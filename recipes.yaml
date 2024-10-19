@@ -1,0 +1,8 @@
+recipes:
+  - name: "Grilled Chicken Breast with Steamed Broccoli"
+    description: "Simple and healthy grilled chicken with steamed broccoli."
+    ingredients:
+      - name: "Chicken Breast"
+        quantity: "4 lbs"
+      - name: Broccoli
+        quantity: "1 serving"
