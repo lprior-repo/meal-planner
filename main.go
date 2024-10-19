@@ -1,20 +1,37 @@
 package main
 
 import (
-	"html/template"
-	"net/http"
+	"fmt"
+	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
+type RecipeStruct struct {
+	Recipes []struct {
+		Name        string `yaml:"name"`
+		Description string `yaml:"description"`
+		Ingredients []struct {
+			Name     string `yaml:"name"`
+			Quantity string `yaml:"quantity"`
+		} `yaml:"ingredients"`
+	} `yaml:"recipes"`
+}
+
+func readFile(filename string) ([]byte, error) {
+	recipeFile, err := os.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	return recipeFile, nil
+}
+
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl := template.Must(template.ParseFiles("templates/index.html"))
-		tmpl.Execute(w, nil)
-	})
-
-	http.HandleFunc("/getDropdown", func(w http.ResponseWriter, r *http.Request) {
-		tmpl := template.Must(template.ParseFiles("templates/dropdown.html"))
-		tmpl.Execute(w, nil)
-	})
-
-	http.ListenAndServe(":8080", nil)
+	recipeFile, err := readFile("recipes.yaml")
+	if err != nil {
+		fmt.Println("Couldn't read in recipe file")
+	}
+	var recipesWrapper RecipeStruct
+	yaml.Unmarshal(recipeFile, &recipesWrapper)
+	fmt.Println(recipesWrapper.Recipes)
 }
