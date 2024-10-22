@@ -1,8 +1,124 @@
 recipes:
-  - name: "Grilled Chicken Breast with Steamed Broccoli"
-    description: "Simple and healthy grilled chicken with steamed broccoli."
-    ingredients:
-      - name: "Chicken Breast"
-        quantity: "4 lbs"
-      - name: Broccoli
-        quantity: "1 serving"
+  main:
+    - name: Sloppy Joes
+      ingredients:
+        - name: 92% Ground Beef
+          quantity: 4 lbs
+        - name: Manwich Sauce
+          quantity: 4
+        - name: 80 Calorie Buns
+          quantity: 2
+        - name: Onion
+          quantity: 1
+      instructions:
+        - Brown the ground beef in a skillet
+        - Cut up the onions finely and add them to the beef
+        - Combine the beef with Manwich sauce and stir well.
+        - Place the mixture in a smoker at 250°F for 1-2 hours
+      
+    - name: Chicken Legs
+      ingredients: 
+        - name: Chicken Legs
+          quantity: 4 lbs
+      instructions: 
+        - Set smoker to 250°F.
+        - Cover the chicken legs with rub.
+        - Smoke until internal temperature reaches 170°F.
+
+    - name: Beer Can Chicken
+      ingredients:
+        - name: Whole Chicken
+          quantity: 1 chicken
+      instructions:
+        - Preheat the smoker to 250°F.
+        - Apply Rub 
+        - Smoke until internal temperature reaches 170°F.
+
+    - name: Smoked Chicken Thighs
+      ingredients:
+        - name: Chicken Thighs
+          quantity: 4 lbs
+      instructions:
+        - Preheat the smoker to 250°F.
+        - Apply Rub 
+        - Smoke until internal temperature reaches 170°F.
+
+    - name: Smoked Whole Breasts
+      ingredients:
+        - name: Whole Chicken
+          quantity: 5 lbs
+      instructions:
+        - Preheat the smoker to 250°F.
+        - Cover in Rub
+        - Smoke until internal temperature reaches 170°F.
+    
+        - name: One-Pan Lemon Chicken and Vegetables
+      ingredients:
+        - name: Chicken Breasts
+          quantity: 4 lbs
+        - name: Lemons
+          quantity: 2, sliced
+        - name: Green Beans
+          quantity: 2 lbs, trimmed
+      instructions:
+        - Preheat smoker/oven to 300°F.
+        - Coat chicken with olive oil, season, and top with lemon slices.
+        - Toss green beans with oil and seasoning, arrange around chicken.
+        - Cook for 1-1.5 hours or until chicken reaches 165°F.
+
+    - name: One-Pan Garlic Chicken and Potatoes
+      ingredients:
+        - name: Chicken Thighs
+          quantity: 4 lbs
+        - name: Baby Potatoes
+          quantity: 2 lbs, halved
+        - name: Garlic
+          quantity: 5 cloves, minced
+      instructions:
+        - Preheat smoker/oven to 300°F.
+        - Coat chicken with oil and seasoning, toss potatoes with garlic and oil.
+        - Arrange on baking sheet, cook for 1.5-2 hours or until chicken reaches 170°F.
+
+    - name: Simple Chicken and Carrots
+      ingredients:
+        - name: Chicken Breasts
+          quantity: 4 lbs
+        - name: Carrots
+          quantity: 2 lbs, sliced
+      instructions:
+        - Preheat smoker/oven to 275°F.
+        - Coat chicken and carrots with oil and seasoning.
+        - Cook for 1.5 hours or until chicken reaches 165°F.
+
+    - name: Chicken and Zucchini Tray Bake
+      ingredients:
+        - name: Chicken Thighs
+          quantity: 4 lbs
+        - name: Zucchini
+          quantity: 4, sliced
+      instructions:
+        - Preheat smoker/oven to 300°F.
+        - Coat chicken and zucchini with oil and seasoning.
+        - Cook for 1.5 hours or until chicken reaches 170°F.
+
+    - name: Baked Chicken Drumsticks with Sweet Potatoes
+      ingredients:
+        - name: Chicken Drumsticks
+          quantity: 4 lbs
+        - name: Sweet Potatoes
+          quantity: 3, cut into wedges
+      instructions:
+        - Preheat smoker/oven to 300°F.
+        - Coat drumsticks and sweet potatoes with oil and seasoning.
+        - Cook for 1.5-2 hours or until chicken reaches 170°F.
+
+    - name: Simple Chicken Breasts with Asparagus
+      ingredients:
+        - name: Chicken Breasts
+          quantity: 4 lbs
+        - name: Asparagus
+          quantity: 2 lbs
+      instructions:
+        - Preheat smoker/oven to 275°F.
+        - Coat chicken and asparagus with oil and seasoning.
+        - Cook for 1-1.5 hours or until chicken reaches 165°F.
