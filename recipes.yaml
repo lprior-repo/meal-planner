@@ -122,3 +122,21 @@ recipes:
         - Preheat smoker/oven to 275°F.
         - Coat chicken and asparagus with oil and seasoning.
         - Cook for 1-1.5 hours or until chicken reaches 165°F.
+    
+    - name: Chicken Sausage Lasagna
+      ingredients:
+        - name: Chicken Sausages
+          quantity: 12, sliced
+        - name: Marinara Sauce
+          quantity: 2 cans
+        - name: Lasagna Noodles
+          quantity: 1 box
+        - name: Shredded Cheese
+          quantity: 4 cups
+      instructions:
+        - Preheat the smoker to 250°F.
+        - Boil the lasagna noodles halfway (al dente).
+        - Cut the chicken sausages into slices.
+        - In a baking dish, layer marinara sauce, noodles, chicken sausages, and shredded cheese.
+        - Repeat layering until all ingredients are used, ending with a layer of cheese.
+        - Smoke the lasagna for 1-1.5 hours until the cheese is melted and bubbly, and the sausage is fully cooked.
