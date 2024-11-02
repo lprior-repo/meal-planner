@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -31,11 +32,17 @@ func readFile(filename string) ([]byte, error) {
 }
 
 func parseFile(recipeFile []byte) (RecipeStruct, error) {
-	var parseStruct RecipeStruct
-	if err := yaml.Unmarshal(recipeFile, &parseStruct); err != nil {
+	var recipeData RecipeStruct
+	if err := yaml.Unmarshal(recipeFile, &recipeData); err != nil {
 		return RecipeStruct{}, fmt.Errorf("couldn't parse the YAML file: %w", err)
 	}
-	return parseStruct, nil
+	return recipeData, nil
+}
+
+func shuffleRecipes(recipes []Recipe) {
+	rand.Shuffle(len(recipes), func(i, j int) {
+		recipes[i], recipes[j] = recipes[j], recipes[i]
+	})
 }
 
 func main() {
@@ -45,11 +52,30 @@ func main() {
 		return
 	}
 
-	recipes, err := parseFile(recipeFile)
+	recipeData, err := parseFile(recipeFile)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Println(recipes)
+	shuffleRecipes(recipeData.Recipes)
+
+	numRecipes := 4
+	if len(recipeData.Recipes) < 4 {
+		numRecipes = len(recipeData.Recipes)
+	}
+
+	for i := 0; i < numRecipes; i++ {
+		randomRecipe := recipeData.Recipes[i]
+		fmt.Printf("Recipe %d: %s\n", i+1, randomRecipe.Name)
+		fmt.Println("Ingredients:")
+		for _, ingredient := range randomRecipe.Ingredients {
+			fmt.Printf("- %s: %s\n", ingredient.Name, ingredient.Quantity)
+		}
+		fmt.Println("Instructions:")
+		for _, instruction := range randomRecipe.Instructions {
+			fmt.Printf("- %s\n", instruction)
+		}
+		fmt.Println()
+	}
 }
