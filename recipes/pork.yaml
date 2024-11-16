@@ -1,0 +1,176 @@
+recipes:
+  - name: Honey Glazed Ham
+    ingredients:
+      - name: ham
+        quantity: 5 lbs
+      - name: honey
+        quantity: 1/2 cup
+      - name: brown sugar
+        quantity: 1/2 cup
+      - name: Dijon mustard
+        quantity: 2 tbsp
+    instructions:
+      - Preheat oven to 325°f.
+      - In a bowl, mix honey, brown sugar, and Dijon mustard.
+      - Place ham in a roasting pan and brush with glaze mixture.
+      - Bake for 2-2.5 hours, basting with glaze every 30 minutes.
+      - Let rest before slicing and serving.
+
+  - name: Bacon Wrapped Pork Tenderloin
+    ingredients:
+      - name: pork tenderloin
+        quantity: 2 lbs
+      - name: bacon slices
+        quantity: 8
+      - name: garlic cloves, minced
+        quantity: 2
+      - name: brown sugar
+        quantity: 2 tbsp
+    instructions:
+      - Preheat oven to 375°f.
+      - Rub pork tenderloin with minced garlic and brown sugar.
+      - Wrap bacon slices around the tenderloin, securing with toothpicks if necessary.
+      - Place in a baking dish and bake for 40-45 minutes until internal temperature reaches 145°f.
+      - Let rest before slicing.
+
+  - name: Grilled Pork Kebabs
+    ingredients:
+      - name: pork loin, cubed
+        quantity: 2 lbs
+      - name: bell peppers, cut into chunks
+        quantity: 2
+      - name: red onion, cut into chunks
+        quantity: 1
+      - name: teriyaki sauce
+        quantity: 1/2 cup
+      - name: skewers
+        quantity: 10
+    instructions:
+      - Preheat grill to medium-high heat.
+      - In a bowl, marinate pork cubes in teriyaki sauce for 15 minutes.
+      - Thread pork, bell peppers, and onion onto skewers.
+      - Grill skewers for 10-15 minutes, turning occasionally, until pork is cooked through.
+      - Serve hot.
+
+  - name: Pulled Pork Sandwiches
+    ingredients:
+      - name: pork shoulder
+        quantity: 4 lbs
+      - name: BBQ sauce
+        quantity: 2 cups
+      - name: hamburger buns
+        quantity: 8
+      - name: coleslaw (optional)
+        quantity: 2 cups
+    instructions:
+      - Place pork shoulder in a slow cooker.
+      - Pour BBQ sauce over the pork.
+      - Cook on low for 8 hours or high for 4 hours until pork is tender.
+      - Shred pork with two forks.
+      - Serve on hamburger buns with coleslaw if desired.
+
+  - name: Pork Fried Rice
+    ingredients:
+      - name: cooked rice
+        quantity: 4 cups
+      - name: pork loin, diced
+        quantity: 2 cups
+      - name: frozen peas and carrots
+        quantity: 2 cups
+      - name: soy sauce
+        quantity: 1/4 cup
+      - name: eggs, beaten
+        quantity: 2
+    instructions:
+      - In a large skillet or wok, cook diced pork until browned.
+      - Push pork to the side, scramble eggs in the same pan.
+      - Add cooked rice and frozen peas and carrots to the pan.
+      - Stir in soy sauce and cook for 5-7 minutes until heated through.
+      - Serve hot.
+
+  - name: Simple Pork Stir-Fry
+    ingredients:
+      - name: pork tenderloin, sliced
+        quantity: 2 lbs
+      - name: stir-fry vegetables
+        quantity: 4 cups
+      - name: soy sauce
+        quantity: 1/4 cup
+      - name: garlic cloves, minced
+        quantity: 2
+      - name: sesame oil
+        quantity: 2 tbsp
+    instructions:
+      - In a large skillet or wok, heat sesame oil over medium-high heat.
+      - Add minced garlic and sliced pork, cook until pork is browned.
+      - Add stir-fry vegetables and soy sauce.
+      - Cook for 5-7 minutes until vegetables are tender-crisp.
+      - Serve over rice.
+
+  - name: Baked Pork Chops with Apples
+    ingredients:
+      - name: pork chops
+        quantity: 4 bone-in
+      - name: apples, sliced
+        quantity: 2
+      - name: brown sugar
+        quantity: 2 tbsp
+      - name: cinnamon
+        quantity: 1 tsp
+    instructions:
+      - Preheat oven to 375°f.
+      - Place pork chops in a baking dish.
+      - Top with sliced apples.
+      - Sprinkle brown sugar and cinnamon over the apples.
+      - Bake for 35-40 minutes until pork chops are cooked through.
+
+  - name: Pork Schnitzel
+    ingredients:
+      - name: pork cutlets
+        quantity: 4
+      - name: flour
+        quantity: 1 cup
+      - name: eggs, beaten
+        quantity: 2
+      - name: breadcrumbs
+        quantity: 2 cups
+    instructions:
+      - Pound pork cutlets to 1/4-inch thickness.
+      - Dredge cutlets in flour, dip in beaten eggs, then coat with breadcrumbs.
+      - Heat oil in a skillet over medium heat.
+      - Fry cutlets for 3-4 minutes per side until golden brown.
+      - Drain on paper towels and serve.
+
+  - name: Pork Sausage Patties
+    ingredients:
+      - name: ground pork
+        quantity: 2 lbs
+      - name: sage
+        quantity: 1 tsp
+      - name: garlic powder
+        quantity: 1 tsp
+      - name: onion powder
+        quantity: 1 tsp
+    instructions:
+      - In a bowl, combine ground pork with sage, garlic powder, and onion powder.
+      - Form mixture into patties.
+      - Heat a skillet over medium heat.
+      - Cook patties for 4-5 minutes per side until cooked through.
+      - Serve hot.
+
+  - name: Simple Pork and Beans
+    ingredients:
+      - name: pork belly or bacon, diced
+        quantity: 1 lb
+      - name: canned beans
+        quantity: 2 cans
+      - name: molasses
+        quantity: 1/4 cup
+      - name: ketchup
+        quantity: 1/2 cup
+    instructions:
+      - Preheat oven to 350°f.
+      - In a skillet, cook diced pork belly or bacon until crisp.
+      - In a baking dish, combine cooked pork, canned beans, molasses, and ketchup.
+      - Bake for 45 minutes until bubbly.
+      - Serve warm.

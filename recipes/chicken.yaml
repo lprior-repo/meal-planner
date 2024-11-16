@@ -1,0 +1,87 @@
+recipes:
+  - name: Lemon Herb Chicken Breasts
+    ingredients:
+      - name: chicken breasts
+        quantity: 4 lbs
+      - name: lemon juice
+        quantity: 1/4 cup
+      - name: garlic cloves, minced
+        quantity: 2
+      - name: fresh rosemary, chopped
+        quantity: 2 tbsp
+    instructions:
+      - Preheat smoker/oven to 300°f.
+      - In a bowl, combine lemon juice, minced garlic, and chopped rosemary.
+      - Coat chicken breasts with the mixture.
+      - Place in smoker/oven and cook until internal temperature reaches 165°f.
+
+  - name: Garlic Butter Chicken Thighs
+    ingredients:
+      - name: chicken thighs
+        quantity: 4 lbs
+      - name: melted butter
+        quantity: 1/4 cup
+      - name: garlic powder
+        quantity: 2 tsp
+      - name: fresh parsley, chopped
+        quantity: 2 tbsp
+    instructions:
+      - Preheat smoker/oven to 300°f.
+      - Brush chicken thighs with melted butter.
+      - Sprinkle garlic powder over the thighs.
+      - Arrange on baking sheet and cook until internal temperature reaches 170°f.
+      - Garnish with chopped parsley before serving.
+
+  - name: Chicken Legs
+    ingredients:
+      - name: chicken legs
+        quantity: 4 lbs
+      - name: fresh herbs (e.g., thyme or rosemary)
+        quantity: 2 tbsp
+      - name: lemon slices
+        quantity: 1 lemon, sliced
+      - name: garlic cloves, minced
+        quantity: 3
+    instructions:
+      - Preheat smoker/oven to 250°f.
+      - Rub chicken legs with olive oil and your choice of fresh herbs.
+      - Top with lemon slices and minced garlic.
+      - Place in smoker and cook until internal temperature reaches 170°f.
+
+  - name: Beer Can Chicken
+    ingredients:
+      - name: whole chicken
+        quantity: 1
+      - name: beer can
+        quantity: 1
+      - name: lemon slices
+        quantity: 1 lemon, sliced
+      - name: fresh herbs (e.g., rosemary, thyme)
+        quantity: 2 tbsp
+      - name: garlic cloves, minced
+        quantity: 3
+    instructions:
+      - Preheat smoker/oven to 250°f.
+      - Apply rub to the whole chicken, focusing on the skin.
+      - Insert a beer can into the cavity of the chicken.
+      - Top the chicken with lemon slices and fresh herbs.
+      - Place the chicken upright on the beer can in the smoker.
+      - Smoke until internal temperature of the chicken reaches 170°f.
+
+  - name: Chicken Sausage Lasagna
+    ingredients:
+      - name: chicken sausages
+        quantity: 12, sliced
+      - name: marinara sauce
+        quantity: 2 cans
+      - name: lasagna noodles
+        quantity: 1 box
+      - name: shredded cheese
+        quantity: 4 cups
+    instructions:
+      - Preheat the smoker to 250°f.
+      - Boil the lasagna noodles halfway (al dente).
+      - Slice the chicken sausages.
+      - In a baking dish, layer marinara sauce, noodles, chicken sausages, and shredded cheese.
+      - Repeat layering until all ingredients are used, ending with a layer of cheese.
+      - Smoke the lasagna for 1-1.5 hours until the cheese is melted and bubbly, and the sausage is fully cooked.

@@ -1,0 +1,28 @@
+recipes:
+  - name: Simple Smoked Turkey Breast
+    ingredients:
+      - name: turkey breast
+        quantity: 5 lbs
+      - name: honey
+        quantity: 2 tbsp
+      - name: Dijon mustard
+        quantity: 2 tbsp
+    instructions:
+      - Preheat smoker to 250°f.
+      - In a bowl, mix honey and Dijon mustard.
+      - Rub turkey breast with the mixture.
+      - Place in smoker and cook until internal temperature reaches 165°f.
+
+  - name: Easy Smoked Turkey Legs
+    ingredients:
+      - name: turkey legs
+        quantity: 4 lbs
+      - name: maple syrup
+        quantity: 1/4 cup
+      - name: apple cider vinegar
+        quantity: 2 tbsp
+    instructions:
+      - Preheat smoker to 250°f.
+      - In a bowl, mix maple syrup and apple cider vinegar.
+      - Brush turkey legs with the mixture.
+      - Place in smoker and cook until internal temperature reaches 165°f.
