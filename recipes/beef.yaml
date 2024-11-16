@@ -1,0 +1,234 @@
+recipes:
+  - name: Quick Beef Brisket
+    ingredients:
+      - name: beef brisket
+        quantity: 6 lbs
+      - name: BBQ sauce
+        quantity: 1 cup
+      - name: honey
+        quantity: 2 tbsp
+      - name: smoked paprika
+        quantity: 1 tbsp
+    instructions:
+      - Preheat smoker to 225°f.
+      - In a bowl, mix BBQ sauce, honey, and smoked paprika.
+      - Rub the mixture generously over the beef brisket.
+      - Place brisket in smoker and cook for 10-12 hours until tender.
+
+  - name: Simple Beef Stir-Fry
+    ingredients:
+      - name: beef sirloin, sliced
+        quantity: 2 lbs
+      - name: broccoli florets
+        quantity: 2 cups
+      - name: soy sauce
+        quantity: 1/2 cup
+      - name: sesame oil
+        quantity: 2 tbsp
+    instructions:
+      - Preheat smoker/oven to 400°f.
+      - Toss beef slices with soy sauce and sesame oil.
+      - Arrange beef and broccoli on a baking sheet.
+      - Bake for 20-25 minutes, stirring halfway through.
+
+  - name: Beef Tacos
+    ingredients:
+      - name: ground beef
+        quantity: 3 lbs
+      - name: taco seasoning
+        quantity: 1 packet
+      - name: taco shells
+        quantity: 20
+      - name: shredded cheese
+        quantity: 2 cups
+    instructions:
+      - Preheat smoker/oven to 350°f.
+      - Brown ground beef in a skillet and mix in taco seasoning.
+      - Fill taco shells with beef and top with shredded cheese.
+      - Place on baking sheet and bake for 5-10 minutes until cheese is melted.
+
+  - name: Quick Beef Tacos Al Pastor
+    ingredients:
+      - name: beef flank steak, thinly sliced
+        quantity: 3 lbs
+      - name: pineapple slices
+        quantity: 1 cup
+      - name: taco seasoning
+        quantity: 2 packets
+      - name: corn tortillas
+        quantity: 20
+      - name: cilantro, chopped
+        quantity: 1 bunch
+    instructions:
+      - Preheat smoker/oven to 350°f.
+      - Toss beef slices with taco seasoning.
+      - Arrange beef and pineapple slices on a baking sheet.
+      - Bake for 25-30 minutes until beef is cooked through.
+      - Serve on corn tortillas topped with diced onions and chopped cilantro.
+
+  - name: Simple Beef Carne Asada
+    ingredients:
+      - name: beef skirt steak
+        quantity: 3 lbs
+      - name: lime juice
+        quantity: 1/2 cup
+      - name: olive oil
+        quantity: 1/4 cup
+      - name: garlic cloves, minced
+        quantity: 3
+      - name: tortillas
+        quantity: 20
+    instructions:
+      - Preheat smoker/oven to 375°f.
+      - In a bowl, mix lime juice, olive oil, and minced garlic.
+      - Marinate beef skirt steak in the mixture for 10 minutes.
+      - Arrange beef on a baking sheet and bake for 20-25 minutes until desired doneness.
+      - Slice thinly and serve on tortillas with salsa.
+
+  - name: Quick Beef Fajitas
+    ingredients:
+      - name: beef strips
+        quantity: 2 lbs
+      - name: bell peppers, sliced
+        quantity: 3
+      - name: onions, sliced
+        quantity: 2
+      - name: fajita seasoning
+        quantity: 2 packets
+      - name: tortillas
+        quantity: 20
+    instructions:
+      - Preheat smoker/oven to 400°f.
+      - Toss beef strips with fajita seasoning.
+      - Arrange beef, bell peppers, and onions on a baking sheet.
+      - Bake for 20-25 minutes, stirring halfway through.
+      - Serve with warm tortillas.
+
+  - name: Easy Beef Bulgogi
+    ingredients:
+      - name: beef ribeye, thinly sliced
+        quantity: 3 lbs
+      - name: soy sauce
+        quantity: 1/2 cup
+      - name: sesame oil
+        quantity: 2 tbsp
+      - name: brown sugar
+        quantity: 2 tbsp
+      - name: green onions, chopped
+        quantity: 1/2 cup
+    instructions:
+      - Preheat smoker/oven to 375°f.
+      - In a bowl, mix soy sauce, sesame oil, brown sugar, and chopped green onions.
+      - Toss beef slices in the marinade and let sit for 5 minutes.
+      - Arrange beef on a baking sheet and bake for 20-25 minutes until cooked through.
+      - Garnish with additional green onions if desired and serve over rice.
+
+  - name: Quick Beef Kofta Kebabs
+    ingredients:
+      - name: ground beef
+        quantity: 3 lbs
+      - name: onion, grated
+        quantity: 1
+      - name: garlic, minced
+        quantity: 2 cloves
+      - name: parsley, chopped
+        quantity: 1/4 cup
+      - name: skewers
+        quantity: 20
+    instructions:
+      - Preheat smoker/oven to 375°f.
+      - In a bowl, combine ground beef, grated onion, minced garlic, and chopped parsley.
+      - Form mixture into long, thin kebabs and thread onto skewers.
+      - Arrange kebabs on a baking sheet and bake for 20-25 minutes until cooked through.
+      - Serve with pita bread and your favorite dipping sauce.
+
+  - name: Simple Beef Rendang
+    ingredients:
+      - name: beef chuck, cubed
+        quantity: 4 lbs
+      - name: coconut milk
+        quantity: 4 cups
+      - name: chili paste
+        quantity: 3 tbsp
+      - name: ginger, grated
+        quantity: 2 tbsp
+      - name: garlic, minced
+        quantity: 4 cloves
+    instructions:
+      - Preheat smoker/oven to 325°f.
+      - In a large pot, combine coconut milk, minced garlic, grated ginger, and chili paste.
+      - Add beef cubes and stir to coat.
+      - Cover and bake for 3-4 hours until beef is tender and sauce has thickened.
+      - Season with salt to taste and serve with steamed rice.
+
+  - name: Beef Teriyaki Stir-Fry
+    ingredients:
+      - name: beef sirloin, sliced
+        quantity: 2 lbs
+      - name: broccoli florets
+        quantity: 2 cups
+      - name: soy sauce
+        quantity: 1/2 cup
+      - name: sesame oil
+        quantity: 2 tbsp
+      - name: garlic, minced
+        quantity: 2 cloves
+    instructions:
+      - Preheat smoker/oven to 400°f.
+      - Marinate beef slices with soy sauce, sesame oil, and minced garlic for 5 minutes.
+      - Arrange beef and broccoli on a baking sheet.
+      - Bake for 20-25 minutes, stirring halfway through.
+      - Serve over steamed rice or noodles.
+
+  - name: Beef Bibimbap
+    ingredients:
+      - name: beef ribeye, thinly sliced
+        quantity: 2 lbs
+      - name: spinach, blanched
+        quantity: 2 cups
+      - name: carrots, julienned
+        quantity: 2
+      - name: egg, fried
+        quantity: 4
+      - name: gochujang (Korean chili paste)
+        quantity: 1/2 cup
+    instructions:
+      - Preheat smoker/oven to 350°f.
+      - Arrange cooked rice in bowls.
+      - Top with beef, spinach, julienned carrots, and a fried egg.
+      - Add gochujang on the side and serve.
+
+  - name: Simple Beef Shawarma
+    ingredients:
+      - name: beef sirloin, thinly sliced
+        quantity: 3 lbs
+      - name: garlic, minced
+        quantity: 2 cloves
+      - name: lemon juice
+        quantity: 1/4 cup
+      - name: shawarma seasoning
+        quantity: 2 tbsp
+      - name: pita bread
+        quantity: 20
+    instructions:
+      - Preheat smoker/oven to 375°f.
+      - In a bowl, mix lemon juice, minced garlic, and shawarma seasoning.
+      - Toss beef slices in the marinade and let sit for 5 minutes.
+      - Arrange beef on a baking sheet and bake for 20-25 minutes until cooked through.
+      - Serve beef in pita bread with your favorite toppings.
+
+  - name: Sloppy Joes
+    ingredients:
+      - name: 92% ground beef
+        quantity: 4 lbs
+      - name: manwich sauce
+        quantity: 4
+      - name: 80 calorie buns
+        quantity: 2
+      - name: onion
+        quantity: 1
+    instructions:
+      - Brown the ground beef in a skillet.
+      - Cut up the onions finely and add them to the beef.
+      - Combine the beef with manwich sauce and stir well.
+      - Place the mixture in a smoker at 250°f for 1-2 hours.

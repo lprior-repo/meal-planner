@@ -1,0 +1,426 @@
+recipes:
+  - name: Lemon Butter Asparagus
+    ingredients:
+      - name: asparagus spears, trimmed
+        quantity: 2 lbs
+      - name: butter, melted
+        quantity: 3 tbsp
+      - name: lemon zest
+        quantity: 1 tsp
+    instructions:
+      - Toss asparagus spears with melted butter and lemon zest.
+      - Spread on a baking sheet and roast at 400°f for 10-12 minutes until tender.
+      - Serve warm.
+
+  - name: Simple Cucumber Salad
+    ingredients:
+      - name: cucumbers, thinly sliced
+        quantity: 4 cups
+      - name: red onions, thinly sliced
+        quantity: 1/2 cup
+      - name: vinegar (apple cider or white)
+        quantity: 1/4 cup
+    instructions:
+      - Combine sliced cucumbers and red onions in a bowl.
+      - Drizzle with vinegar and toss to coat.
+      - Chill for 5 minutes before serving.
+
+  - name: Garlic Butter Green Beans
+    ingredients:
+      - name: green beans, trimmed
+        quantity: 4 cups
+      - name: butter, melted
+        quantity: 3 tbsp
+      - name: garlic cloves, minced
+        quantity: 2
+    instructions:
+      - Toss green beans with melted butter and minced garlic.
+      - Spread on a baking sheet and roast at 400°f for 15 minutes until tender.
+      - Serve warm.
+
+  - name: Honey Glazed Carrots
+    ingredients:
+      - name: baby carrots
+        quantity: 4 cups
+      - name: honey
+        quantity: 2 tbsp
+      - name: butter, melted
+        quantity: 2 tbsp
+    instructions:
+      - Toss baby carrots with melted butter and honey.
+      - Spread on a baking sheet and roast at 400°f for 20 minutes until tender.
+      - Serve warm.
+
+  - name: Steamed Broccoli with Lemon
+    ingredients:
+      - name: broccoli florets
+        quantity: 4 cups
+      - name: butter
+        quantity: 2 tbsp
+      - name: lemon juice
+        quantity: 2 tbsp
+    instructions:
+      - Steam broccoli florets until tender, about 5 minutes.
+      - Toss with melted butter and lemon juice.
+      - Serve immediately.
+
+  - name: Simple Mashed Potatoes
+    ingredients:
+      - name: potatoes, peeled and cubed
+        quantity: 4 cups
+      - name: butter
+        quantity: 1/4 cup
+      - name: milk
+        quantity: 1/2 cup
+    instructions:
+      - Boil potatoes until tender, about 15 minutes.
+      - Drain and mash with butter and milk.
+      - Serve warm.
+
+  - name: Roasted Cherry Tomatoes
+    ingredients:
+      - name: cherry tomatoes
+        quantity: 4 cups
+      - name: olive oil
+        quantity: 2 tbsp
+      - name: balsamic glaze
+        quantity: 2 tbsp
+    instructions:
+      - Toss cherry tomatoes with olive oil.
+      - Spread on a baking sheet and roast at 400°f for 15 minutes.
+      - Drizzle with balsamic glaze before serving.
+
+  - name: Simple Avocado Slices
+    ingredients:
+      - name: avocados, sliced
+        quantity: 3
+      - name: lime juice
+        quantity: 2 tbsp
+      - name: sea salt
+        quantity: to taste
+    instructions:
+      - Arrange avocado slices on a plate.
+      - Drizzle with lime juice and sprinkle with sea salt.
+      - Serve immediately.
+
+  - name: Quick Coleslaw
+    ingredients:
+      - name: shredded cabbage
+        quantity: 6 cups
+      - name: shredded carrots
+        quantity: 2 cups
+      - name: mayonnaise
+        quantity: 1/2 cup
+    instructions:
+      - Combine shredded cabbage and carrots in a bowl.
+      - Mix in mayonnaise until well coated.
+      - Serve chilled.
+
+  - name: Balsamic Glazed Brussels Sprouts
+    ingredients:
+      - name: Brussels sprouts, halved
+        quantity: 4 cups
+      - name: olive oil
+        quantity: 2 tbsp
+      - name: balsamic glaze
+        quantity: 2 tbsp
+    instructions:
+      - Toss halved Brussels sprouts with olive oil.
+      - Spread on a baking sheet and roast at 400°f for 20 minutes.
+      - Drizzle with balsamic glaze before serving.
+
+  - name: Easy Caprese Skewers
+    ingredients:
+      - name: cherry tomatoes
+        quantity: 20
+      - name: fresh mozzarella balls
+        quantity: 20
+      - name: fresh basil leaves
+        quantity: 20
+    instructions:
+      - Thread a cherry tomato, mozzarella ball, and basil leaf onto each skewer.
+      - Drizzle with balsamic glaze if desired.
+      - Serve fresh.
+
+  - name: Lemon Herb Quinoa
+    ingredients:
+      - name: quinoa, rinsed
+        quantity: 1 cup
+      - name: vegetable broth
+        quantity: 2 cups
+      - name: lemon juice
+        quantity: 1/4 cup
+    instructions:
+      - Bring vegetable broth to a boil.
+      - Add quinoa, reduce heat, cover, and simmer for 15 minutes.
+      - Remove from heat, fluff with a fork, and stir in lemon juice.
+      - Serve warm or chilled.
+
+  - name: Roasted Sweet Potato Cubes
+    ingredients:
+      - name: sweet potatoes, cubed
+        quantity: 4 cups
+      - name: olive oil
+        quantity: 2 tbsp
+      - name: cinnamon
+        quantity: 1 tsp
+    instructions:
+      - Toss sweet potato cubes with olive oil and cinnamon.
+      - Spread on a baking sheet and roast at 400°f for 25 minutes until tender.
+      - Serve warm.
+
+  - name: Simple Greek Salad
+    ingredients:
+      - name: cucumbers, sliced
+        quantity: 2 cups
+      - name: cherry tomatoes, halved
+        quantity: 2 cups
+      - name: feta cheese, crumbled
+        quantity: 1 cup
+    instructions:
+      - Combine sliced cucumbers and halved cherry tomatoes in a bowl.
+      - Top with crumbled feta cheese.
+      - Serve chilled.
+
+  - name: Steamed Baby Carrots
+    ingredients:
+      - name: baby carrots
+        quantity: 4 cups
+      - name: butter
+        quantity: 2 tbsp
+      - name: honey
+        quantity: 1 tbsp
+    instructions:
+      - Steam baby carrots until tender, about 5 minutes.
+      - Toss with melted butter and honey.
+      - Serve warm.
+
+  - name: Simple Guacamole
+    ingredients:
+      - name: ripe avocados
+        quantity: 3
+      - name: lime juice
+        quantity: 2 tbsp
+      - name: sea salt
+        quantity: to taste
+    instructions:
+      - Mash avocados in a bowl.
+      - Mix in lime juice and sea salt.
+      - Serve immediately with chips or as a topping.
+
+  - name: Sautéed Spinach
+    ingredients:
+      - name: fresh spinach
+        quantity: 10 cups
+      - name: garlic cloves, minced
+        quantity: 2
+      - name: olive oil
+        quantity: 2 tbsp
+    instructions:
+      - Heat olive oil in a large skillet over medium heat.
+      - Add minced garlic and sauté until fragrant, about 1 minute.
+      - Add fresh spinach and toss until wilted, about 3-4 minutes.
+      - Serve immediately.
+
+  - name: Quick Hummus
+    ingredients:
+      - name: canned chickpeas, drained and rinsed
+        quantity: 2 cans (15 oz each)
+      - name: tahini
+        quantity: 1/4 cup
+      - name: lemon juice
+        quantity: 3 tbsp
+    instructions:
+      - Combine chickpeas, tahini, and lemon juice in a food processor.
+      - Blend until smooth and creamy.
+      - Serve with pita or vegetable sticks.
+
+  - name: Parmesan Garlic Bread
+    ingredients:
+      - name: baguette, sliced
+        quantity: 1 large
+      - name: butter, softened
+        quantity: 1/2 cup
+      - name: grated Parmesan cheese
+        quantity: 1/2 cup
+    instructions:
+      - Preheat oven to 375°f.
+      - Spread softened butter on each baguette slice.
+      - Sprinkle grated Parmesan cheese on top.
+      - Place on a baking sheet and bake for 10-12 minutes until golden.
+      - Serve warm.
+
+  - name: Simple Edamame
+    ingredients:
+      - name: frozen edamame, shelled
+        quantity: 4 cups
+      - name: sea salt
+        quantity: to taste
+      - name: lemon wedges
+        quantity: 6
+    instructions:
+      - Boil edamame in salted water for 5 minutes.
+      - Drain and sprinkle with sea salt.
+      - Serve with lemon wedges.
+
+  - name: Baked Zucchini Chips
+    ingredients:
+      - name: zucchini, thinly sliced
+        quantity: 4 cups
+      - name: olive oil
+        quantity: 2 tbsp
+      - name: grated Parmesan cheese
+        quantity: 1/2 cup
+    instructions:
+      - Preheat oven to 425°f.
+      - Toss zucchini slices with olive oil.
+      - Sprinkle grated Parmesan cheese on top.
+      - Arrange on a baking sheet and bake for 15-20 minutes until crispy.
+      - Serve warm.
+
+  - name: Fresh Tomato Salsa
+    ingredients:
+      - name: tomatoes, diced
+        quantity: 4
+      - name: red onions, finely chopped
+        quantity: 1/2 cup
+      - name: cilantro, chopped
+        quantity: 1/4 cup
+    instructions:
+      - Combine diced tomatoes, finely chopped red onions, and chopped cilantro in a bowl.
+      - Toss to mix well.
+      - Serve fresh with chips or as a topping.
+
+  - name: Simple Green Salad
+    ingredients:
+      - name: mixed greens
+        quantity: 6 cups
+      - name: cherry tomatoes, halved
+        quantity: 2 cups
+      - name: cucumber, sliced
+        quantity: 2 cups
+    instructions:
+      - In a large bowl, combine mixed greens, halved cherry tomatoes, and sliced cucumber.
+      - Toss gently to mix.
+      - Serve with your favorite dressing.
+
+  - name: Steamed Peas with Mint
+    ingredients:
+      - name: green peas, fresh or frozen
+        quantity: 4 cups
+      - name: fresh mint leaves, chopped
+        quantity: 2 tbsp
+      - name: butter
+        quantity: 2 tbsp
+    instructions:
+      - Steam green peas until tender, about 5 minutes.
+      - Toss with melted butter and chopped fresh mint.
+      - Serve warm.
+
+  - name: Caprese Salad
+    ingredients:
+      - name: fresh mozzarella, sliced
+        quantity: 8 oz
+      - name: tomatoes, sliced
+        quantity: 4
+      - name: fresh basil leaves
+        quantity: 1/4 cup
+    instructions:
+      - Arrange tomato slices and mozzarella slices alternately on a plate.
+      - Tuck fresh basil leaves between the slices.
+      - Drizzle with balsamic glaze if desired.
+      - Serve fresh.
+
+  - name: Quick Spinach and Feta
+    ingredients:
+      - name: fresh spinach
+        quantity: 10 cups
+      - name: feta cheese, crumbled
+        quantity: 1 cup
+      - name: olive oil
+        quantity: 2 tbsp
+    instructions:
+      - Heat olive oil in a large skillet over medium heat.
+      - Add fresh spinach and sauté until wilted, about 3-4 minutes.
+      - Remove from heat and stir in crumbled feta cheese.
+      - Serve warm.
+
+  - name: Simple Mango Salsa
+    ingredients:
+      - name: mangoes, diced
+        quantity: 3
+      - name: red bell peppers, diced
+        quantity: 1
+      - name: lime juice
+        quantity: 2 tbsp
+    instructions:
+      - Combine diced mangoes and diced red bell peppers in a bowl.
+      - Drizzle with lime juice and toss to mix.
+      - Serve fresh with chips or as a topping.
+
+  - name: Quick Hummus
+    ingredients:
+      - name: canned chickpeas, drained and rinsed
+        quantity: 2 cans (15 oz each)
+      - name: tahini
+        quantity: 1/4 cup
+      - name: lemon juice
+        quantity: 3 tbsp
+    instructions:
+      - Combine chickpeas, tahini, and lemon juice in a food processor.
+      - Blend until smooth and creamy.
+      - Serve with pita or vegetable sticks.
+
+  - name: Baked Polenta Fries
+    ingredients:
+      - name: polenta, cooked and cooled
+        quantity: 2 cups
+      - name: olive oil
+        quantity: 3 tbsp
+      - name: grated Parmesan cheese
+        quantity: 1/2 cup
+    instructions:
+      - Preheat oven to 425°f.
+      - Cut cooked and cooled polenta into fry shapes.
+      - Toss polenta fries with olive oil and grated Parmesan cheese.
+      - Arrange on a baking sheet and bake for 20-25 minutes until crispy.
+      - Serve warm.
+
+  - name: Cherry Tomato Basil Salad
+    ingredients:
+      - name: cherry tomatoes, halved
+        quantity: 4 cups
+      - name: fresh basil leaves, torn
+        quantity: 1/4 cup
+      - name: mozzarella balls, halved
+        quantity: 2 cups
+    instructions:
+      - Combine halved cherry tomatoes, torn fresh basil leaves, and halved mozzarella balls in a bowl.
+      - Toss gently to mix.
+      - Serve fresh.
+
+  - name: Simple Edamame
+    ingredients:
+      - name: frozen edamame, shelled
+        quantity: 4 cups
+      - name: sea salt
+        quantity: to taste
+      - name: lemon wedges
+        quantity: 6
+    instructions:
+      - Boil edamame in salted water for 5 minutes.
+      - Drain and sprinkle with sea salt.
+      - Serve with lemon wedges.
+
+  - name: Roasted Red Potatoes
+    ingredients:
+      - name: red potatoes, cubed
+        quantity: 4 cups
+      - name: olive oil
+        quantity: 3 tbsp
+      - name: dried rosemary
+        quantity: 2 tsp
+    instructions:
+      - Toss cubed red potatoes with olive oil and dried rosemary.
+      - Spread on a baking sheet and roast at 400°f for 25 minutes until golden.
+      - Serve warm.
