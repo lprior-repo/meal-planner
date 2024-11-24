@@ -45,8 +45,21 @@ type EmailPayload struct {
 }
 
 func loadEnv() error {
-	if err := godotenv.Load(); err != nil {
-		return fmt.Errorf("error loading .env file: %w", err)
+	err := godotenv.Load()
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("error loading .env file: %w", err)
+		}
+	}
+	requiredVars := []string{"MAILTRAP_API_TOKEN", "SENDER_EMAIL", "SENDER_NAME", "RECIPIENT_EMAIL"}
+	var missingVars []string
+	for _, v := range requiredVars {
+		if os.Getenv(v) == "" {
+			missingVars = append(missingVars, v)
+		}
+	}
+	if len(missingVars) > 0 {
+		return fmt.Errorf("missing required environment variables: %s", strings.Join(missingVars, ", "))
 	}
 	return nil
 }
@@ -122,17 +135,37 @@ func loadRecipes(dir, excludeFile string) ([]Recipe, error) {
 	return allRecipes, nil
 }
 
-func printRecipe(title string, recipe Recipe) {
-	fmt.Printf("%s: %s\n", title, recipe.Name)
-	fmt.Println("Ingredients:")
+func loadSides() ([]Recipe, error) {
+	recipesDir := "recipes"
+	sidesFilename := "sides.yaml"
+	sidesFilePath, err := getSidesFilePath(recipesDir, sidesFilename)
+	if err != nil {
+		return nil, err
+	}
+	sidesData, err := readYAMLFile(sidesFilePath)
+	if err != nil {
+		return nil, fmt.Errorf("error reading sides file: %w", err)
+	}
+	sidesCollection, err := parseYAML(sidesData)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing %s: %w", sidesFilename, err)
+	}
+	return sidesCollection.Recipes, nil
+}
+
+func printRecipe(title string, recipe Recipe) string {
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf("%s: %s\n", title, recipe.Name))
+	sb.WriteString("Ingredients:\n")
 	for _, ingredient := range recipe.Ingredients {
-		fmt.Printf("- %s: %s\n", ingredient.Name, ingredient.Quantity)
+		sb.WriteString(fmt.Sprintf("- %s: %s\n", ingredient.Name, ingredient.Quantity))
 	}
-	fmt.Println("Instructions:")
+	sb.WriteString("Instructions:\n")
 	for _, instruction := range recipe.Instructions {
-		fmt.Printf("- %s\n", instruction)
+		sb.WriteString(fmt.Sprintf("- %s\n", instruction))
 	}
-	fmt.Println()
+	sb.WriteString("\n")
+	return sb.String()
 }
 
 func min(a, b int) int {
@@ -185,14 +218,12 @@ func main() {
 	senderName := os.Getenv("SENDER_NAME")
 	recipientEmail := os.Getenv("RECIPIENT_EMAIL")
 	if senderEmail == "" || senderName == "" || recipientEmail == "" {
-		fmt.Println("Error: SENDER_EMAIL, SENDER_NAME, and RECIPIENT_EMAIL must be set in the .env file")
+		fmt.Println("Error: SENDER_EMAIL, SENDER_NAME, and RECIPIENT_EMAIL must be set in the environment")
 		return
 	}
-	recipesDir := "recipes"
-	sidesFilename := "sides.yaml"
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	allMainDishes, err := loadRecipes(recipesDir, sidesFilename)
+	allMainDishes, err := loadRecipes("recipes", "sides.yaml")
 	if err != nil {
 		fmt.Println("Error loading main dishes:", err)
 		return
@@ -201,68 +232,35 @@ func main() {
 		fmt.Println("No main dish recipes found.")
 		return
 	}
-	sidesFilePath, err := getSidesFilePath(recipesDir, sidesFilename)
+	sides, err := loadSides()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error loading side dishes:", err)
 		return
 	}
-	sidesData, err := readYAMLFile(sidesFilePath)
-	if err != nil {
-		fmt.Println("Error reading sides file:", err)
-		return
-	}
-	sidesCollection, err := parseYAML(sidesData)
-	if err != nil {
-		fmt.Printf("Error parsing %s: %v\n", sidesFilename, err)
-		return
-	}
-	if len(sidesCollection.Recipes) == 0 {
+	if len(sides) == 0 {
 		fmt.Println("No side dish recipes found.")
 		return
 	}
 	shuffleRecipes(allMainDishes)
-	shuffleRecipes(sidesCollection.Recipes)
+	shuffleRecipes(sides)
 	numRecipes := 4
-	minRecipes := min(len(allMainDishes), len(sidesCollection.Recipes))
+	minRecipes := min(len(allMainDishes), len(sides))
 	if minRecipes < numRecipes {
 		numRecipes = minRecipes
 	}
 	var selectedMainDishes, selectedSideDishes []Recipe
+	var output strings.Builder
 	for i := 0; i < numRecipes; i++ {
-		select {
-		case <-ctx.Done():
-			fmt.Println("Operation timed out.")
-			return
-		default:
-			mainDish := allMainDishes[i]
-			sideDish := sidesCollection.Recipes[i]
-			printRecipe(fmt.Sprintf("Main Dish %d", i+1), mainDish)
-			printRecipe(fmt.Sprintf("Side Dish %d", i+1), sideDish)
-			fmt.Println(strings.Repeat("-", 48))
-			selectedMainDishes = append(selectedMainDishes, mainDish)
-			selectedSideDishes = append(selectedSideDishes, sideDish)
-		}
+		mainDish := allMainDishes[i]
+		sideDish := sides[i]
+		output.WriteString(printRecipe(fmt.Sprintf("Main Dish %d", i+1), mainDish))
+		output.WriteString(printRecipe(fmt.Sprintf("Side Dish %d", i+1), sideDish))
+		output.WriteString(strings.Repeat("-", 48) + "\n\n")
+		selectedMainDishes = append(selectedMainDishes, mainDish)
+		selectedSideDishes = append(selectedSideDishes, sideDish)
 	}
-	emailContent := "Today's Recipe Selection:\n\n"
-	for i := 0; i < numRecipes; i++ {
-		emailContent += fmt.Sprintf("Main Dish %d: %s\n", i+1, selectedMainDishes[i].Name)
-		for _, ingredient := range selectedMainDishes[i].Ingredients {
-			emailContent += fmt.Sprintf("  - %s: %s\n", ingredient.Name, ingredient.Quantity)
-		}
-		for _, instruction := range selectedMainDishes[i].Instructions {
-			emailContent += fmt.Sprintf("  * %s\n", instruction)
-		}
-		emailContent += "\n"
-		emailContent += fmt.Sprintf("Side Dish %d: %s\n", i+1, selectedSideDishes[i].Name)
-		for _, ingredient := range selectedSideDishes[i].Ingredients {
-			emailContent += fmt.Sprintf("  - %s: %s\n", ingredient.Name, ingredient.Quantity)
-		}
-		for _, instruction := range selectedSideDishes[i].Instructions {
-			emailContent += fmt.Sprintf("  * %s\n", instruction)
-		}
-		emailContent += "\n" + strings.Repeat("-", 48) + "\n\n"
-	}
-	var emailPayload EmailPayload
+	emailContent := "Today's Recipe Selection - " + time.Now().Format("January 02, 2006") + "\n\n" + output.String()
+	emailPayload := EmailPayload{}
 	emailPayload.From.Email = senderEmail
 	emailPayload.From.Name = senderName
 	emailPayload.To = []struct {
@@ -270,7 +268,7 @@ func main() {
 	}{
 		{Email: recipientEmail},
 	}
-	emailPayload.Subject = "Today's Recipe Selection!"
+	emailPayload.Subject = "Weekly Recipe Selection for " + time.Now().Format("January 02, 2006")
 	emailPayload.Text = emailContent
 	emailPayload.Category = "Recipe Integration"
 	if err := sendEmail(ctx, emailPayload); err != nil {
