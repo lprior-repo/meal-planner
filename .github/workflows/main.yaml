@@ -1,8 +1,9 @@
 name: Weekly Recipe Email Sender
 
 on:
+  workflow_dispatch:
   schedule:
-    - cron: '0 22 * * FRI'
+    - cron: '0 22 * * FRI' # Runs every Friday at 22:00 UTC (4 PM CST)
 
 jobs:
   send-recipe-email:
