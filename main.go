@@ -107,7 +107,6 @@ func getSidesFilePath(dir, sidesFilename string) (string, error) {
 }
 
 func shuffleRecipes(recipes []Recipe) {
-	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(recipes), func(i, j int) {
 		recipes[i], recipes[j] = recipes[j], recipes[i]
 	})

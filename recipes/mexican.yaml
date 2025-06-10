@@ -9,17 +9,18 @@ recipes:
         quantity: 2 cups
       - name: salsa
         quantity: 1 cup
+      - name: lime juice
+        quantity: 2 tbsp
     instructions:
-      - Preheat smoker/oven to 350°f.
-      - Place a flour tortilla on a baking sheet.
-      - Sprinkle shredded cheese and shrimp on half of the tortilla.
-      - Fold the tortilla over and place on the baking sheet.
-      - Bake for 10-12 minutes until cheese is melted and tortillas are crispy.
-      - Serve with salsa.
+      - Place tortilla on baking sheet.
+      - Add cheese and shrimp on half of tortilla.
+      - Fold over and press to seal.
+      - Bake at 350°F for 10-12 minutes until crispy.
+      - Serve with salsa and lime.
 
   - name: Queso Fundido
     ingredients:
-      - name: shredded cheese (such as Oaxaca or mozzarella)
+      - name: shredded cheese (Oaxaca or mozzarella)
         quantity: 2 cups
       - name: chorizo, cooked and crumbled
         quantity: 1 cup
@@ -30,10 +31,9 @@ recipes:
       - name: jalapeños, sliced
         quantity: 1/2 cup
     instructions:
-      - Preheat smoker/oven to 375°f.
-      - In a baking dish, combine shredded cheese and cooked chorizo.
-      - Bake until cheese is melted and bubbly, about 10-15 minutes.
-      - Serve with tortilla wedges, pico de gallo, and jalapeños.
+      - Layer chorizo and cheese in an oven-safe dish.
+      - Bake at 375°F for 10-15 minutes until bubbly.
+      - Serve with tortilla wedges, pico, and jalapeños.
 
   - name: Chicken Fajitas
     ingredients:
@@ -48,10 +48,9 @@ recipes:
       - name: tortillas
         quantity: 20
     instructions:
-      - Preheat smoker/oven to 400°f.
-      - Toss chicken slices with fajita seasoning.
-      - Arrange chicken, bell peppers, and onions on a baking sheet.
-      - Bake for 20-25 minutes, stirring halfway through.
+      - Toss chicken, peppers, and onions with fajita seasoning.
+      - Bake at 400°F for 20-25 minutes, stirring halfway.
+      - Warm tortillas in microwave or oven.
       - Serve with warm tortillas.
 
   - name: Chicken Tortilla Soup
@@ -67,28 +66,28 @@ recipes:
       - name: tortilla chips
         quantity: 2 cups
     instructions:
-      - In a large pot, combine shredded chicken, chicken broth, diced tomatoes, and corn.
-      - Bring to a simmer and cook for 20 minutes.
-      - Serve hot with tortilla chips on top.
+      - Combine chicken, broth, tomatoes, and corn in a pot.
+      - Simmer for 20 minutes.
+      - Serve with tortilla chips on top.
 
-  - name: Beef Nachos
+  - name: Simple Beef Nachos
     ingredients:
       - name: tortilla chips
         quantity: 4 cups
       - name: ground beef
         quantity: 2 lbs
+      - name: taco seasoning
+        quantity: 1 packet
       - name: shredded cheese
         quantity: 2 cups
-      - name: jalapeños, sliced
-        quantity: 1 cup
       - name: salsa
         quantity: 1 cup
     instructions:
-      - Preheat smoker/oven to 375°f.
-      - Brown ground beef in a skillet and spread evenly over tortilla chips.
-      - Sprinkle shredded cheese and sliced jalapeños on top.
-      - Bake for 10-15 minutes until cheese is melted.
-      - Serve with salsa on the side.
+      - Brown ground beef and add taco seasoning.
+      - Arrange chips on baking sheet.
+      - Top with beef and cheese.
+      - Bake at 375°F for 10-15 minutes until cheese melts.
+      - Serve with salsa.
 
   - name: Chorizo and Potato Tacos
     ingredients:
@@ -101,13 +100,12 @@ recipes:
       - name: shredded cheese
         quantity: 2 cups
       - name: cilantro, chopped
-        quantity: 1 bunch
+        quantity: 1/2 cup
     instructions:
-      - Preheat smoker/oven to 350°f.
-      - Cook chorizo in a skillet until browned, then mix with cooked potatoes.
-      - Fill taco shells with the chorizo and potato mixture.
-      - Top with shredded cheese and chopped cilantro.
-      - Place on a baking sheet and bake for 5-10 minutes until cheese is melted.
+      - Cook chorizo and mix with potatoes.
+      - Fill taco shells with mixture.
+      - Top with cheese and cilantro.
+      - Bake at 350°F for 5-10 minutes until cheese melts.
 
   - name: Chicken Enchiladas
     ingredients:
@@ -120,11 +118,10 @@ recipes:
       - name: shredded cheese
         quantity: 2 cups
     instructions:
-      - Preheat smoker/oven to 350°f.
-      - Fill each tortilla with shredded chicken and a sprinkle of cheese.
-      - Roll up the tortillas and place them seam-side down in a baking dish.
-      - Pour enchilada sauce over the top and sprinkle with remaining cheese.
-      - Bake for 20-25 minutes until cheese is melted and bubbly.
+      - Fill tortillas with chicken and some cheese.
+      - Roll up and place seam-side down in baking dish.
+      - Pour sauce over top and sprinkle with remaining cheese.
+      - Bake at 350°F for 20-25 minutes until bubbly.
 
   - name: Pork Tacos
     ingredients:
@@ -137,15 +134,16 @@ recipes:
       - name: shredded cheese
         quantity: 2 cups
     instructions:
-      - Preheat smoker/oven to 375°f.
-      - Fill taco shells with shredded pork.
-      - Top with shredded lettuce and cheese.
-      - Bake for 5-10 minutes until cheese is melted.
+      - Fill shells with pork.
+      - Top with lettuce and cheese.
+      - Bake at 375°F for 5-10 minutes until cheese melts.
 
-  - name: Fish Tacos
+  - name: Simple Fish Tacos
     ingredients:
-      - name: white fish fillets, seasoned and cooked
+      - name: white fish fillets
         quantity: 2 lbs
+      - name: taco seasoning
+        quantity: 2 tbsp
       - name: corn tortillas
         quantity: 20
       - name: cabbage, shredded
@@ -153,9 +151,11 @@ recipes:
       - name: lime wedges
         quantity: 6
     instructions:
-      - Place cooked fish on corn tortillas.
-      - Top with shredded cabbage.
-      - Serve with lime wedges on the side.
+      - Season fish with taco seasoning.
+      - Bake at 375°F for 12-15 minutes until flaky.
+      - Warm tortillas in foil in the oven.
+      - Assemble tacos with fish and cabbage.
+      - Serve with lime wedges.
 
   - name: Beef Enchiladas
     ingredients:
@@ -170,8 +170,7 @@ recipes:
       - name: onions, diced
         quantity: 1
     instructions:
-      - Preheat smoker/oven to 350°f.
-      - Fill each flour tortilla with shredded beef and diced onions.
-      - Roll up the tortillas and place seam-side down in a baking dish.
-      - Pour enchilada sauce over the top and sprinkle with shredded cheese.
-      - Bake for 20-25 minutes until cheese is melted and bubbly.
+      - Fill tortillas with beef and onions.
+      - Roll up and place in baking dish.
+      - Pour sauce over top and sprinkle with cheese.
+      - Bake at 350°F for 20-25 minutes until bubbly.

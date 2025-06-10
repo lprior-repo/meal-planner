@@ -9,79 +9,84 @@ recipes:
         quantity: 2
       - name: fresh rosemary, chopped
         quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tbsp
     instructions:
-      - Preheat smoker/oven to 300°f.
-      - In a bowl, combine lemon juice, minced garlic, and chopped rosemary.
-      - Coat chicken breasts with the mixture.
-      - Place in smoker/oven and cook until internal temperature reaches 165°f.
+      - Mix lemon juice, garlic, and rosemary.
+      - Season chicken with salt.
+      - Coat chicken with the mixture.
+      - Bake at 375°F for 25-30 minutes until internal temperature reaches 165°F.
 
   - name: Garlic Butter Chicken Thighs
     ingredients:
       - name: chicken thighs
         quantity: 4 lbs
-      - name: melted butter
+      - name: butter, melted
         quantity: 1/4 cup
       - name: garlic powder
         quantity: 2 tsp
-      - name: fresh parsley, chopped
-        quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tbsp
+      - name: paprika
+        quantity: 1 tsp
     instructions:
-      - Preheat smoker/oven to 300°f.
-      - Brush chicken thighs with melted butter.
-      - Sprinkle garlic powder over the thighs.
-      - Arrange on baking sheet and cook until internal temperature reaches 170°f.
-      - Garnish with chopped parsley before serving.
+      - Season chicken with salt and paprika.
+      - Mix butter with garlic powder.
+      - Brush chicken with the garlic butter mixture.
+      - Bake at 425°F for 35-40 minutes until done.
 
-  - name: Chicken Legs
+  - name: Simple Chicken Legs
     ingredients:
       - name: chicken legs
         quantity: 4 lbs
-      - name: fresh herbs (e.g., thyme or rosemary)
+      - name: fresh herbs
         quantity: 2 tbsp
-      - name: lemon slices
-        quantity: 1 lemon, sliced
       - name: garlic cloves, minced
         quantity: 3
+      - name: olive oil
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tbsp
     instructions:
-      - Preheat smoker/oven to 250°f.
-      - Rub chicken legs with olive oil and your choice of fresh herbs.
-      - Top with lemon slices and minced garlic.
-      - Place in smoker and cook until internal temperature reaches 170°f.
+      - Mix olive oil with garlic and salt.
+      - Rub chicken legs with the mixture.
+      - Sprinkle herbs over the chicken.
+      - Bake at 400°F for 40-45 minutes until done.
 
   - name: Beer Can Chicken
     ingredients:
       - name: whole chicken
-        quantity: 1
+        quantity: 1 (4-5 lbs)
       - name: beer can
         quantity: 1
-      - name: lemon slices
-        quantity: 1 lemon, sliced
-      - name: fresh herbs (e.g., rosemary, thyme)
+      - name: poultry seasoning
         quantity: 2 tbsp
-      - name: garlic cloves, minced
-        quantity: 3
+      - name: salt
+        quantity: 1 tbsp
+      - name: garlic powder
+        quantity: 1 tbsp
     instructions:
-      - Preheat smoker/oven to 250°f.
-      - Apply rub to the whole chicken, focusing on the skin.
-      - Insert a beer can into the cavity of the chicken.
-      - Top the chicken with lemon slices and fresh herbs.
-      - Place the chicken upright on the beer can in the smoker.
-      - Smoke until internal temperature of the chicken reaches 170°f.
+      - Rub chicken with salt, garlic powder and poultry seasoning.
+      - Open beer can and remove half the contents.
+      - Insert beer can into chicken cavity so it stands upright.
+      - Bake at 350°F for about 1.25 hours until internal temperature reaches 165°F.
+      - Let rest 10 minutes before carving.
 
-  - name: Chicken Sausage Lasagna
+  - name: Simple Chicken Sausage Lasagna
     ingredients:
-      - name: chicken sausages
-        quantity: 12, sliced
+      - name: chicken sausages, sliced
+        quantity: 12
       - name: marinara sauce
-        quantity: 2 cans
+        quantity: 2 cans (24 oz each)
       - name: lasagna noodles
         quantity: 1 box
-      - name: shredded cheese
-        quantity: 4 cups
+      - name: mozzarella cheese, shredded
+        quantity: 3 cups
+      - name: ricotta cheese
+        quantity: 15 oz
     instructions:
-      - Preheat the smoker to 250°f.
-      - Boil the lasagna noodles halfway (al dente).
-      - Slice the chicken sausages.
-      - In a baking dish, layer marinara sauce, noodles, chicken sausages, and shredded cheese.
-      - Repeat layering until all ingredients are used, ending with a layer of cheese.
-      - Smoke the lasagna for 1-1.5 hours until the cheese is melted and bubbly, and the sausage is fully cooked.
+      - Boil noodles halfway, then drain.
+      - Spread sauce in baking dish.
+      - Layer: noodles, ricotta, sausages, sauce, and mozzarella.
+      - Repeat layers, ending with cheese on top.
+      - Bake at 375°F covered for 25 minutes, then uncovered for 10 minutes.
