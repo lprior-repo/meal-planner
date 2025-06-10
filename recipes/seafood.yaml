@@ -1,13 +1,98 @@
 recipes:
-  - name: Quick Shrimp Skillet
+  - name: Lemon Garlic Shrimp
     ingredients:
       - name: shrimp, peeled and deveined
         quantity: 2 lbs
       - name: lemon juice
         quantity: 1/4 cup
       - name: garlic cloves, minced
-        quantity: 2
+        quantity: 4
+      - name: butter
+        quantity: 3 tbsp
+      - name: salt
+        quantity: 1 tsp
     instructions:
-      - Preheat smoker/oven to 350°f.
-      - In a bowl, toss shrimp with lemon juice and minced garlic.
-      - Arrange on baking sheet and bake for 10-12 minutes until shrimp are pink and cooked through.
+      - Mix lemon juice and garlic in a bowl.
+      - Toss shrimp in the mixture with salt.
+      - Heat butter in a skillet.
+      - Cook shrimp for 1-2 minutes per side until pink.
+      - Serve hot.
+
+  - name: Cedar Plank Salmon
+    ingredients:
+      - name: salmon fillets
+        quantity: 2 lbs
+      - name: cedar planks, soaked
+        quantity: 2
+      - name: brown sugar
+        quantity: 3 tbsp
+      - name: smoked paprika
+        quantity: 1 tbsp
+      - name: salt
+        quantity: 1 tsp
+    instructions:
+      - Preheat grill to 350°F.
+      - Mix brown sugar, smoked paprika, and salt.
+      - Rub mixture over salmon.
+      - Place cedar planks on grill until they smoke.
+      - Flip planks and place salmon on top.
+      - Cook for 15-20 minutes until salmon flakes easily.
+
+  - name: Garlic Butter Scallops
+    ingredients:
+      - name: sea scallops
+        quantity: 1.5 lbs
+      - name: butter
+        quantity: 4 tbsp
+      - name: garlic cloves, minced
+        quantity: 4
+      - name: lemon juice
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tsp
+    instructions:
+      - Pat scallops dry and season with salt.
+      - Heat butter in a skillet over high heat.
+      - Add scallops in a single layer.
+      - Sear for 1.5-2 minutes per side until golden.
+      - Add garlic and lemon juice, toss to coat scallops.
+
+  - name: Easy Fish Tacos
+    ingredients:
+      - name: white fish fillets
+        quantity: 1.5 lbs
+      - name: taco seasoning
+        quantity: 2 tbsp
+      - name: lime juice
+        quantity: 3 tbsp
+      - name: corn tortillas
+        quantity: 12
+      - name: cabbage, shredded
+        quantity: 2 cups
+    instructions:
+      - Mix taco seasoning and lime juice.
+      - Coat fish fillets with mixture.
+      - Bake at 400°F for 12-15 minutes until flaky.
+      - Warm tortillas.
+      - Assemble tacos with fish and cabbage.
+
+  - name: Grilled Lobster Tails
+    ingredients:
+      - name: lobster tails
+        quantity: 4 (6-8 oz each)
+      - name: butter, melted
+        quantity: 1/2 cup
+      - name: garlic cloves, minced
+        quantity: 3
+      - name: lemon juice
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tsp
+    instructions:
+      - Preheat grill to medium-high heat (400-450°F).
+      - Cut lobster shells down the center, leaving tail intact.
+      - Pull meat up and lay on top of shell.
+      - Mix butter, garlic, lemon juice, and salt.
+      - Brush lobster meat with butter mixture.
+      - Grill for 5-6 minutes until meat is opaque.
+
