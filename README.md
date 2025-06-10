@@ -1,6 +1,6 @@
 # Recipe Email Sender
 
-A Go application that selects random main and side dish recipes from YAML files and sends them via email using the Mailtrap API. This tool is perfect for meal planning, recipe sharing, or integrating into a larger kitchen management system.
+A Go application that selects random recipes from YAML files and sends them via email using the Mailtrap API. This tool is perfect for meal planning, recipe sharing, or integrating into a larger kitchen management system.
 
 ## Table of Contents
 
@@ -11,6 +11,7 @@ A Go application that selects random main and side dish recipes from YAML files 
   - [.env File](#env-file)
   - [Recipe Files](#recipe-files)
 - [Usage](#usage)
+- [Testing](#testing)
 - [Sample Output](#sample-output)
 - [Dependencies](#dependencies)
 - [Project Structure](#project-structure)
@@ -19,10 +20,11 @@ A Go application that selects random main and side dish recipes from YAML files 
 
 ## Features
 
-- **Random Recipe Selection**: Randomly selects a specified number of main and side dishes from provided YAML files.
+- **Random Recipe Selection**: Randomly selects a specified number of recipes from provided YAML files.
 - **Email Integration**: Sends the selected recipes via email using the Mailtrap API.
 - **Secure Configuration**: Utilizes environment variables to manage sensitive information securely.
 - **Flexible Recipe Management**: Easily add, remove, or modify recipes by editing YAML files.
+- **Simple Recipes**: All recipes have 5 ingredients or less for easy preparation.
 
 
 ## Prerequisites
@@ -55,90 +57,96 @@ Description of Variables:
 
 `go run main.go`
 
-## Output
+## Testing
+
+The project uses the Testing Trophy approach with multiple levels of tests:
+
+### Running Tests
+
+Use the provided Makefile to run tests:
+
+```bash
+# Run all tests
+make test
+
+# Run specific test levels
+make test-unit
+make test-integration
+make test-e2e
+
+# Run linter
+make lint
+
+# Build and run the application
+make build
+make run
+```
+
+### Test Structure
+
+- **Static Tests (Linting)**: Uses golangci-lint to check code quality
+- **Unit Tests**: Tests individual functions in isolation
+- **Integration Tests**: Tests how components work together
+- **End-to-End Tests**: Tests the entire application workflow
+
+### GitHub Actions
+
+This project uses GitHub Actions for continuous integration, automatically running tests on every push to the main branch and pull requests.
+
+## Sample Output
 
 ```yaml
-Main Dish 1: Sloppy Joes
-  - 92% ground beef: 4 lbs
-  - manwich sauce: 4
-  - 80 calorie buns: 2
-  - onion: 1
-  * Brown the ground beef in a skillet.
-  * Cut up the onions finely and add them to the beef.
-  * Combine the beef with manwich sauce and stir well.
-  * Place the mixture in a smoker at 250°f for 1-2 hours.
-
-Side Dish 1: Sautéed Spinach
-  - fresh spinach: 10 cups
-  - garlic cloves, minced: 2
-  - olive oil: 2 tbsp
-  * Heat olive oil in a large skillet over medium heat.
-  * Add minced garlic and sauté until fragrant, about 1 minute.
-  * Add fresh spinach and toss until wilted, about 3-4 minutes.
-  * Serve immediately.
-
-------------------------------------------------
-
-Main Dish 2: Easy Beef Bulgogi
-  - beef ribeye, thinly sliced: 3 lbs
-  - soy sauce: 1/2 cup
+Recipe 1: Simple Beef Stir-Fry
+  - beef sirloin, sliced: 2 lbs
+  - broccoli florets: 2 cups
+  - soy sauce: 1/4 cup
   - sesame oil: 2 tbsp
-  - brown sugar: 2 tbsp
-  - green onions, chopped: 1/2 cup
-  * Preheat smoker/oven to 375°f.
-  * In a bowl, mix soy sauce, sesame oil, brown sugar, and chopped green onions.
-  * Toss beef slices in the marinade and let sit for 5 minutes.
-  * Arrange beef on a baking sheet and bake for 20-25 minutes until cooked through.
-  * Garnish with additional green onions if desired and serve over rice.
-
-Side Dish 2: Garlic Butter Green Beans
-  - green beans, trimmed: 4 cups
-  - butter, melted: 3 tbsp
-  - garlic cloves, minced: 2
-  * Toss green beans with melted butter and minced garlic.
-  * Spread on a baking sheet and roast at 400°f for 15 minutes until tender.
-  * Serve warm.
+  - garlic, minced: 2 cloves
+  * Mix soy sauce, sesame oil, and garlic.
+  * Toss beef slices in the mixture.
+  * Arrange beef and broccoli on a baking sheet.
+  * Bake at 400°F for 20-25 minutes, stirring halfway through.
 
 ------------------------------------------------
 
-Main Dish 3: Grilled Pork Kebabs
-  - pork loin, cubed: 2 lbs
-  - bell peppers, cut into chunks: 2
-  - red onion, cut into chunks: 1
-  - teriyaki sauce: 1/2 cup
-  - skewers: 10
-  * Preheat grill to medium-high heat.
-  * In a bowl, marinate pork cubes in teriyaki sauce for 15 minutes.
-  * Thread pork, bell peppers, and onion onto skewers.
-  * Grill skewers for 10-15 minutes, turning occasionally, until pork is cooked through.
+Recipe 2: Lemon Garlic Shrimp
+  - shrimp, peeled and deveined: 2 lbs
+  - lemon juice: 1/4 cup
+  - garlic cloves, minced: 4
+  - butter: 3 tbsp
+  - salt: 1 tsp
+  * Mix lemon juice and garlic in a bowl.
+  * Toss shrimp in the mixture with salt.
+  * Heat butter in a skillet.
+  * Cook shrimp for 1-2 minutes per side until pink.
   * Serve hot.
 
-Side Dish 3: Simple Avocado Slices
-  - avocados, sliced: 3
-  - lime juice: 2 tbsp
-  - sea salt: to taste
-  * Arrange avocado slices on a plate.
-  * Drizzle with lime juice and sprinkle with sea salt.
-  * Serve immediately.
+------------------------------------------------
+
+Recipe 3: Simple Pork and Beans
+  - bacon, diced: 1 lb
+  - canned beans: 2 cans (15 oz each)
+  - ketchup: 1/2 cup
+  - molasses: 1/4 cup
+  - brown sugar: 2 tbsp
+  * Cook bacon in skillet until crisp.
+  * Add beans, ketchup, molasses, and brown sugar.
+  * Stir to combine.
+  * Bake at 350°F covered for 30 minutes, then uncovered for 15 minutes.
+  * Let rest before serving.
 
 ------------------------------------------------
 
-Main Dish 4: Lemon Herb Chicken Breasts
-  - chicken breasts: 4 lbs
-  - lemon juice: 1/4 cup
-  - garlic cloves, minced: 2
-  - fresh rosemary, chopped: 2 tbsp
-  * Preheat smoker/oven to 300°f.
-  * In a bowl, combine lemon juice, minced garlic, and chopped rosemary.
-  * Coat chicken breasts with the mixture.
-  * Place in smoker/oven and cook until internal temperature reaches 165°f.
-
-Side Dish 4: Cherry Tomato Basil Salad
-  - cherry tomatoes, halved: 4 cups
-  - fresh basil leaves, torn: 1/4 cup
-  - mozzarella balls, halved: 2 cups
-  * Combine halved cherry tomatoes, torn fresh basil leaves, and halved mozzarella balls in a bowl.
-  * Toss gently to mix.
-  * Serve fresh.
+Recipe 4: Simple Smoked Turkey Breast
+  - turkey breast: 5 lbs
+  - honey: 2 tbsp
+  - Dijon mustard: 2 tbsp
+  - salt: 1 tbsp
+  - garlic powder: 1 tbsp
+  * Preheat smoker to 250°F.
+  * Mix honey, Dijon mustard, salt, and garlic powder.
+  * Rub mixture all over turkey breast.
+  * Smoke until internal temperature reaches 165°F.
+  * Let rest for 15 minutes before slicing.
 ```
 
