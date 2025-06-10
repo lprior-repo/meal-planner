@@ -3,9 +3,9 @@ package integration
 import (
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 	"testing"
+
 	"gopkg.in/yaml.v3"
 )
 

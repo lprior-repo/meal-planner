@@ -247,7 +247,6 @@ func main() {
 	if minRecipes < numRecipes {
 		numRecipes = minRecipes
 	}
-	var selectedMainDishes, selectedSideDishes []Recipe
 	var output strings.Builder
 	for i := 0; i < numRecipes; i++ {
 		mainDish := allMainDishes[i]
@@ -255,8 +254,6 @@ func main() {
 		output.WriteString(printRecipe(fmt.Sprintf("Main Dish %d", i+1), mainDish))
 		output.WriteString(printRecipe(fmt.Sprintf("Side Dish %d", i+1), sideDish))
 		output.WriteString(strings.Repeat("-", 48) + "\n\n")
-		selectedMainDishes = append(selectedMainDishes, mainDish)
-		selectedSideDishes = append(selectedSideDishes, sideDish)
 	}
 	emailContent := "Today's Recipe Selection - " + time.Now().Format("January 02, 2006") + "\n\n" + output.String()
 	emailPayload := EmailPayload{}

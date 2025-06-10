@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -106,18 +105,18 @@ func TestMealPlannerE2E(t *testing.T) {
 	os.Setenv("SENDER_EMAIL", "test@example.com")
 	os.Setenv("SENDER_NAME", "Test Sender")
 	os.Setenv("RECIPIENT_EMAIL", "recipient@example.com")
-	
+
 	// Save the current working directory
 	originalWd, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
-	
+
 	// Change to the test directory
 	if err := os.Chdir(testDir); err != nil {
 		t.Fatalf("Failed to change to test directory: %v", err)
 	}
-	
+
 	// Restore the original working directory after the test
 	defer os.Chdir(originalWd)
 
@@ -133,7 +132,7 @@ func TestMealPlannerE2E(t *testing.T) {
 	// Restore stdout
 	w.Close()
 	os.Stdout = oldStdout
-	
+
 	var buf bytes.Buffer
 	io.Copy(&buf, r)
 	output := buf.String()
@@ -222,7 +221,7 @@ func setupTestEnvironment(t *testing.T) string {
 	if err != nil {
 		t.Fatalf("Failed to marshal beef recipes: %v", err)
 	}
-	if err := ioutil.WriteFile(filepath.Join(recipesDir, "beef.yaml"), beefData, 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(recipesDir, "beef.yaml"), beefData, 0644); err != nil {
 		t.Fatalf("Failed to write beef recipes file: %v", err)
 	}
 
@@ -230,7 +229,7 @@ func setupTestEnvironment(t *testing.T) string {
 	if err != nil {
 		t.Fatalf("Failed to marshal chicken recipes: %v", err)
 	}
-	if err := ioutil.WriteFile(filepath.Join(recipesDir, "chicken.yaml"), chickenData, 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(recipesDir, "chicken.yaml"), chickenData, 0644); err != nil {
 		t.Fatalf("Failed to write chicken recipes file: %v", err)
 	}
 
@@ -268,7 +267,7 @@ func simulateMain(t *testing.T, mailtrapURL string) {
 	for i := 0; i < numRecipes; i++ {
 		mainDish := allMainDishes[i]
 		sideDish := sides[i]
-		
+
 		output.WriteString(fmt.Sprintf("Main Dish %d: %s\n", i+1, mainDish.Name))
 		output.WriteString("Ingredients:\n")
 		for _, ingredient := range mainDish.Ingredients {
@@ -279,7 +278,7 @@ func simulateMain(t *testing.T, mailtrapURL string) {
 			output.WriteString(fmt.Sprintf("- %s\n", instruction))
 		}
 		output.WriteString("\n")
-		
+
 		output.WriteString(fmt.Sprintf("Side Dish %d: %s\n", i+1, sideDish.Name))
 		output.WriteString("Ingredients:\n")
 		for _, ingredient := range sideDish.Ingredients {
@@ -291,13 +290,13 @@ func simulateMain(t *testing.T, mailtrapURL string) {
 		}
 		output.WriteString("\n")
 		output.WriteString(strings.Repeat("-", 48) + "\n\n")
-		
-		selectedMainDishes = append(selectedMainDishes, mainDish)
-		selectedSideDishes = append(selectedSideDishes, sideDish)
+
+		_ = append(selectedMainDishes, mainDish)
+		_ = append(selectedSideDishes, sideDish)
 	}
 
 	emailContent := "Today's Recipe Selection - " + time.Now().Format("January 02, 2006") + "\n\n" + output.String()
-	
+
 	// Create email payload
 	emailPayload := EmailPayload{}
 	emailPayload.From.Email = os.Getenv("SENDER_EMAIL")
@@ -310,12 +309,12 @@ func simulateMain(t *testing.T, mailtrapURL string) {
 	emailPayload.Subject = "Weekly Recipe Selection for " + time.Now().Format("January 02, 2006")
 	emailPayload.Text = emailContent
 	emailPayload.Category = "Recipe Integration"
-	
+
 	// Send email to mock server
 	if err := sendTestEmail(ctx, emailPayload, mailtrapURL); err != nil {
 		t.Fatalf("Error sending email: %v", err)
 	}
-	
+
 	fmt.Println("Email sent successfully!")
 }
 
@@ -326,7 +325,7 @@ func loadRecipes(dir, excludeFile string) ([]Recipe, error) {
 	if err != nil {
 		return nil, fmt.Errorf("couldn't read directory %s: %w", dir, err)
 	}
-	
+
 	for _, entry := range entries {
 		if entry.IsDir() {
 			continue
@@ -336,7 +335,7 @@ func loadRecipes(dir, excludeFile string) ([]Recipe, error) {
 			yamlFiles = append(yamlFiles, filepath.Join(dir, entry.Name()))
 		}
 	}
-	
+
 	var allRecipes []Recipe
 	for _, file := range yamlFiles {
 		data, err := os.ReadFile(file)
@@ -344,16 +343,16 @@ func loadRecipes(dir, excludeFile string) ([]Recipe, error) {
 			fmt.Printf("Warning: %v\n", err)
 			continue
 		}
-		
+
 		var recipeCollection RecipeCollection
 		if err := yaml.Unmarshal(data, &recipeCollection); err != nil {
 			fmt.Printf("Warning: Error parsing file %s: %v\n", file, err)
 			continue
 		}
-		
+
 		allRecipes = append(allRecipes, recipeCollection.Recipes...)
 	}
-	
+
 	return allRecipes, nil
 }
 
@@ -363,35 +362,35 @@ func sendTestEmail(ctx context.Context, payload EmailPayload, mailtrapURL string
 	if err != nil {
 		return fmt.Errorf("error marshalling email payload: %w", err)
 	}
-	
+
 	req, err := http.NewRequestWithContext(ctx, "POST", mailtrapURL+"/api/send", strings.NewReader(string(payloadBytes)))
 	if err != nil {
 		return fmt.Errorf("creating request failed: %w", err)
 	}
-	
+
 	apiToken := os.Getenv("MAILTRAP_API_TOKEN")
 	if apiToken == "" {
 		return fmt.Errorf("MAILTRAP_API_TOKEN environment variable not set")
 	}
-	
+
 	req.Header.Add("Authorization", "Bearer "+apiToken)
 	req.Header.Add("Content-Type", "application/json")
-	
+
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("sending request failed: %w", err)
 	}
-	
+
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return fmt.Errorf("reading response body failed: %w", err)
 	}
-	
+
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
 		return fmt.Errorf("received non-success status code %d: %s", res.StatusCode, string(body))
 	}
-	
+
 	return nil
 }
