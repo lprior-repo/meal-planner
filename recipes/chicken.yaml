@@ -56,7 +56,7 @@ recipes:
   - name: Beer Can Chicken
     ingredients:
       - name: whole chicken
-        quantity: 1 (4-5 lbs)
+        quantity: "1 (4-5 lbs)"
       - name: beer can
         quantity: 1
       - name: poultry seasoning
@@ -77,16 +77,16 @@ recipes:
       - name: chicken sausages, sliced
         quantity: 12
       - name: marinara sauce
-        quantity: 2 cans (24 oz each)
+        quantity: "2 cans (24 oz each)"
       - name: lasagna noodles
-        quantity: 1 box
+        quantity: "1 box"
       - name: mozzarella cheese, shredded
-        quantity: 3 cups
+        quantity: "3 cups"
       - name: ricotta cheese
-        quantity: 15 oz
+        quantity: "15 oz"
     instructions:
-      - Boil noodles halfway, then drain.
-      - Spread sauce in baking dish.
-      - Layer: noodles, ricotta, sausages, sauce, and mozzarella.
-      - Repeat layers, ending with cheese on top.
-      - Bake at 375°F covered for 25 minutes, then uncovered for 10 minutes.
+      - "Boil noodles halfway, then drain."
+      - "Spread sauce in baking dish."
+      - "Layer: noodles, ricotta, sausages, sauce, and mozzarella."
+      - "Repeat layers, ending with cheese on top."
+      - "Bake at 375°F covered for 25 minutes, then uncovered for 10 minutes."
