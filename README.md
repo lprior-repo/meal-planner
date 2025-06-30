@@ -1,6 +1,6 @@
-# Recipe Email Sender
+# Meal Planner
 
-A Go application that selects random recipes from YAML files and sends them via email using the Mailtrap API. This tool is perfect for meal planning, recipe sharing, or integrating into a larger kitchen management system.
+A Go application that selects random recipes from a SQLite database and can send them via email using the Mailtrap API. This tool is perfect for meal planning, recipe sharing, or integrating into a larger kitchen management system.
 
 ## Table of Contents
 
@@ -20,11 +20,13 @@ A Go application that selects random recipes from YAML files and sends them via 
 
 ## Features
 
-- **Random Recipe Selection**: Randomly selects a specified number of recipes from provided YAML files.
-- **Email Integration**: Sends the selected recipes via email using the Mailtrap API.
-- **Secure Configuration**: Utilizes environment variables to manage sensitive information securely.
-- **Flexible Recipe Management**: Easily add, remove, or modify recipes by editing YAML files.
-- **Simple Recipes**: All recipes have 5 ingredients or less for easy preparation.
+- **SQLite Database Storage**: Automatically migrates YAML recipes to a local SQLite database for fast access
+- **Random Recipe Selection**: Randomly selects 4 recipes from the database
+- **Dual Output Modes**: Choose between terminal display or email delivery
+- **Email Integration**: Sends the selected recipes via email using the Mailtrap API
+- **Secure Configuration**: Utilizes environment variables to manage sensitive information securely
+- **Auto-Initialization**: Verifies recipes directory, database, and environment on startup
+- **Simple Recipes**: All recipes have 5 ingredients or less for easy preparation
 
 
 ## Prerequisites
@@ -43,19 +45,25 @@ A Go application that selects random recipes from YAML files and sends them via 
 ```
 
 2. **Install the dependencies**
-`go get github.com/joho/godotenv`
-`go get gopkg.in/yaml.v3`
+```bash
+go mod tidy
+```
 
-Description of Variables:
+3. **Set up environment variables (optional for terminal-only use)**
+Create a `.env` file with:
+```
+MAILTRAP_API_TOKEN=your_mailtrap_token
+SENDER_EMAIL=your_sender@example.com
+SENDER_NAME=Your Name
+RECIPIENT_EMAIL=recipient@example.com
+```
 
-- MAILTRAP_API_TOKEN: Your Mailtrap API token for authentication.
-- SENDER_EMAIL: The email address from which the email will be sent.
-- SENDER_NAME: The name associated with the sender email.
-- RECIPIENT_EMAIL: The email address where the recipes will be sent.
+4. **Run the Program**
+```bash
+go run *.go
+```
 
-## 3. **Run the Program**
-
-`go run main.go`
+When prompted, choose `terminal` to display recipes in the console or `email` to send via Mailtrap.
 
 ## Testing
 
