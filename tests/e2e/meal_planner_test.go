@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -120,27 +121,72 @@ func TestMealPlannerE2E(t *testing.T) {
 	// Restore the original working directory after the test
 	defer os.Chdir(originalWd)
 
-	// Capture output
-	oldStdout := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
+	// Test both output modes
+	t.Run("Terminal Output", func(t *testing.T) {
+		// Capture stdout
+		oldStdout := os.Stdout
+		r, w, _ := os.Pipe()
+		os.Stdout = w
 
-	// Run the application (this would typically call main() but we'd need to modify it for testing)
-	// Instead, we'll simulate the main functionality:
-	simulateMain(t, mockServer.URL)
+		// Mock user input to choose terminal output
+		oldStdin := os.Stdin
+		pipeReader, pipeWriter, _ := os.Pipe()
+		os.Stdin = pipeReader
+		go func() {
+			pipeWriter.Write([]byte("terminal\n"))
+			pipeWriter.Close()
+		}()
 
-	// Restore stdout
-	w.Close()
-	os.Stdout = oldStdout
+		// Run the simulation
+		simulateMain(t, mockServer.URL)
 
-	var buf bytes.Buffer
-	io.Copy(&buf, r)
-	output := buf.String()
+		// Restore stdin and stdout
+		os.Stdin = oldStdin
+		w.Close()
+		os.Stdout = oldStdout
 
-	// Verify output contains expected text
-	if !strings.Contains(output, "Email sent successfully") {
-		t.Errorf("Expected output to contain 'Email sent successfully', got: %s", output)
-	}
+		var buf bytes.Buffer
+		io.Copy(&buf, r)
+		output := buf.String()
+
+		// Verify output contains expected text
+		if !strings.Contains(output, "RECIPE SELECTION") {
+			t.Errorf("Expected terminal output to contain 'RECIPE SELECTION', got: %s", output)
+		}
+	})
+
+	t.Run("Email Output", func(t *testing.T) {
+		// Capture stdout
+		oldStdout := os.Stdout
+		r, w, _ := os.Pipe()
+		os.Stdout = w
+
+		// Mock user input to choose email output
+		oldStdin := os.Stdin
+		pipeReader, pipeWriter, _ := os.Pipe()
+		os.Stdin = pipeReader
+		go func() {
+			pipeWriter.Write([]byte("email\n"))
+			pipeWriter.Close()
+		}()
+
+		// Run the simulation
+		simulateMain(t, mockServer.URL)
+
+		// Restore stdin and stdout
+		os.Stdin = oldStdin
+		w.Close()
+		os.Stdout = oldStdout
+
+		var buf bytes.Buffer
+		io.Copy(&buf, r)
+		output := buf.String()
+
+		// Verify output contains expected text
+		if !strings.Contains(output, "Email sent successfully") {
+			t.Errorf("Expected email output to contain 'Email sent successfully', got: %s", output)
+		}
+	})
 }
 
 // SetupTestEnvironment creates a test directory with recipe files
@@ -236,86 +282,92 @@ func setupTestEnvironment(t *testing.T) string {
 	return testDir
 }
 
+// MockEmailPreference mocks the user's email preference input
+type MockEmailPreference struct {
+	preference string // "email" or "terminal"
+}
+
+// askEmailPreference mocks the function that asks for email preference
+func (m *MockEmailPreference) askEmailPreference() string {
+	return m.preference
+}
+
 // SimulateMain simulates the main functionality for testing
 func simulateMain(t *testing.T, mailtrapURL string) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	// Load recipes
-	allMainDishes, err := loadRecipes("recipes", "nonexistent.yaml")
+	allRecipes, err := loadRecipes("recipes", "")
 	if err != nil {
-		t.Fatalf("Error loading main dishes: %v", err)
+		t.Fatalf("Error loading recipes: %v", err)
 	}
 
-	if len(allMainDishes) == 0 {
-		t.Fatalf("No main dish recipes found")
+	if len(allRecipes) == 0 {
+		t.Fatalf("No recipes found")
 	}
 
-	// Since we removed sides.yaml, we'll skip loading sides
-	// Instead, we'll use main dishes as sides for testing purposes
-	sides := allMainDishes
-
-	// Select random recipes
+	// Select recipes
 	numRecipes := 2
-	if len(allMainDishes) < numRecipes {
-		numRecipes = len(allMainDishes)
+	if len(allRecipes) < numRecipes {
+		numRecipes = len(allRecipes)
 	}
 
-	var selectedMainDishes, selectedSideDishes []Recipe
 	var output strings.Builder
 
 	for i := 0; i < numRecipes; i++ {
-		mainDish := allMainDishes[i]
-		sideDish := sides[i]
+		recipe := allRecipes[i]
 
-		output.WriteString(fmt.Sprintf("Main Dish %d: %s\n", i+1, mainDish.Name))
+		output.WriteString(fmt.Sprintf("Recipe %d: %s\n", i+1, recipe.Name))
 		output.WriteString("Ingredients:\n")
-		for _, ingredient := range mainDish.Ingredients {
+		for _, ingredient := range recipe.Ingredients {
 			output.WriteString(fmt.Sprintf("- %s: %s\n", ingredient.Name, ingredient.Quantity))
 		}
 		output.WriteString("Instructions:\n")
-		for _, instruction := range mainDish.Instructions {
-			output.WriteString(fmt.Sprintf("- %s\n", instruction))
-		}
-		output.WriteString("\n")
-
-		output.WriteString(fmt.Sprintf("Side Dish %d: %s\n", i+1, sideDish.Name))
-		output.WriteString("Ingredients:\n")
-		for _, ingredient := range sideDish.Ingredients {
-			output.WriteString(fmt.Sprintf("- %s: %s\n", ingredient.Name, ingredient.Quantity))
-		}
-		output.WriteString("Instructions:\n")
-		for _, instruction := range sideDish.Instructions {
-			output.WriteString(fmt.Sprintf("- %s\n", instruction))
+		for j, instruction := range recipe.Instructions {
+			output.WriteString(fmt.Sprintf("  %d. %s\n", j+1, instruction))
 		}
 		output.WriteString("\n")
 		output.WriteString(strings.Repeat("-", 48) + "\n\n")
-
-		_ = append(selectedMainDishes, mainDish)
-		_ = append(selectedSideDishes, sideDish)
 	}
 
-	emailContent := "Today's Recipe Selection - " + time.Now().Format("January 02, 2006") + "\n\n" + output.String()
+	recipeContent := "Today's Recipe Selection - " + time.Now().Format("January 02, 2006") + "\n\n" + output.String()
 
-	// Create email payload
-	emailPayload := EmailPayload{}
-	emailPayload.From.Email = os.Getenv("SENDER_EMAIL")
-	emailPayload.From.Name = os.Getenv("SENDER_NAME")
-	emailPayload.To = []struct {
-		Email string `json:"email"`
-	}{
-		{Email: os.Getenv("RECIPIENT_EMAIL")},
+	// Read user preference from stdin
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		t.Fatalf("Error reading input: %v", err)
 	}
-	emailPayload.Subject = "Weekly Recipe Selection for " + time.Now().Format("January 02, 2006")
-	emailPayload.Text = emailContent
-	emailPayload.Category = "Recipe Integration"
+	preference := strings.ToLower(strings.TrimSpace(input))
 
-	// Send email to mock server
-	if err := sendTestEmail(ctx, emailPayload, mailtrapURL); err != nil {
-		t.Fatalf("Error sending email: %v", err)
+	if preference == "email" {
+		// Send email
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		// Create email payload
+		emailPayload := EmailPayload{}
+		emailPayload.From.Email = os.Getenv("SENDER_EMAIL")
+		emailPayload.From.Name = os.Getenv("SENDER_NAME")
+		emailPayload.To = []struct {
+			Email string `json:"email"`
+		}{
+			{Email: os.Getenv("RECIPIENT_EMAIL")},
+		}
+		emailPayload.Subject = "Weekly Recipe Selection for " + time.Now().Format("January 02, 2006")
+		emailPayload.Text = recipeContent
+		emailPayload.Category = "Recipe Integration"
+
+		// Send email to mock server
+		if err := sendTestEmail(ctx, emailPayload, mailtrapURL); err != nil {
+			t.Fatalf("Error sending email: %v", err)
+		}
+
+		fmt.Println("Email sent successfully!")
+	} else {
+		// Output to terminal
+		fmt.Println("\n==== RECIPE SELECTION ====")
+		fmt.Println(output.String())
+		fmt.Println("\n==== END OF RECIPE SELECTION ====")
 	}
-
-	fmt.Println("Email sent successfully!")
 }
 
 // Helper function to load recipes

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -43,6 +44,14 @@ type EmailPayload struct {
 	Text     string `json:"text"`
 	Category string `json:"category"`
 }
+
+// EmailPreference represents user's choice for email delivery
+type EmailPreference int
+
+const (
+	EmailPreferenceTerminal EmailPreference = iota
+	EmailPreferenceSend
+)
 
 func loadEnv() error {
 	err := godotenv.Load()
@@ -98,13 +107,7 @@ func getRecipeFiles(dir, excludeFile string) ([]string, error) {
 	return yamlFiles, nil
 }
 
-func getSidesFilePath(dir, sidesFilename string) (string, error) {
-	sidesFilePath := filepath.Join(dir, sidesFilename)
-	if _, err := os.Stat(sidesFilePath); os.IsNotExist(err) {
-		return "", fmt.Errorf("%s file not found in directory %s", sidesFilename, dir)
-	}
-	return sidesFilePath, nil
-}
+
 
 func shuffleRecipes(recipes []Recipe) {
 	rand.Shuffle(len(recipes), func(i, j int) {
@@ -134,22 +137,20 @@ func loadRecipes(dir, excludeFile string) ([]Recipe, error) {
 	return allRecipes, nil
 }
 
-func loadSides() ([]Recipe, error) {
-	recipesDir := "recipes"
-	sidesFilename := "sides.yaml"
-	sidesFilePath, err := getSidesFilePath(recipesDir, sidesFilename)
+// askEmailPreference prompts the user to choose whether to send an email or display in terminal
+func askEmailPreference() (EmailPreference, error) {
+	fmt.Print("Would you like to send an email or just display recipes in terminal? (terminal/email): ")
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
 	if err != nil {
-		return nil, err
+		return EmailPreferenceTerminal, fmt.Errorf("error reading input: %w", err)
 	}
-	sidesData, err := readYAMLFile(sidesFilePath)
-	if err != nil {
-		return nil, fmt.Errorf("error reading sides file: %w", err)
+	
+	input = strings.ToLower(strings.TrimSpace(input))
+	if input == "email" {
+		return EmailPreferenceSend, nil
 	}
-	sidesCollection, err := parseYAML(sidesData)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing %s: %w", sidesFilename, err)
-	}
-	return sidesCollection.Recipes, nil
+	return EmailPreferenceTerminal, nil
 }
 
 func printRecipe(title string, recipe Recipe) string {
@@ -160,8 +161,8 @@ func printRecipe(title string, recipe Recipe) string {
 		sb.WriteString(fmt.Sprintf("- %s: %s\n", ingredient.Name, ingredient.Quantity))
 	}
 	sb.WriteString("Instructions:\n")
-	for _, instruction := range recipe.Instructions {
-		sb.WriteString(fmt.Sprintf("- %s\n", instruction))
+	for i, instruction := range recipe.Instructions {
+		sb.WriteString(fmt.Sprintf("  %d. %s\n", i+1, instruction))
 	}
 	sb.WriteString("\n")
 	return sb.String()
@@ -209,65 +210,95 @@ func sendEmail(ctx context.Context, payload EmailPayload) error {
 }
 
 func main() {
-	if err := loadEnv(); err != nil {
-		fmt.Println(err)
+	// Initialize application
+	if err := InitializeApp(); err != nil {
+		fmt.Printf("Initialization failed: %v\n", err)
 		return
 	}
-	senderEmail := os.Getenv("SENDER_EMAIL")
-	senderName := os.Getenv("SENDER_NAME")
-	recipientEmail := os.Getenv("RECIPIENT_EMAIL")
-	if senderEmail == "" || senderName == "" || recipientEmail == "" {
-		fmt.Println("Error: SENDER_EMAIL, SENDER_NAME, and RECIPIENT_EMAIL must be set in the environment")
-		return
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	allMainDishes, err := loadRecipes("recipes", "sides.yaml")
+
+	// Load recipes from BadgerDB
+	bdb, err := InitBadgerDatabase()
 	if err != nil {
-		fmt.Println("Error loading main dishes:", err)
+		fmt.Printf("Failed to connect to BadgerDB: %v\n", err)
 		return
 	}
-	if len(allMainDishes) == 0 {
-		fmt.Println("No main dish recipes found.")
-		return
-	}
-	sides, err := loadSides()
+	defer bdb.Close()
+
+	allRecipes, err := bdb.GetAllRecipes()
 	if err != nil {
-		fmt.Println("Error loading side dishes:", err)
+		fmt.Printf("Error loading recipes from BadgerDB: %v\n", err)
 		return
 	}
-	if len(sides) == 0 {
-		fmt.Println("No side dish recipes found.")
+	if len(allRecipes) == 0 {
+		fmt.Println("No recipes found in BadgerDB.")
 		return
 	}
-	shuffleRecipes(allMainDishes)
-	shuffleRecipes(sides)
+	
+	// Shuffle and select recipes
+	shuffleRecipes(allRecipes)
 	numRecipes := 4
-	minRecipes := min(len(allMainDishes), len(sides))
-	if minRecipes < numRecipes {
-		numRecipes = minRecipes
+	if len(allRecipes) < numRecipes {
+		numRecipes = len(allRecipes)
 	}
+	
+	// Generate output
 	var output strings.Builder
 	for i := 0; i < numRecipes; i++ {
-		mainDish := allMainDishes[i]
-		sideDish := sides[i]
-		output.WriteString(printRecipe(fmt.Sprintf("Main Dish %d", i+1), mainDish))
-		output.WriteString(printRecipe(fmt.Sprintf("Side Dish %d", i+1), sideDish))
+		recipe := allRecipes[i]
+		output.WriteString(printRecipe(fmt.Sprintf("Recipe %d", i+1), recipe))
 		output.WriteString(strings.Repeat("-", 48) + "\n\n")
 	}
-	emailContent := "Today's Recipe Selection - " + time.Now().Format("January 02, 2006") + "\n\n" + output.String()
-	emailPayload := EmailPayload{}
-	emailPayload.From.Email = senderEmail
-	emailPayload.From.Name = senderName
-	emailPayload.To = []struct {
-		Email string `json:"email"`
-	}{
-		{Email: recipientEmail},
+	recipeContent := "Today's Recipe Selection - " + time.Now().Format("January 02, 2006") + "\n\n" + output.String()
+	
+	// Ask user preference
+	preference, err := askEmailPreference()
+	if err != nil {
+		fmt.Println("Error getting preference:", err)
+		preference = EmailPreferenceTerminal
 	}
-	emailPayload.Subject = "Weekly Recipe Selection for " + time.Now().Format("January 02, 2006")
-	emailPayload.Text = emailContent
-	emailPayload.Category = "Recipe Integration"
-	if err := sendEmail(ctx, emailPayload); err != nil {
-		fmt.Println("Error sending email:", err)
+	
+	if preference == EmailPreferenceTerminal {
+		// Output to terminal
+		fmt.Println("\n==== RECIPE SELECTION ====")
+		fmt.Println(output.String())
+		fmt.Println("\n==== END OF RECIPE SELECTION ====")
+	} else {
+		// Send email
+		if err := loadEnv(); err != nil {
+			fmt.Println(err)
+			return
+		}
+		senderEmail := os.Getenv("SENDER_EMAIL")
+		senderName := os.Getenv("SENDER_NAME")
+		recipientEmail := os.Getenv("RECIPIENT_EMAIL")
+		if senderEmail == "" || senderName == "" || recipientEmail == "" {
+			fmt.Println("Error: SENDER_EMAIL, SENDER_NAME, and RECIPIENT_EMAIL must be set in the environment")
+			return
+		}
+		
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		
+		emailPayload := EmailPayload{}
+		emailPayload.From.Email = senderEmail
+		emailPayload.From.Name = senderName
+		emailPayload.To = []struct {
+			Email string `json:"email"`
+		}{
+			{Email: recipientEmail},
+		}
+		emailPayload.Subject = "Weekly Recipe Selection for " + time.Now().Format("January 02, 2006")
+		emailPayload.Text = recipeContent
+		emailPayload.Category = "Recipe Integration"
+		
+		if err := sendEmail(ctx, emailPayload); err != nil {
+			fmt.Println("Error sending email:", err)
+			// Fallback to terminal output
+			fmt.Println("\n==== RECIPE SELECTION ====")
+			fmt.Println(output.String())
+			fmt.Println("\n==== END OF RECIPE SELECTION ====")
+		} else {
+			fmt.Println("Email sent successfully!")
+		}
 	}
 }
