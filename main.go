@@ -487,7 +487,37 @@ func loadRecipes(dir, excludeFile string) ([]Recipe, error) {
 	return allRecipes, nil
 }
 
+// AppMode represents the application mode selection
+type AppMode int
+
+const (
+	AppModeTerminal AppMode = iota
+	AppModeEmail
+	AppModeAudit
+)
+
+// askAppMode prompts the user to choose the application mode
+func askAppMode() (AppMode, error) {
+	fmt.Print("Select mode - (t)erminal, (e)mail, or (a)udit recipes: ")
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		return AppModeTerminal, fmt.Errorf("error reading input: %w", err)
+	}
+
+	input = strings.ToLower(strings.TrimSpace(input))
+	switch input {
+	case "email", "e":
+		return AppModeEmail, nil
+	case "audit", "a":
+		return AppModeAudit, nil
+	default:
+		return AppModeTerminal, nil
+	}
+}
+
 // askEmailPreference prompts the user to choose whether to send an email or display in terminal
+// Deprecated: Use askAppMode instead
 func askEmailPreference() (EmailPreference, error) {
 	fmt.Print("Would you like to send an email or just display recipes in terminal? (terminal/email): ")
 	reader := bufio.NewReader(os.Stdin)
@@ -495,7 +525,7 @@ func askEmailPreference() (EmailPreference, error) {
 	if err != nil {
 		return EmailPreferenceTerminal, fmt.Errorf("error reading input: %w", err)
 	}
-	
+
 	input = strings.ToLower(strings.TrimSpace(input))
 	if input == "email" {
 		return EmailPreferenceSend, nil
@@ -584,13 +614,26 @@ func main() {
 		return
 	}
 	
+	// Ask user for mode
+	mode, err := askAppMode()
+	if err != nil {
+		fmt.Println("Error getting mode:", err)
+		mode = AppModeTerminal
+	}
+
+	// Handle audit mode
+	if mode == AppModeAudit {
+		PrintAuditReport(allRecipes)
+		return
+	}
+
 	// Shuffle and select recipes
 	shuffleRecipes(allRecipes)
 	numRecipes := 4
 	if len(allRecipes) < numRecipes {
 		numRecipes = len(allRecipes)
 	}
-	
+
 	// Generate output
 	var output strings.Builder
 	for i := 0; i < numRecipes; i++ {
@@ -599,15 +642,8 @@ func main() {
 		output.WriteString(strings.Repeat("-", 48) + "\n\n")
 	}
 	recipeContent := "Today's Recipe Selection - " + time.Now().Format("January 02, 2006") + "\n\n" + output.String()
-	
-	// Ask user preference
-	preference, err := askEmailPreference()
-	if err != nil {
-		fmt.Println("Error getting preference:", err)
-		preference = EmailPreferenceTerminal
-	}
-	
-	if preference == EmailPreferenceTerminal {
+
+	if mode == AppModeTerminal {
 		// Output to terminal
 		fmt.Println("\n==== RECIPE SELECTION ====")
 		fmt.Println(output.String())
@@ -625,10 +661,10 @@ func main() {
 			fmt.Println("Error: SENDER_EMAIL, SENDER_NAME, and RECIPIENT_EMAIL must be set in the environment")
 			return
 		}
-		
+
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		
+
 		emailPayload := EmailPayload{}
 		emailPayload.From.Email = senderEmail
 		emailPayload.From.Name = senderName
@@ -640,7 +676,7 @@ func main() {
 		emailPayload.Subject = "Weekly Recipe Selection for " + time.Now().Format("January 02, 2006")
 		emailPayload.Text = recipeContent
 		emailPayload.Category = "Recipe Integration"
-		
+
 		if err := sendEmail(ctx, emailPayload); err != nil {
 			fmt.Println("Error sending email:", err)
 			// Fallback to terminal output
