@@ -1427,6 +1427,22 @@ func FormatWeeklyPlanEmail(plan WeeklyMealPlan) string {
 	return sb.String()
 }
 
+// BuildWeeklyPlanEmailPayload creates an EmailPayload from a WeeklyMealPlan
+func BuildWeeklyPlanEmailPayload(plan WeeklyMealPlan, senderEmail, senderName, recipientEmail string) EmailPayload {
+	payload := EmailPayload{}
+	payload.From.Email = senderEmail
+	payload.From.Name = senderName
+	payload.To = []struct {
+		Email string `json:"email"`
+	}{
+		{Email: recipientEmail},
+	}
+	payload.Subject = "Weekly Meal Plan"
+	payload.Text = FormatWeeklyPlanEmail(plan)
+	payload.Category = "Meal Planning"
+	return payload
+}
+
 type EmailPayload struct {
 	From struct {
 		Email string `json:"email"`
