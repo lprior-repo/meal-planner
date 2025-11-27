@@ -9,14 +9,6 @@ import (
 	"github.com/dgraph-io/badger/v4"
 )
 
-// UserProfile represents user data for macro calculations (mirrors main.go)
-type UserProfile struct {
-	Bodyweight    float64 `json:"bodyweight"`
-	ActivityLevel string  `json:"activity_level"`
-	Goal          string  `json:"goal"`
-	MealsPerDay   int     `json:"meals_per_day"`
-}
-
 // StoredUserProfile wraps UserProfile with storage metadata
 type StoredUserProfile struct {
 	ID        string      `json:"id"`
