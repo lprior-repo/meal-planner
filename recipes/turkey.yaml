@@ -36,3 +36,11 @@ recipes:
       - Brush turkey legs with the mixture.
       - Smoke for 2.5-3 hours until internal temperature reaches 165°F.
       - Let rest before serving.
+    macros:
+      protein: 120
+      fat: 40
+      carbs: 30
+    servings: 4
+    category: turkey
+    fodmap_level: low
+    vertical_compliant: true

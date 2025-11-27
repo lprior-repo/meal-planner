@@ -90,3 +90,11 @@ recipes:
       - "Layer: noodles, ricotta, sausages, sauce, and mozzarella."
       - "Repeat layers, ending with cheese on top."
       - "Bake at 375°F covered for 25 minutes, then uncovered for 10 minutes."
+    macros:
+      protein: 80
+      fat: 60
+      carbs: 120
+    servings: 8
+    category: chicken
+    fodmap_level: low
+    vertical_compliant: true

@@ -17,6 +17,14 @@ recipes:
       - Fold over and press to seal.
       - Bake at 350°F for 10-12 minutes until crispy.
       - Serve with salsa and lime.
+    macros:
+      protein: 100
+      fat: 50
+      carbs: 100
+    servings: 5
+    category: mexican
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Queso Fundido
     ingredients:
@@ -34,6 +42,14 @@ recipes:
       - Layer chorizo and cheese in an oven-safe dish.
       - Bake at 375°F for 10-15 minutes until bubbly.
       - Serve with tortilla wedges, pico, and jalapeños.
+    macros:
+      protein: 60
+      fat: 70
+      carbs: 80
+    servings: 6
+    category: mexican
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Chicken Fajitas
     ingredients:
@@ -69,6 +85,14 @@ recipes:
       - Combine chicken, broth, tomatoes, and corn in a pot.
       - Simmer for 20 minutes.
       - Serve with tortilla chips on top.
+    macros:
+      protein: 100
+      fat: 20
+      carbs: 60
+    servings: 6
+    category: mexican
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Simple Beef Nachos
     ingredients:
@@ -88,6 +112,14 @@ recipes:
       - Top with beef and cheese.
       - Bake at 375°F for 10-15 minutes until cheese melts.
       - Serve with salsa.
+    macros:
+      protein: 90
+      fat: 70
+      carbs: 80
+    servings: 6
+    category: mexican
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Chorizo and Potato Tacos
     ingredients:
@@ -106,6 +138,14 @@ recipes:
       - Fill taco shells with mixture.
       - Top with cheese and cilantro.
       - Bake at 350°F for 5-10 minutes until cheese melts.
+    macros:
+      protein: 80
+      fat: 90
+      carbs: 120
+    servings: 8
+    category: mexican
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Chicken Enchiladas
     ingredients:
@@ -122,6 +162,14 @@ recipes:
       - Roll up and place seam-side down in baking dish.
       - Pour sauce over top and sprinkle with remaining cheese.
       - Bake at 350°F for 20-25 minutes until bubbly.
+    macros:
+      protein: 100
+      fat: 50
+      carbs: 100
+    servings: 6
+    category: mexican
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Pork Tacos
     ingredients:
@@ -137,6 +185,14 @@ recipes:
       - Fill shells with pork.
       - Top with lettuce and cheese.
       - Bake at 375°F for 5-10 minutes until cheese melts.
+    macros:
+      protein: 120
+      fat: 80
+      carbs: 80
+    servings: 8
+    category: mexican
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Simple Fish Tacos
     ingredients:
@@ -156,6 +212,14 @@ recipes:
       - Warm tortillas in foil in the oven.
       - Assemble tacos with fish and cabbage.
       - Serve with lime wedges.
+    macros:
+      protein: 90
+      fat: 12
+      carbs: 100
+    servings: 8
+    category: mexican
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Beef Enchiladas
     ingredients:

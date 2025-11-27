@@ -77,6 +77,14 @@ recipes:
       - Cook on low for 8-10 hours until tender.
       - Shred pork with forks.
       - Mix with remaining BBQ sauce and serve on buns.
+    macros:
+      protein: 120
+      fat: 80
+      carbs: 80
+    servings: 8
+    category: pork
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Pork Fried Rice
     ingredients:
@@ -96,6 +104,14 @@ recipes:
       - Add rice, peas and carrots.
       - Stir in soy sauce and cook until heated through.
       - Serve hot.
+    macros:
+      protein: 60
+      fat: 20
+      carbs: 180
+    servings: 4
+    category: pork
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Simple Pork Stir-Fry
     ingredients:
@@ -153,6 +169,14 @@ recipes:
       - Dredge in flour, dip in eggs, then coat with breadcrumbs.
       - Fry in hot oil for 2-3 minutes per side until golden.
       - Drain on paper towels and serve hot.
+    macros:
+      protein: 80
+      fat: 40
+      carbs: 100
+    servings: 4
+    category: pork
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Pork Sausage Patties
     ingredients:

@@ -48,6 +48,14 @@ recipes:
       - Brown ground beef and mix in taco seasoning.
       - Fill taco shells with beef and cheese.
       - Bake at 350°F for 5-10 minutes until cheese melts.
+    macros:
+      protein: 120
+      fat: 90
+      carbs: 80
+    servings: 8
+    category: beef
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Beef Tacos Al Pastor
     ingredients:
@@ -175,6 +183,14 @@ recipes:
       - Cook beef in a skillet until done.
       - Arrange in bowls with spinach and carrots.
       - Top with fried eggs and serve with gochujang.
+    macros:
+      protein: 100
+      fat: 60
+      carbs: 20
+    servings: 4
+    category: beef
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Simple Beef Shawarma
     ingredients:
@@ -193,6 +209,14 @@ recipes:
       - Toss beef in marinade for 5 minutes.
       - Bake at 375°F for 20-25 minutes.
       - Serve in pita bread.
+    macros:
+      protein: 90
+      fat: 30
+      carbs: 120
+    servings: 8
+    category: beef
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Sloppy Joes
     ingredients:

@@ -37,6 +37,14 @@ recipes:
       - Place cedar planks on grill until they smoke.
       - Flip planks and place salmon on top.
       - Cook for 15-20 minutes until salmon flakes easily.
+    macros:
+      protein: 90
+      fat: 40
+      carbs: 12
+    servings: 4
+    category: seafood
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Garlic Butter Scallops
     ingredients:
@@ -75,6 +83,14 @@ recipes:
       - Bake at 400°F for 12-15 minutes until flaky.
       - Warm tortillas.
       - Assemble tacos with fish and cabbage.
+    macros:
+      protein: 75
+      fat: 12
+      carbs: 90
+    servings: 6
+    category: seafood
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Grilled Lobster Tails
     ingredients:
