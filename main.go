@@ -160,6 +160,158 @@ func (u UserProfile) MacrosPerMeal() Macros {
 	}
 }
 
+// ValidateBodyweight checks if bodyweight is within reasonable range
+func ValidateBodyweight(weight float64) error {
+	if weight < 80 {
+		return fmt.Errorf("bodyweight too low: minimum 80 lbs")
+	}
+	if weight > 500 {
+		return fmt.Errorf("bodyweight too high: maximum 500 lbs")
+	}
+	return nil
+}
+
+// ValidateActivityLevel checks if activity level is valid
+func ValidateActivityLevel(level string) error {
+	validLevels := []string{"sedentary", "moderate", "active"}
+	for _, valid := range validLevels {
+		if level == valid {
+			return nil
+		}
+	}
+	return fmt.Errorf("invalid activity level: must be sedentary, moderate, or active")
+}
+
+// ValidateGoal checks if goal is valid
+func ValidateGoal(goal string) error {
+	validGoals := []string{"gain", "maintain", "lose"}
+	for _, valid := range validGoals {
+		if goal == valid {
+			return nil
+		}
+	}
+	return fmt.Errorf("invalid goal: must be gain, maintain, or lose")
+}
+
+// ValidateMealsPerDay checks if meals per day is within range
+func ValidateMealsPerDay(meals int) error {
+	if meals < 2 {
+		return fmt.Errorf("meals per day too low: minimum 2")
+	}
+	if meals > 6 {
+		return fmt.Errorf("meals per day too high: maximum 6")
+	}
+	return nil
+}
+
+// CollectUserProfile interactively collects user profile data from stdin
+func CollectUserProfile() (UserProfile, error) {
+	reader := bufio.NewReader(os.Stdin)
+	profile := UserProfile{}
+
+	// Collect bodyweight
+	for {
+		fmt.Print("Enter your bodyweight (lbs): ")
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			return profile, fmt.Errorf("error reading bodyweight: %w", err)
+		}
+		input = strings.TrimSpace(input)
+		var weight float64
+		_, err = fmt.Sscanf(input, "%f", &weight)
+		if err != nil {
+			fmt.Println("Invalid number. Please enter a valid weight.")
+			continue
+		}
+		if err := ValidateBodyweight(weight); err != nil {
+			fmt.Println(err)
+			continue
+		}
+		profile.Bodyweight = weight
+		break
+	}
+
+	// Collect activity level
+	for {
+		fmt.Print("Activity level (sedentary/moderate/active): ")
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			return profile, fmt.Errorf("error reading activity level: %w", err)
+		}
+		input = strings.ToLower(strings.TrimSpace(input))
+		if err := ValidateActivityLevel(input); err != nil {
+			fmt.Println(err)
+			continue
+		}
+		profile.ActivityLevel = input
+		break
+	}
+
+	// Collect goal
+	for {
+		fmt.Print("Goal (gain/maintain/lose): ")
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			return profile, fmt.Errorf("error reading goal: %w", err)
+		}
+		input = strings.ToLower(strings.TrimSpace(input))
+		if err := ValidateGoal(input); err != nil {
+			fmt.Println(err)
+			continue
+		}
+		profile.Goal = input
+		break
+	}
+
+	// Collect meals per day
+	for {
+		fmt.Print("Meals per day (2-6): ")
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			return profile, fmt.Errorf("error reading meals per day: %w", err)
+		}
+		input = strings.TrimSpace(input)
+		var meals int
+		_, err = fmt.Sscanf(input, "%d", &meals)
+		if err != nil {
+			fmt.Println("Invalid number. Please enter a number between 2-6.")
+			continue
+		}
+		if err := ValidateMealsPerDay(meals); err != nil {
+			fmt.Println(err)
+			continue
+		}
+		profile.MealsPerDay = meals
+		break
+	}
+
+	return profile, nil
+}
+
+// PrintUserProfile displays user profile and calculated macro targets
+func PrintUserProfile(profile UserProfile) {
+	targets := profile.DailyMacroTargets()
+	perMeal := profile.MacrosPerMeal()
+
+	fmt.Println("\n==== YOUR VERTICAL DIET PROFILE ====")
+	fmt.Printf("Bodyweight: %.0f lbs\n", profile.Bodyweight)
+	fmt.Printf("Activity Level: %s\n", profile.ActivityLevel)
+	fmt.Printf("Goal: %s\n", profile.Goal)
+	fmt.Printf("Meals per Day: %d\n", profile.MealsPerDay)
+
+	fmt.Println("\n--- Daily Macro Targets ---")
+	fmt.Printf("Calories: %.0f\n", targets.Calories())
+	fmt.Printf("Protein: %.0fg\n", targets.Protein)
+	fmt.Printf("Fat: %.0fg\n", targets.Fat)
+	fmt.Printf("Carbs: %.0fg\n", targets.Carbs)
+
+	fmt.Println("\n--- Per Meal Targets ---")
+	fmt.Printf("Protein: %.0fg\n", perMeal.Protein)
+	fmt.Printf("Fat: %.0fg\n", perMeal.Fat)
+	fmt.Printf("Carbs: %.0fg\n", perMeal.Carbs)
+	fmt.Println("====================================")
+}
+
 // Meal represents a single meal with its recipe and portion info
 type Meal struct {
 	Recipe      Recipe  `json:"recipe"`
@@ -518,11 +670,12 @@ const (
 	AppModeTerminal AppMode = iota
 	AppModeEmail
 	AppModeAudit
+	AppModeProfile
 )
 
 // askAppMode prompts the user to choose the application mode
 func askAppMode() (AppMode, error) {
-	fmt.Print("Select mode - (t)erminal, (e)mail, or (a)udit recipes: ")
+	fmt.Print("Select mode - (t)erminal, (e)mail, (a)udit, or (p)rofile: ")
 	reader := bufio.NewReader(os.Stdin)
 	input, err := reader.ReadString('\n')
 	if err != nil {
@@ -535,6 +688,8 @@ func askAppMode() (AppMode, error) {
 		return AppModeEmail, nil
 	case "audit", "a":
 		return AppModeAudit, nil
+	case "profile", "p":
+		return AppModeProfile, nil
 	default:
 		return AppModeTerminal, nil
 	}
@@ -648,6 +803,17 @@ func main() {
 	// Handle audit mode
 	if mode == AppModeAudit {
 		PrintAuditReport(allRecipes)
+		return
+	}
+
+	// Handle profile mode
+	if mode == AppModeProfile {
+		profile, err := CollectUserProfile()
+		if err != nil {
+			fmt.Println("Error collecting profile:", err)
+			return
+		}
+		PrintUserProfile(profile)
 		return
 	}
 

@@ -1,6 +1,7 @@
 package unit
 
 import (
+	"fmt"
 	"os"
 	"reflect"
 	"strings"
@@ -963,6 +964,147 @@ func TestVerticalDietMealCategories(t *testing.T) {
 			}
 			if recipe.Category != tc.category {
 				t.Errorf("Expected category %s, got %s", tc.category, recipe.Category)
+			}
+		})
+	}
+}
+
+// ValidateBodyweight checks if bodyweight is within reasonable range
+func ValidateBodyweight(weight float64) error {
+	if weight < 80 {
+		return fmt.Errorf("bodyweight too low: minimum 80 lbs")
+	}
+	if weight > 500 {
+		return fmt.Errorf("bodyweight too high: maximum 500 lbs")
+	}
+	return nil
+}
+
+// ValidateActivityLevel checks if activity level is valid
+func ValidateActivityLevel(level string) error {
+	validLevels := []string{"sedentary", "moderate", "active"}
+	for _, valid := range validLevels {
+		if level == valid {
+			return nil
+		}
+	}
+	return fmt.Errorf("invalid activity level: must be sedentary, moderate, or active")
+}
+
+// ValidateGoal checks if goal is valid
+func ValidateGoal(goal string) error {
+	validGoals := []string{"gain", "maintain", "lose"}
+	for _, valid := range validGoals {
+		if goal == valid {
+			return nil
+		}
+	}
+	return fmt.Errorf("invalid goal: must be gain, maintain, or lose")
+}
+
+// ValidateMealsPerDay checks if meals per day is within range
+func ValidateMealsPerDay(meals int) error {
+	if meals < 2 {
+		return fmt.Errorf("meals per day too low: minimum 2")
+	}
+	if meals > 6 {
+		return fmt.Errorf("meals per day too high: maximum 6")
+	}
+	return nil
+}
+
+func TestValidateBodyweight(t *testing.T) {
+	tests := []struct {
+		name    string
+		weight  float64
+		wantErr bool
+	}{
+		{"valid low", 80, false},
+		{"valid mid", 180, false},
+		{"valid high", 500, false},
+		{"too low", 79, true},
+		{"too high", 501, true},
+		{"zero", 0, true},
+		{"negative", -100, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateBodyweight(tt.weight)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateBodyweight(%v) error = %v, wantErr %v", tt.weight, err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestValidateActivityLevel(t *testing.T) {
+	tests := []struct {
+		name    string
+		level   string
+		wantErr bool
+	}{
+		{"sedentary", "sedentary", false},
+		{"moderate", "moderate", false},
+		{"active", "active", false},
+		{"invalid", "extreme", true},
+		{"empty", "", true},
+		{"uppercase", "ACTIVE", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateActivityLevel(tt.level)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateActivityLevel(%v) error = %v, wantErr %v", tt.level, err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestValidateGoal(t *testing.T) {
+	tests := []struct {
+		name    string
+		goal    string
+		wantErr bool
+	}{
+		{"gain", "gain", false},
+		{"maintain", "maintain", false},
+		{"lose", "lose", false},
+		{"invalid", "bulk", true},
+		{"empty", "", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateGoal(tt.goal)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateGoal(%v) error = %v, wantErr %v", tt.goal, err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestValidateMealsPerDay(t *testing.T) {
+	tests := []struct {
+		name    string
+		meals   int
+		wantErr bool
+	}{
+		{"min valid", 2, false},
+		{"typical 3", 3, false},
+		{"typical 4", 4, false},
+		{"max valid", 6, false},
+		{"too low", 1, true},
+		{"too high", 7, true},
+		{"zero", 0, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateMealsPerDay(tt.meals)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateMealsPerDay(%v) error = %v, wantErr %v", tt.meals, err, tt.wantErr)
 			}
 		})
 	}
