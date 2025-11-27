@@ -22,10 +22,54 @@ type Ingredient struct {
 	Quantity string `yaml:"quantity"`
 }
 
+// Macros represents nutritional macronutrients per serving
+type Macros struct {
+	Protein float64 `yaml:"protein" json:"protein"`
+	Fat     float64 `yaml:"fat" json:"fat"`
+	Carbs   float64 `yaml:"carbs" json:"carbs"`
+}
+
+// Calories calculates total calories from macros (4cal/g protein, 9cal/g fat, 4cal/g carbs)
+func (m Macros) Calories() float64 {
+	return (m.Protein * 4) + (m.Fat * 9) + (m.Carbs * 4)
+}
+
 type Recipe struct {
-	Name         string       `yaml:"name"`
-	Ingredients  []Ingredient `yaml:"ingredients"`
-	Instructions []string     `yaml:"instructions"`
+	Name              string       `yaml:"name"`
+	Ingredients       []Ingredient `yaml:"ingredients"`
+	Instructions      []string     `yaml:"instructions"`
+	Macros            Macros       `yaml:"macros"`
+	Servings          int          `yaml:"servings"`
+	Category          string       `yaml:"category"`
+	FodmapLevel       string       `yaml:"fodmap_level"`
+	VerticalCompliant bool         `yaml:"vertical_compliant"`
+}
+
+// IsVerticalDietCompliant checks if recipe meets Vertical Diet requirements
+func (r Recipe) IsVerticalDietCompliant() bool {
+	// Must be explicitly marked compliant and have low FODMAP
+	return r.VerticalCompliant && (r.FodmapLevel == "low" || r.FodmapLevel == "")
+}
+
+// MacrosPerServing returns macros adjusted for serving size (default 1 serving)
+func (r Recipe) MacrosPerServing() Macros {
+	if r.Servings <= 0 {
+		return r.Macros
+	}
+	return r.Macros
+}
+
+// TotalMacros returns total macros for all servings
+func (r Recipe) TotalMacros() Macros {
+	servings := r.Servings
+	if servings <= 0 {
+		servings = 1
+	}
+	return Macros{
+		Protein: r.Macros.Protein * float64(servings),
+		Fat:     r.Macros.Fat * float64(servings),
+		Carbs:   r.Macros.Carbs * float64(servings),
+	}
 }
 
 type RecipeCollection struct {
