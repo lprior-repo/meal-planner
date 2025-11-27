@@ -973,6 +973,167 @@ func GenerateShoppingList(plan WeeklyMealPlan) []Ingredient {
 	return list
 }
 
+// =============================================================================
+// Strict Validation Rules
+// =============================================================================
+
+// ForbiddenSeedOils list of seed/vegetable oils not allowed on Vertical Diet
+var ForbiddenSeedOils = []string{
+	"canola oil", "soybean oil", "corn oil", "vegetable oil",
+	"sunflower oil", "safflower oil", "cottonseed oil", "grapeseed oil",
+	"rice bran oil", "peanut oil",
+}
+
+// ForbiddenGrains list of grains not allowed (white rice is the exception)
+var ForbiddenGrains = []string{
+	"wheat", "whole wheat", "bread", "pasta", "flour tortilla",
+	"rye", "barley", "oats", "oatmeal",
+	"quinoa", "couscous", "bulgur",
+	"brown rice", // only white rice allowed
+}
+
+// AllowedGrains exceptions that are permitted
+var AllowedGrains = []string{
+	"white rice", "rice cereal", "cream of rice", "rice flour",
+}
+
+// ValidationResult represents the outcome of validating a recipe or plan
+type ValidationResult struct {
+	IsValid    bool     `json:"is_valid"`
+	Violations []string `json:"violations"`
+	Warnings   []string `json:"warnings"`
+	RecipeName string   `json:"recipe_name,omitempty"`
+}
+
+// ValidateRecipeStrict performs strict Vertical Diet validation on a recipe
+func ValidateRecipeStrict(recipe Recipe) ValidationResult {
+	result := ValidationResult{
+		IsValid:    true,
+		RecipeName: recipe.Name,
+	}
+
+	for _, ing := range recipe.Ingredients {
+		ingLower := strings.ToLower(ing.Name)
+
+		// Check for seed oils
+		for _, oil := range ForbiddenSeedOils {
+			if strings.Contains(ingLower, oil) {
+				result.IsValid = false
+				result.Violations = append(result.Violations,
+					fmt.Sprintf("Contains forbidden seed oil: %s", ing.Name))
+			}
+		}
+
+		// Check for forbidden grains (but allow white rice variants)
+		isAllowedGrain := false
+		for _, allowed := range AllowedGrains {
+			if strings.Contains(ingLower, allowed) {
+				isAllowedGrain = true
+				break
+			}
+		}
+
+		if !isAllowedGrain {
+			for _, grain := range ForbiddenGrains {
+				if strings.Contains(ingLower, grain) {
+					result.IsValid = false
+					result.Violations = append(result.Violations,
+						fmt.Sprintf("Contains forbidden grain: %s", ing.Name))
+					break
+				}
+			}
+		}
+
+		// Check for high-FODMAP (reuse existing list)
+		if !isLowFODMAPException(ingLower) {
+			for _, fodmap := range HighFODMAPIngredients {
+				if strings.Contains(ingLower, fodmap) {
+					result.IsValid = false
+					result.Violations = append(result.Violations,
+						fmt.Sprintf("Contains high-FODMAP ingredient: %s", ing.Name))
+					break
+				}
+			}
+		}
+	}
+
+	return result
+}
+
+// ValidateWeeklyPlanStrict validates an entire weekly plan
+func ValidateWeeklyPlanStrict(plan WeeklyMealPlan) ValidationResult {
+	result := ValidationResult{
+		IsValid: true,
+	}
+
+	// Track meal categories for distribution validation
+	redMeatCount := 0
+	totalMeals := 0
+
+	for _, day := range plan.Days {
+		for _, meal := range day.Meals {
+			totalMeals++
+
+			// Validate each recipe
+			recipeResult := ValidateRecipeStrict(meal.Recipe)
+			if !recipeResult.IsValid {
+				result.IsValid = false
+				for _, v := range recipeResult.Violations {
+					result.Violations = append(result.Violations,
+						fmt.Sprintf("%s: %s", meal.Recipe.Name, v))
+				}
+			}
+
+			// Count red meat meals
+			cat := GetMealCategory(meal.Recipe)
+			if cat == MealCategoryRedMeat {
+				redMeatCount++
+			}
+		}
+	}
+
+	// Validate red meat frequency (should be 60-70%)
+	if totalMeals > 0 {
+		redMeatPercent := float64(redMeatCount) / float64(totalMeals)
+		if redMeatPercent < 0.55 {
+			result.Warnings = append(result.Warnings,
+				fmt.Sprintf("Red meat frequency (%.0f%%) is below recommended 60%%", redMeatPercent*100))
+		}
+		if redMeatPercent > 0.75 {
+			result.Warnings = append(result.Warnings,
+				fmt.Sprintf("Red meat frequency (%.0f%%) is above recommended 70%%", redMeatPercent*100))
+		}
+	}
+
+	return result
+}
+
+// PrintValidationResult displays validation results
+func PrintValidationResult(result ValidationResult) {
+	if result.RecipeName != "" {
+		fmt.Printf("\n=== Validation: %s ===\n", result.RecipeName)
+	} else {
+		fmt.Println("\n=== Plan Validation ===")
+	}
+
+	if result.IsValid {
+		fmt.Println("Status: VALID")
+	} else {
+		fmt.Println("Status: INVALID")
+		fmt.Println("\nViolations:")
+		for _, v := range result.Violations {
+			fmt.Printf("  - %s\n", v)
+		}
+	}
+
+	if len(result.Warnings) > 0 {
+		fmt.Println("\nWarnings:")
+		for _, w := range result.Warnings {
+			fmt.Printf("  - %s\n", w)
+		}
+	}
+}
+
 // PrintWeeklyPlan displays the weekly meal plan
 func PrintWeeklyPlan(plan WeeklyMealPlan) {
 	fmt.Println("\n=== Weekly Meal Plan ===")

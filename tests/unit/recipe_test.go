@@ -2176,3 +2176,391 @@ func TestWeeklyPlanMacroProgression(t *testing.T) {
 		prevProtein = totalProtein
 	}
 }
+
+// =============================================================================
+// Strict Validation Rules - Types and Functions
+// =============================================================================
+
+// ForbiddenSeedOils list of seed/vegetable oils not allowed on Vertical Diet
+var ForbiddenSeedOils = []string{
+	"canola oil", "soybean oil", "corn oil", "vegetable oil",
+	"sunflower oil", "safflower oil", "cottonseed oil", "grapeseed oil",
+	"rice bran oil", "peanut oil",
+}
+
+// ForbiddenGrains list of grains not allowed (white rice is the exception)
+var ForbiddenGrains = []string{
+	"wheat", "whole wheat", "bread", "pasta", "flour tortilla",
+	"rye", "barley", "oats", "oatmeal",
+	"quinoa", "couscous", "bulgur",
+	"brown rice", // only white rice allowed
+}
+
+// AllowedGrains exceptions that are permitted
+var AllowedGrains = []string{
+	"white rice", "rice cereal", "cream of rice", "rice flour",
+}
+
+// ValidationResult represents the outcome of validating a recipe or plan
+type ValidationResult struct {
+	IsValid      bool     `json:"is_valid"`
+	Violations   []string `json:"violations"`
+	Warnings     []string `json:"warnings"`
+	RecipeName   string   `json:"recipe_name,omitempty"`
+}
+
+// ValidateRecipeStrict performs strict Vertical Diet validation on a recipe
+func ValidateRecipeStrict(recipe Recipe) ValidationResult {
+	result := ValidationResult{
+		IsValid:    true,
+		RecipeName: recipe.Name,
+	}
+
+	for _, ing := range recipe.Ingredients {
+		ingLower := strings.ToLower(ing.Name)
+
+		// Check for seed oils
+		for _, oil := range ForbiddenSeedOils {
+			if strings.Contains(ingLower, oil) {
+				result.IsValid = false
+				result.Violations = append(result.Violations,
+					fmt.Sprintf("Contains forbidden seed oil: %s", ing.Name))
+			}
+		}
+
+		// Check for forbidden grains (but allow white rice variants)
+		isAllowedGrain := false
+		for _, allowed := range AllowedGrains {
+			if strings.Contains(ingLower, allowed) {
+				isAllowedGrain = true
+				break
+			}
+		}
+
+		if !isAllowedGrain {
+			for _, grain := range ForbiddenGrains {
+				if strings.Contains(ingLower, grain) {
+					result.IsValid = false
+					result.Violations = append(result.Violations,
+						fmt.Sprintf("Contains forbidden grain: %s", ing.Name))
+					break
+				}
+			}
+		}
+
+		// Check for high-FODMAP (reuse existing list)
+		if !isLowFODMAPException(ingLower) {
+			for _, fodmap := range HighFODMAPIngredients {
+				if strings.Contains(ingLower, fodmap) {
+					result.IsValid = false
+					result.Violations = append(result.Violations,
+						fmt.Sprintf("Contains high-FODMAP ingredient: %s", ing.Name))
+					break
+				}
+			}
+		}
+	}
+
+	return result
+}
+
+// ValidateWeeklyPlanStrict validates an entire weekly plan
+func ValidateWeeklyPlanStrict(plan WeeklyMealPlan) ValidationResult {
+	result := ValidationResult{
+		IsValid: true,
+	}
+
+	// Track meal categories for distribution validation
+	redMeatCount := 0
+	totalMeals := 0
+
+	for _, day := range plan.Days {
+		for _, meal := range day.Meals {
+			totalMeals++
+
+			// Validate each recipe
+			recipeResult := ValidateRecipeStrict(meal.Recipe)
+			if !recipeResult.IsValid {
+				result.IsValid = false
+				for _, v := range recipeResult.Violations {
+					result.Violations = append(result.Violations,
+						fmt.Sprintf("%s: %s", meal.Recipe.Name, v))
+				}
+			}
+
+			// Count red meat meals
+			cat := GetMealCategory(meal.Recipe)
+			if cat == MealCategoryRedMeat {
+				redMeatCount++
+			}
+		}
+	}
+
+	// Validate red meat frequency (should be 60-70%)
+	if totalMeals > 0 {
+		redMeatPercent := float64(redMeatCount) / float64(totalMeals)
+		if redMeatPercent < 0.55 {
+			result.Warnings = append(result.Warnings,
+				fmt.Sprintf("Red meat frequency (%.0f%%) is below recommended 60%%", redMeatPercent*100))
+		}
+		if redMeatPercent > 0.75 {
+			result.Warnings = append(result.Warnings,
+				fmt.Sprintf("Red meat frequency (%.0f%%) is above recommended 70%%", redMeatPercent*100))
+		}
+	}
+
+	return result
+}
+
+// =============================================================================
+// Strict Validation Tests
+// =============================================================================
+
+func TestValidateRecipeStrictSeedOils(t *testing.T) {
+	tests := []struct {
+		name       string
+		recipe     Recipe
+		expectValid bool
+	}{
+		{
+			name: "recipe with canola oil - invalid",
+			recipe: Recipe{
+				Name: "Bad Recipe",
+				Ingredients: []Ingredient{
+					{Name: "steak", Quantity: "1 lb"},
+					{Name: "canola oil", Quantity: "2 tbsp"},
+				},
+			},
+			expectValid: false,
+		},
+		{
+			name: "recipe with vegetable oil - invalid",
+			recipe: Recipe{
+				Name: "Bad Recipe 2",
+				Ingredients: []Ingredient{
+					{Name: "chicken", Quantity: "1 lb"},
+					{Name: "vegetable oil", Quantity: "1 tbsp"},
+				},
+			},
+			expectValid: false,
+		},
+		{
+			name: "recipe with olive oil - valid",
+			recipe: Recipe{
+				Name: "Good Recipe",
+				Ingredients: []Ingredient{
+					{Name: "steak", Quantity: "1 lb"},
+					{Name: "olive oil", Quantity: "2 tbsp"},
+				},
+			},
+			expectValid: true,
+		},
+		{
+			name: "recipe with butter - valid",
+			recipe: Recipe{
+				Name: "Butter Recipe",
+				Ingredients: []Ingredient{
+					{Name: "steak", Quantity: "1 lb"},
+					{Name: "butter", Quantity: "2 tbsp"},
+				},
+			},
+			expectValid: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := ValidateRecipeStrict(tt.recipe)
+			if result.IsValid != tt.expectValid {
+				t.Errorf("IsValid = %v, want %v. Violations: %v",
+					result.IsValid, tt.expectValid, result.Violations)
+			}
+		})
+	}
+}
+
+func TestValidateRecipeStrictGrains(t *testing.T) {
+	tests := []struct {
+		name        string
+		recipe      Recipe
+		expectValid bool
+	}{
+		{
+			name: "recipe with white rice - valid",
+			recipe: Recipe{
+				Name: "Rice Bowl",
+				Ingredients: []Ingredient{
+					{Name: "white rice", Quantity: "2 cups"},
+					{Name: "beef", Quantity: "1 lb"},
+				},
+			},
+			expectValid: true,
+		},
+		{
+			name: "recipe with brown rice - invalid",
+			recipe: Recipe{
+				Name: "Brown Rice Bowl",
+				Ingredients: []Ingredient{
+					{Name: "brown rice", Quantity: "2 cups"},
+					{Name: "beef", Quantity: "1 lb"},
+				},
+			},
+			expectValid: false,
+		},
+		{
+			name: "recipe with wheat bread - invalid",
+			recipe: Recipe{
+				Name: "Sandwich",
+				Ingredients: []Ingredient{
+					{Name: "wheat bread", Quantity: "2 slices"},
+					{Name: "beef", Quantity: "4 oz"},
+				},
+			},
+			expectValid: false,
+		},
+		{
+			name: "recipe with oatmeal - invalid",
+			recipe: Recipe{
+				Name: "Oatmeal Breakfast",
+				Ingredients: []Ingredient{
+					{Name: "oatmeal", Quantity: "1 cup"},
+					{Name: "milk", Quantity: "1 cup"},
+				},
+			},
+			expectValid: false,
+		},
+		{
+			name: "recipe with cream of rice - valid",
+			recipe: Recipe{
+				Name: "Rice Cereal",
+				Ingredients: []Ingredient{
+					{Name: "cream of rice", Quantity: "1 cup"},
+					{Name: "butter", Quantity: "1 tbsp"},
+				},
+			},
+			expectValid: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := ValidateRecipeStrict(tt.recipe)
+			if result.IsValid != tt.expectValid {
+				t.Errorf("IsValid = %v, want %v. Violations: %v",
+					result.IsValid, tt.expectValid, result.Violations)
+			}
+		})
+	}
+}
+
+func TestValidateRecipeStrictFODMAP(t *testing.T) {
+	tests := []struct {
+		name        string
+		recipe      Recipe
+		expectValid bool
+	}{
+		{
+			name: "recipe with garlic - invalid",
+			recipe: Recipe{
+				Name: "Garlic Steak",
+				Ingredients: []Ingredient{
+					{Name: "steak", Quantity: "1 lb"},
+					{Name: "garlic cloves", Quantity: "4"},
+				},
+			},
+			expectValid: false,
+		},
+		{
+			name: "recipe with garlic-infused oil - valid (exception)",
+			recipe: Recipe{
+				Name: "Infused Oil Steak",
+				Ingredients: []Ingredient{
+					{Name: "steak", Quantity: "1 lb"},
+					{Name: "garlic-infused oil", Quantity: "2 tbsp"},
+				},
+			},
+			expectValid: true,
+		},
+		{
+			name: "recipe with onion - invalid",
+			recipe: Recipe{
+				Name: "Onion Steak",
+				Ingredients: []Ingredient{
+					{Name: "steak", Quantity: "1 lb"},
+					{Name: "onion, diced", Quantity: "1"},
+				},
+			},
+			expectValid: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := ValidateRecipeStrict(tt.recipe)
+			if result.IsValid != tt.expectValid {
+				t.Errorf("IsValid = %v, want %v. Violations: %v",
+					result.IsValid, tt.expectValid, result.Violations)
+			}
+		})
+	}
+}
+
+func TestValidateWeeklyPlanStrict(t *testing.T) {
+	// Create a valid weekly plan
+	validPlan := WeeklyMealPlan{
+		Days: [7]DailyPlan{
+			{
+				DayName: "Monday",
+				Meals: []Meal{
+					{Recipe: Recipe{Name: "Ribeye", Category: "beef"}, PortionSize: 1.0},
+					{Recipe: Recipe{Name: "Eggs", Category: "vertical-breakfast"}, PortionSize: 1.0},
+				},
+			},
+			{DayName: "Tuesday", Meals: []Meal{{Recipe: Recipe{Name: "Brisket", Category: "beef"}, PortionSize: 1.0}}},
+			{DayName: "Wednesday", Meals: []Meal{{Recipe: Recipe{Name: "Pork", Category: "pork"}, PortionSize: 1.0}}},
+			{DayName: "Thursday", Meals: []Meal{{Recipe: Recipe{Name: "Steak", Category: "beef"}, PortionSize: 1.0}}},
+			{DayName: "Friday", Meals: []Meal{{Recipe: Recipe{Name: "Ground Beef", Category: "beef"}, PortionSize: 1.0}}},
+			{DayName: "Saturday", Meals: []Meal{{Recipe: Recipe{Name: "Salmon", Category: "seafood"}, PortionSize: 1.0}}},
+			{DayName: "Sunday", Meals: []Meal{{Recipe: Recipe{Name: "Ribeye", Category: "beef"}, PortionSize: 1.0}}},
+		},
+	}
+
+	result := ValidateWeeklyPlanStrict(validPlan)
+
+	if !result.IsValid {
+		t.Errorf("Expected valid plan, got violations: %v", result.Violations)
+	}
+}
+
+func TestValidateWeeklyPlanStrictWithViolations(t *testing.T) {
+	// Create a plan with violations
+	invalidPlan := WeeklyMealPlan{
+		Days: [7]DailyPlan{
+			{
+				DayName: "Monday",
+				Meals: []Meal{
+					{
+						Recipe: Recipe{
+							Name: "Bad Recipe",
+							Ingredients: []Ingredient{
+								{Name: "steak", Quantity: "1 lb"},
+								{Name: "canola oil", Quantity: "2 tbsp"},
+							},
+						},
+						PortionSize: 1.0,
+					},
+				},
+			},
+		},
+	}
+
+	result := ValidateWeeklyPlanStrict(invalidPlan)
+
+	if result.IsValid {
+		t.Errorf("Expected invalid plan due to canola oil")
+	}
+
+	if len(result.Violations) == 0 {
+		t.Errorf("Expected violations to be reported")
+	}
+}
