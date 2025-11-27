@@ -558,6 +558,209 @@ func (w WeeklyMealPlan) IsWithinMacroTargets(tolerance float64) bool {
 	return proteinDiff <= tolerance && fatDiff <= tolerance && carbsDiff <= tolerance
 }
 
+// =============================================================================
+// Meal Selection Algorithm
+// =============================================================================
+
+// MealCategory represents the food category for selection distribution
+type MealCategory string
+
+const (
+	MealCategoryRedMeat MealCategory = "red_meat"
+	MealCategorySalmon  MealCategory = "salmon"
+	MealCategoryEggs    MealCategory = "eggs"
+	MealCategoryVariety MealCategory = "variety"
+)
+
+// GetMealCategory determines the category of a recipe based on its ingredients and category
+func GetMealCategory(recipe Recipe) MealCategory {
+	category := strings.ToLower(recipe.Category)
+	name := strings.ToLower(recipe.Name)
+
+	// Check for red meat categories
+	if category == "beef" || category == "vertical-beef" || category == "pork" {
+		return MealCategoryRedMeat
+	}
+
+	// Check for salmon
+	if strings.Contains(name, "salmon") || strings.Contains(category, "salmon") {
+		return MealCategorySalmon
+	}
+
+	// Check for eggs
+	if strings.Contains(name, "egg") || category == "breakfast" || category == "vertical-breakfast" {
+		return MealCategoryEggs
+	}
+
+	// Everything else is variety
+	return MealCategoryVariety
+}
+
+// MealSelectionConfig defines the distribution targets
+type MealSelectionConfig struct {
+	RedMeatMinPercent float64 // 60%
+	RedMeatMaxPercent float64 // 70%
+	ProteinMinPercent float64 // 20% (salmon + eggs)
+	ProteinMaxPercent float64 // 30%
+	VarietyMaxPercent float64 // 10%
+}
+
+// DefaultMealSelectionConfig returns the Vertical Diet recommended distribution
+func DefaultMealSelectionConfig() MealSelectionConfig {
+	return MealSelectionConfig{
+		RedMeatMinPercent: 0.60,
+		RedMeatMaxPercent: 0.70,
+		ProteinMinPercent: 0.20,
+		ProteinMaxPercent: 0.30,
+		VarietyMaxPercent: 0.10,
+	}
+}
+
+// MealSelectionResult tracks the distribution of selected meals
+type MealSelectionResult struct {
+	SelectedRecipes []Recipe
+	RedMeatCount    int
+	SalmonCount     int
+	EggsCount       int
+	VarietyCount    int
+	TotalCount      int
+}
+
+// GetDistribution returns the percentage distribution of meal categories
+func (r MealSelectionResult) GetDistribution() map[MealCategory]float64 {
+	if r.TotalCount == 0 {
+		return map[MealCategory]float64{}
+	}
+	return map[MealCategory]float64{
+		MealCategoryRedMeat: float64(r.RedMeatCount) / float64(r.TotalCount),
+		MealCategorySalmon:  float64(r.SalmonCount) / float64(r.TotalCount),
+		MealCategoryEggs:    float64(r.EggsCount) / float64(r.TotalCount),
+		MealCategoryVariety: float64(r.VarietyCount) / float64(r.TotalCount),
+	}
+}
+
+// IsWithinTargets checks if the selection meets Vertical Diet distribution
+func (r MealSelectionResult) IsWithinTargets(config MealSelectionConfig) bool {
+	if r.TotalCount == 0 {
+		return false
+	}
+	dist := r.GetDistribution()
+
+	// Red meat should be 60-70%
+	redMeat := dist[MealCategoryRedMeat]
+	if redMeat < config.RedMeatMinPercent || redMeat > config.RedMeatMaxPercent {
+		return false
+	}
+
+	// Salmon + Eggs should be 20-30%
+	proteinAlt := dist[MealCategorySalmon] + dist[MealCategoryEggs]
+	if proteinAlt < config.ProteinMinPercent || proteinAlt > config.ProteinMaxPercent {
+		return false
+	}
+
+	// Variety should be at most 10%
+	if dist[MealCategoryVariety] > config.VarietyMaxPercent {
+		return false
+	}
+
+	return true
+}
+
+// SelectMealsForWeek selects meals following Vertical Diet distribution
+// targetMeals is the number of main meals to select (e.g., 21 for 7 days x 3 meals)
+func SelectMealsForWeek(recipes []Recipe, targetMeals int) MealSelectionResult {
+	config := DefaultMealSelectionConfig()
+	result := MealSelectionResult{}
+
+	// Categorize all available recipes
+	var redMeatRecipes, salmonRecipes, eggsRecipes, varietyRecipes []Recipe
+	for _, r := range recipes {
+		if !r.IsVerticalDietCompliant() {
+			continue
+		}
+		switch GetMealCategory(r) {
+		case MealCategoryRedMeat:
+			redMeatRecipes = append(redMeatRecipes, r)
+		case MealCategorySalmon:
+			salmonRecipes = append(salmonRecipes, r)
+		case MealCategoryEggs:
+			eggsRecipes = append(eggsRecipes, r)
+		case MealCategoryVariety:
+			varietyRecipes = append(varietyRecipes, r)
+		}
+	}
+
+	// Calculate target counts (using middle of ranges)
+	redMeatTarget := int(float64(targetMeals) * 0.65) // 65% = middle of 60-70%
+	proteinTarget := int(float64(targetMeals) * 0.25) // 25% = middle of 20-30%
+	varietyTarget := targetMeals - redMeatTarget - proteinTarget
+
+	// Cap variety at 10%
+	maxVariety := int(float64(targetMeals) * config.VarietyMaxPercent)
+	if varietyTarget > maxVariety {
+		varietyTarget = maxVariety
+	}
+
+	// Select red meat meals (cycle through if needed)
+	for i := 0; i < redMeatTarget && len(redMeatRecipes) > 0; i++ {
+		result.SelectedRecipes = append(result.SelectedRecipes, redMeatRecipes[i%len(redMeatRecipes)])
+		result.RedMeatCount++
+	}
+
+	// Select salmon/eggs meals (alternate between them)
+	salmonTarget := proteinTarget / 2
+	eggsTarget := proteinTarget - salmonTarget
+
+	for i := 0; i < salmonTarget && len(salmonRecipes) > 0; i++ {
+		result.SelectedRecipes = append(result.SelectedRecipes, salmonRecipes[i%len(salmonRecipes)])
+		result.SalmonCount++
+	}
+
+	for i := 0; i < eggsTarget && len(eggsRecipes) > 0; i++ {
+		result.SelectedRecipes = append(result.SelectedRecipes, eggsRecipes[i%len(eggsRecipes)])
+		result.EggsCount++
+	}
+
+	// If we couldn't fill salmon/eggs targets, add more from the other
+	remaining := proteinTarget - result.SalmonCount - result.EggsCount
+	if remaining > 0 && len(eggsRecipes) > 0 {
+		for i := 0; i < remaining; i++ {
+			result.SelectedRecipes = append(result.SelectedRecipes, eggsRecipes[i%len(eggsRecipes)])
+			result.EggsCount++
+		}
+	}
+
+	// Select variety meals
+	for i := 0; i < varietyTarget && len(varietyRecipes) > 0; i++ {
+		result.SelectedRecipes = append(result.SelectedRecipes, varietyRecipes[i%len(varietyRecipes)])
+		result.VarietyCount++
+	}
+
+	result.TotalCount = result.RedMeatCount + result.SalmonCount + result.EggsCount + result.VarietyCount
+
+	return result
+}
+
+// PrintMealSelectionSummary displays the meal selection distribution
+func PrintMealSelectionSummary(result MealSelectionResult) {
+	fmt.Println("\n=== Meal Selection Summary ===")
+	fmt.Printf("Total Meals Selected: %d\n\n", result.TotalCount)
+
+	dist := result.GetDistribution()
+	fmt.Println("Distribution:")
+	fmt.Printf("  Red Meat:    %d (%.1f%%)\n", result.RedMeatCount, dist[MealCategoryRedMeat]*100)
+	fmt.Printf("  Salmon:      %d (%.1f%%)\n", result.SalmonCount, dist[MealCategorySalmon]*100)
+	fmt.Printf("  Eggs:        %d (%.1f%%)\n", result.EggsCount, dist[MealCategoryEggs]*100)
+	fmt.Printf("  Variety:     %d (%.1f%%)\n", result.VarietyCount, dist[MealCategoryVariety]*100)
+
+	config := DefaultMealSelectionConfig()
+	if result.IsWithinTargets(config) {
+		fmt.Println("\n✓ Selection meets Vertical Diet distribution targets")
+	} else {
+		fmt.Println("\n✗ Selection does NOT meet Vertical Diet distribution targets")
+	}
+}
+
 type EmailPayload struct {
 	From struct {
 		Email string `json:"email"`
