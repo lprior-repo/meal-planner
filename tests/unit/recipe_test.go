@@ -2564,3 +2564,267 @@ func TestValidateWeeklyPlanStrictWithViolations(t *testing.T) {
 		t.Errorf("Expected violations to be reported")
 	}
 }
+
+// =============================================================================
+// Output Formatter Types and Functions
+// =============================================================================
+
+// IngredientCategory for organizing shopping list
+type IngredientCategory string
+
+const (
+	CategoryProtein   IngredientCategory = "Protein"
+	CategoryDairy     IngredientCategory = "Dairy"
+	CategoryProduce   IngredientCategory = "Produce"
+	CategoryGrains    IngredientCategory = "Grains"
+	CategoryFats      IngredientCategory = "Fats & Oils"
+	CategorySeasonings IngredientCategory = "Seasonings"
+	CategoryOther     IngredientCategory = "Other"
+)
+
+// CategorizedShoppingList organizes ingredients by category
+type CategorizedShoppingList struct {
+	Protein    []Ingredient
+	Dairy      []Ingredient
+	Produce    []Ingredient
+	Grains     []Ingredient
+	Fats       []Ingredient
+	Seasonings []Ingredient
+	Other      []Ingredient
+}
+
+// CategorizeIngredient determines the shopping category for an ingredient
+func CategorizeIngredient(ing Ingredient) IngredientCategory {
+	name := strings.ToLower(ing.Name)
+
+	// Proteins
+	proteins := []string{"beef", "steak", "chicken", "pork", "fish", "salmon", "shrimp",
+		"turkey", "lamb", "ground", "ribeye", "brisket", "sirloin", "eggs", "chorizo"}
+	for _, p := range proteins {
+		if strings.Contains(name, p) {
+			return CategoryProtein
+		}
+	}
+
+	// Dairy
+	dairy := []string{"cheese", "butter", "milk", "cream", "yogurt", "sour cream"}
+	for _, d := range dairy {
+		if strings.Contains(name, d) {
+			return CategoryDairy
+		}
+	}
+
+	// Produce
+	produce := []string{"spinach", "carrot", "pepper", "potato", "tomato", "lettuce",
+		"cucumber", "celery", "orange", "lime", "lemon", "avocado", "cabbage", "cranberry"}
+	for _, p := range produce {
+		if strings.Contains(name, p) {
+			return CategoryProduce
+		}
+	}
+
+	// Grains
+	grains := []string{"rice", "tortilla", "bread", "cereal", "oat"}
+	for _, g := range grains {
+		if strings.Contains(name, g) {
+			return CategoryGrains
+		}
+	}
+
+	// Fats & Oils
+	fats := []string{"oil", "lard", "tallow"}
+	for _, f := range fats {
+		if strings.Contains(name, f) {
+			return CategoryFats
+		}
+	}
+
+	// Seasonings
+	seasonings := []string{"salt", "pepper", "seasoning", "spice", "paprika", "cumin",
+		"oregano", "basil", "thyme", "garlic powder", "onion powder", "honey", "mustard", "sauce"}
+	for _, s := range seasonings {
+		if strings.Contains(name, s) {
+			return CategorySeasonings
+		}
+	}
+
+	return CategoryOther
+}
+
+// OrganizeShoppingList categorizes ingredients
+func OrganizeShoppingList(ingredients []Ingredient) CategorizedShoppingList {
+	var list CategorizedShoppingList
+
+	for _, ing := range ingredients {
+		switch CategorizeIngredient(ing) {
+		case CategoryProtein:
+			list.Protein = append(list.Protein, ing)
+		case CategoryDairy:
+			list.Dairy = append(list.Dairy, ing)
+		case CategoryProduce:
+			list.Produce = append(list.Produce, ing)
+		case CategoryGrains:
+			list.Grains = append(list.Grains, ing)
+		case CategoryFats:
+			list.Fats = append(list.Fats, ing)
+		case CategorySeasonings:
+			list.Seasonings = append(list.Seasonings, ing)
+		default:
+			list.Other = append(list.Other, ing)
+		}
+	}
+
+	return list
+}
+
+// MealTiming represents suggested timing for a meal
+type MealTiming struct {
+	MealNumber int
+	Time       string // e.g., "7:00 AM", "12:00 PM"
+	Recipe     Recipe
+}
+
+// GenerateMealTimings creates meal schedule with 3-5 hour spacing
+func GenerateMealTimings(meals []Meal, startHour int) []MealTiming {
+	var timings []MealTiming
+
+	// Space meals 4 hours apart (middle of 3-5 hour range)
+	hourSpacing := 4
+	hour := startHour
+
+	for i, meal := range meals {
+		// Format time
+		ampm := "AM"
+		displayHour := hour
+		if hour >= 12 {
+			ampm = "PM"
+			if hour > 12 {
+				displayHour = hour - 12
+			}
+		}
+		if displayHour == 0 {
+			displayHour = 12
+		}
+
+		timings = append(timings, MealTiming{
+			MealNumber: i + 1,
+			Time:       fmt.Sprintf("%d:00 %s", displayHour, ampm),
+			Recipe:     meal.Recipe,
+		})
+
+		hour += hourSpacing
+	}
+
+	return timings
+}
+
+// =============================================================================
+// Output Formatter Tests
+// =============================================================================
+
+func TestCategorizeIngredient(t *testing.T) {
+	tests := []struct {
+		name     string
+		ing      Ingredient
+		expected IngredientCategory
+	}{
+		{"ribeye steak", Ingredient{Name: "ribeye steak"}, CategoryProtein},
+		{"ground beef", Ingredient{Name: "ground beef"}, CategoryProtein},
+		{"eggs", Ingredient{Name: "eggs"}, CategoryProtein},
+		{"salmon fillet", Ingredient{Name: "salmon fillet"}, CategoryProtein},
+		{"butter", Ingredient{Name: "butter"}, CategoryDairy},
+		{"shredded cheese", Ingredient{Name: "shredded cheese"}, CategoryDairy},
+		{"spinach", Ingredient{Name: "spinach"}, CategoryProduce},
+		{"bell peppers", Ingredient{Name: "bell peppers"}, CategoryProduce},
+		{"white rice", Ingredient{Name: "white rice"}, CategoryGrains},
+		{"tortillas", Ingredient{Name: "flour tortillas"}, CategoryGrains},
+		{"olive oil", Ingredient{Name: "olive oil"}, CategoryFats},
+		{"salt", Ingredient{Name: "salt"}, CategorySeasonings},
+		{"taco seasoning", Ingredient{Name: "taco seasoning"}, CategorySeasonings},
+		{"bone broth", Ingredient{Name: "bone broth"}, CategoryOther},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := CategorizeIngredient(tt.ing)
+			if result != tt.expected {
+				t.Errorf("CategorizeIngredient(%s) = %v, want %v", tt.name, result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestOrganizeShoppingList(t *testing.T) {
+	ingredients := []Ingredient{
+		{Name: "ribeye steak", Quantity: "2 lbs"},
+		{Name: "butter", Quantity: "1 stick"},
+		{Name: "spinach", Quantity: "1 bag"},
+		{Name: "white rice", Quantity: "2 cups"},
+		{Name: "olive oil", Quantity: "1/4 cup"},
+		{Name: "salt", Quantity: "1 tsp"},
+	}
+
+	list := OrganizeShoppingList(ingredients)
+
+	if len(list.Protein) != 1 {
+		t.Errorf("Expected 1 protein, got %d", len(list.Protein))
+	}
+	if len(list.Dairy) != 1 {
+		t.Errorf("Expected 1 dairy, got %d", len(list.Dairy))
+	}
+	if len(list.Produce) != 1 {
+		t.Errorf("Expected 1 produce, got %d", len(list.Produce))
+	}
+	if len(list.Grains) != 1 {
+		t.Errorf("Expected 1 grain, got %d", len(list.Grains))
+	}
+	if len(list.Fats) != 1 {
+		t.Errorf("Expected 1 fat, got %d", len(list.Fats))
+	}
+	if len(list.Seasonings) != 1 {
+		t.Errorf("Expected 1 seasoning, got %d", len(list.Seasonings))
+	}
+}
+
+func TestGenerateMealTimings(t *testing.T) {
+	meals := []Meal{
+		{Recipe: Recipe{Name: "Breakfast"}},
+		{Recipe: Recipe{Name: "Lunch"}},
+		{Recipe: Recipe{Name: "Dinner"}},
+	}
+
+	timings := GenerateMealTimings(meals, 7) // Start at 7 AM
+
+	if len(timings) != 3 {
+		t.Errorf("Expected 3 timings, got %d", len(timings))
+	}
+
+	// Check times are spaced correctly
+	expectedTimes := []string{"7:00 AM", "11:00 AM", "3:00 PM"}
+	for i, timing := range timings {
+		if timing.Time != expectedTimes[i] {
+			t.Errorf("Meal %d time = %s, want %s", i+1, timing.Time, expectedTimes[i])
+		}
+		if timing.MealNumber != i+1 {
+			t.Errorf("Meal number = %d, want %d", timing.MealNumber, i+1)
+		}
+	}
+}
+
+func TestGenerateMealTimingsFourMeals(t *testing.T) {
+	meals := []Meal{
+		{Recipe: Recipe{Name: "Meal 1"}},
+		{Recipe: Recipe{Name: "Meal 2"}},
+		{Recipe: Recipe{Name: "Meal 3"}},
+		{Recipe: Recipe{Name: "Meal 4"}},
+	}
+
+	timings := GenerateMealTimings(meals, 6) // Start at 6 AM
+
+	expectedTimes := []string{"6:00 AM", "10:00 AM", "2:00 PM", "6:00 PM"}
+	for i, timing := range timings {
+		if timing.Time != expectedTimes[i] {
+			t.Errorf("Meal %d time = %s, want %s", i+1, timing.Time, expectedTimes[i])
+		}
+	}
+}

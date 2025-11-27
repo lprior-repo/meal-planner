@@ -1134,7 +1134,181 @@ func PrintValidationResult(result ValidationResult) {
 	}
 }
 
-// PrintWeeklyPlan displays the weekly meal plan
+// =============================================================================
+// Output Formatter - Categorized Shopping List
+// =============================================================================
+
+// IngredientCategory for organizing shopping list
+type IngredientCategory string
+
+const (
+	CategoryProtein    IngredientCategory = "Protein"
+	CategoryDairy      IngredientCategory = "Dairy"
+	CategoryProduce    IngredientCategory = "Produce"
+	CategoryGrains     IngredientCategory = "Grains"
+	CategoryFats       IngredientCategory = "Fats & Oils"
+	CategorySeasonings IngredientCategory = "Seasonings"
+	CategoryOther      IngredientCategory = "Other"
+)
+
+// CategorizedShoppingList organizes ingredients by category
+type CategorizedShoppingList struct {
+	Protein    []Ingredient
+	Dairy      []Ingredient
+	Produce    []Ingredient
+	Grains     []Ingredient
+	Fats       []Ingredient
+	Seasonings []Ingredient
+	Other      []Ingredient
+}
+
+// CategorizeIngredient determines the shopping category for an ingredient
+func CategorizeIngredient(ing Ingredient) IngredientCategory {
+	name := strings.ToLower(ing.Name)
+
+	// Proteins
+	proteins := []string{"beef", "steak", "chicken", "pork", "fish", "salmon", "shrimp",
+		"turkey", "lamb", "ground", "ribeye", "brisket", "sirloin", "eggs", "chorizo"}
+	for _, p := range proteins {
+		if strings.Contains(name, p) {
+			return CategoryProtein
+		}
+	}
+
+	// Dairy
+	dairy := []string{"cheese", "butter", "milk", "cream", "yogurt", "sour cream"}
+	for _, d := range dairy {
+		if strings.Contains(name, d) {
+			return CategoryDairy
+		}
+	}
+
+	// Produce
+	produce := []string{"spinach", "carrot", "pepper", "potato", "tomato", "lettuce",
+		"cucumber", "celery", "orange", "lime", "lemon", "avocado", "cabbage", "cranberry"}
+	for _, p := range produce {
+		if strings.Contains(name, p) {
+			return CategoryProduce
+		}
+	}
+
+	// Grains
+	grains := []string{"rice", "tortilla", "bread", "cereal", "oat"}
+	for _, g := range grains {
+		if strings.Contains(name, g) {
+			return CategoryGrains
+		}
+	}
+
+	// Fats & Oils
+	fats := []string{"oil", "lard", "tallow"}
+	for _, f := range fats {
+		if strings.Contains(name, f) {
+			return CategoryFats
+		}
+	}
+
+	// Seasonings
+	seasonings := []string{"salt", "pepper", "seasoning", "spice", "paprika", "cumin",
+		"oregano", "basil", "thyme", "garlic powder", "onion powder", "honey", "mustard", "sauce"}
+	for _, s := range seasonings {
+		if strings.Contains(name, s) {
+			return CategorySeasonings
+		}
+	}
+
+	return CategoryOther
+}
+
+// OrganizeShoppingList categorizes ingredients
+func OrganizeShoppingList(ingredients []Ingredient) CategorizedShoppingList {
+	var list CategorizedShoppingList
+
+	for _, ing := range ingredients {
+		switch CategorizeIngredient(ing) {
+		case CategoryProtein:
+			list.Protein = append(list.Protein, ing)
+		case CategoryDairy:
+			list.Dairy = append(list.Dairy, ing)
+		case CategoryProduce:
+			list.Produce = append(list.Produce, ing)
+		case CategoryGrains:
+			list.Grains = append(list.Grains, ing)
+		case CategoryFats:
+			list.Fats = append(list.Fats, ing)
+		case CategorySeasonings:
+			list.Seasonings = append(list.Seasonings, ing)
+		default:
+			list.Other = append(list.Other, ing)
+		}
+	}
+
+	return list
+}
+
+// MealTiming represents suggested timing for a meal
+type MealTiming struct {
+	MealNumber int
+	Time       string // e.g., "7:00 AM", "12:00 PM"
+	Recipe     Recipe
+}
+
+// GenerateMealTimings creates meal schedule with 3-5 hour spacing
+func GenerateMealTimings(meals []Meal, startHour int) []MealTiming {
+	var timings []MealTiming
+
+	// Space meals 4 hours apart (middle of 3-5 hour range)
+	hourSpacing := 4
+	hour := startHour
+
+	for i, meal := range meals {
+		// Format time
+		ampm := "AM"
+		displayHour := hour
+		if hour >= 12 {
+			ampm = "PM"
+			if hour > 12 {
+				displayHour = hour - 12
+			}
+		}
+		if displayHour == 0 {
+			displayHour = 12
+		}
+
+		timings = append(timings, MealTiming{
+			MealNumber: i + 1,
+			Time:       fmt.Sprintf("%d:00 %s", displayHour, ampm),
+			Recipe:     meal.Recipe,
+		})
+
+		hour += hourSpacing
+	}
+
+	return timings
+}
+
+// PrintCategorizedShoppingList displays organized shopping list
+func PrintCategorizedShoppingList(list CategorizedShoppingList) {
+	printCategory := func(name string, items []Ingredient) {
+		if len(items) > 0 {
+			fmt.Printf("\n  %s:\n", name)
+			for _, ing := range items {
+				fmt.Printf("    - %s: %s\n", ing.Name, ing.Quantity)
+			}
+		}
+	}
+
+	fmt.Println("\n=== Shopping List (by category) ===")
+	printCategory("Protein", list.Protein)
+	printCategory("Dairy", list.Dairy)
+	printCategory("Produce", list.Produce)
+	printCategory("Grains", list.Grains)
+	printCategory("Fats & Oils", list.Fats)
+	printCategory("Seasonings", list.Seasonings)
+	printCategory("Other", list.Other)
+}
+
+// PrintWeeklyPlan displays the weekly meal plan with meal timings
 func PrintWeeklyPlan(plan WeeklyMealPlan) {
 	fmt.Println("\n=== Weekly Meal Plan ===")
 	fmt.Printf("Profile: %.0f lbs, %s, %s\n",
@@ -1144,15 +1318,24 @@ func PrintWeeklyPlan(plan WeeklyMealPlan) {
 		plan.UserProfile.DailyFatTarget(),
 		plan.UserProfile.DailyCarbTarget())
 
+	// Determine start hour based on first meal (default 7 AM)
+	startHour := 7
+
 	for _, day := range plan.Days {
 		fmt.Printf("--- %s ---\n", day.DayName)
 		dayMacros := day.TotalMacros()
 		fmt.Printf("Day Total: P:%.0fg F:%.0fg C:%.0fg\n", dayMacros.Protein, dayMacros.Fat, dayMacros.Carbs)
 
-		for i, meal := range day.Meals {
+		// Generate meal timings for the day
+		timings := GenerateMealTimings(day.Meals, startHour)
+
+		for _, timing := range timings {
+			meal := day.Meals[timing.MealNumber-1]
 			mealMacros := meal.Macros()
-			fmt.Printf("  Meal %d: %s (%.1fx portion)\n", i+1, meal.Recipe.Name, meal.PortionSize)
-			fmt.Printf("          P:%.0fg F:%.0fg C:%.0fg\n", mealMacros.Protein, mealMacros.Fat, mealMacros.Carbs)
+			fmt.Printf("  [%s] Meal %d: %s (%.1fx portion)\n",
+				timing.Time, timing.MealNumber, meal.Recipe.Name, meal.PortionSize)
+			fmt.Printf("          P:%.0fg F:%.0fg C:%.0fg\n",
+				mealMacros.Protein, mealMacros.Fat, mealMacros.Carbs)
 		}
 		fmt.Println()
 	}
@@ -1166,12 +1349,10 @@ func PrintWeeklyPlan(plan WeeklyMealPlan) {
 	fmt.Printf("Daily Avg: P:%.0fg F:%.0fg C:%.0fg (%.0f cal)\n",
 		avgMacros.Protein, avgMacros.Fat, avgMacros.Carbs, avgMacros.Calories())
 
-	// Print shopping list
+	// Print categorized shopping list
 	if len(plan.ShoppingList) > 0 {
-		fmt.Println("\n=== Shopping List ===")
-		for _, ing := range plan.ShoppingList {
-			fmt.Printf("  - %s: %s\n", ing.Name, ing.Quantity)
-		}
+		categorized := OrganizeShoppingList(plan.ShoppingList)
+		PrintCategorizedShoppingList(categorized)
 	}
 }
 
