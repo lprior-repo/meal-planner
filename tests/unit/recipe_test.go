@@ -1648,3 +1648,287 @@ func TestSelectMealsForWeekOnlyCompliant(t *testing.T) {
 		}
 	}
 }
+
+// =============================================================================
+// Portion Calculator Types and Functions
+// =============================================================================
+
+// PortionCalculation represents a scaled recipe portion
+type PortionCalculation struct {
+	Recipe       Recipe
+	ScaleFactor  float64 // 1.0 = original serving, 1.5 = 150% of serving
+	ScaledMacros Macros
+	MeetsTarget  bool    // within 5% of target macros
+	Variance     float64 // percentage variance from target
+}
+
+// CalculatePortionForTarget scales a recipe to hit target macros
+// Prioritizes hitting protein target since it's the key constraint in Vertical Diet
+func CalculatePortionForTarget(recipe Recipe, targetMacros Macros) PortionCalculation {
+	result := PortionCalculation{
+		Recipe: recipe,
+	}
+
+	// If recipe has no macros defined, return 1.0 scale factor
+	if recipe.Macros.Protein == 0 && recipe.Macros.Fat == 0 && recipe.Macros.Carbs == 0 {
+		result.ScaleFactor = 1.0
+		result.ScaledMacros = recipe.Macros
+		result.MeetsTarget = false
+		result.Variance = 100.0 // No macro data
+		return result
+	}
+
+	// Calculate scale factor based on protein (primary macro)
+	if recipe.Macros.Protein > 0 && targetMacros.Protein > 0 {
+		result.ScaleFactor = targetMacros.Protein / recipe.Macros.Protein
+	} else if recipe.Macros.Calories() > 0 && targetMacros.Calories() > 0 {
+		// Fallback to calories if no protein
+		result.ScaleFactor = targetMacros.Calories() / recipe.Macros.Calories()
+	} else {
+		result.ScaleFactor = 1.0
+	}
+
+	// Cap scale factor to reasonable range (0.25x to 4x)
+	if result.ScaleFactor < 0.25 {
+		result.ScaleFactor = 0.25
+	}
+	if result.ScaleFactor > 4.0 {
+		result.ScaleFactor = 4.0
+	}
+
+	// Calculate scaled macros
+	result.ScaledMacros = Macros{
+		Protein: recipe.Macros.Protein * result.ScaleFactor,
+		Fat:     recipe.Macros.Fat * result.ScaleFactor,
+		Carbs:   recipe.Macros.Carbs * result.ScaleFactor,
+	}
+
+	// Calculate variance from target
+	proteinVar := 0.0
+	if targetMacros.Protein > 0 {
+		proteinVar = (result.ScaledMacros.Protein - targetMacros.Protein) / targetMacros.Protein
+		if proteinVar < 0 {
+			proteinVar = -proteinVar
+		}
+	}
+
+	fatVar := 0.0
+	if targetMacros.Fat > 0 {
+		fatVar = (result.ScaledMacros.Fat - targetMacros.Fat) / targetMacros.Fat
+		if fatVar < 0 {
+			fatVar = -fatVar
+		}
+	}
+
+	carbsVar := 0.0
+	if targetMacros.Carbs > 0 {
+		carbsVar = (result.ScaledMacros.Carbs - targetMacros.Carbs) / targetMacros.Carbs
+		if carbsVar < 0 {
+			carbsVar = -carbsVar
+		}
+	}
+
+	// Average variance across macros
+	result.Variance = (proteinVar + fatVar + carbsVar) / 3.0 * 100.0
+
+	// Check if within 5% tolerance (on protein primarily)
+	result.MeetsTarget = proteinVar <= 0.05
+
+	return result
+}
+
+// CalculateDailyPortions distributes daily macro targets across meals
+func CalculateDailyPortions(dailyMacros Macros, mealsPerDay int, recipes []Recipe) []PortionCalculation {
+	if mealsPerDay <= 0 {
+		return nil
+	}
+
+	// Divide daily macros evenly across meals
+	perMealMacros := Macros{
+		Protein: dailyMacros.Protein / float64(mealsPerDay),
+		Fat:     dailyMacros.Fat / float64(mealsPerDay),
+		Carbs:   dailyMacros.Carbs / float64(mealsPerDay),
+	}
+
+	var portions []PortionCalculation
+	for _, recipe := range recipes {
+		portions = append(portions, CalculatePortionForTarget(recipe, perMealMacros))
+	}
+
+	return portions
+}
+
+// =============================================================================
+// Portion Calculator Tests
+// =============================================================================
+
+func TestCalculatePortionForTarget(t *testing.T) {
+	tests := []struct {
+		name           string
+		recipe         Recipe
+		targetMacros   Macros
+		expectedScale  float64
+		expectMeets    bool
+		scaleTolerance float64
+	}{
+		{
+			name: "exact match - no scaling needed",
+			recipe: Recipe{
+				Name:   "Steak",
+				Macros: Macros{Protein: 50, Fat: 20, Carbs: 0},
+			},
+			targetMacros:   Macros{Protein: 50, Fat: 20, Carbs: 0},
+			expectedScale:  1.0,
+			expectMeets:    true,
+			scaleTolerance: 0.01,
+		},
+		{
+			name: "double protein needed",
+			recipe: Recipe{
+				Name:   "Small Steak",
+				Macros: Macros{Protein: 25, Fat: 10, Carbs: 0},
+			},
+			targetMacros:   Macros{Protein: 50, Fat: 20, Carbs: 0},
+			expectedScale:  2.0,
+			expectMeets:    true,
+			scaleTolerance: 0.01,
+		},
+		{
+			name: "half protein needed",
+			recipe: Recipe{
+				Name:   "Big Steak",
+				Macros: Macros{Protein: 100, Fat: 40, Carbs: 0},
+			},
+			targetMacros:   Macros{Protein: 50, Fat: 20, Carbs: 0},
+			expectedScale:  0.5,
+			expectMeets:    true,
+			scaleTolerance: 0.01,
+		},
+		{
+			name: "capped at minimum scale",
+			recipe: Recipe{
+				Name:   "Huge Steak",
+				Macros: Macros{Protein: 500, Fat: 200, Carbs: 0},
+			},
+			targetMacros:   Macros{Protein: 50, Fat: 20, Carbs: 0},
+			expectedScale:  0.25, // Would be 0.1, capped at 0.25
+			expectMeets:    false,
+			scaleTolerance: 0.01,
+		},
+		{
+			name: "capped at maximum scale",
+			recipe: Recipe{
+				Name:   "Tiny Steak",
+				Macros: Macros{Protein: 10, Fat: 5, Carbs: 0},
+			},
+			targetMacros:   Macros{Protein: 50, Fat: 20, Carbs: 0},
+			expectedScale:  4.0, // Would be 5.0, capped at 4.0
+			expectMeets:    false,
+			scaleTolerance: 0.01,
+		},
+		{
+			name: "recipe with no macros",
+			recipe: Recipe{
+				Name:   "No Data",
+				Macros: Macros{Protein: 0, Fat: 0, Carbs: 0},
+			},
+			targetMacros:   Macros{Protein: 50, Fat: 20, Carbs: 30},
+			expectedScale:  1.0,
+			expectMeets:    false,
+			scaleTolerance: 0.01,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := CalculatePortionForTarget(tt.recipe, tt.targetMacros)
+
+			scaleDiff := result.ScaleFactor - tt.expectedScale
+			if scaleDiff < 0 {
+				scaleDiff = -scaleDiff
+			}
+			if scaleDiff > tt.scaleTolerance {
+				t.Errorf("ScaleFactor = %v, want %v (tolerance %v)", result.ScaleFactor, tt.expectedScale, tt.scaleTolerance)
+			}
+
+			if result.MeetsTarget != tt.expectMeets {
+				t.Errorf("MeetsTarget = %v, want %v", result.MeetsTarget, tt.expectMeets)
+			}
+		})
+	}
+}
+
+func TestCalculateDailyPortions(t *testing.T) {
+	recipes := []Recipe{
+		{Name: "Steak", Macros: Macros{Protein: 50, Fat: 20, Carbs: 0}},
+		{Name: "Eggs", Macros: Macros{Protein: 20, Fat: 15, Carbs: 2}},
+		{Name: "Rice", Macros: Macros{Protein: 5, Fat: 1, Carbs: 45}},
+	}
+
+	dailyMacros := Macros{Protein: 200, Fat: 80, Carbs: 300}
+	mealsPerDay := 4
+
+	portions := CalculateDailyPortions(dailyMacros, mealsPerDay, recipes)
+
+	if len(portions) != len(recipes) {
+		t.Errorf("Got %d portions, want %d", len(portions), len(recipes))
+	}
+
+	// Each meal should target 50g protein
+	perMealProtein := dailyMacros.Protein / float64(mealsPerDay) // 50g
+
+	// Steak (50g protein) should need 1.0x scaling for 50g target
+	if portions[0].ScaleFactor < 0.9 || portions[0].ScaleFactor > 1.1 {
+		t.Errorf("Steak scale factor = %v, want ~1.0", portions[0].ScaleFactor)
+	}
+
+	// Eggs (20g protein) should need 2.5x scaling for 50g target
+	if portions[1].ScaleFactor < 2.4 || portions[1].ScaleFactor > 2.6 {
+		t.Errorf("Eggs scale factor = %v, want ~2.5", portions[1].ScaleFactor)
+	}
+
+	// Rice (5g protein) should be capped at 4.0x
+	if portions[2].ScaleFactor != 4.0 {
+		t.Errorf("Rice scale factor = %v, want 4.0 (capped)", portions[2].ScaleFactor)
+	}
+
+	_ = perMealProtein // used for documentation
+}
+
+func TestCalculateDailyPortionsZeroMeals(t *testing.T) {
+	recipes := []Recipe{{Name: "Test"}}
+	dailyMacros := Macros{Protein: 200}
+
+	portions := CalculateDailyPortions(dailyMacros, 0, recipes)
+
+	if portions != nil {
+		t.Errorf("Expected nil for 0 meals, got %v", portions)
+	}
+}
+
+func TestPortionCalculationVariance(t *testing.T) {
+	recipe := Recipe{
+		Name:   "Steak",
+		Macros: Macros{Protein: 50, Fat: 20, Carbs: 10},
+	}
+
+	// Target that won't perfectly match recipe ratios
+	targetMacros := Macros{Protein: 50, Fat: 30, Carbs: 20}
+
+	result := CalculatePortionForTarget(recipe, targetMacros)
+
+	// Scale factor should be 1.0 (protein matches)
+	if result.ScaleFactor != 1.0 {
+		t.Errorf("ScaleFactor = %v, want 1.0", result.ScaleFactor)
+	}
+
+	// Should meet protein target
+	if !result.MeetsTarget {
+		t.Errorf("Expected MeetsTarget = true")
+	}
+
+	// Variance should be non-zero due to fat/carbs mismatch
+	if result.Variance == 0 {
+		t.Errorf("Expected non-zero variance due to fat/carbs mismatch")
+	}
+}

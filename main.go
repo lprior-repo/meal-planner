@@ -761,6 +761,129 @@ func PrintMealSelectionSummary(result MealSelectionResult) {
 	}
 }
 
+// =============================================================================
+// Portion Calculator
+// =============================================================================
+
+// PortionCalculation represents a scaled recipe portion
+type PortionCalculation struct {
+	Recipe       Recipe
+	ScaleFactor  float64 // 1.0 = original serving, 1.5 = 150% of serving
+	ScaledMacros Macros
+	MeetsTarget  bool    // within 5% of target macros
+	Variance     float64 // percentage variance from target
+}
+
+// CalculatePortionForTarget scales a recipe to hit target macros
+// Prioritizes hitting protein target since it's the key constraint in Vertical Diet
+func CalculatePortionForTarget(recipe Recipe, targetMacros Macros) PortionCalculation {
+	result := PortionCalculation{
+		Recipe: recipe,
+	}
+
+	// If recipe has no macros defined, return 1.0 scale factor
+	if recipe.Macros.Protein == 0 && recipe.Macros.Fat == 0 && recipe.Macros.Carbs == 0 {
+		result.ScaleFactor = 1.0
+		result.ScaledMacros = recipe.Macros
+		result.MeetsTarget = false
+		result.Variance = 100.0 // No macro data
+		return result
+	}
+
+	// Calculate scale factor based on protein (primary macro)
+	if recipe.Macros.Protein > 0 && targetMacros.Protein > 0 {
+		result.ScaleFactor = targetMacros.Protein / recipe.Macros.Protein
+	} else if recipe.Macros.Calories() > 0 && targetMacros.Calories() > 0 {
+		// Fallback to calories if no protein
+		result.ScaleFactor = targetMacros.Calories() / recipe.Macros.Calories()
+	} else {
+		result.ScaleFactor = 1.0
+	}
+
+	// Cap scale factor to reasonable range (0.25x to 4x)
+	if result.ScaleFactor < 0.25 {
+		result.ScaleFactor = 0.25
+	}
+	if result.ScaleFactor > 4.0 {
+		result.ScaleFactor = 4.0
+	}
+
+	// Calculate scaled macros
+	result.ScaledMacros = Macros{
+		Protein: recipe.Macros.Protein * result.ScaleFactor,
+		Fat:     recipe.Macros.Fat * result.ScaleFactor,
+		Carbs:   recipe.Macros.Carbs * result.ScaleFactor,
+	}
+
+	// Calculate variance from target
+	proteinVar := 0.0
+	if targetMacros.Protein > 0 {
+		proteinVar = (result.ScaledMacros.Protein - targetMacros.Protein) / targetMacros.Protein
+		if proteinVar < 0 {
+			proteinVar = -proteinVar
+		}
+	}
+
+	fatVar := 0.0
+	if targetMacros.Fat > 0 {
+		fatVar = (result.ScaledMacros.Fat - targetMacros.Fat) / targetMacros.Fat
+		if fatVar < 0 {
+			fatVar = -fatVar
+		}
+	}
+
+	carbsVar := 0.0
+	if targetMacros.Carbs > 0 {
+		carbsVar = (result.ScaledMacros.Carbs - targetMacros.Carbs) / targetMacros.Carbs
+		if carbsVar < 0 {
+			carbsVar = -carbsVar
+		}
+	}
+
+	// Average variance across macros
+	result.Variance = (proteinVar + fatVar + carbsVar) / 3.0 * 100.0
+
+	// Check if within 5% tolerance (on protein primarily)
+	result.MeetsTarget = proteinVar <= 0.05
+
+	return result
+}
+
+// CalculateDailyPortions distributes daily macro targets across meals
+func CalculateDailyPortions(dailyMacros Macros, mealsPerDay int, recipes []Recipe) []PortionCalculation {
+	if mealsPerDay <= 0 {
+		return nil
+	}
+
+	// Divide daily macros evenly across meals
+	perMealMacros := Macros{
+		Protein: dailyMacros.Protein / float64(mealsPerDay),
+		Fat:     dailyMacros.Fat / float64(mealsPerDay),
+		Carbs:   dailyMacros.Carbs / float64(mealsPerDay),
+	}
+
+	var portions []PortionCalculation
+	for _, recipe := range recipes {
+		portions = append(portions, CalculatePortionForTarget(recipe, perMealMacros))
+	}
+
+	return portions
+}
+
+// PrintPortionCalculation displays the portion calculation result
+func PrintPortionCalculation(calc PortionCalculation) {
+	fmt.Printf("\n%s:\n", calc.Recipe.Name)
+	fmt.Printf("  Scale Factor: %.2fx\n", calc.ScaleFactor)
+	fmt.Printf("  Scaled Macros: P:%.0fg F:%.0fg C:%.0fg (%.0f cal)\n",
+		calc.ScaledMacros.Protein, calc.ScaledMacros.Fat, calc.ScaledMacros.Carbs,
+		calc.ScaledMacros.Calories())
+	if calc.MeetsTarget {
+		fmt.Printf("  ✓ Meets protein target (%.1f%% variance)\n", calc.Variance)
+	} else {
+		fmt.Printf("  ✗ Does not meet target (%.1f%% variance)\n", calc.Variance)
+	}
+}
+
 type EmailPayload struct {
 	From struct {
 		Email string `json:"email"`
