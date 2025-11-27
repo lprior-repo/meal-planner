@@ -1,0 +1,122 @@
+recipes:
+  - name: Basic White Rice
+    ingredients:
+      - name: white jasmine rice
+        quantity: 2 cups
+      - name: water
+        quantity: 4 cups
+      - name: salt
+        quantity: 1 tsp
+      - name: butter
+        quantity: 2 tbsp
+    instructions:
+      - Rinse rice until water runs clear.
+      - Combine rice, water, and salt in pot.
+      - Bring to boil, reduce heat, cover.
+      - Simmer 18 minutes.
+      - Fluff with fork, stir in butter.
+    macros:
+      protein: 8
+      fat: 24
+      carbs: 180
+    servings: 4
+    category: carbs
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Rice with Bone Broth
+    ingredients:
+      - name: white jasmine rice
+        quantity: 2 cups
+      - name: beef bone broth
+        quantity: 4 cups
+      - name: salt
+        quantity: 1/2 tsp
+    instructions:
+      - Rinse rice until water runs clear.
+      - Combine rice, broth, and salt in pot.
+      - Bring to boil, reduce heat, cover.
+      - Simmer 18 minutes.
+      - Fluff with fork before serving.
+    macros:
+      protein: 16
+      fat: 4
+      carbs: 180
+    servings: 4
+    category: carbs
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Butter Rice
+    ingredients:
+      - name: white jasmine rice
+        quantity: 2 cups
+      - name: water
+        quantity: 4 cups
+      - name: butter
+        quantity: 4 tbsp
+      - name: salt
+        quantity: 1 tsp
+    instructions:
+      - Rinse rice until water runs clear.
+      - Melt half the butter in pot.
+      - Add rice and toast 2 minutes.
+      - Add water and salt, bring to boil.
+      - Reduce heat, cover, simmer 18 minutes.
+      - Stir in remaining butter.
+    macros:
+      protein: 8
+      fat: 48
+      carbs: 180
+    servings: 4
+    category: carbs
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Rice Cereal (Cream of Rice)
+    ingredients:
+      - name: cream of rice cereal
+        quantity: 1 cup
+      - name: water
+        quantity: 4 cups
+      - name: salt
+        quantity: 1/4 tsp
+      - name: butter
+        quantity: 2 tbsp
+    instructions:
+      - Bring water and salt to boil.
+      - Slowly whisk in cream of rice.
+      - Reduce heat, stir constantly 3-4 minutes.
+      - Remove from heat, stir in butter.
+    macros:
+      protein: 8
+      fat: 24
+      carbs: 160
+    servings: 4
+    category: carbs
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Rice with Spinach
+    ingredients:
+      - name: cooked white rice
+        quantity: 2 cups
+      - name: fresh spinach
+        quantity: 2 cups
+      - name: butter
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1/2 tsp
+    instructions:
+      - Melt butter in large pan over medium heat.
+      - Add spinach, cook until wilted (2 minutes).
+      - Add cooked rice, toss to combine.
+      - Season with salt and serve.
+    macros:
+      protein: 6
+      fat: 24
+      carbs: 90
+    servings: 2
+    category: carbs
+    fodmap_level: low
+    vertical_compliant: true

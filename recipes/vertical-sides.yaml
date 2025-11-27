@@ -1,0 +1,143 @@
+recipes:
+  - name: Sauteed Spinach
+    ingredients:
+      - name: fresh spinach
+        quantity: 1 lb
+      - name: butter
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1/2 tsp
+    instructions:
+      - Melt butter in large pan over medium heat.
+      - Add spinach in batches, stirring until wilted.
+      - Season with salt and serve immediately.
+    macros:
+      protein: 12
+      fat: 24
+      carbs: 16
+    servings: 4
+    category: sides
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Roasted Bell Peppers
+    ingredients:
+      - name: bell peppers (red, yellow, orange)
+        quantity: 4
+      - name: olive oil
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tsp
+    instructions:
+      - Preheat oven to 400°F.
+      - Slice peppers, remove seeds.
+      - Toss with oil and salt.
+      - Roast 25-30 minutes until tender.
+    macros:
+      protein: 4
+      fat: 28
+      carbs: 28
+    servings: 4
+    category: sides
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Steamed Carrots
+    ingredients:
+      - name: carrots, sliced
+        quantity: 1 lb
+      - name: butter
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1/2 tsp
+    instructions:
+      - Steam carrots until tender, about 10 minutes.
+      - Drain and toss with butter.
+      - Season with salt and serve.
+    macros:
+      protein: 4
+      fat: 24
+      carbs: 44
+    servings: 4
+    category: sides
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Simple Baked Potato
+    ingredients:
+      - name: russet potatoes
+        quantity: 4
+      - name: butter
+        quantity: 4 tbsp
+      - name: salt
+        quantity: 1 tsp
+    instructions:
+      - Preheat oven to 400°F.
+      - Poke potatoes with fork several times.
+      - Bake directly on rack 45-60 minutes.
+      - Split open, add butter and salt.
+    macros:
+      protein: 16
+      fat: 48
+      carbs: 148
+    servings: 4
+    category: sides
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Orange Slices
+    ingredients:
+      - name: navel oranges
+        quantity: 4
+    instructions:
+      - Peel oranges.
+      - Separate into segments or slice into rounds.
+      - Serve fresh.
+    macros:
+      protein: 4
+      fat: 0
+      carbs: 60
+    servings: 4
+    category: sides
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Cranberry Juice (Unsweetened)
+    ingredients:
+      - name: unsweetened cranberry juice
+        quantity: 4 cups
+    instructions:
+      - Pour over ice if desired.
+      - Serve chilled.
+    macros:
+      protein: 0
+      fat: 0
+      carbs: 32
+    servings: 4
+    category: sides
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Simple Cucumber Salad
+    ingredients:
+      - name: cucumber, sliced
+        quantity: 2
+      - name: olive oil
+        quantity: 2 tbsp
+      - name: rice vinegar
+        quantity: 1 tbsp
+      - name: salt
+        quantity: 1/2 tsp
+    instructions:
+      - Slice cucumbers thin.
+      - Whisk oil, vinegar, and salt.
+      - Toss cucumbers with dressing.
+      - Chill 15 minutes before serving.
+    macros:
+      protein: 2
+      fat: 28
+      carbs: 8
+    servings: 4
+    category: sides
+    fodmap_level: low
+    vertical_compliant: true

@@ -257,7 +257,7 @@ var HighFODMAPIngredients = []string{
 	"broccoli",
 	"asparagus",
 	"mushroom",
-	"apple",
+	"apples",  // whole apples, not vinegar
 	"pear",
 	"mango",
 	"watermelon",
@@ -267,12 +267,30 @@ var HighFODMAPIngredients = []string{
 	"honey",
 }
 
+// LowFODMAPExceptions contains ingredients that contain high-FODMAP keywords
+// but are actually low-FODMAP and should not be flagged
+var LowFODMAPExceptions = []string{
+	"apple cider vinegar",
+	"garlic-infused oil",
+	"green onion tops", // green part only is low-FODMAP
+}
+
 // FODMAPAnalysis represents the result of analyzing a recipe for FODMAP content
 type FODMAPAnalysis struct {
 	Recipe               string   `json:"recipe"`
 	HighFODMAPFound      []string `json:"high_fodmap_found"`
 	IsLowFODMAP          bool     `json:"is_low_fodmap"`
 	CompliancePercentage float64  `json:"compliance_percentage"`
+}
+
+// isLowFODMAPException checks if an ingredient is a known low-FODMAP exception
+func isLowFODMAPException(ingredientLower string) bool {
+	for _, exception := range LowFODMAPExceptions {
+		if strings.Contains(ingredientLower, exception) {
+			return true
+		}
+	}
+	return false
 }
 
 // AnalyzeRecipeFODMAP checks a recipe's ingredients against high-FODMAP list
@@ -284,6 +302,12 @@ func AnalyzeRecipeFODMAP(recipe Recipe) FODMAPAnalysis {
 
 	for _, ingredient := range recipe.Ingredients {
 		ingredientLower := strings.ToLower(ingredient.Name)
+
+		// Skip known low-FODMAP exceptions
+		if isLowFODMAPException(ingredientLower) {
+			continue
+		}
+
 		for _, fodmap := range HighFODMAPIngredients {
 			if strings.Contains(ingredientLower, fodmap) {
 				analysis.HighFODMAPFound = append(analysis.HighFODMAPFound, ingredient.Name)

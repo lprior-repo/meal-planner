@@ -732,7 +732,7 @@ var HighFODMAPIngredients = []string{
 	"broccoli",
 	"asparagus",
 	"mushroom",
-	"apple",
+	"apples", // whole apples, not vinegar
 	"pear",
 	"mango",
 	"watermelon",
@@ -740,6 +740,24 @@ var HighFODMAPIngredients = []string{
 	"rye",
 	"barley",
 	"honey",
+}
+
+// LowFODMAPExceptions contains ingredients that contain high-FODMAP keywords
+// but are actually low-FODMAP and should not be flagged
+var LowFODMAPExceptions = []string{
+	"apple cider vinegar",
+	"garlic-infused oil",
+	"green onion tops", // green part only is low-FODMAP
+}
+
+// isLowFODMAPException checks if an ingredient is a known low-FODMAP exception
+func isLowFODMAPException(ingredientLower string) bool {
+	for _, exception := range LowFODMAPExceptions {
+		if strings.Contains(ingredientLower, exception) {
+			return true
+		}
+	}
+	return false
 }
 
 // FODMAPAnalysis represents the result of analyzing a recipe for FODMAP content
@@ -759,6 +777,12 @@ func AnalyzeRecipeFODMAP(recipe Recipe) FODMAPAnalysis {
 
 	for _, ingredient := range recipe.Ingredients {
 		ingredientLower := strings.ToLower(ingredient.Name)
+
+		// Skip known low-FODMAP exceptions
+		if isLowFODMAPException(ingredientLower) {
+			continue
+		}
+
 		for _, fodmap := range HighFODMAPIngredients {
 			if strings.Contains(ingredientLower, fodmap) {
 				analysis.HighFODMAPFound = append(analysis.HighFODMAPFound, ingredient.Name)
@@ -855,6 +879,92 @@ func TestAnalyzeAllRecipesFODMAP(t *testing.T) {
 	}
 	if analyses[1].IsLowFODMAP {
 		t.Error("Expected Garlic Dish to NOT be low FODMAP")
+	}
+}
+
+func TestVerticalDietRecipeWithMacros(t *testing.T) {
+	// Test that recipes with full Vertical Diet metadata parse correctly
+	recipe := Recipe{
+		Name: "Simple Grass-Fed Ribeye",
+		Ingredients: []Ingredient{
+			{Name: "grass-fed ribeye steak", Quantity: "12 oz"},
+			{Name: "salt", Quantity: "1 tsp"},
+			{Name: "black pepper", Quantity: "1/2 tsp"},
+			{Name: "butter", Quantity: "2 tbsp"},
+		},
+		Instructions: []string{
+			"Let steak come to room temperature for 30 minutes.",
+			"Season generously with salt and pepper.",
+			"Heat cast iron skillet over high heat.",
+			"Sear 4 minutes per side for medium-rare.",
+		},
+		Macros: Macros{
+			Protein: 62,
+			Fat:     48,
+			Carbs:   0,
+		},
+		Servings:          2,
+		Category:          "beef",
+		FodmapLevel:       "low",
+		VerticalCompliant: true,
+	}
+
+	// Test macros
+	if recipe.Macros.Protein != 62 {
+		t.Errorf("Expected protein 62, got %v", recipe.Macros.Protein)
+	}
+	if recipe.Macros.Fat != 48 {
+		t.Errorf("Expected fat 48, got %v", recipe.Macros.Fat)
+	}
+	if recipe.Macros.Carbs != 0 {
+		t.Errorf("Expected carbs 0, got %v", recipe.Macros.Carbs)
+	}
+
+	// Test calories calculation
+	expectedCalories := float64(62*4 + 48*9 + 0*4) // 248 + 432 = 680
+	if recipe.Macros.Calories() != expectedCalories {
+		t.Errorf("Expected calories %v, got %v", expectedCalories, recipe.Macros.Calories())
+	}
+
+	// Test vertical diet compliance
+	if !recipe.IsVerticalDietCompliant() {
+		t.Error("Recipe should be Vertical Diet compliant")
+	}
+
+	// Test FODMAP analysis - should be clean
+	analysis := AnalyzeRecipeFODMAP(recipe)
+	if !analysis.IsLowFODMAP {
+		t.Error("Grass-fed ribeye should be low FODMAP")
+	}
+	if analysis.CompliancePercentage != 100.0 {
+		t.Errorf("Expected 100%% compliance, got %v", analysis.CompliancePercentage)
+	}
+}
+
+func TestVerticalDietMealCategories(t *testing.T) {
+	// Test different category types
+	categories := []struct {
+		name     string
+		category string
+		valid    bool
+	}{
+		{"beef", "beef", true},
+		{"carbs", "carbs", true},
+		{"breakfast", "breakfast", true},
+		{"sides", "sides", true},
+	}
+
+	for _, tc := range categories {
+		t.Run(tc.name, func(t *testing.T) {
+			recipe := Recipe{
+				Category:          tc.category,
+				VerticalCompliant: true,
+				FodmapLevel:       "low",
+			}
+			if recipe.Category != tc.category {
+				t.Errorf("Expected category %s, got %s", tc.category, recipe.Category)
+			}
+		})
 	}
 }
 
