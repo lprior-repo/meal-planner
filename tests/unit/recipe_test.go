@@ -3,6 +3,7 @@ package unit
 import (
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -714,6 +715,198 @@ func TestRecipeTotalMacros(t *testing.T) {
 			got := tt.recipe.TotalMacros()
 			if got != tt.expected {
 				t.Errorf("Recipe.TotalMacros() = %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+// HighFODMAPIngredients contains ingredients that are high in FODMAPs
+// and should be avoided or limited on the Vertical Diet
+var HighFODMAPIngredients = []string{
+	"garlic",
+	"onion",
+	"beans",
+	"chickpea",
+	"lentil",
+	"cauliflower",
+	"broccoli",
+	"asparagus",
+	"mushroom",
+	"apple",
+	"pear",
+	"mango",
+	"watermelon",
+	"wheat",
+	"rye",
+	"barley",
+	"honey",
+}
+
+// FODMAPAnalysis represents the result of analyzing a recipe for FODMAP content
+type FODMAPAnalysis struct {
+	Recipe               string   // Recipe name
+	HighFODMAPFound      []string // List of high-FODMAP ingredients found
+	IsLowFODMAP          bool     // True if no high-FODMAP ingredients found
+	CompliancePercentage float64  // 0-100, higher means more compliant
+}
+
+// AnalyzeRecipeFODMAP checks a recipe's ingredients against high-FODMAP list
+func AnalyzeRecipeFODMAP(recipe Recipe) FODMAPAnalysis {
+	analysis := FODMAPAnalysis{
+		Recipe:      recipe.Name,
+		IsLowFODMAP: true,
+	}
+
+	for _, ingredient := range recipe.Ingredients {
+		ingredientLower := strings.ToLower(ingredient.Name)
+		for _, fodmap := range HighFODMAPIngredients {
+			if strings.Contains(ingredientLower, fodmap) {
+				analysis.HighFODMAPFound = append(analysis.HighFODMAPFound, ingredient.Name)
+				analysis.IsLowFODMAP = false
+				break
+			}
+		}
+	}
+
+	// Calculate compliance percentage
+	if len(recipe.Ingredients) == 0 {
+		analysis.CompliancePercentage = 100.0
+	} else {
+		compliantCount := len(recipe.Ingredients) - len(analysis.HighFODMAPFound)
+		analysis.CompliancePercentage = float64(compliantCount) / float64(len(recipe.Ingredients)) * 100
+	}
+
+	return analysis
+}
+
+func TestAnalyzeRecipeFODMAP(t *testing.T) {
+	tests := []struct {
+		name                 string
+		recipe               Recipe
+		expectedLowFODMAP    bool
+		expectedHighFODMAPs  []string
+		expectedCompliance   float64
+	}{
+		{
+			name: "clean recipe - no high-FODMAP",
+			recipe: Recipe{
+				Name: "Simple Steak",
+				Ingredients: []Ingredient{
+					{Name: "beef ribeye", Quantity: "2 lbs"},
+					{Name: "salt", Quantity: "1 tbsp"},
+					{Name: "pepper", Quantity: "1 tsp"},
+				},
+			},
+			expectedLowFODMAP:   true,
+			expectedHighFODMAPs: nil,
+			expectedCompliance:  100.0,
+		},
+		{
+			name: "recipe with garlic",
+			recipe: Recipe{
+				Name: "Garlic Steak",
+				Ingredients: []Ingredient{
+					{Name: "beef ribeye", Quantity: "2 lbs"},
+					{Name: "garlic cloves, minced", Quantity: "4"},
+					{Name: "salt", Quantity: "1 tbsp"},
+				},
+			},
+			expectedLowFODMAP:   false,
+			expectedHighFODMAPs: []string{"garlic cloves, minced"},
+			expectedCompliance:  66.66666666666667, // 2 out of 3 compliant
+		},
+		{
+			name: "recipe with onion and beans",
+			recipe: Recipe{
+				Name: "Bean Stew",
+				Ingredients: []Ingredient{
+					{Name: "ground beef", Quantity: "2 lbs"},
+					{Name: "onions, diced", Quantity: "2"},
+					{Name: "canned beans", Quantity: "2 cans"},
+					{Name: "salt", Quantity: "1 tbsp"},
+				},
+			},
+			expectedLowFODMAP:   false,
+			expectedHighFODMAPs: []string{"onions, diced", "canned beans"},
+			expectedCompliance:  50.0, // 2 out of 4 compliant
+		},
+		{
+			name: "recipe with broccoli",
+			recipe: Recipe{
+				Name: "Beef Stir-Fry",
+				Ingredients: []Ingredient{
+					{Name: "beef sirloin", Quantity: "2 lbs"},
+					{Name: "broccoli florets", Quantity: "2 cups"},
+					{Name: "soy sauce", Quantity: "1/4 cup"},
+				},
+			},
+			expectedLowFODMAP:   false,
+			expectedHighFODMAPs: []string{"broccoli florets"},
+			expectedCompliance:  66.66666666666667,
+		},
+		{
+			name: "recipe with honey",
+			recipe: Recipe{
+				Name: "Honey Glazed Ham",
+				Ingredients: []Ingredient{
+					{Name: "ham", Quantity: "6 lbs"},
+					{Name: "honey", Quantity: "1/2 cup"},
+					{Name: "brown sugar", Quantity: "1/4 cup"},
+				},
+			},
+			expectedLowFODMAP:   false,
+			expectedHighFODMAPs: []string{"honey"},
+			expectedCompliance:  66.66666666666667,
+		},
+		{
+			name: "recipe with apple",
+			recipe: Recipe{
+				Name: "Pork with Apples",
+				Ingredients: []Ingredient{
+					{Name: "pork chops", Quantity: "4"},
+					{Name: "apples, sliced", Quantity: "2"},
+					{Name: "cinnamon", Quantity: "1 tsp"},
+					{Name: "salt", Quantity: "1 tbsp"},
+				},
+			},
+			expectedLowFODMAP:   false,
+			expectedHighFODMAPs: []string{"apples, sliced"},
+			expectedCompliance:  75.0,
+		},
+		{
+			name:                "empty recipe",
+			recipe:              Recipe{Name: "Empty Recipe"},
+			expectedLowFODMAP:   true,
+			expectedHighFODMAPs: nil,
+			expectedCompliance:  100.0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			analysis := AnalyzeRecipeFODMAP(tt.recipe)
+
+			if analysis.IsLowFODMAP != tt.expectedLowFODMAP {
+				t.Errorf("IsLowFODMAP = %v, want %v", analysis.IsLowFODMAP, tt.expectedLowFODMAP)
+			}
+
+			if len(analysis.HighFODMAPFound) != len(tt.expectedHighFODMAPs) {
+				t.Errorf("HighFODMAPFound count = %d, want %d", len(analysis.HighFODMAPFound), len(tt.expectedHighFODMAPs))
+			}
+
+			for i, expected := range tt.expectedHighFODMAPs {
+				if i < len(analysis.HighFODMAPFound) && analysis.HighFODMAPFound[i] != expected {
+					t.Errorf("HighFODMAPFound[%d] = %s, want %s", i, analysis.HighFODMAPFound[i], expected)
+				}
+			}
+
+			// Use tolerance for float comparison
+			diff := analysis.CompliancePercentage - tt.expectedCompliance
+			if diff < 0 {
+				diff = -diff
+			}
+			if diff > 0.01 {
+				t.Errorf("CompliancePercentage = %v, want %v", analysis.CompliancePercentage, tt.expectedCompliance)
 			}
 		})
 	}
