@@ -2981,3 +2981,106 @@ func TestFormatWeeklyPlanEmailEmptyPlan(t *testing.T) {
 		t.Errorf("Empty plan email should still have header")
 	}
 }
+
+// =============================================================================
+// Email Sending Tests
+// =============================================================================
+
+// EmailPayload for email sending
+type EmailPayload struct {
+	From struct {
+		Email string `json:"email"`
+		Name  string `json:"name"`
+	} `json:"from"`
+	To []struct {
+		Email string `json:"email"`
+	} `json:"to"`
+	Subject  string `json:"subject"`
+	Text     string `json:"text"`
+	Category string `json:"category"`
+}
+
+// BuildWeeklyPlanEmailPayload creates an EmailPayload from a WeeklyMealPlan
+func BuildWeeklyPlanEmailPayload(plan WeeklyMealPlan, senderEmail, senderName, recipientEmail string) EmailPayload {
+	payload := EmailPayload{}
+	payload.From.Email = senderEmail
+	payload.From.Name = senderName
+	payload.To = []struct {
+		Email string `json:"email"`
+	}{
+		{Email: recipientEmail},
+	}
+	payload.Subject = "Weekly Meal Plan"
+	payload.Text = FormatWeeklyPlanEmail(plan)
+	payload.Category = "Meal Planning"
+	return payload
+}
+
+func TestBuildWeeklyPlanEmailPayload(t *testing.T) {
+	profile := UserProfile{
+		Bodyweight:    180,
+		ActivityLevel: "moderate",
+		Goal:          "maintain",
+		MealsPerDay:   3,
+	}
+
+	plan := WeeklyMealPlan{
+		UserProfile: profile,
+		Days: [7]DailyPlan{
+			{
+				DayName: "Monday",
+				Meals: []Meal{
+					{
+						Recipe:      Recipe{Name: "Test Recipe"},
+						PortionSize: 1.0,
+					},
+				},
+			},
+		},
+	}
+
+	payload := BuildWeeklyPlanEmailPayload(plan, "sender@test.com", "Test Sender", "recipient@test.com")
+
+	if payload.From.Email != "sender@test.com" {
+		t.Errorf("From email = %s, want sender@test.com", payload.From.Email)
+	}
+
+	if payload.From.Name != "Test Sender" {
+		t.Errorf("From name = %s, want Test Sender", payload.From.Name)
+	}
+
+	if len(payload.To) != 1 || payload.To[0].Email != "recipient@test.com" {
+		t.Errorf("To email incorrect")
+	}
+
+	if payload.Subject != "Weekly Meal Plan" {
+		t.Errorf("Subject = %s, want Weekly Meal Plan", payload.Subject)
+	}
+
+	if !strings.Contains(payload.Text, "Weekly Meal Plan") {
+		t.Errorf("Payload text should contain formatted plan")
+	}
+
+	if !strings.Contains(payload.Text, "Test Recipe") {
+		t.Errorf("Payload text should contain recipe name")
+	}
+
+	if payload.Category != "Meal Planning" {
+		t.Errorf("Category = %s, want Meal Planning", payload.Category)
+	}
+}
+
+func TestBuildWeeklyPlanEmailPayloadEmptyPlan(t *testing.T) {
+	plan := WeeklyMealPlan{}
+
+	payload := BuildWeeklyPlanEmailPayload(plan, "sender@test.com", "Sender", "recipient@test.com")
+
+	// Should still build valid payload
+	if payload.From.Email == "" {
+		t.Errorf("From email should not be empty")
+	}
+
+	if payload.Text == "" {
+		t.Errorf("Text should not be empty even for empty plan")
+	}
+}
