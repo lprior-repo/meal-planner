@@ -160,6 +160,114 @@ func (u UserProfile) MacrosPerMeal() Macros {
 	}
 }
 
+// Meal represents a single meal with its recipe and portion info
+type Meal struct {
+	Recipe      Recipe  `json:"recipe"`
+	PortionSize float64 `json:"portion_size"` // multiplier (1.0 = one serving)
+}
+
+// Macros returns the macros for this meal adjusted for portion size
+func (m Meal) Macros() Macros {
+	return Macros{
+		Protein: m.Recipe.Macros.Protein * m.PortionSize,
+		Fat:     m.Recipe.Macros.Fat * m.PortionSize,
+		Carbs:   m.Recipe.Macros.Carbs * m.PortionSize,
+	}
+}
+
+// DailyPlan represents meals for a single day
+type DailyPlan struct {
+	DayName string `json:"day_name"` // Monday, Tuesday, etc.
+	Meals   []Meal `json:"meals"`
+}
+
+// TotalMacros calculates sum of all meal macros for the day
+func (d DailyPlan) TotalMacros() Macros {
+	total := Macros{}
+	for _, meal := range d.Meals {
+		m := meal.Macros()
+		total.Protein += m.Protein
+		total.Fat += m.Fat
+		total.Carbs += m.Carbs
+	}
+	return total
+}
+
+// WeeklyMealPlan represents a full week of meal planning
+type WeeklyMealPlan struct {
+	Days         [7]DailyPlan `json:"days"`
+	ShoppingList []Ingredient `json:"shopping_list"`
+	UserProfile  UserProfile  `json:"user_profile"`
+}
+
+// TotalMacros calculates sum of all daily macros for the week
+func (w WeeklyMealPlan) TotalMacros() Macros {
+	total := Macros{}
+	for _, day := range w.Days {
+		m := day.TotalMacros()
+		total.Protein += m.Protein
+		total.Fat += m.Fat
+		total.Carbs += m.Carbs
+	}
+	return total
+}
+
+// AverageDailyMacros returns average macros per day
+func (w WeeklyMealPlan) AverageDailyMacros() Macros {
+	total := w.TotalMacros()
+	return Macros{
+		Protein: total.Protein / 7,
+		Fat:     total.Fat / 7,
+		Carbs:   total.Carbs / 7,
+	}
+}
+
+// GenerateShoppingList creates a consolidated shopping list from all meals
+func (w *WeeklyMealPlan) GenerateShoppingList() {
+	ingredientMap := make(map[string]Ingredient)
+	for _, day := range w.Days {
+		for _, meal := range day.Meals {
+			for _, ing := range meal.Recipe.Ingredients {
+				// Simple aggregation by name (quantities would need parsing for real use)
+				if existing, ok := ingredientMap[ing.Name]; ok {
+					existing.Quantity = existing.Quantity + ", " + ing.Quantity
+					ingredientMap[ing.Name] = existing
+				} else {
+					ingredientMap[ing.Name] = ing
+				}
+			}
+		}
+	}
+
+	w.ShoppingList = make([]Ingredient, 0, len(ingredientMap))
+	for _, ing := range ingredientMap {
+		w.ShoppingList = append(w.ShoppingList, ing)
+	}
+}
+
+// IsWithinMacroTargets checks if average daily macros are within tolerance of targets
+func (w WeeklyMealPlan) IsWithinMacroTargets(tolerance float64) bool {
+	avg := w.AverageDailyMacros()
+	targets := w.UserProfile.DailyMacroTargets()
+
+	proteinDiff := (avg.Protein - targets.Protein) / targets.Protein
+	fatDiff := (avg.Fat - targets.Fat) / targets.Fat
+	carbsDiff := (avg.Carbs - targets.Carbs) / targets.Carbs
+
+	// Make differences absolute
+	if proteinDiff < 0 {
+		proteinDiff = -proteinDiff
+	}
+	if fatDiff < 0 {
+		fatDiff = -fatDiff
+	}
+	if carbsDiff < 0 {
+		carbsDiff = -carbsDiff
+	}
+
+	return proteinDiff <= tolerance && fatDiff <= tolerance && carbsDiff <= tolerance
+}
+
 type EmailPayload struct {
 	From struct {
 		Email string `json:"email"`
