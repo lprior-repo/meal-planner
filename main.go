@@ -884,6 +884,136 @@ func PrintPortionCalculation(calc PortionCalculation) {
 	}
 }
 
+// =============================================================================
+// Weekly Plan Generator
+// =============================================================================
+
+// DayNames for weekly plan generation
+var DayNames = []string{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}
+
+// GenerateWeeklyPlan creates a 7-day meal plan using Vertical Diet distribution
+func GenerateWeeklyPlan(profile UserProfile, recipes []Recipe) WeeklyMealPlan {
+	plan := WeeklyMealPlan{
+		UserProfile: profile,
+	}
+
+	// Calculate daily macro targets from profile
+	dailyMacros := Macros{
+		Protein: profile.DailyProteinTarget(),
+		Fat:     profile.DailyFatTarget(),
+		Carbs:   profile.DailyCarbTarget(),
+	}
+
+	// Select meals for the week using Vertical Diet distribution
+	totalMeals := 7 * profile.MealsPerDay
+	selection := SelectMealsForWeek(recipes, totalMeals)
+
+	// Distribute selected recipes across days
+	recipeIdx := 0
+	for day := 0; day < 7; day++ {
+		dailyPlan := DailyPlan{
+			DayName: DayNames[day],
+			Meals:   make([]Meal, 0, profile.MealsPerDay),
+		}
+
+		// Per-meal macro target
+		perMealMacros := Macros{
+			Protein: dailyMacros.Protein / float64(profile.MealsPerDay),
+			Fat:     dailyMacros.Fat / float64(profile.MealsPerDay),
+			Carbs:   dailyMacros.Carbs / float64(profile.MealsPerDay),
+		}
+
+		for meal := 0; meal < profile.MealsPerDay && recipeIdx < len(selection.SelectedRecipes); meal++ {
+			recipe := selection.SelectedRecipes[recipeIdx]
+			recipeIdx++
+
+			// Calculate portion to hit macro target
+			portion := CalculatePortionForTarget(recipe, perMealMacros)
+
+			dailyPlan.Meals = append(dailyPlan.Meals, Meal{
+				Recipe:      recipe,
+				PortionSize: portion.ScaleFactor,
+			})
+		}
+
+		plan.Days[day] = dailyPlan
+	}
+
+	// Generate shopping list from all meals
+	plan.ShoppingList = GenerateShoppingList(plan)
+
+	return plan
+}
+
+// GenerateShoppingList aggregates ingredients from all meals in the plan
+func GenerateShoppingList(plan WeeklyMealPlan) []Ingredient {
+	ingredientMap := make(map[string]Ingredient)
+
+	for _, day := range plan.Days {
+		for _, meal := range day.Meals {
+			for _, ing := range meal.Recipe.Ingredients {
+				key := strings.ToLower(ing.Name)
+				if existing, ok := ingredientMap[key]; ok {
+					// Combine quantities (simplified - just append)
+					existing.Quantity = existing.Quantity + " + " + ing.Quantity
+					ingredientMap[key] = existing
+				} else {
+					ingredientMap[key] = ing
+				}
+			}
+		}
+	}
+
+	// Convert map to slice
+	var list []Ingredient
+	for _, ing := range ingredientMap {
+		list = append(list, ing)
+	}
+
+	return list
+}
+
+// PrintWeeklyPlan displays the weekly meal plan
+func PrintWeeklyPlan(plan WeeklyMealPlan) {
+	fmt.Println("\n=== Weekly Meal Plan ===")
+	fmt.Printf("Profile: %.0f lbs, %s, %s\n",
+		plan.UserProfile.Bodyweight, plan.UserProfile.ActivityLevel, plan.UserProfile.Goal)
+	fmt.Printf("Daily Targets: P:%.0fg F:%.0fg C:%.0fg\n\n",
+		plan.UserProfile.DailyProteinTarget(),
+		plan.UserProfile.DailyFatTarget(),
+		plan.UserProfile.DailyCarbTarget())
+
+	for _, day := range plan.Days {
+		fmt.Printf("--- %s ---\n", day.DayName)
+		dayMacros := day.TotalMacros()
+		fmt.Printf("Day Total: P:%.0fg F:%.0fg C:%.0fg\n", dayMacros.Protein, dayMacros.Fat, dayMacros.Carbs)
+
+		for i, meal := range day.Meals {
+			mealMacros := meal.Macros()
+			fmt.Printf("  Meal %d: %s (%.1fx portion)\n", i+1, meal.Recipe.Name, meal.PortionSize)
+			fmt.Printf("          P:%.0fg F:%.0fg C:%.0fg\n", mealMacros.Protein, mealMacros.Fat, mealMacros.Carbs)
+		}
+		fmt.Println()
+	}
+
+	// Print weekly totals
+	totalMacros := plan.TotalMacros()
+	avgMacros := plan.AverageDailyMacros()
+	fmt.Println("=== Weekly Summary ===")
+	fmt.Printf("Total:   P:%.0fg F:%.0fg C:%.0fg (%.0f cal)\n",
+		totalMacros.Protein, totalMacros.Fat, totalMacros.Carbs, totalMacros.Calories())
+	fmt.Printf("Daily Avg: P:%.0fg F:%.0fg C:%.0fg (%.0f cal)\n",
+		avgMacros.Protein, avgMacros.Fat, avgMacros.Carbs, avgMacros.Calories())
+
+	// Print shopping list
+	if len(plan.ShoppingList) > 0 {
+		fmt.Println("\n=== Shopping List ===")
+		for _, ing := range plan.ShoppingList {
+			fmt.Printf("  - %s: %s\n", ing.Name, ing.Quantity)
+		}
+	}
+}
+
 type EmailPayload struct {
 	From struct {
 		Email string `json:"email"`

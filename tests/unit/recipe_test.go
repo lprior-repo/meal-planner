@@ -1932,3 +1932,247 @@ func TestPortionCalculationVariance(t *testing.T) {
 		t.Errorf("Expected non-zero variance due to fat/carbs mismatch")
 	}
 }
+
+// =============================================================================
+// Weekly Plan Generator Types and Functions
+// =============================================================================
+
+var DayNames = []string{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}
+
+// GenerateWeeklyPlan creates a 7-day meal plan using Vertical Diet distribution
+func GenerateWeeklyPlan(profile UserProfile, recipes []Recipe) WeeklyMealPlan {
+	plan := WeeklyMealPlan{
+		UserProfile: profile,
+	}
+
+	// Calculate daily macro targets from profile
+	dailyMacros := Macros{
+		Protein: profile.DailyProteinTarget(),
+		Fat:     profile.DailyFatTarget(),
+		Carbs:   profile.DailyCarbTarget(),
+	}
+
+	// Select meals for the week using Vertical Diet distribution
+	totalMeals := 7 * profile.MealsPerDay
+	selection := SelectMealsForWeek(recipes, totalMeals)
+
+	// Distribute selected recipes across days
+	recipeIdx := 0
+	for day := 0; day < 7; day++ {
+		dailyPlan := DailyPlan{
+			DayName: DayNames[day],
+			Meals:   make([]Meal, 0, profile.MealsPerDay),
+		}
+
+		// Per-meal macro target
+		perMealMacros := Macros{
+			Protein: dailyMacros.Protein / float64(profile.MealsPerDay),
+			Fat:     dailyMacros.Fat / float64(profile.MealsPerDay),
+			Carbs:   dailyMacros.Carbs / float64(profile.MealsPerDay),
+		}
+
+		for meal := 0; meal < profile.MealsPerDay && recipeIdx < len(selection.SelectedRecipes); meal++ {
+			recipe := selection.SelectedRecipes[recipeIdx]
+			recipeIdx++
+
+			// Calculate portion to hit macro target
+			portion := CalculatePortionForTarget(recipe, perMealMacros)
+
+			dailyPlan.Meals = append(dailyPlan.Meals, Meal{
+				Recipe:      recipe,
+				PortionSize: portion.ScaleFactor,
+			})
+		}
+
+		plan.Days[day] = dailyPlan
+	}
+
+	// Generate shopping list from all meals
+	plan.ShoppingList = GenerateShoppingList(plan)
+
+	return plan
+}
+
+// GenerateShoppingList aggregates ingredients from all meals in the plan
+func GenerateShoppingList(plan WeeklyMealPlan) []Ingredient {
+	ingredientMap := make(map[string]Ingredient)
+
+	for _, day := range plan.Days {
+		for _, meal := range day.Meals {
+			for _, ing := range meal.Recipe.Ingredients {
+				key := strings.ToLower(ing.Name)
+				if existing, ok := ingredientMap[key]; ok {
+					// Combine quantities (simplified - just append)
+					existing.Quantity = existing.Quantity + " + " + ing.Quantity
+					ingredientMap[key] = existing
+				} else {
+					ingredientMap[key] = ing
+				}
+			}
+		}
+	}
+
+	// Convert map to slice
+	var list []Ingredient
+	for _, ing := range ingredientMap {
+		list = append(list, ing)
+	}
+
+	return list
+}
+
+// =============================================================================
+// Weekly Plan Generator Tests
+// =============================================================================
+
+func TestGenerateWeeklyPlan(t *testing.T) {
+	profile := UserProfile{
+		Bodyweight:    200,
+		ActivityLevel: "moderate",
+		Goal:          "gain",
+		MealsPerDay:   3,
+	}
+
+	recipes := []Recipe{
+		{Name: "Ribeye", Category: "beef", VerticalCompliant: true, FodmapLevel: "low",
+			Macros: Macros{Protein: 50, Fat: 30, Carbs: 0}},
+		{Name: "Ground Beef", Category: "beef", VerticalCompliant: true, FodmapLevel: "low",
+			Macros: Macros{Protein: 40, Fat: 25, Carbs: 0}},
+		{Name: "Brisket", Category: "beef", VerticalCompliant: true, FodmapLevel: "low",
+			Macros: Macros{Protein: 45, Fat: 20, Carbs: 0}},
+		{Name: "Pork Chops", Category: "pork", VerticalCompliant: true, FodmapLevel: "low",
+			Macros: Macros{Protein: 35, Fat: 15, Carbs: 0}},
+		{Name: "Salmon", Category: "seafood", VerticalCompliant: true, FodmapLevel: "low",
+			Macros: Macros{Protein: 35, Fat: 20, Carbs: 0}},
+		{Name: "Scrambled Eggs", Category: "vertical-breakfast", VerticalCompliant: true, FodmapLevel: "low",
+			Macros: Macros{Protein: 25, Fat: 20, Carbs: 2}},
+		{Name: "Chicken", Category: "chicken", VerticalCompliant: true, FodmapLevel: "low",
+			Macros: Macros{Protein: 40, Fat: 10, Carbs: 0}},
+	}
+
+	plan := GenerateWeeklyPlan(profile, recipes)
+
+	// Check all 7 days have meals
+	for i, day := range plan.Days {
+		if day.DayName != DayNames[i] {
+			t.Errorf("Day %d name = %s, want %s", i, day.DayName, DayNames[i])
+		}
+		if len(day.Meals) == 0 {
+			t.Errorf("Day %d has no meals", i)
+		}
+	}
+
+	// Check total macros are reasonable (should be around 7 * daily target)
+	totalMacros := plan.TotalMacros()
+	expectedWeeklyProtein := profile.DailyProteinTarget() * 7
+	// Allow 50% variance since we're limited by recipe pool
+	if totalMacros.Protein < expectedWeeklyProtein*0.5 {
+		t.Errorf("Weekly protein = %.0f, want >= %.0f", totalMacros.Protein, expectedWeeklyProtein*0.5)
+	}
+}
+
+func TestGenerateWeeklyPlanEmptyRecipes(t *testing.T) {
+	profile := UserProfile{
+		Bodyweight:    200,
+		ActivityLevel: "moderate",
+		Goal:          "maintain",
+		MealsPerDay:   3,
+	}
+
+	var recipes []Recipe
+
+	plan := GenerateWeeklyPlan(profile, recipes)
+
+	// Should still generate plan structure, just with empty meals
+	for i, day := range plan.Days {
+		if day.DayName != DayNames[i] {
+			t.Errorf("Day %d name = %s, want %s", i, day.DayName, DayNames[i])
+		}
+	}
+}
+
+func TestGenerateShoppingList(t *testing.T) {
+	plan := WeeklyMealPlan{
+		Days: [7]DailyPlan{
+			{
+				DayName: "Monday",
+				Meals: []Meal{
+					{
+						Recipe: Recipe{
+							Name: "Steak",
+							Ingredients: []Ingredient{
+								{Name: "ribeye steak", Quantity: "1 lb"},
+								{Name: "salt", Quantity: "1 tsp"},
+							},
+						},
+						PortionSize: 1.0,
+					},
+				},
+			},
+			{
+				DayName: "Tuesday",
+				Meals: []Meal{
+					{
+						Recipe: Recipe{
+							Name: "Steak Again",
+							Ingredients: []Ingredient{
+								{Name: "ribeye steak", Quantity: "1 lb"},
+								{Name: "pepper", Quantity: "1 tsp"},
+							},
+						},
+						PortionSize: 1.0,
+					},
+				},
+			},
+		},
+	}
+
+	list := GenerateShoppingList(plan)
+
+	if len(list) < 2 {
+		t.Errorf("Shopping list should have at least 2 unique ingredients, got %d", len(list))
+	}
+
+	// Check that ribeye steak quantities were combined
+	found := false
+	for _, ing := range list {
+		if strings.ToLower(ing.Name) == "ribeye steak" {
+			found = true
+			if !strings.Contains(ing.Quantity, "+") {
+				t.Errorf("Expected combined quantity for ribeye steak, got %s", ing.Quantity)
+			}
+		}
+	}
+	if !found {
+		t.Errorf("Expected to find ribeye steak in shopping list")
+	}
+}
+
+func TestWeeklyPlanMacroProgression(t *testing.T) {
+	// Test that weekly plan can be generated with different profile goals
+	profiles := []UserProfile{
+		{Bodyweight: 150, ActivityLevel: "sedentary", Goal: "lose", MealsPerDay: 3},
+		{Bodyweight: 200, ActivityLevel: "moderate", Goal: "maintain", MealsPerDay: 4},
+		{Bodyweight: 250, ActivityLevel: "active", Goal: "gain", MealsPerDay: 4},
+	}
+
+	recipes := []Recipe{
+		{Name: "Ribeye", Category: "beef", VerticalCompliant: true, FodmapLevel: "low",
+			Macros: Macros{Protein: 50, Fat: 30, Carbs: 0}},
+		{Name: "Eggs", Category: "vertical-breakfast", VerticalCompliant: true, FodmapLevel: "low",
+			Macros: Macros{Protein: 25, Fat: 20, Carbs: 2}},
+	}
+
+	var prevProtein float64
+	for i, profile := range profiles {
+		plan := GenerateWeeklyPlan(profile, recipes)
+		totalProtein := plan.TotalMacros().Protein
+
+		// Each larger profile should have more protein (with tolerance)
+		if i > 0 && totalProtein < prevProtein*0.8 {
+			t.Errorf("Profile %d protein (%.0f) should be >= profile %d protein (%.0f)",
+				i, totalProtein, i-1, prevProtein)
+		}
+		prevProtein = totalProtein
+	}
+}
