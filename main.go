@@ -245,6 +245,74 @@ func (w *WeeklyMealPlan) GenerateShoppingList() {
 	}
 }
 
+// HighFODMAPIngredients contains ingredients that are high in FODMAPs
+// and should be avoided or limited on the Vertical Diet
+var HighFODMAPIngredients = []string{
+	"garlic",
+	"onion",
+	"beans",
+	"chickpea",
+	"lentil",
+	"cauliflower",
+	"broccoli",
+	"asparagus",
+	"mushroom",
+	"apple",
+	"pear",
+	"mango",
+	"watermelon",
+	"wheat",
+	"rye",
+	"barley",
+	"honey",
+}
+
+// FODMAPAnalysis represents the result of analyzing a recipe for FODMAP content
+type FODMAPAnalysis struct {
+	Recipe               string   `json:"recipe"`
+	HighFODMAPFound      []string `json:"high_fodmap_found"`
+	IsLowFODMAP          bool     `json:"is_low_fodmap"`
+	CompliancePercentage float64  `json:"compliance_percentage"`
+}
+
+// AnalyzeRecipeFODMAP checks a recipe's ingredients against high-FODMAP list
+func AnalyzeRecipeFODMAP(recipe Recipe) FODMAPAnalysis {
+	analysis := FODMAPAnalysis{
+		Recipe:      recipe.Name,
+		IsLowFODMAP: true,
+	}
+
+	for _, ingredient := range recipe.Ingredients {
+		ingredientLower := strings.ToLower(ingredient.Name)
+		for _, fodmap := range HighFODMAPIngredients {
+			if strings.Contains(ingredientLower, fodmap) {
+				analysis.HighFODMAPFound = append(analysis.HighFODMAPFound, ingredient.Name)
+				analysis.IsLowFODMAP = false
+				break
+			}
+		}
+	}
+
+	// Calculate compliance percentage
+	if len(recipe.Ingredients) == 0 {
+		analysis.CompliancePercentage = 100.0
+	} else {
+		compliantCount := len(recipe.Ingredients) - len(analysis.HighFODMAPFound)
+		analysis.CompliancePercentage = float64(compliantCount) / float64(len(recipe.Ingredients)) * 100
+	}
+
+	return analysis
+}
+
+// AnalyzeAllRecipesFODMAP analyzes all recipes and returns compliance summary
+func AnalyzeAllRecipesFODMAP(recipes []Recipe) []FODMAPAnalysis {
+	analyses := make([]FODMAPAnalysis, len(recipes))
+	for i, recipe := range recipes {
+		analyses[i] = AnalyzeRecipeFODMAP(recipe)
+	}
+	return analyses
+}
+
 // IsWithinMacroTargets checks if average daily macros are within tolerance of targets
 func (w WeeklyMealPlan) IsWithinMacroTargets(tolerance float64) bool {
 	avg := w.AverageDailyMacros()
