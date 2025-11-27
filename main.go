@@ -313,6 +313,52 @@ func AnalyzeAllRecipesFODMAP(recipes []Recipe) []FODMAPAnalysis {
 	return analyses
 }
 
+// RecipeAuditSummary provides an overview of recipe compliance
+type RecipeAuditSummary struct {
+	TotalRecipes          int     `json:"total_recipes"`
+	CompliantRecipes      int     `json:"compliant_recipes"`
+	NonCompliantRecipes   int     `json:"non_compliant_recipes"`
+	OverallComplianceRate float64 `json:"overall_compliance_rate"`
+}
+
+// GenerateAuditSummary creates a summary from FODMAP analyses
+func GenerateAuditSummary(analyses []FODMAPAnalysis) RecipeAuditSummary {
+	summary := RecipeAuditSummary{
+		TotalRecipes: len(analyses),
+	}
+	for _, analysis := range analyses {
+		if analysis.IsLowFODMAP {
+			summary.CompliantRecipes++
+		} else {
+			summary.NonCompliantRecipes++
+		}
+	}
+	if summary.TotalRecipes > 0 {
+		summary.OverallComplianceRate = float64(summary.CompliantRecipes) / float64(summary.TotalRecipes) * 100
+	}
+	return summary
+}
+
+// PrintAuditReport outputs a formatted recipe compliance audit
+func PrintAuditReport(recipes []Recipe) {
+	analyses := AnalyzeAllRecipesFODMAP(recipes)
+	summary := GenerateAuditSummary(analyses)
+
+	fmt.Println("\n==== VERTICAL DIET RECIPE AUDIT ====")
+	fmt.Printf("Total Recipes: %d\n", summary.TotalRecipes)
+	fmt.Printf("Compliant (Low-FODMAP): %d (%.1f%%)\n", summary.CompliantRecipes, summary.OverallComplianceRate)
+	fmt.Printf("Non-Compliant: %d\n", summary.NonCompliantRecipes)
+	fmt.Println("\n--- Non-Compliant Recipes ---")
+
+	for _, analysis := range analyses {
+		if !analysis.IsLowFODMAP {
+			fmt.Printf("\n%s (%.0f%% compliant)\n", analysis.Recipe, analysis.CompliancePercentage)
+			fmt.Printf("  High-FODMAP ingredients: %v\n", analysis.HighFODMAPFound)
+		}
+	}
+	fmt.Println("\n==== END AUDIT ====")
+}
+
 // IsWithinMacroTargets checks if average daily macros are within tolerance of targets
 func (w WeeklyMealPlan) IsWithinMacroTargets(tolerance float64) bool {
 	avg := w.AverageDailyMacros()

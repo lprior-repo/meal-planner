@@ -779,6 +779,85 @@ func AnalyzeRecipeFODMAP(recipe Recipe) FODMAPAnalysis {
 	return analysis
 }
 
+// AnalyzeAllRecipesFODMAP analyzes all recipes and returns compliance summary
+func AnalyzeAllRecipesFODMAP(recipes []Recipe) []FODMAPAnalysis {
+	analyses := make([]FODMAPAnalysis, len(recipes))
+	for i, recipe := range recipes {
+		analyses[i] = AnalyzeRecipeFODMAP(recipe)
+	}
+	return analyses
+}
+
+// RecipeAuditSummary provides an overview of recipe compliance
+type RecipeAuditSummary struct {
+	TotalRecipes          int     `json:"total_recipes"`
+	CompliantRecipes      int     `json:"compliant_recipes"`
+	NonCompliantRecipes   int     `json:"non_compliant_recipes"`
+	OverallComplianceRate float64 `json:"overall_compliance_rate"`
+}
+
+// GenerateAuditSummary creates a summary from FODMAP analyses
+func GenerateAuditSummary(analyses []FODMAPAnalysis) RecipeAuditSummary {
+	summary := RecipeAuditSummary{
+		TotalRecipes: len(analyses),
+	}
+	for _, analysis := range analyses {
+		if analysis.IsLowFODMAP {
+			summary.CompliantRecipes++
+		} else {
+			summary.NonCompliantRecipes++
+		}
+	}
+	if summary.TotalRecipes > 0 {
+		summary.OverallComplianceRate = float64(summary.CompliantRecipes) / float64(summary.TotalRecipes) * 100
+	}
+	return summary
+}
+
+func TestGenerateAuditSummary(t *testing.T) {
+	analyses := []FODMAPAnalysis{
+		{Recipe: "Clean Steak", IsLowFODMAP: true},
+		{Recipe: "Garlic Chicken", IsLowFODMAP: false},
+		{Recipe: "Simple Rice", IsLowFODMAP: true},
+		{Recipe: "Bean Stew", IsLowFODMAP: false},
+		{Recipe: "Plain Beef", IsLowFODMAP: true},
+	}
+
+	summary := GenerateAuditSummary(analyses)
+
+	if summary.TotalRecipes != 5 {
+		t.Errorf("TotalRecipes = %d, want 5", summary.TotalRecipes)
+	}
+	if summary.CompliantRecipes != 3 {
+		t.Errorf("CompliantRecipes = %d, want 3", summary.CompliantRecipes)
+	}
+	if summary.NonCompliantRecipes != 2 {
+		t.Errorf("NonCompliantRecipes = %d, want 2", summary.NonCompliantRecipes)
+	}
+	if summary.OverallComplianceRate != 60.0 {
+		t.Errorf("OverallComplianceRate = %v, want 60.0", summary.OverallComplianceRate)
+	}
+}
+
+func TestAnalyzeAllRecipesFODMAP(t *testing.T) {
+	recipes := []Recipe{
+		{Name: "Clean Steak", Ingredients: []Ingredient{{Name: "beef", Quantity: "2 lbs"}}},
+		{Name: "Garlic Dish", Ingredients: []Ingredient{{Name: "garlic", Quantity: "4 cloves"}}},
+	}
+
+	analyses := AnalyzeAllRecipesFODMAP(recipes)
+
+	if len(analyses) != 2 {
+		t.Fatalf("Expected 2 analyses, got %d", len(analyses))
+	}
+	if !analyses[0].IsLowFODMAP {
+		t.Error("Expected Clean Steak to be low FODMAP")
+	}
+	if analyses[1].IsLowFODMAP {
+		t.Error("Expected Garlic Dish to NOT be low FODMAP")
+	}
+}
+
 func TestAnalyzeRecipeFODMAP(t *testing.T) {
 	tests := []struct {
 		name                 string
