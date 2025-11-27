@@ -1356,6 +1356,77 @@ func PrintWeeklyPlan(plan WeeklyMealPlan) {
 	}
 }
 
+// FormatWeeklyPlanEmail formats a weekly meal plan as email-friendly text
+func FormatWeeklyPlanEmail(plan WeeklyMealPlan) string {
+	var sb strings.Builder
+
+	sb.WriteString("=== Weekly Meal Plan ===\n\n")
+	sb.WriteString(fmt.Sprintf("Profile: %.0f lbs, %s, %s\n",
+		plan.UserProfile.Bodyweight, plan.UserProfile.ActivityLevel, plan.UserProfile.Goal))
+	sb.WriteString(fmt.Sprintf("Daily Targets: P:%.0fg F:%.0fg C:%.0fg\n\n",
+		plan.UserProfile.DailyProteinTarget(),
+		plan.UserProfile.DailyFatTarget(),
+		plan.UserProfile.DailyCarbTarget()))
+
+	startHour := 7
+
+	for _, day := range plan.Days {
+		if day.DayName == "" {
+			continue
+		}
+		sb.WriteString(fmt.Sprintf("--- %s ---\n", day.DayName))
+		dayMacros := day.TotalMacros()
+		sb.WriteString(fmt.Sprintf("Day Total: P:%.0fg F:%.0fg C:%.0fg\n", dayMacros.Protein, dayMacros.Fat, dayMacros.Carbs))
+
+		timings := GenerateMealTimings(day.Meals, startHour)
+
+		for _, timing := range timings {
+			if timing.MealNumber > len(day.Meals) {
+				continue
+			}
+			meal := day.Meals[timing.MealNumber-1]
+			mealMacros := meal.Macros()
+			sb.WriteString(fmt.Sprintf("  [%s] Meal %d: %s (%.1fx portion)\n",
+				timing.Time, timing.MealNumber, meal.Recipe.Name, meal.PortionSize))
+			sb.WriteString(fmt.Sprintf("          P:%.0fg F:%.0fg C:%.0fg\n",
+				mealMacros.Protein, mealMacros.Fat, mealMacros.Carbs))
+		}
+		sb.WriteString("\n")
+	}
+
+	// Weekly summary
+	totalMacros := plan.TotalMacros()
+	avgMacros := plan.AverageDailyMacros()
+	sb.WriteString("=== Weekly Summary ===\n")
+	sb.WriteString(fmt.Sprintf("Total:   P:%.0fg F:%.0fg C:%.0fg (%.0f cal)\n",
+		totalMacros.Protein, totalMacros.Fat, totalMacros.Carbs, totalMacros.Calories()))
+	sb.WriteString(fmt.Sprintf("Daily Avg: P:%.0fg F:%.0fg C:%.0fg (%.0f cal)\n\n",
+		avgMacros.Protein, avgMacros.Fat, avgMacros.Carbs, avgMacros.Calories()))
+
+	// Shopping list
+	if len(plan.ShoppingList) > 0 {
+		sb.WriteString("=== Shopping List ===\n")
+		categorized := OrganizeShoppingList(plan.ShoppingList)
+		formatCategory := func(name string, items []Ingredient) {
+			if len(items) > 0 {
+				sb.WriteString(fmt.Sprintf("\n  %s:\n", name))
+				for _, ing := range items {
+					sb.WriteString(fmt.Sprintf("    - %s: %s\n", ing.Name, ing.Quantity))
+				}
+			}
+		}
+		formatCategory("Protein", categorized.Protein)
+		formatCategory("Dairy", categorized.Dairy)
+		formatCategory("Produce", categorized.Produce)
+		formatCategory("Grains", categorized.Grains)
+		formatCategory("Fats & Oils", categorized.Fats)
+		formatCategory("Seasonings", categorized.Seasonings)
+		formatCategory("Other", categorized.Other)
+	}
+
+	return sb.String()
+}
+
 type EmailPayload struct {
 	From struct {
 		Email string `json:"email"`

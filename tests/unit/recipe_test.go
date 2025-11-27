@@ -2718,6 +2718,77 @@ func GenerateMealTimings(meals []Meal, startHour int) []MealTiming {
 	return timings
 }
 
+// FormatWeeklyPlanEmail formats a weekly meal plan as email-friendly text
+func FormatWeeklyPlanEmail(plan WeeklyMealPlan) string {
+	var sb strings.Builder
+
+	sb.WriteString("=== Weekly Meal Plan ===\n\n")
+	sb.WriteString(fmt.Sprintf("Profile: %.0f lbs, %s, %s\n",
+		plan.UserProfile.Bodyweight, plan.UserProfile.ActivityLevel, plan.UserProfile.Goal))
+	sb.WriteString(fmt.Sprintf("Daily Targets: P:%.0fg F:%.0fg C:%.0fg\n\n",
+		plan.UserProfile.DailyProteinTarget(),
+		plan.UserProfile.DailyFatTarget(),
+		plan.UserProfile.DailyCarbTarget()))
+
+	startHour := 7
+
+	for _, day := range plan.Days {
+		if day.DayName == "" {
+			continue
+		}
+		sb.WriteString(fmt.Sprintf("--- %s ---\n", day.DayName))
+		dayMacros := day.TotalMacros()
+		sb.WriteString(fmt.Sprintf("Day Total: P:%.0fg F:%.0fg C:%.0fg\n", dayMacros.Protein, dayMacros.Fat, dayMacros.Carbs))
+
+		timings := GenerateMealTimings(day.Meals, startHour)
+
+		for _, timing := range timings {
+			if timing.MealNumber > len(day.Meals) {
+				continue
+			}
+			meal := day.Meals[timing.MealNumber-1]
+			mealMacros := meal.Macros()
+			sb.WriteString(fmt.Sprintf("  [%s] Meal %d: %s (%.1fx portion)\n",
+				timing.Time, timing.MealNumber, meal.Recipe.Name, meal.PortionSize))
+			sb.WriteString(fmt.Sprintf("          P:%.0fg F:%.0fg C:%.0fg\n",
+				mealMacros.Protein, mealMacros.Fat, mealMacros.Carbs))
+		}
+		sb.WriteString("\n")
+	}
+
+	// Weekly summary
+	totalMacros := plan.TotalMacros()
+	avgMacros := plan.AverageDailyMacros()
+	sb.WriteString("=== Weekly Summary ===\n")
+	sb.WriteString(fmt.Sprintf("Total:   P:%.0fg F:%.0fg C:%.0fg (%.0f cal)\n",
+		totalMacros.Protein, totalMacros.Fat, totalMacros.Carbs, totalMacros.Calories()))
+	sb.WriteString(fmt.Sprintf("Daily Avg: P:%.0fg F:%.0fg C:%.0fg (%.0f cal)\n\n",
+		avgMacros.Protein, avgMacros.Fat, avgMacros.Carbs, avgMacros.Calories()))
+
+	// Shopping list
+	if len(plan.ShoppingList) > 0 {
+		sb.WriteString("=== Shopping List ===\n")
+		categorized := OrganizeShoppingList(plan.ShoppingList)
+		formatCategory := func(name string, items []Ingredient) {
+			if len(items) > 0 {
+				sb.WriteString(fmt.Sprintf("\n  %s:\n", name))
+				for _, ing := range items {
+					sb.WriteString(fmt.Sprintf("    - %s: %s\n", ing.Name, ing.Quantity))
+				}
+			}
+		}
+		formatCategory("Protein", categorized.Protein)
+		formatCategory("Dairy", categorized.Dairy)
+		formatCategory("Produce", categorized.Produce)
+		formatCategory("Grains", categorized.Grains)
+		formatCategory("Fats & Oils", categorized.Fats)
+		formatCategory("Seasonings", categorized.Seasonings)
+		formatCategory("Other", categorized.Other)
+	}
+
+	return sb.String()
+}
+
 // =============================================================================
 // Output Formatter Tests
 // =============================================================================
@@ -2826,5 +2897,87 @@ func TestGenerateMealTimingsFourMeals(t *testing.T) {
 		if timing.Time != expectedTimes[i] {
 			t.Errorf("Meal %d time = %s, want %s", i+1, timing.Time, expectedTimes[i])
 		}
+	}
+}
+
+// =============================================================================
+// Email Formatting Tests
+// =============================================================================
+
+func TestFormatWeeklyPlanEmail(t *testing.T) {
+	profile := UserProfile{
+		Bodyweight:    180,
+		ActivityLevel: "moderate",
+		Goal:          "maintain",
+		MealsPerDay:   3,
+	}
+
+	plan := WeeklyMealPlan{
+		UserProfile: profile,
+		Days: [7]DailyPlan{
+			{
+				DayName: "Monday",
+				Meals: []Meal{
+					{
+						Recipe: Recipe{
+							Name:   "Beef and Rice",
+							Macros: Macros{Protein: 40, Fat: 15, Carbs: 50},
+							Ingredients: []Ingredient{
+								{Name: "Ground Beef", Quantity: "8 oz"},
+								{Name: "White Rice", Quantity: "1 cup"},
+							},
+						},
+						PortionSize: 1.0,
+					},
+				},
+			},
+		},
+		ShoppingList: []Ingredient{
+			{Name: "Ground Beef", Quantity: "8 oz"},
+			{Name: "White Rice", Quantity: "1 cup"},
+		},
+	}
+
+	email := FormatWeeklyPlanEmail(plan)
+
+	// Test that email contains key sections
+	if !strings.Contains(email, "Weekly Meal Plan") {
+		t.Errorf("Email should contain 'Weekly Meal Plan' header")
+	}
+
+	if !strings.Contains(email, "Monday") {
+		t.Errorf("Email should contain day name 'Monday'")
+	}
+
+	if !strings.Contains(email, "Beef and Rice") {
+		t.Errorf("Email should contain recipe name")
+	}
+
+	if !strings.Contains(email, "Shopping List") {
+		t.Errorf("Email should contain shopping list section")
+	}
+
+	if !strings.Contains(email, "Ground Beef") {
+		t.Errorf("Email should contain shopping list items")
+	}
+
+	// Test macro targets are included
+	if !strings.Contains(email, "Daily Targets") {
+		t.Errorf("Email should contain daily macro targets")
+	}
+}
+
+func TestFormatWeeklyPlanEmailEmptyPlan(t *testing.T) {
+	plan := WeeklyMealPlan{}
+
+	email := FormatWeeklyPlanEmail(plan)
+
+	// Should still generate something, not panic
+	if email == "" {
+		t.Errorf("Empty plan should still generate email content")
+	}
+
+	if !strings.Contains(email, "Weekly Meal Plan") {
+		t.Errorf("Empty plan email should still have header")
 	}
 }
