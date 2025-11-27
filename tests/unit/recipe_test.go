@@ -212,6 +212,195 @@ func TestRecipeIsVerticalDietCompliant(t *testing.T) {
 	}
 }
 
+// UserProfile represents user data for macro calculations
+type UserProfile struct {
+	Bodyweight    float64 `json:"bodyweight"`     // in pounds
+	ActivityLevel string  `json:"activity_level"` // sedentary, moderate, active
+	Goal          string  `json:"goal"`           // gain, maintain, lose
+	MealsPerDay   int     `json:"meals_per_day"`  // typically 3-4
+}
+
+// DailyProteinTarget calculates protein target (0.8-1g per lb bodyweight)
+// Returns higher end for active/gain, lower for sedentary/lose
+func (u UserProfile) DailyProteinTarget() float64 {
+	multiplier := 0.9 // default moderate
+	if u.ActivityLevel == "active" || u.Goal == "gain" {
+		multiplier = 1.0
+	} else if u.ActivityLevel == "sedentary" || u.Goal == "lose" {
+		multiplier = 0.8
+	}
+	return u.Bodyweight * multiplier
+}
+
+// DailyFatTarget calculates fat target (0.3g per lb bodyweight)
+func (u UserProfile) DailyFatTarget() float64 {
+	return u.Bodyweight * 0.3
+}
+
+// DailyCarbTarget calculates carb target based on remaining calories
+// After protein (4cal/g) and fat (9cal/g), fill rest with carbs (4cal/g)
+func (u UserProfile) DailyCarbTarget() float64 {
+	totalCalories := u.DailyCalorieTarget()
+	proteinCalories := u.DailyProteinTarget() * 4
+	fatCalories := u.DailyFatTarget() * 9
+	remainingCalories := totalCalories - proteinCalories - fatCalories
+	if remainingCalories < 0 {
+		remainingCalories = 0
+	}
+	return remainingCalories / 4
+}
+
+// DailyCalorieTarget estimates daily calorie needs
+func (u UserProfile) DailyCalorieTarget() float64 {
+	// Base: 15 cal/lb for moderate activity
+	baseMultiplier := 15.0
+	if u.ActivityLevel == "sedentary" {
+		baseMultiplier = 12.0
+	} else if u.ActivityLevel == "active" {
+		baseMultiplier = 18.0
+	}
+
+	base := u.Bodyweight * baseMultiplier
+
+	// Adjust for goal
+	switch u.Goal {
+	case "gain":
+		return base * 1.15 // 15% surplus
+	case "lose":
+		return base * 0.85 // 15% deficit
+	default:
+		return base // maintain
+	}
+}
+
+// DailyMacroTargets returns complete macro targets
+func (u UserProfile) DailyMacroTargets() Macros {
+	return Macros{
+		Protein: u.DailyProteinTarget(),
+		Fat:     u.DailyFatTarget(),
+		Carbs:   u.DailyCarbTarget(),
+	}
+}
+
+// MacrosPerMeal divides daily targets by meals per day
+func (u UserProfile) MacrosPerMeal() Macros {
+	meals := u.MealsPerDay
+	if meals <= 0 {
+		meals = 3
+	}
+	daily := u.DailyMacroTargets()
+	return Macros{
+		Protein: daily.Protein / float64(meals),
+		Fat:     daily.Fat / float64(meals),
+		Carbs:   daily.Carbs / float64(meals),
+	}
+}
+
+func TestUserProfileDailyProteinTarget(t *testing.T) {
+	tests := []struct {
+		name     string
+		profile  UserProfile
+		expected float64
+	}{
+		{
+			name:     "active gain - max protein",
+			profile:  UserProfile{Bodyweight: 180, ActivityLevel: "active", Goal: "gain"},
+			expected: 180.0, // 1.0 * 180
+		},
+		{
+			name:     "sedentary lose - min protein",
+			profile:  UserProfile{Bodyweight: 180, ActivityLevel: "sedentary", Goal: "lose"},
+			expected: 144.0, // 0.8 * 180
+		},
+		{
+			name:     "moderate maintain - mid protein",
+			profile:  UserProfile{Bodyweight: 200, ActivityLevel: "moderate", Goal: "maintain"},
+			expected: 180.0, // 0.9 * 200
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.profile.DailyProteinTarget()
+			if got != tt.expected {
+				t.Errorf("DailyProteinTarget() = %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestUserProfileDailyFatTarget(t *testing.T) {
+	profile := UserProfile{Bodyweight: 180}
+	expected := 54.0 // 0.3 * 180
+	got := profile.DailyFatTarget()
+	if got != expected {
+		t.Errorf("DailyFatTarget() = %v, want %v", got, expected)
+	}
+}
+
+func TestUserProfileDailyCalorieTarget(t *testing.T) {
+	tests := []struct {
+		name     string
+		profile  UserProfile
+		expected float64
+	}{
+		{
+			name:     "moderate maintain",
+			profile:  UserProfile{Bodyweight: 180, ActivityLevel: "moderate", Goal: "maintain"},
+			expected: 2700.0, // 180 * 15
+		},
+		{
+			name:     "active gain",
+			profile:  UserProfile{Bodyweight: 180, ActivityLevel: "active", Goal: "gain"},
+			expected: 3726.0, // 180 * 18 * 1.15
+		},
+		{
+			name:     "sedentary lose",
+			profile:  UserProfile{Bodyweight: 180, ActivityLevel: "sedentary", Goal: "lose"},
+			expected: 1836.0, // 180 * 12 * 0.85
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.profile.DailyCalorieTarget()
+			// Use tolerance for floating point comparison
+			diff := got - tt.expected
+			if diff < 0 {
+				diff = -diff
+			}
+			if diff > 0.01 {
+				t.Errorf("DailyCalorieTarget() = %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestUserProfileMacrosPerMeal(t *testing.T) {
+	profile := UserProfile{
+		Bodyweight:    180,
+		ActivityLevel: "moderate",
+		Goal:          "maintain",
+		MealsPerDay:   4,
+	}
+
+	macros := profile.MacrosPerMeal()
+
+	// Daily: Protein=162 (0.9*180), Fat=54 (0.3*180)
+	// Calories: 2700, ProteinCal=648, FatCal=486, CarbCal=1566, Carbs=391.5
+	// Per meal (4): Protein=40.5, Fat=13.5, Carbs=97.875
+
+	expectedProtein := 40.5
+	expectedFat := 13.5
+
+	if macros.Protein != expectedProtein {
+		t.Errorf("MacrosPerMeal().Protein = %v, want %v", macros.Protein, expectedProtein)
+	}
+	if macros.Fat != expectedFat {
+		t.Errorf("MacrosPerMeal().Fat = %v, want %v", macros.Fat, expectedFat)
+	}
+}
+
 func TestRecipeTotalMacros(t *testing.T) {
 	tests := []struct {
 		name     string

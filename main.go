@@ -76,6 +76,90 @@ type RecipeCollection struct {
 	Recipes []Recipe `yaml:"recipes"`
 }
 
+// UserProfile represents user data for macro calculations
+type UserProfile struct {
+	Bodyweight    float64 `json:"bodyweight"`     // in pounds
+	ActivityLevel string  `json:"activity_level"` // sedentary, moderate, active
+	Goal          string  `json:"goal"`           // gain, maintain, lose
+	MealsPerDay   int     `json:"meals_per_day"`  // typically 3-4
+}
+
+// DailyProteinTarget calculates protein target (0.8-1g per lb bodyweight)
+// Returns higher end for active/gain, lower for sedentary/lose
+func (u UserProfile) DailyProteinTarget() float64 {
+	multiplier := 0.9 // default moderate
+	if u.ActivityLevel == "active" || u.Goal == "gain" {
+		multiplier = 1.0
+	} else if u.ActivityLevel == "sedentary" || u.Goal == "lose" {
+		multiplier = 0.8
+	}
+	return u.Bodyweight * multiplier
+}
+
+// DailyFatTarget calculates fat target (0.3g per lb bodyweight)
+func (u UserProfile) DailyFatTarget() float64 {
+	return u.Bodyweight * 0.3
+}
+
+// DailyCarbTarget calculates carb target based on remaining calories
+// After protein (4cal/g) and fat (9cal/g), fill rest with carbs (4cal/g)
+func (u UserProfile) DailyCarbTarget() float64 {
+	totalCalories := u.DailyCalorieTarget()
+	proteinCalories := u.DailyProteinTarget() * 4
+	fatCalories := u.DailyFatTarget() * 9
+	remainingCalories := totalCalories - proteinCalories - fatCalories
+	if remainingCalories < 0 {
+		remainingCalories = 0
+	}
+	return remainingCalories / 4
+}
+
+// DailyCalorieTarget estimates daily calorie needs
+func (u UserProfile) DailyCalorieTarget() float64 {
+	// Base: 15 cal/lb for moderate activity
+	baseMultiplier := 15.0
+	if u.ActivityLevel == "sedentary" {
+		baseMultiplier = 12.0
+	} else if u.ActivityLevel == "active" {
+		baseMultiplier = 18.0
+	}
+
+	base := u.Bodyweight * baseMultiplier
+
+	// Adjust for goal
+	switch u.Goal {
+	case "gain":
+		return base * 1.15 // 15% surplus
+	case "lose":
+		return base * 0.85 // 15% deficit
+	default:
+		return base // maintain
+	}
+}
+
+// DailyMacroTargets returns complete macro targets
+func (u UserProfile) DailyMacroTargets() Macros {
+	return Macros{
+		Protein: u.DailyProteinTarget(),
+		Fat:     u.DailyFatTarget(),
+		Carbs:   u.DailyCarbTarget(),
+	}
+}
+
+// MacrosPerMeal divides daily targets by meals per day
+func (u UserProfile) MacrosPerMeal() Macros {
+	meals := u.MealsPerDay
+	if meals <= 0 {
+		meals = 3
+	}
+	daily := u.DailyMacroTargets()
+	return Macros{
+		Protein: daily.Protein / float64(meals),
+		Fat:     daily.Fat / float64(meals),
+		Carbs:   daily.Carbs / float64(meals),
+	}
+}
+
 type EmailPayload struct {
 	From struct {
 		Email string `json:"email"`
