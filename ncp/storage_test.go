@@ -166,3 +166,36 @@ func TestGetNutritionHistory_PartialData(t *testing.T) {
 		t.Errorf("Expected 3 days of history, got %d", len(history))
 	}
 }
+
+func TestParseStateKey_Valid(t *testing.T) {
+	key := "ncp:state:2024-11-29"
+
+	date, err := ParseStateKey(key)
+	if err != nil {
+		t.Fatalf("ParseStateKey failed: %v", err)
+	}
+
+	if date.Year() != 2024 || date.Month() != 11 || date.Day() != 29 {
+		t.Errorf("ParseStateKey returned wrong date: %v", date)
+	}
+}
+
+func TestParseStateKey_Invalid(t *testing.T) {
+	tests := []struct {
+		name string
+		key  string
+	}{
+		{"too short", "ncp:state:"},
+		{"empty", ""},
+		{"wrong prefix", "other:2024-11-29"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := ParseStateKey(tt.key)
+			if err == nil {
+				t.Error("Expected error for invalid key, got nil")
+			}
+		})
+	}
+}

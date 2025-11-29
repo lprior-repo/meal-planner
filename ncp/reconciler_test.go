@@ -123,6 +123,91 @@ func TestIsWithinTolerance(t *testing.T) {
 	}
 }
 
+func TestMaxDeviation(t *testing.T) {
+	tests := []struct {
+		name      string
+		deviation DeviationResult
+		want      float64
+	}{
+		{
+			name: "protein is max",
+			deviation: DeviationResult{
+				ProteinPct: 30.0,
+				FatPct:     10.0,
+				CarbsPct:   20.0,
+			},
+			want: 30.0,
+		},
+		{
+			name: "fat is max",
+			deviation: DeviationResult{
+				ProteinPct: 10.0,
+				FatPct:     -40.0, // negative but larger absolute value
+				CarbsPct:   20.0,
+			},
+			want: 40.0,
+		},
+		{
+			name: "carbs is max",
+			deviation: DeviationResult{
+				ProteinPct: 10.0,
+				FatPct:     20.0,
+				CarbsPct:   -50.0,
+			},
+			want: 50.0,
+		},
+		{
+			name: "all equal",
+			deviation: DeviationResult{
+				ProteinPct: 25.0,
+				FatPct:     25.0,
+				CarbsPct:   25.0,
+			},
+			want: 25.0,
+		},
+		{
+			name: "all zero",
+			deviation: DeviationResult{
+				ProteinPct: 0.0,
+				FatPct:     0.0,
+				CarbsPct:   0.0,
+			},
+			want: 0.0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.deviation.MaxDeviation()
+			if !floatEquals(got, tt.want, 0.01) {
+				t.Errorf("MaxDeviation() = %f, want %f", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCalcPctDeviation_ZeroGoal(t *testing.T) {
+	// When goal is zero, should return 0 to avoid division by zero
+	goals := NutritionGoals{
+		DailyProtein:  0,
+		DailyFat:      0,
+		DailyCarbs:    0,
+		DailyCalories: 0,
+	}
+	actual := NutritionData{
+		Protein:  100,
+		Fat:      50,
+		Carbs:    200,
+		Calories: 2000,
+	}
+
+	result := CalculateDeviation(goals, actual)
+
+	if result.ProteinPct != 0 {
+		t.Errorf("Expected 0 for zero goal, got %f", result.ProteinPct)
+	}
+}
+
 // floatEquals compares two floats with a tolerance
 func floatEquals(a, b, tolerance float64) bool {
 	diff := a - b

@@ -154,3 +154,148 @@ func TestSelectTopRecipes_LimitExceedsAvailable(t *testing.T) {
 		t.Errorf("Expected 2 recipes (all available), got %d", len(top))
 	}
 }
+
+
+func TestGenerateReason_ProteinDeficit(t *testing.T) {
+	tests := []struct {
+		name        string
+		deviation   DeviationResult
+		macros      RecipeMacros
+		expected    string
+	}{
+		{
+			name:      "high protein deficit with high protein recipe",
+			deviation: DeviationResult{ProteinPct: -15},
+			macros:    RecipeMacros{Protein: 25},
+			expected:  "High protein to address deficit",
+		},
+		{
+			name:      "protein exactly at -10 boundary (not triggered)",
+			deviation: DeviationResult{ProteinPct: -10},
+			macros:    RecipeMacros{Protein: 25},
+			expected:  "Balanced macros",
+		},
+		{
+			name:      "protein below -10 but recipe has only 20g (not triggered)",
+			deviation: DeviationResult{ProteinPct: -15},
+			macros:    RecipeMacros{Protein: 20},
+			expected:  "Balanced macros",
+		},
+		{
+			name:      "protein below -10 and recipe has 21g (triggered)",
+			deviation: DeviationResult{ProteinPct: -11},
+			macros:    RecipeMacros{Protein: 21},
+			expected:  "High protein to address deficit",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := generateReason(tt.deviation, tt.macros)
+			if result != tt.expected {
+				t.Errorf("generateReason() = %q, want %q", result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestGenerateReason_CarbsDeficit(t *testing.T) {
+	tests := []struct {
+		name        string
+		deviation   DeviationResult
+		macros      RecipeMacros
+		expected    string
+	}{
+		{
+			name:      "high carbs deficit with high carb recipe",
+			deviation: DeviationResult{CarbsPct: -15},
+			macros:    RecipeMacros{Carbs: 40},
+			expected:  "Good carbs to address deficit",
+		},
+		{
+			name:      "carbs exactly at -10 boundary (not triggered)",
+			deviation: DeviationResult{CarbsPct: -10},
+			macros:    RecipeMacros{Carbs: 40},
+			expected:  "Balanced macros",
+		},
+		{
+			name:      "carbs below -10 but recipe has only 30g (not triggered)",
+			deviation: DeviationResult{CarbsPct: -15},
+			macros:    RecipeMacros{Carbs: 30},
+			expected:  "Balanced macros",
+		},
+		{
+			name:      "carbs below -10 and recipe has 31g (triggered)",
+			deviation: DeviationResult{CarbsPct: -11},
+			macros:    RecipeMacros{Carbs: 31},
+			expected:  "Good carbs to address deficit",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := generateReason(tt.deviation, tt.macros)
+			if result != tt.expected {
+				t.Errorf("generateReason() = %q, want %q", result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestGenerateReason_FatDeficit(t *testing.T) {
+	tests := []struct {
+		name        string
+		deviation   DeviationResult
+		macros      RecipeMacros
+		expected    string
+	}{
+		{
+			name:      "high fat deficit with high fat recipe",
+			deviation: DeviationResult{FatPct: -15},
+			macros:    RecipeMacros{Fat: 20},
+			expected:  "Healthy fats to address deficit",
+		},
+		{
+			name:      "fat exactly at -10 boundary (not triggered)",
+			deviation: DeviationResult{FatPct: -10},
+			macros:    RecipeMacros{Fat: 20},
+			expected:  "Balanced macros",
+		},
+		{
+			name:      "fat below -10 but recipe has only 15g (not triggered)",
+			deviation: DeviationResult{FatPct: -15},
+			macros:    RecipeMacros{Fat: 15},
+			expected:  "Balanced macros",
+		},
+		{
+			name:      "fat below -10 and recipe has 16g (triggered)",
+			deviation: DeviationResult{FatPct: -11},
+			macros:    RecipeMacros{Fat: 16},
+			expected:  "Healthy fats to address deficit",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := generateReason(tt.deviation, tt.macros)
+			if result != tt.expected {
+				t.Errorf("generateReason() = %q, want %q", result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestGenerateReason_Priority(t *testing.T) {
+	// When multiple deficits exist, protein should take priority
+	deviation := DeviationResult{
+		ProteinPct: -15,
+		CarbsPct:   -15,
+		FatPct:     -15,
+	}
+	macros := RecipeMacros{Protein: 30, Carbs: 40, Fat: 20}
+
+	result := generateReason(deviation, macros)
+	if result != "High protein to address deficit" {
+		t.Errorf("Expected protein priority, got %q", result)
+	}
+}
