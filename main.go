@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -945,28 +946,225 @@ func GenerateWeeklyPlan(profile UserProfile, recipes []Recipe) WeeklyMealPlan {
 	return plan
 }
 
+// =============================================================================
+// Unit Conversion System for Smart Quantity Aggregation
+// =============================================================================
+
+// UnitType represents the category of measurement unit
+type UnitType int
+
+const (
+	UnitTypeWeight UnitType = iota
+	UnitTypeVolume
+	UnitTypeCount
+	UnitTypeOther
+)
+
+// Unit represents a measurement unit with its conversion properties
+type Unit struct {
+	Name       string   // Canonical name (e.g., "oz", "tbsp")
+	Type       UnitType // Category for compatibility checking
+	BaseValue  float64  // Value in base unit (oz for weight, tsp for volume)
+	Aliases    []string // Alternative names (e.g., "ounce", "ounces")
+}
+
+// ParsedQuantity represents a parsed quantity with numeric value and unit
+type ParsedQuantity struct {
+	Amount float64
+	Unit   Unit
+	Raw    string // Original string for fallback
+}
+
+// Common units with their conversion values
+var (
+	// Weight units (base: oz)
+	UnitOz = Unit{Name: "oz", Type: UnitTypeWeight, BaseValue: 1, Aliases: []string{"ounce", "ounces"}}
+	UnitLb = Unit{Name: "lb", Type: UnitTypeWeight, BaseValue: 16, Aliases: []string{"lbs", "pound", "pounds"}}
+
+	// Volume units (base: tsp)
+	UnitTsp  = Unit{Name: "tsp", Type: UnitTypeVolume, BaseValue: 1, Aliases: []string{"teaspoon", "teaspoons"}}
+	UnitTbsp = Unit{Name: "tbsp", Type: UnitTypeVolume, BaseValue: 3, Aliases: []string{"tablespoon", "tablespoons"}}
+	UnitCup  = Unit{Name: "cup", Type: UnitTypeVolume, BaseValue: 48, Aliases: []string{"cups"}}
+
+	// Count units
+	UnitCount = Unit{Name: "", Type: UnitTypeCount, BaseValue: 1, Aliases: []string{}}
+
+	// Unknown/other
+	UnitUnknown = Unit{Name: "", Type: UnitTypeOther, BaseValue: 0, Aliases: []string{}}
+
+	// Unit lookup map for parsing
+	UnitLookup = map[string]Unit{
+		"oz": UnitOz, "ounce": UnitOz, "ounces": UnitOz,
+		"lb": UnitLb, "lbs": UnitLb, "pound": UnitLb, "pounds": UnitLb,
+		"tsp": UnitTsp, "teaspoon": UnitTsp, "teaspoons": UnitTsp,
+		"tbsp": UnitTbsp, "tablespoon": UnitTbsp, "tablespoons": UnitTbsp,
+		"cup": UnitCup, "cups": UnitCup,
+	}
+)
+
+// ParseQuantity parses a quantity string like "1 lb", "2.5 cups", "1/2 tsp" into ParsedQuantity
+func ParseQuantity(s string) ParsedQuantity {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return ParsedQuantity{Raw: s, Unit: UnitUnknown}
+	}
+
+	// Try to extract number and unit
+	// Handle formats: "1 lb", "1.5 oz", "1/2 tsp", "2 (6 oz) cans"
+	parts := strings.Fields(s)
+	if len(parts) == 0 {
+		return ParsedQuantity{Raw: s, Unit: UnitUnknown}
+	}
+
+	// Parse the numeric part (first token)
+	amount, ok := parseNumber(parts[0])
+	if !ok {
+		// Not a number, return as-is
+		return ParsedQuantity{Raw: s, Unit: UnitUnknown}
+	}
+
+	// If only a number (e.g., "4" for eggs), treat as count
+	if len(parts) == 1 {
+		return ParsedQuantity{Amount: amount, Unit: UnitCount, Raw: s}
+	}
+
+	// Try to match the second part as a unit
+	unitStr := strings.ToLower(parts[1])
+	if unit, ok := UnitLookup[unitStr]; ok {
+		return ParsedQuantity{Amount: amount, Unit: unit, Raw: s}
+	}
+
+	// Unit not recognized, return as count or other
+	return ParsedQuantity{Amount: amount, Unit: UnitUnknown, Raw: s}
+}
+
+// parseNumber parses a number string, handling fractions like "1/2"
+func parseNumber(s string) (float64, bool) {
+	s = strings.TrimSpace(s)
+
+	// Handle fractions like "1/2"
+	if strings.Contains(s, "/") {
+		parts := strings.Split(s, "/")
+		if len(parts) != 2 {
+			return 0, false
+		}
+		num, err1 := strconv.ParseFloat(strings.TrimSpace(parts[0]), 64)
+		denom, err2 := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
+		if err1 != nil || err2 != nil || denom == 0 {
+			return 0, false
+		}
+		return num / denom, true
+	}
+
+	// Handle decimals and integers
+	val, err := strconv.ParseFloat(s, 64)
+	return val, err == nil
+}
+
+// CanConvert checks if two units can be converted to each other
+func CanConvert(a, b Unit) bool {
+	return a.Type == b.Type && a.Type != UnitTypeOther
+}
+
+// ConvertToBase converts a quantity to its base unit (oz for weight, tsp for volume)
+func ConvertToBase(q ParsedQuantity) float64 {
+	return q.Amount * q.Unit.BaseValue
+}
+
+// AggregateQuantities combines multiple quantities of the same ingredient
+func AggregateQuantities(quantities []ParsedQuantity) string {
+	if len(quantities) == 0 {
+		return ""
+	}
+	if len(quantities) == 1 {
+		return quantities[0].Raw
+	}
+
+	// Group by unit type
+	weightTotal := 0.0
+	volumeTotal := 0.0
+	countTotal := 0.0
+	var otherParts []string
+
+	for _, q := range quantities {
+		switch q.Unit.Type {
+		case UnitTypeWeight:
+			weightTotal += ConvertToBase(q) // Convert to oz
+		case UnitTypeVolume:
+			volumeTotal += ConvertToBase(q) // Convert to tsp
+		case UnitTypeCount:
+			countTotal += q.Amount
+		default:
+			otherParts = append(otherParts, q.Raw)
+		}
+	}
+
+	var result []string
+
+	// Format weight (prefer lb for >= 16 oz)
+	if weightTotal > 0 {
+		if weightTotal >= 16 {
+			lbs := int(weightTotal) / 16
+			oz := weightTotal - float64(lbs*16)
+			if oz > 0 {
+				result = append(result, fmt.Sprintf("%d lb %.0f oz", lbs, oz))
+			} else {
+				result = append(result, fmt.Sprintf("%d lb", lbs))
+			}
+		} else {
+			result = append(result, fmt.Sprintf("%.0f oz", weightTotal))
+		}
+	}
+
+	// Format volume (prefer cups for >= 48 tsp, tbsp for >= 3 tsp)
+	if volumeTotal > 0 {
+		if volumeTotal >= 48 {
+			cups := volumeTotal / 48
+			result = append(result, fmt.Sprintf("%.1f cups", cups))
+		} else if volumeTotal >= 3 {
+			tbsp := volumeTotal / 3
+			result = append(result, fmt.Sprintf("%.0f tbsp", tbsp))
+		} else {
+			result = append(result, fmt.Sprintf("%.0f tsp", volumeTotal))
+		}
+	}
+
+	// Format count
+	if countTotal > 0 {
+		result = append(result, fmt.Sprintf("%.0f", countTotal))
+	}
+
+	// Add other parts that couldn't be parsed
+	result = append(result, otherParts...)
+
+	return strings.Join(result, " + ")
+}
+
 // GenerateShoppingList aggregates ingredients from all meals in the plan
+// Uses smart quantity aggregation to combine compatible units (e.g., "1 lb + 8 oz" -> "1 lb 8 oz")
 func GenerateShoppingList(plan WeeklyMealPlan) []Ingredient {
+	// Track all quantities for each ingredient
+	quantityMap := make(map[string][]ParsedQuantity)
 	ingredientMap := make(map[string]Ingredient)
 
 	for _, day := range plan.Days {
 		for _, meal := range day.Meals {
 			for _, ing := range meal.Recipe.Ingredients {
 				key := strings.ToLower(ing.Name)
-				if existing, ok := ingredientMap[key]; ok {
-					// Combine quantities (simplified - just append)
-					existing.Quantity = existing.Quantity + " + " + ing.Quantity
-					ingredientMap[key] = existing
-				} else {
+				parsed := ParseQuantity(ing.Quantity)
+				quantityMap[key] = append(quantityMap[key], parsed)
+				if _, ok := ingredientMap[key]; !ok {
 					ingredientMap[key] = ing
 				}
 			}
 		}
 	}
 
-	// Convert map to slice
+	// Convert map to slice with aggregated quantities
 	var list []Ingredient
-	for _, ing := range ingredientMap {
+	for key, ing := range ingredientMap {
+		quantities := quantityMap[key]
+		ing.Quantity = AggregateQuantities(quantities)
 		list = append(list, ing)
 	}
 
