@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"math/rand"
@@ -14,7 +15,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dgraph-io/badger/v4"
 	"github.com/joho/godotenv"
+	"github.com/lprior-repo/demo-web-app/ncp"
 	"gopkg.in/yaml.v3"
 )
 
@@ -1851,7 +1854,197 @@ func sendEmail(ctx context.Context, payload EmailPayload) error {
 	return nil
 }
 
+
+// NCP CLI flags
+var (
+	ncpSync      = flag.Bool("ncp-sync", false, "Sync nutrition data from Cronometer")
+	ncpStatus    = flag.Bool("ncp-status", false, "Show current nutrition status vs goals")
+	ncpReconcile = flag.Bool("ncp-reconcile", false, "Run full reconciliation and suggest adjustments")
+	ncpDays      = flag.Int("ncp-days", 7, "Number of days to analyze for NCP commands")
+)
+
+// handleNCPCommands processes NCP-related CLI flags
+// Returns true if an NCP command was handled, false to continue normal execution
+func handleNCPCommands(bdb *BadgerDatabase) bool {
+	if !*ncpSync && !*ncpStatus && !*ncpReconcile {
+		return false
+	}
+
+	// Load NCP config from environment
+	if err := loadEnv(); err != nil {
+		fmt.Println("Error loading environment:", err)
+		return true
+	}
+
+	config := ncp.CronometerConfig{
+		Username: os.Getenv("CRONOMETER_USERNAME"),
+		Password: os.Getenv("CRONOMETER_PASSWORD"),
+	}
+
+	// Get BadgerDB for NCP storage
+	ncpDB, err := InitNCPDatabase()
+	if err != nil {
+		fmt.Printf("Failed to initialize NCP database: %v\n", err)
+		return true
+	}
+	defer ncpDB.Close()
+
+	if *ncpSync {
+		handleNCPSync(ncpDB, config)
+		return true
+	}
+
+	if *ncpStatus {
+		handleNCPStatus(ncpDB, bdb)
+		return true
+	}
+
+	if *ncpReconcile {
+		handleNCPReconcile(ncpDB, bdb)
+		return true
+	}
+
+	return false
+}
+
+func handleNCPSync(db *badger.DB, config ncp.CronometerConfig) {
+	fmt.Println("Syncing nutrition data from Cronometer...")
+
+	endDate := time.Now()
+	startDate := endDate.AddDate(0, 0, -*ncpDays)
+
+	if err := ncp.SyncNutritionData(db, config, startDate, endDate); err != nil {
+		fmt.Printf("Sync failed: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Successfully synced %d days of nutrition data.\n", *ncpDays)
+}
+
+func handleNCPStatus(ncpDB *badger.DB, bdb *BadgerDatabase) {
+	fmt.Println("Fetching nutrition status...")
+
+	// Get history
+	endDate := time.Now()
+	startDate := endDate.AddDate(0, 0, -*ncpDays)
+
+	history, err := ncp.GetNutritionHistory(ncpDB, startDate, endDate)
+	if err != nil {
+		fmt.Printf("Failed to get nutrition history: %v\n", err)
+		return
+	}
+
+	if len(history) == 0 {
+		fmt.Println("No nutrition data found. Run --ncp-sync first.")
+		return
+	}
+
+	// Get goals from environment or use defaults
+	goals := getNCPGoals()
+
+	// Get recipes for suggestions
+	recipes := getNCPRecipes(bdb)
+
+	// Run reconciliation
+	result := ncp.RunReconciliation(history, goals, recipes, 25.0, 3)
+
+	// Output status
+	fmt.Println(ncp.FormatStatusOutput(result))
+}
+
+func handleNCPReconcile(ncpDB *badger.DB, bdb *BadgerDatabase) {
+	fmt.Println("Running nutrition reconciliation...")
+
+	// Get history
+	endDate := time.Now()
+	startDate := endDate.AddDate(0, 0, -*ncpDays)
+
+	history, err := ncp.GetNutritionHistory(ncpDB, startDate, endDate)
+	if err != nil {
+		fmt.Printf("Failed to get nutrition history: %v\n", err)
+		return
+	}
+
+	if len(history) == 0 {
+		fmt.Println("No nutrition data found. Run --ncp-sync first.")
+		return
+	}
+
+	// Get goals from environment or use defaults
+	goals := getNCPGoals()
+
+	// Get recipes for suggestions
+	recipes := getNCPRecipes(bdb)
+
+	// Run reconciliation
+	result := ncp.RunReconciliation(history, goals, recipes, 25.0, 5)
+
+	// Output reconciliation result
+	fmt.Println(ncp.FormatReconcileOutput(result))
+}
+
+func getNCPGoals() ncp.NutritionGoals {
+	// Try to get from environment, use sensible defaults
+	protein := parseFloatEnv("NCP_DAILY_PROTEIN", 180.0)
+	fat := parseFloatEnv("NCP_DAILY_FAT", 60.0)
+	carbs := parseFloatEnv("NCP_DAILY_CARBS", 250.0)
+	calories := parseFloatEnv("NCP_DAILY_CALORIES", 2500.0)
+
+	return ncp.NutritionGoals{
+		DailyProtein:  protein,
+		DailyFat:      fat,
+		DailyCarbs:    carbs,
+		DailyCalories: calories,
+	}
+}
+
+func parseFloatEnv(key string, defaultVal float64) float64 {
+	if val := os.Getenv(key); val != "" {
+		if f, err := strconv.ParseFloat(val, 64); err == nil {
+			return f
+		}
+	}
+	return defaultVal
+}
+
+func getNCPRecipes(bdb *BadgerDatabase) []ncp.ScoredRecipe {
+	allRecipes, err := bdb.GetAllRecipes()
+	if err != nil {
+		return []ncp.ScoredRecipe{}
+	}
+
+	scored := make([]ncp.ScoredRecipe, len(allRecipes))
+	for i, r := range allRecipes {
+		scored[i] = ncp.ScoredRecipe{
+			Name: r.Name,
+			Macros: ncp.RecipeMacros{
+				Protein:  r.Macros.Protein,
+				Fat:      r.Macros.Fat,
+				Carbs:    r.Macros.Carbs,
+				Calories: r.Macros.Calories(),
+			},
+		}
+	}
+	return scored
+}
+
+// InitNCPDatabase initializes BadgerDB for NCP data storage
+func InitNCPDatabase() (*badger.DB, error) {
+	ncpPath := filepath.Join(".", "ncp_data")
+	if err := os.MkdirAll(ncpPath, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create NCP data directory: %w", err)
+	}
+
+	opts := badger.DefaultOptions(ncpPath)
+	opts.Logger = nil
+
+	return badger.Open(opts)
+}
+
 func main() {
+	// Parse command line flags
+	flag.Parse()
+
 	// Initialize application
 	if err := InitializeApp(); err != nil {
 		fmt.Printf("Initialization failed: %v\n", err)
@@ -1865,6 +2058,11 @@ func main() {
 		return
 	}
 	defer bdb.Close()
+
+	// Handle NCP commands if specified
+	if handleNCPCommands(bdb) {
+		return
+	}
 
 	allRecipes, err := bdb.GetAllRecipes()
 	if err != nil {
