@@ -98,3 +98,129 @@ recipes:
     category: chicken
     fodmap_level: low
     vertical_compliant: true
+
+  # === NEW SIMPLE HIGH-PROTEIN CHICKEN RECIPES ===
+  # ≤5 ingredients, ≤10 min prep, lean protein focus
+  # Calories = protein×4 + carbs×4 + fat×9
+
+  - name: Pan-Seared Chicken Breast
+    ingredients:
+      - name: chicken breast
+        quantity: 1 lb (2 breasts)
+      - name: avocado oil
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tsp
+      - name: black pepper
+        quantity: 1/2 tsp
+    instructions:
+      - Pound chicken to even thickness.
+      - Season with salt and pepper.
+      - Heat oil in skillet over medium-high.
+      - Cook 6-7 minutes per side until internal temp 165°F.
+      - Rest 5 minutes before slicing.
+    macros:
+      protein: 62
+      fat: 32
+      carbs: 0
+    servings: 2
+    category: chicken
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Simple Roast Chicken Thighs
+    ingredients:
+      - name: bone-in chicken thighs
+        quantity: 2 lbs (4 thighs)
+      - name: olive oil
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tbsp
+      - name: black pepper
+        quantity: 1 tsp
+    instructions:
+      - Preheat oven to 425°F.
+      - Pat thighs dry, rub with oil.
+      - Season generously with salt and pepper.
+      - Roast skin-side up 35-40 minutes until crispy.
+    macros:
+      protein: 80
+      fat: 64
+      carbs: 0
+    servings: 4
+    category: chicken
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Butter Poached Chicken
+    ingredients:
+      - name: chicken breast
+        quantity: 1 lb
+      - name: butter
+        quantity: 4 tbsp
+      - name: chicken broth
+        quantity: 1 cup
+      - name: salt
+        quantity: 1 tsp
+    instructions:
+      - Cut chicken into 1-inch pieces.
+      - Melt butter in skillet, add broth.
+      - Add chicken, season with salt.
+      - Simmer 10-12 minutes until cooked through.
+      - Serve with pan sauce.
+    macros:
+      protein: 62
+      fat: 48
+      carbs: 0
+    servings: 2
+    category: chicken
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Grilled Chicken Strips
+    ingredients:
+      - name: chicken tenders
+        quantity: 1.5 lbs
+      - name: olive oil
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tsp
+      - name: black pepper
+        quantity: 1/2 tsp
+    instructions:
+      - Toss tenders with oil, salt, and pepper.
+      - Heat grill or grill pan to high.
+      - Grill 3-4 minutes per side until done.
+      - Internal temp should reach 165°F.
+    macros:
+      protein: 93
+      fat: 30
+      carbs: 0
+    servings: 4
+    category: chicken
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Chicken and Rice Bowl
+    ingredients:
+      - name: chicken breast, cubed
+        quantity: 1 lb
+      - name: cooked white rice
+        quantity: 2 cups
+      - name: butter
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tsp
+    instructions:
+      - Season chicken with salt.
+      - Cook chicken in butter over medium-high heat 6-8 min.
+      - Divide rice between bowls.
+      - Top with chicken and drizzle pan butter over.
+    macros:
+      protein: 66
+      fat: 28
+      carbs: 90
+    servings: 4
+    category: chicken
+    fodmap_level: low
+    vertical_compliant: true
