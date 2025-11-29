@@ -112,3 +112,129 @@ recipes:
       - Brush lobster meat with butter mixture.
       - Grill for 5-6 minutes until meat is opaque.
 
+  # === VERTICAL DIET + RHONDA PATRICK SALMON RECIPES ===
+  # High omega-3, simple prep (≤10 min), ≤5 ingredients
+  # Calories = protein×4 + carbs×4 + fat×9
+
+  - name: Simple Pan-Seared Salmon
+    ingredients:
+      - name: wild-caught salmon fillet
+        quantity: 8 oz
+      - name: avocado oil
+        quantity: 1 tbsp
+      - name: salt
+        quantity: 1/2 tsp
+      - name: black pepper
+        quantity: 1/4 tsp
+    instructions:
+      - Pat salmon dry, season with salt and pepper.
+      - Heat oil in skillet over medium-high heat.
+      - Place salmon skin-side up, cook 4 minutes.
+      - Flip, cook 3-4 minutes until internal temp 125°F.
+    macros:
+      protein: 46
+      fat: 28
+      carbs: 0
+    servings: 1
+    category: seafood
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Baked Salmon with Butter
+    ingredients:
+      - name: salmon fillets
+        quantity: 1 lb (2 fillets)
+      - name: butter
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tsp
+      - name: lemon
+        quantity: 1
+    instructions:
+      - Preheat oven to 400°F.
+      - Place salmon on baking sheet, season with salt.
+      - Top each fillet with 1 tbsp butter.
+      - Bake 12-15 minutes until flaky.
+      - Squeeze lemon over top before serving.
+    macros:
+      protein: 92
+      fat: 48
+      carbs: 0
+    servings: 2
+    category: seafood
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Salmon Patties
+    ingredients:
+      - name: canned wild salmon
+        quantity: 14 oz (2 cans)
+      - name: eggs
+        quantity: 2
+      - name: salt
+        quantity: 1/2 tsp
+      - name: avocado oil
+        quantity: 2 tbsp
+    instructions:
+      - Drain salmon, remove bones if desired.
+      - Mix salmon, eggs, and salt in bowl.
+      - Form into 4 patties.
+      - Heat oil in skillet over medium heat.
+      - Cook patties 4 minutes per side until golden.
+    macros:
+      protein: 80
+      fat: 36
+      carbs: 0
+    servings: 4
+    category: seafood
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Broiled Salmon with Olive Oil
+    ingredients:
+      - name: salmon fillet
+        quantity: 1 lb
+      - name: extra virgin olive oil
+        quantity: 2 tbsp
+      - name: salt
+        quantity: 1 tsp
+      - name: black pepper
+        quantity: 1/2 tsp
+    instructions:
+      - Preheat broiler to high.
+      - Place salmon on broiler pan, brush with olive oil.
+      - Season with salt and pepper.
+      - Broil 8-10 minutes until internal temp 125°F.
+    macros:
+      protein: 92
+      fat: 52
+      carbs: 0
+    servings: 2
+    category: seafood
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Smoked Salmon Plate
+    ingredients:
+      - name: smoked salmon
+        quantity: 8 oz
+      - name: hard-boiled eggs
+        quantity: 4
+      - name: avocado
+        quantity: 1
+      - name: salt
+        quantity: 1/4 tsp
+    instructions:
+      - Arrange smoked salmon on plate.
+      - Halve eggs and avocado, add to plate.
+      - Season with salt.
+      - Serve immediately (no cooking required).
+    macros:
+      protein: 52
+      fat: 48
+      carbs: 4
+    servings: 2
+    category: seafood
+    fodmap_level: low
+    vertical_compliant: true
+
