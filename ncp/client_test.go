@@ -3,6 +3,7 @@ package ncp
 import (
 	"context"
 	"testing"
+	"time"
 )
 
 func TestNewCronometerClient(t *testing.T) {
@@ -49,5 +50,44 @@ func TestCronometerClient_IsLoggedIn(t *testing.T) {
 	// Should not be logged in initially
 	if client.IsLoggedIn() {
 		t.Error("Expected IsLoggedIn() to be false before login")
+	}
+}
+
+func TestCronometerClient_FetchDailyNutrition_NotLoggedIn(t *testing.T) {
+	config := CronometerConfig{
+		Username: "user@example.com",
+		Password: "password123",
+	}
+
+	client := NewCronometerClient(config)
+
+	// Should error when not logged in
+	_, err := client.FetchDailyNutrition(context.Background(), time.Now())
+	if err == nil {
+		t.Error("Expected error when not logged in, got nil")
+	}
+}
+
+func TestNutritionData_Struct(t *testing.T) {
+	// Test that NutritionData struct has expected fields
+	data := NutritionData{
+		Date:     time.Now(),
+		Protein:  150.5,
+		Fat:      65.2,
+		Carbs:    200.0,
+		Calories: 2000.0,
+	}
+
+	if data.Protein != 150.5 {
+		t.Errorf("Expected protein 150.5, got %f", data.Protein)
+	}
+	if data.Fat != 65.2 {
+		t.Errorf("Expected fat 65.2, got %f", data.Fat)
+	}
+	if data.Carbs != 200.0 {
+		t.Errorf("Expected carbs 200.0, got %f", data.Carbs)
+	}
+	if data.Calories != 2000.0 {
+		t.Errorf("Expected calories 2000.0, got %f", data.Calories)
 	}
 }
