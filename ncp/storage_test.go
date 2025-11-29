@@ -199,3 +199,104 @@ func TestParseStateKey_Invalid(t *testing.T) {
 		})
 	}
 }
+
+
+func TestParseStateKey_InvalidDateFormat(t *testing.T) {
+	// Valid prefix but invalid date format
+	key := "ncp:state:invalid-date"
+	_, err := ParseStateKey(key)
+	if err == nil {
+		t.Error("Expected error for invalid date format, got nil")
+	}
+}
+
+func TestStoreNutritionState_UpdateExisting(t *testing.T) {
+	db, cleanup := setupTestDB(t)
+	defer cleanup()
+
+	date := time.Date(2024, 11, 29, 0, 0, 0, 0, time.UTC)
+	
+	// Store initial state
+	state1 := NutritionState{
+		Date: date,
+		Consumed: NutritionData{
+			Protein: 100.0,
+		},
+		SyncedAt: time.Now(),
+	}
+	if err := StoreNutritionState(db, state1); err != nil {
+		t.Fatalf("Failed to store state: %v", err)
+	}
+
+	// Update with new state
+	state2 := NutritionState{
+		Date: date,
+		Consumed: NutritionData{
+			Protein: 150.0,
+		},
+		SyncedAt: time.Now(),
+	}
+	if err := StoreNutritionState(db, state2); err != nil {
+		t.Fatalf("Failed to update state: %v", err)
+	}
+
+	// Verify update
+	retrieved, err := GetNutritionState(db, date)
+	if err != nil {
+		t.Fatalf("Failed to retrieve state: %v", err)
+	}
+	if retrieved.Consumed.Protein != 150.0 {
+		t.Errorf("Expected protein 150.0, got %f", retrieved.Consumed.Protein)
+	}
+}
+
+
+func TestGetNutritionHistory_EarlyTermination(t *testing.T) {
+	db, cleanup := setupTestDB(t)
+	defer cleanup()
+
+	// Store data for a range of dates
+	dates := []time.Time{
+		time.Date(2024, 11, 25, 0, 0, 0, 0, time.UTC),
+		time.Date(2024, 11, 26, 0, 0, 0, 0, time.UTC),
+		time.Date(2024, 11, 27, 0, 0, 0, 0, time.UTC),
+		time.Date(2024, 11, 28, 0, 0, 0, 0, time.UTC),
+		time.Date(2024, 11, 29, 0, 0, 0, 0, time.UTC),
+	}
+
+	for i, date := range dates {
+		state := NutritionState{
+			Date: date,
+			Consumed: NutritionData{
+				Protein: float64(100 + i*10),
+			},
+			SyncedAt: time.Now(),
+		}
+		if err := StoreNutritionState(db, state); err != nil {
+			t.Fatalf("Failed to store state: %v", err)
+		}
+	}
+
+	// Request only middle dates (26th to 27th)
+	// This should trigger the early termination when key > endKey
+	startDate := time.Date(2024, 11, 26, 0, 0, 0, 0, time.UTC)
+	endDate := time.Date(2024, 11, 27, 0, 0, 0, 0, time.UTC)
+
+	history, err := GetNutritionHistory(db, startDate, endDate)
+	if err != nil {
+		t.Fatalf("Failed to get history: %v", err)
+	}
+
+	// Should only return 2 days (26th and 27th), not 28th or 29th
+	if len(history) != 2 {
+		t.Errorf("Expected 2 days, got %d", len(history))
+	}
+
+	// Verify the dates are correct
+	if history[0].Date != startDate {
+		t.Errorf("Expected first date %v, got %v", startDate, history[0].Date)
+	}
+	if history[1].Date != endDate {
+		t.Errorf("Expected second date %v, got %v", endDate, history[1].Date)
+	}
+}

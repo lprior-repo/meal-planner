@@ -53,6 +53,36 @@ func TestNutritionGoals_Validate(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "negative protein",
+			goals: NutritionGoals{
+				DailyProtein:  -10.0,
+				DailyFat:      54.0,
+				DailyCarbs:    250.0,
+				DailyCalories: 2700.0,
+			},
+			wantErr: true,
+		},
+		{
+			name: "negative fat",
+			goals: NutritionGoals{
+				DailyProtein:  180.0,
+				DailyFat:      -10.0,
+				DailyCarbs:    250.0,
+				DailyCalories: 2700.0,
+			},
+			wantErr: true,
+		},
+		{
+			name: "negative carbs",
+			goals: NutritionGoals{
+				DailyProtein:  180.0,
+				DailyFat:      54.0,
+				DailyCarbs:    -10.0,
+				DailyCalories: 2700.0,
+			},
+			wantErr: true,
+		},
+		{
 			name: "negative calories",
 			goals: NutritionGoals{
 				DailyProtein:  180.0,
@@ -61,6 +91,36 @@ func TestNutritionGoals_Validate(t *testing.T) {
 				DailyCalories: -100.0,
 			},
 			wantErr: true,
+		},
+		{
+			name: "zero calories",
+			goals: NutritionGoals{
+				DailyProtein:  180.0,
+				DailyFat:      54.0,
+				DailyCarbs:    250.0,
+				DailyCalories: 0,
+			},
+			wantErr: true,
+		},
+		{
+			name: "zero fat is valid",
+			goals: NutritionGoals{
+				DailyProtein:  180.0,
+				DailyFat:      0,
+				DailyCarbs:    250.0,
+				DailyCalories: 2700.0,
+			},
+			wantErr: false,
+		},
+		{
+			name: "zero carbs is valid",
+			goals: NutritionGoals{
+				DailyProtein:  180.0,
+				DailyFat:      54.0,
+				DailyCarbs:    0,
+				DailyCalories: 2700.0,
+			},
+			wantErr: false,
 		},
 	}
 

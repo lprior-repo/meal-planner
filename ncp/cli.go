@@ -11,15 +11,22 @@ import (
 
 // SyncNutritionData fetches nutrition data from Cronometer and stores it in BadgerDB
 func SyncNutritionData(db *badger.DB, config CronometerConfig, startDate, endDate time.Time) error {
-	ctx := context.Background()
-
 	// Validate config
 	if err := config.Validate(); err != nil {
 		return fmt.Errorf("invalid config: %w", err)
 	}
 
-	// Create client and login
+	// Create client and use the generic sync function
 	client := NewCronometerClient(config)
+	return SyncNutritionDataWithClient(db, client, startDate, endDate)
+}
+
+// SyncNutritionDataWithClient syncs nutrition data using the provided client
+// This is separated to allow for mocking in tests
+func SyncNutritionDataWithClient(db *badger.DB, client NutritionClient, startDate, endDate time.Time) error {
+	ctx := context.Background()
+
+	// Login
 	if err := client.Login(ctx); err != nil {
 		return fmt.Errorf("login failed: %w", err)
 	}

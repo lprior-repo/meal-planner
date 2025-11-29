@@ -9,6 +9,15 @@ import (
 	"github.com/jrmycanady/gocronometer"
 )
 
+// NutritionClient interface for fetching nutrition data
+// This allows for mocking in tests
+type NutritionClient interface {
+	Login(ctx context.Context) error
+	Logout(ctx context.Context) error
+	IsLoggedIn() bool
+	FetchDailyNutrition(ctx context.Context, date time.Time) (*NutritionData, error)
+}
+
 // CronometerClient wraps gocronometer.Client with our config
 type CronometerClient struct {
 	config   CronometerConfig

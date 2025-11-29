@@ -103,6 +103,124 @@ func TestScoreRecipeForDeviation_OverEating(t *testing.T) {
 	}
 }
 
+
+func TestScoreRecipeForDeviation_FatPenalty(t *testing.T) {
+	// Over on fat by more than 10%
+	deviation := DeviationResult{
+		ProteinPct: -20.0,
+		FatPct:     15.0, // Over by 15%
+		CarbsPct:   -10.0,
+	}
+
+	// High fat recipe when already over on fat
+	macros := RecipeMacros{
+		Protein: 30.0,
+		Fat:     25.0, // > 20g, should trigger penalty
+		Carbs:   20.0,
+	}
+
+	score := ScoreRecipeForDeviation(deviation, macros)
+
+	// Should have lower score due to fat penalty
+	if score > 0.5 {
+		t.Errorf("Expected reduced score due to fat penalty, got %f", score)
+	}
+}
+
+func TestScoreRecipeForDeviation_CarbsPenalty(t *testing.T) {
+	// Over on carbs by more than 10%
+	deviation := DeviationResult{
+		ProteinPct: -20.0,
+		FatPct:     -5.0,
+		CarbsPct:   15.0, // Over by 15%
+	}
+
+	// High carb recipe when already over on carbs
+	macros := RecipeMacros{
+		Protein: 30.0,
+		Fat:     10.0,
+		Carbs:   40.0, // > 30g, should trigger penalty
+	}
+
+	score := ScoreRecipeForDeviation(deviation, macros)
+
+	// Should have lower score due to carbs penalty
+	if score > 0.5 {
+		t.Errorf("Expected reduced score due to carbs penalty, got %f", score)
+	}
+}
+
+func TestScoreRecipeForDeviation_ScoreClamping(t *testing.T) {
+	// Test that score doesn't exceed 1.0
+	deviation := DeviationResult{
+		ProteinPct: -50.0,
+		FatPct:     -50.0,
+		CarbsPct:   -50.0,
+	}
+
+	// Very high macro recipe
+	macros := RecipeMacros{
+		Protein: 100.0,
+		Fat:     50.0,
+		Carbs:   100.0,
+	}
+
+	score := ScoreRecipeForDeviation(deviation, macros)
+
+	if score > 1.0 {
+		t.Errorf("Score should be clamped to 1.0, got %f", score)
+	}
+	if score < 0 {
+		t.Errorf("Score should not be negative, got %f", score)
+	}
+}
+
+func TestScoreRecipeForDeviation_NegativeScoreClamping(t *testing.T) {
+	// Test that excessive penalties don't make score negative
+	deviation := DeviationResult{
+		ProteinPct: 5.0,  // Slightly over
+		FatPct:     20.0, // Over
+		CarbsPct:   20.0, // Over
+	}
+
+	// High fat/carb recipe with penalties
+	macros := RecipeMacros{
+		Protein: 5.0,
+		Fat:     30.0, // Triggers penalty
+		Carbs:   50.0, // Triggers penalty
+	}
+
+	score := ScoreRecipeForDeviation(deviation, macros)
+
+	if score < 0 {
+		t.Errorf("Score should be clamped to 0, got %f", score)
+	}
+}
+
+
+func TestScoreRecipeForDeviation_ZeroMacros(t *testing.T) {
+	// Under on macros but recipe has zero macros
+	deviation := DeviationResult{
+		ProteinPct: -20.0,
+		FatPct:     -20.0,
+		CarbsPct:   -20.0,
+	}
+
+	// Zero macro recipe
+	macros := RecipeMacros{
+		Protein: 0,
+		Fat:     0,
+		Carbs:   0,
+	}
+
+	score := ScoreRecipeForDeviation(deviation, macros)
+
+	// Should get 0 score since recipe doesn't help with any deficit
+	if score > 0.2 {
+		t.Errorf("Expected low score for zero macro recipe, got %f", score)
+	}
+}
+
 func TestSelectTopRecipes_Basic(t *testing.T) {
 	deviation := DeviationResult{
 		ProteinPct:  -20.0,

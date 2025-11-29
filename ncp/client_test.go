@@ -2,6 +2,7 @@ package ncp
 
 import (
 	"context"
+	"os"
 	"testing"
 	"time"
 )
@@ -89,5 +90,89 @@ func TestNutritionData_Struct(t *testing.T) {
 	}
 	if data.Calories != 2000.0 {
 		t.Errorf("Expected calories 2000.0, got %f", data.Calories)
+	}
+}
+
+
+func TestCronometerClient_Logout_NotLoggedIn(t *testing.T) {
+	config := CronometerConfig{
+		Username: "test@example.com",
+		Password: "password123",
+	}
+	client := NewCronometerClient(config)
+
+	// Logout when not logged in should succeed without error
+	ctx := context.Background()
+	err := client.Logout(ctx)
+	if err != nil {
+		t.Errorf("Expected no error for logout when not logged in, got %v", err)
+	}
+}
+
+
+func TestCronometerClient_Login_Success(t *testing.T) {
+	// Skip if no credentials (integration test)
+	username := os.Getenv("CRONOMETER_USERNAME")
+	password := os.Getenv("CRONOMETER_PASSWORD")
+	if username == "" || password == "" {
+		t.Skip("Skipping integration test: CRONOMETER credentials not set")
+	}
+
+	config := CronometerConfig{
+		Username: username,
+		Password: password,
+	}
+
+	client := NewCronometerClient(config)
+	ctx := context.Background()
+
+	err := client.Login(ctx)
+	if err != nil {
+		t.Fatalf("Login failed: %v", err)
+	}
+
+	if !client.IsLoggedIn() {
+		t.Error("Expected IsLoggedIn() to return true after login")
+	}
+
+	// Clean up
+	err = client.Logout(ctx)
+	if err != nil {
+		t.Errorf("Logout failed: %v", err)
+	}
+}
+
+func TestCronometerClient_FetchDailyNutrition_Success(t *testing.T) {
+	// Skip if no credentials (integration test)
+	username := os.Getenv("CRONOMETER_USERNAME")
+	password := os.Getenv("CRONOMETER_PASSWORD")
+	if username == "" || password == "" {
+		t.Skip("Skipping integration test: CRONOMETER credentials not set")
+	}
+
+	config := CronometerConfig{
+		Username: username,
+		Password: password,
+	}
+
+	client := NewCronometerClient(config)
+	ctx := context.Background()
+
+	err := client.Login(ctx)
+	if err != nil {
+		t.Fatalf("Login failed: %v", err)
+	}
+	defer client.Logout(ctx)
+
+	// Fetch today's data
+	today := time.Now()
+	data, err := client.FetchDailyNutrition(ctx, today)
+	if err != nil {
+		t.Fatalf("FetchDailyNutrition failed: %v", err)
+	}
+
+	// Just verify we got data back
+	if data == nil {
+		t.Error("Expected non-nil nutrition data")
 	}
 }
