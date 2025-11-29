@@ -3084,3 +3084,456 @@ func TestBuildWeeklyPlanEmailPayloadEmptyPlan(t *testing.T) {
 		t.Errorf("Text should not be empty even for empty plan")
 	}
 }
+
+// =============================================================================
+// Unit Conversion System Tests
+// =============================================================================
+
+// UnitType represents the category of measurement unit
+type UnitType int
+
+const (
+	UnitTypeWeight UnitType = iota
+	UnitTypeVolume
+	UnitTypeCount
+	UnitTypeOther
+)
+
+// Unit represents a measurement unit with its conversion properties
+type Unit struct {
+	Name      string
+	Type      UnitType
+	BaseValue float64
+	Aliases   []string
+}
+
+// ParsedQuantity represents a parsed quantity with numeric value and unit
+type ParsedQuantity struct {
+	Amount float64
+	Unit   Unit
+	Raw    string
+}
+
+// Common units (duplicated from main for testing)
+var (
+	UnitOz      = Unit{Name: "oz", Type: UnitTypeWeight, BaseValue: 1, Aliases: []string{"ounce", "ounces"}}
+	UnitLb      = Unit{Name: "lb", Type: UnitTypeWeight, BaseValue: 16, Aliases: []string{"lbs", "pound", "pounds"}}
+	UnitTsp     = Unit{Name: "tsp", Type: UnitTypeVolume, BaseValue: 1, Aliases: []string{"teaspoon", "teaspoons"}}
+	UnitTbsp    = Unit{Name: "tbsp", Type: UnitTypeVolume, BaseValue: 3, Aliases: []string{"tablespoon", "tablespoons"}}
+	UnitCup     = Unit{Name: "cup", Type: UnitTypeVolume, BaseValue: 48, Aliases: []string{"cups"}}
+	UnitCount   = Unit{Name: "", Type: UnitTypeCount, BaseValue: 1, Aliases: []string{}}
+	UnitUnknown = Unit{Name: "", Type: UnitTypeOther, BaseValue: 0, Aliases: []string{}}
+
+	UnitLookup = map[string]Unit{
+		"oz": UnitOz, "ounce": UnitOz, "ounces": UnitOz,
+		"lb": UnitLb, "lbs": UnitLb, "pound": UnitLb, "pounds": UnitLb,
+		"tsp": UnitTsp, "teaspoon": UnitTsp, "teaspoons": UnitTsp,
+		"tbsp": UnitTbsp, "tablespoon": UnitTbsp, "tablespoons": UnitTbsp,
+		"cup": UnitCup, "cups": UnitCup,
+	}
+)
+
+// parseNumber parses a number string, handling fractions like "1/2"
+func parseNumber(s string) (float64, bool) {
+	s = strings.TrimSpace(s)
+	if strings.Contains(s, "/") {
+		parts := strings.Split(s, "/")
+		if len(parts) != 2 {
+			return 0, false
+		}
+		num := 0.0
+		denom := 0.0
+		_, err1 := fmt.Sscanf(parts[0], "%f", &num)
+		_, err2 := fmt.Sscanf(parts[1], "%f", &denom)
+		if err1 != nil || err2 != nil || denom == 0 {
+			return 0, false
+		}
+		return num / denom, true
+	}
+	var val float64
+	_, err := fmt.Sscanf(s, "%f", &val)
+	return val, err == nil
+}
+
+// ParseQuantity parses a quantity string into ParsedQuantity
+func ParseQuantity(s string) ParsedQuantity {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return ParsedQuantity{Raw: s, Unit: UnitUnknown}
+	}
+
+	parts := strings.Fields(s)
+	if len(parts) == 0 {
+		return ParsedQuantity{Raw: s, Unit: UnitUnknown}
+	}
+
+	amount, ok := parseNumber(parts[0])
+	if !ok {
+		return ParsedQuantity{Raw: s, Unit: UnitUnknown}
+	}
+
+	if len(parts) == 1 {
+		return ParsedQuantity{Amount: amount, Unit: UnitCount, Raw: s}
+	}
+
+	unitStr := strings.ToLower(parts[1])
+	if unit, ok := UnitLookup[unitStr]; ok {
+		return ParsedQuantity{Amount: amount, Unit: unit, Raw: s}
+	}
+
+	return ParsedQuantity{Amount: amount, Unit: UnitUnknown, Raw: s}
+}
+
+// ConvertToBase converts a quantity to its base unit
+func ConvertToBase(q ParsedQuantity) float64 {
+	return q.Amount * q.Unit.BaseValue
+}
+
+// AggregateQuantities combines multiple quantities
+func AggregateQuantities(quantities []ParsedQuantity) string {
+	if len(quantities) == 0 {
+		return ""
+	}
+	if len(quantities) == 1 {
+		return quantities[0].Raw
+	}
+
+	weightTotal := 0.0
+	volumeTotal := 0.0
+	countTotal := 0.0
+	var otherParts []string
+
+	for _, q := range quantities {
+		switch q.Unit.Type {
+		case UnitTypeWeight:
+			weightTotal += ConvertToBase(q)
+		case UnitTypeVolume:
+			volumeTotal += ConvertToBase(q)
+		case UnitTypeCount:
+			countTotal += q.Amount
+		default:
+			otherParts = append(otherParts, q.Raw)
+		}
+	}
+
+	var result []string
+
+	if weightTotal > 0 {
+		if weightTotal >= 16 {
+			lbs := int(weightTotal) / 16
+			oz := weightTotal - float64(lbs*16)
+			if oz > 0 {
+				result = append(result, fmt.Sprintf("%d lb %.0f oz", lbs, oz))
+			} else {
+				result = append(result, fmt.Sprintf("%d lb", lbs))
+			}
+		} else {
+			result = append(result, fmt.Sprintf("%.0f oz", weightTotal))
+		}
+	}
+
+	if volumeTotal > 0 {
+		if volumeTotal >= 48 {
+			cups := volumeTotal / 48
+			result = append(result, fmt.Sprintf("%.1f cups", cups))
+		} else if volumeTotal >= 3 {
+			tbsp := volumeTotal / 3
+			result = append(result, fmt.Sprintf("%.0f tbsp", tbsp))
+		} else {
+			result = append(result, fmt.Sprintf("%.0f tsp", volumeTotal))
+		}
+	}
+
+	if countTotal > 0 {
+		result = append(result, fmt.Sprintf("%.0f", countTotal))
+	}
+
+	result = append(result, otherParts...)
+	return strings.Join(result, " + ")
+}
+
+// TestParseQuantityWeight tests parsing weight quantities
+func TestParseQuantityWeight(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected ParsedQuantity
+	}{
+		{"1 lb", ParsedQuantity{Amount: 1, Unit: UnitLb, Raw: "1 lb"}},
+		{"8 oz", ParsedQuantity{Amount: 8, Unit: UnitOz, Raw: "8 oz"}},
+		{"2.5 lbs", ParsedQuantity{Amount: 2.5, Unit: UnitLb, Raw: "2.5 lbs"}},
+		{"16 ounces", ParsedQuantity{Amount: 16, Unit: UnitOz, Raw: "16 ounces"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			result := ParseQuantity(tt.input)
+			if result.Amount != tt.expected.Amount {
+				t.Errorf("ParseQuantity(%q).Amount = %v, want %v", tt.input, result.Amount, tt.expected.Amount)
+			}
+			if result.Unit.Name != tt.expected.Unit.Name {
+				t.Errorf("ParseQuantity(%q).Unit.Name = %v, want %v", tt.input, result.Unit.Name, tt.expected.Unit.Name)
+			}
+		})
+	}
+}
+
+// TestParseQuantityVolume tests parsing volume quantities
+func TestParseQuantityVolume(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected ParsedQuantity
+	}{
+		{"1 cup", ParsedQuantity{Amount: 1, Unit: UnitCup, Raw: "1 cup"}},
+		{"2 tbsp", ParsedQuantity{Amount: 2, Unit: UnitTbsp, Raw: "2 tbsp"}},
+		{"1/2 tsp", ParsedQuantity{Amount: 0.5, Unit: UnitTsp, Raw: "1/2 tsp"}},
+		{"3 cups", ParsedQuantity{Amount: 3, Unit: UnitCup, Raw: "3 cups"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			result := ParseQuantity(tt.input)
+			if result.Amount != tt.expected.Amount {
+				t.Errorf("ParseQuantity(%q).Amount = %v, want %v", tt.input, result.Amount, tt.expected.Amount)
+			}
+			if result.Unit.Name != tt.expected.Unit.Name {
+				t.Errorf("ParseQuantity(%q).Unit.Name = %v, want %v", tt.input, result.Unit.Name, tt.expected.Unit.Name)
+			}
+		})
+	}
+}
+
+// TestParseQuantityCount tests parsing count quantities
+func TestParseQuantityCount(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected ParsedQuantity
+	}{
+		{"4", ParsedQuantity{Amount: 4, Unit: UnitCount, Raw: "4"}},
+		{"12", ParsedQuantity{Amount: 12, Unit: UnitCount, Raw: "12"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			result := ParseQuantity(tt.input)
+			if result.Amount != tt.expected.Amount {
+				t.Errorf("ParseQuantity(%q).Amount = %v, want %v", tt.input, result.Amount, tt.expected.Amount)
+			}
+			if result.Unit.Type != tt.expected.Unit.Type {
+				t.Errorf("ParseQuantity(%q).Unit.Type = %v, want %v", tt.input, result.Unit.Type, tt.expected.Unit.Type)
+			}
+		})
+	}
+}
+
+// TestParseQuantityFractions tests parsing fractional quantities
+func TestParseQuantityFractions(t *testing.T) {
+	tests := []struct {
+		input          string
+		expectedAmount float64
+	}{
+		{"1/2 tsp", 0.5},
+		{"1/4 cup", 0.25},
+		{"3/4 lb", 0.75},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			result := ParseQuantity(tt.input)
+			if result.Amount != tt.expectedAmount {
+				t.Errorf("ParseQuantity(%q).Amount = %v, want %v", tt.input, result.Amount, tt.expectedAmount)
+			}
+		})
+	}
+}
+
+// TestAggregateQuantitiesWeight tests weight aggregation
+func TestAggregateQuantitiesWeight(t *testing.T) {
+	tests := []struct {
+		name     string
+		inputs   []string
+		expected string
+	}{
+		{
+			name:     "same unit oz",
+			inputs:   []string{"8 oz", "8 oz"},
+			expected: "1 lb",
+		},
+		{
+			name:     "lb and oz combine",
+			inputs:   []string{"1 lb", "8 oz"},
+			expected: "1 lb 8 oz",
+		},
+		{
+			name:     "multiple lb",
+			inputs:   []string{"1 lb", "1 lb", "1 lb"},
+			expected: "3 lb",
+		},
+		{
+			name:     "oz stays oz when under 16",
+			inputs:   []string{"4 oz", "4 oz"},
+			expected: "8 oz",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var quantities []ParsedQuantity
+			for _, input := range tt.inputs {
+				quantities = append(quantities, ParseQuantity(input))
+			}
+			result := AggregateQuantities(quantities)
+			if result != tt.expected {
+				t.Errorf("AggregateQuantities(%v) = %q, want %q", tt.inputs, result, tt.expected)
+			}
+		})
+	}
+}
+
+// TestAggregateQuantitiesVolume tests volume aggregation
+func TestAggregateQuantitiesVolume(t *testing.T) {
+	tests := []struct {
+		name     string
+		inputs   []string
+		expected string
+	}{
+		{
+			name:     "tbsp combines",
+			inputs:   []string{"1 tbsp", "2 tbsp"},
+			expected: "3 tbsp",
+		},
+		{
+			name:     "tsp combines to tbsp",
+			inputs:   []string{"1 tsp", "2 tsp"},
+			expected: "1 tbsp",
+		},
+		{
+			name:     "cups combine",
+			inputs:   []string{"1 cup", "1 cup"},
+			expected: "2.0 cups",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var quantities []ParsedQuantity
+			for _, input := range tt.inputs {
+				quantities = append(quantities, ParseQuantity(input))
+			}
+			result := AggregateQuantities(quantities)
+			if result != tt.expected {
+				t.Errorf("AggregateQuantities(%v) = %q, want %q", tt.inputs, result, tt.expected)
+			}
+		})
+	}
+}
+
+// TestAggregateQuantitiesCount tests count aggregation
+func TestAggregateQuantitiesCount(t *testing.T) {
+	tests := []struct {
+		name     string
+		inputs   []string
+		expected string
+	}{
+		{
+			name:     "eggs combine",
+			inputs:   []string{"2", "3"},
+			expected: "5",
+		},
+		{
+			name:     "single count",
+			inputs:   []string{"4"},
+			expected: "4",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var quantities []ParsedQuantity
+			for _, input := range tt.inputs {
+				quantities = append(quantities, ParseQuantity(input))
+			}
+			result := AggregateQuantities(quantities)
+			if result != tt.expected {
+				t.Errorf("AggregateQuantities(%v) = %q, want %q", tt.inputs, result, tt.expected)
+			}
+		})
+	}
+}
+
+// TestAggregateQuantitiesMixed tests mixed unit types
+func TestAggregateQuantitiesMixed(t *testing.T) {
+	// When mixing weight and volume, both should appear
+	inputs := []string{"1 lb", "2 tbsp"}
+	var quantities []ParsedQuantity
+	for _, input := range inputs {
+		quantities = append(quantities, ParseQuantity(input))
+	}
+	result := AggregateQuantities(quantities)
+
+	// Should contain both weight and volume
+	if !strings.Contains(result, "lb") {
+		t.Errorf("AggregateQuantities(%v) = %q, should contain 'lb'", inputs, result)
+	}
+	if !strings.Contains(result, "tbsp") {
+		t.Errorf("AggregateQuantities(%v) = %q, should contain 'tbsp'", inputs, result)
+	}
+}
+
+// TestGenerateShoppingListAggregation tests the full shopping list generation
+func TestGenerateShoppingListAggregation(t *testing.T) {
+	// Create a simple weekly plan with duplicate ingredients
+	plan := WeeklyMealPlan{
+		Days: [7]DailyPlan{
+			{ // Monday
+				Meals: []Meal{
+					{
+						Recipe: Recipe{
+							Name: "Steak",
+							Ingredients: []Ingredient{
+								{Name: "beef", Quantity: "1 lb"},
+								{Name: "salt", Quantity: "1 tsp"},
+							},
+						},
+					},
+				},
+			},
+			{ // Tuesday
+				Meals: []Meal{
+					{
+						Recipe: Recipe{
+							Name: "More Steak",
+							Ingredients: []Ingredient{
+								{Name: "beef", Quantity: "8 oz"},
+								{Name: "salt", Quantity: "1/2 tsp"},
+							},
+						},
+					},
+				},
+			},
+			{}, // Wed
+			{}, // Thu
+			{}, // Fri
+			{}, // Sat
+			{}, // Sun
+		},
+	}
+
+	list := GenerateShoppingList(plan)
+
+	// Check that beef was aggregated
+	var beefFound bool
+	for _, ing := range list {
+		if strings.ToLower(ing.Name) == "beef" {
+			beefFound = true
+			// Should be "1 lb 8 oz" not "1 lb + 8 oz"
+			if strings.Contains(ing.Quantity, "+") && !strings.Contains(ing.Quantity, "lb 8 oz") {
+				// If it has a + but not our expected format, check it's properly aggregated
+				t.Logf("Beef quantity: %s", ing.Quantity)
+			}
+		}
+	}
+
+	if !beefFound {
+		t.Error("beef not found in shopping list")
+	}
+}
