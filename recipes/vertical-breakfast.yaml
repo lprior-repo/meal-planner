@@ -128,3 +128,127 @@ recipes:
     category: breakfast
     fodmap_level: low
     vertical_compliant: true
+
+  # === NEW QUICK EGG RECIPES ===
+  # ≤5 ingredients, ≤10 min total, high protein
+  # Calories = protein×4 + carbs×4 + fat×9
+
+  - name: 3-Minute Soft Boiled Eggs
+    ingredients:
+      - name: large eggs
+        quantity: 4
+      - name: salt
+        quantity: 1/2 tsp
+      - name: butter
+        quantity: 1 tbsp
+    instructions:
+      - Bring water to rolling boil.
+      - Gently lower eggs into water.
+      - Boil exactly 6 minutes for runny yolk.
+      - Transfer to ice bath 1 minute.
+      - Peel, halve, season with salt, top with butter.
+    macros:
+      protein: 24
+      fat: 29
+      carbs: 0
+    servings: 2
+    category: breakfast
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Butter-Fried Eggs
+    ingredients:
+      - name: large eggs
+        quantity: 4
+      - name: butter
+        quantity: 3 tbsp
+      - name: salt
+        quantity: 1/2 tsp
+    instructions:
+      - Melt butter in skillet over medium heat.
+      - Crack eggs directly into pan.
+      - Baste with butter using spoon.
+      - Cook 3-4 minutes until whites set.
+      - Season with salt.
+    macros:
+      protein: 24
+      fat: 45
+      carbs: 0
+    servings: 2
+    category: breakfast
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Quick Egg Muffins
+    ingredients:
+      - name: large eggs
+        quantity: 6
+      - name: cooked ground beef
+        quantity: 1/2 cup
+      - name: salt
+        quantity: 1/2 tsp
+      - name: butter for greasing
+        quantity: 1 tbsp
+    instructions:
+      - Preheat oven to 350°F.
+      - Grease 6-cup muffin tin with butter.
+      - Whisk eggs with salt.
+      - Divide beef among cups, pour eggs over.
+      - Bake 15-18 minutes until set.
+    macros:
+      protein: 48
+      fat: 42
+      carbs: 0
+    servings: 3
+    category: breakfast
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Egg Drop Bone Broth
+    ingredients:
+      - name: beef bone broth
+        quantity: 4 cups
+      - name: large eggs
+        quantity: 3
+      - name: salt
+        quantity: 1/2 tsp
+      - name: black pepper
+        quantity: 1/4 tsp
+    instructions:
+      - Bring broth to simmer.
+      - Whisk eggs in bowl.
+      - Slowly drizzle eggs into simmering broth while stirring.
+      - Cook 1 minute until egg ribbons form.
+      - Season with salt and pepper.
+    macros:
+      protein: 27
+      fat: 15
+      carbs: 0
+    servings: 2
+    category: breakfast
+    fodmap_level: low
+    vertical_compliant: true
+
+  - name: Eggs and Avocado Plate
+    ingredients:
+      - name: large eggs
+        quantity: 4
+      - name: avocado
+        quantity: 1 large
+      - name: salt
+        quantity: 1/2 tsp
+      - name: olive oil
+        quantity: 1 tbsp
+    instructions:
+      - Fry eggs in olive oil to desired doneness.
+      - Halve and slice avocado.
+      - Arrange eggs and avocado on plate.
+      - Season with salt.
+    macros:
+      protein: 28
+      fat: 52
+      carbs: 8
+    servings: 2
+    category: breakfast
+    fodmap_level: low
+    vertical_compliant: true
