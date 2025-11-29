@@ -1,6 +1,9 @@
 package ncp
 
-import "math"
+import (
+	"math"
+	"sort"
+)
 
 // RecipeMacros represents the nutritional macros of a recipe
 type RecipeMacros struct {
@@ -61,4 +64,66 @@ func ScoreRecipeForDeviation(deviation DeviationResult, macros RecipeMacros) flo
 	}
 
 	return score
+}
+
+
+// ScoredRecipe represents a recipe with its nutritional macros for scoring
+type ScoredRecipe struct {
+	Name   string       `json:"name"`
+	Macros RecipeMacros `json:"macros"`
+}
+
+// SelectTopRecipes scores recipes against a deviation and returns the top N by score
+func SelectTopRecipes(deviation DeviationResult, recipes []ScoredRecipe, limit int) []RecipeSuggestion {
+	if len(recipes) == 0 {
+		return []RecipeSuggestion{}
+	}
+
+	// Score all recipes
+	type scoredItem struct {
+		recipe ScoredRecipe
+		score  float64
+	}
+	scored := make([]scoredItem, len(recipes))
+	for i, r := range recipes {
+		scored[i] = scoredItem{
+			recipe: r,
+			score:  ScoreRecipeForDeviation(deviation, r.Macros),
+		}
+	}
+
+	// Sort by score descending
+	sort.Slice(scored, func(i, j int) bool {
+		return scored[i].score > scored[j].score
+	})
+
+	// Take top N
+	if limit > len(scored) {
+		limit = len(scored)
+	}
+
+	suggestions := make([]RecipeSuggestion, limit)
+	for i := 0; i < limit; i++ {
+		suggestions[i] = RecipeSuggestion{
+			RecipeName: scored[i].recipe.Name,
+			Reason:     generateReason(deviation, scored[i].recipe.Macros),
+			Score:      scored[i].score,
+		}
+	}
+
+	return suggestions
+}
+
+// generateReason creates a human-readable reason for the suggestion
+func generateReason(deviation DeviationResult, macros RecipeMacros) string {
+	if deviation.ProteinPct < -10 && macros.Protein > 20 {
+		return "High protein to address deficit"
+	}
+	if deviation.CarbsPct < -10 && macros.Carbs > 30 {
+		return "Good carbs to address deficit"
+	}
+	if deviation.FatPct < -10 && macros.Fat > 15 {
+		return "Healthy fats to address deficit"
+	}
+	return "Balanced macros"
 }

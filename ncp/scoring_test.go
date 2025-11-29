@@ -102,3 +102,55 @@ func TestScoreRecipeForDeviation_OverEating(t *testing.T) {
 		t.Errorf("Expected very low score (<0.3) when already over goals, got %f", score)
 	}
 }
+
+func TestSelectTopRecipes_Basic(t *testing.T) {
+	deviation := DeviationResult{
+		ProteinPct:  -20.0,
+		FatPct:      0.0,
+		CarbsPct:    -10.0,
+		CaloriesPct: -15.0,
+	}
+
+	recipes := []ScoredRecipe{
+		{Name: "Low Protein Salad", Macros: RecipeMacros{Protein: 5, Fat: 10, Carbs: 20, Calories: 190}},
+		{Name: "Grilled Chicken", Macros: RecipeMacros{Protein: 45, Fat: 8, Carbs: 2, Calories: 260}},
+		{Name: "Beef Stir Fry", Macros: RecipeMacros{Protein: 35, Fat: 15, Carbs: 25, Calories: 375}},
+		{Name: "Plain Rice", Macros: RecipeMacros{Protein: 4, Fat: 1, Carbs: 45, Calories: 205}},
+	}
+
+	top := SelectTopRecipes(deviation, recipes, 2)
+
+	if len(top) != 2 {
+		t.Fatalf("Expected 2 recipes, got %d", len(top))
+	}
+
+	// High protein recipes should be at top
+	if top[0].RecipeName != "Grilled Chicken" && top[0].RecipeName != "Beef Stir Fry" {
+		t.Errorf("Expected high protein recipe first, got %s", top[0].RecipeName)
+	}
+}
+
+func TestSelectTopRecipes_EmptyInput(t *testing.T) {
+	deviation := DeviationResult{ProteinPct: -10.0}
+	recipes := []ScoredRecipe{}
+
+	top := SelectTopRecipes(deviation, recipes, 3)
+
+	if len(top) != 0 {
+		t.Errorf("Expected empty result for empty input, got %d", len(top))
+	}
+}
+
+func TestSelectTopRecipes_LimitExceedsAvailable(t *testing.T) {
+	deviation := DeviationResult{ProteinPct: -10.0}
+	recipes := []ScoredRecipe{
+		{Name: "Recipe 1", Macros: RecipeMacros{Protein: 30}},
+		{Name: "Recipe 2", Macros: RecipeMacros{Protein: 20}},
+	}
+
+	top := SelectTopRecipes(deviation, recipes, 10)
+
+	if len(top) != 2 {
+		t.Errorf("Expected 2 recipes (all available), got %d", len(top))
+	}
+}
