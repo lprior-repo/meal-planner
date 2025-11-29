@@ -29,3 +29,6 @@ go.work.sum
 
 # Installers
 *.msi
+# Gleam build artifacts
+gleam/build/
+
