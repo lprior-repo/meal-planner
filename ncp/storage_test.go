@@ -78,3 +78,91 @@ func TestGetNutritionState_NotFound(t *testing.T) {
 		t.Error("Expected error for non-existent state, got nil")
 	}
 }
+
+func TestGetNutritionHistory(t *testing.T) {
+	db, cleanup := setupTestDB(t)
+	defer cleanup()
+
+	// Store 7 days of data
+	baseDate := time.Date(2024, 11, 23, 0, 0, 0, 0, time.UTC)
+	for i := 0; i < 7; i++ {
+		date := baseDate.AddDate(0, 0, i)
+		state := NutritionState{
+			Date: date,
+			Consumed: NutritionData{
+				Date:     date,
+				Protein:  150.0 + float64(i*10),
+				Fat:      60.0,
+				Carbs:    200.0,
+				Calories: 2000.0,
+			},
+			SyncedAt: time.Now(),
+		}
+		err := StoreNutritionState(db, state)
+		if err != nil {
+			t.Fatalf("Failed to store state for day %d: %v", i, err)
+		}
+	}
+
+	// Get history
+	endDate := baseDate.AddDate(0, 0, 6) // 2024-11-29
+	history, err := GetNutritionHistory(db, baseDate, endDate)
+	if err != nil {
+		t.Fatalf("Failed to get history: %v", err)
+	}
+
+	if len(history) != 7 {
+		t.Errorf("Expected 7 days of history, got %d", len(history))
+	}
+
+	// Verify first and last entries
+	if history[0].Consumed.Protein != 150.0 {
+		t.Errorf("Expected first day protein 150.0, got %f", history[0].Consumed.Protein)
+	}
+	if history[6].Consumed.Protein != 210.0 {
+		t.Errorf("Expected last day protein 210.0, got %f", history[6].Consumed.Protein)
+	}
+}
+
+func TestGetNutritionHistory_PartialData(t *testing.T) {
+	db, cleanup := setupTestDB(t)
+	defer cleanup()
+
+	// Store only 3 days of data (with gaps)
+	dates := []time.Time{
+		time.Date(2024, 11, 23, 0, 0, 0, 0, time.UTC),
+		time.Date(2024, 11, 25, 0, 0, 0, 0, time.UTC),
+		time.Date(2024, 11, 27, 0, 0, 0, 0, time.UTC),
+	}
+
+	for _, date := range dates {
+		state := NutritionState{
+			Date: date,
+			Consumed: NutritionData{
+				Date:     date,
+				Protein:  150.0,
+				Fat:      60.0,
+				Carbs:    200.0,
+				Calories: 2000.0,
+			},
+			SyncedAt: time.Now(),
+		}
+		err := StoreNutritionState(db, state)
+		if err != nil {
+			t.Fatalf("Failed to store state: %v", err)
+		}
+	}
+
+	// Get history for 7 days
+	startDate := time.Date(2024, 11, 23, 0, 0, 0, 0, time.UTC)
+	endDate := time.Date(2024, 11, 29, 0, 0, 0, 0, time.UTC)
+	history, err := GetNutritionHistory(db, startDate, endDate)
+	if err != nil {
+		t.Fatalf("Failed to get history: %v", err)
+	}
+
+	// Should only return the 3 days that have data
+	if len(history) != 3 {
+		t.Errorf("Expected 3 days of history, got %d", len(history))
+	}
+}
