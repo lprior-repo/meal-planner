@@ -1,60 +1,9 @@
 package ncp
 
 import (
-	"context"
 	"fmt"
 	"strings"
-	"time"
-
-	"github.com/dgraph-io/badger/v4"
 )
-
-// SyncNutritionData fetches nutrition data from Cronometer and stores it in BadgerDB
-func SyncNutritionData(db *badger.DB, config CronometerConfig, startDate, endDate time.Time) error {
-	// Validate config
-	if err := config.Validate(); err != nil {
-		return fmt.Errorf("invalid config: %w", err)
-	}
-
-	// Create client and use the generic sync function
-	client := NewCronometerClient(config)
-	return SyncNutritionDataWithClient(db, client, startDate, endDate)
-}
-
-// SyncNutritionDataWithClient syncs nutrition data using the provided client
-// This is separated to allow for mocking in tests
-func SyncNutritionDataWithClient(db *badger.DB, client NutritionClient, startDate, endDate time.Time) error {
-	ctx := context.Background()
-
-	// Login
-	if err := client.Login(ctx); err != nil {
-		return fmt.Errorf("login failed: %w", err)
-	}
-	defer client.Logout(ctx)
-
-	// Fetch data for each day in range
-	current := startDate
-	for !current.After(endDate) {
-		data, err := client.FetchDailyNutrition(ctx, current)
-		if err != nil {
-			return fmt.Errorf("failed to fetch data for %s: %w", current.Format("2006-01-02"), err)
-		}
-
-		state := NutritionState{
-			Date:     current,
-			Consumed: *data,
-			SyncedAt: time.Now(),
-		}
-
-		if err := StoreNutritionState(db, state); err != nil {
-			return fmt.Errorf("failed to store data for %s: %w", current.Format("2006-01-02"), err)
-		}
-
-		current = current.AddDate(0, 0, 1)
-	}
-
-	return nil
-}
 
 // FormatStatusOutput generates a human-readable status report
 func FormatStatusOutput(result ReconciliationResult) string {

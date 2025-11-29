@@ -5,6 +5,15 @@ import (
 	"time"
 )
 
+// NutritionData represents nutrition values for a day
+type NutritionData struct {
+	Date     time.Time `json:"date"`
+	Protein  float64   `json:"protein"`
+	Fat      float64   `json:"fat"`
+	Carbs    float64   `json:"carbs"`
+	Calories float64   `json:"calories"`
+}
+
 // NutritionState represents the nutrition state for a specific day
 type NutritionState struct {
 	Date     time.Time     `json:"date"`

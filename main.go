@@ -1857,7 +1857,6 @@ func sendEmail(ctx context.Context, payload EmailPayload) error {
 
 // NCP CLI flags
 var (
-	ncpSync      = flag.Bool("ncp-sync", false, "Sync nutrition data from Cronometer")
 	ncpStatus    = flag.Bool("ncp-status", false, "Show current nutrition status vs goals")
 	ncpReconcile = flag.Bool("ncp-reconcile", false, "Run full reconciliation and suggest adjustments")
 	ncpDays      = flag.Int("ncp-days", 7, "Number of days to analyze for NCP commands")
@@ -1866,19 +1865,8 @@ var (
 // handleNCPCommands processes NCP-related CLI flags
 // Returns true if an NCP command was handled, false to continue normal execution
 func handleNCPCommands(bdb *BadgerDatabase) bool {
-	if !*ncpSync && !*ncpStatus && !*ncpReconcile {
+	if !*ncpStatus && !*ncpReconcile {
 		return false
-	}
-
-	// Load NCP config from environment
-	if err := loadEnv(); err != nil {
-		fmt.Println("Error loading environment:", err)
-		return true
-	}
-
-	config := ncp.CronometerConfig{
-		Username: os.Getenv("CRONOMETER_USERNAME"),
-		Password: os.Getenv("CRONOMETER_PASSWORD"),
 	}
 
 	// Get BadgerDB for NCP storage
@@ -1888,11 +1876,6 @@ func handleNCPCommands(bdb *BadgerDatabase) bool {
 		return true
 	}
 	defer ncpDB.Close()
-
-	if *ncpSync {
-		handleNCPSync(ncpDB, config)
-		return true
-	}
 
 	if *ncpStatus {
 		handleNCPStatus(ncpDB, bdb)
@@ -1905,20 +1888,6 @@ func handleNCPCommands(bdb *BadgerDatabase) bool {
 	}
 
 	return false
-}
-
-func handleNCPSync(db *badger.DB, config ncp.CronometerConfig) {
-	fmt.Println("Syncing nutrition data from Cronometer...")
-
-	endDate := time.Now()
-	startDate := endDate.AddDate(0, 0, -*ncpDays)
-
-	if err := ncp.SyncNutritionData(db, config, startDate, endDate); err != nil {
-		fmt.Printf("Sync failed: %v\n", err)
-		return
-	}
-
-	fmt.Printf("Successfully synced %d days of nutrition data.\n", *ncpDays)
 }
 
 func handleNCPStatus(ncpDB *badger.DB, bdb *BadgerDatabase) {
@@ -1935,7 +1904,7 @@ func handleNCPStatus(ncpDB *badger.DB, bdb *BadgerDatabase) {
 	}
 
 	if len(history) == 0 {
-		fmt.Println("No nutrition data found. Run --ncp-sync first.")
+		fmt.Println("No nutrition data found.")
 		return
 	}
 
@@ -1966,7 +1935,7 @@ func handleNCPReconcile(ncpDB *badger.DB, bdb *BadgerDatabase) {
 	}
 
 	if len(history) == 0 {
-		fmt.Println("No nutrition data found. Run --ncp-sync first.")
+		fmt.Println("No nutrition data found.")
 		return
 	}
 
