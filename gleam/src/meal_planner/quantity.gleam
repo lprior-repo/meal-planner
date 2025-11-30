@@ -173,7 +173,7 @@ pub fn convert_to_base(q: ParsedQuantity) -> Float {
 
 // Format a float, removing unnecessary decimals
 fn format_float(f: Float) -> String {
-  let rounded = float.round(f *. 10.0) /. 10.0
+  let rounded = int.to_float(float.round(f *. 10.0)) /. 10.0
   let i = float.truncate(rounded)
   case int.to_float(i) == rounded {
     True -> int.to_string(i)
