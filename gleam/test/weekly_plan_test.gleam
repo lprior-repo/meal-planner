@@ -1,6 +1,6 @@
 import gleam/list
 import gleeunit/should
-import meal_planner/meal_plan.{DailyPlan, Meal, WeeklyMealPlan}
+import meal_planner/meal_plan
 import meal_planner/types.{
   type Recipe, type UserProfile, Active, Gain, Ingredient, Low, Macros, Maintain,
   Moderate, Recipe, UserProfile,

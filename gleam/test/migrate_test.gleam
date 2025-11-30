@@ -1,7 +1,7 @@
 import gleam/dynamic/decode
 import gleam/list
 import gleeunit/should
-import meal_planner/migrate.{Migration}
+import meal_planner/migrate
 import simplifile
 import sqlight
 

@@ -1,14 +1,10 @@
 import gleeunit
 import gleeunit/should
 import meal_planner/meal_selection.{
-  type MealCategory, type MealSelectionConfig, type MealSelectionResult, Eggs,
-  RedMeat, Salmon, Variety, default_meal_selection_config, get_distribution,
+  Eggs, RedMeat, Salmon, Variety, default_meal_selection_config, get_distribution,
   get_meal_category, is_within_targets, select_meals_for_week,
 }
-import meal_planner/types.{
-  type FodmapLevel, type Ingredient, type Macros, type Recipe, Ingredient, Low,
-  Macros, Recipe,
-}
+import meal_planner/types.{Ingredient, Low, Macros, Recipe}
 
 pub fn main() {
   gleeunit.main()
