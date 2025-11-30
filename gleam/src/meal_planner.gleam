@@ -158,17 +158,27 @@ fn handle_mode(mode: String) {
 
 /// Generate and display meal plan in terminal
 fn generate_and_display_plan() -> Result(Nil, String) {
-  use <- result.try(storage.initialize_database())
-  
-  use profile <- result.try(user_profile.load_or_collect_profile())
-  use recipes <- result.try(recipe_loader.load_all_recipes("recipes", ""))
-  
-  case meal_plan.generate_weekly_plan(profile, recipes) {
-    Ok(plan) -> {
-      output.print_weekly_plan(plan)
-      Ok(Nil)
+  case storage.initialize_database() {
+    Ok(_) -> {
+      case user_profile.load_or_collect_profile() {
+        Ok(profile) -> {
+          case recipe_loader.load_all_recipes("recipes", "") {
+            Ok(recipes) -> {
+              case meal_plan.generate_weekly_plan(profile, recipes) {
+                Ok(plan) -> {
+                  output.print_weekly_plan(plan)
+                  Ok(Nil)
+                }
+                Error(err) -> Error("Failed to generate meal plan: " <> err)
+              }
+            }
+            Error(err) -> Error("Failed to load recipes: " <> err)
+          }
+        }
+        Error(err) -> Error("Failed to load profile: " <> err)
+      }
     }
-    Error(err) -> Error("Failed to generate meal plan: " <> err)
+    Error(err) -> Error("Failed to initialize database: " <> err)
   }
 }
 
@@ -189,7 +199,7 @@ fn generate_and_email_plan() -> Result(Nil, String) {
                         Error(err) -> Error("Failed to send email: " <> err)
                       }
                     }
-                    Error(err) -> Error("Failed to load email config: " <> err)
+                    Error(env_err) -> Error("Failed to load email config: " <> env.format_error(env_err))
                   }
                 }
                 Error(err) -> Error("Failed to generate meal plan: " <> err)
@@ -204,7 +214,6 @@ fn generate_and_email_plan() -> Result(Nil, String) {
     Error(err) -> Error("Failed to initialize database: " <> err)
   }
 }
-}
 
 /// Audit recipes for Vertical Diet compliance
 fn audit_recipes() -> Result(Nil, String) {
@@ -216,10 +225,13 @@ fn audit_recipes() -> Result(Nil, String) {
 
 /// Set up user profile
 fn setup_profile() -> Result(Nil, String) {
-  use profile <- result.try(user_profile.collect_interactive_profile())
-  
-  user_profile.print_profile(profile)
-  Ok(Nil)
+  case user_profile.collect_interactive_profile() {
+    Ok(profile) -> {
+      user_profile.print_profile(profile)
+      Ok(Nil)
+    }
+    Error(profile_err) -> Error(user_profile.profile_error_to_string(profile_err))
+  }
 }
 
 /// Show NCP status

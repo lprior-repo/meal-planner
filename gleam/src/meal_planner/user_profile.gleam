@@ -136,3 +136,10 @@ fn float_to_string(f: Float) -> String {
 /// Import int.to_string for formatting
 @external(erlang, "erlang", "integer_to_list")
 fn int_to_string(i: Int) -> String
+/// Convert ProfileError to string
+pub fn profile_error_to_string(error: ProfileError) -> String {
+  case error {
+    InvalidInput(msg) -> "Invalid input: " <> msg
+    ParseError(msg) -> "Parse error: " <> msg
+  }
+}
