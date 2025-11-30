@@ -11,11 +11,12 @@ CREATE TABLE IF NOT EXISTS nutrients (
 );
 
 -- Food items (from food.csv)
+-- Note: food_category_id is TEXT in USDA data (category name, not ID)
 CREATE TABLE IF NOT EXISTS foods (
     fdc_id INTEGER PRIMARY KEY,
     data_type TEXT NOT NULL,
     description TEXT NOT NULL,
-    food_category_id INTEGER,
+    food_category TEXT,
     publication_date TEXT
 );
 
