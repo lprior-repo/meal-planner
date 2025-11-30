@@ -32,3 +32,4 @@ go.work.sum
 # Gleam build artifacts
 gleam/build/
 
+gleam/mcp_agent_mail/
