@@ -48,30 +48,31 @@ pub fn init_db(conn: sqlight.Connection) -> Result(Nil, StorageError) {
   }
 }
 
-/// Save nutrition data for a specific date
-/// Uses INSERT OR REPLACE to handle both insert and update
-pub fn save_nutrition_state(
-  conn: sqlight.Connection,
-  date: String,
-  data: NutritionData,
-) -> Result(Nil, StorageError) {
-  let sql =
-    "INSERT OR REPLACE INTO nutrition_state (date, protein, fat, carbs, calories)
-     VALUES (?, ?, ?, ?, ?)"
-
-  let args = [
-    sqlight.text(date),
-    sqlight.float(data.protein),
-    sqlight.float(data.fat),
-    sqlight.float(data.carbs),
-    sqlight.float(data.calories),
-  ]
-
-  case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(_) -> Ok(Nil)
-  }
-}
+// TODO: Re-enable when NCP module is available
+// /// Save nutrition data for a specific date
+// /// Uses INSERT OR REPLACE to handle both insert and update
+// pub fn save_nutrition_state(
+//   conn: sqlight.Connection,
+//   date: String,
+//   data: NutritionData,
+// ) -> Result(Nil, StorageError) {
+//   let sql =
+//     "INSERT OR REPLACE INTO nutrition_state (date, protein, fat, carbs, calories)
+//      VALUES (?, ?, ?, ?, ?)"
+// 
+//   let args = [
+//     sqlight.text(date),
+//     sqlight.float(data.protein),
+//     sqlight.float(data.fat),
+//     sqlight.float(data.carbs),
+//     sqlight.float(data.calories),
+//   ]
+// 
+//   case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
+//     Error(e) -> Error(DatabaseError(e.message))
+//     Ok(_) -> Ok(Nil)
+//   }
+// }
 
 /// Get nutrition data for a specific date
 pub fn get_nutrition_state(
