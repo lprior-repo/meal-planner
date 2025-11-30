@@ -43,3 +43,31 @@ pub fn set_level_test() {
   logger.set_level(logging.Info)
   |> should.equal(Nil)
 }
+
+pub fn notice_test() {
+  // Should not panic when logging notice
+  logger.notice("Test notice message")
+  |> should.equal(Nil)
+}
+
+pub fn critical_test() {
+  // Should not panic when logging critical
+  logger.critical("Test critical message")
+  |> should.equal(Nil)
+}
+
+// Test setting different log levels
+pub fn set_level_debug_test() {
+  logger.set_level(logging.Debug)
+  |> should.equal(Nil)
+}
+
+pub fn set_level_warning_test() {
+  logger.set_level(logging.Warning)
+  |> should.equal(Nil)
+}
+
+pub fn set_level_error_test() {
+  logger.set_level(logging.Error)
+  |> should.equal(Nil)
+}
