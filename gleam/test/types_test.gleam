@@ -1,5 +1,7 @@
 import gleeunit/should
-import meal_planner/types.{Macros, macros_calories, macros_add, macros_scale}
+import meal_planner/types.{
+  Ingredient, Macros, macros_add, macros_calories, macros_scale,
+}
 
 pub fn macros_calories_test() {
   // 4cal/g protein, 9cal/g fat, 4cal/g carbs
@@ -30,4 +32,12 @@ pub fn macros_scale_test() {
   result.protein |> should.equal(20.0)
   result.fat |> should.equal(10.0)
   result.carbs |> should.equal(40.0)
+}
+
+// Ingredient tests
+
+pub fn ingredient_creation_test() {
+  let ing = Ingredient(name: "Chicken breast", quantity: "200g")
+  ing.name |> should.equal("Chicken breast")
+  ing.quantity |> should.equal("200g")
 }
