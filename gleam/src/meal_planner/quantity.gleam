@@ -94,7 +94,12 @@ fn parse_number(s: String) -> Result(Float, Nil) {
       case string.split(trimmed, "/") {
         [num_str, denom_str] -> {
           case float.parse(string.trim(num_str)), float.parse(string.trim(denom_str)) {
-            Ok(num), Ok(denom) if denom !=. 0.0 -> Ok(num /. denom)
+            Ok(num), Ok(denom) -> {
+              case denom == 0.0 {
+                True -> Error(Nil)
+                False -> Ok(num /. denom)
+              }
+            }
             _, _ -> Error(Nil)
           }
         }
@@ -169,9 +174,10 @@ pub fn convert_to_base(q: ParsedQuantity) -> Float {
 // Format a float, removing unnecessary decimals
 fn format_float(f: Float) -> String {
   let rounded = float.round(f *. 10.0) /. 10.0
-  case float.truncate(rounded) {
-    i if int.to_float(i) == rounded -> int.to_string(i)
-    _ -> float.to_string(rounded)
+  let i = float.truncate(rounded)
+  case int.to_float(i) == rounded {
+    True -> int.to_string(i)
+    False -> float.to_string(rounded)
   }
 }
 
