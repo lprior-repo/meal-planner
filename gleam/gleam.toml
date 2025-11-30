@@ -37,6 +37,9 @@ glint = ">= 0.14.0"
 # Environment variables
 envoy = ">= 1.0.0"
 
+# .env file loading
+dot_env = ">= 1.0.0"
+
 # Filepath handling
 filepath = ">= 1.0.0"
 
