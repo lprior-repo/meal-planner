@@ -34,3 +34,6 @@ gleam/build/
 
 gleam/mcp_agent_mail/
 mcp_agent_mail/
+
+# MCP config (contains local tokens)
+.mcp.json
