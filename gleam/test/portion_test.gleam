@@ -1,9 +1,8 @@
-import gleam/float
 import gleam/list
 import gleeunit
 import gleeunit/should
 import meal_planner/portion
-import meal_planner/types.{Macros, Recipe, Ingredient, Low}
+import meal_planner/types.{Low, Macros, Recipe}
 
 pub fn main() {
   gleeunit.main()
