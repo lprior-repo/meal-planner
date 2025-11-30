@@ -417,7 +417,7 @@ pub fn initialize_database() -> Result(Nil, String) {
         Ok(_) -> Ok(Nil)
         Error(_) -> Error("Failed to initialize recipe tables")
       }
-      Error(e) -> Error("Failed to initialize database: " <> e.message)
+      Error(_) -> Error("Failed to initialize database")
     }
   })
 }
