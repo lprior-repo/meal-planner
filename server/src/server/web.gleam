@@ -1,5 +1,6 @@
 //// Wisp web server for the meal planner application
 
+import gleam/erlang/process
 import gleam/json
 import gleam/list
 import lustre/attribute
@@ -28,11 +29,10 @@ pub fn main() {
     |> mist.start
   
   // Keep the process alive
-  process_sleep_forever()
+  process.sleep_forever()
 }
 
-@external(erlang, "timer", "sleep")
-fn process_sleep_forever() -> Nil
+
 
 // ============================================================================
 // Request Handler

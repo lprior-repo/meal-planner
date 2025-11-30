@@ -47,6 +47,9 @@ filepath = ">= 1.0.0"
 logging = ">= 1.0.0"
 simplifile = ">= 2.3.1 and < 3.0.0"
 
+# Local dependencies
+shared = { path = "../shared" }
+
 [dev-dependencies]
 # Testing framework
 gleeunit = ">= 1.0.0 and < 2.0.0"

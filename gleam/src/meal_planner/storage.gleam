@@ -1,7 +1,10 @@
 /// SQLite storage module for nutrition data persistence
 
 import gleam/dynamic/decode
+import gleam/list
+import gleam/string
 import meal_planner/ncp.{type NutritionData, type NutritionGoals, NutritionData, NutritionGoals}
+import shared/types.{type Recipe, type Macros, Recipe, Macros, Low, Medium, High}
 import sqlight
 
 /// Error type for storage operations
@@ -143,5 +146,262 @@ pub fn get_goals(conn: sqlight.Connection) -> Result(NutritionGoals, StorageErro
     Error(e) -> Error(DatabaseError(e.message))
     Ok([]) -> Error(NotFound)
     Ok([data, ..]) -> Ok(data)
+  }
+}
+
+// ============================================================================
+// Recipe Storage Functions
+// ============================================================================
+
+/// Initialize recipe tables in the database
+pub fn init_recipe_tables(conn: sqlight.Connection) -> Result(Nil, StorageError) {
+  let create_recipes_table =
+    "CREATE TABLE IF NOT EXISTS recipes (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      ingredients TEXT NOT NULL,
+      instructions TEXT NOT NULL,
+      protein REAL NOT NULL,
+      fat REAL NOT NULL,
+      carbs REAL NOT NULL,
+      servings INTEGER NOT NULL,
+      category TEXT NOT NULL,
+      fodmap_level TEXT NOT NULL,
+      vertical_compliant INTEGER NOT NULL
+    )"
+
+  case sqlight.exec(create_recipes_table, on: conn) {
+    Error(e) -> Error(DatabaseError(e.message))
+    Ok(Nil) -> Ok(Nil)
+  }
+}
+
+/// Save a recipe to the database
+pub fn save_recipe(
+  conn: sqlight.Connection,
+  recipe: Recipe,
+) -> Result(Nil, StorageError) {
+  let sql =
+    "INSERT OR REPLACE INTO recipes 
+     (id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+
+  let ingredients_json = string.join(
+    list.map(recipe.ingredients, fn(i) { i.name <> ":" <> i.quantity }),
+    "|"
+  )
+  
+  let instructions_json = string.join(recipe.instructions, "|")
+
+  let fodmap_string = case recipe.fodmap_level {
+    Low -> "low"
+    Medium -> "medium" 
+    High -> "high"
+  }
+
+  let args = [
+    sqlight.text(recipe.id),
+    sqlight.text(recipe.name),
+    sqlight.text(ingredients_json),
+    sqlight.text(instructions_json),
+    sqlight.float(recipe.macros.protein),
+    sqlight.float(recipe.macros.fat),
+    sqlight.float(recipe.macros.carbs),
+    sqlight.int(recipe.servings),
+    sqlight.text(recipe.category),
+    sqlight.text(fodmap_string),
+    sqlight.int(case recipe.vertical_compliant { True -> 1 False -> 0 }),
+  ]
+
+  case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
+    Error(e) -> Error(DatabaseError(e.message))
+    Ok(_) -> Ok(Nil)
+  }
+}
+
+/// Get all recipes from the database
+pub fn get_all_recipes(conn: sqlight.Connection) -> Result(List(Recipe), StorageError) {
+  let sql =
+    "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
+     FROM recipes ORDER BY name"
+
+  let decoder = {
+    use id <- decode.field(0, decode.string)
+    use name <- decode.field(1, decode.string)
+    use ingredients_str <- decode.field(2, decode.string)
+    use instructions_str <- decode.field(3, decode.string)
+    use protein <- decode.field(4, decode.float)
+    use fat <- decode.field(5, decode.float)
+    use carbs <- decode.field(6, decode.float)
+    use servings <- decode.field(7, decode.int)
+    use category <- decode.field(8, decode.string)
+    use fodmap_str <- decode.field(9, decode.string)
+    use vertical_int <- decode.field(10, decode.int)
+
+    let ingredients = string.split(ingredients_str, "|")
+      |> list.map(fn(pair) {
+        case string.split(pair, ":") {
+          [name, quantity] -> Ingredient(name, quantity)
+          _ -> Ingredient(pair, "")
+        }
+      })
+    
+    let instructions = string.split(instructions_str, "|")
+
+    let fodmap_level = case fodmap_str {
+      "low" -> Low
+      "medium" -> Medium
+      "high" -> High
+      _ -> Low
+    }
+
+    let vertical_compliant = case vertical_int {
+      1 -> True
+      _ -> False
+    }
+
+    decode.success(Recipe(
+      id: id,
+      name: name,
+      ingredients: ingredients,
+      instructions: instructions,
+      macros: Macros(protein: protein, fat: fat, carbs: carbs),
+      servings: servings,
+      category: category,
+      fodmap_level: fodmap_level,
+      vertical_compliant: vertical_compliant,
+    ))
+  }
+
+  case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
+    Error(e) -> Error(DatabaseError(e.message))
+    Ok(recipes) -> Ok(recipes)
+  }
+}
+
+/// Get a specific recipe by ID
+pub fn get_recipe_by_id(
+  conn: sqlight.Connection,
+  recipe_id: String,
+) -> Result(Recipe, StorageError) {
+  let sql =
+    "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
+     FROM recipes WHERE id = ?"
+
+  let decoder = {
+    use id <- decode.field(0, decode.string)
+    use name <- decode.field(1, decode.string)
+    use ingredients_str <- decode.field(2, decode.string)
+    use instructions_str <- decode.field(3, decode.string)
+    use protein <- decode.field(4, decode.float)
+    use fat <- decode.field(5, decode.float)
+    use carbs <- decode.field(6, decode.float)
+    use servings <- decode.field(7, decode.int)
+    use category <- decode.field(8, decode.string)
+    use fodmap_str <- decode.field(9, decode.string)
+    use vertical_int <- decode.field(10, decode.int)
+
+    let ingredients = string.split(ingredients_str, "|")
+      |> list.map(fn(pair) {
+        case string.split(pair, ":") {
+          [name, quantity] -> Ingredient(name, quantity)
+          _ -> Ingredient(pair, "")
+        }
+      })
+    
+    let instructions = string.split(instructions_str, "|")
+
+    let fodmap_level = case fodmap_str {
+      "low" -> Low
+      "medium" -> Medium
+      "high" -> High
+      _ -> Low
+    }
+
+    let vertical_compliant = case vertical_int {
+      1 -> True
+      _ -> False
+    }
+
+    decode.success(Recipe(
+      id: id,
+      name: name,
+      ingredients: ingredients,
+      instructions: instructions,
+      macros: Macros(protein: protein, fat: fat, carbs: carbs),
+      servings: servings,
+      category: category,
+      fodmap_level: fodmap_level,
+      vertical_compliant: vertical_compliant,
+    ))
+  }
+
+  case sqlight.query(sql, on: conn, with: [sqlight.text(recipe_id)], expecting: decoder) {
+    Error(e) -> Error(DatabaseError(e.message))
+    Ok([]) -> Error(NotFound)
+    Ok([recipe, ..]) -> Ok(recipe)
+  }
+}
+
+/// Get recipes by category
+pub fn get_recipes_by_category(
+  conn: sqlight.Connection,
+  category: String,
+) -> Result(List(Recipe), StorageError) {
+  let sql =
+    "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
+     FROM recipes WHERE category = ? ORDER BY name"
+
+  let decoder = {
+    use id <- decode.field(0, decode.string)
+    use name <- decode.field(1, decode.string)
+    use ingredients_str <- decode.field(2, decode.string)
+    use instructions_str <- decode.field(3, decode.string)
+    use protein <- decode.field(4, decode.float)
+    use fat <- decode.field(5, decode.float)
+    use carbs <- decode.field(6, decode.float)
+    use servings <- decode.field(7, decode.int)
+    use category <- decode.field(8, decode.string)
+    use fodmap_str <- decode.field(9, decode.string)
+    use vertical_int <- decode.field(10, decode.int)
+
+    let ingredients = string.split(ingredients_str, "|")
+      |> list.map(fn(pair) {
+        case string.split(pair, ":") {
+          [name, quantity] -> Ingredient(name, quantity)
+          _ -> Ingredient(pair, "")
+        }
+      })
+    
+    let instructions = string.split(instructions_str, "|")
+
+    let fodmap_level = case fodmap_str {
+      "low" -> Low
+      "medium" -> Medium
+      "high" -> High
+      _ -> Low
+    }
+
+    let vertical_compliant = case vertical_int {
+      1 -> True
+      _ -> False
+    }
+
+    decode.success(Recipe(
+      id: id,
+      name: name,
+      ingredients: ingredients,
+      instructions: instructions,
+      macros: Macros(protein: protein, fat: fat, carbs: carbs),
+      servings: servings,
+      category: category,
+      fodmap_level: fodmap_level,
+      vertical_compliant: vertical_compliant,
+    ))
+  }
+
+  case sqlight.query(sql, on: conn, with: [sqlight.text(category)], expecting: decoder) {
+    Error(e) -> Error(DatabaseError(e.message))
+    Ok(recipes) -> Ok(recipes)
   }
 }
