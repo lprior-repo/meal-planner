@@ -2,11 +2,13 @@
 ///
 /// Handles collecting user data interactively and calculating nutritional targets
 
+import gleam/float
 import gleam/io
+import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
-import meal_planner/types.{type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Moderate, Sedentary}
+import meal_planner/types.{type ActivityLevel, type Goal, type UserProfile, UserProfile, Active, Gain, Lose, Maintain, Moderate, Sedentary}
 
 /// Error type for user profile operations
 pub type ProfileError {
@@ -54,7 +56,7 @@ pub fn validate_meals_per_day(meals: Int) -> Result(Int, ProfileError) {
 
 /// Parse string to float with error handling
 fn parse_float(s: String) -> Result(Float, ProfileError) {
-  case string.to_float(s) {
+  case float.parse(s) {
     Ok(f) -> Ok(f)
     Error(_) -> Error(ParseError("invalid number: " <> s))
   }
@@ -62,7 +64,7 @@ fn parse_float(s: String) -> Result(Float, ProfileError) {
 
 /// Parse string to int with error handling
 fn parse_int(s: String) -> Result(Int, ProfileError) {
-  case string.to_int(s) {
+  case int.parse(s) {
     Ok(i) -> Ok(i)
     Error(_) -> Error(ParseError("invalid number: " <> s))
   }
@@ -128,7 +130,7 @@ pub fn format_user_profile(profile: UserProfile) -> String {
 /// Convert float to string
 fn float_to_string(f: Float) -> String {
   // Simple conversion - in real implementation would handle rounding
-  string.from_float(f)
+  float.to_string(f)
 }
 
 /// Import int.to_string for formatting

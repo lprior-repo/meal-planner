@@ -88,12 +88,9 @@ fn profile_command() -> glint.Command(Nil) {
 /// NCP status command - show nutrition status vs goals
 fn ncp_status_command() -> glint.Command(Nil) {
   use <- glint.command_help("Show nutrition status vs goals")
-  use named, _args, _flags <- glint.command()
+  use _named, _args, _flags <- glint.command()
 
-  let days = case glint.get_flag(named, "days") {
-    Ok(d) -> d
-    Error(_) -> 7
-  }
+  let days = 7  // Default to 7 days for now
   
   case show_ncp_status(days) {
     Ok(_) -> Nil
@@ -104,12 +101,9 @@ fn ncp_status_command() -> glint.Command(Nil) {
 /// NCP reconcile command - run nutrition reconciliation
 fn ncp_reconcile_command() -> glint.Command(Nil) {
   use <- glint.command_help("Run nutrition reconciliation and suggest adjustments")
-  use named, _args, _flags <- glint.command()
+  use _named, _args, _flags <- glint.command()
 
-  let days = case glint.get_flag(named, "days") {
-    Ok(d) -> d
-    Error(_) -> 7
-  }
+  let days = 7  // Default to 7 days for now
   
   case run_ncp_reconciliation(days) {
     Ok(_) -> Nil
@@ -169,25 +163,47 @@ fn generate_and_display_plan() -> Result(Nil, String) {
   use profile <- result.try(user_profile.load_or_collect_profile())
   use recipes <- result.try(recipe_loader.load_all_recipes("recipes", ""))
   
-  use plan <- result.try(meal_plan.generate_weekly_plan(profile, recipes))
-  
-  output.print_weekly_plan(plan)
-  Ok(Nil)
+  case meal_plan.generate_weekly_plan(profile, recipes) {
+    Ok(plan) -> {
+      output.print_weekly_plan(plan)
+      Ok(Nil)
+    }
+    Error(err) -> Error("Failed to generate meal plan: " <> err)
+  }
 }
 
 /// Generate and email meal plan
 fn generate_and_email_plan() -> Result(Nil, String) {
-  use <- result.try(storage.initialize_database())
-  
-  use profile <- result.try(user_profile.load_or_collect_profile())
-  use recipes <- result.try(recipe_loader.load_all_recipes("recipes", ""))
-  
-  use plan <- result.try(meal_plan.generate_weekly_plan(profile, recipes))
-  
-  case env.load_email_config() {
-    Ok(config) -> output.send_weekly_plan_email(plan, config)
-    Error(err) -> Error("Failed to load email config: " <> err)
+  case storage.initialize_database() {
+    Ok(_) -> {
+      case user_profile.load_or_collect_profile() {
+        Ok(profile) -> {
+          case recipe_loader.load_all_recipes("recipes", "") {
+            Ok(recipes) -> {
+              case meal_plan.generate_weekly_plan(profile, recipes) {
+                Ok(plan) -> {
+                  case env.load_email_config() {
+                    Ok(config) -> {
+                      case output.send_weekly_plan_email(plan, config) {
+                        Ok(_) -> Ok(Nil)
+                        Error(err) -> Error("Failed to send email: " <> err)
+                      }
+                    }
+                    Error(err) -> Error("Failed to load email config: " <> err)
+                  }
+                }
+                Error(err) -> Error("Failed to generate meal plan: " <> err)
+              }
+            }
+            Error(err) -> Error("Failed to load recipes: " <> err)
+          }
+        }
+        Error(err) -> Error("Failed to load profile: " <> err)
+      }
+    }
+    Error(err) -> Error("Failed to initialize database: " <> err)
   }
+}
 }
 
 /// Audit recipes for Vertical Diet compliance

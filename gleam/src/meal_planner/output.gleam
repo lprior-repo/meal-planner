@@ -4,6 +4,7 @@
 
 import gleam/float
 import gleam/int
+import gleam/io
 import gleam/list
 import gleam/string
 import meal_planner/env.{type RequiredVars}
@@ -16,7 +17,7 @@ import meal_planner/types.{
   type ActivityLevel, type Goal, type Ingredient, type Macros, type Recipe,
   type UserProfile, Active, Gain, Lose, Maintain, Moderate, Sedentary,
   daily_calorie_target, daily_carb_target, daily_fat_target, daily_protein_target,
-  macros_calories,
+  macros_calories, Macros, is_vertical_diet_compliant,
 }
 
 /// Format macros as a compact string (e.g., "P:40g F:20g C:30g")
@@ -328,7 +329,7 @@ pub fn print_audit_report(recipes: List(Recipe)) -> Nil {
   io.println("==== VERTICAL DIET RECIPE AUDIT ====")
   io.println("Total Recipes: " <> int.to_string(list.length(recipes)))
   
-  let compliant = list.filter(recipes, fn(r) { meal_planner/types.is_vertical_diet_compliant(r) })
+  let compliant = list.filter(recipes, is_vertical_diet_compliant)
   let compliant_count = list.length(compliant)
   let compliance_rate = case list.length(recipes) {
     0 -> 0.0
@@ -342,5 +343,5 @@ pub fn print_audit_report(recipes: List(Recipe)) -> Nil {
 
 /// Convert float to string
 fn float_to_string(f: Float) -> String {
-  string.from_float(f)
+  float.to_string(f)
 }
