@@ -28,8 +28,5 @@ sqlight = ">= 1.0.0 and < 2.0.0"
 # Shared types
 shared = { path = "../shared" }
 
-# Import from existing meal_planner
-meal_planner = { path = "../gleam" }
-
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

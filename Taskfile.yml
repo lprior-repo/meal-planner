@@ -1,0 +1,290 @@
+version: '3'
+
+vars:
+  SHARED_DIR: '{{.ROOT_DIR}}/shared'
+  SERVER_DIR: '{{.ROOT_DIR}}/server'
+  CLIENT_DIR: '{{.ROOT_DIR}}/client'
+  CLI_DIR: '{{.ROOT_DIR}}/gleam'
+
+tasks:
+  dev:
+    desc: "Main development task - compile all projects and start server"
+    deps:
+      - build
+    cmds:
+      - task: server:background
+      - |
+        echo "🚀 Development environment started!"
+        echo ""
+        echo "✅ All Gleam projects compiled:"
+        echo "   - shared (types)"
+        echo "   - server (Wisp backend)"
+        echo "   - client (Lustre SPA)"
+        echo "   - gleam (CLI tool)"
+        echo ""
+        echo "🌐 Server running in background"
+        echo ""
+        echo "💡 Tip: Use 'task server:stop' to stop the background server"
+
+  build:
+    desc: "Compile all Gleam projects in dependency order"
+    deps:
+      - build:shared
+    cmds:
+      - task: build:server
+      - task: build:client
+      - task: build:cli
+
+  build:shared:
+    desc: "Compile shared types library"
+    dir: '{{.SHARED_DIR}}'
+    sources:
+      - '{{.SHARED_DIR}}/src/**/*.gleam'
+      - '{{.SHARED_DIR}}/gleam.toml'
+    generates:
+      - '{{.SHARED_DIR}}/build/**/*'
+    cmds:
+      - gleam build
+
+  build:server:
+    desc: "Compile server (Wisp backend)"
+    dir: '{{.SERVER_DIR}}'
+    deps:
+      - build:shared
+    sources:
+      - '{{.SERVER_DIR}}/src/**/*.gleam'
+      - '{{.SERVER_DIR}}/gleam.toml'
+    generates:
+      - '{{.SERVER_DIR}}/build/**/*'
+    cmds:
+      - gleam build
+
+  build:client:
+    desc: "Compile client (Lustre SPA)"
+    dir: '{{.CLIENT_DIR}}'
+    deps:
+      - build:shared
+    sources:
+      - '{{.CLIENT_DIR}}/src/**/*.gleam'
+      - '{{.CLIENT_DIR}}/gleam.toml'
+    generates:
+      - '{{.CLIENT_DIR}}/build/**/*'
+    cmds:
+      - gleam build
+
+  build:cli:
+    desc: "Compile CLI tool"
+    dir: '{{.CLI_DIR}}'
+    deps:
+      - build:shared
+    sources:
+      - '{{.CLI_DIR}}/src/**/*.gleam'
+      - '{{.CLI_DIR}}/gleam.toml'
+    generates:
+      - '{{.CLI_DIR}}/build/**/*'
+    cmds:
+      - gleam build
+
+  test:
+    desc: "Run all tests (main test suite in gleam/)"
+    dir: '{{.CLI_DIR}}'
+    deps:
+      - build:shared
+    cmds:
+      - gleam test
+
+  test:server:
+    desc: "Run server tests"
+    dir: '{{.SERVER_DIR}}'
+    deps:
+      - build:shared
+    cmds:
+      - gleam test
+
+  test:client:
+    desc: "Run client tests"
+    dir: '{{.CLIENT_DIR}}'
+    deps:
+      - build:shared
+    cmds:
+      - gleam test
+
+  test:shared:
+    desc: "Run shared types tests"
+    dir: '{{.SHARED_DIR}}'
+    cmds:
+      - gleam test
+
+  test:all:
+    desc: "Run tests for all projects"
+    cmds:
+      - task: test:shared
+      - task: test
+      - task: test:server
+      - task: test:client
+
+  check:
+    desc: "Run gleam check on all projects to verify compilation"
+    cmds:
+      - task: check:shared
+      - task: check:server
+      - task: check:client
+      - task: check:cli
+
+  check:shared:
+    desc: "Check shared types compilation"
+    dir: '{{.SHARED_DIR}}'
+    cmds:
+      - gleam check
+
+  check:server:
+    desc: "Check server compilation"
+    dir: '{{.SERVER_DIR}}'
+    cmds:
+      - gleam check
+
+  check:client:
+    desc: "Check client compilation"
+    dir: '{{.CLIENT_DIR}}'
+    cmds:
+      - gleam check
+
+  check:cli:
+    desc: "Check CLI compilation"
+    dir: '{{.CLI_DIR}}'
+    cmds:
+      - gleam check
+
+  format:
+    desc: "Format all Gleam code"
+    cmds:
+      - task: format:shared
+      - task: format:server
+      - task: format:client
+      - task: format:cli
+
+  format:shared:
+    desc: "Format shared types code"
+    dir: '{{.SHARED_DIR}}'
+    cmds:
+      - gleam format
+
+  format:server:
+    desc: "Format server code"
+    dir: '{{.SERVER_DIR}}'
+    cmds:
+      - gleam format
+
+  format:client:
+    desc: "Format client code"
+    dir: '{{.CLIENT_DIR}}'
+    cmds:
+      - gleam format
+
+  format:cli:
+    desc: "Format CLI code"
+    dir: '{{.CLI_DIR}}'
+    cmds:
+      - gleam format
+
+  clean:
+    desc: "Clean all build artifacts"
+    cmds:
+      - task: clean:shared
+      - task: clean:server
+      - task: clean:client
+      - task: clean:cli
+
+  clean:shared:
+    desc: "Clean shared types build artifacts"
+    dir: '{{.SHARED_DIR}}'
+    cmds:
+      - gleam clean
+
+  clean:server:
+    desc: "Clean server build artifacts"
+    dir: '{{.SERVER_DIR}}'
+    cmds:
+      - gleam clean
+
+  clean:client:
+    desc: "Clean client build artifacts"
+    dir: '{{.CLIENT_DIR}}'
+    cmds:
+      - gleam clean
+
+  clean:cli:
+    desc: "Clean CLI build artifacts"
+    dir: '{{.CLI_DIR}}'
+    cmds:
+      - gleam clean
+
+  server:
+    desc: "Run the server"
+    dir: '{{.SERVER_DIR}}'
+    deps:
+      - build:server
+    cmds:
+      - gleam run
+
+  server:background:
+    desc: "Run the server in the background"
+    dir: '{{.SERVER_DIR}}'
+    deps:
+      - build:server
+    cmds:
+      - gleam run &
+
+  server:stop:
+    desc: "Stop the background server"
+    cmds:
+      - pkill -f "gleam run" || true
+      - echo "Server stopped"
+
+  client:dev:
+    desc: "Run client development server"
+    dir: '{{.CLIENT_DIR}}'
+    deps:
+      - build:client
+    cmds:
+      - gleam run -m lustre/dev start
+
+  cli:run:
+    desc: "Run the CLI tool"
+    dir: '{{.CLI_DIR}}'
+    deps:
+      - build:cli
+    cmds:
+      - gleam run -- {{.CLI_ARGS}}
+
+  deps:update:
+    desc: "Update dependencies for all projects"
+    cmds:
+      - task: deps:update:shared
+      - task: deps:update:server
+      - task: deps:update:client
+      - task: deps:update:cli
+
+  deps:update:shared:
+    desc: "Update shared dependencies"
+    dir: '{{.SHARED_DIR}}'
+    cmds:
+      - gleam update
+
+  deps:update:server:
+    desc: "Update server dependencies"
+    dir: '{{.SERVER_DIR}}'
+    cmds:
+      - gleam update
+
+  deps:update:client:
+    desc: "Update client dependencies"
+    dir: '{{.CLIENT_DIR}}'
+    cmds:
+      - gleam update
+
+  deps:update:cli:
+    desc: "Update CLI dependencies"
+    dir: '{{.CLI_DIR}}'
+    cmds:
+      - gleam update
