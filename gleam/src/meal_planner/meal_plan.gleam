@@ -4,7 +4,7 @@ import gleam/list
 import gleam/result
 import meal_planner/types.{
   type Ingredient, type Macros, type UserProfile, type Recipe,
-  Macros, macros_scale, Low,
+  Recipe, Macros, macros_scale, Low,
 }
 
 
