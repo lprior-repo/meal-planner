@@ -169,7 +169,7 @@ pub fn generate_weekly_plan_generates_shopping_list_test() {
   let plan = generate_weekly_plan(profile, recipes)
 
   // Should have non-empty shopping list
-  { list.length(plan.shopping_list) > 0 } |> should.be_true()
+  { plan.shopping_list != [] } |> should.be_true()
 }
 
 pub fn generate_weekly_plan_meals_have_portion_sizes_test() {
