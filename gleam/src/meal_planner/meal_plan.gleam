@@ -1,6 +1,7 @@
 /// Meal planning types for daily and weekly plans
 
 import gleam/list
+import gleam/result
 import meal_planner/types.{
   type Ingredient, type Macros, type UserProfile,
   Macros, macros_scale, Low,
