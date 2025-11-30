@@ -5,6 +5,13 @@ pub type Ingredient {
   Ingredient(name: String, quantity: String)
 }
 
+/// FODMAP level for digestive health tracking
+pub type FodmapLevel {
+  Low
+  Medium
+  High
+}
+
 /// Recipe represents a complete recipe with ingredients, instructions, and nutrition
 pub type Recipe {
   Recipe(
@@ -14,10 +21,33 @@ pub type Recipe {
     macros: Macros,
     servings: Int,
     category: String,
-    fodmap_level: String,
+    fodmap_level: FodmapLevel,
     vertical_compliant: Bool,
   )
 }
+
+/// Check if recipe meets Vertical Diet requirements
+/// Must be explicitly marked compliant and have low FODMAP
+pub fn is_vertical_diet_compliant(recipe: Recipe) -> Bool {
+  recipe.vertical_compliant && recipe.fodmap_level == Low
+}
+
+/// Returns macros per serving (macros are already stored per serving)
+pub fn macros_per_serving(recipe: Recipe) -> Macros {
+  recipe.macros
+}
+
+/// Returns total macros for all servings
+pub fn total_macros(recipe: Recipe) -> Macros {
+  let servings = case recipe.servings {
+    s if s <= 0 -> 1
+    s -> s
+  }
+  macros_scale(recipe.macros, int_to_float(servings))
+}
+
+@external(erlang, "erlang", "float")
+fn int_to_float(n: Int) -> Float
 
 /// Macros represents nutritional macronutrients per serving
 pub type Macros {

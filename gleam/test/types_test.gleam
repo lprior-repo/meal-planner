@@ -1,6 +1,6 @@
 import gleeunit/should
 import meal_planner/types.{
-  Ingredient, Macros, Recipe, macros_add, macros_calories, macros_scale,
+  Ingredient, Low, Macros, Recipe, macros_add, macros_calories, macros_scale,
 }
 
 pub fn macros_calories_test() {
@@ -59,7 +59,7 @@ pub fn recipe_creation_test() {
       macros: macros,
       servings: 2,
       category: "protein",
-      fodmap_level: "low",
+      fodmap_level: Low,
       vertical_compliant: True,
     )
   recipe.name |> should.equal("Grilled Chicken")
