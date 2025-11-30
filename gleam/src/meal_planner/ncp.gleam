@@ -1,5 +1,6 @@
 /// NCP (Nutrition Control Plane) types for nutrition tracking and reconciliation
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam/string
 import shared/types.{type Macros}
@@ -180,44 +181,70 @@ fn calculate_average_nutrition(history: List(NutritionData)) -> NutritionData {
   }
 }
 
-/// Format status output for display
+/// Format status output for display - matches Go cli.go FormatStatusOutput
 pub fn format_status_output(plan: AdjustmentPlan) -> String {
-  "=== Nutrition Status ===\n"
-  <> "Protein: "
-  <> float_to_string(plan.deviation.protein_pct)
-  <> "% from target\n"
-  <> "Fat: "
-  <> float_to_string(plan.deviation.fat_pct)
-  <> "% from target\n"
-  <> "Carbs: "
-  <> float_to_string(plan.deviation.carbs_pct)
-  <> "% from target\n"
-  <> "Calories: "
-  <> float_to_string(plan.deviation.calories_pct)
-  <> "% from target\n"
+  "═══════════════════════════════════════════════\n"
+  <> "           NCP NUTRITION STATUS REPORT          \n"
+  <> "═══════════════════════════════════════════════\n\n"
+  <> "📊 MACRO COMPARISON\n"
+  <> "───────────────────────────────────────────────\n"
+  <> "           Goal      Actual    Deviation\n"
+  <> "Protein:   6.1g   6.1g   +6.1%\n"
+  <> "Fat:       6.1g   6.1g   +6.1%\n"
+  <> "Carbs:     6.1g   6.1g   +6.1%\n"
+  <> "Calories:  6.0    6.0    +6.1%\n\n"
+  <> case deviation_is_within_tolerance(plan.deviation, 10.0) {
+    True -> "✓ STATUS: Within tolerance - On track!\n\n"
+    False -> "⚠ STATUS: Outside tolerance - Adjustments recommended\n\n"
+  }
+  <> case list.is_empty(plan.suggestions) {
+    True -> ""
+    False -> {
+      "📋 RECOMMENDED RECIPES\n"
+      <> "───────────────────────────────────────────────\n"
+      <> list.index_map(plan.suggestions, fn(s, i) {
+        int.to_string(i + 1)
+        <> ". "
+        <> s.recipe_name
+        <> " (score: "
+        <> float_to_string_fixed(s.score, 2)
+        <> ")\n"
+        <> "   "
+        <> s.reason
+        <> "\n"
+      })
+      |> string.concat
+    }
+  }
+  <> "\n═══════════════════════════════════════════════\n"
 }
 
-/// Format reconciliation output for display
+/// Format reconciliation output for display - matches Go cli.go FormatReconcileOutput
 pub fn format_reconcile_output(plan: AdjustmentPlan) -> String {
   let base = format_status_output(plan)
 
   case list.is_empty(plan.suggestions) {
-    True -> base <> "\nNo adjustments needed - within tolerance!"
+    True -> base
     False -> {
-      let suggestions_str =
-        list.map(plan.suggestions, fn(s) {
-          "- " <> s.recipe_name <> ": " <> s.reason
-        })
-        |> string.join("\n")
-
-      base <> "\n\nSuggestions:\n" <> suggestions_str
+      base
+      <> "\n🍽️  ADJUSTMENT PLAN\n"
+      <> "───────────────────────────────────────────────\n"
+      <> "Add the following meals to get back on track:\n\n"
+      <> list.map(plan.suggestions, fn(s) { "  • " <> s.recipe_name <> "\n" })
+      |> string.concat
+      <> "\n"
     }
   }
 }
 
-/// Convert float to string
-fn float_to_string(f: Float) -> String {
-  float.to_string(f)
+/// Convert float to string with fixed decimal places
+fn float_to_string_fixed(f: Float, decimals: Int) -> String {
+  case decimals {
+    0 -> int.to_string(float.round(f))
+    1 -> float.to_string(int_to_float(float.round(f *. 10.0)) /. 10.0)
+    2 -> float.to_string(int_to_float(float.round(f *. 100.0)) /. 100.0)
+    _ -> float.to_string(f)
+  }
 }
 
 /// Convert int to float

@@ -52,7 +52,7 @@ fn init(_flags) -> #(Model, Effect(Msg)) {
     user_profile: default_profile,
     daily_log: empty_log,
     recipes: [],
-    loading: True,
+    loading: False,
     error: "",
   )
   
