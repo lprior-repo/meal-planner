@@ -4,7 +4,7 @@ import gleam/dynamic/decode
 import gleam/list
 import gleam/string
 import meal_planner/ncp.{type NutritionData, type NutritionGoals, NutritionData, NutritionGoals}
-import shared/types.{type Recipe, type Macros, Recipe, Macros, Low, Medium, High}
+import shared/types.{type Recipe, type Macros, Recipe, Macros, Ingredient, Low, Medium, High}
 import sqlight
 
 /// Error type for storage operations
