@@ -74,55 +74,57 @@ pub fn init_db(conn: sqlight.Connection) -> Result(Nil, StorageError) {
 //   }
 // }
 
-/// Get nutrition data for a specific date
-pub fn get_nutrition_state(
-  conn: sqlight.Connection,
-  date: String,
-) -> Result(NutritionData, StorageError) {
-  let sql =
-    "SELECT protein, fat, carbs, calories FROM nutrition_state WHERE date = ?"
+// TODO: Re-enable when NCP module is available
+// /// Get nutrition data for a specific date
+// pub fn get_nutrition_state(
+//   conn: sqlight.Connection,
+//   date: String,
+// ) -> Result(NutritionData, StorageError) {
+//   let sql =
+//     "SELECT protein, fat, carbs, calories FROM nutrition_state WHERE date = ?"
+// 
+//   let decoder = {
+//     use protein <- decode.field(0, decode.float)
+//     use fat <- decode.field(1, decode.float)
+//     use carbs <- decode.field(2, decode.float)
+//     use calories <- decode.field(3, decode.float)
+//     decode.success(NutritionData(
+//       protein: protein,
+//       fat: fat,
+//       carbs: carbs,
+//       calories: calories,
+//     ))
+//   }
+// 
+//   case sqlight.query(sql, on: conn, with: [sqlight.text(date)], expecting: decoder) {
+//     Error(e) -> Error(DatabaseError(e.message))
+//     Ok([]) -> Error(NotFound)
+//     Ok([data, ..]) -> Ok(data)
+//   }
+// }
 
-  let decoder = {
-    use protein <- decode.field(0, decode.float)
-    use fat <- decode.field(1, decode.float)
-    use carbs <- decode.field(2, decode.float)
-    use calories <- decode.field(3, decode.float)
-    decode.success(NutritionData(
-      protein: protein,
-      fat: fat,
-      carbs: carbs,
-      calories: calories,
-    ))
-  }
-
-  case sqlight.query(sql, on: conn, with: [sqlight.text(date)], expecting: decoder) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([data, ..]) -> Ok(data)
-  }
-}
-
-/// Save nutrition goals (only one row with id=1)
-pub fn save_goals(
-  conn: sqlight.Connection,
-  goals: NutritionGoals,
-) -> Result(Nil, StorageError) {
-  let sql =
-    "INSERT OR REPLACE INTO nutrition_goals (id, daily_protein, daily_fat, daily_carbs, daily_calories)
-     VALUES (1, ?, ?, ?, ?)"
-
-  let args = [
-    sqlight.float(goals.daily_protein),
-    sqlight.float(goals.daily_fat),
-    sqlight.float(goals.daily_carbs),
-    sqlight.float(goals.daily_calories),
-  ]
-
-  case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(_) -> Ok(Nil)
-  }
-}
+// TODO: Re-enable when NCP module is available
+// /// Save nutrition goals (only one row with id=1)
+// pub fn save_goals(
+//   conn: sqlight.Connection,
+//   goals: NutritionGoals,
+// ) -> Result(Nil, StorageError) {
+//   let sql =
+//     "INSERT OR REPLACE INTO nutrition_goals (id, daily_protein, daily_fat, daily_carbs, daily_calories)
+//      VALUES (1, ?, ?, ?, ?)"
+// 
+//   let args = [
+//     sqlight.float(goals.daily_protein),
+//     sqlight.float(goals.daily_fat),
+//     sqlight.float(goals.daily_carbs),
+//     sqlight.float(goals.daily_calories),
+//   ]
+// 
+//   case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
+//     Error(e) -> Error(DatabaseError(e.message))
+//     Ok(_) -> Ok(Nil)
+//   }
+// }
 
 /// Get nutrition goals
 pub fn get_goals(conn: sqlight.Connection) -> Result(NutritionGoals, StorageError) {
