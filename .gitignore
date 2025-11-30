@@ -31,6 +31,9 @@ go.work.sum
 *.msi
 # Gleam build artifacts
 gleam/build/
+client/build/
+server/build/
+shared/build/
 
 gleam/mcp_agent_mail/
 mcp_agent_mail/
