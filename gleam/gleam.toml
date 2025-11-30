@@ -25,12 +25,7 @@ gleam_json = ">= 3.0.0 and < 4.0.0"
 glaml = ">= 3.0.0"
 
 # SQLite database (replacing BadgerDB)
-# NOTE: sqlight requires C compiler (Visual Studio Build Tools on Windows)
-# Uncomment after installing: winget install Microsoft.VisualStudio.2022.BuildTools
-# sqlight = ">= 0.0.0"
-
-# Pure Erlang alternative: DETS-based storage
-# database = ">= 0.0.0"
+sqlight = ">= 1.0.0 and < 2.0.0"
 
 # OTP for supervision and GenServers
 gleam_otp = ">= 0.10.0"
