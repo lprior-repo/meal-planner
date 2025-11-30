@@ -4,7 +4,8 @@
 import logging
 
 // Re-export LogLevel type for convenience
-pub type LogLevel = logging.LogLevel
+pub type LogLevel =
+  logging.LogLevel
 
 /// Configure the default Erlang logger handler with pretty Gleam output
 /// Should be called once at application startup

@@ -1,5 +1,5 @@
-import gleeunit/should
 import gleam/string
+import gleeunit/should
 import meal_planner/email.{EmailAddress, EmailPayload}
 
 pub fn email_payload_creation_test() {

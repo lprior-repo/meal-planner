@@ -77,8 +77,7 @@ pub fn validate_required_vars(
 pub fn format_error(error: EnvError) -> String {
   case error {
     MissingVars(missing) ->
-      "missing required environment variables: "
-      <> string.join(missing, ", ")
+      "missing required environment variables: " <> string.join(missing, ", ")
   }
 }
 

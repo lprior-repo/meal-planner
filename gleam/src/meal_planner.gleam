@@ -2,20 +2,17 @@
 ///
 /// This module provides the main entry point for the meal planner application.
 /// It handles CLI argument parsing and dispatches to the appropriate commands.
-
 import gleam/io
-import gleam/list
 import gleam/result
-import gleam/string
 import glint
 import meal_planner/env
 import meal_planner/meal_plan
+import meal_planner/output
 import meal_planner/recipe_loader
 import meal_planner/storage
-import meal_planner/output
 import meal_planner/user_profile
+
 // import meal_planner/ncp  // Temporarily disabled due to compilation errors
-import shared/types
 
 /// Application entry point
 pub fn main() {
@@ -42,7 +39,7 @@ fn default_command() -> glint.Command(Nil) {
 
   io.println("Meal Planner v1.0.0")
   io.println("")
-  
+
   case select_mode() {
     Ok(mode) -> handle_mode(mode)
     Error(err) -> {
@@ -90,8 +87,9 @@ fn ncp_status_command() -> glint.Command(Nil) {
   use <- glint.command_help("Show nutrition status vs goals")
   use _named, _args, _flags <- glint.command()
 
-  let days = 7  // Default to 7 days for now
-  
+  let days = 7
+  // Default to 7 days for now
+
   case show_ncp_status(days) {
     Ok(_) -> Nil
     Error(err) -> io.println("Error showing NCP status: " <> err)
@@ -100,11 +98,14 @@ fn ncp_status_command() -> glint.Command(Nil) {
 
 /// NCP reconcile command - run nutrition reconciliation
 fn ncp_reconcile_command() -> glint.Command(Nil) {
-  use <- glint.command_help("Run nutrition reconciliation and suggest adjustments")
+  use <- glint.command_help(
+    "Run nutrition reconciliation and suggest adjustments",
+  )
   use _named, _args, _flags <- glint.command()
 
-  let days = 7  // Default to 7 days for now
-  
+  let days = 7
+  // Default to 7 days for now
+
   case run_ncp_reconciliation(days) {
     Ok(_) -> Nil
     Error(err) -> io.println("Error running NCP reconciliation: " <> err)
@@ -127,7 +128,7 @@ fn select_mode() -> Result(String, String) {
   io.println("  (a)udit    - Audit recipes for Vertical Diet compliance")
   io.println("  (p)rofile  - Set up user profile")
   io.print("Your choice: ")
-  
+
   // This would need to be implemented with proper stdin reading
   // For now, default to terminal mode
   Ok("t")
@@ -136,22 +137,26 @@ fn select_mode() -> Result(String, String) {
 /// Handle selected mode
 fn handle_mode(mode: String) {
   case mode {
-    "t" -> case generate_and_display_plan() {
-      Ok(_) -> Nil
-      Error(err) -> io.println("Error: " <> err)
-    }
-    "e" -> case generate_and_email_plan() {
-      Ok(_) -> Nil
-      Error(err) -> io.println("Error: " <> err)
-    }
-    "a" -> case audit_recipes() {
-      Ok(_) -> Nil
-      Error(err) -> io.println("Error: " <> err)
-    }
-    "p" -> case setup_profile() {
-      Ok(_) -> Nil
-      Error(err) -> io.println("Error: " <> err)
-    }
+    "t" ->
+      case generate_and_display_plan() {
+        Ok(_) -> Nil
+        Error(err) -> io.println("Error: " <> err)
+      }
+    "e" ->
+      case generate_and_email_plan() {
+        Ok(_) -> Nil
+        Error(err) -> io.println("Error: " <> err)
+      }
+    "a" ->
+      case audit_recipes() {
+        Ok(_) -> Nil
+        Error(err) -> io.println("Error: " <> err)
+      }
+    "p" ->
+      case setup_profile() {
+        Ok(_) -> Nil
+        Error(err) -> io.println("Error: " <> err)
+      }
     _ -> io.println("Invalid mode. Please choose t, e, a, or p.")
   }
 }
@@ -199,7 +204,11 @@ fn generate_and_email_plan() -> Result(Nil, String) {
                         Error(err) -> Error("Failed to send email: " <> err)
                       }
                     }
-                    Error(env_err) -> Error("Failed to load email config: " <> env.format_error(env_err))
+                    Error(env_err) ->
+                      Error(
+                        "Failed to load email config: "
+                        <> env.format_error(env_err),
+                      )
                   }
                 }
                 Error(err) -> Error("Failed to generate meal plan: " <> err)
@@ -218,7 +227,7 @@ fn generate_and_email_plan() -> Result(Nil, String) {
 /// Audit recipes for Vertical Diet compliance
 fn audit_recipes() -> Result(Nil, String) {
   use recipes <- result.try(recipe_loader.load_all_recipes("recipes", ""))
-  
+
   output.print_audit_report(recipes)
   Ok(Nil)
 }
@@ -230,18 +239,21 @@ fn setup_profile() -> Result(Nil, String) {
       user_profile.print_profile(profile)
       Ok(Nil)
     }
-    Error(profile_err) -> Error(user_profile.profile_error_to_string(profile_err))
+    Error(profile_err) ->
+      Error(user_profile.profile_error_to_string(profile_err))
   }
 }
 
 /// Show NCP status
-fn show_ncp_status(days: Int) -> Result(Nil, String) {
+fn show_ncp_status(_days: Int) -> Result(Nil, String) {
   io.println("NCP status temporarily disabled due to module compilation issues")
   Ok(Nil)
 }
 
 /// Run NCP reconciliation
-fn run_ncp_reconciliation(days: Int) -> Result(Nil, String) {
-  io.println("NCP reconciliation temporarily disabled due to module compilation issues")
+fn run_ncp_reconciliation(_days: Int) -> Result(Nil, String) {
+  io.println(
+    "NCP reconciliation temporarily disabled due to module compilation issues",
+  )
   Ok(Nil)
 }

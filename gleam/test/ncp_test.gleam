@@ -1,8 +1,7 @@
 import gleeunit/should
 import meal_planner/ncp.{
-  DeviationResult, NutritionData, NutritionGoals,
-  calculate_deviation, deviation_is_within_tolerance,
-  deviation_max, nutrition_goals_validate,
+  DeviationResult, NutritionData, NutritionGoals, calculate_deviation,
+  deviation_is_within_tolerance, deviation_max, nutrition_goals_validate,
 }
 
 pub fn nutrition_goals_validate_valid_test() {

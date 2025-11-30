@@ -1,8 +1,8 @@
 import gleam/list
 import gleeunit/should
 import meal_planner/shopping_list.{
-  Dairy, Fats, Grains, Other, Produce, Protein, Seasonings, categorize_ingredient,
-  organize_shopping_list,
+  Dairy, Fats, Grains, Other, Produce, Protein, Seasonings,
+  categorize_ingredient, organize_shopping_list,
 }
 import meal_planner/types.{Ingredient}
 

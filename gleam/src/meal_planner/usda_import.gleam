@@ -1,6 +1,5 @@
 /// USDA FoodData Central CSV importer
 /// Downloads and imports food/nutrient data to SQLite
-
 import gleam/dynamic/decode
 import gleam/int
 import gleam/io
@@ -22,7 +21,13 @@ pub type ImportError {
 
 /// USDA Nutrient definition
 pub type Nutrient {
-  Nutrient(id: Int, name: String, unit_name: String, nutrient_nbr: Option(String), rank: Option(Int))
+  Nutrient(
+    id: Int,
+    name: String,
+    unit_name: String,
+    nutrient_nbr: Option(String),
+    rank: Option(Int),
+  )
 }
 
 /// USDA Food item
@@ -76,7 +81,8 @@ fn parse_csv_fields(
     Ok(#("\"", rest)) -> parse_csv_fields(rest, fields, current, !in_quotes)
     Ok(#(",", rest)) if !in_quotes ->
       parse_csv_fields(rest, [current, ..fields], "", False)
-    Ok(#(char, rest)) -> parse_csv_fields(rest, fields, current <> char, in_quotes)
+    Ok(#(char, rest)) ->
+      parse_csv_fields(rest, fields, current <> char, in_quotes)
   }
 }
 
@@ -95,7 +101,13 @@ fn parse_nutrient(fields: List(String)) -> Result(Nutrient, String) {
             Ok(r) -> Some(r)
             Error(_) -> None
           }
-          Ok(Nutrient(id: id, name: name, unit_name: unit_name, nutrient_nbr: nbr, rank: rank))
+          Ok(Nutrient(
+            id: id,
+            name: name,
+            unit_name: unit_name,
+            nutrient_nbr: nbr,
+            rank: rank,
+          ))
         }
       }
     }
@@ -106,7 +118,14 @@ fn parse_nutrient(fields: List(String)) -> Result(Nutrient, String) {
 /// Parse food.csv line
 fn parse_food(fields: List(String)) -> Result(Food, String) {
   case fields {
-    [fdc_id_str, data_type, description, food_category_str, publication_date, ..] -> {
+    [
+      fdc_id_str,
+      data_type,
+      description,
+      food_category_str,
+      publication_date,
+      ..
+    ] -> {
       case int.parse(fdc_id_str) {
         Error(_) -> Error("Invalid fdc_id: " <> fdc_id_str)
         Ok(fdc_id) -> {
@@ -136,13 +155,22 @@ fn parse_food(fields: List(String)) -> Result(Food, String) {
 fn parse_food_nutrient(fields: List(String)) -> Result(FoodNutrient, String) {
   case fields {
     [id_str, fdc_id_str, nutrient_id_str, amount_str, ..] -> {
-      case int.parse(id_str), int.parse(fdc_id_str), int.parse(nutrient_id_str) {
+      case
+        int.parse(id_str),
+        int.parse(fdc_id_str),
+        int.parse(nutrient_id_str)
+      {
         Ok(id), Ok(fdc_id), Ok(nutrient_id) -> {
           let amount = case parse_float(amount_str) {
             Ok(a) -> Some(a)
             Error(_) -> None
           }
-          Ok(FoodNutrient(id: id, fdc_id: fdc_id, nutrient_id: nutrient_id, amount: amount))
+          Ok(FoodNutrient(
+            id: id,
+            fdc_id: fdc_id,
+            nutrient_id: nutrient_id,
+            amount: amount,
+          ))
         }
         _, _, _ -> Error("Invalid food_nutrient row")
       }
@@ -155,7 +183,8 @@ fn parse_float(s: String) -> Result(Float, Nil) {
   case string.contains(s, ".") {
     True ->
       case float_parse_ffi(s) {
-        f if f == 0.0 && s != "0.0" && s != "0" && s != ".0" && s != "0." -> Error(Nil)
+        f if f == 0.0 && s != "0.0" && s != "0" && s != ".0" && s != "0." ->
+          Error(Nil)
         f -> Ok(f)
       }
     False ->
@@ -265,11 +294,14 @@ pub fn import_csv_file(
       let lines =
         content
         |> string.split("\n")
-        |> list.drop(1)  // Skip header
+        |> list.drop(1)
+        // Skip header
         |> list.filter(fn(l) { l != "" })
 
       let total = list.length(lines)
-      io.println("Importing " <> int.to_string(total) <> " rows from " <> file_type)
+      io.println(
+        "Importing " <> int.to_string(total) <> " rows from " <> file_type,
+      )
 
       import_lines_in_batches(conn, lines, file_type, batch_size, 0)
     }
@@ -286,42 +318,47 @@ fn import_lines_in_batches(
   case list.split(lines, batch_size) {
     #([], _) -> Ok(total_imported)
     #(batch, rest) -> {
-      let parsed = list.filter_map(batch, fn(line) {
-        let fields = parse_csv_line(line)
-        case file_type {
-          "nutrient" -> parse_nutrient(fields) |> result.map(NutrientRow)
-          "food" -> parse_food(fields) |> result.map(FoodRow)
-          "food_nutrient" -> parse_food_nutrient(fields) |> result.map(FoodNutrientRow)
-          _ -> Error("Unknown file type")
-        }
-      })
+      let parsed =
+        list.filter_map(batch, fn(line) {
+          let fields = parse_csv_line(line)
+          case file_type {
+            "nutrient" -> parse_nutrient(fields) |> result.map(NutrientRow)
+            "food" -> parse_food(fields) |> result.map(FoodRow)
+            "food_nutrient" ->
+              parse_food_nutrient(fields) |> result.map(FoodNutrientRow)
+            _ -> Error("Unknown file type")
+          }
+        })
 
       let inserted = case file_type {
         "nutrient" -> {
-          let nutrients = list.filter_map(parsed, fn(r) {
-            case r {
-              NutrientRow(n) -> Ok(n)
-              _ -> Error(Nil)
-            }
-          })
+          let nutrients =
+            list.filter_map(parsed, fn(r) {
+              case r {
+                NutrientRow(n) -> Ok(n)
+                _ -> Error(Nil)
+              }
+            })
           insert_nutrients(conn, nutrients)
         }
         "food" -> {
-          let foods = list.filter_map(parsed, fn(r) {
-            case r {
-              FoodRow(f) -> Ok(f)
-              _ -> Error(Nil)
-            }
-          })
+          let foods =
+            list.filter_map(parsed, fn(r) {
+              case r {
+                FoodRow(f) -> Ok(f)
+                _ -> Error(Nil)
+              }
+            })
           insert_foods(conn, foods)
         }
         "food_nutrient" -> {
-          let fns = list.filter_map(parsed, fn(r) {
-            case r {
-              FoodNutrientRow(fn_) -> Ok(fn_)
-              _ -> Error(Nil)
-            }
-          })
+          let fns =
+            list.filter_map(parsed, fn(r) {
+              case r {
+                FoodNutrientRow(fn_) -> Ok(fn_)
+                _ -> Error(Nil)
+              }
+            })
           insert_food_nutrients(conn, fns)
         }
         _ -> Error(DatabaseError("Unknown file type"))
@@ -331,8 +368,11 @@ fn import_lines_in_batches(
         Error(e) -> Error(e)
         Ok(count) -> {
           let new_total = total_imported + count
-          case new_total % 10000 {
-            0 -> io.println("  Imported " <> int.to_string(new_total) <> " rows...")
+          case new_total % 10_000 {
+            0 ->
+              io.println(
+                "  Imported " <> int.to_string(new_total) <> " rows...",
+              )
             _ -> Nil
           }
           import_lines_in_batches(conn, rest, file_type, batch_size, new_total)
@@ -376,12 +416,21 @@ pub fn import_from_directory(
 
           // Import food_nutrients (largest file)
           let fn_result =
-            import_csv_file(conn, usda_dir <> "/food_nutrient.csv", "food_nutrient", 5000)
+            import_csv_file(
+              conn,
+              usda_dir <> "/food_nutrient.csv",
+              "food_nutrient",
+              5000,
+            )
 
           case fn_result {
             Error(e) -> Error(e)
             Ok(fn_count) -> {
-              io.println("Imported " <> int.to_string(fn_count) <> " food nutrient values")
+              io.println(
+                "Imported "
+                <> int.to_string(fn_count)
+                <> " food nutrient values",
+              )
               Ok(#(nutrients_count, foods_count, fn_count))
             }
           }

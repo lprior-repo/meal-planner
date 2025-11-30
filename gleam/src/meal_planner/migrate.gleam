@@ -1,6 +1,5 @@
 /// Database migration system
 /// Runs numbered SQL migration files from gleam/migrations/
-
 import gleam/dynamic/decode
 import gleam/int
 import gleam/io
@@ -131,8 +130,7 @@ fn record_migration(
   conn: sqlight.Connection,
   migration: Migration,
 ) -> Result(Nil, MigrateError) {
-  let sql =
-    "INSERT INTO schema_migrations (version, name) VALUES (?, ?)"
+  let sql = "INSERT INTO schema_migrations (version, name) VALUES (?, ?)"
 
   case
     sqlight.query(

@@ -1,7 +1,6 @@
 /// Shopping list generation and categorization
 ///
 /// Organizes ingredients by shopping category for easier grocery shopping.
-
 import gleam/list
 import gleam/string
 import meal_planner/types.{type Ingredient}
@@ -55,9 +54,8 @@ const fats_keywords = ["oil", "lard", "tallow"]
 
 /// Seasonings keywords for categorization
 const seasonings_keywords = [
-  "salt", "pepper", "seasoning", "spice", "paprika", "cumin", "oregano",
-  "basil", "thyme", "garlic powder", "onion powder", "honey", "mustard",
-  "sauce",
+  "salt", "pepper", "seasoning", "spice", "paprika", "cumin", "oregano", "basil",
+  "thyme", "garlic powder", "onion powder", "honey", "mustard", "sauce",
 ]
 
 /// Determine the shopping category for an ingredient
@@ -122,10 +120,10 @@ pub fn organize_shopping_list(
         CategorizedShoppingList(..acc, grains: [ingredient, ..acc.grains])
       Fats -> CategorizedShoppingList(..acc, fats: [ingredient, ..acc.fats])
       Seasonings ->
-        CategorizedShoppingList(
-          ..acc,
-          seasonings: [ingredient, ..acc.seasonings],
-        )
+        CategorizedShoppingList(..acc, seasonings: [
+          ingredient,
+          ..acc.seasonings
+        ])
       Other -> CategorizedShoppingList(..acc, other: [ingredient, ..acc.other])
     }
   })

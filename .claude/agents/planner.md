@@ -1,4 +1,5 @@
 ---
+name: "planner"
 description: "Tessl Planning Architect - Decomposes features, bugs, or tasks into atomic beads. Outputs Beads CLI commands for bd. Use this agent before performing multi-step work."
 mode: subagent
 model: anthropic/claude-sonnet-4-20250514

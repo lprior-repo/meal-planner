@@ -84,8 +84,7 @@ pub fn get_meal_category(recipe: Recipe) -> MealCategory {
 /// GetDistribution returns the percentage distribution of meal categories
 pub fn get_distribution(result: MealSelectionResult) -> Distribution {
   case result.total_count {
-    0 ->
-      Distribution(red_meat: 0.0, salmon: 0.0, eggs: 0.0, variety: 0.0)
+    0 -> Distribution(red_meat: 0.0, salmon: 0.0, eggs: 0.0, variety: 0.0)
     total -> {
       let total_float = int_to_float(total)
       Distribution(
@@ -139,27 +138,22 @@ pub fn select_meals_for_week(
   let categorized =
     recipes
     |> list.filter(is_vertical_diet_compliant)
-    |> list.fold(
-      #([], [], [], []),
-      fn(acc, recipe) {
-        let #(red_meat, salmon, eggs, variety) = acc
-        case get_meal_category(recipe) {
-          RedMeat -> #([recipe, ..red_meat], salmon, eggs, variety)
-          Salmon -> #(red_meat, [recipe, ..salmon], eggs, variety)
-          Eggs -> #(red_meat, salmon, [recipe, ..eggs], variety)
-          Variety -> #(red_meat, salmon, eggs, [recipe, ..variety])
-        }
-      },
-    )
+    |> list.fold(#([], [], [], []), fn(acc, recipe) {
+      let #(red_meat, salmon, eggs, variety) = acc
+      case get_meal_category(recipe) {
+        RedMeat -> #([recipe, ..red_meat], salmon, eggs, variety)
+        Salmon -> #(red_meat, [recipe, ..salmon], eggs, variety)
+        Eggs -> #(red_meat, salmon, [recipe, ..eggs], variety)
+        Variety -> #(red_meat, salmon, eggs, [recipe, ..variety])
+      }
+    })
 
   let #(red_meat_recipes, salmon_recipes, eggs_recipes, variety_recipes) =
     categorized
 
   // Calculate target counts (using middle of ranges)
-  let red_meat_target =
-    float_to_int(int_to_float(target_meals) *. 0.65)
-  let protein_target =
-    float_to_int(int_to_float(target_meals) *. 0.25)
+  let red_meat_target = float_to_int(int_to_float(target_meals) *. 0.65)
+  let protein_target = float_to_int(int_to_float(target_meals) *. 0.25)
   let max_variety =
     float_to_int(int_to_float(target_meals) *. config.variety_max_percent)
   let variety_target = {
@@ -185,8 +179,7 @@ pub fn select_meals_for_week(
 
   // If we couldn't fill salmon/eggs targets, add more from eggs
   let #(selected_eggs_extra, eggs_count_extra) = case
-    salmon_count + eggs_count < protein_target
-    && eggs_recipes != []
+    salmon_count + eggs_count < protein_target && eggs_recipes != []
   {
     True -> {
       let remaining = protein_target - salmon_count - eggs_count

@@ -42,8 +42,7 @@ pub fn new_payload(
 /// Converts an EmailAddress to JSON
 fn email_address_to_json(addr: EmailAddress) -> json.Json {
   case addr.name {
-    "" ->
-      json.object([#("email", json.string(addr.email))])
+    "" -> json.object([#("email", json.string(addr.email))])
     _ ->
       json.object([
         #("email", json.string(addr.email)),
@@ -57,10 +56,7 @@ pub fn payload_to_json(payload: EmailPayload) -> Result(String, Nil) {
   let json_obj =
     json.object([
       #("from", email_address_to_json(payload.from)),
-      #(
-        "to",
-        json.array(payload.to, of: email_address_to_json),
-      ),
+      #("to", json.array(payload.to, of: email_address_to_json)),
       #("subject", json.string(payload.subject)),
       #("text", json.string(payload.text)),
       #("category", json.string(payload.category)),
@@ -95,13 +91,7 @@ pub fn send_email(
     Ok(resp) ->
       case resp.status {
         200 | 201 | 202 -> Ok(resp.body)
-        _ ->
-          Error(
-            "HTTP "
-            <> int.to_string(resp.status)
-            <> ": "
-            <> resp.body,
-          )
+        _ -> Error("HTTP " <> int.to_string(resp.status) <> ": " <> resp.body)
       }
     Error(_) -> Error("Failed to send HTTP request")
   }

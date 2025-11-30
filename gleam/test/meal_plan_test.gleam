@@ -168,7 +168,8 @@ pub fn weekly_plan_macros_test() {
   // 3 meals per day, 2 days
   let day1 = DailyPlan(day_name: "Monday", meals: [meal, meal, meal])
   let day2 = DailyPlan(day_name: "Tuesday", meals: [meal, meal, meal])
-  let plan = WeeklyMealPlan(days: [day1, day2], shopping_list: [], user_profile: profile)
+  let plan =
+    WeeklyMealPlan(days: [day1, day2], shopping_list: [], user_profile: profile)
   let macros = weekly_plan_macros(plan)
   // 6 meals total, 30 protein each = 180
   macros.protein |> should.equal(180.0)
@@ -203,7 +204,8 @@ pub fn weekly_plan_avg_daily_macros_test() {
   // 3 meals per day for 2 days
   let day1 = DailyPlan(day_name: "Monday", meals: [meal, meal, meal])
   let day2 = DailyPlan(day_name: "Tuesday", meals: [meal, meal, meal])
-  let plan = WeeklyMealPlan(days: [day1, day2], shopping_list: [], user_profile: profile)
+  let plan =
+    WeeklyMealPlan(days: [day1, day2], shopping_list: [], user_profile: profile)
   let avg = weekly_plan_avg_daily_macros(plan)
   // Total: 180 protein / 2 days = 90 per day
   avg.protein |> should.equal(90.0)

@@ -125,10 +125,12 @@ pub fn run_real_migrations_test() {
     let tables_sql =
       "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
     case
-      sqlight.query(tables_sql, on: conn, with: [], expecting: decode.at(
-        [0],
-        decode.string,
-      ))
+      sqlight.query(
+        tables_sql,
+        on: conn,
+        with: [],
+        expecting: decode.at([0], decode.string),
+      )
     {
       Ok(tables) -> {
         // Should have foods, nutrients, food_nutrients, nutrition_state, etc.

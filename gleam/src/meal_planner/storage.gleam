@@ -1,9 +1,8 @@
 /// SQLite storage module for nutrition data persistence
-
 import gleam/dynamic/decode
 import gleam/list
 import gleam/string
-import shared/types.{type Recipe, type Macros, Recipe, Macros, Ingredient, Low, Medium, High}
+import shared/types.{type Recipe, High, Ingredient, Low, Macros, Medium, Recipe}
 import sqlight
 
 /// Error type for storage operations
@@ -189,16 +188,17 @@ pub fn save_recipe(
      (id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-  let ingredients_json = string.join(
-    list.map(recipe.ingredients, fn(i) { i.name <> ":" <> i.quantity }),
-    "|"
-  )
-  
+  let ingredients_json =
+    string.join(
+      list.map(recipe.ingredients, fn(i) { i.name <> ":" <> i.quantity }),
+      "|",
+    )
+
   let instructions_json = string.join(recipe.instructions, "|")
 
   let fodmap_string = case recipe.fodmap_level {
     Low -> "low"
-    Medium -> "medium" 
+    Medium -> "medium"
     High -> "high"
   }
 
@@ -213,7 +213,10 @@ pub fn save_recipe(
     sqlight.int(recipe.servings),
     sqlight.text(recipe.category),
     sqlight.text(fodmap_string),
-    sqlight.int(case recipe.vertical_compliant { True -> 1 False -> 0 }),
+    sqlight.int(case recipe.vertical_compliant {
+      True -> 1
+      False -> 0
+    }),
   ]
 
   case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
@@ -223,7 +226,9 @@ pub fn save_recipe(
 }
 
 /// Get all recipes from the database
-pub fn get_all_recipes(conn: sqlight.Connection) -> Result(List(Recipe), StorageError) {
+pub fn get_all_recipes(
+  conn: sqlight.Connection,
+) -> Result(List(Recipe), StorageError) {
   let sql =
     "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
      FROM recipes ORDER BY name"
@@ -241,14 +246,15 @@ pub fn get_all_recipes(conn: sqlight.Connection) -> Result(List(Recipe), Storage
     use fodmap_str <- decode.field(9, decode.string)
     use vertical_int <- decode.field(10, decode.int)
 
-    let ingredients = string.split(ingredients_str, "|")
+    let ingredients =
+      string.split(ingredients_str, "|")
       |> list.map(fn(pair) {
         case string.split(pair, ":") {
           [name, quantity] -> Ingredient(name, quantity)
           _ -> Ingredient(pair, "")
         }
       })
-    
+
     let instructions = string.split(instructions_str, "|")
 
     let fodmap_level = case fodmap_str {
@@ -304,14 +310,15 @@ pub fn get_recipe_by_id(
     use fodmap_str <- decode.field(9, decode.string)
     use vertical_int <- decode.field(10, decode.int)
 
-    let ingredients = string.split(ingredients_str, "|")
+    let ingredients =
+      string.split(ingredients_str, "|")
       |> list.map(fn(pair) {
         case string.split(pair, ":") {
           [name, quantity] -> Ingredient(name, quantity)
           _ -> Ingredient(pair, "")
         }
       })
-    
+
     let instructions = string.split(instructions_str, "|")
 
     let fodmap_level = case fodmap_str {
@@ -339,7 +346,14 @@ pub fn get_recipe_by_id(
     ))
   }
 
-  case sqlight.query(sql, on: conn, with: [sqlight.text(recipe_id)], expecting: decoder) {
+  case
+    sqlight.query(
+      sql,
+      on: conn,
+      with: [sqlight.text(recipe_id)],
+      expecting: decoder,
+    )
+  {
     Error(e) -> Error(DatabaseError(e.message))
     Ok([]) -> Error(NotFound)
     Ok([recipe, ..]) -> Ok(recipe)
@@ -368,14 +382,15 @@ pub fn get_recipes_by_category(
     use fodmap_str <- decode.field(9, decode.string)
     use vertical_int <- decode.field(10, decode.int)
 
-    let ingredients = string.split(ingredients_str, "|")
+    let ingredients =
+      string.split(ingredients_str, "|")
       |> list.map(fn(pair) {
         case string.split(pair, ":") {
           [name, quantity] -> Ingredient(name, quantity)
           _ -> Ingredient(pair, "")
         }
       })
-    
+
     let instructions = string.split(instructions_str, "|")
 
     let fodmap_level = case fodmap_str {
@@ -403,7 +418,14 @@ pub fn get_recipes_by_category(
     ))
   }
 
-  case sqlight.query(sql, on: conn, with: [sqlight.text(category)], expecting: decoder) {
+  case
+    sqlight.query(
+      sql,
+      on: conn,
+      with: [sqlight.text(category)],
+      expecting: decoder,
+    )
+  {
     Error(e) -> Error(DatabaseError(e.message))
     Ok(recipes) -> Ok(recipes)
   }
@@ -413,10 +435,11 @@ pub fn get_recipes_by_category(
 pub fn initialize_database() -> Result(Nil, String) {
   with_connection("meal_planner.db", fn(conn) {
     case init_db(conn) {
-      Ok(_) -> case init_recipe_tables(conn) {
-        Ok(_) -> Ok(Nil)
-        Error(_) -> Error("Failed to initialize recipe tables")
-      }
+      Ok(_) ->
+        case init_recipe_tables(conn) {
+          Ok(_) -> Ok(Nil)
+          Error(_) -> Error("Failed to initialize recipe tables")
+        }
       Error(_) -> Error("Failed to initialize database")
     }
   })

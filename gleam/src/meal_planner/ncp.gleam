@@ -1,7 +1,5 @@
 /// NCP (Nutrition Control Plane) types for nutrition tracking and reconciliation
-
 import gleam/float
-import gleam/int
 import gleam/list
 import gleam/string
 import shared/types.{type Macros}
@@ -38,7 +36,10 @@ pub type RecipeSuggestion {
 
 /// AdjustmentPlan contains recipe suggestions to correct nutritional deviations
 pub type AdjustmentPlan {
-  AdjustmentPlan(deviation: DeviationResult, suggestions: List(RecipeSuggestion))
+  AdjustmentPlan(
+    deviation: DeviationResult,
+    suggestions: List(RecipeSuggestion),
+  )
 }
 
 /// ScoredRecipe represents a recipe with its nutritional macros for scoring
@@ -107,7 +108,7 @@ pub fn deviation_max(dev: DeviationResult) -> Float {
 }
 
 /// Get nutrition history for specified number of days
-pub fn get_nutrition_history(days: Int) -> Result(List(NutritionData), String) {
+pub fn get_nutrition_history(_days: Int) -> Result(List(NutritionData), String) {
   // For now, return empty list
   // In full implementation, this would query the database
   Ok([])
@@ -128,24 +129,24 @@ pub fn run_reconciliation(
   history: List(NutritionData),
   goals: NutritionGoals,
   tolerance_pct: Float,
-  max_suggestions: Int,
+  _max_suggestions: Int,
 ) -> AdjustmentPlan {
   // For now, create a simple plan
   // In full implementation, this would analyze history vs goals
   let avg_data = calculate_average_nutrition(history)
   let deviation = calculate_deviation(goals, avg_data)
-  
+
   let suggestions = case deviation_max(deviation) >. tolerance_pct {
     True -> [
       RecipeSuggestion(
         recipe_name: "Increase Protein",
         reason: "Protein intake below target",
         score: 25.0,
-      )
+      ),
     ]
     False -> []
   }
-  
+
   AdjustmentPlan(deviation: deviation, suggestions: suggestions)
 }
 
@@ -155,15 +156,20 @@ fn calculate_average_nutrition(history: List(NutritionData)) -> NutritionData {
     [] -> NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
     _ -> {
       let count = int_to_float(list.length(history))
-      let sum = list.fold(history, NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0), fn(acc, data) {
-        NutritionData(
-          protein: acc.protein +. data.protein,
-          fat: acc.fat +. data.fat,
-          carbs: acc.carbs +. data.carbs,
-          calories: acc.calories +. data.calories,
+      let sum =
+        list.fold(
+          history,
+          NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0),
+          fn(acc, data) {
+            NutritionData(
+              protein: acc.protein +. data.protein,
+              fat: acc.fat +. data.fat,
+              carbs: acc.carbs +. data.carbs,
+              calories: acc.calories +. data.calories,
+            )
+          },
         )
-      })
-      
+
       NutritionData(
         protein: sum.protein /. count,
         fat: sum.fat /. count,
@@ -177,23 +183,33 @@ fn calculate_average_nutrition(history: List(NutritionData)) -> NutritionData {
 /// Format status output for display
 pub fn format_status_output(plan: AdjustmentPlan) -> String {
   "=== Nutrition Status ===\n"
-  <> "Protein: " <> float_to_string(plan.deviation.protein_pct) <> "% from target\n"
-  <> "Fat: " <> float_to_string(plan.deviation.fat_pct) <> "% from target\n"
-  <> "Carbs: " <> float_to_string(plan.deviation.carbs_pct) <> "% from target\n"
-  <> "Calories: " <> float_to_string(plan.deviation.calories_pct) <> "% from target\n"
+  <> "Protein: "
+  <> float_to_string(plan.deviation.protein_pct)
+  <> "% from target\n"
+  <> "Fat: "
+  <> float_to_string(plan.deviation.fat_pct)
+  <> "% from target\n"
+  <> "Carbs: "
+  <> float_to_string(plan.deviation.carbs_pct)
+  <> "% from target\n"
+  <> "Calories: "
+  <> float_to_string(plan.deviation.calories_pct)
+  <> "% from target\n"
 }
 
 /// Format reconciliation output for display
 pub fn format_reconcile_output(plan: AdjustmentPlan) -> String {
   let base = format_status_output(plan)
-  
+
   case list.is_empty(plan.suggestions) {
     True -> base <> "\nNo adjustments needed - within tolerance!"
     False -> {
-      let suggestions_str = list.map(plan.suggestions, fn(s) {
-        "- " <> s.recipe_name <> ": " <> s.reason
-      }) |> string.join("\n")
-      
+      let suggestions_str =
+        list.map(plan.suggestions, fn(s) {
+          "- " <> s.recipe_name <> ": " <> s.reason
+        })
+        |> string.join("\n")
+
       base <> "\n\nSuggestions:\n" <> suggestions_str
     }
   }
@@ -201,28 +217,12 @@ pub fn format_reconcile_output(plan: AdjustmentPlan) -> String {
 
 /// Convert float to string
 fn float_to_string(f: Float) -> String {
-  string.from_float(f)
+  float.to_string(f)
 }
 
 /// Convert int to float
 @external(erlang, "erlang", "float")
 fn int_to_float(n: Int) -> Float
-
-/// List length function
-fn list_length(list: List(a)) -> Int {
-  case list {
-    [] -> 0
-    [_, ..rest] -> 1 + list_length(rest)
-  }
-}
-
-/// List fold function
-fn list_fold(list: List(a), acc: b, f: fn(b, a) -> b) -> b {
-  case list {
-    [] -> acc
-    [first, ..rest] -> list_fold(rest, f(acc, first), f)
-  }
-}
 
 // ============================================================================
 // Recipe Scoring and Selection Functions
@@ -235,23 +235,27 @@ pub fn score_recipe_for_deviation(
   deviation: DeviationResult,
   macros: Macros,
 ) -> Float {
-  let total_deviation = 
-    float.absolute_value(deviation.protein_pct) 
-    +. float.absolute_value(deviation.fat_pct) 
+  let total_deviation =
+    float.absolute_value(deviation.protein_pct)
+    +. float.absolute_value(deviation.fat_pct)
     +. float.absolute_value(deviation.carbs_pct)
-  
+
   case total_deviation <. 5.0 {
     True -> 0.1
     False -> {
       // If over on all macros, adding food is bad
-      case deviation.protein_pct >. 0.0 && deviation.fat_pct >. 0.0 && deviation.carbs_pct >. 0.0 {
+      case
+        deviation.protein_pct >. 0.0
+        && deviation.fat_pct >. 0.0
+        && deviation.carbs_pct >. 0.0
+      {
         True -> 0.1
         False -> {
           let score = calculate_base_score(deviation, macros)
-          |> apply_protein_scoring(deviation, macros)
-          |> apply_fat_scoring(deviation, macros)
-          |> apply_carb_scoring(deviation, macros)
-          
+          let score = apply_protein_scoring(deviation, macros, score)
+          let score = apply_fat_scoring(deviation, macros, score)
+          let score = apply_carb_scoring(deviation, macros, score)
+
           score
           |> float.clamp(0.0, 1.0)
         }
@@ -261,20 +265,21 @@ pub fn score_recipe_for_deviation(
 }
 
 /// Calculate base score for recipe against deviation
-fn calculate_base_score(deviation: DeviationResult, macros: Macros) -> Float {
+fn calculate_base_score(_deviation: DeviationResult, _macros: Macros) -> Float {
   0.0
 }
 
 /// Apply protein scoring (weight: 0.5)
 fn apply_protein_scoring(
-  deviation: DeviationResult, 
-  macros: Macros, 
-  current_score: Float
+  deviation: DeviationResult,
+  macros: Macros,
+  current_score: Float,
 ) -> Float {
   case deviation.protein_pct <. 0.0 && macros.protein >. 0.0 {
     True -> {
       // Recipe helps address protein deficit
-      let protein_score = float.min(macros.protein /. 40.0, 1.0) // Normalize: 40g protein = max score
+      let protein_score = float.min(macros.protein /. 40.0, 1.0)
+      // Normalize: 40g protein = max score
       current_score +. 0.5 *. protein_score
     }
     False -> current_score
@@ -283,13 +288,14 @@ fn apply_protein_scoring(
 
 /// Apply fat scoring (weight: 0.25)
 fn apply_fat_scoring(
-  deviation: DeviationResult, 
-  macros: Macros, 
-  current_score: Float
+  deviation: DeviationResult,
+  macros: Macros,
+  current_score: Float,
 ) -> Float {
   case deviation.fat_pct <. 0.0 && macros.fat >. 0.0 {
     True -> {
-      let fat_score = float.min(macros.fat /. 25.0, 1.0) // Normalize: 25g fat = max score
+      let fat_score = float.min(macros.fat /. 25.0, 1.0)
+      // Normalize: 25g fat = max score
       current_score +. 0.25 *. fat_score
     }
     False -> {
@@ -304,13 +310,14 @@ fn apply_fat_scoring(
 
 /// Apply carb scoring (weight: 0.25)
 fn apply_carb_scoring(
-  deviation: DeviationResult, 
-  macros: Macros, 
-  current_score: Float
+  deviation: DeviationResult,
+  macros: Macros,
+  current_score: Float,
 ) -> Float {
   case deviation.carbs_pct <. 0.0 && macros.carbs >. 0.0 {
     True -> {
-      let carbs_score = float.min(macros.carbs /. 50.0, 1.0) // Normalize: 50g carbs = max score
+      let carbs_score = float.min(macros.carbs /. 50.0, 1.0)
+      // Normalize: 50g carbs = max score
       current_score +. 0.25 *. carbs_score
     }
     False -> {
@@ -333,21 +340,24 @@ pub fn select_top_recipes(
     [] -> []
     _ -> {
       // Score all recipes
-      let scored = list.map(recipes, fn(r) {
-        let score = score_recipe_for_deviation(deviation, r.macros)
-        #(r, score)
-      })
-      
+      let scored =
+        list.map(recipes, fn(r) {
+          let score = score_recipe_for_deviation(deviation, r.macros)
+          #(r, score)
+        })
+
       // Sort by score descending
-      let sorted = list.sort(scored, fn(a, b) {
-        let #(_, score_a) = a
-        let #(_, score_b) = b
-        float.compare(score_b, score_a) // Descending order
-      })
-      
+      let sorted =
+        list.sort(scored, fn(a, b) {
+          let #(_, score_a) = a
+          let #(_, score_b) = b
+          float.compare(score_b, score_a)
+          // Descending order
+        })
+
       // Take top N
       let limited = list.take(sorted, limit)
-      
+
       // Convert to suggestions
       list.map(limited, fn(item) {
         let #(recipe, score) = item

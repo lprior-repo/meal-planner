@@ -3,7 +3,6 @@
 /// FODMAP (Fermentable Oligosaccharides, Disaccharides, Monosaccharides, and Polyols)
 /// are short-chain carbohydrates that can cause digestive issues. The Vertical Diet
 /// emphasizes low-FODMAP foods for better digestion and nutrient absorption.
-
 import gleam/int
 import gleam/list
 import gleam/string

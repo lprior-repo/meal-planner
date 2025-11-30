@@ -1,9 +1,9 @@
-import gleam/string
-import gleam/list
+import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
+import gleam/list
 import gleam/result
-import gleam/dict.{type Dict}
+import gleam/string
 
 // Unit types for measurement categories
 pub type UnitType {
@@ -95,17 +95,19 @@ fn parse_number(s: String) -> Result(Float, Nil) {
         [num_str, denom_str] -> {
           let num_result = case float.parse(string.trim(num_str)) {
             Ok(n) -> Ok(n)
-            Error(_) -> case int.parse(string.trim(num_str)) {
-              Ok(n) -> Ok(int.to_float(n))
-              Error(_) -> Error(Nil)
-            }
+            Error(_) ->
+              case int.parse(string.trim(num_str)) {
+                Ok(n) -> Ok(int.to_float(n))
+                Error(_) -> Error(Nil)
+              }
           }
           let denom_result = case float.parse(string.trim(denom_str)) {
             Ok(d) -> Ok(d)
-            Error(_) -> case int.parse(string.trim(denom_str)) {
-              Ok(d) -> Ok(int.to_float(d))
-              Error(_) -> Error(Nil)
-            }
+            Error(_) ->
+              case int.parse(string.trim(denom_str)) {
+                Ok(d) -> Ok(int.to_float(d))
+                Error(_) -> Error(Nil)
+              }
           }
           case num_result, denom_result {
             Ok(num), Ok(denom) -> {
@@ -147,22 +149,27 @@ pub fn parse_quantity(s: String) -> ParsedQuantity {
         [] -> ParsedQuantity(amount: 0.0, unit: unit_unknown(), raw: s)
         [num_part] -> {
           case parse_number(num_part) {
-            Ok(amount) -> ParsedQuantity(amount: amount, unit: unit_count(), raw: s)
-            Error(_) -> ParsedQuantity(amount: 0.0, unit: unit_unknown(), raw: s)
+            Ok(amount) ->
+              ParsedQuantity(amount: amount, unit: unit_count(), raw: s)
+            Error(_) ->
+              ParsedQuantity(amount: 0.0, unit: unit_unknown(), raw: s)
           }
         }
         [num_part, ..rest] -> {
           case parse_number(num_part) {
             Ok(amount) -> {
               let unit_lookup = create_unit_lookup()
-              let unit_str = string.lowercase(list.first(rest) |> result.unwrap(""))
+              let unit_str =
+                string.lowercase(list.first(rest) |> result.unwrap(""))
 
               case dict.get(unit_lookup, unit_str) {
                 Ok(unit) -> ParsedQuantity(amount: amount, unit: unit, raw: s)
-                Error(_) -> ParsedQuantity(amount: amount, unit: unit_unknown(), raw: s)
+                Error(_) ->
+                  ParsedQuantity(amount: amount, unit: unit_unknown(), raw: s)
               }
             }
-            Error(_) -> ParsedQuantity(amount: 0.0, unit: unit_unknown(), raw: s)
+            Error(_) ->
+              ParsedQuantity(amount: 0.0, unit: unit_unknown(), raw: s)
           }
         }
       }
@@ -223,7 +230,10 @@ pub fn aggregate_quantities(quantities: List(ParsedQuantity)) -> String {
               let lbs = float.truncate(weight_total) / 16
               let oz = weight_total -. int.to_float(lbs * 16)
               case oz >. 0.0 {
-                True -> [int.to_string(lbs) <> " lb " <> format_float(oz) <> " oz", ..result]
+                True -> [
+                  int.to_string(lbs) <> " lb " <> format_float(oz) <> " oz",
+                  ..result
+                ]
                 False -> [int.to_string(lbs) <> " lb", ..result]
               }
             }

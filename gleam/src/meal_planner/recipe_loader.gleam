@@ -1,7 +1,7 @@
+import glaml
 import gleam/list
 import gleam/result
 import gleam/string
-import glaml
 import meal_planner/types.{
   type FodmapLevel, type Ingredient, type Macros, type Recipe, High, Ingredient,
   Low, Macros, Medium, Recipe,
@@ -254,7 +254,8 @@ pub fn load_recipes(
     entries
     |> list.filter(fn(filename) {
       let is_yaml =
-        string.ends_with(filename, ".yaml") || string.ends_with(filename, ".yml")
+        string.ends_with(filename, ".yaml")
+        || string.ends_with(filename, ".yml")
       let not_excluded = filename != exclude_file
       is_yaml && not_excluded
     })
@@ -281,6 +282,9 @@ fn load_recipe_file(filepath: String) -> Result(List(Recipe), String) {
 }
 
 /// Load all recipes from directory and combine them
-pub fn load_all_recipes(dir: String, exclude_file: String) -> Result(List(Recipe), String) {
+pub fn load_all_recipes(
+  dir: String,
+  exclude_file: String,
+) -> Result(List(Recipe), String) {
   load_recipes(dir, exclude_file)
 }

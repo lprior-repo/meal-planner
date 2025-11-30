@@ -4,7 +4,6 @@
 /// - Forbidden seed oils
 /// - Forbidden grains (except white rice)
 /// - High FODMAP ingredients
-
 import gleam/list
 import gleam/string
 import meal_planner/fodmap
@@ -34,7 +33,12 @@ const forbidden_grains = [
 ]
 
 /// Allowed grain exceptions
-const allowed_grains = ["white rice", "rice cereal", "cream of rice", "rice flour"]
+const allowed_grains = [
+  "white rice",
+  "rice cereal",
+  "cream of rice",
+  "rice flour",
+]
 
 /// High FODMAP ingredients to check
 const high_fodmap_ingredients = [

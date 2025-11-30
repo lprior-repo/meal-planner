@@ -1,11 +1,11 @@
-import gleeunit/should
 import gleam/float
+import gleeunit/should
 import meal_planner/types.{
-  Active, Gain, High, Ingredient, Lose, Low, Macros, Medium, Moderate, Recipe,
-  Sedentary, UserProfile, daily_calorie_target, daily_carb_target,
+  Active, Gain, High, Ingredient, Lose, Low, Macros, Maintain, Medium, Moderate,
+  Recipe, Sedentary, UserProfile, daily_calorie_target, daily_carb_target,
   daily_fat_target, daily_macro_targets, daily_protein_target,
   is_vertical_diet_compliant, macros_add, macros_calories, macros_per_serving,
-  macros_scale, total_macros, Maintain,
+  macros_scale, total_macros,
 }
 
 // Helper to compare floats with tolerance for floating point precision

@@ -1,7 +1,6 @@
 /// Output formatting functions for meal plans and recipes
 ///
 /// Provides text formatting for terminal display and email output.
-
 import gleam/float
 import gleam/int
 import gleam/io
@@ -12,12 +11,14 @@ import meal_planner/meal_plan.{
   type DailyPlan, type Meal, type WeeklyMealPlan, daily_plan_macros, meal_macros,
   weekly_plan_macros,
 }
-import meal_planner/shopping_list.{type CategorizedShoppingList, organize_shopping_list}
+import meal_planner/shopping_list.{
+  type CategorizedShoppingList, organize_shopping_list,
+}
 import meal_planner/types.{
   type ActivityLevel, type Goal, type Ingredient, type Macros, type Recipe,
-  type UserProfile, Active, Gain, Lose, Maintain, Moderate, Sedentary,
-  daily_calorie_target, daily_carb_target, daily_fat_target, daily_protein_target,
-  macros_calories, Macros, is_vertical_diet_compliant,
+  type UserProfile, Active, Gain, Lose, Macros, Maintain, Moderate, Sedentary,
+  daily_calorie_target, daily_carb_target, daily_fat_target,
+  daily_protein_target, is_vertical_diet_compliant, macros_calories,
 }
 
 /// Format macros as a compact string (e.g., "P:40g F:20g C:30g")
@@ -153,7 +154,9 @@ pub fn format_daily_plan(plan: DailyPlan, start_hour: Int) -> String {
   let day_macros = daily_plan_macros(plan)
 
   let meals_str =
-    list.index_map(plan.meals, fn(meal, i) { format_meal_entry(meal, i, start_hour) })
+    list.index_map(plan.meals, fn(meal, i) {
+      format_meal_entry(meal, i, start_hour)
+    })
     |> string.join("\n")
 
   "--- "
@@ -230,14 +233,13 @@ pub fn format_weekly_plan(plan: WeeklyMealPlan) -> String {
 
   let summary = format_weekly_summary(plan)
 
-  let shopping =
-    case plan.shopping_list {
-      [] -> ""
-      ingredients -> {
-        let categorized = organize_shopping_list(ingredients)
-        "\n\n" <> format_categorized_shopping_list(categorized)
-      }
+  let shopping = case plan.shopping_list {
+    [] -> ""
+    ingredients -> {
+      let categorized = organize_shopping_list(ingredients)
+      "\n\n" <> format_categorized_shopping_list(categorized)
     }
+  }
 
   header <> "\n\n" <> days_str <> "\n\n" <> summary <> shopping
 }
@@ -313,14 +315,16 @@ pub fn print_weekly_plan(plan: WeeklyMealPlan) -> Nil {
 
 /// Send weekly meal plan via email
 pub fn send_weekly_plan_email(
-  plan: WeeklyMealPlan, 
+  plan: WeeklyMealPlan,
   config: RequiredVars,
 ) -> Result(Nil, String) {
   // For now, just print the email content
   io.println("=== Email Content ===")
   io.println(format_weekly_plan_email(plan))
   io.println("To: " <> config.recipient_email)
-  io.println("From: " <> config.sender_name <> " <" <> config.sender_email <> ">")
+  io.println(
+    "From: " <> config.sender_name <> " <" <> config.sender_email <> ">",
+  )
   Ok(Nil)
 }
 
@@ -328,16 +332,24 @@ pub fn send_weekly_plan_email(
 pub fn print_audit_report(recipes: List(Recipe)) -> Nil {
   io.println("==== VERTICAL DIET RECIPE AUDIT ====")
   io.println("Total Recipes: " <> int.to_string(list.length(recipes)))
-  
+
   let compliant = list.filter(recipes, is_vertical_diet_compliant)
   let compliant_count = list.length(compliant)
   let compliance_rate = case list.length(recipes) {
     0 -> 0.0
     n -> int_to_float(compliant_count) /. int_to_float(n) *. 100.0
   }
-  
-  io.println("Compliant (Low-FODMAP): " <> int.to_string(compliant_count) <> " (" <> float_to_string(compliance_rate) <> "%)")
-  io.println("Non-Compliant: " <> int.to_string(list.length(recipes) - compliant_count))
+
+  io.println(
+    "Compliant (Low-FODMAP): "
+    <> int.to_string(compliant_count)
+    <> " ("
+    <> float_to_string(compliance_rate)
+    <> "%)",
+  )
+  io.println(
+    "Non-Compliant: " <> int.to_string(list.length(recipes) - compliant_count),
+  )
   io.println("==== END AUDIT ====")
 }
 

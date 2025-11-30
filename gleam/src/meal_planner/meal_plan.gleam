@@ -1,13 +1,10 @@
 /// Meal planning types for daily and weekly plans
-
 import gleam/list
 import gleam/result
 import meal_planner/types.{
-  type Ingredient, type Macros, type UserProfile, type Recipe,
-  Recipe, Macros, macros_scale, Low,
+  type Ingredient, type Macros, type Recipe, type UserProfile, Low, Macros,
+  Recipe, macros_scale,
 }
-
-
 
 /// Meal represents a recipe with a portion size multiplier
 pub type Meal {
@@ -26,19 +23,32 @@ pub type DailyPlan {
 
 /// Create a default empty recipe
 pub fn default_recipe() -> Recipe {
-  Recipe(name: "", ingredients: [], instructions: [], macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0), servings: 1, category: "", fodmap_level: Low, vertical_compliant: False)
+  Recipe(
+    name: "",
+    ingredients: [],
+    instructions: [],
+    macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+    servings: 1,
+    category: "",
+    fodmap_level: Low,
+    vertical_compliant: False,
+  )
 }
 
 /// Calculate total macros for a daily plan
 pub fn daily_plan_macros(plan: DailyPlan) -> Macros {
-  list_fold(plan.meals, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(acc, meal) {
-    let m = meal_macros(meal)
-    Macros(
-      protein: acc.protein +. m.protein,
-      fat: acc.fat +. m.fat,
-      carbs: acc.carbs +. m.carbs,
-    )
-  })
+  list_fold(
+    plan.meals,
+    Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+    fn(acc, meal) {
+      let m = meal_macros(meal)
+      Macros(
+        protein: acc.protein +. m.protein,
+        fat: acc.fat +. m.fat,
+        carbs: acc.carbs +. m.carbs,
+      )
+    },
+  )
 }
 
 fn list_fold(list: List(a), acc: b, f: fn(b, a) -> b) -> b {
@@ -102,20 +112,35 @@ pub fn generate_weekly_plan(
 ) -> Result(WeeklyMealPlan, String) {
   // For now, create a simple plan
   // In full implementation, this would use meal selection algorithms
-  let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-  
-  let daily_plans = list.map(days, fn(day) {
-    DailyPlan(
-      day_name: day,
-      meals: [
-        Meal(recipe: list.first(recipes) |> result.unwrap(Recipe(name: "", ingredients: [], instructions: [], macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0), servings: 1, category: "", fodmap_level: Low, vertical_compliant: False)), portion_size: 1.0)
-      ]
-    )
-  })
-  
-  Ok(WeeklyMealPlan(
-    days: daily_plans,
-    shopping_list: [],
-    user_profile: profile,
-  ))
+  let days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ]
+
+  let daily_plans =
+    list.map(days, fn(day) {
+      DailyPlan(day_name: day, meals: [
+        Meal(
+          recipe: list.first(recipes)
+            |> result.unwrap(Recipe(
+              name: "",
+              ingredients: [],
+              instructions: [],
+              macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+              servings: 1,
+              category: "",
+              fodmap_level: Low,
+              vertical_compliant: False,
+            )),
+          portion_size: 1.0,
+        ),
+      ])
+    })
+
+  Ok(WeeklyMealPlan(days: daily_plans, shopping_list: [], user_profile: profile))
 }

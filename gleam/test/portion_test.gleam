@@ -10,16 +10,17 @@ pub fn main() {
 
 // Test PortionCalculation struct and basic scaling
 pub fn calculate_portion_for_target_basic_test() {
-  let recipe = Recipe(
-    name: "Steak and Rice",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 50.0, fat: 20.0, carbs: 30.0),
-    servings: 1,
-    category: "beef",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      name: "Steak and Rice",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 50.0, fat: 20.0, carbs: 30.0),
+      servings: 1,
+      category: "beef",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let target = Macros(protein: 100.0, fat: 40.0, carbs: 60.0)
 
@@ -38,16 +39,17 @@ pub fn calculate_portion_for_target_basic_test() {
 
 // Test scaling with protein as primary constraint
 pub fn calculate_portion_prioritizes_protein_test() {
-  let recipe = Recipe(
-    name: "Chicken Breast",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 40.0, fat: 5.0, carbs: 0.0),
-    servings: 1,
-    category: "chicken",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      name: "Chicken Breast",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 40.0, fat: 5.0, carbs: 0.0),
+      servings: 1,
+      category: "chicken",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let target = Macros(protein: 60.0, fat: 15.0, carbs: 50.0)
 
@@ -67,16 +69,17 @@ pub fn calculate_portion_prioritizes_protein_test() {
 
 // Test scale factor capping at 4x maximum
 pub fn calculate_portion_caps_scale_factor_max_test() {
-  let recipe = Recipe(
-    name: "Light Meal",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 10.0, fat: 5.0, carbs: 10.0),
-    servings: 1,
-    category: "variety",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      name: "Light Meal",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 10.0, fat: 5.0, carbs: 10.0),
+      servings: 1,
+      category: "variety",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let target = Macros(protein: 200.0, fat: 100.0, carbs: 200.0)
 
@@ -92,16 +95,17 @@ pub fn calculate_portion_caps_scale_factor_max_test() {
 
 // Test scale factor capping at 0.25x minimum
 pub fn calculate_portion_caps_scale_factor_min_test() {
-  let recipe = Recipe(
-    name: "Heavy Meal",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 100.0, fat: 50.0, carbs: 100.0),
-    servings: 1,
-    category: "beef",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      name: "Heavy Meal",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 100.0, fat: 50.0, carbs: 100.0),
+      servings: 1,
+      category: "beef",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let target = Macros(protein: 5.0, fat: 2.0, carbs: 5.0)
 
@@ -117,16 +121,17 @@ pub fn calculate_portion_caps_scale_factor_min_test() {
 
 // Test with recipe that has no macros
 pub fn calculate_portion_no_macros_test() {
-  let recipe = Recipe(
-    name: "Unknown Meal",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
-    servings: 1,
-    category: "other",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      name: "Unknown Meal",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+      servings: 1,
+      category: "other",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let target = Macros(protein: 50.0, fat: 20.0, carbs: 30.0)
 
@@ -146,16 +151,17 @@ pub fn calculate_portion_no_macros_test() {
 
 // Test variance calculation
 pub fn calculate_portion_variance_within_tolerance_test() {
-  let recipe = Recipe(
-    name: "Perfect Match",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 50.0, fat: 20.0, carbs: 30.0),
-    servings: 1,
-    category: "beef",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      name: "Perfect Match",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 50.0, fat: 20.0, carbs: 30.0),
+      servings: 1,
+      category: "beef",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let target = Macros(protein: 52.0, fat: 21.0, carbs: 31.0)
 
@@ -176,31 +182,34 @@ pub fn calculate_daily_portions_test() {
   let daily_macros = Macros(protein: 150.0, fat: 60.0, carbs: 180.0)
   let meals_per_day = 3
 
-  let recipe1 = Recipe(
-    name: "Breakfast",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 40.0, fat: 15.0, carbs: 50.0),
-    servings: 1,
-    category: "eggs",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe1 =
+    Recipe(
+      name: "Breakfast",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 40.0, fat: 15.0, carbs: 50.0),
+      servings: 1,
+      category: "eggs",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
-  let recipe2 = Recipe(
-    name: "Lunch",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 60.0, fat: 25.0, carbs: 70.0),
-    servings: 1,
-    category: "beef",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe2 =
+    Recipe(
+      name: "Lunch",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 60.0, fat: 25.0, carbs: 70.0),
+      servings: 1,
+      category: "beef",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let recipes = [recipe1, recipe2]
 
-  let results = portion.calculate_daily_portions(daily_macros, meals_per_day, recipes)
+  let results =
+    portion.calculate_daily_portions(daily_macros, meals_per_day, recipes)
 
   // Should return 2 results (one per recipe)
   list.length(results)
@@ -224,7 +233,8 @@ pub fn calculate_daily_portions_zero_meals_test() {
 
   let recipes = []
 
-  let results = portion.calculate_daily_portions(daily_macros, meals_per_day, recipes)
+  let results =
+    portion.calculate_daily_portions(daily_macros, meals_per_day, recipes)
 
   // Should return empty list
   list.length(results)

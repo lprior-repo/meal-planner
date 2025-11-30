@@ -1,4 +1,5 @@
 ---
+name: "fractal-quality-loop"
 description: "Fractal Quality Loop agent - orchestrates multi-pass QA with linting, tests, code review, architecture analysis, and Beads integration."
 mode: subagent
 model: anthropic/claude-sonnet-4-20250514

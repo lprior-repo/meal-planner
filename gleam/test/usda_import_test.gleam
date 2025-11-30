@@ -81,7 +81,12 @@ pub fn import_nutrient_csv_test() {
 
     // Import the CSV
     let result =
-      usda_import.import_csv_file(conn, temp_dir <> "/nutrient.csv", "nutrient", 100)
+      usda_import.import_csv_file(
+        conn,
+        temp_dir <> "/nutrient.csv",
+        "nutrient",
+        100,
+      )
 
     result |> should.be_ok
 
@@ -236,7 +241,11 @@ pub fn import_food_nutrient_csv_test() {
     case query_result {
       Ok([amount]) -> {
         // Protein amount for chicken breast should be ~31.02
-        { float.compare(amount, 30.0) == order.Gt && float.compare(amount, 32.0) == order.Lt } |> should.be_true
+        {
+          float.compare(amount, 30.0) == order.Gt
+          && float.compare(amount, 32.0) == order.Lt
+        }
+        |> should.be_true
       }
       _ -> should.fail()
     }
@@ -330,7 +339,10 @@ pub fn import_from_directory_test() {
 pub fn file_not_found_test() {
   sqlight.with_connection(":memory:", fn(conn) {
     let _ =
-      sqlight.exec("CREATE TABLE nutrients (id INTEGER PRIMARY KEY, name TEXT NOT NULL, unit_name TEXT NOT NULL, nutrient_nbr TEXT, rank INTEGER)", on: conn)
+      sqlight.exec(
+        "CREATE TABLE nutrients (id INTEGER PRIMARY KEY, name TEXT NOT NULL, unit_name TEXT NOT NULL, nutrient_nbr TEXT, rank INTEGER)",
+        on: conn,
+      )
 
     let result =
       usda_import.import_csv_file(

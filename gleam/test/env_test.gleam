@@ -9,12 +9,13 @@ pub fn main() {
 // Test that required environment variables are validated
 pub fn validate_required_vars_missing_test() {
   // When all env vars are missing, should return error with all missing vars
-  let vars = env.RequiredVars(
-    mailtrap_api_token: "",
-    sender_email: "",
-    sender_name: "",
-    recipient_email: "",
-  )
+  let vars =
+    env.RequiredVars(
+      mailtrap_api_token: "",
+      sender_email: "",
+      sender_name: "",
+      recipient_email: "",
+    )
 
   let result = env.validate_required_vars(vars)
 
@@ -24,12 +25,13 @@ pub fn validate_required_vars_missing_test() {
 
 // Test that validation passes when all vars are present
 pub fn validate_required_vars_present_test() {
-  let vars = env.RequiredVars(
-    mailtrap_api_token: "test_token",
-    sender_email: "test@example.com",
-    sender_name: "Test Sender",
-    recipient_email: "recipient@example.com",
-  )
+  let vars =
+    env.RequiredVars(
+      mailtrap_api_token: "test_token",
+      sender_email: "test@example.com",
+      sender_name: "Test Sender",
+      recipient_email: "recipient@example.com",
+    )
 
   let result = env.validate_required_vars(vars)
 
@@ -39,12 +41,13 @@ pub fn validate_required_vars_present_test() {
 
 // Test that partial missing variables returns error
 pub fn validate_required_vars_partial_test() {
-  let vars = env.RequiredVars(
-    mailtrap_api_token: "test_token",
-    sender_email: "",
-    sender_name: "Test",
-    recipient_email: "",
-  )
+  let vars =
+    env.RequiredVars(
+      mailtrap_api_token: "test_token",
+      sender_email: "",
+      sender_name: "Test",
+      recipient_email: "",
+    )
 
   let result = env.validate_required_vars(vars)
 

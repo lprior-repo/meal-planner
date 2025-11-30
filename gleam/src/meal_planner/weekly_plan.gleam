@@ -1,9 +1,11 @@
 /// Weekly plan generation following Vertical Diet guidelines
 ///
 /// Creates 7-day meal plans with proper meal distribution and portion sizing.
-
 import gleam/list
-import meal_planner/meal_plan.{type DailyPlan, type Meal, type WeeklyMealPlan, DailyPlan, Meal, WeeklyMealPlan}
+import meal_planner/meal_plan.{
+  type DailyPlan, type Meal, type WeeklyMealPlan, DailyPlan, Meal,
+  WeeklyMealPlan,
+}
 import meal_planner/meal_selection.{select_meals_for_week}
 import meal_planner/portion.{calculate_portion_for_target}
 import meal_planner/types.{
@@ -13,9 +15,7 @@ import meal_planner/types.{
 
 /// Day names for weekly plan generation
 pub fn day_names() -> List(String) {
-  [
-    "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
-  ]
+  ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 }
 
 /// Generate a 7-day meal plan using Vertical Diet distribution
@@ -41,7 +41,12 @@ pub fn generate_weekly_plan(
     list.fold(day_names(), #([], selected_recipes), fn(acc, day_name) {
       let #(built_days, available_recipes) = acc
       let #(daily_plan, remaining) =
-        build_daily_plan(day_name, daily_macros, profile.meals_per_day, available_recipes)
+        build_daily_plan(
+          day_name,
+          daily_macros,
+          profile.meals_per_day,
+          available_recipes,
+        )
       #([daily_plan, ..built_days], remaining)
     })
 

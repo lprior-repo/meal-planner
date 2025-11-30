@@ -83,13 +83,15 @@ pub fn can_convert_different_types_test() {
 pub fn convert_to_base_oz_test() {
   let parsed = quantity.parse_quantity("2 lb")
   let base = quantity.convert_to_base(parsed)
-  base |> should.equal(32.0)  // 2 lb = 32 oz
+  base |> should.equal(32.0)
+  // 2 lb = 32 oz
 }
 
 pub fn convert_to_base_tbsp_test() {
   let parsed = quantity.parse_quantity("2 tbsp")
   let base = quantity.convert_to_base(parsed)
-  base |> should.equal(6.0)  // 2 tbsp = 6 tsp
+  base |> should.equal(6.0)
+  // 2 tbsp = 6 tsp
 }
 
 // Test aggregation

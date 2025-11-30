@@ -1,8 +1,8 @@
 import gleeunit
 import gleeunit/should
 import meal_planner/meal_selection.{
-  Eggs, RedMeat, Salmon, Variety, default_meal_selection_config, get_distribution,
-  get_meal_category, is_within_targets, select_meals_for_week,
+  Eggs, RedMeat, Salmon, Variety, default_meal_selection_config,
+  get_distribution, get_meal_category, is_within_targets, select_meals_for_week,
 }
 import meal_planner/types.{type Recipe, Ingredient, Low, Macros, Recipe}
 

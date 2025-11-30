@@ -1,5 +1,4 @@
 /// Core types for the meal planner application
-
 /// Ingredient represents a single ingredient with name and quantity
 pub type Ingredient {
   Ingredient(name: String, quantity: String)

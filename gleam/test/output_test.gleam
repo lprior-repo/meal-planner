@@ -119,7 +119,9 @@ pub fn format_user_profile_includes_targets_test() {
 pub fn format_daily_plan_test() {
   let recipe = make_recipe("Steak Dinner")
   let plan =
-    DailyPlan(day_name: "Monday", meals: [Meal(recipe: recipe, portion_size: 1.0)])
+    DailyPlan(day_name: "Monday", meals: [
+      Meal(recipe: recipe, portion_size: 1.0),
+    ])
 
   let result = format_daily_plan(plan, 7)
 
@@ -131,13 +133,10 @@ pub fn format_daily_plan_multiple_meals_test() {
   let recipe1 = make_recipe("Breakfast")
   let recipe2 = make_recipe("Lunch")
   let plan =
-    DailyPlan(
-      day_name: "Tuesday",
-      meals: [
-        Meal(recipe: recipe1, portion_size: 1.0),
-        Meal(recipe: recipe2, portion_size: 1.5),
-      ],
-    )
+    DailyPlan(day_name: "Tuesday", meals: [
+      Meal(recipe: recipe1, portion_size: 1.0),
+      Meal(recipe: recipe2, portion_size: 1.5),
+    ])
 
   let result = format_daily_plan(plan, 7)
 
@@ -188,9 +187,12 @@ pub fn format_weekly_plan_basic_test() {
 
   let recipe = make_recipe("Steak")
   let day =
-    DailyPlan(day_name: "Monday", meals: [Meal(recipe: recipe, portion_size: 1.0)])
+    DailyPlan(day_name: "Monday", meals: [
+      Meal(recipe: recipe, portion_size: 1.0),
+    ])
 
-  let plan = WeeklyMealPlan(days: [day], shopping_list: [], user_profile: profile)
+  let plan =
+    WeeklyMealPlan(days: [day], shopping_list: [], user_profile: profile)
 
   let result = format_weekly_plan(plan)
 
@@ -210,7 +212,9 @@ pub fn format_weekly_plan_includes_summary_test() {
 
   let recipe = make_recipe("Steak")
   let day =
-    DailyPlan(day_name: "Monday", meals: [Meal(recipe: recipe, portion_size: 1.0)])
+    DailyPlan(day_name: "Monday", meals: [
+      Meal(recipe: recipe, portion_size: 1.0),
+    ])
 
   let plan =
     WeeklyMealPlan(

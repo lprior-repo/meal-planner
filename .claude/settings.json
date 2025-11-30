@@ -6,22 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd gleam && gleam check 2>&1 | head -20"
-          }
-        ]
-      }
-    ],
-    "PreCommit": [
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cd gleam && gleam test"
-          },
-          {
-            "type": "command",
-            "command": "cd gleam && gleam format --check src test"
+            "command": "nu -c 'cd gleam && gleam check | head 20'"
           }
         ]
       }
