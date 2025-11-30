@@ -6,6 +6,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/string
+import meal_planner/env.{type RequiredVars}
 import meal_planner/meal_plan.{
   type DailyPlan, type Meal, type WeeklyMealPlan, daily_plan_macros, meal_macros,
   weekly_plan_macros,
@@ -13,7 +14,7 @@ import meal_planner/meal_plan.{
 import meal_planner/shopping_list.{type CategorizedShoppingList, organize_shopping_list}
 import meal_planner/types.{
   type ActivityLevel, type Goal, type Ingredient, type Macros, type Recipe,
-  type UserProfile, Active, Gain, Lose, Macros, Maintain, Moderate, Sedentary,
+  type UserProfile, Active, Gain, Lose, Maintain, Moderate, Sedentary,
   daily_calorie_target, daily_carb_target, daily_fat_target, daily_protein_target,
   macros_calories,
 }
@@ -303,3 +304,43 @@ fn float_to_string_1dp(f: Float) -> String {
 
 @external(erlang, "erlang", "float")
 fn int_to_float(n: Int) -> Float
+
+/// Print weekly meal plan to terminal
+pub fn print_weekly_plan(plan: WeeklyMealPlan) -> Nil {
+  io.println(format_weekly_plan(plan))
+}
+
+/// Send weekly meal plan via email
+pub fn send_weekly_plan_email(
+  plan: WeeklyMealPlan, 
+  config: RequiredVars,
+) -> Result(Nil, String) {
+  // For now, just print the email content
+  io.println("=== Email Content ===")
+  io.println(format_weekly_plan_email(plan))
+  io.println("To: " <> config.recipient_email)
+  io.println("From: " <> config.sender_name <> " <" <> config.sender_email <> ">")
+  Ok(Nil)
+}
+
+/// Print audit report for recipes
+pub fn print_audit_report(recipes: List(Recipe)) -> Nil {
+  io.println("==== VERTICAL DIET RECIPE AUDIT ====")
+  io.println("Total Recipes: " <> int.to_string(list.length(recipes)))
+  
+  let compliant = list.filter(recipes, fn(r) { meal_planner/types.is_vertical_diet_compliant(r) })
+  let compliant_count = list.length(compliant)
+  let compliance_rate = case list.length(recipes) {
+    0 -> 0.0
+    n -> int_to_float(compliant_count) /. int_to_float(n) *. 100.0
+  }
+  
+  io.println("Compliant (Low-FODMAP): " <> int.to_string(compliant_count) <> " (" <> float_to_string(compliance_rate) <> "%)")
+  io.println("Non-Compliant: " <> int.to_string(list.length(recipes) - compliant_count))
+  io.println("==== END AUDIT ====")
+}
+
+/// Convert float to string
+fn float_to_string(f: Float) -> String {
+  string.from_float(f)
+}

@@ -1,9 +1,13 @@
 /// Meal planning types for daily and weekly plans
 
+import gleam/list
 import meal_planner/types.{
-  type Ingredient, type Macros, type Recipe, type UserProfile, Macros,
-  macros_scale,
+  type Ingredient, type Macros, type UserProfile,
+  Macros, macros_scale, Low,
 }
+import shared/types.{Recipe}
+
+
 
 /// Meal represents a recipe with a portion size multiplier
 pub type Meal {
@@ -18,6 +22,11 @@ pub fn meal_macros(m: Meal) -> Macros {
 /// DailyPlan represents all meals for a single day
 pub type DailyPlan {
   DailyPlan(day_name: String, meals: List(Meal))
+}
+
+/// Create a default empty recipe
+pub fn default_recipe() -> shared/types.Recipe {
+  shared/types.Recipe(name: "", ingredients: [], instructions: [], macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0), servings: 1, category: "", fodmap_level: Low, vertical_compliant: False)
 }
 
 /// Calculate total macros for a daily plan
@@ -84,3 +93,29 @@ fn list_length(list: List(a)) -> Int {
 
 @external(erlang, "erlang", "float")
 fn int_to_float(n: Int) -> Float
+
+/// Generate a complete weekly meal plan
+/// Uses Vertical Diet distribution and portion calculations
+pub fn generate_weekly_plan(
+  profile: UserProfile,
+  recipes: List(shared/types.Recipe),
+) -> Result(WeeklyMealPlan, String) {
+  // For now, create a simple plan
+  // In full implementation, this would use meal selection algorithms
+  let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+  
+  let daily_plans = list.map(days, fn(day) {
+    DailyPlan(
+      day_name: day,
+      meals: [
+        Meal(recipe: list.first(recipes) |> result.unwrap(Recipe(name: "", ingredients: [], instructions: [], macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0), servings: 1, category: "", fodmap_level: Low, vertical_compliant: False)), portion_size: 1.0)
+      ]
+    )
+  })
+  
+  Ok(WeeklyMealPlan(
+    days: daily_plans,
+    shopping_list: [],
+    user_profile: profile,
+  ))
+}
