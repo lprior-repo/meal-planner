@@ -1,6 +1,6 @@
 import gleeunit/should
 import meal_planner/types.{
-  Ingredient, Macros, macros_add, macros_calories, macros_scale,
+  Ingredient, Macros, Recipe, macros_add, macros_calories, macros_scale,
 }
 
 pub fn macros_calories_test() {
@@ -40,4 +40,29 @@ pub fn ingredient_creation_test() {
   let ing = Ingredient(name: "Chicken breast", quantity: "200g")
   ing.name |> should.equal("Chicken breast")
   ing.quantity |> should.equal("200g")
+}
+
+// Recipe tests
+
+pub fn recipe_creation_test() {
+  let macros = Macros(protein: 40.0, fat: 10.0, carbs: 5.0)
+  let ingredients = [
+    Ingredient(name: "Chicken breast", quantity: "200g"),
+    Ingredient(name: "Olive oil", quantity: "1 tbsp"),
+  ]
+  let instructions = ["Season chicken", "Grill for 6 min per side"]
+  let recipe =
+    Recipe(
+      name: "Grilled Chicken",
+      ingredients: ingredients,
+      instructions: instructions,
+      macros: macros,
+      servings: 2,
+      category: "protein",
+      fodmap_level: "low",
+      vertical_compliant: True,
+    )
+  recipe.name |> should.equal("Grilled Chicken")
+  recipe.servings |> should.equal(2)
+  recipe.vertical_compliant |> should.be_true()
 }

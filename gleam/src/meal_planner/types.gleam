@@ -5,6 +5,20 @@ pub type Ingredient {
   Ingredient(name: String, quantity: String)
 }
 
+/// Recipe represents a complete recipe with ingredients, instructions, and nutrition
+pub type Recipe {
+  Recipe(
+    name: String,
+    ingredients: List(Ingredient),
+    instructions: List(String),
+    macros: Macros,
+    servings: Int,
+    category: String,
+    fodmap_level: String,
+    vertical_compliant: Bool,
+  )
+}
+
 /// Macros represents nutritional macronutrients per serving
 pub type Macros {
   Macros(protein: Float, fat: Float, carbs: Float)
