@@ -98,3 +98,8 @@ pub fn load() -> Result(RequiredVars, EnvError) {
   load_dotenv()
   load_from_env()
 }
+
+/// Load email configuration (alias for load function)
+pub fn load_email_config() -> Result(RequiredVars, EnvError) {
+  load()
+}

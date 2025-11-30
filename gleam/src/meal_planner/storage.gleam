@@ -405,3 +405,16 @@ pub fn get_recipes_by_category(
     Ok(recipes) -> Ok(recipes)
   }
 }
+
+/// Initialize database with all required tables
+pub fn initialize_database() -> Result(Nil, String) {
+  with_connection("meal_planner.db", fn(conn) {
+    case init_db(conn) {
+      Ok(_) -> case init_recipe_tables(conn) {
+        Ok(_) -> Ok(Nil)
+        Error(e) -> Error("Failed to initialize recipe tables: " <> e.message)
+      }
+      Error(e) -> Error("Failed to initialize database: " <> e.message)
+    }
+  })
+}

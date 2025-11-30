@@ -279,3 +279,8 @@ fn load_recipe_file(filepath: String) -> Result(List(Recipe), String) {
 
   parse_yaml(content)
 }
+
+/// Load all recipes from directory and combine them
+pub fn load_all_recipes(dir: String, exclude_file: String) -> Result(List(Recipe), String) {
+  load_recipes(dir, exclude_file)
+}
