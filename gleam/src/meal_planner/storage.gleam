@@ -126,30 +126,31 @@ pub fn init_db(conn: sqlight.Connection) -> Result(Nil, StorageError) {
 //   }
 // }
 
-/// Get nutrition goals
-pub fn get_goals(conn: sqlight.Connection) -> Result(NutritionGoals, StorageError) {
-  let sql =
-    "SELECT daily_protein, daily_fat, daily_carbs, daily_calories FROM nutrition_goals WHERE id = 1"
-
-  let decoder = {
-    use daily_protein <- decode.field(0, decode.float)
-    use daily_fat <- decode.field(1, decode.float)
-    use daily_carbs <- decode.field(2, decode.float)
-    use daily_calories <- decode.field(3, decode.float)
-    decode.success(NutritionGoals(
-      daily_protein: daily_protein,
-      daily_fat: daily_fat,
-      daily_carbs: daily_carbs,
-      daily_calories: daily_calories,
-    ))
-  }
-
-  case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([data, ..]) -> Ok(data)
-  }
-}
+// TODO: Re-enable when NCP module is available
+// /// Get nutrition goals
+// pub fn get_goals(conn: sqlight.Connection) -> Result(NutritionGoals, StorageError) {
+//   let sql =
+//     "SELECT daily_protein, daily_fat, daily_carbs, daily_calories FROM nutrition_goals WHERE id = 1"
+// 
+//   let decoder = {
+//     use daily_protein <- decode.field(0, decode.float)
+//     use daily_fat <- decode.field(1, decode.float)
+//     use daily_carbs <- decode.field(2, decode.float)
+//     use daily_calories <- decode.field(3, decode.float)
+//     decode.success(NutritionGoals(
+//       daily_protein: daily_protein,
+//       daily_fat: daily_fat,
+//       daily_carbs: daily_carbs,
+//       daily_calories: daily_calories,
+//     ))
+//   }
+// 
+//   case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
+//     Error(e) -> Error(DatabaseError(e.message))
+//     Ok([]) -> Error(NotFound)
+//     Ok([data, ..]) -> Ok(data)
+//   }
+// }
 
 // ============================================================================
 // Recipe Storage Functions
@@ -414,7 +415,7 @@ pub fn initialize_database() -> Result(Nil, String) {
     case init_db(conn) {
       Ok(_) -> case init_recipe_tables(conn) {
         Ok(_) -> Ok(Nil)
-        Error(e) -> Error("Failed to initialize recipe tables: " <> e.message)
+        Error(_) -> Error("Failed to initialize recipe tables")
       }
       Error(e) -> Error("Failed to initialize database: " <> e.message)
     }
