@@ -1,2 +1,30 @@
 {
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd gleam && gleam check 2>&1 | head -20"
+          }
+        ]
+      }
+    ],
+    "PreCommit": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd gleam && gleam test"
+          },
+          {
+            "type": "command",
+            "command": "cd gleam && gleam format --check src test"
+          }
+        ]
+      }
+    ]
+  }
 }
