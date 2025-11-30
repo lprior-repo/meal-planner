@@ -1,3 +1,4 @@
+import dot_env
 import envoy
 import gleam/list
 import gleam/result
@@ -79,4 +80,21 @@ pub fn format_error(error: EnvError) -> String {
       "missing required environment variables: "
       <> string.join(missing, ", ")
   }
+}
+
+/// Load .env file from the project root
+/// Silently ignores missing .env file (common in production)
+pub fn load_dotenv() -> Nil {
+  dot_env.new()
+  |> dot_env.set_path(".env")
+  |> dot_env.set_debug(False)
+  |> dot_env.set_ignore_missing_file(True)
+  |> dot_env.load
+}
+
+/// Load environment variables with .env file support
+/// First loads .env file (if exists), then reads from environment
+pub fn load() -> Result(RequiredVars, EnvError) {
+  load_dotenv()
+  load_from_env()
 }
