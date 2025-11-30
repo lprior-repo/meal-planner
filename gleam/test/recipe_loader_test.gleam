@@ -2,7 +2,6 @@ import gleam/list
 import gleeunit
 import gleeunit/should
 import meal_planner/recipe_loader
-import meal_planner/types
 
 pub fn main() {
   gleeunit.main()
