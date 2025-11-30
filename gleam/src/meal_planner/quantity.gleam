@@ -93,7 +93,21 @@ fn parse_number(s: String) -> Result(Float, Nil) {
     True -> {
       case string.split(trimmed, "/") {
         [num_str, denom_str] -> {
-          case float.parse(string.trim(num_str)), float.parse(string.trim(denom_str)) {
+          let num_result = case float.parse(string.trim(num_str)) {
+            Ok(n) -> Ok(n)
+            Error(_) -> case int.parse(string.trim(num_str)) {
+              Ok(n) -> Ok(int.to_float(n))
+              Error(_) -> Error(Nil)
+            }
+          }
+          let denom_result = case float.parse(string.trim(denom_str)) {
+            Ok(d) -> Ok(d)
+            Error(_) -> case int.parse(string.trim(denom_str)) {
+              Ok(d) -> Ok(int.to_float(d))
+              Error(_) -> Error(Nil)
+            }
+          }
+          case num_result, denom_result {
             Ok(num), Ok(denom) -> {
               case denom == 0.0 {
                 True -> Error(Nil)
