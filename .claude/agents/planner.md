@@ -1,8 +1,17 @@
 ---
-name: planner
-description: "Tessl Planning Architect - MUST BE USED when decomposing features, bugs, or tasks into atomic beads. Use PROACTIVELY before starting any multi-step work. Transforms user intent into executable bd CLI commands."
-tools: Read, Grep, Glob, Bash
-model: sonnet
+description: "Tessl Planning Architect - Decomposes features, bugs, or tasks into atomic beads. Outputs Beads CLI commands for bd. Use this agent before performing multi-step work."
+mode: subagent
+model: anthropic/claude-sonnet-4-20250514
+temperature: 0.0
+tools:
+  read: true
+  grep: true
+  glob: true
+  bash: true
+  write: false
+permission:
+  bash: ask
+  edit: deny
 ---
 
 # IDENTITY
@@ -164,7 +173,7 @@ bd create "Write email validation function" -t task -p 1 \
   --acceptance "Validates correct emails; rejects malformed; tests pass" --json
 
 # Capture T1 ID, then:
-# T2: Integrate validation
+# T2: Integrate validation in signup
 bd create "Integrate email validation in signup" -t task -p 1 \
   --deps "blocks:T1_ID" \
   -d "Call validation before processing. Rollback: git reset --hard HEAD" \

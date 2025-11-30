@@ -137,6 +137,11 @@ WorkItem:
 
 ## Slash Commands
 
+### Orchestration
+- `/fractal-loop <task>` - Complete SDLC orchestrator with parallel agents, MCP coordination, and Beads tracking
+- `/flow <task>` - Full orchestrator, guides through all loops
+- `/plan <task>` - Decompose into atomic beads
+
 ### Spec Refinement
 - `/clarify <task>` - Run clarification loop, output questions
 - `/research <task>` - Investigate codebase, output findings
@@ -149,9 +154,8 @@ WorkItem:
 - `/tdd-green` - Make current failing test pass
 - `/tdd-refactor` - Improve without changing behavior
 
-### Orchestration
-- `/flow <task>` - Full orchestrator, guides through all loops
-- `/plan <task>` - Decompose into atomic beads (existing)
+### Session Management
+- `/land` - Execute complete "Landing the Plane" workflow (mandatory session end)
 
 ## Agent Modes Summary
 
@@ -165,3 +169,94 @@ WorkItem:
 | TDD-Red | Write failing test | Test code |
 | TDD-Green | Make test pass | Implementation code |
 | TDD-Refactor | Improve code | Refactored code |
+| Quality-Loop | Multi-layer validation | Quality report with issues |
+
+## Landing the Plane (Session End Protocol)
+
+**The plane is NOT landed until git push succeeds. NO EXCEPTIONS.**
+
+### Seven-Step Mandatory Workflow
+
+1. **File Remaining Issues**: Create beads for any incomplete work
+   ```bash
+   bd create "Description of remaining work" -t task -p 2 --json
+   ```
+
+2. **Run Quality Gates**: Execute all quality checks
+   ```bash
+   go test ./...      # All tests must pass
+   go build          # Build must succeed
+   make lint         # Linting must pass
+   ```
+   If any fail: `bd create "Fix [issue]" -t bug -p 0 --json`
+
+3. **Update Beads Issues**: Close completed work, update in-progress
+   ```bash
+   bd close <id> --reason "Completed" --json
+   ```
+
+4. **PUSH TO REMOTE (MANDATORY)**:
+   ```bash
+   git pull --rebase
+   # If conflicts in .beads/beads.jsonl:
+   #   git checkout --theirs .beads/beads.jsonl && bd import
+   bd sync
+   git push       # MANDATORY - PLANE NOT LANDED WITHOUT THIS
+   git status     # MUST show "up to date with origin"
+   ```
+
+5. **Clean Git State**:
+   ```bash
+   git stash clear
+   git remote prune origin
+   ```
+
+6. **Verify Clean State**: `git status` must show "up to date" and "working tree clean"
+
+7. **Choose Follow-Up Work**: `bd ready --json`
+
+**CRITICAL**: Never say "ready to push" - YOU must execute `git push` successfully.
+
+## MCP Tools Integration
+
+### Serena (Code Navigation) - MANDATORY
+
+**NEVER read entire files. Use symbol-aware tools:**
+
+- `get_symbols_overview(file_path)` - Get file structure
+- `find_symbol(name, file_path, include_body)` - Find specific symbol
+- `find_referencing_symbols(name, file_path)` - Find all usages
+- `search_for_pattern(pattern, file_pattern)` - Search across codebase
+
+**Editing (symbol-aware):**
+- `replace_symbol_body(name, file_path, new_body)` - Replace function implementation
+- `insert_after_symbol(name, file_path, content)` - Insert new code
+- `rename_symbol(old_name, new_name, file_path)` - Rename across file
+
+**Memory (cross-session):**
+- `write_memory(key, content)` - Save learnings
+- `read_memory(key)` - Recall context
+- `list_memories()` - List all memories
+
+### Agent-Mail (Multi-Agent Coordination) - MANDATORY
+
+**Session Setup:**
+```python
+ensure_project(project_key="/abs/path")
+register_agent(project_key, agent_name="auto-generated")
+```
+
+**File Reservations (BEFORE editing):**
+```python
+file_reservation_paths(project_key, agent_name, paths, ttl_seconds, exclusive, reason="bd-123")
+release_file_reservations(project_key, agent_name, paths)
+```
+
+**Messaging:**
+```python
+send_message(..., thread_id="bd-123", subject="[bd-123] Update", ack_required=True)
+fetch_inbox(project_key, agent_name)
+reply_message(project_key, message_id, sender_name, body_md)
+```
+
+**Integration with Beads**: Use bead ID as `thread_id`, prefix subjects with `[bd-###]`, use bead ID as reservation reason.
