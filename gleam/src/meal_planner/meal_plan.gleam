@@ -5,7 +5,7 @@ import meal_planner/types.{
   type Ingredient, type Macros, type UserProfile,
   Macros, macros_scale, Low,
 }
-import shared/types.{Recipe}
+import shared/types.{type Recipe}
 
 
 
@@ -25,8 +25,8 @@ pub type DailyPlan {
 }
 
 /// Create a default empty recipe
-pub fn default_recipe() -> shared/types.Recipe {
-  shared/types.Recipe(name: "", ingredients: [], instructions: [], macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0), servings: 1, category: "", fodmap_level: Low, vertical_compliant: False)
+pub fn default_recipe() -> Recipe {
+  Recipe(name: "", ingredients: [], instructions: [], macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0), servings: 1, category: "", fodmap_level: Low, vertical_compliant: False)
 }
 
 /// Calculate total macros for a daily plan
@@ -98,7 +98,7 @@ fn int_to_float(n: Int) -> Float
 /// Uses Vertical Diet distribution and portion calculations
 pub fn generate_weekly_plan(
   profile: UserProfile,
-  recipes: List(shared/types.Recipe),
+  recipes: List(Recipe),
 ) -> Result(WeeklyMealPlan, String) {
   // For now, create a simple plan
   // In full implementation, this would use meal selection algorithms
