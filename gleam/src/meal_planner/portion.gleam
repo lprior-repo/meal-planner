@@ -1,7 +1,6 @@
 /// Portion calculation module for scaling recipes to hit macro targets
 /// Ported from Go implementation in main.go
 
-import gleam/float
 import gleam/list
 import meal_planner/types.{type Macros, type Recipe, Macros}
 

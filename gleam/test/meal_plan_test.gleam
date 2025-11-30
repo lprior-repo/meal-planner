@@ -1,5 +1,5 @@
 import gleeunit/should
-import meal_planner/meal_plan.{DailyPlan, Meal, WeeklyMealPlan, meal_macros}
+import meal_planner/meal_plan.{DailyPlan, Meal, meal_macros}
 import meal_planner/types.{Ingredient, Low, Macros, Recipe}
 
 pub fn meal_macros_test() {
