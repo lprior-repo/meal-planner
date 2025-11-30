@@ -40,3 +40,4 @@ gleeunit = { version = ">= 1.0.0 and < 2.0.0" }
 glint = { version = ">= 0.14.0" }
 logging = { version = ">= 1.0.0" }
 sqlight = { version = ">= 1.0.0 and < 2.0.0" }
+simplifile = { version = ">= 2.3.1 and < 3.0.0" }
