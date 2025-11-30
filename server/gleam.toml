@@ -1,0 +1,35 @@
+name = "server"
+version = "1.0.0"
+
+description = "Wisp web server for meal planner backend"
+licences = ["MIT"]
+
+target = "erlang"
+
+gleam = ">= 1.0.0"
+
+[dependencies]
+gleam_stdlib = ">= 0.67.0"
+gleam_json = ">= 3.0.0 and < 4.0.0"
+gleam_http = ">= 4.0.0"
+gleam_erlang = ">= 1.0.0"
+gleam_otp = ">= 1.0.0"
+
+# Web framework and server
+wisp = ">= 2.0.0 and < 3.0.0"
+mist = ">= 5.0.0 and < 6.0.0"
+
+# Lustre for SSR
+lustre = ">= 5.0.0 and < 6.0.0"
+
+# Database
+sqlight = ">= 1.0.0 and < 2.0.0"
+
+# Shared types
+shared = { path = "../shared" }
+
+# Import from existing meal_planner
+meal_planner = { path = "../gleam" }
+
+[dev-dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"
