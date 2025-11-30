@@ -1,0 +1,1 @@
+-record(macros, {protein :: float(), fat :: float(), carbs :: float()}).

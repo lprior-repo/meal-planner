@@ -1,0 +1,1 @@
+-record(ingredient, {name :: binary(), quantity :: binary()}).
