@@ -1,8 +1,2 @@
 {
-  "mcpServers": {
-    "serena": {
-      "command": "C:\Users\Lewis\bin\serena-mcp.cmd",
-      "args": []
-    }
-  }
 }
