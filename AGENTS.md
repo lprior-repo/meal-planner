@@ -260,3 +260,113 @@ reply_message(project_key, message_id, sender_name, body_md)
 ```
 
 **Integration with Beads**: Use bead ID as `thread_id`, prefix subjects with `[bd-###]`, use bead ID as reservation reason.
+
+## Agent-Mail MCP Enforcement (MANDATORY)
+
+**All agents MUST use Agent-Mail MCP for coordination. This is NOT optional.**
+
+### Pre-Session Setup (EVERY SESSION)
+
+Before doing ANY work, agents MUST:
+
+```python
+# 1. Register with the project
+ensure_project(project_key="/home/lewis/src/meal-planner")
+
+# 2. Register agent identity
+register_agent(project_key="/home/lewis/src/meal-planner", agent_name="auto")
+# Returns: {"agent_name": "GreenCastle", ...}
+```
+
+### File Reservation Protocol (BEFORE ANY EDIT)
+
+**NEVER edit a file without reserving it first.**
+
+```python
+# Before editing any file:
+file_reservation_paths(
+    project_key="/home/lewis/src/meal-planner",
+    agent_name="YOUR_AGENT_NAME",
+    paths=["path/to/file.go"],
+    ttl_seconds=300,
+    exclusive=True,
+    reason="bd-123"  # Always use bead ID
+)
+
+# If reservation fails (file already reserved):
+# 1. Check who has it: list_file_reservations(...)
+# 2. Send message to that agent asking for release
+# 3. Wait for release or work on different bead
+# 4. DO NOT proceed without reservation
+```
+
+### Messaging Protocol
+
+**Use messages for all inter-agent communication:**
+
+```python
+# Announce starting work on a bead
+send_message(
+    project_key="/home/lewis/src/meal-planner",
+    sender_name="YOUR_AGENT_NAME",
+    recipients=["broadcast"],
+    subject="[bd-123] Starting work",
+    body_md="Working on: Add retry config type",
+    thread_id="bd-123",
+    ack_required=False
+)
+
+# Request assistance or handoff
+send_message(
+    ...
+    recipients=["OtherAgent"],
+    subject="[bd-123] Need help with tests",
+    body_md="Can you review the test approach?",
+    ack_required=True
+)
+
+# Check inbox regularly
+fetch_inbox(project_key, agent_name)
+```
+
+### Session End Protocol
+
+```python
+# Release all file reservations
+release_file_reservations(
+    project_key="/home/lewis/src/meal-planner",
+    agent_name="YOUR_AGENT_NAME",
+    paths=["all"]  # or list specific paths
+)
+
+# Announce session end
+send_message(
+    ...
+    recipients=["broadcast"],
+    subject="[bd-123] Session complete",
+    body_md="Completed: ...\nRemaining: ..."
+)
+```
+
+### Conflict Resolution
+
+If another agent has a file you need:
+
+1. **Check reservation**: `list_file_reservations(project_key, path_filter="path/to/file")`
+2. **Send message**: Request release via `send_message(..., ack_required=True)`
+3. **Wait or pivot**: Either wait for release or work on a different bead
+4. **NEVER force**: Do not edit files reserved by other agents
+
+### Why This Matters
+
+Without Agent-Mail coordination:
+- Agents overwrite each other's work
+- No visibility into parallel workstreams  
+- Merge conflicts and lost changes
+- Humans must manually coordinate
+
+With Agent-Mail:
+- Clear ownership via file reservations
+- Visible intent and progress
+- Conflict-free parallel work
+- Audit trail of all coordination
