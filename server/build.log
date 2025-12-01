@@ -1,0 +1,71 @@
+  Compiling server
+error: Type mismatch
+    ┌─ /home/lewis/src/meal-planner/server/src/server/meal_logging.gleam:102:59
+    │
+102 │                     html.option([attribute.value("0.5")], [element.text("0.5")]),
+    │                                                           ^^^^^^^^^^^^^^^^^^^^^
+
+Expected type:
+
+    String
+
+Found type:
+
+    List(element.Element(a))
+
+error: Type mismatch
+    ┌─ /home/lewis/src/meal-planner/server/src/server/meal_logging.gleam:104:67
+    │
+104 │                       [attribute.value("1.0"), attribute.selected("selected")],
+    │                                                                   ^^^^^^^^^^
+
+Expected type:
+
+    Bool
+
+Found type:
+
+    String
+
+error: Type mismatch
+    ┌─ /home/lewis/src/meal-planner/server/src/server/meal_logging.gleam:105:23
+    │
+105 │                       [element.text("1.0")],
+    │                       ^^^^^^^^^^^^^^^^^^^^^
+
+Expected type:
+
+    String
+
+Found type:
+
+    List(element.Element(a))
+
+error: Type mismatch
+    ┌─ /home/lewis/src/meal-planner/server/src/server/meal_logging.gleam:107:59
+    │
+107 │                     html.option([attribute.value("1.5")], [element.text("1.5")]),
+    │                                                           ^^^^^^^^^^^^^^^^^^^^^
+
+Expected type:
+
+    String
+
+Found type:
+
+    List(element.Element(a))
+
+error: Type mismatch
+    ┌─ /home/lewis/src/meal-planner/server/src/server/meal_logging.gleam:108:59
+    │
+108 │                     html.option([attribute.value("2.0")], [element.text("2.0")]),
+    │                                                           ^^^^^^^^^^^^^^^^^^^^^
+
+Expected type:
+
+    String
+
+Found type:
+
+    List(element.Element(a))
+

@@ -1,0 +1,162 @@
+//// API functions for meal logging
+
+import gleam/bit_array
+import gleam/dynamic/decode
+import gleam/http
+import gleam/int
+import gleam/json
+import gleam/list
+import gleam/string
+import wisp
+
+import server/storage
+import shared/types
+
+// For generating unique IDs
+@external(erlang, "crypto", "strong_rand_bytes")
+fn random_bytes(n: Int) -> BitArray
+
+fn generate_id() -> String {
+  let bytes = random_bytes(16)
+  case bit_array.base16_encode(bytes) {
+    Ok(encoded) -> string.lowercase(encoded)
+    Error(_) -> "error-generating-id"
+  }
+}
+
+/// Get recent meals for quick logging
+pub fn api_recent_logs(_req: wisp.Request) -> wisp.Response {
+  use conn <- storage.with_connection(storage.db_path)
+
+  case storage.get_recent_meals(conn, 5) {
+    Ok(entries) -> {
+      let json_data = json.array(entries, types.food_log_entry_to_json)
+      wisp.json_response(json.to_string(json_data), 200)
+    }
+    Error(_) -> {
+      let empty_array = json.array([], fn(_) { json.null() })
+      wisp.json_response(json.to_string(empty_array), 200)
+    }
+  }
+}
+
+/// Quick log a meal with default settings
+pub fn api_quick_log(req: wisp.Request) -> wisp.Response {
+  case wisp.get_query(req) {
+    Ok(query) -> {
+      let recipe_id = list.key_find(query, "recipe_id")
+      let date = list.key_find(query, "date")
+
+      case recipe_id, date {
+        Ok(rid), Ok(d) -> {
+          use conn <- storage.with_connection(storage.db_path)
+
+          case storage.get_recipe_by_id(conn, rid) {
+            Ok(recipe) -> {
+              let entry = create_food_log_entry(recipe, 1.0, types.Snack)
+              case storage.save_food_log_entry(conn, d, entry) {
+                Ok(_) -> wisp.redirect("/dashboard")
+                Error(_) -> wisp.internal_server_error()
+              }
+            }
+            Error(_) -> wisp.not_found()
+          }
+        }
+        _, _ -> wisp.bad_request()
+      }
+    }
+    Error(_) -> wisp.bad_request()
+  }
+}
+
+/// Create a log entry with meal type selection
+pub fn api_create_log(req: wisp.Request) -> wisp.Response {
+  case wisp.get_query(req) {
+    Ok(query) -> {
+      let recipe_id = list.key_find(query, "recipe_id")
+      let date = list.key_find(query, "date")
+      let meal_type_str = list.key_find(query, "meal_type")
+
+      case recipe_id, date {
+        Ok(rid), Ok(d) -> {
+          use conn <- storage.with_connection(storage.db_path)
+
+          case storage.get_recipe_by_id(conn, rid) {
+            Ok(recipe) -> {
+              let meal_type = case meal_type_str {
+                Ok(mt) -> parse_meal_type(mt)
+                Error(_) -> types.Snack
+              }
+              let entry = create_food_log_entry(recipe, 1.0, meal_type)
+              case storage.save_food_log_entry(conn, d, entry) {
+                Ok(_) -> wisp.redirect("/dashboard")
+                Error(_) -> wisp.internal_server_error()
+              }
+            }
+            Error(_) -> wisp.not_found()
+          }
+        }
+        _, _ -> wisp.bad_request()
+      }
+    }
+    Error(_) -> wisp.bad_request()
+  }
+}
+
+fn create_food_log_entry(
+  recipe: types.Recipe,
+  servings: Float,
+  meal_type: types.MealType,
+) -> types.FoodLogEntry {
+  let macros = types.Macros(
+    protein: recipe.macros.protein *. servings,
+    fat: recipe.macros.fat *. servings,
+    carbs: recipe.macros.carbs *. servings,
+  )
+
+  types.FoodLogEntry(
+    id: generate_id(),
+    recipe_id: recipe.id,
+    recipe_name: recipe.name,
+    servings: servings,
+    macros: macros,
+    meal_type: meal_type,
+    logged_at: get_current_datetime(),
+  )
+}
+
+fn parse_meal_type(s: String) -> types.MealType {
+  case s {
+    "breakfast" -> types.Breakfast
+    "lunch" -> types.Lunch
+    "dinner" -> types.Dinner
+    "snack" -> types.Snack
+    _ -> types.Snack
+  }
+}
+
+fn get_current_datetime() -> String {
+  let #(#(year, month, day), #(hour, minute, second)) = erlang_local_time()
+  int.to_string(year)
+  <> "-"
+  <> pad_int(month)
+  <> "-"
+  <> pad_int(day)
+  <> " "
+  <> pad_int(hour)
+  <> ":"
+  <> pad_int(minute)
+  <> ":"
+  <> pad_int(second)
+}
+
+fn pad_int(i: Int) -> String {
+  let s = int.to_string(i)
+  case string.length(s) {
+    1 -> "0" <> s
+    _ -> s
+  }
+}
+
+@external(erlang, "calendar", "local_time")
+fn erlang_local_time() -> #(#(Int, Int, Int), #(Int, Int, Int))

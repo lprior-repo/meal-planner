@@ -1,0 +1,280 @@
+//// API functions for meal logging
+
+import gleam/bit_array
+import gleam/dynamic/decode
+import gleam/http
+import gleam/int
+import gleam/json
+import gleam/list
+import gleam/option
+import gleam/string
+import wisp
+
+import server/storage
+import shared/types
+
+// For generating unique IDs
+@external(erlang, "crypto", "strong_rand_bytes")
+fn random_bytes(n: Int) -> BitArray
+
+fn generate_id() -> String {
+  let bytes = random_bytes(16)
+  let assert Ok(encoded) = bit_array.base16_encode(bytes)
+  string.lowercase(encoded)
+}
+
+// ============================================================================
+// Main POST /api/logs endpoint
+// ============================================================================
+
+/// Main handler for POST /api/logs - Create food log entry from JSON
+pub fn api_logs_endpoint(req: wisp.Request) -> wisp.Response {
+  case req.method {
+    http.Post -> api_create_log_json(req)
+    http.Get -> api_list_logs()
+    _ -> wisp.method_not_allowed([http.Post, http.Get])
+  }
+}
+
+/// POST /api/logs - Create a new food log entry from JSON
+fn api_create_log_json(req: wisp.Request) -> wisp.Response {
+  use json_body <- wisp.require_json(req)
+
+  // Decode the JSON request body
+  let decoder = {
+    use recipe_id <- decode.field("recipe_id", decode.string)
+    use recipe_name <- decode.field("recipe_name", decode.string)
+    use servings <- decode.field("servings", decode.float)
+    use meal_type_str <- decode.field("meal_type", decode.string)
+    use maybe_date <- decode.optional("date", decode.string)
+
+    // Parse meal type
+    case meal_type_str {
+      "breakfast" ->
+        decode.success(#(recipe_id, recipe_name, servings, types.Breakfast, maybe_date))
+      "lunch" ->
+        decode.success(#(recipe_id, recipe_name, servings, types.Lunch, maybe_date))
+      "dinner" ->
+        decode.success(#(recipe_id, recipe_name, servings, types.Dinner, maybe_date))
+      "snack" ->
+        decode.success(#(recipe_id, recipe_name, servings, types.Snack, maybe_date))
+      _ -> decode.failure(meal_type_str, "Invalid meal_type. Expected: breakfast, lunch, dinner, or snack")
+    }
+  }
+
+  case decode.run(json_body, decoder) {
+    Error(_) ->
+      error_response(
+        "Invalid request body. Required: recipe_id, recipe_name, servings, meal_type (breakfast/lunch/dinner/snack)",
+        400,
+      )
+    Ok(#(recipe_id, recipe_name, servings, meal_type, maybe_date)) -> {
+      // Use provided date or today's date
+      let date = option.unwrap(maybe_date, get_today_date())
+
+      // Get recipe to calculate macros
+      storage.with_connection(storage.db_path, fn(conn) {
+        case storage.get_recipe_by_id(conn, recipe_id) {
+          Error(storage.NotFound) ->
+            error_response("Recipe not found: " <> recipe_id, 404)
+          Error(storage.DatabaseError(msg)) -> error_response(msg, 500)
+          Ok(recipe) -> {
+            // Calculate scaled macros based on servings
+            let scaled_macros = types.macros_scale(recipe.macros, servings)
+
+            // Create the food log entry with calculated macros
+            let entry =
+              types.FoodLogEntry(
+                id: generate_id(),
+                recipe_id: recipe_id,
+                recipe_name: recipe_name,
+                servings: servings,
+                macros: scaled_macros,
+                meal_type: meal_type,
+                logged_at: get_current_datetime(),
+              )
+
+            // Save to database
+            case storage.save_food_log_entry(conn, date, entry) {
+              Error(storage.DatabaseError(msg)) -> error_response(msg, 500)
+              Error(_) -> error_response("Failed to save food log entry", 500)
+              Ok(_) -> {
+                let response_json = types.food_log_entry_to_json(entry)
+                wisp.json_response(json.to_string(response_json), 201)
+              }
+            }
+          }
+        }
+      })
+    }
+  }
+}
+
+/// GET /api/logs - Get today's food logs
+fn api_list_logs() -> wisp.Response {
+  let date = get_today_date()
+  storage.with_connection(storage.db_path, fn(conn) {
+    case storage.get_daily_log(conn, date) {
+      Error(storage.DatabaseError(msg)) -> error_response(msg, 500)
+      Error(_) -> {
+        // If no logs found, return empty log for today
+        let empty_log =
+          types.DailyLog(
+            date: date,
+            entries: [],
+            total_macros: types.macros_zero(),
+          )
+        let json_data = types.daily_log_to_json(empty_log)
+        wisp.json_response(json.to_string(json_data), 200)
+      }
+      Ok(daily_log) -> {
+        let json_data = types.daily_log_to_json(daily_log)
+        wisp.json_response(json.to_string(json_data), 200)
+      }
+    }
+  })
+}
+
+fn get_today_date() -> String {
+  let #(#(year, month, day), _) = erlang_local_time()
+  int.to_string(year) <> "-" <> pad_int(month) <> "-" <> pad_int(day)
+}
+
+fn error_response(message: String, status: Int) -> wisp.Response {
+  let error = json.object([#("error", json.string(message))])
+  wisp.json_response(json.to_string(error), status)
+}
+
+// ============================================================================
+// Legacy GET-based endpoints
+// ============================================================================
+
+/// Get recent meals for quick logging
+pub fn api_recent_logs(_req: wisp.Request) -> wisp.Response {
+  storage.with_connection(storage.db_path, fn(conn) {
+    case storage.get_recent_meals(conn, 5) {
+      Ok(entries) -> {
+        let json_data = json.array(entries, types.food_log_entry_to_json)
+        wisp.json_response(json.to_string(json_data), 200)
+      }
+      Error(_) -> {
+        let empty_array = json.array([], fn(_) { json.null() })
+        wisp.json_response(json.to_string(empty_array), 200)
+      }
+    }
+  })
+}
+
+/// Quick log a meal with default settings
+pub fn api_quick_log(req: wisp.Request) -> wisp.Response {
+  let query = wisp.get_query(req)
+  let recipe_id = list.key_find(query, "recipe_id")
+  let date = list.key_find(query, "date")
+
+  case recipe_id, date {
+    Ok(rid), Ok(d) -> {
+      storage.with_connection(storage.db_path, fn(conn) {
+        case storage.get_recipe_by_id(conn, rid) {
+          Ok(recipe) -> {
+            let entry = create_food_log_entry(recipe, 1.0, types.Snack)
+            case storage.save_food_log_entry(conn, d, entry) {
+              Ok(_) -> wisp.redirect("/dashboard")
+              Error(_) -> error_response("Failed to log meal", 500)
+            }
+          }
+          Error(_) -> wisp.not_found()
+        }
+      })
+    }
+    _, _ -> error_response("Missing required parameters: recipe_id, date", 400)
+  }
+}
+
+/// Create a log entry with meal type selection
+pub fn api_create_log(req: wisp.Request) -> wisp.Response {
+  let query = wisp.get_query(req)
+  let recipe_id = list.key_find(query, "recipe_id")
+  let date = list.key_find(query, "date")
+  let meal_type_str = list.key_find(query, "meal_type")
+
+  case recipe_id, date {
+    Ok(rid), Ok(d) -> {
+      storage.with_connection(storage.db_path, fn(conn) {
+        case storage.get_recipe_by_id(conn, rid) {
+          Ok(recipe) -> {
+            let meal_type = case meal_type_str {
+              Ok(mt) -> parse_meal_type(mt)
+              Error(_) -> types.Snack
+            }
+            let entry = create_food_log_entry(recipe, 1.0, meal_type)
+            case storage.save_food_log_entry(conn, d, entry) {
+              Ok(_) -> wisp.redirect("/dashboard")
+              Error(_) -> error_response("Failed to log meal", 500)
+            }
+          }
+          Error(_) -> wisp.not_found()
+        }
+      })
+    }
+    _, _ -> error_response("Missing required parameters: recipe_id, date", 400)
+  }
+}
+
+fn create_food_log_entry(
+  recipe: types.Recipe,
+  servings: Float,
+  meal_type: types.MealType,
+) -> types.FoodLogEntry {
+  let macros =
+    types.Macros(
+      protein: recipe.macros.protein *. servings,
+      fat: recipe.macros.fat *. servings,
+      carbs: recipe.macros.carbs *. servings,
+    )
+
+  types.FoodLogEntry(
+    id: generate_id(),
+    recipe_id: recipe.id,
+    recipe_name: recipe.name,
+    servings: servings,
+    macros: macros,
+    meal_type: meal_type,
+    logged_at: get_current_datetime(),
+  )
+}
+
+fn parse_meal_type(s: String) -> types.MealType {
+  case s {
+    "breakfast" -> types.Breakfast
+    "lunch" -> types.Lunch
+    "dinner" -> types.Dinner
+    "snack" -> types.Snack
+    _ -> types.Snack
+  }
+}
+
+fn get_current_datetime() -> String {
+  let #(#(year, month, day), #(hour, minute, second)) = erlang_local_time()
+  int.to_string(year)
+  <> "-"
+  <> pad_int(month)
+  <> "-"
+  <> pad_int(day)
+  <> " "
+  <> pad_int(hour)
+  <> ":"
+  <> pad_int(minute)
+  <> ":"
+  <> pad_int(second)
+}
+
+fn pad_int(i: Int) -> String {
+  let s = int.to_string(i)
+  case string.length(s) {
+    1 -> "0" <> s
+    _ -> s
+  }
+}
+
+@external(erlang, "calendar", "local_time")
+fn erlang_local_time() -> #(#(Int, Int, Int), #(Int, Int, Int))

@@ -1,5 +1,6 @@
 //// Wisp web server for the meal planner application
 
+import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/float
 import gleam/int
@@ -56,6 +57,8 @@ fn handle_request(req: wisp.Request) -> wisp.Response {
 
     // SSR pages
     ["recipes"] -> recipes_page()
+    ["recipes", "new"] -> new_recipe_page()
+    ["recipes", id, "edit"] -> edit_recipe_page(id)
     ["recipes", id] -> recipe_detail_page(id)
     ["dashboard"] -> dashboard_page(req)
     ["profile"] -> profile_page()
@@ -134,6 +137,9 @@ fn recipes_page() -> wisp.Response {
       html.p([attribute.class("subtitle")], [
         element.text("Browse our collection of healthy meals"),
       ]),
+      html.a([attribute.href("/recipes/new"), attribute.class("btn btn-primary")], [
+        element.text("+ New Recipe"),
+      ]),
     ]),
     html.div([attribute.class("recipe-grid")], list.map(recipes, recipe_card)),
   ]
@@ -184,7 +190,25 @@ fn recipe_detail_page(id: String) -> wisp.Response {
           element.text("← Back to recipes"),
         ]),
         html.div([attribute.class("recipe-detail")], [
-          html.h1([], [element.text(recipe.name)]),
+          html.div([attribute.class("recipe-detail-header")], [
+            html.h1([], [element.text(recipe.name)]),
+            html.div([attribute.class("recipe-actions")], [
+              html.a([attribute.href("/recipes/" <> id <> "/edit"), attribute.class("btn btn-secondary")], [
+                element.text("Edit"),
+              ]),
+              html.form([
+                attribute.method("POST"),
+                attribute.action("/api/recipes/" <> id),
+                attribute.attribute("onsubmit", "return confirm('Delete this recipe?')"),
+                attribute.style("display", "inline"),
+              ], [
+                html.input([attribute.type_("hidden"), attribute.name("_method"), attribute.value("DELETE")]),
+                html.button([attribute.type_("submit"), attribute.class("btn btn-danger")], [
+                  element.text("Delete"),
+                ]),
+              ]),
+            ]),
+          ]),
           html.p([attribute.class("meta")], [
             element.text("Category: " <> recipe.category),
           ]),
@@ -613,6 +637,175 @@ fn log_meal_form(recipe_id: String) -> wisp.Response {
   }
 }
 
+fn new_recipe_page() -> wisp.Response {
+  let content = [
+    html.a([attribute.href("/recipes"), attribute.class("back-link")], [
+      element.text("← Back to recipes"),
+    ]),
+    html.div([attribute.class("recipe-form-container")], [
+      html.h1([], [element.text("Create New Recipe")]),
+      recipe_form(None),
+    ]),
+  ]
+
+  wisp.html_response(render_page("New Recipe - Meal Planner", content), 200)
+}
+
+fn edit_recipe_page(id: String) -> wisp.Response {
+  let recipes = sample_recipes()
+
+  case list.find(recipes, fn(r) { r.id == id }) {
+    Ok(recipe) -> {
+      let content = [
+        html.a([attribute.href("/recipes/" <> id), attribute.class("back-link")], [
+          element.text("← Back to recipe"),
+        ]),
+        html.div([attribute.class("recipe-form-container")], [
+          html.h1([], [element.text("Edit Recipe: " <> recipe.name)]),
+          recipe_form(Some(recipe)),
+        ]),
+      ]
+
+      wisp.html_response(render_page("Edit " <> recipe.name <> " - Meal Planner", content), 200)
+    }
+    Error(_) -> not_found_page()
+  }
+}
+
+fn recipe_form(recipe: Option(types.Recipe)) -> element.Element(msg) {
+  let #(name_value, category_value, protein_value, fat_value, carbs_value, servings_value, action, method) = case recipe {
+    Some(r) -> #(
+      r.name,
+      r.category,
+      float_to_string(r.macros.protein),
+      float_to_string(r.macros.fat),
+      float_to_string(r.macros.carbs),
+      int_to_string(r.servings),
+      "/api/recipes/" <> r.id,
+      "PUT"
+    )
+    None -> #("", "main", "0", "0", "0", "1", "/api/recipes", "POST")
+  }
+
+  html.form(
+    [
+      attribute.method(method),
+      attribute.action(action),
+      attribute.class("recipe-form"),
+    ],
+    [
+      html.div([attribute.class("form-group")], [
+        html.label([attribute.attribute("for", "name")], [
+          element.text("Recipe Name"),
+        ]),
+        html.input([
+          attribute.type_("text"),
+          attribute.id("name"),
+          attribute.name("name"),
+          attribute.value(name_value),
+          attribute.required(True),
+          attribute.placeholder("e.g., Chicken and Rice"),
+        ]),
+      ]),
+      html.div([attribute.class("form-group")], [
+        html.label([attribute.attribute("for", "category")], [
+          element.text("Category"),
+        ]),
+        html.select(
+          [
+            attribute.id("category"),
+            attribute.name("category"),
+            attribute.required(True),
+          ],
+          [
+            html.option([attribute.value("main"), category_selected("main", category_value)], "Main Dish"),
+            html.option([attribute.value("side"), category_selected("side", category_value)], "Side Dish"),
+            html.option([attribute.value("dessert"), category_selected("dessert", category_value)], "Dessert"),
+            html.option([attribute.value("drink"), category_selected("drink", category_value)], "Drink"),
+          ],
+        ),
+      ]),
+      html.div([attribute.class("form-group")], [
+        html.label([attribute.attribute("for", "protein")], [
+          element.text("Protein (g)"),
+        ]),
+        html.input([
+          attribute.type_("number"),
+          attribute.id("protein"),
+          attribute.name("protein"),
+          attribute.attribute("min", "0"),
+          attribute.attribute("step", "0.1"),
+          attribute.value(protein_value),
+          attribute.required(True),
+        ]),
+      ]),
+      html.div([attribute.class("form-group")], [
+        html.label([attribute.attribute("for", "fat")], [
+          element.text("Fat (g)"),
+        ]),
+        html.input([
+          attribute.type_("number"),
+          attribute.id("fat"),
+          attribute.name("fat"),
+          attribute.attribute("min", "0"),
+          attribute.attribute("step", "0.1"),
+          attribute.value(fat_value),
+          attribute.required(True),
+        ]),
+      ]),
+      html.div([attribute.class("form-group")], [
+        html.label([attribute.attribute("for", "carbs")], [
+          element.text("Carbs (g)"),
+        ]),
+        html.input([
+          attribute.type_("number"),
+          attribute.id("carbs"),
+          attribute.name("carbs"),
+          attribute.attribute("min", "0"),
+          attribute.attribute("step", "0.1"),
+          attribute.value(carbs_value),
+          attribute.required(True),
+        ]),
+      ]),
+      html.div([attribute.class("form-group")], [
+        html.label([attribute.attribute("for", "servings")], [
+          element.text("Servings"),
+        ]),
+        html.input([
+          attribute.type_("number"),
+          attribute.id("servings"),
+          attribute.name("servings"),
+          attribute.attribute("min", "1"),
+          attribute.attribute("step", "1"),
+          attribute.value(servings_value),
+          attribute.required(True),
+        ]),
+      ]),
+      html.div([attribute.class("form-actions")], [
+        html.button([attribute.type_("submit"), attribute.class("btn btn-primary")], [
+          element.text(case recipe {
+            Some(_) -> "Update Recipe"
+            None -> "Create Recipe"
+          }),
+        ]),
+        html.a([attribute.href(case recipe {
+          Some(r) -> "/recipes/" <> r.id
+          None -> "/recipes"
+        }), attribute.class("btn btn-secondary")], [
+          element.text("Cancel"),
+        ]),
+      ]),
+    ],
+  )
+}
+
+fn category_selected(value: String, current: String) -> attribute.Attribute(msg) {
+  case value == current {
+    True -> attribute.selected(True)
+    False -> attribute.class("")
+  }
+}
+
 fn page_header(title: String, back_href: String) -> element.Element(msg) {
   html.header([attribute.class("page-header")], [
     html.a([attribute.href(back_href), attribute.class("back-link")], [
@@ -654,8 +847,8 @@ fn render_page(title: String, content: List(element.Element(msg))) -> String {
 
 fn handle_api(req: wisp.Request, path: List(String)) -> wisp.Response {
   case path {
-    ["recipes"] -> api_recipes(req)
-    ["recipes", id] -> api_recipe(req, id)
+    ["recipes"] -> api_recipes_handler(req)
+    ["recipes", id] -> api_recipe_handler(req, id)
     ["profile"] -> api_profile(req)
     ["logs"] -> api_logs_create(req)
     ["logs", "recent"] -> api_logs_recent(req)
@@ -666,22 +859,176 @@ fn handle_api(req: wisp.Request, path: List(String)) -> wisp.Response {
   }
 }
 
-fn api_recipes(_req: wisp.Request) -> wisp.Response {
-  let recipes = sample_recipes()
-  let json_data = json.array(recipes, types.recipe_to_json)
-
-  wisp.json_response(json.to_string(json_data), 200)
+/// GET /api/recipes - List all recipes
+/// POST /api/recipes - Create new recipe
+fn api_recipes_handler(req: wisp.Request) -> wisp.Response {
+  case req.method {
+    wisp.Get -> api_recipes_list(req)
+    wisp.Post -> api_recipes_create(req)
+    _ -> wisp.method_not_allowed([wisp.Get, wisp.Post])
+  }
 }
 
-fn api_recipe(_req: wisp.Request, id: String) -> wisp.Response {
-  let recipes = sample_recipes()
+/// GET /api/recipes/:id - Get single recipe
+/// PUT /api/recipes/:id - Update recipe
+/// DELETE /api/recipes/:id - Delete recipe
+fn api_recipe_handler(req: wisp.Request, id: String) -> wisp.Response {
+  case req.method {
+    wisp.Get -> api_recipe_get(req, id)
+    wisp.Put -> api_recipe_update(req, id)
+    wisp.Delete -> api_recipe_delete(req, id)
+    _ -> wisp.method_not_allowed([wisp.Get, wisp.Put, wisp.Delete])
+  }
+}
 
-  case list.find(recipes, fn(r) { r.id == id }) {
+/// GET /api/recipes - List all recipes from database
+fn api_recipes_list(_req: wisp.Request) -> wisp.Response {
+  use conn <- storage.with_connection(storage.db_path)
+
+  case storage.get_all_recipes(conn) {
+    Ok(recipes) -> {
+      let json_data = json.array(recipes, types.recipe_to_json)
+      wisp.json_response(json.to_string(json_data), 200)
+    }
+    Error(storage.DatabaseError(msg)) -> {
+      let err = json.object([#("error", json.string(msg))])
+      wisp.json_response(json.to_string(err), 500)
+    }
+    Error(storage.NotFound) -> {
+      let empty = json.array([], fn(x) { x })
+      wisp.json_response(json.to_string(empty), 200)
+    }
+  }
+}
+
+/// POST /api/recipes - Create new recipe
+fn api_recipes_create(req: wisp.Request) -> wisp.Response {
+  use conn <- storage.with_connection(storage.db_path)
+  use json_body <- wisp.require_json(req)
+
+  case decode.run(json_body, types.recipe_decoder()) {
+    Ok(recipe) -> {
+      case storage.save_recipe(conn, recipe) {
+        Ok(_) -> {
+          let json_data = types.recipe_to_json(recipe)
+          wisp.json_response(json.to_string(json_data), 201)
+        }
+        Error(storage.DatabaseError(msg)) -> {
+          let err = json.object([#("error", json.string(msg))])
+          wisp.json_response(json.to_string(err), 500)
+        }
+        Error(storage.NotFound) -> {
+          let err = json.object([#("error", json.string("Not found"))])
+          wisp.json_response(json.to_string(err), 404)
+        }
+      }
+    }
+    Error(_) -> {
+      let err = json.object([#("error", json.string("Invalid recipe data"))])
+      wisp.json_response(json.to_string(err), 400)
+    }
+  }
+}
+
+/// GET /api/recipes/:id - Get single recipe
+fn api_recipe_get(_req: wisp.Request, id: String) -> wisp.Response {
+  use conn <- storage.with_connection(storage.db_path)
+
+  case storage.get_recipe_by_id(conn, id) {
     Ok(recipe) -> {
       let json_data = types.recipe_to_json(recipe)
       wisp.json_response(json.to_string(json_data), 200)
     }
-    Error(_) -> wisp.not_found()
+    Error(storage.NotFound) -> {
+      let err = json.object([#("error", json.string("Recipe not found"))])
+      wisp.json_response(json.to_string(err), 404)
+    }
+    Error(storage.DatabaseError(msg)) -> {
+      let err = json.object([#("error", json.string(msg))])
+      wisp.json_response(json.to_string(err), 500)
+    }
+  }
+}
+
+/// PUT /api/recipes/:id - Update recipe
+fn api_recipe_update(req: wisp.Request, id: String) -> wisp.Response {
+  use conn <- storage.with_connection(storage.db_path)
+  use json_body <- wisp.require_json(req)
+
+  // First check if recipe exists
+  case storage.get_recipe_by_id(conn, id) {
+    Error(storage.NotFound) -> {
+      let err = json.object([#("error", json.string("Recipe not found"))])
+      wisp.json_response(json.to_string(err), 404)
+    }
+    Error(storage.DatabaseError(msg)) -> {
+      let err = json.object([#("error", json.string(msg))])
+      wisp.json_response(json.to_string(err), 500)
+    }
+    Ok(_existing_recipe) -> {
+      // Decode the updated recipe
+      case decode.run(json_body, types.recipe_decoder()) {
+        Ok(updated_recipe) -> {
+          // Ensure the ID matches the URL parameter
+          let recipe_to_save =
+            types.Recipe(..updated_recipe, id: id)
+
+          case storage.save_recipe(conn, recipe_to_save) {
+            Ok(_) -> {
+              let json_data = types.recipe_to_json(recipe_to_save)
+              wisp.json_response(json.to_string(json_data), 200)
+            }
+            Error(storage.DatabaseError(msg)) -> {
+              let err = json.object([#("error", json.string(msg))])
+              wisp.json_response(json.to_string(err), 500)
+            }
+            Error(storage.NotFound) -> {
+              let err = json.object([#("error", json.string("Not found"))])
+              wisp.json_response(json.to_string(err), 404)
+            }
+          }
+        }
+        Error(_) -> {
+          let err =
+            json.object([#("error", json.string("Invalid recipe data"))])
+          wisp.json_response(json.to_string(err), 400)
+        }
+      }
+    }
+  }
+}
+
+/// DELETE /api/recipes/:id - Delete recipe
+fn api_recipe_delete(_req: wisp.Request, id: String) -> wisp.Response {
+  use conn <- storage.with_connection(storage.db_path)
+
+  // First check if recipe exists
+  case storage.get_recipe_by_id(conn, id) {
+    Error(storage.NotFound) -> {
+      let err = json.object([#("error", json.string("Recipe not found"))])
+      wisp.json_response(json.to_string(err), 404)
+    }
+    Error(storage.DatabaseError(msg)) -> {
+      let err = json.object([#("error", json.string(msg))])
+      wisp.json_response(json.to_string(err), 500)
+    }
+    Ok(_recipe) -> {
+      case storage.delete_recipe(conn, id) {
+        Ok(_) -> {
+          let success =
+            json.object([#("message", json.string("Recipe deleted successfully"))])
+          wisp.json_response(json.to_string(success), 200)
+        }
+        Error(storage.DatabaseError(msg)) -> {
+          let err = json.object([#("error", json.string(msg))])
+          wisp.json_response(json.to_string(err), 500)
+        }
+        Error(storage.NotFound) -> {
+          let err = json.object([#("error", json.string("Recipe not found"))])
+          wisp.json_response(json.to_string(err), 404)
+        }
+      }
+    }
   }
 }
 

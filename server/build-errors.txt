@@ -1,0 +1,9 @@
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/server/test/server/live_dashboard_test.gleam:4:1
+  │
+4 │ import gleam/int
+  │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+   Compiled in 0.06s

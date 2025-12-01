@@ -1,0 +1,125 @@
+  Compiling server
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:10:22
+   │
+10 │ import gleam/option.{None, Some}
+   │                      ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:10:28
+   │
+10 │ import gleam/option.{None, Some}
+   │                            ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:11:1
+   │
+11 │ import gleam/result
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:27:1
+   │
+27 │ fn random_bytes(n: Int) -> BitArray
+   │ ^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:30:1
+   │
+30 │ fn system_time(unit: Int) -> Int
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:32:1
+   │
+32 │ fn generate_id() -> String {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:40:1
+   │
+40 │ fn current_timestamp() -> String {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:273:19
+    │
+273 │ fn dashboard_page(req) -> wisp.Response {
+    │                   ^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_req`.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:506:1
+    │
+506 │ fn api_logs_endpoint(req: wisp.Request) -> wisp.Response {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:514:1
+    │
+514 │ fn api_logs_post(req: wisp.Request) -> wisp.Response {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+error: Type mismatch
+   ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:35:5
+   │
+35 │     Ok(encoded) -> string.lowercase(encoded)
+   │     ^^^^^^^^^^^
+
+Expected type:
+
+    String
+
+Found type:
+
+    Result(String, a)
+
+error: Type mismatch
+   ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:36:5
+   │
+36 │     Error(_) -> "error-id"
+   │     ^^^^^^^^
+
+Expected type:
+
+    String
+
+Found type:
+
+    Result(a, b)
+
+error: Unknown module value
+    ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:508:5
+    │
+508 │     wisp.Post -> api_logs_post(req)
+    │     ^^^^^^^^^
+
+The module `wisp` does not have a `Post` value.
+
+error: Unknown module value
+    ┌─ /home/lewis/src/meal-planner/server/src/server/web.gleam:509:40
+    │
+509 │     _ -> wisp.method_not_allowed([wisp.Post])
+    │                                        ^^^^
+
+The module `wisp` does not have a `Post` value.
+
