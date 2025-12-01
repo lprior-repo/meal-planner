@@ -1,12 +1,16 @@
 /// SQLite storage module for nutrition data persistence
 import gleam/dynamic/decode
+import gleam/io
 import gleam/list
+import gleam/option
 import gleam/string
+import meal_planner/migrate
 import meal_planner/ncp
 import meal_planner/types.{
   type Recipe, type UserProfile, Active, Gain, High, Ingredient, Lose, Low,
   Macros, Maintain, Medium, Moderate, Recipe, Sedentary, UserProfile,
 }
+import meal_planner/usda_import
 import sqlight
 
 /// Error type for storage operations
@@ -580,14 +584,216 @@ pub fn get_recipes_by_category(
 
 /// Initialize database with all required tables
 pub fn initialize_database() -> Result(Nil, String) {
-  with_connection("meal_planner.db", fn(conn) {
-    case init_db(conn) {
-      Ok(_) ->
-        case init_recipe_tables(conn) {
-          Ok(_) -> Ok(Nil)
-          Error(_) -> Error("Failed to initialize recipe tables")
+  // First run migrations to create schema
+  case migrate.init_database("migrations") {
+    Error(_e) -> Error("Failed to run migrations")
+    Ok(_count) -> {
+      // Then initialize any remaining tables
+      with_connection(migrate.get_db_path(), fn(conn) {
+        case init_db(conn) {
+          Ok(_) ->
+            case init_recipe_tables(conn) {
+              Ok(_) -> {
+                // Check if USDA data needs importing
+                case usda_import.is_imported(conn) {
+                  True -> {
+                    io.println("USDA data already imported")
+                    Ok(Nil)
+                  }
+                  False -> {
+                    io.println("Importing USDA FoodData Central...")
+                    let usda_dir =
+                      usda_import.get_cache_dir()
+                      <> "/FoodData_Central_csv_2025-04-24"
+                    case usda_import.import_from_directory(conn, usda_dir) {
+                      Ok(_counts) -> {
+                        io.println("USDA import complete!")
+                        Ok(Nil)
+                      }
+                      Error(err) -> {
+                        io.println(
+                          "USDA import failed (will continue without): "
+                          <> format_usda_error(err),
+                        )
+                        // Don't fail app startup if USDA import fails
+                        Ok(Nil)
+                      }
+                    }
+                  }
+                }
+              }
+              Error(_) -> Error("Failed to initialize recipe tables")
+            }
+          Error(_) -> Error("Failed to initialize database")
         }
-      Error(_) -> Error("Failed to initialize database")
+      })
     }
-  })
+  }
+}
+
+fn format_usda_error(err: usda_import.ImportError) -> String {
+  case err {
+    usda_import.FileNotFound(path) -> "File not found: " <> path
+    usda_import.ParseError(msg) -> "Parse error: " <> msg
+    usda_import.DatabaseError(msg) -> "Database error: " <> msg
+    usda_import.ZipError(msg) -> "Zip error: " <> msg
+  }
+}
+
+// ============================================================================
+// USDA Food Search Functions
+// ============================================================================
+
+/// A food item from the USDA database
+pub type UsdaFood {
+  UsdaFood(
+    fdc_id: Int,
+    description: String,
+    data_type: String,
+    category: String,
+  )
+}
+
+/// Nutrient value for a food
+pub type FoodNutrientValue {
+  FoodNutrientValue(nutrient_name: String, amount: Float, unit: String)
+}
+
+/// Search for foods by description
+pub fn search_foods(
+  conn: sqlight.Connection,
+  query: String,
+  limit: Int,
+) -> Result(List(UsdaFood), StorageError) {
+  let sql =
+    "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
+     FROM foods
+     WHERE description LIKE ?
+     ORDER BY
+       CASE data_type
+         WHEN 'sr_legacy_food' THEN 1
+         WHEN 'foundation_food' THEN 2
+         WHEN 'survey_fndds_food' THEN 3
+         ELSE 4
+       END,
+       description
+     LIMIT ?"
+
+  let search_term = "%" <> query <> "%"
+
+  let decoder = {
+    use fdc_id <- decode.field(0, decode.int)
+    use description <- decode.field(1, decode.string)
+    use data_type <- decode.field(2, decode.string)
+    use category <- decode.field(3, decode.string)
+    decode.success(UsdaFood(
+      fdc_id: fdc_id,
+      description: description,
+      data_type: data_type,
+      category: category,
+    ))
+  }
+
+  case
+    sqlight.query(
+      sql,
+      on: conn,
+      with: [sqlight.text(search_term), sqlight.int(limit)],
+      expecting: decoder,
+    )
+  {
+    Error(e) -> Error(DatabaseError(e.message))
+    Ok(foods) -> Ok(foods)
+  }
+}
+
+/// Get nutrients for a specific food
+pub fn get_food_nutrients(
+  conn: sqlight.Connection,
+  fdc_id: Int,
+) -> Result(List(FoodNutrientValue), StorageError) {
+  let sql =
+    "SELECT n.name, fn.amount, n.unit_name
+     FROM food_nutrients fn
+     JOIN nutrients n ON fn.nutrient_id = n.id
+     WHERE fn.fdc_id = ?
+     ORDER BY n.rank NULLS LAST, n.name"
+
+  let decoder = {
+    use name <- decode.field(0, decode.string)
+    use amount <- decode.field(1, decode.optional(decode.float))
+    use unit <- decode.field(2, decode.string)
+    decode.success(FoodNutrientValue(
+      nutrient_name: name,
+      amount: case amount {
+        option.Some(a) -> a
+        option.None -> 0.0
+      },
+      unit: unit,
+    ))
+  }
+
+  case
+    sqlight.query(
+      sql,
+      on: conn,
+      with: [sqlight.int(fdc_id)],
+      expecting: decoder,
+    )
+  {
+    Error(e) -> Error(DatabaseError(e.message))
+    Ok(nutrients) -> Ok(nutrients)
+  }
+}
+
+/// Get a single food by FDC ID
+pub fn get_food_by_id(
+  conn: sqlight.Connection,
+  fdc_id: Int,
+) -> Result(UsdaFood, StorageError) {
+  let sql =
+    "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
+     FROM foods WHERE fdc_id = ?"
+
+  let decoder = {
+    use fdc_id <- decode.field(0, decode.int)
+    use description <- decode.field(1, decode.string)
+    use data_type <- decode.field(2, decode.string)
+    use category <- decode.field(3, decode.string)
+    decode.success(UsdaFood(
+      fdc_id: fdc_id,
+      description: description,
+      data_type: data_type,
+      category: category,
+    ))
+  }
+
+  case
+    sqlight.query(
+      sql,
+      on: conn,
+      with: [sqlight.int(fdc_id)],
+      expecting: decoder,
+    )
+  {
+    Error(e) -> Error(DatabaseError(e.message))
+    Ok([]) -> Error(NotFound)
+    Ok([food, ..]) -> Ok(food)
+  }
+}
+
+/// Get count of foods in database
+pub fn get_foods_count(conn: sqlight.Connection) -> Result(Int, StorageError) {
+  let sql = "SELECT COUNT(*) FROM foods"
+
+  let decoder = {
+    use count <- decode.field(0, decode.int)
+    decode.success(count)
+  }
+
+  case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
+    Error(e) -> Error(DatabaseError(e.message))
+    Ok([count]) -> Ok(count)
+    Ok(_) -> Ok(0)
+  }
 }

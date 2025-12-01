@@ -1,3 +1,4 @@
+import gleam/dynamic/decode
 import gleam/list
 import gleeunit/should
 import meal_planner/ncp
@@ -6,6 +7,7 @@ import meal_planner/types.{
   type Recipe, Active, Gain, High, Ingredient, Lose, Low, Macros, Maintain,
   Medium, Moderate, Recipe, Sedentary, UserProfile,
 }
+import sqlight
 
 // ============================================================================
 // User Profile Persistence Tests
@@ -551,5 +553,324 @@ pub fn recipe_ingredients_serialization_test() {
     // Verify ingredients were serialized and deserialized correctly
     retrieved.ingredients |> list.length |> should.equal(3)
     retrieved.instructions |> list.length |> should.equal(3)
+  })
+}
+
+// ============================================================================
+// USDA Food Search Tests
+// ============================================================================
+
+fn setup_usda_test_data(conn: sqlight.Connection) -> Nil {
+  // Create minimal USDA tables for testing
+  let create_foods =
+    "CREATE TABLE IF NOT EXISTS foods (
+      fdc_id INTEGER PRIMARY KEY,
+      description TEXT NOT NULL,
+      data_type TEXT NOT NULL,
+      food_category TEXT
+    )"
+
+  let create_nutrients =
+    "CREATE TABLE IF NOT EXISTS nutrients (
+      id INTEGER PRIMARY KEY,
+      name TEXT NOT NULL,
+      unit_name TEXT NOT NULL,
+      rank INTEGER
+    )"
+
+  let create_food_nutrients =
+    "CREATE TABLE IF NOT EXISTS food_nutrients (
+      fdc_id INTEGER,
+      nutrient_id INTEGER,
+      amount REAL
+    )"
+
+  let assert Ok(Nil) = sqlight.exec(create_foods, on: conn)
+  let assert Ok(Nil) = sqlight.exec(create_nutrients, on: conn)
+  let assert Ok(Nil) = sqlight.exec(create_food_nutrients, on: conn)
+
+  // Insert test data
+  let insert_food1 =
+    "INSERT INTO foods (fdc_id, description, data_type, food_category)
+     VALUES (1, 'Chicken breast, raw', 'sr_legacy_food', 'Poultry')"
+  let insert_food2 =
+    "INSERT INTO foods (fdc_id, description, data_type, food_category)
+     VALUES (2, 'White rice, cooked', 'sr_legacy_food', 'Grains')"
+  let insert_food3 =
+    "INSERT INTO foods (fdc_id, description, data_type, food_category)
+     VALUES (3, 'Chocolate chip cookies', 'foundation_food', 'Sweets')"
+
+  let assert Ok(_) =
+    sqlight.query(insert_food1, on: conn, with: [], expecting: decode.dynamic)
+  let assert Ok(_) =
+    sqlight.query(insert_food2, on: conn, with: [], expecting: decode.dynamic)
+  let assert Ok(_) =
+    sqlight.query(insert_food3, on: conn, with: [], expecting: decode.dynamic)
+
+  // Insert test nutrients
+  let insert_nutrient1 =
+    "INSERT INTO nutrients (id, name, unit_name, rank)
+     VALUES (1203, 'Protein', 'g', 1)"
+  let insert_nutrient2 =
+    "INSERT INTO nutrients (id, name, unit_name, rank)
+     VALUES (1004, 'Fat', 'g', 2)"
+  let insert_nutrient3 =
+    "INSERT INTO nutrients (id, name, unit_name, rank)
+     VALUES (1005, 'Carbohydrate', 'g', 3)"
+
+  let assert Ok(_) =
+    sqlight.query(
+      insert_nutrient1,
+      on: conn,
+      with: [],
+      expecting: decode.dynamic,
+    )
+  let assert Ok(_) =
+    sqlight.query(
+      insert_nutrient2,
+      on: conn,
+      with: [],
+      expecting: decode.dynamic,
+    )
+  let assert Ok(_) =
+    sqlight.query(
+      insert_nutrient3,
+      on: conn,
+      with: [],
+      expecting: decode.dynamic,
+    )
+
+  // Insert food nutrient values for chicken
+  let insert_fn1 =
+    "INSERT INTO food_nutrients (fdc_id, nutrient_id, amount)
+     VALUES (1, 1203, 23.1), (1, 1004, 1.2), (1, 1005, 0.0)"
+
+  let assert Ok(_) =
+    sqlight.query(insert_fn1, on: conn, with: [], expecting: decode.dynamic)
+
+  Nil
+}
+
+pub fn search_foods_empty_results_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    // Search for something that doesn't exist
+    let assert Ok(results) = storage.search_foods(conn, "nonexistent food", 10)
+    results |> list.length |> should.equal(0)
+  })
+}
+
+pub fn search_foods_finds_matching_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    // Search for "chicken"
+    let assert Ok(results) = storage.search_foods(conn, "chicken", 10)
+    results |> list.length |> should.equal(1)
+
+    case results {
+      [food] -> {
+        food.fdc_id |> should.equal(1)
+        food.description |> should.equal("Chicken breast, raw")
+        food.data_type |> should.equal("sr_legacy_food")
+        food.category |> should.equal("Poultry")
+      }
+      _ -> should.be_true(False)
+    }
+  })
+}
+
+pub fn search_foods_wildcard_matching_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    // Search should use wildcards
+    let assert Ok(results) = storage.search_foods(conn, "chi", 10)
+    // Should match "chicken" and "chocolate chip cookies"
+    results |> list.length |> should.equal(2)
+  })
+}
+
+pub fn search_foods_respects_limit_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    // Search with limit 1
+    let assert Ok(results) = storage.search_foods(conn, "c", 1)
+    results |> list.length |> should.equal(1)
+  })
+}
+
+pub fn search_foods_orders_by_data_type_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    // Search for items that match multiple data types
+    let assert Ok(results) = storage.search_foods(conn, "c", 10)
+    // sr_legacy_food should come before foundation_food
+    case results {
+      [first, ..] -> {
+        // First should be sr_legacy_food (chicken or white rice)
+        first.data_type |> should.equal("sr_legacy_food")
+      }
+      _ -> should.be_true(False)
+    }
+  })
+}
+
+pub fn get_food_nutrients_success_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    let assert Ok(nutrients) = storage.get_food_nutrients(conn, 1)
+    nutrients |> list.length |> should.equal(3)
+
+    // Find protein nutrient
+    case list.find(nutrients, fn(n) { n.nutrient_name == "Protein" }) {
+      Ok(protein) -> {
+        protein.amount |> should.equal(23.1)
+        protein.unit |> should.equal("g")
+      }
+      Error(_) -> should.be_true(False)
+    }
+  })
+}
+
+pub fn get_food_nutrients_empty_for_nonexistent_food_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    let assert Ok(nutrients) = storage.get_food_nutrients(conn, 999)
+    nutrients |> list.length |> should.equal(0)
+  })
+}
+
+pub fn get_food_nutrients_orders_by_rank_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    let assert Ok(nutrients) = storage.get_food_nutrients(conn, 1)
+    // Should be ordered by rank (protein=1, fat=2, carbs=3)
+    case nutrients {
+      [first, second, third] -> {
+        first.nutrient_name |> should.equal("Protein")
+        second.nutrient_name |> should.equal("Fat")
+        third.nutrient_name |> should.equal("Carbohydrate")
+      }
+      _ -> should.be_true(False)
+    }
+  })
+}
+
+pub fn get_food_nutrients_handles_null_amount_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    // Insert a nutrient with NULL amount
+    let insert_null =
+      "INSERT INTO food_nutrients (fdc_id, nutrient_id, amount)
+       VALUES (2, 1203, NULL)"
+    let assert Ok(_) =
+      sqlight.query(insert_null, on: conn, with: [], expecting: decode.dynamic)
+
+    let assert Ok(nutrients) = storage.get_food_nutrients(conn, 2)
+    // Should return the nutrient with amount = 0.0
+    case list.find(nutrients, fn(n) { n.nutrient_name == "Protein" }) {
+      Ok(protein) -> protein.amount |> should.equal(0.0)
+      Error(_) -> should.be_true(False)
+    }
+  })
+}
+
+pub fn get_food_by_id_success_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    let assert Ok(food) = storage.get_food_by_id(conn, 1)
+    food.fdc_id |> should.equal(1)
+    food.description |> should.equal("Chicken breast, raw")
+    food.data_type |> should.equal("sr_legacy_food")
+    food.category |> should.equal("Poultry")
+  })
+}
+
+pub fn get_food_by_id_not_found_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    case storage.get_food_by_id(conn, 999) {
+      Error(storage.NotFound) -> should.be_true(True)
+      _ -> should.be_true(False)
+    }
+  })
+}
+
+pub fn get_food_by_id_handles_null_category_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    // Insert a food with NULL category
+    let insert_null_cat =
+      "INSERT INTO foods (fdc_id, description, data_type, food_category)
+       VALUES (100, 'Test food', 'sr_legacy_food', NULL)"
+    let assert Ok(_) =
+      sqlight.query(
+        insert_null_cat,
+        on: conn,
+        with: [],
+        expecting: decode.dynamic,
+      )
+
+    let assert Ok(food) = storage.get_food_by_id(conn, 100)
+    // Should return empty string for NULL category
+    food.category |> should.equal("")
+  })
+}
+
+pub fn get_foods_count_zero_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(Nil) = storage.init_db(conn)
+
+    // Create empty foods table
+    let create_foods =
+      "CREATE TABLE IF NOT EXISTS foods (
+        fdc_id INTEGER PRIMARY KEY,
+        description TEXT,
+        data_type TEXT,
+        food_category TEXT
+      )"
+    let assert Ok(Nil) = sqlight.exec(create_foods, on: conn)
+
+    let assert Ok(count) = storage.get_foods_count(conn)
+    count |> should.equal(0)
+  })
+}
+
+pub fn get_foods_count_nonzero_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    let assert Ok(count) = storage.get_foods_count(conn)
+    count |> should.equal(3)
+  })
+}
+
+pub fn get_foods_count_after_insert_test() {
+  storage.with_connection(":memory:", fn(conn) {
+    setup_usda_test_data(conn)
+
+    let assert Ok(initial_count) = storage.get_foods_count(conn)
+    initial_count |> should.equal(3)
+
+    // Insert another food
+    let insert_food =
+      "INSERT INTO foods (fdc_id, description, data_type, food_category)
+       VALUES (4, 'New food', 'sr_legacy_food', 'Test')"
+    let assert Ok(_) =
+      sqlight.query(insert_food, on: conn, with: [], expecting: decode.dynamic)
+
+    let assert Ok(new_count) = storage.get_foods_count(conn)
+    new_count |> should.equal(4)
   })
 }

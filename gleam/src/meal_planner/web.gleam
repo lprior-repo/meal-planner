@@ -6,9 +6,12 @@ import gleam/float
 import gleam/int
 import gleam/json
 import gleam/list
+import gleam/option.{None, Some}
+import gleam/uri
 import lustre/attribute
 import lustre/element
 import lustre/element/html
+import meal_planner/migrate
 import meal_planner/storage
 import meal_planner/types.{
   type Macros, type Recipe, type UserProfile, Active, Gain, Lose, Macros,
@@ -36,7 +39,7 @@ pub fn start(port: Int) {
   wisp.configure_logger()
 
   let secret_key_base = wisp.random_string(64)
-  let ctx = Context(db_path: "meal_planner.db")
+  let ctx = Context(db_path: migrate.get_db_path())
 
   let handler = fn(req) { handle_request(req, ctx) }
 
@@ -71,6 +74,8 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["recipes", id] -> recipe_detail_page(id, ctx)
     ["dashboard"] -> dashboard_page(ctx)
     ["profile"] -> profile_page(ctx)
+    ["foods"] -> foods_page(req, ctx)
+    ["foods", id] -> food_detail_page(id, ctx)
 
     // 404
     _ -> not_found_page()
@@ -109,6 +114,10 @@ fn home_page() -> wisp.Response {
       html.a([attribute.href("/recipes"), attribute.class("nav-card")], [
         html.span([attribute.class("nav-icon")], [element.text("🍽")]),
         html.span([], [element.text("Recipes")]),
+      ]),
+      html.a([attribute.href("/foods"), attribute.class("nav-card")], [
+        html.span([attribute.class("nav-icon")], [element.text("🔍")]),
+        html.span([], [element.text("Food Search")]),
       ]),
       html.a([attribute.href("/profile"), attribute.class("nav-card")], [
         html.span([attribute.class("nav-icon")], [element.text("👤")]),
@@ -202,10 +211,7 @@ fn recipe_detail_page(id: String, ctx: Context) -> wisp.Response {
                 "Protein",
                 float_to_string(recipe.macros.protein) <> "g",
               ),
-              macro_stat_block(
-                "Fat",
-                float_to_string(recipe.macros.fat) <> "g",
-              ),
+              macro_stat_block("Fat", float_to_string(recipe.macros.fat) <> "g"),
               macro_stat_block(
                 "Carbs",
                 float_to_string(recipe.macros.carbs) <> "g",
@@ -389,6 +395,175 @@ fn page_header(title: String, back_href: String) -> element.Element(msg) {
   ])
 }
 
+fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
+  // Get search query from URL params
+  let query = case uri.parse_query(req.query |> option.unwrap("")) {
+    Ok(params) -> {
+      case list.find(params, fn(p) { p.0 == "q" }) {
+        Ok(#(_, q)) -> Some(q)
+        Error(_) -> None
+      }
+    }
+    Error(_) -> None
+  }
+
+  let foods = case query {
+    Some(q) if q != "" -> search_foods(ctx, q, 50)
+    _ -> []
+  }
+
+  let food_count = get_foods_count(ctx)
+
+  let content = [
+    html.div([attribute.class("page-header")], [
+      html.h1([], [element.text("Food Search")]),
+      html.p([attribute.class("subtitle")], [
+        element.text("Search " <> int_to_string(food_count) <> " USDA foods"),
+      ]),
+    ]),
+    html.form([attribute.action("/foods"), attribute.method("get")], [
+      html.div([attribute.class("search-box")], [
+        html.input([
+          attribute.type_("search"),
+          attribute.name("q"),
+          attribute.placeholder("Search foods (e.g., chicken, apple, rice)"),
+          attribute.value(query |> option.unwrap("")),
+          attribute.class("search-input"),
+        ]),
+        html.button(
+          [attribute.type_("submit"), attribute.class("btn btn-primary")],
+          [
+            element.text("Search"),
+          ],
+        ),
+      ]),
+    ]),
+    case query {
+      Some(q) if q != "" -> {
+        case foods {
+          [] ->
+            html.p([attribute.class("empty-state")], [
+              element.text("No foods found matching \"" <> q <> "\""),
+            ])
+          _ ->
+            html.div([attribute.class("food-list")], list.map(foods, food_row))
+        }
+      }
+      _ ->
+        html.p([attribute.class("empty-state")], [
+          element.text("Enter a search term to find foods"),
+        ])
+    },
+  ]
+
+  wisp.html_response(render_page("Food Search - Meal Planner", content), 200)
+}
+
+fn food_row(food: storage.UsdaFood) -> element.Element(msg) {
+  html.a(
+    [
+      attribute.class("food-item"),
+      attribute.href("/foods/" <> int_to_string(food.fdc_id)),
+    ],
+    [
+      html.div([attribute.class("food-info")], [
+        html.span([attribute.class("food-name")], [
+          element.text(food.description),
+        ]),
+        html.span([attribute.class("food-type")], [element.text(food.data_type)]),
+      ]),
+    ],
+  )
+}
+
+fn food_detail_page(id: String, ctx: Context) -> wisp.Response {
+  case int.parse(id) {
+    Error(_) -> not_found_page()
+    Ok(fdc_id) -> {
+      case load_food_by_id(ctx, fdc_id) {
+        Error(_) -> not_found_page()
+        Ok(food) -> {
+          let nutrients = load_food_nutrients(ctx, fdc_id)
+          // Find key macros
+          let protein = find_nutrient(nutrients, "Protein")
+          let fat = find_nutrient(nutrients, "Total lipid (fat)")
+          let carbs = find_nutrient(nutrients, "Carbohydrate, by difference")
+          let calories = find_nutrient(nutrients, "Energy")
+
+          let content = [
+            html.a([attribute.href("/foods"), attribute.class("back-link")], [
+              element.text("← Back to search"),
+            ]),
+            html.div([attribute.class("food-detail")], [
+              html.h1([], [element.text(food.description)]),
+              html.p([attribute.class("meta")], [
+                element.text("Type: " <> food.data_type),
+              ]),
+              // Macro summary card
+              html.div([attribute.class("macro-card")], [
+                html.h2([], [element.text("Nutrition per 100g")]),
+                html.div([attribute.class("macro-grid")], [
+                  macro_stat_block("Protein", format_nutrient(protein)),
+                  macro_stat_block("Fat", format_nutrient(fat)),
+                  macro_stat_block("Carbs", format_nutrient(carbs)),
+                  macro_stat_block("Calories", format_calories(calories)),
+                ]),
+              ]),
+              // All nutrients
+              html.div([attribute.class("nutrients-list")], [
+                html.h2([], [element.text("All Nutrients")]),
+                html.table([attribute.class("nutrients-table")], [
+                  html.thead([], [
+                    html.tr([], [
+                      html.th([], [element.text("Nutrient")]),
+                      html.th([], [element.text("Amount")]),
+                    ]),
+                  ]),
+                  html.tbody([], list.map(nutrients, nutrient_row)),
+                ]),
+              ]),
+            ]),
+          ]
+
+          wisp.html_response(
+            render_page(food.description <> " - Meal Planner", content),
+            200,
+          )
+        }
+      }
+    }
+  }
+}
+
+fn nutrient_row(n: storage.FoodNutrientValue) -> element.Element(msg) {
+  html.tr([], [
+    html.td([], [element.text(n.nutrient_name)]),
+    html.td([], [element.text(float_to_string(n.amount) <> " " <> n.unit)]),
+  ])
+}
+
+fn find_nutrient(
+  nutrients: List(storage.FoodNutrientValue),
+  name: String,
+) -> option.Option(storage.FoodNutrientValue) {
+  list.find(nutrients, fn(n) { n.nutrient_name == name })
+  |> option.from_result
+}
+
+fn format_nutrient(n: option.Option(storage.FoodNutrientValue)) -> String {
+  case n {
+    Some(nutrient) -> float_to_string(nutrient.amount) <> " " <> nutrient.unit
+    None -> "—"
+  }
+}
+
+fn format_calories(n: option.Option(storage.FoodNutrientValue)) -> String {
+  case n {
+    Some(nutrient) -> float_to_string(nutrient.amount) <> " kcal"
+    None -> "—"
+  }
+}
+
 fn render_page(title: String, content: List(element.Element(msg))) -> String {
   let body =
     html.html([attribute.attribute("lang", "en")], [
@@ -396,7 +571,10 @@ fn render_page(title: String, content: List(element.Element(msg))) -> String {
         html.meta([attribute.attribute("charset", "UTF-8")]),
         html.meta([
           attribute.name("viewport"),
-          attribute.attribute("content", "width=device-width, initial-scale=1.0"),
+          attribute.attribute(
+            "content",
+            "width=device-width, initial-scale=1.0",
+          ),
         ]),
         html.title([], title),
         html.link([
@@ -423,6 +601,8 @@ fn handle_api(
     ["recipes"] -> api_recipes(req, ctx)
     ["recipes", id] -> api_recipe(req, id, ctx)
     ["profile"] -> api_profile(req, ctx)
+    ["foods"] -> api_foods(req, ctx)
+    ["foods", id] -> api_food(req, id, ctx)
     _ -> wisp.not_found()
   }
 }
@@ -448,6 +628,74 @@ fn api_profile(_req: wisp.Request, ctx: Context) -> wisp.Response {
   let profile = load_profile(ctx)
   let json_data = profile_to_json(profile)
   wisp.json_response(json.to_string(json_data), 200)
+}
+
+fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
+  let query = case uri.parse_query(req.query |> option.unwrap("")) {
+    Ok(params) -> {
+      case list.find(params, fn(p) { p.0 == "q" }) {
+        Ok(#(_, q)) -> q
+        Error(_) -> ""
+      }
+    }
+    Error(_) -> ""
+  }
+
+  case query {
+    "" -> {
+      let json_data =
+        json.object([
+          #("error", json.string("Query parameter 'q' required")),
+        ])
+      wisp.json_response(json.to_string(json_data), 400)
+    }
+    q -> {
+      let foods = search_foods(ctx, q, 50)
+      let json_data = json.array(foods, food_to_json)
+      wisp.json_response(json.to_string(json_data), 200)
+    }
+  }
+}
+
+fn api_food(_req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
+  case int.parse(id) {
+    Error(_) -> wisp.not_found()
+    Ok(fdc_id) -> {
+      case load_food_by_id(ctx, fdc_id) {
+        Error(_) -> wisp.not_found()
+        Ok(food) -> {
+          let nutrients = load_food_nutrients(ctx, fdc_id)
+          let json_data =
+            json.object([
+              #("fdc_id", json.int(food.fdc_id)),
+              #("description", json.string(food.description)),
+              #("data_type", json.string(food.data_type)),
+              #("category", json.string(food.category)),
+              #(
+                "nutrients",
+                json.array(nutrients, fn(n) {
+                  json.object([
+                    #("name", json.string(n.nutrient_name)),
+                    #("amount", json.float(n.amount)),
+                    #("unit", json.string(n.unit)),
+                  ])
+                }),
+              ),
+            ])
+          wisp.json_response(json.to_string(json_data), 200)
+        }
+      }
+    }
+  }
+}
+
+fn food_to_json(f: storage.UsdaFood) -> json.Json {
+  json.object([
+    #("fdc_id", json.int(f.fdc_id)),
+    #("description", json.string(f.description)),
+    #("data_type", json.string(f.data_type)),
+    #("category", json.string(f.category)),
+  ])
 }
 
 // ============================================================================
@@ -507,6 +755,49 @@ fn default_profile() -> UserProfile {
     goal: Maintain,
     meals_per_day: 3,
   )
+}
+
+fn search_foods(
+  ctx: Context,
+  query: String,
+  limit: Int,
+) -> List(storage.UsdaFood) {
+  storage.with_connection(ctx.db_path, fn(conn) {
+    case storage.search_foods(conn, query, limit) {
+      Ok(foods) -> foods
+      Error(_) -> []
+    }
+  })
+}
+
+fn load_food_by_id(ctx: Context, fdc_id: Int) -> Result(storage.UsdaFood, Nil) {
+  storage.with_connection(ctx.db_path, fn(conn) {
+    case storage.get_food_by_id(conn, fdc_id) {
+      Ok(food) -> Ok(food)
+      Error(_) -> Error(Nil)
+    }
+  })
+}
+
+fn load_food_nutrients(
+  ctx: Context,
+  fdc_id: Int,
+) -> List(storage.FoodNutrientValue) {
+  storage.with_connection(ctx.db_path, fn(conn) {
+    case storage.get_food_nutrients(conn, fdc_id) {
+      Ok(nutrients) -> nutrients
+      Error(_) -> []
+    }
+  })
+}
+
+fn get_foods_count(ctx: Context) -> Int {
+  storage.with_connection(ctx.db_path, fn(conn) {
+    case storage.get_foods_count(conn) {
+      Ok(count) -> count
+      Error(_) -> 0
+    }
+  })
 }
 
 /// Sample recipes for fallback when database is empty

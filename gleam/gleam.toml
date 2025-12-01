@@ -53,10 +53,12 @@ simplifile = ">= 2.3.1 and < 3.0.0"
 
 # Local dependencies
 shared = { path = "../shared" }
+server = { path = "../server" }
 
 [dev-dependencies]
 # Testing framework
 gleeunit = ">= 1.0.0 and < 2.0.0"
 
-# Property-based testing (future)
-# qcheck = ">= 0.0.0"
+# Property-based testing
+qcheck = ">= 1.0.0 and < 2.0.0"
+qcheck_gleeunit_utils = ">= 1.0.0 and < 2.0.0"

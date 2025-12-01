@@ -318,6 +318,9 @@ fn import_lines_in_batches(
   case list.split(lines, batch_size) {
     #([], _) -> Ok(total_imported)
     #(batch, rest) -> {
+      // Start transaction for this batch
+      let _ = sqlight.exec("BEGIN TRANSACTION", on: conn)
+
       let parsed =
         list.filter_map(batch, fn(line) {
           let fields = parse_csv_line(line)
@@ -364,11 +367,14 @@ fn import_lines_in_batches(
         _ -> Error(DatabaseError("Unknown file type"))
       }
 
+      // Commit transaction
+      let _ = sqlight.exec("COMMIT", on: conn)
+
       case inserted {
         Error(e) -> Error(e)
         Ok(count) -> {
           let new_total = total_imported + count
-          case new_total % 10_000 {
+          case new_total % 50_000 {
             0 ->
               io.println(
                 "  Imported " <> int.to_string(new_total) <> " rows...",
@@ -396,32 +402,41 @@ pub fn import_from_directory(
 ) -> Result(#(Int, Int, Int), ImportError) {
   io.println("Starting USDA FoodData Central import from " <> usda_dir)
 
+  // Optimize SQLite for bulk import
+  let _ = sqlight.exec("PRAGMA synchronous = OFF", on: conn)
+  let _ = sqlight.exec("PRAGMA journal_mode = MEMORY", on: conn)
+  let _ = sqlight.exec("PRAGMA cache_size = 100000", on: conn)
+
   // Import nutrients first (referenced by food_nutrients)
   let nutrient_result =
-    import_csv_file(conn, usda_dir <> "/nutrient.csv", "nutrient", 100)
+    import_csv_file(conn, usda_dir <> "/nutrient.csv", "nutrient", 500)
 
   case nutrient_result {
     Error(e) -> Error(e)
     Ok(nutrients_count) -> {
       io.println("Imported " <> int.to_string(nutrients_count) <> " nutrients")
 
-      // Import foods
+      // Import foods with larger batches
       let food_result =
-        import_csv_file(conn, usda_dir <> "/food.csv", "food", 1000)
+        import_csv_file(conn, usda_dir <> "/food.csv", "food", 5000)
 
       case food_result {
         Error(e) -> Error(e)
         Ok(foods_count) -> {
           io.println("Imported " <> int.to_string(foods_count) <> " foods")
 
-          // Import food_nutrients (largest file)
+          // Import food_nutrients (largest file) with even larger batches
           let fn_result =
             import_csv_file(
               conn,
               usda_dir <> "/food_nutrient.csv",
               "food_nutrient",
-              5000,
+              10_000,
             )
+
+          // Reset SQLite to safe mode
+          let _ = sqlight.exec("PRAGMA synchronous = FULL", on: conn)
+          let _ = sqlight.exec("PRAGMA journal_mode = DELETE", on: conn)
 
           case fn_result {
             Error(e) -> Error(e)
