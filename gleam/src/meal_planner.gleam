@@ -6,26 +6,35 @@ import gleam/io
 import gleam/list
 import gleam/result
 import glint
+import meal_planner/application
 import meal_planner/env
 import meal_planner/meal_plan
 import meal_planner/ncp
 import meal_planner/output
 import meal_planner/recipe_loader
-import meal_planner/storage
 import meal_planner/user_profile
 
 /// Application entry point
 pub fn main() {
-  glint.new()
-  |> glint.with_name("meal-planner")
-  |> glint.pretty_help(glint.default_pretty_help())
-  |> glint.add(at: [], do: default_command())
-  |> glint.add(at: ["plan"], do: plan_command())
-  |> glint.add(at: ["audit"], do: audit_command())
-  |> glint.add(at: ["profile"], do: profile_command())
-  |> glint.add(at: ["ncp-status"], do: ncp_status_command())
-  |> glint.add(at: ["ncp-reconcile"], do: ncp_reconcile_command())
-  |> glint.run(start_arguments())
+  // Start OTP application (initializes database, supervisor tree)
+  case application.start() {
+    Error(err) -> {
+      io.println("Failed to start application: " <> application.format_error(err))
+    }
+    Ok(_app_state) -> {
+      // Application started successfully, run CLI
+      glint.new()
+      |> glint.with_name("meal-planner")
+      |> glint.pretty_help(glint.default_pretty_help())
+      |> glint.add(at: [], do: default_command())
+      |> glint.add(at: ["plan"], do: plan_command())
+      |> glint.add(at: ["audit"], do: audit_command())
+      |> glint.add(at: ["profile"], do: profile_command())
+      |> glint.add(at: ["ncp-status"], do: ncp_status_command())
+      |> glint.add(at: ["ncp-reconcile"], do: ncp_reconcile_command())
+      |> glint.run(start_arguments())
+    }
+  }
 }
 
 /// Get command line arguments (Erlang specific)
@@ -176,64 +185,56 @@ fn handle_mode(mode: String) {
 
 /// Generate and display meal plan in terminal
 fn generate_and_display_plan() -> Result(Nil, String) {
-  case storage.initialize_database() {
-    Ok(_) -> {
-      case user_profile.load_or_collect_profile() {
-        Ok(profile) -> {
-          case recipe_loader.load_all_recipes("recipes", "") {
-            Ok(recipes) -> {
-              case meal_plan.generate_weekly_plan(profile, recipes) {
-                Ok(plan) -> {
-                  output.print_weekly_plan(plan)
-                  Ok(Nil)
-                }
-                Error(err) -> Error("Failed to generate meal plan: " <> err)
-              }
+  // Database is already initialized by application.start()
+  case user_profile.load_or_collect_profile() {
+    Ok(profile) -> {
+      case recipe_loader.load_all_recipes("recipes", "") {
+        Ok(recipes) -> {
+          case meal_plan.generate_weekly_plan(profile, recipes) {
+            Ok(plan) -> {
+              output.print_weekly_plan(plan)
+              Ok(Nil)
             }
-            Error(err) -> Error("Failed to load recipes: " <> err)
+            Error(err) -> Error("Failed to generate meal plan: " <> err)
           }
         }
-        Error(err) -> Error("Failed to load profile: " <> err)
+        Error(err) -> Error("Failed to load recipes: " <> err)
       }
     }
-    Error(err) -> Error("Failed to initialize database: " <> err)
+    Error(err) -> Error("Failed to load profile: " <> err)
   }
 }
 
 /// Generate and email meal plan
 fn generate_and_email_plan() -> Result(Nil, String) {
-  case storage.initialize_database() {
-    Ok(_) -> {
-      case user_profile.load_or_collect_profile() {
-        Ok(profile) -> {
-          case recipe_loader.load_all_recipes("recipes", "") {
-            Ok(recipes) -> {
-              case meal_plan.generate_weekly_plan(profile, recipes) {
-                Ok(plan) -> {
-                  case env.load_email_config() {
-                    Ok(config) -> {
-                      case output.send_weekly_plan_email(plan, config) {
-                        Ok(_) -> Ok(Nil)
-                        Error(err) -> Error("Failed to send email: " <> err)
-                      }
-                    }
-                    Error(env_err) ->
-                      Error(
-                        "Failed to load email config: "
-                        <> env.format_error(env_err),
-                      )
+  // Database is already initialized by application.start()
+  case user_profile.load_or_collect_profile() {
+    Ok(profile) -> {
+      case recipe_loader.load_all_recipes("recipes", "") {
+        Ok(recipes) -> {
+          case meal_plan.generate_weekly_plan(profile, recipes) {
+            Ok(plan) -> {
+              case env.load_email_config() {
+                Ok(config) -> {
+                  case output.send_weekly_plan_email(plan, config) {
+                    Ok(_) -> Ok(Nil)
+                    Error(err) -> Error("Failed to send email: " <> err)
                   }
                 }
-                Error(err) -> Error("Failed to generate meal plan: " <> err)
+                Error(env_err) ->
+                  Error(
+                    "Failed to load email config: "
+                    <> env.format_error(env_err),
+                  )
               }
             }
-            Error(err) -> Error("Failed to load recipes: " <> err)
+            Error(err) -> Error("Failed to generate meal plan: " <> err)
           }
         }
-        Error(err) -> Error("Failed to load profile: " <> err)
+        Error(err) -> Error("Failed to load recipes: " <> err)
       }
     }
-    Error(err) -> Error("Failed to initialize database: " <> err)
+    Error(err) -> Error("Failed to load profile: " <> err)
   }
 }
 
