@@ -31,8 +31,12 @@ sqlight = ">= 1.0.0 and < 2.0.0"
 gleam_otp = ">= 0.10.0"
 gleam_erlang = ">= 0.25.0"
 
-# CLI argument parsing
-glint = ">= 0.14.0"
+# Web framework and server
+wisp = ">= 2.0.0 and < 3.0.0"
+mist = ">= 5.0.0 and < 6.0.0"
+
+# Lustre for SSR
+lustre = ">= 5.0.0 and < 6.0.0"
 
 # Environment variables
 envoy = ">= 1.0.0"
