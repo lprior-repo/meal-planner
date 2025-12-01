@@ -3,15 +3,14 @@ import meal_planner/meal_plan.{
   DailyPlan, Meal, WeeklyMealPlan, daily_plan_macros, meal_macros,
   weekly_plan_avg_daily_macros, weekly_plan_macros,
 }
-import meal_planner/types.{
-  Active, Ingredient, Low, Macros, Maintain, Recipe, UserProfile,
-}
+import meal_planner/types.{Active, Low, Macros, Maintain, Recipe, UserProfile}
 
 pub fn meal_macros_test() {
   let recipe =
     Recipe(
+      id: "chicken",
       name: "Chicken",
-      ingredients: [Ingredient(name: "Chicken", quantity: "200g")],
+      ingredients: [types.Ingredient(name: "Chicken", quantity: "200g")],
       instructions: ["Cook"],
       macros: Macros(protein: 40.0, fat: 10.0, carbs: 5.0),
       servings: 1,
@@ -29,8 +28,9 @@ pub fn meal_macros_test() {
 pub fn meal_macros_fractional_portion_test() {
   let recipe =
     Recipe(
+      id: "rice",
       name: "Rice",
-      ingredients: [Ingredient(name: "Rice", quantity: "100g")],
+      ingredients: [types.Ingredient(name: "Rice", quantity: "100g")],
       instructions: ["Boil"],
       macros: Macros(protein: 4.0, fat: 0.5, carbs: 28.0),
       servings: 1,
@@ -48,6 +48,7 @@ pub fn meal_macros_fractional_portion_test() {
 pub fn daily_plan_creation_test() {
   let recipe =
     Recipe(
+      id: "eggs",
       name: "Eggs",
       ingredients: [],
       instructions: [],
@@ -65,6 +66,7 @@ pub fn daily_plan_creation_test() {
 pub fn daily_plan_macros_single_meal_test() {
   let recipe =
     Recipe(
+      id: "steak",
       name: "Steak",
       ingredients: [],
       instructions: [],
@@ -86,6 +88,7 @@ pub fn daily_plan_macros_multiple_meals_test() {
   let breakfast =
     Meal(
       recipe: Recipe(
+        id: "eggs-breakfast",
         name: "Eggs",
         ingredients: [],
         instructions: [],
@@ -100,6 +103,7 @@ pub fn daily_plan_macros_multiple_meals_test() {
   let lunch =
     Meal(
       recipe: Recipe(
+        id: "chicken-rice",
         name: "Chicken Rice",
         ingredients: [],
         instructions: [],
@@ -114,6 +118,7 @@ pub fn daily_plan_macros_multiple_meals_test() {
   let dinner =
     Meal(
       recipe: Recipe(
+        id: "beef-rice",
         name: "Beef Rice",
         ingredients: [],
         instructions: [],
@@ -154,6 +159,7 @@ pub fn weekly_plan_macros_test() {
   let meal =
     Meal(
       recipe: Recipe(
+        id: "standard-meal",
         name: "Standard Meal",
         ingredients: [],
         instructions: [],
@@ -190,6 +196,7 @@ pub fn weekly_plan_avg_daily_macros_test() {
   let meal =
     Meal(
       recipe: Recipe(
+        id: "standard-meal-2",
         name: "Standard Meal",
         ingredients: [],
         instructions: [],

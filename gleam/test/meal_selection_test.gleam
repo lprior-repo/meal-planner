@@ -17,6 +17,7 @@ fn make_recipe(
   vertical_compliant: Bool,
 ) -> Recipe {
   Recipe(
+    id: name,
     name: name,
     ingredients: [Ingredient("Test ingredient", "1 unit")],
     instructions: ["Test instruction"],

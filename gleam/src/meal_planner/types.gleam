@@ -14,6 +14,7 @@ pub type FodmapLevel {
 /// Recipe represents a complete recipe with ingredients, instructions, and nutrition
 pub type Recipe {
   Recipe(
+    id: String,
     name: String,
     ingredients: List(Ingredient),
     instructions: List(String),

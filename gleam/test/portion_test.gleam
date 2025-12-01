@@ -12,6 +12,7 @@ pub fn main() {
 pub fn calculate_portion_for_target_basic_test() {
   let recipe =
     Recipe(
+      id: "steak-and-rice",
       name: "Steak and Rice",
       ingredients: [],
       instructions: [],
@@ -41,6 +42,7 @@ pub fn calculate_portion_for_target_basic_test() {
 pub fn calculate_portion_prioritizes_protein_test() {
   let recipe =
     Recipe(
+      id: "chicken-breast",
       name: "Chicken Breast",
       ingredients: [],
       instructions: [],
@@ -71,6 +73,7 @@ pub fn calculate_portion_prioritizes_protein_test() {
 pub fn calculate_portion_caps_scale_factor_max_test() {
   let recipe =
     Recipe(
+      id: "light-meal",
       name: "Light Meal",
       ingredients: [],
       instructions: [],
@@ -97,6 +100,7 @@ pub fn calculate_portion_caps_scale_factor_max_test() {
 pub fn calculate_portion_caps_scale_factor_min_test() {
   let recipe =
     Recipe(
+      id: "heavy-meal",
       name: "Heavy Meal",
       ingredients: [],
       instructions: [],
@@ -123,6 +127,7 @@ pub fn calculate_portion_caps_scale_factor_min_test() {
 pub fn calculate_portion_no_macros_test() {
   let recipe =
     Recipe(
+      id: "unknown-meal",
       name: "Unknown Meal",
       ingredients: [],
       instructions: [],
@@ -153,6 +158,7 @@ pub fn calculate_portion_no_macros_test() {
 pub fn calculate_portion_variance_within_tolerance_test() {
   let recipe =
     Recipe(
+      id: "perfect-match",
       name: "Perfect Match",
       ingredients: [],
       instructions: [],
@@ -184,6 +190,7 @@ pub fn calculate_daily_portions_test() {
 
   let recipe1 =
     Recipe(
+      id: "breakfast",
       name: "Breakfast",
       ingredients: [],
       instructions: [],
@@ -196,6 +203,7 @@ pub fn calculate_daily_portions_test() {
 
   let recipe2 =
     Recipe(
+      id: "lunch",
       name: "Lunch",
       ingredients: [],
       instructions: [],

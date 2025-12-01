@@ -3,16 +3,16 @@
 /// This module provides the main entry point for the meal planner application.
 /// It handles CLI argument parsing and dispatches to the appropriate commands.
 import gleam/io
+import gleam/list
 import gleam/result
 import glint
 import meal_planner/env
 import meal_planner/meal_plan
+import meal_planner/ncp
 import meal_planner/output
 import meal_planner/recipe_loader
 import meal_planner/storage
 import meal_planner/user_profile
-
-// import meal_planner/ncp  // Temporarily disabled due to compilation errors
 
 /// Application entry point
 pub fn main() {
@@ -82,15 +82,25 @@ fn profile_command() -> glint.Command(Nil) {
   }
 }
 
+/// Days flag for NCP commands
+fn days_flag() -> glint.Flag(Int) {
+  glint.int_flag("days")
+  |> glint.flag_default(7)
+  |> glint.flag_help("Number of days to analyze")
+}
+
 /// NCP status command - show nutrition status vs goals
 fn ncp_status_command() -> glint.Command(Nil) {
   use <- glint.command_help("Show nutrition status vs goals")
-  use _named, _args, _flags <- glint.command()
+  use days_getter <- glint.flag(days_flag())
+  use _named, _args, flags <- glint.command()
 
-  let days = 7
-  // Default to 7 days for now
+  let day_count = case days_getter(flags) {
+    Ok(d) -> d
+    Error(_) -> 7
+  }
 
-  case show_ncp_status(days) {
+  case show_ncp_status(day_count) {
     Ok(_) -> Nil
     Error(err) -> io.println("Error showing NCP status: " <> err)
   }
@@ -101,12 +111,15 @@ fn ncp_reconcile_command() -> glint.Command(Nil) {
   use <- glint.command_help(
     "Run nutrition reconciliation and suggest adjustments",
   )
-  use _named, _args, _flags <- glint.command()
+  use days_getter <- glint.flag(days_flag())
+  use _named, _args, flags <- glint.command()
 
-  let days = 7
-  // Default to 7 days for now
+  let day_count = case days_getter(flags) {
+    Ok(d) -> d
+    Error(_) -> 7
+  }
 
-  case run_ncp_reconciliation(days) {
+  case run_ncp_reconciliation(day_count) {
     Ok(_) -> Nil
     Error(err) -> io.println("Error running NCP reconciliation: " <> err)
   }
@@ -245,15 +258,96 @@ fn setup_profile() -> Result(Nil, String) {
 }
 
 /// Show NCP status
-fn show_ncp_status(_days: Int) -> Result(Nil, String) {
-  io.println("NCP status temporarily disabled due to module compilation issues")
-  Ok(Nil)
+fn show_ncp_status(days: Int) -> Result(Nil, String) {
+  io.println("Fetching nutrition status...")
+
+  // Get history
+  case ncp.get_nutrition_history(days) {
+    Ok(history) -> {
+      case list.is_empty(history) {
+        True -> {
+          io.println("No nutrition data found.")
+          Ok(Nil)
+        }
+        False -> {
+          // Get goals
+          let goals = get_ncp_goals()
+
+          // Get recipes for suggestions
+          let recipes = get_ncp_recipes()
+
+          // Get current date as string
+          let date = get_current_date()
+
+          // Run reconciliation
+          let result =
+            ncp.run_reconciliation(history, goals, recipes, 25.0, 3, date)
+
+          // Output status
+          io.println(ncp.format_status_output(result))
+          Ok(Nil)
+        }
+      }
+    }
+    Error(err) -> Error("Failed to get nutrition history: " <> err)
+  }
 }
 
 /// Run NCP reconciliation
-fn run_ncp_reconciliation(_days: Int) -> Result(Nil, String) {
-  io.println(
-    "NCP reconciliation temporarily disabled due to module compilation issues",
-  )
-  Ok(Nil)
+fn run_ncp_reconciliation(days: Int) -> Result(Nil, String) {
+  io.println("Running nutrition reconciliation...")
+
+  // Get history
+  case ncp.get_nutrition_history(days) {
+    Ok(history) -> {
+      case list.is_empty(history) {
+        True -> {
+          io.println("No nutrition data found.")
+          Ok(Nil)
+        }
+        False -> {
+          // Get goals
+          let goals = get_ncp_goals()
+
+          // Get recipes for suggestions
+          let recipes = get_ncp_recipes()
+
+          // Get current date as string
+          let date = get_current_date()
+
+          // Run reconciliation
+          let result =
+            ncp.run_reconciliation(history, goals, recipes, 25.0, 5, date)
+
+          // Output reconciliation result
+          io.println(ncp.format_reconcile_output(result))
+          Ok(Nil)
+        }
+      }
+    }
+    Error(err) -> Error("Failed to get nutrition history: " <> err)
+  }
 }
+
+/// Get NCP goals from environment or defaults
+fn get_ncp_goals() -> ncp.NutritionGoals {
+  // Use defaults for now - could be enhanced to read from env
+  ncp.get_default_goals()
+}
+
+/// Get recipes for NCP suggestions
+fn get_ncp_recipes() -> List(ncp.ScoredRecipe) {
+  // Load recipes and convert to ScoredRecipe format
+  case recipe_loader.load_all_recipes("recipes", "") {
+    Ok(recipes) -> {
+      list.map(recipes, fn(r) {
+        ncp.ScoredRecipe(name: r.name, macros: r.macros)
+      })
+    }
+    Error(_) -> []
+  }
+}
+
+/// Get current date as string
+@external(erlang, "meal_planner_ffi", "get_current_date")
+fn get_current_date() -> String

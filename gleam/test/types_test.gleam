@@ -63,6 +63,7 @@ pub fn recipe_creation_test() {
   let instructions = ["Season chicken", "Grill for 6 min per side"]
   let recipe =
     Recipe(
+      id: "grilled-chicken",
       name: "Grilled Chicken",
       ingredients: ingredients,
       instructions: instructions,
@@ -82,6 +83,7 @@ pub fn recipe_creation_test() {
 pub fn is_vertical_diet_compliant_low_fodmap_and_compliant_test() {
   let recipe =
     Recipe(
+      id: "test-1",
       name: "Test",
       ingredients: [],
       instructions: [],
@@ -97,6 +99,7 @@ pub fn is_vertical_diet_compliant_low_fodmap_and_compliant_test() {
 pub fn is_vertical_diet_compliant_high_fodmap_fails_test() {
   let recipe =
     Recipe(
+      id: "test-2",
       name: "Test",
       ingredients: [],
       instructions: [],
@@ -112,6 +115,7 @@ pub fn is_vertical_diet_compliant_high_fodmap_fails_test() {
 pub fn is_vertical_diet_compliant_medium_fodmap_fails_test() {
   let recipe =
     Recipe(
+      id: "test-3",
       name: "Test",
       ingredients: [],
       instructions: [],
@@ -127,6 +131,7 @@ pub fn is_vertical_diet_compliant_medium_fodmap_fails_test() {
 pub fn is_vertical_diet_compliant_not_marked_compliant_fails_test() {
   let recipe =
     Recipe(
+      id: "test-4",
       name: "Test",
       ingredients: [],
       instructions: [],
@@ -144,6 +149,7 @@ pub fn is_vertical_diet_compliant_not_marked_compliant_fails_test() {
 pub fn macros_per_serving_returns_recipe_macros_test() {
   let recipe =
     Recipe(
+      id: "test-5",
       name: "Test",
       ingredients: [],
       instructions: [],
@@ -164,6 +170,7 @@ pub fn macros_per_serving_returns_recipe_macros_test() {
 pub fn total_macros_multiplies_by_servings_test() {
   let recipe =
     Recipe(
+      id: "test-6",
       name: "Test",
       ingredients: [],
       instructions: [],
@@ -182,6 +189,7 @@ pub fn total_macros_multiplies_by_servings_test() {
 pub fn total_macros_single_serving_test() {
   let recipe =
     Recipe(
+      id: "test-7",
       name: "Test",
       ingredients: [],
       instructions: [],
@@ -198,6 +206,7 @@ pub fn total_macros_single_serving_test() {
 pub fn total_macros_zero_servings_treated_as_one_test() {
   let recipe =
     Recipe(
+      id: "test-8",
       name: "Test",
       ingredients: [],
       instructions: [],

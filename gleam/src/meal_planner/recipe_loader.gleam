@@ -58,6 +58,7 @@ fn find_map_value(
 fn parse_recipe(node: glaml.Node) -> Result(Recipe, String) {
   case node {
     glaml.NodeMap(pairs) -> {
+      use id <- result.try(get_string_optional(pairs, "id", ""))
       use name <- result.try(get_string(pairs, "name"))
       use ingredients <- result.try(get_ingredients(pairs, "ingredients"))
       use instructions <- result.try(get_string_list(pairs, "instructions"))
@@ -67,7 +68,14 @@ fn parse_recipe(node: glaml.Node) -> Result(Recipe, String) {
       use fodmap_level <- result.try(get_fodmap_level(pairs, "fodmap_level"))
       use vertical_compliant <- result.try(get_bool(pairs, "vertical_compliant"))
 
+      // Generate id from name if not provided
+      let recipe_id = case id {
+        "" -> string.lowercase(name) |> string.replace(" ", "-")
+        _ -> id
+      }
+
       Ok(Recipe(
+        id: recipe_id,
         name: name,
         ingredients: ingredients,
         instructions: instructions,
@@ -95,6 +103,19 @@ fn get_string(
   case node {
     glaml.NodeStr(s) -> Ok(s)
     _ -> Error("Expected string for key: " <> key)
+  }
+}
+
+/// Get an optional string value from a map with default
+fn get_string_optional(
+  pairs: List(#(glaml.Node, glaml.Node)),
+  key: String,
+  default: String,
+) -> Result(String, String) {
+  case find_map_value(pairs, key) {
+    Ok(glaml.NodeStr(s)) -> Ok(s)
+    Ok(_) -> Error("Expected string for key: " <> key)
+    Error(_) -> Ok(default)
   }
 }
 

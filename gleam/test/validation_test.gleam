@@ -8,6 +8,7 @@ import meal_planner/validation.{validate_recipe_strict}
 // Helper to create a test recipe
 fn make_recipe(name: String, ingredients: List(Ingredient)) -> Recipe {
   Recipe(
+    id: name,
     name: name,
     ingredients: ingredients,
     instructions: [],

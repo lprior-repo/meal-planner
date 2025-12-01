@@ -3,7 +3,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/string
-import shared/types.{type Macros}
+import meal_planner/types.{type Macros}
 
 /// NutritionGoals represents daily macro targets
 pub type NutritionGoals {
@@ -43,9 +43,26 @@ pub type AdjustmentPlan {
   )
 }
 
+/// ReconciliationResult represents the full result of a nutrition reconciliation
+pub type ReconciliationResult {
+  ReconciliationResult(
+    date: String,
+    average_consumed: NutritionData,
+    goals: NutritionGoals,
+    deviation: DeviationResult,
+    plan: AdjustmentPlan,
+    within_tolerance: Bool,
+  )
+}
+
 /// ScoredRecipe represents a recipe with its nutritional macros for scoring
 pub type ScoredRecipe {
   ScoredRecipe(name: String, macros: Macros)
+}
+
+/// NutritionState represents a day's nutrition tracking state
+pub type NutritionState {
+  NutritionState(date: String, consumed: NutritionData, synced_at: String)
 }
 
 /// Validate ensures goals are within reasonable ranges
@@ -109,7 +126,7 @@ pub fn deviation_max(dev: DeviationResult) -> Float {
 }
 
 /// Get nutrition history for specified number of days
-pub fn get_nutrition_history(_days: Int) -> Result(List(NutritionData), String) {
+pub fn get_nutrition_history(_days: Int) -> Result(List(NutritionState), String) {
   // For now, return empty list
   // In full implementation, this would query the database
   Ok([])
@@ -125,34 +142,54 @@ pub fn get_default_goals() -> NutritionGoals {
   )
 }
 
-/// Run reconciliation analysis on nutrition data
+/// Run full reconciliation - matches Go ncp/reconcile.go RunReconciliation
+/// Performs:
+/// 1. Calculates average consumption from history
+/// 2. Computes deviation from goals
+/// 3. Generates recipe suggestions to address deviations
+/// 4. Returns comprehensive result
 pub fn run_reconciliation(
-  history: List(NutritionData),
+  history: List(NutritionState),
   goals: NutritionGoals,
+  recipes: List(ScoredRecipe),
   tolerance_pct: Float,
-  _max_suggestions: Int,
+  suggestion_limit: Int,
+  date: String,
+) -> ReconciliationResult {
+  // Calculate average consumption from history
+  let avg_consumed = average_nutrition_history(history)
+
+  // Calculate deviation from goals
+  let deviation = calculate_deviation(goals, avg_consumed)
+
+  // Check if within tolerance
+  let within_tolerance = deviation_is_within_tolerance(deviation, tolerance_pct)
+
+  // Generate adjustment plan
+  let plan = generate_adjustments(deviation, recipes, suggestion_limit)
+
+  ReconciliationResult(
+    date: date,
+    average_consumed: avg_consumed,
+    goals: goals,
+    deviation: deviation,
+    plan: plan,
+    within_tolerance: within_tolerance,
+  )
+}
+
+/// Generate adjustment plan - matches Go ncp/generate.go GenerateAdjustments
+pub fn generate_adjustments(
+  deviation: DeviationResult,
+  recipes: List(ScoredRecipe),
+  limit: Int,
 ) -> AdjustmentPlan {
-  // For now, create a simple plan
-  // In full implementation, this would analyze history vs goals
-  let avg_data = calculate_average_nutrition(history)
-  let deviation = calculate_deviation(goals, avg_data)
-
-  let suggestions = case deviation_max(deviation) >. tolerance_pct {
-    True -> [
-      RecipeSuggestion(
-        recipe_name: "Increase Protein",
-        reason: "Protein intake below target",
-        score: 25.0,
-      ),
-    ]
-    False -> []
-  }
-
+  let suggestions = select_top_recipes(deviation, recipes, limit)
   AdjustmentPlan(deviation: deviation, suggestions: suggestions)
 }
 
-/// Calculate average nutrition from history
-fn calculate_average_nutrition(history: List(NutritionData)) -> NutritionData {
+/// Calculate average nutrition history - matches Go ncp/history.go AverageNutritionHistory
+pub fn average_nutrition_history(history: List(NutritionState)) -> NutritionData {
   case history {
     [] -> NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
     _ -> {
@@ -161,12 +198,12 @@ fn calculate_average_nutrition(history: List(NutritionData)) -> NutritionData {
         list.fold(
           history,
           NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0),
-          fn(acc, data) {
+          fn(acc, state) {
             NutritionData(
-              protein: acc.protein +. data.protein,
-              fat: acc.fat +. data.fat,
-              carbs: acc.carbs +. data.carbs,
-              calories: acc.calories +. data.calories,
+              protein: acc.protein +. state.consumed.protein,
+              fat: acc.fat +. state.consumed.fat,
+              carbs: acc.carbs +. state.consumed.carbs,
+              calories: acc.calories +. state.consumed.calories,
             )
           },
         )
@@ -182,58 +219,137 @@ fn calculate_average_nutrition(history: List(NutritionData)) -> NutritionData {
 }
 
 /// Format status output for display - matches Go cli.go FormatStatusOutput
-pub fn format_status_output(plan: AdjustmentPlan) -> String {
-  "═══════════════════════════════════════════════\n"
-  <> "           NCP NUTRITION STATUS REPORT          \n"
-  <> "═══════════════════════════════════════════════\n\n"
-  <> "📊 MACRO COMPARISON\n"
-  <> "───────────────────────────────────────────────\n"
-  <> "           Goal      Actual    Deviation\n"
-  <> "Protein:   6.1g   6.1g   +6.1%\n"
-  <> "Fat:       6.1g   6.1g   +6.1%\n"
-  <> "Carbs:     6.1g   6.1g   +6.1%\n"
-  <> "Calories:  6.0    6.0    +6.1%\n\n"
-  <> case deviation_is_within_tolerance(plan.deviation, 10.0) {
+pub fn format_status_output(result: ReconciliationResult) -> String {
+  let header =
+    "═══════════════════════════════════════════════\n"
+    <> "           NCP NUTRITION STATUS REPORT          \n"
+    <> "═══════════════════════════════════════════════\n\n"
+    <> "Date: "
+    <> result.date
+    <> "\n\n"
+
+  let macro_header =
+    "📊 MACRO COMPARISON\n"
+    <> "───────────────────────────────────────────────\n"
+    <> "           Goal      Actual    Deviation\n"
+
+  let protein_line =
+    "Protein:   "
+    <> pad_float(result.goals.daily_protein, 6, 1)
+    <> "g   "
+    <> pad_float(result.average_consumed.protein, 6, 1)
+    <> "g   "
+    <> format_deviation(result.deviation.protein_pct)
+    <> "\n"
+
+  let fat_line =
+    "Fat:       "
+    <> pad_float(result.goals.daily_fat, 6, 1)
+    <> "g   "
+    <> pad_float(result.average_consumed.fat, 6, 1)
+    <> "g   "
+    <> format_deviation(result.deviation.fat_pct)
+    <> "\n"
+
+  let carbs_line =
+    "Carbs:     "
+    <> pad_float(result.goals.daily_carbs, 6, 1)
+    <> "g   "
+    <> pad_float(result.average_consumed.carbs, 6, 1)
+    <> "g   "
+    <> format_deviation(result.deviation.carbs_pct)
+    <> "\n"
+
+  let calories_line =
+    "Calories:  "
+    <> pad_float(result.goals.daily_calories, 6, 0)
+    <> "    "
+    <> pad_float(result.average_consumed.calories, 6, 0)
+    <> "    "
+    <> format_deviation(result.deviation.calories_pct)
+    <> "\n\n"
+
+  let status = case result.within_tolerance {
     True -> "✓ STATUS: Within tolerance - On track!\n\n"
     False -> "⚠ STATUS: Outside tolerance - Adjustments recommended\n\n"
   }
-  <> case list.is_empty(plan.suggestions) {
+
+  let suggestions = case
+    result.within_tolerance || list.is_empty(result.plan.suggestions)
+  {
     True -> ""
-    False -> {
+    False ->
       "📋 RECOMMENDED RECIPES\n"
       <> "───────────────────────────────────────────────\n"
-      <> list.index_map(plan.suggestions, fn(s, i) {
-        int.to_string(i + 1)
-        <> ". "
-        <> s.recipe_name
-        <> " (score: "
-        <> float_to_string_fixed(s.score, 2)
-        <> ")\n"
-        <> "   "
-        <> s.reason
-        <> "\n"
-      })
-      |> string.concat
-    }
+      <> format_suggestions(result.plan.suggestions)
   }
-  <> "\n═══════════════════════════════════════════════\n"
+
+  let footer = "\n═══════════════════════════════════════════════\n"
+
+  header
+  <> macro_header
+  <> protein_line
+  <> fat_line
+  <> carbs_line
+  <> calories_line
+  <> status
+  <> suggestions
+  <> footer
+}
+
+/// Format suggestions list
+fn format_suggestions(suggestions: List(RecipeSuggestion)) -> String {
+  list.index_map(suggestions, fn(s, i) {
+    int.to_string(i + 1)
+    <> ". "
+    <> s.recipe_name
+    <> " (score: "
+    <> float_to_string_fixed(s.score, 2)
+    <> ")\n"
+    <> "   "
+    <> s.reason
+    <> "\n"
+  })
+  |> string.concat
 }
 
 /// Format reconciliation output for display - matches Go cli.go FormatReconcileOutput
-pub fn format_reconcile_output(plan: AdjustmentPlan) -> String {
-  let base = format_status_output(plan)
+pub fn format_reconcile_output(result: ReconciliationResult) -> String {
+  let base = format_status_output(result)
 
-  case list.is_empty(plan.suggestions) {
+  case result.within_tolerance || list.is_empty(result.plan.suggestions) {
     True -> base
-    False -> {
+    False ->
       base
       <> "\n🍽️  ADJUSTMENT PLAN\n"
       <> "───────────────────────────────────────────────\n"
       <> "Add the following meals to get back on track:\n\n"
-      <> list.map(plan.suggestions, fn(s) { "  • " <> s.recipe_name <> "\n" })
-      |> string.concat
+      <> {
+        list.map(result.plan.suggestions, fn(s) {
+          "  • " <> s.recipe_name <> "\n"
+        })
+        |> string.concat
+      }
       <> "\n"
-    }
+  }
+}
+
+/// Format deviation percentage with sign
+fn format_deviation(pct: Float) -> String {
+  let sign = case pct >=. 0.0 {
+    True -> "+"
+    False -> ""
+  }
+  sign <> float_to_string_fixed(pct, 1) <> "%"
+}
+
+/// Pad a float to specified width with given decimal places
+fn pad_float(f: Float, width: Int, decimals: Int) -> String {
+  let formatted = float_to_string_fixed(f, decimals)
+  let padding = width - string.length(formatted)
+  case padding > 0 {
+    True -> string.repeat(" ", padding) <> formatted
+    False -> formatted
   }
 }
 

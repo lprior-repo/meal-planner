@@ -2,7 +2,7 @@ import gleam/list
 import gleam/result
 import gleeunit/should
 import meal_planner/ncp
-import shared/types.{Macros}
+import meal_planner/types.{Macros}
 
 pub fn recipe_scoring_test() {
   let deviation =

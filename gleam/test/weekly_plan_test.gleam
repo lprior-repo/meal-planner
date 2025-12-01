@@ -10,6 +10,7 @@ import meal_planner/weekly_plan.{day_names, generate_weekly_plan}
 fn make_compliant_recipes() -> List(Recipe) {
   [
     Recipe(
+      id: "beef-steak",
       name: "Beef Steak",
       ingredients: [
         Ingredient(name: "Ribeye steak", quantity: "12 oz"),
@@ -23,6 +24,7 @@ fn make_compliant_recipes() -> List(Recipe) {
       vertical_compliant: True,
     ),
     Recipe(
+      id: "ground-beef-bowl",
       name: "Ground Beef Bowl",
       ingredients: [
         Ingredient(name: "Ground beef", quantity: "1 lb"),
@@ -36,6 +38,7 @@ fn make_compliant_recipes() -> List(Recipe) {
       vertical_compliant: True,
     ),
     Recipe(
+      id: "salmon-fillet",
       name: "Salmon Fillet",
       ingredients: [Ingredient(name: "Salmon", quantity: "8 oz")],
       instructions: ["Bake salmon"],
@@ -46,6 +49,7 @@ fn make_compliant_recipes() -> List(Recipe) {
       vertical_compliant: True,
     ),
     Recipe(
+      id: "scrambled-eggs",
       name: "Scrambled Eggs",
       ingredients: [
         Ingredient(name: "Eggs", quantity: "4"),
@@ -204,6 +208,7 @@ pub fn generate_weekly_plan_no_compliant_recipes_test() {
   // Non-compliant recipe
   let recipes = [
     Recipe(
+      id: "bad-recipe",
       name: "Bad Recipe",
       ingredients: [],
       instructions: [],

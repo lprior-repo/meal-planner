@@ -14,6 +14,7 @@ import meal_planner/types.{
 // Helper to create test recipe
 fn make_recipe(name: String) -> Recipe {
   Recipe(
+    id: name,
     name: name,
     ingredients: [
       Ingredient(name: "Ground beef", quantity: "1 lb"),

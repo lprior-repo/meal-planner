@@ -24,6 +24,7 @@ pub type DailyPlan {
 /// Create a default empty recipe
 pub fn default_recipe() -> Recipe {
   Recipe(
+    id: "",
     name: "",
     ingredients: [],
     instructions: [],
@@ -127,16 +128,7 @@ pub fn generate_weekly_plan(
       DailyPlan(day_name: day, meals: [
         Meal(
           recipe: list.first(recipes)
-            |> result.unwrap(Recipe(
-              name: "",
-              ingredients: [],
-              instructions: [],
-              macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
-              servings: 1,
-              category: "",
-              fodmap_level: Low,
-              vertical_compliant: False,
-            )),
+            |> result.unwrap(default_recipe()),
           portion_size: 1.0,
         ),
       ])

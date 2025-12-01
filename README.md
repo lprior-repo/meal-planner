@@ -1,160 +1,129 @@
 # Meal Planner
 
-A Go application that selects random recipes from a SQLite database and can send them via email using the Mailtrap API. This tool is perfect for meal planning, recipe sharing, or integrating into a larger kitchen management system.
-
-## Table of Contents
-
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Configuration](#configuration)
-  - [.env File](#env-file)
-  - [Recipe Files](#recipe-files)
-- [Usage](#usage)
-- [Testing](#testing)
-- [Sample Output](#sample-output)
-- [Dependencies](#dependencies)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
+A Gleam application for meal planning based on the Vertical Diet principles. Features include recipe management, FODMAP analysis, weekly meal plan generation, macro tracking, and a Nutrition Control Plane (NCP) for reconciling dietary goals.
 
 ## Features
 
-- **SQLite Database Storage**: Automatically migrates YAML recipes to a local SQLite database for fast access
-- **Random Recipe Selection**: Randomly selects 4 recipes from the database
-- **Dual Output Modes**: Choose between terminal display or email delivery
-- **Email Integration**: Sends the selected recipes via email using the Mailtrap API
-- **Secure Configuration**: Utilizes environment variables to manage sensitive information securely
-- **Auto-Initialization**: Verifies recipes directory, database, and environment on startup
-- **Simple Recipes**: All recipes have 5 ingredients or less for easy preparation
-
+- **Recipe Management**: Load recipes from YAML files, store in SQLite, query by category
+- **FODMAP Analysis**: Analyze recipes for FODMAP content with exception handling (garlic-infused oil, etc.)
+- **Weekly Meal Planning**: Generate weekly meal plans based on user profile and macro targets
+- **Macro Calculations**: Calculate daily protein, fat, carb targets based on bodyweight, activity level, and goals
+- **Portion Sizing**: Automatically calculate portion sizes to meet macro targets
+- **Shopping List Generation**: Generate categorized shopping lists from meal plans
+- **Nutrition Control Plane (NCP)**: Track nutrition state, set goals, reconcile deviations
+- **Recipe Validation**: Validate recipes against Vertical Diet rules (no seed oils, proper grains)
+- **User Profiles**: Persist user profiles with activity level, goals, and meal preferences
 
 ## Prerequisites
 
-- **Go**: Ensure you have Go installed (version 1.23 or later recommended). [Download Go](https://golang.org/dl/)
-- **Mailtrap Account**: Sign up for a [Mailtrap](https://mailtrap.io/) account to obtain an API token for sending emails.
-- **Git**: For version control and cloning the repository. [Download Git](https://git-scm.com/downloads)
+- **Erlang/OTP**: Version 26 or later
+- **Gleam**: Version 1.5.1 or later
+- **Git**: For version control
 
 ## Installation
 
 1. **Clone the Repository**
 
 ```bash
-   git clone https://github.com/lprior-repo/meal-planner
-   cd meal-planner
+git clone https://github.com/lprior-repo/meal-planner
+cd meal-planner/gleam
 ```
 
-2. **Install the dependencies**
+2. **Install dependencies**
 ```bash
-go mod tidy
+gleam deps download
 ```
 
-3. **Set up environment variables (optional for terminal-only use)**
-Create a `.env` file with:
-```
-MAILTRAP_API_TOKEN=your_mailtrap_token
-SENDER_EMAIL=your_sender@example.com
-SENDER_NAME=Your Name
-RECIPIENT_EMAIL=recipient@example.com
-```
-
-4. **Run the Program**
+3. **Build the project**
 ```bash
-go run *.go
+gleam build
 ```
 
-When prompted, choose `terminal` to display recipes in the console or `email` to send via Mailtrap.
+4. **Run tests**
+```bash
+gleam test
+```
+
+## Usage
+
+Run the CLI application:
+
+```bash
+gleam run
+```
+
+Available commands:
+- `plan` - Generate a weekly meal plan
+- `ncp status` - Show NCP status
+- `ncp reconcile` - Reconcile nutrition state with goals
+- `ncp goals` - Show nutrition goals
+- `ncp recipes` - Suggest recipes based on current deviation
 
 ## Testing
 
-The project uses the Testing Trophy approach with multiple levels of tests:
-
-### Running Tests
-
-Use the provided Makefile to run tests:
+The project has comprehensive test coverage (225+ tests):
 
 ```bash
 # Run all tests
-make test
+gleam test
 
-# Run specific test levels
-make test-unit
-make test-integration
-make test-e2e
-
-# Run linter
-make lint
-
-# Build and run the application
-make build
-make run
+# Run specific test files
+gleam test --module fodmap_test
+gleam test --module ncp_test
 ```
 
-### Test Structure
+### Test Categories
 
-- **Static Tests (Linting)**: Uses golangci-lint to check code quality
-- **Unit Tests**: Tests individual functions in isolation
-- **Integration Tests**: Tests how components work together
-- **End-to-End Tests**: Tests the entire application workflow
+- **Unit Tests**: Types, macros, FODMAP analysis, validation
+- **Integration Tests**: Storage, migrations, recipe loading
+- **NCP Tests**: Scoring, deviation calculation, reconciliation
 
-### GitHub Actions
+## Project Structure
 
-This project uses GitHub Actions for continuous integration, automatically running tests on every push to the main branch and pull requests.
-
-## Sample Output
-
-```yaml
-Recipe 1: Simple Beef Stir-Fry
-  - beef sirloin, sliced: 2 lbs
-  - broccoli florets: 2 cups
-  - soy sauce: 1/4 cup
-  - sesame oil: 2 tbsp
-  - garlic, minced: 2 cloves
-  * Mix soy sauce, sesame oil, and garlic.
-  * Toss beef slices in the mixture.
-  * Arrange beef and broccoli on a baking sheet.
-  * Bake at 400°F for 20-25 minutes, stirring halfway through.
-
-------------------------------------------------
-
-Recipe 2: Lemon Garlic Shrimp
-  - shrimp, peeled and deveined: 2 lbs
-  - lemon juice: 1/4 cup
-  - garlic cloves, minced: 4
-  - butter: 3 tbsp
-  - salt: 1 tsp
-  * Mix lemon juice and garlic in a bowl.
-  * Toss shrimp in the mixture with salt.
-  * Heat butter in a skillet.
-  * Cook shrimp for 1-2 minutes per side until pink.
-  * Serve hot.
-
-------------------------------------------------
-
-Recipe 3: Simple Pork and Beans
-  - bacon, diced: 1 lb
-  - canned beans: 2 cans (15 oz each)
-  - ketchup: 1/2 cup
-  - molasses: 1/4 cup
-  - brown sugar: 2 tbsp
-  * Cook bacon in skillet until crisp.
-  * Add beans, ketchup, molasses, and brown sugar.
-  * Stir to combine.
-  * Bake at 350°F covered for 30 minutes, then uncovered for 15 minutes.
-  * Let rest before serving.
-
-------------------------------------------------
-
-Recipe 4: Simple Smoked Turkey Breast
-  - turkey breast: 5 lbs
-  - honey: 2 tbsp
-  - Dijon mustard: 2 tbsp
-  - salt: 1 tbsp
-  - garlic powder: 1 tbsp
-  * Preheat smoker to 250°F.
-  * Mix honey, Dijon mustard, salt, and garlic powder.
-  * Rub mixture all over turkey breast.
-  * Smoke until internal temperature reaches 165°F.
-  * Let rest for 15 minutes before slicing.
+```
+gleam/
+├── src/
+│   └── meal_planner/
+│       ├── types.gleam        # Core types (Recipe, Macros, UserProfile)
+│       ├── fodmap.gleam       # FODMAP analysis
+│       ├── validation.gleam   # Recipe validation
+│       ├── meal_plan.gleam    # Meal plan generation
+│       ├── weekly_plan.gleam  # Weekly planning
+│       ├── meal_selection.gleam # Meal selection logic
+│       ├── portion.gleam      # Portion calculations
+│       ├── shopping_list.gleam # Shopping list generation
+│       ├── output.gleam       # Output formatting
+│       ├── ncp.gleam          # Nutrition Control Plane
+│       ├── storage.gleam      # SQLite persistence
+│       ├── migrate.gleam      # Database migrations
+│       └── recipe_loader.gleam # YAML recipe loading
+├── test/
+│   └── *.gleam                # Test files
+└── gleam.toml                 # Project configuration
 ```
 
+## Architecture
+
+The application follows functional programming principles with immutable data structures. Key design decisions:
+
+- **Pure Functions**: Core logic is pure, side effects isolated to storage/IO modules
+- **Type Safety**: Gleam's type system prevents runtime errors
+- **Pattern Matching**: Extensive use of pattern matching for control flow
+- **Result Types**: Errors handled with Result types, no exceptions
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Write tests first (TDD)
+4. Implement your changes
+5. Ensure all tests pass: `gleam test`
+6. Submit a pull request
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Legacy Go Code
+
+The original Go implementation has been archived in `_archive/go/`. The project has been fully migrated to Gleam.

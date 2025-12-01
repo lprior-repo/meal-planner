@@ -36,6 +36,7 @@ pub fn is_low_fodmap_exception_regular_onion_test() {
 pub fn analyze_recipe_fodmap_low_fodmap_test() {
   let recipe =
     Recipe(
+      id: "grilled-chicken",
       name: "Grilled Chicken",
       ingredients: [
         Ingredient(name: "Chicken breast", quantity: "200g"),
@@ -60,6 +61,7 @@ pub fn analyze_recipe_fodmap_low_fodmap_test() {
 pub fn analyze_recipe_fodmap_high_fodmap_test() {
   let recipe =
     Recipe(
+      id: "garlic-bread",
       name: "Garlic Bread",
       ingredients: [
         Ingredient(name: "Bread", quantity: "2 slices"),
@@ -85,6 +87,7 @@ pub fn analyze_recipe_fodmap_high_fodmap_test() {
 pub fn analyze_recipe_fodmap_exception_test() {
   let recipe =
     Recipe(
+      id: "salad-vinegar",
       name: "Salad with Vinegar",
       ingredients: [
         Ingredient(name: "Lettuce", quantity: "1 cup"),
@@ -108,6 +111,7 @@ pub fn analyze_recipe_fodmap_exception_test() {
 pub fn analyze_recipe_fodmap_empty_ingredients_test() {
   let recipe =
     Recipe(
+      id: "empty-recipe",
       name: "Empty Recipe",
       ingredients: [],
       instructions: [],
@@ -127,6 +131,7 @@ pub fn analyze_recipe_fodmap_empty_ingredients_test() {
 pub fn analyze_recipe_fodmap_multiple_high_fodmap_test() {
   let recipe =
     Recipe(
+      id: "bean-soup",
       name: "Bean Soup",
       ingredients: [
         Ingredient(name: "Beans", quantity: "1 cup"),

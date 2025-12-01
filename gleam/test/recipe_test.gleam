@@ -7,6 +7,7 @@ import meal_planner/types.{
 pub fn recipe_is_vertical_diet_compliant_true_test() {
   let recipe =
     Recipe(
+      id: "grilled-chicken",
       name: "Grilled Chicken",
       ingredients: [],
       instructions: [],
@@ -22,6 +23,7 @@ pub fn recipe_is_vertical_diet_compliant_true_test() {
 pub fn recipe_is_vertical_diet_compliant_high_fodmap_test() {
   let recipe =
     Recipe(
+      id: "garlic-bread",
       name: "Garlic Bread",
       ingredients: [],
       instructions: [],
@@ -38,6 +40,7 @@ pub fn recipe_is_vertical_diet_compliant_high_fodmap_test() {
 pub fn recipe_is_vertical_diet_compliant_not_marked_test() {
   let recipe =
     Recipe(
+      id: "rice",
       name: "Rice",
       ingredients: [],
       instructions: [],
@@ -54,6 +57,7 @@ pub fn recipe_is_vertical_diet_compliant_not_marked_test() {
 pub fn recipe_total_macros_test() {
   let recipe =
     Recipe(
+      id: "chicken",
       name: "Chicken",
       ingredients: [],
       instructions: [],
@@ -72,6 +76,7 @@ pub fn recipe_total_macros_test() {
 pub fn recipe_total_macros_zero_servings_test() {
   let recipe =
     Recipe(
+      id: "test-zero",
       name: "Test",
       ingredients: [],
       instructions: [],
@@ -89,6 +94,7 @@ pub fn recipe_total_macros_zero_servings_test() {
 pub fn recipe_macros_per_serving_test() {
   let recipe =
     Recipe(
+      id: "test-per-serving",
       name: "Test",
       ingredients: [],
       instructions: [],
