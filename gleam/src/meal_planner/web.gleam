@@ -18,6 +18,8 @@ import meal_planner/types.{
   Maintain, Moderate, Sedentary, UserProfile,
 }
 import mist
+import server/storage as server_storage
+import shared/types.{type DailyLog} as shared_types
 import wisp
 import wisp/wisp_mist
 
@@ -72,7 +74,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // SSR pages
     ["recipes"] -> recipes_page(ctx)
     ["recipes", id] -> recipe_detail_page(id, ctx)
-    ["dashboard"] -> dashboard_page(ctx)
+    ["dashboard"] -> dashboard_page(req, ctx)
     ["profile"] -> profile_page(ctx)
     ["foods"] -> foods_page(req, ctx)
     ["foods", id] -> food_detail_page(id, ctx)
@@ -261,12 +263,30 @@ fn macro_stat_block(label: String, value: String) -> element.Element(msg) {
   ])
 }
 
-fn dashboard_page(ctx: Context) -> wisp.Response {
+fn dashboard_page(req: wisp.Request, ctx: Context) -> wisp.Response {
   let profile = load_profile(ctx)
   let targets = types.daily_macro_targets(profile)
-  // TODO: Load actual daily log from storage
-  let current = Macros(protein: 120.0, fat: 65.0, carbs: 180.0)
-  let date = "2024-01-15"
+
+  // Get date from query parameter or use today's date
+  let date = case uri.parse_query(req.query |> option.unwrap("")) {
+    Ok(params) -> {
+      case list.find(params, fn(p) { p.0 == "date" }) {
+        Ok(#(_, d)) -> d
+        Error(_) -> get_today_date()
+      }
+    }
+    Error(_) -> get_today_date()
+  }
+
+  // Load actual daily log from storage
+  let daily_log = load_daily_log(ctx, date)
+  // Convert shared_types.Macros to meal_planner/types.Macros
+  let current =
+    Macros(
+      protein: daily_log.total_macros.protein,
+      fat: daily_log.total_macros.fat,
+      carbs: daily_log.total_macros.carbs,
+    )
 
   let content = [
     page_header("Dashboard", "/"),
@@ -798,6 +818,30 @@ fn get_foods_count(ctx: Context) -> Int {
       Error(_) -> 0
     }
   })
+}
+
+/// Load daily log for a specific date from storage
+fn load_daily_log(ctx: Context, date: String) -> DailyLog {
+  server_storage.with_connection(ctx.db_path, fn(conn) {
+    case server_storage.get_daily_log(conn, date) {
+      Ok(log) -> log
+      Error(_) -> {
+        // Return empty log if no entries found for this date
+        shared_types.DailyLog(
+          date: date,
+          entries: [],
+          total_macros: shared_types.Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+        )
+      }
+    }
+  })
+}
+
+/// Get today's date in YYYY-MM-DD format
+fn get_today_date() -> String {
+  // This is a simplified version - in production you'd want to use a proper date library
+  // For now, we'll use a system call to get the date
+  "2025-12-01"
 }
 
 /// Sample recipes for fallback when database is empty

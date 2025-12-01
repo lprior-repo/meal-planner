@@ -1,8 +1,8 @@
 //// Shared types for the meal planner application.
 //// These types work on both JavaScript (client) and Erlang (server) targets.
 
-import gleam/json.{type Json}
 import gleam/dynamic/decode.{type Decoder}
+import gleam/json.{type Json}
 import gleam/list
 
 // ============================================================================
@@ -114,7 +114,7 @@ pub fn daily_macro_targets(u: UserProfile) -> Macros {
   let fat = calculate_fat_target(u)
   let calories = calculate_calorie_target(u)
   let carbs = calculate_carb_target(calories, protein, fat)
-  
+
   Macros(protein: protein, fat: fat, carbs: carbs)
 }
 
@@ -184,11 +184,7 @@ pub type FoodLogEntry {
 
 /// Daily food log with all entries
 pub type DailyLog {
-  DailyLog(
-    date: String,
-    entries: List(FoodLogEntry),
-    total_macros: Macros,
-  )
+  DailyLog(date: String, entries: List(FoodLogEntry), total_macros: Macros)
 }
 
 // ============================================================================
@@ -358,7 +354,10 @@ pub fn meal_type_decoder() -> Decoder(MealType) {
 pub fn recipe_decoder() -> Decoder(Recipe) {
   use id <- decode.field("id", decode.string)
   use name <- decode.field("name", decode.string)
-  use ingredients <- decode.field("ingredients", decode.list(ingredient_decoder()))
+  use ingredients <- decode.field(
+    "ingredients",
+    decode.list(ingredient_decoder()),
+  )
   use instructions <- decode.field("instructions", decode.list(decode.string))
   use macros <- decode.field("macros", macros_decoder())
   use servings <- decode.field("servings", decode.int)
@@ -419,5 +418,9 @@ pub fn daily_log_decoder() -> Decoder(DailyLog) {
   use date <- decode.field("date", decode.string)
   use entries <- decode.field("entries", decode.list(food_log_entry_decoder()))
   use total_macros <- decode.field("total_macros", macros_decoder())
-  decode.success(DailyLog(date: date, entries: entries, total_macros: total_macros))
+  decode.success(DailyLog(
+    date: date,
+    entries: entries,
+    total_macros: total_macros,
+  ))
 }

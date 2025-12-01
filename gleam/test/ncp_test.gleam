@@ -2,8 +2,8 @@ import gleam/list
 import gleam/string
 import gleeunit/should
 import meal_planner/ncp.{
-  AdjustmentPlan, DeviationResult, NutritionData, NutritionGoals,
-  NutritionState, RecipeSuggestion, ReconciliationResult, ScoredRecipe,
+  AdjustmentPlan, DeviationResult, NutritionData, NutritionGoals, NutritionState,
+  RecipeSuggestion, ReconciliationResult, ScoredRecipe,
   average_nutrition_history, calculate_deviation, deviation_is_within_tolerance,
   deviation_max, format_reconcile_output, format_status_output,
   generate_adjustments, generate_reason, get_default_goals,

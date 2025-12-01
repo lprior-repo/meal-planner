@@ -20,21 +20,19 @@ import shared/types
 
 pub fn main() {
   wisp.configure_logger()
-  
+
   let secret_key_base = wisp.random_string(64)
-  
+
   // Start the server
   let assert Ok(_) =
     wisp_mist.handler(handle_request, secret_key_base)
     |> mist.new
     |> mist.port(3000)
     |> mist.start
-  
+
   // Keep the process alive
   process.sleep_forever()
 }
-
-
 
 // ============================================================================
 // Request Handler
@@ -72,7 +70,7 @@ fn middleware(
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
-  
+
   handler(req)
 }
 
@@ -177,10 +175,9 @@ fn recipe_detail_page(id: String) -> wisp.Response {
   case list.find(recipes, fn(r) { r.id == id }) {
     Ok(recipe) -> {
       let content = [
-        html.a(
-          [attribute.href("/recipes"), attribute.class("back-link")],
-          [element.text("← Back to recipes")],
-        ),
+        html.a([attribute.href("/recipes"), attribute.class("back-link")], [
+          element.text("← Back to recipes"),
+        ]),
         html.div([attribute.class("recipe-detail")], [
           html.h1([], [element.text(recipe.name)]),
           html.p([attribute.class("meta")], [
@@ -194,10 +191,7 @@ fn recipe_detail_page(id: String) -> wisp.Response {
                 "Protein",
                 float_to_string(recipe.macros.protein) <> "g",
               ),
-              macro_stat_block(
-                "Fat",
-                float_to_string(recipe.macros.fat) <> "g",
-              ),
+              macro_stat_block("Fat", float_to_string(recipe.macros.fat) <> "g"),
               macro_stat_block(
                 "Carbs",
                 float_to_string(recipe.macros.carbs) <> "g",
@@ -337,7 +331,9 @@ fn profile_page() -> wisp.Response {
         html.h2([], [element.text("Stats")]),
         html.dl([], [
           html.dt([], [element.text("Bodyweight")]),
-          html.dd([], [element.text(float_to_string(profile.bodyweight) <> " lbs")]),
+          html.dd([], [
+            element.text(float_to_string(profile.bodyweight) <> " lbs"),
+          ]),
           html.dt([], [element.text("Activity Level")]),
           html.dd([], [
             element.text(types.activity_level_to_string(profile.activity_level)),
@@ -379,18 +375,28 @@ fn page_header(title: String, back_href: String) -> element.Element(msg) {
 }
 
 fn render_page(title: String, content: List(element.Element(msg))) -> String {
-  let body = html.html([attribute.attribute("lang", "en")], [
-    html.head([], [
-      html.meta([attribute.attribute("charset", "UTF-8")]),
-      html.meta([attribute.name("viewport"), attribute.attribute("content", "width=device-width, initial-scale=1.0")]),
-      html.title([], title),
-      html.link([attribute.rel("stylesheet"), attribute.href("/static/styles.css")]),
-    ]),
-    html.body([], [
-      html.div([attribute.class("container")], content),
-    ]),
-  ])
-  
+  let body =
+    html.html([attribute.attribute("lang", "en")], [
+      html.head([], [
+        html.meta([attribute.attribute("charset", "UTF-8")]),
+        html.meta([
+          attribute.name("viewport"),
+          attribute.attribute(
+            "content",
+            "width=device-width, initial-scale=1.0",
+          ),
+        ]),
+        html.title([], title),
+        html.link([
+          attribute.rel("stylesheet"),
+          attribute.href("/static/styles.css"),
+        ]),
+      ]),
+      html.body([], [
+        html.div([attribute.class("container")], content),
+      ]),
+    ])
+
   "<!DOCTYPE html>" <> element.to_string(body)
 }
 
@@ -411,13 +417,13 @@ fn handle_api(req: wisp.Request, path: List(String)) -> wisp.Response {
 fn api_recipes(_req: wisp.Request) -> wisp.Response {
   let recipes = sample_recipes()
   let json_data = json.array(recipes, types.recipe_to_json)
-  
+
   wisp.json_response(json.to_string(json_data), 200)
 }
 
 fn api_recipe(_req: wisp.Request, id: String) -> wisp.Response {
   let recipes = sample_recipes()
-  
+
   case list.find(recipes, fn(r) { r.id == id }) {
     Ok(recipe) -> {
       let json_data = types.recipe_to_json(recipe)
@@ -428,25 +434,23 @@ fn api_recipe(_req: wisp.Request, id: String) -> wisp.Response {
 }
 
 fn api_profile(_req: wisp.Request) -> wisp.Response {
-  let profile = types.UserProfile(
-    id: "user-1",
-    bodyweight: 180.0,
-    activity_level: types.Moderate,
-    goal: types.Maintain,
-    meals_per_day: 3,
-  )
-  
+  let profile =
+    types.UserProfile(
+      id: "user-1",
+      bodyweight: 180.0,
+      activity_level: types.Moderate,
+      goal: types.Maintain,
+      meals_per_day: 3,
+    )
+
   let json_data = types.user_profile_to_json(profile)
   wisp.json_response(json.to_string(json_data), 200)
 }
 
 fn api_logs(_req: wisp.Request, date: String) -> wisp.Response {
-  let log = types.DailyLog(
-    date: date,
-    entries: [],
-    total_macros: types.macros_zero(),
-  )
-  
+  let log =
+    types.DailyLog(date: date, entries: [], total_macros: types.macros_zero())
+
   let json_data = types.daily_log_to_json(log)
   wisp.json_response(json.to_string(json_data), 200)
 }
@@ -460,7 +464,7 @@ fn serve_static(req: wisp.Request, _path: List(String)) -> wisp.Response {
     Ok(dir) -> dir <> "/static"
     Error(_) -> "./priv/static"
   }
-  
+
   wisp.serve_static(req, under: "/static", from: static_dir, next: fn() {
     wisp.not_found()
   })
