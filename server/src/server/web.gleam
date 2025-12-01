@@ -12,6 +12,9 @@ import mist
 import wisp
 import wisp/wisp_mist
 
+import server/storage
+import server/usda_api
+import server/web_helpers
 import shared/types
 
 // ============================================================================
@@ -54,7 +57,7 @@ fn handle_request(req: wisp.Request) -> wisp.Response {
     // SSR pages
     ["recipes"] -> recipes_page()
     ["recipes", id] -> recipe_detail_page(id)
-    ["dashboard"] -> dashboard_page()
+    ["dashboard"] -> dashboard_page(req)
     ["profile"] -> profile_page()
 
     // 404
@@ -239,17 +242,65 @@ fn macro_stat_block(label: String, value: String) -> element.Element(msg) {
   ])
 }
 
-fn dashboard_page() -> wisp.Response {
-  let profile = sample_profile()
-  let daily_log = sample_daily_log()
+fn dashboard_page(req: wisp.Request) -> wisp.Response {
+  use conn <- storage.with_connection(storage.db_path)
+
+  let today = web_helpers.get_today_date()
+  let profile = storage.get_user_profile_or_default(conn)
+  let log = case storage.get_daily_log(conn, today) {
+    Ok(l) -> l
+    Error(_) ->
+      types.DailyLog(
+        date: today,
+        entries: [],
+        total_macros: types.macros_zero(),
+      )
+  }
+  let entries = log.entries
+
+  // Get filter from query params
+  let filter = case wisp.get_query(req) {
+    [#("filter", f), ..] -> f
+    _ -> "all"
+  }
+
+  // Filter entries by meal type
+  let filtered_entries = case filter {
+    "breakfast" ->
+      list.filter(entries, fn(e: types.FoodLogEntry) {
+        e.meal_type == types.Breakfast
+      })
+    "lunch" ->
+      list.filter(entries, fn(e: types.FoodLogEntry) {
+        e.meal_type == types.Lunch
+      })
+    "dinner" ->
+      list.filter(entries, fn(e: types.FoodLogEntry) {
+        e.meal_type == types.Dinner
+      })
+    "snack" ->
+      list.filter(entries, fn(e: types.FoodLogEntry) {
+        e.meal_type == types.Snack
+      })
+    _ -> entries
+  }
+
   let targets = types.daily_macro_targets(profile)
-  let current = daily_log.total_macros
+  let current = sum_macros(filtered_entries)
 
   let content = [
     page_header("Dashboard", "/"),
     html.div([attribute.class("dashboard")], [
       // Date
-      html.p([attribute.class("date")], [element.text(daily_log.date)]),
+      html.p([attribute.class("date")], [element.text(today)]),
+      // Filter buttons
+      html.div([attribute.class("filter-buttons")], [
+        filter_btn("All", "all", filter),
+        filter_btn("Breakfast", "breakfast", filter),
+        filter_btn("Lunch", "lunch", filter),
+        filter_btn("Dinner", "dinner", filter),
+        filter_btn("Snack", "snack", filter),
+      ]),
       // Calorie summary
       html.div([attribute.class("calorie-summary")], [
         html.div([attribute.class("calorie-current")], [
@@ -269,9 +320,24 @@ fn dashboard_page() -> wisp.Response {
         macro_bar("Fat", current.fat, targets.fat, "#ffc107"),
         macro_bar("Carbs", current.carbs, targets.carbs, "#17a2b8"),
       ]),
+      // Logged meals
+      html.div([attribute.class("logged-meals")], [
+        html.h3([], [element.text("Today's Meals")]),
+        case filtered_entries {
+          [] ->
+            html.p([attribute.class("empty")], [
+              element.text("No meals logged yet"),
+            ])
+          _ ->
+            html.ul(
+              [attribute.class("meal-list")],
+              list.map(filtered_entries, meal_entry_item),
+            )
+        },
+      ]),
       // Quick actions
       html.div([attribute.class("quick-actions")], [
-        html.a([attribute.href("/recipes"), attribute.class("btn")], [
+        html.a([attribute.href("/log"), attribute.class("btn")], [
           element.text("Add Meal"),
         ]),
       ]),
@@ -279,6 +345,68 @@ fn dashboard_page() -> wisp.Response {
   ]
 
   wisp.html_response(render_page("Dashboard - Meal Planner", content), 200)
+}
+
+fn filter_btn(
+  label: String,
+  value: String,
+  current: String,
+) -> element.Element(msg) {
+  let class = case value == current {
+    True -> "filter-btn active"
+    False -> "filter-btn"
+  }
+  html.a(
+    [attribute.href("/dashboard?filter=" <> value), attribute.class(class)],
+    [
+      element.text(label),
+    ],
+  )
+}
+
+fn meal_entry_item(entry: types.FoodLogEntry) -> element.Element(msg) {
+  html.li([attribute.class("meal-entry")], [
+    html.div([attribute.class("meal-info")], [
+      html.span([attribute.class("meal-name")], [
+        element.text(entry.recipe_name),
+      ]),
+      html.span([attribute.class("meal-servings")], [
+        element.text(" (" <> float_to_string(entry.servings) <> " serving)"),
+      ]),
+      html.span([attribute.class("meal-type-badge")], [
+        element.text(types.meal_type_to_string(entry.meal_type)),
+      ]),
+    ]),
+    html.div([attribute.class("meal-macros")], [
+      element.text(
+        float_to_string(entry.macros.protein)
+        <> "P / "
+        <> float_to_string(entry.macros.fat)
+        <> "F / "
+        <> float_to_string(entry.macros.carbs)
+        <> "C",
+      ),
+    ]),
+    html.a(
+      [
+        attribute.href("/api/logs/entry/" <> entry.id <> "?action=delete"),
+        attribute.class("delete-btn"),
+      ],
+      [
+        element.text("×"),
+      ],
+    ),
+  ])
+}
+
+fn sum_macros(entries: List(types.FoodLogEntry)) -> types.Macros {
+  list.fold(entries, types.macros_zero(), fn(acc, entry) {
+    types.Macros(
+      protein: acc.protein +. entry.macros.protein,
+      fat: acc.fat +. entry.macros.fat,
+      carbs: acc.carbs +. entry.macros.carbs,
+    )
+  })
 }
 
 fn macro_bar(
@@ -409,7 +537,11 @@ fn handle_api(req: wisp.Request, path: List(String)) -> wisp.Response {
     ["recipes"] -> api_recipes(req)
     ["recipes", id] -> api_recipe(req, id)
     ["profile"] -> api_profile(req)
+    ["logs"] -> api_logs_create(req)
+    ["logs", "recent"] -> api_logs_recent(req)
+    ["logs", "entry", id] -> api_log_entry(req, id)
     ["logs", date] -> api_logs(req, date)
+    ["foods", "search"] -> api_foods_search(req)
     _ -> wisp.not_found()
   }
 }
@@ -448,11 +580,108 @@ fn api_profile(_req: wisp.Request) -> wisp.Response {
 }
 
 fn api_logs(_req: wisp.Request, date: String) -> wisp.Response {
-  let log =
-    types.DailyLog(date: date, entries: [], total_macros: types.macros_zero())
+  use conn <- storage.with_connection(storage.db_path)
+
+  let log = case storage.get_daily_log(conn, date) {
+    Ok(l) -> l
+    Error(_) ->
+      types.DailyLog(date: date, entries: [], total_macros: types.macros_zero())
+  }
 
   let json_data = types.daily_log_to_json(log)
   wisp.json_response(json.to_string(json_data), 200)
+}
+
+/// POST /api/logs - Create a new food log entry
+fn api_logs_create(req: wisp.Request) -> wisp.Response {
+  use conn <- storage.with_connection(storage.db_path)
+
+  // Get query params for form submission
+  case wisp.get_query(req) {
+    [
+      #("recipe_id", recipe_id),
+      #("servings", servings_str),
+      #("meal_type", meal_type_str),
+      ..
+    ] -> {
+      let servings = case float.parse(servings_str) {
+        Ok(s) -> s
+        Error(_) -> 1.0
+      }
+      let meal_type = string_to_meal_type(meal_type_str)
+      let today = today_date_string()
+
+      // Get recipe to calculate macros
+      case storage.get_recipe_by_id(conn, recipe_id) {
+        Error(_) -> wisp.not_found()
+        Ok(recipe) -> {
+          let scaled_macros = types.macros_scale(recipe.macros, servings)
+          let entry =
+            types.FoodLogEntry(
+              id: generate_entry_id(),
+              recipe_id: recipe.id,
+              recipe_name: recipe.name,
+              servings: servings,
+              macros: scaled_macros,
+              meal_type: meal_type,
+              logged_at: current_timestamp(),
+            )
+
+          case storage.save_food_log_entry(conn, today, entry) {
+            Ok(_) -> wisp.redirect("/dashboard")
+            Error(_) -> {
+              let err =
+                json.object([#("error", json.string("Failed to save entry"))])
+              wisp.json_response(json.to_string(err), 500)
+            }
+          }
+        }
+      }
+    }
+    _ -> {
+      let err =
+        json.object([#("error", json.string("Missing required parameters"))])
+      wisp.json_response(json.to_string(err), 400)
+    }
+  }
+}
+
+/// GET /api/logs/recent - Get recently logged meals
+fn api_logs_recent(_req: wisp.Request) -> wisp.Response {
+  use conn <- storage.with_connection(storage.db_path)
+
+  case storage.get_recent_meals(conn, 5) {
+    Ok(entries) -> {
+      let json_data = json.array(entries, types.food_log_entry_to_json)
+      wisp.json_response(json.to_string(json_data), 200)
+    }
+    Error(_) -> {
+      let empty = json.array([], fn(x) { x })
+      wisp.json_response(json.to_string(empty), 200)
+    }
+  }
+}
+
+/// GET/DELETE /api/logs/entry/:id - Manage a log entry
+fn api_log_entry(req: wisp.Request, entry_id: String) -> wisp.Response {
+  use conn <- storage.with_connection(storage.db_path)
+
+  // Check for delete action in query params
+  case wisp.get_query(req) {
+    [#("action", "delete"), ..] -> {
+      case storage.delete_food_log_entry(conn, entry_id) {
+        Ok(_) -> wisp.redirect("/dashboard")
+        Error(_) -> wisp.not_found()
+      }
+    }
+    _ -> wisp.not_found()
+  }
+}
+
+/// GET /api/foods/search?q=query - Search USDA foods
+fn api_foods_search(req: wisp.Request) -> wisp.Response {
+  // Delegate to USDA API module
+  usda_api.handle_search(req)
 }
 
 // ============================================================================
@@ -534,14 +763,6 @@ fn sample_profile() -> types.UserProfile {
   )
 }
 
-fn sample_daily_log() -> types.DailyLog {
-  types.DailyLog(
-    date: "2024-01-15",
-    entries: [],
-    total_macros: types.Macros(protein: 120.0, fat: 65.0, carbs: 180.0),
-  )
-}
-
 // ============================================================================
 // Helpers
 // ============================================================================
@@ -554,3 +775,53 @@ fn float_to_string(f: Float) -> String {
 
 @external(erlang, "erlang", "integer_to_binary")
 fn int_to_string(i: Int) -> String
+
+/// Get today's date as a string in YYYY-MM-DD format
+fn today_date_string() -> String {
+  // Use Erlang calendar for date
+  let #(#(year, month, day), _time) = erlang_localtime()
+  int.to_string(year) <> "-" <> pad_two(month) <> "-" <> pad_two(day)
+}
+
+fn pad_two(n: Int) -> String {
+  case n < 10 {
+    True -> "0" <> int.to_string(n)
+    False -> int.to_string(n)
+  }
+}
+
+@external(erlang, "calendar", "local_time")
+fn erlang_localtime() -> #(#(Int, Int, Int), #(Int, Int, Int))
+
+/// Generate a unique entry ID
+fn generate_entry_id() -> String {
+  "entry-" <> wisp.random_string(12)
+}
+
+/// Get current timestamp as ISO8601 string
+fn current_timestamp() -> String {
+  let #(#(year, month, day), #(hour, min, sec)) = erlang_localtime()
+  int.to_string(year)
+  <> "-"
+  <> pad_two(month)
+  <> "-"
+  <> pad_two(day)
+  <> "T"
+  <> pad_two(hour)
+  <> ":"
+  <> pad_two(min)
+  <> ":"
+  <> pad_two(sec)
+  <> "Z"
+}
+
+/// Convert string to meal type
+fn string_to_meal_type(s: String) -> types.MealType {
+  case s {
+    "breakfast" -> types.Breakfast
+    "lunch" -> types.Lunch
+    "dinner" -> types.Dinner
+    "snack" -> types.Snack
+    _ -> types.Lunch
+  }
+}

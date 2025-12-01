@@ -2,12 +2,9 @@
 //// Provides search and food detail from USDA database
 
 import gleam/dynamic/decode
-import gleam/http
 import gleam/int
 import gleam/json
-import gleam/list
 import gleam/option.{None, Some}
-import gleam/result
 import gleam/string
 import server/storage
 import sqlight
@@ -27,15 +24,6 @@ type UsdaFood {
 
 type FoodNutrient {
   FoodNutrient(nutrient_name: String, amount: Float, unit: String)
-}
-
-type FoodDetail {
-  FoodDetail(
-    fdc_id: Int,
-    description: String,
-    food_category: option.Option(String),
-    nutrients: List(FoodNutrient),
-  )
 }
 
 // ============================================================================

@@ -411,7 +411,7 @@ pub fn generate_weekly_plan_each_day_has_meal_test() {
   case result {
     Ok(plan) -> {
       // Each day should have at least one meal
-      list.all(plan.days, fn(day) { list.length(day.meals) > 0 })
+      list.all(plan.days, fn(day) { day.meals != [] })
       |> should.be_true()
     }
     Error(_) -> should.fail()
