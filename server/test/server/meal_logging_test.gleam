@@ -923,3 +923,765 @@ pub fn filter_all_meal_types_returns_all_test() {
     |> should.equal(1)
   })
 }
+
+// ============================================================================
+// BDD Scenario: Log meal from recipe with servings calculation
+// ============================================================================
+
+pub fn log_meal_from_recipe_with_servings_test() {
+  // Given a database with a recipe that has base macros per serving
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(_) = storage.init_db(conn)
+
+    let recipe =
+      types.Recipe(
+        id: "chicken-rice",
+        name: "Chicken and Rice",
+        ingredients: [
+          types.Ingredient("Chicken breast", "8 oz"),
+          types.Ingredient("White rice", "1 cup"),
+        ],
+        instructions: ["Cook rice", "Grill chicken", "Combine"],
+        macros: types.Macros(protein: 45.0, fat: 8.0, carbs: 45.0),
+        servings: 1,
+        category: "chicken",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      )
+    let assert Ok(_) = storage.save_recipe(conn, recipe)
+
+    // When logging 1.5 servings of the recipe
+    let servings = 1.5
+    let calculated_macros = types.macros_scale(recipe.macros, servings)
+
+    let entry =
+      types.FoodLogEntry(
+        id: "log-001",
+        recipe_id: "chicken-rice",
+        recipe_name: "Chicken and Rice",
+        servings: servings,
+        macros: calculated_macros,
+        meal_type: types.Lunch,
+        logged_at: "2024-01-20T12:00:00Z",
+      )
+
+    let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-20", entry)
+
+    // Then the entry is logged with correctly calculated macros
+    let assert Ok(daily_log) = storage.get_daily_log(conn, "2024-01-20")
+    let assert [logged_entry] = daily_log.entries
+
+    // Protein: 45 * 1.5 = 67.5
+    logged_entry.macros.protein
+    |> should.equal(67.5)
+
+    // Fat: 8 * 1.5 = 12
+    logged_entry.macros.fat
+    |> should.equal(12.0)
+
+    // Carbs: 45 * 1.5 = 67.5
+    logged_entry.macros.carbs
+    |> should.equal(67.5)
+
+    // And servings are recorded
+    logged_entry.servings
+    |> should.equal(1.5)
+  })
+}
+
+pub fn log_meal_from_recipe_with_half_serving_test() {
+  // Given a recipe with known macros
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(_) = storage.init_db(conn)
+
+    let recipe =
+      types.Recipe(
+        id: "protein-shake",
+        name: "Protein Shake",
+        ingredients: [types.Ingredient("Protein powder", "1 scoop")],
+        instructions: ["Mix with water"],
+        macros: types.Macros(protein: 24.0, fat: 2.0, carbs: 4.0),
+        servings: 1,
+        category: "supplement",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      )
+    let assert Ok(_) = storage.save_recipe(conn, recipe)
+
+    // When logging 0.5 servings
+    let servings = 0.5
+    let calculated_macros = types.macros_scale(recipe.macros, servings)
+
+    let entry =
+      types.FoodLogEntry(
+        id: "log-002",
+        recipe_id: "protein-shake",
+        recipe_name: "Protein Shake",
+        servings: servings,
+        macros: calculated_macros,
+        meal_type: types.Snack,
+        logged_at: "2024-01-20T15:00:00Z",
+      )
+
+    let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-20", entry)
+
+    // Then macros are halved
+    let assert Ok(daily_log) = storage.get_daily_log(conn, "2024-01-20")
+    let assert [logged_entry] = daily_log.entries
+
+    logged_entry.macros.protein
+    |> should.equal(12.0)
+    logged_entry.macros.fat
+    |> should.equal(1.0)
+    logged_entry.macros.carbs
+    |> should.equal(2.0)
+  })
+}
+
+// ============================================================================
+// BDD Scenario: GET /api/logs/recent returns most recently logged meals
+// ============================================================================
+
+pub fn get_recent_meals_returns_latest_test() {
+  // Given a database with multiple meals logged across different dates
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(_) = storage.init_db(conn)
+
+    // Create recipes
+    let chicken =
+      types.Recipe(
+        id: "grilled-chicken",
+        name: "Grilled Chicken",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 50.0, fat: 5.0, carbs: 0.0),
+        servings: 1,
+        category: "chicken",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      )
+
+    let rice =
+      types.Recipe(
+        id: "rice-bowl",
+        name: "Rice Bowl",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 10.0, fat: 2.0, carbs: 60.0),
+        servings: 1,
+        category: "grains",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      )
+
+    let eggs =
+      types.Recipe(
+        id: "scrambled-eggs",
+        name: "Scrambled Eggs",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 18.0, fat: 12.0, carbs: 2.0),
+        servings: 1,
+        category: "breakfast",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      )
+
+    let assert Ok(_) = storage.save_recipe(conn, chicken)
+    let assert Ok(_) = storage.save_recipe(conn, rice)
+    let assert Ok(_) = storage.save_recipe(conn, eggs)
+
+    // Log meals on different dates (oldest to newest)
+    let entries = [
+      types.FoodLogEntry(
+        id: "old-chicken",
+        recipe_id: "grilled-chicken",
+        recipe_name: "Grilled Chicken",
+        servings: 1.0,
+        macros: types.Macros(protein: 50.0, fat: 5.0, carbs: 0.0),
+        meal_type: types.Lunch,
+        logged_at: "2024-01-10T12:00:00Z",
+      ),
+      types.FoodLogEntry(
+        id: "old-rice",
+        recipe_id: "rice-bowl",
+        recipe_name: "Rice Bowl",
+        servings: 1.0,
+        macros: types.Macros(protein: 10.0, fat: 2.0, carbs: 60.0),
+        meal_type: types.Lunch,
+        logged_at: "2024-01-15T12:00:00Z",
+      ),
+      types.FoodLogEntry(
+        id: "recent-eggs",
+        recipe_id: "scrambled-eggs",
+        recipe_name: "Scrambled Eggs",
+        servings: 1.0,
+        macros: types.Macros(protein: 18.0, fat: 12.0, carbs: 2.0),
+        meal_type: types.Breakfast,
+        logged_at: "2024-01-20T08:00:00Z",
+      ),
+    ]
+
+    let assert Ok(_) =
+      storage.save_food_log_entry(conn, "2024-01-10", list.first(entries)
+        |> should.be_ok())
+    let assert Ok(_) =
+      storage.save_food_log_entry(
+        conn,
+        "2024-01-15",
+        entries
+          |> list.drop(1)
+          |> list.first()
+          |> should.be_ok(),
+      )
+    let assert Ok(_) =
+      storage.save_food_log_entry(
+        conn,
+        "2024-01-20",
+        entries
+          |> list.drop(2)
+          |> list.first()
+          |> should.be_ok(),
+      )
+
+    // When retrieving recent meals (limit 5)
+    let assert Ok(recent_meals) = storage.get_recent_meals(conn, 5)
+
+    // Then meals are returned in reverse chronological order (newest first)
+    list.length(recent_meals)
+    |> should.equal(3)
+
+    // And the most recent meal is first
+    let assert [first, .._rest] = recent_meals
+    first.recipe_name
+    |> should.equal("Scrambled Eggs")
+    first.logged_at
+    |> should.equal("2024-01-20T08:00:00Z")
+  })
+}
+
+pub fn get_recent_meals_with_limit_test() {
+  // Given a database with many DIFFERENT meals logged
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(_) = storage.init_db(conn)
+
+    // Create 5 different recipes
+    let recipes = [
+      types.Recipe(
+        id: "meal-1",
+        name: "Meal 1",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
+        servings: 1,
+        category: "general",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      ),
+      types.Recipe(
+        id: "meal-2",
+        name: "Meal 2",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 35.0, fat: 12.0, carbs: 45.0),
+        servings: 1,
+        category: "general",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      ),
+      types.Recipe(
+        id: "meal-3",
+        name: "Meal 3",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
+        servings: 1,
+        category: "general",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      ),
+      types.Recipe(
+        id: "meal-4",
+        name: "Meal 4",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 40.0, fat: 15.0, carbs: 50.0),
+        servings: 1,
+        category: "general",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      ),
+      types.Recipe(
+        id: "meal-5",
+        name: "Meal 5",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 20.0, fat: 5.0, carbs: 30.0),
+        servings: 1,
+        category: "general",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      ),
+    ]
+
+    list.each(recipes, fn(r) {
+      let assert Ok(_) = storage.save_recipe(conn, r)
+    })
+
+    // Log different meals on different days
+    let entries = [
+      types.FoodLogEntry(
+        id: "e1",
+        recipe_id: "meal-1",
+        recipe_name: "Meal 1",
+        servings: 1.0,
+        macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
+        meal_type: types.Lunch,
+        logged_at: "2024-01-01T12:00:00Z",
+      ),
+      types.FoodLogEntry(
+        id: "e2",
+        recipe_id: "meal-2",
+        recipe_name: "Meal 2",
+        servings: 1.0,
+        macros: types.Macros(protein: 35.0, fat: 12.0, carbs: 45.0),
+        meal_type: types.Lunch,
+        logged_at: "2024-01-02T12:00:00Z",
+      ),
+      types.FoodLogEntry(
+        id: "e3",
+        recipe_id: "meal-3",
+        recipe_name: "Meal 3",
+        servings: 1.0,
+        macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
+        meal_type: types.Lunch,
+        logged_at: "2024-01-03T12:00:00Z",
+      ),
+      types.FoodLogEntry(
+        id: "e4",
+        recipe_id: "meal-4",
+        recipe_name: "Meal 4",
+        servings: 1.0,
+        macros: types.Macros(protein: 40.0, fat: 15.0, carbs: 50.0),
+        meal_type: types.Lunch,
+        logged_at: "2024-01-04T12:00:00Z",
+      ),
+      types.FoodLogEntry(
+        id: "e5",
+        recipe_id: "meal-5",
+        recipe_name: "Meal 5",
+        servings: 1.0,
+        macros: types.Macros(protein: 20.0, fat: 5.0, carbs: 30.0),
+        meal_type: types.Lunch,
+        logged_at: "2024-01-05T12:00:00Z",
+      ),
+    ]
+
+    list.index_map(entries, fn(entry, idx) {
+      let date = case idx {
+        0 -> "2024-01-01"
+        1 -> "2024-01-02"
+        2 -> "2024-01-03"
+        3 -> "2024-01-04"
+        4 -> "2024-01-05"
+        _ -> "2024-01-01"
+      }
+      let assert Ok(_) = storage.save_food_log_entry(conn, date, entry)
+      idx
+    })
+
+    // When retrieving recent meals with limit 3
+    let assert Ok(recent_meals) = storage.get_recent_meals(conn, 3)
+
+    // Then only 3 meals are returned
+    list.length(recent_meals)
+    |> should.equal(3)
+
+    // And they are the 3 most recent (distinct recipes)
+    let assert [first, second, third] = recent_meals
+    first.recipe_name
+    |> should.equal("Meal 5")
+    second.recipe_name
+    |> should.equal("Meal 4")
+    third.recipe_name
+    |> should.equal("Meal 3")
+  })
+}
+
+pub fn get_recent_meals_empty_database_test() {
+  // Given an empty database
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(_) = storage.init_db(conn)
+
+    // When retrieving recent meals
+    let assert Ok(recent_meals) = storage.get_recent_meals(conn, 5)
+
+    // Then an empty list is returned
+    list.length(recent_meals)
+    |> should.equal(0)
+  })
+}
+
+// ============================================================================
+// BDD Scenario: Edit food log entry (update meal type and servings)
+// ============================================================================
+
+pub fn edit_food_log_entry_meal_type_test() {
+  // Given a database with an existing food log entry
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(_) = storage.init_db(conn)
+
+    let recipe =
+      types.Recipe(
+        id: "flexible-meal",
+        name: "Flexible Meal",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 35.0, fat: 12.0, carbs: 40.0),
+        servings: 1,
+        category: "general",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      )
+    let assert Ok(_) = storage.save_recipe(conn, recipe)
+
+    let original_entry =
+      types.FoodLogEntry(
+        id: "log-edit-1",
+        recipe_id: "flexible-meal",
+        recipe_name: "Flexible Meal",
+        servings: 1.0,
+        macros: types.Macros(protein: 35.0, fat: 12.0, carbs: 40.0),
+        meal_type: types.Lunch,
+        logged_at: "2024-01-25T12:00:00Z",
+      )
+    let assert Ok(_) =
+      storage.save_food_log_entry(conn, "2024-01-25", original_entry)
+
+    // When editing the meal type from Lunch to Dinner
+    let assert Ok(_) =
+      storage.update_food_log_entry(
+        conn,
+        "log-edit-1",
+        1.0,
+        types.Macros(protein: 35.0, fat: 12.0, carbs: 40.0),
+        types.Dinner,
+      )
+
+    // Then the meal type is updated
+    let assert Ok(entry) = storage.get_food_log_entry(conn, "log-edit-1")
+    entry.meal_type
+    |> should.equal(types.Dinner)
+
+    // And other fields remain unchanged
+    entry.servings
+    |> should.equal(1.0)
+    entry.macros.protein
+    |> should.equal(35.0)
+  })
+}
+
+pub fn edit_food_log_entry_servings_and_macros_test() {
+  // Given a food log entry with 1.0 servings
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(_) = storage.init_db(conn)
+
+    let recipe =
+      types.Recipe(
+        id: "adjustable",
+        name: "Adjustable Meal",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 40.0, fat: 15.0, carbs: 50.0),
+        servings: 1,
+        category: "general",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      )
+    let assert Ok(_) = storage.save_recipe(conn, recipe)
+
+    let entry =
+      types.FoodLogEntry(
+        id: "log-adjust",
+        recipe_id: "adjustable",
+        recipe_name: "Adjustable Meal",
+        servings: 1.0,
+        macros: types.Macros(protein: 40.0, fat: 15.0, carbs: 50.0),
+        meal_type: types.Dinner,
+        logged_at: "2024-01-25T18:00:00Z",
+      )
+    let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-25", entry)
+
+    // When editing servings to 2.0
+    let new_macros = types.macros_scale(recipe.macros, 2.0)
+    let assert Ok(_) =
+      storage.update_food_log_entry(
+        conn,
+        "log-adjust",
+        2.0,
+        new_macros,
+        types.Dinner,
+      )
+
+    // Then servings and macros are updated
+    let assert Ok(updated_entry) =
+      storage.get_food_log_entry(conn, "log-adjust")
+
+    updated_entry.servings
+    |> should.equal(2.0)
+    updated_entry.macros.protein
+    |> should.equal(80.0)
+    updated_entry.macros.fat
+    |> should.equal(30.0)
+    updated_entry.macros.carbs
+    |> should.equal(100.0)
+  })
+}
+
+pub fn edit_nonexistent_food_log_entry_test() {
+  // Given a database with no entries
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(_) = storage.init_db(conn)
+
+    // When attempting to update a nonexistent entry
+    let result =
+      storage.update_food_log_entry(
+        conn,
+        "nonexistent-id",
+        1.0,
+        types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
+        types.Lunch,
+      )
+
+    // Then the operation completes (idempotent - no error on missing entry)
+    result
+    |> should.be_ok()
+  })
+}
+
+// ============================================================================
+// BDD Scenario: Daily log totals update correctly when entries added/removed
+// ============================================================================
+
+pub fn daily_log_totals_update_on_add_test() {
+  // Given a daily log with one entry
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(_) = storage.init_db(conn)
+
+    let recipe =
+      types.Recipe(
+        id: "meal",
+        name: "Standard Meal",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 45.0),
+        servings: 1,
+        category: "general",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      )
+    let assert Ok(_) = storage.save_recipe(conn, recipe)
+
+    let entry1 =
+      types.FoodLogEntry(
+        id: "e1",
+        recipe_id: "meal",
+        recipe_name: "Standard Meal",
+        servings: 1.0,
+        macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 45.0),
+        meal_type: types.Breakfast,
+        logged_at: "2024-01-30T08:00:00Z",
+      )
+    let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-30", entry1)
+
+    // Verify initial totals
+    let assert Ok(log_before) = storage.get_daily_log(conn, "2024-01-30")
+    log_before.total_macros.protein
+    |> should.equal(30.0)
+
+    // When adding a second entry
+    let entry2 =
+      types.FoodLogEntry(
+        id: "e2",
+        recipe_id: "meal",
+        recipe_name: "Standard Meal",
+        servings: 1.0,
+        macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 45.0),
+        meal_type: types.Lunch,
+        logged_at: "2024-01-30T12:00:00Z",
+      )
+    let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-30", entry2)
+
+    // Then totals are updated correctly
+    let assert Ok(log_after) = storage.get_daily_log(conn, "2024-01-30")
+
+    log_after.total_macros.protein
+    |> should.equal(60.0)
+    // 30 + 30
+    log_after.total_macros.fat
+    |> should.equal(20.0)
+    // 10 + 10
+    log_after.total_macros.carbs
+    |> should.equal(90.0)
+    // 45 + 45
+  })
+}
+
+pub fn daily_log_totals_update_on_remove_test() {
+  // Given a daily log with multiple entries
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(_) = storage.init_db(conn)
+
+    let recipe =
+      types.Recipe(
+        id: "meal",
+        name: "Meal",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
+        servings: 1,
+        category: "general",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      )
+    let assert Ok(_) = storage.save_recipe(conn, recipe)
+
+    let entry1 =
+      types.FoodLogEntry(
+        id: "keep",
+        recipe_id: "meal",
+        recipe_name: "Meal",
+        servings: 1.0,
+        macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
+        meal_type: types.Breakfast,
+        logged_at: "2024-01-30T08:00:00Z",
+      )
+
+    let entry2 =
+      types.FoodLogEntry(
+        id: "remove",
+        recipe_id: "meal",
+        recipe_name: "Meal",
+        servings: 1.0,
+        macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
+        meal_type: types.Lunch,
+        logged_at: "2024-01-30T12:00:00Z",
+      )
+
+    let entry3 =
+      types.FoodLogEntry(
+        id: "keep2",
+        recipe_id: "meal",
+        recipe_name: "Meal",
+        servings: 1.0,
+        macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
+        meal_type: types.Dinner,
+        logged_at: "2024-01-30T18:00:00Z",
+      )
+
+    let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-30", entry1)
+    let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-30", entry2)
+    let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-30", entry3)
+
+    // Verify totals before removal
+    let assert Ok(log_before) = storage.get_daily_log(conn, "2024-01-30")
+    log_before.total_macros.protein
+    |> should.equal(75.0)
+    // 25 * 3
+
+    // When removing one entry
+    let assert Ok(_) = storage.delete_food_log_entry(conn, "remove")
+
+    // Then totals are recalculated correctly
+    let assert Ok(log_after) = storage.get_daily_log(conn, "2024-01-30")
+
+    log_after.total_macros.protein
+    |> should.equal(50.0)
+    // 25 * 2
+    log_after.total_macros.fat
+    |> should.equal(16.0)
+    // 8 * 2
+    log_after.total_macros.carbs
+    |> should.equal(70.0)
+    // 35 * 2
+
+    // And entry count is correct
+    list.length(log_after.entries)
+    |> should.equal(2)
+  })
+}
+
+pub fn daily_log_totals_update_on_edit_servings_test() {
+  // Given a daily log with entries
+  storage.with_connection(":memory:", fn(conn) {
+    let assert Ok(_) = storage.init_db(conn)
+
+    let recipe =
+      types.Recipe(
+        id: "meal",
+        name: "Meal",
+        ingredients: [],
+        instructions: [],
+        macros: types.Macros(protein: 20.0, fat: 5.0, carbs: 30.0),
+        servings: 1,
+        category: "general",
+        fodmap_level: types.Low,
+        vertical_compliant: True,
+      )
+    let assert Ok(_) = storage.save_recipe(conn, recipe)
+
+    let entry1 =
+      types.FoodLogEntry(
+        id: "static",
+        recipe_id: "meal",
+        recipe_name: "Meal",
+        servings: 1.0,
+        macros: types.Macros(protein: 20.0, fat: 5.0, carbs: 30.0),
+        meal_type: types.Breakfast,
+        logged_at: "2024-01-30T08:00:00Z",
+      )
+
+    let entry2 =
+      types.FoodLogEntry(
+        id: "editable",
+        recipe_id: "meal",
+        recipe_name: "Meal",
+        servings: 1.0,
+        macros: types.Macros(protein: 20.0, fat: 5.0, carbs: 30.0),
+        meal_type: types.Lunch,
+        logged_at: "2024-01-30T12:00:00Z",
+      )
+
+    let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-30", entry1)
+    let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-30", entry2)
+
+    // Initial total: 40g protein (20 + 20)
+    let assert Ok(log_before) = storage.get_daily_log(conn, "2024-01-30")
+    log_before.total_macros.protein
+    |> should.equal(40.0)
+
+    // When editing servings of one entry to 2.0
+    let new_macros = types.macros_scale(recipe.macros, 2.0)
+    let assert Ok(_) =
+      storage.update_food_log_entry(
+        conn,
+        "editable",
+        2.0,
+        new_macros,
+        types.Lunch,
+      )
+
+    // Then totals reflect the change
+    let assert Ok(log_after) = storage.get_daily_log(conn, "2024-01-30")
+
+    log_after.total_macros.protein
+    |> should.equal(60.0)
+    // 20 (static) + 40 (edited)
+    log_after.total_macros.fat
+    |> should.equal(15.0)
+    // 5 + 10
+    log_after.total_macros.carbs
+    |> should.equal(90.0)
+    // 30 + 60
+  })
+}
