@@ -61,7 +61,7 @@ Available commands:
 
 ## Testing
 
-The project has comprehensive test coverage (225+ tests):
+The project has comprehensive test coverage (279+ tests):
 
 ```bash
 # Run all tests
@@ -84,28 +84,33 @@ gleam test --module ncp_test
 gleam/
 ├── src/
 │   └── meal_planner/
-│       ├── types.gleam        # Core types (Recipe, Macros, UserProfile)
-│       ├── fodmap.gleam       # FODMAP analysis
-│       ├── validation.gleam   # Recipe validation
-│       ├── meal_plan.gleam    # Meal plan generation
-│       ├── weekly_plan.gleam  # Weekly planning
+│       ├── application.gleam   # OTP application lifecycle
+│       ├── supervisor.gleam    # Supervision tree
+│       ├── state.gleam         # GenServer for runtime state
+│       ├── types.gleam         # Core types (Recipe, Macros, UserProfile)
+│       ├── fodmap.gleam        # FODMAP analysis
+│       ├── validation.gleam    # Recipe validation
+│       ├── meal_plan.gleam     # Meal plan generation
+│       ├── weekly_plan.gleam   # Weekly planning
 │       ├── meal_selection.gleam # Meal selection logic
-│       ├── portion.gleam      # Portion calculations
+│       ├── portion.gleam       # Portion calculations
 │       ├── shopping_list.gleam # Shopping list generation
-│       ├── output.gleam       # Output formatting
-│       ├── ncp.gleam          # Nutrition Control Plane
-│       ├── storage.gleam      # SQLite persistence
-│       ├── migrate.gleam      # Database migrations
+│       ├── output.gleam        # Output formatting
+│       ├── ncp.gleam           # Nutrition Control Plane
+│       ├── storage.gleam       # SQLite persistence
+│       ├── migrate.gleam       # Database migrations
 │       └── recipe_loader.gleam # YAML recipe loading
 ├── test/
-│   └── *.gleam                # Test files
-└── gleam.toml                 # Project configuration
+│   └── *.gleam                 # Test files
+└── gleam.toml                  # Project configuration
 ```
 
 ## Architecture
 
 The application follows functional programming principles with immutable data structures. Key design decisions:
 
+- **OTP Supervision**: Application starts with OTP supervisor tree for fault tolerance
+- **GenServer State**: Runtime state (user profile, goals) cached in GenServer
 - **Pure Functions**: Core logic is pure, side effects isolated to storage/IO modules
 - **Type Safety**: Gleam's type system prevents runtime errors
 - **Pattern Matching**: Extensive use of pattern matching for control flow
