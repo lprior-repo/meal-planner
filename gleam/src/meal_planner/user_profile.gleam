@@ -60,13 +60,82 @@ pub fn validate_meals_per_day(meals: Int) -> Result(Int, ProfileError) {
   }
 }
 
+/// Parse bodyweight from string
+pub fn parse_bodyweight(input: String) -> Result(Float, ProfileError) {
+  case float.parse(string.trim(input)) {
+    Ok(weight) -> validate_bodyweight(weight)
+    Error(_) -> Error(ParseError("invalid bodyweight: must be a number"))
+  }
+}
+
+/// Parse meals per day from string
+pub fn parse_meals_per_day(input: String) -> Result(Int, ProfileError) {
+  case int.parse(string.trim(input)) {
+    Ok(meals) -> validate_meals_per_day(meals)
+    Error(_) -> Error(ParseError("invalid meals per day: must be a number"))
+  }
+}
+
+/// Create a user profile from validated inputs
+pub fn create_profile(
+  bodyweight: Float,
+  activity_level: ActivityLevel,
+  goal: Goal,
+  meals_per_day: Int,
+) -> Result(UserProfile, ProfileError) {
+  // Re-validate all inputs to ensure they meet requirements
+  case validate_bodyweight(bodyweight) {
+    Error(e) -> Error(e)
+    Ok(w) ->
+      case validate_meals_per_day(meals_per_day) {
+        Error(e) -> Error(e)
+        Ok(m) ->
+          Ok(UserProfile(
+            bodyweight: w,
+            activity_level: activity_level,
+            goal: goal,
+            meals_per_day: m,
+          ))
+      }
+  }
+}
+
+/// Create a user profile from string inputs
+pub fn create_profile_from_strings(
+  bodyweight_str: String,
+  activity_level_str: String,
+  goal_str: String,
+  meals_per_day_str: String,
+) -> Result(UserProfile, ProfileError) {
+  case parse_bodyweight(bodyweight_str) {
+    Error(e) -> Error(e)
+    Ok(weight) ->
+      case validate_activity_level(activity_level_str) {
+        Error(e) -> Error(e)
+        Ok(activity) ->
+          case validate_goal(goal_str) {
+            Error(e) -> Error(e)
+            Ok(g) ->
+              case parse_meals_per_day(meals_per_day_str) {
+                Error(e) -> Error(e)
+                Ok(meals) -> create_profile(weight, activity, g, meals)
+              }
+          }
+      }
+  }
+}
+
 /// Collect user profile interactively from stdin
 /// Note: This is a simplified version - full implementation would need proper stdin reading
+/// Due to Gleam on Erlang's limited stdin support, this returns a default profile
+/// For actual interactive collection, use create_profile_from_strings with user inputs
 pub fn collect_interactive_profile() -> Result(UserProfile, ProfileError) {
   io.println("=== User Profile Setup ===")
+  io.println("Note: Interactive stdin is limited in Gleam on Erlang")
+  io.println("Use create_profile_from_strings() to build profile from inputs")
 
-  // For now, return a default profile
-  // In a full implementation, this would collect data interactively
+  // Return a default profile for demonstration
+  // In a full implementation with proper stdin support, this would collect data interactively
   Ok(UserProfile(
     bodyweight: 180.0,
     activity_level: Moderate,

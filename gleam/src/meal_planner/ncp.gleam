@@ -132,6 +132,219 @@ pub fn get_nutrition_history(_days: Int) -> Result(List(NutritionState), String)
   Ok([])
 }
 
+/// TrendDirection represents whether a metric is trending up, down, or stable
+pub type TrendDirection {
+  Increasing
+  Decreasing
+  Stable
+}
+
+/// TrendAnalysis contains trend information for all macros
+pub type TrendAnalysis {
+  TrendAnalysis(
+    protein_trend: TrendDirection,
+    fat_trend: TrendDirection,
+    carbs_trend: TrendDirection,
+    calories_trend: TrendDirection,
+    protein_change: Float,
+    fat_change: Float,
+    carbs_change: Float,
+    calories_change: Float,
+  )
+}
+
+/// Calculate minimum values across nutrition history
+pub fn calculate_min_nutrition(history: List(NutritionState)) -> NutritionData {
+  case history {
+    [] -> NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
+    [first, ..rest] ->
+      list.fold(rest, first.consumed, fn(min_data, state) {
+        NutritionData(
+          protein: float.min(min_data.protein, state.consumed.protein),
+          fat: float.min(min_data.fat, state.consumed.fat),
+          carbs: float.min(min_data.carbs, state.consumed.carbs),
+          calories: float.min(min_data.calories, state.consumed.calories),
+        )
+      })
+  }
+}
+
+/// Calculate maximum values across nutrition history
+pub fn calculate_max_nutrition(history: List(NutritionState)) -> NutritionData {
+  case history {
+    [] -> NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
+    [first, ..rest] ->
+      list.fold(rest, first.consumed, fn(max_data, state) {
+        NutritionData(
+          protein: float.max(max_data.protein, state.consumed.protein),
+          fat: float.max(max_data.fat, state.consumed.fat),
+          carbs: float.max(max_data.carbs, state.consumed.carbs),
+          calories: float.max(max_data.calories, state.consumed.calories),
+        )
+      })
+  }
+}
+
+/// Calculate standard deviation for a list of floats
+fn calculate_std_dev(values: List(Float), mean: Float) -> Float {
+  case list.length(values) {
+    0 -> 0.0
+    1 -> 0.0
+    n -> {
+      let variance =
+        list.fold(values, 0.0, fn(acc, value) {
+          let diff = value -. mean
+          acc +. { diff *. diff }
+        })
+        /. int_to_float(n)
+
+      case float.square_root(variance) {
+        Ok(std_dev) -> std_dev
+        Error(_) -> 0.0
+      }
+    }
+  }
+}
+
+/// Calculate variability (standard deviation) for each macro in history
+pub fn calculate_nutrition_variability(
+  history: List(NutritionState),
+) -> NutritionData {
+  case history {
+    [] -> NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
+    _ -> {
+      let avg = average_nutrition_history(history)
+
+      let proteins = list.map(history, fn(s) { s.consumed.protein })
+      let fats = list.map(history, fn(s) { s.consumed.fat })
+      let carbs_list = list.map(history, fn(s) { s.consumed.carbs })
+      let calories_list = list.map(history, fn(s) { s.consumed.calories })
+
+      NutritionData(
+        protein: calculate_std_dev(proteins, avg.protein),
+        fat: calculate_std_dev(fats, avg.fat),
+        carbs: calculate_std_dev(carbs_list, avg.carbs),
+        calories: calculate_std_dev(calories_list, avg.calories),
+      )
+    }
+  }
+}
+
+/// Analyze trends in nutrition history
+/// Compares first half average to second half average to determine trend direction
+pub fn analyze_nutrition_trends(history: List(NutritionState)) -> TrendAnalysis {
+  case history {
+    [] ->
+      TrendAnalysis(
+        protein_trend: Stable,
+        fat_trend: Stable,
+        carbs_trend: Stable,
+        calories_trend: Stable,
+        protein_change: 0.0,
+        fat_change: 0.0,
+        carbs_change: 0.0,
+        calories_change: 0.0,
+      )
+    [_] ->
+      TrendAnalysis(
+        protein_trend: Stable,
+        fat_trend: Stable,
+        carbs_trend: Stable,
+        calories_trend: Stable,
+        protein_change: 0.0,
+        fat_change: 0.0,
+        carbs_change: 0.0,
+        calories_change: 0.0,
+      )
+    _ -> {
+      let len = list.length(history)
+      let mid = len / 2
+
+      // Split into first half and second half
+      let first_half = list.take(history, mid)
+      let second_half = list.drop(history, mid)
+
+      let first_avg = average_nutrition_history(first_half)
+      let second_avg = average_nutrition_history(second_half)
+
+      // Calculate changes (percentage)
+      let protein_change = case first_avg.protein {
+        0.0 -> 0.0
+        _ ->
+          { second_avg.protein -. first_avg.protein }
+          /. first_avg.protein
+          *. 100.0
+      }
+
+      let fat_change = case first_avg.fat {
+        0.0 -> 0.0
+        _ -> { second_avg.fat -. first_avg.fat } /. first_avg.fat *. 100.0
+      }
+
+      let carbs_change = case first_avg.carbs {
+        0.0 -> 0.0
+        _ -> { second_avg.carbs -. first_avg.carbs } /. first_avg.carbs *. 100.0
+      }
+
+      let calories_change = case first_avg.calories {
+        0.0 -> 0.0
+        _ ->
+          { second_avg.calories -. first_avg.calories }
+          /. first_avg.calories
+          *. 100.0
+      }
+
+      // Determine trend direction (threshold: 5%)
+      let threshold = 5.0
+
+      TrendAnalysis(
+        protein_trend: determine_trend(protein_change, threshold),
+        fat_trend: determine_trend(fat_change, threshold),
+        carbs_trend: determine_trend(carbs_change, threshold),
+        calories_trend: determine_trend(calories_change, threshold),
+        protein_change: protein_change,
+        fat_change: fat_change,
+        carbs_change: carbs_change,
+        calories_change: calories_change,
+      )
+    }
+  }
+}
+
+/// Determine trend direction based on percentage change and threshold
+fn determine_trend(pct_change: Float, threshold: Float) -> TrendDirection {
+  let neg_threshold = 0.0 -. threshold
+  case pct_change {
+    change if change >. threshold -> Increasing
+    change if change <. neg_threshold -> Decreasing
+    _ -> Stable
+  }
+}
+
+/// Check if nutrition is consistently meeting goals (within tolerance)
+/// Returns the percentage of days that met the tolerance
+pub fn calculate_consistency_rate(
+  history: List(NutritionState),
+  goals: NutritionGoals,
+  tolerance_pct: Float,
+) -> Float {
+  case history {
+    [] -> 0.0
+    _ -> {
+      let total = int_to_float(list.length(history))
+      let within_tolerance_count =
+        list.filter(history, fn(state) {
+          let deviation = calculate_deviation(goals, state.consumed)
+          deviation_is_within_tolerance(deviation, tolerance_pct)
+        })
+        |> list.length
+        |> int_to_float
+
+      { within_tolerance_count /. total } *. 100.0
+    }
+  }
+}
+
 /// Get default nutrition goals
 pub fn get_default_goals() -> NutritionGoals {
   NutritionGoals(
@@ -228,10 +441,12 @@ pub fn format_status_output(result: ReconciliationResult) -> String {
     <> result.date
     <> "\n\n"
 
+  let summary = format_status_summary(result)
+
   let macro_header =
     "📊 MACRO COMPARISON\n"
     <> "───────────────────────────────────────────────\n"
-    <> "           Goal      Actual    Deviation\n"
+    <> "           Goal      Actual    Deviation  Status\n"
 
   let protein_line =
     "Protein:   "
@@ -239,7 +454,9 @@ pub fn format_status_output(result: ReconciliationResult) -> String {
     <> "g   "
     <> pad_float(result.average_consumed.protein, 6, 1)
     <> "g   "
-    <> format_deviation(result.deviation.protein_pct)
+    <> pad_deviation(result.deviation.protein_pct, 9)
+    <> "  "
+    <> deviation_indicator(result.deviation.protein_pct)
     <> "\n"
 
   let fat_line =
@@ -248,7 +465,9 @@ pub fn format_status_output(result: ReconciliationResult) -> String {
     <> "g   "
     <> pad_float(result.average_consumed.fat, 6, 1)
     <> "g   "
-    <> format_deviation(result.deviation.fat_pct)
+    <> pad_deviation(result.deviation.fat_pct, 9)
+    <> "  "
+    <> deviation_indicator(result.deviation.fat_pct)
     <> "\n"
 
   let carbs_line =
@@ -257,7 +476,9 @@ pub fn format_status_output(result: ReconciliationResult) -> String {
     <> "g   "
     <> pad_float(result.average_consumed.carbs, 6, 1)
     <> "g   "
-    <> format_deviation(result.deviation.carbs_pct)
+    <> pad_deviation(result.deviation.carbs_pct, 9)
+    <> "  "
+    <> deviation_indicator(result.deviation.carbs_pct)
     <> "\n"
 
   let calories_line =
@@ -266,7 +487,9 @@ pub fn format_status_output(result: ReconciliationResult) -> String {
     <> "    "
     <> pad_float(result.average_consumed.calories, 6, 0)
     <> "    "
-    <> format_deviation(result.deviation.calories_pct)
+    <> pad_deviation(result.deviation.calories_pct, 9)
+    <> "  "
+    <> deviation_indicator(result.deviation.calories_pct)
     <> "\n\n"
 
   let status = case result.within_tolerance {
@@ -287,6 +510,7 @@ pub fn format_status_output(result: ReconciliationResult) -> String {
   let footer = "\n═══════════════════════════════════════════════\n"
 
   header
+  <> summary
   <> macro_header
   <> protein_line
   <> fat_line
@@ -300,17 +524,28 @@ pub fn format_status_output(result: ReconciliationResult) -> String {
 /// Format suggestions list
 fn format_suggestions(suggestions: List(RecipeSuggestion)) -> String {
   list.index_map(suggestions, fn(s, i) {
+    let score_bar = format_score_bar(s.score)
     int.to_string(i + 1)
     <> ". "
     <> s.recipe_name
-    <> " (score: "
-    <> float_to_string_fixed(s.score, 2)
-    <> ")\n"
-    <> "   "
-    <> s.reason
     <> "\n"
+    <> "   Match: "
+    <> score_bar
+    <> " ("
+    <> float_to_string_fixed(s.score *. 100.0, 0)
+    <> "%)\n"
+    <> "   Why:   "
+    <> s.reason
+    <> "\n\n"
   })
   |> string.concat
+}
+
+/// Format a visual score bar (0.0 to 1.0)
+fn format_score_bar(score: Float) -> String {
+  let filled_count = float.round(score *. 10.0)
+  let empty_count = 10 - filled_count
+  string.repeat("█", filled_count) <> string.repeat("░", empty_count)
 }
 
 /// Format reconciliation output for display - matches Go cli.go FormatReconcileOutput
@@ -341,6 +576,49 @@ fn format_deviation(pct: Float) -> String {
     False -> ""
   }
   sign <> float_to_string_fixed(pct, 1) <> "%"
+}
+
+/// Pad deviation string to specified width (right-aligned)
+fn pad_deviation(pct: Float, width: Int) -> String {
+  let formatted = format_deviation(pct)
+  let padding = width - string.length(formatted)
+  case padding > 0 {
+    True -> string.repeat(" ", padding) <> formatted
+    False -> formatted
+  }
+}
+
+/// Get visual indicator for deviation status
+fn deviation_indicator(pct: Float) -> String {
+  let abs_pct = float.absolute_value(pct)
+  case abs_pct <=. 5.0 {
+    True -> "✓ Good"
+    False ->
+      case abs_pct <=. 10.0 {
+        True -> "~ OK"
+        False -> "! High"
+      }
+  }
+}
+
+/// Format a quick status summary showing overall compliance
+fn format_status_summary(result: ReconciliationResult) -> String {
+  let max_dev = deviation_max(result.deviation)
+  let status_emoji = case result.within_tolerance {
+    True -> "✓"
+    False -> "⚠"
+  }
+  let summary_line =
+    status_emoji
+    <> " Quick Status: Max deviation "
+    <> float_to_string_fixed(max_dev, 1)
+    <> "% | "
+    <> case result.within_tolerance {
+      True -> "On Track"
+      False -> "Needs Adjustment"
+    }
+    <> "\n\n"
+  summary_line
 }
 
 /// Pad a float to specified width with given decimal places
@@ -408,8 +686,32 @@ pub fn score_recipe_for_deviation(
 }
 
 /// Calculate base score for recipe against deviation
-fn calculate_base_score(_deviation: DeviationResult, _macros: Macros) -> Float {
-  0.0
+/// Provides a small baseline score (0.0-0.1) for recipes that provide any macros
+/// when there's a deficit, encouraging food additions for overall nutritional needs
+fn calculate_base_score(deviation: DeviationResult, macros: Macros) -> Float {
+  // Calculate how many macros are in deficit
+  let protein_deficit = deviation.protein_pct <. 0.0
+  let fat_deficit = deviation.fat_pct <. 0.0
+  let carbs_deficit = deviation.carbs_pct <. 0.0
+
+  let deficit_count = case protein_deficit, fat_deficit, carbs_deficit {
+    True, True, True -> 3
+    True, True, False | True, False, True | False, True, True -> 2
+    True, False, False | False, True, False | False, False, True -> 1
+    False, False, False -> 0
+  }
+
+  // Calculate total macros provided by recipe
+  let total_macros = macros.protein +. macros.fat +. macros.carbs
+
+  case deficit_count > 0 && total_macros >. 0.0 {
+    True -> {
+      // Small base score (max 0.1) for providing any nutrition when in deficit
+      let normalized = float.min(total_macros /. 100.0, 1.0)
+      0.1 *. normalized
+    }
+    False -> 0.0
+  }
 }
 
 /// Apply protein scoring (weight: 0.5)
