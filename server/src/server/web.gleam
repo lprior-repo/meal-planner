@@ -59,6 +59,8 @@ fn handle_request(req: wisp.Request) -> wisp.Response {
     ["recipes", id] -> recipe_detail_page(id)
     ["dashboard"] -> dashboard_page(req)
     ["profile"] -> profile_page()
+    ["log"] -> log_meal_page()
+    ["log", recipe_id] -> log_meal_form(recipe_id)
 
     // 404
     _ -> not_found_page()
@@ -491,6 +493,124 @@ fn profile_page() -> wisp.Response {
   ]
 
   wisp.html_response(render_page("Profile - Meal Planner", content), 200)
+}
+
+fn log_meal_page() -> wisp.Response {
+  let recipes = sample_recipes()
+
+  let content = [
+    page_header("Log Meal", "/dashboard"),
+    html.div([attribute.class("page-description")], [
+      html.p([], [element.text("Select a recipe to log:")]),
+    ]),
+    html.div([attribute.class("recipe-grid")],
+      list.map(recipes, fn(recipe) {
+        html.a(
+          [
+            attribute.class("recipe-card"),
+            attribute.href("/log/" <> recipe.id),
+          ],
+          [
+            html.div([attribute.class("recipe-card-content")], [
+              html.h3([attribute.class("recipe-title")], [element.text(recipe.name)]),
+              html.span([attribute.class("recipe-category")], [
+                element.text(recipe.category),
+              ]),
+              html.div([attribute.class("recipe-macros")], [
+                macro_badge("P", recipe.macros.protein),
+                macro_badge("F", recipe.macros.fat),
+                macro_badge("C", recipe.macros.carbs),
+              ]),
+              html.div([attribute.class("recipe-calories")], [
+                element.text(float_to_string(types.macros_calories(recipe.macros)) <> " cal"),
+              ]),
+            ]),
+          ],
+        )
+      })
+    ),
+  ]
+
+  wisp.html_response(render_page("Log Meal - Meal Planner", content), 200)
+}
+
+fn log_meal_form(recipe_id: String) -> wisp.Response {
+  let recipes = sample_recipes()
+
+  case list.find(recipes, fn(r) { r.id == recipe_id }) {
+    Ok(recipe) -> {
+      let content = [
+        html.a([attribute.href("/log"), attribute.class("back-link")], [
+          element.text("← Back to recipe selection"),
+        ]),
+        html.div([attribute.class("log-form-container")], [
+          html.h1([], [element.text("Log: " <> recipe.name)]),
+          html.div([attribute.class("recipe-summary")], [
+            html.p([attribute.class("meta")], [
+              element.text("Per serving: " <> float_to_string(types.macros_calories(recipe.macros)) <> " cal"),
+            ]),
+            html.div([attribute.class("macro-badges")], [
+              macro_badge("P", recipe.macros.protein),
+              macro_badge("F", recipe.macros.fat),
+              macro_badge("C", recipe.macros.carbs),
+            ]),
+          ]),
+          html.form(
+            [
+              attribute.method("POST"),
+              attribute.action("/api/logs?recipe_id=" <> recipe_id),
+              attribute.class("log-form"),
+            ],
+            [
+              html.div([attribute.class("form-group")], [
+                html.label([attribute.attribute("for", "servings")], [
+                  element.text("Servings"),
+                ]),
+                html.input([
+                  attribute.type_("number"),
+                  attribute.id("servings"),
+                  attribute.name("servings"),
+                  attribute.attribute("min", "0.1"),
+                  attribute.attribute("step", "0.1"),
+                  attribute.value("1.0"),
+                  attribute.required(True),
+                ]),
+              ]),
+              html.div([attribute.class("form-group")], [
+                html.label([attribute.attribute("for", "meal_type")], [
+                  element.text("Meal Type"),
+                ]),
+                html.select(
+                  [
+                    attribute.id("meal_type"),
+                    attribute.name("meal_type"),
+                    attribute.required(True),
+                  ],
+                  [
+                    html.option([attribute.value("breakfast")], "Breakfast"),
+                    html.option([attribute.value("lunch")], "Lunch"),
+                    html.option([attribute.value("dinner")], "Dinner"),
+                    html.option([attribute.value("snack")], "Snack"),
+                  ],
+                ),
+              ]),
+              html.div([attribute.class("form-actions")], [
+                html.button([attribute.type_("submit"), attribute.class("btn btn-primary")], [
+                  element.text("Log Meal"),
+                ]),
+                html.a([attribute.href("/log"), attribute.class("btn btn-secondary")], [
+                  element.text("Cancel"),
+                ]),
+              ]),
+            ],
+          ),
+        ]),
+      ]
+
+      wisp.html_response(render_page("Log " <> recipe.name <> " - Meal Planner", content), 200)
+    }
+    Error(_) -> not_found_page()
+  }
 }
 
 fn page_header(title: String, back_href: String) -> element.Element(msg) {
