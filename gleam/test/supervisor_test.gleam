@@ -29,8 +29,7 @@ pub fn default_config_test() {
 
 /// Test supervisor with custom configuration
 pub fn supervisor_with_custom_config_test() {
-  let config =
-    supervisor.SupervisorConfig(max_restarts: 5, restart_period: 10)
+  let config = supervisor.SupervisorConfig(max_restarts: 5, restart_period: 10)
 
   let result = supervisor.start_with_config(config)
 

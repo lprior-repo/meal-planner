@@ -19,7 +19,9 @@ pub fn main() {
   // Start OTP application (initializes database, supervisor tree)
   case application.start() {
     Error(err) -> {
-      io.println("Failed to start application: " <> application.format_error(err))
+      io.println(
+        "Failed to start application: " <> application.format_error(err),
+      )
     }
     Ok(_app_state) -> {
       // Application started successfully, run CLI
@@ -223,8 +225,7 @@ fn generate_and_email_plan() -> Result(Nil, String) {
                 }
                 Error(env_err) ->
                   Error(
-                    "Failed to load email config: "
-                    <> env.format_error(env_err),
+                    "Failed to load email config: " <> env.format_error(env_err),
                   )
               }
             }
