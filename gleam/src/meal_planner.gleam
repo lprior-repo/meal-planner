@@ -40,8 +40,17 @@ pub fn main() {
 }
 
 /// Get command line arguments (Erlang specific)
+/// init:get_plain_arguments returns charlists, need to convert to binaries
+fn start_arguments() -> List(String) {
+  get_plain_arguments()
+  |> list.map(charlist_to_string)
+}
+
 @external(erlang, "init", "get_plain_arguments")
-fn start_arguments() -> List(String)
+fn get_plain_arguments() -> List(a)
+
+@external(erlang, "unicode", "characters_to_binary")
+fn charlist_to_string(charlist: a) -> String
 
 /// Default command - interactive mode selection
 fn default_command() -> glint.Command(Nil) {
