@@ -2,9 +2,8 @@ import gleam/json
 import gleeunit
 import gleeunit/should
 import shared/types.{
-  Active, Breakfast, Dinner, Gain, High, Ingredient,
-  Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
-  UserProfile, Lose,
+  Active, Breakfast, Dinner, Gain, High, Ingredient, Lose, Low, Lunch, Macros,
+  Maintain, Medium, Moderate, Recipe, Sedentary, Snack, UserProfile,
 }
 
 pub fn main() {
@@ -63,13 +62,14 @@ pub fn macros_sum_test() {
 // ============================================================================
 
 pub fn daily_macro_targets_active_gain_test() {
-  let profile = UserProfile(
-    id: "test",
-    bodyweight: 200.0,
-    activity_level: Active,
-    goal: Gain,
-    meals_per_day: 4,
-  )
+  let profile =
+    UserProfile(
+      id: "test",
+      bodyweight: 200.0,
+      activity_level: Active,
+      goal: Gain,
+      meals_per_day: 4,
+    )
   let targets = types.daily_macro_targets(profile)
   // Active/gain = 1.0 protein multiplier = 200g protein
   targets.protein |> should.equal(200.0)
@@ -81,13 +81,14 @@ pub fn daily_macro_targets_active_gain_test() {
 }
 
 pub fn daily_macro_targets_sedentary_lose_test() {
-  let profile = UserProfile(
-    id: "test",
-    bodyweight: 180.0,
-    activity_level: Sedentary,
-    goal: Lose,
-    meals_per_day: 3,
-  )
+  let profile =
+    UserProfile(
+      id: "test",
+      bodyweight: 180.0,
+      activity_level: Sedentary,
+      goal: Lose,
+      meals_per_day: 3,
+    )
   let targets = types.daily_macro_targets(profile)
   // Sedentary/lose = 0.8 protein multiplier = 144g protein
   targets.protein |> should.equal(144.0)
@@ -229,20 +230,21 @@ pub fn macros_roundtrip_test() {
 }
 
 pub fn recipe_roundtrip_test() {
-  let original = Recipe(
-    id: "recipe-123",
-    name: "Grilled Chicken",
-    ingredients: [
-      Ingredient(name: "Chicken breast", quantity: "8 oz"),
-      Ingredient(name: "Olive oil", quantity: "1 tbsp"),
-    ],
-    instructions: ["Season chicken", "Grill for 6 minutes per side"],
-    macros: Macros(protein: 50.0, fat: 8.0, carbs: 0.0),
-    servings: 2,
-    category: "chicken",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let original =
+    Recipe(
+      id: "recipe-123",
+      name: "Grilled Chicken",
+      ingredients: [
+        Ingredient(name: "Chicken breast", quantity: "8 oz"),
+        Ingredient(name: "Olive oil", quantity: "1 tbsp"),
+      ],
+      instructions: ["Season chicken", "Grill for 6 minutes per side"],
+      macros: Macros(protein: 50.0, fat: 8.0, carbs: 0.0),
+      servings: 2,
+      category: "chicken",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
   let json_str = types.recipe_to_json(original) |> json.to_string
   let result = json.parse(json_str, types.recipe_decoder())
   result |> should.be_ok
@@ -258,13 +260,14 @@ pub fn recipe_roundtrip_test() {
 }
 
 pub fn user_profile_roundtrip_test() {
-  let original = UserProfile(
-    id: "user-456",
-    bodyweight: 185.0,
-    activity_level: Moderate,
-    goal: Maintain,
-    meals_per_day: 4,
-  )
+  let original =
+    UserProfile(
+      id: "user-456",
+      bodyweight: 185.0,
+      activity_level: Moderate,
+      goal: Maintain,
+      meals_per_day: 4,
+    )
   let json_str = types.user_profile_to_json(original) |> json.to_string
   let result = json.parse(json_str, types.user_profile_decoder())
   result |> should.be_ok
@@ -277,4 +280,168 @@ pub fn user_profile_roundtrip_test() {
   decoded.activity_level |> should.equal(Moderate)
   decoded.goal |> should.equal(Maintain)
   decoded.meals_per_day |> should.equal(4)
+}
+
+// ============================================================================
+// FoodLogEntry Tests
+// ============================================================================
+
+pub fn food_log_entry_roundtrip_test() {
+  let entry =
+    types.FoodLogEntry(
+      id: "log-001",
+      recipe_id: "recipe-123",
+      recipe_name: "Grilled Chicken",
+      servings: 1.5,
+      macros: Macros(protein: 75.0, fat: 12.0, carbs: 0.0),
+      meal_type: Lunch,
+      logged_at: "2025-01-15T12:30:00Z",
+    )
+  let json_str = types.food_log_entry_to_json(entry) |> json.to_string
+  let result = json.parse(json_str, types.food_log_entry_decoder())
+  result |> should.be_ok
+  let decoded = case result {
+    Ok(e) -> e
+    Error(_) -> entry
+  }
+  decoded.id |> should.equal("log-001")
+  decoded.recipe_name |> should.equal("Grilled Chicken")
+  decoded.servings |> should.equal(1.5)
+  decoded.meal_type |> should.equal(Lunch)
+}
+
+pub fn daily_log_roundtrip_test() {
+  let entries = [
+    types.FoodLogEntry(
+      id: "log-001",
+      recipe_id: "recipe-1",
+      recipe_name: "Breakfast",
+      servings: 1.0,
+      macros: Macros(protein: 30.0, fat: 15.0, carbs: 20.0),
+      meal_type: Breakfast,
+      logged_at: "2025-01-15T08:00:00Z",
+    ),
+    types.FoodLogEntry(
+      id: "log-002",
+      recipe_id: "recipe-2",
+      recipe_name: "Lunch",
+      servings: 1.0,
+      macros: Macros(protein: 45.0, fat: 20.0, carbs: 50.0),
+      meal_type: Lunch,
+      logged_at: "2025-01-15T12:00:00Z",
+    ),
+  ]
+  let daily =
+    types.DailyLog(
+      date: "2025-01-15",
+      entries: entries,
+      total_macros: Macros(protein: 75.0, fat: 35.0, carbs: 70.0),
+    )
+  let json_str = types.daily_log_to_json(daily) |> json.to_string
+  let result = json.parse(json_str, types.daily_log_decoder())
+  result |> should.be_ok
+  let decoded = case result {
+    Ok(d) -> d
+    Error(_) -> daily
+  }
+  decoded.date |> should.equal("2025-01-15")
+  decoded.total_macros.protein |> should.equal(75.0)
+}
+
+// ============================================================================
+// Edge Case Tests
+// ============================================================================
+
+pub fn macros_scale_zero_test() {
+  let m = Macros(protein: 30.0, fat: 15.0, carbs: 40.0)
+  let result = types.macros_scale(m, 0.0)
+  result.protein |> should.equal(0.0)
+  result.fat |> should.equal(0.0)
+  result.carbs |> should.equal(0.0)
+}
+
+pub fn macros_scale_negative_test() {
+  let m = Macros(protein: 30.0, fat: 15.0, carbs: 40.0)
+  let result = types.macros_scale(m, -1.0)
+  result.protein |> should.equal(-30.0)
+  result.fat |> should.equal(-15.0)
+  result.carbs |> should.equal(-40.0)
+}
+
+pub fn macros_sum_empty_list_test() {
+  let result = types.macros_sum([])
+  result.protein |> should.equal(0.0)
+  result.fat |> should.equal(0.0)
+  result.carbs |> should.equal(0.0)
+}
+
+pub fn macros_calories_zero_test() {
+  let m = Macros(protein: 0.0, fat: 0.0, carbs: 0.0)
+  types.macros_calories(m) |> should.equal(0.0)
+}
+
+pub fn fodmap_level_decoder_invalid_test() {
+  // Invalid value should return default (Low)
+  let result = json.parse("\"invalid\"", types.fodmap_level_decoder())
+  result |> should.be_error
+}
+
+pub fn activity_level_decoder_invalid_test() {
+  // Invalid value should return default (Sedentary)
+  let result = json.parse("\"invalid\"", types.activity_level_decoder())
+  result |> should.be_error
+}
+
+pub fn goal_decoder_invalid_test() {
+  // Invalid value should return default (Maintain)
+  let result = json.parse("\"invalid\"", types.goal_decoder())
+  result |> should.be_error
+}
+
+pub fn meal_type_decoder_invalid_test() {
+  // Invalid value should return default (Snack)
+  let result = json.parse("\"invalid\"", types.meal_type_decoder())
+  result |> should.be_error
+}
+
+pub fn ingredient_to_json_test() {
+  let ing = Ingredient(name: "Beef", quantity: "1 lb")
+  let json_str = types.ingredient_to_json(ing) |> json.to_string
+  json_str |> should.not_equal("")
+}
+
+// ============================================================================
+// Additional Daily Macro Target Tests
+// ============================================================================
+
+pub fn daily_macro_targets_moderate_maintain_test() {
+  let profile =
+    UserProfile(
+      id: "test",
+      bodyweight: 150.0,
+      activity_level: Moderate,
+      goal: Maintain,
+      meals_per_day: 3,
+    )
+  let targets = types.daily_macro_targets(profile)
+  // Moderate/maintain = 0.9 protein multiplier = 135g protein
+  targets.protein |> should.equal(135.0)
+  // Fat = 0.3 * 150 = 45g
+  targets.fat |> should.equal(45.0)
+}
+
+pub fn daily_macro_targets_active_lose_test() {
+  let profile =
+    UserProfile(
+      id: "test",
+      bodyweight: 200.0,
+      activity_level: Active,
+      goal: Lose,
+      meals_per_day: 4,
+    )
+  let targets = types.daily_macro_targets(profile)
+  // Active = 1.0 multiplier regardless of goal for protein
+  targets.protein |> should.equal(200.0)
+  // Fat = 0.3 * 200 = 60g
+  targets.fat |> should.equal(60.0)
 }

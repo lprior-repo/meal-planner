@@ -1,7 +1,9 @@
+import gleam/list
 import gleeunit/should
 import meal_planner/meal_plan.{
-  DailyPlan, Meal, WeeklyMealPlan, daily_plan_macros, meal_macros,
-  weekly_plan_avg_daily_macros, weekly_plan_macros,
+  DailyPlan, Meal, WeeklyMealPlan, daily_plan_macros, default_recipe,
+  generate_weekly_plan, meal_macros, weekly_plan_avg_daily_macros,
+  weekly_plan_macros,
 }
 import meal_planner/types.{Active, Low, Macros, Maintain, Recipe, UserProfile}
 
@@ -235,4 +237,227 @@ pub fn weekly_plan_empty_days_test() {
   macros.protein |> should.equal(0.0)
   let avg = weekly_plan_avg_daily_macros(plan)
   avg.protein |> should.equal(0.0)
+}
+
+// ============================================================================
+// default_recipe tests
+// ============================================================================
+
+pub fn default_recipe_returns_empty_recipe_test() {
+  let recipe = default_recipe()
+  recipe.id |> should.equal("")
+  recipe.name |> should.equal("")
+  recipe.ingredients |> should.equal([])
+  recipe.instructions |> should.equal([])
+  recipe.servings |> should.equal(1)
+  recipe.macros.protein |> should.equal(0.0)
+  recipe.macros.fat |> should.equal(0.0)
+  recipe.macros.carbs |> should.equal(0.0)
+  recipe.vertical_compliant |> should.be_false()
+}
+
+pub fn default_recipe_fodmap_is_low_test() {
+  let recipe = default_recipe()
+  recipe.fodmap_level |> should.equal(Low)
+}
+
+// ============================================================================
+// generate_weekly_plan tests
+// ============================================================================
+
+pub fn generate_weekly_plan_returns_seven_days_test() {
+  let profile =
+    UserProfile(
+      bodyweight: 180.0,
+      activity_level: Active,
+      goal: Maintain,
+      meals_per_day: 3,
+    )
+  let recipe =
+    Recipe(
+      id: "test-recipe",
+      name: "Test Recipe",
+      ingredients: [types.Ingredient(name: "Chicken", quantity: "8 oz")],
+      instructions: ["Cook chicken"],
+      macros: Macros(protein: 50.0, fat: 15.0, carbs: 20.0),
+      servings: 1,
+      category: "chicken",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
+
+  let result = generate_weekly_plan(profile, [recipe])
+  result |> should.be_ok()
+
+  case result {
+    Ok(plan) -> {
+      list.length(plan.days) |> should.equal(7)
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+pub fn generate_weekly_plan_has_correct_day_names_test() {
+  let profile =
+    UserProfile(
+      bodyweight: 180.0,
+      activity_level: Active,
+      goal: Maintain,
+      meals_per_day: 3,
+    )
+  let recipe =
+    Recipe(
+      id: "test-recipe",
+      name: "Test Recipe",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
+      servings: 1,
+      category: "test",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
+
+  let result = generate_weekly_plan(profile, [recipe])
+  case result {
+    Ok(plan) -> {
+      let day_names = list.map(plan.days, fn(d) { d.day_name })
+      list.contains(day_names, "Monday") |> should.be_true()
+      list.contains(day_names, "Tuesday") |> should.be_true()
+      list.contains(day_names, "Wednesday") |> should.be_true()
+      list.contains(day_names, "Thursday") |> should.be_true()
+      list.contains(day_names, "Friday") |> should.be_true()
+      list.contains(day_names, "Saturday") |> should.be_true()
+      list.contains(day_names, "Sunday") |> should.be_true()
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+pub fn generate_weekly_plan_with_empty_recipes_test() {
+  let profile =
+    UserProfile(
+      bodyweight: 180.0,
+      activity_level: Active,
+      goal: Maintain,
+      meals_per_day: 3,
+    )
+
+  let result = generate_weekly_plan(profile, [])
+  result |> should.be_ok()
+
+  case result {
+    Ok(plan) -> {
+      // Even with no recipes, should create 7 days with default recipe
+      list.length(plan.days) |> should.equal(7)
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+pub fn generate_weekly_plan_preserves_user_profile_test() {
+  let profile =
+    UserProfile(
+      bodyweight: 200.0,
+      activity_level: Active,
+      goal: types.Gain,
+      meals_per_day: 4,
+    )
+  let recipe =
+    Recipe(
+      id: "test",
+      name: "Test",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
+      servings: 1,
+      category: "test",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
+
+  let result = generate_weekly_plan(profile, [recipe])
+  case result {
+    Ok(plan) -> {
+      plan.user_profile.bodyweight |> should.equal(200.0)
+      plan.user_profile.meals_per_day |> should.equal(4)
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+pub fn generate_weekly_plan_each_day_has_meal_test() {
+  let profile =
+    UserProfile(
+      bodyweight: 180.0,
+      activity_level: Active,
+      goal: Maintain,
+      meals_per_day: 3,
+    )
+  let recipe =
+    Recipe(
+      id: "test-recipe",
+      name: "Test Recipe",
+      ingredients: [types.Ingredient(name: "Beef", quantity: "6 oz")],
+      instructions: ["Grill"],
+      macros: Macros(protein: 45.0, fat: 20.0, carbs: 0.0),
+      servings: 1,
+      category: "beef",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
+
+  let result = generate_weekly_plan(profile, [recipe])
+  case result {
+    Ok(plan) -> {
+      // Each day should have at least one meal
+      list.all(plan.days, fn(day) { list.length(day.meals) > 0 })
+      |> should.be_true()
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+// ============================================================================
+// Edge case tests for meal_macros
+// ============================================================================
+
+pub fn meal_macros_zero_portion_test() {
+  let recipe =
+    Recipe(
+      id: "test",
+      name: "Test",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
+      servings: 1,
+      category: "test",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
+  let meal = Meal(recipe: recipe, portion_size: 0.0)
+  let macros = meal_macros(meal)
+  macros.protein |> should.equal(0.0)
+  macros.fat |> should.equal(0.0)
+  macros.carbs |> should.equal(0.0)
+}
+
+pub fn meal_macros_large_portion_test() {
+  let recipe =
+    Recipe(
+      id: "test",
+      name: "Test",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+      servings: 1,
+      category: "test",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
+  let meal = Meal(recipe: recipe, portion_size: 10.0)
+  let macros = meal_macros(meal)
+  macros.protein |> should.equal(100.0)
+  macros.fat |> should.equal(50.0)
+  macros.carbs |> should.equal(200.0)
 }
