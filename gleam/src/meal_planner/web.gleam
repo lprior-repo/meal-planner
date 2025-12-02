@@ -4,6 +4,7 @@
 import gleam/erlang/process
 import gleam/float
 import gleam/int
+import gleam/io
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
@@ -11,15 +12,13 @@ import gleam/uri
 import lustre/attribute
 import lustre/element
 import lustre/element/html
-import meal_planner/migrate
 import meal_planner/storage
 import meal_planner/types.{
-  type Macros, type Recipe, type UserProfile, Active, Gain, Lose, Macros,
-  Maintain, Moderate, Sedentary, UserProfile,
+  type DailyLog, type Macros, type Recipe, type UserProfile, Active, DailyLog,
+  Gain, Lose, Macros, Maintain, Moderate, Sedentary, UserProfile,
 }
 import mist
-import server/storage as server_storage
-import shared/types.{type DailyLog} as shared_types
+import pog
 import wisp
 import wisp/wisp_mist
 
@@ -27,9 +26,9 @@ import wisp/wisp_mist
 // Context (passed to handlers)
 // ============================================================================
 
-/// Web context holding database path
+/// Web context holding database connection
 pub type Context {
-  Context(db_path: String)
+  Context(db: pog.Connection)
 }
 
 // ============================================================================
@@ -45,8 +44,14 @@ pub fn main() {
 pub fn start(port: Int) {
   wisp.configure_logger()
 
+  // Initialize database connection pool
+  let db_config = storage.default_config()
+  let assert Ok(db) = storage.start_pool(db_config)
+
   let secret_key_base = wisp.random_string(64)
-  let ctx = Context(db_path: migrate.get_db_path())
+  let ctx = Context(db: db)
+
+  io.println("Starting server on port " <> int.to_string(port))
 
   let handler = fn(req) { handle_request(req, ctx) }
 
@@ -814,19 +819,17 @@ fn get_foods_count(ctx: Context) -> Int {
 
 /// Load daily log for a specific date from storage
 fn load_daily_log(ctx: Context, date: String) -> DailyLog {
-  server_storage.with_connection(ctx.db_path, fn(conn) {
-    case server_storage.get_daily_log(conn, date) {
-      Ok(log) -> log
-      Error(_) -> {
-        // Return empty log if no entries found for this date
-        shared_types.DailyLog(
-          date: date,
-          entries: [],
-          total_macros: shared_types.Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
-        )
-      }
+  case storage.get_daily_log(ctx.db, date) {
+    Ok(log) -> log
+    Error(_) -> {
+      // Return empty log if no entries found for this date
+      DailyLog(
+        date: date,
+        entries: [],
+        total_macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+      )
     }
-  })
+  }
 }
 
 /// Get today's date in YYYY-MM-DD format

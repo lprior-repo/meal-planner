@@ -1,14 +1,17 @@
 /// PostgreSQL storage module for nutrition data persistence
 import gleam/dynamic/decode
+import gleam/erlang/process
 import gleam/int
-import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/otp/actor
 import gleam/string
 import meal_planner/ncp
 import meal_planner/types.{
-  type Recipe, type UserProfile, Active, Gain, High, Ingredient, Lose, Low,
-  Macros, Maintain, Medium, Moderate, Recipe, Sedentary, UserProfile,
+  type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+  Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+  Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary,
+  Snack, UserProfile,
 }
 import pog
 
@@ -44,8 +47,9 @@ pub fn default_config() -> DbConfig {
 
 /// Convert DbConfig to pog.Config
 fn to_pog_config(config: DbConfig) -> pog.Config {
+  let pool_name = process.new_name(prefix: "meal_planner_db")
   let base =
-    pog.default_config()
+    pog.default_config(pool_name: pool_name)
     |> pog.host(config.host)
     |> pog.port(config.port)
     |> pog.database(config.database)
@@ -61,18 +65,16 @@ fn to_pog_config(config: DbConfig) -> pog.Config {
 /// Start the database connection pool
 pub fn start_pool(config: DbConfig) -> Result(pog.Connection, String) {
   let pog_config = to_pog_config(config)
-  case pog.connect(pog_config) {
-    Ok(conn) -> Ok(conn)
-    Error(pog.ConnectionUnavailable) ->
-      Error("Database connection unavailable")
-    Error(pog.PostgresqlError(_code, _name, msg)) ->
-      Error("PostgreSQL error: " <> msg)
+  case pog.start(pog_config) {
+    Ok(started) -> {
+      let actor.Started(_pid, conn) = started
+      Ok(conn)
+    }
+    Error(actor.InitTimeout) -> Error("Database connection timeout")
+    Error(actor.InitFailed(reason)) ->
+      Error("Database connection failed: " <> reason)
+    Error(actor.InitExited(_)) -> Error("Database process exited unexpectedly")
   }
-}
-
-/// Disconnect from the database
-pub fn disconnect(conn: pog.Connection) -> Nil {
-  pog.disconnect(conn)
 }
 
 // ============================================================================
@@ -144,6 +146,7 @@ pub fn get_nutrition_state(
   {
     Error(e) -> Error(DatabaseError(format_pog_error(e)))
     Ok(pog.Returned(0, _)) -> Error(NotFound)
+    Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [row, ..])) -> Ok(row)
   }
 }
@@ -244,6 +247,7 @@ pub fn get_goals(conn: pog.Connection) -> Result(ncp.NutritionGoals, StorageErro
   {
     Error(e) -> Error(DatabaseError(format_pog_error(e)))
     Ok(pog.Returned(0, _)) -> Error(NotFound)
+    Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [row, ..])) -> Ok(row)
   }
 }
@@ -334,6 +338,7 @@ pub fn get_user_profile(conn: pog.Connection) -> Result(UserProfile, StorageErro
   {
     Error(e) -> Error(DatabaseError(format_pog_error(e)))
     Ok(pog.Returned(0, _)) -> Error(NotFound)
+    Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [row, ..])) -> Ok(row)
   }
 }
@@ -430,6 +435,7 @@ pub fn get_recipe_by_id(
   {
     Error(e) -> Error(DatabaseError(format_pog_error(e)))
     Ok(pog.Returned(0, _)) -> Error(NotFound)
+    Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [row, ..])) -> Ok(row)
   }
 }
@@ -635,6 +641,7 @@ pub fn get_food_by_id(
   {
     Error(e) -> Error(DatabaseError(format_pog_error(e)))
     Ok(pog.Returned(0, _)) -> Error(NotFound)
+    Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [row, ..])) -> Ok(row)
   }
 }
@@ -781,34 +788,8 @@ fn food_log_decoder() -> decode.Decoder(FoodLog) {
 // ============================================================================
 
 // ============================================================================
-// Daily Log Functions (for shared types compatibility)
+// Daily Log Functions (uses types from meal_planner/types)
 // ============================================================================
-
-/// Meal type for food logs
-pub type MealType {
-  Breakfast
-  Lunch
-  Dinner
-  Snack
-}
-
-/// Food log entry matching shared types structure
-pub type FoodLogEntry {
-  FoodLogEntry(
-    id: String,
-    recipe_id: String,
-    recipe_name: String,
-    servings: Float,
-    macros: Macros,
-    meal_type: MealType,
-    logged_at: String,
-  )
-}
-
-/// Daily log matching shared types structure
-pub type DailyLog {
-  DailyLog(date: String, entries: List(FoodLogEntry), total_macros: Macros)
-}
 
 /// Get daily log for a specific date
 pub fn get_daily_log(
@@ -902,5 +883,6 @@ fn format_pog_error(err: pog.QueryError) -> String {
         })
       "Decode error: " <> string.join(msgs, "; ")
     }
+    pog.QueryTimeout -> "Database query timeout"
   }
 }
