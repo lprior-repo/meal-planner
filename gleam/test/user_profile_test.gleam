@@ -15,6 +15,7 @@ pub fn daily_protein_target_active_gain_test() {
   // Active + gain = 1.0 multiplier
   let u =
     UserProfile(
+      id: "test-user",
       bodyweight: 200.0,
       activity_level: Active,
       goal: Gain,
@@ -27,6 +28,7 @@ pub fn daily_protein_target_sedentary_lose_test() {
   // Sedentary + lose = 0.8 multiplier
   let u =
     UserProfile(
+      id: "test-user",
       bodyweight: 200.0,
       activity_level: Sedentary,
       goal: Lose,
@@ -39,6 +41,7 @@ pub fn daily_protein_target_moderate_test() {
   // Moderate = 0.9 multiplier
   let u =
     UserProfile(
+      id: "test-user",
       bodyweight: 200.0,
       activity_level: Moderate,
       goal: Maintain,
@@ -51,6 +54,7 @@ pub fn daily_fat_target_test() {
   // 0.3g per lb bodyweight
   let u =
     UserProfile(
+      id: "test-user",
       bodyweight: 200.0,
       activity_level: Moderate,
       goal: Maintain,
@@ -63,6 +67,7 @@ pub fn daily_calorie_target_moderate_maintain_test() {
   // Moderate = 15 cal/lb, maintain = no adjustment
   let u =
     UserProfile(
+      id: "test-user",
       bodyweight: 200.0,
       activity_level: Moderate,
       goal: Maintain,
@@ -75,6 +80,7 @@ pub fn daily_calorie_target_active_gain_test() {
   // Active = 18 cal/lb, gain = 15% surplus
   let u =
     UserProfile(
+      id: "test-user",
       bodyweight: 200.0,
       activity_level: Active,
       goal: Gain,
@@ -88,6 +94,7 @@ pub fn daily_calorie_target_sedentary_lose_test() {
   // Sedentary = 12 cal/lb, lose = 15% deficit
   let u =
     UserProfile(
+      id: "test-user",
       bodyweight: 200.0,
       activity_level: Sedentary,
       goal: Lose,
@@ -100,6 +107,7 @@ pub fn daily_calorie_target_sedentary_lose_test() {
 pub fn daily_macro_targets_test() {
   let u =
     UserProfile(
+      id: "test-user",
       bodyweight: 200.0,
       activity_level: Moderate,
       goal: Maintain,
@@ -235,6 +243,7 @@ pub fn profile_error_to_string_parse_error_test() {
 pub fn format_user_profile_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Maintain,
@@ -297,7 +306,7 @@ pub fn parse_meals_per_day_out_of_range_test() {
 // Profile creation tests
 
 pub fn create_profile_valid_test() {
-  let result = create_profile(180.0, Moderate, Maintain, 3)
+  let result = create_profile("test-user", 180.0, Moderate, Maintain, 3)
   result |> should.be_ok()
   let profile = case result {
     Ok(p) -> p
@@ -310,19 +319,19 @@ pub fn create_profile_valid_test() {
 }
 
 pub fn create_profile_invalid_bodyweight_test() {
-  create_profile(50.0, Moderate, Maintain, 3)
+  create_profile("test-user", 50.0, Moderate, Maintain, 3)
   |> should.be_error()
   |> should.equal(InvalidInput("bodyweight too low: minimum 80 lbs"))
 }
 
 pub fn create_profile_invalid_meals_test() {
-  create_profile(180.0, Moderate, Maintain, 10)
+  create_profile("test-user", 180.0, Moderate, Maintain, 10)
   |> should.be_error()
   |> should.equal(InvalidInput("meals per day too high: maximum 6"))
 }
 
 pub fn create_profile_from_strings_valid_test() {
-  let result = create_profile_from_strings("180.0", "moderate", "maintain", "3")
+  let result = create_profile_from_strings("test-user", "180.0", "moderate", "maintain", "3")
   result |> should.be_ok()
   let profile = case result {
     Ok(p) -> p
@@ -336,24 +345,24 @@ pub fn create_profile_from_strings_valid_test() {
 
 pub fn create_profile_from_strings_all_variations_test() {
   // Test with different valid inputs
-  create_profile_from_strings("200.5", "active", "gain", "4")
+  create_profile_from_strings("test-user", "200.5", "active", "gain", "4")
   |> should.be_ok()
 
-  create_profile_from_strings("150.0", "sedentary", "lose", "2")
+  create_profile_from_strings("test-user", "150.0", "sedentary", "lose", "2")
   |> should.be_ok()
 
-  create_profile_from_strings("250.0", "MODERATE", "MAINTAIN", "5")
+  create_profile_from_strings("test-user", "250.0", "MODERATE", "MAINTAIN", "5")
   |> should.be_ok()
 }
 
 pub fn create_profile_from_strings_invalid_bodyweight_test() {
-  create_profile_from_strings("not a number", "moderate", "maintain", "3")
+  create_profile_from_strings("test-user", "not a number", "moderate", "maintain", "3")
   |> should.be_error()
   |> should.equal(ParseError("invalid bodyweight: must be a number"))
 }
 
 pub fn create_profile_from_strings_invalid_activity_test() {
-  create_profile_from_strings("180.0", "invalid", "maintain", "3")
+  create_profile_from_strings("test-user", "180.0", "invalid", "maintain", "3")
   |> should.be_error()
   |> should.equal(InvalidInput(
     "invalid activity level: must be sedentary, moderate, or active",
@@ -361,13 +370,13 @@ pub fn create_profile_from_strings_invalid_activity_test() {
 }
 
 pub fn create_profile_from_strings_invalid_goal_test() {
-  create_profile_from_strings("180.0", "moderate", "invalid", "3")
+  create_profile_from_strings("test-user", "180.0", "moderate", "invalid", "3")
   |> should.be_error()
   |> should.equal(InvalidInput("invalid goal: must be gain, maintain, or lose"))
 }
 
 pub fn create_profile_from_strings_invalid_meals_test() {
-  create_profile_from_strings("180.0", "moderate", "maintain", "not a number")
+  create_profile_from_strings("test-user", "180.0", "moderate", "maintain", "not a number")
   |> should.be_error()
   |> should.equal(ParseError("invalid meals per day: must be a number"))
 }

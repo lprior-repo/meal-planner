@@ -226,6 +226,7 @@ pub fn total_macros_zero_servings_treated_as_one_test() {
 pub fn daily_protein_target_active_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Active,
       goal: Maintain,
@@ -238,6 +239,7 @@ pub fn daily_protein_target_active_test() {
 pub fn daily_protein_target_sedentary_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Sedentary,
       goal: Maintain,
@@ -250,6 +252,7 @@ pub fn daily_protein_target_sedentary_test() {
 pub fn daily_protein_target_gain_goal_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Gain,
@@ -262,6 +265,7 @@ pub fn daily_protein_target_gain_goal_test() {
 pub fn daily_protein_target_lose_goal_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Lose,
@@ -274,6 +278,7 @@ pub fn daily_protein_target_lose_goal_test() {
 pub fn daily_protein_target_moderate_maintain_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Maintain,
@@ -286,6 +291,7 @@ pub fn daily_protein_target_moderate_maintain_test() {
 pub fn daily_fat_target_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Active,
       goal: Maintain,
@@ -298,6 +304,7 @@ pub fn daily_fat_target_test() {
 pub fn daily_calorie_target_sedentary_maintain_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Sedentary,
       goal: Maintain,
@@ -311,6 +318,7 @@ pub fn daily_calorie_target_sedentary_maintain_test() {
 pub fn daily_calorie_target_active_maintain_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Active,
       goal: Maintain,
@@ -324,6 +332,7 @@ pub fn daily_calorie_target_active_maintain_test() {
 pub fn daily_calorie_target_moderate_gain_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 100.0,
       activity_level: Moderate,
       goal: Gain,
@@ -337,6 +346,7 @@ pub fn daily_calorie_target_moderate_gain_test() {
 pub fn daily_calorie_target_moderate_lose_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Lose,
@@ -350,6 +360,7 @@ pub fn daily_calorie_target_moderate_lose_test() {
 pub fn daily_carb_target_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Active,
       goal: Maintain,
@@ -366,6 +377,7 @@ pub fn daily_carb_target_test() {
 pub fn daily_macro_targets_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Active,
       goal: Maintain,

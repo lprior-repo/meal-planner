@@ -67,6 +67,7 @@ fn make_compliant_recipes() -> List(Recipe) {
 
 fn make_test_profile() -> UserProfile {
   UserProfile(
+    id: "test-user",
     bodyweight: 180.0,
     activity_level: Moderate,
     goal: Gain,
@@ -131,6 +132,7 @@ pub fn generate_weekly_plan_assigns_day_names_test() {
 pub fn generate_weekly_plan_creates_meals_per_day_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Gain,
@@ -150,6 +152,7 @@ pub fn generate_weekly_plan_creates_meals_per_day_test() {
 pub fn generate_weekly_plan_four_meals_per_day_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 200.0,
       activity_level: Active,
       goal: Gain,
@@ -230,6 +233,7 @@ pub fn generate_weekly_plan_no_compliant_recipes_test() {
 pub fn generate_weekly_plan_total_meals_correct_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Maintain,

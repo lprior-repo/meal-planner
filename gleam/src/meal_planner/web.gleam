@@ -36,6 +36,11 @@ pub type Context {
 // Server Entry
 // ============================================================================
 
+/// Main entry point - starts server on port 8080
+pub fn main() {
+  start(8080)
+}
+
 /// Start the web server on the specified port
 pub fn start(port: Int) {
   wisp.configure_logger()
@@ -738,38 +743,33 @@ fn serve_static(req: wisp.Request, _path: List(String)) -> wisp.Response {
 // ============================================================================
 
 fn load_recipes(ctx: Context) -> List(Recipe) {
-  storage.with_connection(ctx.db_path, fn(conn) {
-    case storage.get_all_recipes(conn) {
-      Ok([]) -> sample_recipes()
-      Ok(recipes) -> recipes
-      Error(_) -> sample_recipes()
-    }
-  })
+  case storage.get_all_recipes(ctx.db) {
+    Ok([]) -> sample_recipes()
+    Ok(recipes) -> recipes
+    Error(_) -> sample_recipes()
+  }
 }
 
 fn load_recipe_by_id(ctx: Context, id: String) -> Result(Recipe, Nil) {
-  storage.with_connection(ctx.db_path, fn(conn) {
-    case storage.get_recipe_by_id(conn, id) {
-      Ok(recipe) -> Ok(recipe)
-      Error(_) -> {
-        // Fallback to sample recipes
-        list.find(sample_recipes(), fn(r) { r.id == id })
-      }
+  case storage.get_recipe_by_id(ctx.db, id) {
+    Ok(recipe) -> Ok(recipe)
+    Error(_) -> {
+      // Fallback to sample recipes
+      list.find(sample_recipes(), fn(r) { r.id == id })
     }
-  })
+  }
 }
 
 fn load_profile(ctx: Context) -> UserProfile {
-  storage.with_connection(ctx.db_path, fn(conn) {
-    case storage.get_user_profile(conn) {
-      Ok(profile) -> profile
-      Error(_) -> default_profile()
-    }
-  })
+  case storage.get_user_profile(ctx.db) {
+    Ok(profile) -> profile
+    Error(_) -> default_profile()
+  }
 }
 
 fn default_profile() -> UserProfile {
   UserProfile(
+    id: "default",
     bodyweight: 180.0,
     activity_level: Moderate,
     goal: Maintain,
@@ -782,42 +782,34 @@ fn search_foods(
   query: String,
   limit: Int,
 ) -> List(storage.UsdaFood) {
-  storage.with_connection(ctx.db_path, fn(conn) {
-    case storage.search_foods(conn, query, limit) {
-      Ok(foods) -> foods
-      Error(_) -> []
-    }
-  })
+  case storage.search_foods(ctx.db, query, limit) {
+    Ok(foods) -> foods
+    Error(_) -> []
+  }
 }
 
 fn load_food_by_id(ctx: Context, fdc_id: Int) -> Result(storage.UsdaFood, Nil) {
-  storage.with_connection(ctx.db_path, fn(conn) {
-    case storage.get_food_by_id(conn, fdc_id) {
-      Ok(food) -> Ok(food)
-      Error(_) -> Error(Nil)
-    }
-  })
+  case storage.get_food_by_id(ctx.db, fdc_id) {
+    Ok(food) -> Ok(food)
+    Error(_) -> Error(Nil)
+  }
 }
 
 fn load_food_nutrients(
   ctx: Context,
   fdc_id: Int,
 ) -> List(storage.FoodNutrientValue) {
-  storage.with_connection(ctx.db_path, fn(conn) {
-    case storage.get_food_nutrients(conn, fdc_id) {
-      Ok(nutrients) -> nutrients
-      Error(_) -> []
-    }
-  })
+  case storage.get_food_nutrients(ctx.db, fdc_id) {
+    Ok(nutrients) -> nutrients
+    Error(_) -> []
+  }
 }
 
 fn get_foods_count(ctx: Context) -> Int {
-  storage.with_connection(ctx.db_path, fn(conn) {
-    case storage.get_foods_count(conn) {
-      Ok(count) -> count
-      Error(_) -> 0
-    }
-  })
+  case storage.get_foods_count(ctx.db) {
+    Ok(count) -> count
+    Error(_) -> 0
+  }
 }
 
 /// Load daily log for a specific date from storage

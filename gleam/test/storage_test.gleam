@@ -19,6 +19,7 @@ pub fn save_and_get_user_profile_test() {
 
     let profile =
       UserProfile(
+        id: "test-user",
         bodyweight: 180.0,
         activity_level: Moderate,
         goal: Gain,
@@ -43,6 +44,7 @@ pub fn save_user_profile_activity_levels_test() {
     // Test sedentary
     let profile_sed =
       UserProfile(
+        id: "test-user-sed",
         bodyweight: 150.0,
         activity_level: Sedentary,
         goal: Lose,
@@ -59,6 +61,7 @@ pub fn save_user_profile_activity_levels_test() {
     // Test active
     let profile_active =
       UserProfile(
+        id: "test-user-active",
         bodyweight: 200.0,
         activity_level: Active,
         goal: Gain,
@@ -92,6 +95,7 @@ pub fn user_profile_upsert_test() {
     // Save initial profile
     let profile1 =
       UserProfile(
+        id: "test-user-1",
         bodyweight: 175.0,
         activity_level: Moderate,
         goal: Maintain,
@@ -102,6 +106,7 @@ pub fn user_profile_upsert_test() {
     // Update profile (should replace, not create duplicate)
     let profile2 =
       UserProfile(
+        id: "test-user-2",
         bodyweight: 180.0,
         activity_level: Active,
         goal: Gain,

@@ -1,5 +1,5 @@
 import gleeunit/should
-import shared/types.{Ingredient, Low, Macros, Recipe}
+import meal_planner/types.{Ingredient, Low, Macros, Recipe}
 
 pub fn recipe_storage_test() {
   let recipe =

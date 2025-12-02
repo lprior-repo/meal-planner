@@ -1,11 +1,11 @@
 import gleam/list
 import gleeunit/should
 import meal_planner/meal_plan.{
-  DailyPlan, Meal, WeeklyMealPlan, daily_plan_macros, default_recipe,
-  generate_weekly_plan, meal_macros, weekly_plan_avg_daily_macros,
-  weekly_plan_macros,
+  DailyPlan, Meal, WeeklyMealPlan, daily_plan_macros, default_recipe, meal_macros,
+  weekly_plan_avg_daily_macros, weekly_plan_macros,
 }
 import meal_planner/types.{Active, Low, Macros, Maintain, Recipe, UserProfile}
+import meal_planner/weekly_plan.{generate_weekly_plan}
 
 pub fn meal_macros_test() {
   let recipe =
@@ -153,6 +153,7 @@ pub fn daily_plan_macros_empty_meals_test() {
 pub fn weekly_plan_macros_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 176.0,
       activity_level: Active,
       goal: Maintain,
@@ -190,6 +191,7 @@ pub fn weekly_plan_macros_test() {
 pub fn weekly_plan_avg_daily_macros_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 176.0,
       activity_level: Active,
       goal: Maintain,
@@ -227,6 +229,7 @@ pub fn weekly_plan_avg_daily_macros_test() {
 pub fn weekly_plan_empty_days_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 154.0,
       activity_level: Active,
       goal: Maintain,
@@ -268,6 +271,7 @@ pub fn default_recipe_fodmap_is_low_test() {
 pub fn generate_weekly_plan_returns_seven_days_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Active,
       goal: Maintain,
@@ -286,20 +290,14 @@ pub fn generate_weekly_plan_returns_seven_days_test() {
       vertical_compliant: True,
     )
 
-  let result = generate_weekly_plan(profile, [recipe])
-  result |> should.be_ok()
-
-  case result {
-    Ok(plan) -> {
-      list.length(plan.days) |> should.equal(7)
-    }
-    Error(_) -> should.fail()
-  }
+  let plan = generate_weekly_plan(profile, [recipe])
+  list.length(plan.days) |> should.equal(7)
 }
 
 pub fn generate_weekly_plan_has_correct_day_names_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Active,
       goal: Maintain,
@@ -318,46 +316,36 @@ pub fn generate_weekly_plan_has_correct_day_names_test() {
       vertical_compliant: True,
     )
 
-  let result = generate_weekly_plan(profile, [recipe])
-  case result {
-    Ok(plan) -> {
-      let day_names = list.map(plan.days, fn(d) { d.day_name })
-      list.contains(day_names, "Monday") |> should.be_true()
-      list.contains(day_names, "Tuesday") |> should.be_true()
-      list.contains(day_names, "Wednesday") |> should.be_true()
-      list.contains(day_names, "Thursday") |> should.be_true()
-      list.contains(day_names, "Friday") |> should.be_true()
-      list.contains(day_names, "Saturday") |> should.be_true()
-      list.contains(day_names, "Sunday") |> should.be_true()
-    }
-    Error(_) -> should.fail()
-  }
+  let plan = generate_weekly_plan(profile, [recipe])
+  let day_names = list.map(plan.days, fn(d) { d.day_name })
+  list.contains(day_names, "Monday") |> should.be_true()
+  list.contains(day_names, "Tuesday") |> should.be_true()
+  list.contains(day_names, "Wednesday") |> should.be_true()
+  list.contains(day_names, "Thursday") |> should.be_true()
+  list.contains(day_names, "Friday") |> should.be_true()
+  list.contains(day_names, "Saturday") |> should.be_true()
+  list.contains(day_names, "Sunday") |> should.be_true()
 }
 
 pub fn generate_weekly_plan_with_empty_recipes_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Active,
       goal: Maintain,
       meals_per_day: 3,
     )
 
-  let result = generate_weekly_plan(profile, [])
-  result |> should.be_ok()
-
-  case result {
-    Ok(plan) -> {
-      // Even with no recipes, should create 7 days with default recipe
-      list.length(plan.days) |> should.equal(7)
-    }
-    Error(_) -> should.fail()
-  }
+  let plan = generate_weekly_plan(profile, [])
+  // Even with no recipes, should create 7 days
+  list.length(plan.days) |> should.equal(7)
 }
 
 pub fn generate_weekly_plan_preserves_user_profile_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 200.0,
       activity_level: Active,
       goal: types.Gain,
@@ -376,19 +364,15 @@ pub fn generate_weekly_plan_preserves_user_profile_test() {
       vertical_compliant: True,
     )
 
-  let result = generate_weekly_plan(profile, [recipe])
-  case result {
-    Ok(plan) -> {
-      plan.user_profile.bodyweight |> should.equal(200.0)
-      plan.user_profile.meals_per_day |> should.equal(4)
-    }
-    Error(_) -> should.fail()
-  }
+  let plan = generate_weekly_plan(profile, [recipe])
+  plan.user_profile.bodyweight |> should.equal(200.0)
+  plan.user_profile.meals_per_day |> should.equal(4)
 }
 
 pub fn generate_weekly_plan_each_day_has_meal_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Active,
       goal: Maintain,
@@ -407,15 +391,10 @@ pub fn generate_weekly_plan_each_day_has_meal_test() {
       vertical_compliant: True,
     )
 
-  let result = generate_weekly_plan(profile, [recipe])
-  case result {
-    Ok(plan) -> {
-      // Each day should have at least one meal
-      list.all(plan.days, fn(day) { day.meals != [] })
-      |> should.be_true()
-    }
-    Error(_) -> should.fail()
-  }
+  let plan = generate_weekly_plan(profile, [recipe])
+  // Each day should have at least one meal
+  list.all(plan.days, fn(day) { day.meals != [] })
+  |> should.be_true()
 }
 
 // ============================================================================

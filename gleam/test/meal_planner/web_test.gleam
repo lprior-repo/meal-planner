@@ -11,6 +11,7 @@ pub fn main() {
 pub fn user_profile_macro_targets_test() {
   let profile =
     types.UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: types.Moderate,
       goal: types.Maintain,

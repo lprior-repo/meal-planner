@@ -88,6 +88,7 @@ pub fn format_meal_timing_evening_test() {
 pub fn format_user_profile_basic_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Gain,
@@ -104,6 +105,7 @@ pub fn format_user_profile_basic_test() {
 pub fn format_user_profile_includes_targets_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 200.0,
       activity_level: Active,
       goal: Gain,
@@ -180,6 +182,7 @@ pub fn format_categorized_shopping_list_empty_categories_test() {
 pub fn format_weekly_plan_basic_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Gain,
@@ -205,6 +208,7 @@ pub fn format_weekly_plan_basic_test() {
 pub fn format_weekly_plan_includes_summary_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Gain,
@@ -234,6 +238,7 @@ pub fn format_weekly_plan_includes_summary_test() {
 pub fn format_weekly_plan_empty_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Gain,

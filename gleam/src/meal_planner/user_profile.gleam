@@ -78,6 +78,7 @@ pub fn parse_meals_per_day(input: String) -> Result(Int, ProfileError) {
 
 /// Create a user profile from validated inputs
 pub fn create_profile(
+  id: String,
   bodyweight: Float,
   activity_level: ActivityLevel,
   goal: Goal,
@@ -91,6 +92,7 @@ pub fn create_profile(
         Error(e) -> Error(e)
         Ok(m) ->
           Ok(UserProfile(
+            id: id,
             bodyweight: w,
             activity_level: activity_level,
             goal: goal,
@@ -102,6 +104,7 @@ pub fn create_profile(
 
 /// Create a user profile from string inputs
 pub fn create_profile_from_strings(
+  id: String,
   bodyweight_str: String,
   activity_level_str: String,
   goal_str: String,
@@ -118,7 +121,7 @@ pub fn create_profile_from_strings(
             Ok(g) ->
               case parse_meals_per_day(meals_per_day_str) {
                 Error(e) -> Error(e)
-                Ok(meals) -> create_profile(weight, activity, g, meals)
+                Ok(meals) -> create_profile(id, weight, activity, g, meals)
               }
           }
       }
@@ -137,6 +140,7 @@ pub fn collect_interactive_profile() -> Result(UserProfile, ProfileError) {
   // Return a default profile for demonstration
   // In a full implementation with proper stdin support, this would collect data interactively
   Ok(UserProfile(
+    id: "default",
     bodyweight: 180.0,
     activity_level: Moderate,
     goal: Maintain,

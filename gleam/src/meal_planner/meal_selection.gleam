@@ -128,6 +128,8 @@ pub fn is_within_targets(
 
 /// SelectMealsForWeek selects meals following Vertical Diet distribution
 /// target_meals is the number of main meals to select (e.g., 21 for 7 days x 3 meals)
+/// When there aren't enough recipes in certain categories, it fills remaining slots
+/// from available recipes to ensure the target count is met.
 pub fn select_meals_for_week(
   recipes: List(Recipe),
   target_meals: Int,
@@ -135,9 +137,9 @@ pub fn select_meals_for_week(
   let config = default_meal_selection_config()
 
   // Categorize all available recipes, filtering for compliant only
+  let compliant_recipes = list.filter(recipes, is_vertical_diet_compliant)
   let categorized =
-    recipes
-    |> list.filter(is_vertical_diet_compliant)
+    compliant_recipes
     |> list.fold(#([], [], [], []), fn(acc, recipe) {
       let #(red_meat, salmon, eggs, variety) = acc
       case get_meal_category(recipe) {
@@ -193,7 +195,7 @@ pub fn select_meals_for_week(
     select_from_category(variety_recipes, variety_target)
 
   // Combine all selected recipes
-  let all_selected =
+  let initial_selected =
     list.flatten([
       selected_red_meat,
       selected_salmon,
@@ -202,17 +204,29 @@ pub fn select_meals_for_week(
       selected_variety,
     ])
 
+  let initial_count =
+    red_meat_count + salmon_count + eggs_count + eggs_count_extra + variety_count
+
+  // If we don't have enough recipes to meet the target, fill with available recipes
+  // cycling through all compliant recipes to reach the target
+  let #(final_selected, extra_count) = case
+    initial_count < target_meals && compliant_recipes != []
+  {
+    True -> {
+      let remaining = target_meals - initial_count
+      let #(extra, extra_len) = select_from_category(compliant_recipes, remaining)
+      #(list.append(initial_selected, extra), extra_len)
+    }
+    False -> #(initial_selected, 0)
+  }
+
   MealSelectionResult(
-    selected_recipes: all_selected,
-    red_meat_count: red_meat_count,
+    selected_recipes: final_selected,
+    red_meat_count: red_meat_count + extra_count,
     salmon_count: salmon_count,
     eggs_count: eggs_count + eggs_count_extra,
     variety_count: variety_count,
-    total_count: red_meat_count
-      + salmon_count
-      + eggs_count
-      + eggs_count_extra
-      + variety_count,
+    total_count: initial_count + extra_count,
   )
 }
 

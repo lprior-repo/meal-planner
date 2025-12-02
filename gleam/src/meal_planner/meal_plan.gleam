@@ -1,6 +1,4 @@
 /// Meal planning types for daily and weekly plans
-import gleam/list
-import gleam/result
 import meal_planner/types.{
   type Ingredient, type Macros, type Recipe, type UserProfile, Low, Macros,
   Recipe, macros_scale,
@@ -105,34 +103,3 @@ fn list_length(list: List(a)) -> Int {
 @external(erlang, "erlang", "float")
 fn int_to_float(n: Int) -> Float
 
-/// Generate a complete weekly meal plan
-/// Uses Vertical Diet distribution and portion calculations
-pub fn generate_weekly_plan(
-  profile: UserProfile,
-  recipes: List(Recipe),
-) -> Result(WeeklyMealPlan, String) {
-  // For now, create a simple plan
-  // In full implementation, this would use meal selection algorithms
-  let days = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ]
-
-  let daily_plans =
-    list.map(days, fn(day) {
-      DailyPlan(day_name: day, meals: [
-        Meal(
-          recipe: list.first(recipes)
-            |> result.unwrap(default_recipe()),
-          portion_size: 1.0,
-        ),
-      ])
-    })
-
-  Ok(WeeklyMealPlan(days: daily_plans, shopping_list: [], user_profile: profile))
-}

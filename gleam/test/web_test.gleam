@@ -59,6 +59,7 @@ pub fn recipe_to_json_serialization_test() {
 pub fn profile_to_json_includes_targets_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Maintain,
@@ -88,6 +89,7 @@ pub fn float_to_string_rounds_correctly_test() {
 pub fn activity_level_to_string_all_variants_test() {
   let sedentary =
     UserProfile(
+      id: "test-user",
       bodyweight: 150.0,
       activity_level: types.Sedentary,
       goal: Maintain,
@@ -95,6 +97,7 @@ pub fn activity_level_to_string_all_variants_test() {
     )
   let moderate =
     UserProfile(
+      id: "test-user",
       bodyweight: 150.0,
       activity_level: types.Moderate,
       goal: Maintain,
@@ -102,6 +105,7 @@ pub fn activity_level_to_string_all_variants_test() {
     )
   let active =
     UserProfile(
+      id: "test-user",
       bodyweight: 150.0,
       activity_level: types.Active,
       goal: Maintain,
@@ -117,6 +121,7 @@ pub fn activity_level_to_string_all_variants_test() {
 pub fn goal_to_string_all_variants_test() {
   let gain =
     UserProfile(
+      id: "test-user",
       bodyweight: 100.0,
       activity_level: Moderate,
       goal: types.Gain,
@@ -124,6 +129,7 @@ pub fn goal_to_string_all_variants_test() {
     )
   let maintain =
     UserProfile(
+      id: "test-user",
       bodyweight: 100.0,
       activity_level: Moderate,
       goal: types.Maintain,
@@ -131,6 +137,7 @@ pub fn goal_to_string_all_variants_test() {
     )
   let lose =
     UserProfile(
+      id: "test-user",
       bodyweight: 100.0,
       activity_level: Moderate,
       goal: types.Lose,
@@ -251,6 +258,7 @@ pub fn load_profile_from_db_test() {
 
     let profile =
       UserProfile(
+        id: "test-user",
         bodyweight: 180.0,
         activity_level: Moderate,
         goal: Maintain,
@@ -332,6 +340,7 @@ pub fn sample_recipes_have_valid_macros_test() {
 pub fn default_profile_has_reasonable_values_test() {
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Maintain,
@@ -395,6 +404,7 @@ pub fn full_profile_roundtrip_test() {
 
     let original =
       UserProfile(
+        id: "test-user",
         bodyweight: 175.5,
         activity_level: types.Active,
         goal: types.Gain,

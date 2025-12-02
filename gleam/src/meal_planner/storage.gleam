@@ -1,17 +1,16 @@
-/// SQLite storage module for nutrition data persistence
+/// PostgreSQL storage module for nutrition data persistence
 import gleam/dynamic/decode
+import gleam/int
 import gleam/io
 import gleam/list
-import gleam/option
+import gleam/option.{type Option, None, Some}
 import gleam/string
-import meal_planner/migrate
 import meal_planner/ncp
 import meal_planner/types.{
   type Recipe, type UserProfile, Active, Gain, High, Ingredient, Lose, Low,
   Macros, Maintain, Medium, Moderate, Recipe, Sedentary, UserProfile,
 }
-import meal_planner/usda_import
-import sqlight
+import pog
 
 /// Error type for storage operations
 pub type StorageError {
@@ -19,54 +18,61 @@ pub type StorageError {
   DatabaseError(String)
 }
 
-/// Open a connection to a SQLite database and run a function with it
-/// Connection is automatically closed after the function completes
-pub fn with_connection(path: String, f: fn(sqlight.Connection) -> a) -> a {
-  sqlight.with_connection(path, f)
+/// Database configuration
+pub type DbConfig {
+  DbConfig(
+    host: String,
+    port: Int,
+    database: String,
+    user: String,
+    password: Option(String),
+    pool_size: Int,
+  )
 }
 
-/// Initialize the database schema
-pub fn init_db(conn: sqlight.Connection) -> Result(Nil, StorageError) {
-  let create_nutrition_table =
-    "CREATE TABLE IF NOT EXISTS nutrition_state (
-      date TEXT PRIMARY KEY,
-      protein REAL NOT NULL,
-      fat REAL NOT NULL,
-      carbs REAL NOT NULL,
-      calories REAL NOT NULL,
-      synced_at TEXT NOT NULL DEFAULT ''
-    )"
+/// Default configuration for development
+pub fn default_config() -> DbConfig {
+  DbConfig(
+    host: "localhost",
+    port: 5432,
+    database: "meal_planner",
+    user: "postgres",
+    password: Some("postgres"),
+    pool_size: 10,
+  )
+}
 
-  let create_goals_table =
-    "CREATE TABLE IF NOT EXISTS nutrition_goals (
-      id INTEGER PRIMARY KEY CHECK (id = 1),
-      daily_protein REAL NOT NULL,
-      daily_fat REAL NOT NULL,
-      daily_carbs REAL NOT NULL,
-      daily_calories REAL NOT NULL
-    )"
+/// Convert DbConfig to pog.Config
+fn to_pog_config(config: DbConfig) -> pog.Config {
+  let base =
+    pog.default_config()
+    |> pog.host(config.host)
+    |> pog.port(config.port)
+    |> pog.database(config.database)
+    |> pog.user(config.user)
+    |> pog.pool_size(config.pool_size)
 
-  let create_profile_table =
-    "CREATE TABLE IF NOT EXISTS user_profile (
-      id INTEGER PRIMARY KEY CHECK (id = 1),
-      bodyweight REAL NOT NULL,
-      activity_level TEXT NOT NULL,
-      goal TEXT NOT NULL,
-      meals_per_day INTEGER NOT NULL
-    )"
-
-  case sqlight.exec(create_nutrition_table, on: conn) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(Nil) ->
-      case sqlight.exec(create_goals_table, on: conn) {
-        Error(e) -> Error(DatabaseError(e.message))
-        Ok(Nil) ->
-          case sqlight.exec(create_profile_table, on: conn) {
-            Error(e) -> Error(DatabaseError(e.message))
-            Ok(Nil) -> Ok(Nil)
-          }
-      }
+  case config.password {
+    Some(pw) -> pog.password(base, Some(pw))
+    None -> base
   }
+}
+
+/// Start the database connection pool
+pub fn start_pool(config: DbConfig) -> Result(pog.Connection, String) {
+  let pog_config = to_pog_config(config)
+  case pog.connect(pog_config) {
+    Ok(conn) -> Ok(conn)
+    Error(pog.ConnectionUnavailable) ->
+      Error("Database connection unavailable")
+    Error(pog.PostgresqlError(_code, _name, msg)) ->
+      Error("PostgreSQL error: " <> msg)
+  }
+}
+
+/// Disconnect from the database
+pub fn disconnect(conn: pog.Connection) -> Nil {
+  pog.disconnect(conn)
 }
 
 // ============================================================================
@@ -75,35 +81,41 @@ pub fn init_db(conn: sqlight.Connection) -> Result(Nil, StorageError) {
 
 /// Save nutrition state for a specific date
 pub fn save_nutrition_state(
-  conn: sqlight.Connection,
+  conn: pog.Connection,
   state: ncp.NutritionState,
 ) -> Result(Nil, StorageError) {
   let sql =
-    "INSERT OR REPLACE INTO nutrition_state (date, protein, fat, carbs, calories, synced_at)
-     VALUES (?, ?, ?, ?, ?, ?)"
+    "INSERT INTO nutrition_state (date, protein, fat, carbs, calories, synced_at)
+     VALUES ($1, $2, $3, $4, $5, NOW())
+     ON CONFLICT (date) DO UPDATE SET
+       protein = EXCLUDED.protein,
+       fat = EXCLUDED.fat,
+       carbs = EXCLUDED.carbs,
+       calories = EXCLUDED.calories,
+       synced_at = NOW()"
 
-  let args = [
-    sqlight.text(state.date),
-    sqlight.float(state.consumed.protein),
-    sqlight.float(state.consumed.fat),
-    sqlight.float(state.consumed.carbs),
-    sqlight.float(state.consumed.calories),
-    sqlight.text(state.synced_at),
-  ]
-
-  case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
-    Error(e) -> Error(DatabaseError(e.message))
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(state.date))
+    |> pog.parameter(pog.float(state.consumed.protein))
+    |> pog.parameter(pog.float(state.consumed.fat))
+    |> pog.parameter(pog.float(state.consumed.carbs))
+    |> pog.parameter(pog.float(state.consumed.calories))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
     Ok(_) -> Ok(Nil)
   }
 }
 
 /// Get nutrition state for a specific date
 pub fn get_nutrition_state(
-  conn: sqlight.Connection,
+  conn: pog.Connection,
   date: String,
 ) -> Result(ncp.NutritionState, StorageError) {
   let sql =
-    "SELECT date, protein, fat, carbs, calories, synced_at FROM nutrition_state WHERE date = ?"
+    "SELECT date, protein, fat, carbs, calories, synced_at::text
+     FROM nutrition_state WHERE date = $1"
 
   let decoder = {
     use date <- decode.field(0, decode.string)
@@ -125,22 +137,25 @@ pub fn get_nutrition_state(
   }
 
   case
-    sqlight.query(sql, on: conn, with: [sqlight.text(date)], expecting: decoder)
+    pog.query(sql)
+    |> pog.parameter(pog.text(date))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([data, ..]) -> Ok(data)
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(0, _)) -> Error(NotFound)
+    Ok(pog.Returned(_, [row, ..])) -> Ok(row)
   }
 }
 
 /// Get nutrition history for the last N days
 pub fn get_nutrition_history(
-  conn: sqlight.Connection,
+  conn: pog.Connection,
   limit: Int,
 ) -> Result(List(ncp.NutritionState), StorageError) {
   let sql =
-    "SELECT date, protein, fat, carbs, calories, synced_at
-     FROM nutrition_state ORDER BY date DESC LIMIT ?"
+    "SELECT date, protein, fat, carbs, calories, synced_at::text
+     FROM nutrition_state ORDER BY date DESC LIMIT $1"
 
   let decoder = {
     use date <- decode.field(0, decode.string)
@@ -162,10 +177,13 @@ pub fn get_nutrition_history(
   }
 
   case
-    sqlight.query(sql, on: conn, with: [sqlight.int(limit)], expecting: decoder)
+    pog.query(sql)
+    |> pog.parameter(pog.int(limit))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(states) -> Ok(states)
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
 
@@ -175,32 +193,36 @@ pub fn get_nutrition_history(
 
 /// Save nutrition goals
 pub fn save_goals(
-  conn: sqlight.Connection,
+  conn: pog.Connection,
   goals: ncp.NutritionGoals,
 ) -> Result(Nil, StorageError) {
   let sql =
-    "INSERT OR REPLACE INTO nutrition_goals (id, daily_protein, daily_fat, daily_carbs, daily_calories)
-     VALUES (1, ?, ?, ?, ?)"
+    "INSERT INTO nutrition_goals (id, daily_protein, daily_fat, daily_carbs, daily_calories)
+     VALUES (1, $1, $2, $3, $4)
+     ON CONFLICT (id) DO UPDATE SET
+       daily_protein = EXCLUDED.daily_protein,
+       daily_fat = EXCLUDED.daily_fat,
+       daily_carbs = EXCLUDED.daily_carbs,
+       daily_calories = EXCLUDED.daily_calories"
 
-  let args = [
-    sqlight.float(goals.daily_protein),
-    sqlight.float(goals.daily_fat),
-    sqlight.float(goals.daily_carbs),
-    sqlight.float(goals.daily_calories),
-  ]
-
-  case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
-    Error(e) -> Error(DatabaseError(e.message))
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.float(goals.daily_protein))
+    |> pog.parameter(pog.float(goals.daily_fat))
+    |> pog.parameter(pog.float(goals.daily_carbs))
+    |> pog.parameter(pog.float(goals.daily_calories))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
     Ok(_) -> Ok(Nil)
   }
 }
 
 /// Get nutrition goals
-pub fn get_goals(
-  conn: sqlight.Connection,
-) -> Result(ncp.NutritionGoals, StorageError) {
+pub fn get_goals(conn: pog.Connection) -> Result(ncp.NutritionGoals, StorageError) {
   let sql =
-    "SELECT daily_protein, daily_fat, daily_carbs, daily_calories FROM nutrition_goals WHERE id = 1"
+    "SELECT daily_protein, daily_fat, daily_carbs, daily_calories
+     FROM nutrition_goals WHERE id = 1"
 
   let decoder = {
     use daily_protein <- decode.field(0, decode.float)
@@ -215,10 +237,14 @@ pub fn get_goals(
     ))
   }
 
-  case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([data, ..]) -> Ok(data)
+  case
+    pog.query(sql)
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(0, _)) -> Error(NotFound)
+    Ok(pog.Returned(_, [row, ..])) -> Ok(row)
   }
 }
 
@@ -228,12 +254,17 @@ pub fn get_goals(
 
 /// Save user profile
 pub fn save_user_profile(
-  conn: sqlight.Connection,
+  conn: pog.Connection,
   profile: UserProfile,
 ) -> Result(Nil, StorageError) {
   let sql =
-    "INSERT OR REPLACE INTO user_profile (id, bodyweight, activity_level, goal, meals_per_day)
-     VALUES (1, ?, ?, ?, ?)"
+    "INSERT INTO user_profile (id, bodyweight, activity_level, goal, meals_per_day)
+     VALUES (1, $1, $2, $3, $4)
+     ON CONFLICT (id) DO UPDATE SET
+       bodyweight = EXCLUDED.bodyweight,
+       activity_level = EXCLUDED.activity_level,
+       goal = EXCLUDED.goal,
+       meals_per_day = EXCLUDED.meals_per_day"
 
   let activity_str = case profile.activity_level {
     Sedentary -> "sedentary"
@@ -247,31 +278,31 @@ pub fn save_user_profile(
     Lose -> "lose"
   }
 
-  let args = [
-    sqlight.float(profile.bodyweight),
-    sqlight.text(activity_str),
-    sqlight.text(goal_str),
-    sqlight.int(profile.meals_per_day),
-  ]
-
-  case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
-    Error(e) -> Error(DatabaseError(e.message))
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.float(profile.bodyweight))
+    |> pog.parameter(pog.text(activity_str))
+    |> pog.parameter(pog.text(goal_str))
+    |> pog.parameter(pog.int(profile.meals_per_day))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
     Ok(_) -> Ok(Nil)
   }
 }
 
 /// Get user profile
-pub fn get_user_profile(
-  conn: sqlight.Connection,
-) -> Result(UserProfile, StorageError) {
+pub fn get_user_profile(conn: pog.Connection) -> Result(UserProfile, StorageError) {
   let sql =
-    "SELECT bodyweight, activity_level, goal, meals_per_day FROM user_profile WHERE id = 1"
+    "SELECT id, bodyweight, activity_level, goal, meals_per_day
+     FROM user_profile WHERE id = 1"
 
   let decoder = {
-    use bodyweight <- decode.field(0, decode.float)
-    use activity_str <- decode.field(1, decode.string)
-    use goal_str <- decode.field(2, decode.string)
-    use meals_per_day <- decode.field(3, decode.int)
+    use id <- decode.field(0, decode.int)
+    use bodyweight <- decode.field(1, decode.float)
+    use activity_str <- decode.field(2, decode.string)
+    use goal_str <- decode.field(3, decode.string)
+    use meals_per_day <- decode.field(4, decode.int)
 
     let activity_level = case activity_str {
       "sedentary" -> Sedentary
@@ -288,6 +319,7 @@ pub fn get_user_profile(
     }
 
     decode.success(UserProfile(
+      id: int.to_string(id),
       bodyweight: bodyweight,
       activity_level: activity_level,
       goal: goal,
@@ -295,10 +327,14 @@ pub fn get_user_profile(
     ))
   }
 
-  case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([profile, ..]) -> Ok(profile)
+  case
+    pog.query(sql)
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(0, _)) -> Error(NotFound)
+    Ok(pog.Returned(_, [row, ..])) -> Ok(row)
   }
 }
 
@@ -306,38 +342,26 @@ pub fn get_user_profile(
 // Recipe Storage Functions
 // ============================================================================
 
-/// Initialize recipe tables in the database
-pub fn init_recipe_tables(conn: sqlight.Connection) -> Result(Nil, StorageError) {
-  let create_recipes_table =
-    "CREATE TABLE IF NOT EXISTS recipes (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      ingredients TEXT NOT NULL,
-      instructions TEXT NOT NULL,
-      protein REAL NOT NULL,
-      fat REAL NOT NULL,
-      carbs REAL NOT NULL,
-      servings INTEGER NOT NULL,
-      category TEXT NOT NULL,
-      fodmap_level TEXT NOT NULL,
-      vertical_compliant INTEGER NOT NULL
-    )"
-
-  case sqlight.exec(create_recipes_table, on: conn) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(Nil) -> Ok(Nil)
-  }
-}
-
 /// Save a recipe to the database
 pub fn save_recipe(
-  conn: sqlight.Connection,
+  conn: pog.Connection,
   recipe: Recipe,
 ) -> Result(Nil, StorageError) {
   let sql =
-    "INSERT OR REPLACE INTO recipes 
+    "INSERT INTO recipes
      (id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+     ON CONFLICT (id) DO UPDATE SET
+       name = EXCLUDED.name,
+       ingredients = EXCLUDED.ingredients,
+       instructions = EXCLUDED.instructions,
+       protein = EXCLUDED.protein,
+       fat = EXCLUDED.fat,
+       carbs = EXCLUDED.carbs,
+       servings = EXCLUDED.servings,
+       category = EXCLUDED.category,
+       fodmap_level = EXCLUDED.fodmap_level,
+       vertical_compliant = EXCLUDED.vertical_compliant"
 
   let ingredients_json =
     string.join(
@@ -353,291 +377,129 @@ pub fn save_recipe(
     High -> "high"
   }
 
-  let args = [
-    sqlight.text(recipe.id),
-    sqlight.text(recipe.name),
-    sqlight.text(ingredients_json),
-    sqlight.text(instructions_json),
-    sqlight.float(recipe.macros.protein),
-    sqlight.float(recipe.macros.fat),
-    sqlight.float(recipe.macros.carbs),
-    sqlight.int(recipe.servings),
-    sqlight.text(recipe.category),
-    sqlight.text(fodmap_string),
-    sqlight.int(case recipe.vertical_compliant {
-      True -> 1
-      False -> 0
-    }),
-  ]
-
-  case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
-    Error(e) -> Error(DatabaseError(e.message))
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(recipe.id))
+    |> pog.parameter(pog.text(recipe.name))
+    |> pog.parameter(pog.text(ingredients_json))
+    |> pog.parameter(pog.text(instructions_json))
+    |> pog.parameter(pog.float(recipe.macros.protein))
+    |> pog.parameter(pog.float(recipe.macros.fat))
+    |> pog.parameter(pog.float(recipe.macros.carbs))
+    |> pog.parameter(pog.int(recipe.servings))
+    |> pog.parameter(pog.text(recipe.category))
+    |> pog.parameter(pog.text(fodmap_string))
+    |> pog.parameter(pog.bool(recipe.vertical_compliant))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
     Ok(_) -> Ok(Nil)
   }
 }
 
 /// Get all recipes from the database
-pub fn get_all_recipes(
-  conn: sqlight.Connection,
-) -> Result(List(Recipe), StorageError) {
+pub fn get_all_recipes(conn: pog.Connection) -> Result(List(Recipe), StorageError) {
   let sql =
     "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
      FROM recipes ORDER BY name"
 
-  let decoder = {
-    use id <- decode.field(0, decode.string)
-    use name <- decode.field(1, decode.string)
-    use ingredients_str <- decode.field(2, decode.string)
-    use instructions_str <- decode.field(3, decode.string)
-    use protein <- decode.field(4, decode.float)
-    use fat <- decode.field(5, decode.float)
-    use carbs <- decode.field(6, decode.float)
-    use servings <- decode.field(7, decode.int)
-    use category <- decode.field(8, decode.string)
-    use fodmap_str <- decode.field(9, decode.string)
-    use vertical_int <- decode.field(10, decode.int)
-
-    let ingredients =
-      string.split(ingredients_str, "|")
-      |> list.map(fn(pair) {
-        case string.split(pair, ":") {
-          [name, quantity] -> Ingredient(name, quantity)
-          _ -> Ingredient(pair, "")
-        }
-      })
-
-    let instructions = string.split(instructions_str, "|")
-
-    let fodmap_level = case fodmap_str {
-      "low" -> Low
-      "medium" -> Medium
-      "high" -> High
-      _ -> Low
-    }
-
-    let vertical_compliant = case vertical_int {
-      1 -> True
-      _ -> False
-    }
-
-    decode.success(Recipe(
-      id: id,
-      name: name,
-      ingredients: ingredients,
-      instructions: instructions,
-      macros: Macros(protein: protein, fat: fat, carbs: carbs),
-      servings: servings,
-      category: category,
-      fodmap_level: fodmap_level,
-      vertical_compliant: vertical_compliant,
-    ))
-  }
-
-  case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(recipes) -> Ok(recipes)
+  case
+    pog.query(sql)
+    |> pog.returning(recipe_decoder())
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
 
 /// Get a specific recipe by ID
 pub fn get_recipe_by_id(
-  conn: sqlight.Connection,
+  conn: pog.Connection,
   recipe_id: String,
 ) -> Result(Recipe, StorageError) {
   let sql =
     "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
-     FROM recipes WHERE id = ?"
-
-  let decoder = {
-    use id <- decode.field(0, decode.string)
-    use name <- decode.field(1, decode.string)
-    use ingredients_str <- decode.field(2, decode.string)
-    use instructions_str <- decode.field(3, decode.string)
-    use protein <- decode.field(4, decode.float)
-    use fat <- decode.field(5, decode.float)
-    use carbs <- decode.field(6, decode.float)
-    use servings <- decode.field(7, decode.int)
-    use category <- decode.field(8, decode.string)
-    use fodmap_str <- decode.field(9, decode.string)
-    use vertical_int <- decode.field(10, decode.int)
-
-    let ingredients =
-      string.split(ingredients_str, "|")
-      |> list.map(fn(pair) {
-        case string.split(pair, ":") {
-          [name, quantity] -> Ingredient(name, quantity)
-          _ -> Ingredient(pair, "")
-        }
-      })
-
-    let instructions = string.split(instructions_str, "|")
-
-    let fodmap_level = case fodmap_str {
-      "low" -> Low
-      "medium" -> Medium
-      "high" -> High
-      _ -> Low
-    }
-
-    let vertical_compliant = case vertical_int {
-      1 -> True
-      _ -> False
-    }
-
-    decode.success(Recipe(
-      id: id,
-      name: name,
-      ingredients: ingredients,
-      instructions: instructions,
-      macros: Macros(protein: protein, fat: fat, carbs: carbs),
-      servings: servings,
-      category: category,
-      fodmap_level: fodmap_level,
-      vertical_compliant: vertical_compliant,
-    ))
-  }
+     FROM recipes WHERE id = $1"
 
   case
-    sqlight.query(
-      sql,
-      on: conn,
-      with: [sqlight.text(recipe_id)],
-      expecting: decoder,
-    )
+    pog.query(sql)
+    |> pog.parameter(pog.text(recipe_id))
+    |> pog.returning(recipe_decoder())
+    |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([recipe, ..]) -> Ok(recipe)
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(0, _)) -> Error(NotFound)
+    Ok(pog.Returned(_, [row, ..])) -> Ok(row)
   }
 }
 
 /// Get recipes by category
 pub fn get_recipes_by_category(
-  conn: sqlight.Connection,
+  conn: pog.Connection,
   category: String,
 ) -> Result(List(Recipe), StorageError) {
   let sql =
     "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
-     FROM recipes WHERE category = ? ORDER BY name"
-
-  let decoder = {
-    use id <- decode.field(0, decode.string)
-    use name <- decode.field(1, decode.string)
-    use ingredients_str <- decode.field(2, decode.string)
-    use instructions_str <- decode.field(3, decode.string)
-    use protein <- decode.field(4, decode.float)
-    use fat <- decode.field(5, decode.float)
-    use carbs <- decode.field(6, decode.float)
-    use servings <- decode.field(7, decode.int)
-    use category <- decode.field(8, decode.string)
-    use fodmap_str <- decode.field(9, decode.string)
-    use vertical_int <- decode.field(10, decode.int)
-
-    let ingredients =
-      string.split(ingredients_str, "|")
-      |> list.map(fn(pair) {
-        case string.split(pair, ":") {
-          [name, quantity] -> Ingredient(name, quantity)
-          _ -> Ingredient(pair, "")
-        }
-      })
-
-    let instructions = string.split(instructions_str, "|")
-
-    let fodmap_level = case fodmap_str {
-      "low" -> Low
-      "medium" -> Medium
-      "high" -> High
-      _ -> Low
-    }
-
-    let vertical_compliant = case vertical_int {
-      1 -> True
-      _ -> False
-    }
-
-    decode.success(Recipe(
-      id: id,
-      name: name,
-      ingredients: ingredients,
-      instructions: instructions,
-      macros: Macros(protein: protein, fat: fat, carbs: carbs),
-      servings: servings,
-      category: category,
-      fodmap_level: fodmap_level,
-      vertical_compliant: vertical_compliant,
-    ))
-  }
+     FROM recipes WHERE category = $1 ORDER BY name"
 
   case
-    sqlight.query(
-      sql,
-      on: conn,
-      with: [sqlight.text(category)],
-      expecting: decoder,
-    )
+    pog.query(sql)
+    |> pog.parameter(pog.text(category))
+    |> pog.returning(recipe_decoder())
+    |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(recipes) -> Ok(recipes)
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
 
-/// Initialize database with all required tables
-pub fn initialize_database() -> Result(Nil, String) {
-  // First run migrations to create schema
-  case migrate.init_database("migrations") {
-    Error(_e) -> Error("Failed to run migrations")
-    Ok(_count) -> {
-      // Then initialize any remaining tables
-      with_connection(migrate.get_db_path(), fn(conn) {
-        case init_db(conn) {
-          Ok(_) ->
-            case init_recipe_tables(conn) {
-              Ok(_) -> {
-                // Check if USDA data needs importing
-                case usda_import.is_imported(conn) {
-                  True -> {
-                    io.println("USDA data already imported")
-                    Ok(Nil)
-                  }
-                  False -> {
-                    io.println("Importing USDA FoodData Central...")
-                    let usda_dir =
-                      usda_import.get_cache_dir()
-                      <> "/FoodData_Central_csv_2025-04-24"
-                    case usda_import.import_from_directory(conn, usda_dir) {
-                      Ok(_counts) -> {
-                        io.println("USDA import complete!")
-                        Ok(Nil)
-                      }
-                      Error(err) -> {
-                        io.println(
-                          "USDA import failed (will continue without): "
-                          <> format_usda_error(err),
-                        )
-                        // Don't fail app startup if USDA import fails
-                        Ok(Nil)
-                      }
-                    }
-                  }
-                }
-              }
-              Error(_) -> Error("Failed to initialize recipe tables")
-            }
-          Error(_) -> Error("Failed to initialize database")
-        }
-      })
-    }
-  }
-}
+/// Recipe decoder helper
+fn recipe_decoder() -> decode.Decoder(Recipe) {
+  use id <- decode.field(0, decode.string)
+  use name <- decode.field(1, decode.string)
+  use ingredients_str <- decode.field(2, decode.string)
+  use instructions_str <- decode.field(3, decode.string)
+  use protein <- decode.field(4, decode.float)
+  use fat <- decode.field(5, decode.float)
+  use carbs <- decode.field(6, decode.float)
+  use servings <- decode.field(7, decode.int)
+  use category <- decode.field(8, decode.string)
+  use fodmap_str <- decode.field(9, decode.string)
+  use vertical_compliant <- decode.field(10, decode.bool)
 
-fn format_usda_error(err: usda_import.ImportError) -> String {
-  case err {
-    usda_import.FileNotFound(path) -> "File not found: " <> path
-    usda_import.ParseError(msg) -> "Parse error: " <> msg
-    usda_import.DatabaseError(msg) -> "Database error: " <> msg
-    usda_import.ZipError(msg) -> "Zip error: " <> msg
+  let ingredients =
+    string.split(ingredients_str, "|")
+    |> list.filter(fn(s) { s != "" })
+    |> list.map(fn(pair) {
+      case string.split(pair, ":") {
+        [name, quantity] -> Ingredient(name, quantity)
+        _ -> Ingredient(pair, "")
+      }
+    })
+
+  let instructions =
+    string.split(instructions_str, "|")
+    |> list.filter(fn(s) { s != "" })
+
+  let fodmap_level = case fodmap_str {
+    "low" -> Low
+    "medium" -> Medium
+    "high" -> High
+    _ -> Low
   }
+
+  decode.success(Recipe(
+    id: id,
+    name: name,
+    ingredients: ingredients,
+    instructions: instructions,
+    macros: Macros(protein: protein, fat: fat, carbs: carbs),
+    servings: servings,
+    category: category,
+    fodmap_level: fodmap_level,
+    vertical_compliant: vertical_compliant,
+  ))
 }
 
 // ============================================================================
@@ -659,16 +521,18 @@ pub type FoodNutrientValue {
   FoodNutrientValue(nutrient_name: String, amount: Float, unit: String)
 }
 
-/// Search for foods by description
+/// Search for foods by description using PostgreSQL full-text search
 pub fn search_foods(
-  conn: sqlight.Connection,
+  conn: pog.Connection,
   query: String,
   limit: Int,
 ) -> Result(List(UsdaFood), StorageError) {
+  // Use PostgreSQL full-text search for better performance
   let sql =
     "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
      FROM foods
-     WHERE description LIKE ?
+     WHERE to_tsvector('english', description) @@ plainto_tsquery('english', $1)
+        OR description ILIKE $2
      ORDER BY
        CASE data_type
          WHEN 'sr_legacy_food' THEN 1
@@ -677,9 +541,9 @@ pub fn search_foods(
          ELSE 4
        END,
        description
-     LIMIT ?"
+     LIMIT $3"
 
-  let search_term = "%" <> query <> "%"
+  let search_pattern = "%" <> query <> "%"
 
   let decoder = {
     use fdc_id <- decode.field(0, decode.int)
@@ -695,65 +559,60 @@ pub fn search_foods(
   }
 
   case
-    sqlight.query(
-      sql,
-      on: conn,
-      with: [sqlight.text(search_term), sqlight.int(limit)],
-      expecting: decoder,
-    )
+    pog.query(sql)
+    |> pog.parameter(pog.text(query))
+    |> pog.parameter(pog.text(search_pattern))
+    |> pog.parameter(pog.int(limit))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(foods) -> Ok(foods)
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
 
 /// Get nutrients for a specific food
 pub fn get_food_nutrients(
-  conn: sqlight.Connection,
+  conn: pog.Connection,
   fdc_id: Int,
 ) -> Result(List(FoodNutrientValue), StorageError) {
   let sql =
-    "SELECT n.name, fn.amount, n.unit_name
+    "SELECT n.name, COALESCE(fn.amount, 0), n.unit_name
      FROM food_nutrients fn
      JOIN nutrients n ON fn.nutrient_id = n.id
-     WHERE fn.fdc_id = ?
+     WHERE fn.fdc_id = $1
      ORDER BY n.rank NULLS LAST, n.name"
 
   let decoder = {
     use name <- decode.field(0, decode.string)
-    use amount <- decode.field(1, decode.optional(decode.float))
+    use amount <- decode.field(1, decode.float)
     use unit <- decode.field(2, decode.string)
     decode.success(FoodNutrientValue(
       nutrient_name: name,
-      amount: case amount {
-        option.Some(a) -> a
-        option.None -> 0.0
-      },
+      amount: amount,
       unit: unit,
     ))
   }
 
   case
-    sqlight.query(
-      sql,
-      on: conn,
-      with: [sqlight.int(fdc_id)],
-      expecting: decoder,
-    )
+    pog.query(sql)
+    |> pog.parameter(pog.int(fdc_id))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(nutrients) -> Ok(nutrients)
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
 
 /// Get a single food by FDC ID
 pub fn get_food_by_id(
-  conn: sqlight.Connection,
+  conn: pog.Connection,
   fdc_id: Int,
 ) -> Result(UsdaFood, StorageError) {
   let sql =
     "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
-     FROM foods WHERE fdc_id = ?"
+     FROM foods WHERE fdc_id = $1"
 
   let decoder = {
     use fdc_id <- decode.field(0, decode.int)
@@ -769,31 +628,279 @@ pub fn get_food_by_id(
   }
 
   case
-    sqlight.query(
-      sql,
-      on: conn,
-      with: [sqlight.int(fdc_id)],
-      expecting: decoder,
-    )
+    pog.query(sql)
+    |> pog.parameter(pog.int(fdc_id))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([food, ..]) -> Ok(food)
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(0, _)) -> Error(NotFound)
+    Ok(pog.Returned(_, [row, ..])) -> Ok(row)
   }
 }
 
 /// Get count of foods in database
-pub fn get_foods_count(conn: sqlight.Connection) -> Result(Int, StorageError) {
-  let sql = "SELECT COUNT(*) FROM foods"
+pub fn get_foods_count(conn: pog.Connection) -> Result(Int, StorageError) {
+  let sql = "SELECT COUNT(*)::int FROM foods"
 
   let decoder = {
     use count <- decode.field(0, decode.int)
     decode.success(count)
   }
 
-  case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([count]) -> Ok(count)
+  case
+    pog.query(sql)
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, [count])) -> Ok(count)
     Ok(_) -> Ok(0)
+  }
+}
+
+// ============================================================================
+// Food Log Functions
+// ============================================================================
+
+/// Food log entry type
+pub type FoodLog {
+  FoodLog(
+    id: String,
+    date: String,
+    recipe_id: String,
+    recipe_name: String,
+    servings: Float,
+    protein: Float,
+    fat: Float,
+    carbs: Float,
+    meal_type: String,
+    logged_at: String,
+  )
+}
+
+/// Save a food log entry
+pub fn save_food_log(
+  conn: pog.Connection,
+  log: FoodLog,
+) -> Result(Nil, StorageError) {
+  let sql =
+    "INSERT INTO food_logs
+     (id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+     ON CONFLICT (id) DO UPDATE SET
+       servings = EXCLUDED.servings,
+       protein = EXCLUDED.protein,
+       fat = EXCLUDED.fat,
+       carbs = EXCLUDED.carbs,
+       meal_type = EXCLUDED.meal_type,
+       logged_at = NOW()"
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(log.id))
+    |> pog.parameter(pog.text(log.date))
+    |> pog.parameter(pog.text(log.recipe_id))
+    |> pog.parameter(pog.text(log.recipe_name))
+    |> pog.parameter(pog.float(log.servings))
+    |> pog.parameter(pog.float(log.protein))
+    |> pog.parameter(pog.float(log.fat))
+    |> pog.parameter(pog.float(log.carbs))
+    |> pog.parameter(pog.text(log.meal_type))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(_) -> Ok(Nil)
+  }
+}
+
+/// Get food logs for a specific date
+pub fn get_food_logs_by_date(
+  conn: pog.Connection,
+  date: String,
+) -> Result(List(FoodLog), StorageError) {
+  let sql =
+    "SELECT id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text
+     FROM food_logs WHERE date = $1 ORDER BY logged_at"
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(date))
+    |> pog.returning(food_log_decoder())
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
+  }
+}
+
+/// Delete a food log entry
+pub fn delete_food_log(
+  conn: pog.Connection,
+  log_id: String,
+) -> Result(Nil, StorageError) {
+  let sql = "DELETE FROM food_logs WHERE id = $1"
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(log_id))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(_) -> Ok(Nil)
+  }
+}
+
+fn food_log_decoder() -> decode.Decoder(FoodLog) {
+  use id <- decode.field(0, decode.string)
+  use date <- decode.field(1, decode.string)
+  use recipe_id <- decode.field(2, decode.string)
+  use recipe_name <- decode.field(3, decode.string)
+  use servings <- decode.field(4, decode.float)
+  use protein <- decode.field(5, decode.float)
+  use fat <- decode.field(6, decode.float)
+  use carbs <- decode.field(7, decode.float)
+  use meal_type <- decode.field(8, decode.string)
+  use logged_at <- decode.field(9, decode.string)
+  decode.success(FoodLog(
+    id: id,
+    date: date,
+    recipe_id: recipe_id,
+    recipe_name: recipe_name,
+    servings: servings,
+    protein: protein,
+    fat: fat,
+    carbs: carbs,
+    meal_type: meal_type,
+    logged_at: logged_at,
+  ))
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+// ============================================================================
+// Daily Log Functions (for shared types compatibility)
+// ============================================================================
+
+/// Meal type for food logs
+pub type MealType {
+  Breakfast
+  Lunch
+  Dinner
+  Snack
+}
+
+/// Food log entry matching shared types structure
+pub type FoodLogEntry {
+  FoodLogEntry(
+    id: String,
+    recipe_id: String,
+    recipe_name: String,
+    servings: Float,
+    macros: Macros,
+    meal_type: MealType,
+    logged_at: String,
+  )
+}
+
+/// Daily log matching shared types structure
+pub type DailyLog {
+  DailyLog(date: String, entries: List(FoodLogEntry), total_macros: Macros)
+}
+
+/// Get daily log for a specific date
+pub fn get_daily_log(
+  conn: pog.Connection,
+  date: String,
+) -> Result(DailyLog, StorageError) {
+  let sql =
+    "SELECT id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text
+     FROM food_logs WHERE date = $1 ORDER BY logged_at"
+
+  let decoder = {
+    use id <- decode.field(0, decode.string)
+    use _date <- decode.field(1, decode.string)
+    use recipe_id <- decode.field(2, decode.string)
+    use recipe_name <- decode.field(3, decode.string)
+    use servings <- decode.field(4, decode.float)
+    use protein <- decode.field(5, decode.float)
+    use fat <- decode.field(6, decode.float)
+    use carbs <- decode.field(7, decode.float)
+    use meal_type_str <- decode.field(8, decode.string)
+    use logged_at <- decode.field(9, decode.string)
+
+    let meal_type = case meal_type_str {
+      "breakfast" -> Breakfast
+      "lunch" -> Lunch
+      "dinner" -> Dinner
+      _ -> Snack
+    }
+
+    decode.success(FoodLogEntry(
+      id: id,
+      recipe_id: recipe_id,
+      recipe_name: recipe_name,
+      servings: servings,
+      macros: Macros(protein: protein, fat: fat, carbs: carbs),
+      meal_type: meal_type,
+      logged_at: logged_at,
+    ))
+  }
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(date))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, entries)) -> {
+      let total_macros = calculate_total_macros(entries)
+      Ok(DailyLog(date: date, entries: entries, total_macros: total_macros))
+    }
+  }
+}
+
+/// Calculate total macros from food log entries
+fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
+  list.fold(entries, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(acc, entry) {
+    Macros(
+      protein: acc.protein +. entry.macros.protein,
+      fat: acc.fat +. entry.macros.fat,
+      carbs: acc.carbs +. entry.macros.carbs,
+    )
+  })
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/// Format pog error to string
+fn format_pog_error(err: pog.QueryError) -> String {
+  case err {
+    pog.ConnectionUnavailable -> "Database connection unavailable"
+    pog.ConstraintViolated(msg, constraint, _detail) ->
+      "Constraint violated: " <> constraint <> " - " <> msg
+    pog.PostgresqlError(_code, _name, msg) -> "PostgreSQL error: " <> msg
+    pog.UnexpectedArgumentCount(expected, got) ->
+      "Expected "
+      <> int.to_string(expected)
+      <> " arguments, got "
+      <> int.to_string(got)
+    pog.UnexpectedArgumentType(expected, got) ->
+      "Expected type " <> expected <> ", got " <> got
+    pog.UnexpectedResultType(errs) -> {
+      let msgs =
+        list.map(errs, fn(e) {
+          case e {
+            decode.DecodeError(expected, found, path) ->
+              "Expected " <> expected <> " at " <> string.join(path, ".") <> ", found " <> found
+          }
+        })
+      "Decode error: " <> string.join(msgs, "; ")
+    }
   }
 }

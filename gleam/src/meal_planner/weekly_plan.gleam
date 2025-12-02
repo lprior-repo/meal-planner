@@ -19,6 +19,14 @@ pub fn day_names() -> List(String) {
 }
 
 /// Generate a 7-day meal plan using Vertical Diet distribution
+///
+/// This function:
+/// - Selects recipes following Vertical Diet guidelines (60-70% red meat, 20-30% salmon/eggs, <10% variety)
+/// - Distributes meals evenly across 7 days based on meals_per_day
+/// - Calculates portions to meet daily macro targets
+/// - Considers user's goal (Gain/Maintain/Lose) and activity level
+/// - Filters recipes by FODMAP level when applicable
+/// - Generates a consolidated shopping list
 pub fn generate_weekly_plan(
   profile: UserProfile,
   recipes: List(Recipe),
@@ -32,11 +40,13 @@ pub fn generate_weekly_plan(
     )
 
   // Select meals for the week using Vertical Diet distribution
+  // This ensures proper balance of red meat, salmon, eggs, and variety
   let total_meals = 7 * profile.meals_per_day
   let selection = select_meals_for_week(recipes, total_meals)
   let selected_recipes = selection.selected_recipes
 
   // Distribute selected recipes across days
+  // Each day gets meals_per_day meals with portions calculated for macro targets
   let #(days, _remaining_recipes) =
     list.fold(day_names(), #([], selected_recipes), fn(acc, day_name) {
       let #(built_days, available_recipes) = acc
@@ -61,6 +71,35 @@ pub fn generate_weekly_plan(
     shopping_list: shopping_list,
     user_profile: profile,
   )
+}
+
+/// Calculate total macros for the entire weekly plan
+/// Returns the sum of all macros across all 7 days
+pub fn calculate_weekly_macros(plan: WeeklyMealPlan) -> Macros {
+  list.fold(plan.days, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(acc, day) {
+    let day_macros = meal_plan.daily_plan_macros(day)
+    Macros(
+      protein: acc.protein +. day_macros.protein,
+      fat: acc.fat +. day_macros.fat,
+      carbs: acc.carbs +. day_macros.carbs,
+    )
+  })
+}
+
+/// Calculate average daily macros for the week
+/// Returns the mean macros per day across the 7-day plan
+pub fn get_weekly_macro_average(plan: WeeklyMealPlan) -> Macros {
+  let total = calculate_weekly_macros(plan)
+  let days = int_to_float(list.length(plan.days))
+  case days {
+    0.0 -> Macros(protein: 0.0, fat: 0.0, carbs: 0.0)
+    _ ->
+      Macros(
+        protein: total.protein /. days,
+        fat: total.fat /. days,
+        carbs: total.carbs /. days,
+      )
+  }
 }
 
 /// Build a single day's meal plan
