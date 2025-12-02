@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS nutrition_state (
     protein REAL NOT NULL,
     fat REAL NOT NULL,
     carbs REAL NOT NULL,
-    calories REAL NOT NULL
+    calories REAL NOT NULL,
+    synced_at TEXT NOT NULL DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS nutrition_goals (

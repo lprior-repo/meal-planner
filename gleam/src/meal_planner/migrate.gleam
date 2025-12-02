@@ -21,12 +21,20 @@ pub type Migration {
   Migration(version: Int, name: String, sql: String)
 }
 
-/// Get the application data directory (XDG standard)
+/// Get the application data directory (cross-platform)
+/// - Windows: %LOCALAPPDATA%\meal-planner
+/// - Unix/Linux: $XDG_DATA_HOME/meal-planner or ~/.local/share/meal-planner
 pub fn get_data_dir() -> String {
-  // Use XDG_DATA_HOME or default to ~/.local/share
-  case simplifile.is_directory(get_xdg_data_home()) {
-    Ok(True) -> get_xdg_data_home() <> "/meal-planner"
-    _ -> get_home() <> "/.local/share/meal-planner"
+  // Try Windows LOCALAPPDATA first
+  case envoy_get("LOCALAPPDATA") {
+    Ok(local_app_data) -> local_app_data <> "\\meal-planner"
+    Error(_) -> {
+      // Fall back to XDG/Unix paths
+      case simplifile.is_directory(get_xdg_data_home()) {
+        Ok(True) -> get_xdg_data_home() <> "/meal-planner"
+        _ -> get_home() <> "/.local/share/meal-planner"
+      }
+    }
   }
 }
 
@@ -38,9 +46,14 @@ fn get_xdg_data_home() -> String {
 }
 
 fn get_home() -> String {
-  case envoy_get("HOME") {
+  // Try USERPROFILE (Windows) first, then HOME (Unix)
+  case envoy_get("USERPROFILE") {
     Ok(path) -> path
-    Error(_) -> "/tmp"
+    Error(_) ->
+      case envoy_get("HOME") {
+        Ok(path) -> path
+        Error(_) -> "/tmp"
+      }
   }
 }
 
@@ -49,7 +62,12 @@ fn envoy_get(name: String) -> Result(String, Nil)
 
 /// Get the default database path
 pub fn get_db_path() -> String {
-  get_data_dir() <> "/meal-planner.db"
+  let dir = get_data_dir()
+  // Use appropriate path separator
+  case envoy_get("LOCALAPPDATA") {
+    Ok(_) -> dir <> "\\meal-planner.db"
+    Error(_) -> dir <> "/meal-planner.db"
+  }
 }
 
 /// Ensure data directory exists

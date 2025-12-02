@@ -3,9 +3,11 @@
 import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/float
+import gleam/http
 import gleam/int
 import gleam/json
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import lustre/attribute
 import lustre/element
 import lustre/element/html
@@ -863,9 +865,9 @@ fn handle_api(req: wisp.Request, path: List(String)) -> wisp.Response {
 /// POST /api/recipes - Create new recipe
 fn api_recipes_handler(req: wisp.Request) -> wisp.Response {
   case req.method {
-    wisp.Get -> api_recipes_list(req)
-    wisp.Post -> api_recipes_create(req)
-    _ -> wisp.method_not_allowed([wisp.Get, wisp.Post])
+    http.Get -> api_recipes_list(req)
+    http.Post -> api_recipes_create(req)
+    _ -> wisp.method_not_allowed([http.Get, http.Post])
   }
 }
 
@@ -874,10 +876,10 @@ fn api_recipes_handler(req: wisp.Request) -> wisp.Response {
 /// DELETE /api/recipes/:id - Delete recipe
 fn api_recipe_handler(req: wisp.Request, id: String) -> wisp.Response {
   case req.method {
-    wisp.Get -> api_recipe_get(req, id)
-    wisp.Put -> api_recipe_update(req, id)
-    wisp.Delete -> api_recipe_delete(req, id)
-    _ -> wisp.method_not_allowed([wisp.Get, wisp.Put, wisp.Delete])
+    http.Get -> api_recipe_get(req, id)
+    http.Put -> api_recipe_update(req, id)
+    http.Delete -> api_recipe_delete(req, id)
+    _ -> wisp.method_not_allowed([http.Get, http.Put, http.Delete])
   }
 }
 
