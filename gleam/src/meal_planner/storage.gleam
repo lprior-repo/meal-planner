@@ -1335,7 +1335,7 @@ fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
 /// Calculate total micronutrients from food log entries
 fn calculate_total_micronutrients(
   entries: List(FoodLogEntry),
-) -> types.Micronutrients {
+) -> Option(types.Micronutrients) {
   let micros_list =
     list.filter_map(entries, fn(entry) {
       case entry.micronutrients {
@@ -1343,7 +1343,10 @@ fn calculate_total_micronutrients(
         None -> Error(Nil)
       }
     })
-  types.micronutrients_sum(micros_list)
+  case micros_list {
+    [] -> None
+    _ -> Some(types.micronutrients_sum(micros_list))
+  }
 }
 
 // ============================================================================

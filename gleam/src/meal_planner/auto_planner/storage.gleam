@@ -287,5 +287,10 @@ fn format_pog_error(error: pog.QueryError) -> String {
       "PostgreSQL error " <> code <> " (" <> name <> "): " <> msg
     pog.UnexpectedResultType(_expected) ->
       "Unexpected result type"
+    pog.QueryTimeout -> "Database query timeout"
+    pog.UnexpectedArgumentCount(expected, got) ->
+      "Expected " <> int.to_string(expected) <> " arguments, got " <> int.to_string(got)
+    pog.UnexpectedArgumentType(expected, got) ->
+      "Expected type " <> expected <> ", got " <> got
   }
 }
