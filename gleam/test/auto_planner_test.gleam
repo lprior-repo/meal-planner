@@ -1,8 +1,13 @@
 import gleam/list
 import gleam/string
 import gleeunit/should
-import meal_planner/auto_planner
-import shared/types.{type Recipe, Ingredient, Low, Macros, Recipe}
+import meal_planner/auto_planner.{
+  type AutoPlanConfig, type DietPrinciple, type RecipeScore, RecipeScore,
+  calculate_macro_match_score, calculate_variety_score,
+  filter_by_diet_principles, generate_auto_plan, score_recipe, select_top_n,
+}
+import meal_planner/auto_planner/types as auto_types
+import shared/types.{type Recipe, High, Ingredient, Low, Macros, Recipe}
 
 // =============================================================================
 // Test Data
@@ -26,7 +31,10 @@ fn create_test_recipes() -> List(Recipe) {
     Recipe(
       id: "test-2",
       name: "Ground Beef and Rice Bowl",
-      ingredients: [Ingredient("ground beef", "6 oz"), Ingredient("white rice", "1 cup")],
+      ingredients: [
+        Ingredient("ground beef", "6 oz"),
+        Ingredient("white rice", "1 cup"),
+      ],
       instructions: ["Cook beef", "Serve with rice"],
       macros: Macros(protein: 40.0, fat: 18.0, carbs: 45.0),
       servings: 1,
@@ -91,7 +99,7 @@ fn create_test_recipes() -> List(Recipe) {
       macros: Macros(protein: 2.0, fat: 0.0, carbs: 12.0),
       servings: 2,
       category: "side",
-      fodmap_level: types.High,
+      fodmap_level: High,
       vertical_compliant: False,
     ),
     // Bison option (different protein source for variety)
@@ -109,13 +117,13 @@ fn create_test_recipes() -> List(Recipe) {
   ]
 }
 
-fn create_config() -> auto_planner.AutoPlanConfig {
-  auto_planner.AutoPlanConfig(
-    diet_principles: [auto_planner.VerticalDiet],
+fn create_config() -> AutoPlanConfig {
+  auto_types.AutoPlanConfig(
+    user_id: "test-user-123",
+    diet_principles: [auto_types.VerticalDiet],
     macro_targets: Macros(protein: 180.0, fat: 60.0, carbs: 250.0),
     recipe_count: 4,
     variety_factor: 0.7,
-    user_id: "test-user-123",
   )
 }
 
@@ -137,25 +145,27 @@ pub fn auto_plan_config_type_test() {
 }
 
 pub fn recipe_score_type_test() {
-  let recipe = Recipe(
-    id: "test",
-    name: "Test Recipe",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 40.0, fat: 20.0, carbs: 30.0),
-    servings: 1,
-    category: "test",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      id: "test",
+      name: "Test Recipe",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 40.0, fat: 20.0, carbs: 30.0),
+      servings: 1,
+      category: "test",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
-  let score = auto_planner.RecipeScore(
-    recipe: recipe,
-    diet_compliance_score: 1.0,
-    macro_match_score: 0.8,
-    variety_score: 0.6,
-    overall_score: 0.8,
-  )
+  let score =
+    RecipeScore(
+      recipe: recipe,
+      diet_compliance_score: 1.0,
+      macro_match_score: 0.8,
+      variety_score: 0.6,
+      overall_score: 0.8,
+    )
 
   score.overall_score
   |> should.equal(0.8)
@@ -170,9 +180,9 @@ pub fn recipe_score_type_test() {
 
 pub fn filter_vertical_diet_recipes_test() {
   let recipes = create_test_recipes()
-  let principles = [auto_planner.VerticalDiet]
+  let principles = [auto_types.VerticalDiet]
 
-  let filtered = auto_planner.filter_by_diet_principles(recipes, principles)
+  let filtered = filter_by_diet_principles(recipes, principles)
 
   // Should filter out non-vertical recipes
   filtered
@@ -189,7 +199,7 @@ pub fn filter_empty_principles_returns_all_test() {
   let recipes = create_test_recipes()
   let principles = []
 
-  let filtered = auto_planner.filter_by_diet_principles(recipes, principles)
+  let filtered = filter_by_diet_principles(recipes, principles)
 
   // Empty principles should return all recipes
   filtered
@@ -202,51 +212,51 @@ pub fn filter_empty_principles_returns_all_test() {
 // =============================================================================
 
 pub fn macro_match_perfect_score_test() {
-  let recipe = Recipe(
-    id: "test",
-    name: "Perfect Match",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 45.0, fat: 15.0, carbs: 62.5),
-    servings: 1,
-    category: "test",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      id: "test",
+      name: "Perfect Match",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 45.0, fat: 15.0, carbs: 62.5),
+      servings: 1,
+      category: "test",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let targets = Macros(protein: 180.0, fat: 60.0, carbs: 250.0)
   let config = create_config()
 
   // Recipe provides 1/4 of targets (4 recipes expected)
-  let score = auto_planner.calculate_macro_match_score(recipe, targets, config.recipe_count)
+  let score = calculate_macro_match_score(recipe, targets, config.recipe_count)
 
   // Perfect match should score close to 1.0
-  score
-  |> should.be_true(fn(s) { s >. 0.9 })
+  should.be_true(score >. 0.9)
 }
 
 pub fn macro_match_poor_score_test() {
-  let recipe = Recipe(
-    id: "test",
-    name: "Poor Match",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 100.0, fat: 50.0, carbs: 200.0),
-    servings: 1,
-    category: "test",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      id: "test",
+      name: "Poor Match",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 100.0, fat: 50.0, carbs: 200.0),
+      servings: 1,
+      category: "test",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let targets = Macros(protein: 180.0, fat: 60.0, carbs: 250.0)
   let config = create_config()
 
   // Recipe provides way too much (over 1/2 of daily targets in one meal)
-  let score = auto_planner.calculate_macro_match_score(recipe, targets, config.recipe_count)
+  let score = calculate_macro_match_score(recipe, targets, config.recipe_count)
 
   // Poor match should score lower
-  score
-  |> should.be_true(fn(s) { s <. 0.5 })
+  should.be_true(score <. 0.5)
 }
 
 // =============================================================================
@@ -254,17 +264,18 @@ pub fn macro_match_poor_score_test() {
 // =============================================================================
 
 pub fn variety_score_unique_category_test() {
-  let recipe = Recipe(
-    id: "test",
-    name: "Bison Steak",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 48.0, fat: 16.0, carbs: 0.0),
-    servings: 1,
-    category: "bison-main",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      id: "test",
+      name: "Bison Steak",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 48.0, fat: 16.0, carbs: 0.0),
+      servings: 1,
+      category: "bison-main",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let already_selected = [
     Recipe(
@@ -280,25 +291,25 @@ pub fn variety_score_unique_category_test() {
     ),
   ]
 
-  let score = auto_planner.calculate_variety_score(recipe, already_selected)
+  let score = calculate_variety_score(recipe, already_selected)
 
   // Different category should score high
-  score
-  |> should.be_true(fn(s) { s >. 0.8 })
+  should.be_true(score >. 0.8)
 }
 
 pub fn variety_score_duplicate_category_test() {
-  let recipe = Recipe(
-    id: "test",
-    name: "Another Beef Steak",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 50.0, fat: 34.0, carbs: 1.0),
-    servings: 1,
-    category: "beef-main",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      id: "test",
+      name: "Another Beef Steak",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 50.0, fat: 34.0, carbs: 1.0),
+      servings: 1,
+      category: "beef-main",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let already_selected = [
     Recipe(
@@ -314,11 +325,10 @@ pub fn variety_score_duplicate_category_test() {
     ),
   ]
 
-  let score = auto_planner.calculate_variety_score(recipe, already_selected)
+  let score = calculate_variety_score(recipe, already_selected)
 
   // Same category should score lower
-  score
-  |> should.be_true(fn(s) { s <. 0.5 })
+  should.be_true(score <. 0.5)
 }
 
 // =============================================================================
@@ -326,48 +336,45 @@ pub fn variety_score_duplicate_category_test() {
 // =============================================================================
 
 pub fn score_recipe_comprehensive_test() {
-  let recipe = Recipe(
-    id: "test",
-    name: "Good Recipe",
-    ingredients: [],
-    instructions: [],
-    macros: Macros(protein: 45.0, fat: 15.0, carbs: 62.5),
-    servings: 1,
-    category: "beef-main",
-    fodmap_level: Low,
-    vertical_compliant: True,
-  )
+  let recipe =
+    Recipe(
+      id: "test",
+      name: "Good Recipe",
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: 45.0, fat: 15.0, carbs: 62.5),
+      servings: 1,
+      category: "beef-main",
+      fodmap_level: Low,
+      vertical_compliant: True,
+    )
 
   let config = create_config()
   let already_selected = []
 
-  let scored = auto_planner.score_recipe(recipe, config, already_selected)
+  let scored = score_recipe(recipe, config, already_selected)
 
   // Check all score components are in valid range
-  scored.diet_compliance_score
-  |> should.be_true(fn(s) { s >=. 0.0 && s <=. 1.0 })
+  should.be_true(scored.diet_compliance_score >=. 0.0 && scored.diet_compliance_score <=. 1.0)
 
-  scored.macro_match_score
-  |> should.be_true(fn(s) { s >=. 0.0 && s <=. 1.0 })
+  should.be_true(scored.macro_match_score >=. 0.0 && scored.macro_match_score <=. 1.0)
 
-  scored.variety_score
-  |> should.be_true(fn(s) { s >=. 0.0 && s <=. 1.0 })
+  should.be_true(scored.variety_score >=. 0.0 && scored.variety_score <=. 1.0)
 
-  scored.overall_score
-  |> should.be_true(fn(s) { s >=. 0.0 && s <=. 1.0 })
+  should.be_true(scored.overall_score >=. 0.0 && scored.overall_score <=. 1.0)
 
   // Overall score should be weighted average
   let expected =
-    scored.diet_compliance_score *. 0.4
-    +. scored.macro_match_score *. 0.35
-    +. scored.variety_score *. 0.25
+    scored.diet_compliance_score
+    *. 0.4
+    +. scored.macro_match_score
+    *. 0.35
+    +. scored.variety_score
+    *. 0.25
 
   // Allow small floating point difference
-  scored.overall_score
-  |> should.be_true(fn(s) {
-    let diff = s -. expected
-    diff >=. -0.01 && diff <=. 0.01
-  })
+  let diff = scored.overall_score -. expected
+  should.be_true(diff >=. -0.01 && diff <=. 0.01)
 }
 
 // =============================================================================
@@ -381,9 +388,9 @@ pub fn select_top_n_returns_correct_count_test() {
   let scored_recipes =
     recipes
     |> list.filter(fn(r) { r.vertical_compliant })
-    |> list.map(fn(r) { auto_planner.score_recipe(r, config, []) })
+    |> list.map(fn(r) { score_recipe(r, config, []) })
 
-  let selected = auto_planner.select_top_n(scored_recipes, 4, 0.7)
+  let selected = select_top_n(scored_recipes, 4, 0.7)
 
   // Should return exactly 4 recipes
   selected
@@ -398,18 +405,16 @@ pub fn select_top_n_prioritizes_variety_test() {
   let scored_recipes =
     recipes
     |> list.filter(fn(r) { r.vertical_compliant })
-    |> list.map(fn(r) { auto_planner.score_recipe(r, config, []) })
+    |> list.map(fn(r) { score_recipe(r, config, []) })
 
-  let selected = auto_planner.select_top_n(scored_recipes, 4, 0.7)
+  let selected = select_top_n(scored_recipes, 4, 0.7)
 
   // Should have diverse categories
   let categories = list.map(selected, fn(r) { r.category })
   let unique_categories = list.unique(categories)
 
   // Should have at least 3 different categories
-  unique_categories
-  |> list.length
-  |> should.be_true(fn(count) { count >= 3 })
+  should.be_true(list.length(unique_categories) >= 3)
 }
 
 // =============================================================================
@@ -420,7 +425,7 @@ pub fn generate_auto_plan_success_test() {
   let recipes = create_test_recipes()
   let config = create_config()
 
-  let result = auto_planner.generate_auto_plan(recipes, config)
+  let result = generate_auto_plan(recipes, config)
 
   // Should succeed
   result
@@ -434,9 +439,7 @@ pub fn generate_auto_plan_success_test() {
       |> should.equal(4)
 
       // Plan ID should not be empty
-      plan.id
-      |> string.length
-      |> should.be_true(fn(len) { len > 0 })
+      should.be_true(string.length(plan.id) > 0)
 
       // Config should match input
       plan.config.recipe_count
@@ -446,19 +449,14 @@ pub fn generate_auto_plan_success_test() {
       |> should.equal("test-user-123")
 
       // Should have generated timestamp
-      plan.generated_at
-      |> string.length
-      |> should.be_true(fn(len) { len > 0 })
+      should.be_true(string.length(plan.generated_at) > 0)
 
       // Total macros should be reasonable
-      plan.total_macros.protein
-      |> should.be_true(fn(p) { p >. 0.0 })
+      should.be_true(plan.total_macros.protein >. 0.0)
 
-      plan.total_macros.fat
-      |> should.be_true(fn(f) { f >. 0.0 })
+      should.be_true(plan.total_macros.fat >. 0.0)
 
-      plan.total_macros.carbs
-      |> should.be_true(fn(c) { c >. 0.0 })
+      should.be_true(plan.total_macros.carbs >. 0.0)
     }
     Error(_) -> should.fail()
   }
@@ -481,7 +479,7 @@ pub fn generate_auto_plan_insufficient_recipes_test() {
 
   let config = create_config()
 
-  let result = auto_planner.generate_auto_plan(recipes, config)
+  let result = generate_auto_plan(recipes, config)
 
   // Should fail with appropriate error
   result
@@ -507,14 +505,14 @@ pub fn generate_auto_plan_no_valid_recipes_test() {
       macros: Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
       servings: 1,
       category: "side",
-      fodmap_level: types.High,
+      fodmap_level: High,
       vertical_compliant: False,
     ),
   ]
 
   let config = create_config()
 
-  let result = auto_planner.generate_auto_plan(recipes, config)
+  let result = generate_auto_plan(recipes, config)
 
   // Should fail because no recipes pass diet filter
   result
@@ -523,12 +521,14 @@ pub fn generate_auto_plan_no_valid_recipes_test() {
 
 pub fn generate_auto_plan_variety_test() {
   let recipes = create_test_recipes()
-  let config = auto_planner.AutoPlanConfig(
-    ..create_config(),
-    variety_factor: 1.0,  // Maximum variety
-  )
+  let config =
+    auto_types.AutoPlanConfig(
+      ..create_config(),
+      variety_factor: 1.0,
+      // Maximum variety
+    )
 
-  let result = auto_planner.generate_auto_plan(recipes, config)
+  let result = generate_auto_plan(recipes, config)
 
   case result {
     Ok(plan) -> {
@@ -537,9 +537,7 @@ pub fn generate_auto_plan_variety_test() {
       let unique_categories = list.unique(categories)
 
       // High variety factor should result in diverse categories
-      unique_categories
-      |> list.length
-      |> should.be_true(fn(count) { count >= 3 })
+      should.be_true(list.length(unique_categories) >= 3)
     }
     Error(_) -> should.fail()
   }

@@ -116,7 +116,6 @@ pub fn stat_card(stat: ui_types.StatCard) -> String {
 /// </div>
 pub fn recipe_card(data: ui_types.RecipeCardData) -> String {
   // CONTRACT: Returns HTML string for recipe card
-  // BODY: TODO - Implement with image (if available), name, category, calories
   let ui_types.RecipeCardData(id: _, name: name, category: category, calories: calories, image_url: image_url) = data
   let calories_str = calories |> float.truncate |> int.to_string
   let image_html = case image_url {
@@ -144,7 +143,6 @@ pub fn recipe_card(data: ui_types.RecipeCardData) -> String {
 /// </div>
 pub fn food_card(data: ui_types.FoodCardData) -> String {
   // CONTRACT: Returns HTML string for food result card
-  // BODY: TODO - Implement with food-description, food-category, food-type
   let ui_types.FoodCardData(fdc_id: _, description: description, data_type: data_type, category: category) = data
   "<div class=\"food-card\"><div class=\"food-description\">"
   <> description

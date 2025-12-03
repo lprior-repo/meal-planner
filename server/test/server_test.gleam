@@ -2,6 +2,7 @@
 //// Following TDD methodology: write tests first, then verify implementation
 
 import gleam/list
+import gleam/option
 import gleeunit
 import gleeunit/should
 import server/storage
@@ -139,6 +140,9 @@ pub fn storage_save_and_get_food_log_test() {
         macros: types.Macros(protein: 67.5, fat: 12.0, carbs: 67.5),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     storage.save_food_log_entry(conn, "2024-01-15", entry)
@@ -165,6 +169,9 @@ pub fn storage_delete_food_log_entry_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 20.0),
         meal_type: types.Dinner,
         logged_at: "2024-01-15T18:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-15", entry)
@@ -193,6 +200,9 @@ pub fn storage_daily_log_calculates_total_macros_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-15T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let entry2 =
@@ -204,6 +214,9 @@ pub fn storage_daily_log_calculates_total_macros_test() {
         macros: types.Macros(protein: 45.0, fat: 15.0, carbs: 50.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-15", entry1)
@@ -411,6 +424,9 @@ pub fn storage_food_log_breakfast_type_test() {
         macros: types.Macros(protein: 12.0, fat: 10.0, carbs: 1.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-15T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-15", entry)
@@ -435,6 +451,9 @@ pub fn storage_food_log_snack_type_test() {
         macros: types.Macros(protein: 5.0, fat: 15.0, carbs: 3.0),
         meal_type: types.Snack,
         logged_at: "2024-01-15T15:30:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-15", entry)

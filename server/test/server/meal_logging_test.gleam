@@ -4,6 +4,7 @@
 
 import gleam/float
 import gleam/list
+import gleam/option
 import gleeunit
 import gleeunit/should
 import server/storage
@@ -46,6 +47,9 @@ pub fn create_meal_log_entry_test() {
         macros: types.Macros(protein: 50.0, fat: 5.0, carbs: 0.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:30:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     // Then entry is saved successfully (simulating 201 Created)
@@ -95,6 +99,9 @@ pub fn delete_meal_log_entry_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Dinner,
         logged_at: "2024-01-15T18:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-15", entry)
 
@@ -163,6 +170,9 @@ pub fn update_meal_log_servings_test() {
         macros: types.Macros(protein: 20.0, fat: 10.0, carbs: 60.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) =
       storage.save_food_log_entry(conn, "2024-01-15", original_entry)
@@ -177,6 +187,9 @@ pub fn update_meal_log_servings_test() {
         macros: types.Macros(protein: 30.0, fat: 15.0, carbs: 90.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) =
       storage.save_food_log_entry(conn, "2024-01-15", updated_entry)
@@ -226,6 +239,9 @@ pub fn update_servings_to_fractional_amount_test() {
         macros: types.Macros(protein: 10.0, fat: 20.0, carbs: 15.0),
         meal_type: types.Snack,
         logged_at: "2024-01-15T15:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-15", entry)
 
@@ -239,6 +255,9 @@ pub fn update_servings_to_fractional_amount_test() {
         macros: types.Macros(protein: 5.0, fat: 10.0, carbs: 7.5),
         meal_type: types.Snack,
         logged_at: "2024-01-15T15:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-15", updated)
 
@@ -290,6 +309,9 @@ pub fn get_recent_logged_meals_test() {
         macros: types.Macros(protein: 10.0, fat: 5.0, carbs: 50.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-14T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let entry2 =
@@ -301,6 +323,9 @@ pub fn get_recent_logged_meals_test() {
         macros: types.Macros(protein: 10.0, fat: 5.0, carbs: 50.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-15T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let entry3 =
@@ -312,6 +337,9 @@ pub fn get_recent_logged_meals_test() {
         macros: types.Macros(protein: 10.0, fat: 5.0, carbs: 50.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-16T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-14", entry1)
@@ -359,6 +387,9 @@ pub fn meal_type_suggestion_breakfast_test() {
       macros: types.Macros(protein: 18.0, fat: 12.0, carbs: 2.0),
       meal_type: types.Breakfast,
       logged_at: logged_at,
+      micronutrients: option.None,
+      source_type: "recipe",
+      source_id: "unknown",
     )
 
   // Then the meal type is Breakfast
@@ -384,6 +415,9 @@ pub fn meal_type_suggestion_lunch_test() {
       macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 30.0),
       meal_type: types.Lunch,
       logged_at: logged_at,
+      micronutrients: option.None,
+      source_type: "recipe",
+      source_id: "unknown",
     )
 
   // Then the meal type is Lunch
@@ -405,6 +439,9 @@ pub fn meal_type_suggestion_dinner_test() {
       macros: types.Macros(protein: 45.0, fat: 25.0, carbs: 10.0),
       meal_type: types.Dinner,
       logged_at: logged_at,
+      micronutrients: option.None,
+      source_type: "recipe",
+      source_id: "unknown",
     )
 
   // Then the meal type is Dinner
@@ -426,6 +463,9 @@ pub fn meal_type_suggestion_snack_test() {
       macros: types.Macros(protein: 5.0, fat: 15.0, carbs: 3.0),
       meal_type: types.Snack,
       logged_at: logged_at,
+      micronutrients: option.None,
+      source_type: "recipe",
+      source_id: "unknown",
     )
 
   // Then the meal type is Snack
@@ -561,6 +601,9 @@ pub fn dashboard_displays_daily_log_entries_test() {
         macros: types.Macros(protein: 25.0, fat: 12.0, carbs: 45.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-15T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let entry2 =
@@ -572,6 +615,9 @@ pub fn dashboard_displays_daily_log_entries_test() {
         macros: types.Macros(protein: 35.0, fat: 15.0, carbs: 30.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:30:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-15", entry1)
@@ -651,6 +697,9 @@ pub fn filter_meals_by_breakfast_type_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-15T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let lunch_entry =
@@ -662,6 +711,9 @@ pub fn filter_meals_by_breakfast_type_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let dinner_entry =
@@ -673,6 +725,9 @@ pub fn filter_meals_by_breakfast_type_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Dinner,
         logged_at: "2024-01-15T18:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) =
@@ -726,6 +781,9 @@ pub fn filter_meals_by_lunch_type_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-15T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "l1",
@@ -735,6 +793,9 @@ pub fn filter_meals_by_lunch_type_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "l2",
@@ -744,6 +805,9 @@ pub fn filter_meals_by_lunch_type_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T13:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
     ]
 
@@ -795,6 +859,9 @@ pub fn filter_meals_by_snack_type_test() {
         macros: types.Macros(protein: 10.0, fat: 5.0, carbs: 15.0),
         meal_type: types.Snack,
         logged_at: "2024-01-15T10:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "l1",
@@ -804,6 +871,9 @@ pub fn filter_meals_by_snack_type_test() {
         macros: types.Macros(protein: 10.0, fat: 5.0, carbs: 15.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "s2",
@@ -813,6 +883,9 @@ pub fn filter_meals_by_snack_type_test() {
         macros: types.Macros(protein: 10.0, fat: 5.0, carbs: 15.0),
         meal_type: types.Snack,
         logged_at: "2024-01-15T15:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
     ]
 
@@ -860,6 +933,9 @@ pub fn filter_all_meal_types_returns_all_test() {
         macros: types.Macros(protein: 20.0, fat: 10.0, carbs: 30.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-15T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "l1",
@@ -869,6 +945,9 @@ pub fn filter_all_meal_types_returns_all_test() {
         macros: types.Macros(protein: 20.0, fat: 10.0, carbs: 30.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "d1",
@@ -878,6 +957,9 @@ pub fn filter_all_meal_types_returns_all_test() {
         macros: types.Macros(protein: 20.0, fat: 10.0, carbs: 30.0),
         meal_type: types.Dinner,
         logged_at: "2024-01-15T18:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "s1",
@@ -887,6 +969,9 @@ pub fn filter_all_meal_types_returns_all_test() {
         macros: types.Macros(protein: 20.0, fat: 10.0, carbs: 30.0),
         meal_type: types.Snack,
         logged_at: "2024-01-15T15:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
     ]
 
@@ -963,6 +1048,9 @@ pub fn log_meal_from_recipe_with_servings_test() {
         macros: calculated_macros,
         meal_type: types.Lunch,
         logged_at: "2024-01-20T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-20", entry)
@@ -1021,6 +1109,9 @@ pub fn log_meal_from_recipe_with_half_serving_test() {
         macros: calculated_macros,
         meal_type: types.Snack,
         logged_at: "2024-01-20T15:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-20", entry)
@@ -1101,6 +1192,9 @@ pub fn get_recent_meals_returns_latest_test() {
         macros: types.Macros(protein: 50.0, fat: 5.0, carbs: 0.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-10T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "old-rice",
@@ -1110,6 +1204,9 @@ pub fn get_recent_meals_returns_latest_test() {
         macros: types.Macros(protein: 10.0, fat: 2.0, carbs: 60.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "recent-eggs",
@@ -1119,6 +1216,9 @@ pub fn get_recent_meals_returns_latest_test() {
         macros: types.Macros(protein: 18.0, fat: 12.0, carbs: 2.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-20T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
     ]
 
@@ -1238,6 +1338,9 @@ pub fn get_recent_meals_with_limit_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-01T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "e2",
@@ -1247,6 +1350,9 @@ pub fn get_recent_meals_with_limit_test() {
         macros: types.Macros(protein: 35.0, fat: 12.0, carbs: 45.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-02T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "e3",
@@ -1256,6 +1362,9 @@ pub fn get_recent_meals_with_limit_test() {
         macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-03T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "e4",
@@ -1265,6 +1374,9 @@ pub fn get_recent_meals_with_limit_test() {
         macros: types.Macros(protein: 40.0, fat: 15.0, carbs: 50.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-04T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
       types.FoodLogEntry(
         id: "e5",
@@ -1274,6 +1386,9 @@ pub fn get_recent_meals_with_limit_test() {
         macros: types.Macros(protein: 20.0, fat: 5.0, carbs: 30.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-05T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       ),
     ]
 
@@ -1354,6 +1469,9 @@ pub fn edit_food_log_entry_meal_type_test() {
         macros: types.Macros(protein: 35.0, fat: 12.0, carbs: 40.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-25T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) =
       storage.save_food_log_entry(conn, "2024-01-25", original_entry)
@@ -1409,6 +1527,9 @@ pub fn edit_food_log_entry_servings_and_macros_test() {
         macros: types.Macros(protein: 40.0, fat: 15.0, carbs: 50.0),
         meal_type: types.Dinner,
         logged_at: "2024-01-25T18:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-25", entry)
 
@@ -1491,6 +1612,9 @@ pub fn daily_log_totals_update_on_add_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 45.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-30T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-30", entry1)
 
@@ -1509,6 +1633,9 @@ pub fn daily_log_totals_update_on_add_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 45.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-30T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-30", entry2)
 
@@ -1555,6 +1682,9 @@ pub fn daily_log_totals_update_on_remove_test() {
         macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-30T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let entry2 =
@@ -1566,6 +1696,9 @@ pub fn daily_log_totals_update_on_remove_test() {
         macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-30T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let entry3 =
@@ -1577,6 +1710,9 @@ pub fn daily_log_totals_update_on_remove_test() {
         macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
         meal_type: types.Dinner,
         logged_at: "2024-01-30T18:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-30", entry1)
@@ -1639,6 +1775,9 @@ pub fn daily_log_totals_update_on_edit_servings_test() {
         macros: types.Macros(protein: 20.0, fat: 5.0, carbs: 30.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-30T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let entry2 =
@@ -1650,6 +1789,9 @@ pub fn daily_log_totals_update_on_edit_servings_test() {
         macros: types.Macros(protein: 20.0, fat: 5.0, carbs: 30.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-30T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-30", entry1)

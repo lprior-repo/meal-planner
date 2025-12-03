@@ -2,6 +2,7 @@
 //// Following BDD Red-Green-Refactor with fractal loop discipline
 
 import gleam/list
+import gleam/option
 import gleeunit
 import gleeunit/should
 import server/storage
@@ -48,6 +49,9 @@ pub fn load_todays_food_log_from_storage_test() {
         macros: types.Macros(protein: 45.0, fat: 8.0, carbs: 45.0),
         meal_type: types.Lunch,
         logged_at: "2024-12-01T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) = storage.save_food_log_entry(conn, today, entry)
 
@@ -105,6 +109,9 @@ pub fn load_specific_date_food_log_test() {
         macros: types.Macros(protein: 40.0, fat: 20.0, carbs: 35.0),
         meal_type: types.Dinner,
         logged_at: "2024-11-30T18:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) =
       storage.save_food_log_entry(conn, yesterday, entry_yesterday)
@@ -118,6 +125,9 @@ pub fn load_specific_date_food_log_test() {
         macros: types.Macros(protein: 80.0, fat: 40.0, carbs: 70.0),
         meal_type: types.Lunch,
         logged_at: "2024-12-01T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) = storage.save_food_log_entry(conn, today, entry_today)
 
@@ -226,6 +236,9 @@ pub fn sum_all_entry_macros_for_totals_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Breakfast,
         logged_at: "2024-12-01T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let entry2 =
       types.FoodLogEntry(
@@ -236,6 +249,9 @@ pub fn sum_all_entry_macros_for_totals_test() {
         macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
         meal_type: types.Lunch,
         logged_at: "2024-12-01T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let entry3 =
       types.FoodLogEntry(
@@ -246,6 +262,9 @@ pub fn sum_all_entry_macros_for_totals_test() {
         macros: types.Macros(protein: 45.0, fat: 15.0, carbs: 60.0),
         meal_type: types.Dinner,
         logged_at: "2024-12-01T18:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, date, entry1)
@@ -392,6 +411,9 @@ pub fn entries_ordered_by_logged_at_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Dinner,
         logged_at: "2024-12-01T18:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let entry_breakfast =
       types.FoodLogEntry(
@@ -402,6 +424,9 @@ pub fn entries_ordered_by_logged_at_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Breakfast,
         logged_at: "2024-12-01T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let entry_lunch =
       types.FoodLogEntry(
@@ -412,6 +437,9 @@ pub fn entries_ordered_by_logged_at_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Lunch,
         logged_at: "2024-12-01T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     // Save in wrong order
@@ -473,6 +501,9 @@ pub fn delete_entry_updates_totals_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Breakfast,
         logged_at: "2024-12-01T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let entry2 =
       types.FoodLogEntry(
@@ -483,6 +514,9 @@ pub fn delete_entry_updates_totals_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Lunch,
         logged_at: "2024-12-01T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let entry3 =
       types.FoodLogEntry(
@@ -493,6 +527,9 @@ pub fn delete_entry_updates_totals_test() {
         macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
         meal_type: types.Dinner,
         logged_at: "2024-12-01T18:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let assert Ok(_) = storage.save_food_log_entry(conn, date, entry1)

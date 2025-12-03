@@ -52,6 +52,14 @@ pub fn insert_all_vertical_diet_recipes_test() {
               io.println("  ✗ " <> recipe.name <> " - Not found error")
               Error(Nil)
             }
+            Error(storage.InvalidInput(msg)) -> {
+              io.println("  ✗ " <> recipe.name <> " - Invalid input: " <> msg)
+              Error(Nil)
+            }
+            Error(storage.Unauthorized(msg)) -> {
+              io.println("  ✗ " <> recipe.name <> " - Unauthorized: " <> msg)
+              Error(Nil)
+            }
           }
         })
 

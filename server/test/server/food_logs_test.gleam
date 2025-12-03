@@ -2,6 +2,7 @@
 
 import gleam/json
 import gleam/list
+import gleam/option
 import gleam/string
 import gleeunit
 import gleeunit/should
@@ -51,6 +52,9 @@ pub fn test_save_and_retrieve_food_log_test() {
         macros: types.Macros(protein: 45.0, fat: 15.0, carbs: 60.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     // Save the entry
@@ -123,6 +127,9 @@ pub fn test_multiple_log_entries_test() {
         macros: types.Macros(protein: 20.0, fat: 5.0, carbs: 30.0),
         meal_type: types.Breakfast,
         logged_at: "2024-01-15T08:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let entry2 =
@@ -134,6 +141,9 @@ pub fn test_multiple_log_entries_test() {
         macros: types.Macros(protein: 40.0, fat: 10.0, carbs: 60.0),
         meal_type: types.Lunch,
         logged_at: "2024-01-15T12:30:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     let entry3 =
@@ -145,6 +155,9 @@ pub fn test_multiple_log_entries_test() {
         macros: types.Macros(protein: 30.0, fat: 7.5, carbs: 45.0),
         meal_type: types.Dinner,
         logged_at: "2024-01-15T18:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
 
     // Save all entries
@@ -202,6 +215,9 @@ pub fn test_delete_food_log_entry_test() {
         macros: types.Macros(protein: 25.0, fat: 8.0, carbs: 35.0),
         meal_type: types.Snack,
         logged_at: "2024-01-15T15:00:00Z",
+        micronutrients: option.None,
+        source_type: "recipe",
+        source_id: "unknown",
       )
     let assert Ok(_) = storage.save_food_log_entry(conn, "2024-01-15", entry)
 
@@ -325,6 +341,9 @@ pub fn test_food_log_entry_json_test() {
       macros: types.Macros(protein: 45.0, fat: 15.0, carbs: 60.0),
       meal_type: types.Lunch,
       logged_at: "2024-01-15T12:00:00Z",
+      micronutrients: option.None,
+      source_type: "recipe",
+      source_id: "unknown",
     )
 
   let json_str = json.to_string(types.food_log_entry_to_json(entry))
@@ -353,6 +372,9 @@ pub fn test_daily_log_json_test() {
       macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
       meal_type: types.Breakfast,
       logged_at: "2024-01-15T08:00:00Z",
+      micronutrients: option.None,
+      source_type: "recipe",
+      source_id: "unknown",
     )
 
   let entry2 =
@@ -364,6 +386,9 @@ pub fn test_daily_log_json_test() {
       macros: types.Macros(protein: 40.0, fat: 15.0, carbs: 50.0),
       meal_type: types.Lunch,
       logged_at: "2024-01-15T12:00:00Z",
+      micronutrients: option.None,
+      source_type: "recipe",
+      source_id: "unknown",
     )
 
   let daily_log =
@@ -371,6 +396,7 @@ pub fn test_daily_log_json_test() {
       date: "2024-01-15",
       entries: [entry1, entry2],
       total_macros: types.Macros(protein: 70.0, fat: 25.0, carbs: 90.0),
+      total_micronutrients: option.None,
     )
 
   let json_str = json.to_string(types.daily_log_to_json(daily_log))

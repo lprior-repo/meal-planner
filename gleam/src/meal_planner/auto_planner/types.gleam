@@ -73,6 +73,7 @@ pub type RecipeSource {
 /// Configuration for auto meal plan generation
 pub type AutoPlanConfig {
   AutoPlanConfig(
+    user_id: String,
     diet_principles: List(DietPrinciple),
     macro_targets: Macros,
     recipe_count: Int,
@@ -162,6 +163,7 @@ pub fn recipe_source_to_json(rs: RecipeSource) -> json.Json {
 
 pub fn auto_plan_config_to_json(config: AutoPlanConfig) -> json.Json {
   json.object([
+    #("user_id", json.string(config.user_id)),
     #(
       "diet_principles",
       json.array(config.diet_principles, diet_principle_to_json),
@@ -197,6 +199,7 @@ pub fn diet_principle_decoder() -> Decoder(DietPrinciple) {
 }
 
 pub fn auto_plan_config_decoder() -> Decoder(AutoPlanConfig) {
+  use user_id <- decode.field("user_id", decode.string)
   use diet_principles <- decode.field(
     "diet_principles",
     decode.list(diet_principle_decoder()),
@@ -206,6 +209,7 @@ pub fn auto_plan_config_decoder() -> Decoder(AutoPlanConfig) {
   use variety_factor <- decode.field("variety_factor", decode.float)
 
   decode.success(AutoPlanConfig(
+    user_id: user_id,
     diet_principles: diet_principles,
     macro_targets: macro_targets,
     recipe_count: recipe_count,

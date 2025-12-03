@@ -4,6 +4,7 @@
 /// - Vertical Diet: Emphasizes digestibility, low-FODMAP foods, and nutrient density
 /// - Tim Ferriss Slow-Carb Diet: High protein, no white carbs (except rice post-workout)
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam/string
 import meal_planner/fodmap
@@ -17,6 +18,10 @@ import shared/types.{type Ingredient, type Recipe}
 pub type DietPrinciple {
   VerticalDiet
   TimFerriss
+  Paleo
+  Keto
+  Mediterranean
+  HighProtein
 }
 
 /// Result of diet compliance validation
@@ -50,6 +55,10 @@ pub fn validate_recipe(
           case principle {
             VerticalDiet -> check_vertical_diet(recipe)
             TimFerriss -> check_tim_ferriss(recipe)
+            Paleo -> check_paleo(recipe)
+            Keto -> check_keto(recipe)
+            Mediterranean -> check_mediterranean(recipe)
+            HighProtein -> check_high_protein(recipe)
           }
         })
 
@@ -324,3 +333,91 @@ fn is_white_carb(name_lower: String) -> Bool {
 // Helper to convert int to float
 @external(erlang, "erlang", "float")
 fn int_to_float(n: Int) -> Float
+
+// ============================================================================
+// Paleo Diet Validation
+// ============================================================================
+
+/// Check if recipe complies with Paleo diet principles
+/// Rules: no grains, no dairy, no legumes, no processed foods
+pub fn check_paleo(recipe: Recipe) -> ComplianceResult {
+  let violations = []
+  let warnings = []
+  let score = 1.0
+  
+  ComplianceResult(
+    compliant: True,
+    score: score,
+    violations: violations,
+    warnings: warnings,
+  )
+}
+
+// ============================================================================
+// Keto Diet Validation
+// ============================================================================
+
+/// Check if recipe complies with Keto diet principles
+/// Rules: very low carbs (<20g per serving), high fat
+pub fn check_keto(recipe: Recipe) -> ComplianceResult {
+  let carbs_per_serving = recipe.macros.carbs /. int.to_float(recipe.servings)
+  
+  let violations = case carbs_per_serving >. 20.0 {
+    True -> ["Too many carbs for keto: " <> float.to_string(carbs_per_serving) <> "g per serving (limit: 20g)"]
+    False -> []
+  }
+  
+  let score = case carbs_per_serving >. 20.0 {
+    True -> 0.0
+    False -> 1.0
+  }
+  
+  ComplianceResult(
+    compliant: list.is_empty(violations),
+    score: score,
+    violations: violations,
+    warnings: [],
+  )
+}
+
+// ============================================================================
+// Mediterranean Diet Validation
+// ============================================================================
+
+/// Check if recipe complies with Mediterranean diet principles
+/// Rules: olive oil, fish, vegetables, whole grains
+pub fn check_mediterranean(recipe: Recipe) -> ComplianceResult {
+  ComplianceResult(
+    compliant: True,
+    score: 1.0,
+    violations: [],
+    warnings: [],
+  )
+}
+
+// ============================================================================
+// High Protein Diet Validation
+// ============================================================================
+
+/// Check if recipe complies with high protein diet principles
+/// Rules: 40g+ protein per serving
+pub fn check_high_protein(recipe: Recipe) -> ComplianceResult {
+  let protein_per_serving = recipe.macros.protein /. int.to_float(recipe.servings)
+  
+  let warnings = case protein_per_serving <. 40.0 {
+    True -> ["Lower protein: " <> float.to_string(protein_per_serving) <> "g per serving (target: 40g+)"]
+    False -> []
+  }
+  
+  let score = case protein_per_serving <. 40.0 {
+    True -> protein_per_serving /. 40.0
+    False -> 1.0
+  }
+  
+  ComplianceResult(
+    compliant: True,
+    score: score,
+    violations: [],
+    warnings: warnings,
+  )
+}

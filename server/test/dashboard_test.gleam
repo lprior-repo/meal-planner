@@ -3,6 +3,7 @@
 
 import gleam/float
 import gleam/list
+import gleam/option
 import gleeunit
 import gleeunit/should
 
@@ -193,6 +194,9 @@ pub fn daily_log_sums_entries_for_total_macros_test() {
       macros: types.Macros(protein: 45.0, fat: 8.0, carbs: 45.0),
       meal_type: types.Lunch,
       logged_at: "2024-01-15T12:00:00Z",
+      micronutrients: option.None,
+      source_type: "recipe",
+      source_id: "unknown",
     )
 
   let entry2 =
@@ -204,6 +208,9 @@ pub fn daily_log_sums_entries_for_total_macros_test() {
       macros: types.Macros(protein: 40.0, fat: 20.0, carbs: 35.0),
       meal_type: types.Dinner,
       logged_at: "2024-01-15T18:00:00Z",
+      micronutrients: option.None,
+      source_type: "recipe",
+      source_id: "unknown",
     )
 
   let entry3 =
@@ -215,6 +222,9 @@ pub fn daily_log_sums_entries_for_total_macros_test() {
       macros: types.Macros(protein: 35.0, fat: 18.0, carbs: 8.0),
       meal_type: types.Breakfast,
       logged_at: "2024-01-15T08:00:00Z",
+      micronutrients: option.None,
+      source_type: "recipe",
+      source_id: "unknown",
     )
 
   // When summing entries

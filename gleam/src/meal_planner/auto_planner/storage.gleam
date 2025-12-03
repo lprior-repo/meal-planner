@@ -107,14 +107,15 @@ pub fn get_auto_plan(
         Ok(recipes) -> {
           // For now, create a default config (TODO: parse config_json)
           let config =
-            types.AutoPlanConfig(
-              diet_principles: [types.VerticalDiet],
+            auto_types.AutoPlanConfig(
+              user_id: "",
+              diet_principles: [auto_types.VerticalDiet],
               macro_targets: total_macros,
               recipe_count: list.length(recipes),
               variety_factor: 0.7,
             )
 
-          Ok(AutoMealPlan(
+          Ok(auto_types.AutoMealPlan(
             id: plan_id,
             recipes: recipes,
             generated_at: generated_at,
@@ -212,7 +213,7 @@ fn recipe_row_decoder() -> decode.Decoder(Recipe) {
 /// Save recipe source
 pub fn save_recipe_source(
   conn: pog.Connection,
-  source: RecipeSource,
+  source: auto_types.RecipeSource,
 ) -> Result(Nil, StorageError) {
   let sql =
     "INSERT INTO recipe_sources (id, name, type, config)
@@ -222,7 +223,7 @@ pub fn save_recipe_source(
        type = EXCLUDED.type,
        config = EXCLUDED.config"
 
-  let type_str = types.recipe_source_type_to_string(source.source_type)
+  let type_str = auto_types.recipe_source_type_to_string(source.source_type)
 
   case
     pog.query(sql)
@@ -243,7 +244,7 @@ pub fn save_recipe_source(
 /// Get all recipe sources
 pub fn get_recipe_sources(
   conn: pog.Connection,
-) -> Result(List(RecipeSource), StorageError) {
+) -> Result(List(auto_types.RecipeSource), StorageError) {
   let sql = "SELECT id, name, type, config FROM recipe_sources ORDER BY name"
 
   let decoder = {
@@ -253,13 +254,13 @@ pub fn get_recipe_sources(
     use config <- decode.field(3, decode.optional(decode.string))
 
     let source_type = case type_str {
-      "database" -> types.Database
-      "api" -> types.Api
-      "user_provided" -> types.UserProvided
-      _ -> types.Database
+      "database" -> auto_types.Database
+      "api" -> auto_types.Api
+      "user_provided" -> auto_types.UserProvided
+      _ -> auto_types.Database
     }
 
-    decode.success(RecipeSource(
+    decode.success(auto_types.RecipeSource(
       id: id,
       name: name,
       source_type: source_type,

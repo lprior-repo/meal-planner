@@ -975,6 +975,16 @@ fn create_recipe_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
           let error_json = json.object([#("error", json.string("Not found"))])
           wisp.json_response(json.to_string(error_json), 404)
         }
+        Error(storage.InvalidInput(msg)) -> {
+          let error_json =
+            json.object([#("error", json.string("Invalid input: " <> msg))])
+          wisp.json_response(json.to_string(error_json), 400)
+        }
+        Error(storage.Unauthorized(msg)) -> {
+          let error_json =
+            json.object([#("error", json.string("Unauthorized: " <> msg))])
+          wisp.json_response(json.to_string(error_json), 401)
+        }
       }
     }
     Error(errors) -> {
