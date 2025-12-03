@@ -454,135 +454,37 @@ pub fn macros_to_json(m: Macros) -> Json {
 }
 
 pub fn micronutrients_to_json(m: Micronutrients) -> Json {
-  let fields = []
-
-  // Fiber
-  let fields = case m.fiber {
-    Some(v) -> [#("fiber", json.float(v)), ..fields]
-    None -> fields
+  // Helper to convert Option(Float) to Json
+  let optional_float = fn(opt) {
+    case opt {
+      Some(v) -> json.float(v)
+      None -> json.null()
+    }
   }
 
-  // Sugar
-  let fields = case m.sugar {
-    Some(v) -> [#("sugar", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Sodium
-  let fields = case m.sodium {
-    Some(v) -> [#("sodium", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Cholesterol
-  let fields = case m.cholesterol {
-    Some(v) -> [#("cholesterol", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Vitamin A
-  let fields = case m.vitamin_a {
-    Some(v) -> [#("vitamin_a", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Vitamin C
-  let fields = case m.vitamin_c {
-    Some(v) -> [#("vitamin_c", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Vitamin D
-  let fields = case m.vitamin_d {
-    Some(v) -> [#("vitamin_d", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Vitamin E
-  let fields = case m.vitamin_e {
-    Some(v) -> [#("vitamin_e", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Vitamin K
-  let fields = case m.vitamin_k {
-    Some(v) -> [#("vitamin_k", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Vitamin B6
-  let fields = case m.vitamin_b6 {
-    Some(v) -> [#("vitamin_b6", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Vitamin B12
-  let fields = case m.vitamin_b12 {
-    Some(v) -> [#("vitamin_b12", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Folate
-  let fields = case m.folate {
-    Some(v) -> [#("folate", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Thiamin
-  let fields = case m.thiamin {
-    Some(v) -> [#("thiamin", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Riboflavin
-  let fields = case m.riboflavin {
-    Some(v) -> [#("riboflavin", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Niacin
-  let fields = case m.niacin {
-    Some(v) -> [#("niacin", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Calcium
-  let fields = case m.calcium {
-    Some(v) -> [#("calcium", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Iron
-  let fields = case m.iron {
-    Some(v) -> [#("iron", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Magnesium
-  let fields = case m.magnesium {
-    Some(v) -> [#("magnesium", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Phosphorus
-  let fields = case m.phosphorus {
-    Some(v) -> [#("phosphorus", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Potassium
-  let fields = case m.potassium {
-    Some(v) -> [#("potassium", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  // Zinc
-  let fields = case m.zinc {
-    Some(v) -> [#("zinc", json.float(v)), ..fields]
-    None -> fields
-  }
-
-  json.object(fields)
+  json.object([
+    #("fiber", optional_float(m.fiber)),
+    #("sugar", optional_float(m.sugar)),
+    #("sodium", optional_float(m.sodium)),
+    #("cholesterol", optional_float(m.cholesterol)),
+    #("vitamin_a", optional_float(m.vitamin_a)),
+    #("vitamin_c", optional_float(m.vitamin_c)),
+    #("vitamin_d", optional_float(m.vitamin_d)),
+    #("vitamin_e", optional_float(m.vitamin_e)),
+    #("vitamin_k", optional_float(m.vitamin_k)),
+    #("vitamin_b6", optional_float(m.vitamin_b6)),
+    #("vitamin_b12", optional_float(m.vitamin_b12)),
+    #("folate", optional_float(m.folate)),
+    #("thiamin", optional_float(m.thiamin)),
+    #("riboflavin", optional_float(m.riboflavin)),
+    #("niacin", optional_float(m.niacin)),
+    #("calcium", optional_float(m.calcium)),
+    #("iron", optional_float(m.iron)),
+    #("magnesium", optional_float(m.magnesium)),
+    #("phosphorus", optional_float(m.phosphorus)),
+    #("potassium", optional_float(m.potassium)),
+    #("zinc", optional_float(m.zinc)),
+  ])
 }
 
 pub fn ingredient_to_json(i: Ingredient) -> Json {
@@ -821,27 +723,27 @@ pub fn meal_type_decoder() -> Decoder(MealType) {
 
 /// Decoder for Micronutrients
 pub fn micronutrients_decoder() -> Decoder(Micronutrients) {
-  use fiber <- decode.field("fiber", decode.optional(decode.float))
-  use sugar <- decode.field("sugar", decode.optional(decode.float))
-  use sodium <- decode.field("sodium", decode.optional(decode.float))
-  use cholesterol <- decode.field("cholesterol", decode.optional(decode.float))
-  use vitamin_a <- decode.field("vitamin_a", decode.optional(decode.float))
-  use vitamin_c <- decode.field("vitamin_c", decode.optional(decode.float))
-  use vitamin_d <- decode.field("vitamin_d", decode.optional(decode.float))
-  use vitamin_e <- decode.field("vitamin_e", decode.optional(decode.float))
-  use vitamin_k <- decode.field("vitamin_k", decode.optional(decode.float))
-  use vitamin_b6 <- decode.field("vitamin_b6", decode.optional(decode.float))
-  use vitamin_b12 <- decode.field("vitamin_b12", decode.optional(decode.float))
-  use folate <- decode.field("folate", decode.optional(decode.float))
-  use thiamin <- decode.field("thiamin", decode.optional(decode.float))
-  use riboflavin <- decode.field("riboflavin", decode.optional(decode.float))
-  use niacin <- decode.field("niacin", decode.optional(decode.float))
-  use calcium <- decode.field("calcium", decode.optional(decode.float))
-  use iron <- decode.field("iron", decode.optional(decode.float))
-  use magnesium <- decode.field("magnesium", decode.optional(decode.float))
-  use phosphorus <- decode.field("phosphorus", decode.optional(decode.float))
-  use potassium <- decode.field("potassium", decode.optional(decode.float))
-  use zinc <- decode.field("zinc", decode.optional(decode.float))
+  use fiber <- decode.optional_field("fiber", decode.float)
+  use sugar <- decode.optional_field("sugar", decode.float)
+  use sodium <- decode.optional_field("sodium", decode.float)
+  use cholesterol <- decode.optional_field("cholesterol", decode.float)
+  use vitamin_a <- decode.optional_field("vitamin_a", decode.float)
+  use vitamin_c <- decode.optional_field("vitamin_c", decode.float)
+  use vitamin_d <- decode.optional_field("vitamin_d", decode.float)
+  use vitamin_e <- decode.optional_field("vitamin_e", decode.float)
+  use vitamin_k <- decode.optional_field("vitamin_k", decode.float)
+  use vitamin_b6 <- decode.optional_field("vitamin_b6", decode.float)
+  use vitamin_b12 <- decode.optional_field("vitamin_b12", decode.float)
+  use folate <- decode.optional_field("folate", decode.float)
+  use thiamin <- decode.optional_field("thiamin", decode.float)
+  use riboflavin <- decode.optional_field("riboflavin", decode.float)
+  use niacin <- decode.optional_field("niacin", decode.float)
+  use calcium <- decode.optional_field("calcium", decode.float)
+  use iron <- decode.optional_field("iron", decode.float)
+  use magnesium <- decode.optional_field("magnesium", decode.float)
+  use phosphorus <- decode.optional_field("phosphorus", decode.float)
+  use potassium <- decode.optional_field("potassium", decode.float)
+  use zinc <- decode.optional_field("zinc", decode.float)
   decode.success(Micronutrients(
     fiber: fiber,
     sugar: sugar,

@@ -650,15 +650,10 @@ pub fn search_foods_filtered(
   }
 
   // Same multi-factor ranking as search_foods
-  let sql =
-    "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
+  let sql = "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
      FROM foods
      WHERE (to_tsvector('english', description) @@ plainto_tsquery('english', $1)
-        OR description ILIKE $2)"
-    <> verified_clause
-    <> branded_clause
-    <> category_clause
-    <> "
+        OR description ILIKE $2)" <> verified_clause <> branded_clause <> category_clause <> "
      ORDER BY
        -- 1. Data Quality Score (0-100): Prioritize verified USDA data
        CASE data_type

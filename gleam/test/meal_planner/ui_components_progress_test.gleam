@@ -98,7 +98,9 @@ pub fn progress_bar_accessibility_attributes_test() {
   result |> string.contains("aria-valuenow=\"75\"") |> should.be_true
   result |> string.contains("aria-valuemin=\"0\"") |> should.be_true
   result |> string.contains("aria-valuemax=\"100\"") |> should.be_true
-  result |> string.contains("aria-label=\"Progress: 75 percent\"") |> should.be_true
+  result
+  |> string.contains("aria-label=\"Progress: 75 percent\"")
+  |> should.be_true
 }
 
 pub fn progress_bar_color_classes_test() {
@@ -265,9 +267,11 @@ pub fn progress_circle_zero_percent_test() {
   let result = progress.progress_circle(0.0, "Daily Goal")
 
   result |> string.contains("--progress: 0%;") |> should.be_true
-  result |> string.contains("<span class=\"progress-percent\">0%</span>")
+  result
+  |> string.contains("<span class=\"progress-percent\">0%</span>")
   |> should.be_true
-  result |> string.contains("<span class=\"progress-label\">Daily Goal</span>")
+  result
+  |> string.contains("<span class=\"progress-label\">Daily Goal</span>")
   |> should.be_true
 }
 
@@ -275,7 +279,8 @@ pub fn progress_circle_fifty_percent_test() {
   let result = progress.progress_circle(50.0, "Halfway")
 
   result |> string.contains("--progress: 50%;") |> should.be_true
-  result |> string.contains("<span class=\"progress-percent\">50%</span>")
+  result
+  |> string.contains("<span class=\"progress-percent\">50%</span>")
   |> should.be_true
 }
 
@@ -283,7 +288,8 @@ pub fn progress_circle_hundred_percent_test() {
   let result = progress.progress_circle(100.0, "Complete")
 
   result |> string.contains("--progress: 100%;") |> should.be_true
-  result |> string.contains("<span class=\"progress-percent\">100%</span>")
+  result
+  |> string.contains("<span class=\"progress-percent\">100%</span>")
   |> should.be_true
 }
 
@@ -292,7 +298,8 @@ pub fn progress_circle_fractional_test() {
 
   // Should truncate to integer
   result |> string.contains("--progress: 75%;") |> should.be_true
-  result |> string.contains("<span class=\"progress-percent\">75%</span>")
+  result
+  |> string.contains("<span class=\"progress-percent\">75%</span>")
   |> should.be_true
 }
 
@@ -319,7 +326,8 @@ pub fn progress_with_label_basic_test() {
   result
   |> string.contains("<span class=\"progress-label-text\">Calories</span>")
   |> should.be_true
-  result |> string.contains("<span class=\"progress-value\">1850 / 2100</span>")
+  result
+  |> string.contains("<span class=\"progress-value\">1850 / 2100</span>")
   |> should.be_true
   result |> string.contains("width: 88%") |> should.be_true
 }
@@ -327,7 +335,8 @@ pub fn progress_with_label_basic_test() {
 pub fn progress_with_label_zero_test() {
   let result = progress.progress_with_label(0.0, 2000.0, "Steps")
 
-  result |> string.contains("<span class=\"progress-value\">0 / 2000</span>")
+  result
+  |> string.contains("<span class=\"progress-value\">0 / 2000</span>")
   |> should.be_true
   result |> string.contains("width: 0%") |> should.be_true
 }
@@ -469,8 +478,7 @@ pub fn edge_case_empty_label_test() {
 }
 
 pub fn edge_case_special_characters_in_label_test() {
-  let result =
-    progress.progress_with_label(50.0, 100.0, "Protein & Carbs (g)")
+  let result = progress.progress_with_label(50.0, 100.0, "Protein & Carbs (g)")
 
   // Should preserve special characters
   result |> string.contains("Protein & Carbs (g)") |> should.be_true

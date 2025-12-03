@@ -38,12 +38,16 @@ pub fn json_response_contains_valid_json_body_test() {
 }
 
 pub fn json_response_handles_nested_objects_test() {
-  let nested = json.object([
-    #("user", json.object([
-      #("id", json.int(123)),
-      #("name", json.string("John Doe")),
-    ])),
-  ])
+  let nested =
+    json.object([
+      #(
+        "user",
+        json.object([
+          #("id", json.int(123)),
+          #("name", json.string("John Doe")),
+        ]),
+      ),
+    ])
   let response = web_helpers.json_response(nested, 201)
 
   response.status
@@ -64,11 +68,15 @@ pub fn json_response_handles_nested_objects_test() {
 }
 
 pub fn json_response_handles_arrays_test() {
-  let array_data = json.array([
-    json.string("item1"),
-    json.string("item2"),
-    json.string("item3"),
-  ], json.to_string)
+  let array_data =
+    json.array(
+      [
+        json.string("item1"),
+        json.string("item2"),
+        json.string("item3"),
+      ],
+      json.to_string,
+    )
 
   let data = json.object([#("items", array_data)])
   let response = web_helpers.json_response(data, 200)
@@ -101,9 +109,10 @@ pub fn json_response_handles_empty_object_test() {
 }
 
 pub fn json_response_handles_null_values_test() {
-  let data = json.object([
-    #("value", json.null()),
-  ])
+  let data =
+    json.object([
+      #("value", json.null()),
+    ])
   let response = web_helpers.json_response(data, 200)
 
   case response.body {
@@ -117,10 +126,11 @@ pub fn json_response_handles_null_values_test() {
 }
 
 pub fn json_response_handles_boolean_values_test() {
-  let data = json.object([
-    #("enabled", json.bool(True)),
-    #("disabled", json.bool(False)),
-  ])
+  let data =
+    json.object([
+      #("enabled", json.bool(True)),
+      #("disabled", json.bool(False)),
+    ])
   let response = web_helpers.json_response(data, 200)
 
   case response.body {
@@ -138,10 +148,11 @@ pub fn json_response_handles_boolean_values_test() {
 }
 
 pub fn json_response_handles_numeric_values_test() {
-  let data = json.object([
-    #("integer", json.int(42)),
-    #("float", json.float(3.14)),
-  ])
+  let data =
+    json.object([
+      #("integer", json.int(42)),
+      #("float", json.float(3.14)),
+    ])
   let response = web_helpers.json_response(data, 200)
 
   case response.body {
@@ -480,17 +491,30 @@ pub fn error_response_sanitizes_xss_attempt_test() {
 }
 
 pub fn json_response_handles_deeply_nested_structures_test() {
-  let deep_nested = json.object([
-    #("level1", json.object([
-      #("level2", json.object([
-        #("level3", json.object([
-          #("level4", json.object([
-            #("value", json.string("deep")),
-          ])),
-        ])),
-      ])),
-    ])),
-  ])
+  let deep_nested =
+    json.object([
+      #(
+        "level1",
+        json.object([
+          #(
+            "level2",
+            json.object([
+              #(
+                "level3",
+                json.object([
+                  #(
+                    "level4",
+                    json.object([
+                      #("value", json.string("deep")),
+                    ]),
+                  ),
+                ]),
+              ),
+            ]),
+          ),
+        ]),
+      ),
+    ])
 
   let response = web_helpers.json_response(deep_nested, 200)
 
@@ -543,7 +567,8 @@ pub fn error_response_always_has_error_structure_test() {
       let response = web_helpers.error_response("Test", code)
       case response.body {
         wisp.Text(body) -> {
-          string.contains(body, "\"error\"") && string.contains(body, "\"message\"")
+          string.contains(body, "\"error\"")
+          && string.contains(body, "\"message\"")
         }
         _ -> False
       }

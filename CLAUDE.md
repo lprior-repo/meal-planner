@@ -1,6 +1,6 @@
 ---
 name: claude-code-session
-description: "Claude Code configuration for automatic Agent Mail registration, Beads integration, and SPARC methodology"
+description: "Claude Code configuration for automatic Agent Mail registration and Beads integration"
 color: blue
 ---
 
@@ -109,29 +109,20 @@ bv --robot-diff        # Progress tracking
 
 ### Concurrent Execution
 ```javascript
-// ✅ CORRECT: Batch all operations
+// ✅ CORRECT: Batch all operations in single message
 [Single Message]:
   Task("agent1", "...", "coder")
   Task("agent2", "...", "tester")
   TodoWrite({ todos: [5-10 todos] })
-  Write("file1.gleam")
-  Write("file2.gleam")
-  Bash("command1 && command2")
+  Read("file1.gleam")
+  Read("file2.gleam")
+  Edit("file3.gleam", old, new)
+  Bash("gleam test && gleam build")
 
 // ❌ WRONG: Multiple messages
 Message 1: Task(...)
 Message 2: TodoWrite(...)
-Message 3: Write(...)
-```
-
-### SPARC Methodology
-```bash
-# TDD workflow
-npx claude-flow sparc tdd "feature"
-
-# Individual phases
-npx claude-flow sparc run spec-pseudocode "task"
-npx claude-flow sparc run architect "task"
+Message 3: Read(...)
 ```
 
 ## 🚨 Session Close Protocol
@@ -152,11 +143,13 @@ npx claude-flow sparc run architect "task"
 - Reserve **before** editing
 - Use `reason="bd-###"` for traceability
 - Release when done or use `ttl_seconds` for auto-expiry
+- Check conflicts with other agents
 
 ### Thread Communication
 - Use `thread_id="bd-###"` for all messages
 - Subject format: `[bd-###] Brief description`
 - Set `ack_required=true` for decisions
+- Reply to threads to maintain context
 
 ### Inbox Checking
 ```javascript
@@ -166,6 +159,13 @@ const messages = await mcp__mcp_agent_mail__fetch_inbox({
   agent_name: session.agent.name,
   since_ts: "2025-12-03T00:00:00Z",
   urgent_only: false
+});
+
+// Acknowledge important messages
+await mcp__mcp_agent_mail__acknowledge_message({
+  project_key: "/home/lewis/src/meal-planner",
+  agent_name: session.agent.name,
+  message_id: 123
 });
 ```
 
@@ -186,21 +186,69 @@ const messages = await mcp__mcp_agent_mail__fetch_inbox({
 
 ### Quality
 - Write tests first (TDD)
-- Use SPARC for complex features
 - Keep files under 500 lines
 - Never hardcode secrets
+- Use descriptive commit messages
 
-## 🔧 MCP Servers
+## 🔧 MCP Server Setup
 
 **Required:**
 ```bash
 claude mcp add mcp-agent-mail npx mcp-agent-mail mcp start
 ```
 
-**Optional:**
+### Verify Installation
 ```bash
-claude mcp add claude-flow npx claude-flow@alpha mcp start
-claude mcp add ruv-swarm npx ruv-swarm mcp start
+# Check MCP server is running
+claude mcp list
+
+# Test Agent Mail connection
+mcp__mcp_agent_mail__health_check
+```
+
+## 🔍 Common Workflows
+
+### Continue Existing Work
+```javascript
+// Resume work on bd-123
+const thread = await mcp__mcp_agent_mail__macro_prepare_thread({
+  project_key: "/home/lewis/src/meal-planner",
+  thread_id: "bd-123",
+  program: "claude-code",
+  model: "claude-sonnet-4-5",
+  llm_mode: true,
+  include_inbox_bodies: true
+});
+// Returns: thread summary, participants, action items
+```
+
+### Coordinate with Other Agents
+```javascript
+// Request contact with another agent
+await mcp__mcp_agent_mail__macro_contact_handshake({
+  project_key: "/home/lewis/src/meal-planner",
+  requester: session.agent.name,
+  target: "OtherAgent",
+  reason: "Need to coordinate on bd-123",
+  auto_accept: false
+});
+```
+
+### Handle File Conflicts
+```javascript
+// Check who has file reserved
+const conflicts = await mcp__mcp_agent_mail__file_reservation_paths({
+  project_key: "/home/lewis/src/meal-planner",
+  agent_name: session.agent.name,
+  paths: ["gleam/src/meal_planner/web.gleam"],
+  exclusive: true,
+  reason: "bd-123"
+});
+
+if (conflicts.conflicts.length > 0) {
+  // Wait or coordinate with holder
+  console.log("File reserved by:", conflicts.conflicts[0].holders);
+}
 ```
 
 ---

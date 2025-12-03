@@ -96,11 +96,12 @@ pub fn h6_renders_correctly_test() {
 // ===================================================================
 
 pub fn heading_with_subtitle_h1_with_subtitle_test() {
-  let result = typography.heading_with_subtitle(
-    1,
-    "Main Title",
-    option.Some("Subtitle text"),
-  )
+  let result =
+    typography.heading_with_subtitle(
+      1,
+      "Main Title",
+      option.Some("Subtitle text"),
+    )
 
   result
   |> should.equal(
@@ -116,11 +117,8 @@ pub fn heading_with_subtitle_h1_without_subtitle_test() {
 }
 
 pub fn heading_with_subtitle_h2_with_subtitle_test() {
-  let result = typography.heading_with_subtitle(
-    2,
-    "Section",
-    option.Some("Description"),
-  )
+  let result =
+    typography.heading_with_subtitle(2, "Section", option.Some("Description"))
 
   result
   |> should.equal(
@@ -129,11 +127,8 @@ pub fn heading_with_subtitle_h2_with_subtitle_test() {
 }
 
 pub fn heading_with_subtitle_h3_with_subtitle_test() {
-  let result = typography.heading_with_subtitle(
-    3,
-    "Subsection",
-    option.Some("Details"),
-  )
+  let result =
+    typography.heading_with_subtitle(3, "Subsection", option.Some("Details"))
 
   result
   |> should.equal(
@@ -149,11 +144,7 @@ pub fn heading_with_subtitle_h4_without_subtitle_test() {
 }
 
 pub fn heading_with_subtitle_h5_with_subtitle_test() {
-  let result = typography.heading_with_subtitle(
-    5,
-    "Minor",
-    option.Some("Note"),
-  )
+  let result = typography.heading_with_subtitle(5, "Minor", option.Some("Note"))
 
   result
   |> should.equal(
@@ -162,11 +153,8 @@ pub fn heading_with_subtitle_h5_with_subtitle_test() {
 }
 
 pub fn heading_with_subtitle_h6_with_subtitle_test() {
-  let result = typography.heading_with_subtitle(
-    6,
-    "Smallest",
-    option.Some("Tiny"),
-  )
+  let result =
+    typography.heading_with_subtitle(6, "Smallest", option.Some("Tiny"))
 
   result
   |> should.equal(
@@ -175,11 +163,8 @@ pub fn heading_with_subtitle_h6_with_subtitle_test() {
 }
 
 pub fn heading_with_subtitle_defaults_to_h1_for_invalid_level_test() {
-  let result = typography.heading_with_subtitle(
-    99,
-    "Invalid Level",
-    option.None,
-  )
+  let result =
+    typography.heading_with_subtitle(99, "Invalid Level", option.None)
 
   result
   |> should.equal("<div class=\"heading-group\"><h1>Invalid Level</h1></div>")
@@ -537,11 +522,8 @@ pub fn heading_group_applies_class_test() {
 }
 
 pub fn subtitle_applies_class_test() {
-  let result = typography.heading_with_subtitle(
-    1,
-    "Title",
-    option.Some("Subtitle"),
-  )
+  let result =
+    typography.heading_with_subtitle(1, "Title", option.Some("Subtitle"))
 
   result
   |> should.contain("class=\"subtitle\"")

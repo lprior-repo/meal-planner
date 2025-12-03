@@ -118,8 +118,7 @@ pub fn button_ghost_variant_test() {
 
 /// Test Small size renders correct CSS class
 pub fn button_small_size_test() {
-  let html =
-    button.button_sized("Small", "/", ui_types.Primary, ui_types.Small)
+  let html = button.button_sized("Small", "/", ui_types.Primary, ui_types.Small)
 
   html
   |> string.contains("btn-sm")
@@ -138,8 +137,7 @@ pub fn button_medium_size_test() {
 
 /// Test Large size renders correct CSS class
 pub fn button_large_size_test() {
-  let html =
-    button.button_sized("Large", "/", ui_types.Primary, ui_types.Large)
+  let html = button.button_sized("Large", "/", ui_types.Primary, ui_types.Large)
 
   html
   |> string.contains("btn-lg")
@@ -428,7 +426,8 @@ pub fn button_url_with_anchor_test() {
 
 /// Test button with special characters in label
 pub fn button_special_chars_label_test() {
-  let html = button.button("<script>alert('xss')</script>", "/", ui_types.Primary)
+  let html =
+    button.button("<script>alert('xss')</script>", "/", ui_types.Primary)
 
   // THEN: Label should be included as-is (HTML escaping is client responsibility)
   html
@@ -474,8 +473,10 @@ pub fn action_button_group_test() {
 
 /// Test pagination button group
 pub fn pagination_button_group_test() {
-  let prev = button.button_sized("← Previous", "/page/1", ui_types.Ghost, ui_types.Small)
-  let next = button.button_sized("Next →", "/page/3", ui_types.Ghost, ui_types.Small)
+  let prev =
+    button.button_sized("← Previous", "/page/1", ui_types.Ghost, ui_types.Small)
+  let next =
+    button.button_sized("Next →", "/page/3", ui_types.Ghost, ui_types.Small)
   let html = button.button_group([prev, next])
 
   // THEN: Should render pagination controls
@@ -524,7 +525,12 @@ pub fn snapshot_primary_button_test() {
 /// Test complete HTML snapshot for sized button
 pub fn snapshot_sized_button_test() {
   let html =
-    button.button_sized("Download", "/download", ui_types.Success, ui_types.Large)
+    button.button_sized(
+      "Download",
+      "/download",
+      ui_types.Success,
+      ui_types.Large,
+    )
 
   html
   |> should.equal(

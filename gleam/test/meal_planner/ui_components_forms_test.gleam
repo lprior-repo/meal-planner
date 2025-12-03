@@ -228,14 +228,18 @@ pub fn select_field_with_options_test() {
   should.be_true(result |> contains("<div class=\"form-group\">"))
 
   // Should have label
-  should.be_true(result |> contains("<label for=\"meal_type\">Meal Type</label>"))
+  should.be_true(
+    result |> contains("<label for=\"meal_type\">Meal Type</label>"),
+  )
 
   // Should have select element
   should.be_true(result |> contains("<select id=\"meal_type\""))
   should.be_true(result |> contains("name=\"meal_type\""))
 
   // Should have all options
-  should.be_true(result |> contains("<option value=\"breakfast\">Breakfast</option>"))
+  should.be_true(
+    result |> contains("<option value=\"breakfast\">Breakfast</option>"),
+  )
   should.be_true(result |> contains("<option value=\"lunch\">Lunch</option>"))
   should.be_true(result |> contains("<option value=\"dinner\">Dinner</option>"))
 }
@@ -608,7 +612,9 @@ pub fn search_combobox_with_selection_test() {
     forms.search_combobox_with_selection("ap", "Search...", results, True, 2)
 
   // Should have aria-activedescendant pointing to selected item
-  should.be_true(result |> contains("aria-activedescendant=\"search-result-2\""))
+  should.be_true(
+    result |> contains("aria-activedescendant=\"search-result-2\""),
+  )
 
   // Should show results
   should.be_true(result |> contains("Apple"))
@@ -623,7 +629,9 @@ pub fn search_combobox_selection_accessibility_test() {
     forms.search_combobox_with_selection("test", "Search...", results, True, 42)
 
   // Should link input to selected result via ARIA
-  should.be_true(result |> contains("aria-activedescendant=\"search-result-42\""))
+  should.be_true(
+    result |> contains("aria-activedescendant=\"search-result-42\""),
+  )
 
   // Result item should have matching ID
   should.be_true(result |> contains("id=\"search-result-42\""))
@@ -715,7 +723,13 @@ pub fn select_many_options_test() {
 /// Test number input with very large value
 pub fn number_input_large_value_test() {
   let result =
-    forms.number_input("big", "Big Number", 999999.99, option.None, option.None)
+    forms.number_input(
+      "big",
+      "Big Number",
+      999_999.99,
+      option.None,
+      option.None,
+    )
 
   // Should handle large numbers
   should.be_true(result |> contains("value=\"999999.99\""))

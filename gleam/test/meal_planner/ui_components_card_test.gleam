@@ -15,6 +15,7 @@
 import birdie
 import gleam/option
 import gleeunit/should
+import gleam/string
 import meal_planner/ui/components/card
 import meal_planner/ui/types/ui_types
 
@@ -280,7 +281,7 @@ pub fn recipe_card_without_image_renders_test() {
 
   result
   |> should.contain("<div class=\"recipe-card\">")
-  |> should.not_contain("<img")
+  string.contains(result, "<img") |> should.be_false()
   |> should.contain("Garden Salad")
   |> should.contain("Salad")
   |> should.contain("125")
@@ -300,7 +301,7 @@ pub fn recipe_card_truncates_calories_test() {
   // Should truncate to 299, not round to 300
   result
   |> should.contain("299")
-  |> should.not_contain("300")
+  string.contains(result, "300") |> should.be_false()
 }
 
 pub fn recipe_card_high_calorie_snapshot_test() {
@@ -643,5 +644,5 @@ pub fn calorie_summary_handles_fractional_percentages_test() {
 
   result
   |> should.contain("87%")
-  |> should.not_contain("87.5")
+  string.contains(result, "87.5") |> should.be_false()
 }

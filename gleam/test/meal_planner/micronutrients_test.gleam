@@ -670,8 +670,11 @@ pub fn micronutrients_json_encode_empty_test() {
   let json_value = micronutrients_to_json(m)
   let json_string = json.to_string(json_value)
 
-  // Should be an empty object or minimal JSON
-  json_string |> should.equal("{}")
+  // Should contain all fields with null values
+  string.contains(json_string, "\"fiber\"")
+  |> should.be_true()
+  string.contains(json_string, "null")
+  |> should.be_true()
 }
 
 /// Test JSON round-trip encoding/decoding with full data

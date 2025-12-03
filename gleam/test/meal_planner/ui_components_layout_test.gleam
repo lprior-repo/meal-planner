@@ -8,9 +8,9 @@
 /// - Page sections
 /// - CSS class generation
 /// - Accessibility (semantic HTML)
+import gleam/string
 import gleeunit
 import gleeunit/should
-import gleam/string
 import meal_planner/ui/components/layout
 import meal_planner/ui/types/ui_types
 
@@ -25,13 +25,10 @@ pub fn main() {
 /// Test basic flex container with row direction
 pub fn flex_row_basic_test() {
   let result =
-    layout.flex(
-      ui_types.Row,
-      ui_types.AlignCenter,
-      ui_types.JustifyBetween,
-      4,
-      ["<span>Item 1</span>", "<span>Item 2</span>"],
-    )
+    layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyBetween, 4, [
+      "<span>Item 1</span>",
+      "<span>Item 2</span>",
+    ])
 
   result
   |> should.equal(
@@ -42,13 +39,10 @@ pub fn flex_row_basic_test() {
 /// Test flex container with column direction
 pub fn flex_column_test() {
   let result =
-    layout.flex(
-      ui_types.Column,
-      ui_types.AlignStart,
-      ui_types.JustifyStart,
-      2,
-      ["<p>First</p>", "<p>Second</p>"],
-    )
+    layout.flex(ui_types.Column, ui_types.AlignStart, ui_types.JustifyStart, 2, [
+      "<p>First</p>",
+      "<p>Second</p>",
+    ])
 
   result
   |> should.equal(
@@ -59,13 +53,9 @@ pub fn flex_column_test() {
 /// Test flex container with row-reverse direction
 pub fn flex_row_reverse_test() {
   let result =
-    layout.flex(
-      ui_types.RowReverse,
-      ui_types.AlignEnd,
-      ui_types.JustifyEnd,
-      8,
-      ["<div>A</div>"],
-    )
+    layout.flex(ui_types.RowReverse, ui_types.AlignEnd, ui_types.JustifyEnd, 8, [
+      "<div>A</div>",
+    ])
 
   result
   |> should.equal(
@@ -149,17 +139,11 @@ pub fn flex_empty_children_test() {
 /// Test flex container with multiple children
 pub fn flex_multiple_children_test() {
   let result =
-    layout.flex(
-      ui_types.Row,
-      ui_types.AlignCenter,
-      ui_types.JustifyBetween,
-      4,
-      [
-        "<button>Cancel</button>",
-        "<button>Submit</button>",
-        "<button>Delete</button>",
-      ],
-    )
+    layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyBetween, 4, [
+      "<button>Cancel</button>",
+      "<button>Submit</button>",
+      "<button>Delete</button>",
+    ])
 
   result |> string.contains("<button>Cancel</button>") |> should.be_true()
   result |> string.contains("<button>Submit</button>") |> should.be_true()
@@ -480,7 +464,9 @@ pub fn complex_nested_layout_test() {
   // Verify all layers are present
   final_layout |> string.contains("container mx-auto") |> should.be_true()
   final_layout |> string.contains("<section") |> should.be_true()
-  final_layout |> string.contains("grid grid-cols-responsive") |> should.be_true()
+  final_layout
+  |> string.contains("grid grid-cols-responsive")
+  |> should.be_true()
 }
 
 // ===================================================================
