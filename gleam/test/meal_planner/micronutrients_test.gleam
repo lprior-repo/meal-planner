@@ -1,4 +1,3 @@
-import gleam/dynamic/decode
 import gleam/float
 import gleam/json
 import gleam/option.{None, Some}
@@ -129,7 +128,8 @@ pub fn micronutrients_add_both_some_test() {
   option_float_close(result.vitamin_b12, Some(3.6), 0.0001)
   |> should.be_true()
   result.folate |> should.equal(Some(600.0))
-  result.thiamin |> should.equal(Some(1.8))
+  option_float_close(result.thiamin, Some(1.8), 0.0001)
+  |> should.be_true()
   result.riboflavin |> should.equal(Some(1.95))
   result.niacin |> should.equal(Some(24.0))
   result.calcium |> should.equal(Some(1500.0))
