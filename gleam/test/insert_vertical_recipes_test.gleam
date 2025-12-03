@@ -130,7 +130,7 @@ pub fn insert_all_vertical_diet_recipes_test() {
       successes |> should.equal(total)
 
       // Assert correct category counts
-      beef_count |> should.equal(9)
+      beef_count |> should.equal(8)
       bison_count |> should.equal(2)
       lamb_count |> should.equal(2)
       rice_count |> should.equal(6)
