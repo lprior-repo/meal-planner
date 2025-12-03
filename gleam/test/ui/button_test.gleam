@@ -114,23 +114,23 @@ pub fn button_sized_variant_and_size_test() {
 // ===================================================================
 
 pub fn submit_button_renders_type_attribute_test() {
-  button.submit_button("Submit", ui_types.Primary)
-  |> should.contain("type=\"submit\"")
+  let result = button.submit_button("Submit", ui_types.Primary)
+  assert_contains(result, "type=\"submit\"")
 }
 
 pub fn submit_button_renders_variant_test() {
-  button.submit_button("Submit", ui_types.Success)
-  |> should.contain("btn-success")
+  let result = button.submit_button("Submit", ui_types.Success)
+  assert_contains(result, "btn-success")
 }
 
 pub fn submit_button_renders_label_test() {
-  button.submit_button("Send", ui_types.Primary)
-  |> should.contain("Send")
+  let result = button.submit_button("Send", ui_types.Primary)
+  assert_contains(result, "Send")
 }
 
 pub fn submit_button_is_button_element_test() {
-  button.submit_button("Submit", ui_types.Primary)
-  |> should.contain("<button")
+  let result = button.submit_button("Submit", ui_types.Primary)
+  assert_contains(result, "<button")
 }
 
 // ===================================================================
@@ -138,23 +138,23 @@ pub fn submit_button_is_button_element_test() {
 // ===================================================================
 
 pub fn disabled_button_renders_disabled_attribute_test() {
-  button.button_disabled("Disabled", ui_types.Primary)
-  |> should.contain("disabled")
+  let result = button.button_disabled("Disabled", ui_types.Primary)
+  assert_contains(result, "disabled")
 }
 
 pub fn disabled_button_renders_disabled_class_test() {
-  button.button_disabled("Disabled", ui_types.Primary)
-  |> should.contain("btn-disabled")
+  let result = button.button_disabled("Disabled", ui_types.Primary)
+  assert_contains(result, "btn-disabled")
 }
 
 pub fn disabled_button_renders_variant_test() {
-  button.button_disabled("Disabled", ui_types.Warning)
-  |> should.contain("btn-warning")
+  let result = button.button_disabled("Disabled", ui_types.Warning)
+  assert_contains(result, "btn-warning")
 }
 
 pub fn disabled_button_renders_label_test() {
-  button.button_disabled("Cannot click", ui_types.Primary)
-  |> should.contain("Cannot click")
+  let result = button.button_disabled("Cannot click", ui_types.Primary)
+  assert_contains(result, "Cannot click")
 }
 
 // ===================================================================
