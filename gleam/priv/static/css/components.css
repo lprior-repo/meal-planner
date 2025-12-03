@@ -407,6 +407,35 @@ select:focus {
   gap: var(--space-4);
 }
 
+/* Macro Color Coding (Task: meal-planner-uzr.2) */
+.macro-protein .progress-fill {
+  background-color: #007bff; /* Blue */
+  transition: width 0.6s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.macro-fat .progress-fill {
+  background-color: #ff9800; /* Orange */
+  transition: width 0.6s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.macro-carbs .progress-fill {
+  background-color: #28a745; /* Green */
+  transition: width 0.6s cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Optional: Label color coordination */
+.macro-protein .macro-bar-header {
+  color: #007bff;
+}
+
+.macro-fat .macro-bar-header {
+  color: #ff9800;
+}
+
+.macro-carbs .macro-bar-header {
+  color: #28a745;
+}
+
 /* Macro Badge */
 .macro-badge {
   display: inline-block;
@@ -641,6 +670,281 @@ select:focus {
   display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
+}
+
+/* ===================================================================
+   MEAL ENTRY CARDS (meal-planner-51y)
+   =================================================================== */
+
+/* Meal Entry Item - Food log entry card with edit/delete controls */
+.meal-entry-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-4);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-200) var(--ease-out);
+  position: relative;
+}
+
+.meal-entry-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-300);
+}
+
+.meal-entry-item:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Entry Time */
+.entry-time {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  min-width: 70px;
+}
+
+/* Entry Details (Food name and portion) */
+.entry-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.food-name {
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+  font-size: var(--text-base);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.portion {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Entry Macros - Colored badges for P/F/C */
+.entry-macros {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.macro {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  transition: transform var(--duration-150) var(--ease-out);
+}
+
+.macro:hover {
+  transform: scale(1.05);
+}
+
+.macro-protein {
+  color: var(--color-success);
+  background-color: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.macro-fat {
+  color: var(--color-warning);
+  background-color: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.macro-carbs {
+  color: var(--color-info);
+  background-color: rgba(23, 162, 184, 0.1);
+  border: 1px solid rgba(23, 162, 184, 0.2);
+}
+
+/* Entry Calories */
+.entry-calories {
+  font-weight: var(--font-bold);
+  color: var(--color-primary);
+  font-size: var(--text-base);
+  min-width: 80px;
+  text-align: right;
+}
+
+/* Entry Actions - Edit/Delete buttons */
+.entry-actions {
+  display: flex;
+  gap: var(--space-2);
+  opacity: 0;
+  transition: opacity var(--duration-200) var(--ease-out);
+}
+
+.meal-entry-item:hover .entry-actions {
+  opacity: 1;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration-150) var(--ease-out);
+  font-size: var(--text-base);
+}
+
+.btn-icon:hover {
+  transform: scale(1.1);
+  background-color: var(--color-bg-secondary);
+}
+
+.btn-icon:active {
+  transform: scale(0.95);
+}
+
+.btn-edit {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-edit:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.btn-delete {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.btn-delete:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* Meal Section - Collapsible sections for meal types */
+.meal-section {
+  margin-bottom: var(--space-4);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.meal-section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background-color: var(--color-bg-secondary);
+  cursor: pointer;
+  transition: background-color var(--duration-150) var(--ease-out);
+}
+
+.meal-section-header:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.meal-section-header h3 {
+  flex: 1;
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+}
+
+.entry-count {
+  font-size: var(--text-sm);
+  font-weight: var(--font-normal);
+  color: var(--color-text-secondary);
+}
+
+.section-calories {
+  font-weight: var(--font-semibold);
+  color: var(--color-primary);
+  font-size: var(--text-base);
+}
+
+.collapse-toggle {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: transform var(--duration-200) var(--ease-out);
+}
+
+.collapse-toggle:hover {
+  background-color: var(--color-bg);
+  border-color: var(--color-primary);
+}
+
+.meal-section.collapsed .collapse-toggle {
+  transform: rotate(-90deg);
+}
+
+.meal-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height var(--duration-300) var(--ease-out);
+}
+
+.meal-section.collapsed .meal-section-body {
+  max-height: 0;
+  padding: 0;
+}
+
+/* Daily Log Timeline */
+.daily-log-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Responsive adjustments for meal entries */
+@media (max-width: 768px) {
+  .meal-entry-item {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .entry-time {
+    font-size: var(--text-xs);
+  }
+
+  .entry-macros {
+    order: 3;
+  }
+
+  .entry-calories {
+    order: 2;
+    text-align: left;
+  }
+
+  .entry-actions {
+    opacity: 1;
+    order: 4;
+    justify-content: flex-end;
+  }
 }
 
 /* ===================================================================

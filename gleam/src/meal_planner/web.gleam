@@ -18,8 +18,9 @@ import lustre/element/html
 import meal_planner/storage
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
-  type UserProfile, Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain,
-  Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack, UserProfile,
+  type SearchFilters, type UserProfile, Active, Breakfast, DailyLog, Dinner,
+  FoodLogEntry, Gain, Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack,
+  UserProfile,
 }
 import mist
 import pog
@@ -1854,7 +1855,10 @@ fn api_profile(_req: wisp.Request, ctx: Context) -> wisp.Response {
 }
 
 fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
-  let query = case uri.parse_query(req.query |> option.unwrap("")) {
+  // Parse all query parameters
+  let parsed_query = uri.parse_query(req.query |> option.unwrap(""))
+
+  let query = case parsed_query {
     Ok(params) -> {
       case list.find(params, fn(p) { p.0 == "q" }) {
         Ok(#(_, q)) -> q
@@ -1862,6 +1866,37 @@ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
       }
     }
     Error(_) -> ""
+  }
+
+  // Parse filter parameters
+  let filters = case parsed_query {
+    Ok(params) -> {
+      let verified_only = case list.find(params, fn(p) { p.0 == "verified_only" }) {
+        Ok(#(_, "true")) -> True
+        _ -> False
+      }
+
+      let branded_only = case list.find(params, fn(p) { p.0 == "branded_only" }) {
+        Ok(#(_, "true")) -> True
+        _ -> False
+      }
+
+      let category = case list.find(params, fn(p) { p.0 == "category" }) {
+        Ok(#(_, cat)) if cat != "" -> Some(cat)
+        _ -> None
+      }
+
+      types.SearchFilters(
+        verified_only: verified_only,
+        branded_only: branded_only,
+        category: category,
+      )
+    }
+    Error(_) -> types.SearchFilters(
+      verified_only: False,
+      branded_only: False,
+      category: None,
+    )
   }
 
   case query {
@@ -1873,7 +1908,7 @@ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
       wisp.json_response(json.to_string(json_data), 400)
     }
     q -> {
-      let foods = search_foods(ctx, q, 50)
+      let foods = search_foods_filtered(ctx, q, filters, 50)
       let json_data = json.array(foods, food_to_json)
       wisp.json_response(json.to_string(json_data), 200)
     }
@@ -2077,6 +2112,18 @@ fn search_foods(
   limit: Int,
 ) -> List(storage.UsdaFood) {
   case storage.search_foods(ctx.db, query, limit) {
+    Ok(foods) -> foods
+    Error(_) -> []
+  }
+}
+
+fn search_foods_filtered(
+  ctx: Context,
+  query: String,
+  filters: SearchFilters,
+  limit: Int,
+) -> List(storage.UsdaFood) {
+  case storage.search_foods_filtered(ctx.db, query, filters, limit) {
     Ok(foods) -> foods
     Error(_) -> []
   }
