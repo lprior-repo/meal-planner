@@ -3,15 +3,12 @@
 import gleam/dynamic/decode
 import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/string
 import meal_planner/auto_planner/types as auto_types
 import meal_planner/storage.{type StorageError, DatabaseError, NotFound}
 import pog
-import shared/types.{
-  type FodmapLevel, type Macros, type Recipe, High, Ingredient, Low, Macros,
-  Medium, Recipe,
-}
+import shared/types.{type Recipe, High, Ingredient, Low, Macros, Medium, Recipe}
 
 // ============================================================================
 // Auto Meal Plan Storage
@@ -105,7 +102,7 @@ pub fn get_auto_plan(
       case load_recipes_by_ids(conn, recipe_ids) {
         Error(e) -> Error(e)
         Ok(recipes) -> {
-          // For now, create a default config (TODO: parse config_json)
+          // Config JSON parsing tracked in bead meal-planner-qon
           let config =
             auto_types.AutoPlanConfig(
               user_id: "",

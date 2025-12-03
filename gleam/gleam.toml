@@ -54,7 +54,6 @@ simplifile = ">= 2.3.1 and < 3.0.0"
 
 # Local dependencies
 shared = { path = "../shared" }
-server = { path = "../server" }
 
 [dev-dependencies]
 # Testing framework

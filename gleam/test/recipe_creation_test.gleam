@@ -11,19 +11,18 @@
 ///
 /// Using Test-Driven Development (TDD) with gleeunit framework
 
-import gleam/dynamic/decode
 import gleam/erlang/process
+import gleam/float
+import gleam/int
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option.{Some}
 import gleam/otp/actor
 import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/storage
 import pog
-import shared/types.{
-  type FodmapLevel, type Recipe, High, Ingredient, Low, Macros, Medium, Recipe,
-}
+import shared/types.{type Recipe, High, Ingredient, Low, Macros, Medium, Recipe}
 
 pub fn main() {
   gleeunit.main()

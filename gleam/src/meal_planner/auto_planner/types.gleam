@@ -2,7 +2,6 @@
 //// Supports diet principles like Vertical Diet and Tim Ferriss 4-Hour Body
 
 import gleam/json
-import gleam/list
 import gleam/option.{type Option, None, Some}
 import shared/types.{type Macros, type Recipe}
 

@@ -7,7 +7,7 @@
 
 import gleam/erlang/process
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option
 import gleam/otp/actor
 import gleeunit
 import gleeunit/should
@@ -196,7 +196,7 @@ pub fn custom_results_ordered_first_test() {
   let result = food_search.unified_food_search(mock_db(), "user-1", "test", 50)
 
   case result {
-    Ok(response) -> {
+    Ok(_response) -> {
       // Find index of first USDA result (if any)
       // Find index of last Custom result (if any)
       // Last custom should come before first USDA

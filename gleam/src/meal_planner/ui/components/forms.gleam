@@ -13,17 +13,13 @@
 
 import gleam/option
 
-// TODO: Import lustre/element, lustre/attribute when available
-// import lustre/element
-// import lustre/attribute
-
 /// Text input field
 ///
 /// Renders: <input type="text" class="input" />
 pub fn input_field(
   name: String,
-  placeholder: String,
-  value: String,
+  _placeholder: String,
+  _value: String,
 ) -> String {
   // TODO: Implement using Lustre element builder
   "<!-- input_field: " <> name <> " -->"
@@ -37,10 +33,10 @@ pub fn input_field(
 ///   <input type="text" id="name" />
 /// </div>
 pub fn input_with_label(
-  label: String,
+  _label: String,
   name: String,
-  placeholder: String,
-  value: String,
+  _placeholder: String,
+  _value: String,
 ) -> String {
   // TODO: Implement using Lustre element builder
   "<!-- input_with_label: " <> name <> " -->"
@@ -55,7 +51,7 @@ pub fn input_with_label(
 /// </div>
 pub fn search_input(
   query: String,
-  placeholder: String,
+  _placeholder: String,
 ) -> String {
   // TODO: Implement using Lustre element builder
   "<!-- search_input: " <> query <> " -->"
@@ -66,10 +62,10 @@ pub fn search_input(
 /// Renders: <input type="number" class="input" />
 pub fn number_input(
   name: String,
-  label: String,
-  value: Float,
-  min: option.Option(Float),
-  max: option.Option(Float),
+  _label: String,
+  _value: Float,
+  _min: option.Option(Float),
+  _max: option.Option(Float),
 ) -> String {
   // TODO: Implement using Lustre element builder
   "<!-- number_input: " <> name <> " -->"
@@ -86,7 +82,7 @@ pub fn number_input(
 /// </div>
 pub fn select_field(
   name: String,
-  label: String,
+  _label: String,
   _options: List(#(String, String)),
 ) -> String {
   // TODO: Implement using Lustre element builder
@@ -103,8 +99,8 @@ pub fn select_field(
 /// </div>
 pub fn form_field(
   label: String,
-  input: String,
-  error: option.Option(String),
+  _input: String,
+  _error: option.Option(String),
 ) -> String {
   // TODO: Implement using Lustre element builder
   "<!-- form_field: " <> label <> " -->"
@@ -119,9 +115,9 @@ pub fn form_field(
 /// </form>
 pub fn form(
   action: String,
-  method: String,
-  fields: List(String),
-  submit_label: String,
+  _method: String,
+  _fields: List(String),
+  _submit_label: String,
 ) -> String {
   // TODO: Implement using Lustre element builder
   "<!-- form: " <> action <> " -->"
@@ -130,8 +126,4 @@ pub fn form(
 // ===================================================================
 // INTERNAL HELPERS
 // ===================================================================
-
-// TODO: Add internal helper functions for:
-// - Building CSS class strings
-// - Converting types to HTML attributes
-// - Input validation
+// Helper functions will be added as needed during implementation

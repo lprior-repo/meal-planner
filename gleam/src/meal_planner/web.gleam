@@ -1,7 +1,6 @@
 //// Wisp web server for the meal planner application
 //// Server-side rendered pages with Lustre
 
-import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/float
 import gleam/http
@@ -9,7 +8,7 @@ import gleam/int
 import gleam/io
 import gleam/json
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import gleam/uri
@@ -17,11 +16,10 @@ import lustre/attribute
 import lustre/element
 import lustre/element/html
 import meal_planner/storage
-import meal_planner/web_helpers
 import shared/types.{
   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
-  type UserProfile, type Micronutrients, Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain,
-  Lose, Lunch, Macros, Maintain, Micronutrients, Moderate, Sedentary, Snack, UserProfile,
+  type UserProfile, Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain,
+  Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack, UserProfile,
 }
 import mist
 import pog
@@ -90,15 +88,15 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // SSR pages
     ["recipes"] -> recipes_page(ctx)
     ["recipes", "new"] -> new_recipe_page()
-    // TODO: Implement edit page
+    // Edit page tracked in bead meal-planner-8er
     // ["recipes", id, "edit"] -> edit_recipe_page(id, ctx)
     ["recipes", id] -> recipe_detail_page(id, ctx)
     ["dashboard"] -> dashboard_page(req, ctx)
     ["profile"] -> profile_page(ctx)
     ["foods"] -> foods_page(req, ctx)
     ["foods", id] -> food_detail_page(id, ctx)
-    // ["log"] -> log_meal_page(ctx)
-    // ["log", recipe_id] -> log_meal_form(recipe_id, ctx)
+    ["log"] -> log_meal_page(ctx)
+    ["log", recipe_id] -> log_meal_form(recipe_id, ctx)
 
     // 404
     _ -> not_found_page()
@@ -596,19 +594,46 @@ fn dashboard_page(req: wisp.Request, ctx: Context) -> wisp.Response {
 
   // Load actual daily log from storage
   let daily_log = load_daily_log(ctx, date)
-  // Convert shared_types.Macros to meal_planner/types.Macros
-  let current =
-    Macros(
-      protein: daily_log.total_macros.protein,
-      fat: daily_log.total_macros.fat,
-      carbs: daily_log.total_macros.carbs,
-    )
+  let entries = daily_log.entries
+
+  // Get filter from query params
+  let filter = case uri.parse_query(req.query |> option.unwrap("")) {
+    Ok(params) -> {
+      case list.find(params, fn(p) { p.0 == "filter" }) {
+        Ok(#(_, f)) -> f
+        Error(_) -> "all"
+      }
+    }
+    Error(_) -> "all"
+  }
+
+  // Filter entries by meal type
+  let filtered_entries = case filter {
+    "breakfast" ->
+      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Breakfast })
+    "lunch" -> list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Lunch })
+    "dinner" ->
+      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Dinner })
+    "snack" -> list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Snack })
+    _ -> entries
+  }
+
+  // Calculate current macros from filtered entries
+  let current = sum_macros(filtered_entries)
 
   let content = [
     page_header("Dashboard", "/"),
     html.div([attribute.class("dashboard")], [
       // Date
       html.p([attribute.class("date")], [element.text(date)]),
+      // Filter buttons
+      html.div([attribute.class("filter-buttons")], [
+        filter_btn("All", "all", filter),
+        filter_btn("Breakfast", "breakfast", filter),
+        filter_btn("Lunch", "lunch", filter),
+        filter_btn("Dinner", "dinner", filter),
+        filter_btn("Snack", "snack", filter),
+      ]),
       // Calorie summary
       html.div([attribute.class("calorie-summary")], [
         html.div([attribute.class("calorie-current")], [
@@ -628,9 +653,24 @@ fn dashboard_page(req: wisp.Request, ctx: Context) -> wisp.Response {
         macro_bar("Fat", current.fat, targets.fat, "#ffc107"),
         macro_bar("Carbs", current.carbs, targets.carbs, "#17a2b8"),
       ]),
+      // Logged meals
+      html.div([attribute.class("logged-meals")], [
+        html.h3([], [element.text("Today's Meals")]),
+        case filtered_entries {
+          [] ->
+            html.p([attribute.class("empty")], [
+              element.text("No meals logged yet"),
+            ])
+          _ ->
+            html.ul(
+              [attribute.class("meal-list")],
+              list.map(filtered_entries, meal_entry_item),
+            )
+        },
+      ]),
       // Quick actions
       html.div([attribute.class("quick-actions")], [
-        html.a([attribute.href("/recipes"), attribute.class("btn")], [
+        html.a([attribute.href("/log"), attribute.class("btn")], [
           element.text("Add Meal"),
         ]),
       ]),
@@ -679,6 +719,58 @@ fn macro_bar(
   ])
 }
 
+fn filter_btn(label: String, value: String, current: String) -> element.Element(msg) {
+  let class = case value == current {
+    True -> "filter-btn active"
+    False -> "filter-btn"
+  }
+  html.a(
+    [attribute.href("/dashboard?filter=" <> value), attribute.class(class)],
+    [element.text(label)],
+  )
+}
+
+fn meal_entry_item(entry: FoodLogEntry) -> element.Element(msg) {
+  html.li([attribute.class("meal-entry")], [
+    html.div([attribute.class("meal-info")], [
+      html.span([attribute.class("meal-name")], [element.text(entry.recipe_name)]),
+      html.span([attribute.class("meal-servings")], [
+        element.text(" (" <> float_to_string(entry.servings) <> " serving)"),
+      ]),
+      html.span([attribute.class("meal-type-badge")], [
+        element.text(meal_type_to_string(entry.meal_type)),
+      ]),
+    ]),
+    html.div([attribute.class("meal-macros")], [
+      element.text(
+        float_to_string(entry.macros.protein)
+        <> "P / "
+        <> float_to_string(entry.macros.fat)
+        <> "F / "
+        <> float_to_string(entry.macros.carbs)
+        <> "C",
+      ),
+    ]),
+    html.a(
+      [
+        attribute.href("/api/logs/entry/" <> entry.id <> "?action=delete"),
+        attribute.class("delete-btn"),
+      ],
+      [element.text("×")],
+    ),
+  ])
+}
+
+fn sum_macros(entries: List(FoodLogEntry)) -> Macros {
+  list.fold(entries, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(acc, entry) {
+    Macros(
+      protein: acc.protein +. entry.macros.protein,
+      fat: acc.fat +. entry.macros.fat,
+      carbs: acc.carbs +. entry.macros.carbs,
+    )
+  })
+}
+
 fn profile_page(ctx: Context) -> wisp.Response {
   let profile = load_profile(ctx)
   let targets = types.daily_macro_targets(profile)
@@ -720,6 +812,137 @@ fn profile_page(ctx: Context) -> wisp.Response {
   ]
 
   wisp.html_response(render_page("Profile - Meal Planner", content), 200)
+}
+
+fn log_meal_page(ctx: Context) -> wisp.Response {
+  let recipes = load_recipes(ctx)
+
+  let content = [
+    page_header("Log Meal", "/dashboard"),
+    html.div([attribute.class("page-description")], [
+      html.p([], [element.text("Select a recipe to log:")]),
+    ]),
+    html.div(
+      [attribute.class("recipe-grid")],
+      list.map(recipes, fn(recipe) {
+        html.a(
+          [
+            attribute.class("recipe-card"),
+            attribute.href("/log/" <> recipe.id),
+          ],
+          [
+            html.div([attribute.class("recipe-card-content")], [
+              html.h3([attribute.class("recipe-title")], [
+                element.text(recipe.name),
+              ]),
+              html.span([attribute.class("recipe-category")], [
+                element.text(recipe.category),
+              ]),
+              html.div([attribute.class("recipe-macros")], [
+                macro_badge("P", recipe.macros.protein),
+                macro_badge("F", recipe.macros.fat),
+                macro_badge("C", recipe.macros.carbs),
+              ]),
+              html.div([attribute.class("recipe-calories")], [
+                element.text(
+                  float_to_string(types.macros_calories(recipe.macros))
+                  <> " cal",
+                ),
+              ]),
+            ]),
+          ],
+        )
+      }),
+    ),
+  ]
+
+  wisp.html_response(render_page("Log Meal - Meal Planner", content), 200)
+}
+
+fn log_meal_form(recipe_id: String, ctx: Context) -> wisp.Response {
+  case load_recipe_by_id(ctx, recipe_id) {
+    Ok(recipe) -> {
+      let content = [
+        html.a([attribute.href("/log"), attribute.class("back-link")], [
+          element.text("← Back to recipe selection"),
+        ]),
+        html.div([attribute.class("log-form-container")], [
+          html.h1([], [element.text("Log: " <> recipe.name)]),
+          html.div([attribute.class("recipe-summary")], [
+            html.p([attribute.class("meta")], [
+              element.text(
+                "Per serving: "
+                <> float_to_string(types.macros_calories(recipe.macros))
+                <> " cal",
+              ),
+            ]),
+            html.div([attribute.class("macro-badges")], [
+              macro_badge("P", recipe.macros.protein),
+              macro_badge("F", recipe.macros.fat),
+              macro_badge("C", recipe.macros.carbs),
+            ]),
+          ]),
+          html.form(
+            [
+              attribute.method("POST"),
+              attribute.action("/api/logs?recipe_id=" <> recipe_id),
+              attribute.class("log-form"),
+            ],
+            [
+              html.div([attribute.class("form-group")], [
+                html.label([attribute.attribute("for", "servings")], [
+                  element.text("Servings"),
+                ]),
+                html.input([
+                  attribute.type_("number"),
+                  attribute.id("servings"),
+                  attribute.name("servings"),
+                  attribute.attribute("min", "0.1"),
+                  attribute.attribute("step", "0.1"),
+                  attribute.value("1.0"),
+                  attribute.required(True),
+                ]),
+              ]),
+              html.div([attribute.class("form-group")], [
+                html.label([attribute.attribute("for", "meal_type")], [
+                  element.text("Meal Type"),
+                ]),
+                html.select(
+                  [
+                    attribute.id("meal_type"),
+                    attribute.name("meal_type"),
+                    attribute.required(True),
+                  ],
+                  [
+                    html.option([attribute.value("breakfast")], "Breakfast"),
+                    html.option([attribute.value("lunch")], "Lunch"),
+                    html.option([attribute.value("dinner")], "Dinner"),
+                    html.option([attribute.value("snack")], "Snack"),
+                  ],
+                ),
+              ]),
+              html.div([attribute.class("form-actions")], [
+                html.button(
+                  [attribute.type_("submit"), attribute.class("btn btn-primary")],
+                  [element.text("Log Meal")],
+                ),
+                html.a(
+                  [attribute.href("/log"), attribute.class("btn btn-secondary")],
+                  [element.text("Cancel")],
+                ),
+              ]),
+            ],
+          ),
+        ]),
+      ]
+
+      wisp.html_response(
+        render_page("Log " <> recipe.name <> " - Meal Planner", content),
+        200,
+      )
+    }
+    Error(_) -> not_found_page()
+  }
 }
 
 fn page_header(title: String, back_href: String) -> element.Element(msg) {
@@ -939,6 +1162,8 @@ fn handle_api(
     ["profile"] -> api_profile(req, ctx)
     ["foods"] -> api_foods(req, ctx)
     ["foods", id] -> api_food(req, id, ctx)
+    ["logs"] -> api_logs_create(req, ctx)
+    ["logs", "entry", id] -> api_log_entry(req, id, ctx)
     _ -> wisp.not_found()
   }
 }
@@ -1001,8 +1226,6 @@ fn create_recipe_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
 fn parse_recipe_from_form(
   values: List(#(String, String)),
 ) -> Result(Recipe, List(String)) {
-  let errors = []
-
   // Extract basic fields
   let name = case list.key_find(values, "name") {
     Ok(n) if n != "" -> Ok(n)
@@ -1296,6 +1519,99 @@ fn food_to_json(f: storage.UsdaFood) -> json.Json {
   ])
 }
 
+/// POST /api/logs - Create a new food log entry
+fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
+  // Get query params for form submission
+  case uri.parse_query(req.query |> option.unwrap("")) {
+    Ok(params) -> {
+      let recipe_id = list.find(params, fn(p) { p.0 == "recipe_id" })
+        |> result.map(fn(p) { p.1 })
+      let servings_str = list.find(params, fn(p) { p.0 == "servings" })
+        |> result.map(fn(p) { p.1 })
+      let meal_type_str = list.find(params, fn(p) { p.0 == "meal_type" })
+        |> result.map(fn(p) { p.1 })
+
+      case recipe_id, servings_str, meal_type_str {
+        Ok(rid), Ok(sstr), Ok(mtstr) -> {
+          let servings = case float.parse(sstr) {
+            Ok(s) -> s
+            Error(_) -> 1.0
+          }
+          let meal_type = string_to_meal_type(mtstr)
+          let today = get_today_date()
+
+          // Get recipe to calculate macros
+          case load_recipe_by_id(ctx, rid) {
+            Error(_) -> wisp.not_found()
+            Ok(recipe) -> {
+              let scaled_macros = types.macros_scale(recipe.macros, servings)
+              let entry =
+                FoodLogEntry(
+                  id: generate_entry_id(),
+                  recipe_id: recipe.id,
+                  recipe_name: recipe.name,
+                  servings: servings,
+                  macros: scaled_macros,
+                  micronutrients: None,
+                  meal_type: meal_type,
+                  logged_at: current_timestamp(),
+                  source_type: "recipe",
+                  source_id: recipe.id,
+                )
+
+              case storage.save_food_log_entry(ctx.db, today, entry) {
+                Ok(_) -> wisp.redirect("/dashboard")
+                Error(_) -> {
+                  let err =
+                    json.object([
+                      #("error", json.string("Failed to save entry")),
+                    ])
+                  wisp.json_response(json.to_string(err), 500)
+                }
+              }
+            }
+          }
+        }
+        _, _, _ -> {
+          let err =
+            json.object([
+              #("error", json.string("Missing required parameters")),
+            ])
+          wisp.json_response(json.to_string(err), 400)
+        }
+      }
+    }
+    Error(_) -> {
+      let err =
+        json.object([#("error", json.string("Invalid query parameters"))])
+      wisp.json_response(json.to_string(err), 400)
+    }
+  }
+}
+
+/// GET/DELETE /api/logs/entry/:id - Manage a log entry
+fn api_log_entry(
+  req: wisp.Request,
+  entry_id: String,
+  ctx: Context,
+) -> wisp.Response {
+  // Check for delete action in query params
+  case uri.parse_query(req.query |> option.unwrap("")) {
+    Ok(params) -> {
+      case list.find(params, fn(p) { p.0 == "action" && p.1 == "delete" }) {
+        Ok(_) -> {
+          case storage.delete_food_log(ctx.db, entry_id) {
+            Ok(_) -> wisp.redirect("/dashboard")
+            Error(_) -> wisp.not_found()
+          }
+        }
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(_) -> wisp.not_found()
+  }
+}
+
 // ============================================================================
 // Static Files
 // ============================================================================
@@ -1527,6 +1843,58 @@ fn goal_to_string(p: UserProfile) -> String {
     Lose -> "Lose"
   }
 }
+
+fn meal_type_to_string(meal_type: MealType) -> String {
+  case meal_type {
+    Breakfast -> "Breakfast"
+    Lunch -> "Lunch"
+    Dinner -> "Dinner"
+    Snack -> "Snack"
+  }
+}
+
+/// Convert string to meal type
+fn string_to_meal_type(s: String) -> MealType {
+  case s {
+    "breakfast" -> Breakfast
+    "lunch" -> Lunch
+    "dinner" -> Dinner
+    "snack" -> Snack
+    _ -> Lunch
+  }
+}
+
+/// Generate a unique entry ID
+fn generate_entry_id() -> String {
+  "entry-" <> wisp.random_string(12)
+}
+
+/// Get current timestamp as ISO8601 string
+fn current_timestamp() -> String {
+  let #(#(year, month, day), #(hour, min, sec)) = erlang_localtime()
+  int.to_string(year)
+  <> "-"
+  <> pad_two(month)
+  <> "-"
+  <> pad_two(day)
+  <> "T"
+  <> pad_two(hour)
+  <> ":"
+  <> pad_two(min)
+  <> ":"
+  <> pad_two(sec)
+  <> "Z"
+}
+
+fn pad_two(n: Int) -> String {
+  case n < 10 {
+    True -> "0" <> int.to_string(n)
+    False -> int.to_string(n)
+  }
+}
+
+@external(erlang, "calendar", "local_time")
+fn erlang_localtime() -> #(#(Int, Int, Int), #(Int, Int, Int))
 
 @external(erlang, "erlang", "integer_to_binary")
 fn int_to_string(i: Int) -> String

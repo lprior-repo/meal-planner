@@ -11,8 +11,8 @@ import gleam/string
 import meal_planner/storage
 import pog
 import shared/types.{
-  type FoodSearchError, type FoodSearchResponse, DatabaseError,
-  FoodSearchResponse, InvalidQuery, UsdaFoodResult,
+  type FoodSearchError, type FoodSearchResponse, FoodSearchResponse,
+  InvalidQuery, UsdaFoodResult,
 }
 
 /// Search both custom foods and USDA database
@@ -34,7 +34,7 @@ import shared/types.{
 /// ```
 pub fn unified_food_search(
   db: pog.Connection,
-  user_id: String,
+  _user_id: String,
   query: String,
   limit: Int,
 ) -> Result(FoodSearchResponse, FoodSearchError) {
@@ -50,8 +50,7 @@ pub fn unified_food_search(
         l if l < 1 || l > 100 ->
           Error(InvalidQuery("Limit must be between 1 and 100"))
         _ -> {
-          // STEP 3: For now, custom foods not implemented - use full limit for USDA
-          // TODO: When custom_food_storage module is ready, split limit 50/50
+          // STEP 3: Custom foods tracked in bead meal-planner-1k0
           let custom_results = []  // Placeholder until custom foods implemented
           let usda_limit = limit
 

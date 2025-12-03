@@ -2,9 +2,9 @@ import gleam/list
 import gleam/string
 import gleeunit/should
 import meal_planner/auto_planner.{
-  type AutoPlanConfig, type DietPrinciple, type RecipeScore, RecipeScore,
-  calculate_macro_match_score, calculate_variety_score,
-  filter_by_diet_principles, generate_auto_plan, score_recipe, select_top_n,
+  type AutoPlanConfig, RecipeScore, calculate_macro_match_score,
+  calculate_variety_score, filter_by_diet_principles, generate_auto_plan,
+  score_recipe, select_top_n,
 }
 import meal_planner/auto_planner/types as auto_types
 import shared/types.{type Recipe, High, Ingredient, Low, Macros, Recipe}

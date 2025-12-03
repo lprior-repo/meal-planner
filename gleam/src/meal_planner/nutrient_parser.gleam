@@ -6,7 +6,6 @@
 /// USDA nutrient database uses standardized names like "Protein", "Total lipid (fat)",
 /// "Carbohydrate, by difference", etc. This module maps those to our schema.
 
-import gleam/float
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string

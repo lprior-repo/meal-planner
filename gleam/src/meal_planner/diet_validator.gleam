@@ -340,7 +340,7 @@ fn int_to_float(n: Int) -> Float
 
 /// Check if recipe complies with Paleo diet principles
 /// Rules: no grains, no dairy, no legumes, no processed foods
-pub fn check_paleo(recipe: Recipe) -> ComplianceResult {
+pub fn check_paleo(_recipe: Recipe) -> ComplianceResult {
   let violations = []
   let warnings = []
   let score = 1.0
@@ -386,7 +386,7 @@ pub fn check_keto(recipe: Recipe) -> ComplianceResult {
 
 /// Check if recipe complies with Mediterranean diet principles
 /// Rules: olive oil, fish, vegetables, whole grains
-pub fn check_mediterranean(recipe: Recipe) -> ComplianceResult {
+pub fn check_mediterranean(_recipe: Recipe) -> ComplianceResult {
   ComplianceResult(
     compliant: True,
     score: 1.0,

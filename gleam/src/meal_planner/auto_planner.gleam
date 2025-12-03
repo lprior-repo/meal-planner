@@ -331,6 +331,3 @@ fn generate_timestamp() -> String {
 // External functions for math operations
 @external(erlang, "math", "exp")
 fn float_exp(x: Float) -> Float
-
-@external(erlang, "erlang", "float")
-fn int_to_float(n: Int) -> Float

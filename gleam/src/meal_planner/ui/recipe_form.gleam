@@ -1,19 +1,16 @@
 // Recipe Form UI Component
 // Accessible, responsive form with dynamic rows and validation
 
-import gleam/string_builder.{type StringBuilder}
-
 /// Generate the complete recipe creation form HTML
-pub fn render_form() -> StringBuilder {
-  string_builder.new()
-  |> string_builder.append(form_container_start())
-  |> string_builder.append(form_header())
-  |> string_builder.append(basic_info_section())
-  |> string_builder.append(ingredients_section())
-  |> string_builder.append(instructions_section())
-  |> string_builder.append(nutrition_section())
-  |> string_builder.append(form_actions())
-  |> string_builder.append(form_container_end())
+pub fn render_form() -> String {
+  form_container_start()
+  <> form_header()
+  <> basic_info_section()
+  <> ingredients_section()
+  <> instructions_section()
+  <> nutrition_section()
+  <> form_actions()
+  <> form_container_end()
 }
 
 fn form_container_start() -> String {

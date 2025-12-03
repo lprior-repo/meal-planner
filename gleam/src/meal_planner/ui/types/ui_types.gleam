@@ -167,9 +167,5 @@ pub type NavCard {
 }
 
 // ===================================================================
-// TODO: Add more types as needed
-// - SearchState for food search
-// - DashboardData for dashboard
-// - Macros for nutrition data
-// - UserProfile for user info
+// Additional types will be added as specific features are implemented
 // ===================================================================

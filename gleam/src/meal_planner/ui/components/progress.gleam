@@ -11,14 +11,9 @@
 ///
 /// See: docs/component_signatures.md (section: Progress Indicators)
 
-import gleam/option
 import gleam/int
 import gleam/float
 import meal_planner/ui/types/ui_types
-
-// TODO: Import lustre/element, lustre/attribute when available
-// import lustre/element
-// import lustre/attribute
 
 /// Progress bar component
 ///
@@ -198,9 +193,5 @@ fn calculate_percentage(current: Float, target: Float) -> Float {
 }
 
 // ===================================================================
-// TODO: Additional components to implement
-// - Animated progress bars
-// - Multi-segment progress
-// - Step indicators
-// - Loading spinners
+// Additional component enhancements will be added as needed
 // ===================================================================
