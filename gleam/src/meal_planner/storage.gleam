@@ -626,6 +626,108 @@ pub fn search_foods(
   }
 }
 
+/// Search for foods with additional filters
+pub fn search_foods_filtered(
+  conn: pog.Connection,
+  query: String,
+  filters: types.SearchFilters,
+  limit: Int,
+) -> Result(List(UsdaFood), StorageError) {
+  // Build WHERE clause based on filters
+  let verified_clause = case filters.verified_only {
+    True -> " AND data_type IN ('foundation_food', 'sr_legacy_food')"
+    False -> ""
+  }
+
+  let branded_clause = case filters.branded_only {
+    True -> " AND data_type = 'branded_food'"
+    False -> ""
+  }
+
+  let category_clause = case filters.category {
+    Some(_) -> " AND food_category ILIKE $4"
+    None -> ""
+  }
+
+  // Same multi-factor ranking as search_foods
+  let sql =
+    "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
+     FROM foods
+     WHERE (to_tsvector('english', description) @@ plainto_tsquery('english', $1)
+        OR description ILIKE $2)"
+    <> verified_clause
+    <> branded_clause
+    <> category_clause
+    <> "
+     ORDER BY
+       -- 1. Data Quality Score (0-100): Prioritize verified USDA data
+       CASE data_type
+         WHEN 'foundation_food' THEN 100
+         WHEN 'sr_legacy_food' THEN 95
+         WHEN 'survey_fndds_food' THEN 90
+         WHEN 'sub_sample_food' THEN 50
+         WHEN 'agricultural_acquisition' THEN 40
+         WHEN 'market_acquisition' THEN 35
+         WHEN 'branded_food' THEN 30
+         ELSE 10
+       END DESC,
+
+       -- 2. Exact Match Boost
+       CASE
+         WHEN LOWER(description) LIKE LOWER($1 || '%') THEN 1
+         ELSE 2
+       END,
+
+       -- 3. Generic vs Branded
+       CASE
+         WHEN description !~* '[,®©™]' THEN 1
+         ELSE 2
+       END,
+
+       -- 4. Simplicity Score
+       array_length(string_to_array(description, ' '), 1),
+
+       -- 5. Alphabetical
+       description
+     LIMIT $3"
+
+  let search_pattern = "%" <> query <> "%"
+
+  let decoder = {
+    use fdc_id <- decode.field(0, decode.int)
+    use description <- decode.field(1, decode.string)
+    use data_type <- decode.field(2, decode.string)
+    use category <- decode.field(3, decode.string)
+    decode.success(UsdaFood(
+      fdc_id: fdc_id,
+      description: description,
+      data_type: data_type,
+      category: category,
+    ))
+  }
+
+  // Build query with parameters - category filter uses $4 if present
+  let base_query =
+    pog.query(sql)
+    |> pog.parameter(pog.text(query))
+    |> pog.parameter(pog.text(search_pattern))
+    |> pog.parameter(pog.int(limit))
+
+  let final_query = case filters.category {
+    Some(cat) -> pog.parameter(base_query, pog.text("%" <> cat <> "%"))
+    None -> base_query
+  }
+
+  case
+    final_query
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
+  }
+}
+
 /// Get nutrients for a specific food
 pub fn get_food_nutrients(
   conn: pog.Connection,
@@ -775,14 +877,50 @@ pub fn create_custom_food(
     zinc,
   ) = case food.micronutrients {
     Some(m) -> #(
-      m.fiber, m.sugar, m.sodium, m.cholesterol,
-      m.vitamin_a, m.vitamin_c, m.vitamin_d, m.vitamin_e, m.vitamin_k,
-      m.vitamin_b6, m.vitamin_b12, m.folate, m.thiamin, m.riboflavin, m.niacin,
-      m.calcium, m.iron, m.magnesium, m.phosphorus, m.potassium, m.zinc,
+      m.fiber,
+      m.sugar,
+      m.sodium,
+      m.cholesterol,
+      m.vitamin_a,
+      m.vitamin_c,
+      m.vitamin_d,
+      m.vitamin_e,
+      m.vitamin_k,
+      m.vitamin_b6,
+      m.vitamin_b12,
+      m.folate,
+      m.thiamin,
+      m.riboflavin,
+      m.niacin,
+      m.calcium,
+      m.iron,
+      m.magnesium,
+      m.phosphorus,
+      m.potassium,
+      m.zinc,
     )
     None -> #(
-      None, None, None, None, None, None, None, None, None, None, None,
-      None, None, None, None, None, None, None, None, None, None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
     )
   }
 
@@ -895,21 +1033,73 @@ fn custom_food_decoder() -> decode.Decoder(types.CustomFood) {
   use zinc <- decode.field(31, decode.optional(decode.float))
 
   let micronutrients = case
-    fiber, sugar, sodium, cholesterol,
-    vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
-    vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin,
-    calcium, iron, magnesium, phosphorus, potassium, zinc
+    fiber,
+    sugar,
+    sodium,
+    cholesterol,
+    vitamin_a,
+    vitamin_c,
+    vitamin_d,
+    vitamin_e,
+    vitamin_k,
+    vitamin_b6,
+    vitamin_b12,
+    folate,
+    thiamin,
+    riboflavin,
+    niacin,
+    calcium,
+    iron,
+    magnesium,
+    phosphorus,
+    potassium,
+    zinc
   {
-    None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None, None, None -> None
+    None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None
+    -> None
     _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ->
       Some(types.Micronutrients(
-        fiber: fiber, sugar: sugar, sodium: sodium, cholesterol: cholesterol,
-        vitamin_a: vitamin_a, vitamin_c: vitamin_c, vitamin_d: vitamin_d,
-        vitamin_e: vitamin_e, vitamin_k: vitamin_k, vitamin_b6: vitamin_b6,
-        vitamin_b12: vitamin_b12, folate: folate, thiamin: thiamin,
-        riboflavin: riboflavin, niacin: niacin, calcium: calcium, iron: iron,
-        magnesium: magnesium, phosphorus: phosphorus, potassium: potassium, zinc: zinc,
+        fiber: fiber,
+        sugar: sugar,
+        sodium: sodium,
+        cholesterol: cholesterol,
+        vitamin_a: vitamin_a,
+        vitamin_c: vitamin_c,
+        vitamin_d: vitamin_d,
+        vitamin_e: vitamin_e,
+        vitamin_k: vitamin_k,
+        vitamin_b6: vitamin_b6,
+        vitamin_b12: vitamin_b12,
+        folate: folate,
+        thiamin: thiamin,
+        riboflavin: riboflavin,
+        niacin: niacin,
+        calcium: calcium,
+        iron: iron,
+        magnesium: magnesium,
+        phosphorus: phosphorus,
+        potassium: potassium,
+        zinc: zinc,
       ))
   }
 
@@ -1727,18 +1917,22 @@ pub fn save_food_to_log(
 
         // Custom food source: Fetch custom food and use its macros/micronutrients
         types.CustomFoodSource(custom_food_id, user_id) -> {
-          use custom_food <- result.try(get_custom_food_by_id(conn, custom_food_id, user_id))
-          
+          use custom_food <- result.try(get_custom_food_by_id(
+            conn,
+            custom_food_id,
+            user_id,
+          ))
+
           // Scale custom food macros by servings
           let scaled_macros = types.macros_scale(custom_food.macros, servings)
           let scaled_micros = case custom_food.micronutrients {
             Some(m) -> Some(types.micronutrients_scale(m, servings))
             None -> None
           }
-          
+
           // Generate unique ID
           let log_id = generate_log_id(date, custom_food_id, meal_type)
-          
+
           // Insert with custom food source tracking
           insert_food_log_entry(
             conn,
