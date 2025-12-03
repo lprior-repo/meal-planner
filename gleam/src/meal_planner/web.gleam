@@ -19,8 +19,8 @@ import meal_planner/storage
 import meal_planner/web_helpers
 import shared/types.{
   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
-  type UserProfile, Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain,
-  Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack, UserProfile,
+  type UserProfile, type Micronutrients, Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain,
+  Lose, Lunch, Macros, Maintain, Micronutrients, Moderate, Sedentary, Snack, UserProfile,
 }
 import mist
 import pog
@@ -874,6 +874,7 @@ fn load_daily_log(ctx: Context, date: String) -> DailyLog {
         date: date,
         entries: [],
         total_macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+        total_micronutrients: types.micronutrients_zero(),
       )
     }
   }
