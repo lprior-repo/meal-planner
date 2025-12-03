@@ -87,10 +87,10 @@ pub type FormField {
 // ===================================================================
 
 pub type StatusType {
-  Success
-  Warning
-  Error
-  Info
+  StatusSuccess
+  StatusWarning
+  StatusError
+  StatusInfo
 }
 
 // ===================================================================

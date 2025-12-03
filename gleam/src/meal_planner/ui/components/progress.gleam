@@ -105,10 +105,10 @@ pub fn status_badge(
 ) -> String {
   // CONTRACT: Returns HTML string for status badge
   let status_class = case status {
-    ui_types.Success -> "status-success"
-    ui_types.Warning -> "status-warning"
-    ui_types.Error -> "status-error"
-    ui_types.Info -> "status-info"
+    ui_types.StatusSuccess -> "status-success"
+    ui_types.StatusWarning -> "status-warning"
+    ui_types.StatusError -> "status-error"
+    ui_types.StatusInfo -> "status-info"
   }
 
   "<span class=\"status-badge " <> status_class <> "\">" <> label <> "</span>"

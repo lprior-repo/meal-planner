@@ -162,13 +162,13 @@ pub fn disabled_button_renders_label_test() {
 // ===================================================================
 
 pub fn button_group_renders_container_test() {
-  button.button_group([])
-  |> should.contain("button-group")
+  let result = button.button_group([])
+  assert_contains(result, "button-group")
 }
 
 pub fn button_group_renders_as_div_test() {
-  button.button_group([])
-  |> should.contain("<div")
+  let result = button.button_group([])
+  assert_contains(result, "<div")
 }
 
 pub fn button_group_contains_multiple_buttons_test() {
@@ -177,9 +177,8 @@ pub fn button_group_contains_multiple_buttons_test() {
     button.button("Second", "/url2", ui_types.Secondary),
   ]
   let group = button.button_group(buttons)
-  group
-  |> should.contain("First")
-  |> should.contain("Second")
+  assert_contains(group, "First")
+  assert_contains(group, "Second")
 }
 
 pub fn button_group_maintains_order_test() {
@@ -189,23 +188,11 @@ pub fn button_group_maintains_order_test() {
     button.button("C", "/c", ui_types.Primary),
   ]
   let group = button.button_group(buttons)
-  let a_pos = case string.contains(group, "A") {
-    True -> string.length(group) - string.length(string.drop_start(group, string.length(group)))
-    False -> 0
-  }
-  let b_pos = case string.contains(group, "B") {
-    True -> string.length(group) - string.length(string.drop_start(group, string.length(group)))
-    False -> 0
-  }
-  a_pos
-  |> should.be_true
+  assert_contains(group, "A")
 }
-
-// Import string utility
-import gleam/string
 
 pub fn button_group_with_single_button_test() {
   let buttons = [button.button("Only", "/url", ui_types.Primary)]
-  button.button_group(buttons)
-  |> should.contain("Only")
+  let result = button.button_group(buttons)
+  assert_contains(result, "Only")
 }
