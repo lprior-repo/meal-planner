@@ -940,19 +940,6 @@ fn handle_api(
     ["profile"] -> api_profile(req, ctx)
     ["foods"] -> api_foods(req, ctx)
     ["foods", id] -> api_food(req, id, ctx)
-    // Auto planner routes
-    ["meal-plans", "auto", ..rest] ->
-      auto_planner_routes.handle_auto_planner_routes(
-        req,
-        ["meal-plans", "auto", ..rest],
-        auto_planner_routes.Context(db: ctx.db),
-      )
-    ["recipe-sources", ..rest] ->
-      auto_planner_routes.handle_auto_planner_routes(
-        req,
-        ["recipe-sources", ..rest],
-        auto_planner_routes.Context(db: ctx.db),
-      )
     _ -> wisp.not_found()
   }
 }

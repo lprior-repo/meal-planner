@@ -119,39 +119,37 @@ fn recipe_with_empty_instructions() -> Recipe {
 fn validate_recipe(recipe: Recipe) -> Result(Nil, String) {
   // Check for empty name
   case string.trim(recipe.name) {
-    "" -> return Error("Recipe name cannot be empty")
-    _ -> Nil
+    "" -> Error("Recipe name cannot be empty")
+    _ -> {
+      // Check for negative macro values
+      case
+        recipe.macros.protein <. 0.0
+        || recipe.macros.fat <. 0.0
+        || recipe.macros.carbs <. 0.0
+      {
+        True -> Error("Macro values cannot be negative")
+        False -> {
+          // Check for empty ingredients
+          case recipe.ingredients {
+            [] -> Error("Recipe must have at least one ingredient")
+            _ -> {
+              // Check for empty instructions
+              case recipe.instructions {
+                [] -> Error("Recipe must have at least one instruction")
+                _ -> {
+                  // Check for valid servings
+                  case recipe.servings <= 0 {
+                    True -> Error("Servings must be greater than zero")
+                    False -> Ok(Nil)
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
-
-  // Check for negative macro values
-  case
-    recipe.macros.protein <. 0.0
-    || recipe.macros.fat <. 0.0
-    || recipe.macros.carbs <. 0.0
-  {
-    True -> return Error("Macro values cannot be negative")
-    False -> Nil
-  }
-
-  // Check for empty ingredients
-  case recipe.ingredients {
-    [] -> return Error("Recipe must have at least one ingredient")
-    _ -> Nil
-  }
-
-  // Check for empty instructions
-  case recipe.instructions {
-    [] -> return Error("Recipe must have at least one instruction")
-    _ -> Nil
-  }
-
-  // Check for valid servings
-  case recipe.servings <= 0 {
-    True -> return Error("Servings must be greater than zero")
-    False -> Nil
-  }
-
-  Ok(Nil)
 }
 
 // =============================================================================
