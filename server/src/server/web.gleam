@@ -1083,7 +1083,7 @@ fn api_logs_create(req: wisp.Request) -> wisp.Response {
         Ok(s) -> s
         Error(_) -> 1.0
       }
-      let _meal_type = string_to_meal_type(meal_type_str)
+      let meal_type = string_to_meal_type(meal_type_str)
       let today = today_date_string()
 
       // Get recipe to calculate macros
@@ -1099,7 +1099,7 @@ fn api_logs_create(req: wisp.Request) -> wisp.Response {
               servings: servings,
               macros: scaled_macros,
               micronutrients: None,
-              meal_type: _meal_type,
+              meal_type: meal_type,
               logged_at: current_timestamp(),
             )
 
