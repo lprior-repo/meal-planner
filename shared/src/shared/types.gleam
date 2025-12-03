@@ -49,6 +49,58 @@ pub fn macros_sum(macros: List(Macros)) -> Macros {
 }
 
 // ============================================================================
+// Micronutrients Types
+// ============================================================================
+
+/// Micronutrient values (vitamins and minerals)
+/// All fields are optional as not all foods have complete micronutrient data
+pub type Micronutrients {
+  Micronutrients(
+    fiber: Option(Float),
+    sugar: Option(Float),
+    sodium: Option(Float),
+    cholesterol: Option(Float),
+    vitamin_a: Option(Float),
+    vitamin_c: Option(Float),
+    vitamin_d: Option(Float),
+    vitamin_e: Option(Float),
+    vitamin_k: Option(Float),
+    vitamin_b6: Option(Float),
+    vitamin_b12: Option(Float),
+    folate: Option(Float),
+    thiamin: Option(Float),
+    riboflavin: Option(Float),
+    niacin: Option(Float),
+    calcium: Option(Float),
+    iron: Option(Float),
+    magnesium: Option(Float),
+    phosphorus: Option(Float),
+    potassium: Option(Float),
+    zinc: Option(Float),
+  )
+}
+
+// ============================================================================
+// Custom Food Types
+// ============================================================================
+
+/// User-defined custom food with complete nutritional information
+pub type CustomFood {
+  CustomFood(
+    id: String,
+    user_id: String,
+    name: String,
+    brand: Option(String),
+    description: Option(String),
+    serving_size: Float,
+    serving_unit: String,
+    macros: Macros,
+    calories: Float,
+    micronutrients: Option(Micronutrients),
+  )
+}
+
+// ============================================================================
 // Recipe Types
 // ============================================================================
 
@@ -200,6 +252,138 @@ pub fn macros_to_json(m: Macros) -> Json {
   ])
 }
 
+pub fn micronutrients_to_json(m: Micronutrients) -> Json {
+  let fields = []
+
+  // Fiber
+  let fields = case m.fiber {
+    Some(v) -> [#("fiber", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Sugar
+  let fields = case m.sugar {
+    Some(v) -> [#("sugar", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Sodium
+  let fields = case m.sodium {
+    Some(v) -> [#("sodium", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Cholesterol
+  let fields = case m.cholesterol {
+    Some(v) -> [#("cholesterol", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Vitamin A
+  let fields = case m.vitamin_a {
+    Some(v) -> [#("vitamin_a", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Vitamin C
+  let fields = case m.vitamin_c {
+    Some(v) -> [#("vitamin_c", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Vitamin D
+  let fields = case m.vitamin_d {
+    Some(v) -> [#("vitamin_d", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Vitamin E
+  let fields = case m.vitamin_e {
+    Some(v) -> [#("vitamin_e", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Vitamin K
+  let fields = case m.vitamin_k {
+    Some(v) -> [#("vitamin_k", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Vitamin B6
+  let fields = case m.vitamin_b6 {
+    Some(v) -> [#("vitamin_b6", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Vitamin B12
+  let fields = case m.vitamin_b12 {
+    Some(v) -> [#("vitamin_b12", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Folate
+  let fields = case m.folate {
+    Some(v) -> [#("folate", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Thiamin
+  let fields = case m.thiamin {
+    Some(v) -> [#("thiamin", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Riboflavin
+  let fields = case m.riboflavin {
+    Some(v) -> [#("riboflavin", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Niacin
+  let fields = case m.niacin {
+    Some(v) -> [#("niacin", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Calcium
+  let fields = case m.calcium {
+    Some(v) -> [#("calcium", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Iron
+  let fields = case m.iron {
+    Some(v) -> [#("iron", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Magnesium
+  let fields = case m.magnesium {
+    Some(v) -> [#("magnesium", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Phosphorus
+  let fields = case m.phosphorus {
+    Some(v) -> [#("phosphorus", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Potassium
+  let fields = case m.potassium {
+    Some(v) -> [#("potassium", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  // Zinc
+  let fields = case m.zinc {
+    Some(v) -> [#("zinc", json.float(v)), ..fields]
+    None -> fields
+  }
+
+  json.object(fields)
+}
+
 pub fn ingredient_to_json(i: Ingredient) -> Json {
   json.object([
     #("name", json.string(i.name)),
@@ -348,6 +532,83 @@ pub fn meal_type_decoder() -> Decoder(MealType) {
     "snack" -> decode.success(Snack)
     _ -> decode.failure(Snack, "MealType")
   }
+}
+
+/// Decoder for Micronutrients
+pub fn micronutrients_decoder() -> Decoder(Micronutrients) {
+  use fiber <- decode.field("fiber", decode.optional(decode.float))
+  use sugar <- decode.field("sugar", decode.optional(decode.float))
+  use sodium <- decode.field("sodium", decode.optional(decode.float))
+  use cholesterol <- decode.field("cholesterol", decode.optional(decode.float))
+  use vitamin_a <- decode.field("vitamin_a", decode.optional(decode.float))
+  use vitamin_c <- decode.field("vitamin_c", decode.optional(decode.float))
+  use vitamin_d <- decode.field("vitamin_d", decode.optional(decode.float))
+  use vitamin_e <- decode.field("vitamin_e", decode.optional(decode.float))
+  use vitamin_k <- decode.field("vitamin_k", decode.optional(decode.float))
+  use vitamin_b6 <- decode.field("vitamin_b6", decode.optional(decode.float))
+  use vitamin_b12 <- decode.field("vitamin_b12", decode.optional(decode.float))
+  use folate <- decode.field("folate", decode.optional(decode.float))
+  use thiamin <- decode.field("thiamin", decode.optional(decode.float))
+  use riboflavin <- decode.field("riboflavin", decode.optional(decode.float))
+  use niacin <- decode.field("niacin", decode.optional(decode.float))
+  use calcium <- decode.field("calcium", decode.optional(decode.float))
+  use iron <- decode.field("iron", decode.optional(decode.float))
+  use magnesium <- decode.field("magnesium", decode.optional(decode.float))
+  use phosphorus <- decode.field("phosphorus", decode.optional(decode.float))
+  use potassium <- decode.field("potassium", decode.optional(decode.float))
+  use zinc <- decode.field("zinc", decode.optional(decode.float))
+  decode.success(Micronutrients(
+    fiber: fiber,
+    sugar: sugar,
+    sodium: sodium,
+    cholesterol: cholesterol,
+    vitamin_a: vitamin_a,
+    vitamin_c: vitamin_c,
+    vitamin_d: vitamin_d,
+    vitamin_e: vitamin_e,
+    vitamin_k: vitamin_k,
+    vitamin_b6: vitamin_b6,
+    vitamin_b12: vitamin_b12,
+    folate: folate,
+    thiamin: thiamin,
+    riboflavin: riboflavin,
+    niacin: niacin,
+    calcium: calcium,
+    iron: iron,
+    magnesium: magnesium,
+    phosphorus: phosphorus,
+    potassium: potassium,
+    zinc: zinc,
+  ))
+}
+
+/// Decoder for CustomFood
+pub fn custom_food_decoder() -> Decoder(CustomFood) {
+  use id <- decode.field("id", decode.string)
+  use user_id <- decode.field("user_id", decode.string)
+  use name <- decode.field("name", decode.string)
+  use brand <- decode.field("brand", decode.optional(decode.string))
+  use description <- decode.field("description", decode.optional(decode.string))
+  use serving_size <- decode.field("serving_size", decode.float)
+  use serving_unit <- decode.field("serving_unit", decode.string)
+  use macros <- decode.field("macros", macros_decoder())
+  use calories <- decode.field("calories", decode.float)
+  use micronutrients <- decode.field(
+    "micronutrients",
+    decode.optional(micronutrients_decoder()),
+  )
+  decode.success(CustomFood(
+    id: id,
+    user_id: user_id,
+    name: name,
+    brand: brand,
+    description: description,
+    serving_size: serving_size,
+    serving_unit: serving_unit,
+    macros: macros,
+    calories: calories,
+    micronutrients: micronutrients,
+  ))
 }
 
 /// Decoder for Recipe
