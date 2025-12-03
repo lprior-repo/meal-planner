@@ -12,6 +12,7 @@
 ///
 /// See: docs/component_signatures.md (section: Typography)
 
+import gleam/option.{type Option}
 import meal_planner/ui/types/ui_types
 
 // ===================================================================

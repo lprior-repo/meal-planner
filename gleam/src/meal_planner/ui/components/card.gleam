@@ -15,6 +15,7 @@
 import gleam/option
 import gleam/list
 import gleam/int
+import gleam/float
 import meal_planner/ui/types/ui_types
 
 // ===================================================================
@@ -102,7 +103,7 @@ pub fn stat_card(stat: ui_types.StatCard) -> String {
   // CONTRACT: Returns HTML string for stat card
   // BODY: TODO - Implement with stat-value, stat-unit, stat-label
   // Note: trend field should optionally render as indicator
-  let ui_types.StatCard(label, value, unit, trend: _, color) = stat
+  let ui_types.StatCard(label: label, value: value, unit: unit, trend: _, color: color) = stat
   "<div class=\"stat-card\" style=\"--color: "
   <> color
   <> "\"><div class=\"stat-value\">"
@@ -128,8 +129,8 @@ pub fn stat_card(stat: ui_types.StatCard) -> String {
 pub fn recipe_card(data: ui_types.RecipeCardData) -> String {
   // CONTRACT: Returns HTML string for recipe card
   // BODY: TODO - Implement with image (if available), name, category, calories
-  let ui_types.RecipeCardData(id: _, name, category, calories, image_url) = data
-  let calories_str = calories |> int.floor |> int.to_string
+  let ui_types.RecipeCardData(id: _, name: name, category: category, calories: calories, image_url: image_url) = data
+  let calories_str = calories |> float.truncate |> int.to_string
   let image_html = case image_url {
     option.Some(url) -> "<img src=\"" <> url <> "\" />"
     option.None -> ""
@@ -156,7 +157,7 @@ pub fn recipe_card(data: ui_types.RecipeCardData) -> String {
 pub fn food_card(data: ui_types.FoodCardData) -> String {
   // CONTRACT: Returns HTML string for food result card
   // BODY: TODO - Implement with food-description, food-category, food-type
-  let ui_types.FoodCardData(fdc_id: _, description, data_type, category) = data
+  let ui_types.FoodCardData(fdc_id: _, description: description, data_type: data_type, category: category) = data
   "<div class=\"food-card\"><div class=\"food-description\">"
   <> description
   <> "</div><div class=\"food-category\">"

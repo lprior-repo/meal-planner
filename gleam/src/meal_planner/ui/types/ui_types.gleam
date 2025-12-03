@@ -87,10 +87,10 @@ pub type FormField {
 // ===================================================================
 
 pub type StatusType {
-  Success
-  Warning
-  Error
-  Info
+  StatusSuccess
+  StatusWarning
+  StatusError
+  StatusInfo
 }
 
 // ===================================================================
@@ -105,20 +105,20 @@ pub type FlexDirection {
 }
 
 pub type FlexAlign {
-  Start
-  Center
-  End
+  AlignStart
+  AlignCenter
+  AlignEnd
   Stretch
-  Between
-  Around
+  AlignBetween
+  AlignAround
 }
 
 pub type FlexJustify {
-  Start
-  Center
-  End
-  Between
-  Around
+  JustifyStart
+  JustifyCenter
+  JustifyEnd
+  JustifyBetween
+  JustifyAround
   Even
 }
 
@@ -152,10 +152,10 @@ pub type TextSize {
 }
 
 pub type FontWeight {
-  Normal
-  Medium
-  Semibold
-  Bold
+  WeightNormal
+  WeightMedium
+  WeightSemibold
+  WeightBold
 }
 
 // ===================================================================
