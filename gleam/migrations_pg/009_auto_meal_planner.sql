@@ -25,24 +25,12 @@ CREATE TABLE IF NOT EXISTS auto_meal_plans (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Recipe diet compliance tracking
-CREATE TABLE IF NOT EXISTS recipe_diet_compliance (
-    recipe_id INTEGER PRIMARY KEY,
-    vertical_diet_compliant BOOLEAN NOT NULL DEFAULT false,
-    tim_ferriss_compliant BOOLEAN NOT NULL DEFAULT false,
-    compliance_notes TEXT, -- Text notes explaining compliance status
-    last_checked TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
-);
-
 -- Indexes for performance optimization
 CREATE INDEX IF NOT EXISTS idx_recipe_sources_type ON recipe_sources(type);
 CREATE INDEX IF NOT EXISTS idx_recipe_sources_enabled ON recipe_sources(enabled);
 CREATE INDEX IF NOT EXISTS idx_auto_meal_plans_user_id ON auto_meal_plans(user_id);
 CREATE INDEX IF NOT EXISTS idx_auto_meal_plans_status ON auto_meal_plans(status);
 CREATE INDEX IF NOT EXISTS idx_auto_meal_plans_generated_at ON auto_meal_plans(generated_at);
-CREATE INDEX IF NOT EXISTS idx_recipe_diet_compliance_vertical ON recipe_diet_compliance(vertical_diet_compliant);
-CREATE INDEX IF NOT EXISTS idx_recipe_diet_compliance_ferriss ON recipe_diet_compliance(tim_ferriss_compliant);
 
 -- GIN indexes for JSONB columns (PostgreSQL specific)
 CREATE INDEX IF NOT EXISTS idx_recipe_sources_config ON recipe_sources USING GIN (config);
