@@ -1,0 +1,193 @@
+{
+  "analysis_metadata": {
+    "timestamp": "2025-12-03T11:56:00Z",
+    "analyzer_agent": "structure-analyzer",
+    "thread_id": "CLEANUP-2025-001"
+  },
+  "misplaced_files": {
+    "root_level_scripts": {
+      "severity": "HIGH",
+      "files": [
+        {
+          "current_location": "/home/lewis/src/meal-planner/debug-browser.mjs",
+          "type": "JavaScript module",
+          "recommended_location": "scripts/debug/debug-browser.mjs",
+          "reason": "Utility script should be in scripts/ directory"
+        },
+        {
+          "current_location": "/home/lewis/src/meal-planner/claude-flow",
+          "type": "Shell script",
+          "recommended_location": "scripts/tools/claude-flow",
+          "reason": "Wrapper script should be in scripts/tools/"
+        }
+      ]
+    },
+    "database_files_in_git": {
+      "severity": "CRITICAL",
+      "files": [
+        {
+          "current_location": ".beads/beads.db",
+          "size": "unknown",
+          "status": "tracked",
+          "recommended_action": "Add to .gitignore, remove from git history",
+          "reason": "Database files should never be committed"
+        },
+        {
+          "current_location": ".beads/beads.db-shm",
+          "recommended_action": "Add *.db-shm to .gitignore"
+        },
+        {
+          "current_location": ".beads/beads.db-wal",
+          "recommended_action": "Add *.db-wal to .gitignore"
+        },
+        {
+          "current_location": ".hive-mind/hive.db",
+          "recommended_action": "Add to .gitignore"
+        },
+        {
+          "current_location": ".swarm/memory.db",
+          "size": "72KB",
+          "status": "modified",
+          "recommended_action": "Add to .gitignore immediately"
+        }
+      ]
+    },
+    "oversized_directory": {
+      "severity": "CRITICAL",
+      "directory": "db_export/",
+      "size": "208M",
+      "percentage_of_repo": "64%",
+      "recommended_action": "Move to external storage or .gitignore",
+      "reason": "Database exports bloat repository, should be in cloud storage or local-only"
+    },
+    "duplicate_metrics_directories": {
+      "severity": "MEDIUM",
+      "issue": "Multiple .claude-flow/metrics/ directories",
+      "locations": [
+        {
+          "path": ".claude-flow/metrics/",
+          "files": 4,
+          "size": "476KB",
+          "status": "primary"
+        },
+        {
+          "path": "gleam/.claude-flow/metrics/",
+          "files": 2,
+          "size": "unknown",
+          "status": "duplicate",
+          "recommended_action": "Remove or consolidate with root metrics"
+        }
+      ]
+    },
+    "documentation_organization": {
+      "severity": "MEDIUM",
+      "issue": "Documentation scattered across multiple locations",
+      "files": [
+        {
+          "current_location": "docs/architecture/save_food_to_log_design.md",
+          "status": "untracked",
+          "recommended_action": "Add to git, ensure proper location"
+        },
+        {
+          "current_location": "docs/*.md (50+ files)",
+          "issue": "Many docs at root of docs/ directory",
+          "recommended_action": "Organize into subdirectories by topic"
+        },
+        {
+          "current_location": "specs/",
+          "size": "56KB",
+          "recommended_action": "Merge into docs/architecture/ or docs/specifications/"
+        }
+      ]
+    },
+    "build_artifacts": {
+      "severity": "LOW",
+      "issue": "Build artifacts may be in git",
+      "locations": [
+        {
+          "path": "gleam/build/",
+          "status": "likely ignored",
+          "recommended_action": "Verify .gitignore includes build/"
+        }
+      ]
+    },
+    "static_assets_organization": {
+      "severity": "LOW",
+      "issue": "New CSS file not organized",
+      "files": [
+        {
+          "current_location": "gleam/priv/static/css/recipe-form.css",
+          "status": "untracked",
+          "recommended_action": "Add to git, verify import chain"
+        }
+      ]
+    },
+    "source_code_organization": {
+      "severity": "MEDIUM",
+      "files": [
+        {
+          "current_location": "gleam/src/meal_planner/auto_planner.gleam",
+          "status": "untracked",
+          "recommended_action": "Add to git if complete, or document as WIP"
+        },
+        {
+          "current_location": "gleam/src/meal_planner/ui/recipe_form.gleam",
+          "status": "untracked",
+          "recommended_action": "Add to git if complete"
+        }
+      ]
+    },
+    "empty_directories": {
+      "severity": "LOW",
+      "directories": [
+        {
+          "path": "mcp_agent_mail/",
+          "size": "0",
+          "recommended_action": "Remove if unused, or add README.md explaining purpose"
+        },
+        {
+          "path": "memory/",
+          "size": "12K",
+          "issue": "Small size suggests minimal use",
+          "recommended_action": "Document purpose or consider removal"
+        }
+      ]
+    },
+    "server_directory_ambiguity": {
+      "severity": "MEDIUM",
+      "issue": "Unclear separation between gleam/ and server/ directories",
+      "directories": [
+        {
+          "path": "server/",
+          "size": "268KB",
+          "issue": "Separate server directory when gleam/ is main app",
+          "recommended_action": "Clarify purpose in README, or merge into gleam/"
+        }
+      ]
+    }
+  },
+  "gitignore_additions_needed": [
+    "*.db",
+    "*.db-shm",
+    "*.db-wal",
+    ".swarm/",
+    ".hive-mind/",
+    ".beads/beads.db*",
+    "db_export/",
+    ".claude-flow/metrics/*.json"
+  ],
+  "summary": {
+    "total_issues": 10,
+    "critical": 2,
+    "high": 1,
+    "medium": 5,
+    "low": 2,
+    "estimated_cleanup_time": "2-3 hours",
+    "priority_actions": [
+      "Add database files to .gitignore immediately",
+      "Move or ignore db_export/ directory",
+      "Consolidate metrics directories",
+      "Organize root-level scripts into scripts/"
+    ]
+  }
+}

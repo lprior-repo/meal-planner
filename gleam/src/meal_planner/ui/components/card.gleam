@@ -13,18 +13,10 @@
 /// See: docs/component_signatures.md (section: Cards)
 
 import gleam/option
-import gleam/list
 import gleam/int
 import gleam/float
+import gleam/string
 import meal_planner/ui/types/ui_types
-
-// ===================================================================
-// HELPER FUNCTIONS
-// ===================================================================
-
-fn string_concat(items: List(String)) -> String {
-  list.fold(items, "", fn(acc, item) { acc <> item })
-}
 
 // ===================================================================
 // PUBLIC COMPONENT FUNCTIONS
@@ -37,8 +29,7 @@ pub fn card(
   content: List(String),
 ) -> String {
   // CONTRACT: Returns HTML string for basic card container
-  // BODY: TODO - Implement as div with card class containing content list
-  let content_str = string_concat(content)
+  let content_str = string.concat(content)
   "<div class=\"card\">" <> content_str <> "</div>"
 }
 
@@ -54,8 +45,7 @@ pub fn card_with_header(
   content: List(String),
 ) -> String {
   // CONTRACT: Returns HTML string for card with header
-  // BODY: TODO - Implement with card-header and card-body sections
-  let content_str = string_concat(content)
+  let content_str = string.concat(content)
   "<div class=\"card\"><div class=\"card-header\">"
   <> header
   <> "</div><div class=\"card-body\">"
@@ -79,9 +69,8 @@ pub fn card_with_actions(
   actions: List(String),
 ) -> String {
   // CONTRACT: Returns HTML string for card with header and actions
-  // BODY: TODO - Implement with card-header containing actions, and card-body
-  let content_str = string_concat(content)
-  let actions_str = string_concat(actions)
+  let content_str = string.concat(content)
+  let actions_str = string.concat(actions)
   "<div class=\"card\"><div class=\"card-header\">"
   <> header
   <> "<div class=\"card-actions\">"
@@ -101,7 +90,6 @@ pub fn card_with_actions(
 /// </div>
 pub fn stat_card(stat: ui_types.StatCard) -> String {
   // CONTRACT: Returns HTML string for stat card
-  // BODY: TODO - Implement with stat-value, stat-unit, stat-label
   // Note: trend field should optionally render as indicator
   let ui_types.StatCard(label: label, value: value, unit: unit, trend: _, color: color) = stat
   "<div class=\"stat-card\" style=\"--color: "

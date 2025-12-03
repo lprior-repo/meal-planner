@@ -61,7 +61,6 @@ pub fn macro_bar(
   color: String,
 ) -> String {
   // CONTRACT: Returns HTML string for macro progress bar
-  // BODY: TODO - Implement with macro-bar class, label, and percentage
   let percentage = calculate_percentage(current, target)
   let pct_int = float_to_int(percentage)
   let current_int = float_to_int(current)
@@ -84,15 +83,18 @@ pub fn macro_bar(
 /// Renders: <span class="macro-badge">Protein: 120g</span>
 pub fn macro_badge(label: String, value: Float) -> String {
   // CONTRACT: Returns HTML string for macro badge
-  // BODY: TODO - Implement with macro-badge class containing label and value
   let value_int = float_to_int(value)
   "<span class=\"macro-badge\">" <> label <> ": " <> int_to_string(value_int) <> "g</span>"
 }
 
-/// Macro badges group (from Macros type)
+/// Macro badges group container (empty placeholder)
+///
+/// Renders: <div class="macro-badges"></div>
+///
+/// Note: This component is a container placeholder. Typically populated dynamically
+/// with individual macro_badge components via your rendering framework.
 pub fn macro_badges() -> String {
   // CONTRACT: Returns HTML string for macro badges group
-  // BODY: TODO - Implement with macro-badges class
   "<div class=\"macro-badges\"></div>"
 }
 
@@ -118,12 +120,12 @@ pub fn status_badge(
 ///
 /// Renders:
 /// <div class="progress-circle">
-///   <svg>...</svg>
-///   <span>75%</span>
+///   <div class="circle-progress" style="--progress: 75%;"></div>
+///   <span class="progress-percent">75%</span>
+///   <span class="progress-label">Label</span>
 /// </div>
 pub fn progress_circle(percentage: Float, label: String) -> String {
   // CONTRACT: Returns HTML string for circular progress indicator
-  // BODY: TODO - Implement with progress-circle class and SVG or CSS circle
   let pct_int = float_to_int(percentage)
 
   "<div class=\"progress-circle\">"
@@ -137,8 +139,10 @@ pub fn progress_circle(percentage: Float, label: String) -> String {
 ///
 /// Renders:
 /// <div class="progress-with-label">
-///   <span>Calories</span>
-///   <span>1850 / 2100</span>
+///   <div class="progress-header">
+///     <span class="progress-label-text">Calories</span>
+///     <span class="progress-value">1850 / 2100</span>
+///   </div>
 ///   <div class="progress-bar">...</div>
 /// </div>
 pub fn progress_with_label(
@@ -147,7 +151,6 @@ pub fn progress_with_label(
   label: String,
 ) -> String {
   // CONTRACT: Returns HTML string for progress bar with label
-  // BODY: TODO - Implement with progress-with-label class, label, and percentage
   let percentage = calculate_percentage(current, target)
   let pct_int = float_to_int(percentage)
   let current_int = float_to_int(current)

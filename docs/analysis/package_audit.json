@@ -1,0 +1,259 @@
+{
+  "analysis_date": "2025-12-03",
+  "project": "/home/lewis/src/meal-planner",
+  "package_managers": {
+    "gleam": "gleam.toml",
+    "npm": "package.json"
+  },
+  "summary": {
+    "total_gleam_dependencies": 19,
+    "total_npm_dependencies": 1,
+    "unused_dependencies": 0,
+    "deprecated_dependencies": 0,
+    "duplicate_dependencies": 0
+  },
+  "gleam_dependencies": {
+    "production": {
+      "gleam_stdlib": {
+        "version": ">= 0.65.0",
+        "usage": "used_extensively",
+        "import_count": 196,
+        "status": "active",
+        "note": "Core standard library, used everywhere"
+      },
+      "gleam_httpc": {
+        "version": ">= 5.0.0 and < 6.0.0",
+        "usage": "used",
+        "files": ["meal_planner/email.gleam"],
+        "status": "active",
+        "purpose": "HTTP client for Mailtrap API"
+      },
+      "gleam_http": {
+        "version": ">= 3.0.0",
+        "usage": "used",
+        "files": ["meal_planner/web.gleam", "meal_planner/email.gleam"],
+        "status": "active",
+        "purpose": "HTTP types and utilities"
+      },
+      "gleam_json": {
+        "version": ">= 3.0.0 and < 4.0.0",
+        "usage": "used",
+        "files": ["meal_planner/web.gleam", "meal_planner/auto_planner/types.gleam", "shared/types"],
+        "status": "active",
+        "purpose": "JSON encoding/decoding"
+      },
+      "glaml": {
+        "version": ">= 3.0.0",
+        "usage": "used",
+        "files": ["meal_planner/recipe_loader.gleam"],
+        "status": "active",
+        "purpose": "YAML parsing for recipe files"
+      },
+      "pog": {
+        "version": ">= 1.0.0",
+        "usage": "used",
+        "files": [
+          "meal_planner/storage.gleam",
+          "meal_planner/web.gleam",
+          "meal_planner/food_search.gleam",
+          "meal_planner/auto_planner/storage.gleam",
+          "scripts/init_pg.gleam"
+        ],
+        "status": "active",
+        "purpose": "PostgreSQL database client (successor to gleam_pgo)"
+      },
+      "gleam_otp": {
+        "version": ">= 0.10.0",
+        "usage": "used",
+        "files": [
+          "meal_planner/storage.gleam",
+          "meal_planner/supervisor.gleam",
+          "meal_planner/application.gleam",
+          "meal_planner/state.gleam",
+          "scripts/init_pg.gleam"
+        ],
+        "status": "active",
+        "purpose": "OTP supervision and actors"
+      },
+      "gleam_erlang": {
+        "version": ">= 0.25.0",
+        "usage": "used",
+        "files": [
+          "meal_planner/storage.gleam",
+          "meal_planner/supervisor.gleam",
+          "meal_planner/application.gleam",
+          "meal_planner/web.gleam",
+          "meal_planner/state.gleam"
+        ],
+        "status": "active",
+        "purpose": "Erlang interop and process management"
+      },
+      "wisp": {
+        "version": ">= 2.0.0 and < 3.0.0",
+        "usage": "used",
+        "files": ["meal_planner/web.gleam", "meal_planner/web_helpers.gleam"],
+        "status": "active",
+        "purpose": "Web framework"
+      },
+      "mist": {
+        "version": ">= 5.0.0 and < 6.0.0",
+        "usage": "used",
+        "files": ["meal_planner/web.gleam"],
+        "status": "active",
+        "purpose": "HTTP server"
+      },
+      "lustre": {
+        "version": ">= 5.0.0 and < 6.0.0",
+        "usage": "partial",
+        "files": ["meal_planner/web.gleam"],
+        "status": "underutilized",
+        "note": "Imported in web.gleam but many UI components are stubs waiting for lustre integration"
+      },
+      "envoy": {
+        "version": ">= 1.0.0",
+        "usage": "used",
+        "files": ["meal_planner/env.gleam", "scripts/init_pg.gleam", "scripts/restore_db.gleam"],
+        "status": "active",
+        "purpose": "Environment variable access"
+      },
+      "dot_env": {
+        "version": ">= 1.0.0",
+        "usage": "used",
+        "files": ["meal_planner/env.gleam"],
+        "status": "active",
+        "purpose": ".env file loading"
+      },
+      "filepath": {
+        "version": ">= 1.0.0",
+        "usage": "listed_not_seen_in_imports",
+        "files": [],
+        "status": "potentially_unused",
+        "recommendation": "Verify usage or remove from gleam.toml"
+      },
+      "logging": {
+        "version": ">= 1.0.0",
+        "usage": "used",
+        "files": ["meal_planner/logger.gleam"],
+        "status": "active",
+        "purpose": "Structured logging"
+      },
+      "simplifile": {
+        "version": ">= 2.3.1 and < 3.0.0",
+        "usage": "used",
+        "files": ["meal_planner/recipe_loader.gleam", "scripts/init_pg.gleam", "scripts/restore_db.gleam"],
+        "status": "active",
+        "purpose": "File operations"
+      },
+      "shared": {
+        "version": "{ path = \"../shared\" }",
+        "usage": "used_extensively",
+        "files": "imported by almost all modules",
+        "status": "active",
+        "purpose": "Shared types between frontend and backend"
+      },
+      "server": {
+        "version": "{ path = \"../server\" }",
+        "usage": "listed_not_seen_in_imports",
+        "files": [],
+        "status": "potentially_unused",
+        "recommendation": "Verify if server package is needed or remove"
+      }
+    },
+    "dev_dependencies": {
+      "gleeunit": {
+        "version": ">= 1.0.0 and < 2.0.0",
+        "usage": "testing",
+        "files": ["gleam/test/"],
+        "status": "active",
+        "purpose": "Unit testing framework"
+      },
+      "qcheck": {
+        "version": ">= 1.0.0 and < 2.0.0",
+        "usage": "testing",
+        "status": "active",
+        "purpose": "Property-based testing"
+      },
+      "qcheck_gleeunit_utils": {
+        "version": ">= 1.0.0 and < 2.0.0",
+        "usage": "testing",
+        "status": "active",
+        "purpose": "Integration between qcheck and gleeunit"
+      }
+    }
+  },
+  "npm_dependencies": {
+    "production": {
+      "puppeteer": {
+        "version": "^24.31.0",
+        "usage": "unknown",
+        "status": "unclear",
+        "note": "Only npm dependency, unclear purpose in meal planner",
+        "recommendation": "Clarify usage or remove if unused"
+      }
+    }
+  },
+  "shared_package": {
+    "path": "../shared",
+    "dependencies": {
+      "gleam_stdlib": ">= 0.65.0",
+      "gleam_json": ">= 3.0.0 and < 4.0.0"
+    },
+    "dev_dependencies": {
+      "gleeunit": ">= 1.0.0 and < 2.0.0"
+    },
+    "status": "active",
+    "purpose": "Shared types for meal planner frontend and backend"
+  },
+  "server_package": {
+    "path": "../server",
+    "status": "listed_in_dependencies",
+    "note": "gleam.toml includes server as local dependency but no imports detected",
+    "recommendation": "Verify if server package is actually used or remove from dependencies"
+  },
+  "duplicate_dependencies": [],
+  "deprecated_packages": [],
+  "unused_packages": [
+    {
+      "name": "filepath",
+      "severity": "low",
+      "issue": "Listed in gleam.toml but not seen in any import statements",
+      "recommendation": "Search codebase thoroughly or remove"
+    },
+    {
+      "name": "server",
+      "severity": "medium",
+      "issue": "Local dependency listed but no imports detected",
+      "recommendation": "Verify usage or remove from gleam.toml"
+    },
+    {
+      "name": "puppeteer",
+      "severity": "medium",
+      "issue": "npm package unclear purpose in meal planner",
+      "recommendation": "Document usage or remove if not needed"
+    }
+  ],
+  "version_constraint_analysis": {
+    "overly_permissive": [],
+    "recommended_updates": [],
+    "notes": [
+      "All version constraints are reasonable",
+      "Using >= with < upper bounds for stable packages",
+      "No breaking version ranges detected"
+    ]
+  },
+  "recommendations": [
+    "Verify if 'filepath' package is used - if not, remove from gleam.toml",
+    "Verify if 'server' local package is used - if not, remove from dependencies",
+    "Document or remove 'puppeteer' npm package - unclear why it's needed",
+    "Complete lustre integration in UI components to fully utilize the dependency",
+    "All other packages are actively used and properly configured"
+  ],
+  "health_score": "85/100",
+  "health_notes": [
+    "Strong: No deprecated packages",
+    "Strong: No duplicate dependencies",
+    "Strong: Most packages actively used",
+    "Weak: 3 potentially unused dependencies",
+    "Weak: One dependency (lustre) underutilized due to stub implementations"
+  ]
+}

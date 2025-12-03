@@ -1,0 +1,192 @@
+{
+  "analysis_date": "2025-12-03",
+  "agent": "redundancy-analyzer",
+  "thread_id": "CLEANUP-2025-001",
+  "summary": {
+    "total_config_files": 192,
+    "redundant_configs": 2,
+    "conflicting_configs": 0,
+    "consolidation_opportunities": 1
+  },
+  "configuration_audit": {
+    "gleam_configurations": {
+      "primary_configs": [
+        {
+          "path": "gleam/gleam.toml",
+          "lines": 65,
+          "purpose": "Main Gleam project configuration",
+          "status": "ACTIVE",
+          "dependencies": 35
+        },
+        {
+          "path": "server/gleam.toml",
+          "lines": 33,
+          "purpose": "Server subproject configuration",
+          "status": "ACTIVE",
+          "dependencies": 15
+        },
+        {
+          "path": "shared/gleam.toml",
+          "lines": 17,
+          "purpose": "Shared types library configuration",
+          "status": "ACTIVE",
+          "dependencies": 3
+        }
+      ],
+      "build_artifacts": {
+        "count": 39,
+        "location": "*/build/packages/*/gleam.toml",
+        "status": "AUTO_GENERATED",
+        "recommendation": "NO_ACTION - Managed by build system"
+      },
+      "recommendation": "NO_REDUNDANCY - Each config serves distinct purpose"
+    },
+    "environment_configs": {
+      "env_files": {
+        "found": 0,
+        "searched_patterns": [
+          ".env",
+          ".env.local",
+          ".env.development",
+          ".env.production",
+          "*.env"
+        ],
+        "status": "NONE_FOUND",
+        "recommendation": "GOOD - Environment variables likely managed by dot_env library at runtime"
+      }
+    },
+    "build_configurations": {
+      "package_json": [
+        {
+          "path": "package.json",
+          "purpose": "Node.js project configuration",
+          "status": "ACTIVE",
+          "scripts": {
+            "build": "gleam build",
+            "test": "gleam test",
+            "lint": "potential",
+            "typecheck": "potential"
+          },
+          "dependencies": [
+            "puppeteer",
+            "puppeteer-core"
+          ]
+        },
+        {
+          "path": "node_modules/*/package.json",
+          "count": 149,
+          "status": "DEPENDENCY_CONFIGS",
+          "recommendation": "NO_ACTION - Standard npm structure"
+        }
+      ],
+      "recommendation": "NO_REDUNDANCY"
+    },
+    "git_configurations": {
+      "gitignore": {
+        "path": ".gitignore",
+        "status": "PRESENT",
+        "needs_update": true,
+        "additions_recommended": [
+          "*.db-shm",
+          "*.db-wal",
+          "*.db-journal",
+          ".claude-flow/metrics/*.json (older than 30 days)",
+          ".swarm/memory.db-shm",
+          ".swarm/memory.db-wal",
+          ".beads/beads.db-shm",
+          ".beads/beads.db-wal"
+        ],
+        "reason": "SQLite temporary files are currently being tracked in git"
+      },
+      "git_hooks": {
+        "backup_files": [
+          ".git/hooks/pre-commit.backup",
+          ".git/hooks/post-merge.backup"
+        ],
+        "recommendation": "DELETE - These are backup files no longer needed",
+        "priority": "LOW"
+      }
+    },
+    "claude_flow_configs": {
+      "metrics_configs": {
+        "path": ".claude-flow/metrics/",
+        "files": [
+          "performance.json",
+          "system-metrics.json",
+          "task-metrics.json"
+        ],
+        "duplicates_across_projects": true,
+        "locations": [
+          ".claude-flow/metrics/",
+          "gleam/.claude-flow/metrics/"
+        ],
+        "recommendation": "CONSOLIDATE - Decide on single metrics location",
+        "suggested_structure": {
+          "option_1": "Keep only root .claude-flow/metrics/",
+          "option_2": "Add .claude-flow to .gitignore and treat as build artifact",
+          "preferred": "option_2"
+        },
+        "priority": "MEDIUM"
+      }
+    }
+  },
+  "conflicting_configurations": {
+    "found": false,
+    "checked": [
+      "Port configurations",
+      "Database connection strings",
+      "API endpoints",
+      "Build targets"
+    ],
+    "status": "NO_CONFLICTS_DETECTED"
+  },
+  "consolidation_recommendations": [
+    {
+      "action": "UPDATE_GITIGNORE",
+      "priority": "HIGH",
+      "changes": [
+        "Add *.db-shm",
+        "Add *.db-wal",
+        "Add *.db-journal",
+        "Consider adding .claude-flow/metrics/"
+      ],
+      "reason": "Prevent tracking SQLite temporary files and metrics",
+      "estimated_time": "5 minutes"
+    },
+    {
+      "action": "DELETE_GIT_HOOK_BACKUPS",
+      "priority": "LOW",
+      "files": [
+        ".git/hooks/pre-commit.backup",
+        ".git/hooks/post-merge.backup"
+      ],
+      "command": "rm .git/hooks/*.backup",
+      "estimated_time": "1 minute"
+    },
+    {
+      "action": "CONSOLIDATE_METRICS",
+      "priority": "MEDIUM",
+      "approach": "Decide on metrics strategy",
+      "options": [
+        {
+          "option": "Single root metrics directory",
+          "pros": ["Centralized", "Easier to analyze"],
+          "cons": ["Per-project metrics lost"]
+        },
+        {
+          "option": "Add to .gitignore",
+          "pros": ["Treat as runtime data", "No repo bloat"],
+          "cons": ["Metrics not version controlled"]
+        }
+      ],
+      "recommended": "Add .claude-flow/metrics/ to .gitignore",
+      "estimated_time": "10 minutes"
+    }
+  ],
+  "space_analysis": {
+    "total_config_space": "~200 KB",
+    "redundant_space": "8 KB",
+    "percentage_redundant": 4.0,
+    "impact": "MINIMAL - Configuration redundancy is negligible"
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "analysis_date": "2025-12-03",
+  "project": "/home/lewis/src/meal-planner",
+  "summary": {
+    "files_analyzed": 41,
+    "files_with_potential_unused_imports": 5,
+    "total_potential_unused_imports": 12
+  },
+  "findings": [
+    {
+      "file": "gleam/src/meal_planner/auto_planner.gleam",
+      "line": 207,
+      "import": "order module (for order.Lt, order.Gt)",
+      "status": "missing_import",
+      "severity": "error",
+      "issue": "Code uses order.Lt and order.Gt but doesn't import gleam/order",
+      "fix": "Add: import gleam/order"
+    },
+    {
+      "file": "gleam/src/meal_planner/ui/pages/dashboard.gleam",
+      "line": 18,
+      "import": "gleam/option",
+      "status": "potentially_unused",
+      "severity": "low",
+      "issue": "File imports gleam/option but appears to be stub with TODO",
+      "note": "May be needed when implemented"
+    },
+    {
+      "file": "gleam/src/meal_planner/ui/pages/food_search.gleam",
+      "line": 16,
+      "import": "gleam/option",
+      "status": "potentially_unused",
+      "severity": "low",
+      "issue": "File imports gleam/option but appears to be stub with TODO",
+      "note": "May be needed when implemented"
+    },
+    {
+      "file": "gleam/src/meal_planner/ui/components/forms.gleam",
+      "line": 14,
+      "import": "gleam/option",
+      "status": "potentially_unused",
+      "severity": "low",
+      "issue": "File imports gleam/option but functions return placeholder strings",
+      "note": "May be needed when implemented"
+    },
+    {
+      "file": "gleam/src/meal_planner/ui/components/progress.gleam",
+      "line": 14-17,
+      "imports": ["gleam/option", "gleam/int", "gleam/float", "meal_planner/ui/types/ui_types"],
+      "status": "stub_implementation",
+      "severity": "low",
+      "issue": "File has imports but contains TODO comment about missing lustre imports",
+      "note": "Waiting for lustre/element and lustre/attribute imports"
+    },
+    {
+      "file": "gleam/src/meal_planner/state.gleam",
+      "line": 18-23,
+      "imports": [
+        "gleam/erlang/process",
+        "gleam/option",
+        "gleam/otp/actor",
+        "gleam/otp/supervision",
+        "meal_planner/ncp",
+        "shared/types"
+      ],
+      "status": "orphaned_module",
+      "severity": "medium",
+      "issue": "Entire module appears unused in web architecture",
+      "recommendation": "If module is truly unused, all imports are dead code"
+    }
+  ],
+  "gleam_stdlib_usage": {
+    "most_imported": [
+      {"module": "gleam/list", "count": 28},
+      {"module": "gleam/string", "count": 20},
+      {"module": "gleam/option", "count": 18},
+      {"module": "gleam/int", "count": 15},
+      {"module": "gleam/float", "count": 12},
+      {"module": "gleam/io", "count": 10},
+      {"module": "gleam/result", "count": 9}
+    ]
+  },
+  "external_package_usage": {
+    "pog": {
+      "files": 4,
+      "usage": "PostgreSQL database access",
+      "status": "active"
+    },
+    "wisp": {
+      "files": 2,
+      "usage": "Web framework",
+      "status": "active"
+    },
+    "mist": {
+      "files": 1,
+      "usage": "HTTP server",
+      "status": "active"
+    },
+    "lustre": {
+      "files": 1,
+      "usage": "UI rendering (SSR)",
+      "status": "active"
+    },
+    "glaml": {
+      "files": 1,
+      "usage": "YAML parsing for recipes",
+      "status": "active"
+    },
+    "simplifile": {
+      "files": 3,
+      "usage": "File operations",
+      "status": "active"
+    },
+    "envoy": {
+      "files": 3,
+      "usage": "Environment variables",
+      "status": "active"
+    },
+    "logging": {
+      "files": 1,
+      "usage": "Structured logging",
+      "status": "active"
+    },
+    "dot_env": {
+      "files": 1,
+      "usage": ".env file loading",
+      "status": "active"
+    }
+  },
+  "recommendations": [
+    "Fix missing order import in auto_planner.gleam - this will cause compilation error",
+    "Complete stub implementations (dashboard, food_search, forms) or remove them",
+    "Verify if state.gleam module is needed - if not, remove entire file",
+    "Review validation.gleam vs diet_validator.gleam for redundancy",
+    "All external packages appear to be actively used - no unused dependencies detected"
+  ]
+}

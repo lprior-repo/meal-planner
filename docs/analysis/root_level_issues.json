@@ -1,0 +1,329 @@
+{
+  "analysis_metadata": {
+    "timestamp": "2025-12-03T11:56:00Z",
+    "analyzer_agent": "structure-analyzer",
+    "thread_id": "CLEANUP-2025-001"
+  },
+  "root_level_analysis": {
+    "current_files": [
+      {
+        "name": "AGENTS.md",
+        "size": "12KB",
+        "purpose": "Agent documentation",
+        "status": "appropriate",
+        "action": "none"
+      },
+      {
+        "name": "CLAUDE.md",
+        "size": "16KB",
+        "purpose": "Claude Code configuration",
+        "status": "appropriate",
+        "action": "none"
+      },
+      {
+        "name": "README.md",
+        "size": "4.5KB",
+        "purpose": "Project readme",
+        "status": "appropriate",
+        "action": "none"
+      },
+      {
+        "name": "LICENSE",
+        "size": "35KB",
+        "purpose": "License file",
+        "status": "appropriate",
+        "action": "none"
+      },
+      {
+        "name": "package.json",
+        "size": "56B",
+        "purpose": "Node package config",
+        "status": "appropriate",
+        "action": "none"
+      },
+      {
+        "name": "package-lock.json",
+        "size": "40KB",
+        "purpose": "Dependency lock",
+        "status": "appropriate",
+        "action": "none"
+      },
+      {
+        "name": "Taskfile.yml",
+        "size": "5.9KB",
+        "purpose": "Task runner config",
+        "status": "appropriate",
+        "action": "none"
+      },
+      {
+        "name": ".gitignore",
+        "size": "521B",
+        "purpose": "Git ignore rules",
+        "status": "needs updates",
+        "action": "add database file patterns"
+      },
+      {
+        "name": ".gitattributes",
+        "size": "70B",
+        "purpose": "Git attributes",
+        "status": "appropriate",
+        "action": "none"
+      },
+      {
+        "name": "mise.toml",
+        "size": "41B",
+        "purpose": "Mise config",
+        "status": "appropriate",
+        "action": "none"
+      },
+      {
+        "name": ".mcp.json",
+        "size": "503B",
+        "purpose": "MCP configuration",
+        "status": "appropriate",
+        "action": "none"
+      },
+      {
+        "name": "opencode.json",
+        "size": "285B",
+        "purpose": "OpenCode config",
+        "status": "appropriate",
+        "action": "none"
+      },
+      {
+        "name": "debug-browser.mjs",
+        "size": "1.5KB",
+        "purpose": "Debug utility",
+        "status": "misplaced",
+        "action": "move to scripts/debug/",
+        "priority": "medium"
+      },
+      {
+        "name": "claude-flow",
+        "size": "1.1KB",
+        "purpose": "CLI wrapper script",
+        "status": "misplaced",
+        "action": "move to scripts/tools/",
+        "priority": "medium"
+      }
+    ],
+    "cleanup_priorities": [
+      {
+        "priority": 1,
+        "action": "Update .gitignore",
+        "items": [
+          "*.db",
+          "*.db-shm",
+          "*.db-wal",
+          ".swarm/",
+          ".hive-mind/",
+          ".beads/beads.db*",
+          "db_export/"
+        ],
+        "impact": "Prevents database files from being committed",
+        "urgency": "CRITICAL"
+      },
+      {
+        "priority": 2,
+        "action": "Remove tracked database files",
+        "commands": [
+          "git rm --cached .beads/beads.db*",
+          "git rm --cached .hive-mind/hive.db",
+          "git rm --cached .swarm/memory.db*"
+        ],
+        "impact": "Cleans git history of database files",
+        "urgency": "CRITICAL"
+      },
+      {
+        "priority": 3,
+        "action": "Handle db_export/ directory",
+        "options": [
+          {
+            "option": "Move to external storage",
+            "pros": "Preserves data, reduces repo size by 208MB (64%)",
+            "cons": "Requires cloud storage setup"
+          },
+          {
+            "option": "Add to .gitignore",
+            "pros": "Simple, keeps local copy",
+            "cons": "Takes up local disk space"
+          },
+          {
+            "option": "Archive and delete",
+            "pros": "Maximum cleanup",
+            "cons": "Data loss if not backed up"
+          }
+        ],
+        "urgency": "HIGH"
+      },
+      {
+        "priority": 4,
+        "action": "Organize root scripts",
+        "moves": [
+          {
+            "from": "debug-browser.mjs",
+            "to": "scripts/debug/debug-browser.mjs"
+          },
+          {
+            "from": "claude-flow",
+            "to": "scripts/tools/claude-flow"
+          }
+        ],
+        "impact": "Cleaner root directory",
+        "urgency": "MEDIUM"
+      },
+      {
+        "priority": 5,
+        "action": "Consolidate metrics directories",
+        "task": "Merge or remove gleam/.claude-flow/metrics/",
+        "impact": "Eliminates duplicate metric storage",
+        "urgency": "MEDIUM"
+      }
+    ],
+    "directory_organization_recommendations": {
+      "current_structure": {
+        "docs": "50+ markdown files",
+        "gleam": "main application",
+        "server": "unclear purpose",
+        "scripts": "40KB mixed scripts",
+        "specs": "56KB specifications",
+        "recipes": "68KB recipe data",
+        "shared": "2.9MB shared resources"
+      },
+      "recommended_structure": {
+        "docs": {
+          "subdirs": ["architecture/", "api/", "guides/", "analysis/"],
+          "action": "Organize 50+ docs into subdirectories"
+        },
+        "scripts": {
+          "subdirs": ["debug/", "tools/", "build/", "utils/"],
+          "action": "Organize by purpose"
+        },
+        "data": {
+          "action": "Create data/ directory",
+          "contents": ["recipes/", "exports/ (for db_export)"],
+          "gitignore": "data/exports/"
+        },
+        "gleam": {
+          "note": "Well-organized, keep structure",
+          "cleanup": "Remove or document duplicate .claude-flow/"
+        }
+      }
+    },
+    "large_files_analysis": {
+      "files_over_500_lines": [
+        {
+          "file": "gleam/src/meal_planner/web.gleam",
+          "lines": 1522,
+          "status": "CRITICAL - exceeds 500 line guideline",
+          "recommendation": "Refactor into smaller modules"
+        },
+        {
+          "file": "gleam/src/meal_planner/storage.gleam",
+          "lines": 1384,
+          "status": "CRITICAL - exceeds 500 line guideline",
+          "recommendation": "Split into storage/queries, storage/models"
+        },
+        {
+          "file": "gleam/test/ncp_test.gleam",
+          "lines": 1475,
+          "status": "WARNING - large test file",
+          "recommendation": "Consider splitting test suites"
+        },
+        {
+          "file": "gleam/src/meal_planner/ncp.gleam",
+          "lines": 835,
+          "status": "WARNING - approaching limit",
+          "recommendation": "Monitor for refactoring opportunity"
+        },
+        {
+          "file": "gleam/test/meal_planner/save_food_to_log_test.gleam",
+          "lines": 602,
+          "status": "WARNING - large test file",
+          "recommendation": "Acceptable for comprehensive test coverage"
+        },
+        {
+          "file": "gleam/src/meal_planner/vertical_diet_recipes.gleam",
+          "lines": 595,
+          "status": "WARNING - approaching limit",
+          "recommendation": "Consider extracting recipe data"
+        },
+        {
+          "file": "gleam/test/recipe_creation_test.gleam",
+          "lines": 677,
+          "status": "WARNING - large test file"
+        },
+        {
+          "file": "gleam/test/recipe_creation_integration_test.gleam",
+          "lines": 644,
+          "status": "WARNING - large test file"
+        },
+        {
+          "file": "gleam/test/auto_planner_test.gleam",
+          "lines": 565,
+          "status": "WARNING - large test file"
+        },
+        {
+          "file": "gleam/test/vertical_diet_recipes_test.gleam",
+          "lines": 549,
+          "status": "WARNING - approaching limit"
+        },
+        {
+          "file": "gleam/src/scripts/init_pg.gleam",
+          "lines": 548,
+          "status": "WARNING - large init script"
+        }
+      ],
+      "summary": {
+        "files_exceeding_500": 11,
+        "critical_refactoring_needed": 2,
+        "warnings": 9,
+        "test_files": 7,
+        "source_files": 4
+      }
+    }
+  },
+  "immediate_action_items": [
+    {
+      "action": "Update .gitignore with database patterns",
+      "urgency": "CRITICAL",
+      "time_estimate": "5 minutes"
+    },
+    {
+      "action": "Remove database files from git tracking",
+      "urgency": "CRITICAL",
+      "time_estimate": "10 minutes"
+    },
+    {
+      "action": "Move or gitignore db_export/",
+      "urgency": "HIGH",
+      "time_estimate": "15 minutes"
+    },
+    {
+      "action": "Organize root scripts into scripts/",
+      "urgency": "MEDIUM",
+      "time_estimate": "20 minutes"
+    },
+    {
+      "action": "Consolidate metrics directories",
+      "urgency": "MEDIUM",
+      "time_estimate": "15 minutes"
+    },
+    {
+      "action": "Refactor web.gleam (1522 lines)",
+      "urgency": "MEDIUM",
+      "time_estimate": "2-3 hours"
+    },
+    {
+      "action": "Refactor storage.gleam (1384 lines)",
+      "urgency": "MEDIUM",
+      "time_estimate": "2-3 hours"
+    }
+  ],
+  "estimated_total_cleanup_time": "4-6 hours",
+  "repository_size_impact": {
+    "current_size": "~324MB",
+    "potential_reduction": "208MB (64%)",
+    "after_cleanup": "~116MB"
+  }
+}

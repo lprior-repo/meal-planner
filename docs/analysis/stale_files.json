@@ -1,0 +1,247 @@
+{
+  "analysis_date": "2025-12-03",
+  "confidence_levels": {
+    "high": "90-100% safe to delete",
+    "medium": "70-89% safe, needs review",
+    "low": "50-69% safe, requires investigation"
+  },
+  "backup_and_broken_files": {
+    "confidence": "high",
+    "files": [
+      {
+        "file": "gleam/src/meal_planner/auto_planner.gleam.wip",
+        "reason": "WIP file from active development",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete after verifying gleam/src/meal_planner/auto_planner.gleam is correct",
+        "confidence_score": 95
+      },
+      {
+        "file": "gleam/src/meal_planner/diet_validator.gleam.wip",
+        "reason": "WIP file from active development",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete after verifying diet_validator.gleam is correct",
+        "confidence_score": 95
+      },
+      {
+        "file": "gleam/test/auto_planner_test.gleam.wip",
+        "reason": "Work-in-progress test file",
+        "last_modified": "2025-12-03",
+        "recommendation": "Merge into main test file or delete",
+        "confidence_score": 90
+      },
+      {
+        "file": "gleam/test/ui/progress_test.gleam.bak",
+        "reason": "Backup file from refactoring StatusType enum",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete if progress_test.gleam is working",
+        "confidence_score": 100
+      },
+      {
+        "file": "gleam/test/auto_planner_test.gleam.bak",
+        "reason": "Backup file",
+        "last_modified": "Recent",
+        "recommendation": "Delete if tests pass",
+        "confidence_score": 100
+      },
+      {
+        "file": "gleam/test_progress.gleam",
+        "reason": "Root-level test file (violates project structure)",
+        "last_modified": "2025-12-03",
+        "recommendation": "Move to gleam/test/ or delete if duplicate",
+        "confidence_score": 85
+      },
+      {
+        "file": "gleam/src/meal_planner/custom_food_storage.gleam.BROKEN",
+        "reason": "Explicitly marked as broken",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete if custom_food_storage.gleam works",
+        "confidence_score": 100
+      },
+      {
+        "file": "gleam/src/meal_planner/custom_food_storage.gleam.OLD",
+        "reason": "Old version saved during refactor",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete - superseded by current version",
+        "confidence_score": 100
+      },
+      {
+        "file": "server/build-errors.txt",
+        "reason": "Build log file committed to git",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete and add to .gitignore",
+        "confidence_score": 100
+      },
+      {
+        "file": "server/build.log",
+        "reason": "Build log file",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete and add to .gitignore",
+        "confidence_score": 100
+      },
+      {
+        "file": "server/build_output.txt",
+        "reason": "Build output committed",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete and add to .gitignore",
+        "confidence_score": 100
+      },
+      {
+        "file": "server/final-test-output.txt",
+        "reason": "Test output file",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete and add to .gitignore",
+        "confidence_score": 100
+      },
+      {
+        "file": "server/test-output.txt",
+        "reason": "Test output file",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete and add to .gitignore",
+        "confidence_score": 100
+      },
+      {
+        "file": "server/src/server/meal_logging.gleam.broken3",
+        "reason": "Failed refactoring attempt #3",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete if meal_logging.gleam works",
+        "confidence_score": 95
+      },
+      {
+        "file": "server/src/server/meal_logging_api.gleam.broken2",
+        "reason": "Failed refactoring attempt #2",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete if current API works",
+        "confidence_score": 95
+      },
+      {
+        "file": "server/src/server/meal_logging_api.gleam.disabled",
+        "reason": "Disabled version",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete if no longer needed",
+        "confidence_score": 90
+      },
+      {
+        "file": "server/src/server/meal_logging_backup.gleam.disabled",
+        "reason": "Backup from migration work",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete if migration successful",
+        "confidence_score": 90
+      },
+      {
+        "file": "server/src/server/web.gleam.backup",
+        "reason": "Backup during web refactor",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete if web.gleam is stable",
+        "confidence_score": 95
+      },
+      {
+        "file": "server/src/server/web_dashboard_functions.txt",
+        "reason": "Text notes/scratchpad",
+        "last_modified": "2025-12-03",
+        "recommendation": "Move to docs/ or delete",
+        "confidence_score": 80
+      },
+      {
+        "file": "server/src/server/web_dashboard_patch.gleam.broken",
+        "reason": "Broken patch file",
+        "last_modified": "2025-12-03",
+        "recommendation": "Delete if patch was applied or abandoned",
+        "confidence_score": 95
+      },
+      {
+        "file": "gleam/test/storage_test.gleam.disabled",
+        "reason": "Disabled test file",
+        "last_modified": "2025-12-03",
+        "recommendation": "Re-enable tests or delete if obsolete",
+        "confidence_score": 75
+      },
+      {
+        "file": "scripts/insert_vertical_diet_recipes.gleam",
+        "reason": "One-time data import script in wrong location",
+        "last_modified": "2025-12-03",
+        "recommendation": "Move to gleam/src/scripts/ or delete if import complete",
+        "confidence_score": 85
+      }
+    ],
+    "total_backup_files": 22,
+    "total_size_estimate": "~500KB"
+  },
+  "build_artifacts": {
+    "confidence": "high",
+    "directories": [
+      {
+        "path": "gleam/build/",
+        "reason": "Gleam build artifacts",
+        "recommendation": "Should NOT be tracked in git. Add to .gitignore",
+        "files_count": "~150+",
+        "confidence_score": 100
+      },
+      {
+        "path": "shared/build/",
+        "reason": "Shared workspace build artifacts",
+        "recommendation": "Should NOT be tracked in git. Add to .gitignore",
+        "files_count": "~50+",
+        "confidence_score": 100
+      }
+    ],
+    "action_required": "Add build/ directories to .gitignore and run git rm -r --cached"
+  },
+  "metrics_and_logs": {
+    "confidence": "medium",
+    "files": [
+      {
+        "file": ".claude-flow/metrics/system-metrics.json",
+        "size": "464KB",
+        "commits": 21,
+        "reason": "Auto-generated metrics file, very large",
+        "recommendation": "Should be in .gitignore, not tracked",
+        "confidence_score": 100
+      },
+      {
+        "file": ".claude-flow/metrics/performance.json",
+        "commits": 17,
+        "reason": "Auto-generated metrics",
+        "recommendation": "Add to .gitignore",
+        "confidence_score": 100
+      },
+      {
+        "file": ".claude-flow/metrics/task-metrics.json",
+        "commits": 17,
+        "reason": "Auto-generated metrics",
+        "recommendation": "Add to .gitignore",
+        "confidence_score": 100
+      },
+      {
+        "file": ".swarm/memory.db",
+        "size": "76KB",
+        "reason": "SQLite database for swarm coordination",
+        "recommendation": "Add to .gitignore, should not be tracked",
+        "confidence_score": 100
+      },
+      {
+        "file": ".swarm/memory.db-shm",
+        "reason": "SQLite shared memory file",
+        "recommendation": "Add to .gitignore",
+        "confidence_score": 100
+      },
+      {
+        "file": ".swarm/memory.db-wal",
+        "reason": "SQLite write-ahead log",
+        "recommendation": "Add to .gitignore",
+        "confidence_score": 100
+      }
+    ],
+    "action_required": "Update .gitignore and remove from tracking"
+  },
+  "documentation_candidates": {
+    "confidence": "medium",
+    "files": [
+      {
+        "file": "docs/post_recipes_implementation.gleam",
+        "reason": "Gleam source code in docs/ folder",
+        "recommendation": "Move to examples/ or implementation location",
+        "confidence_score": 70
+      }
+    ]
+  }
+}
