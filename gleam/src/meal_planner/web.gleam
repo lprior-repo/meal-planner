@@ -88,15 +88,16 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
 
     // SSR pages
     ["recipes"] -> recipes_page(ctx)
-    ["recipes", "new"] -> new_recipe_page()
-    ["recipes", id, "edit"] -> edit_recipe_page(id, ctx)
+    // TODO: Implement these pages
+    // ["recipes", "new"] -> new_recipe_page()
+    // ["recipes", id, "edit"] -> edit_recipe_page(id, ctx)
     ["recipes", id] -> recipe_detail_page(id, ctx)
     ["dashboard"] -> dashboard_page(req, ctx)
     ["profile"] -> profile_page(ctx)
     ["foods"] -> foods_page(req, ctx)
     ["foods", id] -> food_detail_page(id, ctx)
-    ["log"] -> log_meal_page(ctx)
-    ["log", recipe_id] -> log_meal_form(recipe_id, ctx)
+    // ["log"] -> log_meal_page(ctx)
+    // ["log", recipe_id] -> log_meal_form(recipe_id, ctx)
 
     // 404
     _ -> not_found_page()
