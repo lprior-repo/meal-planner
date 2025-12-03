@@ -14,13 +14,22 @@ import gleam/option
 import gleam/string
 import gleam/list
 import gleam/int
+import gleam/float
 
 /// Text input field
 ///
 /// Renders: <input type="text" class="input" />
-pub fn input_field(name: String, _placeholder: String, _value: String) -> String {
-  // TODO: Implement using Lustre element builder
-  "<!-- input_field: " <> name <> " -->"
+pub fn input_field(name: String, placeholder: String, value: String) -> String {
+  "<input type=\"text\" class=\"input\" "
+  <> "name=\""
+  <> name
+  <> "\" "
+  <> "placeholder=\""
+  <> placeholder
+  <> "\" "
+  <> "value=\""
+  <> value
+  <> "\" />"
 }
 
 /// Text input with label
@@ -31,13 +40,31 @@ pub fn input_field(name: String, _placeholder: String, _value: String) -> String
 ///   <input type="text" id="name" />
 /// </div>
 pub fn input_with_label(
-  _label: String,
+  label: String,
   name: String,
-  _placeholder: String,
-  _value: String,
+  placeholder: String,
+  value: String,
 ) -> String {
-  // TODO: Implement using Lustre element builder
-  "<!-- input_with_label: " <> name <> " -->"
+  "<div class=\"form-group\">"
+  <> "<label for=\""
+  <> name
+  <> "\">"
+  <> label
+  <> "</label>"
+  <> "<input type=\"text\" class=\"input\" "
+  <> "id=\""
+  <> name
+  <> "\" "
+  <> "name=\""
+  <> name
+  <> "\" "
+  <> "placeholder=\""
+  <> placeholder
+  <> "\" "
+  <> "value=\""
+  <> value
+  <> "\" />"
+  <> "</div>"
 }
 
 /// Search input with integrated button
@@ -47,9 +74,17 @@ pub fn input_with_label(
 ///   <input type="search" class="input-search" />
 ///   <button class="btn btn-primary">Search</button>
 /// </div>
-pub fn search_input(query: String, _placeholder: String) -> String {
-  // TODO: Implement using Lustre element builder
-  "<!-- search_input: " <> query <> " -->"
+pub fn search_input(query: String, placeholder: String) -> String {
+  "<div class=\"search-box\">"
+  <> "<input type=\"search\" class=\"input-search\" "
+  <> "placeholder=\""
+  <> placeholder
+  <> "\" "
+  <> "value=\""
+  <> query
+  <> "\" />"
+  <> "<button class=\"btn btn-primary\" type=\"submit\">Search</button>"
+  <> "</div>"
 }
 
 /// Number input field
@@ -57,13 +92,41 @@ pub fn search_input(query: String, _placeholder: String) -> String {
 /// Renders: <input type="number" class="input" />
 pub fn number_input(
   name: String,
-  _label: String,
-  _value: Float,
-  _min: option.Option(Float),
-  _max: option.Option(Float),
+  label: String,
+  value: Float,
+  min: option.Option(Float),
+  max: option.Option(Float),
 ) -> String {
-  // TODO: Implement using Lustre element builder
-  "<!-- number_input: " <> name <> " -->"
+  let value_str = float.to_string(value)
+  let min_attr = case min {
+    option.Some(m) -> " min=\"" <> float.to_string(m) <> "\""
+    option.None -> ""
+  }
+  let max_attr = case max {
+    option.Some(m) -> " max=\"" <> float.to_string(m) <> "\""
+    option.None -> ""
+  }
+  
+  "<div class=\"form-group\">"
+  <> "<label for=\""
+  <> name
+  <> "\">"
+  <> label
+  <> "</label>"
+  <> "<input type=\"number\" class=\"input\" "
+  <> "id=\""
+  <> name
+  <> "\" "
+  <> "name=\""
+  <> name
+  <> "\" "
+  <> "value=\""
+  <> value_str
+  <> "\""
+  <> min_attr
+  <> max_attr
+  <> " />"
+  <> "</div>"
 }
 
 /// Select dropdown
@@ -77,11 +140,33 @@ pub fn number_input(
 /// </div>
 pub fn select_field(
   name: String,
-  _label: String,
-  _options: List(#(String, String)),
+  label: String,
+  options: List(#(String, String)),
 ) -> String {
-  // TODO: Implement using Lustre element builder
-  "<!-- select_field: " <> name <> " -->"
+  let options_html =
+    options
+    |> list.map(fn(opt) {
+      let #(value, text) = opt
+      "<option value=\"" <> value <> "\">" <> text <> "</option>"
+    })
+    |> string.concat()
+  
+  "<div class=\"form-group\">"
+  <> "<label for=\""
+  <> name
+  <> "\">"
+  <> label
+  <> "</label>"
+  <> "<select id=\""
+  <> name
+  <> "\" "
+  <> "name=\""
+  <> name
+  <> "\" "
+  <> "class=\"input\">"
+  <> options_html
+  <> "</select>"
+  <> "</div>"
 }
 
 /// Form group container with label and error message
@@ -94,11 +179,21 @@ pub fn select_field(
 /// </div>
 pub fn form_field(
   label: String,
-  _input: String,
-  _error: option.Option(String),
+  input: String,
+  error: option.Option(String),
 ) -> String {
-  // TODO: Implement using Lustre element builder
-  "<!-- form_field: " <> label <> " -->"
+  let error_html = case error {
+    option.Some(err_msg) -> "<div class=\"form-error\">" <> err_msg <> "</div>"
+    option.None -> ""
+  }
+  
+  "<div class=\"form-group\">"
+  <> "<label>"
+  <> label
+  <> "</label>"
+  <> input
+  <> error_html
+  <> "</div>"
 }
 
 /// Form container
@@ -110,12 +205,23 @@ pub fn form_field(
 /// </form>
 pub fn form(
   action: String,
-  _method: String,
-  _fields: List(String),
-  _submit_label: String,
+  method: String,
+  fields: List(String),
+  submit_label: String,
 ) -> String {
-  // TODO: Implement using Lustre element builder
-  "<!-- form: " <> action <> " -->"
+  let fields_html = string.concat(fields)
+  
+  "<form action=\""
+  <> action
+  <> "\" "
+  <> "method=\""
+  <> method
+  <> "\">"
+  <> fields_html
+  <> "<button type=\"submit\" class=\"btn btn-primary\">"
+  <> submit_label
+  <> "</button>"
+  <> "</form>"
 }
 // ===================================================================
 // SEARCH INPUT COMPONENTS (Bead meal-planner-rvz.1)
