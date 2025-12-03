@@ -6,16 +6,13 @@
 ///
 /// Results are ordered with custom foods first, then USDA foods.
 
+import gleam/list
 import gleam/string
+import meal_planner/storage
 import pog
-// TODO: Will be used in GREEN phase implementation:
-// import gleam/list
-// import gleam/result
-// import meal_planner/custom_food_storage
-// import meal_planner/storage
 import shared/types.{
   type FoodSearchError, type FoodSearchResponse, DatabaseError,
-  FoodSearchResponse, InvalidQuery,
+  FoodSearchResponse, InvalidQuery, UsdaFoodResult,
 }
 
 /// Search both custom foods and USDA database
@@ -53,13 +50,38 @@ pub fn unified_food_search(
         l if l < 1 || l > 100 ->
           Error(InvalidQuery("Limit must be between 1 and 100"))
         _ -> {
-          // STEP 3: Return placeholder response for now
-          // This will make validation tests pass, but structure tests will still fail
+          // STEP 3: For now, custom foods not implemented - use full limit for USDA
+          // TODO: When custom_food_storage module is ready, split limit 50/50
+          let custom_results = []  // Placeholder until custom foods implemented
+          let usda_limit = limit
+
+          // STEP 4: Query USDA foods (global)
+          let usda_results = case storage.search_foods(db, trimmed_query, usda_limit) {
+            Ok(foods) ->
+              foods
+              |> list.map(fn(food) {
+                UsdaFoodResult(
+                  food.fdc_id,
+                  food.description,
+                  food.data_type,
+                  food.category,
+                )
+              })
+            Error(_) -> []  // Graceful degradation - return empty on error
+          }
+
+          // STEP 5: Merge results (custom first, then USDA)
+          let all_results = list.append(custom_results, usda_results)
+          let custom_count = list.length(custom_results)
+          let usda_count = list.length(usda_results)
+          let total_count = custom_count + usda_count
+
+          // STEP 6: Return response
           Ok(FoodSearchResponse(
-            results: [],
-            total_count: 0,
-            custom_count: 0,
-            usda_count: 0,
+            results: all_results,
+            total_count: total_count,
+            custom_count: custom_count,
+            usda_count: usda_count,
           ))
         }
       }

@@ -1,0 +1,447 @@
+/* ===================================================================
+   DESIGN SYSTEM: Theme & Design Tokens
+
+   This file defines all CSS custom properties (design tokens) used
+   throughout the meal planner application. It serves as the single
+   source of truth for:
+   - Color palette
+   - Typography scale
+   - Spacing scale
+   - Shadows and elevation
+   - Border radius
+   - Transitions and animations
+
+   References: docs/css_design_tokens.md
+   =================================================================== */
+
+:root {
+  /* ================================================================
+     COLOR PALETTE
+     ================================================================ */
+
+  /* Primary Colors - Main brand color (Blue) */
+  --color-primary-50: #f0f7ff;
+  --color-primary-100: #e0e9fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary: #007bff;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c3d66;
+  --color-primary-dark: #0056b3;
+  --color-primary-light: #cfe2ff;
+
+  /* Success - Positive feedback, confirmations */
+  --color-success: #28a745;
+  --color-success-light: #d4edda;
+  --color-success-dark: #1e7e34;
+
+  /* Warning - Caution, pending actions */
+  --color-warning: #ffc107;
+  --color-warning-light: #fff3cd;
+  --color-warning-dark: #e0a800;
+
+  /* Danger - Destructive actions, errors */
+  --color-danger: #dc3545;
+  --color-danger-light: #f8d7da;
+  --color-danger-dark: #bd2130;
+
+  /* Info - Informational messages */
+  --color-info: #17a2b8;
+  --color-info-light: #d1ecf1;
+  --color-info-dark: #0c5460;
+
+  /* Semantic Macro Colors */
+  --color-protein: #28a745;    /* Green */
+  --color-fat: #ffc107;        /* Amber */
+  --color-carbs: #17a2b8;      /* Cyan */
+
+  /* Neutral/Grayscale (0-900) */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  /* Semantic Text Colors */
+  --color-text: #333333;           /* Primary text */
+  --color-text-secondary: #666666;  /* Secondary text */
+  --color-text-muted: #999999;      /* Muted/disabled text */
+  --color-text-light: #ffffff;      /* Light/inverse text */
+
+  /* Background Colors */
+  --color-bg: #ffffff;              /* Primary background */
+  --color-bg-secondary: #f5f5f5;    /* Secondary background */
+  --color-bg-tertiary: #eeeeee;     /* Tertiary background */
+  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Border Colors */
+  --color-border: #e9ecef;         /* Standard border */
+  --color-border-light: #f0f0f0;   /* Light border */
+  --color-border-dark: #cccccc;    /* Dark border */
+
+  /* Disabled State */
+  --color-disabled-bg: #f5f5f5;
+  --color-disabled-text: #999999;
+  --color-disabled-border: #e0e0e0;
+
+  /* Focus/Interaction States */
+  --color-focus: var(--color-primary);
+  --color-hover: var(--color-primary-light);
+  --color-active: var(--color-primary-dark);
+
+  /* ================================================================
+     TYPOGRAPHY
+     ================================================================ */
+
+  /* Font Family Stack */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-serif: 'Georgia', 'Times New Roman', serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+
+  /* Font Size Scale (Modular Scale: 1.125) */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
+  --text-4xl: 2.25rem;     /* 36px */
+  --text-5xl: 2.5rem;      /* 40px */
+
+  /* Font Weights */
+  --font-thin: 100;
+  --font-extralight: 200;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  --font-black: 900;
+
+  /* Line Heights */
+  --line-tight: 1.2;
+  --line-normal: 1.5;
+  --line-relaxed: 1.75;
+  --line-loose: 2;
+
+  /* Letter Spacing */
+  --letter-tighter: -0.05em;
+  --letter-tight: -0.025em;
+  --letter-normal: 0em;
+  --letter-wide: 0.025em;
+  --letter-wider: 0.05em;
+  --letter-widest: 0.1em;
+
+  /* ================================================================
+     SPACING SCALE (8px base unit)
+     ================================================================ */
+
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;   /* 2px */
+  --space-1: 0.25rem;      /* 4px */
+  --space-1-5: 0.375rem;   /* 6px */
+  --space-2: 0.5rem;       /* 8px */
+  --space-2-5: 0.625rem;   /* 10px */
+  --space-3: 0.75rem;      /* 12px */
+  --space-3-5: 0.875rem;   /* 14px */
+  --space-4: 1rem;         /* 16px */
+  --space-5: 1.25rem;      /* 20px */
+  --space-6: 1.5rem;       /* 24px */
+  --space-7: 1.75rem;      /* 28px */
+  --space-8: 2rem;         /* 32px */
+  --space-9: 2.25rem;      /* 36px */
+  --space-10: 2.5rem;      /* 40px */
+  --space-12: 3rem;        /* 48px */
+  --space-14: 3.5rem;      /* 56px */
+  --space-16: 4rem;        /* 64px */
+  --space-20: 5rem;        /* 80px */
+  --space-24: 6rem;        /* 96px */
+  --space-28: 7rem;        /* 112px */
+  --space-32: 8rem;        /* 128px */
+
+  /* ================================================================
+     BORDER RADIUS
+     ================================================================ */
+
+  --radius-none: 0;
+  --radius-px: 1px;
+  --radius-sm: 0.25rem;    /* 4px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-2xl: 1.5rem;    /* 24px */
+  --radius-3xl: 2rem;      /* 32px */
+  --radius-full: 9999px;   /* Pill shape */
+
+  /* ================================================================
+     SHADOWS (Box-shadow)
+     ================================================================ */
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --shadow-none: 0 0 #0000;
+
+  /* Inset shadows (for borders/outlines) */
+  --shadow-inset-sm: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  --shadow-inset-md: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* ================================================================
+     TRANSITIONS & ANIMATIONS
+     ================================================================ */
+
+  /* Duration (Milliseconds) */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+
+  /* Easing Functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Transition Shorthand */
+  --transition-fast: all var(--duration-150) var(--ease-out);
+  --transition: all var(--duration-300) var(--ease-out);
+  --transition-slow: all var(--duration-500) var(--ease-out);
+
+  /* ================================================================
+     BREAKPOINTS (Mobile-First Approach)
+     ================================================================ */
+
+  /* Mobile: < 640px (default) */
+  /* Tablet: >= 640px (sm) */
+  --breakpoint-sm: 640px;
+  /* Desktop: >= 1024px (lg) */
+  --breakpoint-lg: 1024px;
+  /* Large Desktop: >= 1280px (xl) */
+  --breakpoint-xl: 1280px;
+
+  /* ================================================================
+     CONTAINER SIZES
+     ================================================================ */
+
+  --max-width-xs: 20rem;       /* 320px */
+  --max-width-sm: 24rem;       /* 384px */
+  --max-width-md: 28rem;       /* 448px */
+  --max-width-lg: 32rem;       /* 512px */
+  --max-width-xl: 36rem;       /* 576px */
+  --max-width-2xl: 42rem;      /* 672px */
+  --max-width-3xl: 48rem;      /* 768px */
+  --max-width-4xl: 56rem;      /* 896px */
+  --max-width-5xl: 64rem;      /* 1024px */
+  --max-width-6xl: 72rem;      /* 1152px */
+  --max-width-7xl: 80rem;      /* 1280px */
+  --max-width-prose: 65ch;     /* Readable text width */
+
+  /* Standard container */
+  --container-width: 1200px;
+  --container-padding: var(--space-4);
+
+  /* ================================================================
+     Z-INDEX SCALE
+     ================================================================ */
+
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-fixed: 30;
+  --z-modal-backdrop: 40;
+  --z-modal: 50;
+  --z-popover: 60;
+  --z-tooltip: 70;
+}
+
+/* ===================================================================
+   BASE ELEMENT STYLES
+   =================================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--line-normal);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings */
+h1 {
+  font-size: var(--text-5xl);
+  font-weight: var(--font-bold);
+  line-height: var(--line-tight);
+  margin-bottom: var(--space-4);
+}
+
+h2 {
+  font-size: var(--text-4xl);
+  font-weight: var(--font-bold);
+  line-height: var(--line-tight);
+  margin-bottom: var(--space-3);
+}
+
+h3 {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--line-tight);
+  margin-bottom: var(--space-3);
+}
+
+h4 {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-2);
+}
+
+h5 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-2);
+}
+
+h6 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  margin-bottom: var(--space-2);
+}
+
+/* Paragraphs and text */
+p {
+  margin-bottom: var(--space-4);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+a:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Forms */
+input,
+textarea,
+select {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-sans);
+  border: none;
+  padding: 0;
+  background: none;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  padding: var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+th {
+  background-color: var(--color-bg-secondary);
+  font-weight: var(--font-semibold);
+}
+
+/* Code */
+code,
+pre {
+  font-family: var(--font-mono);
+  background-color: var(--color-bg-secondary);
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+}
+
+pre {
+  padding: var(--space-3);
+  overflow-x: auto;
+}
+
+/* ===================================================================
+   FOCUS & ACCESSIBILITY
+   =================================================================== */
+
+/* Remove default focus outline, use custom */
+:focus {
+  outline: none;
+}
+
+/* Keyboard focus visible indicator */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* TODO: Dark mode support (future enhancement)
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: #ffffff;
+    --color-bg: #1a1a1a;
+    --color-border: #333333;
+  }
+}
+*/
