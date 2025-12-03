@@ -36,33 +36,33 @@ fn assert_contains(haystack: String, needle: String) -> Nil {
 // ===================================================================
 
 pub fn button_primary_renders_correct_class_test() {
-  button.button("Click me", "/action", ui_types.Primary)
-  |> should.contain("btn-primary")
+  let result = button.button("Click me", "/action", ui_types.Primary)
+  assert_contains(result, "btn-primary")
 }
 
 pub fn button_secondary_renders_correct_class_test() {
-  button.button("Click me", "/action", ui_types.Secondary)
-  |> should.contain("btn-secondary")
+  let result = button.button("Click me", "/action", ui_types.Secondary)
+  assert_contains(result, "btn-secondary")
 }
 
 pub fn button_danger_renders_correct_class_test() {
-  button.button("Delete", "/delete", ui_types.Danger)
-  |> should.contain("btn-danger")
+  let result = button.button("Delete", "/delete", ui_types.Danger)
+  assert_contains(result, "btn-danger")
 }
 
 pub fn button_success_renders_correct_class_test() {
-  button.button("Confirm", "/confirm", ui_types.Success)
-  |> should.contain("btn-success")
+  let result = button.button("Confirm", "/confirm", ui_types.Success)
+  assert_contains(result, "btn-success")
 }
 
 pub fn button_warning_renders_correct_class_test() {
-  button.button("Warning", "/warn", ui_types.Warning)
-  |> should.contain("btn-warning")
+  let result = button.button("Warning", "/warn", ui_types.Warning)
+  assert_contains(result, "btn-warning")
 }
 
 pub fn button_ghost_renders_correct_class_test() {
-  button.button("Link", "/page", ui_types.Ghost)
-  |> should.contain("btn-ghost")
+  let result = button.button("Link", "/page", ui_types.Ghost)
+  assert_contains(result, "btn-ghost")
 }
 
 // ===================================================================
@@ -70,18 +70,18 @@ pub fn button_ghost_renders_correct_class_test() {
 // ===================================================================
 
 pub fn button_renders_href_attribute_test() {
-  button.button("Go", "/home", ui_types.Primary)
-  |> should.contain("href=\"/home\"")
+  let result = button.button("Go", "/home", ui_types.Primary)
+  assert_contains(result, "href=\"/home\"")
 }
 
 pub fn button_renders_label_test() {
-  button.button("Click me", "/action", ui_types.Primary)
-  |> should.contain("Click me")
+  let result = button.button("Click me", "/action", ui_types.Primary)
+  assert_contains(result, "Click me")
 }
 
 pub fn button_contains_btn_base_class_test() {
-  button.button("Button", "/url", ui_types.Primary)
-  |> should.contain("btn")
+  let result = button.button("Button", "/url", ui_types.Primary)
+  assert_contains(result, "btn")
 }
 
 // ===================================================================
@@ -89,24 +89,24 @@ pub fn button_contains_btn_base_class_test() {
 // ===================================================================
 
 pub fn button_sized_small_renders_test() {
-  button.button_sized("Small", "/url", ui_types.Primary, ui_types.Small)
-  |> should.contain("btn-sm")
+  let result = button.button_sized("Small", "/url", ui_types.Primary, ui_types.Small)
+  assert_contains(result, "btn-sm")
 }
 
 pub fn button_sized_medium_renders_test() {
-  button.button_sized("Medium", "/url", ui_types.Primary, ui_types.Medium)
-  |> should.contain("btn-md")
+  let result = button.button_sized("Medium", "/url", ui_types.Primary, ui_types.Medium)
+  assert_contains(result, "btn-md")
 }
 
 pub fn button_sized_large_renders_test() {
-  button.button_sized("Large", "/url", ui_types.Primary, ui_types.Large)
-  |> should.contain("btn-lg")
+  let result = button.button_sized("Large", "/url", ui_types.Primary, ui_types.Large)
+  assert_contains(result, "btn-lg")
 }
 
 pub fn button_sized_variant_and_size_test() {
-  button.button_sized("Click", "/url", ui_types.Danger, ui_types.Large)
-  |> should.contain("btn-danger")
-  |> should.contain("btn-lg")
+  let result = button.button_sized("Click", "/url", ui_types.Danger, ui_types.Large)
+  assert_contains(result, "btn-danger")
+  assert_contains(result, "btn-lg")
 }
 
 // ===================================================================
