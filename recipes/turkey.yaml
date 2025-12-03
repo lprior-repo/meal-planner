@@ -17,6 +17,14 @@ recipes:
       - Rub mixture all over turkey breast.
       - Smoke until internal temperature reaches 165°F.
       - Let rest for 15 minutes before slicing.
+    macros:
+      protein: 175
+      fat: 25
+      carbs: 8
+    servings: 8
+    category: turkey
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Easy Smoked Turkey Legs
     ingredients:

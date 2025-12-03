@@ -16,6 +16,14 @@ recipes:
       - Season chicken with salt.
       - Coat chicken with the mixture.
       - Bake at 375°F for 25-30 minutes until internal temperature reaches 165°F.
+    macros:
+      protein: 180
+      fat: 20
+      carbs: 4
+    servings: 6
+    category: chicken
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Garlic Butter Chicken Thighs
     ingredients:
@@ -34,6 +42,14 @@ recipes:
       - Mix butter with garlic powder.
       - Brush chicken with the garlic butter mixture.
       - Bake at 425°F for 35-40 minutes until done.
+    macros:
+      protein: 160
+      fat: 80
+      carbs: 2
+    servings: 6
+    category: chicken
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Simple Chicken Legs
     ingredients:
@@ -52,6 +68,14 @@ recipes:
       - Rub chicken legs with the mixture.
       - Sprinkle herbs over the chicken.
       - Bake at 400°F for 40-45 minutes until done.
+    macros:
+      protein: 160
+      fat: 70
+      carbs: 2
+    servings: 6
+    category: chicken
+    fodmap_level: medium
+    vertical_compliant: false
 
   - name: Beer Can Chicken
     ingredients:
@@ -71,6 +95,14 @@ recipes:
       - Insert beer can into chicken cavity so it stands upright.
       - Bake at 350°F for about 1.25 hours until internal temperature reaches 165°F.
       - Let rest 10 minutes before carving.
+    macros:
+      protein: 140
+      fat: 60
+      carbs: 2
+    servings: 6
+    category: chicken
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Simple Chicken Sausage Lasagna
     ingredients:
