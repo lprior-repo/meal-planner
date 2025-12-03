@@ -11,6 +11,7 @@ import gleam/json
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
+import gleam/string
 import gleam/uri
 import lustre/attribute
 import lustre/element
@@ -88,8 +89,8 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
 
     // SSR pages
     ["recipes"] -> recipes_page(ctx)
-    // TODO: Implement these pages
-    // ["recipes", "new"] -> new_recipe_page()
+    ["recipes", "new"] -> new_recipe_page()
+    // TODO: Implement edit page
     // ["recipes", id, "edit"] -> edit_recipe_page(id, ctx)
     ["recipes", id] -> recipe_detail_page(id, ctx)
     ["dashboard"] -> dashboard_page(req, ctx)
@@ -223,14 +224,12 @@ fn new_recipe_page() -> wisp.Response {
               attribute.class("form-control"),
             ],
             [
-              html.option([attribute.value("chicken")], [element.text("Chicken")]),
-              html.option([attribute.value("beef")], [element.text("Beef")]),
-              html.option([attribute.value("pork")], [element.text("Pork")]),
-              html.option([attribute.value("seafood")], [element.text("Seafood")]),
-              html.option([attribute.value("vegetarian")], [
-                element.text("Vegetarian"),
-              ]),
-              html.option([attribute.value("other")], [element.text("Other")]),
+              html.option([attribute.value("chicken")], "Chicken"),
+              html.option([attribute.value("beef")], "Beef"),
+              html.option([attribute.value("pork")], "Pork"),
+              html.option([attribute.value("seafood")], "Seafood"),
+              html.option([attribute.value("vegetarian")], "Vegetarian"),
+              html.option([attribute.value("other")], "Other"),
             ],
           ),
         ]),
@@ -302,9 +301,9 @@ fn new_recipe_page() -> wisp.Response {
               attribute.class("form-control"),
             ],
             [
-              html.option([attribute.value("low")], [element.text("Low")]),
-              html.option([attribute.value("medium")], [element.text("Medium")]),
-              html.option([attribute.value("high")], [element.text("High")]),
+              html.option([attribute.value("low")], "Low"),
+              html.option([attribute.value("medium")], "Medium"),
+              html.option([attribute.value("high")], "High"),
             ],
           ),
         ]),
@@ -944,11 +943,263 @@ fn handle_api(
   }
 }
 
-fn api_recipes(_req: wisp.Request, ctx: Context) -> wisp.Response {
-  let recipes = load_recipes(ctx)
-  let json_data = json.array(recipes, recipe_to_json)
+fn api_recipes(req: wisp.Request, ctx: Context) -> wisp.Response {
+  case req.method {
+    http.Get -> {
+      let recipes = load_recipes(ctx)
+      let json_data = json.array(recipes, recipe_to_json)
+      wisp.json_response(json.to_string(json_data), 200)
+    }
+    http.Post -> create_recipe_handler(req, ctx)
+    _ -> wisp.method_not_allowed([http.Get, http.Post])
+  }
+}
 
-  wisp.json_response(json.to_string(json_data), 200)
+fn create_recipe_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
+  use form_data <- wisp.require_form(req)
+
+  case parse_recipe_from_form(form_data.values) {
+    Ok(recipe) -> {
+      case storage.save_recipe(ctx.db, recipe) {
+        Ok(_) -> {
+          wisp.redirect("/recipes/" <> recipe.id)
+        }
+        Error(storage.DatabaseError(msg)) -> {
+          let error_json =
+            json.object([
+              #("error", json.string("Failed to save recipe: " <> msg)),
+            ])
+          wisp.json_response(json.to_string(error_json), 500)
+        }
+        Error(storage.NotFound) -> {
+          let error_json = json.object([#("error", json.string("Not found"))])
+          wisp.json_response(json.to_string(error_json), 404)
+        }
+      }
+    }
+    Error(errors) -> {
+      let error_json =
+        json.object([
+          #("error", json.string("Validation failed")),
+          #("details", json.array(errors, json.string)),
+        ])
+      wisp.json_response(json.to_string(error_json), 400)
+    }
+  }
+}
+
+fn parse_recipe_from_form(
+  values: List(#(String, String)),
+) -> Result(Recipe, List(String)) {
+  let errors = []
+
+  // Extract basic fields
+  let name = case list.key_find(values, "name") {
+    Ok(n) if n != "" -> Ok(n)
+    _ -> Error("Recipe name is required")
+  }
+
+  let category = case list.key_find(values, "category") {
+    Ok(c) if c != "" -> Ok(c)
+    _ -> Error("Category is required")
+  }
+
+  let servings = case list.key_find(values, "servings") {
+    Ok(s) ->
+      case int.parse(s) {
+        Ok(num) if num > 0 -> Ok(num)
+        _ -> Error("Servings must be a positive number")
+      }
+    _ -> Error("Servings is required")
+  }
+
+  // Extract macros
+  let protein = case list.key_find(values, "protein") {
+    Ok(p) ->
+      case float.parse(p) {
+        Ok(num) if num >=. 0.0 -> Ok(num)
+        _ -> Error("Protein must be a non-negative number")
+      }
+    _ -> Error("Protein is required")
+  }
+
+  let fat = case list.key_find(values, "fat") {
+    Ok(f) ->
+      case float.parse(f) {
+        Ok(num) if num >=. 0.0 -> Ok(num)
+        _ -> Error("Fat must be a non-negative number")
+      }
+    _ -> Error("Fat is required")
+  }
+
+  let carbs = case list.key_find(values, "carbs") {
+    Ok(c) ->
+      case float.parse(c) {
+        Ok(num) if num >=. 0.0 -> Ok(num)
+        _ -> Error("Carbs must be a non-negative number")
+      }
+    _ -> Error("Carbs is required")
+  }
+
+  // Extract FODMAP level
+  let fodmap_level = case list.key_find(values, "fodmap_level") {
+    Ok("low") -> Ok(types.Low)
+    Ok("medium") -> Ok(types.Medium)
+    Ok("high") -> Ok(types.High)
+    _ -> Error("FODMAP level must be 'low', 'medium', or 'high'")
+  }
+
+  // Extract vertical_compliant (checkbox)
+  let vertical_compliant = case list.key_find(values, "vertical_compliant") {
+    Ok("true") -> True
+    _ -> False
+  }
+
+  // Extract ingredients (dynamic fields)
+  let ingredients = extract_ingredients(values)
+  let ingredients_result = case ingredients {
+    [] -> Error("At least one ingredient is required")
+    _ -> Ok(ingredients)
+  }
+
+  // Extract instructions (dynamic fields)
+  let instructions = extract_instructions(values)
+  let instructions_result = case instructions {
+    [] -> Error("At least one instruction is required")
+    _ -> Ok(instructions)
+  }
+
+  // Collect all errors
+  let all_errors =
+    []
+    |> add_error(name)
+    |> add_error(category)
+    |> add_error(servings)
+    |> add_error(protein)
+    |> add_error(fat)
+    |> add_error(carbs)
+    |> add_error(fodmap_level)
+    |> add_error(ingredients_result)
+    |> add_error(instructions_result)
+
+  case all_errors {
+    [] -> {
+      // All validations passed, create Recipe
+      let assert Ok(name_val) = name
+      let assert Ok(category_val) = category
+      let assert Ok(servings_val) = servings
+      let assert Ok(protein_val) = protein
+      let assert Ok(fat_val) = fat
+      let assert Ok(carbs_val) = carbs
+      let assert Ok(fodmap_val) = fodmap_level
+      let assert Ok(ingredients_val) = ingredients_result
+      let assert Ok(instructions_val) = instructions_result
+
+      let recipe =
+        types.Recipe(
+          id: generate_recipe_id(name_val),
+          name: name_val,
+          ingredients: ingredients_val,
+          instructions: instructions_val,
+          macros: Macros(protein: protein_val, fat: fat_val, carbs: carbs_val),
+          servings: servings_val,
+          category: category_val,
+          fodmap_level: fodmap_val,
+          vertical_compliant: vertical_compliant,
+        )
+
+      Ok(recipe)
+    }
+    errs -> Error(errs)
+  }
+}
+
+fn add_error(
+  errors: List(String),
+  result: Result(a, String),
+) -> List(String) {
+  case result {
+    Ok(_) -> errors
+    Error(msg) -> [msg, ..errors]
+  }
+}
+
+fn extract_ingredients(values: List(#(String, String))) -> List(types.Ingredient) {
+  let ingredient_pairs =
+    list.filter_map(values, fn(pair) {
+      let #(key, _) = pair
+      case string.starts_with(key, "ingredient_name_") {
+        True -> {
+          let index = string.replace(key, "ingredient_name_", "")
+          Ok(index)
+        }
+        False -> Error(Nil)
+      }
+    })
+
+  list.filter_map(ingredient_pairs, fn(index) {
+    let name_key = "ingredient_name_" <> index
+    let quantity_key = "ingredient_quantity_" <> index
+
+    let name = list.key_find(values, name_key) |> result.unwrap("")
+    let quantity = list.key_find(values, quantity_key) |> result.unwrap("")
+
+    case name != "" && quantity != "" {
+      True -> Ok(types.Ingredient(name: name, quantity: quantity))
+      False -> Error(Nil)
+    }
+  })
+}
+
+fn extract_instructions(values: List(#(String, String))) -> List(String) {
+  let instruction_indices =
+    list.filter_map(values, fn(pair) {
+      let #(key, _) = pair
+      case string.starts_with(key, "instruction_") {
+        True -> {
+          let index = string.replace(key, "instruction_", "")
+          Ok(index)
+        }
+        False -> Error(Nil)
+      }
+    })
+
+  list.filter_map(instruction_indices, fn(index) {
+    let key = "instruction_" <> index
+    case list.key_find(values, key) {
+      Ok(instruction) -> {
+        case instruction != "" {
+          True -> Ok(instruction)
+          False -> Error(Nil)
+        }
+      }
+      Error(_) -> Error(Nil)
+    }
+  })
+}
+
+fn generate_recipe_id(name: String) -> String {
+  let normalized =
+    name
+    |> string.lowercase
+    |> string.replace(" ", "-")
+    |> string.replace("'", "")
+    |> string.replace("\"", "")
+
+  // Add timestamp to ensure uniqueness
+  let timestamp = get_timestamp_string()
+  normalized <> "-" <> timestamp
+}
+
+@external(erlang, "erlang", "system_time")
+fn system_time(unit: Int) -> Int
+
+fn get_timestamp_string() -> String {
+  // Get milliseconds since epoch
+  let millis = system_time(1000)
+  // Take last 6 digits to keep ID shorter
+  let short_id = millis % 1_000_000
+  int_to_string(short_id)
 }
 
 fn api_recipe(_req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
@@ -1134,7 +1385,7 @@ fn load_daily_log(ctx: Context, date: String) -> DailyLog {
         date: date,
         entries: [],
         total_macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
-        total_micronutrients: types.micronutrients_zero(),
+        total_micronutrients: Some(types.micronutrients_zero()),
       )
     }
   }
