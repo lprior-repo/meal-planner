@@ -102,6 +102,39 @@ pub type CustomFood {
 }
 
 // ============================================================================
+// Food Search Types
+// ============================================================================
+
+/// Unified search result with source identification
+pub type FoodSearchResult {
+  /// Custom food result (user-created)
+  CustomFoodResult(food: CustomFood)
+  /// USDA food result (from national database)
+  UsdaFoodResult(
+    fdc_id: Int,
+    description: String,
+    data_type: String,
+    category: String,
+  )
+}
+
+/// Search response wrapper with metadata
+pub type FoodSearchResponse {
+  FoodSearchResponse(
+    results: List(FoodSearchResult),
+    total_count: Int,
+    custom_count: Int,
+    usda_count: Int,
+  )
+}
+
+/// Search error types
+pub type FoodSearchError {
+  DatabaseError(String)
+  InvalidQuery(String)
+}
+
+// ============================================================================
 // Recipe Types
 // ============================================================================
 
@@ -497,6 +530,64 @@ pub fn daily_log_to_json(d: DailyLog) -> Json {
     #("date", json.string(d.date)),
     #("entries", json.array(d.entries, food_log_entry_to_json)),
     #("total_macros", macros_to_json(d.total_macros)),
+  ])
+}
+
+pub fn custom_food_to_json(f: CustomFood) -> Json {
+  let fields = [
+    #("id", json.string(f.id)),
+    #("user_id", json.string(f.user_id)),
+    #("name", json.string(f.name)),
+    #("serving_size", json.float(f.serving_size)),
+    #("serving_unit", json.string(f.serving_unit)),
+    #("macros", macros_to_json(f.macros)),
+    #("calories", json.float(f.calories)),
+  ]
+
+  let fields = case f.brand {
+    Some(brand) -> [#("brand", json.string(brand)), ..fields]
+    None -> fields
+  }
+
+  let fields = case f.description {
+    Some(desc) -> [#("description", json.string(desc)), ..fields]
+    None -> fields
+  }
+
+  let fields = case f.micronutrients {
+    Some(micros) -> [#("micronutrients", micronutrients_to_json(micros)), ..fields]
+    None -> fields
+  }
+
+  json.object(fields)
+}
+
+pub fn food_search_result_to_json(r: FoodSearchResult) -> Json {
+  case r {
+    CustomFoodResult(food) ->
+      json.object([
+        #("type", json.string("custom")),
+        #("data", custom_food_to_json(food)),
+      ])
+    UsdaFoodResult(fdc_id, description, data_type, category) ->
+      json.object([
+        #("type", json.string("usda")),
+        #("data", json.object([
+          #("fdc_id", json.int(fdc_id)),
+          #("description", json.string(description)),
+          #("data_type", json.string(data_type)),
+          #("category", json.string(category)),
+        ])),
+      ])
+  }
+}
+
+pub fn food_search_response_to_json(resp: FoodSearchResponse) -> Json {
+  json.object([
+    #("results", json.array(resp.results, food_search_result_to_json)),
+    #("total_count", json.int(resp.total_count)),
+    #("custom_count", json.int(resp.custom_count)),
+    #("usda_count", json.int(resp.usda_count)),
   ])
 }
 
