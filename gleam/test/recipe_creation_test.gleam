@@ -12,8 +12,6 @@
 /// Using Test-Driven Development (TDD) with gleeunit framework
 
 import gleam/erlang/process
-import gleam/float
-import gleam/int
 import gleam/list
 import gleam/option.{Some}
 import gleam/otp/actor

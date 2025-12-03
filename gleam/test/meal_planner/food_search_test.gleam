@@ -7,16 +7,12 @@
 
 import gleam/erlang/process
 import gleam/list
-import gleam/option
 import gleam/otp/actor
 import gleeunit
 import gleeunit/should
 import meal_planner/food_search
 import pog
-import shared/types.{
-  type FoodSearchError, CustomFood, CustomFoodResult, DatabaseError,
-  FoodSearchResponse, InvalidQuery, Macros, Micronutrients, UsdaFoodResult,
-}
+import shared/types.{type FoodSearchError, DatabaseError, InvalidQuery}
 
 pub fn main() {
   gleeunit.main()
