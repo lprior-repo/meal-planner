@@ -1,10 +1,14 @@
 /// Test database helper - manages PostgreSQL lifecycle for tests
+import gleam/dynamic/decode
 import gleam/erlang/process
+import gleam/int
+import gleam/list
 import gleam/option.{Some}
 import gleam/otp/actor
 import gleam/string
 import meal_planner/storage
 import pog
+import simplifile
 
 /// Test database configuration
 pub fn test_config() -> storage.DbConfig {
@@ -115,18 +119,173 @@ fn run_migrations(conn: pog.Connection) -> Result(Nil, String) {
     pog.query(
       "CREATE TABLE IF NOT EXISTS schema_migrations (
        version INTEGER PRIMARY KEY,
+       name TEXT NOT NULL,
        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
      )",
     )
 
   case pog.execute(schema_query, conn) {
     Ok(_) -> {
-      // In a real implementation, we would read and execute all migration files
-      // For now, return Ok - migrations can be run manually or by init script
-      Ok(Nil)
+      // Get list of migration files
+      let migration_dir = "migrations"
+      case simplifile.read_directory(migration_dir) {
+        Ok(files) -> {
+          // Filter and sort migration files (001_*.sql, 002_*.sql, etc.)
+          let migration_files =
+            files
+            |> list.filter(fn(f) { string.ends_with(f, ".sql") })
+            |> list.sort(string.compare)
+
+          // Execute each migration in order
+          execute_migrations(conn, migration_dir, migration_files)
+        }
+        Error(_) ->
+          Error(
+            "Failed to read migrations directory: " <> migration_dir
+            <> ". Ensure you run tests from the gleam directory.",
+          )
+      }
     }
     Error(err) ->
       Error("Failed to create schema_migrations: " <> format_error(err))
+  }
+}
+
+/// Execute migration files in order
+fn execute_migrations(
+  conn: pog.Connection,
+  dir: String,
+  files: List(String),
+) -> Result(Nil, String) {
+  case files {
+    [] -> Ok(Nil)
+    [file, ..rest] -> {
+      case execute_migration_file(conn, dir, file) {
+        Ok(_) -> execute_migrations(conn, dir, rest)
+        Error(e) -> Error(e)
+      }
+    }
+  }
+}
+
+/// Execute a single migration file
+fn execute_migration_file(
+  conn: pog.Connection,
+  dir: String,
+  filename: String,
+) -> Result(Nil, String) {
+  // Extract version number from filename (e.g., "001_schema_migrations.sql" -> 1)
+  let version = parse_migration_version(filename)
+
+  // Check if migration already applied
+  case is_migration_applied(conn, version) {
+    Ok(True) -> {
+      // Migration already applied, skip
+      Ok(Nil)
+    }
+    Ok(False) -> {
+      // Read migration file
+      let filepath = dir <> "/" <> filename
+      case simplifile.read(filepath) {
+        Ok(sql_content) -> {
+          // Execute the SQL
+          case execute_sql_script(conn, sql_content) {
+            Ok(_) -> {
+              // Record migration as applied
+              record_migration(conn, version, filename)
+            }
+            Error(e) ->
+              Error(
+                "Failed to execute migration " <> filename <> ": " <> e,
+              )
+          }
+        }
+        Error(_) -> Error("Failed to read migration file: " <> filepath)
+      }
+    }
+    Error(e) ->
+      Error("Failed to check migration status for " <> filename <> ": " <> e)
+  }
+}
+
+/// Parse version number from migration filename
+fn parse_migration_version(filename: String) -> Int {
+  // Extract first 3 digits (e.g., "001_schema.sql" -> 1)
+  case string.split(filename, "_") {
+    [version_str, ..] ->
+      case int.parse(version_str) {
+        Ok(v) -> v
+        Error(_) -> 0
+      }
+    _ -> 0
+  }
+}
+
+/// Check if a migration version has been applied
+fn is_migration_applied(conn: pog.Connection, version: Int) -> Result(Bool, String) {
+  let query =
+    pog.query("SELECT COUNT(*) as count FROM schema_migrations WHERE version = $1")
+    |> pog.parameter(pog.int(version))
+
+  let decoder = {
+    use count <- decode.field(0, decode.int)
+    decode.success(count)
+  }
+
+  case pog.returning(query, decoder) |> pog.execute(conn) {
+    Ok(pog.Returned(_, [count])) -> Ok(count > 0)
+    Ok(_) -> Ok(False)
+    Error(e) -> Error(format_error(e))
+  }
+}
+
+/// Record a migration as applied
+fn record_migration(
+  conn: pog.Connection,
+  version: Int,
+  name: String,
+) -> Result(Nil, String) {
+  let query =
+    pog.query(
+      "INSERT INTO schema_migrations (version, name) VALUES ($1, $2) ON CONFLICT (version) DO NOTHING",
+    )
+    |> pog.parameter(pog.int(version))
+    |> pog.parameter(pog.text(name))
+
+  case pog.execute(query, conn) {
+    Ok(_) -> Ok(Nil)
+    Error(e) -> Error(format_error(e))
+  }
+}
+
+/// Execute a SQL script (may contain multiple statements)
+fn execute_sql_script(conn: pog.Connection, sql: String) -> Result(Nil, String) {
+  // Split by semicolon to handle multiple statements
+  // Filter out empty statements and comments
+  let statements =
+    string.split(sql, ";")
+    |> list.map(string.trim)
+    |> list.filter(fn(s) {
+      !string.is_empty(s) && !string.starts_with(s, "--")
+    })
+
+  execute_statements(conn, statements)
+}
+
+/// Execute multiple SQL statements
+fn execute_statements(
+  conn: pog.Connection,
+  statements: List(String),
+) -> Result(Nil, String) {
+  case statements {
+    [] -> Ok(Nil)
+    [stmt, ..rest] -> {
+      case pog.execute(pog.query(stmt), conn) {
+        Ok(_) -> execute_statements(conn, rest)
+        Error(e) ->
+          Error("Failed to execute statement: " <> format_error(e))
+      }
+    }
   }
 }
 
