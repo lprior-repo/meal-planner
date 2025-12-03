@@ -10,11 +10,11 @@
 /// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: docs/component_signatures.md (section: Forms)
+import gleam/float
+import gleam/int
+import gleam/list
 import gleam/option
 import gleam/string
-import gleam/list
-import gleam/int
-import gleam/float
 
 /// Text input field
 ///
@@ -106,7 +106,7 @@ pub fn number_input(
     option.Some(m) -> " max=\"" <> float.to_string(m) <> "\""
     option.None -> ""
   }
-  
+
   "<div class=\"form-group\">"
   <> "<label for=\""
   <> name
@@ -150,7 +150,7 @@ pub fn select_field(
       "<option value=\"" <> value <> "\">" <> text <> "</option>"
     })
     |> string.concat()
-  
+
   "<div class=\"form-group\">"
   <> "<label for=\""
   <> name
@@ -186,7 +186,7 @@ pub fn form_field(
     option.Some(err_msg) -> "<div class=\"form-error\">" <> err_msg <> "</div>"
     option.None -> ""
   }
-  
+
   "<div class=\"form-group\">"
   <> "<label>"
   <> label
@@ -210,7 +210,7 @@ pub fn form(
   submit_label: String,
 ) -> String {
   let fields_html = string.concat(fields)
-  
+
   "<form action=\""
   <> action
   <> "\" "
@@ -223,6 +223,7 @@ pub fn form(
   <> "</button>"
   <> "</form>"
 }
+
 // ===================================================================
 // SEARCH INPUT COMPONENTS (Bead meal-planner-rvz.1)
 // ===================================================================
@@ -496,7 +497,6 @@ pub fn search_combobox_with_selection(
   <> results_html
   <> "</div>"
 }
-
 // ===================================================================
 // INTERNAL HELPERS
 // ===================================================================

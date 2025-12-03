@@ -61,11 +61,21 @@ pub fn render_dashboard(data: DashboardData) -> String {
 
   // Macro progress bars
   let protein_bar =
-    progress.macro_bar("Protein", data.protein_current, data.protein_target, "macro-protein")
+    progress.macro_bar(
+      "Protein",
+      data.protein_current,
+      data.protein_target,
+      "macro-protein",
+    )
   let fat_bar =
     progress.macro_bar("Fat", data.fat_current, data.fat_target, "macro-fat")
   let carbs_bar =
-    progress.macro_bar("Carbs", data.carbs_current, data.carbs_target, "macro-carbs")
+    progress.macro_bar(
+      "Carbs",
+      data.carbs_current,
+      data.carbs_target,
+      "macro-carbs",
+    )
 
   // Daily log timeline
   let timeline = daily_log.daily_log_timeline(data.meal_entries)

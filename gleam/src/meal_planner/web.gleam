@@ -410,9 +410,12 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
     Error(_) -> not_found_page()
     Ok(recipe) -> {
       let content = [
-        html.a([attribute.href("/recipes/" <> id), attribute.class("back-link")], [
-          element.text("← Back to recipe"),
-        ]),
+        html.a(
+          [attribute.href("/recipes/" <> id), attribute.class("back-link")],
+          [
+            element.text("← Back to recipe"),
+          ],
+        ),
         html.div([attribute.class("page-header")], [
           html.h1([], [element.text("Edit Recipe")]),
         ]),
@@ -474,7 +477,9 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
               html.h2([], [element.text("Nutrition (per serving)")]),
               html.div([attribute.class("form-row")], [
                 html.div([attribute.class("form-group")], [
-                  html.label([attribute.for("protein")], [element.text("Protein (g)")]),
+                  html.label([attribute.for("protein")], [
+                    element.text("Protein (g)"),
+                  ]),
                   html.input([
                     attribute.type_("number"),
                     attribute.name("protein"),
@@ -498,7 +503,9 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
                   ]),
                 ]),
                 html.div([attribute.class("form-group")], [
-                  html.label([attribute.for("carbs")], [element.text("Carbs (g)")]),
+                  html.label([attribute.for("carbs")], [
+                    element.text("Carbs (g)"),
+                  ]),
                   html.input([
                     attribute.type_("number"),
                     attribute.name("carbs"),
@@ -512,7 +519,9 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
               ]),
             ]),
             html.div([attribute.class("form-group")], [
-              html.label([attribute.for("fodmap_level")], [element.text("FODMAP Level")]),
+              html.label([attribute.for("fodmap_level")], [
+                element.text("FODMAP Level"),
+              ]),
               html.select(
                 [
                   attribute.name("fodmap_level"),
@@ -549,7 +558,8 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
             ]),
             html.div([attribute.class("form-section")], [
               html.h2([], [element.text("Ingredients")]),
-              html.div([attribute.id("ingredients-list")], 
+              html.div(
+                [attribute.id("ingredients-list")],
                 list.index_map(recipe.ingredients, fn(ing, idx) {
                   html.div([attribute.class("form-row ingredient-row")], [
                     html.div([attribute.class("form-group")], [
@@ -565,7 +575,9 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
                     html.div([attribute.class("form-group")], [
                       html.input([
                         attribute.type_("text"),
-                        attribute.name("ingredient_quantity_" <> int_to_string(idx)),
+                        attribute.name(
+                          "ingredient_quantity_" <> int_to_string(idx),
+                        ),
                         attribute.placeholder("Quantity"),
                         attribute.value(ing.quantity),
                         attribute.class("form-control"),
@@ -573,7 +585,7 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
                       ]),
                     ]),
                   ])
-                })
+                }),
               ),
               html.button(
                 [
@@ -586,7 +598,8 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
             ]),
             html.div([attribute.class("form-section")], [
               html.h2([], [element.text("Instructions")]),
-              html.div([attribute.id("instructions-list")],
+              html.div(
+                [attribute.id("instructions-list")],
                 list.index_map(recipe.instructions, fn(inst, idx) {
                   html.div([attribute.class("form-group instruction-row")], [
                     html.textarea(
@@ -600,7 +613,7 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
                       inst,
                     ),
                   ])
-                })
+                }),
               ),
               html.button(
                 [
@@ -617,13 +630,14 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
                 [element.text("Update Recipe")],
               ),
               html.a(
-                [attribute.href("/recipes/" <> id), attribute.class("btn btn-secondary")],
+                [
+                  attribute.href("/recipes/" <> id),
+                  attribute.class("btn btn-secondary"),
+                ],
                 [element.text("Cancel")],
               ),
             ]),
-            html.script(
-              [],
-              "
+            html.script([], "
 let ingredientCount = " <> int_to_string(list.length(recipe.ingredients)) <> ";
 let instructionCount = " <> int_to_string(list.length(recipe.instructions)) <> ";
 
@@ -661,32 +675,44 @@ function addInstruction() {
   container.appendChild(div);
   instructionCount++;
 }
-              ",
-            ),
+              "),
           ],
         ),
       ]
 
-      wisp.html_response(render_page("Edit " <> recipe.name <> " - Meal Planner", content), 200)
+      wisp.html_response(
+        render_page("Edit " <> recipe.name <> " - Meal Planner", content),
+        200,
+      )
     }
   }
 }
 
-fn category_option(value: String, label: String, current: String) -> element.Element(msg) {
+fn category_option(
+  value: String,
+  label: String,
+  current: String,
+) -> element.Element(msg) {
   case value == current {
-    True -> html.option([attribute.value(value), attribute.selected(True)], label)
+    True ->
+      html.option([attribute.value(value), attribute.selected(True)], label)
     False -> html.option([attribute.value(value)], label)
   }
 }
 
-fn fodmap_option(value: String, label: String, current: types.FodmapLevel) -> element.Element(msg) {
+fn fodmap_option(
+  value: String,
+  label: String,
+  current: types.FodmapLevel,
+) -> element.Element(msg) {
   let current_str = case current {
     types.Low -> "low"
     types.Medium -> "medium"
     types.High -> "high"
   }
   case value == current_str {
-    True -> html.option([attribute.value(value), attribute.selected(True)], label)
+    True ->
+      html.option([attribute.value(value), attribute.selected(True)], label)
     False -> html.option([attribute.value(value)], label)
   }
 }
@@ -1749,9 +1775,9 @@ fn api_recipe(req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
     http.Post -> {
       // Handle both DELETE (_method=DELETE) and UPDATE (_method=PUT) via method override
       use form_data <- wisp.require_form(req)
-      
+
       let method_override = list.key_find(form_data.values, "_method")
-      
+
       case method_override {
         Ok("DELETE") -> {
           // Handle delete
@@ -1770,22 +1796,30 @@ fn api_recipe(req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
                 Error(storage.DatabaseError(msg)) -> {
                   let error_json =
                     json.object([
-                      #("error", json.string("Failed to update recipe: " <> msg)),
+                      #(
+                        "error",
+                        json.string("Failed to update recipe: " <> msg),
+                      ),
                     ])
                   wisp.json_response(json.to_string(error_json), 500)
                 }
                 Error(storage.NotFound) -> {
-                  let error_json = json.object([#("error", json.string("Recipe not found"))])
+                  let error_json =
+                    json.object([#("error", json.string("Recipe not found"))])
                   wisp.json_response(json.to_string(error_json), 404)
                 }
                 Error(storage.InvalidInput(msg)) -> {
                   let error_json =
-                    json.object([#("error", json.string("Invalid input: " <> msg))])
+                    json.object([
+                      #("error", json.string("Invalid input: " <> msg)),
+                    ])
                   wisp.json_response(json.to_string(error_json), 400)
                 }
                 Error(storage.Unauthorized(msg)) -> {
                   let error_json =
-                    json.object([#("error", json.string("Unauthorized: " <> msg))])
+                    json.object([
+                      #("error", json.string("Unauthorized: " <> msg)),
+                    ])
                   wisp.json_response(json.to_string(error_json), 401)
                 }
               }

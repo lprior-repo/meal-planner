@@ -179,7 +179,6 @@ pub type MealEntryData {
     meal_type: String,
   )
 }
-
 // ===================================================================
 // Additional types will be added as specific features are implemented
 // ===================================================================

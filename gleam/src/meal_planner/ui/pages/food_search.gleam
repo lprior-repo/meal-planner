@@ -35,19 +35,24 @@ pub type SearchState {
 /// - Results list or empty/loading state
 /// - Integrated with components from meal-planner-rvz.1, rvz.2, rvz.3
 pub fn render_food_search_page(state: SearchState) -> String {
-  let SearchState(query: query_opt, results: results, total_count: _, loading: loading) = state
-  
+  let SearchState(
+    query: query_opt,
+    results: results,
+    total_count: _,
+    loading: loading,
+  ) = state
+
   let query = case query_opt {
     option.Some(q) -> q
     option.None -> ""
   }
-  
+
   // Determine if results dropdown should be expanded
   let has_query = string.length(query) > 0
   let expanded = has_query && { loading || list_length(results) > 0 }
-  
+
   let search_widget = case loading {
-    True -> 
+    True ->
       // Show search input + loading state
       "<div class=\"search-container\">"
       <> forms.search_input_with_autofocus(query, "Search foods...", True)
@@ -57,7 +62,7 @@ pub fn render_food_search_page(state: SearchState) -> String {
       // Show search input + results (using combobox for keyboard nav)
       forms.search_combobox(query, "Search foods...", results, expanded)
   }
-  
+
   "<div class=\"food-search-page\">"
   <> "<header class=\"page-header\">"
   <> "<h1>Food Search</h1>"
@@ -76,7 +81,6 @@ fn list_length(items: List(a)) -> Int {
     [_first, ..rest] -> 1 + list_length(rest)
   }
 }
-
 /// Search form component (deprecated - use forms.search_combobox instead)
 ///
 /// Renders the search input with:
