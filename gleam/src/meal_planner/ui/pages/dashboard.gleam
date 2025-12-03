@@ -14,6 +14,12 @@
 ///
 /// See: docs/UI_REQUIREMENTS_ANALYSIS.md (Bead 3)
 /// See: docs/component_signatures.md (Dashboard Page)
+import meal_planner/ui/components/card
+import meal_planner/ui/components/daily_log
+import meal_planner/ui/components/layout
+import meal_planner/ui/components/progress
+import meal_planner/ui/types/ui_types
+
 /// Dashboard data structure
 ///
 /// Contains all data needed to render the dashboard:
@@ -32,7 +38,7 @@ pub type DashboardData {
     carbs_current: Float,
     carbs_target: Float,
     date: String,
-    meal_count: Int,
+    meal_entries: List(ui_types.MealEntryData),
   )
 }
 
@@ -44,7 +50,36 @@ pub type DashboardData {
 /// - Macro progress bars
 /// - Daily log entries list
 /// - Quick action buttons
-pub fn render_dashboard(_data: DashboardData) -> String {
-  // Dashboard implementation tracked in bead meal-planner-36f
-  "<!-- render_dashboard -->"
+pub fn render_dashboard(data: DashboardData) -> String {
+  // Calorie summary card
+  let calorie_card =
+    card.calorie_summary_card(
+      data.daily_calories_current,
+      data.daily_calories_target,
+      data.date,
+    )
+
+  // Macro progress bars
+  let protein_bar =
+    progress.macro_bar("Protein", data.protein_current, data.protein_target, "macro-protein")
+  let fat_bar =
+    progress.macro_bar("Fat", data.fat_current, data.fat_target, "macro-fat")
+  let carbs_bar =
+    progress.macro_bar("Carbs", data.carbs_current, data.carbs_target, "macro-carbs")
+
+  // Daily log timeline
+  let timeline = daily_log.daily_log_timeline(data.meal_entries)
+
+  // Build layout
+  layout.container(1200, [
+    layout.section([
+      card.card_with_header("Daily Summary", [calorie_card]),
+    ]),
+    layout.section([
+      card.card_with_header("Macros", [protein_bar, fat_bar, carbs_bar]),
+    ]),
+    layout.section([
+      card.card_with_header("Daily Log", [timeline]),
+    ]),
+  ])
 }
