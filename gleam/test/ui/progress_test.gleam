@@ -220,3 +220,62 @@ pub fn progress_with_label_exceeds_target_test() {
   let result = progress.progress_with_label(120.0, 100.0, "Over")
   assert_contains(result, "120")
 }
+
+// ===================================================================
+// ARIA ACCESSIBILITY TESTS
+// ===================================================================
+
+pub fn progress_bar_has_role_test() {
+  let result = progress.progress_bar(50.0, 100.0, "primary")
+  assert_contains(result, "role=\"progressbar\"")
+}
+
+pub fn progress_bar_has_aria_valuenow_test() {
+  let result = progress.progress_bar(75.0, 100.0, "primary")
+  assert_contains(result, "aria-valuenow=\"75\"")
+}
+
+pub fn progress_bar_has_aria_valuemin_test() {
+  let result = progress.progress_bar(50.0, 100.0, "primary")
+  assert_contains(result, "aria-valuemin=\"0\"")
+}
+
+pub fn progress_bar_has_aria_valuemax_test() {
+  let result = progress.progress_bar(50.0, 100.0, "primary")
+  assert_contains(result, "aria-valuemax=\"100\"")
+}
+
+pub fn progress_bar_has_aria_label_test() {
+  let result = progress.progress_bar(50.0, 100.0, "primary")
+  assert_contains(result, "aria-label=\"Progress: 50 percent\"")
+}
+
+pub fn macro_bar_has_role_test() {
+  let result = progress.macro_bar("Protein", 150.0, 200.0, "success")
+  assert_contains(result, "role=\"progressbar\"")
+}
+
+pub fn macro_bar_has_aria_label_test() {
+  let result = progress.macro_bar("Protein", 150.0, 200.0, "success")
+  assert_contains(result, "aria-label=\"Protein: 150 of 200 grams\"")
+}
+
+pub fn progress_circle_has_role_test() {
+  let result = progress.progress_circle(75.0, "Progress")
+  assert_contains(result, "role=\"progressbar\"")
+}
+
+pub fn progress_circle_has_aria_label_test() {
+  let result = progress.progress_circle(75.0, "Progress")
+  assert_contains(result, "aria-label=\"Progress: 75 percent\"")
+}
+
+pub fn progress_with_label_has_role_test() {
+  let result = progress.progress_with_label(60.0, 100.0, "Daily Goal")
+  assert_contains(result, "role=\"progressbar\"")
+}
+
+pub fn progress_with_label_has_aria_label_test() {
+  let result = progress.progress_with_label(60.0, 100.0, "Daily Goal")
+  assert_contains(result, "aria-label=\"Daily Goal: 60 of 100\"")
+}

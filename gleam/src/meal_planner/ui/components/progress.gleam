@@ -28,7 +28,11 @@ pub fn progress_bar(current: Float, target: Float, color: String) -> String {
 
   "<div class=\"progress-bar "
   <> color
-  <> "\">"
+  <> "\" role=\"progressbar\" aria-valuenow=\""
+  <> int_to_string(pct_int)
+  <> "\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-label=\"Progress: "
+  <> int_to_string(pct_int)
+  <> " percent\">"
   <> "<div class=\"progress-fill\" style=\""
   <> width_style
   <> "\"></div>"
@@ -76,7 +80,15 @@ pub fn macro_bar(
   <> int_to_string(target_int)
   <> "g</span>"
   <> "</div>"
-  <> "<div class=\"progress-bar\">"
+  <> "<div class=\"progress-bar\" role=\"progressbar\" aria-valuenow=\""
+  <> int_to_string(pct_int)
+  <> "\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-label=\""
+  <> label
+  <> ": "
+  <> int_to_string(current_int)
+  <> " of "
+  <> int_to_string(target_int)
+  <> " grams\">"
   <> "<div class=\"progress-fill\" style=\""
   <> width_style
   <> "\"></div>"
@@ -135,7 +147,13 @@ pub fn progress_circle(percentage: Float, label: String) -> String {
   // CONTRACT: Returns HTML string for circular progress indicator
   let pct_int = float_to_int(percentage)
 
-  "<div class=\"progress-circle\">"
+  "<div class=\"progress-circle\" role=\"progressbar\" aria-valuenow=\""
+  <> int_to_string(pct_int)
+  <> "\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-label=\""
+  <> label
+  <> ": "
+  <> int_to_string(pct_int)
+  <> " percent\">"
   <> "<div class=\"circle-progress\" style=\"--progress: "
   <> int_to_string(pct_int)
   <> "%; \"></div>"
@@ -180,7 +198,15 @@ pub fn progress_with_label(
   <> int_to_string(float_to_int(target))
   <> "</span>"
   <> "</div>"
-  <> "<div class=\"progress-bar\">"
+  <> "<div class=\"progress-bar\" role=\"progressbar\" aria-valuenow=\""
+  <> int_to_string(pct_int)
+  <> "\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-label=\""
+  <> label
+  <> ": "
+  <> int_to_string(current_int)
+  <> " of "
+  <> int_to_string(float_to_int(target))
+  <> "\">"
   <> "<div class=\"progress-fill\" style=\""
   <> width_style
   <> "\"></div>"
