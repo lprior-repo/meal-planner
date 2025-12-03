@@ -11,7 +11,74 @@
 ///
 /// See: docs/component_signatures.md (section: Layout)
 
+import gleam/string
 import meal_planner/ui/types/ui_types
+
+// ===================================================================
+// HELPER FUNCTIONS - FLEX
+// ===================================================================
+
+/// Convert FlexDirection to CSS class string
+fn direction_to_class(direction: ui_types.FlexDirection) -> String {
+  case direction {
+    ui_types.Row -> "flex-row"
+    ui_types.Column -> "flex-col"
+    ui_types.RowReverse -> "flex-row-reverse"
+    ui_types.ColumnReverse -> "flex-col-reverse"
+  }
+}
+
+/// Convert FlexAlign to CSS class string
+fn align_to_class(align: ui_types.FlexAlign) -> String {
+  case align {
+    ui_types.AlignStart -> "items-start"
+    ui_types.AlignCenter -> "items-center"
+    ui_types.AlignEnd -> "items-end"
+    ui_types.Stretch -> "items-stretch"
+    ui_types.AlignBetween -> "items-between"
+    ui_types.AlignAround -> "items-around"
+  }
+}
+
+/// Convert FlexJustify to CSS class string
+fn justify_to_class(justify: ui_types.FlexJustify) -> String {
+  case justify {
+    ui_types.JustifyStart -> "justify-start"
+    ui_types.JustifyCenter -> "justify-center"
+    ui_types.JustifyEnd -> "justify-end"
+    ui_types.JustifyBetween -> "justify-between"
+    ui_types.JustifyAround -> "justify-around"
+    ui_types.Even -> "justify-evenly"
+  }
+}
+
+/// Convert gap integer to CSS class string
+fn gap_to_class(gap: Int) -> String {
+  "gap-" <> string.inspect(gap)
+}
+
+// ===================================================================
+// HELPER FUNCTIONS - GRID
+// ===================================================================
+
+/// Convert GridColumns to CSS class string
+fn columns_to_class(columns: ui_types.GridColumns) -> String {
+  case columns {
+    ui_types.Auto -> "grid-cols-auto"
+    ui_types.Fixed(n) -> "grid-cols-" <> string.inspect(n)
+    ui_types.Repeat(n) -> "grid-cols-" <> string.inspect(n)
+    ui_types.Responsive -> "grid-cols-responsive"
+  }
+}
+
+// ===================================================================
+// HELPER FUNCTION - PADDING
+// ===================================================================
+
+/// Convert padding amount to CSS class string
+fn padding_to_class(padding: Int) -> String {
+  "p-" <> string.inspect(padding)
+}
 
 // ===================================================================
 // FLEX COMPONENT
@@ -19,7 +86,7 @@ import meal_planner/ui/types/ui_types
 
 /// Flex container
 ///
-/// Renders: <div class="flex flex-row flex-items-center flex-justify-between">children</div>
+/// Renders: <div class="flex flex-row items-center justify-between gap-4">children</div>
 pub fn flex(
   direction: ui_types.FlexDirection,
   align: ui_types.FlexAlign,
@@ -28,8 +95,23 @@ pub fn flex(
   children: List(String),
 ) -> String {
   // CONTRACT: Returns HTML string for flex container
-  // BODY: TODO - Implement with flex, direction, align, justify, and gap classes
-  todo
+  let direction_class = direction_to_class(direction)
+  let align_class = align_to_class(align)
+  let justify_class = justify_to_class(justify)
+  let gap_class = gap_to_class(gap)
+  let children_html = string.concat(children)
+
+  "<div class=\"flex "
+  <> direction_class
+  <> " "
+  <> align_class
+  <> " "
+  <> justify_class
+  <> " "
+  <> gap_class
+  <> "\">"
+  <> children_html
+  <> "</div>"
 }
 
 // ===================================================================
@@ -38,15 +120,18 @@ pub fn flex(
 
 /// Grid container
 ///
-/// Renders: <div class="grid grid-cols-repeat">children</div>
+/// Renders: <div class="grid grid-cols-4 gap-4">children</div>
 pub fn grid(
   columns: ui_types.GridColumns,
   gap: Int,
   children: List(String),
 ) -> String {
   // CONTRACT: Returns HTML string for grid container
-  // BODY: TODO - Implement with grid class and column configuration
-  todo
+  let columns_class = columns_to_class(columns)
+  let gap_class = gap_to_class(gap)
+  let children_html = string.concat(children)
+
+  "<div class=\"grid " <> columns_class <> " " <> gap_class <> "\">" <> children_html <> "</div>"
 }
 
 // ===================================================================
@@ -61,29 +146,38 @@ pub fn space_around(
   children: List(String),
 ) -> String {
   // CONTRACT: Returns HTML string for spaced container
-  // BODY: TODO - Implement with padding class based on amount
-  todo
+  let padding_class = padding_to_class(amount)
+  let children_html = string.concat(children)
+
+  "<div class=\"space-around " <> padding_class <> "\">" <> children_html <> "</div>"
 }
 
 /// Container with max-width
 ///
-/// Renders: <div class="container max-w-[max_width]">children</div>
+/// Renders: <div class="container mx-auto" style="max-width: 1200px">children</div>
 pub fn container(
   max_width: Int,
   children: List(String),
 ) -> String {
   // CONTRACT: Returns HTML string for max-width container
-  // BODY: TODO - Implement with container class and max-width CSS
-  todo
+  let children_html = string.concat(children)
+  let max_width_px = string.inspect(max_width) <> "px"
+
+  "<div class=\"container mx-auto\" style=\"max-width: "
+  <> max_width_px
+  <> "\">"
+  <> children_html
+  <> "</div>"
 }
 
 /// Page section with padding
 ///
-/// Renders: <section class="section p-16">children</section>
+/// Renders: <section class="section">children</section>
 pub fn section(
   children: List(String),
 ) -> String {
   // CONTRACT: Returns HTML string for page section
-  // BODY: TODO - Implement as section element with section class and padding
-  todo
+  let children_html = string.concat(children)
+
+  "<section class=\"section\">" <> children_html <> "</section>"
 }
