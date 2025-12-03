@@ -1,21 +1,26 @@
 //// Wisp web server for the meal planner application
 //// Server-side rendered pages with Lustre
 
+import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/float
+import gleam/http
 import gleam/int
 import gleam/io
 import gleam/json
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option.{type Option, None, Some}
+import gleam/result
 import gleam/uri
 import lustre/attribute
 import lustre/element
 import lustre/element/html
 import meal_planner/storage
-import meal_planner/types.{
-  type DailyLog, type Macros, type Recipe, type UserProfile, Active, DailyLog,
-  Gain, Lose, Macros, Maintain, Moderate, Sedentary, UserProfile,
+import meal_planner/web_helpers
+import shared/types.{
+  type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
+  type UserProfile, Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain,
+  Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack, UserProfile,
 }
 import mist
 import pog
@@ -83,11 +88,15 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
 
     // SSR pages
     ["recipes"] -> recipes_page(ctx)
+    ["recipes", "new"] -> new_recipe_page()
+    ["recipes", id, "edit"] -> edit_recipe_page(id, ctx)
     ["recipes", id] -> recipe_detail_page(id, ctx)
     ["dashboard"] -> dashboard_page(req, ctx)
     ["profile"] -> profile_page(ctx)
     ["foods"] -> foods_page(req, ctx)
     ["foods", id] -> food_detail_page(id, ctx)
+    ["log"] -> log_meal_page(ctx)
+    ["log", recipe_id] -> log_meal_form(recipe_id, ctx)
 
     // 404
     _ -> not_found_page()
@@ -164,6 +173,10 @@ fn recipes_page(ctx: Context) -> wisp.Response {
       html.p([attribute.class("subtitle")], [
         element.text("Browse our collection of healthy meals"),
       ]),
+      html.a(
+        [attribute.href("/recipes/new"), attribute.class("btn btn-primary")],
+        [element.text("+ New Recipe")],
+      ),
     ]),
     html.div([attribute.class("recipe-grid")], list.map(recipes, recipe_card)),
   ]
@@ -211,7 +224,40 @@ fn recipe_detail_page(id: String, ctx: Context) -> wisp.Response {
           element.text("← Back to recipes"),
         ]),
         html.div([attribute.class("recipe-detail")], [
-          html.h1([], [element.text(recipe.name)]),
+          html.div([attribute.class("recipe-detail-header")], [
+            html.h1([], [element.text(recipe.name)]),
+            html.div([attribute.class("recipe-actions")], [
+              html.a(
+                [
+                  attribute.href("/recipes/" <> id <> "/edit"),
+                  attribute.class("btn btn-secondary"),
+                ],
+                [element.text("Edit")],
+              ),
+              html.form(
+                [
+                  attribute.method("POST"),
+                  attribute.action("/api/recipes/" <> id),
+                  attribute.attribute(
+                    "onsubmit",
+                    "return confirm('Delete this recipe?')",
+                  ),
+                  attribute.style("display", "inline"),
+                ],
+                [
+                  html.input([
+                    attribute.type_("hidden"),
+                    attribute.name("_method"),
+                    attribute.value("DELETE"),
+                  ]),
+                  html.button(
+                    [attribute.type_("submit"), attribute.class("btn btn-danger")],
+                    [element.text("Delete")],
+                  ),
+                ],
+              ),
+            ]),
+          ]),
           html.p([attribute.class("meta")], [
             element.text("Category: " <> recipe.category),
           ]),

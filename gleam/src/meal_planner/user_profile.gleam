@@ -5,7 +5,7 @@ import gleam/float
 import gleam/int
 import gleam/io
 import gleam/string
-import meal_planner/types.{
+import shared/types.{
   type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
   Moderate, Sedentary, UserProfile,
 }

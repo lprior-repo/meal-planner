@@ -2,7 +2,7 @@ import glaml
 import gleam/list
 import gleam/result
 import gleam/string
-import meal_planner/types.{
+import shared/types.{
   type FodmapLevel, type Ingredient, type Macros, type Recipe, High, Ingredient,
   Low, Macros, Medium, Recipe,
 }

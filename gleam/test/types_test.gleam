@@ -1,6 +1,6 @@
 import gleam/float
 import gleeunit/should
-import meal_planner/types.{
+import shared/types.{
   Active, Gain, High, Ingredient, Lose, Low, Macros, Maintain, Medium, Moderate,
   Recipe, Sedentary, UserProfile, daily_calorie_target, daily_carb_target,
   daily_fat_target, daily_macro_targets, daily_protein_target,

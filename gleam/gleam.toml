@@ -24,9 +24,6 @@ gleam_json = ">= 3.0.0 and < 4.0.0"
 # YAML parsing (for recipe files)
 glaml = ">= 3.0.0"
 
-# SQLite database (for local/embedded use)
-sqlight = ">= 1.0.0 and < 2.0.0"
-
 # PostgreSQL database (for production with concurrency)
 # Using pog - the successor to gleam_pgo
 pog = ">= 1.0.0"

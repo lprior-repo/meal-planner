@@ -1,6 +1,6 @@
 import gleam/list
 import gleeunit/should
-import meal_planner/types.{
+import shared/types.{
   type Recipe, type UserProfile, Active, Gain, Ingredient, Low, Macros, Maintain,
   Moderate, Recipe, UserProfile,
 }

@@ -7,7 +7,7 @@
 import gleam/list
 import gleam/string
 import meal_planner/fodmap
-import meal_planner/types.{type Recipe}
+import shared/types.{type Recipe}
 
 /// Result of validating a recipe or meal plan
 pub type ValidationResult {
