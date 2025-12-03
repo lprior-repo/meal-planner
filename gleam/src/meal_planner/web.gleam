@@ -13,7 +13,7 @@ import lustre/attribute
 import lustre/element
 import lustre/element/html
 import meal_planner/storage
-import meal_planner/types.{
+import shared/types.{
   type DailyLog, type Macros, type Recipe, type UserProfile, Active, DailyLog,
   Gain, Lose, Macros, Maintain, Moderate, Sedentary, UserProfile,
 }

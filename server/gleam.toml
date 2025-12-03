@@ -22,7 +22,8 @@ mist = ">= 5.0.0 and < 6.0.0"
 # Lustre for SSR
 lustre = ">= 5.0.0 and < 6.0.0"
 
-# Database
+# Database - server still uses SQLite
+# meal_planner/ uses PostgreSQL via pog
 sqlight = ">= 1.0.0 and < 2.0.0"
 
 # Shared types

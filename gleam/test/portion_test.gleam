@@ -2,7 +2,7 @@ import gleam/list
 import gleeunit
 import gleeunit/should
 import meal_planner/portion
-import meal_planner/types.{Low, Macros, Recipe}
+import shared/types.{Low, Macros, Recipe}
 
 pub fn main() {
   gleeunit.main()

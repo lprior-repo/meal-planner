@@ -2,7 +2,7 @@ import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/ncp
 import meal_planner/state
-import meal_planner/types.{Active, Gain, Moderate, UserProfile}
+import shared/types.{Active, Gain, Moderate, UserProfile}
 
 /// Test that state server starts successfully
 pub fn state_server_starts_test() {

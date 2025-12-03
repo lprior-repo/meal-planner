@@ -7,7 +7,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/otp/actor
 import gleam/string
 import meal_planner/ncp
-import meal_planner/types.{
+import shared/types.{
   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary,

@@ -3,7 +3,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/string
-import meal_planner/types.{type Macros}
+import shared/types.{type Macros}
 
 /// NutritionGoals represents daily macro targets
 pub type NutritionGoals {

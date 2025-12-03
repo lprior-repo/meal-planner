@@ -8,7 +8,7 @@ import meal_planner/meal_plan.{
 }
 import meal_planner/meal_selection.{select_meals_for_week}
 import meal_planner/portion.{calculate_portion_for_target}
-import meal_planner/types.{
+import shared/types.{
   type Ingredient, type Macros, type Recipe, type UserProfile, Macros,
   daily_carb_target, daily_fat_target, daily_protein_target,
 }

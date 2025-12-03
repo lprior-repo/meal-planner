@@ -79,6 +79,29 @@ pub type Recipe {
   )
 }
 
+/// Check if recipe meets Vertical Diet requirements
+/// Must be explicitly marked compliant and have low FODMAP
+pub fn is_vertical_diet_compliant(recipe: Recipe) -> Bool {
+  recipe.vertical_compliant && recipe.fodmap_level == Low
+}
+
+/// Returns macros per serving (macros are already stored per serving)
+pub fn macros_per_serving(recipe: Recipe) -> Macros {
+  recipe.macros
+}
+
+/// Returns total macros for all servings
+pub fn total_macros(recipe: Recipe) -> Macros {
+  let servings = case recipe.servings {
+    s if s <= 0 -> 1
+    s -> s
+  }
+  macros_scale(recipe.macros, int_to_float(servings))
+}
+
+@external(erlang, "erlang", "float")
+fn int_to_float(n: Int) -> Float
+
 // ============================================================================
 // User Profile Types
 // ============================================================================
@@ -108,17 +131,9 @@ pub type UserProfile {
   )
 }
 
-/// Calculate daily macro targets for a user profile
-pub fn daily_macro_targets(u: UserProfile) -> Macros {
-  let protein = calculate_protein_target(u)
-  let fat = calculate_fat_target(u)
-  let calories = calculate_calorie_target(u)
-  let carbs = calculate_carb_target(calories, protein, fat)
-
-  Macros(protein: protein, fat: fat, carbs: carbs)
-}
-
-fn calculate_protein_target(u: UserProfile) -> Float {
+/// Calculate daily protein target (0.8-1g per lb bodyweight)
+/// Higher end for active/gain, lower for sedentary/lose
+pub fn daily_protein_target(u: UserProfile) -> Float {
   let multiplier = case u.activity_level, u.goal {
     Active, _ -> 1.0
     _, Gain -> 1.0
@@ -129,11 +144,13 @@ fn calculate_protein_target(u: UserProfile) -> Float {
   u.bodyweight *. multiplier
 }
 
-fn calculate_fat_target(u: UserProfile) -> Float {
+/// Calculate daily fat target (0.3g per lb bodyweight)
+pub fn daily_fat_target(u: UserProfile) -> Float {
   u.bodyweight *. 0.3
 }
 
-fn calculate_calorie_target(u: UserProfile) -> Float {
+/// Calculate daily calorie target based on activity and goal
+pub fn daily_calorie_target(u: UserProfile) -> Float {
   let base_multiplier = case u.activity_level {
     Sedentary -> 12.0
     Moderate -> 15.0
@@ -147,14 +164,26 @@ fn calculate_calorie_target(u: UserProfile) -> Float {
   }
 }
 
-fn calculate_carb_target(calories: Float, protein: Float, fat: Float) -> Float {
-  let protein_calories = protein *. 4.0
-  let fat_calories = fat *. 9.0
-  let remaining = calories -. protein_calories -. fat_calories
+/// Calculate daily carb target based on remaining calories
+/// After protein (4cal/g) and fat (9cal/g), fill rest with carbs (4cal/g)
+pub fn daily_carb_target(u: UserProfile) -> Float {
+  let total_calories = daily_calorie_target(u)
+  let protein_calories = daily_protein_target(u) *. 4.0
+  let fat_calories = daily_fat_target(u) *. 9.0
+  let remaining = total_calories -. protein_calories -. fat_calories
   case remaining <. 0.0 {
     True -> 0.0
     False -> remaining /. 4.0
   }
+}
+
+/// Calculate complete daily macro targets
+pub fn daily_macro_targets(u: UserProfile) -> Macros {
+  Macros(
+    protein: daily_protein_target(u),
+    fat: daily_fat_target(u),
+    carbs: daily_carb_target(u),
+  )
 }
 
 // ============================================================================

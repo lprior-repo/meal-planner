@@ -1,6 +1,6 @@
 import gleeunit/should
 import meal_planner/fodmap.{analyze_recipe_fodmap, is_low_fodmap_exception}
-import meal_planner/types.{Ingredient, Low, Macros, Recipe}
+import shared/types.{Ingredient, Low, Macros, Recipe}
 
 // Test is_low_fodmap_exception with apple cider vinegar
 pub fn is_low_fodmap_exception_apple_cider_vinegar_test() {

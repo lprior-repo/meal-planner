@@ -24,17 +24,17 @@ pub type StartupError {
 /// Start the OTP application supervisor tree
 ///
 /// This initializes all application services including:
-/// - Database schema initialization
+/// - Database connection pool
 /// - Supervisor tree with registry and workers
 /// - Logger configuration
 ///
 /// Returns the supervisor reference on success, or an error describing
 /// what failed during startup.
 pub fn start() -> Result(AppState, StartupError) {
-  // First, ensure database is initialized
-  case storage.initialize_database() {
+  // Verify database connection is available
+  case storage.start_pool(storage.default_config()) {
     Error(err) -> Error(DatabaseInitError(err))
-    Ok(Nil) -> {
+    Ok(_conn) -> {
       // Create and start the supervisor tree
       case supervisor.start() {
         Ok(started) -> Ok(AppState(supervisor: started.data))

@@ -1,5 +1,5 @@
 /// Meal planning types for daily and weekly plans
-import meal_planner/types.{
+import shared/types.{
   type Ingredient, type Macros, type Recipe, type UserProfile, Low, Macros,
   Recipe, macros_scale,
 }
