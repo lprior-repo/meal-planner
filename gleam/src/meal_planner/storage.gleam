@@ -716,6 +716,218 @@ pub fn get_foods_count(conn: pog.Connection) -> Result(Int, StorageError) {
 }
 
 // ============================================================================
+// Custom Foods Functions
+// ============================================================================
+
+/// Create a new custom food entry
+pub fn create_custom_food(
+  conn: pog.Connection,
+  food: types.CustomFood,
+) -> Result(types.CustomFood, StorageError) {
+  let sql =
+    "INSERT INTO custom_foods (
+      id, user_id, name, brand, description,
+      serving_size, serving_unit,
+      protein, fat, carbs, calories,
+      fiber, sugar, sodium, cholesterol,
+      vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
+      vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin,
+      calcium, iron, magnesium, phosphorus, potassium, zinc,
+      created_at, updated_at
+    ) VALUES (
+      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
+      $12, $13, $14, $15, $16, $17, $18, $19, $20,
+      $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32,
+      CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    )
+    RETURNING 
+      id, user_id, name, brand, description,
+      serving_size, serving_unit,
+      protein, fat, carbs, calories,
+      fiber, sugar, sodium, cholesterol,
+      vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
+      vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin,
+      calcium, iron, magnesium, phosphorus, potassium, zinc"
+
+  let decoder = custom_food_decoder()
+
+  let #(
+    fiber,
+    sugar,
+    sodium,
+    cholesterol,
+    vitamin_a,
+    vitamin_c,
+    vitamin_d,
+    vitamin_e,
+    vitamin_k,
+    vitamin_b6,
+    vitamin_b12,
+    folate,
+    thiamin,
+    riboflavin,
+    niacin,
+    calcium,
+    iron,
+    magnesium,
+    phosphorus,
+    potassium,
+    zinc,
+  ) = case food.micronutrients {
+    Some(m) -> #(
+      m.fiber, m.sugar, m.sodium, m.cholesterol,
+      m.vitamin_a, m.vitamin_c, m.vitamin_d, m.vitamin_e, m.vitamin_k,
+      m.vitamin_b6, m.vitamin_b12, m.folate, m.thiamin, m.riboflavin, m.niacin,
+      m.calcium, m.iron, m.magnesium, m.phosphorus, m.potassium, m.zinc,
+    )
+    None -> #(
+      None, None, None, None, None, None, None, None, None, None, None,
+      None, None, None, None, None, None, None, None, None, None,
+    )
+  }
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(food.id))
+    |> pog.parameter(pog.text(food.user_id))
+    |> pog.parameter(pog.text(food.name))
+    |> pog.parameter(pog.nullable(pog.text, food.brand))
+    |> pog.parameter(pog.nullable(pog.text, food.description))
+    |> pog.parameter(pog.float(food.serving_size))
+    |> pog.parameter(pog.text(food.serving_unit))
+    |> pog.parameter(pog.float(food.macros.protein))
+    |> pog.parameter(pog.float(food.macros.fat))
+    |> pog.parameter(pog.float(food.macros.carbs))
+    |> pog.parameter(pog.float(food.calories))
+    |> pog.parameter(pog.nullable(pog.float, fiber))
+    |> pog.parameter(pog.nullable(pog.float, sugar))
+    |> pog.parameter(pog.nullable(pog.float, sodium))
+    |> pog.parameter(pog.nullable(pog.float, cholesterol))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_a))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_c))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_d))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_e))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_k))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_b6))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_b12))
+    |> pog.parameter(pog.nullable(pog.float, folate))
+    |> pog.parameter(pog.nullable(pog.float, thiamin))
+    |> pog.parameter(pog.nullable(pog.float, riboflavin))
+    |> pog.parameter(pog.nullable(pog.float, niacin))
+    |> pog.parameter(pog.nullable(pog.float, calcium))
+    |> pog.parameter(pog.nullable(pog.float, iron))
+    |> pog.parameter(pog.nullable(pog.float, magnesium))
+    |> pog.parameter(pog.nullable(pog.float, phosphorus))
+    |> pog.parameter(pog.nullable(pog.float, potassium))
+    |> pog.parameter(pog.nullable(pog.float, zinc))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, [created])) -> Ok(created)
+    Ok(_) -> Error(DatabaseError("Failed to create custom food"))
+  }
+}
+
+/// Get custom food by ID (with user authorization)
+pub fn get_custom_food_by_id(
+  conn: pog.Connection,
+  food_id: String,
+  user_id: String,
+) -> Result(types.CustomFood, StorageError) {
+  let sql =
+    "SELECT id, user_id, name, brand, description,
+            serving_size, serving_unit,
+            protein, fat, carbs, calories,
+            fiber, sugar, sodium, cholesterol,
+            vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
+            vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin,
+            calcium, iron, magnesium, phosphorus, potassium, zinc
+     FROM custom_foods WHERE id = $1 AND user_id = $2"
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(food_id))
+    |> pog.parameter(pog.text(user_id))
+    |> pog.returning(custom_food_decoder())
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(0, _)) -> Error(NotFound)
+    Ok(pog.Returned(_, [])) -> Error(NotFound)
+    Ok(pog.Returned(_, [food, ..])) -> Ok(food)
+  }
+}
+
+/// Decoder for custom food
+fn custom_food_decoder() -> decode.Decoder(types.CustomFood) {
+  use id <- decode.field(0, decode.string)
+  use user_id <- decode.field(1, decode.string)
+  use name <- decode.field(2, decode.string)
+  use brand <- decode.field(3, decode.optional(decode.string))
+  use description <- decode.field(4, decode.optional(decode.string))
+  use serving_size <- decode.field(5, decode.float)
+  use serving_unit <- decode.field(6, decode.string)
+  use protein <- decode.field(7, decode.float)
+  use fat <- decode.field(8, decode.float)
+  use carbs <- decode.field(9, decode.float)
+  use calories <- decode.field(10, decode.float)
+  use fiber <- decode.field(11, decode.optional(decode.float))
+  use sugar <- decode.field(12, decode.optional(decode.float))
+  use sodium <- decode.field(13, decode.optional(decode.float))
+  use cholesterol <- decode.field(14, decode.optional(decode.float))
+  use vitamin_a <- decode.field(15, decode.optional(decode.float))
+  use vitamin_c <- decode.field(16, decode.optional(decode.float))
+  use vitamin_d <- decode.field(17, decode.optional(decode.float))
+  use vitamin_e <- decode.field(18, decode.optional(decode.float))
+  use vitamin_k <- decode.field(19, decode.optional(decode.float))
+  use vitamin_b6 <- decode.field(20, decode.optional(decode.float))
+  use vitamin_b12 <- decode.field(21, decode.optional(decode.float))
+  use folate <- decode.field(22, decode.optional(decode.float))
+  use thiamin <- decode.field(23, decode.optional(decode.float))
+  use riboflavin <- decode.field(24, decode.optional(decode.float))
+  use niacin <- decode.field(25, decode.optional(decode.float))
+  use calcium <- decode.field(26, decode.optional(decode.float))
+  use iron <- decode.field(27, decode.optional(decode.float))
+  use magnesium <- decode.field(28, decode.optional(decode.float))
+  use phosphorus <- decode.field(29, decode.optional(decode.float))
+  use potassium <- decode.field(30, decode.optional(decode.float))
+  use zinc <- decode.field(31, decode.optional(decode.float))
+
+  let micronutrients = case
+    fiber, sugar, sodium, cholesterol,
+    vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
+    vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin,
+    calcium, iron, magnesium, phosphorus, potassium, zinc
+  {
+    None, None, None, None, None, None, None, None, None, None, None,
+    None, None, None, None, None, None, None, None, None, None -> None
+    _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ->
+      Some(types.Micronutrients(
+        fiber: fiber, sugar: sugar, sodium: sodium, cholesterol: cholesterol,
+        vitamin_a: vitamin_a, vitamin_c: vitamin_c, vitamin_d: vitamin_d,
+        vitamin_e: vitamin_e, vitamin_k: vitamin_k, vitamin_b6: vitamin_b6,
+        vitamin_b12: vitamin_b12, folate: folate, thiamin: thiamin,
+        riboflavin: riboflavin, niacin: niacin, calcium: calcium, iron: iron,
+        magnesium: magnesium, phosphorus: phosphorus, potassium: potassium, zinc: zinc,
+      ))
+  }
+
+  decode.success(types.CustomFood(
+    id: id,
+    user_id: user_id,
+    name: name,
+    brand: brand,
+    description: description,
+    serving_size: serving_size,
+    serving_unit: serving_unit,
+    macros: types.Macros(protein: protein, fat: fat, carbs: carbs),
+    calories: calories,
+    micronutrients: micronutrients,
+  ))
+}
+
+// ============================================================================
 // Food Log Functions
 // ============================================================================
 
