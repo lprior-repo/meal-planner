@@ -11,6 +11,7 @@
 ///
 /// See: docs/component_signatures.md (section: Forms)
 import gleam/option
+import gleam/string
 
 /// Text input field
 ///
@@ -114,6 +115,86 @@ pub fn form(
   // TODO: Implement using Lustre element builder
   "<!-- form: " <> action <> " -->"
 }
+// ===================================================================
+// SEARCH INPUT COMPONENTS (Bead meal-planner-rvz.1)
+// ===================================================================
+
+/// Search input with clear button
+///
+/// Features:
+/// - 300ms debouncing via data attribute (handled by client JS)
+/// - Clear button visible when query has value
+/// - Placeholder text
+/// - Proper ARIA labels for accessibility
+///
+/// Renders:
+/// <div class="search-input-container" data-debounce="300">
+///   <input type="search" class="input-search" ... />
+///   <button type="button" class="search-clear-btn [hidden]">×</button>
+/// </div>
+pub fn search_input_with_clear(query: String, placeholder: String) -> String {
+  let has_value = string.length(query) > 0
+  let clear_btn_class = case has_value {
+    True -> "search-clear-btn"
+    False -> "search-clear-btn hidden"
+  }
+
+  "<div class=\"search-input-container\" data-debounce=\"300\">"
+  <> "<input type=\"search\" class=\"input-search\" "
+  <> "placeholder=\""
+  <> placeholder
+  <> "\" "
+  <> "value=\""
+  <> query
+  <> "\" "
+  <> "aria-label=\""
+  <> placeholder
+  <> "\" />"
+  <> "<button type=\"button\" class=\""
+  <> clear_btn_class
+  <> "\">×</button>"
+  <> "</div>"
+}
+
+/// Search input with autofocus control
+///
+/// Same as search_input_with_clear but with optional autofocus attribute
+/// for keyboard focus management.
+pub fn search_input_with_autofocus(
+  query: String,
+  placeholder: String,
+  autofocus: Bool,
+) -> String {
+  let has_value = string.length(query) > 0
+  let clear_btn_class = case has_value {
+    True -> "search-clear-btn"
+    False -> "search-clear-btn hidden"
+  }
+
+  let autofocus_attr = case autofocus {
+    True -> " autofocus"
+    False -> ""
+  }
+
+  "<div class=\"search-input-container\" data-debounce=\"300\">"
+  <> "<input type=\"search\" class=\"input-search\" "
+  <> "placeholder=\""
+  <> placeholder
+  <> "\" "
+  <> "value=\""
+  <> query
+  <> "\" "
+  <> "aria-label=\""
+  <> placeholder
+  <> "\""
+  <> autofocus_attr
+  <> " />"
+  <> "<button type=\"button\" class=\""
+  <> clear_btn_class
+  <> "\">×</button>"
+  <> "</div>"
+}
+
 // ===================================================================
 // INTERNAL HELPERS
 // ===================================================================

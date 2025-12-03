@@ -1,6 +1,7 @@
 //// Wisp web server for the meal planner application
 //// Server-side rendered pages with Lustre
 
+import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/float
 import gleam/http
@@ -15,11 +16,13 @@ import gleam/uri
 import lustre/attribute
 import lustre/element
 import lustre/element/html
+import meal_planner/food_search
 import meal_planner/storage
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
-  type UserProfile, Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain,
-  Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack, UserProfile,
+  type UserProfile, Active, Breakfast, DailyLog, DatabaseError, Dinner,
+  FoodLogEntry, Gain, InvalidQuery, Lose, Lunch, Macros, Maintain, Moderate,
+  Sedentary, Snack, UserProfile,
 }
 import mist
 import pog
@@ -97,6 +100,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["foods", id] -> food_detail_page(id, ctx)
     ["log"] -> log_meal_page(ctx)
     ["log", recipe_id] -> log_meal_form(recipe_id, ctx)
+    ["log", "food", id] -> log_food_form(id, ctx)
 
     // 404
     _ -> not_found_page()
@@ -872,6 +876,114 @@ fn log_meal_page(ctx: Context) -> wisp.Response {
   wisp.html_response(render_page("Log Meal - Meal Planner", content), 200)
 }
 
+fn log_food_form(fdc_id: String, ctx: Context) -> wisp.Response {
+  case int.parse(fdc_id) {
+    Ok(id) ->
+      case storage.load_usda_food(ctx.db, id) {
+        Ok(food) -> {
+          let content = [
+            html.a([attribute.href("/foods"), attribute.class("back-link")], [
+              element.text("← Back to food search"),
+            ]),
+            html.div([attribute.class("log-form-container")], [
+              html.h1([], [element.text("Log: " <> food.name)]),
+              html.div([attribute.class("food-summary")], [
+                html.p([attribute.class("meta")], [
+                  element.text(
+                    "Per 100g: "
+                    <> float_to_string(types.macros_calories(food.macros_per_100g))
+                    <> " cal",
+                  ),
+                ]),
+                html.div([attribute.class("macro-badges")], [
+                  macro_badge("P", food.macros_per_100g.protein),
+                  macro_badge("F", food.macros_per_100g.fat),
+                  macro_badge("C", food.macros_per_100g.carbs),
+                ]),
+              ]),
+              html.form(
+                [
+                  attribute.method("POST"),
+                  attribute.action("/api/logs/food?fdc_id=" <> fdc_id),
+                  attribute.class("log-form"),
+                ],
+                [
+                  html.div([attribute.class("form-group")], [
+                    html.label([attribute.attribute("for", "grams")], [
+                      element.text("Amount (grams)"),
+                    ]),
+                    html.input([
+                      attribute.type_("number"),
+                      attribute.id("grams"),
+                      attribute.name("grams"),
+                      attribute.attribute("min", "1"),
+                      attribute.attribute("step", "1"),
+                      attribute.value("100"),
+                      attribute.required(True),
+                    ]),
+                  ]),
+                  html.div([attribute.class("form-group")], [
+                    html.label([attribute.attribute("for", "meal_type")], [
+                      element.text("Meal Type"),
+                    ]),
+                    html.select(
+                      [
+                        attribute.id("meal_type"),
+                        attribute.name("meal_type"),
+                        attribute.required(True),
+                      ],
+                      [
+                        html.option([attribute.value("breakfast")], "Breakfast"),
+                        html.option([attribute.value("lunch")], "Lunch"),
+                        html.option([attribute.value("dinner")], "Dinner"),
+                        html.option([attribute.value("snack")], "Snack"),
+                      ],
+                    ),
+                  ]),
+                  html.div([attribute.class("form-actions")], [
+                    html.button(
+                      [
+                        attribute.type_("submit"),
+                        attribute.class("btn btn-primary"),
+                      ],
+                      [element.text("Log Food")],
+                    ),
+                    html.a(
+                      [
+                        attribute.href("/foods/" <> fdc_id),
+                        attribute.class("btn btn-secondary"),
+                      ],
+                      [element.text("Cancel")],
+                    ),
+                  ]),
+                ],
+              ),
+            ]),
+          ]
+
+          wisp.html_response(
+            render_page("Log " <> food.name <> " - Meal Planner", content),
+            200,
+          )
+        }
+        Error(_) -> {
+          let content = [
+            html.div([attribute.class("error")], [
+              element.text("Food not found"),
+            ]),
+          ]
+          wisp.html_response(render_page("Error", content), 404)
+        }
+      }
+    Error(_) -> {
+      let content = [
+        html.div([attribute.class("error")], [element.text("Invalid food ID")]),
+      ]
+      wisp.html_response(render_page("Error", content), 400)
+    }
+  }
+}
+
 fn log_meal_form(recipe_id: String, ctx: Context) -> wisp.Response {
   case load_recipe_by_id(ctx, recipe_id) {
     Ok(recipe) -> {
@@ -1097,6 +1209,16 @@ fn food_detail_page(id: String, ctx: Context) -> wisp.Response {
                   html.tbody([], list.map(nutrients, nutrient_row)),
                 ]),
               ]),
+              // Log food button
+              html.div([attribute.class("food-actions")], [
+                html.a(
+                  [
+                    attribute.href("/log/food/" <> int_to_string(fdc_id)),
+                    attribute.class("btn btn-primary"),
+                  ],
+                  [element.text("Log This Food")],
+                ),
+              ]),
             ]),
           ]
 
@@ -1180,6 +1302,7 @@ fn handle_api(
     ["foods", "search"] -> api_foods_search(req, ctx)
     ["foods", id] -> api_food(req, id, ctx)
     ["logs"] -> api_logs_create(req, ctx)
+    ["logs", "food"] -> api_logs_food_create(req, ctx)
     ["logs", "entry", id] -> api_log_entry(req, id, ctx)
     _ -> wisp.not_found()
   }
@@ -1494,6 +1617,68 @@ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
   }
 }
 
+/// POST /api/foods/search - Unified food search endpoint
+/// Searches both custom foods (user-scoped) and USDA foods (global)
+/// Expects JSON body: {"query": "chicken", "limit": 50}
+/// Returns paginated results with counts
+fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
+  case req.method {
+    http.Post -> {
+      // Parse JSON body
+      use json_body <- wisp.require_json(req)
+
+      // Extract query and limit from JSON
+      let query_result = case json.decode(json_body, using: decode_search_request()) {
+        Ok(#(query, limit)) -> Ok(#(query, limit))
+        Error(_) -> Error("Invalid JSON body")
+      }
+
+      case query_result {
+        Ok(#(query, limit)) -> {
+          // Call unified search with hardcoded user_id for now
+          // TODO: Get user_id from auth context once authentication is implemented
+          let user_id = "default-user"
+          
+          case food_search.unified_food_search(ctx.db, user_id, query, limit) {
+            Ok(response) -> {
+              let json_data = types.food_search_response_to_json(response)
+              wisp.json_response(json.to_string(json_data), 200)
+            }
+            Error(InvalidQuery(msg)) -> {
+              let error_json = json.object([
+                #("error", json.string("Invalid query")),
+                #("details", json.string(msg)),
+              ])
+              wisp.json_response(json.to_string(error_json), 400)
+            }
+            Error(DatabaseError(msg)) -> {
+              let error_json = json.object([
+                #("error", json.string("Database error")),
+                #("details", json.string(msg)),
+              ])
+              wisp.json_response(json.to_string(error_json), 500)
+            }
+          }
+        }
+        Error(msg) -> {
+          let error_json = json.object([
+            #("error", json.string(msg)),
+          ])
+          wisp.json_response(json.to_string(error_json), 400)
+        }
+      }
+    }
+    _ -> wisp.method_not_allowed([http.Post])
+  }
+}
+
+/// Decode search request from JSON
+fn decode_search_request() -> decode.Decoder(#(String, Int)) {
+  use query <- decode.field("query", decode.string)
+  use limit <- decode.field("limit", decode.int)
+  decode.success(#(query, limit))
+}
+
 fn api_food(_req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
   case int.parse(id) {
     Error(_) -> wisp.not_found()
@@ -1537,21 +1722,26 @@ fn food_to_json(f: storage.UsdaFood) -> json.Json {
 
 /// POST /api/logs - Create a new food log entry
 fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
-  // Get query params for form submission
-  case uri.parse_query(req.query |> option.unwrap("")) {
-    Ok(params) -> {
-      let recipe_id =
-        list.find(params, fn(p) { p.0 == "recipe_id" })
-        |> result.map(fn(p) { p.1 })
-      let servings_str =
-        list.find(params, fn(p) { p.0 == "servings" })
-        |> result.map(fn(p) { p.1 })
-      let meal_type_str =
-        list.find(params, fn(p) { p.0 == "meal_type" })
-        |> result.map(fn(p) { p.1 })
+  use form_data <- wisp.require_form(req)
 
-      case recipe_id, servings_str, meal_type_str {
-        Ok(rid), Ok(sstr), Ok(mtstr) -> {
+  // Get recipe_id from query params
+  let recipe_id_result = case uri.parse_query(req.query |> option.unwrap("")) {
+    Ok(params) ->
+      list.find(params, fn(p) { p.0 == "recipe_id" })
+      |> result.map(fn(p) { p.1 })
+    Error(_) -> Error(Nil)
+  }
+
+  // Get servings and meal_type from form body
+  let servings_str =
+    list.find(form_data.values, fn(p) { p.0 == "servings" })
+    |> result.map(fn(p) { p.1 })
+  let meal_type_str =
+    list.find(form_data.values, fn(p) { p.0 == "meal_type" })
+    |> result.map(fn(p) { p.1 })
+
+  case recipe_id_result, servings_str, meal_type_str {
+    Ok(rid), Ok(sstr), Ok(mtstr) -> {
           let servings = case float.parse(sstr) {
             Ok(s) -> s
             Error(_) -> 1.0
@@ -1580,6 +1770,16 @@ fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
 
               case storage.save_food_log_entry(ctx.db, today, entry) {
                 Ok(_) -> wisp.redirect("/dashboard")
+                Error(storage.DatabaseError(msg)) -> {
+                  let err =
+                    json.object([
+                      #(
+                        "error",
+                        json.string("Failed to save entry: " <> msg),
+                      ),
+                    ])
+                  wisp.json_response(json.to_string(err), 500)
+                }
                 Error(_) -> {
                   let err =
                     json.object([
@@ -1591,20 +1791,188 @@ fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
             }
           }
         }
-        _, _, _ -> {
+    _, _, _ -> {
+      let err =
+        json.object([#("error", json.string("Missing required parameters"))])
+      wisp.json_response(json.to_string(err), 400)
+    }
+  }
+}
+
+fn api_logs_food_create(req: wisp.Request, ctx: Context) -> wisp.Response {
+  use form_data <- wisp.require_form(req)
+
+  // Get fdc_id from query params
+  let fdc_id_result = case uri.parse_query(req.query |> option.unwrap("")) {
+    Ok(params) ->
+      list.find(params, fn(p) { p.0 == "fdc_id" })
+      |> result.map(fn(p) { p.1 })
+    Error(_) -> Error(Nil)
+  }
+
+  // Get grams and meal_type from form body
+  let grams_str =
+    list.find(form_data.values, fn(p) { p.0 == "grams" })
+    |> result.map(fn(p) { p.1 })
+  let meal_type_str =
+    list.find(form_data.values, fn(p) { p.0 == "meal_type" })
+    |> result.map(fn(p) { p.1 })
+
+  case fdc_id_result, grams_str, meal_type_str {
+    Ok(fdc_id_str), Ok(g_str), Ok(mtstr) -> {
+      case int.parse(fdc_id_str), float.parse(g_str) {
+        Ok(fdc_id), Ok(grams) -> {
+          let meal_type = string_to_meal_type(mtstr)
+          let today = get_today_date()
+
+          // Get USDA food to calculate macros and micronutrients
+          case storage.load_usda_food(ctx.db, fdc_id) {
+            Error(_) -> wisp.not_found()
+            Ok(food) -> {
+              // Scale macros from per 100g to actual grams
+              let portion_multiplier = grams /. 100.0
+              let scaled_macros =
+                types.macros_scale(food.macros_per_100g, portion_multiplier)
+
+              // Scale micronutrients from per 100g to actual grams
+              let scaled_micros = case food.micronutrients_per_100g {
+                None -> None
+                Some(micros) ->
+                  Some(types.Micronutrients(
+                    fiber: scale_optional_float(micros.fiber, portion_multiplier),
+                    sugar: scale_optional_float(micros.sugar, portion_multiplier),
+                    sodium: scale_optional_float(
+                      micros.sodium,
+                      portion_multiplier,
+                    ),
+                    cholesterol: scale_optional_float(
+                      micros.cholesterol,
+                      portion_multiplier,
+                    ),
+                    vitamin_a: scale_optional_float(
+                      micros.vitamin_a,
+                      portion_multiplier,
+                    ),
+                    vitamin_c: scale_optional_float(
+                      micros.vitamin_c,
+                      portion_multiplier,
+                    ),
+                    vitamin_d: scale_optional_float(
+                      micros.vitamin_d,
+                      portion_multiplier,
+                    ),
+                    vitamin_e: scale_optional_float(
+                      micros.vitamin_e,
+                      portion_multiplier,
+                    ),
+                    vitamin_k: scale_optional_float(
+                      micros.vitamin_k,
+                      portion_multiplier,
+                    ),
+                    vitamin_b6: scale_optional_float(
+                      micros.vitamin_b6,
+                      portion_multiplier,
+                    ),
+                    vitamin_b12: scale_optional_float(
+                      micros.vitamin_b12,
+                      portion_multiplier,
+                    ),
+                    folate: scale_optional_float(
+                      micros.folate,
+                      portion_multiplier,
+                    ),
+                    thiamin: scale_optional_float(
+                      micros.thiamin,
+                      portion_multiplier,
+                    ),
+                    riboflavin: scale_optional_float(
+                      micros.riboflavin,
+                      portion_multiplier,
+                    ),
+                    niacin: scale_optional_float(
+                      micros.niacin,
+                      portion_multiplier,
+                    ),
+                    calcium: scale_optional_float(
+                      micros.calcium,
+                      portion_multiplier,
+                    ),
+                    iron: scale_optional_float(micros.iron, portion_multiplier),
+                    magnesium: scale_optional_float(
+                      micros.magnesium,
+                      portion_multiplier,
+                    ),
+                    phosphorus: scale_optional_float(
+                      micros.phosphorus,
+                      portion_multiplier,
+                    ),
+                    potassium: scale_optional_float(
+                      micros.potassium,
+                      portion_multiplier,
+                    ),
+                    zinc: scale_optional_float(micros.zinc, portion_multiplier),
+                  ))
+              }
+
+              let entry =
+                FoodLogEntry(
+                  id: generate_entry_id(),
+                  recipe_id: int.to_string(fdc_id),
+                  recipe_name: food.name <> " (" <> float_to_string(grams) <> "g)",
+                  servings: grams,
+                  macros: scaled_macros,
+                  micronutrients: scaled_micros,
+                  meal_type: meal_type,
+                  logged_at: current_timestamp(),
+                  source_type: "usda_food",
+                  source_id: int.to_string(fdc_id),
+                )
+
+              case storage.save_food_log_entry(ctx.db, today, entry) {
+                Ok(_) -> wisp.redirect("/dashboard")
+                Error(storage.DatabaseError(msg)) -> {
+                  let err =
+                    json.object([
+                      #(
+                        "error",
+                        json.string("Failed to save entry: " <> msg),
+                      ),
+                    ])
+                  wisp.json_response(json.to_string(err), 500)
+                }
+                Error(_) -> {
+                  let err =
+                    json.object([
+                      #("error", json.string("Failed to save entry")),
+                    ])
+                  wisp.json_response(json.to_string(err), 500)
+                }
+              }
+            }
+          }
+        }
+        _, _ -> {
           let err =
-            json.object([
-              #("error", json.string("Missing required parameters")),
-            ])
+            json.object([#("error", json.string("Invalid fdc_id or grams"))])
           wisp.json_response(json.to_string(err), 400)
         }
       }
     }
-    Error(_) -> {
+    _, _, _ -> {
       let err =
-        json.object([#("error", json.string("Invalid query parameters"))])
+        json.object([#("error", json.string("Missing required parameters"))])
       wisp.json_response(json.to_string(err), 400)
     }
+  }
+}
+
+fn scale_optional_float(
+  value: option.Option(Float),
+  multiplier: Float,
+) -> option.Option(Float) {
+  case value {
+    None -> None
+    Some(v) -> Some(v *. multiplier)
   }
 }
 
@@ -1738,9 +2106,12 @@ fn load_daily_log(ctx: Context, date: String) -> DailyLog {
 
 /// Get today's date in YYYY-MM-DD format
 fn get_today_date() -> String {
-  // This is a simplified version - in production you'd want to use a proper date library
-  // For now, we'll use a system call to get the date
-  "2025-12-01"
+  let #(#(year, month, day), _) = erlang_localtime()
+  int.to_string(year)
+  <> "-"
+  <> pad_two(month)
+  <> "-"
+  <> pad_two(day)
 }
 
 /// Sample recipes for fallback when database is empty
