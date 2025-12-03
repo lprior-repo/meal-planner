@@ -91,8 +91,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // SSR pages
     ["recipes"] -> recipes_page(ctx)
     ["recipes", "new"] -> new_recipe_page()
-    // Edit page tracked in bead meal-planner-8er
-    // ["recipes", id, "edit"] -> edit_recipe_page(id, ctx)
+    ["recipes", id, "edit"] -> edit_recipe_page(id, ctx)
     ["recipes", id] -> recipe_detail_page(id, ctx)
     ["dashboard"] -> dashboard_page(req, ctx)
     ["profile"] -> profile_page(ctx)
@@ -408,6 +407,292 @@ function addInstruction() {
   ]
 
   wisp.html_response(render_page("New Recipe - Meal Planner", content), 200)
+fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
+  case load_recipe_by_id(ctx, id) {
+    Error(_) -> not_found_page()
+    Ok(recipe) -> {
+      let content = [
+        html.a([attribute.href("/recipes/" <> id), attribute.class("back-link")], [
+          element.text("← Back to recipe"),
+        ]),
+        html.div([attribute.class("page-header")], [
+          html.h1([], [element.text("Edit Recipe")]),
+        ]),
+        html.form(
+          [
+            attribute.method("POST"),
+            attribute.action("/api/recipes/" <> id),
+            attribute.class("recipe-form"),
+          ],
+          [
+            html.input([
+              attribute.type_("hidden"),
+              attribute.name("_method"),
+              attribute.value("PUT"),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.for("name")], [element.text("Recipe Name")]),
+              html.input([
+                attribute.type_("text"),
+                attribute.name("name"),
+                attribute.id("name"),
+                attribute.required(True),
+                attribute.value(recipe.name),
+                attribute.class("form-control"),
+              ]),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.for("category")], [element.text("Category")]),
+              html.select(
+                [
+                  attribute.name("category"),
+                  attribute.id("category"),
+                  attribute.required(True),
+                  attribute.class("form-control"),
+                ],
+                [
+                  category_option("chicken", "Chicken", recipe.category),
+                  category_option("beef", "Beef", recipe.category),
+                  category_option("pork", "Pork", recipe.category),
+                  category_option("seafood", "Seafood", recipe.category),
+                  category_option("vegetarian", "Vegetarian", recipe.category),
+                  category_option("other", "Other", recipe.category),
+                ],
+              ),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.for("servings")], [element.text("Servings")]),
+              html.input([
+                attribute.type_("number"),
+                attribute.name("servings"),
+                attribute.id("servings"),
+                attribute.required(True),
+                attribute.value(int_to_string(recipe.servings)),
+                attribute.attribute("min", "1"),
+                attribute.class("form-control"),
+              ]),
+            ]),
+            html.div([attribute.class("form-section")], [
+              html.h2([], [element.text("Nutrition (per serving)")]),
+              html.div([attribute.class("form-row")], [
+                html.div([attribute.class("form-group")], [
+                  html.label([attribute.for("protein")], [element.text("Protein (g)")]),
+                  html.input([
+                    attribute.type_("number"),
+                    attribute.name("protein"),
+                    attribute.id("protein"),
+                    attribute.required(True),
+                    attribute.attribute("step", "0.1"),
+                    attribute.value(float_to_string(recipe.macros.protein)),
+                    attribute.class("form-control"),
+                  ]),
+                ]),
+                html.div([attribute.class("form-group")], [
+                  html.label([attribute.for("fat")], [element.text("Fat (g)")]),
+                  html.input([
+                    attribute.type_("number"),
+                    attribute.name("fat"),
+                    attribute.id("fat"),
+                    attribute.required(True),
+                    attribute.attribute("step", "0.1"),
+                    attribute.value(float_to_string(recipe.macros.fat)),
+                    attribute.class("form-control"),
+                  ]),
+                ]),
+                html.div([attribute.class("form-group")], [
+                  html.label([attribute.for("carbs")], [element.text("Carbs (g)")]),
+                  html.input([
+                    attribute.type_("number"),
+                    attribute.name("carbs"),
+                    attribute.id("carbs"),
+                    attribute.required(True),
+                    attribute.attribute("step", "0.1"),
+                    attribute.value(float_to_string(recipe.macros.carbs)),
+                    attribute.class("form-control"),
+                  ]),
+                ]),
+              ]),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.for("fodmap_level")], [element.text("FODMAP Level")]),
+              html.select(
+                [
+                  attribute.name("fodmap_level"),
+                  attribute.id("fodmap_level"),
+                  attribute.required(True),
+                  attribute.class("form-control"),
+                ],
+                [
+                  fodmap_option("low", "Low", recipe.fodmap_level),
+                  fodmap_option("medium", "Medium", recipe.fodmap_level),
+                  fodmap_option("high", "High", recipe.fodmap_level),
+                ],
+              ),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.class("checkbox-label")], [
+                html.input(case recipe.vertical_compliant {
+                  True -> [
+                    attribute.type_("checkbox"),
+                    attribute.name("vertical_compliant"),
+                    attribute.id("vertical_compliant"),
+                    attribute.value("true"),
+                    attribute.checked(True),
+                  ]
+                  False -> [
+                    attribute.type_("checkbox"),
+                    attribute.name("vertical_compliant"),
+                    attribute.id("vertical_compliant"),
+                    attribute.value("true"),
+                  ]
+                }),
+                element.text(" Vertical Diet Compliant"),
+              ]),
+            ]),
+            html.div([attribute.class("form-section")], [
+              html.h2([], [element.text("Ingredients")]),
+              html.div([attribute.id("ingredients-list")], 
+                list.index_map(recipe.ingredients, fn(ing, idx) {
+                  html.div([attribute.class("form-row ingredient-row")], [
+                    html.div([attribute.class("form-group")], [
+                      html.input([
+                        attribute.type_("text"),
+                        attribute.name("ingredient_name_" <> int_to_string(idx)),
+                        attribute.placeholder("Ingredient"),
+                        attribute.value(ing.name),
+                        attribute.class("form-control"),
+                        attribute.required(True),
+                      ]),
+                    ]),
+                    html.div([attribute.class("form-group")], [
+                      html.input([
+                        attribute.type_("text"),
+                        attribute.name("ingredient_quantity_" <> int_to_string(idx)),
+                        attribute.placeholder("Quantity"),
+                        attribute.value(ing.quantity),
+                        attribute.class("form-control"),
+                        attribute.required(True),
+                      ]),
+                    ]),
+                  ])
+                })
+              ),
+              html.button(
+                [
+                  attribute.type_("button"),
+                  attribute.class("btn btn-secondary"),
+                  attribute.attribute("onclick", "addIngredient()"),
+                ],
+                [element.text("+ Add Ingredient")],
+              ),
+            ]),
+            html.div([attribute.class("form-section")], [
+              html.h2([], [element.text("Instructions")]),
+              html.div([attribute.id("instructions-list")],
+                list.index_map(recipe.instructions, fn(inst, idx) {
+                  html.div([attribute.class("form-group instruction-row")], [
+                    html.textarea(
+                      [
+                        attribute.name("instruction_" <> int_to_string(idx)),
+                        attribute.attribute("rows", "2"),
+                        attribute.placeholder("Step " <> int_to_string(idx + 1)),
+                        attribute.class("form-control"),
+                        attribute.required(True),
+                      ],
+                      inst,
+                    ),
+                  ])
+                })
+              ),
+              html.button(
+                [
+                  attribute.type_("button"),
+                  attribute.class("btn btn-secondary"),
+                  attribute.attribute("onclick", "addInstruction()"),
+                ],
+                [element.text("+ Add Step")],
+              ),
+            ]),
+            html.div([attribute.class("form-actions")], [
+              html.button(
+                [attribute.type_("submit"), attribute.class("btn btn-primary")],
+                [element.text("Update Recipe")],
+              ),
+              html.a(
+                [attribute.href("/recipes/" <> id), attribute.class("btn btn-secondary")],
+                [element.text("Cancel")],
+              ),
+            ]),
+            html.script(
+              [],
+              "
+let ingredientCount = " <> int_to_string(list.length(recipe.ingredients)) <> ";
+let instructionCount = " <> int_to_string(list.length(recipe.instructions)) <> ";
+
+function addIngredient() {
+  const container = document.getElementById('ingredients-list');
+  const div = document.createElement('div');
+  div.className = 'form-row ingredient-row';
+  div.innerHTML = `
+    <div class=\"form-group\">
+      <input type=\"text\" name=\"ingredient_name_${ingredientCount}\"
+             placeholder=\"Ingredient\" class=\"form-control\" required>
+    </div>
+    <div class=\"form-group\">
+      <input type=\"text\" name=\"ingredient_quantity_${ingredientCount}\"
+             placeholder=\"Quantity\" class=\"form-control\" required>
+    </div>
+    <button type=\"button\" class=\"btn btn-danger btn-small\"
+            onclick=\"this.parentElement.remove()\">Remove</button>
+  `;
+  container.appendChild(div);
+  ingredientCount++;
+}
+
+function addInstruction() {
+  const container = document.getElementById('instructions-list');
+  const div = document.createElement('div');
+  div.className = 'form-group instruction-row';
+  div.innerHTML = `
+    <textarea name=\"instruction_${instructionCount}\" rows=\"2\"
+              placeholder=\"Step ${instructionCount + 1}\"
+              class=\"form-control\" required></textarea>
+    <button type=\"button\" class=\"btn btn-danger btn-small\"
+            onclick=\"this.parentElement.remove()\">Remove</button>
+  `;
+  container.appendChild(div);
+  instructionCount++;
+}
+              ",
+            ),
+          ],
+        ),
+      ]
+
+      wisp.html_response(render_page("Edit " <> recipe.name <> " - Meal Planner", content), 200)
+    }
+  }
+}
+
+fn category_option(value: String, label: String, current: String) -> element.Element(msg) {
+  case value == current {
+    True -> html.option([attribute.value(value), attribute.selected(True)], label)
+    False -> html.option([attribute.value(value)], label)
+  }
+}
+
+fn fodmap_option(value: String, label: String, current: types.FodmapLevel) -> element.Element(msg) {
+  let current_str = case current {
+    types.Low -> "low"
+    types.Medium -> "medium"
+    types.High -> "high"
+  }
+  case value == current_str {
+    True -> html.option([attribute.value(value), attribute.selected(True)], label)
+    False -> html.option([attribute.value(value)], label)
+  }
+}
+
 }
 
 fn ingredient_input_row(index: Int) -> element.Element(msg) {
@@ -1721,16 +2006,23 @@ fn food_to_json(f: storage.UsdaFood) -> json.Json {
 }
 
 /// POST /api/logs - Create a new food log entry
+/// Accepts any food source: recipe_id, fdc_id (USDA), or custom_food_id
 fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
   use form_data <- wisp.require_form(req)
 
-  // Get recipe_id from query params
-  let recipe_id_result = case uri.parse_query(req.query |> option.unwrap("")) {
-    Ok(params) ->
-      list.find(params, fn(p) { p.0 == "recipe_id" })
-      |> result.map(fn(p) { p.1 })
-    Error(_) -> Error(Nil)
+  // Parse query parameters to determine food source
+  let query_params = case uri.parse_query(req.query |> option.unwrap("")) {
+    Ok(params) -> params
+    Error(_) -> []
   }
+
+  // Extract food source from query params (recipe_id, fdc_id, or custom_food_id)
+  let recipe_id = list.find(query_params, fn(p) { p.0 == "recipe_id" })
+    |> result.map(fn(p) { p.1 })
+  let fdc_id_str = list.find(query_params, fn(p) { p.0 == "fdc_id" })
+    |> result.map(fn(p) { p.1 })
+  let custom_food_id = list.find(query_params, fn(p) { p.0 == "custom_food_id" })
+    |> result.map(fn(p) { p.1 })
 
   // Get servings and meal_type from form body
   let servings_str =
@@ -1740,60 +2032,70 @@ fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
     list.find(form_data.values, fn(p) { p.0 == "meal_type" })
     |> result.map(fn(p) { p.1 })
 
-  case recipe_id_result, servings_str, meal_type_str {
-    Ok(rid), Ok(sstr), Ok(mtstr) -> {
-          let servings = case float.parse(sstr) {
-            Ok(s) -> s
-            Error(_) -> 1.0
+  // Parse servings and meal_type
+  case servings_str, meal_type_str {
+    Ok(sstr), Ok(mtstr) -> {
+      let servings = case float.parse(sstr) {
+        Ok(s) -> s
+        Error(_) -> 1.0
+      }
+      let meal_type = string_to_meal_type(mtstr)
+      let today = get_today_date()
+
+      // Determine food source type and construct FoodSource
+      let food_source_result = case recipe_id, fdc_id_str, custom_food_id {
+        Ok(rid), Error(_), Error(_) -> Ok(types.RecipeSource(rid))
+        Error(_), Ok(fdc_str), Error(_) -> 
+          case int.parse(fdc_str) {
+            Ok(fdc) -> Ok(types.UsdaFoodSource(fdc))
+            Error(_) -> Error("Invalid fdc_id format")
           }
-          let meal_type = string_to_meal_type(mtstr)
-          let today = get_today_date()
+        Error(_), Error(_), Ok(cid) -> {
+          // For custom foods, we need user_id - get from session/auth
+          // For now, use a placeholder until auth is implemented
+          Ok(types.CustomFoodSource(cid, "default_user"))
+        }
+        _, _, _ -> Error("Exactly one food source (recipe_id, fdc_id, or custom_food_id) must be provided")
+      }
 
-          // Get recipe to calculate macros
-          case load_recipe_by_id(ctx, rid) {
-            Error(_) -> wisp.not_found()
-            Ok(recipe) -> {
-              let scaled_macros = types.macros_scale(recipe.macros, servings)
-              let entry =
-                FoodLogEntry(
-                  id: generate_entry_id(),
-                  recipe_id: recipe.id,
-                  recipe_name: recipe.name,
-                  servings: servings,
-                  macros: scaled_macros,
-                  micronutrients: None,
-                  meal_type: meal_type,
-                  logged_at: current_timestamp(),
-                  source_type: "recipe",
-                  source_id: recipe.id,
-                )
-
-              case storage.save_food_log_entry(ctx.db, today, entry) {
-                Ok(_) -> wisp.redirect("/dashboard")
-                Error(storage.DatabaseError(msg)) -> {
-                  let err =
-                    json.object([
-                      #(
-                        "error",
-                        json.string("Failed to save entry: " <> msg),
-                      ),
-                    ])
-                  wisp.json_response(json.to_string(err), 500)
-                }
-                Error(_) -> {
-                  let err =
-                    json.object([
-                      #("error", json.string("Failed to save entry")),
-                    ])
-                  wisp.json_response(json.to_string(err), 500)
-                }
-              }
+      case food_source_result {
+        Ok(food_source) -> {
+          // Use the unified save_food_to_log function
+          case storage.save_food_to_log(ctx.db, today, food_source, servings, meal_type) {
+            Ok(_) -> wisp.redirect("/dashboard")
+            Error(storage.DatabaseError(msg)) -> {
+              let err =
+                json.object([
+                  #("error", json.string("Failed to save entry: " <> msg)),
+                ])
+              wisp.json_response(json.to_string(err), 500)
+            }
+            Error(storage.NotFound) -> {
+              let err =
+                json.object([#("error", json.string("Food not found"))])
+              wisp.json_response(json.to_string(err), 404)
+            }
+            Error(storage.InvalidInput(msg)) -> {
+              let err =
+                json.object([#("error", json.string(msg))])
+              wisp.json_response(json.to_string(err), 400)
+            }
+            Error(_) -> {
+              let err =
+                json.object([#("error", json.string("Failed to save entry"))])
+              wisp.json_response(json.to_string(err), 500)
             }
           }
         }
-    _, _, _ -> {
+        Error(msg) -> {
+          let err = json.object([#("error", json.string(msg))])
+          wisp.json_response(json.to_string(err), 400)
+        }
+      }
+    }
+    _, _ -> {
       let err =
-        json.object([#("error", json.string("Missing required parameters"))])
+        json.object([#("error", json.string("Missing servings or meal_type"))])
       wisp.json_response(json.to_string(err), 400)
     }
   }
