@@ -186,6 +186,266 @@ fn recipes_page(ctx: Context) -> wisp.Response {
   wisp.html_response(render_page("Recipes - Meal Planner", content), 200)
 }
 
+fn new_recipe_page() -> wisp.Response {
+  let content = [
+    html.a([attribute.href("/recipes"), attribute.class("back-link")], [
+      element.text("← Back to recipes"),
+    ]),
+    html.div([attribute.class("page-header")], [
+      html.h1([], [element.text("New Recipe")]),
+    ]),
+    html.form(
+      [
+        attribute.method("POST"),
+        attribute.action("/api/recipes"),
+        attribute.class("recipe-form"),
+      ],
+      [
+        // Name input
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("name")], [element.text("Recipe Name")]),
+          html.input([
+            attribute.type_("text"),
+            attribute.name("name"),
+            attribute.id("name"),
+            attribute.required(True),
+            attribute.placeholder("e.g., Chicken and Rice"),
+            attribute.class("form-control"),
+          ]),
+        ]),
+        // Category select
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("category")], [element.text("Category")]),
+          html.select(
+            [
+              attribute.name("category"),
+              attribute.id("category"),
+              attribute.required(True),
+              attribute.class("form-control"),
+            ],
+            [
+              html.option([attribute.value("chicken")], [element.text("Chicken")]),
+              html.option([attribute.value("beef")], [element.text("Beef")]),
+              html.option([attribute.value("pork")], [element.text("Pork")]),
+              html.option([attribute.value("seafood")], [element.text("Seafood")]),
+              html.option([attribute.value("vegetarian")], [
+                element.text("Vegetarian"),
+              ]),
+              html.option([attribute.value("other")], [element.text("Other")]),
+            ],
+          ),
+        ]),
+        // Servings input
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("servings")], [element.text("Servings")]),
+          html.input([
+            attribute.type_("number"),
+            attribute.name("servings"),
+            attribute.id("servings"),
+            attribute.required(True),
+            attribute.value("1"),
+            attribute.attribute("min", "1"),
+            attribute.class("form-control"),
+          ]),
+        ]),
+        // Macros section
+        html.div([attribute.class("form-section")], [
+          html.h2([], [element.text("Nutrition (per serving)")]),
+          html.div([attribute.class("form-row")], [
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.for("protein")], [element.text("Protein (g)")]),
+              html.input([
+                attribute.type_("number"),
+                attribute.name("protein"),
+                attribute.id("protein"),
+                attribute.required(True),
+                attribute.attribute("step", "0.1"),
+                attribute.placeholder("0"),
+                attribute.class("form-control"),
+              ]),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.for("fat")], [element.text("Fat (g)")]),
+              html.input([
+                attribute.type_("number"),
+                attribute.name("fat"),
+                attribute.id("fat"),
+                attribute.required(True),
+                attribute.attribute("step", "0.1"),
+                attribute.placeholder("0"),
+                attribute.class("form-control"),
+              ]),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.for("carbs")], [element.text("Carbs (g)")]),
+              html.input([
+                attribute.type_("number"),
+                attribute.name("carbs"),
+                attribute.id("carbs"),
+                attribute.required(True),
+                attribute.attribute("step", "0.1"),
+                attribute.placeholder("0"),
+                attribute.class("form-control"),
+              ]),
+            ]),
+          ]),
+        ]),
+        // FODMAP level select
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("fodmap_level")], [
+            element.text("FODMAP Level"),
+          ]),
+          html.select(
+            [
+              attribute.name("fodmap_level"),
+              attribute.id("fodmap_level"),
+              attribute.required(True),
+              attribute.class("form-control"),
+            ],
+            [
+              html.option([attribute.value("low")], [element.text("Low")]),
+              html.option([attribute.value("medium")], [element.text("Medium")]),
+              html.option([attribute.value("high")], [element.text("High")]),
+            ],
+          ),
+        ]),
+        // Vertical compliant checkbox
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.class("checkbox-label")], [
+            html.input([
+              attribute.type_("checkbox"),
+              attribute.name("vertical_compliant"),
+              attribute.id("vertical_compliant"),
+              attribute.value("true"),
+            ]),
+            element.text(" Vertical Diet Compliant"),
+          ]),
+        ]),
+        // Ingredients section
+        html.div([attribute.class("form-section")], [
+          html.h2([], [element.text("Ingredients")]),
+          html.div([attribute.id("ingredients-list")], [
+            ingredient_input_row(0),
+          ]),
+          html.button(
+            [
+              attribute.type_("button"),
+              attribute.class("btn btn-secondary"),
+              attribute.attribute("onclick", "addIngredient()"),
+            ],
+            [element.text("+ Add Ingredient")],
+          ),
+        ]),
+        // Instructions section
+        html.div([attribute.class("form-section")], [
+          html.h2([], [element.text("Instructions")]),
+          html.div([attribute.id("instructions-list")], [
+            instruction_input_row(0),
+          ]),
+          html.button(
+            [
+              attribute.type_("button"),
+              attribute.class("btn btn-secondary"),
+              attribute.attribute("onclick", "addInstruction()"),
+            ],
+            [element.text("+ Add Step")],
+          ),
+        ]),
+        // Submit button
+        html.div([attribute.class("form-actions")], [
+          html.button(
+            [attribute.type_("submit"), attribute.class("btn btn-primary")],
+            [element.text("Create Recipe")],
+          ),
+        ]),
+        // JavaScript for dynamic fields
+        html.script(
+          [],
+          "
+let ingredientCount = 1;
+let instructionCount = 1;
+
+function addIngredient() {
+  const container = document.getElementById('ingredients-list');
+  const div = document.createElement('div');
+  div.className = 'form-row ingredient-row';
+  div.innerHTML = `
+    <div class=\"form-group\">
+      <input type=\"text\" name=\"ingredient_name_${ingredientCount}\"
+             placeholder=\"Ingredient\" class=\"form-control\" required>
+    </div>
+    <div class=\"form-group\">
+      <input type=\"text\" name=\"ingredient_quantity_${ingredientCount}\"
+             placeholder=\"Quantity\" class=\"form-control\" required>
+    </div>
+    <button type=\"button\" class=\"btn btn-danger btn-small\"
+            onclick=\"this.parentElement.remove()\">Remove</button>
+  `;
+  container.appendChild(div);
+  ingredientCount++;
+}
+
+function addInstruction() {
+  const container = document.getElementById('instructions-list');
+  const div = document.createElement('div');
+  div.className = 'form-group instruction-row';
+  div.innerHTML = `
+    <textarea name=\"instruction_${instructionCount}\" rows=\"2\"
+              placeholder=\"Step ${instructionCount + 1}\"
+              class=\"form-control\" required></textarea>
+    <button type=\"button\" class=\"btn btn-danger btn-small\"
+            onclick=\"this.parentElement.remove()\">Remove</button>
+  `;
+  container.appendChild(div);
+  instructionCount++;
+}
+        ",
+        ),
+      ],
+    ),
+  ]
+
+  wisp.html_response(render_page("New Recipe - Meal Planner", content), 200)
+}
+
+fn ingredient_input_row(index: Int) -> element.Element(msg) {
+  html.div([attribute.class("form-row ingredient-row")], [
+    html.div([attribute.class("form-group")], [
+      html.input([
+        attribute.type_("text"),
+        attribute.name("ingredient_name_" <> int_to_string(index)),
+        attribute.placeholder("Ingredient"),
+        attribute.class("form-control"),
+        attribute.required(True),
+      ]),
+    ]),
+    html.div([attribute.class("form-group")], [
+      html.input([
+        attribute.type_("text"),
+        attribute.name("ingredient_quantity_" <> int_to_string(index)),
+        attribute.placeholder("Quantity"),
+        attribute.class("form-control"),
+        attribute.required(True),
+      ]),
+    ]),
+  ])
+}
+
+fn instruction_input_row(index: Int) -> element.Element(msg) {
+  html.div([attribute.class("form-group instruction-row")], [
+    html.textarea(
+      [
+        attribute.name("instruction_" <> int_to_string(index)),
+        attribute.attribute("rows", "2"),
+        attribute.placeholder("Step " <> int_to_string(index + 1)),
+        attribute.class("form-control"),
+        attribute.required(True),
+      ],
+      "",
+    ),
+  ])
+}
+
 fn recipe_card(recipe: Recipe) -> element.Element(msg) {
   let calories = types.macros_calories(recipe.macros)
   html.a(
