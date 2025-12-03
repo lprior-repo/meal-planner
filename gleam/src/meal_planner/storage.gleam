@@ -936,21 +936,122 @@ pub fn save_food_log_entry(
 ) -> Result(Nil, StorageError) {
   let sql =
     "INSERT INTO food_logs
-     (id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+     (id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at,
+      fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
+      vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium,
+      phosphorus, potassium, zinc)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(),
+      $10, $11, $12, $13, $14, $15, $16, $17, $18,
+      $19, $20, $21, $22, $23, $24, $25, $26, $27,
+      $28, $29, $30)
      ON CONFLICT (id) DO UPDATE SET
        servings = EXCLUDED.servings,
        protein = EXCLUDED.protein,
        fat = EXCLUDED.fat,
        carbs = EXCLUDED.carbs,
        meal_type = EXCLUDED.meal_type,
-       logged_at = NOW()"
+       logged_at = NOW(),
+       fiber = EXCLUDED.fiber,
+       sugar = EXCLUDED.sugar,
+       sodium = EXCLUDED.sodium,
+       cholesterol = EXCLUDED.cholesterol,
+       vitamin_a = EXCLUDED.vitamin_a,
+       vitamin_c = EXCLUDED.vitamin_c,
+       vitamin_d = EXCLUDED.vitamin_d,
+       vitamin_e = EXCLUDED.vitamin_e,
+       vitamin_k = EXCLUDED.vitamin_k,
+       vitamin_b6 = EXCLUDED.vitamin_b6,
+       vitamin_b12 = EXCLUDED.vitamin_b12,
+       folate = EXCLUDED.folate,
+       thiamin = EXCLUDED.thiamin,
+       riboflavin = EXCLUDED.riboflavin,
+       niacin = EXCLUDED.niacin,
+       calcium = EXCLUDED.calcium,
+       iron = EXCLUDED.iron,
+       magnesium = EXCLUDED.magnesium,
+       phosphorus = EXCLUDED.phosphorus,
+       potassium = EXCLUDED.potassium,
+       zinc = EXCLUDED.zinc"
 
   let meal_type_str = case entry.meal_type {
     Breakfast -> "breakfast"
     Lunch -> "lunch"
     Dinner -> "dinner"
     Snack -> "snack"
+  }
+
+  // Extract micronutrients from entry (handle Option)
+  let #(
+    fiber,
+    sugar,
+    sodium,
+    cholesterol,
+    vitamin_a,
+    vitamin_c,
+    vitamin_d,
+    vitamin_e,
+    vitamin_k,
+    vitamin_b6,
+    vitamin_b12,
+    folate,
+    thiamin,
+    riboflavin,
+    niacin,
+    calcium,
+    iron,
+    magnesium,
+    phosphorus,
+    potassium,
+    zinc,
+  ) = case entry.micronutrients {
+    Some(m) ->
+      #(
+        m.fiber,
+        m.sugar,
+        m.sodium,
+        m.cholesterol,
+        m.vitamin_a,
+        m.vitamin_c,
+        m.vitamin_d,
+        m.vitamin_e,
+        m.vitamin_k,
+        m.vitamin_b6,
+        m.vitamin_b12,
+        m.folate,
+        m.thiamin,
+        m.riboflavin,
+        m.niacin,
+        m.calcium,
+        m.iron,
+        m.magnesium,
+        m.phosphorus,
+        m.potassium,
+        m.zinc,
+      )
+    None ->
+      #(
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+      )
   }
 
   case
@@ -964,6 +1065,27 @@ pub fn save_food_log_entry(
     |> pog.parameter(pog.float(entry.macros.fat))
     |> pog.parameter(pog.float(entry.macros.carbs))
     |> pog.parameter(pog.text(meal_type_str))
+    |> pog.parameter(pog.nullable(pog.float, fiber))
+    |> pog.parameter(pog.nullable(pog.float, sugar))
+    |> pog.parameter(pog.nullable(pog.float, sodium))
+    |> pog.parameter(pog.nullable(pog.float, cholesterol))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_a))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_c))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_d))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_e))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_k))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_b6))
+    |> pog.parameter(pog.nullable(pog.float, vitamin_b12))
+    |> pog.parameter(pog.nullable(pog.float, folate))
+    |> pog.parameter(pog.nullable(pog.float, thiamin))
+    |> pog.parameter(pog.nullable(pog.float, riboflavin))
+    |> pog.parameter(pog.nullable(pog.float, niacin))
+    |> pog.parameter(pog.nullable(pog.float, calcium))
+    |> pog.parameter(pog.nullable(pog.float, iron))
+    |> pog.parameter(pog.nullable(pog.float, magnesium))
+    |> pog.parameter(pog.nullable(pog.float, phosphorus))
+    |> pog.parameter(pog.nullable(pog.float, potassium))
+    |> pog.parameter(pog.nullable(pog.float, zinc))
     |> pog.execute(conn)
   {
     Error(e) -> Error(DatabaseError(format_pog_error(e)))

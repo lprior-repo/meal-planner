@@ -396,14 +396,14 @@ fn has_white_carbs(recipe: Recipe) -> Bool {
 }
 
 fn calculate_tim_ferriss_score(recipe: Recipe) -> Float {
-  let mut score = 0.0
+  let score = 0.0
 
-  score = case meets_tim_ferriss_protein_requirement(recipe) {
+  let score = case meets_tim_ferriss_protein_requirement(recipe) {
     True -> score +. 0.5
     False -> score
   }
 
-  score = case has_white_carbs(recipe) {
+  let score = case has_white_carbs(recipe) {
     False -> score +. 0.5
     True -> score
   }

@@ -5,13 +5,13 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import meal_planner/auto_planner/types.{
-  type AutoMealPlan, type AutoPlanConfig, type RecipeSource, AutoMealPlan,
-  RecipeSource,
-}
+import meal_planner/auto_planner/types as auto_types
 import meal_planner/storage.{type StorageError, DatabaseError, NotFound}
 import pog
-import shared/types.{type Macros, type Recipe, Ingredient, Macros, Recipe}
+import shared/types.{
+  type FodmapLevel, type Macros, type Recipe, High, Ingredient, Low, Macros,
+  Medium, Recipe,
+}
 
 // ============================================================================
 // Auto Meal Plan Storage
@@ -20,7 +20,7 @@ import shared/types.{type Macros, type Recipe, Ingredient, Macros, Recipe}
 /// Save auto meal plan to database
 pub fn save_auto_plan(
   conn: pog.Connection,
-  plan: AutoMealPlan,
+  plan: auto_types.AutoMealPlan,
 ) -> Result(Nil, StorageError) {
   let sql =
     "INSERT INTO auto_meal_plans
@@ -39,7 +39,7 @@ pub fn save_auto_plan(
 
   // Serialize config to JSON string
   let config_json =
-    types.auto_plan_config_to_json(plan.config)
+    auto_types.auto_plan_config_to_json(plan.config)
     |> json.to_string
 
   case
@@ -62,7 +62,7 @@ pub fn save_auto_plan(
 pub fn get_auto_plan(
   conn: pog.Connection,
   id: String,
-) -> Result(AutoMealPlan, StorageError) {
+) -> Result(auto_types.AutoMealPlan, StorageError) {
   let sql =
     "SELECT id, recipe_ids, generated_at, total_protein, total_fat, total_carbs, config_json
      FROM auto_meal_plans WHERE id = $1"
@@ -186,10 +186,10 @@ fn recipe_row_decoder() -> decode.Decoder(Recipe) {
   let instructions = string.split(instructions_str, "|")
 
   let fodmap_level = case fodmap_str {
-    "low" -> types.Low
-    "medium" -> types.Medium
-    "high" -> types.High
-    _ -> types.Low
+    "low" -> Low
+    "medium" -> Medium
+    "high" -> High
+    _ -> Low
   }
 
   decode.success(Recipe(
@@ -285,25 +285,7 @@ fn format_pog_error(error: pog.QueryError) -> String {
     pog.ConnectionUnavailable -> "Database connection unavailable"
     pog.PostgresqlError(code, name, msg) ->
       "PostgreSQL error " <> code <> " (" <> name <> "): " <> msg
-    pog.UnexpectedResultType(expected, _) ->
-      "Unexpected result type, expected: " <> list_type_to_string(expected)
-  }
-}
-
-fn list_type_to_string(lt: List(pog.PgType)) -> String {
-  string.join(list.map(lt, pg_type_to_string), ", ")
-}
-
-fn pg_type_to_string(pt: pog.PgType) -> String {
-  case pt {
-    pog.PgBool -> "bool"
-    pog.PgInt -> "int"
-    pog.PgText -> "text"
-    pog.PgFloat -> "float"
-    pog.PgBytea -> "bytea"
-    pog.PgArray(_) -> "array"
-    pog.PgDate -> "date"
-    pog.PgTime -> "time"
-    pog.PgTimestamptz -> "timestamptz"
+    pog.UnexpectedResultType(_expected) ->
+      "Unexpected result type"
   }
 }
