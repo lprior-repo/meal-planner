@@ -14,6 +14,7 @@
 import gleam/option
 import gleam/int
 import gleam/float
+import meal_planner/ui/types/ui_types
 
 // TODO: Import lustre/element, lustre/attribute when available
 // import lustre/element
@@ -31,14 +32,13 @@ pub fn progress_bar(
   color: String,
 ) -> String {
   // CONTRACT: Returns HTML string for progress bar
-  // BODY: TODO - Implement with progress-bar class and width based on percentage
   let percentage = calculate_percentage(current, target)
   let pct_int = float_to_int(percentage)
   let width_style = "width: " <> int_to_string(pct_int) <> "%"
 
   "<div class=\"progress-bar " <> color <> "\">"
   <> "<div class=\"progress-fill\" style=\"" <> width_style <> "\"></div>"
-  <> "<span class=\"progress-text\">" <> int_to_string(pct_int) <> "%</span>"
+  <> "<span class=\"progress-text\">" <> int_to_string(pct_int) <> "</span>"
   <> "</div>"
 }
 
@@ -101,25 +101,17 @@ pub fn macro_badges() -> String {
 /// Renders: <span class="badge badge-success">Completed</span>
 pub fn status_badge(
   label: String,
-  status: StatusType,
+  status: ui_types.StatusType,
 ) -> String {
   // CONTRACT: Returns HTML string for status badge
-  // BODY: TODO - Implement with status-badge class and status type class
   let status_class = case status {
-    Success -> "status-success"
-    Warning -> "status-warning"
-    Error -> "status-error"
-    Info -> "status-info"
+    ui_types.Success -> "status-success"
+    ui_types.Warning -> "status-warning"
+    ui_types.Error -> "status-error"
+    ui_types.Info -> "status-info"
   }
 
   "<span class=\"status-badge " <> status_class <> "\">" <> label <> "</span>"
-}
-
-pub type StatusType {
-  Success
-  Warning
-  Error
-  Info
 }
 
 /// Circular progress indicator (percentage)

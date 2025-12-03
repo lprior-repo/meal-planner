@@ -7,11 +7,28 @@
 
 import gleeunit
 import gleeunit/should
+import gleam/string
 import meal_planner/ui/components/button
 import meal_planner/ui/types/ui_types
 
 pub fn main() {
   gleeunit.main()
+}
+
+// Custom assertion for string containment
+fn assert_contains(haystack: String, needle: String) -> Nil {
+  case string.contains(haystack, needle) {
+    True -> Nil
+    False -> {
+      let _msg = string.concat([
+        "\n",
+        haystack,
+        "\nshould contain\n",
+        needle,
+      ])
+      should.fail()
+    }
+  }
 }
 
 // ===================================================================
