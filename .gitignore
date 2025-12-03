@@ -63,6 +63,7 @@ test-output.txt
 
 # Backup and temporary files
 *.bak
+*.backup
 *.OLD
 *.BROKEN
 *.broken*
