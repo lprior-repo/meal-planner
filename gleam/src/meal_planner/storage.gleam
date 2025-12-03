@@ -19,6 +19,8 @@ import pog
 pub type StorageError {
   NotFound
   DatabaseError(String)
+  InvalidInput(String)
+  Unauthorized(String)
 }
 
 /// Database configuration
@@ -809,7 +811,7 @@ pub fn get_recent_meals(
     "SELECT DISTINCT ON (recipe_id) id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text,
             fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
             vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium,
-            phosphorus, potassium, zinc
+            phosphorus, potassium, zinc, source_type, source_id
      FROM food_logs
      ORDER BY recipe_id, logged_at DESC
      LIMIT $1"
@@ -846,6 +848,8 @@ pub fn get_recent_meals(
     use phosphorus <- decode.field(28, decode.optional(decode.float))
     use potassium <- decode.field(29, decode.optional(decode.float))
     use zinc <- decode.field(30, decode.optional(decode.float))
+    use source_type <- decode.field(31, decode.string)
+    use source_id <- decode.field(32, decode.string)
 
     let meal_type = case meal_type_str {
       "breakfast" -> Breakfast
@@ -914,6 +918,8 @@ pub fn get_recent_meals(
       micronutrients: micronutrients,
       meal_type: meal_type,
       logged_at: logged_at,
+      source_type: source_type,
+      source_id: source_id,
     ))
   }
 
@@ -939,11 +945,11 @@ pub fn save_food_log_entry(
      (id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at,
       fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
       vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium,
-      phosphorus, potassium, zinc)
+      phosphorus, potassium, zinc, source_type, source_id)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(),
       $10, $11, $12, $13, $14, $15, $16, $17, $18,
       $19, $20, $21, $22, $23, $24, $25, $26, $27,
-      $28, $29, $30)
+      $28, $29, $30, $31, $32)
      ON CONFLICT (id) DO UPDATE SET
        servings = EXCLUDED.servings,
        protein = EXCLUDED.protein,
@@ -971,7 +977,9 @@ pub fn save_food_log_entry(
        magnesium = EXCLUDED.magnesium,
        phosphorus = EXCLUDED.phosphorus,
        potassium = EXCLUDED.potassium,
-       zinc = EXCLUDED.zinc"
+       zinc = EXCLUDED.zinc,
+       source_type = EXCLUDED.source_type,
+       source_id = EXCLUDED.source_id"
 
   let meal_type_str = case entry.meal_type {
     Breakfast -> "breakfast"
@@ -1086,6 +1094,8 @@ pub fn save_food_log_entry(
     |> pog.parameter(pog.nullable(pog.float, phosphorus))
     |> pog.parameter(pog.nullable(pog.float, potassium))
     |> pog.parameter(pog.nullable(pog.float, zinc))
+    |> pog.parameter(pog.text(entry.source_type))
+    |> pog.parameter(pog.text(entry.source_id))
     |> pog.execute(conn)
   {
     Error(e) -> Error(DatabaseError(format_pog_error(e)))
@@ -1195,7 +1205,7 @@ pub fn get_daily_log(
     "SELECT id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text,
             fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
             vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium,
-            phosphorus, potassium, zinc
+            phosphorus, potassium, zinc, source_type, source_id
      FROM food_logs WHERE date = $1 ORDER BY logged_at"
 
   let decoder = {
@@ -1230,6 +1240,8 @@ pub fn get_daily_log(
     use phosphorus <- decode.field(28, decode.optional(decode.float))
     use potassium <- decode.field(29, decode.optional(decode.float))
     use zinc <- decode.field(30, decode.optional(decode.float))
+    use source_type <- decode.field(31, decode.string)
+    use source_id <- decode.field(32, decode.string)
 
     let meal_type = case meal_type_str {
       "breakfast" -> Breakfast
@@ -1298,6 +1310,8 @@ pub fn get_daily_log(
       micronutrients: micronutrients,
       meal_type: meal_type,
       logged_at: logged_at,
+      source_type: source_type,
+      source_id: source_id,
     ))
   }
 

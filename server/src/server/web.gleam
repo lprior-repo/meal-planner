@@ -1101,6 +1101,8 @@ fn api_logs_create(req: wisp.Request) -> wisp.Response {
               micronutrients: None,
               meal_type: meal_type,
               logged_at: current_timestamp(),
+              source_type: "recipe",
+              source_id: recipe.id,
             )
 
           case storage.save_food_log_entry(conn, today, entry) {

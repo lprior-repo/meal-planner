@@ -205,6 +205,17 @@ pub type CustomFood {
   )
 }
 
+/// Type-safe food source tracking for food logs
+/// Prevents mismatched source_type and source_id through compile-time checking
+pub type FoodSource {
+  /// Food from recipes table
+  RecipeSource(recipe_id: String)
+  /// Food from custom_foods table (includes user_id for authorization)
+  CustomFoodSource(custom_food_id: String, user_id: String)
+  /// Food from USDA database (foods/food_nutrients tables)
+  UsdaFoodSource(fdc_id: Int)
+}
+
 // ============================================================================
 // Food Search Types
 // ============================================================================
@@ -399,6 +410,9 @@ pub type FoodLogEntry {
     micronutrients: Option(Micronutrients),
     meal_type: MealType,
     logged_at: String,
+    // Source tracking (from migration 006)
+    source_type: String,
+    source_id: String,
   )
 }
 
@@ -912,6 +926,8 @@ pub fn food_log_entry_decoder() -> Decoder(FoodLogEntry) {
   )
   use meal_type <- decode.field("meal_type", meal_type_decoder())
   use logged_at <- decode.field("logged_at", decode.string)
+  use source_type <- decode.field("source_type", decode.string)
+  use source_id <- decode.field("source_id", decode.string)
   decode.success(FoodLogEntry(
     id: id,
     recipe_id: recipe_id,
@@ -921,6 +937,8 @@ pub fn food_log_entry_decoder() -> Decoder(FoodLogEntry) {
     micronutrients: micronutrients,
     meal_type: meal_type,
     logged_at: logged_at,
+    source_type: source_type,
+    source_id: source_id,
   ))
 }
 

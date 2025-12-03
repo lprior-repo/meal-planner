@@ -467,6 +467,8 @@ fn food_log_entry_decoder() -> decode.Decoder(FoodLogEntry) {
   use carbs <- decode.field(7, decode.float)
   use meal_type_str <- decode.field(8, decode.string)
   use logged_at <- decode.field(9, decode.string)
+  use source_type <- decode.field(10, decode.string)
+  use source_id <- decode.field(11, decode.string)
 
   let meal_type = case meal_type_str {
     "breakfast" -> types.Breakfast
@@ -485,6 +487,8 @@ fn food_log_entry_decoder() -> decode.Decoder(FoodLogEntry) {
     micronutrients: None,
     meal_type: meal_type,
     logged_at: logged_at,
+    source_type: source_type,
+    source_id: source_id,
   ))
 }
 
