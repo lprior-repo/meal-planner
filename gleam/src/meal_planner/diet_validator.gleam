@@ -8,7 +8,7 @@ import gleam/int
 import gleam/list
 import gleam/string
 import meal_planner/fodmap
-import shared/types.{type Ingredient, type Recipe}
+import meal_planner/types.{type Ingredient, type Recipe}
 
 // ============================================================================
 // Types

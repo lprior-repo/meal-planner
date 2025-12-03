@@ -9,7 +9,7 @@
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import shared/types.{type Macros, type Micronutrients, Macros, Micronutrients}
+import meal_planner/types.{type Macros, type Micronutrients, Macros, Micronutrients}
 
 /// USDA nutrient value from database
 pub type UsdaNutrient {

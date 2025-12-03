@@ -12,7 +12,7 @@ import gleeunit
 import gleeunit/should
 import meal_planner/food_search
 import pog
-import shared/types.{DatabaseError, InvalidQuery}
+import meal_planner/types.{DatabaseError, InvalidQuery}
 
 pub fn main() {
   gleeunit.main()

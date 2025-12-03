@@ -8,7 +8,7 @@ import gleam/string
 import meal_planner/auto_planner/types as auto_types
 import meal_planner/storage.{type StorageError, DatabaseError, NotFound}
 import pog
-import shared/types.{type Recipe, High, Ingredient, Low, Macros, Medium, Recipe}
+import meal_planner/types.{type Recipe, High, Ingredient, Low, Macros, Medium, Recipe}
 
 // ============================================================================
 // Auto Meal Plan Storage

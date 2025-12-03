@@ -10,7 +10,7 @@ import meal_planner/ncp.{
   nutrition_goals_validate, run_reconciliation, score_recipe_for_deviation,
   select_top_recipes,
 }
-import shared/types.{Macros}
+import meal_planner/types.{Macros}
 
 pub fn nutrition_goals_validate_valid_test() {
   let goals =

@@ -1,7 +1,7 @@
 /// Tests for web module dashboard integration
 import gleeunit
 import gleeunit/should
-import shared/types
+import meal_planner/types
 
 pub fn main() {
   gleeunit.main()

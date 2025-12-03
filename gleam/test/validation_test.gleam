@@ -1,6 +1,6 @@
 import gleam/list
 import gleeunit/should
-import shared/types.{
+import meal_planner/types.{
   type Ingredient, type Recipe, Ingredient, Low, Macros, Recipe,
 }
 import meal_planner/validation.{validate_recipe_strict}

@@ -9,7 +9,7 @@ import gleam/result
 import gleam/string
 import meal_planner/ncp
 import pog
-import shared/types.{
+import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,

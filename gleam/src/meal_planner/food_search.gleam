@@ -10,7 +10,7 @@ import gleam/list
 import gleam/string
 import meal_planner/storage
 import pog
-import shared/types.{
+import meal_planner/types.{
   type FoodSearchError, type FoodSearchResponse, FoodSearchResponse,
   InvalidQuery, UsdaFoodResult,
 }

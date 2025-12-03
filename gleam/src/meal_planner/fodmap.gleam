@@ -6,7 +6,7 @@
 import gleam/int
 import gleam/list
 import gleam/string
-import shared/types.{type Recipe}
+import meal_planner/types.{type Recipe}
 
 /// FODMAPAnalysis represents the result of analyzing a recipe for FODMAP content
 pub type FODMAPAnalysis {

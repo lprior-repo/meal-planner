@@ -5,7 +5,7 @@
 import gleam/float
 import gleeunit/should
 import qcheck
-import shared/types.{
+import meal_planner/types.{
   type Macros, Macros, macros_add, macros_calories, macros_scale, macros_zero,
 }
 

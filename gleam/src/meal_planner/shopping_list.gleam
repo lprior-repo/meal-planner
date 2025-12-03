@@ -3,7 +3,7 @@
 /// Organizes ingredients by shopping category for easier grocery shopping.
 import gleam/list
 import gleam/string
-import shared/types.{type Ingredient}
+import meal_planner/types.{type Ingredient}
 
 /// Category for organizing shopping list items
 pub type IngredientCategory {

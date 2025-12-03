@@ -16,7 +16,7 @@ import lustre/attribute
 import lustre/element
 import lustre/element/html
 import meal_planner/storage
-import shared/types.{
+import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
   type UserProfile, Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain,
   Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack, UserProfile,

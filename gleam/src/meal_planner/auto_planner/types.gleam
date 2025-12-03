@@ -3,7 +3,7 @@
 
 import gleam/json
 import gleam/option.{type Option, None, Some}
-import shared/types.{type Macros, type Recipe}
+import meal_planner/types.{type Macros, type Recipe}
 
 // ============================================================================
 // Diet Principles

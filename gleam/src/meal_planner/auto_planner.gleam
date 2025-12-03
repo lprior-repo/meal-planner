@@ -9,7 +9,7 @@ import gleam/list
 import gleam/order
 import meal_planner/auto_planner/types as auto_types
 import meal_planner/diet_validator
-import shared/types
+import meal_planner/types
 
 // Re-export types for convenience
 pub type DietPrinciple = auto_types.DietPrinciple

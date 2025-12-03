@@ -6,7 +6,7 @@ import meal_planner/output.{
   format_meal_timing, format_recipe, format_user_profile, format_weekly_plan,
 }
 import meal_planner/shopping_list.{organize_shopping_list}
-import shared/types.{
+import meal_planner/types.{
   type Recipe, Active, Gain, Ingredient, Low, Macros, Moderate, Recipe,
   UserProfile,
 }

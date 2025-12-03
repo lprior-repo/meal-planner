@@ -20,7 +20,7 @@ import gleeunit
 import gleeunit/should
 import meal_planner/storage
 import pog
-import shared/types.{type Recipe, High, Ingredient, Low, Macros, Medium, Recipe}
+import meal_planner/types.{type Recipe, High, Ingredient, Low, Macros, Medium, Recipe}
 
 pub fn main() {
   gleeunit.main()

@@ -20,7 +20,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/otp/actor
 import gleam/otp/supervision
 import meal_planner/ncp
-import shared/types.{type UserProfile}
+import meal_planner/types.{type UserProfile}
 
 /// Internal state held by the GenServer
 pub type State {

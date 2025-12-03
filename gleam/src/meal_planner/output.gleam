@@ -14,7 +14,7 @@ import meal_planner/meal_plan.{
 import meal_planner/shopping_list.{
   type CategorizedShoppingList, organize_shopping_list,
 }
-import shared/types.{
+import meal_planner/types.{
   type ActivityLevel, type Goal, type Ingredient, type Macros, type Recipe,
   type UserProfile, Active, Gain, Lose, Macros, Maintain, Moderate, Sedentary,
   daily_calorie_target, daily_carb_target, daily_fat_target,

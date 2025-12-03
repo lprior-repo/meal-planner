@@ -4,7 +4,7 @@
 /// - White rice as primary carbohydrate
 /// - Easily digestible, low FODMAP foods
 /// - Micronutrient-dense vegetables
-import shared/types.{type Recipe, Ingredient, Low, Macros, Recipe}
+import meal_planner/types.{type Recipe, Ingredient, Low, Macros, Recipe}
 
 /// Generate all Vertical Diet recipes
 pub fn all_recipes() -> List(Recipe) {

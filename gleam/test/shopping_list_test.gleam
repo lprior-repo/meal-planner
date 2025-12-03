@@ -4,7 +4,7 @@ import meal_planner/shopping_list.{
   Dairy, Fats, Grains, Other, Produce, Protein, Seasonings,
   categorize_ingredient, organize_shopping_list,
 }
-import shared/types.{Ingredient}
+import meal_planner/types.{Ingredient}
 
 // Test categorize_ingredient for protein items
 pub fn categorize_ingredient_protein_beef_test() {

@@ -7,7 +7,7 @@ import meal_planner/auto_planner.{
   score_recipe, select_top_n,
 }
 import meal_planner/auto_planner/types as auto_types
-import shared/types.{type Recipe, High, Ingredient, Low, Macros, Recipe}
+import meal_planner/types.{type Recipe, High, Ingredient, Low, Macros, Recipe}
 
 // =============================================================================
 // Test Data

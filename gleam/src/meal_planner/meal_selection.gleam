@@ -1,7 +1,7 @@
 /// Meal selection logic following Vertical Diet distribution guidelines
 import gleam/list
 import gleam/string
-import shared/types.{type Recipe, is_vertical_diet_compliant}
+import meal_planner/types.{type Recipe, is_vertical_diet_compliant}
 
 /// MealCategory represents the food category for selection distribution
 pub type MealCategory {

@@ -1,5 +1,5 @@
 import gleeunit/should
-import shared/types.{
+import meal_planner/types.{
   High, Low, Macros, Recipe, is_vertical_diet_compliant, macros_per_serving,
   total_macros,
 }

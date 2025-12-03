@@ -1,5 +1,5 @@
 import gleeunit/should
-import shared/types.{
+import meal_planner/types.{
   Active, Gain, Lose, Maintain, Moderate, Sedentary, UserProfile,
   daily_calorie_target, daily_fat_target, daily_macro_targets,
   daily_protein_target,
