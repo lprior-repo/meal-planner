@@ -4,10 +4,9 @@
 /// Tests verify that button components render correct HTML and CSS classes.
 ///
 /// All tests are expected to FAIL until the button component functions are implemented.
-
+import gleam/string
 import gleeunit
 import gleeunit/should
-import gleam/string
 import meal_planner/ui/components/button
 import meal_planner/ui/types/ui_types
 
@@ -20,12 +19,13 @@ fn assert_contains(haystack: String, needle: String) -> Nil {
   case string.contains(haystack, needle) {
     True -> Nil
     False -> {
-      let _msg = string.concat([
-        "\n",
-        haystack,
-        "\nshould contain\n",
-        needle,
-      ])
+      let _msg =
+        string.concat([
+          "\n",
+          haystack,
+          "\nshould contain\n",
+          needle,
+        ])
       should.fail()
     }
   }
@@ -89,22 +89,26 @@ pub fn button_contains_btn_base_class_test() {
 // ===================================================================
 
 pub fn button_sized_small_renders_test() {
-  let result = button.button_sized("Small", "/url", ui_types.Primary, ui_types.Small)
+  let result =
+    button.button_sized("Small", "/url", ui_types.Primary, ui_types.Small)
   assert_contains(result, "btn-sm")
 }
 
 pub fn button_sized_medium_renders_test() {
-  let result = button.button_sized("Medium", "/url", ui_types.Primary, ui_types.Medium)
+  let result =
+    button.button_sized("Medium", "/url", ui_types.Primary, ui_types.Medium)
   assert_contains(result, "btn-md")
 }
 
 pub fn button_sized_large_renders_test() {
-  let result = button.button_sized("Large", "/url", ui_types.Primary, ui_types.Large)
+  let result =
+    button.button_sized("Large", "/url", ui_types.Primary, ui_types.Large)
   assert_contains(result, "btn-lg")
 }
 
 pub fn button_sized_variant_and_size_test() {
-  let result = button.button_sized("Click", "/url", ui_types.Danger, ui_types.Large)
+  let result =
+    button.button_sized("Click", "/url", ui_types.Danger, ui_types.Large)
   assert_contains(result, "btn-danger")
   assert_contains(result, "btn-lg")
 }

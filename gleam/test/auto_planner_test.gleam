@@ -355,9 +355,13 @@ pub fn score_recipe_comprehensive_test() {
   let scored = score_recipe(recipe, config, already_selected)
 
   // Check all score components are in valid range
-  should.be_true(scored.diet_compliance_score >=. 0.0 && scored.diet_compliance_score <=. 1.0)
+  should.be_true(
+    scored.diet_compliance_score >=. 0.0 && scored.diet_compliance_score <=. 1.0,
+  )
 
-  should.be_true(scored.macro_match_score >=. 0.0 && scored.macro_match_score <=. 1.0)
+  should.be_true(
+    scored.macro_match_score >=. 0.0 && scored.macro_match_score <=. 1.0,
+  )
 
   should.be_true(scored.variety_score >=. 0.0 && scored.variety_score <=. 1.0)
 

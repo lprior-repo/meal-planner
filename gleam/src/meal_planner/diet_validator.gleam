@@ -47,7 +47,12 @@ pub fn validate_recipe(
   case principles {
     [] ->
       // No principles to validate against - everything is compliant
-      ComplianceResult(compliant: True, score: 1.0, violations: [], warnings: [])
+      ComplianceResult(
+        compliant: True,
+        score: 1.0,
+        violations: [],
+        warnings: [],
+      )
     _ -> {
       // Validate against each principle and combine results
       let results =
@@ -63,8 +68,7 @@ pub fn validate_recipe(
         })
 
       // Combine results - all must be compliant for overall compliance
-      let all_compliant =
-        list.all(results, fn(result) { result.compliant })
+      let all_compliant = list.all(results, fn(result) { result.compliant })
 
       // Average the scores
       let avg_score = case list.length(results) {
@@ -278,9 +282,7 @@ pub fn check_tim_ferriss(recipe: Recipe) -> ComplianceResult {
 
 /// Check if ingredient list contains seed oils
 pub fn has_seed_oils(ingredients: List(Ingredient)) -> Bool {
-  list.any(ingredients, fn(ing) {
-    is_seed_oil(string.lowercase(ing.name))
-  })
+  list.any(ingredients, fn(ing) { is_seed_oil(string.lowercase(ing.name)) })
 }
 
 /// Check if an ingredient name is a seed oil
@@ -311,9 +313,7 @@ pub fn calculate_protein_per_serving(recipe: Recipe) -> Float {
 
 /// Check if ingredient list contains white carbs
 pub fn has_white_carbs(ingredients: List(Ingredient)) -> Bool {
-  list.any(ingredients, fn(ing) {
-    is_white_carb(string.lowercase(ing.name))
-  })
+  list.any(ingredients, fn(ing) { is_white_carb(string.lowercase(ing.name)) })
 }
 
 /// Check if an ingredient name is a white carb
@@ -344,7 +344,7 @@ pub fn check_paleo(_recipe: Recipe) -> ComplianceResult {
   let violations = []
   let warnings = []
   let score = 1.0
-  
+
   ComplianceResult(
     compliant: True,
     score: score,
@@ -361,17 +361,21 @@ pub fn check_paleo(_recipe: Recipe) -> ComplianceResult {
 /// Rules: very low carbs (<20g per serving), high fat
 pub fn check_keto(recipe: Recipe) -> ComplianceResult {
   let carbs_per_serving = recipe.macros.carbs /. int.to_float(recipe.servings)
-  
+
   let violations = case carbs_per_serving >. 20.0 {
-    True -> ["Too many carbs for keto: " <> float.to_string(carbs_per_serving) <> "g per serving (limit: 20g)"]
+    True -> [
+      "Too many carbs for keto: "
+      <> float.to_string(carbs_per_serving)
+      <> "g per serving (limit: 20g)",
+    ]
     False -> []
   }
-  
+
   let score = case carbs_per_serving >. 20.0 {
     True -> 0.0
     False -> 1.0
   }
-  
+
   ComplianceResult(
     compliant: list.is_empty(violations),
     score: score,
@@ -387,12 +391,7 @@ pub fn check_keto(recipe: Recipe) -> ComplianceResult {
 /// Check if recipe complies with Mediterranean diet principles
 /// Rules: olive oil, fish, vegetables, whole grains
 pub fn check_mediterranean(_recipe: Recipe) -> ComplianceResult {
-  ComplianceResult(
-    compliant: True,
-    score: 1.0,
-    violations: [],
-    warnings: [],
-  )
+  ComplianceResult(compliant: True, score: 1.0, violations: [], warnings: [])
 }
 
 // ============================================================================
@@ -402,18 +401,23 @@ pub fn check_mediterranean(_recipe: Recipe) -> ComplianceResult {
 /// Check if recipe complies with high protein diet principles
 /// Rules: 40g+ protein per serving
 pub fn check_high_protein(recipe: Recipe) -> ComplianceResult {
-  let protein_per_serving = recipe.macros.protein /. int.to_float(recipe.servings)
-  
+  let protein_per_serving =
+    recipe.macros.protein /. int.to_float(recipe.servings)
+
   let warnings = case protein_per_serving <. 40.0 {
-    True -> ["Lower protein: " <> float.to_string(protein_per_serving) <> "g per serving (target: 40g+)"]
+    True -> [
+      "Lower protein: "
+      <> float.to_string(protein_per_serving)
+      <> "g per serving (target: 40g+)",
+    ]
     False -> []
   }
-  
+
   let score = case protein_per_serving <. 40.0 {
     True -> protein_per_serving /. 40.0
     False -> 1.0
   }
-  
+
   ComplianceResult(
     compliant: True,
     score: score,

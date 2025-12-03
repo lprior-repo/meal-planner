@@ -10,17 +10,12 @@
 /// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: docs/component_signatures.md (section: Forms)
-
 import gleam/option
 
 /// Text input field
 ///
 /// Renders: <input type="text" class="input" />
-pub fn input_field(
-  name: String,
-  _placeholder: String,
-  _value: String,
-) -> String {
+pub fn input_field(name: String, _placeholder: String, _value: String) -> String {
   // TODO: Implement using Lustre element builder
   "<!-- input_field: " <> name <> " -->"
 }
@@ -49,10 +44,7 @@ pub fn input_with_label(
 ///   <input type="search" class="input-search" />
 ///   <button class="btn btn-primary">Search</button>
 /// </div>
-pub fn search_input(
-  query: String,
-  _placeholder: String,
-) -> String {
+pub fn search_input(query: String, _placeholder: String) -> String {
   // TODO: Implement using Lustre element builder
   "<!-- search_input: " <> query <> " -->"
 }
@@ -122,7 +114,6 @@ pub fn form(
   // TODO: Implement using Lustre element builder
   "<!-- form: " <> action <> " -->"
 }
-
 // ===================================================================
 // INTERNAL HELPERS
 // ===================================================================

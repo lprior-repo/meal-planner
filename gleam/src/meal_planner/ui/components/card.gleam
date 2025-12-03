@@ -11,10 +11,9 @@
 /// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: docs/component_signatures.md (section: Cards)
-
-import gleam/option
-import gleam/int
 import gleam/float
+import gleam/int
+import gleam/option
 import gleam/string
 import meal_planner/ui/types/ui_types
 
@@ -25,9 +24,7 @@ import meal_planner/ui/types/ui_types
 /// Basic card container
 ///
 /// Renders: <div class="card">content</div>
-pub fn card(
-  content: List(String),
-) -> String {
+pub fn card(content: List(String)) -> String {
   // CONTRACT: Returns HTML string for basic card container
   let content_str = string.concat(content)
   "<div class=\"card\">" <> content_str <> "</div>"
@@ -40,10 +37,7 @@ pub fn card(
 ///   <div class="card-header">Header</div>
 ///   <div class="card-body">content</div>
 /// </div>
-pub fn card_with_header(
-  header: String,
-  content: List(String),
-) -> String {
+pub fn card_with_header(header: String, content: List(String)) -> String {
   // CONTRACT: Returns HTML string for card with header
   let content_str = string.concat(content)
   "<div class=\"card\"><div class=\"card-header\">"
@@ -91,7 +85,13 @@ pub fn card_with_actions(
 pub fn stat_card(stat: ui_types.StatCard) -> String {
   // CONTRACT: Returns HTML string for stat card
   // Note: trend field should optionally render as indicator
-  let ui_types.StatCard(label: label, value: value, unit: unit, trend: _, color: color) = stat
+  let ui_types.StatCard(
+    label: label,
+    value: value,
+    unit: unit,
+    trend: _,
+    color: color,
+  ) = stat
   "<div class=\"stat-card\" style=\"--color: "
   <> color
   <> "\"><div class=\"stat-value\">"
@@ -116,7 +116,13 @@ pub fn stat_card(stat: ui_types.StatCard) -> String {
 /// </div>
 pub fn recipe_card(data: ui_types.RecipeCardData) -> String {
   // CONTRACT: Returns HTML string for recipe card
-  let ui_types.RecipeCardData(id: _, name: name, category: category, calories: calories, image_url: image_url) = data
+  let ui_types.RecipeCardData(
+    id: _,
+    name: name,
+    category: category,
+    calories: calories,
+    image_url: image_url,
+  ) = data
   let calories_str = calories |> float.truncate |> int.to_string
   let image_html = case image_url {
     option.Some(url) -> "<img src=\"" <> url <> "\" />"
@@ -143,7 +149,12 @@ pub fn recipe_card(data: ui_types.RecipeCardData) -> String {
 /// </div>
 pub fn food_card(data: ui_types.FoodCardData) -> String {
   // CONTRACT: Returns HTML string for food result card
-  let ui_types.FoodCardData(fdc_id: _, description: description, data_type: data_type, category: category) = data
+  let ui_types.FoodCardData(
+    fdc_id: _,
+    description: description,
+    data_type: data_type,
+    category: category,
+  ) = data
   "<div class=\"food-card\"><div class=\"food-description\">"
   <> description
   <> "</div><div class=\"food-category\">"

@@ -10,9 +10,8 @@
 /// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: docs/component_signatures.md (section: Progress Indicators)
-
-import gleam/int
 import gleam/float
+import gleam/int
 import meal_planner/ui/types/ui_types
 
 /// Progress bar component
@@ -21,19 +20,21 @@ import meal_planner/ui/types/ui_types
 /// <div class="progress-bar">
 ///   <div class="progress-fill" style="width: 75%"></div>
 /// </div>
-pub fn progress_bar(
-  current: Float,
-  target: Float,
-  color: String,
-) -> String {
+pub fn progress_bar(current: Float, target: Float, color: String) -> String {
   // CONTRACT: Returns HTML string for progress bar
   let percentage = calculate_percentage(current, target)
   let pct_int = float_to_int(percentage)
   let width_style = "width: " <> int_to_string(pct_int) <> "%"
 
-  "<div class=\"progress-bar " <> color <> "\">"
-  <> "<div class=\"progress-fill\" style=\"" <> width_style <> "\"></div>"
-  <> "<span class=\"progress-text\">" <> int_to_string(pct_int) <> "</span>"
+  "<div class=\"progress-bar "
+  <> color
+  <> "\">"
+  <> "<div class=\"progress-fill\" style=\""
+  <> width_style
+  <> "\"></div>"
+  <> "<span class=\"progress-text\">"
+  <> int_to_string(pct_int)
+  <> "</span>"
   <> "</div>"
 }
 
@@ -62,13 +63,23 @@ pub fn macro_bar(
   let target_int = float_to_int(target)
   let width_style = "width: " <> int_to_string(pct_int) <> "%"
 
-  "<div class=\"macro-bar " <> color <> "\">"
+  "<div class=\"macro-bar "
+  <> color
+  <> "\">"
   <> "<div class=\"macro-bar-header\">"
-  <> "<span>" <> label <> "</span>"
-  <> "<span>" <> int_to_string(current_int) <> "g / " <> int_to_string(target_int) <> "g</span>"
+  <> "<span>"
+  <> label
+  <> "</span>"
+  <> "<span>"
+  <> int_to_string(current_int)
+  <> "g / "
+  <> int_to_string(target_int)
+  <> "g</span>"
   <> "</div>"
   <> "<div class=\"progress-bar\">"
-  <> "<div class=\"progress-fill\" style=\"" <> width_style <> "\"></div>"
+  <> "<div class=\"progress-fill\" style=\""
+  <> width_style
+  <> "\"></div>"
   <> "</div>"
   <> "</div>"
 }
@@ -79,7 +90,11 @@ pub fn macro_bar(
 pub fn macro_badge(label: String, value: Float) -> String {
   // CONTRACT: Returns HTML string for macro badge
   let value_int = float_to_int(value)
-  "<span class=\"macro-badge\">" <> label <> ": " <> int_to_string(value_int) <> "g</span>"
+  "<span class=\"macro-badge\">"
+  <> label
+  <> ": "
+  <> int_to_string(value_int)
+  <> "g</span>"
 }
 
 /// Macro badges group container (empty placeholder)
@@ -96,10 +111,7 @@ pub fn macro_badges() -> String {
 /// Status badge/indicator
 ///
 /// Renders: <span class="badge badge-success">Completed</span>
-pub fn status_badge(
-  label: String,
-  status: ui_types.StatusType,
-) -> String {
+pub fn status_badge(label: String, status: ui_types.StatusType) -> String {
   // CONTRACT: Returns HTML string for status badge
   let status_class = case status {
     ui_types.StatusSuccess -> "status-success"
@@ -124,9 +136,15 @@ pub fn progress_circle(percentage: Float, label: String) -> String {
   let pct_int = float_to_int(percentage)
 
   "<div class=\"progress-circle\">"
-  <> "<div class=\"circle-progress\" style=\"--progress: " <> int_to_string(pct_int) <> "%; \"></div>"
-  <> "<span class=\"progress-percent\">" <> int_to_string(pct_int) <> "%</span>"
-  <> "<span class=\"progress-label\">" <> label <> "</span>"
+  <> "<div class=\"circle-progress\" style=\"--progress: "
+  <> int_to_string(pct_int)
+  <> "%; \"></div>"
+  <> "<span class=\"progress-percent\">"
+  <> int_to_string(pct_int)
+  <> "%</span>"
+  <> "<span class=\"progress-label\">"
+  <> label
+  <> "</span>"
   <> "</div>"
 }
 
@@ -153,11 +171,19 @@ pub fn progress_with_label(
 
   "<div class=\"progress-with-label\">"
   <> "<div class=\"progress-header\">"
-  <> "<span class=\"progress-label-text\">" <> label <> "</span>"
-  <> "<span class=\"progress-value\">" <> int_to_string(current_int) <> " / " <> int_to_string(float_to_int(target)) <> "</span>"
+  <> "<span class=\"progress-label-text\">"
+  <> label
+  <> "</span>"
+  <> "<span class=\"progress-value\">"
+  <> int_to_string(current_int)
+  <> " / "
+  <> int_to_string(float_to_int(target))
+  <> "</span>"
   <> "</div>"
   <> "<div class=\"progress-bar\">"
-  <> "<div class=\"progress-fill\" style=\"" <> width_style <> "\"></div>"
+  <> "<div class=\"progress-fill\" style=\""
+  <> width_style
+  <> "\"></div>"
   <> "</div>"
   <> "</div>"
 }
@@ -191,7 +217,6 @@ fn calculate_percentage(current: Float, target: Float) -> Float {
     False -> 0.0
   }
 }
-
 // ===================================================================
 // Additional component enhancements will be added as needed
 // ===================================================================

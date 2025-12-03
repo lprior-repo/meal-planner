@@ -1,8 +1,8 @@
 import gleam/list
 import gleeunit/should
 import meal_planner/meal_plan.{
-  DailyPlan, Meal, WeeklyMealPlan, daily_plan_macros, default_recipe, meal_macros,
-  weekly_plan_avg_daily_macros, weekly_plan_macros,
+  DailyPlan, Meal, WeeklyMealPlan, daily_plan_macros, default_recipe,
+  meal_macros, weekly_plan_avg_daily_macros, weekly_plan_macros,
 }
 import meal_planner/types.{Active, Low, Macros, Maintain, Recipe, UserProfile}
 import meal_planner/weekly_plan.{generate_weekly_plan}

@@ -7,8 +7,10 @@ import gleam/option.{None, Some}
 import gleam/string
 import meal_planner/auto_planner/types as auto_types
 import meal_planner/storage.{type StorageError, DatabaseError, NotFound}
+import meal_planner/types.{
+  type Recipe, High, Ingredient, Low, Macros, Medium, Recipe,
+}
 import pog
-import meal_planner/types.{type Recipe, High, Ingredient, Low, Macros, Medium, Recipe}
 
 // ============================================================================
 // Auto Meal Plan Storage
@@ -140,7 +142,9 @@ fn load_recipes_by_ids(
 
       let sql =
         "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
-         FROM recipes WHERE id IN (" <> placeholders <> ")"
+         FROM recipes WHERE id IN ("
+        <> placeholders
+        <> ")"
 
       let decoder = recipe_row_decoder()
 
@@ -283,11 +287,13 @@ fn format_pog_error(error: pog.QueryError) -> String {
     pog.ConnectionUnavailable -> "Database connection unavailable"
     pog.PostgresqlError(code, name, msg) ->
       "PostgreSQL error " <> code <> " (" <> name <> "): " <> msg
-    pog.UnexpectedResultType(_expected) ->
-      "Unexpected result type"
+    pog.UnexpectedResultType(_expected) -> "Unexpected result type"
     pog.QueryTimeout -> "Database query timeout"
     pog.UnexpectedArgumentCount(expected, got) ->
-      "Expected " <> int.to_string(expected) <> " arguments, got " <> int.to_string(got)
+      "Expected "
+      <> int.to_string(expected)
+      <> " arguments, got "
+      <> int.to_string(got)
     pog.UnexpectedArgumentType(expected, got) ->
       "Expected type " <> expected <> ", got " <> got
   }

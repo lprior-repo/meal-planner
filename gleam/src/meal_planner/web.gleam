@@ -249,7 +249,9 @@ fn new_recipe_page() -> wisp.Response {
           html.h2([], [element.text("Nutrition (per serving)")]),
           html.div([attribute.class("form-row")], [
             html.div([attribute.class("form-group")], [
-              html.label([attribute.for("protein")], [element.text("Protein (g)")]),
+              html.label([attribute.for("protein")], [
+                element.text("Protein (g)"),
+              ]),
               html.input([
                 attribute.type_("number"),
                 attribute.name("protein"),
@@ -509,7 +511,10 @@ fn recipe_detail_page(id: String, ctx: Context) -> wisp.Response {
                     attribute.value("DELETE"),
                   ]),
                   html.button(
-                    [attribute.type_("submit"), attribute.class("btn btn-danger")],
+                    [
+                      attribute.type_("submit"),
+                      attribute.class("btn btn-danger"),
+                    ],
                     [element.text("Delete")],
                   ),
                 ],
@@ -611,10 +616,12 @@ fn dashboard_page(req: wisp.Request, ctx: Context) -> wisp.Response {
   let filtered_entries = case filter {
     "breakfast" ->
       list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Breakfast })
-    "lunch" -> list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Lunch })
+    "lunch" ->
+      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Lunch })
     "dinner" ->
       list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Dinner })
-    "snack" -> list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Snack })
+    "snack" ->
+      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Snack })
     _ -> entries
   }
 
@@ -719,7 +726,11 @@ fn macro_bar(
   ])
 }
 
-fn filter_btn(label: String, value: String, current: String) -> element.Element(msg) {
+fn filter_btn(
+  label: String,
+  value: String,
+  current: String,
+) -> element.Element(msg) {
   let class = case value == current {
     True -> "filter-btn active"
     False -> "filter-btn"
@@ -733,7 +744,9 @@ fn filter_btn(label: String, value: String, current: String) -> element.Element(
 fn meal_entry_item(entry: FoodLogEntry) -> element.Element(msg) {
   html.li([attribute.class("meal-entry")], [
     html.div([attribute.class("meal-info")], [
-      html.span([attribute.class("meal-name")], [element.text(entry.recipe_name)]),
+      html.span([attribute.class("meal-name")], [
+        element.text(entry.recipe_name),
+      ]),
       html.span([attribute.class("meal-servings")], [
         element.text(" (" <> float_to_string(entry.servings) <> " serving)"),
       ]),
@@ -923,7 +936,10 @@ fn log_meal_form(recipe_id: String, ctx: Context) -> wisp.Response {
               ]),
               html.div([attribute.class("form-actions")], [
                 html.button(
-                  [attribute.type_("submit"), attribute.class("btn btn-primary")],
+                  [
+                    attribute.type_("submit"),
+                    attribute.class("btn btn-primary"),
+                  ],
                   [element.text("Log Meal")],
                 ),
                 html.a(
@@ -1347,17 +1363,16 @@ fn parse_recipe_from_form(
   }
 }
 
-fn add_error(
-  errors: List(String),
-  result: Result(a, String),
-) -> List(String) {
+fn add_error(errors: List(String), result: Result(a, String)) -> List(String) {
   case result {
     Ok(_) -> errors
     Error(msg) -> [msg, ..errors]
   }
 }
 
-fn extract_ingredients(values: List(#(String, String))) -> List(types.Ingredient) {
+fn extract_ingredients(
+  values: List(#(String, String)),
+) -> List(types.Ingredient) {
   let ingredient_pairs =
     list.filter_map(values, fn(pair) {
       let #(key, _) = pair
@@ -1524,11 +1539,14 @@ fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
   // Get query params for form submission
   case uri.parse_query(req.query |> option.unwrap("")) {
     Ok(params) -> {
-      let recipe_id = list.find(params, fn(p) { p.0 == "recipe_id" })
+      let recipe_id =
+        list.find(params, fn(p) { p.0 == "recipe_id" })
         |> result.map(fn(p) { p.1 })
-      let servings_str = list.find(params, fn(p) { p.0 == "servings" })
+      let servings_str =
+        list.find(params, fn(p) { p.0 == "servings" })
         |> result.map(fn(p) { p.1 })
-      let meal_type_str = list.find(params, fn(p) { p.0 == "meal_type" })
+      let meal_type_str =
+        list.find(params, fn(p) { p.0 == "meal_type" })
         |> result.map(fn(p) { p.1 })
 
       case recipe_id, servings_str, meal_type_str {

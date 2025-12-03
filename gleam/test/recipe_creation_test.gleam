@@ -10,7 +10,6 @@
 /// 7. Integration with storage layer
 ///
 /// Using Test-Driven Development (TDD) with gleeunit framework
-
 import gleam/erlang/process
 import gleam/list
 import gleam/option.{Some}
@@ -19,8 +18,10 @@ import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/storage
+import meal_planner/types.{
+  type Recipe, High, Ingredient, Low, Macros, Medium, Recipe,
+}
 import pog
-import meal_planner/types.{type Recipe, High, Ingredient, Low, Macros, Medium, Recipe}
 
 pub fn main() {
   gleeunit.main()
@@ -404,11 +405,7 @@ pub fn delete_recipe_test() {
 pub fn recipe_ids_are_unique_test() {
   let recipe1 = valid_recipe()
   let recipe2 =
-    Recipe(
-      ..valid_recipe(),
-      id: "test-recipe-2",
-      name: "Different Recipe",
-    )
+    Recipe(..valid_recipe(), id: "test-recipe-2", name: "Different Recipe")
 
   should.not_equal(recipe1.id, recipe2.id)
 }

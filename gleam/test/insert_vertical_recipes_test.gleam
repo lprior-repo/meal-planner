@@ -1,11 +1,10 @@
 /// Test to insert Vertical Diet recipes into the database
 /// Run with: gleam test --target erlang --module insert_vertical_recipes_test
-
-import gleeunit
-import gleeunit/should
+import gleam/int
 import gleam/io
 import gleam/list
-import gleam/int
+import gleeunit
+import gleeunit/should
 import meal_planner/storage
 import meal_planner/vertical_diet_recipes
 
@@ -91,7 +90,8 @@ pub fn insert_all_vertical_diet_recipes_test() {
         Error(_) -> 0
       }
 
-      let bison_count = case storage.get_recipes_by_category(conn, "bison-main")
+      let bison_count = case
+        storage.get_recipes_by_category(conn, "bison-main")
       {
         Ok(r) -> list.length(r)
         Error(_) -> 0
@@ -107,11 +107,12 @@ pub fn insert_all_vertical_diet_recipes_test() {
         Error(_) -> 0
       }
 
-      let veg_count =
-        case storage.get_recipes_by_category(conn, "vegetable-side") {
-          Ok(r) -> list.length(r)
-          Error(_) -> 0
-        }
+      let veg_count = case
+        storage.get_recipes_by_category(conn, "vegetable-side")
+      {
+        Ok(r) -> list.length(r)
+        Error(_) -> 0
+      }
 
       io.println("\n📊 Recipe breakdown:")
       io.println("  🥩 Beef mains: " <> int.to_string(beef_count))

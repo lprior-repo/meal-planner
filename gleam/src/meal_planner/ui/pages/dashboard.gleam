@@ -14,7 +14,6 @@
 ///
 /// See: docs/UI_REQUIREMENTS_ANALYSIS.md (Bead 3)
 /// See: docs/component_signatures.md (Dashboard Page)
-
 /// Dashboard data structure
 ///
 /// Contains all data needed to render the dashboard:

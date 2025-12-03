@@ -331,7 +331,14 @@ pub fn create_profile_invalid_meals_test() {
 }
 
 pub fn create_profile_from_strings_valid_test() {
-  let result = create_profile_from_strings("test-user", "180.0", "moderate", "maintain", "3")
+  let result =
+    create_profile_from_strings(
+      "test-user",
+      "180.0",
+      "moderate",
+      "maintain",
+      "3",
+    )
   result |> should.be_ok()
   let profile = case result {
     Ok(p) -> p
@@ -356,7 +363,13 @@ pub fn create_profile_from_strings_all_variations_test() {
 }
 
 pub fn create_profile_from_strings_invalid_bodyweight_test() {
-  create_profile_from_strings("test-user", "not a number", "moderate", "maintain", "3")
+  create_profile_from_strings(
+    "test-user",
+    "not a number",
+    "moderate",
+    "maintain",
+    "3",
+  )
   |> should.be_error()
   |> should.equal(ParseError("invalid bodyweight: must be a number"))
 }
@@ -376,7 +389,13 @@ pub fn create_profile_from_strings_invalid_goal_test() {
 }
 
 pub fn create_profile_from_strings_invalid_meals_test() {
-  create_profile_from_strings("test-user", "180.0", "moderate", "maintain", "not a number")
+  create_profile_from_strings(
+    "test-user",
+    "180.0",
+    "moderate",
+    "maintain",
+    "not a number",
+  )
   |> should.be_error()
   |> should.equal(ParseError("invalid meals per day: must be a number"))
 }

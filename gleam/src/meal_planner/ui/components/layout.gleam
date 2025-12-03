@@ -10,7 +10,6 @@
 /// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: docs/component_signatures.md (section: Layout)
-
 import gleam/string
 import meal_planner/ui/types/ui_types
 
@@ -131,7 +130,13 @@ pub fn grid(
   let gap_class = gap_to_class(gap)
   let children_html = string.concat(children)
 
-  "<div class=\"grid " <> columns_class <> " " <> gap_class <> "\">" <> children_html <> "</div>"
+  "<div class=\"grid "
+  <> columns_class
+  <> " "
+  <> gap_class
+  <> "\">"
+  <> children_html
+  <> "</div>"
 }
 
 // ===================================================================
@@ -141,24 +146,22 @@ pub fn grid(
 /// Spacing container (padding around children)
 ///
 /// Renders: <div class="space-around p-16">children</div>
-pub fn space_around(
-  amount: Int,
-  children: List(String),
-) -> String {
+pub fn space_around(amount: Int, children: List(String)) -> String {
   // CONTRACT: Returns HTML string for spaced container
   let padding_class = padding_to_class(amount)
   let children_html = string.concat(children)
 
-  "<div class=\"space-around " <> padding_class <> "\">" <> children_html <> "</div>"
+  "<div class=\"space-around "
+  <> padding_class
+  <> "\">"
+  <> children_html
+  <> "</div>"
 }
 
 /// Container with max-width
 ///
 /// Renders: <div class="container mx-auto" style="max-width: 1200px">children</div>
-pub fn container(
-  max_width: Int,
-  children: List(String),
-) -> String {
+pub fn container(max_width: Int, children: List(String)) -> String {
   // CONTRACT: Returns HTML string for max-width container
   let children_html = string.concat(children)
   let max_width_px = string.inspect(max_width) <> "px"
@@ -173,9 +176,7 @@ pub fn container(
 /// Page section with padding
 ///
 /// Renders: <section class="section">children</section>
-pub fn section(
-  children: List(String),
-) -> String {
+pub fn section(children: List(String)) -> String {
   // CONTRACT: Returns HTML string for page section
   let children_html = string.concat(children)
 

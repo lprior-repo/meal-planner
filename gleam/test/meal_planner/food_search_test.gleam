@@ -4,15 +4,14 @@
 /// 1. Write failing tests (RED) ⬅️ WE ARE HERE
 /// 2. Implement minimal code to pass (GREEN)
 /// 3. Refactor while keeping tests passing (REFACTOR)
-
 import gleam/erlang/process
 import gleam/list
 import gleam/otp/actor
 import gleeunit
 import gleeunit/should
 import meal_planner/food_search
-import pog
 import meal_planner/types.{DatabaseError, InvalidQuery}
+import pog
 
 pub fn main() {
   gleeunit.main()
@@ -81,7 +80,8 @@ pub fn short_query_returns_error_test() {
 
 /// Test 3: Limit of 0 should return InvalidQuery error
 pub fn zero_limit_returns_error_test() {
-  let result = food_search.unified_food_search(mock_db(), "user-1", "chicken", 0)
+  let result =
+    food_search.unified_food_search(mock_db(), "user-1", "chicken", 0)
 
   result
   |> should.be_error()
@@ -223,7 +223,8 @@ pub fn results_respect_total_limit_test() {
 
 /// Test 12: Minimum valid limit (1) should work
 pub fn minimum_limit_works_test() {
-  let result = food_search.unified_food_search(mock_db(), "user-1", "chicken", 1)
+  let result =
+    food_search.unified_food_search(mock_db(), "user-1", "chicken", 1)
 
   result
   |> should.be_ok()

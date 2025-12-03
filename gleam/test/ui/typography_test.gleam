@@ -2,11 +2,10 @@
 ///
 /// This module defines tests for typography components.
 /// Tests verify that typography components render correct HTML and CSS classes.
-
+import gleam/option
+import gleam/string
 import gleeunit
 import gleeunit/should
-import gleam/string
-import gleam/option
 import meal_planner/ui/components/typography
 import meal_planner/ui/types/ui_types
 
@@ -19,12 +18,13 @@ fn assert_contains(haystack: String, needle: String) -> Nil {
   case string.contains(haystack, needle) {
     True -> Nil
     False -> {
-      let _msg = string.concat([
-        "\n",
-        haystack,
-        "\nshould contain\n",
-        needle,
-      ])
+      let _msg =
+        string.concat([
+          "\n",
+          haystack,
+          "\nshould contain\n",
+          needle,
+        ])
       should.fail()
     }
   }
@@ -81,42 +81,48 @@ pub fn h6_renders_correct_tag_test() {
 // ===================================================================
 
 pub fn heading_with_subtitle_level_1_test() {
-  let result = typography.heading_with_subtitle(1, "Title", option.Some("Subtitle"))
+  let result =
+    typography.heading_with_subtitle(1, "Title", option.Some("Subtitle"))
   assert_contains(result, "<h1>")
   assert_contains(result, "Title")
   assert_contains(result, "Subtitle")
 }
 
 pub fn heading_with_subtitle_level_2_test() {
-  let result = typography.heading_with_subtitle(2, "Title", option.Some("Subtitle"))
+  let result =
+    typography.heading_with_subtitle(2, "Title", option.Some("Subtitle"))
   assert_contains(result, "<h2>")
   assert_contains(result, "Title")
   assert_contains(result, "Subtitle")
 }
 
 pub fn heading_with_subtitle_level_3_test() {
-  let result = typography.heading_with_subtitle(3, "Title", option.Some("Subtitle"))
+  let result =
+    typography.heading_with_subtitle(3, "Title", option.Some("Subtitle"))
   assert_contains(result, "<h3>")
   assert_contains(result, "Title")
   assert_contains(result, "Subtitle")
 }
 
 pub fn heading_with_subtitle_level_4_test() {
-  let result = typography.heading_with_subtitle(4, "Title", option.Some("Subtitle"))
+  let result =
+    typography.heading_with_subtitle(4, "Title", option.Some("Subtitle"))
   assert_contains(result, "<h4>")
   assert_contains(result, "Title")
   assert_contains(result, "Subtitle")
 }
 
 pub fn heading_with_subtitle_level_5_test() {
-  let result = typography.heading_with_subtitle(5, "Title", option.Some("Subtitle"))
+  let result =
+    typography.heading_with_subtitle(5, "Title", option.Some("Subtitle"))
   assert_contains(result, "<h5>")
   assert_contains(result, "Title")
   assert_contains(result, "Subtitle")
 }
 
 pub fn heading_with_subtitle_level_6_test() {
-  let result = typography.heading_with_subtitle(6, "Title", option.Some("Subtitle"))
+  let result =
+    typography.heading_with_subtitle(6, "Title", option.Some("Subtitle"))
   assert_contains(result, "<h6>")
   assert_contains(result, "Title")
   assert_contains(result, "Subtitle")
@@ -130,17 +136,20 @@ pub fn heading_with_subtitle_none_test() {
 }
 
 pub fn heading_with_subtitle_container_test() {
-  let result = typography.heading_with_subtitle(1, "Title", option.Some("Subtitle"))
+  let result =
+    typography.heading_with_subtitle(1, "Title", option.Some("Subtitle"))
   assert_contains(result, "heading-group")
 }
 
 pub fn heading_with_subtitle_subtitle_class_test() {
-  let result = typography.heading_with_subtitle(1, "Title", option.Some("Subtitle"))
+  let result =
+    typography.heading_with_subtitle(1, "Title", option.Some("Subtitle"))
   assert_contains(result, "subtitle")
 }
 
 pub fn heading_with_subtitle_invalid_level_test() {
-  let result = typography.heading_with_subtitle(10, "Title", option.Some("Subtitle"))
+  let result =
+    typography.heading_with_subtitle(10, "Title", option.Some("Subtitle"))
   assert_contains(result, "<h1>")
 }
 

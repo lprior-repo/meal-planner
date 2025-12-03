@@ -1,6 +1,5 @@
 /// Web helper functions
 /// Temporary placeholder to unblock compilation
-
 import gleam/json.{type Json}
 import wisp.{type Response}
 

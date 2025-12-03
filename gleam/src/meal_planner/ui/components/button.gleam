@@ -10,7 +10,6 @@
 /// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: docs/component_signatures.md (section: Buttons)
-
 import gleam/string
 import meal_planner/ui/types/ui_types
 
@@ -53,7 +52,13 @@ pub fn button(
 ) -> String {
   // CONTRACT: Returns HTML string for button link with variant classes
   let variant_class = variant_to_class(variant)
-  "<a href=\"" <> href <> "\" class=\"btn " <> variant_class <> "\">" <> label <> "</a>"
+  "<a href=\""
+  <> href
+  <> "\" class=\"btn "
+  <> variant_class
+  <> "\">"
+  <> label
+  <> "</a>"
 }
 
 /// Button with custom size
@@ -68,39 +73,47 @@ pub fn button_sized(
   // CONTRACT: Returns HTML string for sized button link
   let variant_class = variant_to_class(variant)
   let size_class = size_to_class(size)
-  "<a href=\"" <> href <> "\" class=\"btn " <> variant_class <> " " <> size_class <> "\">" <> label <> "</a>"
+  "<a href=\""
+  <> href
+  <> "\" class=\"btn "
+  <> variant_class
+  <> " "
+  <> size_class
+  <> "\">"
+  <> label
+  <> "</a>"
 }
 
 /// Submit button for forms
 ///
 /// Renders: <button type="submit" class="btn btn-primary">Label</button>
-pub fn submit_button(
-  label: String,
-  variant: ui_types.ButtonVariant,
-) -> String {
+pub fn submit_button(label: String, variant: ui_types.ButtonVariant) -> String {
   // CONTRACT: Returns HTML string for submit button
   let variant_class = variant_to_class(variant)
-  "<button type=\"submit\" class=\"btn " <> variant_class <> "\">" <> label <> "</button>"
+  "<button type=\"submit\" class=\"btn "
+  <> variant_class
+  <> "\">"
+  <> label
+  <> "</button>"
 }
 
 /// Disabled button state
 ///
 /// Renders: <button disabled class="btn btn-primary btn-disabled">Label</button>
-pub fn button_disabled(
-  label: String,
-  variant: ui_types.ButtonVariant,
-) -> String {
+pub fn button_disabled(label: String, variant: ui_types.ButtonVariant) -> String {
   // CONTRACT: Returns HTML string for disabled button
   let variant_class = variant_to_class(variant)
-  "<button disabled class=\"btn " <> variant_class <> " btn-disabled\">" <> label <> "</button>"
+  "<button disabled class=\"btn "
+  <> variant_class
+  <> " btn-disabled\">"
+  <> label
+  <> "</button>"
 }
 
 /// Button group container
 ///
 /// Renders: <div class="button-group">buttons...</div>
-pub fn button_group(
-  buttons: List(String),
-) -> String {
+pub fn button_group(buttons: List(String)) -> String {
   // CONTRACT: Returns HTML string for button group container
   let buttons_html = string.concat(buttons)
   "<div class=\"button-group\">" <> buttons_html <> "</div>"

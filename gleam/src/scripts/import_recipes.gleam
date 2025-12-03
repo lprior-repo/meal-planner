@@ -42,8 +42,10 @@ pub fn main() {
         list.map(recipe_files, fn(file) { import_recipe_file(conn, file) })
 
       // Count successes and failures
-      let successes = list.filter(results, fn(r) { result.is_ok(r) })  |> list.length
-      let failures = list.filter(results, fn(r) { result.is_error(r) }) |> list.length
+      let successes =
+        list.filter(results, fn(r) { result.is_ok(r) }) |> list.length
+      let failures =
+        list.filter(results, fn(r) { result.is_error(r) }) |> list.length
 
       io.println("")
       io.println("📊 Import Summary:")

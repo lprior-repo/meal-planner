@@ -1,6 +1,6 @@
+import gleam/io
 import gleeunit
 import gleeunit/should
-import gleam/io
 import test_db
 
 pub fn main() {

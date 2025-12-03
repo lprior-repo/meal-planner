@@ -154,9 +154,13 @@ fn format_error(err: pog.QueryError) -> String {
   case err {
     pog.PostgresqlError(code, name, msg) ->
       "PostgreSQL error " <> code <> " (" <> name <> "): " <> msg
-    pog.UnexpectedResultType(errors) -> "Decode errors: " <> string.inspect(errors)
+    pog.UnexpectedResultType(errors) ->
+      "Decode errors: " <> string.inspect(errors)
     pog.UnexpectedArgumentCount(expected, got) ->
-      "Expected " <> string.inspect(expected) <> " arguments, got " <> string.inspect(got)
+      "Expected "
+      <> string.inspect(expected)
+      <> " arguments, got "
+      <> string.inspect(got)
     pog.UnexpectedArgumentType(expected, got) ->
       "Expected type " <> expected <> ", got " <> got
     pog.ConstraintViolated(msg, constraint, detail) ->

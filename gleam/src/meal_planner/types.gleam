@@ -127,7 +127,10 @@ fn scale_optional(v: Option(Float), factor: Float) -> Option(Float) {
 }
 
 /// Add two Micronutrients together
-pub fn micronutrients_add(a: Micronutrients, b: Micronutrients) -> Micronutrients {
+pub fn micronutrients_add(
+  a: Micronutrients,
+  b: Micronutrients,
+) -> Micronutrients {
   Micronutrients(
     fiber: add_optional(a.fiber, b.fiber),
     sugar: add_optional(a.sugar, b.sugar),
@@ -649,7 +652,10 @@ pub fn food_log_entry_to_json(e: FoodLogEntry) -> Json {
   ]
 
   let fields = case e.micronutrients {
-    Some(micros) -> [#("micronutrients", micronutrients_to_json(micros)), ..fields]
+    Some(micros) -> [
+      #("micronutrients", micronutrients_to_json(micros)),
+      ..fields
+    ]
     None -> fields
   }
 
@@ -664,7 +670,10 @@ pub fn daily_log_to_json(d: DailyLog) -> Json {
   ]
 
   let fields = case d.total_micronutrients {
-    Some(micros) -> [#("total_micronutrients", micronutrients_to_json(micros)), ..fields]
+    Some(micros) -> [
+      #("total_micronutrients", micronutrients_to_json(micros)),
+      ..fields
+    ]
     None -> fields
   }
 
@@ -693,7 +702,10 @@ pub fn custom_food_to_json(f: CustomFood) -> Json {
   }
 
   let fields = case f.micronutrients {
-    Some(micros) -> [#("micronutrients", micronutrients_to_json(micros)), ..fields]
+    Some(micros) -> [
+      #("micronutrients", micronutrients_to_json(micros)),
+      ..fields
+    ]
     None -> fields
   }
 
@@ -710,12 +722,15 @@ pub fn food_search_result_to_json(r: FoodSearchResult) -> Json {
     UsdaFoodResult(fdc_id, description, data_type, category) ->
       json.object([
         #("type", json.string("usda")),
-        #("data", json.object([
-          #("fdc_id", json.int(fdc_id)),
-          #("description", json.string(description)),
-          #("data_type", json.string(data_type)),
-          #("category", json.string(category)),
-        ])),
+        #(
+          "data",
+          json.object([
+            #("fdc_id", json.int(fdc_id)),
+            #("description", json.string(description)),
+            #("data_type", json.string(data_type)),
+            #("category", json.string(category)),
+          ]),
+        ),
       ])
   }
 }

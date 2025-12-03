@@ -2,7 +2,6 @@
 /// Downloads from GitHub Release if not present locally
 ///
 /// Run with: gleam run -m scripts/restore_db
-
 import envoy
 import gleam/io
 import gleam/list
@@ -51,7 +50,16 @@ pub fn main() {
 
   // Drop and create database
   io.println("Dropping existing database...")
-  case run_command(psql, ["-h", "localhost", "-U", "postgres", "-c", "DROP DATABASE IF EXISTS " <> db_name]) {
+  case
+    run_command(psql, [
+      "-h",
+      "localhost",
+      "-U",
+      "postgres",
+      "-c",
+      "DROP DATABASE IF EXISTS " <> db_name,
+    ])
+  {
     Ok(_) -> Nil
     Error(e) -> {
       io.println("Warning: " <> e)
@@ -59,7 +67,16 @@ pub fn main() {
   }
 
   io.println("Creating database...")
-  case run_command(psql, ["-h", "localhost", "-U", "postgres", "-c", "CREATE DATABASE " <> db_name]) {
+  case
+    run_command(psql, [
+      "-h",
+      "localhost",
+      "-U",
+      "postgres",
+      "-c",
+      "CREATE DATABASE " <> db_name,
+    ])
+  {
     Ok(_) -> Nil
     Error(e) -> {
       io.println("Failed to create database: " <> e)
@@ -73,7 +90,19 @@ pub fn main() {
   io.println("")
 
   // Restore with parallel jobs
-  case run_command(pg_restore, ["-h", "localhost", "-U", "postgres", "-d", db_name, "-j", "4", dump_file]) {
+  case
+    run_command(pg_restore, [
+      "-h",
+      "localhost",
+      "-U",
+      "postgres",
+      "-d",
+      db_name,
+      "-j",
+      "4",
+      dump_file,
+    ])
+  {
     Ok(_) -> Nil
     Error(e) -> {
       // pg_restore returns non-zero even on warnings, check if data was restored
@@ -85,10 +114,18 @@ pub fn main() {
   io.println("Verifying restore...")
 
   // Verify the restore
-  case run_command(psql, [
-    "-h", "localhost", "-U", "postgres", "-d", db_name,
-    "-c", "SELECT 'Nutrients' as tbl, count(*) FROM nutrients UNION ALL SELECT 'Foods', count(*) FROM foods UNION ALL SELECT 'Food Nutrients', count(*) FROM food_nutrients"
-  ]) {
+  case
+    run_command(psql, [
+      "-h",
+      "localhost",
+      "-U",
+      "postgres",
+      "-d",
+      db_name,
+      "-c",
+      "SELECT 'Nutrients' as tbl, count(*) FROM nutrients UNION ALL SELECT 'Foods', count(*) FROM foods UNION ALL SELECT 'Food Nutrients', count(*) FROM food_nutrients",
+    ])
+  {
     Ok(output) -> {
       io.println(output)
       io.println("")
@@ -122,17 +159,21 @@ fn get_pg_bin_path() -> String {
         "C:\\Program Files\\PostgreSQL\\16\\bin\\",
         "C:\\Program Files\\PostgreSQL\\15\\bin\\",
       ]
-      case list.find(paths, fn(p) {
-        case simplifile.is_file(p <> "psql.exe") {
-          Ok(True) -> True
-          _ -> False
-        }
-      }) {
+      case
+        list.find(paths, fn(p) {
+          case simplifile.is_file(p <> "psql.exe") {
+            Ok(True) -> True
+            _ -> False
+          }
+        })
+      {
         Ok(path) -> path
-        Error(_) -> ""  // Hope it's in PATH
+        Error(_) -> ""
+        // Hope it's in PATH
       }
     }
-    Error(_) -> ""  // Unix - assume psql is in PATH
+    Error(_) -> ""
+    // Unix - assume psql is in PATH
   }
 }
 
@@ -147,10 +188,16 @@ fn download_dump(dest: String) -> Result(Nil, String) {
       case envoy.get("LOCALAPPDATA") {
         Ok(_) -> {
           // Windows - use PowerShell
-          case run_command("powershell", [
-            "-Command",
-            "Invoke-WebRequest -Uri '" <> dump_url <> "' -OutFile '" <> dest <> "'"
-          ]) {
+          case
+            run_command("powershell", [
+              "-Command",
+              "Invoke-WebRequest -Uri '"
+                <> dump_url
+                <> "' -OutFile '"
+                <> dest
+                <> "'",
+            ])
+          {
             Ok(_) -> Ok(Nil)
             Error(e) -> Error(e)
           }

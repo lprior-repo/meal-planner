@@ -5,7 +5,6 @@
 /// and composing components.
 ///
 /// See: docs/component_signatures.md
-
 import gleam/option
 
 // ===================================================================
@@ -75,11 +74,7 @@ pub type SelectOption {
 }
 
 pub type FormField {
-  FormField(
-    label: String,
-    input: String,
-    error: option.Option(String),
-  )
+  FormField(label: String, input: String, error: option.Option(String))
 }
 
 // ===================================================================
@@ -165,7 +160,6 @@ pub type FontWeight {
 pub type NavCard {
   NavCard(icon: String, label: String, href: String)
 }
-
 // ===================================================================
 // Additional types will be added as specific features are implemented
 // ===================================================================

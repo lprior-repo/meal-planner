@@ -11,7 +11,6 @@
 /// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: docs/component_signatures.md (section: Typography)
-
 import gleam/option.{type Option}
 import meal_planner/ui/types/ui_types
 
@@ -148,10 +147,7 @@ pub fn label_text(text: String, for: String) -> String {
 /// - Italic: <em>text</em>
 /// - Code: <code>text</code>
 /// - Underline: <u>text</u>
-pub fn emphasize_text(
-  text: String,
-  emphasis: ui_types.TextEmphasis,
-) -> String {
+pub fn emphasize_text(text: String, emphasis: ui_types.TextEmphasis) -> String {
   // CONTRACT: Returns HTML string with semantic emphasis element
   // BODY: Implement with appropriate HTML element for each emphasis type
   case emphasis {

@@ -2,7 +2,6 @@
 ///
 /// This module provides intelligent meal planning by scoring and selecting recipes
 /// based on diet principles, macro targets, and variety preferences.
-
 import gleam/float
 import gleam/int
 import gleam/list
@@ -12,9 +11,14 @@ import meal_planner/diet_validator
 import meal_planner/types
 
 // Re-export types for convenience
-pub type DietPrinciple = auto_types.DietPrinciple
-pub type AutoPlanConfig = auto_types.AutoPlanConfig
-pub type AutoMealPlan = auto_types.AutoMealPlan
+pub type DietPrinciple =
+  auto_types.DietPrinciple
+
+pub type AutoPlanConfig =
+  auto_types.AutoPlanConfig
+
+pub type AutoMealPlan =
+  auto_types.AutoMealPlan
 
 // ============================================================================
 // Types
@@ -80,16 +84,19 @@ pub fn calculate_macro_match_score(
   recipe_count: Int,
 ) -> Float {
   // Calculate target per recipe (daily target / number of recipes)
-  let target_per_recipe = types.Macros(
-    protein: targets.protein /. int.to_float(recipe_count),
-    fat: targets.fat /. int.to_float(recipe_count),
-    carbs: targets.carbs /. int.to_float(recipe_count),
-  )
+  let target_per_recipe =
+    types.Macros(
+      protein: targets.protein /. int.to_float(recipe_count),
+      fat: targets.fat /. int.to_float(recipe_count),
+      carbs: targets.carbs /. int.to_float(recipe_count),
+    )
 
   // Calculate percentage deviation for each macro
-  let protein_dev = calculate_deviation(recipe.macros.protein, target_per_recipe.protein)
+  let protein_dev =
+    calculate_deviation(recipe.macros.protein, target_per_recipe.protein)
   let fat_dev = calculate_deviation(recipe.macros.fat, target_per_recipe.fat)
-  let carbs_dev = calculate_deviation(recipe.macros.carbs, target_per_recipe.carbs)
+  let carbs_dev =
+    calculate_deviation(recipe.macros.carbs, target_per_recipe.carbs)
 
   // Average the deviations
   let avg_dev = { protein_dev +. fat_dev +. carbs_dev } /. 3.0
@@ -199,8 +206,7 @@ fn select_top_n_helper(
           // Adjust scores based on variety factor
           let adjusted =
             list.map(available, fn(scored) {
-              let new_variety =
-                calculate_variety_score(scored.recipe, selected)
+              let new_variety = calculate_variety_score(scored.recipe, selected)
               let new_overall =
                 scored.diet_compliance_score
                 *. 0.4
@@ -225,12 +231,10 @@ fn select_top_n_helper(
           // Take the best one
           case sorted {
             [best, ..rest] ->
-              select_top_n_helper(
-                rest,
-                remaining - 1,
-                variety_factor,
-                [best.recipe, ..selected],
-              )
+              select_top_n_helper(rest, remaining - 1, variety_factor, [
+                best.recipe,
+                ..selected
+              ])
             [] -> list.reverse(selected)
           }
         }
@@ -265,8 +269,7 @@ pub fn generate_auto_plan(
           )
         False -> {
           // Score all filtered recipes
-          let scored =
-            list.map(filtered, fn(r) { score_recipe(r, config, []) })
+          let scored = list.map(filtered, fn(r) { score_recipe(r, config, []) })
 
           // Select top N recipes
           let selected =
@@ -277,16 +280,17 @@ pub fn generate_auto_plan(
             False -> {
               // Calculate total macros
               let total_macros =
-                list.fold(selected, types.Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(
-                  acc,
-                  recipe,
-                ) {
-                  types.Macros(
-                    protein: acc.protein +. recipe.macros.protein,
-                    fat: acc.fat +. recipe.macros.fat,
-                    carbs: acc.carbs +. recipe.macros.carbs,
-                  )
-                })
+                list.fold(
+                  selected,
+                  types.Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+                  fn(acc, recipe) {
+                    types.Macros(
+                      protein: acc.protein +. recipe.macros.protein,
+                      fat: acc.fat +. recipe.macros.fat,
+                      carbs: acc.carbs +. recipe.macros.carbs,
+                    )
+                  },
+                )
 
               // Generate plan ID (simple timestamp-based ID)
               let plan_id = "auto-plan-" <> generate_timestamp()

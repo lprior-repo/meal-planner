@@ -4,10 +4,10 @@
 
 import gleam/float
 import gleeunit/should
-import qcheck
 import meal_planner/types.{
   type Macros, Macros, macros_add, macros_calories, macros_scale, macros_zero,
 }
+import qcheck
 
 // ============================================================================
 // Generators

@@ -1,10 +1,9 @@
 /// Progress Component Tests
 ///
 /// This module defines tests that verify progress components render correct HTML and percentages.
-
+import gleam/string
 import gleeunit
 import gleeunit/should
-import gleam/string
 import meal_planner/ui/components/progress
 import meal_planner/ui/types/ui_types
 
@@ -17,12 +16,13 @@ fn assert_contains(haystack: String, needle: String) -> Nil {
   case string.contains(haystack, needle) {
     True -> Nil
     False -> {
-      let _msg = string.concat([
-        "\n",
-        haystack,
-        "\nshould contain\n",
-        needle,
-      ])
+      let _msg =
+        string.concat([
+          "\n",
+          haystack,
+          "\nshould contain\n",
+          needle,
+        ])
       should.fail()
     }
   }

@@ -5,15 +5,14 @@
 /// - USDA foods (global, from food_nutrients table)
 ///
 /// Results are ordered with custom foods first, then USDA foods.
-
 import gleam/list
 import gleam/string
 import meal_planner/storage
-import pog
 import meal_planner/types.{
   type FoodSearchError, type FoodSearchResponse, FoodSearchResponse,
   InvalidQuery, UsdaFoodResult,
 }
+import pog
 
 /// Search both custom foods and USDA database
 /// Returns custom foods first (user-scoped), then USDA foods (global)
@@ -42,8 +41,7 @@ pub fn unified_food_search(
   let trimmed_query = string.trim(query)
 
   case string.length(trimmed_query) {
-    len if len < 2 ->
-      Error(InvalidQuery("Query must be at least 2 characters"))
+    len if len < 2 -> Error(InvalidQuery("Query must be at least 2 characters"))
     _ -> {
       // STEP 2: Validate limit (must be 1-100)
       case limit {
@@ -51,11 +49,14 @@ pub fn unified_food_search(
           Error(InvalidQuery("Limit must be between 1 and 100"))
         _ -> {
           // STEP 3: Custom foods tracked in bead meal-planner-1k0
-          let custom_results = []  // Placeholder until custom foods implemented
+          let custom_results = []
+          // Placeholder until custom foods implemented
           let usda_limit = limit
 
           // STEP 4: Query USDA foods (global)
-          let usda_results = case storage.search_foods(db, trimmed_query, usda_limit) {
+          let usda_results = case
+            storage.search_foods(db, trimmed_query, usda_limit)
+          {
             Ok(foods) ->
               foods
               |> list.map(fn(food) {
@@ -66,7 +67,8 @@ pub fn unified_food_search(
                   food.category,
                 )
               })
-            Error(_) -> []  // Graceful degradation - return empty on error
+            Error(_) -> []
+            // Graceful degradation - return empty on error
           }
 
           // STEP 5: Merge results (custom first, then USDA)

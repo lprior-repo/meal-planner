@@ -205,7 +205,11 @@ pub fn select_meals_for_week(
     ])
 
   let initial_count =
-    red_meat_count + salmon_count + eggs_count + eggs_count_extra + variety_count
+    red_meat_count
+    + salmon_count
+    + eggs_count
+    + eggs_count_extra
+    + variety_count
 
   // If we don't have enough recipes to meet the target, fill with available recipes
   // cycling through all compliant recipes to reach the target
@@ -214,7 +218,8 @@ pub fn select_meals_for_week(
   {
     True -> {
       let remaining = target_meals - initial_count
-      let #(extra, extra_len) = select_from_category(compliant_recipes, remaining)
+      let #(extra, extra_len) =
+        select_from_category(compliant_recipes, remaining)
       #(list.append(initial_selected, extra), extra_len)
     }
     False -> #(initial_selected, 0)

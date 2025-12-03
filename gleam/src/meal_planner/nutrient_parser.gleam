@@ -5,11 +5,12 @@
 ///
 /// USDA nutrient database uses standardized names like "Protein", "Total lipid (fat)",
 /// "Carbohydrate, by difference", etc. This module maps those to our schema.
-
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import meal_planner/types.{type Macros, type Micronutrients, Macros, Micronutrients}
+import meal_planner/types.{
+  type Macros, type Micronutrients, Macros, Micronutrients,
+}
 
 /// USDA nutrient value from database
 pub type UsdaNutrient {
@@ -39,10 +40,10 @@ pub fn parse_usda_nutrients(
 
   let sodium = find_nutrient(nutrients, "Sodium, Na") |> convert_to_mg_opt
 
-  let cholesterol =
-    find_nutrient(nutrients, "Cholesterol") |> convert_to_mg_opt
+  let cholesterol = find_nutrient(nutrients, "Cholesterol") |> convert_to_mg_opt
 
-  let vitamin_a = find_nutrient(nutrients, "Vitamin A, RAE") |> convert_to_ug_opt
+  let vitamin_a =
+    find_nutrient(nutrients, "Vitamin A, RAE") |> convert_to_ug_opt
 
   let vitamin_c =
     find_nutrient(nutrients, "Vitamin C, total ascorbic acid")

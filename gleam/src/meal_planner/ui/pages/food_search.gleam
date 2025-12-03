@@ -12,14 +12,14 @@
 ///
 /// See: docs/UI_REQUIREMENTS_ANALYSIS.md (Bead 2)
 /// See: docs/component_signatures.md (Food Search Page)
-
 import gleam/option
 
 /// Food search page state
 pub type SearchState {
   SearchState(
     query: option.Option(String),
-    results: List(#(Int, String, String, String)),  // (id, name, type, category)
+    results: List(#(Int, String, String, String)),
+    // (id, name, type, category)
     total_count: Int,
     loading: Bool,
   )
@@ -35,7 +35,6 @@ pub fn render_food_search_page(_state: SearchState) -> String {
   // Food search implementation tracked in bead meal-planner-qfnc
   "<!-- render_food_search_page -->"
 }
-
 /// Search form component
 ///
 /// Renders the search input with:

@@ -2,7 +2,6 @@
 /// Uses BEAM's process spawning for maximum parallel processing
 ///
 /// Run with: gleam run -m scripts/init_pg
-
 import envoy
 import gleam/dynamic/decode
 import gleam/erlang/process.{type Subject}
@@ -38,7 +37,9 @@ pub fn main() {
     Error(e) -> {
       io.println("Failed to create database: " <> e)
       io.println("")
-      io.println("Make sure PostgreSQL is running and you can connect as postgres user")
+      io.println(
+        "Make sure PostgreSQL is running and you can connect as postgres user",
+      )
       panic
     }
     Ok(_) -> {
@@ -73,9 +74,15 @@ pub fn main() {
       case check_tables_exist(db) {
         False -> {
           io.println("Tables not found. Run migrations manually with psql:")
-          io.println("  psql -d meal_planner -f migrations_pg/001_schema_migrations.sql")
-          io.println("  psql -d meal_planner -f migrations_pg/002_usda_tables.sql")
-          io.println("  psql -d meal_planner -f migrations_pg/003_app_tables.sql")
+          io.println(
+            "  psql -d meal_planner -f migrations_pg/001_schema_migrations.sql",
+          )
+          io.println(
+            "  psql -d meal_planner -f migrations_pg/002_usda_tables.sql",
+          )
+          io.println(
+            "  psql -d meal_planner -f migrations_pg/003_app_tables.sql",
+          )
           panic
         }
         True -> {
@@ -93,7 +100,9 @@ pub fn main() {
         False -> {
           io.println("Starting parallel USDA import...")
           io.println(
-            "Workers: " <> int.to_string(food_nutrient_workers) <> " concurrent connections",
+            "Workers: "
+            <> int.to_string(food_nutrient_workers)
+            <> " concurrent connections",
           )
           io.println("")
 
@@ -103,7 +112,9 @@ pub fn main() {
               io.println("=== Import Complete ===")
               io.println("  Nutrients: " <> int.to_string(stats.nutrients))
               io.println("  Foods: " <> int.to_string(stats.foods))
-              io.println("  Food nutrients: " <> int.to_string(stats.food_nutrients))
+              io.println(
+                "  Food nutrients: " <> int.to_string(stats.food_nutrients),
+              )
               print_stats(db)
             }
             Error(e) -> {
@@ -157,7 +168,8 @@ fn create_database_if_needed() -> Result(Nil, String) {
           let create_query = pog.query("CREATE DATABASE meal_planner")
           case pog.execute(create_query, db) {
             Ok(_) -> Ok(Nil)
-            Error(e) -> Error("Failed to create database: " <> format_pog_error(e))
+            Error(e) ->
+              Error("Failed to create database: " <> format_pog_error(e))
           }
         }
         Ok(_) -> Ok(Nil)
@@ -170,7 +182,8 @@ fn create_database_if_needed() -> Result(Nil, String) {
 fn format_pog_error(e: pog.QueryError) -> String {
   case e {
     pog.ConstraintViolated(msg, _, _) -> "Constraint violated: " <> msg
-    pog.PostgresqlError(code, _, msg) -> "PostgreSQL error " <> code <> ": " <> msg
+    pog.PostgresqlError(code, _, msg) ->
+      "PostgreSQL error " <> code <> ": " <> msg
     pog.UnexpectedArgumentCount(_, _) -> "Unexpected argument count"
     pog.UnexpectedArgumentType(_, _) -> "Unexpected argument type"
     pog.UnexpectedResultType(_) -> "Unexpected result type"
@@ -181,7 +194,9 @@ fn format_pog_error(e: pog.QueryError) -> String {
 
 fn check_tables_exist(db: pog.Connection) -> Bool {
   let query =
-    pog.query("SELECT COUNT(*) FROM information_schema.tables WHERE table_name IN ('foods', 'nutrients', 'food_nutrients', 'recipes')")
+    pog.query(
+      "SELECT COUNT(*) FROM information_schema.tables WHERE table_name IN ('foods', 'nutrients', 'food_nutrients', 'recipes')",
+    )
     |> pog.returning(decode.at([0], decode.int))
 
   case pog.execute(query, db) {
@@ -241,7 +256,12 @@ fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
       // Import nutrients first (small, quick)
       io.println("Importing nutrients...")
       let n_result =
-        import_file_parallel(db, usda_dir <> "\\nutrient.csv", "nutrient", nutrient_workers)
+        import_file_parallel(
+          db,
+          usda_dir <> "\\nutrient.csv",
+          "nutrient",
+          nutrient_workers,
+        )
 
       case n_result {
         Error(e) -> Error(e)
@@ -249,9 +269,18 @@ fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
           io.println("  -> " <> int.to_string(nutrients) <> " nutrients")
 
           // Import foods in parallel
-          io.println("Importing foods with " <> int.to_string(food_workers) <> " workers...")
+          io.println(
+            "Importing foods with "
+            <> int.to_string(food_workers)
+            <> " workers...",
+          )
           let f_result =
-            import_file_parallel(db, usda_dir <> "\\food.csv", "food", food_workers)
+            import_file_parallel(
+              db,
+              usda_dir <> "\\food.csv",
+              "food",
+              food_workers,
+            )
 
           case f_result {
             Error(e) -> Error(e)
@@ -276,7 +305,9 @@ fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
                 Error(e) -> Error(e)
                 Ok(food_nutrients) -> {
                   io.println(
-                    "  -> " <> int.to_string(food_nutrients) <> " food nutrients",
+                    "  -> "
+                    <> int.to_string(food_nutrients)
+                    <> " food nutrients",
                   )
                   Ok(ImportStats(nutrients, foods, food_nutrients))
                 }
@@ -347,13 +378,18 @@ fn import_file_parallel(
   }
 }
 
-fn collect_results(subject: Subject(WorkerResult), remaining: Int, acc: Int) -> Int {
+fn collect_results(
+  subject: Subject(WorkerResult),
+  remaining: Int,
+  acc: Int,
+) -> Int {
   case remaining {
     0 -> acc
     _ -> {
       // Wait for a result with 10 minute timeout
       case process.receive(subject, 600_000) {
-        Ok(WorkerDone(_, count)) -> collect_results(subject, remaining - 1, acc + count)
+        Ok(WorkerDone(_, count)) ->
+          collect_results(subject, remaining - 1, acc + count)
         Error(_) -> acc
       }
     }
@@ -398,7 +434,11 @@ fn process_chunk(
   })
 }
 
-fn insert_batch(db: pog.Connection, lines: List(String), file_type: String) -> Int {
+fn insert_batch(
+  db: pog.Connection,
+  lines: List(String),
+  file_type: String,
+) -> Int {
   case file_type {
     "nutrient" -> insert_nutrients_batch(db, lines)
     "food" -> insert_foods_batch(db, lines)

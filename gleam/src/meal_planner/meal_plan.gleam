@@ -102,4 +102,3 @@ fn list_length(list: List(a)) -> Int {
 
 @external(erlang, "erlang", "float")
 fn int_to_float(n: Int) -> Float
-

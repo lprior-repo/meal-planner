@@ -2,10 +2,9 @@
 ///
 /// This module defines tests that verify the layout components render correct HTML and CSS classes.
 /// Tests cover flex layouts, grids, spacing, containers, and sections.
-
+import gleam/string
 import gleeunit
 import gleeunit/should
-import gleam/string
 import meal_planner/ui/components/layout
 import meal_planner/ui/types/ui_types
 
@@ -18,12 +17,13 @@ fn assert_contains(haystack: String, needle: String) -> Nil {
   case string.contains(haystack, needle) {
     True -> Nil
     False -> {
-      let _msg = string.concat([
-        "\n",
-        haystack,
-        "\nshould contain\n",
-        needle,
-      ])
+      let _msg =
+        string.concat([
+          "\n",
+          haystack,
+          "\nshould contain\n",
+          needle,
+        ])
       should.fail()
     }
   }
@@ -34,22 +34,50 @@ fn assert_contains(haystack: String, needle: String) -> Nil {
 // ===================================================================
 
 pub fn flex_row_direction_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "flex-row")
 }
 
 pub fn flex_column_direction_test() {
-  let result = layout.flex(ui_types.Column, ui_types.AlignCenter, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Column,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "flex-col")
 }
 
 pub fn flex_row_reverse_direction_test() {
-  let result = layout.flex(ui_types.RowReverse, ui_types.AlignCenter, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.RowReverse,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "flex-row-reverse")
 }
 
 pub fn flex_column_reverse_direction_test() {
-  let result = layout.flex(ui_types.ColumnReverse, ui_types.AlignCenter, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.ColumnReverse,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "flex-col-reverse")
 }
 
@@ -58,32 +86,62 @@ pub fn flex_column_reverse_direction_test() {
 // ===================================================================
 
 pub fn flex_align_start_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignStart, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignStart,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "items-start")
 }
 
 pub fn flex_align_center_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "items-center")
 }
 
 pub fn flex_align_end_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignEnd, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(ui_types.Row, ui_types.AlignEnd, ui_types.JustifyCenter, 4, [])
   assert_contains(result, "items-end")
 }
 
 pub fn flex_align_stretch_test() {
-  let result = layout.flex(ui_types.Row, ui_types.Stretch, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(ui_types.Row, ui_types.Stretch, ui_types.JustifyCenter, 4, [])
   assert_contains(result, "items-stretch")
 }
 
 pub fn flex_align_between_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignBetween, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignBetween,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "items-between")
 }
 
 pub fn flex_align_around_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignAround, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignAround,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "items-around")
 }
 
@@ -92,32 +150,62 @@ pub fn flex_align_around_test() {
 // ===================================================================
 
 pub fn flex_justify_start_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyStart, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyStart,
+      4,
+      [],
+    )
   assert_contains(result, "justify-start")
 }
 
 pub fn flex_justify_center_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "justify-center")
 }
 
 pub fn flex_justify_end_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyEnd, 4, [])
+  let result =
+    layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyEnd, 4, [])
   assert_contains(result, "justify-end")
 }
 
 pub fn flex_justify_between_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyBetween, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyBetween,
+      4,
+      [],
+    )
   assert_contains(result, "justify-between")
 }
 
 pub fn flex_justify_around_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyAround, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyAround,
+      4,
+      [],
+    )
   assert_contains(result, "justify-around")
 }
 
 pub fn flex_justify_evenly_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.Even, 4, [])
+  let result =
+    layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.Even, 4, [])
   assert_contains(result, "justify-evenly")
 }
 
@@ -126,17 +214,38 @@ pub fn flex_justify_evenly_test() {
 // ===================================================================
 
 pub fn flex_gap_small_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 2, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      2,
+      [],
+    )
   assert_contains(result, "gap-2")
 }
 
 pub fn flex_gap_medium_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "gap-4")
 }
 
 pub fn flex_gap_large_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 8, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      8,
+      [],
+    )
   assert_contains(result, "gap-8")
 }
 
@@ -145,24 +254,52 @@ pub fn flex_gap_large_test() {
 // ===================================================================
 
 pub fn flex_is_div_element_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "<div")
 }
 
 pub fn flex_has_flex_class_test() {
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 4, [])
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      4,
+      [],
+    )
   assert_contains(result, "class=\"flex")
 }
 
 pub fn flex_contains_children_test() {
   let children = ["<span>Item 1</span>", "<span>Item 2</span>"]
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 4, children)
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyCenter,
+      4,
+      children,
+    )
   assert_contains(result, "Item 1")
   assert_contains(result, "Item 2")
 }
 
 pub fn flex_combines_all_classes_test() {
-  let result = layout.flex(ui_types.Column, ui_types.AlignCenter, ui_types.JustifyBetween, 6, [])
+  let result =
+    layout.flex(
+      ui_types.Column,
+      ui_types.AlignCenter,
+      ui_types.JustifyBetween,
+      6,
+      [],
+    )
   assert_contains(result, "flex")
   assert_contains(result, "flex-col")
   assert_contains(result, "items-center")
@@ -380,17 +517,25 @@ pub fn flex_with_multiple_children_test() {
     "<div>Child 2</div>",
     "<div>Child 3</div>",
   ]
-  let result = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyBetween, 4, children)
+  let result =
+    layout.flex(
+      ui_types.Row,
+      ui_types.AlignCenter,
+      ui_types.JustifyBetween,
+      4,
+      children,
+    )
   assert_contains(result, "Child 1")
   assert_contains(result, "Child 2")
   assert_contains(result, "Child 3")
 }
 
 pub fn grid_in_section_test() {
-  let grid_content = layout.grid(ui_types.Fixed(3), 4, [
-    "<div>Item 1</div>",
-    "<div>Item 2</div>",
-  ])
+  let grid_content =
+    layout.grid(ui_types.Fixed(3), 4, [
+      "<div>Item 1</div>",
+      "<div>Item 2</div>",
+    ])
   let result = layout.section([grid_content])
   assert_contains(result, "<section")
   assert_contains(result, "grid")
@@ -398,9 +543,10 @@ pub fn grid_in_section_test() {
 }
 
 pub fn flex_in_container_test() {
-  let flex_content = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 4, [
-    "<button>Click</button>",
-  ])
+  let flex_content =
+    layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 4, [
+      "<button>Click</button>",
+    ])
   let result = layout.container(1200, [flex_content])
   assert_contains(result, "container")
   assert_contains(result, "flex")
@@ -408,10 +554,12 @@ pub fn flex_in_container_test() {
 }
 
 pub fn nested_layouts_test() {
-  let inner_flex = layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 2, [
-    "<span>Item</span>",
-  ])
-  let grid_with_flex = layout.grid(ui_types.Fixed(2), 4, [inner_flex, inner_flex])
+  let inner_flex =
+    layout.flex(ui_types.Row, ui_types.AlignCenter, ui_types.JustifyCenter, 2, [
+      "<span>Item</span>",
+    ])
+  let grid_with_flex =
+    layout.grid(ui_types.Fixed(2), 4, [inner_flex, inner_flex])
   let result = layout.container(1200, [grid_with_flex])
   assert_contains(result, "container")
   assert_contains(result, "grid")
