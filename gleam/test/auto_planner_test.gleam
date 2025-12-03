@@ -487,8 +487,9 @@ pub fn generate_auto_plan_insufficient_recipes_test() {
 
   case result {
     Error(msg) -> {
+      // Check for "Insufficient" (capital I) in error message
       msg
-      |> string.contains("insufficient")
+      |> string.contains("Insufficient")
       |> should.be_true
     }
     Ok(_) -> should.fail()
