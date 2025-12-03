@@ -54,8 +54,9 @@ pub fn create_complete_food_returns_201_test() {
   //   "name": "Homemade Protein Shake",
   //   ... (all fields returned)
   // }
-  
-  should.be_true(True)  // Placeholder
+
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Create simple custom food without micronutrients
@@ -77,7 +78,7 @@ pub fn create_minimal_food_returns_201_test() {
   //   },
   //   "calories": 175.0
   // }
-  
+
   should.be_true(True)
 }
 
@@ -90,7 +91,7 @@ pub fn create_minimal_food_returns_201_test() {
 pub fn generated_id_follows_format_test() {
   // Create "Protein Shake"
   // Expected ID: "custom-protein-shake-{timestamp}"
-  
+
   should.be_true(True)
 }
 
@@ -102,7 +103,7 @@ pub fn generated_id_follows_format_test() {
 /// - Error message indicates missing field
 pub fn missing_name_returns_400_test() {
   // Request missing name field
-  
+
   should.be_true(True)
 }
 
@@ -141,7 +142,7 @@ pub fn negative_serving_returns_400_test() {
   //   "serving_size": -10.0,
   //   ...
   // }
-  
+
   should.be_true(True)
 }
 
@@ -154,7 +155,7 @@ pub fn negative_macros_return_400_test() {
   //     "carbs": 15.0
   //   }
   // }
-  
+
   should.be_true(True)
 }
 
@@ -169,7 +170,7 @@ pub fn empty_name_returns_400_test() {
   //   "name": "",
   //   ...
   // }
-  
+
   should.be_true(True)
 }
 
@@ -213,7 +214,7 @@ pub fn partial_micronutrients_accepted_test() {
   //     "protein": null
   //   }
   // }
-  
+
   should.be_true(True)
 }
 
@@ -242,7 +243,7 @@ pub fn created_food_is_searchable_test() {
   // 2. Search for "Test Food"
   // 3. Verify it appears in results
   // 4. Verify custom_count > 0
-  
+
   should.be_true(True)
 }
 
@@ -255,7 +256,7 @@ pub fn duplicate_names_allowed_test() {
   // Create "Protein Shake" twice
   // Should succeed both times
   // IDs should be different
-  
+
   should.be_true(True)
 }
 
@@ -267,7 +268,7 @@ pub fn duplicate_names_allowed_test() {
 pub fn special_characters_in_name_handled_test() {
   // Create "McDonald's Burger"
   // ID should be "custom-mcdonalds-burger-{timestamp}"
-  
+
   should.be_true(True)
 }
 
@@ -275,7 +276,7 @@ pub fn special_characters_in_name_handled_test() {
 pub fn long_name_handled_test() {
   // Create food with 500 character name
   // Should succeed or return clear validation error
-  
+
   should.be_true(True)
 }
 
@@ -283,7 +284,7 @@ pub fn long_name_handled_test() {
 pub fn unicode_in_name_handled_test() {
   // Create "Café Latté"
   // Should handle unicode properly
-  
+
   should.be_true(True)
 }
 
@@ -298,6 +299,6 @@ pub fn all_micronutrients_supported_test() {
   // vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
   // vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin,
   // calcium, iron, magnesium, phosphorus, potassium, zinc
-  
+
   should.be_true(True)
 }

@@ -191,7 +191,13 @@ pub fn check_tim_ferriss_low_protein_test() {
   ]
 
   let recipe =
-    make_recipe("Quinoa Bowl", ingredients, make_macros(15.0, 10.0, 40.0), 1, Low)
+    make_recipe(
+      "Quinoa Bowl",
+      ingredients,
+      make_macros(15.0, 10.0, 40.0),
+      1,
+      Low,
+    )
 
   let result = diet_validator.check_tim_ferriss(recipe)
 
@@ -211,7 +217,13 @@ pub fn check_tim_ferriss_with_white_carbs_test() {
   ]
 
   let recipe =
-    make_recipe("Chicken Pasta", ingredients, make_macros(35.0, 10.0, 60.0), 1, Low)
+    make_recipe(
+      "Chicken Pasta",
+      ingredients,
+      make_macros(35.0, 10.0, 60.0),
+      1,
+      Low,
+    )
 
   let result = diet_validator.check_tim_ferriss(recipe)
 
@@ -263,7 +275,13 @@ pub fn check_keto_compliant_test() {
   ]
 
   let recipe =
-    make_recipe("Keto Steak", ingredients, make_macros(40.0, 35.0, 15.0), 1, Low)
+    make_recipe(
+      "Keto Steak",
+      ingredients,
+      make_macros(40.0, 35.0, 15.0),
+      1,
+      Low,
+    )
 
   let result = diet_validator.check_keto(recipe)
 
@@ -282,7 +300,13 @@ pub fn check_keto_too_many_carbs_test() {
   ]
 
   let recipe =
-    make_recipe("Chicken Rice", ingredients, make_macros(40.0, 15.0, 250.0), 1, Low)
+    make_recipe(
+      "Chicken Rice",
+      ingredients,
+      make_macros(40.0, 15.0, 250.0),
+      1,
+      Low,
+    )
 
   let result = diet_validator.check_keto(recipe)
 
@@ -305,7 +329,13 @@ pub fn check_high_protein_compliant_test() {
   let ingredients = [make_ingredient("chicken breast", "300g")]
 
   let recipe =
-    make_recipe("Grilled Chicken", ingredients, make_macros(200.0, 20.0, 0.0), 2, Low)
+    make_recipe(
+      "Grilled Chicken",
+      ingredients,
+      make_macros(200.0, 20.0, 0.0),
+      2,
+      Low,
+    )
 
   let result = diet_validator.check_high_protein(recipe)
 
@@ -321,7 +351,13 @@ pub fn check_high_protein_low_protein_test() {
   let ingredients = [make_ingredient("turkey", "150g")]
 
   let recipe =
-    make_recipe("Turkey Breast", ingredients, make_macros(60.0, 10.0, 5.0), 2, Low)
+    make_recipe(
+      "Turkey Breast",
+      ingredients,
+      make_macros(60.0, 10.0, 5.0),
+      2,
+      Low,
+    )
 
   let result = diet_validator.check_high_protein(recipe)
 
@@ -376,7 +412,13 @@ pub fn validate_recipe_multiple_principles_test() {
   ]
 
   let recipe =
-    make_recipe("Beef Spinach", ingredients, make_macros(50.0, 40.0, 10.0), 1, Low)
+    make_recipe(
+      "Beef Spinach",
+      ingredients,
+      make_macros(50.0, 40.0, 10.0),
+      1,
+      Low,
+    )
 
   let result =
     diet_validator.validate_recipe(recipe, [VerticalDiet, HighProtein, Keto])
@@ -385,9 +427,7 @@ pub fn validate_recipe_multiple_principles_test() {
   |> should.be_true
 
   // Score should be average of all principles
-  {
-    result.score >. 0.0
-  }
+  { result.score >. 0.0 }
   |> should.be_true
 }
 
@@ -399,7 +439,13 @@ pub fn validate_recipe_conflicting_principles_test() {
   ]
 
   let recipe =
-    make_recipe("Chicken Rice", ingredients, make_macros(40.0, 10.0, 80.0), 1, Low)
+    make_recipe(
+      "Chicken Rice",
+      ingredients,
+      make_macros(40.0, 10.0, 80.0),
+      1,
+      Low,
+    )
 
   // Should pass VerticalDiet but fail Keto (too many carbs)
   let result = diet_validator.validate_recipe(recipe, [VerticalDiet, Keto])
@@ -465,8 +511,7 @@ pub fn has_white_carbs_false_with_rice_test() {
 }
 
 pub fn calculate_protein_per_serving_test() {
-  let recipe =
-    make_recipe("Test", [], make_macros(60.0, 20.0, 40.0), 2, Low)
+  let recipe = make_recipe("Test", [], make_macros(60.0, 20.0, 40.0), 2, Low)
 
   let protein = diet_validator.calculate_protein_per_serving(recipe)
 

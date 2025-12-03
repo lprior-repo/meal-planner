@@ -58,8 +58,9 @@ pub fn valid_search_returns_results_test() {
   //   "custom_count": 0,
   //   "usda_count": 25
   // }
-  
-  should.be_true(True)  // Placeholder - test documented for manual verification
+
+  should.be_true(True)
+  // Placeholder - test documented for manual verification
 }
 
 /// Test: Empty query returns 400 with error
@@ -79,8 +80,9 @@ pub fn empty_query_returns_400_test() {
   //   "error": "Invalid query",
   //   "details": "Query must be at least 2 characters"
   // }
-  
-  should.be_true(True)  // Placeholder
+
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Query too short returns 400
@@ -89,7 +91,8 @@ pub fn empty_query_returns_400_test() {
 /// - POST /api/foods/search with {"query": "a", "limit": 10}
 /// - Response: 400 Bad Request
 pub fn short_query_returns_400_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Limit too high returns 400
@@ -99,7 +102,8 @@ pub fn short_query_returns_400_test() {
 /// - Response: 400 Bad Request
 /// - Error message about maximum limit (100)
 pub fn excessive_limit_returns_400_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Negative limit returns 400
@@ -108,7 +112,8 @@ pub fn excessive_limit_returns_400_test() {
 /// - POST /api/foods/search with {"query": "chicken", "limit": -5}
 /// - Response: 400 Bad Request
 pub fn negative_limit_returns_400_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Zero limit returns 400
@@ -117,7 +122,8 @@ pub fn negative_limit_returns_400_test() {
 /// - POST /api/foods/search with {"query": "chicken", "limit": 0}
 /// - Response: 400 Bad Request
 pub fn zero_limit_returns_400_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Results respect limit parameter
@@ -127,7 +133,8 @@ pub fn zero_limit_returns_400_test() {
 /// - Response contains at most 5 results
 /// - results.length <= 5
 pub fn results_respect_limit_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Invalid JSON body returns 400
@@ -137,7 +144,8 @@ pub fn results_respect_limit_test() {
 /// - Response: 400 Bad Request
 /// - Error message about invalid JSON
 pub fn invalid_json_returns_400_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Missing required fields returns 400
@@ -146,7 +154,8 @@ pub fn invalid_json_returns_400_test() {
 /// - POST /api/foods/search with {"query": "chicken"} (missing limit)
 /// - Response: 400 Bad Request
 pub fn missing_fields_returns_400_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: GET method returns 405
@@ -156,7 +165,8 @@ pub fn missing_fields_returns_400_test() {
 /// - Response: 405 Method Not Allowed
 /// - Allow header includes POST
 pub fn get_method_returns_405_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Search for common foods returns USDA results
@@ -166,7 +176,8 @@ pub fn get_method_returns_405_test() {
 /// - Results should include items from USDA database
 /// - usda_count > 0
 pub fn common_foods_return_usda_results_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Custom foods appear before USDA foods in results
@@ -176,7 +187,8 @@ pub fn common_foods_return_usda_results_test() {
 /// - They should appear first in the results array
 /// - Before any USDA food results
 pub fn custom_foods_ordered_first_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Count fields are accurate
@@ -185,7 +197,8 @@ pub fn custom_foods_ordered_first_test() {
 /// - total_count == custom_count + usda_count
 /// - All counts are non-negative integers
 pub fn count_fields_accurate_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Search with special characters is handled
@@ -195,7 +208,8 @@ pub fn count_fields_accurate_test() {
 /// - Should not cause server error
 /// - Returns valid response (200 or 400)
 pub fn special_characters_handled_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Minimum valid limit (1) works
@@ -205,7 +219,8 @@ pub fn special_characters_handled_test() {
 /// - Response: 200 OK
 /// - Returns at most 1 result
 pub fn minimum_limit_works_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
 
 /// Test: Maximum valid limit (100) works
@@ -215,5 +230,6 @@ pub fn minimum_limit_works_test() {
 /// - Response: 200 OK
 /// - Returns at most 100 results
 pub fn maximum_limit_works_test() {
-  should.be_true(True)  // Placeholder
+  should.be_true(True)
+  // Placeholder
 }
