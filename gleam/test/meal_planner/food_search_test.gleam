@@ -5,8 +5,10 @@
 /// 2. Implement minimal code to pass (GREEN)
 /// 3. Refactor while keeping tests passing (REFACTOR)
 
+import gleam/erlang/process
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/otp/actor
 import gleeunit
 import gleeunit/should
 import meal_planner/food_search
@@ -25,12 +27,24 @@ pub fn main() {
 // =============================================================================
 
 /// Mock database connection for testing
-/// Returns a dummy pog.Connection since we're testing the function signature
-/// This will panic if actually called - tests are just checking error handling
+/// Creates a minimal pog.Connection for validation tests
+/// Database is NOT actually used during validation, but we need a valid connection value
 fn mock_db() -> pog.Connection {
-  // In RED phase, we're testing validation logic which doesn't touch the DB
-  // Using panic as a placeholder - real DB tests come in GREEN phase
-  panic as "mock_db should not be called during validation tests"
+  // Create a minimal config - won't be used in validation tests
+  let pool_name = process.new_name(prefix: "test_mock")
+  let config =
+    pog.default_config(pool_name: pool_name)
+    |> pog.host("localhost")
+    |> pog.database("test")
+    |> pog.user("test")
+    |> pog.pool_size(1)
+
+  // Start minimal connection (won't actually connect during validation tests)
+  case pog.start(config) {
+    Ok(actor.Started(_pid, conn)) -> conn
+    Error(_) ->
+      panic as "Failed to create mock DB - this shouldn't happen in validation tests"
+  }
 }
 
 // =============================================================================

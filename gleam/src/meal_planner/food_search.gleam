@@ -6,11 +6,11 @@
 ///
 /// Results are ordered with custom foods first, then USDA foods.
 
+import gleam/string
 import pog
 // TODO: Will be used in GREEN phase implementation:
 // import gleam/list
 // import gleam/result
-// import gleam/string
 // import meal_planner/custom_food_storage
 // import meal_planner/storage
 import shared/types.{
@@ -41,7 +41,28 @@ pub fn unified_food_search(
   query: String,
   limit: Int,
 ) -> Result(FoodSearchResponse, FoodSearchError) {
-  // TODO: Implement unified search
-  // This is a placeholder for TDD - will fail tests
-  Error(DatabaseError("Not implemented"))
+  // STEP 1: Validate query (trim whitespace, check length)
+  let trimmed_query = string.trim(query)
+
+  case string.length(trimmed_query) {
+    len if len < 2 ->
+      Error(InvalidQuery("Query must be at least 2 characters"))
+    _ -> {
+      // STEP 2: Validate limit (must be 1-100)
+      case limit {
+        l if l < 1 || l > 100 ->
+          Error(InvalidQuery("Limit must be between 1 and 100"))
+        _ -> {
+          // STEP 3: Return placeholder response for now
+          // This will make validation tests pass, but structure tests will still fail
+          Ok(FoodSearchResponse(
+            results: [],
+            total_count: 0,
+            custom_count: 0,
+            usda_count: 0,
+          ))
+        }
+      }
+    }
+  }
 }
