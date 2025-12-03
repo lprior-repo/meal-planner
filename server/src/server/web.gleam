@@ -282,7 +282,7 @@ fn dashboard_page(req: wisp.Request) -> wisp.Response {
         date: today,
         entries: [],
         total_macros: types.macros_zero(),
-        total_micronutrients: types.micronutrients_zero(),
+        total_micronutrients: option.None,
       )
   }
   let entries = log.entries
@@ -1059,7 +1059,7 @@ fn api_logs(_req: wisp.Request, date: String) -> wisp.Response {
         date: date,
         entries: [],
         total_macros: types.macros_zero(),
-        total_micronutrients: types.micronutrients_zero(),
+        total_micronutrients: option.None,
       )
   }
 

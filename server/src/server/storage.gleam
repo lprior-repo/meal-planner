@@ -491,7 +491,7 @@ fn food_log_entry_decoder() -> decode.Decoder(FoodLogEntry) {
 /// Calculate total micronutrients from food log entries
 fn calculate_total_micronutrients(
   entries: List(FoodLogEntry),
-) -> types.Micronutrients {
+) -> option.Option(types.Micronutrients) {
   let micros_list =
     list.filter_map(entries, fn(entry) {
       case entry.micronutrients {
@@ -499,7 +499,10 @@ fn calculate_total_micronutrients(
         None -> Error(Nil)
       }
     })
-  types.micronutrients_sum(micros_list)
+  case list.is_empty(micros_list) {
+    True -> option.None
+    False -> option.Some(types.micronutrients_sum(micros_list))
+  }
 }
 
 fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {

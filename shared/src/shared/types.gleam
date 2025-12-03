@@ -408,7 +408,7 @@ pub type DailyLog {
     date: String,
     entries: List(FoodLogEntry),
     total_macros: Macros,
-    total_micronutrients: Micronutrients,
+    total_micronutrients: Option(Micronutrients),
   )
 }
 
@@ -643,12 +643,18 @@ pub fn food_log_entry_to_json(e: FoodLogEntry) -> Json {
 }
 
 pub fn daily_log_to_json(d: DailyLog) -> Json {
-  json.object([
+  let fields = [
     #("date", json.string(d.date)),
     #("entries", json.array(d.entries, food_log_entry_to_json)),
     #("total_macros", macros_to_json(d.total_macros)),
-    #("total_micronutrients", micronutrients_to_json(d.total_micronutrients)),
-  ])
+  ]
+
+  let fields = case d.total_micronutrients {
+    Some(micros) -> [#("total_micronutrients", micronutrients_to_json(micros)), ..fields]
+    None -> fields
+  }
+
+  json.object(fields)
 }
 
 pub fn custom_food_to_json(f: CustomFood) -> Json {
@@ -925,7 +931,7 @@ pub fn daily_log_decoder() -> Decoder(DailyLog) {
   use total_macros <- decode.field("total_macros", macros_decoder())
   use total_micronutrients <- decode.field(
     "total_micronutrients",
-    micronutrients_decoder(),
+    decode.optional(micronutrients_decoder()),
   )
   decode.success(DailyLog(
     date: date,
