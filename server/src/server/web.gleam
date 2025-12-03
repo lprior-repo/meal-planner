@@ -130,8 +130,12 @@ fn not_found_page() -> wisp.Response {
 }
 
 fn recipes_page() -> wisp.Response {
-  // TODO: Load recipes from storage
-  let recipes = sample_recipes()
+  use conn <- storage.with_connection(storage.db_path)
+
+  let recipes = case storage.get_all_recipes(conn) {
+    Ok(recipes) -> recipes
+    Error(_) -> []  // Fall back to empty list on error
+  }
 
   let content = [
     html.div([attribute.class("page-header")], [
