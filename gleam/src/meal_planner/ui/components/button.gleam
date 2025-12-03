@@ -52,8 +52,8 @@ pub fn button(
   variant: ui_types.ButtonVariant,
 ) -> String {
   // CONTRACT: Returns HTML string for button link with variant classes
-  // BODY: TODO - Implement using Lustre element builder
-  todo
+  let variant_class = variant_to_class(variant)
+  "<a href=\"" <> href <> "\" class=\"btn " <> variant_class <> "\">" <> label <> "</a>"
 }
 
 /// Button with custom size
@@ -66,8 +66,9 @@ pub fn button_sized(
   size: ui_types.ButtonSize,
 ) -> String {
   // CONTRACT: Returns HTML string for sized button link
-  // BODY: TODO - Implement with variant and size classes
-  todo
+  let variant_class = variant_to_class(variant)
+  let size_class = size_to_class(size)
+  "<a href=\"" <> href <> "\" class=\"btn " <> variant_class <> " " <> size_class <> "\">" <> label <> "</a>"
 }
 
 /// Submit button for forms
@@ -78,8 +79,8 @@ pub fn submit_button(
   variant: ui_types.ButtonVariant,
 ) -> String {
   // CONTRACT: Returns HTML string for submit button
-  // BODY: TODO - Implement with type="submit" and variant classes
-  todo
+  let variant_class = variant_to_class(variant)
+  "<button type=\"submit\" class=\"btn " <> variant_class <> "\">" <> label <> "</button>"
 }
 
 /// Disabled button state
@@ -90,8 +91,8 @@ pub fn button_disabled(
   variant: ui_types.ButtonVariant,
 ) -> String {
   // CONTRACT: Returns HTML string for disabled button
-  // BODY: TODO - Implement with disabled attribute and btn-disabled class
-  todo
+  let variant_class = variant_to_class(variant)
+  "<button disabled class=\"btn " <> variant_class <> " btn-disabled\">" <> label <> "</button>"
 }
 
 /// Button group container
@@ -101,6 +102,6 @@ pub fn button_group(
   buttons: List(String),
 ) -> String {
   // CONTRACT: Returns HTML string for button group container
-  // BODY: TODO - Implement as div with button-group class containing button list
-  todo
+  let buttons_html = string.concat(buttons)
+  "<div class=\"button-group\">" <> buttons_html <> "</div>"
 }

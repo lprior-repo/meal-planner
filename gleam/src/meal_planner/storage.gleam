@@ -700,6 +700,28 @@ pub type FoodLog {
     carbs: Float,
     meal_type: String,
     logged_at: String,
+    // Micronutrients (all optional)
+    fiber: Option(Float),
+    sugar: Option(Float),
+    sodium: Option(Float),
+    cholesterol: Option(Float),
+    vitamin_a: Option(Float),
+    vitamin_c: Option(Float),
+    vitamin_d: Option(Float),
+    vitamin_e: Option(Float),
+    vitamin_k: Option(Float),
+    vitamin_b6: Option(Float),
+    vitamin_b12: Option(Float),
+    folate: Option(Float),
+    thiamin: Option(Float),
+    riboflavin: Option(Float),
+    niacin: Option(Float),
+    calcium: Option(Float),
+    iron: Option(Float),
+    magnesium: Option(Float),
+    phosphorus: Option(Float),
+    potassium: Option(Float),
+    zinc: Option(Float),
   )
 }
 
@@ -744,7 +766,10 @@ pub fn get_food_logs_by_date(
   date: String,
 ) -> Result(List(FoodLog), StorageError) {
   let sql =
-    "SELECT id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text
+    "SELECT id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text,
+            fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
+            vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium,
+            phosphorus, potassium, zinc
      FROM food_logs WHERE date = $1 ORDER BY logged_at"
 
   case
@@ -781,7 +806,10 @@ pub fn get_recent_meals(
   limit: Int,
 ) -> Result(List(FoodLogEntry), StorageError) {
   let sql =
-    "SELECT DISTINCT ON (recipe_id) id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text
+    "SELECT DISTINCT ON (recipe_id) id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text,
+            fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
+            vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium,
+            phosphorus, potassium, zinc
      FROM food_logs
      ORDER BY recipe_id, logged_at DESC
      LIMIT $1"
@@ -797,6 +825,27 @@ pub fn get_recent_meals(
     use carbs <- decode.field(7, decode.float)
     use meal_type_str <- decode.field(8, decode.string)
     use logged_at <- decode.field(9, decode.string)
+    use fiber <- decode.field(10, decode.optional(decode.float))
+    use sugar <- decode.field(11, decode.optional(decode.float))
+    use sodium <- decode.field(12, decode.optional(decode.float))
+    use cholesterol <- decode.field(13, decode.optional(decode.float))
+    use vitamin_a <- decode.field(14, decode.optional(decode.float))
+    use vitamin_c <- decode.field(15, decode.optional(decode.float))
+    use vitamin_d <- decode.field(16, decode.optional(decode.float))
+    use vitamin_e <- decode.field(17, decode.optional(decode.float))
+    use vitamin_k <- decode.field(18, decode.optional(decode.float))
+    use vitamin_b6 <- decode.field(19, decode.optional(decode.float))
+    use vitamin_b12 <- decode.field(20, decode.optional(decode.float))
+    use folate <- decode.field(21, decode.optional(decode.float))
+    use thiamin <- decode.field(22, decode.optional(decode.float))
+    use riboflavin <- decode.field(23, decode.optional(decode.float))
+    use niacin <- decode.field(24, decode.optional(decode.float))
+    use calcium <- decode.field(25, decode.optional(decode.float))
+    use iron <- decode.field(26, decode.optional(decode.float))
+    use magnesium <- decode.field(27, decode.optional(decode.float))
+    use phosphorus <- decode.field(28, decode.optional(decode.float))
+    use potassium <- decode.field(29, decode.optional(decode.float))
+    use zinc <- decode.field(30, decode.optional(decode.float))
 
     let meal_type = case meal_type_str {
       "breakfast" -> Breakfast
@@ -805,12 +854,64 @@ pub fn get_recent_meals(
       _ -> Snack
     }
 
+    let micronutrients = case
+      fiber,
+      sugar,
+      sodium,
+      cholesterol,
+      vitamin_a,
+      vitamin_c,
+      vitamin_d,
+      vitamin_e,
+      vitamin_k,
+      vitamin_b6,
+      vitamin_b12,
+      folate,
+      thiamin,
+      riboflavin,
+      niacin,
+      calcium,
+      iron,
+      magnesium,
+      phosphorus,
+      potassium,
+      zinc
+    {
+      None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None ->
+        None
+      _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ->
+        Some(types.Micronutrients(
+          fiber: fiber,
+          sugar: sugar,
+          sodium: sodium,
+          cholesterol: cholesterol,
+          vitamin_a: vitamin_a,
+          vitamin_c: vitamin_c,
+          vitamin_d: vitamin_d,
+          vitamin_e: vitamin_e,
+          vitamin_k: vitamin_k,
+          vitamin_b6: vitamin_b6,
+          vitamin_b12: vitamin_b12,
+          folate: folate,
+          thiamin: thiamin,
+          riboflavin: riboflavin,
+          niacin: niacin,
+          calcium: calcium,
+          iron: iron,
+          magnesium: magnesium,
+          phosphorus: phosphorus,
+          potassium: potassium,
+          zinc: zinc,
+        ))
+    }
+
     decode.success(FoodLogEntry(
       id: id,
       recipe_id: recipe_id,
       recipe_name: recipe_name,
       servings: servings,
       macros: Macros(protein: protein, fat: fat, carbs: carbs),
+      micronutrients: micronutrients,
       meal_type: meal_type,
       logged_at: logged_at,
     ))
@@ -899,6 +1000,27 @@ fn food_log_decoder() -> decode.Decoder(FoodLog) {
   use carbs <- decode.field(7, decode.float)
   use meal_type <- decode.field(8, decode.string)
   use logged_at <- decode.field(9, decode.string)
+  use fiber <- decode.field(10, decode.optional(decode.float))
+  use sugar <- decode.field(11, decode.optional(decode.float))
+  use sodium <- decode.field(12, decode.optional(decode.float))
+  use cholesterol <- decode.field(13, decode.optional(decode.float))
+  use vitamin_a <- decode.field(14, decode.optional(decode.float))
+  use vitamin_c <- decode.field(15, decode.optional(decode.float))
+  use vitamin_d <- decode.field(16, decode.optional(decode.float))
+  use vitamin_e <- decode.field(17, decode.optional(decode.float))
+  use vitamin_k <- decode.field(18, decode.optional(decode.float))
+  use vitamin_b6 <- decode.field(19, decode.optional(decode.float))
+  use vitamin_b12 <- decode.field(20, decode.optional(decode.float))
+  use folate <- decode.field(21, decode.optional(decode.float))
+  use thiamin <- decode.field(22, decode.optional(decode.float))
+  use riboflavin <- decode.field(23, decode.optional(decode.float))
+  use niacin <- decode.field(24, decode.optional(decode.float))
+  use calcium <- decode.field(25, decode.optional(decode.float))
+  use iron <- decode.field(26, decode.optional(decode.float))
+  use magnesium <- decode.field(27, decode.optional(decode.float))
+  use phosphorus <- decode.field(28, decode.optional(decode.float))
+  use potassium <- decode.field(29, decode.optional(decode.float))
+  use zinc <- decode.field(30, decode.optional(decode.float))
   decode.success(FoodLog(
     id: id,
     date: date,
@@ -910,6 +1032,27 @@ fn food_log_decoder() -> decode.Decoder(FoodLog) {
     carbs: carbs,
     meal_type: meal_type,
     logged_at: logged_at,
+    fiber: fiber,
+    sugar: sugar,
+    sodium: sodium,
+    cholesterol: cholesterol,
+    vitamin_a: vitamin_a,
+    vitamin_c: vitamin_c,
+    vitamin_d: vitamin_d,
+    vitamin_e: vitamin_e,
+    vitamin_k: vitamin_k,
+    vitamin_b6: vitamin_b6,
+    vitamin_b12: vitamin_b12,
+    folate: folate,
+    thiamin: thiamin,
+    riboflavin: riboflavin,
+    niacin: niacin,
+    calcium: calcium,
+    iron: iron,
+    magnesium: magnesium,
+    phosphorus: phosphorus,
+    potassium: potassium,
+    zinc: zinc,
   ))
 }
 
@@ -927,7 +1070,10 @@ pub fn get_daily_log(
   date: String,
 ) -> Result(DailyLog, StorageError) {
   let sql =
-    "SELECT id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text
+    "SELECT id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text,
+            fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
+            vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium,
+            phosphorus, potassium, zinc
      FROM food_logs WHERE date = $1 ORDER BY logged_at"
 
   let decoder = {
@@ -941,6 +1087,27 @@ pub fn get_daily_log(
     use carbs <- decode.field(7, decode.float)
     use meal_type_str <- decode.field(8, decode.string)
     use logged_at <- decode.field(9, decode.string)
+    use fiber <- decode.field(10, decode.optional(decode.float))
+    use sugar <- decode.field(11, decode.optional(decode.float))
+    use sodium <- decode.field(12, decode.optional(decode.float))
+    use cholesterol <- decode.field(13, decode.optional(decode.float))
+    use vitamin_a <- decode.field(14, decode.optional(decode.float))
+    use vitamin_c <- decode.field(15, decode.optional(decode.float))
+    use vitamin_d <- decode.field(16, decode.optional(decode.float))
+    use vitamin_e <- decode.field(17, decode.optional(decode.float))
+    use vitamin_k <- decode.field(18, decode.optional(decode.float))
+    use vitamin_b6 <- decode.field(19, decode.optional(decode.float))
+    use vitamin_b12 <- decode.field(20, decode.optional(decode.float))
+    use folate <- decode.field(21, decode.optional(decode.float))
+    use thiamin <- decode.field(22, decode.optional(decode.float))
+    use riboflavin <- decode.field(23, decode.optional(decode.float))
+    use niacin <- decode.field(24, decode.optional(decode.float))
+    use calcium <- decode.field(25, decode.optional(decode.float))
+    use iron <- decode.field(26, decode.optional(decode.float))
+    use magnesium <- decode.field(27, decode.optional(decode.float))
+    use phosphorus <- decode.field(28, decode.optional(decode.float))
+    use potassium <- decode.field(29, decode.optional(decode.float))
+    use zinc <- decode.field(30, decode.optional(decode.float))
 
     let meal_type = case meal_type_str {
       "breakfast" -> Breakfast
@@ -949,12 +1116,64 @@ pub fn get_daily_log(
       _ -> Snack
     }
 
+    let micronutrients = case
+      fiber,
+      sugar,
+      sodium,
+      cholesterol,
+      vitamin_a,
+      vitamin_c,
+      vitamin_d,
+      vitamin_e,
+      vitamin_k,
+      vitamin_b6,
+      vitamin_b12,
+      folate,
+      thiamin,
+      riboflavin,
+      niacin,
+      calcium,
+      iron,
+      magnesium,
+      phosphorus,
+      potassium,
+      zinc
+    {
+      None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None ->
+        None
+      _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ->
+        Some(types.Micronutrients(
+          fiber: fiber,
+          sugar: sugar,
+          sodium: sodium,
+          cholesterol: cholesterol,
+          vitamin_a: vitamin_a,
+          vitamin_c: vitamin_c,
+          vitamin_d: vitamin_d,
+          vitamin_e: vitamin_e,
+          vitamin_k: vitamin_k,
+          vitamin_b6: vitamin_b6,
+          vitamin_b12: vitamin_b12,
+          folate: folate,
+          thiamin: thiamin,
+          riboflavin: riboflavin,
+          niacin: niacin,
+          calcium: calcium,
+          iron: iron,
+          magnesium: magnesium,
+          phosphorus: phosphorus,
+          potassium: potassium,
+          zinc: zinc,
+        ))
+    }
+
     decode.success(FoodLogEntry(
       id: id,
       recipe_id: recipe_id,
       recipe_name: recipe_name,
       servings: servings,
       macros: Macros(protein: protein, fat: fat, carbs: carbs),
+      micronutrients: micronutrients,
       meal_type: meal_type,
       logged_at: logged_at,
     ))
@@ -969,7 +1188,13 @@ pub fn get_daily_log(
     Error(e) -> Error(DatabaseError(format_pog_error(e)))
     Ok(pog.Returned(_, entries)) -> {
       let total_macros = calculate_total_macros(entries)
-      Ok(DailyLog(date: date, entries: entries, total_macros: total_macros))
+      let total_micronutrients = calculate_total_micronutrients(entries)
+      Ok(DailyLog(
+        date: date,
+        entries: entries,
+        total_macros: total_macros,
+        total_micronutrients: total_micronutrients,
+      ))
     }
   }
 }
@@ -983,6 +1208,20 @@ fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
       carbs: acc.carbs +. entry.macros.carbs,
     )
   })
+}
+
+/// Calculate total micronutrients from food log entries
+fn calculate_total_micronutrients(
+  entries: List(FoodLogEntry),
+) -> types.Micronutrients {
+  let micros_list =
+    list.filter_map(entries, fn(entry) {
+      case entry.micronutrients {
+        Some(m) -> Ok(m)
+        None -> Error(Nil)
+      }
+    })
+  types.micronutrients_sum(micros_list)
 }
 
 // ============================================================================

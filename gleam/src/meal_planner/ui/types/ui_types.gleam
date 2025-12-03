@@ -1,0 +1,175 @@
+/// UI Component Type Definitions
+///
+/// This module defines all type signatures for UI components used throughout
+/// the meal planner application. These types ensure type safety when building
+/// and composing components.
+///
+/// See: docs/component_signatures.md
+
+import gleam/option
+
+// ===================================================================
+// BUTTON TYPES
+// ===================================================================
+
+pub type ButtonVariant {
+  Primary
+  Secondary
+  Danger
+  Success
+  Warning
+  Ghost
+}
+
+pub type ButtonSize {
+  Small
+  Medium
+  Large
+}
+
+// ===================================================================
+// CARD TYPES
+// ===================================================================
+
+pub type CardVariant {
+  Basic
+  Elevated
+  Outlined
+}
+
+pub type StatCard {
+  StatCard(
+    label: String,
+    value: String,
+    unit: String,
+    trend: option.Option(Float),
+    color: String,
+  )
+}
+
+pub type RecipeCardData {
+  RecipeCardData(
+    id: String,
+    name: String,
+    category: String,
+    calories: Float,
+    image_url: option.Option(String),
+  )
+}
+
+pub type FoodCardData {
+  FoodCardData(
+    fdc_id: Int,
+    description: String,
+    data_type: String,
+    category: String,
+  )
+}
+
+// ===================================================================
+// FORM TYPES
+// ===================================================================
+
+pub type SelectOption {
+  SelectOption(value: String, label: String, selected: Bool)
+}
+
+pub type FormField {
+  FormField(
+    label: String,
+    input: String,
+    error: option.Option(String),
+  )
+}
+
+// ===================================================================
+// PROGRESS TYPES
+// ===================================================================
+
+pub type StatusType {
+  Success
+  Warning
+  Error
+  Info
+}
+
+// ===================================================================
+// LAYOUT TYPES
+// ===================================================================
+
+pub type FlexDirection {
+  Row
+  Column
+  RowReverse
+  ColumnReverse
+}
+
+pub type FlexAlign {
+  Start
+  Center
+  End
+  Stretch
+  Between
+  Around
+}
+
+pub type FlexJustify {
+  Start
+  Center
+  End
+  Between
+  Around
+  Even
+}
+
+pub type GridColumns {
+  Auto
+  Fixed(Int)
+  Repeat(Int)
+  Responsive
+}
+
+// ===================================================================
+// TYPOGRAPHY TYPES
+// ===================================================================
+
+pub type TextEmphasis {
+  Normal
+  Strong
+  Italic
+  Code
+  Underline
+}
+
+pub type TextSize {
+  Xs
+  Sm
+  Base
+  Lg
+  Xl
+  Xxl
+  Xxxl
+}
+
+pub type FontWeight {
+  Normal
+  Medium
+  Semibold
+  Bold
+}
+
+// ===================================================================
+// PAGE COMPONENT TYPES
+// ===================================================================
+
+pub type NavCard {
+  NavCard(icon: String, label: String, href: String)
+}
+
+// ===================================================================
+// TODO: Add more types as needed
+// - SearchState for food search
+// - DashboardData for dashboard
+// - Macros for nutrition data
+// - UserProfile for user info
+// ===================================================================

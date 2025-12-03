@@ -282,6 +282,7 @@ fn dashboard_page(req: wisp.Request) -> wisp.Response {
         date: today,
         entries: [],
         total_macros: types.macros_zero(),
+        total_micronutrients: types.micronutrients_zero(),
       )
   }
   let entries = log.entries
@@ -1054,7 +1055,12 @@ fn api_logs(_req: wisp.Request, date: String) -> wisp.Response {
   let log = case storage.get_daily_log(conn, date) {
     Ok(l) -> l
     Error(_) ->
-      types.DailyLog(date: date, entries: [], total_macros: types.macros_zero())
+      types.DailyLog(
+        date: date,
+        entries: [],
+        total_macros: types.macros_zero(),
+        total_micronutrients: types.micronutrients_zero(),
+      )
   }
 
   let json_data = types.daily_log_to_json(log)
@@ -1077,7 +1083,7 @@ fn api_logs_create(req: wisp.Request) -> wisp.Response {
         Ok(s) -> s
         Error(_) -> 1.0
       }
-      let meal_type = string_to_meal_type(meal_type_str)
+      let _meal_type = string_to_meal_type(meal_type_str)
       let today = today_date_string()
 
       // Get recipe to calculate macros
@@ -1092,7 +1098,8 @@ fn api_logs_create(req: wisp.Request) -> wisp.Response {
               recipe_name: recipe.name,
               servings: servings,
               macros: scaled_macros,
-              meal_type: meal_type,
+              micronutrients: None,
+              meal_type: _meal_type,
               logged_at: current_timestamp(),
             )
 

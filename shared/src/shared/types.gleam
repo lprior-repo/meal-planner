@@ -81,6 +81,110 @@ pub type Micronutrients {
   )
 }
 
+/// Empty micronutrients (all None)
+pub fn micronutrients_zero() -> Micronutrients {
+  Micronutrients(
+    fiber: None,
+    sugar: None,
+    sodium: None,
+    cholesterol: None,
+    vitamin_a: None,
+    vitamin_c: None,
+    vitamin_d: None,
+    vitamin_e: None,
+    vitamin_k: None,
+    vitamin_b6: None,
+    vitamin_b12: None,
+    folate: None,
+    thiamin: None,
+    riboflavin: None,
+    niacin: None,
+    calcium: None,
+    iron: None,
+    magnesium: None,
+    phosphorus: None,
+    potassium: None,
+    zinc: None,
+  )
+}
+
+/// Helper to add optional floats
+fn add_optional(a: Option(Float), b: Option(Float)) -> Option(Float) {
+  case a, b {
+    Some(x), Some(y) -> Some(x +. y)
+    Some(x), None -> Some(x)
+    None, Some(y) -> Some(y)
+    None, None -> None
+  }
+}
+
+/// Helper to scale optional floats
+fn scale_optional(v: Option(Float), factor: Float) -> Option(Float) {
+  case v {
+    Some(x) -> Some(x *. factor)
+    None -> None
+  }
+}
+
+/// Add two Micronutrients together
+pub fn micronutrients_add(a: Micronutrients, b: Micronutrients) -> Micronutrients {
+  Micronutrients(
+    fiber: add_optional(a.fiber, b.fiber),
+    sugar: add_optional(a.sugar, b.sugar),
+    sodium: add_optional(a.sodium, b.sodium),
+    cholesterol: add_optional(a.cholesterol, b.cholesterol),
+    vitamin_a: add_optional(a.vitamin_a, b.vitamin_a),
+    vitamin_c: add_optional(a.vitamin_c, b.vitamin_c),
+    vitamin_d: add_optional(a.vitamin_d, b.vitamin_d),
+    vitamin_e: add_optional(a.vitamin_e, b.vitamin_e),
+    vitamin_k: add_optional(a.vitamin_k, b.vitamin_k),
+    vitamin_b6: add_optional(a.vitamin_b6, b.vitamin_b6),
+    vitamin_b12: add_optional(a.vitamin_b12, b.vitamin_b12),
+    folate: add_optional(a.folate, b.folate),
+    thiamin: add_optional(a.thiamin, b.thiamin),
+    riboflavin: add_optional(a.riboflavin, b.riboflavin),
+    niacin: add_optional(a.niacin, b.niacin),
+    calcium: add_optional(a.calcium, b.calcium),
+    iron: add_optional(a.iron, b.iron),
+    magnesium: add_optional(a.magnesium, b.magnesium),
+    phosphorus: add_optional(a.phosphorus, b.phosphorus),
+    potassium: add_optional(a.potassium, b.potassium),
+    zinc: add_optional(a.zinc, b.zinc),
+  )
+}
+
+/// Scale micronutrients by a factor
+pub fn micronutrients_scale(m: Micronutrients, factor: Float) -> Micronutrients {
+  Micronutrients(
+    fiber: scale_optional(m.fiber, factor),
+    sugar: scale_optional(m.sugar, factor),
+    sodium: scale_optional(m.sodium, factor),
+    cholesterol: scale_optional(m.cholesterol, factor),
+    vitamin_a: scale_optional(m.vitamin_a, factor),
+    vitamin_c: scale_optional(m.vitamin_c, factor),
+    vitamin_d: scale_optional(m.vitamin_d, factor),
+    vitamin_e: scale_optional(m.vitamin_e, factor),
+    vitamin_k: scale_optional(m.vitamin_k, factor),
+    vitamin_b6: scale_optional(m.vitamin_b6, factor),
+    vitamin_b12: scale_optional(m.vitamin_b12, factor),
+    folate: scale_optional(m.folate, factor),
+    thiamin: scale_optional(m.thiamin, factor),
+    riboflavin: scale_optional(m.riboflavin, factor),
+    niacin: scale_optional(m.niacin, factor),
+    calcium: scale_optional(m.calcium, factor),
+    iron: scale_optional(m.iron, factor),
+    magnesium: scale_optional(m.magnesium, factor),
+    phosphorus: scale_optional(m.phosphorus, factor),
+    potassium: scale_optional(m.potassium, factor),
+    zinc: scale_optional(m.zinc, factor),
+  )
+}
+
+/// Sum a list of micronutrients
+pub fn micronutrients_sum(micros: List(Micronutrients)) -> Micronutrients {
+  list.fold(micros, micronutrients_zero(), micronutrients_add)
+}
+
 // ============================================================================
 // Custom Food Types
 // ============================================================================
@@ -292,6 +396,7 @@ pub type FoodLogEntry {
     recipe_name: String,
     servings: Float,
     macros: Macros,
+    micronutrients: Option(Micronutrients),
     meal_type: MealType,
     logged_at: String,
   )
@@ -299,7 +404,12 @@ pub type FoodLogEntry {
 
 /// Daily food log with all entries
 pub type DailyLog {
-  DailyLog(date: String, entries: List(FoodLogEntry), total_macros: Macros)
+  DailyLog(
+    date: String,
+    entries: List(FoodLogEntry),
+    total_macros: Macros,
+    total_micronutrients: Micronutrients,
+  )
 }
 
 // ============================================================================
@@ -514,7 +624,7 @@ pub fn meal_type_to_string(m: MealType) -> String {
 }
 
 pub fn food_log_entry_to_json(e: FoodLogEntry) -> Json {
-  json.object([
+  let fields = [
     #("id", json.string(e.id)),
     #("recipe_id", json.string(e.recipe_id)),
     #("recipe_name", json.string(e.recipe_name)),
@@ -522,7 +632,14 @@ pub fn food_log_entry_to_json(e: FoodLogEntry) -> Json {
     #("macros", macros_to_json(e.macros)),
     #("meal_type", json.string(meal_type_to_string(e.meal_type))),
     #("logged_at", json.string(e.logged_at)),
-  ])
+  ]
+
+  let fields = case e.micronutrients {
+    Some(micros) -> [#("micronutrients", micronutrients_to_json(micros)), ..fields]
+    None -> fields
+  }
+
+  json.object(fields)
 }
 
 pub fn daily_log_to_json(d: DailyLog) -> Json {
@@ -530,6 +647,7 @@ pub fn daily_log_to_json(d: DailyLog) -> Json {
     #("date", json.string(d.date)),
     #("entries", json.array(d.entries, food_log_entry_to_json)),
     #("total_macros", macros_to_json(d.total_macros)),
+    #("total_micronutrients", micronutrients_to_json(d.total_micronutrients)),
   ])
 }
 
@@ -782,6 +900,10 @@ pub fn food_log_entry_decoder() -> Decoder(FoodLogEntry) {
   use recipe_name <- decode.field("recipe_name", decode.string)
   use servings <- decode.field("servings", decode.float)
   use macros <- decode.field("macros", macros_decoder())
+  use micronutrients <- decode.field(
+    "micronutrients",
+    decode.optional(micronutrients_decoder()),
+  )
   use meal_type <- decode.field("meal_type", meal_type_decoder())
   use logged_at <- decode.field("logged_at", decode.string)
   decode.success(FoodLogEntry(
@@ -790,6 +912,7 @@ pub fn food_log_entry_decoder() -> Decoder(FoodLogEntry) {
     recipe_name: recipe_name,
     servings: servings,
     macros: macros,
+    micronutrients: micronutrients,
     meal_type: meal_type,
     logged_at: logged_at,
   ))
@@ -800,9 +923,14 @@ pub fn daily_log_decoder() -> Decoder(DailyLog) {
   use date <- decode.field("date", decode.string)
   use entries <- decode.field("entries", decode.list(food_log_entry_decoder()))
   use total_macros <- decode.field("total_macros", macros_decoder())
+  use total_micronutrients <- decode.field(
+    "total_micronutrients",
+    micronutrients_decoder(),
+  )
   decode.success(DailyLog(
     date: date,
     entries: entries,
     total_macros: total_macros,
+    total_micronutrients: total_micronutrients,
   ))
 }

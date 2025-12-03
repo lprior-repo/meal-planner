@@ -3,6 +3,7 @@
 
 import gleam/dynamic/decode
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/string
 import shared/types.{
   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
@@ -387,7 +388,13 @@ pub fn get_daily_log(
     Error(e) -> Error(DatabaseError(e.message))
     Ok(entries) -> {
       let total_macros = calculate_total_macros(entries)
-      Ok(DailyLog(date: date, entries: entries, total_macros: total_macros))
+      let total_micronutrients = calculate_total_micronutrients(entries)
+      Ok(DailyLog(
+        date: date,
+        entries: entries,
+        total_macros: total_macros,
+        total_micronutrients: total_micronutrients,
+      ))
     }
   }
 }
@@ -475,9 +482,24 @@ fn food_log_entry_decoder() -> decode.Decoder(FoodLogEntry) {
     recipe_name: recipe_name,
     servings: servings,
     macros: Macros(protein: protein, fat: fat, carbs: carbs),
+    micronutrients: None,
     meal_type: meal_type,
     logged_at: logged_at,
   ))
+}
+
+/// Calculate total micronutrients from food log entries
+fn calculate_total_micronutrients(
+  entries: List(FoodLogEntry),
+) -> types.Micronutrients {
+  let micros_list =
+    list.filter_map(entries, fn(entry) {
+      case entry.micronutrients {
+        Some(m) -> Ok(m)
+        None -> Error(Nil)
+      }
+    })
+  types.micronutrients_sum(micros_list)
 }
 
 fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
