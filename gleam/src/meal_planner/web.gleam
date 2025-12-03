@@ -1177,6 +1177,7 @@ fn handle_api(
     ["recipes", id] -> api_recipe(req, id, ctx)
     ["profile"] -> api_profile(req, ctx)
     ["foods"] -> api_foods(req, ctx)
+    ["foods", "search"] -> api_foods_search(req, ctx)
     ["foods", id] -> api_food(req, id, ctx)
     ["logs"] -> api_logs_create(req, ctx)
     ["logs", "entry", id] -> api_log_entry(req, id, ctx)
