@@ -154,15 +154,15 @@ fn format_error(err: pog.QueryError) -> String {
   case err {
     pog.PostgresqlError(code, name, msg) ->
       "PostgreSQL error " <> code <> " (" <> name <> "): " <> msg
-    pog.UnexpectedResultType(rows, cols) ->
-      "Unexpected result: "
-      <> string.inspect(rows)
-      <> " rows, "
-      <> string.inspect(cols)
-      <> " columns"
+    pog.UnexpectedResultType(errors) -> "Decode errors: " <> string.inspect(errors)
+    pog.UnexpectedArgumentCount(expected, got) ->
+      "Expected " <> string.inspect(expected) <> " arguments, got " <> string.inspect(got)
+    pog.UnexpectedArgumentType(expected, got) ->
+      "Expected type " <> expected <> ", got " <> got
     pog.ConstraintViolated(msg, constraint, detail) ->
       "Constraint violation: " <> msg <> " (" <> constraint <> "): " <> detail
     pog.ConnectionUnavailable ->
       "Connection unavailable - database may not be running"
+    pog.QueryTimeout -> "Database query timeout"
   }
 }
