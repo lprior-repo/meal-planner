@@ -1,4 +1,5 @@
 import gleam/json
+import gleam/option.{None}
 import gleeunit
 import gleeunit/should
 import shared/types.{
@@ -294,6 +295,7 @@ pub fn food_log_entry_roundtrip_test() {
       recipe_name: "Grilled Chicken",
       servings: 1.5,
       macros: Macros(protein: 75.0, fat: 12.0, carbs: 0.0),
+      micronutrients: None,
       meal_type: Lunch,
       logged_at: "2025-01-15T12:30:00Z",
     )
@@ -318,6 +320,7 @@ pub fn daily_log_roundtrip_test() {
       recipe_name: "Breakfast",
       servings: 1.0,
       macros: Macros(protein: 30.0, fat: 15.0, carbs: 20.0),
+      micronutrients: None,
       meal_type: Breakfast,
       logged_at: "2025-01-15T08:00:00Z",
     ),
@@ -327,6 +330,7 @@ pub fn daily_log_roundtrip_test() {
       recipe_name: "Lunch",
       servings: 1.0,
       macros: Macros(protein: 45.0, fat: 20.0, carbs: 50.0),
+      micronutrients: None,
       meal_type: Lunch,
       logged_at: "2025-01-15T12:00:00Z",
     ),
@@ -336,6 +340,7 @@ pub fn daily_log_roundtrip_test() {
       date: "2025-01-15",
       entries: entries,
       total_macros: Macros(protein: 75.0, fat: 35.0, carbs: 70.0),
+      total_micronutrients: None,
     )
   let json_str = types.daily_log_to_json(daily) |> json.to_string
   let result = json.parse(json_str, types.daily_log_decoder())

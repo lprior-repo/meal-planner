@@ -99,11 +99,6 @@ pub fn validate_recipe(
 /// - Preferred carbs: white rice, sweet potatoes
 /// - No high-FODMAP ingredients
 pub fn check_vertical_diet(recipe: Recipe) -> ComplianceResult {
-  let violations = []
-  let warnings = []
-  // TODO: Fix scoring system - Gleam doesn't support mutable variables
-  let score = 1.0
-
   // Check for seed oils (major violation)
   let violations = case has_seed_oils(recipe.ingredients) {
     True -> {
@@ -111,32 +106,27 @@ pub fn check_vertical_diet(recipe: Recipe) -> ComplianceResult {
         list.filter(recipe.ingredients, fn(ing) {
           is_seed_oil(string.lowercase(ing.name))
         })
-      let oil_violations =
-        list.map(seed_oil_ingredients, fn(ing) {
-          "Contains seed oil: " <> ing.name
-        })
-      list.append(violations, oil_violations)
+      list.map(seed_oil_ingredients, fn(ing) {
+        "Contains seed oil: " <> ing.name
+      })
     }
-    False -> violations
+    False -> []
   }
 
   // Check FODMAP compliance using existing module
   let fodmap_analysis = fodmap.analyze_recipe_fodmap(recipe)
-  let warnings = case fodmap_analysis.is_low_fodmap {
-    False -> {
-      let fodmap_warnings =
-        list.map(fodmap_analysis.high_fodmap_found, fn(ingredient) {
-          "High FODMAP ingredient: " <> ingredient
-        })
-      list.append(warnings, fodmap_warnings)
-    }
-    True -> warnings
+  let fodmap_warnings = case fodmap_analysis.is_low_fodmap {
+    False ->
+      list.map(fodmap_analysis.high_fodmap_found, fn(ingredient) {
+        "High FODMAP ingredient: " <> ingredient
+      })
+    True -> []
   }
 
-  // Adjust score based on FODMAP compliance
+  // Calculate score based on FODMAP compliance
   let score = case fodmap_analysis.is_low_fodmap {
-    True -> score
-    False -> score *. { fodmap_analysis.compliance_percentage /. 100.0 }
+    True -> 1.0
+    False -> fodmap_analysis.compliance_percentage /. 100.0
   }
 
   // Check for preferred proteins (informational only)
@@ -149,12 +139,9 @@ pub fn check_vertical_diet(recipe: Recipe) -> ComplianceResult {
       || string.contains(name_lower, "egg")
     })
 
-  let warnings = case has_preferred_protein {
-    True -> warnings
-    False -> [
-      "Consider adding preferred proteins (beef, chicken, eggs)",
-      ..warnings
-    ]
+  let protein_warnings = case has_preferred_protein {
+    True -> []
+    False -> ["Consider adding preferred proteins (beef, chicken, eggs)"]
   }
 
   // Check for preferred carbs (informational only)
@@ -165,13 +152,14 @@ pub fn check_vertical_diet(recipe: Recipe) -> ComplianceResult {
       || string.contains(name_lower, "sweet potato")
     })
 
-  let warnings = case has_preferred_carbs {
-    True -> warnings
-    False -> [
-      "Consider adding preferred carbs (white rice, sweet potatoes)",
-      ..warnings
-    ]
+  let carb_warnings = case has_preferred_carbs {
+    True -> []
+    False -> ["Consider adding preferred carbs (white rice, sweet potatoes)"]
   }
+
+  // Combine all warnings
+  let warnings =
+    list.flatten([fodmap_warnings, protein_warnings, carb_warnings])
 
   // Overall compliance - fails only if there are violations
   let is_compliant = list.is_empty(violations)
@@ -194,24 +182,20 @@ pub fn check_vertical_diet(recipe: Recipe) -> ComplianceResult {
 /// - No white carbs (except white rice with post-workout flag)
 /// - Contains legumes or quality protein
 pub fn check_tim_ferriss(recipe: Recipe) -> ComplianceResult {
-  let violations = []
-  let warnings = []
-  let mut score = 1.0
-
   // Check protein content
   let protein_per_serving = calculate_protein_per_serving(recipe)
-  let warnings = case protein_per_serving <. 30.0 {
+  let protein_warnings = case protein_per_serving <. 30.0 {
     True -> {
       let protein_str = float.to_string(protein_per_serving)
-      ["Low protein per serving: " <> protein_str <> "g (target: 30g+)", ..warnings]
+      ["Low protein per serving: " <> protein_str <> "g (target: 30g+)"]
     }
-    False -> warnings
+    False -> []
   }
 
-  // Adjust score based on protein
+  // Calculate score based on protein
   let score = case protein_per_serving <. 30.0 {
-    True -> score *. { protein_per_serving /. 30.0 }
-    False -> score
+    True -> protein_per_serving /. 30.0
+    False -> 1.0
   }
 
   // Check for white carbs (violations)
@@ -222,14 +206,11 @@ pub fn check_tim_ferriss(recipe: Recipe) -> ComplianceResult {
     })
 
   let violations = case list.is_empty(white_carb_ingredients) {
-    True -> violations
-    False -> {
-      let carb_violations =
-        list.map(white_carb_ingredients, fn(ing) {
-          "Contains white carbs: " <> ing.name
-        })
-      list.append(violations, carb_violations)
-    }
+    True -> []
+    False ->
+      list.map(white_carb_ingredients, fn(ing) {
+        "Contains white carbs: " <> ing.name
+      })
   }
 
   // Check for white rice (warning only - allowed post-workout)
@@ -238,9 +219,9 @@ pub fn check_tim_ferriss(recipe: Recipe) -> ComplianceResult {
       string.contains(string.lowercase(ing.name), "white rice")
     })
 
-  let warnings = case has_white_rice {
-    True -> ["Contains white rice (allowed post-workout)", ..warnings]
-    False -> warnings
+  let rice_warnings = case has_white_rice {
+    True -> ["Contains white rice (allowed post-workout)"]
+    False -> []
   }
 
   // Check for legumes or quality protein
@@ -262,13 +243,14 @@ pub fn check_tim_ferriss(recipe: Recipe) -> ComplianceResult {
       || string.contains(name_lower, "fish")
     })
 
-  let warnings = case has_legumes || has_quality_protein {
-    True -> warnings
-    False -> [
-      "Consider adding legumes or quality protein source",
-      ..warnings
-    ]
+  let protein_source_warnings = case has_legumes || has_quality_protein {
+    True -> []
+    False -> ["Consider adding legumes or quality protein source"]
   }
+
+  // Combine all warnings
+  let warnings =
+    list.flatten([protein_warnings, rice_warnings, protein_source_warnings])
 
   // Overall compliance
   let is_compliant = list.is_empty(violations) && protein_per_serving >=. 30.0
