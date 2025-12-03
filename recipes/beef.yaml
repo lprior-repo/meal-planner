@@ -14,6 +14,14 @@ recipes:
       - Mix BBQ sauce and honey.
       - Season brisket with salt and rub with sauce mixture.
       - Smoke for 10-12 hours until tender.
+    macros:
+      protein: 360
+      fat: 150
+      carbs: 40
+    servings: 12
+    category: beef
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Simple Beef Stir-Fry
     ingredients:
@@ -33,6 +41,14 @@ recipes:
       - Toss beef slices in the mixture.
       - Arrange beef and broccoli on a baking sheet.
       - Bake for 20-25 minutes, stirring halfway through.
+    macros:
+      protein: 180
+      fat: 60
+      carbs: 12
+    servings: 4
+    category: beef
+    fodmap_level: medium
+    vertical_compliant: false
 
   - name: Beef Tacos
     ingredients:
@@ -74,6 +90,14 @@ recipes:
       - Arrange beef and pineapple on baking sheet.
       - Bake at 350°F for 25-30 minutes.
       - Serve on corn tortillas with cilantro.
+    macros:
+      protein: 135
+      fat: 75
+      carbs: 120
+    servings: 10
+    category: beef
+    fodmap_level: low
+    vertical_compliant: true
 
   - name: Simple Beef Carne Asada
     ingredients:

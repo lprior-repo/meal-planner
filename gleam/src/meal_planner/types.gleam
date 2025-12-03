@@ -252,6 +252,17 @@ pub type FoodSearchError {
   InvalidQuery(String)
 }
 
+/// Search filter options
+pub type SearchFilters {
+  SearchFilters(
+    verified_only: Bool,
+    // Show only verified USDA foundation/SR legacy foods
+    branded_only: Bool,
+    // Show only branded commercial foods
+    category: Option(String),
+  )
+}
+
 // ============================================================================
 // Recipe Types
 // ============================================================================
