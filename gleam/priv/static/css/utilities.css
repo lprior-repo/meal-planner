@@ -793,9 +793,241 @@
   max-width: var(--max-width-xl);
 }
 
-/* TODO: Placeholder utilities - expand as needed
-.cursor-pointer { cursor: pointer; }
-.cursor-default { cursor: default; }
-.pointer-events-none { pointer-events: none; }
-.pointer-events-auto { pointer-events: auto; }
-*/
+/* ===================================================================
+   CURSOR & POINTER EVENTS
+   =================================================================== */
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-default {
+  cursor: default;
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.pointer-events-auto {
+  pointer-events: auto;
+}
+
+/* ===================================================================
+   TOUCH-FRIENDLY INTERACTIONS (Mobile-First)
+   =================================================================== */
+
+/* Minimum tap target size: 44px x 44px (WCAG 2.5.5) */
+.tap-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Touch-friendly buttons */
+.touch-btn {
+  padding: var(--space-3) var(--space-4);
+  min-height: 44px;
+}
+
+/* Touch-friendly input fields */
+.touch-input {
+  padding: var(--space-3);
+  min-height: 44px;
+  font-size: var(--text-base);
+}
+
+/* Disable hover effects on touch devices */
+@media (hover: none) {
+  .hover\:transform-y:hover {
+    transform: none;
+  }
+}
+
+/* ===================================================================
+   RESPONSIVE BREAKPOINTS (Mobile-First)
+   Breakpoints: sm: 640px, lg: 1024px, xl: 1280px
+   =================================================================== */
+
+/* TABLET+ (>= 640px) */
+@media (min-width: 640px) {
+  /* Display */
+  .sm\:hidden { display: none; }
+  .sm\:block { display: block; }
+  .sm\:inline { display: inline; }
+  .sm\:inline-block { display: inline-block; }
+  .sm\:flex { display: flex; }
+  .sm\:grid { display: grid; }
+
+  /* Flexbox */
+  .sm\:flex-row { flex-direction: row; }
+  .sm\:flex-col { flex-direction: column; }
+  .sm\:justify-start { justify-content: flex-start; }
+  .sm\:justify-center { justify-content: center; }
+  .sm\:justify-end { justify-content: flex-end; }
+  .sm\:justify-between { justify-content: space-between; }
+  .sm\:items-start { align-items: flex-start; }
+  .sm\:items-center { align-items: center; }
+  .sm\:items-end { align-items: flex-end; }
+
+  /* Grid */
+  .sm\:grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sm\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sm\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+  /* Gap */
+  .sm\:gap-2 { gap: var(--space-2); }
+  .sm\:gap-3 { gap: var(--space-3); }
+  .sm\:gap-4 { gap: var(--space-4); }
+  .sm\:gap-6 { gap: var(--space-6); }
+  .sm\:gap-8 { gap: var(--space-8); }
+
+  /* Spacing */
+  .sm\:p-4 { padding: var(--space-4); }
+  .sm\:p-6 { padding: var(--space-6); }
+  .sm\:p-8 { padding: var(--space-8); }
+  .sm\:px-4 { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .sm\:px-6 { padding-left: var(--space-6); padding-right: var(--space-6); }
+  .sm\:py-4 { padding-top: var(--space-4); padding-bottom: var(--space-4); }
+  .sm\:py-6 { padding-top: var(--space-6); padding-bottom: var(--space-6); }
+
+  .sm\:m-4 { margin: var(--space-4); }
+  .sm\:m-6 { margin: var(--space-6); }
+  .sm\:mt-4 { margin-top: var(--space-4); }
+  .sm\:mt-6 { margin-top: var(--space-6); }
+  .sm\:mb-4 { margin-bottom: var(--space-4); }
+  .sm\:mb-6 { margin-bottom: var(--space-6); }
+
+  /* Typography */
+  .sm\:text-sm { font-size: var(--text-sm); }
+  .sm\:text-base { font-size: var(--text-base); }
+  .sm\:text-lg { font-size: var(--text-lg); }
+  .sm\:text-xl { font-size: var(--text-xl); }
+  .sm\:text-2xl { font-size: var(--text-2xl); }
+  .sm\:text-3xl { font-size: var(--text-3xl); }
+
+  /* Width */
+  .sm\:w-auto { width: auto; }
+  .sm\:w-full { width: 100%; }
+  .sm\:w-1\/2 { width: 50%; }
+  .sm\:w-1\/3 { width: 33.333333%; }
+  .sm\:w-2\/3 { width: 66.666667%; }
+
+  /* Text alignment */
+  .sm\:text-left { text-align: left; }
+  .sm\:text-center { text-align: center; }
+  .sm\:text-right { text-align: right; }
+}
+
+/* DESKTOP (>= 1024px) */
+@media (min-width: 1024px) {
+  /* Display */
+  .lg\:hidden { display: none; }
+  .lg\:block { display: block; }
+  .lg\:inline { display: inline; }
+  .lg\:inline-block { display: inline-block; }
+  .lg\:flex { display: flex; }
+  .lg\:grid { display: grid; }
+
+  /* Flexbox */
+  .lg\:flex-row { flex-direction: row; }
+  .lg\:flex-col { flex-direction: column; }
+  .lg\:justify-start { justify-content: flex-start; }
+  .lg\:justify-center { justify-content: center; }
+  .lg\:justify-end { justify-content: flex-end; }
+  .lg\:justify-between { justify-content: space-between; }
+  .lg\:items-start { align-items: flex-start; }
+  .lg\:items-center { align-items: center; }
+  .lg\:items-end { align-items: flex-end; }
+
+  /* Grid */
+  .lg\:grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .lg\:grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .lg\:grid-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+
+  /* Gap */
+  .lg\:gap-2 { gap: var(--space-2); }
+  .lg\:gap-3 { gap: var(--space-3); }
+  .lg\:gap-4 { gap: var(--space-4); }
+  .lg\:gap-6 { gap: var(--space-6); }
+  .lg\:gap-8 { gap: var(--space-8); }
+
+  /* Spacing */
+  .lg\:p-4 { padding: var(--space-4); }
+  .lg\:p-6 { padding: var(--space-6); }
+  .lg\:p-8 { padding: var(--space-8); }
+  .lg\:px-6 { padding-left: var(--space-6); padding-right: var(--space-6); }
+  .lg\:px-8 { padding-left: var(--space-8); padding-right: var(--space-8); }
+  .lg\:py-6 { padding-top: var(--space-6); padding-bottom: var(--space-6); }
+  .lg\:py-8 { padding-top: var(--space-8); padding-bottom: var(--space-8); }
+
+  .lg\:m-6 { margin: var(--space-6); }
+  .lg\:m-8 { margin: var(--space-8); }
+  .lg\:mt-6 { margin-top: var(--space-6); }
+  .lg\:mt-8 { margin-top: var(--space-8); }
+  .lg\:mb-6 { margin-bottom: var(--space-6); }
+  .lg\:mb-8 { margin-bottom: var(--space-8); }
+
+  /* Typography */
+  .lg\:text-base { font-size: var(--text-base); }
+  .lg\:text-lg { font-size: var(--text-lg); }
+  .lg\:text-xl { font-size: var(--text-xl); }
+  .lg\:text-2xl { font-size: var(--text-2xl); }
+  .lg\:text-3xl { font-size: var(--text-3xl); }
+  .lg\:text-4xl { font-size: var(--text-4xl); }
+  .lg\:text-5xl { font-size: var(--text-5xl); }
+
+  /* Width */
+  .lg\:w-auto { width: auto; }
+  .lg\:w-full { width: 100%; }
+  .lg\:w-1\/2 { width: 50%; }
+  .lg\:w-1\/3 { width: 33.333333%; }
+  .lg\:w-2\/3 { width: 66.666667%; }
+  .lg\:w-1\/4 { width: 25%; }
+  .lg\:w-3\/4 { width: 75%; }
+
+  /* Text alignment */
+  .lg\:text-left { text-align: left; }
+  .lg\:text-center { text-align: center; }
+  .lg\:text-right { text-align: right; }
+}
+
+/* LARGE DESKTOP (>= 1280px) */
+@media (min-width: 1280px) {
+  /* Display */
+  .xl\:hidden { display: none; }
+  .xl\:block { display: block; }
+  .xl\:inline { display: inline; }
+  .xl\:inline-block { display: inline-block; }
+  .xl\:flex { display: flex; }
+  .xl\:grid { display: grid; }
+
+  /* Grid */
+  .xl\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .xl\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .xl\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .xl\:grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .xl\:grid-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+
+  /* Gap */
+  .xl\:gap-6 { gap: var(--space-6); }
+  .xl\:gap-8 { gap: var(--space-8); }
+
+  /* Typography */
+  .xl\:text-xl { font-size: var(--text-xl); }
+  .xl\:text-2xl { font-size: var(--text-2xl); }
+  .xl\:text-3xl { font-size: var(--text-3xl); }
+  .xl\:text-4xl { font-size: var(--text-4xl); }
+  .xl\:text-5xl { font-size: var(--text-5xl); }
+
+  /* Spacing */
+  .xl\:p-8 { padding: var(--space-8); }
+  .xl\:px-8 { padding-left: var(--space-8); padding-right: var(--space-8); }
+  .xl\:py-8 { padding-top: var(--space-8); padding-bottom: var(--space-8); }
+}

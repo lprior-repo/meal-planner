@@ -160,6 +160,26 @@ pub type FontWeight {
 pub type NavCard {
   NavCard(icon: String, label: String, href: String)
 }
+
+// ===================================================================
+// MEAL LOG TYPES
+// ===================================================================
+
+/// Meal entry for daily log display
+pub type MealEntryData {
+  MealEntryData(
+    id: String,
+    time: String,
+    food_name: String,
+    portion: String,
+    protein: Float,
+    fat: Float,
+    carbs: Float,
+    calories: Float,
+    meal_type: String,
+  )
+}
+
 // ===================================================================
 // Additional types will be added as specific features are implemented
 // ===================================================================

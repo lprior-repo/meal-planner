@@ -12,9 +12,8 @@ body {
 }
 
 .container {
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  /* padding set in media queries for responsive behavior */
 }
 
 /* Hero section */
@@ -41,8 +40,8 @@ body {
 /* Home navigation */
 .home-nav {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
+  /* grid-template-columns set in media queries for responsive behavior */
 }
 
 .nav-card {
@@ -59,10 +58,7 @@ body {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.nav-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
+/* hover state moved to @media (hover: hover) below */
 
 .nav-icon {
   font-size: 2.5rem;
@@ -138,8 +134,7 @@ body {
 .profile-section dl {
   margin: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  /* grid-template-columns, gap set in media queries for responsive behavior */
 }
 
 .profile-section dt {
@@ -150,14 +145,14 @@ body {
   margin: 0;
   font-weight: 500;
   color: #333;
-  text-align: right;
+  /* text-align set in media queries for responsive behavior */
 }
 
 .header {
   background: white;
-  padding: 1rem 2rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   margin-bottom: 2rem;
+  /* padding set in media queries for responsive behavior */
 }
 
 .header h1 {
@@ -167,16 +162,16 @@ body {
 
 .nav {
   display: flex;
-  gap: 1rem;
   margin-top: 1rem;
+  /* gap, flex-wrap set in media queries for responsive behavior */
 }
 
 .nav-link {
-  padding: 0.5rem 1rem;
   text-decoration: none;
   color: #666;
   border-radius: 4px;
   transition: all 0.2s;
+  /* padding, font-size set in media queries for responsive behavior */
 }
 
 .nav-link:hover {
@@ -191,9 +186,9 @@ body {
 
 .main {
   background: white;
-  padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  /* padding set in media queries for responsive behavior */
 }
 
 .footer {
@@ -203,13 +198,13 @@ body {
 }
 
 .btn {
-  padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
   transition: all 0.2s;
+  /* padding, min-height set in media queries for responsive/touch behavior */
 }
 
 .btn-primary {
@@ -309,8 +304,8 @@ body {
 
 .macro-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 1rem;
+  /* grid-template-columns set in media queries for responsive behavior */
 }
 
 .macro-stat {
@@ -502,10 +497,10 @@ body {
 /* Quick stats */
 .quick-stats {
   display: flex;
-  gap: 1rem;
   justify-content: center;
   padding-top: 1rem;
   border-top: 1px solid #eee;
+  /* flex-direction, gap set in media queries for responsive behavior */
 }
 
 .quick-stat {
@@ -571,8 +566,8 @@ body {
 /* Recipe grid layout */
 .recipe-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
+  /* grid-template-columns set in media queries for responsive behavior */
 }
 
 /* Recipe card */
@@ -587,10 +582,7 @@ body {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.recipe-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+/* hover state moved to @media (hover: hover) below */
 
 .recipe-card-content {
   display: flex;
@@ -701,10 +693,7 @@ body {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.food-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+/* hover state moved to @media (hover: hover) below */
 
 .food-info {
   display: flex;
@@ -754,30 +743,260 @@ body {
   background: #f8f9fa;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+/* ===================================================================
+   RESPONSIVE DESIGN (Mobile-First)
+   Mobile: < 640px (base styles above)
+   Tablet: >= 640px (sm)
+   Desktop: >= 1024px (lg)
+   Large Desktop: >= 1280px (xl)
+   =================================================================== */
+
+/* BASE (Mobile < 640px) - Already defined above */
+/* Optimizations for small screens */
+body {
+  font-size: 16px; /* Prevent iOS zoom on input focus */
+}
+
+.container {
+  padding: 1rem;
+}
+
+.header {
+  padding: 0.75rem 1rem;
+}
+
+.main {
+  padding: 1rem;
+}
+
+.hero h1 {
+  font-size: 1.75rem; /* Smaller on mobile */
+}
+
+.hero .tagline {
+  font-size: 1rem;
+}
+
+/* Single column layouts on mobile */
+.home-nav {
+  grid-template-columns: 1fr;
+}
+
+.recipe-grid {
+  grid-template-columns: 1fr;
+}
+
+.macro-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.profile-section dl {
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.profile-section dd {
+  text-align: left;
+}
+
+.nav {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Touch-friendly buttons on mobile */
+.btn {
+  min-height: 44px;
+  padding: 0.75rem 1.25rem;
+}
+
+.filter-btn {
+  min-height: 44px;
+}
+
+/* Stack quick stats vertically on mobile */
+.quick-stats {
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* TABLET+ (>= 640px) */
+@media (min-width: 640px) {
+  .container {
+    padding: 1.5rem;
+  }
+
   .header {
-    padding: 1rem;
-  }
-
-  .nav {
-    flex-wrap: wrap;
-  }
-
-  .nav-link {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.9rem;
+    padding: 1rem 1.5rem;
   }
 
   .main {
-    padding: 1rem;
+    padding: 1.5rem;
   }
 
-  .macro-grid {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  /* Two-column layouts */
+  .home-nav {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .recipe-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .macro-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .profile-section dl {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .profile-section dd {
+    text-align: right;
+  }
+
+  .nav {
+    flex-wrap: nowrap;
+    gap: 1rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  /* Horizontal quick stats */
+  .quick-stats {
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
+
+/* DESKTOP (>= 1024px) */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1200px;
+    padding: 2rem;
+  }
+
+  .header {
+    padding: 1rem 2rem;
+  }
+
+  .main {
+    padding: 2rem;
+  }
+
+  .hero {
+    padding: 4rem 2rem;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero .tagline {
+    font-size: 1.1rem;
+  }
+
+  /* Multi-column layouts */
+  .home-nav {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .recipe-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .macro-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Larger touch targets less critical on desktop */
+  .btn {
+    min-height: auto;
+  }
+
+  /* Better spacing on larger screens */
+  .quick-stats {
+    gap: 1.5rem;
+  }
+}
+
+/* LARGE DESKTOP (>= 1280px) */
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+
+  .home-nav {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  .recipe-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ===================================================================
+   TOUCH & HOVER OPTIMIZATIONS
+   =================================================================== */
+
+/* Enhanced hover states only on devices that support hover */
+@media (hover: hover) {
+  .nav-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .recipe-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .food-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* No transform on touch devices */
+@media (hover: none) {
+  .nav-card:hover,
+  .recipe-card:hover,
+  .food-item:hover {
+    transform: none;
+  }
+
+  /* Slightly larger tap targets on touch */
+  .nav-card,
+  .recipe-card,
+  .food-item {
+    padding: 1.25rem;
+  }
+}
+
+/* ===================================================================
+   ACCESSIBILITY: Reduce motion for users who prefer it
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-card,
+  .recipe-card,
+  .food-item,
+  .progress-fill,
+  .ring-progress {
+    transition: none !important;
   }
 }
