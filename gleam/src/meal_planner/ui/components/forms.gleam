@@ -12,6 +12,8 @@
 /// See: docs/component_signatures.md (section: Forms)
 import gleam/option
 import gleam/string
+import gleam/list
+import gleam/int
 
 /// Text input field
 ///
@@ -192,6 +194,200 @@ pub fn search_input_with_autofocus(
   <> "<button type=\"button\" class=\""
   <> clear_btn_class
   <> "\">×</button>"
+  <> "</div>"
+}
+
+// ===================================================================
+// SEARCH RESULTS LIST COMPONENTS (Bead meal-planner-rvz.2)
+// ===================================================================
+
+/// Search results list item
+///
+/// Renders a single result item with hover/click interaction
+/// Includes unique ID for aria-activedescendant support
+fn render_result_item(
+  id: Int,
+  name: String,
+  data_type: String,
+  category: String,
+) -> String {
+  "<div class=\"search-result-item\" role=\"option\" "
+  <> "id=\"search-result-"
+  <> int.to_string(id)
+  <> "\" "
+  <> "data-food-id=\""
+  <> int.to_string(id)
+  <> "\">"
+  <> "<div class=\"result-name\">"
+  <> name
+  <> "</div>"
+  <> "<div class=\"result-meta\">"
+  <> data_type
+  <> " • "
+  <> category
+  <> "</div>"
+  <> "</div>"
+}
+
+/// Search results list
+///
+/// Features:
+/// - Displays list of search results with hover/click selection
+/// - Responsive sizing with max-height and scroll
+/// - ARIA listbox role for accessibility
+/// - Each item shows name, type, and category
+///
+/// Renders:
+/// <div class="search-results-list max-h-96 overflow-y-auto" role="listbox">
+///   <div class="search-result-item" role="option" data-food-id="123">...</div>
+/// </div>
+pub fn search_results_list(
+  items: List(#(Int, String, String, String)),
+  _show_scroll: Bool,
+) -> String {
+  let items_html =
+    items
+    |> list.map(fn(item) {
+      let #(id, name, data_type, category) = item
+      render_result_item(id, name, data_type, category)
+    })
+    |> string.concat()
+
+  "<div class=\"search-results-list max-h-96 overflow-y-auto\" role=\"listbox\">"
+  <> items_html
+  <> "</div>"
+}
+
+/// Search results loading state
+///
+/// Shows skeleton loading UI while search is in progress
+/// 
+/// Renders:
+/// <div class="search-results-loading" aria-busy="true">
+///   <div class="skeleton skeleton-item">...</div>
+///   <div class="skeleton skeleton-item">...</div>
+///   <div class="skeleton skeleton-item">...</div>
+/// </div>
+pub fn search_results_loading() -> String {
+  "<div class=\"search-results-loading\" aria-busy=\"true\">"
+  <> "<div class=\"skeleton skeleton-item\"></div>"
+  <> "<div class=\"skeleton skeleton-item\"></div>"
+  <> "<div class=\"skeleton skeleton-item\"></div>"
+  <> "</div>"
+}
+
+/// Search results empty state
+///
+/// Shows "no results" message when search returns empty
+///
+/// Renders:
+/// <div class="search-results-empty" role="status">
+///   <p>No results found for "query"</p>
+/// </div>
+pub fn search_results_empty(query: String) -> String {
+  "<div class=\"search-results-empty\" role=\"status\">"
+  <> "<p>No results found for \""
+  <> query
+  <> "\"</p>"
+  <> "</div>"
+}
+
+// ===================================================================
+// KEYBOARD NAVIGATION COMPONENTS (Bead meal-planner-rvz.3)
+// ===================================================================
+
+/// Search combobox with keyboard navigation
+///
+/// Features:
+/// - ARIA combobox role with proper attributes
+/// - aria-expanded indicates dropdown state
+/// - aria-controls links to results listbox
+/// - aria-autocomplete indicates list completion
+/// - Keyboard navigation data attribute for JS handlers
+/// - Combines search input + results list
+///
+/// Renders full search widget with keyboard support
+pub fn search_combobox(
+  query: String,
+  placeholder: String,
+  results: List(#(Int, String, String, String)),
+  expanded: Bool,
+) -> String {
+  let expanded_str = case expanded {
+    True -> "true"
+    False -> "false"
+  }
+
+  let results_html = case expanded, results {
+    True, [] -> search_results_empty(query)
+    True, items -> search_results_list(items, False)
+    False, _ -> ""
+  }
+
+  "<div class=\"search-combobox\" role=\"combobox\" "
+  <> "aria-expanded=\""
+  <> expanded_str
+  <> "\" "
+  <> "aria-controls=\"search-results-listbox\" "
+  <> "data-keyboard-nav=\"true\">"
+  <> "<input type=\"search\" class=\"input-search\" "
+  <> "placeholder=\""
+  <> placeholder
+  <> "\" "
+  <> "value=\""
+  <> query
+  <> "\" "
+  <> "aria-label=\""
+  <> placeholder
+  <> "\" "
+  <> "aria-autocomplete=\"list\" />"
+  <> results_html
+  <> "</div>"
+}
+
+/// Search combobox with active selection
+///
+/// Same as search_combobox but includes aria-activedescendant
+/// to indicate which result item has keyboard focus
+pub fn search_combobox_with_selection(
+  query: String,
+  placeholder: String,
+  results: List(#(Int, String, String, String)),
+  expanded: Bool,
+  selected_id: Int,
+) -> String {
+  let expanded_str = case expanded {
+    True -> "true"
+    False -> "false"
+  }
+
+  let results_html = case expanded, results {
+    True, [] -> search_results_empty(query)
+    True, items -> search_results_list(items, False)
+    False, _ -> ""
+  }
+
+  "<div class=\"search-combobox\" role=\"combobox\" "
+  <> "aria-expanded=\""
+  <> expanded_str
+  <> "\" "
+  <> "aria-controls=\"search-results-listbox\" "
+  <> "data-keyboard-nav=\"true\">"
+  <> "<input type=\"search\" class=\"input-search\" "
+  <> "placeholder=\""
+  <> placeholder
+  <> "\" "
+  <> "value=\""
+  <> query
+  <> "\" "
+  <> "aria-label=\""
+  <> placeholder
+  <> "\" "
+  <> "aria-autocomplete=\"list\" "
+  <> "aria-activedescendant=\"search-result-"
+  <> int.to_string(selected_id)
+  <> "\" />"
+  <> results_html
   <> "</div>"
 }
 

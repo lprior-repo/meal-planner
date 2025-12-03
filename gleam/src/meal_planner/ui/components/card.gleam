@@ -163,3 +163,70 @@ pub fn food_card(data: ui_types.FoodCardData) -> String {
   <> data_type
   <> "</div></div>"
 }
+
+// ===================================================================
+// CALORIE SUMMARY CARD (Bead meal-planner-uzr.1)
+// ===================================================================
+
+/// Calorie summary card component
+///
+/// Features:
+/// - Displays current and target calories
+/// - Percentage indicator with color coding (green/yellow/red)
+/// - Animated counter transition (data attribute for JS)
+/// - Date navigation buttons (prev/next day)
+///
+/// Color coding:
+/// - Green: < 90% of target
+/// - Yellow: 90-100% of target
+/// - Red: > 100% of target
+///
+/// Renders:
+/// <div class="calorie-summary-card">
+///   <div class="date-nav">...</div>
+///   <div class="calorie-display">
+///     <div class="current animated-counter">1850</div>
+///     <div class="target">/ 2000</div>
+///   </div>
+///   <div class="percentage percentage-green">92%</div>
+/// </div>
+pub fn calorie_summary_card(
+  current_calories: Float,
+  target_calories: Float,
+  date: String,
+) -> String {
+  let current_int = float.truncate(current_calories)
+  let target_int = float.truncate(target_calories)
+  let percentage = { current_calories /. target_calories } *. 100.0
+  let percentage_int = float.truncate(percentage)
+
+  let percentage_class = case percentage {
+    p if p <. 90.0 -> "percentage-green"
+    p if p <=. 100.0 -> "percentage-yellow"
+    _ -> "percentage-red"
+  }
+
+  "<div class=\"calorie-summary-card\">"
+  <> "<div class=\"date-nav\">"
+  <> "<button class=\"btn-prev-day\">&lt;</button>"
+  <> "<span class=\"current-date\">"
+  <> date
+  <> "</span>"
+  <> "<button class=\"btn-next-day\">&gt;</button>"
+  <> "</div>"
+  <> "<div class=\"calorie-display\">"
+  <> "<div class=\"current animated-counter\" data-animate-duration=\"1000\">"
+  <> int.to_string(current_int)
+  <> "</div>"
+  <> "<div class=\"separator\">/</div>"
+  <> "<div class=\"target\">"
+  <> int.to_string(target_int)
+  <> "</div>"
+  <> "</div>"
+  <> "<div class=\"percentage "
+  <> percentage_class
+  <> "\">"
+  <> int.to_string(percentage_int)
+  <> "%</div>"
+  <> "</div>"
+}

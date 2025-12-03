@@ -365,3 +365,67 @@ pub fn food_card_with_numeric_id_test() {
   let result = card.food_card(food)
   assert_contains(result, "Water")
 }
+
+// ===================================================================
+// CALORIE SUMMARY CARD TESTS (Bead meal-planner-uzr.1)
+// ===================================================================
+
+pub fn calorie_summary_card_renders_current_calories_test() {
+  let result = card.calorie_summary_card(1850.0, 2000.0, "2025-12-03")
+  assert_contains(result, "1850")
+}
+
+pub fn calorie_summary_card_renders_target_calories_test() {
+  let result = card.calorie_summary_card(1500.0, 2000.0, "2025-12-03")
+  assert_contains(result, "2000")
+}
+
+pub fn calorie_summary_card_has_container_class_test() {
+  let result = card.calorie_summary_card(1000.0, 2000.0, "2025-12-03")
+  assert_contains(result, "calorie-summary-card")
+}
+
+pub fn calorie_summary_card_percentage_green_test() {
+  // 90% of target (1800/2000) should be green
+  let result = card.calorie_summary_card(1800.0, 2000.0, "2025-12-03")
+  assert_contains(result, "percentage-green")
+}
+
+pub fn calorie_summary_card_percentage_yellow_test() {
+  // 95% of target (1900/2000) should be yellow (90-100%)
+  let result = card.calorie_summary_card(1900.0, 2000.0, "2025-12-03")
+  assert_contains(result, "percentage-yellow")
+}
+
+pub fn calorie_summary_card_percentage_red_test() {
+  // 110% of target (2200/2000) should be red (>100%)
+  let result = card.calorie_summary_card(2200.0, 2000.0, "2025-12-03")
+  assert_contains(result, "percentage-red")
+}
+
+pub fn calorie_summary_card_animated_counter_test() {
+  let result = card.calorie_summary_card(1500.0, 2000.0, "2025-12-03")
+  // Should have animation data attribute or class
+  assert_contains(result, "animated-counter")
+}
+
+pub fn calorie_summary_card_date_display_test() {
+  let result = card.calorie_summary_card(1500.0, 2000.0, "2025-12-03")
+  assert_contains(result, "2025-12-03")
+}
+
+pub fn calorie_summary_card_prev_button_test() {
+  let result = card.calorie_summary_card(1500.0, 2000.0, "2025-12-03")
+  assert_contains(result, "btn-prev-day")
+}
+
+pub fn calorie_summary_card_next_button_test() {
+  let result = card.calorie_summary_card(1500.0, 2000.0, "2025-12-03")
+  assert_contains(result, "btn-next-day")
+}
+
+pub fn calorie_summary_card_percentage_value_test() {
+  // Should display percentage (75% = 1500/2000)
+  let result = card.calorie_summary_card(1500.0, 2000.0, "2025-12-03")
+  assert_contains(result, "75")
+}
