@@ -440,6 +440,23 @@ pub fn get_recipe_by_id(
   }
 }
 
+/// Delete a recipe
+pub fn delete_recipe(
+  conn: pog.Connection,
+  recipe_id: String,
+) -> Result(Nil, StorageError) {
+  let sql = "DELETE FROM recipes WHERE id = $1"
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(recipe_id))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(_) -> Ok(Nil)
+  }
+}
+
 /// Get recipes by category
 pub fn get_recipes_by_category(
   conn: pog.Connection,
@@ -756,6 +773,119 @@ pub fn delete_food_log(
     Error(e) -> Error(DatabaseError(format_pog_error(e)))
     Ok(_) -> Ok(Nil)
   }
+}
+
+/// Get recent meals (distinct by recipe, most recent first)
+pub fn get_recent_meals(
+  conn: pog.Connection,
+  limit: Int,
+) -> Result(List(FoodLogEntry), StorageError) {
+  let sql =
+    "SELECT DISTINCT ON (recipe_id) id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text
+     FROM food_logs
+     ORDER BY recipe_id, logged_at DESC
+     LIMIT $1"
+
+  let decoder = {
+    use id <- decode.field(0, decode.string)
+    use _date <- decode.field(1, decode.string)
+    use recipe_id <- decode.field(2, decode.string)
+    use recipe_name <- decode.field(3, decode.string)
+    use servings <- decode.field(4, decode.float)
+    use protein <- decode.field(5, decode.float)
+    use fat <- decode.field(6, decode.float)
+    use carbs <- decode.field(7, decode.float)
+    use meal_type_str <- decode.field(8, decode.string)
+    use logged_at <- decode.field(9, decode.string)
+
+    let meal_type = case meal_type_str {
+      "breakfast" -> Breakfast
+      "lunch" -> Lunch
+      "dinner" -> Dinner
+      _ -> Snack
+    }
+
+    decode.success(FoodLogEntry(
+      id: id,
+      recipe_id: recipe_id,
+      recipe_name: recipe_name,
+      servings: servings,
+      macros: Macros(protein: protein, fat: fat, carbs: carbs),
+      meal_type: meal_type,
+      logged_at: logged_at,
+    ))
+  }
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.int(limit))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
+  }
+}
+
+/// Save a food log entry using shared types
+pub fn save_food_log_entry(
+  conn: pog.Connection,
+  date: String,
+  entry: FoodLogEntry,
+) -> Result(Nil, StorageError) {
+  let sql =
+    "INSERT INTO food_logs
+     (id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+     ON CONFLICT (id) DO UPDATE SET
+       servings = EXCLUDED.servings,
+       protein = EXCLUDED.protein,
+       fat = EXCLUDED.fat,
+       carbs = EXCLUDED.carbs,
+       meal_type = EXCLUDED.meal_type,
+       logged_at = NOW()"
+
+  let meal_type_str = case entry.meal_type {
+    Breakfast -> "breakfast"
+    Lunch -> "lunch"
+    Dinner -> "dinner"
+    Snack -> "snack"
+  }
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(entry.id))
+    |> pog.parameter(pog.text(date))
+    |> pog.parameter(pog.text(entry.recipe_id))
+    |> pog.parameter(pog.text(entry.recipe_name))
+    |> pog.parameter(pog.float(entry.servings))
+    |> pog.parameter(pog.float(entry.macros.protein))
+    |> pog.parameter(pog.float(entry.macros.fat))
+    |> pog.parameter(pog.float(entry.macros.carbs))
+    |> pog.parameter(pog.text(meal_type_str))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(_) -> Ok(Nil)
+  }
+}
+
+/// Get user profile or return default if not found
+pub fn get_user_profile_or_default(conn: pog.Connection) -> UserProfile {
+  case get_user_profile(conn) {
+    Ok(profile) -> profile
+    Error(_) -> default_user_profile()
+  }
+}
+
+fn default_user_profile() -> UserProfile {
+  UserProfile(
+    id: "user-1",
+    bodyweight: 180.0,
+    activity_level: Moderate,
+    goal: Maintain,
+    meals_per_day: 3,
+  )
 }
 
 fn food_log_decoder() -> decode.Decoder(FoodLog) {
