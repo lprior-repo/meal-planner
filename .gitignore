@@ -34,3 +34,4 @@ Thumbs.db
 
 # Beads local state
 .beads/*.db
+db_export/
