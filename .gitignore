@@ -35,3 +35,6 @@ Thumbs.db
 # Beads local state
 .beads/*.db
 db_export/
+.claude-flow/metrics/*.json
+.swarm/memory.db-shm
+.swarm/memory.db-wal
