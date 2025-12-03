@@ -559,19 +559,42 @@ pub fn search_foods(
   query: String,
   limit: Int,
 ) -> Result(List(UsdaFood), StorageError) {
-  // Use PostgreSQL full-text search for better performance
+  // Multi-factor ranking algorithm for intelligent search results
+  // Prioritizes: 1) Data quality, 2) Exact matches, 3) Generic over branded, 4) Simplicity
   let sql =
     "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
      FROM foods
      WHERE to_tsvector('english', description) @@ plainto_tsquery('english', $1)
         OR description ILIKE $2
      ORDER BY
+       -- 1. Data Quality Score (0-100): Prioritize verified USDA data
        CASE data_type
-         WHEN 'sr_legacy_food' THEN 1
-         WHEN 'foundation_food' THEN 2
-         WHEN 'survey_fndds_food' THEN 3
-         ELSE 4
+         WHEN 'foundation_food' THEN 100       -- Highest quality USDA foundation data
+         WHEN 'sr_legacy_food' THEN 95         -- USDA Standard Reference legacy
+         WHEN 'survey_fndds_food' THEN 90      -- USDA FNDDS survey data
+         WHEN 'sub_sample_food' THEN 50        -- Laboratory sub-samples
+         WHEN 'agricultural_acquisition' THEN 40
+         WHEN 'market_acquisition' THEN 35
+         WHEN 'branded_food' THEN 30           -- Commercial branded products
+         ELSE 10
+       END DESC,
+
+       -- 2. Exact Match Boost: Prioritize items starting with search term
+       CASE
+         WHEN LOWER(description) LIKE LOWER($1 || '%') THEN 1
+         ELSE 2
        END,
+
+       -- 3. Generic vs Branded: Prefer generic foods without brand indicators
+       CASE
+         WHEN description !~* '[,®©™]' THEN 1  -- No commas or trademark symbols
+         ELSE 2
+       END,
+
+       -- 4. Simplicity Score: Shorter descriptions = more generic
+       array_length(string_to_array(description, ' '), 1),
+
+       -- 5. Alphabetical: Final tie-breaker
        description
      LIMIT $3"
 
@@ -1490,9 +1513,34 @@ pub fn save_food_to_log(
           )
         }
 
-        // Custom food source: Not implemented yet - requires custom_foods table
-        types.CustomFoodSource(_food_id, _user_id) -> {
-          Error(InvalidInput("Custom food source not yet implemented"))
+        // Custom food source: Fetch custom food and use its macros/micronutrients
+        types.CustomFoodSource(custom_food_id, user_id) -> {
+          use custom_food <- result.try(get_custom_food_by_id(conn, custom_food_id, user_id))
+          
+          // Scale custom food macros by servings
+          let scaled_macros = types.macros_scale(custom_food.macros, servings)
+          let scaled_micros = case custom_food.micronutrients {
+            Some(m) -> Some(types.micronutrients_scale(m, servings))
+            None -> None
+          }
+          
+          // Generate unique ID
+          let log_id = generate_log_id(date, custom_food_id, meal_type)
+          
+          // Insert with custom food source tracking
+          insert_food_log_entry(
+            conn,
+            log_id,
+            date,
+            custom_food_id,
+            custom_food.name,
+            servings,
+            scaled_macros,
+            scaled_micros,
+            meal_type,
+            "custom_food",
+            custom_food_id,
+          )
         }
       }
   }
