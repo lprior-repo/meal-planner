@@ -15,7 +15,6 @@ import gleam/uri
 import lustre/attribute
 import lustre/element
 import lustre/element/html
-import meal_planner/auto_planner/routes as auto_planner_routes
 import meal_planner/storage
 import meal_planner/web_helpers
 import shared/types.{
