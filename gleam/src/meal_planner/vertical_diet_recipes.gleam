@@ -4,10 +4,7 @@
 /// - White rice as primary carbohydrate
 /// - Easily digestible, low FODMAP foods
 /// - Micronutrient-dense vegetables
-
-import shared/types.{
-  type Recipe, Ingredient, Low, Macros, Recipe,
-}
+import shared/types.{type Recipe, Ingredient, Low, Macros, Recipe}
 
 /// Generate all Vertical Diet recipes
 pub fn all_recipes() -> List(Recipe) {
@@ -15,7 +12,6 @@ pub fn all_recipes() -> List(Recipe) {
     // ============================================================================
     // RED MEAT MAIN DISHES (12 recipes)
     // ============================================================================
-
     // 1. Classic Grilled Ribeye
     Recipe(
       id: "vd-ribeye-01",
@@ -301,7 +297,6 @@ pub fn all_recipes() -> List(Recipe) {
     // ============================================================================
     // WHITE RICE PREPARATIONS (6 recipes)
     // ============================================================================
-
     // 13. Simple White Rice
     Recipe(
       id: "vd-rice-01",
@@ -442,7 +437,6 @@ pub fn all_recipes() -> List(Recipe) {
     // ============================================================================
     // VEGETABLE SIDES (7 recipes)
     // ============================================================================
-
     // 19. Steamed Carrots
     Recipe(
       id: "vd-veg-carrots-01",
