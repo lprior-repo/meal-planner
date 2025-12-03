@@ -256,7 +256,7 @@ pub fn ingredient_name_field_is_required_test() {
   |> string.split("id=\"ingredient-name-0\"")
   |> fn(parts) {
     case parts {
-      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first; _ -> "" } }
+      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
       _ -> ""
     }
   }
@@ -379,7 +379,7 @@ pub fn instruction_field_is_required_test() {
   |> string.split("id=\"instruction-0\"")
   |> fn(parts) {
     case parts {
-      [_, rest, ..] -> rest |> string.split("</textarea>") |> fn(p) { case p { [first, ..] -> first; _ -> "" } }
+      [_, rest, ..] -> rest |> string.split("</textarea>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
       _ -> ""
     }
   }
@@ -437,7 +437,7 @@ pub fn nutrition_fields_are_optional_test() {
   |> string.split("Nutrition Information")
   |> fn(parts) {
     case parts {
-      [_, rest, ..] -> rest |> string.split("</section>") |> fn(p) { case p { [first, ..] -> first; _ -> "" } }
+      [_, rest, ..] -> rest |> string.split("</section>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
       _ -> ""
     }
   }
@@ -476,7 +476,7 @@ pub fn protein_field_has_decimal_precision_test() {
   |> string.split("id=\"protein\"")
   |> fn(parts) {
     case parts {
-      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first; _ -> "" } }
+      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
       _ -> ""
     }
   }
@@ -497,7 +497,7 @@ pub fn carbs_field_has_decimal_precision_test() {
   |> string.split("id=\"carbs\"")
   |> fn(parts) {
     case parts {
-      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first; _ -> "" } }
+      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
       _ -> ""
     }
   }
@@ -514,7 +514,7 @@ pub fn fat_field_has_decimal_precision_test() {
   |> string.split("id=\"fat\"")
   |> fn(parts) {
     case parts {
-      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first; _ -> "" } }
+      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
       _ -> ""
     }
   }
@@ -829,7 +829,7 @@ pub fn cancel_button_has_button_type_test() {
   |> string.split("id=\"cancel-btn\"")
   |> fn(parts) {
     case parts {
-      [_, rest, ..] -> rest |> string.split(">") |> fn(p) { case p { [first, ..] -> first; _ -> "" } }
+      [_, rest, ..] -> rest |> string.split(">") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
       _ -> ""
     }
   }

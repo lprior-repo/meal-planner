@@ -15,7 +15,10 @@
 /// - Search functionality with debouncing
 /// - Keyboard navigation
 /// - Edge cases and boundary conditions
+import gleam/int
+import gleam/list
 import gleam/option
+import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/ui/components/forms
