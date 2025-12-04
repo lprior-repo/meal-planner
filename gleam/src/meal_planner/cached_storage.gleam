@@ -9,10 +9,7 @@
 /// - Recipe queries: 10 minutes (600 seconds)
 
 import gleam/int
-import gleam/list
 import gleam/option.{None, Some}
-import gleam/result
-import gleam/string_builder
 import meal_planner/cache
 import meal_planner/storage.{type StorageError, type UsdaFood}
 import meal_planner/types.{type Recipe}
@@ -314,30 +311,28 @@ pub fn cleanup_expired(cached: CachedStorage) -> #(CachedStorage, Int) {
   #(cleaned, total_removed)
 }
 
-/// Get cache statistics (optimized with string_builder)
+/// Get cache statistics
 pub fn stats(cached: CachedStorage) -> String {
   let food_stats = cache.stats(cached.food_cache)
   let recipe_stats = cache.stats(cached.recipe_cache)
   let recipe_id_stats = cache.stats(cached.recipe_by_id_cache)
 
-  string_builder.new()
-  |> string_builder.append("Cache Statistics:\n")
-  |> string_builder.append("  Food Cache: ")
-  |> string_builder.append(int.to_string(food_stats.total_entries))
-  |> string_builder.append(" total, ")
-  |> string_builder.append(int.to_string(food_stats.expired_entries))
-  |> string_builder.append(" expired\n")
-  |> string_builder.append("  Recipe List Cache: ")
-  |> string_builder.append(int.to_string(recipe_stats.total_entries))
-  |> string_builder.append(" total, ")
-  |> string_builder.append(int.to_string(recipe_stats.expired_entries))
-  |> string_builder.append(" expired\n")
-  |> string_builder.append("  Recipe ID Cache: ")
-  |> string_builder.append(int.to_string(recipe_id_stats.total_entries))
-  |> string_builder.append(" total, ")
-  |> string_builder.append(int.to_string(recipe_id_stats.expired_entries))
-  |> string_builder.append(" expired")
-  |> string_builder.to_string
+  "Cache Statistics:\n"
+  <> "  Food Cache: "
+  <> int.to_string(food_stats.total_entries)
+  <> " total, "
+  <> int.to_string(food_stats.expired_entries)
+  <> " expired\n"
+  <> "  Recipe List Cache: "
+  <> int.to_string(recipe_stats.total_entries)
+  <> " total, "
+  <> int.to_string(recipe_stats.expired_entries)
+  <> " expired\n"
+  <> "  Recipe ID Cache: "
+  <> int.to_string(recipe_id_stats.total_entries)
+  <> " total, "
+  <> int.to_string(recipe_id_stats.expired_entries)
+  <> " expired"
 }
 
 /// Build a unique filter key from SearchFilters

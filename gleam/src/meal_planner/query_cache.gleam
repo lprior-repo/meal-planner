@@ -315,7 +315,7 @@ pub fn calculate_improvement(
   cached_time_ms: Float,
   uncached_time_ms: Float,
 ) -> Float {
-  case uncached_time_ms > 0.0 {
+  case uncached_time_ms >. 0.0 {
     True -> uncached_time_ms /. cached_time_ms
     False -> 1.0
   }
