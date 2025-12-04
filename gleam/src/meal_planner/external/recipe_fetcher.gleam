@@ -1,6 +1,7 @@
 //// External Recipe API Fetcher
 ////
 //// Unified interface for fetching recipes from external APIs.
+//// Includes TheMealDB implementation (free, no key required).
 
 import gleam/dynamic/decode.{type Decoder}
 import gleam/http/request
@@ -10,23 +11,26 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
+import meal_planner/external/external_errors.{
+  type FetchError, ApiKeyMissing, InvalidQuery, NetworkError, ParseError,
+  RecipeNotFound, RateLimitError,
+}
 import meal_planner/types.{
   type Ingredient, type Macros, type Recipe, Ingredient, Low, Macros, Recipe,
 }
+
+// ============================================================================
+// Public Types
+// ============================================================================
 
 pub type RecipeSource {
   TheMealDB
   Spoonacular
 }
 
-pub type FetchError {
-  NetworkError(String)
-  ParseError(String)
-  RateLimitError
-  ApiKeyMissing
-  RecipeNotFound(String)
-  InvalidQuery(String)
-}
+// ============================================================================
+// Internal Types for TheMealDB
+// ============================================================================
 
 type MealDbResponse {
   MealDbResponse(meals: Option(List(MealDbMeal)))
@@ -51,6 +55,10 @@ type MealDbMeal {
   )
 }
 
+// ============================================================================
+// Public API
+// ============================================================================
+
 pub fn fetch_recipe(
   source: RecipeSource,
   recipe_id: String,
@@ -71,7 +79,6 @@ pub fn search_recipes(
     l if l > 100 -> 100
     l -> l
   }
-
   case source {
     TheMealDB -> themealdb_search_recipes(query, validated_limit)
     Spoonacular -> Error(ApiKeyMissing)
@@ -110,6 +117,10 @@ pub fn error_message(error: FetchError) -> String {
     InvalidQuery(msg) -> "Invalid query: " <> msg
   }
 }
+
+// ============================================================================
+// TheMealDB Implementation
+// ============================================================================
 
 fn themealdb_fetch_recipe(recipe_id: String) -> Result(Recipe, FetchError) {
   case recipe_id {
