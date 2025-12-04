@@ -488,6 +488,67 @@ pub fn get_recipes_by_category(
   }
 }
 
+/// Filter recipes by macro constraints from recipes_simplified table
+/// Returns recipes matching: protein >= min_protein, fat <= max_fat, calories <= max_calories
+/// Used as pre-filtered candidates for knapsack solver
+pub fn filter_recipes(
+  conn: pog.Connection,
+  min_protein: Int,
+  max_fat: Int,
+  max_calories: Int,
+) -> Result(List(Recipe), StorageError) {
+  let sql =
+    "SELECT id::text, name, '', '', protein::float, fat::float, carbs::float, 1, category, 'low', false
+     FROM recipes_simplified
+     WHERE protein >= $1 AND fat <= $2 AND calories <= $3
+     ORDER BY protein DESC, calories ASC"
+
+  let decoder = {
+    use id <- decode.field(0, decode.string)
+    use name <- decode.field(1, decode.string)
+    use _ingredients_str <- decode.field(2, decode.string)
+    use _instructions_str <- decode.field(3, decode.string)
+    use protein <- decode.field(4, decode.float)
+    use fat <- decode.field(5, decode.float)
+    use carbs <- decode.field(6, decode.float)
+    use servings <- decode.field(7, decode.int)
+    use category <- decode.field(8, decode.string)
+    use fodmap_str <- decode.field(9, decode.string)
+    use vertical_compliant <- decode.field(10, decode.bool)
+
+    let fodmap_level = case fodmap_str {
+      "low" -> Low
+      "medium" -> Medium
+      "high" -> High
+      _ -> Low
+    }
+
+    decode.success(Recipe(
+      id: id,
+      name: name,
+      ingredients: [],
+      instructions: [],
+      macros: Macros(protein: protein, fat: fat, carbs: carbs),
+      servings: servings,
+      category: category,
+      fodmap_level: fodmap_level,
+      vertical_compliant: vertical_compliant,
+    ))
+  }
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.int(min_protein))
+    |> pog.parameter(pog.int(max_fat))
+    |> pog.parameter(pog.int(max_calories))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
+  }
+}
+
 /// Recipe decoder helper
 fn recipe_decoder() -> decode.Decoder(Recipe) {
   use id <- decode.field(0, decode.string)
@@ -1208,6 +1269,20 @@ pub type FoodLog {
   )
 }
 
+/// Log entry type for food consumption tracking
+pub type Log {
+  Log(
+    id: Int,
+    user_id: Int,
+    food_id: Int,
+    quantity: Float,
+    log_date: String,
+    macros: Option(String),
+    created_at: String,
+    updated_at: String,
+  )
+}
+
 /// Save a food log entry
 pub fn save_food_log(
   conn: pog.Connection,
@@ -1259,6 +1334,59 @@ pub fn get_food_logs_by_date(
     pog.query(sql)
     |> pog.parameter(pog.text(date))
     |> pog.returning(food_log_decoder())
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
+  }
+}
+
+/// Get logs for a specific user and date from the logs table
+///
+/// Queries the logs table (distinct from food_logs) which tracks:
+/// - user_id: Reference to user
+/// - food_id: Reference to food item from USDA database
+/// - quantity: Amount consumed
+/// - log_date: Date of consumption
+/// - macros: JSONB column storing macro nutrients
+///
+/// Returns empty list if no logs exist for the date (handles gracefully)
+pub fn get_todays_logs(
+  conn: pog.Connection,
+  user_id: Int,
+  date: String,
+) -> Result(List(Log), StorageError) {
+  let sql =
+    "SELECT id, user_id, food_id, quantity, log_date, macros, created_at::text, updated_at::text
+     FROM logs WHERE user_id = $1 AND log_date = $2
+     ORDER BY created_at ASC"
+
+  let decoder = {
+    use id <- decode.field(0, decode.int)
+    use user_id_val <- decode.field(1, decode.int)
+    use food_id <- decode.field(2, decode.int)
+    use quantity <- decode.field(3, decode.float)
+    use log_date <- decode.field(4, decode.string)
+    use macros <- decode.field(5, decode.optional(decode.string))
+    use created_at <- decode.field(6, decode.string)
+    use updated_at <- decode.field(7, decode.string)
+    decode.success(Log(
+      id: id,
+      user_id: user_id_val,
+      food_id: food_id,
+      quantity: quantity,
+      log_date: log_date,
+      macros: macros,
+      created_at: created_at,
+      updated_at: updated_at,
+    ))
+  }
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.int(user_id))
+    |> pog.parameter(pog.text(date))
+    |> pog.returning(decoder)
     |> pog.execute(conn)
   {
     Error(e) -> Error(DatabaseError(format_pog_error(e)))

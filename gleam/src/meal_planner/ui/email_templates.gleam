@@ -46,7 +46,8 @@ fn format_float(value: Float) -> String {
 ///
 /// Returns a complete HTML string suitable for sending as email body.
 pub fn render_weekly_email(summary: WeeklySummary) -> String {
-  let top_foods_html = summary.top_foods
+  let top_foods_html =
+    summary.top_foods
     |> list.take(5)
     |> list.map(fn(food) { "      <li>" <> food <> "</li>\n" })
     |> string.concat()
