@@ -394,8 +394,9 @@ pub fn long_category_name_handled_test() {
     Some(cat) -> {
       cat
       |> should.equal(long_category)
-      string.length(cat)
-      |> should.be_greater_than(50)
+      let length = string.length(cat)
+      { length > 50 }
+      |> should.be_true
     }
     None -> should.fail()
   }
