@@ -10,7 +10,9 @@
 /// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: docs/component_signatures.md (section: Buttons)
-import gleam/string
+import lustre/attribute
+import lustre/element
+import lustre/element/html
 import meal_planner/ui/types/ui_types
 
 // ===================================================================
@@ -49,16 +51,16 @@ pub fn button(
   label: String,
   href: String,
   variant: ui_types.ButtonVariant,
-) -> String {
-  // CONTRACT: Returns HTML string for button link with variant classes
+) -> element.Element(msg) {
   let variant_class = variant_to_class(variant)
-  "<a href=\""
-  <> href
-  <> "\" class=\"btn "
-  <> variant_class
-  <> "\" role=\"button\">"
-  <> label
-  <> "</a>"
+  html.a(
+    [
+      attribute.href(href),
+      attribute.class("btn " <> variant_class),
+      attribute.attribute("role", "button"),
+    ],
+    [element.text(label)],
+  )
 }
 
 /// Button with custom size
@@ -69,52 +71,54 @@ pub fn button_sized(
   href: String,
   variant: ui_types.ButtonVariant,
   size: ui_types.ButtonSize,
-) -> String {
-  // CONTRACT: Returns HTML string for sized button link
+) -> element.Element(msg) {
   let variant_class = variant_to_class(variant)
   let size_class = size_to_class(size)
-  "<a href=\""
-  <> href
-  <> "\" class=\"btn "
-  <> variant_class
-  <> " "
-  <> size_class
-  <> "\" role=\"button\">"
-  <> label
-  <> "</a>"
+  html.a(
+    [
+      attribute.href(href),
+      attribute.class("btn " <> variant_class <> " " <> size_class),
+      attribute.attribute("role", "button"),
+    ],
+    [element.text(label)],
+  )
 }
 
 /// Submit button for forms
 ///
 /// Renders: <button type="submit" class="btn btn-primary">Label</button>
-pub fn submit_button(label: String, variant: ui_types.ButtonVariant) -> String {
-  // CONTRACT: Returns HTML string for submit button
+pub fn submit_button(
+  label: String,
+  variant: ui_types.ButtonVariant,
+) -> element.Element(msg) {
   let variant_class = variant_to_class(variant)
-  "<button type=\"submit\" class=\"btn "
-  <> variant_class
-  <> "\">"
-  <> label
-  <> "</button>"
+  html.button(
+    [attribute.type_("submit"), attribute.class("btn " <> variant_class)],
+    [element.text(label)],
+  )
 }
 
 /// Disabled button state
 ///
 /// Renders: <button disabled class="btn btn-primary btn-disabled" aria-disabled="true">Label</button>
-pub fn button_disabled(label: String, variant: ui_types.ButtonVariant) -> String {
-  // CONTRACT: Returns HTML string for disabled button
+pub fn button_disabled(
+  label: String,
+  variant: ui_types.ButtonVariant,
+) -> element.Element(msg) {
   let variant_class = variant_to_class(variant)
-  "<button disabled class=\"btn "
-  <> variant_class
-  <> " btn-disabled\" aria-disabled=\"true\">"
-  <> label
-  <> "</button>"
+  html.button(
+    [
+      attribute.disabled(True),
+      attribute.class("btn " <> variant_class <> " btn-disabled"),
+      attribute.attribute("aria-disabled", "true"),
+    ],
+    [element.text(label)],
+  )
 }
 
 /// Button group container
 ///
 /// Renders: <div class="button-group">buttons...</div>
-pub fn button_group(buttons: List(String)) -> String {
-  // CONTRACT: Returns HTML string for button group container
-  let buttons_html = string.concat(buttons)
-  "<div class=\"button-group\">" <> buttons_html <> "</div>"
+pub fn button_group(buttons: List(element.Element(msg))) -> element.Element(msg) {
+  html.div([attribute.class("button-group")], buttons)
 }

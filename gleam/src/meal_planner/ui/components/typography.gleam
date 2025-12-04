@@ -12,6 +12,9 @@
 ///
 /// See: docs/component_signatures.md (section: Typography)
 import gleam/option.{type Option}
+import lustre/attribute
+import lustre/element
+import lustre/element/html
 import meal_planner/ui/types/ui_types
 
 // ===================================================================
@@ -21,55 +24,43 @@ import meal_planner/ui/types/ui_types
 /// Heading level 1
 ///
 /// Renders: <h1>text</h1>
-pub fn h1(text: String) -> String {
-  // CONTRACT: Returns HTML string for h1 heading
-  // BODY: Implement as h1 element
-  "<h1>" <> text <> "</h1>"
+pub fn h1(text: String) -> element.Element(msg) {
+  html.h1([], [element.text(text)])
 }
 
 /// Heading level 2
 ///
 /// Renders: <h2>text</h2>
-pub fn h2(text: String) -> String {
-  // CONTRACT: Returns HTML string for h2 heading
-  // BODY: Implement as h2 element
-  "<h2>" <> text <> "</h2>"
+pub fn h2(text: String) -> element.Element(msg) {
+  html.h2([], [element.text(text)])
 }
 
 /// Heading level 3
 ///
 /// Renders: <h3>text</h3>
-pub fn h3(text: String) -> String {
-  // CONTRACT: Returns HTML string for h3 heading
-  // BODY: Implement as h3 element
-  "<h3>" <> text <> "</h3>"
+pub fn h3(text: String) -> element.Element(msg) {
+  html.h3([], [element.text(text)])
 }
 
 /// Heading level 4
 ///
 /// Renders: <h4>text</h4>
-pub fn h4(text: String) -> String {
-  // CONTRACT: Returns HTML string for h4 heading
-  // BODY: Implement as h4 element
-  "<h4>" <> text <> "</h4>"
+pub fn h4(text: String) -> element.Element(msg) {
+  html.h4([], [element.text(text)])
 }
 
 /// Heading level 5
 ///
 /// Renders: <h5>text</h5>
-pub fn h5(text: String) -> String {
-  // CONTRACT: Returns HTML string for h5 heading
-  // BODY: Implement as h5 element
-  "<h5>" <> text <> "</h5>"
+pub fn h5(text: String) -> element.Element(msg) {
+  html.h5([], [element.text(text)])
 }
 
 /// Heading level 6
 ///
 /// Renders: <h6>text</h6>
-pub fn h6(text: String) -> String {
-  // CONTRACT: Returns HTML string for h6 heading
-  // BODY: Implement as h6 element
-  "<h6>" <> text <> "</h6>"
+pub fn h6(text: String) -> element.Element(msg) {
+  html.h6([], [element.text(text)])
 }
 
 /// Heading with optional subtitle
@@ -83,10 +74,8 @@ pub fn heading_with_subtitle(
   level: Int,
   title: String,
   subtitle: Option(String),
-) -> String {
-  // CONTRACT: Returns HTML string for heading with optional subtitle
-  // BODY: Implement with dynamic heading level and conditional subtitle
-  let heading_tag = case level {
+) -> element.Element(msg) {
+  let heading_element = case level {
     1 -> h1(title)
     2 -> h2(title)
     3 -> h3(title)
@@ -96,12 +85,15 @@ pub fn heading_with_subtitle(
     _ -> h1(title)
   }
 
-  let subtitle_html = case subtitle {
-    option.Some(text) -> "<p class=\"subtitle\">" <> text <> "</p>"
-    option.None -> ""
+  let children = case subtitle {
+    option.Some(text) -> [
+      heading_element,
+      html.p([attribute.class("subtitle")], [element.text(text)]),
+    ]
+    option.None -> [heading_element]
   }
 
-  "<div class=\"heading-group\">" <> heading_tag <> subtitle_html <> "</div>"
+  html.div([attribute.class("heading-group")], children)
 }
 
 // ===================================================================
@@ -111,28 +103,22 @@ pub fn heading_with_subtitle(
 /// Body text (paragraph)
 ///
 /// Renders: <p class="body-text">text</p>
-pub fn body_text(text: String) -> String {
-  // CONTRACT: Returns HTML string for body paragraph
-  // BODY: Implement as p element with body-text class
-  "<p class=\"body-text\">" <> text <> "</p>"
+pub fn body_text(text: String) -> element.Element(msg) {
+  html.p([attribute.class("body-text")], [element.text(text)])
 }
 
 /// Small/secondary text
 ///
 /// Renders: <small class="secondary-text">text</small>
-pub fn secondary_text(text: String) -> String {
-  // CONTRACT: Returns HTML string for secondary text
-  // BODY: Implement as small element with secondary-text class
-  "<small class=\"secondary-text\">" <> text <> "</small>"
+pub fn secondary_text(text: String) -> element.Element(msg) {
+  html.small([attribute.class("secondary-text")], [element.text(text)])
 }
 
 /// Label text (typically for forms)
 ///
 /// Renders: <label for="for">text</label>
-pub fn label_text(text: String, for: String) -> String {
-  // CONTRACT: Returns HTML string for label
-  // BODY: Implement as label element with for attribute
-  "<label for=\"" <> for <> "\">" <> text <> "</label>"
+pub fn label_text(text: String, for: String) -> element.Element(msg) {
+  html.label([attribute.for(for)], [element.text(text)])
 }
 
 // ===================================================================
@@ -147,23 +133,22 @@ pub fn label_text(text: String, for: String) -> String {
 /// - Italic: <em>text</em>
 /// - Code: <code>text</code>
 /// - Underline: <u>text</u>
-pub fn emphasize_text(text: String, emphasis: ui_types.TextEmphasis) -> String {
-  // CONTRACT: Returns HTML string with semantic emphasis element
-  // BODY: Implement with appropriate HTML element for each emphasis type
+pub fn emphasize_text(
+  text: String,
+  emphasis: ui_types.TextEmphasis,
+) -> element.Element(msg) {
   case emphasis {
-    ui_types.Normal -> "<span>" <> text <> "</span>"
-    ui_types.Strong -> "<strong>" <> text <> "</strong>"
-    ui_types.Italic -> "<em>" <> text <> "</em>"
-    ui_types.Code -> "<code>" <> text <> "</code>"
-    ui_types.Underline -> "<u>" <> text <> "</u>"
+    ui_types.Normal -> html.span([], [element.text(text)])
+    ui_types.Strong -> html.strong([], [element.text(text)])
+    ui_types.Italic -> html.em([], [element.text(text)])
+    ui_types.Code -> html.code([], [element.text(text)])
+    ui_types.Underline -> html.u([], [element.text(text)])
   }
 }
 
 /// Monospace text (for code/numbers)
 ///
 /// Renders: <code class="mono-text">text</code>
-pub fn mono_text(text: String) -> String {
-  // CONTRACT: Returns HTML string for monospace text
-  // BODY: Implement as code element with mono-text class
-  "<code class=\"mono-text\">" <> text <> "</code>"
+pub fn mono_text(text: String) -> element.Element(msg) {
+  html.code([attribute.class("mono-text")], [element.text(text)])
 }

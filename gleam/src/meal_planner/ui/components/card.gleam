@@ -13,8 +13,11 @@
 /// See: docs/component_signatures.md (section: Cards)
 import gleam/float
 import gleam/int
+import gleam/list
 import gleam/option
-import gleam/string
+import lustre/attribute
+import lustre/element
+import lustre/element/html
 import meal_planner/ui/types/ui_types
 
 // ===================================================================
@@ -24,10 +27,8 @@ import meal_planner/ui/types/ui_types
 /// Basic card container
 ///
 /// Renders: <div class="card">content</div>
-pub fn card(content: List(String)) -> String {
-  // CONTRACT: Returns HTML string for basic card container
-  let content_str = string.concat(content)
-  "<div class=\"card\">" <> content_str <> "</div>"
+pub fn card(content: List(element.Element(msg))) -> element.Element(msg) {
+  html.div([attribute.class("card")], content)
 }
 
 /// Card with header
@@ -37,14 +38,14 @@ pub fn card(content: List(String)) -> String {
 ///   <div class="card-header">Header</div>
 ///   <div class="card-body">content</div>
 /// </div>
-pub fn card_with_header(header: String, content: List(String)) -> String {
-  // CONTRACT: Returns HTML string for card with header
-  let content_str = string.concat(content)
-  "<div class=\"card\"><div class=\"card-header\">"
-  <> header
-  <> "</div><div class=\"card-body\">"
-  <> content_str
-  <> "</div></div>"
+pub fn card_with_header(
+  header: String,
+  content: List(element.Element(msg)),
+) -> element.Element(msg) {
+  html.div([attribute.class("card")], [
+    html.div([attribute.class("card-header")], [element.text(header)]),
+    html.div([attribute.class("card-body")], content),
+  ])
 }
 
 /// Card with header and actions
@@ -59,19 +60,16 @@ pub fn card_with_header(header: String, content: List(String)) -> String {
 /// </div>
 pub fn card_with_actions(
   header: String,
-  content: List(String),
-  actions: List(String),
-) -> String {
-  // CONTRACT: Returns HTML string for card with header and actions
-  let content_str = string.concat(content)
-  let actions_str = string.concat(actions)
-  "<div class=\"card\"><div class=\"card-header\">"
-  <> header
-  <> "<div class=\"card-actions\">"
-  <> actions_str
-  <> "</div></div><div class=\"card-body\">"
-  <> content_str
-  <> "</div></div>"
+  content: List(element.Element(msg)),
+  actions: List(element.Element(msg)),
+) -> element.Element(msg) {
+  html.div([attribute.class("card")], [
+    html.div([attribute.class("card-header")], [
+      element.text(header),
+      html.div([attribute.class("card-actions")], actions),
+    ]),
+    html.div([attribute.class("card-body")], content),
+  ])
 }
 
 /// Statistic card (value-focused)
@@ -82,9 +80,7 @@ pub fn card_with_actions(
 ///   <div class="stat-unit">kcal</div>
 ///   <div class="stat-label">Calories</div>
 /// </div>
-pub fn stat_card(stat: ui_types.StatCard) -> String {
-  // CONTRACT: Returns HTML string for stat card
-  // Note: trend field should optionally render as indicator
+pub fn stat_card(stat: ui_types.StatCard) -> element.Element(msg) {
   let ui_types.StatCard(
     label: label,
     value: value,
@@ -92,15 +88,17 @@ pub fn stat_card(stat: ui_types.StatCard) -> String {
     trend: _,
     color: color,
   ) = stat
-  "<div class=\"stat-card\" style=\"--color: "
-  <> color
-  <> "\"><div class=\"stat-value\">"
-  <> value
-  <> "</div><div class=\"stat-unit\">"
-  <> unit
-  <> "</div><div class=\"stat-label\">"
-  <> label
-  <> "</div></div>"
+  html.div(
+    [
+      attribute.class("stat-card"),
+      attribute.style([#("--color", color)]),
+    ],
+    [
+      html.div([attribute.class("stat-value")], [element.text(value)]),
+      html.div([attribute.class("stat-unit")], [element.text(unit)]),
+      html.div([attribute.class("stat-label")], [element.text(label)]),
+    ],
+  )
 }
 
 /// Recipe card for display in grid
@@ -114,8 +112,7 @@ pub fn stat_card(stat: ui_types.StatCard) -> String {
 ///     <div class="calories">Calories: 500</div>
 ///   </div>
 /// </div>
-pub fn recipe_card(data: ui_types.RecipeCardData) -> String {
-  // CONTRACT: Returns HTML string for recipe card
+pub fn recipe_card(data: ui_types.RecipeCardData) -> element.Element(msg) {
   let ui_types.RecipeCardData(
     id: _,
     name: name,
@@ -124,19 +121,22 @@ pub fn recipe_card(data: ui_types.RecipeCardData) -> String {
     image_url: image_url,
   ) = data
   let calories_str = calories |> float.truncate |> int.to_string
-  let image_html = case image_url {
-    option.Some(url) -> "<img src=\"" <> url <> "\" />"
-    option.None -> ""
+
+  let image_element = case image_url {
+    option.Some(url) -> [html.img([attribute.src(url)])]
+    option.None -> []
   }
-  "<div class=\"recipe-card\">"
-  <> image_html
-  <> "<div class=\"recipe-info\"><h3>"
-  <> name
-  <> "</h3><span class=\"category\">"
-  <> category
-  <> "</span><div class=\"calories\">"
-  <> calories_str
-  <> "</div></div></div>"
+
+  let children =
+    list.append(image_element, [
+      html.div([attribute.class("recipe-info")], [
+        html.h3([], [element.text(name)]),
+        html.span([attribute.class("category")], [element.text(category)]),
+        html.div([attribute.class("calories")], [element.text(calories_str)]),
+      ]),
+    ])
+
+  html.div([attribute.class("recipe-card")], children)
 }
 
 /// Food search result card
@@ -147,21 +147,18 @@ pub fn recipe_card(data: ui_types.RecipeCardData) -> String {
 ///   <div class="food-category">SR Legacy Foods</div>
 ///   <div class="food-type">Survey (FNDDS)</div>
 /// </div>
-pub fn food_card(data: ui_types.FoodCardData) -> String {
-  // CONTRACT: Returns HTML string for food result card
+pub fn food_card(data: ui_types.FoodCardData) -> element.Element(msg) {
   let ui_types.FoodCardData(
     fdc_id: _,
     description: description,
     data_type: data_type,
     category: category,
   ) = data
-  "<div class=\"food-card\"><div class=\"food-description\">"
-  <> description
-  <> "</div><div class=\"food-category\">"
-  <> category
-  <> "</div><div class=\"food-type\">"
-  <> data_type
-  <> "</div></div>"
+  html.div([attribute.class("food-card")], [
+    html.div([attribute.class("food-description")], [element.text(description)]),
+    html.div([attribute.class("food-category")], [element.text(category)]),
+    html.div([attribute.class("food-type")], [element.text(data_type)]),
+  ])
 }
 
 // ===================================================================
@@ -194,39 +191,39 @@ pub fn calorie_summary_card(
   current_calories: Float,
   target_calories: Float,
   date: String,
-) -> String {
+) -> element.Element(msg) {
   let current_int = float.truncate(current_calories)
   let target_int = float.truncate(target_calories)
   let percentage = { current_calories /. target_calories } *. 100.0
   let percentage_int = float.truncate(percentage)
 
   let percentage_class = case percentage {
-    p if p <. 90.0 -> "percentage-green"
-    p if p <=. 100.0 -> "percentage-yellow"
-    _ -> "percentage-red"
+    p if p <. 90.0 -> "percentage percentage-green"
+    p if p <=. 100.0 -> "percentage percentage-yellow"
+    _ -> "percentage percentage-red"
   }
 
-  "<div class=\"calorie-summary-card\">"
-  <> "<div class=\"date-nav\">"
-  <> "<button class=\"btn-prev-day\">&lt;</button>"
-  <> "<span class=\"current-date\">"
-  <> date
-  <> "</span>"
-  <> "<button class=\"btn-next-day\">&gt;</button>"
-  <> "</div>"
-  <> "<div class=\"calorie-display\">"
-  <> "<div class=\"current animated-counter\" data-animate-duration=\"1000\">"
-  <> int.to_string(current_int)
-  <> "</div>"
-  <> "<div class=\"separator\">/</div>"
-  <> "<div class=\"target\">"
-  <> int.to_string(target_int)
-  <> "</div>"
-  <> "</div>"
-  <> "<div class=\"percentage "
-  <> percentage_class
-  <> "\">"
-  <> int.to_string(percentage_int)
-  <> "%</div>"
-  <> "</div>"
+  html.div([attribute.class("calorie-summary-card")], [
+    html.div([attribute.class("date-nav")], [
+      html.button([attribute.class("btn-prev-day")], [element.text("<")]),
+      html.span([attribute.class("current-date")], [element.text(date)]),
+      html.button([attribute.class("btn-next-day")], [element.text(">")]),
+    ]),
+    html.div([attribute.class("calorie-display")], [
+      html.div(
+        [
+          attribute.class("current animated-counter"),
+          attribute.attribute("data-animate-duration", "1000"),
+        ],
+        [element.text(int.to_string(current_int))],
+      ),
+      html.div([attribute.class("separator")], [element.text("/")]),
+      html.div([attribute.class("target")], [
+        element.text(int.to_string(target_int)),
+      ]),
+    ]),
+    html.div([attribute.class(percentage_class)], [
+      element.text(int.to_string(percentage_int) <> "%"),
+    ]),
+  ])
 }
