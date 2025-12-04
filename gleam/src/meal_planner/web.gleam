@@ -106,7 +106,11 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["recipes", "new"] -> new_recipe_page()
     ["recipes", id, "edit"] -> edit_recipe_page(id, ctx)
     ["recipes", id] -> recipe_detail_page(id, ctx)
-    ["dashboard"] -> dashboard.dashboard(req, ctx)
+    ["dashboard"] ->
+      dashboard.dashboard(
+        req,
+        dashboard.Context(db: ctx.db, search_cache: ctx.search_cache),
+      )
     ["profile"] -> profile_page(ctx)
     ["foods"] -> foods_page(req, ctx)
     ["foods", id] -> food_detail_page(id, ctx)

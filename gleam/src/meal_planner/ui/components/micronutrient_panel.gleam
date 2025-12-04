@@ -6,12 +6,15 @@
 /// - Vitamins and minerals display
 /// - Responsive design with mobile support
 ///
-/// All components render as HTML strings suitable for SSR.
+/// All components render as Lustre HTML elements suitable for SSR.
 import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
+import lustre/attribute.{attribute, class}
+import lustre/element.{type Element, text}
+import lustre/element/html.{div, h3, p, span}
 import meal_planner/types.{type Micronutrients}
 
 // ===================================================================
@@ -262,7 +265,7 @@ pub fn extract_other_nutrients(
 // ===================================================================
 
 /// Render a single micronutrient progress bar
-pub fn micronutrient_bar(item: MicronutrientItem) -> String {
+pub fn micronutrient_bar(item: MicronutrientItem) -> Element(msg) {
   let percentage_str = item.percentage |> float.truncate |> int.to_string
   let amount_str = format_amount(item.amount, item.unit)
   let dv_str = format_amount(item.daily_value, item.unit)
@@ -275,60 +278,46 @@ pub fn micronutrient_bar(item: MicronutrientItem) -> String {
   }
   let width_str = float.to_string(visual_percentage)
 
-  "<div class=\"micronutrient-bar "
-  <> color_class
-  <> "\">"
-  <> "<div class=\"micro-header\">"
-  <> "<span class=\"micro-name\">"
-  <> item.name
-  <> "</span>"
-  <> "<span class=\"micro-value\">"
-  <> amount_str
-  <> item.unit
-  <> " / "
-  <> dv_str
-  <> item.unit
-  <> "</span>"
-  <> "</div>"
-  <> "<div class=\"micro-progress\">"
-  <> "<div class=\"micro-fill\" style=\"width: "
-  <> width_str
-  <> "%\"></div>"
-  <> "</div>"
-  <> "<div class=\"micro-percentage\">"
-  <> percentage_str
-  <> "% DV</div>"
-  <> "</div>"
+  div([class("micronutrient-bar " <> color_class)], [
+    div([class("micro-header")], [
+      span([class("micro-name")], [text(item.name)]),
+      span([class("micro-value")], [
+        text(amount_str <> item.unit <> " / " <> dv_str <> item.unit),
+      ]),
+    ]),
+    div([class("micro-progress")], [
+      div(
+        [class("micro-fill"), attribute("style", "width: " <> width_str <> "%")],
+        [],
+      ),
+    ]),
+    div([class("micro-percentage")], [text(percentage_str <> "% DV")]),
+  ])
 }
 
 /// Render a section of micronutrients (vitamins, minerals, or other)
 pub fn micronutrient_section(
   title: String,
   items: List(MicronutrientItem),
-) -> String {
+) -> Element(msg) {
   case items {
-    [] -> ""
+    [] -> element.none()
     _ -> {
-      let items_html = items |> list.map(micronutrient_bar) |> string.concat
-      "<div class=\"micro-section\">"
-      <> "<h3 class=\"micro-section-title\">"
-      <> title
-      <> "</h3>"
-      <> "<div class=\"micro-list\">"
-      <> items_html
-      <> "</div>"
-      <> "</div>"
+      div([class("micro-section")], [
+        h3([class("micro-section-title")], [text(title)]),
+        div([class("micro-list")], list.map(items, micronutrient_bar)),
+      ])
     }
   }
 }
 
 /// Complete micronutrient panel with all nutrients
-pub fn micronutrient_panel(micros: Option(Micronutrients)) -> String {
+pub fn micronutrient_panel(micros: Option(Micronutrients)) -> Element(msg) {
   case micros {
     None ->
-      "<div class=\"micronutrient-panel empty\">"
-      <> "<p class=\"empty-message\">No micronutrient data available</p>"
-      <> "</div>"
+      div([class("micronutrient-panel empty")], [
+        p([class("empty-message")], [text("No micronutrient data available")]),
+      ])
     Some(m) -> {
       let dv = standard_daily_values()
       let vitamins = extract_vitamins(m, dv)
@@ -341,42 +330,42 @@ pub fn micronutrient_panel(micros: Option(Micronutrients)) -> String {
         && list.is_empty(other)
       {
         True ->
-          "<div class=\"micronutrient-panel empty\">"
-          <> "<p class=\"empty-message\">No micronutrient data available</p>"
-          <> "</div>"
+          div([class("micronutrient-panel empty")], [
+            p([class("empty-message")], [
+              text("No micronutrient data available"),
+            ]),
+          ])
         False ->
-          "<div class=\"micronutrient-panel\">"
-          <> micronutrient_section("Vitamins", vitamins)
-          <> micronutrient_section("Minerals", minerals)
-          <> micronutrient_section("Other Nutrients", other)
-          <> "</div>"
+          div([class("micronutrient-panel")], [
+            micronutrient_section("Vitamins", vitamins),
+            micronutrient_section("Minerals", minerals),
+            micronutrient_section("Other Nutrients", other),
+          ])
       }
     }
   }
 }
 
 /// Compact micronutrient summary for cards
-pub fn micronutrient_summary(micros: Option(Micronutrients)) -> String {
+pub fn micronutrient_summary(micros: Option(Micronutrients)) -> Element(msg) {
   case micros {
-    None -> "<p class=\"micro-summary-empty\">No micronutrient data</p>"
+    None -> p([class("micro-summary-empty")], [text("No micronutrient data")])
     Some(m) -> {
       let dv = standard_daily_values()
       let vitamins = extract_vitamins(m, dv)
       let minerals = extract_minerals(m, dv)
 
-      let vitamin_count =
-        list.fold(vitamins, 0, fn(acc, _) { acc + 1 }) |> int.to_string
-      let mineral_count =
-        list.fold(minerals, 0, fn(acc, _) { acc + 1 }) |> int.to_string
+      let vitamin_count = list.length(vitamins) |> int.to_string
+      let mineral_count = list.length(minerals) |> int.to_string
 
-      "<div class=\"micro-summary\">"
-      <> "<span class=\"badge badge-vitamin\">"
-      <> vitamin_count
-      <> " vitamins</span>"
-      <> "<span class=\"badge badge-mineral\">"
-      <> mineral_count
-      <> " minerals</span>"
-      <> "</div>"
+      div([class("micro-summary")], [
+        span([class("badge badge-vitamin")], [
+          text(vitamin_count <> " vitamins"),
+        ]),
+        span([class("badge badge-mineral")], [
+          text(mineral_count <> " minerals"),
+        ]),
+      ])
     }
   }
 }

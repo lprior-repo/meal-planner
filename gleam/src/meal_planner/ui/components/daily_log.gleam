@@ -7,13 +7,16 @@
 /// - Collapsible sections
 /// - Complete daily log timeline
 ///
-/// All components render as HTML strings suitable for SSR.
+/// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: Bead meal-planner-uzr.3
 import gleam/float
 import gleam/int
 import gleam/list
 import gleam/string
+import lustre/attribute.{attribute, class}
+import lustre/element.{type Element, text}
+import lustre/element/html.{button, div, h3, span}
 import meal_planner/ui/types/ui_types
 
 // ===================================================================
@@ -29,26 +32,7 @@ import meal_planner/ui/types/ui_types
 /// - Macros (P/F/C)
 /// - Calories
 /// - Edit and delete action buttons
-///
-/// Renders:
-/// <div class="meal-entry-item">
-///   <div class="entry-time">08:30 AM</div>
-///   <div class="entry-details">
-///     <div class="food-name">Scrambled Eggs</div>
-///     <div class="portion">2 servings</div>
-///   </div>
-///   <div class="entry-macros">
-///     <span class="macro">P: 24g</span>
-///     <span class="macro">F: 18g</span>
-///     <span class="macro">C: 4g</span>
-///   </div>
-///   <div class="entry-calories">320 kcal</div>
-///   <div class="entry-actions">
-///     <button class="btn-edit">Edit</button>
-///     <button class="btn-delete">Delete</button>
-///   </div>
-/// </div>
-pub fn meal_entry_item(entry: ui_types.MealEntryData) -> String {
+pub fn meal_entry_item(entry: ui_types.MealEntryData) -> Element(msg) {
   let ui_types.MealEntryData(
     id: id,
     time: time,
@@ -66,43 +50,27 @@ pub fn meal_entry_item(entry: ui_types.MealEntryData) -> String {
   let carbs_str = float.truncate(carbs) |> int.to_string
   let calories_str = float.truncate(calories) |> int.to_string
 
-  "<div class=\"meal-entry-item\" data-entry-id=\""
-  <> id
-  <> "\">"
-  <> "<div class=\"entry-time\">"
-  <> time
-  <> "</div>"
-  <> "<div class=\"entry-details\">"
-  <> "<div class=\"food-name\">"
-  <> food_name
-  <> "</div>"
-  <> "<div class=\"portion\">"
-  <> portion
-  <> "</div>"
-  <> "</div>"
-  <> "<div class=\"entry-macros\">"
-  <> "<span class=\"macro macro-protein\">P: "
-  <> protein_str
-  <> "g</span>"
-  <> "<span class=\"macro macro-fat\">F: "
-  <> fat_str
-  <> "g</span>"
-  <> "<span class=\"macro macro-carbs\">C: "
-  <> carbs_str
-  <> "g</span>"
-  <> "</div>"
-  <> "<div class=\"entry-calories\">"
-  <> calories_str
-  <> " kcal</div>"
-  <> "<div class=\"entry-actions\">"
-  <> "<button class=\"btn-icon btn-edit\" data-entry-id=\""
-  <> id
-  <> "\">✏️</button>"
-  <> "<button class=\"btn-icon btn-delete\" data-entry-id=\""
-  <> id
-  <> "\">🗑️</button>"
-  <> "</div>"
-  <> "</div>"
+  div([class("meal-entry-item"), attribute("data-entry-id", id)], [
+    div([class("entry-time")], [text(time)]),
+    div([class("entry-details")], [
+      div([class("food-name")], [text(food_name)]),
+      div([class("portion")], [text(portion)]),
+    ]),
+    div([class("entry-macros")], [
+      span([class("macro macro-protein")], [text("P: " <> protein_str <> "g")]),
+      span([class("macro macro-fat")], [text("F: " <> fat_str <> "g")]),
+      span([class("macro macro-carbs")], [text("C: " <> carbs_str <> "g")]),
+    ]),
+    div([class("entry-calories")], [text(calories_str <> " kcal")]),
+    div([class("entry-actions")], [
+      button([class("btn-icon btn-edit"), attribute("data-entry-id", id)], [
+        text("✏️"),
+      ]),
+      button([class("btn-icon btn-delete"), attribute("data-entry-id", id)], [
+        text("🗑️"),
+      ]),
+    ]),
+  ])
 }
 
 // ===================================================================
@@ -116,53 +84,33 @@ pub fn meal_entry_item(entry: ui_types.MealEntryData) -> String {
 /// - Total calories for this meal type
 /// - Collapsible toggle
 /// - List of meal entries
-///
-/// Renders:
-/// <div class="meal-section" data-meal-type="breakfast">
-///   <div class="meal-section-header">
-///     <h3>Breakfast <span class="entry-count">(3)</span></h3>
-///     <span class="section-calories">650 kcal</span>
-///     <button class="collapse-toggle">▼</button>
-///   </div>
-///   <div class="meal-section-body">
-///     <!-- meal entries -->
-///   </div>
-/// </div>
 pub fn meal_section(
   meal_type: String,
   entries: List(ui_types.MealEntryData),
-) -> String {
-  let entry_count = list.fold(entries, 0, fn(acc, _) { acc + 1 })
+) -> Element(msg) {
+  let entry_count = list.length(entries)
   let total_calories =
     entries
     |> list.fold(0.0, fn(sum, entry) { sum +. entry.calories })
   let total_calories_str = float.truncate(total_calories) |> int.to_string
 
-  let entries_html =
-    entries
-    |> list.map(meal_entry_item)
-    |> string.concat
-
   let meal_type_lower = string.lowercase(meal_type)
 
-  "<div class=\"meal-section\" data-meal-type=\""
-  <> meal_type_lower
-  <> "\">"
-  <> "<div class=\"meal-section-header\">"
-  <> "<h3>"
-  <> meal_type
-  <> " <span class=\"entry-count\">("
-  <> int.to_string(entry_count)
-  <> ")</span></h3>"
-  <> "<span class=\"section-calories\">"
-  <> total_calories_str
-  <> " kcal</span>"
-  <> "<button class=\"collapse-toggle\">▼</button>"
-  <> "</div>"
-  <> "<div class=\"meal-section-body\">"
-  <> entries_html
-  <> "</div>"
-  <> "</div>"
+  div([class("meal-section"), attribute("data-meal-type", meal_type_lower)], [
+    div([class("meal-section-header")], [
+      h3([], [
+        text(meal_type <> " "),
+        span([class("entry-count")], [
+          text("(" <> int.to_string(entry_count) <> ")"),
+        ]),
+      ]),
+      span([class("section-calories")], [
+        text(total_calories_str <> " kcal"),
+      ]),
+      button([class("collapse-toggle")], [text("▼")]),
+    ]),
+    div([class("meal-section-body")], list.map(entries, meal_entry_item)),
+  ])
 }
 
 // ===================================================================
@@ -178,12 +126,7 @@ pub fn meal_section(
 /// - Snack
 ///
 /// Each section is collapsible and shows total calories
-///
-/// Renders:
-/// <div class="daily-log-timeline">
-///   <!-- meal sections -->
-/// </div>
-pub fn daily_log_timeline(entries: List(ui_types.MealEntryData)) -> String {
+pub fn daily_log_timeline(entries: List(ui_types.MealEntryData)) -> Element(msg) {
   // Group entries by meal type
   let breakfast_entries =
     entries
@@ -201,27 +144,22 @@ pub fn daily_log_timeline(entries: List(ui_types.MealEntryData)) -> String {
     entries
     |> list.filter(fn(e) { e.meal_type == "snack" })
 
-  // Build sections HTML
-  let sections = [
-    case list.is_empty(breakfast_entries) {
-      True -> ""
-      False -> meal_section("Breakfast", breakfast_entries)
-    },
-    case list.is_empty(lunch_entries) {
-      True -> ""
-      False -> meal_section("Lunch", lunch_entries)
-    },
-    case list.is_empty(dinner_entries) {
-      True -> ""
-      False -> meal_section("Dinner", dinner_entries)
-    },
-    case list.is_empty(snack_entries) {
-      True -> ""
-      False -> meal_section("Snack", snack_entries)
-    },
-  ]
+  // Build sections list
+  let sections =
+    [
+      #("Breakfast", breakfast_entries),
+      #("Lunch", lunch_entries),
+      #("Dinner", dinner_entries),
+      #("Snack", snack_entries),
+    ]
+    |> list.filter(fn(section) {
+      let #(_, section_entries) = section
+      !list.is_empty(section_entries)
+    })
+    |> list.map(fn(section) {
+      let #(name, section_entries) = section
+      meal_section(name, section_entries)
+    })
 
-  let sections_html = sections |> string.concat
-
-  "<div class=\"daily-log-timeline\">" <> sections_html <> "</div>"
+  div([class("daily-log-timeline")], sections)
 }

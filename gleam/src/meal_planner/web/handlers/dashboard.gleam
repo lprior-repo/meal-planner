@@ -12,18 +12,16 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/uri
-import lustre/attribute
-import lustre/element
-import lustre/element/html
 import meal_planner/storage
 import meal_planner/storage_optimized
-import meal_planner/types
-import meal_planner/types.{type UserProfile, Macros}
-import meal_planner/ui/components/progress
+import meal_planner/types.{
+  type Macros, type UserProfile, Macros, daily_macro_targets, macros_calories,
+}
+import meal_planner/ui/components/dashboard as dashboard_component
 import pog
 import wisp
 
-/// Web context holding database connection and query cache
+/// Web context holding database connection
 pub type Context {
   Context(db: pog.Connection, search_cache: storage_optimized.SearchCache)
 }
@@ -32,7 +30,7 @@ pub type Context {
 pub fn dashboard(req: wisp.Request, ctx: Context) -> wisp.Response {
   // Get user profile to determine target macros
   let profile = load_profile(ctx)
-  let targets = types.daily_macro_targets(profile)
+  let targets = daily_macro_targets(profile)
 
   // Get date from query parameters or use today's date
   let date = extract_date_param(req)
@@ -43,69 +41,69 @@ pub fn dashboard(req: wisp.Request, ctx: Context) -> wisp.Response {
   case storage.get_todays_logs(ctx.db, default_user_id, date) {
     Error(_) -> {
       // Return error response
-      let error_content = [
-        html.div([attribute.class("error")], [
-          element.text("Failed to load daily logs"),
-        ]),
-      ]
-      wisp.html_response(render_dashboard_html(error_content), 500)
+      let error_html = "<div class=\"error\">Failed to load daily logs</div>"
+      wisp.html_response(error_html, 500)
     }
     Ok(logs) -> {
       // Calculate current macros from logs
       let current = sum_log_macros(logs)
 
-      // Render dashboard with progress bars
-      let content = [
-        html.div([attribute.class("dashboard-container")], [
-          html.h1([], [element.text("Daily Macro Progress")]),
-          html.p([attribute.class("dashboard-date")], [element.text(date)]),
-          // Calorie summary
-          html.div([attribute.class("calorie-summary")], [
-            html.div([attribute.class("calorie-display")], [
-              html.span([attribute.class("current-calories")], [
-                element.text(
-                  float_to_display_string(types.macros_calories(current)),
-                ),
-              ]),
-              html.span([attribute.class("separator")], [element.text(" / ")]),
-              html.span([attribute.class("target-calories")], [
-                element.text(
-                  float_to_display_string(types.macros_calories(targets)),
-                ),
-              ]),
-              html.span([attribute.class("unit")], [element.text(" cal")]),
-            ]),
-          ]),
-          // Macro progress bars
-          html.div([attribute.class("macro-progress")], [
-            progress.macro_bar(
-              "Protein",
-              current.protein,
-              targets.protein,
-              "protein",
-            ),
-            progress.macro_bar("Fat", current.fat, targets.fat, "fat"),
-            progress.macro_bar("Carbs", current.carbs, targets.carbs, "carbs"),
-          ]),
-          // Log entries list
-          html.div([attribute.class("log-entries")], [
-            html.h2([], [element.text("Today's Entries")]),
-            case list.length(logs) {
-              0 ->
-                html.p([attribute.class("empty-state")], [
-                  element.text("No logs recorded yet"),
-                ])
-              _ ->
-                html.ul(
-                  [attribute.class("entries-list")],
-                  list.map(logs, render_log_entry),
-                )
-            },
-          ]),
-        ]),
-      ]
+      // Build dashboard HTML
+      let dashboard_html =
+        "<div class=\"dashboard-container\">"
+        <> "<h1>Daily Macro Progress</h1>"
+        <> "<p class=\"dashboard-date\">"
+        <> date
+        <> "</p>"
+        <> "<div class=\"calorie-summary\">"
+        <> "<div class=\"calorie-display\">"
+        <> "<span class=\"current-calories\">"
+        <> float_to_display_string(macros_calories(current))
+        <> "</span>"
+        <> "<span class=\"separator\"> / </span>"
+        <> "<span class=\"target-calories\">"
+        <> float_to_display_string(macros_calories(targets))
+        <> "</span>"
+        <> "<span class=\"unit\"> cal</span>"
+        <> "</div></div>"
+        <> "<div class=\"macro-progress\">"
+        <> "<div class=\"macro-bar\">"
+        <> "<div class=\"macro-bar-label\">Protein</div>"
+        <> dashboard_component.progress_bar(
+          float_to_int(current.protein),
+          float_to_int(targets.protein),
+        )
+        <> "</div>"
+        <> "<div class=\"macro-bar\">"
+        <> "<div class=\"macro-bar-label\">Fat</div>"
+        <> dashboard_component.progress_bar(
+          float_to_int(current.fat),
+          float_to_int(targets.fat),
+        )
+        <> "</div>"
+        <> "<div class=\"macro-bar\">"
+        <> "<div class=\"macro-bar-label\">Carbs</div>"
+        <> dashboard_component.progress_bar(
+          float_to_int(current.carbs),
+          float_to_int(targets.carbs),
+        )
+        <> "</div>"
+        <> "</div>"
+        <> "<div class=\"log-entries\">"
+        <> "<h2>Today's Entries</h2>"
+        <> case list.length(logs) {
+          0 -> "<p class=\"empty-state\">No logs recorded yet</p>"
+          _ ->
+            "<ul class=\"entries-list\">"
+            <> list.fold(logs, "", fn(acc, log) {
+              acc <> render_log_entry_html(log)
+            })
+            <> "</ul>"
+        }
+        <> "</div>"
+        <> "</div>"
 
-      wisp.html_response(render_dashboard_html(content), 200)
+      wisp.html_response(dashboard_html, 200)
     }
   }
 }
@@ -143,7 +141,7 @@ fn sum_log_macros(logs: List(storage.Log)) -> Macros {
       None ->
         // No macros recorded, keep accumulator
         acc
-      Some(macros_str) ->
+      Some(_macros_str) ->
         // Parse macros string (format: "protein:fat:carbs" or similar)
         // For now, assume no macros in string, return as-is
         acc
@@ -151,24 +149,31 @@ fn sum_log_macros(logs: List(storage.Log)) -> Macros {
   })
 }
 
-/// Render individual log entry
-fn render_log_entry(log: storage.Log) -> element.Element(msg) {
-  html.li([attribute.class("log-entry")], [
-    html.div([attribute.class("entry-info")], [
-      html.p([], [
-        element.text("Food ID: " <> int.to_string(log.food_id)),
-      ]),
-      html.p([], [
-        element.text("Quantity: " <> float_to_display_string(log.quantity)),
-      ]),
-      html.p([], [element.text("Date: " <> log.log_date)]),
-    ]),
-  ])
+/// Render individual log entry as HTML
+fn render_log_entry_html(log: storage.Log) -> String {
+  "<li class=\"log-entry\">"
+  <> "<div class=\"entry-info\">"
+  <> "<p>Food ID: "
+  <> int.to_string(log.food_id)
+  <> "</p>"
+  <> "<p>Quantity: "
+  <> float_to_display_string(log.quantity)
+  <> "</p>"
+  <> "<p>Date: "
+  <> log.log_date
+  <> "</p>"
+  <> "</div>"
+  <> "</li>"
+}
+
+/// Convert float to integer (truncate decimal)
+fn float_to_int(f: Float) -> Int {
+  float.truncate(f)
 }
 
 /// Format float for display (2 decimal places)
 fn float_to_display_string(f: Float) -> String {
-  let truncated = float.truncate(f)
+  let truncated = float_to_int(f)
   int.to_string(truncated)
 }
 
@@ -177,10 +182,4 @@ fn get_today_date() -> String {
   // Simplified implementation - returns fixed date
   // In production, use a proper date library
   "2025-12-01"
-}
-
-/// Wrap content with basic HTML structure
-fn render_dashboard_html(content: List(element.Element(msg))) -> String {
-  let html_element = html.div([attribute.class("dashboard-page")], content)
-  element.to_string(html_element)
 }
