@@ -1,6 +1,8 @@
 // Tests for skeleton loading components
 // Validates HTML structure and accessibility attributes
 
+import gleam/list
+import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/ui/skeletons

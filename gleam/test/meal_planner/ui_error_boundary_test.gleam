@@ -2,6 +2,7 @@
 ///
 /// Tests for error boundary wrappers, fallback UI, and error handling logic.
 import gleam/option.{None, Some}
+import gleam/string
 import gleeunit
 import gleeunit/should
 import lustre/attribute
@@ -11,6 +12,16 @@ import meal_planner/ui/error_boundary
 
 pub fn main() {
   gleeunit.main()
+}
+
+/// Helper function to check if string contains substring
+fn should_contain(haystack: String, needle: String) -> Nil {
+  string.contains(haystack, needle) |> should.be_true()
+}
+
+/// Helper function to check if string does NOT contain substring
+fn should_not_contain(haystack: String, needle: String) -> Nil {
+  string.contains(haystack, needle) |> should.be_false()
 }
 
 // ===================================================================
@@ -136,7 +147,7 @@ pub fn boundary_state_error_test() {
   // When state is Error, should render fallback wrapped in boundary div
   result
   |> element.to_string
-  |> should.contain("component-boundary")
+  |> should_contain("component-boundary")
 }
 
 // ===================================================================
@@ -158,7 +169,7 @@ pub fn form_boundary_ok_state_test() {
   // Should render form when no error
   result
   |> element.to_string
-  |> should.contain("<form")
+  |> should_contain("<form")
 }
 
 pub fn form_boundary_error_state_test() {
@@ -180,11 +191,11 @@ pub fn form_boundary_error_state_test() {
   // Should render error handler when error state
   result
   |> element.to_string
-  |> should.contain("form-boundary")
+  |> should_contain("form-boundary")
 
   result
   |> element.to_string
-  |> should.contain("form-error")
+  |> should_contain("form-error")
 }
 
 pub fn form_boundary_recoverable_error_shows_retry_test() {
@@ -211,7 +222,7 @@ pub fn form_boundary_recoverable_error_shows_retry_test() {
   // Should show retry button for recoverable errors
   result
   |> element.to_string
-  |> should.contain("Retry")
+  |> should_contain("Retry")
 }
 
 pub fn form_validation_error_display_test() {
@@ -230,24 +241,24 @@ pub fn form_validation_error_display_test() {
 
   // Should contain overall message
   html_string
-  |> should.contain("Please fix the errors below")
+  |> should_contain("Please fix the errors below")
 
   // Should contain field errors
   html_string
-  |> should.contain("name")
+  |> should_contain("name")
 
   html_string
-  |> should.contain("Recipe name is required")
+  |> should_contain("Recipe name is required")
 
   html_string
-  |> should.contain("servings")
+  |> should_contain("servings")
 
   html_string
-  |> should.contain("Must be greater than 0")
+  |> should_contain("Must be greater than 0")
 
   // Should have proper structure
   html_string
-  |> should.contain("validation-error-list")
+  |> should_contain("validation-error-list")
 }
 
 // ===================================================================
@@ -270,7 +281,7 @@ pub fn fetch_boundary_ok_state_test() {
   // Should render content when no error
   result
   |> element.to_string
-  |> should.contain("Data loaded")
+  |> should_contain("Data loaded")
 }
 
 pub fn fetch_boundary_error_state_test() {
@@ -290,11 +301,11 @@ pub fn fetch_boundary_error_state_test() {
   // Should render error display
   result
   |> element.to_string
-  |> should.contain("fetch-boundary")
+  |> should_contain("fetch-boundary")
 
   result
   |> element.to_string
-  |> should.contain("Network Error")
+  |> should_contain("Network Error")
 }
 
 pub fn fetch_error_display_with_retry_test() {
@@ -318,18 +329,18 @@ pub fn fetch_error_display_with_retry_test() {
 
   // Should show error message
   html_string
-  |> should.contain("Failed to load recipes")
+  |> should_contain("Failed to load recipes")
 
   // Should show retry button
   html_string
-  |> should.contain("Retry")
+  |> should_contain("Retry")
 
   // Should show technical details
   html_string
-  |> should.contain("Technical Details")
+  |> should_contain("Technical Details")
 
   html_string
-  |> should.contain("HTTP 500")
+  |> should_contain("HTTP 500")
 }
 
 pub fn fetch_error_display_non_recoverable_test() {
@@ -350,15 +361,15 @@ pub fn fetch_error_display_non_recoverable_test() {
 
   // Should show error message
   html_string
-  |> should.contain("Unauthorized access")
+  |> should_contain("Unauthorized access")
 
   // Should NOT show retry button
   html_string
-  |> should.not_contain("Retry")
+  |> should_not_contain("Retry")
 
   // Should show home button instead
   html_string
-  |> should.contain("Go Home")
+  |> should_contain("Go Home")
 }
 
 // ===================================================================
@@ -380,7 +391,7 @@ pub fn route_boundary_ok_state_test() {
   // Should render content when no error
   result
   |> element.to_string
-  |> should.contain("Page content")
+  |> should_contain("Page content")
 }
 
 pub fn route_boundary_error_state_test() {
@@ -407,11 +418,11 @@ pub fn route_boundary_error_state_test() {
   // Should render fallback
   result
   |> element.to_string
-  |> should.contain("route-boundary")
+  |> should_contain("route-boundary")
 
   result
   |> element.to_string
-  |> should.contain("404 Not Found")
+  |> should_contain("404 Not Found")
 }
 
 pub fn route_not_found_page_test() {
@@ -421,21 +432,21 @@ pub fn route_not_found_page_test() {
 
   // Should show 404 code
   html_string
-  |> should.contain("404")
+  |> should_contain("404")
 
   // Should show the invalid path
   html_string
-  |> should.contain("/invalid/path")
+  |> should_contain("/invalid/path")
 
   // Should provide navigation suggestions
   html_string
-  |> should.contain("Dashboard")
+  |> should_contain("Dashboard")
 
   html_string
-  |> should.contain("Browse Recipes")
+  |> should_contain("Browse Recipes")
 
   html_string
-  |> should.contain("Search Foods")
+  |> should_contain("Search Foods")
 }
 
 pub fn invalid_route_param_page_test() {
@@ -445,15 +456,15 @@ pub fn invalid_route_param_page_test() {
 
   // Should show parameter name
   html_string
-  |> should.contain("recipe_id")
+  |> should_contain("recipe_id")
 
   // Should show invalid value
   html_string
-  |> should.contain("invalid-123")
+  |> should_contain("invalid-123")
 
   // Should show error message
   html_string
-  |> should.contain("Invalid Parameter")
+  |> should_contain("Invalid Parameter")
 }
 
 // ===================================================================
@@ -475,7 +486,7 @@ pub fn component_boundary_ok_state_test() {
   // Should render content when no error
   result
   |> element.to_string
-  |> should.contain("Component")
+  |> should_contain("Component")
 }
 
 pub fn component_boundary_error_state_test() {
@@ -494,11 +505,11 @@ pub fn component_boundary_error_state_test() {
   // Should render fallback
   result
   |> element.to_string
-  |> should.contain("component-boundary")
+  |> should_contain("component-boundary")
 
   result
   |> element.to_string
-  |> should.contain("Fallback")
+  |> should_contain("Fallback")
 }
 
 pub fn component_error_fallback_with_details_test() {
@@ -523,19 +534,19 @@ pub fn component_error_fallback_with_details_test() {
 
   // Should show component name
   html_string
-  |> should.contain("RecipeCard")
+  |> should_contain("RecipeCard")
 
   // Should show error message
   html_string
-  |> should.contain("Failed to render")
+  |> should_contain("Failed to render")
 
   // Should show details when requested
   html_string
-  |> should.contain("Stack trace")
+  |> should_contain("Stack trace")
 
   // Should show retry for recoverable errors
   html_string
-  |> should.contain("Retry")
+  |> should_contain("Retry")
 }
 
 pub fn component_error_fallback_no_details_test() {
@@ -560,11 +571,11 @@ pub fn component_error_fallback_no_details_test() {
 
   // Should NOT show details when show_details is False
   html_string
-  |> should.not_contain("Hidden details")
+  |> should_not_contain("Hidden details")
 
   // Should show dismiss for non-recoverable errors
   html_string
-  |> should.contain("Dismiss")
+  |> should_contain("Dismiss")
 }
 
 // ===================================================================
@@ -588,28 +599,28 @@ pub fn error_fallback_with_actions_test() {
 
   // Should contain error message
   html_string
-  |> should.contain("Something went wrong")
+  |> should_contain("Something went wrong")
 
   // Should contain icon
   html_string
-  |> should.contain("⚠")
+  |> should_contain("⚠")
 
   // Should contain actions
   html_string
-  |> should.contain("Retry")
+  |> should_contain("Retry")
 
   html_string
-  |> should.contain("Home")
+  |> should_contain("Home")
 }
 
 pub fn retry_button_with_url_test() {
   let result = error_boundary.retry_button(Some("/api/retry"))
 
   element.to_string(result)
-  |> should.contain("Retry")
+  |> should_contain("Retry")
 
   element.to_string(result)
-  |> should.contain("/api/retry")
+  |> should_contain("/api/retry")
 }
 
 pub fn retry_button_without_url_test() {
@@ -619,11 +630,11 @@ pub fn retry_button_without_url_test() {
 
   // Should have retry button
   html_string
-  |> should.contain("Retry")
+  |> should_contain("Retry")
 
   // Should have onclick reload
   html_string
-  |> should.contain("window.location.reload()")
+  |> should_contain("window.location.reload()")
 }
 
 pub fn reset_button_test() {
@@ -632,10 +643,10 @@ pub fn reset_button_test() {
   let html_string = element.to_string(result)
 
   html_string
-  |> should.contain("Reset")
+  |> should_contain("Reset")
 
   html_string
-  |> should.contain("/dashboard")
+  |> should_contain("/dashboard")
 }
 
 // ===================================================================
@@ -659,7 +670,7 @@ pub fn async_boundary_loading_state_test() {
   // Should show loading state
   result
   |> element.to_string
-  |> should.contain("Loading...")
+  |> should_contain("Loading...")
 }
 
 pub fn async_boundary_success_state_test() {
@@ -679,7 +690,7 @@ pub fn async_boundary_success_state_test() {
   // Should show content with data
   result
   |> element.to_string
-  |> should.contain("Recipe data")
+  |> should_contain("Recipe data")
 }
 
 pub fn async_boundary_failed_state_test() {
@@ -702,11 +713,11 @@ pub fn async_boundary_failed_state_test() {
   // Should show error fallback
   result
   |> element.to_string
-  |> should.contain("async-boundary")
+  |> should_contain("async-boundary")
 
   result
   |> element.to_string
-  |> should.contain("API Error")
+  |> should_contain("API Error")
 }
 
 // ===================================================================
@@ -728,7 +739,7 @@ pub fn page_boundary_ok_state_test() {
   // Should render page content
   result
   |> element.to_string
-  |> should.contain("Page content")
+  |> should_contain("Page content")
 }
 
 pub fn page_boundary_error_state_test() {
@@ -743,7 +754,7 @@ pub fn page_boundary_error_state_test() {
     )
   let state = error_boundary.Error(error)
   let content = html.div([], [element.text("Page")])
-  let error_handler = fn(err) {
+  let error_handler = fn(err: error_boundary.BoundaryError) {
     html.div([], [element.text("Error: " <> err.message)])
   }
 
@@ -757,9 +768,9 @@ pub fn page_boundary_error_state_test() {
   // Should render error page
   result
   |> element.to_string
-  |> should.contain("page-boundary")
+  |> should_contain("page-boundary")
 
   result
   |> element.to_string
-  |> should.contain("Error: Page crashed")
+  |> should_contain("Error: Page crashed")
 }
