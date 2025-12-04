@@ -275,6 +275,26 @@ gleam run -m scripts/<script_name>
 - Document public functions with doc comments
 - Prefer pattern matching over if/else chains
 
+## Development Workflow
+
+### Pre-commit Hooks
+
+This project uses pre-commit hooks to ensure code quality:
+- Runs `gleam format` and `gleam check` before each commit
+- Automatically formats code and validates compilation
+
+To bypass the hook temporarily (emergency commits only):
+
+```bash
+git commit --no-verify -m "Emergency fix"
+```
+
+To disable permanently (not recommended):
+
+```bash
+chmod -x .git/hooks/pre-commit
+```
+
 ## Contributing
 
 1. Fork the repository
