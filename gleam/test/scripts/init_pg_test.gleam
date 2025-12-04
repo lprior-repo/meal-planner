@@ -101,12 +101,50 @@ fn drop_test_database(db_name: String) -> Result(Nil, String) {
   }
 }
 
+/// Run all migrations in standard order (skips migration 009)
+fn run_all_migrations(db: pog.Connection) -> Result(Nil, String) {
+  let migrations = [
+    "migrations_pg/001_schema_migrations.sql",
+    "migrations_pg/002_usda_tables.sql",
+    "migrations_pg/003_app_tables.sql",
+    "migrations_pg/005_add_micronutrients_to_food_logs.sql",
+    "migrations_pg/006_add_source_tracking.sql",
+    // Skip 009 - requires users table which doesn't exist yet
+  ]
+
+  list.try_each(migrations, fn(migration_path) {
+    run_migration(db, migration_path)
+  })
+}
+
 /// Helper to run a test with isolated database
-/// Creates unique DB, runs test, cleans up
+/// Creates unique DB, runs migrations, runs test, cleans up
 fn with_test_db(test_fn: fn(pog.Connection) -> a) -> a {
   let db_name = unique_test_db_name()
 
-  // Setup
+  // Setup: create database
+  let assert Ok(_) = create_test_database(db_name)
+  let assert Ok(started) = pog.start(test_db_config(db_name))
+  let db = started.data
+
+  // Setup: run migrations
+  let assert Ok(_) = run_all_migrations(db)
+
+  // Run test
+  let result = test_fn(db)
+
+  // Cleanup
+  let assert Ok(_) = drop_test_database(db_name)
+
+  result
+}
+
+/// Helper to run a test with empty database (no migrations)
+/// Used for testing migration execution itself
+fn with_empty_db(test_fn: fn(pog.Connection) -> a) -> a {
+  let db_name = unique_test_db_name()
+
+  // Setup: create database only (no migrations)
   let assert Ok(_) = create_test_database(db_name)
   let assert Ok(started) = pog.start(test_db_config(db_name))
   let db = started.data
