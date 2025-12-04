@@ -73,17 +73,20 @@ pub fn input_with_label(
   <> "</div>"
 }
 
-/// Search input with integrated button
+/// Search input with integrated button and HTMX
 ///
 /// Renders:
 /// <div class="search-box" role="search">
-///   <input type="search" class="input-search" aria-label="placeholder" />
+///   <input type="search" class="input-search" aria-label="placeholder"
+///          hx-get="/api/foods/search" hx-trigger="input changed delay:300ms"
+///          hx-target="#food-results" hx-swap="innerHTML" hx-push-url="true" />
 ///   <button class="btn btn-primary" type="submit">Search</button>
 /// </div>
 pub fn search_input(query: String, placeholder: String) -> String {
   "<div class=\"search-box\" role=\"search\">"
   <> "<input type=\"search\" class=\"input-search\" "
   <> "id=\"search-input\" "
+  <> "name=\"q\" "
   <> "placeholder=\""
   <> placeholder
   <> "\" "
@@ -92,7 +95,12 @@ pub fn search_input(query: String, placeholder: String) -> String {
   <> "\" "
   <> "value=\""
   <> query
-  <> "\" />"
+  <> "\" "
+  <> "hx-get=\"/api/foods/search\" "
+  <> "hx-trigger=\"input changed delay:300ms\" "
+  <> "hx-target=\"#food-results\" "
+  <> "hx-swap=\"innerHTML\" "
+  <> "hx-push-url=\"true\" />"
   <> "<button class=\"btn btn-primary\" type=\"submit\" aria-label=\"Submit search\">Search</button>"
   <> "</div>"
 }
@@ -241,17 +249,20 @@ pub fn form(
 // SEARCH INPUT COMPONENTS (Bead meal-planner-rvz.1)
 // ===================================================================
 
-/// Search input with clear button
+/// Search input with clear button and HTMX
 ///
 /// Features:
-/// - 300ms debouncing via data attribute (handled by client JS)
+/// - 300ms debouncing via HTMX trigger delay
 /// - Clear button visible when query has value
 /// - Placeholder text
 /// - Proper ARIA labels for accessibility
+/// - HTMX attributes for dynamic search
 ///
 /// Renders:
-/// <div class="search-input-container" data-debounce="300">
-///   <input type="search" class="input-search" ... />
+/// <div class="search-input-container">
+///   <input type="search" class="input-search"
+///          hx-get="/api/foods/search" hx-trigger="input changed delay:300ms"
+///          hx-target="#food-results" hx-swap="innerHTML" ... />
 ///   <button type="button" class="search-clear-btn [hidden]">×</button>
 /// </div>
 pub fn search_input_with_clear(query: String, placeholder: String) -> String {
@@ -261,8 +272,10 @@ pub fn search_input_with_clear(query: String, placeholder: String) -> String {
     False -> "search-clear-btn hidden"
   }
 
-  "<div class=\"search-input-container\" data-debounce=\"300\">"
+  "<div class=\"search-input-container\">"
   <> "<input type=\"search\" class=\"input-search\" "
+  <> "id=\"search-input\" "
+  <> "name=\"q\" "
   <> "placeholder=\""
   <> placeholder
   <> "\" "
@@ -271,17 +284,22 @@ pub fn search_input_with_clear(query: String, placeholder: String) -> String {
   <> "\" "
   <> "aria-label=\""
   <> placeholder
-  <> "\" />"
+  <> "\" "
+  <> "hx-get=\"/api/foods/search\" "
+  <> "hx-trigger=\"input changed delay:300ms from:#search-input\" "
+  <> "hx-target=\"#food-results\" "
+  <> "hx-swap=\"innerHTML\" "
+  <> "hx-push-url=\"true\" />"
   <> "<button type=\"button\" class=\""
   <> clear_btn_class
   <> "\">×</button>"
   <> "</div>"
 }
 
-/// Search input with autofocus control
+/// Search input with autofocus control and HTMX
 ///
 /// Same as search_input_with_clear but with optional autofocus attribute
-/// for keyboard focus management.
+/// for keyboard focus management and HTMX for dynamic search.
 pub fn search_input_with_autofocus(
   query: String,
   placeholder: String,
@@ -298,8 +316,10 @@ pub fn search_input_with_autofocus(
     False -> ""
   }
 
-  "<div class=\"search-input-container\" data-debounce=\"300\">"
+  "<div class=\"search-input-container\">"
   <> "<input type=\"search\" class=\"input-search\" "
+  <> "id=\"search-input\" "
+  <> "name=\"q\" "
   <> "placeholder=\""
   <> placeholder
   <> "\" "
@@ -308,7 +328,12 @@ pub fn search_input_with_autofocus(
   <> "\" "
   <> "aria-label=\""
   <> placeholder
-  <> "\""
+  <> "\" "
+  <> "hx-get=\"/api/foods/search\" "
+  <> "hx-trigger=\"input changed delay:300ms from:#search-input\" "
+  <> "hx-target=\"#food-results\" "
+  <> "hx-swap=\"innerHTML\" "
+  <> "hx-push-url=\"true\""
   <> autofocus_attr
   <> " />"
   <> "<button type=\"button\" class=\""
@@ -500,17 +525,17 @@ pub fn search_results_empty(query: String) -> String {
 // KEYBOARD NAVIGATION COMPONENTS (Bead meal-planner-rvz.3)
 // ===================================================================
 
-/// Search combobox with keyboard navigation
+/// Search combobox with keyboard navigation and HTMX
 ///
 /// Features:
 /// - ARIA combobox role with proper attributes
 /// - aria-expanded indicates dropdown state
 /// - aria-controls links to results listbox
 /// - aria-autocomplete indicates list completion
-/// - Keyboard navigation data attribute for JS handlers
+/// - HTMX for dynamic search (no JavaScript required)
 /// - Combines search input + results list
 ///
-/// Renders full search widget with keyboard support
+/// Renders full search widget with keyboard support and HTMX
 pub fn search_combobox(
   query: String,
   placeholder: String,
@@ -532,9 +557,10 @@ pub fn search_combobox(
   <> "aria-expanded=\""
   <> expanded_str
   <> "\" "
-  <> "aria-controls=\"search-results-listbox\" "
-  <> "data-keyboard-nav=\"true\">"
+  <> "aria-controls=\"search-results-listbox\">"
   <> "<input type=\"search\" class=\"input-search\" "
+  <> "id=\"search-input\" "
+  <> "name=\"q\" "
   <> "placeholder=\""
   <> placeholder
   <> "\" "
@@ -544,7 +570,12 @@ pub fn search_combobox(
   <> "aria-label=\""
   <> placeholder
   <> "\" "
-  <> "aria-autocomplete=\"list\" />"
+  <> "aria-autocomplete=\"list\" "
+  <> "hx-get=\"/api/foods/search\" "
+  <> "hx-trigger=\"input changed delay:300ms from:#search-input\" "
+  <> "hx-target=\"#food-results\" "
+  <> "hx-swap=\"innerHTML\" "
+  <> "hx-push-url=\"true\" />"
   <> results_html
   <> "</div>"
 }
@@ -576,7 +607,7 @@ pub fn search_combobox_with_selection(
   <> expanded_str
   <> "\" "
   <> "aria-controls=\"search-results-listbox\" "
-  <> "data-keyboard-nav=\"true\">"
+  <> ">"
   <> "<input type=\"search\" class=\"input-search\" "
   <> "placeholder=\""
   <> placeholder
@@ -604,7 +635,7 @@ pub fn search_combobox_with_selection(
 /// Parameters:
 /// - `categories`: List of category strings from database
 /// - `selected_category`: Currently selected category (None = "All Categories")
-/// - `on_change_handler`: Name of JavaScript handler for change events
+/// - `on_change_handler`: DEPRECATED - HTMX handles changes automatically
 ///
 /// Returns: HTML string for the select element
 ///
@@ -653,9 +684,12 @@ pub fn category_dropdown(
   <> "id=\"category-filter\" "
   <> "name=\"category\" "
   <> "aria-label=\"Filter by category\" "
-  <> "onchange=\""
-  <> on_change_handler
-  <> "(this)\">"
+  <> "hx-get=\"/api/foods/search\" "
+  <> "hx-trigger=\"change\" "
+  <> "hx-target=\"#food-results\" "
+  <> "hx-swap=\"innerHTML\" "
+  <> "hx-push-url=\"true\" "
+  <> "hx-include=\"[name='category']\">"
   <> "<option value=\"\""
   <> all_selected
   <> ">All Categories</option>"

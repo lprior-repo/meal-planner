@@ -27,6 +27,7 @@ import meal_planner/types.{
   FoodLogEntry, Gain, Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack,
   UserProfile,
 }
+import meal_planner/ui/components/food_search
 import mist
 import pog
 import wisp
@@ -1373,6 +1374,10 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
 
   let food_count = get_foods_count(ctx)
 
+  // Create filter chips and categories
+  let chips = food_search.default_filter_chips()
+  let categories = food_search.default_categories()
+
   let content = [
     html.div([attribute.class("page-header")], [
       html.h1([], [element.text("Food Search")]),
@@ -1380,6 +1385,8 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
         element.text("Search " <> int_to_string(food_count) <> " USDA foods"),
       ]),
     ]),
+    // Filter chips above search form
+    food_search.render_filter_chips_with_dropdown(chips, categories),
     html.form([attribute.action("/foods"), attribute.method("get")], [
       html.div([attribute.class("search-box")], [
         html.input([
@@ -1397,22 +1404,25 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
         ),
       ]),
     ]),
-    case query {
-      Some(q) if q != "" -> {
-        case foods {
-          [] ->
-            html.p([attribute.class("empty-state")], [
-              element.text("No foods found matching \"" <> q <> "\""),
-            ])
-          _ ->
-            html.div([attribute.class("food-list")], list.map(foods, food_row))
+    // Wrap search results in HTMX target container
+    html.div([attribute.id("search-results")], [
+      case query {
+        Some(q) if q != "" -> {
+          case foods {
+            [] ->
+              html.p([attribute.class("empty-state")], [
+                element.text("No foods found matching \"" <> q <> "\""),
+              ])
+            _ ->
+              html.div([attribute.class("food-list")], list.map(foods, food_row))
+          }
         }
-      }
-      _ ->
-        html.p([attribute.class("empty-state")], [
-          element.text("Enter a search term to find foods"),
-        ])
-    },
+        _ ->
+          html.p([attribute.class("empty-state")], [
+            element.text("Enter a search term to find foods"),
+          ])
+      },
+    ]),
   ]
 
   wisp.html_response(render_page("Food Search - Meal Planner", content), 200)
@@ -1564,6 +1574,7 @@ fn handle_api(
     ["recipes", id] -> api_recipe(req, id, ctx)
     ["profile"] -> api_profile(req, ctx)
     ["foods"] -> api_foods(req, ctx)
+    ["foods", "search"] -> api_foods_search(req, ctx)
     ["foods", id] -> api_food(req, id, ctx)
     ["logs"] -> api_logs_create(req, ctx)
     ["logs", "entry", id] -> api_log_entry(req, id, ctx)
@@ -1936,35 +1947,47 @@ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
   // Parse all query parameters
   let parsed_query = uri.parse_query(req.query |> option.unwrap(""))
 
+  // Read search query - support both 'q' and 'query' parameter names
   let query = case parsed_query {
     Ok(params) -> {
+      // Try 'q' first, then 'query' as fallback
       case list.find(params, fn(p) { p.0 == "q" }) {
         Ok(#(_, q)) -> q
-        Error(_) -> ""
+        Error(_) ->
+          case list.find(params, fn(p) { p.0 == "query" }) {
+            Ok(#(_, q)) -> q
+            Error(_) -> ""
+          }
       }
     }
     Error(_) -> ""
   }
 
-  // Parse filter parameters
+  // Parse all filter parameters from URL query string
+  // This ensures the handler is stateless and works with HTMX URL-based state
   let filters = case parsed_query {
     Ok(params) -> {
+      // Parse verified filter - accepts "true" string or "1"
       let verified_only = case
-        list.find(params, fn(p) { p.0 == "verified_only" })
+        list.find(params, fn(p) { p.0 == "verified" || p.0 == "verified_only" })
       {
         Ok(#(_, "true")) -> True
+        Ok(#(_, "1")) -> True
         _ -> False
       }
 
+      // Parse branded filter - accepts "true" string or "1"
       let branded_only = case
-        list.find(params, fn(p) { p.0 == "branded_only" })
+        list.find(params, fn(p) { p.0 == "branded" || p.0 == "branded_only" })
       {
         Ok(#(_, "true")) -> True
+        Ok(#(_, "1")) -> True
         _ -> False
       }
 
+      // Parse category filter - empty string treated as None
       let category = case list.find(params, fn(p) { p.0 == "category" }) {
-        Ok(#(_, cat)) if cat != "" -> Some(cat)
+        Ok(#(_, cat)) if cat != "" && cat != "all" -> Some(cat)
         _ -> None
       }
 
@@ -1975,6 +1998,7 @@ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
       )
     }
     Error(_) ->
+      // Default filters when no query params
       types.SearchFilters(
         verified_only: False,
         branded_only: False,
@@ -1986,7 +2010,7 @@ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
     "" -> {
       let json_data =
         json.object([
-          #("error", json.string("Query parameter 'q' required")),
+          #("error", json.string("Query parameter 'q' or 'query' required")),
         ])
       wisp.json_response(json.to_string(json_data), 400)
     }
@@ -1996,6 +2020,109 @@ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
       wisp.json_response(json.to_string(json_data), 200)
     }
   }
+}
+
+/// API endpoint for HTMX filter requests - returns HTML fragment
+/// GET /api/foods/search?q=query&filter=all|verified|branded|category&category=Vegetables
+fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
+  // Parse all query parameters
+  let parsed_query = uri.parse_query(req.query |> option.unwrap(""))
+
+  // Read search query - support both 'q' and 'query' parameter names
+  let query = case parsed_query {
+    Ok(params) -> {
+      // Try 'q' first, then 'query' as fallback
+      case list.find(params, fn(p) { p.0 == "q" }) {
+        Ok(#(_, q)) -> q
+        Error(_) ->
+          case list.find(params, fn(p) { p.0 == "query" }) {
+            Ok(#(_, q)) -> q
+            Error(_) -> ""
+          }
+      }
+    }
+    Error(_) -> ""
+  }
+
+  // Parse filter parameter: all, verified, branded, or category
+  let filter_type = case parsed_query {
+    Ok(params) ->
+      case list.find(params, fn(p) { p.0 == "filter" }) {
+        Ok(#(_, f)) -> f
+        Error(_) -> "all"
+      }
+    Error(_) -> "all"
+  }
+
+  // Parse category parameter
+  let category_param = case parsed_query {
+    Ok(params) ->
+      case list.find(params, fn(p) { p.0 == "category" }) {
+        Ok(#(_, cat)) if cat != "" -> Some(cat)
+        Ok(#(_, _)) -> None
+        Error(_) -> None
+      }
+    Error(_) -> None
+  }
+
+  // Build SearchFilters based on filter type
+  let filters = case filter_type {
+    "verified" ->
+      types.SearchFilters(
+        verified_only: True,
+        branded_only: False,
+        category: None,
+      )
+    "branded" ->
+      types.SearchFilters(
+        verified_only: False,
+        branded_only: True,
+        category: None,
+      )
+    "category" ->
+      types.SearchFilters(
+        verified_only: False,
+        branded_only: False,
+        category: category_param,
+      )
+    _ ->
+      // "all" or any other value
+      types.SearchFilters(
+        verified_only: False,
+        branded_only: False,
+        category: None,
+      )
+  }
+
+  // Execute search or return empty state
+  let #(_updated_ctx, foods) = case query {
+    "" -> #(ctx, [])
+    q -> search_foods_filtered(ctx, q, filters, 50)
+  }
+
+  // Render HTML fragment for HTMX to swap in
+  let search_results = case query {
+    "" ->
+      html.div([attribute.id("search-results"), attribute.class("empty-state")], [
+        element.text("Enter a search term to find foods"),
+      ])
+    q ->
+      case foods {
+        [] ->
+          html.div(
+            [attribute.id("search-results"), attribute.class("empty-state")],
+            [element.text("No foods found matching \"" <> q <> "\"")],
+          )
+        _ ->
+          html.div(
+            [attribute.id("search-results"), attribute.class("food-list")],
+            list.map(foods, food_row),
+          )
+      }
+  }
+
+  // Return only the HTML fragment (not a full page)
+  wisp.html_response(element.to_string(search_results), 200)
 }
 
 fn api_food(_req: wisp.Request, id: String, ctx: Context) -> wisp.Response {

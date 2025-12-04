@@ -29,9 +29,7 @@ pub fn default_filter_chips_all_selected_test() {
 
 pub fn default_categories_has_items_test() {
   let categories = food_search.default_categories()
-  let has_items = list.length(categories) > 0
-  has_items
-  |> should.be_true
+  should.be_true(list.length(categories) > 0)
 }
 
 pub fn update_selected_filter_changes_selection_test() {
