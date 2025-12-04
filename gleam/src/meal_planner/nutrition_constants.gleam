@@ -327,3 +327,19 @@ pub const recommended_carbs_g = 200.0
 
 /// Quality/acceptability threshold for scores (0.0 to 1.0)
 pub const quality_threshold = 0.95
+
+// ===================================================================
+// CACHE AND TIME CONSTANTS
+// ===================================================================
+
+/// Default cache size (number of entries)
+pub const default_cache_size = 100
+
+/// Default cache TTL in seconds (5 minutes)
+pub const default_cache_ttl_seconds = 300
+
+/// Nanoseconds per microsecond for time conversion
+pub const nanoseconds_per_microsecond = 1000
+
+/// Milliseconds conversion factor (1 second = 1000ms)
+pub const milliseconds_per_second = 1000

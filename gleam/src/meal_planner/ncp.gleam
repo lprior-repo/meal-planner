@@ -775,7 +775,7 @@ fn apply_carb_scoring(
   case deviation.carbs_pct <. 0.0 && macros.carbs >. 0.0 {
     True -> {
       let carbs_score =
-        float.min(macros.carbs /. nutrition_constants.recommended_carbs_g, 1.0)
+        float.min(macros.carbs /. nutrition_constants.daily_carbs_target, 1.0)
       // Normalize: recommended carbs = max score
       current_score +. 0.25 *. carbs_score
     }
