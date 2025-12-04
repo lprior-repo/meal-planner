@@ -112,7 +112,14 @@ fn middleware(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
 
-  handler(req)
+  // Get response from handler and add Vary header for compression support
+  // Note: Actual compression should be handled by reverse proxy (nginx/caddy)
+  // See docs/nginx-compression.conf for production setup instructions
+  let response = handler(req)
+
+  // Add Vary header to indicate responses can be compressed based on Accept-Encoding
+  response
+  |> wisp.set_header("vary", "Accept-Encoding")
 }
 
 // ============================================================================

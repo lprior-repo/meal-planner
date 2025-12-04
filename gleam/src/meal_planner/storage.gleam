@@ -1,13 +1,12 @@
 /// PostgreSQL storage module for nutrition data persistence
 import gleam/dynamic/decode
-import gleam/erlang/process
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/otp/actor
 import gleam/result
 import gleam/string
 import meal_planner/ncp
+import meal_planner/postgres
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
@@ -24,60 +23,19 @@ pub type StorageError {
   Unauthorized(String)
 }
 
-/// Database configuration
-pub type DbConfig {
-  DbConfig(
-    host: String,
-    port: Int,
-    database: String,
-    user: String,
-    password: Option(String),
-    pool_size: Int,
-  )
-}
+/// Database configuration (re-export from postgres module)
+pub type DbConfig =
+  postgres.Config
 
-/// Default configuration for development
+/// Default configuration for development (re-export from postgres module)
 pub fn default_config() -> DbConfig {
-  DbConfig(
-    host: "localhost",
-    port: 5432,
-    database: "meal_planner",
-    user: "postgres",
-    password: Some("postgres"),
-    pool_size: 10,
-  )
+  postgres.default_config()
 }
 
-/// Convert DbConfig to pog.Config
-fn to_pog_config(config: DbConfig) -> pog.Config {
-  let pool_name = process.new_name(prefix: "meal_planner_db")
-  let base =
-    pog.default_config(pool_name: pool_name)
-    |> pog.host(config.host)
-    |> pog.port(config.port)
-    |> pog.database(config.database)
-    |> pog.user(config.user)
-    |> pog.pool_size(config.pool_size)
-
-  case config.password {
-    Some(pw) -> pog.password(base, Some(pw))
-    None -> base
-  }
-}
-
-/// Start the database connection pool
+/// Start the database connection pool (re-export from postgres module)
 pub fn start_pool(config: DbConfig) -> Result(pog.Connection, String) {
-  let pog_config = to_pog_config(config)
-  case pog.start(pog_config) {
-    Ok(started) -> {
-      let actor.Started(_pid, conn) = started
-      Ok(conn)
-    }
-    Error(actor.InitTimeout) -> Error("Database connection timeout")
-    Error(actor.InitFailed(reason)) ->
-      Error("Database connection failed: " <> reason)
-    Error(actor.InitExited(_)) -> Error("Database process exited unexpectedly")
-  }
+  postgres.connect(config)
+  |> result.map_error(postgres.format_error)
 }
 
 // ============================================================================
