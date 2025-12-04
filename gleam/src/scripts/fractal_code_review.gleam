@@ -291,3 +291,24 @@ fn extract_function_name(line: String) -> String {
   |> result.map(fn(parts) { parts.0 })
   |> result.unwrap("unknown")
 }
+
+/// Calculate overall review score from a checklist of checks
+/// Returns a score between 0.0 (all checks failed) and 1.0 (all checks passed)
+///
+/// Each check is a tuple of (check_name, passed: Bool)
+/// The score is calculated as: (number of passing checks) / (total checks)
+pub fn calculate_review_score(checks: List(#(String, Bool))) -> Float {
+  case list.length(checks) {
+    0 -> 1.0
+    total -> {
+      let passing_count =
+        list.filter(checks, fn(check) {
+          let #(_, passed) = check
+          passed
+        })
+        |> list.length()
+
+      int.to_float(passing_count) /. int.to_float(total)
+    }
+  }
+}

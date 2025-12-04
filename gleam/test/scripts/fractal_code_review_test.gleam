@@ -240,3 +240,67 @@ pub fn detect_long_functions_empty_code_test() {
   list.length(long_funcs)
   |> should.equal(0)
 }
+
+// Test: calculate_review_score should return 1.0 for all passing checks
+pub fn calculate_review_score_all_passing_test() {
+  let checks = [
+    #("type_safety", True),
+    #("test_coverage", True),
+    #("no_long_functions", True),
+  ]
+
+  fractal_code_review.calculate_review_score(checks)
+  |> should.equal(1.0)
+}
+
+// Test: calculate_review_score should return 0.0 for all failing checks
+pub fn calculate_review_score_all_failing_test() {
+  let checks = [
+    #("type_safety", False),
+    #("test_coverage", False),
+    #("no_long_functions", False),
+  ]
+
+  fractal_code_review.calculate_review_score(checks)
+  |> should.equal(0.0)
+}
+
+// Test: calculate_review_score should calculate partial score correctly
+pub fn calculate_review_score_partial_test() {
+  let checks = [
+    #("type_safety", True),
+    #("test_coverage", False),
+    #("no_long_functions", True),
+  ]
+
+  let score = fractal_code_review.calculate_review_score(checks)
+
+  // Should be 2/3 = 0.666...
+  case score >=. 0.66 && score <=. 0.67 {
+    True -> should.be_true(True)
+    False -> should.be_true(False)
+  }
+}
+
+// Test: calculate_review_score should handle empty checklist
+pub fn calculate_review_score_empty_test() {
+  let checks = []
+
+  fractal_code_review.calculate_review_score(checks)
+  |> should.equal(1.0)
+}
+
+// Test: calculate_review_score should handle single check
+pub fn calculate_review_score_single_passing_test() {
+  let checks = [#("type_safety", True)]
+
+  fractal_code_review.calculate_review_score(checks)
+  |> should.equal(1.0)
+}
+
+pub fn calculate_review_score_single_failing_test() {
+  let checks = [#("type_safety", False)]
+
+  fractal_code_review.calculate_review_score(checks)
+  |> should.equal(0.0)
+}
