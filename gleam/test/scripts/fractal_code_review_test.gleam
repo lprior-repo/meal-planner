@@ -219,9 +219,9 @@ pub fn long_function() -> Int {
 
       // Should have more than 50 lines
       { func.line_count > 50 }
-      |> should.be_true()
+      |> should.be_true
     }
-    Error(_) -> should.fail()
+    Error(_) -> panic as "Expected to find long function"
   }
 }
 

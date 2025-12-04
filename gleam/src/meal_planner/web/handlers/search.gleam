@@ -6,7 +6,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/uri
 import meal_planner/storage.{type FoodNutrientValue, type UsdaFood}
-import meal_planner/types.{SearchFilters}
+import meal_planner/types.{type SearchFilters, SearchFilters}
 import pog
 import wisp
 
@@ -126,7 +126,7 @@ fn search_foods_filtered(
   filters: SearchFilters,
   limit: Int,
 ) -> List(UsdaFood) {
-  case storage.search_foods_with_filters(ctx.db, query, filters, limit) {
+  case storage.search_foods_filtered(ctx.db, query, filters, limit) {
     Ok(foods) -> foods
     Error(_) -> []
   }
