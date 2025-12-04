@@ -1501,8 +1501,7 @@ fn handle_api(
     ["foods", id] -> api_food(req, id, ctx)
     ["logs"] -> api_logs_create(req, ctx)
     ["logs", "entry", id] -> api_log_entry(req, id, ctx)
-    // TODO: Implement api_recipe_sources for meal-planner-ajf
-    // ["recipe-sources"] -> api_recipe_sources(req, ctx)
+    ["recipe-sources"] -> api_recipe_sources(req, ctx)
     _ -> wisp.not_found()
   }
 }
@@ -2063,8 +2062,76 @@ fn api_log_entry(
   }
 }
 
-// TODO [meal-planner-ajf]: Implement api_recipe_sources, create_recipe_source, and list_recipe_sources
-// These were partially implemented but broke due to json.decode API changes in gleam_json v2
+fn api_recipe_sources(req: wisp.Request, ctx: Context) -> wisp.Response {
+  case req.method {
+    http.Post -> create_recipe_source(req, ctx)
+    http.Get -> list_recipe_sources(ctx)
+    _ -> wisp.method_not_allowed([http.Get, http.Post])
+  }
+}
+
+fn create_recipe_source(req: wisp.Request, ctx: Context) -> wisp.Response {
+  use json_body <- wisp.require_json(req)
+
+  // Decode the JSON body using the decoder
+  case auto_types.recipe_source_decoder()(json_body) {
+    Error(_) -> {
+      let error_json =
+        json.object([#("error", json.string("Invalid JSON format"))])
+      wisp.json_response(json.to_string(error_json), 400)
+    }
+    Ok(source_data) -> {
+      // Generate a unique ID for the new source
+      let id = "src-" <> int.to_string(int.random(100_000_000))
+      let source =
+        auto_types.RecipeSource(
+          id: id,
+          name: source_data.name,
+          source_type: source_data.source_type,
+          config: source_data.config,
+        )
+
+      // Save to database
+      case auto_storage.save_recipe_source(ctx.db, source) {
+        Ok(_) -> {
+          let response_json = auto_types.recipe_source_to_json(source)
+          wisp.json_response(json.to_string(response_json), 201)
+        }
+        Error(storage.DatabaseError(msg)) -> {
+          let error_json = json.object([#("error", json.string(msg))])
+          wisp.json_response(json.to_string(error_json), 500)
+        }
+        Error(_) -> {
+          let error_json =
+            json.object([
+              #("error", json.string("Failed to create recipe source")),
+            ])
+          wisp.json_response(json.to_string(error_json), 500)
+        }
+      }
+    }
+  }
+}
+
+fn list_recipe_sources(ctx: Context) -> wisp.Response {
+  case auto_storage.get_recipe_sources(ctx.db) {
+    Ok(sources) -> {
+      let json_data = json.array(sources, auto_types.recipe_source_to_json)
+      wisp.json_response(json.to_string(json_data), 200)
+    }
+    Error(storage.DatabaseError(msg)) -> {
+      let error_json = json.object([#("error", json.string(msg))])
+      wisp.json_response(json.to_string(error_json), 500)
+    }
+    Error(_) -> {
+      let error_json =
+        json.object([
+          #("error", json.string("Failed to fetch recipe sources")),
+        ])
+      wisp.json_response(json.to_string(error_json), 500)
+    }
+  }
+}
 
 // ============================================================================
 // Static Files
