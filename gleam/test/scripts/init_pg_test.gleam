@@ -14,8 +14,7 @@ import gleam/erlang/process
 import gleam/int
 import gleam/io
 import gleam/list
-import gleam/option.{None, Some}
-import gleam/result
+import gleam/option.{Some}
 import gleam/string
 import gleeunit/should
 import pog
