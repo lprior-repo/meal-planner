@@ -31,6 +31,7 @@ import meal_planner/types.{
 import meal_planner/ui/components/food_search
 import meal_planner/web/handlers/dashboard
 import meal_planner/web/handlers/food_log
+import meal_planner/web/handlers/generate
 import meal_planner/web/handlers/profile
 import meal_planner/web/handlers/recipe
 import meal_planner/web/handlers/search
@@ -1684,6 +1685,7 @@ fn handle_api(
       food_log.api_log_entry(req, id, food_log.Context(db: ctx.db))
     ["swap", meal_type] ->
       swap.api_swap_meal(req, meal_type, swap.Context(db: ctx.db))
+    ["generate"] -> generate.api_generate(req, generate.Context(db: ctx.db))
     ["recipe-sources"] -> api_recipe_sources(req, ctx)
     ["meal-plans", "auto"] -> api_auto_meal_plan(req, ctx)
     ["meal-plans", "auto", id] -> api_auto_meal_plan_by_id(req, id, ctx)
