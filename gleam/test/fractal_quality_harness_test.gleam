@@ -26,6 +26,23 @@ pub type TestResults {
 }
 
 // ===================================================================
+// TEST RESULT AGGREGATOR
+// ===================================================================
+
+/// Aggregate test results from multiple test passes
+/// Combines unit, integration, and E2E test results
+pub fn aggregate_test_results(
+  unit: TestResults,
+  integration: TestResults,
+  e2e: TestResults,
+) -> TestResults {
+  TestResults(
+    passed: unit.passed + integration.passed + e2e.passed,
+    failed: unit.failed + integration.failed + e2e.failed,
+  )
+}
+
+// ===================================================================
 // TRUTH SCORE CALCULATOR
 // ===================================================================
 
@@ -42,6 +59,110 @@ pub fn truth_score(results: TestResults) -> Float {
       passed_float /. total_float
     }
   }
+}
+
+// ===================================================================
+// AGGREGATE TEST RESULTS TESTS
+// ===================================================================
+
+pub fn aggregate_all_passed_test() {
+  // All three test types passed
+  let unit = TestResults(passed: 10, failed: 0)
+  let integration = TestResults(passed: 5, failed: 0)
+  let e2e = TestResults(passed: 3, failed: 0)
+
+  aggregate_test_results(unit, integration, e2e)
+  |> should.equal(TestResults(passed: 18, failed: 0))
+}
+
+pub fn aggregate_all_failed_test() {
+  // All three test types failed
+  let unit = TestResults(passed: 0, failed: 10)
+  let integration = TestResults(passed: 0, failed: 5)
+  let e2e = TestResults(passed: 0, failed: 3)
+
+  aggregate_test_results(unit, integration, e2e)
+  |> should.equal(TestResults(passed: 0, failed: 18))
+}
+
+pub fn aggregate_mixed_results_test() {
+  // Mix of passed and failed across test types
+  let unit = TestResults(passed: 8, failed: 2)
+  let integration = TestResults(passed: 4, failed: 1)
+  let e2e = TestResults(passed: 2, failed: 1)
+
+  aggregate_test_results(unit, integration, e2e)
+  |> should.equal(TestResults(passed: 14, failed: 4))
+}
+
+pub fn aggregate_zero_tests_test() {
+  // Edge case: no tests in any category
+  let unit = TestResults(passed: 0, failed: 0)
+  let integration = TestResults(passed: 0, failed: 0)
+  let e2e = TestResults(passed: 0, failed: 0)
+
+  aggregate_test_results(unit, integration, e2e)
+  |> should.equal(TestResults(passed: 0, failed: 0))
+}
+
+pub fn aggregate_only_unit_tests_test() {
+  // Only unit tests ran (Pass 1 of fractal loop)
+  let unit = TestResults(passed: 10, failed: 1)
+  let integration = TestResults(passed: 0, failed: 0)
+  let e2e = TestResults(passed: 0, failed: 0)
+
+  aggregate_test_results(unit, integration, e2e)
+  |> should.equal(TestResults(passed: 10, failed: 1))
+}
+
+pub fn aggregate_unit_and_integration_test() {
+  // Unit and integration tests ran (Pass 1 and 2)
+  let unit = TestResults(passed: 10, failed: 1)
+  let integration = TestResults(passed: 5, failed: 0)
+  let e2e = TestResults(passed: 0, failed: 0)
+
+  aggregate_test_results(unit, integration, e2e)
+  |> should.equal(TestResults(passed: 15, failed: 1))
+}
+
+pub fn aggregate_complete_fractal_loop_test() {
+  // All four passes complete (unit, integration, e2e, review)
+  // Review would be captured in unit/integration/e2e
+  let unit = TestResults(passed: 20, failed: 1)
+  let integration = TestResults(passed: 10, failed: 0)
+  let e2e = TestResults(passed: 5, failed: 0)
+
+  let aggregated = aggregate_test_results(unit, integration, e2e)
+
+  aggregated |> should.equal(TestResults(passed: 35, failed: 1))
+
+  // Verify truth score is high (should be 35/36 ≈ 0.972)
+  let score = truth_score(aggregated)
+  { score >. 0.95 } |> should.be_true
+}
+
+pub fn aggregate_preserves_individual_results_test() {
+  // Aggregation shouldn't modify original results
+  let unit = TestResults(passed: 5, failed: 1)
+  let integration = TestResults(passed: 3, failed: 0)
+  let e2e = TestResults(passed: 2, failed: 0)
+
+  let _aggregated = aggregate_test_results(unit, integration, e2e)
+
+  // Original results should be unchanged
+  unit |> should.equal(TestResults(passed: 5, failed: 1))
+  integration |> should.equal(TestResults(passed: 3, failed: 0))
+  e2e |> should.equal(TestResults(passed: 2, failed: 0))
+}
+
+pub fn aggregate_large_test_suites_test() {
+  // Handle large numbers
+  let unit = TestResults(passed: 1000, failed: 50)
+  let integration = TestResults(passed: 500, failed: 25)
+  let e2e = TestResults(passed: 100, failed: 5)
+
+  aggregate_test_results(unit, integration, e2e)
+  |> should.equal(TestResults(passed: 1600, failed: 80))
 }
 
 // ===================================================================
