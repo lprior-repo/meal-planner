@@ -10,7 +10,6 @@ import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
-import meal_planner/auto_planner/types as auto_types
 import meal_planner/diet_validator.{type DietPrinciple}
 import meal_planner/types.{type Macros, type Recipe}
 

@@ -3,7 +3,9 @@ import gleeunit
 import gleeunit/should
 import meal_planner/auto_planner/recipe_scorer
 import meal_planner/diet_validator.{VerticalDiet}
-import meal_planner/types.{High, Ingredient, Low, Macros, Medium, Recipe}
+import meal_planner/types.{
+  type Recipe, High, Ingredient, Low, Macros, Recipe,
+}
 
 pub fn main() {
   gleeunit.main()
