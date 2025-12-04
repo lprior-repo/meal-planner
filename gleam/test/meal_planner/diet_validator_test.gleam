@@ -500,14 +500,14 @@ pub fn has_white_carbs_true_test() {
 }
 
 pub fn has_white_carbs_false_with_rice_test() {
-  // White rice is a white carb
+  // White rice is NOT considered a prohibited white carb (allowed post-workout in Tim Ferriss diet)
   let ingredients = [
     make_ingredient("chicken", "200g"),
     make_ingredient("white rice", "150g"),
   ]
 
   diet_validator.has_white_carbs(ingredients)
-  |> should.be_true
+  |> should.be_false
 }
 
 pub fn calculate_protein_per_serving_test() {
