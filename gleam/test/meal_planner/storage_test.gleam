@@ -1,7 +1,7 @@
 import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
-import meal_planner/storage.{Log}
+import meal_planner/storage.{type Log, Log}
 
 pub fn main() {
   gleeunit.main()
@@ -171,7 +171,8 @@ pub fn user_id_positive_integer_test() {
       updated_at: "2025-12-02T09:00:00Z",
     )
 
-  log.user_id > 0
+  log.user_id
+  > 0
   |> should.be_true()
 }
 
@@ -193,7 +194,8 @@ pub fn food_id_positive_integer_test() {
       updated_at: "2025-12-01T08:00:00Z",
     )
 
-  log.food_id > 0
+  log.food_id
+  > 0
   |> should.be_true()
 }
 
