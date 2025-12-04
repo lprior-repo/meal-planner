@@ -16,9 +16,11 @@ import gleam/uri
 import lustre/attribute
 import lustre/element
 import lustre/element/html
+import meal_planner/auto_planner
 import meal_planner/auto_planner/storage as auto_storage
 import meal_planner/auto_planner/types as auto_types
 import meal_planner/storage
+import meal_planner/storage_optimized
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
   type SearchFilters, type UserProfile, Active, Breakfast, DailyLog, Dinner,
@@ -34,9 +36,9 @@ import wisp/wisp_mist
 // Context (passed to handlers)
 // ============================================================================
 
-/// Web context holding database connection
+/// Web context holding database connection and query cache
 pub type Context {
-  Context(db: pog.Connection)
+  Context(db: pog.Connection, search_cache: storage_optimized.SearchCache)
 }
 
 // ============================================================================
@@ -56,8 +58,11 @@ pub fn start(port: Int) {
   let db_config = storage.default_config()
   let assert Ok(db) = storage.start_pool(db_config)
 
+  // Initialize search cache (5 min TTL, 100 entry max)
+  let search_cache = storage_optimized.new_search_cache()
+
   let secret_key_base = wisp.random_string(64)
-  let ctx = Context(db: db)
+  let ctx = Context(db: db, search_cache: search_cache)
 
   io.println("Starting server on port " <> int.to_string(port))
 
@@ -162,7 +167,6 @@ fn home_page() -> wisp.Response {
 }
 
 fn weekly_plan_page(_ctx: Context) -> wisp.Response {
-  // Placeholder content - will be enhanced in future tasks
   let content = [
     html.div([attribute.class("page-header")], [
       html.h1([], [element.text("Weekly Plan")]),
@@ -170,13 +174,48 @@ fn weekly_plan_page(_ctx: Context) -> wisp.Response {
         element.text("Plan your meals for the week"),
       ]),
     ]),
-    // Weekly calendar component will be integrated here
-    html.div([attribute.class("weekly-calendar-container")], [
-      element.text("Weekly calendar component coming soon..."),
-    ]),
+    // 7-day grid calendar
+    render_weekly_calendar(),
   ]
 
   wisp.html_response(render_page("Weekly Plan - Meal Planner", content), 200)
+}
+
+/// Render the 7-day weekly calendar grid
+fn render_weekly_calendar() -> element.Element(Nil) {
+  let days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ]
+
+  html.div([attribute.class("weekly-calendar")], [
+    html.div([attribute.class("weekly-grid")], list.map(days, render_day_column)),
+  ])
+}
+
+/// Render a single day column with 3 meal slots
+fn render_day_column(day_name: String) -> element.Element(Nil) {
+  html.article([attribute.class("day-column")], [
+    html.h3([attribute.class("day-name")], [element.text(day_name)]),
+    render_meal_slot("Breakfast"),
+    render_meal_slot("Lunch"),
+    render_meal_slot("Dinner"),
+  ])
+}
+
+/// Render a single meal slot (empty state)
+fn render_meal_slot(meal_type: String) -> element.Element(Nil) {
+  html.div([attribute.class("meal-slot")], [
+    html.div([attribute.class("meal-type")], [element.text(meal_type)]),
+    html.div([attribute.class("meal-content empty")], [
+      element.text("No meals planned"),
+    ]),
+  ])
 }
 
 fn not_found_page() -> wisp.Response {
@@ -668,16 +707,12 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
               ),
             ]),
             html.script([], "
-let ingredientCount = " <> int_to_string(list.fold(
-              recipe.ingredients,
-              0,
-              fn(acc, _) { acc + 1 },
-            )) <> ";
-let instructionCount = " <> int_to_string(list.fold(
-              recipe.instructions,
-              0,
-              fn(acc, _) { acc + 1 },
-            )) <> ";
+let ingredientCount = " <> int_to_string(
+              list.fold(recipe.ingredients, 0, fn(acc, _) { acc + 1 }),
+            ) <> ";
+let instructionCount = " <> int_to_string(
+              list.fold(recipe.instructions, 0, fn(acc, _) { acc + 1 }),
+            ) <> ";
 
 function addIngredient() {
   const container = document.getElementById('ingredients-list');
@@ -1331,9 +1366,9 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
     Error(_) -> None
   }
 
-  let foods = case query {
+  let #(ctx, foods) = case query {
     Some(q) if q != "" -> search_foods(ctx, q, 50)
-    _ -> []
+    _ -> #(ctx, [])
   }
 
   let food_count = get_foods_count(ctx)
@@ -1530,6 +1565,7 @@ fn handle_api(
     ["logs"] -> api_logs_create(req, ctx)
     ["logs", "entry", id] -> api_log_entry(req, id, ctx)
     ["recipe-sources"] -> api_recipe_sources(req, ctx)
+    ["meal-plans", "auto"] -> api_auto_meal_plan(req, ctx)
     _ -> wisp.not_found()
   }
 }
@@ -1909,12 +1945,16 @@ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
   // Parse filter parameters
   let filters = case parsed_query {
     Ok(params) -> {
-      let verified_only = case list.find(params, fn(p) { p.0 == "verified_only" }) {
+      let verified_only = case
+        list.find(params, fn(p) { p.0 == "verified_only" })
+      {
         Ok(#(_, "true")) -> True
         _ -> False
       }
 
-      let branded_only = case list.find(params, fn(p) { p.0 == "branded_only" }) {
+      let branded_only = case
+        list.find(params, fn(p) { p.0 == "branded_only" })
+      {
         Ok(#(_, "true")) -> True
         _ -> False
       }
@@ -1930,11 +1970,12 @@ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
         category: category,
       )
     }
-    Error(_) -> types.SearchFilters(
-      verified_only: False,
-      branded_only: False,
-      category: None,
-    )
+    Error(_) ->
+      types.SearchFilters(
+        verified_only: False,
+        branded_only: False,
+        category: None,
+      )
   }
 
   case query {
@@ -1946,7 +1987,7 @@ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
       wisp.json_response(json.to_string(json_data), 400)
     }
     q -> {
-      let foods = search_foods_filtered(ctx, q, filters, 50)
+      let #(_updated_ctx, foods) = search_foods_filtered(ctx, q, filters, 50)
       let json_data = json.array(foods, food_to_json)
       wisp.json_response(json.to_string(json_data), 200)
     }
@@ -2162,6 +2203,76 @@ fn list_recipe_sources(ctx: Context) -> wisp.Response {
 }
 
 // ============================================================================
+// Auto Meal Plan API
+// ============================================================================
+
+/// POST /api/meal-plans/auto - Generate auto meal plan
+fn api_auto_meal_plan(req: wisp.Request, ctx: Context) -> wisp.Response {
+  case req.method {
+    http.Post -> create_auto_meal_plan(req, ctx)
+    _ -> wisp.method_not_allowed([http.Post])
+  }
+}
+
+fn create_auto_meal_plan(req: wisp.Request, ctx: Context) -> wisp.Response {
+  use json_body <- wisp.require_json(req)
+
+  // Decode the JSON body using the config decoder
+  case decode.run(json_body, auto_types.auto_plan_config_decoder()) {
+    Error(_) -> {
+      let error_json =
+        json.object([#("error", json.string("Invalid JSON format"))])
+      wisp.json_response(json.to_string(error_json), 400)
+    }
+    Ok(config) -> {
+      // Validate config
+      case auto_types.validate_config(config) {
+        Error(msg) -> {
+          let error_json = json.object([#("error", json.string(msg))])
+          wisp.json_response(json.to_string(error_json), 400)
+        }
+        Ok(_) -> {
+          // Load all recipes from database
+          let recipes = load_recipes(ctx)
+
+          // Generate auto meal plan
+          case auto_planner.generate_auto_plan(recipes, config) {
+            Error(msg) -> {
+              let error_json = json.object([#("error", json.string(msg))])
+              wisp.json_response(json.to_string(error_json), 400)
+            }
+            Ok(plan) -> {
+              // Save plan to database
+              case auto_storage.save_auto_plan(ctx.db, plan) {
+                Error(storage.DatabaseError(msg)) -> {
+                  let error_json =
+                    json.object([
+                      #("error", json.string("Failed to save plan: " <> msg)),
+                    ])
+                  wisp.json_response(json.to_string(error_json), 500)
+                }
+                Error(_) -> {
+                  let error_json =
+                    json.object([
+                      #("error", json.string("Failed to save plan")),
+                    ])
+                  wisp.json_response(json.to_string(error_json), 500)
+                }
+                Ok(_) -> {
+                  // Return the generated plan
+                  let response_json = auto_types.auto_meal_plan_to_json(plan)
+                  wisp.json_response(json.to_string(response_json), 201)
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
 // Static Files
 // ============================================================================
 
@@ -2219,10 +2330,20 @@ fn search_foods(
   ctx: Context,
   query: String,
   limit: Int,
-) -> List(storage.UsdaFood) {
-  case storage.search_foods(ctx.db, query, limit) {
-    Ok(foods) -> foods
-    Error(_) -> []
+) -> #(Context, List(storage.UsdaFood)) {
+  let #(updated_cache, result) =
+    storage_optimized.search_foods_cached(
+      ctx.db,
+      ctx.search_cache,
+      query,
+      limit,
+    )
+
+  let updated_ctx = Context(..ctx, search_cache: updated_cache)
+
+  case result {
+    Ok(foods) -> #(updated_ctx, foods)
+    Error(_) -> #(updated_ctx, [])
   }
 }
 
@@ -2231,10 +2352,21 @@ fn search_foods_filtered(
   query: String,
   filters: SearchFilters,
   limit: Int,
-) -> List(storage.UsdaFood) {
-  case storage.search_foods_filtered(ctx.db, query, filters, limit) {
-    Ok(foods) -> foods
-    Error(_) -> []
+) -> #(Context, List(storage.UsdaFood)) {
+  let #(updated_cache, result) =
+    storage_optimized.search_foods_filtered_cached(
+      ctx.db,
+      ctx.search_cache,
+      query,
+      filters,
+      limit,
+    )
+
+  let updated_ctx = Context(..ctx, search_cache: updated_cache)
+
+  case result {
+    Ok(foods) -> #(updated_ctx, foods)
+    Error(_) -> #(updated_ctx, [])
   }
 }
 
@@ -2511,12 +2643,7 @@ fn server_error_response(message: String) -> wisp.Response {
 
 /// 400 Bad Request response
 fn bad_request_response(message: String) -> wisp.Response {
-  error_response(
-    400,
-    "400 Bad Request",
-    "Invalid request. " <> message,
-    None,
-  )
+  error_response(400, "400 Bad Request", "Invalid request. " <> message, None)
 }
 
 /// 404 Not Found response with helpful actions
@@ -2558,8 +2685,7 @@ fn json_error_response(status: Int, error_message: String) -> wisp.Response {
 /// Handle storage errors with appropriate HTTP responses
 fn handle_storage_error(error: storage.StorageError) -> wisp.Response {
   case error {
-    storage.NotFound ->
-      json_error_response(404, "Resource not found")
+    storage.NotFound -> json_error_response(404, "Resource not found")
     storage.InvalidInput(msg) ->
       json_error_response(400, "Invalid input: " <> msg)
     storage.Unauthorized(msg) ->
