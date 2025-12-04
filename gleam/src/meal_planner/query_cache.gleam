@@ -55,8 +55,8 @@ pub type CacheStats {
 pub fn new() -> QueryCache(a) {
   QueryCache(
     entries: dict.new(),
-    max_size: constants.default_cache_size,
-    default_ttl: constants.default_cache_ttl_seconds,
+    max_size: 100,
+    default_ttl: 300,
     hits: 0,
     misses: 0,
   )
@@ -92,8 +92,7 @@ pub fn get(cache: QueryCache(a), key: String) -> #(QueryCache(a), Option(a)) {
 
     Ok(entry) -> {
       // Check if entry is expired
-      let age_seconds =
-        { now - entry.created_at } / constants.nanoseconds_per_microsecond
+      let age_seconds = { now - entry.created_at } / 1000
       case age_seconds > entry.ttl_seconds {
         True -> {
           // Expired - remove and return miss
