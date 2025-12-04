@@ -1427,25 +1427,28 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
   // If HTMX request, return only the search results fragment
   case is_htmx {
     True -> {
-      let results_html = case query {
-        Some(q) if q != "" -> {
-          case foods {
-            [] ->
-              html.p([attribute.class("empty-state")], [
-                element.text("No foods found matching \"" <> q <> "\""),
-              ])
+      let results_html =
+        html.div([attribute.id("search-results")], [
+          case query {
+            Some(q) if q != "" -> {
+              case foods {
+                [] ->
+                  html.p([attribute.class("empty-state")], [
+                    element.text("No foods found matching \"" <> q <> "\""),
+                  ])
+                _ ->
+                  html.div(
+                    [attribute.class("food-list")],
+                    list.map(foods, food_row),
+                  )
+              }
+            }
             _ ->
-              html.div(
-                [attribute.class("food-list")],
-                list.map(foods, food_row),
-              )
-          }
-        }
-        _ ->
-          html.p([attribute.class("empty-state")], [
-            element.text("Enter a search term to find foods"),
-          ])
-      }
+              html.p([attribute.class("empty-state")], [
+                element.text("Enter a search term to find foods"),
+              ])
+          },
+        ])
 
       // Return just the HTML fragment for HTMX
       wisp.html_response(element.to_string(results_html), 200)
@@ -1462,7 +1465,9 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
         html.div([attribute.class("page-header")], [
           html.h1([], [element.text("Food Search")]),
           html.p([attribute.class("subtitle")], [
-            element.text("Search " <> int_to_string(food_count) <> " USDA foods"),
+            element.text(
+              "Search " <> int_to_string(food_count) <> " USDA foods",
+            ),
           ]),
         ]),
         // Filter chips above search form
@@ -1508,7 +1513,10 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
         ]),
       ]
 
-      wisp.html_response(render_page("Food Search - Meal Planner", content), 200)
+      wisp.html_response(
+        render_page("Food Search - Meal Planner", content),
+        200,
+      )
     }
   }
 }

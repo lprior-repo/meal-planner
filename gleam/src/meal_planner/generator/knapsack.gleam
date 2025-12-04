@@ -85,7 +85,10 @@ fn greedy_select(
       // Find recipe closest to per_meal_target
       case find_closest_recipe(available, per_meal_target) {
         Ok(#(recipe, rest)) -> {
-          greedy_select(rest, per_meal_target, remaining - 1, [recipe, ..selected])
+          greedy_select(rest, per_meal_target, remaining - 1, [
+            recipe,
+            ..selected
+          ])
         }
         Error(Nil) -> selected
       }
@@ -131,7 +134,10 @@ fn find_closest_helper(
         }
         False -> {
           // Previous best is still better
-          find_closest_helper(rest, target, best, best_diff, [recipe, ..excluded])
+          find_closest_helper(rest, target, best, best_diff, [
+            recipe,
+            ..excluded
+          ])
         }
       }
     }

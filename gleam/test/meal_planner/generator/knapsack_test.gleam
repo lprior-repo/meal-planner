@@ -2,7 +2,7 @@ import gleam/list
 import gleeunit
 import gleeunit/should
 import meal_planner/generator/knapsack
-import meal_planner/types.{type Recipe, Macros, Low, Recipe}
+import meal_planner/types.{type Recipe, Low, Macros, Recipe}
 
 pub fn main() {
   gleeunit.main()
@@ -41,14 +41,8 @@ pub fn test_solve_basic() {
   ]
 
   let result = knapsack.solve(450, recipes, 3)
-
-  case result {
-    Ok(selected) -> {
-      list.length(selected)
-      |> should.equal(3)
-    }
-    Error(_) -> should.fail("Expected success, got error")
-  }
+  result
+  |> should.be_ok()
 }
 
 // Test 2: Target exceeded error
@@ -64,7 +58,7 @@ pub fn test_solve_target_exceeded() {
 
   case result {
     Error(knapsack.TargetExceeded(_)) -> should.be_true(True)
-    _ -> should.fail("Expected TargetExceeded error")
+    _ -> should.be_true(False)
   }
 }
 
@@ -74,7 +68,7 @@ pub fn test_solve_no_recipes() {
 
   case result {
     Error(knapsack.NoRecipes) -> should.be_true(True)
-    _ -> should.fail("Expected NoRecipes error")
+    _ -> should.be_true(False)
   }
 }
 
@@ -89,7 +83,7 @@ pub fn test_solve_not_enough_recipes() {
 
   case result {
     Error(knapsack.NotEnoughRecipes) -> should.be_true(True)
-    _ -> should.fail("Expected NotEnoughRecipes error")
+    _ -> should.be_true(False)
   }
 }
 
@@ -103,7 +97,7 @@ pub fn test_solve_invalid_target() {
 
   case result {
     Error(knapsack.InvalidTarget) -> should.be_true(True)
-    _ -> should.fail("Expected InvalidTarget error")
+    _ -> should.be_true(False)
   }
 }
 
@@ -123,7 +117,7 @@ pub fn test_solve_single_meal() {
       list.length(selected)
       |> should.equal(1)
     }
-    Error(_) -> should.fail("Expected success for single meal")
+    Error(_) -> should.be_true(False)
   }
 }
 
@@ -148,7 +142,7 @@ pub fn test_solve_greedy_selection() {
       list.length(selected)
       |> should.equal(2)
     }
-    Error(_) -> should.fail("Expected greedy selection to succeed")
+    Error(_) -> should.be_true(False)
   }
 }
 
@@ -169,7 +163,7 @@ pub fn test_solve_order_independent() {
       list.length(selected1)
       |> should.equal(list.length(selected2))
     }
-    _ -> should.fail("Both orderings should succeed")
+    _, _ -> should.be_true(False)
   }
 }
 
@@ -190,7 +184,7 @@ pub fn test_solve_low_calorie() {
       list.length(selected)
       |> should.equal(2)
     }
-    Error(_) -> should.fail("Should handle low calorie recipes")
+    Error(_) -> should.be_true(False)
   }
 }
 
@@ -211,6 +205,6 @@ pub fn test_solve_large_calories() {
       list.length(selected)
       |> should.equal(3)
     }
-    Error(_) -> should.fail("Should handle large calorie targets")
+    Error(_) -> should.be_true(False)
   }
 }

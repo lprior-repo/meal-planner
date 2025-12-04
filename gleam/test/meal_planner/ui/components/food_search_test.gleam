@@ -60,7 +60,8 @@ pub fn render_filter_chip_htmx_attributes_test() {
 
 pub fn render_filter_chip_verified_htmx_test() {
   // Test Verified Only chip has correct filter parameter
-  let chip = food_search.FilterChip("Verified Only", food_search.VerifiedOnly, False)
+  let chip =
+    food_search.FilterChip("Verified Only", food_search.VerifiedOnly, False)
   let rendered = food_search.render_filter_chip(chip)
   let html = element.to_string(rendered)
 
@@ -80,7 +81,8 @@ pub fn render_filter_chip_branded_htmx_test() {
 
 pub fn render_filter_chip_category_htmx_test() {
   // Test By Category chip has correct filter parameter
-  let chip = food_search.FilterChip("By Category", food_search.ByCategory, False)
+  let chip =
+    food_search.FilterChip("By Category", food_search.ByCategory, False)
   let rendered = food_search.render_filter_chip(chip)
   let html = element.to_string(rendered)
 
@@ -112,7 +114,8 @@ pub fn render_category_dropdown_htmx_test() {
   // Test category dropdown has correct HTMX attributes
   let chips = food_search.default_filter_chips()
   let categories = ["Vegetables", "Fruits"]
-  let rendered = food_search.render_filter_chips_with_dropdown(chips, categories)
+  let rendered =
+    food_search.render_filter_chips_with_dropdown(chips, categories)
   let html = element.to_string(rendered)
 
   // Dropdown should have HTMX attributes
@@ -121,7 +124,10 @@ pub fn render_category_dropdown_htmx_test() {
   should.be_true(string.contains(html, "hx-target=\"#search-results\""))
   should.be_true(string.contains(html, "hx-swap=\"innerHTML\""))
   should.be_true(string.contains(html, "hx-push-url=\"true\""))
-  should.be_true(string.contains(html, "hx-include=\"[name='q'], [name='filter']\""))
+  should.be_true(string.contains(
+    html,
+    "hx-include=\"[name='q'], [name='filter']\"",
+  ))
 
   // Should have hidden filter input
   should.be_true(string.contains(html, "name=\"filter\""))
