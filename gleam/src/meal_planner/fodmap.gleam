@@ -70,9 +70,10 @@ pub fn analyze_recipe_fodmap(recipe: Recipe) -> FODMAPAnalysis {
     list.fold(recipe.ingredients, #(0, 0), fn(acc, ingredient) {
       let ingredient_lower = string.lowercase(ingredient.name)
       let is_exception = is_low_fodmap_exception(ingredient_lower)
-      let contains_high_fodmap = list.any(high_fodmap_ingredients, fn(fodmap) {
-        string.contains(ingredient_lower, fodmap)
-      })
+      let contains_high_fodmap =
+        list.any(high_fodmap_ingredients, fn(fodmap) {
+          string.contains(ingredient_lower, fodmap)
+        })
       let is_high = case !is_exception && contains_high_fodmap {
         True -> 1
         False -> 0

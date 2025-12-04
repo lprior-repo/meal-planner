@@ -368,9 +368,7 @@ pub fn all_skeletons_have_aria_label_test() {
   ]
 
   skeletons_to_test
-  |> list.each(fn(html) {
-    should.be_true(string_contains(html, "aria-label="))
-  })
+  |> list.each(fn(html) { should.be_true(string_contains(html, "aria-label=")) })
 }
 
 // ============================================================================

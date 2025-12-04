@@ -7,7 +7,6 @@
 /// - Responsive design with mobile support
 ///
 /// All components render as HTML strings suitable for SSR.
-
 import gleam/float
 import gleam/int
 import gleam/list
@@ -138,9 +137,10 @@ fn get_status_color(percentage: Float) -> String {
 /// Format nutrient amount with appropriate precision
 fn format_amount(amount: Float, unit: String) -> String {
   let rounded = case unit {
-    "mg" | "g" -> float.truncate(amount *. 10.0) |> int.to_float |> fn(x) {
-      x /. 10.0
-    }
+    "mg" | "g" ->
+      float.truncate(amount *. 10.0)
+      |> int.to_float
+      |> fn(x) { x /. 10.0 }
     "mcg" -> float.truncate(amount) |> int.to_float
     _ -> amount
   }
@@ -263,8 +263,7 @@ pub fn extract_other_nutrients(
 
 /// Render a single micronutrient progress bar
 pub fn micronutrient_bar(item: MicronutrientItem) -> String {
-  let percentage_str =
-    item.percentage |> float.truncate |> int.to_string
+  let percentage_str = item.percentage |> float.truncate |> int.to_string
   let amount_str = format_amount(item.amount, item.unit)
   let dv_str = format_amount(item.daily_value, item.unit)
   let color_class = get_status_color(item.percentage)
@@ -276,16 +275,29 @@ pub fn micronutrient_bar(item: MicronutrientItem) -> String {
   }
   let width_str = float.to_string(visual_percentage)
 
-  "<div class=\"micronutrient-bar " <> color_class <> "\">"
+  "<div class=\"micronutrient-bar "
+  <> color_class
+  <> "\">"
   <> "<div class=\"micro-header\">"
-  <> "<span class=\"micro-name\">" <> item.name <> "</span>"
-  <> "<span class=\"micro-value\">" <> amount_str <> item.unit
-  <> " / " <> dv_str <> item.unit <> "</span>"
+  <> "<span class=\"micro-name\">"
+  <> item.name
+  <> "</span>"
+  <> "<span class=\"micro-value\">"
+  <> amount_str
+  <> item.unit
+  <> " / "
+  <> dv_str
+  <> item.unit
+  <> "</span>"
   <> "</div>"
   <> "<div class=\"micro-progress\">"
-  <> "<div class=\"micro-fill\" style=\"width: " <> width_str <> "%\"></div>"
+  <> "<div class=\"micro-fill\" style=\"width: "
+  <> width_str
+  <> "%\"></div>"
   <> "</div>"
-  <> "<div class=\"micro-percentage\">" <> percentage_str <> "% DV</div>"
+  <> "<div class=\"micro-percentage\">"
+  <> percentage_str
+  <> "% DV</div>"
   <> "</div>"
 }
 
@@ -299,8 +311,12 @@ pub fn micronutrient_section(
     _ -> {
       let items_html = items |> list.map(micronutrient_bar) |> string.concat
       "<div class=\"micro-section\">"
-      <> "<h3 class=\"micro-section-title\">" <> title <> "</h3>"
-      <> "<div class=\"micro-list\">" <> items_html <> "</div>"
+      <> "<h3 class=\"micro-section-title\">"
+      <> title
+      <> "</h3>"
+      <> "<div class=\"micro-list\">"
+      <> items_html
+      <> "</div>"
       <> "</div>"
     }
   }
@@ -319,9 +335,11 @@ pub fn micronutrient_panel(micros: Option(Micronutrients)) -> String {
       let minerals = extract_minerals(m, dv)
       let other = extract_other_nutrients(m, dv)
 
-      case list.is_empty(vitamins) && list.is_empty(minerals) && list.is_empty(
-        other,
-      ) {
+      case
+        list.is_empty(vitamins)
+        && list.is_empty(minerals)
+        && list.is_empty(other)
+      {
         True ->
           "<div class=\"micronutrient-panel empty\">"
           <> "<p class=\"empty-message\">No micronutrient data available</p>"
@@ -352,9 +370,11 @@ pub fn micronutrient_summary(micros: Option(Micronutrients)) -> String {
         list.fold(minerals, 0, fn(acc, _) { acc + 1 }) |> int.to_string
 
       "<div class=\"micro-summary\">"
-      <> "<span class=\"badge badge-vitamin\">" <> vitamin_count
+      <> "<span class=\"badge badge-vitamin\">"
+      <> vitamin_count
       <> " vitamins</span>"
-      <> "<span class=\"badge badge-mineral\">" <> mineral_count
+      <> "<span class=\"badge badge-mineral\">"
+      <> mineral_count
       <> " minerals</span>"
       <> "</div>"
     }

@@ -9,7 +9,8 @@ pub fn main() {
 
 // Test: check_type_safety should return True for fully typed function
 pub fn check_type_safety_fully_typed_test() {
-  let code = "
+  let code =
+    "
 pub fn calculate(x: Int, y: Int) -> Int {
   x + y
 }
@@ -21,7 +22,8 @@ pub fn calculate(x: Int, y: Int) -> Int {
 
 // Test: check_type_safety should return False for untyped parameter
 pub fn check_type_safety_untyped_parameter_test() {
-  let code = "
+  let code =
+    "
 pub fn calculate(x, y: Int) -> Int {
   x + y
 }
@@ -33,7 +35,8 @@ pub fn calculate(x, y: Int) -> Int {
 
 // Test: check_type_safety should return False for missing return type
 pub fn check_type_safety_missing_return_type_test() {
-  let code = "
+  let code =
+    "
 pub fn calculate(x: Int, y: Int) {
   x + y
 }
@@ -45,7 +48,8 @@ pub fn calculate(x: Int, y: Int) {
 
 // Test: check_type_safety should handle multiple functions correctly
 pub fn check_type_safety_multiple_functions_test() {
-  let code = "
+  let code =
+    "
 pub fn add(x: Int, y: Int) -> Int {
   x + y
 }
@@ -61,7 +65,8 @@ pub fn multiply(a: Float, b: Float) -> Float {
 
 // Test: check_type_safety should return False if any function is untyped
 pub fn check_type_safety_mixed_functions_test() {
-  let code = "
+  let code =
+    "
 pub fn add(x: Int, y: Int) -> Int {
   x + y
 }
@@ -77,7 +82,8 @@ pub fn multiply(a, b) {
 
 // Test: check_type_safety should handle external functions
 pub fn check_type_safety_external_function_test() {
-  let code = "
+  let code =
+    "
 @external(erlang, \"erlang\", \"float\")
 pub fn int_to_float(n: Int) -> Float
 "
@@ -96,7 +102,8 @@ pub fn check_type_safety_empty_code_test() {
 
 // Test: check_type_safety should handle code with only comments
 pub fn check_type_safety_only_comments_test() {
-  let code = "
+  let code =
+    "
 /// This is a comment
 // Another comment
 "
@@ -144,7 +151,8 @@ pub fn check_coverage_non_existent_file_test() {
 
 // Test: detect_long_functions should find functions over 50 lines
 pub fn detect_long_functions_finds_long_function_test() {
-  let code = "
+  let code =
+    "
 pub fn short_function() -> Int {
   1 + 1
 }
@@ -219,7 +227,8 @@ pub fn long_function() -> Int {
 
 // Test: detect_long_functions should ignore short functions
 pub fn detect_long_functions_ignores_short_functions_test() {
-  let code = "
+  let code =
+    "
 pub fn func1() -> Int { 1 }
 pub fn func2() -> String { \"hello\" }
 pub fn func3() -> Bool { True }

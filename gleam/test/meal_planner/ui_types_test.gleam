@@ -217,14 +217,14 @@ pub fn recipe_card_zero_calories_test() {
 pub fn food_card_constructor_test() {
   let card =
     ui_types.FoodCardData(
-      fdc_id: 123456,
+      fdc_id: 123_456,
       description: "Chicken breast, grilled",
       data_type: "Foundation",
       category: "Poultry Products",
     )
 
   card.fdc_id
-  |> should.equal(123456)
+  |> should.equal(123_456)
   card.description
   |> should.equal("Chicken breast, grilled")
   card.data_type
@@ -569,8 +569,7 @@ pub fn font_weight_bold_test() {
 // ===================================================================
 
 pub fn nav_card_constructor_test() {
-  let card =
-    ui_types.NavCard(icon: "📊", label: "Dashboard", href: "/dashboard")
+  let card = ui_types.NavCard(icon: "📊", label: "Dashboard", href: "/dashboard")
 
   card.icon
   |> should.equal("📊")

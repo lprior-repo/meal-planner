@@ -1,9 +1,9 @@
+import gleam/option.{None, Some}
+import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/types.{type Micronutrients, Micronutrients}
 import meal_planner/ui/components/micronutrient_panel
-import gleam/option.{None, Some}
-import gleam/string
 
 pub fn main() {
   gleeunit.main()

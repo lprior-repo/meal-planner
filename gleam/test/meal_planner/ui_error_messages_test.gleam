@@ -6,7 +6,6 @@
 /// - Actionable suggestions generation
 /// - Error categorization
 /// - Message formatting
-
 import gleam/option.{Some}
 import gleeunit
 import gleeunit/should
@@ -361,10 +360,7 @@ pub fn generic_error_test() {
 
 pub fn info_message_test() {
   let error =
-    error_messages.info_message(
-      "Feature Updated",
-      "We've added a new feature!",
-    )
+    error_messages.info_message("Feature Updated", "We've added a new feature!")
 
   error.severity
   |> should.equal(error_messages.Info)
@@ -386,8 +382,7 @@ pub fn format_suggestions_empty_test() {
 }
 
 pub fn format_suggestions_single_test() {
-  let result =
-    error_messages.format_suggestions(["Try again"])
+  let result = error_messages.format_suggestions(["Try again"])
 
   // Should contain HTML list with suggestion
   result

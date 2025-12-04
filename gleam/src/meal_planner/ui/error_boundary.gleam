@@ -297,7 +297,9 @@ pub fn route_not_found(path: String) -> element.Element(msg) {
       html.div([attribute.class("error-code")], [element.text("404")]),
       html.h1([attribute.class("error-title")], [element.text("Page Not Found")]),
       html.p([attribute.class("error-message")], [
-        element.text("The page \"" <> path <> "\" doesn't exist or has been moved."),
+        element.text(
+          "The page \"" <> path <> "\" doesn't exist or has been moved.",
+        ),
       ]),
       html.div([attribute.class("error-suggestions")], [
         html.h3([], [element.text("Try these instead:")]),
@@ -306,7 +308,9 @@ pub fn route_not_found(path: String) -> element.Element(msg) {
             html.a([attribute.href("/")], [element.text("Dashboard")]),
           ]),
           html.li([], [
-            html.a([attribute.href("/recipes")], [element.text("Browse Recipes")]),
+            html.a([attribute.href("/recipes")], [
+              element.text("Browse Recipes"),
+            ]),
           ]),
           html.li([], [
             html.a([attribute.href("/food-search")], [
@@ -314,7 +318,9 @@ pub fn route_not_found(path: String) -> element.Element(msg) {
             ]),
           ]),
           html.li([], [
-            html.a([attribute.href("/meal-plan")], [element.text("Meal Planner")]),
+            html.a([attribute.href("/meal-plan")], [
+              element.text("Meal Planner"),
+            ]),
           ]),
         ]),
       ]),
@@ -523,10 +529,7 @@ pub fn reset_button(safe_url: String) -> element.Element(msg) {
 /// ```gleam
 /// network_error("Failed to fetch recipes", Some("Check network connection"))
 /// ```
-pub fn network_error(
-  message: String,
-  details: Option(String),
-) -> BoundaryError {
+pub fn network_error(message: String, details: Option(String)) -> BoundaryError {
   BoundaryError(
     message: message,
     category: NetworkError,

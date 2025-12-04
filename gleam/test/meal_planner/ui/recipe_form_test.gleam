@@ -27,7 +27,9 @@ pub fn render_form_contains_required_elements_test() {
 
   // Required sections
   html
-  |> string.contains("<h2 class=\"text-xl font-semibold mb-4\">Basic Information</h2>")
+  |> string.contains(
+    "<h2 class=\"text-xl font-semibold mb-4\">Basic Information</h2>",
+  )
   |> should.be_true()
 
   html
@@ -116,14 +118,23 @@ pub fn category_field_has_required_attribute_test() {
   |> should.be_true()
 
   // Category select should be required
-  let category_section = html
-  |> string.split("id=\"recipe-category\"")
-  |> fn(parts) {
-    case parts {
-      [_, rest, ..] -> rest |> string.split("</select>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
-      _ -> ""
+  let category_section =
+    html
+    |> string.split("id=\"recipe-category\"")
+    |> fn(parts) {
+      case parts {
+        [_, rest, ..] ->
+          rest
+          |> string.split("</select>")
+          |> fn(p) {
+            case p {
+              [first, ..] -> first
+              _ -> ""
+            }
+          }
+        _ -> ""
+      }
     }
-  }
 
   category_section
   |> string.contains("required")
@@ -252,14 +263,23 @@ pub fn ingredients_section_has_initial_row_test() {
 pub fn ingredient_name_field_is_required_test() {
   let html = recipe_form.render_form()
 
-  let ingredient_name_section = html
-  |> string.split("id=\"ingredient-name-0\"")
-  |> fn(parts) {
-    case parts {
-      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
-      _ -> ""
+  let ingredient_name_section =
+    html
+    |> string.split("id=\"ingredient-name-0\"")
+    |> fn(parts) {
+      case parts {
+        [_, rest, ..] ->
+          rest
+          |> string.split("/>")
+          |> fn(p) {
+            case p {
+              [first, ..] -> first
+              _ -> ""
+            }
+          }
+        _ -> ""
+      }
     }
-  }
 
   ingredient_name_section
   |> string.contains("required")
@@ -375,14 +395,23 @@ pub fn instruction_field_is_textarea_test() {
 pub fn instruction_field_is_required_test() {
   let html = recipe_form.render_form()
 
-  let instruction_section = html
-  |> string.split("id=\"instruction-0\"")
-  |> fn(parts) {
-    case parts {
-      [_, rest, ..] -> rest |> string.split("</textarea>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
-      _ -> ""
+  let instruction_section =
+    html
+    |> string.split("id=\"instruction-0\"")
+    |> fn(parts) {
+      case parts {
+        [_, rest, ..] ->
+          rest
+          |> string.split("</textarea>")
+          |> fn(p) {
+            case p {
+              [first, ..] -> first
+              _ -> ""
+            }
+          }
+        _ -> ""
+      }
     }
-  }
 
   instruction_section
   |> string.contains("required")
@@ -433,14 +462,23 @@ pub fn nutrition_fields_are_optional_test() {
   let html = recipe_form.render_form()
 
   // Get nutrition section
-  let nutrition_section = html
-  |> string.split("Nutrition Information")
-  |> fn(parts) {
-    case parts {
-      [_, rest, ..] -> rest |> string.split("</section>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
-      _ -> ""
+  let nutrition_section =
+    html
+    |> string.split("Nutrition Information")
+    |> fn(parts) {
+      case parts {
+        [_, rest, ..] ->
+          rest
+          |> string.split("</section>")
+          |> fn(p) {
+            case p {
+              [first, ..] -> first
+              _ -> ""
+            }
+          }
+        _ -> ""
+      }
     }
-  }
 
   // Should NOT contain "required" in nutrition section
   // (All other required fields are outside this section)
@@ -472,14 +510,23 @@ pub fn calories_field_has_numeric_constraints_test() {
 pub fn protein_field_has_decimal_precision_test() {
   let html = recipe_form.render_form()
 
-  let protein_section = html
-  |> string.split("id=\"protein\"")
-  |> fn(parts) {
-    case parts {
-      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
-      _ -> ""
+  let protein_section =
+    html
+    |> string.split("id=\"protein\"")
+    |> fn(parts) {
+      case parts {
+        [_, rest, ..] ->
+          rest
+          |> string.split("/>")
+          |> fn(p) {
+            case p {
+              [first, ..] -> first
+              _ -> ""
+            }
+          }
+        _ -> ""
+      }
     }
-  }
 
   protein_section
   |> string.contains("step=\"0.1\"")
@@ -493,14 +540,23 @@ pub fn protein_field_has_decimal_precision_test() {
 pub fn carbs_field_has_decimal_precision_test() {
   let html = recipe_form.render_form()
 
-  let carbs_section = html
-  |> string.split("id=\"carbs\"")
-  |> fn(parts) {
-    case parts {
-      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
-      _ -> ""
+  let carbs_section =
+    html
+    |> string.split("id=\"carbs\"")
+    |> fn(parts) {
+      case parts {
+        [_, rest, ..] ->
+          rest
+          |> string.split("/>")
+          |> fn(p) {
+            case p {
+              [first, ..] -> first
+              _ -> ""
+            }
+          }
+        _ -> ""
+      }
     }
-  }
 
   carbs_section
   |> string.contains("step=\"0.1\"")
@@ -510,14 +566,23 @@ pub fn carbs_field_has_decimal_precision_test() {
 pub fn fat_field_has_decimal_precision_test() {
   let html = recipe_form.render_form()
 
-  let fat_section = html
-  |> string.split("id=\"fat\"")
-  |> fn(parts) {
-    case parts {
-      [_, rest, ..] -> rest |> string.split("/>") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
-      _ -> ""
+  let fat_section =
+    html
+    |> string.split("id=\"fat\"")
+    |> fn(parts) {
+      case parts {
+        [_, rest, ..] ->
+          rest
+          |> string.split("/>")
+          |> fn(p) {
+            case p {
+              [first, ..] -> first
+              _ -> ""
+            }
+          }
+        _ -> ""
+      }
     }
-  }
 
   fat_section
   |> string.contains("step=\"0.1\"")
@@ -586,7 +651,9 @@ pub fn required_fields_have_visual_indicator_test() {
 
   // Should have asterisk with aria-label
   html
-  |> string.contains("<span class=\"text-danger\" aria-label=\"required\">*</span>")
+  |> string.contains(
+    "<span class=\"text-danger\" aria-label=\"required\">*</span>",
+  )
   |> should.be_true()
 }
 
@@ -630,7 +697,9 @@ pub fn form_status_has_aria_live_test() {
   let html = recipe_form.render_form()
 
   html
-  |> string.contains("id=\"form-status\" class=\"text-sm text-muted ml-auto\" role=\"status\" aria-live=\"polite\"")
+  |> string.contains(
+    "id=\"form-status\" class=\"text-sm text-muted ml-auto\" role=\"status\" aria-live=\"polite\"",
+  )
   |> should.be_true()
 }
 
@@ -825,14 +894,23 @@ pub fn submit_button_has_correct_type_test() {
 pub fn cancel_button_has_button_type_test() {
   let html = recipe_form.render_form()
 
-  let cancel_section = html
-  |> string.split("id=\"cancel-btn\"")
-  |> fn(parts) {
-    case parts {
-      [_, rest, ..] -> rest |> string.split(">") |> fn(p) { case p { [first, ..] -> first _ -> "" } }
-      _ -> ""
+  let cancel_section =
+    html
+    |> string.split("id=\"cancel-btn\"")
+    |> fn(parts) {
+      case parts {
+        [_, rest, ..] ->
+          rest
+          |> string.split(">")
+          |> fn(p) {
+            case p {
+              [first, ..] -> first
+              _ -> ""
+            }
+          }
+        _ -> ""
+      }
     }
-  }
 
   cancel_section
   |> string.contains("type=\"button\"")

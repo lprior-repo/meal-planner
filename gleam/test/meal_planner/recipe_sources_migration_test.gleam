@@ -162,9 +162,7 @@ pub fn recipe_sources_has_correct_columns_test() {
       )
 
       should.be_true(
-        list.any(columns, fn(c) {
-          c.0 == "config" && c.2 == "YES"
-        }),
+        list.any(columns, fn(c) { c.0 == "config" && c.2 == "YES" }),
       )
 
       should.be_true(

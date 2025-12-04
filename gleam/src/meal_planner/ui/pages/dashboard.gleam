@@ -61,9 +61,7 @@ pub type DashboardData {
 pub fn render_dashboard(data: DashboardData) -> String {
   // Page title for screen readers
   let page_title =
-    "<h1 class=\"sr-only\">Nutrition Dashboard for "
-    <> data.date
-    <> "</h1>"
+    "<h1 class=\"sr-only\">Nutrition Dashboard for " <> data.date <> "</h1>"
 
   // Calorie summary card
   let calorie_card =
@@ -105,20 +103,20 @@ pub fn render_dashboard(data: DashboardData) -> String {
   <> page_title
   <> layout.container(1200, [
     "<section aria-labelledby=\"daily-summary-heading\">"
-    <> "<h2 id=\"daily-summary-heading\" class=\"section-header\">Daily Summary</h2>"
-    <> calorie_card
-    <> "</section>",
+      <> "<h2 id=\"daily-summary-heading\" class=\"section-header\">Daily Summary</h2>"
+      <> calorie_card
+      <> "</section>",
     "<section aria-labelledby=\"macros-heading\">"
-    <> "<h2 id=\"macros-heading\" class=\"section-header\">Macronutrients</h2>"
-    <> protein_bar
-    <> fat_bar
-    <> carbs_bar
-    <> "</section>",
+      <> "<h2 id=\"macros-heading\" class=\"section-header\">Macronutrients</h2>"
+      <> protein_bar
+      <> fat_bar
+      <> carbs_bar
+      <> "</section>",
     "<section aria-labelledby=\"daily-log-heading\">"
-    <> "<h2 id=\"daily-log-heading\" class=\"section-header\">Daily Log</h2>"
-    <> filter_controls
-    <> timeline
-    <> "</section>",
+      <> "<h2 id=\"daily-log-heading\" class=\"section-header\">Daily Log</h2>"
+      <> filter_controls
+      <> timeline
+      <> "</section>",
   ])
   <> scripts
   <> "</main>"

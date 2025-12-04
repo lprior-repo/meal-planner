@@ -264,7 +264,8 @@ pub fn parse_invalid_yaml_syntax_test() {
 
 /// Test automatic ID generation from recipe name
 pub fn auto_generate_id_from_name_test() {
-  let yaml = "recipes:
+  let yaml =
+    "recipes:
   - name: My Special Beef Recipe
     ingredients:
       - name: beef
@@ -289,7 +290,8 @@ pub fn auto_generate_id_from_name_test() {
 
 /// Test FODMAP level case insensitivity
 pub fn fodmap_level_case_insensitive_test() {
-  let yaml_lowercase = "recipes:
+  let yaml_lowercase =
+    "recipes:
   - name: Test Recipe
     ingredients:
       - name: test
@@ -306,7 +308,8 @@ pub fn fodmap_level_case_insensitive_test() {
     vertical_compliant: true
 "
 
-  let yaml_uppercase = "recipes:
+  let yaml_uppercase =
+    "recipes:
   - name: Test Recipe 2
     ingredients:
       - name: test
@@ -332,7 +335,8 @@ pub fn fodmap_level_case_insensitive_test() {
 
 /// Test all FODMAP levels
 pub fn all_fodmap_levels_test() {
-  let yaml = "recipes:
+  let yaml =
+    "recipes:
   - name: Low FODMAP
     ingredients:
       - name: test
@@ -470,7 +474,8 @@ pub fn handle_missing_file_test() {
 /// Test graceful handling of multiple recipe failures
 pub fn handle_multiple_recipe_failures_test() {
   // YAML with mix of valid and invalid recipes
-  let mixed_yaml = "recipes:
+  let mixed_yaml =
+    "recipes:
   - name: Valid Recipe
     ingredients:
       - name: ingredient1
@@ -499,7 +504,8 @@ pub fn handle_multiple_recipe_failures_test() {
 
 /// Test error message quality for missing keys
 pub fn error_message_quality_test() {
-  let yaml_missing_name = "recipes:
+  let yaml_missing_name =
+    "recipes:
   - ingredients:
       - name: test
         quantity: 1 unit
@@ -687,7 +693,8 @@ pub fn complete_workflow_test() {
 
 /// Test recipe with minimal values
 pub fn minimal_recipe_test() {
-  let minimal_yaml = "recipes:
+  let minimal_yaml =
+    "recipes:
   - name: Minimal Recipe
     ingredients:
       - name: one ingredient
@@ -715,7 +722,8 @@ pub fn minimal_recipe_test() {
 
 /// Test recipe with maximum realistic values
 pub fn large_recipe_test() {
-  let large_yaml = "recipes:
+  let large_yaml =
+    "recipes:
   - name: Very Large Recipe
     ingredients:
       - name: ingredient 1
@@ -752,7 +760,8 @@ pub fn large_recipe_test() {
 
 /// Test recipe with special characters in strings
 pub fn special_characters_test() {
-  let special_yaml = "recipes:
+  let special_yaml =
+    "recipes:
   - name: Recipe with Special Characters!@#$%
     ingredients:
       - name: ingredient with & ampersand

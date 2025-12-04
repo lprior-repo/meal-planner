@@ -65,16 +65,31 @@ echo "Starting Agent Mail server..."
 cd "$INSTALL_DIR"
 nohup "$INSTALL_DIR/scripts/run_server_with_token.sh" > "$MAILBOX_DIR/server.log" 2>&1 &
 
-# Wait and verify
+# Wait and verify process started
 sleep 2
-if pgrep -f "mcp_agent_mail" > /dev/null 2>&1; then
-    echo "✓ Server started successfully"
-    echo ""
-    echo "Web UI: http://127.0.0.1:$PORT/mail"
-    echo "Logs: $MAILBOX_DIR/server.log"
-    echo ""
-else
-    echo "✗ Server failed to start"
+if ! pgrep -f "mcp_agent_mail" > /dev/null 2>&1; then
+    echo "✗ Server process failed to start"
     echo "Check logs: $MAILBOX_DIR/server.log"
     exit 1
 fi
+
+# Wait for HTTP server to be ready (max 10 seconds)
+echo "Testing server readiness..."
+MAX_ATTEMPTS=20
+ATTEMPT=0
+while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+    if curl -s -f "http://127.0.0.1:$PORT/health" > /dev/null 2>&1; then
+        echo "✓ Server is ready and responding"
+        echo ""
+        echo "Web UI: http://127.0.0.1:$PORT/mail"
+        echo "Logs: $MAILBOX_DIR/server.log"
+        echo ""
+        exit 0
+    fi
+    ATTEMPT=$((ATTEMPT + 1))
+    sleep 0.5
+done
+
+echo "✗ Server started but not responding to HTTP requests"
+echo "Check logs: $MAILBOX_DIR/server.log"
+exit 1

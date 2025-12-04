@@ -8,9 +8,9 @@
 //     Error(e) -> error_display(e)
 //   }
 
-import gleam/string
 import gleam/int
 import gleam/list
+import gleam/string
 
 /// Food card skeleton - placeholder for food search results
 /// Shows skeleton for food name, type, and macro badges
@@ -158,7 +158,8 @@ fn micronutrient_bar_skeleton() -> String {
 /// Table row skeleton - placeholder for data table rows
 /// Accepts count parameter for number of rows to display
 pub fn table_row_skeleton(count: Int) -> String {
-  let rows = list.range(1, count)
+  let rows =
+    list.range(1, count)
     |> list.map(fn(_) { single_table_row_skeleton() })
     |> string.join("")
 
@@ -237,7 +238,8 @@ pub fn card_stat_skeleton() -> String {
 /// List skeleton - placeholder for generic lists
 /// Accepts count parameter for number of list items
 pub fn list_skeleton(count: Int) -> String {
-  let items = list.range(1, count)
+  let items =
+    list.range(1, count)
     |> list.map(fn(_) {
       "
 <div class=\"skeleton-list-item\">
@@ -253,8 +255,8 @@ pub fn list_skeleton(count: Int) -> String {
     |> string.join("")
 
   "<div class=\"food-list\" role=\"status\" aria-label=\"Loading list\">"
-    <> items
-    <> "</div>"
+  <> items
+  <> "</div>"
 }
 
 /// Page skeleton - full page loading state
@@ -327,7 +329,8 @@ pub fn daily_log_timeline_skeleton() -> String {
 
 /// Recipe grid skeleton - grid of recipe cards
 pub fn recipe_grid_skeleton(count: Int) -> String {
-  let cards = list.range(1, count)
+  let cards =
+    list.range(1, count)
     |> list.map(fn(_) { recipe_card_skeleton() })
     |> string.join("")
 
@@ -340,7 +343,8 @@ pub fn recipe_grid_skeleton(count: Int) -> String {
 
 /// Food search results skeleton - list of food items
 pub fn food_search_results_skeleton(count: Int) -> String {
-  let items = list.range(1, count)
+  let items =
+    list.range(1, count)
     |> list.map(fn(_) { food_card_skeleton() })
     |> string.join("")
 

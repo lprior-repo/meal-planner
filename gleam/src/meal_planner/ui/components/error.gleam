@@ -101,7 +101,9 @@ pub fn rich_error_display(
 /// ```
 pub fn compact_error_display(error: ErrorMessage) -> element.Element(msg) {
   let class_name =
-    "alert " <> error_messages.severity_class(error.severity) <> " compact-error"
+    "alert "
+    <> error_messages.severity_class(error.severity)
+    <> " compact-error"
   let icon_text = error_messages.severity_icon(error.severity)
 
   html.div([attribute.class(class_name)], [
@@ -123,8 +125,7 @@ pub fn error_toast(
   error: ErrorMessage,
   duration duration_ms: Int,
 ) -> element.Element(msg) {
-  let class_name =
-    "toast " <> error_messages.severity_class(error.severity)
+  let class_name = "toast " <> error_messages.severity_class(error.severity)
   let icon_text = error_messages.severity_icon(error.severity)
 
   html.div(
@@ -136,11 +137,16 @@ pub fn error_toast(
     [
       html.span([attribute.class("toast-icon")], [element.text(icon_text)]),
       html.div([attribute.class("toast-content")], [
-        html.strong([attribute.class("toast-title")], [element.text(error.title)]),
+        html.strong([attribute.class("toast-title")], [
+          element.text(error.title),
+        ]),
         html.p([attribute.class("toast-message")], [element.text(error.message)]),
       ]),
       html.button(
-        [attribute.class("toast-close"), attribute.attribute("aria-label", "Close")],
+        [
+          attribute.class("toast-close"),
+          attribute.attribute("aria-label", "Close"),
+        ],
         [element.text("×")],
       ),
     ],
@@ -207,10 +213,9 @@ pub fn error_modal(
         [attribute.class("modal-footer")],
         case error.retry_available, error.retry_url {
           True, Some(url) -> [
-            html.a(
-              [attribute.href(url), attribute.class("btn btn-primary")],
-              [element.text("Try Again")],
-            ),
+            html.a([attribute.href(url), attribute.class("btn btn-primary")], [
+              element.text("Try Again"),
+            ]),
             html.button([attribute.class("btn btn-secondary")], [
               element.text("Cancel"),
             ]),
@@ -263,10 +268,9 @@ pub fn error_alert(
 ) -> element.Element(msg) {
   let close_button = case dismissable, dismiss_url {
     True, Some(url) -> [
-      html.a(
-        [attribute.href(url), attribute.class("alert-close")],
-        [element.text("×")],
-      ),
+      html.a([attribute.href(url), attribute.class("alert-close")], [
+        element.text("×"),
+      ]),
     ]
     _, _ -> []
   }
@@ -293,10 +297,9 @@ pub fn success_alert(
 ) -> element.Element(msg) {
   let close_button = case dismissable, dismiss_url {
     True, Some(url) -> [
-      html.a(
-        [attribute.href(url), attribute.class("alert-close")],
-        [element.text("×")],
-      ),
+      html.a([attribute.href(url), attribute.class("alert-close")], [
+        element.text("×"),
+      ]),
     ]
     _, _ -> []
   }
@@ -323,10 +326,9 @@ pub fn warning_alert(
 ) -> element.Element(msg) {
   let close_button = case dismissable, dismiss_url {
     True, Some(url) -> [
-      html.a(
-        [attribute.href(url), attribute.class("alert-close")],
-        [element.text("×")],
-      ),
+      html.a([attribute.href(url), attribute.class("alert-close")], [
+        element.text("×"),
+      ]),
     ]
     _, _ -> []
   }
@@ -353,10 +355,9 @@ pub fn info_alert(
 ) -> element.Element(msg) {
   let close_button = case dismissable, dismiss_url {
     True, Some(url) -> [
-      html.a(
-        [attribute.href(url), attribute.class("alert-close")],
-        [element.text("×")],
-      ),
+      html.a([attribute.href(url), attribute.class("alert-close")], [
+        element.text("×"),
+      ]),
     ]
     _, _ -> []
   }
@@ -433,9 +434,12 @@ pub fn not_found_page() -> element.Element(msg) {
         html.a([attribute.href("/"), attribute.class("btn btn-primary")], [
           element.text("Go Home"),
         ]),
-        html.a([attribute.href("/recipes"), attribute.class("btn btn-secondary")], [
-          element.text("Browse Recipes"),
-        ]),
+        html.a(
+          [attribute.href("/recipes"), attribute.class("btn btn-secondary")],
+          [
+            element.text("Browse Recipes"),
+          ],
+        ),
       ]),
     ]),
   ])
@@ -537,7 +541,9 @@ pub fn no_search_results(query: String) -> element.Element(msg) {
   empty_state(
     icon: "🔍",
     title: "No results found",
-    message: "No foods matching \"" <> query <> "\" were found. Try a different search term.",
+    message: "No foods matching \""
+      <> query
+      <> "\" were found. Try a different search term.",
     action: None,
   )
 }
@@ -623,7 +629,6 @@ pub type EmptyAction {
 
 /// Option type alias for convenience (re-exported from gleam/option)
 /// Note: Already imported from gleam/option
-
 // ===================================================================
 // HELPER FUNCTIONS
 // ===================================================================

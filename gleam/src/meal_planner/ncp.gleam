@@ -417,19 +417,20 @@ pub fn average_nutrition_history(history: List(NutritionState)) -> NutritionData
     _ -> {
       // Calculate sum and count in one pass
       let #(sum, count) =
-        list.fold(history, #(
-          NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0),
-          0,
-        ), fn(acc, state) {
-          let updated_sum =
-            NutritionData(
-              protein: acc.0.protein +. state.consumed.protein,
-              fat: acc.0.fat +. state.consumed.fat,
-              carbs: acc.0.carbs +. state.consumed.carbs,
-              calories: acc.0.calories +. state.consumed.calories,
-            )
-          #(updated_sum, acc.1 + 1)
-        })
+        list.fold(
+          history,
+          #(NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0), 0),
+          fn(acc, state) {
+            let updated_sum =
+              NutritionData(
+                protein: { acc.0 }.protein +. state.consumed.protein,
+                fat: { acc.0 }.fat +. state.consumed.fat,
+                carbs: { acc.0 }.carbs +. state.consumed.carbs,
+                calories: { acc.0 }.calories +. state.consumed.calories,
+              )
+            #(updated_sum, acc.1 + 1)
+          },
+        )
 
       let count_float = int_to_float(count)
       NutritionData(

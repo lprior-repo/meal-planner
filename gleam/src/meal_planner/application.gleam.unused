@@ -25,17 +25,18 @@ pub type StartupError {
 ///
 /// This initializes all application services including:
 /// - Database connection pool
-/// - Supervisor tree with registry and workers
+/// - Supervisor tree with registry and cache server
 /// - Logger configuration
 ///
 /// Returns the supervisor reference on success, or an error describing
-/// what failed during startup.
+/// what failed during startup. The cache server is automatically started
+/// as a supervised child and can be accessed via cache_server.whereis().
 pub fn start() -> Result(AppState, StartupError) {
   // Verify database connection is available
   case storage.start_pool(storage.default_config()) {
     Error(err) -> Error(DatabaseInitError(err))
     Ok(_conn) -> {
-      // Create and start the supervisor tree
+      // Create and start the supervisor tree (includes cache_server)
       case supervisor.start() {
         Ok(started) -> Ok(AppState(supervisor: started.data))
         Error(err) -> Error(SupervisorStartError(err))

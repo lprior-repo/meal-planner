@@ -1,8 +1,8 @@
+import envoy
+import gleam/string
 import gleeunit
 import gleeunit/should
-import gleam/string
 import simplifile
-import envoy
 
 // Module under test imports would go here
 // For now we'll test the helper functions and workflows
@@ -177,7 +177,8 @@ pub fn extract_directory_from_path_test() {
 
 pub fn extract_directory_from_windows_path_test() {
   // Test extracting directory from Windows path
-  let windows_path = "C:\\Users\\test\\AppData\\Local\\meal-planner\\meal_planner.dump"
+  let windows_path =
+    "C:\\Users\\test\\AppData\\Local\\meal-planner\\meal_planner.dump"
   let without_file = string.replace(windows_path, "\\meal_planner.dump", "")
 
   should.equal(without_file, "C:\\Users\\test\\AppData\\Local\\meal-planner")
@@ -209,23 +210,29 @@ pub fn build_psql_create_command_test() {
 pub fn build_pg_restore_command_args_test() {
   // Test building pg_restore command arguments
   let args = [
-    "-h", "localhost",
-    "-U", "postgres",
-    "-d", "meal_planner",
-    "-j", "4",
-    "/path/to/dump"
+    "-h",
+    "localhost",
+    "-U",
+    "postgres",
+    "-d",
+    "meal_planner",
+    "-j",
+    "4",
+    "/path/to/dump",
   ]
 
-  should.equal(string.join(args, " "),
-    "-h localhost -U postgres -d meal_planner -j 4 /path/to/dump")
+  should.equal(
+    string.join(args, " "),
+    "-h localhost -U postgres -d meal_planner -j 4 /path/to/dump",
+  )
 }
 
 pub fn build_verification_query_test() {
   // Test building verification SQL query
   let query =
-    "SELECT 'Nutrients' as tbl, count(*) FROM nutrients " <>
-    "UNION ALL SELECT 'Foods', count(*) FROM foods " <>
-    "UNION ALL SELECT 'Food Nutrients', count(*) FROM food_nutrients"
+    "SELECT 'Nutrients' as tbl, count(*) FROM nutrients "
+    <> "UNION ALL SELECT 'Foods', count(*) FROM foods "
+    <> "UNION ALL SELECT 'Food Nutrients', count(*) FROM food_nutrients"
 
   should.be_true(string.contains(query, "Nutrients"))
   should.be_true(string.contains(query, "Foods"))
@@ -257,7 +264,8 @@ pub fn detect_warning_in_output_test() {
 pub fn detect_success_output_test() {
   // Test successful output has no errors
   let success_output = "CREATE DATABASE\ncommand successful"
-  let contains_error = string.contains(string.lowercase(success_output), "error")
+  let contains_error =
+    string.contains(string.lowercase(success_output), "error")
 
   should.be_false(contains_error)
 }
@@ -269,11 +277,11 @@ pub fn detect_success_output_test() {
 pub fn verify_table_counts_format_test() {
   // Test parsing verification query results
   let sample_output =
-    "     tbl      | count \n" <>
-    "--------------+-------\n" <>
-    " Nutrients    | 150   \n" <>
-    " Foods        | 9339  \n" <>
-    " Food Nutrients | 82936\n"
+    "     tbl      | count \n"
+    <> "--------------+-------\n"
+    <> " Nutrients    | 150   \n"
+    <> " Foods        | 9339  \n"
+    <> " Food Nutrients | 82936\n"
 
   should.be_true(string.contains(sample_output, "Nutrients"))
   should.be_true(string.contains(sample_output, "Foods"))
@@ -283,9 +291,9 @@ pub fn verify_table_counts_format_test() {
 pub fn verify_nonzero_counts_test() {
   // Test that verification checks for non-zero counts
   let sample_output =
-    " Nutrients    | 150   \n" <>
-    " Foods        | 9339  \n" <>
-    " Food Nutrients | 82936\n"
+    " Nutrients    | 150   \n"
+    <> " Foods        | 9339  \n"
+    <> " Food Nutrients | 82936\n"
 
   // In a real implementation, would parse numbers and verify > 0
   should.be_true(string.contains(sample_output, "150"))
@@ -296,9 +304,9 @@ pub fn verify_nonzero_counts_test() {
 pub fn verify_empty_database_detection_test() {
   // Test detection of empty/failed restore
   let empty_output =
-    " Nutrients    | 0   \n" <>
-    " Foods        | 0   \n" <>
-    " Food Nutrients | 0\n"
+    " Nutrients    | 0   \n"
+    <> " Foods        | 0   \n"
+    <> " Food Nutrients | 0\n"
 
   should.be_true(string.contains(empty_output, "| 0"))
 }
@@ -315,8 +323,12 @@ pub fn detect_postgres_path_windows_test() {
     "C:\\Program Files\\PostgreSQL\\15\\bin\\",
   ]
 
-  should.equal(string.length(string.join(windows_paths, ",")),
-    string.length("C:\\Program Files\\PostgreSQL\\17\\bin\\,C:\\Program Files\\PostgreSQL\\16\\bin\\,C:\\Program Files\\PostgreSQL\\15\\bin\\"))
+  should.equal(
+    string.length(string.join(windows_paths, ",")),
+    string.length(
+      "C:\\Program Files\\PostgreSQL\\17\\bin\\,C:\\Program Files\\PostgreSQL\\16\\bin\\,C:\\Program Files\\PostgreSQL\\15\\bin\\",
+    ),
+  )
 }
 
 pub fn detect_postgres_binary_test() {
@@ -333,7 +345,8 @@ pub fn detect_postgres_binary_test() {
 
 pub fn validate_dump_url_format_test() {
   // Test dump URL is well-formed
-  let url = "https://github.com/lprior-repo/meal-planner/releases/download/v1.0.0/meal_planner.dump"
+  let url =
+    "https://github.com/lprior-repo/meal-planner/releases/download/v1.0.0/meal_planner.dump"
 
   should.be_true(string.starts_with(url, "https://"))
   should.be_true(string.contains(url, "github.com"))
@@ -427,8 +440,12 @@ pub fn restore_workflow_steps_test() {
     "7. Verify restoration",
   ]
 
-  should.equal(string.length(string.join(steps, "\n")),
-    string.length("1. Get dump path\n2. Check if dump exists locally\n3. Download if missing\n4. Drop existing database\n5. Create new database\n6. Restore from dump\n7. Verify restoration"))
+  should.equal(
+    string.length(string.join(steps, "\n")),
+    string.length(
+      "1. Get dump path\n2. Check if dump exists locally\n3. Download if missing\n4. Drop existing database\n5. Create new database\n6. Restore from dump\n7. Verify restoration",
+    ),
+  )
 }
 
 pub fn error_handling_workflow_test() {
@@ -462,6 +479,10 @@ pub fn create_after_drop_test() {
     "CREATE DATABASE meal_planner",
   ]
 
-  should.equal(string.length(string.join(workflow, "\n")),
-    string.length("DROP DATABASE IF EXISTS meal_planner\nCREATE DATABASE meal_planner"))
+  should.equal(
+    string.length(string.join(workflow, "\n")),
+    string.length(
+      "DROP DATABASE IF EXISTS meal_planner\nCREATE DATABASE meal_planner",
+    ),
+  )
 }

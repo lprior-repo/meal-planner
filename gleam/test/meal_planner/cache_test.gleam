@@ -253,7 +253,11 @@ pub fn large_cache_test() {
 }
 
 // Helper function to add many entries
-fn add_many_entries(c: cache.Cache(String), start: Int, end: Int) -> cache.Cache(String) {
+fn add_many_entries(
+  c: cache.Cache(String),
+  start: Int,
+  end: Int,
+) -> cache.Cache(String) {
   case start >= end {
     True -> c
     False -> {
@@ -264,4 +268,3 @@ fn add_many_entries(c: cache.Cache(String), start: Int, end: Int) -> cache.Cache
     }
   }
 }
-

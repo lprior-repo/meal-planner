@@ -1,15 +1,12 @@
 //// Tests for search handlers
 
+import gleam/option.{None}
 import gleeunit/should
 import meal_planner/types.{SearchFilters}
-import gleam/option.{None}
 
 pub fn search_filters_creation_test() {
-  let filters = SearchFilters(
-    verified_only: True,
-    branded_only: False,
-    category: None,
-  )
+  let filters =
+    SearchFilters(verified_only: True, branded_only: False, category: None)
 
   filters.verified_only
   |> should.equal(True)
@@ -19,11 +16,12 @@ pub fn search_filters_creation_test() {
 }
 
 pub fn search_filters_with_category_test() {
-  let filters = SearchFilters(
-    verified_only: False,
-    branded_only: False,
-    category: option.Some("Vegetables"),
-  )
+  let filters =
+    SearchFilters(
+      verified_only: False,
+      branded_only: False,
+      category: option.Some("Vegetables"),
+    )
 
   case filters.category {
     option.Some(cat) -> {

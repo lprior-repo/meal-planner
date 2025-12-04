@@ -1,7 +1,6 @@
 /// Performance monitoring and benchmarking utilities
 /// Tracks query execution times and cache performance
 /// Target: Monitor 50% DB load reduction in Phase 2
-
 import gleam/float
 import gleam/int
 import gleam/io
@@ -63,10 +62,7 @@ pub fn calculate_time_saved(
 }
 
 /// Calculate DB load reduction percentage
-pub fn calculate_db_load_reduction(
-  cache_hits: Int,
-  total_queries: Int,
-) -> Float {
+pub fn calculate_db_load_reduction(cache_hits: Int, total_queries: Int) -> Float {
   let hit_rate = calculate_hit_rate(cache_hits, total_queries)
   // Each cache hit eliminates a DB query, so hit_rate = load reduction
   hit_rate *. 100.0
@@ -202,9 +198,7 @@ pub fn print_metrics(metrics: PerformanceMetrics) -> Nil {
     <> "ms",
   )
   io.println(
-    "Total Time Saved: "
-    <> float.to_string(metrics.total_time_saved_ms)
-    <> "ms",
+    "Total Time Saved: " <> float.to_string(metrics.total_time_saved_ms) <> "ms",
   )
   io.println(
     "DB Load Reduction: "
@@ -220,17 +214,12 @@ pub fn print_benchmark(result: BenchmarkResult) -> Nil {
   io.println("Test: " <> result.test_name)
   io.println("Iterations: " <> int.to_string(result.iterations))
   io.println("Avg Time: " <> float.to_string(result.avg_time_ms) <> "ms")
-  io.println(
-    "Queries/sec: " <> float.to_string(result.queries_per_second),
-  )
+  io.println("Queries/sec: " <> float.to_string(result.queries_per_second))
   io.println("========================\n")
 }
 
 /// Print performance comparison
-pub fn print_comparison(
-  before: BenchmarkResult,
-  after: BenchmarkResult,
-) -> Nil {
+pub fn print_comparison(before: BenchmarkResult, after: BenchmarkResult) -> Nil {
   let speedup = compare_performance(before, after)
   let improvement = format_improvement(speedup)
 
@@ -260,8 +249,7 @@ pub fn verify_phase2_target(
   case db_reduction >=. 50.0 {
     True -> {
       io.println(
-        "✓ Phase 2 target achieved: "
-        <> format_db_reduction(db_reduction),
+        "✓ Phase 2 target achieved: " <> format_db_reduction(db_reduction),
       )
       Ok(Nil)
     }

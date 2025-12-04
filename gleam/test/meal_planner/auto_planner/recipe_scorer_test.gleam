@@ -3,9 +3,7 @@ import gleeunit
 import gleeunit/should
 import meal_planner/auto_planner/recipe_scorer
 import meal_planner/diet_validator.{VerticalDiet}
-import meal_planner/types.{
-  type Recipe, High, Ingredient, Low, Macros, Recipe,
-}
+import meal_planner/types.{type Recipe, High, Ingredient, Low, Macros, Recipe}
 
 pub fn main() {
   gleeunit.main()
@@ -81,12 +79,7 @@ pub fn score_recipe_basic_test() {
   let weights = recipe_scorer.default_weights()
 
   let score =
-    recipe_scorer.score_recipe(
-      recipe,
-      [VerticalDiet],
-      targets,
-      weights,
-    )
+    recipe_scorer.score_recipe(recipe, [VerticalDiet], targets, weights)
 
   // Should have perfect macro match and good compliance
   score.recipe_id
@@ -110,12 +103,7 @@ pub fn score_recipe_with_deviation_test() {
   let weights = recipe_scorer.default_weights()
 
   let score =
-    recipe_scorer.score_recipe(
-      recipe,
-      [VerticalDiet],
-      targets,
-      weights,
-    )
+    recipe_scorer.score_recipe(recipe, [VerticalDiet], targets, weights)
 
   // Macro match should be less than perfect
   score.macro_match_score
@@ -133,12 +121,7 @@ pub fn score_recipe_non_compliant_test() {
   let weights = recipe_scorer.default_weights()
 
   let score =
-    recipe_scorer.score_recipe(
-      recipe,
-      [VerticalDiet],
-      targets,
-      weights,
-    )
+    recipe_scorer.score_recipe(recipe, [VerticalDiet], targets, weights)
 
   // Should have low diet compliance score
   score.diet_compliance_score
@@ -369,8 +352,7 @@ pub fn take_top_n_test() {
 pub fn default_weights_sum_test() {
   let weights = recipe_scorer.default_weights()
 
-  let sum =
-    weights.diet_compliance +. weights.macro_match +. weights.variety
+  let sum = weights.diet_compliance +. weights.macro_match +. weights.variety
 
   // Weights should sum to 1.0
   sum

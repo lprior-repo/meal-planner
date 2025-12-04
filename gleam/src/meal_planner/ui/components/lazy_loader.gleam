@@ -13,7 +13,6 @@
 /// - Progressive image loading
 ///
 /// See: meal-planner-e0v (Performance optimization)
-
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -56,13 +55,15 @@ pub fn meal_entry_skeleton() -> String {
 pub fn micronutrient_panel_skeleton() -> String {
   "<div class=\"micronutrient-panel skeleton\">"
   <> "<div class=\"skeleton-text\" style=\"width: 120px; height: 20px; margin-bottom: 16px;\"></div>"
-  <> string.concat(list.map([1, 2, 3, 4, 5], fn(_) {
-    "<div class=\"micronutrient-bar skeleton\" style=\"margin-bottom: 12px;\">"
-    <> "<div class=\"skeleton-text\" style=\"width: 100px; height: 14px;\"></div>"
-    <> "<div class=\"skeleton-bar\" style=\"height: 8px; margin: 8px 0;\"></div>"
-    <> "<div class=\"skeleton-text\" style=\"width: 60px; height: 12px;\"></div>"
-    <> "</div>"
-  }))
+  <> string.concat(
+    list.map([1, 2, 3, 4, 5], fn(_) {
+      "<div class=\"micronutrient-bar skeleton\" style=\"margin-bottom: 12px;\">"
+      <> "<div class=\"skeleton-text\" style=\"width: 100px; height: 14px;\"></div>"
+      <> "<div class=\"skeleton-bar\" style=\"height: 8px; margin: 8px 0;\"></div>"
+      <> "<div class=\"skeleton-text\" style=\"width: 60px; height: 12px;\"></div>"
+      <> "</div>"
+    }),
+  )
   <> "</div>"
 }
 
@@ -105,11 +106,19 @@ pub fn search_results_skeleton(count: Int) -> String {
 /// - id: Unique identifier for this lazy-loaded section
 /// - placeholder: Skeleton loader HTML to show while loading
 /// - content_src: API endpoint or data attribute with content
-pub fn lazy_section(id: String, placeholder: String, content_src: String) -> String {
+pub fn lazy_section(
+  id: String,
+  placeholder: String,
+  content_src: String,
+) -> String {
   "<div class=\"lazy-section\" "
-  <> "id=\"lazy-" <> id <> "\" "
+  <> "id=\"lazy-"
+  <> id
+  <> "\" "
   <> "data-lazy-load=\"true\" "
-  <> "data-content-src=\"" <> content_src <> "\" "
+  <> "data-content-src=\""
+  <> content_src
+  <> "\" "
   <> "data-loaded=\"false\">"
   <> "<div class=\"lazy-placeholder\" data-placeholder=\"true\">"
   <> placeholder
@@ -128,9 +137,15 @@ pub fn deferred_component(
   data_json: String,
 ) -> String {
   "<div class=\"deferred-component\" "
-  <> "id=\"deferred-" <> id <> "\" "
-  <> "data-component-type=\"" <> component_type <> "\" "
-  <> "data-component-data=\"" <> encode_json(data_json) <> "\" "
+  <> "id=\"deferred-"
+  <> id
+  <> "\" "
+  <> "data-component-type=\""
+  <> component_type
+  <> "\" "
+  <> "data-component-data=\""
+  <> encode_json(data_json)
+  <> "\" "
   <> "data-rendered=\"false\">"
   <> get_skeleton_for_component(component_type)
   <> "</div>"
@@ -141,19 +156,14 @@ fn get_skeleton_for_component(component_type: String) -> String {
   case component_type {
     "micronutrient-panel" -> micronutrient_panel_skeleton()
     "macro-bars" ->
-      macro_bar_skeleton()
-      <> macro_bar_skeleton()
-      <> macro_bar_skeleton()
+      macro_bar_skeleton() <> macro_bar_skeleton() <> macro_bar_skeleton()
     "calorie-card" -> calorie_card_skeleton()
     "meal-entries" ->
-      meal_entry_skeleton()
-      <> meal_entry_skeleton()
-      <> meal_entry_skeleton()
+      meal_entry_skeleton() <> meal_entry_skeleton() <> meal_entry_skeleton()
     "recipe-grid" ->
-      recipe_card_skeleton()
-      <> recipe_card_skeleton()
-      <> recipe_card_skeleton()
-    _ -> "<div class=\"skeleton-text\" style=\"width: 100%; height: 200px;\"></div>"
+      recipe_card_skeleton() <> recipe_card_skeleton() <> recipe_card_skeleton()
+    _ ->
+      "<div class=\"skeleton-text\" style=\"width: 100%; height: 200px;\"></div>"
   }
 }
 
@@ -180,11 +190,19 @@ pub fn virtual_scroll_container(
   let total_height = item_height * total_items
 
   "<div class=\"virtual-scroll-container\" "
-  <> "id=\"" <> id <> "\" "
+  <> "id=\""
+  <> id
+  <> "\" "
   <> "data-virtual-scroll=\"true\" "
-  <> "data-item-height=\"" <> int.to_string(item_height) <> "\" "
-  <> "data-total-items=\"" <> int.to_string(total_items) <> "\" "
-  <> "data-visible-count=\"" <> int.to_string(visible_count) <> "\" "
+  <> "data-item-height=\""
+  <> int.to_string(item_height)
+  <> "\" "
+  <> "data-total-items=\""
+  <> int.to_string(total_items)
+  <> "\" "
+  <> "data-visible-count=\""
+  <> int.to_string(visible_count)
+  <> "\" "
   <> "style=\"height: 600px; overflow-y: auto; position: relative;\">"
   <> "<div class=\"virtual-scroll-spacer\" style=\"height: "
   <> int.to_string(total_height)
@@ -200,21 +218,34 @@ pub fn virtual_scroll_container(
 /// Lazy-loaded image with blur-up placeholder
 ///
 /// Shows low-quality placeholder while high-res image loads
-pub fn lazy_image(src: String, alt: String, placeholder: Option(String)) -> String {
+pub fn lazy_image(
+  src: String,
+  alt: String,
+  placeholder: Option(String),
+) -> String {
   let placeholder_src = case placeholder {
     Some(p) -> p
-    None -> "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3C/svg%3E"
+    None ->
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3C/svg%3E"
   }
 
   "<div class=\"lazy-image-wrapper\">"
   <> "<img class=\"lazy-image-placeholder\" "
-  <> "src=\"" <> placeholder_src <> "\" "
-  <> "alt=\"" <> alt <> " (loading)\" "
+  <> "src=\""
+  <> placeholder_src
+  <> "\" "
+  <> "alt=\""
+  <> alt
+  <> " (loading)\" "
   <> "aria-hidden=\"true\" "
   <> "style=\"filter: blur(10px); transition: opacity 0.3s;\" />"
   <> "<img class=\"lazy-image\" "
-  <> "data-src=\"" <> src <> "\" "
-  <> "alt=\"" <> alt <> "\" "
+  <> "data-src=\""
+  <> src
+  <> "\" "
+  <> "alt=\""
+  <> alt
+  <> "\" "
   <> "loading=\"lazy\" "
   <> "style=\"opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%;\" />"
   <> "</div>"
@@ -226,7 +257,9 @@ pub fn lazy_image(src: String, alt: String, placeholder: Option(String)) -> Stri
 
 /// Animated spinner for loading states
 pub fn loading_spinner(size: String) -> String {
-  "<div class=\"loading-spinner loading-spinner-" <> size <> "\" "
+  "<div class=\"loading-spinner loading-spinner-"
+  <> size
+  <> "\" "
   <> "role=\"status\" aria-label=\"Loading\">"
   <> "<div class=\"spinner-circle\"></div>"
   <> "<span class=\"visually-hidden\">Loading...</span>"
@@ -247,13 +280,23 @@ pub fn loading_progress_bar(percentage: Float, label: String) -> String {
   let pct_str = percentage |> float_to_int |> int.to_string
 
   "<div class=\"loading-progress\" role=\"progressbar\" "
-  <> "aria-valuenow=\"" <> pct_str <> "\" "
+  <> "aria-valuenow=\""
+  <> pct_str
+  <> "\" "
   <> "aria-valuemin=\"0\" "
   <> "aria-valuemax=\"100\" "
-  <> "aria-label=\"" <> label <> "\">"
-  <> "<div class=\"progress-label\">" <> label <> " (" <> pct_str <> "%)</div>"
+  <> "aria-label=\""
+  <> label
+  <> "\">"
+  <> "<div class=\"progress-label\">"
+  <> label
+  <> " ("
+  <> pct_str
+  <> "%)</div>"
   <> "<div class=\"progress-track\">"
-  <> "<div class=\"progress-fill\" style=\"width: " <> pct_str <> "%\"></div>"
+  <> "<div class=\"progress-fill\" style=\"width: "
+  <> pct_str
+  <> "%\"></div>"
   <> "</div>"
   <> "</div>"
 }

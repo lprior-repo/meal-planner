@@ -6,7 +6,8 @@ import meal_planner/types.{type UserProfile, Macros}
 import pog
 import wisp
 
-type Profile = types.UserProfile
+type Profile =
+  types.UserProfile
 
 /// Web context holding database connection
 pub type Context {
@@ -34,16 +35,22 @@ fn profile_to_json(p: Profile) -> json.Json {
   json.object([
     #("id", json.string(p.id)),
     #("bodyweight", json.float(p.bodyweight)),
-    #("activity_level", json.string(case p.activity_level {
-      types.Sedentary -> "sedentary"
-      types.Moderate -> "moderate"
-      types.Active -> "active"
-    })),
-    #("goal", json.string(case p.goal {
-      types.Lose -> "lose"
-      types.Maintain -> "maintain"
-      types.Gain -> "gain"
-    })),
+    #(
+      "activity_level",
+      json.string(case p.activity_level {
+        types.Sedentary -> "sedentary"
+        types.Moderate -> "moderate"
+        types.Active -> "active"
+      }),
+    ),
+    #(
+      "goal",
+      json.string(case p.goal {
+        types.Lose -> "lose"
+        types.Maintain -> "maintain"
+        types.Gain -> "gain"
+      }),
+    ),
     #("meals_per_day", json.int(p.meals_per_day)),
   ])
 }

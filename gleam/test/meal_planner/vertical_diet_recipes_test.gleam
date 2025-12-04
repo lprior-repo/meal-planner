@@ -116,14 +116,15 @@ pub fn all_recipes_have_vd_prefix_test() {
 pub fn all_recipe_ids_follow_pattern_test() {
   let recipes = vertical_diet_recipes.all_recipes()
   // IDs should be like "vd-ribeye-01", "vd-rice-01", etc.
-  let all_valid = list.all(recipes, fn(r) {
-    let parts = string.split(r.id, "-")
-    // Use pattern matching instead of list.length() >= 3
-    case parts {
-      [_, _, _, ..] -> True
-      _ -> False
-    }
-  })
+  let all_valid =
+    list.all(recipes, fn(r) {
+      let parts = string.split(r.id, "-")
+      // Use pattern matching instead of list.length() >= 3
+      case parts {
+        [_, _, _, ..] -> True
+        _ -> False
+      }
+    })
   all_valid |> should.be_true()
 }
 
@@ -141,8 +142,7 @@ pub fn all_recipes_have_ingredients_test() {
 
 pub fn all_recipes_have_instructions_test() {
   let recipes = vertical_diet_recipes.all_recipes()
-  let all_have_instructions =
-    list.all(recipes, fn(r) { r.instructions != [] })
+  let all_have_instructions = list.all(recipes, fn(r) { r.instructions != [] })
   all_have_instructions |> should.be_true()
 }
 
@@ -165,9 +165,7 @@ pub fn all_recipes_have_low_fodmap_test() {
 pub fn all_recipes_pass_vertical_compliance_check_test() {
   let recipes = vertical_diet_recipes.all_recipes()
   let all_compliant =
-    list.all(recipes, fn(r) {
-      r.vertical_compliant && r.fodmap_level == Low
-    })
+    list.all(recipes, fn(r) { r.vertical_compliant && r.fodmap_level == Low })
   all_compliant |> should.be_true()
 }
 
@@ -236,9 +234,7 @@ pub fn all_recipes_have_non_negative_macros_test() {
   let recipes = vertical_diet_recipes.all_recipes()
   let all_non_negative =
     list.all(recipes, fn(r) {
-      r.macros.protein >=. 0.0
-      && r.macros.fat >=. 0.0
-      && r.macros.carbs >=. 0.0
+      r.macros.protein >=. 0.0 && r.macros.fat >=. 0.0 && r.macros.carbs >=. 0.0
     })
   all_non_negative |> should.be_true()
 }
@@ -411,8 +407,7 @@ pub fn ingredient_quantities_are_reasonable_test() {
 pub fn all_instructions_non_empty_test() {
   let recipes = vertical_diet_recipes.all_recipes()
   let all_instructions = list.flat_map(recipes, fn(r) { r.instructions })
-  let all_non_empty =
-    list.all(all_instructions, fn(i) { string.length(i) > 0 })
+  let all_non_empty = list.all(all_instructions, fn(i) { string.length(i) > 0 })
   all_non_empty |> should.be_true()
 }
 
@@ -434,7 +429,8 @@ pub fn recipes_have_reasonable_instruction_count_test() {
 pub fn serving_sizes_are_reasonable_test() {
   let recipes = vertical_diet_recipes.all_recipes()
   // Servings should be between 1 and 10
-  let all_reasonable = list.all(recipes, fn(r) { r.servings >= 1 && r.servings <= 10 })
+  let all_reasonable =
+    list.all(recipes, fn(r) { r.servings >= 1 && r.servings <= 10 })
   all_reasonable |> should.be_true()
 }
 

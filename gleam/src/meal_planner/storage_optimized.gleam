@@ -1,7 +1,6 @@
 /// Optimized storage functions with query caching and improved query plans
 /// Phase 2: Database query optimization
 /// Target: 50% DB load reduction through covering indexes and caching
-
 import gleam/dict
 import gleam/dynamic/decode
 import gleam/int
@@ -158,8 +157,7 @@ pub fn search_foods_filtered_cached(
     }
 
     None -> {
-      let result =
-        search_foods_filtered_optimized(conn, query, filters, limit)
+      let result = search_foods_filtered_optimized(conn, query, filters, limit)
 
       let final_cache = case result {
         Ok(results) -> query_cache.put(updated_cache, cache_key, results)
@@ -202,16 +200,9 @@ fn search_foods_filtered_optimized(
     None -> ""
   }
 
-  let sql =
-    "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
-     FROM foods"
-    <> index_hint
-    <> "
-     WHERE (description LIKE $1 || '%' OR description LIKE '%' || $1 || '%')"
-    <> verified_clause
-    <> branded_clause
-    <> category_clause
-    <> "
+  let sql = "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
+     FROM foods" <> index_hint <> "
+     WHERE (description LIKE $1 || '%' OR description LIKE '%' || $1 || '%')" <> verified_clause <> branded_clause <> category_clause <> "
      ORDER BY
        CASE
          WHEN LOWER(description) LIKE LOWER($1 || '%') THEN 1

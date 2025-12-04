@@ -4,7 +4,6 @@
 /// - Diet compliance (0-1): How well the recipe follows specified diet principles
 /// - Macro target match (0-1): How close recipe macros are to target macros
 /// - Variety score (0-1): Encourages diverse ingredient selection
-
 import gleam/float
 import gleam/int
 import gleam/list
@@ -32,11 +31,7 @@ pub type RecipeScore {
 
 /// Scoring weights for different factors
 pub type ScoringWeights {
-  ScoringWeights(
-    diet_compliance: Float,
-    macro_match: Float,
-    variety: Float,
-  )
+  ScoringWeights(diet_compliance: Float, macro_match: Float, variety: Float)
 }
 
 // ============================================================================
@@ -93,29 +88,17 @@ pub fn score_and_rank_recipes(
 
 /// Default scoring weights (balanced approach)
 pub fn default_weights() -> ScoringWeights {
-  ScoringWeights(
-    diet_compliance: 0.5,
-    macro_match: 0.3,
-    variety: 0.2,
-  )
+  ScoringWeights(diet_compliance: 0.5, macro_match: 0.3, variety: 0.2)
 }
 
 /// Strict diet compliance weights (prioritize diet rules)
 pub fn strict_compliance_weights() -> ScoringWeights {
-  ScoringWeights(
-    diet_compliance: 0.7,
-    macro_match: 0.2,
-    variety: 0.1,
-  )
+  ScoringWeights(diet_compliance: 0.7, macro_match: 0.2, variety: 0.1)
 }
 
 /// Performance focused weights (prioritize macro targets)
 pub fn performance_weights() -> ScoringWeights {
-  ScoringWeights(
-    diet_compliance: 0.3,
-    macro_match: 0.6,
-    variety: 0.1,
-  )
+  ScoringWeights(diet_compliance: 0.3, macro_match: 0.6, variety: 0.1)
 }
 
 // ============================================================================
@@ -167,7 +150,8 @@ pub fn macro_deviation(actual: Float, target: Float) -> Float {
 /// Score recipe variety based on ingredient diversity (0-1)
 /// More unique ingredients = higher score
 pub fn score_variety(recipe: Recipe) -> Float {
-  let ingredient_count = list.fold(recipe.ingredients, 0, fn(acc, _) { acc + 1 })
+  let ingredient_count =
+    list.fold(recipe.ingredients, 0, fn(acc, _) { acc + 1 })
 
   case ingredient_count {
     0 -> 0.0

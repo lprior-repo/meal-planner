@@ -5,7 +5,6 @@
 ///
 /// Cache entries expire after their TTL and are automatically cleaned up.
 /// The cache uses Gleam's Dict for O(1) lookups.
-
 import gleam/dict.{type Dict}
 import gleam/int
 import gleam/option.{type Option, None, Some}
@@ -64,8 +63,7 @@ pub fn get(cache: Cache(a), key: String) -> #(Cache(a), Option(a)) {
         True -> #(cache, Some(entry.value))
         False -> {
           // Entry expired, remove it and return None
-          let cleaned_cache =
-            Cache(entries: dict.delete(cache.entries, key))
+          let cleaned_cache = Cache(entries: dict.delete(cache.entries, key))
           #(cleaned_cache, None)
         }
       }
@@ -91,9 +89,7 @@ pub fn invalidate(cache: Cache(a), key: String) -> Cache(a) {
 /// Useful for invalidating all related queries (e.g., all food searches)
 pub fn invalidate_prefix(cache: Cache(a), prefix: String) -> Cache(a) {
   let filtered_entries =
-    dict.filter(cache.entries, fn(key, _entry) {
-      !starts_with(key, prefix)
-    })
+    dict.filter(cache.entries, fn(key, _entry) { !starts_with(key, prefix) })
   Cache(entries: filtered_entries)
 }
 

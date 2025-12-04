@@ -8,7 +8,9 @@ import gleam/list
 import gleam/result
 import gleam/string
 import meal_planner/storage
-import meal_planner/types.{type Recipe, Ingredient, Macros, type Macros as MacrosType}
+import meal_planner/types.{
+  type Macros as MacrosType, type Recipe, Ingredient, Macros,
+}
 import pog
 import wisp
 
@@ -32,10 +34,7 @@ pub fn api_recipes(req: wisp.Request, ctx: Context) -> wisp.Response {
 }
 
 /// POST /api/recipes - Create new recipe
-pub fn create_recipe_handler(
-  req: wisp.Request,
-  ctx: Context,
-) -> wisp.Response {
+pub fn create_recipe_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
   use form_data <- wisp.require_form(req)
 
   case parse_recipe_from_form(form_data.values) {
@@ -284,7 +283,11 @@ pub fn parse_recipe_from_form(
           name: name_val,
           ingredients: ingredients_val,
           instructions: instructions_val,
-          macros: types.Macros(protein: protein_val, fat: fat_val, carbs: carbs_val),
+          macros: types.Macros(
+            protein: protein_val,
+            fat: fat_val,
+            carbs: carbs_val,
+          ),
           servings: servings_val,
           category: category_val,
           fodmap_level: fodmap_val,

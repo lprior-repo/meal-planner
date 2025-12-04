@@ -8,7 +8,7 @@
 /// ```
 /// meal_planner_sup (OneForOne)
 /// ├── registry (ETS-based process registry for named services)
-/// └── [future workers will be added here]
+/// └── cache_server (Query cache GenServer for optimized search)
 /// ```
 ///
 /// ## Restart Strategies
@@ -19,6 +19,7 @@ import gleam/erlang/process.{type Subject}
 import gleam/otp/actor
 import gleam/otp/static_supervisor.{type Supervisor} as supervisor
 import gleam/otp/supervision
+import meal_planner/cache_server
 import meal_planner/logger
 
 /// Registry state - holds references to named services
@@ -43,6 +44,7 @@ pub fn start() -> actor.StartResult(Supervisor) {
   supervisor.new(supervisor.OneForOne)
   |> supervisor.restart_tolerance(intensity: 3, period: 5)
   |> supervisor.add(registry_child())
+  |> supervisor.add(cache_server_child())
   |> supervisor.start
 }
 
@@ -80,6 +82,17 @@ fn handle_registry_message(
   }
 }
 
+/// Create the cache server child specification
+///
+/// The cache server manages the query cache for optimized database queries.
+/// It's initialized on startup and provides thread-safe cache operations.
+fn cache_server_child() -> supervision.ChildSpecification(
+  Subject(cache_server.CacheMessage),
+) {
+  supervision.worker(cache_server.start)
+  |> supervision.restart(supervision.Permanent)
+}
+
 /// Supervisor configuration options
 pub type SupervisorConfig {
   SupervisorConfig(
@@ -108,5 +121,6 @@ pub fn start_with_config(
     period: config.restart_period,
   )
   |> supervisor.add(registry_child())
+  |> supervisor.add(cache_server_child())
   |> supervisor.start
 }

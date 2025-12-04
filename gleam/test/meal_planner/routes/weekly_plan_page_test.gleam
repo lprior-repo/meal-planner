@@ -264,7 +264,6 @@ pub fn page_is_accessible_test() {
   True
   |> should.be_true
 }
-
 // ===================================================================
 // INTEGRATION HELPERS (to be implemented)
 // ===================================================================

@@ -9,6 +9,7 @@
 ///
 /// Run with: cd gleam && gleam test
 import envoy
+import fixtures/test_db
 import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/int
@@ -19,7 +20,6 @@ import gleam/string
 import gleeunit/should
 import pog
 import simplifile
-import fixtures/test_db
 
 // =============================================================================
 // Test Database Configuration
@@ -70,7 +70,6 @@ fn create_test_database(db_name: String) -> Result(Nil, String) {
     Error(_) -> Error("Cannot connect to PostgreSQL")
     Ok(started) -> {
       let db = started.data
-      
 
       // First, terminate any existing connections to the target database
       let terminate_query =
@@ -90,7 +89,8 @@ fn create_test_database(db_name: String) -> Result(Nil, String) {
       let create_query = pog.query("CREATE DATABASE " <> db_name)
       let result = case pog.execute(create_query, db) {
         Ok(_) -> Ok(Nil)
-        Error(e) -> Error("Failed to create test database: " <> format_pog_error(e))
+        Error(e) ->
+          Error("Failed to create test database: " <> format_pog_error(e))
       }
 
       // Stop the pool to release connection
@@ -105,7 +105,6 @@ fn drop_test_database(db_name: String) -> Result(Nil, String) {
     Error(_) -> Error("Cannot connect to PostgreSQL")
     Ok(started) -> {
       let db = started.data
-      
 
       // Terminate any connections to the target database
       let terminate_query =
@@ -120,7 +119,8 @@ fn drop_test_database(db_name: String) -> Result(Nil, String) {
       let query = pog.query("DROP DATABASE IF EXISTS " <> db_name)
       let result = case pog.execute(query, db) {
         Ok(_) -> Ok(Nil)
-        Error(e) -> Error("Failed to drop test database: " <> format_pog_error(e))
+        Error(e) ->
+          Error("Failed to drop test database: " <> format_pog_error(e))
       }
 
       // Stop the pool to release connection

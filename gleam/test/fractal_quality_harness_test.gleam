@@ -270,7 +270,7 @@ pub fn generate_checklist_integration_test() {
 
 pub fn auto_rollback_triggers_on_low_score_test() {
   // Score < 0.95 should trigger rollback
-  let score = 0.90
+  let score = 0.9
   let files = ["src/module.gleam", "test/module_test.gleam"]
 
   auto_rollback(score, files)
@@ -324,7 +324,7 @@ pub fn auto_rollback_zero_score_test() {
 
 pub fn auto_rollback_empty_file_list_test() {
   // Rollback with empty file list
-  let score = 0.90
+  let score = 0.9
   let files = []
 
   auto_rollback(score, files)

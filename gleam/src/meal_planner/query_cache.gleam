@@ -1,7 +1,6 @@
 /// In-memory query result caching for frequently accessed data
 /// Implements LRU cache with TTL for search queries and dashboard data
 /// Target: 10x speedup for popular queries, 50% DB load reduction
-
 import gleam/dict.{type Dict}
 import gleam/int
 import gleam/list
@@ -171,7 +170,9 @@ pub fn clear(cache: QueryCache(a)) -> QueryCache(a) {
 // ============================================================================
 
 /// Evict the least recently used entry
-fn evict_lru(entries: Dict(String, CacheEntry(a))) -> Dict(String, CacheEntry(a)) {
+fn evict_lru(
+  entries: Dict(String, CacheEntry(a)),
+) -> Dict(String, CacheEntry(a)) {
   // Find entry with oldest last_accessed timestamp
   let entries_list = dict.to_list(entries)
 

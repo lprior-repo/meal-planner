@@ -19,7 +19,6 @@
 ///   }
 /// }
 /// ```
-
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
@@ -163,10 +162,11 @@ fn unauthorized_error(msg: String) -> ErrorMessage {
 fn invalid_query_error(msg: String) -> ErrorMessage {
   let friendly_msg = case string.contains(msg, "at least 2 characters") {
     True -> "Please enter at least 2 characters to search."
-    False -> case string.contains(msg, "between 1 and 100") {
-      True -> "Please request between 1 and 100 results."
-      False -> "Your search query isn't quite right. " <> msg
-    }
+    False ->
+      case string.contains(msg, "between 1 and 100") {
+        True -> "Please request between 1 and 100 results."
+        False -> "Your search query isn't quite right. " <> msg
+      }
   }
 
   ErrorMessage(
@@ -246,25 +246,29 @@ fn make_validation_message_friendly(msg: String) -> String {
       let field = extract_field_name(msg)
       "Please enter a " <> field <> "."
     }
-    False -> case string.contains(msg, "must be a positive number") {
-      True -> {
-        let field = extract_field_name(msg)
-        field <> " must be greater than zero."
-      }
-      False -> case string.contains(msg, "must be a non-negative number") {
+    False ->
+      case string.contains(msg, "must be a positive number") {
         True -> {
           let field = extract_field_name(msg)
-          field <> " cannot be negative."
+          field <> " must be greater than zero."
         }
-        False -> case string.contains(msg, "at least") {
-          True -> msg
-          False -> case string.contains(msg, "too long") {
-            True -> msg
-            False -> msg
+        False ->
+          case string.contains(msg, "must be a non-negative number") {
+            True -> {
+              let field = extract_field_name(msg)
+              field <> " cannot be negative."
+            }
+            False ->
+              case string.contains(msg, "at least") {
+                True -> msg
+                False ->
+                  case string.contains(msg, "too long") {
+                    True -> msg
+                    False -> msg
+                  }
+              }
           }
-        }
       }
-    }
   }
 }
 
@@ -336,13 +340,16 @@ pub fn food_log_error(msg: String) -> ErrorMessage {
 pub fn custom_food_error(msg: String) -> ErrorMessage {
   let friendly_msg = case string.contains(msg, "name") {
     True -> "Please enter a food name."
-    False -> case string.contains(msg, "serving") {
-      True -> "Please specify a serving size."
-      False -> case string.contains(msg, "macros") {
-        True -> "Please enter nutritional information (protein, fat, carbs)."
-        False -> "Please check your input and try again."
+    False ->
+      case string.contains(msg, "serving") {
+        True -> "Please specify a serving size."
+        False ->
+          case string.contains(msg, "macros") {
+            True ->
+              "Please enter nutritional information (protein, fat, carbs)."
+            False -> "Please check your input and try again."
+          }
       }
-    }
   }
 
   ErrorMessage(

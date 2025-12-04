@@ -80,7 +80,7 @@ fn run_all_migrations(db: pog.Connection) -> Result(Nil, String) {
     "migrations_pg/005_add_micronutrients_to_food_logs.sql",
     "migrations_pg/006_add_source_tracking.sql",
     // Skip 009 - requires users table which doesn't exist yet
-    // "migrations_pg/009_auto_meal_planner.sql",
+  // "migrations_pg/009_auto_meal_planner.sql",
   ]
 
   list.try_each(migrations, fn(migration_path) {

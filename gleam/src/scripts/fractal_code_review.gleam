@@ -106,9 +106,7 @@ fn validate_params_typed(params: String) -> Bool {
     |> list.filter(fn(p) { p != "" })
 
   // Each parameter must contain a colon (indicating type annotation)
-  list.all(param_list, fn(param) {
-    string.contains(param, ":")
-  })
+  list.all(param_list, fn(param) { string.contains(param, ":") })
 }
 
 /// Check if function has return type annotation
@@ -188,7 +186,7 @@ fn has_test_for_function(test_code: String, func_name: String) -> Bool {
   // Common patterns: func_name_test, test_func_name, or contains func_name in test
   let test_pattern = func_name <> "_test"
   string.contains(test_code, test_pattern)
-    || string.contains(test_code, func_name)
+  || string.contains(test_code, func_name)
 }
 
 /// Represents a function that exceeds the recommended line count
@@ -219,7 +217,11 @@ fn find_long_functions_recursive(
           let line_count = current_line - start
           case line_count > 50 {
             True -> [
-              LongFunction(name: name, line_count: line_count, start_line: start),
+              LongFunction(
+                name: name,
+                line_count: line_count,
+                start_line: start,
+              ),
               ..accumulator
             ]
             False -> accumulator

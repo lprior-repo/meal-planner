@@ -85,8 +85,7 @@ pub fn state_error_creation_test() {
 }
 
 pub fn render_error_creation_test() {
-  let error =
-    error_boundary.render_error("Render failed", Some("Missing prop"))
+  let error = error_boundary.render_error("Render failed", Some("Missing prop"))
 
   error.message
   |> should.equal("Render failed")
@@ -354,8 +353,7 @@ pub fn fetch_error_display_non_recoverable_test() {
       retry_action: None,
     )
 
-  let result =
-    error_boundary.fetch_error_display(error: error, retry_url: None)
+  let result = error_boundary.fetch_error_display(error: error, retry_url: None)
 
   let html_string = element.to_string(result)
 

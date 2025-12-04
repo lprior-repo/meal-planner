@@ -44,17 +44,11 @@ fn white_carb_macros() -> Macros {
 
 pub fn vertical_diet_compliant_low_fodmap_test() {
   let recipe =
-    make_recipe(
-      "Grilled Steak",
-      high_protein_macros(),
-      Low,
-      True,
-      [
-        Ingredient("Ribeye steak", "8oz"),
-        Ingredient("White rice", "1 cup"),
-        Ingredient("Carrots", "1/2 cup"),
-      ],
-    )
+    make_recipe("Grilled Steak", high_protein_macros(), Low, True, [
+      Ingredient("Ribeye steak", "8oz"),
+      Ingredient("White rice", "1 cup"),
+      Ingredient("Carrots", "1/2 cup"),
+    ])
 
   let result = check_vertical_diet(recipe)
   result.compliant
@@ -65,16 +59,10 @@ pub fn vertical_diet_compliant_low_fodmap_test() {
 
 pub fn vertical_diet_seed_oil_violation_test() {
   let recipe =
-    make_recipe(
-      "Fried Chicken",
-      high_protein_macros(),
-      Low,
-      True,
-      [
-        Ingredient("Chicken", "8oz"),
-        Ingredient("Canola oil", "2 tbsp"),
-      ],
-    )
+    make_recipe("Fried Chicken", high_protein_macros(), Low, True, [
+      Ingredient("Chicken", "8oz"),
+      Ingredient("Canola oil", "2 tbsp"),
+    ])
 
   let result = check_vertical_diet(recipe)
   result.compliant
@@ -85,17 +73,11 @@ pub fn vertical_diet_seed_oil_violation_test() {
 
 pub fn vertical_diet_high_fodmap_test() {
   let recipe =
-    make_recipe(
-      "Garlic Chicken",
-      high_protein_macros(),
-      High,
-      True,
-      [
-        Ingredient("Chicken breast", "8oz"),
-        Ingredient("Garlic", "4 cloves"),
-        Ingredient("Onions", "1 cup"),
-      ],
-    )
+    make_recipe("Garlic Chicken", high_protein_macros(), High, True, [
+      Ingredient("Chicken breast", "8oz"),
+      Ingredient("Garlic", "4 cloves"),
+      Ingredient("Onions", "1 cup"),
+    ])
 
   let result = check_vertical_diet(recipe)
   // Should be compliant (no seed oils), but have FODMAP warnings
@@ -127,17 +109,11 @@ pub fn vertical_diet_multiple_seed_oils_test() {
 
 pub fn tim_ferriss_high_protein_low_white_carbs_test() {
   let recipe =
-    make_recipe(
-      "Protein Bowl",
-      high_protein_macros(),
-      Low,
-      False,
-      [
-        Ingredient("Chicken breast", "8oz"),
-        Ingredient("Black beans", "1 cup"),
-        Ingredient("Spinach", "2 cups"),
-      ],
-    )
+    make_recipe("Protein Bowl", high_protein_macros(), Low, False, [
+      Ingredient("Chicken breast", "8oz"),
+      Ingredient("Black beans", "1 cup"),
+      Ingredient("Spinach", "2 cups"),
+    ])
 
   let result = check_tim_ferriss(recipe)
   result.compliant
@@ -177,13 +153,10 @@ pub fn tim_ferriss_white_carbs_detected_test() {
 
 pub fn tim_ferriss_white_rice_allowed_test() {
   let recipe =
-    make_recipe(
-      "Post Workout Rice",
-      high_protein_macros(),
-      Low,
-      False,
-      [Ingredient("White rice", "1 cup"), Ingredient("Chicken", "8oz")],
-    )
+    make_recipe("Post Workout Rice", high_protein_macros(), Low, False, [
+      Ingredient("White rice", "1 cup"),
+      Ingredient("Chicken", "8oz"),
+    ])
 
   let result = check_tim_ferriss(recipe)
   // White rice is allowed (warning only), protein is high
@@ -214,8 +187,7 @@ pub fn tim_ferriss_legumes_recommended_test() {
 // ============================================================================
 
 pub fn empty_ingredients_vertical_test() {
-  let recipe =
-    make_recipe("Empty", high_protein_macros(), Low, True, [])
+  let recipe = make_recipe("Empty", high_protein_macros(), Low, True, [])
 
   let result = check_vertical_diet(recipe)
   // No seed oils, compliant
@@ -224,8 +196,7 @@ pub fn empty_ingredients_vertical_test() {
 }
 
 pub fn empty_ingredients_tim_ferriss_test() {
-  let recipe =
-    make_recipe("Empty", high_protein_macros(), Low, False, [])
+  let recipe = make_recipe("Empty", high_protein_macros(), Low, False, [])
 
   let result = check_tim_ferriss(recipe)
   // High protein, no white carbs

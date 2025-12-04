@@ -357,9 +357,7 @@ pub fn print_audit_report(recipes: List(Recipe)) -> Nil {
     <> float_to_string(compliance_rate)
     <> "%)",
   )
-  io.println(
-    "Non-Compliant: " <> int.to_string(total_count - compliant_count),
-  )
+  io.println("Non-Compliant: " <> int.to_string(total_count - compliant_count))
   io.println("==== END AUDIT ====")
 }
 

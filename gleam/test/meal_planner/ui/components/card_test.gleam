@@ -52,7 +52,9 @@ pub fn basic_card_renders_single_content_test() {
 
 pub fn basic_card_renders_multiple_content_test() {
   card.card(["<h2>Title</h2>", "<p>First</p>", "<p>Second</p>"])
-  |> should.equal("<div class=\"card\"><h2>Title</h2><p>First</p><p>Second</p></div>")
+  |> should.equal(
+    "<div class=\"card\"><h2>Title</h2><p>First</p><p>Second</p></div>",
+  )
 }
 
 pub fn basic_card_renders_empty_content_test() {
@@ -78,12 +80,16 @@ pub fn basic_card_has_proper_html_structure_test() {
 
 pub fn card_with_header_renders_correctly_test() {
   card.card_with_header("My Header", ["<p>Content</p>"])
-  |> should.equal("<div class=\"card\"><div class=\"card-header\">My Header</div><div class=\"card-body\"><p>Content</p></div></div>")
+  |> should.equal(
+    "<div class=\"card\"><div class=\"card-header\">My Header</div><div class=\"card-body\"><p>Content</p></div></div>",
+  )
 }
 
 pub fn card_with_header_handles_empty_content_test() {
   card.card_with_header("Header Only", [])
-  |> should.equal("<div class=\"card\"><div class=\"card-header\">Header Only</div><div class=\"card-body\"></div></div>")
+  |> should.equal(
+    "<div class=\"card\"><div class=\"card-header\">Header Only</div><div class=\"card-body\"></div></div>",
+  )
 }
 
 pub fn card_with_header_has_proper_structure_test() {
@@ -108,11 +114,11 @@ pub fn card_with_header_maintains_order_test() {
 // ===================================================================
 
 pub fn card_with_actions_renders_all_elements_test() {
-  let result = card.card_with_actions(
-    "Task Card",
-    ["<p>Task description</p>"],
-    ["<button>Edit</button>", "<button>Delete</button>"],
-  )
+  let result =
+    card.card_with_actions("Task Card", ["<p>Task description</p>"], [
+      "<button>Edit</button>",
+      "<button>Delete</button>",
+    ])
 
   result |> string.contains("Task Card") |> should.be_true
   result |> string.contains("card-actions") |> should.be_true
@@ -127,7 +133,8 @@ pub fn card_with_actions_handles_no_actions_test() {
 }
 
 pub fn card_with_actions_handles_single_action_test() {
-  let result = card.card_with_actions("Header", ["Content"], ["<button>Save</button>"])
+  let result =
+    card.card_with_actions("Header", ["Content"], ["<button>Save</button>"])
   result |> string.contains("card-actions") |> should.be_true
   result |> string.contains("<button>Save</button>") |> should.be_true
 }
@@ -145,13 +152,14 @@ pub fn card_with_actions_maintains_structure_test() {
 // ===================================================================
 
 pub fn stat_card_renders_all_fields_test() {
-  let stat = ui_types.StatCard(
-    label: "Calories",
-    value: "2100",
-    unit: "kcal",
-    trend: option.Some(5.0),
-    color: "#4CAF50",
-  )
+  let stat =
+    ui_types.StatCard(
+      label: "Calories",
+      value: "2100",
+      unit: "kcal",
+      trend: option.Some(5.0),
+      color: "#4CAF50",
+    )
   let result = card.stat_card(stat)
 
   result |> string.contains("stat-card") |> should.be_true
@@ -162,13 +170,14 @@ pub fn stat_card_renders_all_fields_test() {
 }
 
 pub fn stat_card_handles_no_trend_test() {
-  let stat = ui_types.StatCard(
-    label: "Weight",
-    value: "75.5",
-    unit: "kg",
-    trend: option.None,
-    color: "#2196F3",
-  )
+  let stat =
+    ui_types.StatCard(
+      label: "Weight",
+      value: "75.5",
+      unit: "kg",
+      trend: option.None,
+      color: "#2196F3",
+    )
   let result = card.stat_card(stat)
 
   result |> string.contains("75.5") |> should.be_true
@@ -177,13 +186,14 @@ pub fn stat_card_handles_no_trend_test() {
 }
 
 pub fn stat_card_has_proper_structure_test() {
-  let stat = ui_types.StatCard(
-    label: "Test",
-    value: "100",
-    unit: "g",
-    trend: option.None,
-    color: "#000",
-  )
+  let stat =
+    ui_types.StatCard(
+      label: "Test",
+      value: "100",
+      unit: "g",
+      trend: option.None,
+      color: "#000",
+    )
   let html = card.stat_card(stat)
 
   html |> string.contains("class=\"stat-card\"") |> should.be_true
@@ -193,13 +203,14 @@ pub fn stat_card_has_proper_structure_test() {
 }
 
 pub fn stat_card_applies_custom_color_test() {
-  let stat = ui_types.StatCard(
-    label: "Protein",
-    value: "150",
-    unit: "g",
-    trend: option.None,
-    color: "#FF6734",
-  )
+  let stat =
+    ui_types.StatCard(
+      label: "Protein",
+      value: "150",
+      unit: "g",
+      trend: option.None,
+      color: "#FF6734",
+    )
   let result = card.stat_card(stat)
   result |> string.contains("--color: #FF6734") |> should.be_true
 }
@@ -209,13 +220,14 @@ pub fn stat_card_applies_custom_color_test() {
 // ===================================================================
 
 pub fn recipe_card_with_image_renders_test() {
-  let recipe = ui_types.RecipeCardData(
-    id: "recipe-001",
-    name: "Grilled Chicken",
-    category: "Main Course",
-    calories: 450.5,
-    image_url: option.Some("https://example.com/chicken.jpg"),
-  )
+  let recipe =
+    ui_types.RecipeCardData(
+      id: "recipe-001",
+      name: "Grilled Chicken",
+      category: "Main Course",
+      calories: 450.5,
+      image_url: option.Some("https://example.com/chicken.jpg"),
+    )
   let result = card.recipe_card(recipe)
 
   result |> string.contains("recipe-card") |> should.be_true
@@ -228,13 +240,14 @@ pub fn recipe_card_with_image_renders_test() {
 }
 
 pub fn recipe_card_without_image_renders_test() {
-  let recipe = ui_types.RecipeCardData(
-    id: "recipe-002",
-    name: "Garden Salad",
-    category: "Salad",
-    calories: 125.0,
-    image_url: option.None,
-  )
+  let recipe =
+    ui_types.RecipeCardData(
+      id: "recipe-002",
+      name: "Garden Salad",
+      category: "Salad",
+      calories: 125.0,
+      image_url: option.None,
+    )
   let result = card.recipe_card(recipe)
 
   result |> string.contains("recipe-card") |> should.be_true
@@ -243,26 +256,28 @@ pub fn recipe_card_without_image_renders_test() {
 }
 
 pub fn recipe_card_truncates_calories_test() {
-  let recipe = ui_types.RecipeCardData(
-    id: "r1",
-    name: "Test",
-    category: "Test",
-    calories: 123.789,
-    image_url: option.None,
-  )
+  let recipe =
+    ui_types.RecipeCardData(
+      id: "r1",
+      name: "Test",
+      category: "Test",
+      calories: 123.789,
+      image_url: option.None,
+    )
   let result = card.recipe_card(recipe)
   result |> string.contains("123") |> should.be_true
   result |> string.contains("123.789") |> should.be_false
 }
 
 pub fn recipe_card_has_proper_structure_test() {
-  let recipe = ui_types.RecipeCardData(
-    id: "r",
-    name: "N",
-    category: "C",
-    calories: 100.0,
-    image_url: option.None,
-  )
+  let recipe =
+    ui_types.RecipeCardData(
+      id: "r",
+      name: "N",
+      category: "C",
+      calories: 100.0,
+      image_url: option.None,
+    )
   let html = card.recipe_card(recipe)
 
   html |> string.contains("class=\"recipe-card\"") |> should.be_true
@@ -276,12 +291,13 @@ pub fn recipe_card_has_proper_structure_test() {
 // ===================================================================
 
 pub fn food_card_renders_all_fields_test() {
-  let food = ui_types.FoodCardData(
-    fdc_id: 123_456,
-    description: "Chicken, broilers or fryers, breast, meat only, raw",
-    data_type: "Survey (FNDDS)",
-    category: "Poultry Products",
-  )
+  let food =
+    ui_types.FoodCardData(
+      fdc_id: 123_456,
+      description: "Chicken, broilers or fryers, breast, meat only, raw",
+      data_type: "Survey (FNDDS)",
+      category: "Poultry Products",
+    )
   let result = card.food_card(food)
 
   result |> string.contains("food-card") |> should.be_true
@@ -293,12 +309,13 @@ pub fn food_card_renders_all_fields_test() {
 }
 
 pub fn food_card_has_proper_structure_test() {
-  let food = ui_types.FoodCardData(
-    fdc_id: 1,
-    description: "Test Food",
-    data_type: "Survey",
-    category: "Test",
-  )
+  let food =
+    ui_types.FoodCardData(
+      fdc_id: 1,
+      description: "Test Food",
+      data_type: "Survey",
+      category: "Test",
+    )
   let html = card.food_card(food)
 
   html |> string.contains("class=\"food-card\"") |> should.be_true
@@ -310,12 +327,13 @@ pub fn food_card_has_proper_structure_test() {
 pub fn food_card_handles_long_descriptions_test() {
   let long_desc =
     "Very long food description that contains many words and should still render correctly without breaking the card layout"
-  let food = ui_types.FoodCardData(
-    fdc_id: 999,
-    description: long_desc,
-    data_type: "Branded",
-    category: "Snacks",
-  )
+  let food =
+    ui_types.FoodCardData(
+      fdc_id: 999,
+      description: long_desc,
+      data_type: "Branded",
+      category: "Snacks",
+    )
   let result = card.food_card(food)
   result |> string.contains(long_desc) |> should.be_true
 }
@@ -397,37 +415,40 @@ pub fn card_should_support_deep_shadow_variable_test() {
 }
 
 pub fn stat_card_should_support_deep_shadow_test() {
-  let stat = ui_types.StatCard(
-    label: "Test",
-    value: "100",
-    unit: "g",
-    trend: option.None,
-    color: "#000",
-  )
+  let stat =
+    ui_types.StatCard(
+      label: "Test",
+      value: "100",
+      unit: "g",
+      trend: option.None,
+      color: "#000",
+    )
   let html = card.stat_card(stat)
   // Stat cards should also use deep shadows
   html |> string.contains("class=\"stat-card\"") |> should.be_true
 }
 
 pub fn recipe_card_should_support_deep_shadow_test() {
-  let recipe = ui_types.RecipeCardData(
-    id: "r",
-    name: "Test",
-    category: "Test",
-    calories: 100.0,
-    image_url: option.None,
-  )
+  let recipe =
+    ui_types.RecipeCardData(
+      id: "r",
+      name: "Test",
+      category: "Test",
+      calories: 100.0,
+      image_url: option.None,
+    )
   let html = card.recipe_card(recipe)
   html |> string.contains("class=\"recipe-card\"") |> should.be_true
 }
 
 pub fn food_card_should_support_deep_shadow_test() {
-  let food = ui_types.FoodCardData(
-    fdc_id: 1,
-    description: "Test",
-    data_type: "Test",
-    category: "Test",
-  )
+  let food =
+    ui_types.FoodCardData(
+      fdc_id: 1,
+      description: "Test",
+      data_type: "Test",
+      category: "Test",
+    )
   let html = card.food_card(food)
   html |> string.contains("class=\"food-card\"") |> should.be_true
 }
@@ -454,32 +475,35 @@ pub fn all_card_variants_have_classes_for_hover_test() {
   let with_actions = card.card_with_actions("H", ["C"], ["A"])
   with_actions |> string.contains("class=\"card\"") |> should.be_true
 
-  let stat = ui_types.StatCard(
-    label: "T",
-    value: "1",
-    unit: "u",
-    trend: option.None,
-    color: "#000",
-  )
+  let stat =
+    ui_types.StatCard(
+      label: "T",
+      value: "1",
+      unit: "u",
+      trend: option.None,
+      color: "#000",
+    )
   let stat_html = card.stat_card(stat)
   stat_html |> string.contains("class=\"stat-card\"") |> should.be_true
 
-  let recipe = ui_types.RecipeCardData(
-    id: "r",
-    name: "R",
-    category: "C",
-    calories: 100.0,
-    image_url: option.None,
-  )
+  let recipe =
+    ui_types.RecipeCardData(
+      id: "r",
+      name: "R",
+      category: "C",
+      calories: 100.0,
+      image_url: option.None,
+    )
   let recipe_html = card.recipe_card(recipe)
   recipe_html |> string.contains("class=\"recipe-card\"") |> should.be_true
 
-  let food = ui_types.FoodCardData(
-    fdc_id: 1,
-    description: "F",
-    data_type: "T",
-    category: "C",
-  )
+  let food =
+    ui_types.FoodCardData(
+      fdc_id: 1,
+      description: "F",
+      data_type: "T",
+      category: "C",
+    )
   let food_html = card.food_card(food)
   food_html |> string.contains("class=\"food-card\"") |> should.be_true
 }
@@ -490,7 +514,8 @@ pub fn all_card_variants_have_classes_for_hover_test() {
 
 pub fn all_cards_have_matching_div_tags_test() {
   let basic = card.card(["<p>Test</p>"])
-  count_occurrences(basic, "<div") |> should.equal(count_occurrences(basic, "</div>"))
+  count_occurrences(basic, "<div")
+  |> should.equal(count_occurrences(basic, "</div>"))
 
   let with_header = card.card_with_header("Header", ["Content"])
   count_occurrences(with_header, "<div")
@@ -502,16 +527,18 @@ pub fn all_cards_have_matching_div_tags_test() {
 }
 
 pub fn all_stat_cards_have_valid_structure_test() {
-  let stat = ui_types.StatCard(
-    label: "Test",
-    value: "100",
-    unit: "g",
-    trend: option.None,
-    color: "#000",
-  )
+  let stat =
+    ui_types.StatCard(
+      label: "Test",
+      value: "100",
+      unit: "g",
+      trend: option.None,
+      color: "#000",
+    )
   let html = card.stat_card(stat)
 
-  count_occurrences(html, "<div") |> should.equal(count_occurrences(html, "</div>"))
+  count_occurrences(html, "<div")
+  |> should.equal(count_occurrences(html, "</div>"))
   // Should have at least: stat-card, stat-value, stat-unit, stat-label
   let stat_count = count_occurrences(html, "stat-")
   case stat_count >= 3 {
@@ -521,30 +548,34 @@ pub fn all_stat_cards_have_valid_structure_test() {
 }
 
 pub fn all_recipe_cards_have_valid_structure_test() {
-  let recipe = ui_types.RecipeCardData(
-    id: "r",
-    name: "Test Recipe",
-    category: "Test",
-    calories: 100.0,
-    image_url: option.None,
-  )
+  let recipe =
+    ui_types.RecipeCardData(
+      id: "r",
+      name: "Test Recipe",
+      category: "Test",
+      calories: 100.0,
+      image_url: option.None,
+    )
   let html = card.recipe_card(recipe)
 
-  count_occurrences(html, "<div") |> should.equal(count_occurrences(html, "</div>"))
+  count_occurrences(html, "<div")
+  |> should.equal(count_occurrences(html, "</div>"))
   html |> string.contains("recipe-card") |> should.be_true
   html |> string.contains("recipe-info") |> should.be_true
 }
 
 pub fn all_food_cards_have_valid_structure_test() {
-  let food = ui_types.FoodCardData(
-    fdc_id: 1,
-    description: "Test Food",
-    data_type: "Survey",
-    category: "Test",
-  )
+  let food =
+    ui_types.FoodCardData(
+      fdc_id: 1,
+      description: "Test Food",
+      data_type: "Survey",
+      category: "Test",
+    )
   let html = card.food_card(food)
 
-  count_occurrences(html, "<div") |> should.equal(count_occurrences(html, "</div>"))
+  count_occurrences(html, "<div")
+  |> should.equal(count_occurrences(html, "</div>"))
   html |> string.contains("food-card") |> should.be_true
   html |> string.contains("food-description") |> should.be_true
   html |> string.contains("food-category") |> should.be_true
@@ -554,8 +585,10 @@ pub fn all_food_cards_have_valid_structure_test() {
 pub fn calorie_summary_has_valid_html_structure_test() {
   let html = card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
 
-  count_occurrences(html, "<div") |> should.equal(count_occurrences(html, "</div>"))
-  count_occurrences(html, "<button") |> should.equal(count_occurrences(html, "</button>"))
+  count_occurrences(html, "<div")
+  |> should.equal(count_occurrences(html, "</div>"))
+  count_occurrences(html, "<button")
+  |> should.equal(count_occurrences(html, "</button>"))
 }
 
 pub fn no_cards_contain_unescaped_quotes_test() {
@@ -572,20 +605,23 @@ pub fn no_cards_contain_unescaped_quotes_test() {
 
 pub fn cards_handle_empty_strings_test() {
   let result1 = card.card_with_header("", [""])
-  result1 |> string.contains("<div class=\"card-header\"></div>") |> should.be_true
+  result1
+  |> string.contains("<div class=\"card-header\"></div>")
+  |> should.be_true
 
   let result2 = card.card_with_actions("", [""], [])
   result2 |> string.contains("card-header") |> should.be_true
 }
 
 pub fn stat_card_handles_zero_values_test() {
-  let stat = ui_types.StatCard(
-    label: "Zero",
-    value: "0",
-    unit: "items",
-    trend: option.None,
-    color: "#000000",
-  )
+  let stat =
+    ui_types.StatCard(
+      label: "Zero",
+      value: "0",
+      unit: "items",
+      trend: option.None,
+      color: "#000000",
+    )
 
   card.stat_card(stat)
   |> string.contains("<div class=\"stat-value\">0</div>")
@@ -593,13 +629,14 @@ pub fn stat_card_handles_zero_values_test() {
 }
 
 pub fn recipe_card_handles_zero_calories_test() {
-  let recipe = ui_types.RecipeCardData(
-    id: "r0",
-    name: "Water",
-    category: "Beverages",
-    calories: 0.0,
-    image_url: option.None,
-  )
+  let recipe =
+    ui_types.RecipeCardData(
+      id: "r0",
+      name: "Water",
+      category: "Beverages",
+      calories: 0.0,
+      image_url: option.None,
+    )
 
   card.recipe_card(recipe)
   |> string.contains("<div class=\"calories\">0</div>")
@@ -622,13 +659,14 @@ pub fn cards_handle_special_characters_test() {
 }
 
 pub fn stat_card_handles_negative_trend_test() {
-  let stat = ui_types.StatCard(
-    label: "Weight",
-    value: "75",
-    unit: "kg",
-    trend: option.Some(-2.5),
-    color: "#FF0000",
-  )
+  let stat =
+    ui_types.StatCard(
+      label: "Weight",
+      value: "75",
+      unit: "kg",
+      trend: option.Some(-2.5),
+      color: "#FF0000",
+    )
   let result = card.stat_card(stat)
   result |> string.contains("stat-card") |> should.be_true
 }
@@ -642,13 +680,14 @@ pub fn calorie_summary_handles_very_large_numbers_test() {
 pub fn recipe_card_handles_very_long_names_test() {
   let long_name =
     "This is an extremely long recipe name that might cause layout issues if not handled properly"
-  let recipe = ui_types.RecipeCardData(
-    id: "r",
-    name: long_name,
-    category: "Test",
-    calories: 100.0,
-    image_url: option.None,
-  )
+  let recipe =
+    ui_types.RecipeCardData(
+      id: "r",
+      name: long_name,
+      category: "Test",
+      calories: 100.0,
+      image_url: option.None,
+    )
   let result = card.recipe_card(recipe)
   result |> string.contains(long_name) |> should.be_true
 }
@@ -664,13 +703,14 @@ pub fn cards_render_consistently_test() {
 }
 
 pub fn stat_cards_render_consistently_test() {
-  let stat = ui_types.StatCard(
-    label: "Test",
-    value: "100",
-    unit: "g",
-    trend: option.None,
-    color: "#000",
-  )
+  let stat =
+    ui_types.StatCard(
+      label: "Test",
+      value: "100",
+      unit: "g",
+      trend: option.None,
+      color: "#000",
+    )
   let html1 = card.stat_card(stat)
   let html2 = card.stat_card(stat)
   html1 |> should.equal(html2)
