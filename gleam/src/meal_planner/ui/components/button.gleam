@@ -44,7 +44,7 @@ fn size_to_class(size: ui_types.ButtonSize) -> String {
 
 /// Basic button link
 ///
-/// Renders: <a href="/path" class="btn btn-primary">Label</a>
+/// Renders: <a href="/path" class="btn btn-primary" role="button">Label</a>
 pub fn button(
   label: String,
   href: String,
@@ -56,14 +56,14 @@ pub fn button(
   <> href
   <> "\" class=\"btn "
   <> variant_class
-  <> "\">"
+  <> "\" role=\"button\">"
   <> label
   <> "</a>"
 }
 
 /// Button with custom size
 ///
-/// Renders: <a href="/path" class="btn btn-primary btn-lg">Label</a>
+/// Renders: <a href="/path" class="btn btn-primary btn-lg" role="button">Label</a>
 pub fn button_sized(
   label: String,
   href: String,
@@ -79,7 +79,7 @@ pub fn button_sized(
   <> variant_class
   <> " "
   <> size_class
-  <> "\">"
+  <> "\" role=\"button\">"
   <> label
   <> "</a>"
 }
@@ -99,13 +99,13 @@ pub fn submit_button(label: String, variant: ui_types.ButtonVariant) -> String {
 
 /// Disabled button state
 ///
-/// Renders: <button disabled class="btn btn-primary btn-disabled">Label</button>
+/// Renders: <button disabled class="btn btn-primary btn-disabled" aria-disabled="true">Label</button>
 pub fn button_disabled(label: String, variant: ui_types.ButtonVariant) -> String {
   // CONTRACT: Returns HTML string for disabled button
   let variant_class = variant_to_class(variant)
   "<button disabled class=\"btn "
   <> variant_class
-  <> " btn-disabled\">"
+  <> " btn-disabled\" aria-disabled=\"true\">"
   <> label
   <> "</button>"
 }

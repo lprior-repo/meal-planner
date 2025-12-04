@@ -18,13 +18,19 @@ import gleam/string
 
 /// Text input field
 ///
-/// Renders: <input type="text" class="input" />
+/// Renders: <input type="text" class="input" id="name" aria-label="placeholder" />
 pub fn input_field(name: String, placeholder: String, value: String) -> String {
   "<input type=\"text\" class=\"input\" "
+  <> "id=\""
+  <> name
+  <> "\" "
   <> "name=\""
   <> name
   <> "\" "
   <> "placeholder=\""
+  <> placeholder
+  <> "\" "
+  <> "aria-label=\""
   <> placeholder
   <> "\" "
   <> "value=\""
@@ -70,20 +76,24 @@ pub fn input_with_label(
 /// Search input with integrated button
 ///
 /// Renders:
-/// <div class="search-box">
-///   <input type="search" class="input-search" />
-///   <button class="btn btn-primary">Search</button>
+/// <div class="search-box" role="search">
+///   <input type="search" class="input-search" aria-label="placeholder" />
+///   <button class="btn btn-primary" type="submit">Search</button>
 /// </div>
 pub fn search_input(query: String, placeholder: String) -> String {
-  "<div class=\"search-box\">"
+  "<div class=\"search-box\" role=\"search\">"
   <> "<input type=\"search\" class=\"input-search\" "
+  <> "id=\"search-input\" "
   <> "placeholder=\""
+  <> placeholder
+  <> "\" "
+  <> "aria-label=\""
   <> placeholder
   <> "\" "
   <> "value=\""
   <> query
   <> "\" />"
-  <> "<button class=\"btn btn-primary\" type=\"submit\">Search</button>"
+  <> "<button class=\"btn btn-primary\" type=\"submit\" aria-label=\"Submit search\">Search</button>"
   <> "</div>"
 }
 
@@ -175,7 +185,7 @@ pub fn select_field(
 /// <div class="form-group">
 ///   <label>Label</label>
 ///   {input}
-///   <div class="form-error">Error message</div>
+///   <div class="form-error" role="alert" aria-live="polite">Error message</div>
 /// </div>
 pub fn form_field(
   label: String,
@@ -183,7 +193,10 @@ pub fn form_field(
   error: option.Option(String),
 ) -> String {
   let error_html = case error {
-    option.Some(err_msg) -> "<div class=\"form-error\">" <> err_msg <> "</div>"
+    option.Some(err_msg) ->
+      "<div class=\"form-error\" role=\"alert\" aria-live=\"polite\">"
+      <> err_msg
+      <> "</div>"
     option.None -> ""
   }
 

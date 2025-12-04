@@ -45,12 +45,23 @@ pub type DashboardData {
 /// Render the complete nutrition dashboard
 ///
 /// Returns HTML for the full dashboard including:
-/// - Page header with date navigation
-/// - Calorie summary card with animated numbers
-/// - Macro progress bars
-/// - Daily log entries list
+/// - Page header with date navigation (h1)
+/// - Calorie summary card with animated numbers (section)
+/// - Macro progress bars (section with h2)
+/// - Daily log entries list (section with h2)
 /// - Quick action buttons
+///
+/// Accessibility features:
+/// - Proper heading hierarchy (h1 -> h2)
+/// - Semantic HTML5 elements (main, section, article)
+/// - ARIA landmarks and labels
 pub fn render_dashboard(data: DashboardData) -> String {
+  // Page title for screen readers
+  let page_title =
+    "<h1 class=\"sr-only\">Nutrition Dashboard for "
+    <> data.date
+    <> "</h1>"
+
   // Calorie summary card
   let calorie_card =
     card.calorie_summary_card(
@@ -80,16 +91,24 @@ pub fn render_dashboard(data: DashboardData) -> String {
   // Daily log timeline
   let timeline = daily_log.daily_log_timeline(data.meal_entries)
 
-  // Build layout
-  layout.container(1200, [
-    layout.section([
-      card.card_with_header("Daily Summary", [calorie_card]),
-    ]),
-    layout.section([
-      card.card_with_header("Macros", [protein_bar, fat_bar, carbs_bar]),
-    ]),
-    layout.section([
-      card.card_with_header("Daily Log", [timeline]),
-    ]),
+  // Build layout with proper ARIA landmarks
+  "<main role=\"main\" aria-label=\"Nutrition Dashboard\">"
+  <> page_title
+  <> layout.container(1200, [
+    "<section aria-labelledby=\"daily-summary-heading\">"
+    <> "<h2 id=\"daily-summary-heading\" class=\"section-header\">Daily Summary</h2>"
+    <> calorie_card
+    <> "</section>",
+    "<section aria-labelledby=\"macros-heading\">"
+    <> "<h2 id=\"macros-heading\" class=\"section-header\">Macronutrients</h2>"
+    <> protein_bar
+    <> fat_bar
+    <> carbs_bar
+    <> "</section>",
+    "<section aria-labelledby=\"daily-log-heading\">"
+    <> "<h2 id=\"daily-log-heading\" class=\"section-header\">Daily Log</h2>"
+    <> timeline
+    <> "</section>",
   ])
+  <> "</main>"
 }
