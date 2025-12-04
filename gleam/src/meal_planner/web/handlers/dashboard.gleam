@@ -33,7 +33,7 @@ pub fn dashboard(req: wisp.Request, ctx: Context) -> wisp.Response {
   let targets = daily_macro_targets(profile)
 
   // Get date from query parameters or use today's date
-  let date = extract_date_param(req)
+  let date = extract_date_param(req.query)
 
   // Fetch today's logs from database
   // Using default user_id of 1 for singleton user model
@@ -118,8 +118,8 @@ fn load_profile(ctx: Context) -> UserProfile {
 }
 
 /// Extract date from query parameters or return today's date
-fn extract_date_param(req: wisp.Request) -> String {
-  case uri.parse_query(req.query |> option.unwrap("")) {
+pub fn extract_date_param(query: option.Option(String)) -> String {
+  case uri.parse_query(query |> option.unwrap("")) {
     Ok(params) -> {
       case
         list.find(params, fn(p) { p.0 == "date" })
@@ -134,7 +134,7 @@ fn extract_date_param(req: wisp.Request) -> String {
 }
 
 /// Sum macros from list of logs
-fn sum_log_macros(logs: List(storage.Log)) -> Macros {
+pub fn sum_log_macros(logs: List(storage.Log)) -> Macros {
   list.fold(logs, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(acc, log) {
     // Parse macros from log if available
     case log.macros {
@@ -150,7 +150,7 @@ fn sum_log_macros(logs: List(storage.Log)) -> Macros {
 }
 
 /// Render individual log entry as HTML
-fn render_log_entry_html(log: storage.Log) -> String {
+pub fn render_log_entry_html(log: storage.Log) -> String {
   "<li class=\"log-entry\">"
   <> "<div class=\"entry-info\">"
   <> "<p>Food ID: "
@@ -167,18 +167,18 @@ fn render_log_entry_html(log: storage.Log) -> String {
 }
 
 /// Convert float to integer (truncate decimal)
-fn float_to_int(f: Float) -> Int {
+pub fn float_to_int(f: Float) -> Int {
   float.truncate(f)
 }
 
 /// Format float for display (2 decimal places)
-fn float_to_display_string(f: Float) -> String {
+pub fn float_to_display_string(f: Float) -> String {
   let truncated = float_to_int(f)
   int.to_string(truncated)
 }
 
 /// Get today's date in YYYY-MM-DD format
-fn get_today_date() -> String {
+pub fn get_today_date() -> String {
   // Simplified implementation - returns fixed date
   // In production, use a proper date library
   "2025-12-01"

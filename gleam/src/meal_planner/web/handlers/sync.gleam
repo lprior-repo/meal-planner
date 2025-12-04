@@ -4,6 +4,8 @@ import gleam/erlang/process.{type Subject}
 import gleam/http
 import gleam/json
 import gleam/list
+import gleam/option
+import gleam/uri
 import meal_planner/actors/todoist_actor
 import wisp
 
@@ -68,14 +70,16 @@ fn handle_sync_request(
 
 /// Extract user_id from request body or query parameters
 fn extract_user_id(req: wisp.Request) -> Result(String, String) {
-  // Try to extract from query parameters first
-  let query_params = wisp.get_query(req)
-  case list.find(query_params, fn(param) { param.0 == "user_id" }) {
-    Ok(#(_, user_id)) if user_id != "" -> Ok(user_id)
-    _ -> {
-      // If not in query, try to extract from request body as JSON
-      // This is a fallback - typically query params are preferred for GET/async operations
-      Error("Missing required parameter: user_id")
+  // Parse query parameters from the request
+  let parsed_query = uri.parse_query(req.query |> option.unwrap(""))
+
+  case parsed_query {
+    Ok(params) -> {
+      case list.find(params, fn(param) { param.0 == "user_id" }) {
+        Ok(#(_, user_id)) if user_id != "" -> Ok(user_id)
+        _ -> Error("Missing required parameter: user_id")
+      }
     }
+    Error(_) -> Error("Invalid query parameters")
   }
 }
