@@ -223,7 +223,10 @@ if pgrep -f "mcp_agent_mail" > /dev/null 2>&1; then
         echo ""
         echo "Starting live monitor (Ctrl+C to stop)..."
         sleep 1
-        monitor_activity
+
+        # Call the standalone monitor script
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        exec "$SCRIPT_DIR/monitor-agent-mail.sh"
     else
         echo "⚠ Server process found but not responding - will restart"
         pkill -f "mcp_agent_mail" || true
@@ -300,9 +303,9 @@ while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
         echo "Starting live monitor (Ctrl+C to stop)..."
         sleep 1
 
-        # Start monitoring loop (this will run indefinitely)
-        monitor_activity
-        exit 0
+        # Call the standalone monitor script
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        exec "$SCRIPT_DIR/monitor-agent-mail.sh"
     fi
     ATTEMPT=$((ATTEMPT + 1))
     sleep 0.5
