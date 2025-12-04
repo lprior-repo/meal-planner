@@ -5,6 +5,7 @@ import gleam/list
 import gleam/option
 import gleam/result
 import gleam/string
+import meal_planner/nutrition_constants
 import simplifile
 
 /// Check if all function parameters and return types are explicitly typed
@@ -194,7 +195,7 @@ pub type LongFunction {
   LongFunction(name: String, line_count: Int, start_line: Int)
 }
 
-/// Detect functions that exceed 50 lines of code
+/// Detect functions that exceed maximum allowed line count
 /// Returns a list of LongFunction records for functions that are too long
 pub fn detect_long_functions(code: String) -> List(LongFunction) {
   let lines = string.split(code, "\n")
@@ -215,7 +216,7 @@ fn find_long_functions_recursive(
         option.None -> accumulator
         option.Some(#(name, start, _brace_count)) -> {
           let line_count = current_line - start
-          case line_count > 50 {
+          case line_count >. nutrition_constants.max_function_lines {
             True -> [
               LongFunction(
                 name: name,
@@ -243,7 +244,7 @@ fn find_long_functions_recursive(
             option.None -> accumulator
             option.Some(#(prev_name, prev_start, _)) -> {
               let prev_line_count = current_line - prev_start
-              case prev_line_count > 50 {
+              case prev_line_count >. nutrition_constants.max_function_lines {
                 True -> [
                   LongFunction(
                     name: prev_name,

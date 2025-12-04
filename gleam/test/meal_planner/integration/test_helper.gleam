@@ -8,7 +8,6 @@
 /// - Mock context creation utilities
 ///
 /// Based on Martin Fowler's evolutionary design: comprehensive tests enable confident refactoring.
-import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/int
@@ -113,12 +112,7 @@ pub fn fixture_recipe(
     servings: servings,
     category: "Test",
     fodmap_level: types.Low,
-    micronutrients: None,
-    prep_time: Some(10),
-    cook_time: Some(20),
-    total_time: Some(30),
-    tags: ["test"],
-    source: Some("test-fixture"),
+    vertical_compliant: True,
   )
 }
 
@@ -356,9 +350,8 @@ pub fn save_test_recipe(
   // Note: This assumes storage.save_recipe exists or we need to use raw SQL
   let sql =
     "INSERT INTO recipes (id, name, category, servings,
-                          protein, fat, carbs,
-                          prep_time, cook_time, total_time)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                          protein, fat, carbs, fodmap_level, vertical_compliant)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
      RETURNING id"
 
   pog.query(sql)
@@ -369,12 +362,10 @@ pub fn save_test_recipe(
   |> pog.parameter(pog.float(recipe.macros.protein))
   |> pog.parameter(pog.float(recipe.macros.fat))
   |> pog.parameter(pog.float(recipe.macros.carbs))
-  |> pog.parameter(pog.nullable(pog.int, recipe.prep_time))
-  |> pog.parameter(pog.nullable(pog.int, recipe.cook_time))
-  |> pog.parameter(pog.nullable(pog.int, recipe.total_time))
-  |> pog.returning(decode.element(0, decode.string))
+  |> pog.parameter(pog.text(types.fodmap_level_to_string(recipe.fodmap_level)))
+  |> pog.parameter(pog.bool(recipe.vertical_compliant))
   |> pog.execute(conn)
-  |> result.map(fn(response) {
+  |> result.map(fn(_response) {
     // Recipe saved successfully
     recipe
   })

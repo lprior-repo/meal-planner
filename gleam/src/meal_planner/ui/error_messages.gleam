@@ -22,6 +22,7 @@
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
+import meal_planner/nutrition_constants
 import meal_planner/storage.{type StorageError}
 import meal_planner/types.{type FoodSearchError}
 

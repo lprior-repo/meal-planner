@@ -10,6 +10,7 @@ import lustre/element/html.{
   button, div, form, h1, h2, input, label, option, p, section, select, span,
   textarea,
 }
+import meal_planner/nutrition_constants
 
 /// Generate the complete recipe creation form HTML
 pub fn render_form() -> Element(msg) {
@@ -54,8 +55,8 @@ fn basic_info_section() -> Element(msg) {
         class("input"),
         placeholder("e.g., Grilled Chicken Salad"),
         required(),
-        minlength("3"),
-        maxlength("100"),
+        minlength(nutrition_constants.min_recipe_name_length |> int.to_string),
+        maxlength(nutrition_constants.max_recipe_name_length |> int.to_string),
         attribute("aria-describedby", "name-error"),
         attribute("aria-invalid", "false"),
       ]),
@@ -116,7 +117,7 @@ fn basic_info_section() -> Element(msg) {
           name("prep_time"),
           class("input"),
           min("0"),
-          max("999"),
+          max(nutrition_constants.max_cooking_time |> int.to_string),
           placeholder("30"),
           attribute("aria-describedby", "prep-time-error"),
         ]),
@@ -138,7 +139,7 @@ fn basic_info_section() -> Element(msg) {
           name("cook_time"),
           class("input"),
           min("0"),
-          max("999"),
+          max(nutrition_constants.max_cooking_time |> int.to_string),
           placeholder("45"),
           attribute("aria-describedby", "cook-time-error"),
         ]),
@@ -167,8 +168,8 @@ fn basic_info_section() -> Element(msg) {
         name("servings"),
         class("input"),
         min("1"),
-        max("100"),
-        value("4"),
+        max(nutrition_constants.max_servings |> int.to_string),
+        value(nutrition_constants.default_servings |> int.to_string),
         required(),
         attribute("aria-describedby", "servings-error"),
         attribute("aria-invalid", "false"),
@@ -302,7 +303,9 @@ fn ingredient_row(index: Int) -> Element(msg) {
               id("ingredient-amount-" <> idx_str),
               name("ingredients[" <> idx_str <> "][amount]"),
               class("input ingredient-amount"),
-              placeholder("200"),
+              placeholder(
+                nutrition_constants.default_ingredient_amount |> int.to_string,
+              ),
               min("0"),
               step("0.01"),
               required(),
@@ -508,12 +511,48 @@ fn nutrition_section() -> Element(msg) {
       text("Nutrition Information (per serving)"),
     ]),
     div([class("grid grid-cols-2 gap-4")], [
-      nutrition_field("calories", "Calories (kcal)", "9999", "1", "e.g., 350"),
-      nutrition_field("protein", "Protein (g)", "999", "0.1", "e.g., 30"),
-      nutrition_field("carbs", "Carbohydrates (g)", "999", "0.1", "e.g., 25"),
-      nutrition_field("fat", "Fat (g)", "999", "0.1", "e.g., 15"),
-      nutrition_field("fiber", "Fiber (g)", "999", "0.1", "e.g., 5"),
-      nutrition_field("sugar", "Sugar (g)", "999", "0.1", "e.g., 8"),
+      nutrition_field(
+        "calories",
+        "Calories (kcal)",
+        nutrition_constants.max_calories_per_serving |> int.to_string,
+        "1",
+        "e.g., 350",
+      ),
+      nutrition_field(
+        "protein",
+        "Protein (g)",
+        nutrition_constants.max_macronutrient_grams |> int.to_string,
+        "0.1",
+        "e.g., 30",
+      ),
+      nutrition_field(
+        "carbs",
+        "Carbohydrates (g)",
+        nutrition_constants.max_macronutrient_grams |> int.to_string,
+        "0.1",
+        "e.g., 25",
+      ),
+      nutrition_field(
+        "fat",
+        "Fat (g)",
+        nutrition_constants.max_macronutrient_grams |> int.to_string,
+        "0.1",
+        "e.g., 15",
+      ),
+      nutrition_field(
+        "fiber",
+        "Fiber (g)",
+        nutrition_constants.max_macronutrient_grams |> int.to_string,
+        "0.1",
+        "e.g., 5",
+      ),
+      nutrition_field(
+        "sugar",
+        "Sugar (g)",
+        nutrition_constants.max_macronutrient_grams |> int.to_string,
+        "0.1",
+        "e.g., 8",
+      ),
     ]),
   ])
 }

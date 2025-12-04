@@ -7,6 +7,7 @@ import gleam/io
 import gleam/list
 import gleam/result
 import gleam/string
+import meal_planner/nutrition_constants as constants
 import meal_planner/query_cache
 import meal_planner/storage
 import meal_planner/storage_optimized
@@ -65,7 +66,7 @@ pub fn calculate_time_saved(
 pub fn calculate_db_load_reduction(cache_hits: Int, total_queries: Int) -> Float {
   let hit_rate = calculate_hit_rate(cache_hits, total_queries)
   // Each cache hit eliminates a DB query, so hit_rate = load reduction
-  hit_rate *. 100.0
+  hit_rate *. int.to_float(constants.percent_multiplier)
 }
 
 /// Generate performance report
@@ -107,7 +108,8 @@ pub fn benchmark(
 
   let total_time = int.to_float(end_time - start_time)
   let avg_time = total_time /. int.to_float(iterations)
-  let queries_per_second = 1000.0 /. avg_time
+  let queries_per_second =
+    int.to_float(constants.milliseconds_per_second) /. avg_time
 
   BenchmarkResult(
     test_name: test_name,
@@ -154,13 +156,15 @@ pub fn compare_performance(
 ) -> Float {
   case after.avg_time_ms >. 0.0 {
     True -> before.avg_time_ms /. after.avg_time_ms
-    False -> 1.0
+    False -> constants.min_speedup_factor
   }
 }
 
 /// Format performance improvement as percentage
 pub fn format_improvement(speedup_factor: Float) -> String {
-  let percent = { speedup_factor -. 1.0 } *. 100.0
+  let percent =
+    { speedup_factor -. constants.min_speedup_factor }
+    *. int.to_float(constants.percent_multiplier)
   let percent_str = float.to_string(percent)
   percent_str <> "% faster"
 }
@@ -185,7 +189,8 @@ pub fn print_metrics(metrics: PerformanceMetrics) -> Nil {
   io.println(
     "Hit Rate: "
     <> float.to_string(
-      calculate_hit_rate(metrics.cache_hits, metrics.total_queries) *. 100.0,
+      calculate_hit_rate(metrics.cache_hits, metrics.total_queries)
+      *. int.to_float(constants.percent_multiplier),
     )
     <> "%",
   )
@@ -246,7 +251,7 @@ pub fn verify_phase2_target(
       cache_stats.hits + cache_stats.misses,
     )
 
-  case db_reduction >=. 50.0 {
+  case db_reduction >=. constants.target_db_load_reduction_percent {
     True -> {
       io.println(
         "✓ Phase 2 target achieved: " <> format_db_reduction(db_reduction),
@@ -257,9 +262,11 @@ pub fn verify_phase2_target(
       io.println(
         "✗ Phase 2 target not met: "
         <> format_db_reduction(db_reduction)
-        <> " (need 50%)",
+        <> " (need "
+        <> float.to_string(constants.target_db_load_reduction_percent)
+        <> "%)",
       )
-      Error("DB load reduction below 50% target")
+      Error("DB load reduction below target")
     }
   }
 }
@@ -292,7 +299,9 @@ pub fn generate_phase2_report(
       float.to_string(db_reduction),
       "%                  ║\n",
       "║ Cache Hit Rate:       ",
-      float.to_string(cache_stats.hit_rate *. 100.0),
+      float.to_string(
+        cache_stats.hit_rate *. int.to_float(constants.percent_multiplier),
+      ),
       "%                  ║\n",
       "║                                                            ║\n",
       "║ OPTIMIZATIONS APPLIED:                                     ║\n",
@@ -304,9 +313,15 @@ pub fn generate_phase2_report(
       "║                                                            ║\n",
       "║ TARGET STATUS:                                             ║\n",
       "║ ",
-      case db_reduction >=. 50.0 {
-        True -> "✓ ACHIEVED: 50% DB load reduction target          "
-        False -> "✗ NOT MET: Below 50% target                       "
+      case db_reduction >=. constants.target_db_load_reduction_percent {
+        True ->
+          "✓ ACHIEVED: "
+          <> float.to_string(constants.target_db_load_reduction_percent)
+          <> "% DB load reduction target          "
+        False ->
+          "✗ NOT MET: Below "
+          <> float.to_string(constants.target_db_load_reduction_percent)
+          <> "% target                       "
       },
       "║\n",
       "╚════════════════════════════════════════════════════════════╝\n",

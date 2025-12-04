@@ -6,6 +6,7 @@ import gleam/json
 import lustre/element
 import meal_planner/generator
 import meal_planner/meal_plan.{type DailyPlan, type Meal, Meal}
+import meal_planner/nutrition_constants
 import meal_planner/storage
 import meal_planner/types
 import meal_planner/ui/components/meal_card
@@ -117,7 +118,11 @@ fn handle_swap_request(
                 }
                 Ok(new_recipe) -> {
                   // Create the new meal with default portion size
-                  let new_meal = Meal(recipe: new_recipe, portion_size: 1.0)
+                  let new_meal =
+                    Meal(
+                      recipe: new_recipe,
+                      portion_size: nutrition_constants.default_portion_size,
+                    )
 
                   // Render the meal card as HTML
                   let html =

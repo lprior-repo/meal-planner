@@ -10,6 +10,7 @@ import gleam/result
 import lustre/element
 import meal_planner/generator
 import meal_planner/meal_plan.{type DailyPlan, type Meal, Meal}
+import meal_planner/nutrition_constants
 import meal_planner/storage
 import meal_planner/types.{type Recipe}
 import meal_planner/ui/components/meal_card

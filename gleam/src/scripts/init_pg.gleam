@@ -12,18 +12,9 @@ import gleam/option.{Some}
 import gleam/otp/actor
 import gleam/result
 import gleam/string
+import meal_planner/nutrition_constants
 import pog
 import simplifile
-
-/// Number of parallel workers for each import phase
-const nutrient_workers = 4
-
-const food_workers = 16
-
-const food_nutrient_workers = 32
-
-/// Batch size for inserts
-const batch_size = 5000
 
 /// Main entry point
 pub fn main() {
@@ -57,7 +48,7 @@ pub fn main() {
     |> pog.database("meal_planner")
     |> pog.user("postgres")
     |> pog.password(Some("postgres"))
-    |> pog.pool_size(50)
+    |> pog.pool_size(nutrition_constants.pg_pool_size)
 
   // Start connection pool
   case pog.start(config) {
@@ -101,7 +92,7 @@ pub fn main() {
           io.println("Starting parallel USDA import...")
           io.println(
             "Workers: "
-            <> int.to_string(food_nutrient_workers)
+            <> int.to_string(nutrition_constants.food_nutrient_import_workers)
             <> " concurrent connections",
           )
           io.println("")
@@ -211,7 +202,8 @@ fn check_data_imported(db: pog.Connection) -> Bool {
     |> pog.returning(decode.at([0], decode.int))
 
   case pog.execute(query, db) {
-    Ok(pog.Returned(_, [count])) -> count > 1000
+    Ok(pog.Returned(_, [count])) ->
+      count > nutrition_constants.import_batch_size
     _ -> False
   }
 }
@@ -260,7 +252,7 @@ fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
           db,
           usda_dir <> "\\nutrient.csv",
           "nutrient",
-          nutrient_workers,
+          nutrition_constants.nutrient_import_workers,
         )
 
       case n_result {
@@ -271,7 +263,7 @@ fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
           // Import foods in parallel
           io.println(
             "Importing foods with "
-            <> int.to_string(food_workers)
+            <> int.to_string(nutrition_constants.food_import_workers)
             <> " workers...",
           )
           let f_result =
@@ -279,7 +271,7 @@ fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
               db,
               usda_dir <> "\\food.csv",
               "food",
-              food_workers,
+              nutrition_constants.food_import_workers,
             )
 
           case f_result {
@@ -290,7 +282,9 @@ fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
               // Import food_nutrients with maximum parallelism
               io.println(
                 "Importing food nutrients with "
-                <> int.to_string(food_nutrient_workers)
+                <> int.to_string(
+                  nutrition_constants.food_nutrient_import_workers,
+                )
                 <> " workers...",
               )
               let fn_result =
@@ -298,7 +292,7 @@ fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
                   db,
                   usda_dir <> "\\food_nutrient.csv",
                   "food_nutrient",
-                  food_nutrient_workers,
+                  nutrition_constants.food_nutrient_import_workers,
                 )
 
               case fn_result {

@@ -10,6 +10,7 @@ import gleam/uri
 import lustre/attribute
 import lustre/element
 import lustre/element/html
+import meal_planner/nutrition_constants
 import meal_planner/storage.{type FoodNutrientValue, type UsdaFood}
 import meal_planner/types.{type SearchFilters, SearchFilters}
 import pog
@@ -35,8 +36,13 @@ pub fn validate_search_query(query: String) -> Result(String, String) {
     True -> Error("Query must be at least 2 characters")
     False -> {
       // Check maximum length
-      case string.length(trimmed) > 200 {
-        True -> Error("Query exceeds maximum length of 200 characters")
+      case string.length(trimmed) > nutrition_constants.max_query_length {
+        True ->
+          Error(
+            "Query exceeds maximum length of "
+            <> int.to_string(nutrition_constants.max_query_length)
+            <> " characters",
+          )
         False -> {
           // Sanitize for SQL safety - replace potential SQL injection characters
           // In Gleam with parameterized queries, this is mostly defensive
@@ -188,7 +194,7 @@ pub fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
                   ctx,
                   validated_query,
                   validated_filters,
-                  50,
+                  nutrition_constants.default_search_limit,
                 )
               let json_data = json.array(foods, food_to_json)
               wisp.json_response(json.to_string(json_data), 200)
@@ -296,7 +302,13 @@ pub fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
   // Execute search or return empty state
   let foods = case query {
     "" -> []
-    q -> search_foods_filtered(ctx, q, filters, 50)
+    q ->
+      search_foods_filtered(
+        ctx,
+        q,
+        filters,
+        nutrition_constants.default_search_limit,
+      )
   }
 
   // Render HTML fragment for HTMX to swap in
