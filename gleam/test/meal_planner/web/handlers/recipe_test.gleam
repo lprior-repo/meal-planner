@@ -50,8 +50,7 @@ pub fn parse_missing_required_fields_test() {
 
   case recipe.parse_recipe_from_form(form_values) {
     Error(errors) -> {
-      let len = list.length(errors)
-      { len > 0 }
+      list.length(errors) > 0
       |> should.be_true()
     }
     Ok(_) -> should.fail()

@@ -19,6 +19,7 @@ import gleam/string
 import gleeunit/should
 import pog
 import simplifile
+import fixtures/test_db
 
 // =============================================================================
 // Test Database Configuration
@@ -69,7 +70,7 @@ fn create_test_database(db_name: String) -> Result(Nil, String) {
     Error(_) -> Error("Cannot connect to PostgreSQL")
     Ok(started) -> {
       let db = started.data
-      let pool = started.process
+      
 
       // First, terminate any existing connections to the target database
       let terminate_query =
@@ -93,8 +94,6 @@ fn create_test_database(db_name: String) -> Result(Nil, String) {
       }
 
       // Stop the pool to release connection
-      process.send(pool, pog.Stop)
-
       result
     }
   }
@@ -106,7 +105,7 @@ fn drop_test_database(db_name: String) -> Result(Nil, String) {
     Error(_) -> Error("Cannot connect to PostgreSQL")
     Ok(started) -> {
       let db = started.data
-      let pool = started.process
+      
 
       // Terminate any connections to the target database
       let terminate_query =
@@ -125,8 +124,6 @@ fn drop_test_database(db_name: String) -> Result(Nil, String) {
       }
 
       // Stop the pool to release connection
-      process.send(pool, pog.Stop)
-
       result
     }
   }
@@ -330,6 +327,17 @@ fn insert_test_food_nutrient(
 }
 
 // =============================================================================
+// Cleanup (runs first alphabetically)
+// =============================================================================
+
+/// Clean up orphan test databases from previous failed runs
+/// This test name starts with "aaa" to run first alphabetically
+pub fn aaa_cleanup_orphan_databases_test() {
+  test_db.cleanup_orphan_test_databases()
+  |> should.be_ok
+}
+
+// =============================================================================
 // Migration Tests
 // =============================================================================
 
@@ -409,9 +417,7 @@ pub fn migrations_are_idempotent_test() {
 pub fn migration_order_matters_test() {
   with_empty_db(fn(db) {
     // Running 003 before 002 should fail (missing dependencies)
-    let result = run_migration(db, "migrations_pg/003_app_tables.sql")
-
-    result
+    run_migration(db, "migrations_pg/003_app_tables.sql")
     |> should.be_error
   })
 }
@@ -423,9 +429,7 @@ pub fn migration_order_matters_test() {
 /// Test: Nutrients table has correct schema
 pub fn nutrients_table_schema_test() {
   with_test_db(fn(db) {
-    let result = insert_test_nutrient(db, 1, "Protein", "g")
-
-    result
+    insert_test_nutrient(db, 1, "Protein", "g")
     |> should.be_ok
 
     get_row_count(db, "nutrients")
@@ -436,9 +440,7 @@ pub fn nutrients_table_schema_test() {
 /// Test: Foods table has correct schema and indexes
 pub fn foods_table_schema_test() {
   with_test_db(fn(db) {
-    let result = insert_test_food(db, 100_001, "Test Food")
-
-    result
+    insert_test_food(db, 100_001, "Test Food")
     |> should.be_ok
 
     get_row_count(db, "foods")
@@ -644,9 +646,7 @@ pub fn connection_to_nonexistent_db_fails_test() {
     |> pog.password(Some("postgres"))
     |> pog.pool_size(1)
 
-  let result = pog.start(bad_config)
-
-  result
+  pog.start(bad_config)
   |> should.be_error
 }
 
@@ -654,9 +654,7 @@ pub fn connection_to_nonexistent_db_fails_test() {
 pub fn invalid_sql_causes_error_test() {
   with_test_db(fn(db) {
     let query = pog.query("SELECT * FROM nonexistent_table")
-    let result = pog.execute(query, db)
-
-    result
+    pog.execute(query, db)
     |> should.be_error
   })
 }
@@ -674,9 +672,7 @@ pub fn constraint_violation_caught_test() {
       |> pog.parameter(pog.int(999_999))
       |> pog.parameter(pog.float(10.0))
 
-    let result = pog.execute(query, db)
-
-    result
+    pog.execute(query, db)
     |> should.be_error
   })
 }
@@ -700,9 +696,7 @@ pub fn concurrent_connections_test() {
     |> pog.password(Some("postgres"))
     |> pog.pool_size(10)
 
-  let result = pog.start(config)
-
-  result
+  pog.start(config)
   |> should.be_ok
 
   let assert Ok(_) = drop_test_database(db_name)
