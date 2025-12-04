@@ -15,6 +15,8 @@ import gleam/uri
 import lustre/attribute
 import lustre/element
 import lustre/element/html
+import meal_planner/auto_planner/storage as auto_storage
+import meal_planner/auto_planner/types as auto_types
 import meal_planner/storage
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
@@ -1499,6 +1501,8 @@ fn handle_api(
     ["foods", id] -> api_food(req, id, ctx)
     ["logs"] -> api_logs_create(req, ctx)
     ["logs", "entry", id] -> api_log_entry(req, id, ctx)
+    // TODO: Implement api_recipe_sources for meal-planner-ajf
+    // ["recipe-sources"] -> api_recipe_sources(req, ctx)
     _ -> wisp.not_found()
   }
 }
@@ -2058,6 +2062,9 @@ fn api_log_entry(
     Error(_) -> wisp.not_found()
   }
 }
+
+// TODO [meal-planner-ajf]: Implement api_recipe_sources, create_recipe_source, and list_recipe_sources
+// These were partially implemented but broke due to json.decode API changes in gleam_json v2
 
 // ============================================================================
 // Static Files
