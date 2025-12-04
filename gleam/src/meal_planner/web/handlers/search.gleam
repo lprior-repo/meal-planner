@@ -13,6 +13,7 @@ import lustre/element/html
 import meal_planner/nutrition_constants
 import meal_planner/storage.{type FoodNutrientValue, type UsdaFood}
 import meal_planner/types.{type SearchFilters, SearchFilters}
+import meal_planner/ui/components/forms
 import pog
 import wisp
 
@@ -422,7 +423,16 @@ pub fn api_filter_fragment(req: wisp.Request) -> wisp.Response {
     <> "<button class=\"filter-chip\" data-filter=\"branded\">Branded</button>"
     <> "</div>"
 
-  let html = forms.filter_panel_collapsible(expanded, filter_content)
+  // Build the filter panel HTML
+  let html =
+    "<div class=\"filter-panel\" "
+    <> case expanded {
+      True -> "data-expanded=\"true\""
+      False -> ""
+    }
+    <> ">"
+    <> filter_content
+    <> "</div>"
 
   wisp.html_response(html, 200)
 }
