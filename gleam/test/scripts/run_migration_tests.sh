@@ -30,13 +30,12 @@ echo ""
 echo "Running migrations..."
 cd /home/lewis/src/meal-planner/gleam
 
-for migration in migrations/001_schema_migrations.sql \
-                 migrations/002_nutrition_tables.sql \
-                 migrations/003_usda_foods.sql \
-                 migrations/004_app_tables.sql \
-                 migrations/005_add_micronutrients_to_food_logs.sql \
-                 migrations/006_add_source_tracking.sql \
-                 migrations/009_auto_meal_planner.sql; do
+for migration in migrations_pg/001_schema_migrations.sql \
+                 migrations_pg/002_usda_tables.sql \
+                 migrations_pg/003_app_tables.sql \
+                 migrations_pg/005_add_micronutrients_to_food_logs.sql \
+                 migrations_pg/006_add_source_tracking.sql \
+                 migrations_pg/009_auto_meal_planner.sql; do
     if [ -f "$migration" ]; then
         echo "  - Applying $migration"
         PGPASSWORD=postgres psql -h localhost -U postgres -d meal_planner_test -f "$migration" > /dev/null 2>&1

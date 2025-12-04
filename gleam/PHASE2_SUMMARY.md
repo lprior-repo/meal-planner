@@ -47,7 +47,7 @@
 ## Files Created (6 files, 2031 lines)
 
 ```
-gleam/migrations/012_phase2_query_optimization.sql    137 lines
+gleam/migrations_pg/012_phase2_query_optimization.sql  137 lines
 gleam/src/meal_planner/query_cache.gleam              322 lines
 gleam/src/meal_planner/storage_optimized.gleam        372 lines
 gleam/src/meal_planner/performance.gleam              333 lines
@@ -74,13 +74,13 @@ PHASE2_IMPLEMENTATION_REPORT.md                       509 lines
 
 ```bash
 # Apply migration
-sqlite3 meal_planner.db < migrations/012_phase2_query_optimization.sql
+psql -d meal_planner -f migrations_pg/012_phase2_query_optimization.sql
 
 # Verify indexes
-sqlite3 meal_planner.db "SELECT name FROM sqlite_master WHERE type='index';"
+psql -d meal_planner -c "SELECT indexname FROM pg_indexes WHERE schemaname='public';"
 
 # Check query plan
-sqlite3 meal_planner.db "EXPLAIN QUERY PLAN SELECT * FROM food_logs WHERE date='2025-12-04';"
+psql -d meal_planner -c "EXPLAIN SELECT * FROM food_logs WHERE date='2025-12-04';"
 ```
 
 ## Status

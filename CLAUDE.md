@@ -104,7 +104,7 @@ bv --robot-diff        # Progress tracking
 ### File Organization
 - `/gleam/src` - Gleam source
 - `/gleam/test` - Tests
-- `/gleam/migrations` - SQL migrations
+- `/gleam/migrations_pg` - PostgreSQL migrations
 - **NEVER** save to root folder
 
 ### Concurrent Execution
