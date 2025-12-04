@@ -56,7 +56,7 @@ fn chip_classes(selected: Bool) -> String {
 // PUBLIC COMPONENT FUNCTIONS
 // ===================================================================
 
-/// Render a single filter chip
+/// Render a single filter chip with HTMX attributes
 ///
 /// Usage:
 /// ```gleam
@@ -64,9 +64,22 @@ fn chip_classes(selected: Bool) -> String {
 /// ```
 ///
 /// Renders:
-/// <button class="filter-chip filter-chip-selected" data-filter="all">
+/// <button class="filter-chip filter-chip-selected"
+///         data-filter="all"
+///         hx-get="/api/foods?filter=all"
+///         hx-target="#food-results"
+///         hx-swap="innerHTML"
+///         hx-push-url="true"
+///         hx-include="[name='q']"
+///         aria-selected="true"
+///         aria-pressed="true"
+///         role="button"
+///         type="button">
 ///   All
 /// </button>
+///
+/// Note: The hx-include attribute ensures the current search query is included
+/// in the HTMX request by grabbing the value from the search input element.
 pub fn render_filter_chip(chip: FilterChip) -> element.Element(msg) {
   let FilterChip(label: label, filter_type: filter_type, selected: selected) =
     chip
@@ -81,10 +94,15 @@ pub fn render_filter_chip(chip: FilterChip) -> element.Element(msg) {
         True -> "true"
         False -> "false"
       }),
+      attribute.attribute("aria-pressed", case selected {
+        True -> "true"
+        False -> "false"
+      }),
+      attribute.attribute("role", "button"),
       attribute.type_("button"),
       // HTMX attributes for dynamic filtering
-      attribute.attribute("hx-get", "/api/foods/search?filter=" <> filter_str),
-      attribute.attribute("hx-target", "#search-results"),
+      attribute.attribute("hx-get", "/api/foods?filter=" <> filter_str),
+      attribute.attribute("hx-target", "#food-results"),
       attribute.attribute("hx-swap", "innerHTML"),
       attribute.attribute("hx-push-url", "true"),
       attribute.attribute("hx-include", "[name='q']"),
@@ -236,12 +254,12 @@ pub fn render_filter_chips_with_dropdown(
           attribute.disabled(!category_selected),
           attribute.attribute("aria-label", "Filter by category"),
           // HTMX attributes for dynamic category filtering
-          attribute.attribute("hx-get", "/api/foods/search"),
+          attribute.attribute("hx-get", "/api/foods"),
           attribute.attribute("hx-trigger", "change"),
-          attribute.attribute("hx-target", "#search-results"),
+          attribute.attribute("hx-target", "#food-results"),
           attribute.attribute("hx-swap", "innerHTML"),
           attribute.attribute("hx-push-url", "true"),
-          attribute.attribute("hx-include", "[name='q'], [name='filter']"),
+          attribute.attribute("hx-include", "[name='q']"),
         ],
         all_options,
       ),
