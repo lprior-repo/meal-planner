@@ -8,7 +8,7 @@ import gleam/int
 import gleam/option.{type Option, None, Some}
 import meal_planner/query_cache
 import meal_planner/storage.{
-  type StorageError, type UsdaFood, DatabaseError, UsdaFood, format_pog_error,
+  type StorageError, type UsdaFood, DatabaseError, UsdaFood,
 }
 import meal_planner/types
 import pog
@@ -124,7 +124,7 @@ fn search_foods_optimized(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(_e) -> Error(DatabaseError("Query execution failed"))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
@@ -253,7 +253,7 @@ fn search_foods_filtered_optimized(
   }
 
   case pog.returning(final_query, decoder) |> pog.execute(conn) {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(_e) -> Error(DatabaseError("Query execution failed"))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
@@ -308,7 +308,7 @@ pub fn record_query_metric(
     |> pog.returning(decode.dynamic)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(_e) -> Error(DatabaseError("Failed to record query metric"))
     Ok(_) -> Ok(Nil)
   }
 }
@@ -355,7 +355,7 @@ pub fn get_query_metrics(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(_e) -> Error(DatabaseError("Query execution failed"))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
