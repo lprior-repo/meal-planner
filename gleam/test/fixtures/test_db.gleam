@@ -1,6 +1,9 @@
 /// Test database setup and fixtures
 /// Provides utilities to create test databases with migrations pre-applied
+import gleam/dynamic/decode
 import gleam/erlang/process
+import gleam/int
+import gleam/io
 import gleam/list
 import gleam/option.{Some}
 import gleam/result
@@ -180,5 +183,66 @@ pub fn get_connection() -> Result(pog.Connection, String) {
         "Failed to connect to test database. Ensure PostgreSQL is running and test database exists.",
       )
     Ok(started) -> Ok(started.data)
+  }
+}
+
+// =============================================================================
+// Orphan Database Cleanup
+// =============================================================================
+
+/// Clean up all orphaned test databases (test_meal_planner_*)
+/// This should be called at the start of test runs to clean up from failed runs
+pub fn cleanup_orphan_test_databases() -> Result(Int, String) {
+  case pog.start(postgres_db_config()) {
+    Error(_) -> Error("Cannot connect to PostgreSQL")
+    Ok(started) -> {
+      let db = started.data
+
+      // First, terminate connections to test databases
+      let terminate_query =
+        pog.query(
+          "SELECT pg_terminate_backend(pid)
+           FROM pg_stat_activity
+           WHERE datname LIKE 'test_meal_planner_%'
+           AND pid <> pg_backend_pid()",
+        )
+      let _ = pog.execute(terminate_query, db)
+
+      // Get list of test databases to drop
+      let list_query =
+        pog.query(
+          "SELECT datname FROM pg_database
+           WHERE datname LIKE 'test_meal_planner_%'",
+        )
+        |> pog.returning(decode.at([0], decode.string))
+
+      case pog.execute(list_query, db) {
+        Error(e) ->
+          Error("Failed to list test databases: " <> format_pog_error(e))
+        Ok(pog.Returned(_, db_names)) -> {
+          // Drop each database
+          let dropped =
+            list.filter_map(db_names, fn(db_name) {
+              let drop_query =
+                pog.query("DROP DATABASE IF EXISTS " <> db_name <> ";")
+              case pog.execute(drop_query, db) {
+                Ok(_) -> Ok(db_name)
+                Error(_) -> Error(Nil)
+              }
+            })
+
+          let count = list.length(dropped)
+          case count {
+            0 -> Ok(0)
+            n -> {
+              io.println(
+                "Cleaned up " <> int.to_string(n) <> " orphan test database(s)",
+              )
+              Ok(n)
+            }
+          }
+        }
+      }
+    }
   }
 }

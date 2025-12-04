@@ -69,17 +69,33 @@ fn create_test_database(db_name: String) -> Result(Nil, String) {
     Error(_) -> Error("Cannot connect to PostgreSQL")
     Ok(started) -> {
       let db = started.data
+      let pool = started.process
+
+      // First, terminate any existing connections to the target database
+      let terminate_query =
+        pog.query(
+          "SELECT pg_terminate_backend(pid)
+           FROM pg_stat_activity
+           WHERE datname = $1 AND pid <> pg_backend_pid()",
+        )
+        |> pog.parameter(pog.text(db_name))
+      let _ = pog.execute(terminate_query, db)
 
       // Drop existing test database if it exists
-      let drop_query = pog.query("DROP DATABASE IF EXISTS " <> db_name <> ";")
+      let drop_query = pog.query("DROP DATABASE IF EXISTS " <> db_name)
       let _ = pog.execute(drop_query, db)
 
       // Create fresh test database
-      let create_query = pog.query("CREATE DATABASE " <> db_name <> ";")
-      case pog.execute(create_query, db) {
+      let create_query = pog.query("CREATE DATABASE " <> db_name)
+      let result = case pog.execute(create_query, db) {
         Ok(_) -> Ok(Nil)
-        Error(_) -> Error("Failed to create test database")
+        Error(e) -> Error("Failed to create test database: " <> format_pog_error(e))
       }
+
+      // Stop the pool to release connection
+      process.send(pool, pog.Stop)
+
+      result
     }
   }
 }
@@ -90,11 +106,28 @@ fn drop_test_database(db_name: String) -> Result(Nil, String) {
     Error(_) -> Error("Cannot connect to PostgreSQL")
     Ok(started) -> {
       let db = started.data
-      let query = pog.query("DROP DATABASE IF EXISTS " <> db_name <> ";")
-      case pog.execute(query, db) {
+      let pool = started.process
+
+      // Terminate any connections to the target database
+      let terminate_query =
+        pog.query(
+          "SELECT pg_terminate_backend(pid)
+           FROM pg_stat_activity
+           WHERE datname = $1 AND pid <> pg_backend_pid()",
+        )
+        |> pog.parameter(pog.text(db_name))
+      let _ = pog.execute(terminate_query, db)
+
+      let query = pog.query("DROP DATABASE IF EXISTS " <> db_name)
+      let result = case pog.execute(query, db) {
         Ok(_) -> Ok(Nil)
-        Error(_) -> Error("Failed to drop test database")
+        Error(e) -> Error("Failed to drop test database: " <> format_pog_error(e))
       }
+
+      // Stop the pool to release connection
+      process.send(pool, pog.Stop)
+
+      result
     }
   }
 }
