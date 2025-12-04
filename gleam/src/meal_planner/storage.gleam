@@ -739,10 +739,14 @@ fn execute_filtered_search(
   }
 
   // Same multi-factor ranking as search_foods
+  // WHERE clause ordered for optimal performance: most selective filters first
+  // 1. verified_only, branded_only (most selective)
+  // 2. category (exact match)
+  // 3. text search (FTS and ILIKE - least selective, evaluated last)
   let sql = "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
      FROM foods
-     WHERE (to_tsvector('english', description) @@ plainto_tsquery('english', $1)
-        OR description ILIKE $2)" <> verified_clause <> branded_clause <> category_clause <> "
+     WHERE 1=1" <> verified_clause <> branded_clause <> category_clause <> " AND (to_tsvector('english', description) @@ plainto_tsquery('english', $1)
+        OR description ILIKE $2)
      ORDER BY
        -- 1. Data Quality Score (0-100): Prioritize verified USDA data
        CASE data_type

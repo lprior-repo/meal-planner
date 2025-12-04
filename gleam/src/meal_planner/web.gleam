@@ -29,6 +29,7 @@ import meal_planner/types.{
   UserProfile,
 }
 import meal_planner/ui/components/food_search
+import meal_planner/web/handlers/dashboard
 import meal_planner/web/handlers/food_log
 import meal_planner/web/handlers/profile
 import meal_planner/web/handlers/recipe
@@ -105,7 +106,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["recipes", "new"] -> new_recipe_page()
     ["recipes", id, "edit"] -> edit_recipe_page(id, ctx)
     ["recipes", id] -> recipe_detail_page(id, ctx)
-    ["dashboard"] -> dashboard_page(req, ctx)
+    ["dashboard"] -> dashboard.dashboard(req, ctx)
     ["profile"] -> profile_page(ctx)
     ["foods"] -> foods_page(req, ctx)
     ["foods", id] -> food_detail_page(id, ctx)
