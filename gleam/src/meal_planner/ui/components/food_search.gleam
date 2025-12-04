@@ -9,8 +9,7 @@
 ///
 /// See: docs/component_signatures.md (section: Food Search)
 import gleam/list
-import gleam/option
-import gleam/string
+import gleam/result
 import lustre/attribute
 import lustre/element
 import lustre/element/html
@@ -172,11 +171,11 @@ pub fn render_filter_chips_with_dropdown(
       let FilterChip(filter_type: ft, ..) = chip
       ft == ByCategory
     })
-    |> option.map(fn(chip) {
+    |> result.map(fn(chip) {
       let FilterChip(selected: sel, ..) = chip
       sel
     })
-    |> option.unwrap(False)
+    |> result.unwrap(False)
 
   // Build category options
   let default_option =
