@@ -246,7 +246,8 @@ pub fn extract_date_param_with_date_test() {
 
 /// Test extract_date_param with multiple params
 pub fn extract_date_param_multiple_params_test() {
-  let date = dashboard.extract_date_param(Some("foo=bar&date=2025-11-20&baz=qux"))
+  let date =
+    dashboard.extract_date_param(Some("foo=bar&date=2025-11-20&baz=qux"))
 
   date |> should.equal("2025-11-20")
 }
