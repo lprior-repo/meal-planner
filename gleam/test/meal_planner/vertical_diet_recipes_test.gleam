@@ -71,8 +71,8 @@ pub fn all_recipes_returns_list_test() {
   let recipes = vertical_diet_recipes.all_recipes()
   // Use pattern matching instead of list.length() for O(1) check
   case recipes {
-    [] -> should.fail("Expected recipes but got empty list")
-    [_, ..] -> should.be_ok()
+    [] -> should.fail()
+    [_, ..] -> should.be_true(True)
   }
 }
 
