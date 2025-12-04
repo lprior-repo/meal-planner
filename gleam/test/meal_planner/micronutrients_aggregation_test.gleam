@@ -11,8 +11,9 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/types.{
-  type FoodLogEntry, type Macros, type MealType, type Micronutrients, FoodLogEntry, Macros,
-  Micronutrients, micronutrients_add, micronutrients_sum, micronutrients_zero,
+  type FoodLogEntry, type Macros, type MealType, type Micronutrients, Breakfast,
+  FoodLogEntry, Macros, Micronutrients, Snack, micronutrients_add,
+  micronutrients_sum, micronutrients_zero,
 }
 
 // ============================================================================
@@ -116,7 +117,7 @@ fn create_test_log(
     servings: servings,
     macros: Macros(protein: 20.0, fat: 10.0, carbs: 30.0),
     micronutrients: Some(micros),
-    meal_type: MealType.Breakfast,
+    meal_type: Breakfast,
     logged_at: "2024-01-01T08:00:00Z",
     source_type: "recipe",
     source_id: "test",
@@ -172,7 +173,7 @@ pub fn single_log_no_micros_test() {
       servings: 1.0,
       macros: Macros(protein: 20.0, fat: 10.0, carbs: 30.0),
       micronutrients: None,
-      meal_type: MealType.Snack,
+      meal_type: Snack,
       logged_at: "2024-01-01T10:00:00Z",
       source_type: "recipe",
       source_id: "test",
@@ -810,7 +811,7 @@ pub fn very_large_values_test() {
 
   // Should detect multiple excess warnings
   let warnings = detect_excess_warnings(micros, rda)
-  list.length(warnings) > 0 |> should.be_true()
+  { list.length(warnings) > 0 } |> should.be_true()
 
   // Verify percentages are calculated correctly
   let sodium_pct = calculate_rda_percentage(10_000.0, rda.sodium_mg)
