@@ -7,6 +7,9 @@ import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import gleam/uri
+import lustre/attribute
+import lustre/element
+import lustre/element/html
 import meal_planner/storage.{type FoodNutrientValue, type UsdaFood}
 import meal_planner/types.{type SearchFilters, SearchFilters}
 import pog
@@ -228,6 +231,116 @@ pub fn api_food(_req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
       }
     }
   }
+}
+
+/// GET /api/foods/search?q=query&filter=all|verified|branded|category&category=Vegetables
+/// Returns HTML fragment for HTMX to swap into page
+pub fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
+  // Parse all query parameters
+  let parsed_query = uri.parse_query(req.query |> option.unwrap(""))
+
+  // Read search query - support both 'q' and 'query' parameter names
+  let query = case parsed_query {
+    Ok(params) -> {
+      // Try 'q' first, then 'query' as fallback
+      case list.find(params, fn(p) { p.0 == "q" }) {
+        Ok(#(_, q)) -> q
+        Error(_) ->
+          case list.find(params, fn(p) { p.0 == "query" }) {
+            Ok(#(_, q)) -> q
+            Error(_) -> ""
+          }
+      }
+    }
+    Error(_) -> ""
+  }
+
+  // Parse filter parameter: all, verified, branded, or category
+  let filter_type = case parsed_query {
+    Ok(params) ->
+      case list.find(params, fn(p) { p.0 == "filter" }) {
+        Ok(#(_, f)) -> f
+        Error(_) -> "all"
+      }
+    Error(_) -> "all"
+  }
+
+  // Parse category parameter
+  let category_param = case parsed_query {
+    Ok(params) ->
+      case list.find(params, fn(p) { p.0 == "category" }) {
+        Ok(#(_, cat)) if cat != "" -> Some(cat)
+        Ok(#(_, _)) -> None
+        Error(_) -> None
+      }
+    Error(_) -> None
+  }
+
+  // Build SearchFilters based on filter type
+  let filters = case filter_type {
+    "verified" ->
+      SearchFilters(verified_only: True, branded_only: False, category: None)
+    "branded" ->
+      SearchFilters(verified_only: False, branded_only: True, category: None)
+    "category" ->
+      SearchFilters(
+        verified_only: False,
+        branded_only: False,
+        category: category_param,
+      )
+    _ ->
+      // "all" or any other value
+      SearchFilters(verified_only: False, branded_only: False, category: None)
+  }
+
+  // Execute search or return empty state
+  let foods = case query {
+    "" -> []
+    q -> search_foods_filtered(ctx, q, filters, 50)
+  }
+
+  // Render HTML fragment for HTMX to swap in
+  let search_results = case query {
+    "" ->
+      html.div(
+        [attribute.id("search-results"), attribute.class("empty-state")],
+        [element.text("Enter a search term to find foods")],
+      )
+    q ->
+      case foods {
+        [] ->
+          html.div(
+            [attribute.id("search-results"), attribute.class("empty-state")],
+            [element.text("No foods found matching \"" <> q <> "\"")],
+          )
+        _ ->
+          html.div(
+            [attribute.id("search-results"), attribute.class("food-list")],
+            list.map(foods, food_row),
+          )
+      }
+  }
+
+  // Return only the HTML fragment (not a full page)
+  wisp.html_response(element.to_string(search_results), 200)
+}
+
+/// Render food row for display in list
+fn food_row(food: UsdaFood) -> element.Element(msg) {
+  html.a(
+    [
+      attribute.class("food-item"),
+      attribute.href("/foods/" <> int.to_string(food.fdc_id)),
+    ],
+    [
+      html.div([attribute.class("food-info")], [
+        html.span([attribute.class("food-name")], [
+          element.text(food.description),
+        ]),
+        html.span([attribute.class("food-type")], [element.text(food.data_type)]),
+      ]),
+    ],
+  )
 }
 
 // ============================================================================

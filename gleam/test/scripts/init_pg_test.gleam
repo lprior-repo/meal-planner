@@ -183,7 +183,8 @@ fn with_empty_db(test_fn: fn(pog.Connection) -> a) -> a {
   // Run test
   let result = test_fn(db)
 
-  // Cleanup
+  // Cleanup: stop pool and drop database
+  process.kill(started.pid)
   let assert Ok(_) = drop_test_database(db_name)
 
   result
@@ -699,9 +700,10 @@ pub fn concurrent_connections_test() {
     |> pog.password(Some("postgres"))
     |> pog.pool_size(10)
 
-  pog.start(config)
-  |> should.be_ok
+  let assert Ok(started) = pog.start(config)
 
+  // Cleanup: stop pool and drop database
+  process.kill(started.pid)
   let assert Ok(_) = drop_test_database(db_name)
 }
 

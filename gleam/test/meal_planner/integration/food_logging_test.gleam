@@ -31,18 +31,14 @@
 /// - Multiple foods in one day
 /// - Daily log retrieval
 /// - Edge cases (empty days, zero servings, etc.)
-import gleam/float
-import gleam/int
 import gleam/list
-import gleam/option.{None, Some}
-import gleam/result
-import gleam/string
+import gleam/option
 import gleeunit
 import gleeunit/should
 import meal_planner/storage
 import meal_planner/types.{
-  type DailyLog, type FoodLogEntry, type Macros, Breakfast, CustomFoodSource,
-  Dinner, Lunch, Macros, RecipeSource, Snack, UsdaFoodSource,
+  type FoodLogEntry, type Macros, Breakfast, Dinner, Lunch, Macros, RecipeSource,
+  Snack, UsdaFoodSource,
 }
 import pog
 import test_helper
@@ -229,16 +225,34 @@ pub fn multiple_foods_in_one_day_test() {
 
   // Log foods to different meals
   let assert Ok(_) =
-    storage.save_food_to_log(db, date, RecipeSource("oatmeal-001"), 1.0, Breakfast)
+    storage.save_food_to_log(
+      db,
+      date,
+      RecipeSource("oatmeal-001"),
+      1.0,
+      Breakfast,
+    )
 
   let assert Ok(_) =
     storage.save_food_to_log(db, date, RecipeSource("salmon-001"), 1.5, Lunch)
 
   let assert Ok(_) =
-    storage.save_food_to_log(db, date, RecipeSource("rice-bowl-001"), 1.0, Dinner)
+    storage.save_food_to_log(
+      db,
+      date,
+      RecipeSource("rice-bowl-001"),
+      1.0,
+      Dinner,
+    )
 
   let assert Ok(_) =
-    storage.save_food_to_log(db, date, RecipeSource("protein-shake-001"), 2.0, Snack)
+    storage.save_food_to_log(
+      db,
+      date,
+      RecipeSource("protein-shake-001"),
+      2.0,
+      Snack,
+    )
 
   // Retrieve daily log
   let assert Ok(daily_log) = storage.get_daily_log(db, date)
@@ -282,17 +296,17 @@ pub fn search_and_log_usda_food_test() {
   // STEP 2: Verify search returns results
   // Note: This test may be skipped if USDA data is not loaded
   case search_results {
-    Ok(results) -> {
+    Ok(foods) -> {
       // STEP 3: If we have results, select the first one
-      case list.first(results.foods) {
-        Ok(first_food) -> {
+      case list.first(foods) {
+        Ok(food) -> {
           // STEP 4: Log the selected USDA food
           // Note: USDA foods use fdc_id as identifier
           let assert Ok(log_entry) =
             storage.save_food_to_log(
               db,
               date,
-              UsdaFoodSource(first_food.fdc_id),
+              UsdaFoodSource(food.fdc_id),
               1.0,
               Lunch,
             )
@@ -527,13 +541,31 @@ pub fn meal_type_persistence_test() {
     )
 
   let assert Ok(_) =
-    storage.save_food_to_log(db, date, RecipeSource("test-meal-001"), 1.0, Lunch)
+    storage.save_food_to_log(
+      db,
+      date,
+      RecipeSource("test-meal-001"),
+      1.0,
+      Lunch,
+    )
 
   let assert Ok(_) =
-    storage.save_food_to_log(db, date, RecipeSource("test-meal-001"), 1.0, Dinner)
+    storage.save_food_to_log(
+      db,
+      date,
+      RecipeSource("test-meal-001"),
+      1.0,
+      Dinner,
+    )
 
   let assert Ok(_) =
-    storage.save_food_to_log(db, date, RecipeSource("test-meal-001"), 1.0, Snack)
+    storage.save_food_to_log(
+      db,
+      date,
+      RecipeSource("test-meal-001"),
+      1.0,
+      Snack,
+    )
 
   // Retrieve and verify meal types
   let assert Ok(daily_log) = storage.get_daily_log(db, date)

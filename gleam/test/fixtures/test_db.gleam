@@ -60,10 +60,14 @@ fn create_test_database() -> Result(Nil, String) {
 
       // Create fresh test database
       let create_query = pog.query("CREATE DATABASE " <> test_db_name <> ";")
-      case pog.execute(create_query, db) {
+      let result = case pog.execute(create_query, db) {
         Ok(_) -> Ok(Nil)
         Error(_) -> Error("Failed to create test database")
       }
+
+      // Cleanup pool
+      process.kill(started.pid)
+      result
     }
   }
 }
@@ -171,10 +175,14 @@ pub fn teardown() -> Result(Nil, String) {
     Ok(started) -> {
       let db = started.data
       let query = pog.query("DROP DATABASE IF EXISTS " <> test_db_name <> ";")
-      case pog.execute(query, db) {
+      let result = case pog.execute(query, db) {
         Ok(_) -> Ok(Nil)
         Error(_) -> Error("Failed to drop test database")
       }
+
+      // Cleanup pool
+      process.kill(started.pid)
+      result
     }
   }
 }
@@ -220,7 +228,7 @@ pub fn cleanup_orphan_test_databases() -> Result(Int, String) {
         )
         |> pog.returning(decode.at([0], decode.string))
 
-      case pog.execute(list_query, db) {
+      let result = case pog.execute(list_query, db) {
         Error(e) ->
           Error("Failed to list test databases: " <> format_pog_error(e))
         Ok(pog.Returned(_, db_names)) -> {
@@ -247,6 +255,10 @@ pub fn cleanup_orphan_test_databases() -> Result(Int, String) {
           }
         }
       }
+
+      // Cleanup pool
+      process.kill(started.pid)
+      result
     }
   }
 }

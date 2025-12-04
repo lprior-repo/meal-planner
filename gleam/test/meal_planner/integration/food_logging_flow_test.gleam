@@ -11,9 +11,9 @@ import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/food_search
+import meal_planner/integration/test_helper
 import meal_planner/storage
 import meal_planner/types.{type Macros, Breakfast, Lunch, Macros}
-import test/meal_planner/integration/test_helper
 
 pub fn main() {
   gleeunit.main()

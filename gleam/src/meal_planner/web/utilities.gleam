@@ -32,10 +32,7 @@ pub fn load_recipes(db: pog.Connection) -> List(Recipe) {
 }
 
 /// Load recipe by ID
-pub fn load_recipe_by_id(
-  db: pog.Connection,
-  id: String,
-) -> Result(Recipe, Nil) {
+pub fn load_recipe_by_id(db: pog.Connection, id: String) -> Result(Recipe, Nil) {
   case storage.get_recipe_by_id(db, id) {
     Ok(recipe) -> Ok(recipe)
     Error(_) -> Error(Nil)

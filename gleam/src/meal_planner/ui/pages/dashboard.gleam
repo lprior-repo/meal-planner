@@ -14,6 +14,9 @@
 ///
 /// See: docs/UI_REQUIREMENTS_ANALYSIS.md (Bead 3)
 /// See: docs/component_signatures.md (Dashboard Page)
+import lustre/attribute.{attribute, class, id}
+import lustre/element.{type Element, text}
+import lustre/element/html.{button, div, h1, h2, main, section}
 import meal_planner/ui/components/card
 import meal_planner/ui/components/daily_log
 import meal_planner/ui/components/layout
@@ -51,17 +54,19 @@ pub type DashboardData {
 /// - Daily log entries list (section with h2)
 /// - Quick action buttons
 /// - Filter controls for meal types
-/// - Client-side JavaScript for filtering and interactions
+/// - HTMX handles all interactivity
 ///
 /// Accessibility features:
 /// - Proper heading hierarchy (h1 -> h2)
 /// - Semantic HTML5 elements (main, section, article)
 /// - ARIA landmarks and labels
 /// - Live region for filter announcements
-pub fn render_dashboard(data: DashboardData) -> String {
+pub fn render_dashboard(data: DashboardData) -> Element(msg) {
   // Page title for screen readers
   let page_title =
-    "<h1 class=\"sr-only\">Nutrition Dashboard for " <> data.date <> "</h1>"
+    h1([class("sr-only")], [
+      text("Nutrition Dashboard for " <> data.date),
+    ])
 
   // Calorie summary card
   let calorie_card =
@@ -95,63 +100,114 @@ pub fn render_dashboard(data: DashboardData) -> String {
   // Daily log timeline
   let timeline = daily_log.daily_log_timeline(data.meal_entries)
 
-  // Client-side scripts for filtering and interactions
-  let scripts = render_dashboard_scripts()
-
   // Build layout with proper ARIA landmarks
-  "<main role=\"main\" aria-label=\"Nutrition Dashboard\">"
-  <> page_title
-  <> layout.container(1200, [
-    "<section aria-labelledby=\"daily-summary-heading\">"
-      <> "<h2 id=\"daily-summary-heading\" class=\"section-header\">Daily Summary</h2>"
-      <> calorie_card
-      <> "</section>",
-    "<section aria-labelledby=\"macros-heading\">"
-      <> "<h2 id=\"macros-heading\" class=\"section-header\">Macronutrients</h2>"
-      <> protein_bar
-      <> fat_bar
-      <> carbs_bar
-      <> "</section>",
-    "<section aria-labelledby=\"daily-log-heading\">"
-      <> "<h2 id=\"daily-log-heading\" class=\"section-header\">Daily Log</h2>"
-      <> filter_controls
-      <> timeline
-      <> "</section>",
-  ])
-  <> scripts
-  <> "</main>"
+  main(
+    [attribute("role", "main"), attribute("aria-label", "Nutrition Dashboard")],
+    [
+      page_title,
+      layout.container(1200, [
+        section([attribute("aria-labelledby", "daily-summary-heading")], [
+          h2([id("daily-summary-heading"), class("section-header")], [
+            text("Daily Summary"),
+          ]),
+          calorie_card,
+        ]),
+        section([attribute("aria-labelledby", "macros-heading")], [
+          h2([id("macros-heading"), class("section-header")], [
+            text("Macronutrients"),
+          ]),
+          protein_bar,
+          fat_bar,
+          carbs_bar,
+        ]),
+        section([attribute("aria-labelledby", "daily-log-heading")], [
+          h2([id("daily-log-heading"), class("section-header")], [
+            text("Daily Log"),
+          ]),
+          filter_controls,
+          timeline,
+        ]),
+      ]),
+    ],
+  )
 }
 
 /// Render filter controls for meal log
 ///
-/// Provides client-side filtering by meal type
+/// Provides client-side filtering by meal type using HTMX:
 /// - All meals (default)
 /// - Breakfast only
 /// - Lunch only
 /// - Dinner only
 /// - Snacks only
-fn render_filter_controls() -> String {
-  "<div class=\"meal-filters\" role=\"group\" aria-label=\"Filter meals by type\">"
-  <> "<div class=\"filter-buttons\">"
-  <> "<button class=\"filter-btn active\" data-filter-meal-type=\"all\" aria-pressed=\"true\">All</button>"
-  <> "<button class=\"filter-btn\" data-filter-meal-type=\"breakfast\" aria-pressed=\"false\">Breakfast</button>"
-  <> "<button class=\"filter-btn\" data-filter-meal-type=\"lunch\" aria-pressed=\"false\">Lunch</button>"
-  <> "<button class=\"filter-btn\" data-filter-meal-type=\"dinner\" aria-pressed=\"false\">Dinner</button>"
-  <> "<button class=\"filter-btn\" data-filter-meal-type=\"snack\" aria-pressed=\"false\">Snack</button>"
-  <> "</div>"
-  <> "<div id=\"filter-results-summary\" class=\"filter-summary\" aria-live=\"polite\"></div>"
-  <> "<div id=\"filter-announcement\" class=\"sr-only\" role=\"status\" aria-live=\"assertive\" aria-atomic=\"true\"></div>"
-  <> "</div>"
-}
-
-/// Render dashboard scripts (HTMX handles all interactivity)
-///
-/// All dashboard interactivity is handled via HTMX attributes:
-/// - Filter chips: hx-get with query params
-/// - Meal logger: hx-post/hx-delete for edit/delete
-/// - Dynamic updates: hx-swap for DOM updates
-///
-/// No custom JavaScript required.
-fn render_dashboard_scripts() -> String {
-  ""
+fn render_filter_controls() -> Element(msg) {
+  div(
+    [
+      class("meal-filters"),
+      attribute("role", "group"),
+      attribute("aria-label", "Filter meals by type"),
+    ],
+    [
+      div([class("filter-buttons")], [
+        button(
+          [
+            class("filter-btn active"),
+            attribute("data-filter-meal-type", "all"),
+            attribute("aria-pressed", "true"),
+          ],
+          [text("All")],
+        ),
+        button(
+          [
+            class("filter-btn"),
+            attribute("data-filter-meal-type", "breakfast"),
+            attribute("aria-pressed", "false"),
+          ],
+          [text("Breakfast")],
+        ),
+        button(
+          [
+            class("filter-btn"),
+            attribute("data-filter-meal-type", "lunch"),
+            attribute("aria-pressed", "false"),
+          ],
+          [text("Lunch")],
+        ),
+        button(
+          [
+            class("filter-btn"),
+            attribute("data-filter-meal-type", "dinner"),
+            attribute("aria-pressed", "false"),
+          ],
+          [text("Dinner")],
+        ),
+        button(
+          [
+            class("filter-btn"),
+            attribute("data-filter-meal-type", "snack"),
+            attribute("aria-pressed", "false"),
+          ],
+          [text("Snack")],
+        ),
+      ]),
+      div(
+        [
+          id("filter-results-summary"),
+          class("filter-summary"),
+          attribute("aria-live", "polite"),
+        ],
+        [],
+      ),
+      div(
+        [
+          id("filter-announcement"),
+          class("sr-only"),
+          attribute("role", "status"),
+          attribute("aria-live", "assertive"),
+          attribute("aria-atomic", "true"),
+        ],
+        [],
+      ),
+    ],
+  )
 }

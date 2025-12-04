@@ -342,17 +342,23 @@ pub fn virtual_scroll_container(
     ],
     [
       div(
-        [class("virtual-scroll-spacer"), style([
-          #("height", int.to_string(total_height) <> "px"),
-        ])],
+        [
+          class("virtual-scroll-spacer"),
+          style([
+            #("height", int.to_string(total_height) <> "px"),
+          ]),
+        ],
         [],
       ),
       div(
-        [class("virtual-scroll-content"), style([
-          #("position", "absolute"),
-          #("top", "0"),
-          #("width", "100%"),
-        ])],
+        [
+          class("virtual-scroll-content"),
+          style([
+            #("position", "absolute"),
+            #("top", "0"),
+            #("width", "100%"),
+          ]),
+        ],
         [],
       ),
     ],

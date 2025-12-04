@@ -1,0 +1,8 @@
+error: Syntax error
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/food_logging_flow_test.gleam:16:8
+   │
+16 │ import test/meal_planner/integration/test_helper
+   │        ^^^^ This is a reserved word
+
+Hint: I was expecting to see a name here.
+

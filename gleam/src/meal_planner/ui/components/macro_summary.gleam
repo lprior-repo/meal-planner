@@ -215,7 +215,12 @@ fn macro_progress_bar(
         attribute("aria-valuemax", "100"),
         attribute(
           "aria-label",
-          label <> ": " <> current_str <> " of " <> target_str <> " grams, "
+          label
+            <> ": "
+            <> current_str
+            <> " of "
+            <> target_str
+            <> " grams, "
             <> pct_str
             <> " percent",
         ),
@@ -272,7 +277,11 @@ fn calories_progress_bar(
         attribute("aria-valuemax", "100"),
         attribute(
           "aria-label",
-          "Calories: " <> current_str <> " of " <> target_str <> " kilocalories, "
+          "Calories: "
+            <> current_str
+            <> " of "
+            <> target_str
+            <> " kilocalories, "
             <> pct_str
             <> " percent",
         ),
@@ -347,7 +356,8 @@ pub fn weekly_macro_summary_panel(summary: WeeklyMacroSummary) -> Element(msg) {
       MacroTargets(protein: 150.0, fat: 60.0, carbs: 200.0, calories: 2000.0)
   }
 
-  let avg_protein_pct = calculate_percentage(summary.avg_protein, targets.protein)
+  let avg_protein_pct =
+    calculate_percentage(summary.avg_protein, targets.protein)
   let avg_fat_pct = calculate_percentage(summary.avg_fat, targets.fat)
   let avg_carbs_pct = calculate_percentage(summary.avg_carbs, targets.carbs)
   let avg_calories_pct =
@@ -367,12 +377,7 @@ pub fn weekly_macro_summary_panel(summary: WeeklyMacroSummary) -> Element(msg) {
         targets.protein,
         avg_protein_pct,
       ),
-      macro_progress_bar(
-        "Avg Fat",
-        summary.avg_fat,
-        targets.fat,
-        avg_fat_pct,
-      ),
+      macro_progress_bar("Avg Fat", summary.avg_fat, targets.fat, avg_fat_pct),
       macro_progress_bar(
         "Avg Carbs",
         summary.avg_carbs,
@@ -393,7 +398,10 @@ pub fn weekly_macro_summary_panel(summary: WeeklyMacroSummary) -> Element(msg) {
 /// Displays:
 /// - P/F/C values in compact format
 /// - Colored status indicator
-pub fn macro_summary_badge(totals: Macros, targets: MacroTargets) -> Element(msg) {
+pub fn macro_summary_badge(
+  totals: Macros,
+  targets: MacroTargets,
+) -> Element(msg) {
   let protein_pct = calculate_percentage(totals.protein, targets.protein)
   let fat_pct = calculate_percentage(totals.fat, targets.fat)
   let carbs_pct = calculate_percentage(totals.carbs, targets.carbs)

@@ -9,6 +9,8 @@
 ///
 /// Based on Martin Fowler's evolutionary design: comprehensive tests enable confident refactoring.
 import gleam/dynamic
+import gleam/dynamic/decode
+import gleam/erlang/process
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -53,21 +55,17 @@ pub fn test_db_config() -> TestDbConfig {
 /// Returns a connection that should be cleaned up with cleanup_test_db()
 pub fn setup_test_db() -> Result(pog.Connection, String) {
   let config = test_db_config()
+  let pool_name = process.new_name(prefix: "test_pool")
 
-  pog.Config(
-    host: config.host,
-    port: config.port,
-    database: config.database,
-    user: config.user,
-    password: Some(config.password),
-    ssl: False,
-    connection_parameters: [],
-    pool_size: 5,
-    queue_target: 50,
-    queue_interval: 100,
-    idle_interval: 1000,
-  )
-  |> pog.connect
+  pog.default_config(pool_name)
+  |> pog.host(config.host)
+  |> pog.port(config.port)
+  |> pog.database(config.database)
+  |> pog.user(config.user)
+  |> pog.password(Some(config.password))
+  |> pog.pool_size(5)
+  |> pog.start
+  |> result.map(fn(started) { started.data })
   |> result.map_error(fn(_) {
     "Failed to connect to test database. Ensure PostgreSQL is running and meal_planner_test database exists."
   })
