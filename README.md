@@ -279,21 +279,45 @@ gleam run -m scripts/<script_name>
 
 ### Pre-commit Hooks
 
-This project uses pre-commit hooks to ensure code quality:
-- Runs `gleam format` and `gleam check` before each commit
-- Automatically formats code and validates compilation
+This project uses pre-commit hooks to maintain code quality before commits. The hooks run automatically on every `git commit`.
 
-To bypass the hook temporarily (emergency commits only):
+#### What the Hook Does
+
+The pre-commit hook enforces:
+- **Code Formatting**: `gleam format --check` - Ensures consistent code style
+- **Type Checking**: `gleam build` - Verifies type safety and compilation
+- **Test Suite**: `gleam test` - Runs all unit and integration tests
+
+#### Bypass for Emergencies
+
+Only use this in emergencies when you need to commit without running checks:
 
 ```bash
-git commit --no-verify -m "Emergency fix"
+SKIP_HOOKS=1 git commit -m "Emergency hotfix: description"
 ```
 
-To disable permanently (not recommended):
+**Important**: The `SKIP_HOOKS=1` variable bypasses all pre-commit checks. Only use this for true emergencies, then run the full check suite immediately after:
 
 ```bash
-chmod -x .git/hooks/pre-commit
+./scripts/pre-commit.sh
 ```
+
+#### Manual Check
+
+Run the same checks manually without committing:
+
+```bash
+./scripts/pre-commit.sh
+```
+
+This will format-check code, compile the project, and run tests. Fix any issues and try again.
+
+#### Best Practices
+
+1. **Before committing**: Run `./scripts/pre-commit.sh` locally to catch issues early
+2. **For quick commits**: Use `gleam format` then commit (formatting fixes common issues)
+3. **Never disable the hook**: Pre-commit checks prevent broken code from being committed
+4. **Emergency bypass only**: Use `SKIP_HOOKS=1` only for critical hotfixes, then verify with `./scripts/pre-commit.sh`
 
 ## Contributing
 
