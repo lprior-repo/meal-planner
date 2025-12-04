@@ -225,3 +225,78 @@ pub const quality_threshold = 0.95
 
 /// Default daily calorie target (alias for daily_calorie_target)
 pub const default_calorie_target = 2000.0
+
+// ===================================================================
+// UI MACRO SUMMARY THRESHOLDS
+// ===================================================================
+
+/// Threshold for "under target" status in macro progress (percentage)
+/// Used in macro_summary.gleam for color coding (yellow warning)
+pub const macro_under_threshold = 90.0
+
+/// Threshold for "on target" upper bound (percentage)
+/// Used in macro_summary.gleam for color coding (green)
+pub const macro_on_target_upper = 110.0
+
+/// Threshold for "over" status (percentage)
+/// Used in macro_summary.gleam for color coding (orange)
+pub const macro_over_threshold = 130.0
+
+/// Percentage divisor for averaging macro percentages
+/// Used when calculating average across multiple macros (3.0 for 3 macros)
+pub const macro_average_divisor = 3.0
+
+/// Maximum percentage cap for display in progress bars
+/// Capped at 100% for visual consistency
+pub const progress_bar_visual_cap = 100.0
+
+// ===================================================================
+// UI MICRONUTRIENT THRESHOLDS
+// ===================================================================
+
+/// Threshold for "low" micronutrient status (percentage)
+/// Below 50% of daily value - deficiency warning
+pub const micronutrient_low_threshold = 50.0
+
+/// Threshold for "optimal" micronutrient status (percentage)
+/// 50-100% of daily value - optimal range
+pub const micronutrient_optimal_threshold = 100.0
+
+/// Threshold for "high" micronutrient status (percentage)
+/// 100-150% of daily value - elevated but acceptable
+pub const micronutrient_high_threshold = 150.0
+
+/// Default daily value limit for sugar (grams)
+/// Arbitrary limit used when sugar data available
+pub const default_sugar_daily_value = 50.0
+
+/// Precision multiplier for formatting amounts (1 decimal place)
+pub const format_precision_multiplier = 10.0
+
+// ===================================================================
+// CALORIE PERCENTAGE THRESHOLDS
+// ===================================================================
+
+/// Threshold for calorie deficit (percentage)
+/// Below 90% of target - shows green
+pub const calorie_deficit_threshold = 90.0
+
+/// Threshold for calorie match (percentage)
+/// 90-100% of target - shows yellow
+pub const calorie_match_threshold = 100.0
+
+/// Animation duration for calorie counter transitions (milliseconds)
+pub const calorie_animation_duration = 1000
+
+// ===================================================================
+// CACHE AND TIME CONSTANTS
+// ===================================================================
+
+/// Default cache size (number of entries)
+pub const default_cache_size = 100
+
+/// Default cache TTL in seconds (5 minutes)
+pub const default_cache_ttl_seconds = 300
+
+/// Nanoseconds per microsecond for time conversion
+pub const nanoseconds_per_microsecond = 1000

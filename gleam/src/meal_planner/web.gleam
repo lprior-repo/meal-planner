@@ -21,6 +21,7 @@ import meal_planner/actors/todoist_actor
 import meal_planner/auto_planner
 import meal_planner/auto_planner/storage as auto_storage
 import meal_planner/auto_planner/types as auto_types
+import meal_planner/nutrition_constants
 import meal_planner/storage
 import meal_planner/storage_optimized
 import meal_planner/types.{
@@ -1441,7 +1442,13 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
 
   // Search with filters
   let #(ctx, foods) = case query {
-    Some(q) if q != "" -> search_foods_filtered(ctx, q, filters, 50)
+    Some(q) if q != "" ->
+      search_foods_filtered(
+        ctx,
+        q,
+        filters,
+        nutrition_constants.default_search_limit,
+      )
     _ -> #(ctx, [])
   }
 
@@ -2134,7 +2141,13 @@ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
       wisp.json_response(json.to_string(json_data), 400)
     }
     q -> {
-      let #(_updated_ctx, foods) = search_foods_filtered(ctx, q, filters, 50)
+      let #(_updated_ctx, foods) =
+        search_foods_filtered(
+          ctx,
+          q,
+          filters,
+          nutrition_constants.default_search_limit,
+        )
       let json_data = json.array(foods, food_to_json)
       wisp.json_response(json.to_string(json_data), 200)
     }
@@ -2216,7 +2229,13 @@ fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
   // Execute search or return empty state
   let #(_updated_ctx, foods) = case query {
     "" -> #(ctx, [])
-    q -> search_foods_filtered(ctx, q, filters, 50)
+    q ->
+      search_foods_filtered(
+        ctx,
+        q,
+        filters,
+        nutrition_constants.default_search_limit,
+      )
   }
 
   // Render HTML fragment for HTMX to swap in

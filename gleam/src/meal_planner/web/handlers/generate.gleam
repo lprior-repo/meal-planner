@@ -94,8 +94,11 @@ fn process_generate_request(
           // Check if locked_id is provided
           case gen_req.locked_id {
             None -> {
-              // Generate without locked food - use first 3 recipes
-              render_meal_cards_from_recipes(list.take(available_recipes, 3))
+              // Generate without locked food - use first meals_per_day recipes
+              render_meal_cards_from_recipes(list.take(
+                available_recipes,
+                nutrition_constants.meals_per_day,
+              ))
             }
             Some(locked_id) -> {
               // Find the locked recipe
@@ -164,7 +167,11 @@ fn render_meal_cards_from_recipes(recipes: List(Recipe)) -> wisp.Response {
       let meal_html =
         list.zip(recipes, meal_types)
         |> list.map(fn(pair) {
-          let meal = Meal(recipe: pair.0, portion_size: 1.0)
+          let meal =
+            Meal(
+              recipe: pair.0,
+              portion_size: nutrition_constants.default_portion_size,
+            )
           meal_card.render_meal_card(meal, pair.1)
           |> element.to_string
         })
@@ -185,7 +192,12 @@ fn render_daily_plan_meals(daily_plan: DailyPlan) -> wisp.Response {
   let meal_html =
     meals
     |> list.map(fn(pair) {
-      meal_card.render_meal_card(pair.0, pair.1)
+      let updated_meal =
+        meal_plan.Meal(
+          ..pair.0,
+          portion_size: nutrition_constants.default_portion_size,
+        )
+      meal_card.render_meal_card(updated_meal, pair.1)
       |> element.to_string
     })
     |> list.fold("", fn(acc, card) { acc <> card })

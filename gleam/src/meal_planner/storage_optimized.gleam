@@ -5,6 +5,7 @@ import gleam/dict
 import gleam/dynamic/decode
 import gleam/int
 import gleam/option.{type Option, None, Some}
+import meal_planner/nutrition_constants as constants
 import meal_planner/query_cache
 import meal_planner/storage.{
   type StorageError, type UsdaFood, DatabaseError, UsdaFood,
@@ -23,7 +24,10 @@ pub type SearchCache =
 
 /// Create a new search cache
 pub fn new_search_cache() -> SearchCache {
-  query_cache.new_with_config(100, 300)
+  query_cache.new_with_config(
+    constants.default_cache_size,
+    constants.default_cache_ttl_seconds,
+  )
 }
 
 // ============================================================================
@@ -47,7 +51,11 @@ pub fn search_foods_cached(
   case cached_result {
     Some(results) -> {
       // Cache hit - return immediately
-      query_cache.record_metric(True, "search_foods", 0.5)
+      query_cache.record_metric(
+        True,
+        "search_foods",
+        constants.cached_query_time_ms,
+      )
       #(updated_cache, Ok(results))
     }
 
@@ -61,7 +69,11 @@ pub fn search_foods_cached(
         Error(_) -> updated_cache
       }
 
-      query_cache.record_metric(False, "search_foods", 5.0)
+      query_cache.record_metric(
+        False,
+        "search_foods",
+        constants.uncached_search_query_time_ms,
+      )
       #(final_cache, result)
     }
   }
@@ -76,24 +88,32 @@ fn search_foods_optimized(
 ) -> Result(List(UsdaFood), StorageError) {
   // Optimized SQL using covering index idx_foods_search_covering
   // Includes all columns in SELECT to use covering index
-  let sql =
-    "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
+  // Build SQL with constants for magic numbers
+  let sql = "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
      FROM foods INDEXED BY idx_foods_search_covering
      WHERE (description LIKE $1 || '%'
         OR description LIKE '%' || $1 || '%')
      ORDER BY
        -- 1. Exact prefix match (uses index efficiently)
        CASE
-         WHEN LOWER(description) LIKE LOWER($1 || '%') THEN 1
-         ELSE 2
+         WHEN LOWER(description) LIKE LOWER($1 || '%') THEN " <> int.to_string(
+      constants.exact_match_priority,
+    ) <> "
+         ELSE " <> int.to_string(constants.partial_match_priority) <> "
        END,
 
        -- 2. Data Quality Score
        CASE data_type
-         WHEN 'foundation_food' THEN 100
-         WHEN 'sr_legacy_food' THEN 95
-         WHEN 'survey_fndds_food' THEN 90
-         ELSE 50
+         WHEN 'foundation_food' THEN " <> int.to_string(
+      constants.foundation_food_quality_score,
+    ) <> "
+         WHEN 'sr_legacy_food' THEN " <> int.to_string(
+      constants.sr_legacy_food_quality_score,
+    ) <> "
+         WHEN 'survey_fndds_food' THEN " <> int.to_string(
+      constants.survey_fndds_food_quality_score,
+    ) <> "
+         ELSE " <> int.to_string(constants.default_food_quality_score) <> "
        END DESC,
 
        -- 3. Simplicity (shorter = more generic)

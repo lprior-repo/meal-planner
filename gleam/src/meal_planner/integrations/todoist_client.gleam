@@ -16,6 +16,7 @@
 import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import meal_planner/nutrition_constants
 
 // ============================================================================
 // Types
@@ -108,11 +109,11 @@ pub fn task_with_todoist_id(
 ///   Endpoint: https://api.todoist.com/rest/v2/tasks
 ///   Headers: Authorization: Bearer {api_token}
 ///   Body: JSON array of tasks
-/// - Add batch processing for large task lists (max 200 per request)
+/// - Add batch processing for large task lists (max nutrition_constants.todoist_batch_size per request)
 /// - Implement exponential backoff retry logic for transient failures
 /// - Add request/response logging for debugging
 /// - Parse Todoist API response and update task todoist_ids
-/// - Handle rate limiting (120 requests/minute)
+/// - Handle rate limiting (nutrition_constants.todoist_requests_per_minute requests/minute)
 /// - Add support for task updates (PUT) vs creates (POST)
 ///
 /// # Example

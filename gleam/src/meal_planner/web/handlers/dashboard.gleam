@@ -12,6 +12,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/uri
+import meal_planner/nutrition_constants
 import meal_planner/storage
 import meal_planner/storage_optimized
 import meal_planner/types.{
@@ -36,9 +37,10 @@ pub fn dashboard(req: wisp.Request, ctx: Context) -> wisp.Response {
   let date = extract_date_param(req.query)
 
   // Fetch today's logs from database
-  // Using default user_id of 1 for singleton user model
-  let default_user_id = 1
-  case storage.get_todays_logs(ctx.db, default_user_id, date) {
+  // Using default user_id for singleton user model
+  case
+    storage.get_todays_logs(ctx.db, nutrition_constants.default_user_id, date)
+  {
     Error(_) -> {
       // Return error response
       let error_html = "<div class=\"error\">Failed to load daily logs</div>"

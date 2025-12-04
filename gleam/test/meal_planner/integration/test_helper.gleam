@@ -364,6 +364,7 @@ pub fn save_test_recipe(
   |> pog.parameter(pog.float(recipe.macros.carbs))
   |> pog.parameter(pog.text(types.fodmap_level_to_string(recipe.fodmap_level)))
   |> pog.parameter(pog.bool(recipe.vertical_compliant))
+  |> pog.returning(decode.string)
   |> pog.execute(conn)
   |> result.map(fn(_response) {
     // Recipe saved successfully

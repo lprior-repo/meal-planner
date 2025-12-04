@@ -1,6 +1,7 @@
 //// Profile handlers for API endpoints
 
 import gleam/json
+import meal_planner/nutrition_constants
 import meal_planner/storage
 import meal_planner/types.{type UserProfile, Macros}
 import pog

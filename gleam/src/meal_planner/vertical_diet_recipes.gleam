@@ -1,9 +1,10 @@
 /// Vertical Diet compliant recipes
 /// Created following Stan Efferding's Vertical Diet principles:
-/// - Red meat as primary protein source
-/// - White rice as primary carbohydrate
+/// - Red meat as primary protein source (target: nutrition_constants.daily_protein_target per day)
+/// - White rice as primary carbohydrate (target: nutrition_constants.daily_carbs_target per day)
 /// - Easily digestible, low FODMAP foods
 /// - Micronutrient-dense vegetables
+import meal_planner/nutrition_constants
 import meal_planner/types.{type Recipe, Ingredient, Low, Macros, Recipe}
 
 /// Generate all Vertical Diet recipes

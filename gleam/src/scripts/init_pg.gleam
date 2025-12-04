@@ -365,7 +365,13 @@ fn import_file_parallel(
 
       // Wait for all workers to complete
       let num_chunks = list.length(chunks)
-      let total_inserted = collect_results(result_subject, num_chunks, 0)
+      let total_inserted =
+        collect_results(
+          result_subject,
+          num_chunks,
+          0,
+          nutrition_constants.worker_timeout_ms,
+        )
 
       Ok(total_inserted)
     }
@@ -376,14 +382,15 @@ fn collect_results(
   subject: Subject(WorkerResult),
   remaining: Int,
   acc: Int,
+  timeout_ms: Int,
 ) -> Int {
   case remaining {
     0 -> acc
     _ -> {
-      // Wait for a result with 10 minute timeout
-      case process.receive(subject, 600_000) {
+      // Wait for a result with configured timeout
+      case process.receive(subject, timeout_ms) {
         Ok(WorkerDone(_, count)) ->
-          collect_results(subject, remaining - 1, acc + count)
+          collect_results(subject, remaining - 1, acc + count, timeout_ms)
         Error(_) -> acc
       }
     }
@@ -408,12 +415,13 @@ fn process_chunk(
   worker_id: Int,
 ) -> Int {
   // Process in batches
-  let batches = split_into_chunks(lines, batch_size, [])
+  let batches =
+    split_into_chunks(lines, nutrition_constants.import_batch_size, [])
 
   list.fold(batches, 0, fn(acc, batch) {
     let inserted = insert_batch(db, batch, file_type)
     let new_total = acc + inserted
-    case new_total % 50_000 {
+    case new_total % nutrition_constants.progress_report_interval {
       0 ->
         io.println(
           "    Worker "

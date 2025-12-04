@@ -20,6 +20,7 @@ import gleam/string
 import lustre/attribute.{attribute, class, id, style}
 import lustre/element.{type Element, text}
 import lustre/element/html.{div, img, link, span}
+import meal_planner/nutrition_constants
 
 // ===================================================================
 // SKELETON LOADER COMPONENTS

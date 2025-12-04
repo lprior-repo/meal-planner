@@ -7,6 +7,7 @@ import gleam/json
 import gleam/list
 import gleam/result
 import gleam/string
+import meal_planner/nutrition_constants
 import meal_planner/storage
 import meal_planner/types.{
   type Macros as MacrosType, type Recipe, Ingredient, Macros,

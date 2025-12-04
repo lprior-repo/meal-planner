@@ -16,6 +16,7 @@ import gleam/list
 import lustre/attribute.{attribute, class}
 import lustre/element.{type Element, text}
 import lustre/element/html.{div, h3, span}
+import meal_planner/nutrition_constants
 import meal_planner/types.{type DailyLog, type Macros}
 
 // ===================================================================
@@ -56,14 +57,14 @@ pub type WeeklyMacroSummary {
 // HELPER FUNCTIONS
 // ===================================================================
 
-/// Calculate percentage of target (0-150% capped for display)
+/// Calculate percentage of target (0-maximum_display_percentage capped for display)
 fn calculate_percentage(current: Float, target: Float) -> Float {
   case target >. 0.0 {
     True -> {
       let pct = current /. target *. 100.0
-      // Cap at 150% for visual consistency
-      case pct >. 150.0 {
-        True -> 150.0
+      // Cap at maximum_display_percentage for visual consistency
+      case pct >. nutrition_constants.maximum_display_percentage {
+        True -> nutrition_constants.maximum_display_percentage
         False -> pct
       }
     }
@@ -72,14 +73,14 @@ fn calculate_percentage(current: Float, target: Float) -> Float {
 }
 
 /// Determine color class based on percentage relative to target
-/// - Under (< 90%): yellow (deficiency warning)
-/// - On target (90-110%): green
-/// - Over (> 110%): orange/red
+/// - Under (< macro_under_threshold%): yellow (deficiency warning)
+/// - On target (macro_under_threshold-macro_on_target_upper%): green
+/// - Over (> macro_on_target_upper%): orange/red
 fn get_target_color(percentage: Float) -> String {
   case percentage {
-    p if p <. 90.0 -> "status-under"
-    p if p <=. 110.0 -> "status-on-target"
-    p if p <=. 130.0 -> "status-over"
+    p if p <. nutrition_constants.macro_under_threshold -> "status-under"
+    p if p <=. nutrition_constants.macro_on_target_upper -> "status-on-target"
+    p if p <=. nutrition_constants.macro_over_threshold -> "status-over"
     _ -> "status-excess"
   }
 }
@@ -192,9 +193,11 @@ fn macro_progress_bar(
 
   let color_class = get_target_color(percentage)
 
-  // Calculate visual width (cap at 100% for display)
-  let visual_percentage = case percentage >. 100.0 {
-    True -> 100.0
+  // Calculate visual width (cap at progress_bar_visual_cap for display)
+  let visual_percentage = case
+    percentage >. nutrition_constants.progress_bar_visual_cap
+  {
+    True -> nutrition_constants.progress_bar_visual_cap
     False -> percentage
   }
   let width_str = int.to_string(float.truncate(visual_percentage))
@@ -255,8 +258,10 @@ fn calories_progress_bar(
 
   let color_class = get_target_color(percentage)
 
-  let visual_percentage = case percentage >. 100.0 {
-    True -> 100.0
+  let visual_percentage = case
+    percentage >. nutrition_constants.progress_bar_visual_cap
+  {
+    True -> nutrition_constants.progress_bar_visual_cap
     False -> percentage
   }
   let width_str = int.to_string(float.truncate(visual_percentage))
@@ -353,7 +358,12 @@ pub fn weekly_macro_summary_panel(summary: WeeklyMacroSummary) -> Element(msg) {
   let targets = case list.first(summary.daily_summaries) {
     Ok(first) -> first.targets
     Error(_) ->
-      MacroTargets(protein: 150.0, fat: 60.0, carbs: 200.0, calories: 2000.0)
+      MacroTargets(
+        protein: nutrition_constants.daily_protein_target,
+        fat: nutrition_constants.daily_fat_target,
+        carbs: nutrition_constants.daily_carbs_target,
+        calories: nutrition_constants.daily_calorie_target,
+      )
   }
 
   let avg_protein_pct =
@@ -407,7 +417,9 @@ pub fn macro_summary_badge(
   let carbs_pct = calculate_percentage(totals.carbs, targets.carbs)
 
   // Overall status based on average percentage
-  let avg_pct = { protein_pct +. fat_pct +. carbs_pct } /. 3.0
+  let avg_pct =
+    { protein_pct +. fat_pct +. carbs_pct }
+    /. nutrition_constants.macro_average_divisor
   let status_class = get_target_color(avg_pct)
 
   let p_str = int.to_string(float.truncate(totals.protein))
