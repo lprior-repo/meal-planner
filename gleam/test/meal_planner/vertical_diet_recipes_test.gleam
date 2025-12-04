@@ -529,8 +529,8 @@ pub fn zero_carb_recipes_exist_test() {
   let zero_carb_recipes = list.filter(recipes, fn(r) { r.macros.carbs == 0.0 })
   // Should have several zero-carb protein recipes - use pattern matching for O(1)
   case zero_carb_recipes {
-    [] -> should.fail("Expected zero-carb recipes")
-    [_, ..] -> should.be_ok()
+    [] -> should.fail()
+    [_, ..] -> should.be_true(True)
   }
 }
 
