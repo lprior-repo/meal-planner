@@ -1,0 +1,177 @@
+# Migration 010 Files Created
+
+## Summary of What Was Found and Created
+
+### MIGRATION STATUS: NOT YET APPLIED (ready to apply, blocked by connection pool)
+
+### Problem Identified:
+- 4 meal_planner_test Erlang processes running
+- Each has ~50 database connections
+- Total: ~200 connections vs PostgreSQL max_connections=100
+- Result: "too many clients already" error
+
+### Solution:
+```bash
+pkill -f "meal_planner_test"
+sleep 10
+./scripts/apply-migration-010.sh
+```
+
+---
+
+## Files Created by This Analysis
+
+1. **scripts/apply-migration-010.sh**
+   - Automated migration application script
+   - Checks if migration already applied
+   - Applies SQL file
+   - Records in schema_migrations
+   - Verifies all 5 indexes created
+   - Shows sizes and stats
+
+2. **MIGRATION_010_INSTRUCTIONS.md**
+   - Detailed step-by-step instructions
+   - Multiple application methods
+   - Troubleshooting guide
+   - Verification queries
+   - Complete documentation
+
+3. **MIGRATION_010_SUMMARY.md**
+   - Technical analysis of migration contents
+   - All 5 indexes explained
+   - Performance impact estimates
+   - Before/after query plans
+   - Connection pool issue diagnosis
+
+4. **MIGRATION_010_APPLY_NOW.md**
+   - Quick-start guide
+   - Immediate fix commands
+   - Process IDs to kill
+   - Expected results
+   - Verification steps
+
+5. **MIGRATION_010_FILES.txt** (this file)
+   - Index of all created files
+   - Quick reference
+
+---
+
+## Migration Contents (Already Exists)
+
+**File**: gleam/migrations_pg/010_optimize_search_performance.sql
+
+Creates 5 indexes:
+1. idx_foods_data_type_category (composite: type + category)
+2. idx_foods_search_covering (covering: all search columns)
+3. idx_foods_verified (partial: verified foods only)
+4. idx_foods_verified_category (partial: verified + category)
+5. idx_foods_branded (partial: branded foods only)
+
+Plus: ANALYZE foods (refresh statistics)
+
+---
+
+## How to Apply Migration
+
+### Option 1: Automated (Recommended)
+```bash
+cd /home/lewis/src/meal-planner
+pkill -f "meal_planner_test"
+sleep 10
+./scripts/apply-migration-010.sh
+```
+
+### Option 2: Manual
+```bash
+pkill -f "meal_planner_test"
+sleep 10
+cd gleam
+PGPASSWORD=postgres psql -U postgres -d meal_planner \
+  -f migrations_pg/010_optimize_search_performance.sql
+```
+
+---
+
+## Verification Commands
+
+### Check if migration applied:
+```bash
+PGPASSWORD=postgres psql -U postgres -d meal_planner -c \
+  "SELECT * FROM schema_migrations WHERE version = 10;"
+```
+
+### Count indexes:
+```bash
+PGPASSWORD=postgres psql -U postgres -d meal_planner -c \
+  "SELECT COUNT(*) FROM pg_indexes WHERE tablename = 'foods' AND indexname LIKE 'idx_foods_%';"
+```
+
+### Show index sizes:
+```bash
+PGPASSWORD=postgres psql -U postgres -d meal_planner -c \
+  "SELECT indexrelname, pg_size_pretty(pg_relation_size(indexrelid))
+   FROM pg_stat_user_indexes WHERE tablename = 'foods'
+   ORDER BY indexrelname;"
+```
+
+---
+
+## Expected Performance Improvements
+
+- Verified-only queries: 50-70% faster
+- Category-only queries: 30-40% faster
+- Combined filter queries: 50-70% faster
+- Average improvement: 56%
+- Storage cost: ~15-20MB
+
+---
+
+## Process IDs Found (as of this analysis)
+
+meal_planner_test instances:
+- 121824
+- 122049
+- 125821
+- 127383
+
+Kill command:
+```bash
+kill 121824 122049 125821 127383
+# OR
+pkill -f "meal_planner_test"
+```
+
+---
+
+## Next Steps After Migration
+
+1. Verify all 5 indexes exist
+2. Check schema_migrations shows version 10
+3. Run filtered food search queries
+4. Monitor index usage:
+   ```sql
+   SELECT indexrelname, idx_scan, idx_tup_read
+   FROM pg_stat_user_indexes
+   WHERE tablename = 'foods'
+   ORDER BY idx_scan DESC;
+   ```
+5. Check query plans use indexes:
+   ```sql
+   EXPLAIN ANALYZE
+   SELECT fdc_id, description
+   FROM foods
+   WHERE data_type IN ('foundation_food', 'sr_legacy_food')
+   LIMIT 50;
+   ```
+
+---
+
+## Migration File Location
+
+/home/lewis/src/meal-planner/gleam/migrations_pg/010_optimize_search_performance.sql
+
+Lines of code: 141
+Indexes: 5
+Comments: Extensive documentation included
+Idempotent: Yes (uses IF NOT EXISTS)
+Safe to re-run: Yes
