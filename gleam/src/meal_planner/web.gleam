@@ -2357,3 +2357,112 @@ fn erlang_localtime() -> #(#(Int, Int, Int), #(Int, Int, Int))
 
 @external(erlang, "erlang", "integer_to_binary")
 fn int_to_string(i: Int) -> String
+
+// ============================================================================
+// Error Response Helpers
+// ============================================================================
+
+/// Create a user-friendly error response page
+fn error_response(
+  status: Int,
+  title: String,
+  message: String,
+  retry_url: option.Option(String),
+) -> wisp.Response {
+  let retry_button = case retry_url {
+    Some(url) -> [
+      html.a([attribute.href(url), attribute.class("btn btn-primary")], [
+        element.text("Try Again"),
+      ]),
+    ]
+    None -> []
+  }
+
+  let content = [
+    html.div([attribute.class("error-page")], [
+      html.div([attribute.class("error-page-content")], [
+        html.div([attribute.class("error-icon-large")], [element.text("⚠")]),
+        html.h1([attribute.class("error-title")], [element.text(title)]),
+        html.p([attribute.class("error-message")], [element.text(message)]),
+        html.div([attribute.class("error-actions")], [
+          html.a([attribute.href("/"), attribute.class("btn btn-secondary")], [
+            element.text("Go Home"),
+          ]),
+          ..retry_button
+        ]),
+      ]),
+    ]),
+  ]
+
+  wisp.html_response(render_page(title, content), status)
+}
+
+/// 500 Server Error response
+fn server_error_response(message: String) -> wisp.Response {
+  error_response(
+    500,
+    "500 Server Error",
+    "Something went wrong on our end. " <> message,
+    None,
+  )
+}
+
+/// 400 Bad Request response
+fn bad_request_response(message: String) -> wisp.Response {
+  error_response(
+    400,
+    "400 Bad Request",
+    "Invalid request. " <> message,
+    None,
+  )
+}
+
+/// 404 Not Found response with helpful actions
+fn enhanced_not_found() -> wisp.Response {
+  let content = [
+    html.div([attribute.class("error-page")], [
+      html.div([attribute.class("error-page-content")], [
+        html.h1([attribute.class("error-code")], [element.text("404")]),
+        html.h2([attribute.class("error-title")], [
+          element.text("Page Not Found"),
+        ]),
+        html.p([attribute.class("error-message")], [
+          element.text(
+            "The page you're looking for doesn't exist or has been moved.",
+          ),
+        ]),
+        html.div([attribute.class("error-actions")], [
+          html.a([attribute.href("/"), attribute.class("btn btn-primary")], [
+            element.text("Go Home"),
+          ]),
+          html.a(
+            [attribute.href("/recipes"), attribute.class("btn btn-secondary")],
+            [element.text("Browse Recipes")],
+          ),
+        ]),
+      ]),
+    ]),
+  ]
+
+  wisp.html_response(render_page("404 Not Found", content), 404)
+}
+
+/// JSON error response for API endpoints
+fn json_error_response(status: Int, error_message: String) -> wisp.Response {
+  let error_json = json.object([#("error", json.string(error_message))])
+  wisp.json_response(json.to_string(error_json), status)
+}
+
+/// Handle storage errors with appropriate HTTP responses
+fn handle_storage_error(error: storage.StorageError) -> wisp.Response {
+  case error {
+    storage.NotFound ->
+      json_error_response(404, "Resource not found")
+    storage.InvalidInput(msg) ->
+      json_error_response(400, "Invalid input: " <> msg)
+    storage.Unauthorized(msg) ->
+      json_error_response(401, "Unauthorized: " <> msg)
+    storage.DatabaseError(msg) ->
+      json_error_response(500, "Database error: " <> msg)
+  }
+}

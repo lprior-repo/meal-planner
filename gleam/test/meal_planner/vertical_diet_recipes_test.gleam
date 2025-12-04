@@ -69,7 +69,11 @@ fn calculate_calories(m: Macros) -> Float {
 
 pub fn all_recipes_returns_list_test() {
   let recipes = vertical_diet_recipes.all_recipes()
-  { list.length(recipes) > 0 } |> should.be_true()
+  // Use pattern matching instead of list.length() for O(1) check
+  case recipes {
+    [] -> should.fail("Expected recipes but got empty list")
+    [_, ..] -> should.be_ok()
+  }
 }
 
 pub fn all_recipes_count_test() {
@@ -114,7 +118,11 @@ pub fn all_recipe_ids_follow_pattern_test() {
   // IDs should be like "vd-ribeye-01", "vd-rice-01", etc.
   let all_valid = list.all(recipes, fn(r) {
     let parts = string.split(r.id, "-")
-    list.length(parts) >= 3
+    // Use pattern matching instead of list.length() >= 3
+    case parts {
+      [_, _, _, ..] -> True
+      _ -> False
+    }
   })
   all_valid |> should.be_true()
 }
@@ -519,8 +527,11 @@ pub fn chuck_roast_multiple_servings_test() {
 pub fn zero_carb_recipes_exist_test() {
   let recipes = vertical_diet_recipes.all_recipes()
   let zero_carb_recipes = list.filter(recipes, fn(r) { r.macros.carbs == 0.0 })
-  // Should have several zero-carb protein recipes
-  { list.length(zero_carb_recipes) > 0 } |> should.be_true()
+  // Should have several zero-carb protein recipes - use pattern matching for O(1)
+  case zero_carb_recipes {
+    [] -> should.fail("Expected zero-carb recipes")
+    [_, ..] -> should.be_ok()
+  }
 }
 
 pub fn all_beef_ingredients_present_test() {
