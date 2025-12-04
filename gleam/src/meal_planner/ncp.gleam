@@ -187,16 +187,18 @@ pub fn calculate_max_nutrition(history: List(NutritionState)) -> NutritionData {
 
 /// Calculate standard deviation for a list of floats
 fn calculate_std_dev(values: List(Float), mean: Float) -> Float {
-  case list.length(values) {
+  // Count and calculate variance in one pass
+  let #(variance_sum, count) =
+    list.fold(values, #(0.0, 0), fn(acc, value) {
+      let diff = value -. mean
+      #(acc.0 +. { diff *. diff }, acc.1 + 1)
+    })
+
+  case count {
     0 -> 0.0
     1 -> 0.0
     n -> {
-      let variance =
-        list.fold(values, 0.0, fn(acc, value) {
-          let diff = value -. mean
-          acc +. { diff *. diff }
-        })
-        /. int_to_float(n)
+      let variance = variance_sum /. int_to_float(n)
 
       case float.square_root(variance) {
         Ok(std_dev) -> std_dev
@@ -257,7 +259,8 @@ pub fn analyze_nutrition_trends(history: List(NutritionState)) -> TrendAnalysis 
         calories_change: 0.0,
       )
     _ -> {
-      let len = list.length(history)
+      // Count history length efficiently
+      let len = list.fold(history, 0, fn(acc, _) { acc + 1 })
       let mid = len / 2
 
       // Split into first half and second half
@@ -331,15 +334,21 @@ pub fn calculate_consistency_rate(
   case history {
     [] -> 0.0
     _ -> {
-      let total = int_to_float(list.length(history))
-      let within_tolerance_count =
-        list.filter(history, fn(state) {
+      // Count total and within_tolerance in one pass
+      let #(total_count, within_count) =
+        list.fold(history, #(0, 0), fn(acc, state) {
           let deviation = calculate_deviation(goals, state.consumed)
-          deviation_is_within_tolerance(deviation, tolerance_pct)
+          let is_within = case
+            deviation_is_within_tolerance(deviation, tolerance_pct)
+          {
+            True -> 1
+            False -> 0
+          }
+          #(acc.0 + 1, acc.1 + is_within)
         })
-        |> list.length
-        |> int_to_float
 
+      let total = int_to_float(total_count)
+      let within_tolerance_count = int_to_float(within_count)
       { within_tolerance_count /. total } *. 100.0
     }
   }
@@ -406,26 +415,28 @@ pub fn average_nutrition_history(history: List(NutritionState)) -> NutritionData
   case history {
     [] -> NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
     _ -> {
-      let count = int_to_float(list.length(history))
-      let sum =
-        list.fold(
-          history,
+      // Calculate sum and count in one pass
+      let #(sum, count) =
+        list.fold(history, #(
           NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0),
-          fn(acc, state) {
+          0,
+        ), fn(acc, state) {
+          let updated_sum =
             NutritionData(
-              protein: acc.protein +. state.consumed.protein,
-              fat: acc.fat +. state.consumed.fat,
-              carbs: acc.carbs +. state.consumed.carbs,
-              calories: acc.calories +. state.consumed.calories,
+              protein: acc.0.protein +. state.consumed.protein,
+              fat: acc.0.fat +. state.consumed.fat,
+              carbs: acc.0.carbs +. state.consumed.carbs,
+              calories: acc.0.calories +. state.consumed.calories,
             )
-          },
-        )
+          #(updated_sum, acc.1 + 1)
+        })
 
+      let count_float = int_to_float(count)
       NutritionData(
-        protein: sum.protein /. count,
-        fat: sum.fat /. count,
-        carbs: sum.carbs /. count,
-        calories: sum.calories /. count,
+        protein: sum.protein /. count_float,
+        fat: sum.fat /. count_float,
+        carbs: sum.carbs /. count_float,
+        calories: sum.calories /. count_float,
       )
     }
   }

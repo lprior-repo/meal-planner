@@ -346,8 +346,10 @@ pub fn micronutrient_summary(micros: Option(Micronutrients)) -> String {
       let vitamins = extract_vitamins(m, dv)
       let minerals = extract_minerals(m, dv)
 
-      let vitamin_count = list.length(vitamins) |> int.to_string
-      let mineral_count = list.length(minerals) |> int.to_string
+      let vitamin_count =
+        list.fold(vitamins, 0, fn(acc, _) { acc + 1 }) |> int.to_string
+      let mineral_count =
+        list.fold(minerals, 0, fn(acc, _) { acc + 1 }) |> int.to_string
 
       "<div class=\"micro-summary\">"
       <> "<span class=\"badge badge-vitamin\">" <> vitamin_count

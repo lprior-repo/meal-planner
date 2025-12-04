@@ -132,7 +132,7 @@ pub fn meal_section(
   meal_type: String,
   entries: List(ui_types.MealEntryData),
 ) -> String {
-  let entry_count = list.length(entries)
+  let entry_count = list.fold(entries, 0, fn(acc, _) { acc + 1 })
   let total_calories =
     entries
     |> list.fold(0.0, fn(sum, entry) { sum +. entry.calories })

@@ -110,7 +110,7 @@ pub fn get_auto_plan(
               user_id: "",
               diet_principles: [auto_types.VerticalDiet],
               macro_targets: total_macros,
-              recipe_count: list.length(recipes),
+              recipe_count: list.fold(recipes, 0, fn(acc, _) { acc + 1 }),
               variety_factor: 0.7,
             )
 

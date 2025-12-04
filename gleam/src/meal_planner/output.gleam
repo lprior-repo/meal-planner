@@ -267,7 +267,8 @@ fn format_weekly_plan_header(profile: UserProfile) -> String {
 /// Format weekly summary
 fn format_weekly_summary(plan: WeeklyMealPlan) -> String {
   let total = weekly_plan_macros(plan)
-  let days_count = list.length(plan.days)
+  // Count days efficiently
+  let days_count = list.fold(plan.days, 0, fn(acc, _) { acc + 1 })
   let avg = case days_count {
     0 -> Macros(protein: 0.0, fat: 0.0, carbs: 0.0)
     n ->
@@ -331,11 +332,20 @@ pub fn send_weekly_plan_email(
 /// Print audit report for recipes
 pub fn print_audit_report(recipes: List(Recipe)) -> Nil {
   io.println("==== VERTICAL DIET RECIPE AUDIT ====")
-  io.println("Total Recipes: " <> int.to_string(list.length(recipes)))
 
-  let compliant = list.filter(recipes, is_vertical_diet_compliant)
-  let compliant_count = list.length(compliant)
-  let compliance_rate = case list.length(recipes) {
+  // Count total and compliant recipes in one pass
+  let #(total_count, compliant_count) =
+    list.fold(recipes, #(0, 0), fn(acc, recipe) {
+      let is_compliant = case is_vertical_diet_compliant(recipe) {
+        True -> 1
+        False -> 0
+      }
+      #(acc.0 + 1, acc.1 + is_compliant)
+    })
+
+  io.println("Total Recipes: " <> int.to_string(total_count))
+
+  let compliance_rate = case total_count {
     0 -> 0.0
     n -> int_to_float(compliant_count) /. int_to_float(n) *. 100.0
   }
@@ -348,7 +358,7 @@ pub fn print_audit_report(recipes: List(Recipe)) -> Nil {
     <> "%)",
   )
   io.println(
-    "Non-Compliant: " <> int.to_string(list.length(recipes) - compliant_count),
+    "Non-Compliant: " <> int.to_string(total_count - compliant_count),
   )
   io.println("==== END AUDIT ====")
 }

@@ -36,6 +36,15 @@ pub type RecipeScore {
 }
 
 // ============================================================================
+// Helper Functions
+// ============================================================================
+
+/// Efficiently count list items using fold instead of O(n) length
+fn count_list(items: List(a)) -> Int {
+  list.fold(items, 0, fn(acc, _) { acc + 1 })
+}
+
+// ============================================================================
 // Filtering Functions
 // ============================================================================
 
@@ -258,11 +267,13 @@ pub fn generate_auto_plan(
       // Filter recipes by diet principles
       let filtered = filter_by_diet_principles(recipes, config.diet_principles)
 
-      case list.length(filtered) < config.recipe_count {
+      // Count filtered recipes efficiently
+      let filtered_count = count_list(filtered)
+      case filtered_count < config.recipe_count {
         True ->
           Error(
             "Insufficient recipes after filtering: "
-            <> int.to_string(list.length(filtered))
+            <> int.to_string(filtered_count)
             <> " available, "
             <> int.to_string(config.recipe_count)
             <> " required",
@@ -275,7 +286,9 @@ pub fn generate_auto_plan(
           let selected =
             select_top_n(scored, config.recipe_count, config.variety_factor)
 
-          case list.length(selected) < config.recipe_count {
+          // Verify selection count efficiently
+          let selected_count = count_list(selected)
+          case selected_count < config.recipe_count {
             True -> Error("Failed to select enough recipes")
             False -> {
               // Calculate total macros

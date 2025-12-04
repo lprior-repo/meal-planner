@@ -1,6 +1,7 @@
 //// Wisp web server for the meal planner application
 //// Server-side rendered pages with Lustre
 
+import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/float
 import gleam/http
@@ -648,8 +649,16 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
               ),
             ]),
             html.script([], "
-let ingredientCount = " <> int_to_string(list.length(recipe.ingredients)) <> ";
-let instructionCount = " <> int_to_string(list.length(recipe.instructions)) <> ";
+let ingredientCount = " <> int_to_string(list.fold(
+              recipe.ingredients,
+              0,
+              fn(acc, _) { acc + 1 },
+            )) <> ";
+let instructionCount = " <> int_to_string(list.fold(
+              recipe.instructions,
+              0,
+              fn(acc, _) { acc + 1 },
+            )) <> ";
 
 function addIngredient() {
   const container = document.getElementById('ingredients-list');
@@ -2074,7 +2083,7 @@ fn create_recipe_source(req: wisp.Request, ctx: Context) -> wisp.Response {
   use json_body <- wisp.require_json(req)
 
   // Decode the JSON body using the decoder
-  case auto_types.recipe_source_decoder()(json_body) {
+  case decode.run(json_body, auto_types.recipe_source_decoder()) {
     Error(_) -> {
       let error_json =
         json.object([#("error", json.string("Invalid JSON format"))])

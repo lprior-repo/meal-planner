@@ -90,7 +90,8 @@ pub fn calculate_weekly_macros(plan: WeeklyMealPlan) -> Macros {
 /// Returns the mean macros per day across the 7-day plan
 pub fn get_weekly_macro_average(plan: WeeklyMealPlan) -> Macros {
   let total = calculate_weekly_macros(plan)
-  let days = int_to_float(list.length(plan.days))
+  let days_count = list.fold(plan.days, 0, fn(acc, _) { acc + 1 })
+  let days = int_to_float(days_count)
   case days {
     0.0 -> Macros(protein: 0.0, fat: 0.0, carbs: 0.0)
     _ ->

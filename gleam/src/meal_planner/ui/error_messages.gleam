@@ -443,7 +443,8 @@ pub fn info_message(title: String, message: String) -> ErrorMessage {
 
 /// Collect multiple validation errors into a single message
 pub fn validation_errors(errors: List(String)) -> ErrorMessage {
-  let message = case list.length(errors) {
+  let error_count = list.fold(errors, 0, fn(acc, _) { acc + 1 })
+  let message = case error_count {
     1 -> "Please correct the following issue:"
     n -> "Please correct " <> int_to_string(n) <> " issues:"
   }

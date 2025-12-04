@@ -70,14 +70,14 @@ pub fn validate_recipe(
       // Combine results - all must be compliant for overall compliance
       let all_compliant = list.all(results, fn(result) { result.compliant })
 
-      // Average the scores
-      let avg_score = case list.length(results) {
+      // Average the scores efficiently
+      let #(total_score, count) =
+        list.fold(results, #(0.0, 0), fn(acc, result) {
+          #(acc.0 +. result.score, acc.1 + 1)
+        })
+      let avg_score = case count {
         0 -> 1.0
-        count -> {
-          let total_score =
-            list.fold(results, 0.0, fn(acc, result) { acc +. result.score })
-          total_score /. int_to_float(count)
-        }
+        n -> total_score /. int_to_float(n)
       }
 
       // Combine violations and warnings

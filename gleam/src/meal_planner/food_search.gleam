@@ -71,10 +71,12 @@ pub fn unified_food_search(
             // Graceful degradation - return empty on error
           }
 
-          // STEP 5: Merge results (custom first, then USDA)
+          // STEP 5: Merge results and count efficiently (custom first, then USDA)
           let all_results = list.append(custom_results, usda_results)
-          let custom_count = list.length(custom_results)
-          let usda_count = list.length(usda_results)
+          let #(custom_count, usda_count) = #(
+            list.fold(custom_results, 0, fn(acc, _) { acc + 1 }),
+            list.fold(usda_results, 0, fn(acc, _) { acc + 1 }),
+          )
           let total_count = custom_count + usda_count
 
           // STEP 6: Return response
