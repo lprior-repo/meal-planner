@@ -312,13 +312,27 @@ pub fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
       )
   }
 
+  // Build active filters for display
+  let active_filters = case filter_type {
+    "verified" -> [#("filter_type", "verified")]
+    "branded" -> [#("filter_type", "branded")]
+    "category" ->
+      case category_param {
+        Some(cat) -> [#("category", cat)]
+        None -> []
+      }
+    _ -> []
+  }
+
   // Render HTML fragment for HTMX to swap in
-  let search_results = case query {
+  // Use forms.search_results_with_count() to render results with count and ARIA live region
+  let search_results_html = case query {
     "" ->
       html.div(
         [attribute.id("search-results"), attribute.class("empty-state")],
         [element.text("Enter a search term to find foods")],
       )
+      |> element.to_string
     q ->
       case foods {
         [] ->
@@ -326,16 +340,28 @@ pub fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
             [attribute.id("search-results"), attribute.class("empty-state")],
             [element.text("No foods found matching \"" <> q <> "\"")],
           )
-        _ ->
-          html.div(
-            [attribute.id("search-results"), attribute.class("food-list")],
-            list.map(foods, food_row),
+          |> element.to_string
+        _ -> {
+          // Convert foods to items format for search_results_with_count
+          let items =
+            foods
+            |> list.map(fn(food) {
+              #(food.fdc_id, food.description, food.data_type, food.category)
+            })
+
+          // Use forms.search_results_with_count with HTMX updates and ARIA accessibility
+          forms.search_results_with_count(
+            items,
+            list.length(foods),
+            active_filters,
+            list.length(active_filters) > 0,
           )
+        }
       }
   }
 
   // Return only the HTML fragment (not a full page)
-  wisp.html_response(element.to_string(search_results), 200)
+  wisp.html_response(search_results_html, 200)
 }
 
 /// Render food row for display in list
