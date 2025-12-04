@@ -27,15 +27,14 @@ import simplifile
 
 /// Generate a unique test database name to avoid conflicts between parallel tests
 fn unique_test_db_name() -> String {
-  // Use process name generator which includes timestamp and random component
-  let name = process.new_name(prefix: "test_meal_planner")
-  // Convert to valid database name (lowercase, replace special chars)
-  string.replace(name, "@", "_")
-  |> string.replace("<", "_")
-  |> string.replace(">", "_")
-  |> string.replace(".", "_")
-  |> string.lowercase
+  // Use system time for unique component
+  let timestamp = erlang_system_time()
+  // Create unique database name with timestamp
+  "test_meal_planner_" <> int.to_string(timestamp)
 }
+
+@external(erlang, "erlang", "system_time")
+fn erlang_system_time() -> Int
 
 /// Create a test database configuration with unique name
 fn test_db_config(db_name: String) -> pog.Config {
