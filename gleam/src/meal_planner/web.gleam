@@ -29,6 +29,10 @@ import meal_planner/types.{
   UserProfile,
 }
 import meal_planner/ui/components/food_search
+import meal_planner/web/handlers/food_log
+import meal_planner/web/handlers/profile
+import meal_planner/web/handlers/recipe
+import meal_planner/web/handlers/search
 import mist
 import pog
 import wisp
@@ -1663,14 +1667,15 @@ fn handle_api(
   ctx: Context,
 ) -> wisp.Response {
   case path {
-    ["recipes"] -> api_recipes(req, ctx)
-    ["recipes", id] -> api_recipe(req, id, ctx)
-    ["profile"] -> api_profile(req, ctx)
-    ["foods"] -> api_foods(req, ctx)
+    ["recipes"] -> recipe.api_recipes(req, recipe.Context(db: ctx.db))
+    ["recipes", id] -> recipe.api_recipe(req, id, recipe.Context(db: ctx.db))
+    ["profile"] -> profile.api_profile(req, profile.Context(db: ctx.db))
+    ["foods"] -> search.api_foods(req, search.Context(db: ctx.db))
     ["foods", "search"] -> api_foods_search(req, ctx)
-    ["foods", id] -> api_food(req, id, ctx)
-    ["logs"] -> api_logs_create(req, ctx)
-    ["logs", "entry", id] -> api_log_entry(req, id, ctx)
+    ["foods", id] -> search.api_food(req, id, search.Context(db: ctx.db))
+    ["logs"] -> food_log.api_logs_create(req, food_log.Context(db: ctx.db))
+    ["logs", "entry", id] ->
+      food_log.api_log_entry(req, id, food_log.Context(db: ctx.db))
     ["recipe-sources"] -> api_recipe_sources(req, ctx)
     ["meal-plans", "auto"] -> api_auto_meal_plan(req, ctx)
     ["meal-plans", "auto", id] -> api_auto_meal_plan_by_id(req, id, ctx)
