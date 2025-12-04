@@ -25,15 +25,25 @@ import simplifile
 // Test Database Configuration
 // =============================================================================
 
-const test_db_name = "meal_planner_test"
+/// Generate a unique test database name to avoid conflicts between parallel tests
+fn unique_test_db_name() -> String {
+  // Use process name generator which includes timestamp and random component
+  let name = process.new_name(prefix: "test_meal_planner")
+  // Convert to valid database name (lowercase, replace special chars)
+  string.replace(name, "@", "_")
+  |> string.replace("<", "_")
+  |> string.replace(">", "_")
+  |> string.replace(".", "_")
+  |> string.lowercase
+}
 
-/// Create a test database configuration
-fn test_db_config() -> pog.Config {
+/// Create a test database configuration with unique name
+fn test_db_config(db_name: String) -> pog.Config {
   let pool_name = process.new_name(prefix: "test_pool")
   pog.default_config(pool_name)
   |> pog.host("localhost")
   |> pog.port(5432)
-  |> pog.database(test_db_name)
+  |> pog.database(db_name)
   |> pog.user("postgres")
   |> pog.password(Some("postgres"))
   |> pog.pool_size(5)
@@ -55,20 +65,19 @@ fn postgres_db_config() -> pog.Config {
 // Test Fixtures and Helpers
 // =============================================================================
 
-/// Create test database
-fn create_test_database() -> Result(Nil, String) {
+/// Create test database with given name
+fn create_test_database(db_name: String) -> Result(Nil, String) {
   case pog.start(postgres_db_config()) {
     Error(_) -> Error("Cannot connect to PostgreSQL")
     Ok(started) -> {
       let db = started.data
 
-      // Drop existing test database
-      let drop_query =
-        pog.query("DROP DATABASE IF EXISTS " <> test_db_name <> ";")
+      // Drop existing test database if it exists
+      let drop_query = pog.query("DROP DATABASE IF EXISTS " <> db_name <> ";")
       let _ = pog.execute(drop_query, db)
 
       // Create fresh test database
-      let create_query = pog.query("CREATE DATABASE " <> test_db_name <> ";")
+      let create_query = pog.query("CREATE DATABASE " <> db_name <> ";")
       case pog.execute(create_query, db) {
         Ok(_) -> Ok(Nil)
         Error(_) -> Error("Failed to create test database")
@@ -77,19 +86,38 @@ fn create_test_database() -> Result(Nil, String) {
   }
 }
 
-/// Drop test database
-fn drop_test_database() -> Result(Nil, String) {
+/// Drop test database with given name
+fn drop_test_database(db_name: String) -> Result(Nil, String) {
   case pog.start(postgres_db_config()) {
     Error(_) -> Error("Cannot connect to PostgreSQL")
     Ok(started) -> {
       let db = started.data
-      let query = pog.query("DROP DATABASE IF EXISTS " <> test_db_name <> ";")
+      let query = pog.query("DROP DATABASE IF EXISTS " <> db_name <> ";")
       case pog.execute(query, db) {
         Ok(_) -> Ok(Nil)
         Error(_) -> Error("Failed to drop test database")
       }
     }
   }
+}
+
+/// Helper to run a test with isolated database
+/// Creates unique DB, runs test, cleans up
+fn with_test_db(test_fn: fn(pog.Connection) -> a) -> a {
+  let db_name = unique_test_db_name()
+
+  // Setup
+  let assert Ok(_) = create_test_database(db_name)
+  let assert Ok(started) = pog.start(test_db_config(db_name))
+  let db = started.data
+
+  // Run test
+  let result = test_fn(db)
+
+  // Cleanup
+  let assert Ok(_) = drop_test_database(db_name)
+
+  result
 }
 
 /// Run migration SQL file

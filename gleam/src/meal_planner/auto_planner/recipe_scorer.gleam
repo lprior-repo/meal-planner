@@ -8,9 +8,10 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/result
 import gleam/string
-import meal_planner/auto_planner/types
-import meal_planner/diet_validator
+import meal_planner/auto_planner/types as auto_types
+import meal_planner/diet_validator.{type DietPrinciple}
 import meal_planner/types.{type Macros, type Recipe}
 
 // ============================================================================
@@ -146,7 +147,9 @@ pub fn score_macro_match(recipe_macros: Macros, targets: Macros) -> Float {
 
   // Convert error to score (0 error = 1.0 score, 100% error = 0 score)
   // Use exponential decay for better discrimination
-  let score = float.power(2.718281828, 0.0 -. { avg_error *. 2.0 })
+  let score =
+    float.power(2.718281828, 0.0 -. { avg_error *. 2.0 })
+    |> result.unwrap(0.0)
 
   // Clamp to [0, 1]
   float.min(1.0, float.max(0.0, score))
