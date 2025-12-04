@@ -15,6 +15,7 @@
 //// let html = render_weekly_email(summary)
 //// ```
 
+import gleam/float
 import gleam/int
 import gleam/list
 import gleam/string
@@ -32,9 +33,10 @@ pub type WeeklySummary {
 
 /// Format a float to 1 decimal place
 fn format_float(value: Float) -> String {
-  let whole = string.inspect(value |> int.floor)
-  let decimal = int.floor({ value *. 10.0 } -. { int.floor(value) *. 10.0 })
-  whole <> "." <> string.inspect(decimal)
+  let whole = float.truncate(value) |> int.to_string
+  let decimal_part = value -. float.truncate(value)
+  let decimal = float.truncate(decimal_part *. 10.0) |> int.to_string
+  whole <> "." <> decimal
 }
 
 /// Render a weekly nutrition summary as plain HTML email
