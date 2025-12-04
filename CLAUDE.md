@@ -101,11 +101,51 @@ bv --robot-diff        # Progress tracking
 
 ## 🛠️ Development Rules
 
+### JavaScript Prohibition - CRITICAL RULE
+**NO JAVASCRIPT FILES ALLOWED IN THIS PROJECT**
+
+- ❌ **NEVER** create `.js` files
+- ❌ **NEVER** write custom JavaScript code
+- ✅ **ONLY EXCEPTION**: HTMX library (already included in base template)
+- ✅ **ALL** interactivity MUST use HTMX attributes:
+  - `hx-get` - GET request
+  - `hx-post` - POST request
+  - `hx-target` - Where to insert response
+  - `hx-swap` - How to swap content (innerHTML, outerHTML, etc)
+  - `hx-trigger` - What triggers the request (change, click, etc)
+  - `hx-push-url` - Update browser URL
+
+**HTMX Usage Examples:**
+```html
+<!-- Filter chips with server-side updates -->
+<button hx-get="/api/foods/search?filter=vegetable"
+        hx-target="#results"
+        hx-swap="innerHTML">
+  Vegetables
+</button>
+
+<!-- Dropdown with auto-submit -->
+<select hx-get="/api/foods/search"
+        hx-trigger="change"
+        hx-target="#results"
+        hx-push-url="true">
+  <option value="dairy">Dairy</option>
+</select>
+
+<!-- Form with dynamic updates -->
+<form hx-post="/api/logs"
+      hx-target="#log-list"
+      hx-swap="afterbegin">
+  <input name="food_id" />
+</form>
+```
+
 ### File Organization
 - `/gleam/src` - Gleam source
 - `/gleam/test` - Tests
 - `/gleam/migrations_pg` - PostgreSQL migrations
 - **NEVER** save to root folder
+- **NEVER** create JavaScript files
 
 ### Concurrent Execution
 ```javascript

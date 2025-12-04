@@ -1540,6 +1540,9 @@ fn render_page(title: String, content: List(element.Element(msg))) -> String {
           attribute.rel("stylesheet"),
           attribute.href("/static/styles.css"),
         ]),
+        // HTMX library - the ONLY JavaScript allowed in the project
+        // All interactivity must use HTMX attributes, not custom JS files
+        html.script([attribute.src("https://unpkg.com/htmx.org@1.9.10")], ""),
       ]),
       html.body([], [html.div([attribute.class("container")], content)]),
     ])
