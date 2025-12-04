@@ -132,7 +132,11 @@ fn run_all_migrations(db: pog.Connection) -> Result(Nil, String) {
 
 /// Set up a test database with all migrations applied
 /// This should be called once at the start of a test suite
+/// Also cleans up orphan test databases from previous failed runs
 pub fn setup_once() -> Result(Nil, String) {
+  // Clean up any orphan test databases from previous failed runs
+  let _ = cleanup_orphan_test_databases()
+
   // Create fresh test database
   case create_test_database() {
     Error(e) -> Error("Failed to create database: " <> e)
