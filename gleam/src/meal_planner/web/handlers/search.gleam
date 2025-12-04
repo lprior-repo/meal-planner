@@ -59,7 +59,7 @@ pub fn validate_boolean_filter(value: String) -> Result(Bool, String) {
 
 /// Validate all search filters
 /// Returns validated filters or error message
-fn validate_filters(
+pub fn validate_filters(
   verified_param: option.Option(String),
   branded_param: option.Option(String),
   category_param: option.Option(String),
