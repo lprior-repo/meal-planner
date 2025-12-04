@@ -2,6 +2,7 @@
 /// Implements type safety validation for Gleam code
 import gleam/int
 import gleam/list
+import gleam/option
 import gleam/result
 import gleam/string
 import simplifile
@@ -188,4 +189,105 @@ fn has_test_for_function(test_code: String, func_name: String) -> Bool {
   let test_pattern = func_name <> "_test"
   string.contains(test_code, test_pattern)
     || string.contains(test_code, func_name)
+}
+
+/// Represents a function that exceeds the recommended line count
+pub type LongFunction {
+  LongFunction(name: String, line_count: Int, start_line: Int)
+}
+
+/// Detect functions that exceed 50 lines of code
+/// Returns a list of LongFunction records for functions that are too long
+pub fn detect_long_functions(code: String) -> List(LongFunction) {
+  let lines = string.split(code, "\n")
+  find_long_functions_recursive(lines, 0, [], None)
+}
+
+/// Recursively process lines to find long functions
+fn find_long_functions_recursive(
+  lines: List(String),
+  current_line: Int,
+  accumulator: List(LongFunction),
+  current_function: option.Option(#(String, Int, Int)),
+) -> List(LongFunction) {
+  case lines {
+    [] -> {
+      // End of file - check if we have a function in progress
+      case current_function {
+        option.None -> accumulator
+        option.Some(#(name, start, brace_count)) -> {
+          let line_count = current_line - start
+          case line_count > 50 {
+            True -> [
+              LongFunction(name: name, line_count: line_count, start_line: start),
+              ..accumulator
+            ]
+            False -> accumulator
+          }
+        }
+      }
+    }
+    [line, ..rest] -> {
+      let trimmed = string.trim(line)
+
+      // Check if this is a function declaration
+      case is_function_declaration(trimmed) {
+        True -> {
+          // Extract function name
+          let func_name = extract_function_name(trimmed)
+
+          // If we have a previous function, finalize it
+          let new_accumulator = case current_function {
+            option.None -> accumulator
+            option.Some(#(prev_name, prev_start, _)) -> {
+              let prev_line_count = current_line - prev_start
+              case prev_line_count > 50 {
+                True -> [
+                  LongFunction(
+                    name: prev_name,
+                    line_count: prev_line_count,
+                    start_line: prev_start,
+                  ),
+                  ..accumulator
+                ]
+                False -> accumulator
+              }
+            }
+          }
+
+          // Start tracking new function
+          find_long_functions_recursive(
+            rest,
+            current_line + 1,
+            new_accumulator,
+            option.Some(#(func_name, current_line, 0)),
+          )
+        }
+        False -> {
+          // Continue with current function
+          find_long_functions_recursive(
+            rest,
+            current_line + 1,
+            accumulator,
+            current_function,
+          )
+        }
+      }
+    }
+  }
+}
+
+/// Check if a line is a function declaration
+fn is_function_declaration(line: String) -> Bool {
+  string.starts_with(line, "pub fn ") || string.starts_with(line, "fn ")
+}
+
+/// Extract function name from declaration line
+fn extract_function_name(line: String) -> String {
+  line
+  |> string.replace("pub fn ", "")
+  |> string.replace("fn ", "")
+  |> string.split_once("(")
+  |> result.map(fn(parts) { parts.0 })
+  |> result.unwrap("unknown")
 }
