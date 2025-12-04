@@ -331,6 +331,138 @@
   color: var(--color-primary);
 }
 
+/* Food Card */
+.food-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-deep);
+  transition: transform var(--duration-200) var(--ease-out),
+              box-shadow var(--duration-200) var(--ease-out);
+}
+
+.food-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-2xl);
+}
+
+.food-description {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+}
+
+.food-category {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.food-type {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+/* Calorie Summary Card */
+.calorie-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-deep);
+  transition: transform var(--duration-200) var(--ease-out),
+              box-shadow var(--duration-200) var(--ease-out);
+}
+
+.calorie-summary-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-2xl);
+}
+
+.date-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.current-date {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text);
+}
+
+.btn-prev-day,
+.btn-next-day {
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-prev-day:hover,
+.btn-next-day:hover {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+.calorie-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-2);
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+}
+
+.current {
+  color: var(--color-text);
+}
+
+.separator {
+  color: var(--color-text-muted);
+  font-weight: var(--font-normal);
+}
+
+.target {
+  color: var(--color-text-secondary);
+}
+
+.animated-counter {
+  transition: all var(--duration-500) var(--ease-out);
+}
+
+.percentage {
+  text-align: center;
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+.percentage-green {
+  background-color: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+.percentage-yellow {
+  background-color: var(--color-warning-light);
+  color: var(--color-warning-dark);
+}
+
+.percentage-red {
+  background-color: var(--color-danger-light);
+  color: var(--color-danger-dark);
+}
+
 /* ===================================================================
    FORMS
    =================================================================== */
