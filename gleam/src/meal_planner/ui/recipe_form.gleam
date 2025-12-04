@@ -443,8 +443,5 @@ fn form_container_end() -> String {
   "
   </form>
 </div>
-
-<!-- Include form validation and dynamic row management script -->
-<script src=\"/static/js/recipe-form.js\"></script>
 "
 }

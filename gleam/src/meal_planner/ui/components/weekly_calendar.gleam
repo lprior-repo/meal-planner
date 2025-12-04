@@ -67,7 +67,8 @@ fn render_meal_rows_with_data(
   days: List(String),
   meals_by_day: List(List(Meal)),
 ) -> String {
-  let breakfast_row = render_meal_row_with_data(days, meals_by_day, 0, "breakfast")
+  let breakfast_row =
+    render_meal_row_with_data(days, meals_by_day, 0, "breakfast")
   let lunch_row = render_meal_row_with_data(days, meals_by_day, 1, "lunch")
   let dinner_row = render_meal_row_with_data(days, meals_by_day, 2, "dinner")
 
@@ -84,11 +85,10 @@ fn render_meal_row_with_data(
   let cells =
     list.index_map(days, fn(day, day_index) {
       let day_meals = get_at_index(meals_by_day, day_index)
-      let meal =
-        case day_meals {
-          Some(meals) -> get_at_index(meals, meal_index)
-          None -> None
-        }
+      let meal = case day_meals {
+        Some(meals) -> get_at_index(meals, meal_index)
+        None -> None
+      }
       render_meal_cell(day, meal_type, meal)
     })
     |> string.join("")

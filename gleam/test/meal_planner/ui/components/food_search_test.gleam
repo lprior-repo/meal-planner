@@ -35,7 +35,7 @@ pub fn default_categories_has_items_test() {
 pub fn update_selected_filter_changes_selection_test() {
   let chips = food_search.default_filter_chips()
   let updated = food_search.update_selected_filter(chips, food_search.Branded)
-  
+
   // Find Branded chip and verify it's selected
   list.find(updated, fn(chip) { chip.filter_type == food_search.Branded })
   |> should.be_ok

@@ -276,41 +276,100 @@ EOF
     echo ""
 fi
 
-# Start server
-echo "Starting Agent Mail server..."
-cd "$INSTALL_DIR"
-nohup "$INSTALL_DIR/scripts/run_server_with_token.sh" > "$MAILBOX_DIR/server.log" 2>&1 &
+# Determine mode from command line argument
+MODE="${1:-background}"  # Default to background mode
 
-# Wait and verify process started
-sleep 2
-if ! pgrep -f "mcp_agent_mail" > /dev/null 2>&1; then
-    echo "✗ Server process failed to start"
+if [ "$MODE" = "foreground" ] || [ "$MODE" = "fg" ]; then
+    # FOREGROUND MODE: Start server in foreground with live monitoring
+    echo "Starting Agent Mail server in FOREGROUND mode..."
+    echo "Press Ctrl+C to stop both server and monitor"
+    echo ""
+
+    cd "$INSTALL_DIR"
+
+    # Start server in background but keep this script running
+    "$INSTALL_DIR/scripts/run_server_with_token.sh" > "$MAILBOX_DIR/server.log" 2>&1 &
+    SERVER_PID=$!
+
+    # Cleanup function to kill server when script exits
+    cleanup() {
+        echo ""
+        echo -e "${YELLOW}Shutting down server (PID: $SERVER_PID)...${RESET}"
+        kill $SERVER_PID 2>/dev/null || true
+        wait $SERVER_PID 2>/dev/null || true
+        echo -e "${GREEN}✓ Server stopped${RESET}"
+        exit 0
+    }
+    trap cleanup INT TERM EXIT
+
+    # Wait for server to be ready
+    echo "Waiting for server to start..."
+    MAX_ATTEMPTS=20
+    ATTEMPT=0
+    while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+        if curl -s -f "http://127.0.0.1:$PORT/health/liveness" > /dev/null 2>&1; then
+            echo -e "${GREEN}✓ Server is ready and responding${RESET}"
+            echo ""
+            echo "Web UI: http://127.0.0.1:$PORT/mail"
+            echo "Server PID: $SERVER_PID"
+            echo "Logs: $MAILBOX_DIR/server.log"
+            echo ""
+            sleep 1
+            break
+        fi
+        ATTEMPT=$((ATTEMPT + 1))
+        sleep 0.5
+    done
+
+    if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+        echo -e "${RED}✗ Server failed to respond${RESET}"
+        echo "Check logs: $MAILBOX_DIR/server.log"
+        kill $SERVER_PID 2>/dev/null || true
+        exit 1
+    fi
+
+    # Now exec the monitor - this replaces current process
+    # When monitor exits (Ctrl+C), the trap will kill the server
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    exec "$SCRIPT_DIR/monitor-agent-mail.sh"
+
+else
+    # BACKGROUND MODE: Start server in background and return
+    echo "Starting Agent Mail server in BACKGROUND mode..."
+    cd "$INSTALL_DIR"
+    nohup "$INSTALL_DIR/scripts/run_server_with_token.sh" > "$MAILBOX_DIR/server.log" 2>&1 &
+
+    # Wait and verify process started
+    sleep 2
+    if ! pgrep -f "mcp_agent_mail" > /dev/null 2>&1; then
+        echo "✗ Server process failed to start"
+        echo "Check logs: $MAILBOX_DIR/server.log"
+        exit 1
+    fi
+
+    # Wait for HTTP server to be ready (max 10 seconds)
+    echo "Testing server readiness..."
+    MAX_ATTEMPTS=20
+    ATTEMPT=0
+    while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+        if curl -s -f "http://127.0.0.1:$PORT/health/liveness" > /dev/null 2>&1; then
+            echo "✓ Server is ready and responding"
+            echo ""
+            echo "Web UI: http://127.0.0.1:$PORT/mail"
+            echo "Logs: $MAILBOX_DIR/server.log"
+            echo ""
+            echo "To watch live activity:"
+            echo "  ./scripts/monitor-agent-mail.sh"
+            echo ""
+            echo "To start in foreground mode next time:"
+            echo "  ./scripts/start-agent-mail.sh foreground"
+            exit 0
+        fi
+        ATTEMPT=$((ATTEMPT + 1))
+        sleep 0.5
+    done
+
+    echo "✗ Server started but not responding to HTTP requests"
     echo "Check logs: $MAILBOX_DIR/server.log"
     exit 1
 fi
-
-# Wait for HTTP server to be ready (max 10 seconds)
-echo "Testing server readiness..."
-MAX_ATTEMPTS=20
-ATTEMPT=0
-while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-    if curl -s -f "http://127.0.0.1:$PORT/health/liveness" > /dev/null 2>&1; then
-        echo "✓ Server is ready and responding"
-        echo ""
-        echo "Web UI: http://127.0.0.1:$PORT/mail"
-        echo "Logs: $MAILBOX_DIR/server.log"
-        echo ""
-        echo "Starting live monitor (Ctrl+C to stop)..."
-        sleep 1
-
-        # Call the standalone monitor script
-        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-        exec "$SCRIPT_DIR/monitor-agent-mail.sh"
-    fi
-    ATTEMPT=$((ATTEMPT + 1))
-    sleep 0.5
-done
-
-echo "✗ Server started but not responding to HTTP requests"
-echo "Check logs: $MAILBOX_DIR/server.log"
-exit 1

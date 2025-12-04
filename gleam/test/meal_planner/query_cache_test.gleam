@@ -313,7 +313,8 @@ pub fn reset_stats_clears_counters_test() {
 
   stats.hits |> should.equal(0)
   stats.misses |> should.equal(0)
-  stats.size |> should.equal(1) // Entries remain
+  stats.size |> should.equal(1)
+  // Entries remain
 }
 
 // ============================================================================
@@ -335,25 +336,14 @@ pub fn search_key_normalizes_case_test() {
 }
 
 pub fn search_filtered_key_generation_test() {
-  let key = query_cache.search_filtered_key(
-    "chicken",
-    True,
-    False,
-    Some("protein"),
-    20,
-  )
+  let key =
+    query_cache.search_filtered_key("chicken", True, False, Some("protein"), 20)
 
   key |> should.equal("search_filtered:chicken:v:n:protein:20")
 }
 
 pub fn search_filtered_key_no_category_test() {
-  let key = query_cache.search_filtered_key(
-    "bread",
-    False,
-    True,
-    None,
-    10,
-  )
+  let key = query_cache.search_filtered_key("bread", False, True, None, 10)
 
   key |> should.equal("search_filtered:bread:n:b:all:10")
 }
@@ -374,7 +364,7 @@ pub fn recent_meals_key_generation_test() {
 }
 
 pub fn food_nutrients_key_generation_test() {
-  let key = query_cache.food_nutrients_key(123456)
+  let key = query_cache.food_nutrients_key(123_456)
   key |> should.equal("nutrients:123456")
 }
 
@@ -489,7 +479,8 @@ pub fn empty_key_test() {
 
 pub fn very_long_key_test() {
   let cache = query_cache.new()
-  let long_key = "search_filtered:very_long_query_string_that_goes_on_and_on:v:n:category:100"
+  let long_key =
+    "search_filtered:very_long_query_string_that_goes_on_and_on:v:n:category:100"
   let cache = query_cache.put(cache, long_key, "value")
 
   let #(_cache, result) = query_cache.get(cache, long_key)

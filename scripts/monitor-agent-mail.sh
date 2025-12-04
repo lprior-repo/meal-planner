@@ -41,12 +41,43 @@ fi
 
 show_header() {
     echo -e "${BOLD}${CYAN}╔════════════════════════════════════════════════════════════════╗${RESET}"
-    echo -e "${BOLD}${CYAN}║           Agent Mail Live Monitor - Press Ctrl+C to exit      ║${RESET}"
+    echo -e "${BOLD}${CYAN}║    📬 Agent Mail Live Monitor - Press Ctrl+C to exit 📬       ║${RESET}"
     echo -e "${BOLD}${CYAN}╚════════════════════════════════════════════════════════════════╝${RESET}"
     echo ""
-    echo -e "${DIM}Monitoring: $MAILBOX_DIR${RESET}"
-    echo -e "${DIM}Web UI: http://127.0.0.1:$PORT/mail${RESET}"
-    echo -e "${DIM}Watching for changes in real-time...${RESET}"
+    echo -e "${DIM}📁 Monitoring: $MAILBOX_DIR${RESET}"
+    echo -e "${DIM}🌐 Web UI: ${BOLD}http://127.0.0.1:$PORT/mail${RESET}"
+    echo -e "${DIM}👁  Watching for changes in real-time...${RESET}"
+    echo ""
+}
+
+show_stats() {
+    echo -e "${BOLD}${MAGENTA}═══ 📊 Database Statistics ═══${RESET}"
+
+    # Count active agents
+    local agent_count=0
+    if [ -d "$MAILBOX_DIR/agents" ]; then
+        agent_count=$(find "$MAILBOX_DIR/agents" -type f -name "profile.json" 2>/dev/null | wc -l)
+    fi
+
+    # Count total messages
+    local message_count=0
+    if [ -d "$MAILBOX_DIR/messages" ]; then
+        message_count=$(find "$MAILBOX_DIR/messages" -type f -name "*.md" 2>/dev/null | wc -l)
+    fi
+
+    # Count active reservations
+    local reservation_count=0
+    if [ -d "$MAILBOX_DIR/file_reservations" ]; then
+        reservation_count=$(find "$MAILBOX_DIR/file_reservations" -type f -name "*.json" -exec grep -l '"released_ts": null' {} \; 2>/dev/null | wc -l)
+    fi
+
+    # Count total projects
+    local project_count=0
+    if [ -d "$MAILBOX_DIR" ]; then
+        project_count=$(find "$MAILBOX_DIR" -type d -name ".git" 2>/dev/null | wc -l)
+    fi
+
+    echo -e "  ${BOLD}Projects:${RESET} ${GREEN}$project_count${RESET} │ ${BOLD}Agents:${RESET} ${GREEN}$agent_count${RESET} │ ${BOLD}Messages:${RESET} ${BLUE}$message_count${RESET} │ ${BOLD}Reservations:${RESET} ${YELLOW}$reservation_count${RESET}"
     echo ""
 }
 
@@ -138,6 +169,7 @@ show_reservations() {
 trap 'echo -e "\n${GREEN}Monitor stopped${RESET}"; exit 0' INT
 
 show_header
+show_stats
 
 # Check if inotifywait is available
 if ! command -v inotifywait &> /dev/null; then
@@ -157,6 +189,7 @@ if ! command -v inotifywait &> /dev/null; then
         if [ $((now - last_check)) -ge 30 ]; then
             clear
             show_header
+            show_stats
             show_agents
             show_messages
             show_reservations
@@ -193,11 +226,25 @@ while IFS='|' read -r timestamp event dir file; do
     if [[ "$full_path" == *"/agents/"* ]] && [[ "$file" == "profile.json" ]]; then
         agent_name=$(basename "$(dirname "$full_path")")
         if [[ "$event_type" == *"CREATE"* ]]; then
-            echo -e "${GREEN}[${timestamp}] 🤖 New agent registered: ${agent_name}${RESET}"
+            echo -e "${GREEN}┌─────────────────────────────────────────────────────────────${RESET}"
+            echo -e "${GREEN}│ [${timestamp}] 🤖 NEW AGENT REGISTERED${RESET}"
+            echo -e "${GREEN}├─────────────────────────────────────────────────────────────${RESET}"
+            if [ -f "$full_path" ]; then
+                program=$(jq -r '.program // "Unknown"' "$full_path" 2>/dev/null || echo "Unknown")
+                model=$(jq -r '.model // "Unknown"' "$full_path" 2>/dev/null || echo "Unknown")
+                task=$(jq -r '.task_description // ""' "$full_path" 2>/dev/null || echo "")
+                echo -e "${GREEN}│${RESET} ${BOLD}Agent:${RESET} ${GREEN}${agent_name}${RESET}"
+                echo -e "${GREEN}│${RESET} ${BOLD}Program:${RESET} ${program}"
+                echo -e "${GREEN}│${RESET} ${BOLD}Model:${RESET} ${model}"
+                [ -n "$task" ] && echo -e "${GREEN}│${RESET} ${BOLD}Task:${RESET} ${task}"
+            else
+                echo -e "${GREEN}│${RESET} ${BOLD}Agent:${RESET} ${GREEN}${agent_name}${RESET}"
+            fi
+            echo -e "${GREEN}└─────────────────────────────────────────────────────────────${RESET}"
         elif [[ "$event_type" == *"MODIFY"* ]]; then
-            echo -e "${CYAN}[${timestamp}] 🔄 Agent updated: ${agent_name}${RESET}"
+            echo -e "${CYAN}[${timestamp}] 🔄 Agent updated: ${BOLD}${agent_name}${RESET}"
         elif [[ "$event_type" == *"DELETE"* ]]; then
-            echo -e "${RED}[${timestamp}] 👋 Agent removed: ${agent_name}${RESET}"
+            echo -e "${RED}[${timestamp}] 👋 Agent removed: ${BOLD}${agent_name}${RESET}"
         fi
 
     elif [[ "$full_path" == *"/messages/"* ]] && [[ "$file" == *.md ]]; then
@@ -207,8 +254,32 @@ while IFS='|' read -r timestamp event dir file; do
                 subject=$(grep "^# " "$full_path" 2>/dev/null | head -1 | sed 's/^# //' || echo "No subject")
                 from=$(grep "^**From:**" "$full_path" 2>/dev/null | sed 's/^**From:** //' || echo "Unknown")
                 to=$(grep "^**To:**" "$full_path" 2>/dev/null | sed 's/^**To:** //' || echo "Unknown")
-                echo -e "${BLUE}[${timestamp}] 📧 New message: ${subject}${RESET}"
-                echo -e "   ${DIM}From: ${from} → To: ${to}${RESET}"
+                thread=$(grep "^**Thread:**" "$full_path" 2>/dev/null | sed 's/^**Thread:** //' || echo "")
+                importance=$(grep "^**Importance:**" "$full_path" 2>/dev/null | sed 's/^**Importance:** //' || echo "normal")
+
+                # Choose color based on importance
+                color="${BLUE}"
+                icon="📧"
+                case "$importance" in
+                    high|urgent)
+                        color="${RED}"
+                        icon="🚨"
+                        ;;
+                    *)
+                        color="${BLUE}"
+                        icon="📧"
+                        ;;
+                esac
+
+                echo -e "${color}┌─────────────────────────────────────────────────────────────${RESET}"
+                echo -e "${color}│ [${timestamp}] ${icon} NEW MESSAGE${RESET}"
+                echo -e "${color}├─────────────────────────────────────────────────────────────${RESET}"
+                echo -e "${color}│${RESET} ${BOLD}Subject:${RESET} ${subject}"
+                echo -e "${color}│${RESET} ${BOLD}From:${RESET} ${GREEN}${from}${RESET} ${BOLD}→${RESET} ${BOLD}To:${RESET} ${CYAN}${to}${RESET}"
+                [ -n "$thread" ] && echo -e "${color}│${RESET} ${BOLD}Thread:${RESET} ${thread}"
+                [ "$importance" != "normal" ] && echo -e "${color}│${RESET} ${BOLD}Importance:${RESET} ${RED}${importance}${RESET}"
+                echo -e "${color}│${RESET} ${BOLD}File:${RESET} ${DIM}${file}${RESET}"
+                echo -e "${color}└─────────────────────────────────────────────────────────────${RESET}"
             fi
         fi
 
@@ -217,11 +288,30 @@ while IFS='|' read -r timestamp event dir file; do
             agent=$(jq -r '.agent_name // "Unknown"' "$full_path" 2>/dev/null || echo "Unknown")
             path=$(jq -r '.path_pattern // "Unknown"' "$full_path" 2>/dev/null || echo "Unknown")
             released=$(jq -r '.released_ts // "null"' "$full_path" 2>/dev/null || echo "null")
+            exclusive=$(jq -r '.exclusive // false' "$full_path" 2>/dev/null || echo "false")
+            reason=$(jq -r '.reason // ""' "$full_path" 2>/dev/null || echo "")
 
             if [[ "$event_type" == *"CREATE"* ]] && [[ "$released" == "null" ]]; then
-                echo -e "${YELLOW}[${timestamp}] 🔒 File reservation: ${agent} → ${path}${RESET}"
+                lock_icon="🔒"
+                lock_type="SHARED"
+                if [ "$exclusive" = "true" ]; then
+                    lock_icon="🔐"
+                    lock_type="EXCLUSIVE"
+                fi
+                echo -e "${YELLOW}┌─────────────────────────────────────────────────────────────${RESET}"
+                echo -e "${YELLOW}│ [${timestamp}] ${lock_icon} FILE RESERVATION (${lock_type})${RESET}"
+                echo -e "${YELLOW}├─────────────────────────────────────────────────────────────${RESET}"
+                echo -e "${YELLOW}│${RESET} ${BOLD}Agent:${RESET} ${GREEN}${agent}${RESET}"
+                echo -e "${YELLOW}│${RESET} ${BOLD}Path:${RESET} ${CYAN}${path}${RESET}"
+                [ -n "$reason" ] && echo -e "${YELLOW}│${RESET} ${BOLD}Reason:${RESET} ${reason}"
+                echo -e "${YELLOW}└─────────────────────────────────────────────────────────────${RESET}"
             elif [[ "$event_type" == *"MODIFY"* ]] && [[ "$released" != "null" ]]; then
-                echo -e "${GREEN}[${timestamp}] 🔓 File released: ${agent} → ${path}${RESET}"
+                echo -e "${GREEN}┌─────────────────────────────────────────────────────────────${RESET}"
+                echo -e "${GREEN}│ [${timestamp}] 🔓 FILE RELEASED${RESET}"
+                echo -e "${GREEN}├─────────────────────────────────────────────────────────────${RESET}"
+                echo -e "${GREEN}│${RESET} ${BOLD}Agent:${RESET} ${GREEN}${agent}${RESET}"
+                echo -e "${GREEN}│${RESET} ${BOLD}Path:${RESET} ${CYAN}${path}${RESET}"
+                echo -e "${GREEN}└─────────────────────────────────────────────────────────────${RESET}"
             fi
         fi
     fi

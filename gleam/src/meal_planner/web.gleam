@@ -5,6 +5,7 @@ import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/float
 import gleam/http
+import gleam/http/request
 import gleam/int
 import gleam/io
 import gleam/json
@@ -195,7 +196,10 @@ fn render_weekly_calendar() -> element.Element(Nil) {
   ]
 
   html.div([attribute.class("weekly-calendar")], [
-    html.div([attribute.class("weekly-grid")], list.map(days, render_day_column)),
+    html.div(
+      [attribute.class("weekly-grid")],
+      list.map(days, render_day_column),
+    ),
   ])
 }
 
@@ -1414,7 +1418,10 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
                 element.text("No foods found matching \"" <> q <> "\""),
               ])
             _ ->
-              html.div([attribute.class("food-list")], list.map(foods, food_row))
+              html.div(
+                [attribute.class("food-list")],
+                list.map(foods, food_row),
+              )
           }
         }
         _ ->
@@ -2103,9 +2110,12 @@ fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
   // Render HTML fragment for HTMX to swap in
   let search_results = case query {
     "" ->
-      html.div([attribute.id("search-results"), attribute.class("empty-state")], [
-        element.text("Enter a search term to find foods"),
-      ])
+      html.div(
+        [attribute.id("search-results"), attribute.class("empty-state")],
+        [
+          element.text("Enter a search term to find foods"),
+        ],
+      )
     q ->
       case foods {
         [] ->

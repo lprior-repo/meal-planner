@@ -640,10 +640,7 @@ pub fn search_foods_filtered(
     Some(cat) ->
       case validate_category(cat) {
         Ok(valid_cat) ->
-          Ok(types.SearchFilters(
-            ..filters,
-            category: option.Some(valid_cat),
-          ))
+          Ok(types.SearchFilters(..filters, category: option.Some(valid_cat)))
         Error(e) -> Error(InvalidInput(e))
       }
     None -> Ok(filters)
@@ -651,7 +648,8 @@ pub fn search_foods_filtered(
 
   case validated_filters {
     Error(e) -> Error(e)
-    Ok(safe_filters) -> execute_filtered_search(conn, query, safe_filters, limit)
+    Ok(safe_filters) ->
+      execute_filtered_search(conn, query, safe_filters, limit)
   }
 }
 
@@ -675,7 +673,7 @@ fn execute_filtered_search(
   }
 
   let category_clause = case filters.category {
-    Some(_) -> " AND food_category ILIKE $4"
+    Some(_) -> " AND food_category = $4"
     None -> ""
   }
 
@@ -739,7 +737,7 @@ fn execute_filtered_search(
     |> pog.parameter(pog.int(limit))
 
   let final_query = case filters.category {
-    Some(cat) -> pog.parameter(base_query, pog.text("%" <> cat <> "%"))
+    Some(cat) -> pog.parameter(base_query, pog.text(cat))
     None -> base_query
   }
 
@@ -844,7 +842,9 @@ pub fn get_foods_count(conn: pog.Connection) -> Result(Int, StorageError) {
 
 /// Get all distinct food categories from the foods table
 /// Returns categories sorted alphabetically, excluding empty/null values
-pub fn get_food_categories(conn: pog.Connection) -> Result(List(String), StorageError) {
+pub fn get_food_categories(
+  conn: pog.Connection,
+) -> Result(List(String), StorageError) {
   let sql =
     "SELECT DISTINCT food_category
      FROM foods

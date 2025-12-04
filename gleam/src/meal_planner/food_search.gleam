@@ -11,7 +11,7 @@ import gleam/string
 import meal_planner/storage
 import meal_planner/types.{
   type FoodSearchError, type FoodSearchResponse, FoodSearchResponse,
-  InvalidQuery, UsdaFoodResult, SearchFilters,
+  InvalidQuery, SearchFilters, UsdaFoodResult,
 }
 import pog
 
@@ -133,11 +133,12 @@ pub fn unified_food_search_with_category(
       let trimmed_query = string.trim(query)
 
       // STEP 2: Build search filters with category
-      let filters = SearchFilters(
-        verified_only: False,
-        branded_only: False,
-        category: category,
-      )
+      let filters =
+        SearchFilters(
+          verified_only: False,
+          branded_only: False,
+          category: category,
+        )
 
       // STEP 3: Query USDA foods with filters
       let usda_results = case string.length(trimmed_query) {
@@ -163,7 +164,9 @@ pub fn unified_food_search_with_category(
         }
         _ -> {
           // Search mode: text search with category filter
-          case storage.search_foods_filtered(db, trimmed_query, filters, limit) {
+          case
+            storage.search_foods_filtered(db, trimmed_query, filters, limit)
+          {
             Ok(foods) ->
               foods
               |> list.map(fn(food) {

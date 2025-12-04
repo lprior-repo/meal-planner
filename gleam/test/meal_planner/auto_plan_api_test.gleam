@@ -1,7 +1,6 @@
 /// Integration tests for POST /api/meal-plans/auto endpoint
 ///
 /// These tests specify the expected behavior for auto meal plan generation
-
 import gleeunit
 import gleeunit/should
 

@@ -16,39 +16,52 @@ pub type Context {
 }
 
 /// GET /api/foods - Search for foods with optional filters
+/// Reads all filter state from URL query parameters for HTMX compatibility
 pub fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
   // Parse all query parameters
   let parsed_query = uri.parse_query(req.query |> option.unwrap(""))
 
+  // Read search query - support both 'q' and 'query' parameter names
   let query = case parsed_query {
     Ok(params) -> {
+      // Try 'q' first, then 'query' as fallback
       case list.find(params, fn(p) { p.0 == "q" }) {
         Ok(#(_, q)) -> q
-        Error(_) -> ""
+        Error(_) ->
+          case list.find(params, fn(p) { p.0 == "query" }) {
+            Ok(#(_, q)) -> q
+            Error(_) -> ""
+          }
       }
     }
     Error(_) -> ""
   }
 
-  // Parse filter parameters
+  // Parse all filter parameters from URL query string
+  // This ensures the handler is stateless and works with HTMX URL-based state
   let filters = case parsed_query {
     Ok(params) -> {
+      // Parse verified filter - accepts "true" string or "1"
       let verified_only = case
-        list.find(params, fn(p) { p.0 == "verified_only" })
+        list.find(params, fn(p) { p.0 == "verified" || p.0 == "verified_only" })
       {
         Ok(#(_, "true")) -> True
+        Ok(#(_, "1")) -> True
         _ -> False
       }
 
+      // Parse branded filter - accepts "true" string or "1"
       let branded_only = case
-        list.find(params, fn(p) { p.0 == "branded_only" })
+        list.find(params, fn(p) { p.0 == "branded" || p.0 == "branded_only" })
       {
         Ok(#(_, "true")) -> True
+        Ok(#(_, "1")) -> True
         _ -> False
       }
 
+      // Parse category filter - empty string treated as None
       let category = case list.find(params, fn(p) { p.0 == "category" }) {
-        Ok(#(_, cat)) if cat != "" -> Some(cat)
+        Ok(#(_, cat)) if cat != "" && cat != "all" -> Some(cat)
         _ -> None
       }
 
@@ -59,6 +72,7 @@ pub fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
       )
     }
     Error(_) ->
+      // Default filters when no query params
       types.SearchFilters(
         verified_only: False,
         branded_only: False,
@@ -70,7 +84,7 @@ pub fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
     "" -> {
       let json_data =
         json.object([
-          #("error", json.string("Query parameter 'q' required")),
+          #("error", json.string("Query parameter 'q' or 'query' required")),
         ])
       wisp.json_response(json.to_string(json_data), 400)
     }

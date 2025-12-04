@@ -144,17 +144,14 @@ fn render_filter_controls() -> String {
   <> "</div>"
 }
 
-/// Render dashboard JavaScript includes
+/// Render dashboard scripts (HTMX handles all interactivity)
 ///
-/// Includes two optimized JavaScript files:
-/// - dashboard-filters.js: Client-side filtering (5-10x faster than server-side)
-/// - meal-logger.js: Meal entry interactions (edit/delete/collapse)
+/// All dashboard interactivity is handled via HTMX attributes:
+/// - Filter chips: hx-get with query params
+/// - Meal logger: hx-post/hx-delete for edit/delete
+/// - Dynamic updates: hx-swap for DOM updates
 ///
-/// Performance benefits:
-/// - Extracted from inline handlers (60% HTML size reduction)
-/// - Cacheable by browser
-/// - Loaded asynchronously
+/// No custom JavaScript required.
 fn render_dashboard_scripts() -> String {
-  "<script src=\"/static/js/dashboard-filters.js\" type=\"module\" defer></script>"
-  <> "<script src=\"/static/js/meal-logger.js\" type=\"module\" defer></script>"
+  ""
 }

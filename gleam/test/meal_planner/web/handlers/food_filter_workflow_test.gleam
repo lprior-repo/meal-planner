@@ -248,11 +248,12 @@ pub fn multiple_filter_combinations_test() {
 
   list.each(combinations, fn(combo) {
     let #(verified, branded, category, _description) = combo
-    let filters = SearchFilters(
-      verified_only: verified,
-      branded_only: branded,
-      category: category,
-    )
+    let filters =
+      SearchFilters(
+        verified_only: verified,
+        branded_only: branded,
+        category: category,
+      )
 
     filters.verified_only
     |> should.equal(verified)

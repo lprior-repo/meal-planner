@@ -625,6 +625,7 @@ pub fn search_combobox_with_selection(
   <> results_html
   <> "</div>"
 }
+
 /// Category dropdown selector
 ///
 /// Renders a dropdown with:

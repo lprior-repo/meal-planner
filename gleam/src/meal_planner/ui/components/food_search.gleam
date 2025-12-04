@@ -67,9 +67,7 @@ fn chip_classes(selected: Bool) -> String {
 /// <button class="filter-chip filter-chip-selected" data-filter="all">
 ///   All
 /// </button>
-pub fn render_filter_chip(
-  chip: FilterChip,
-) -> element.Element(msg) {
+pub fn render_filter_chip(chip: FilterChip) -> element.Element(msg) {
   let FilterChip(label: label, filter_type: filter_type, selected: selected) =
     chip
   let classes = chip_classes(selected)
@@ -84,6 +82,12 @@ pub fn render_filter_chip(
         False -> "false"
       }),
       attribute.type_("button"),
+      // HTMX attributes for dynamic filtering
+      attribute.attribute("hx-get", "/api/foods/search?filter=" <> filter_str),
+      attribute.attribute("hx-target", "#search-results"),
+      attribute.attribute("hx-swap", "innerHTML"),
+      attribute.attribute("hx-push-url", "true"),
+      attribute.attribute("hx-include", "[name='q']"),
     ],
     [element.text(label)],
   )
@@ -135,6 +139,7 @@ pub fn render_filter_chips(chips: List(FilterChip)) -> element.Element(msg) {
 /// - All standard filter chips
 /// - Category dropdown for additional filtering
 /// - Dropdown only enabled when "By Category" chip is selected
+/// - HTMX-powered auto-submit on category change
 ///
 /// Usage:
 /// ```gleam
@@ -153,7 +158,17 @@ pub fn render_filter_chips(chips: List(FilterChip)) -> element.Element(msg) {
 /// <div class="filter-chips-container">
 ///   <div class="filter-chips">...</div>
 ///   <div class="filter-dropdown-container">
-///     <select class="filter-dropdown" data-filter="category">
+///     <select
+///       name="category"
+///       class="filter-dropdown"
+///       data-filter="category"
+///       hx-get="/api/foods"
+///       hx-trigger="change"
+///       hx-target="#food-results"
+///       hx-swap="innerHTML"
+///       hx-push-url="true"
+///       hx-include="[name='q']"
+///       aria-label="Filter by category">
 ///       <option value="">Select Category...</option>
 ///       <option value="vegetables">Vegetables</option>
 ///     </select>
@@ -207,12 +222,26 @@ pub fn render_filter_chips_with_dropdown(
       chip_elements,
     ),
     html.div([attribute.class("filter-dropdown-container")], [
+      // Hidden input to indicate category filter is active
+      html.input([
+        attribute.type_("hidden"),
+        attribute.name("filter"),
+        attribute.value("category"),
+      ]),
       html.select(
         [
           attribute.class(dropdown_classes),
           attribute.attribute("data-filter", "category"),
+          attribute.name("category"),
           attribute.disabled(!category_selected),
           attribute.attribute("aria-label", "Filter by category"),
+          // HTMX attributes for dynamic category filtering
+          attribute.attribute("hx-get", "/api/foods/search"),
+          attribute.attribute("hx-trigger", "change"),
+          attribute.attribute("hx-target", "#search-results"),
+          attribute.attribute("hx-swap", "innerHTML"),
+          attribute.attribute("hx-push-url", "true"),
+          attribute.attribute("hx-include", "[name='q'], [name='filter']"),
         ],
         all_options,
       ),
