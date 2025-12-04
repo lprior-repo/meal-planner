@@ -79,8 +79,10 @@ pub fn input_with_label(
 /// <div class="search-box" role="search">
 ///   <input type="search" class="input-search" aria-label="placeholder"
 ///          hx-get="/api/foods/search" hx-trigger="input changed delay:300ms"
-///          hx-target="#food-results" hx-swap="innerHTML" hx-push-url="true" />
+///          hx-target="#food-results" hx-swap="innerHTML" hx-push-url="true"
+///          hx-indicator="#search-loading" />
 ///   <button class="btn btn-primary" type="submit">Search</button>
+///   <span id="search-loading" class="htmx-indicator">Loading...</span>
 /// </div>
 pub fn search_input(query: String, placeholder: String) -> String {
   "<div class=\"search-box\" role=\"search\">"
@@ -100,8 +102,10 @@ pub fn search_input(query: String, placeholder: String) -> String {
   <> "hx-trigger=\"input changed delay:300ms\" "
   <> "hx-target=\"#food-results\" "
   <> "hx-swap=\"innerHTML\" "
-  <> "hx-push-url=\"true\" />"
+  <> "hx-push-url=\"true\" "
+  <> "hx-indicator=\"#search-loading\" />"
   <> "<button class=\"btn btn-primary\" type=\"submit\" aria-label=\"Submit search\">Search</button>"
+  <> "<span id=\"search-loading\" class=\"htmx-indicator\" aria-label=\"Loading search results\">Loading...</span>"
   <> "</div>"
 }
 
@@ -257,13 +261,16 @@ pub fn form(
 /// - Placeholder text
 /// - Proper ARIA labels for accessibility
 /// - HTMX attributes for dynamic search
+/// - Loading indicator during requests
 ///
 /// Renders:
 /// <div class="search-input-container">
 ///   <input type="search" class="input-search"
 ///          hx-get="/api/foods/search" hx-trigger="input changed delay:300ms"
-///          hx-target="#food-results" hx-swap="innerHTML" ... />
+///          hx-target="#food-results" hx-swap="innerHTML"
+///          hx-indicator="#search-loading" ... />
 ///   <button type="button" class="search-clear-btn [hidden]">×</button>
+///   <span id="search-loading" class="htmx-indicator">Loading...</span>
 /// </div>
 pub fn search_input_with_clear(query: String, placeholder: String) -> String {
   let has_value = string.length(query) > 0
@@ -289,10 +296,12 @@ pub fn search_input_with_clear(query: String, placeholder: String) -> String {
   <> "hx-trigger=\"input changed delay:300ms from:#search-input\" "
   <> "hx-target=\"#food-results\" "
   <> "hx-swap=\"innerHTML\" "
-  <> "hx-push-url=\"true\" />"
+  <> "hx-push-url=\"true\" "
+  <> "hx-indicator=\"#search-loading\" />"
   <> "<button type=\"button\" class=\""
   <> clear_btn_class
   <> "\">×</button>"
+  <> "<span id=\"search-loading\" class=\"htmx-indicator\" aria-label=\"Loading search results\">Loading...</span>"
   <> "</div>"
 }
 
@@ -300,6 +309,7 @@ pub fn search_input_with_clear(query: String, placeholder: String) -> String {
 ///
 /// Same as search_input_with_clear but with optional autofocus attribute
 /// for keyboard focus management and HTMX for dynamic search.
+/// Includes loading indicator for user feedback.
 pub fn search_input_with_autofocus(
   query: String,
   placeholder: String,
@@ -333,12 +343,14 @@ pub fn search_input_with_autofocus(
   <> "hx-trigger=\"input changed delay:300ms from:#search-input\" "
   <> "hx-target=\"#food-results\" "
   <> "hx-swap=\"innerHTML\" "
-  <> "hx-push-url=\"true\""
+  <> "hx-push-url=\"true\" "
+  <> "hx-indicator=\"#search-loading\""
   <> autofocus_attr
   <> " />"
   <> "<button type=\"button\" class=\""
   <> clear_btn_class
   <> "\">×</button>"
+  <> "<span id=\"search-loading\" class=\"htmx-indicator\" aria-label=\"Loading search results\">Loading...</span>"
   <> "</div>"
 }
 
@@ -533,6 +545,7 @@ pub fn search_results_empty(query: String) -> String {
 /// - aria-controls links to results listbox
 /// - aria-autocomplete indicates list completion
 /// - HTMX for dynamic search (no JavaScript required)
+/// - Loading indicator during requests
 /// - Combines search input + results list
 ///
 /// Renders full search widget with keyboard support and HTMX
@@ -575,7 +588,9 @@ pub fn search_combobox(
   <> "hx-trigger=\"input changed delay:300ms from:#search-input\" "
   <> "hx-target=\"#food-results\" "
   <> "hx-swap=\"innerHTML\" "
-  <> "hx-push-url=\"true\" />"
+  <> "hx-push-url=\"true\" "
+  <> "hx-indicator=\"#search-loading\" />"
+  <> "<span id=\"search-loading\" class=\"htmx-indicator\" aria-label=\"Loading search results\">Loading...</span>"
   <> results_html
   <> "</div>"
 }
@@ -583,7 +598,8 @@ pub fn search_combobox(
 /// Search combobox with active selection
 ///
 /// Same as search_combobox but includes aria-activedescendant
-/// to indicate which result item has keyboard focus
+/// to indicate which result item has keyboard focus.
+/// Includes loading indicator for user feedback.
 pub fn search_combobox_with_selection(
   query: String,
   placeholder: String,
@@ -621,7 +637,13 @@ pub fn search_combobox_with_selection(
   <> "aria-autocomplete=\"list\" "
   <> "aria-activedescendant=\"search-result-"
   <> int.to_string(selected_id)
-  <> "\" />"
+  <> "\" "
+  <> "hx-get=\"/api/foods/search\" "
+  <> "hx-trigger=\"input changed delay:300ms from:.input-search\" "
+  <> "hx-target=\"#food-results\" "
+  <> "hx-swap=\"innerHTML\" "
+  <> "hx-indicator=\"#search-loading\" />"
+  <> "<span id=\"search-loading\" class=\"htmx-indicator\" aria-label=\"Loading search results\">Loading...</span>"
   <> results_html
   <> "</div>"
 }
@@ -690,12 +712,14 @@ pub fn category_dropdown(
   <> "hx-target=\"#food-results\" "
   <> "hx-swap=\"innerHTML\" "
   <> "hx-push-url=\"true\" "
-  <> "hx-include=\"[name='category']\">"
+  <> "hx-include=\"[name='category']\" "
+  <> "hx-indicator=\"#category-loading\">"
   <> "<option value=\"\""
   <> all_selected
   <> ">All Categories</option>"
   <> category_options
   <> "</select>"
+  <> "<span id=\"category-loading\" class=\"htmx-indicator\" aria-label=\"Loading category results\">Loading...</span>"
 }
 
 /// Category filter group with label

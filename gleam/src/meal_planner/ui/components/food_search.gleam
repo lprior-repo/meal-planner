@@ -71,6 +71,7 @@ fn chip_classes(selected: Bool) -> String {
 ///         hx-swap="innerHTML"
 ///         hx-push-url="true"
 ///         hx-include="[name='q']"
+///         hx-indicator="#filter-loading"
 ///         aria-selected="true"
 ///         aria-pressed="true"
 ///         role="button"
@@ -80,6 +81,7 @@ fn chip_classes(selected: Bool) -> String {
 ///
 /// Note: The hx-include attribute ensures the current search query is included
 /// in the HTMX request by grabbing the value from the search input element.
+/// The hx-indicator attribute shows a loading state during the request.
 pub fn render_filter_chip(chip: FilterChip) -> element.Element(msg) {
   let FilterChip(label: label, filter_type: filter_type, selected: selected) =
     chip
@@ -106,6 +108,7 @@ pub fn render_filter_chip(chip: FilterChip) -> element.Element(msg) {
       attribute.attribute("hx-swap", "innerHTML"),
       attribute.attribute("hx-push-url", "true"),
       attribute.attribute("hx-include", "[name='q']"),
+      attribute.attribute("hx-indicator", "#filter-loading"),
     ],
     [element.text(label)],
   )

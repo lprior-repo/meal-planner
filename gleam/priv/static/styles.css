@@ -1704,3 +1704,208 @@ body {
     transform: none;
   }
 }
+/* ===================================================================
+   HTMX LOADING INDICATORS
+
+   Styles for .htmx-indicator elements that show loading states
+   when HTMX requests are in progress.
+
+   These indicators are shown/hidden automatically by HTMX based on
+   the hx-indicator attribute on form elements.
+   =================================================================== */
+
+/* ===================================================================
+   BASE INDICATOR STYLES
+   =================================================================== */
+
+/* Default indicator - hidden by default, shown during hx-request */
+.htmx-indicator {
+  display: none;
+}
+
+/* Show indicator during HTMX request */
+.htmx-request .htmx-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: var(--space-2);
+}
+
+/* ===================================================================
+   INLINE INDICATOR (for search inputs and buttons)
+   =================================================================== */
+
+/* Inline loading indicator - small spinner with text */
+.htmx-indicator {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* Spinner inside indicator */
+.htmx-indicator::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: htmx-spinner 0.6s linear infinite;
+  margin-right: var(--space-1);
+}
+
+/* ===================================================================
+   ANIMATIONS
+   =================================================================== */
+
+@keyframes htmx-spinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pulse animation for additional visual feedback */
+@keyframes htmx-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ===================================================================
+   BUTTON LOADING STATES
+   =================================================================== */
+
+/* Button that triggers HTMX request gets opacity change */
+.btn.htmx-request {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* ===================================================================
+   INPUT LOADING STATES
+   =================================================================== */
+
+/* Input during request gets visual feedback */
+.input:disabled,
+.input-search:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+}
+
+/* ===================================================================
+   SEARCH-SPECIFIC INDICATORS
+   =================================================================== */
+
+/* Search input container during request */
+.search-input-container {
+  position: relative;
+}
+
+/* Search loading indicator positioning */
+#search-loading {
+  display: none;
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+}
+
+/* Show search indicator during request */
+.htmx-request #search-loading {
+  display: inline-flex;
+}
+
+/* ===================================================================
+   CATEGORY DROPDOWN INDICATOR
+   =================================================================== */
+
+/* Category filter loading state */
+#category-loading {
+  display: none;
+  margin-left: var(--space-2);
+}
+
+/* Show category loading indicator */
+.htmx-request #category-loading {
+  display: inline-flex;
+}
+
+/* ===================================================================
+   FILTER CHIP INDICATORS
+   =================================================================== */
+
+/* Filter loading indicator */
+#filter-loading {
+  display: none;
+  margin-left: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+}
+
+/* Show filter indicator during request */
+.htmx-request #filter-loading {
+  display: inline-flex;
+}
+
+/* ===================================================================
+   SEARCH RESULTS CONTAINER LOADING
+   =================================================================== */
+
+/* Dim search results during loading */
+#food-results.htmx-request {
+  opacity: 0.7;
+  transition: opacity var(--duration-200) var(--ease-out);
+}
+
+/* ===================================================================
+   RESPONSIVE ADJUSTMENTS
+   =================================================================== */
+
+@media (max-width: 640px) {
+  /* Stack indicators on mobile */
+  .htmx-request .htmx-indicator {
+    display: inline-flex;
+    margin-top: var(--space-1);
+  }
+
+  /* Reduce indicator size on mobile */
+  .htmx-indicator::before {
+    width: 12px;
+    height: 12px;
+    border-width: 1.5px;
+  }
+}
+
+/* ===================================================================
+   ACCESSIBILITY
+   =================================================================== */
+
+/* Ensure indicator is visible with high contrast mode */
+@media (prefers-contrast: high) {
+  .htmx-indicator {
+    font-weight: var(--font-medium);
+  }
+
+  .htmx-indicator::before {
+    border-width: 3px;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .htmx-indicator::before {
+    animation: none;
+    border-top-color: var(--color-border);
+    border-right-color: var(--color-primary);
+  }
+}
