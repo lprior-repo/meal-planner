@@ -100,6 +100,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["foods", id] -> food_detail_page(id, ctx)
     ["log"] -> log_meal_page(ctx)
     ["log", recipe_id] -> log_meal_form(recipe_id, ctx)
+    ["weekly-plan"] -> weekly_plan_page(ctx)
 
     // 404
     _ -> not_found_page()
@@ -158,6 +159,24 @@ fn home_page() -> wisp.Response {
   ]
 
   wisp.html_response(render_page("Meal Planner", content), 200)
+}
+
+fn weekly_plan_page(_ctx: Context) -> wisp.Response {
+  // Placeholder content - will be enhanced in future tasks
+  let content = [
+    html.div([attribute.class("page-header")], [
+      html.h1([], [element.text("Weekly Plan")]),
+      html.p([attribute.class("subtitle")], [
+        element.text("Plan your meals for the week"),
+      ]),
+    ]),
+    // Weekly calendar component will be integrated here
+    html.div([attribute.class("weekly-calendar-container")], [
+      element.text("Weekly calendar component coming soon..."),
+    ]),
+  ]
+
+  wisp.html_response(render_page("Weekly Plan - Meal Planner", content), 200)
 }
 
 fn not_found_page() -> wisp.Response {

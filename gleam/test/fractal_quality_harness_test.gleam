@@ -232,10 +232,10 @@ pub fn generate_checklist_item_structure_test() {
   case checklist {
     [first, ..] -> {
       // Should have name field (non-empty string)
-      string.length(first.name) > 0 |> should.be_true
+      { string.length(first.name) > 0 } |> should.be_true
 
       // Should have description field (non-empty string)
-      string.length(first.description) > 0 |> should.be_true
+      { string.length(first.description) > 0 } |> should.be_true
 
       // Should have passed field (boolean)
       { first.passed == True || first.passed == False } |> should.be_true
