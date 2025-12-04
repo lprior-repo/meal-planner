@@ -1,3 +1,4 @@
+import gleam/list
 import gleeunit
 import gleeunit/should
 import scripts/fractal_code_review
@@ -139,4 +140,103 @@ pub fn check_coverage_non_existent_file_test() {
 
   fractal_code_review.check_coverage(file)
   |> should.equal(0.0)
+}
+
+// Test: detect_long_functions should find functions over 50 lines
+pub fn detect_long_functions_finds_long_function_test() {
+  let code = "
+pub fn short_function() -> Int {
+  1 + 1
+}
+
+pub fn long_function() -> Int {
+  let x = 1
+  let y = 2
+  let z = 3
+  let a = 4
+  let b = 5
+  let c = 6
+  let d = 7
+  let e = 8
+  let f = 9
+  let g = 10
+  let h = 11
+  let i = 12
+  let j = 13
+  let k = 14
+  let l = 15
+  let m = 16
+  let n = 17
+  let o = 18
+  let p = 19
+  let q = 20
+  let r = 21
+  let s = 22
+  let t = 23
+  let u = 24
+  let v = 25
+  let w = 26
+  let x2 = 27
+  let y2 = 28
+  let z2 = 29
+  let a2 = 30
+  let b2 = 31
+  let c2 = 32
+  let d2 = 33
+  let e2 = 34
+  let f2 = 35
+  let g2 = 36
+  let h2 = 37
+  let i2 = 38
+  let j2 = 39
+  let k2 = 40
+  let l2 = 41
+  let m2 = 42
+  let n2 = 43
+  let o2 = 44
+  let p2 = 45
+  x + y + z
+}
+"
+
+  let long_funcs = fractal_code_review.detect_long_functions(code)
+
+  list.length(long_funcs)
+  |> should.equal(1)
+
+  case list.first(long_funcs) {
+    Ok(func) -> {
+      func.name
+      |> should.equal("long_function")
+
+      // Should have more than 50 lines
+      func.line_count
+      |> should.be_true(fn(count) { count > 50 })
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+// Test: detect_long_functions should ignore short functions
+pub fn detect_long_functions_ignores_short_functions_test() {
+  let code = "
+pub fn func1() -> Int { 1 }
+pub fn func2() -> String { \"hello\" }
+pub fn func3() -> Bool { True }
+"
+
+  let long_funcs = fractal_code_review.detect_long_functions(code)
+
+  list.length(long_funcs)
+  |> should.equal(0)
+}
+
+// Test: detect_long_functions should handle empty code
+pub fn detect_long_functions_empty_code_test() {
+  let code = ""
+
+  let long_funcs = fractal_code_review.detect_long_functions(code)
+
+  list.length(long_funcs)
+  |> should.equal(0)
 }

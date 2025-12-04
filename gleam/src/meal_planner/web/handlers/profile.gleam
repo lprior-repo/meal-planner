@@ -1,6 +1,7 @@
 //// Profile handlers for API endpoints
 
 import gleam/json
+import meal_planner/storage
 import meal_planner/types.{type UserProfile, Macros}
 import pog
 import wisp
@@ -25,10 +26,7 @@ pub fn api_profile(_req: wisp.Request, ctx: Context) -> wisp.Response {
 
 /// Load user profile
 fn load_profile(ctx: Context) -> Profile {
-  case storage.get_profile(ctx.db) {
-    Ok(profile) -> profile
-    Error(_) -> storage.get_user_profile_or_default(ctx.db)
-  }
+  storage.get_user_profile_or_default(ctx.db)
 }
 
 /// Convert profile to JSON
@@ -38,15 +36,13 @@ fn profile_to_json(p: Profile) -> json.Json {
     #("bodyweight", json.float(p.bodyweight)),
     #("activity_level", json.string(case p.activity_level {
       types.Sedentary -> "sedentary"
-      types.Light -> "light"
       types.Moderate -> "moderate"
       types.Active -> "active"
-      types.VeryActive -> "very_active"
     })),
     #("goal", json.string(case p.goal {
-      types.Cut -> "cut"
+      types.Lose -> "lose"
       types.Maintain -> "maintain"
-      types.Bulk -> "bulk"
+      types.Gain -> "gain"
     })),
     #("meals_per_day", json.int(p.meals_per_day)),
   ])

@@ -1,7 +1,7 @@
 //// Tests for profile handlers
 
 import gleeunit/should
-import meal_planner/types.{Macros, Preferences, Profile}
+import meal_planner/types.{Macros, UserProfile}
 
 pub fn profile_creation_test() {
   let profile = UserProfile(

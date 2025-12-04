@@ -49,10 +49,7 @@ pub fn parse_missing_required_fields_test() {
   ]
 
   case recipe.parse_recipe_from_form(form_values) {
-    Error(errors) -> {
-      list.length(errors) > 0
-      |> should.be_true()
-    }
+    Error(errors) -> should.be_true(errors != [])
     Ok(_) -> should.fail()
   }
 }

@@ -202,12 +202,14 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+  box-shadow: var(--shadow-deep);
+  transition: transform var(--duration-200) var(--ease-out),
+              box-shadow var(--duration-200) var(--ease-out);
 }
 
 .card:hover {
-  box-shadow: var(--shadow-md);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-2xl);
 }
 
 .card-header {
@@ -235,13 +237,26 @@
 }
 
 /* Card Variants */
-.card-stat {
+.card-stat,
+.stat-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: var(--space-6);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-deep);
+  transition: transform var(--duration-200) var(--ease-out),
+              box-shadow var(--duration-200) var(--ease-out);
+}
+
+.card-stat:hover,
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-2xl);
 }
 
 .card-stat .stat-value {
@@ -284,12 +299,14 @@
   border-radius: var(--radius-lg);
   text-decoration: none;
   color: inherit;
-  transition: var(--transition);
+  box-shadow: var(--shadow-deep);
+  transition: transform var(--duration-200) var(--ease-out),
+              box-shadow var(--duration-200) var(--ease-out);
 }
 
 .recipe-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-2xl);
 }
 
 .recipe-title {
