@@ -304,127 +304,85 @@ fn insert_test_food_nutrient(
 
 /// Test: Migration 001 - schema_migrations table creation
 pub fn migration_001_creates_schema_migrations_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
+  with_empty_db(fn(db) {
+    let assert Ok(_) =
+      run_migration(db, "migrations_pg/001_schema_migrations.sql")
 
-  // Execute
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
-
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-
-  // Verify
-  table_exists(db, "schema_migrations")
-  |> should.be_true
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    table_exists(db, "schema_migrations")
+    |> should.be_true
+  })
 }
 
 /// Test: Migration 002 - USDA tables creation
 pub fn migration_002_creates_usda_tables_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_empty_db(fn(db) {
+    let assert Ok(_) =
+      run_migration(db, "migrations_pg/001_schema_migrations.sql")
+    let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
+    table_exists(db, "nutrients")
+    |> should.be_true
 
-  // Execute
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    table_exists(db, "foods")
+    |> should.be_true
 
-  // Verify all tables exist
-  table_exists(db, "nutrients")
-  |> should.be_true
+    table_exists(db, "food_nutrients")
+    |> should.be_true
 
-  table_exists(db, "foods")
-  |> should.be_true
-
-  table_exists(db, "food_nutrients")
-  |> should.be_true
-
-  table_exists(db, "food_nutrients_staging")
-  |> should.be_true
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    table_exists(db, "food_nutrients_staging")
+    |> should.be_true
+  })
 }
 
 /// Test: Migration 003 - App tables creation
 pub fn migration_003_creates_app_tables_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_empty_db(fn(db) {
+    let assert Ok(_) =
+      run_migration(db, "migrations_pg/001_schema_migrations.sql")
+    let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    let assert Ok(_) = run_migration(db, "migrations_pg/003_app_tables.sql")
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    table_exists(db, "recipes")
+    |> should.be_true
 
-  // Execute
-  let assert Ok(_) = run_migration(db, "migrations_pg/003_app_tables.sql")
-
-  // Verify app tables exist
-  table_exists(db, "recipes")
-  |> should.be_true
-
-  table_exists(db, "food_logs")
-  |> should.be_true
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    table_exists(db, "food_logs")
+    |> should.be_true
+  })
 }
 
 /// Test: Migrations are idempotent (can run multiple times)
 pub fn migrations_are_idempotent_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_empty_db(fn(db) {
+    let assert Ok(_) =
+      run_migration(db, "migrations_pg/001_schema_migrations.sql")
+    let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
 
-  // First run
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    // Second run should succeed (CREATE IF NOT EXISTS)
+    let result1 = run_migration(db, "migrations_pg/001_schema_migrations.sql")
+    result1
+    |> should.be_ok
 
-  // Second run should succeed (CREATE IF NOT EXISTS)
-  let result1 = run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  result1
-  |> should.be_ok
+    let result2 = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    result2
+    |> should.be_ok
 
-  let result2 = run_migration(db, "migrations_pg/002_usda_tables.sql")
-  result2
-  |> should.be_ok
+    table_exists(db, "schema_migrations")
+    |> should.be_true
 
-  // Tables should still exist
-  table_exists(db, "schema_migrations")
-  |> should.be_true
-
-  table_exists(db, "nutrients")
-  |> should.be_true
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    table_exists(db, "nutrients")
+    |> should.be_true
+  })
 }
 
 /// Test: Migration ordering matters
 pub fn migration_order_matters_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_empty_db(fn(db) {
+    // Running 003 before 002 should fail (missing dependencies)
+    let result = run_migration(db, "migrations_pg/003_app_tables.sql")
 
-  // Running 003 before 002 should fail (missing dependencies)
-  let result = run_migration(db, "migrations_pg/003_app_tables.sql")
-
-  // Should fail because foods table doesn't exist yet
-  result
-  |> should.be_error
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    result
+    |> should.be_error
+  })
 }
 
 // =============================================================================
@@ -433,106 +391,61 @@ pub fn migration_order_matters_test() {
 
 /// Test: Nutrients table has correct schema
 pub fn nutrients_table_schema_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let result = insert_test_nutrient(db, 1, "Protein", "g")
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    result
+    |> should.be_ok
 
-  // Insert test data to verify schema
-  let result = insert_test_nutrient(db, 1, "Protein", "g")
-
-  result
-  |> should.be_ok
-
-  // Verify it was inserted
-  get_row_count(db, "nutrients")
-  |> should.equal(1)
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    get_row_count(db, "nutrients")
+    |> should.equal(1)
+  })
 }
 
 /// Test: Foods table has correct schema and indexes
 pub fn foods_table_schema_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let result = insert_test_food(db, 100_001, "Test Food")
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    result
+    |> should.be_ok
 
-  // Insert test data
-  let result = insert_test_food(db, 100_001, "Test Food")
-
-  result
-  |> should.be_ok
-
-  // Verify it was inserted
-  get_row_count(db, "foods")
-  |> should.equal(1)
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    get_row_count(db, "foods")
+    |> should.equal(1)
+  })
 }
 
 /// Test: Food nutrients table enforces foreign key constraints
 pub fn food_nutrients_foreign_key_constraints_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let assert Ok(_) = insert_test_nutrient(db, 1, "Protein", "g")
+    let assert Ok(_) = insert_test_food(db, 100_001, "Test Food")
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    // Valid insert should succeed
+    let result1 = insert_test_food_nutrient(db, 1, 100_001, 1, 10.5)
+    result1
+    |> should.be_ok
 
-  // Insert required data
-  let assert Ok(_) = insert_test_nutrient(db, 1, "Protein", "g")
-  let assert Ok(_) = insert_test_food(db, 100_001, "Test Food")
-
-  // Valid insert should succeed
-  let result1 = insert_test_food_nutrient(db, 1, 100_001, 1, 10.5)
-  result1
-  |> should.be_ok
-
-  // Invalid foreign key should fail
-  let result2 = insert_test_food_nutrient(db, 2, 999_999, 1, 5.0)
-  result2
-  |> should.be_error
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    // Invalid foreign key should fail
+    let result2 = insert_test_food_nutrient(db, 2, 999_999, 1, 5.0)
+    result2
+    |> should.be_error
+  })
 }
 
 /// Test: Primary key constraints prevent duplicates
 pub fn primary_key_prevents_duplicates_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    // First insert should succeed
+    let result1 = insert_test_nutrient(db, 1, "Protein", "g")
+    result1
+    |> should.be_ok
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
-
-  // First insert should succeed
-  let result1 = insert_test_nutrient(db, 1, "Protein", "g")
-  result1
-  |> should.be_ok
-
-  // Duplicate primary key should fail
-  let result2 = insert_test_nutrient(db, 1, "Fat", "g")
-  result2
-  |> should.be_error
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    // Duplicate primary key should fail
+    let result2 = insert_test_nutrient(db, 1, "Fat", "g")
+    result2
+    |> should.be_error
+  })
 }
 
 // =============================================================================
@@ -541,83 +454,62 @@ pub fn primary_key_prevents_duplicates_test() {
 
 /// Test: Full-text search index exists on foods.description
 pub fn foods_fts_index_exists_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let query =
+      pog.query(
+        "SELECT COUNT(*) FROM pg_indexes
+         WHERE tablename = 'foods'
+         AND indexname = 'idx_foods_description_gin'",
+      )
+      |> pog.returning(decode.at([0], decode.int))
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
-
-  // Check index exists
-  let query =
-    pog.query(
-      "SELECT COUNT(*) FROM pg_indexes
-       WHERE tablename = 'foods'
-       AND indexname = 'idx_foods_description_gin'",
-    )
-    |> pog.returning(decode.at([0], decode.int))
-
-  case pog.execute(query, db) {
-    Ok(pog.Returned(_, [count])) -> {
-      count
-      |> should.equal(1)
+    case pog.execute(query, db) {
+      Ok(pog.Returned(_, [count])) -> {
+        count
+        |> should.equal(1)
+      }
+      _ -> should.fail()
     }
-    _ -> should.fail()
-  }
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+  })
 }
 
 /// Test: B-tree indexes exist on foods table
 pub fn foods_btree_indexes_exist_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    // Check data_type index
+    let query1 =
+      pog.query(
+        "SELECT COUNT(*) FROM pg_indexes
+         WHERE tablename = 'foods'
+         AND indexname = 'idx_foods_data_type'",
+      )
+      |> pog.returning(decode.at([0], decode.int))
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
-
-  // Check data_type index
-  let query1 =
-    pog.query(
-      "SELECT COUNT(*) FROM pg_indexes
-       WHERE tablename = 'foods'
-       AND indexname = 'idx_foods_data_type'",
-    )
-    |> pog.returning(decode.at([0], decode.int))
-
-  case pog.execute(query1, db) {
-    Ok(pog.Returned(_, [count])) -> {
-      count
-      |> should.equal(1)
+    case pog.execute(query1, db) {
+      Ok(pog.Returned(_, [count])) -> {
+        count
+        |> should.equal(1)
+      }
+      _ -> should.fail()
     }
-    _ -> should.fail()
-  }
 
-  // Check category index
-  let query2 =
-    pog.query(
-      "SELECT COUNT(*) FROM pg_indexes
-       WHERE tablename = 'foods'
-       AND indexname = 'idx_foods_category'",
-    )
-    |> pog.returning(decode.at([0], decode.int))
+    // Check category index
+    let query2 =
+      pog.query(
+        "SELECT COUNT(*) FROM pg_indexes
+         WHERE tablename = 'foods'
+         AND indexname = 'idx_foods_category'",
+      )
+      |> pog.returning(decode.at([0], decode.int))
 
-  case pog.execute(query2, db) {
-    Ok(pog.Returned(_, [count])) -> {
-      count
-      |> should.equal(1)
+    case pog.execute(query2, db) {
+      Ok(pog.Returned(_, [count])) -> {
+        count
+        |> should.equal(1)
+      }
+      _ -> should.fail()
     }
-    _ -> should.fail()
-  }
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+  })
 }
 
 // =============================================================================
@@ -626,125 +518,83 @@ pub fn foods_btree_indexes_exist_test() {
 
 /// Test: Can insert multiple nutrients in batch
 pub fn batch_nutrient_insert_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let assert Ok(_) = insert_test_nutrient(db, 1, "Protein", "g")
+    let assert Ok(_) = insert_test_nutrient(db, 2, "Fat", "g")
+    let assert Ok(_) = insert_test_nutrient(db, 3, "Carbohydrates", "g")
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
-
-  // Insert batch of nutrients
-  let assert Ok(_) = insert_test_nutrient(db, 1, "Protein", "g")
-  let assert Ok(_) = insert_test_nutrient(db, 2, "Fat", "g")
-  let assert Ok(_) = insert_test_nutrient(db, 3, "Carbohydrates", "g")
-
-  // Verify count
-  get_row_count(db, "nutrients")
-  |> should.equal(3)
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    get_row_count(db, "nutrients")
+    |> should.equal(3)
+  })
 }
 
 /// Test: Can insert foods and nutrients with relationships
 pub fn related_data_insert_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let assert Ok(_) = insert_test_nutrient(db, 1, "Protein", "g")
+    let assert Ok(_) = insert_test_nutrient(db, 2, "Fat", "g")
+    let assert Ok(_) = insert_test_food(db, 100_001, "Chicken Breast")
+    let assert Ok(_) = insert_test_food_nutrient(db, 1, 100_001, 1, 31.0)
+    let assert Ok(_) = insert_test_food_nutrient(db, 2, 100_001, 2, 3.6)
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    get_row_count(db, "nutrients")
+    |> should.equal(2)
 
-  // Insert nutrients
-  let assert Ok(_) = insert_test_nutrient(db, 1, "Protein", "g")
-  let assert Ok(_) = insert_test_nutrient(db, 2, "Fat", "g")
+    get_row_count(db, "foods")
+    |> should.equal(1)
 
-  // Insert food
-  let assert Ok(_) = insert_test_food(db, 100_001, "Chicken Breast")
-
-  // Insert food nutrients
-  let assert Ok(_) = insert_test_food_nutrient(db, 1, 100_001, 1, 31.0)
-  let assert Ok(_) = insert_test_food_nutrient(db, 2, 100_001, 2, 3.6)
-
-  // Verify counts
-  get_row_count(db, "nutrients")
-  |> should.equal(2)
-
-  get_row_count(db, "foods")
-  |> should.equal(1)
-
-  get_row_count(db, "food_nutrients")
-  |> should.equal(2)
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    get_row_count(db, "food_nutrients")
+    |> should.equal(2)
+  })
 }
 
 /// Test: ON CONFLICT DO NOTHING works for idempotent inserts
 pub fn on_conflict_do_nothing_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let query1 =
+      pog.query(
+        "INSERT INTO nutrients (id, name, unit_name, nutrient_nbr, rank)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (id) DO NOTHING",
+      )
+      |> pog.parameter(pog.int(1))
+      |> pog.parameter(pog.text("Protein"))
+      |> pog.parameter(pog.text("g"))
+      |> pog.parameter(pog.text("TEST"))
+      |> pog.parameter(pog.int(100))
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    let assert Ok(_) = pog.execute(query1, db)
 
-  // First insert
-  let query1 =
-    pog.query(
-      "INSERT INTO nutrients (id, name, unit_name, nutrient_nbr, rank)
-       VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (id) DO NOTHING",
-    )
-    |> pog.parameter(pog.int(1))
-    |> pog.parameter(pog.text("Protein"))
-    |> pog.parameter(pog.text("g"))
-    |> pog.parameter(pog.text("TEST"))
-    |> pog.parameter(pog.int(100))
+    let query2 =
+      pog.query(
+        "INSERT INTO nutrients (id, name, unit_name, nutrient_nbr, rank)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (id) DO NOTHING",
+      )
+      |> pog.parameter(pog.int(1))
+      |> pog.parameter(pog.text("Different Name"))
+      |> pog.parameter(pog.text("mg"))
+      |> pog.parameter(pog.text("TEST2"))
+      |> pog.parameter(pog.int(200))
 
-  let assert Ok(_) = pog.execute(query1, db)
+    let assert Ok(_) = pog.execute(query2, db)
 
-  // Second insert with same ID (should be ignored)
-  let query2 =
-    pog.query(
-      "INSERT INTO nutrients (id, name, unit_name, nutrient_nbr, rank)
-       VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (id) DO NOTHING",
-    )
-    |> pog.parameter(pog.int(1))
-    |> pog.parameter(pog.text("Different Name"))
-    |> pog.parameter(pog.text("mg"))
-    |> pog.parameter(pog.text("TEST2"))
-    |> pog.parameter(pog.int(200))
+    get_row_count(db, "nutrients")
+    |> should.equal(1)
 
-  let assert Ok(_) = pog.execute(query2, db)
+    let query3 =
+      pog.query("SELECT name FROM nutrients WHERE id = $1")
+      |> pog.parameter(pog.int(1))
+      |> pog.returning(decode.at([0], decode.string))
 
-  // Should still only have 1 row
-  get_row_count(db, "nutrients")
-  |> should.equal(1)
-
-  // Verify original data wasn't changed
-  let query3 =
-    pog.query("SELECT name FROM nutrients WHERE id = $1")
-    |> pog.parameter(pog.int(1))
-    |> pog.returning(decode.at([0], decode.string))
-
-  case pog.execute(query3, db) {
-    Ok(pog.Returned(_, [name])) -> {
-      name
-      |> should.equal("Protein")
+    case pog.execute(query3, db) {
+      Ok(pog.Returned(_, [name])) -> {
+        name
+        |> should.equal("Protein")
+      }
+      _ -> should.fail()
     }
-    _ -> should.fail()
-  }
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+  })
 }
 
 // =============================================================================
@@ -771,55 +621,33 @@ pub fn connection_to_nonexistent_db_fails_test() {
 
 /// Test: Invalid SQL causes rollback
 pub fn invalid_sql_causes_error_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let query = pog.query("SELECT * FROM nonexistent_table")
+    let result = pog.execute(query, db)
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
-
-  // Execute invalid SQL
-  let query = pog.query("SELECT * FROM nonexistent_table")
-  let result = pog.execute(query, db)
-
-  result
-  |> should.be_error
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    result
+    |> should.be_error
+  })
 }
 
 /// Test: Constraint violations are caught
 pub fn constraint_violation_caught_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let query =
+      pog.query(
+        "INSERT INTO food_nutrients (id, fdc_id, nutrient_id, amount)
+         VALUES ($1, $2, $3, $4)",
+      )
+      |> pog.parameter(pog.int(1))
+      |> pog.parameter(pog.int(999_999))
+      |> pog.parameter(pog.int(999_999))
+      |> pog.parameter(pog.float(10.0))
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    let result = pog.execute(query, db)
 
-  // Try to insert food_nutrient without required foreign keys
-  let query =
-    pog.query(
-      "INSERT INTO food_nutrients (id, fdc_id, nutrient_id, amount)
-       VALUES ($1, $2, $3, $4)",
-    )
-    |> pog.parameter(pog.int(1))
-    |> pog.parameter(pog.int(999_999))
-    |> pog.parameter(pog.int(999_999))
-    |> pog.parameter(pog.float(10.0))
-
-  let result = pog.execute(query, db)
-
-  result
-  |> should.be_error
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    result
+    |> should.be_error
+  })
 }
 
 // =============================================================================
@@ -828,16 +656,15 @@ pub fn constraint_violation_caught_test() {
 
 /// Test: Can handle multiple concurrent connections
 pub fn concurrent_connections_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
+  let db_name = unique_test_db_name()
+  let assert Ok(_) = create_test_database(db_name)
 
-  // Create config with multiple connections
   let pool_name = process.new_name(prefix: "concurrent_pool")
   let config =
     pog.default_config(pool_name)
     |> pog.host("localhost")
     |> pog.port(5432)
-    |> pog.database(test_db_name)
+    |> pog.database(db_name)
     |> pog.user("postgres")
     |> pog.password(Some("postgres"))
     |> pog.pool_size(10)
@@ -847,35 +674,22 @@ pub fn concurrent_connections_test() {
   result
   |> should.be_ok
 
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+  let assert Ok(_) = drop_test_database(db_name)
 }
 
 /// Test: Large batch insert performance
 pub fn large_batch_insert_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let ids = list.range(1, 100)
+    list.each(ids, fn(id) {
+      let assert Ok(_) =
+        insert_test_nutrient(db, id, "Nutrient " <> int.to_string(id), "g")
+      Nil
+    })
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
-
-  // Insert 100 nutrients
-  let ids = list.range(1, 100)
-  list.each(ids, fn(id) {
-    let assert Ok(_) =
-      insert_test_nutrient(db, id, "Nutrient " <> int.to_string(id), "g")
-    Nil
+    get_row_count(db, "nutrients")
+    |> should.equal(100)
   })
-
-  // Verify all inserted
-  get_row_count(db, "nutrients")
-  |> should.equal(100)
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
 }
 
 // =============================================================================
@@ -884,66 +698,39 @@ pub fn large_batch_insert_test() {
 
 /// Test: CASCADE delete removes related food_nutrients
 pub fn cascade_delete_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let assert Ok(_) = insert_test_nutrient(db, 1, "Protein", "g")
+    let assert Ok(_) = insert_test_food(db, 100_001, "Test Food")
+    let assert Ok(_) = insert_test_food_nutrient(db, 1, 100_001, 1, 10.0)
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    get_row_count(db, "food_nutrients")
+    |> should.equal(1)
 
-  // Insert test data
-  let assert Ok(_) = insert_test_nutrient(db, 1, "Protein", "g")
-  let assert Ok(_) = insert_test_food(db, 100_001, "Test Food")
-  let assert Ok(_) = insert_test_food_nutrient(db, 1, 100_001, 1, 10.0)
+    let delete_query =
+      pog.query("DELETE FROM foods WHERE fdc_id = $1")
+      |> pog.parameter(pog.int(100_001))
 
-  // Verify food_nutrient exists
-  get_row_count(db, "food_nutrients")
-  |> should.equal(1)
+    let assert Ok(_) = pog.execute(delete_query, db)
 
-  // Delete the food
-  let delete_query =
-    pog.query("DELETE FROM foods WHERE fdc_id = $1")
-    |> pog.parameter(pog.int(100_001))
-
-  let assert Ok(_) = pog.execute(delete_query, db)
-
-  // Verify CASCADE deleted the food_nutrient
-  get_row_count(db, "food_nutrients")
-  |> should.equal(0)
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    get_row_count(db, "food_nutrients")
+    |> should.equal(0)
+  })
 }
 
 /// Test: Nutrient deletion cascades to food_nutrients
 pub fn nutrient_cascade_delete_test() {
-  // Setup
-  let assert Ok(_) = create_test_database()
-  let assert Ok(started) = pog.start(test_db_config())
-  let db = started.data
+  with_test_db(fn(db) {
+    let assert Ok(_) = insert_test_nutrient(db, 1, "Protein", "g")
+    let assert Ok(_) = insert_test_food(db, 100_001, "Test Food")
+    let assert Ok(_) = insert_test_food_nutrient(db, 1, 100_001, 1, 10.0)
 
-  let assert Ok(_) =
-    run_migration(db, "migrations_pg/001_schema_migrations.sql")
-  let assert Ok(_) = run_migration(db, "migrations_pg/002_usda_tables.sql")
+    let delete_query =
+      pog.query("DELETE FROM nutrients WHERE id = $1")
+      |> pog.parameter(pog.int(1))
 
-  // Insert test data
-  let assert Ok(_) = insert_test_nutrient(db, 1, "Protein", "g")
-  let assert Ok(_) = insert_test_food(db, 100_001, "Test Food")
-  let assert Ok(_) = insert_test_food_nutrient(db, 1, 100_001, 1, 10.0)
+    let assert Ok(_) = pog.execute(delete_query, db)
 
-  // Delete the nutrient
-  let delete_query =
-    pog.query("DELETE FROM nutrients WHERE id = $1")
-    |> pog.parameter(pog.int(1))
-
-  let assert Ok(_) = pog.execute(delete_query, db)
-
-  // Verify CASCADE deleted the food_nutrient
-  get_row_count(db, "food_nutrients")
-  |> should.equal(0)
-
-  // Cleanup
-  let assert Ok(_) = drop_test_database()
+    get_row_count(db, "food_nutrients")
+    |> should.equal(0)
+  })
 }
