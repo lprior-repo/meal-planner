@@ -156,7 +156,7 @@ pub fn compare_performance(
   before: BenchmarkResult,
   after: BenchmarkResult,
 ) -> Float {
-  case after.avg_time_ms > 0.0 {
+  case after.avg_time_ms >. 0.0 {
     True -> before.avg_time_ms /. after.avg_time_ms
     False -> 1.0
   }
@@ -257,7 +257,7 @@ pub fn verify_phase2_target(
       cache_stats.hits + cache_stats.misses,
     )
 
-  case db_reduction >= 50.0 {
+  case db_reduction >=. 50.0 {
     True -> {
       io.println(
         "✓ Phase 2 target achieved: "
@@ -298,17 +298,13 @@ pub fn generate_phase2_report(
       "║ PERFORMANCE IMPROVEMENTS:                                  ║\n",
       "║                                                            ║\n",
       "║ Query Speedup:        ",
-      string.pad_left(float.to_string(speedup), 10, " "),
+      float.to_string(speedup),
       "x                   ║\n",
       "║ DB Load Reduction:    ",
-      string.pad_left(float.to_string(db_reduction), 10, " "),
+      float.to_string(db_reduction),
       "%                  ║\n",
       "║ Cache Hit Rate:       ",
-      string.pad_left(
-        float.to_string(cache_stats.hit_rate *. 100.0),
-        10,
-        " ",
-      ),
+      float.to_string(cache_stats.hit_rate *. 100.0),
       "%                  ║\n",
       "║                                                            ║\n",
       "║ OPTIMIZATIONS APPLIED:                                     ║\n",
@@ -320,7 +316,7 @@ pub fn generate_phase2_report(
       "║                                                            ║\n",
       "║ TARGET STATUS:                                             ║\n",
       "║ ",
-      case db_reduction >= 50.0 {
+      case db_reduction >=. 50.0 {
         True -> "✓ ACHIEVED: 50% DB load reduction target          "
         False -> "✗ NOT MET: Below 50% target                       "
       },
