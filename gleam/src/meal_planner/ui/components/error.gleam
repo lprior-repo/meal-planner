@@ -10,9 +10,221 @@
 /// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: docs/component_signatures.md (section: Error States)
+import gleam/list
+import gleam/option.{type Option, None, Some}
 import lustre/attribute
 import lustre/element
 import lustre/element/html
+import meal_planner/ui/error_messages.{type ErrorMessage, type Severity}
+
+// ===================================================================
+// ENHANCED ERROR MESSAGES WITH SUGGESTIONS
+// ===================================================================
+
+/// Rich error display with title, message, suggestions, and actions
+///
+/// Usage:
+/// ```gleam
+/// let error_msg = error_messages.from_storage_error(storage_error)
+/// rich_error_display(error_msg, show_technical: False)
+/// ```
+pub fn rich_error_display(
+  error: ErrorMessage,
+  show_technical show_technical: Bool,
+) -> element.Element(msg) {
+  let class_name =
+    "alert " <> error_messages.severity_class(error.severity) <> " rich-error"
+  let icon_text = error_messages.severity_icon(error.severity)
+
+  let suggestions_html = case error.suggestions {
+    [] -> []
+    suggestions -> [
+      html.div([attribute.class("error-suggestions")], [
+        html.p([attribute.class("suggestions-title")], [
+          element.text("What can you do:"),
+        ]),
+        html.ul(
+          [attribute.class("suggestions-list")],
+          list.map(suggestions, fn(suggestion) {
+            html.li([], [element.text(suggestion)])
+          }),
+        ),
+      ]),
+    ]
+  }
+
+  let retry_button = case error.retry_available, error.retry_url {
+    True, Some(url) -> [
+      html.a([attribute.href(url), attribute.class("btn btn-sm btn-primary")], [
+        element.text("Try Again"),
+      ]),
+    ]
+    True, None -> [
+      html.button([attribute.class("btn btn-sm btn-primary")], [
+        element.text("Retry"),
+      ]),
+    ]
+    False, _ -> []
+  }
+
+  let technical_details = case show_technical, error.technical_details {
+    True, Some(details) -> [
+      html.details([attribute.class("technical-details")], [
+        html.summary([], [element.text("Technical Details")]),
+        html.pre([attribute.class("technical-details-content")], [
+          element.text(details),
+        ]),
+      ]),
+    ]
+    _, _ -> []
+  }
+
+  html.div([attribute.class(class_name)], [
+    html.div([attribute.class("alert-header")], [
+      html.span([attribute.class("alert-icon-large")], [element.text(icon_text)]),
+      html.h3([attribute.class("alert-title")], [element.text(error.title)]),
+    ]),
+    html.div([attribute.class("alert-body")], [
+      html.p([attribute.class("alert-message")], [element.text(error.message)]),
+      ..list.flatten([suggestions_html, technical_details])
+    ]),
+    html.div([attribute.class("alert-actions")], retry_button),
+  ])
+}
+
+/// Compact error display for inline/form errors
+///
+/// Usage:
+/// ```gleam
+/// let error_msg = error_messages.invalid_input_error("Name is required")
+/// compact_error_display(error_msg)
+/// ```
+pub fn compact_error_display(error: ErrorMessage) -> element.Element(msg) {
+  let class_name =
+    "alert " <> error_messages.severity_class(error.severity) <> " compact-error"
+  let icon_text = error_messages.severity_icon(error.severity)
+
+  html.div([attribute.class(class_name)], [
+    html.span([attribute.class("alert-icon")], [element.text(icon_text)]),
+    html.span([attribute.class("alert-message")], [
+      element.text(error.title <> ": " <> error.message),
+    ]),
+  ])
+}
+
+/// Toast notification for transient errors
+///
+/// Usage:
+/// ```gleam
+/// let error_msg = error_messages.network_timeout()
+/// error_toast(error_msg, duration: 5000)
+/// ```
+pub fn error_toast(
+  error: ErrorMessage,
+  duration duration_ms: Int,
+) -> element.Element(msg) {
+  let class_name =
+    "toast " <> error_messages.severity_class(error.severity)
+  let icon_text = error_messages.severity_icon(error.severity)
+
+  html.div(
+    [
+      attribute.class(class_name),
+      attribute.attribute("data-duration", int_to_string(duration_ms)),
+      attribute.attribute("role", "alert"),
+    ],
+    [
+      html.span([attribute.class("toast-icon")], [element.text(icon_text)]),
+      html.div([attribute.class("toast-content")], [
+        html.strong([attribute.class("toast-title")], [element.text(error.title)]),
+        html.p([attribute.class("toast-message")], [element.text(error.message)]),
+      ]),
+      html.button(
+        [attribute.class("toast-close"), attribute.attribute("aria-label", "Close")],
+        [element.text("×")],
+      ),
+    ],
+  )
+}
+
+/// Modal dialog for critical errors
+///
+/// Usage:
+/// ```gleam
+/// let error_msg = error_messages.server_error()
+/// error_modal(error_msg, is_open: True)
+/// ```
+pub fn error_modal(
+  error: ErrorMessage,
+  is_open is_open: Bool,
+) -> element.Element(msg) {
+  let modal_class = case is_open {
+    True -> "modal modal-open"
+    False -> "modal"
+  }
+
+  let icon_text = error_messages.severity_icon(error.severity)
+  let severity_color = error_messages.severity_color(error.severity)
+
+  html.div([attribute.class(modal_class)], [
+    html.div([attribute.class("modal-overlay")], []),
+    html.div([attribute.class("modal-content error-modal")], [
+      html.div(
+        [
+          attribute.class("modal-header"),
+          attribute.style("border-color", severity_color),
+        ],
+        [
+          html.div([attribute.class("modal-icon")], [
+            html.span(
+              [
+                attribute.class("icon-circle"),
+                attribute.style("background-color", severity_color),
+              ],
+              [element.text(icon_text)],
+            ),
+          ]),
+          html.h2([attribute.class("modal-title")], [element.text(error.title)]),
+        ],
+      ),
+      html.div([attribute.class("modal-body")], [
+        html.p([attribute.class("modal-message")], [element.text(error.message)]),
+        case error.suggestions {
+          [] -> element.none()
+          suggestions ->
+            html.div([attribute.class("modal-suggestions")], [
+              html.p([attribute.class("suggestions-label")], [
+                element.text("Try these steps:"),
+              ]),
+              html.ul(
+                [],
+                list.map(suggestions, fn(s) { html.li([], [element.text(s)]) }),
+              ),
+            ])
+        },
+      ]),
+      html.div(
+        [attribute.class("modal-footer")],
+        case error.retry_available, error.retry_url {
+          True, Some(url) -> [
+            html.a(
+              [attribute.href(url), attribute.class("btn btn-primary")],
+              [element.text("Try Again")],
+            ),
+            html.button([attribute.class("btn btn-secondary")], [
+              element.text("Cancel"),
+            ]),
+          ]
+          _, _ -> [
+            html.button([attribute.class("btn btn-primary")], [
+              element.text("OK"),
+            ]),
+          ]
+        },
+      ),
+    ]),
+  ])
+}
 
 // ===================================================================
 // PUBLIC COMPONENT FUNCTIONS - ERROR ALERTS
@@ -409,8 +621,29 @@ pub type EmptyAction {
   EmptyAction(label: String, url: String)
 }
 
-/// Option type alias for convenience
-pub type Option(a) {
-  Some(a)
-  None
+/// Option type alias for convenience (re-exported from gleam/option)
+/// Note: Already imported from gleam/option
+
+// ===================================================================
+// HELPER FUNCTIONS
+// ===================================================================
+
+/// Convert integer to string (for attributes)
+fn int_to_string(n: Int) -> String {
+  case n {
+    0 -> "0"
+    1 -> "1"
+    2 -> "2"
+    3 -> "3"
+    4 -> "4"
+    5 -> "5"
+    6 -> "6"
+    7 -> "7"
+    8 -> "8"
+    9 -> "9"
+    _ -> int_to_string_generic(n)
+  }
 }
+
+@external(erlang, "erlang", "integer_to_binary")
+fn int_to_string_generic(n: Int) -> String
