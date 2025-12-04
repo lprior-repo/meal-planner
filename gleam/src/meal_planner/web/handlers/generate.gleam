@@ -50,10 +50,7 @@ pub fn api_generate(req: wisp.Request, ctx: Context) -> wisp.Response {
 }
 
 /// Internal handler for generate request
-fn handle_generate_request(
-  req: wisp.Request,
-  ctx: Context,
-) -> wisp.Response {
+fn handle_generate_request(req: wisp.Request, ctx: Context) -> wisp.Response {
   use json_body <- wisp.require_json(req)
 
   // Decode the request JSON
@@ -118,8 +115,7 @@ fn process_generate_request(
                     )
                   {
                     Error(gen_error) -> {
-                      let error_msg =
-                        generator_error_to_string(gen_error)
+                      let error_msg = generator_error_to_string(gen_error)
                       let error_response =
                         json.object([#("error", json.string(error_msg))])
                       wisp.json_response(json.to_string(error_response), 400)
@@ -185,9 +181,7 @@ fn render_daily_plan_meals(daily_plan: DailyPlan) -> wisp.Response {
 
   let meal_html =
     meals
-    |> list.map(fn(pair) {
-      meal_card.render_meal_card(pair.0, pair.1)
-    })
+    |> list.map(fn(pair) { meal_card.render_meal_card(pair.0, pair.1) })
     |> list.fold("", fn(acc, card) { acc <> card })
 
   wisp.response(200)

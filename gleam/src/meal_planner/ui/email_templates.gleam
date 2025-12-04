@@ -33,8 +33,9 @@ pub type WeeklySummary {
 
 /// Format a float to 1 decimal place
 fn format_float(value: Float) -> String {
-  let whole = float.truncate(value) |> int.to_string
-  let decimal_part = value -. float.truncate(value)
+  let whole_int = float.truncate(value)
+  let whole = whole_int |> int.to_string
+  let decimal_part = value -. int.to_float(whole_int)
   let decimal = float.truncate(decimal_part *. 10.0) |> int.to_string
   whole <> "." <> decimal
 }

@@ -1,10 +1,9 @@
 /// Tests for generator module
-import gleam/list
 import gleeunit
 import gleeunit/should
 import meal_planner/generator.{regenerate_slot}
-import meal_planner/meal_plan.{DailyPlan, Meal}
-import meal_planner/types.{Low, Macros, Recipe}
+import meal_planner/meal_plan.{type DailyPlan, type Meal, DailyPlan, Meal}
+import meal_planner/types.{type Recipe, Low, Macros, Recipe}
 
 pub fn main() {
   gleeunit.main()
