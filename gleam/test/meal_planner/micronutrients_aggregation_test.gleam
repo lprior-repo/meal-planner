@@ -11,7 +11,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/types.{
-  type FoodLogEntry, type Micronutrients, FoodLogEntry, Macros, MealType,
+  type FoodLogEntry, type Macros, type MealType, type Micronutrients, FoodLogEntry, Macros,
   Micronutrients, micronutrients_add, micronutrients_sum, micronutrients_zero,
 }
 
@@ -810,7 +810,7 @@ pub fn very_large_values_test() {
 
   // Should detect multiple excess warnings
   let warnings = detect_excess_warnings(micros, rda)
-  list.length(warnings) |> should.be_true(fn(n) { n >. 0 })
+  list.length(warnings) > 0 |> should.be_true()
 
   // Verify percentages are calculated correctly
   let sodium_pct = calculate_rda_percentage(10_000.0, rda.sodium_mg)
