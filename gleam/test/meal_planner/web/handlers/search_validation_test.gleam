@@ -1,6 +1,7 @@
 //// Tests for search handler validation functions
 
 import gleam/option.{None, Some}
+import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/types.{SearchFilters}
