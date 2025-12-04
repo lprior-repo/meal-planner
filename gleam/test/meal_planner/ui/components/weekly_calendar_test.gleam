@@ -17,6 +17,8 @@
 import gleam/string
 import gleeunit
 import gleeunit/should
+import meal_planner/meal_plan.{type Meal, Meal}
+import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
 import meal_planner/ui/components/weekly_calendar
 
 pub fn main() {
@@ -37,6 +39,26 @@ fn count_occurrences_loop(haystack: String, needle: String, count: Int) -> Int {
     Ok(#(_before, after)) -> count_occurrences_loop(after, needle, count + 1)
     Error(_) -> count
   }
+}
+
+/// Create a test recipe
+fn create_test_recipe(name: String) -> Recipe {
+  Recipe(
+    id: "test-" <> name,
+    name: name,
+    ingredients: [],
+    instructions: [],
+    macros: Macros(protein: 30.0, fat: 15.0, carbs: 40.0),
+    servings: 1,
+    category: "test",
+    fodmap_level: Low,
+    vertical_compliant: True,
+  )
+}
+
+/// Create a test meal from recipe
+fn create_test_meal(name: String) -> Meal {
+  Meal(recipe: create_test_recipe(name), portion_size: 1.0)
 }
 
 // ===================================================================
@@ -161,28 +183,68 @@ pub fn empty_slot_has_empty_state_class_test() {
 }
 
 // ===================================================================
-// FILLED SLOT TESTS (future)
+// FILLED SLOT TESTS
 // ===================================================================
 
 pub fn filled_slot_shows_recipe_name_test() {
-  let html = weekly_calendar.render()
-  count_occurrences(html, "meal-content") |> should.equal(21)
+  // Create a single meal for Monday breakfast
+  let breakfast_meal = create_test_meal("Scrambled Eggs")
+  let monday_meals = [breakfast_meal]
+  let meals_by_day = [monday_meals]
+
+  let html = weekly_calendar.render_with_meals(meals_by_day)
+  html |> string.contains("Scrambled Eggs") |> should.be_true
 }
 
 pub fn filled_slot_does_not_show_placeholder_test() {
-  True |> should.be_true
+  // Create meals for all Monday slots
+  let monday_meals = [
+    create_test_meal("Scrambled Eggs"),
+    create_test_meal("Chicken Salad"),
+    create_test_meal("Beef Steak"),
+  ]
+  let meals_by_day = [monday_meals]
+
+  let html = weekly_calendar.render_with_meals(meals_by_day)
+  // Count placeholders - should be 21 total slots minus 3 filled = 18
+  count_occurrences(html, "No meal planned") |> should.equal(18)
 }
 
 pub fn filled_slot_has_filled_state_class_test() {
-  True |> should.be_true
+  let monday_meals = [create_test_meal("Scrambled Eggs")]
+  let meals_by_day = [monday_meals]
+
+  let html = weekly_calendar.render_with_meals(meals_by_day)
+  html |> string.contains("meal-slot-filled") |> should.be_true
 }
 
 pub fn multiple_filled_slots_render_correctly_test() {
-  True |> should.be_true
+  // Fill all meals for Monday and Tuesday
+  let monday_meals = [
+    create_test_meal("Breakfast 1"),
+    create_test_meal("Lunch 1"),
+    create_test_meal("Dinner 1"),
+  ]
+  let tuesday_meals = [
+    create_test_meal("Breakfast 2"),
+    create_test_meal("Lunch 2"),
+    create_test_meal("Dinner 2"),
+  ]
+  let meals_by_day = [monday_meals, tuesday_meals]
+
+  let html = weekly_calendar.render_with_meals(meals_by_day)
+  html |> string.contains("Breakfast 1") |> should.be_true
+  html |> string.contains("Lunch 2") |> should.be_true
+  html |> string.contains("Dinner 1") |> should.be_true
+  count_occurrences(html, "meal-slot-filled") |> should.equal(6)
+  count_occurrences(html, "No meal planned") |> should.equal(15)
 }
 
 pub fn filled_slot_shows_meal_macros_test() {
-  True |> should.be_true
+  // This is a placeholder for future enhancement
+  // Currently we only show recipe name, not macros
+  let html = weekly_calendar.render()
+  count_occurrences(html, "meal-content") |> should.equal(21)
 }
 
 // ===================================================================
@@ -218,7 +280,9 @@ pub fn meal_slots_use_semantic_elements_test() {
 pub fn calendar_has_proper_accessibility_test() {
   let html = weekly_calendar.render()
   html |> string.contains("role=\"grid\"") |> should.be_true
-  html |> string.contains("aria-label=\"Weekly meal calendar\"") |> should.be_true
+  html
+  |> string.contains("aria-label=\"Weekly meal calendar\"")
+  |> should.be_true
 }
 
 pub fn day_headers_are_accessible_test() {
