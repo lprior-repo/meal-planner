@@ -11,11 +11,19 @@ PORT=8765
 
 # Check if server is already running
 if pgrep -f "mcp_agent_mail" > /dev/null 2>&1; then
-    echo "✓ Server is already running"
-    echo ""
-    echo "Web UI: http://127.0.0.1:$PORT/mail"
-    echo ""
-    exit 0
+    # Verify it's actually responding
+    if curl -s -f "http://127.0.0.1:$PORT/health/liveness" > /dev/null 2>&1; then
+        echo "✓ Server is already running and healthy"
+        echo ""
+        echo "Web UI: http://127.0.0.1:$PORT/mail"
+        echo "Logs: $MAILBOX_DIR/server.log"
+        echo ""
+        exit 0
+    else
+        echo "⚠ Server process found but not responding - will restart"
+        pkill -f "mcp_agent_mail" || true
+        sleep 1
+    fi
 fi
 
 # Install if needed
@@ -78,7 +86,7 @@ echo "Testing server readiness..."
 MAX_ATTEMPTS=20
 ATTEMPT=0
 while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-    if curl -s -f "http://127.0.0.1:$PORT/health" > /dev/null 2>&1; then
+    if curl -s -f "http://127.0.0.1:$PORT/health/liveness" > /dev/null 2>&1; then
         echo "✓ Server is ready and responding"
         echo ""
         echo "Web UI: http://127.0.0.1:$PORT/mail"
