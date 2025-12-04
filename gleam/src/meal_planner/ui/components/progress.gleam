@@ -44,7 +44,7 @@ pub fn progress_bar(
       attribute.attribute("aria-label", "Progress: " <> pct_str <> " percent"),
     ],
     [
-      html.div([attribute.style([#("width", width_style)])], []),
+      html.div([attribute.style("width", "width: " <> width_style)], []),
       html.span([attribute.class("progress-text")], [element.text(pct_str)]),
     ],
   )
@@ -95,7 +95,7 @@ pub fn macro_bar(
           label <> ": " <> current_str <> " of " <> target_str <> " grams",
         ),
       ],
-      [html.div([attribute.style([#("width", width_style)])], [])],
+      [html.div([attribute.style("width", "width: " <> width_style)], [])],
     ),
   ])
 }
@@ -170,7 +170,7 @@ pub fn progress_circle(percentage: Float, label: String) -> element.Element(msg)
       html.div(
         [
           attribute.class("circle-progress"),
-          attribute.style([#("--progress", pct_str <> "%")]),
+          attribute.style("--progress", "--progress: " <> pct_str <> "%"),
         ],
         [],
       ),
@@ -226,7 +226,7 @@ pub fn progress_with_label(
           label <> ": " <> current_str <> " of " <> target_str,
         ),
       ],
-      [html.div([attribute.style([#("width", width_style)])], [])],
+      [html.div([attribute.style("width", "width: " <> width_style)], [])],
     ),
   ])
 }

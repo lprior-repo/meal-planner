@@ -92,7 +92,7 @@ pub fn stat_card(stat: ui_types.StatCard) -> element.Element(msg) {
   html.div(
     [
       attribute.class("stat-card"),
-      attribute.style([#("--color", color)]),
+      attribute.attribute("style", "--color: " <> color),
     ],
     [
       html.div([attribute.class("stat-value")], [element.text(value)]),

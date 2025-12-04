@@ -13,7 +13,7 @@ import gleam/result
 import gleam/string
 import meal_planner/external/external_errors.{
   type FetchError, ApiKeyMissing, InvalidQuery, NetworkError, ParseError,
-  RecipeNotFound, RateLimitError,
+  RateLimitError, RecipeNotFound,
 }
 import meal_planner/types.{
   type Ingredient, type Macros, type Recipe, Ingredient, Low, Macros, Recipe,

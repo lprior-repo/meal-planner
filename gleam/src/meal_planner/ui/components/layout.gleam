@@ -168,7 +168,7 @@ pub fn container(
   html.div(
     [
       attribute.class("container mx-auto"),
-      attribute.style([#("max-width", max_width_px)]),
+      attribute("style", "max-width: " <> max_width_px),
     ],
     children,
   )

@@ -12,13 +12,15 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/uri
+import lustre/element
 import meal_planner/nutrition_constants
 import meal_planner/storage
 import meal_planner/storage_optimized
 import meal_planner/types.{
   type Macros, type UserProfile, Macros, daily_macro_targets, macros_calories,
 }
-import meal_planner/ui/components/dashboard as dashboard_component
+import meal_planner/ui/components/macro_progress
+import meal_planner/ui/components/progress
 import pog
 import wisp
 
@@ -69,27 +71,28 @@ pub fn dashboard(req: wisp.Request, ctx: Context) -> wisp.Response {
         <> "<span class=\"unit\"> cal</span>"
         <> "</div></div>"
         <> "<div class=\"macro-progress\">"
-        <> "<div class=\"macro-bar\">"
-        <> "<div class=\"macro-bar-label\">Protein</div>"
-        <> dashboard_component.progress_bar(
-          float_to_int(current.protein),
-          float_to_int(targets.protein),
-        )
-        <> "</div>"
-        <> "<div class=\"macro-bar\">"
-        <> "<div class=\"macro-bar-label\">Fat</div>"
-        <> dashboard_component.progress_bar(
-          float_to_int(current.fat),
-          float_to_int(targets.fat),
-        )
-        <> "</div>"
-        <> "<div class=\"macro-bar\">"
-        <> "<div class=\"macro-bar-label\">Carbs</div>"
-        <> dashboard_component.progress_bar(
-          float_to_int(current.carbs),
-          float_to_int(targets.carbs),
-        )
-        <> "</div>"
+        <> {
+          progress.macro_bar(
+            "Protein",
+            current.protein,
+            targets.protein,
+            "progress-protein",
+          )
+          |> element.to_string
+        }
+        <> {
+          progress.macro_bar("Fat", current.fat, targets.fat, "progress-fat")
+          |> element.to_string
+        }
+        <> {
+          progress.macro_bar(
+            "Carbs",
+            current.carbs,
+            targets.carbs,
+            "progress-carbs",
+          )
+          |> element.to_string
+        }
         <> "</div>"
         <> "<div class=\"log-entries\">"
         <> "<h2>Today's Entries</h2>"
