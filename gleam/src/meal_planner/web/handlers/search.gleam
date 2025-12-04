@@ -5,8 +5,8 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/uri
-import meal_planner/storage
-import meal_planner/types.{type Food, type FoodNutrient, SearchFilters}
+import meal_planner/storage.{type FoodNutrientValue, type UsdaFood}
+import meal_planner/types.{SearchFilters}
 import pog
 import wisp
 
@@ -33,12 +33,16 @@ pub fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
   // Parse filter parameters
   let filters = case parsed_query {
     Ok(params) -> {
-      let verified_only = case list.find(params, fn(p) { p.0 == "verified_only" }) {
+      let verified_only = case
+        list.find(params, fn(p) { p.0 == "verified_only" })
+      {
         Ok(#(_, "true")) -> True
         _ -> False
       }
 
-      let branded_only = case list.find(params, fn(p) { p.0 == "branded_only" }) {
+      let branded_only = case
+        list.find(params, fn(p) { p.0 == "branded_only" })
+      {
         Ok(#(_, "true")) -> True
         _ -> False
       }
@@ -54,11 +58,12 @@ pub fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
         category: category,
       )
     }
-    Error(_) -> types.SearchFilters(
-      verified_only: False,
-      branded_only: False,
-      category: None,
-    )
+    Error(_) ->
+      types.SearchFilters(
+        verified_only: False,
+        branded_only: False,
+        category: None,
+      )
   }
 
   case query {
@@ -120,7 +125,7 @@ fn search_foods_filtered(
   query: String,
   filters: SearchFilters,
   limit: Int,
-) -> List(Food) {
+) -> List(UsdaFood) {
   case storage.search_foods_with_filters(ctx.db, query, filters, limit) {
     Ok(foods) -> foods
     Error(_) -> []
@@ -128,7 +133,7 @@ fn search_foods_filtered(
 }
 
 /// Load food by FDC ID
-fn load_food_by_id(ctx: Context, fdc_id: Int) -> Result(Food, Nil) {
+fn load_food_by_id(ctx: Context, fdc_id: Int) -> Result(UsdaFood, Nil) {
   case storage.get_food_by_id(ctx.db, fdc_id) {
     Ok(food) -> Ok(food)
     Error(_) -> Error(Nil)
@@ -136,7 +141,7 @@ fn load_food_by_id(ctx: Context, fdc_id: Int) -> Result(Food, Nil) {
 }
 
 /// Load food nutrients
-fn load_food_nutrients(ctx: Context, fdc_id: Int) -> List(FoodNutrient) {
+fn load_food_nutrients(ctx: Context, fdc_id: Int) -> List(FoodNutrientValue) {
   case storage.get_food_nutrients(ctx.db, fdc_id) {
     Ok(nutrients) -> nutrients
     Error(_) -> []
@@ -144,7 +149,7 @@ fn load_food_nutrients(ctx: Context, fdc_id: Int) -> List(FoodNutrient) {
 }
 
 /// Convert food to JSON
-fn food_to_json(f: types.Food) -> json.Json {
+fn food_to_json(f: UsdaFood) -> json.Json {
   json.object([
     #("fdc_id", json.int(f.fdc_id)),
     #("description", json.string(f.description)),
