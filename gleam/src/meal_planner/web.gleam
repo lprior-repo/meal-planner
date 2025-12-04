@@ -1360,8 +1360,17 @@ fn page_header(title: String, back_href: String) -> element.Element(msg) {
 }
 
 fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
+  // Check if this is an HTMX request
+  let is_htmx = case request.get_header(req, "hx-request") {
+    Ok(_) -> True
+    Error(_) -> False
+  }
+
+  // Parse query parameters
+  let parsed_query = uri.parse_query(req.query |> option.unwrap(""))
+
   // Get search query from URL params
-  let query = case uri.parse_query(req.query |> option.unwrap("")) {
+  let query = case parsed_query {
     Ok(params) -> {
       case list.find(params, fn(p) { p.0 == "q" }) {
         Ok(#(_, q)) -> Some(q)
@@ -1371,46 +1380,54 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
     Error(_) -> None
   }
 
+  // Parse filter parameters for HTMX requests
+  let filters = case parsed_query {
+    Ok(params) -> {
+      let verified_only = case
+        list.find(params, fn(p) { p.0 == "verified" || p.0 == "verified_only" })
+      {
+        Ok(#(_, "true")) -> True
+        Ok(#(_, "1")) -> True
+        _ -> False
+      }
+
+      let branded_only = case
+        list.find(params, fn(p) { p.0 == "branded" || p.0 == "branded_only" })
+      {
+        Ok(#(_, "true")) -> True
+        Ok(#(_, "1")) -> True
+        _ -> False
+      }
+
+      let category = case list.find(params, fn(p) { p.0 == "category" }) {
+        Ok(#(_, cat)) if cat != "" && cat != "all" -> Some(cat)
+        _ -> None
+      }
+
+      types.SearchFilters(
+        verified_only: verified_only,
+        branded_only: branded_only,
+        category: category,
+      )
+    }
+    Error(_) ->
+      types.SearchFilters(
+        verified_only: False,
+        branded_only: False,
+        category: None,
+      )
+  }
+
+  // Search with filters
   let #(ctx, foods) = case query {
-    Some(q) if q != "" -> search_foods(ctx, q, 50)
+    Some(q) if q != "" -> search_foods_filtered(ctx, q, filters, 50)
     _ -> #(ctx, [])
   }
 
-  let food_count = get_foods_count(ctx)
-
-  // Create filter chips and categories
-  let chips = food_search.default_filter_chips()
-  let categories = food_search.default_categories()
-
-  let content = [
-    html.div([attribute.class("page-header")], [
-      html.h1([], [element.text("Food Search")]),
-      html.p([attribute.class("subtitle")], [
-        element.text("Search " <> int_to_string(food_count) <> " USDA foods"),
-      ]),
-    ]),
-    // Filter chips above search form
-    food_search.render_filter_chips_with_dropdown(chips, categories),
-    html.form([attribute.action("/foods"), attribute.method("get")], [
-      html.div([attribute.class("search-box")], [
-        html.input([
-          attribute.type_("search"),
-          attribute.name("q"),
-          attribute.placeholder("Search foods (e.g., chicken, apple, rice)"),
-          attribute.value(query |> option.unwrap("")),
-          attribute.class("search-input"),
-        ]),
-        html.button(
-          [attribute.type_("submit"), attribute.class("btn btn-primary")],
-          [
-            element.text("Search"),
-          ],
-        ),
-      ]),
-    ]),
-    // Wrap search results in HTMX target container
-    html.div([attribute.id("search-results")], [
-      case query {
+  // If HTMX request, return only the search results fragment
+  case is_htmx {
+    True -> {
+      let results_html = case query {
         Some(q) if q != "" -> {
           case foods {
             [] ->
@@ -1428,11 +1445,72 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
           html.p([attribute.class("empty-state")], [
             element.text("Enter a search term to find foods"),
           ])
-      },
-    ]),
-  ]
+      }
 
-  wisp.html_response(render_page("Food Search - Meal Planner", content), 200)
+      // Return just the HTML fragment for HTMX
+      wisp.html_response(element.to_string(results_html), 200)
+    }
+    False -> {
+      // Normal request - return full page
+      let food_count = get_foods_count(ctx)
+
+      // Create filter chips and categories
+      let chips = food_search.default_filter_chips()
+      let categories = food_search.default_categories()
+
+      let content = [
+        html.div([attribute.class("page-header")], [
+          html.h1([], [element.text("Food Search")]),
+          html.p([attribute.class("subtitle")], [
+            element.text("Search " <> int_to_string(food_count) <> " USDA foods"),
+          ]),
+        ]),
+        // Filter chips above search form
+        food_search.render_filter_chips_with_dropdown(chips, categories),
+        html.form([attribute.action("/foods"), attribute.method("get")], [
+          html.div([attribute.class("search-box")], [
+            html.input([
+              attribute.type_("search"),
+              attribute.name("q"),
+              attribute.placeholder("Search foods (e.g., chicken, apple, rice)"),
+              attribute.value(query |> option.unwrap("")),
+              attribute.class("search-input"),
+            ]),
+            html.button(
+              [attribute.type_("submit"), attribute.class("btn btn-primary")],
+              [
+                element.text("Search"),
+              ],
+            ),
+          ]),
+        ]),
+        // Wrap search results in HTMX target container
+        html.div([attribute.id("search-results")], [
+          case query {
+            Some(q) if q != "" -> {
+              case foods {
+                [] ->
+                  html.p([attribute.class("empty-state")], [
+                    element.text("No foods found matching \"" <> q <> "\""),
+                  ])
+                _ ->
+                  html.div(
+                    [attribute.class("food-list")],
+                    list.map(foods, food_row),
+                  )
+              }
+            }
+            _ ->
+              html.p([attribute.class("empty-state")], [
+                element.text("Enter a search term to find foods"),
+              ])
+          },
+        ]),
+      ]
+
+      wisp.html_response(render_page("Food Search - Meal Planner", content), 200)
+    }
+  }
 }
 
 fn food_row(food: storage.UsdaFood) -> element.Element(msg) {

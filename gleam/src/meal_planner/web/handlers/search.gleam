@@ -4,6 +4,8 @@ import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/result
+import gleam/string
 import gleam/uri
 import meal_planner/storage.{type FoodNutrientValue, type UsdaFood}
 import meal_planner/types.{type SearchFilters, SearchFilters}
