@@ -2,8 +2,7 @@
 ////
 //// Unified interface for fetching recipes from external APIs.
 
-import gleam/dynamic.{type Decoder}
-import gleam/dynamic/decode
+import gleam/dynamic/decode.{type Decoder}
 import gleam/http/request
 import gleam/httpc
 import gleam/json
@@ -159,7 +158,7 @@ fn make_http_request(url: String) -> Result(String, FetchError) {
 fn parse_meal_response(
   json_string: String,
 ) -> Result(MealDbResponse, FetchError) {
-  json.decode(json_string, meal_response_decoder())
+  json.parse(json_string, using: meal_response_decoder())
   |> result.map_error(fn(_) { ParseError("Failed to parse TheMealDB response") })
 }
 

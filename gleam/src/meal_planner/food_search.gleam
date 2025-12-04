@@ -5,6 +5,7 @@
 /// - USDA foods (global, from food_nutrients table)
 ///
 /// Results are ordered with custom foods first, then USDA foods.
+import gleam/int
 import gleam/list
 import gleam/option
 import gleam/string

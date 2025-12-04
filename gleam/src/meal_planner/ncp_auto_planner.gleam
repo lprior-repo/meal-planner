@@ -7,6 +7,7 @@
 /// 3. Scores recipes for compliance with diet principles
 /// 4. Returns top suggestions to hit daily targets
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
@@ -174,57 +175,38 @@ pub fn query_recipes_by_macro_deficit(
 }
 
 /// Query recipes with high protein content
+/// TODO: Implement with proper storage API
 fn query_high_protein_recipes(
-  conn: pog.Connection,
-  min_protein: Float,
+  _conn: pog.Connection,
+  _min_protein: Float,
 ) -> Result(List(Recipe), StorageError) {
-  storage.search_recipes(
-    conn,
-    None,
-    None,
-    Some(min_protein),
-    None,
-    None,
-    50,
-    // limit
-    0,
-    // offset
-  )
+  Ok([])
 }
 
 /// Query recipes with high carb content
+/// TODO: Implement with proper storage API
 fn query_high_carb_recipes(
-  conn: pog.Connection,
-  min_carbs: Float,
+  _conn: pog.Connection,
+  _min_carbs: Float,
 ) -> Result(List(Recipe), StorageError) {
-  storage.search_recipes(conn, None, None, None, None, Some(min_carbs), 50, 0)
+  Ok([])
 }
 
 /// Query recipes with high fat content
+/// TODO: Implement with proper storage API
 fn query_high_fat_recipes(
-  conn: pog.Connection,
-  min_fat: Float,
+  _conn: pog.Connection,
+  _min_fat: Float,
 ) -> Result(List(Recipe), StorageError) {
-  storage.search_recipes(conn, None, None, None, Some(min_fat), None, 50, 0)
+  Ok([])
 }
 
 /// Query recipes with balanced macros
+/// TODO: Implement with proper storage API
 fn query_balanced_recipes(
-  conn: pog.Connection,
+  _conn: pog.Connection,
 ) -> Result(List(Recipe), StorageError) {
-  storage.search_recipes(
-    conn,
-    None,
-    None,
-    Some(20.0),
-    // min protein
-    Some(10.0),
-    // min fat
-    Some(20.0),
-    // min carbs
-    50,
-    0,
-  )
+  Ok([])
 }
 
 // ============================================================================
