@@ -77,23 +77,23 @@
   justify-content: center;
   padding: var(--space-2) var(--space-4);
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-2xl);
   font-size: var(--text-base);
   font-weight: var(--font-medium);
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: var(--transition-scale);
   text-decoration: none;
   white-space: nowrap;
   user-select: none;
 }
 
 .btn:hover {
-  transform: translateY(-2px);
+  transform: scale(1.05);
   box-shadow: var(--shadow-md);
 }
 
 .btn:active {
-  transform: translateY(0);
+  transform: scale(0.98);
   box-shadow: var(--shadow-sm);
 }
 

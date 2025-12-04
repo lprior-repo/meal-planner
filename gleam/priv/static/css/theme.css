@@ -224,6 +224,7 @@
   --transition-fast: all var(--duration-150) var(--ease-out);
   --transition: all var(--duration-300) var(--ease-out);
   --transition-slow: all var(--duration-500) var(--ease-out);
+  --transition-scale: transform var(--duration-200) var(--ease-out);
 
   /* ================================================================
      BREAKPOINTS (Mobile-First Approach)
