@@ -254,9 +254,9 @@ pub fn render_filter_chips_with_dropdown(
           attribute.disabled(!category_selected),
           attribute.attribute("aria-label", "Filter by category"),
           // HTMX attributes for dynamic category filtering
-          attribute.attribute("hx-get", "/api/foods"),
+          attribute.attribute("hx-get", "/foods"),
           attribute.attribute("hx-trigger", "change"),
-          attribute.attribute("hx-target", "#food-results"),
+          attribute.attribute("hx-target", "#search-results"),
           attribute.attribute("hx-swap", "innerHTML"),
           attribute.attribute("hx-push-url", "true"),
           attribute.attribute("hx-include", "[name='q']"),
