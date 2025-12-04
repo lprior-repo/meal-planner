@@ -198,7 +198,7 @@ pub type LongFunction {
 /// Returns a list of LongFunction records for functions that are too long
 pub fn detect_long_functions(code: String) -> List(LongFunction) {
   let lines = string.split(code, "\n")
-  find_long_functions_recursive(lines, 0, [], None)
+  find_long_functions_recursive(lines, 0, [], option.None)
 }
 
 /// Recursively process lines to find long functions
@@ -213,7 +213,7 @@ fn find_long_functions_recursive(
       // End of file - check if we have a function in progress
       case current_function {
         option.None -> accumulator
-        option.Some(#(name, start, brace_count)) -> {
+        option.Some(#(name, start, _brace_count)) -> {
           let line_count = current_line - start
           case line_count > 50 {
             True -> [

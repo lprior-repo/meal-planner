@@ -218,8 +218,8 @@ pub fn long_function() -> Int {
       |> should.equal("long_function")
 
       // Should have more than 50 lines
-      func.line_count
-      |> should.be_true(fn(count) { count > 50 })
+      { func.line_count > 50 }
+      |> should.be_true()
     }
     Error(_) -> should.fail()
   }
