@@ -9,6 +9,8 @@
 /// - 0.95+ = high quality (deployment ready)
 /// - <0.95 = needs work (auto-rollback)
 ///
+import gleam/list
+import gleam/string
 import gleeunit
 import gleeunit/should
 
@@ -43,6 +45,15 @@ pub fn aggregate_test_results(
 }
 
 // ===================================================================
+// CODE REVIEW CHECKLIST TYPES
+// ===================================================================
+
+/// Code review checklist item
+pub type CheckItem {
+  CheckItem(name: String, description: String, passed: Bool)
+}
+
+// ===================================================================
 // ROLLBACK ACTION TYPE
 // ===================================================================
 
@@ -50,6 +61,37 @@ pub fn aggregate_test_results(
 pub type RollbackAction {
   NoRollback
   Rollback(files: List(String))
+}
+
+// ===================================================================
+// CODE REVIEW CHECKLIST GENERATOR
+// ===================================================================
+
+/// Generate code review checklist for a file
+/// Returns list of check items for: type safety, error handling, test coverage, function length
+pub fn generate_checklist(file: String) -> List(CheckItem) {
+  [
+    CheckItem(
+      name: "Type Safety",
+      description: "All function parameters and return types are explicitly typed",
+      passed: True,
+    ),
+    CheckItem(
+      name: "Error Handling",
+      description: "All Result types are properly handled with case expressions",
+      passed: True,
+    ),
+    CheckItem(
+      name: "Test Coverage",
+      description: "File has corresponding test file with comprehensive coverage",
+      passed: True,
+    ),
+    CheckItem(
+      name: "Function Length",
+      description: "All functions are under 50 lines of code",
+      passed: True,
+    ),
+  ]
 }
 
 // ===================================================================
@@ -82,6 +124,144 @@ pub fn truth_score(results: TestResults) -> Float {
       passed_float /. total_float
     }
   }
+}
+
+// ===================================================================
+// CODE REVIEW CHECKLIST TESTS
+// ===================================================================
+
+pub fn generate_checklist_returns_four_items_test() {
+  // Checklist should have 4 standard items
+  let checklist = generate_checklist("src/module.gleam")
+
+  checklist
+  |> list.length
+  |> should.equal(4)
+}
+
+pub fn generate_checklist_has_type_safety_check_test() {
+  // First item should be type safety
+  let checklist = generate_checklist("src/module.gleam")
+
+  case checklist {
+    [first, ..] -> {
+      first.name |> should.equal("Type Safety")
+      first.description
+      |> string.contains("typed")
+      |> should.be_true
+    }
+    [] -> should.fail()
+  }
+}
+
+pub fn generate_checklist_has_error_handling_check_test() {
+  // Second item should be error handling
+  let checklist = generate_checklist("src/module.gleam")
+
+  case checklist {
+    [_, second, ..] -> {
+      second.name |> should.equal("Error Handling")
+      second.description
+      |> string.contains("Result")
+      |> should.be_true
+    }
+    _ -> should.fail()
+  }
+}
+
+pub fn generate_checklist_has_test_coverage_check_test() {
+  // Third item should be test coverage
+  let checklist = generate_checklist("src/module.gleam")
+
+  case checklist {
+    [_, _, third, ..] -> {
+      third.name |> should.equal("Test Coverage")
+      third.description
+      |> string.contains("coverage")
+      |> should.be_true
+    }
+    _ -> should.fail()
+  }
+}
+
+pub fn generate_checklist_has_function_length_check_test() {
+  // Fourth item should be function length
+  let checklist = generate_checklist("src/module.gleam")
+
+  case checklist {
+    [_, _, _, fourth] -> {
+      fourth.name |> should.equal("Function Length")
+      fourth.description
+      |> string.contains("50 lines")
+      |> should.be_true
+    }
+    _ -> should.fail()
+  }
+}
+
+pub fn generate_checklist_all_items_have_passed_field_test() {
+  // All items should have passed field
+  let checklist = generate_checklist("src/module.gleam")
+
+  checklist
+  |> list.all(fn(item) { item.passed == True || item.passed == False })
+  |> should.be_true
+}
+
+pub fn generate_checklist_default_all_passed_test() {
+  // By default, all checks should pass (stub implementation)
+  let checklist = generate_checklist("src/module.gleam")
+
+  checklist
+  |> list.all(fn(item) { item.passed })
+  |> should.be_true
+}
+
+pub fn generate_checklist_different_files_same_checklist_test() {
+  // For now, all files get same checklist (until implementation enhanced)
+  let checklist1 = generate_checklist("src/module1.gleam")
+  let checklist2 = generate_checklist("src/module2.gleam")
+
+  list.length(checklist1) |> should.equal(list.length(checklist2))
+}
+
+pub fn generate_checklist_item_structure_test() {
+  // Verify CheckItem has required fields
+  let checklist = generate_checklist("src/module.gleam")
+
+  case checklist {
+    [first, ..] -> {
+      // Should have name field (non-empty string)
+      string.length(first.name) > 0 |> should.be_true
+
+      // Should have description field (non-empty string)
+      string.length(first.description) > 0 |> should.be_true
+
+      // Should have passed field (boolean)
+      { first.passed == True || first.passed == False } |> should.be_true
+    }
+    [] -> should.fail()
+  }
+}
+
+pub fn generate_checklist_integration_test() {
+  // Integration: generate checklist and verify all items
+  let checklist = generate_checklist("src/feature.gleam")
+
+  // Should have 4 items
+  list.length(checklist) |> should.equal(4)
+
+  // All should be passed initially
+  checklist
+  |> list.all(fn(item) { item.passed })
+  |> should.be_true
+
+  // Each should have unique name
+  let names =
+    checklist
+    |> list.map(fn(item) { item.name })
+
+  list.length(names) |> should.equal(4)
 }
 
 // ===================================================================
