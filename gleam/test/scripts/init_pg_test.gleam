@@ -94,6 +94,7 @@ fn create_test_database(db_name: String) -> Result(Nil, String) {
       }
 
       // Stop the pool to release connection
+      process.kill(started.pid)
       result
     }
   }
@@ -124,6 +125,7 @@ fn drop_test_database(db_name: String) -> Result(Nil, String) {
       }
 
       // Stop the pool to release connection
+      process.kill(started.pid)
       result
     }
   }
@@ -161,7 +163,8 @@ fn with_test_db(test_fn: fn(pog.Connection) -> a) -> a {
   // Run test
   let result = test_fn(db)
 
-  // Cleanup
+  // Cleanup: stop pool and drop database
+  process.kill(started.pid)
   let assert Ok(_) = drop_test_database(db_name)
 
   result

@@ -3,6 +3,7 @@
 import gleam/dynamic/decode
 import gleam/http
 import gleam/json
+import lustre/element
 import meal_planner/generator
 import meal_planner/meal_plan.{type DailyPlan, type Meal, Meal}
 import meal_planner/storage
@@ -119,7 +120,9 @@ fn handle_swap_request(
                   let new_meal = Meal(recipe: new_recipe, portion_size: 1.0)
 
                   // Render the meal card as HTML
-                  let html = meal_card.render_meal_card(new_meal, meal_type)
+                  let html =
+                    meal_card.render_meal_card(new_meal, meal_type)
+                    |> element.to_string
 
                   // Return HTML (not JSON) for HTMX outerHTML replacement
                   wisp.response(200)

@@ -7,6 +7,7 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
+import lustre/element
 import meal_planner/generator
 import meal_planner/meal_plan.{type DailyPlan, type Meal, Meal}
 import meal_planner/storage
@@ -164,6 +165,7 @@ fn render_meal_cards_from_recipes(recipes: List(Recipe)) -> wisp.Response {
         |> list.map(fn(pair) {
           let meal = Meal(recipe: pair.0, portion_size: 1.0)
           meal_card.render_meal_card(meal, pair.1)
+          |> element.to_string
         })
         |> list.fold("", fn(acc, card) { acc <> card })
 
@@ -181,7 +183,10 @@ fn render_daily_plan_meals(daily_plan: DailyPlan) -> wisp.Response {
 
   let meal_html =
     meals
-    |> list.map(fn(pair) { meal_card.render_meal_card(pair.0, pair.1) })
+    |> list.map(fn(pair) {
+      meal_card.render_meal_card(pair.0, pair.1)
+      |> element.to_string
+    })
     |> list.fold("", fn(acc, card) { acc <> card })
 
   wisp.response(200)

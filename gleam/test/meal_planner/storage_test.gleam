@@ -175,8 +175,7 @@ pub fn user_id_positive_integer_test() {
       updated_at: "2025-12-02T09:00:00Z",
     )
 
-  log.user_id
-  > 0
+  { log.user_id > 0 }
   |> should.be_true()
 }
 
@@ -198,8 +197,7 @@ pub fn food_id_positive_integer_test() {
       updated_at: "2025-12-01T08:00:00Z",
     )
 
-  log.food_id
-  > 0
+  { log.food_id > 0 }
   |> should.be_true()
 }
 
@@ -221,8 +219,7 @@ pub fn quantity_non_negative_test() {
       updated_at: "2025-11-30T07:00:00Z",
     )
 
-  log.quantity
-  >=. 0.0
+  { log.quantity >=. 0.0 }
   |> should.be_true()
 }
 

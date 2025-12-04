@@ -9,9 +9,12 @@
 /// - HTMX swap button for dynamic meal replacement
 /// - Proper element IDs for HTMX targeting
 ///
-/// All components render as HTML strings suitable for SSR.
+/// All components render as Lustre HTML elements suitable for SSR.
 import gleam/float
 import gleam/int
+import lustre/attribute
+import lustre/element
+import lustre/element/html
 import meal_planner/meal_plan.{type Meal, meal_macros}
 import meal_planner/types.{type Macros, macros_calories}
 
@@ -49,50 +52,45 @@ import meal_planner/types.{type Macros, macros_calories}
 ///           hx-swap="outerHTML"
 ///           class="btn btn-primary">Swap Meal</button>
 /// </div>
-pub fn render_meal_card(meal: Meal, meal_type: String) -> String {
+pub fn render_meal_card(meal: Meal, meal_type: String) -> element.Element(msg) {
   let macros = meal_macros(meal)
   let calories = macros_calories(macros)
   let calories_int = float.truncate(calories)
-  let protein_str = float.to_string(macros.protein)
-  let carbs_str = float.to_string(macros.carbs)
-  let fat_str = float.to_string(macros.fat)
 
-  "<div id=\""
-  <> meal_type
-  <> "-card\" class=\"meal-card\">"
-  <> "<div class=\"meal-name\">"
-  <> meal.recipe.name
-  <> "</div>"
-  <> "<div class=\"meal-macros\">"
-  <> "<div class=\"macro-item\">"
-  <> "<span class=\"macro-label\">Calories</span>"
-  <> "<span class=\"macro-value\">"
-  <> int.to_string(calories_int)
-  <> "</span>"
-  <> "</div>"
-  <> "<div class=\"macro-item\">"
-  <> "<span class=\"macro-label\">Protein</span>"
-  <> "<span class=\"macro-value\">"
-  <> protein_str
-  <> "g</span>"
-  <> "</div>"
-  <> "<div class=\"macro-item\">"
-  <> "<span class=\"macro-label\">Carbs</span>"
-  <> "<span class=\"macro-value\">"
-  <> carbs_str
-  <> "g</span>"
-  <> "</div>"
-  <> "<div class=\"macro-item\">"
-  <> "<span class=\"macro-label\">Fat</span>"
-  <> "<span class=\"macro-value\">"
-  <> fat_str
-  <> "g</span>"
-  <> "</div>"
-  <> "</div>"
-  <> "<button hx-post=\"/api/swap/"
-  <> meal_type
-  <> "\" hx-target=\"#"
-  <> meal_type
-  <> "-card\" hx-swap=\"outerHTML\" class=\"btn btn-primary\">Swap Meal</button>"
-  <> "</div>"
+  html.div([attribute.id(meal_type <> "-card"), attribute.class("meal-card")], [
+    html.div([attribute.class("meal-name")], [element.text(meal.recipe.name)]),
+    html.div([attribute.class("meal-macros")], [
+      macro_item("Calories", int.to_string(calories_int), ""),
+      macro_item("Protein", float.to_string(macros.protein), "g"),
+      macro_item("Carbs", float.to_string(macros.carbs), "g"),
+      macro_item("Fat", float.to_string(macros.fat), "g"),
+    ]),
+    html.button(
+      [
+        attribute.attribute("hx-post", "/api/swap/" <> meal_type),
+        attribute.attribute("hx-target", "#" <> meal_type <> "-card"),
+        attribute.attribute("hx-swap", "outerHTML"),
+        attribute.class("btn btn-primary"),
+      ],
+      [element.text("Swap Meal")],
+    ),
+  ])
+}
+
+// ===================================================================
+// PRIVATE HELPER FUNCTIONS
+// ===================================================================
+
+/// Helper function to render a macro item (label and value)
+fn macro_item(
+  label: String,
+  value: String,
+  unit: String,
+) -> element.Element(msg) {
+  html.div([attribute.class("macro-item")], [
+    html.span([attribute.class("macro-label")], [element.text(label)]),
+    html.span([attribute.class("macro-value")], [
+      element.text(value <> unit),
+    ]),
+  ])
 }

@@ -17,6 +17,9 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
+import lustre/attribute.{attribute, class, id, style}
+import lustre/element.{type Element, text}
+import lustre/element/html.{div, img, link, span}
 
 // ===================================================================
 // SKELETON LOADER COMPONENTS
@@ -24,73 +27,195 @@ import gleam/string
 
 /// Skeleton loader for macro progress bars
 /// Shows animated placeholder while actual data loads
-pub fn macro_bar_skeleton() -> String {
-  "<div class=\"macro-bar skeleton\">"
-  <> "<div class=\"macro-bar-header skeleton-text\" style=\"width: 120px; height: 16px;\"></div>"
-  <> "<div class=\"progress-bar skeleton-bar\">"
-  <> "<div class=\"skeleton-shimmer\"></div>"
-  <> "</div>"
-  <> "</div>"
+pub fn macro_bar_skeleton() -> Element(msg) {
+  div([class("macro-bar skeleton")], [
+    div(
+      [
+        class("macro-bar-header skeleton-text"),
+        style([
+          #("width", "120px"),
+          #("height", "16px"),
+        ]),
+      ],
+      [],
+    ),
+    div([class("progress-bar skeleton-bar")], [
+      div([class("skeleton-shimmer")], []),
+    ]),
+  ])
 }
 
 /// Skeleton loader for calorie summary card
-pub fn calorie_card_skeleton() -> String {
-  "<div class=\"calorie-summary skeleton\">"
-  <> "<div class=\"skeleton-text\" style=\"width: 150px; height: 24px; margin-bottom: 8px;\"></div>"
-  <> "<div class=\"skeleton-text\" style=\"width: 200px; height: 48px;\"></div>"
-  <> "</div>"
+pub fn calorie_card_skeleton() -> Element(msg) {
+  div([class("calorie-summary skeleton")], [
+    div(
+      [
+        class("skeleton-text"),
+        style([
+          #("width", "150px"),
+          #("height", "24px"),
+          #("margin-bottom", "8px"),
+        ]),
+      ],
+      [],
+    ),
+    div(
+      [
+        class("skeleton-text"),
+        style([#("width", "200px"), #("height", "48px")]),
+      ],
+      [],
+    ),
+  ])
 }
 
 /// Skeleton loader for meal entry item
-pub fn meal_entry_skeleton() -> String {
-  "<div class=\"meal-entry-item skeleton\">"
-  <> "<div class=\"skeleton-text\" style=\"width: 60px; height: 16px;\"></div>"
-  <> "<div class=\"skeleton-text\" style=\"width: 180px; height: 20px;\"></div>"
-  <> "<div class=\"skeleton-text\" style=\"width: 140px; height: 16px;\"></div>"
-  <> "<div class=\"skeleton-text\" style=\"width: 80px; height: 16px;\"></div>"
-  <> "</div>"
+pub fn meal_entry_skeleton() -> Element(msg) {
+  div([class("meal-entry-item skeleton")], [
+    div(
+      [class("skeleton-text"), style([#("width", "60px"), #("height", "16px")])],
+      [],
+    ),
+    div(
+      [
+        class("skeleton-text"),
+        style([#("width", "180px"), #("height", "20px")]),
+      ],
+      [],
+    ),
+    div(
+      [
+        class("skeleton-text"),
+        style([#("width", "140px"), #("height", "16px")]),
+      ],
+      [],
+    ),
+    div(
+      [class("skeleton-text"), style([#("width", "80px"), #("height", "16px")])],
+      [],
+    ),
+  ])
 }
 
 /// Skeleton loader for micronutrient panel
-pub fn micronutrient_panel_skeleton() -> String {
-  "<div class=\"micronutrient-panel skeleton\">"
-  <> "<div class=\"skeleton-text\" style=\"width: 120px; height: 20px; margin-bottom: 16px;\"></div>"
-  <> string.concat(
-    list.map([1, 2, 3, 4, 5], fn(_) {
-      "<div class=\"micronutrient-bar skeleton\" style=\"margin-bottom: 12px;\">"
-      <> "<div class=\"skeleton-text\" style=\"width: 100px; height: 14px;\"></div>"
-      <> "<div class=\"skeleton-bar\" style=\"height: 8px; margin: 8px 0;\"></div>"
-      <> "<div class=\"skeleton-text\" style=\"width: 60px; height: 12px;\"></div>"
-      <> "</div>"
-    }),
-  )
-  <> "</div>"
+pub fn micronutrient_panel_skeleton() -> Element(msg) {
+  div([class("micronutrient-panel skeleton")], [
+    div(
+      [
+        class("skeleton-text"),
+        style([
+          #("width", "120px"),
+          #("height", "20px"),
+          #("margin-bottom", "16px"),
+        ]),
+      ],
+      [],
+    ),
+    ..list.map([1, 2, 3, 4, 5], fn(_) {
+      div(
+        [
+          class("micronutrient-bar skeleton"),
+          style([#("margin-bottom", "12px")]),
+        ],
+        [
+          div(
+            [
+              class("skeleton-text"),
+              style([#("width", "100px"), #("height", "14px")]),
+            ],
+            [],
+          ),
+          div(
+            [
+              class("skeleton-bar"),
+              style([#("height", "8px"), #("margin", "8px 0")]),
+            ],
+            [],
+          ),
+          div(
+            [
+              class("skeleton-text"),
+              style([#("width", "60px"), #("height", "12px")]),
+            ],
+            [],
+          ),
+        ],
+      )
+    })
+  ])
 }
 
 /// Skeleton loader for recipe card
-pub fn recipe_card_skeleton() -> String {
-  "<div class=\"recipe-card skeleton\">"
-  <> "<div class=\"skeleton-image\" style=\"width: 100%; height: 160px;\"></div>"
-  <> "<div class=\"recipe-card-content\">"
-  <> "<div class=\"skeleton-text\" style=\"width: 180px; height: 20px; margin-bottom: 8px;\"></div>"
-  <> "<div class=\"skeleton-text\" style=\"width: 80px; height: 14px; margin-bottom: 12px;\"></div>"
-  <> "<div class=\"skeleton-text\" style=\"width: 140px; height: 14px;\"></div>"
-  <> "</div>"
-  <> "</div>"
+pub fn recipe_card_skeleton() -> Element(msg) {
+  div([class("recipe-card skeleton")], [
+    div(
+      [
+        class("skeleton-image"),
+        style([#("width", "100%"), #("height", "160px")]),
+      ],
+      [],
+    ),
+    div([class("recipe-card-content")], [
+      div(
+        [
+          class("skeleton-text"),
+          style([
+            #("width", "180px"),
+            #("height", "20px"),
+            #("margin-bottom", "8px"),
+          ]),
+        ],
+        [],
+      ),
+      div(
+        [
+          class("skeleton-text"),
+          style([
+            #("width", "80px"),
+            #("height", "14px"),
+            #("margin-bottom", "12px"),
+          ]),
+        ],
+        [],
+      ),
+      div(
+        [
+          class("skeleton-text"),
+          style([#("width", "140px"), #("height", "14px")]),
+        ],
+        [],
+      ),
+    ]),
+  ])
 }
 
 /// Skeleton loader for food search results
-pub fn search_results_skeleton(count: Int) -> String {
-  "<div class=\"search-results skeleton\">"
-  <> string.concat(
+pub fn search_results_skeleton(count: Int) -> Element(msg) {
+  div(
+    [class("search-results skeleton")],
     list.map(list.range(1, count), fn(_) {
-      "<div class=\"food-item skeleton\" style=\"margin-bottom: 8px;\">"
-      <> "<div class=\"skeleton-text\" style=\"width: 70%; height: 18px; margin-bottom: 4px;\"></div>"
-      <> "<div class=\"skeleton-text\" style=\"width: 40%; height: 14px;\"></div>"
-      <> "</div>"
+      div([class("food-item skeleton"), style([#("margin-bottom", "8px")])], [
+        div(
+          [
+            class("skeleton-text"),
+            style([
+              #("width", "70%"),
+              #("height", "18px"),
+              #("margin-bottom", "4px"),
+            ]),
+          ],
+          [],
+        ),
+        div(
+          [
+            class("skeleton-text"),
+            style([#("width", "40%"), #("height", "14px")]),
+          ],
+          [],
+        ),
+      ])
     }),
   )
-  <> "</div>"
 }
 
 // ===================================================================
@@ -103,28 +228,29 @@ pub fn search_results_skeleton(count: Int) -> String {
 /// Uses the `data-lazy-load` attribute to trigger loading
 ///
 /// Parameters:
-/// - id: Unique identifier for this lazy-loaded section
-/// - placeholder: Skeleton loader HTML to show while loading
+/// - id_str: Unique identifier for this lazy-loaded section
+/// - placeholder: Skeleton loader element to show while loading
 /// - content_src: API endpoint or data attribute with content
 pub fn lazy_section(
-  id: String,
-  placeholder: String,
+  id_str: String,
+  placeholder: Element(msg),
   content_src: String,
-) -> String {
-  "<div class=\"lazy-section\" "
-  <> "id=\"lazy-"
-  <> id
-  <> "\" "
-  <> "data-lazy-load=\"true\" "
-  <> "data-content-src=\""
-  <> content_src
-  <> "\" "
-  <> "data-loaded=\"false\">"
-  <> "<div class=\"lazy-placeholder\" data-placeholder=\"true\">"
-  <> placeholder
-  <> "</div>"
-  <> "<div class=\"lazy-content\" style=\"display: none;\"></div>"
-  <> "</div>"
+) -> Element(msg) {
+  div(
+    [
+      class("lazy-section"),
+      id("lazy-" <> id_str),
+      attribute("data-lazy-load", "true"),
+      attribute("data-content-src", content_src),
+      attribute("data-loaded", "false"),
+    ],
+    [
+      div([class("lazy-placeholder"), attribute("data-placeholder", "true")], [
+        placeholder,
+      ]),
+      div([class("lazy-content"), style([#("display", "none")])], []),
+    ],
+  )
 }
 
 /// Defer rendering of heavy component
@@ -132,38 +258,49 @@ pub fn lazy_section(
 /// Component will be rendered client-side after page load
 /// Useful for charts, visualizations, or other expensive components
 pub fn deferred_component(
-  id: String,
+  id_str: String,
   component_type: String,
   data_json: String,
-) -> String {
-  "<div class=\"deferred-component\" "
-  <> "id=\"deferred-"
-  <> id
-  <> "\" "
-  <> "data-component-type=\""
-  <> component_type
-  <> "\" "
-  <> "data-component-data=\""
-  <> encode_json(data_json)
-  <> "\" "
-  <> "data-rendered=\"false\">"
-  <> get_skeleton_for_component(component_type)
-  <> "</div>"
+) -> Element(msg) {
+  div(
+    [
+      class("deferred-component"),
+      id("deferred-" <> id_str),
+      attribute("data-component-type", component_type),
+      attribute("data-component-data", encode_json(data_json)),
+      attribute("data-rendered", "false"),
+    ],
+    [get_skeleton_for_component(component_type)],
+  )
 }
 
 /// Get appropriate skeleton for component type
-fn get_skeleton_for_component(component_type: String) -> String {
+fn get_skeleton_for_component(component_type: String) -> Element(msg) {
   case component_type {
     "micronutrient-panel" -> micronutrient_panel_skeleton()
     "macro-bars" ->
-      macro_bar_skeleton() <> macro_bar_skeleton() <> macro_bar_skeleton()
+      div([], [macro_bar_skeleton(), macro_bar_skeleton(), macro_bar_skeleton()])
     "calorie-card" -> calorie_card_skeleton()
     "meal-entries" ->
-      meal_entry_skeleton() <> meal_entry_skeleton() <> meal_entry_skeleton()
+      div([], [
+        meal_entry_skeleton(),
+        meal_entry_skeleton(),
+        meal_entry_skeleton(),
+      ])
     "recipe-grid" ->
-      recipe_card_skeleton() <> recipe_card_skeleton() <> recipe_card_skeleton()
+      div([], [
+        recipe_card_skeleton(),
+        recipe_card_skeleton(),
+        recipe_card_skeleton(),
+      ])
     _ ->
-      "<div class=\"skeleton-text\" style=\"width: 100%; height: 200px;\"></div>"
+      div(
+        [
+          class("skeleton-text"),
+          style([#("width", "100%"), #("height", "200px")]),
+        ],
+        [],
+      )
   }
 }
 
@@ -177,38 +314,49 @@ fn get_skeleton_for_component(component_type: String) -> String {
 /// Significantly reduces DOM nodes for lists with 100+ items
 ///
 /// Parameters:
-/// - id: Container ID
+/// - id_str: Container ID
 /// - item_height: Fixed height per item (in pixels)
 /// - total_items: Total number of items
 /// - visible_count: Number of items to keep in DOM
 pub fn virtual_scroll_container(
-  id: String,
+  id_str: String,
   item_height: Int,
   total_items: Int,
   visible_count: Int,
-) -> String {
+) -> Element(msg) {
   let total_height = item_height * total_items
 
-  "<div class=\"virtual-scroll-container\" "
-  <> "id=\""
-  <> id
-  <> "\" "
-  <> "data-virtual-scroll=\"true\" "
-  <> "data-item-height=\""
-  <> int.to_string(item_height)
-  <> "\" "
-  <> "data-total-items=\""
-  <> int.to_string(total_items)
-  <> "\" "
-  <> "data-visible-count=\""
-  <> int.to_string(visible_count)
-  <> "\" "
-  <> "style=\"height: 600px; overflow-y: auto; position: relative;\">"
-  <> "<div class=\"virtual-scroll-spacer\" style=\"height: "
-  <> int.to_string(total_height)
-  <> "px;\"></div>"
-  <> "<div class=\"virtual-scroll-content\" style=\"position: absolute; top: 0; width: 100%;\"></div>"
-  <> "</div>"
+  div(
+    [
+      class("virtual-scroll-container"),
+      id(id_str),
+      attribute("data-virtual-scroll", "true"),
+      attribute("data-item-height", int.to_string(item_height)),
+      attribute("data-total-items", int.to_string(total_items)),
+      attribute("data-visible-count", int.to_string(visible_count)),
+      style([
+        #("height", "600px"),
+        #("overflow-y", "auto"),
+        #("position", "relative"),
+      ]),
+    ],
+    [
+      div(
+        [class("virtual-scroll-spacer"), style([
+          #("height", int.to_string(total_height) <> "px"),
+        ])],
+        [],
+      ),
+      div(
+        [class("virtual-scroll-content"), style([
+          #("position", "absolute"),
+          #("top", "0"),
+          #("width", "100%"),
+        ])],
+        [],
+      ),
+    ],
+  )
 }
 
 // ===================================================================
@@ -222,33 +370,36 @@ pub fn lazy_image(
   src: String,
   alt: String,
   placeholder: Option(String),
-) -> String {
+) -> Element(msg) {
   let placeholder_src = case placeholder {
     Some(p) -> p
     None ->
       "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3C/svg%3E"
   }
 
-  "<div class=\"lazy-image-wrapper\">"
-  <> "<img class=\"lazy-image-placeholder\" "
-  <> "src=\""
-  <> placeholder_src
-  <> "\" "
-  <> "alt=\""
-  <> alt
-  <> " (loading)\" "
-  <> "aria-hidden=\"true\" "
-  <> "style=\"filter: blur(10px); transition: opacity 0.3s;\" />"
-  <> "<img class=\"lazy-image\" "
-  <> "data-src=\""
-  <> src
-  <> "\" "
-  <> "alt=\""
-  <> alt
-  <> "\" "
-  <> "loading=\"lazy\" "
-  <> "style=\"opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%;\" />"
-  <> "</div>"
+  div([class("lazy-image-wrapper")], [
+    img([
+      class("lazy-image-placeholder"),
+      attribute("src", placeholder_src),
+      attribute("alt", alt <> " (loading)"),
+      attribute("aria-hidden", "true"),
+      style([#("filter", "blur(10px)"), #("transition", "opacity 0.3s")]),
+    ]),
+    img([
+      class("lazy-image"),
+      attribute("data-src", src),
+      attribute("alt", alt),
+      attribute("loading", "lazy"),
+      style([
+        #("opacity", "0"),
+        #("position", "absolute"),
+        #("top", "0"),
+        #("left", "0"),
+        #("width", "100%"),
+        #("height", "100%"),
+      ]),
+    ]),
+  ])
 }
 
 // ===================================================================
@@ -256,49 +407,49 @@ pub fn lazy_image(
 // ===================================================================
 
 /// Animated spinner for loading states
-pub fn loading_spinner(size: String) -> String {
-  "<div class=\"loading-spinner loading-spinner-"
-  <> size
-  <> "\" "
-  <> "role=\"status\" aria-label=\"Loading\">"
-  <> "<div class=\"spinner-circle\"></div>"
-  <> "<span class=\"visually-hidden\">Loading...</span>"
-  <> "</div>"
+pub fn loading_spinner(size: String) -> Element(msg) {
+  div(
+    [
+      class("loading-spinner loading-spinner-" <> size),
+      attribute("role", "status"),
+      attribute("aria-label", "Loading"),
+    ],
+    [
+      div([class("spinner-circle")], []),
+      span([class("visually-hidden")], [text("Loading...")]),
+    ],
+  )
 }
 
 /// Inline loading indicator for buttons
-pub fn button_loading_state() -> String {
-  "<span class=\"button-loader\">"
-  <> "<span class=\"loader-dot\"></span>"
-  <> "<span class=\"loader-dot\"></span>"
-  <> "<span class=\"loader-dot\"></span>"
-  <> "</span>"
+pub fn button_loading_state() -> Element(msg) {
+  span([class("button-loader")], [
+    span([class("loader-dot")], []),
+    span([class("loader-dot")], []),
+    span([class("loader-dot")], []),
+  ])
 }
 
 /// Progress bar for multi-step loading
-pub fn loading_progress_bar(percentage: Float, label: String) -> String {
+pub fn loading_progress_bar(percentage: Float, label: String) -> Element(msg) {
   let pct_str = percentage |> float_to_int |> int.to_string
 
-  "<div class=\"loading-progress\" role=\"progressbar\" "
-  <> "aria-valuenow=\""
-  <> pct_str
-  <> "\" "
-  <> "aria-valuemin=\"0\" "
-  <> "aria-valuemax=\"100\" "
-  <> "aria-label=\""
-  <> label
-  <> "\">"
-  <> "<div class=\"progress-label\">"
-  <> label
-  <> " ("
-  <> pct_str
-  <> "%)</div>"
-  <> "<div class=\"progress-track\">"
-  <> "<div class=\"progress-fill\" style=\"width: "
-  <> pct_str
-  <> "%\"></div>"
-  <> "</div>"
-  <> "</div>"
+  div(
+    [
+      class("loading-progress"),
+      attribute("role", "progressbar"),
+      attribute("aria-valuenow", pct_str),
+      attribute("aria-valuemin", "0"),
+      attribute("aria-valuemax", "100"),
+      attribute("aria-label", label),
+    ],
+    [
+      div([class("progress-label")], [text(label <> " (" <> pct_str <> "%)")]),
+      div([class("progress-track")], [
+        div([class("progress-fill"), style([#("width", pct_str <> "%")])], []),
+      ]),
+    ],
+  )
 }
 
 // ===================================================================
@@ -335,22 +486,37 @@ fn encode_json(json: String) -> String {
 // ===================================================================
 
 /// Add resource hints for preloading critical assets
-pub fn resource_hints(critical_images: List(String)) -> String {
+pub fn resource_hints(critical_images: List(String)) -> Element(msg) {
   let preload_links =
-    critical_images
-    |> list.map(fn(url) {
-      "<link rel=\"preload\" href=\"" <> url <> "\" as=\"image\" />"
+    list.map(critical_images, fn(url) {
+      link([
+        attribute("rel", "preload"),
+        attribute("href", url),
+        attribute("as", "image"),
+      ])
     })
-    |> string.concat
 
-  preload_links
-  <> "<link rel=\"dns-prefetch\" href=\"https://api.nal.usda.gov\" />"
-  <> "<link rel=\"preconnect\" href=\"https://api.nal.usda.gov\" crossorigin />"
+  element.fragment([
+    element.fragment(preload_links),
+    link([
+      attribute("rel", "dns-prefetch"),
+      attribute("href", "https://api.nal.usda.gov"),
+    ]),
+    link([
+      attribute("rel", "preconnect"),
+      attribute("href", "https://api.nal.usda.gov"),
+      attribute("crossorigin", ""),
+    ]),
+  ])
 }
 
 /// Content visibility hint for off-screen content
-pub fn content_visibility_hint(id: String, estimated_height: Int) -> String {
-  "style=\"content-visibility: auto; contain-intrinsic-size: "
-  <> int.to_string(estimated_height)
-  <> "px;\""
+pub fn content_visibility_hint(
+  id_str: String,
+  estimated_height: Int,
+) -> attribute.Attribute(msg) {
+  style([
+    #("content-visibility", "auto"),
+    #("contain-intrinsic-size", int.to_string(estimated_height) <> "px"),
+  ])
 }

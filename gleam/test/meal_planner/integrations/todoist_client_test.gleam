@@ -1,5 +1,7 @@
 import gleam/json
+import gleam/list
 import gleam/option.{None, Some}
+import gleam/string
 import gleeunit/should
 import meal_planner/integrations/todoist_client.{
   type Error, type Task, ApiError, AuthenticationError, SyncError,
@@ -125,31 +127,29 @@ pub fn task_to_json_with_description_test() {
   let json_result = task_to_json(task)
 
   // Verify JSON is properly structured
-  json_result
-  |> json.to_string
-  |> should.contain("task-1")
+  let json_str = json.to_string(json_result)
 
-  json_result
-  |> json.to_string
-  |> should.contain("Buy groceries")
+  string.contains(json_str, "task-1")
+  |> should.be_true()
 
-  json_result
-  |> json.to_string
-  |> should.contain("Weekly shopping")
+  string.contains(json_str, "Buy groceries")
+  |> should.be_true()
+
+  string.contains(json_str, "Weekly shopping")
+  |> should.be_true()
 }
 
 pub fn task_to_json_without_description_test() {
   let task = new_task("task-2", "Prep meals", None)
 
   let json_result = task_to_json(task)
+  let json_str = json.to_string(json_result)
 
-  json_result
-  |> json.to_string
-  |> should.contain("task-2")
+  string.contains(json_str, "task-2")
+  |> should.be_true()
 
-  json_result
-  |> json.to_string
-  |> should.contain("Prep meals")
+  string.contains(json_str, "Prep meals")
+  |> should.be_true()
 }
 
 pub fn tasks_to_json_array_test() {
@@ -162,17 +162,17 @@ pub fn tasks_to_json_array_test() {
 
   let json_str = json.to_string(json_result)
 
-  json_str
-  |> should.contain("task-1")
+  string.contains(json_str, "task-1")
+  |> should.be_true()
 
-  json_str
-  |> should.contain("task-2")
+  string.contains(json_str, "task-2")
+  |> should.be_true()
 
-  json_str
-  |> should.contain("Buy groceries")
+  string.contains(json_str, "Buy groceries")
+  |> should.be_true()
 
-  json_str
-  |> should.contain("Prep meals")
+  string.contains(json_str, "Prep meals")
+  |> should.be_true()
 }
 
 // ============================================================================
@@ -219,12 +219,8 @@ pub fn unsynced_tasks_filters_correctly_test() {
 
   let result = unsynced_tasks(tasks)
 
-  result
-  |> should.have_length(2)
-
-  let ids =
-    result
-    |> should.have_length(2)
+  list.length(result)
+  |> should.equal(2)
 }
 
 pub fn synced_tasks_filters_correctly_test() {
@@ -237,12 +233,13 @@ pub fn synced_tasks_filters_correctly_test() {
 
   let result = synced_tasks(tasks)
 
-  result
-  |> should.have_length(2)
+  list.length(result)
+  |> should.equal(2)
 
-  // Both results should be synced
+  // Both results should be synced - verify all have todoist_id
   result
-  |> should.have_length(2)
+  |> list.all(is_synced)
+  |> should.be_true()
 }
 
 // ============================================================================
@@ -251,42 +248,46 @@ pub fn synced_tasks_filters_correctly_test() {
 
 pub fn error_message_for_api_error_test() {
   let err = ApiError("Network timeout")
+  let msg = error_message(err)
 
-  error_message(err)
-  |> should.contain("API Error")
+  string.contains(msg, "API Error")
+  |> should.be_true()
 
-  error_message(err)
-  |> should.contain("Network timeout")
+  string.contains(msg, "Network timeout")
+  |> should.be_true()
 }
 
 pub fn error_message_for_authentication_error_test() {
   let err = AuthenticationError("Invalid token")
+  let msg = error_message(err)
 
-  error_message(err)
-  |> should.contain("Authentication Error")
+  string.contains(msg, "Authentication Error")
+  |> should.be_true()
 
-  error_message(err)
-  |> should.contain("Invalid token")
+  string.contains(msg, "Invalid token")
+  |> should.be_true()
 }
 
 pub fn error_message_for_validation_error_test() {
   let err = ValidationError("Missing required field")
+  let msg = error_message(err)
 
-  error_message(err)
-  |> should.contain("Validation Error")
+  string.contains(msg, "Validation Error")
+  |> should.be_true()
 
-  error_message(err)
-  |> should.contain("Missing required field")
+  string.contains(msg, "Missing required field")
+  |> should.be_true()
 }
 
 pub fn error_message_for_sync_error_test() {
   let err = SyncError("Partial sync failed")
+  let msg = error_message(err)
 
-  error_message(err)
-  |> should.contain("Sync Error")
+  string.contains(msg, "Sync Error")
+  |> should.be_true()
 
-  error_message(err)
-  |> should.contain("Partial sync failed")
+  string.contains(msg, "Partial sync failed")
+  |> should.be_true()
 }
 
 // ============================================================================
@@ -301,10 +302,12 @@ pub fn sync_workflow_test() {
 
   // 1. Check all tasks are unsynced
   unsynced_tasks(tasks)
-  |> should.have_length(2)
+  |> list.length
+  |> should.equal(2)
 
   synced_tasks(tasks)
-  |> should.have_length(0)
+  |> list.length
+  |> should.equal(0)
 
   // 2. Sync tasks (stub implementation)
   let sync_result = sync_tasks("my-token", tasks)
