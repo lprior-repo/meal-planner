@@ -69,11 +69,7 @@ pub fn search_foods_cached(
         Error(_) -> updated_cache
       }
 
-      query_cache.record_metric(
-        False,
-        "search_foods",
-        constants.uncached_search_query_time_ms,
-      )
+      query_cache.record_metric(False, "search_foods", 50.0)
       #(final_cache, result)
     }
   }
