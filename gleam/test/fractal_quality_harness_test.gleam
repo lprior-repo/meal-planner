@@ -43,6 +43,29 @@ pub fn aggregate_test_results(
 }
 
 // ===================================================================
+// ROLLBACK ACTION TYPE
+// ===================================================================
+
+/// Action to take based on quality score
+pub type RollbackAction {
+  NoRollback
+  Rollback(files: List(String))
+}
+
+// ===================================================================
+// AUTO ROLLBACK
+// ===================================================================
+
+/// Determine if rollback is needed based on quality score
+/// Returns Rollback(files) if score < 0.95, otherwise NoRollback
+pub fn auto_rollback(score: Float, files: List(String)) -> RollbackAction {
+  case score <. 0.95 {
+    True -> Rollback(files)
+    False -> NoRollback
+  }
+}
+
+// ===================================================================
 // TRUTH SCORE CALCULATOR
 // ===================================================================
 
@@ -59,6 +82,140 @@ pub fn truth_score(results: TestResults) -> Float {
       passed_float /. total_float
     }
   }
+}
+
+// ===================================================================
+// AUTO ROLLBACK TESTS
+// ===================================================================
+
+pub fn auto_rollback_triggers_on_low_score_test() {
+  // Score < 0.95 should trigger rollback
+  let score = 0.90
+  let files = ["src/module.gleam", "test/module_test.gleam"]
+
+  auto_rollback(score, files)
+  |> should.equal(Rollback(files))
+}
+
+pub fn auto_rollback_no_rollback_on_high_score_test() {
+  // Score >= 0.95 should not rollback
+  let score = 0.96
+  let files = ["src/module.gleam"]
+
+  auto_rollback(score, files)
+  |> should.equal(NoRollback)
+}
+
+pub fn auto_rollback_threshold_exactly_0_95_test() {
+  // Score exactly 0.95 should not rollback (threshold is <0.95, not <=)
+  let score = 0.95
+  let files = ["src/module.gleam"]
+
+  auto_rollback(score, files)
+  |> should.equal(NoRollback)
+}
+
+pub fn auto_rollback_just_below_threshold_test() {
+  // Score just below 0.95 should rollback
+  let score = 0.94
+  let files = ["src/module.gleam"]
+
+  auto_rollback(score, files)
+  |> should.equal(Rollback(files))
+}
+
+pub fn auto_rollback_perfect_score_test() {
+  // Score 1.0 should not rollback
+  let score = 1.0
+  let files = ["src/module.gleam"]
+
+  auto_rollback(score, files)
+  |> should.equal(NoRollback)
+}
+
+pub fn auto_rollback_zero_score_test() {
+  // Score 0.0 should rollback (all tests failed)
+  let score = 0.0
+  let files = ["src/module.gleam"]
+
+  auto_rollback(score, files)
+  |> should.equal(Rollback(files))
+}
+
+pub fn auto_rollback_empty_file_list_test() {
+  // Rollback with empty file list
+  let score = 0.90
+  let files = []
+
+  auto_rollback(score, files)
+  |> should.equal(Rollback([]))
+}
+
+pub fn auto_rollback_multiple_files_test() {
+  // Rollback should preserve all files
+  let score = 0.85
+  let files = [
+    "src/module1.gleam",
+    "src/module2.gleam",
+    "src/module3.gleam",
+    "test/module1_test.gleam",
+    "test/module2_test.gleam",
+  ]
+
+  auto_rollback(score, files)
+  |> should.equal(Rollback(files))
+}
+
+pub fn auto_rollback_integration_with_truth_score_test() {
+  // Integration test: calculate score and check rollback
+  let results = TestResults(passed: 90, failed: 10)
+  let score = truth_score(results)
+  let files = ["src/feature.gleam"]
+
+  // 90/100 = 0.9, which is < 0.95, so should rollback
+  auto_rollback(score, files)
+  |> should.equal(Rollback(files))
+}
+
+pub fn auto_rollback_integration_high_quality_test() {
+  // Integration test: high quality should not rollback
+  let results = TestResults(passed: 96, failed: 4)
+  let score = truth_score(results)
+  let files = ["src/feature.gleam"]
+
+  // 96/100 = 0.96, which is >= 0.95, so no rollback
+  auto_rollback(score, files)
+  |> should.equal(NoRollback)
+}
+
+pub fn auto_rollback_fractal_loop_complete_test() {
+  // Complete fractal loop: aggregate and check rollback
+  let unit = TestResults(passed: 20, failed: 1)
+  let integration = TestResults(passed: 10, failed: 0)
+  let e2e = TestResults(passed: 5, failed: 0)
+
+  let aggregated = aggregate_test_results(unit, integration, e2e)
+  let score = truth_score(aggregated)
+  let files = ["src/feature.gleam", "test/feature_test.gleam"]
+
+  // 35/36 ≈ 0.972, which is >= 0.95, so no rollback
+  auto_rollback(score, files)
+  |> should.equal(NoRollback)
+}
+
+pub fn auto_rollback_fractal_loop_failed_test() {
+  // Fractal loop with too many failures should rollback
+  let unit = TestResults(passed: 85, failed: 15)
+  let integration = TestResults(passed: 40, failed: 10)
+  let e2e = TestResults(passed: 15, failed: 10)
+
+  let aggregated = aggregate_test_results(unit, integration, e2e)
+  let score = truth_score(aggregated)
+  let files = ["src/feature.gleam"]
+
+  // 140/175 = 0.8, which is < 0.95, so should rollback
+  auto_rollback(score, files)
+  |> should.equal(Rollback(files))
 }
 
 // ===================================================================
