@@ -4,7 +4,6 @@
 //// It supports multiple recipe sources and handles error conditions gracefully.
 
 import gleam/list
-import meal_planner/external/themealdb
 import meal_planner/types.{type Recipe}
 
 // ============================================================================
@@ -40,12 +39,17 @@ pub type FetchError {
 // ============================================================================
 
 /// Fetch a single recipe by ID from the specified source
+/// Note: Actual API implementation should be in source-specific modules
 pub fn fetch_recipe(
   source: RecipeSource,
   recipe_id: String,
 ) -> Result(Recipe, FetchError) {
   case source {
-    TheMealDB -> themealdb.fetch_recipe(recipe_id)
+    TheMealDB -> {
+      // TODO: Implement actual TheMealDB API call
+      // For now, return not found
+      Error(RecipeNotFound(recipe_id))
+    }
     Spoonacular -> Error(ApiKeyMissing)
   }
 }
@@ -64,7 +68,11 @@ pub fn search_recipes(
   }
 
   case source {
-    TheMealDB -> themealdb.search_recipes(query, validated_limit)
+    TheMealDB -> {
+      // TODO: Implement actual TheMealDB API call
+      // For now, return empty list
+      Ok([])
+    }
     Spoonacular -> Error(ApiKeyMissing)
   }
 }

@@ -179,6 +179,22 @@ pub type MealEntryData {
     meal_type: String,
   )
 }
+
+/// Food log entry card for display in meal logs
+pub type LogEntryCard {
+  LogEntryCard(
+    entry_id: String,
+    food_name: String,
+    portion: Float,
+    unit: String,
+    protein: Float,
+    fat: Float,
+    carbs: Float,
+    calories: Float,
+    meal_type: String,
+    logged_at: String,
+  )
+}
 // ===================================================================
 // Additional types will be added as specific features are implemented
 // ===================================================================

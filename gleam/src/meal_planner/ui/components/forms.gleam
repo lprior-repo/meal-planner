@@ -595,11 +595,19 @@ pub fn search_combobox(
   <> "</div>"
 }
 
-/// Search combobox with active selection
+/// Search combobox with active selection and keyboard navigation
 ///
 /// Same as search_combobox but includes aria-activedescendant
 /// to indicate which result item has keyboard focus.
+/// Adds HTMX keyboard triggers for arrow navigation and enter selection.
+/// Server-side focus management via CSS classes and aria-activedescendant updates.
 /// Includes loading indicator for user feedback.
+///
+/// Features:
+/// - aria-activedescendant tracks currently focused result
+/// - HTMX keyboard triggers (ArrowUp, ArrowDown, Enter)
+/// - Server updates aria-activedescendant on keyboard navigation
+/// - CSS .focused class indicates highlighted result
 pub fn search_combobox_with_selection(
   query: String,
   placeholder: String,
@@ -625,6 +633,7 @@ pub fn search_combobox_with_selection(
   <> "aria-controls=\"search-results-listbox\" "
   <> ">"
   <> "<input type=\"search\" class=\"input-search\" "
+  <> "id=\"search-input\" "
   <> "placeholder=\""
   <> placeholder
   <> "\" "
@@ -639,7 +648,7 @@ pub fn search_combobox_with_selection(
   <> int.to_string(selected_id)
   <> "\" "
   <> "hx-get=\"/api/foods/search\" "
-  <> "hx-trigger=\"input changed delay:300ms from:.input-search\" "
+  <> "hx-trigger=\"input changed delay:300ms from:#search-input, keydown[key=='ArrowDown'] from:#search-input, keydown[key=='ArrowUp'] from:#search-input, keydown[key=='Enter'] from:#search-input\" "
   <> "hx-target=\"#food-results\" "
   <> "hx-swap=\"innerHTML\" "
   <> "hx-indicator=\"#search-loading\" />"

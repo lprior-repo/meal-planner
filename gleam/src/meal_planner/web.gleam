@@ -1707,6 +1707,7 @@ fn handle_api(
     ["recipe-sources"] -> api_recipe_sources(req, ctx)
     ["meal-plans", "auto"] -> api_auto_meal_plan(req, ctx)
     ["meal-plans", "auto", id] -> api_auto_meal_plan_by_id(req, id, ctx)
+    ["fragments", "filters"] -> search.api_filter_fragment(req)
     _ -> wisp.not_found()
   }
 }

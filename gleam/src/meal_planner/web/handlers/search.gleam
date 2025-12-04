@@ -397,3 +397,32 @@ fn food_to_json(f: UsdaFood) -> json.Json {
     #("category", json.string(f.category)),
   ])
 }
+
+/// GET /api/fragments/filters?expanded=true|false
+/// Returns HTML fragment for collapsible filter panel (mobile)
+pub fn api_filter_fragment(req: wisp.Request) -> wisp.Response {
+  // Parse query parameter for expanded state
+  let parsed_query = uri.parse_query(req.query |> option.unwrap(""))
+
+  let expanded = case parsed_query {
+    Ok(params) ->
+      case list.find(params, fn(p) { p.0 == "expanded" }) {
+        Ok(#(_, "true")) -> True
+        Ok(#(_, "false")) -> False
+        _ -> False
+      }
+    Error(_) -> False
+  }
+
+  // Sample filter content
+  let filter_content =
+    "<div class=\"filter-chips\">"
+    <> "<button class=\"filter-chip\" data-filter=\"all\">All</button>"
+    <> "<button class=\"filter-chip\" data-filter=\"verified\">Verified</button>"
+    <> "<button class=\"filter-chip\" data-filter=\"branded\">Branded</button>"
+    <> "</div>"
+
+  let html = forms.filter_panel_collapsible(expanded, filter_content)
+
+  wisp.html_response(html, 200)
+}
