@@ -17,6 +17,7 @@ import gleam/uri
 import lustre/attribute
 import lustre/element
 import lustre/element/html
+import meal_planner/actors/todoist_actor
 import meal_planner/auto_planner
 import meal_planner/auto_planner/storage as auto_storage
 import meal_planner/auto_planner/types as auto_types
@@ -36,6 +37,7 @@ import meal_planner/web/handlers/profile
 import meal_planner/web/handlers/recipe
 import meal_planner/web/handlers/search
 import meal_planner/web/handlers/swap
+import meal_planner/web/handlers/sync
 import mist
 import pog
 import wisp
@@ -45,9 +47,13 @@ import wisp/wisp_mist
 // Context (passed to handlers)
 // ============================================================================
 
-/// Web context holding database connection and query cache
+/// Web context holding database connection, query cache, and actors
 pub type Context {
-  Context(db: pog.Connection, search_cache: storage_optimized.SearchCache)
+  Context(
+    db: pog.Connection,
+    search_cache: storage_optimized.SearchCache,
+    todoist_actor: process.Subject(todoist_actor.Message),
+  )
 }
 
 // ============================================================================
@@ -70,8 +76,12 @@ pub fn start(port: Int) {
   // Initialize search cache (5 min TTL, 100 entry max)
   let search_cache = storage_optimized.new_search_cache()
 
+  // Initialize TodoistActor for async sync operations
+  let assert Ok(todoist_started) = todoist_actor.start()
+  let todoist = todoist_started.data
+
   let secret_key_base = wisp.random_string(64)
-  let ctx = Context(db: db, search_cache: search_cache)
+  let ctx = Context(db: db, search_cache: search_cache, todoist_actor: todoist)
 
   io.println("Starting server on port " <> int.to_string(port))
 
@@ -1686,6 +1696,7 @@ fn handle_api(
     ["swap", meal_type] ->
       swap.api_swap_meal(req, meal_type, swap.Context(db: ctx.db))
     ["generate"] -> generate.api_generate(req, generate.Context(db: ctx.db))
+    ["sync", "todoist"] -> sync.api_sync_todoist(req, ctx.todoist_actor)
     ["recipe-sources"] -> api_recipe_sources(req, ctx)
     ["meal-plans", "auto"] -> api_auto_meal_plan(req, ctx)
     ["meal-plans", "auto", id] -> api_auto_meal_plan_by_id(req, id, ctx)
