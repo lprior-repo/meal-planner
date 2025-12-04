@@ -8,6 +8,7 @@
 import gleam/list
 import gleam/option
 import gleam/string
+import meal_planner/nutrition_constants as constants
 import meal_planner/storage
 import meal_planner/types.{
   type FoodSearchError, type FoodSearchResponse, FoodSearchResponse,
@@ -42,12 +43,20 @@ pub fn unified_food_search(
   let trimmed_query = string.trim(query)
 
   case string.length(trimmed_query) {
-    len if len < 2 -> Error(InvalidQuery("Query must be at least 2 characters"))
+    len if len < constants.min_query_length ->
+      Error(InvalidQuery(
+        "Query must be at least "
+        <> int.to_string(constants.min_query_length)
+        <> " characters",
+      ))
     _ -> {
       // STEP 2: Validate limit (must be 1-100)
       case limit {
-        l if l < 1 || l > 100 ->
-          Error(InvalidQuery("Limit must be between 1 and 100"))
+        l if l < 1 || l > constants.max_search_limit ->
+          Error(InvalidQuery(
+            "Limit must be between 1 and "
+            <> int.to_string(constants.max_search_limit),
+          ))
         _ -> {
           // STEP 3: Custom foods tracked in bead meal-planner-1k0
           let custom_results = []
@@ -127,8 +136,11 @@ pub fn unified_food_search_with_category(
 ) -> Result(FoodSearchResponse, FoodSearchError) {
   // STEP 1: Validate limit (must be 1-100)
   case limit {
-    l if l < 1 || l > 100 ->
-      Error(InvalidQuery("Limit must be between 1 and 100"))
+    l if l < 1 || l > constants.max_search_limit ->
+      Error(InvalidQuery(
+        "Limit must be between 1 and "
+        <> int.to_string(constants.max_search_limit),
+      ))
     _ -> {
       let trimmed_query = string.trim(query)
 

@@ -384,7 +384,7 @@ fn get_timestamp_string() -> String {
   // Get milliseconds since epoch
   let millis = system_time(1000)
   // Take last 6 digits to keep ID shorter
-  let short_id = millis % 1_000_000
+  let short_id = millis % nutrition_constants.recipe_id_modulo_divisor
   int.to_string(short_id)
 }
 

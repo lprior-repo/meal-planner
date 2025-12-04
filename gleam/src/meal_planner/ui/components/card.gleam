@@ -18,6 +18,7 @@ import gleam/option
 import lustre/attribute
 import lustre/element
 import lustre/element/html
+import meal_planner/nutrition_constants
 import meal_planner/ui/types/ui_types
 
 // ===================================================================
@@ -198,8 +199,10 @@ pub fn calorie_summary_card(
   let percentage_int = float.truncate(percentage)
 
   let percentage_class = case percentage {
-    p if p <. 90.0 -> "percentage percentage-green"
-    p if p <=. 100.0 -> "percentage percentage-yellow"
+    p if p <. nutrition_constants.calorie_deficit_threshold ->
+      "percentage percentage-green"
+    p if p <=. nutrition_constants.calorie_match_threshold ->
+      "percentage percentage-yellow"
     _ -> "percentage percentage-red"
   }
 
@@ -213,7 +216,10 @@ pub fn calorie_summary_card(
       html.div(
         [
           attribute.class("current animated-counter"),
-          attribute.attribute("data-animate-duration", "1000"),
+          attribute.attribute(
+            "data-animate-duration",
+            int.to_string(nutrition_constants.calorie_animation_duration),
+          ),
         ],
         [element.text(int.to_string(current_int))],
       ),

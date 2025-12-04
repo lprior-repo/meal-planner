@@ -548,6 +548,70 @@ pub fn search_results_empty_no_query_test() {
 }
 
 // ===================================================================
+// CLEAR ALL FILTERS BUTTON TESTS
+// ===================================================================
+
+/// Test clear all filters button with HTMX attributes
+pub fn search_results_with_count_clear_all_button_test() {
+  let items = [#(1, "Chicken", "Foundation", "Poultry")]
+  let active_filters = [
+    #("verified", "Verified Only"),
+    #("category", "Vegetables"),
+  ]
+
+  let result = forms.search_results_with_count(items, 1, active_filters, True)
+
+  // Should have clear all button with HTMX attributes
+  should.be_true(result |> contains("btn-clear-all-filters"))
+  should.be_true(result |> contains("Clear All Filters"))
+
+  // Should have HTMX get attribute to reset filters
+  should.be_true(result |> contains("hx-get=\"/api/foods/search?q=\""))
+
+  // Should have correct target
+  should.be_true(result |> contains("hx-target=\"#search-results\""))
+
+  // Should have correct swap
+  should.be_true(result |> contains("hx-swap=\"innerHTML\""))
+
+  // Should push URL to clear query params
+  should.be_true(result |> contains("hx-push-url=\"true\""))
+}
+
+/// Test clear all filters button hidden when no filters
+pub fn search_results_with_count_no_filters_test() {
+  let items = [#(1, "Chicken", "Foundation", "Poultry")]
+  let active_filters: List(#(String, String)) = []
+
+  let result = forms.search_results_with_count(items, 1, active_filters, True)
+
+  // Should NOT have clear all button when no filters
+  should.be_false(result |> contains("Clear All Filters"))
+}
+
+/// Test search results with filters visible
+pub fn search_results_with_count_filters_visible_test() {
+  let items = [
+    #(1, "Apple", "Foundation", "Fruits"),
+    #(2, "Banana", "Foundation", "Fruits"),
+  ]
+  let active_filters = [#("category", "Fruits")]
+
+  let result = forms.search_results_with_count(items, 2, active_filters, True)
+
+  // Should have active filters section
+  should.be_true(result |> contains("active-filters-container"))
+  should.be_true(result |> contains("Active filters:"))
+
+  // Should have filter tag
+  should.be_true(result |> contains("filter-tag"))
+  should.be_true(result |> contains("Fruits"))
+
+  // Should have remove filter indicator
+  should.be_true(result |> contains("remove-filter"))
+}
+
+// ===================================================================
 // KEYBOARD NAVIGATION COMBOBOX TESTS
 // ===================================================================
 

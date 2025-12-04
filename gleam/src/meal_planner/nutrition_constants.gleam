@@ -300,3 +300,30 @@ pub const default_cache_ttl_seconds = 300
 
 /// Nanoseconds per microsecond for time conversion
 pub const nanoseconds_per_microsecond = 1000
+
+// ===================================================================
+// RECIPE ID GENERATION CONSTANTS
+// ===================================================================
+
+/// Modulo divisor for generating short recipe IDs
+/// Takes last 6 digits of milliseconds (modulo 1,000,000) for compact ID generation
+pub const recipe_id_modulo_divisor = 1_000_000
+
+// ===================================================================
+// TASK-SPECIFIC ALIASES (for TDD compatibility)
+// ===================================================================
+
+/// Default daily calorie target (alias for daily_calorie_target)
+pub const default_calorie_target = 2000.0
+
+/// Recommended daily protein in grams (alias for daily_protein_target)
+pub const recommended_protein_g = 150.0
+
+/// Recommended daily fat in grams (alias for daily_fat_target)
+pub const recommended_fat_g = 50.0
+
+/// Recommended daily carbs in grams (alias for daily_carbs_target)
+pub const recommended_carbs_g = 200.0
+
+/// Quality/acceptability threshold for scores (0.0 to 1.0)
+pub const quality_threshold = 0.95

@@ -15,6 +15,7 @@ import gleam/string
 import lustre/attribute.{attribute, class}
 import lustre/element.{type Element, text}
 import lustre/element/html.{div, h3, p, span}
+import meal_planner/nutrition_constants
 import meal_planner/types.{type Micronutrients}
 
 // ===================================================================
@@ -125,14 +126,15 @@ fn calculate_percentage(amount: Float, daily_value: Float) -> Float {
 }
 
 /// Determine color class based on percentage
-/// - Low (< 50%): yellow (deficiency warning)
-/// - Optimal (50-100%): green
-/// - Excess (> 100%): orange/red
+/// - Low (< micronutrient_low_threshold%): yellow (deficiency warning)
+/// - Optimal (micronutrient_low_threshold-micronutrient_optimal_threshold%): green
+/// - Excess (> micronutrient_optimal_threshold%): orange/red
 fn get_status_color(percentage: Float) -> String {
   case percentage {
-    p if p <. 50.0 -> "status-low"
-    p if p <=. 100.0 -> "status-optimal"
-    p if p <=. 150.0 -> "status-high"
+    p if p <. nutrition_constants.micronutrient_low_threshold -> "status-low"
+    p if p <=. nutrition_constants.micronutrient_optimal_threshold ->
+      "status-optimal"
+    p if p <=. nutrition_constants.micronutrient_high_threshold -> "status-high"
     _ -> "status-excess"
   }
 }
@@ -141,9 +143,9 @@ fn get_status_color(percentage: Float) -> String {
 fn format_amount(amount: Float, unit: String) -> String {
   let rounded = case unit {
     "mg" | "g" ->
-      float.truncate(amount *. 10.0)
+      float.truncate(amount *. nutrition_constants.format_precision_multiplier)
       |> int.to_float
-      |> fn(x) { x /. 10.0 }
+      |> fn(x) { x /. nutrition_constants.format_precision_multiplier }
     "mcg" -> float.truncate(amount) |> int.to_float
     _ -> amount
   }
@@ -236,9 +238,8 @@ pub fn extract_other_nutrients(
     #("Fiber", micros.fiber, "g", dv.fiber_g),
     #("Sodium", micros.sodium, "mg", dv.sodium_mg),
     #("Cholesterol", micros.cholesterol, "mg", dv.cholesterol_mg),
-    #("Sugar", micros.sugar, "g", 50.0),
+    #("Sugar", micros.sugar, "g", nutrition_constants.default_sugar_daily_value),
   ]
-  // 50g arbitrary limit for sugar
 
   items
   |> list.filter_map(fn(item) {
@@ -271,9 +272,11 @@ pub fn micronutrient_bar(item: MicronutrientItem) -> Element(msg) {
   let dv_str = format_amount(item.daily_value, item.unit)
   let color_class = get_status_color(item.percentage)
 
-  // Cap visual width at 100% but show actual percentage in label
-  let visual_percentage = case item.percentage >. 100.0 {
-    True -> 100.0
+  // Cap visual width at progress_bar_visual_cap but show actual percentage in label
+  let visual_percentage = case
+    item.percentage >. nutrition_constants.progress_bar_visual_cap
+  {
+    True -> nutrition_constants.progress_bar_visual_cap
     False -> item.percentage
   }
   let width_str = float.to_string(visual_percentage)

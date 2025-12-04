@@ -4,6 +4,7 @@ import gleam/httpc
 import gleam/int
 import gleam/json
 import gleam/result
+import meal_planner/nutrition_constants
 
 /// Represents the sender or recipient of an email
 pub type EmailAddress {
@@ -90,6 +91,7 @@ pub fn send_email(
   case httpc.send(req) {
     Ok(resp) ->
       case resp.status {
+        // HTTP 2xx success codes for email submission (200 OK, 201 Created, 202 Accepted)
         200 | 201 | 202 -> Ok(resp.body)
         _ -> Error("HTTP " <> int.to_string(resp.status) <> ": " <> resp.body)
       }

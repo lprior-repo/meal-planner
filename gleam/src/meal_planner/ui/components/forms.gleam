@@ -470,7 +470,7 @@ pub fn search_results_with_count(
 
   let clear_all_btn = case show_clear_all && list.length(active_filters) > 0 {
     True ->
-      "<button class=\"btn-clear-all-filters btn btn-ghost btn-sm\" type=\"button\">Clear All Filters</button>"
+      "<button class=\"btn-clear-all-filters btn btn-ghost btn-sm\" type=\"button\" hx-get=\"/api/foods/search?q=\" hx-target=\"#search-results\" hx-swap=\"innerHTML\" hx-push-url=\"true\">Clear All Filters</button>"
     False -> ""
   }
 

@@ -53,7 +53,10 @@ pub fn calorie_card_skeleton() -> Element(msg) {
       [
         class("skeleton-text"),
         style([
-          #("width", "150px"),
+          #(
+            "width",
+            int.to_string(nutrition_constants.skeleton_label_width) <> "px",
+          ),
           #("height", "24px"),
           #("margin-bottom", "8px"),
         ]),
@@ -63,7 +66,13 @@ pub fn calorie_card_skeleton() -> Element(msg) {
     div(
       [
         class("skeleton-text"),
-        style([#("width", "200px"), #("height", "48px")]),
+        style([
+          #(
+            "width",
+            int.to_string(nutrition_constants.skeleton_calorie_width) <> "px",
+          ),
+          #("height", "48px"),
+        ]),
       ],
       [],
     ),
@@ -200,7 +209,13 @@ pub fn search_results_skeleton(count: Int) -> Element(msg) {
           [
             class("skeleton-text"),
             style([
-              #("width", "70%"),
+              #(
+                "width",
+                int.to_string(
+                  nutrition_constants.skeleton_main_text_width_percent,
+                )
+                  <> "%",
+              ),
               #("height", "18px"),
               #("margin-bottom", "4px"),
             ]),
@@ -210,7 +225,16 @@ pub fn search_results_skeleton(count: Int) -> Element(msg) {
         div(
           [
             class("skeleton-text"),
-            style([#("width", "40%"), #("height", "14px")]),
+            style([
+              #(
+                "width",
+                int.to_string(
+                  nutrition_constants.skeleton_secondary_text_width_percent,
+                )
+                  <> "%",
+              ),
+              #("height", "14px"),
+            ]),
           ],
           [],
         ),
@@ -298,7 +322,13 @@ fn get_skeleton_for_component(component_type: String) -> Element(msg) {
       div(
         [
           class("skeleton-text"),
-          style([#("width", "100%"), #("height", "200px")]),
+          style([
+            #("width", "100%"),
+            #(
+              "height",
+              int.to_string(nutrition_constants.skeleton_large_height) <> "px",
+            ),
+          ]),
         ],
         [],
       )
@@ -380,8 +410,10 @@ pub fn lazy_image(
 ) -> Element(msg) {
   let placeholder_src = case placeholder {
     Some(p) -> p
-    None ->
+    None -> {
+      // Generic placeholder SVG (400x300 gray rectangle)
       "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3C/svg%3E"
+    }
   }
 
   div([class("lazy-image-wrapper")], [
