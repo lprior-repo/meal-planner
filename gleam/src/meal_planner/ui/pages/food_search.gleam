@@ -24,6 +24,10 @@ pub type SearchState {
     // (id, name, type, category)
     total_count: Int,
     loading: Bool,
+    categories: List(String),
+    // Available categories from database
+    selected_category: option.Option(String),
+    // Currently selected category filter
   )
 }
 
@@ -31,6 +35,7 @@ pub type SearchState {
 ///
 /// Returns HTML for the full page including:
 /// - Page header
+/// - Category filter dropdown
 /// - Search form with input (keyboard navigation enabled)
 /// - Results list or empty/loading state
 /// - Integrated with components from meal-planner-rvz.1, rvz.2, rvz.3
@@ -40,6 +45,8 @@ pub fn render_food_search_page(state: SearchState) -> String {
     results: results,
     total_count: _,
     loading: loading,
+    categories: categories,
+    selected_category: selected_category,
   ) = state
 
   let query = case query_opt {
@@ -69,6 +76,13 @@ pub fn render_food_search_page(state: SearchState) -> String {
   <> "<p class=\"subtitle\">Search USDA FoodData Central database</p>"
   <> "</header>"
   <> "<main class=\"page-content\">"
+  <> "<div class=\"search-filters\">"
+  <> forms.category_filter_group(
+    categories,
+    selected_category,
+    "handleCategoryChange",
+  )
+  <> "</div>"
   <> search_widget
   <> "</main>"
   <> "</div>"

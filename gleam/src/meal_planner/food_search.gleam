@@ -6,11 +6,12 @@
 ///
 /// Results are ordered with custom foods first, then USDA foods.
 import gleam/list
+import gleam/option
 import gleam/string
 import meal_planner/storage
 import meal_planner/types.{
   type FoodSearchError, type FoodSearchResponse, FoodSearchResponse,
-  InvalidQuery, UsdaFoodResult,
+  InvalidQuery, UsdaFoodResult, SearchFilters,
 }
 import pog
 
@@ -88,6 +89,106 @@ pub fn unified_food_search(
           ))
         }
       }
+    }
+  }
+}
+
+/// Search foods with category filter applied
+/// Integrates category filtering with unified search
+///
+/// ## Parameters
+/// - `db`: PostgreSQL connection
+/// - `user_id`: User ID for custom food scoping
+/// - `query`: Search term (min 2 characters, or empty for browse mode)
+/// - `category`: Optional category filter (None = all categories)
+/// - `limit`: Total result limit (max 100)
+///
+/// ## Returns
+/// - `Ok(FoodSearchResponse)`: Filtered search results with metadata
+/// - `Err(FoodSearchError)`: Validation or database error
+///
+/// ## Examples
+/// ```gleam
+/// // Search with category filter
+/// let result = unified_food_search_with_category(
+///   db, "user-123", "chicken", option.Some("Poultry Products"), 50
+/// )
+/// // Browse all items in category (empty query)
+/// let result = unified_food_search_with_category(
+///   db, "user-123", "", option.Some("Dairy and Egg Products"), 50
+/// )
+/// ```
+pub fn unified_food_search_with_category(
+  db: pog.Connection,
+  _user_id: String,
+  query: String,
+  category: option.Option(String),
+  limit: Int,
+) -> Result(FoodSearchResponse, FoodSearchError) {
+  // STEP 1: Validate limit (must be 1-100)
+  case limit {
+    l if l < 1 || l > 100 ->
+      Error(InvalidQuery("Limit must be between 1 and 100"))
+    _ -> {
+      let trimmed_query = string.trim(query)
+
+      // STEP 2: Build search filters with category
+      let filters = SearchFilters(
+        verified_only: False,
+        branded_only: False,
+        category: category,
+      )
+
+      // STEP 3: Query USDA foods with filters
+      let usda_results = case string.length(trimmed_query) {
+        len if len < 2 -> {
+          // Browse mode: return foods in category without text search
+          case category {
+            option.Some(_) ->
+              case storage.search_foods_filtered(db, "", filters, limit) {
+                Ok(foods) ->
+                  foods
+                  |> list.map(fn(food) {
+                    UsdaFoodResult(
+                      food.fdc_id,
+                      food.description,
+                      food.data_type,
+                      food.category,
+                    )
+                  })
+                Error(_) -> []
+              }
+            option.None -> []
+          }
+        }
+        _ -> {
+          // Search mode: text search with category filter
+          case storage.search_foods_filtered(db, trimmed_query, filters, limit) {
+            Ok(foods) ->
+              foods
+              |> list.map(fn(food) {
+                UsdaFoodResult(
+                  food.fdc_id,
+                  food.description,
+                  food.data_type,
+                  food.category,
+                )
+              })
+            Error(_) -> []
+          }
+        }
+      }
+
+      // STEP 4: Count results
+      let total_count = list.length(usda_results)
+
+      // STEP 5: Return response
+      Ok(FoodSearchResponse(
+        results: usda_results,
+        total_count: total_count,
+        custom_count: 0,
+        usda_count: total_count,
+      ))
     }
   }
 }

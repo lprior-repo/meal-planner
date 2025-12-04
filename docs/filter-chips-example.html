@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filter Chips - Interactive Example</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-radius: 0.5rem;
+    }
+
+    h1 {
+      margin-bottom: 0.5rem;
+      color: #0066cc;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .demo-section {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 0.5rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .demo-section h2 {
+      margin-bottom: 1rem;
+      color: #333;
+      font-size: 1.25rem;
+    }
+
+    /* Override filter chips CSS for this demo */
+    .filter-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-chips-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      outline: none;
+    }
+
+    .filter-chips-container:focus {
+      outline: 2px solid #0066cc;
+      outline-offset: 2px;
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background-color: #e8f0ff;
+      border: 1px solid #b0d0ff;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #0066cc;
+      transition: all 150ms ease-in-out;
+      user-select: none;
+    }
+
+    .filter-chip:hover {
+      background-color: #d0e5ff;
+      border-color: #80b5ff;
+    }
+
+    .filter-chip:focus {
+      outline: 2px solid #0066cc;
+      outline-offset: 2px;
+    }
+
+    .filter-chip.active {
+      background-color: #0066cc;
+      border-color: #0052a3;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .chip-label {
+      white-space: nowrap;
+    }
+
+    .chip-remove {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.25rem;
+      height: 1.25rem;
+      padding: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: inherit;
+      font-size: 1.125rem;
+      font-weight: bold;
+      opacity: 0.7;
+      transition: opacity 150ms;
+    }
+
+    .filter-chip:hover .chip-remove {
+      opacity: 1;
+    }
+
+    .category-dropdown-container {
+      position: relative;
+    }
+
+    .category-dropdown-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background-color: #ffffff;
+      border: 1px solid #d0d0d0;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #333333;
+      cursor: pointer;
+      transition: all 150ms ease-in-out;
+      white-space: nowrap;
+    }
+
+    .category-dropdown-trigger:hover {
+      background-color: #f9f9f9;
+      border-color: #b0b0b0;
+    }
+
+    .category-dropdown-trigger:focus {
+      outline: 2px solid #0066cc;
+      outline-offset: 2px;
+    }
+
+    .category-dropdown-trigger::after {
+      content: '';
+      display: inline-block;
+      width: 0.4rem;
+      height: 0.4rem;
+      border: solid #333;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      transition: transform 150ms ease-in-out;
+    }
+
+    .category-dropdown-container.open .category-dropdown-trigger::after {
+      transform: rotate(-135deg);
+    }
+
+    .category-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      left: 0;
+      display: none;
+      min-width: 200px;
+      background-color: #ffffff;
+      border: 1px solid #d0d0d0;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+    }
+
+    .category-dropdown-container.open .category-dropdown-menu {
+      display: block;
+    }
+
+    .category-dropdown-item {
+      display: block;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: none;
+      background: none;
+      color: #333;
+      font-size: 0.875rem;
+      cursor: pointer;
+      text-align: left;
+      transition: background-color 150ms;
+    }
+
+    .category-dropdown-item:hover {
+      background-color: #f0f0f0;
+    }
+
+    .category-dropdown-item.selected {
+      background-color: #e8f0ff;
+      color: #0066cc;
+      font-weight: 600;
+    }
+
+    .filters-clear-all {
+      padding: 0.5rem 1rem;
+      background-color: #ffffff;
+      border: 1px solid #d0d0d0;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      color: #666;
+      cursor: pointer;
+      transition: all 150ms;
+    }
+
+    .filters-clear-all:hover:not(:disabled) {
+      background-color: #f0f0f0;
+      border-color: #b0b0b0;
+      color: #333;
+    }
+
+    .filters-clear-all:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .filters-results-info {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background-color: #e8f0ff;
+      border-left: 3px solid #0066cc;
+      color: #0066cc;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    /* Results display */
+    .results-list {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .result-item {
+      padding: 1rem;
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 0.25rem;
+    }
+
+    .result-item h3 {
+      margin-bottom: 0.25rem;
+      color: #333;
+    }
+
+    .result-item .category-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: #e8f0ff;
+      color: #0066cc;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+
+    .code-block {
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .code-block code {
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-list li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .feature-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #0066cc;
+      font-weight: bold;
+    }
+
+    .keyboard-shortcuts {
+      background: #f0f7ff;
+      border-left: 3px solid #0066cc;
+      padding: 1rem;
+      border-radius: 0.25rem;
+      margin-top: 1rem;
+    }
+
+    .keyboard-shortcuts h3 {
+      margin-bottom: 0.5rem;
+      color: #0066cc;
+    }
+
+    .keyboard-shortcuts p {
+      font-size: 0.875rem;
+      margin: 0.25rem 0;
+    }
+
+    code {
+      background: #f0f0f0;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Filter Chips Interactive Demo</h1>
+      <p class="subtitle">Try clicking chips, using the dropdown, and keyboard navigation</p>
+    </header>
+
+    <!-- Demo 1: Basic Filter Chips -->
+    <div class="demo-section">
+      <h2>1. Interactive Filter Chips</h2>
+      <p>Click chips to toggle them. Use keyboard for navigation (Arrow keys, Space, Delete).</p>
+
+      <div class="filter-controls">
+        <div class="category-dropdown-container">
+          <button class="category-dropdown-trigger" aria-expanded="false">
+            Add Category Filter
+          </button>
+          <div class="category-dropdown-menu" role="listbox">
+            <button class="category-dropdown-item" data-category-value="vegetables" role="option">
+              Vegetables
+            </button>
+            <button class="category-dropdown-item" data-category-value="fruits" role="option">
+              Fruits
+            </button>
+            <button class="category-dropdown-item" data-category-value="grains" role="option">
+              Grains
+            </button>
+            <button class="category-dropdown-item" data-category-value="proteins" role="option">
+              Proteins
+            </button>
+            <button class="category-dropdown-item" data-category-value="dairy" role="option">
+              Dairy
+            </button>
+          </div>
+        </div>
+        <button class="filters-clear-all" aria-label="Clear all filters" disabled>
+          Clear All
+        </button>
+        <div class="filters-results-info" aria-live="polite"></div>
+      </div>
+
+      <div class="filter-chips-container" aria-label="Active filters" tabindex="0">
+        <div class="filter-chip" data-filter-type="verified" data-filter-value="true" role="button" tabindex="0" aria-pressed="false">
+          <span class="chip-label">Verified Only</span>
+          <button class="chip-remove" aria-label="Remove verified only filter">×</button>
+        </div>
+
+        <div class="filter-chip" data-filter-type="branded" data-filter-value="false" role="button" tabindex="-1" aria-pressed="false">
+          <span class="chip-label">Generic Foods</span>
+          <button class="chip-remove" aria-label="Remove generic foods filter">×</button>
+        </div>
+
+        <div class="filter-chip" data-filter-type="dietary" data-filter-value="vegan" role="button" tabindex="-1" aria-pressed="false">
+          <span class="chip-label">Vegan</span>
+          <button class="chip-remove" aria-label="Remove vegan filter">×</button>
+        </div>
+      </div>
+
+      <div class="keyboard-shortcuts">
+        <h3>Keyboard Shortcuts</h3>
+        <p><code>Tab</code> - Navigate between chips</p>
+        <p><code>Space</code> or <code>Enter</code> - Toggle chip</p>
+        <p><code>Delete</code> or <code>Backspace</code> - Remove chip</p>
+        <p><code>Arrow Keys</code> - Move left/right between chips</p>
+      </div>
+
+      <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Sample Results:</h3>
+      <div id="results" class="results-list">
+        <!-- Results populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Demo 2: URL Synchronization -->
+    <div class="demo-section">
+      <h2>2. URL Query Parameter Sync</h2>
+      <p>The filter state is automatically synced to the URL. Try bookmarking or sharing the URL with filters applied.</p>
+
+      <p>Current URL:</p>
+      <div class="code-block">
+        <code id="current-url"></code>
+      </div>
+
+      <button onclick="copyUrlToClipboard()" style="padding: 0.5rem 1rem; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Copy URL
+      </button>
+    </div>
+
+    <!-- Demo 3: API Usage -->
+    <div class="demo-section">
+      <h2>3. JavaScript API Examples</h2>
+
+      <p>The FilterChips object exposes a public API for programmatic control:</p>
+
+      <div class="code-block">
+        <code><pre>// Get current filters
+const filters = FilterChips.getFilters();
+
+// Set filters programmatically
+FilterChips.setFilters({
+  category: ['vegetables', 'fruits'],
+  verified: ['true']
+});
+
+// Clear all
+FilterChips.clearAll();
+
+// Check if active
+if (FilterChips.isFilterActive('verified', 'true')) {
+  console.log('Verified only is active');
+}
+
+// Listen to events
+FilterChips.on('filterChange', function(event) {
+  console.log('Filter changed:', event);
+});
+
+FilterChips.on('filterApply', function(event) {
+  console.log('Triggering search with:', event.filters);
+});</pre></code>
+      </div>
+
+      <button onclick="setPresetFilters()" style="padding: 0.5rem 1rem; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 0.5rem;">
+        Set Preset Filters
+      </button>
+
+      <button onclick="logCurrentState()" style="padding: 0.5rem 1rem; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Log Current State to Console
+      </button>
+    </div>
+
+    <!-- Demo 4: Features -->
+    <div class="demo-section">
+      <h2>4. Features</h2>
+      <ul class="feature-list">
+        <li>Click handlers for filter chips (toggle on/off)</li>
+        <li>Remove filter with X button</li>
+        <li>URL query parameter synchronization</li>
+        <li>Toggle active state visually</li>
+        <li>Automatic search triggering (debounced)</li>
+        <li>Category dropdown with keyboard navigation</li>
+        <li>Full keyboard accessibility</li>
+        <li>Screen reader support (WCAG 2.1 AA)</li>
+        <li>LocalStorage persistence</li>
+        <li>Responsive design (mobile, tablet, desktop)</li>
+        <li>Dark mode support</li>
+        <li>Event system for integration</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Include the filter chips JS -->
+  <!-- In production, link to actual file: -->
+  <!-- <script src="/static/js/filter-chips.js"></script> -->
+
+  <script>
+    // Initialize filter chips with demo callbacks
+    FilterChips.init({
+      loadFromUrl: true,
+      persistToStorage: true,
+      onFilterChange: function(event) {
+        console.log('Filter changed:', event);
+        updateResults();
+        updateUrl();
+      },
+      onSearch: function(event) {
+        console.log('Search triggered with filters:', event.filters);
+        updateResults();
+      }
+    });
+
+    // Update results display based on filters
+    function updateResults() {
+      const filters = FilterChips.getFilters();
+
+      // Sample food data
+      const foods = [
+        { name: 'Carrots', category: 'vegetables', verified: true, branded: false, dietary: 'vegan' },
+        { name: 'Broccoli', category: 'vegetables', verified: true, branded: false, dietary: 'vegan' },
+        { name: 'Apples', category: 'fruits', verified: true, branded: false, dietary: 'vegan' },
+        { name: 'Bananas', category: 'fruits', verified: true, branded: false, dietary: 'vegan' },
+        { name: 'Chicken Breast', category: 'proteins', verified: true, branded: false, dietary: 'keto' },
+        { name: 'Salmon', category: 'proteins', verified: true, branded: false, dietary: 'keto' },
+        { name: 'Brown Rice', category: 'grains', verified: true, branded: false, dietary: 'vegan' },
+        { name: 'Whole Wheat Bread', category: 'grains', verified: true, branded: true, dietary: 'vegetarian' },
+        { name: 'Milk', category: 'dairy', verified: true, branded: false, dietary: 'vegetarian' },
+        { name: 'Yogurt', category: 'dairy', verified: true, branded: true, dietary: 'vegetarian' },
+      ];
+
+      // Filter foods based on active filters
+      const filtered = foods.filter(food => {
+        if (filters.category && !filters.category.includes(food.category)) return false;
+        if (filters.verified === ['true'] && !food.verified) return false;
+        if (filters.branded === ['false'] && food.branded) return false;
+        if (filters.dietary && !filters.dietary.includes(food.dietary)) return false;
+        return true;
+      });
+
+      // Display results
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = filtered.map(food => `
+        <div class="result-item">
+          <h3>${food.name}</h3>
+          <div>
+            <span class="category-badge">${food.category}</span>
+            ${food.verified ? '<span class="category-badge" style="background: #e8f5e9; color: #2e7d32;">Verified</span>' : ''}
+            ${food.branded ? '<span class="category-badge" style="background: #fff3e0; color: #e65100;">Branded</span>' : ''}
+          </div>
+        </div>
+      `).join('');
+
+      if (filtered.length === 0) {
+        resultsDiv.innerHTML = '<p style="color: #999; font-style: italic;">No results match your filters.</p>';
+      }
+    }
+
+    // Update URL display
+    function updateUrl() {
+      document.getElementById('current-url').textContent = window.location.href;
+    }
+
+    // Copy URL to clipboard
+    function copyUrlToClipboard() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('URL copied to clipboard!');
+      });
+    }
+
+    // Set preset filters
+    function setPresetFilters() {
+      FilterChips.setFilters({
+        category: ['vegetables', 'fruits'],
+        verified: ['true']
+      });
+    }
+
+    // Log current state
+    function logCurrentState() {
+      console.log('Current Filters:', FilterChips.getFilters());
+    }
+
+    // Initialize display
+    updateResults();
+    updateUrl();
+  </script>
+
+  <!-- In a real app, uncomment this instead of the inline script above:
+  <script src="/static/js/filter-chips.js"></script>
+  <script>
+    FilterChips.init({
+      loadFromUrl: true,
+      persistToStorage: true,
+      onFilterChange: updateResults,
+      onSearch: performSearch
+    });
+  </script>
+  -->
+</body>
+</html>

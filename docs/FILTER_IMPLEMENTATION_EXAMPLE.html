@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter State Management - Implementation Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 2rem;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+            color: #222;
+        }
+
+        h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #555;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            font-family: 'Courier New', monospace;
+        }
+
+        .code-comment {
+            color: #6a9955;
+        }
+
+        .code-string {
+            color: #ce9178;
+        }
+
+        .code-keyword {
+            color: #569cd6;
+        }
+
+        .code-function {
+            color: #dcdcaa;
+        }
+
+        .code-property {
+            color: #9cdcfe;
+        }
+
+        .example-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #007bff;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .feature-list {
+            list-style-position: inside;
+            margin: 1rem 0;
+            padding-left: 1rem;
+        }
+
+        .feature-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .demo-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-button {
+            padding: 0.75rem 1.5rem;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .demo-button:hover {
+            background: #0056b3;
+        }
+
+        .demo-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .status-display {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.9em;
+        }
+
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: 0.5rem 0;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        table th {
+            background: #007bff;
+            color: white;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .note {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 3px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 3px;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Filter State Management - Implementation Example</h1>
+
+        <!-- Introduction -->
+        <div class="example-section">
+            <h2>Quick Start</h2>
+            <p>This example demonstrates how to integrate and use the advanced filter state management system in your Meal Planner application.</p>
+
+            <h3>What You'll Get:</h3>
+            <ul class="feature-list">
+                <li>Persistent filter state across page reloads</li>
+                <li>URL parameters that reflect current filters</li>
+                <li>Browser back/forward button support</li>
+                <li>Undo/Redo with keyboard shortcuts (Ctrl+Z/Y)</li>
+                <li>Export filters as shareable URLs or JSON</li>
+                <li>Import filters from URLs or JSON files</li>
+                <li>Full keyboard accessibility</li>
+            </ul>
+        </div>
+
+        <!-- Setup Instructions -->
+        <div class="example-section">
+            <h2>Step 1: Include Files</h2>
+            <p>Add these scripts to your HTML template in the following order:</p>
+
+            <pre><code>&lt;<span class="code-keyword">head</span>&gt;
+  <span class="code-comment">&lt;!-- CSS Styles --&gt;</span>
+  &lt;<span class="code-keyword">link</span> rel=<span class="code-string">"stylesheet"</span> href=<span class="code-string">"/static/css/filter-state.css"</span>&gt;
+&lt;/<span class="code-keyword">head</span>&gt;
+
+&lt;<span class="code-keyword">body</span>&gt;
+  <span class="code-comment">&lt;!-- Your dashboard HTML --&gt;</span>
+
+  <span class="code-comment">&lt;!-- Scripts at end of body --&gt;</span>
+  <span class="code-comment">&lt;!-- Step 1: Load core state manager --&gt;</span>
+  &lt;<span class="code-keyword">script</span> src=<span class="code-string">"/static/js/filter-state-manager.js"</span>&gt;&lt;/<span class="code-keyword">script</span>&gt;
+
+  <span class="code-comment">&lt;!-- Step 2: Load existing dashboard filters (if present) --&gt;</span>
+  &lt;<span class="code-keyword">script</span> src=<span class="code-string">"/static/js/dashboard-filters.js"</span>&gt;&lt;/<span class="code-keyword">script</span>&gt;
+
+  <span class="code-comment">&lt;!-- Step 3: Load integration layer --&gt;</span>
+  &lt;<span class="code-keyword">script</span> src=<span class="code-string">"/static/js/filter-integration.js"</span>&gt;&lt;/<span class="code-keyword">script</span>&gt;
+&lt;/<span class="code-keyword">body</span>&gt;</code></pre>
+
+            <div class="note">
+                <strong>Note:</strong> The scripts auto-initialize on DOMContentLoaded. No additional setup code needed!
+            </div>
+        </div>
+
+        <!-- HTML Structure -->
+        <div class="example-section">
+            <h2>Step 2: Dashboard HTML Structure</h2>
+            <p>Ensure your dashboard has the correct HTML structure:</p>
+
+            <pre><code>&lt;<span class="code-keyword">div</span> class=<span class="code-string">"meal-filters"</span> role=<span class="code-string">"group"</span>
+     aria-label=<span class="code-string">"Filter meals by type"</span>&gt;
+
+  <span class="code-comment">&lt;!-- Filter buttons container --&gt;</span>
+  &lt;<span class="code-keyword">div</span> class=<span class="code-string">"filter-buttons"</span>&gt;
+    &lt;<span class="code-keyword">button</span> class=<span class="code-string">"filter-btn active"</span>
+            data-filter-meal-type=<span class="code-string">"all"</span>
+            aria-pressed=<span class="code-string">"true"</span>&gt;All&lt;/<span class="code-keyword">button</span>&gt;
+    &lt;<span class="code-keyword">button</span> class=<span class="code-string">"filter-btn"</span>
+            data-filter-meal-type=<span class="code-string">"breakfast"</span>
+            aria-pressed=<span class="code-string">"false"</span>&gt;Breakfast&lt;/<span class="code-keyword">button</span>&gt;
+    &lt;<span class="code-keyword">button</span> class=<span class="code-string">"filter-btn"</span>
+            data-filter-meal-type=<span class="code-string">"lunch"</span>
+            aria-pressed=<span class="code-string">"false"</span>&gt;Lunch&lt;/<span class="code-keyword">button</span>&gt;
+    &lt;<span class="code-keyword">button</span> class=<span class="code-string">"filter-btn"</span>
+            data-filter-meal-type=<span class="code-string">"dinner"</span>
+            aria-pressed=<span class="code-string">"false"</span>&gt;Dinner&lt;/<span class="code-keyword">button</span>&gt;
+    &lt;<span class="code-keyword">button</span> class=<span class="code-string">"filter-btn"</span>
+            data-filter-meal-type=<span class="code-string">"snack"</span>
+            aria-pressed=<span class="code-string">"false"</span>&gt;Snack&lt;/<span class="code-keyword">button</span>&gt;
+  &lt;/<span class="code-keyword">div</span>&gt;
+
+  <span class="code-comment">&lt;!-- Filter status display --&gt;</span>
+  &lt;<span class="code-keyword">div</span> id=<span class="code-string">"filter-results-summary"</span>
+       class=<span class="code-string">"filter-summary"</span>
+       aria-live=<span class="code-string">"polite"</span>&gt;&lt;/<span class="code-keyword">div</span>&gt;
+
+  <span class="code-comment">&lt;!-- Screen reader announcement --&gt;</span>
+  &lt;<span class="code-keyword">div</span> id=<span class="code-string">"filter-announcement"</span>
+       class=<span class="code-string">"sr-only"</span>
+       role=<span class="code-string">"status"</span>
+       aria-live=<span class="code-string">"assertive"</span>&gt;&lt;/<span class="code-keyword">div</span>&gt;
+&lt;/<span class="code-keyword">div</span>&gt;</code></pre>
+
+            <div class="success">
+                <strong>Good News!</strong> If you already have this structure from the existing dashboard-filters.js, you're ready to go!
+            </div>
+        </div>
+
+        <!-- JavaScript Examples -->
+        <div class="example-section">
+            <h2>Step 3: Usage Examples</h2>
+
+            <h3>Example 1: Get Current Filters</h3>
+            <pre><code><span class="code-keyword">const</span> currentFilters = window.FilterStateManager.getState();
+
+console.log(currentFilters);
+<span class="code-comment">// Output: { mealType: 'breakfast', dateFrom: null, dateTo: null }</span></code></pre>
+
+            <h3>Example 2: Set Filters Programmatically</h3>
+            <pre><code><span class="code-comment">// Update one or more filters</span>
+window.FilterStateManager.setState({
+  mealType: <span class="code-string">'lunch'</span>,
+  dateFrom: <span class="code-string">'2024-01-01'</span>
+});
+
+<span class="code-comment">// This will:
+// 1. Update internal state
+// 2. Update URL to: ?filter-mealType=lunch&filter-dateFrom=2024-01-01
+// 3. Update UI (button states, inputs)
+// 4. Trigger onStateChange callbacks
+// 5. Add to history for undo/redo</span></code></pre>
+
+            <h3>Example 3: Listen to Filter Changes</h3>
+            <pre><code>window.FilterStateManager.onStateChange(<span class="code-keyword">function</span> (event) {
+  console.log(<span class="code-string">'Filters changed!'</span>, event);
+  <span class="code-comment">// event.state = new filter state</span>
+  <span class="code-comment">// event.previous = previous filter state</span>
+  <span class="code-comment">// event.source = 'setState', 'popstate', 'storage', etc</span>
+
+  <span class="code-comment">// Example: Trigger API call to update meal log</span>
+  <span class="code-keyword">fetch</span>(<span class="code-string">'/api/meals'</span>, {
+    method: <span class="code-string">'POST'</span>,
+    headers: { <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span> },
+    body: JSON.stringify(event.state)
+  })
+    .then(response =&gt; response.json())
+    .then(data =&gt; updateMealLog(data));
+});
+
+<span class="code-function">updateMealLog</span>(<span class="code-keyword">function</span> (meals) {
+  <span class="code-comment">// Update your UI with filtered meals</span>
+});</code></pre>
+
+            <h3>Example 4: Undo/Redo Filter Changes</h3>
+            <pre><code><span class="code-comment">// Undo (Ctrl+Z / Cmd+Z)</span>
+<span class="code-keyword">if</span> (window.FilterStateManager.canUndo()) {
+  window.FilterStateManager.undo();
+}
+
+<span class="code-comment">// Redo (Ctrl+Y / Cmd+Y)</span>
+<span class="code-keyword">if</span> (window.FilterStateManager.canRedo()) {
+  window.FilterStateManager.redo();
+}
+
+<span class="code-comment">// Check history info</span>
+<span class="code-keyword">const</span> historyInfo = window.FilterStateManager.getHistoryInfo();
+console.log(historyInfo);
+<span class="code-comment">// { size: 5, index: 2, canUndo: true, canRedo: true }</span></code></pre>
+
+            <h3>Example 5: Reset Filters</h3>
+            <pre><code><span class="code-comment">// Reset to default state</span>
+window.FilterStateManager.reset();
+
+<span class="code-comment">// Or reset to custom defaults</span>
+window.FilterStateManager.reset({
+  mealType: <span class="code-string">'all'</span>,
+  dateFrom: <span class="code-string">'2024-01-01'</span>,
+  dateTo: null
+});</code></pre>
+
+            <h3>Example 6: Export as Shareable URL</h3>
+            <pre><code><span class="code-comment">// Get the current URL with filter parameters</span>
+<span class="code-keyword">const</span> shareUrl = window.FilterStateManager.exportAsUrl();
+console.log(shareUrl);
+<span class="code-comment">// "https://example.com/dashboard?filter-mealType=breakfast&filter-dateFrom=2024-01-01"</span>
+
+<span class="code-comment">// Copy to clipboard</span>
+navigator.clipboard.writeText(shareUrl);</code></pre>
+
+            <h3>Example 7: Import from JSON</h3>
+            <pre><code><span class="code-keyword">const</span> jsonString = <span class="code-string">'{"version":1,"state":{"mealType":"breakfast","dateFrom":null,"dateTo":null}}'</span>;
+
+window.FilterStateManager.importState(jsonString);</code></pre>
+        </div>
+
+        <!-- Feature Matrix -->
+        <div class="example-section">
+            <h2>Feature Comparison</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Old System</th>
+                        <th>New System</th>
+                        <th>Benefit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Persist Filters</td>
+                        <td>✓ localStorage</td>
+                        <td>✓ sessionStorage + localStorage</td>
+                        <td>Better privacy, flexible options</td>
+                    </tr>
+                    <tr>
+                        <td>URL Parameters</td>
+                        <td>✗</td>
+                        <td>✓ Auto-sync</td>
+                        <td>Shareable filtered views</td>
+                    </tr>
+                    <tr>
+                        <td>Browser Back/Forward</td>
+                        <td>✗</td>
+                        <td>✓ Full support</td>
+                        <td>Natural browser navigation</td>
+                    </tr>
+                    <tr>
+                        <td>Undo/Redo</td>
+                        <td>✗</td>
+                        <td>✓ Full history</td>
+                        <td>Easy mistake recovery</td>
+                    </tr>
+                    <tr>
+                        <td>Keyboard Shortcuts</td>
+                        <td>✗</td>
+                        <td>✓ Ctrl+Z/Y, etc</td>
+                        <td>Power user experience</td>
+                    </tr>
+                    <tr>
+                        <td>Export/Import</td>
+                        <td>✗</td>
+                        <td>✓ URL + JSON</td>
+                        <td>Share and save filter sets</td>
+                    </tr>
+                    <tr>
+                        <td>Event System</td>
+                        <td>Manual polling</td>
+                        <td>✓ onStateChange</td>
+                        <td>Reactive architecture</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- URL Examples -->
+        <div class="example-section">
+            <h2>URL Parameter Examples</h2>
+
+            <h3>Single Filter</h3>
+            <pre><code>https://example.com/dashboard?filter-mealType=breakfast</code></pre>
+
+            <h3>Multiple Filters</h3>
+            <pre><code>https://example.com/dashboard?filter-mealType=lunch&filter-dateFrom=2024-01-01</code></pre>
+
+            <h3>Date Range</h3>
+            <pre><code>https://example.com/dashboard?filter-dateFrom=2024-01-01&filter-dateTo=2024-01-31</code></pre>
+
+            <h3>No Filters (Default)</h3>
+            <pre><code>https://example.com/dashboard
+<span class="code-comment">(or with empty search: https://example.com/dashboard?)</span></code></pre>
+
+            <div class="highlight">
+                <strong>💡 Pro Tip:</strong> Share the full URL with filters to let others see the exact filtered view you're looking at!
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcuts -->
+        <div class="example-section">
+            <h2>Keyboard Shortcuts Reference</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Shortcut</th>
+                        <th>Action</th>
+                        <th>Works When</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Ctrl+Z</code> / <code>Cmd+Z</code></td>
+                        <td>Undo last filter change</td>
+                        <td>Not in input field</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+Y</code> / <code>Cmd+Y</code></td>
+                        <td>Redo last filter change</td>
+                        <td>Not in input field</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+Shift+F</code></td>
+                        <td>Focus filter controls</td>
+                        <td>Always</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+Alt+C</code></td>
+                        <td>Clear all filters</td>
+                        <td>Not in input field</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="example-section">
+            <h2>Best Practices</h2>
+
+            <h3>Do:</h3>
+            <ul class="checklist">
+                <li>Use sessionStorage by default (better privacy)</li>
+                <li>Listen to onStateChange for reactive updates</li>
+                <li>Allow users to share filtered URLs</li>
+                <li>Use clear, descriptive filter labels</li>
+                <li>Test with keyboard shortcuts</li>
+                <li>Show filter status to users</li>
+            </ul>
+
+            <h3>Don't:</h3>
+            <ul>
+                <li style="list-style: none; padding-left: 0;">
+                    <span style="color: red;">✗</span> Hardcode filter states in URLs
+                </li>
+                <li style="list-style: none; padding-left: 0;">
+                    <span style="color: red;">✗</span> Store sensitive data in filters
+                </li>
+                <li style="list-style: none; padding-left: 0;">
+                    <span style="color: red;">✗</span> Disable keyboard shortcuts
+                </li>
+                <li style="list-style: none; padding-left: 0;">
+                    <span style="color: red;">✗</span> Forget to handle storage quota errors
+                </li>
+            </ul>
+        </div>
+
+        <!-- Testing Checklist -->
+        <div class="example-section">
+            <h2>Implementation Checklist</h2>
+
+            <ul class="checklist">
+                <li>Include filter-state-manager.js script</li>
+                <li>Include filter-integration.js script</li>
+                <li>Include filter-state.css styles</li>
+                <li>Test filters persist on page reload</li>
+                <li>Test URL parameters update</li>
+                <li>Test browser back/forward buttons</li>
+                <li>Test Ctrl+Z / Ctrl+Y shortcuts</li>
+                <li>Test export/import functionality</li>
+                <li>Test clear all filters button</li>
+                <li>Test with keyboard navigation only</li>
+                <li>Test with screen reader</li>
+                <li>Test with JavaScript disabled (graceful degradation)</li>
+            </ul>
+        </div>
+
+        <!-- Debugging -->
+        <div class="example-section">
+            <h2>Debugging & Troubleshooting</h2>
+
+            <h3>Get Debug Information</h3>
+            <pre><code><span class="code-keyword">const</span> debug = window.FilterStateManager.getDebugInfo();
+console.log(debug);
+
+<span class="code-comment">// Output:</span>
+<span class="code-comment">// {</span>
+<span class="code-comment">//   currentState: { mealType: 'breakfast', ... },</span>
+<span class="code-comment">//   hasActiveFilters: true,</span>
+<span class="code-comment">//   filterDescription: "Filtering by: breakfast",</span>
+<span class="code-comment">//   history: { size: 5, index: 2, canUndo: true, canRedo: true },</span>
+<span class="code-comment">//   config: { ... },</span>
+<span class="code-comment">//   storageSize: 82</span>
+<span class="code-comment">// }</span></code></pre>
+
+            <h3>Common Issues</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Issue</th>
+                        <th>Solution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Filters not persisting</td>
+                        <td>Check storage quota, verify sessionStorage available</td>
+                    </tr>
+                    <tr>
+                        <td>URL not syncing</td>
+                        <td>Check enableUrlSync config, verify History API support</td>
+                    </tr>
+                    <tr>
+                        <td>Undo not working</td>
+                        <td>Verify enableHistory: true, check canUndo() first</td>
+                    </tr>
+                    <tr>
+                        <td>Export/Import buttons missing</td>
+                        <td>Ensure filter-integration.js is loaded, check browser console for errors</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Demo Section -->
+        <div class="demo-section">
+            <h2>Live Demo (if scripts loaded)</h2>
+
+            <p>Try these buttons to test the filter state manager:</p>
+
+            <div>
+                <button class="demo-button" onclick="demoSetFilter('breakfast')">Set to Breakfast</button>
+                <button class="demo-button" onclick="demoSetFilter('lunch')">Set to Lunch</button>
+                <button class="demo-button" onclick="demoSetFilter('dinner')">Set to Dinner</button>
+                <button class="demo-button" onclick="demoReset()">Reset Filters</button>
+                <button class="demo-button" id="demo-undo" onclick="demoUndo()" disabled>Undo</button>
+                <button class="demo-button" id="demo-redo" onclick="demoRedo()" disabled>Redo</button>
+            </div>
+
+            <div id="demo-status" class="status-display">
+                Script not loaded - navigate to actual dashboard to test
+            </div>
+
+            <script>
+                function demoSetFilter(type) {
+                    if (window.FilterStateManager) {
+                        window.FilterStateManager.setState({ mealType: type });
+                        updateDemoStatus();
+                    }
+                }
+
+                function demoReset() {
+                    if (window.FilterStateManager) {
+                        window.FilterStateManager.reset();
+                        updateDemoStatus();
+                    }
+                }
+
+                function demoUndo() {
+                    if (window.FilterStateManager && window.FilterStateManager.canUndo()) {
+                        window.FilterStateManager.undo();
+                        updateDemoStatus();
+                    }
+                }
+
+                function demoRedo() {
+                    if (window.FilterStateManager && window.FilterStateManager.canRedo()) {
+                        window.FilterStateManager.redo();
+                        updateDemoStatus();
+                    }
+                }
+
+                function updateDemoStatus() {
+                    if (window.FilterStateManager) {
+                        const debug = window.FilterStateManager.getDebugInfo();
+                        const status = `Current State:\n${JSON.stringify(debug.currentState, null, 2)}\n\n` +
+                            `Filter Description: ${debug.filterDescription}\n\n` +
+                            `History: ${debug.history.index + 1} / ${debug.history.size}\n` +
+                            `Can Undo: ${debug.history.canUndo}\n` +
+                            `Can Redo: ${debug.history.canRedo}\n\n` +
+                            `Current URL: ${window.location.href}`;
+                        document.getElementById('demo-status').textContent = status;
+
+                        // Update button states
+                        document.getElementById('demo-undo').disabled = !debug.history.canUndo;
+                        document.getElementById('demo-redo').disabled = !debug.history.canRedo;
+                    }
+                }
+
+                // Update on page load
+                if (window.FilterStateManager) {
+                    updateDemoStatus();
+                    window.FilterStateManager.onStateChange(updateDemoStatus);
+                }
+            </script>
+        </div>
+
+        <!-- Support -->
+        <div class="example-section">
+            <h2>Need Help?</h2>
+
+            <p>For more detailed information, see:</p>
+            <ul class="feature-list">
+                <li><code>FILTER_STATE_MANAGEMENT.md</code> - Complete API reference</li>
+                <li><code>filter-state-manager.js</code> - Core implementation with comments</li>
+                <li><code>filter-integration.js</code> - Dashboard integration layer</li>
+                <li><code>filter-state.css</code> - Styling guide</li>
+            </ul>
+
+            <p>Check the browser console (F12) for debug messages and errors.</p>
+        </div>
+    </div>
+</body>
+</html>

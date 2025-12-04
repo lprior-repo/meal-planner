@@ -770,6 +770,30 @@ pub fn get_foods_count(conn: pog.Connection) -> Result(Int, StorageError) {
   }
 }
 
+/// Get all distinct food categories from the foods table
+/// Returns categories sorted alphabetically, excluding empty/null values
+pub fn get_food_categories(conn: pog.Connection) -> Result(List(String), StorageError) {
+  let sql =
+    "SELECT DISTINCT food_category
+     FROM foods
+     WHERE food_category IS NOT NULL AND food_category != ''
+     ORDER BY food_category ASC"
+
+  let decoder = {
+    use category <- decode.field(0, decode.string)
+    decode.success(category)
+  }
+
+  case
+    pog.query(sql)
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
+  }
+}
+
 // ============================================================================
 // Custom Foods Functions
 // ============================================================================

@@ -586,6 +586,151 @@ select:focus-visible {
 }
 
 /* ===================================================================
+   SEARCH RESULTS CONTAINER & FILTERING
+   =================================================================== */
+
+/* Search Results Container */
+.search-results-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+/* Search Results Header with Count and Filters */
+.search-results-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+/* Results Count Display */
+.search-results-count {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Active Filters Container */
+.active-filters-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.active-filters-label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Active Filters List */
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* Individual Filter Tag */
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: all var(--duration-200) var(--ease-out);
+  white-space: nowrap;
+}
+
+.filter-tag:hover {
+  background-color: var(--color-primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+  transform: scale(1.05);
+}
+
+.filter-tag:active {
+  transform: scale(0.98);
+}
+
+.filter-tag:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Remove Filter Button (× icon) */
+.remove-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-full);
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+  line-height: 1;
+  margin-left: var(--space-1);
+  transition: all var(--duration-150) var(--ease-out);
+}
+
+.filter-tag:hover .remove-filter {
+  background-color: rgba(0, 0, 0, 0.2);
+  transform: rotate(90deg);
+}
+
+/* Clear All Filters Button */
+.btn-clear-all-filters {
+  align-self: flex-start;
+  font-size: var(--text-sm);
+}
+
+.btn-clear-all-filters:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+/* Responsive: Stack on mobile */
+@media (max-width: 640px) {
+  .search-results-header {
+    gap: var(--space-2);
+    padding: var(--space-2);
+  }
+
+  .active-filters {
+    gap: var(--space-1);
+  }
+
+  .filter-tag {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+  }
+
+  .remove-filter {
+    width: 18px;
+    height: 18px;
+    margin-left: var(--space-1);
+  }
+}
+
+/* ===================================================================
    PROGRESS BARS
    =================================================================== */
 

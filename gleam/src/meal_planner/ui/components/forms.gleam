@@ -378,6 +378,90 @@ pub fn search_results_list(
   <> "</div>"
 }
 
+/// Search results with count header
+///
+/// Shows the number of results and active filters
+/// Displays removable filter tags with clear button for all filters
+///
+/// Renders:
+/// <div class="search-results-container">
+///   <div class="search-results-header">
+///     <div class="search-results-count">X results</div>
+///     <div class="active-filters">
+///       <button class="filter-tag" data-filter="verified">Verified<span class="remove-filter">×</span></button>
+///     </div>
+///     <button class="btn-clear-all-filters">Clear All</button>
+///   </div>
+///   <div class="search-results-list">...</div>
+/// </div>
+pub fn search_results_with_count(
+  items: List(#(Int, String, String, String)),
+  result_count: Int,
+  active_filters: List(#(String, String)),
+  show_clear_all: Bool,
+) -> String {
+  let items_html =
+    items
+    |> list.map(fn(item) {
+      let #(id, name, data_type, category) = item
+      render_result_item(id, name, data_type, category)
+    })
+    |> string.concat()
+
+  let count_text = case result_count {
+    1 -> "1 result"
+    _ -> int.to_string(result_count) <> " results"
+  }
+
+  // Render active filter tags
+  let filter_tags_html =
+    active_filters
+    |> list.map(fn(filter) {
+      let #(filter_name, filter_value) = filter
+      "<button class=\"filter-tag\" data-filter-name=\""
+      <> escape_html(filter_name)
+      <> "\" data-filter-value=\""
+      <> escape_html(filter_value)
+      <> "\" type=\"button\" aria-label=\"Remove "
+      <> escape_html(filter_value)
+      <> " filter\">"
+      <> escape_html(filter_value)
+      <> "<span class=\"remove-filter\" aria-hidden=\"true\">×</span>"
+      <> "</button>"
+    })
+    |> string.concat()
+
+  let clear_all_btn = case show_clear_all && list.length(active_filters) > 0 {
+    True ->
+      "<button class=\"btn-clear-all-filters btn btn-ghost btn-sm\" type=\"button\">Clear All Filters</button>"
+    False -> ""
+  }
+
+  let filters_section = case list.length(active_filters) > 0 {
+    True ->
+      "<div class=\"active-filters-container\">"
+      <> "<div class=\"active-filters-label\">Active filters:</div>"
+      <> "<div class=\"active-filters\">"
+      <> filter_tags_html
+      <> "</div>"
+      <> clear_all_btn
+      <> "</div>"
+    False -> ""
+  }
+
+  "<div class=\"search-results-container\">"
+  <> "<div class=\"search-results-header\">"
+  <> "<div class=\"search-results-count\" role=\"status\" aria-live=\"polite\">"
+  <> count_text
+  <> "</div>"
+  <> filters_section
+  <> "</div>"
+  <> "<div class=\"search-results-list max-h-96 overflow-y-auto\" role=\"listbox\">"
+  <> items_html
+  <> "</div>"
+  <> "</div>"
+}
+
 /// Search results loading state
 ///
 /// Shows skeleton loading UI while search is in progress
@@ -510,7 +594,109 @@ pub fn search_combobox_with_selection(
   <> results_html
   <> "</div>"
 }
+/// Category dropdown selector
+///
+/// Renders a dropdown with:
+/// - "All Categories" as default option
+/// - All available categories sorted alphabetically
+/// - Currently selected category highlighted
+///
+/// Parameters:
+/// - `categories`: List of category strings from database
+/// - `selected_category`: Currently selected category (None = "All Categories")
+/// - `on_change_handler`: Name of JavaScript handler for change events
+///
+/// Returns: HTML string for the select element
+///
+/// Example:
+/// ```gleam
+/// category_dropdown(
+///   ["Dairy and Egg Products", "Spices and Herbs"],
+///   Some("Dairy and Egg Products"),
+///   "handleCategoryChange"
+/// )
+/// ```
+pub fn category_dropdown(
+  categories: List(String),
+  selected_category: option.Option(String),
+  on_change_handler: String,
+) -> String {
+  // Build option elements for all categories
+  let category_options =
+    categories
+    |> list.map(fn(category) {
+      let is_selected = case selected_category {
+        option.Some(selected) if selected == category -> True
+        _ -> False
+      }
+      let selected_attr = case is_selected {
+        True -> " selected"
+        False -> ""
+      }
+      "<option value=\""
+      <> escape_html(category)
+      <> "\""
+      <> selected_attr
+      <> ">"
+      <> escape_html(category)
+      <> "</option>"
+    })
+    |> string.join("")
+
+  // Determine if "All Categories" should be selected
+  let all_selected = case selected_category {
+    option.None -> " selected"
+    option.Some(_) -> ""
+  }
+
+  "<select class=\"category-dropdown\" "
+  <> "id=\"category-filter\" "
+  <> "name=\"category\" "
+  <> "aria-label=\"Filter by category\" "
+  <> "onchange=\""
+  <> on_change_handler
+  <> "(this)\">"
+  <> "<option value=\"\""
+  <> all_selected
+  <> ">All Categories</option>"
+  <> category_options
+  <> "</select>"
+}
+
+/// Category filter group with label
+///
+/// Renders a complete filter group with:
+/// - Label: "Food Category"
+/// - Dropdown with categories
+/// - Form group wrapper for styling
+///
+/// Parameters:
+/// - `categories`: List of available categories
+/// - `selected_category`: Currently selected category
+/// - `on_change_handler`: JavaScript change handler function name
+///
+/// Returns: HTML string for the complete filter group
+pub fn category_filter_group(
+  categories: List(String),
+  selected_category: option.Option(String),
+  on_change_handler: String,
+) -> String {
+  "<div class=\"form-group category-filter\">"
+  <> "<label for=\"category-filter\">Food Category</label>"
+  <> category_dropdown(categories, selected_category, on_change_handler)
+  <> "</div>"
+}
+
 // ===================================================================
 // INTERNAL HELPERS
 // ===================================================================
-// Helper functions will be added as needed during implementation
+
+/// Escape HTML special characters to prevent XSS attacks
+fn escape_html(text: String) -> String {
+  text
+  |> string.replace("&", "&amp;")
+  |> string.replace("<", "&lt;")
+  |> string.replace(">", "&gt;")
+  |> string.replace("\"", "&quot;")
+  |> string.replace("'", "&#39;")
+}
