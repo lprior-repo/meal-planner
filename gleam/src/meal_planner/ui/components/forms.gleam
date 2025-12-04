@@ -450,7 +450,7 @@ pub fn search_results_with_count(
     _ -> int.to_string(result_count) <> " results"
   }
 
-  // Render active filter tags
+  // Render active filter tags with HTMX delete functionality
   let filter_tags_html =
     active_filters
     |> list.map(fn(filter) {
@@ -461,7 +461,7 @@ pub fn search_results_with_count(
       <> escape_html(filter_value)
       <> "\" type=\"button\" aria-label=\"Remove "
       <> escape_html(filter_value)
-      <> " filter\">"
+      <> " filter\" hx-get=\"/api/foods/search?q=&filter=all\" hx-target=\"#search-results\" hx-swap=\"innerHTML\" hx-push-url=\"true\">"
       <> escape_html(filter_value)
       <> "<span class=\"remove-filter\" aria-hidden=\"true\">×</span>"
       <> "</button>"
@@ -502,7 +502,7 @@ pub fn search_results_with_count(
 /// Search results loading state
 ///
 /// Shows skeleton loading UI while search is in progress
-/// 
+///
 /// Renders:
 /// <div class="search-results-loading" aria-busy="true">
 ///   <div class="skeleton skeleton-item">...</div>
