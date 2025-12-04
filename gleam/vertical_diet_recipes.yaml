@@ -1,0 +1,497 @@
+# Vertical Diet Recipe Examples
+# Stan Efferding's Vertical Diet principles
+# Focus: Red meat, white rice, easy digestion, low FODMAP, performance nutrition
+
+recipes:
+  # ========================================
+  # RED MEAT MAINS (Beef & Bison)
+  # ========================================
+
+  - id: vd-001
+    name: "Vertical Diet Ground Beef Bowl"
+    category: lunch
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - red_meat
+      - beef
+      - white_rice
+      - post_workout
+    macros:
+      calories: 680
+      protein: 52
+      carbs: 68
+      fat: 24
+    ingredients:
+      - "8oz (227g) 85/15 ground beef"
+      - "1.5 cups cooked white rice"
+      - "1 tsp salt"
+      - "1/2 cup steamed carrots"
+    instructions:
+      - "Cook ground beef in skillet over medium-high heat until browned (8-10 min)"
+      - "Season with salt while cooking"
+      - "Cook white rice according to package directions"
+      - "Steam carrots until tender (5-7 min)"
+      - "Combine in bowl: rice base, beef on top, carrots on side"
+      - "Serve hot"
+
+  - id: vd-002
+    name: "Bison Burger with White Rice"
+    category: dinner
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - bison
+      - white_rice
+      - lean_protein
+    macros:
+      calories: 720
+      protein: 55
+      carbs: 75
+      fat: 18
+    ingredients:
+      - "8oz (227g) ground bison"
+      - "2 cups cooked white rice"
+      - "1 tsp salt"
+      - "1/2 tbsp olive oil"
+    instructions:
+      - "Form bison into patty, season with salt"
+      - "Heat olive oil in skillet over medium-high heat"
+      - "Cook patty 4-5 minutes per side for medium"
+      - "Let rest 3 minutes before serving"
+      - "Serve alongside white rice"
+
+  - id: vd-003
+    name: "Simple Ribeye Steak with Sweet Potato"
+    category: dinner
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - beef
+      - steak
+      - sweet_potato
+      - high_fat
+    macros:
+      calories: 850
+      protein: 58
+      carbs: 62
+      fat: 38
+    ingredients:
+      - "10oz (284g) ribeye steak"
+      - "1 large sweet potato (300g)"
+      - "1 tbsp butter"
+      - "salt to taste"
+    instructions:
+      - "Preheat oven to 400°F for sweet potato"
+      - "Pierce sweet potato with fork, bake 45-60 minutes until soft"
+      - "Season ribeye generously with salt"
+      - "Heat cast iron skillet to high heat"
+      - "Sear ribeye 3-4 minutes per side for medium-rare"
+      - "Let rest 5 minutes before serving"
+      - "Serve with baked sweet potato topped with butter"
+
+  - id: vd-004
+    name: "Ground Beef and White Rice - Classic"
+    category: lunch
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - beef
+      - white_rice
+      - simple
+      - staple
+    macros:
+      calories: 620
+      protein: 48
+      carbs: 64
+      fat: 20
+    ingredients:
+      - "7oz (200g) 90/10 ground beef"
+      - "1.5 cups cooked white rice"
+      - "1 tsp salt"
+      - "black pepper to taste"
+    instructions:
+      - "Heat skillet over medium-high heat"
+      - "Add ground beef, break up with spatula"
+      - "Season with salt and pepper while cooking"
+      - "Cook until browned and no pink remains (7-9 min)"
+      - "Serve over white rice"
+
+  - id: vd-005
+    name: "Bison Sirloin with Mashed Potatoes"
+    category: dinner
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - bison
+      - white_potato
+      - comfort_food
+    macros:
+      calories: 680
+      protein: 54
+      carbs: 58
+      fat: 22
+    ingredients:
+      - "8oz (227g) bison sirloin"
+      - "2 medium white potatoes (400g)"
+      - "2 tbsp butter"
+      - "1/4 cup whole milk"
+      - "salt to taste"
+    instructions:
+      - "Boil potatoes until fork-tender (15-20 min)"
+      - "While potatoes cook, season bison with salt"
+      - "Grill or pan-sear bison 4-5 minutes per side"
+      - "Drain potatoes, add butter and milk"
+      - "Mash until smooth, season with salt"
+      - "Let bison rest 3 minutes before serving"
+
+  # ========================================
+  # POST-WORKOUT MEALS
+  # ========================================
+
+  - id: vd-006
+    name: "Post-Workout Beef and Rice"
+    category: lunch
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - post_workout
+      - high_carb
+      - beef
+      - white_rice
+    macros:
+      calories: 750
+      protein: 60
+      carbs: 85
+      fat: 15
+    ingredients:
+      - "9oz (255g) 93/7 ground beef"
+      - "2.25 cups cooked white rice"
+      - "1 tsp salt"
+      - "optional: hot sauce"
+    instructions:
+      - "Cook ground beef in skillet over high heat"
+      - "Break into small pieces for easy eating"
+      - "Season with salt while cooking"
+      - "Cook rice (high volume for post-workout carbs)"
+      - "Combine beef and rice in large bowl"
+      - "Consume within 30-60 minutes post-workout"
+
+  - id: vd-007
+    name: "Monster Mash - Beef, Rice & Sweet Potato"
+    category: dinner
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - post_workout
+      - mass_building
+      - high_volume
+      - beef
+    macros:
+      calories: 920
+      protein: 65
+      carbs: 112
+      fat: 18
+    ingredients:
+      - "10oz (284g) ground beef"
+      - "2 cups cooked white rice"
+      - "1 large sweet potato (300g)"
+      - "1 tbsp butter"
+      - "salt to taste"
+    instructions:
+      - "Bake sweet potato at 400°F for 45-60 minutes"
+      - "Cook ground beef until browned, season with salt"
+      - "Prepare white rice"
+      - "Mash sweet potato with butter"
+      - "In large bowl: layer rice, then beef, then sweet potato mash"
+      - "Mix all together (the 'monster mash')"
+
+  - id: vd-008
+    name: "Anabolic Ground Beef Power Bowl"
+    category: lunch
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - high_protein
+      - muscle_building
+      - beef
+      - spinach
+    macros:
+      calories: 800
+      protein: 68
+      carbs: 78
+      fat: 22
+    ingredients:
+      - "10oz (284g) 85/15 ground beef"
+      - "2 cups cooked white rice"
+      - "1/2 cup steamed spinach"
+      - "1 tsp salt"
+    instructions:
+      - "Cook ground beef over medium-high heat until browned"
+      - "Season generously with salt"
+      - "Steam spinach until wilted (2-3 minutes)"
+      - "Prepare white rice"
+      - "Build bowl: rice base, spinach layer, beef on top"
+
+  # ========================================
+  # SIMPLE CARB SIDES
+  # ========================================
+
+  - id: vd-009
+    name: "White Rice with Butter and Salt"
+    category: snack
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - white_rice
+      - simple_carbs
+      - easy_digestion
+    macros:
+      calories: 280
+      protein: 4
+      carbs: 58
+      fat: 4
+    ingredients:
+      - "1.5 cups cooked white rice"
+      - "1 tbsp butter"
+      - "1/2 tsp salt"
+    instructions:
+      - "Cook white rice according to package directions"
+      - "Fluff with fork when done"
+      - "Stir in butter while rice is hot"
+      - "Season with salt"
+
+  - id: vd-010
+    name: "Baked Sweet Potato with Butter"
+    category: snack
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - sweet_potato
+      - simple_carbs
+      - micronutrients
+    macros:
+      calories: 220
+      protein: 3
+      carbs: 42
+      fat: 5
+    ingredients:
+      - "1 large sweet potato (300g)"
+      - "1 tbsp butter"
+      - "salt to taste"
+    instructions:
+      - "Preheat oven to 400°F"
+      - "Wash sweet potato, pierce with fork"
+      - "Bake 45-60 minutes until soft"
+      - "Cut open, add butter and salt"
+
+  - id: vd-011
+    name: "White Potato Mash - Plain"
+    category: snack
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - white_potato
+      - simple_carbs
+      - comfort_food
+    macros:
+      calories: 180
+      protein: 4
+      carbs: 38
+      fat: 2
+    ingredients:
+      - "2 medium white potatoes (400g)"
+      - "1 tbsp butter"
+      - "salt to taste"
+    instructions:
+      - "Peel and cube potatoes"
+      - "Boil in salted water until tender (15-20 min)"
+      - "Drain well"
+      - "Mash with butter"
+      - "Season with salt"
+
+  # ========================================
+  # EASY VEGETABLES (Low FODMAP)
+  # ========================================
+
+  - id: vd-012
+    name: "Steamed Carrots with Salt"
+    category: snack
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - vegetables
+      - carrots
+      - micronutrients
+      - easy_digestion
+    macros:
+      calories: 85
+      protein: 2
+      carbs: 18
+      fat: 1
+    ingredients:
+      - "2 cups sliced carrots (240g)"
+      - "1/2 tsp salt"
+    instructions:
+      - "Peel and slice carrots into rounds"
+      - "Place in steamer basket over boiling water"
+      - "Steam 5-7 minutes until tender"
+      - "Season with salt"
+
+  - id: vd-013
+    name: "Sautéed Spinach with Olive Oil"
+    category: snack
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - vegetables
+      - spinach
+      - iron
+      - micronutrients
+    macros:
+      calories: 120
+      protein: 4
+      carbs: 8
+      fat: 9
+    ingredients:
+      - "4 cups fresh spinach (120g)"
+      - "1 tbsp olive oil"
+      - "1/2 tsp salt"
+      - "1 clove garlic (optional)"
+    instructions:
+      - "Heat olive oil in large skillet"
+      - "Add spinach (add garlic first if using)"
+      - "Sauté 2-3 minutes until wilted"
+      - "Season with salt"
+
+  # ========================================
+  # COMPLETE VERTICAL DIET MEALS
+  # ========================================
+
+  - id: vd-014
+    name: "Efferding Special - Beef, Rice, Carrots"
+    category: dinner
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - complete_meal
+      - classic
+      - beef
+      - white_rice
+      - vegetables
+    macros:
+      calories: 780
+      protein: 56
+      carbs: 88
+      fat: 20
+    ingredients:
+      - "8oz (227g) ground beef"
+      - "2 cups cooked white rice"
+      - "1 cup steamed carrots"
+      - "1 tsp salt"
+    instructions:
+      - "Cook ground beef in skillet until browned"
+      - "Season with salt while cooking"
+      - "Prepare white rice"
+      - "Steam carrots until tender"
+      - "Plate: rice bed, beef center, carrots around edge"
+      - "Classic Vertical Diet meal composition"
+
+  - id: vd-015
+    name: "Monster Maker - Double Beef with Sweet Potato"
+    category: dinner
+    servings: 1
+    fodmap_level: low
+    vertical_compliant: true
+    tags:
+      - mass_building
+      - high_protein
+      - high_volume
+      - strength_athletes
+    macros:
+      calories: 1050
+      protein: 82
+      carbs: 95
+      fat: 28
+    ingredients:
+      - "12oz (340g) ground beef"
+      - "2 cups cooked white rice"
+      - "1 large sweet potato (300g)"
+      - "1 tbsp butter"
+      - "salt to taste"
+    instructions:
+      - "Bake sweet potato at 400°F for 45-60 minutes"
+      - "Cook ground beef in large skillet"
+      - "Season beef generously with salt"
+      - "Prepare white rice"
+      - "Cut sweet potato open, add butter"
+      - "Serve as massive plate: rice, double beef portion, whole sweet potato"
+      - "For serious mass building and strength athletes"
+
+# ========================================
+# VERTICAL DIET PRINCIPLES SUMMARY
+# ========================================
+principles:
+  - name: "Red Meat Priority"
+    description: "Focus on beef and bison for complete protein, iron, zinc, B12"
+
+  - name: "White Rice as Carb Base"
+    description: "Easy to digest, low FODMAP, quick energy, no gut irritation"
+
+  - name: "Simple Carbs"
+    description: "White potatoes, sweet potatoes, white rice - all easy to digest"
+
+  - name: "Low FODMAP Vegetables"
+    description: "Carrots, spinach, bell peppers - avoid gut irritation"
+
+  - name: "Easy Digestion"
+    description: "All foods selected for minimal digestive stress"
+
+  - name: "Nutrient Density"
+    description: "Maximum micronutrients per calorie, especially from red meat"
+
+  - name: "Performance Focus"
+    description: "Optimized for strength athletes and bodybuilders"
+
+# ========================================
+# MEAL PLANNING GUIDELINES
+# ========================================
+guidelines:
+  daily_structure:
+    - "3-6 meals per day"
+    - "Protein at every meal (30-60g)"
+    - "White rice or potatoes with most meals"
+    - "Red meat 1-2x daily minimum"
+    - "Easy vegetables 2-3x daily"
+
+  post_workout:
+    - "High protein (50-70g)"
+    - "High simple carbs (80-120g)"
+    - "Lower fat for faster digestion"
+    - "Consume within 60 minutes"
+
+  mass_building:
+    - "Increase portions of existing recipes"
+    - "Add extra white rice"
+    - "Use fattier cuts of beef (85/15 instead of 93/7)"
+    - "Monster Mash and Monster Maker for high-calorie days"
+
+  cutting:
+    - "Use leaner beef (93/7 or 96/4)"
+    - "Reduce rice portions"
+    - "Increase vegetable portions"
+    - "Keep protein high (1g per lb bodyweight)"
