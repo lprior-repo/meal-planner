@@ -13,7 +13,6 @@
 import gleam/erlang/process
 import gleam/list
 import gleam/option.{Some}
-import gleam/otp/actor
 import gleam/string
 import gleeunit
 import gleeunit/should
@@ -22,8 +21,11 @@ import meal_planner/types.{
   type Recipe, High, Ingredient, Low, Macros, Medium, Recipe,
 }
 import pog
+import test_helper
 
 pub fn main() {
+  // Initialize test database once before running tests
+  test_helper.setup()
   gleeunit.main()
 }
 
@@ -32,6 +34,7 @@ pub fn main() {
 // =============================================================================
 
 /// Create a test database connection
+/// Note: test_helper.setup() must be called first to initialize the database
 fn test_db() -> pog.Connection {
   let pool_name = process.new_name(prefix: "recipe_test")
   let config =
@@ -43,11 +46,8 @@ fn test_db() -> pog.Connection {
     |> pog.password(Some("postgres"))
     |> pog.pool_size(1)
 
-  case pog.start(config) {
-    Ok(actor.Started(_pid, conn)) -> conn
-    Error(_) ->
-      panic as "Failed to connect to test database. Ensure PostgreSQL is running and test database exists."
-  }
+  let assert Ok(started) = pog.start(config)
+  started.data
 }
 
 /// Create a valid recipe for testing
