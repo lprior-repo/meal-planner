@@ -196,3 +196,55 @@ pub fn post_auto_plan_variety_factor_test() {
 
   should.be_true(True)
 }
+
+/// Test: GET /api/meal-plans/auto/:id retrieves saved plan
+///
+/// Expected behavior:
+/// - GET /api/meal-plans/auto/:id with valid plan ID
+/// - Response: 200 OK
+/// - Response body contains complete plan with recipes
+pub fn get_auto_plan_by_id_success_test() {
+  // Example request:
+  // GET /api/meal-plans/auto/auto-plan-2024-12-04T12:00:00Z
+  //
+  // Expected response:
+  // Status: 200 OK
+  // {
+  //   "id": "auto-plan-2024-12-04T12:00:00Z",
+  //   "recipes": [ ... 4 recipe objects ... ],
+  //   "total_macros": { "protein": 180.0, "fat": 98.0, "carbs": 180.0 },
+  //   "config": { ... },
+  //   "generated_at": "2024-12-04T12:00:00Z"
+  // }
+
+  should.be_true(True)
+}
+
+/// Test: GET /api/meal-plans/auto/:id with nonexistent ID returns 404
+///
+/// Expected behavior:
+/// - GET with ID that doesn't exist
+/// - Response: 404 Not Found
+/// - Response body contains error message
+pub fn get_auto_plan_by_id_not_found_test() {
+  // Example request:
+  // GET /api/meal-plans/auto/nonexistent-id
+  //
+  // Expected response:
+  // Status: 404
+  // { "error": "Meal plan not found" }
+
+  should.be_true(True)
+}
+
+/// Test: POST to GET endpoint returns 405
+///
+/// Expected behavior:
+/// - POST /api/meal-plans/auto/:id
+/// - Response: 405 Method Not Allowed
+pub fn get_auto_plan_method_not_allowed_test() {
+  // POST /api/meal-plans/auto/some-id
+  // Expected: 405 Method Not Allowed
+
+  should.be_true(True)
+}

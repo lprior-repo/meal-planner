@@ -1566,6 +1566,7 @@ fn handle_api(
     ["logs", "entry", id] -> api_log_entry(req, id, ctx)
     ["recipe-sources"] -> api_recipe_sources(req, ctx)
     ["meal-plans", "auto"] -> api_auto_meal_plan(req, ctx)
+    ["meal-plans", "auto", id] -> api_auto_meal_plan_by_id(req, id, ctx)
     _ -> wisp.not_found()
   }
 }
@@ -2268,6 +2269,42 @@ fn create_auto_meal_plan(req: wisp.Request, ctx: Context) -> wisp.Response {
           }
         }
       }
+    }
+  }
+}
+
+/// GET /api/meal-plans/auto/:id - Retrieve auto meal plan by ID
+fn api_auto_meal_plan_by_id(
+  req: wisp.Request,
+  id: String,
+  ctx: Context,
+) -> wisp.Response {
+  case req.method {
+    http.Get -> get_auto_meal_plan_by_id(id, ctx)
+    _ -> wisp.method_not_allowed([http.Get])
+  }
+}
+
+fn get_auto_meal_plan_by_id(id: String, ctx: Context) -> wisp.Response {
+  case auto_storage.get_auto_plan(ctx.db, id) {
+    Error(storage.NotFound) -> {
+      let error_json =
+        json.object([#("error", json.string("Meal plan not found"))])
+      wisp.json_response(json.to_string(error_json), 404)
+    }
+    Error(storage.DatabaseError(msg)) -> {
+      let error_json =
+        json.object([#("error", json.string("Database error: " <> msg))])
+      wisp.json_response(json.to_string(error_json), 500)
+    }
+    Error(_) -> {
+      let error_json =
+        json.object([#("error", json.string("Failed to retrieve meal plan"))])
+      wisp.json_response(json.to_string(error_json), 500)
+    }
+    Ok(plan) -> {
+      let response_json = auto_types.auto_meal_plan_to_json(plan)
+      wisp.json_response(json.to_string(response_json), 200)
     }
   }
 }
