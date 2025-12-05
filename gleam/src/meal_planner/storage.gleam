@@ -7,44 +7,39 @@
 /// - storage/logs: Food logging and daily/weekly summaries
 /// - storage/nutrients: Nutrient calculations and parsing
 /// - storage/migrations: Database migration utilities
-
 import meal_planner/storage/profile.{
-  type StorageError, type DbConfig,
-  default_config, start_pool,
-  save_nutrition_state, get_nutrition_state, get_nutrition_history,
-  save_goals, get_goals,
-  save_user_profile, get_user_profile, get_user_profile_or_default,
+  type DbConfig, type StorageError, default_config, get_goals,
+  get_nutrition_history, get_nutrition_state, get_user_profile,
+  get_user_profile_or_default, save_goals, save_nutrition_state,
+  save_user_profile, start_pool,
 }
 
 import meal_planner/storage/recipes.{
-  save_recipe, get_all_recipes, get_recipe_by_id,
-  delete_recipe, get_recipes_by_category, filter_recipes,
+  delete_recipe, filter_recipes, get_all_recipes, get_recipe_by_id,
+  get_recipes_by_category, save_recipe,
 }
 
 import meal_planner/storage/foods.{
-  type UsdaFood, type FoodNutrientValue, type UsdaFoodWithNutrients,
-  search_foods, search_foods_filtered, get_food_by_id,
-  load_usda_food_with_macros, get_foods_count,
-  get_food_categories, create_custom_food, get_custom_food_by_id,
-  search_custom_foods, get_custom_foods_for_user, delete_custom_food, update_custom_food,
+  type FoodNutrientValue, type UsdaFood, type UsdaFoodWithNutrients,
+  create_custom_food, delete_custom_food, get_custom_food_by_id,
+  get_custom_foods_for_user, get_food_by_id, get_food_categories,
+  get_foods_count, load_usda_food_with_macros, search_custom_foods, search_foods,
+  search_foods_filtered, update_custom_food,
 }
 
 import meal_planner/storage/logs.{
-  type FoodLog, type Log, type FoodSummaryItem, type WeeklySummary,
-  save_food_log, get_food_logs_by_date, get_todays_logs,
-  delete_food_log, get_recent_meals, save_food_log_entry,
-  get_daily_log, get_weekly_summary, save_food_to_log,
-  get_recently_logged_foods,
+  type FoodLog, type FoodSummaryItem, type Log, type WeeklySummary,
+  delete_food_log, get_daily_log, get_food_logs_by_date, get_recent_meals,
+  get_recently_logged_foods, get_todays_logs, get_weekly_summary, save_food_log,
+  save_food_log_entry, save_food_to_log,
 }
 
 import meal_planner/storage/nutrients.{
-  get_food_nutrients, parse_usda_macros, parse_usda_micronutrients,
-  calculate_total_macros, calculate_total_micronutrients,
+  calculate_total_macros, calculate_total_micronutrients, get_food_nutrients,
+  parse_usda_macros, parse_usda_micronutrients,
 }
 
-import meal_planner/storage/migrations.{
-  init_migrations,
-}
+import meal_planner/storage/migrations.{init_migrations}
 
 // Re-export everything
 pub fn default_config() {
@@ -224,12 +219,29 @@ pub fn init_migrations() {
 }
 
 // Re-export types for type annotations
-pub type StorageError = profile.StorageError
-pub type DbConfig = profile.DbConfig
-pub type UsdaFood = foods.UsdaFood
-pub type FoodNutrientValue = foods.FoodNutrientValue
-pub type UsdaFoodWithNutrients = foods.UsdaFoodWithNutrients
-pub type FoodLog = logs.FoodLog
-pub type Log = logs.Log
-pub type FoodSummaryItem = logs.FoodSummaryItem
-pub type WeeklySummary = logs.WeeklySummary
+pub type StorageError =
+  profile.StorageError
+
+pub type DbConfig =
+  profile.DbConfig
+
+pub type UsdaFood =
+  foods.UsdaFood
+
+pub type FoodNutrientValue =
+  foods.FoodNutrientValue
+
+pub type UsdaFoodWithNutrients =
+  foods.UsdaFoodWithNutrients
+
+pub type FoodLog =
+  logs.FoodLog
+
+pub type Log =
+  logs.Log
+
+pub type FoodSummaryItem =
+  logs.FoodSummaryItem
+
+pub type WeeklySummary =
+  logs.WeeklySummary

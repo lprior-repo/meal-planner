@@ -7,6 +7,7 @@ import gleam/result
 import gleam/string
 import meal_planner/ncp
 import meal_planner/postgres
+import meal_planner/storage/utils
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
@@ -109,7 +110,7 @@ pub fn save_nutrition_state(
     |> pog.parameter(pog.float(state.consumed.calories))
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(_) -> Ok(Nil)
   }
 }
@@ -148,7 +149,7 @@ pub fn get_nutrition_state(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(0, _)) -> Error(NotFound)
     Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [row, ..])) -> Ok(row)
@@ -189,7 +190,7 @@ pub fn get_nutrition_history(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
@@ -220,7 +221,7 @@ pub fn save_goals(
     |> pog.parameter(pog.float(goals.daily_calories))
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(_) -> Ok(Nil)
   }
 }
@@ -251,7 +252,7 @@ pub fn get_goals(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(0, _)) -> Error(NotFound)
     Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [row, ..])) -> Ok(row)
@@ -296,7 +297,7 @@ pub fn save_user_profile(
     |> pog.parameter(pog.int(profile.meals_per_day))
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(_) -> Ok(Nil)
   }
 }
@@ -344,7 +345,7 @@ pub fn get_user_profile(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(0, _)) -> Error(NotFound)
     Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [row, ..])) -> Ok(row)
