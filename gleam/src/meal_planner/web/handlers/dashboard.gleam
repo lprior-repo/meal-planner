@@ -13,7 +13,9 @@ import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import gleam/uri
+import lustre/attribute
 import lustre/element
+import lustre/element/html
 import meal_planner/nutrition_constants
 import meal_planner/storage
 import meal_planner/storage_optimized
@@ -70,12 +72,16 @@ pub fn dashboard(req: wisp.Request, ctx: Context) -> wisp.Response {
           total_micronutrients: daily_log.total_micronutrients,
         )
 
-      // Render dashboard page
-      let dashboard_html =
-        dashboard_page.render_dashboard(dashboard_data)
-        |> element.to_string
+      // Render dashboard page with full HTML wrapper
+      let content = [
+        dashboard_page.render_dashboard(dashboard_data),
+        // Modal container for HTMX dynamic content
+        html.div([attribute.id("modal-container")], []),
+      ]
 
-      wisp.html_response(dashboard_html, 200)
+      let page_html = render_full_page("Dashboard - Meal Planner", content)
+
+      wisp.html_response(page_html, 200)
     }
   }
 }
@@ -152,4 +158,36 @@ pub fn get_today_date() -> String {
   // Simplified implementation - returns fixed date
   // In production, use a proper date library
   "2025-12-05"
+}
+
+/// Render full HTML page with HTMX support
+/// This ensures HTMX is loaded and modal container is present
+fn render_full_page(
+  title: String,
+  content: List(element.Element(msg)),
+) -> String {
+  let body =
+    html.html([attribute.attribute("lang", "en")], [
+      html.head([], [
+        html.meta([attribute.attribute("charset", "UTF-8")]),
+        html.meta([
+          attribute.name("viewport"),
+          attribute.attribute(
+            "content",
+            "width=device-width, initial-scale=1.0",
+          ),
+        ]),
+        html.title([], title),
+        html.link([
+          attribute.rel("stylesheet"),
+          attribute.href("/static/styles.css"),
+        ]),
+        // HTMX library - the ONLY JavaScript allowed in the project
+        // All interactivity must use HTMX attributes, not custom JS files
+        html.script([attribute.src("https://unpkg.com/htmx.org@1.9.10")], ""),
+      ]),
+      html.body([], content),
+    ])
+
+  "<!DOCTYPE html>" <> element.to_string(body)
 }
