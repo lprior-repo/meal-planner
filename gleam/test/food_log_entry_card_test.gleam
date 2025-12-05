@@ -1,10 +1,8 @@
 /// Tests for Food Log Entry Card Components
 ///
 /// Tests the food_log_entry_card component module
-import gleam/option
 import gleeunit
 import gleeunit/should
-import lustre/element
 import meal_planner/ui/components/food_log_entry_card
 import meal_planner/ui/types/ui_types
 

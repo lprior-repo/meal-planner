@@ -107,10 +107,11 @@ pub fn get_auto_plan(
         Error(e) -> Error(e)
         Ok(recipes) -> {
           // Parse config from JSON
-          let config_result =
-            config_json
-            |> json.decode(using: auto_types.auto_plan_config_decoder())
+          let config_result = {
+            use json_val <- result.try(json.parse(config_json))
+            decode.run(json_val, auto_types.auto_plan_config_decoder())
             |> result.map_error(fn(_) { "Failed to decode config JSON" })
+          }
 
           case config_result {
             Error(e) -> Error(DatabaseError(e))
