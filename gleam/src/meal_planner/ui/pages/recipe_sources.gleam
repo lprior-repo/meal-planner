@@ -11,6 +11,7 @@
 /// See: CLAUDE.md (JavaScript Prohibition - CRITICAL RULE)
 import gleam/list
 import gleam/option
+import gleam/result
 import lustre/attribute
 import lustre/element
 import lustre/element/html
@@ -36,7 +37,7 @@ pub type SourceStatus {
   Active
   Inactive
   ConfigurationRequired
-  Error
+  ErrorStatus
 }
 
 /// Recipe sources page state
@@ -171,7 +172,7 @@ fn render_status_badge(
       "status-badge status-config-required",
       "API Key Required",
     )
-    Error, _, _ -> #("status-badge status-error", "Error")
+    ErrorStatus, _, _ -> #("status-badge status-error", "Error")
     _, _, _ -> #("status-badge status-inactive", "Not Configured")
   }
 
@@ -218,7 +219,7 @@ fn render_source_configuration(
         ],
       )
     }
-    Error(_) ->
+    Error(Nil) ->
       html.div([attribute.id("source-config")], [
         html.p([], [element.text("Source not found")]),
       ])

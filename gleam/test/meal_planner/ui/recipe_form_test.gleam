@@ -11,6 +11,7 @@
 
 import gleam/string
 import gleeunit/should
+import lustre/element
 import meal_planner/ui/recipe_form
 
 // ============================================================================
@@ -18,7 +19,7 @@ import meal_planner/ui/recipe_form
 // ============================================================================
 
 pub fn render_form_contains_required_elements_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Form container
   html
@@ -46,7 +47,7 @@ pub fn render_form_contains_required_elements_test() {
 }
 
 pub fn render_form_contains_submit_button_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("<button\n        type=\"submit\"")
@@ -62,7 +63,7 @@ pub fn render_form_contains_submit_button_test() {
 }
 
 pub fn render_form_contains_cancel_button_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"cancel-btn\"")
@@ -78,7 +79,7 @@ pub fn render_form_contains_cancel_button_test() {
 // ============================================================================
 
 pub fn recipe_name_field_has_required_attribute_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"recipe-name\"")
@@ -90,7 +91,7 @@ pub fn recipe_name_field_has_required_attribute_test() {
 }
 
 pub fn recipe_name_field_has_length_constraints_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Should have minlength and maxlength
   html
@@ -103,7 +104,7 @@ pub fn recipe_name_field_has_length_constraints_test() {
 }
 
 pub fn recipe_name_field_has_placeholder_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("placeholder=\"e.g., Grilled Chicken Salad\"")
@@ -111,7 +112,7 @@ pub fn recipe_name_field_has_placeholder_test() {
 }
 
 pub fn category_field_has_required_attribute_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"recipe-category\"")
@@ -142,7 +143,7 @@ pub fn category_field_has_required_attribute_test() {
 }
 
 pub fn category_field_has_valid_options_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Should have all category options
   html
@@ -171,7 +172,7 @@ pub fn category_field_has_valid_options_test() {
 }
 
 pub fn servings_field_has_numeric_constraints_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Should be a number input with min/max
   html
@@ -196,7 +197,7 @@ pub fn servings_field_has_numeric_constraints_test() {
 }
 
 pub fn prep_time_field_has_numeric_constraints_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"prep-time\"")
@@ -212,7 +213,7 @@ pub fn prep_time_field_has_numeric_constraints_test() {
 }
 
 pub fn cook_time_field_has_numeric_constraints_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"cook-time\"")
@@ -232,7 +233,7 @@ pub fn cook_time_field_has_numeric_constraints_test() {
 // ============================================================================
 
 pub fn ingredients_section_has_add_button_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"add-ingredient\"")
@@ -244,7 +245,7 @@ pub fn ingredients_section_has_add_button_test() {
 }
 
 pub fn ingredients_section_has_initial_row_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Should have first ingredient row
   html
@@ -261,7 +262,7 @@ pub fn ingredients_section_has_initial_row_test() {
 }
 
 pub fn ingredient_name_field_is_required_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   let ingredient_name_section =
     html
@@ -287,7 +288,7 @@ pub fn ingredient_name_field_is_required_test() {
 }
 
 pub fn ingredient_amount_field_has_numeric_constraints_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"ingredient-amount-0\"")
@@ -307,7 +308,7 @@ pub fn ingredient_amount_field_has_numeric_constraints_test() {
 }
 
 pub fn ingredient_unit_field_has_valid_options_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Should have all unit options
   html
@@ -336,7 +337,7 @@ pub fn ingredient_unit_field_has_valid_options_test() {
 }
 
 pub fn ingredient_remove_button_exists_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("class=\"btn btn-danger btn-sm remove-ingredient\"")
@@ -353,7 +354,7 @@ pub fn ingredient_remove_button_exists_test() {
 // ============================================================================
 
 pub fn instructions_section_has_add_button_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"add-instruction\"")
@@ -365,7 +366,7 @@ pub fn instructions_section_has_add_button_test() {
 }
 
 pub fn instructions_section_has_initial_row_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"instruction-0\"")
@@ -377,7 +378,7 @@ pub fn instructions_section_has_initial_row_test() {
 }
 
 pub fn instruction_field_is_textarea_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("<textarea")
@@ -393,7 +394,7 @@ pub fn instruction_field_is_textarea_test() {
 }
 
 pub fn instruction_field_is_required_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   let instruction_section =
     html
@@ -419,7 +420,7 @@ pub fn instruction_field_is_required_test() {
 }
 
 pub fn instruction_remove_button_exists_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("class=\"btn btn-danger btn-sm remove-instruction\"")
@@ -431,7 +432,7 @@ pub fn instruction_remove_button_exists_test() {
 // ============================================================================
 
 pub fn nutrition_section_contains_all_macro_fields_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"calories\"")
@@ -459,7 +460,7 @@ pub fn nutrition_section_contains_all_macro_fields_test() {
 }
 
 pub fn nutrition_fields_are_optional_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Get nutrition section
   let nutrition_section =
@@ -488,7 +489,7 @@ pub fn nutrition_fields_are_optional_test() {
 }
 
 pub fn calories_field_has_numeric_constraints_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"calories\"")
@@ -508,7 +509,7 @@ pub fn calories_field_has_numeric_constraints_test() {
 }
 
 pub fn protein_field_has_decimal_precision_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   let protein_section =
     html
@@ -538,7 +539,7 @@ pub fn protein_field_has_decimal_precision_test() {
 }
 
 pub fn carbs_field_has_decimal_precision_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   let carbs_section =
     html
@@ -564,7 +565,7 @@ pub fn carbs_field_has_decimal_precision_test() {
 }
 
 pub fn fat_field_has_decimal_precision_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   let fat_section =
     html
@@ -594,7 +595,7 @@ pub fn fat_field_has_decimal_precision_test() {
 // ============================================================================
 
 pub fn form_has_novalidate_attribute_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Form should have novalidate for custom validation
   html
@@ -603,7 +604,7 @@ pub fn form_has_novalidate_attribute_test() {
 }
 
 pub fn required_fields_have_aria_invalid_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Required fields should have aria-invalid="false" initially
   html
@@ -612,7 +613,7 @@ pub fn required_fields_have_aria_invalid_test() {
 }
 
 pub fn required_fields_have_aria_describedby_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Recipe name field
   html
@@ -631,7 +632,7 @@ pub fn required_fields_have_aria_describedby_test() {
 }
 
 pub fn error_spans_have_aria_live_regions_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("role=\"alert\" aria-live=\"polite\"")
@@ -639,7 +640,7 @@ pub fn error_spans_have_aria_live_regions_test() {
 }
 
 pub fn error_spans_have_role_alert_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("class=\"form-error\" role=\"alert\"")
@@ -647,7 +648,7 @@ pub fn error_spans_have_role_alert_test() {
 }
 
 pub fn required_fields_have_visual_indicator_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Should have asterisk with aria-label
   html
@@ -658,7 +659,7 @@ pub fn required_fields_have_visual_indicator_test() {
 }
 
 pub fn buttons_have_aria_labels_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("aria-label=\"Add ingredient row\"")
@@ -678,7 +679,7 @@ pub fn buttons_have_aria_labels_test() {
 }
 
 pub fn dynamic_lists_have_role_attributes_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("role=\"list\" aria-label=\"Ingredient list\"")
@@ -694,7 +695,7 @@ pub fn dynamic_lists_have_role_attributes_test() {
 }
 
 pub fn form_status_has_aria_live_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains(
@@ -708,7 +709,7 @@ pub fn form_status_has_aria_live_test() {
 // ============================================================================
 
 pub fn ingredient_fields_have_array_notation_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Should use array notation for ingredients
   html
@@ -725,7 +726,7 @@ pub fn ingredient_fields_have_array_notation_test() {
 }
 
 pub fn instruction_fields_have_array_notation_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Should use array notation for instructions
   html
@@ -734,7 +735,7 @@ pub fn instruction_fields_have_array_notation_test() {
 }
 
 pub fn fields_have_data_row_index_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("data-row-index=\"0\"")
@@ -746,7 +747,7 @@ pub fn fields_have_data_row_index_test() {
 // ============================================================================
 
 pub fn form_uses_responsive_grid_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("class=\"grid grid-cols-2 gap-4\"")
@@ -758,7 +759,7 @@ pub fn form_uses_responsive_grid_test() {
 }
 
 pub fn form_has_card_structure_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("class=\"card\"")
@@ -778,7 +779,7 @@ pub fn form_has_card_structure_test() {
 }
 
 pub fn form_has_semantic_sections_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Should use <section> elements
   html
@@ -787,7 +788,7 @@ pub fn form_has_semantic_sections_test() {
 }
 
 pub fn form_includes_javascript_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("<script src=\"/static/js/recipe-form.js\"></script>")
@@ -799,7 +800,7 @@ pub fn form_includes_javascript_test() {
 // ============================================================================
 
 pub fn all_fields_have_error_spans_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Required field error spans
   html
@@ -824,7 +825,7 @@ pub fn all_fields_have_error_spans_test() {
 }
 
 pub fn ingredient_fields_have_error_spans_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"ingredient-name-0-error\"")
@@ -840,7 +841,7 @@ pub fn ingredient_fields_have_error_spans_test() {
 }
 
 pub fn instruction_fields_have_error_spans_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"instruction-0-error\"")
@@ -848,7 +849,7 @@ pub fn instruction_fields_have_error_spans_test() {
 }
 
 pub fn section_level_error_spans_exist_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"ingredients-error\"")
@@ -860,7 +861,7 @@ pub fn section_level_error_spans_exist_test() {
 }
 
 pub fn nutrition_fields_have_error_spans_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("id=\"calories-error\"")
@@ -884,7 +885,7 @@ pub fn nutrition_fields_have_error_spans_test() {
 // ============================================================================
 
 pub fn submit_button_has_correct_type_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   html
   |> string.contains("type=\"submit\"")
@@ -892,7 +893,7 @@ pub fn submit_button_has_correct_type_test() {
 }
 
 pub fn cancel_button_has_button_type_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   let cancel_section =
     html
@@ -922,7 +923,7 @@ pub fn cancel_button_has_button_type_test() {
 // ============================================================================
 
 pub fn render_form_produces_valid_html_structure_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Should have container
   html
@@ -945,7 +946,7 @@ pub fn render_form_produces_valid_html_structure_test() {
 }
 
 pub fn render_form_includes_all_sections_in_order_test() {
-  let html = recipe_form.render_form()
+  let html = recipe_form.render_form() |> element.to_string
 
   // Find positions of each section
   let has_basic_info = string.contains(html, "Basic Information")

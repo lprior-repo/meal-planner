@@ -1,9 +1,10 @@
 // Recipe Form UI Component
 // Accessible, responsive form with dynamic rows and validation
 
+import gleam/int
 import lustre/attribute.{
-  attribute, class, id, max, maxlength, min, minlength, name, placeholder,
-  required, rows, step, type_, value,
+  attribute, class, id, max, maxlength, min, minlength, name, placeholder, step,
+  type_, value,
 }
 import lustre/element.{type Element, text}
 import lustre/element/html.{
@@ -54,9 +55,9 @@ fn basic_info_section() -> Element(msg) {
         name("name"),
         class("input"),
         placeholder("e.g., Grilled Chicken Salad"),
-        required(),
-        minlength(nutrition_constants.min_recipe_name_length |> int.to_string),
-        maxlength(nutrition_constants.max_recipe_name_length |> int.to_string),
+        attribute("required", ""),
+        minlength(nutrition_constants.min_recipe_name_length),
+        maxlength(nutrition_constants.max_recipe_name_length),
         attribute("aria-describedby", "name-error"),
         attribute("aria-invalid", "false"),
       ]),
@@ -83,18 +84,18 @@ fn basic_info_section() -> Element(msg) {
           id("recipe-category"),
           name("category"),
           class("input"),
-          required(),
+          attribute("required", ""),
           attribute("aria-describedby", "category-error"),
           attribute("aria-invalid", "false"),
         ],
         [
-          option([value("")], [text("Select a category")]),
-          option([value("breakfast")], [text("Breakfast")]),
-          option([value("lunch")], [text("Lunch")]),
-          option([value("dinner")], [text("Dinner")]),
-          option([value("snack")], [text("Snack")]),
-          option([value("dessert")], [text("Dessert")]),
-          option([value("beverage")], [text("Beverage")]),
+          option([value("")], "Select a category"),
+          option([value("breakfast")], "Breakfast"),
+          option([value("lunch")], "Lunch"),
+          option([value("dinner")], "Dinner"),
+          option([value("snack")], "Snack"),
+          option([value("dessert")], "Dessert"),
+          option([value("beverage")], "Beverage"),
         ],
       ),
       span(
@@ -170,7 +171,7 @@ fn basic_info_section() -> Element(msg) {
         min("1"),
         max(nutrition_constants.max_servings |> int.to_string),
         value(nutrition_constants.default_servings |> int.to_string),
-        required(),
+        attribute("required", ""),
         attribute("aria-describedby", "servings-error"),
         attribute("aria-invalid", "false"),
       ]),
@@ -262,7 +263,7 @@ fn ingredient_row(index: Int) -> Element(msg) {
               name("ingredients[" <> idx_str <> "][name]"),
               class("input ingredient-name"),
               placeholder("e.g., Chicken breast"),
-              required(),
+              attribute("required", ""),
               attribute(
                 "aria-describedby",
                 "ingredient-name-" <> idx_str <> "-error",
@@ -308,7 +309,7 @@ fn ingredient_row(index: Int) -> Element(msg) {
               ),
               min("0"),
               step("0.01"),
-              required(),
+              attribute("required", ""),
               attribute(
                 "aria-describedby",
                 "ingredient-amount-" <> idx_str <> "-error",
@@ -349,7 +350,7 @@ fn ingredient_row(index: Int) -> Element(msg) {
                 id("ingredient-unit-" <> idx_str),
                 name("ingredients[" <> idx_str <> "][unit]"),
                 class("input ingredient-unit"),
-                required(),
+                attribute("required", ""),
                 attribute(
                   "aria-describedby",
                   "ingredient-unit-" <> idx_str <> "-error",
@@ -357,17 +358,17 @@ fn ingredient_row(index: Int) -> Element(msg) {
                 attribute("aria-invalid", "false"),
               ],
               [
-                option([value("")], [text("Select")]),
-                option([value("g")], [text("g (grams)")]),
-                option([value("kg")], [text("kg (kilograms)")]),
-                option([value("ml")], [text("ml (milliliters)")]),
-                option([value("l")], [text("L (liters)")]),
-                option([value("cup")], [text("cup")]),
-                option([value("tbsp")], [text("tbsp (tablespoon)")]),
-                option([value("tsp")], [text("tsp (teaspoon)")]),
-                option([value("oz")], [text("oz (ounce)")]),
-                option([value("lb")], [text("lb (pound)")]),
-                option([value("piece")], [text("piece")]),
+                option([value("")], "Select"),
+                option([value("g")], "g (grams)"),
+                option([value("kg")], "kg (kilograms)"),
+                option([value("ml")], "ml (milliliters)"),
+                option([value("l")], "L (liters)"),
+                option([value("cup")], "cup"),
+                option([value("tbsp")], "tbsp (tablespoon)"),
+                option([value("tsp")], "tsp (teaspoon)"),
+                option([value("oz")], "oz (ounce)"),
+                option([value("lb")], "lb (pound)"),
+                option([value("piece")], "piece"),
               ],
             ),
             span(
@@ -475,11 +476,11 @@ fn instruction_row(index: Int) -> Element(msg) {
             name("instructions[" <> idx_str <> "]"),
             class("input instruction-text"),
             placeholder("e.g., Preheat oven to 375°F (190°C)"),
-            required(),
-            rows(2),
+            attribute("required", ""),
+            attribute("rows", "2"),
             attribute("aria-describedby", "instruction-" <> idx_str <> "-error"),
             attribute("aria-invalid", "false"),
-          ]),
+          ], ""),
           span(
             [
               id("instruction-" <> idx_str <> "-error"),
@@ -621,4 +622,3 @@ fn form_actions() -> Element(msg) {
 }
 
 // Required for int.to_string
-import gleam/int

@@ -17,10 +17,23 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import lustre/attribute.{attribute, class, id, style}
+import lustre/attribute.{attribute, class, id}
 import lustre/element.{type Element, text}
 import lustre/element/html.{div, img, link, span}
 import meal_planner/nutrition_constants
+
+// Helper function to create inline style attribute from CSS property list
+fn inline_style(properties: List(#(String, String))) -> attribute.Attribute(msg) {
+  let css_string =
+    properties
+    |> list.map(fn(prop) {
+      let #(key, value) = prop
+      key <> ": " <> value
+    })
+    |> string.join("; ")
+
+  attribute("style", css_string)
+}
 
 // ===================================================================
 // SKELETON LOADER COMPONENTS
@@ -33,7 +46,7 @@ pub fn macro_bar_skeleton() -> Element(msg) {
     div(
       [
         class("macro-bar-header skeleton-text"),
-        style([
+        inline_style([
           #("width", "120px"),
           #("height", "16px"),
         ]),
@@ -52,7 +65,7 @@ pub fn calorie_card_skeleton() -> Element(msg) {
     div(
       [
         class("skeleton-text"),
-        style([
+        inline_style([
           #(
             "width",
             int.to_string(nutrition_constants.skeleton_label_width) <> "px",
@@ -66,7 +79,7 @@ pub fn calorie_card_skeleton() -> Element(msg) {
     div(
       [
         class("skeleton-text"),
-        style([
+        inline_style([
           #(
             "width",
             int.to_string(nutrition_constants.skeleton_calorie_width) <> "px",
@@ -83,25 +96,25 @@ pub fn calorie_card_skeleton() -> Element(msg) {
 pub fn meal_entry_skeleton() -> Element(msg) {
   div([class("meal-entry-item skeleton")], [
     div(
-      [class("skeleton-text"), style([#("width", "60px"), #("height", "16px")])],
+      [class("skeleton-text"), inline_style([#("width", "60px"), #("height", "16px")])],
       [],
     ),
     div(
       [
         class("skeleton-text"),
-        style([#("width", "180px"), #("height", "20px")]),
+        inline_style([#("width", "180px"), #("height", "20px")]),
       ],
       [],
     ),
     div(
       [
         class("skeleton-text"),
-        style([#("width", "140px"), #("height", "16px")]),
+        inline_style([#("width", "140px"), #("height", "16px")]),
       ],
       [],
     ),
     div(
-      [class("skeleton-text"), style([#("width", "80px"), #("height", "16px")])],
+      [class("skeleton-text"), inline_style([#("width", "80px"), #("height", "16px")])],
       [],
     ),
   ])
@@ -113,7 +126,7 @@ pub fn micronutrient_panel_skeleton() -> Element(msg) {
     div(
       [
         class("skeleton-text"),
-        style([
+        inline_style([
           #("width", "120px"),
           #("height", "20px"),
           #("margin-bottom", "16px"),
@@ -125,27 +138,27 @@ pub fn micronutrient_panel_skeleton() -> Element(msg) {
       div(
         [
           class("micronutrient-bar skeleton"),
-          style([#("margin-bottom", "12px")]),
+          inline_style([#("margin-bottom", "12px")]),
         ],
         [
           div(
             [
               class("skeleton-text"),
-              style([#("width", "100px"), #("height", "14px")]),
+              inline_style([#("width", "100px"), #("height", "14px")]),
             ],
             [],
           ),
           div(
             [
               class("skeleton-bar"),
-              style([#("height", "8px"), #("margin", "8px 0")]),
+              inline_style([#("height", "8px"), #("margin", "8px 0")]),
             ],
             [],
           ),
           div(
             [
               class("skeleton-text"),
-              style([#("width", "60px"), #("height", "12px")]),
+              inline_style([#("width", "60px"), #("height", "12px")]),
             ],
             [],
           ),
@@ -161,7 +174,7 @@ pub fn recipe_card_skeleton() -> Element(msg) {
     div(
       [
         class("skeleton-image"),
-        style([#("width", "100%"), #("height", "160px")]),
+        inline_style([#("width", "100%"), #("height", "160px")]),
       ],
       [],
     ),
@@ -169,7 +182,7 @@ pub fn recipe_card_skeleton() -> Element(msg) {
       div(
         [
           class("skeleton-text"),
-          style([
+          inline_style([
             #("width", "180px"),
             #("height", "20px"),
             #("margin-bottom", "8px"),
@@ -180,7 +193,7 @@ pub fn recipe_card_skeleton() -> Element(msg) {
       div(
         [
           class("skeleton-text"),
-          style([
+          inline_style([
             #("width", "80px"),
             #("height", "14px"),
             #("margin-bottom", "12px"),
@@ -191,7 +204,7 @@ pub fn recipe_card_skeleton() -> Element(msg) {
       div(
         [
           class("skeleton-text"),
-          style([#("width", "140px"), #("height", "14px")]),
+          inline_style([#("width", "140px"), #("height", "14px")]),
         ],
         [],
       ),
@@ -204,11 +217,11 @@ pub fn search_results_skeleton(count: Int) -> Element(msg) {
   div(
     [class("search-results skeleton")],
     list.map(list.range(1, count), fn(_) {
-      div([class("food-item skeleton"), style([#("margin-bottom", "8px")])], [
+      div([class("food-item skeleton"), inline_style([#("margin-bottom", "8px")])], [
         div(
           [
             class("skeleton-text"),
-            style([
+            inline_style([
               #(
                 "width",
                 int.to_string(
@@ -225,7 +238,7 @@ pub fn search_results_skeleton(count: Int) -> Element(msg) {
         div(
           [
             class("skeleton-text"),
-            style([
+            inline_style([
               #(
                 "width",
                 int.to_string(
@@ -273,7 +286,7 @@ pub fn lazy_section(
       div([class("lazy-placeholder"), attribute("data-placeholder", "true")], [
         placeholder,
       ]),
-      div([class("lazy-content"), style([#("display", "none")])], []),
+      div([class("lazy-content"), inline_style([#("display", "none")])], []),
     ],
   )
 }
@@ -322,7 +335,7 @@ fn get_skeleton_for_component(component_type: String) -> Element(msg) {
       div(
         [
           class("skeleton-text"),
-          style([
+          inline_style([
             #("width", "100%"),
             #(
               "height",
@@ -365,7 +378,7 @@ pub fn virtual_scroll_container(
       attribute("data-item-height", int.to_string(item_height)),
       attribute("data-total-items", int.to_string(total_items)),
       attribute("data-visible-count", int.to_string(visible_count)),
-      style([
+      inline_style([
         #("height", "600px"),
         #("overflow-y", "auto"),
         #("position", "relative"),
@@ -375,7 +388,7 @@ pub fn virtual_scroll_container(
       div(
         [
           class("virtual-scroll-spacer"),
-          style([
+          inline_style([
             #("height", int.to_string(total_height) <> "px"),
           ]),
         ],
@@ -384,7 +397,7 @@ pub fn virtual_scroll_container(
       div(
         [
           class("virtual-scroll-content"),
-          style([
+          inline_style([
             #("position", "absolute"),
             #("top", "0"),
             #("width", "100%"),
@@ -422,14 +435,14 @@ pub fn lazy_image(
       attribute("src", placeholder_src),
       attribute("alt", alt <> " (loading)"),
       attribute("aria-hidden", "true"),
-      style([#("filter", "blur(10px)"), #("transition", "opacity 0.3s")]),
+      inline_style([#("filter", "blur(10px)"), #("transition", "opacity 0.3s")]),
     ]),
     img([
       class("lazy-image"),
       attribute("data-src", src),
       attribute("alt", alt),
       attribute("loading", "lazy"),
-      style([
+      inline_style([
         #("opacity", "0"),
         #("position", "absolute"),
         #("top", "0"),
@@ -485,7 +498,7 @@ pub fn loading_progress_bar(percentage: Float, label: String) -> Element(msg) {
     [
       div([class("progress-label")], [text(label <> " (" <> pct_str <> "%)")]),
       div([class("progress-track")], [
-        div([class("progress-fill"), style([#("width", pct_str <> "%")])], []),
+        div([class("progress-fill"), inline_style([#("width", pct_str <> "%")])], []),
       ]),
     ],
   )
@@ -554,7 +567,7 @@ pub fn content_visibility_hint(
   id_str: String,
   estimated_height: Int,
 ) -> attribute.Attribute(msg) {
-  style([
+  inline_style([
     #("content-visibility", "auto"),
     #("contain-intrinsic-size", int.to_string(estimated_height) <> "px"),
   ])

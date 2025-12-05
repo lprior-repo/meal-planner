@@ -20,6 +20,7 @@
 ///
 /// See: Bead meal-planner-51y
 /// See: food_log_entry_card.gleam for card components
+import gleam/float
 import gleam/int
 import gleam/list
 import lustre/attribute.{attribute, class, id}

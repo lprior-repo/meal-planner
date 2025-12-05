@@ -12,9 +12,23 @@
 /// }
 /// ```
 import gleam/list
+import gleam/string
 import lustre/attribute
 import lustre/element
 import lustre/element/html
+
+// Helper function to create inline style attribute from CSS property list
+fn inline_style(properties: List(#(String, String))) -> attribute.Attribute(msg) {
+  let css_string =
+    properties
+    |> list.map(fn(prop) {
+      let #(key, value) = prop
+      key <> ": " <> value
+    })
+    |> string.join("; ")
+
+  attribute.attribute("style", css_string)
+}
 
 /// Food card skeleton - placeholder for food search results
 /// Shows skeleton for food name, type, and macro badges
@@ -67,7 +81,7 @@ pub fn recipe_card_skeleton() -> element.Element(msg) {
         html.div(
           [
             attribute.class("skeleton skeleton-text skeleton-text-1/4"),
-            attribute.style([#("margin-top", "var(--space-3)")]),
+            inline_style([#("margin-top", "var(--space-3)")]),
           ],
           [],
         ),
@@ -96,7 +110,7 @@ pub fn meal_log_skeleton() -> element.Element(msg) {
         html.div(
           [
             attribute.class("skeleton skeleton-text"),
-            attribute.style([#("height", "14px"), #("width", "50px")]),
+            inline_style([#("height", "14px"), #("width", "50px")]),
           ],
           [],
         ),
@@ -109,7 +123,7 @@ pub fn meal_log_skeleton() -> element.Element(msg) {
         html.div(
           [
             attribute.class("skeleton skeleton-text skeleton-text-1/2"),
-            attribute.style([#("margin-top", "var(--space-1)")]),
+            inline_style([#("margin-top", "var(--space-1)")]),
           ],
           [],
         ),
@@ -123,18 +137,18 @@ pub fn meal_log_skeleton() -> element.Element(msg) {
         html.div(
           [
             attribute.class("skeleton skeleton-text"),
-            attribute.style([#("height", "16px"), #("width", "60px")]),
+            inline_style([#("height", "16px"), #("width", "60px")]),
           ],
           [],
         ),
       ]),
       html.div(
-        [attribute.class("entry-actions"), attribute.style([#("opacity", "0")])],
+        [attribute.class("entry-actions"), inline_style([#("opacity", "0")])],
         [
           html.div(
             [
               attribute.class("skeleton"),
-              attribute.style([
+              inline_style([
                 #("width", "32px"),
                 #("height", "32px"),
                 #("border-radius", "var(--radius-md)"),
@@ -145,7 +159,7 @@ pub fn meal_log_skeleton() -> element.Element(msg) {
           html.div(
             [
               attribute.class("skeleton"),
-              attribute.style([
+              inline_style([
                 #("width", "32px"),
                 #("height", "32px"),
                 #("border-radius", "var(--radius-md)"),
@@ -182,14 +196,14 @@ fn macro_bar_skeleton() -> element.Element(msg) {
       html.div(
         [
           attribute.class("skeleton skeleton-text"),
-          attribute.style([#("height", "14px"), #("width", "80px")]),
+          inline_style([#("height", "14px"), #("width", "80px")]),
         ],
         [],
       ),
       html.div(
         [
           attribute.class("skeleton skeleton-text"),
-          attribute.style([#("height", "14px"), #("width", "60px")]),
+          inline_style([#("height", "14px"), #("width", "60px")]),
         ],
         [],
       ),
@@ -214,7 +228,7 @@ pub fn micronutrient_skeleton() -> element.Element(msg) {
         html.div(
           [
             attribute.class("skeleton skeleton-text skeleton-text-1/4"),
-            attribute.style([
+            inline_style([
               #("height", "20px"),
               #("margin-bottom", "var(--space-3)"),
             ]),
@@ -231,7 +245,7 @@ pub fn micronutrient_skeleton() -> element.Element(msg) {
         html.div(
           [
             attribute.class("skeleton skeleton-text skeleton-text-1/4"),
-            attribute.style([
+            inline_style([
               #("height", "20px"),
               #("margin-bottom", "var(--space-3)"),
             ]),
@@ -254,14 +268,14 @@ fn micronutrient_bar_skeleton() -> element.Element(msg) {
       html.div(
         [
           attribute.class("skeleton skeleton-text"),
-          attribute.style([#("height", "14px"), #("width", "100px")]),
+          inline_style([#("height", "14px"), #("width", "100px")]),
         ],
         [],
       ),
       html.div(
         [
           attribute.class("skeleton skeleton-text"),
-          attribute.style([#("height", "12px"), #("width", "60px")]),
+          inline_style([#("height", "12px"), #("width", "60px")]),
         ],
         [],
       ),
@@ -272,7 +286,7 @@ fn micronutrient_bar_skeleton() -> element.Element(msg) {
     html.div(
       [
         attribute.class("skeleton skeleton-text"),
-        attribute.style([
+        inline_style([
           #("height", "12px"),
           #("width", "40px"),
           #("margin-top", "var(--space-1)"),
@@ -343,14 +357,14 @@ pub fn form_skeleton() -> element.Element(msg) {
         html.div(
           [
             attribute.class("skeleton skeleton-text skeleton-text-1/2"),
-            attribute.style([#("height", "32px")]),
+            inline_style([#("height", "32px")]),
           ],
           [],
         ),
         html.div(
           [
             attribute.class("skeleton skeleton-text skeleton-text-full"),
-            attribute.style([
+            inline_style([
               #("height", "16px"),
               #("margin-top", "var(--space-2)"),
             ]),
@@ -371,7 +385,7 @@ pub fn form_skeleton() -> element.Element(msg) {
         html.div(
           [
             attribute.class("skeleton"),
-            attribute.style([
+            inline_style([
               #("width", "140px"),
               #("height", "42px"),
               #("border-radius", "var(--radius-md)"),
@@ -382,7 +396,7 @@ pub fn form_skeleton() -> element.Element(msg) {
         html.div(
           [
             attribute.class("skeleton"),
-            attribute.style([
+            inline_style([
               #("width", "100px"),
               #("height", "42px"),
               #("border-radius", "var(--radius-md)"),
@@ -400,7 +414,7 @@ fn form_field_skeleton() -> element.Element(msg) {
     html.div(
       [
         attribute.class("skeleton skeleton-text"),
-        attribute.style([
+        inline_style([
           #("height", "16px"),
           #("width", "120px"),
           #("margin-bottom", "var(--space-2)"),
@@ -411,7 +425,7 @@ fn form_field_skeleton() -> element.Element(msg) {
     html.div(
       [
         attribute.class("skeleton"),
-        attribute.style([
+        inline_style([
           #("height", "42px"),
           #("width", "100%"),
           #("border-radius", "var(--radius-md)"),
@@ -434,7 +448,7 @@ pub fn search_box_skeleton() -> element.Element(msg) {
       html.div(
         [
           attribute.class("skeleton"),
-          attribute.style([
+          inline_style([
             #("flex", "1"),
             #("height", "42px"),
             #("border-radius", "var(--radius-md)"),
@@ -445,7 +459,7 @@ pub fn search_box_skeleton() -> element.Element(msg) {
       html.div(
         [
           attribute.class("skeleton"),
-          attribute.style([
+          inline_style([
             #("width", "100px"),
             #("height", "42px"),
             #("border-radius", "var(--radius-md)"),
@@ -469,7 +483,7 @@ pub fn card_stat_skeleton() -> element.Element(msg) {
       html.div(
         [
           attribute.class("skeleton"),
-          attribute.style([
+          inline_style([
             #("width", "100px"),
             #("height", "64px"),
             #("margin-bottom", "var(--space-2)"),
@@ -480,7 +494,7 @@ pub fn card_stat_skeleton() -> element.Element(msg) {
       html.div(
         [
           attribute.class("skeleton skeleton-text"),
-          attribute.style([
+          inline_style([
             #("height", "12px"),
             #("width", "60px"),
             #("margin-top", "var(--space-1)"),
@@ -491,7 +505,7 @@ pub fn card_stat_skeleton() -> element.Element(msg) {
       html.div(
         [
           attribute.class("skeleton skeleton-text"),
-          attribute.style([
+          inline_style([
             #("height", "16px"),
             #("width", "80px"),
             #("margin-top", "var(--space-2)"),
@@ -604,28 +618,28 @@ pub fn meal_section_skeleton() -> element.Element(msg) {
         html.div(
           [
             attribute.class("skeleton skeleton-text"),
-            attribute.style([#("height", "24px"), #("width", "120px")]),
+            inline_style([#("height", "24px"), #("width", "120px")]),
           ],
           [],
         ),
         html.div(
           [
             attribute.class("skeleton skeleton-text"),
-            attribute.style([#("height", "16px"), #("width", "60px")]),
+            inline_style([#("height", "16px"), #("width", "60px")]),
           ],
           [],
         ),
         html.div(
           [
             attribute.class("skeleton skeleton-text"),
-            attribute.style([#("height", "16px"), #("width", "80px")]),
+            inline_style([#("height", "16px"), #("width", "80px")]),
           ],
           [],
         ),
         html.div(
           [
             attribute.class("skeleton"),
-            attribute.style([
+            inline_style([
               #("width", "32px"),
               #("height", "32px"),
               #("border-radius", "var(--radius-md)"),
@@ -705,14 +719,14 @@ pub fn dashboard_skeleton() -> element.Element(msg) {
         html.div(
           [
             attribute.class("skeleton skeleton-text skeleton-text-1/2"),
-            attribute.style([#("height", "40px")]),
+            inline_style([#("height", "40px")]),
           ],
           [],
         ),
         html.div(
           [
             attribute.class("skeleton skeleton-text skeleton-text-full"),
-            attribute.style([
+            inline_style([
               #("height", "20px"),
               #("margin-top", "var(--space-2)"),
             ]),
@@ -723,7 +737,7 @@ pub fn dashboard_skeleton() -> element.Element(msg) {
       html.div(
         [
           attribute.class("grid grid-cols-4 gap-4"),
-          attribute.style([#("margin-bottom", "var(--space-6)")]),
+          inline_style([#("margin-bottom", "var(--space-6)")]),
         ],
         [
           card_stat_skeleton(),
@@ -738,7 +752,7 @@ pub fn dashboard_skeleton() -> element.Element(msg) {
             html.div(
               [
                 attribute.class("skeleton skeleton-text skeleton-text-1/3"),
-                attribute.style([#("height", "24px")]),
+                inline_style([#("height", "24px")]),
               ],
               [],
             ),
@@ -750,7 +764,7 @@ pub fn dashboard_skeleton() -> element.Element(msg) {
             html.div(
               [
                 attribute.class("skeleton skeleton-text skeleton-text-1/3"),
-                attribute.style([#("height", "24px")]),
+                inline_style([#("height", "24px")]),
               ],
               [],
             ),
