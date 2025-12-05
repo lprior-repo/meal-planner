@@ -39,7 +39,7 @@ pub type UsdaFoodWithNutrients {
 // Helper Function - Error Formatting
 // ============================================================================
 
-fn format_pog_error(err: pog.QueryError) -> String {
+fn utils.format_pog_error(err: pog.QueryError) -> String {
   case err {
     pog.ConnectionError -> "Connection error"
     pog.QueryError -> "Query error"
@@ -94,7 +94,7 @@ pub fn search_foods(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
@@ -132,7 +132,7 @@ pub fn get_food_by_id(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(0, _)) -> Error(NotFound)
     Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [food, ..])) -> Ok(food)
@@ -160,7 +160,7 @@ pub fn get_foods_count(conn: pog.Connection) -> Result(Int, StorageError) {
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(_, [])) -> Ok(0)
     Ok(pog.Returned(_, [count, ..])) -> Ok(count)
   }
@@ -180,7 +180,7 @@ pub fn get_food_categories(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
@@ -216,7 +216,7 @@ pub fn create_custom_food(
     |> pog.returning(custom_food_decoder())
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(_, [created_food, ..])) -> Ok(created_food)
     Ok(_) -> Error(NotFound)
   }
@@ -239,7 +239,7 @@ pub fn get_custom_food_by_id(
     |> pog.returning(custom_food_decoder())
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(0, _)) -> Error(NotFound)
     Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [food, ..])) -> Ok(food)
@@ -273,7 +273,7 @@ pub fn search_custom_foods(
     |> pog.returning(custom_food_decoder())
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
@@ -293,7 +293,7 @@ pub fn get_custom_foods_for_user(
     |> pog.returning(custom_food_decoder())
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
@@ -312,7 +312,7 @@ pub fn delete_custom_food(
     |> pog.parameter(pog.text(user_id))
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(_) -> Ok(Nil)
   }
 }
@@ -343,7 +343,7 @@ pub fn update_custom_food(
     |> pog.returning(custom_food_decoder())
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(0, _)) -> Error(NotFound)
     Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [updated_food, ..])) -> Ok(updated_food)
@@ -376,7 +376,7 @@ pub fn get_food_nutrients(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }

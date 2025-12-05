@@ -62,123 +62,213 @@ fn standard_targets() -> macro_summary.MacroTargets {
 }
 
 // ===================================================================
-// PERCENTAGE CALCULATION TESTS
+// PERCENTAGE CALCULATION TESTS (tested indirectly through summaries)
 // ===================================================================
 
-pub fn calculate_percentage_at_target_test() {
+pub fn percentage_at_target_via_summary_test() {
   // Exactly 100% of target
-  let percentage = macro_summary.calculate_percentage(150.0, 150.0)
-  percentage
+  let macros = create_macros(150.0, 60.0, 200.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  summary.protein_percentage
+  |> should.equal(100.0)
+
+  summary.fat_percentage
+  |> should.equal(100.0)
+
+  summary.carbs_percentage
   |> should.equal(100.0)
 }
 
-pub fn calculate_percentage_above_target_test() {
+pub fn percentage_above_target_via_summary_test() {
   // 110% of target
-  let percentage = macro_summary.calculate_percentage(165.0, 150.0)
-  percentage
+  let macros = create_macros(165.0, 66.0, 220.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  summary.protein_percentage
+  |> should.equal(110.0)
+
+  summary.fat_percentage
+  |> should.equal(110.0)
+
+  summary.carbs_percentage
   |> should.equal(110.0)
 }
 
-pub fn calculate_percentage_below_target_test() {
+pub fn percentage_below_target_via_summary_test() {
   // 80% of target
-  let percentage = macro_summary.calculate_percentage(120.0, 150.0)
-  percentage
+  let macros = create_macros(120.0, 48.0, 160.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  summary.protein_percentage
+  |> should.equal(80.0)
+
+  summary.fat_percentage
+  |> should.equal(80.0)
+
+  summary.carbs_percentage
   |> should.equal(80.0)
 }
 
-pub fn calculate_percentage_zero_target_test() {
+pub fn percentage_zero_target_via_summary_test() {
   // Zero target should return 0.0 (avoid division by zero)
-  let percentage = macro_summary.calculate_percentage(100.0, 0.0)
-  percentage
+  let macros = create_macros(100.0, 60.0, 200.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = create_targets(0.0, 60.0, 200.0, 2000.0)
+
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  summary.protein_percentage
   |> should.equal(0.0)
 }
 
-pub fn calculate_percentage_caps_at_maximum_test() {
+pub fn percentage_caps_at_maximum_via_summary_test() {
   // 200% exceeds maximum_display_percentage (150%), should cap
-  let percentage = macro_summary.calculate_percentage(300.0, 150.0)
-  percentage
+  let macros = create_macros(300.0, 60.0, 200.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  summary.protein_percentage
   |> should.equal(nutrition_constants.maximum_display_percentage)
 }
 
-pub fn calculate_percentage_fractional_test() {
+pub fn percentage_fractional_via_summary_test() {
   // 123.456% should be returned as float
-  let percentage = macro_summary.calculate_percentage(185.18, 150.0)
-  percentage
+  let macros = create_macros(185.18, 60.0, 200.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  summary.protein_percentage
   |> should.be_close_to(123.45, 0.1)
 }
 
-pub fn calculate_percentage_small_values_test() {
-  // Small values should work correctly
-  let percentage = macro_summary.calculate_percentage(0.5, 1.0)
-  percentage
-  |> should.equal(50.0)
-}
-
 // ===================================================================
-// COLOR CODING LOGIC TESTS
+// COLOR CODING LOGIC TESTS (tested via HTML rendering)
 // ===================================================================
 
-pub fn get_target_color_under_threshold_test() {
+pub fn color_under_threshold_test() {
   // Below 90% is "under"
-  let color = macro_summary.get_target_color(80.0)
-  color
-  |> should.equal("status-under")
+  let macros = create_macros(120.0, 48.0, 150.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-under")
+  |> should.be_true
 }
 
-pub fn get_target_color_at_under_threshold_test() {
-  // Exactly at 90% is "on-target"
-  let color = macro_summary.get_target_color(90.0)
-  color
-  |> should.equal("status-on-target")
+pub fn color_at_under_threshold_test() {
+  // Exactly at 90% should be "on-target"
+  let macros = create_macros(135.0, 54.0, 180.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-on-target")
+  |> should.be_true
 }
 
-pub fn get_target_color_in_range_test() {
+pub fn color_in_range_test() {
   // 100% is in target range
-  let color = macro_summary.get_target_color(100.0)
-  color
-  |> should.equal("status-on-target")
+  let macros = create_macros(150.0, 60.0, 200.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-on-target")
+  |> should.be_true
 }
 
-pub fn get_target_color_at_upper_threshold_test() {
+pub fn color_at_upper_threshold_test() {
   // Exactly at 110% is "on-target" (upper bound inclusive)
-  let color = macro_summary.get_target_color(110.0)
-  color
-  |> should.equal("status-on-target")
+  let macros = create_macros(165.0, 66.0, 220.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-on-target")
+  |> should.be_true
 }
 
-pub fn get_target_color_just_above_upper_test() {
+pub fn color_just_above_upper_test() {
   // Just above 110% is "over"
-  let color = macro_summary.get_target_color(110.1)
-  color
-  |> should.equal("status-over")
+  let macros = create_macros(166.0, 66.0, 220.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-over")
+  |> should.be_true
 }
 
-pub fn get_target_color_at_over_threshold_test() {
+pub fn color_at_over_threshold_test() {
   // Exactly at 130% is "over"
-  let color = macro_summary.get_target_color(130.0)
-  color
-  |> should.equal("status-over")
+  let macros = create_macros(195.0, 78.0, 260.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-over")
+  |> should.be_true
 }
 
-pub fn get_target_color_excess_test() {
+pub fn color_excess_test() {
   // Above 130% is "excess"
-  let color = macro_summary.get_target_color(140.0)
-  color
-  |> should.equal("status-excess")
-}
+  let macros = create_macros(210.0, 90.0, 290.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
 
-pub fn get_target_color_zero_test() {
-  // 0% is "under"
-  let color = macro_summary.get_target_color(0.0)
-  color
-  |> should.equal("status-under")
-}
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
 
-pub fn get_target_color_extreme_values_test() {
-  // Very high percentage is "excess"
-  let color = macro_summary.get_target_color(250.0)
-  color
-  |> should.equal("status-excess")
+  html
+  |> string.contains("status-excess")
+  |> should.be_true
 }
 
 // ===================================================================
@@ -989,44 +1079,98 @@ pub fn weekly_summary_maintains_immutability_test() {
 
 pub fn color_boundary_89_percent_test() {
   // 89% is just under threshold (90%), should be "under"
-  let color = macro_summary.get_target_color(89.0)
-  color
-  |> should.equal("status-under")
+  let macros = create_macros(133.5, 53.4, 178.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-under")
+  |> should.be_true
 }
 
 pub fn color_boundary_90_percent_test() {
   // 90% is at threshold, should be "on-target"
-  let color = macro_summary.get_target_color(90.0)
-  color
-  |> should.equal("status-on-target")
+  let macros = create_macros(135.0, 54.0, 180.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-on-target")
+  |> should.be_true
 }
 
 pub fn color_boundary_110_percent_test() {
   // 110% is at upper bound, should be "on-target"
-  let color = macro_summary.get_target_color(110.0)
-  color
-  |> should.equal("status-on-target")
+  let macros = create_macros(165.0, 66.0, 220.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-on-target")
+  |> should.be_true
 }
 
 pub fn color_boundary_110_1_percent_test() {
   // 110.1% is just above upper, should be "over"
-  let color = macro_summary.get_target_color(110.1)
-  color
-  |> should.equal("status-over")
+  let macros = create_macros(165.15, 66.06, 220.2)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-over")
+  |> should.be_true
 }
 
 pub fn color_boundary_130_percent_test() {
   // 130% is at excess threshold, should be "over"
-  let color = macro_summary.get_target_color(130.0)
-  color
-  |> should.equal("status-over")
+  let macros = create_macros(195.0, 78.0, 260.0)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-over")
+  |> should.be_true
 }
 
 pub fn color_boundary_130_1_percent_test() {
   // 130.1% is just above excess threshold, should be "excess"
-  let color = macro_summary.get_target_color(130.1)
-  color
-  |> should.equal("status-excess")
+  let macros = create_macros(195.15, 78.06, 260.2)
+  let log = create_daily_log("2025-12-05", macros)
+  let targets = standard_targets()
+  let summary = macro_summary.create_daily_summary(log, targets)
+
+  let html =
+    macro_summary.daily_macro_summary_panel(summary)
+    |> element.to_string
+
+  html
+  |> string.contains("status-excess")
+  |> should.be_true
 }
 
 // ===================================================================

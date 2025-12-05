@@ -11,8 +11,6 @@ import gleam/io
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/result
-import gleam/string
 import gleam/uri
 import lustre/attribute
 import lustre/element

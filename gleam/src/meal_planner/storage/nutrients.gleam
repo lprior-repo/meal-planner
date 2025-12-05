@@ -117,7 +117,7 @@ pub fn get_food_nutrients(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
@@ -156,7 +156,7 @@ pub fn get_food_by_id(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(0, _)) -> Error(NotFound)
 
@@ -375,7 +375,7 @@ pub fn get_daily_log(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, entries)) -> {
       let total_macros = calculate_total_macros(entries)
@@ -393,7 +393,9 @@ pub fn get_daily_log(
 }
 
 /// Calculate total macros from food log entries
-fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
+/// Sums all macros across daily food logs
+/// Public so it can be tested and reused
+pub fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
   list.fold(entries, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(acc, entry) {
     Macros(
       protein: acc.protein +. entry.macros.protein,
@@ -404,7 +406,10 @@ fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
 }
 
 /// Calculate total micronutrients from food log entries
-fn calculate_total_micronutrients(
+/// Aggregates all 21 micronutrients across daily food logs
+/// Returns None if no entries have micronutrient data
+/// Public so it can be tested and reused
+pub fn calculate_total_micronutrients(
   entries: List(FoodLogEntry),
 ) -> Option(types.Micronutrients) {
   let micros_list =
@@ -531,7 +536,7 @@ pub fn get_weekly_summary(
     |> pog.returning(summary_decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, rows)) -> {
       case rows {
@@ -1180,7 +1185,7 @@ fn insert_food_log_entry(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(0, _)) ->
       Error(DatabaseError("Failed to insert food log entry"))

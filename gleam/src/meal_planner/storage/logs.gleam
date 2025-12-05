@@ -205,7 +205,7 @@ pub fn save_food_log(
     |> pog.parameter(pog.text(log.meal_type))
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(_) -> Ok(Nil)
   }
@@ -233,7 +233,7 @@ pub fn get_food_logs_by_date(
     |> pog.returning(food_log_decoder())
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
@@ -297,7 +297,7 @@ pub fn get_todays_logs(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
@@ -315,7 +315,7 @@ pub fn delete_food_log(
     |> pog.parameter(pog.text(log_id))
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(_) -> Ok(Nil)
   }
@@ -510,7 +510,7 @@ pub fn get_recent_meals(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
@@ -560,7 +560,7 @@ pub fn get_recently_logged_foods(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
@@ -771,7 +771,7 @@ pub fn save_food_log_entry(
     |> pog.parameter(pog.text(entry.source_id))
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(_) -> Ok(Nil)
   }
@@ -1091,7 +1091,7 @@ pub fn get_daily_log(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, entries)) -> {
       let total_macros = calculate_total_macros(entries)
@@ -1247,7 +1247,7 @@ pub fn get_weekly_summary(
     |> pog.returning(summary_decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, rows)) -> {
       case rows {
