@@ -27,7 +27,7 @@
 /// // Request shutdown
 /// scheduler_actor.shutdown(actor_subject)
 /// ```
-import gleam/erlang/process.{type Subject}
+import gleam/erlang/process.{type Subject, send, send_after}
 import gleam/int
 import gleam/list
 import gleam/otp/actor
@@ -74,7 +74,14 @@ pub type Message {
 /// Note: This is a stub implementation - the full OTP actor implementation requires
 /// proper handling of self-references which is complex in Gleam's actor system
 pub fn start() -> actor.StartResult(Subject(Message)) {
-  panic as "SchedulerActor not implemented"
+  let initial_state = State(
+    self_ref: panic as "self_ref cannot be set initially",
+    next_check_time: 0,
+    db_conn: panic as "db_conn must be provided",
+    user_id: 0,
+  )
+
+  actor.start(initial_state, handle_message)
 }
 
 /// Create a child specification for adding this actor to a supervisor
@@ -94,14 +101,14 @@ fn handle_message(state: State, message: Message) -> actor.Next(State, Message) 
       case is_sunday_8pm() {
         True -> {
           // It's Sunday 8 PM, trigger email send
-          process.send(state.self_ref, TriggerEmail)
+          send(state.self_ref, TriggerEmail)
           // Schedule next check in 1 hour (3600000 ms)
-          process.send_after(state.self_ref, 3_600_000, CheckTime)
+          let _ = send_after(state.self_ref, 3_600_000, CheckTime)
           actor.continue(state)
         }
         False -> {
           // Not time yet, schedule next check in 1 hour
-          process.send_after(state.self_ref, 3_600_000, CheckTime)
+          let _ = send_after(state.self_ref, 3_600_000, CheckTime)
           actor.continue(state)
         }
       }
@@ -114,7 +121,7 @@ fn handle_message(state: State, message: Message) -> actor.Next(State, Message) 
     }
 
     Shutdown -> {
-      actor.stop()
+      actor.Stop
     }
   }
 }
@@ -158,14 +165,13 @@ pub fn get_next_check_time(state: State) -> Int {
 }
 
 /// Create an empty initial state (for testing)
+/// This is a stub that cannot be safely constructed without actual process references
 pub fn empty_state() -> State {
-  // For testing purposes only - normal usage goes through start()
-  State(
-    self_ref: panic as "empty_state should not be used outside tests",
-    next_check_time: 0,
-    db_conn: panic as "empty_state should not be used outside tests",
-    user_id: 0,
-  )
+  // This function is not implementable safely - state requires:
+  // - self_ref: Subject(Message) - requires active actor
+  // - db_conn: pog.Connection - requires active database connection
+  // For testing, use dependency injection or create actual actor instances
+  todo
 }
 
 // ============================================================================
