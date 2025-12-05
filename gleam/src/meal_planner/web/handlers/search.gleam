@@ -365,24 +365,6 @@ pub fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
   wisp.html_response(search_results_html, 200)
 }
 
-/// Render food row for display in list
-fn food_row(food: UsdaFood) -> element.Element(msg) {
-  html.a(
-    [
-      attribute.class("food-item"),
-      attribute.href("/foods/" <> int.to_string(food.fdc_id)),
-    ],
-    [
-      html.div([attribute.class("food-info")], [
-        html.span([attribute.class("food-name")], [
-          element.text(food.description),
-        ]),
-        html.span([attribute.class("food-type")], [element.text(food.data_type)]),
-      ]),
-    ],
-  )
-}
-
 // ============================================================================
 // Helper Functions
 // ============================================================================

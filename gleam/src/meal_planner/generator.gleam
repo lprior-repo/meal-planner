@@ -2,7 +2,7 @@
 import gleam/list
 import gleam/result
 import meal_planner/generator/knapsack.{type KnapsackError}
-import meal_planner/meal_plan.{type DailyPlan, type Meal, DailyPlan, Meal}
+import meal_planner/meal_plan.{type DailyPlan, DailyPlan, Meal}
 import meal_planner/types.{type Recipe, macros_calories}
 
 /// Error type for generator functions
@@ -158,7 +158,7 @@ pub fn generate_with_locked(
                   }
                   let meal3 = case
                     list.first(selected_recipes)
-                    |> result.then(fn(_) {
+                    |> result.try(fn(_) {
                       case list.rest(selected_recipes) {
                         Ok(rest) -> list.first(rest)
                         Error(_) -> Error(Nil)

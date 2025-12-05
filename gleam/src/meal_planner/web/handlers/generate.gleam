@@ -6,10 +6,9 @@ import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/result
 import lustre/element
 import meal_planner/generator
-import meal_planner/meal_plan.{type DailyPlan, type Meal, Meal}
+import meal_planner/meal_plan.{type DailyPlan, Meal}
 import meal_planner/nutrition_constants
 import meal_planner/storage
 import meal_planner/types.{type Recipe}

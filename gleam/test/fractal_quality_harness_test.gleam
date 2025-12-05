@@ -69,7 +69,7 @@ pub type RollbackAction {
 
 /// Generate code review checklist for a file
 /// Returns list of check items for: type safety, error handling, test coverage, function length
-pub fn generate_checklist(file: String) -> List(CheckItem) {
+pub fn generate_checklist(_file: String) -> List(CheckItem) {
   [
     CheckItem(
       name: "Type Safety",

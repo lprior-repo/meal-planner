@@ -19,7 +19,6 @@ import meal_planner/storage_optimized
 import meal_planner/types.{
   type Macros, type UserProfile, Macros, daily_macro_targets, macros_calories,
 }
-import meal_planner/ui/components/macro_progress
 import meal_planner/ui/components/progress
 import pog
 import wisp

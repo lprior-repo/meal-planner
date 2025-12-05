@@ -475,7 +475,7 @@ pub fn search_results_with_count(
       )
     })
 
-  let clear_all_btn = case show_clear_all && list.length(active_filters) > 0 {
+  let clear_all_btn = case show_clear_all && !list.is_empty(active_filters) {
     True ->
       html.button(
         [
@@ -491,7 +491,7 @@ pub fn search_results_with_count(
     False -> element.none()
   }
 
-  let filters_section = case list.length(active_filters) > 0 {
+  let filters_section = case !list.is_empty(active_filters) {
     True ->
       html.div([attribute.class("active-filters-container")], [
         html.div(

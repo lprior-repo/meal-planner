@@ -6,9 +6,7 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option.{Some}
-import gleam/result
 import gleam/string
-import gleeunit/should
 import pog
 import simplifile
 
