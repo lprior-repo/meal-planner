@@ -1352,6 +1352,7 @@ fn render_foods_full_page(
           ])
       },
     ]),
+    html.div([attribute.id("food-log-modal"), attribute.class("modal")], []),
   ]
 
   wisp.html_response(render_page("Food Search - Meal Planner", content), 200)

@@ -8,6 +8,7 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
+import gleam/string
 import gleam/uri
 import meal_planner/nutrient_parser.{UsdaNutrient}
 import meal_planner/storage
@@ -321,4 +322,162 @@ fn extract_macros_from_nutrients(
     |> result.unwrap(0.0)
 
   types.Macros(protein: protein, fat: fat, carbs: carbs)
+}
+
+/// GET /api/fragments/food-log-form?fdc_id=123 - Return HTML form for logging food
+pub fn api_food_log_form_fragment(
+  req: wisp.Request,
+  ctx: Context,
+) -> wisp.Response {
+  case uri.parse_query(req.query |> option.unwrap("")) {
+    Ok(params) -> {
+      case list.find(params, fn(p) { p.0 == "fdc_id" }) {
+        Ok(#(_, fdc_id_str)) -> {
+          case int.parse(fdc_id_str) {
+            Ok(fdc_id) -> {
+              case storage.get_food_by_id(ctx.db, fdc_id) {
+                Ok(food) -> render_food_log_form(food)
+                Error(_) ->
+                  wisp.html_response(
+                    "<div class=\"error\">Food not found</div>",
+                    404,
+                  )
+              }
+            }
+            Error(_) ->
+              wisp.html_response(
+                "<div class=\"error\">Invalid food ID</div>",
+                400,
+              )
+          }
+        }
+        Error(_) ->
+          wisp.html_response(
+            "<div class=\"error\">Missing fdc_id parameter</div>",
+            400,
+          )
+      }
+    }
+    Error(_) ->
+      wisp.html_response("<div class=\"error\">Invalid parameters</div>", 400)
+  }
+}
+
+fn render_food_log_form(food: storage.UsdaFood) -> wisp.Response {
+  let form_html =
+    "<div class=\"modal-content\">"
+    <> "<div class=\"modal-header\"><h3>Add to Food Log</h3>"
+    <> "<button type=\"button\" class=\"modal-close\" aria-label=\"Close\" onclick=\"document.getElementById('food-log-modal').innerHTML=''\">&times;</button></div>"
+    <> "<div class=\"modal-body\"><p class=\"food-name\"><strong>"
+    <> escape_html_string(food.description)
+    <> "</strong></p>"
+    <> "<form action=\"/api/logs/food-form?fdc_id="
+    <> int.to_string(food.fdc_id)
+    <> "\" method=\"GET\" hx-get=\"/api/logs/food-form?fdc_id="
+    <> int.to_string(food.fdc_id)
+    <> "\" hx-target=\"#food-log-result\" hx-swap=\"innerHTML\">"
+    <> "<div class=\"form-group\"><label for=\"grams\">Amount (grams):</label>"
+    <> "<input type=\"number\" id=\"grams\" name=\"grams\" class=\"input\" min=\"1\" step=\"1\" value=\"100\" required /></div>"
+    <> "<div class=\"form-group\"><label for=\"meal-type\">Meal Type:</label>"
+    <> "<select id=\"meal-type\" name=\"meal_type\" class=\"input\" required>"
+    <> "<option value=\"breakfast\">Breakfast</option><option value=\"lunch\" selected>Lunch</option>"
+    <> "<option value=\"dinner\">Dinner</option><option value=\"snack\">Snack</option></select></div>"
+    <> "<div class=\"form-actions\"><button type=\"submit\" class=\"btn btn-primary\">Add to Log</button>"
+    <> "<button type=\"button\" class=\"btn btn-secondary\" onclick=\"document.getElementById('food-log-modal').innerHTML=''\">Cancel</button></div></form>"
+    <> "<div id=\"food-log-result\"></div></div></div>"
+  wisp.html_response(form_html, 200)
+}
+
+/// GET /api/logs/food-form - Submit food log via form parameters
+pub fn api_food_log_form_submit(
+  req: wisp.Request,
+  ctx: Context,
+) -> wisp.Response {
+  case uri.parse_query(req.query |> option.unwrap("")) {
+    Ok(params) -> {
+      let fdc_id_result =
+        list.find(params, fn(p) { p.0 == "fdc_id" })
+        |> result.map(fn(p) { int.parse(p.1) })
+        |> result.flatten
+      let grams_result =
+        list.find(params, fn(p) { p.0 == "grams" })
+        |> result.map(fn(p) { float.parse(p.1) })
+        |> result.flatten
+      let meal_type_result =
+        list.find(params, fn(p) { p.0 == "meal_type" })
+        |> result.map(fn(p) { p.1 })
+
+      case fdc_id_result, grams_result, meal_type_result {
+        Ok(fdc_id), Ok(grams), Ok(meal_type_str) -> {
+          let meal_type = string_to_meal_type(meal_type_str)
+          let today = get_today_date()
+
+          case storage.load_usda_food_with_macros(ctx.db, fdc_id) {
+            Error(DatabaseError(msg)) ->
+              wisp.html_response(
+                "<div class=\"error\">Error: "
+                  <> escape_html_string(msg)
+                  <> "</div>",
+                400,
+              )
+            Error(_) ->
+              wisp.html_response(
+                "<div class=\"error\">Food not found</div>",
+                404,
+              )
+            Ok(usda_food_data) -> {
+              let scaling_factor = grams /. 100.0
+              let scaled_macros =
+                extract_macros_from_nutrients(
+                  usda_food_data.nutrients,
+                  scaling_factor,
+                )
+              let entry =
+                FoodLogEntry(
+                  id: generate_entry_id(),
+                  recipe_id: int.to_string(fdc_id),
+                  recipe_name: usda_food_data.food.description,
+                  servings: grams,
+                  macros: scaled_macros,
+                  micronutrients: None,
+                  meal_type: meal_type,
+                  logged_at: current_timestamp(),
+                  source_type: "usda_food",
+                  source_id: int.to_string(fdc_id),
+                )
+
+              case storage.save_food_log_entry(ctx.db, today, entry) {
+                Ok(_) ->
+                  wisp.html_response(
+                    "<div class=\"success\">Added to log! <a href=\"/dashboard\">View Dashboard</a></div>",
+                    200,
+                  )
+                Error(_) ->
+                  wisp.html_response(
+                    "<div class=\"error\">Failed to save entry</div>",
+                    500,
+                  )
+              }
+            }
+          }
+        }
+        _, _, _ ->
+          wisp.html_response(
+            "<div class=\"error\">Missing required fields</div>",
+            400,
+          )
+      }
+    }
+    Error(_) ->
+      wisp.html_response("<div class=\"error\">Invalid form data</div>", 400)
+  }
+}
+
+fn escape_html_string(text: String) -> String {
+  text
+  |> string.replace("&", "&amp;")
+  |> string.replace("<", "&lt;")
+  |> string.replace(">", "&gt;")
+  |> string.replace("\"", "&quot;")
+  |> string.replace("'", "&#39;")
 }
