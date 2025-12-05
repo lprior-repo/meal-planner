@@ -379,31 +379,6 @@ pub fn different_keys_for_different_params_test() {
 }
 
 // ============================================================================
-// Performance Metrics Tests
-// ============================================================================
-
-pub fn calculate_improvement_test() {
-  // 10x improvement: uncached 100ms, cached 10ms
-  let improvement = query_cache.calculate_improvement(10.0, 100.0)
-  improvement |> should.equal(10.0)
-
-  // 2x improvement
-  let improvement = query_cache.calculate_improvement(50.0, 100.0)
-  improvement |> should.equal(2.0)
-}
-
-pub fn calculate_improvement_zero_uncached_test() {
-  let improvement = query_cache.calculate_improvement(10.0, 0.0)
-  improvement |> should.equal(1.0)
-}
-
-pub fn record_metric_does_not_crash_test() {
-  // This is a stub function, just verify it doesn't crash
-  query_cache.record_metric(True, "test_query", 15.5)
-  query_cache.record_metric(False, "test_query", 150.0)
-}
-
-// ============================================================================
 // Integration Tests
 // ============================================================================
 

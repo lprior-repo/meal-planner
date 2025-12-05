@@ -294,29 +294,3 @@ pub fn recent_meals_key(limit: Int) -> String {
 pub fn food_nutrients_key(fdc_id: Int) -> String {
   "nutrients:" <> int.to_string(fdc_id)
 }
-
-// ============================================================================
-// Performance Metrics
-// ============================================================================
-
-/// Record cache performance metric
-pub fn record_metric(
-  _cache_hit: Bool,
-  _query_name: String,
-  _execution_time_ms: Float,
-) -> Nil {
-  // In production, this would log to the query_performance_metrics table
-  // For now, this is a stub that could be implemented with the storage module
-  Nil
-}
-
-/// Calculate performance improvement from caching
-pub fn calculate_improvement(
-  cached_time_ms: Float,
-  uncached_time_ms: Float,
-) -> Float {
-  case uncached_time_ms >. 0.0 {
-    True -> uncached_time_ms /. cached_time_ms
-    False -> 1.0
-  }
-}
