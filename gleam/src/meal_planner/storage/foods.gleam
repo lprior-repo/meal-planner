@@ -1,11 +1,16 @@
 /// Food storage module - USDA foods and custom foods
 /// Handles searching, retrieving, and managing food data
-import gleam/decode
+import gleam/dynamic/decode
 import gleam/int
 import gleam/list
-import gleam/option
+import gleam/option.{None, Some}
 import gleam/result
+import gleam/string
+import meal_planner/storage/utils
+import gleam/string
 import meal_planner/storage/profile.{type StorageError, DatabaseError, NotFound}
+import meal_planner/storage/utils
+import meal_planner/storage/utils
 import meal_planner/types
 import pog
 
@@ -33,17 +38,6 @@ pub type FoodNutrientValue {
 
 pub type UsdaFoodWithNutrients {
   UsdaFoodWithNutrients(food: UsdaFood, nutrients: List(FoodNutrientValue))
-}
-
-// ============================================================================
-// Helper Function - Error Formatting
-// ============================================================================
-
-fn utils.format_pog_error(err: pog.QueryError) -> String {
-  case err {
-    pog.ConnectionError -> "Connection error"
-    pog.QueryError -> "Query error"
-  }
 }
 
 // ============================================================================
@@ -173,7 +167,10 @@ pub fn get_food_categories(
   let sql =
     "SELECT DISTINCT food_category FROM foods WHERE food_category IS NOT NULL"
 
-  let decoder = decode.field(0, decode.string)
+  let decoder = {
+    use category <- decode.field(0, decode.string)
+    decode.success(category)
+  }
 
   case
     pog.query(sql)
@@ -205,8 +202,8 @@ pub fn create_custom_food(
     |> pog.parameter(pog.text(food.id))
     |> pog.parameter(pog.text(user_id))
     |> pog.parameter(pog.text(food.name))
-    |> pog.parameter(pog.text_or_null(food.brand))
-    |> pog.parameter(pog.text_or_null(food.description))
+    |> pog.parameter(pog.nullable(pog.text, food.brand))
+    |> pog.parameter(pog.nullable(pog.text, food.description))
     |> pog.parameter(pog.float(food.serving_size))
     |> pog.parameter(pog.text(food.serving_unit))
     |> pog.parameter(pog.float(food.macros.protein))
@@ -332,8 +329,8 @@ pub fn update_custom_food(
     |> pog.parameter(pog.text(food.id))
     |> pog.parameter(pog.text(user_id))
     |> pog.parameter(pog.text(food.name))
-    |> pog.parameter(pog.text_or_null(food.brand))
-    |> pog.parameter(pog.text_or_null(food.description))
+    |> pog.parameter(pog.nullable(pog.text, food.brand))
+    |> pog.parameter(pog.nullable(pog.text, food.description))
     |> pog.parameter(pog.float(food.serving_size))
     |> pog.parameter(pog.text(food.serving_unit))
     |> pog.parameter(pog.float(food.macros.protein))
