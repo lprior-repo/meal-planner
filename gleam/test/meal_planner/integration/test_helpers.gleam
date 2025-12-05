@@ -25,6 +25,7 @@
 /// 5. Cleans up the database after the test completes
 ///
 import gleam/erlang/process
+import gleam/int
 import gleam/list
 import gleam/option.{Some}
 import gleam/result
@@ -111,10 +112,10 @@ fn connect_to_test_db(
 // ============================================================================
 
 /// Generate a unique test database name using timestamp and pool suffix
-/// Format: test_db_<pool_id>
+/// Format: test_db_<random_id>
 fn generate_test_db_name() -> String {
-  let pool_id = process.new_name(prefix: "test_db_") |> string.slice(from: 7, length: 99)
-  "test_db_" <> pool_id
+  let random_id = int.random(999_999_999)
+  "test_db_" <> int.to_string(random_id)
 }
 
 /// Create a new test database

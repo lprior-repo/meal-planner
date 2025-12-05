@@ -90,7 +90,8 @@ pub fn basic_card_has_proper_html_structure_test() {
 pub fn card_with_header_renders_correctly_test() {
   card.card_with_header("My Header", [element.text("Content")])
   |> element.to_string
-  |> should.contain("<div class=\"card\">")
+  |> string.contains("<div class=\"card\">")
+  |> should.be_true
 }
 
 pub fn card_with_header_handles_empty_content_test() {

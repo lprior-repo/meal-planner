@@ -8,6 +8,7 @@
 ///
 import gleam/dynamic/decode
 import gleam/list
+import gleam/result
 import gleam/string
 import gleeunit
 import gleeunit/should
@@ -36,18 +37,15 @@ pub fn with_integration_db_creates_and_cleans_database_test() {
       // Verify by querying schema_migrations table
       let query = "SELECT COUNT(*) as count FROM schema_migrations"
 
-      pog.query(query)
-      |> pog.returning(fn(row) {
-        row
-        |> decode.dynamic(
-          decode.field("count", decode.int),
-        )
-      })
-      |> pog.execute(conn)
-      |> result.map(fn(response) { Nil })
-      |> result.map_error(fn(err) {
-        "Failed to query schema_migrations: " <> string.inspect(err)
-      })
+      case
+        pog.query(query)
+        |> pog.returning(decode.at([0], decode.int))
+        |> pog.execute(conn)
+      {
+        Ok(pog.Returned(_, _)) -> Ok(Nil)
+        Error(err) ->
+          Error("Failed to query schema_migrations: " <> string.inspect(err))
+      }
     })
 
   should.be_ok(result)
@@ -62,16 +60,15 @@ pub fn with_integration_db_provides_working_connection_test() {
       // Test basic query execution
       let query = "SELECT 1 as value"
 
-      pog.query(query)
-      |> pog.returning(fn(row) {
-        row
-        |> decode.dynamic(decode.field("value", decode.int))
-      })
-      |> pog.execute(conn)
-      |> result.map(fn(_response) { Nil })
-      |> result.map_error(fn(err) {
-        "Failed to execute test query: " <> string.inspect(err)
-      })
+      case
+        pog.query(query)
+        |> pog.returning(decode.at([0], decode.int))
+        |> pog.execute(conn)
+      {
+        Ok(pog.Returned(_, _)) -> Ok(Nil)
+        Error(err) ->
+          Error("Failed to execute test query: " <> string.inspect(err))
+      }
     })
 
   should.be_ok(result)
@@ -116,27 +113,25 @@ pub fn migrations_discovered_and_ordered_test() {
       let query =
         "SELECT version, name FROM schema_migrations ORDER BY version"
 
-      pog.query(query)
-      |> pog.returning(fn(row) {
-        row
-        |> decode.dynamic(
-          decode.tuple2(
-            decode.field("version", decode.int),
-            decode.field("name", decode.string),
-          ),
-        )
-      })
-      |> pog.execute(conn)
-      |> result.map(fn(migrations) {
-        // Verify we have migrations
-        case list.length(migrations) > 0 {
-          True -> Nil
-          False -> panic as "No migrations were applied"
+      case
+        pog.query(query)
+        |> pog.returning({
+          use version <- decode.field(0, decode.int)
+          use name <- decode.field(1, decode.string)
+          decode.success(#(version, name))
+        })
+        |> pog.execute(conn)
+      {
+        Ok(pog.Returned(_, migrations)) -> {
+          // Verify we have migrations
+          case migrations != [] {
+            True -> Ok(Nil)
+            False -> Error("No migrations were applied")
+          }
         }
-      })
-      |> result.map_error(fn(err) {
-        "Failed to query migrations: " <> string.inspect(err)
-      })
+        Error(err) ->
+          Error("Failed to query migrations: " <> string.inspect(err))
+      }
     })
 
   should.be_ok(result)
@@ -155,21 +150,17 @@ pub fn migrations_create_expected_tables_test() {
            WHERE table_name = 'schema_migrations'
          ) as exists"
 
-      pog.query(query)
-      |> pog.returning(fn(row) {
-        row
-        |> decode.dynamic(decode.field("exists", decode.bool))
-      })
-      |> pog.execute(conn)
-      |> result.map(fn(response) {
-        case response {
-          [True] -> Nil
-          _ -> panic as "schema_migrations table not created"
-        }
-      })
-      |> result.map_error(fn(err) {
-        "Failed to verify table creation: " <> string.inspect(err)
-      })
+      case
+        pog.query(query)
+        |> pog.returning(decode.at([0], decode.bool))
+        |> pog.execute(conn)
+      {
+        Ok(pog.Returned(_, [True])) -> Ok(Nil)
+        Ok(pog.Returned(_, _)) ->
+          Error("schema_migrations table not created")
+        Error(err) ->
+          Error("Failed to verify table creation: " <> string.inspect(err))
+      }
     })
 
   should.be_ok(result)
@@ -191,10 +182,8 @@ pub fn with_integration_db_result_propagates_errors_test() {
     })
 
   case result {
-    Ok(_) -> should.fail("Expected error but got Ok")
-    Error(msg) -> {
-      should.equal(msg, expected_error)
-    }
+    Ok(_) -> panic as "Expected error but got Ok"
+    Error(msg) -> should.equal(msg, expected_error)
   }
 }
 

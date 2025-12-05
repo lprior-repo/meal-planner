@@ -10,7 +10,7 @@ import pog
 /// Get a test database connection
 fn get_test_db() -> pog.Connection {
   let pool_name = process.new_name(prefix: "migration_test_simple")
-  case
+  let result =
     pog.default_config(pool_name)
     |> pog.host("localhost")
     |> pog.port(5432)
@@ -19,7 +19,8 @@ fn get_test_db() -> pog.Connection {
     |> pog.password(Some("postgres"))
     |> pog.pool_size(1)
     |> pog.start()
-  {
+
+  case result {
     Ok(started) -> started.data
     Error(_) -> panic as "Failed to connect to test database"
   }
@@ -44,7 +45,7 @@ pub fn recipe_sources_table_exists_test() {
     Ok(pog.Returned(_, [False])) ->
       panic as "recipe_sources table does not exist"
     Ok(_) -> panic as "Unexpected result"
-    Error(e) -> panic as "Query failed: " <> format_error(e)
+    Error(e) -> panic as "Query failed"
   }
 }
 
@@ -73,10 +74,10 @@ pub fn recipe_sources_has_correct_columns_test() {
       case column_count == 7 {
         True -> should.be_true(True)
         False ->
-          panic as "Expected 7 columns, got " <> string.inspect(column_count)
+          panic as "Expected 7 columns"
       }
     }
-    Error(e) -> panic as "Query failed: " <> format_error(e)
+    Error(e) -> panic as "Query failed"
   }
 }
 
@@ -99,7 +100,8 @@ pub fn recipe_sources_has_primary_key_test() {
         True -> should.be_true(True)
         False -> panic as "Primary key not found"
       }
-    Error(e) -> panic as "Query failed: " <> format_error(e)
+    Ok(_) -> panic as "Unexpected result format"
+    Error(_) -> panic as "Query failed"
   }
 }
 
@@ -122,7 +124,7 @@ pub fn recipe_sources_has_required_indexes_test() {
         True -> should.be_true(True)
         False -> panic as "Expected at least 2 indexes"
       }
-    Error(e) -> panic as "Query failed: " <> format_error(e)
+    Error(e) -> panic as "Query failed"
   }
 }
 
