@@ -17,6 +17,7 @@
 import gleam/string
 import gleeunit
 import gleeunit/should
+import lustre/element
 import meal_planner/meal_plan.{type Meal, Meal}
 import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
 import meal_planner/ui/components/weekly_calendar
@@ -66,47 +67,47 @@ fn create_test_meal(name: String) -> Meal {
 // ===================================================================
 
 pub fn calendar_renders_monday_column_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   html |> string.contains("Monday") |> should.be_true
 }
 
 pub fn calendar_renders_tuesday_column_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   html |> string.contains("Tuesday") |> should.be_true
 }
 
 pub fn calendar_renders_wednesday_column_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   html |> string.contains("Wednesday") |> should.be_true
 }
 
 pub fn calendar_renders_thursday_column_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   html |> string.contains("Thursday") |> should.be_true
 }
 
 pub fn calendar_renders_friday_column_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   html |> string.contains("Friday") |> should.be_true
 }
 
 pub fn calendar_renders_saturday_column_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   html |> string.contains("Saturday") |> should.be_true
 }
 
 pub fn calendar_renders_sunday_column_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   html |> string.contains("Sunday") |> should.be_true
 }
 
 pub fn calendar_renders_exactly_seven_columns_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   count_occurrences(html, "<th>") |> should.equal(7)
 }
 
 pub fn columns_appear_in_correct_order_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   case string.split_once(html, "Monday") {
     Ok(#(_before_monday, after_monday)) -> {
       after_monday |> string.contains("Sunday") |> should.be_true
@@ -120,30 +121,30 @@ pub fn columns_appear_in_correct_order_test() {
 // ===================================================================
 
 pub fn each_column_has_breakfast_slot_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   html |> string.contains("meal-row-breakfast") |> should.be_true
   count_occurrences(html, "breakfast") |> should.equal(14)
 }
 
 pub fn each_column_has_lunch_slot_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   html |> string.contains("meal-row-lunch") |> should.be_true
   count_occurrences(html, "lunch") |> should.equal(14)
 }
 
 pub fn each_column_has_dinner_slot_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   html |> string.contains("meal-row-dinner") |> should.be_true
   count_occurrences(html, "dinner") |> should.equal(14)
 }
 
 pub fn each_column_has_exactly_three_meal_slots_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   count_occurrences(html, "class=\"meal-row") |> should.equal(3)
 }
 
 pub fn meal_slots_in_correct_order_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   case string.split_once(html, "meal-row-breakfast") {
     Ok(#(_before, after_breakfast)) -> {
       after_breakfast |> string.contains("meal-row-lunch") |> should.be_true
@@ -159,7 +160,7 @@ pub fn meal_slots_in_correct_order_test() {
 }
 
 pub fn calendar_has_21_total_meal_slots_test() {
-  let html = weekly_calendar.render()
+  let html = weekly_calendar.render() |> element.to_string
   count_occurrences(html, "class=\"meal-slot") |> should.equal(21)
 }
 

@@ -2,8 +2,10 @@
 
 import gleam/dynamic/decode
 import gleam/int
+import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/result
 import gleam/string
 import meal_planner/auto_planner/types as auto_types
 import meal_planner/storage.{type StorageError, DatabaseError, NotFound}
@@ -94,7 +96,7 @@ pub fn get_auto_plan(
     Ok(pog.Returned(0, _)) -> Error(NotFound)
     Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [row, ..])) -> {
-      let #(plan_id, recipe_ids_str, generated_at, total_macros, _config_json) =
+      let #(plan_id, recipe_ids_str, generated_at, total_macros, config_json) =
         row
 
       // Parse recipe IDs
@@ -104,23 +106,23 @@ pub fn get_auto_plan(
       case load_recipes_by_ids(conn, recipe_ids) {
         Error(e) -> Error(e)
         Ok(recipes) -> {
-          // Config JSON parsing tracked in bead meal-planner-qon
-          let config =
-            auto_types.AutoPlanConfig(
-              user_id: "",
-              diet_principles: [auto_types.VerticalDiet],
-              macro_targets: total_macros,
-              recipe_count: list.fold(recipes, 0, fn(acc, _) { acc + 1 }),
-              variety_factor: 0.7,
-            )
+          // Parse config from JSON
+          let config_result =
+            config_json
+            |> json.decode(using: auto_types.auto_plan_config_decoder())
+            |> result.map_error(fn(_) { "Failed to decode config JSON" })
 
-          Ok(auto_types.AutoMealPlan(
-            id: plan_id,
-            recipes: recipes,
-            generated_at: generated_at,
-            total_macros: total_macros,
-            config: config,
-          ))
+          case config_result {
+            Error(e) -> Error(DatabaseError(e))
+            Ok(config) ->
+              Ok(auto_types.AutoMealPlan(
+                id: plan_id,
+                recipes: recipes,
+                generated_at: generated_at,
+                total_macros: total_macros,
+                config: config,
+              ))
+          }
         }
       }
     }
@@ -278,8 +280,6 @@ pub fn get_recipe_sources(
 // ============================================================================
 // Helpers
 // ============================================================================
-
-import gleam/json
 
 fn format_pog_error(error: pog.QueryError) -> String {
   case error {

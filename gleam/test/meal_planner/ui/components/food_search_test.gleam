@@ -50,8 +50,10 @@ pub fn render_filter_chip_htmx_attributes_test() {
   let html = element.to_string(rendered)
 
   // Verify HTMX attributes are present
-  should.be_true(string.contains(html, "hx-get"))
-  should.be_true(string.contains(html, "/api/foods/search?filter=all"))
+  should.be_true(string.contains(
+    html,
+    "hx-get=\"/api/foods/search?filter=all\"",
+  ))
   should.be_true(string.contains(html, "hx-target=\"#search-results\""))
   should.be_true(string.contains(html, "hx-swap=\"innerHTML\""))
   should.be_true(string.contains(html, "hx-push-url=\"true\""))
@@ -65,7 +67,10 @@ pub fn render_filter_chip_verified_htmx_test() {
   let rendered = food_search.render_filter_chip(chip)
   let html = element.to_string(rendered)
 
-  should.be_true(string.contains(html, "/api/foods/search?filter=verified"))
+  should.be_true(string.contains(
+    html,
+    "hx-get=\"/api/foods/search?filter=verified\"",
+  ))
   should.be_true(string.contains(html, "data-filter=\"verified\""))
 }
 
@@ -75,7 +80,10 @@ pub fn render_filter_chip_branded_htmx_test() {
   let rendered = food_search.render_filter_chip(chip)
   let html = element.to_string(rendered)
 
-  should.be_true(string.contains(html, "/api/foods/search?filter=branded"))
+  should.be_true(string.contains(
+    html,
+    "hx-get=\"/api/foods/search?filter=branded\"",
+  ))
   should.be_true(string.contains(html, "data-filter=\"branded\""))
 }
 
@@ -86,7 +94,10 @@ pub fn render_filter_chip_category_htmx_test() {
   let rendered = food_search.render_filter_chip(chip)
   let html = element.to_string(rendered)
 
-  should.be_true(string.contains(html, "/api/foods/search?filter=category"))
+  should.be_true(string.contains(
+    html,
+    "hx-get=\"/api/foods/search?filter=category\"",
+  ))
   should.be_true(string.contains(html, "data-filter=\"category\""))
 }
 

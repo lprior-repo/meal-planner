@@ -12,6 +12,11 @@
 8. [Usage Examples](#usage-examples)
 9. [Troubleshooting](#troubleshooting)
 10. [Future Enhancements](#future-enhancements)
+11. [NCP Auto Planner Integration](#ncp-auto-planner-integration-ncp_auto_plannergleam)
+12. [Recipe Scorer Module](#recipe-scorer-module-auto_plannerrecipe_scorergleam)
+13. [Storage Module](#storage-module-auto_plannerstoragegleam)
+14. [Types Module](#types-module-auto_plannertypesgleam)
+15. [Appendix](#appendix)
 
 ---
 
@@ -1534,6 +1539,480 @@ pub fn generate_quick_plan(
 2. **Parallel Scoring**: Score recipes in parallel using Erlang concurrency
 3. **Incremental Selection**: Stream results instead of batch processing
 4. **Database Indexing**: Optimize queries for diet principle filtering
+
+---
+
+## NCP Auto Planner Integration (ncp_auto_planner.gleam)
+
+The `ncp_auto_planner` module connects the Nutrition Control Plane with the auto meal planner to provide intelligent recipe suggestions based on macro deficits.
+
+### Core Functions
+
+#### `suggest_recipes_for_deficit`
+
+**Signature**:
+```gleam
+pub fn suggest_recipes_for_deficit(
+  conn: pog.Connection,
+  goals: ncp.NutritionGoals,
+  actual: ncp.NutritionData,
+  config: SuggestionConfig,
+) -> Result(SuggestionResult, StorageError)
+```
+
+**Description**: Main entry point for generating recipe suggestions based on NCP deficit analysis.
+
+**Flow**:
+1. Calculate current NCP deficit from goals vs actual consumption
+2. If within tolerance (default 10%), return empty suggestions
+3. Query recipes that help fill macro gaps
+4. Score recipes for macro match, diet compliance, and variety
+5. Return top N suggestions
+
+**Example**:
+```gleam
+import meal_planner/ncp_auto_planner
+
+let goals = ncp.NutritionGoals(
+  daily_protein: 180.0,
+  daily_fat: 60.0,
+  daily_carbs: 250.0,
+  daily_calories: 2500.0,
+)
+
+let actual = ncp.NutritionData(
+  protein: 120.0,  // 60g short
+  fat: 55.0,       // 5g short
+  carbs: 180.0,    // 70g short
+  calories: 1900.0,
+)
+
+let config = ncp_auto_planner.default_config()
+
+case ncp_auto_planner.suggest_recipes_for_deficit(conn, goals, actual, config) {
+  Ok(result) -> {
+    case result.within_tolerance {
+      True -> io.println("On track!")
+      False -> {
+        io.println("Suggestions:")
+        list.each(result.suggestions, fn(sugg) {
+          io.println("- " <> sugg.recipe.name <> ": " <> sugg.reason)
+        })
+      }
+    }
+  }
+  Error(e) -> io.println("Error: " <> string.inspect(e))
+}
+```
+
+#### `query_recipes_by_macro_deficit`
+
+**Signature**:
+```gleam
+pub fn query_recipes_by_macro_deficit(
+  conn: pog.Connection,
+  deficit: ncp.DeviationResult,
+) -> Result(List(Recipe), StorageError)
+```
+
+**Description**: Intelligently queries recipes based on which macros are in deficit.
+
+**Query Strategy**:
+- **High protein deficit** (< -15%): Query high-protein recipes (>30g protein)
+- **High carb deficit** (< -15%): Query high-carb recipes (>40g carbs)
+- **Fat deficit**: Query high-fat recipes (>20g fat)
+- **Multiple deficits**: Query balanced recipes
+- **Moderate deficits**: Lower thresholds
+
+#### `generate_meal_plan_for_deficit`
+
+**Signature**:
+```gleam
+pub fn generate_meal_plan_for_deficit(
+  conn: pog.Connection,
+  goals: ncp.NutritionGoals,
+  actual: ncp.NutritionData,
+  config: SuggestionConfig,
+  max_recipes: Int,
+) -> Result(AutoMealPlan, StorageError)
+```
+
+**Description**: Iteratively builds a complete meal plan to address macro deficits.
+
+**Algorithm**:
+1. Select highest-scoring recipe for current deficit
+2. Add to plan and update accumulated macros
+3. Recalculate deficit with new totals
+4. Repeat until deficit addressed or max recipes reached
+
+### Configuration Presets
+
+#### `default_config()`
+```gleam
+SuggestionConfig(
+  max_suggestions: 5,
+  diet_principles: [],
+  min_compliance_score: 0.5,
+  variety_weight: 0.2,
+)
+```
+
+#### `vertical_diet_config()`
+```gleam
+SuggestionConfig(
+  max_suggestions: 5,
+  diet_principles: [diet_validator.VerticalDiet],
+  min_compliance_score: 0.7,  // Stricter compliance
+  variety_weight: 0.2,
+)
+```
+
+#### `high_protein_config()`
+```gleam
+SuggestionConfig(
+  max_suggestions: 5,
+  diet_principles: [diet_validator.HighProtein],
+  min_compliance_score: 0.6,
+  variety_weight: 0.1,  // Less variety, more protein focus
+)
+```
+
+### Formatting Functions
+
+#### `format_suggestion_result`
+
+**Signature**:
+```gleam
+pub fn format_suggestion_result(result: SuggestionResult) -> String
+```
+
+**Description**: Formats suggestion results for display with visual progress bars.
+
+**Example Output**:
+```
+📊 Macro Deficit Detected
+───────────────────────────────────────────────
+  Protein: -12.5%
+  Fat: +3.2%
+  Carbs: -8.8%
+
+🍽️  Recommended Recipes
+───────────────────────────────────────────────
+1. Grilled Ribeye Steak
+   Match: ██████████ (95%)
+   Why: High protein (48g) to address deficit
+   Macros: P48g F32g C0g
+
+2. Ground Beef Rice Bowl
+   Match: ████████░░ (87%)
+   Why: Balanced macros to help reach goals
+   Macros: P40g F18g C45g
+```
+
+---
+
+## Recipe Scorer Module (auto_planner/recipe_scorer.gleam)
+
+The `recipe_scorer` module provides advanced recipe scoring functionality separate from the main auto planner.
+
+### Types
+
+```gleam
+pub type RecipeScore {
+  RecipeScore(
+    recipe_id: String,
+    total_score: Float,
+    diet_compliance_score: Float,
+    macro_match_score: Float,
+    variety_score: Float,
+    violations: List(String),
+    warnings: List(String),
+  )
+}
+
+pub type ScoringWeights {
+  ScoringWeights(
+    diet_compliance: Float,
+    macro_match: Float,
+    variety: Float,
+  )
+}
+```
+
+### Main Functions
+
+#### `score_recipe`
+
+**Signature**:
+```gleam
+pub fn score_recipe(
+  recipe: Recipe,
+  diet_principles: List(DietPrinciple),
+  macro_targets: Macros,
+  weights: ScoringWeights,
+) -> RecipeScore
+```
+
+**Description**: Scores a recipe with custom weights for different factors.
+
+**Example**:
+```gleam
+import meal_planner/auto_planner/recipe_scorer
+
+let weights = recipe_scorer.performance_weights()
+// ScoringWeights(diet_compliance: 0.3, macro_match: 0.6, variety: 0.1)
+
+let score = recipe_scorer.score_recipe(
+  recipe,
+  [diet_validator.VerticalDiet],
+  Macros(protein: 45.0, fat: 15.0, carbs: 62.5),
+  weights,
+)
+
+io.println("Total score: " <> float.to_string(score.total_score))
+io.println("Violations: " <> string.join(score.violations, ", "))
+```
+
+#### `score_and_rank_recipes`
+
+**Signature**:
+```gleam
+pub fn score_and_rank_recipes(
+  recipes: List(Recipe),
+  diet_principles: List(DietPrinciple),
+  macro_targets: Macros,
+  weights: ScoringWeights,
+) -> List(RecipeScore)
+```
+
+**Description**: Scores and sorts recipes by total score (highest first).
+
+### Weight Presets
+
+| Preset | Diet | Macro | Variety | Use Case |
+|--------|------|-------|---------|----------|
+| **default_weights()** | 0.5 | 0.3 | 0.2 | Balanced approach |
+| **strict_compliance_weights()** | 0.7 | 0.2 | 0.1 | Prioritize diet rules |
+| **performance_weights()** | 0.3 | 0.6 | 0.1 | Prioritize macro targets |
+
+### Utility Functions
+
+#### `score_macro_match`
+
+**Description**: Calculates macro match score using exponential decay for better discrimination.
+
+**Formula**:
+```gleam
+// Average percentage error across all macros
+avg_error = (protein_error + fat_error + carbs_error) / 3.0
+
+// Exponential decay: e^(-2 * error)
+score = e^(-2.0 * avg_error)
+```
+
+#### `score_variety`
+
+**Description**: Scores ingredient diversity (more ingredients = higher score).
+
+**Scoring**:
+- 0 ingredients: 0.0
+- 1 ingredient: 0.2
+- 2 ingredients: 0.4
+- 3 ingredients: 0.6
+- 4 ingredients: 0.8
+- 5+ ingredients: 1.0
+
+#### `calculate_variety_penalty`
+
+**Description**: Calculates penalty for ingredient overlap with already selected recipes.
+
+**Returns**: Penalty from 0.0 (no overlap) to 1.0 (complete overlap)
+
+### Filtering Functions
+
+```gleam
+// Filter by minimum score
+let high_scores = recipe_scorer.filter_by_score(scores, 0.7)
+
+// Filter out recipes with violations
+let compliant = recipe_scorer.filter_compliant_only(scores)
+
+// Get top N
+let top_10 = recipe_scorer.take_top_n(scores, 10)
+```
+
+---
+
+## Storage Module (auto_planner/storage.gleam)
+
+The `storage` module handles database persistence for auto meal plans and recipe sources.
+
+### Auto Meal Plan Storage
+
+#### `save_auto_plan`
+
+**Signature**:
+```gleam
+pub fn save_auto_plan(
+  conn: pog.Connection,
+  plan: AutoMealPlan,
+) -> Result(Nil, StorageError)
+```
+
+**Description**: Saves auto meal plan to PostgreSQL database with upsert semantics.
+
+**Database Schema**:
+```sql
+CREATE TABLE auto_meal_plans (
+  id TEXT PRIMARY KEY,
+  recipe_ids TEXT NOT NULL,            -- Comma-separated IDs
+  generated_at TEXT NOT NULL,
+  total_protein REAL NOT NULL,
+  total_fat REAL NOT NULL,
+  total_carbs REAL NOT NULL,
+  config_json TEXT NOT NULL           -- JSON serialized config
+);
+```
+
+**Example**:
+```gleam
+import meal_planner/auto_planner/storage
+
+case storage.save_auto_plan(conn, plan) {
+  Ok(_) -> io.println("Plan saved successfully")
+  Error(storage.DatabaseError(msg)) -> io.println("Error: " <> msg)
+  Error(_) -> io.println("Unknown error")
+}
+```
+
+#### `get_auto_plan`
+
+**Signature**:
+```gleam
+pub fn get_auto_plan(
+  conn: pog.Connection,
+  id: String,
+) -> Result(AutoMealPlan, StorageError)
+```
+
+**Description**: Retrieves auto meal plan by ID, loading all associated recipes.
+
+**Example**:
+```gleam
+case storage.get_auto_plan(conn, "auto-plan-123") {
+  Ok(plan) -> {
+    io.println("Loaded plan: " <> plan.id)
+    io.println("Recipes: " <> int.to_string(list.length(plan.recipes)))
+  }
+  Error(storage.NotFound) -> io.println("Plan not found")
+  Error(_) -> io.println("Database error")
+}
+```
+
+### Recipe Source Storage
+
+#### `save_recipe_source`
+
+**Signature**:
+```gleam
+pub fn save_recipe_source(
+  conn: pog.Connection,
+  source: RecipeSource,
+) -> Result(Nil, StorageError)
+```
+
+**Description**: Saves recipe source configuration (database, API, user-provided).
+
+**Example**:
+```gleam
+let source = auto_types.RecipeSource(
+  id: "usda-api",
+  name: "USDA Food Database",
+  source_type: auto_types.Api,
+  config: Some("{\"api_key\": \"...\"}"),
+)
+
+storage.save_recipe_source(conn, source)
+```
+
+#### `get_recipe_sources`
+
+**Signature**:
+```gleam
+pub fn get_recipe_sources(
+  conn: pog.Connection,
+) -> Result(List(RecipeSource), StorageError)
+```
+
+**Description**: Lists all configured recipe sources.
+
+---
+
+## Types Module (auto_planner/types.gleam)
+
+The `types` module defines all types for the auto planner with JSON encoding/decoding support.
+
+### Core Types
+
+#### `DietPrinciple`
+
+```gleam
+pub type DietPrinciple {
+  VerticalDiet
+  TimFerriss
+  Paleo
+  Keto
+  Mediterranean
+  HighProtein
+}
+```
+
+**String Conversion**:
+```gleam
+diet_principle_to_string(VerticalDiet)  // "vertical_diet"
+diet_principle_from_string("keto")      // Some(Keto)
+```
+
+#### `RecipeSource`
+
+```gleam
+pub type RecipeSource {
+  RecipeSource(
+    id: String,
+    name: String,
+    source_type: RecipeSourceType,
+    config: Option(String),  // JSON config
+  )
+}
+```
+
+### JSON Encoding
+
+All types support JSON encoding via `*_to_json` functions:
+
+```gleam
+// Encode config
+let json = auto_types.auto_plan_config_to_json(config)
+let json_str = json.to_string(json)
+
+// Encode plan
+let plan_json = auto_types.auto_meal_plan_to_json(plan)
+```
+
+### JSON Decoding
+
+All types support JSON decoding via `*_decoder` functions:
+
+```gleam
+import gleam/dynamic/decode
+
+// Decode config from JSON
+let decoder = auto_types.auto_plan_config_decoder()
+case decode.run(json_value, decoder) {
+  Ok(config) -> use_config(config)
+  Error(_) -> handle_error()
+}
+```
 
 ---
 
