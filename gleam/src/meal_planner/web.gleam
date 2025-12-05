@@ -1930,13 +1930,6 @@ fn load_daily_log(ctx: Context, date: String) -> DailyLog {
   }
 }
 
-/// Get today's date in YYYY-MM-DD format
-fn get_today_date() -> String {
-  // This is a simplified version - in production you'd want to use a proper date library
-  // For now, we'll use a system call to get the date
-  "2025-12-01"
-}
-
 /// Sample recipes for fallback when database is empty
 fn sample_recipes() -> List(Recipe) {
   [
@@ -2057,48 +2050,6 @@ fn goal_to_string(p: UserProfile) -> String {
   }
 }
 
-fn meal_type_to_string(meal_type: MealType) -> String {
-  case meal_type {
-    Breakfast -> "Breakfast"
-    Lunch -> "Lunch"
-    Dinner -> "Dinner"
-    Snack -> "Snack"
-  }
-}
-
-/// Convert string to meal type
-fn string_to_meal_type(s: String) -> MealType {
-  case s {
-    "breakfast" -> Breakfast
-    "lunch" -> Lunch
-    "dinner" -> Dinner
-    "snack" -> Snack
-    _ -> Lunch
-  }
-}
-
-/// Generate a unique entry ID
-fn generate_entry_id() -> String {
-  "entry-" <> wisp.random_string(12)
-}
-
-/// Get current timestamp as ISO8601 string
-fn current_timestamp() -> String {
-  let #(#(year, month, day), #(hour, min, sec)) = erlang_localtime()
-  int.to_string(year)
-  <> "-"
-  <> pad_two(month)
-  <> "-"
-  <> pad_two(day)
-  <> "T"
-  <> pad_two(hour)
-  <> ":"
-  <> pad_two(min)
-  <> ":"
-  <> pad_two(sec)
-  <> "Z"
-}
-
 fn pad_two(n: Int) -> String {
   case n < 10 {
     True -> "0" <> int.to_string(n)
@@ -2115,86 +2066,6 @@ fn int_to_string(i: Int) -> String
 // ============================================================================
 // Error Response Helpers
 // ============================================================================
-
-/// Create a user-friendly error response page
-fn error_response(
-  status: Int,
-  title: String,
-  message: String,
-  retry_url: option.Option(String),
-) -> wisp.Response {
-  let retry_button = case retry_url {
-    Some(url) -> [
-      html.a([attribute.href(url), attribute.class("btn btn-primary")], [
-        element.text("Try Again"),
-      ]),
-    ]
-    None -> []
-  }
-
-  let content = [
-    html.div([attribute.class("error-page")], [
-      html.div([attribute.class("error-page-content")], [
-        html.div([attribute.class("error-icon-large")], [element.text("⚠")]),
-        html.h1([attribute.class("error-title")], [element.text(title)]),
-        html.p([attribute.class("error-message")], [element.text(message)]),
-        html.div([attribute.class("error-actions")], [
-          html.a([attribute.href("/"), attribute.class("btn btn-secondary")], [
-            element.text("Go Home"),
-          ]),
-          ..retry_button
-        ]),
-      ]),
-    ]),
-  ]
-
-  wisp.html_response(render_page(title, content), status)
-}
-
-/// 500 Server Error response
-fn server_error_response(message: String) -> wisp.Response {
-  error_response(
-    500,
-    "500 Server Error",
-    "Something went wrong on our end. " <> message,
-    None,
-  )
-}
-
-/// 400 Bad Request response
-fn bad_request_response(message: String) -> wisp.Response {
-  error_response(400, "400 Bad Request", "Invalid request. " <> message, None)
-}
-
-/// 404 Not Found response with helpful actions
-fn enhanced_not_found() -> wisp.Response {
-  let content = [
-    html.div([attribute.class("error-page")], [
-      html.div([attribute.class("error-page-content")], [
-        html.h1([attribute.class("error-code")], [element.text("404")]),
-        html.h2([attribute.class("error-title")], [
-          element.text("Page Not Found"),
-        ]),
-        html.p([attribute.class("error-message")], [
-          element.text(
-            "The page you're looking for doesn't exist or has been moved.",
-          ),
-        ]),
-        html.div([attribute.class("error-actions")], [
-          html.a([attribute.href("/"), attribute.class("btn btn-primary")], [
-            element.text("Go Home"),
-          ]),
-          html.a(
-            [attribute.href("/recipes"), attribute.class("btn btn-secondary")],
-            [element.text("Browse Recipes")],
-          ),
-        ]),
-      ]),
-    ]),
-  ]
-
-  wisp.html_response(render_page("404 Not Found", content), 404)
-}
 
 /// JSON error response for API endpoints
 fn json_error_response(status: Int, error_message: String) -> wisp.Response {
