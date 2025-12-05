@@ -8,7 +8,6 @@
 //// - Empty state when no logs exist
 
 import gleam/int
-import gleam/option
 import gleam/option.{None, Some}
 import gleam/string
 import gleeunit/should

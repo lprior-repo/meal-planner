@@ -3,7 +3,6 @@ import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/list
 import gleam/option.{Some}
-import gleam/string
 import gleeunit/should
 import pog
 
@@ -45,7 +44,7 @@ pub fn recipe_sources_table_exists_test() {
     Ok(pog.Returned(_, [False])) ->
       panic as "recipe_sources table does not exist"
     Ok(_) -> panic as "Unexpected result"
-    Error(e) -> panic as "Query failed"
+    Error(_) -> panic as "Query failed"
   }
 }
 
@@ -77,7 +76,7 @@ pub fn recipe_sources_has_correct_columns_test() {
           panic as "Expected 7 columns"
       }
     }
-    Error(e) -> panic as "Query failed"
+    Error(_) -> panic as "Query failed"
   }
 }
 
@@ -124,19 +123,6 @@ pub fn recipe_sources_has_required_indexes_test() {
         True -> should.be_true(True)
         False -> panic as "Expected at least 2 indexes"
       }
-    Error(e) -> panic as "Query failed"
-  }
-}
-
-fn format_error(e: pog.QueryError) -> String {
-  case e {
-    pog.ConstraintViolated(msg, _, _) -> "Constraint violated: " <> msg
-    pog.PostgresqlError(code, _, msg) ->
-      "PostgreSQL error " <> code <> ": " <> msg
-    pog.UnexpectedArgumentCount(_, _) -> "Unexpected argument count"
-    pog.UnexpectedArgumentType(_, _) -> "Unexpected argument type"
-    pog.UnexpectedResultType(_) -> "Unexpected result type"
-    pog.QueryTimeout -> "Query timeout"
-    pog.ConnectionUnavailable -> "Connection unavailable"
+    Error(_) -> panic as "Query failed"
   }
 }

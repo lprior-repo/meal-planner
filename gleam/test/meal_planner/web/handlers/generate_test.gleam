@@ -11,8 +11,8 @@ import gleam/list
 import gleam/string
 import gleeunit/should
 import meal_planner/generator
-import meal_planner/meal_plan.{type DailyPlan, DailyPlan, Meal}
-import meal_planner/types.{type Recipe, Low, Macros, Recipe}
+import meal_planner/meal_plan.{type DailyPlan, type Meal, DailyPlan, Meal}
+import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
 
 // ============================================================================
 // Test Recipe Factory
@@ -46,7 +46,7 @@ fn create_test_meal(recipe: Recipe) -> Meal {
 /// Calculate total calories from a daily plan
 fn plan_total_calories(plan: DailyPlan) -> Float {
   let macros = meal_plan_macros(plan)
-  macros_calories(macros)
+  calculate_calories_from_macros(macros)
 }
 
 /// Calculate macros from a daily plan (copied helper)
@@ -68,7 +68,7 @@ fn meal_plan_macros(plan: DailyPlan) -> Macros {
 }
 
 /// Calculate calories from macros (4 cal/g protein and carbs, 9 cal/g fat)
-fn macros_calories(m: Macros) -> Float {
+fn calculate_calories_from_macros(m: Macros) -> Float {
   { m.protein *. 4.0 } +. { m.fat *. 9.0 } +. { m.carbs *. 4.0 }
 }
 

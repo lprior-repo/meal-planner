@@ -17,6 +17,7 @@
 /// 7. Integration Tests - Multiple entries, filtering
 import gleam/string
 import gleeunit/should
+import lustre/element
 import meal_planner/ui/components/daily_log
 import meal_planner/ui/types/ui_types
 
@@ -85,7 +86,7 @@ pub fn meal_entry_item_renders_basic_html_test() {
     )
 
   // WHEN: Rendering the entry
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should render meal-entry-item container
   html
@@ -96,7 +97,7 @@ pub fn meal_entry_item_renders_basic_html_test() {
 /// Test meal entry item displays entry ID as data attribute
 pub fn meal_entry_item_displays_entry_id_test() {
   let entry = breakfast_entry("breakfast-001", "Oatmeal")
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should have data-entry-id attribute
   html
@@ -119,7 +120,7 @@ pub fn meal_entry_item_displays_time_test() {
       meal_type: "breakfast",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should display time in entry-time div
   html
@@ -130,7 +131,7 @@ pub fn meal_entry_item_displays_time_test() {
 /// Test meal entry item displays food name correctly
 pub fn meal_entry_item_displays_food_name_test() {
   let entry = breakfast_entry("1", "Greek Yogurt with Berries")
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should display food name in food-name div
   html
@@ -153,7 +154,7 @@ pub fn meal_entry_item_displays_portion_test() {
       meal_type: "breakfast",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should display portion in portion div
   html
@@ -180,7 +181,7 @@ pub fn meal_entry_item_displays_protein_test() {
       meal_type: "lunch",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should display protein with macro-protein class
   html
@@ -203,7 +204,7 @@ pub fn meal_entry_item_displays_fat_test() {
       meal_type: "lunch",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should display fat with macro-fat class
   html
@@ -226,7 +227,7 @@ pub fn meal_entry_item_displays_carbs_test() {
       meal_type: "lunch",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should display carbs with macro-carbs class
   html
@@ -249,7 +250,7 @@ pub fn meal_entry_item_displays_all_macros_test() {
       meal_type: "dinner",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should display all three macros in entry-macros div
   html
@@ -288,7 +289,7 @@ pub fn meal_entry_item_displays_calories_test() {
       meal_type: "snack",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should display calories in entry-calories div
   html
@@ -299,7 +300,7 @@ pub fn meal_entry_item_displays_calories_test() {
 /// Test meal entry item renders edit button
 pub fn meal_entry_item_renders_edit_button_test() {
   let entry = breakfast_entry("edit-test-1", "Toast")
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should have edit button with correct class and data attribute
   html
@@ -318,7 +319,7 @@ pub fn meal_entry_item_renders_edit_button_test() {
 /// Test meal entry item renders delete button
 pub fn meal_entry_item_renders_delete_button_test() {
   let entry = lunch_entry("delete-test-1", "Salad")
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should have delete button with correct class and data attribute
   html
@@ -337,7 +338,7 @@ pub fn meal_entry_item_renders_delete_button_test() {
 /// Test meal entry item action buttons have entry actions container
 pub fn meal_entry_item_has_actions_container_test() {
   let entry = breakfast_entry("1", "Cereal")
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should wrap action buttons in entry-actions div
   html
@@ -364,7 +365,7 @@ pub fn meal_entry_item_truncates_decimal_macros_test() {
       meal_type: "snack",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should truncate decimals to whole numbers
   html
@@ -399,7 +400,7 @@ pub fn meal_entry_item_handles_zero_macros_test() {
       meal_type: "snack",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should display zeros correctly
   html
@@ -425,7 +426,7 @@ pub fn meal_section_renders_basic_html_test() {
   let entries = [breakfast_entry("1", "Eggs"), breakfast_entry("2", "Toast")]
 
   // WHEN: Rendering the meal section
-  let html = daily_log.meal_section("Breakfast", entries)
+  let html = daily_log.meal_section("Breakfast", entries) |> element.to_string
 
   // THEN: Should render meal-section container
   html
@@ -436,7 +437,7 @@ pub fn meal_section_renders_basic_html_test() {
 /// Test meal section displays meal type as data attribute
 pub fn meal_section_displays_meal_type_attribute_test() {
   let entries = [breakfast_entry("1", "Pancakes")]
-  let html = daily_log.meal_section("Breakfast", entries)
+  let html = daily_log.meal_section("Breakfast", entries) |> element.to_string
 
   // THEN: Should have data-meal-type attribute with lowercase value
   html
@@ -447,7 +448,7 @@ pub fn meal_section_displays_meal_type_attribute_test() {
 /// Test meal section displays meal type header
 pub fn meal_section_displays_meal_type_header_test() {
   let entries = [lunch_entry("1", "Sandwich")]
-  let html = daily_log.meal_section("Lunch", entries)
+  let html = daily_log.meal_section("Lunch", entries) |> element.to_string
 
   // THEN: Should display meal type in h3 header
   html
@@ -462,7 +463,7 @@ pub fn meal_section_displays_entry_count_test() {
     dinner_entry("2", "Vegetables"),
     dinner_entry("3", "Potato"),
   ]
-  let html = daily_log.meal_section("Dinner", entries)
+  let html = daily_log.meal_section("Dinner", entries) |> element.to_string
 
   // THEN: Should display count of entries in parentheses
   html
@@ -496,7 +497,7 @@ pub fn meal_section_displays_total_calories_test() {
       meal_type: "breakfast",
     ),
   ]
-  let html = daily_log.meal_section("Breakfast", entries)
+  let html = daily_log.meal_section("Breakfast", entries) |> element.to_string
 
   // THEN: Should display sum of calories (165 + 107 = 272)
   html
@@ -507,7 +508,7 @@ pub fn meal_section_displays_total_calories_test() {
 /// Test meal section has collapse toggle button
 pub fn meal_section_has_collapse_toggle_test() {
   let entries = [snack_entry("1", "Apple")]
-  let html = daily_log.meal_section("Snack", entries)
+  let html = daily_log.meal_section("Snack", entries) |> element.to_string
 
   // THEN: Should have collapse toggle button
   html
@@ -526,7 +527,7 @@ pub fn meal_section_contains_all_entries_test() {
     breakfast_entry("2", "Banana"),
     breakfast_entry("3", "Coffee"),
   ]
-  let html = daily_log.meal_section("Breakfast", entries)
+  let html = daily_log.meal_section("Breakfast", entries) |> element.to_string
 
   // THEN: Should contain all food names
   html
@@ -545,7 +546,7 @@ pub fn meal_section_contains_all_entries_test() {
 /// Test meal section wraps entries in meal-section-body
 pub fn meal_section_has_body_container_test() {
   let entries = [lunch_entry("1", "Soup")]
-  let html = daily_log.meal_section("Lunch", entries)
+  let html = daily_log.meal_section("Lunch", entries) |> element.to_string
 
   // THEN: Should wrap entries in meal-section-body div
   html
@@ -556,7 +557,7 @@ pub fn meal_section_has_body_container_test() {
 /// Test meal section with single entry shows count of 1
 pub fn meal_section_single_entry_count_test() {
   let entries = [dinner_entry("1", "Pizza")]
-  let html = daily_log.meal_section("Dinner", entries)
+  let html = daily_log.meal_section("Dinner", entries) |> element.to_string
 
   // THEN: Should show (1) as entry count
   html
@@ -566,7 +567,7 @@ pub fn meal_section_single_entry_count_test() {
 
 /// Test meal section with empty list shows count of 0
 pub fn meal_section_empty_list_count_test() {
-  let html = daily_log.meal_section("Breakfast", [])
+  let html = daily_log.meal_section("Breakfast", []) |> element.to_string
 
   // THEN: Should show (0) as entry count
   html
@@ -589,7 +590,7 @@ pub fn daily_log_timeline_renders_basic_html_test() {
   let entries = [breakfast_entry("1", "Eggs")]
 
   // WHEN: Rendering the timeline
-  let html = daily_log.daily_log_timeline(entries)
+  let html = daily_log.daily_log_timeline(entries) |> element.to_string
 
   // THEN: Should render daily-log-timeline container
   html
@@ -604,7 +605,7 @@ pub fn daily_log_timeline_groups_breakfast_test() {
     breakfast_entry("2", "Toast"),
     lunch_entry("3", "Salad"),
   ]
-  let html = daily_log.daily_log_timeline(entries)
+  let html = daily_log.daily_log_timeline(entries) |> element.to_string
 
   // THEN: Should have Breakfast section with 2 entries
   html
@@ -627,7 +628,7 @@ pub fn daily_log_timeline_groups_lunch_test() {
     lunch_entry("2", "Apple"),
     dinner_entry("3", "Steak"),
   ]
-  let html = daily_log.daily_log_timeline(entries)
+  let html = daily_log.daily_log_timeline(entries) |> element.to_string
 
   // THEN: Should have Lunch section with 2 entries
   html
@@ -650,7 +651,7 @@ pub fn daily_log_timeline_groups_dinner_test() {
     dinner_entry("2", "Rice"),
     snack_entry("3", "Nuts"),
   ]
-  let html = daily_log.daily_log_timeline(entries)
+  let html = daily_log.daily_log_timeline(entries) |> element.to_string
 
   // THEN: Should have Dinner section with 2 entries
   html
@@ -673,7 +674,7 @@ pub fn daily_log_timeline_groups_snack_test() {
     snack_entry("2", "Apple"),
     breakfast_entry("3", "Oatmeal"),
   ]
-  let html = daily_log.daily_log_timeline(entries)
+  let html = daily_log.daily_log_timeline(entries) |> element.to_string
 
   // THEN: Should have Snack section with 2 entries
   html
@@ -697,7 +698,7 @@ pub fn daily_log_timeline_groups_snack_test() {
 pub fn daily_log_timeline_excludes_empty_sections_test() {
   // GIVEN: Only breakfast entries, no lunch/dinner/snack
   let entries = [breakfast_entry("1", "Eggs"), breakfast_entry("2", "Toast")]
-  let html = daily_log.daily_log_timeline(entries)
+  let html = daily_log.daily_log_timeline(entries) |> element.to_string
 
   // THEN: Should only show Breakfast section
   html
@@ -728,7 +729,7 @@ pub fn daily_log_timeline_all_meal_types_test() {
     dinner_entry("3", "Dinner Food"),
     snack_entry("4", "Snack Food"),
   ]
-  let html = daily_log.daily_log_timeline(entries)
+  let html = daily_log.daily_log_timeline(entries) |> element.to_string
 
   // THEN: Should show all four meal sections
   html
@@ -750,7 +751,7 @@ pub fn daily_log_timeline_all_meal_types_test() {
 
 /// Test daily log timeline with empty list
 pub fn daily_log_timeline_empty_list_test() {
-  let html = daily_log.daily_log_timeline([])
+  let html = daily_log.daily_log_timeline([]) |> element.to_string
 
   // THEN: Should render empty timeline container
   html
@@ -821,7 +822,7 @@ pub fn daily_log_timeline_complete_day_test() {
     ),
   ]
 
-  let html = daily_log.daily_log_timeline(entries)
+  let html = daily_log.daily_log_timeline(entries) |> element.to_string
 
   // THEN: Should render all meals in their respective sections
   html
@@ -869,7 +870,7 @@ pub fn daily_log_timeline_multiple_snacks_test() {
     snack_entry("2", "Afternoon Snack"),
     snack_entry("3", "Evening Snack"),
   ]
-  let html = daily_log.daily_log_timeline(entries)
+  let html = daily_log.daily_log_timeline(entries) |> element.to_string
 
   // THEN: Should have Snack section with 3 entries
   html
@@ -888,7 +889,7 @@ pub fn daily_log_timeline_multiple_snacks_test() {
 /// Test meal entry uses semantic div structure
 pub fn meal_entry_semantic_structure_test() {
   let entry = breakfast_entry("1", "Toast")
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should use semantic div elements for structure
   html
@@ -919,7 +920,7 @@ pub fn meal_entry_semantic_structure_test() {
 /// Test meal section uses semantic h3 for header
 pub fn meal_section_semantic_header_test() {
   let entries = [lunch_entry("1", "Pasta")]
-  let html = daily_log.meal_section("Lunch", entries)
+  let html = daily_log.meal_section("Lunch", entries) |> element.to_string
 
   // THEN: Should use h3 for meal type heading
   html
@@ -942,7 +943,7 @@ pub fn action_buttons_have_data_attributes_test() {
       meal_type: "breakfast",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Both buttons should have data-entry-id for identification
   // Count occurrences of data-entry-id="action-test-123"
@@ -979,7 +980,7 @@ pub fn meal_entry_long_food_name_test() {
       meal_type: "lunch",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should preserve full food name
   html
@@ -1002,7 +1003,7 @@ pub fn meal_entry_special_chars_food_name_test() {
       meal_type: "snack",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should preserve special characters
   html
@@ -1025,7 +1026,7 @@ pub fn meal_entry_high_calories_test() {
       meal_type: "lunch",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
 
   // THEN: Should handle large calorie values
   html
@@ -1059,7 +1060,7 @@ pub fn meal_section_high_total_calories_test() {
       meal_type: "lunch",
     ),
   ]
-  let html = daily_log.meal_section("Lunch", entries)
+  let html = daily_log.meal_section("Lunch", entries) |> element.to_string
 
   // THEN: Should correctly sum high calorie values (1100 + 900 = 2000)
   html
@@ -1086,7 +1087,7 @@ pub fn snapshot_meal_entry_item_test() {
       meal_type: "breakfast",
     )
 
-  let html = daily_log.meal_entry_item(entry)
+  let html = daily_log.meal_entry_item(entry) |> element.to_string
   let expected =
     "<div class=\"meal-entry-item\" data-entry-id=\"snap-1\">"
     <> "<div class=\"entry-time\">08:00 AM</div>"

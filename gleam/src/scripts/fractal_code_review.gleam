@@ -216,7 +216,8 @@ fn find_long_functions_recursive(
         option.None -> accumulator
         option.Some(#(name, start, _brace_count)) -> {
           let line_count = current_line - start
-          case line_count >. nutrition_constants.max_function_lines {
+          let line_count_float = int.to_float(line_count)
+          case line_count_float >. nutrition_constants.max_function_lines {
             True -> [
               LongFunction(
                 name: name,
@@ -244,7 +245,8 @@ fn find_long_functions_recursive(
             option.None -> accumulator
             option.Some(#(prev_name, prev_start, _)) -> {
               let prev_line_count = current_line - prev_start
-              case prev_line_count >. nutrition_constants.max_function_lines {
+              let prev_line_count_float = int.to_float(prev_line_count)
+              case prev_line_count_float >. nutrition_constants.max_function_lines {
                 True -> [
                   LongFunction(
                     name: prev_name,

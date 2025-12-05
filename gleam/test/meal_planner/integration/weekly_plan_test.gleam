@@ -8,13 +8,10 @@
 /// 5. Plan can be regenerated with different constraints
 ///
 /// This validates the automated planning workflow is working correctly.
-import gleam/list
-import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/integration/test_helper
-import meal_planner/types.{type Macros, type Recipe, Macros}
-import meal_planner/weekly_plan
+import meal_planner/types.{Macros}
 
 pub fn main() {
   gleeunit.main()
@@ -29,14 +26,14 @@ pub fn main() {
 /// Simplest case: generate meals for one day with target macros
 pub fn generate_single_day_plan_test() {
   // Create test recipes
-  let recipes = [
+  let _recipes = [
     test_helper.fixture_high_protein_meal(),
     test_helper.fixture_balanced_meal(),
     test_helper.fixture_low_carb_meal(),
   ]
 
   // Target: 150g protein, 50g fat, 150g carbs
-  let target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
+  let _target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
 
   // Note: This requires weekly_plan module to have a generate function
   // For now, this is a skeleton showing the expected API
@@ -57,14 +54,14 @@ pub fn generate_single_day_plan_test() {
 /// Generate a full week of meals
 pub fn generate_weekly_plan_test() {
   // Create variety of recipes
-  let recipes = [
+  let _recipes = [
     test_helper.fixture_high_protein_meal(),
     test_helper.fixture_balanced_meal(),
     test_helper.fixture_low_carb_meal(),
   ]
 
   // Target per day: 150g protein, 50g fat, 150g carbs
-  let daily_target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
+  let _daily_target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
 
   // Generate 7-day plan
   // let week_plan = weekly_plan.generate_week(recipes, daily_target, meals_per_day: 3)
@@ -84,13 +81,13 @@ pub fn generate_weekly_plan_test() {
 ///
 /// User wants 4 meals per day (breakfast, lunch, dinner, snack)
 pub fn plan_respects_meal_count_test() {
-  let recipes = [
+  let _recipes = [
     test_helper.fixture_high_protein_meal(),
     test_helper.fixture_balanced_meal(),
     test_helper.fixture_low_carb_meal(),
   ]
 
-  let target = Macros(protein: 180.0, fat: 60.0, carbs: 180.0)
+  let _target = Macros(protein: 180.0, fat: 60.0, carbs: 180.0)
 
   // Request 4 meals per day
   // let plan = weekly_plan.generate(recipes, target, meals_per_day: 4)
@@ -105,13 +102,13 @@ pub fn plan_respects_meal_count_test() {
 ///
 /// Weekly plan should hit calorie target within tolerance
 pub fn plan_meets_calorie_targets_test() {
-  let recipes = [
+  let _recipes = [
     test_helper.fixture_high_protein_meal(),
     test_helper.fixture_balanced_meal(),
   ]
 
   let target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
-  let target_calories = types.macros_calories(target)
+  let _target_calories = types.macros_calories(target)
   // = (150*4) + (50*9) + (150*4) = 600 + 450 + 600 = 1650 calories
 
   // Generate plan
@@ -136,13 +133,13 @@ pub fn plan_meets_calorie_targets_test() {
 ///
 /// Daily plan should not repeat the same meal
 pub fn plan_has_variety_in_day_test() {
-  let recipes = [
+  let _recipes = [
     test_helper.fixture_high_protein_meal(),
     test_helper.fixture_balanced_meal(),
     test_helper.fixture_low_carb_meal(),
   ]
 
-  let target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
+  let _target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
 
   // Generate plan
   // let plan = weekly_plan.generate(recipes, target, meals_per_day: 3)
@@ -159,12 +156,12 @@ pub fn plan_has_variety_in_day_test() {
 ///
 /// Macros should be distributed relatively evenly
 pub fn plan_balances_macros_across_meals_test() {
-  let recipes = [
+  let _recipes = [
     test_helper.fixture_high_protein_meal(),
     test_helper.fixture_balanced_meal(),
   ]
 
-  let target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
+  let _target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
 
   // Generate plan with 3 meals
   // let plan = weekly_plan.generate(recipes, target, meals_per_day: 3)
@@ -187,9 +184,9 @@ pub fn plan_balances_macros_across_meals_test() {
 /// Edge case: Not enough recipes to create variety
 pub fn plan_with_few_recipes_test() {
   // Only one recipe available
-  let recipes = [test_helper.fixture_balanced_meal()]
+  let _recipes = [test_helper.fixture_balanced_meal()]
 
-  let target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
+  let _target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
 
   // Should still generate plan, but meals may repeat
   // let plan = weekly_plan.generate(recipes, target, meals_per_day: 3)
@@ -205,9 +202,9 @@ pub fn plan_with_few_recipes_test() {
 ///
 /// Edge case: User has 0 calorie target (invalid, should error)
 pub fn plan_with_zero_target_test() {
-  let recipes = [test_helper.fixture_balanced_meal()]
+  let _recipes = [test_helper.fixture_balanced_meal()]
 
-  let zero_target = types.macros_zero()
+  let _zero_target = types.macros_zero()
 
   // Should error or return empty plan
   // let result = weekly_plan.generate(recipes, zero_target, meals_per_day: 3)
@@ -226,7 +223,7 @@ pub fn plan_with_zero_target_test() {
 ///
 /// When user wants high protein, plan should favor protein-rich meals
 pub fn plan_optimizes_high_protein_test() {
-  let recipes = [
+  let _recipes = [
     test_helper.fixture_high_protein_meal(),
     // 30g protein
     test_helper.fixture_balanced_meal(),
@@ -234,7 +231,7 @@ pub fn plan_optimizes_high_protein_test() {
   ]
 
   // High protein target
-  let target = Macros(protein: 200.0, fat: 50.0, carbs: 100.0)
+  let _target = Macros(protein: 200.0, fat: 50.0, carbs: 100.0)
 
   // Generate plan
   // let plan = weekly_plan.generate(recipes, target, meals_per_day: 3)
@@ -250,7 +247,7 @@ pub fn plan_optimizes_high_protein_test() {
 ///
 /// When user wants low carb, plan should favor low-carb meals
 pub fn plan_optimizes_low_carb_test() {
-  let recipes = [
+  let _recipes = [
     test_helper.fixture_low_carb_meal(),
     // 5g carbs per serving
     test_helper.fixture_balanced_meal(),
@@ -258,7 +255,7 @@ pub fn plan_optimizes_low_carb_test() {
   ]
 
   // Low carb target
-  let target = Macros(protein: 150.0, fat: 80.0, carbs: 50.0)
+  let _target = Macros(protein: 150.0, fat: 80.0, carbs: 50.0)
 
   // Generate plan
   // let plan = weekly_plan.generate(recipes, target, meals_per_day: 3)
@@ -278,17 +275,17 @@ pub fn plan_optimizes_low_carb_test() {
 ///
 /// User can modify targets and regenerate
 pub fn regenerate_plan_with_new_targets_test() {
-  let recipes = [
+  let _recipes = [
     test_helper.fixture_high_protein_meal(),
     test_helper.fixture_balanced_meal(),
   ]
 
   // First plan: maintenance calories
-  let target1 = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
+  let _target1 = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
   // let plan1 = weekly_plan.generate(recipes, target1, meals_per_day: 3)
 
   // Second plan: bulking calories (higher everything)
-  let target2 = Macros(protein: 200.0, fat: 70.0, carbs: 250.0)
+  let _target2 = Macros(protein: 200.0, fat: 70.0, carbs: 250.0)
   // let plan2 = weekly_plan.generate(recipes, target2, meals_per_day: 3)
 
   // Plans should be different (different serving sizes)
@@ -301,13 +298,13 @@ pub fn regenerate_plan_with_new_targets_test() {
 ///
 /// Change from 3 to 4 meals per day
 pub fn regenerate_with_different_meal_count_test() {
-  let recipes = [
+  let _recipes = [
     test_helper.fixture_high_protein_meal(),
     test_helper.fixture_balanced_meal(),
     test_helper.fixture_low_carb_meal(),
   ]
 
-  let target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
+  let _target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
 
   // First plan: 3 meals
   // let plan1 = weekly_plan.generate(recipes, target, meals_per_day: 3)
@@ -366,7 +363,7 @@ pub fn plan_adapts_to_partial_day_test() {
   let daily_target = Macros(protein: 150.0, fat: 50.0, carbs: 150.0)
 
   // Remaining needed: 120g protein, 40g fat, 130g carbs
-  let remaining =
+  let _remaining =
     Macros(
       protein: daily_target.protein -. logged_breakfast.protein,
       fat: daily_target.fat -. logged_breakfast.fat,
@@ -374,7 +371,7 @@ pub fn plan_adapts_to_partial_day_test() {
     )
 
   // Generate plan for remaining 2 meals
-  let recipes = [
+  let _recipes = [
     test_helper.fixture_high_protein_meal(),
     test_helper.fixture_balanced_meal(),
   ]
@@ -383,25 +380,4 @@ pub fn plan_adapts_to_partial_day_test() {
   // should.equal(list.length(remaining_plan.meals), 2)
 
   should.be_true(True)
-}
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/// Calculate total macros from a plan (helper for tests)
-fn calculate_plan_macros_example() -> Macros {
-  // This would sum all meals in a plan
-  // let total = list.fold(plan.meals, types.macros_zero(), fn(acc, meal) {
-  //   types.macros_add(acc, types.macros_scale(meal.recipe.macros, meal.servings))
-  // })
-  types.macros_zero()
-}
-
-/// Absolute value helper
-fn float_abs(x: Float) -> Float {
-  case x >=. 0.0 {
-    True -> x
-    False -> 0.0 -. x
-  }
 }

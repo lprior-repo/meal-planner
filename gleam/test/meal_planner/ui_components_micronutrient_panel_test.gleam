@@ -2,6 +2,7 @@ import gleam/option.{None, Some}
 import gleam/string
 import gleeunit
 import gleeunit/should
+import lustre/element
 import meal_planner/types.{type Micronutrients, Micronutrients}
 import meal_planner/ui/components/micronutrient_panel
 
@@ -144,7 +145,7 @@ pub fn micronutrient_bar_renders_test() {
       category: "vitamin",
     )
 
-  let html = micronutrient_panel.micronutrient_bar(item)
+  let html = micronutrient_panel.micronutrient_bar(item) |> element.to_string
 
   // Should contain the nutrient name
   html |> string.contains("Vitamin C") |> should.be_true
@@ -162,7 +163,9 @@ pub fn micronutrient_section_renders_test() {
   let dv = micronutrient_panel.standard_daily_values()
   let vitamins = micronutrient_panel.extract_vitamins(micros, dv)
 
-  let html = micronutrient_panel.micronutrient_section("Vitamins", vitamins)
+  let html =
+    micronutrient_panel.micronutrient_section("Vitamins", vitamins)
+    |> element.to_string
 
   // Should contain section title
   html |> string.contains("Vitamins") |> should.be_true
@@ -175,7 +178,8 @@ pub fn micronutrient_section_renders_test() {
 pub fn micronutrient_panel_with_data_test() {
   let micros = Some(sample_micronutrients())
 
-  let html = micronutrient_panel.micronutrient_panel(micros)
+  let html =
+    micronutrient_panel.micronutrient_panel(micros) |> element.to_string
 
   // Should contain panel structure
   html |> string.contains("micronutrient-panel") |> should.be_true
@@ -189,7 +193,8 @@ pub fn micronutrient_panel_with_data_test() {
 }
 
 pub fn micronutrient_panel_without_data_test() {
-  let html = micronutrient_panel.micronutrient_panel(None)
+  let html =
+    micronutrient_panel.micronutrient_panel(None) |> element.to_string
 
   // Should show empty state
   html |> string.contains("empty") |> should.be_true
@@ -199,7 +204,8 @@ pub fn micronutrient_panel_without_data_test() {
 pub fn micronutrient_panel_full_daily_values_test() {
   let micros = Some(full_micronutrients())
 
-  let html = micronutrient_panel.micronutrient_panel(micros)
+  let html =
+    micronutrient_panel.micronutrient_panel(micros) |> element.to_string
 
   // Should render successfully with 100% DV
   html |> string.contains("micronutrient-panel") |> should.be_true
@@ -213,7 +219,8 @@ pub fn micronutrient_panel_full_daily_values_test() {
 pub fn micronutrient_summary_with_data_test() {
   let micros = Some(sample_micronutrients())
 
-  let html = micronutrient_panel.micronutrient_summary(micros)
+  let html =
+    micronutrient_panel.micronutrient_summary(micros) |> element.to_string
 
   // Should show vitamin and mineral counts
   html |> string.contains("vitamins") |> should.be_true
@@ -222,7 +229,8 @@ pub fn micronutrient_summary_with_data_test() {
 }
 
 pub fn micronutrient_summary_without_data_test() {
-  let html = micronutrient_panel.micronutrient_summary(None)
+  let html =
+    micronutrient_panel.micronutrient_summary(None) |> element.to_string
 
   // Should show empty message
   html |> string.contains("No micronutrient data") |> should.be_true
@@ -243,7 +251,7 @@ pub fn low_percentage_has_warning_color_test() {
       category: "vitamin",
     )
 
-  let html = micronutrient_panel.micronutrient_bar(item)
+  let html = micronutrient_panel.micronutrient_bar(item) |> element.to_string
 
   // Should have low status (< 50%)
   html |> string.contains("status-low") |> should.be_true
@@ -260,7 +268,7 @@ pub fn optimal_percentage_has_green_color_test() {
       category: "vitamin",
     )
 
-  let html = micronutrient_panel.micronutrient_bar(item)
+  let html = micronutrient_panel.micronutrient_bar(item) |> element.to_string
 
   // Should have optimal status (50-100%)
   html |> string.contains("status-optimal") |> should.be_true
@@ -277,7 +285,7 @@ pub fn high_percentage_has_orange_color_test() {
       category: "vitamin",
     )
 
-  let html = micronutrient_panel.micronutrient_bar(item)
+  let html = micronutrient_panel.micronutrient_bar(item) |> element.to_string
 
   // Should have high status (100-150%)
   html |> string.contains("status-high") |> should.be_true
@@ -294,7 +302,7 @@ pub fn excess_percentage_has_red_color_test() {
       category: "other",
     )
 
-  let html = micronutrient_panel.micronutrient_bar(item)
+  let html = micronutrient_panel.micronutrient_bar(item) |> element.to_string
 
   // Should have excess status (> 150%)
   html |> string.contains("status-excess") |> should.be_true

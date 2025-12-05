@@ -21,9 +21,8 @@
 import gleeunit
 import gleeunit/should
 import meal_planner/types.{
-  type MacroTargets, type Macros, type Recipe, type UserProfile,
-  type WeeklyMealPlan, Active, Gain, High, Low, Macros, Moderate, Recipe,
-  Sedentary,
+  type Macros, type Recipe, type UserProfile, Active, Gain, Macros, Moderate,
+  Recipe, Sedentary,
 }
 
 pub fn main() {

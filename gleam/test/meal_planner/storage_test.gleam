@@ -2,10 +2,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
-import meal_planner/storage.{
-  type FoodSummaryItem, type Log, type WeeklySummary, FoodSummaryItem, Log,
-  WeeklySummary,
-}
+import meal_planner/storage.{type Log, FoodSummaryItem, Log, WeeklySummary}
 
 pub fn main() {
   gleeunit.main()

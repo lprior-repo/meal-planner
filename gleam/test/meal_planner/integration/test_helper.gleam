@@ -18,8 +18,8 @@ import gleam/string
 import meal_planner/storage
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type MealType,
-  type Micronutrients, type Recipe, Breakfast, DailyLog, Dinner, FoodLogEntry,
-  Lunch, Macros, Micronutrients, Recipe, Snack,
+  type Micronutrients, type Recipe, DailyLog, FoodLogEntry, Macros,
+  Micronutrients, Recipe,
 }
 import pog
 

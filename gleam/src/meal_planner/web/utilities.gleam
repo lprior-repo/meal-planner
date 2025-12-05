@@ -11,10 +11,10 @@ import gleam/string
 import meal_planner/storage
 import meal_planner/storage_optimized
 import meal_planner/types.{
-  type ActivityLevel, type DailyLog, type FoodGoal, type FoodLogEntry,
-  type Macros, type MealType, type Recipe, type SearchFilters, type UserProfile,
-  Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, Lose, Lunch, Macros,
-  Maintain, Moderate, Sedentary, Snack, UserProfile,
+  type ActivityLevel, type DailyLog, type FoodLogEntry, type Goal, type Macros,
+  type MealType, type Recipe, type SearchFilters, type UserProfile, Active,
+  Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, Lose, Lunch, Macros, Maintain,
+  Moderate, Sedentary, Snack, UserProfile,
 }
 import pog
 
@@ -41,7 +41,7 @@ pub fn load_recipe_by_id(db: pog.Connection, id: String) -> Result(Recipe, Nil) 
 
 /// Load user profile from database
 pub fn load_profile(db: pog.Connection) -> UserProfile {
-  case storage.get_user_profile(db, 1) {
+  case storage.get_user_profile(db) {
     Ok(profile) -> profile
     Error(_) -> default_profile()
   }
@@ -50,12 +50,11 @@ pub fn load_profile(db: pog.Connection) -> UserProfile {
 /// Create default user profile
 pub fn default_profile() -> UserProfile {
   UserProfile(
-    user_id: 1,
-    age: 25,
-    weight_kg: 70.0,
-    height_cm: 170,
+    id: "1",
+    bodyweight: 154.0,
     activity_level: Moderate,
     goal: Maintain,
+    meals_per_day: 3,
   )
 }
 
@@ -66,20 +65,9 @@ pub fn search_foods_filtered(
   query: String,
   filters: SearchFilters,
   limit: Int,
-) -> #(storage_optimized.SearchCache, List(storage.UsdaFood)) {
-  case filters.verified_only {
-    True -> storage_optimized.search_foods_verified(cache, db, query, limit)
-    False ->
-      case filters.branded_only {
-        True -> storage_optimized.search_foods_branded(cache, db, query, limit)
-        False ->
-          case filters.category {
-            option.Some(cat) ->
-              storage_optimized.search_foods_category(cache, db, query, cat)
-            option.None -> storage_optimized.search_foods(cache, db, query)
-          }
-      }
-  }
+) -> #(storage_optimized.SearchCache, Result(List(storage.UsdaFood), storage.StorageError)) {
+  // Use the main search function - filtering is handled in storage_optimized
+  storage_optimized.search_foods_cached(db, cache, query, limit)
 }
 
 /// Load food by FDC ID
@@ -116,7 +104,13 @@ pub fn get_foods_count(db: pog.Connection) -> Int {
 pub fn load_daily_log(db: pog.Connection, date: String) -> DailyLog {
   case storage.get_daily_log(db, date) {
     Ok(log) -> log
-    Error(_) -> DailyLog(date: date, entries: [])
+    Error(_) ->
+      DailyLog(
+        date: date,
+        entries: [],
+        total_macros: Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+        total_micronutrients: option.None,
+      )
   }
 }
 
@@ -158,10 +152,9 @@ pub fn recipe_to_json(r: Recipe) -> json.Json {
 /// Convert UserProfile to JSON
 pub fn profile_to_json(p: UserProfile) -> json.Json {
   json.object([
-    #("user_id", json.int(p.user_id)),
-    #("age", json.int(p.age)),
-    #("weight_kg", json.float(p.weight_kg)),
-    #("height_cm", json.int(p.height_cm)),
+    #("id", json.string(p.id)),
+    #("bodyweight", json.float(p.bodyweight)),
+    #("meals_per_day", json.int(p.meals_per_day)),
     #("activity_level", json.string(activity_level_to_string(p))),
     #("goal", json.string(goal_to_string(p))),
   ])
@@ -288,7 +281,7 @@ pub fn find_nutrient(
   nutrients: List(storage.FoodNutrientValue),
   name: String,
 ) -> Option(storage.FoodNutrientValue) {
-  list.find(nutrients, fn(n) { n.name == name })
+  list.find(nutrients, fn(n) { n.nutrient_name == name })
   |> option.from_result
 }
 
@@ -296,7 +289,7 @@ pub fn find_nutrient(
 pub fn format_nutrient(n: Option(storage.FoodNutrientValue)) -> String {
   case n {
     option.Some(nutrient) ->
-      float_to_string(nutrient.amount) <> " " <> nutrient.unit_name
+      float_to_string(nutrient.amount) <> " " <> nutrient.unit
     option.None -> "N/A"
   }
 }

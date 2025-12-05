@@ -11,9 +11,8 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/types.{
-  type FoodLogEntry, type Macros, type MealType, type Micronutrients, Breakfast,
-  FoodLogEntry, Macros, Micronutrients, Snack, micronutrients_add,
-  micronutrients_sum, micronutrients_zero,
+  type FoodLogEntry, type Micronutrients, Breakfast, FoodLogEntry, Macros,
+  Micronutrients, Snack, micronutrients_sum, micronutrients_zero,
 }
 
 // ============================================================================

@@ -210,7 +210,7 @@ fn run_migration(
     <> ": "
     <> string.inspect(err)
   })
-  |> result.then(fn(_) {
+  |> result.try(fn(_) {
     // Record migration in schema_migrations table
     pog.query(
       "INSERT INTO schema_migrations (version, name, applied_at) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
@@ -268,16 +268,16 @@ pub fn with_integration_db(
   let db_name = generate_test_db_name()
 
   // Step 1: Connect to admin database
-  use admin_conn <- result.then(connect_to_admin_db(config))
+  use admin_conn <- result.try(connect_to_admin_db(config))
 
   // Step 2: Create test database
-  use _ <- result.then(create_test_database(admin_conn, db_name))
+  use _ <- result.try(create_test_database(admin_conn, db_name))
 
   // Step 3: Connect to test database
-  use test_conn <- result.then(connect_to_test_db(config, db_name))
+  use test_conn <- result.try(connect_to_test_db(config, db_name))
 
   // Step 4: Run all migrations
-  use _ <- result.then(run_all_migrations(test_conn))
+  use _ <- result.try(run_all_migrations(test_conn))
 
   // Step 5: Execute test function
   let test_result = {
@@ -291,11 +291,7 @@ pub fn with_integration_db(
   // Return test result if successful, otherwise return cleanup error
   case test_result {
     Ok(_) -> cleanup_result
-    Error(msg) -> {
-      // Still try to cleanup even if test failed
-      let _ = cleanup_result
-      Error(msg)
-    }
+    Error(msg) -> Error(msg)
   }
 }
 
@@ -310,19 +306,19 @@ pub fn with_integration_db_result(
   let db_name = generate_test_db_name()
 
   // Step 1: Connect to admin database
-  use admin_conn <- result.then(connect_to_admin_db(config))
+  use admin_conn <- result.try(connect_to_admin_db(config))
 
   // Step 2: Create test database
-  use _ <- result.then(create_test_database(admin_conn, db_name))
+  use _ <- result.try(create_test_database(admin_conn, db_name))
 
   // Step 3: Connect to test database
-  use test_conn <- result.then(connect_to_test_db(config, db_name))
+  use test_conn <- result.try(connect_to_test_db(config, db_name))
 
   // Step 4: Run all migrations
-  use _ <- result.then(run_all_migrations(test_conn))
+  use _ <- result.try(run_all_migrations(test_conn))
 
   // Step 5: Execute test function
-  use _ <- result.then(test_fn(test_conn))
+  use _ <- result.try(test_fn(test_conn))
 
   // Step 6: Cleanup - drop test database
   drop_test_database(admin_conn, db_name)

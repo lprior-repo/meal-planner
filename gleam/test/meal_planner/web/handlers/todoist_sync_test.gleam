@@ -7,8 +7,8 @@
 //// - Actor integration for async message passing
 //// - Response structure with proper status codes
 
-import actor
 import gleam/erlang/process.{type Subject}
+import gleam/otp/actor
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}

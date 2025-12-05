@@ -21,6 +21,7 @@ import gleam/option
 import gleam/string
 import gleeunit
 import gleeunit/should
+import lustre/attribute
 import lustre/element
 import meal_planner/ui/components/forms
 
@@ -281,7 +282,7 @@ pub fn select_field_special_chars_test() {
 
 /// Test form field without error
 pub fn form_field_no_error_test() {
-  let input = "<input type=\"text\" name=\"test\" />"
+  let input = element.element("input", [attribute.type_("text"), attribute.name("test")], [])
   let html = forms.form_field("Test Label", input, option.None) |> element.to_string
 
   // Should have form-group
@@ -290,8 +291,10 @@ pub fn form_field_no_error_test() {
   // Should have label
   should.be_true(html |> contains("<label>Test Label</label>"))
 
-  // Should have input
-  should.be_true(html |> contains(input))
+  // Should have input element
+  should.be_true(html |> contains("<input"))
+  should.be_true(html |> contains("type=\"text\""))
+  should.be_true(html |> contains("name=\"test\""))
 
   // Should NOT have error div
   should.be_false(html |> contains("form-error"))
@@ -299,7 +302,7 @@ pub fn form_field_no_error_test() {
 
 /// Test form field with error message
 pub fn form_field_with_error_test() {
-  let input = "<input type=\"email\" name=\"email\" />"
+  let input = element.element("input", [attribute.type_("email"), attribute.name("email")], [])
   let html =
     forms.form_field("Email", input, option.Some("Invalid email address"))
     |> element.to_string
@@ -307,8 +310,10 @@ pub fn form_field_with_error_test() {
   // Should have label
   should.be_true(html |> contains("<label>Email</label>"))
 
-  // Should have input
-  should.be_true(html |> contains(input))
+  // Should have input element
+  should.be_true(html |> contains("<input"))
+  should.be_true(html |> contains("type=\"email\""))
+  should.be_true(html |> contains("name=\"email\""))
 
   // Should have error div with message
   should.be_true(html |> contains("<div class=\"form-error\">"))
@@ -317,7 +322,7 @@ pub fn form_field_with_error_test() {
 
 /// Test form field with multiple error scenarios
 pub fn form_field_required_error_test() {
-  let input = "<input type=\"text\" name=\"name\" />"
+  let input = element.element("input", [attribute.type_("text"), attribute.name("name")], [])
   let html =
     forms.form_field("Name", input, option.Some("This field is required"))
     |> element.to_string
@@ -328,7 +333,7 @@ pub fn form_field_required_error_test() {
 
 /// Test form field with length validation error
 pub fn form_field_length_error_test() {
-  let input = "<input type=\"text\" name=\"password\" />"
+  let input = element.element("input", [attribute.type_("text"), attribute.name("password")], [])
   let html =
     forms.form_field(
       "Password",
@@ -845,7 +850,7 @@ pub fn search_unicode_test() {
 
 /// Test empty error message edge case
 pub fn form_field_empty_error_message_test() {
-  let input = "<input type=\"text\" />"
+  let input = element.element("input", [attribute.type_("text")], [])
   let html = forms.form_field("Label", input, option.Some("")) |> element.to_string
 
   // Should render error div even with empty message

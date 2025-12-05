@@ -6,6 +6,7 @@
 /// - HTML response format (not JSON) for HTMX outerHTML replacement
 /// - New meal differs from old meal
 /// - Calorie targets are respected after swap
+import gleam/int
 import gleam/json
 import gleam/option.{None, Some}
 import gleeunit/should
@@ -97,7 +98,7 @@ pub fn mock_recipe_calories_test() {
   // Verify macros are calculated (protein + fat + carbs should sum to calories)
   let calculated_cals = macros_calories(recipe.macros)
   calculated_cals
-  |> should.be_close(500.0, 5.0)
+  |> assert_close(500.0, 5.0)
 }
 
 // ============================================================================
@@ -175,13 +176,13 @@ pub fn meal_card_renders_html_test() {
 
   // Verify HTML structure contains expected elements
   html
-  |> should.contain("lunch-card")
+  |> string.contains(_, "lunch-card") |> should.be_true
 
   html
-  |> should.contain("Grilled Chicken")
+  |> string.contains(_, "Grilled Chicken") |> should.be_true
 
   html
-  |> should.contain("meal-card")
+  |> string.contains(_, "meal-card") |> should.be_true
 }
 
 pub fn meal_card_contains_swap_button_test() {
@@ -191,13 +192,13 @@ pub fn meal_card_contains_swap_button_test() {
     <> "hx-swap=\"outerHTML\">Swap Meal</button>"
 
   html
-  |> should.contain("hx-post=\"/api/swap/lunch\"")
+  |> string.contains(_, "hx-post=\"/api/swap/lunch\"") |> should.be_true
 
   html
-  |> should.contain("hx-target=\"#lunch-card\"")
+  |> string.contains(_, "hx-target=\"#lunch-card\"") |> should.be_true
 
   html
-  |> should.contain("hx-swap=\"outerHTML\"")
+  |> string.contains(_, "hx-swap=\"outerHTML\"") |> should.be_true
 }
 
 // ============================================================================
@@ -258,11 +259,10 @@ pub fn meal_within_calorie_target_test() {
 
   // Recipe should be within reasonable bounds for daily plan
   recipe_cals
-  |> should.be_close(500.0, 5.0)
+  |> assert_close(500.0, 5.0)
 
   // Should be less than total daily target
-  recipe_cals
-  |> should.be_less_than(float.from_int(calorie_target))
+  should.be_true(recipe_cals <. int.to_float(calorie_target))
 }
 
 pub fn daily_plan_calorie_sum_test() {
@@ -277,7 +277,7 @@ pub fn daily_plan_calorie_sum_test() {
 
   // Daily plan should total around 1600 calories (400+500+700)
   total_cals
-  |> should.be_close(1600.0, 50.0)
+  |> assert_close(1600.0, 50.0)
 }
 
 // ============================================================================
@@ -290,15 +290,15 @@ pub fn html_response_not_json_test() {
   let html = "<div>Content</div>"
 
   // Should NOT be JSON structure
-  html
-  |> should.not_contain("\"error\"")
+  string.contains(html, "\"error\"")
+  |> should.be_false
 
   // Should be HTML
   html
-  |> should.contain("<div>")
+  |> string.contains(_, "<div>") |> should.be_true
 
   html
-  |> should.contain("</div>")
+  |> string.contains(_, "</div>") |> should.be_true
 }
 
 pub fn html_has_htmx_attributes_test() {
@@ -309,10 +309,10 @@ pub fn html_has_htmx_attributes_test() {
 
   // Should contain HTMX attributes, not JSON fields
   html
-  |> should.contain("hx-post")
+  |> string.contains(_, "hx-post") |> should.be_true
 
-  html
-  |> should.not_contain("application/json")
+  string.contains(html, "application/json")
+  |> should.be_false
 }
 
 // ============================================================================
@@ -335,6 +335,12 @@ fn string_contains(haystack: String, needle: String) -> Bool {
     True -> True
     False -> False
   }
+}
+
+/// Check if a float is within tolerance of expected value
+fn assert_close(actual: Float, expected: Float, tolerance: Float) -> Nil {
+  let diff = float.absolute_value(actual -. expected)
+  should.be_true(diff <=. tolerance)
 }
 
 /// Import list module functions
@@ -372,10 +378,10 @@ pub fn full_swap_workflow_test() {
       let new_cals = macros_calories(new_meal.recipe.macros)
 
       old_cals
-      |> should.be_close(500.0, 5.0)
+      |> assert_close(500.0, 5.0)
 
       new_cals
-      |> should.be_close(480.0, 5.0)
+      |> assert_close(480.0, 5.0)
     }
     _ -> should.fail()
   }
@@ -401,15 +407,15 @@ pub fn html_response_for_swapped_meal_test() {
 
   // Verify HTML contains correct meal info
   html_fragment
-  |> should.contain("Grilled Salmon")
+  |> string.contains(_, "Grilled Salmon") |> should.be_true
 
   html_fragment
-  |> should.contain("lunch-card")
+  |> string.contains(_, "lunch-card") |> should.be_true
 
   // Verify it's HTML, not JSON
-  html_fragment
-  |> should.not_contain("{")
+  string.contains(html_fragment, "{")
+  |> should.be_false
 
-  html_fragment
-  |> should.not_contain("}")
+  string.contains(html_fragment, "}")
+  |> should.be_false
 }
