@@ -100,7 +100,7 @@ pub fn api_logs_food(req: wisp.Request, ctx: Context) -> wisp.Response {
   use json_body <- wisp.require_json(req)
 
   // Try to extract fdc_id from JSON
-  case decode.run(json_body, decode.field("fdc_id", decode.string)) {
+  case decode.run(json_body, decode.at(["fdc_id"], decode.string)) {
     Ok(fdc_id_str) -> log_usda_food(json_body, fdc_id_str, ctx)
     Error(_) -> {
       let err_json =
@@ -120,9 +120,9 @@ fn log_usda_food(
 ) -> wisp.Response {
   // Parse grams and meal_type from JSON
   let fdc_id_result = int.parse(fdc_id_str)
-  let grams_result = decode.run(json_body, decode.field("grams", decode.float))
+  let grams_result = decode.run(json_body, decode.at(["grams"], decode.float))
   let meal_type_result =
-    decode.run(json_body, decode.field("meal_type", decode.string))
+    decode.run(json_body, decode.at(["meal_type"], decode.string))
 
   case fdc_id_result, grams_result, meal_type_result {
     Ok(fdc_id), Ok(grams), Ok(meal_type_str) -> {
@@ -147,11 +147,11 @@ fn log_usda_food(
           // Scale macros and micronutrients by the factor
           let scaled_macros =
             types.macros_scale(usda_food.macros, scaling_factor)
-          let scaled_micronutrients =
-            Some(types.micronutrients_scale(
-              usda_food.micronutrients,
-              scaling_factor,
-            ))
+          let scaled_micronutrients = case usda_food.micronutrients {
+            Some(micros) ->
+              Some(types.micronutrients_scale(micros, scaling_factor))
+            None -> None
+          }
 
           // Create log entry with source_type='usda_food'
           let entry =

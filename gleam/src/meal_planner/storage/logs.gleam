@@ -1,13 +1,17 @@
 /// PostgreSQL storage module for nutrition data persistence
 import gleam/dynamic/decode
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/postgres
+import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
+import meal_planner/storage/profile
 import meal_planner/storage/utils
 import meal_planner/types.{
-  type FoodLogEntry, Breakfast, Dinner, FoodLogEntry, Lunch, Snack,
+  type DailyLog, type FoodLogEntry, type Macros, type UserProfile, Active,
+  Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, Lose, Lunch, Macros,
+  Maintain, Moderate, Sedentary, Snack, UserProfile,
 }
 import pog
 
@@ -211,7 +215,7 @@ pub fn save_food_log(
 pub fn get_food_logs_by_date(
   conn: pog.Connection,
   date: String,
-) -> Result(List(FoodLog), StorageError) {
+) -> Result(List(FoodLogEntry), StorageError) {
   let sql =
     "SELECT id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text,
 
@@ -219,7 +223,7 @@ pub fn get_food_logs_by_date(
 
             vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium,
 
-            phosphorus, potassium, zinc
+            phosphorus, potassium, zinc, source_type, source_id
 
      FROM food_logs WHERE date = $1 ORDER BY logged_at"
 
@@ -775,7 +779,7 @@ pub fn save_food_log_entry(
 
 /// Get user profile or return default if not found
 pub fn get_user_profile_or_default(conn: pog.Connection) -> UserProfile {
-  case get_user_profile(conn) {
+  case profile.get_user_profile(conn) {
     Ok(profile) -> profile
 
     Error(_) -> default_user_profile()
@@ -792,10 +796,10 @@ fn default_user_profile() -> UserProfile {
   )
 }
 
-fn food_log_decoder() -> decode.Decoder(FoodLog) {
+fn food_log_decoder() -> decode.Decoder(FoodLogEntry) {
   use id <- decode.field(0, decode.string)
 
-  use date <- decode.field(1, decode.string)
+  use _date <- decode.field(1, decode.string)
 
   use recipe_id <- decode.field(2, decode.string)
 
@@ -809,7 +813,7 @@ fn food_log_decoder() -> decode.Decoder(FoodLog) {
 
   use carbs <- decode.field(7, decode.float)
 
-  use meal_type <- decode.field(8, decode.string)
+  use meal_type_str <- decode.field(8, decode.string)
 
   use logged_at <- decode.field(9, decode.string)
 
@@ -855,38 +859,100 @@ fn food_log_decoder() -> decode.Decoder(FoodLog) {
 
   use zinc <- decode.field(30, decode.optional(decode.float))
 
-  decode.success(FoodLog(
+  use source_type <- decode.field(31, decode.string)
+
+  use source_id <- decode.field(32, decode.string)
+
+  let meal_type = case meal_type_str {
+    "breakfast" -> Breakfast
+    "lunch" -> Lunch
+    "dinner" -> Dinner
+    _ -> Snack
+  }
+
+  let micronutrients = case
+    fiber,
+    sugar,
+    sodium,
+    cholesterol,
+    vitamin_a,
+    vitamin_c,
+    vitamin_d,
+    vitamin_e,
+    vitamin_k,
+    vitamin_b6,
+    vitamin_b12,
+    folate,
+    thiamin,
+    riboflavin,
+    niacin,
+    calcium,
+    iron,
+    magnesium,
+    phosphorus,
+    potassium,
+    zinc
+  {
+    None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None
+    -> None
+
+    _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ->
+      Some(types.Micronutrients(
+        fiber: fiber,
+        sugar: sugar,
+        sodium: sodium,
+        cholesterol: cholesterol,
+        vitamin_a: vitamin_a,
+        vitamin_c: vitamin_c,
+        vitamin_d: vitamin_d,
+        vitamin_e: vitamin_e,
+        vitamin_k: vitamin_k,
+        vitamin_b6: vitamin_b6,
+        vitamin_b12: vitamin_b12,
+        folate: folate,
+        thiamin: thiamin,
+        riboflavin: riboflavin,
+        niacin: niacin,
+        calcium: calcium,
+        iron: iron,
+        magnesium: magnesium,
+        phosphorus: phosphorus,
+        potassium: potassium,
+        zinc: zinc,
+      ))
+  }
+
+  decode.success(FoodLogEntry(
     id: id,
-    date: date,
     recipe_id: recipe_id,
     recipe_name: recipe_name,
     servings: servings,
-    protein: protein,
-    fat: fat,
-    carbs: carbs,
+    macros: Macros(protein: protein, fat: fat, carbs: carbs),
+    micronutrients: micronutrients,
     meal_type: meal_type,
     logged_at: logged_at,
-    fiber: fiber,
-    sugar: sugar,
-    sodium: sodium,
-    cholesterol: cholesterol,
-    vitamin_a: vitamin_a,
-    vitamin_c: vitamin_c,
-    vitamin_d: vitamin_d,
-    vitamin_e: vitamin_e,
-    vitamin_k: vitamin_k,
-    vitamin_b6: vitamin_b6,
-    vitamin_b12: vitamin_b12,
-    folate: folate,
-    thiamin: thiamin,
-    riboflavin: riboflavin,
-    niacin: niacin,
-    calcium: calcium,
-    iron: iron,
-    magnesium: magnesium,
-    phosphorus: phosphorus,
-    potassium: potassium,
-    zinc: zinc,
+    source_type: source_type,
+    source_id: source_id,
   ))
 }
 

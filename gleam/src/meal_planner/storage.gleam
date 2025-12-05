@@ -7,12 +7,7 @@
 /// - storage/logs: Food logging and daily/weekly summaries
 /// - storage/nutrients: Nutrient calculations and parsing
 /// - storage/migrations: Database migration utilities
-import meal_planner/storage/profile.{
-  type DbConfig, type StorageError, default_config, get_goals,
-  get_nutrition_history, get_nutrition_state, get_user_profile,
-  get_user_profile_or_default, save_goals, save_nutrition_state,
-  save_user_profile, start_pool,
-}
+import meal_planner/storage/profile as profile_module
 
 import meal_planner/storage/recipes.{
   delete_recipe, filter_recipes, get_all_recipes, get_recipe_by_id,
@@ -20,7 +15,6 @@ import meal_planner/storage/recipes.{
 }
 
 import meal_planner/storage/foods.{
-  type FoodNutrientValue, type UsdaFood, type UsdaFoodWithNutrients,
   create_custom_food, delete_custom_food, get_custom_food_by_id,
   get_custom_foods_for_user, get_food_by_id, get_food_categories,
   get_foods_count, load_usda_food_with_macros, search_custom_foods, search_foods,
@@ -28,58 +22,51 @@ import meal_planner/storage/foods.{
 }
 
 import meal_planner/storage/logs.{
-  type FoodLog, type FoodSummaryItem, type Log, type WeeklySummary,
   delete_food_log, get_daily_log, get_food_logs_by_date, get_recent_meals,
-  get_recently_logged_foods, get_todays_logs, get_weekly_summary, save_food_log,
-  save_food_log_entry, save_food_to_log,
-}
-
-import meal_planner/storage/nutrients.{
-  calculate_total_macros, calculate_total_micronutrients, get_food_nutrients,
-  parse_usda_macros, parse_usda_micronutrients,
+  get_user_profile_or_default, save_food_log,
 }
 
 import meal_planner/storage/migrations.{init_migrations}
 
 // Re-export everything
 pub fn default_config() {
-  profile.default_config()
+  profile_module.default_config()
 }
 
 pub fn start_pool(config) {
-  profile.start_pool(config)
+  profile_module.start_pool(config)
 }
 
 pub fn save_nutrition_state(conn, state) {
-  profile.save_nutrition_state(conn, state)
+  profile_module.save_nutrition_state(conn, state)
 }
 
 pub fn get_nutrition_state(conn, date) {
-  profile.get_nutrition_state(conn, date)
+  profile_module.get_nutrition_state(conn, date)
 }
 
 pub fn get_nutrition_history(conn, days) {
-  profile.get_nutrition_history(conn, days)
+  profile_module.get_nutrition_history(conn, days)
 }
 
 pub fn save_goals(conn, goals) {
-  profile.save_goals(conn, goals)
+  profile_module.save_goals(conn, goals)
 }
 
 pub fn get_goals(conn) {
-  profile.get_goals(conn)
+  profile_module.get_goals(conn)
 }
 
 pub fn save_user_profile(conn, user_profile) {
-  profile.save_user_profile(conn, user_profile)
+  profile_module.save_user_profile(conn, user_profile)
 }
 
-pub fn get_user_profile(conn, user_id) {
-  profile.get_user_profile(conn, user_id)
+pub fn get_user_profile(conn) {
+  profile_module.get_user_profile(conn)
 }
 
 pub fn get_user_profile_or_default(conn) {
-  profile.get_user_profile_or_default(conn)
+  logs.get_user_profile_or_default(conn)
 }
 
 pub fn save_recipe(conn, recipe) {
@@ -102,17 +89,17 @@ pub fn get_recipes_by_category(conn, category) {
   recipes.get_recipes_by_category(conn, category)
 }
 
-pub fn filter_recipes(conn, constraints) {
-  recipes.filter_recipes(conn, constraints)
-}
+// pub fn filter_recipes(conn, constraints) {
+//   recipes.filter_recipes(conn, constraints)
+// }
 
-pub fn search_foods(conn, query) {
-  foods.search_foods(conn, query)
-}
+// pub fn search_foods(conn, query) {
+//   foods.search_foods(conn, query)
+// }
 
-pub fn search_foods_filtered(conn, query, category) {
-  foods.search_foods_filtered(conn, query, category)
-}
+// pub fn search_foods_filtered(conn, query, category) {
+//   foods.search_foods_filtered(conn, query, category)
+// }
 
 pub fn get_food_by_id(conn, id) {
   foods.get_food_by_id(conn, id)
@@ -138,9 +125,9 @@ pub fn get_custom_food_by_id(conn, user_id, id) {
   foods.get_custom_food_by_id(conn, user_id, id)
 }
 
-pub fn search_custom_foods(conn, user_id, query) {
-  foods.search_custom_foods(conn, user_id, query)
-}
+// pub fn search_custom_foods(conn, user_id, query) {
+//   foods.search_custom_foods(conn, user_id, query)
+// }
 
 pub fn get_custom_foods_for_user(conn, user_id) {
   foods.get_custom_foods_for_user(conn, user_id)
@@ -162,9 +149,9 @@ pub fn get_food_logs_by_date(conn, date) {
   logs.get_food_logs_by_date(conn, date)
 }
 
-pub fn get_todays_logs(conn) {
-  logs.get_todays_logs(conn)
-}
+// pub fn get_todays_logs(conn) {
+//   logs.get_todays_logs(conn)
+// }
 
 pub fn delete_food_log(conn, id) {
   logs.delete_food_log(conn, id)
@@ -174,45 +161,45 @@ pub fn get_recent_meals(conn, limit) {
   logs.get_recent_meals(conn, limit)
 }
 
-pub fn save_food_log_entry(conn, user_id, entry) {
-  logs.save_food_log_entry(conn, user_id, entry)
-}
+// pub fn save_food_log_entry(conn, user_id, entry) {
+//   logs.save_food_log_entry(conn, user_id, entry)
+// }
 
 pub fn get_daily_log(conn, date) {
   logs.get_daily_log(conn, date)
 }
 
-pub fn get_weekly_summary(conn, start_date) {
-  logs.get_weekly_summary(conn, start_date)
-}
+// pub fn get_weekly_summary(conn, start_date) {
+//   logs.get_weekly_summary(conn, start_date)
+// }
 
-pub fn save_food_to_log(conn, user_id, meal_type, food) {
-  logs.save_food_to_log(conn, user_id, meal_type, food)
-}
+// pub fn save_food_to_log(conn, user_id, meal_type, food) {
+//   logs.save_food_to_log(conn, user_id, meal_type, food)
+// }
 
-pub fn get_recently_logged_foods(conn, user_id, limit) {
-  logs.get_recently_logged_foods(conn, user_id, limit)
-}
+// pub fn get_recently_logged_foods(conn, user_id, limit) {
+//   logs.get_recently_logged_foods(conn, user_id, limit)
+// }
 
-pub fn get_food_nutrients(conn, id) {
-  nutrients.get_food_nutrients(conn, id)
-}
+// pub fn get_food_nutrients(conn, id) {
+//   nutrients.get_food_nutrients(conn, id)
+// }
 
-pub fn parse_usda_macros(nutrients_list) {
-  nutrients.parse_usda_macros(nutrients_list)
-}
+// pub fn parse_usda_macros(nutrients_list) {
+//   nutrients.parse_usda_macros(nutrients_list)
+// }
 
-pub fn parse_usda_micronutrients(nutrients_list) {
-  nutrients.parse_usda_micronutrients(nutrients_list)
-}
+// pub fn parse_usda_micronutrients(nutrients_list) {
+//   nutrients.parse_usda_micronutrients(nutrients_list)
+// }
 
-pub fn calculate_total_macros(entries) {
-  nutrients.calculate_total_macros(entries)
-}
+// pub fn calculate_total_macros(entries) {
+//   nutrients.calculate_total_macros(entries)
+// }
 
-pub fn calculate_total_micronutrients(entries) {
-  nutrients.calculate_total_micronutrients(entries)
-}
+// pub fn calculate_total_micronutrients(entries) {
+//   nutrients.calculate_total_micronutrients(entries)
+// }
 
 pub fn init_migrations() {
   migrations.init_migrations()
@@ -220,10 +207,10 @@ pub fn init_migrations() {
 
 // Re-export types for type annotations
 pub type StorageError =
-  profile.StorageError
+  profile_module.StorageError
 
 pub type DbConfig =
-  profile.DbConfig
+  profile_module.DbConfig
 
 pub type UsdaFood =
   foods.UsdaFood
@@ -233,9 +220,6 @@ pub type FoodNutrientValue =
 
 pub type UsdaFoodWithNutrients =
   foods.UsdaFoodWithNutrients
-
-pub type FoodLog =
-  logs.FoodLog
 
 pub type Log =
   logs.Log

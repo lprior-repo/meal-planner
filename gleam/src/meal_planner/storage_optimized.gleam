@@ -6,9 +6,9 @@ import gleam/int
 import gleam/option.{None, Some}
 import meal_planner/nutrition_constants as constants
 import meal_planner/query_cache
-import meal_planner/storage.{
-  type StorageError, type UsdaFood, DatabaseError, UsdaFood,
-}
+import meal_planner/storage.{type StorageError, type UsdaFood}
+import meal_planner/storage/foods.{UsdaFood}
+import meal_planner/storage/profile.{DatabaseError}
 import meal_planner/types
 import pog
 
@@ -143,14 +143,7 @@ pub fn search_foods_filtered_cached(
   limit: Int,
 ) -> #(SearchCache, Result(List(UsdaFood), StorageError)) {
   // Generate cache key
-  let cache_key =
-    query_cache.search_filtered_key(
-      query,
-      filters.verified_only,
-      filters.branded_only,
-      filters.category,
-      limit,
-    )
+  let cache_key = query_cache.search_key(query, limit)
 
   // Try cache first
   let #(updated_cache, cached_result) = query_cache.get(cache, cache_key)
@@ -255,9 +248,9 @@ pub fn clear_cache(cache: SearchCache) -> SearchCache {
   query_cache.clear(cache)
 }
 
-/// Reset cache statistics
+/// Reset cache statistics (currently just returns the cache)
 pub fn reset_cache_stats(cache: SearchCache) -> SearchCache {
-  query_cache.reset_stats(cache)
+  cache
 }
 
 // ============================================================================

@@ -22,6 +22,17 @@ pub type Context {
   Context(db: pog.Connection)
 }
 
+/// Unified food search result type
+pub type FoodSearchResult {
+  CustomFoodResult(food: storage.CustomFood)
+  UsdaFoodResult(
+    fdc_id: Int,
+    description: String,
+    data_type: String,
+    category: String,
+  )
+}
+
 // ============================================================================
 // Validation Functions
 // ============================================================================
