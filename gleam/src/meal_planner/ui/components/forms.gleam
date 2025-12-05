@@ -799,11 +799,10 @@ pub fn category_dropdown(
 pub fn category_filter_group(
   categories: List(String),
   selected_category: option.Option(String),
-  on_change_handler: String,
 ) -> element.Element(msg) {
   html.div([attribute.class("form-group category-filter")], [
     html.label([attribute.for("category-filter")], [element.text("Food Category")]),
-    category_dropdown(categories, selected_category, on_change_handler),
+    category_dropdown(categories, selected_category),
   ])
 }
 
