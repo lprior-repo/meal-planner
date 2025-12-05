@@ -81,7 +81,9 @@ pub fn start() -> actor.StartResult(Subject(Message)) {
     user_id: 0,
   )
 
-  actor.start(initial_state, handle_message)
+  actor.new(initial_state)
+  |> actor.on_message(handle_message)
+  |> actor.start
 }
 
 /// Create a child specification for adding this actor to a supervisor
@@ -121,7 +123,7 @@ fn handle_message(state: State, message: Message) -> actor.Next(State, Message) 
     }
 
     Shutdown -> {
-      actor.Stop
+      actor.stop()
     }
   }
 }

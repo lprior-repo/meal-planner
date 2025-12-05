@@ -26,8 +26,9 @@ import meal_planner/storage
 import meal_planner/storage_optimized
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
-  type UserProfile, Active, Breakfast, Dinner, Gain, Lose, Lunch, Macros,
-  Maintain, Moderate, Sedentary, Snack, UserProfile,
+  type SearchFilters, type UserProfile, Active, Breakfast, DailyLog, Dinner,
+  FoodLogEntry, Gain, Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack,
+  UserProfile,
 }
 import meal_planner/ui/components/food_search
 import meal_planner/web/handlers/dashboard
