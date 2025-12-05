@@ -354,7 +354,7 @@ pub fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
             items,
             list.length(foods),
             active_filters,
-            list.length(active_filters) > 0,
+            active_filters != [],
           )
           |> element.to_string
         }

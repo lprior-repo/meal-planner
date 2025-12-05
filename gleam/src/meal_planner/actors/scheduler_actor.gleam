@@ -28,11 +28,9 @@
 /// scheduler_actor.shutdown(actor_subject)
 /// ```
 import gleam/erlang/process.{type Subject, send, send_after}
-import gleam/int
 import gleam/list
 import gleam/otp/actor
 import gleam/otp/supervision
-import gleam/string
 import meal_planner/integrations/smtp_client
 import meal_planner/storage
 import meal_planner/ui/email_templates
@@ -255,8 +253,7 @@ fn smtp_error_to_string(error: smtp_client.Error) -> String {
 }
 
 /// Log an error message
-fn log_error(context: String, message: String) -> Nil {
-  let log_msg = "[SchedulerActor ERROR] " <> context <> ": " <> message
+fn log_error(_context: String, _message: String) -> Nil {
   // In production, this would write to a proper logger
   // For now, it's handled by Erlang's default error handling
   Nil

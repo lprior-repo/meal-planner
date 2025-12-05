@@ -50,11 +50,12 @@ pub fn search_foods_cached(
   case cached_result {
     Some(results) -> {
       // Cache hit - return immediately
-      query_cache.record_metric(
-        True,
-        "search_foods",
-        constants.cached_query_time_ms,
-      )
+      let _ =
+        query_cache.record_metric(
+          True,
+          "search_foods",
+          constants.cached_query_time_ms,
+        )
       #(updated_cache, Ok(results))
     }
 
@@ -68,7 +69,7 @@ pub fn search_foods_cached(
         Error(_) -> updated_cache
       }
 
-      query_cache.record_metric(False, "search_foods", 50.0)
+      let _ = query_cache.record_metric(False, "search_foods", 50.0)
       #(final_cache, result)
     }
   }
@@ -166,11 +167,12 @@ pub fn search_foods_filtered_cached(
 
   case cached_result {
     Some(results) -> {
-      query_cache.record_metric(
-        True,
-        "search_foods_filtered",
-        constants.cached_query_time_ms,
-      )
+      let _ =
+        query_cache.record_metric(
+          True,
+          "search_foods_filtered",
+          constants.cached_query_time_ms,
+        )
       #(updated_cache, Ok(results))
     }
 
@@ -182,11 +184,12 @@ pub fn search_foods_filtered_cached(
         Error(_) -> updated_cache
       }
 
-      query_cache.record_metric(
-        False,
-        "search_foods_filtered",
-        constants.uncached_filtered_search_query_time_ms,
-      )
+      let _ =
+        query_cache.record_metric(
+          False,
+          "search_foods_filtered",
+          constants.uncached_filtered_search_query_time_ms,
+        )
       #(final_cache, result)
     }
   }
