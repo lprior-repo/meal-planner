@@ -25,14 +25,6 @@ import meal_planner/types.{
 }
 import pog
 
-/// Error type for storage operations
-pub type StorageError {
-  NotFound
-  DatabaseError(String)
-  InvalidInput(String)
-  Unauthorized(String)
-}
-
 /// Valid USDA food categories for SQL injection prevention
 /// These are the official USDA FoodData Central categories
 const valid_food_categories = [
@@ -354,7 +346,10 @@ pub fn save_food_to_log(
       case food_source {
         // Recipe source: Fetch recipe and use its macros
         types.RecipeSource(recipe_id) -> {
-          use recipe <- result.try(get_recipe_by_id(conn, recipe_id))
+          use recipe <- result.try(
+            get_recipe_by_id(conn, recipe_id)
+            |> result.map_error(fn(_) { DatabaseError("Failed to fetch recipe") })
+          )
 
           // Scale recipe macros by servings
 
