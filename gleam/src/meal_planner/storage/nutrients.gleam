@@ -7,7 +7,13 @@ import gleam/result
 import gleam/string
 import meal_planner/ncp
 import meal_planner/postgres
-import meal_planner/storage/foods.{type FoodNutrientValue}
+import meal_planner/storage/foods.{
+  type FoodNutrientValue, type UsdaFood, type UsdaFoodWithNutrients,
+  FoodNutrientValue, UsdaFood, UsdaFoodWithNutrients,
+}
+import meal_planner/storage/logs.{
+  type FoodSummaryItem, type WeeklySummary, FoodSummaryItem, WeeklySummary,
+}
 import meal_planner/storage/utils
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
