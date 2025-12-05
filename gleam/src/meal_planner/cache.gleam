@@ -94,7 +94,7 @@ pub fn invalidate_prefix(cache: Cache(a), prefix: String) -> Cache(a) {
 }
 
 /// Clear all entries from the cache
-pub fn clear(cache: Cache(a)) -> Cache(a) {
+pub fn clear(_cache: Cache(a)) -> Cache(a) {
   Cache(entries: dict.new())
 }
 
