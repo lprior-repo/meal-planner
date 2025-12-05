@@ -12,6 +12,9 @@ import lustre/element/html.{
   textarea,
 }
 import meal_planner/nutrition_constants
+import meal_planner/ui/types/ui_types.{
+  type NutritionFieldProps, NutritionFieldProps,
+}
 
 /// Generate the complete recipe creation form HTML
 pub fn render_form() -> Element(msg) {
@@ -518,75 +521,69 @@ fn nutrition_section() -> Element(msg) {
       text("Nutrition Information (per serving)"),
     ]),
     div([class("grid grid-cols-2 gap-4")], [
-      nutrition_field(
-        "calories",
-        "Calories (kcal)",
-        nutrition_constants.max_calories_per_serving |> int.to_string,
-        "1",
-        "e.g., 350",
-      ),
-      nutrition_field(
-        "protein",
-        "Protein (g)",
-        nutrition_constants.max_macronutrient_grams |> int.to_string,
-        "0.1",
-        "e.g., 30",
-      ),
-      nutrition_field(
-        "carbs",
-        "Carbohydrates (g)",
-        nutrition_constants.max_macronutrient_grams |> int.to_string,
-        "0.1",
-        "e.g., 25",
-      ),
-      nutrition_field(
-        "fat",
-        "Fat (g)",
-        nutrition_constants.max_macronutrient_grams |> int.to_string,
-        "0.1",
-        "e.g., 15",
-      ),
-      nutrition_field(
-        "fiber",
-        "Fiber (g)",
-        nutrition_constants.max_macronutrient_grams |> int.to_string,
-        "0.1",
-        "e.g., 5",
-      ),
-      nutrition_field(
-        "sugar",
-        "Sugar (g)",
-        nutrition_constants.max_macronutrient_grams |> int.to_string,
-        "0.1",
-        "e.g., 8",
-      ),
+      nutrition_field(NutritionFieldProps(
+        field_name: "calories",
+        label_text: "Calories (kcal)",
+        max_val: nutrition_constants.max_calories_per_serving |> int.to_string,
+        step_val: "1",
+        placeholder_text: "e.g., 350",
+      )),
+      nutrition_field(NutritionFieldProps(
+        field_name: "protein",
+        label_text: "Protein (g)",
+        max_val: nutrition_constants.max_macronutrient_grams |> int.to_string,
+        step_val: "0.1",
+        placeholder_text: "e.g., 30",
+      )),
+      nutrition_field(NutritionFieldProps(
+        field_name: "carbs",
+        label_text: "Carbohydrates (g)",
+        max_val: nutrition_constants.max_macronutrient_grams |> int.to_string,
+        step_val: "0.1",
+        placeholder_text: "e.g., 25",
+      )),
+      nutrition_field(NutritionFieldProps(
+        field_name: "fat",
+        label_text: "Fat (g)",
+        max_val: nutrition_constants.max_macronutrient_grams |> int.to_string,
+        step_val: "0.1",
+        placeholder_text: "e.g., 15",
+      )),
+      nutrition_field(NutritionFieldProps(
+        field_name: "fiber",
+        label_text: "Fiber (g)",
+        max_val: nutrition_constants.max_macronutrient_grams |> int.to_string,
+        step_val: "0.1",
+        placeholder_text: "e.g., 5",
+      )),
+      nutrition_field(NutritionFieldProps(
+        field_name: "sugar",
+        label_text: "Sugar (g)",
+        max_val: nutrition_constants.max_macronutrient_grams |> int.to_string,
+        step_val: "0.1",
+        placeholder_text: "e.g., 8",
+      )),
     ]),
   ])
 }
 
-fn nutrition_field(
-  field_name: String,
-  label_text: String,
-  max_val: String,
-  step_val: String,
-  placeholder_text: String,
-) -> Element(msg) {
+fn nutrition_field(props: NutritionFieldProps) -> Element(msg) {
   div([class("form-group")], [
-    label([attribute("for", field_name)], [text(label_text)]),
+    label([attribute("for", props.field_name)], [text(props.label_text)]),
     input([
       type_("number"),
-      id(field_name),
-      name(field_name),
+      id(props.field_name),
+      name(props.field_name),
       class("input"),
       min("0"),
-      max(max_val),
-      step(step_val),
-      placeholder(placeholder_text),
-      attribute("aria-describedby", field_name <> "-error"),
+      max(props.max_val),
+      step(props.step_val),
+      placeholder(props.placeholder_text),
+      attribute("aria-describedby", props.field_name <> "-error"),
     ]),
     span(
       [
-        id(field_name <> "-error"),
+        id(props.field_name <> "-error"),
         class("form-error"),
         attribute("role", "alert"),
       ],

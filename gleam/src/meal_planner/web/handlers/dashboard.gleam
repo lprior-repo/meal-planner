@@ -9,7 +9,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option
 import gleam/result
 import gleam/string
 import gleam/uri
@@ -20,10 +20,8 @@ import meal_planner/nutrition_constants
 import meal_planner/storage
 import meal_planner/storage_optimized
 import meal_planner/types.{
-  type FoodLogEntry, type Macros, type UserProfile, Macros, daily_macro_targets,
-  macros_calories,
+  type FoodLogEntry, type UserProfile, daily_macro_targets, macros_calories,
 }
-import meal_planner/ui/components/progress
 import meal_planner/ui/pages/dashboard as dashboard_page
 import meal_planner/ui/types/ui_types
 import pog
@@ -181,6 +179,11 @@ fn render_full_page(
         html.link([
           attribute.rel("stylesheet"),
           attribute.href("/static/styles.css"),
+        ]),
+        // Include lazy loading and skeleton styles
+        html.link([
+          attribute.rel("stylesheet"),
+          attribute.href("/static/css/lazy-loading.css"),
         ]),
         // HTMX library - the ONLY JavaScript allowed in the project
         // All interactivity must use HTMX attributes, not custom JS files

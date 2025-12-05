@@ -11,8 +11,6 @@ import gleam/io
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/result
-import gleam/string
 import gleam/uri
 import lustre/attribute
 import lustre/element
@@ -31,6 +29,7 @@ import meal_planner/types.{
   UserProfile,
 }
 import meal_planner/ui/components/food_search
+import meal_planner/web/handlers/custom_foods
 import meal_planner/web/handlers/dashboard
 import meal_planner/web/handlers/food_log
 import meal_planner/web/handlers/generate
@@ -994,103 +993,6 @@ fn macro_stat_block(label: String, value: String) -> element.Element(msg) {
   ])
 }
 
-fn macro_bar(
-  label: String,
-  current: Float,
-  target: Float,
-  color: String,
-) -> element.Element(msg) {
-  let pct = case target >. 0.0 {
-    True -> current /. target *. 100.0
-    False -> 0.0
-  }
-  let pct_capped = case pct >. 100.0 {
-    True -> 100.0
-    False -> pct
-  }
-
-  html.div([attribute.class("macro-bar")], [
-    html.div([attribute.class("macro-bar-header")], [
-      html.span([], [element.text(label)]),
-      html.span([], [
-        element.text(
-          float_to_string(current) <> "g / " <> float_to_string(target) <> "g",
-        ),
-      ]),
-    ]),
-    html.div([attribute.class("progress-bar")], [
-      html.div(
-        [
-          attribute.class("progress-fill"),
-          attribute.style(
-            "width",
-            float_to_string(pct_capped) <> "%; background:" <> color,
-          ),
-        ],
-        [],
-      ),
-    ]),
-  ])
-}
-
-fn filter_btn(
-  label: String,
-  value: String,
-  current: String,
-) -> element.Element(msg) {
-  let class = case value == current {
-    True -> "filter-btn active"
-    False -> "filter-btn"
-  }
-  html.a(
-    [attribute.href("/dashboard?filter=" <> value), attribute.class(class)],
-    [element.text(label)],
-  )
-}
-
-fn meal_entry_item(entry: FoodLogEntry) -> element.Element(msg) {
-  html.li([attribute.class("meal-entry")], [
-    html.div([attribute.class("meal-info")], [
-      html.span([attribute.class("meal-name")], [
-        element.text(entry.recipe_name),
-      ]),
-      html.span([attribute.class("meal-servings")], [
-        element.text(" (" <> float_to_string(entry.servings) <> " serving)"),
-      ]),
-      html.span([attribute.class("meal-type-badge")], [
-        element.text(meal_type_to_string(entry.meal_type)),
-      ]),
-    ]),
-    html.div([attribute.class("meal-macros")], [
-      element.text(
-        float_to_string(entry.macros.protein)
-        <> "P / "
-        <> float_to_string(entry.macros.fat)
-        <> "F / "
-        <> float_to_string(entry.macros.carbs)
-        <> "C",
-      ),
-    ]),
-    html.a(
-      [
-        attribute.href("/api/logs/entry/" <> entry.id <> "?action=delete"),
-        attribute.class("delete-btn"),
-      ],
-      [element.text("×")],
-    ),
-  ])
-}
-
-fn sum_macros(entries: List(FoodLogEntry)) -> Macros {
-  list.fold(entries, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(acc, entry) {
-    Macros(
-      protein: acc.protein +. entry.macros.protein,
-      fat: acc.fat +. entry.macros.fat,
-      carbs: acc.carbs +. entry.macros.carbs,
-    )
-  })
-}
-
 fn profile_page(ctx: Context) -> wisp.Response {
   let profile = load_profile(ctx)
   let targets = types.daily_macro_targets(profile)
@@ -1139,41 +1041,46 @@ fn log_meal_page(ctx: Context) -> wisp.Response {
 
   let content = [
     page_header("Log Meal", "/dashboard"),
-    html.div([attribute.class("page-description")], [
-      html.p([], [element.text("Select a recipe to log:")]),
+    html.main([attribute.attribute("role", "main")], [
+      html.div([attribute.class("page-description")], [
+        html.p([], [element.text("Select a recipe to log:")]),
+      ]),
+      html.section(
+        [
+          attribute.class("recipe-grid"),
+          attribute.attribute("aria-label", "Available recipes to log"),
+        ],
+        list.map(recipes, fn(recipe) {
+          html.a(
+            [
+              attribute.class("recipe-card"),
+              attribute.href("/log/" <> recipe.id),
+            ],
+            [
+              html.div([attribute.class("recipe-card-content")], [
+                html.h3([attribute.class("recipe-title")], [
+                  element.text(recipe.name),
+                ]),
+                html.span([attribute.class("recipe-category")], [
+                  element.text(recipe.category),
+                ]),
+                html.div([attribute.class("recipe-macros")], [
+                  macro_badge("P", recipe.macros.protein),
+                  macro_badge("F", recipe.macros.fat),
+                  macro_badge("C", recipe.macros.carbs),
+                ]),
+                html.div([attribute.class("recipe-calories")], [
+                  element.text(
+                    float_to_string(types.macros_calories(recipe.macros))
+                    <> " cal",
+                  ),
+                ]),
+              ]),
+            ],
+          )
+        }),
+      ),
     ]),
-    html.div(
-      [attribute.class("recipe-grid")],
-      list.map(recipes, fn(recipe) {
-        html.a(
-          [
-            attribute.class("recipe-card"),
-            attribute.href("/log/" <> recipe.id),
-          ],
-          [
-            html.div([attribute.class("recipe-card-content")], [
-              html.h3([attribute.class("recipe-title")], [
-                element.text(recipe.name),
-              ]),
-              html.span([attribute.class("recipe-category")], [
-                element.text(recipe.category),
-              ]),
-              html.div([attribute.class("recipe-macros")], [
-                macro_badge("P", recipe.macros.protein),
-                macro_badge("F", recipe.macros.fat),
-                macro_badge("C", recipe.macros.carbs),
-              ]),
-              html.div([attribute.class("recipe-calories")], [
-                element.text(
-                  float_to_string(types.macros_calories(recipe.macros))
-                  <> " cal",
-                ),
-              ]),
-            ]),
-          ],
-        )
-      }),
-    ),
   ]
 
   wisp.html_response(render_page("Log Meal - Meal Planner", content), 200)
@@ -1567,6 +1474,11 @@ fn render_page(title: String, content: List(element.Element(msg))) -> String {
           attribute.rel("stylesheet"),
           attribute.href("/static/styles.css"),
         ]),
+        // Include lazy loading and skeleton styles
+        html.link([
+          attribute.rel("stylesheet"),
+          attribute.href("/static/css/lazy-loading.css"),
+        ]),
         // HTMX library - the ONLY JavaScript allowed in the project
         // All interactivity must use HTMX attributes, not custom JS files
         html.script([attribute.src("https://unpkg.com/htmx.org@1.9.10")], ""),
@@ -1593,7 +1505,11 @@ fn handle_api(
     ["foods"] -> search.api_foods(req, search.Context(db: ctx.db))
     ["foods", "search"] -> api_foods_search(req, ctx)
     ["foods", id] -> search.api_food(req, id, search.Context(db: ctx.db))
+    ["custom-foods", ..rest] ->
+      custom_foods.api_custom_foods(req, rest, custom_foods.Context(db: ctx.db))
     ["logs"] -> food_log.api_logs_create(req, food_log.Context(db: ctx.db))
+    ["logs", "food"] ->
+      food_log.api_logs_food(req, food_log.Context(db: ctx.db))
     ["logs", "entry", id] ->
       food_log.api_log_entry(req, id, food_log.Context(db: ctx.db))
     ["swap", meal_type] ->
@@ -1605,449 +1521,6 @@ fn handle_api(
     ["meal-plans", "auto", id] -> api_auto_meal_plan_by_id(req, id, ctx)
     ["fragments", "filters"] -> search.api_filter_fragment(req)
     _ -> wisp.not_found()
-  }
-}
-
-fn api_recipes(req: wisp.Request, ctx: Context) -> wisp.Response {
-  case req.method {
-    http.Get -> {
-      let recipes = load_recipes(ctx)
-      let json_data = json.array(recipes, recipe_to_json)
-      wisp.json_response(json.to_string(json_data), 200)
-    }
-    http.Post -> create_recipe_handler(req, ctx)
-    _ -> wisp.method_not_allowed([http.Get, http.Post])
-  }
-}
-
-fn create_recipe_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
-  use form_data <- wisp.require_form(req)
-
-  case parse_recipe_from_form(form_data.values) {
-    Ok(recipe) -> {
-      case storage.save_recipe(ctx.db, recipe) {
-        Ok(_) -> {
-          wisp.redirect("/recipes/" <> recipe.id)
-        }
-        Error(storage.DatabaseError(msg)) -> {
-          let error_json =
-            json.object([
-              #("error", json.string("Failed to save recipe: " <> msg)),
-            ])
-          wisp.json_response(json.to_string(error_json), 500)
-        }
-        Error(storage.NotFound) -> {
-          let error_json = json.object([#("error", json.string("Not found"))])
-          wisp.json_response(json.to_string(error_json), 404)
-        }
-        Error(storage.InvalidInput(msg)) -> {
-          let error_json =
-            json.object([#("error", json.string("Invalid input: " <> msg))])
-          wisp.json_response(json.to_string(error_json), 400)
-        }
-        Error(storage.Unauthorized(msg)) -> {
-          let error_json =
-            json.object([#("error", json.string("Unauthorized: " <> msg))])
-          wisp.json_response(json.to_string(error_json), 401)
-        }
-      }
-    }
-    Error(errors) -> {
-      let error_json =
-        json.object([
-          #("error", json.string("Validation failed")),
-          #("details", json.array(errors, json.string)),
-        ])
-      wisp.json_response(json.to_string(error_json), 400)
-    }
-  }
-}
-
-fn parse_recipe_from_form(
-  values: List(#(String, String)),
-) -> Result(Recipe, List(String)) {
-  // Extract basic fields
-  let name = case list.key_find(values, "name") {
-    Ok(n) if n != "" -> Ok(n)
-    _ -> Error("Recipe name is required")
-  }
-
-  let category = case list.key_find(values, "category") {
-    Ok(c) if c != "" -> Ok(c)
-    _ -> Error("Category is required")
-  }
-
-  let servings = case list.key_find(values, "servings") {
-    Ok(s) ->
-      case int.parse(s) {
-        Ok(num) if num > 0 -> Ok(num)
-        _ -> Error("Servings must be a positive number")
-      }
-    _ -> Error("Servings is required")
-  }
-
-  // Extract macros
-  let protein = case list.key_find(values, "protein") {
-    Ok(p) ->
-      case float.parse(p) {
-        Ok(num) if num >=. 0.0 -> Ok(num)
-        _ -> Error("Protein must be a non-negative number")
-      }
-    _ -> Error("Protein is required")
-  }
-
-  let fat = case list.key_find(values, "fat") {
-    Ok(f) ->
-      case float.parse(f) {
-        Ok(num) if num >=. 0.0 -> Ok(num)
-        _ -> Error("Fat must be a non-negative number")
-      }
-    _ -> Error("Fat is required")
-  }
-
-  let carbs = case list.key_find(values, "carbs") {
-    Ok(c) ->
-      case float.parse(c) {
-        Ok(num) if num >=. 0.0 -> Ok(num)
-        _ -> Error("Carbs must be a non-negative number")
-      }
-    _ -> Error("Carbs is required")
-  }
-
-  // Extract FODMAP level
-  let fodmap_level = case list.key_find(values, "fodmap_level") {
-    Ok("low") -> Ok(types.Low)
-    Ok("medium") -> Ok(types.Medium)
-    Ok("high") -> Ok(types.High)
-    _ -> Error("FODMAP level must be 'low', 'medium', or 'high'")
-  }
-
-  // Extract vertical_compliant (checkbox)
-  let vertical_compliant = case list.key_find(values, "vertical_compliant") {
-    Ok("true") -> True
-    _ -> False
-  }
-
-  // Extract ingredients (dynamic fields)
-  let ingredients = extract_ingredients(values)
-  let ingredients_result = case ingredients {
-    [] -> Error("At least one ingredient is required")
-    _ -> Ok(ingredients)
-  }
-
-  // Extract instructions (dynamic fields)
-  let instructions = extract_instructions(values)
-  let instructions_result = case instructions {
-    [] -> Error("At least one instruction is required")
-    _ -> Ok(instructions)
-  }
-
-  // Collect all errors
-  let all_errors =
-    []
-    |> add_error(name)
-    |> add_error(category)
-    |> add_error(servings)
-    |> add_error(protein)
-    |> add_error(fat)
-    |> add_error(carbs)
-    |> add_error(fodmap_level)
-    |> add_error(ingredients_result)
-    |> add_error(instructions_result)
-
-  case all_errors {
-    [] -> {
-      // All validations passed, create Recipe
-      let assert Ok(name_val) = name
-      let assert Ok(category_val) = category
-      let assert Ok(servings_val) = servings
-      let assert Ok(protein_val) = protein
-      let assert Ok(fat_val) = fat
-      let assert Ok(carbs_val) = carbs
-      let assert Ok(fodmap_val) = fodmap_level
-      let assert Ok(ingredients_val) = ingredients_result
-      let assert Ok(instructions_val) = instructions_result
-
-      let recipe =
-        types.Recipe(
-          id: generate_recipe_id(name_val),
-          name: name_val,
-          ingredients: ingredients_val,
-          instructions: instructions_val,
-          macros: Macros(protein: protein_val, fat: fat_val, carbs: carbs_val),
-          servings: servings_val,
-          category: category_val,
-          fodmap_level: fodmap_val,
-          vertical_compliant: vertical_compliant,
-        )
-
-      Ok(recipe)
-    }
-    errs -> Error(errs)
-  }
-}
-
-fn add_error(errors: List(String), result: Result(a, String)) -> List(String) {
-  case result {
-    Ok(_) -> errors
-    Error(msg) -> [msg, ..errors]
-  }
-}
-
-fn extract_ingredients(
-  values: List(#(String, String)),
-) -> List(types.Ingredient) {
-  let ingredient_pairs =
-    list.filter_map(values, fn(pair) {
-      let #(key, _) = pair
-      case string.starts_with(key, "ingredient_name_") {
-        True -> {
-          let index = string.replace(key, "ingredient_name_", "")
-          Ok(index)
-        }
-        False -> Error(Nil)
-      }
-    })
-
-  list.filter_map(ingredient_pairs, fn(index) {
-    let name_key = "ingredient_name_" <> index
-    let quantity_key = "ingredient_quantity_" <> index
-
-    let name = list.key_find(values, name_key) |> result.unwrap("")
-    let quantity = list.key_find(values, quantity_key) |> result.unwrap("")
-
-    case name != "" && quantity != "" {
-      True -> Ok(types.Ingredient(name: name, quantity: quantity))
-      False -> Error(Nil)
-    }
-  })
-}
-
-fn extract_instructions(values: List(#(String, String))) -> List(String) {
-  let instruction_indices =
-    list.filter_map(values, fn(pair) {
-      let #(key, _) = pair
-      case string.starts_with(key, "instruction_") {
-        True -> {
-          let index = string.replace(key, "instruction_", "")
-          Ok(index)
-        }
-        False -> Error(Nil)
-      }
-    })
-
-  list.filter_map(instruction_indices, fn(index) {
-    let key = "instruction_" <> index
-    case list.key_find(values, key) {
-      Ok(instruction) -> {
-        case instruction != "" {
-          True -> Ok(instruction)
-          False -> Error(Nil)
-        }
-      }
-      Error(_) -> Error(Nil)
-    }
-  })
-}
-
-fn generate_recipe_id(name: String) -> String {
-  let normalized =
-    name
-    |> string.lowercase
-    |> string.replace(" ", "-")
-    |> string.replace("'", "")
-    |> string.replace("\"", "")
-
-  // Add timestamp to ensure uniqueness
-  let timestamp = get_timestamp_string()
-  normalized <> "-" <> timestamp
-}
-
-@external(erlang, "erlang", "system_time")
-fn system_time(unit: Int) -> Int
-
-fn get_timestamp_string() -> String {
-  // Get milliseconds since epoch
-  let millis = system_time(1000)
-  // Take last 6 digits to keep ID shorter
-  let short_id = millis % 1_000_000
-  int_to_string(short_id)
-}
-
-fn api_recipe(req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
-  case req.method {
-    http.Get -> {
-      case load_recipe_by_id(ctx, id) {
-        Ok(recipe) -> {
-          let json_data = recipe_to_json(recipe)
-          wisp.json_response(json.to_string(json_data), 200)
-        }
-        Error(_) -> wisp.not_found()
-      }
-    }
-    http.Post -> {
-      // Handle both DELETE (_method=DELETE) and UPDATE (_method=PUT) via method override
-      use form_data <- wisp.require_form(req)
-
-      let method_override = list.key_find(form_data.values, "_method")
-
-      case method_override {
-        Ok("DELETE") -> {
-          // Handle delete
-          case storage.delete_recipe(ctx.db, id) {
-            Ok(_) -> wisp.redirect("/recipes")
-            Error(_) -> wisp.not_found()
-          }
-        }
-        Ok("PUT") -> {
-          // Handle update
-          case parse_recipe_from_form(form_data.values) {
-            Ok(recipe) -> {
-              let updated_recipe = types.Recipe(..recipe, id: id)
-              case storage.save_recipe(ctx.db, updated_recipe) {
-                Ok(_) -> wisp.redirect("/recipes/" <> id)
-                Error(storage.DatabaseError(msg)) -> {
-                  let error_json =
-                    json.object([
-                      #(
-                        "error",
-                        json.string("Failed to update recipe: " <> msg),
-                      ),
-                    ])
-                  wisp.json_response(json.to_string(error_json), 500)
-                }
-                Error(storage.NotFound) -> {
-                  let error_json =
-                    json.object([#("error", json.string("Recipe not found"))])
-                  wisp.json_response(json.to_string(error_json), 404)
-                }
-                Error(storage.InvalidInput(msg)) -> {
-                  let error_json =
-                    json.object([
-                      #("error", json.string("Invalid input: " <> msg)),
-                    ])
-                  wisp.json_response(json.to_string(error_json), 400)
-                }
-                Error(storage.Unauthorized(msg)) -> {
-                  let error_json =
-                    json.object([
-                      #("error", json.string("Unauthorized: " <> msg)),
-                    ])
-                  wisp.json_response(json.to_string(error_json), 401)
-                }
-              }
-            }
-            Error(errors) -> {
-              let error_json =
-                json.object([
-                  #("error", json.string("Validation failed")),
-                  #("details", json.array(errors, json.string)),
-                ])
-              wisp.json_response(json.to_string(error_json), 400)
-            }
-          }
-        }
-        _ -> wisp.method_not_allowed([http.Get, http.Post])
-      }
-    }
-    http.Delete -> {
-      case storage.delete_recipe(ctx.db, id) {
-        Ok(_) -> wisp.json_response("{\"success\": true}", 200)
-        Error(_) -> wisp.not_found()
-      }
-    }
-    _ -> wisp.method_not_allowed([http.Get, http.Post, http.Delete])
-  }
-}
-
-fn api_profile(_req: wisp.Request, ctx: Context) -> wisp.Response {
-  let profile = load_profile(ctx)
-  let json_data = profile_to_json(profile)
-  wisp.json_response(json.to_string(json_data), 200)
-}
-
-fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
-  // Parse all query parameters
-  let parsed_query = uri.parse_query(req.query |> option.unwrap(""))
-
-  // Read search query - support both 'q' and 'query' parameter names
-  let query = case parsed_query {
-    Ok(params) -> {
-      // Try 'q' first, then 'query' as fallback
-      case list.find(params, fn(p) { p.0 == "q" }) {
-        Ok(#(_, q)) -> q
-        Error(_) ->
-          case list.find(params, fn(p) { p.0 == "query" }) {
-            Ok(#(_, q)) -> q
-            Error(_) -> ""
-          }
-      }
-    }
-    Error(_) -> ""
-  }
-
-  // Parse all filter parameters from URL query string
-  // This ensures the handler is stateless and works with HTMX URL-based state
-  let filters = case parsed_query {
-    Ok(params) -> {
-      // Parse verified filter - accepts "true" string or "1"
-      let verified_only = case
-        list.find(params, fn(p) { p.0 == "verified" || p.0 == "verified_only" })
-      {
-        Ok(#(_, "true")) -> True
-        Ok(#(_, "1")) -> True
-        _ -> False
-      }
-
-      // Parse branded filter - accepts "true" string or "1"
-      let branded_only = case
-        list.find(params, fn(p) { p.0 == "branded" || p.0 == "branded_only" })
-      {
-        Ok(#(_, "true")) -> True
-        Ok(#(_, "1")) -> True
-        _ -> False
-      }
-
-      // Parse category filter - empty string treated as None
-      let category = case list.find(params, fn(p) { p.0 == "category" }) {
-        Ok(#(_, cat)) if cat != "" && cat != "all" -> Some(cat)
-        _ -> None
-      }
-
-      types.SearchFilters(
-        verified_only: verified_only,
-        branded_only: branded_only,
-        category: category,
-      )
-    }
-    Error(_) ->
-      // Default filters when no query params
-      types.SearchFilters(
-        verified_only: False,
-        branded_only: False,
-        category: None,
-      )
-  }
-
-  case query {
-    "" -> {
-      let json_data =
-        json.object([
-          #("error", json.string("Query parameter 'q' or 'query' required")),
-        ])
-      wisp.json_response(json.to_string(json_data), 400)
-    }
-    q -> {
-      let #(_updated_ctx, foods) =
-        search_foods_filtered(
-          ctx,
-          q,
-          filters,
-          nutrition_constants.default_search_limit,
-        )
-      let json_data = json.array(foods, food_to_json)
-      wisp.json_response(json.to_string(json_data), 200)
-    }
   }
 }
 
@@ -2161,143 +1634,6 @@ fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
 
   // Return only the HTML fragment (not a full page)
   wisp.html_response(element.to_string(search_results), 200)
-}
-
-fn api_food(_req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
-  case int.parse(id) {
-    Error(_) -> wisp.not_found()
-    Ok(fdc_id) -> {
-      case load_food_by_id(ctx, fdc_id) {
-        Error(_) -> wisp.not_found()
-        Ok(food) -> {
-          let nutrients = load_food_nutrients(ctx, fdc_id)
-          let json_data =
-            json.object([
-              #("fdc_id", json.int(food.fdc_id)),
-              #("description", json.string(food.description)),
-              #("data_type", json.string(food.data_type)),
-              #("category", json.string(food.category)),
-              #(
-                "nutrients",
-                json.array(nutrients, fn(n) {
-                  json.object([
-                    #("name", json.string(n.nutrient_name)),
-                    #("amount", json.float(n.amount)),
-                    #("unit", json.string(n.unit)),
-                  ])
-                }),
-              ),
-            ])
-          wisp.json_response(json.to_string(json_data), 200)
-        }
-      }
-    }
-  }
-}
-
-fn food_to_json(f: storage.UsdaFood) -> json.Json {
-  json.object([
-    #("fdc_id", json.int(f.fdc_id)),
-    #("description", json.string(f.description)),
-    #("data_type", json.string(f.data_type)),
-    #("category", json.string(f.category)),
-  ])
-}
-
-/// POST /api/logs - Create a new food log entry
-fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
-  // Get query params for form submission
-  case uri.parse_query(req.query |> option.unwrap("")) {
-    Ok(params) -> {
-      let recipe_id =
-        list.find(params, fn(p) { p.0 == "recipe_id" })
-        |> result.map(fn(p) { p.1 })
-      let servings_str =
-        list.find(params, fn(p) { p.0 == "servings" })
-        |> result.map(fn(p) { p.1 })
-      let meal_type_str =
-        list.find(params, fn(p) { p.0 == "meal_type" })
-        |> result.map(fn(p) { p.1 })
-
-      case recipe_id, servings_str, meal_type_str {
-        Ok(rid), Ok(sstr), Ok(mtstr) -> {
-          let servings = case float.parse(sstr) {
-            Ok(s) -> s
-            Error(_) -> 1.0
-          }
-          let meal_type = string_to_meal_type(mtstr)
-          let today = get_today_date()
-
-          // Get recipe to calculate macros
-          case load_recipe_by_id(ctx, rid) {
-            Error(_) -> wisp.not_found()
-            Ok(recipe) -> {
-              let scaled_macros = types.macros_scale(recipe.macros, servings)
-              let entry =
-                FoodLogEntry(
-                  id: generate_entry_id(),
-                  recipe_id: recipe.id,
-                  recipe_name: recipe.name,
-                  servings: servings,
-                  macros: scaled_macros,
-                  micronutrients: None,
-                  meal_type: meal_type,
-                  logged_at: current_timestamp(),
-                  source_type: "recipe",
-                  source_id: recipe.id,
-                )
-
-              case storage.save_food_log_entry(ctx.db, today, entry) {
-                Ok(_) -> wisp.redirect("/dashboard")
-                Error(_) -> {
-                  let err =
-                    json.object([
-                      #("error", json.string("Failed to save entry")),
-                    ])
-                  wisp.json_response(json.to_string(err), 500)
-                }
-              }
-            }
-          }
-        }
-        _, _, _ -> {
-          let err =
-            json.object([
-              #("error", json.string("Missing required parameters")),
-            ])
-          wisp.json_response(json.to_string(err), 400)
-        }
-      }
-    }
-    Error(_) -> {
-      let err =
-        json.object([#("error", json.string("Invalid query parameters"))])
-      wisp.json_response(json.to_string(err), 400)
-    }
-  }
-}
-
-/// GET/DELETE /api/logs/entry/:id - Manage a log entry
-fn api_log_entry(
-  req: wisp.Request,
-  entry_id: String,
-  ctx: Context,
-) -> wisp.Response {
-  // Check for delete action in query params
-  case uri.parse_query(req.query |> option.unwrap("")) {
-    Ok(params) -> {
-      case list.find(params, fn(p) { p.0 == "action" && p.1 == "delete" }) {
-        Ok(_) -> {
-          case storage.delete_food_log(ctx.db, entry_id) {
-            Ok(_) -> wisp.redirect("/dashboard")
-            Error(_) -> wisp.not_found()
-          }
-        }
-        Error(_) -> wisp.not_found()
-      }
-    }
-    Error(_) -> wisp.not_found()
-  }
 }
 
 fn api_recipe_sources(req: wisp.Request, ctx: Context) -> wisp.Response {
@@ -2531,27 +1867,6 @@ fn default_profile() -> UserProfile {
   )
 }
 
-fn search_foods(
-  ctx: Context,
-  query: String,
-  limit: Int,
-) -> #(Context, List(storage.UsdaFood)) {
-  let #(updated_cache, result) =
-    storage_optimized.search_foods_cached(
-      ctx.db,
-      ctx.search_cache,
-      query,
-      limit,
-    )
-
-  let updated_ctx = Context(..ctx, search_cache: updated_cache)
-
-  case result {
-    Ok(foods) -> #(updated_ctx, foods)
-    Error(_) -> #(updated_ctx, [])
-  }
-}
-
 fn search_foods_filtered(
   ctx: Context,
   query: String,
@@ -2613,13 +1928,6 @@ fn load_daily_log(ctx: Context, date: String) -> DailyLog {
       )
     }
   }
-}
-
-/// Get today's date in YYYY-MM-DD format
-fn get_today_date() -> String {
-  // This is a simplified version - in production you'd want to use a proper date library
-  // For now, we'll use a system call to get the date
-  "2025-12-01"
 }
 
 /// Sample recipes for fallback when database is empty
@@ -2742,48 +2050,6 @@ fn goal_to_string(p: UserProfile) -> String {
   }
 }
 
-fn meal_type_to_string(meal_type: MealType) -> String {
-  case meal_type {
-    Breakfast -> "Breakfast"
-    Lunch -> "Lunch"
-    Dinner -> "Dinner"
-    Snack -> "Snack"
-  }
-}
-
-/// Convert string to meal type
-fn string_to_meal_type(s: String) -> MealType {
-  case s {
-    "breakfast" -> Breakfast
-    "lunch" -> Lunch
-    "dinner" -> Dinner
-    "snack" -> Snack
-    _ -> Lunch
-  }
-}
-
-/// Generate a unique entry ID
-fn generate_entry_id() -> String {
-  "entry-" <> wisp.random_string(12)
-}
-
-/// Get current timestamp as ISO8601 string
-fn current_timestamp() -> String {
-  let #(#(year, month, day), #(hour, min, sec)) = erlang_localtime()
-  int.to_string(year)
-  <> "-"
-  <> pad_two(month)
-  <> "-"
-  <> pad_two(day)
-  <> "T"
-  <> pad_two(hour)
-  <> ":"
-  <> pad_two(min)
-  <> ":"
-  <> pad_two(sec)
-  <> "Z"
-}
-
 fn pad_two(n: Int) -> String {
   case n < 10 {
     True -> "0" <> int.to_string(n)
@@ -2801,101 +2067,8 @@ fn int_to_string(i: Int) -> String
 // Error Response Helpers
 // ============================================================================
 
-/// Create a user-friendly error response page
-fn error_response(
-  status: Int,
-  title: String,
-  message: String,
-  retry_url: option.Option(String),
-) -> wisp.Response {
-  let retry_button = case retry_url {
-    Some(url) -> [
-      html.a([attribute.href(url), attribute.class("btn btn-primary")], [
-        element.text("Try Again"),
-      ]),
-    ]
-    None -> []
-  }
-
-  let content = [
-    html.div([attribute.class("error-page")], [
-      html.div([attribute.class("error-page-content")], [
-        html.div([attribute.class("error-icon-large")], [element.text("⚠")]),
-        html.h1([attribute.class("error-title")], [element.text(title)]),
-        html.p([attribute.class("error-message")], [element.text(message)]),
-        html.div([attribute.class("error-actions")], [
-          html.a([attribute.href("/"), attribute.class("btn btn-secondary")], [
-            element.text("Go Home"),
-          ]),
-          ..retry_button
-        ]),
-      ]),
-    ]),
-  ]
-
-  wisp.html_response(render_page(title, content), status)
-}
-
-/// 500 Server Error response
-fn server_error_response(message: String) -> wisp.Response {
-  error_response(
-    500,
-    "500 Server Error",
-    "Something went wrong on our end. " <> message,
-    None,
-  )
-}
-
-/// 400 Bad Request response
-fn bad_request_response(message: String) -> wisp.Response {
-  error_response(400, "400 Bad Request", "Invalid request. " <> message, None)
-}
-
-/// 404 Not Found response with helpful actions
-fn enhanced_not_found() -> wisp.Response {
-  let content = [
-    html.div([attribute.class("error-page")], [
-      html.div([attribute.class("error-page-content")], [
-        html.h1([attribute.class("error-code")], [element.text("404")]),
-        html.h2([attribute.class("error-title")], [
-          element.text("Page Not Found"),
-        ]),
-        html.p([attribute.class("error-message")], [
-          element.text(
-            "The page you're looking for doesn't exist or has been moved.",
-          ),
-        ]),
-        html.div([attribute.class("error-actions")], [
-          html.a([attribute.href("/"), attribute.class("btn btn-primary")], [
-            element.text("Go Home"),
-          ]),
-          html.a(
-            [attribute.href("/recipes"), attribute.class("btn btn-secondary")],
-            [element.text("Browse Recipes")],
-          ),
-        ]),
-      ]),
-    ]),
-  ]
-
-  wisp.html_response(render_page("404 Not Found", content), 404)
-}
-
 /// JSON error response for API endpoints
 fn json_error_response(status: Int, error_message: String) -> wisp.Response {
   let error_json = json.object([#("error", json.string(error_message))])
   wisp.json_response(json.to_string(error_json), status)
-}
-
-/// Handle storage errors with appropriate HTTP responses
-fn handle_storage_error(error: storage.StorageError) -> wisp.Response {
-  case error {
-    storage.NotFound -> json_error_response(404, "Resource not found")
-    storage.InvalidInput(msg) ->
-      json_error_response(400, "Invalid input: " <> msg)
-    storage.Unauthorized(msg) ->
-      json_error_response(401, "Unauthorized: " <> msg)
-    storage.DatabaseError(msg) ->
-      json_error_response(500, "Database error: " <> msg)
-  }
 }

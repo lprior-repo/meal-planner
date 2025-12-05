@@ -16,7 +16,7 @@ import lustre/attribute
 import lustre/element
 import lustre/element/html
 import meal_planner/meal_plan.{type Meal, meal_macros}
-import meal_planner/types.{type Macros, macros_calories}
+import meal_planner/types.{macros_calories}
 
 // ===================================================================
 // PUBLIC COMPONENT FUNCTIONS

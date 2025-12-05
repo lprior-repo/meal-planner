@@ -24,11 +24,13 @@ set -euo pipefail
 
 # Configuration
 readonly POOL_STATE_FILE="/tmp/pool-state.json"
+readonly POOL_LOCK_FILE="/tmp/pool-state.lock"
 readonly WORKTREE_BASE_DIR=".agent-worktrees"
 readonly MIN_POOL_SIZE=3
 readonly MAX_POOL_SIZE=10
 readonly SCALE_CHECK_INTERVAL=60  # seconds
 readonly QUEUE_WAIT_THRESHOLD=3   # agents waiting before scale-up
+readonly LOCK_TIMEOUT=30          # seconds to wait for lock
 
 # Colors for output
 readonly RED='\033[0;31m'
@@ -217,61 +219,76 @@ pool_acquire() {
 
     log_info "Agent ${agent_name} requesting worktree for task ${task_id} (priority: ${priority})"
 
-    local state
-    state=$(get_pool_state)
+    # CRITICAL: Use file locking to prevent race conditions
+    (
+        flock -x -w "$LOCK_TIMEOUT" 200 || {
+            log_error "Failed to acquire pool lock after ${LOCK_TIMEOUT}s"
+            return 1
+        }
 
-    # Check for available worktree
-    local available_wt
-    available_wt=$(echo "$state" | jq -r '.worktrees[] | select(.status == "available") | .id' | head -1)
+        local state
+        state=$(get_pool_state)
 
-    if [[ -n "$available_wt" ]]; then
-        # Assign worktree
-        state=$(echo "$state" | jq \
-            --arg id "$available_wt" \
-            --arg agent "$agent_name" \
-            --arg task "$task_id" \
-            '.worktrees = (.worktrees | map(
-                if .id == $id then
-                    .status = "in_use" |
-                    .current_agent = $agent |
-                    .current_task = $task |
-                    .task_count += 1 |
-                    .last_used = (now | todate)
-                else . end
-            ))')
-        update_pool_state "$state"
+        # Check for available worktree
+        local available_wt
+        available_wt=$(echo "$state" | jq -r '.worktrees[] | select(.status == "available") | .id' | head -1)
 
-        log_info "✓ Assigned worktree ${available_wt} to agent ${agent_name}"
-        echo "$available_wt"
-        return 0
-    else
-        # Queue the agent
-        state=$(echo "$state" | jq \
-            --arg agent "$agent_name" \
-            --arg task "$task_id" \
-            --argjson priority "$priority" \
-            '.queue += [{
-                "agent_id": $agent,
-                "task_id": $task,
-                "priority": $priority,
-                "queued_at": (now | todate)
-            }] | .queue |= sort_by(.priority) | reverse')
-        update_pool_state "$state"
+        if [[ -n "$available_wt" ]]; then
+            # Assign worktree
+            state=$(echo "$state" | jq \
+                --arg id "$available_wt" \
+                --arg agent "$agent_name" \
+                --arg task "$task_id" \
+                '.worktrees = (.worktrees | map(
+                    if .id == $id then
+                        .status = "in_use" |
+                        .current_agent = $agent |
+                        .current_task = $task |
+                        .task_count += 1 |
+                        .last_used = (now | todate)
+                    else . end
+                ))')
+            update_pool_state "$state"
 
-        log_warn "No available worktrees - agent ${agent_name} queued (position: $(echo "$state" | jq '.queue | length'))"
+            log_info "✓ Assigned worktree ${available_wt} to agent ${agent_name}"
+            echo "$available_wt"
+            return 0
+        else
+            # Queue the agent
+            state=$(echo "$state" | jq \
+                --arg agent "$agent_name" \
+                --arg task "$task_id" \
+                --argjson priority "$priority" \
+                '.queue += [{
+                    "agent_id": $agent,
+                    "task_id": $task,
+                    "priority": $priority,
+                    "queued_at": (now | todate)
+                }] | .queue |= sort_by(.priority) | reverse')
+            update_pool_state "$state"
 
-        # Check if we should scale up
+            log_warn "No available worktrees - agent ${agent_name} queued (position: $(echo "$state" | jq '.queue | length'))"
+
+            echo "queued"
+            return 1
+        fi
+    ) 200>"$POOL_LOCK_FILE"
+
+    # Scale-up outside lock to prevent deadlock
+    local result=$?
+    if [[ $result -eq 1 ]]; then
+        local state
+        state=$(get_pool_state)
         local queue_size
         queue_size=$(echo "$state" | jq '.queue | length')
         if [[ $queue_size -ge $QUEUE_WAIT_THRESHOLD ]]; then
             log_info "Queue threshold reached ($queue_size >= $QUEUE_WAIT_THRESHOLD), attempting scale-up"
             pool_scale_up || log_warn "Scale-up failed or not possible"
         fi
-
-        echo "queued"
-        return 1
     fi
+    return $result
 }
+
 
 pool_release() {
     local wt_id="$1"
@@ -279,71 +296,89 @@ pool_release() {
 
     log_info "Releasing worktree ${wt_id} from agent ${agent_name}"
 
-    local state
-    state=$(get_pool_state)
+    # CRITICAL: Use file locking for atomic release
+    (
+        flock -x -w "$LOCK_TIMEOUT" 200 || {
+            log_error "Failed to acquire pool lock after ${LOCK_TIMEOUT}s"
+            return 1
+        }
 
-    # Mark worktree as available
-    state=$(echo "$state" | jq \
-        --arg id "$wt_id" \
-        '.worktrees = (.worktrees | map(
-            if .id == $id then
-                .status = "available" |
-                .current_agent = null |
-                .current_task = null
-            else . end
-        )) | .metrics.total_tasks_completed += 1')
-    update_pool_state "$state"
+        local state
+        state=$(get_pool_state)
 
-    log_info "✓ Worktree ${wt_id} released"
+        # Mark worktree as available
+        state=$(echo "$state" | jq \
+            --arg id "$wt_id" \
+            '.worktrees = (.worktrees | map(
+                if .id == $id then
+                    .status = "available" |
+                    .current_agent = null |
+                    .current_task = null
+                else . end
+            )) | .metrics.total_tasks_completed += 1')
+        update_pool_state "$state"
 
-    # Process queue
+        log_info "✓ Worktree ${wt_id} released"
+    ) 200>"$POOL_LOCK_FILE"
+
+    # Process queue outside lock to prevent deadlock
     process_queue
 }
 
+
 process_queue() {
-    local state
-    state=$(get_pool_state)
+    # CRITICAL: Use file locking for atomic queue processing
+    (
+        flock -x -w "$LOCK_TIMEOUT" 200 || {
+            log_error "Failed to acquire pool lock after ${LOCK_TIMEOUT}s"
+            return 1
+        }
 
-    local queue_size
-    queue_size=$(echo "$state" | jq '.queue | length')
+        local state
+        state=$(get_pool_state)
 
-    if [[ $queue_size -eq 0 ]]; then
-        log_debug "Queue is empty, nothing to process"
-        return 0
-    fi
+        local queue_size
+        queue_size=$(echo "$state" | jq '.queue | length')
 
-    log_info "Processing queue (${queue_size} agents waiting)"
+        if [[ $queue_size -eq 0 ]]; then
+            log_debug "Queue is empty, nothing to process"
+            return 0
+        fi
 
-    # Get next agent from queue (highest priority)
-    local next_agent
-    next_agent=$(echo "$state" | jq -r '.queue[0].agent_id')
-    local next_task
-    next_task=$(echo "$state" | jq -r '.queue[0].task_id')
+        log_info "Processing queue (${queue_size} agents waiting)"
 
-    # Try to acquire worktree for queued agent
-    local available_wt
-    available_wt=$(echo "$state" | jq -r '.worktrees[] | select(.status == "available") | .id' | head -1)
+        # Get next agent from queue (highest priority)
+        local next_agent
+        next_agent=$(echo "$state" | jq -r '.queue[0].agent_id')
+        local next_task
+        next_task=$(echo "$state" | jq -r '.queue[0].task_id')
 
-    if [[ -n "$available_wt" ]]; then
-        # Assign worktree and remove from queue
-        state=$(echo "$state" | jq \
-            --arg id "$available_wt" \
-            --arg agent "$next_agent" \
-            --arg task "$next_task" \
-            '.worktrees = (.worktrees | map(
-                if .id == $id then
-                    .status = "in_use" |
-                    .current_agent = $agent |
-                    .current_task = $task |
-                    .task_count += 1 |
-                    .last_used = (now | todate)
-                else . end
-            )) | .queue = .queue[1:]')
-        update_pool_state "$state"
+        # Try to acquire worktree for queued agent
+        local available_wt
+        available_wt=$(echo "$state" | jq -r '.worktrees[] | select(.status == "available") | .id' | head -1)
 
-        log_info "✓ Assigned worktree ${available_wt} to queued agent ${next_agent}"
-    fi
+        if [[ -n "$available_wt" ]]; then
+            # Assign worktree and remove from queue
+            state=$(echo "$state" | jq \
+                --arg id "$available_wt" \
+                --arg agent "$next_agent" \
+                --arg task "$next_task" \
+                '.worktrees = (.worktrees | map(
+                    if .id == $id then
+                        .status = "in_use" |
+                        .current_agent = $agent |
+                        .current_task = $task |
+                        .task_count += 1 |
+                        .last_used = (now | todate)
+                    else . end
+                )) | .queue = .queue[1:]')
+            update_pool_state "$state"
+
+            log_info "✓ Assigned worktree ${available_wt} to queued agent ${next_agent}"
+        fi
+    ) 200>"$POOL_LOCK_FILE"
 }
+
 
 pool_scale_up() {
     local state

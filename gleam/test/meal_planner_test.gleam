@@ -5,7 +5,7 @@ import test_helper
 
 pub fn main() {
   // Setup: Start PostgreSQL and create test database
-  test_helper.setup()
+  let _ = test_helper.setup()
   io.println("✓ Test database ready")
 
   // Run all tests

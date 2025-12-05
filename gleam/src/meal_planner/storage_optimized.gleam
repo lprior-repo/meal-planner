@@ -48,15 +48,7 @@ pub fn search_foods_cached(
   let #(updated_cache, cached_result) = query_cache.get(cache, cache_key)
 
   case cached_result {
-    Some(results) -> {
-      // Cache hit - return immediately
-      query_cache.record_metric(
-        True,
-        "search_foods",
-        constants.cached_query_time_ms,
-      )
-      #(updated_cache, Ok(results))
-    }
+    Some(results) -> #(updated_cache, Ok(results))
 
     None -> {
       // Cache miss - query database
@@ -68,7 +60,6 @@ pub fn search_foods_cached(
         Error(_) -> updated_cache
       }
 
-      query_cache.record_metric(False, "search_foods", 50.0)
       #(final_cache, result)
     }
   }
@@ -137,7 +128,7 @@ fn search_foods_optimized(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(_e) -> Error(DatabaseError("Query execution failed"))
+    Error(_) -> Error(DatabaseError("Query execution failed"))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
@@ -165,14 +156,7 @@ pub fn search_foods_filtered_cached(
   let #(updated_cache, cached_result) = query_cache.get(cache, cache_key)
 
   case cached_result {
-    Some(results) -> {
-      query_cache.record_metric(
-        True,
-        "search_foods_filtered",
-        constants.cached_query_time_ms,
-      )
-      #(updated_cache, Ok(results))
-    }
+    Some(results) -> #(updated_cache, Ok(results))
 
     None -> {
       let result = search_foods_filtered_optimized(conn, query, filters, limit)
@@ -182,11 +166,6 @@ pub fn search_foods_filtered_cached(
         Error(_) -> updated_cache
       }
 
-      query_cache.record_metric(
-        False,
-        "search_foods_filtered",
-        constants.uncached_filtered_search_query_time_ms,
-      )
       #(final_cache, result)
     }
   }
@@ -257,7 +236,7 @@ fn search_foods_filtered_optimized(
   }
 
   case pog.returning(final_query, decoder) |> pog.execute(conn) {
-    Error(_e) -> Error(DatabaseError("Query execution failed"))
+    Error(_) -> Error(DatabaseError("Query execution failed"))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
@@ -312,7 +291,7 @@ pub fn record_query_metric(
     |> pog.returning(decode.dynamic)
     |> pog.execute(conn)
   {
-    Error(_e) -> Error(DatabaseError("Failed to record query metric"))
+    Error(_) -> Error(DatabaseError("Failed to record query metric"))
     Ok(_) -> Ok(Nil)
   }
 }
@@ -359,7 +338,7 @@ pub fn get_query_metrics(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(_e) -> Error(DatabaseError("Query execution failed"))
+    Error(_) -> Error(DatabaseError("Query execution failed"))
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }

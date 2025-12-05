@@ -23,6 +23,7 @@ import meal_planner/ui/components/card
 import meal_planner/ui/components/daily_log
 import meal_planner/ui/components/layout
 import meal_planner/ui/components/micronutrient_panel
+import meal_planner/ui/components/micronutrient_summary
 import meal_planner/ui/components/progress
 import meal_planner/ui/types/ui_types
 
@@ -108,9 +109,17 @@ pub fn render_dashboard(data: DashboardData) -> Element(msg) {
   // Quick action buttons
   let quick_actions = render_quick_actions()
 
-  // Micronutrient panel
-  let micronutrient_section =
-    micronutrient_panel.micronutrient_panel(data.total_micronutrients)
+  // Micronutrient summary (compact daily summary)
+  let micronutrient_section = case
+    micronutrient_summary.create_daily_summary(
+      data.date,
+      data.total_micronutrients,
+    )
+  {
+    option.Some(summary) ->
+      micronutrient_summary.daily_micronutrient_summary_panel(summary)
+    option.None -> micronutrient_summary.empty_micronutrient_summary()
+  }
 
   // Build layout with proper ARIA landmarks
   main(

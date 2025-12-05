@@ -11,7 +11,6 @@
 ///
 /// See: docs/component_signatures.md (section: Layout)
 import gleam/int
-import gleam/list
 import lustre/attribute
 import lustre/element
 import lustre/element/html

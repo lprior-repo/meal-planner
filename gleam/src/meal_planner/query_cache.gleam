@@ -10,15 +10,9 @@ import gleam/string
 // Cache Types
 // ============================================================================
 
-/// Cache entry with TTL and access tracking
+/// Cache entry with TTL
 pub type CacheEntry(a) {
-  CacheEntry(
-    value: a,
-    created_at: Int,
-    last_accessed: Int,
-    access_count: Int,
-    ttl_seconds: Int,
-  )
+  CacheEntry(value: a, created_at: Int, last_accessed: Int, ttl_seconds: Int)
 }
 
 /// LRU cache with configurable size and TTL
@@ -34,14 +28,7 @@ pub type QueryCache(a) {
 
 /// Cache statistics for monitoring
 pub type CacheStats {
-  CacheStats(
-    size: Int,
-    max_size: Int,
-    hits: Int,
-    misses: Int,
-    hit_rate: Float,
-    evictions: Int,
-  )
+  CacheStats(size: Int, max_size: Int, hits: Int, misses: Int, hit_rate: Float)
 }
 
 // ============================================================================
@@ -103,12 +90,7 @@ pub fn get(cache: QueryCache(a), key: String) -> #(QueryCache(a), Option(a)) {
 
         False -> {
           // Valid - update access stats and return hit
-          let updated_entry =
-            CacheEntry(
-              ..entry,
-              last_accessed: now,
-              access_count: entry.access_count + 1,
-            )
+          let updated_entry = CacheEntry(..entry, last_accessed: now)
           let new_entries = dict.insert(cache.entries, key, updated_entry)
           #(
             QueryCache(..cache, entries: new_entries, hits: cache.hits + 1),
@@ -139,7 +121,6 @@ pub fn put_with_ttl(
       value: value,
       created_at: now,
       last_accessed: now,
-      access_count: 0,
       ttl_seconds: ttl_seconds,
     )
 
@@ -150,12 +131,6 @@ pub fn put_with_ttl(
   }
 
   let new_entries = dict.insert(entries, key, entry)
-  QueryCache(..cache, entries: new_entries)
-}
-
-/// Remove a specific key from the cache
-pub fn delete(cache: QueryCache(a), key: String) -> QueryCache(a) {
-  let new_entries = dict.delete(cache.entries, key)
   QueryCache(..cache, entries: new_entries)
 }
 
@@ -225,13 +200,7 @@ pub fn get_stats(cache: QueryCache(a)) -> CacheStats {
     hits: cache.hits,
     misses: cache.misses,
     hit_rate: hit_rate,
-    evictions: 0,
   )
-}
-
-/// Reset cache statistics
-pub fn reset_stats(cache: QueryCache(a)) -> QueryCache(a) {
-  QueryCache(..cache, hits: 0, misses: 0)
 }
 
 // ============================================================================
@@ -241,82 +210,4 @@ pub fn reset_stats(cache: QueryCache(a)) -> QueryCache(a) {
 /// Generate a cache key for search queries
 pub fn search_key(query: String, limit: Int) -> String {
   "search:" <> string.lowercase(query) <> ":" <> int.to_string(limit)
-}
-
-/// Generate a cache key for filtered search queries
-pub fn search_filtered_key(
-  query: String,
-  verified_only: Bool,
-  branded_only: Bool,
-  category: Option(String),
-  limit: Int,
-) -> String {
-  let verified = case verified_only {
-    True -> "v"
-    False -> "n"
-  }
-  let branded = case branded_only {
-    True -> "b"
-    False -> "n"
-  }
-  let cat = case category {
-    Some(c) -> c
-    None -> "all"
-  }
-
-  "search_filtered:"
-  <> string.lowercase(query)
-  <> ":"
-  <> verified
-  <> ":"
-  <> branded
-  <> ":"
-  <> cat
-  <> ":"
-  <> int.to_string(limit)
-}
-
-/// Generate a cache key for dashboard queries
-pub fn dashboard_key(date: String, meal_type: Option(String)) -> String {
-  let meal = case meal_type {
-    Some(m) -> m
-    None -> "all"
-  }
-  "dashboard:" <> date <> ":" <> meal
-}
-
-/// Generate a cache key for recent meals
-pub fn recent_meals_key(limit: Int) -> String {
-  "recent_meals:" <> int.to_string(limit)
-}
-
-/// Generate a cache key for food nutrients
-pub fn food_nutrients_key(fdc_id: Int) -> String {
-  "nutrients:" <> int.to_string(fdc_id)
-}
-
-// ============================================================================
-// Performance Metrics
-// ============================================================================
-
-/// Record cache performance metric
-pub fn record_metric(
-  _cache_hit: Bool,
-  _query_name: String,
-  _execution_time_ms: Float,
-) -> Nil {
-  // In production, this would log to the query_performance_metrics table
-  // For now, this is a stub that could be implemented with the storage module
-  Nil
-}
-
-/// Calculate performance improvement from caching
-pub fn calculate_improvement(
-  cached_time_ms: Float,
-  uncached_time_ms: Float,
-) -> Float {
-  case uncached_time_ms >. 0.0 {
-    True -> uncached_time_ms /. cached_time_ms
-    False -> 1.0
-  }
 }

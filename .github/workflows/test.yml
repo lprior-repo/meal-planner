@@ -35,3 +35,15 @@ jobs:
     - name: Run tests
       working-directory: gleam
       run: gleam test
+
+    - name: Cleanup after tests
+      if: always()
+      run: |
+        # Kill any remaining test processes
+        pkill -f "gleam|erl|beam" || true
+
+        # Clean up temporary test files
+        rm -f /tmp/test_*.db
+        rm -f /tmp/test_*.tmp
+
+        echo "✅ Test cleanup completed"

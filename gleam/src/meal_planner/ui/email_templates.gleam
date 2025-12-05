@@ -19,7 +19,6 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/string
-import meal_planner/nutrition_constants
 
 /// Weekly nutrition summary data for email rendering
 pub type WeeklySummary {

@@ -36,3 +36,14 @@ jobs:
           SENDER_NAME: ${{ secrets.SENDER_NAME }}
           RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
         run: gleam run
+
+      - name: Cleanup after email workflow
+        if: always()
+        run: |
+          # Kill any remaining processes
+          pkill -f "gleam|erl|beam" || true
+
+          # Clean up temporary files
+          rm -f /tmp/*.tmp
+
+          echo "✅ Email workflow cleanup completed"
