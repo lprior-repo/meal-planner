@@ -8,10 +8,10 @@
 //// - Response structure with proper status codes
 
 import gleam/erlang/process.{type Subject}
-import gleam/otp/actor
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/otp/actor
 import gleam/string
 import gleeunit/should
 import meal_planner/actors/todoist_actor.{type Message, Shutdown, Sync}

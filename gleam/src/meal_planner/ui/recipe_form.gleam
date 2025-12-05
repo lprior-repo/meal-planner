@@ -471,16 +471,22 @@ fn instruction_row(index: Int) -> Element(msg) {
               ),
             ],
           ),
-          textarea([
-            id("instruction-" <> idx_str),
-            name("instructions[" <> idx_str <> "]"),
-            class("input instruction-text"),
-            placeholder("e.g., Preheat oven to 375°F (190°C)"),
-            attribute("required", ""),
-            attribute("rows", "2"),
-            attribute("aria-describedby", "instruction-" <> idx_str <> "-error"),
-            attribute("aria-invalid", "false"),
-          ], ""),
+          textarea(
+            [
+              id("instruction-" <> idx_str),
+              name("instructions[" <> idx_str <> "]"),
+              class("input instruction-text"),
+              placeholder("e.g., Preheat oven to 375°F (190°C)"),
+              attribute("required", ""),
+              attribute("rows", "2"),
+              attribute(
+                "aria-describedby",
+                "instruction-" <> idx_str <> "-error",
+              ),
+              attribute("aria-invalid", "false"),
+            ],
+            "",
+          ),
           span(
             [
               id("instruction-" <> idx_str <> "-error"),
@@ -620,5 +626,4 @@ fn form_actions() -> Element(msg) {
     ),
   ])
 }
-
 // Required for int.to_string

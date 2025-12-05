@@ -459,8 +459,7 @@ pub fn nested_flex_in_container_test() {
       element.text("<button>Right</button>"),
     ])
 
-  let result =
-    layout.container(1200, [flex_content]) |> element.to_string
+  let result = layout.container(1200, [flex_content]) |> element.to_string
 
   result |> string.contains("container mx-auto") |> should.be_true()
   result |> string.contains("flex flex-row") |> should.be_true()

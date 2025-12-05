@@ -73,8 +73,9 @@ pub fn card_with_header_handles_empty_content_test() {
 }
 
 pub fn card_with_header_has_proper_structure_test() {
-  let result = card.card_with_header("Test", [element.text("content")])
-  |> element.to_string
+  let result =
+    card.card_with_header("Test", [element.text("content")])
+    |> element.to_string
 
   result
   |> string.contains("card-header")
@@ -88,10 +89,14 @@ pub fn card_with_header_has_proper_structure_test() {
 // Card with actions tests
 pub fn card_with_actions_renders_all_elements_test() {
   let result =
-    card.card_with_actions("Task Card", [element.text("<p>Task description</p>")], [
-      element.text("<button>Edit</button>"),
-      element.text("<button>Delete</button>"),
-    ])
+    card.card_with_actions(
+      "Task Card",
+      [element.text("<p>Task description</p>")],
+      [
+        element.text("<button>Edit</button>"),
+        element.text("<button>Delete</button>"),
+      ],
+    )
     |> element.to_string
 
   result |> string.contains("Task Card") |> should.be_true
@@ -200,8 +205,9 @@ pub fn food_card_renders_all_fields_test() {
 
 // Calorie summary card tests
 pub fn calorie_summary_card_green_zone_test() {
-  let result = card.calorie_summary_card(1750.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1750.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("calorie-summary-card") |> should.be_true
   result |> string.contains("1750") |> should.be_true
@@ -211,40 +217,45 @@ pub fn calorie_summary_card_green_zone_test() {
 }
 
 pub fn calorie_summary_card_yellow_zone_test() {
-  let result = card.calorie_summary_card(1900.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1900.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("percentage-yellow") |> should.be_true
   result |> string.contains("95%") |> should.be_true
 }
 
 pub fn calorie_summary_card_red_zone_test() {
-  let result = card.calorie_summary_card(2200.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(2200.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("percentage-red") |> should.be_true
   result |> string.contains("110%") |> should.be_true
 }
 
 pub fn calorie_summary_card_boundary_90_percent_test() {
-  let result = card.calorie_summary_card(1800.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1800.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("percentage-yellow") |> should.be_true
   result |> string.contains("90%") |> should.be_true
 }
 
 pub fn calorie_summary_card_under_90_percent_test() {
-  let result = card.calorie_summary_card(1799.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1799.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("percentage-green") |> should.be_true
   result |> string.contains("89%") |> should.be_true
 }
 
 pub fn calorie_summary_card_has_navigation_test() {
-  let result = card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("btn-prev-day") |> should.be_true
   result |> string.contains("btn-next-day") |> should.be_true
@@ -253,14 +264,16 @@ pub fn calorie_summary_card_has_navigation_test() {
 
 // Edge case tests
 pub fn cards_handle_empty_strings_test() {
-  let result1 = card.card_with_header("", [element.text("")])
-  |> element.to_string
+  let result1 =
+    card.card_with_header("", [element.text("")])
+    |> element.to_string
   result1
   |> string.contains("<div class=\"card-header\"></div>")
   |> should.be_true
 
-  let result2 = card.card_with_actions("", [element.text("")], [])
-  |> element.to_string
+  let result2 =
+    card.card_with_actions("", [element.text("")], [])
+    |> element.to_string
   result2 |> string.contains("card-header") |> should.be_true
 }
 
@@ -297,8 +310,9 @@ pub fn recipe_card_handles_zero_calories_test() {
 }
 
 pub fn calorie_summary_handles_zero_calories_test() {
-  let result = card.calorie_summary_card(0.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(0.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("0") |> should.be_true
   result |> string.contains("percentage-green") |> should.be_true
@@ -310,12 +324,15 @@ pub fn cards_have_proper_class_structure_test() {
   let result1 = card.card([element.text("content")]) |> element.to_string
   result1 |> string.contains("class=\"card\"") |> should.be_true
 
-  let result2 = card.card_with_header("h", [element.text("c")]) |> element.to_string
+  let result2 =
+    card.card_with_header("h", [element.text("c")]) |> element.to_string
   result2 |> string.contains("class=\"card\"") |> should.be_true
   result2 |> string.contains("class=\"card-header\"") |> should.be_true
   result2 |> string.contains("class=\"card-body\"") |> should.be_true
 
-  let result3 = card.card_with_actions("h", [element.text("c")], [element.text("a")]) |> element.to_string
+  let result3 =
+    card.card_with_actions("h", [element.text("c")], [element.text("a")])
+    |> element.to_string
   result3 |> string.contains("class=\"card\"") |> should.be_true
   result3 |> string.contains("class=\"card-actions\"") |> should.be_true
 }

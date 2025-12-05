@@ -566,6 +566,7 @@ fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
                 attribute.required(True),
                 attribute.value(int_to_string(recipe.servings)),
                 attribute.attribute("min", "1"),
+                attribute.attribute("step", "1"),
                 attribute.class("form-control"),
               ]),
             ]),
@@ -991,111 +992,6 @@ fn macro_stat_block(label: String, value: String) -> element.Element(msg) {
     html.span([attribute.class("macro-value")], [element.text(value)]),
     html.span([attribute.class("macro-name")], [element.text(label)]),
   ])
-}
-
-fn dashboard_page(req: wisp.Request, ctx: Context) -> wisp.Response {
-  let profile = load_profile(ctx)
-  let targets = types.daily_macro_targets(profile)
-
-  // Get date from query parameter or use today's date
-  let date = case uri.parse_query(req.query |> option.unwrap("")) {
-    Ok(params) -> {
-      case list.find(params, fn(p) { p.0 == "date" }) {
-        Ok(#(_, d)) -> d
-        Error(_) -> get_today_date()
-      }
-    }
-    Error(_) -> get_today_date()
-  }
-
-  // Load actual daily log from storage
-  let daily_log = load_daily_log(ctx, date)
-  let entries = daily_log.entries
-
-  // Get filter from query params
-  let filter = case uri.parse_query(req.query |> option.unwrap("")) {
-    Ok(params) -> {
-      case list.find(params, fn(p) { p.0 == "filter" }) {
-        Ok(#(_, f)) -> f
-        Error(_) -> "all"
-      }
-    }
-    Error(_) -> "all"
-  }
-
-  // Filter entries by meal type
-  let filtered_entries = case filter {
-    "breakfast" ->
-      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Breakfast })
-    "lunch" ->
-      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Lunch })
-    "dinner" ->
-      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Dinner })
-    "snack" ->
-      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Snack })
-    _ -> entries
-  }
-
-  // Calculate current macros from filtered entries
-  let current = sum_macros(filtered_entries)
-
-  let content = [
-    page_header("Dashboard", "/"),
-    html.div([attribute.class("dashboard")], [
-      // Date
-      html.p([attribute.class("date")], [element.text(date)]),
-      // Filter buttons
-      html.div([attribute.class("filter-buttons")], [
-        filter_btn("All", "all", filter),
-        filter_btn("Breakfast", "breakfast", filter),
-        filter_btn("Lunch", "lunch", filter),
-        filter_btn("Dinner", "dinner", filter),
-        filter_btn("Snack", "snack", filter),
-      ]),
-      // Calorie summary
-      html.div([attribute.class("calorie-summary")], [
-        html.div([attribute.class("calorie-current")], [
-          html.span([attribute.class("big-number")], [
-            element.text(float_to_string(types.macros_calories(current))),
-          ]),
-          html.span([], [element.text(" / ")]),
-          html.span([], [
-            element.text(float_to_string(types.macros_calories(targets))),
-          ]),
-          html.span([attribute.class("unit")], [element.text(" cal")]),
-        ]),
-      ]),
-      // Macro bars
-      html.div([attribute.class("macro-bars")], [
-        macro_bar("Protein", current.protein, targets.protein, "#28a745"),
-        macro_bar("Fat", current.fat, targets.fat, "#ffc107"),
-        macro_bar("Carbs", current.carbs, targets.carbs, "#17a2b8"),
-      ]),
-      // Logged meals
-      html.div([attribute.class("logged-meals")], [
-        html.h3([], [element.text("Today's Meals")]),
-        case filtered_entries {
-          [] ->
-            html.p([attribute.class("empty")], [
-              element.text("No meals logged yet"),
-            ])
-          _ ->
-            html.ul(
-              [attribute.class("meal-list")],
-              list.map(filtered_entries, meal_entry_item),
-            )
-        },
-      ]),
-      // Quick actions
-      html.div([attribute.class("quick-actions")], [
-        html.a([attribute.href("/log"), attribute.class("btn")], [
-          element.text("Add Meal"),
-        ]),
-      ]),
-    ]),
-  ]
-
-  wisp.html_response(render_page("Dashboard - Meal Planner", content), 200)
 }
 
 fn macro_bar(

@@ -65,7 +65,10 @@ pub fn search_foods_filtered(
   query: String,
   filters: SearchFilters,
   limit: Int,
-) -> #(storage_optimized.SearchCache, Result(List(storage.UsdaFood), storage.StorageError)) {
+) -> #(
+  storage_optimized.SearchCache,
+  Result(List(storage.UsdaFood), storage.StorageError),
+) {
   // Use the main search function - filtering is handled in storage_optimized
   storage_optimized.search_foods_cached(db, cache, query, limit)
 }

@@ -72,8 +72,7 @@ pub fn recipe_sources_has_correct_columns_test() {
       let column_count = list.length(columns)
       case column_count == 7 {
         True -> should.be_true(True)
-        False ->
-          panic as "Expected 7 columns"
+        False -> panic as "Expected 7 columns"
       }
     }
     Error(_) -> panic as "Query failed"

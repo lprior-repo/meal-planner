@@ -121,7 +121,6 @@ pub fn sql_injection_union_select_blocked_test() {
   malicious_query
   |> string.contains("DROP")
   |> should.be_true()
-
   // This test documents that we rely on pog's parameterization
   // In actual code, this would be passed as a parameter, not concatenated
 }
@@ -135,7 +134,6 @@ pub fn sql_injection_in_category_blocked_test() {
   malicious_category
   |> string.contains("OR")
   |> should.be_true()
-
   // In real code, category would be validated against allowed list
 }
 
@@ -159,7 +157,6 @@ pub fn input_validation_max_length_enforced_test() {
   very_long_query
   |> string.length
   |> should.equal(1000)
-
   // In real code, this should be rejected if > max_query_length
 }
 
@@ -170,7 +167,6 @@ pub fn input_validation_special_chars_handled_test() {
   query_with_special_chars
   |> string.contains("é")
   |> should.be_true()
-
   // Should handle UTF-8 characters correctly
 }
 
@@ -184,14 +180,17 @@ pub fn security_null_byte_handled_test() {
 
   input_with_null
   |> string.length
-  |> should.equal(15)  // null byte counts as character
+  |> should.equal(15)
+  // null byte counts as character
 }
 
 /// Test unicode edge cases
 pub fn security_unicode_normalization_test() {
   // Some unicode characters can be represented multiple ways
-  let input1 = "café"  // é as single character
-  let input2 = "café"  // é as e + combining acute
+  let input1 = "café"
+  // é as single character
+  let input2 = "café"
+  // é as e + combining acute
 
   // Both should be handled correctly (length > 0)
   { string.length(input1) > 0 } |> should.be_true()
@@ -205,6 +204,5 @@ pub fn security_path_traversal_blocked_test() {
   malicious_path
   |> string.contains("..")
   |> should.be_true()
-
   // In real file operations, paths should be validated/sanitized
 }

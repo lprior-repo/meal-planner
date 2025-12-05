@@ -177,8 +177,9 @@ pub fn stat_card_renders_all_fields_test() {
       trend: option.Some(5.0),
       color: "#4CAF50",
     )
-  let result = card.stat_card(stat)
-  |> element.to_string
+  let result =
+    card.stat_card(stat)
+    |> element.to_string
 
   result |> string.contains("stat-card") |> should.be_true
   result |> string.contains("--color: #4CAF50") |> should.be_true
@@ -196,8 +197,9 @@ pub fn stat_card_handles_no_trend_test() {
       trend: option.None,
       color: "#2196F3",
     )
-  let result = card.stat_card(stat)
-  |> element.to_string
+  let result =
+    card.stat_card(stat)
+    |> element.to_string
 
   result |> string.contains("75.5") |> should.be_true
   result |> string.contains("kg") |> should.be_true
@@ -213,8 +215,9 @@ pub fn stat_card_has_proper_structure_test() {
       trend: option.None,
       color: "#000",
     )
-  let html = card.stat_card(stat)
-  |> element.to_string
+  let html =
+    card.stat_card(stat)
+    |> element.to_string
 
   html |> string.contains("class=\"stat-card\"") |> should.be_true
   html |> string.contains("class=\"stat-value\"") |> should.be_true
@@ -231,8 +234,9 @@ pub fn stat_card_applies_custom_color_test() {
       trend: option.None,
       color: "#FF6734",
     )
-  let result = card.stat_card(stat)
-  |> element.to_string
+  let result =
+    card.stat_card(stat)
+    |> element.to_string
   result |> string.contains("--color: #FF6734") |> should.be_true
 }
 
@@ -249,8 +253,9 @@ pub fn recipe_card_with_image_renders_test() {
       calories: 450.5,
       image_url: option.Some("https://example.com/chicken.jpg"),
     )
-  let result = card.recipe_card(recipe)
-  |> element.to_string
+  let result =
+    card.recipe_card(recipe)
+    |> element.to_string
 
   result |> string.contains("recipe-card") |> should.be_true
   result
@@ -270,8 +275,9 @@ pub fn recipe_card_without_image_renders_test() {
       calories: 125.0,
       image_url: option.None,
     )
-  let result = card.recipe_card(recipe)
-  |> element.to_string
+  let result =
+    card.recipe_card(recipe)
+    |> element.to_string
 
   result |> string.contains("recipe-card") |> should.be_true
   result |> string.contains("<img") |> should.be_false
@@ -287,8 +293,9 @@ pub fn recipe_card_truncates_calories_test() {
       calories: 123.789,
       image_url: option.None,
     )
-  let result = card.recipe_card(recipe)
-  |> element.to_string
+  let result =
+    card.recipe_card(recipe)
+    |> element.to_string
   result |> string.contains("123") |> should.be_true
   result |> string.contains("123.789") |> should.be_false
 }
@@ -302,8 +309,9 @@ pub fn recipe_card_has_proper_structure_test() {
       calories: 100.0,
       image_url: option.None,
     )
-  let html = card.recipe_card(recipe)
-  |> element.to_string
+  let html =
+    card.recipe_card(recipe)
+    |> element.to_string
 
   html |> string.contains("class=\"recipe-card\"") |> should.be_true
   html |> string.contains("class=\"recipe-info\"") |> should.be_true
@@ -323,8 +331,9 @@ pub fn food_card_renders_all_fields_test() {
       data_type: "Survey (FNDDS)",
       category: "Poultry Products",
     )
-  let result = card.food_card(food)
-  |> element.to_string
+  let result =
+    card.food_card(food)
+    |> element.to_string
 
   result |> string.contains("food-card") |> should.be_true
   result
@@ -342,8 +351,9 @@ pub fn food_card_has_proper_structure_test() {
       data_type: "Survey",
       category: "Test",
     )
-  let html = card.food_card(food)
-  |> element.to_string
+  let html =
+    card.food_card(food)
+    |> element.to_string
 
   html |> string.contains("class=\"food-card\"") |> should.be_true
   html |> string.contains("class=\"food-description\"") |> should.be_true
@@ -361,8 +371,9 @@ pub fn food_card_handles_long_descriptions_test() {
       data_type: "Branded",
       category: "Snacks",
     )
-  let result = card.food_card(food)
-  |> element.to_string
+  let result =
+    card.food_card(food)
+    |> element.to_string
   result |> string.contains(long_desc) |> should.be_true
 }
 
@@ -371,8 +382,9 @@ pub fn food_card_handles_long_descriptions_test() {
 // ===================================================================
 
 pub fn calorie_summary_card_green_zone_test() {
-  let result = card.calorie_summary_card(1750.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1750.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("calorie-summary-card") |> should.be_true
   result |> string.contains("1750") |> should.be_true
@@ -382,40 +394,45 @@ pub fn calorie_summary_card_green_zone_test() {
 }
 
 pub fn calorie_summary_card_yellow_zone_test() {
-  let result = card.calorie_summary_card(1900.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1900.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("percentage-yellow") |> should.be_true
   result |> string.contains("95%") |> should.be_true
 }
 
 pub fn calorie_summary_card_red_zone_test() {
-  let result = card.calorie_summary_card(2200.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(2200.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("percentage-red") |> should.be_true
   result |> string.contains("110%") |> should.be_true
 }
 
 pub fn calorie_summary_card_boundary_90_percent_test() {
-  let result = card.calorie_summary_card(1800.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1800.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("percentage-yellow") |> should.be_true
   result |> string.contains("90%") |> should.be_true
 }
 
 pub fn calorie_summary_card_under_90_percent_test() {
-  let result = card.calorie_summary_card(1799.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1799.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("percentage-green") |> should.be_true
   result |> string.contains("89%") |> should.be_true
 }
 
 pub fn calorie_summary_card_has_navigation_test() {
-  let result = card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("btn-prev-day") |> should.be_true
   result |> string.contains("btn-next-day") |> should.be_true
@@ -423,16 +440,18 @@ pub fn calorie_summary_card_has_navigation_test() {
 }
 
 pub fn calorie_summary_card_has_animated_counter_test() {
-  let result = card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("animated-counter") |> should.be_true
   result |> string.contains("data-animate-duration=\"1000\"") |> should.be_true
 }
 
 pub fn calorie_summary_card_has_date_nav_test() {
-  let result = card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("class=\"date-nav\"") |> should.be_true
   result |> string.contains("class=\"current-date\"") |> should.be_true
@@ -458,8 +477,9 @@ pub fn stat_card_should_support_deep_shadow_test() {
       trend: option.None,
       color: "#000",
     )
-  let html = card.stat_card(stat)
-  |> element.to_string
+  let html =
+    card.stat_card(stat)
+    |> element.to_string
   html |> string.contains("class=\"stat-card\"") |> should.be_true
 }
 
@@ -472,8 +492,9 @@ pub fn recipe_card_should_support_deep_shadow_test() {
       calories: 100.0,
       image_url: option.None,
     )
-  let html = card.recipe_card(recipe)
-  |> element.to_string
+  let html =
+    card.recipe_card(recipe)
+    |> element.to_string
   html |> string.contains("class=\"recipe-card\"") |> should.be_true
 }
 
@@ -485,14 +506,16 @@ pub fn food_card_should_support_deep_shadow_test() {
       data_type: "Test",
       category: "Test",
     )
-  let html = card.food_card(food)
-  |> element.to_string
+  let html =
+    card.food_card(food)
+    |> element.to_string
   html |> string.contains("class=\"food-card\"") |> should.be_true
 }
 
 pub fn calorie_summary_should_support_deep_shadow_test() {
-  let html = card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let html =
+    card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
+    |> element.to_string
   html |> string.contains("class=\"calorie-summary-card\"") |> should.be_true
 }
 
@@ -501,16 +524,19 @@ pub fn calorie_summary_should_support_deep_shadow_test() {
 // ===================================================================
 
 pub fn all_card_variants_have_classes_for_hover_test() {
-  let basic = card.card([element.text("Test")])
-  |> element.to_string
+  let basic =
+    card.card([element.text("Test")])
+    |> element.to_string
   basic |> string.contains("class=\"card\"") |> should.be_true
 
-  let with_header = card.card_with_header("H", [element.text("C")])
-  |> element.to_string
+  let with_header =
+    card.card_with_header("H", [element.text("C")])
+    |> element.to_string
   with_header |> string.contains("class=\"card\"") |> should.be_true
 
-  let with_actions = card.card_with_actions("H", [element.text("C")], [element.text("A")])
-  |> element.to_string
+  let with_actions =
+    card.card_with_actions("H", [element.text("C")], [element.text("A")])
+    |> element.to_string
   with_actions |> string.contains("class=\"card\"") |> should.be_true
 
   let stat =
@@ -521,8 +547,9 @@ pub fn all_card_variants_have_classes_for_hover_test() {
       trend: option.None,
       color: "#000",
     )
-  let stat_html = card.stat_card(stat)
-  |> element.to_string
+  let stat_html =
+    card.stat_card(stat)
+    |> element.to_string
   stat_html |> string.contains("class=\"stat-card\"") |> should.be_true
 
   let recipe =
@@ -533,8 +560,9 @@ pub fn all_card_variants_have_classes_for_hover_test() {
       calories: 100.0,
       image_url: option.None,
     )
-  let recipe_html = card.recipe_card(recipe)
-  |> element.to_string
+  let recipe_html =
+    card.recipe_card(recipe)
+    |> element.to_string
   recipe_html |> string.contains("class=\"recipe-card\"") |> should.be_true
 
   let food =
@@ -544,8 +572,9 @@ pub fn all_card_variants_have_classes_for_hover_test() {
       data_type: "T",
       category: "C",
     )
-  let food_html = card.food_card(food)
-  |> element.to_string
+  let food_html =
+    card.food_card(food)
+    |> element.to_string
   food_html |> string.contains("class=\"food-card\"") |> should.be_true
 }
 
@@ -554,18 +583,21 @@ pub fn all_card_variants_have_classes_for_hover_test() {
 // ===================================================================
 
 pub fn all_cards_have_matching_div_tags_test() {
-  let basic = card.card([element.text("Test")])
-  |> element.to_string
+  let basic =
+    card.card([element.text("Test")])
+    |> element.to_string
   count_occurrences(basic, "<div")
   |> should.equal(count_occurrences(basic, "</div>"))
 
-  let with_header = card.card_with_header("Header", [element.text("Content")])
-  |> element.to_string
+  let with_header =
+    card.card_with_header("Header", [element.text("Content")])
+    |> element.to_string
   count_occurrences(with_header, "<div")
   |> should.equal(count_occurrences(with_header, "</div>"))
 
-  let with_actions = card.card_with_actions("H", [element.text("C")], [element.text("A")])
-  |> element.to_string
+  let with_actions =
+    card.card_with_actions("H", [element.text("C")], [element.text("A")])
+    |> element.to_string
   count_occurrences(with_actions, "<div")
   |> should.equal(count_occurrences(with_actions, "</div>"))
 }
@@ -579,8 +611,9 @@ pub fn all_stat_cards_have_valid_structure_test() {
       trend: option.None,
       color: "#000",
     )
-  let html = card.stat_card(stat)
-  |> element.to_string
+  let html =
+    card.stat_card(stat)
+    |> element.to_string
 
   count_occurrences(html, "<div")
   |> should.equal(count_occurrences(html, "</div>"))
@@ -600,8 +633,9 @@ pub fn all_recipe_cards_have_valid_structure_test() {
       calories: 100.0,
       image_url: option.None,
     )
-  let html = card.recipe_card(recipe)
-  |> element.to_string
+  let html =
+    card.recipe_card(recipe)
+    |> element.to_string
 
   count_occurrences(html, "<div")
   |> should.equal(count_occurrences(html, "</div>"))
@@ -617,8 +651,9 @@ pub fn all_food_cards_have_valid_structure_test() {
       data_type: "Survey",
       category: "Test",
     )
-  let html = card.food_card(food)
-  |> element.to_string
+  let html =
+    card.food_card(food)
+    |> element.to_string
 
   count_occurrences(html, "<div")
   |> should.equal(count_occurrences(html, "</div>"))
@@ -629,8 +664,9 @@ pub fn all_food_cards_have_valid_structure_test() {
 }
 
 pub fn calorie_summary_has_valid_html_structure_test() {
-  let html = card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let html =
+    card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   count_occurrences(html, "<div")
   |> should.equal(count_occurrences(html, "</div>"))
@@ -639,12 +675,14 @@ pub fn calorie_summary_has_valid_html_structure_test() {
 }
 
 pub fn no_cards_contain_unescaped_quotes_test() {
-  let basic = card.card([element.text("Test")])
-  |> element.to_string
+  let basic =
+    card.card([element.text("Test")])
+    |> element.to_string
   basic |> string.contains("\"\"") |> should.be_false
 
-  let with_header = card.card_with_header("Test", [element.text("Content")])
-  |> element.to_string
+  let with_header =
+    card.card_with_header("Test", [element.text("Content")])
+    |> element.to_string
   with_header |> string.contains("\"\"") |> should.be_false
 }
 
@@ -653,14 +691,16 @@ pub fn no_cards_contain_unescaped_quotes_test() {
 // ===================================================================
 
 pub fn cards_handle_empty_strings_test() {
-  let result1 = card.card_with_header("", [])
-  |> element.to_string
+  let result1 =
+    card.card_with_header("", [])
+    |> element.to_string
   result1
   |> string.contains("<div class=\"card-header\"></div>")
   |> should.be_true
 
-  let result2 = card.card_with_actions("", [element.text("")], [])
-  |> element.to_string
+  let result2 =
+    card.card_with_actions("", [element.text("")], [])
+    |> element.to_string
   result2 |> string.contains("card-header") |> should.be_true
 }
 
@@ -697,8 +737,9 @@ pub fn recipe_card_handles_zero_calories_test() {
 }
 
 pub fn calorie_summary_handles_zero_calories_test() {
-  let result = card.calorie_summary_card(0.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(0.0, 2000.0, "2024-12-03")
+    |> element.to_string
 
   result |> string.contains("0") |> should.be_true
   result |> string.contains("percentage-green") |> should.be_true
@@ -707,8 +748,9 @@ pub fn calorie_summary_handles_zero_calories_test() {
 
 pub fn cards_handle_special_characters_test() {
   let special = "<script>alert('test')</script>"
-  let result = card.card([element.text(special)])
-  |> element.to_string
+  let result =
+    card.card([element.text(special)])
+    |> element.to_string
   result |> string.contains(special) |> should.be_true
 }
 
@@ -721,14 +763,16 @@ pub fn stat_card_handles_negative_trend_test() {
       trend: option.Some(-2.5),
       color: "#FF0000",
     )
-  let result = card.stat_card(stat)
-  |> element.to_string
+  let result =
+    card.stat_card(stat)
+    |> element.to_string
   result |> string.contains("stat-card") |> should.be_true
 }
 
 pub fn calorie_summary_handles_very_large_numbers_test() {
-  let result = card.calorie_summary_card(99_999.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let result =
+    card.calorie_summary_card(99_999.0, 2000.0, "2024-12-03")
+    |> element.to_string
   result |> string.contains("99999") |> should.be_true
   result |> string.contains("percentage-red") |> should.be_true
 }
@@ -744,8 +788,9 @@ pub fn recipe_card_handles_very_long_names_test() {
       calories: 100.0,
       image_url: option.None,
     )
-  let result = card.recipe_card(recipe)
-  |> element.to_string
+  let result =
+    card.recipe_card(recipe)
+    |> element.to_string
   result |> string.contains(long_name) |> should.be_true
 }
 
@@ -754,10 +799,12 @@ pub fn recipe_card_handles_very_long_names_test() {
 // ===================================================================
 
 pub fn cards_render_consistently_test() {
-  let html1 = card.card([element.text("Test")])
-  |> element.to_string
-  let html2 = card.card([element.text("Test")])
-  |> element.to_string
+  let html1 =
+    card.card([element.text("Test")])
+    |> element.to_string
+  let html2 =
+    card.card([element.text("Test")])
+    |> element.to_string
   html1 |> should.equal(html2)
 }
 
@@ -770,17 +817,21 @@ pub fn stat_cards_render_consistently_test() {
       trend: option.None,
       color: "#000",
     )
-  let html1 = card.stat_card(stat)
-  |> element.to_string
-  let html2 = card.stat_card(stat)
-  |> element.to_string
+  let html1 =
+    card.stat_card(stat)
+    |> element.to_string
+  let html2 =
+    card.stat_card(stat)
+    |> element.to_string
   html1 |> should.equal(html2)
 }
 
 pub fn calorie_summary_renders_consistently_test() {
-  let html1 = card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
-  |> element.to_string
-  let html2 = card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
-  |> element.to_string
+  let html1 =
+    card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
+    |> element.to_string
+  let html2 =
+    card.calorie_summary_card(1500.0, 2000.0, "2024-12-03")
+    |> element.to_string
   html1 |> should.equal(html2)
 }

@@ -76,39 +76,42 @@ pub fn input_with_label(
 ///   <span id="search-loading" class="htmx-indicator">Loading...</span>
 /// </div>
 pub fn search_input(query: String, placeholder: String) -> element.Element(msg) {
-  html.div([attribute.attribute("role", "search"), attribute.class("search-box")], [
-    html.input([
-      attribute.type_("search"),
-      attribute.class("input-search"),
-      attribute.id("search-input"),
-      attribute.name("q"),
-      attribute.placeholder(placeholder),
-      attribute.attribute("aria-label", placeholder),
-      attribute.value(query),
-      attribute.attribute("hx-get", "/api/foods/search"),
-      attribute.attribute("hx-trigger", "input changed delay:300ms"),
-      attribute.attribute("hx-target", "#food-results"),
-      attribute.attribute("hx-swap", "innerHTML"),
-      attribute.attribute("hx-push-url", "true"),
-      attribute.attribute("hx-indicator", "#search-loading"),
-    ]),
-    html.button(
-      [
-        attribute.class("btn btn-primary"),
-        attribute.type_("submit"),
-        attribute.attribute("aria-label", "Submit search"),
-      ],
-      [element.text("Search")],
-    ),
-    html.span(
-      [
-        attribute.id("search-loading"),
-        attribute.class("htmx-indicator"),
-        attribute.attribute("aria-label", "Loading search results"),
-      ],
-      [element.text("Loading...")],
-    ),
-  ])
+  html.div(
+    [attribute.attribute("role", "search"), attribute.class("search-box")],
+    [
+      html.input([
+        attribute.type_("search"),
+        attribute.class("input-search"),
+        attribute.id("search-input"),
+        attribute.name("q"),
+        attribute.placeholder(placeholder),
+        attribute.attribute("aria-label", placeholder),
+        attribute.value(query),
+        attribute.attribute("hx-get", "/api/foods/search"),
+        attribute.attribute("hx-trigger", "input changed delay:300ms"),
+        attribute.attribute("hx-target", "#food-results"),
+        attribute.attribute("hx-swap", "innerHTML"),
+        attribute.attribute("hx-push-url", "true"),
+        attribute.attribute("hx-indicator", "#search-loading"),
+      ]),
+      html.button(
+        [
+          attribute.class("btn btn-primary"),
+          attribute.type_("submit"),
+          attribute.attribute("aria-label", "Submit search"),
+        ],
+        [element.text("Search")],
+      ),
+      html.span(
+        [
+          attribute.id("search-loading"),
+          attribute.class("htmx-indicator"),
+          attribute.attribute("aria-label", "Loading search results"),
+        ],
+        [element.text("Loading...")],
+      ),
+    ],
+  )
 }
 
 /// Number input field
@@ -170,8 +173,9 @@ pub fn select_field(
 
   html.div([attribute.class("form-group")], [
     html.label([attribute.for(name)], [element.text(label)]),
-    html.select([attribute.id(name), attribute.name(name), attribute.class("input")],
-      option_elements
+    html.select(
+      [attribute.id(name), attribute.name(name), attribute.class("input")],
+      option_elements,
     ),
   ])
 }
@@ -275,16 +279,18 @@ pub fn search_input_with_clear(
       attribute.value(query),
       attribute.attribute("aria-label", placeholder),
       attribute.attribute("hx-get", "/api/foods/search"),
-      attribute.attribute("hx-trigger", "input changed delay:300ms from:#search-input"),
+      attribute.attribute(
+        "hx-trigger",
+        "input changed delay:300ms from:#search-input",
+      ),
       attribute.attribute("hx-target", "#food-results"),
       attribute.attribute("hx-swap", "innerHTML"),
       attribute.attribute("hx-push-url", "true"),
       attribute.attribute("hx-indicator", "#search-loading"),
     ]),
-    html.button(
-      [attribute.type_("button"), attribute.class(clear_btn_class)],
-      [element.text("×")],
-    ),
+    html.button([attribute.type_("button"), attribute.class(clear_btn_class)], [
+      element.text("×"),
+    ]),
     html.span(
       [
         attribute.id("search-loading"),
@@ -328,7 +334,10 @@ pub fn search_input_with_autofocus(
         attribute.value(query),
         attribute.attribute("aria-label", placeholder),
         attribute.attribute("hx-get", "/api/foods/search"),
-        attribute.attribute("hx-trigger", "input changed delay:300ms from:#search-input"),
+        attribute.attribute(
+          "hx-trigger",
+          "input changed delay:300ms from:#search-input",
+        ),
         attribute.attribute("hx-target", "#food-results"),
         attribute.attribute("hx-swap", "innerHTML"),
         attribute.attribute("hx-push-url", "true"),
@@ -336,10 +345,9 @@ pub fn search_input_with_autofocus(
       ]
       |> list.append(autofocus_attrs),
     ),
-    html.button(
-      [attribute.type_("button"), attribute.class(clear_btn_class)],
-      [element.text("×")],
-    ),
+    html.button([attribute.type_("button"), attribute.class(clear_btn_class)], [
+      element.text("×"),
+    ]),
     html.span(
       [
         attribute.id("search-loading"),
@@ -374,10 +382,9 @@ fn render_result_item(
     ],
     [
       html.div([attribute.class("result-name")], [element.text(name)]),
-      html.div(
-        [attribute.class("result-meta")],
-        [element.text(data_type <> " • " <> category)],
-      ),
+      html.div([attribute.class("result-meta")], [
+        element.text(data_type <> " • " <> category),
+      ]),
     ],
   )
 }
@@ -459,7 +466,10 @@ pub fn search_results_with_count(
           attribute.attribute("data-filter-name", escape_html(filter_name)),
           attribute.attribute("data-filter-value", escape_html(filter_value)),
           attribute.type_("button"),
-          attribute.attribute("aria-label", "Remove " <> escape_html(filter_value) <> " filter"),
+          attribute.attribute(
+            "aria-label",
+            "Remove " <> escape_html(filter_value) <> " filter",
+          ),
           attribute.attribute("hx-get", "/api/foods/search?q=&filter=all"),
           attribute.attribute("hx-target", "#search-results"),
           attribute.attribute("hx-swap", "innerHTML"),
@@ -468,7 +478,10 @@ pub fn search_results_with_count(
         [
           element.text(escape_html(filter_value)),
           html.span(
-            [attribute.class("remove-filter"), attribute.attribute("aria-hidden", "true")],
+            [
+              attribute.class("remove-filter"),
+              attribute.attribute("aria-hidden", "true"),
+            ],
             [element.text("×")],
           ),
         ],
@@ -494,10 +507,9 @@ pub fn search_results_with_count(
   let filters_section = case !list.is_empty(active_filters) {
     True ->
       html.div([attribute.class("active-filters-container")], [
-        html.div(
-          [attribute.class("active-filters-label")],
-          [element.text("Active filters:")],
-        ),
+        html.div([attribute.class("active-filters-label")], [
+          element.text("Active filters:"),
+        ]),
         html.div([attribute.class("active-filters")], filter_tag_elements),
         clear_all_btn,
       ])
@@ -538,7 +550,10 @@ pub fn search_results_with_count(
 /// </div>
 pub fn search_results_loading() -> element.Element(msg) {
   html.div(
-    [attribute.class("search-results-loading"), attribute.attribute("aria-busy", "true")],
+    [
+      attribute.class("search-results-loading"),
+      attribute.attribute("aria-busy", "true"),
+    ],
     [
       html.div([attribute.class("skeleton skeleton-item")], []),
       html.div([attribute.class("skeleton skeleton-item")], []),
@@ -557,7 +572,10 @@ pub fn search_results_loading() -> element.Element(msg) {
 /// </div>
 pub fn search_results_empty(query: String) -> element.Element(msg) {
   html.div(
-    [attribute.class("search-results-empty"), attribute.attribute("role", "status")],
+    [
+      attribute.class("search-results-empty"),
+      attribute.attribute("role", "status"),
+    ],
     [
       html.p([], [
         element.text("No results found for \"" <> query <> "\""),
@@ -617,7 +635,10 @@ pub fn search_combobox(
         attribute.attribute("aria-label", placeholder),
         attribute.attribute("aria-autocomplete", "list"),
         attribute.attribute("hx-get", "/api/foods/search"),
-        attribute.attribute("hx-trigger", "input changed delay:300ms from:#search-input"),
+        attribute.attribute(
+          "hx-trigger",
+          "input changed delay:300ms from:#search-input",
+        ),
         attribute.attribute("hx-target", "#food-results"),
         attribute.attribute("hx-swap", "innerHTML"),
         attribute.attribute("hx-push-url", "true"),
@@ -683,9 +704,15 @@ pub fn search_combobox_with_selection(
         attribute.value(query),
         attribute.attribute("aria-label", placeholder),
         attribute.attribute("aria-autocomplete", "list"),
-        attribute.attribute("aria-activedescendant", "search-result-" <> int.to_string(selected_id)),
+        attribute.attribute(
+          "aria-activedescendant",
+          "search-result-" <> int.to_string(selected_id),
+        ),
         attribute.attribute("hx-get", "/api/foods/search"),
-        attribute.attribute("hx-trigger", "input changed delay:300ms from:#search-input, keydown[key=='ArrowDown'] from:#search-input, keydown[key=='ArrowUp'] from:#search-input, keydown[key=='Enter'] from:#search-input"),
+        attribute.attribute(
+          "hx-trigger",
+          "input changed delay:300ms from:#search-input, keydown[key=='ArrowDown'] from:#search-input, keydown[key=='ArrowUp'] from:#search-input, keydown[key=='Enter'] from:#search-input",
+        ),
         attribute.attribute("hx-target", "#food-results"),
         attribute.attribute("hx-swap", "innerHTML"),
         attribute.attribute("hx-indicator", "#search-loading"),
@@ -738,7 +765,10 @@ pub fn category_dropdown(
         _ -> False
       }
       let attrs = case is_selected {
-        True -> [attribute.value(escape_html(category)), attribute.attribute("selected", "")]
+        True -> [
+          attribute.value(escape_html(category)),
+          attribute.attribute("selected", ""),
+        ]
         False -> [attribute.value(escape_html(category))]
       }
       html.option(attrs, escape_html(category))
@@ -750,10 +780,11 @@ pub fn category_dropdown(
     option.Some(_) -> [attribute.value("")]
   }
 
-  let all_options = list.flatten([
-    [html.option(all_selected_attrs, "All Categories")],
-    category_options,
-  ])
+  let all_options =
+    list.flatten([
+      [html.option(all_selected_attrs, "All Categories")],
+      category_options,
+    ])
 
   html.div([], [
     html.select(
@@ -801,7 +832,9 @@ pub fn category_filter_group(
   selected_category: option.Option(String),
 ) -> element.Element(msg) {
   html.div([attribute.class("form-group category-filter")], [
-    html.label([attribute.for("category-filter")], [element.text("Food Category")]),
+    html.label([attribute.for("category-filter")], [
+      element.text("Food Category"),
+    ]),
     category_dropdown(categories, selected_category),
   ])
 }

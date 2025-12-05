@@ -16,7 +16,9 @@ import gleam/list
 import gleam/string
 import lustre/attribute.{attribute, class, id}
 import lustre/element.{type Element, text}
-import lustre/element/html.{div, form, h1, header, input, li, main, p, section, span, ul}
+import lustre/element/html.{
+  div, form, h1, header, input, li, main, p, section, span, ul,
+}
 import meal_planner/storage.{type UsdaFood}
 import meal_planner/ui/components/loading
 

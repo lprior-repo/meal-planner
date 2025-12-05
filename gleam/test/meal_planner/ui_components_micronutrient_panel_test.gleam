@@ -193,8 +193,7 @@ pub fn micronutrient_panel_with_data_test() {
 }
 
 pub fn micronutrient_panel_without_data_test() {
-  let html =
-    micronutrient_panel.micronutrient_panel(None) |> element.to_string
+  let html = micronutrient_panel.micronutrient_panel(None) |> element.to_string
 
   // Should show empty state
   html |> string.contains("empty") |> should.be_true

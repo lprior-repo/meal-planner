@@ -30,8 +30,8 @@ import gleam/list
 import gleam/option.{Some}
 import gleam/result
 import gleam/string
-import simplifile
 import pog
+import simplifile
 
 // ============================================================================
 // Test Database Configuration
@@ -65,9 +65,7 @@ fn test_db_config() -> TestDbConfig {
 
 /// Create a connection to the PostgreSQL admin database
 /// Used for creating/dropping test databases
-fn connect_to_admin_db(
-  config: TestDbConfig,
-) -> Result(pog.Connection, String) {
+fn connect_to_admin_db(config: TestDbConfig) -> Result(pog.Connection, String) {
   let pool_name = process.new_name(prefix: "test_admin_pool")
 
   pog.default_config(pool_name)
@@ -101,9 +99,10 @@ fn connect_to_test_db(
   |> pog.start
   |> result.map(fn(started) { started.data })
   |> result.map_error(fn(err) {
-    "Failed to connect to test database " <> db_name <> ": " <> string.inspect(
-      err,
-    )
+    "Failed to connect to test database "
+    <> db_name
+    <> ": "
+    <> string.inspect(err)
   })
 }
 
@@ -124,7 +123,9 @@ fn create_test_database(
   db_name: String,
 ) -> Result(Nil, String) {
   let query =
-    "CREATE DATABASE " <> db_name <> " WITH ENCODING 'UTF8' LC_COLLATE 'C' LC_CTYPE 'C'"
+    "CREATE DATABASE "
+    <> db_name
+    <> " WITH ENCODING 'UTF8' LC_COLLATE 'C' LC_CTYPE 'C'"
 
   pog.query(query)
   |> pog.execute(admin_conn)
@@ -205,10 +206,7 @@ fn run_migration(
   |> pog.execute(conn)
   |> result.map(fn(_) { Nil })
   |> result.map_error(fn(err) {
-    "Failed to run migration "
-    <> filename
-    <> ": "
-    <> string.inspect(err)
+    "Failed to run migration " <> filename <> ": " <> string.inspect(err)
   })
   |> result.try(fn(_) {
     // Record migration in schema_migrations table

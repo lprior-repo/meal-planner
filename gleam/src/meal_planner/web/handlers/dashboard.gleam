@@ -22,7 +22,7 @@ import meal_planner/storage_optimized
 import meal_planner/types.{
   type FoodLogEntry, type Macros, type UserProfile, Macros, daily_macro_targets,
   macros_calories,
-} as types
+}
 import meal_planner/ui/components/progress
 import meal_planner/ui/pages/dashboard as dashboard_page
 import meal_planner/ui/types/ui_types

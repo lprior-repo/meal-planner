@@ -35,7 +35,9 @@ pub fn main() {
 
 /// Test basic text input renders correctly
 pub fn input_field_renders_correctly_test() {
-  let html = forms.input_field("username", "Enter username", "john_doe") |> element.to_string
+  let html =
+    forms.input_field("username", "Enter username", "john_doe")
+    |> element.to_string
 
   // Should contain input element with correct type
   should.be_true(html |> contains("<input type=\"text\""))
@@ -66,7 +68,9 @@ pub fn input_field_empty_value_test() {
 
 /// Test input field with special characters
 pub fn input_field_special_characters_test() {
-  let html = forms.input_field("note", "Enter note", "Test & \"quote\"") |> element.to_string
+  let html =
+    forms.input_field("note", "Enter note", "Test & \"quote\"")
+    |> element.to_string
 
   // Should contain the value (HTML escaping handled by browser)
   should.be_true(html |> contains("value=\"Test & \"quote\"\""))
@@ -117,7 +121,9 @@ pub fn input_with_label_preserves_value_test() {
 
 /// Test search input renders correctly
 pub fn search_input_basic_rendering_test() {
-  let html = forms.search_input("chicken recipes", "Search recipes...") |> element.to_string
+  let html =
+    forms.search_input("chicken recipes", "Search recipes...")
+    |> element.to_string
 
   // Should have search-box container
   should.be_true(html |> contains("<div class=\"search-box\">"))
@@ -233,15 +239,14 @@ pub fn select_field_with_options_test() {
     #("dinner", "Dinner"),
   ]
 
-  let html = forms.select_field("meal_type", "Meal Type", options) |> element.to_string
+  let html =
+    forms.select_field("meal_type", "Meal Type", options) |> element.to_string
 
   // Should have form-group
   should.be_true(html |> contains("<div class=\"form-group\">"))
 
   // Should have label
-  should.be_true(
-    html |> contains("<label for=\"meal_type\">Meal Type</label>"),
-  )
+  should.be_true(html |> contains("<label for=\"meal_type\">Meal Type</label>"))
 
   // Should have select element
   should.be_true(html |> contains("<select id=\"meal_type\""))
@@ -257,7 +262,8 @@ pub fn select_field_with_options_test() {
 
 /// Test select field with empty options list
 pub fn select_field_empty_options_test() {
-  let html = forms.select_field("empty", "Empty Select", []) |> element.to_string
+  let html =
+    forms.select_field("empty", "Empty Select", []) |> element.to_string
 
   // Should still render select element
   should.be_true(html |> contains("<select"))
@@ -270,7 +276,8 @@ pub fn select_field_empty_options_test() {
 pub fn select_field_special_chars_test() {
   let options = [#("test", "Test & \"Value\"")]
 
-  let html = forms.select_field("special", "Special", options) |> element.to_string
+  let html =
+    forms.select_field("special", "Special", options) |> element.to_string
 
   // Should contain the option text
   should.be_true(html |> contains("Test & \"Value\""))
@@ -282,8 +289,14 @@ pub fn select_field_special_chars_test() {
 
 /// Test form field without error
 pub fn form_field_no_error_test() {
-  let input = element.element("input", [attribute.type_("text"), attribute.name("test")], [])
-  let html = forms.form_field("Test Label", input, option.None) |> element.to_string
+  let input =
+    element.element(
+      "input",
+      [attribute.type_("text"), attribute.name("test")],
+      [],
+    )
+  let html =
+    forms.form_field("Test Label", input, option.None) |> element.to_string
 
   // Should have form-group
   should.be_true(html |> contains("<div class=\"form-group\">"))
@@ -302,7 +315,12 @@ pub fn form_field_no_error_test() {
 
 /// Test form field with error message
 pub fn form_field_with_error_test() {
-  let input = element.element("input", [attribute.type_("email"), attribute.name("email")], [])
+  let input =
+    element.element(
+      "input",
+      [attribute.type_("email"), attribute.name("email")],
+      [],
+    )
   let html =
     forms.form_field("Email", input, option.Some("Invalid email address"))
     |> element.to_string
@@ -322,7 +340,12 @@ pub fn form_field_with_error_test() {
 
 /// Test form field with multiple error scenarios
 pub fn form_field_required_error_test() {
-  let input = element.element("input", [attribute.type_("text"), attribute.name("name")], [])
+  let input =
+    element.element(
+      "input",
+      [attribute.type_("text"), attribute.name("name")],
+      [],
+    )
   let html =
     forms.form_field("Name", input, option.Some("This field is required"))
     |> element.to_string
@@ -333,7 +356,12 @@ pub fn form_field_required_error_test() {
 
 /// Test form field with length validation error
 pub fn form_field_length_error_test() {
-  let input = element.element("input", [attribute.type_("text"), attribute.name("password")], [])
+  let input =
+    element.element(
+      "input",
+      [attribute.type_("text"), attribute.name("password")],
+      [],
+    )
   let html =
     forms.form_field(
       "Password",
@@ -357,7 +385,8 @@ pub fn form_complete_rendering_test() {
     forms.input_with_label("Email", "email", "Enter email", ""),
   ]
 
-  let html = forms.form("/submit", "POST", fields, "Submit") |> element.to_string
+  let html =
+    forms.form("/submit", "POST", fields, "Submit") |> element.to_string
 
   // Should have form element
   should.be_true(html |> contains("<form"))
@@ -402,7 +431,8 @@ pub fn form_empty_fields_test() {
 
 /// Test search input with clear button when empty
 pub fn search_with_clear_empty_test() {
-  let html = forms.search_input_with_clear("", "Search foods...") |> element.to_string
+  let html =
+    forms.search_input_with_clear("", "Search foods...") |> element.to_string
 
   // Should have search container with debounce
   should.be_true(html |> contains("<div class=\"search-input-container\""))
@@ -420,7 +450,9 @@ pub fn search_with_clear_empty_test() {
 
 /// Test search input with clear button when query has value
 pub fn search_with_clear_has_value_test() {
-  let html = forms.search_input_with_clear("chicken", "Search foods...") |> element.to_string
+  let html =
+    forms.search_input_with_clear("chicken", "Search foods...")
+    |> element.to_string
 
   // Should have value
   should.be_true(html |> contains("value=\"chicken\""))
@@ -435,7 +467,8 @@ pub fn search_with_clear_has_value_test() {
 
 /// Test search input ARIA label
 pub fn search_with_clear_aria_test() {
-  let html = forms.search_input_with_clear("", "Search foods...") |> element.to_string
+  let html =
+    forms.search_input_with_clear("", "Search foods...") |> element.to_string
 
   // Should have aria-label matching placeholder
   should.be_true(html |> contains("aria-label=\"Search foods...\""))
@@ -447,7 +480,9 @@ pub fn search_with_clear_aria_test() {
 
 /// Test search with autofocus enabled
 pub fn search_autofocus_enabled_test() {
-  let html = forms.search_input_with_autofocus("", "Search...", True) |> element.to_string
+  let html =
+    forms.search_input_with_autofocus("", "Search...", True)
+    |> element.to_string
 
   // Should have autofocus attribute
   should.be_true(html |> contains(" autofocus"))
@@ -455,7 +490,9 @@ pub fn search_autofocus_enabled_test() {
 
 /// Test search with autofocus disabled
 pub fn search_autofocus_disabled_test() {
-  let html = forms.search_input_with_autofocus("test", "Search...", False) |> element.to_string
+  let html =
+    forms.search_input_with_autofocus("test", "Search...", False)
+    |> element.to_string
 
   // Should NOT have autofocus attribute
   should.be_false(html |> contains("autofocus"))
@@ -574,7 +611,9 @@ pub fn search_results_with_count_clear_all_button_test() {
     #("category", "Vegetables"),
   ]
 
-  let html = forms.search_results_with_count(items, 1, active_filters, True) |> element.to_string
+  let html =
+    forms.search_results_with_count(items, 1, active_filters, True)
+    |> element.to_string
 
   // Should have clear all button with HTMX attributes
   should.be_true(html |> contains("btn-clear-all-filters"))
@@ -598,7 +637,9 @@ pub fn search_results_with_count_no_filters_test() {
   let items = [#(1, "Chicken", "Foundation", "Poultry")]
   let active_filters: List(#(String, String)) = []
 
-  let html = forms.search_results_with_count(items, 1, active_filters, True) |> element.to_string
+  let html =
+    forms.search_results_with_count(items, 1, active_filters, True)
+    |> element.to_string
 
   // Should NOT have clear all button when no filters
   should.be_false(html |> contains("Clear All Filters"))
@@ -612,7 +653,9 @@ pub fn search_results_with_count_filters_visible_test() {
   ]
   let active_filters = [#("category", "Fruits")]
 
-  let html = forms.search_results_with_count(items, 2, active_filters, True) |> element.to_string
+  let html =
+    forms.search_results_with_count(items, 2, active_filters, True)
+    |> element.to_string
 
   // Should have active filters section
   should.be_true(html |> contains("active-filters-container"))
@@ -632,7 +675,8 @@ pub fn search_results_with_count_filters_visible_test() {
 
 /// Test search combobox collapsed state
 pub fn search_combobox_collapsed_test() {
-  let html = forms.search_combobox("", "Search...", [], False) |> element.to_string
+  let html =
+    forms.search_combobox("", "Search...", [], False) |> element.to_string
 
   // Should have combobox role
   should.be_true(html |> contains("role=\"combobox\""))
@@ -657,7 +701,9 @@ pub fn search_combobox_collapsed_test() {
 pub fn search_combobox_expanded_with_results_test() {
   let results = [#(1, "Chicken", "Foundation", "Poultry")]
 
-  let html = forms.search_combobox("chi", "Search...", results, True) |> element.to_string
+  let html =
+    forms.search_combobox("chi", "Search...", results, True)
+    |> element.to_string
 
   // Should be expanded
   should.be_true(html |> contains("aria-expanded=\"true\""))
@@ -669,7 +715,8 @@ pub fn search_combobox_expanded_with_results_test() {
 
 /// Test search combobox expanded with no results
 pub fn search_combobox_expanded_empty_test() {
-  let html = forms.search_combobox("xyz", "Search...", [], True) |> element.to_string
+  let html =
+    forms.search_combobox("xyz", "Search...", [], True) |> element.to_string
 
   // Should be expanded
   should.be_true(html |> contains("aria-expanded=\"true\""))
@@ -695,9 +742,7 @@ pub fn search_combobox_with_selection_test() {
     |> element.to_string
 
   // Should have aria-activedescendant pointing to selected item
-  should.be_true(
-    html |> contains("aria-activedescendant=\"search-result-2\""),
-  )
+  should.be_true(html |> contains("aria-activedescendant=\"search-result-2\""))
 
   // Should show results
   should.be_true(html |> contains("Apple"))
@@ -713,9 +758,7 @@ pub fn search_combobox_selection_accessibility_test() {
     |> element.to_string
 
   // Should link input to selected result via ARIA
-  should.be_true(
-    html |> contains("aria-activedescendant=\"search-result-42\""),
-  )
+  should.be_true(html |> contains("aria-activedescendant=\"search-result-42\""))
 
   // Result item should have matching ID
   should.be_true(html |> contains("id=\"search-result-42\""))
@@ -728,17 +771,22 @@ pub fn search_combobox_selection_accessibility_test() {
 /// Test complete search workflow: empty -> typing -> results
 pub fn search_workflow_test() {
   // Step 1: Empty search (collapsed)
-  let step1 = forms.search_combobox("", "Search foods...", [], False) |> element.to_string
+  let step1 =
+    forms.search_combobox("", "Search foods...", [], False) |> element.to_string
   should.be_true(step1 |> contains("aria-expanded=\"false\""))
 
   // Step 2: User types query (expanded, with results)
   let results = [#(1, "Chicken Breast", "Foundation", "Poultry")]
-  let step2 = forms.search_combobox("chick", "Search foods...", results, True) |> element.to_string
+  let step2 =
+    forms.search_combobox("chick", "Search foods...", results, True)
+    |> element.to_string
   should.be_true(step2 |> contains("aria-expanded=\"true\""))
   should.be_true(step2 |> contains("Chicken Breast"))
 
   // Step 3: User clears search (expanded, empty state)
-  let step3 = forms.search_combobox("xyz", "Search foods...", [], True) |> element.to_string
+  let step3 =
+    forms.search_combobox("xyz", "Search foods...", [], True)
+    |> element.to_string
   should.be_true(step3 |> contains("No results found"))
 }
 
@@ -797,7 +845,8 @@ pub fn select_many_options_test() {
       #(val, "Option " <> int.to_string(i))
     })
 
-  let html = forms.select_field("many", "Many Options", options) |> element.to_string
+  let html =
+    forms.select_field("many", "Many Options", options) |> element.to_string
 
   // Should render all options
   should.be_true(html |> contains("<select"))
@@ -842,7 +891,8 @@ pub fn number_input_negative_value_test() {
 
 /// Test search with Unicode characters
 pub fn search_unicode_test() {
-  let html = forms.search_input_with_clear("寿司 🍣", "Search...") |> element.to_string
+  let html =
+    forms.search_input_with_clear("寿司 🍣", "Search...") |> element.to_string
 
   // Should handle Unicode
   should.be_true(html |> contains("value=\"寿司 🍣\""))
@@ -851,7 +901,8 @@ pub fn search_unicode_test() {
 /// Test empty error message edge case
 pub fn form_field_empty_error_message_test() {
   let input = element.element("input", [attribute.type_("text")], [])
-  let html = forms.form_field("Label", input, option.Some("")) |> element.to_string
+  let html =
+    forms.form_field("Label", input, option.Some("")) |> element.to_string
 
   // Should render error div even with empty message
   should.be_true(html |> contains("<div class=\"form-error\">"))

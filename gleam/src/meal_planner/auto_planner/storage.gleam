@@ -108,7 +108,10 @@ pub fn get_auto_plan(
         Ok(recipes) -> {
           // Parse config from JSON
           let config_result =
-            json.parse(from: config_json, using: auto_types.auto_plan_config_decoder())
+            json.parse(
+              from: config_json,
+              using: auto_types.auto_plan_config_decoder(),
+            )
             |> result.map_error(fn(_) { "Failed to decode config JSON" })
 
           case config_result {

@@ -110,8 +110,7 @@ pub fn migrations_discovered_and_ordered_test() {
   let result =
     test_helpers.with_integration_db_result(fn(conn) {
       // Query migrations that were applied
-      let query =
-        "SELECT version, name FROM schema_migrations ORDER BY version"
+      let query = "SELECT version, name FROM schema_migrations ORDER BY version"
 
       case
         pog.query(query)
@@ -156,8 +155,7 @@ pub fn migrations_create_expected_tables_test() {
         |> pog.execute(conn)
       {
         Ok(pog.Returned(_, [True])) -> Ok(Nil)
-        Ok(pog.Returned(_, _)) ->
-          Error("schema_migrations table not created")
+        Ok(pog.Returned(_, _)) -> Error("schema_migrations table not created")
         Error(err) ->
           Error("Failed to verify table creation: " <> string.inspect(err))
       }
@@ -177,9 +175,7 @@ pub fn with_integration_db_result_propagates_errors_test() {
   let expected_error = "Test error message"
 
   let result =
-    test_helpers.with_integration_db_result(fn(_conn) {
-      Error(expected_error)
-    })
+    test_helpers.with_integration_db_result(fn(_conn) { Error(expected_error) })
 
   case result {
     Ok(_) -> panic as "Expected error but got Ok"

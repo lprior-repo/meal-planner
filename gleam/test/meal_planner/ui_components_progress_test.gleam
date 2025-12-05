@@ -41,7 +41,8 @@ pub fn progress_bar_zero_percent_test() {
 }
 
 pub fn progress_bar_fifty_percent_test() {
-  let result = progress.progress_bar(50.0, 100.0, "success") |> element.to_string
+  let result =
+    progress.progress_bar(50.0, 100.0, "success") |> element.to_string
 
   // Should render with 50% width
   result |> string.contains("width: 50%") |> should.be_true
@@ -51,7 +52,8 @@ pub fn progress_bar_fifty_percent_test() {
 }
 
 pub fn progress_bar_hundred_percent_test() {
-  let result = progress.progress_bar(100.0, 100.0, "warning") |> element.to_string
+  let result =
+    progress.progress_bar(100.0, 100.0, "warning") |> element.to_string
 
   // Should render with 100% width
   result |> string.contains("width: 100%") |> should.be_true
@@ -60,7 +62,8 @@ pub fn progress_bar_hundred_percent_test() {
 }
 
 pub fn progress_bar_over_hundred_percent_test() {
-  let result = progress.progress_bar(150.0, 100.0, "danger") |> element.to_string
+  let result =
+    progress.progress_bar(150.0, 100.0, "danger") |> element.to_string
 
   // Should cap at 100%
   result |> string.contains("width: 100%") |> should.be_true
@@ -76,7 +79,8 @@ pub fn progress_bar_fractional_percentage_test() {
 }
 
 pub fn progress_bar_negative_current_test() {
-  let result = progress.progress_bar(-10.0, 100.0, "primary") |> element.to_string
+  let result =
+    progress.progress_bar(-10.0, 100.0, "primary") |> element.to_string
 
   // Should handle negative values (renders as 0% due to percentage calculation)
   result |> string.contains("width: 0%") |> should.be_true
@@ -92,7 +96,8 @@ pub fn progress_bar_zero_target_test() {
 }
 
 pub fn progress_bar_accessibility_attributes_test() {
-  let result = progress.progress_bar(75.0, 100.0, "primary") |> element.to_string
+  let result =
+    progress.progress_bar(75.0, 100.0, "primary") |> element.to_string
 
   // Should have all required ARIA attributes
   result |> string.contains("role=\"progressbar\"") |> should.be_true
@@ -105,9 +110,12 @@ pub fn progress_bar_accessibility_attributes_test() {
 }
 
 pub fn progress_bar_color_classes_test() {
-  let primary = progress.progress_bar(50.0, 100.0, "primary") |> element.to_string
-  let success = progress.progress_bar(50.0, 100.0, "success") |> element.to_string
-  let warning = progress.progress_bar(50.0, 100.0, "warning") |> element.to_string
+  let primary =
+    progress.progress_bar(50.0, 100.0, "primary") |> element.to_string
+  let success =
+    progress.progress_bar(50.0, 100.0, "success") |> element.to_string
+  let warning =
+    progress.progress_bar(50.0, 100.0, "warning") |> element.to_string
   let danger = progress.progress_bar(50.0, 100.0, "danger") |> element.to_string
 
   primary |> string.contains("progress-bar primary") |> should.be_true
@@ -121,7 +129,8 @@ pub fn progress_bar_color_classes_test() {
 // ===================================================================
 
 pub fn macro_bar_basic_test() {
-  let result = progress.macro_bar("Protein", 120.0, 150.0, "protein") |> element.to_string
+  let result =
+    progress.macro_bar("Protein", 120.0, 150.0, "protein") |> element.to_string
 
   // Should render with label and values
   result |> string.contains("<span>Protein</span>") |> should.be_true
@@ -131,7 +140,8 @@ pub fn macro_bar_basic_test() {
 }
 
 pub fn macro_bar_zero_progress_test() {
-  let result = progress.macro_bar("Carbs", 0.0, 200.0, "carbs") |> element.to_string
+  let result =
+    progress.macro_bar("Carbs", 0.0, 200.0, "carbs") |> element.to_string
 
   result |> string.contains("<span>0g / 200g</span>") |> should.be_true
   result |> string.contains("width: 0%") |> should.be_true
@@ -145,7 +155,8 @@ pub fn macro_bar_full_progress_test() {
 }
 
 pub fn macro_bar_over_target_test() {
-  let result = progress.macro_bar("Protein", 180.0, 150.0, "protein") |> element.to_string
+  let result =
+    progress.macro_bar("Protein", 180.0, 150.0, "protein") |> element.to_string
 
   // Should cap at 100% but show actual values
   result |> string.contains("<span>180g / 150g</span>") |> should.be_true
@@ -153,7 +164,8 @@ pub fn macro_bar_over_target_test() {
 }
 
 pub fn macro_bar_accessibility_test() {
-  let result = progress.macro_bar("Protein", 120.0, 150.0, "protein") |> element.to_string
+  let result =
+    progress.macro_bar("Protein", 120.0, 150.0, "protein") |> element.to_string
 
   // Should have proper ARIA attributes
   result |> string.contains("role=\"progressbar\"") |> should.be_true
@@ -178,7 +190,9 @@ pub fn macro_bar_fractional_values_test() {
 // ===================================================================
 
 pub fn macro_bar_protein_color_test() {
-  let result = progress.macro_bar("Protein", 120.0, 150.0, "macro-protein") |> element.to_string
+  let result =
+    progress.macro_bar("Protein", 120.0, 150.0, "macro-protein")
+    |> element.to_string
 
   // Should have protein class for blue color
   result |> string.contains("macro-bar macro-protein") |> should.be_true
@@ -187,7 +201,8 @@ pub fn macro_bar_protein_color_test() {
 }
 
 pub fn macro_bar_fat_color_test() {
-  let result = progress.macro_bar("Fat", 50.0, 70.0, "macro-fat") |> element.to_string
+  let result =
+    progress.macro_bar("Fat", 50.0, 70.0, "macro-fat") |> element.to_string
 
   // Should have fat class for orange color
   result |> string.contains("macro-bar macro-fat") |> should.be_true
@@ -196,7 +211,9 @@ pub fn macro_bar_fat_color_test() {
 }
 
 pub fn macro_bar_carbs_color_test() {
-  let result = progress.macro_bar("Carbs", 150.0, 200.0, "macro-carbs") |> element.to_string
+  let result =
+    progress.macro_bar("Carbs", 150.0, 200.0, "macro-carbs")
+    |> element.to_string
 
   // Should have carbs class for green color
   result |> string.contains("macro-bar macro-carbs") |> should.be_true
@@ -206,9 +223,14 @@ pub fn macro_bar_carbs_color_test() {
 
 pub fn macro_bar_all_three_macros_test() {
   // Test all three macro types together (as they appear on dashboard)
-  let protein = progress.macro_bar("Protein", 120.0, 150.0, "macro-protein") |> element.to_string
-  let fat = progress.macro_bar("Fat", 50.0, 70.0, "macro-fat") |> element.to_string
-  let carbs = progress.macro_bar("Carbs", 150.0, 200.0, "macro-carbs") |> element.to_string
+  let protein =
+    progress.macro_bar("Protein", 120.0, 150.0, "macro-protein")
+    |> element.to_string
+  let fat =
+    progress.macro_bar("Fat", 50.0, 70.0, "macro-fat") |> element.to_string
+  let carbs =
+    progress.macro_bar("Carbs", 150.0, 200.0, "macro-carbs")
+    |> element.to_string
 
   // Verify all three have correct structure
   protein |> string.contains("macro-protein") |> should.be_true
@@ -262,7 +284,9 @@ pub fn macro_badges_container_test() {
 // ===================================================================
 
 pub fn status_badge_success_test() {
-  let result = progress.status_badge("Completed", ui_types.StatusSuccess) |> element.to_string
+  let result =
+    progress.status_badge("Completed", ui_types.StatusSuccess)
+    |> element.to_string
 
   result
   |> should.equal(
@@ -271,7 +295,9 @@ pub fn status_badge_success_test() {
 }
 
 pub fn status_badge_warning_test() {
-  let result = progress.status_badge("Low Protein", ui_types.StatusWarning) |> element.to_string
+  let result =
+    progress.status_badge("Low Protein", ui_types.StatusWarning)
+    |> element.to_string
 
   result
   |> should.equal(
@@ -280,7 +306,9 @@ pub fn status_badge_warning_test() {
 }
 
 pub fn status_badge_error_test() {
-  let result = progress.status_badge("Over Calories", ui_types.StatusError) |> element.to_string
+  let result =
+    progress.status_badge("Over Calories", ui_types.StatusError)
+    |> element.to_string
 
   result
   |> should.equal(
@@ -289,7 +317,8 @@ pub fn status_badge_error_test() {
 }
 
 pub fn status_badge_info_test() {
-  let result = progress.status_badge("On Track", ui_types.StatusInfo) |> element.to_string
+  let result =
+    progress.status_badge("On Track", ui_types.StatusInfo) |> element.to_string
 
   result
   |> should.equal("<span class=\"status-badge status-info\">On Track</span>")
@@ -297,10 +326,16 @@ pub fn status_badge_info_test() {
 
 pub fn status_badge_all_types_test() {
   // Test all status types are correctly mapped
-  let success = progress.status_badge("Success", ui_types.StatusSuccess) |> element.to_string
-  let warning = progress.status_badge("Warning", ui_types.StatusWarning) |> element.to_string
-  let error = progress.status_badge("Error", ui_types.StatusError) |> element.to_string
-  let info = progress.status_badge("Info", ui_types.StatusInfo) |> element.to_string
+  let success =
+    progress.status_badge("Success", ui_types.StatusSuccess)
+    |> element.to_string
+  let warning =
+    progress.status_badge("Warning", ui_types.StatusWarning)
+    |> element.to_string
+  let error =
+    progress.status_badge("Error", ui_types.StatusError) |> element.to_string
+  let info =
+    progress.status_badge("Info", ui_types.StatusInfo) |> element.to_string
 
   success |> string.contains("status-success") |> should.be_true
   warning |> string.contains("status-warning") |> should.be_true
@@ -343,7 +378,8 @@ pub fn progress_circle_hundred_percent_test() {
 }
 
 pub fn progress_circle_fractional_test() {
-  let result = progress.progress_circle(75.5, "Almost Done") |> element.to_string
+  let result =
+    progress.progress_circle(75.5, "Almost Done") |> element.to_string
 
   // Should truncate to integer
   result |> string.contains("--progress: 75%;") |> should.be_true
@@ -353,7 +389,8 @@ pub fn progress_circle_fractional_test() {
 }
 
 pub fn progress_circle_accessibility_test() {
-  let result = progress.progress_circle(75.0, "Daily Calories") |> element.to_string
+  let result =
+    progress.progress_circle(75.0, "Daily Calories") |> element.to_string
 
   // Should have proper ARIA attributes
   result |> string.contains("role=\"progressbar\"") |> should.be_true
@@ -370,7 +407,9 @@ pub fn progress_circle_accessibility_test() {
 // ===================================================================
 
 pub fn progress_with_label_basic_test() {
-  let result = progress.progress_with_label(1850.0, 2100.0, "Calories") |> element.to_string
+  let result =
+    progress.progress_with_label(1850.0, 2100.0, "Calories")
+    |> element.to_string
 
   result
   |> string.contains("<span class=\"progress-label-text\">Calories</span>")
@@ -382,7 +421,8 @@ pub fn progress_with_label_basic_test() {
 }
 
 pub fn progress_with_label_zero_test() {
-  let result = progress.progress_with_label(0.0, 2000.0, "Steps") |> element.to_string
+  let result =
+    progress.progress_with_label(0.0, 2000.0, "Steps") |> element.to_string
 
   result
   |> string.contains("<span class=\"progress-value\">0 / 2000</span>")
@@ -391,7 +431,8 @@ pub fn progress_with_label_zero_test() {
 }
 
 pub fn progress_with_label_complete_test() {
-  let result = progress.progress_with_label(2000.0, 2000.0, "Water") |> element.to_string
+  let result =
+    progress.progress_with_label(2000.0, 2000.0, "Water") |> element.to_string
 
   result
   |> string.contains("<span class=\"progress-value\">2000 / 2000</span>")
@@ -400,7 +441,9 @@ pub fn progress_with_label_complete_test() {
 }
 
 pub fn progress_with_label_over_target_test() {
-  let result = progress.progress_with_label(2500.0, 2000.0, "Calories") |> element.to_string
+  let result =
+    progress.progress_with_label(2500.0, 2000.0, "Calories")
+    |> element.to_string
 
   // Should cap at 100% but show actual values
   result
@@ -410,7 +453,8 @@ pub fn progress_with_label_over_target_test() {
 }
 
 pub fn progress_with_label_accessibility_test() {
-  let result = progress.progress_with_label(1500.0, 2000.0, "Protein") |> element.to_string
+  let result =
+    progress.progress_with_label(1500.0, 2000.0, "Protein") |> element.to_string
 
   result |> string.contains("role=\"progressbar\"") |> should.be_true
   result |> string.contains("aria-valuenow=\"75\"") |> should.be_true
@@ -422,7 +466,9 @@ pub fn progress_with_label_accessibility_test() {
 }
 
 pub fn progress_with_label_fractional_values_test() {
-  let result = progress.progress_with_label(1234.5, 2000.0, "Calories") |> element.to_string
+  let result =
+    progress.progress_with_label(1234.5, 2000.0, "Calories")
+    |> element.to_string
 
   // Should truncate to integers
   result
@@ -448,7 +494,8 @@ pub fn progress_bar_valid_range_property_test() {
   test_cases
   |> list_for_each(fn(test_case) {
     let #(current, target) = test_case
-    let result = progress.progress_bar(current, target, "primary") |> element.to_string
+    let result =
+      progress.progress_bar(current, target, "primary") |> element.to_string
 
     // All results should contain valid HTML structure
     result |> string.contains("progress-bar") |> should.be_true
@@ -469,7 +516,8 @@ pub fn macro_bar_valid_range_property_test() {
   test_cases
   |> list_for_each(fn(test_case) {
     let #(label, current, target) = test_case
-    let result = progress.macro_bar(label, current, target, "macro") |> element.to_string
+    let result =
+      progress.macro_bar(label, current, target, "macro") |> element.to_string
 
     // All results should contain valid structure
     result |> string.contains("macro-bar") |> should.be_true
@@ -498,7 +546,9 @@ pub fn progress_circle_valid_range_property_test() {
 // ===================================================================
 
 pub fn edge_case_very_large_numbers_test() {
-  let result = progress.progress_bar(999_999.0, 1_000_000.0, "primary") |> element.to_string
+  let result =
+    progress.progress_bar(999_999.0, 1_000_000.0, "primary")
+    |> element.to_string
 
   // Should handle large numbers
   result |> string.contains("width: 99%") |> should.be_true
@@ -512,7 +562,8 @@ pub fn edge_case_very_small_numbers_test() {
 }
 
 pub fn edge_case_equal_current_and_target_test() {
-  let result = progress.progress_bar(100.0, 100.0, "primary") |> element.to_string
+  let result =
+    progress.progress_bar(100.0, 100.0, "primary") |> element.to_string
 
   // Should show exactly 100%
   result |> string.contains("width: 100%") |> should.be_true
@@ -527,7 +578,9 @@ pub fn edge_case_empty_label_test() {
 }
 
 pub fn edge_case_special_characters_in_label_test() {
-  let result = progress.progress_with_label(50.0, 100.0, "Protein & Carbs (g)") |> element.to_string
+  let result =
+    progress.progress_with_label(50.0, 100.0, "Protein & Carbs (g)")
+    |> element.to_string
 
   // Should preserve special characters
   result |> string.contains("Protein & Carbs (g)") |> should.be_true

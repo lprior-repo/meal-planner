@@ -176,13 +176,16 @@ pub fn meal_card_renders_html_test() {
 
   // Verify HTML structure contains expected elements
   html
-  |> string.contains(_, "lunch-card") |> should.be_true
+  |> string.contains("lunch-card")
+  |> should.be_true
 
   html
-  |> string.contains(_, "Grilled Chicken") |> should.be_true
+  |> string.contains("Grilled Chicken")
+  |> should.be_true
 
   html
-  |> string.contains(_, "meal-card") |> should.be_true
+  |> string.contains("meal-card")
+  |> should.be_true
 }
 
 pub fn meal_card_contains_swap_button_test() {
@@ -192,13 +195,16 @@ pub fn meal_card_contains_swap_button_test() {
     <> "hx-swap=\"outerHTML\">Swap Meal</button>"
 
   html
-  |> string.contains(_, "hx-post=\"/api/swap/lunch\"") |> should.be_true
+  |> string.contains("hx-post=\"/api/swap/lunch\"")
+  |> should.be_true
 
   html
-  |> string.contains(_, "hx-target=\"#lunch-card\"") |> should.be_true
+  |> string.contains("hx-target=\"#lunch-card\"")
+  |> should.be_true
 
   html
-  |> string.contains(_, "hx-swap=\"outerHTML\"") |> should.be_true
+  |> string.contains("hx-swap=\"outerHTML\"")
+  |> should.be_true
 }
 
 // ============================================================================
@@ -295,10 +301,12 @@ pub fn html_response_not_json_test() {
 
   // Should be HTML
   html
-  |> string.contains(_, "<div>") |> should.be_true
+  |> string.contains("<div>")
+  |> should.be_true
 
   html
-  |> string.contains(_, "</div>") |> should.be_true
+  |> string.contains("</div>")
+  |> should.be_true
 }
 
 pub fn html_has_htmx_attributes_test() {
@@ -309,7 +317,8 @@ pub fn html_has_htmx_attributes_test() {
 
   // Should contain HTMX attributes, not JSON fields
   html
-  |> string.contains(_, "hx-post") |> should.be_true
+  |> string.contains("hx-post")
+  |> should.be_true
 
   string.contains(html, "application/json")
   |> should.be_false
@@ -407,10 +416,12 @@ pub fn html_response_for_swapped_meal_test() {
 
   // Verify HTML contains correct meal info
   html_fragment
-  |> string.contains(_, "Grilled Salmon") |> should.be_true
+  |> string.contains("Grilled Salmon")
+  |> should.be_true
 
   html_fragment
-  |> string.contains(_, "lunch-card") |> should.be_true
+  |> string.contains("lunch-card")
+  |> should.be_true
 
   // Verify it's HTML, not JSON
   string.contains(html_fragment, "{")

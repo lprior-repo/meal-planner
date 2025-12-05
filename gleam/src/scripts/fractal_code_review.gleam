@@ -246,7 +246,9 @@ fn find_long_functions_recursive(
             option.Some(#(prev_name, prev_start, _)) -> {
               let prev_line_count = current_line - prev_start
               let prev_line_count_float = int.to_float(prev_line_count)
-              case prev_line_count_float >. nutrition_constants.max_function_lines {
+              case
+                prev_line_count_float >. nutrition_constants.max_function_lines
+              {
                 True -> [
                   LongFunction(
                     name: prev_name,

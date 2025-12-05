@@ -74,12 +74,13 @@ pub type Message {
 /// Note: This is a stub implementation - the full OTP actor implementation requires
 /// proper handling of self-references which is complex in Gleam's actor system
 pub fn start() -> actor.StartResult(Subject(Message)) {
-  let initial_state = State(
-    self_ref: panic as "self_ref cannot be set initially",
-    next_check_time: 0,
-    db_conn: panic as "db_conn must be provided",
-    user_id: 0,
-  )
+  let initial_state =
+    State(
+      self_ref: panic as "self_ref cannot be set initially",
+      next_check_time: 0,
+      db_conn: panic as "db_conn must be provided",
+      user_id: 0,
+    )
 
   actor.new(initial_state)
   |> actor.on_message(handle_message)

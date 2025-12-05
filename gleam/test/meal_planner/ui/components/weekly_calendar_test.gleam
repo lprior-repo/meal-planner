@@ -193,7 +193,8 @@ pub fn filled_slot_shows_recipe_name_test() {
   let monday_meals = [breakfast_meal]
   let meals_by_day = [monday_meals]
 
-  let html = weekly_calendar.render_with_meals(meals_by_day) |> element.to_string
+  let html =
+    weekly_calendar.render_with_meals(meals_by_day) |> element.to_string
   html |> string.contains("Scrambled Eggs") |> should.be_true
 }
 
@@ -206,7 +207,8 @@ pub fn filled_slot_does_not_show_placeholder_test() {
   ]
   let meals_by_day = [monday_meals]
 
-  let html = weekly_calendar.render_with_meals(meals_by_day) |> element.to_string
+  let html =
+    weekly_calendar.render_with_meals(meals_by_day) |> element.to_string
   // Count placeholders - should be 21 total slots minus 3 filled = 18
   count_occurrences(html, "No meal planned") |> should.equal(18)
 }
@@ -215,7 +217,8 @@ pub fn filled_slot_has_filled_state_class_test() {
   let monday_meals = [create_test_meal("Scrambled Eggs")]
   let meals_by_day = [monday_meals]
 
-  let html = weekly_calendar.render_with_meals(meals_by_day) |> element.to_string
+  let html =
+    weekly_calendar.render_with_meals(meals_by_day) |> element.to_string
   html |> string.contains("meal-slot-filled") |> should.be_true
 }
 
@@ -233,7 +236,8 @@ pub fn multiple_filled_slots_render_correctly_test() {
   ]
   let meals_by_day = [monday_meals, tuesday_meals]
 
-  let html = weekly_calendar.render_with_meals(meals_by_day) |> element.to_string
+  let html =
+    weekly_calendar.render_with_meals(meals_by_day) |> element.to_string
   html |> string.contains("Breakfast 1") |> should.be_true
   html |> string.contains("Lunch 2") |> should.be_true
   html |> string.contains("Dinner 1") |> should.be_true

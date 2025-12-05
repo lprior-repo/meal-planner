@@ -77,19 +77,19 @@ pub type FoodLogPageData {
 /// - Keyboard navigation support
 pub fn render_food_log_page(data: FoodLogPageData) -> Element(msg) {
   // Page title
-  let page_title =
-    h1([class("page-title")], [text("Food Log - " <> data.date)])
+  let page_title = h1([class("page-title")], [text("Food Log - " <> data.date)])
 
   // Date navigation
   let date_nav = render_date_navigation(data.date)
 
   // Daily totals summary
-  let totals_summary = render_daily_totals(
-    data.total_calories,
-    data.total_protein,
-    data.total_fat,
-    data.total_carbs,
-  )
+  let totals_summary =
+    render_daily_totals(
+      data.total_calories,
+      data.total_protein,
+      data.total_fat,
+      data.total_carbs,
+    )
 
   // Add entry button
   let add_button = render_add_entry_button()
@@ -101,19 +101,16 @@ pub fn render_food_log_page(data: FoodLogPageData) -> Element(msg) {
   let modal_container = div([id("modal-container"), class("modal-root")], [])
 
   // Build layout with proper ARIA landmarks
-  main(
-    [attribute("role", "main"), attribute("aria-label", "Food Log")],
-    [
-      layout.container(1200, [
-        page_title,
-        date_nav,
-        totals_summary,
-        add_button,
-        entries_section,
-        modal_container,
-      ]),
-    ],
-  )
+  main([attribute("role", "main"), attribute("aria-label", "Food Log")], [
+    layout.container(1200, [
+      page_title,
+      date_nav,
+      totals_summary,
+      add_button,
+      entries_section,
+      modal_container,
+    ]),
+  ])
 }
 
 // ===================================================================
@@ -336,8 +333,7 @@ fn render_empty_state() -> Element(msg) {
 /// - Optimized for small screens
 pub fn render_food_log_page_compact(data: FoodLogPageData) -> Element(msg) {
   // Page title
-  let page_title =
-    h1([class("page-title compact")], [text(data.date)])
+  let page_title = h1([class("page-title compact")], [text(data.date)])
 
   // Date navigation (icons only)
   let date_nav = render_date_navigation_compact(data.date)
@@ -355,19 +351,16 @@ pub fn render_food_log_page_compact(data: FoodLogPageData) -> Element(msg) {
   let modal_container = div([id("modal-container"), class("modal-root")], [])
 
   // Build compact layout
-  main(
-    [attribute("role", "main"), attribute("aria-label", "Food Log")],
-    [
-      layout.container(600, [
-        page_title,
-        date_nav,
-        totals_summary,
-        add_button,
-        entries_section,
-        modal_container,
-      ]),
-    ],
-  )
+  main([attribute("role", "main"), attribute("aria-label", "Food Log")], [
+    layout.container(600, [
+      page_title,
+      date_nav,
+      totals_summary,
+      add_button,
+      entries_section,
+      modal_container,
+    ]),
+  ])
 }
 
 /// Compact date navigation (icons only)

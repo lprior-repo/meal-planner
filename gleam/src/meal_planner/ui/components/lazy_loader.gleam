@@ -96,7 +96,10 @@ pub fn calorie_card_skeleton() -> Element(msg) {
 pub fn meal_entry_skeleton() -> Element(msg) {
   div([class("meal-entry-item skeleton")], [
     div(
-      [class("skeleton-text"), inline_style([#("width", "60px"), #("height", "16px")])],
+      [
+        class("skeleton-text"),
+        inline_style([#("width", "60px"), #("height", "16px")]),
+      ],
       [],
     ),
     div(
@@ -114,7 +117,10 @@ pub fn meal_entry_skeleton() -> Element(msg) {
       [],
     ),
     div(
-      [class("skeleton-text"), inline_style([#("width", "80px"), #("height", "16px")])],
+      [
+        class("skeleton-text"),
+        inline_style([#("width", "80px"), #("height", "16px")]),
+      ],
       [],
     ),
   ])
@@ -217,41 +223,44 @@ pub fn search_results_skeleton(count: Int) -> Element(msg) {
   div(
     [class("search-results skeleton")],
     list.map(list.range(1, count), fn(_) {
-      div([class("food-item skeleton"), inline_style([#("margin-bottom", "8px")])], [
-        div(
-          [
-            class("skeleton-text"),
-            inline_style([
-              #(
-                "width",
-                int.to_string(
-                  nutrition_constants.skeleton_main_text_width_percent,
-                )
-                  <> "%",
-              ),
-              #("height", "18px"),
-              #("margin-bottom", "4px"),
-            ]),
-          ],
-          [],
-        ),
-        div(
-          [
-            class("skeleton-text"),
-            inline_style([
-              #(
-                "width",
-                int.to_string(
-                  nutrition_constants.skeleton_secondary_text_width_percent,
-                )
-                  <> "%",
-              ),
-              #("height", "14px"),
-            ]),
-          ],
-          [],
-        ),
-      ])
+      div(
+        [class("food-item skeleton"), inline_style([#("margin-bottom", "8px")])],
+        [
+          div(
+            [
+              class("skeleton-text"),
+              inline_style([
+                #(
+                  "width",
+                  int.to_string(
+                    nutrition_constants.skeleton_main_text_width_percent,
+                  )
+                    <> "%",
+                ),
+                #("height", "18px"),
+                #("margin-bottom", "4px"),
+              ]),
+            ],
+            [],
+          ),
+          div(
+            [
+              class("skeleton-text"),
+              inline_style([
+                #(
+                  "width",
+                  int.to_string(
+                    nutrition_constants.skeleton_secondary_text_width_percent,
+                  )
+                    <> "%",
+                ),
+                #("height", "14px"),
+              ]),
+            ],
+            [],
+          ),
+        ],
+      )
     }),
   )
 }
@@ -498,7 +507,10 @@ pub fn loading_progress_bar(percentage: Float, label: String) -> Element(msg) {
     [
       div([class("progress-label")], [text(label <> " (" <> pct_str <> "%)")]),
       div([class("progress-track")], [
-        div([class("progress-fill"), inline_style([#("width", pct_str <> "%")])], []),
+        div(
+          [class("progress-fill"), inline_style([#("width", pct_str <> "%")])],
+          [],
+        ),
       ]),
     ],
   )

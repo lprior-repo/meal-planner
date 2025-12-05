@@ -13,9 +13,9 @@ import gleam/option.{None, Some}
 import gleam/string
 import gleeunit
 import gleeunit/should
+import lustre/element
 import meal_planner/types.{Active, Gain, Lose, Maintain, Moderate, Sedentary}
 import meal_planner/ui/components/auto_planner_trigger
-import lustre/element
 
 pub fn main() {
   gleeunit.main()
