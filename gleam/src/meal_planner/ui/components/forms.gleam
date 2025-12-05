@@ -813,7 +813,10 @@ pub fn category_filter_group(
 // ===================================================================
 
 /// Escape HTML special characters to prevent XSS attacks
-fn escape_html(text: String) -> String {
+///
+/// This function is public to enable security testing.
+/// Do NOT use this for actual HTML generation - use Lustre's element API instead.
+pub fn escape_html(text: String) -> String {
   text
   |> string.replace("&", "&amp;")
   |> string.replace("<", "&lt;")
