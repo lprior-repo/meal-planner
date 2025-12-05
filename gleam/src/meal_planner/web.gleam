@@ -1496,6 +1496,8 @@ fn handle_api(
     ["foods"] -> search.api_foods(req, search.Context(db: ctx.db))
     ["foods", "search"] -> api_foods_search(req, ctx)
     ["foods", id] -> search.api_food(req, id, search.Context(db: ctx.db))
+    ["custom-foods", ..rest] ->
+      custom_foods.api_custom_foods(req, rest, custom_foods.Context(db: ctx.db))
     ["logs"] -> food_log.api_logs_create(req, food_log.Context(db: ctx.db))
     ["logs", "entry", id] ->
       food_log.api_log_entry(req, id, food_log.Context(db: ctx.db))

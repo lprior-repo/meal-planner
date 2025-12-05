@@ -445,3 +445,43 @@ pub fn api_filter_fragment(req: wisp.Request) -> wisp.Response {
 
   wisp.html_response(html, 200)
 }
+
+/// Convert unified food search result to JSON
+fn unified_food_result_to_json(result: FoodSearchResult) -> json.Json {
+  case result {
+    CustomFoodResult(food) ->
+      json.object([
+        #("type", json.string("custom")),
+        #("id", json.string(food.id)),
+        #("user_id", json.string(food.user_id)),
+        #("name", json.string(food.name)),
+        #("brand", case food.brand {
+          Some(b) -> json.string(b)
+          None -> json.null()
+        }),
+        #("description", case food.description {
+          Some(d) -> json.string(d)
+          None -> json.null()
+        }),
+        #("serving_size", json.float(food.serving_size)),
+        #("serving_unit", json.string(food.serving_unit)),
+        #(
+          "macros",
+          json.object([
+            #("protein", json.float(food.macros.protein)),
+            #("fat", json.float(food.macros.fat)),
+            #("carbs", json.float(food.macros.carbs)),
+          ]),
+        ),
+        #("calories", json.float(food.calories)),
+      ])
+    UsdaFoodResult(fdc_id, description, data_type, category) ->
+      json.object([
+        #("type", json.string("usda")),
+        #("fdc_id", json.int(fdc_id)),
+        #("description", json.string(description)),
+        #("data_type", json.string(data_type)),
+        #("category", json.string(category)),
+      ])
+  }
+}
