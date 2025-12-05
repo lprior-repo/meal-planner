@@ -165,15 +165,11 @@ pub fn get_next_check_time(state: State) -> Int {
   state.next_check_time
 }
 
-/// Create an empty initial state (for testing)
-/// This is a stub that cannot be safely constructed without actual process references
-pub fn empty_state() -> State {
-  // This function is not implementable safely - state requires:
-  // - self_ref: Subject(Message) - requires active actor
-  // - db_conn: pog.Connection - requires active database connection
-  // For testing, use dependency injection or create actual actor instances
-  todo
-}
+// NOTE: empty_state() function removed - it cannot be safely constructed
+// The State type requires:
+// - self_ref: Subject(Message) - requires active actor
+// - db_conn: pog.Connection - requires active database connection
+// For testing, use dependency injection or create actual actor instances
 
 // ============================================================================
 // Email Sending Pipeline
