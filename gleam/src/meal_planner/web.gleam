@@ -2073,15 +2073,3 @@ fn json_error_response(status: Int, error_message: String) -> wisp.Response {
   wisp.json_response(json.to_string(error_json), status)
 }
 
-/// Handle storage errors with appropriate HTTP responses
-fn handle_storage_error(error: storage.StorageError) -> wisp.Response {
-  case error {
-    storage.NotFound -> json_error_response(404, "Resource not found")
-    storage.InvalidInput(msg) ->
-      json_error_response(400, "Invalid input: " <> msg)
-    storage.Unauthorized(msg) ->
-      json_error_response(401, "Unauthorized: " <> msg)
-    storage.DatabaseError(msg) ->
-      json_error_response(500, "Database error: " <> msg)
-  }
-}
