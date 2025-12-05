@@ -11,9 +11,10 @@ import gleam/option
 import gleam/string
 import meal_planner/nutrition_constants as constants
 import meal_planner/storage
+import meal_planner/types
 import meal_planner/types.{
-  type FoodSearchError, type FoodSearchResponse, FoodSearchResponse,
-  InvalidQuery, SearchFilters, UsdaFoodResult,
+  type FoodSearchError, type FoodSearchResponse, CustomFoodResult,
+  FoodSearchResponse, InvalidQuery, SearchFilters, UsdaFoodResult,
 }
 import pog
 
@@ -59,12 +60,27 @@ pub fn unified_food_search(
             <> int.to_string(constants.max_search_limit),
           ))
         _ -> {
-          // STEP 3: Custom foods tracked in bead meal-planner-1k0
-          let custom_results = []
-          // Placeholder until custom foods implemented
-          let usda_limit = limit
+          // STEP 3: Split limit between custom and USDA foods
+          let custom_limit = int.min(limit / 2, 50)
+          let usda_limit = int.min(limit - custom_limit, 50)
 
-          // STEP 4: Query USDA foods (global)
+          // STEP 4: Query custom foods (user-scoped, prioritized)
+          let custom_results = case
+            storage.search_custom_foods(
+              db,
+              user_id,
+              trimmed_query,
+              custom_limit,
+            )
+          {
+            Ok(foods) ->
+              foods
+              |> list.map(fn(food) { types.CustomFoodResult(food) })
+            Error(_) -> []
+            // Graceful degradation - return empty on error
+          }
+
+          // STEP 5: Query USDA foods (global)
           let usda_results = case
             storage.search_foods(db, trimmed_query, usda_limit)
           {
@@ -82,7 +98,7 @@ pub fn unified_food_search(
             // Graceful degradation - return empty on error
           }
 
-          // STEP 5: Merge results and count efficiently (custom first, then USDA)
+          // STEP 6: Merge results and count efficiently (custom first, then USDA)
           let all_results = list.append(custom_results, usda_results)
           let #(custom_count, usda_count) = #(
             list.fold(custom_results, 0, fn(acc, _) { acc + 1 }),
@@ -90,7 +106,7 @@ pub fn unified_food_search(
           )
           let total_count = custom_count + usda_count
 
-          // STEP 6: Return response
+          // STEP 7: Return response
           Ok(FoodSearchResponse(
             results: all_results,
             total_count: total_count,
