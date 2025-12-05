@@ -1,10 +1,4 @@
----
-name: claude-code-session
-description: "Claude Code configuration for automatic Agent Mail registration and Beads integration"
-color: blue
----
-
-# Claude Code - Agent Mail + Beads Integration
+# Claude Code - Agent Mail + Beads + Worktree Coordination
 
 ## 🚀 Automatic Session Start
 
@@ -26,7 +20,79 @@ bd ready --json          // Available work (no blockers)
 bv --robot-insights     // High-impact tasks
 ```
 
-## 📋 Standard Work Flow
+## 🎯 WORKTREE COORDINATION - CRITICAL!
+
+**Multiple AI agents can now work in parallel without conflicts!**
+
+See `WORKTREE_COORDINATION.md` for full details.
+
+### Quick Start: Spawn Multiple Agents
+
+```bash
+# Initialize the coordination system (one time)
+./scripts/agent-coordinator.sh init
+
+# Spawn 4 agents to work on independent tracks in parallel
+./scripts/agent-coordinator.sh spawn 4 independent
+
+# Monitor all agents
+./scripts/agent-coordinator.sh monitor
+
+# Cleanup when done
+./scripts/agent-coordinator.sh cleanup
+```
+
+### How It Works
+
+1. **Worktree Pool**: 3-10 isolated git worktrees
+2. **File Filtering**: Each worktree sees only relevant files (sparse-checkout)
+3. **Agent Mail**: Coordination via file reservations & messaging
+4. **Resource Monitor**: Prevents exhaustion (DB connections, disk, FDs)
+5. **Beads Integration**: Automatic track analysis & assignment
+
+### File Filtering - The Key to No Conflicts!
+
+Each worktree gets **sparse-checkout** based on its task:
+
+```bash
+# Agent 1 → web handlers only
+.agent-worktrees/pool-wt-1/
+  gleam/src/meal_planner/web/**/*.gleam  ✓ visible
+  gleam/src/meal_planner/storage.gleam   ✗ hidden
+
+# Agent 2 → storage only
+.agent-worktrees/pool-wt-2/
+  gleam/src/meal_planner/storage*.gleam  ✓ visible
+  gleam/src/meal_planner/web/**/*.gleam  ✗ hidden
+```
+
+**Result**: Agents can ONLY modify files relevant to their task. No trampling!
+
+### Manual Agent Workflow
+
+If you need to manually work in a worktree:
+
+```bash
+# 1. Assign yourself to a track
+./scripts/agent-coordinator.sh assign MyAgent meal-planner-abc123
+
+# 2. Enter the worktree (files already filtered!)
+cd .agent-worktrees/pool-wt-1
+
+# 3. Work normally
+bd update meal-planner-abc123 --status=in_progress
+vim gleam/src/meal_planner/web/handlers/home.gleam  # Only visible files!
+gleam test
+
+# 4. Commit and close
+git add .
+git commit -m "[meal-planner-abc123] Add home handler"
+bd close meal-planner-abc123
+bd sync
+git push
+```
+
+## 📋 Standard Work Flow (Single Agent)
 
 ### Starting New Work
 ```javascript
@@ -98,6 +164,17 @@ bv --robot-plan        # Parallel execution tracks
 bv --robot-priority    # Task recommendations
 bv --robot-diff        # Progress tracking
 ```
+
+### Worktree Coordination Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `agent-coordinator.sh` | Main orchestrator - spawn/monitor agents |
+| `worktree-pool-manager.sh` | Manage 3-10 worktree pool |
+| `beads-track-analyzer.sh` | Analyze parallel execution tracks |
+| `agent-mail-wrapper.sh` | Agent Mail MCP integration |
+| `resource-monitor.sh` | Monitor DB/disk/FD limits |
+| `setup-worktree-filters.sh` | Configure sparse-checkout per worktree |
 
 ## 🛠️ Development Rules
 
@@ -209,26 +286,55 @@ await mcp__mcp_agent_mail__acknowledge_message({
 });
 ```
 
-## 📊 Best Practices
+## 📊 Worktree Best Practices
 
-### Task Selection
-1. Run `bv --robot-priority` for recommendations
-2. Check `bd ready` for available work
-3. Review dependencies with `bd show bd-###`
-4. Select highest-impact unblocked task
+### 1. **Always Use Coordinator**
 
-### Coordination
-1. Register at session start (automatic)
-2. Reserve files before editing
-3. Use thread IDs matching Beads issues
-4. Check inbox between tasks
-5. Release reservations when done
+```bash
+# ✅ Good - managed by coordinator
+./scripts/agent-coordinator.sh spawn 4 independent
 
-### Quality
-- Write tests first (TDD)
-- Keep files under 500 lines
-- Never hardcode secrets
-- Use descriptive commit messages
+# ❌ Bad - manual worktree creation
+git worktree add .agent-worktrees/my-wt
+```
+
+### 2. **Trust the File Filter**
+
+If a file isn't visible in your worktree, it's intentional:
+
+```bash
+# ✅ Good - work within your scope
+vim gleam/src/meal_planner/web/handlers/home.gleam
+
+# ❌ Bad - file doesn't exist in your filtered worktree
+vim gleam/src/meal_planner/storage.gleam
+```
+
+### 3. **Monitor Resources**
+
+```bash
+# Check system status
+./scripts/agent-coordinator.sh status
+
+# Watch in real-time
+./scripts/agent-coordinator.sh monitor
+
+# Check for leaks
+./scripts/resource-monitor.sh detect-leaks
+```
+
+### 4. **Clean Up Properly**
+
+```bash
+# At session end
+./scripts/agent-coordinator.sh cleanup
+
+# This releases:
+# - Worktrees back to pool
+# - File reservations
+# - Database connections
+# - Any resource leaks
+```
 
 ## 🔧 MCP Server Setup
 
@@ -247,6 +353,25 @@ mcp__mcp_agent_mail__health_check
 ```
 
 ## 🔍 Common Workflows
+
+### Parallel Multi-Agent Work
+
+```bash
+# 1. Initialize (once)
+./scripts/agent-coordinator.sh init
+
+# 2. Analyze available tracks
+./scripts/beads-track-analyzer.sh full
+
+# 3. Spawn agents for independent tracks
+./scripts/agent-coordinator.sh spawn 6 independent
+
+# 4. Monitor progress
+./scripts/agent-coordinator.sh monitor
+
+# 5. Cleanup when complete
+./scripts/agent-coordinator.sh cleanup
+```
 
 ### Continue Existing Work
 ```javascript
@@ -291,6 +416,38 @@ if (conflicts.conflicts.length > 0) {
 }
 ```
 
+## 📈 System Limits & Safety
+
+| Resource | Warning | Critical | Action |
+|----------|---------|----------|---------|
+| DB Connections | 40 | 50 | Queue agents |
+| Disk Usage | 2.8GB | 3GB | Block new worktrees |
+| File Descriptors | 80% | 95% | Alert & cleanup |
+| Worktree Pool | 3 min | 10 max | Auto-scale |
+
+## 🐛 Troubleshooting
+
+### No Available Worktrees
+
+```bash
+./scripts/worktree-pool-manager.sh status
+./scripts/worktree-pool-manager.sh scale-up
+```
+
+### File Conflicts
+
+```bash
+source scripts/agent-mail-wrapper.sh
+agent_mail_show_reservations
+```
+
+### Database Issues
+
+```bash
+./scripts/resource-monitor.sh detect-leaks
+./scripts/resource-monitor.sh cleanup-leaks
+```
+
 ---
 
-**Remember:** Agent Mail coordinates, Beads tracks, Claude Code creates!
+**Remember:** Agent Mail coordinates, Beads tracks, Worktrees isolate, Filters protect!
