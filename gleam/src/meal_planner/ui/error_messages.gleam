@@ -24,6 +24,9 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 import meal_planner/nutrition_constants
 import meal_planner/storage.{type StorageError}
+import meal_planner/storage/profile.{
+  DatabaseError, InvalidInput, NotFound, Unauthorized,
+}
 import meal_planner/types.{type FoodSearchError}
 
 // ============================================================================
@@ -74,10 +77,10 @@ pub type ErrorAction {
 /// Convert StorageError to user-friendly ErrorMessage
 pub fn from_storage_error(error: StorageError) -> ErrorMessage {
   case error {
-    storage.DatabaseError(msg) -> database_error(msg)
-    storage.NotFound -> not_found_error()
-    storage.InvalidInput(msg) -> invalid_input_error(msg)
-    storage.Unauthorized(msg) -> unauthorized_error(msg)
+    DatabaseError(msg) -> database_error(msg)
+    NotFound -> not_found_error()
+    InvalidInput(msg) -> invalid_input_error(msg)
+    Unauthorized(msg) -> unauthorized_error(msg)
   }
 }
 

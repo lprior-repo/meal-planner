@@ -1,15 +1,17 @@
 //// Food log handlers for API endpoints
 
+import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/float
-import gleam/http
 import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/uri
+import meal_planner/nutrient_parser.{UsdaNutrient}
 import meal_planner/storage
+import meal_planner/storage/profile.{DatabaseError}
 import meal_planner/types.{FoodLogEntry}
 import pog
 import wisp
@@ -114,7 +116,7 @@ pub fn api_logs_food(req: wisp.Request, ctx: Context) -> wisp.Response {
 
 /// Internal implementation for logging USDA food
 fn log_usda_food(
-  json_body: json.Json,
+  json_body: dynamic.Dynamic,
   fdc_id_str: String,
   ctx: Context,
 ) -> wisp.Response {
@@ -131,7 +133,7 @@ fn log_usda_food(
 
       // Load USDA food with all nutrients
       case storage.load_usda_food_with_macros(ctx.db, fdc_id) {
-        Error(storage.DatabaseError(msg)) -> {
+        Error(DatabaseError(msg)) -> {
           let err_json = json.object([#("error", json.string(msg))])
           wisp.json_response(json.to_string(err_json), 400)
         }
@@ -140,25 +142,26 @@ fn log_usda_food(
             json.object([#("error", json.string("Food not found"))])
           wisp.json_response(json.to_string(err_json), 404)
         }
-        Ok(usda_food) -> {
+        Ok(usda_food_data) -> {
           // Calculate scaling factor: grams / 100 (USDA data is per 100g)
           let scaling_factor = grams /. 100.0
 
-          // Scale macros and micronutrients by the factor
+          // Extract macros from nutrients and scale them
           let scaled_macros =
-            types.macros_scale(usda_food.macros, scaling_factor)
-          let scaled_micronutrients = case usda_food.micronutrients {
-            Some(micros) ->
-              Some(types.micronutrients_scale(micros, scaling_factor))
-            None -> None
-          }
+            extract_macros_from_nutrients(
+              usda_food_data.nutrients,
+              scaling_factor,
+            )
+
+          // For now, micronutrients extraction is not implemented
+          let scaled_micronutrients = None
 
           // Create log entry with source_type='usda_food'
           let entry =
             FoodLogEntry(
               id: generate_entry_id(),
               recipe_id: int.to_string(fdc_id),
-              recipe_name: usda_food.description,
+              recipe_name: usda_food_data.food.description,
               servings: grams,
               macros: scaled_macros,
               micronutrients: scaled_micronutrients,
@@ -179,7 +182,7 @@ fn log_usda_food(
               let response_json =
                 json.object([
                   #("id", json.string(entry.id)),
-                  #("description", json.string(usda_food.description)),
+                  #("description", json.string(usda_food_data.food.description)),
                   #("grams", json.float(grams)),
                   #("meal_type", json.string(meal_type_str)),
                   #("macros", types.macros_to_json(scaled_macros)),
@@ -295,3 +298,27 @@ fn erlang_localtime() -> #(#(Int, Int, Int), #(Int, Int, Int))
 
 @external(erlang, "erlang", "integer_to_binary")
 fn int_to_string(i: Int) -> String
+
+/// Extract macros from nutrient list and scale by factor
+/// Nutrient IDs: Protein=1003, Total Fat=1004, Carbs=1005
+fn extract_macros_from_nutrients(
+  nutrients: List(storage.FoodNutrientValue),
+  scaling_factor: Float,
+) -> types.Macros {
+  let protein =
+    list.find(nutrients, fn(n) { n.nutrient_id == 1003 })
+    |> result.map(fn(n) { n.amount *. scaling_factor })
+    |> result.unwrap(0.0)
+
+  let fat =
+    list.find(nutrients, fn(n) { n.nutrient_id == 1004 })
+    |> result.map(fn(n) { n.amount *. scaling_factor })
+    |> result.unwrap(0.0)
+
+  let carbs =
+    list.find(nutrients, fn(n) { n.nutrient_id == 1005 })
+    |> result.map(fn(n) { n.amount *. scaling_factor })
+    |> result.unwrap(0.0)
+
+  types.Macros(protein: protein, fat: fat, carbs: carbs)
+}

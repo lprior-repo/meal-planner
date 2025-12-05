@@ -21,6 +21,7 @@ import meal_planner/auto_planner/storage as auto_storage
 import meal_planner/auto_planner/types as auto_types
 import meal_planner/nutrition_constants
 import meal_planner/storage
+import meal_planner/storage/profile as storage_profile
 import meal_planner/storage_optimized
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
@@ -1671,7 +1672,7 @@ fn create_recipe_source(req: wisp.Request, ctx: Context) -> wisp.Response {
           let response_json = auto_types.recipe_source_to_json(source)
           wisp.json_response(json.to_string(response_json), 201)
         }
-        Error(storage.DatabaseError(msg)) -> {
+        Error(storage_profile.DatabaseError(msg)) -> {
           let error_json = json.object([#("error", json.string(msg))])
           wisp.json_response(json.to_string(error_json), 500)
         }
@@ -1693,7 +1694,7 @@ fn list_recipe_sources(ctx: Context) -> wisp.Response {
       let json_data = json.array(sources, auto_types.recipe_source_to_json)
       wisp.json_response(json.to_string(json_data), 200)
     }
-    Error(storage.DatabaseError(msg)) -> {
+    Error(storage_profile.DatabaseError(msg)) -> {
       let error_json = json.object([#("error", json.string(msg))])
       wisp.json_response(json.to_string(error_json), 500)
     }
@@ -1749,7 +1750,7 @@ fn create_auto_meal_plan(req: wisp.Request, ctx: Context) -> wisp.Response {
             Ok(plan) -> {
               // Save plan to database
               case auto_storage.save_auto_plan(ctx.db, plan) {
-                Error(storage.DatabaseError(msg)) -> {
+                Error(storage_profile.DatabaseError(msg)) -> {
                   let error_json =
                     json.object([
                       #("error", json.string("Failed to save plan: " <> msg)),
@@ -1791,12 +1792,12 @@ fn api_auto_meal_plan_by_id(
 
 fn get_auto_meal_plan_by_id(id: String, ctx: Context) -> wisp.Response {
   case auto_storage.get_auto_plan(ctx.db, id) {
-    Error(storage.NotFound) -> {
+    Error(storage_profile.NotFound) -> {
       let error_json =
         json.object([#("error", json.string("Meal plan not found"))])
       wisp.json_response(json.to_string(error_json), 404)
     }
-    Error(storage.DatabaseError(msg)) -> {
+    Error(storage_profile.DatabaseError(msg)) -> {
       let error_json =
         json.object([#("error", json.string("Database error: " <> msg))])
       wisp.json_response(json.to_string(error_json), 500)

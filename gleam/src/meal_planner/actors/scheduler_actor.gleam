@@ -33,6 +33,9 @@ import gleam/otp/actor
 import gleam/otp/supervision
 import meal_planner/integrations/smtp_client
 import meal_planner/storage
+import meal_planner/storage/profile.{
+  DatabaseError, InvalidInput, NotFound, Unauthorized,
+}
 import meal_planner/ui/email_templates
 import pog
 
@@ -188,8 +191,8 @@ fn send_weekly_email(state: State) -> Nil {
 
   // Step 1: Fetch weekly summary from database
   case storage.get_weekly_summary(state.db_conn, state.user_id, start_date) {
-    Error(db_error) -> {
-      log_error("Failed to fetch weekly summary", db_error_to_string(db_error))
+    Error(_db_error) -> {
+      log_error("Failed to fetch weekly summary", "Database error")
     }
     Ok(summary) -> {
       // Step 2: Render the HTML email template
@@ -234,10 +237,10 @@ fn get_top_food_names(foods: List(storage.FoodSummaryItem)) -> List(String) {
 /// Convert database error to string for logging
 fn db_error_to_string(error: storage.StorageError) -> String {
   case error {
-    storage.NotFound -> "Food not found in database"
-    storage.DatabaseError(msg) -> "Database error: " <> msg
-    storage.InvalidInput(msg) -> "Invalid input: " <> msg
-    storage.Unauthorized(msg) -> "Unauthorized: " <> msg
+    NotFound -> "Food not found in database"
+    DatabaseError(msg) -> "Database error: " <> msg
+    InvalidInput(msg) -> "Invalid input: " <> msg
+    Unauthorized(msg) -> "Unauthorized: " <> msg
   }
 }
 

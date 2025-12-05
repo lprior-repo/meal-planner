@@ -20,6 +20,7 @@ import lustre/element/html.{
   div, form, h1, header, input, li, main, p, section, span, ul,
 }
 import meal_planner/storage.{type UsdaFood}
+import meal_planner/storage/foods.{UsdaFood}
 import meal_planner/ui/components/loading
 
 /// Render the complete food search page
@@ -174,7 +175,7 @@ pub fn search_results(foods: List(UsdaFood)) -> Element(msg) {
 /// ))
 /// ```
 pub fn food_result_item(food: UsdaFood) -> Element(msg) {
-  let storage.UsdaFood(
+  let UsdaFood(
     fdc_id: fdc_id,
     description: description,
     data_type: data_type,

@@ -242,7 +242,7 @@ pub fn recipe_detail_page(id: String, ctx: Context) -> wisp.Response {
 /// GET /foods - Display food search page
 pub fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
   // Check if this is an HTMX request
-  let is_htmx = case wisp.get_header(req, "hx-request") {
+  let is_htmx = case list.key_find(req.headers, "hx-request") {
     Ok(_) -> True
     Error(_) -> False
   }

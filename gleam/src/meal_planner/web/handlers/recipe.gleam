@@ -9,6 +9,9 @@ import gleam/result
 import gleam/string
 import meal_planner/nutrition_constants
 import meal_planner/storage
+import meal_planner/storage/recipes.{
+  DatabaseError, InvalidInput, NotFound, Unauthorized,
+}
 import meal_planner/types.{type Macros as MacrosType, type Recipe}
 import pog
 import wisp
@@ -42,23 +45,23 @@ pub fn create_recipe_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
         Ok(_) -> {
           wisp.redirect("/recipes/" <> recipe.id)
         }
-        Error(storage.DatabaseError(msg)) -> {
+        Error(DatabaseError(msg)) -> {
           let error_json =
             json.object([
               #("error", json.string("Failed to save recipe: " <> msg)),
             ])
           wisp.json_response(json.to_string(error_json), 500)
         }
-        Error(storage.NotFound) -> {
+        Error(NotFound) -> {
           let error_json = json.object([#("error", json.string("Not found"))])
           wisp.json_response(json.to_string(error_json), 404)
         }
-        Error(storage.InvalidInput(msg)) -> {
+        Error(InvalidInput(msg)) -> {
           let error_json =
             json.object([#("error", json.string("Invalid input: " <> msg))])
           wisp.json_response(json.to_string(error_json), 400)
         }
-        Error(storage.Unauthorized(msg)) -> {
+        Error(Unauthorized(msg)) -> {
           let error_json =
             json.object([#("error", json.string("Unauthorized: " <> msg))])
           wisp.json_response(json.to_string(error_json), 401)
@@ -112,7 +115,7 @@ pub fn api_recipe(req: wisp.Request, id: String, ctx: Context) -> wisp.Response 
               let updated_recipe = types.Recipe(..recipe, id: id)
               case storage.save_recipe(ctx.db, updated_recipe) {
                 Ok(_) -> wisp.redirect("/recipes/" <> id)
-                Error(storage.DatabaseError(msg)) -> {
+                Error(DatabaseError(msg)) -> {
                   let error_json =
                     json.object([
                       #(
@@ -122,19 +125,19 @@ pub fn api_recipe(req: wisp.Request, id: String, ctx: Context) -> wisp.Response 
                     ])
                   wisp.json_response(json.to_string(error_json), 500)
                 }
-                Error(storage.NotFound) -> {
+                Error(NotFound) -> {
                   let error_json =
                     json.object([#("error", json.string("Recipe not found"))])
                   wisp.json_response(json.to_string(error_json), 404)
                 }
-                Error(storage.InvalidInput(msg)) -> {
+                Error(InvalidInput(msg)) -> {
                   let error_json =
                     json.object([
                       #("error", json.string("Invalid input: " <> msg)),
                     ])
                   wisp.json_response(json.to_string(error_json), 400)
                 }
-                Error(storage.Unauthorized(msg)) -> {
+                Error(Unauthorized(msg)) -> {
                   let error_json =
                     json.object([
                       #("error", json.string("Unauthorized: " <> msg)),
@@ -196,29 +199,35 @@ pub fn parse_recipe_from_form(
 
   // Extract macros
   let protein = case list.key_find(values, "protein") {
-    Ok(p) ->
+    Ok(p) if p != "" ->
       case float.parse(p) {
         Ok(num) if num >=. 0.0 -> Ok(num)
-        _ -> Error("Protein must be a non-negative number")
+        Ok(_) -> Error("Protein must be a non-negative number")
+        Error(_) -> Error("Protein must be a valid number")
       }
+    Ok("") -> Error("Protein is required")
     _ -> Error("Protein is required")
   }
 
   let fat = case list.key_find(values, "fat") {
-    Ok(f) ->
+    Ok(f) if f != "" ->
       case float.parse(f) {
         Ok(num) if num >=. 0.0 -> Ok(num)
-        _ -> Error("Fat must be a non-negative number")
+        Ok(_) -> Error("Fat must be a non-negative number")
+        Error(_) -> Error("Fat must be a valid number")
       }
+    Ok("") -> Error("Fat is required")
     _ -> Error("Fat is required")
   }
 
   let carbs = case list.key_find(values, "carbs") {
-    Ok(c) ->
+    Ok(c) if c != "" ->
       case float.parse(c) {
         Ok(num) if num >=. 0.0 -> Ok(num)
-        _ -> Error("Carbs must be a non-negative number")
+        Ok(_) -> Error("Carbs must be a non-negative number")
+        Error(_) -> Error("Carbs must be a valid number")
       }
+    Ok("") -> Error("Carbs is required")
     _ -> Error("Carbs is required")
   }
 

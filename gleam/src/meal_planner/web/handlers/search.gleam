@@ -12,7 +12,7 @@ import lustre/element
 import lustre/element/html
 import meal_planner/nutrition_constants
 import meal_planner/storage.{type FoodNutrientValue, type UsdaFood}
-import meal_planner/types.{type SearchFilters, SearchFilters}
+import meal_planner/types.{type CustomFood, type SearchFilters, SearchFilters}
 import meal_planner/ui/components/forms
 import pog
 import wisp
@@ -24,7 +24,7 @@ pub type Context {
 
 /// Unified food search result type
 pub type FoodSearchResult {
-  CustomFoodResult(food: storage.CustomFood)
+  CustomFoodResult(food: CustomFood)
   UsdaFoodResult(
     fdc_id: Int,
     description: String,

@@ -10,10 +10,14 @@
 
 import gleam/dynamic/decode
 import gleam/http
+import gleam/int
 import gleam/json
+import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
+import gleam/uri
 import meal_planner/storage
+import meal_planner/storage/profile.{NotFound}
 import meal_planner/types
 import pog
 import wisp
@@ -78,17 +82,20 @@ fn create_custom_food(req: wisp.Request, ctx: Context) -> wisp.Response {
 
   let result = {
     use name <- decode.field("name", decode.string)
-    use brand <- decode.optional_field("brand", decode.string)
-    use description <- decode.optional_field("description", decode.string)
+    use brand <- decode.field("brand", decode.optional(decode.string))
+    use description <- decode.field(
+      "description",
+      decode.optional(decode.string),
+    )
     use serving_size <- decode.field("serving_size", decode.float)
     use serving_unit <- decode.field("serving_unit", decode.string)
     use protein <- decode.field("protein", decode.float)
     use fat <- decode.field("fat", decode.float)
     use carbs <- decode.field("carbs", decode.float)
     use calories <- decode.field("calories", decode.float)
-    use micronutrients <- decode.optional_field(
+    use micronutrients <- decode.field(
       "micronutrients",
-      micronutrients_decoder(),
+      decode.optional(micronutrients_decoder()),
     )
 
     // Generate ID and get user_id (would be from auth context in real impl)
@@ -111,9 +118,13 @@ fn create_custom_food(req: wisp.Request, ctx: Context) -> wisp.Response {
 
   case decode.run(json_data, result) {
     Ok(custom_food) -> {
-      case storage.create_custom_food(ctx.db, custom_food) {
+      let user_id = "user_default"
+      case storage.create_custom_food(ctx.db, user_id, custom_food) {
         Ok(created) -> {
-          wisp.json_response(types.custom_food_to_json(created), 201)
+          wisp.json_response(
+            json.to_string(types.custom_food_to_json(created)),
+            201,
+          )
         }
         Error(_err) -> {
           wisp.response(500)
@@ -132,18 +143,15 @@ fn create_custom_food(req: wisp.Request, ctx: Context) -> wisp.Response {
 // List Custom Foods
 // ============================================================================
 
-/// GET /api/custom-foods?limit=20&offset=0
+/// GET /api/custom-foods
 /// Lists all custom foods for the current user
-fn list_custom_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
-  // Parse query parameters
-  let limit = get_query_param_int(req, "limit", 20)
-  let offset = get_query_param_int(req, "offset", 0)
+fn list_custom_foods(_req: wisp.Request, ctx: Context) -> wisp.Response {
   let user_id = "user_default"
 
-  case storage.get_custom_foods_for_user(ctx.db, user_id, limit, offset) {
+  case storage.get_custom_foods_for_user(ctx.db, user_id) {
     Ok(foods) -> {
-      let json = json.array(foods, types.custom_food_to_json)
-      wisp.json_response(json, 200)
+      let json_data = json.array(foods, types.custom_food_to_json)
+      wisp.json_response(json.to_string(json_data), 200)
     }
     Error(_err) -> {
       wisp.response(500)
@@ -165,11 +173,11 @@ fn get_custom_food(
 ) -> wisp.Response {
   let user_id = "user_default"
 
-  case storage.get_custom_food_by_id(ctx.db, food_id, user_id) {
+  case storage.get_custom_food_by_id(ctx.db, user_id, food_id) {
     Ok(food) -> {
-      wisp.json_response(types.custom_food_to_json(food), 200)
+      wisp.json_response(json.to_string(types.custom_food_to_json(food)), 200)
     }
-    Error(storage.NotFound) -> {
+    Error(NotFound) -> {
       wisp.response(404)
       |> wisp.string_body("Custom food not found")
     }
@@ -196,22 +204,34 @@ fn update_custom_food(
   // First get the existing custom food to verify ownership
   let user_id = "user_default"
 
-  case storage.get_custom_food_by_id(ctx.db, food_id, user_id) {
+  case storage.get_custom_food_by_id(ctx.db, user_id, food_id) {
     Ok(existing_food) -> {
+      // Explicitly type existing_food for closure capture
+      let existing_food: types.CustomFood = existing_food
+
       // Decode the update payload
       let result = {
-        use name <- decode.optional_field("name", decode.string)
-        use brand <- decode.optional_field("brand", decode.string)
-        use description <- decode.optional_field("description", decode.string)
-        use serving_size <- decode.optional_field("serving_size", decode.float)
-        use serving_unit <- decode.optional_field("serving_unit", decode.string)
-        use protein <- decode.optional_field("protein", decode.float)
-        use fat <- decode.optional_field("fat", decode.float)
-        use carbs <- decode.optional_field("carbs", decode.float)
-        use calories <- decode.optional_field("calories", decode.float)
-        use micronutrients <- decode.optional_field(
+        use name <- decode.field("name", decode.optional(decode.string))
+        use brand <- decode.field("brand", decode.optional(decode.string))
+        use description <- decode.field(
+          "description",
+          decode.optional(decode.string),
+        )
+        use serving_size <- decode.field(
+          "serving_size",
+          decode.optional(decode.float),
+        )
+        use serving_unit <- decode.field(
+          "serving_unit",
+          decode.optional(decode.string),
+        )
+        use protein <- decode.field("protein", decode.optional(decode.float))
+        use fat <- decode.field("fat", decode.optional(decode.float))
+        use carbs <- decode.field("carbs", decode.optional(decode.float))
+        use calories <- decode.field("calories", decode.optional(decode.float))
+        use micronutrients <- decode.field(
           "micronutrients",
-          micronutrients_decoder(),
+          decode.optional(micronutrients_decoder()),
         )
 
         // Merge with existing values
@@ -242,9 +262,12 @@ fn update_custom_food(
 
       case decode.run(json_data, result) {
         Ok(updated_food) -> {
-          case storage.update_custom_food(ctx.db, updated_food) {
+          case storage.update_custom_food(ctx.db, user_id, updated_food) {
             Ok(saved) -> {
-              wisp.json_response(types.custom_food_to_json(saved), 200)
+              wisp.json_response(
+                json.to_string(types.custom_food_to_json(saved)),
+                200,
+              )
             }
             Error(_err) -> {
               wisp.response(500)
@@ -258,7 +281,7 @@ fn update_custom_food(
         }
       }
     }
-    Error(storage.NotFound) -> {
+    Error(NotFound) -> {
       wisp.response(404)
       |> wisp.string_body("Custom food not found")
     }
@@ -282,11 +305,11 @@ fn delete_custom_food(
 ) -> wisp.Response {
   let user_id = "user_default"
 
-  case storage.delete_custom_food(ctx.db, food_id, user_id) {
+  case storage.delete_custom_food(ctx.db, user_id, food_id) {
     Ok(_) -> {
       wisp.response(204)
     }
-    Error(storage.NotFound) -> {
+    Error(NotFound) -> {
       wisp.response(404)
       |> wisp.string_body("Custom food not found")
     }
@@ -316,8 +339,8 @@ fn search_custom_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
     q -> {
       case storage.search_custom_foods(ctx.db, user_id, q, limit) {
         Ok(foods) -> {
-          let json = json.array(foods, types.custom_food_to_json)
-          wisp.json_response(json, 200)
+          let json_data = json.array(foods, types.custom_food_to_json)
+          wisp.json_response(json.to_string(json_data), 200)
         }
         Error(_err) -> {
           wisp.response(500)
@@ -370,27 +393,27 @@ fn get_query_param_int(req: wisp.Request, name: String, default: Int) -> Int {
 
 /// Decode micronutrients from JSON
 fn micronutrients_decoder() -> decode.Decoder(types.Micronutrients) {
-  use fiber <- decode.optional_field("fiber", decode.float)
-  use sugar <- decode.optional_field("sugar", decode.float)
-  use sodium <- decode.optional_field("sodium", decode.float)
-  use cholesterol <- decode.optional_field("cholesterol", decode.float)
-  use vitamin_a <- decode.optional_field("vitamin_a", decode.float)
-  use vitamin_c <- decode.optional_field("vitamin_c", decode.float)
-  use vitamin_d <- decode.optional_field("vitamin_d", decode.float)
-  use vitamin_e <- decode.optional_field("vitamin_e", decode.float)
-  use vitamin_k <- decode.optional_field("vitamin_k", decode.float)
-  use vitamin_b6 <- decode.optional_field("vitamin_b6", decode.float)
-  use vitamin_b12 <- decode.optional_field("vitamin_b12", decode.float)
-  use folate <- decode.optional_field("folate", decode.float)
-  use thiamin <- decode.optional_field("thiamin", decode.float)
-  use riboflavin <- decode.optional_field("riboflavin", decode.float)
-  use niacin <- decode.optional_field("niacin", decode.float)
-  use calcium <- decode.optional_field("calcium", decode.float)
-  use iron <- decode.optional_field("iron", decode.float)
-  use magnesium <- decode.optional_field("magnesium", decode.float)
-  use phosphorus <- decode.optional_field("phosphorus", decode.float)
-  use potassium <- decode.optional_field("potassium", decode.float)
-  use zinc <- decode.optional_field("zinc", decode.float)
+  use fiber <- decode.field("fiber", decode.optional(decode.float))
+  use sugar <- decode.field("sugar", decode.optional(decode.float))
+  use sodium <- decode.field("sodium", decode.optional(decode.float))
+  use cholesterol <- decode.field("cholesterol", decode.optional(decode.float))
+  use vitamin_a <- decode.field("vitamin_a", decode.optional(decode.float))
+  use vitamin_c <- decode.field("vitamin_c", decode.optional(decode.float))
+  use vitamin_d <- decode.field("vitamin_d", decode.optional(decode.float))
+  use vitamin_e <- decode.field("vitamin_e", decode.optional(decode.float))
+  use vitamin_k <- decode.field("vitamin_k", decode.optional(decode.float))
+  use vitamin_b6 <- decode.field("vitamin_b6", decode.optional(decode.float))
+  use vitamin_b12 <- decode.field("vitamin_b12", decode.optional(decode.float))
+  use folate <- decode.field("folate", decode.optional(decode.float))
+  use thiamin <- decode.field("thiamin", decode.optional(decode.float))
+  use riboflavin <- decode.field("riboflavin", decode.optional(decode.float))
+  use niacin <- decode.field("niacin", decode.optional(decode.float))
+  use calcium <- decode.field("calcium", decode.optional(decode.float))
+  use iron <- decode.field("iron", decode.optional(decode.float))
+  use magnesium <- decode.field("magnesium", decode.optional(decode.float))
+  use phosphorus <- decode.field("phosphorus", decode.optional(decode.float))
+  use potassium <- decode.field("potassium", decode.optional(decode.float))
+  use zinc <- decode.field("zinc", decode.optional(decode.float))
 
   decode.success(types.Micronutrients(
     fiber: fiber,

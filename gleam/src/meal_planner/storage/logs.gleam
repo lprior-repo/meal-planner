@@ -6,22 +6,16 @@ import gleam/result
 import gleam/string
 import meal_planner/postgres
 import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
-import meal_planner/storage/profile
+import meal_planner/storage/profile.{
+  type StorageError, DatabaseError, InvalidInput, NotFound, Unauthorized,
+}
 import meal_planner/storage/utils
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type UserProfile, Active,
-  Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, Lose, Lunch, Macros,
-  Maintain, Moderate, Sedentary, Snack, UserProfile,
+  Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, Lose, Lunch, Macros, Maintain,
+  Moderate, Sedentary, Snack, UserProfile,
 }
 import pog
-
-/// Error type for storage operations
-pub type StorageError {
-  NotFound
-  DatabaseError(String)
-  InvalidInput(String)
-  Unauthorized(String)
-}
 
 /// Valid USDA food categories for SQL injection prevention
 /// These are the official USDA FoodData Central categories

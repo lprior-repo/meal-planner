@@ -11,7 +11,6 @@ import gleam/option
 import gleam/string
 import meal_planner/nutrition_constants as constants
 import meal_planner/storage
-import meal_planner/types
 import meal_planner/types.{
   type FoodSearchError, type FoodSearchResponse, CustomFoodResult,
   FoodSearchResponse, InvalidQuery, SearchFilters, UsdaFoodResult,

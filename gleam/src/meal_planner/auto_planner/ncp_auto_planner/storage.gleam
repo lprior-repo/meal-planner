@@ -8,7 +8,8 @@ import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/auto_planner/types as auto_types
-import meal_planner/storage.{type StorageError, DatabaseError, NotFound}
+import meal_planner/storage.{type StorageError}
+import meal_planner/storage/profile.{DatabaseError, NotFound}
 import meal_planner/types.{
   type Recipe, High, Ingredient, Low, Macros, Medium, Recipe,
 }
