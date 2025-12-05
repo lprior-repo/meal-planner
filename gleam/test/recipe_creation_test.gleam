@@ -21,7 +21,7 @@ import test_helper
 
 pub fn main() {
   // Initialize test database once before running tests
-  test_helper.setup()
+  let _ = test_helper.setup()
   gleeunit.main()
 }
 
