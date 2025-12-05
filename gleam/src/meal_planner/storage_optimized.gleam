@@ -1,10 +1,9 @@
 /// Optimized storage functions with query caching and improved query plans
 /// Phase 2: Database query optimization
 /// Target: 50% DB load reduction through covering indexes and caching
-import gleam/dict
 import gleam/dynamic/decode
 import gleam/int
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import meal_planner/nutrition_constants as constants
 import meal_planner/query_cache
 import meal_planner/storage.{

@@ -4,7 +4,6 @@ import gleam/httpc
 import gleam/int
 import gleam/json
 import gleam/result
-import meal_planner/nutrition_constants
 
 /// Represents the sender or recipient of an email
 pub type EmailAddress {

@@ -3,10 +3,8 @@
 /// Target: 10x speedup for popular queries, 50% DB load reduction
 import gleam/dict.{type Dict}
 import gleam/int
-import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import meal_planner/nutrition_constants as constants
 
 // ============================================================================
 // Cache Types
@@ -303,9 +301,9 @@ pub fn food_nutrients_key(fdc_id: Int) -> String {
 
 /// Record cache performance metric
 pub fn record_metric(
-  cache_hit: Bool,
-  query_name: String,
-  execution_time_ms: Float,
+  _cache_hit: Bool,
+  _query_name: String,
+  _execution_time_ms: Float,
 ) -> Nil {
   // In production, this would log to the query_performance_metrics table
   // For now, this is a stub that could be implemented with the storage module
