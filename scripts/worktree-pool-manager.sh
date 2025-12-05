@@ -25,11 +25,13 @@ set -euo pipefail
 # Configuration
 readonly POOL_STATE_FILE="/tmp/pool-state.json"
 readonly POOL_LOCK_FILE="/tmp/pool-state.lock"
+readonly POOL_LOCK_FILE="/tmp/pool-state.lock"
 readonly WORKTREE_BASE_DIR=".agent-worktrees"
 readonly MIN_POOL_SIZE=3
 readonly MAX_POOL_SIZE=10
 readonly SCALE_CHECK_INTERVAL=60  # seconds
 readonly QUEUE_WAIT_THRESHOLD=3   # agents waiting before scale-up
+readonly LOCK_TIMEOUT=30          # seconds to wait for lock
 readonly LOCK_TIMEOUT=30          # seconds to wait for lock
 
 # Colors for output

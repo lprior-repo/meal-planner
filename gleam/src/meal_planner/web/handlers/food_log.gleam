@@ -3,11 +3,11 @@
 import gleam/float
 import gleam/json
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option.{None}
 import gleam/result
 import gleam/uri
 import meal_planner/storage
-import meal_planner/types.{type FoodLogEntry, FoodLogEntry, Macros}
+import meal_planner/types.{FoodLogEntry}
 import pog
 import wisp
 

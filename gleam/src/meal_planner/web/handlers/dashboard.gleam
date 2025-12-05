@@ -9,7 +9,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
-import gleam/option.{Some}
+import gleam/option
 import gleam/result
 import gleam/string
 import gleam/uri

@@ -6,15 +6,12 @@ import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{type Option}
-import gleam/result
-import gleam/string
 import meal_planner/storage
 import meal_planner/storage_optimized
 import meal_planner/types.{
-  type ActivityLevel, type DailyLog, type FoodLogEntry, type Goal, type Macros,
-  type MealType, type Recipe, type SearchFilters, type UserProfile, Active,
-  Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, Lose, Lunch, Macros, Maintain,
-  Moderate, Sedentary, Snack, UserProfile,
+  type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
+  type SearchFilters, type UserProfile, Active, Breakfast, DailyLog, Dinner,
+  Gain, Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack, UserProfile,
 }
 import pog
 
@@ -63,7 +60,7 @@ pub fn search_foods_filtered(
   db: pog.Connection,
   cache: storage_optimized.SearchCache,
   query: String,
-  filters: SearchFilters,
+  _filters: SearchFilters,
   limit: Int,
 ) -> #(
   storage_optimized.SearchCache,
