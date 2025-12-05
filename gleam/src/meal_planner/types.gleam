@@ -49,6 +49,86 @@ pub fn macros_sum(macros: List(Macros)) -> Macros {
   list.fold(macros, macros_zero(), macros_add)
 }
 
+/// Calculate protein as a percentage of total calories (0.0 to 1.0)
+pub fn protein_ratio(m: Macros) -> Float {
+  let total_cals = macros_calories(m)
+  case total_cals >. 0.0 {
+    True -> { m.protein *. 4.0 } /. total_cals
+    False -> 0.0
+  }
+}
+
+/// Calculate carbs as a percentage of total calories (0.0 to 1.0)
+pub fn carb_ratio(m: Macros) -> Float {
+  let total_cals = macros_calories(m)
+  case total_cals >. 0.0 {
+    True -> { m.carbs *. 4.0 } /. total_cals
+    False -> 0.0
+  }
+}
+
+/// Calculate fat as a percentage of total calories (0.0 to 1.0)
+pub fn fat_ratio(m: Macros) -> Float {
+  let total_cals = macros_calories(m)
+  case total_cals >. 0.0 {
+    True -> { m.fat *. 9.0 } /. total_cals
+    False -> 0.0
+  }
+}
+
+/// Check if macros are balanced (30% protein, 30% fat, 40% carbs +/- 10%)
+pub fn is_balanced(m: Macros) -> Bool {
+  let p_ratio = protein_ratio(m)
+  let f_ratio = fat_ratio(m)
+  let c_ratio = carb_ratio(m)
+  let protein_ok = p_ratio >=. 0.2 && p_ratio <=. 0.4
+  let fat_ok = f_ratio >=. 0.2 && f_ratio <=. 0.4
+  let carb_ok = c_ratio >=. 0.3 && c_ratio <=. 0.5
+  protein_ok && fat_ok && carb_ok
+}
+
+/// Check if macros are empty (all zeros)
+pub fn is_empty(m: Macros) -> Bool {
+  m.protein == 0.0 && m.fat == 0.0 && m.carbs == 0.0
+}
+
+/// Check if any macro value is negative
+pub fn has_negative_values(m: Macros) -> Bool {
+  m.protein <. 0.0 || m.fat <. 0.0 || m.carbs <. 0.0
+}
+
+/// Calculate protein calories only
+pub fn protein_calories(m: Macros) -> Float {
+  m.protein *. 4.0
+}
+
+/// Calculate carb calories only
+pub fn carb_calories(m: Macros) -> Float {
+  m.carbs *. 4.0
+}
+
+/// Calculate fat calories only
+pub fn fat_calories(m: Macros) -> Float {
+  m.fat *. 9.0
+}
+
+/// Compare two Macros for approximate equality (0.1g tolerance)
+pub fn macros_approximately_equal(a: Macros, b: Macros) -> Bool {
+  let tolerance = 0.1
+  let protein_close = float_abs(a.protein -. b.protein) <. tolerance
+  let fat_close = float_abs(a.fat -. b.fat) <. tolerance
+  let carbs_close = float_abs(a.carbs -. b.carbs) <. tolerance
+  protein_close && fat_close && carbs_close
+}
+
+/// Helper function for absolute value
+fn float_abs(x: Float) -> Float {
+  case x <. 0.0 {
+    True -> 0.0 -. x
+    False -> x
+  }
+}
+
 // ============================================================================
 // Micronutrients Types
 // ============================================================================
