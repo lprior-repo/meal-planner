@@ -8,8 +8,8 @@ import meal_planner/ncp
 import meal_planner/postgres
 import meal_planner/storage/utils
 import meal_planner/types.{
-  type UserProfile,
-  Active, Gain, Lose, Maintain, Moderate, Sedentary, UserProfile,
+  type UserProfile, Active, Gain, Lose, Maintain, Moderate, Sedentary,
+  UserProfile,
 }
 import pog
 
@@ -20,7 +20,6 @@ pub type StorageError {
   InvalidInput(String)
   Unauthorized(String)
 }
-
 
 /// Database configuration (re-export from postgres module)
 pub type DbConfig =

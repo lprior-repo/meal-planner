@@ -1,0 +1,822 @@
+  Compiling meal_planner
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:5:22
+  │
+5 │ import gleam/option.{type Option, None, Some}
+  │                      ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:5:35
+  │
+5 │ import gleam/option.{type Option, None, Some}
+  │                                   ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:5:41
+  │
+5 │ import gleam/option.{type Option, None, Some}
+  │                                         ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:12:3
+   │
+12 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │   ^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:12:18
+   │
+12 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │                  ^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:12:37
+   │
+12 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │                                     ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:12:50
+   │
+12 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │                                                  ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:13:11
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │           ^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:13:22
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                      ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:13:32
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:13:40
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                        ^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:13:60
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                                            ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:13:66
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                                                  ^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:14:9
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │         ^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:14:14
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │              ^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:14:21
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                     ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:14:39
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                       ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:14:57
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                                         ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:14:76
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                                                            ^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private constant
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:29:1
+   │
+29 │ const valid_food_categories = [
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private constant is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/profile.gleam:58:1
+   │
+58 │ fn validate_category(category: String) -> Result(String, String) {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:3:1
+  │
+3 │ import gleam/int
+  │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:5:22
+  │
+5 │ import gleam/option.{type Option, None, Some}
+  │                      ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:5:35
+  │
+5 │ import gleam/option.{type Option, None, Some}
+  │                                   ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:5:41
+  │
+5 │ import gleam/option.{type Option, None, Some}
+  │                                         ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:8:1
+  │
+8 │ import meal_planner/ncp
+  │ ^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported value
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:10:36
+   │
+10 │ import meal_planner/storage/utils.{format_pog_error}
+   │                                    ^^^^^^^^^^^^^^^^ This imported value is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:12:3
+   │
+12 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │   ^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:12:18
+   │
+12 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │                  ^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:12:37
+   │
+12 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │                                     ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:12:63
+   │
+12 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │                                                               ^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:13:3
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │   ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:13:11
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │           ^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:13:22
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                      ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:13:32
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:13:40
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                        ^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:13:54
+   │
+13 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                                      ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:14:3
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │   ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:14:14
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │              ^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:14:29
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                             ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:14:47
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                               ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:14:65
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                                                 ^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:14:76
+   │
+14 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                                                            ^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:15:3
+   │
+15 │   UserProfile,
+   │   ^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private constant
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:29:1
+   │
+29 │ const valid_food_categories = [
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private constant is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipes.gleam:58:1
+   │
+58 │ fn validate_category(category: String) -> Result(String, String) {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/foods.gleam:4:1
+  │
+4 │ import gleam/int
+  │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/foods.gleam:5:1
+  │
+5 │ import gleam/list
+  │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/foods.gleam:8:1
+  │
+8 │ import gleam/string
+  │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/foods.gleam:97:3
+   │
+97 │   filters: types.SearchFilters,
+   │   ^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_filters`.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:3:1
+  │
+3 │ import gleam/int
+  │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:8:1
+  │
+8 │ import meal_planner/ncp
+  │ ^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:14:50
+   │
+14 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │                                                  ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:15:3
+   │
+15 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │   ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:15:54
+   │
+15 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                                      ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:15:60
+   │
+15 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                                            ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:15:66
+   │
+15 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                                                  ^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:16:3
+   │
+16 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │   ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:16:9
+   │
+16 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │         ^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:16:39
+   │
+16 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                       ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:16:57
+   │
+16 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                                         ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:16:65
+   │
+16 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                                                 ^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private constant
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:31:1
+   │
+31 │ const valid_food_categories = [
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private constant is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam:60:1
+   │
+60 │ fn validate_category(category: String) -> Result(String, String) {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:8:1
+  │
+8 │ import meal_planner/ncp
+  │ ^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:11:27
+   │
+11 │   type FoodNutrientValue, type UsdaFood, type UsdaFoodWithNutrients,
+   │                           ^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:11:42
+   │
+11 │   type FoodNutrientValue, type UsdaFood, type UsdaFoodWithNutrients,
+   │                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:12:22
+   │
+12 │   FoodNutrientValue, UsdaFood, UsdaFoodWithNutrients, get_custom_food_by_id,
+   │                      ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:12:32
+   │
+12 │   FoodNutrientValue, UsdaFood, UsdaFoodWithNutrients, get_custom_food_by_id,
+   │                                ^^^^^^^^^^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported value
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:13:19
+   │
+13 │   get_food_by_id, get_food_nutrients,
+   │                   ^^^^^^^^^^^^^^^^^^ This imported value is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:16:3
+   │
+16 │   type FoodSummaryItem, type WeeklySummary, FoodSummaryItem, WeeklySummary,
+   │   ^^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:21:3
+   │
+21 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │   ^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:21:50
+   │
+21 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │                                                  ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:21:63
+   │
+21 │   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
+   │                                                               ^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:22:3
+   │
+22 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │   ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:22:22
+   │
+22 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                      ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:22:54
+   │
+22 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                                      ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:22:60
+   │
+22 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                                            ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:22:66
+   │
+22 │   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
+   │                                                                  ^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:23:3
+   │
+23 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │   ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:23:9
+   │
+23 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │         ^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:23:29
+   │
+23 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                             ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:23:39
+   │
+23 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                       ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:23:47
+   │
+23 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                               ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:23:57
+   │
+23 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                                         ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:23:65
+   │
+23 │   Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
+   │                                                                 ^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:24:3
+   │
+24 │   UserProfile,
+   │   ^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private constant
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:30:1
+   │
+30 │ const valid_food_categories = [
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private constant is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:59:1
+   │
+59 │ fn validate_category(category: String) -> Result(String, String) {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Shadowed Import
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:87:1
+   │  
+87 │ ╭ pub fn get_food_nutrients(
+88 │ │   conn: pog.Connection,
+89 │ │   fdc_id: Int,
+90 │ │ ) -> Result(List(FoodNutrientValue), StorageError) {
+   │ ╰──────────────────────────────────────────────────^ `get_food_nutrients` is defined here
+
+Definition of get_food_nutrients shadows an imported value.
+The imported value could not be used in this module anyway.
+Hint: Either rename the definition or remove the import.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:932:1
+    │
+932 │ fn format_pog_error(err: pog.QueryError) -> String {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+error: Unknown type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:90:38
+   │
+90 │ ) -> Result(List(FoodNutrientValue), StorageError) {
+   │                                      ^^^^^^^^^^^^
+
+The type `StorageError` is not defined or imported in this module.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:125:23
+    │
+125 │     Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+    │                       ^^^^^^^^^^^^^
+
+The custom type variant constructor `DatabaseError` is not in scope here.
+
+error: Unknown type
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:159:28
+    │
+159 │ ) -> Result(WeeklySummary, StorageError) {
+    │                            ^^^^^^^^^^^^
+
+The type `StorageError` is not defined or imported in this module.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:261:23
+    │
+261 │     Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+    │                       ^^^^^^^^^^^^^
+
+The custom type variant constructor `DatabaseError` is not in scope here.
+
+error: Unknown type
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:337:27
+    │
+337 │ ) -> Result(FoodLogEntry, StorageError) {
+    │                           ^^^^^^^^^^^^
+
+The type `StorageError` is not defined or imported in this module.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:341:19
+    │
+341 │     True -> Error(InvalidInput("Servings must be non-negative"))
+    │                   ^^^^^^^^^^^^
+
+The custom type variant constructor `InvalidInput` is not in scope here.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:351:41
+    │
+351 │             |> result.map_error(fn(_) { DatabaseError("Failed to fetch recipe") })
+    │                                         ^^^^^^^^^^^^^
+
+The custom type variant constructor `DatabaseError` is not in scope here.
+
+error: Unknown type
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:655:27
+    │
+655 │ ) -> Result(FoodLogEntry, StorageError) {
+    │                           ^^^^^^^^^^^^
+
+The type `StorageError` is not defined or imported in this module.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:913:23
+    │
+913 │     Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+    │                       ^^^^^^^^^^^^^
+
+The custom type variant constructor `DatabaseError` is not in scope here.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:916:13
+    │
+916 │       Error(DatabaseError("Failed to insert food log entry"))
+    │             ^^^^^^^^^^^^^
+
+The custom type variant constructor `DatabaseError` is not in scope here.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/nutrients.gleam:919:13
+    │
+919 │       Error(DatabaseError("Failed to insert food log entry"))
+    │             ^^^^^^^^^^^^^
+
+The custom type variant constructor `DatabaseError` is not in scope here.
+

@@ -2072,4 +2072,3 @@ fn json_error_response(status: Int, error_message: String) -> wisp.Response {
   let error_json = json.object([#("error", json.string(error_message))])
   wisp.json_response(json.to_string(error_json), status)
 }
-

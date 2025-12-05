@@ -7,8 +7,7 @@ import gleam/string
 import meal_planner/postgres
 import meal_planner/storage/utils
 import meal_planner/types.{
-  type FoodLogEntry,
-  Breakfast, Dinner, FoodLogEntry, Lunch, Snack,
+  type FoodLogEntry, Breakfast, Dinner, FoodLogEntry, Lunch, Snack,
 }
 import pog
 

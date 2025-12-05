@@ -9,9 +9,5 @@ import meal_planner/storage/foods.{
 }
 import meal_planner/storage/recipes.{get_recipe_by_id}
 import meal_planner/storage/utils
-import meal_planner/types.{
-  type Macros, type Recipe, Macros, Recipe,
-}
+import meal_planner/types.{type Macros, type Recipe, Macros, Recipe}
 import pog
-
-}
