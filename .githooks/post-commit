@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Post-Commit Hook - Detect --no-verify Usage
+# =============================================================================
+# Runs after every commit to check if there are compilation errors
+# Provides warnings if --no-verify was likely used
+# =============================================================================
+
+set -euo pipefail
+
+# Colors
+readonly RED='\033[0;31m'
+readonly YELLOW='\033[1;33m'
+readonly GREEN='\033[0;32m'
+readonly BOLD='\033[1m'
+readonly NC='\033[0m'
+
+# Check if build would pass
+cd "$(git rev-parse --show-toplevel)"
+
+if [[ -f "gleam/gleam.toml" ]]; then
+    # Quick build check (silent)
+    if ! (cd gleam && gleam build >/dev/null 2>&1); then
+        echo ""
+        echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${RED}${BOLD}  ⚠ WARNING: COMMIT HAS COMPILATION ERRORS${NC}"
+        echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
+        echo -e "${BOLD}It appears you may have used 'git commit --no-verify'${NC}"
+        echo ""
+        echo "Your commit was successful, but the code doesn't compile!"
+        echo ""
+        echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${BOLD}CRITICAL REMINDER:${NC}"
+        echo ""
+        echo "  You MUST fix these compilation errors before:"
+        echo "    • Pushing to remote"
+        echo "    • Merging to main"
+        echo "    • Creating a PR"
+        echo ""
+        echo "  The pre-push hook will BLOCK your push until errors are fixed!"
+        echo ""
+        echo -e "${BOLD}To fix now:${NC}"
+        echo "  1. Run: cd gleam && gleam build"
+        echo "  2. Fix the errors shown"
+        echo "  3. Commit the fixes: git add . && git commit -m 'Fix compilation errors'"
+        echo ""
+        echo -e "${BOLD}Or to amend this commit:${NC}"
+        echo "  1. Fix the errors"
+        echo "  2. Run: git add ."
+        echo "  3. Run: git commit --amend --no-edit"
+        echo ""
+        echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
+        echo "See errors by running: cd gleam && gleam build"
+        echo ""
+    fi
+fi
+
+exit 0
