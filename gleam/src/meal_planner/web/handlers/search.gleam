@@ -356,6 +356,7 @@ pub fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
             active_filters,
             list.length(active_filters) > 0,
           )
+          |> element.to_string
         }
       }
   }

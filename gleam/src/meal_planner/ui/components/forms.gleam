@@ -15,27 +15,27 @@ import gleam/int
 import gleam/list
 import gleam/option
 import gleam/string
+import lustre/attribute
+import lustre/element
+import lustre/element/html
 
 /// Text input field
 ///
 /// Renders: <input type="text" class="input" id="name" aria-label="placeholder" />
-pub fn input_field(name: String, placeholder: String, value: String) -> String {
-  "<input type=\"text\" class=\"input\" "
-  <> "id=\""
-  <> name
-  <> "\" "
-  <> "name=\""
-  <> name
-  <> "\" "
-  <> "placeholder=\""
-  <> placeholder
-  <> "\" "
-  <> "aria-label=\""
-  <> placeholder
-  <> "\" "
-  <> "value=\""
-  <> value
-  <> "\" />"
+pub fn input_field(
+  name: String,
+  placeholder: String,
+  value: String,
+) -> element.Element(msg) {
+  html.input([
+    attribute.type_("text"),
+    attribute.class("input"),
+    attribute.id(name),
+    attribute.name(name),
+    attribute.placeholder(placeholder),
+    attribute.attribute("aria-label", placeholder),
+    attribute.value(value),
+  ])
 }
 
 /// Text input with label
@@ -50,27 +50,18 @@ pub fn input_with_label(
   name: String,
   placeholder: String,
   value: String,
-) -> String {
-  "<div class=\"form-group\">"
-  <> "<label for=\""
-  <> name
-  <> "\">"
-  <> label
-  <> "</label>"
-  <> "<input type=\"text\" class=\"input\" "
-  <> "id=\""
-  <> name
-  <> "\" "
-  <> "name=\""
-  <> name
-  <> "\" "
-  <> "placeholder=\""
-  <> placeholder
-  <> "\" "
-  <> "value=\""
-  <> value
-  <> "\" />"
-  <> "</div>"
+) -> element.Element(msg) {
+  html.div([attribute.class("form-group")], [
+    html.label([attribute.for(name)], [element.text(label)]),
+    html.input([
+      attribute.type_("text"),
+      attribute.class("input"),
+      attribute.id(name),
+      attribute.name(name),
+      attribute.placeholder(placeholder),
+      attribute.value(value),
+    ]),
+  ])
 }
 
 /// Search input with integrated button and HTMX
@@ -84,29 +75,40 @@ pub fn input_with_label(
 ///   <button class="btn btn-primary" type="submit">Search</button>
 ///   <span id="search-loading" class="htmx-indicator">Loading...</span>
 /// </div>
-pub fn search_input(query: String, placeholder: String) -> String {
-  "<div class=\"search-box\" role=\"search\">"
-  <> "<input type=\"search\" class=\"input-search\" "
-  <> "id=\"search-input\" "
-  <> "name=\"q\" "
-  <> "placeholder=\""
-  <> placeholder
-  <> "\" "
-  <> "aria-label=\""
-  <> placeholder
-  <> "\" "
-  <> "value=\""
-  <> query
-  <> "\" "
-  <> "hx-get=\"/api/foods/search\" "
-  <> "hx-trigger=\"input changed delay:300ms\" "
-  <> "hx-target=\"#food-results\" "
-  <> "hx-swap=\"innerHTML\" "
-  <> "hx-push-url=\"true\" "
-  <> "hx-indicator=\"#search-loading\" />"
-  <> "<button class=\"btn btn-primary\" type=\"submit\" aria-label=\"Submit search\">Search</button>"
-  <> "<span id=\"search-loading\" class=\"htmx-indicator\" aria-label=\"Loading search results\">Loading...</span>"
-  <> "</div>"
+pub fn search_input(query: String, placeholder: String) -> element.Element(msg) {
+  html.div([attribute.attribute("role", "search"), attribute.class("search-box")], [
+    html.input([
+      attribute.type_("search"),
+      attribute.class("input-search"),
+      attribute.id("search-input"),
+      attribute.name("q"),
+      attribute.placeholder(placeholder),
+      attribute.attribute("aria-label", placeholder),
+      attribute.value(query),
+      attribute.attribute("hx-get", "/api/foods/search"),
+      attribute.attribute("hx-trigger", "input changed delay:300ms"),
+      attribute.attribute("hx-target", "#food-results"),
+      attribute.attribute("hx-swap", "innerHTML"),
+      attribute.attribute("hx-push-url", "true"),
+      attribute.attribute("hx-indicator", "#search-loading"),
+    ]),
+    html.button(
+      [
+        attribute.class("btn btn-primary"),
+        attribute.type_("submit"),
+        attribute.attribute("aria-label", "Submit search"),
+      ],
+      [element.text("Search")],
+    ),
+    html.span(
+      [
+        attribute.id("search-loading"),
+        attribute.class("htmx-indicator"),
+        attribute.attribute("aria-label", "Loading search results"),
+      ],
+      [element.text("Loading...")],
+    ),
+  ])
 }
 
 /// Number input field
@@ -118,37 +120,31 @@ pub fn number_input(
   value: Float,
   min: option.Option(Float),
   max: option.Option(Float),
-) -> String {
+) -> element.Element(msg) {
   let value_str = float.to_string(value)
-  let min_attr = case min {
-    option.Some(m) -> " min=\"" <> float.to_string(m) <> "\""
-    option.None -> ""
+  let min_attrs = case min {
+    option.Some(m) -> [attribute.attribute("min", float.to_string(m))]
+    option.None -> []
   }
-  let max_attr = case max {
-    option.Some(m) -> " max=\"" <> float.to_string(m) <> "\""
-    option.None -> ""
+  let max_attrs = case max {
+    option.Some(m) -> [attribute.attribute("max", float.to_string(m))]
+    option.None -> []
   }
 
-  "<div class=\"form-group\">"
-  <> "<label for=\""
-  <> name
-  <> "\">"
-  <> label
-  <> "</label>"
-  <> "<input type=\"number\" class=\"input\" "
-  <> "id=\""
-  <> name
-  <> "\" "
-  <> "name=\""
-  <> name
-  <> "\" "
-  <> "value=\""
-  <> value_str
-  <> "\""
-  <> min_attr
-  <> max_attr
-  <> " />"
-  <> "</div>"
+  html.div([attribute.class("form-group")], [
+    html.label([attribute.for(name)], [element.text(label)]),
+    html.input(
+      [
+        attribute.type_("number"),
+        attribute.class("input"),
+        attribute.id(name),
+        attribute.name(name),
+        attribute.value(value_str),
+      ]
+      |> list.append(min_attrs)
+      |> list.append(max_attrs),
+    ),
+  ])
 }
 
 /// Select dropdown
@@ -164,31 +160,20 @@ pub fn select_field(
   name: String,
   label: String,
   options: List(#(String, String)),
-) -> String {
-  let options_html =
+) -> element.Element(msg) {
+  let option_elements =
     options
     |> list.map(fn(opt) {
       let #(value, text) = opt
-      "<option value=\"" <> value <> "\">" <> text <> "</option>"
+      html.option([attribute.value(value)], text)
     })
-    |> string.concat()
 
-  "<div class=\"form-group\">"
-  <> "<label for=\""
-  <> name
-  <> "\">"
-  <> label
-  <> "</label>"
-  <> "<select id=\""
-  <> name
-  <> "\" "
-  <> "name=\""
-  <> name
-  <> "\" "
-  <> "class=\"input\">"
-  <> options_html
-  <> "</select>"
-  <> "</div>"
+  html.div([attribute.class("form-group")], [
+    html.label([attribute.for(name)], [element.text(label)]),
+    html.select([attribute.id(name), attribute.name(name), attribute.class("input")],
+      option_elements
+    ),
+  ])
 }
 
 /// Form group container with label and error message
@@ -201,24 +186,27 @@ pub fn select_field(
 /// </div>
 pub fn form_field(
   label: String,
-  input: String,
+  input: element.Element(msg),
   error: option.Option(String),
-) -> String {
-  let error_html = case error {
+) -> element.Element(msg) {
+  let error_element = case error {
     option.Some(err_msg) ->
-      "<div class=\"form-error\" role=\"alert\" aria-live=\"polite\">"
-      <> err_msg
-      <> "</div>"
-    option.None -> ""
+      html.div(
+        [
+          attribute.class("form-error"),
+          attribute.attribute("role", "alert"),
+          attribute.attribute("aria-live", "polite"),
+        ],
+        [element.text(err_msg)],
+      )
+    option.None -> element.none()
   }
 
-  "<div class=\"form-group\">"
-  <> "<label>"
-  <> label
-  <> "</label>"
-  <> input
-  <> error_html
-  <> "</div>"
+  html.div([attribute.class("form-group")], [
+    html.label([], [element.text(label)]),
+    input,
+    error_element,
+  ])
 }
 
 /// Form container
@@ -231,22 +219,17 @@ pub fn form_field(
 pub fn form(
   action: String,
   method: String,
-  fields: List(String),
+  fields: List(element.Element(msg)),
   submit_label: String,
-) -> String {
-  let fields_html = string.concat(fields)
-
-  "<form action=\""
-  <> action
-  <> "\" "
-  <> "method=\""
-  <> method
-  <> "\">"
-  <> fields_html
-  <> "<button type=\"submit\" class=\"btn btn-primary\">"
-  <> submit_label
-  <> "</button>"
-  <> "</form>"
+) -> element.Element(msg) {
+  html.form([attribute.action(action), attribute.method(method)], {
+    list.append(fields, [
+      html.button(
+        [attribute.type_("submit"), attribute.class("btn btn-primary")],
+        [element.text(submit_label)],
+      ),
+    ])
+  })
 }
 
 // ===================================================================
@@ -272,37 +255,45 @@ pub fn form(
 ///   <button type="button" class="search-clear-btn [hidden]">×</button>
 ///   <span id="search-loading" class="htmx-indicator">Loading...</span>
 /// </div>
-pub fn search_input_with_clear(query: String, placeholder: String) -> String {
+pub fn search_input_with_clear(
+  query: String,
+  placeholder: String,
+) -> element.Element(msg) {
   let has_value = string.length(query) > 0
   let clear_btn_class = case has_value {
     True -> "search-clear-btn"
     False -> "search-clear-btn hidden"
   }
 
-  "<div class=\"search-input-container\">"
-  <> "<input type=\"search\" class=\"input-search\" "
-  <> "id=\"search-input\" "
-  <> "name=\"q\" "
-  <> "placeholder=\""
-  <> placeholder
-  <> "\" "
-  <> "value=\""
-  <> query
-  <> "\" "
-  <> "aria-label=\""
-  <> placeholder
-  <> "\" "
-  <> "hx-get=\"/api/foods/search\" "
-  <> "hx-trigger=\"input changed delay:300ms from:#search-input\" "
-  <> "hx-target=\"#food-results\" "
-  <> "hx-swap=\"innerHTML\" "
-  <> "hx-push-url=\"true\" "
-  <> "hx-indicator=\"#search-loading\" />"
-  <> "<button type=\"button\" class=\""
-  <> clear_btn_class
-  <> "\">×</button>"
-  <> "<span id=\"search-loading\" class=\"htmx-indicator\" aria-label=\"Loading search results\">Loading...</span>"
-  <> "</div>"
+  html.div([attribute.class("search-input-container")], [
+    html.input([
+      attribute.type_("search"),
+      attribute.class("input-search"),
+      attribute.id("search-input"),
+      attribute.name("q"),
+      attribute.placeholder(placeholder),
+      attribute.value(query),
+      attribute.attribute("aria-label", placeholder),
+      attribute.attribute("hx-get", "/api/foods/search"),
+      attribute.attribute("hx-trigger", "input changed delay:300ms from:#search-input"),
+      attribute.attribute("hx-target", "#food-results"),
+      attribute.attribute("hx-swap", "innerHTML"),
+      attribute.attribute("hx-push-url", "true"),
+      attribute.attribute("hx-indicator", "#search-loading"),
+    ]),
+    html.button(
+      [attribute.type_("button"), attribute.class(clear_btn_class)],
+      [element.text("×")],
+    ),
+    html.span(
+      [
+        attribute.id("search-loading"),
+        attribute.class("htmx-indicator"),
+        attribute.attribute("aria-label", "Loading search results"),
+      ],
+      [element.text("Loading...")],
+    ),
+  ])
 }
 
 /// Search input with autofocus control and HTMX
@@ -314,44 +305,50 @@ pub fn search_input_with_autofocus(
   query: String,
   placeholder: String,
   autofocus: Bool,
-) -> String {
+) -> element.Element(msg) {
   let has_value = string.length(query) > 0
   let clear_btn_class = case has_value {
     True -> "search-clear-btn"
     False -> "search-clear-btn hidden"
   }
 
-  let autofocus_attr = case autofocus {
-    True -> " autofocus"
-    False -> ""
+  let autofocus_attrs = case autofocus {
+    True -> [attribute.attribute("autofocus", "")]
+    False -> []
   }
 
-  "<div class=\"search-input-container\">"
-  <> "<input type=\"search\" class=\"input-search\" "
-  <> "id=\"search-input\" "
-  <> "name=\"q\" "
-  <> "placeholder=\""
-  <> placeholder
-  <> "\" "
-  <> "value=\""
-  <> query
-  <> "\" "
-  <> "aria-label=\""
-  <> placeholder
-  <> "\" "
-  <> "hx-get=\"/api/foods/search\" "
-  <> "hx-trigger=\"input changed delay:300ms from:#search-input\" "
-  <> "hx-target=\"#food-results\" "
-  <> "hx-swap=\"innerHTML\" "
-  <> "hx-push-url=\"true\" "
-  <> "hx-indicator=\"#search-loading\""
-  <> autofocus_attr
-  <> " />"
-  <> "<button type=\"button\" class=\""
-  <> clear_btn_class
-  <> "\">×</button>"
-  <> "<span id=\"search-loading\" class=\"htmx-indicator\" aria-label=\"Loading search results\">Loading...</span>"
-  <> "</div>"
+  html.div([attribute.class("search-input-container")], [
+    html.input(
+      [
+        attribute.type_("search"),
+        attribute.class("input-search"),
+        attribute.id("search-input"),
+        attribute.name("q"),
+        attribute.placeholder(placeholder),
+        attribute.value(query),
+        attribute.attribute("aria-label", placeholder),
+        attribute.attribute("hx-get", "/api/foods/search"),
+        attribute.attribute("hx-trigger", "input changed delay:300ms from:#search-input"),
+        attribute.attribute("hx-target", "#food-results"),
+        attribute.attribute("hx-swap", "innerHTML"),
+        attribute.attribute("hx-push-url", "true"),
+        attribute.attribute("hx-indicator", "#search-loading"),
+      ]
+      |> list.append(autofocus_attrs),
+    ),
+    html.button(
+      [attribute.type_("button"), attribute.class(clear_btn_class)],
+      [element.text("×")],
+    ),
+    html.span(
+      [
+        attribute.id("search-loading"),
+        attribute.class("htmx-indicator"),
+        attribute.attribute("aria-label", "Loading search results"),
+      ],
+      [element.text("Loading...")],
+    ),
+  ])
 }
 
 // ===================================================================
@@ -367,23 +364,22 @@ fn render_result_item(
   name: String,
   data_type: String,
   category: String,
-) -> String {
-  "<div class=\"search-result-item\" role=\"option\" "
-  <> "id=\"search-result-"
-  <> int.to_string(id)
-  <> "\" "
-  <> "data-food-id=\""
-  <> int.to_string(id)
-  <> "\">"
-  <> "<div class=\"result-name\">"
-  <> name
-  <> "</div>"
-  <> "<div class=\"result-meta\">"
-  <> data_type
-  <> " • "
-  <> category
-  <> "</div>"
-  <> "</div>"
+) -> element.Element(msg) {
+  html.div(
+    [
+      attribute.class("search-result-item"),
+      attribute.attribute("role", "option"),
+      attribute.id("search-result-" <> int.to_string(id)),
+      attribute.attribute("data-food-id", int.to_string(id)),
+    ],
+    [
+      html.div([attribute.class("result-name")], [element.text(name)]),
+      html.div(
+        [attribute.class("result-meta")],
+        [element.text(data_type <> " • " <> category)],
+      ),
+    ],
+  )
 }
 
 /// Search results list
@@ -401,18 +397,21 @@ fn render_result_item(
 pub fn search_results_list(
   items: List(#(Int, String, String, String)),
   _show_scroll: Bool,
-) -> String {
-  let items_html =
+) -> element.Element(msg) {
+  let items_elements =
     items
     |> list.map(fn(item) {
       let #(id, name, data_type, category) = item
       render_result_item(id, name, data_type, category)
     })
-    |> string.concat()
 
-  "<div class=\"search-results-list max-h-96 overflow-y-auto\" role=\"listbox\">"
-  <> items_html
-  <> "</div>"
+  html.div(
+    [
+      attribute.class("search-results-list max-h-96 overflow-y-auto"),
+      attribute.attribute("role", "listbox"),
+    ],
+    items_elements,
+  )
 }
 
 /// Search results with count header
@@ -436,14 +435,13 @@ pub fn search_results_with_count(
   result_count: Int,
   active_filters: List(#(String, String)),
   show_clear_all: Bool,
-) -> String {
-  let items_html =
+) -> element.Element(msg) {
+  let items_elements =
     items
     |> list.map(fn(item) {
       let #(id, name, data_type, category) = item
       render_result_item(id, name, data_type, category)
     })
-    |> string.concat()
 
   let count_text = case result_count {
     1 -> "1 result"
@@ -451,52 +449,81 @@ pub fn search_results_with_count(
   }
 
   // Render active filter tags with HTMX delete functionality
-  let filter_tags_html =
+  let filter_tag_elements =
     active_filters
     |> list.map(fn(filter) {
       let #(filter_name, filter_value) = filter
-      "<button class=\"filter-tag\" data-filter-name=\""
-      <> escape_html(filter_name)
-      <> "\" data-filter-value=\""
-      <> escape_html(filter_value)
-      <> "\" type=\"button\" aria-label=\"Remove "
-      <> escape_html(filter_value)
-      <> " filter\" hx-get=\"/api/foods/search?q=&filter=all\" hx-target=\"#search-results\" hx-swap=\"innerHTML\" hx-push-url=\"true\">"
-      <> escape_html(filter_value)
-      <> "<span class=\"remove-filter\" aria-hidden=\"true\">×</span>"
-      <> "</button>"
+      html.button(
+        [
+          attribute.class("filter-tag"),
+          attribute.attribute("data-filter-name", escape_html(filter_name)),
+          attribute.attribute("data-filter-value", escape_html(filter_value)),
+          attribute.type_("button"),
+          attribute.attribute("aria-label", "Remove " <> escape_html(filter_value) <> " filter"),
+          attribute.attribute("hx-get", "/api/foods/search?q=&filter=all"),
+          attribute.attribute("hx-target", "#search-results"),
+          attribute.attribute("hx-swap", "innerHTML"),
+          attribute.attribute("hx-push-url", "true"),
+        ],
+        [
+          element.text(escape_html(filter_value)),
+          html.span(
+            [attribute.class("remove-filter"), attribute.attribute("aria-hidden", "true")],
+            [element.text("×")],
+          ),
+        ],
+      )
     })
-    |> string.concat()
 
   let clear_all_btn = case show_clear_all && list.length(active_filters) > 0 {
     True ->
-      "<button class=\"btn-clear-all-filters btn btn-ghost btn-sm\" type=\"button\" hx-get=\"/api/foods/search?q=\" hx-target=\"#search-results\" hx-swap=\"innerHTML\" hx-push-url=\"true\">Clear All Filters</button>"
-    False -> ""
+      html.button(
+        [
+          attribute.class("btn-clear-all-filters btn btn-ghost btn-sm"),
+          attribute.type_("button"),
+          attribute.attribute("hx-get", "/api/foods/search?q="),
+          attribute.attribute("hx-target", "#search-results"),
+          attribute.attribute("hx-swap", "innerHTML"),
+          attribute.attribute("hx-push-url", "true"),
+        ],
+        [element.text("Clear All Filters")],
+      )
+    False -> element.none()
   }
 
   let filters_section = case list.length(active_filters) > 0 {
     True ->
-      "<div class=\"active-filters-container\">"
-      <> "<div class=\"active-filters-label\">Active filters:</div>"
-      <> "<div class=\"active-filters\">"
-      <> filter_tags_html
-      <> "</div>"
-      <> clear_all_btn
-      <> "</div>"
-    False -> ""
+      html.div([attribute.class("active-filters-container")], [
+        html.div(
+          [attribute.class("active-filters-label")],
+          [element.text("Active filters:")],
+        ),
+        html.div([attribute.class("active-filters")], filter_tag_elements),
+        clear_all_btn,
+      ])
+    False -> element.none()
   }
 
-  "<div class=\"search-results-container\">"
-  <> "<div class=\"search-results-header\">"
-  <> "<div class=\"search-results-count\" role=\"status\" aria-live=\"polite\">"
-  <> count_text
-  <> "</div>"
-  <> filters_section
-  <> "</div>"
-  <> "<div class=\"search-results-list max-h-96 overflow-y-auto\" role=\"listbox\">"
-  <> items_html
-  <> "</div>"
-  <> "</div>"
+  html.div([attribute.class("search-results-container")], [
+    html.div([attribute.class("search-results-header")], [
+      html.div(
+        [
+          attribute.class("search-results-count"),
+          attribute.attribute("role", "status"),
+          attribute.attribute("aria-live", "polite"),
+        ],
+        [element.text(count_text)],
+      ),
+      filters_section,
+    ]),
+    html.div(
+      [
+        attribute.class("search-results-list max-h-96 overflow-y-auto"),
+        attribute.attribute("role", "listbox"),
+      ],
+      items_elements,
+    ),
+  ])
 }
 
 /// Search results loading state
@@ -509,12 +536,15 @@ pub fn search_results_with_count(
 ///   <div class="skeleton skeleton-item">...</div>
 ///   <div class="skeleton skeleton-item">...</div>
 /// </div>
-pub fn search_results_loading() -> String {
-  "<div class=\"search-results-loading\" aria-busy=\"true\">"
-  <> "<div class=\"skeleton skeleton-item\"></div>"
-  <> "<div class=\"skeleton skeleton-item\"></div>"
-  <> "<div class=\"skeleton skeleton-item\"></div>"
-  <> "</div>"
+pub fn search_results_loading() -> element.Element(msg) {
+  html.div(
+    [attribute.class("search-results-loading"), attribute.attribute("aria-busy", "true")],
+    [
+      html.div([attribute.class("skeleton skeleton-item")], []),
+      html.div([attribute.class("skeleton skeleton-item")], []),
+      html.div([attribute.class("skeleton skeleton-item")], []),
+    ],
+  )
 }
 
 /// Search results empty state
@@ -525,12 +555,15 @@ pub fn search_results_loading() -> String {
 /// <div class="search-results-empty" role="status">
 ///   <p>No results found for "query"</p>
 /// </div>
-pub fn search_results_empty(query: String) -> String {
-  "<div class=\"search-results-empty\" role=\"status\">"
-  <> "<p>No results found for \""
-  <> query
-  <> "\"</p>"
-  <> "</div>"
+pub fn search_results_empty(query: String) -> element.Element(msg) {
+  html.div(
+    [attribute.class("search-results-empty"), attribute.attribute("role", "status")],
+    [
+      html.p([], [
+        element.text("No results found for \"" <> query <> "\""),
+      ]),
+    ],
+  )
 }
 
 // ===================================================================
@@ -554,45 +587,53 @@ pub fn search_combobox(
   placeholder: String,
   results: List(#(Int, String, String, String)),
   expanded: Bool,
-) -> String {
+) -> element.Element(msg) {
   let expanded_str = case expanded {
     True -> "true"
     False -> "false"
   }
 
-  let results_html = case expanded, results {
+  let results_element = case expanded, results {
     True, [] -> search_results_empty(query)
     True, items -> search_results_list(items, False)
-    False, _ -> ""
+    False, _ -> element.none()
   }
 
-  "<div class=\"search-combobox\" role=\"combobox\" "
-  <> "aria-expanded=\""
-  <> expanded_str
-  <> "\" "
-  <> "aria-controls=\"search-results-listbox\">"
-  <> "<input type=\"search\" class=\"input-search\" "
-  <> "id=\"search-input\" "
-  <> "name=\"q\" "
-  <> "placeholder=\""
-  <> placeholder
-  <> "\" "
-  <> "value=\""
-  <> query
-  <> "\" "
-  <> "aria-label=\""
-  <> placeholder
-  <> "\" "
-  <> "aria-autocomplete=\"list\" "
-  <> "hx-get=\"/api/foods/search\" "
-  <> "hx-trigger=\"input changed delay:300ms from:#search-input\" "
-  <> "hx-target=\"#food-results\" "
-  <> "hx-swap=\"innerHTML\" "
-  <> "hx-push-url=\"true\" "
-  <> "hx-indicator=\"#search-loading\" />"
-  <> "<span id=\"search-loading\" class=\"htmx-indicator\" aria-label=\"Loading search results\">Loading...</span>"
-  <> results_html
-  <> "</div>"
+  html.div(
+    [
+      attribute.class("search-combobox"),
+      attribute.attribute("role", "combobox"),
+      attribute.attribute("aria-expanded", expanded_str),
+      attribute.attribute("aria-controls", "search-results-listbox"),
+    ],
+    [
+      html.input([
+        attribute.type_("search"),
+        attribute.class("input-search"),
+        attribute.id("search-input"),
+        attribute.name("q"),
+        attribute.placeholder(placeholder),
+        attribute.value(query),
+        attribute.attribute("aria-label", placeholder),
+        attribute.attribute("aria-autocomplete", "list"),
+        attribute.attribute("hx-get", "/api/foods/search"),
+        attribute.attribute("hx-trigger", "input changed delay:300ms from:#search-input"),
+        attribute.attribute("hx-target", "#food-results"),
+        attribute.attribute("hx-swap", "innerHTML"),
+        attribute.attribute("hx-push-url", "true"),
+        attribute.attribute("hx-indicator", "#search-loading"),
+      ]),
+      html.span(
+        [
+          attribute.id("search-loading"),
+          attribute.class("htmx-indicator"),
+          attribute.attribute("aria-label", "Loading search results"),
+        ],
+        [element.text("Loading...")],
+      ),
+      results_element,
+    ],
+  )
 }
 
 /// Search combobox with active selection and keyboard navigation
@@ -614,47 +655,52 @@ pub fn search_combobox_with_selection(
   results: List(#(Int, String, String, String)),
   expanded: Bool,
   selected_id: Int,
-) -> String {
+) -> element.Element(msg) {
   let expanded_str = case expanded {
     True -> "true"
     False -> "false"
   }
 
-  let results_html = case expanded, results {
+  let results_element = case expanded, results {
     True, [] -> search_results_empty(query)
     True, items -> search_results_list(items, False)
-    False, _ -> ""
+    False, _ -> element.none()
   }
 
-  "<div class=\"search-combobox\" role=\"combobox\" "
-  <> "aria-expanded=\""
-  <> expanded_str
-  <> "\" "
-  <> "aria-controls=\"search-results-listbox\" "
-  <> ">"
-  <> "<input type=\"search\" class=\"input-search\" "
-  <> "id=\"search-input\" "
-  <> "placeholder=\""
-  <> placeholder
-  <> "\" "
-  <> "value=\""
-  <> query
-  <> "\" "
-  <> "aria-label=\""
-  <> placeholder
-  <> "\" "
-  <> "aria-autocomplete=\"list\" "
-  <> "aria-activedescendant=\"search-result-"
-  <> int.to_string(selected_id)
-  <> "\" "
-  <> "hx-get=\"/api/foods/search\" "
-  <> "hx-trigger=\"input changed delay:300ms from:#search-input, keydown[key=='ArrowDown'] from:#search-input, keydown[key=='ArrowUp'] from:#search-input, keydown[key=='Enter'] from:#search-input\" "
-  <> "hx-target=\"#food-results\" "
-  <> "hx-swap=\"innerHTML\" "
-  <> "hx-indicator=\"#search-loading\" />"
-  <> "<span id=\"search-loading\" class=\"htmx-indicator\" aria-label=\"Loading search results\">Loading...</span>"
-  <> results_html
-  <> "</div>"
+  html.div(
+    [
+      attribute.class("search-combobox"),
+      attribute.attribute("role", "combobox"),
+      attribute.attribute("aria-expanded", expanded_str),
+      attribute.attribute("aria-controls", "search-results-listbox"),
+    ],
+    [
+      html.input([
+        attribute.type_("search"),
+        attribute.class("input-search"),
+        attribute.id("search-input"),
+        attribute.placeholder(placeholder),
+        attribute.value(query),
+        attribute.attribute("aria-label", placeholder),
+        attribute.attribute("aria-autocomplete", "list"),
+        attribute.attribute("aria-activedescendant", "search-result-" <> int.to_string(selected_id)),
+        attribute.attribute("hx-get", "/api/foods/search"),
+        attribute.attribute("hx-trigger", "input changed delay:300ms from:#search-input, keydown[key=='ArrowDown'] from:#search-input, keydown[key=='ArrowUp'] from:#search-input, keydown[key=='Enter'] from:#search-input"),
+        attribute.attribute("hx-target", "#food-results"),
+        attribute.attribute("hx-swap", "innerHTML"),
+        attribute.attribute("hx-indicator", "#search-loading"),
+      ]),
+      html.span(
+        [
+          attribute.id("search-loading"),
+          attribute.class("htmx-indicator"),
+          attribute.attribute("aria-label", "Loading search results"),
+        ],
+        [element.text("Loading...")],
+      ),
+      results_element,
+    ],
+  )
 }
 
 /// Category dropdown selector
@@ -669,7 +715,7 @@ pub fn search_combobox_with_selection(
 /// - `selected_category`: Currently selected category (None = "All Categories")
 /// - `on_change_handler`: DEPRECATED - HTMX handles changes automatically
 ///
-/// Returns: HTML string for the select element
+/// Returns: Lustre element for the select element
 ///
 /// Example:
 /// ```gleam
@@ -682,8 +728,8 @@ pub fn search_combobox_with_selection(
 pub fn category_dropdown(
   categories: List(String),
   selected_category: option.Option(String),
-  on_change_handler: String,
-) -> String {
+  _on_change_handler: String,
+) -> element.Element(msg) {
   // Build option elements for all categories
   let category_options =
     categories
@@ -692,43 +738,50 @@ pub fn category_dropdown(
         option.Some(selected) if selected == category -> True
         _ -> False
       }
-      let selected_attr = case is_selected {
-        True -> " selected"
-        False -> ""
+      let attrs = case is_selected {
+        True -> [attribute.value(escape_html(category)), attribute.attribute("selected", "")]
+        False -> [attribute.value(escape_html(category))]
       }
-      "<option value=\""
-      <> escape_html(category)
-      <> "\""
-      <> selected_attr
-      <> ">"
-      <> escape_html(category)
-      <> "</option>"
+      html.option(attrs, escape_html(category))
     })
-    |> string.join("")
 
   // Determine if "All Categories" should be selected
-  let all_selected = case selected_category {
-    option.None -> " selected"
-    option.Some(_) -> ""
+  let all_selected_attrs = case selected_category {
+    option.None -> [attribute.value(""), attribute.attribute("selected", "")]
+    option.Some(_) -> [attribute.value("")]
   }
 
-  "<select class=\"category-dropdown\" "
-  <> "id=\"category-filter\" "
-  <> "name=\"category\" "
-  <> "aria-label=\"Filter by category\" "
-  <> "hx-get=\"/api/foods/search\" "
-  <> "hx-trigger=\"change\" "
-  <> "hx-target=\"#food-results\" "
-  <> "hx-swap=\"innerHTML\" "
-  <> "hx-push-url=\"true\" "
-  <> "hx-include=\"[name='category']\" "
-  <> "hx-indicator=\"#category-loading\">"
-  <> "<option value=\"\""
-  <> all_selected
-  <> ">All Categories</option>"
-  <> category_options
-  <> "</select>"
-  <> "<span id=\"category-loading\" class=\"htmx-indicator\" aria-label=\"Loading category results\">Loading...</span>"
+  let all_options = list.flatten([
+    [html.option(all_selected_attrs, "All Categories")],
+    category_options,
+  ])
+
+  html.div([], [
+    html.select(
+      [
+        attribute.class("category-dropdown"),
+        attribute.id("category-filter"),
+        attribute.name("category"),
+        attribute.attribute("aria-label", "Filter by category"),
+        attribute.attribute("hx-get", "/api/foods/search"),
+        attribute.attribute("hx-trigger", "change"),
+        attribute.attribute("hx-target", "#food-results"),
+        attribute.attribute("hx-swap", "innerHTML"),
+        attribute.attribute("hx-push-url", "true"),
+        attribute.attribute("hx-include", "[name='category']"),
+        attribute.attribute("hx-indicator", "#category-loading"),
+      ],
+      all_options,
+    ),
+    html.span(
+      [
+        attribute.id("category-loading"),
+        attribute.class("htmx-indicator"),
+        attribute.attribute("aria-label", "Loading category results"),
+      ],
+      [element.text("Loading...")],
+    ),
+  ])
 }
 
 /// Category filter group with label
@@ -743,16 +796,16 @@ pub fn category_dropdown(
 /// - `selected_category`: Currently selected category
 /// - `on_change_handler`: JavaScript change handler function name
 ///
-/// Returns: HTML string for the complete filter group
+/// Returns: Lustre element for the complete filter group
 pub fn category_filter_group(
   categories: List(String),
   selected_category: option.Option(String),
   on_change_handler: String,
-) -> String {
-  "<div class=\"form-group category-filter\">"
-  <> "<label for=\"category-filter\">Food Category</label>"
-  <> category_dropdown(categories, selected_category, on_change_handler)
-  <> "</div>"
+) -> element.Element(msg) {
+  html.div([attribute.class("form-group category-filter")], [
+    html.label([attribute.for("category-filter")], [element.text("Food Category")]),
+    category_dropdown(categories, selected_category, on_change_handler),
+  ])
 }
 
 // ===================================================================
