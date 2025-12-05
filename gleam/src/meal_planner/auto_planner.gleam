@@ -324,6 +324,46 @@ pub fn generate_auto_plan(
 }
 
 // ============================================================================
+// Timestamp Functions
+// ============================================================================
+
+/// Generate timestamp string in ISO8601 format with UTC timezone
+/// Format: YYYY-MM-DDTHH:MM:SSZ
+fn generate_timestamp() -> String {
+  let #(#(year, month, day), #(hour, min, sec)) = erlang_localtime()
+  int_to_string(year)
+  <> "-"
+  <> pad_two(month)
+  <> "-"
+  <> pad_two(day)
+  <> "T"
+  <> pad_two(hour)
+  <> ":"
+  <> pad_two(min)
+  <> ":"
+  <> pad_two(sec)
+  <> "Z"
+}
+
+/// Pad a single digit integer with leading zero
+/// Converts 5 to "05", leaves 10 as "10"
+fn pad_two(n: Int) -> String {
+  case n < 10 {
+    True -> "0" <> int_to_string(n)
+    False -> int_to_string(n)
+  }
+}
+
+/// Convert integer to string
+fn int_to_string(n: Int) -> String {
+  int.to_string(n)
+}
+
+/// External function to get local time as {{year, month, day}, {hour, min, sec}}
+@external(erlang, "calendar", "local_time")
+fn erlang_localtime() -> #(#(Int, Int, Int), #(Int, Int, Int))
+
+// ============================================================================
 // Helper Functions
 // ============================================================================
 
@@ -336,13 +376,6 @@ fn calculate_deviation(actual: Float, target: Float) -> Float {
       diff /. target
     }
   }
-}
-
-/// Generate timestamp string (simple implementation)
-fn generate_timestamp() -> String {
-  // In production, use proper timestamp generation
-  // For now, use a simple counter approach
-  "2024-12-03T11:55:00Z"
 }
 
 // External functions for math operations

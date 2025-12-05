@@ -7,6 +7,7 @@ import gleam/result
 import gleam/string
 import meal_planner/ncp
 import meal_planner/postgres
+import meal_planner/storage/utils
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
   Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
@@ -153,7 +154,7 @@ pub fn save_recipe(
     |> pog.parameter(pog.bool(recipe.vertical_compliant))
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(_) -> Ok(Nil)
   }
@@ -173,7 +174,7 @@ pub fn get_all_recipes(
     |> pog.returning(recipe_decoder())
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
@@ -195,7 +196,7 @@ pub fn get_recipe_by_id(
     |> pog.returning(recipe_decoder())
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(0, _)) -> Error(NotFound)
 
@@ -217,7 +218,7 @@ pub fn delete_recipe(
     |> pog.parameter(pog.text(recipe_id))
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(_) -> Ok(Nil)
   }
@@ -239,7 +240,7 @@ pub fn get_recipes_by_category(
     |> pog.returning(recipe_decoder())
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
@@ -317,7 +318,7 @@ pub fn filter_recipes(
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
-    Error(e) -> Error(DatabaseError(format_pog_error(e)))
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }

@@ -31,6 +31,7 @@ import meal_planner/types.{
   UserProfile,
 }
 import meal_planner/ui/components/food_search
+import meal_planner/web/handlers/custom_foods
 import meal_planner/web/handlers/dashboard
 import meal_planner/web/handlers/food_log
 import meal_planner/web/handlers/generate

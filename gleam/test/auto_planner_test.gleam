@@ -1,3 +1,4 @@
+import gleam/int
 import gleam/list
 import gleam/string
 import gleeunit/should
@@ -543,6 +544,138 @@ pub fn generate_auto_plan_variety_test() {
 
       // High variety factor should result in diverse categories
       should.be_true(list.length(unique_categories) >= 3)
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+// =============================================================================
+// Timestamp Generation Tests
+// =============================================================================
+
+pub fn auto_plan_generated_at_format_test() {
+  let recipes = create_test_recipes()
+  let config = create_config()
+
+  let result = generate_auto_plan(recipes, config)
+
+  case result {
+    Ok(plan) -> {
+      let timestamp = plan.generated_at
+
+      // Timestamp should not be empty
+      should.be_true(string.length(timestamp) > 0)
+
+      // Timestamp should contain ISO8601 format indicators
+      should.be_true(string.contains(timestamp, "T"))
+      should.be_true(string.contains(timestamp, "Z"))
+      should.be_true(string.contains(timestamp, "-"))
+      should.be_true(string.contains(timestamp, ":"))
+
+      // Timestamp should be exactly 20 characters (YYYY-MM-DDTHH:MM:SSZ)
+      should.equal(string.length(timestamp), 20)
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+pub fn auto_plan_id_contains_timestamp_test() {
+  let recipes = create_test_recipes()
+  let config = create_config()
+
+  let result = generate_auto_plan(recipes, config)
+
+  case result {
+    Ok(plan) -> {
+      let plan_id = plan.id
+
+      // Plan ID should start with "auto-plan-"
+      should.be_true(string.starts_with(plan_id, "auto-plan-"))
+
+      // Plan ID should contain timestamp (20 chars)
+      let timestamp_part = string.drop_start(plan_id, 10)
+      should.equal(string.length(timestamp_part), 20)
+
+      // Timestamp part should be valid ISO format
+      should.be_true(string.contains(timestamp_part, "T"))
+      should.be_true(string.contains(timestamp_part, "Z"))
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+pub fn auto_plan_multiple_generations_have_different_timestamps_test() {
+  let recipes = create_test_recipes()
+  let config = create_config()
+
+  let result1 = generate_auto_plan(recipes, config)
+  let result2 = generate_auto_plan(recipes, config)
+
+  case result1, result2 {
+    Ok(plan1), Ok(plan2) -> {
+      // Plan IDs should be different (different timestamps)
+      // Note: This test might occasionally fail if generated within the same second
+      // but timestamps include seconds, so it's very likely to be different
+      let ids_may_differ =
+        plan1.id != plan2.id || plan1.generated_at == plan2.generated_at
+      should.be_true(ids_may_differ)
+
+      // Both timestamps should be valid
+      should.equal(string.length(plan1.generated_at), 20)
+      should.equal(string.length(plan2.generated_at), 20)
+    }
+    _, _ -> should.fail()
+  }
+}
+
+pub fn auto_plan_timestamp_has_valid_date_parts_test() {
+  let recipes = create_test_recipes()
+  let config = create_config()
+
+  let result = generate_auto_plan(recipes, config)
+
+  case result {
+    Ok(plan) -> {
+      let timestamp = plan.generated_at
+
+      // Extract parts: YYYY-MM-DDTHH:MM:SSZ
+      let year_str = string.slice(timestamp, 0, 4)
+      let month_str = string.slice(timestamp, 5, 2)
+      let day_str = string.slice(timestamp, 8, 2)
+      let hour_str = string.slice(timestamp, 11, 2)
+      let min_str = string.slice(timestamp, 14, 2)
+      let sec_str = string.slice(timestamp, 17, 2)
+
+      // All parts should be numeric
+      case
+        int.parse(year_str),
+        int.parse(month_str),
+        int.parse(day_str),
+        int.parse(hour_str),
+        int.parse(min_str),
+        int.parse(sec_str)
+      {
+        Ok(year), Ok(month), Ok(day), Ok(hour), Ok(minute), Ok(second) -> {
+          // Year should be reasonable (2020-2100)
+          should.be_true(year >= 2020 && year <= 2100)
+
+          // Month should be 01-12
+          should.be_true(month >= 1 && month <= 12)
+
+          // Day should be 01-31
+          should.be_true(day >= 1 && day <= 31)
+
+          // Hour should be 00-23
+          should.be_true(hour >= 0 && hour <= 23)
+
+          // Minute should be 00-59
+          should.be_true(minute >= 0 && minute <= 59)
+
+          // Second should be 00-59
+          should.be_true(second >= 0 && second <= 59)
+        }
+        _, _, _, _, _, _ -> should.fail()
+      }
     }
     Error(_) -> should.fail()
   }

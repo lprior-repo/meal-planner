@@ -36,7 +36,7 @@ import pog
 /// ```
 pub fn unified_food_search(
   db: pog.Connection,
-  _user_id: String,
+  user_id: String,
   query: String,
   limit: Int,
 ) -> Result(FoodSearchResponse, FoodSearchError) {

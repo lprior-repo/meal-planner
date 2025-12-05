@@ -488,6 +488,123 @@ pub fn log_meal_form(recipe_id: String, ctx: Context) -> wisp.Response {
   }
 }
 
+/// GET /log/food/{id} - Display USDA food logging form with portion and meal selection
+pub fn log_food_form(id: String, ctx: Context) -> wisp.Response {
+  case int.parse(id) {
+    Error(_) -> not_found_page()
+    Ok(fdc_id) -> {
+      case utilities.load_food_by_id(ctx.db, fdc_id) {
+        Error(_) -> not_found_page()
+        Ok(food) -> {
+          let nutrients = utilities.load_food_nutrients(ctx.db, fdc_id)
+          // Find key macros per 100g
+          let protein = utilities.find_nutrient(nutrients, "Protein")
+          let fat = utilities.find_nutrient(nutrients, "Total lipid (fat)")
+          let carbs =
+            utilities.find_nutrient(nutrients, "Carbohydrate, by difference")
+
+          let content = [
+            html.a([attribute.href("/foods"), attribute.class("back-link")], [
+              element.text("← Back to food search"),
+            ]),
+            html.div([attribute.class("log-form-container")], [
+              html.h1([], [element.text("Log: " <> food.description)]),
+              html.div([attribute.class("food-summary")], [
+                html.p([attribute.class("meta")], [
+                  element.text("Type: " <> food.data_type),
+                ]),
+                html.p([attribute.class("meta")], [
+                  element.text("Nutrition per 100g:"),
+                ]),
+                html.div([attribute.class("macro-badges")], [
+                  macro_badge("P", extract_nutrient_value(protein)),
+                  macro_badge("F", extract_nutrient_value(fat)),
+                  macro_badge("C", extract_nutrient_value(carbs)),
+                ]),
+              ]),
+              html.form(
+                [
+                  attribute.method("POST"),
+                  attribute.action("/api/logs/food?food_id=" <> id),
+                  attribute.class("log-form"),
+                ],
+                [
+                  html.div([attribute.class("form-group")], [
+                    html.label([attribute.attribute("for", "portion_grams")], [
+                      element.text("Portion Size (grams)"),
+                    ]),
+                    html.input([
+                      attribute.type_("number"),
+                      attribute.id("portion_grams"),
+                      attribute.name("portion_grams"),
+                      attribute.attribute("min", "1"),
+                      attribute.attribute("step", "1"),
+                      attribute.value("100"),
+                      attribute.required(True),
+                    ]),
+                  ]),
+                  html.div([attribute.class("form-group")], [
+                    html.label([attribute.attribute("for", "meal_type")], [
+                      element.text("Meal Type"),
+                    ]),
+                    html.select(
+                      [
+                        attribute.id("meal_type"),
+                        attribute.name("meal_type"),
+                        attribute.required(True),
+                      ],
+                      [
+                        html.option([attribute.value("breakfast")], "Breakfast"),
+                        html.option([attribute.value("lunch")], "Lunch"),
+                        html.option([attribute.value("dinner")], "Dinner"),
+                        html.option([attribute.value("snack")], "Snack"),
+                      ],
+                    ),
+                  ]),
+                  html.div([attribute.class("form-actions")], [
+                    html.button(
+                      [
+                        attribute.type_("submit"),
+                        attribute.class("btn btn-primary"),
+                      ],
+                      [element.text("Log Food")],
+                    ),
+                    html.a(
+                      [
+                        attribute.href("/foods"),
+                        attribute.class("btn btn-secondary"),
+                      ],
+                      [element.text("Cancel")],
+                    ),
+                  ]),
+                ],
+              ),
+            ]),
+          ]
+
+          wisp.html_response(
+            render_page(
+              "Log " <> food.description <> " - Meal Planner",
+              content,
+            ),
+            200,
+          )
+        }
+      }
+    }
+  }
+}
+
+/// Extract nutrient value from optional FoodNutrientValue
+fn extract_nutrient_value(
+  nutrient: option.Option(storage.FoodNutrientValue),
+) -> Float {
+  case nutrient {
+    Some(n) -> n.amount
+    None -> 0.0
+  }
+}
+
 // ============================================================================
 // Weekly Plan Page
 // ============================================================================

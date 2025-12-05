@@ -195,6 +195,22 @@ pub type LogEntryCard {
     logged_at: String,
   )
 }
+
+// ===================================================================
+// PARAMETER OBJECT TYPES (Props)
+// ===================================================================
+
+/// Configuration for nutrition field rendering
+/// Replaces long parameter list in recipe_form.gleam
+pub type NutritionFieldProps {
+  NutritionFieldProps(
+    field_name: String,
+    label_text: String,
+    max_val: String,
+    step_val: String,
+    placeholder_text: String,
+  )
+}
 // ===================================================================
 // Additional types will be added as specific features are implemented
 // ===================================================================
