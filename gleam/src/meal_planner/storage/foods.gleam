@@ -6,12 +6,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
-import gleam/string
-import meal_planner/storage/utils
-import gleam/string
 import meal_planner/storage/profile.{type StorageError, DatabaseError, NotFound}
-import meal_planner/storage/utils
-import meal_planner/storage/utils
 import meal_planner/storage/utils
 import meal_planner/types
 import pog
@@ -149,7 +144,10 @@ pub fn load_usda_food_with_macros(
 pub fn get_foods_count(conn: pog.Connection) -> Result(Int, StorageError) {
   let sql = "SELECT COUNT(*) FROM foods"
 
-  let decoder = decode.field(0, decode.int)
+  let decoder = {
+    use count <- decode.field(0, decode.int)
+    decode.success(count)
+  }
 
   case
     pog.query(sql)

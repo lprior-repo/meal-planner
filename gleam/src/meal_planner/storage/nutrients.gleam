@@ -9,11 +9,13 @@ import meal_planner/ncp
 import meal_planner/postgres
 import meal_planner/storage/foods.{
   type FoodNutrientValue, type UsdaFood, type UsdaFoodWithNutrients,
-  FoodNutrientValue, UsdaFood, UsdaFoodWithNutrients,
+  FoodNutrientValue, UsdaFood, UsdaFoodWithNutrients, get_custom_food_by_id,
+  get_food_by_id, get_food_nutrients,
 }
 import meal_planner/storage/logs.{
   type FoodSummaryItem, type WeeklySummary, FoodSummaryItem, WeeklySummary,
 }
+import meal_planner/storage/recipes.{get_recipe_by_id}
 import meal_planner/storage/utils
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
@@ -95,7 +97,7 @@ pub fn get_food_nutrients(
   fdc_id: Int,
 ) -> Result(List(FoodNutrientValue), StorageError) {
   let sql =
-    "SELECT n.name, COALESCE(fn.amount, 0), n.unit_name
+    "SELECT fn.nutrient_id, n.name, COALESCE(fn.amount, 0), n.unit_name
 
      FROM food_nutrients fn
 
@@ -106,13 +108,16 @@ pub fn get_food_nutrients(
      ORDER BY n.rank NULLS LAST, n.name"
 
   let decoder = {
-    use name <- decode.field(0, decode.string)
+    use nutrient_id <- decode.field(0, decode.int)
 
-    use amount <- decode.field(1, decode.float)
+    use name <- decode.field(1, decode.string)
 
-    use unit <- decode.field(2, decode.string)
+    use amount <- decode.field(2, decode.float)
+
+    use unit <- decode.field(3, decode.string)
 
     decode.success(FoodNutrientValue(
+      nutrient_id: nutrient_id,
       nutrient_name: name,
       amount: amount,
       unit: unit,
@@ -126,291 +131,8 @@ pub fn get_food_nutrients(
     |> pog.execute(conn)
   {
     Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
-}
-
-/// Get a single food by FDC ID
-pub fn get_food_by_id(
-  conn: pog.Connection,
-  fdc_id: Int,
-) -> Result(UsdaFood, StorageError) {
-  let sql =
-    "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
-
-     FROM foods WHERE fdc_id = $1"
-
-  let decoder = {
-    use fdc_id <- decode.field(0, decode.int)
-
-    use description <- decode.field(1, decode.string)
-
-    use data_type <- decode.field(2, decode.string)
-
-    use category <- decode.field(3, decode.string)
-
-    decode.success(UsdaFood(
-      fdc_id: fdc_id,
-      description: description,
-      data_type: data_type,
-      category: category,
-    ))
-  }
-
-  case
-    pog.query(sql)
-    |> pog.parameter(pog.int(fdc_id))
-    |> pog.returning(decoder)
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-
-    Ok(pog.Returned(0, _)) -> Error(NotFound)
-
-    Ok(pog.Returned(_, [])) -> Error(NotFound)
-
-    Ok(pog.Returned(_, [row, ..])) -> Ok(row)
-  }
-}
-
-/// Load USDA food with calculated macros and micronutrients
-/// This combines food info with parsed nutrient data for display in forms
-pub fn load_usda_food_with_macros(
-  conn: pog.Connection,
-  fdc_id: Int,
-) -> Result(UsdaFoodWithNutrients, StorageError) {
-  use food <- result.try(get_food_by_id(conn, fdc_id))
-
-  use nutrients <- result.try(get_food_nutrients(conn, fdc_id))
-
-  let macros = parse_usda_macros(nutrients)
-
-  let micronutrients = parse_usda_micronutrients(nutrients)
-
-  Ok(UsdaFoodWithNutrients(
-    fdc_id: food.fdc_id,
-    description: food.description,
-    data_type: food.data_type,
-    category: food.category,
-    macros: macros,
-    micronutrients: micronutrients,
-  ))
-}
-
-/// Get count of foods in database
-pub fn get_daily_log(
-  conn: pog.Connection,
-  date: String,
-) -> Result(DailyLog, StorageError) {
-  let sql =
-    "SELECT id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, logged_at::text,
-
-            fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k,
-
-            vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium,
-
-            phosphorus, potassium, zinc, source_type, source_id
-
-     FROM food_logs WHERE date = $1 ORDER BY logged_at"
-
-  let decoder = {
-    use id <- decode.field(0, decode.string)
-
-    use _date <- decode.field(1, decode.string)
-
-    use recipe_id <- decode.field(2, decode.string)
-
-    use recipe_name <- decode.field(3, decode.string)
-
-    use servings <- decode.field(4, decode.float)
-
-    use protein <- decode.field(5, decode.float)
-
-    use fat <- decode.field(6, decode.float)
-
-    use carbs <- decode.field(7, decode.float)
-
-    use meal_type_str <- decode.field(8, decode.string)
-
-    use logged_at <- decode.field(9, decode.string)
-
-    use fiber <- decode.field(10, decode.optional(decode.float))
-
-    use sugar <- decode.field(11, decode.optional(decode.float))
-
-    use sodium <- decode.field(12, decode.optional(decode.float))
-
-    use cholesterol <- decode.field(13, decode.optional(decode.float))
-
-    use vitamin_a <- decode.field(14, decode.optional(decode.float))
-
-    use vitamin_c <- decode.field(15, decode.optional(decode.float))
-
-    use vitamin_d <- decode.field(16, decode.optional(decode.float))
-
-    use vitamin_e <- decode.field(17, decode.optional(decode.float))
-
-    use vitamin_k <- decode.field(18, decode.optional(decode.float))
-
-    use vitamin_b6 <- decode.field(19, decode.optional(decode.float))
-
-    use vitamin_b12 <- decode.field(20, decode.optional(decode.float))
-
-    use folate <- decode.field(21, decode.optional(decode.float))
-
-    use thiamin <- decode.field(22, decode.optional(decode.float))
-
-    use riboflavin <- decode.field(23, decode.optional(decode.float))
-
-    use niacin <- decode.field(24, decode.optional(decode.float))
-
-    use calcium <- decode.field(25, decode.optional(decode.float))
-
-    use iron <- decode.field(26, decode.optional(decode.float))
-
-    use magnesium <- decode.field(27, decode.optional(decode.float))
-
-    use phosphorus <- decode.field(28, decode.optional(decode.float))
-
-    use potassium <- decode.field(29, decode.optional(decode.float))
-
-    use zinc <- decode.field(30, decode.optional(decode.float))
-
-    use source_type <- decode.field(31, decode.string)
-
-    use source_id <- decode.field(32, decode.string)
-
-    let meal_type = case meal_type_str {
-      "breakfast" -> Breakfast
-
-      "lunch" -> Lunch
-
-      "dinner" -> Dinner
-
-      _ -> Snack
-    }
-
-    let micronutrients = case
-      fiber,
-      sugar,
-      sodium,
-      cholesterol,
-      vitamin_a,
-      vitamin_c,
-      vitamin_d,
-      vitamin_e,
-      vitamin_k,
-      vitamin_b6,
-      vitamin_b12,
-      folate,
-      thiamin,
-      riboflavin,
-      niacin,
-      calcium,
-      iron,
-      magnesium,
-      phosphorus,
-      potassium,
-      zinc
-    {
-      None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None
-      -> None
-
-      _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ->
-        Some(types.Micronutrients(
-          fiber: fiber,
-          sugar: sugar,
-          sodium: sodium,
-          cholesterol: cholesterol,
-          vitamin_a: vitamin_a,
-          vitamin_c: vitamin_c,
-          vitamin_d: vitamin_d,
-          vitamin_e: vitamin_e,
-          vitamin_k: vitamin_k,
-          vitamin_b6: vitamin_b6,
-          vitamin_b12: vitamin_b12,
-          folate: folate,
-          thiamin: thiamin,
-          riboflavin: riboflavin,
-          niacin: niacin,
-          calcium: calcium,
-          iron: iron,
-          magnesium: magnesium,
-          phosphorus: phosphorus,
-          potassium: potassium,
-          zinc: zinc,
-        ))
-    }
-
-    decode.success(FoodLogEntry(
-      id: id,
-      recipe_id: recipe_id,
-      recipe_name: recipe_name,
-      servings: servings,
-      macros: Macros(protein: protein, fat: fat, carbs: carbs),
-      micronutrients: micronutrients,
-      meal_type: meal_type,
-      logged_at: logged_at,
-      source_type: source_type,
-      source_id: source_id,
-    ))
-  }
-
-  case
-    pog.query(sql)
-    |> pog.parameter(pog.text(date))
-    |> pog.returning(decoder)
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-
-    Ok(pog.Returned(_, entries)) -> {
-      let total_macros = calculate_total_macros(entries)
-
-      let total_micronutrients = calculate_total_micronutrients(entries)
-
-      Ok(DailyLog(
-        date: date,
-        entries: entries,
-        total_macros: total_macros,
-        total_micronutrients: total_micronutrients,
-      ))
-    }
-  }
-}
-
-/// Calculate total macros from food log entries
-/// Sums all macros across daily food logs
-/// Public so it can be tested and reused
-pub fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
-  list.fold(entries, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(acc, entry) {
-    Macros(
-      protein: acc.protein +. entry.macros.protein,
-      fat: acc.fat +. entry.macros.fat,
-      carbs: acc.carbs +. entry.macros.carbs,
-    )
-  })
 }
 
 /// Calculate total micronutrients from food log entries
