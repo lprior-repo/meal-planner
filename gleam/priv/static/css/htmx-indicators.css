@@ -156,7 +156,7 @@
    =================================================================== */
 
 /* Dim search results during loading */
-#food-results.htmx-request {
+#search-results.htmx-request {
   opacity: 0.7;
   transition: opacity var(--duration-200) var(--ease-out);
 }
