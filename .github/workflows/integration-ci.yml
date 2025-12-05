@@ -147,3 +147,68 @@ jobs:
           git checkout integration
           git reset --hard main
           git push --force origin integration
+
+  cleanup:
+    name: Resource Cleanup
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [quality-gate]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install cleanup dependencies
+        run: |
+          # Install jq for JSON processing
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Run resource cleanup
+        run: |
+          # Kill any orphaned processes
+          pkill -f "gleam|pool-manager|agent-coordinator" || true
+
+          # Clean up temporary state files
+          rm -f /tmp/pool-state.json
+          rm -f /tmp/pool-state.lock
+          rm -f /tmp/agent-coordination-state.json
+          rm -f /tmp/resource-monitor.pid
+          rm -f /tmp/resource-monitor-state.json
+
+          echo "✅ Resource cleanup completed"
+
+      - name: Cleanup worktree pool
+        run: |
+          # Clean up any leftover worktrees from coordination
+          if [[ -d ".agent-worktrees" ]]; then
+            for wt in .agent-worktrees/pool-wt-*; do
+              if [[ -d "$wt" ]]; then
+                echo "Removing worktree: $wt"
+                git worktree remove "$wt" --force || true
+              fi
+            done
+          fi
+
+          echo "✅ Worktree cleanup completed"
+
+      - name: Verify cleanup
+        run: |
+          # Verify no orphaned processes remain
+          orphaned_procs=$(pgrep -f "gleam|pool-manager" | wc -l || true)
+
+          if [[ "$orphaned_procs" -gt 0 ]]; then
+            echo "⚠️  Warning: $orphaned_procs orphaned processes detected"
+            pgrep -f "gleam|pool-manager"
+          else
+            echo "✅ No orphaned processes"
+          fi
+
+          # Verify state files are cleaned
+          if [[ ! -f /tmp/pool-state.json ]] && \
+             [[ ! -f /tmp/agent-coordination-state.json ]]; then
+            echo "✅ State files cleaned"
+          else
+            echo "⚠️  Warning: Some state files remain"
+            ls -la /tmp/*state*.json 2>/dev/null || true
+          fi
