@@ -1,7 +1,6 @@
 //// Food log handlers for API endpoints
 
 import gleam/float
-import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}

@@ -11,7 +11,6 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/string
 import lustre/attribute.{attribute, class}
 import lustre/element.{type Element, text}
 import lustre/element/html.{div, h3, p, span}

@@ -24,11 +24,13 @@ set -euo pipefail
 
 # Configuration
 readonly POOL_STATE_FILE="/tmp/pool-state.json"
+readonly POOL_LOCK_FILE="/tmp/pool-state.lock"
 readonly WORKTREE_BASE_DIR=".agent-worktrees"
 readonly MIN_POOL_SIZE=3
 readonly MAX_POOL_SIZE=10
 readonly SCALE_CHECK_INTERVAL=60  # seconds
 readonly QUEUE_WAIT_THRESHOLD=3   # agents waiting before scale-up
+readonly LOCK_TIMEOUT=30          # seconds to wait for lock
 
 # Colors for output
 readonly RED='\033[0;31m'
@@ -214,6 +216,76 @@ pool_acquire() {
     local agent_name="$1"
     local task_id="$2"
     local priority="${3:-1}"
+
+    log_info "Agent ${agent_name} requesting worktree for task ${task_id} (priority: ${priority})"
+
+    # CRITICAL: Use file locking to prevent race conditions
+    (
+        flock -x -w "$LOCK_TIMEOUT" 200 || {
+            log_error "Failed to acquire pool lock after ${LOCK_TIMEOUT}s"
+            return 1
+        }
+
+        local state
+        state=$(get_pool_state)
+
+        local available_wt
+        available_wt=$(echo "$state" | jq -r '.worktrees[] | select(.status == "available") | .id' | head -1)
+
+        if [[ -n "$available_wt" ]]; then
+            state=$(echo "$state" | jq \
+                --arg id "$available_wt" \
+                --arg agent "$agent_name" \
+                --arg task "$task_id" \
+                '.worktrees = (.worktrees | map(
+                    if .id == $id then
+                        .status = "in_use" |
+                        .current_agent = $agent |
+                        .current_task = $task |
+                        .task_count += 1 |
+                        .last_used = (now | todate)
+                    else . end
+                ))')
+            update_pool_state "$state"
+
+            log_info "✓ Assigned worktree ${available_wt} to agent ${agent_name}"
+            echo "$available_wt"
+            return 0
+        else
+            state=$(echo "$state" | jq \
+                --arg agent "$agent_name" \
+                --arg task "$task_id" \
+                --argjson priority "$priority" \
+                '.queue += [{
+                    "agent_id": $agent,
+                    "task_id": $task,
+                    "priority": $priority,
+                    "queued_at": (now | todate)
+                }] | .queue |= sort_by(.priority) | reverse')
+            update_pool_state "$state"
+
+            local queue_position
+            queue_position=$(echo "$state" | jq '.queue | length')
+            log_warn "No available worktrees - agent ${agent_name} queued (position: ${queue_position})"
+
+            echo "queued"
+            return 1
+        fi
+    ) 200>"$POOL_LOCK_FILE"
+
+    local result=$?
+    if [[ $result -eq 1 ]]; then
+        local state
+        state=$(get_pool_state)
+        local queue_size
+        queue_size=$(echo "$state" | jq '.queue | length')
+        if [[ $queue_size -ge $QUEUE_WAIT_THRESHOLD ]]; then
+            log_info "Queue threshold reached ($queue_size >= $QUEUE_WAIT_THRESHOLD), attempting scale-up"
+            pool_scale_up || log_warn "Scale-up failed or not possible"
+        fi
+    fi
+    return $result
+}"
 
     log_info "Agent ${agent_name} requesting worktree for task ${task_id} (priority: ${priority})"
 

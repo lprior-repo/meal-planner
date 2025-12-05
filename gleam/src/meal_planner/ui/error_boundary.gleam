@@ -14,10 +14,8 @@
 /// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: docs/component_signatures.md (section: Error Boundaries)
-import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/result
 import lustre/attribute
 import lustre/element
 import lustre/element/html
@@ -183,7 +181,7 @@ pub fn form_validation_error(
 pub fn fetch_boundary(
   state state: BoundaryState,
   content content: element.Element(msg),
-  loading loading: element.Element(msg),
+  loading _loading: element.Element(msg),
   retry_url retry_url: Option(String),
 ) -> element.Element(msg) {
   case state {

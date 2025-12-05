@@ -12,14 +12,13 @@
 import gleam/float
 import gleam/int
 import gleam/list
-import gleam/string
 import lustre/attribute.{attribute, class}
 import lustre/element.{type Element, text}
 import lustre/element/html.{button, div, h2, h3, h4, section, span}
 import meal_planner/meal_plan.{
-  type DailyPlan, type Meal, type WeeklyMealPlan, daily_plan_macros, meal_macros,
+  type DailyPlan, type Meal, type WeeklyMealPlan, daily_plan_macros,
 }
-import meal_planner/types.{type Macros, macros_calories}
+import meal_planner/types.{macros_calories}
 import meal_planner/ui/components/meal_card
 
 // ===================================================================
