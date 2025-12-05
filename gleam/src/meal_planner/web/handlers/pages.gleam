@@ -1511,6 +1511,11 @@ fn render_page(title: String, content: List(element.Element(Nil))) -> String {
           attribute.rel("stylesheet"),
           attribute.href("/static/styles.css"),
         ]),
+        // Include lazy loading and skeleton styles
+        html.link([
+          attribute.rel("stylesheet"),
+          attribute.href("/static/css/lazy-loading.css"),
+        ]),
         html.script([attribute.src("https://unpkg.com/htmx.org@1.9.10")], ""),
       ]),
       html.body([], [html.div([attribute.class("container")], content)]),

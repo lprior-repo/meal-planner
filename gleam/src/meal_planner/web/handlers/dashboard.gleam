@@ -180,6 +180,11 @@ fn render_full_page(
           attribute.rel("stylesheet"),
           attribute.href("/static/styles.css"),
         ]),
+        // Include lazy loading and skeleton styles
+        html.link([
+          attribute.rel("stylesheet"),
+          attribute.href("/static/css/lazy-loading.css"),
+        ]),
         // HTMX library - the ONLY JavaScript allowed in the project
         // All interactivity must use HTMX attributes, not custom JS files
         html.script([attribute.src("https://unpkg.com/htmx.org@1.9.10")], ""),

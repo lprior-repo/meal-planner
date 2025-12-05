@@ -1041,41 +1041,46 @@ fn log_meal_page(ctx: Context) -> wisp.Response {
 
   let content = [
     page_header("Log Meal", "/dashboard"),
-    html.div([attribute.class("page-description")], [
-      html.p([], [element.text("Select a recipe to log:")]),
+    html.main([attribute.attribute("role", "main")], [
+      html.div([attribute.class("page-description")], [
+        html.p([], [element.text("Select a recipe to log:")]),
+      ]),
+      html.section(
+        [
+          attribute.class("recipe-grid"),
+          attribute.attribute("aria-label", "Available recipes to log"),
+        ],
+        list.map(recipes, fn(recipe) {
+          html.a(
+            [
+              attribute.class("recipe-card"),
+              attribute.href("/log/" <> recipe.id),
+            ],
+            [
+              html.div([attribute.class("recipe-card-content")], [
+                html.h3([attribute.class("recipe-title")], [
+                  element.text(recipe.name),
+                ]),
+                html.span([attribute.class("recipe-category")], [
+                  element.text(recipe.category),
+                ]),
+                html.div([attribute.class("recipe-macros")], [
+                  macro_badge("P", recipe.macros.protein),
+                  macro_badge("F", recipe.macros.fat),
+                  macro_badge("C", recipe.macros.carbs),
+                ]),
+                html.div([attribute.class("recipe-calories")], [
+                  element.text(
+                    float_to_string(types.macros_calories(recipe.macros))
+                    <> " cal",
+                  ),
+                ]),
+              ]),
+            ],
+          )
+        }),
+      ),
     ]),
-    html.div(
-      [attribute.class("recipe-grid")],
-      list.map(recipes, fn(recipe) {
-        html.a(
-          [
-            attribute.class("recipe-card"),
-            attribute.href("/log/" <> recipe.id),
-          ],
-          [
-            html.div([attribute.class("recipe-card-content")], [
-              html.h3([attribute.class("recipe-title")], [
-                element.text(recipe.name),
-              ]),
-              html.span([attribute.class("recipe-category")], [
-                element.text(recipe.category),
-              ]),
-              html.div([attribute.class("recipe-macros")], [
-                macro_badge("P", recipe.macros.protein),
-                macro_badge("F", recipe.macros.fat),
-                macro_badge("C", recipe.macros.carbs),
-              ]),
-              html.div([attribute.class("recipe-calories")], [
-                element.text(
-                  float_to_string(types.macros_calories(recipe.macros))
-                  <> " cal",
-                ),
-              ]),
-            ]),
-          ],
-        )
-      }),
-    ),
   ]
 
   wisp.html_response(render_page("Log Meal - Meal Planner", content), 200)
@@ -1468,6 +1473,11 @@ fn render_page(title: String, content: List(element.Element(msg))) -> String {
         html.link([
           attribute.rel("stylesheet"),
           attribute.href("/static/styles.css"),
+        ]),
+        // Include lazy loading and skeleton styles
+        html.link([
+          attribute.rel("stylesheet"),
+          attribute.href("/static/css/lazy-loading.css"),
         ]),
         // HTMX library - the ONLY JavaScript allowed in the project
         // All interactivity must use HTMX attributes, not custom JS files
