@@ -94,7 +94,7 @@ pub fn search_foods(
 pub fn search_foods_filtered(
   conn: pog.Connection,
   query: String,
-  filters: types.SearchFilters,
+  _filters: types.SearchFilters,
   limit: Int,
 ) -> Result(List(UsdaFood), StorageError) {
   search_foods(conn, query, limit)

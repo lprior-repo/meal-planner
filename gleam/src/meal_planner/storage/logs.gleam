@@ -1,20 +1,14 @@
 /// PostgreSQL storage module for nutrition data persistence
 import gleam/dynamic/decode
-import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
-import meal_planner/ncp
 import meal_planner/postgres
-import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
-import meal_planner/storage/profile.{get_user_profile}
 import meal_planner/storage/utils
 import meal_planner/types.{
-  type DailyLog, type FoodLogEntry, type Macros, type Recipe, type UserProfile,
-  Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain, High, Ingredient,
-  Lose, Low, Lunch, Macros, Maintain, Medium, Moderate, Recipe, Sedentary, Snack,
-  UserProfile,
+  type FoodLogEntry,
+  Breakfast, Dinner, FoodLogEntry, Lunch, Snack,
 }
 import pog
 
