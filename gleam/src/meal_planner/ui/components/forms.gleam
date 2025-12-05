@@ -728,7 +728,6 @@ pub fn search_combobox_with_selection(
 pub fn category_dropdown(
   categories: List(String),
   selected_category: option.Option(String),
-  _on_change_handler: String,
 ) -> element.Element(msg) {
   // Build option elements for all categories
   let category_options =

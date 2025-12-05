@@ -25,7 +25,7 @@ pub fn test_db_config() -> pog.Config {
   |> pog.database(test_db_name)
   |> pog.user("postgres")
   |> pog.password(Some("postgres"))
-  |> pog.pool_size(5)
+  |> pog.pool_size(1)
 }
 
 /// Create postgres database config (for setup/teardown)

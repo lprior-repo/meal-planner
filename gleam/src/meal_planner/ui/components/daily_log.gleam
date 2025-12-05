@@ -63,12 +63,30 @@ pub fn meal_entry_item(entry: ui_types.MealEntryData) -> Element(msg) {
     ]),
     div([class("entry-calories")], [text(calories_str <> " kcal")]),
     div([class("entry-actions")], [
-      button([class("btn-icon btn-edit"), attribute("data-entry-id", id)], [
-        text("✏️"),
-      ]),
-      button([class("btn-icon btn-delete"), attribute("data-entry-id", id)], [
-        text("🗑️"),
-      ]),
+      button(
+        [
+          class("btn-icon btn-edit"),
+          attribute("data-entry-id", id),
+          attribute("hx-get", "/log/" <> id <> "/edit"),
+          attribute("hx-target", "#modal-container"),
+          attribute("hx-swap", "innerHTML"),
+        ],
+        [text("✏️")],
+      ),
+      button(
+        [
+          class("btn-icon btn-delete"),
+          attribute("data-entry-id", id),
+          attribute(
+            "hx-delete",
+            "/api/logs/entry/" <> id <> "?action=delete",
+          ),
+          attribute("hx-target", "closest .meal-entry-item"),
+          attribute("hx-swap", "outerHTML swap:1s"),
+          attribute("hx-confirm", "Delete this entry?"),
+        ],
+        [text("🗑️")],
+      ),
     ]),
   ])
 }
