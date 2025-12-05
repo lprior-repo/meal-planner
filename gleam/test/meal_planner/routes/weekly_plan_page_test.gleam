@@ -17,6 +17,7 @@
 import gleam/string
 import gleeunit
 import gleeunit/should
+import lustre/element.{type Element}
 
 pub fn main() {
   gleeunit.main()
@@ -31,7 +32,8 @@ pub fn weekly_plan_route_returns_200_test() {
   // Implementation pending - route handler needs to be created
 
   // Expected behavior:
-  // let response = handle_request(GET, ["weekly-plan"], ctx)
+  // let element = get_weekly_plan_element(ctx)
+  // element |> element.to_string() returns valid HTML
   // response.status |> should.equal(200)
 
   // For now, we'll create a stub test that documents expected behavior
@@ -154,8 +156,8 @@ pub fn meal_slots_appear_in_correct_order_test() {
 
 pub fn empty_slot_shows_no_meals_planned_message_test() {
   // Verify empty meal slots display 'No meals planned'
-  // let html = get_weekly_plan_html_empty(ctx)
-  // html |> string.contains("No meals planned") |> should.be_true
+  // let element = get_weekly_plan_element_empty(ctx)
+  // element |> element.to_string() |> string.contains("No meals planned") |> should.be_true
 
   True
   |> should.be_true
@@ -163,8 +165,8 @@ pub fn empty_slot_shows_no_meals_planned_message_test() {
 
 pub fn empty_state_appears_for_all_empty_slots_test() {
   // When no meals are planned, all 21 slots (7 days × 3 meals) show message
-  // let html = get_weekly_plan_html_empty(ctx)
-  // count_occurrences(html, "No meals planned") |> should.equal(21)
+  // let element = get_weekly_plan_element_empty(ctx)
+  // element |> element.to_string() |> count_occurrences(_, "No meals planned") |> should.equal(21)
 
   True
   |> should.be_true
@@ -172,7 +174,8 @@ pub fn empty_state_appears_for_all_empty_slots_test() {
 
 pub fn filled_slot_shows_recipe_name_test() {
   // When a meal is planned, show recipe name instead of empty message
-  // let html = get_weekly_plan_html_with_meal(ctx, "Grilled Salmon")
+  // let element = get_weekly_plan_element_with_meal(ctx, "Grilled Salmon")
+  // let html = element |> element.to_string()
   // html |> string.contains("Grilled Salmon") |> should.be_true
   // html |> string.contains("No meals planned") |> should.be_false
 
@@ -186,10 +189,10 @@ pub fn filled_slot_shows_recipe_name_test() {
 
 pub fn response_has_valid_html_structure_test() {
   // Verify response is valid HTML5
-  // let html = get_weekly_plan_html(ctx)
-  // html |> string.starts_with("<!DOCTYPE html>") |> should.be_true
+  // let element = get_weekly_plan_element(ctx)
+  // let html = element |> element.to_string()
   // html |> string.contains("<html") |> should.be_true
-  // html |> string.contains("</html>") |> should.be_true
+  // Note: HTML doctype may not appear in element serialization
 
   True
   |> should.be_true
@@ -270,9 +273,13 @@ pub fn page_is_accessible_test() {
 
 // Helper functions that will be implemented when the route exists:
 //
-// fn get_weekly_plan_html(ctx: Context) -> String
-// fn get_weekly_plan_html_empty(ctx: Context) -> String
-// fn get_weekly_plan_html_with_meal(ctx: Context, recipe_name: String) -> String
+// fn get_weekly_plan_element(ctx: Context) -> Element(Msg)
+// fn get_weekly_plan_element_empty(ctx: Context) -> Element(Msg)
+// fn get_weekly_plan_element_with_meal(ctx: Context, recipe_name: String) -> Element(Msg)
+//
+// Usage: Convert Elements to String for assertions using element.to_string()
+// Example: get_weekly_plan_element(ctx) |> element.to_string() |> string.contains("Monday")
+//
 // fn count_occurrences(html: String, pattern: String) -> Int
 // fn extract_day_columns(html: String) -> List(String)
 // fn all_have_same_structure(elements: List(String)) -> Bool
