@@ -74,20 +74,19 @@ pub fn search_foods_cached(
   }
 }
 
-/// Optimized search using covering index
-/// Query plan: Uses idx_foods_search_covering to avoid table lookups
+/// Optimized search using PostgreSQL indexes
+/// PostgreSQL will automatically use appropriate indexes
 fn search_foods_optimized(
   conn: pog.Connection,
   query: String,
   limit: Int,
 ) -> Result(List(UsdaFood), StorageError) {
-  // Optimized SQL using covering index idx_foods_search_covering
-  // Includes all columns in SELECT to use covering index
-  // Build SQL with constants for magic numbers
+  // PostgreSQL query - query planner will use indexes automatically
+  // Using ILIKE for case-insensitive matching
   let sql = "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
-     FROM foods INDEXED BY idx_foods_search_covering
-     WHERE (description LIKE $1 || '%'
-        OR description LIKE '%' || $1 || '%')
+     FROM foods
+     WHERE (description ILIKE $1 || '%'
+        OR description ILIKE '%' || $1 || '%')
      ORDER BY
        -- 1. Exact prefix match (uses index efficiently)
        CASE
@@ -193,20 +192,13 @@ pub fn search_foods_filtered_cached(
   }
 }
 
-/// Optimized filtered search using partial indexes
+/// Optimized filtered search using PostgreSQL indexes
 fn search_foods_filtered_optimized(
   conn: pog.Connection,
   query: String,
   filters: types.SearchFilters,
   limit: Int,
 ) -> Result(List(UsdaFood), StorageError) {
-  // Use partial index hint based on filters
-  let index_hint = case filters.verified_only, filters.branded_only {
-    True, _ -> " INDEXED BY idx_foods_verified_search"
-    _, True -> " INDEXED BY idx_foods_branded_search"
-    _, _ -> " INDEXED BY idx_foods_search_covering"
-  }
-
   // Build WHERE clause
   let verified_clause = case filters.verified_only {
     True -> " AND data_type IN ('foundation_food', 'sr_legacy_food')"
@@ -219,13 +211,14 @@ fn search_foods_filtered_optimized(
   }
 
   let category_clause = case filters.category {
-    Some(_) -> " AND food_category LIKE '%' || $4 || '%'"
+    Some(_) -> " AND food_category ILIKE '%' || $3 || '%'"
     None -> ""
   }
 
+  // PostgreSQL query without SQLite-specific INDEXED BY hints
   let sql = "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
-     FROM foods" <> index_hint <> "
-     WHERE (description LIKE $1 || '%' OR description LIKE '%' || $1 || '%')" <> verified_clause <> branded_clause <> category_clause <> "
+     FROM foods
+     WHERE (description ILIKE $1 || '%' OR description ILIKE '%' || $1 || '%')" <> verified_clause <> branded_clause <> category_clause <> "
      ORDER BY
        CASE
          WHEN LOWER(description) LIKE LOWER($1 || '%') THEN 1
@@ -238,9 +231,7 @@ fn search_foods_filtered_optimized(
        END DESC,
        LENGTH(description),
        description
-     LIMIT $3"
-
-  let search_pattern = "%" <> query <> "%"
+     LIMIT $2"
 
   let decoder = {
     use fdc_id <- decode.field(0, decode.int)
@@ -258,7 +249,6 @@ fn search_foods_filtered_optimized(
   let base_query =
     pog.query(sql)
     |> pog.parameter(pog.text(query))
-    |> pog.parameter(pog.text(search_pattern))
     |> pog.parameter(pog.int(limit))
 
   let final_query = case filters.category {
