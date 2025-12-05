@@ -17,8 +17,6 @@ fn test_db_config() -> pog.Config {
   |> pog.pool_size(5)
 }
 
-// Removed unused helper functions: postgres_db_config, format_pog_error, run_migration, run_all_migrations
-
 /// Initialize test database once
 /// This is called automatically by gleeunit before running tests
 ///
