@@ -10,7 +10,6 @@
 /// 4. Daily log retrieval and display
 /// 5. Source tracking persistence
 /// 6. Edge cases and error handling
-
 import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
@@ -103,17 +102,19 @@ fn calculate_daily_totals(entries: List(FoodLogEntry)) -> Macros {
 
 /// Test: Log a single recipe at breakfast
 pub fn log_single_recipe_breakfast_test() {
-  let recipe = create_test_recipe("breakfast-1", "Eggs and Toast", 20.0, 15.0, 30.0)
-  let entry = create_test_entry(
-    "entry-1",
-    recipe.id,
-    recipe.name,
-    1.0,
-    recipe.macros.protein,
-    recipe.macros.fat,
-    recipe.macros.carbs,
-    Breakfast,
-  )
+  let recipe =
+    create_test_recipe("breakfast-1", "Eggs and Toast", 20.0, 15.0, 30.0)
+  let entry =
+    create_test_entry(
+      "entry-1",
+      recipe.id,
+      recipe.name,
+      1.0,
+      recipe.macros.protein,
+      recipe.macros.fat,
+      recipe.macros.carbs,
+      Breakfast,
+    )
 
   // Verify entry data
   entry.recipe_id
@@ -138,16 +139,17 @@ pub fn log_recipe_with_scaled_servings_test() {
   let scaled_fat = recipe.macros.fat *. 1.5
   let scaled_carbs = recipe.macros.carbs *. 1.5
 
-  let entry = create_test_entry(
-    "entry-2",
-    recipe.id,
-    recipe.name,
-    1.5,
-    scaled_protein,
-    scaled_fat,
-    scaled_carbs,
-    Lunch,
-  )
+  let entry =
+    create_test_entry(
+      "entry-2",
+      recipe.id,
+      recipe.name,
+      1.5,
+      scaled_protein,
+      scaled_fat,
+      scaled_carbs,
+      Lunch,
+    )
 
   // Verify scaling
   entry.servings
@@ -175,16 +177,17 @@ pub fn log_usda_food_with_grams_test() {
   let scaled_fat = usda_macros_per_100g.fat *. scaling_factor
   let scaled_carbs = usda_macros_per_100g.carbs *. scaling_factor
 
-  let entry = create_test_entry(
-    "entry-3",
-    "usda-171477",
-    "Chicken Breast (Raw)",
-    scaling_factor,
-    scaled_protein,
-    scaled_fat,
-    scaled_carbs,
-    Lunch,
-  )
+  let entry =
+    create_test_entry(
+      "entry-3",
+      "usda-171477",
+      "Chicken Breast (Raw)",
+      scaling_factor,
+      scaled_protein,
+      scaled_fat,
+      scaled_carbs,
+      Lunch,
+    )
 
   // Verify USDA logging
   entry.servings
@@ -204,52 +207,56 @@ pub fn log_usda_food_with_grams_test() {
 /// Test: Log breakfast, lunch, dinner, and snack
 pub fn log_complete_day_test() {
   // Breakfast: Eggs and Toast
-  let breakfast = create_test_entry(
-    "entry-1",
-    "breakfast-1",
-    "Eggs and Toast",
-    1.0,
-    20.0,
-    15.0,
-    30.0,
-    Breakfast,
-  )
+  let breakfast =
+    create_test_entry(
+      "entry-1",
+      "breakfast-1",
+      "Eggs and Toast",
+      1.0,
+      20.0,
+      15.0,
+      30.0,
+      Breakfast,
+    )
 
   // Lunch: Chicken Salad with 1.5 servings
-  let lunch = create_test_entry(
-    "entry-2",
-    "lunch-1",
-    "Chicken Salad",
-    1.5,
-    52.5,
-    12.0,
-    45.0,
-    Lunch,
-  )
+  let lunch =
+    create_test_entry(
+      "entry-2",
+      "lunch-1",
+      "Chicken Salad",
+      1.5,
+      52.5,
+      12.0,
+      45.0,
+      Lunch,
+    )
 
   // Dinner: Fish and Rice
-  let dinner = create_test_entry(
-    "entry-3",
-    "dinner-1",
-    "Fish and Rice",
-    1.0,
-    40.0,
-    10.0,
-    60.0,
-    Dinner,
-  )
+  let dinner =
+    create_test_entry(
+      "entry-3",
+      "dinner-1",
+      "Fish and Rice",
+      1.0,
+      40.0,
+      10.0,
+      60.0,
+      Dinner,
+    )
 
   // Snack: Protein Bar
-  let snack = create_test_entry(
-    "entry-4",
-    "snack-1",
-    "Protein Bar",
-    1.0,
-    20.0,
-    5.0,
-    40.0,
-    Snack,
-  )
+  let snack =
+    create_test_entry(
+      "entry-4",
+      "snack-1",
+      "Protein Bar",
+      1.0,
+      20.0,
+      5.0,
+      40.0,
+      Snack,
+    )
 
   let daily_log = create_daily_log([breakfast, lunch, dinner, snack])
 
@@ -269,29 +276,32 @@ pub fn log_complete_day_test() {
 
 /// Test: Multiple entries of same recipe on same day
 pub fn log_same_recipe_multiple_times_test() {
-  let recipe = create_test_recipe("coffee-1", "Coffee with Cream", 1.0, 3.0, 0.5)
+  let recipe =
+    create_test_recipe("coffee-1", "Coffee with Cream", 1.0, 3.0, 0.5)
 
-  let entry1 = create_test_entry(
-    "entry-1",
-    recipe.id,
-    recipe.name,
-    1.0,
-    recipe.macros.protein,
-    recipe.macros.fat,
-    recipe.macros.carbs,
-    Breakfast,
-  )
+  let entry1 =
+    create_test_entry(
+      "entry-1",
+      recipe.id,
+      recipe.name,
+      1.0,
+      recipe.macros.protein,
+      recipe.macros.fat,
+      recipe.macros.carbs,
+      Breakfast,
+    )
 
-  let entry2 = create_test_entry(
-    "entry-2",
-    recipe.id,
-    recipe.name,
-    1.0,
-    recipe.macros.protein,
-    recipe.macros.fat,
-    recipe.macros.carbs,
-    Snack,
-  )
+  let entry2 =
+    create_test_entry(
+      "entry-2",
+      recipe.id,
+      recipe.name,
+      1.0,
+      recipe.macros.protein,
+      recipe.macros.fat,
+      recipe.macros.carbs,
+      Snack,
+    )
 
   let daily_log = create_daily_log([entry1, entry2])
 
@@ -316,16 +326,17 @@ pub fn log_same_recipe_multiple_times_test() {
 
 /// Test: Recipe source is tracked correctly
 pub fn recipe_source_tracking_test() {
-  let entry = create_test_entry(
-    "entry-1",
-    "recipe-123",
-    "Test Recipe",
-    1.0,
-    30.0,
-    10.0,
-    50.0,
-    Lunch,
-  )
+  let entry =
+    create_test_entry(
+      "entry-1",
+      "recipe-123",
+      "Test Recipe",
+      1.0,
+      30.0,
+      10.0,
+      50.0,
+      Lunch,
+    )
 
   // Verify source tracking
   entry.source_type
@@ -369,16 +380,17 @@ pub fn usda_food_source_tracking_test() {
 
 /// Test: Entry contains all required source tracking fields
 pub fn entry_has_complete_source_fields_test() {
-  let entry = create_test_entry(
-    "entry-1",
-    "recipe-456",
-    "Test Meal",
-    1.0,
-    30.0,
-    10.0,
-    50.0,
-    Breakfast,
-  )
+  let entry =
+    create_test_entry(
+      "entry-1",
+      "recipe-456",
+      "Test Meal",
+      1.0,
+      30.0,
+      10.0,
+      50.0,
+      Breakfast,
+    )
 
   // Verify all source-related fields exist
   entry.recipe_id
@@ -402,27 +414,29 @@ pub fn entry_has_complete_source_fields_test() {
 pub fn macro_scaling_proportional_test() {
   let recipe = create_test_recipe("test-recipe", "Test Food", 30.0, 15.0, 60.0)
 
-  let single_serving_entry = create_test_entry(
-    "entry-1",
-    recipe.id,
-    recipe.name,
-    1.0,
-    recipe.macros.protein,
-    recipe.macros.fat,
-    recipe.macros.carbs,
-    Lunch,
-  )
+  let single_serving_entry =
+    create_test_entry(
+      "entry-1",
+      recipe.id,
+      recipe.name,
+      1.0,
+      recipe.macros.protein,
+      recipe.macros.fat,
+      recipe.macros.carbs,
+      Lunch,
+    )
 
-  let double_serving_entry = create_test_entry(
-    "entry-2",
-    recipe.id,
-    recipe.name,
-    2.0,
-    recipe.macros.protein *. 2.0,
-    recipe.macros.fat *. 2.0,
-    recipe.macros.carbs *. 2.0,
-    Lunch,
-  )
+  let double_serving_entry =
+    create_test_entry(
+      "entry-2",
+      recipe.id,
+      recipe.name,
+      2.0,
+      recipe.macros.protein *. 2.0,
+      recipe.macros.fat *. 2.0,
+      recipe.macros.carbs *. 2.0,
+      Lunch,
+    )
 
   // Verify proportional scaling
   double_serving_entry.macros.protein
@@ -437,38 +451,41 @@ pub fn macro_scaling_proportional_test() {
 
 /// Test: Macro totals are calculated correctly
 pub fn daily_macro_totals_calculation_test() {
-  let entry1 = create_test_entry(
-    "entry-1",
-    "recipe-1",
-    "Meal 1",
-    1.0,
-    30.0,
-    10.0,
-    50.0,
-    Breakfast,
-  )
+  let entry1 =
+    create_test_entry(
+      "entry-1",
+      "recipe-1",
+      "Meal 1",
+      1.0,
+      30.0,
+      10.0,
+      50.0,
+      Breakfast,
+    )
 
-  let entry2 = create_test_entry(
-    "entry-2",
-    "recipe-2",
-    "Meal 2",
-    1.0,
-    40.0,
-    15.0,
-    60.0,
-    Lunch,
-  )
+  let entry2 =
+    create_test_entry(
+      "entry-2",
+      "recipe-2",
+      "Meal 2",
+      1.0,
+      40.0,
+      15.0,
+      60.0,
+      Lunch,
+    )
 
-  let entry3 = create_test_entry(
-    "entry-3",
-    "recipe-3",
-    "Meal 3",
-    1.0,
-    25.0,
-    8.0,
-    35.0,
-    Dinner,
-  )
+  let entry3 =
+    create_test_entry(
+      "entry-3",
+      "recipe-3",
+      "Meal 3",
+      1.0,
+      25.0,
+      8.0,
+      35.0,
+      Dinner,
+    )
 
   let daily_log = create_daily_log([entry1, entry2, entry3])
 
@@ -485,16 +502,17 @@ pub fn daily_macro_totals_calculation_test() {
 
 /// Test: Zero serving macros are valid
 pub fn zero_serving_macros_test() {
-  let entry = create_test_entry(
-    "entry-1",
-    "recipe-1",
-    "Zero Cal Drink",
-    1.0,
-    0.0,
-    0.0,
-    0.0,
-    Breakfast,
-  )
+  let entry =
+    create_test_entry(
+      "entry-1",
+      "recipe-1",
+      "Zero Cal Drink",
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      Breakfast,
+    )
 
   // Zero macros should be valid
   entry.macros.protein
@@ -527,9 +545,12 @@ pub fn entries_assigned_correct_meal_types_test() {
   // Find entries by meal type
   let breakfast_entries =
     list.filter(daily_log.entries, fn(e) { e.meal_type == Breakfast })
-  let lunch_entries = list.filter(daily_log.entries, fn(e) { e.meal_type == Lunch })
-  let dinner_entries = list.filter(daily_log.entries, fn(e) { e.meal_type == Dinner })
-  let snack_entries = list.filter(daily_log.entries, fn(e) { e.meal_type == Snack })
+  let lunch_entries =
+    list.filter(daily_log.entries, fn(e) { e.meal_type == Lunch })
+  let dinner_entries =
+    list.filter(daily_log.entries, fn(e) { e.meal_type == Dinner })
+  let snack_entries =
+    list.filter(daily_log.entries, fn(e) { e.meal_type == Snack })
 
   list.length(breakfast_entries)
   |> should.equal(1)
@@ -553,7 +574,8 @@ pub fn multiple_entries_same_meal_type_test() {
 
   let daily_log = create_daily_log([snack1, snack2])
 
-  let snack_entries = list.filter(daily_log.entries, fn(e) { e.meal_type == Snack })
+  let snack_entries =
+    list.filter(daily_log.entries, fn(e) { e.meal_type == Snack })
 
   list.length(snack_entries)
   |> should.equal(2)
@@ -568,16 +590,17 @@ pub fn multiple_entries_same_meal_type_test() {
 
 /// Test: Entry has valid timestamp
 pub fn entry_has_valid_timestamp_test() {
-  let entry = create_test_entry(
-    "entry-1",
-    "recipe-1",
-    "Test Meal",
-    1.0,
-    30.0,
-    10.0,
-    50.0,
-    Lunch,
-  )
+  let entry =
+    create_test_entry(
+      "entry-1",
+      "recipe-1",
+      "Test Meal",
+      1.0,
+      30.0,
+      10.0,
+      50.0,
+      Lunch,
+    )
 
   // Verify timestamp is not empty and follows ISO format
   entry.logged_at
@@ -589,16 +612,17 @@ pub fn entry_has_valid_timestamp_test() {
 
 /// Test: Daily log contains date information
 pub fn daily_log_has_date_test() {
-  let entry = create_test_entry(
-    "entry-1",
-    "recipe-1",
-    "Test Meal",
-    1.0,
-    30.0,
-    10.0,
-    50.0,
-    Breakfast,
-  )
+  let entry =
+    create_test_entry(
+      "entry-1",
+      "recipe-1",
+      "Test Meal",
+      1.0,
+      30.0,
+      10.0,
+      50.0,
+      Breakfast,
+    )
 
   let daily_log = create_daily_log([entry])
 
@@ -615,19 +639,21 @@ pub fn daily_log_has_date_test() {
 
 /// Test: Very small serving size (less than 1)
 pub fn fractional_serving_size_test() {
-  let recipe = create_test_recipe("recipe-1", "Expensive Spice", 100.0, 0.0, 0.0)
+  let recipe =
+    create_test_recipe("recipe-1", "Expensive Spice", 100.0, 0.0, 0.0)
 
   // User logs 0.1 servings (very small amount)
-  let entry = create_test_entry(
-    "entry-1",
-    recipe.id,
-    recipe.name,
-    0.1,
-    recipe.macros.protein *. 0.1,
-    recipe.macros.fat *. 0.1,
-    recipe.macros.carbs *. 0.1,
-    Breakfast,
-  )
+  let entry =
+    create_test_entry(
+      "entry-1",
+      recipe.id,
+      recipe.name,
+      0.1,
+      recipe.macros.protein *. 0.1,
+      recipe.macros.fat *. 0.1,
+      recipe.macros.carbs *. 0.1,
+      Breakfast,
+    )
 
   entry.servings
   |> should.equal(0.1)
@@ -641,16 +667,17 @@ pub fn large_serving_size_test() {
   let recipe = create_test_recipe("recipe-1", "Soup", 10.0, 5.0, 20.0)
 
   // User logs 3 servings
-  let entry = create_test_entry(
-    "entry-1",
-    recipe.id,
-    recipe.name,
-    3.0,
-    recipe.macros.protein *. 3.0,
-    recipe.macros.fat *. 3.0,
-    recipe.macros.carbs *. 3.0,
-    Lunch,
-  )
+  let entry =
+    create_test_entry(
+      "entry-1",
+      recipe.id,
+      recipe.name,
+      3.0,
+      recipe.macros.protein *. 3.0,
+      recipe.macros.fat *. 3.0,
+      recipe.macros.carbs *. 3.0,
+      Lunch,
+    )
 
   entry.servings
   |> should.equal(3.0)
@@ -682,7 +709,16 @@ pub fn empty_daily_log_test() {
 /// Test: Single entry daily log
 pub fn single_entry_daily_log_test() {
   let entry =
-    create_test_entry("e1", "r1", "Single Meal", 1.0, 50.0, 20.0, 75.0, Breakfast)
+    create_test_entry(
+      "e1",
+      "r1",
+      "Single Meal",
+      1.0,
+      50.0,
+      20.0,
+      75.0,
+      Breakfast,
+    )
 
   let daily_log = create_daily_log([entry])
 
@@ -750,21 +786,23 @@ pub fn e2e_search_select_log_usda_food_test() {
 /// Scenario: User saves recipe, then logs recipe with scaled servings
 pub fn e2e_recipe_creation_and_logging_test() {
   // STEP 1: User creates recipe "Pasta Carbonara"
-  let recipe = create_test_recipe("pasta-1", "Pasta Carbonara", 25.0, 18.0, 45.0)
+  let recipe =
+    create_test_recipe("pasta-1", "Pasta Carbonara", 25.0, 18.0, 45.0)
 
   // STEP 2: Recipe saved with macros
 
   // STEP 3: User logs 1.5 servings at dinner
-  let entry = create_test_entry(
-    "entry-1",
-    recipe.id,
-    recipe.name,
-    1.5,
-    recipe.macros.protein *. 1.5,
-    recipe.macros.fat *. 1.5,
-    recipe.macros.carbs *. 1.5,
-    Dinner,
-  )
+  let entry =
+    create_test_entry(
+      "entry-1",
+      recipe.id,
+      recipe.name,
+      1.5,
+      recipe.macros.protein *. 1.5,
+      recipe.macros.fat *. 1.5,
+      recipe.macros.carbs *. 1.5,
+      Dinner,
+    )
 
   // STEP 4: Entry saved to database
   entry.recipe_id
@@ -783,52 +821,45 @@ pub fn e2e_recipe_creation_and_logging_test() {
 /// Scenario: User logs entire day (breakfast, lunch, dinner, snacks)
 pub fn e2e_complete_day_logging_test() {
   // STEP 1: User logs breakfast
-  let breakfast = create_test_entry(
-    "e1",
-    "r1",
-    "Oatmeal",
-    1.0,
-    10.0,
-    3.0,
-    54.0,
-    Breakfast,
-  )
+  let breakfast =
+    create_test_entry("e1", "r1", "Oatmeal", 1.0, 10.0, 3.0, 54.0, Breakfast)
 
   // STEP 2: User logs mid-morning snack
   let snack1 =
     create_test_entry("e2", "r2", "Apple", 1.0, 0.3, 0.1, 25.0, Snack)
 
   // STEP 3: User logs lunch
-  let lunch = create_test_entry(
-    "e3",
-    "r3",
-    "Salmon",
-    200.0 /. 100.0,
-    22.0 *. 2.0,
-    13.0 *. 2.0,
-    0.0,
-    Lunch,
-  )
+  let lunch =
+    create_test_entry(
+      "e3",
+      "r3",
+      "Salmon",
+      200.0 /. 100.0,
+      22.0 *. 2.0,
+      13.0 *. 2.0,
+      0.0,
+      Lunch,
+    )
 
   // STEP 4: User logs afternoon snack
   let snack2 =
     create_test_entry("e4", "r4", "Yogurt", 1.0, 10.0, 3.0, 5.0, Snack)
 
   // STEP 5: User logs dinner
-  let dinner = create_test_entry(
-    "e5",
-    "r5",
-    "Steak",
-    150.0 /. 100.0,
-    25.0 *. 1.5,
-    18.0 *. 1.5,
-    0.0,
-    Dinner,
-  )
+  let dinner =
+    create_test_entry(
+      "e5",
+      "r5",
+      "Steak",
+      150.0 /. 100.0,
+      25.0 *. 1.5,
+      18.0 *. 1.5,
+      0.0,
+      Dinner,
+    )
 
   // STEP 6: User views daily dashboard
-  let daily_log =
-    create_daily_log([breakfast, snack1, lunch, snack2, dinner])
+  let daily_log = create_daily_log([breakfast, snack1, lunch, snack2, dinner])
 
   // Verify all entries logged
   list.length(daily_log.entries)
@@ -848,16 +879,8 @@ pub fn e2e_complete_day_logging_test() {
 /// Scenario: User modifies meal by logging another portion then checking total
 pub fn e2e_modify_meal_add_second_portion_test() {
   // STEP 1: User logs 1 serving of recipe at lunch
-  let serving1 = create_test_entry(
-    "e1",
-    "recipe-1",
-    "Pasta",
-    1.0,
-    20.0,
-    5.0,
-    40.0,
-    Lunch,
-  )
+  let serving1 =
+    create_test_entry("e1", "recipe-1", "Pasta", 1.0, 20.0, 5.0, 40.0, Lunch)
 
   let daily_log_v1 = create_daily_log([serving1])
 
@@ -865,16 +888,17 @@ pub fn e2e_modify_meal_add_second_portion_test() {
   |> should.equal(20.0)
 
   // STEP 2: User decides to add more and logs another 0.5 servings same recipe
-  let serving2 = create_test_entry(
-    "e2",
-    "recipe-1",
-    "Pasta",
-    0.5,
-    20.0 *. 0.5,
-    5.0 *. 0.5,
-    40.0 *. 0.5,
-    Lunch,
-  )
+  let serving2 =
+    create_test_entry(
+      "e2",
+      "recipe-1",
+      "Pasta",
+      0.5,
+      20.0 *. 0.5,
+      5.0 *. 0.5,
+      40.0 *. 0.5,
+      Lunch,
+    )
 
   let daily_log_v2 = create_daily_log([serving1, serving2])
 
