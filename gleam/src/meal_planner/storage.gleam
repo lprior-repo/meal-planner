@@ -616,6 +616,18 @@ pub type FoodNutrientValue {
   FoodNutrientValue(nutrient_name: String, amount: Float, unit: String)
 }
 
+/// USDA food with calculated macros and micronutrients
+pub type UsdaFoodWithNutrients {
+  UsdaFoodWithNutrients(
+    fdc_id: Int,
+    description: String,
+    data_type: String,
+    category: String,
+    macros: types.Macros,
+    micronutrients: Option(types.Micronutrients),
+  )
+}
+
 /// Search for foods by description using PostgreSQL full-text search
 pub fn search_foods(
   conn: pog.Connection,
@@ -883,6 +895,28 @@ pub fn get_food_by_id(
     Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [row, ..])) -> Ok(row)
   }
+}
+
+/// Load USDA food with calculated macros and micronutrients
+/// This combines food info with parsed nutrient data for display in forms
+pub fn load_usda_food_with_macros(
+  conn: pog.Connection,
+  fdc_id: Int,
+) -> Result(UsdaFoodWithNutrients, StorageError) {
+  use food <- result.try(get_food_by_id(conn, fdc_id))
+  use nutrients <- result.try(get_food_nutrients(conn, fdc_id))
+
+  let macros = parse_usda_macros(nutrients)
+  let micronutrients = parse_usda_micronutrients(nutrients)
+
+  Ok(UsdaFoodWithNutrients(
+    fdc_id: food.fdc_id,
+    description: food.description,
+    data_type: food.data_type,
+    category: food.category,
+    macros: macros,
+    micronutrients: micronutrients,
+  ))
 }
 
 /// Get count of foods in database
