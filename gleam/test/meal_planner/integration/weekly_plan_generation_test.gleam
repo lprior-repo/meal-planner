@@ -15,15 +15,6 @@
 /// - Follows patterns from food_logging_e2e_test.gleam
 import gleeunit
 import gleeunit/should
-import meal_planner/auto_planner/storage as auto_storage
-import meal_planner/auto_planner/types as auto_types
-import meal_planner/meal_plan.{type WeeklyMealPlan, WeeklyMealPlan}
-import meal_planner/storage
-import meal_planner/types.{
-  type Recipe, type UserProfile, Active, Gain, High, Ingredient, Low, Macros,
-  Medium, Moderate, Recipe, Sedentary, UserProfile,
-}
-import meal_planner/weekly_plan
 
 pub fn main() {
   gleeunit.main()
