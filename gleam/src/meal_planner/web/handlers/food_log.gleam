@@ -95,10 +95,7 @@ pub fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
 /// POST /api/logs/food - Log a USDA food with grams and meal type
 /// Request JSON: {"fdc_id": string, "grams": float, "meal_type": string}
 /// Response: JSON with created entry
-pub fn api_logs_food(
-  req: wisp.Request,
-  ctx: Context,
-) -> wisp.Response {
+pub fn api_logs_food(req: wisp.Request, ctx: Context) -> wisp.Response {
   // Parse JSON body
   use json_body <- wisp.require_json(req)
 
@@ -151,12 +148,10 @@ fn log_usda_food(
           let scaled_macros =
             types.macros_scale(usda_food.macros, scaling_factor)
           let scaled_micronutrients =
-            Some(
-              types.micronutrients_scale(
-                usda_food.micronutrients,
-                scaling_factor,
-              ),
-            )
+            Some(types.micronutrients_scale(
+              usda_food.micronutrients,
+              scaling_factor,
+            ))
 
           // Create log entry with source_type='usda_food'
           let entry =

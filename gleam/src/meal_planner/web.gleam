@@ -1499,6 +1499,8 @@ fn handle_api(
     ["custom-foods", ..rest] ->
       custom_foods.api_custom_foods(req, rest, custom_foods.Context(db: ctx.db))
     ["logs"] -> food_log.api_logs_create(req, food_log.Context(db: ctx.db))
+    ["logs", "food"] ->
+      food_log.api_logs_food(req, food_log.Context(db: ctx.db))
     ["logs", "entry", id] ->
       food_log.api_log_entry(req, id, food_log.Context(db: ctx.db))
     ["swap", meal_type] ->
