@@ -15,7 +15,7 @@ import gleam/option.{type Option, None, Some}
 import lustre/attribute
 import lustre/element
 import lustre/element/html
-import meal_planner/ui/error_messages.{type ErrorMessage, type Severity}
+import meal_planner/ui/error_messages.{type ErrorMessage}
 
 // ===================================================================
 // ENHANCED ERROR MESSAGES WITH SUGGESTIONS

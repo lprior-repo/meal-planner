@@ -181,7 +181,7 @@ pub fn form_validation_error(
 pub fn fetch_boundary(
   state state: BoundaryState,
   content content: element.Element(msg),
-  loading _loading: element.Element(msg),
+  loading: element.Element(msg),
   retry_url retry_url: Option(String),
 ) -> element.Element(msg) {
   case state {

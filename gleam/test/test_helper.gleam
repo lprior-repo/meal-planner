@@ -1,11 +1,8 @@
 /// Global test setup - run once before all tests
 /// This ensures the test database is created and migrated
 import gleam/erlang/process
-import gleam/list
 import gleam/option.{Some}
-import gleam/string
 import pog
-import simplifile
 
 const test_db_name = "meal_planner_test"
 
