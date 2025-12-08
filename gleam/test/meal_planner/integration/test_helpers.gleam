@@ -111,13 +111,13 @@ fn connect_to_test_db(
 // External Functions
 // ============================================================================
 
-/// Get current Unix timestamp (simplified)
+/// Get current Unix timestamp
 @external(erlang, "erlang", "system_time")
 fn erlang_now() -> Int
 
-/// Get random integer between min and max
+/// Get random integer
 @external(erlang, "rand", "uniform")
-fn erlang_random(min: Int, max: Int) -> Int
+fn erlang_random(max: Int) -> Int
 
 // ============================================================================
 // Database Creation and Teardown
@@ -127,7 +127,7 @@ fn erlang_random(min: Int, max: Int) -> Int
 /// Format: test_db_<timestamp>_<random>
 fn generate_test_db_name() -> String {
   let timestamp = int.to_string(erlang_now())
-  let random = int.to_string(erlang_random(100_000, 999_999))
+  let random = int.to_string(erlang_random(999_999))
   "test_db_" <> timestamp <> "_" <> random
 }
 
@@ -198,15 +198,6 @@ fn run_migration(
   filename: String,
   content: String,
 ) -> Result(Nil, String) {
-  // Extract version number from filename (e.g., "001_schema.sql" -> 1)
-  let version =
-    filename
-    |> string.split("_")
-    |> list.first
-    |> result.unwrap("")
-    |> int.parse
-    |> result.unwrap_or(0)
-
   // Execute migration SQL
   pog.query(content)
   |> pog.execute(conn)
@@ -216,22 +207,6 @@ fn run_migration(
     <> filename
     <> ": "
     <> string.inspect(err)
-  })
-  |> result.then(fn(_) {
-    // Record migration in schema_migrations table
-    let timestamp = "2024-01-01T00:00:00Z"
-
-    pog.query(
-      "INSERT INTO schema_migrations (version, name, applied_at) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
-    )
-    |> pog.parameter(pog.int(version))
-    |> pog.parameter(pog.text(filename))
-    |> pog.parameter(pog.text(timestamp))
-    |> pog.execute(conn)
-    |> result.map(fn(_) { Nil })
-    |> result.map_error(fn(err) {
-      "Failed to record migration in schema_migrations: " <> string.inspect(err)
-    })
   })
 }
 
@@ -259,17 +234,6 @@ fn run_all_migrations(conn: pog.Connection) -> Result(Nil, String) {
 /// 5. Cleans up (drops the database)
 ///
 /// Returns: The result of the test function, or an error if setup/cleanup fails
-///
-/// # Example
-///
-/// ```gleam
-/// pub fn test_food_logging() {
-///   with_integration_db(fn(conn) {
-///     let result = perform_operation(conn)
-///     should.equal(result, expected)
-///   })
-/// }
-/// ```
 pub fn with_integration_db(
   test_fn: fn(pog.Connection) -> Nil,
 ) -> Result(Nil, String) {
