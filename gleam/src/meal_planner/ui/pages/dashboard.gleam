@@ -14,6 +14,7 @@
 ///
 /// See: docs/UI_REQUIREMENTS_ANALYSIS.md (Bead 3)
 /// See: docs/component_signatures.md (Dashboard Page)
+import gleam/list
 import gleam/option
 import lustre/attribute.{attribute, class, id}
 import lustre/element.{type Element, text}
@@ -22,7 +23,6 @@ import meal_planner/types.{type Micronutrients}
 import meal_planner/ui/components/card
 import meal_planner/ui/components/daily_log
 import meal_planner/ui/components/layout
-import meal_planner/ui/components/micronutrient_panel
 import meal_planner/ui/components/micronutrient_summary
 import meal_planner/ui/components/progress
 import meal_planner/ui/types/ui_types
@@ -121,46 +121,61 @@ pub fn render_dashboard(data: DashboardData) -> Element(msg) {
     option.None -> micronutrient_summary.empty_micronutrient_summary()
   }
 
+  // Conditionally include micronutrient section only if there are meal entries
+  let micronutrient_sections = case list.is_empty(data.meal_entries) {
+    True -> []
+    False -> [
+      section([attribute("aria-labelledby", "micronutrients-heading")], [
+        h2([id("micronutrients-heading"), class("section-header")], [
+          text("Micronutrients"),
+        ]),
+        micronutrient_section,
+      ]),
+    ]
+  }
+
   // Build layout with proper ARIA landmarks
   main(
     [attribute("role", "main"), attribute("aria-label", "Nutrition Dashboard")],
     [
       page_title,
-      layout.container(1200, [
-        // Quick actions section
-        section([class("quick-actions-section")], [quick_actions]),
-        // Daily summary section
-        section([attribute("aria-labelledby", "daily-summary-heading")], [
-          h2([id("daily-summary-heading"), class("section-header")], [
-            text("Daily Summary"),
-          ]),
-          calorie_card,
+      layout.container(
+        1200,
+        list.flatten([
+          [
+            // Quick actions section
+            section([class("quick-actions-section")], [quick_actions]),
+            // Daily summary section
+            section([attribute("aria-labelledby", "daily-summary-heading")], [
+              h2([id("daily-summary-heading"), class("section-header")], [
+                text("Daily Summary"),
+              ]),
+              calorie_card,
+            ]),
+            // Macronutrients section
+            section([attribute("aria-labelledby", "macros-heading")], [
+              h2([id("macros-heading"), class("section-header")], [
+                text("Macronutrients"),
+              ]),
+              protein_bar,
+              fat_bar,
+              carbs_bar,
+            ]),
+          ],
+          // Conditionally include micronutrients section
+          micronutrient_sections,
+          [
+            // Daily log section
+            section([attribute("aria-labelledby", "daily-log-heading")], [
+              h2([id("daily-log-heading"), class("section-header")], [
+                text("Daily Log"),
+              ]),
+              filter_controls,
+              timeline,
+            ]),
+          ],
         ]),
-        // Macronutrients section
-        section([attribute("aria-labelledby", "macros-heading")], [
-          h2([id("macros-heading"), class("section-header")], [
-            text("Macronutrients"),
-          ]),
-          protein_bar,
-          fat_bar,
-          carbs_bar,
-        ]),
-        // Micronutrients section
-        section([attribute("aria-labelledby", "micronutrients-heading")], [
-          h2([id("micronutrients-heading"), class("section-header")], [
-            text("Micronutrients"),
-          ]),
-          micronutrient_section,
-        ]),
-        // Daily log section
-        section([attribute("aria-labelledby", "daily-log-heading")], [
-          h2([id("daily-log-heading"), class("section-header")], [
-            text("Daily Log"),
-          ]),
-          filter_controls,
-          timeline,
-        ]),
-      ]),
+      ),
     ],
   )
 }

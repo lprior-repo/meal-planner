@@ -78,9 +78,11 @@ pub fn meal_entry_item(entry: ui_types.MealEntryData) -> Element(msg) {
           class("btn-icon btn-delete"),
           attribute("data-entry-id", id),
           attribute("hx-delete", "/api/logs/entry/" <> id <> "?action=delete"),
-          attribute("hx-target", "closest .meal-entry-item"),
-          attribute("hx-swap", "outerHTML swap:1s"),
           attribute("hx-confirm", "Delete this entry?"),
+          // Refresh entire dashboard after delete to update totals
+          attribute("hx-get", "/dashboard"),
+          attribute("hx-target", "body"),
+          attribute("hx-swap", "innerHTML"),
         ],
         [text("🗑️")],
       ),

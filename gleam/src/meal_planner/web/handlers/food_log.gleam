@@ -567,10 +567,8 @@ pub fn api_food_log_form_submit(
 
               case storage.save_food_log_entry(ctx.db, today, entry) {
                 Ok(_) ->
-                  wisp.html_response(
-                    "<div class=\"success\">Added to log! <a href=\"/dashboard\">View Dashboard</a></div>",
-                    200,
-                  )
+                  // Redirect to dashboard to see updated data
+                  wisp.redirect("/dashboard")
                 Error(_) ->
                   wisp.html_response(
                     "<div class=\"error\">Failed to save entry</div>",
