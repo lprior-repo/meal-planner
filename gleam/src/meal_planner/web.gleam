@@ -1343,6 +1343,8 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
               ])
           },
         ]),
+        // Modal container for food logging form
+        html.div([attribute.id("food-log-modal")], []),
       ]
 
       wisp.html_response(
@@ -1511,6 +1513,8 @@ fn handle_api(
     ["logs"] -> food_log.api_logs_create(req, food_log.Context(db: ctx.db))
     ["logs", "food"] ->
       food_log.api_logs_food(req, food_log.Context(db: ctx.db))
+    ["logs", "food-form"] ->
+      food_log.api_food_log_form_submit(req, food_log.Context(db: ctx.db))
     ["logs", "entry", id] ->
       food_log.api_log_entry(req, id, food_log.Context(db: ctx.db))
     ["swap", meal_type] ->
@@ -1521,6 +1525,8 @@ fn handle_api(
     ["meal-plans", "auto"] -> api_auto_meal_plan(req, ctx)
     ["meal-plans", "auto", id] -> api_auto_meal_plan_by_id(req, id, ctx)
     ["fragments", "filters"] -> search.api_filter_fragment(req)
+    ["fragments", "food-log-form"] ->
+      food_log.api_food_log_form_fragment(req, food_log.Context(db: ctx.db))
     _ -> wisp.not_found()
   }
 }

@@ -379,6 +379,16 @@ fn render_result_item(
       attribute.attribute("role", "option"),
       attribute.id("search-result-" <> int.to_string(id)),
       attribute.attribute("data-food-id", int.to_string(id)),
+      attribute.attribute("tabindex", "0"),
+      attribute.attribute("aria-label", "Select " <> name <> " to log"),
+      // HTMX click handler to load food logging form
+      attribute.attribute(
+        "hx-get",
+        "/api/fragments/food-log-form?fdc_id=" <> int.to_string(id),
+      ),
+      attribute.attribute("hx-target", "#food-log-modal"),
+      attribute.attribute("hx-swap", "innerHTML"),
+      attribute.attribute("style", "cursor: pointer;"),
     ],
     [
       html.div([attribute.class("result-name")], [element.text(name)]),
