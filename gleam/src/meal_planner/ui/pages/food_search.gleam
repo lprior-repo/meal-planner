@@ -11,6 +11,7 @@
 /// - Individual food result cards
 ///
 /// See: meal-planner-iz3 (Food search UI components)
+import gleam/float
 import gleam/int
 import gleam/list
 import gleam/string
@@ -158,8 +159,10 @@ pub fn search_results(foods: List(UsdaFood)) -> Element(msg) {
 ///
 /// Renders a single food item as a list item with:
 /// - Food description/name
+/// - USDA Verified badge (for high-quality data types)
 /// - Data type badge (foundation, branded, etc.)
 /// - Food category
+/// - Serving size information
 /// - Action button to add food
 ///
 /// ## Arguments
@@ -171,7 +174,8 @@ pub fn search_results(foods: List(UsdaFood)) -> Element(msg) {
 ///   fdc_id: 123456,
 ///   description: "Chicken, broilers or fryers, breast, meat only, cooked, roasted",
 ///   data_type: "foundation_food",
-///   category: "Poultry Products"
+///   category: "Poultry Products",
+///   serving_size: 100.0
 /// ))
 /// ```
 pub fn food_result_item(food: UsdaFood) -> Element(msg) {
@@ -180,21 +184,40 @@ pub fn food_result_item(food: UsdaFood) -> Element(msg) {
     description: description,
     data_type: data_type,
     category: category,
+    serving_size: serving_size,
   ) = food
 
   // Format data type for display
   let data_type_label = format_data_type(data_type)
   let data_type_class = "badge badge-" <> data_type_badge_class(data_type)
 
+  // Check if this is USDA verified data
+  let is_usda_verified = is_verified_data_type(data_type)
+
   li([class("food-result-item")], [
     div([class("food-result-content")], [
       div([class("food-result-header")], [
         p([class("food-description")], [text(description)]),
-        span([class(data_type_class)], [text(data_type_label)]),
+        div([class("badge-group")], [
+          // USDA Verified badge for high-quality data
+          case is_usda_verified {
+            True ->
+              span([class("badge badge-verified")], [text("✓ USDA Verified")])
+            False -> span([], [])
+          },
+          span([class(data_type_class)], [text(data_type_label)]),
+        ]),
       ]),
       div([class("food-result-meta")], [
         span([class("food-category")], [text(category)]),
         span([class("food-id")], [text("FDC ID: " <> int.to_string(fdc_id))]),
+        // Display serving size if available
+        case serving_size {
+          "" -> span([], [])
+          "0" -> span([], [])
+          size ->
+            span([class("serving-size")], [text("Serving: " <> size <> "g")])
+        },
       ]),
     ]),
     div([class("food-result-actions")], [
@@ -245,4 +268,19 @@ fn format_data_type_badge_class(data_type: String) -> String {
 /// Alias for badge class function (fixing duplicate name)
 fn data_type_badge_class(data_type: String) -> String {
   format_data_type_badge_class(data_type)
+}
+
+/// Check if data type is from verified USDA sources
+///
+/// Returns True for high-quality data types:
+/// - foundation_food: USDA Foundation Foods
+/// - sr_legacy_food: USDA SR Legacy Database
+/// - survey_fndds_food: USDA Survey (FNDDS) data
+fn is_verified_data_type(data_type: String) -> Bool {
+  case data_type {
+    "foundation_food" -> True
+    "sr_legacy_food" -> True
+    "survey_fndds_food" -> True
+    _ -> False
+  }
 }

@@ -1124,6 +1124,30 @@ body {
   color: #555;
 }
 
+/* Food search badge group */
+.badge-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* USDA Verified badge */
+.badge-verified {
+  background: #28a745;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Serving size display */
+.serving-size {
+  color: #666;
+  font-size: 0.85rem;
+}
+
 .recipe-calories {
   font-weight: 600;
   color: #007bff;
