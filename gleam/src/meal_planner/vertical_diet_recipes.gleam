@@ -17,10 +17,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-ribeye-01",
       name: "Classic Grilled Ribeye",
       ingredients: [
-        Ingredient("ribeye steak", "8 oz"),
-        Ingredient("sea salt", "1 tsp"),
-        Ingredient("black pepper", "1/2 tsp"),
-        Ingredient("olive oil", "1 tbsp"),
+        Ingredient(name: "ribeye steak", quantity: "8 oz"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
+        Ingredient(name: "black pepper", quantity: "1/2 tsp"),
+        Ingredient(name: "olive oil", quantity: "1 tbsp"),
       ],
       instructions: [
         "Let steak come to room temperature for 30 minutes",
@@ -42,10 +42,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-strip-02",
       name: "Pan-Seared Strip Steak",
       ingredients: [
-        Ingredient("NY strip steak", "8 oz"),
-        Ingredient("butter", "2 tbsp"),
-        Ingredient("garlic", "2 cloves"),
-        Ingredient("sea salt", "1 tsp"),
+        Ingredient(name: "NY strip steak", quantity: "8 oz"),
+        Ingredient(name: "butter", quantity: "2 tbsp"),
+        Ingredient(name: "garlic", quantity: "2 cloves"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
       ],
       instructions: [
         "Pat steak dry and season with salt",
@@ -67,10 +67,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-beef-rice-03",
       name: "Ground Beef and Rice Bowl",
       ingredients: [
-        Ingredient("lean ground beef (90/10)", "6 oz"),
-        Ingredient("cooked white rice", "1 cup"),
-        Ingredient("sea salt", "1 tsp"),
-        Ingredient("olive oil", "1 tbsp"),
+        Ingredient(name: "lean ground beef (90/10)", quantity: "6 oz"),
+        Ingredient(name: "cooked white rice", quantity: "1 cup"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
+        Ingredient(name: "olive oil", quantity: "1 tbsp"),
       ],
       instructions: [
         "Heat olive oil in skillet over medium-high heat",
@@ -91,10 +91,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-patties-04",
       name: "Simple Beef Patties",
       ingredients: [
-        Ingredient("ground beef (85/15)", "8 oz"),
-        Ingredient("sea salt", "1 tsp"),
-        Ingredient("black pepper", "1/2 tsp"),
-        Ingredient("olive oil", "1 tbsp"),
+        Ingredient(name: "ground beef (85/15)", quantity: "8 oz"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
+        Ingredient(name: "black pepper", quantity: "1/2 tsp"),
+        Ingredient(name: "olive oil", quantity: "1 tbsp"),
       ],
       instructions: [
         "Form beef into 2 thick patties",
@@ -115,9 +115,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-bison-05",
       name: "Bison Burger Patty",
       ingredients: [
-        Ingredient("ground bison", "6 oz"),
-        Ingredient("sea salt", "3/4 tsp"),
-        Ingredient("olive oil", "1 tsp"),
+        Ingredient(name: "ground bison", quantity: "6 oz"),
+        Ingredient(name: "sea salt", quantity: "3/4 tsp"),
+        Ingredient(name: "olive oil", quantity: "1 tsp"),
       ],
       instructions: [
         "Form bison into a thick patty",
@@ -138,9 +138,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-bison-steak-06",
       name: "Grilled Bison Steak",
       ingredients: [
-        Ingredient("bison sirloin steak", "8 oz"),
-        Ingredient("sea salt", "1 tsp"),
-        Ingredient("butter", "1 tbsp"),
+        Ingredient(name: "bison sirloin steak", quantity: "8 oz"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
+        Ingredient(name: "butter", quantity: "1 tbsp"),
       ],
       instructions: [
         "Let steak reach room temperature",
@@ -160,9 +160,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-lamb-07",
       name: "Lamb Chops with Sea Salt",
       ingredients: [
-        Ingredient("lamb loin chops", "8 oz (3-4 chops)"),
-        Ingredient("sea salt", "1 tsp"),
-        Ingredient("olive oil", "1 tbsp"),
+        Ingredient(name: "lamb loin chops", quantity: "8 oz (3-4 chops)"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
+        Ingredient(name: "olive oil", quantity: "1 tbsp"),
       ],
       instructions: [
         "Bring lamb to room temperature",
@@ -183,9 +183,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-ground-lamb-08",
       name: "Simple Ground Lamb",
       ingredients: [
-        Ingredient("ground lamb", "6 oz"),
-        Ingredient("sea salt", "3/4 tsp"),
-        Ingredient("black pepper", "1/4 tsp"),
+        Ingredient(name: "ground lamb", quantity: "6 oz"),
+        Ingredient(name: "sea salt", quantity: "3/4 tsp"),
+        Ingredient(name: "black pepper", quantity: "1/4 tsp"),
       ],
       instructions: [
         "Heat skillet over medium-high heat",
@@ -206,10 +206,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-beef-spinach-09",
       name: "Beef and Spinach Skillet",
       ingredients: [
-        Ingredient("ground beef (90/10)", "6 oz"),
-        Ingredient("fresh spinach", "2 cups"),
-        Ingredient("sea salt", "1 tsp"),
-        Ingredient("olive oil", "1 tbsp"),
+        Ingredient(name: "ground beef (90/10)", quantity: "6 oz"),
+        Ingredient(name: "fresh spinach", quantity: "2 cups"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
+        Ingredient(name: "olive oil", quantity: "1 tbsp"),
       ],
       instructions: [
         "Brown ground beef in olive oil",
@@ -229,10 +229,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-ribeye-broth-10",
       name: "Ribeye with Bone Broth Reduction",
       ingredients: [
-        Ingredient("ribeye steak", "8 oz"),
-        Ingredient("beef bone broth", "1/2 cup"),
-        Ingredient("sea salt", "1 tsp"),
-        Ingredient("butter", "2 tbsp"),
+        Ingredient(name: "ribeye steak", quantity: "8 oz"),
+        Ingredient(name: "beef bone broth", quantity: "1/2 cup"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
+        Ingredient(name: "butter", quantity: "2 tbsp"),
       ],
       instructions: [
         "Season and sear ribeye as usual",
@@ -254,9 +254,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-sirloin-tips-11",
       name: "Grilled Sirloin Tips",
       ingredients: [
-        Ingredient("sirloin tips", "8 oz"),
-        Ingredient("sea salt", "1 tsp"),
-        Ingredient("olive oil", "2 tbsp"),
+        Ingredient(name: "sirloin tips", quantity: "8 oz"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
+        Ingredient(name: "olive oil", quantity: "2 tbsp"),
       ],
       instructions: [
         "Cut sirloin into 2-inch cubes",
@@ -276,10 +276,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-chuck-roast-12",
       name: "Simple Beef Chuck Roast",
       ingredients: [
-        Ingredient("beef chuck roast", "3 lbs"),
-        Ingredient("sea salt", "2 tbsp"),
-        Ingredient("beef bone broth", "2 cups"),
-        Ingredient("carrots", "1 lb, large chunks"),
+        Ingredient(name: "beef chuck roast", quantity: "3 lbs"),
+        Ingredient(name: "sea salt", quantity: "2 tbsp"),
+        Ingredient(name: "beef bone broth", quantity: "2 cups"),
+        Ingredient(name: "carrots", quantity: "1 lb, large chunks"),
       ],
       instructions: [
         "Season roast generously with salt",
@@ -302,9 +302,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-rice-01",
       name: "Simple White Rice",
       ingredients: [
-        Ingredient("white rice", "1 cup dry"),
-        Ingredient("water", "2 cups"),
-        Ingredient("sea salt", "1/2 tsp"),
+        Ingredient(name: "white rice", quantity: "1 cup dry"),
+        Ingredient(name: "water", quantity: "2 cups"),
+        Ingredient(name: "sea salt", quantity: "1/2 tsp"),
       ],
       instructions: [
         "Rinse rice until water runs clear",
@@ -325,9 +325,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-rice-broth-02",
       name: "Bone Broth Rice",
       ingredients: [
-        Ingredient("white rice", "1 cup dry"),
-        Ingredient("beef bone broth", "2 cups"),
-        Ingredient("sea salt", "1/4 tsp"),
+        Ingredient(name: "white rice", quantity: "1 cup dry"),
+        Ingredient(name: "beef bone broth", quantity: "2 cups"),
+        Ingredient(name: "sea salt", quantity: "1/4 tsp"),
       ],
       instructions: [
         "Rinse rice thoroughly",
@@ -348,10 +348,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-rice-butter-03",
       name: "Butter Rice",
       ingredients: [
-        Ingredient("white rice", "1 cup dry"),
-        Ingredient("water", "2 cups"),
-        Ingredient("butter", "3 tbsp"),
-        Ingredient("sea salt", "1/2 tsp"),
+        Ingredient(name: "white rice", quantity: "1 cup dry"),
+        Ingredient(name: "water", quantity: "2 cups"),
+        Ingredient(name: "butter", quantity: "3 tbsp"),
+        Ingredient(name: "sea salt", quantity: "1/2 tsp"),
       ],
       instructions: [
         "Cook rice as usual in water with salt",
@@ -371,9 +371,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-rice-salty-04",
       name: "Salty Rice (Electrolyte-Enhanced)",
       ingredients: [
-        Ingredient("white rice", "1 cup dry"),
-        Ingredient("water", "2 cups"),
-        Ingredient("sea salt", "1 tsp"),
+        Ingredient(name: "white rice", quantity: "1 cup dry"),
+        Ingredient(name: "water", quantity: "2 cups"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
       ],
       instructions: [
         "Rinse rice well",
@@ -393,10 +393,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-rice-spinach-05",
       name: "Spinach Rice",
       ingredients: [
-        Ingredient("cooked white rice", "2 cups"),
-        Ingredient("fresh spinach", "2 cups"),
-        Ingredient("butter", "2 tbsp"),
-        Ingredient("sea salt", "1/2 tsp"),
+        Ingredient(name: "cooked white rice", quantity: "2 cups"),
+        Ingredient(name: "fresh spinach", quantity: "2 cups"),
+        Ingredient(name: "butter", quantity: "2 tbsp"),
+        Ingredient(name: "sea salt", quantity: "1/2 tsp"),
       ],
       instructions: [
         "Heat butter in pan",
@@ -416,10 +416,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-rice-carrot-06",
       name: "Carrot-Infused Rice",
       ingredients: [
-        Ingredient("white rice", "1 cup dry"),
-        Ingredient("carrot juice", "1 cup"),
-        Ingredient("water", "1 cup"),
-        Ingredient("sea salt", "1/2 tsp"),
+        Ingredient(name: "white rice", quantity: "1 cup dry"),
+        Ingredient(name: "carrot juice", quantity: "1 cup"),
+        Ingredient(name: "water", quantity: "1 cup"),
+        Ingredient(name: "sea salt", quantity: "1/2 tsp"),
       ],
       instructions: [
         "Combine rice, carrot juice, water, and salt",
@@ -442,10 +442,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-veg-carrots-01",
       name: "Simple Steamed Carrots",
       ingredients: [
-        Ingredient("carrots", "1 lb, sliced"),
-        Ingredient("water", "1 cup"),
-        Ingredient("sea salt", "1/2 tsp"),
-        Ingredient("butter", "1 tbsp"),
+        Ingredient(name: "carrots", quantity: "1 lb, sliced"),
+        Ingredient(name: "water", quantity: "1 cup"),
+        Ingredient(name: "sea salt", quantity: "1/2 tsp"),
+        Ingredient(name: "butter", quantity: "1 tbsp"),
       ],
       instructions: [
         "Steam carrots until tender, about 8 minutes",
@@ -464,9 +464,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-veg-spinach-01",
       name: "Sautéed Spinach",
       ingredients: [
-        Ingredient("fresh spinach", "1 lb"),
-        Ingredient("olive oil", "2 tbsp"),
-        Ingredient("sea salt", "1/2 tsp"),
+        Ingredient(name: "fresh spinach", quantity: "1 lb"),
+        Ingredient(name: "olive oil", quantity: "2 tbsp"),
+        Ingredient(name: "sea salt", quantity: "1/2 tsp"),
       ],
       instructions: [
         "Heat olive oil in large pan",
@@ -486,9 +486,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-veg-carrots-roast-02",
       name: "Roasted Carrots",
       ingredients: [
-        Ingredient("carrots", "1 lb, whole or halved"),
-        Ingredient("olive oil", "2 tbsp"),
-        Ingredient("sea salt", "1 tsp"),
+        Ingredient(name: "carrots", quantity: "1 lb, whole or halved"),
+        Ingredient(name: "olive oil", quantity: "2 tbsp"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
       ],
       instructions: [
         "Preheat oven to 425°F",
@@ -508,10 +508,10 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-veg-zucchini-01",
       name: "Steamed Zucchini",
       ingredients: [
-        Ingredient("zucchini", "2 medium, sliced"),
-        Ingredient("water", "1 cup"),
-        Ingredient("sea salt", "1/4 tsp"),
-        Ingredient("butter", "1 tbsp"),
+        Ingredient(name: "zucchini", quantity: "2 medium, sliced"),
+        Ingredient(name: "water", quantity: "1 cup"),
+        Ingredient(name: "sea salt", quantity: "1/4 tsp"),
+        Ingredient(name: "butter", quantity: "1 tbsp"),
       ],
       instructions: [
         "Steam zucchini until tender, 5-6 minutes",
@@ -530,9 +530,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-veg-carrots-butter-03",
       name: "Butter Glazed Carrots",
       ingredients: [
-        Ingredient("carrots", "1 lb, sliced"),
-        Ingredient("butter", "3 tbsp"),
-        Ingredient("sea salt", "1/2 tsp"),
+        Ingredient(name: "carrots", quantity: "1 lb, sliced"),
+        Ingredient(name: "butter", quantity: "3 tbsp"),
+        Ingredient(name: "sea salt", quantity: "1/2 tsp"),
       ],
       instructions: [
         "Steam carrots until tender",
@@ -553,9 +553,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-veg-bokchoy-01",
       name: "Sautéed Bok Choy",
       ingredients: [
-        Ingredient("bok choy", "1 lb, chopped"),
-        Ingredient("olive oil", "1 tbsp"),
-        Ingredient("sea salt", "1/4 tsp"),
+        Ingredient(name: "bok choy", quantity: "1 lb, chopped"),
+        Ingredient(name: "olive oil", quantity: "1 tbsp"),
+        Ingredient(name: "sea salt", quantity: "1/4 tsp"),
       ],
       instructions: [
         "Heat oil in wok or large pan",
@@ -575,9 +575,9 @@ pub fn all_recipes() -> List(Recipe) {
       id: "vd-veg-carrots-mash-04",
       name: "Carrot Mash",
       ingredients: [
-        Ingredient("carrots", "2 lbs, chopped"),
-        Ingredient("butter", "4 tbsp"),
-        Ingredient("sea salt", "1 tsp"),
+        Ingredient(name: "carrots", quantity: "2 lbs, chopped"),
+        Ingredient(name: "butter", quantity: "4 tbsp"),
+        Ingredient(name: "sea salt", quantity: "1 tsp"),
       ],
       instructions: [
         "Boil carrots until very soft, 20 minutes",
