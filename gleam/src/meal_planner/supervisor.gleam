@@ -8,6 +8,7 @@
 ///
 /// ```
 /// RootSupervisor
+/// ├── StateServer (application state cache)
 /// ├── ActorsSupervisor (one_for_one)
 /// │   ├── SchedulerActor (email notifications)
 /// │   └── TodoistActor (API synchronization)
@@ -46,6 +47,7 @@ import gleam/otp/supervision.{type Children, type Message, type Supervisor}
 import meal_planner/actors/scheduler_actor
 import meal_planner/actors/todoist_actor
 import meal_planner/query_cache
+import meal_planner/state
 import pog
 
 // ============================================================================
@@ -71,6 +73,8 @@ pub type SupervisorRefs {
   SupervisorRefs(
     /// Main supervisor
     root: Subject(Message),
+    /// State server for application state
+    state: Subject(state.Message),
     /// Scheduler actor for email notifications
     scheduler: Subject(scheduler_actor.Message),
     /// Todoist actor for API sync
@@ -87,8 +91,9 @@ pub type SupervisorRefs {
 /// Start the root supervisor tree with default configuration
 ///
 /// This starts all supervised processes in the correct order:
-/// 1. Actors supervisor (scheduler, todoist)
-/// 2. Cache supervisor (query cache)
+/// 1. State server (application state cache)
+/// 2. Actors supervisor (scheduler, todoist)
+/// 3. Cache supervisor (query cache)
 ///
 /// Returns a StartResult containing the supervisor subject
 pub fn start(
@@ -127,6 +132,7 @@ fn root_supervisor(
   config: SupervisorConfig,
 ) -> Children(Nil) {
   children
+  |> supervision.add(state.supervised())
   |> supervision.add(actors_supervisor(config))
   |> supervision.add(cache_supervisor(config))
 }
@@ -197,5 +203,5 @@ pub fn is_child_alive(child: Subject(a)) -> Bool {
 pub fn child_count() -> Int {
   // In a real implementation, this would query the supervisor
   // For now, return the static count of children
-  3
+  4
 }
