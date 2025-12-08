@@ -5,9 +5,6 @@ import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import meal_planner/id.{
-  type CustomFoodId, type FdcId, type LogEntryId, type RecipeId, type UserId,
-}
 
 // ============================================================================
 // Core Nutrition Types
@@ -271,6 +268,60 @@ pub fn micronutrients_sum(micros: List(Micronutrients)) -> Micronutrients {
   list.fold(micros, micronutrients_zero(), micronutrients_add)
 }
 
+/// MicronutrientGoals - same structure as Micronutrients but used for targets/goals
+/// All fields are optional to allow users to set only the goals they care about
+pub type MicronutrientGoals =
+  Micronutrients
+
+/// FDA Recommended Daily Allowance (RDA) values for adult males
+/// Based on FDA nutrition labeling guidelines
+/// Units: fiber(g), sugar(g), sodium(mg), cholesterol(mg), vitamins(mcg/mg), minerals(mg)
+pub fn fda_rda_defaults() -> MicronutrientGoals {
+  Micronutrients(
+    fiber: Some(28.0),
+    // Dietary fiber (g)
+    sugar: Some(50.0),
+    // Added sugars daily limit (g)
+    sodium: Some(2300.0),
+    // Sodium daily limit (mg)
+    cholesterol: Some(300.0),
+    // Cholesterol daily limit (mg)
+    vitamin_a: Some(900.0),
+    // Vitamin A (mcg RAE)
+    vitamin_c: Some(90.0),
+    // Vitamin C (mg)
+    vitamin_d: Some(20.0),
+    // Vitamin D (mcg)
+    vitamin_e: Some(15.0),
+    // Vitamin E (mg alpha-tocopherol)
+    vitamin_k: Some(120.0),
+    // Vitamin K (mcg)
+    vitamin_b6: Some(1.7),
+    // Vitamin B6 (mg)
+    vitamin_b12: Some(2.4),
+    // Vitamin B12 (mcg)
+    folate: Some(400.0),
+    // Folate (mcg DFE)
+    thiamin: Some(1.2),
+    // Thiamin/B1 (mg)
+    riboflavin: Some(1.3),
+    // Riboflavin/B2 (mg)
+    niacin: Some(16.0),
+    // Niacin/B3 (mg)
+    calcium: Some(1000.0),
+    // Calcium (mg)
+    iron: Some(8.0),
+    // Iron (mg)
+    magnesium: Some(420.0),
+    // Magnesium (mg)
+    phosphorus: Some(700.0),
+    // Phosphorus (mg)
+    potassium: Some(3400.0),
+    // Potassium (mg)
+    zinc: Some(11.0),
+  )
+}
+
 // ============================================================================
 // Custom Food Types
 // ============================================================================
@@ -278,8 +329,8 @@ pub fn micronutrients_sum(micros: List(Micronutrients)) -> Micronutrients {
 /// User-defined custom food with complete nutritional information
 pub type CustomFood {
   CustomFood(
-    id: CustomFoodId,
-    user_id: UserId,
+    id: String,
+    user_id: String,
     name: String,
     brand: Option(String),
     description: Option(String),
@@ -295,11 +346,11 @@ pub type CustomFood {
 /// Prevents mismatched source_type and source_id through compile-time checking
 pub type FoodSource {
   /// Food from recipes table
-  RecipeSource(recipe_id: RecipeId)
+  RecipeSource(recipe_id: String)
   /// Food from custom_foods table (includes user_id for authorization)
-  CustomFoodSource(custom_food_id: CustomFoodId, user_id: UserId)
+  CustomFoodSource(custom_food_id: String, user_id: String)
   /// Food from USDA database (foods/food_nutrients tables)
-  UsdaFoodSource(fdc_id: FdcId)
+  UsdaFoodSource(fdc_id: Int)
 }
 
 // ============================================================================
@@ -312,7 +363,7 @@ pub type FoodSearchResult {
   CustomFoodResult(food: CustomFood)
   /// USDA food result (from national database)
   UsdaFoodResult(
-    fdc_id: FdcId,
+    fdc_id: Int,
     description: String,
     data_type: String,
     category: String,
@@ -366,7 +417,7 @@ pub type FodmapLevel {
 /// Recipe with all nutritional and dietary information
 pub type Recipe {
   Recipe(
-    id: RecipeId,
+    id: String,
     name: String,
     ingredients: List(Ingredient),
     instructions: List(String),
@@ -422,11 +473,12 @@ pub type Goal {
 /// User profile for personalized nutrition targets
 pub type UserProfile {
   UserProfile(
-    id: UserId,
+    id: String,
     bodyweight: Float,
     activity_level: ActivityLevel,
     goal: Goal,
     meals_per_day: Int,
+    micronutrient_goals: Option(MicronutrientGoals),
   )
 }
 
@@ -500,8 +552,8 @@ pub type MealType {
 /// A single food log entry
 pub type FoodLogEntry {
   FoodLogEntry(
-    id: LogEntryId,
-    recipe_id: RecipeId,
+    id: String,
+    recipe_id: String,
     recipe_name: String,
     servings: Float,
     macros: Macros,
@@ -588,7 +640,7 @@ pub fn fodmap_level_to_string(f: FodmapLevel) -> String {
 
 pub fn recipe_to_json(r: Recipe) -> Json {
   json.object([
-    #("id", id.recipe_id_to_json(r.id)),
+    #("id", json.string(r.id)),
     #("name", json.string(r.name)),
     #("ingredients", json.array(r.ingredients, ingredient_to_json)),
     #("instructions", json.array(r.instructions, json.string)),
@@ -619,7 +671,7 @@ pub fn goal_to_string(g: Goal) -> String {
 pub fn user_profile_to_json(u: UserProfile) -> Json {
   let targets = daily_macro_targets(u)
   json.object([
-    #("id", id.user_id_to_json(u.id)),
+    #("id", json.string(u.id)),
     #("bodyweight", json.float(u.bodyweight)),
     #("activity_level", json.string(activity_level_to_string(u.activity_level))),
     #("goal", json.string(goal_to_string(u.goal))),
@@ -639,8 +691,8 @@ pub fn meal_type_to_string(m: MealType) -> String {
 
 pub fn food_log_entry_to_json(e: FoodLogEntry) -> Json {
   let fields = [
-    #("id", id.log_entry_id_to_json(e.id)),
-    #("recipe_id", id.recipe_id_to_json(e.recipe_id)),
+    #("id", json.string(e.id)),
+    #("recipe_id", json.string(e.recipe_id)),
     #("recipe_name", json.string(e.recipe_name)),
     #("servings", json.float(e.servings)),
     #("macros", macros_to_json(e.macros)),
@@ -679,8 +731,8 @@ pub fn daily_log_to_json(d: DailyLog) -> Json {
 
 pub fn custom_food_to_json(f: CustomFood) -> Json {
   let fields = [
-    #("id", id.custom_food_id_to_json(f.id)),
-    #("user_id", id.user_id_to_json(f.user_id)),
+    #("id", json.string(f.id)),
+    #("user_id", json.string(f.user_id)),
     #("name", json.string(f.name)),
     #("serving_size", json.float(f.serving_size)),
     #("serving_unit", json.string(f.serving_unit)),
@@ -716,13 +768,13 @@ pub fn food_search_result_to_json(r: FoodSearchResult) -> Json {
         #("type", json.string("custom")),
         #("data", custom_food_to_json(food)),
       ])
-    UsdaFoodResult(fdc_id, description, data_type, category) ->
+    UsdaFoodResult(fdc_id, description, data_type, category, serving_size) ->
       json.object([
         #("type", json.string("usda")),
         #(
           "data",
           json.object([
-            #("fdc_id", id.fdc_id_to_json(fdc_id)),
+            #("fdc_id", json.int(fdc_id)),
             #("description", json.string(description)),
             #("data_type", json.string(data_type)),
             #("category", json.string(category)),
@@ -916,12 +968,17 @@ pub fn user_profile_decoder() -> Decoder(UserProfile) {
   use activity_level <- decode.field("activity_level", activity_level_decoder())
   use goal <- decode.field("goal", goal_decoder())
   use meals_per_day <- decode.field("meals_per_day", decode.int)
+  use micronutrient_goals <- decode.field(
+    "micronutrient_goals",
+    decode.optional(micronutrients_decoder()),
+  )
   decode.success(UserProfile(
     id: id,
     bodyweight: bodyweight,
     activity_level: activity_level,
     goal: goal,
     meals_per_day: meals_per_day,
+    micronutrient_goals: micronutrient_goals,
   ))
 }
 
