@@ -21,6 +21,7 @@ pub type UsdaFood {
     description: String,
     data_type: String,
     category: String,
+    serving_size: String,
   )
 }
 
@@ -48,7 +49,7 @@ pub fn search_foods(
   limit: Int,
 ) -> Result(List(UsdaFood), StorageError) {
   let sql =
-    "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
+    "SELECT fdc_id, description, data_type, COALESCE(food_category, ''), '100g'
      FROM foods
      WHERE to_tsvector('english', description) @@ plainto_tsquery('english', $1)
         OR description ILIKE $2
@@ -74,7 +75,14 @@ pub fn search_foods(
     use description <- decode.field(1, decode.string)
     use data_type <- decode.field(2, decode.string)
     use category <- decode.field(3, decode.string)
-    decode.success(UsdaFood(fdc_id, description, data_type, category))
+    use serving_size <- decode.field(4, decode.string)
+    decode.success(UsdaFood(
+      fdc_id,
+      description,
+      data_type,
+      category,
+      serving_size,
+    ))
   }
 
   case
@@ -99,6 +107,65 @@ pub fn search_foods_filtered(
 ) -> Result(List(UsdaFood), StorageError) {
   search_foods(conn, query, limit)
 }
+/// Search for foods with filters and offset for pagination
+pub fn search_foods_filtered_with_offset(
+  conn: pog.Connection,
+  query: String,
+  _filters: types.SearchFilters,
+  limit: Int,
+  offset: Int,
+) -> Result(List(UsdaFood), StorageError) {
+  let sql =
+    "SELECT fdc_id, description, data_type, COALESCE(food_category, ''), COALESCE(household_serving_fulltext, '')
+     FROM foods
+     WHERE to_tsvector('english', description) @@ plainto_tsquery('english', $1)
+        OR description ILIKE $2
+     ORDER BY
+       CASE data_type
+         WHEN 'foundation_food' THEN 100
+         WHEN 'sr_legacy_food' THEN 95
+         WHEN 'survey_fndds_food' THEN 90
+         WHEN 'sub_sample_food' THEN 50
+         WHEN 'agricultural_acquisition' THEN 40
+         WHEN 'market_acquisition' THEN 35
+         WHEN 'branded_food' THEN 30
+         ELSE 10
+       END DESC,
+       array_length(string_to_array(description, ' '), 1),
+       description
+     LIMIT $3 OFFSET $4"
+
+  let search_pattern = "%" <> query <> "%"
+
+  let decoder = {
+    use fdc_id <- decode.field(0, decode.int)
+    use description <- decode.field(1, decode.string)
+    use data_type <- decode.field(2, decode.string)
+    use category <- decode.field(3, decode.string)
+    use serving_size <- decode.field(4, decode.string)
+    decode.success(UsdaFood(
+      fdc_id,
+      description,
+      data_type,
+      category,
+      serving_size,
+    ))
+  }
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(query))
+    |> pog.parameter(pog.text(search_pattern))
+    |> pog.parameter(pog.int(limit))
+    |> pog.parameter(pog.int(offset))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
+  }
+}
+
 
 /// Get food by FDC ID
 pub fn get_food_by_id(
@@ -106,7 +173,7 @@ pub fn get_food_by_id(
   fdc_id: Int,
 ) -> Result(UsdaFood, StorageError) {
   let sql =
-    "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
+    "SELECT fdc_id, description, data_type, COALESCE(food_category, ''), '100g'
      FROM foods WHERE fdc_id = $1"
 
   let decoder = {
@@ -114,7 +181,14 @@ pub fn get_food_by_id(
     use description <- decode.field(1, decode.string)
     use data_type <- decode.field(2, decode.string)
     use category <- decode.field(3, decode.string)
-    decode.success(UsdaFood(fdc_id, description, data_type, category))
+    use serving_size <- decode.field(4, decode.string)
+    decode.success(UsdaFood(
+      fdc_id,
+      description,
+      data_type,
+      category,
+      serving_size,
+    ))
   }
 
   case

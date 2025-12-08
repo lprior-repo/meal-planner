@@ -5,6 +5,9 @@ import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import meal_planner/id.{
+  type CustomFoodId, type FdcId, type LogEntryId, type RecipeId, type UserId,
+}
 
 // ============================================================================
 // Core Nutrition Types
@@ -275,8 +278,8 @@ pub fn micronutrients_sum(micros: List(Micronutrients)) -> Micronutrients {
 /// User-defined custom food with complete nutritional information
 pub type CustomFood {
   CustomFood(
-    id: String,
-    user_id: String,
+    id: CustomFoodId,
+    user_id: UserId,
     name: String,
     brand: Option(String),
     description: Option(String),
@@ -292,11 +295,11 @@ pub type CustomFood {
 /// Prevents mismatched source_type and source_id through compile-time checking
 pub type FoodSource {
   /// Food from recipes table
-  RecipeSource(recipe_id: String)
+  RecipeSource(recipe_id: RecipeId)
   /// Food from custom_foods table (includes user_id for authorization)
-  CustomFoodSource(custom_food_id: String, user_id: String)
+  CustomFoodSource(custom_food_id: CustomFoodId, user_id: UserId)
   /// Food from USDA database (foods/food_nutrients tables)
-  UsdaFoodSource(fdc_id: Int)
+  UsdaFoodSource(fdc_id: FdcId)
 }
 
 // ============================================================================
@@ -309,10 +312,11 @@ pub type FoodSearchResult {
   CustomFoodResult(food: CustomFood)
   /// USDA food result (from national database)
   UsdaFoodResult(
-    fdc_id: Int,
+    fdc_id: FdcId,
     description: String,
     data_type: String,
     category: String,
+    serving_size: String,
   )
 }
 
@@ -362,7 +366,7 @@ pub type FodmapLevel {
 /// Recipe with all nutritional and dietary information
 pub type Recipe {
   Recipe(
-    id: String,
+    id: RecipeId,
     name: String,
     ingredients: List(Ingredient),
     instructions: List(String),
@@ -418,7 +422,7 @@ pub type Goal {
 /// User profile for personalized nutrition targets
 pub type UserProfile {
   UserProfile(
-    id: String,
+    id: UserId,
     bodyweight: Float,
     activity_level: ActivityLevel,
     goal: Goal,
@@ -496,8 +500,8 @@ pub type MealType {
 /// A single food log entry
 pub type FoodLogEntry {
   FoodLogEntry(
-    id: String,
-    recipe_id: String,
+    id: LogEntryId,
+    recipe_id: RecipeId,
     recipe_name: String,
     servings: Float,
     macros: Macros,
@@ -584,7 +588,7 @@ pub fn fodmap_level_to_string(f: FodmapLevel) -> String {
 
 pub fn recipe_to_json(r: Recipe) -> Json {
   json.object([
-    #("id", json.string(r.id)),
+    #("id", id.recipe_id_to_json(r.id)),
     #("name", json.string(r.name)),
     #("ingredients", json.array(r.ingredients, ingredient_to_json)),
     #("instructions", json.array(r.instructions, json.string)),
@@ -615,7 +619,7 @@ pub fn goal_to_string(g: Goal) -> String {
 pub fn user_profile_to_json(u: UserProfile) -> Json {
   let targets = daily_macro_targets(u)
   json.object([
-    #("id", json.string(u.id)),
+    #("id", id.user_id_to_json(u.id)),
     #("bodyweight", json.float(u.bodyweight)),
     #("activity_level", json.string(activity_level_to_string(u.activity_level))),
     #("goal", json.string(goal_to_string(u.goal))),
@@ -635,8 +639,8 @@ pub fn meal_type_to_string(m: MealType) -> String {
 
 pub fn food_log_entry_to_json(e: FoodLogEntry) -> Json {
   let fields = [
-    #("id", json.string(e.id)),
-    #("recipe_id", json.string(e.recipe_id)),
+    #("id", id.log_entry_id_to_json(e.id)),
+    #("recipe_id", id.recipe_id_to_json(e.recipe_id)),
     #("recipe_name", json.string(e.recipe_name)),
     #("servings", json.float(e.servings)),
     #("macros", macros_to_json(e.macros)),
@@ -675,8 +679,8 @@ pub fn daily_log_to_json(d: DailyLog) -> Json {
 
 pub fn custom_food_to_json(f: CustomFood) -> Json {
   let fields = [
-    #("id", json.string(f.id)),
-    #("user_id", json.string(f.user_id)),
+    #("id", id.custom_food_id_to_json(f.id)),
+    #("user_id", id.user_id_to_json(f.user_id)),
     #("name", json.string(f.name)),
     #("serving_size", json.float(f.serving_size)),
     #("serving_unit", json.string(f.serving_unit)),
@@ -718,7 +722,7 @@ pub fn food_search_result_to_json(r: FoodSearchResult) -> Json {
         #(
           "data",
           json.object([
-            #("fdc_id", json.int(fdc_id)),
+            #("fdc_id", id.fdc_id_to_json(fdc_id)),
             #("description", json.string(description)),
             #("data_type", json.string(data_type)),
             #("category", json.string(category)),

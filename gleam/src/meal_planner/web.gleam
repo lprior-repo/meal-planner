@@ -125,6 +125,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
         dashboard.Context(db: ctx.db, search_cache: ctx.search_cache),
       )
     ["profile"] -> profile_page(ctx)
+    // ["profile", "edit"] -> profile_edit_page(ctx)  // TODO: Implement profile edit page
     ["foods"] -> foods_page(req, ctx)
     ["foods", id] -> food_detail_page(id, ctx)
     ["log"] -> log_meal_page(ctx)
@@ -933,6 +934,62 @@ fn recipe_detail_page(id: String, ctx: Context) -> wisp.Response {
               ),
             ]),
           ]),
+          // Add to Meal Plan form with HTMX
+          html.div([attribute.id("add-to-plan-section")], [
+            html.form(
+              [
+                attribute.method("POST"),
+                attribute.action("/api/recipes/" <> id <> "/add-to-plan"),
+                attribute.class("add-to-plan-form"),
+                attribute.attribute("hx-post", "/api/recipes/" <> id <> "/add-to-plan"),
+                attribute.attribute("hx-target", "#add-to-plan-feedback"),
+                attribute.attribute("hx-swap", "innerHTML"),
+              ],
+              [
+                html.div([attribute.class("form-group")], [
+                  html.label([attribute.for("servings")], [
+                    element.text("Servings"),
+                  ]),
+                  html.input([
+                    attribute.type_("number"),
+                    attribute.id("servings"),
+                    attribute.name("servings"),
+                    attribute.attribute("min", "0.1"),
+                    attribute.attribute("step", "0.1"),
+                    attribute.value("1.0"),
+                    attribute.required(True),
+                  ]),
+                ]),
+                html.div([attribute.class("form-group")], [
+                  html.label([attribute.for("meal_type")], [
+                    element.text("Meal Type"),
+                  ]),
+                  html.select(
+                    [
+                      attribute.id("meal_type"),
+                      attribute.name("meal_type"),
+                      attribute.required(True),
+                    ],
+                    [
+                      html.option([attribute.value("breakfast")], "Breakfast"),
+                      html.option([attribute.value("lunch"), attribute.selected(True)], "Lunch"),
+                      html.option([attribute.value("dinner")], "Dinner"),
+                      html.option([attribute.value("snack")], "Snack"),
+                    ],
+                  ),
+                ]),
+                html.button(
+                  [
+                    attribute.type_("submit"),
+                    attribute.class("btn btn-primary"),
+                  ],
+                  [element.text("Add to Meal Plan")],
+                ),
+              ],
+            ),
+            // Feedback container for HTMX response
+            html.div([attribute.id("add-to-plan-feedback")], []),
+          ]),
           html.p([attribute.class("meta")], [
             element.text("Category: " <> recipe.category),
           ]),
@@ -1493,6 +1550,120 @@ fn render_page(title: String, content: List(element.Element(msg))) -> String {
 }
 
 // ============================================================================
+// Recipe to Meal Plan API
+// ============================================================================
+
+/// POST /api/recipes/:id/add-to-plan - Add recipe to today's meal plan
+fn api_add_recipe_to_plan(
+  req: wisp.Request,
+  recipe_id: String,
+  ctx: Context,
+) -> wisp.Response {
+  case req.method {
+    http.Post -> {
+      // Parse form data
+      use form_data <- wisp.require_form(req)
+
+      // Extract servings and meal_type from form
+      let servings_result = list.key_find(form_data.values, "servings")
+        |> result.then(float.parse)
+
+      let meal_type_str = list.key_find(form_data.values, "meal_type")
+        |> result.unwrap("lunch")
+
+      // Convert meal_type string to MealType
+      let meal_type = case meal_type_str {
+        "breakfast" -> Breakfast
+        "lunch" -> Lunch
+        "dinner" -> Dinner
+        "snack" -> Snack
+        _ -> Lunch
+      }
+
+      // Get servings or default to 1.0
+      let servings = result.unwrap(servings_result, 1.0)
+
+      // Load the recipe
+      case load_recipe_by_id(ctx, recipe_id) {
+        Error(_) -> {
+          // Recipe not found - return error HTML
+          let error_html =
+            "<div class=\"alert alert-error\">Recipe not found</div>"
+          wisp.html_response(error_html, 404)
+        }
+        Ok(recipe) -> {
+          // Calculate scaled macros
+          let scaled_macros = types.macros_scale(recipe.macros, servings)
+
+          // Get today's date
+          let today = get_today_date()
+
+          // Create food log entry
+          let entry = FoodLogEntry(
+            id: food_log.generate_entry_id(),
+            recipe_id: recipe.id,
+            recipe_name: recipe.name,
+            servings: servings,
+            macros: scaled_macros,
+            micronutrients: None,
+            meal_type: meal_type,
+            logged_at: current_timestamp(),
+            source_type: "recipe",
+            source_id: recipe.id,
+          )
+
+          // Save to database
+          case storage.save_food_log_entry(ctx.db, today, entry) {
+            Ok(_) -> {
+              // Success - return success HTML with link to dashboard
+              let success_html =
+                "<div class=\"alert alert-success\">Added "
+                <> recipe.name
+                <> " to your meal plan! <a href=\"/dashboard\">View Dashboard</a></div>"
+              wisp.html_response(success_html, 200)
+            }
+            Error(_) -> {
+              // Database error - return error HTML
+              let error_html =
+                "<div class=\"alert alert-error\">Failed to add to meal plan. Please try again.</div>"
+              wisp.html_response(error_html, 500)
+            }
+          }
+        }
+      }
+    }
+    _ -> wisp.method_not_allowed([http.Post])
+  }
+}
+
+/// Get today's date in YYYY-MM-DD format
+fn get_today_date() -> String {
+  let #(#(year, month, day), _time) = erlang_localtime()
+  int_to_string(year)
+  <> "-"
+  <> pad_two(month)
+  <> "-"
+  <> pad_two(day)
+}
+
+/// Get current timestamp as ISO8601 string
+fn current_timestamp() -> String {
+  let #(#(year, month, day), #(hour, min, sec)) = erlang_localtime()
+  int_to_string(year)
+  <> "-"
+  <> pad_two(month)
+  <> "-"
+  <> pad_two(day)
+  <> "T"
+  <> pad_two(hour)
+  <> ":"
+  <> pad_two(min)
+  <> ":"
+  <> pad_two(sec)
+  <> "Z"
+}
+
+// ============================================================================
 // API Routes
 // ============================================================================
 
@@ -1503,6 +1674,7 @@ fn handle_api(
 ) -> wisp.Response {
   case path {
     ["recipes"] -> recipe.api_recipes(req, recipe.Context(db: ctx.db))
+    ["recipes", id, "add-to-plan"] -> api_add_recipe_to_plan(req, id, ctx)
     ["recipes", id] -> recipe.api_recipe(req, id, recipe.Context(db: ctx.db))
     ["profile"] -> profile.api_profile(req, profile.Context(db: ctx.db))
     ["foods"] -> search.api_foods(req, search.Context(db: ctx.db))

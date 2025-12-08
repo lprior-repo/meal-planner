@@ -30,6 +30,7 @@ pub type FoodSearchResult {
     description: String,
     data_type: String,
     category: String,
+    serving_size: String,
   )
 }
 
@@ -416,6 +417,7 @@ fn food_to_json(f: UsdaFood) -> json.Json {
     #("description", json.string(f.description)),
     #("data_type", json.string(f.data_type)),
     #("category", json.string(f.category)),
+    #("serving_size", json.string(f.serving_size)),
   ])
 }
 
@@ -486,13 +488,14 @@ fn unified_food_result_to_json(result: FoodSearchResult) -> json.Json {
         ),
         #("calories", json.float(food.calories)),
       ])
-    UsdaFoodResult(fdc_id, description, data_type, category) ->
+    UsdaFoodResult(fdc_id, description, data_type, category, serving_size) ->
       json.object([
         #("type", json.string("usda")),
         #("fdc_id", json.int(fdc_id)),
         #("description", json.string(description)),
         #("data_type", json.string(data_type)),
         #("category", json.string(category)),
+        #("serving_size", json.string(serving_size)),
       ])
   }
 }

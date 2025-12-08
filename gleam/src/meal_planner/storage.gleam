@@ -22,7 +22,8 @@ import meal_planner/storage/foods.{
   create_custom_food, delete_custom_food, get_custom_food_by_id,
   get_custom_foods_for_user, get_food_by_id, get_food_categories,
   get_food_nutrients, get_foods_count, load_usda_food_with_macros,
-  search_custom_foods, search_foods, search_foods_filtered, update_custom_food,
+  search_custom_foods, search_foods, search_foods_filtered,
+  search_foods_filtered_with_offset, update_custom_food,
 }
 
 import meal_planner/storage/logs.{
@@ -151,6 +152,10 @@ pub fn search_foods(conn, query, limit) {
 
 pub fn search_foods_filtered(conn, query, filters, limit) {
   foods.search_foods_filtered(conn, query, filters, limit)
+}
+
+pub fn search_foods_filtered_with_offset(conn, query, filters, limit, offset) {
+  foods.search_foods_filtered_with_offset(conn, query, filters, limit, offset)
 }
 
 pub fn get_food_nutrients(conn, fdc_id) {

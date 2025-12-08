@@ -154,8 +154,12 @@ fn log_usda_food(
               scaling_factor,
             )
 
-          // For now, micronutrients extraction is not implemented
-          let scaled_micronutrients = None
+          // Extract micronutrients from nutrients and scale them
+          let scaled_micronutrients =
+            extract_micronutrients_from_nutrients(
+              usda_food_data.nutrients,
+              scaling_factor,
+            )
 
           // Create log entry with source_type='usda_food'
           let entry =
@@ -324,6 +328,106 @@ fn extract_macros_from_nutrients(
   types.Macros(protein: protein, fat: fat, carbs: carbs)
 }
 
+/// Extract micronutrients from nutrient list and scale by factor
+/// Returns None if no micronutrients are available, otherwise Some(Micronutrients)
+///
+/// USDA Nutrient IDs:
+/// - Fiber: 1079
+/// - Sugars: 2000
+/// - Sodium: 1093
+/// - Cholesterol: 1253
+/// - Vitamin A: 1106
+/// - Vitamin C: 1162
+/// - Vitamin D: 1114
+/// - Vitamin E: 1109
+/// - Vitamin K: 1185
+/// - Vitamin B6: 1175
+/// - Vitamin B12: 1178
+/// - Folate: 1177
+/// - Thiamin: 1165
+/// - Riboflavin: 1166
+/// - Niacin: 1167
+/// - Calcium: 1087
+/// - Iron: 1089
+/// - Magnesium: 1090
+/// - Phosphorus: 1091
+/// - Potassium: 1092
+/// - Zinc: 1095
+fn extract_micronutrients_from_nutrients(
+  nutrients: List(storage.FoodNutrientValue),
+  scaling_factor: Float,
+) -> option.Option(types.Micronutrients) {
+  // Extract each micronutrient value and scale
+  let find_and_scale = fn(nutrient_id: Int) -> option.Option(Float) {
+    list.find(nutrients, fn(n) { n.nutrient_id == nutrient_id })
+    |> result.map(fn(n) { n.amount *. scaling_factor })
+    |> option.from_result
+  }
+
+  let fiber = find_and_scale(1079)
+  let sugar = find_and_scale(2000)
+  let sodium = find_and_scale(1093)
+  let cholesterol = find_and_scale(1253)
+  let vitamin_a = find_and_scale(1106)
+  let vitamin_c = find_and_scale(1162)
+  let vitamin_d = find_and_scale(1114)
+  let vitamin_e = find_and_scale(1109)
+  let vitamin_k = find_and_scale(1185)
+  let vitamin_b6 = find_and_scale(1175)
+  let vitamin_b12 = find_and_scale(1178)
+  let folate = find_and_scale(1177)
+  let thiamin = find_and_scale(1165)
+  let riboflavin = find_and_scale(1166)
+  let niacin = find_and_scale(1167)
+  let calcium = find_and_scale(1087)
+  let iron = find_and_scale(1089)
+  let magnesium = find_and_scale(1090)
+  let phosphorus = find_and_scale(1091)
+  let potassium = find_and_scale(1092)
+  let zinc = find_and_scale(1095)
+
+  // Check if at least one micronutrient is available
+  let has_any_micronutrients =
+    list.any([
+      fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d,
+      vitamin_e, vitamin_k, vitamin_b6, vitamin_b12, folate, thiamin,
+      riboflavin, niacin, calcium, iron, magnesium, phosphorus, potassium, zinc,
+    ], fn(opt) {
+      case opt {
+        Some(_) -> True
+        None -> False
+      }
+    })
+
+  case has_any_micronutrients {
+    True ->
+      Some(types.Micronutrients(
+        fiber: fiber,
+        sugar: sugar,
+        sodium: sodium,
+        cholesterol: cholesterol,
+        vitamin_a: vitamin_a,
+        vitamin_c: vitamin_c,
+        vitamin_d: vitamin_d,
+        vitamin_e: vitamin_e,
+        vitamin_k: vitamin_k,
+        vitamin_b6: vitamin_b6,
+        vitamin_b12: vitamin_b12,
+        folate: folate,
+        thiamin: thiamin,
+        riboflavin: riboflavin,
+        niacin: niacin,
+        calcium: calcium,
+        iron: iron,
+        magnesium: magnesium,
+        phosphorus: phosphorus,
+        potassium: potassium,
+        zinc: zinc,
+      ))
+    False -> None
+  }
+}
+
 /// GET /api/fragments/food-log-form?fdc_id=123 - Return HTML form for logging food
 pub fn api_food_log_form_fragment(
   req: wisp.Request,
@@ -432,6 +536,11 @@ pub fn api_food_log_form_submit(
                   usda_food_data.nutrients,
                   scaling_factor,
                 )
+              let scaled_micronutrients =
+                extract_micronutrients_from_nutrients(
+                  usda_food_data.nutrients,
+                  scaling_factor,
+                )
               let entry =
                 FoodLogEntry(
                   id: generate_entry_id(),
@@ -439,7 +548,7 @@ pub fn api_food_log_form_submit(
                   recipe_name: usda_food_data.food.description,
                   servings: grams,
                   macros: scaled_macros,
-                  micronutrients: None,
+                  micronutrients: scaled_micronutrients,
                   meal_type: meal_type,
                   logged_at: current_timestamp(),
                   source_type: "usda_food",

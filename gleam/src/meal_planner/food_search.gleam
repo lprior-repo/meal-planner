@@ -91,6 +91,7 @@ pub fn unified_food_search(
                   food.description,
                   food.data_type,
                   food.category,
+                  food.serving_size,
                 )
               })
             Error(_) -> []
@@ -183,6 +184,7 @@ pub fn unified_food_search_with_category(
                       food.description,
                       food.data_type,
                       food.category,
+                      food.serving_size,
                     )
                   })
                 Error(_) -> []
@@ -203,6 +205,7 @@ pub fn unified_food_search_with_category(
                   food.description,
                   food.data_type,
                   food.category,
+                  food.serving_size,
                 )
               })
             Error(_) -> []

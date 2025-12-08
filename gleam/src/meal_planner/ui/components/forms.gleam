@@ -373,6 +373,35 @@ fn render_result_item(
   data_type: String,
   category: String,
 ) -> element.Element(msg) {
+  // Determine if this is a verified USDA food
+  let is_verified = case data_type {
+    "foundation_food" | "sr_legacy_food" | "survey_fndds_food" -> True
+    _ -> False
+  }
+
+  // Format data type for display
+  let data_type_label = format_data_type_label(data_type)
+
+  // Build the badges list
+  let badges = case is_verified {
+    True -> [
+      html.span(
+        [attribute.class("badge badge-verified")],
+        [element.text("USDA Verified")],
+      ),
+      html.span(
+        [attribute.class("badge badge-info")],
+        [element.text(data_type_label)],
+      ),
+    ]
+    False -> [
+      html.span(
+        [attribute.class("badge badge-warning")],
+        [element.text(data_type_label)],
+      ),
+    ]
+  }
+
   html.div(
     [
       attribute.class("search-result-item"),
@@ -391,9 +420,17 @@ fn render_result_item(
       attribute.attribute("style", "cursor: pointer;"),
     ],
     [
-      html.div([attribute.class("result-name")], [element.text(name)]),
+      html.div([attribute.class("result-header")], [
+        html.div([attribute.class("result-name")], [element.text(name)]),
+        html.div([attribute.class("result-badges")], badges),
+      ]),
       html.div([attribute.class("result-meta")], [
-        element.text(data_type <> " • " <> category),
+        html.span([attribute.class("result-category")], [
+          element.text(category),
+        ]),
+        html.span([attribute.class("result-serving")], [
+          element.text("100g serving"),
+        ]),
       ]),
     ],
   )
@@ -864,4 +901,18 @@ pub fn escape_html(text: String) -> String {
   |> string.replace(">", "&gt;")
   |> string.replace("\"", "&quot;")
   |> string.replace("'", "&#39;")
+}
+
+/// Format USDA data type for human-readable display in badges
+fn format_data_type_label(data_type: String) -> String {
+  case data_type {
+    "foundation_food" -> "Foundation"
+    "sr_legacy_food" -> "SR Legacy"
+    "survey_fndds_food" -> "Survey"
+    "branded_food" -> "Branded"
+    "sub_sample_food" -> "Sub-sample"
+    "agricultural_acquisition" -> "Agricultural"
+    "market_acquisition" -> "Market"
+    _ -> "Other"
+  }
 }
