@@ -24,6 +24,7 @@ import meal_planner/types.{
 }
 import meal_planner/ui/pages/dashboard as dashboard_page
 import meal_planner/ui/types/ui_types
+import meal_planner/utils/datetime
 import pog
 import wisp
 
@@ -102,10 +103,10 @@ pub fn extract_date_param(query: option.Option(String)) -> String {
         |> result.map(fn(p) { p.1 })
       {
         Ok(date) -> date
-        Error(_) -> get_today_date()
+        Error(_) -> datetime.get_today_date()
       }
     }
-    Error(_) -> get_today_date()
+    Error(_) -> datetime.get_today_date()
   }
 }
 
@@ -151,12 +152,7 @@ fn food_log_to_meal_entry(entry: FoodLogEntry) -> ui_types.MealEntryData {
   )
 }
 
-/// Get today's date in YYYY-MM-DD format
-pub fn get_today_date() -> String {
-  // Simplified implementation - returns fixed date
-  // In production, use a proper date library
-  "2025-12-05"
-}
+// Note: get_today_date is now imported from meal_planner/utils/datetime
 
 /// Render full HTML page with HTMX support
 /// This ensures HTMX is loaded and modal container is present

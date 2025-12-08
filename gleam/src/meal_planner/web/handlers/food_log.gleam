@@ -14,6 +14,7 @@ import meal_planner/nutrient_parser.{UsdaNutrient}
 import meal_planner/storage
 import meal_planner/storage/profile.{DatabaseError}
 import meal_planner/types.{FoodLogEntry}
+import meal_planner/utils/datetime
 import pog
 import wisp
 
@@ -44,7 +45,7 @@ pub fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
             Error(_) -> 1.0
           }
           let meal_type = string_to_meal_type(mtstr)
-          let today = get_today_date()
+          let today = datetime.get_today_date()
 
           // Get recipe to calculate macros
           case storage.get_recipe_by_id(ctx.db, rid) {
@@ -130,7 +131,7 @@ fn log_usda_food(
   case fdc_id_result, grams_result, meal_type_result {
     Ok(fdc_id), Ok(grams), Ok(meal_type_str) -> {
       let meal_type = string_to_meal_type(meal_type_str)
-      let today = get_today_date()
+      let today = datetime.get_today_date()
 
       // Load USDA food with all nutrients
       case storage.load_usda_food_with_macros(ctx.db, fdc_id) {
@@ -291,12 +292,7 @@ fn pad_two(n: Int) -> String {
   }
 }
 
-/// Get today's date in YYYY-MM-DD format
-fn get_today_date() -> String {
-  // This is a simplified version - in production you'd want to use a proper date library
-  // For now, we'll use a system call to get the date
-  "2025-12-01"
-}
+// Note: get_today_date is now imported from meal_planner/utils/datetime
 
 @external(erlang, "calendar", "local_time")
 fn erlang_localtime() -> #(#(Int, Int, Int), #(Int, Int, Int))
@@ -528,7 +524,7 @@ pub fn api_food_log_form_submit(
       case fdc_id_result, grams_result, meal_type_result {
         Ok(fdc_id), Ok(grams), Ok(meal_type_str) -> {
           let meal_type = string_to_meal_type(meal_type_str)
-          let today = get_today_date()
+          let today = datetime.get_today_date()
 
           case storage.load_usda_food_with_macros(ctx.db, fdc_id) {
             Error(DatabaseError(msg)) ->
