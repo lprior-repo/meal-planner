@@ -30,6 +30,7 @@ import meal_planner/types.{
   UserProfile,
 }
 import meal_planner/ui/components/food_search
+import meal_planner/web/handlers/analytics
 import meal_planner/web/handlers/custom_foods
 import meal_planner/web/handlers/dashboard
 import meal_planner/web/handlers/food_log
@@ -131,6 +132,8 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["log"] -> log_meal_page(ctx)
     ["log", recipe_id] -> log_meal_form(recipe_id, ctx)
     ["weekly-plan"] -> weekly_plan_page(ctx)
+    ["analytics"] ->
+      analytics.analytics_dashboard(req, analytics.Context(db: ctx.db))
 
     // 404
     _ -> not_found_page()
