@@ -2,9 +2,12 @@
 //// These types work on both JavaScript (client) and Erlang (server) targets.
 
 import gleam/dynamic/decode.{type Decoder}
+import gleam/float
+import gleam/int
 import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/string
 
 // ============================================================================
 // Core Nutrition Types
@@ -1037,4 +1040,147 @@ pub fn daily_log_decoder() -> Decoder(DailyLog) {
     total_macros: total_macros,
     total_micronutrients: total_micronutrients,
   ))
+}
+
+// ============================================================================
+// Formatting Functions (moved from output.gleam to avoid feature envy)
+// ============================================================================
+
+/// Format macros as a compact string (e.g., "P:40g F:20g C:30g")
+pub fn macros_to_string(m: Macros) -> String {
+  let p = float_to_int_rounded(m.protein)
+  let f = float_to_int_rounded(m.fat)
+  let c = float_to_int_rounded(m.carbs)
+
+  "P:"
+  <> int.to_string(p)
+  <> "g F:"
+  <> int.to_string(f)
+  <> "g C:"
+  <> int.to_string(c)
+  <> "g"
+}
+
+/// Format macros with calories (e.g., "P:40g F:20g C:30g (200 cal)")
+pub fn macros_to_string_with_calories(m: Macros) -> String {
+  let cal = float_to_int_rounded(macros_calories(m))
+  macros_to_string(m) <> " (" <> int.to_string(cal) <> " cal)"
+}
+
+/// Format ingredient as a readable line (e.g., "- Flour: 2 cups")
+pub fn ingredient_to_display_string(ing: Ingredient) -> String {
+  "  - " <> ing.name <> ": " <> ing.quantity
+}
+
+/// Format a single ingredient line for shopping list (indented)
+pub fn ingredient_to_shopping_list_line(ing: Ingredient) -> String {
+  "    - " <> ing.name <> ": " <> ing.quantity
+}
+
+/// Format FODMAP level as a readable string
+pub fn fodmap_level_to_display_string(level: FodmapLevel) -> String {
+  case level {
+    Low -> "Low"
+    Medium -> "Medium"
+    High -> "High"
+  }
+}
+
+/// Format recipe as a complete, readable string
+pub fn recipe_to_display_string(recipe: Recipe) -> String {
+  let ingredients_str =
+    list.map(recipe.ingredients, ingredient_to_display_string)
+    |> string.join("\n")
+
+  let instructions_str =
+    list.index_map(recipe.instructions, fn(inst, i) {
+      "  " <> int.to_string(i + 1) <> ". " <> inst
+    })
+    |> string.join("\n")
+
+  recipe.name
+  <> "\n"
+  <> "Macros: "
+  <> macros_to_string(recipe.macros)
+  <> "\n\n"
+  <> "Ingredients:\n"
+  <> ingredients_str
+  <> "\n\n"
+  <> "Instructions:\n"
+  <> instructions_str
+}
+
+/// Format activity level as a readable string
+pub fn activity_level_to_display_string(level: ActivityLevel) -> String {
+  case level {
+    Sedentary -> "Sedentary"
+    Moderate -> "Moderate"
+    Active -> "Active"
+  }
+}
+
+/// Format goal as a readable string
+pub fn goal_to_display_string(goal: Goal) -> String {
+  case goal {
+    Gain -> "Gain"
+    Maintain -> "Maintain"
+    Lose -> "Lose"
+  }
+}
+
+/// Format user profile with calculated targets as a comprehensive string
+pub fn user_profile_to_display_string(profile: UserProfile) -> String {
+  let protein = float_to_int_rounded(daily_protein_target(profile))
+  let fat = float_to_int_rounded(daily_fat_target(profile))
+  let carbs = float_to_int_rounded(daily_carb_target(profile))
+  let calories = float_to_int_rounded(daily_calorie_target(profile))
+
+  "==== YOUR VERTICAL DIET PROFILE ====\n"
+  <> "Bodyweight: "
+  <> float_to_int_rounded_string(profile.bodyweight)
+  <> " lbs\n"
+  <> "Activity Level: "
+  <> activity_level_to_display_string(profile.activity_level)
+  <> "\n"
+  <> "Goal: "
+  <> goal_to_display_string(profile.goal)
+  <> "\n"
+  <> "Meals per Day: "
+  <> int.to_string(profile.meals_per_day)
+  <> "\n\n"
+  <> "--- Daily Macro Targets ---\n"
+  <> "Calories: "
+  <> int.to_string(calories)
+  <> "\n"
+  <> "Protein: "
+  <> int.to_string(protein)
+  <> "g\n"
+  <> "Fat: "
+  <> int.to_string(fat)
+  <> "g\n"
+  <> "Carbs: "
+  <> int.to_string(carbs)
+  <> "g\n"
+  <> "===================================="
+}
+
+// ============================================================================
+// Formatting Helper Functions
+// ============================================================================
+
+/// Round a float and format as string with no decimals
+fn float_to_int_rounded_string(f: Float) -> String {
+  int.to_string(float_to_int_rounded(f))
+}
+
+/// Round float to nearest integer
+fn float_to_int_rounded(f: Float) -> Int {
+  float.round(f)
+}
+
+/// Format float with 1 decimal place
+pub fn float_to_1dp_string(f: Float) -> String {
+  let whole = float.truncate(f)
+  let frac = float.round({ f -. int_to_float(whole) } *. 10.0)
+  int.to_string(whole) <> "." <> int.to_string(frac)
 }
