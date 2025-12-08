@@ -1848,6 +1848,8 @@ fn handle_api(
     ["fragments", "filters"] -> search.api_filter_fragment(req)
     ["fragments", "food-log-form"] ->
       food_log.api_food_log_form_fragment(req, food_log.Context(db: ctx.db))
+    ["analytics", "summary"] ->
+      analytics.api_analytics_summary(req, analytics.Context(db: ctx.db))
     _ -> wisp.not_found()
   }
 }

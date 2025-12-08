@@ -12,7 +12,10 @@ import lustre/element
 import lustre/element/html
 import meal_planner/nutrition_constants
 import meal_planner/storage.{type FoodNutrientValue, type UsdaFood}
-import meal_planner/types.{type CustomFood, type SearchFilters, SearchFilters}
+import meal_planner/types.{
+  type CustomFood, type SearchAnalyticsEvent, type SearchFilters,
+  SearchAnalyticsEvent, SearchFilters,
+}
 import meal_planner/ui/components/forms
 import pog
 import wisp
@@ -322,6 +325,28 @@ pub fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
         filters,
         nutrition_constants.default_search_limit,
       )
+  }
+
+  // Record search analytics event (only for non-empty queries)
+  case query {
+    "" -> Nil
+    q -> {
+      let event =
+        SearchAnalyticsEvent(
+          user_id: "default_user",
+          // TODO: Get from session
+          search_term: q,
+          filters: filters,
+          result_count: list.length(foods),
+          custom_count: 0,
+          // Not tracked separately in this handler
+          usda_count: list.length(foods),
+          session_id: None,
+        )
+      // Fire and forget - don't block on analytics
+      let _result = storage.record_search_event(ctx.db, event)
+      Nil
+    }
   }
 
   // Build active filters for display

@@ -670,14 +670,24 @@ pub fn goal_to_string(g: Goal) -> String {
 
 pub fn user_profile_to_json(u: UserProfile) -> Json {
   let targets = daily_macro_targets(u)
-  json.object([
+  let base_fields = [
     #("id", json.string(u.id)),
     #("bodyweight", json.float(u.bodyweight)),
     #("activity_level", json.string(activity_level_to_string(u.activity_level))),
     #("goal", json.string(goal_to_string(u.goal))),
     #("meals_per_day", json.int(u.meals_per_day)),
     #("daily_targets", macros_to_json(targets)),
-  ])
+  ]
+
+  let fields = case u.micronutrient_goals {
+    Some(goals) -> [
+      #("micronutrient_goals", micronutrients_to_json(goals)),
+      ..base_fields
+    ]
+    None -> base_fields
+  }
+
+  json.object(fields)
 }
 
 pub fn meal_type_to_string(m: MealType) -> String {
@@ -778,6 +788,7 @@ pub fn food_search_result_to_json(r: FoodSearchResult) -> Json {
             #("description", json.string(description)),
             #("data_type", json.string(data_type)),
             #("category", json.string(category)),
+            #("serving_size", json.string(serving_size)),
           ]),
         ),
       ])
