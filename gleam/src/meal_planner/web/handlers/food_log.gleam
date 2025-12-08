@@ -388,16 +388,20 @@ fn extract_micronutrients_from_nutrients(
 
   // Check if at least one micronutrient is available
   let has_any_micronutrients =
-    list.any([
-      fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d,
-      vitamin_e, vitamin_k, vitamin_b6, vitamin_b12, folate, thiamin,
-      riboflavin, niacin, calcium, iron, magnesium, phosphorus, potassium, zinc,
-    ], fn(opt) {
-      case opt {
-        Some(_) -> True
-        None -> False
-      }
-    })
+    list.any(
+      [
+        fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d,
+        vitamin_e, vitamin_k, vitamin_b6, vitamin_b12, folate, thiamin,
+        riboflavin, niacin, calcium, iron, magnesium, phosphorus, potassium,
+        zinc,
+      ],
+      fn(opt) {
+        case opt {
+          Some(_) -> True
+          None -> False
+        }
+      },
+    )
 
   case has_any_micronutrients {
     True ->
@@ -505,7 +509,17 @@ pub fn api_food_log_form_submit(
         |> result.flatten
       let grams_result =
         list.find(params, fn(p) { p.0 == "grams" })
-        |> result.map(fn(p) { float.parse(p.1) })
+        |> result.map(fn(p) {
+          // Try float parse, if that fails try int parse and convert
+          case float.parse(p.1) {
+            Ok(f) -> Ok(f)
+            Error(_) ->
+              case int.parse(p.1) {
+                Ok(i) -> Ok(int.to_float(i))
+                Error(_) -> Error(Nil)
+              }
+          }
+        })
         |> result.flatten
       let meal_type_result =
         list.find(params, fn(p) { p.0 == "meal_type" })
@@ -570,11 +584,32 @@ pub fn api_food_log_form_submit(
             }
           }
         }
-        _, _, _ ->
+        _, _, _ -> {
+          // Debug: Log what we received
+          let debug_msg =
+            "Missing fields - fdc_id: "
+            <> case fdc_id_result {
+              Ok(id) -> "OK(" <> int.to_string(id) <> ")"
+              Error(_) -> "ERROR"
+            }
+            <> ", grams: "
+            <> case grams_result {
+              Ok(g) -> "OK(" <> float.to_string(g) <> ")"
+              Error(_) -> "ERROR"
+            }
+            <> ", meal_type: "
+            <> case meal_type_result {
+              Ok(mt) -> "OK(" <> mt <> ")"
+              Error(_) -> "ERROR"
+            }
+
           wisp.html_response(
-            "<div class=\"error\">Missing required fields</div>",
+            "<div class=\"error\">Missing required fields. "
+              <> debug_msg
+              <> "</div>",
             400,
           )
+        }
       }
     }
     Error(_) ->

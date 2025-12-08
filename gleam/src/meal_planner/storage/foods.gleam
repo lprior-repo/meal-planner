@@ -107,6 +107,7 @@ pub fn search_foods_filtered(
 ) -> Result(List(UsdaFood), StorageError) {
   search_foods(conn, query, limit)
 }
+
 /// Search for foods with filters and offset for pagination
 pub fn search_foods_filtered_with_offset(
   conn: pog.Connection,
@@ -165,7 +166,6 @@ pub fn search_foods_filtered_with_offset(
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
 }
-
 
 /// Get food by FDC ID
 pub fn get_food_by_id(
@@ -431,7 +431,10 @@ pub fn get_food_nutrients(
   fdc_id: Int,
 ) -> Result(List(FoodNutrientValue), StorageError) {
   let sql =
-    "SELECT nutrient_id, nutrient_name, amount, unit FROM food_nutrients WHERE fdc_id = $1"
+    "SELECT fn.nutrient_id, n.name, fn.amount, n.unit_name
+     FROM food_nutrients fn
+     JOIN nutrients n ON fn.nutrient_id = n.id
+     WHERE fn.fdc_id = $1"
 
   let decoder = {
     use nutrient_id <- decode.field(0, decode.int)

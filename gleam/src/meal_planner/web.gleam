@@ -11,6 +11,7 @@ import gleam/io
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/result
 import gleam/uri
 import lustre/attribute
 import lustre/element
@@ -30,11 +31,13 @@ import meal_planner/types.{
   UserProfile,
 }
 import meal_planner/ui/components/food_search
-import meal_planner/web/handlers/analytics
+
+// import meal_planner/web/handlers/analytics
 import meal_planner/web/handlers/custom_foods
 import meal_planner/web/handlers/dashboard
 import meal_planner/web/handlers/food_log
 import meal_planner/web/handlers/generate
+import meal_planner/web/handlers/pages
 import meal_planner/web/handlers/profile
 import meal_planner/web/handlers/recipe
 import meal_planner/web/handlers/search
@@ -130,11 +133,16 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["foods"] -> foods_page(req, ctx)
     ["foods", id] -> food_detail_page(id, ctx)
     ["log"] -> log_meal_page(ctx)
+    ["log", "food", id] ->
+      pages.log_food_form(
+        id,
+        pages.Context(db: ctx.db, search_cache: ctx.search_cache),
+      )
     ["log", recipe_id] -> log_meal_form(recipe_id, ctx)
     ["weekly-plan"] -> weekly_plan_page(ctx)
-    ["analytics"] ->
-      analytics.analytics_dashboard(req, analytics.Context(db: ctx.db))
+    ["analytics"] -> wisp.not_found()
 
+    // analytics.analytics_dashboard(req, analytics.Context(db: ctx.db))
     // 404
     _ -> not_found_page()
   }
@@ -814,6 +822,40 @@ fn fodmap_option(
     types.Low -> "low"
     types.Medium -> "medium"
     types.High -> "high"
+  }
+  case value == current_str {
+    True ->
+      html.option([attribute.value(value), attribute.selected(True)], label)
+    False -> html.option([attribute.value(value)], label)
+  }
+}
+
+fn goal_option(
+  value: String,
+  label: String,
+  current: types.Goal,
+) -> element.Element(msg) {
+  let current_str = case current {
+    types.Lose -> "lose"
+    types.Maintain -> "maintain"
+    types.Gain -> "gain"
+  }
+  case value == current_str {
+    True ->
+      html.option([attribute.value(value), attribute.selected(True)], label)
+    False -> html.option([attribute.value(value)], label)
+  }
+}
+
+fn activity_level_option(
+  value: String,
+  label: String,
+  current: types.ActivityLevel,
+) -> element.Element(msg) {
+  let current_str = case current {
+    types.Sedentary -> "sedentary"
+    types.Moderate -> "moderate"
+    types.Active -> "active"
   }
   case value == current_str {
     True ->
@@ -1598,7 +1640,16 @@ fn food_detail_page(id: String, ctx: Context) -> wisp.Response {
               element.text("← Back to search"),
             ]),
             html.div([attribute.class("food-detail")], [
-              html.h1([], [element.text(food.description)]),
+              html.div([attribute.class("food-detail-header")], [
+                html.h1([], [element.text(food.description)]),
+                html.a(
+                  [
+                    attribute.href("/log/food/" <> id),
+                    attribute.class("btn btn-primary"),
+                  ],
+                  [element.text("+ Log This Food")],
+                ),
+              ]),
               html.p([attribute.class("meta")], [
                 element.text("Type: " <> food.data_type),
               ]),
@@ -1848,8 +1899,8 @@ fn handle_api(
     ["fragments", "filters"] -> search.api_filter_fragment(req)
     ["fragments", "food-log-form"] ->
       food_log.api_food_log_form_fragment(req, food_log.Context(db: ctx.db))
-    ["analytics", "summary"] ->
-      analytics.api_analytics_summary(req, analytics.Context(db: ctx.db))
+    ["analytics", "summary"] -> wisp.not_found()
+    // analytics.api_analytics_summary(req, analytics.Context(db: ctx.db))
     _ -> wisp.not_found()
   }
 }
@@ -2194,6 +2245,7 @@ fn default_profile() -> UserProfile {
     activity_level: Moderate,
     goal: Maintain,
     meals_per_day: 3,
+    micronutrient_goals: option.None,
   )
 }
 

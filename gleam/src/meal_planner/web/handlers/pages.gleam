@@ -314,7 +314,16 @@ pub fn food_detail_page(id: String, ctx: Context) -> wisp.Response {
               element.text("← Back to search"),
             ]),
             html.div([attribute.class("food-detail")], [
-              html.h1([], [element.text(food.description)]),
+              html.div([attribute.class("food-detail-header")], [
+                html.h1([], [element.text(food.description)]),
+                html.a(
+                  [
+                    attribute.href("/log/food/" <> id),
+                    attribute.class("btn btn-primary"),
+                  ],
+                  [element.text("+ Log This Food")],
+                ),
+              ]),
               html.p([attribute.class("meta")], [
                 element.text("Type: " <> food.data_type),
               ]),
@@ -534,19 +543,24 @@ pub fn log_food_form(id: String, ctx: Context) -> wisp.Response {
               ]),
               html.form(
                 [
-                  attribute.method("POST"),
-                  attribute.action("/api/logs/food?food_id=" <> id),
+                  attribute.method("GET"),
+                  attribute.action("/api/logs/food-form"),
                   attribute.class("log-form"),
                 ],
                 [
+                  html.input([
+                    attribute.type_("hidden"),
+                    attribute.name("fdc_id"),
+                    attribute.value(id),
+                  ]),
                   html.div([attribute.class("form-group")], [
-                    html.label([attribute.attribute("for", "portion_grams")], [
+                    html.label([attribute.attribute("for", "grams")], [
                       element.text("Portion Size (grams)"),
                     ]),
                     html.input([
                       attribute.type_("number"),
-                      attribute.id("portion_grams"),
-                      attribute.name("portion_grams"),
+                      attribute.id("grams"),
+                      attribute.name("grams"),
                       attribute.attribute("min", "1"),
                       attribute.attribute("step", "1"),
                       attribute.value("100"),
