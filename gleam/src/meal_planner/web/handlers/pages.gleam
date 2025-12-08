@@ -210,7 +210,17 @@ pub fn recipe_detail_page(id: String, ctx: Context) -> wisp.Response {
             html.ul(
               [],
               list.map(recipe.ingredients, fn(ing) {
-                html.li([], [element.text(ing.quantity <> " " <> ing.name)])
+                html.li([], [
+                  html.span([attribute.class("ingredient-quantity")], [
+                    element.text(ing.quantity),
+                  ]),
+                  html.span([attribute.class("ingredient-separator")], [
+                    element.text(" "),
+                  ]),
+                  html.span([attribute.class("ingredient-name")], [
+                    element.text(ing.name),
+                  ]),
+                ])
               }),
             ),
           ]),
