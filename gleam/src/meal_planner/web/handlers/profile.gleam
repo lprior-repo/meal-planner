@@ -173,7 +173,12 @@ fn parse_profile_form(
 
   // Collect all errors
   let all_errors =
-    [bodyweight_result, activity_level_result, goal_result, meals_per_day_result]
+    [
+      bodyweight_result,
+      activity_level_result,
+      goal_result,
+      meals_per_day_result,
+    ]
     |> list.filter_map(fn(r) {
       case r {
         Error(errs) -> Ok(errs)

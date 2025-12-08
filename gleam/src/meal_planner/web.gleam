@@ -125,7 +125,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
         dashboard.Context(db: ctx.db, search_cache: ctx.search_cache),
       )
     ["profile"] -> profile_page(ctx)
-    // ["profile", "edit"] -> profile_edit_page(ctx)  // TODO: Implement profile edit page
+    ["profile", "edit"] -> profile_edit_page(ctx)
     ["foods"] -> foods_page(req, ctx)
     ["foods", id] -> food_detail_page(id, ctx)
     ["log"] -> log_meal_page(ctx)
@@ -941,7 +941,10 @@ fn recipe_detail_page(id: String, ctx: Context) -> wisp.Response {
                 attribute.method("POST"),
                 attribute.action("/api/recipes/" <> id <> "/add-to-plan"),
                 attribute.class("add-to-plan-form"),
-                attribute.attribute("hx-post", "/api/recipes/" <> id <> "/add-to-plan"),
+                attribute.attribute(
+                  "hx-post",
+                  "/api/recipes/" <> id <> "/add-to-plan",
+                ),
                 attribute.attribute("hx-target", "#add-to-plan-feedback"),
                 attribute.attribute("hx-swap", "innerHTML"),
               ],
@@ -972,7 +975,10 @@ fn recipe_detail_page(id: String, ctx: Context) -> wisp.Response {
                     ],
                     [
                       html.option([attribute.value("breakfast")], "Breakfast"),
-                      html.option([attribute.value("lunch"), attribute.selected(True)], "Lunch"),
+                      html.option(
+                        [attribute.value("lunch"), attribute.selected(True)],
+                        "Lunch",
+                      ),
                       html.option([attribute.value("dinner")], "Dinner"),
                       html.option([attribute.value("snack")], "Snack"),
                     ],
@@ -1057,6 +1063,12 @@ fn profile_page(ctx: Context) -> wisp.Response {
 
   let content = [
     page_header("Profile", "/"),
+    html.div([attribute.class("page-actions")], [
+      html.a(
+        [attribute.href("/profile/edit"), attribute.class("btn btn-primary")],
+        [element.text("Edit Profile")],
+      ),
+    ]),
     html.div([attribute.class("profile")], [
       html.div([attribute.class("profile-section")], [
         html.h2([], [element.text("Stats")]),
@@ -1092,6 +1104,141 @@ fn profile_page(ctx: Context) -> wisp.Response {
   ]
 
   wisp.html_response(render_page("Profile - Meal Planner", content), 200)
+}
+
+fn profile_edit_page(ctx: Context) -> wisp.Response {
+  let profile = load_profile(ctx)
+
+  let content = [
+    html.a([attribute.href("/profile"), attribute.class("back-link")], [
+      element.text("← Back to profile"),
+    ]),
+    html.div([attribute.class("page-header")], [
+      html.h1([], [element.text("Edit Profile")]),
+    ]),
+    html.div(
+      [attribute.id("error-messages"), attribute.class("error-list")],
+      [],
+    ),
+    html.form(
+      [
+        attribute.id("profile-form"),
+        attribute.attribute("hx-post", "/api/profile"),
+        attribute.attribute("hx-target", "#error-messages"),
+        attribute.attribute("hx-swap", "innerHTML"),
+        attribute.class("profile-form"),
+      ],
+      [
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("bodyweight")], [
+            element.text("Bodyweight (lbs)"),
+          ]),
+          html.input([
+            attribute.type_("number"),
+            attribute.name("bodyweight"),
+            attribute.id("bodyweight"),
+            attribute.required(True),
+            attribute.attribute("step", "0.1"),
+            attribute.attribute("min", "0"),
+            attribute.value(float_to_string(profile.bodyweight)),
+            attribute.class("form-control"),
+          ]),
+        ]),
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("activity_level")], [
+            element.text("Activity Level"),
+          ]),
+          html.select(
+            [
+              attribute.name("activity_level"),
+              attribute.id("activity_level"),
+              attribute.required(True),
+              attribute.class("form-control"),
+            ],
+            [
+              activity_level_option(
+                "sedentary",
+                "Sedentary",
+                profile.activity_level,
+              ),
+              activity_level_option(
+                "moderate",
+                "Moderate",
+                profile.activity_level,
+              ),
+              activity_level_option("active", "Active", profile.activity_level),
+            ],
+          ),
+        ]),
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("goal")], [element.text("Goal")]),
+          html.select(
+            [
+              attribute.name("goal"),
+              attribute.id("goal"),
+              attribute.required(True),
+              attribute.class("form-control"),
+            ],
+            [
+              goal_option("lose", "Lose Weight", profile.goal),
+              goal_option("maintain", "Maintain Weight", profile.goal),
+              goal_option("gain", "Gain Weight", profile.goal),
+            ],
+          ),
+        ]),
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("meals_per_day")], [
+            element.text("Meals per Day"),
+          ]),
+          html.input([
+            attribute.type_("number"),
+            attribute.name("meals_per_day"),
+            attribute.id("meals_per_day"),
+            attribute.required(True),
+            attribute.attribute("min", "1"),
+            attribute.attribute("max", "10"),
+            attribute.attribute("step", "1"),
+            attribute.value(int_to_string(profile.meals_per_day)),
+            attribute.class("form-control"),
+          ]),
+        ]),
+        html.div([attribute.class("form-actions")], [
+          html.button(
+            [attribute.type_("submit"), attribute.class("btn btn-primary")],
+            [element.text("Save Changes")],
+          ),
+          html.a(
+            [attribute.href("/profile"), attribute.class("btn btn-secondary")],
+            [element.text("Cancel")],
+          ),
+        ]),
+      ],
+    ),
+    html.script(
+      [],
+      "
+document.getElementById('profile-form').addEventListener('htmx:afterRequest', function(evt) {
+  if (evt.detail.successful) {
+    try {
+      const response = JSON.parse(evt.detail.xhr.responseText);
+      if (response.success) {
+        window.location.href = '/profile';
+      } else if (response.errors) {
+        const errorDiv = document.getElementById('error-messages');
+        errorDiv.innerHTML = response.errors.map(e =>
+          '<div class=\"error-message\">' + e + '</div>'
+        ).join('');
+      }
+    } catch (e) {
+      console.error('Failed to parse response', e);
+    }
+  }
+});
+      ",
+    ),
+  ]
+
+  wisp.html_response(render_page("Edit Profile - Meal Planner", content), 200)
 }
 
 fn log_meal_page(ctx: Context) -> wisp.Response {
@@ -1565,10 +1712,12 @@ fn api_add_recipe_to_plan(
       use form_data <- wisp.require_form(req)
 
       // Extract servings and meal_type from form
-      let servings_result = list.key_find(form_data.values, "servings")
+      let servings_result =
+        list.key_find(form_data.values, "servings")
         |> result.then(float.parse)
 
-      let meal_type_str = list.key_find(form_data.values, "meal_type")
+      let meal_type_str =
+        list.key_find(form_data.values, "meal_type")
         |> result.unwrap("lunch")
 
       // Convert meal_type string to MealType
@@ -1599,18 +1748,19 @@ fn api_add_recipe_to_plan(
           let today = get_today_date()
 
           // Create food log entry
-          let entry = FoodLogEntry(
-            id: food_log.generate_entry_id(),
-            recipe_id: recipe.id,
-            recipe_name: recipe.name,
-            servings: servings,
-            macros: scaled_macros,
-            micronutrients: None,
-            meal_type: meal_type,
-            logged_at: current_timestamp(),
-            source_type: "recipe",
-            source_id: recipe.id,
-          )
+          let entry =
+            FoodLogEntry(
+              id: food_log.generate_entry_id(),
+              recipe_id: recipe.id,
+              recipe_name: recipe.name,
+              servings: servings,
+              macros: scaled_macros,
+              micronutrients: None,
+              meal_type: meal_type,
+              logged_at: current_timestamp(),
+              source_type: "recipe",
+              source_id: recipe.id,
+            )
 
           // Save to database
           case storage.save_food_log_entry(ctx.db, today, entry) {
@@ -1639,11 +1789,7 @@ fn api_add_recipe_to_plan(
 /// Get today's date in YYYY-MM-DD format
 fn get_today_date() -> String {
   let #(#(year, month, day), _time) = erlang_localtime()
-  int_to_string(year)
-  <> "-"
-  <> pad_two(month)
-  <> "-"
-  <> pad_two(day)
+  int_to_string(year) <> "-" <> pad_two(month) <> "-" <> pad_two(day)
 }
 
 /// Get current timestamp as ISO8601 string
