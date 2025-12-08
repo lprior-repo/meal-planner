@@ -1,7 +1,9 @@
 /// PostgreSQL storage module for nutrition data persistence
 import gleam/dynamic/decode
 import gleam/int
+import gleam/json
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/ncp
@@ -222,13 +224,14 @@ pub fn save_user_profile(
   profile: UserProfile,
 ) -> Result(Nil, StorageError) {
   let sql =
-    "INSERT INTO user_profile (id, bodyweight, activity_level, goal, meals_per_day)
-     VALUES (1, $1, $2, $3, $4)
+    "INSERT INTO user_profile (id, bodyweight, activity_level, goal, meals_per_day, micronutrient_goals)
+     VALUES (1, $1, $2, $3, $4, $5)
      ON CONFLICT (id) DO UPDATE SET
        bodyweight = EXCLUDED.bodyweight,
        activity_level = EXCLUDED.activity_level,
        goal = EXCLUDED.goal,
-       meals_per_day = EXCLUDED.meals_per_day"
+       meals_per_day = EXCLUDED.meals_per_day,
+       micronutrient_goals = EXCLUDED.micronutrient_goals"
 
   let activity_str = case profile.activity_level {
     Sedentary -> "sedentary"
@@ -242,12 +245,23 @@ pub fn save_user_profile(
     Lose -> "lose"
   }
 
+  // Encode micronutrient_goals to JSON string
+  let micronutrient_goals_json = case profile.micronutrient_goals {
+    Some(goals) ->
+      pog.nullable(
+        pog.text,
+        Some(types.micronutrients_to_json(goals) |> json.to_string),
+      )
+    None -> pog.null()
+  }
+
   case
     pog.query(sql)
     |> pog.parameter(pog.float(profile.bodyweight))
     |> pog.parameter(pog.text(activity_str))
     |> pog.parameter(pog.text(goal_str))
     |> pog.parameter(pog.int(profile.meals_per_day))
+    |> pog.parameter(micronutrient_goals_json)
     |> pog.execute(conn)
   {
     Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
@@ -260,7 +274,7 @@ pub fn get_user_profile(
   conn: pog.Connection,
 ) -> Result(UserProfile, StorageError) {
   let sql =
-    "SELECT id, bodyweight, activity_level, goal, meals_per_day
+    "SELECT id, bodyweight, activity_level, goal, meals_per_day, micronutrient_goals
      FROM user_profile WHERE id = 1"
 
   let decoder = {
@@ -269,6 +283,10 @@ pub fn get_user_profile(
     use activity_str <- decode.field(2, decode.string)
     use goal_str <- decode.field(3, decode.string)
     use meals_per_day <- decode.field(4, decode.int)
+    use micronutrient_goals_str <- decode.field(
+      5,
+      decode.optional(decode.string),
+    )
 
     let activity_level = case activity_str {
       "sedentary" -> Sedentary
@@ -284,12 +302,23 @@ pub fn get_user_profile(
       _ -> Maintain
     }
 
+    // Decode micronutrient_goals from JSON string
+    let micronutrient_goals = case micronutrient_goals_str {
+      Some(json_str) ->
+        case json.parse(json_str, using: types.micronutrients_decoder()) {
+          Ok(goals) -> Some(goals)
+          Error(_) -> None
+        }
+      None -> None
+    }
+
     decode.success(UserProfile(
       id: int.to_string(id),
       bodyweight: bodyweight,
       activity_level: activity_level,
       goal: goal,
       meals_per_day: meals_per_day,
+      micronutrient_goals: micronutrient_goals,
     ))
   }
 
