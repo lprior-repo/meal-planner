@@ -1,3 +1,4 @@
+import gleam/option.{None}
 import gleeunit/should
 import meal_planner/types.{
   Active, Gain, Lose, Maintain, Moderate, Sedentary, UserProfile,
@@ -20,6 +21,7 @@ pub fn daily_protein_target_active_gain_test() {
       activity_level: Active,
       goal: Gain,
       meals_per_day: 4,
+      micronutrient_goals: None,
     )
   daily_protein_target(u) |> should.equal(200.0)
 }
@@ -33,6 +35,7 @@ pub fn daily_protein_target_sedentary_lose_test() {
       activity_level: Sedentary,
       goal: Lose,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
   daily_protein_target(u) |> should.equal(160.0)
 }
@@ -46,6 +49,7 @@ pub fn daily_protein_target_moderate_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
   daily_protein_target(u) |> should.equal(180.0)
 }
@@ -59,6 +63,7 @@ pub fn daily_fat_target_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
   daily_fat_target(u) |> should.equal(60.0)
 }
@@ -72,6 +77,7 @@ pub fn daily_calorie_target_moderate_maintain_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
   daily_calorie_target(u) |> should.equal(3000.0)
 }
@@ -85,6 +91,7 @@ pub fn daily_calorie_target_active_gain_test() {
       activity_level: Active,
       goal: Gain,
       meals_per_day: 4,
+      micronutrient_goals: None,
     )
   // 200 * 18 * 1.15 = 4140
   daily_calorie_target(u) |> should.equal(4140.0)
@@ -99,6 +106,7 @@ pub fn daily_calorie_target_sedentary_lose_test() {
       activity_level: Sedentary,
       goal: Lose,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
   // 200 * 12 * 0.85 = 2040
   daily_calorie_target(u) |> should.equal(2040.0)
@@ -112,6 +120,7 @@ pub fn daily_macro_targets_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
   let targets = daily_macro_targets(u)
   // Protein: 200 * 0.9 = 180
@@ -248,6 +257,7 @@ pub fn format_user_profile_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
   let formatted = format_user_profile(profile)
   formatted
