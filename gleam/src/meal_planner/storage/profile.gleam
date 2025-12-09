@@ -2,10 +2,8 @@
 import gleam/dynamic/decode
 import gleam/int
 import gleam/json
-import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/result
-import gleam/string
 import meal_planner/ncp
 import meal_planner/postgres
 import meal_planner/storage/utils
