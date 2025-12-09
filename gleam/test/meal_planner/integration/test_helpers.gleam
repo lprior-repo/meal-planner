@@ -171,7 +171,7 @@ fn drop_test_database(
 fn get_migration_files() -> Result(List(String), String) {
   let migrations_dir = "./migrations_pg"
 
-  simplifile.list_contents(migrations_dir)
+  simplifile.read_directory(migrations_dir)
   |> result.map(fn(files) {
     files
     |> list.filter(fn(file) { string.ends_with(file, ".sql") })

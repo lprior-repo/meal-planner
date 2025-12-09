@@ -187,3 +187,8 @@ pub fn print_audit_report(recipes: List(Recipe)) -> Nil {
 fn float_to_string(f: Float) -> String {
   float.to_string(f)
 }
+
+/// Convert int to float
+fn int_to_float(i: Int) -> Float {
+  int.to_float(i)
+}

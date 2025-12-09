@@ -8,6 +8,7 @@
 ///
 /// This module simplifies writing integration tests for Wisp handlers
 /// without needing a running web server.
+import gleam/bit_array
 import gleam/http
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
@@ -83,8 +84,7 @@ pub fn with_header(
   name: String,
   value: String,
 ) -> WispRequest {
-  req
-  |> wisp.set_header(name, value)
+  request.set_header(req, name, value)
 }
 
 /// Add query parameters to a request
@@ -108,8 +108,7 @@ pub fn with_query(req: WispRequest, params: List(#(String, String))) -> WispRequ
 
 /// Simulate an HTMX request by adding the hx-request header
 pub fn as_htmx(req: WispRequest) -> WispRequest {
-  req
-  |> wisp.set_header("hx-request", "true")
+  request.set_header(req, "hx-request", "true")
 }
 
 // ============================================================================
@@ -189,11 +188,13 @@ pub fn assert_header(
 /// Assert that a response has Content-Type: application/json
 pub fn assert_json_response(response: WispResponse) -> Nil {
   case response.get_header(response, "content-type") {
-    Ok(content_type) if string.starts_with(content_type, "application/json") ->
-      Nil
     Ok(content_type) -> {
-      panic as {
-        "Expected JSON response but got Content-Type: " <> content_type
+      case string.starts_with(content_type, "application/json") {
+        True -> Nil
+        False ->
+          panic as {
+            "Expected JSON response but got Content-Type: " <> content_type
+          }
       }
     }
     Error(_) -> panic as "Response missing Content-Type header"
@@ -203,9 +204,14 @@ pub fn assert_json_response(response: WispResponse) -> Nil {
 /// Assert that a response has Content-Type: text/html
 pub fn assert_html_response(response: WispResponse) -> Nil {
   case response.get_header(response, "content-type") {
-    Ok(content_type) if string.starts_with(content_type, "text/html") -> Nil
     Ok(content_type) -> {
-      panic as { "Expected HTML response but got Content-Type: " <> content_type }
+      case string.starts_with(content_type, "text/html") {
+        True -> Nil
+        False ->
+          panic as {
+            "Expected HTML response but got Content-Type: " <> content_type
+          }
+      }
     }
     Error(_) -> panic as "Response missing Content-Type header"
   }
@@ -225,7 +231,7 @@ pub fn get_body_string(response: WispResponse) -> String {
         Error(_) -> ""
       }
     }
-    wisp.File(_) -> ""
+    wisp.File(_, limit: _, offset: _) -> ""
   }
 }
 

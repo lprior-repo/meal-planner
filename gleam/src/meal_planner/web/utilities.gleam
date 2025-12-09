@@ -5,7 +5,7 @@ import gleam/float
 import gleam/int
 import gleam/json
 import gleam/list
-import gleam/option.{type Option}
+import gleam/option.{type Option, None}
 import meal_planner/storage
 import meal_planner/storage_optimized
 import meal_planner/types.{
@@ -52,6 +52,7 @@ pub fn default_profile() -> UserProfile {
     activity_level: Moderate,
     goal: Maintain,
     meals_per_day: 3,
+    micronutrient_goals: None,
   )
 }
 

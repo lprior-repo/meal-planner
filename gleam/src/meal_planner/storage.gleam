@@ -34,6 +34,10 @@ import meal_planner/storage/logs.{
 
 import meal_planner/storage/migrations.{init_migrations}
 
+import meal_planner/storage/analytics.{
+  record_search_event as analytics_record_search_event,
+}
+
 // Re-export everything
 pub fn default_config() {
   profile_module.default_config()
@@ -198,6 +202,11 @@ pub fn get_weekly_summary(conn, user_id, start_date) {
 // Migrations
 pub fn init_migrations() {
   migrations.init_migrations()
+}
+
+// Analytics
+pub fn record_search_event(conn, event) {
+  analytics_record_search_event(conn, event)
 }
 
 // pub fn get_weekly_summary(conn, start_date) {

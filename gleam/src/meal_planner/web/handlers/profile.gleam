@@ -5,6 +5,7 @@ import gleam/http
 import gleam/int
 import gleam/json
 import gleam/list
+import gleam/option.{None}
 import meal_planner/storage
 import meal_planner/storage/profile as storage_profile
 import meal_planner/types
@@ -171,21 +172,25 @@ fn parse_profile_form(
     }
   }
 
-  // Collect all errors
-  let all_errors =
-    [
-      bodyweight_result,
-      activity_level_result,
-      goal_result,
-      meals_per_day_result,
-    ]
-    |> list.filter_map(fn(r) {
-      case r {
-        Error(errs) -> Ok(errs)
-        Ok(_) -> Error(Nil)
-      }
-    })
-    |> list.flatten
+  // Collect errors from each result
+  let bodyweight_errors = case bodyweight_result {
+    Error(errs) -> errs
+    Ok(_) -> []
+  }
+  let activity_errors = case activity_level_result {
+    Error(errs) -> errs
+    Ok(_) -> []
+  }
+  let goal_errors = case goal_result {
+    Error(errs) -> errs
+    Ok(_) -> []
+  }
+  let meals_errors = case meals_per_day_result {
+    Error(errs) -> errs
+    Ok(_) -> []
+  }
+
+  let all_errors = list.flatten([bodyweight_errors, activity_errors, goal_errors, meals_errors])
 
   // Check for errors
   case all_errors {
@@ -198,12 +203,13 @@ fn parse_profile_form(
         meals_per_day_result
       {
         Ok(bw), Ok(al), Ok(g), Ok(mpd) ->
-          Ok(Profile(
+          Ok(types.UserProfile(
             id: "1",
             bodyweight: bw,
             activity_level: al,
             goal: g,
             meals_per_day: mpd,
+            micronutrient_goals: None,
           ))
         _, _, _, _ -> Error(all_errors)
       }

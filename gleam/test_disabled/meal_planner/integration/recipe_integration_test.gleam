@@ -9,8 +9,8 @@
 /// Run with: gleam test
 import gleeunit/should
 import meal_planner/storage
-import meal_planner/test/meal_planner/integration/test_data_builders as builders
-import meal_planner/test/meal_planner/integration/test_helpers
+import meal_planner/integration/test_data_builders as builders
+import meal_planner/integration/test_helpers
 
 // ============================================================================
 // Recipe CRUD Tests

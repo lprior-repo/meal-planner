@@ -313,7 +313,7 @@ pub fn cache_get(
   actor: Subject(Message),
   key: String,
 ) -> Option(dynamic.Dynamic) {
-  process.call(actor, Get(key, _), 1000)
+  process.call(actor, 1000, fn(reply) { Get(key, reply) })
 }
 
 /// Put a value in the cache (async)
@@ -322,7 +322,7 @@ pub fn cache_put(
   key: String,
   value: dynamic.Dynamic,
 ) -> Nil {
-  process.call(actor, Put(key, value, _), 1000)
+  process.call(actor, 1000, fn(reply) { Put(key, value, reply) })
 }
 
 /// Put a value with custom TTL (async)
@@ -332,17 +332,17 @@ pub fn cache_put_with_ttl(
   value: dynamic.Dynamic,
   ttl: Int,
 ) -> Nil {
-  process.call(actor, PutWithTtl(key, value, ttl, _), 1000)
+  process.call(actor, 1000, fn(reply) { PutWithTtl(key, value, ttl, reply) })
 }
 
 /// Clear the cache
 pub fn cache_clear(actor: Subject(Message)) -> Nil {
-  process.call(actor, Clear, 1000)
+  process.call(actor, 1000, fn(reply) { Clear(reply) })
 }
 
 /// Get cache statistics
 pub fn cache_stats(actor: Subject(Message)) -> CacheStats {
-  process.call(actor, GetStats, 1000)
+  process.call(actor, 1000, fn(reply) { GetStats(reply) })
 }
 
 /// Shutdown the cache actor

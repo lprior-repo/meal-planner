@@ -1,7 +1,7 @@
 /// PostgreSQL storage module for nutrition data persistence
 import gleam/dynamic/decode
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{type Option, None, Some} as option
 import gleam/result
 import gleam/string
 import meal_planner/postgres
@@ -540,11 +540,14 @@ pub fn get_recently_logged_foods(
 
     use category <- decode.field(3, decode.string)
 
+    use serving_size <- decode.field(4, decode.optional(decode.string))
+
     decode.success(UsdaFood(
       fdc_id: fdc_id,
       description: description,
       data_type: data_type,
       category: category,
+      serving_size: option.unwrap(serving_size, "100g"),
     ))
   }
 
@@ -787,6 +790,7 @@ fn default_user_profile() -> UserProfile {
     activity_level: Moderate,
     goal: Maintain,
     meals_per_day: 3,
+    micronutrient_goals: None,
   )
 }
 

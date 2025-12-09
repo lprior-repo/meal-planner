@@ -3,7 +3,7 @@
 /// Target: 50% DB load reduction through covering indexes and caching
 import gleam/dynamic/decode
 import gleam/int
-import gleam/option.{None, Some}
+import gleam/option.{None, Some} as option
 import meal_planner/nutrition_constants as constants
 import meal_planner/query_cache
 import meal_planner/storage.{type StorageError, type UsdaFood}
@@ -113,11 +113,13 @@ fn search_foods_optimized(
     use description <- decode.field(1, decode.string)
     use data_type <- decode.field(2, decode.string)
     use category <- decode.field(3, decode.string)
+    use serving_size <- decode.field(4, decode.optional(decode.string))
     decode.success(UsdaFood(
       fdc_id: fdc_id,
       description: description,
       data_type: data_type,
       category: category,
+      serving_size: option.unwrap(serving_size, "100g"),
     ))
   }
 
@@ -210,11 +212,13 @@ fn search_foods_filtered_optimized(
     use description <- decode.field(1, decode.string)
     use data_type <- decode.field(2, decode.string)
     use category <- decode.field(3, decode.string)
+    use serving_size <- decode.field(4, decode.optional(decode.string))
     decode.success(UsdaFood(
       fdc_id: fdc_id,
       description: description,
       data_type: data_type,
       category: category,
+      serving_size: option.unwrap(serving_size, "100g"),
     ))
   }
 

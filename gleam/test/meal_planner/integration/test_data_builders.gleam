@@ -9,6 +9,7 @@
 /// - Easy to override specific fields
 /// - Type-safe construction
 import gleam/list
+import gleam/option
 import meal_planner/types.{
   type FodmapLevel, type Ingredient, type Macros, type Recipe, type UserProfile,
   Active, High, Ingredient, Low, Macros, Maintain, Medium, Moderate, Recipe,
@@ -147,6 +148,7 @@ pub fn user_profile() -> UserProfile {
     activity_level: Moderate,
     goal: Maintain,
     meals_per_day: 3,
+    micronutrient_goals: option.None,
   )
 }
 

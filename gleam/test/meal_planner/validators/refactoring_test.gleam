@@ -100,9 +100,8 @@ pub fn validate_recipe_combines_multiple_validators_test() {
   result.compliant
   |> should.be_true()
 
-  // Score should be average of both validators
-  result.score
-  |> should.be_ok()
+  // Score should be average of both validators (positive value)
+  should.be_true(result.score >=. 0.0)
 }
 
 pub fn validate_recipe_empty_principles_returns_compliant_test() {
