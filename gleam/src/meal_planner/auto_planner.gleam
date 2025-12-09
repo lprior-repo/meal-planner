@@ -7,7 +7,6 @@ import gleam/int
 import gleam/list
 import gleam/order
 import meal_planner/auto_planner/types as auto_types
-import meal_planner/diet_validator
 import meal_planner/types
 
 // Re-export types for convenience
@@ -49,6 +48,8 @@ fn count_list(items: List(a)) -> Int {
 // ============================================================================
 
 /// Filter recipes based on diet principle compliance
+/// Simplified version - uses recipe.vertical_compliant flag for Vertical Diet
+/// For other diets, returns all recipes (can be extended later)
 pub fn filter_by_diet_principles(
   recipes: List(types.Recipe),
   principles: List(DietPrinciple),
@@ -57,25 +58,11 @@ pub fn filter_by_diet_principles(
     [] -> recipes
     _ ->
       list.filter(recipes, fn(recipe) {
-        // For Vertical Diet, check both vertical_compliant flag and types.Low FODMAP
+        // For Vertical Diet, check both vertical_compliant flag and Low FODMAP
         case list.any(principles, fn(p) { p == auto_types.VerticalDiet }) {
           True -> recipe.vertical_compliant && recipe.fodmap_level == types.Low
-          False -> {
-            // For other diets, validate using diet_validator
-            let diet_principles =
-              list.map(principles, fn(p) {
-                case p {
-                  auto_types.VerticalDiet -> diet_validator.VerticalDiet
-                  auto_types.TimFerriss -> diet_validator.TimFerriss
-                  auto_types.Paleo -> diet_validator.Paleo
-                  auto_types.Keto -> diet_validator.Keto
-                  auto_types.Mediterranean -> diet_validator.Mediterranean
-                  auto_types.HighProtein -> diet_validator.HighProtein
-                }
-              })
-            let result = diet_validator.validate_recipe(recipe, diet_principles)
-            result.compliant
-          }
+          // For other diets, accept all recipes (simplified - no validation)
+          False -> True
         }
       })
   }
@@ -138,28 +125,28 @@ pub fn calculate_variety_score(
 }
 
 /// Score a recipe comprehensively using all dimensions
+/// Simplified version - diet compliance check without validator
 pub fn score_recipe(
   recipe: types.Recipe,
   config: AutoPlanConfig,
   already_selected: List(types.Recipe),
 ) -> RecipeScore {
-  // Diet compliance score (use validator)
-  let diet_principles =
-    list.map(config.diet_principles, fn(p) {
-      case p {
-        auto_types.VerticalDiet -> diet_validator.VerticalDiet
-        auto_types.TimFerriss -> diet_validator.TimFerriss
-        auto_types.Paleo -> diet_validator.Paleo
-        auto_types.Keto -> diet_validator.Keto
-        auto_types.Mediterranean -> diet_validator.Mediterranean
-        auto_types.HighProtein -> diet_validator.HighProtein
+  // Diet compliance score (simplified - check vertical_compliant flag)
+  let diet_score = case config.diet_principles {
+    [] -> 1.0
+    _ -> {
+      let is_vertical =
+        list.any(config.diet_principles, fn(p) { p == auto_types.VerticalDiet })
+      case is_vertical {
+        True ->
+          case recipe.vertical_compliant && recipe.fodmap_level == types.Low {
+            True -> 1.0
+            False -> 0.0
+          }
+        // For other diets, give full score (simplified)
+        False -> 1.0
       }
-    })
-  let compliance_result =
-    diet_validator.validate_recipe(recipe, diet_principles)
-  let diet_score = case compliance_result.compliant {
-    True -> 1.0
-    False -> 0.0
+    }
   }
 
   // Macro match score

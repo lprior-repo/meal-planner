@@ -9,7 +9,6 @@ import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
-import meal_planner/diet_validator.{type DietPrinciple}
 import meal_planner/types.{type Macros, type Recipe}
 
 // ============================================================================
@@ -38,16 +37,16 @@ pub type ScoringWeights {
 // Main Scoring Functions
 // ============================================================================
 
-/// Score a recipe against diet principles and macro targets
+/// Score a recipe against macro targets
+/// Simplified version - diet compliance always returns 1.0
 pub fn score_recipe(
   recipe: Recipe,
-  diet_principles: List(DietPrinciple),
+  _diet_principles: List(String),
   macro_targets: Macros,
   weights: ScoringWeights,
 ) -> RecipeScore {
-  // Validate diet compliance
-  let compliance_result =
-    diet_validator.validate_recipe(recipe, diet_principles)
+  // Diet compliance (simplified - always compliant)
+  let _diet_score = 1.0
 
   // Calculate macro match score
   let macro_score = score_macro_match(recipe.macros, macro_targets)
@@ -55,27 +54,27 @@ pub fn score_recipe(
   // Calculate variety score (based on ingredient diversity)
   let variety = score_variety(recipe)
 
-  // Calculate weighted total score
+  // Calculate weighted total score (simplified - diet always gets full weight)
   let total =
-    { weights.diet_compliance *. compliance_result.score }
+    weights.diet_compliance
     +. { weights.macro_match *. macro_score }
     +. { weights.variety *. variety }
 
   RecipeScore(
     recipe_id: recipe.id,
     total_score: total,
-    diet_compliance_score: compliance_result.score,
+    diet_compliance_score: 1.0,
     macro_match_score: macro_score,
     variety_score: variety,
-    violations: compliance_result.violations,
-    warnings: compliance_result.warnings,
+    violations: [],
+    warnings: [],
   )
 }
 
 /// Score a list of recipes and return them sorted by score (highest first)
 pub fn score_and_rank_recipes(
   recipes: List(Recipe),
-  diet_principles: List(DietPrinciple),
+  diet_principles: List(String),
   macro_targets: Macros,
   weights: ScoringWeights,
 ) -> List(RecipeScore) {
