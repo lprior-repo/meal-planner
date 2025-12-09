@@ -23,6 +23,7 @@ pub fn create_user_profile_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   profile.id |> should.equal("user123")
@@ -40,6 +41,7 @@ pub fn create_sedentary_profile_test() {
       activity_level: Sedentary,
       goal: Lose,
       meals_per_day: 4,
+      micronutrient_goals: None,
     )
 
   profile.activity_level |> should.equal(Sedentary)
@@ -54,6 +56,7 @@ pub fn create_active_profile_test() {
       activity_level: Active,
       goal: Gain,
       meals_per_day: 5,
+      micronutrient_goals: None,
     )
 
   profile.activity_level |> should.equal(Active)
@@ -72,6 +75,7 @@ pub fn protein_target_active_test() {
       activity_level: Active,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Active users get 1.0g per lb
@@ -86,6 +90,7 @@ pub fn protein_target_gain_test() {
       activity_level: Moderate,
       goal: Gain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Gain goal gets 1.0g per lb
@@ -100,6 +105,7 @@ pub fn protein_target_sedentary_test() {
       activity_level: Sedentary,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Sedentary gets 0.8g per lb
@@ -114,6 +120,7 @@ pub fn protein_target_lose_test() {
       activity_level: Moderate,
       goal: Lose,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Lose goal gets 0.8g per lb
@@ -128,6 +135,7 @@ pub fn protein_target_moderate_maintain_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Moderate + Maintain gets 0.9g per lb
@@ -146,6 +154,7 @@ pub fn fat_target_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Fat is always 0.3g per lb
@@ -160,6 +169,7 @@ pub fn fat_target_different_weight_test() {
       activity_level: Active,
       goal: Gain,
       meals_per_day: 4,
+      micronutrient_goals: None,
     )
 
   // Fat is always 0.3g per lb
@@ -178,6 +188,7 @@ pub fn calorie_target_sedentary_maintain_test() {
       activity_level: Sedentary,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Sedentary: 180 * 12 = 2160
@@ -192,6 +203,7 @@ pub fn calorie_target_moderate_maintain_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Moderate: 180 * 15 = 2700
@@ -206,6 +218,7 @@ pub fn calorie_target_active_maintain_test() {
       activity_level: Active,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Active: 180 * 18 = 3240
@@ -220,6 +233,7 @@ pub fn calorie_target_gain_test() {
       activity_level: Moderate,
       goal: Gain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Moderate + Gain: (180 * 15) * 1.15 = 3105
@@ -234,6 +248,7 @@ pub fn calorie_target_lose_test() {
       activity_level: Moderate,
       goal: Lose,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Moderate + Lose: (180 * 15) * 0.85 = 2295
@@ -252,6 +267,7 @@ pub fn carb_target_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   // Total calories: 2700
@@ -270,6 +286,7 @@ pub fn carb_target_active_gain_test() {
       activity_level: Active,
       goal: Gain,
       meals_per_day: 5,
+      micronutrient_goals: None,
     )
 
   // Total calories: (200 * 18) * 1.15 = 4140
@@ -292,6 +309,7 @@ pub fn daily_macro_targets_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   let targets = daily_macro_targets(profile)
@@ -309,6 +327,7 @@ pub fn daily_macro_targets_sedentary_lose_test() {
       activity_level: Sedentary,
       goal: Lose,
       meals_per_day: 4,
+      micronutrient_goals: None,
     )
 
   let targets = daily_macro_targets(profile)
@@ -335,6 +354,7 @@ pub fn daily_macro_targets_active_gain_test() {
       activity_level: Active,
       goal: Gain,
       meals_per_day: 5,
+      micronutrient_goals: None,
     )
 
   let targets = daily_macro_targets(profile)
@@ -365,6 +385,7 @@ pub fn low_bodyweight_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 3,
+      micronutrient_goals: None,
     )
 
   let targets = daily_macro_targets(profile)
@@ -381,6 +402,7 @@ pub fn high_bodyweight_test() {
       activity_level: Active,
       goal: Gain,
       meals_per_day: 6,
+      micronutrient_goals: None,
     )
 
   let targets = daily_macro_targets(profile)
@@ -397,6 +419,7 @@ pub fn multiple_meals_per_day_test() {
       activity_level: Moderate,
       goal: Maintain,
       meals_per_day: 6,
+      micronutrient_goals: None,
     )
 
   // meals_per_day doesn't affect macro calculations, just for user planning
