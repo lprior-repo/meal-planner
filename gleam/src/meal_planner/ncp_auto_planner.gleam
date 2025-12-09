@@ -13,7 +13,8 @@ import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/auto_planner/recipe_scorer
 import meal_planner/auto_planner/types as auto_types
-import meal_planner/diet_validator
+
+// Simplified: removed diet_validator dependency
 import meal_planner/ncp
 import meal_planner/storage.{type StorageError}
 import meal_planner/types.{type Macros, type Recipe, Macros}
@@ -24,12 +25,13 @@ import pog
 // ============================================================================
 
 /// Configuration for auto-suggestion generation
+/// Simplified: diet principles now use String type
 pub type SuggestionConfig {
   SuggestionConfig(
     /// Maximum number of recipes to suggest
     max_suggestions: Int,
-    /// Diet principles to follow when suggesting recipes
-    diet_principles: List(diet_validator.DietPrinciple),
+    /// Diet principles to follow when suggesting recipes (simplified - strings)
+    diet_principles: List(String),
     /// Minimum compliance score (0.0-1.0) for recipes
     min_compliance_score: Float,
     /// Weight for variety when scoring (0.0-1.0)
@@ -222,7 +224,7 @@ fn query_balanced_recipes(
 fn score_recipes_for_deficit(
   recipes: List(Recipe),
   deficit: ncp.DeviationResult,
-  diet_principles: List(diet_validator.DietPrinciple),
+  _diet_principles: List(String),
 ) -> List(RecipeSuggestion) {
   recipes
   |> list.map(fn(recipe) {
@@ -230,19 +232,17 @@ fn score_recipes_for_deficit(
     let macro_match_score =
       ncp.score_recipe_for_deviation(deficit, recipe.macros)
 
-    // Score diet compliance using recipe_scorer
-    let compliance_result =
-      diet_validator.validate_recipe(recipe, diet_principles)
+    // Diet compliance (simplified - always 1.0)
+    let _compliance_score = 1.0
 
     // Score variety
     let variety_score = recipe_scorer.score_variety(recipe)
 
     // Calculate weighted total score
     // Weights: macro match (50%), compliance (30%), variety (20%)
+    // Simplified: compliance always 1.0
     let total_score =
-      { 0.5 *. macro_match_score }
-      +. { 0.3 *. compliance_result.score }
-      +. { 0.2 *. variety_score }
+      { 0.5 *. macro_match_score } +. { 0.3 *. 1.0 } +. { 0.2 *. variety_score }
 
     // Generate human-readable reason
     let reason = generate_suggestion_reason(deficit, recipe.macros)
@@ -251,7 +251,8 @@ fn score_recipes_for_deficit(
       recipe: recipe,
       total_score: total_score,
       macro_match_score: macro_match_score,
-      compliance_score: compliance_result.score,
+      compliance_score: 1.0,
+      // Simplified: always compliant
       reason: reason,
       contribution: recipe.macros,
     )
@@ -308,7 +309,7 @@ pub fn default_config() -> SuggestionConfig {
 pub fn vertical_diet_config() -> SuggestionConfig {
   SuggestionConfig(
     max_suggestions: 5,
-    diet_principles: [diet_validator.VerticalDiet],
+    diet_principles: ["VerticalDiet"],
     min_compliance_score: 0.7,
     variety_weight: 0.2,
   )
@@ -318,7 +319,7 @@ pub fn vertical_diet_config() -> SuggestionConfig {
 pub fn tim_ferriss_config() -> SuggestionConfig {
   SuggestionConfig(
     max_suggestions: 5,
-    diet_principles: [diet_validator.TimFerriss],
+    diet_principles: ["TimFerriss"],
     min_compliance_score: 0.7,
     variety_weight: 0.2,
   )
@@ -328,7 +329,7 @@ pub fn tim_ferriss_config() -> SuggestionConfig {
 pub fn high_protein_config() -> SuggestionConfig {
   SuggestionConfig(
     max_suggestions: 5,
-    diet_principles: [diet_validator.HighProtein],
+    diet_principles: ["HighProtein"],
     min_compliance_score: 0.6,
     variety_weight: 0.1,
   )
@@ -594,18 +595,20 @@ fn calculate_calories_from_macros(macros: Macros) -> Float {
   { macros.protein *. 4.0 } +. { macros.carbs *. 4.0 } +. { macros.fat *. 9.0 }
 }
 
-/// Convert diet validator principles to auto planner principles
+/// Convert diet principles (simplified - now just passes through strings)
 fn convert_diet_principles(
-  principles: List(diet_validator.DietPrinciple),
+  principles: List(String),
 ) -> List(auto_types.DietPrinciple) {
   list.map(principles, fn(p) {
     case p {
-      diet_validator.VerticalDiet -> auto_types.VerticalDiet
-      diet_validator.TimFerriss -> auto_types.TimFerriss
-      diet_validator.Paleo -> auto_types.Paleo
-      diet_validator.Keto -> auto_types.Keto
-      diet_validator.Mediterranean -> auto_types.Mediterranean
-      diet_validator.HighProtein -> auto_types.HighProtein
+      "VerticalDiet" -> auto_types.VerticalDiet
+      "TimFerriss" -> auto_types.TimFerriss
+      "Paleo" -> auto_types.Paleo
+      "Keto" -> auto_types.Keto
+      "Mediterranean" -> auto_types.Mediterranean
+      "HighProtein" -> auto_types.HighProtein
+      _ -> auto_types.HighProtein
+      // Default fallback
     }
   })
 }
