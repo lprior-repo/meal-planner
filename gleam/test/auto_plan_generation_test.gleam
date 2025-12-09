@@ -19,18 +19,13 @@
 ///
 /// Test-Driven Development approach following Martin Fowler's evolutionary design:
 /// Comprehensive tests enable confident refactoring and feature addition.
-import gleam/int
 import gleam/list
-import gleam/option.{None, Some}
-import gleam/result
 import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/auto_planner
 import meal_planner/auto_planner/types as auto_types
-import meal_planner/integration/test_helper
 import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
-import pog
 
 pub fn main() {
   gleeunit.main()
@@ -167,28 +162,6 @@ fn float_near(a: Float, b: Float, tolerance: Float) -> Bool {
     False -> b -. a
   }
   diff <=. tolerance
-}
-
-/// Assert macros are within reasonable range of targets
-fn assert_macros_in_range(
-  actual: Macros,
-  targets: Macros,
-  tolerance_percent: Float,
-) -> Nil {
-  let protein_ok =
-    float_near(
-      actual.protein,
-      targets.protein,
-      targets.protein *. tolerance_percent,
-    )
-  let fat_ok =
-    float_near(actual.fat, targets.fat, targets.fat *. tolerance_percent)
-  let carbs_ok =
-    float_near(actual.carbs, targets.carbs, targets.carbs *. tolerance_percent)
-
-  should.be_true(protein_ok || True)
-  should.be_true(fat_ok || True)
-  should.be_true(carbs_ok || True)
 }
 
 // ============================================================================
