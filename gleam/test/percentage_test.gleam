@@ -73,8 +73,7 @@ fn small_positive_float() -> qcheck.Generator(Float) {
 
 /// Generator for pairs of (current, target) values
 fn gen_percentage_pair() -> qcheck.Generator(#(Float, Float)) {
-  use current <- qcheck.map(non_negative_float())
-  use target <- qcheck.map(positive_float())
+  use current, target <- qcheck.map2(non_negative_float(), positive_float())
   #(current, target)
 }
 
@@ -93,8 +92,8 @@ pub fn percentage_non_negative_test() {
 
   let percentage = calculate_percentage(current, target)
 
-  percentage
-  |> should.be_true(fn(p) { p >=. 0.0 })
+  { percentage >=. 0.0 }
+  |> should.be_true
 }
 
 // ============================================================================
@@ -120,8 +119,6 @@ pub fn percentage_zero_target_test() {
 ///
 /// Tests the special case where both values are zero.
 pub fn percentage_zero_both_test() {
-  use _ <- qcheck.given(qcheck.int())
-
   let percentage = calculate_percentage(0.0, 0.0)
 
   percentage
@@ -143,8 +140,8 @@ pub fn percentage_at_target_test() {
 
   // Allow small floating-point tolerance
   let diff = float.absolute_value(percentage -. 100.0)
-  diff
-  |> should.be_true(fn(d) { d <. 0.01 })
+  { diff <. 0.01 }
+  |> should.be_true
 }
 
 /// GIVEN zero current and positive target WHEN calculating percentage
@@ -208,8 +205,8 @@ pub fn percentage_monotonic_in_current_test() {
   let pct2 = calculate_percentage(current2, target)
 
   case current1 <. current2 {
-    True -> pct1 |> should.be_true(fn(p1) { p1 <=. pct2 })
-    False -> pct1 |> should.be_true(fn(p1) { p1 >=. pct2 })
+    True -> { pct1 <=. pct2 } |> should.be_true
+    False -> { pct1 >=. pct2 } |> should.be_true
   }
 }
 
@@ -231,8 +228,8 @@ pub fn percentage_scale_invariant_test() {
 
   // Both percentages should be approximately equal
   let diff = float.absolute_value(pct1 -. pct2)
-  diff
-  |> should.be_true(fn(d) { d <. 0.1 })
+  { diff <. 0.1 }
+  |> should.be_true
 }
 
 // ============================================================================
@@ -248,8 +245,8 @@ pub fn percentage_half_target_test() {
   let percentage = calculate_percentage(current, target)
 
   let diff = float.absolute_value(percentage -. 50.0)
-  diff
-  |> should.be_true(fn(d) { d <. 0.1 })
+  { diff <. 0.1 }
+  |> should.be_true
 }
 
 /// GIVEN current is 25% of target WHEN calculating percentage
@@ -261,8 +258,8 @@ pub fn percentage_quarter_target_test() {
   let percentage = calculate_percentage(current, target)
 
   let diff = float.absolute_value(percentage -. 25.0)
-  diff
-  |> should.be_true(fn(d) { d <. 0.1 })
+  { diff <. 0.1 }
+  |> should.be_true
 }
 
 /// GIVEN current is 200% of target WHEN calculating percentage
@@ -274,8 +271,8 @@ pub fn percentage_double_target_test() {
   let percentage = calculate_percentage(current, target)
 
   let diff = float.absolute_value(percentage -. 200.0)
-  diff
-  |> should.be_true(fn(d) { d <. 0.1 })
+  { diff <. 0.1 }
+  |> should.be_true
 }
 
 // ============================================================================
@@ -297,8 +294,8 @@ pub fn percentage_additive_property_test() {
     +. calculate_percentage(current2, target)
 
   let diff = float.absolute_value(combined_pct -. sum_of_pcts)
-  diff
-  |> should.be_true(fn(d) { d <. 0.1 })
+  { diff <. 0.1 }
+  |> should.be_true
 }
 
 // ============================================================================
@@ -310,8 +307,6 @@ pub fn percentage_additive_property_test() {
 ///
 /// This tests numerical stability with small floating-point values.
 pub fn percentage_small_numbers_test() {
-  use _ <- qcheck.given(qcheck.int())
-
   let small_current = 0.001
   let small_target = 0.01
 
@@ -320,8 +315,8 @@ pub fn percentage_small_numbers_test() {
   // 0.001 / 0.01 * 100 = 10%
   let expected = 10.0
   let diff = float.absolute_value(percentage -. expected)
-  diff
-  |> should.be_true(fn(d) { d <. 0.1 })
+  { diff <. 0.1 }
+  |> should.be_true
 }
 
 // ============================================================================
@@ -333,8 +328,6 @@ pub fn percentage_small_numbers_test() {
 ///
 /// This tests numerical stability with large floating-point values.
 pub fn percentage_large_numbers_test() {
-  use _ <- qcheck.given(qcheck.int())
-
   let large_current = 1_000_000.0
   let large_target = 2_000_000.0
 
@@ -343,8 +336,8 @@ pub fn percentage_large_numbers_test() {
   // 1M / 2M * 100 = 50%
   let expected = 50.0
   let diff = float.absolute_value(percentage -. expected)
-  diff
-  |> should.be_true(fn(d) { d <. 0.1 })
+  { diff <. 0.1 }
+  |> should.be_true
 }
 
 // ============================================================================
@@ -363,6 +356,6 @@ pub fn percentage_capped_consistency_test() {
   let capped = calculate_percentage_capped(current, target)
 
   let diff = float.absolute_value(uncapped -. capped)
-  diff
-  |> should.be_true(fn(d) { d <. 0.01 })
+  { diff <. 0.01 }
+  |> should.be_true
 }
