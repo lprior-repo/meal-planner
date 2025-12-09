@@ -197,15 +197,31 @@ fn check_tables_exist(db: pog.Connection) -> Bool {
 }
 
 fn check_data_imported(db: pog.Connection) -> Bool {
-  let query =
+  // Check foods count
+  let foods_query =
     pog.query("SELECT COUNT(*) FROM foods")
     |> pog.returning(decode.at([0], decode.int))
-
-  case pog.execute(query, db) {
-    Ok(pog.Returned(_, [count])) ->
-      count > nutrition_constants.import_batch_size
+  let foods_ok = case pog.execute(foods_query, db) {
+    Ok(pog.Returned(_, [count])) -> count > nutrition_constants.import_batch_size
     _ -> False
   }
+
+  // Check food_nutrients count - should be ~26.8M when complete
+  // If less than 20M, import is incomplete
+  let fn_query =
+    pog.query("SELECT COUNT(*) FROM food_nutrients")
+    |> pog.returning(decode.at([0], decode.int))
+  let fn_ok = case pog.execute(fn_query, db) {
+    Ok(pog.Returned(_, [count])) -> {
+      io.println(
+        "Food nutrients count: " <> int.to_string(count) <> " (need ~26.8M)",
+      )
+      count > 20_000_000
+    }
+    _ -> False
+  }
+
+  foods_ok && fn_ok
 }
 
 fn print_stats(db: pog.Connection) {
@@ -240,17 +256,17 @@ type WorkerResult {
 
 fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
   let cache_dir = get_usda_cache_dir()
-  let usda_dir = cache_dir <> "\\FoodData_Central_csv_2025-04-24"
+  let usda_dir = cache_dir <> "/FoodData_Central_csv_2025-04-24"
 
   // Verify files exist
-  case simplifile.is_file(usda_dir <> "\\food.csv") {
+  case simplifile.is_file(usda_dir <> "/food.csv") {
     Ok(True) -> {
       // Import nutrients first (small, quick)
       io.println("Importing nutrients...")
       let n_result =
         import_file_parallel(
           db,
-          usda_dir <> "\\nutrient.csv",
+          usda_dir <> "/nutrient.csv",
           "nutrient",
           nutrition_constants.nutrient_import_workers,
         )
@@ -269,7 +285,7 @@ fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
           let f_result =
             import_file_parallel(
               db,
-              usda_dir <> "\\food.csv",
+              usda_dir <> "/food.csv",
               "food",
               nutrition_constants.food_import_workers,
             )
@@ -290,7 +306,7 @@ fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
               let fn_result =
                 import_file_parallel(
                   db,
-                  usda_dir <> "\\food_nutrient.csv",
+                  usda_dir <> "/food_nutrient.csv",
                   "food_nutrient",
                   nutrition_constants.food_nutrient_import_workers,
                 )
@@ -317,7 +333,7 @@ fn parallel_import(db: pog.Connection) -> Result(ImportStats, String) {
 
 fn get_usda_cache_dir() -> String {
   case envoy.get("LOCALAPPDATA") {
-    Ok(local_app_data) -> local_app_data <> "\\meal-planner\\usda-cache"
+    Ok(local_app_data) -> local_app_data <> "/meal-planner/usda-cache"
     Error(_) -> {
       case envoy.get("HOME") {
         Ok(home) -> home <> "/.local/share/meal-planner/usda-cache"
@@ -389,9 +405,27 @@ fn collect_results(
     _ -> {
       // Wait for a result with configured timeout
       case process.receive(subject, timeout_ms) {
-        Ok(WorkerDone(_, count)) ->
+        Ok(WorkerDone(worker_id, count)) -> {
+          io.println(
+            "    Worker "
+            <> int.to_string(worker_id)
+            <> " completed with "
+            <> int.to_string(count)
+            <> " rows",
+          )
           collect_results(subject, remaining - 1, acc + count, timeout_ms)
-        Error(_) -> acc
+        }
+        Error(_) -> {
+          // Timeout - log and continue waiting for other workers
+          io.println(
+            "    Warning: Timeout waiting for worker. "
+            <> int.to_string(remaining)
+            <> " workers still pending. Accumulated: "
+            <> int.to_string(acc),
+          )
+          // Continue waiting for remaining workers with fresh timeout
+          collect_results(subject, remaining - 1, acc, timeout_ms)
+        }
       }
     }
   }

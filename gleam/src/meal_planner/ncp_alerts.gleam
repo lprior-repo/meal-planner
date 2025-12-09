@@ -7,7 +7,7 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import meal_planner/email.{EmailAddress, EmailPayload}
+import meal_planner/email.{type EmailPayload, EmailAddress, EmailPayload}
 
 /// Alert severity levels (following Kubernetes patterns)
 pub type AlertLevel {

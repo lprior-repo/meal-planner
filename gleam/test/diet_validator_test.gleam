@@ -7,7 +7,7 @@ import meal_planner/diet_validator.{
   check_mediterranean, check_paleo, check_tim_ferriss, check_vertical_diet,
   has_seed_oils, has_white_carbs, validate_recipe,
 }
-import meal_planner/types.{High, Ingredient, Low, Macros, Medium, Recipe}
+import meal_planner/types.{type Recipe, High, Ingredient, Low, Macros, Medium, Recipe}
 
 // =============================================================================
 // Test Data Helpers
@@ -162,7 +162,7 @@ pub fn validate_recipe_single_principle_non_compliant_test() {
 
   result.compliant |> should.be_false()
   // Should have seed oil violation
-  list.length(result.violations) > 0 |> should.be_true()
+  { list.length(result.violations) > 0 } |> should.be_true()
 }
 
 pub fn validate_recipe_multiple_principles_test() {
@@ -192,7 +192,7 @@ pub fn check_vertical_diet_with_seed_oil_test() {
 
   result.compliant |> should.be_false()
   // Should have at least one violation for seed oil
-  list.length(result.violations) > 0 |> should.be_true()
+  { list.length(result.violations) > 0 } |> should.be_true()
 }
 
 pub fn check_vertical_diet_high_fodmap_warning_test() {
@@ -200,7 +200,7 @@ pub fn check_vertical_diet_high_fodmap_warning_test() {
   let result = check_vertical_diet(recipe)
 
   // High FODMAP generates warnings, not violations
-  list.length(result.warnings) > 0 |> should.be_true()
+  { list.length(result.warnings) > 0 } |> should.be_true()
 }
 
 pub fn check_vertical_diet_missing_preferred_protein_warning_test() {
@@ -233,7 +233,7 @@ pub fn check_tim_ferriss_low_protein_not_compliant_test() {
   // Low protein fails Tim Ferriss compliance
   result.compliant |> should.be_false()
   // Should have warning about low protein
-  list.length(result.warnings) > 0 |> should.be_true()
+  { list.length(result.warnings) > 0 } |> should.be_true()
 }
 
 pub fn check_tim_ferriss_white_carbs_violation_test() {
@@ -241,7 +241,7 @@ pub fn check_tim_ferriss_white_carbs_violation_test() {
   let result = check_tim_ferriss(recipe)
 
   // Pasta is a white carb violation
-  list.length(result.violations) > 0 |> should.be_true()
+  { list.length(result.violations) > 0 } |> should.be_true()
 }
 
 pub fn check_tim_ferriss_white_rice_warning_test() {
@@ -287,7 +287,7 @@ pub fn check_keto_high_carb_not_compliant_test() {
   result.compliant |> should.be_false()
   result.score |> should.equal(0.0)
   // Should have violation about too many carbs
-  list.length(result.violations) > 0 |> should.be_true()
+  { list.length(result.violations) > 0 } |> should.be_true()
 }
 
 // =============================================================================
@@ -337,7 +337,7 @@ pub fn check_high_protein_below_target_test() {
   // 8g/4 servings = 2g per serving < 40g target
   // Still compliant but with warning
   result.compliant |> should.be_true()
-  list.length(result.warnings) > 0 |> should.be_true()
+  { list.length(result.warnings) > 0 } |> should.be_true()
   // Score should be proportional to protein
   { result.score <. 1.0 } |> should.be_true()
 }

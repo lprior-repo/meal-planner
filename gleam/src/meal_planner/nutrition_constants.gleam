@@ -50,7 +50,8 @@ pub const food_import_workers = 16
 
 pub const food_nutrient_import_workers = 32
 
-pub const worker_timeout_ms = 600_000
+// 60 minutes per worker - food_nutrients has ~838K rows/worker
+pub const worker_timeout_ms = 3_600_000
 
 // ===================================================================
 // UI/UX DIMENSION CONSTANTS
