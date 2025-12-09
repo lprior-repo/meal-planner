@@ -219,6 +219,67 @@ pub fn search_key(query: String, limit: Int) -> String {
   "search:" <> string.lowercase(query) <> ":" <> int.to_string(limit)
 }
 
+/// Generate a cache key for filtered search queries
+pub fn search_filtered_key(
+  query: String,
+  vegetarian: Bool,
+  bio: Bool,
+  category: Option(String),
+  limit: Int,
+) -> String {
+  let veg_str = case vegetarian {
+    True -> "v"
+    False -> "n"
+  }
+  let bio_str = case bio {
+    True -> "b"
+    False -> "n"
+  }
+  let cat_str = case category {
+    Some(c) -> c
+    None -> "all"
+  }
+  "search_filtered:"
+  <> string.lowercase(query)
+  <> ":"
+  <> veg_str
+  <> ":"
+  <> bio_str
+  <> ":"
+  <> cat_str
+  <> ":"
+  <> int.to_string(limit)
+}
+
+/// Generate a cache key for dashboard data
+pub fn dashboard_key(date: String, meal_type: Option(String)) -> String {
+  let meal_str = case meal_type {
+    Some(m) -> m
+    None -> "all"
+  }
+  "dashboard:" <> date <> ":" <> meal_str
+}
+
+/// Generate a cache key for recent meals
+pub fn recent_meals_key(limit: Int) -> String {
+  "recent_meals:" <> int.to_string(limit)
+}
+
+/// Generate a cache key for food nutrients
+pub fn food_nutrients_key(food_id: Int) -> String {
+  "nutrients:" <> int.to_string(food_id)
+}
+
+/// Delete a key from the cache
+pub fn delete(cache: QueryCache(a), key: String) -> QueryCache(a) {
+  QueryCache(..cache, entries: dict.delete(cache.entries, key))
+}
+
+/// Reset statistics counters while keeping cache entries
+pub fn reset_stats(cache: QueryCache(a)) -> QueryCache(a) {
+  QueryCache(..cache, hits: 0, misses: 0)
+}
+
 // ============================================================================
 // OTP Actor Implementation
 // ============================================================================
