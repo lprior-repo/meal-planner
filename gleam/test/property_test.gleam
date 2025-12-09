@@ -1,6 +1,37 @@
-//// Property-based tests for Macros type
+//// Property-based tests for Macros type using Gleam qcheck
+////
 //// BDD Spec: specs/features/property-tests-qcheck.spec.md
 //// Bead: meal-planner-386
+////
+//// This module demonstrates property-based testing patterns using qcheck:
+////
+//// ## Key Patterns
+////
+//// 1. **Generators**: Create random test data with `qcheck.Generator(a)`
+////    - Use `bounded_float(min, max)` for numeric ranges
+////    - Combine generators with `map`, `map2`, `map3`, etc.
+////    - Use `tuple2`, `tuple3` for generating multiple values
+////
+//// 2. **Property Tests**: Use `qcheck.given(generator, property_fn)`
+////    - The `use` syntax creates clean property test functions
+////    - Property functions receive generated values and assert invariants
+////    - Tests run multiple iterations (default 100) with different values
+////
+//// 3. **Mathematical Properties**: Test algebraic laws
+////    - Commutative: `a + b == b + a`
+////    - Associative: `(a + b) + c == a + (b + c)`
+////    - Identity: `a + 0 == a` and `a * 1 == a`
+////    - Zero: `a * 0 == 0`
+////
+//// 4. **Approximate Equality**: Use epsilon for float comparisons
+////    - Floating point arithmetic isn't exact
+////    - Define `float_equal_approx` helper with small epsilon (0.0001)
+////
+//// ## Usage
+////
+//// Run with: `gleam test`
+//// Each property test runs 100 times by default with randomized inputs.
+//// If a test fails, qcheck will shrink the input to find the minimal failing case.
 
 import gleam/float
 import gleeunit/should
@@ -14,11 +45,15 @@ import qcheck
 // ============================================================================
 
 /// Generator for non-negative floats (valid macro values 0-500g)
+///
+/// Pattern: Use `bounded_float` for numeric ranges
 fn non_negative_float() -> qcheck.Generator(Float) {
   qcheck.bounded_float(0.0, 500.0)
 }
 
-/// Simple generator for Macros using map2 twice
+/// Simple generator for Macros using map2
+///
+/// Pattern: Combine multiple generators with `map2`, `map3`, etc.
 fn gen_macros() -> qcheck.Generator(Macros) {
   use protein, fat <- qcheck.map2(non_negative_float(), non_negative_float())
   // For simplicity, use protein value for carbs too (scaled)
@@ -26,6 +61,8 @@ fn gen_macros() -> qcheck.Generator(Macros) {
 }
 
 /// Alternative: Generate Macros from tuple
+///
+/// Pattern: Generate tuples then map to custom types
 fn gen_macros_from_tuple() -> qcheck.Generator(Macros) {
   use pf <- qcheck.map(qcheck.tuple2(non_negative_float(), non_negative_float()))
   let #(protein, fat) = pf

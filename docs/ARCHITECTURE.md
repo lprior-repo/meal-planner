@@ -44,7 +44,7 @@ meal-planner/
 
 ## Database Schema
 
-See `gleam/migrations/` for SQL migrations:
+See `gleam/migrations_pg/` for PostgreSQL migrations:
 - 001: Schema migrations table
 - 002: Nutrition tables
 - 003: USDA foods

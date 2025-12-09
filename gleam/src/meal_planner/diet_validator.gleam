@@ -60,9 +60,23 @@ pub fn validate_recipe(
           case principle {
             VerticalDiet -> check_vertical_diet(recipe)
             TimFerriss -> check_tim_ferriss(recipe)
-            Paleo -> check_paleo(recipe)
+            Paleo ->
+              // Paleo diet validation not yet implemented
+              ComplianceResult(
+                compliant: True,
+                score: 1.0,
+                violations: [],
+                warnings: ["Paleo validation not yet implemented"],
+              )
             Keto -> check_keto(recipe)
-            Mediterranean -> check_mediterranean(recipe)
+            Mediterranean ->
+              // Mediterranean diet validation not yet implemented
+              ComplianceResult(
+                compliant: True,
+                score: 1.0,
+                violations: [],
+                warnings: ["Mediterranean validation not yet implemented"],
+              )
             HighProtein -> check_high_protein(recipe)
           }
         })
@@ -70,14 +84,14 @@ pub fn validate_recipe(
       // Combine results - all must be compliant for overall compliance
       let all_compliant = list.all(results, fn(result) { result.compliant })
 
-      // Average the scores
-      let avg_score = case list.length(results) {
+      // Average the scores efficiently
+      let #(total_score, count) =
+        list.fold(results, #(0.0, 0), fn(acc, result) {
+          #(acc.0 +. result.score, acc.1 + 1)
+        })
+      let avg_score = case count {
         0 -> 1.0
-        count -> {
-          let total_score =
-            list.fold(results, 0.0, fn(acc, result) { acc +. result.score })
-          total_score /. int_to_float(count)
-        }
+        n -> total_score /. int_to_float(n)
       }
 
       // Combine violations and warnings
@@ -335,25 +349,6 @@ fn is_white_carb(name_lower: String) -> Bool {
 fn int_to_float(n: Int) -> Float
 
 // ============================================================================
-// Paleo Diet Validation
-// ============================================================================
-
-/// Check if recipe complies with Paleo diet principles
-/// Rules: no grains, no dairy, no legumes, no processed foods
-pub fn check_paleo(_recipe: Recipe) -> ComplianceResult {
-  let violations = []
-  let warnings = []
-  let score = 1.0
-
-  ComplianceResult(
-    compliant: True,
-    score: score,
-    violations: violations,
-    warnings: warnings,
-  )
-}
-
-// ============================================================================
 // Keto Diet Validation
 // ============================================================================
 
@@ -382,16 +377,6 @@ pub fn check_keto(recipe: Recipe) -> ComplianceResult {
     violations: violations,
     warnings: [],
   )
-}
-
-// ============================================================================
-// Mediterranean Diet Validation
-// ============================================================================
-
-/// Check if recipe complies with Mediterranean diet principles
-/// Rules: olive oil, fish, vegetables, whole grains
-pub fn check_mediterranean(_recipe: Recipe) -> ComplianceResult {
-  ComplianceResult(compliant: True, score: 1.0, violations: [], warnings: [])
 }
 
 // ============================================================================

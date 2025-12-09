@@ -19,19 +19,19 @@
      COLOR PALETTE
      ================================================================ */
 
-  /* Primary Colors - Main brand color (Blue) */
-  --color-primary-50: #f0f7ff;
-  --color-primary-100: #e0e9fe;
-  --color-primary-200: #bae6fd;
-  --color-primary-300: #7dd3fc;
-  --color-primary-400: #38bdf8;
-  --color-primary: #007bff;
-  --color-primary-600: #0284c7;
-  --color-primary-700: #0369a1;
-  --color-primary-800: #075985;
-  --color-primary-900: #0c3d66;
-  --color-primary-dark: #0056b3;
-  --color-primary-light: #cfe2ff;
+  /* Primary Colors - Main brand color (Cronometer Orange) */
+  --color-primary-50: #fff7f0;
+  --color-primary-100: #ffede0;
+  --color-primary-200: #ffd8ba;
+  --color-primary-300: #ffb87d;
+  --color-primary-400: #ff8f52;
+  --color-primary: #FF6734;
+  --color-primary-600: #e65420;
+  --color-primary-700: #c74115;
+  --color-primary-800: #a3340f;
+  --color-primary-900: #7a260a;
+  --color-primary-dark: #c74115;
+  --color-primary-light: #ffede0;
 
   /* Success - Positive feedback, confirmations */
   --color-success: #28a745;
@@ -193,6 +193,7 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-deep: 0 8px 20px -4px rgba(0, 0, 0, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.08);
   --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
   --shadow-none: 0 0 #0000;
 
@@ -224,6 +225,7 @@
   --transition-fast: all var(--duration-150) var(--ease-out);
   --transition: all var(--duration-300) var(--ease-out);
   --transition-slow: all var(--duration-500) var(--ease-out);
+  --transition-scale: transform var(--duration-200) var(--ease-out);
 
   /* ================================================================
      BREAKPOINTS (Mobile-First Approach)

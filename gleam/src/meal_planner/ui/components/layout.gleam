@@ -10,7 +10,10 @@
 /// All components render as Lustre HTML elements suitable for SSR.
 ///
 /// See: docs/component_signatures.md (section: Layout)
-import gleam/string
+import gleam/int
+import lustre/attribute
+import lustre/element
+import lustre/element/html
 import meal_planner/ui/types/ui_types
 
 // ===================================================================
@@ -53,7 +56,7 @@ fn justify_to_class(justify: ui_types.FlexJustify) -> String {
 
 /// Convert gap integer to CSS class string
 fn gap_to_class(gap: Int) -> String {
-  "gap-" <> string.inspect(gap)
+  "gap-" <> int.to_string(gap)
 }
 
 // ===================================================================
@@ -64,8 +67,8 @@ fn gap_to_class(gap: Int) -> String {
 fn columns_to_class(columns: ui_types.GridColumns) -> String {
   case columns {
     ui_types.Auto -> "grid-cols-auto"
-    ui_types.Fixed(n) -> "grid-cols-" <> string.inspect(n)
-    ui_types.Repeat(n) -> "grid-cols-" <> string.inspect(n)
+    ui_types.Fixed(n) -> "grid-cols-" <> int.to_string(n)
+    ui_types.Repeat(n) -> "grid-cols-" <> int.to_string(n)
     ui_types.Responsive -> "grid-cols-responsive"
   }
 }
@@ -76,7 +79,7 @@ fn columns_to_class(columns: ui_types.GridColumns) -> String {
 
 /// Convert padding amount to CSS class string
 fn padding_to_class(padding: Int) -> String {
-  "p-" <> string.inspect(padding)
+  "p-" <> int.to_string(padding)
 }
 
 // ===================================================================
@@ -91,26 +94,25 @@ pub fn flex(
   align: ui_types.FlexAlign,
   justify: ui_types.FlexJustify,
   gap: Int,
-  children: List(String),
-) -> String {
-  // CONTRACT: Returns HTML string for flex container
+  children: List(element.Element(msg)),
+) -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for flex container
   let direction_class = direction_to_class(direction)
   let align_class = align_to_class(align)
   let justify_class = justify_to_class(justify)
   let gap_class = gap_to_class(gap)
-  let children_html = string.concat(children)
 
-  "<div class=\"flex "
-  <> direction_class
-  <> " "
-  <> align_class
-  <> " "
-  <> justify_class
-  <> " "
-  <> gap_class
-  <> "\">"
-  <> children_html
-  <> "</div>"
+  let classes =
+    "flex "
+    <> direction_class
+    <> " "
+    <> align_class
+    <> " "
+    <> justify_class
+    <> " "
+    <> gap_class
+
+  html.div([attribute.class(classes)], children)
 }
 
 // ===================================================================
@@ -123,20 +125,15 @@ pub fn flex(
 pub fn grid(
   columns: ui_types.GridColumns,
   gap: Int,
-  children: List(String),
-) -> String {
-  // CONTRACT: Returns HTML string for grid container
+  children: List(element.Element(msg)),
+) -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for grid container
   let columns_class = columns_to_class(columns)
   let gap_class = gap_to_class(gap)
-  let children_html = string.concat(children)
 
-  "<div class=\"grid "
-  <> columns_class
-  <> " "
-  <> gap_class
-  <> "\">"
-  <> children_html
-  <> "</div>"
+  let classes = "grid " <> columns_class <> " " <> gap_class
+
+  html.div([attribute.class(classes)], children)
 }
 
 // ===================================================================
@@ -146,39 +143,40 @@ pub fn grid(
 /// Spacing container (padding around children)
 ///
 /// Renders: <div class="space-around p-16">children</div>
-pub fn space_around(amount: Int, children: List(String)) -> String {
-  // CONTRACT: Returns HTML string for spaced container
+pub fn space_around(
+  amount: Int,
+  children: List(element.Element(msg)),
+) -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for spaced container
   let padding_class = padding_to_class(amount)
-  let children_html = string.concat(children)
+  let classes = "space-around " <> padding_class
 
-  "<div class=\"space-around "
-  <> padding_class
-  <> "\">"
-  <> children_html
-  <> "</div>"
+  html.div([attribute.class(classes)], children)
 }
 
 /// Container with max-width
 ///
 /// Renders: <div class="container mx-auto" style="max-width: 1200px">children</div>
-pub fn container(max_width: Int, children: List(String)) -> String {
-  // CONTRACT: Returns HTML string for max-width container
-  let children_html = string.concat(children)
-  let max_width_px = string.inspect(max_width) <> "px"
+pub fn container(
+  max_width: Int,
+  children: List(element.Element(msg)),
+) -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for max-width container
+  let max_width_px = int.to_string(max_width) <> "px"
 
-  "<div class=\"container mx-auto\" style=\"max-width: "
-  <> max_width_px
-  <> "\">"
-  <> children_html
-  <> "</div>"
+  html.div(
+    [
+      attribute.class("container mx-auto"),
+      attribute.attribute("style", "max-width: " <> max_width_px),
+    ],
+    children,
+  )
 }
 
 /// Page section with padding
 ///
 /// Renders: <section class="section">children</section>
-pub fn section(children: List(String)) -> String {
-  // CONTRACT: Returns HTML string for page section
-  let children_html = string.concat(children)
-
-  "<section class=\"section\">" <> children_html <> "</section>"
+pub fn section(children: List(element.Element(msg))) -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for page section
+  html.section([attribute.class("section")], children)
 }

@@ -1,0 +1,608 @@
+/**
+ * Filter Chips Styling
+ *
+ * Provides visual styling for interactive filter chips with smooth transitions
+ * and accessible color contrasts.
+ *
+ * Variables:
+ * - --chip-bg-color: Inactive chip background
+ * - --chip-active-bg-color: Active chip background
+ * - --chip-border-color: Chip border color
+ * - --chip-text-color: Chip text color
+ * - --chip-hover-bg-color: Hover state background
+ */
+
+/* ===================================================================
+   FILTER CHIPS CONTAINER
+   =================================================================== */
+
+.filter-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  outline: none;
+}
+
+.filter-chips-container:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.filter-chips-container:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* Empty state */
+.filter-chips-container.empty {
+  display: none;
+}
+
+/* ===================================================================
+   FILTER CHIP
+   =================================================================== */
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #e8f0ff;
+  border: 1px solid #b0d0ff;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0066cc;
+  transition: all 150ms ease-in-out;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Hover state */
+.filter-chip:hover {
+  background-color: #d0e5ff;
+  border-color: #80b5ff;
+  box-shadow: 0 2px 4px rgba(0, 102, 204, 0.1);
+}
+
+/* Focus state for keyboard navigation */
+.filter-chip:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.filter-chip:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* Active/selected state */
+.filter-chip.active {
+  background-color: #0066cc;
+  border-color: #0052a3;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.filter-chip.active:hover {
+  background-color: #0052a3;
+  border-color: #003d7a;
+}
+
+/* Disabled state */
+.filter-chip:disabled,
+.filter-chip[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f0f0f0;
+  border-color: #d0d0d0;
+  color: #666666;
+}
+
+/* RTL support */
+.filter-chip[dir='rtl'] {
+  flex-direction: row-reverse;
+}
+
+/* ===================================================================
+   CHIP LABEL
+   =================================================================== */
+
+.chip-label {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* ===================================================================
+   CHIP REMOVE BUTTON
+   =================================================================== */
+
+.chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 1.125rem;
+  font-weight: bold;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 150ms ease-in-out;
+  display: none;
+}
+
+.filter-chip:hover .chip-remove {
+  display: inline-flex;
+  opacity: 1;
+}
+
+.filter-chip.active .chip-remove {
+  display: inline-flex;
+  color: #ffffff;
+}
+
+.chip-remove:hover {
+  opacity: 1;
+}
+
+.chip-remove:focus {
+  outline: 1px solid currentColor;
+  outline-offset: 1px;
+}
+
+/* ===================================================================
+   CATEGORY DROPDOWN
+   =================================================================== */
+
+.category-dropdown-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+/* Dropdown trigger button */
+.category-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #ffffff;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #333333;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  white-space: nowrap;
+}
+
+.category-dropdown-trigger:hover {
+  background-color: #f9f9f9;
+  border-color: #b0b0b0;
+}
+
+.category-dropdown-trigger:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.category-dropdown-trigger:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* Trigger arrow/chevron */
+.category-dropdown-trigger::after {
+  content: '';
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  border: solid #333333;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  transition: transform 150ms ease-in-out;
+  margin-left: 0.25rem;
+}
+
+.category-dropdown-container.open .category-dropdown-trigger::after {
+  transform: rotate(-135deg);
+}
+
+/* Dropdown menu */
+.category-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  display: none;
+  min-width: 200px;
+  background-color: #ffffff;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.category-dropdown-container.open .category-dropdown-menu {
+  display: block;
+  animation: slideDown 150ms ease-in-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dropdown item */
+.category-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: none;
+  color: #333333;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 150ms ease-in-out;
+  width: 100%;
+  font-weight: 400;
+}
+
+.category-dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.category-dropdown-item:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: -2px;
+}
+
+.category-dropdown-item:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: -2px;
+}
+
+/* Selected/active item */
+.category-dropdown-item.selected {
+  background-color: #e8f0ff;
+  color: #0066cc;
+  font-weight: 600;
+}
+
+.category-dropdown-item.selected::before {
+  content: '✓';
+  display: inline-block;
+  width: 1rem;
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+/* Separator */
+.category-dropdown-item.separator {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: default;
+  pointer-events: none;
+  height: 0;
+  line-height: 0;
+}
+
+/* ===================================================================
+   CLEAR ALL BUTTON
+   =================================================================== */
+
+.filters-clear-all {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #ffffff;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: #666666;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  margin-left: 0.5rem;
+}
+
+.filters-clear-all:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  border-color: #b0b0b0;
+  color: #333333;
+}
+
+.filters-clear-all:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.filters-clear-all:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.filters-clear-all:disabled,
+.filters-clear-all[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===================================================================
+   RESULTS INFO
+   =================================================================== */
+
+.filters-results-info {
+  display: inline-block;
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #e8f0ff;
+  border-left: 3px solid #0066cc;
+  color: #0066cc;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0 4px 4px 0;
+}
+
+.filters-results-info:empty {
+  display: none;
+}
+
+/* ===================================================================
+   FILTER CONTROLS WRAPPER
+   =================================================================== */
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-controls .category-dropdown-container {
+  margin-bottom: 0;
+}
+
+/* ===================================================================
+   RESPONSIVE DESIGN
+   =================================================================== */
+
+@media (max-width: 768px) {
+  .filter-chips-container {
+    gap: 0.375rem;
+    padding: 0.75rem;
+  }
+
+  .filter-chip {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.8125rem;
+  }
+
+  .chip-label {
+    max-width: 120px;
+  }
+
+  .filter-controls {
+    gap: 0.75rem;
+  }
+
+  .category-dropdown-trigger {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.8125rem;
+  }
+
+  .filters-clear-all {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+    margin-left: 0.25rem;
+  }
+
+  .filters-results-info {
+    margin-left: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .category-dropdown-menu {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-chips-container {
+    gap: 0.25rem;
+    padding: 0.5rem;
+  }
+
+  .filter-chip {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .chip-label {
+    max-width: 80px;
+  }
+
+  .filter-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .category-dropdown-trigger {
+    width: 100%;
+  }
+
+  .filters-clear-all {
+    margin-left: 0;
+  }
+
+  .filters-results-info {
+    margin-left: 0;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+
+  .category-dropdown-menu {
+    min-width: 100%;
+    left: 0;
+    right: 0;
+  }
+}
+
+/* ===================================================================
+   DARK MODE SUPPORT
+   =================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  .filter-chips-container {
+    background-color: #222222;
+    border-color: #444444;
+  }
+
+  .filter-chip {
+    background-color: #1a3a5c;
+    border-color: #2a5a8c;
+    color: #66c2ff;
+  }
+
+  .filter-chip:hover {
+    background-color: #2a4a7c;
+    border-color: #3a7aac;
+  }
+
+  .filter-chip.active {
+    background-color: #0066cc;
+    border-color: #0052a3;
+    color: #ffffff;
+  }
+
+  .filter-chip.active:hover {
+    background-color: #0052a3;
+  }
+
+  .category-dropdown-trigger {
+    background-color: #333333;
+    border-color: #555555;
+    color: #cccccc;
+  }
+
+  .category-dropdown-trigger:hover {
+    background-color: #444444;
+    border-color: #666666;
+  }
+
+  .category-dropdown-trigger::after {
+    border-color: #cccccc;
+  }
+
+  .category-dropdown-menu {
+    background-color: #333333;
+    border-color: #555555;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  .category-dropdown-item {
+    color: #cccccc;
+  }
+
+  .category-dropdown-item:hover {
+    background-color: #444444;
+  }
+
+  .category-dropdown-item.selected {
+    background-color: #1a3a5c;
+    color: #66c2ff;
+  }
+
+  .filters-clear-all {
+    background-color: #333333;
+    border-color: #555555;
+    color: #999999;
+  }
+
+  .filters-clear-all:hover:not(:disabled) {
+    background-color: #444444;
+    border-color: #666666;
+    color: #cccccc;
+  }
+
+  .filters-results-info {
+    background-color: #1a3a5c;
+    border-left-color: #0066cc;
+    color: #66c2ff;
+  }
+}
+
+/* ===================================================================
+   ACCESSIBILITY - REDUCED MOTION
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-chip,
+  .category-dropdown-trigger,
+  .filters-clear-all,
+  .category-dropdown-menu {
+    transition: none;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* ===================================================================
+   PRINT STYLES
+   =================================================================== */
+
+@media print {
+  .filter-chips-container,
+  .category-dropdown-container,
+  .filters-clear-all {
+    display: none;
+  }
+
+  .filter-chip {
+    border: 1px solid #000;
+    background: none;
+    color: #000;
+  }
+
+  .filter-chip.active::before {
+    content: '[';
+  }
+
+  .filter-chip.active::after {
+    content: ']';
+  }
+}

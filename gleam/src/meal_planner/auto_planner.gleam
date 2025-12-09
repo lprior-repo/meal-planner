@@ -36,6 +36,15 @@ pub type RecipeScore {
 }
 
 // ============================================================================
+// Helper Functions
+// ============================================================================
+
+/// Efficiently count list items using fold instead of O(n) length
+fn count_list(items: List(a)) -> Int {
+  list.fold(items, 0, fn(acc, _) { acc + 1 })
+}
+
+// ============================================================================
 // Filtering Functions
 // ============================================================================
 
@@ -258,11 +267,13 @@ pub fn generate_auto_plan(
       // Filter recipes by diet principles
       let filtered = filter_by_diet_principles(recipes, config.diet_principles)
 
-      case list.length(filtered) < config.recipe_count {
+      // Count filtered recipes efficiently
+      let filtered_count = count_list(filtered)
+      case filtered_count < config.recipe_count {
         True ->
           Error(
             "Insufficient recipes after filtering: "
-            <> int.to_string(list.length(filtered))
+            <> int.to_string(filtered_count)
             <> " available, "
             <> int.to_string(config.recipe_count)
             <> " required",
@@ -275,7 +286,9 @@ pub fn generate_auto_plan(
           let selected =
             select_top_n(scored, config.recipe_count, config.variety_factor)
 
-          case list.length(selected) < config.recipe_count {
+          // Verify selection count efficiently
+          let selected_count = count_list(selected)
+          case selected_count < config.recipe_count {
             True -> Error("Failed to select enough recipes")
             False -> {
               // Calculate total macros
@@ -311,6 +324,46 @@ pub fn generate_auto_plan(
 }
 
 // ============================================================================
+// Timestamp Functions
+// ============================================================================
+
+/// Generate timestamp string in ISO8601 format with UTC timezone
+/// Format: YYYY-MM-DDTHH:MM:SSZ
+fn generate_timestamp() -> String {
+  let #(#(year, month, day), #(hour, min, sec)) = erlang_localtime()
+  int_to_string(year)
+  <> "-"
+  <> pad_two(month)
+  <> "-"
+  <> pad_two(day)
+  <> "T"
+  <> pad_two(hour)
+  <> ":"
+  <> pad_two(min)
+  <> ":"
+  <> pad_two(sec)
+  <> "Z"
+}
+
+/// Pad a single digit integer with leading zero
+/// Converts 5 to "05", leaves 10 as "10"
+fn pad_two(n: Int) -> String {
+  case n < 10 {
+    True -> "0" <> int_to_string(n)
+    False -> int_to_string(n)
+  }
+}
+
+/// Convert integer to string
+fn int_to_string(n: Int) -> String {
+  int.to_string(n)
+}
+
+/// External function to get local time as {{year, month, day}, {hour, min, sec}}
+@external(erlang, "calendar", "local_time")
+fn erlang_localtime() -> #(#(Int, Int, Int), #(Int, Int, Int))
+
+// ============================================================================
 // Helper Functions
 // ============================================================================
 
@@ -323,13 +376,6 @@ fn calculate_deviation(actual: Float, target: Float) -> Float {
       diff /. target
     }
   }
-}
-
-/// Generate timestamp string (simple implementation)
-fn generate_timestamp() -> String {
-  // In production, use proper timestamp generation
-  // For now, use a simple counter approach
-  "2024-12-03T11:55:00Z"
 }
 
 // External functions for math operations

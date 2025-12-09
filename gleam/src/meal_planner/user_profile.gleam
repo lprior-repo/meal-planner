@@ -4,6 +4,7 @@
 import gleam/float
 import gleam/int
 import gleam/io
+import gleam/option.{None}
 import gleam/string
 import meal_planner/types.{
   type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
@@ -97,6 +98,7 @@ pub fn create_profile(
             activity_level: activity_level,
             goal: goal,
             meals_per_day: m,
+            micronutrient_goals: None,
           ))
       }
   }
@@ -145,6 +147,7 @@ pub fn collect_interactive_profile() -> Result(UserProfile, ProfileError) {
     activity_level: Moderate,
     goal: Maintain,
     meals_per_day: 3,
+    micronutrient_goals: None,
   ))
 }
 

@@ -12,6 +12,9 @@
 /// See: docs/component_signatures.md (section: Progress Indicators)
 import gleam/float
 import gleam/int
+import lustre/attribute
+import lustre/element
+import lustre/element/html
 import meal_planner/ui/types/ui_types
 
 /// Progress bar component
@@ -20,22 +23,31 @@ import meal_planner/ui/types/ui_types
 /// <div class="progress-bar">
 ///   <div class="progress-fill" style="width: 75%"></div>
 /// </div>
-pub fn progress_bar(current: Float, target: Float, color: String) -> String {
-  // CONTRACT: Returns HTML string for progress bar
+pub fn progress_bar(
+  current: Float,
+  target: Float,
+  color: String,
+) -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for progress bar
   let percentage = calculate_percentage(current, target)
   let pct_int = float_to_int(percentage)
-  let width_style = "width: " <> int_to_string(pct_int) <> "%"
+  let pct_str = int_to_string(pct_int)
+  let width_style = pct_str <> "%"
 
-  "<div class=\"progress-bar "
-  <> color
-  <> "\">"
-  <> "<div class=\"progress-fill\" style=\""
-  <> width_style
-  <> "\"></div>"
-  <> "<span class=\"progress-text\">"
-  <> int_to_string(pct_int)
-  <> "</span>"
-  <> "</div>"
+  html.div(
+    [
+      attribute.class("progress-bar " <> color),
+      attribute.attribute("role", "progressbar"),
+      attribute.attribute("aria-valuenow", pct_str),
+      attribute.attribute("aria-valuemin", "0"),
+      attribute.attribute("aria-valuemax", "100"),
+      attribute.attribute("aria-label", "Progress: " <> pct_str <> " percent"),
+    ],
+    [
+      html.div([attribute.style("width", "width: " <> width_style)], []),
+      html.span([attribute.class("progress-text")], [element.text(pct_str)]),
+    ],
+  )
 }
 
 /// Macro progress bar with label
@@ -55,46 +67,50 @@ pub fn macro_bar(
   current: Float,
   target: Float,
   color: String,
-) -> String {
-  // CONTRACT: Returns HTML string for macro progress bar
+) -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for macro progress bar
   let percentage = calculate_percentage(current, target)
   let pct_int = float_to_int(percentage)
   let current_int = float_to_int(current)
   let target_int = float_to_int(target)
-  let width_style = "width: " <> int_to_string(pct_int) <> "%"
+  let pct_str = int_to_string(pct_int)
+  let current_str = int_to_string(current_int)
+  let target_str = int_to_string(target_int)
+  let width_style = pct_str <> "%"
 
-  "<div class=\"macro-bar "
-  <> color
-  <> "\">"
-  <> "<div class=\"macro-bar-header\">"
-  <> "<span>"
-  <> label
-  <> "</span>"
-  <> "<span>"
-  <> int_to_string(current_int)
-  <> "g / "
-  <> int_to_string(target_int)
-  <> "g</span>"
-  <> "</div>"
-  <> "<div class=\"progress-bar\">"
-  <> "<div class=\"progress-fill\" style=\""
-  <> width_style
-  <> "\"></div>"
-  <> "</div>"
-  <> "</div>"
+  html.div([attribute.class("macro-bar " <> color)], [
+    html.div([attribute.class("macro-bar-header")], [
+      html.span([], [element.text(label)]),
+      html.span([], [element.text(current_str <> "g / " <> target_str <> "g")]),
+    ]),
+    html.div(
+      [
+        attribute.class("progress-bar"),
+        attribute.attribute("role", "progressbar"),
+        attribute.attribute("aria-valuenow", pct_str),
+        attribute.attribute("aria-valuemin", "0"),
+        attribute.attribute("aria-valuemax", "100"),
+        attribute.attribute(
+          "aria-label",
+          label <> ": " <> current_str <> " of " <> target_str <> " grams",
+        ),
+      ],
+      [html.div([attribute.style("width", "width: " <> width_style)], [])],
+    ),
+  ])
 }
 
 /// Macro badge (inline label with value)
 ///
 /// Renders: <span class="macro-badge">Protein: 120g</span>
-pub fn macro_badge(label: String, value: Float) -> String {
-  // CONTRACT: Returns HTML string for macro badge
+pub fn macro_badge(label: String, value: Float) -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for macro badge
   let value_int = float_to_int(value)
-  "<span class=\"macro-badge\">"
-  <> label
-  <> ": "
-  <> int_to_string(value_int)
-  <> "g</span>"
+  let value_str = int_to_string(value_int)
+
+  html.span([attribute.class("macro-badge")], [
+    element.text(label <> ": " <> value_str <> "g"),
+  ])
 }
 
 /// Macro badges group container (empty placeholder)
@@ -103,16 +119,19 @@ pub fn macro_badge(label: String, value: Float) -> String {
 ///
 /// Note: This component is a container placeholder. Typically populated dynamically
 /// with individual macro_badge components via your rendering framework.
-pub fn macro_badges() -> String {
-  // CONTRACT: Returns HTML string for macro badges group
-  "<div class=\"macro-badges\"></div>"
+pub fn macro_badges() -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for macro badges group
+  html.div([attribute.class("macro-badges")], [])
 }
 
 /// Status badge/indicator
 ///
 /// Renders: <span class="badge badge-success">Completed</span>
-pub fn status_badge(label: String, status: ui_types.StatusType) -> String {
-  // CONTRACT: Returns HTML string for status badge
+pub fn status_badge(
+  label: String,
+  status: ui_types.StatusType,
+) -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for status badge
   let status_class = case status {
     ui_types.StatusSuccess -> "status-success"
     ui_types.StatusWarning -> "status-warning"
@@ -120,7 +139,9 @@ pub fn status_badge(label: String, status: ui_types.StatusType) -> String {
     ui_types.StatusInfo -> "status-info"
   }
 
-  "<span class=\"status-badge " <> status_class <> "\">" <> label <> "</span>"
+  html.span([attribute.class("status-badge " <> status_class)], [
+    element.text(label),
+  ])
 }
 
 /// Circular progress indicator (percentage)
@@ -131,21 +152,34 @@ pub fn status_badge(label: String, status: ui_types.StatusType) -> String {
 ///   <span class="progress-percent">75%</span>
 ///   <span class="progress-label">Label</span>
 /// </div>
-pub fn progress_circle(percentage: Float, label: String) -> String {
-  // CONTRACT: Returns HTML string for circular progress indicator
+pub fn progress_circle(percentage: Float, label: String) -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for circular progress indicator
   let pct_int = float_to_int(percentage)
+  let pct_str = int_to_string(pct_int)
 
-  "<div class=\"progress-circle\">"
-  <> "<div class=\"circle-progress\" style=\"--progress: "
-  <> int_to_string(pct_int)
-  <> "%; \"></div>"
-  <> "<span class=\"progress-percent\">"
-  <> int_to_string(pct_int)
-  <> "%</span>"
-  <> "<span class=\"progress-label\">"
-  <> label
-  <> "</span>"
-  <> "</div>"
+  html.div(
+    [
+      attribute.class("progress-circle"),
+      attribute.attribute("role", "progressbar"),
+      attribute.attribute("aria-valuenow", pct_str),
+      attribute.attribute("aria-valuemin", "0"),
+      attribute.attribute("aria-valuemax", "100"),
+      attribute.attribute("aria-label", label <> ": " <> pct_str <> " percent"),
+    ],
+    [
+      html.div(
+        [
+          attribute.class("circle-progress"),
+          attribute.style("--progress", "--progress: " <> pct_str <> "%"),
+        ],
+        [],
+      ),
+      html.span([attribute.class("progress-percent")], [
+        element.text(pct_str <> "%"),
+      ]),
+      html.span([attribute.class("progress-label")], [element.text(label)]),
+    ],
+  )
 }
 
 /// Linear progress bar with percentage text
@@ -162,30 +196,39 @@ pub fn progress_with_label(
   current: Float,
   target: Float,
   label: String,
-) -> String {
-  // CONTRACT: Returns HTML string for progress bar with label
+) -> element.Element(msg) {
+  // CONTRACT: Returns Lustre element for progress bar with label
   let percentage = calculate_percentage(current, target)
   let pct_int = float_to_int(percentage)
   let current_int = float_to_int(current)
-  let width_style = "width: " <> int_to_string(pct_int) <> "%"
+  let target_int = float_to_int(target)
+  let pct_str = int_to_string(pct_int)
+  let current_str = int_to_string(current_int)
+  let target_str = int_to_string(target_int)
+  let width_style = pct_str <> "%"
 
-  "<div class=\"progress-with-label\">"
-  <> "<div class=\"progress-header\">"
-  <> "<span class=\"progress-label-text\">"
-  <> label
-  <> "</span>"
-  <> "<span class=\"progress-value\">"
-  <> int_to_string(current_int)
-  <> " / "
-  <> int_to_string(float_to_int(target))
-  <> "</span>"
-  <> "</div>"
-  <> "<div class=\"progress-bar\">"
-  <> "<div class=\"progress-fill\" style=\""
-  <> width_style
-  <> "\"></div>"
-  <> "</div>"
-  <> "</div>"
+  html.div([attribute.class("progress-with-label")], [
+    html.div([attribute.class("progress-header")], [
+      html.span([attribute.class("progress-label-text")], [element.text(label)]),
+      html.span([attribute.class("progress-value")], [
+        element.text(current_str <> " / " <> target_str),
+      ]),
+    ]),
+    html.div(
+      [
+        attribute.class("progress-bar"),
+        attribute.attribute("role", "progressbar"),
+        attribute.attribute("aria-valuenow", pct_str),
+        attribute.attribute("aria-valuemin", "0"),
+        attribute.attribute("aria-valuemax", "100"),
+        attribute.attribute(
+          "aria-label",
+          label <> ": " <> current_str <> " of " <> target_str,
+        ),
+      ],
+      [html.div([attribute.style("width", "width: " <> width_style)], [])],
+    ),
+  ])
 }
 
 // ===================================================================

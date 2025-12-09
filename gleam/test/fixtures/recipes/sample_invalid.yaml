@@ -1,0 +1,6 @@
+recipes:
+  - name: Invalid Recipe Missing Fields
+    ingredients:
+      - name: some ingredient
+        quantity: 1 cup
+    # Missing: instructions, macros, servings, category, fodmap_level, vertical_compliant

@@ -1,0 +1,214 @@
+name: Integration Branch Quality Gate
+
+on:
+  push:
+    branches: [integration]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality-gate:
+    name: Build, Test, and Quality Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: meal_planner_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Erlang/OTP and Gleam
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '26.0'
+          gleam-version: '1.0.0'
+
+      - name: Cache Gleam build
+        uses: actions/cache@v3
+        with:
+          path: |
+            gleam/build
+            ~/.cache/gleam
+          key: ${{ runner.os }}-gleam-${{ hashFiles('gleam/gleam.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gleam-
+
+      - name: Build project
+        run: |
+          cd gleam
+          gleam build
+
+      - name: Run migrations
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/meal_planner_test
+        run: |
+          # Run all migrations
+          for migration in gleam/migrations_pg/*.sql; do
+            echo "Running migration: $migration"
+            psql "$DATABASE_URL" -f "$migration" || exit 1
+          done
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/meal_planner_test
+        run: |
+          cd gleam
+          gleam test
+
+      - name: Check test database cleanup
+        run: |
+          test_dbs=$(psql postgresql://postgres:postgres@localhost:5432/postgres \
+            -t -c "SELECT COUNT(*) FROM pg_database WHERE datname LIKE 'test_db_%'" \
+            | xargs)
+
+          if [ "$test_dbs" -gt 0 ]; then
+            echo "❌ Test database cleanup failed: ${test_dbs} databases remaining"
+            psql postgresql://postgres:postgres@localhost:5432/postgres \
+              -c "SELECT datname FROM pg_database WHERE datname LIKE 'test_db_%'"
+            exit 1
+          fi
+
+          echo "✅ Test database cleanup verified"
+
+      - name: Check compiler warnings
+        run: |
+          cd gleam
+          warnings=$(gleam build 2>&1 | grep -c "warning:" || true)
+          echo "Compiler warnings: $warnings"
+
+          # Fail if warnings exceed baseline (currently 65)
+          if [ "$warnings" -gt 65 ]; then
+            echo "❌ Too many warnings: $warnings (max: 65)"
+            gleam build 2>&1 | grep "warning:"
+            exit 1
+          fi
+
+      - name: Validate beads database
+        run: |
+          # Install beads CLI
+          curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash
+
+          # Check beads health
+          if ! bd doctor; then
+            echo "❌ Beads database has issues"
+            exit 1
+          fi
+
+          echo "✅ Beads database healthy"
+
+      - name: Test coverage report
+        if: always()
+        run: |
+          cd gleam
+          # Generate coverage report (if tooling exists)
+          echo "Test coverage: TBD"
+
+  auto-merge:
+    name: Auto-merge to main
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/integration' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Merge to main
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          git checkout main
+          git pull origin main
+
+          git merge --no-ff origin/integration -m "Auto-merge integration to main [skip ci]"
+
+          git push origin main
+
+      - name: Cleanup integration branch
+        run: |
+          # Reset integration to main after successful merge
+          git checkout integration
+          git reset --hard main
+          git push --force origin integration
+
+  cleanup:
+    name: Resource Cleanup
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [quality-gate]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install cleanup dependencies
+        run: |
+          # Install jq for JSON processing
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Run resource cleanup
+        run: |
+          # Kill any orphaned processes
+          pkill -f "gleam|pool-manager|agent-coordinator" || true
+
+          # Clean up temporary state files
+          rm -f /tmp/pool-state.json
+          rm -f /tmp/pool-state.lock
+          rm -f /tmp/agent-coordination-state.json
+          rm -f /tmp/resource-monitor.pid
+          rm -f /tmp/resource-monitor-state.json
+
+          echo "✅ Resource cleanup completed"
+
+      - name: Cleanup worktree pool
+        run: |
+          # Clean up any leftover worktrees from coordination
+          if [[ -d ".agent-worktrees" ]]; then
+            for wt in .agent-worktrees/pool-wt-*; do
+              if [[ -d "$wt" ]]; then
+                echo "Removing worktree: $wt"
+                git worktree remove "$wt" --force || true
+              fi
+            done
+          fi
+
+          echo "✅ Worktree cleanup completed"
+
+      - name: Verify cleanup
+        run: |
+          # Verify no orphaned processes remain
+          orphaned_procs=$(pgrep -f "gleam|pool-manager" | wc -l || true)
+
+          if [[ "$orphaned_procs" -gt 0 ]]; then
+            echo "⚠️  Warning: $orphaned_procs orphaned processes detected"
+            pgrep -f "gleam|pool-manager"
+          else
+            echo "✅ No orphaned processes"
+          fi
+
+          # Verify state files are cleaned
+          if [[ ! -f /tmp/pool-state.json ]] && \
+             [[ ! -f /tmp/agent-coordination-state.json ]]; then
+            echo "✅ State files cleaned"
+          else
+            echo "⚠️  Warning: Some state files remain"
+            ls -la /tmp/*state*.json 2>/dev/null || true
+          fi

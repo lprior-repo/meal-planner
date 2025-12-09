@@ -22,6 +22,7 @@ pub fn set_and_get_profile_test() {
       activity_level: Moderate,
       goal: Gain,
       meals_per_day: 4,
+      micronutrient_goals: None,
     )
 
   // Initially no profile
@@ -77,6 +78,7 @@ pub fn clear_cache_test() {
       activity_level: Active,
       goal: Gain,
       meals_per_day: 5,
+      micronutrient_goals: None,
     )
 
   let goals =
@@ -131,6 +133,7 @@ pub fn state_helpers_test() {
         activity_level: Moderate,
         goal: Gain,
         meals_per_day: 4,
+        micronutrient_goals: None,
       )),
       goals: None,
     )
@@ -167,6 +170,7 @@ pub fn independent_state_servers_test() {
       activity_level: Moderate,
       goal: Gain,
       meals_per_day: 4,
+      micronutrient_goals: None,
     )
 
   let profile2 =
@@ -176,6 +180,7 @@ pub fn independent_state_servers_test() {
       activity_level: Active,
       goal: Gain,
       meals_per_day: 5,
+      micronutrient_goals: None,
     )
 
   // Set different profiles on each server

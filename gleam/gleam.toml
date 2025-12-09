@@ -54,7 +54,7 @@ simplifile = ">= 2.3.1 and < 3.0.0"
 
 [dev-dependencies]
 # Testing framework
-gleeunit = ">= 1.0.0 and < 2.0.0"
+gleeunit = ">= 1.9.0 and < 2.0.0"
 
 # Property-based testing
 qcheck = ">= 1.0.0 and < 2.0.0"

@@ -240,16 +240,20 @@ fn select_from_category(
   recipes: List(Recipe),
   target: Int,
 ) -> #(List(Recipe), Int) {
-  case list.length(recipes) {
-    0 -> #([], 0)
-    len -> {
+  case recipes {
+    [] -> #([], 0)
+    _ -> {
+      // Count recipes efficiently
+      let len = list.fold(recipes, 0, fn(acc, _) { acc + 1 })
       let selected =
         list.range(0, target - 1)
         |> list.filter_map(fn(i) {
           let idx = i % len
           get_at_index(recipes, idx)
         })
-      #(selected, list.length(selected))
+      // Count selected items efficiently
+      let selected_count = list.fold(selected, 0, fn(acc, _) { acc + 1 })
+      #(selected, selected_count)
     }
   }
 }

@@ -1,26 +1,48 @@
 //// Wisp web server for the meal planner application
 //// Server-side rendered pages with Lustre
 
+import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/float
 import gleam/http
+import gleam/http/request
 import gleam/int
 import gleam/io
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
-import gleam/string
 import gleam/uri
 import lustre/attribute
 import lustre/element
 import lustre/element/html
+import meal_planner/actors/todoist_actor
+import meal_planner/auto_planner
+import meal_planner/auto_planner/storage as auto_storage
+import meal_planner/auto_planner/types as auto_types
+import meal_planner/nutrition_constants
 import meal_planner/storage
+import meal_planner/storage/profile as storage_profile
+import meal_planner/storage_optimized
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
-  type UserProfile, Active, Breakfast, DailyLog, Dinner, FoodLogEntry, Gain,
-  Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack, UserProfile,
+  type SearchFilters, type UserProfile, Active, Breakfast, DailyLog, Dinner,
+  FoodLogEntry, Gain, Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack,
+  UserProfile,
 }
+import meal_planner/ui/components/food_search
+
+// import meal_planner/web/handlers/analytics
+import meal_planner/web/handlers/custom_foods
+import meal_planner/web/handlers/dashboard
+import meal_planner/web/handlers/food_log
+import meal_planner/web/handlers/generate
+import meal_planner/web/handlers/pages
+import meal_planner/web/handlers/profile
+import meal_planner/web/handlers/recipe
+import meal_planner/web/handlers/search
+import meal_planner/web/handlers/swap
+import meal_planner/web/handlers/sync
 import mist
 import pog
 import wisp
@@ -30,9 +52,13 @@ import wisp/wisp_mist
 // Context (passed to handlers)
 // ============================================================================
 
-/// Web context holding database connection
+/// Web context holding database connection, query cache, and actors
 pub type Context {
-  Context(db: pog.Connection)
+  Context(
+    db: pog.Connection,
+    search_cache: storage_optimized.SearchCache,
+    todoist_actor: process.Subject(todoist_actor.Message),
+  )
 }
 
 // ============================================================================
@@ -52,8 +78,15 @@ pub fn start(port: Int) {
   let db_config = storage.default_config()
   let assert Ok(db) = storage.start_pool(db_config)
 
+  // Initialize search cache (5 min TTL, 100 entry max)
+  let search_cache = storage_optimized.new_search_cache()
+
+  // Initialize TodoistActor for async sync operations
+  let assert Ok(todoist_started) = todoist_actor.start()
+  let todoist = todoist_started.data
+
   let secret_key_base = wisp.random_string(64)
-  let ctx = Context(db: db)
+  let ctx = Context(db: db, search_cache: search_cache, todoist_actor: todoist)
 
   io.println("Starting server on port " <> int.to_string(port))
 
@@ -88,16 +121,28 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // SSR pages
     ["recipes"] -> recipes_page(ctx)
     ["recipes", "new"] -> new_recipe_page()
-    // Edit page tracked in bead meal-planner-8er
-    // ["recipes", id, "edit"] -> edit_recipe_page(id, ctx)
+    ["recipes", id, "edit"] -> edit_recipe_page(id, ctx)
     ["recipes", id] -> recipe_detail_page(id, ctx)
-    ["dashboard"] -> dashboard_page(req, ctx)
+    ["dashboard"] ->
+      dashboard.dashboard(
+        req,
+        dashboard.Context(db: ctx.db, search_cache: ctx.search_cache),
+      )
     ["profile"] -> profile_page(ctx)
+    ["profile", "edit"] -> profile_edit_page(ctx)
     ["foods"] -> foods_page(req, ctx)
     ["foods", id] -> food_detail_page(id, ctx)
     ["log"] -> log_meal_page(ctx)
+    ["log", "food", id] ->
+      pages.log_food_form(
+        id,
+        pages.Context(db: ctx.db, search_cache: ctx.search_cache),
+      )
     ["log", recipe_id] -> log_meal_form(recipe_id, ctx)
+    ["weekly-plan"] -> weekly_plan_page(ctx)
+    ["analytics"] -> wisp.not_found()
 
+    // analytics.analytics_dashboard(req, analytics.Context(db: ctx.db))
     // 404
     _ -> not_found_page()
   }
@@ -112,7 +157,14 @@ fn middleware(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
 
-  handler(req)
+  // Get response from handler and add Vary header for compression support
+  // Note: Actual compression should be handled by reverse proxy (nginx/caddy)
+  // See docs/nginx-compression.conf for production setup instructions
+  let response = handler(req)
+
+  // Add Vary header to indicate responses can be compressed based on Accept-Encoding
+  response
+  |> wisp.set_header("vary", "Accept-Encoding")
 }
 
 // ============================================================================
@@ -148,6 +200,61 @@ fn home_page() -> wisp.Response {
   ]
 
   wisp.html_response(render_page("Meal Planner", content), 200)
+}
+
+fn weekly_plan_page(_ctx: Context) -> wisp.Response {
+  let content = [
+    html.div([attribute.class("page-header")], [
+      html.h1([], [element.text("Weekly Plan")]),
+      html.p([attribute.class("subtitle")], [
+        element.text("Plan your meals for the week"),
+      ]),
+    ]),
+    // 7-day grid calendar
+    render_weekly_calendar(),
+  ]
+
+  wisp.html_response(render_page("Weekly Plan - Meal Planner", content), 200)
+}
+
+/// Render the 7-day weekly calendar grid
+fn render_weekly_calendar() -> element.Element(Nil) {
+  let days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ]
+
+  html.div([attribute.class("weekly-calendar")], [
+    html.div(
+      [attribute.class("weekly-grid")],
+      list.map(days, render_day_column),
+    ),
+  ])
+}
+
+/// Render a single day column with 3 meal slots
+fn render_day_column(day_name: String) -> element.Element(Nil) {
+  html.article([attribute.class("day-column")], [
+    html.h3([attribute.class("day-name")], [element.text(day_name)]),
+    render_meal_slot("Breakfast"),
+    render_meal_slot("Lunch"),
+    render_meal_slot("Dinner"),
+  ])
+}
+
+/// Render a single meal slot (empty state)
+fn render_meal_slot(meal_type: String) -> element.Element(Nil) {
+  html.div([attribute.class("meal-slot")], [
+    html.div([attribute.class("meal-type")], [element.text(meal_type)]),
+    html.div([attribute.class("meal-content empty")], [
+      element.text("No meals planned"),
+    ]),
+  ])
 }
 
 fn not_found_page() -> wisp.Response {
@@ -406,6 +513,357 @@ function addInstruction() {
   wisp.html_response(render_page("New Recipe - Meal Planner", content), 200)
 }
 
+fn edit_recipe_page(id: String, ctx: Context) -> wisp.Response {
+  case load_recipe_by_id(ctx, id) {
+    Error(_) -> not_found_page()
+    Ok(recipe) -> {
+      let content = [
+        html.a(
+          [attribute.href("/recipes/" <> id), attribute.class("back-link")],
+          [
+            element.text("← Back to recipe"),
+          ],
+        ),
+        html.div([attribute.class("page-header")], [
+          html.h1([], [element.text("Edit Recipe")]),
+        ]),
+        html.form(
+          [
+            attribute.method("POST"),
+            attribute.action("/api/recipes/" <> id),
+            attribute.class("recipe-form"),
+          ],
+          [
+            html.input([
+              attribute.type_("hidden"),
+              attribute.name("_method"),
+              attribute.value("PUT"),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.for("name")], [element.text("Recipe Name")]),
+              html.input([
+                attribute.type_("text"),
+                attribute.name("name"),
+                attribute.id("name"),
+                attribute.required(True),
+                attribute.value(recipe.name),
+                attribute.class("form-control"),
+              ]),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.for("category")], [element.text("Category")]),
+              html.select(
+                [
+                  attribute.name("category"),
+                  attribute.id("category"),
+                  attribute.required(True),
+                  attribute.class("form-control"),
+                ],
+                [
+                  category_option("chicken", "Chicken", recipe.category),
+                  category_option("beef", "Beef", recipe.category),
+                  category_option("pork", "Pork", recipe.category),
+                  category_option("seafood", "Seafood", recipe.category),
+                  category_option("vegetarian", "Vegetarian", recipe.category),
+                  category_option("other", "Other", recipe.category),
+                ],
+              ),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.for("servings")], [element.text("Servings")]),
+              html.input([
+                attribute.type_("number"),
+                attribute.name("servings"),
+                attribute.id("servings"),
+                attribute.required(True),
+                attribute.value(int_to_string(recipe.servings)),
+                attribute.attribute("min", "1"),
+                attribute.attribute("step", "1"),
+                attribute.class("form-control"),
+              ]),
+            ]),
+            html.div([attribute.class("form-section")], [
+              html.h2([], [element.text("Nutrition (per serving)")]),
+              html.div([attribute.class("form-row")], [
+                html.div([attribute.class("form-group")], [
+                  html.label([attribute.for("protein")], [
+                    element.text("Protein (g)"),
+                  ]),
+                  html.input([
+                    attribute.type_("number"),
+                    attribute.name("protein"),
+                    attribute.id("protein"),
+                    attribute.required(True),
+                    attribute.attribute("step", "0.1"),
+                    attribute.value(float_to_string(recipe.macros.protein)),
+                    attribute.class("form-control"),
+                  ]),
+                ]),
+                html.div([attribute.class("form-group")], [
+                  html.label([attribute.for("fat")], [element.text("Fat (g)")]),
+                  html.input([
+                    attribute.type_("number"),
+                    attribute.name("fat"),
+                    attribute.id("fat"),
+                    attribute.required(True),
+                    attribute.attribute("step", "0.1"),
+                    attribute.value(float_to_string(recipe.macros.fat)),
+                    attribute.class("form-control"),
+                  ]),
+                ]),
+                html.div([attribute.class("form-group")], [
+                  html.label([attribute.for("carbs")], [
+                    element.text("Carbs (g)"),
+                  ]),
+                  html.input([
+                    attribute.type_("number"),
+                    attribute.name("carbs"),
+                    attribute.id("carbs"),
+                    attribute.required(True),
+                    attribute.attribute("step", "0.1"),
+                    attribute.value(float_to_string(recipe.macros.carbs)),
+                    attribute.class("form-control"),
+                  ]),
+                ]),
+              ]),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.for("fodmap_level")], [
+                element.text("FODMAP Level"),
+              ]),
+              html.select(
+                [
+                  attribute.name("fodmap_level"),
+                  attribute.id("fodmap_level"),
+                  attribute.required(True),
+                  attribute.class("form-control"),
+                ],
+                [
+                  fodmap_option("low", "Low", recipe.fodmap_level),
+                  fodmap_option("medium", "Medium", recipe.fodmap_level),
+                  fodmap_option("high", "High", recipe.fodmap_level),
+                ],
+              ),
+            ]),
+            html.div([attribute.class("form-group")], [
+              html.label([attribute.class("checkbox-label")], [
+                html.input(case recipe.vertical_compliant {
+                  True -> [
+                    attribute.type_("checkbox"),
+                    attribute.name("vertical_compliant"),
+                    attribute.id("vertical_compliant"),
+                    attribute.value("true"),
+                    attribute.checked(True),
+                  ]
+                  False -> [
+                    attribute.type_("checkbox"),
+                    attribute.name("vertical_compliant"),
+                    attribute.id("vertical_compliant"),
+                    attribute.value("true"),
+                  ]
+                }),
+                element.text(" Vertical Diet Compliant"),
+              ]),
+            ]),
+            html.div([attribute.class("form-section")], [
+              html.h2([], [element.text("Ingredients")]),
+              html.div(
+                [attribute.id("ingredients-list")],
+                list.index_map(recipe.ingredients, fn(ing, idx) {
+                  html.div([attribute.class("form-row ingredient-row")], [
+                    html.div([attribute.class("form-group")], [
+                      html.input([
+                        attribute.type_("text"),
+                        attribute.name("ingredient_name_" <> int_to_string(idx)),
+                        attribute.placeholder("Ingredient"),
+                        attribute.value(ing.name),
+                        attribute.class("form-control"),
+                        attribute.required(True),
+                      ]),
+                    ]),
+                    html.div([attribute.class("form-group")], [
+                      html.input([
+                        attribute.type_("text"),
+                        attribute.name(
+                          "ingredient_quantity_" <> int_to_string(idx),
+                        ),
+                        attribute.placeholder("Quantity"),
+                        attribute.value(ing.quantity),
+                        attribute.class("form-control"),
+                        attribute.required(True),
+                      ]),
+                    ]),
+                  ])
+                }),
+              ),
+              html.button(
+                [
+                  attribute.type_("button"),
+                  attribute.class("btn btn-secondary"),
+                  attribute.attribute("onclick", "addIngredient()"),
+                ],
+                [element.text("+ Add Ingredient")],
+              ),
+            ]),
+            html.div([attribute.class("form-section")], [
+              html.h2([], [element.text("Instructions")]),
+              html.div(
+                [attribute.id("instructions-list")],
+                list.index_map(recipe.instructions, fn(inst, idx) {
+                  html.div([attribute.class("form-group instruction-row")], [
+                    html.textarea(
+                      [
+                        attribute.name("instruction_" <> int_to_string(idx)),
+                        attribute.attribute("rows", "2"),
+                        attribute.placeholder("Step " <> int_to_string(idx + 1)),
+                        attribute.class("form-control"),
+                        attribute.required(True),
+                      ],
+                      inst,
+                    ),
+                  ])
+                }),
+              ),
+              html.button(
+                [
+                  attribute.type_("button"),
+                  attribute.class("btn btn-secondary"),
+                  attribute.attribute("onclick", "addInstruction()"),
+                ],
+                [element.text("+ Add Step")],
+              ),
+            ]),
+            html.div([attribute.class("form-actions")], [
+              html.button(
+                [attribute.type_("submit"), attribute.class("btn btn-primary")],
+                [element.text("Update Recipe")],
+              ),
+              html.a(
+                [
+                  attribute.href("/recipes/" <> id),
+                  attribute.class("btn btn-secondary"),
+                ],
+                [element.text("Cancel")],
+              ),
+            ]),
+            html.script([], "
+let ingredientCount = " <> int_to_string(
+              list.fold(recipe.ingredients, 0, fn(acc, _) { acc + 1 }),
+            ) <> ";
+let instructionCount = " <> int_to_string(
+              list.fold(recipe.instructions, 0, fn(acc, _) { acc + 1 }),
+            ) <> ";
+
+function addIngredient() {
+  const container = document.getElementById('ingredients-list');
+  const div = document.createElement('div');
+  div.className = 'form-row ingredient-row';
+  div.innerHTML = `
+    <div class=\"form-group\">
+      <input type=\"text\" name=\"ingredient_name_${ingredientCount}\"
+             placeholder=\"Ingredient\" class=\"form-control\" required>
+    </div>
+    <div class=\"form-group\">
+      <input type=\"text\" name=\"ingredient_quantity_${ingredientCount}\"
+             placeholder=\"Quantity\" class=\"form-control\" required>
+    </div>
+    <button type=\"button\" class=\"btn btn-danger btn-small\"
+            onclick=\"this.parentElement.remove()\">Remove</button>
+  `;
+  container.appendChild(div);
+  ingredientCount++;
+}
+
+function addInstruction() {
+  const container = document.getElementById('instructions-list');
+  const div = document.createElement('div');
+  div.className = 'form-group instruction-row';
+  div.innerHTML = `
+    <textarea name=\"instruction_${instructionCount}\" rows=\"2\"
+              placeholder=\"Step ${instructionCount + 1}\"
+              class=\"form-control\" required></textarea>
+    <button type=\"button\" class=\"btn btn-danger btn-small\"
+            onclick=\"this.parentElement.remove()\">Remove</button>
+  `;
+  container.appendChild(div);
+  instructionCount++;
+}
+              "),
+          ],
+        ),
+      ]
+
+      wisp.html_response(
+        render_page("Edit " <> recipe.name <> " - Meal Planner", content),
+        200,
+      )
+    }
+  }
+}
+
+fn category_option(
+  value: String,
+  label: String,
+  current: String,
+) -> element.Element(msg) {
+  case value == current {
+    True ->
+      html.option([attribute.value(value), attribute.selected(True)], label)
+    False -> html.option([attribute.value(value)], label)
+  }
+}
+
+fn fodmap_option(
+  value: String,
+  label: String,
+  current: types.FodmapLevel,
+) -> element.Element(msg) {
+  let current_str = case current {
+    types.Low -> "low"
+    types.Medium -> "medium"
+    types.High -> "high"
+  }
+  case value == current_str {
+    True ->
+      html.option([attribute.value(value), attribute.selected(True)], label)
+    False -> html.option([attribute.value(value)], label)
+  }
+}
+
+fn goal_option(
+  value: String,
+  label: String,
+  current: types.Goal,
+) -> element.Element(msg) {
+  let current_str = case current {
+    types.Lose -> "lose"
+    types.Maintain -> "maintain"
+    types.Gain -> "gain"
+  }
+  case value == current_str {
+    True ->
+      html.option([attribute.value(value), attribute.selected(True)], label)
+    False -> html.option([attribute.value(value)], label)
+  }
+}
+
+fn activity_level_option(
+  value: String,
+  label: String,
+  current: types.ActivityLevel,
+) -> element.Element(msg) {
+  let current_str = case current {
+    types.Sedentary -> "sedentary"
+    types.Moderate -> "moderate"
+    types.Active -> "active"
+  }
+  case value == current_str {
+    True ->
+      html.option([attribute.value(value), attribute.selected(True)], label)
+    False -> html.option([attribute.value(value)], label)
+  }
+}
+
 fn ingredient_input_row(index: Int) -> element.Element(msg) {
   html.div([attribute.class("form-row ingredient-row")], [
     html.div([attribute.class("form-group")], [
@@ -521,6 +979,68 @@ fn recipe_detail_page(id: String, ctx: Context) -> wisp.Response {
               ),
             ]),
           ]),
+          // Add to Meal Plan form with HTMX
+          html.div([attribute.id("add-to-plan-section")], [
+            html.form(
+              [
+                attribute.method("POST"),
+                attribute.action("/api/recipes/" <> id <> "/add-to-plan"),
+                attribute.class("add-to-plan-form"),
+                attribute.attribute(
+                  "hx-post",
+                  "/api/recipes/" <> id <> "/add-to-plan",
+                ),
+                attribute.attribute("hx-target", "#add-to-plan-feedback"),
+                attribute.attribute("hx-swap", "innerHTML"),
+              ],
+              [
+                html.div([attribute.class("form-group")], [
+                  html.label([attribute.for("servings")], [
+                    element.text("Servings"),
+                  ]),
+                  html.input([
+                    attribute.type_("number"),
+                    attribute.id("servings"),
+                    attribute.name("servings"),
+                    attribute.attribute("min", "0.1"),
+                    attribute.attribute("step", "0.1"),
+                    attribute.value("1.0"),
+                    attribute.required(True),
+                  ]),
+                ]),
+                html.div([attribute.class("form-group")], [
+                  html.label([attribute.for("meal_type")], [
+                    element.text("Meal Type"),
+                  ]),
+                  html.select(
+                    [
+                      attribute.id("meal_type"),
+                      attribute.name("meal_type"),
+                      attribute.required(True),
+                    ],
+                    [
+                      html.option([attribute.value("breakfast")], "Breakfast"),
+                      html.option(
+                        [attribute.value("lunch"), attribute.selected(True)],
+                        "Lunch",
+                      ),
+                      html.option([attribute.value("dinner")], "Dinner"),
+                      html.option([attribute.value("snack")], "Snack"),
+                    ],
+                  ),
+                ]),
+                html.button(
+                  [
+                    attribute.type_("submit"),
+                    attribute.class("btn btn-primary"),
+                  ],
+                  [element.text("Add to Meal Plan")],
+                ),
+              ],
+            ),
+            // Feedback container for HTMX response
+            html.div([attribute.id("add-to-plan-feedback")], []),
+          ]),
           html.p([attribute.class("meta")], [
             element.text("Category: " <> recipe.category),
           ]),
@@ -582,214 +1102,18 @@ fn macro_stat_block(label: String, value: String) -> element.Element(msg) {
   ])
 }
 
-fn dashboard_page(req: wisp.Request, ctx: Context) -> wisp.Response {
-  let profile = load_profile(ctx)
-  let targets = types.daily_macro_targets(profile)
-
-  // Get date from query parameter or use today's date
-  let date = case uri.parse_query(req.query |> option.unwrap("")) {
-    Ok(params) -> {
-      case list.find(params, fn(p) { p.0 == "date" }) {
-        Ok(#(_, d)) -> d
-        Error(_) -> get_today_date()
-      }
-    }
-    Error(_) -> get_today_date()
-  }
-
-  // Load actual daily log from storage
-  let daily_log = load_daily_log(ctx, date)
-  let entries = daily_log.entries
-
-  // Get filter from query params
-  let filter = case uri.parse_query(req.query |> option.unwrap("")) {
-    Ok(params) -> {
-      case list.find(params, fn(p) { p.0 == "filter" }) {
-        Ok(#(_, f)) -> f
-        Error(_) -> "all"
-      }
-    }
-    Error(_) -> "all"
-  }
-
-  // Filter entries by meal type
-  let filtered_entries = case filter {
-    "breakfast" ->
-      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Breakfast })
-    "lunch" ->
-      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Lunch })
-    "dinner" ->
-      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Dinner })
-    "snack" ->
-      list.filter(entries, fn(e: FoodLogEntry) { e.meal_type == Snack })
-    _ -> entries
-  }
-
-  // Calculate current macros from filtered entries
-  let current = sum_macros(filtered_entries)
-
-  let content = [
-    page_header("Dashboard", "/"),
-    html.div([attribute.class("dashboard")], [
-      // Date
-      html.p([attribute.class("date")], [element.text(date)]),
-      // Filter buttons
-      html.div([attribute.class("filter-buttons")], [
-        filter_btn("All", "all", filter),
-        filter_btn("Breakfast", "breakfast", filter),
-        filter_btn("Lunch", "lunch", filter),
-        filter_btn("Dinner", "dinner", filter),
-        filter_btn("Snack", "snack", filter),
-      ]),
-      // Calorie summary
-      html.div([attribute.class("calorie-summary")], [
-        html.div([attribute.class("calorie-current")], [
-          html.span([attribute.class("big-number")], [
-            element.text(float_to_string(types.macros_calories(current))),
-          ]),
-          html.span([], [element.text(" / ")]),
-          html.span([], [
-            element.text(float_to_string(types.macros_calories(targets))),
-          ]),
-          html.span([attribute.class("unit")], [element.text(" cal")]),
-        ]),
-      ]),
-      // Macro bars
-      html.div([attribute.class("macro-bars")], [
-        macro_bar("Protein", current.protein, targets.protein, "#28a745"),
-        macro_bar("Fat", current.fat, targets.fat, "#ffc107"),
-        macro_bar("Carbs", current.carbs, targets.carbs, "#17a2b8"),
-      ]),
-      // Logged meals
-      html.div([attribute.class("logged-meals")], [
-        html.h3([], [element.text("Today's Meals")]),
-        case filtered_entries {
-          [] ->
-            html.p([attribute.class("empty")], [
-              element.text("No meals logged yet"),
-            ])
-          _ ->
-            html.ul(
-              [attribute.class("meal-list")],
-              list.map(filtered_entries, meal_entry_item),
-            )
-        },
-      ]),
-      // Quick actions
-      html.div([attribute.class("quick-actions")], [
-        html.a([attribute.href("/log"), attribute.class("btn")], [
-          element.text("Add Meal"),
-        ]),
-      ]),
-    ]),
-  ]
-
-  wisp.html_response(render_page("Dashboard - Meal Planner", content), 200)
-}
-
-fn macro_bar(
-  label: String,
-  current: Float,
-  target: Float,
-  color: String,
-) -> element.Element(msg) {
-  let pct = case target >. 0.0 {
-    True -> current /. target *. 100.0
-    False -> 0.0
-  }
-  let pct_capped = case pct >. 100.0 {
-    True -> 100.0
-    False -> pct
-  }
-
-  html.div([attribute.class("macro-bar")], [
-    html.div([attribute.class("macro-bar-header")], [
-      html.span([], [element.text(label)]),
-      html.span([], [
-        element.text(
-          float_to_string(current) <> "g / " <> float_to_string(target) <> "g",
-        ),
-      ]),
-    ]),
-    html.div([attribute.class("progress-bar")], [
-      html.div(
-        [
-          attribute.class("progress-fill"),
-          attribute.style(
-            "width",
-            float_to_string(pct_capped) <> "%; background:" <> color,
-          ),
-        ],
-        [],
-      ),
-    ]),
-  ])
-}
-
-fn filter_btn(
-  label: String,
-  value: String,
-  current: String,
-) -> element.Element(msg) {
-  let class = case value == current {
-    True -> "filter-btn active"
-    False -> "filter-btn"
-  }
-  html.a(
-    [attribute.href("/dashboard?filter=" <> value), attribute.class(class)],
-    [element.text(label)],
-  )
-}
-
-fn meal_entry_item(entry: FoodLogEntry) -> element.Element(msg) {
-  html.li([attribute.class("meal-entry")], [
-    html.div([attribute.class("meal-info")], [
-      html.span([attribute.class("meal-name")], [
-        element.text(entry.recipe_name),
-      ]),
-      html.span([attribute.class("meal-servings")], [
-        element.text(" (" <> float_to_string(entry.servings) <> " serving)"),
-      ]),
-      html.span([attribute.class("meal-type-badge")], [
-        element.text(meal_type_to_string(entry.meal_type)),
-      ]),
-    ]),
-    html.div([attribute.class("meal-macros")], [
-      element.text(
-        float_to_string(entry.macros.protein)
-        <> "P / "
-        <> float_to_string(entry.macros.fat)
-        <> "F / "
-        <> float_to_string(entry.macros.carbs)
-        <> "C",
-      ),
-    ]),
-    html.a(
-      [
-        attribute.href("/api/logs/entry/" <> entry.id <> "?action=delete"),
-        attribute.class("delete-btn"),
-      ],
-      [element.text("×")],
-    ),
-  ])
-}
-
-fn sum_macros(entries: List(FoodLogEntry)) -> Macros {
-  list.fold(entries, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(acc, entry) {
-    Macros(
-      protein: acc.protein +. entry.macros.protein,
-      fat: acc.fat +. entry.macros.fat,
-      carbs: acc.carbs +. entry.macros.carbs,
-    )
-  })
-}
-
 fn profile_page(ctx: Context) -> wisp.Response {
   let profile = load_profile(ctx)
   let targets = types.daily_macro_targets(profile)
 
   let content = [
     page_header("Profile", "/"),
+    html.div([attribute.class("page-actions")], [
+      html.a(
+        [attribute.href("/profile/edit"), attribute.class("btn btn-primary")],
+        [element.text("Edit Profile")],
+      ),
+    ]),
     html.div([attribute.class("profile")], [
       html.div([attribute.class("profile-section")], [
         html.h2([], [element.text("Stats")]),
@@ -827,46 +1151,186 @@ fn profile_page(ctx: Context) -> wisp.Response {
   wisp.html_response(render_page("Profile - Meal Planner", content), 200)
 }
 
+fn profile_edit_page(ctx: Context) -> wisp.Response {
+  let profile = load_profile(ctx)
+
+  let content = [
+    html.a([attribute.href("/profile"), attribute.class("back-link")], [
+      element.text("← Back to profile"),
+    ]),
+    html.div([attribute.class("page-header")], [
+      html.h1([], [element.text("Edit Profile")]),
+    ]),
+    html.div(
+      [attribute.id("error-messages"), attribute.class("error-list")],
+      [],
+    ),
+    html.form(
+      [
+        attribute.id("profile-form"),
+        attribute.attribute("hx-post", "/api/profile"),
+        attribute.attribute("hx-target", "#error-messages"),
+        attribute.attribute("hx-swap", "innerHTML"),
+        attribute.class("profile-form"),
+      ],
+      [
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("bodyweight")], [
+            element.text("Bodyweight (lbs)"),
+          ]),
+          html.input([
+            attribute.type_("number"),
+            attribute.name("bodyweight"),
+            attribute.id("bodyweight"),
+            attribute.required(True),
+            attribute.attribute("step", "0.1"),
+            attribute.attribute("min", "0"),
+            attribute.value(float_to_string(profile.bodyweight)),
+            attribute.class("form-control"),
+          ]),
+        ]),
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("activity_level")], [
+            element.text("Activity Level"),
+          ]),
+          html.select(
+            [
+              attribute.name("activity_level"),
+              attribute.id("activity_level"),
+              attribute.required(True),
+              attribute.class("form-control"),
+            ],
+            [
+              activity_level_option(
+                "sedentary",
+                "Sedentary",
+                profile.activity_level,
+              ),
+              activity_level_option(
+                "moderate",
+                "Moderate",
+                profile.activity_level,
+              ),
+              activity_level_option("active", "Active", profile.activity_level),
+            ],
+          ),
+        ]),
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("goal")], [element.text("Goal")]),
+          html.select(
+            [
+              attribute.name("goal"),
+              attribute.id("goal"),
+              attribute.required(True),
+              attribute.class("form-control"),
+            ],
+            [
+              goal_option("lose", "Lose Weight", profile.goal),
+              goal_option("maintain", "Maintain Weight", profile.goal),
+              goal_option("gain", "Gain Weight", profile.goal),
+            ],
+          ),
+        ]),
+        html.div([attribute.class("form-group")], [
+          html.label([attribute.for("meals_per_day")], [
+            element.text("Meals per Day"),
+          ]),
+          html.input([
+            attribute.type_("number"),
+            attribute.name("meals_per_day"),
+            attribute.id("meals_per_day"),
+            attribute.required(True),
+            attribute.attribute("min", "1"),
+            attribute.attribute("max", "10"),
+            attribute.attribute("step", "1"),
+            attribute.value(int_to_string(profile.meals_per_day)),
+            attribute.class("form-control"),
+          ]),
+        ]),
+        html.div([attribute.class("form-actions")], [
+          html.button(
+            [attribute.type_("submit"), attribute.class("btn btn-primary")],
+            [element.text("Save Changes")],
+          ),
+          html.a(
+            [attribute.href("/profile"), attribute.class("btn btn-secondary")],
+            [element.text("Cancel")],
+          ),
+        ]),
+      ],
+    ),
+    html.script(
+      [],
+      "
+document.getElementById('profile-form').addEventListener('htmx:afterRequest', function(evt) {
+  if (evt.detail.successful) {
+    try {
+      const response = JSON.parse(evt.detail.xhr.responseText);
+      if (response.success) {
+        window.location.href = '/profile';
+      } else if (response.errors) {
+        const errorDiv = document.getElementById('error-messages');
+        errorDiv.innerHTML = response.errors.map(e =>
+          '<div class=\"error-message\">' + e + '</div>'
+        ).join('');
+      }
+    } catch (e) {
+      console.error('Failed to parse response', e);
+    }
+  }
+});
+      ",
+    ),
+  ]
+
+  wisp.html_response(render_page("Edit Profile - Meal Planner", content), 200)
+}
+
 fn log_meal_page(ctx: Context) -> wisp.Response {
   let recipes = load_recipes(ctx)
 
   let content = [
     page_header("Log Meal", "/dashboard"),
-    html.div([attribute.class("page-description")], [
-      html.p([], [element.text("Select a recipe to log:")]),
+    html.main([attribute.attribute("role", "main")], [
+      html.div([attribute.class("page-description")], [
+        html.p([], [element.text("Select a recipe to log:")]),
+      ]),
+      html.section(
+        [
+          attribute.class("recipe-grid"),
+          attribute.attribute("aria-label", "Available recipes to log"),
+        ],
+        list.map(recipes, fn(recipe) {
+          html.a(
+            [
+              attribute.class("recipe-card"),
+              attribute.href("/log/" <> recipe.id),
+            ],
+            [
+              html.div([attribute.class("recipe-card-content")], [
+                html.h3([attribute.class("recipe-title")], [
+                  element.text(recipe.name),
+                ]),
+                html.span([attribute.class("recipe-category")], [
+                  element.text(recipe.category),
+                ]),
+                html.div([attribute.class("recipe-macros")], [
+                  macro_badge("P", recipe.macros.protein),
+                  macro_badge("F", recipe.macros.fat),
+                  macro_badge("C", recipe.macros.carbs),
+                ]),
+                html.div([attribute.class("recipe-calories")], [
+                  element.text(
+                    float_to_string(types.macros_calories(recipe.macros))
+                    <> " cal",
+                  ),
+                ]),
+              ]),
+            ],
+          )
+        }),
+      ),
     ]),
-    html.div(
-      [attribute.class("recipe-grid")],
-      list.map(recipes, fn(recipe) {
-        html.a(
-          [
-            attribute.class("recipe-card"),
-            attribute.href("/log/" <> recipe.id),
-          ],
-          [
-            html.div([attribute.class("recipe-card-content")], [
-              html.h3([attribute.class("recipe-title")], [
-                element.text(recipe.name),
-              ]),
-              html.span([attribute.class("recipe-category")], [
-                element.text(recipe.category),
-              ]),
-              html.div([attribute.class("recipe-macros")], [
-                macro_badge("P", recipe.macros.protein),
-                macro_badge("F", recipe.macros.fat),
-                macro_badge("C", recipe.macros.carbs),
-              ]),
-              html.div([attribute.class("recipe-calories")], [
-                element.text(
-                  float_to_string(types.macros_calories(recipe.macros))
-                  <> " cal",
-                ),
-              ]),
-            ]),
-          ],
-        )
-      }),
-    ),
   ]
 
   wisp.html_response(render_page("Log Meal - Meal Planner", content), 200)
@@ -971,8 +1435,17 @@ fn page_header(title: String, back_href: String) -> element.Element(msg) {
 }
 
 fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
+  // Check if this is an HTMX request
+  let is_htmx = case request.get_header(req, "hx-request") {
+    Ok(_) -> True
+    Error(_) -> False
+  }
+
+  // Parse query parameters
+  let parsed_query = uri.parse_query(req.query |> option.unwrap(""))
+
   // Get search query from URL params
-  let query = case uri.parse_query(req.query |> option.unwrap("")) {
+  let query = case parsed_query {
     Ok(params) -> {
       case list.find(params, fn(p) { p.0 == "q" }) {
         Ok(#(_, q)) -> Some(q)
@@ -982,56 +1455,153 @@ fn foods_page(req: wisp.Request, ctx: Context) -> wisp.Response {
     Error(_) -> None
   }
 
-  let foods = case query {
-    Some(q) if q != "" -> search_foods(ctx, q, 50)
-    _ -> []
+  // Parse filter parameters for HTMX requests
+  let filters = case parsed_query {
+    Ok(params) -> {
+      let verified_only = case
+        list.find(params, fn(p) { p.0 == "verified" || p.0 == "verified_only" })
+      {
+        Ok(#(_, "true")) -> True
+        Ok(#(_, "1")) -> True
+        _ -> False
+      }
+
+      let branded_only = case
+        list.find(params, fn(p) { p.0 == "branded" || p.0 == "branded_only" })
+      {
+        Ok(#(_, "true")) -> True
+        Ok(#(_, "1")) -> True
+        _ -> False
+      }
+
+      let category = case list.find(params, fn(p) { p.0 == "category" }) {
+        Ok(#(_, cat)) if cat != "" && cat != "all" -> Some(cat)
+        _ -> None
+      }
+
+      types.SearchFilters(
+        verified_only: verified_only,
+        branded_only: branded_only,
+        category: category,
+      )
+    }
+    Error(_) ->
+      types.SearchFilters(
+        verified_only: False,
+        branded_only: False,
+        category: None,
+      )
   }
 
-  let food_count = get_foods_count(ctx)
+  // Search with filters
+  let #(ctx, foods) = case query {
+    Some(q) if q != "" ->
+      search_foods_filtered(
+        ctx,
+        q,
+        filters,
+        nutrition_constants.default_search_limit,
+      )
+    _ -> #(ctx, [])
+  }
 
-  let content = [
-    html.div([attribute.class("page-header")], [
-      html.h1([], [element.text("Food Search")]),
-      html.p([attribute.class("subtitle")], [
-        element.text("Search " <> int_to_string(food_count) <> " USDA foods"),
-      ]),
-    ]),
-    html.form([attribute.action("/foods"), attribute.method("get")], [
-      html.div([attribute.class("search-box")], [
-        html.input([
-          attribute.type_("search"),
-          attribute.name("q"),
-          attribute.placeholder("Search foods (e.g., chicken, apple, rice)"),
-          attribute.value(query |> option.unwrap("")),
-          attribute.class("search-input"),
-        ]),
-        html.button(
-          [attribute.type_("submit"), attribute.class("btn btn-primary")],
-          [
-            element.text("Search"),
-          ],
-        ),
-      ]),
-    ]),
-    case query {
-      Some(q) if q != "" -> {
-        case foods {
-          [] ->
-            html.p([attribute.class("empty-state")], [
-              element.text("No foods found matching \"" <> q <> "\""),
-            ])
-          _ ->
-            html.div([attribute.class("food-list")], list.map(foods, food_row))
-        }
-      }
-      _ ->
-        html.p([attribute.class("empty-state")], [
-          element.text("Enter a search term to find foods"),
+  // If HTMX request, return only the search results fragment
+  case is_htmx {
+    True -> {
+      let results_html =
+        html.div([attribute.id("search-results")], [
+          case query {
+            Some(q) if q != "" -> {
+              case foods {
+                [] ->
+                  html.p([attribute.class("empty-state")], [
+                    element.text("No foods found matching \"" <> q <> "\""),
+                  ])
+                _ ->
+                  html.div(
+                    [attribute.class("food-list")],
+                    list.map(foods, food_row),
+                  )
+              }
+            }
+            _ ->
+              html.p([attribute.class("empty-state")], [
+                element.text("Enter a search term to find foods"),
+              ])
+          },
         ])
-    },
-  ]
 
-  wisp.html_response(render_page("Food Search - Meal Planner", content), 200)
+      // Return just the HTML fragment for HTMX
+      wisp.html_response(element.to_string(results_html), 200)
+    }
+    False -> {
+      // Normal request - return full page
+      let food_count = get_foods_count(ctx)
+
+      // Create filter chips and categories
+      let chips = food_search.default_filter_chips()
+      let categories = food_search.default_categories()
+
+      let content = [
+        html.div([attribute.class("page-header")], [
+          html.h1([], [element.text("Food Search")]),
+          html.p([attribute.class("subtitle")], [
+            element.text(
+              "Search " <> int_to_string(food_count) <> " USDA foods",
+            ),
+          ]),
+        ]),
+        // Filter chips above search form
+        food_search.render_filter_chips_with_dropdown(chips, categories),
+        html.form([attribute.action("/foods"), attribute.method("get")], [
+          html.div([attribute.class("search-box")], [
+            html.input([
+              attribute.type_("search"),
+              attribute.name("q"),
+              attribute.placeholder("Search foods (e.g., chicken, apple, rice)"),
+              attribute.value(query |> option.unwrap("")),
+              attribute.class("search-input"),
+            ]),
+            html.button(
+              [attribute.type_("submit"), attribute.class("btn btn-primary")],
+              [
+                element.text("Search"),
+              ],
+            ),
+          ]),
+        ]),
+        // Wrap search results in HTMX target container
+        html.div([attribute.id("search-results")], [
+          case query {
+            Some(q) if q != "" -> {
+              case foods {
+                [] ->
+                  html.p([attribute.class("empty-state")], [
+                    element.text("No foods found matching \"" <> q <> "\""),
+                  ])
+                _ ->
+                  html.div(
+                    [attribute.class("food-list")],
+                    list.map(foods, food_row),
+                  )
+              }
+            }
+            _ ->
+              html.p([attribute.class("empty-state")], [
+                element.text("Enter a search term to find foods"),
+              ])
+          },
+        ]),
+        // Modal container for food logging form
+        html.div([attribute.id("food-log-modal")], []),
+      ]
+
+      wisp.html_response(
+        render_page("Food Search - Meal Planner", content),
+        200,
+      )
+    }
+  }
 }
 
 fn food_row(food: storage.UsdaFood) -> element.Element(msg) {
@@ -1070,7 +1640,16 @@ fn food_detail_page(id: String, ctx: Context) -> wisp.Response {
               element.text("← Back to search"),
             ]),
             html.div([attribute.class("food-detail")], [
-              html.h1([], [element.text(food.description)]),
+              html.div([attribute.class("food-detail-header")], [
+                html.h1([], [element.text(food.description)]),
+                html.a(
+                  [
+                    attribute.href("/log/food/" <> id),
+                    attribute.class("btn btn-primary"),
+                  ],
+                  [element.text("+ Log This Food")],
+                ),
+              ]),
               html.p([attribute.class("meta")], [
                 element.text("Type: " <> food.data_type),
               ]),
@@ -1156,11 +1735,132 @@ fn render_page(title: String, content: List(element.Element(msg))) -> String {
           attribute.rel("stylesheet"),
           attribute.href("/static/styles.css"),
         ]),
+        // Include lazy loading and skeleton styles
+        html.link([
+          attribute.rel("stylesheet"),
+          attribute.href("/static/css/lazy-loading.css"),
+        ]),
+        // HTMX library - the ONLY JavaScript allowed in the project
+        // All interactivity must use HTMX attributes, not custom JS files
+        html.script([attribute.src("https://unpkg.com/htmx.org@1.9.10")], ""),
       ]),
       html.body([], [html.div([attribute.class("container")], content)]),
     ])
 
   "<!DOCTYPE html>" <> element.to_string(body)
+}
+
+// ============================================================================
+// Recipe to Meal Plan API
+// ============================================================================
+
+/// POST /api/recipes/:id/add-to-plan - Add recipe to today's meal plan
+fn api_add_recipe_to_plan(
+  req: wisp.Request,
+  recipe_id: String,
+  ctx: Context,
+) -> wisp.Response {
+  case req.method {
+    http.Post -> {
+      // Parse form data
+      use form_data <- wisp.require_form(req)
+
+      // Extract servings and meal_type from form
+      let servings_result =
+        list.key_find(form_data.values, "servings")
+        |> result.then(float.parse)
+
+      let meal_type_str =
+        list.key_find(form_data.values, "meal_type")
+        |> result.unwrap("lunch")
+
+      // Convert meal_type string to MealType
+      let meal_type = case meal_type_str {
+        "breakfast" -> Breakfast
+        "lunch" -> Lunch
+        "dinner" -> Dinner
+        "snack" -> Snack
+        _ -> Lunch
+      }
+
+      // Get servings or default to 1.0
+      let servings = result.unwrap(servings_result, 1.0)
+
+      // Load the recipe
+      case load_recipe_by_id(ctx, recipe_id) {
+        Error(_) -> {
+          // Recipe not found - return error HTML
+          let error_html =
+            "<div class=\"alert alert-error\">Recipe not found</div>"
+          wisp.html_response(error_html, 404)
+        }
+        Ok(recipe) -> {
+          // Calculate scaled macros
+          let scaled_macros = types.macros_scale(recipe.macros, servings)
+
+          // Get today's date
+          let today = get_today_date()
+
+          // Create food log entry
+          let entry =
+            FoodLogEntry(
+              id: food_log.generate_entry_id(),
+              recipe_id: recipe.id,
+              recipe_name: recipe.name,
+              servings: servings,
+              macros: scaled_macros,
+              micronutrients: None,
+              meal_type: meal_type,
+              logged_at: current_timestamp(),
+              source_type: "recipe",
+              source_id: recipe.id,
+            )
+
+          // Save to database
+          case storage.save_food_log_entry(ctx.db, today, entry) {
+            Ok(_) -> {
+              // Success - return success HTML with link to dashboard
+              let success_html =
+                "<div class=\"alert alert-success\">Added "
+                <> recipe.name
+                <> " to your meal plan! <a href=\"/dashboard\">View Dashboard</a></div>"
+              wisp.html_response(success_html, 200)
+            }
+            Error(_) -> {
+              // Database error - return error HTML
+              let error_html =
+                "<div class=\"alert alert-error\">Failed to add to meal plan. Please try again.</div>"
+              wisp.html_response(error_html, 500)
+            }
+          }
+        }
+      }
+    }
+    _ -> wisp.method_not_allowed([http.Post])
+  }
+}
+
+/// Get today's date in YYYY-MM-DD format
+fn get_today_date() -> String {
+  let #(#(year, month, day), _time) = erlang_localtime()
+  int_to_string(year) <> "-" <> pad_two(month) <> "-" <> pad_two(day)
+}
+
+/// Get current timestamp as ISO8601 string
+fn current_timestamp() -> String {
+  let #(#(year, month, day), #(hour, min, sec)) = erlang_localtime()
+  int_to_string(year)
+  <> "-"
+  <> pad_two(month)
+  <> "-"
+  <> pad_two(day)
+  <> "T"
+  <> pad_two(hour)
+  <> ":"
+  <> pad_two(min)
+  <> ":"
+  <> pad_two(sec)
+  <> "Z"
 }
 
 // ============================================================================
@@ -1173,460 +1873,324 @@ fn handle_api(
   ctx: Context,
 ) -> wisp.Response {
   case path {
-    ["recipes"] -> api_recipes(req, ctx)
-    ["recipes", id] -> api_recipe(req, id, ctx)
-    ["profile"] -> api_profile(req, ctx)
-    ["foods"] -> api_foods(req, ctx)
-    ["foods", id] -> api_food(req, id, ctx)
-    ["logs"] -> api_logs_create(req, ctx)
-    ["logs", "entry", id] -> api_log_entry(req, id, ctx)
+    ["recipes"] -> recipe.api_recipes(req, recipe.Context(db: ctx.db))
+    ["recipes", id, "add-to-plan"] -> api_add_recipe_to_plan(req, id, ctx)
+    ["recipes", id] -> recipe.api_recipe(req, id, recipe.Context(db: ctx.db))
+    ["profile"] -> profile.api_profile(req, profile.Context(db: ctx.db))
+    ["foods"] -> search.api_foods(req, search.Context(db: ctx.db))
+    ["foods", "search"] -> api_foods_search(req, ctx)
+    ["foods", id] -> search.api_food(req, id, search.Context(db: ctx.db))
+    ["custom-foods", ..rest] ->
+      custom_foods.api_custom_foods(req, rest, custom_foods.Context(db: ctx.db))
+    ["logs"] -> food_log.api_logs_create(req, food_log.Context(db: ctx.db))
+    ["logs", "food"] ->
+      food_log.api_logs_food(req, food_log.Context(db: ctx.db))
+    ["logs", "food-form"] ->
+      food_log.api_food_log_form_submit(req, food_log.Context(db: ctx.db))
+    ["logs", "entry", id] ->
+      food_log.api_log_entry(req, id, food_log.Context(db: ctx.db))
+    ["swap", meal_type] ->
+      swap.api_swap_meal(req, meal_type, swap.Context(db: ctx.db))
+    ["generate"] -> generate.api_generate(req, generate.Context(db: ctx.db))
+    ["sync", "todoist"] -> sync.api_sync_todoist(req, ctx.todoist_actor)
+    ["recipe-sources"] -> api_recipe_sources(req, ctx)
+    ["meal-plans", "auto"] -> api_auto_meal_plan(req, ctx)
+    ["meal-plans", "auto", id] -> api_auto_meal_plan_by_id(req, id, ctx)
+    ["fragments", "filters"] -> search.api_filter_fragment(req)
+    ["fragments", "food-log-form"] ->
+      food_log.api_food_log_form_fragment(req, food_log.Context(db: ctx.db))
+    ["analytics", "summary"] -> wisp.not_found()
+    // analytics.api_analytics_summary(req, analytics.Context(db: ctx.db))
     _ -> wisp.not_found()
   }
 }
 
-fn api_recipes(req: wisp.Request, ctx: Context) -> wisp.Response {
-  case req.method {
-    http.Get -> {
-      let recipes = load_recipes(ctx)
-      let json_data = json.array(recipes, recipe_to_json)
-      wisp.json_response(json.to_string(json_data), 200)
-    }
-    http.Post -> create_recipe_handler(req, ctx)
-    _ -> wisp.method_not_allowed([http.Get, http.Post])
-  }
-}
+/// API endpoint for HTMX filter requests - returns HTML fragment
+/// GET /api/foods/search?q=query&filter=all|verified|branded|category&category=Vegetables
+fn api_foods_search(req: wisp.Request, ctx: Context) -> wisp.Response {
+  // Parse all query parameters
+  let parsed_query = uri.parse_query(req.query |> option.unwrap(""))
 
-fn create_recipe_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
-  use form_data <- wisp.require_form(req)
-
-  case parse_recipe_from_form(form_data.values) {
-    Ok(recipe) -> {
-      case storage.save_recipe(ctx.db, recipe) {
-        Ok(_) -> {
-          wisp.redirect("/recipes/" <> recipe.id)
-        }
-        Error(storage.DatabaseError(msg)) -> {
-          let error_json =
-            json.object([
-              #("error", json.string("Failed to save recipe: " <> msg)),
-            ])
-          wisp.json_response(json.to_string(error_json), 500)
-        }
-        Error(storage.NotFound) -> {
-          let error_json = json.object([#("error", json.string("Not found"))])
-          wisp.json_response(json.to_string(error_json), 404)
-        }
-        Error(storage.InvalidInput(msg)) -> {
-          let error_json =
-            json.object([#("error", json.string("Invalid input: " <> msg))])
-          wisp.json_response(json.to_string(error_json), 400)
-        }
-        Error(storage.Unauthorized(msg)) -> {
-          let error_json =
-            json.object([#("error", json.string("Unauthorized: " <> msg))])
-          wisp.json_response(json.to_string(error_json), 401)
-        }
-      }
-    }
-    Error(errors) -> {
-      let error_json =
-        json.object([
-          #("error", json.string("Validation failed")),
-          #("details", json.array(errors, json.string)),
-        ])
-      wisp.json_response(json.to_string(error_json), 400)
-    }
-  }
-}
-
-fn parse_recipe_from_form(
-  values: List(#(String, String)),
-) -> Result(Recipe, List(String)) {
-  // Extract basic fields
-  let name = case list.key_find(values, "name") {
-    Ok(n) if n != "" -> Ok(n)
-    _ -> Error("Recipe name is required")
-  }
-
-  let category = case list.key_find(values, "category") {
-    Ok(c) if c != "" -> Ok(c)
-    _ -> Error("Category is required")
-  }
-
-  let servings = case list.key_find(values, "servings") {
-    Ok(s) ->
-      case int.parse(s) {
-        Ok(num) if num > 0 -> Ok(num)
-        _ -> Error("Servings must be a positive number")
-      }
-    _ -> Error("Servings is required")
-  }
-
-  // Extract macros
-  let protein = case list.key_find(values, "protein") {
-    Ok(p) ->
-      case float.parse(p) {
-        Ok(num) if num >=. 0.0 -> Ok(num)
-        _ -> Error("Protein must be a non-negative number")
-      }
-    _ -> Error("Protein is required")
-  }
-
-  let fat = case list.key_find(values, "fat") {
-    Ok(f) ->
-      case float.parse(f) {
-        Ok(num) if num >=. 0.0 -> Ok(num)
-        _ -> Error("Fat must be a non-negative number")
-      }
-    _ -> Error("Fat is required")
-  }
-
-  let carbs = case list.key_find(values, "carbs") {
-    Ok(c) ->
-      case float.parse(c) {
-        Ok(num) if num >=. 0.0 -> Ok(num)
-        _ -> Error("Carbs must be a non-negative number")
-      }
-    _ -> Error("Carbs is required")
-  }
-
-  // Extract FODMAP level
-  let fodmap_level = case list.key_find(values, "fodmap_level") {
-    Ok("low") -> Ok(types.Low)
-    Ok("medium") -> Ok(types.Medium)
-    Ok("high") -> Ok(types.High)
-    _ -> Error("FODMAP level must be 'low', 'medium', or 'high'")
-  }
-
-  // Extract vertical_compliant (checkbox)
-  let vertical_compliant = case list.key_find(values, "vertical_compliant") {
-    Ok("true") -> True
-    _ -> False
-  }
-
-  // Extract ingredients (dynamic fields)
-  let ingredients = extract_ingredients(values)
-  let ingredients_result = case ingredients {
-    [] -> Error("At least one ingredient is required")
-    _ -> Ok(ingredients)
-  }
-
-  // Extract instructions (dynamic fields)
-  let instructions = extract_instructions(values)
-  let instructions_result = case instructions {
-    [] -> Error("At least one instruction is required")
-    _ -> Ok(instructions)
-  }
-
-  // Collect all errors
-  let all_errors =
-    []
-    |> add_error(name)
-    |> add_error(category)
-    |> add_error(servings)
-    |> add_error(protein)
-    |> add_error(fat)
-    |> add_error(carbs)
-    |> add_error(fodmap_level)
-    |> add_error(ingredients_result)
-    |> add_error(instructions_result)
-
-  case all_errors {
-    [] -> {
-      // All validations passed, create Recipe
-      let assert Ok(name_val) = name
-      let assert Ok(category_val) = category
-      let assert Ok(servings_val) = servings
-      let assert Ok(protein_val) = protein
-      let assert Ok(fat_val) = fat
-      let assert Ok(carbs_val) = carbs
-      let assert Ok(fodmap_val) = fodmap_level
-      let assert Ok(ingredients_val) = ingredients_result
-      let assert Ok(instructions_val) = instructions_result
-
-      let recipe =
-        types.Recipe(
-          id: generate_recipe_id(name_val),
-          name: name_val,
-          ingredients: ingredients_val,
-          instructions: instructions_val,
-          macros: Macros(protein: protein_val, fat: fat_val, carbs: carbs_val),
-          servings: servings_val,
-          category: category_val,
-          fodmap_level: fodmap_val,
-          vertical_compliant: vertical_compliant,
-        )
-
-      Ok(recipe)
-    }
-    errs -> Error(errs)
-  }
-}
-
-fn add_error(errors: List(String), result: Result(a, String)) -> List(String) {
-  case result {
-    Ok(_) -> errors
-    Error(msg) -> [msg, ..errors]
-  }
-}
-
-fn extract_ingredients(
-  values: List(#(String, String)),
-) -> List(types.Ingredient) {
-  let ingredient_pairs =
-    list.filter_map(values, fn(pair) {
-      let #(key, _) = pair
-      case string.starts_with(key, "ingredient_name_") {
-        True -> {
-          let index = string.replace(key, "ingredient_name_", "")
-          Ok(index)
-        }
-        False -> Error(Nil)
-      }
-    })
-
-  list.filter_map(ingredient_pairs, fn(index) {
-    let name_key = "ingredient_name_" <> index
-    let quantity_key = "ingredient_quantity_" <> index
-
-    let name = list.key_find(values, name_key) |> result.unwrap("")
-    let quantity = list.key_find(values, quantity_key) |> result.unwrap("")
-
-    case name != "" && quantity != "" {
-      True -> Ok(types.Ingredient(name: name, quantity: quantity))
-      False -> Error(Nil)
-    }
-  })
-}
-
-fn extract_instructions(values: List(#(String, String))) -> List(String) {
-  let instruction_indices =
-    list.filter_map(values, fn(pair) {
-      let #(key, _) = pair
-      case string.starts_with(key, "instruction_") {
-        True -> {
-          let index = string.replace(key, "instruction_", "")
-          Ok(index)
-        }
-        False -> Error(Nil)
-      }
-    })
-
-  list.filter_map(instruction_indices, fn(index) {
-    let key = "instruction_" <> index
-    case list.key_find(values, key) {
-      Ok(instruction) -> {
-        case instruction != "" {
-          True -> Ok(instruction)
-          False -> Error(Nil)
-        }
-      }
-      Error(_) -> Error(Nil)
-    }
-  })
-}
-
-fn generate_recipe_id(name: String) -> String {
-  let normalized =
-    name
-    |> string.lowercase
-    |> string.replace(" ", "-")
-    |> string.replace("'", "")
-    |> string.replace("\"", "")
-
-  // Add timestamp to ensure uniqueness
-  let timestamp = get_timestamp_string()
-  normalized <> "-" <> timestamp
-}
-
-@external(erlang, "erlang", "system_time")
-fn system_time(unit: Int) -> Int
-
-fn get_timestamp_string() -> String {
-  // Get milliseconds since epoch
-  let millis = system_time(1000)
-  // Take last 6 digits to keep ID shorter
-  let short_id = millis % 1_000_000
-  int_to_string(short_id)
-}
-
-fn api_recipe(_req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
-  case load_recipe_by_id(ctx, id) {
-    Ok(recipe) -> {
-      let json_data = recipe_to_json(recipe)
-      wisp.json_response(json.to_string(json_data), 200)
-    }
-    Error(_) -> wisp.not_found()
-  }
-}
-
-fn api_profile(_req: wisp.Request, ctx: Context) -> wisp.Response {
-  let profile = load_profile(ctx)
-  let json_data = profile_to_json(profile)
-  wisp.json_response(json.to_string(json_data), 200)
-}
-
-fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
-  let query = case uri.parse_query(req.query |> option.unwrap("")) {
+  // Read search query - support both 'q' and 'query' parameter names
+  let query = case parsed_query {
     Ok(params) -> {
+      // Try 'q' first, then 'query' as fallback
       case list.find(params, fn(p) { p.0 == "q" }) {
         Ok(#(_, q)) -> q
-        Error(_) -> ""
+        Error(_) ->
+          case list.find(params, fn(p) { p.0 == "query" }) {
+            Ok(#(_, q)) -> q
+            Error(_) -> ""
+          }
       }
     }
     Error(_) -> ""
   }
 
-  case query {
-    "" -> {
-      let json_data =
-        json.object([
-          #("error", json.string("Query parameter 'q' required")),
-        ])
-      wisp.json_response(json.to_string(json_data), 400)
-    }
-    q -> {
-      let foods = search_foods(ctx, q, 50)
-      let json_data = json.array(foods, food_to_json)
-      wisp.json_response(json.to_string(json_data), 200)
-    }
+  // Parse filter parameter: all, verified, branded, or category
+  let filter_type = case parsed_query {
+    Ok(params) ->
+      case list.find(params, fn(p) { p.0 == "filter" }) {
+        Ok(#(_, f)) -> f
+        Error(_) -> "all"
+      }
+    Error(_) -> "all"
+  }
+
+  // Parse category parameter
+  let category_param = case parsed_query {
+    Ok(params) ->
+      case list.find(params, fn(p) { p.0 == "category" }) {
+        Ok(#(_, cat)) if cat != "" -> Some(cat)
+        Ok(#(_, _)) -> None
+        Error(_) -> None
+      }
+    Error(_) -> None
+  }
+
+  // Build SearchFilters based on filter type
+  let filters = case filter_type {
+    "verified" ->
+      types.SearchFilters(
+        verified_only: True,
+        branded_only: False,
+        category: None,
+      )
+    "branded" ->
+      types.SearchFilters(
+        verified_only: False,
+        branded_only: True,
+        category: None,
+      )
+    "category" ->
+      types.SearchFilters(
+        verified_only: False,
+        branded_only: False,
+        category: category_param,
+      )
+    _ ->
+      // "all" or any other value
+      types.SearchFilters(
+        verified_only: False,
+        branded_only: False,
+        category: None,
+      )
+  }
+
+  // Execute search or return empty state
+  let #(_updated_ctx, foods) = case query {
+    "" -> #(ctx, [])
+    q ->
+      search_foods_filtered(
+        ctx,
+        q,
+        filters,
+        nutrition_constants.default_search_limit,
+      )
+  }
+
+  // Render HTML fragment for HTMX to swap in
+  let search_results = case query {
+    "" ->
+      html.div(
+        [attribute.id("search-results"), attribute.class("empty-state")],
+        [
+          element.text("Enter a search term to find foods"),
+        ],
+      )
+    q ->
+      case foods {
+        [] ->
+          html.div(
+            [attribute.id("search-results"), attribute.class("empty-state")],
+            [element.text("No foods found matching \"" <> q <> "\"")],
+          )
+        _ ->
+          html.div(
+            [attribute.id("search-results"), attribute.class("food-list")],
+            list.map(foods, food_row),
+          )
+      }
+  }
+
+  // Return only the HTML fragment (not a full page)
+  wisp.html_response(element.to_string(search_results), 200)
+}
+
+fn api_recipe_sources(req: wisp.Request, ctx: Context) -> wisp.Response {
+  case req.method {
+    http.Post -> create_recipe_source(req, ctx)
+    http.Get -> list_recipe_sources(ctx)
+    _ -> wisp.method_not_allowed([http.Get, http.Post])
   }
 }
 
-fn api_food(_req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
-  case int.parse(id) {
-    Error(_) -> wisp.not_found()
-    Ok(fdc_id) -> {
-      case load_food_by_id(ctx, fdc_id) {
-        Error(_) -> wisp.not_found()
-        Ok(food) -> {
-          let nutrients = load_food_nutrients(ctx, fdc_id)
-          let json_data =
+fn create_recipe_source(req: wisp.Request, ctx: Context) -> wisp.Response {
+  use json_body <- wisp.require_json(req)
+
+  // Decode the JSON body using the decoder
+  case decode.run(json_body, auto_types.recipe_source_decoder()) {
+    Error(_) -> {
+      let error_json =
+        json.object([#("error", json.string("Invalid JSON format"))])
+      wisp.json_response(json.to_string(error_json), 400)
+    }
+    Ok(source_data) -> {
+      // Generate a unique ID for the new source
+      let id = "src-" <> int.to_string(int.random(100_000_000))
+      let source =
+        auto_types.RecipeSource(
+          id: id,
+          name: source_data.name,
+          source_type: source_data.source_type,
+          config: source_data.config,
+        )
+
+      // Save to database
+      case auto_storage.save_recipe_source(ctx.db, source) {
+        Ok(_) -> {
+          let response_json = auto_types.recipe_source_to_json(source)
+          wisp.json_response(json.to_string(response_json), 201)
+        }
+        Error(storage_profile.DatabaseError(msg)) -> {
+          let error_json = json.object([#("error", json.string(msg))])
+          wisp.json_response(json.to_string(error_json), 500)
+        }
+        Error(_) -> {
+          let error_json =
             json.object([
-              #("fdc_id", json.int(food.fdc_id)),
-              #("description", json.string(food.description)),
-              #("data_type", json.string(food.data_type)),
-              #("category", json.string(food.category)),
-              #(
-                "nutrients",
-                json.array(nutrients, fn(n) {
-                  json.object([
-                    #("name", json.string(n.nutrient_name)),
-                    #("amount", json.float(n.amount)),
-                    #("unit", json.string(n.unit)),
-                  ])
-                }),
-              ),
+              #("error", json.string("Failed to create recipe source")),
             ])
-          wisp.json_response(json.to_string(json_data), 200)
+          wisp.json_response(json.to_string(error_json), 500)
         }
       }
     }
   }
 }
 
-fn food_to_json(f: storage.UsdaFood) -> json.Json {
-  json.object([
-    #("fdc_id", json.int(f.fdc_id)),
-    #("description", json.string(f.description)),
-    #("data_type", json.string(f.data_type)),
-    #("category", json.string(f.category)),
-  ])
+fn list_recipe_sources(ctx: Context) -> wisp.Response {
+  case auto_storage.get_recipe_sources(ctx.db) {
+    Ok(sources) -> {
+      let json_data = json.array(sources, auto_types.recipe_source_to_json)
+      wisp.json_response(json.to_string(json_data), 200)
+    }
+    Error(storage_profile.DatabaseError(msg)) -> {
+      let error_json = json.object([#("error", json.string(msg))])
+      wisp.json_response(json.to_string(error_json), 500)
+    }
+    Error(_) -> {
+      let error_json =
+        json.object([
+          #("error", json.string("Failed to fetch recipe sources")),
+        ])
+      wisp.json_response(json.to_string(error_json), 500)
+    }
+  }
 }
 
-/// POST /api/logs - Create a new food log entry
-fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
-  // Get query params for form submission
-  case uri.parse_query(req.query |> option.unwrap("")) {
-    Ok(params) -> {
-      let recipe_id =
-        list.find(params, fn(p) { p.0 == "recipe_id" })
-        |> result.map(fn(p) { p.1 })
-      let servings_str =
-        list.find(params, fn(p) { p.0 == "servings" })
-        |> result.map(fn(p) { p.1 })
-      let meal_type_str =
-        list.find(params, fn(p) { p.0 == "meal_type" })
-        |> result.map(fn(p) { p.1 })
+// ============================================================================
+// Auto Meal Plan API
+// ============================================================================
 
-      case recipe_id, servings_str, meal_type_str {
-        Ok(rid), Ok(sstr), Ok(mtstr) -> {
-          let servings = case float.parse(sstr) {
-            Ok(s) -> s
-            Error(_) -> 1.0
-          }
-          let meal_type = string_to_meal_type(mtstr)
-          let today = get_today_date()
+/// POST /api/meal-plans/auto - Generate auto meal plan
+fn api_auto_meal_plan(req: wisp.Request, ctx: Context) -> wisp.Response {
+  case req.method {
+    http.Post -> create_auto_meal_plan(req, ctx)
+    _ -> wisp.method_not_allowed([http.Post])
+  }
+}
 
-          // Get recipe to calculate macros
-          case load_recipe_by_id(ctx, rid) {
-            Error(_) -> wisp.not_found()
-            Ok(recipe) -> {
-              let scaled_macros = types.macros_scale(recipe.macros, servings)
-              let entry =
-                FoodLogEntry(
-                  id: generate_entry_id(),
-                  recipe_id: recipe.id,
-                  recipe_name: recipe.name,
-                  servings: servings,
-                  macros: scaled_macros,
-                  micronutrients: None,
-                  meal_type: meal_type,
-                  logged_at: current_timestamp(),
-                  source_type: "recipe",
-                  source_id: recipe.id,
-                )
+fn create_auto_meal_plan(req: wisp.Request, ctx: Context) -> wisp.Response {
+  use json_body <- wisp.require_json(req)
 
-              case storage.save_food_log_entry(ctx.db, today, entry) {
-                Ok(_) -> wisp.redirect("/dashboard")
-                Error(_) -> {
-                  let err =
+  // Decode the JSON body using the config decoder
+  case decode.run(json_body, auto_types.auto_plan_config_decoder()) {
+    Error(_) -> {
+      let error_json =
+        json.object([#("error", json.string("Invalid JSON format"))])
+      wisp.json_response(json.to_string(error_json), 400)
+    }
+    Ok(config) -> {
+      // Validate config
+      case auto_types.validate_config(config) {
+        Error(msg) -> {
+          let error_json = json.object([#("error", json.string(msg))])
+          wisp.json_response(json.to_string(error_json), 400)
+        }
+        Ok(_) -> {
+          // Load all recipes from database
+          let recipes = load_recipes(ctx)
+
+          // Generate auto meal plan
+          case auto_planner.generate_auto_plan(recipes, config) {
+            Error(msg) -> {
+              let error_json = json.object([#("error", json.string(msg))])
+              wisp.json_response(json.to_string(error_json), 400)
+            }
+            Ok(plan) -> {
+              // Save plan to database
+              case auto_storage.save_auto_plan(ctx.db, plan) {
+                Error(storage_profile.DatabaseError(msg)) -> {
+                  let error_json =
                     json.object([
-                      #("error", json.string("Failed to save entry")),
+                      #("error", json.string("Failed to save plan: " <> msg)),
                     ])
-                  wisp.json_response(json.to_string(err), 500)
+                  wisp.json_response(json.to_string(error_json), 500)
+                }
+                Error(_) -> {
+                  let error_json =
+                    json.object([
+                      #("error", json.string("Failed to save plan")),
+                    ])
+                  wisp.json_response(json.to_string(error_json), 500)
+                }
+                Ok(_) -> {
+                  // Return the generated plan
+                  let response_json = auto_types.auto_meal_plan_to_json(plan)
+                  wisp.json_response(json.to_string(response_json), 201)
                 }
               }
             }
           }
         }
-        _, _, _ -> {
-          let err =
-            json.object([
-              #("error", json.string("Missing required parameters")),
-            ])
-          wisp.json_response(json.to_string(err), 400)
-        }
       }
-    }
-    Error(_) -> {
-      let err =
-        json.object([#("error", json.string("Invalid query parameters"))])
-      wisp.json_response(json.to_string(err), 400)
     }
   }
 }
 
-/// GET/DELETE /api/logs/entry/:id - Manage a log entry
-fn api_log_entry(
+/// GET /api/meal-plans/auto/:id - Retrieve auto meal plan by ID
+fn api_auto_meal_plan_by_id(
   req: wisp.Request,
-  entry_id: String,
+  id: String,
   ctx: Context,
 ) -> wisp.Response {
-  // Check for delete action in query params
-  case uri.parse_query(req.query |> option.unwrap("")) {
-    Ok(params) -> {
-      case list.find(params, fn(p) { p.0 == "action" && p.1 == "delete" }) {
-        Ok(_) -> {
-          case storage.delete_food_log(ctx.db, entry_id) {
-            Ok(_) -> wisp.redirect("/dashboard")
-            Error(_) -> wisp.not_found()
-          }
-        }
-        Error(_) -> wisp.not_found()
-      }
+  case req.method {
+    http.Get -> get_auto_meal_plan_by_id(id, ctx)
+    _ -> wisp.method_not_allowed([http.Get])
+  }
+}
+
+fn get_auto_meal_plan_by_id(id: String, ctx: Context) -> wisp.Response {
+  case auto_storage.get_auto_plan(ctx.db, id) {
+    Error(storage_profile.NotFound) -> {
+      let error_json =
+        json.object([#("error", json.string("Meal plan not found"))])
+      wisp.json_response(json.to_string(error_json), 404)
     }
-    Error(_) -> wisp.not_found()
+    Error(storage_profile.DatabaseError(msg)) -> {
+      let error_json =
+        json.object([#("error", json.string("Database error: " <> msg))])
+      wisp.json_response(json.to_string(error_json), 500)
+    }
+    Error(_) -> {
+      let error_json =
+        json.object([#("error", json.string("Failed to retrieve meal plan"))])
+      wisp.json_response(json.to_string(error_json), 500)
+    }
+    Ok(plan) -> {
+      let response_json = auto_types.auto_meal_plan_to_json(plan)
+      wisp.json_response(json.to_string(response_json), 200)
+    }
   }
 }
 
@@ -1681,17 +2245,30 @@ fn default_profile() -> UserProfile {
     activity_level: Moderate,
     goal: Maintain,
     meals_per_day: 3,
+    micronutrient_goals: option.None,
   )
 }
 
-fn search_foods(
+fn search_foods_filtered(
   ctx: Context,
   query: String,
+  filters: SearchFilters,
   limit: Int,
-) -> List(storage.UsdaFood) {
-  case storage.search_foods(ctx.db, query, limit) {
-    Ok(foods) -> foods
-    Error(_) -> []
+) -> #(Context, List(storage.UsdaFood)) {
+  let #(updated_cache, result) =
+    storage_optimized.search_foods_filtered_cached(
+      ctx.db,
+      ctx.search_cache,
+      query,
+      filters,
+      limit,
+    )
+
+  let updated_ctx = Context(..ctx, search_cache: updated_cache)
+
+  case result {
+    Ok(foods) -> #(updated_ctx, foods)
+    Error(_) -> #(updated_ctx, [])
   }
 }
 
@@ -1733,13 +2310,6 @@ fn load_daily_log(ctx: Context, date: String) -> DailyLog {
       )
     }
   }
-}
-
-/// Get today's date in YYYY-MM-DD format
-fn get_today_date() -> String {
-  // This is a simplified version - in production you'd want to use a proper date library
-  // For now, we'll use a system call to get the date
-  "2025-12-01"
 }
 
 /// Sample recipes for fallback when database is empty
@@ -1862,48 +2432,6 @@ fn goal_to_string(p: UserProfile) -> String {
   }
 }
 
-fn meal_type_to_string(meal_type: MealType) -> String {
-  case meal_type {
-    Breakfast -> "Breakfast"
-    Lunch -> "Lunch"
-    Dinner -> "Dinner"
-    Snack -> "Snack"
-  }
-}
-
-/// Convert string to meal type
-fn string_to_meal_type(s: String) -> MealType {
-  case s {
-    "breakfast" -> Breakfast
-    "lunch" -> Lunch
-    "dinner" -> Dinner
-    "snack" -> Snack
-    _ -> Lunch
-  }
-}
-
-/// Generate a unique entry ID
-fn generate_entry_id() -> String {
-  "entry-" <> wisp.random_string(12)
-}
-
-/// Get current timestamp as ISO8601 string
-fn current_timestamp() -> String {
-  let #(#(year, month, day), #(hour, min, sec)) = erlang_localtime()
-  int.to_string(year)
-  <> "-"
-  <> pad_two(month)
-  <> "-"
-  <> pad_two(day)
-  <> "T"
-  <> pad_two(hour)
-  <> ":"
-  <> pad_two(min)
-  <> ":"
-  <> pad_two(sec)
-  <> "Z"
-}
-
 fn pad_two(n: Int) -> String {
   case n < 10 {
     True -> "0" <> int.to_string(n)
@@ -1916,3 +2444,13 @@ fn erlang_localtime() -> #(#(Int, Int, Int), #(Int, Int, Int))
 
 @external(erlang, "erlang", "integer_to_binary")
 fn int_to_string(i: Int) -> String
+
+// ============================================================================
+// Error Response Helpers
+// ============================================================================
+
+/// JSON error response for API endpoints
+fn json_error_response(status: Int, error_message: String) -> wisp.Response {
+  let error_json = json.object([#("error", json.string(error_message))])
+  wisp.json_response(json.to_string(error_json), status)
+}

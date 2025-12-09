@@ -18,6 +18,9 @@ erl_crash.dump
 mcp_agent_mail/
 gleam/mcp_agent_mail/
 
+# Node modules
+node_modules/
+
 # IDE
 .idea/
 .vscode/

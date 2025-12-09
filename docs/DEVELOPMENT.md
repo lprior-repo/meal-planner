@@ -77,7 +77,7 @@ task clean
 
 ```bash
 # Create migration
-touch gleam/migrations/008_migration_name.sql
+touch gleam/migrations_pg/008_migration_name.sql
 
 # Apply migration
 gleam run -m scripts/migrate

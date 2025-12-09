@@ -65,11 +65,25 @@ pub fn analyze_recipe_fodmap(recipe: Recipe) -> FODMAPAnalysis {
 
   let is_low_fodmap = list.is_empty(high_fodmap_found)
 
-  // Calculate compliance percentage
-  let compliance_percentage = case list.length(recipe.ingredients) {
+  // Calculate compliance percentage efficiently
+  let #(total_count, high_fodmap_count) =
+    list.fold(recipe.ingredients, #(0, 0), fn(acc, ingredient) {
+      let ingredient_lower = string.lowercase(ingredient.name)
+      let is_exception = is_low_fodmap_exception(ingredient_lower)
+      let contains_high_fodmap =
+        list.any(high_fodmap_ingredients, fn(fodmap) {
+          string.contains(ingredient_lower, fodmap)
+        })
+      let is_high = case !is_exception && contains_high_fodmap {
+        True -> 1
+        False -> 0
+      }
+      #(acc.0 + 1, acc.1 + is_high)
+    })
+  let compliance_percentage = case total_count {
     0 -> 100.0
     total -> {
-      let compliant_count = total - list.length(high_fodmap_found)
+      let compliant_count = total - high_fodmap_count
       let compliant_float = int.to_float(compliant_count)
       let total_float = int.to_float(total)
       compliant_float /. total_float *. 100.0

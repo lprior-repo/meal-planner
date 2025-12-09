@@ -160,6 +160,57 @@ pub type FontWeight {
 pub type NavCard {
   NavCard(icon: String, label: String, href: String)
 }
+
+// ===================================================================
+// MEAL LOG TYPES
+// ===================================================================
+
+/// Meal entry for daily log display
+pub type MealEntryData {
+  MealEntryData(
+    id: String,
+    time: String,
+    food_name: String,
+    portion: String,
+    protein: Float,
+    fat: Float,
+    carbs: Float,
+    calories: Float,
+    meal_type: String,
+  )
+}
+
+/// Food log entry card for display in meal logs
+pub type LogEntryCard {
+  LogEntryCard(
+    entry_id: String,
+    food_name: String,
+    portion: Float,
+    unit: String,
+    protein: Float,
+    fat: Float,
+    carbs: Float,
+    calories: Float,
+    meal_type: String,
+    logged_at: String,
+  )
+}
+
+// ===================================================================
+// PARAMETER OBJECT TYPES (Props)
+// ===================================================================
+
+/// Configuration for nutrition field rendering
+/// Replaces long parameter list in recipe_form.gleam
+pub type NutritionFieldProps {
+  NutritionFieldProps(
+    field_name: String,
+    label_text: String,
+    max_val: String,
+    step_val: String,
+    placeholder_text: String,
+  )
+}
 // ===================================================================
 // Additional types will be added as specific features are implemented
 // ===================================================================
