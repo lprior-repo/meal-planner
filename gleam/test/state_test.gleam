@@ -17,10 +17,12 @@ pub fn set_and_get_profile_test() {
 
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Gain,
       meals_per_day: 4,
+      micronutrient_goals: None,
     )
 
   // Initially no profile
@@ -71,10 +73,12 @@ pub fn clear_cache_test() {
 
   let profile =
     UserProfile(
+      id: "test-user",
       bodyweight: 180.0,
       activity_level: Active,
       goal: Gain,
       meals_per_day: 5,
+      micronutrient_goals: None,
     )
 
   let goals =
@@ -124,10 +128,12 @@ pub fn state_helpers_test() {
   let with_profile =
     state.State(
       profile: Some(UserProfile(
+        id: "test-user",
         bodyweight: 180.0,
         activity_level: Moderate,
         goal: Gain,
         meals_per_day: 4,
+        micronutrient_goals: None,
       )),
       goals: None,
     )
@@ -159,18 +165,22 @@ pub fn independent_state_servers_test() {
 
   let profile1 =
     UserProfile(
+      id: "test-user-1",
       bodyweight: 180.0,
       activity_level: Moderate,
       goal: Gain,
       meals_per_day: 4,
+      micronutrient_goals: None,
     )
 
   let profile2 =
     UserProfile(
+      id: "test-user-2",
       bodyweight: 150.0,
       activity_level: Active,
       goal: Gain,
       meals_per_day: 5,
+      micronutrient_goals: None,
     )
 
   // Set different profiles on each server

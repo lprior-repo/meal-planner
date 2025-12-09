@@ -1,799 +1,269 @@
-/// SQLite storage module for nutrition data persistence
-import gleam/dynamic/decode
-import gleam/io
-import gleam/list
-import gleam/option
-import gleam/string
-import meal_planner/migrate
-import meal_planner/ncp
-import meal_planner/types.{
-  type Recipe, type UserProfile, Active, Gain, High, Ingredient, Lose, Low,
-  Macros, Maintain, Medium, Moderate, Recipe, Sedentary, UserProfile,
-}
-import meal_planner/usda_import
-import sqlight
-
-/// Error type for storage operations
-pub type StorageError {
-  NotFound
-  DatabaseError(String)
+/// PostgreSQL storage module - Domain-driven organization
+/// 
+/// This module re-exports all storage functionality from domain-specific submodules:
+/// - storage/profile: User profiles, nutrition state, and goals
+/// - storage/recipes: Recipe storage and retrieval
+/// - storage/foods: USDA food database and custom foods
+/// - storage/logs: Food logging and daily/weekly summaries
+/// - storage/nutrients: Nutrient calculations and parsing
+/// - storage/migrations: Database migration utilities
+import meal_planner/storage/profile as profile_module
+import meal_planner/storage/profile.{
+  type StorageError as ProfileStorageError, DatabaseError, InvalidInput,
+  NotFound, Unauthorized,
 }
 
-/// Open a connection to a SQLite database and run a function with it
-/// Connection is automatically closed after the function completes
-pub fn with_connection(path: String, f: fn(sqlight.Connection) -> a) -> a {
-  sqlight.with_connection(path, f)
+import meal_planner/storage/recipes.{
+  delete_recipe, filter_recipes, get_all_recipes, get_recipe_by_id,
+  get_recipes_by_category, save_recipe,
 }
 
-/// Initialize the database schema
-pub fn init_db(conn: sqlight.Connection) -> Result(Nil, StorageError) {
-  let create_nutrition_table =
-    "CREATE TABLE IF NOT EXISTS nutrition_state (
-      date TEXT PRIMARY KEY,
-      protein REAL NOT NULL,
-      fat REAL NOT NULL,
-      carbs REAL NOT NULL,
-      calories REAL NOT NULL,
-      synced_at TEXT NOT NULL DEFAULT ''
-    )"
-
-  let create_goals_table =
-    "CREATE TABLE IF NOT EXISTS nutrition_goals (
-      id INTEGER PRIMARY KEY CHECK (id = 1),
-      daily_protein REAL NOT NULL,
-      daily_fat REAL NOT NULL,
-      daily_carbs REAL NOT NULL,
-      daily_calories REAL NOT NULL
-    )"
-
-  let create_profile_table =
-    "CREATE TABLE IF NOT EXISTS user_profile (
-      id INTEGER PRIMARY KEY CHECK (id = 1),
-      bodyweight REAL NOT NULL,
-      activity_level TEXT NOT NULL,
-      goal TEXT NOT NULL,
-      meals_per_day INTEGER NOT NULL
-    )"
-
-  case sqlight.exec(create_nutrition_table, on: conn) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(Nil) ->
-      case sqlight.exec(create_goals_table, on: conn) {
-        Error(e) -> Error(DatabaseError(e.message))
-        Ok(Nil) ->
-          case sqlight.exec(create_profile_table, on: conn) {
-            Error(e) -> Error(DatabaseError(e.message))
-            Ok(Nil) -> Ok(Nil)
-          }
-      }
-  }
+import meal_planner/storage/foods.{
+  create_custom_food, delete_custom_food, get_custom_food_by_id,
+  get_custom_foods_for_user, get_food_by_id, get_food_categories,
+  get_food_nutrients, get_foods_count, load_usda_food_with_macros,
+  search_custom_foods, search_foods, search_foods_filtered,
+  search_foods_filtered_with_offset, update_custom_food,
 }
 
-// ============================================================================
-// Nutrition State Storage Functions
-// ============================================================================
-
-/// Save nutrition state for a specific date
-pub fn save_nutrition_state(
-  conn: sqlight.Connection,
-  state: ncp.NutritionState,
-) -> Result(Nil, StorageError) {
-  let sql =
-    "INSERT OR REPLACE INTO nutrition_state (date, protein, fat, carbs, calories, synced_at)
-     VALUES (?, ?, ?, ?, ?, ?)"
-
-  let args = [
-    sqlight.text(state.date),
-    sqlight.float(state.consumed.protein),
-    sqlight.float(state.consumed.fat),
-    sqlight.float(state.consumed.carbs),
-    sqlight.float(state.consumed.calories),
-    sqlight.text(state.synced_at),
-  ]
-
-  case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(_) -> Ok(Nil)
-  }
+import meal_planner/storage/logs.{
+  delete_food_log, get_daily_log, get_food_logs_by_date, get_recent_meals,
+  get_user_profile_or_default, get_weekly_summary, save_food_log,
+  save_food_log_entry,
 }
 
-/// Get nutrition state for a specific date
-pub fn get_nutrition_state(
-  conn: sqlight.Connection,
-  date: String,
-) -> Result(ncp.NutritionState, StorageError) {
-  let sql =
-    "SELECT date, protein, fat, carbs, calories, synced_at FROM nutrition_state WHERE date = ?"
+import meal_planner/storage/migrations.{init_migrations}
 
-  let decoder = {
-    use date <- decode.field(0, decode.string)
-    use protein <- decode.field(1, decode.float)
-    use fat <- decode.field(2, decode.float)
-    use carbs <- decode.field(3, decode.float)
-    use calories <- decode.field(4, decode.float)
-    use synced_at <- decode.field(5, decode.string)
-    decode.success(ncp.NutritionState(
-      date: date,
-      consumed: ncp.NutritionData(
-        protein: protein,
-        fat: fat,
-        carbs: carbs,
-        calories: calories,
-      ),
-      synced_at: synced_at,
-    ))
-  }
-
-  case
-    sqlight.query(sql, on: conn, with: [sqlight.text(date)], expecting: decoder)
-  {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([data, ..]) -> Ok(data)
-  }
+import meal_planner/storage/analytics.{
+  record_search_event as analytics_record_search_event,
 }
 
-/// Get nutrition history for the last N days
-pub fn get_nutrition_history(
-  conn: sqlight.Connection,
-  limit: Int,
-) -> Result(List(ncp.NutritionState), StorageError) {
-  let sql =
-    "SELECT date, protein, fat, carbs, calories, synced_at
-     FROM nutrition_state ORDER BY date DESC LIMIT ?"
-
-  let decoder = {
-    use date <- decode.field(0, decode.string)
-    use protein <- decode.field(1, decode.float)
-    use fat <- decode.field(2, decode.float)
-    use carbs <- decode.field(3, decode.float)
-    use calories <- decode.field(4, decode.float)
-    use synced_at <- decode.field(5, decode.string)
-    decode.success(ncp.NutritionState(
-      date: date,
-      consumed: ncp.NutritionData(
-        protein: protein,
-        fat: fat,
-        carbs: carbs,
-        calories: calories,
-      ),
-      synced_at: synced_at,
-    ))
-  }
-
-  case
-    sqlight.query(sql, on: conn, with: [sqlight.int(limit)], expecting: decoder)
-  {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(states) -> Ok(states)
-  }
+// Re-export everything
+pub fn default_config() {
+  profile_module.default_config()
 }
 
-// ============================================================================
-// Nutrition Goals Storage Functions
-// ============================================================================
-
-/// Save nutrition goals
-pub fn save_goals(
-  conn: sqlight.Connection,
-  goals: ncp.NutritionGoals,
-) -> Result(Nil, StorageError) {
-  let sql =
-    "INSERT OR REPLACE INTO nutrition_goals (id, daily_protein, daily_fat, daily_carbs, daily_calories)
-     VALUES (1, ?, ?, ?, ?)"
-
-  let args = [
-    sqlight.float(goals.daily_protein),
-    sqlight.float(goals.daily_fat),
-    sqlight.float(goals.daily_carbs),
-    sqlight.float(goals.daily_calories),
-  ]
-
-  case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(_) -> Ok(Nil)
-  }
+pub fn start_pool(config) {
+  profile_module.start_pool(config)
 }
 
-/// Get nutrition goals
-pub fn get_goals(
-  conn: sqlight.Connection,
-) -> Result(ncp.NutritionGoals, StorageError) {
-  let sql =
-    "SELECT daily_protein, daily_fat, daily_carbs, daily_calories FROM nutrition_goals WHERE id = 1"
-
-  let decoder = {
-    use daily_protein <- decode.field(0, decode.float)
-    use daily_fat <- decode.field(1, decode.float)
-    use daily_carbs <- decode.field(2, decode.float)
-    use daily_calories <- decode.field(3, decode.float)
-    decode.success(ncp.NutritionGoals(
-      daily_protein: daily_protein,
-      daily_fat: daily_fat,
-      daily_carbs: daily_carbs,
-      daily_calories: daily_calories,
-    ))
-  }
-
-  case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([data, ..]) -> Ok(data)
-  }
+pub fn save_nutrition_state(conn, state) {
+  profile_module.save_nutrition_state(conn, state)
 }
 
-// ============================================================================
-// User Profile Storage Functions
-// ============================================================================
-
-/// Save user profile
-pub fn save_user_profile(
-  conn: sqlight.Connection,
-  profile: UserProfile,
-) -> Result(Nil, StorageError) {
-  let sql =
-    "INSERT OR REPLACE INTO user_profile (id, bodyweight, activity_level, goal, meals_per_day)
-     VALUES (1, ?, ?, ?, ?)"
-
-  let activity_str = case profile.activity_level {
-    Sedentary -> "sedentary"
-    Moderate -> "moderate"
-    Active -> "active"
-  }
-
-  let goal_str = case profile.goal {
-    Gain -> "gain"
-    Maintain -> "maintain"
-    Lose -> "lose"
-  }
-
-  let args = [
-    sqlight.float(profile.bodyweight),
-    sqlight.text(activity_str),
-    sqlight.text(goal_str),
-    sqlight.int(profile.meals_per_day),
-  ]
-
-  case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(_) -> Ok(Nil)
-  }
+pub fn get_nutrition_state(conn, date) {
+  profile_module.get_nutrition_state(conn, date)
 }
 
-/// Get user profile
-pub fn get_user_profile(
-  conn: sqlight.Connection,
-) -> Result(UserProfile, StorageError) {
-  let sql =
-    "SELECT bodyweight, activity_level, goal, meals_per_day FROM user_profile WHERE id = 1"
-
-  let decoder = {
-    use bodyweight <- decode.field(0, decode.float)
-    use activity_str <- decode.field(1, decode.string)
-    use goal_str <- decode.field(2, decode.string)
-    use meals_per_day <- decode.field(3, decode.int)
-
-    let activity_level = case activity_str {
-      "sedentary" -> Sedentary
-      "moderate" -> Moderate
-      "active" -> Active
-      _ -> Moderate
-    }
-
-    let goal = case goal_str {
-      "gain" -> Gain
-      "maintain" -> Maintain
-      "lose" -> Lose
-      _ -> Maintain
-    }
-
-    decode.success(UserProfile(
-      bodyweight: bodyweight,
-      activity_level: activity_level,
-      goal: goal,
-      meals_per_day: meals_per_day,
-    ))
-  }
-
-  case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([profile, ..]) -> Ok(profile)
-  }
+pub fn get_nutrition_history(conn, days) {
+  profile_module.get_nutrition_history(conn, days)
 }
 
-// ============================================================================
-// Recipe Storage Functions
-// ============================================================================
-
-/// Initialize recipe tables in the database
-pub fn init_recipe_tables(conn: sqlight.Connection) -> Result(Nil, StorageError) {
-  let create_recipes_table =
-    "CREATE TABLE IF NOT EXISTS recipes (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      ingredients TEXT NOT NULL,
-      instructions TEXT NOT NULL,
-      protein REAL NOT NULL,
-      fat REAL NOT NULL,
-      carbs REAL NOT NULL,
-      servings INTEGER NOT NULL,
-      category TEXT NOT NULL,
-      fodmap_level TEXT NOT NULL,
-      vertical_compliant INTEGER NOT NULL
-    )"
-
-  case sqlight.exec(create_recipes_table, on: conn) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(Nil) -> Ok(Nil)
-  }
+pub fn save_goals(conn, goals) {
+  profile_module.save_goals(conn, goals)
 }
 
-/// Save a recipe to the database
-pub fn save_recipe(
-  conn: sqlight.Connection,
-  recipe: Recipe,
-) -> Result(Nil, StorageError) {
-  let sql =
-    "INSERT OR REPLACE INTO recipes 
-     (id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-
-  let ingredients_json =
-    string.join(
-      list.map(recipe.ingredients, fn(i) { i.name <> ":" <> i.quantity }),
-      "|",
-    )
-
-  let instructions_json = string.join(recipe.instructions, "|")
-
-  let fodmap_string = case recipe.fodmap_level {
-    Low -> "low"
-    Medium -> "medium"
-    High -> "high"
-  }
-
-  let args = [
-    sqlight.text(recipe.id),
-    sqlight.text(recipe.name),
-    sqlight.text(ingredients_json),
-    sqlight.text(instructions_json),
-    sqlight.float(recipe.macros.protein),
-    sqlight.float(recipe.macros.fat),
-    sqlight.float(recipe.macros.carbs),
-    sqlight.int(recipe.servings),
-    sqlight.text(recipe.category),
-    sqlight.text(fodmap_string),
-    sqlight.int(case recipe.vertical_compliant {
-      True -> 1
-      False -> 0
-    }),
-  ]
-
-  case sqlight.query(sql, on: conn, with: args, expecting: decode.dynamic) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(_) -> Ok(Nil)
-  }
+pub fn get_goals(conn) {
+  profile_module.get_goals(conn)
 }
 
-/// Get all recipes from the database
-pub fn get_all_recipes(
-  conn: sqlight.Connection,
-) -> Result(List(Recipe), StorageError) {
-  let sql =
-    "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
-     FROM recipes ORDER BY name"
-
-  let decoder = {
-    use id <- decode.field(0, decode.string)
-    use name <- decode.field(1, decode.string)
-    use ingredients_str <- decode.field(2, decode.string)
-    use instructions_str <- decode.field(3, decode.string)
-    use protein <- decode.field(4, decode.float)
-    use fat <- decode.field(5, decode.float)
-    use carbs <- decode.field(6, decode.float)
-    use servings <- decode.field(7, decode.int)
-    use category <- decode.field(8, decode.string)
-    use fodmap_str <- decode.field(9, decode.string)
-    use vertical_int <- decode.field(10, decode.int)
-
-    let ingredients =
-      string.split(ingredients_str, "|")
-      |> list.map(fn(pair) {
-        case string.split(pair, ":") {
-          [name, quantity] -> Ingredient(name, quantity)
-          _ -> Ingredient(pair, "")
-        }
-      })
-
-    let instructions = string.split(instructions_str, "|")
-
-    let fodmap_level = case fodmap_str {
-      "low" -> Low
-      "medium" -> Medium
-      "high" -> High
-      _ -> Low
-    }
-
-    let vertical_compliant = case vertical_int {
-      1 -> True
-      _ -> False
-    }
-
-    decode.success(Recipe(
-      id: id,
-      name: name,
-      ingredients: ingredients,
-      instructions: instructions,
-      macros: Macros(protein: protein, fat: fat, carbs: carbs),
-      servings: servings,
-      category: category,
-      fodmap_level: fodmap_level,
-      vertical_compliant: vertical_compliant,
-    ))
-  }
-
-  case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(recipes) -> Ok(recipes)
-  }
+pub fn save_user_profile(conn, user_profile) {
+  profile_module.save_user_profile(conn, user_profile)
 }
 
-/// Get a specific recipe by ID
-pub fn get_recipe_by_id(
-  conn: sqlight.Connection,
-  recipe_id: String,
-) -> Result(Recipe, StorageError) {
-  let sql =
-    "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
-     FROM recipes WHERE id = ?"
-
-  let decoder = {
-    use id <- decode.field(0, decode.string)
-    use name <- decode.field(1, decode.string)
-    use ingredients_str <- decode.field(2, decode.string)
-    use instructions_str <- decode.field(3, decode.string)
-    use protein <- decode.field(4, decode.float)
-    use fat <- decode.field(5, decode.float)
-    use carbs <- decode.field(6, decode.float)
-    use servings <- decode.field(7, decode.int)
-    use category <- decode.field(8, decode.string)
-    use fodmap_str <- decode.field(9, decode.string)
-    use vertical_int <- decode.field(10, decode.int)
-
-    let ingredients =
-      string.split(ingredients_str, "|")
-      |> list.map(fn(pair) {
-        case string.split(pair, ":") {
-          [name, quantity] -> Ingredient(name, quantity)
-          _ -> Ingredient(pair, "")
-        }
-      })
-
-    let instructions = string.split(instructions_str, "|")
-
-    let fodmap_level = case fodmap_str {
-      "low" -> Low
-      "medium" -> Medium
-      "high" -> High
-      _ -> Low
-    }
-
-    let vertical_compliant = case vertical_int {
-      1 -> True
-      _ -> False
-    }
-
-    decode.success(Recipe(
-      id: id,
-      name: name,
-      ingredients: ingredients,
-      instructions: instructions,
-      macros: Macros(protein: protein, fat: fat, carbs: carbs),
-      servings: servings,
-      category: category,
-      fodmap_level: fodmap_level,
-      vertical_compliant: vertical_compliant,
-    ))
-  }
-
-  case
-    sqlight.query(
-      sql,
-      on: conn,
-      with: [sqlight.text(recipe_id)],
-      expecting: decoder,
-    )
-  {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([recipe, ..]) -> Ok(recipe)
-  }
+pub fn get_user_profile(conn) {
+  profile_module.get_user_profile(conn)
 }
 
-/// Get recipes by category
-pub fn get_recipes_by_category(
-  conn: sqlight.Connection,
-  category: String,
-) -> Result(List(Recipe), StorageError) {
-  let sql =
-    "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
-     FROM recipes WHERE category = ? ORDER BY name"
-
-  let decoder = {
-    use id <- decode.field(0, decode.string)
-    use name <- decode.field(1, decode.string)
-    use ingredients_str <- decode.field(2, decode.string)
-    use instructions_str <- decode.field(3, decode.string)
-    use protein <- decode.field(4, decode.float)
-    use fat <- decode.field(5, decode.float)
-    use carbs <- decode.field(6, decode.float)
-    use servings <- decode.field(7, decode.int)
-    use category <- decode.field(8, decode.string)
-    use fodmap_str <- decode.field(9, decode.string)
-    use vertical_int <- decode.field(10, decode.int)
-
-    let ingredients =
-      string.split(ingredients_str, "|")
-      |> list.map(fn(pair) {
-        case string.split(pair, ":") {
-          [name, quantity] -> Ingredient(name, quantity)
-          _ -> Ingredient(pair, "")
-        }
-      })
-
-    let instructions = string.split(instructions_str, "|")
-
-    let fodmap_level = case fodmap_str {
-      "low" -> Low
-      "medium" -> Medium
-      "high" -> High
-      _ -> Low
-    }
-
-    let vertical_compliant = case vertical_int {
-      1 -> True
-      _ -> False
-    }
-
-    decode.success(Recipe(
-      id: id,
-      name: name,
-      ingredients: ingredients,
-      instructions: instructions,
-      macros: Macros(protein: protein, fat: fat, carbs: carbs),
-      servings: servings,
-      category: category,
-      fodmap_level: fodmap_level,
-      vertical_compliant: vertical_compliant,
-    ))
-  }
-
-  case
-    sqlight.query(
-      sql,
-      on: conn,
-      with: [sqlight.text(category)],
-      expecting: decoder,
-    )
-  {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(recipes) -> Ok(recipes)
-  }
+// Recipe functions
+pub fn save_recipe(conn, recipe) {
+  recipes.save_recipe(conn, recipe)
 }
 
-/// Initialize database with all required tables
-pub fn initialize_database() -> Result(Nil, String) {
-  // First run migrations to create schema
-  case migrate.init_database("migrations") {
-    Error(_e) -> Error("Failed to run migrations")
-    Ok(_count) -> {
-      // Then initialize any remaining tables
-      with_connection(migrate.get_db_path(), fn(conn) {
-        case init_db(conn) {
-          Ok(_) ->
-            case init_recipe_tables(conn) {
-              Ok(_) -> {
-                // Check if USDA data needs importing
-                case usda_import.is_imported(conn) {
-                  True -> {
-                    io.println("USDA data already imported")
-                    Ok(Nil)
-                  }
-                  False -> {
-                    io.println("Importing USDA FoodData Central...")
-                    let usda_dir =
-                      usda_import.get_cache_dir()
-                      <> "/FoodData_Central_csv_2025-04-24"
-                    case usda_import.import_from_directory(conn, usda_dir) {
-                      Ok(_counts) -> {
-                        io.println("USDA import complete!")
-                        Ok(Nil)
-                      }
-                      Error(err) -> {
-                        io.println(
-                          "USDA import failed (will continue without): "
-                          <> format_usda_error(err),
-                        )
-                        // Don't fail app startup if USDA import fails
-                        Ok(Nil)
-                      }
-                    }
-                  }
-                }
-              }
-              Error(_) -> Error("Failed to initialize recipe tables")
-            }
-          Error(_) -> Error("Failed to initialize database")
-        }
-      })
-    }
-  }
+pub fn get_all_recipes(conn) {
+  recipes.get_all_recipes(conn)
 }
 
-fn format_usda_error(err: usda_import.ImportError) -> String {
-  case err {
-    usda_import.FileNotFound(path) -> "File not found: " <> path
-    usda_import.ParseError(msg) -> "Parse error: " <> msg
-    usda_import.DatabaseError(msg) -> "Database error: " <> msg
-    usda_import.ZipError(msg) -> "Zip error: " <> msg
-  }
+pub fn get_recipe_by_id(conn, id) {
+  recipes.get_recipe_by_id(conn, id)
 }
 
-// ============================================================================
-// USDA Food Search Functions
-// ============================================================================
-
-/// A food item from the USDA database
-pub type UsdaFood {
-  UsdaFood(
-    fdc_id: Int,
-    description: String,
-    data_type: String,
-    category: String,
-  )
+pub fn delete_recipe(conn, id) {
+  recipes.delete_recipe(conn, id)
 }
 
-/// Nutrient value for a food
-pub type FoodNutrientValue {
-  FoodNutrientValue(nutrient_name: String, amount: Float, unit: String)
+pub fn get_recipes_by_category(conn, category) {
+  recipes.get_recipes_by_category(conn, category)
 }
 
-/// Search for foods by description
-pub fn search_foods(
-  conn: sqlight.Connection,
-  query: String,
-  limit: Int,
-) -> Result(List(UsdaFood), StorageError) {
-  let sql =
-    "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
-     FROM foods
-     WHERE description LIKE ?
-     ORDER BY
-       CASE data_type
-         WHEN 'sr_legacy_food' THEN 1
-         WHEN 'foundation_food' THEN 2
-         WHEN 'survey_fndds_food' THEN 3
-         ELSE 4
-       END,
-       description
-     LIMIT ?"
-
-  let search_term = "%" <> query <> "%"
-
-  let decoder = {
-    use fdc_id <- decode.field(0, decode.int)
-    use description <- decode.field(1, decode.string)
-    use data_type <- decode.field(2, decode.string)
-    use category <- decode.field(3, decode.string)
-    decode.success(UsdaFood(
-      fdc_id: fdc_id,
-      description: description,
-      data_type: data_type,
-      category: category,
-    ))
-  }
-
-  case
-    sqlight.query(
-      sql,
-      on: conn,
-      with: [sqlight.text(search_term), sqlight.int(limit)],
-      expecting: decoder,
-    )
-  {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(foods) -> Ok(foods)
-  }
+pub fn filter_recipes(conn, min_protein, max_fat, max_calories) {
+  recipes.filter_recipes(conn, min_protein, max_fat, max_calories)
 }
 
-/// Get nutrients for a specific food
-pub fn get_food_nutrients(
-  conn: sqlight.Connection,
-  fdc_id: Int,
-) -> Result(List(FoodNutrientValue), StorageError) {
-  let sql =
-    "SELECT n.name, fn.amount, n.unit_name
-     FROM food_nutrients fn
-     JOIN nutrients n ON fn.nutrient_id = n.id
-     WHERE fn.fdc_id = ?
-     ORDER BY n.rank NULLS LAST, n.name"
+// pub fn search_foods(conn, query) {
+//   foods.search_foods(conn, query)
+// }
 
-  let decoder = {
-    use name <- decode.field(0, decode.string)
-    use amount <- decode.field(1, decode.optional(decode.float))
-    use unit <- decode.field(2, decode.string)
-    decode.success(FoodNutrientValue(
-      nutrient_name: name,
-      amount: case amount {
-        option.Some(a) -> a
-        option.None -> 0.0
-      },
-      unit: unit,
-    ))
-  }
+// pub fn search_foods_filtered(conn, query, category) {
+//   foods.search_foods_filtered(conn, query, category)
+// }
 
-  case
-    sqlight.query(
-      sql,
-      on: conn,
-      with: [sqlight.int(fdc_id)],
-      expecting: decoder,
-    )
-  {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok(nutrients) -> Ok(nutrients)
-  }
+// Custom food functions
+pub fn create_custom_food(conn, user_id, custom_food) {
+  foods.create_custom_food(conn, user_id, custom_food)
 }
 
-/// Get a single food by FDC ID
-pub fn get_food_by_id(
-  conn: sqlight.Connection,
-  fdc_id: Int,
-) -> Result(UsdaFood, StorageError) {
-  let sql =
-    "SELECT fdc_id, description, data_type, COALESCE(food_category, '')
-     FROM foods WHERE fdc_id = ?"
-
-  let decoder = {
-    use fdc_id <- decode.field(0, decode.int)
-    use description <- decode.field(1, decode.string)
-    use data_type <- decode.field(2, decode.string)
-    use category <- decode.field(3, decode.string)
-    decode.success(UsdaFood(
-      fdc_id: fdc_id,
-      description: description,
-      data_type: data_type,
-      category: category,
-    ))
-  }
-
-  case
-    sqlight.query(
-      sql,
-      on: conn,
-      with: [sqlight.int(fdc_id)],
-      expecting: decoder,
-    )
-  {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([]) -> Error(NotFound)
-    Ok([food, ..]) -> Ok(food)
-  }
+pub fn get_custom_food_by_id(conn, user_id, food_id) {
+  foods.get_custom_food_by_id(conn, user_id, food_id)
 }
 
-/// Get count of foods in database
-pub fn get_foods_count(conn: sqlight.Connection) -> Result(Int, StorageError) {
-  let sql = "SELECT COUNT(*) FROM foods"
-
-  let decoder = {
-    use count <- decode.field(0, decode.int)
-    decode.success(count)
-  }
-
-  case sqlight.query(sql, on: conn, with: [], expecting: decoder) {
-    Error(e) -> Error(DatabaseError(e.message))
-    Ok([count]) -> Ok(count)
-    Ok(_) -> Ok(0)
-  }
+pub fn get_custom_foods_for_user(conn, user_id) {
+  foods.get_custom_foods_for_user(conn, user_id)
 }
+
+pub fn update_custom_food(conn, user_id, custom_food) {
+  foods.update_custom_food(conn, user_id, custom_food)
+}
+
+pub fn delete_custom_food(conn, user_id, food_id) {
+  foods.delete_custom_food(conn, user_id, food_id)
+}
+
+pub fn search_custom_foods(conn, user_id, query, limit) {
+  foods.search_custom_foods(conn, user_id, query, limit)
+}
+
+// Food database functions
+pub fn get_food_by_id(conn, id) {
+  foods.get_food_by_id(conn, id)
+}
+
+pub fn load_usda_food_with_macros(conn, id) {
+  foods.load_usda_food_with_macros(conn, id)
+}
+
+pub fn get_foods_count(conn) {
+  foods.get_foods_count(conn)
+}
+
+pub fn get_food_categories(conn) {
+  foods.get_food_categories(conn)
+}
+
+pub fn search_foods(conn, query, limit) {
+  foods.search_foods(conn, query, limit)
+}
+
+pub fn search_foods_filtered(conn, query, filters, limit) {
+  foods.search_foods_filtered(conn, query, filters, limit)
+}
+
+pub fn search_foods_filtered_with_offset(conn, query, filters, limit, offset) {
+  foods.search_foods_filtered_with_offset(conn, query, filters, limit, offset)
+}
+
+pub fn get_food_nutrients(conn, fdc_id) {
+  foods.get_food_nutrients(conn, fdc_id)
+}
+
+// Food log functions
+pub fn save_food_log(conn, log) {
+  logs.save_food_log(conn, log)
+}
+
+pub fn save_food_log_entry(conn, date, entry) {
+  logs.save_food_log_entry(conn, date, entry)
+}
+
+pub fn get_food_logs_by_date(conn, date) {
+  logs.get_food_logs_by_date(conn, date)
+}
+
+pub fn delete_food_log(conn, id) {
+  logs.delete_food_log(conn, id)
+}
+
+pub fn get_recent_meals(conn, limit) {
+  logs.get_recent_meals(conn, limit)
+}
+
+pub fn get_daily_log(conn, date) {
+  logs.get_daily_log(conn, date)
+}
+
+pub fn get_user_profile_or_default(conn) {
+  logs.get_user_profile_or_default(conn)
+}
+
+pub fn get_weekly_summary(conn, user_id, start_date) {
+  logs.get_weekly_summary(conn, user_id, start_date)
+}
+
+// Migrations
+pub fn init_migrations() {
+  migrations.init_migrations()
+}
+
+// Analytics
+pub fn record_search_event(conn, event) {
+  analytics_record_search_event(conn, event)
+}
+
+// pub fn get_weekly_summary(conn, start_date) {
+//   logs.get_weekly_summary(conn, start_date)
+// }
+
+// pub fn save_food_to_log(conn, user_id, meal_type, food) {
+//   logs.save_food_to_log(conn, user_id, meal_type, food)
+// }
+
+// pub fn get_recently_logged_foods(conn, user_id, limit) {
+//   logs.get_recently_logged_foods(conn, user_id, limit)
+// }
+
+// pub fn get_food_nutrients(conn, id) {
+//   nutrients.get_food_nutrients(conn, id)
+// }
+
+// pub fn parse_usda_macros(nutrients_list) {
+//   nutrients.parse_usda_macros(nutrients_list)
+// }
+
+// pub fn parse_usda_micronutrients(nutrients_list) {
+//   nutrients.parse_usda_micronutrients(nutrients_list)
+// }
+
+// pub fn calculate_total_macros(entries) {
+//   nutrients.calculate_total_macros(entries)
+// }
+
+// pub fn calculate_total_micronutrients(entries) {
+//   nutrients.calculate_total_micronutrients(entries)
+// }
+
+// init_migrations is re-exported directly from migrations import above
+
+// Re-export types for type annotations
+pub type StorageError =
+  profile_module.StorageError
+
+pub type DbConfig =
+  profile_module.DbConfig
+
+pub type UsdaFood =
+  foods.UsdaFood
+
+pub type FoodNutrientValue =
+  foods.FoodNutrientValue
+
+pub type UsdaFoodWithNutrients =
+  foods.UsdaFoodWithNutrients
+
+pub type Log =
+  logs.Log
+
+pub type FoodSummaryItem =
+  logs.FoodSummaryItem
+
+pub type WeeklySummary =
+  logs.WeeklySummary

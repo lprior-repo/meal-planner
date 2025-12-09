@@ -1,0 +1,3947 @@
+  Compiling meal_planner
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/test/fixtures/test_db.gleam:9:1
+  │
+9 │ import gleam/result
+  │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/fixtures/test_db.gleam:11:1
+   │
+11 │ import gleeunit/should
+   │ ^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+   ┌─ /home/lewis/src/meal-planner/gleam/test/fractal_quality_harness_test.gleam:72:27
+   │
+72 │ pub fn generate_checklist(file: String) -> List(CheckItem) {
+   │                           ^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_file`.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/ncp.gleam:6:1
+  │
+6 │ import meal_planner/nutrition_constants
+  │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/query_cache.gleam:6:1
+  │
+6 │ import gleam/list
+  │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/query_cache.gleam:9:1
+  │
+9 │ import meal_planner/nutrition_constants as constants
+  │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/query_cache.gleam:306:3
+    │
+306 │   cache_hit: Bool,
+    │   ^^^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_cache_hit`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/query_cache.gleam:307:3
+    │
+307 │   query_name: String,
+    │   ^^^^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_query_name`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/query_cache.gleam:308:3
+    │
+308 │   execution_time_ms: Float,
+    │   ^^^^^^^^^^^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_execution_time_ms`.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage_optimized.gleam:4:1
+  │
+4 │ import gleam/dict
+  │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage_optimized.gleam:6:1
+  │
+6 │ import gleam/int
+  │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage_optimized.gleam:7:22
+  │
+7 │ import gleam/option.{type Option, None, Some}
+  │                      ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused value
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage_optimized.gleam:50:7
+   │
+50 │       query_cache.record_metric(True, "search_foods", 0.5)
+   │       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This value is never used
+
+This expression computes a value without any side effects, but then the
+value isn't used at all. You might want to assign it to a variable, or
+delete the expression entirely if it's not needed.
+
+warning: Unused value
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage_optimized.gleam:64:7
+   │
+64 │       query_cache.record_metric(False, "search_foods", 5.0)
+   │       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This value is never used
+
+This expression computes a value without any side effects, but then the
+value isn't used at all. You might want to assign it to a variable, or
+delete the expression entirely if it's not needed.
+
+warning: Unused value
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage_optimized.gleam:155:7
+    │
+155 │       query_cache.record_metric(True, "search_foods_filtered", 0.5)
+    │       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This value is never used
+
+This expression computes a value without any side effects, but then the
+value isn't used at all. You might want to assign it to a variable, or
+delete the expression entirely if it's not needed.
+
+warning: Unused value
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/storage_optimized.gleam:167:7
+    │
+167 │       query_cache.record_metric(False, "search_foods_filtered", 8.0)
+    │       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This value is never used
+
+This expression computes a value without any side effects, but then the
+value isn't used at all. You might want to assign it to a variable, or
+delete the expression entirely if it's not needed.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/food_log.gleam:4:1
+  │
+4 │ import gleam/int
+  │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/food_log.gleam:7:28
+  │
+7 │ import gleam/option.{None, Some}
+  │                            ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/food_log.gleam:11:28
+   │
+11 │ import meal_planner/types.{type FoodLogEntry, FoodLogEntry, Macros}
+   │                            ^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/food_log.gleam:11:61
+   │
+11 │ import meal_planner/types.{type FoodLogEntry, FoodLogEntry, Macros}
+   │                                                             ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/generator.gleam:5:48
+  │
+5 │ import meal_planner/meal_plan.{type DailyPlan, type Meal, DailyPlan, Meal}
+  │                                                ^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Deprecated value used
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/generator.gleam:161:31
+    │
+161 │                     |> result.then(fn(_) {
+    │                               ^^^^ This value has been deprecated
+
+It was deprecated with this message: This function is an alias of
+result.try, use that instead
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/ui/components/meal_card.gleam:19:28
+   │
+19 │ import meal_planner/types.{type Macros, macros_calories}
+   │                            ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/generate.gleam:9:1
+  │
+9 │ import gleam/result
+  │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/generate.gleam:12:48
+   │
+12 │ import meal_planner/meal_plan.{type DailyPlan, type Meal, Meal}
+   │                                                ^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/profile.gleam:5:28
+  │
+5 │ import meal_planner/types.{type UserProfile, Macros}
+  │                            ^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/profile.gleam:5:46
+  │
+5 │ import meal_planner/types.{type UserProfile, Macros}
+  │                                              ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/recipe.gleam:12:43
+   │
+12 │   type Macros as MacrosType, type Recipe, Ingredient, Macros,
+   │                                           ^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/recipe.gleam:12:55
+   │
+12 │   type Macros as MacrosType, type Recipe, Ingredient, Macros,
+   │                                                       ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:27:3
+   │
+27 │   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
+   │   ^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:27:18
+   │
+27 │   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
+   │                  ^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:27:37
+   │
+27 │   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
+   │                                     ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:27:50
+   │
+27 │   type DailyLog, type FoodLogEntry, type Macros, type MealType, type Recipe,
+   │                                                  ^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:28:49
+   │
+28 │   type SearchFilters, type UserProfile, Active, Breakfast, DailyLog, Dinner,
+   │                                                 ^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:28:60
+   │
+28 │   type SearchFilters, type UserProfile, Active, Breakfast, DailyLog, Dinner,
+   │                                                            ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:28:70
+   │
+28 │   type SearchFilters, type UserProfile, Active, Breakfast, DailyLog, Dinner,
+   │                                                                      ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:29:3
+   │
+29 │   FoodLogEntry, Gain, Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack,
+   │   ^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:29:29
+   │
+29 │   FoodLogEntry, Gain, Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack,
+   │                             ^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:29:75
+   │
+29 │   FoodLogEntry, Gain, Lose, Lunch, Macros, Maintain, Moderate, Sedentary, Snack,
+   │                                                                           ^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:995:1
+    │
+995 │ fn dashboard_page(req: wisp.Request, ctx: Context) -> wisp.Response {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1100:1
+     │  
+1100 │ ╭ fn macro_bar(
+1101 │ │   label: String,
+1102 │ │   current: Float,
+1103 │ │   target: Float,
+1104 │ │   color: String,
+1105 │ │ ) -> element.Element(msg) {
+     │ ╰─────────────────────────^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1139:1
+     │  
+1139 │ ╭ fn filter_btn(
+1140 │ │   label: String,
+1141 │ │   value: String,
+1142 │ │   current: String,
+1143 │ │ ) -> element.Element(msg) {
+     │ ╰─────────────────────────^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1154:1
+     │
+1154 │ fn meal_entry_item(entry: FoodLogEntry) -> element.Element(msg) {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1187:1
+     │
+1187 │ fn sum_macros(entries: List(FoodLogEntry)) -> Macros {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1707:1
+     │
+1707 │ fn api_recipes(req: wisp.Request, ctx: Context) -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1719:1
+     │
+1719 │ fn create_recipe_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1762:1
+     │  
+1762 │ ╭ fn parse_recipe_from_form(
+1763 │ │   values: List(#(String, String)),
+1764 │ │ ) -> Result(Recipe, List(String)) {
+     │ ╰─────────────────────────────────^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1886:1
+     │
+1886 │ fn add_error(errors: List(String), result: Result(a, String)) -> List(String) {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1893:1
+     │  
+1893 │ ╭ fn extract_ingredients(
+1894 │ │   values: List(#(String, String)),
+1895 │ │ ) -> List(types.Ingredient) {
+     │ ╰───────────────────────────^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1922:1
+     │
+1922 │ fn extract_instructions(values: List(#(String, String))) -> List(String) {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1949:1
+     │
+1949 │ fn generate_recipe_id(name: String) -> String {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1963:1
+     │
+1963 │ fn system_time(unit: Int) -> Int
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1965:1
+     │
+1965 │ fn get_timestamp_string() -> String {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:1973:1
+     │
+1973 │ fn api_recipe(req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2059:1
+     │
+2059 │ fn api_profile(_req: wisp.Request, ctx: Context) -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2065:1
+     │
+2065 │ fn api_foods(req: wisp.Request, ctx: Context) -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2250:1
+     │
+2250 │ fn api_food(_req: wisp.Request, id: String, ctx: Context) -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2282:1
+     │
+2282 │ fn food_to_json(f: storage.UsdaFood) -> json.Json {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2292:1
+     │
+2292 │ fn api_logs_create(req: wisp.Request, ctx: Context) -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2365:1
+     │  
+2365 │ ╭ fn api_log_entry(
+2366 │ │   req: wisp.Request,
+2367 │ │   entry_id: String,
+2368 │ │   ctx: Context,
+2369 │ │ ) -> wisp.Response {
+     │ ╰──────────────────^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2618:1
+     │  
+2618 │ ╭ fn search_foods(
+2619 │ │   ctx: Context,
+2620 │ │   query: String,
+2621 │ │   limit: Int,
+2622 │ │ ) -> #(Context, List(storage.UsdaFood)) {
+     │ ╰───────────────────────────────────────^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2687:1
+     │
+2687 │ fn load_daily_log(ctx: Context, date: String) -> DailyLog {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2703:1
+     │
+2703 │ fn get_today_date() -> String {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2764:1
+     │
+2764 │ fn macros_to_json(m: Macros) -> json.Json {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2773:1
+     │
+2773 │ fn recipe_to_json(r: Recipe) -> json.Json {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2793:1
+     │
+2793 │ fn profile_to_json(p: UserProfile) -> json.Json {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2829:1
+     │
+2829 │ fn meal_type_to_string(meal_type: MealType) -> String {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2839:1
+     │
+2839 │ fn string_to_meal_type(s: String) -> MealType {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2850:1
+     │
+2850 │ fn generate_entry_id() -> String {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2855:1
+     │
+2855 │ fn current_timestamp() -> String {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2871:1
+     │
+2871 │ fn pad_two(n: Int) -> String {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2879:1
+     │
+2879 │ fn erlang_localtime() -> #(#(Int, Int, Int), #(Int, Int, Int))
+     │ ^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2889:1
+     │  
+2889 │ ╭ fn error_response(
+2890 │ │   status: Int,
+2891 │ │   title: String,
+2892 │ │   message: String,
+2893 │ │   retry_url: option.Option(String),
+2894 │ │ ) -> wisp.Response {
+     │ ╰──────────────────^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2924:1
+     │
+2924 │ fn server_error_response(message: String) -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2934:1
+     │
+2934 │ fn bad_request_response(message: String) -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2939:1
+     │
+2939 │ fn enhanced_not_found() -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2969:1
+     │
+2969 │ fn json_error_response(status: Int, error_message: String) -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+     ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam:2975:1
+     │
+2975 │ fn handle_storage_error(error: storage.StorageError) -> wisp.Response {
+     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:31:1
+   │
+31 │ import gleam/int
+   │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:35:1
+   │
+35 │ import gleam/string
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:90:1
+   │
+90 │ fn handle_message(state: State, message: Message) -> actor.Next(State, Message) {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:145:1
+    │
+145 │ fn is_sunday_8pm() -> Bool {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unreachable code
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:165:22
+    │
+165 │     next_check_time: 0,
+    │                      ^
+
+This argument is unreachable because the previous one always panics. Your
+code will crash before reaching this point.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:182:1
+    │
+182 │ fn send_weekly_email(state: State) -> Nil {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:225:1
+    │
+225 │ fn get_top_food_names(foods: List(storage.FoodSummaryItem)) -> List(String) {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:232:1
+    │
+232 │ fn db_error_to_string(error: storage.StorageError) -> String {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:242:1
+    │
+242 │ fn smtp_error_to_string(error: smtp_client.Error) -> String {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:249:1
+    │
+249 │ fn log_error(context: String, message: String) -> Nil {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused variable
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:250:7
+    │
+250 │   let log_msg = "[SchedulerActor ERROR] " <> context <> ": " <> message
+    │       ^^^^^^^ This variable is never used
+
+Hint: You can ignore it with an underscore: `_log_msg`.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/actors/scheduler_actor.gleam:257:1
+    │
+257 │ fn log_info(message: String) -> Nil {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/cache.gleam:97:14
+   │
+97 │ pub fn clear(cache: Cache(a)) -> Cache(a) {
+   │              ^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_cache`.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/cache_test.gleam:2:1
+  │
+2 │ import gleam/dict
+  │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/filter_recipes_test.gleam:1:1
+  │
+1 │ import gleam/float
+  │ ^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported value
+  ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/filter_recipes_test.gleam:5:30
+  │
+5 │ import meal_planner/storage.{filter_recipes}
+  │                              ^^^^^^^^^^^^^^ This imported value is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:18:1
+   │
+18 │ import meal_planner/storage
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:20:3
+   │
+20 │   type DailyLog, type FoodLogEntry, type FoodSource, type Macros, type MealType,
+   │   ^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:20:18
+   │
+20 │   type DailyLog, type FoodLogEntry, type FoodSource, type Macros, type MealType,
+   │                  ^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:20:37
+   │
+20 │   type DailyLog, type FoodLogEntry, type FoodSource, type Macros, type MealType,
+   │                                     ^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:20:54
+   │
+20 │   type DailyLog, type FoodLogEntry, type FoodSource, type Macros, type MealType,
+   │                                                      ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:20:67
+   │
+20 │   type DailyLog, type FoodLogEntry, type FoodSource, type Macros, type MealType,
+   │                                                                   ^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:21:3
+   │
+21 │   Breakfast, CustomFoodSource, Dinner, Lunch, Macros, RecipeSource, Snack,
+   │   ^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:21:14
+   │
+21 │   Breakfast, CustomFoodSource, Dinner, Lunch, Macros, RecipeSource, Snack,
+   │              ^^^^^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:21:32
+   │
+21 │   Breakfast, CustomFoodSource, Dinner, Lunch, Macros, RecipeSource, Snack,
+   │                                ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:21:40
+   │
+21 │   Breakfast, CustomFoodSource, Dinner, Lunch, Macros, RecipeSource, Snack,
+   │                                        ^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:21:47
+   │
+21 │   Breakfast, CustomFoodSource, Dinner, Lunch, Macros, RecipeSource, Snack,
+   │                                               ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:21:55
+   │
+21 │   Breakfast, CustomFoodSource, Dinner, Lunch, Macros, RecipeSource, Snack,
+   │                                                       ^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:21:69
+   │
+21 │   Breakfast, CustomFoodSource, Dinner, Lunch, Macros, RecipeSource, Snack,
+   │                                                                     ^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/food_logging_e2e_test.gleam:22:3
+   │
+22 │   UsdaFoodSource,
+   │   ^^^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/generator_test.gleam:5:32
+  │
+5 │ import meal_planner/meal_plan.{type DailyPlan, type Meal, DailyPlan, Meal}
+  │                                ^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/test_helper.gleam:11:1
+   │
+11 │ import gleam/dynamic
+   │ ^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/test_helper.gleam:12:1
+   │
+12 │ import gleam/dynamic/decode
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/test_helper.gleam:22:37
+   │
+22 │   type Micronutrients, type Recipe, Breakfast, DailyLog, Dinner, FoodLogEntry,
+   │                                     ^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/test_helper.gleam:22:58
+   │
+22 │   type Micronutrients, type Recipe, Breakfast, DailyLog, Dinner, FoodLogEntry,
+   │                                                          ^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_plan_generation_test.gleam:22:1
+   │
+22 │ import gleam/int
+   │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_plan_generation_test.gleam:24:22
+   │
+24 │ import gleam/option.{None, Some}
+   │                      ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_plan_generation_test.gleam:24:28
+   │
+24 │ import gleam/option.{None, Some}
+   │                            ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_plan_generation_test.gleam:25:1
+   │
+25 │ import gleam/result
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_plan_generation_test.gleam:31:1
+   │
+31 │ import meal_planner/integration/test_helper
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_plan_generation_test.gleam:33:1
+   │
+33 │ import pog
+   │ ^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_plan_generation_test.gleam:173:1
+    │  
+173 │ ╭ fn assert_macros_in_range(
+174 │ │   actual: Macros,
+175 │ │   targets: Macros,
+176 │ │   tolerance_percent: Float,
+177 │ │ ) -> Nil {
+    │ ╰────────^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:69:22
+   │
+69 │ fn cleanup_test_data(ctx: web.Context) -> Nil {
+   │                      ^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_ctx`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:119:22
+    │
+119 │ fn seed_test_recipes(ctx: web.Context) -> Result(List(Recipe), String) {
+    │                      ^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_ctx`.
+
+warning: Unused variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:304:21
+    │
+304 │       let assert Ok(body_json) = json.decode(body, decode.dynamic)
+    │                     ^^^^^^^^^ This variable is never used
+
+Hint: You can ignore it with an underscore: `_body_json`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:400:38
+    │
+400 │         list.map(limited_recipes, fn(recipe) {
+    │                                      ^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_recipe`.
+
+warning: Unused variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:468:11
+    │
+468 │       let response = web.handle_request(request, ctx)
+    │           ^^^^^^^^ This variable is never used
+
+Hint: You can ignore it with an underscore: `_response`.
+
+warning: Unused variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:584:11
+    │
+584 │       let response = web.handle_request(request, ctx)
+    │           ^^^^^^^^ This variable is never used
+
+Hint: You can ignore it with an underscore: `_response`.
+
+error: Unknown module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:30:35
+   │
+30 │ fn setup_test_context() -> Result(web.Context, String) {
+   │                                   ^^^
+
+No module has been found with the name `web`.
+Hint: Did you mean to import `meal_planner/web`?
+
+error: Unknown module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:33:5
+   │
+33 │     pog.Config(
+   │     ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown variable
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:38:17
+   │
+38 │       password: Some("meal_planner"),
+   │                 ^^^^
+
+The custom type variant constructor `Some` is not in scope here.
+
+error: Unknown module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:47:8
+   │
+47 │   case pog.connect(db_config) {
+   │        ^^^
+
+No module has been found with the name `pog`.
+
+error: Unknown module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:50:26
+   │
+50 │       let search_cache = storage_optimized.new_search_cache()
+   │                          ^^^^^^^^^^^^^^^^^
+
+No module has been found with the name `storage_optimized`.
+Hint: Did you mean to import `meal_planner/storage_optimized`?
+
+error: Unknown module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:53:21
+   │
+53 │       let todoist = process.new_subject()
+   │                     ^^^^^^^
+
+No module has been found with the name `process`.
+Hint: Did you mean to import `gleam/erlang/process`?
+
+error: Unknown module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:55:10
+   │
+55 │       Ok(web.Context(
+   │          ^^^
+
+No module has been found with the name `web`.
+Hint: Did you mean to import `meal_planner/web`?
+
+error: Unknown module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:69:27
+   │
+69 │ fn cleanup_test_data(ctx: web.Context) -> Nil {
+   │                           ^^^
+
+No module has been found with the name `web`.
+Hint: Did you mean to import `meal_planner/web`?
+
+error: Unknown module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:72:5
+   │
+72 │     pog.query("DELETE FROM auto_meal_plans WHERE id LIKE 'test-%' OR id LIKE 'auto-plan-%'")
+   │     ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:73:8
+   │
+73 │     |> pog.execute(ctx.db)
+   │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:73:20
+   │
+73 │     |> pog.execute(ctx.db)
+   │                    ^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:77:5
+   │
+77 │     pog.query("DELETE FROM recipes WHERE id LIKE 'test-%'")
+   │     ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:78:8
+   │
+78 │     |> pog.execute(ctx.db)
+   │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:78:20
+   │
+78 │     |> pog.execute(ctx.db)
+   │                    ^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown type
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:91:6
+   │
+91 │ ) -> Recipe {
+   │      ^^^^^^
+
+The type `Recipe` is not defined or imported in this module.
+
+error: Unknown variable
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:92:3
+   │
+92 │   Recipe(
+   │   ^^^^^^
+
+The custom type variant constructor `Recipe` is not in scope here.
+
+error: Unknown variable
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:96:7
+   │
+96 │       Ingredient(
+   │       ^^^^^^^^^^
+
+The custom type variant constructor `Ingredient` is not in scope here.
+
+error: Unknown variable
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:99:15
+   │
+99 │         unit: Some("g"),
+   │               ^^^^
+
+The custom type variant constructor `Some` is not in scope here.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:100:19
+    │
+100 │         category: None,
+    │                   ^^^^
+
+The custom type variant constructor `None` is not in scope here.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:104:13
+    │
+104 │     macros: Macros(protein: protein, fat: fat, carbs: carbs),
+    │             ^^^^^^
+
+The custom type variant constructor `Macros` is not in scope here.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:107:19
+    │
+107 │     fodmap_level: Low,
+    │                   ^^^
+
+The custom type variant constructor `Low` is not in scope here.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:109:21
+    │
+109 │     micronutrients: None,
+    │                     ^^^^
+
+The custom type variant constructor `None` is not in scope here.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:110:16
+    │
+110 │     prep_time: Some(10),
+    │                ^^^^
+
+The custom type variant constructor `Some` is not in scope here.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:111:16
+    │
+111 │     cook_time: Some(20),
+    │                ^^^^
+
+The custom type variant constructor `Some` is not in scope here.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:112:17
+    │
+112 │     total_time: Some(30),
+    │                 ^^^^
+
+The custom type variant constructor `Some` is not in scope here.
+
+error: Unknown variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:114:13
+    │
+114 │     source: Some("test"),
+    │             ^^^^
+
+The custom type variant constructor `Some` is not in scope here.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:119:27
+    │
+119 │ fn seed_test_recipes(ctx: web.Context) -> Result(List(Recipe), String) {
+    │                           ^^^
+
+No module has been found with the name `web`.
+Hint: Did you mean to import `meal_planner/web`?
+
+error: Unknown type
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:119:55
+    │
+119 │ fn seed_test_recipes(ctx: web.Context) -> Result(List(Recipe), String) {
+    │                                                       ^^^^^^
+
+The type `Recipe` is not defined or imported in this module.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:150:3
+    │
+150 │   list.try_map(recipes, fn(recipe) {
+    │   ^^^^
+
+No module has been found with the name `list`.
+Hint: Did you mean to import `gleam/list`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:160:5
+    │
+160 │     pog.query(sql)
+    │     ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:161:8
+    │
+161 │     |> pog.parameter(pog.text(recipe.id))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:161:22
+    │
+161 │     |> pog.parameter(pog.text(recipe.id))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:161:31
+    │
+161 │     |> pog.parameter(pog.text(recipe.id))
+    │                               ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:162:8
+    │
+162 │     |> pog.parameter(pog.text(recipe.name))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:162:22
+    │
+162 │     |> pog.parameter(pog.text(recipe.name))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:162:31
+    │
+162 │     |> pog.parameter(pog.text(recipe.name))
+    │                               ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:163:8
+    │
+163 │     |> pog.parameter(pog.text(recipe.category))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:163:22
+    │
+163 │     |> pog.parameter(pog.text(recipe.category))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:163:31
+    │
+163 │     |> pog.parameter(pog.text(recipe.category))
+    │                               ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:164:8
+    │
+164 │     |> pog.parameter(pog.int(recipe.servings))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:164:22
+    │
+164 │     |> pog.parameter(pog.int(recipe.servings))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:164:30
+    │
+164 │     |> pog.parameter(pog.int(recipe.servings))
+    │                              ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:165:8
+    │
+165 │     |> pog.parameter(pog.float(recipe.macros.protein))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:165:22
+    │
+165 │     |> pog.parameter(pog.float(recipe.macros.protein))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:165:32
+    │
+165 │     |> pog.parameter(pog.float(recipe.macros.protein))
+    │                                ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:165:32
+    │
+165 │     |> pog.parameter(pog.float(recipe.macros.protein))
+    │                                ^^^^^^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:166:8
+    │
+166 │     |> pog.parameter(pog.float(recipe.macros.fat))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:166:22
+    │
+166 │     |> pog.parameter(pog.float(recipe.macros.fat))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:166:32
+    │
+166 │     |> pog.parameter(pog.float(recipe.macros.fat))
+    │                                ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:166:32
+    │
+166 │     |> pog.parameter(pog.float(recipe.macros.fat))
+    │                                ^^^^^^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:167:8
+    │
+167 │     |> pog.parameter(pog.float(recipe.macros.carbs))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:167:22
+    │
+167 │     |> pog.parameter(pog.float(recipe.macros.carbs))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:167:32
+    │
+167 │     |> pog.parameter(pog.float(recipe.macros.carbs))
+    │                                ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:167:32
+    │
+167 │     |> pog.parameter(pog.float(recipe.macros.carbs))
+    │                                ^^^^^^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:168:8
+    │
+168 │     |> pog.parameter(pog.text("Low"))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:168:22
+    │
+168 │     |> pog.parameter(pog.text("Low"))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:169:8
+    │
+169 │     |> pog.parameter(pog.bool(recipe.vertical_compliant))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:169:22
+    │
+169 │     |> pog.parameter(pog.bool(recipe.vertical_compliant))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:169:31
+    │
+169 │     |> pog.parameter(pog.bool(recipe.vertical_compliant))
+    │                               ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:170:8
+    │
+170 │     |> pog.parameter(pog.nullable(pog.int, recipe.prep_time))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:170:22
+    │
+170 │     |> pog.parameter(pog.nullable(pog.int, recipe.prep_time))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:170:35
+    │
+170 │     |> pog.parameter(pog.nullable(pog.int, recipe.prep_time))
+    │                                   ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:170:44
+    │
+170 │     |> pog.parameter(pog.nullable(pog.int, recipe.prep_time))
+    │                                            ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:171:8
+    │
+171 │     |> pog.parameter(pog.nullable(pog.int, recipe.cook_time))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:171:22
+    │
+171 │     |> pog.parameter(pog.nullable(pog.int, recipe.cook_time))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:171:35
+    │
+171 │     |> pog.parameter(pog.nullable(pog.int, recipe.cook_time))
+    │                                   ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:171:44
+    │
+171 │     |> pog.parameter(pog.nullable(pog.int, recipe.cook_time))
+    │                                            ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:172:8
+    │
+172 │     |> pog.parameter(pog.nullable(pog.int, recipe.total_time))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:172:22
+    │
+172 │     |> pog.parameter(pog.nullable(pog.int, recipe.total_time))
+    │                      ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:172:35
+    │
+172 │     |> pog.parameter(pog.nullable(pog.int, recipe.total_time))
+    │                                   ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:172:44
+    │
+172 │     |> pog.parameter(pog.nullable(pog.int, recipe.total_time))
+    │                                            ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:173:8
+    │
+173 │     |> pog.returning(decode.element(0, decode.string))
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:173:22
+    │
+173 │     |> pog.returning(decode.element(0, decode.string))
+    │                      ^^^^^^
+
+No module has been found with the name `decode`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:173:40
+    │
+173 │     |> pog.returning(decode.element(0, decode.string))
+    │                                        ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:174:8
+    │
+174 │     |> pog.execute(ctx.db)
+    │        ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:174:20
+    │
+174 │     |> pog.execute(ctx.db)
+    │                    ^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:175:8
+    │
+175 │     |> result.map(fn(_) { recipe })
+    │        ^^^^^^
+
+No module has been found with the name `result`.
+Hint: Did you mean to import `gleam/result`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:176:8
+    │
+176 │     |> result.map_error(fn(_) { "Failed to save recipe: " <> recipe.id })
+    │        ^^^^^^
+
+No module has been found with the name `result`.
+Hint: Did you mean to import `gleam/result`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:176:62
+    │
+176 │     |> result.map_error(fn(_) { "Failed to save recipe: " <> recipe.id })
+    │                                                              ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:198:9
+    │
+198 │         json.object([
+    │         ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:199:24
+    │
+199 │           #("user_id", json.string("test-user-1")),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:202:13
+    │
+202 │             json.array(["vertical_diet"], json.string),
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:202:43
+    │
+202 │             json.array(["vertical_diet"], json.string),
+    │                                           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:206:13
+    │
+206 │             json.object([
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:207:28
+    │
+207 │               #("protein", json.float(160.0)),
+    │                            ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:208:24
+    │
+208 │               #("fat", json.float(80.0)),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:209:26
+    │
+209 │               #("carbs", json.float(200.0)),
+    │                          ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:212:29
+    │
+212 │           #("recipe_count", json.int(4)),
+    │                             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:213:31
+    │
+213 │           #("variety_factor", json.float(0.7)),
+    │                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:218:9
+    │
+218 │         testing.post_json(
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:221:11
+    │
+221 │           json.to_string(config_json),
+    │           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:225:22
+    │
+225 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:228:7
+    │
+228 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:232:29
+    │
+232 │       let assert Ok(body) = wisp.read_body_to_string(response)
+    │                             ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:233:34
+    │
+233 │       let assert Ok(body_json) = json.decode(body, decode.dynamic)
+    │                                  ^^^^
+
+No module has been found with the name `json`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:233:52
+    │
+233 │       let assert Ok(body_json) = json.decode(body, decode.dynamic)
+    │                                                    ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:236:34
+    │
+236 │       let assert Ok(plan_json) = decode.run(body_json, decode.dynamic)
+    │                                  ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:236:56
+    │
+236 │       let assert Ok(plan_json) = decode.run(body_json, decode.dynamic)
+    │                                                        ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:240:9
+    │
+240 │         decode.run(plan_json, decode.field("id", decode.string))
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:240:31
+    │
+240 │         decode.run(plan_json, decode.field("id", decode.string))
+    │                               ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:240:50
+    │
+240 │         decode.run(plan_json, decode.field("id", decode.string))
+    │                                                  ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:242:9
+    │
+242 │         decode.run(
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:244:11
+    │
+244 │           decode.field("recipes", decode.list(decode.dynamic)),
+    │           ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:244:35
+    │
+244 │           decode.field("recipes", decode.list(decode.dynamic)),
+    │                                   ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:244:47
+    │
+244 │           decode.field("recipes", decode.list(decode.dynamic)),
+    │                                               ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:247:9
+    │
+247 │         decode.run(plan_json, decode.field("total_macros", decode.dynamic))
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:247:31
+    │
+247 │         decode.run(plan_json, decode.field("total_macros", decode.dynamic))
+    │                               ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:247:60
+    │
+247 │         decode.run(plan_json, decode.field("total_macros", decode.dynamic))
+    │                                                            ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:249:9
+    │
+249 │         decode.run(plan_json, decode.field("config", decode.dynamic))
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:249:31
+    │
+249 │         decode.run(plan_json, decode.field("config", decode.dynamic))
+    │                               ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:249:54
+    │
+249 │         decode.run(plan_json, decode.field("config", decode.dynamic))
+    │                                                      ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:251:9
+    │
+251 │         decode.run(plan_json, decode.field("generated_at", decode.string))
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:251:31
+    │
+251 │         decode.run(plan_json, decode.field("generated_at", decode.string))
+    │                               ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:251:60
+    │
+251 │         decode.run(plan_json, decode.field("generated_at", decode.string))
+    │                                                            ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:254:7
+    │
+254 │       list.length(recipes)
+    │       ^^^^
+
+No module has been found with the name `list`.
+Hint: Did you mean to import `gleam/list`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:272:9
+    │
+272 │         json.object([
+    │         ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:273:24
+    │
+273 │           #("user_id", json.string("test-user-2")),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:276:13
+    │
+276 │             json.array(["vertical_diet"], json.string),
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:276:43
+    │
+276 │             json.array(["vertical_diet"], json.string),
+    │                                           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:280:13
+    │
+280 │             json.object([
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:281:28
+    │
+281 │               #("protein", json.float(150.0)),
+    │                            ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:282:24
+    │
+282 │               #("fat", json.float(70.0)),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:283:26
+    │
+283 │               #("carbs", json.float(180.0)),
+    │                          ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:286:29
+    │
+286 │           #("recipe_count", json.int(4)),
+    │                             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:287:31
+    │
+287 │           #("variety_factor", json.float(0.8)),
+    │                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:291:9
+    │
+291 │         testing.post_json(
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:294:11
+    │
+294 │           json.to_string(config_json),
+    │           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:297:22
+    │
+297 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:299:7
+    │
+299 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:303:29
+    │
+303 │       let assert Ok(body) = wisp.read_body_to_string(response)
+    │                             ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:304:34
+    │
+304 │       let assert Ok(body_json) = json.decode(body, decode.dynamic)
+    │                                  ^^^^
+
+No module has been found with the name `json`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:304:52
+    │
+304 │       let assert Ok(body_json) = json.decode(body, decode.dynamic)
+    │                                                    ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:325:9
+    │
+325 │         testing.post("/api/meal-plans/auto", [], "{invalid json")
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:326:12
+    │
+326 │         |> testing.set_header("content-type", "application/json")
+    │            ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:328:22
+    │
+328 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:330:7
+    │
+330 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:333:29
+    │
+333 │       let assert Ok(body) = wisp.read_body_to_string(response)
+    │                             ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:335:10
+    │
+335 │       |> string.contains("Invalid JSON format")
+    │          ^^^^^^
+
+No module has been found with the name `string`.
+Hint: Did you mean to import `gleam/string`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:349:9
+    │
+349 │         json.object([
+    │         ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:350:24
+    │
+350 │           #("user_id", json.string("test")),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:351:32
+    │
+351 │           #("diet_principles", json.array([], json.string)),
+    │                                ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:351:47
+    │
+351 │           #("diet_principles", json.array([], json.string)),
+    │                                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:354:13
+    │
+354 │             json.object([
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:355:28
+    │
+355 │               #("protein", json.float(160.0)),
+    │                            ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:356:24
+    │
+356 │               #("fat", json.float(80.0)),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:357:26
+    │
+357 │               #("carbs", json.float(200.0)),
+    │                          ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:360:29
+    │
+360 │           #("recipe_count", json.int(25)),
+    │                             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:362:31
+    │
+362 │           #("variety_factor", json.float(0.7)),
+    │                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:366:9
+    │
+366 │         testing.post_json(
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:369:11
+    │
+369 │           json.to_string(config_json),
+    │           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:372:22
+    │
+372 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:374:7
+    │
+374 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:377:29
+    │
+377 │       let assert Ok(body) = wisp.read_body_to_string(response)
+    │                             ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:379:10
+    │
+379 │       |> string.contains("recipe_count must be at most 20")
+    │          ^^^^^^
+
+No module has been found with the name `string`.
+Hint: Did you mean to import `gleam/string`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:400:9
+    │
+400 │         list.map(limited_recipes, fn(recipe) {
+    │         ^^^^
+
+No module has been found with the name `list`.
+Hint: Did you mean to import `gleam/list`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:406:11
+    │
+406 │           pog.query(sql)
+    │           ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:407:14
+    │
+407 │           |> pog.parameter(pog.text(recipe.id))
+    │              ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:407:28
+    │
+407 │           |> pog.parameter(pog.text(recipe.id))
+    │                            ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:407:37
+    │
+407 │           |> pog.parameter(pog.text(recipe.id))
+    │                                     ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:408:14
+    │
+408 │           |> pog.parameter(pog.text(recipe.name))
+    │              ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:408:28
+    │
+408 │           |> pog.parameter(pog.text(recipe.name))
+    │                            ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:408:37
+    │
+408 │           |> pog.parameter(pog.text(recipe.name))
+    │                                     ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:409:14
+    │
+409 │           |> pog.parameter(pog.text(recipe.category))
+    │              ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:409:28
+    │
+409 │           |> pog.parameter(pog.text(recipe.category))
+    │                            ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:409:37
+    │
+409 │           |> pog.parameter(pog.text(recipe.category))
+    │                                     ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:410:14
+    │
+410 │           |> pog.parameter(pog.int(recipe.servings))
+    │              ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:410:28
+    │
+410 │           |> pog.parameter(pog.int(recipe.servings))
+    │                            ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:410:36
+    │
+410 │           |> pog.parameter(pog.int(recipe.servings))
+    │                                    ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:411:14
+    │
+411 │           |> pog.parameter(pog.float(recipe.macros.protein))
+    │              ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:411:28
+    │
+411 │           |> pog.parameter(pog.float(recipe.macros.protein))
+    │                            ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:411:38
+    │
+411 │           |> pog.parameter(pog.float(recipe.macros.protein))
+    │                                      ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:411:38
+    │
+411 │           |> pog.parameter(pog.float(recipe.macros.protein))
+    │                                      ^^^^^^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:412:14
+    │
+412 │           |> pog.parameter(pog.float(recipe.macros.fat))
+    │              ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:412:28
+    │
+412 │           |> pog.parameter(pog.float(recipe.macros.fat))
+    │                            ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:412:38
+    │
+412 │           |> pog.parameter(pog.float(recipe.macros.fat))
+    │                                      ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:412:38
+    │
+412 │           |> pog.parameter(pog.float(recipe.macros.fat))
+    │                                      ^^^^^^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:413:14
+    │
+413 │           |> pog.parameter(pog.float(recipe.macros.carbs))
+    │              ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:413:28
+    │
+413 │           |> pog.parameter(pog.float(recipe.macros.carbs))
+    │                            ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:413:38
+    │
+413 │           |> pog.parameter(pog.float(recipe.macros.carbs))
+    │                                      ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:413:38
+    │
+413 │           |> pog.parameter(pog.float(recipe.macros.carbs))
+    │                                      ^^^^^^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:414:14
+    │
+414 │           |> pog.parameter(pog.text("Low"))
+    │              ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:414:28
+    │
+414 │           |> pog.parameter(pog.text("Low"))
+    │                            ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:415:14
+    │
+415 │           |> pog.parameter(pog.bool(recipe.vertical_compliant))
+    │              ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:415:28
+    │
+415 │           |> pog.parameter(pog.bool(recipe.vertical_compliant))
+    │                            ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:415:37
+    │
+415 │           |> pog.parameter(pog.bool(recipe.vertical_compliant))
+    │                                     ^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:416:14
+    │
+416 │           |> pog.execute(ctx.db)
+    │              ^^^
+
+No module has been found with the name `pog`.
+Hint: Did you mean to import `pog`?
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:416:26
+    │
+416 │           |> pog.execute(ctx.db)
+    │                          ^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:421:9
+    │
+421 │         json.object([
+    │         ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:422:24
+    │
+422 │           #("user_id", json.string("test")),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:425:13
+    │
+425 │             json.array(["vertical_diet"], json.string),
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:425:43
+    │
+425 │             json.array(["vertical_diet"], json.string),
+    │                                           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:429:13
+    │
+429 │             json.object([
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:430:28
+    │
+430 │               #("protein", json.float(160.0)),
+    │                            ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:431:24
+    │
+431 │               #("fat", json.float(80.0)),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:432:26
+    │
+432 │               #("carbs", json.float(200.0)),
+    │                          ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:435:29
+    │
+435 │           #("recipe_count", json.int(4)),
+    │                             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:436:31
+    │
+436 │           #("variety_factor", json.float(0.7)),
+    │                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:440:9
+    │
+440 │         testing.post_json(
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:443:11
+    │
+443 │           json.to_string(config_json),
+    │           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:446:22
+    │
+446 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:448:7
+    │
+448 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:451:29
+    │
+451 │       let assert Ok(body) = wisp.read_body_to_string(response)
+    │                             ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:453:10
+    │
+453 │       |> string.contains("Insufficient recipes")
+    │          ^^^^^^
+
+No module has been found with the name `string`.
+Hint: Did you mean to import `gleam/string`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:466:21
+    │
+466 │       let request = testing.get("/api/meal-plans/auto", [])
+    │                     ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:468:22
+    │
+468 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:470:7
+    │
+470 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:491:9
+    │
+491 │         json.object([
+    │         ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:492:24
+    │
+492 │           #("user_id", json.string("test-user-3")),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:495:13
+    │
+495 │             json.array(["vertical_diet"], json.string),
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:495:43
+    │
+495 │             json.array(["vertical_diet"], json.string),
+    │                                           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:499:13
+    │
+499 │             json.object([
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:500:28
+    │
+500 │               #("protein", json.float(160.0)),
+    │                            ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:501:24
+    │
+501 │               #("fat", json.float(80.0)),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:502:26
+    │
+502 │               #("carbs", json.float(200.0)),
+    │                          ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:505:29
+    │
+505 │           #("recipe_count", json.int(4)),
+    │                             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:506:31
+    │
+506 │           #("variety_factor", json.float(0.7)),
+    │                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:510:9
+    │
+510 │         testing.post_json(
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:513:11
+    │
+513 │           json.to_string(config_json),
+    │           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:516:29
+    │
+516 │       let create_response = web.handle_request(create_request, ctx)
+    │                             ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:518:7
+    │
+518 │       create_response.status
+    │       ^^^^^^^^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:522:29
+    │
+522 │       let assert Ok(body) = wisp.read_body_to_string(create_response)
+    │                             ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:523:34
+    │
+523 │       let assert Ok(body_json) = json.decode(body, decode.dynamic)
+    │                                  ^^^^
+
+No module has been found with the name `json`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:523:52
+    │
+523 │       let assert Ok(body_json) = json.decode(body, decode.dynamic)
+    │                                                    ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:525:9
+    │
+525 │         decode.run(body_json, decode.field("id", decode.string))
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:525:31
+    │
+525 │         decode.run(body_json, decode.field("id", decode.string))
+    │                               ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:525:50
+    │
+525 │         decode.run(body_json, decode.field("id", decode.string))
+    │                                                  ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:529:9
+    │
+529 │         testing.get("/api/meal-plans/auto/" <> plan_id, [])
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:531:26
+    │
+531 │       let get_response = web.handle_request(get_request, ctx)
+    │                          ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:533:7
+    │
+533 │       get_response.status
+    │       ^^^^^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:537:33
+    │
+537 │       let assert Ok(get_body) = wisp.read_body_to_string(get_response)
+    │                                 ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:538:33
+    │
+538 │       let assert Ok(get_json) = json.decode(get_body, decode.dynamic)
+    │                                 ^^^^
+
+No module has been found with the name `json`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:538:55
+    │
+538 │       let assert Ok(get_json) = json.decode(get_body, decode.dynamic)
+    │                                                       ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:540:9
+    │
+540 │         decode.run(get_json, decode.field("id", decode.string))
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:540:30
+    │
+540 │         decode.run(get_json, decode.field("id", decode.string))
+    │                              ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:540:49
+    │
+540 │         decode.run(get_json, decode.field("id", decode.string))
+    │                                                 ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:560:9
+    │
+560 │         testing.get("/api/meal-plans/auto/nonexistent-plan-id", [])
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:562:22
+    │
+562 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:564:7
+    │
+564 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:567:29
+    │
+567 │       let assert Ok(body) = wisp.read_body_to_string(response)
+    │                             ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:569:10
+    │
+569 │       |> string.contains("Meal plan not found")
+    │          ^^^^^^
+
+No module has been found with the name `string`.
+Hint: Did you mean to import `gleam/string`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:582:21
+    │
+582 │       let request = testing.post("/api/meal-plans/auto/some-id", [], "")
+    │                     ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:584:22
+    │
+584 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:586:7
+    │
+586 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:604:9
+    │
+604 │         json.object([
+    │         ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:605:24
+    │
+605 │           #("user_id", json.string("test")),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:606:32
+    │
+606 │           #("diet_principles", json.array([], json.string)),
+    │                                ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:606:47
+    │
+606 │           #("diet_principles", json.array([], json.string)),
+    │                                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:609:13
+    │
+609 │             json.object([
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:610:28
+    │
+610 │               #("protein", json.float(160.0)),
+    │                            ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:611:24
+    │
+611 │               #("fat", json.float(80.0)),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:612:26
+    │
+612 │               #("carbs", json.float(200.0)),
+    │                          ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:615:29
+    │
+615 │           #("recipe_count", json.int(-1)),
+    │                             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:616:31
+    │
+616 │           #("variety_factor", json.float(0.7)),
+    │                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:620:9
+    │
+620 │         testing.post_json(
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:623:11
+    │
+623 │           json.to_string(config_json),
+    │           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:626:22
+    │
+626 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:628:7
+    │
+628 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:631:29
+    │
+631 │       let assert Ok(body) = wisp.read_body_to_string(response)
+    │                             ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:633:10
+    │
+633 │       |> string.contains("recipe_count must be at least 1")
+    │          ^^^^^^
+
+No module has been found with the name `string`.
+Hint: Did you mean to import `gleam/string`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:647:9
+    │
+647 │         json.object([
+    │         ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:648:24
+    │
+648 │           #("user_id", json.string("test")),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:649:32
+    │
+649 │           #("diet_principles", json.array([], json.string)),
+    │                                ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:649:47
+    │
+649 │           #("diet_principles", json.array([], json.string)),
+    │                                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:652:13
+    │
+652 │             json.object([
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:653:28
+    │
+653 │               #("protein", json.float(160.0)),
+    │                            ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:654:24
+    │
+654 │               #("fat", json.float(80.0)),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:655:26
+    │
+655 │               #("carbs", json.float(200.0)),
+    │                          ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:658:29
+    │
+658 │           #("recipe_count", json.int(4)),
+    │                             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:659:31
+    │
+659 │           #("variety_factor", json.float(1.5)),
+    │                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:664:9
+    │
+664 │         testing.post_json(
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:667:11
+    │
+667 │           json.to_string(config_json),
+    │           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:670:22
+    │
+670 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:672:7
+    │
+672 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:675:29
+    │
+675 │       let assert Ok(body) = wisp.read_body_to_string(response)
+    │                             ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:677:10
+    │
+677 │       |> string.contains("variety_factor must be between 0 and 1")
+    │          ^^^^^^
+
+No module has been found with the name `string`.
+Hint: Did you mean to import `gleam/string`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:691:9
+    │
+691 │         json.object([
+    │         ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:692:24
+    │
+692 │           #("user_id", json.string("test")),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:693:32
+    │
+693 │           #("diet_principles", json.array([], json.string)),
+    │                                ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:693:47
+    │
+693 │           #("diet_principles", json.array([], json.string)),
+    │                                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:696:13
+    │
+696 │             json.object([
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:697:28
+    │
+697 │               #("protein", json.float(-10.0)),
+    │                            ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:699:24
+    │
+699 │               #("fat", json.float(80.0)),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:700:26
+    │
+700 │               #("carbs", json.float(200.0)),
+    │                          ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:703:29
+    │
+703 │           #("recipe_count", json.int(4)),
+    │                             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:704:31
+    │
+704 │           #("variety_factor", json.float(0.7)),
+    │                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:708:9
+    │
+708 │         testing.post_json(
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:711:11
+    │
+711 │           json.to_string(config_json),
+    │           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:714:22
+    │
+714 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:716:7
+    │
+716 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:719:29
+    │
+719 │       let assert Ok(body) = wisp.read_body_to_string(response)
+    │                             ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:721:10
+    │
+721 │       |> string.contains("macro_targets must be positive")
+    │          ^^^^^^
+
+No module has been found with the name `string`.
+Hint: Did you mean to import `gleam/string`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:741:9
+    │
+741 │         json.object([
+    │         ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:742:24
+    │
+742 │           #("user_id", json.string("test-user-4")),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:745:13
+    │
+745 │             json.array(["vertical_diet"], json.string),
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:745:43
+    │
+745 │             json.array(["vertical_diet"], json.string),
+    │                                           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:749:13
+    │
+749 │             json.object([
+    │             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:750:28
+    │
+750 │               #("protein", json.float(160.0)),
+    │                            ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:751:24
+    │
+751 │               #("fat", json.float(80.0)),
+    │                        ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:752:26
+    │
+752 │               #("carbs", json.float(200.0)),
+    │                          ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:755:29
+    │
+755 │           #("recipe_count", json.int(4)),
+    │                             ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:756:31
+    │
+756 │           #("variety_factor", json.float(0.7)),
+    │                               ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:760:9
+    │
+760 │         testing.post_json(
+    │         ^^^^^^^
+
+No module has been found with the name `testing`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:763:11
+    │
+763 │           json.to_string(config_json),
+    │           ^^^^
+
+No module has been found with the name `json`.
+Hint: Did you mean to import `gleam/json`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:766:22
+    │
+766 │       let response = web.handle_request(request, ctx)
+    │                      ^^^
+
+No module has been found with the name `web`.
+
+error: Unknown type for record access
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:768:7
+    │
+768 │       response.status
+    │       ^^^^^^^^ I don't know what type this is
+
+In order to access a record field we need to know what type it is, but I
+can't tell the type here. Try adding type annotations to your function and
+try again.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:771:29
+    │
+771 │       let assert Ok(body) = wisp.read_body_to_string(response)
+    │                             ^^^^
+
+No module has been found with the name `wisp`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:772:34
+    │
+772 │       let assert Ok(body_json) = json.decode(body, decode.dynamic)
+    │                                  ^^^^
+
+No module has been found with the name `json`.
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:772:52
+    │
+772 │       let assert Ok(body_json) = json.decode(body, decode.dynamic)
+    │                                                    ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:776:9
+    │
+776 │         decode.run(body_json, decode.field("id", decode.string))
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:776:31
+    │
+776 │         decode.run(body_json, decode.field("id", decode.string))
+    │                               ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:776:50
+    │
+776 │         decode.run(body_json, decode.field("id", decode.string))
+    │                                                  ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:778:9
+    │
+778 │         decode.run(
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:780:11
+    │
+780 │           decode.field("recipes", decode.list(decode.dynamic)),
+    │           ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:780:35
+    │
+780 │           decode.field("recipes", decode.list(decode.dynamic)),
+    │                                   ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:780:47
+    │
+780 │           decode.field("recipes", decode.list(decode.dynamic)),
+    │                                               ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:783:9
+    │
+783 │         decode.run(body_json, decode.field("total_macros", decode.dynamic))
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:783:31
+    │
+783 │         decode.run(body_json, decode.field("total_macros", decode.dynamic))
+    │                               ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:783:60
+    │
+783 │         decode.run(body_json, decode.field("total_macros", decode.dynamic))
+    │                                                            ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:785:9
+    │
+785 │         decode.run(body_json, decode.field("config", decode.dynamic))
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:785:31
+    │
+785 │         decode.run(body_json, decode.field("config", decode.dynamic))
+    │                               ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:785:54
+    │
+785 │         decode.run(body_json, decode.field("config", decode.dynamic))
+    │                                                      ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:787:9
+    │
+787 │         decode.run(body_json, decode.field("generated_at", decode.string))
+    │         ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:787:31
+    │
+787 │         decode.run(body_json, decode.field("generated_at", decode.string))
+    │                               ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+
+error: Unknown module
+    ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/integration/auto_planner_api_test.gleam:787:60
+    │
+787 │         decode.run(body_json, decode.field("generated_at", decode.string))
+    │                                                            ^^^^^^
+
+No module has been found with the name `decode`.
+Hint: Did you mean to import `gleam/dynamic/decode`?
+

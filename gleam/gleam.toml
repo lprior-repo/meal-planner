@@ -24,8 +24,9 @@ gleam_json = ">= 3.0.0 and < 4.0.0"
 # YAML parsing (for recipe files)
 glaml = ">= 3.0.0"
 
-# SQLite database (replacing BadgerDB)
-sqlight = ">= 1.0.0 and < 2.0.0"
+# PostgreSQL database (for production with concurrency)
+# Using pog - the successor to gleam_pgo
+pog = ">= 1.0.0"
 
 # OTP for supervision and GenServers
 gleam_otp = ">= 0.10.0"
@@ -51,13 +52,9 @@ filepath = ">= 1.0.0"
 logging = ">= 1.0.0"
 simplifile = ">= 2.3.1 and < 3.0.0"
 
-# Local dependencies
-shared = { path = "../shared" }
-server = { path = "../server" }
-
 [dev-dependencies]
 # Testing framework
-gleeunit = ">= 1.0.0 and < 2.0.0"
+gleeunit = ">= 1.9.0 and < 2.0.0"
 
 # Property-based testing
 qcheck = ">= 1.0.0 and < 2.0.0"

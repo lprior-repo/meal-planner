@@ -12,9 +12,8 @@ body {
 }
 
 .container {
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  /* padding set in media queries for responsive behavior */
 }
 
 /* Hero section */
@@ -41,8 +40,8 @@ body {
 /* Home navigation */
 .home-nav {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
+  /* grid-template-columns set in media queries for responsive behavior */
 }
 
 .nav-card {
@@ -59,10 +58,7 @@ body {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.nav-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
+/* hover state moved to @media (hover: hover) below */
 
 .nav-icon {
   font-size: 2.5rem;
@@ -138,8 +134,7 @@ body {
 .profile-section dl {
   margin: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  /* grid-template-columns, gap set in media queries for responsive behavior */
 }
 
 .profile-section dt {
@@ -150,14 +145,14 @@ body {
   margin: 0;
   font-weight: 500;
   color: #333;
-  text-align: right;
+  /* text-align set in media queries for responsive behavior */
 }
 
 .header {
   background: white;
-  padding: 1rem 2rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   margin-bottom: 2rem;
+  /* padding set in media queries for responsive behavior */
 }
 
 .header h1 {
@@ -167,16 +162,16 @@ body {
 
 .nav {
   display: flex;
-  gap: 1rem;
   margin-top: 1rem;
+  /* gap, flex-wrap set in media queries for responsive behavior */
 }
 
 .nav-link {
-  padding: 0.5rem 1rem;
   text-decoration: none;
   color: #666;
   border-radius: 4px;
   transition: all 0.2s;
+  /* padding, font-size set in media queries for responsive behavior */
 }
 
 .nav-link:hover {
@@ -191,9 +186,9 @@ body {
 
 .main {
   background: white;
-  padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  /* padding set in media queries for responsive behavior */
 }
 
 .footer {
@@ -203,13 +198,13 @@ body {
 }
 
 .btn {
-  padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
   transition: all 0.2s;
+  /* padding, min-height set in media queries for responsive/touch behavior */
 }
 
 .btn-primary {
@@ -286,12 +281,51 @@ body {
 /* Recipe detail enhancements */
 .recipe-detail {
   max-width: 800px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  padding: 0 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .recipe-detail {
+    padding: 0 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .recipe-detail {
+    padding: 0;
+  }
 }
 
 .recipe-detail .meta {
   color: #666;
   font-size: 0.9rem;
   margin-bottom: 1.5rem;
+}
+
+.recipe-detail-header {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recipe-detail-header h1 {
+  margin: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  line-height: 1.3;
+}
+
+.recipe-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .macro-card {
@@ -309,8 +343,8 @@ body {
 
 .macro-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 1rem;
+  /* grid-template-columns set in media queries for responsive behavior */
 }
 
 .macro-stat {
@@ -333,7 +367,15 @@ body {
 }
 
 .ingredients {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.ingredients h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  color: #333;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.75rem;
 }
 
 .ingredients h3 {
@@ -343,11 +385,58 @@ body {
 .ingredients ul {
   list-style: disc;
   padding-left: 1.5rem;
+  margin: 0;
 }
 
 .ingredients li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   color: #444;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ingredient-quantity {
+  font-weight: 500;
+  color: #007bff;
+  display: inline;
+}
+
+.ingredient-separator {
+  display: none;
+}
+
+.ingredient-name {
+  display: inline;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 640px) {
+  .ingredients li {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .ingredient-quantity {
+    flex-shrink: 0;
+  }
+
+  .ingredient-separator {
+    display: inline;
+  }
+
+  .ingredient-name {
+    flex: 1;
+    min-width: 150px;
+  }
 }
 
 /* Empty state */
@@ -374,6 +463,448 @@ body {
   color: #666;
   margin: 0;
   font-size: 0.9rem;
+}
+
+/* ===================================================================
+   FILTER CHIPS & MEAL FILTERS: Mobile-Responsive Design
+
+   Features:
+   - Mobile-first stacked vertical layout
+   - Touch-friendly tap targets (44px minimum)
+   - Collapsible filter panel on mobile
+   - Smooth expand/collapse animations
+   - Responsive grid wrapping on larger screens
+
+   Breakpoints:
+   - Mobile (< 640px): Vertical stack, single column, collapsible
+   - Tablet (640-1024px): 2-3 column wrap with flexible layout
+   - Desktop (>= 1024px): Horizontal row layout
+   =================================================================== */
+
+/* Filter container wrapper */
+.meal-filters {
+  margin-bottom: 1.5rem;
+}
+
+/* Filter buttons container - Vertical stack on mobile */
+.filter-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              margin-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Expanded state for filter buttons */
+.filter-buttons.expanded {
+  max-height: 500px;
+  opacity: 1;
+  margin-bottom: 1.5rem;
+}
+
+/* Individual filter chip button - Touch-friendly */
+.filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #dee2e6;
+  background: white;
+  color: #495057;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Active filter state */
+.filter-btn.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+/* Focus state for accessibility */
+.filter-btn:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Hover/Active press state */
+.filter-btn:active {
+  transform: scale(0.98);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Filter toggle button (mobile only) */
+.filter-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.filter-toggle:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.filter-toggle::after {
+  content: '▼';
+  display: inline-block;
+  margin-left: 0.5rem;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.7rem;
+}
+
+/* Rotate chevron when expanded */
+.filter-toggle.expanded::after {
+  transform: rotate(180deg);
+}
+
+/* Filter results summary */
+.filter-summary {
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  color: #666;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Filter chips - Alternative chip-style filters */
+.filter-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.filter-chip:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.filter-chip.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.filter-chip:active {
+  transform: scale(0.98);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ===================================================================
+   MOBILE MEDIA QUERIES: < 640px
+   - Vertical stack layout
+   - Collapsible filter panel
+   - Full-width buttons
+   - Touch-optimized tap targets
+   =================================================================== */
+
+@media (max-width: 639px) {
+  .meal-filters {
+    margin-bottom: 1.25rem;
+  }
+
+  .filter-toggle {
+    display: flex;
+  }
+
+  .filter-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filter-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    min-height: 44px;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .filter-chips {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filter-chip {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .filter-summary {
+    margin-top: 0.75rem;
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+/* ===================================================================
+   TABLET MEDIA QUERIES: 640px - 1023px
+   - Horizontal scroll or wrapped flex layout
+   - Collapsible panel optional
+   - Balanced spacing
+   =================================================================== */
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .meal-filters {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Show filter buttons in row, with wrap */
+  .filter-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    max-height: none;
+    opacity: 1;
+    margin-bottom: 1rem;
+  }
+
+  /* Hide toggle button on tablet - filters always visible */
+  .filter-toggle {
+    display: none;
+  }
+
+  /* Adjust button width for wrapped layout */
+  .filter-btn {
+    width: auto;
+    min-width: 100px;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    min-height: 40px;
+  }
+
+  .filter-chips {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .filter-chip {
+    width: auto;
+    min-height: 40px;
+    padding: 0.625rem 1rem;
+  }
+
+  .filter-summary {
+    margin-top: 0.5rem;
+    padding: 0.5rem 0;
+  }
+}
+
+/* ===================================================================
+   DESKTOP MEDIA QUERIES: >= 1024px
+   - Horizontal layout
+   - No collapse needed
+   - Optimized spacing
+   =================================================================== */
+
+@media (min-width: 1024px) {
+  .meal-filters {
+    margin-bottom: 2rem;
+  }
+
+  .filter-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    max-height: none;
+    opacity: 1;
+    margin-bottom: 1rem;
+  }
+
+  /* Hide toggle button on desktop */
+  .filter-toggle {
+    display: none;
+  }
+
+  .filter-btn {
+    width: auto;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9rem;
+    min-height: 40px;
+  }
+
+  .filter-chips {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .filter-chip {
+    width: auto;
+    min-height: auto;
+    padding: 0.625rem 1.25rem;
+  }
+
+  .filter-summary {
+    margin-top: 0.75rem;
+    padding: 0.75rem 0;
+  }
+}
+
+/* ===================================================================
+   HOVER & INTERACTION STATES
+   =================================================================== */
+
+/* Enhanced hover only on devices that support it */
+@media (hover: hover) {
+  .filter-btn:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+  }
+
+  .filter-btn.active:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+  }
+
+  .filter-toggle:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+  }
+
+  .filter-chip:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .filter-chip.active:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .filter-btn {
+    min-height: 48px;
+    padding: 0.875rem 1.25rem;
+  }
+
+  .filter-chip {
+    min-height: 48px;
+    padding: 0.875rem 1.25rem;
+  }
+
+  /* Reduced visual feedback for active state on touch */
+  .filter-btn.active {
+    box-shadow: 0 1px 4px rgba(0, 123, 255, 0.15);
+  }
+
+  .filter-chip.active {
+    box-shadow: 0 1px 4px rgba(0, 123, 255, 0.15);
+  }
+}
+
+/* ===================================================================
+   ACCESSIBILITY: Reduced Motion Support
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-buttons,
+  .filter-toggle,
+  .filter-btn,
+  .filter-chip,
+  .filter-toggle::after {
+    transition: none !important;
+  }
+
+  .filter-btn:active,
+  .filter-chip:active {
+    transform: none;
+  }
+}
+
+/* ===================================================================
+   HIGH CONTRAST MODE
+   =================================================================== */
+
+@media (prefers-contrast: high) {
+  .filter-btn {
+    border-width: 2px;
+  }
+
+  .filter-btn.active {
+    border-width: 2px;
+  }
+
+  .filter-toggle {
+    border-width: 2px;
+  }
+
+  .filter-chip {
+    border-width: 2px;
+  }
+
+  .filter-chip.active {
+    border-width: 2px;
+  }
 }
 
 /* Calorie ring */
@@ -470,10 +1001,10 @@ body {
 /* Quick stats */
 .quick-stats {
   display: flex;
-  gap: 1rem;
   justify-content: center;
   padding-top: 1rem;
   border-top: 1px solid #eee;
+  /* flex-direction, gap set in media queries for responsive behavior */
 }
 
 .quick-stat {
@@ -539,8 +1070,8 @@ body {
 /* Recipe grid layout */
 .recipe-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
+  /* grid-template-columns set in media queries for responsive behavior */
 }
 
 /* Recipe card */
@@ -555,10 +1086,7 @@ body {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.recipe-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+/* hover state moved to @media (hover: hover) below */
 
 .recipe-card-content {
   display: flex;
@@ -596,6 +1124,30 @@ body {
   color: #555;
 }
 
+/* Food search badge group */
+.badge-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* USDA Verified badge */
+.badge-verified {
+  background: #28a745;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Serving size display */
+.serving-size {
+  color: #666;
+  font-size: 0.85rem;
+}
+
 .recipe-calories {
   font-weight: 600;
   color: #007bff;
@@ -615,20 +1167,37 @@ body {
 
 /* Instructions */
 .instructions {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 }
 
 .instructions h2 {
-  margin-bottom: 0.75rem;
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  color: #333;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.75rem;
 }
 
 .instructions ol {
   padding-left: 1.5rem;
+  margin: 0;
 }
 
 .instructions li {
-  margin-bottom: 0.75rem;
-  line-height: 1.5;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  color: #444;
+  padding: 0.5rem 0;
+  display: list-item;
+}
+
+.instructions li::marker {
+  font-weight: 600;
+  color: #007bff;
 }
 
 /* Food Search */
@@ -669,10 +1238,7 @@ body {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.food-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+/* hover state moved to @media (hover: hover) below */
 
 .food-info {
   display: flex;
@@ -722,30 +1288,759 @@ body {
   background: #f8f9fa;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+/* ===================================================================
+   RESPONSIVE DESIGN (Mobile-First)
+   Mobile: < 640px (base styles above)
+   Tablet: >= 640px (sm)
+   Desktop: >= 1024px (lg)
+   Large Desktop: >= 1280px (xl)
+   =================================================================== */
+
+/* BASE (Mobile < 640px) - Already defined above */
+/* Optimizations for small screens */
+body {
+  font-size: 16px; /* Prevent iOS zoom on input focus */
+}
+
+.container {
+  padding: 1rem;
+}
+
+.header {
+  padding: 0.75rem 1rem;
+}
+
+.main {
+  padding: 1rem;
+}
+
+.hero h1 {
+  font-size: 1.75rem; /* Smaller on mobile */
+}
+
+.hero .tagline {
+  font-size: 1rem;
+}
+
+/* Single column layouts on mobile */
+.home-nav {
+  grid-template-columns: 1fr;
+}
+
+.recipe-grid {
+  grid-template-columns: 1fr;
+}
+
+.macro-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.profile-section dl {
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.profile-section dd {
+  text-align: left;
+}
+
+.nav {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Touch-friendly buttons on mobile */
+.btn {
+  min-height: 44px;
+  padding: 0.75rem 1.25rem;
+}
+
+.filter-btn {
+  min-height: 44px;
+}
+
+.filter-chip {
+  min-height: 36px;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Stack quick stats vertically on mobile */
+.quick-stats {
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* TABLET+ (>= 640px) */
+@media (min-width: 640px) {
+  .container {
+    padding: 1.5rem;
+  }
+
   .header {
-    padding: 1rem;
-  }
-
-  .nav {
-    flex-wrap: wrap;
-  }
-
-  .nav-link {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.9rem;
+    padding: 1rem 1.5rem;
   }
 
   .main {
-    padding: 1rem;
+    padding: 1.5rem;
   }
 
-  .macro-grid {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  /* Two-column layouts */
+  .home-nav {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .recipe-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .macro-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .profile-section dl {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .profile-section dd {
+    text-align: right;
+  }
+
+  .nav {
+    flex-wrap: nowrap;
+    gap: 1rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  /* Horizontal quick stats */
+  .quick-stats {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  /* Improved spacing for filter chips on tablet */
+  .filter-chips {
+    gap: 0.75rem;
+  }
+}
+
+/* DESKTOP (>= 1024px) */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1200px;
+    padding: 2rem;
+  }
+
+  .header {
+    padding: 1rem 2rem;
+  }
+
+  .main {
+    padding: 2rem;
+  }
+
+  .hero {
+    padding: 4rem 2rem;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero .tagline {
+    font-size: 1.1rem;
+  }
+
+  /* Multi-column layouts */
+  .home-nav {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .recipe-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .macro-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Larger touch targets less critical on desktop */
+  .btn {
+    min-height: auto;
+  }
+
+  /* Better spacing on larger screens */
+  .quick-stats {
+    gap: 1.5rem;
+  }
+
+  /* Optimized spacing for filter chips on desktop */
+  .filter-chips {
+    gap: 1rem;
+  }
+
+  .filter-chip {
+    min-height: auto;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* LARGE DESKTOP (>= 1280px) */
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+
+  .home-nav {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  .recipe-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ===================================================================
+   TOUCH & HOVER OPTIMIZATIONS
+   =================================================================== */
+
+/* Enhanced hover states only on devices that support hover */
+@media (hover: hover) {
+  .nav-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .recipe-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .food-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* No transform on touch devices */
+@media (hover: none) {
+  .nav-card:hover,
+  .recipe-card:hover,
+  .food-item:hover {
+    transform: none;
+  }
+
+  /* Slightly larger tap targets on touch */
+  .nav-card,
+  .recipe-card,
+  .food-item {
+    padding: 1.25rem;
+  }
+}
+
+/* ===================================================================
+   ACCESSIBILITY: Reduce motion for users who prefer it
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-card,
+  .recipe-card,
+  .food-item,
+  .progress-fill,
+  .ring-progress {
+    transition: none !important;
+  }
+}/* ===================================================================
+   WEEKLY CALENDAR: 7-Day Grid Layout
+
+   Responsive grid layout for weekly meal planning with 7 day columns
+   (Monday-Sunday) and 3 meal slots per day (breakfast, lunch, dinner).
+
+   Layout:
+   - Desktop: 7 columns side-by-side
+   - Tablet: 3-4 columns wrapping
+   - Mobile: 1 column stacked
+
+   Components:
+   - .weekly-calendar: Container
+   - .weekly-grid: CSS Grid layout
+   - .day-column: Individual day column
+   - .meal-slot: Meal slot (breakfast/lunch/dinner)
+   - .meal-content: Content area for meal details
+
+   =================================================================== */
+
+/* ===================================================================
+   CALENDAR CONTAINER
+   =================================================================== */
+
+.weekly-calendar {
+  width: 100%;
+  margin: var(--space-6) 0;
+  padding: var(--space-4);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-lg);
+}
+
+/* ===================================================================
+   GRID LAYOUT
+   =================================================================== */
+
+.weekly-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+/* Desktop: 7 columns */
+@media (min-width: 1400px) {
+  .weekly-grid {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+/* Large tablet: 4 columns */
+@media (min-width: 1024px) and (max-width: 1399px) {
+  .weekly-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Tablet: 3 columns */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .weekly-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Mobile: 2 columns */
+@media (min-width: 480px) and (max-width: 767px) {
+  .weekly-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Small mobile: 1 column */
+@media (max-width: 479px) {
+  .weekly-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ===================================================================
+   DAY COLUMN
+   =================================================================== */
+
+.day-column {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-scale);
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.day-column:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Day name header */
+.day-name {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--color-primary);
+  margin: 0 0 var(--space-3) 0;
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid var(--color-gray-200);
+  text-align: center;
+}
+
+/* ===================================================================
+   MEAL SLOTS
+   =================================================================== */
+
+.meal-slot {
+  background: var(--color-gray-50);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--color-gray-200);
+  transition: var(--transition-all);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.meal-slot:last-child {
+  margin-bottom: 0;
+}
+
+.meal-slot:hover {
+  border-color: var(--color-primary-light);
+  background: white;
+}
+
+/* Meal type label (Breakfast, Lunch, Dinner) */
+.meal-type {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-1);
+}
+
+/* ===================================================================
+   MEAL CONTENT
+   =================================================================== */
+
+.meal-content {
+  flex: 1;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 60px;
+}
+
+/* Empty state */
+.meal-content.empty {
+  color: var(--color-gray-400);
+  font-style: italic;
+  background: var(--color-gray-100);
+  border: 1px dashed var(--color-gray-300);
+}
+
+.meal-content.empty:hover {
+  color: var(--color-gray-500);
+  border-color: var(--color-primary-light);
+  cursor: pointer;
+}
+
+/* Filled state (for future use) */
+.meal-content.filled {
+  background: var(--color-success-light);
+  color: var(--color-gray-900);
+  font-weight: var(--font-medium);
+  border: 1px solid var(--color-success);
+}
+
+/* ===================================================================
+   RESPONSIVE ADJUSTMENTS
+   =================================================================== */
+
+/* Reduce padding on mobile */
+@media (max-width: 767px) {
+  .weekly-calendar {
+    padding: var(--space-2);
+    margin: var(--space-4) 0;
+  }
+
+  .day-column {
+    padding: var(--space-2);
+    min-height: 300px;
+  }
+
+  .meal-slot {
+    padding: var(--space-1);
+  }
+
+  .meal-content {
+    min-height: 50px;
+    padding: var(--space-1);
+  }
+}
+
+/* ===================================================================
+   PRINT STYLES
+   =================================================================== */
+
+@media print {
+  .weekly-calendar {
+    background: white;
+    margin: 0;
+  }
+
+  .weekly-grid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--space-2);
+  }
+
+  .day-column {
+    box-shadow: none;
+    border: 1px solid var(--color-gray-300);
+    page-break-inside: avoid;
+  }
+
+  .day-column:hover {
+    transform: none;
+  }
+
+  .meal-slot:hover {
+    border-color: var(--color-gray-200);
+    background: var(--color-gray-50);
+  }
+}
+
+/* ===================================================================
+   ACCESSIBILITY
+   =================================================================== */
+
+/* Focus states for keyboard navigation */
+.meal-slot:focus-within {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .day-column {
+    border: 2px solid currentColor;
+  }
+
+  .meal-slot {
+    border: 2px solid currentColor;
+  }
+
+  .meal-content.empty {
+    border: 2px dashed currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .day-column,
+  .meal-slot,
+  .meal-content {
+    transition: none;
+  }
+
+  .day-column:hover {
+    transform: none;
+  }
+}
+/* ===================================================================
+   HTMX LOADING INDICATORS
+
+   Styles for .htmx-indicator elements that show loading states
+   when HTMX requests are in progress.
+
+   These indicators are shown/hidden automatically by HTMX based on
+   the hx-indicator attribute on form elements.
+   =================================================================== */
+
+/* ===================================================================
+   BASE INDICATOR STYLES
+   =================================================================== */
+
+/* Default indicator - hidden by default, shown during hx-request */
+.htmx-indicator {
+  display: none;
+}
+
+/* Show indicator during HTMX request */
+.htmx-request .htmx-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: var(--space-2);
+}
+
+/* ===================================================================
+   INLINE INDICATOR (for search inputs and buttons)
+   =================================================================== */
+
+/* Inline loading indicator - small spinner with text */
+.htmx-indicator {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* Spinner inside indicator */
+.htmx-indicator::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: htmx-spinner 0.6s linear infinite;
+  margin-right: var(--space-1);
+}
+
+/* ===================================================================
+   ANIMATIONS
+   =================================================================== */
+
+@keyframes htmx-spinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pulse animation for additional visual feedback */
+@keyframes htmx-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ===================================================================
+   BUTTON LOADING STATES
+   =================================================================== */
+
+/* Button that triggers HTMX request gets opacity change */
+.btn.htmx-request {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* ===================================================================
+   INPUT LOADING STATES
+   =================================================================== */
+
+/* Input during request gets visual feedback */
+.input:disabled,
+.input-search:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+}
+
+/* ===================================================================
+   SEARCH-SPECIFIC INDICATORS
+   =================================================================== */
+
+/* Search input container during request */
+.search-input-container {
+  position: relative;
+}
+
+/* Search loading indicator positioning */
+#search-loading {
+  display: none;
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+}
+
+/* Show search indicator during request */
+.htmx-request #search-loading {
+  display: inline-flex;
+}
+
+/* ===================================================================
+   CATEGORY DROPDOWN INDICATOR
+   =================================================================== */
+
+/* Category filter loading state */
+#category-loading {
+  display: none;
+  margin-left: var(--space-2);
+}
+
+/* Show category loading indicator */
+.htmx-request #category-loading {
+  display: inline-flex;
+}
+
+/* ===================================================================
+   FILTER CHIP INDICATORS
+   =================================================================== */
+
+/* Filter loading indicator */
+#filter-loading {
+  display: none;
+  margin-left: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+}
+
+/* Show filter indicator during request */
+.htmx-request #filter-loading {
+  display: inline-flex;
+}
+
+/* ===================================================================
+   SEARCH RESULTS CONTAINER LOADING
+   =================================================================== */
+
+/* Dim search results during loading */
+#food-results.htmx-request {
+  opacity: 0.7;
+  transition: opacity var(--duration-200) var(--ease-out);
+}
+
+/* ===================================================================
+   RESPONSIVE ADJUSTMENTS
+   =================================================================== */
+
+@media (max-width: 640px) {
+  /* Stack indicators on mobile */
+  .htmx-request .htmx-indicator {
+    display: inline-flex;
+    margin-top: var(--space-1);
+  }
+
+  /* Reduce indicator size on mobile */
+  .htmx-indicator::before {
+    width: 12px;
+    height: 12px;
+    border-width: 1.5px;
+  }
+}
+
+/* ===================================================================
+   ACCESSIBILITY
+   =================================================================== */
+
+/* Ensure indicator is visible with high contrast mode */
+@media (prefers-contrast: high) {
+  .htmx-indicator {
+    font-weight: var(--font-medium);
+  }
+
+  .htmx-indicator::before {
+    border-width: 3px;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .htmx-indicator::before {
+    animation: none;
+    border-top-color: var(--color-border);
+    border-right-color: var(--color-primary);
   }
 }

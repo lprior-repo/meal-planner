@@ -18,6 +18,9 @@ erl_crash.dump
 mcp_agent_mail/
 gleam/mcp_agent_mail/
 
+# Node modules
+node_modules/
+
 # IDE
 .idea/
 .vscode/
@@ -34,3 +37,41 @@ Thumbs.db
 
 # Beads local state
 .beads/*.db
+db_export/
+.claude-flow/metrics/*.json
+.swarm/memory.db-shm
+.swarm/memory.db-wal
+
+# Database files (should never be committed)
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+.swarm/
+.hive-mind/
+.beads/beads.db*
+
+# Build artifacts
+build/
+_build/
+*.beam
+*.ez
+
+# Generated metrics and logs
+.claude-flow/metrics/*.json
+*.log
+build-*.txt
+test-output.txt
+*-output.txt
+
+# Backup and temporary files
+*.bak
+*.backup
+*.OLD
+*.BROKEN
+*.broken*
+*.disabled
+*.wip
+
+# Large data directories
+db_export/

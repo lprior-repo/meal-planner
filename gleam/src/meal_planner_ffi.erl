@@ -1,11 +1,16 @@
 -module(meal_planner_ffi).
 -export([get_current_date/0]).
 
+%% Get current date in YYYY-MM-DD format
 get_current_date() ->
-    {{Year, Month, Day}, _} = calendar:local_time(),
-    MonthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ],
-    MonthName = lists:nth(Month, MonthNames),
-    list_to_binary(io_lib:format("~s ~2..0B, ~4..0B", [MonthName, Day, Year])).
+    {{Year, Month, Day}, _Time} = calendar:universal_time(),
+    YearStr = integer_to_list(Year),
+    MonthStr = pad_zero(Month),
+    DayStr = pad_zero(Day),
+    list_to_binary([YearStr, <<"-">>, MonthStr, <<"-">>, DayStr]).
+
+%% Pad single digit numbers with leading zero
+pad_zero(N) when N < 10 ->
+    list_to_binary(["0", integer_to_list(N)]);
+pad_zero(N) ->
+    integer_to_binary(N).

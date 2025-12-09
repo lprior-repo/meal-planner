@@ -1,0 +1,470 @@
+# Tim Ferriss Slow Carb Diet Recipes
+# Quick reference YAML format for easy import/export
+
+metadata:
+  source: "The 4-Hour Body by Tim Ferriss"
+  diet_type: "Slow Carb Diet"
+  total_recipes: 17
+  slow_carb_compliant: 15
+  cheat_day_recipes: 2
+
+rules:
+  - "Avoid white carbohydrates (bread, rice, pasta, potatoes)"
+  - "Eat same few meals repeatedly"
+  - "Don't drink calories"
+  - "Don't eat fruit"
+  - "Take one cheat day per week"
+
+recipes:
+  # HIGH-PROTEIN BREAKFASTS
+  - name: "Slow Carb Breakfast Bowl"
+    category: breakfast
+    calories: 420
+    protein: 38
+    carbs: 28
+    fat: 18
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - legumes
+    description: "3 scrambled eggs with 1 cup black beans, spinach, and salsa. The foundational 4-Hour Body breakfast."
+    ingredients:
+      - "3 large eggs"
+      - "1 cup cooked black beans"
+      - "2 cups fresh spinach"
+      - "2 tbsp salsa"
+      - "Salt and pepper to taste"
+    instructions: |
+      1. Scramble eggs in a non-stick pan
+      2. Heat black beans separately
+      3. Wilt spinach in the egg pan
+      4. Combine all ingredients
+      5. Top with salsa
+
+  - name: "Mexican Breakfast Scramble"
+    category: breakfast
+    calories: 445
+    protein: 42
+    carbs: 32
+    fat: 16
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - legumes
+      - mexican
+    description: "4 eggs scrambled with black beans, diced tomatoes, jalapeños, cilantro, and hot sauce."
+    ingredients:
+      - "4 large eggs"
+      - "3/4 cup black beans"
+      - "1/2 cup diced tomatoes"
+      - "1 jalapeño, diced"
+      - "2 tbsp fresh cilantro"
+      - "Hot sauce to taste"
+
+  - name: "Lentil & Egg Power Breakfast"
+    category: breakfast
+    calories: 395
+    protein: 35
+    carbs: 30
+    fat: 14
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - legumes
+    description: "3 fried eggs over 3/4 cup cooked lentils with sautéed spinach and garlic."
+    ingredients:
+      - "3 large eggs"
+      - "3/4 cup cooked lentils"
+      - "2 cups spinach"
+      - "2 cloves garlic, minced"
+      - "1 tbsp olive oil"
+
+  - name: "Cottage Cheese Protein Scramble"
+    category: breakfast
+    calories: 380
+    protein: 40
+    carbs: 18
+    fat: 16
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - dairy_allowed
+    description: "4 eggs scrambled with 1/2 cup low-fat cottage cheese, black beans, and steamed broccoli."
+    ingredients:
+      - "4 large eggs"
+      - "1/2 cup low-fat cottage cheese"
+      - "1/2 cup black beans"
+      - "1 cup steamed broccoli"
+
+  - name: "Breakfast Burrito Bowl (No Tortilla)"
+    category: breakfast
+    calories: 425
+    protein: 38
+    carbs: 35
+    fat: 15
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - legumes
+      - mexican
+    description: "3 eggs, pinto beans, avocado, salsa verde, cilantro - all the burrito flavor, none of the carbs."
+    ingredients:
+      - "3 large eggs"
+      - "3/4 cup pinto beans"
+      - "1/4 avocado, sliced"
+      - "3 tbsp salsa verde"
+      - "Fresh cilantro"
+
+  # LEAN PROTEIN MAINS
+  - name: "Grass-Fed Beef & Black Bean Bowl"
+    category: lunch
+    calories: 485
+    protein: 48
+    carbs: 28
+    fat: 20
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - legumes
+      - beef
+    description: "6oz grass-fed ground beef with black beans, mixed greens, and guacamole."
+    ingredients:
+      - "6 oz grass-fed ground beef (93% lean)"
+      - "3/4 cup black beans"
+      - "2 cups mixed greens"
+      - "2 tbsp guacamole"
+      - "Cumin, chili powder to taste"
+
+  - name: "Grilled Chicken Thigh with Lentils"
+    category: lunch
+    calories: 450
+    protein: 42
+    carbs: 32
+    fat: 16
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - legumes
+      - chicken
+    description: "2 grilled chicken thighs with French green lentils and roasted Brussels sprouts."
+    ingredients:
+      - "2 chicken thighs (boneless, skinless)"
+      - "3/4 cup cooked French lentils"
+      - "1 cup Brussels sprouts"
+      - "1 tbsp olive oil"
+      - "Garlic and herbs"
+
+  - name: "Pan-Seared Salmon with White Beans"
+    category: dinner
+    calories: 520
+    protein: 45
+    carbs: 30
+    fat: 24
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - legumes
+      - fish
+      - omega3
+    description: "6oz wild salmon with cannellini beans, garlic, and kale sautéed in olive oil."
+    ingredients:
+      - "6 oz wild-caught salmon fillet"
+      - "3/4 cup cannellini beans"
+      - "2 cups kale, chopped"
+      - "3 cloves garlic, minced"
+      - "2 tbsp olive oil"
+
+  - name: "Slow Cooker Pork & Pinto Beans"
+    category: dinner
+    calories: 465
+    protein: 44
+    carbs: 35
+    fat: 16
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - legumes
+      - pork
+    description: "Tender pulled pork shoulder with pinto beans, cumin, and roasted peppers."
+    ingredients:
+      - "6 oz pork shoulder (lean)"
+      - "3/4 cup pinto beans"
+      - "1/2 cup roasted red peppers"
+      - "1 tsp cumin"
+      - "1 tsp smoked paprika"
+
+  - name: "Turkey & Lentil Chili"
+    category: dinner
+    calories: 410
+    protein: 40
+    carbs: 38
+    fat: 12
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - legumes
+      - turkey
+    description: "Lean ground turkey with red lentils, tomatoes, chili spices, and tons of veggies."
+    ingredients:
+      - "6 oz lean ground turkey (99%)"
+      - "1/2 cup red lentils"
+      - "1 cup crushed tomatoes"
+      - "1/2 cup diced bell peppers"
+      - "1/2 cup diced zucchini"
+      - "Chili powder, cumin, paprika"
+
+  # LEGUME SIDES
+  - name: "Garlicky Black Beans with Spinach"
+    category: side
+    calories: 280
+    protein: 18
+    carbs: 42
+    fat: 4
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - legumes
+      - vegetarian
+      - high_fiber
+    description: "1.5 cups black beans sautéed with garlic, cumin, and 2 cups fresh spinach."
+    ingredients:
+      - "1.5 cups cooked black beans"
+      - "4 cloves garlic, minced"
+      - "2 cups fresh spinach"
+      - "1 tsp cumin"
+      - "1 tsp olive oil"
+
+  - name: "Spicy Lentil Soup"
+    category: lunch
+    calories: 320
+    protein: 22
+    carbs: 48
+    fat: 6
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - legumes
+      - vegetarian
+      - high_fiber
+    description: "Red lentils with tomatoes, curry spices, coconut milk, and cauliflower."
+    ingredients:
+      - "1 cup red lentils"
+      - "1 cup diced tomatoes"
+      - "1 cup cauliflower florets"
+      - "1/4 cup coconut milk"
+      - "Curry powder, turmeric, ginger"
+
+  - name: "White Bean & Vegetable Medley"
+    category: side
+    calories: 295
+    protein: 20
+    carbs: 45
+    fat: 5
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - legumes
+      - vegetarian
+      - high_fiber
+    description: "Cannellini beans with zucchini, bell peppers, onions, and Italian herbs."
+    ingredients:
+      - "1.5 cups cannellini beans"
+      - "1 cup zucchini, diced"
+      - "1/2 cup bell peppers, diced"
+      - "1/2 onion, diced"
+      - "Italian herbs, olive oil"
+
+  # VEGETABLE-HEAVY
+  - name: "Massive Spinach Salad with Chicken"
+    category: lunch
+    calories: 385
+    protein: 42
+    carbs: 18
+    fat: 16
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - low_carb
+      - vegetables
+    description: "6oz grilled chicken over 4 cups baby spinach with cucumbers, peppers, olive oil & vinegar."
+    ingredients:
+      - "6 oz grilled chicken breast"
+      - "4 cups baby spinach"
+      - "1 cup cucumber, sliced"
+      - "1/2 cup bell peppers, sliced"
+      - "2 tbsp olive oil"
+      - "1 tbsp red wine vinegar"
+
+  - name: "Cauliflower Steak with Beef"
+    category: dinner
+    calories: 425
+    protein: 38
+    carbs: 22
+    fat: 22
+    verified: true
+    tags:
+      - slow_carb
+      - tim_ferriss
+      - high_protein
+      - low_carb
+      - vegetables
+    description: "5oz grass-fed beef with thick-cut roasted cauliflower steak and chimichurri sauce."
+    ingredients:
+      - "5 oz grass-fed beef steak"
+      - "1 large cauliflower steak (1 inch thick)"
+      - "2 tbsp chimichurri sauce"
+      - "Olive oil, salt, pepper"
+
+  # CHEAT DAY RECIPES
+  - name: "Cheat Day Pancake Stack"
+    category: breakfast
+    calories: 820
+    protein: 18
+    carbs: 110
+    fat: 32
+    verified: false
+    tags:
+      - cheat_day
+      - tim_ferriss
+      - indulgence
+    description: "Buttermilk pancakes with butter, syrup, and berries. Only on cheat day!"
+    ingredients:
+      - "4 large buttermilk pancakes"
+      - "3 tbsp butter"
+      - "1/4 cup maple syrup"
+      - "1/2 cup mixed berries"
+    note: "Saturday only - essential for metabolic boost"
+
+  - name: "Cheat Day Burger & Fries"
+    category: lunch
+    calories: 950
+    protein: 42
+    carbs: 85
+    fat: 48
+    verified: false
+    tags:
+      - cheat_day
+      - tim_ferriss
+      - indulgence
+    description: "Double cheeseburger with bun, fries, and all the toppings. Saturday only!"
+    ingredients:
+      - "2 beef patties (8 oz total)"
+      - "2 slices cheese"
+      - "Burger bun"
+      - "Large order of fries"
+      - "Lettuce, tomato, onion, pickles, sauce"
+    note: "Go wild - it's part of the protocol"
+
+# Nutritional Guidelines
+nutritional_targets:
+  per_meal:
+    protein: "30-40g (minimum 30g at breakfast)"
+    carbs: "25-35g (from legumes/vegetables only)"
+    fat: "12-20g"
+    calories: "380-520"
+  daily_total:
+    meals: 3-4
+    protein: "90-120g"
+    carbs: "75-105g"
+    fat: "36-60g"
+    calories: "1,140-1,470"
+
+# Allowed Foods
+allowed_foods:
+  proteins:
+    - "Eggs (whole)"
+    - "Grass-fed beef"
+    - "Chicken (thighs preferred)"
+    - "Wild-caught fish (salmon, sardines)"
+    - "Pork (lean cuts)"
+    - "Turkey"
+  legumes:
+    - "Black beans"
+    - "Pinto beans"
+    - "Red lentils"
+    - "Green lentils"
+    - "Cannellini beans"
+    - "Kidney beans"
+  vegetables:
+    - "Spinach"
+    - "Mixed greens"
+    - "Broccoli"
+    - "Cauliflower"
+    - "Asparagus"
+    - "Green beans"
+    - "Brussels sprouts"
+    - "Zucchini"
+    - "Bell peppers"
+  exceptions:
+    - "Cottage cheese (only dairy allowed)"
+    - "Tomatoes (technically fruit, but allowed)"
+    - "Avocados (technically fruit, but allowed)"
+
+# Prohibited Foods
+prohibited_foods:
+  - "Bread (all types)"
+  - "Rice (white and brown)"
+  - "Pasta"
+  - "Potatoes"
+  - "Cereal"
+  - "Oats"
+  - "Quinoa"
+  - "All fruits (except tomatoes, avocados)"
+  - "All fruit juice"
+  - "Milk"
+  - "Yogurt (except Greek yogurt in small amounts)"
+  - "Sugar"
+  - "Artificial sweeteners"
+
+# Weekly Schedule
+schedule:
+  monday: "Slow carb (strict)"
+  tuesday: "Slow carb (strict)"
+  wednesday: "Slow carb (strict)"
+  thursday: "Slow carb (strict)"
+  friday: "Slow carb (strict)"
+  saturday: "CHEAT DAY - eat anything"
+  sunday: "Slow carb (strict)"
+
+# Tips for Success
+tips:
+  - "Eat breakfast within 30 minutes of waking"
+  - "30g protein minimum at breakfast to trigger fat loss"
+  - "Don't skip legumes - they prevent constipation"
+  - "Meal prep on Sunday (cook beans in bulk)"
+  - "Keep it simple - same 3-4 meals daily"
+  - "Drink water constantly (1 gallon per day)"
+  - "Take one cheat day per week (don't skip it)"
+  - "Measure progress weekly (same day/time)"
+
+# Expected Results
+expected_results:
+  first_month: "10-20 lbs lost"
+  composition: "Primarily fat loss, muscle maintained"
+  visible_results: "2 weeks"
+  sustainability: "Long-term (with weekly cheat day)"

@@ -1,5 +1,156 @@
 # AI Feedback Loops - Fractal Development System
 
+## 🚨 MANDATORY FIRST STEP: Agent Mail Registration
+
+**BEFORE doing ANY work, agents MUST register with Agent Mail MCP:**
+
+```python
+# 1. Ensure project exists
+ensure_project(project_key="/home/lewis/src/meal-planner")
+
+# 2. Register agent identity (auto-generates adjective+noun name)
+register_agent(
+    project_key="/home/lewis/src/meal-planner",
+    program="claude-code",
+    model="opus-4.1",
+    task_description="Your current task"
+)
+# Returns: {"agent_name": "GreenCastle", ...}
+```
+
+**Agent Mail server is ALREADY RUNNING - never start a server.**
+
+## MCP Agent Mail: Coordination for Multi-Agent Workflows
+
+### What it is
+- A mail-like layer that lets coding agents coordinate asynchronously via MCP tools and resources
+- Provides identities, inbox/outbox, searchable threads, and advisory file reservations
+- Human-auditable artifacts stored in Git
+
+### Why it's useful
+- Prevents agents from stepping on each other with explicit file reservations (leases) for files/globs
+- Keeps communication out of your token budget by storing messages in a per-project archive
+- Offers quick reads (`resource://inbox/...`, `resource://thread/...`) and macros that bundle common flows
+
+### How to use effectively
+
+#### Same Repository
+- **Register identity**: Call `ensure_project`, then `register_agent` using this repo's absolute path as `project_key`
+- **Reserve files before editing**: `file_reservation_paths(project_key, agent_name, ["src/**"], ttl_seconds=3600, exclusive=true)`
+- **Communicate with threads**: Use `send_message(..., thread_id="bd-123")`; check inbox with `fetch_inbox`
+- **Read fast**: `resource://inbox/{Agent}?project=<abs-path>&limit=20` or `resource://thread/{id}?project=<abs-path>&include_bodies=true`
+
+#### Across Different Repos (e.g., Next.js frontend + FastAPI backend)
+- **Option A (single project bus)**: Register both under same `project_key`; keep patterns specific (`frontend/**` vs `backend/**`)
+- **Option B (separate projects)**: Each repo has own `project_key`; use `macro_contact_handshake` to link agents
+
+#### Macros vs Granular Tools
+- **Prefer macros for speed**: `macro_start_session`, `macro_prepare_thread`, `macro_file_reservation_cycle`, `macro_contact_handshake`
+- **Use granular tools for control**: `register_agent`, `file_reservation_paths`, `send_message`, `fetch_inbox`, `acknowledge_message`
+
+### Common Pitfalls
+- "from_agent not registered": Always `register_agent` in correct `project_key` first
+- "FILE_RESERVATION_CONFLICT": Adjust patterns, wait for expiry, or use non-exclusive reservation
+- Auth errors: If JWT+JWKS enabled, include bearer token with `kid` matching server JWKS
+
+## Integrating with Beads (Dependency-Aware Task Planning)
+
+Beads provides lightweight, dependency-aware issue database and CLI (`bd`) for selecting "ready work," setting priorities, and tracking status. It complements MCP Agent Mail's messaging, audit trail, and file-reservation signals.
+
+**Project**: [steveyegge/beads](https://github.com/steveyegge/beads)
+
+### Recommended Conventions
+- **Single source of truth**: Use **Beads** for task status/priority/dependencies; use **Agent Mail** for conversation, decisions, attachments
+- **Shared identifiers**: Use Beads issue id (e.g., `bd-123`) as Mail `thread_id` and prefix subjects with `[bd-123]`
+- **Reservations**: When starting `bd-###` task, call `file_reservation_paths(...)` with issue id in `reason`; release on completion
+
+### Typical Flow (Agents)
+1. **Pick ready work** (Beads): `bd ready --json` → choose one item (highest priority, no blockers)
+2. **Reserve edit surface** (Mail): `file_reservation_paths(project_key, agent_name, ["src/**"], ttl_seconds=3600, exclusive=true, reason="bd-123")`
+3. **Announce start** (Mail): `send_message(..., thread_id="bd-123", subject="[bd-123] Start: <short title>", ack_required=true)`
+4. **Work and update**: Reply in-thread with progress; attach artifacts/images
+5. **Complete and release**:
+   - `bd close bd-123 --reason "Completed"`
+   - `release_file_reservations(project_key, agent_name, paths=["src/**"])`
+   - Final Mail reply: `[bd-123] Completed` with summary
+
+### Mapping Cheat-Sheet
+- **Mail `thread_id`** ↔ `bd-###`
+- **Mail subject**: `[bd-###] …`
+- **File reservation `reason`**: `bd-###`
+- **Commit messages**: Include `bd-###` for traceability
+
+### Event Mirroring (Optional Automation)
+- On `bd update --status blocked`, send high-importance Mail message in thread `bd-###`
+- On Mail "ACK overdue" for critical decision, add Beads label (e.g., `needs-ack`) or bump priority
+
+### Pitfalls to Avoid
+- Don't create or manage tasks in Mail; treat Beads as single task queue
+- Always include `bd-###` in message `thread_id` to avoid ID drift
+
+## Beads Viewer (bv) — AI-Friendly Task Analysis
+
+**Beads Viewer** (`bv`) is a fast terminal UI that provides robot flags designed for AI agent integration.
+
+**Project**: [Dicklesworthstone/beads_viewer](https://github.com/Dicklesworthstone/beads_viewer)
+
+### Why bv for Agents?
+While `bd` handles task CRUD operations, `bv` provides precomputed graph analytics:
+- **PageRank scores**: Identify high-impact tasks that unblock most downstream work
+- **Critical path analysis**: Find longest dependency chain to completion
+- **Cycle detection**: Spot circular dependencies before deadlocks
+- **Parallel track planning**: Determine which tasks can run concurrently
+
+### Robot Flags for AI Integration
+
+| Flag | Output | Agent Use Case |
+|------|--------|----------------|
+| `bv --robot-help` | All AI-facing commands | Discovery / capability check |
+| `bv --robot-insights` | PageRank, betweenness, HITS, critical path, cycles | Quick triage: "What's most impactful?" |
+| `bv --robot-plan` | Parallel tracks, items per track, unblocks lists | Execution planning: "What can run in parallel?" |
+| `bv --robot-priority` | Priority recommendations with reasoning + confidence | Task selection: "What should I work on next?" |
+| `bv --robot-recipes` | Available filter presets (actionable, blocked, etc.) | Workflow setup: "Show me ready work" |
+| `bv --robot-diff --diff-since <ref>` | Changes since commit/date, new/closed items, cycles | Progress tracking: "What changed?" |
+
+### Example: Agent Task Selection Workflow
+```bash
+# 1. Get priority recommendations with reasoning
+bv --robot-priority
+
+# 2. Check what completing a task would unblock
+bv --robot-plan
+
+# 3. After completing work, check what changed
+bv --robot-diff --diff-since "1 hour ago"
+```
+
+### When to Use bv vs bd
+
+| Tool | Best For |
+|------|----------|
+| `bd` | Creating, updating, closing tasks; `bd ready` for simple "what's next" |
+| `bv` | Graph analysis, impact assessment, parallel planning, change tracking |
+
+**Rule of thumb**: Use `bd` for task operations, use `bv` for task intelligence.
+
+### Integration with Agent Mail
+Combine `bv` insights with Agent Mail coordination:
+
+1. Agent A runs `bv --robot-priority` → identifies `bd-42` as highest-impact
+2. Agent A reserves files: `file_reservation_paths(..., reason="bd-42")`
+3. Agent A announces: `send_message(..., thread_id="bd-42", subject="[bd-42] Starting high-impact refactor")`
+4. Other agents see reservation and Mail announcement, pick different tasks
+5. Agent A completes, runs `bv --robot-diff` to report downstream unblocks
+
+This creates feedback loop where graph intelligence drives coordination.
+
+## Development Guidelines
+
+### Critical Rules
+- **Use fractal for design and implementation**: Never bypass the fractal methodology
+- **Never generate markdown unless explicitly asked**: No documentation files without request
+- **Capture leftover issues in Beads**: All incomplete work must be filed as beads before session ends
+
 ## The Fractal Structure
 
 The system is recursive. At every level, the pattern is the same: **attempt, verify, feedback, retry**. The only thing that changes is the granularity.
