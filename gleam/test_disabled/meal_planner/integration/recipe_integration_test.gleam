@@ -8,9 +8,9 @@
 ///
 /// Run with: gleam test
 import gleeunit/should
-import meal_planner/storage
 import meal_planner/integration/test_data_builders as builders
 import meal_planner/integration/test_helpers
+import meal_planner/storage
 
 // ============================================================================
 // Recipe CRUD Tests
@@ -37,9 +37,21 @@ pub fn test_get_all_recipes() {
   test_helpers.with_integration_db(fn(conn) {
     // Arrange: Save multiple recipes
     let recipes = builders.recipe_batch(3)
-    let assert Ok(_) = storage.save_recipe(conn, list.first(recipes) |> result.unwrap(builders.recipe()))
-    let assert Ok(_) = storage.save_recipe(conn, list.at(recipes, 1) |> result.unwrap(builders.recipe()))
-    let assert Ok(_) = storage.save_recipe(conn, list.at(recipes, 2) |> result.unwrap(builders.recipe()))
+    let assert Ok(_) =
+      storage.save_recipe(
+        conn,
+        list.first(recipes) |> result.unwrap(builders.recipe()),
+      )
+    let assert Ok(_) =
+      storage.save_recipe(
+        conn,
+        list.at(recipes, 1) |> result.unwrap(builders.recipe()),
+      )
+    let assert Ok(_) =
+      storage.save_recipe(
+        conn,
+        list.at(recipes, 2) |> result.unwrap(builders.recipe()),
+      )
 
     // Act: Retrieve all recipes
     let assert Ok(all_recipes) = storage.get_all_recipes(conn)

@@ -1,7 +1,7 @@
 /// PostgreSQL storage module for nutrition data persistence
 import gleam/dynamic/decode
 import gleam/list
-import gleam/option.{type Option, None, Some} as option
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/postgres

@@ -202,7 +202,8 @@ fn check_data_imported(db: pog.Connection) -> Bool {
     pog.query("SELECT COUNT(*) FROM foods")
     |> pog.returning(decode.at([0], decode.int))
   let foods_ok = case pog.execute(foods_query, db) {
-    Ok(pog.Returned(_, [count])) -> count > nutrition_constants.import_batch_size
+    Ok(pog.Returned(_, [count])) ->
+      count > nutrition_constants.import_batch_size
     _ -> False
   }
 

@@ -79,16 +79,15 @@ pub fn mock_delete(path: String) -> WispRequest {
 }
 
 /// Add a header to a request
-pub fn with_header(
-  req: WispRequest,
-  name: String,
-  value: String,
-) -> WispRequest {
+pub fn with_header(req: WispRequest, name: String, value: String) -> WispRequest {
   request.set_header(req, name, value)
 }
 
 /// Add query parameters to a request
-pub fn with_query(req: WispRequest, params: List(#(String, String))) -> WispRequest {
+pub fn with_query(
+  req: WispRequest,
+  params: List(#(String, String)),
+) -> WispRequest {
   let query_string =
     params
     |> list.map(fn(pair) {

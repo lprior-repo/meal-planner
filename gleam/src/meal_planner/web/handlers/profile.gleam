@@ -190,7 +190,8 @@ fn parse_profile_form(
     Ok(_) -> []
   }
 
-  let all_errors = list.flatten([bodyweight_errors, activity_errors, goal_errors, meals_errors])
+  let all_errors =
+    list.flatten([bodyweight_errors, activity_errors, goal_errors, meals_errors])
 
   // Check for errors
   case all_errors {

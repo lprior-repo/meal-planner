@@ -44,12 +44,14 @@ pub fn get_analytics_summary(
   _days: Int,
 ) -> Result(SearchAnalyticsSummary, pog.QueryError) {
   // Stubbed - return empty summary
-  Ok(SearchAnalyticsSummary(
-    total_searches: 0,
-    unique_terms: 0,
-    avg_results: 0.0,
-    top_searches: [],
-  ))
+  Ok(
+    SearchAnalyticsSummary(
+      total_searches: 0,
+      unique_terms: 0,
+      avg_results: 0.0,
+      top_searches: [],
+    ),
+  )
 }
 
 /// Get recent search analytics entries
