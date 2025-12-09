@@ -385,20 +385,17 @@ fn render_result_item(
   // Build the badges list
   let badges = case is_verified {
     True -> [
-      html.span(
-        [attribute.class("badge badge-verified")],
-        [element.text("USDA Verified")],
-      ),
-      html.span(
-        [attribute.class("badge badge-info")],
-        [element.text(data_type_label)],
-      ),
+      html.span([attribute.class("badge badge-verified")], [
+        element.text("USDA Verified"),
+      ]),
+      html.span([attribute.class("badge badge-info")], [
+        element.text(data_type_label),
+      ]),
     ]
     False -> [
-      html.span(
-        [attribute.class("badge badge-warning")],
-        [element.text(data_type_label)],
-      ),
+      html.span([attribute.class("badge badge-warning")], [
+        element.text(data_type_label),
+      ]),
     ]
   }
 

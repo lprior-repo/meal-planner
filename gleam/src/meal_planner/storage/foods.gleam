@@ -49,11 +49,12 @@ pub fn search_foods(
   limit: Int,
 ) -> Result(List(UsdaFood), StorageError) {
   let sql =
-    "SELECT fdc_id, description, data_type, COALESCE(food_category, ''), '100g'
+    "SELECT DISTINCT ON (fdc_id) fdc_id, description, data_type, COALESCE(food_category, ''), '100g'
      FROM foods
      WHERE to_tsvector('english', description) @@ plainto_tsquery('english', $1)
         OR description ILIKE $2
      ORDER BY
+       fdc_id,
        CASE data_type
          WHEN 'foundation_food' THEN 100
          WHEN 'sr_legacy_food' THEN 95
@@ -117,11 +118,12 @@ pub fn search_foods_filtered_with_offset(
   offset: Int,
 ) -> Result(List(UsdaFood), StorageError) {
   let sql =
-    "SELECT fdc_id, description, data_type, COALESCE(food_category, ''), COALESCE(household_serving_fulltext, '')
+    "SELECT DISTINCT ON (fdc_id) fdc_id, description, data_type, COALESCE(food_category, ''), COALESCE(household_serving_fulltext, '')
      FROM foods
      WHERE to_tsvector('english', description) @@ plainto_tsquery('english', $1)
         OR description ILIKE $2
      ORDER BY
+       fdc_id,
        CASE data_type
          WHEN 'foundation_food' THEN 100
          WHEN 'sr_legacy_food' THEN 95

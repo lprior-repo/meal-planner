@@ -341,12 +341,9 @@ fn int_to_float(n: Int) -> Float
 /// Check if recipe complies with Paleo diet principles
 /// Note: Paleo validation not yet implemented
 pub fn check_paleo(_recipe: Recipe) -> ComplianceResult {
-  ComplianceResult(
-    compliant: True,
-    score: 1.0,
-    violations: [],
-    warnings: ["Paleo validation not yet implemented"],
-  )
+  ComplianceResult(compliant: True, score: 1.0, violations: [], warnings: [
+    "Paleo validation not yet implemented",
+  ])
 }
 
 // ============================================================================
@@ -387,12 +384,9 @@ pub fn check_keto(recipe: Recipe) -> ComplianceResult {
 /// Check if recipe complies with Mediterranean diet principles
 /// Note: Mediterranean validation not yet implemented
 pub fn check_mediterranean(_recipe: Recipe) -> ComplianceResult {
-  ComplianceResult(
-    compliant: True,
-    score: 1.0,
-    violations: [],
-    warnings: ["Mediterranean validation not yet implemented"],
-  )
+  ComplianceResult(compliant: True, score: 1.0, violations: [], warnings: [
+    "Mediterranean validation not yet implemented",
+  ])
 }
 
 // ============================================================================

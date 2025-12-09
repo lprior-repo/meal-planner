@@ -3,7 +3,7 @@
 /// Target: 50% DB load reduction through covering indexes and caching
 import gleam/dynamic/decode
 import gleam/int
-import gleam/option.{None, Some} as option
+import gleam/option.{None, Some}
 import meal_planner/nutrition_constants as constants
 import meal_planner/query_cache
 import meal_planner/storage.{type StorageError, type UsdaFood}

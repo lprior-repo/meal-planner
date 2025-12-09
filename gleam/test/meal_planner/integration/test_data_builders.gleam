@@ -216,9 +216,7 @@ pub fn recipe_batch(count: Int) -> List(Recipe) {
 }
 
 /// Create a list of recipes in different categories
-pub fn recipe_batch_by_category(
-  categories: List(String),
-) -> List(Recipe) {
+pub fn recipe_batch_by_category(categories: List(String)) -> List(Recipe) {
   categories
   |> list.index_map(fn(category, idx) {
     Recipe(
