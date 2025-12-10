@@ -333,6 +333,94 @@ pub fn create_meal_plan_entry(
   }
 }
 
+/// Update an existing meal plan entry
+///
+/// The entry must have a valid id from a previous create or fetch operation.
+///
+/// Example:
+/// ```gleam
+/// let updated_entry = MealieMealPlanEntry(..entry, title: Some("Updated Title"))
+/// case update_meal_plan_entry(config, updated_entry) {
+///   Ok(entry) -> io.println("Updated: " <> entry.id)
+///   Error(err) -> io.println("Error: " <> string.inspect(err))
+/// }
+/// ```
+pub fn update_meal_plan_entry(
+  config: Config,
+  entry: MealieMealPlanEntry,
+) -> Result(MealieMealPlanEntry, ClientError) {
+  use config <- result.try(validate_config(config))
+
+  let url =
+    build_url(config.mealie_base_url, "/api/groups/mealplans/" <> entry.id)
+
+  let body =
+    types.meal_plan_entry_to_json(entry)
+    |> json.to_string
+
+  case request.to(url) {
+    Ok(req) -> {
+      let req =
+        req
+        |> request.set_method(http.Put)
+        |> add_auth_header(config.mealie_api_token)
+        |> add_json_header
+        |> request.set_body(body)
+
+      use resp <- result.try(execute_request(req))
+      parse_response(resp, types.meal_plan_entry_decoder())
+    }
+    Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
+  }
+}
+
+/// Delete a meal plan entry by ID
+///
+/// Example:
+/// ```gleam
+/// case delete_meal_plan_entry(config, "entry-id-123") {
+///   Ok(Nil) -> io.println("Deleted successfully")
+///   Error(err) -> io.println("Error: " <> string.inspect(err))
+/// }
+/// ```
+pub fn delete_meal_plan_entry(
+  config: Config,
+  entry_id: String,
+) -> Result(Nil, ClientError) {
+  use config <- result.try(validate_config(config))
+
+  let url =
+    build_url(config.mealie_base_url, "/api/groups/mealplans/" <> entry_id)
+
+  case request.to(url) {
+    Ok(req) -> {
+      let req =
+        req
+        |> request.set_method(http.Delete)
+        |> add_auth_header(config.mealie_api_token)
+
+      use resp <- result.try(execute_request(req))
+      case resp.status {
+        200 | 204 -> Ok(Nil)
+        _ -> {
+          case json.parse(resp.body, types.api_error_decoder()) {
+            Ok(api_err) -> Error(ApiError(api_err))
+            Error(_) ->
+              Error(
+                ApiError(MealieApiError(
+                  message: "HTTP " <> string.inspect(resp.status),
+                  error: None,
+                  exception: None,
+                )),
+              )
+          }
+        }
+      }
+    }
+    Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
+  }
+}
+
 // ============================================================================
 // Error Conversion Helpers
 // ============================================================================
