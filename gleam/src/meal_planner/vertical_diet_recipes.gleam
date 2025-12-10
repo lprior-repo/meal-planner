@@ -4,6 +4,7 @@
 /// - White rice as primary carbohydrate
 /// - Easily digestible, low FODMAP foods
 /// - Micronutrient-dense vegetables
+import meal_planner/id
 import meal_planner/types.{type Recipe, Ingredient, Low, Macros, Recipe}
 
 /// Generate all Vertical Diet recipes
@@ -14,7 +15,7 @@ pub fn all_recipes() -> List(Recipe) {
     // ============================================================================
     // 1. Classic Grilled Ribeye
     Recipe(
-      id: "vd-ribeye-01",
+      id: id.recipe_id("vd-ribeye-01"),
       name: "Classic Grilled Ribeye",
       ingredients: [
         Ingredient(name: "ribeye steak", quantity: "8 oz"),
@@ -39,7 +40,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 2. Simple Pan-Seared Strip Steak
     Recipe(
-      id: "vd-strip-02",
+      id: id.recipe_id("vd-strip-02"),
       name: "Pan-Seared Strip Steak",
       ingredients: [
         Ingredient(name: "NY strip steak", quantity: "8 oz"),
@@ -64,7 +65,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 3. Ground Beef and Rice Bowl
     Recipe(
-      id: "vd-beef-rice-03",
+      id: id.recipe_id("vd-beef-rice-03"),
       name: "Ground Beef and Rice Bowl",
       ingredients: [
         Ingredient(name: "lean ground beef (90/10)", quantity: "6 oz"),
@@ -88,7 +89,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 4. Simple Beef Patties
     Recipe(
-      id: "vd-patties-04",
+      id: id.recipe_id("vd-patties-04"),
       name: "Simple Beef Patties",
       ingredients: [
         Ingredient(name: "ground beef (85/15)", quantity: "8 oz"),
@@ -112,7 +113,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 5. Bison Burger Patty
     Recipe(
-      id: "vd-bison-05",
+      id: id.recipe_id("vd-bison-05"),
       name: "Bison Burger Patty",
       ingredients: [
         Ingredient(name: "ground bison", quantity: "6 oz"),
@@ -135,7 +136,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 6. Grilled Bison Steak
     Recipe(
-      id: "vd-bison-steak-06",
+      id: id.recipe_id("vd-bison-steak-06"),
       name: "Grilled Bison Steak",
       ingredients: [
         Ingredient(name: "bison sirloin steak", quantity: "8 oz"),
@@ -157,7 +158,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 7. Lamb Chops with Sea Salt
     Recipe(
-      id: "vd-lamb-07",
+      id: id.recipe_id("vd-lamb-07"),
       name: "Lamb Chops with Sea Salt",
       ingredients: [
         Ingredient(name: "lamb loin chops", quantity: "8 oz (3-4 chops)"),
@@ -180,7 +181,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 8. Simple Ground Lamb
     Recipe(
-      id: "vd-ground-lamb-08",
+      id: id.recipe_id("vd-ground-lamb-08"),
       name: "Simple Ground Lamb",
       ingredients: [
         Ingredient(name: "ground lamb", quantity: "6 oz"),
@@ -203,7 +204,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 9. Beef and Spinach Skillet
     Recipe(
-      id: "vd-beef-spinach-09",
+      id: id.recipe_id("vd-beef-spinach-09"),
       name: "Beef and Spinach Skillet",
       ingredients: [
         Ingredient(name: "ground beef (90/10)", quantity: "6 oz"),
@@ -226,7 +227,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 10. Ribeye with Bone Broth Reduction
     Recipe(
-      id: "vd-ribeye-broth-10",
+      id: id.recipe_id("vd-ribeye-broth-10"),
       name: "Ribeye with Bone Broth Reduction",
       ingredients: [
         Ingredient(name: "ribeye steak", quantity: "8 oz"),
@@ -251,7 +252,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 11. Grilled Sirloin Tips
     Recipe(
-      id: "vd-sirloin-tips-11",
+      id: id.recipe_id("vd-sirloin-tips-11"),
       name: "Grilled Sirloin Tips",
       ingredients: [
         Ingredient(name: "sirloin tips", quantity: "8 oz"),
@@ -273,7 +274,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 12. Beef Chuck Roast (Slow-Cooked)
     Recipe(
-      id: "vd-chuck-roast-12",
+      id: id.recipe_id("vd-chuck-roast-12"),
       name: "Simple Beef Chuck Roast",
       ingredients: [
         Ingredient(name: "beef chuck roast", quantity: "3 lbs"),
@@ -299,7 +300,7 @@ pub fn all_recipes() -> List(Recipe) {
     // ============================================================================
     // 13. Simple White Rice
     Recipe(
-      id: "vd-rice-01",
+      id: id.recipe_id("vd-rice-01"),
       name: "Simple White Rice",
       ingredients: [
         Ingredient(name: "white rice", quantity: "1 cup dry"),
@@ -322,7 +323,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 14. Bone Broth Rice
     Recipe(
-      id: "vd-rice-broth-02",
+      id: id.recipe_id("vd-rice-broth-02"),
       name: "Bone Broth Rice",
       ingredients: [
         Ingredient(name: "white rice", quantity: "1 cup dry"),
@@ -345,7 +346,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 15. Butter Rice
     Recipe(
-      id: "vd-rice-butter-03",
+      id: id.recipe_id("vd-rice-butter-03"),
       name: "Butter Rice",
       ingredients: [
         Ingredient(name: "white rice", quantity: "1 cup dry"),
@@ -368,7 +369,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 16. Salty Rice
     Recipe(
-      id: "vd-rice-salty-04",
+      id: id.recipe_id("vd-rice-salty-04"),
       name: "Salty Rice (Electrolyte-Enhanced)",
       ingredients: [
         Ingredient(name: "white rice", quantity: "1 cup dry"),
@@ -390,7 +391,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 17. Spinach Rice
     Recipe(
-      id: "vd-rice-spinach-05",
+      id: id.recipe_id("vd-rice-spinach-05"),
       name: "Spinach Rice",
       ingredients: [
         Ingredient(name: "cooked white rice", quantity: "2 cups"),
@@ -413,7 +414,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 18. Carrot-Infused Rice
     Recipe(
-      id: "vd-rice-carrot-06",
+      id: id.recipe_id("vd-rice-carrot-06"),
       name: "Carrot-Infused Rice",
       ingredients: [
         Ingredient(name: "white rice", quantity: "1 cup dry"),
@@ -439,7 +440,7 @@ pub fn all_recipes() -> List(Recipe) {
     // ============================================================================
     // 19. Steamed Carrots
     Recipe(
-      id: "vd-veg-carrots-01",
+      id: id.recipe_id("vd-veg-carrots-01"),
       name: "Simple Steamed Carrots",
       ingredients: [
         Ingredient(name: "carrots", quantity: "1 lb, sliced"),
@@ -461,7 +462,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 20. Sautéed Spinach
     Recipe(
-      id: "vd-veg-spinach-01",
+      id: id.recipe_id("vd-veg-spinach-01"),
       name: "Sautéed Spinach",
       ingredients: [
         Ingredient(name: "fresh spinach", quantity: "1 lb"),
@@ -483,7 +484,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 21. Roasted Carrots
     Recipe(
-      id: "vd-veg-carrots-roast-02",
+      id: id.recipe_id("vd-veg-carrots-roast-02"),
       name: "Roasted Carrots",
       ingredients: [
         Ingredient(name: "carrots", quantity: "1 lb, whole or halved"),
@@ -505,7 +506,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 22. Steamed Zucchini
     Recipe(
-      id: "vd-veg-zucchini-01",
+      id: id.recipe_id("vd-veg-zucchini-01"),
       name: "Steamed Zucchini",
       ingredients: [
         Ingredient(name: "zucchini", quantity: "2 medium, sliced"),
@@ -527,7 +528,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 23. Butter Carrots
     Recipe(
-      id: "vd-veg-carrots-butter-03",
+      id: id.recipe_id("vd-veg-carrots-butter-03"),
       name: "Butter Glazed Carrots",
       ingredients: [
         Ingredient(name: "carrots", quantity: "1 lb, sliced"),
@@ -550,7 +551,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 24. Simple Bok Choy
     Recipe(
-      id: "vd-veg-bokchoy-01",
+      id: id.recipe_id("vd-veg-bokchoy-01"),
       name: "Sautéed Bok Choy",
       ingredients: [
         Ingredient(name: "bok choy", quantity: "1 lb, chopped"),
@@ -572,7 +573,7 @@ pub fn all_recipes() -> List(Recipe) {
 
     // 25. Carrot Mash
     Recipe(
-      id: "vd-veg-carrots-mash-04",
+      id: id.recipe_id("vd-veg-carrots-mash-04"),
       name: "Carrot Mash",
       ingredients: [
         Ingredient(name: "carrots", quantity: "2 lbs, chopped"),

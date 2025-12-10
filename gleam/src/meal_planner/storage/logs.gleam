@@ -4,6 +4,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
+import meal_planner/id
 import meal_planner/postgres
 import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
 import meal_planner/storage/profile.{
@@ -300,13 +301,13 @@ pub fn get_todays_logs(
 /// Delete a food log entry
 pub fn delete_food_log(
   conn: pog.Connection,
-  log_id: String,
+  log_id: id.LogEntryId,
 ) -> Result(Nil, StorageError) {
   let sql = "DELETE FROM food_logs WHERE id = $1"
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.text(log_id))
+    |> pog.parameter(pog.text(id.log_entry_id_to_string(log_id)))
     |> pog.execute(conn)
   {
     Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
@@ -336,11 +337,11 @@ pub fn get_recent_meals(
      LIMIT $1"
 
   let decoder = {
-    use id <- decode.field(0, decode.string)
+    use log_entry_id_str <- decode.field(0, decode.string)
 
     use _date <- decode.field(1, decode.string)
 
-    use recipe_id <- decode.field(2, decode.string)
+    use recipe_id_str <- decode.field(2, decode.string)
 
     use recipe_name <- decode.field(3, decode.string)
 
@@ -485,8 +486,8 @@ pub fn get_recent_meals(
     }
 
     decode.success(FoodLogEntry(
-      id: id,
-      recipe_id: recipe_id,
+      id: id.log_entry_id(log_entry_id_str),
+      recipe_id: id.recipe_id(recipe_id_str),
       recipe_name: recipe_name,
       servings: servings,
       macros: Macros(protein: protein, fat: fat, carbs: carbs),
@@ -532,7 +533,7 @@ pub fn get_recently_logged_foods(
      LIMIT $1"
 
   let decoder = {
-    use fdc_id <- decode.field(0, decode.int)
+    use fdc_id_int <- decode.field(0, decode.int)
 
     use description <- decode.field(1, decode.string)
 
@@ -543,7 +544,7 @@ pub fn get_recently_logged_foods(
     use serving_size <- decode.field(4, decode.optional(decode.string))
 
     decode.success(UsdaFood(
-      fdc_id: fdc_id,
+      fdc_id: id.fdc_id(fdc_id_int),
       description: description,
       data_type: data_type,
       category: category,
@@ -734,9 +735,9 @@ pub fn save_food_log_entry(
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.text(entry.id))
+    |> pog.parameter(pog.text(id.log_entry_id_to_string(entry.id)))
     |> pog.parameter(pog.text(date))
-    |> pog.parameter(pog.text(entry.recipe_id))
+    |> pog.parameter(pog.text(id.recipe_id_to_string(entry.recipe_id)))
     |> pog.parameter(pog.text(entry.recipe_name))
     |> pog.parameter(pog.float(entry.servings))
     |> pog.parameter(pog.float(entry.macros.protein))
@@ -785,7 +786,7 @@ pub fn get_user_profile_or_default(conn: pog.Connection) -> UserProfile {
 
 fn default_user_profile() -> UserProfile {
   UserProfile(
-    id: "user-1",
+    id: id.user_id("user-1"),
     bodyweight: 180.0,
     activity_level: Moderate,
     goal: Maintain,
@@ -795,11 +796,11 @@ fn default_user_profile() -> UserProfile {
 }
 
 fn food_log_decoder() -> decode.Decoder(FoodLogEntry) {
-  use id <- decode.field(0, decode.string)
+  use log_entry_id_str <- decode.field(0, decode.string)
 
   use _date <- decode.field(1, decode.string)
 
-  use recipe_id <- decode.field(2, decode.string)
+  use recipe_id_str <- decode.field(2, decode.string)
 
   use recipe_name <- decode.field(3, decode.string)
 
@@ -941,8 +942,8 @@ fn food_log_decoder() -> decode.Decoder(FoodLogEntry) {
   }
 
   decode.success(FoodLogEntry(
-    id: id,
-    recipe_id: recipe_id,
+    id: id.log_entry_id(log_entry_id_str),
+    recipe_id: id.recipe_id(recipe_id_str),
     recipe_name: recipe_name,
     servings: servings,
     macros: Macros(protein: protein, fat: fat, carbs: carbs),
@@ -983,11 +984,11 @@ pub fn get_daily_log(
      FROM food_logs WHERE date = $1 ORDER BY logged_at"
 
   let decoder = {
-    use id <- decode.field(0, decode.string)
+    use log_entry_id_str <- decode.field(0, decode.string)
 
     use _date <- decode.field(1, decode.string)
 
-    use recipe_id <- decode.field(2, decode.string)
+    use recipe_id_str <- decode.field(2, decode.string)
 
     use recipe_name <- decode.field(3, decode.string)
 
@@ -1132,8 +1133,8 @@ pub fn get_daily_log(
     }
 
     decode.success(FoodLogEntry(
-      id: id,
-      recipe_id: recipe_id,
+      id: id.log_entry_id(log_entry_id_str),
+      recipe_id: id.recipe_id(recipe_id_str),
       recipe_name: recipe_name,
       servings: servings,
       macros: Macros(protein: protein, fat: fat, carbs: carbs),

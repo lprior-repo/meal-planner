@@ -6,6 +6,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
+import meal_planner/id
 import meal_planner/storage/profile.{type StorageError, DatabaseError, NotFound}
 import meal_planner/storage/utils
 import meal_planner/types
@@ -17,7 +18,7 @@ import pog
 
 pub type UsdaFood {
   UsdaFood(
-    fdc_id: Int,
+    fdc_id: id.FdcId,
     description: String,
     data_type: String,
     category: String,
@@ -72,13 +73,13 @@ pub fn search_foods(
   let search_pattern = "%" <> query <> "%"
 
   let decoder = {
-    use fdc_id <- decode.field(0, decode.int)
+    use fdc_id_int <- decode.field(0, decode.int)
     use description <- decode.field(1, decode.string)
     use data_type <- decode.field(2, decode.string)
     use category <- decode.field(3, decode.string)
     use serving_size <- decode.field(4, decode.string)
     decode.success(UsdaFood(
-      fdc_id,
+      id.fdc_id(fdc_id_int),
       description,
       data_type,
       category,
@@ -141,13 +142,13 @@ pub fn search_foods_filtered_with_offset(
   let search_pattern = "%" <> query <> "%"
 
   let decoder = {
-    use fdc_id <- decode.field(0, decode.int)
+    use fdc_id_int <- decode.field(0, decode.int)
     use description <- decode.field(1, decode.string)
     use data_type <- decode.field(2, decode.string)
     use category <- decode.field(3, decode.string)
     use serving_size <- decode.field(4, decode.string)
     decode.success(UsdaFood(
-      fdc_id,
+      id.fdc_id(fdc_id_int),
       description,
       data_type,
       category,
@@ -172,20 +173,20 @@ pub fn search_foods_filtered_with_offset(
 /// Get food by FDC ID
 pub fn get_food_by_id(
   conn: pog.Connection,
-  fdc_id: Int,
+  fdc_id: id.FdcId,
 ) -> Result(UsdaFood, StorageError) {
   let sql =
     "SELECT fdc_id, description, data_type, COALESCE(food_category, ''), '100g'
      FROM foods WHERE fdc_id = $1"
 
   let decoder = {
-    use fdc_id <- decode.field(0, decode.int)
+    use fdc_id_int <- decode.field(0, decode.int)
     use description <- decode.field(1, decode.string)
     use data_type <- decode.field(2, decode.string)
     use category <- decode.field(3, decode.string)
     use serving_size <- decode.field(4, decode.string)
     decode.success(UsdaFood(
-      fdc_id,
+      id.fdc_id(fdc_id_int),
       description,
       data_type,
       category,
@@ -195,7 +196,7 @@ pub fn get_food_by_id(
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.int(fdc_id))
+    |> pog.parameter(pog.int(id.fdc_id_to_int(fdc_id)))
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
@@ -209,7 +210,7 @@ pub fn get_food_by_id(
 /// Load USDA food with macros
 pub fn load_usda_food_with_macros(
   conn: pog.Connection,
-  fdc_id: Int,
+  fdc_id: id.FdcId,
 ) -> Result(UsdaFoodWithNutrients, StorageError) {
   use food <- result.try(get_food_by_id(conn, fdc_id))
   use nutrients <- result.try(get_food_nutrients(conn, fdc_id))
@@ -265,18 +266,18 @@ pub fn get_food_categories(
 /// Create custom food
 pub fn create_custom_food(
   conn: pog.Connection,
-  user_id: String,
+  user_id: id.UserId,
   food: types.CustomFood,
 ) -> Result(types.CustomFood, StorageError) {
   let sql =
-    "INSERT INTO custom_foods (id, user_id, name, brand, description, serving_size, serving_unit, protein, fat, carbs, calories) 
+    "INSERT INTO custom_foods (id, user_id, name, brand, description, serving_size, serving_unit, protein, fat, carbs, calories)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
      RETURNING id, user_id, name, brand, description, serving_size, serving_unit, protein, fat, carbs, calories, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL"
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.text(food.id))
-    |> pog.parameter(pog.text(user_id))
+    |> pog.parameter(pog.text(id.custom_food_id_to_string(food.id)))
+    |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
     |> pog.parameter(pog.text(food.name))
     |> pog.parameter(pog.nullable(pog.text, food.brand))
     |> pog.parameter(pog.nullable(pog.text, food.description))
@@ -298,8 +299,8 @@ pub fn create_custom_food(
 /// Get custom food by ID
 pub fn get_custom_food_by_id(
   conn: pog.Connection,
-  user_id: String,
-  food_id: String,
+  user_id: id.UserId,
+  food_id: id.CustomFoodId,
 ) -> Result(types.CustomFood, StorageError) {
   let sql =
     "SELECT id, user_id, name, brand, description, serving_size, serving_unit, protein, fat, carbs, calories, fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k, vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium, phosphorus, potassium, zinc
@@ -307,8 +308,8 @@ pub fn get_custom_food_by_id(
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.text(food_id))
-    |> pog.parameter(pog.text(user_id))
+    |> pog.parameter(pog.text(id.custom_food_id_to_string(food_id)))
+    |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
     |> pog.returning(custom_food_decoder())
     |> pog.execute(conn)
   {
@@ -322,7 +323,7 @@ pub fn get_custom_food_by_id(
 /// Search custom foods
 pub fn search_custom_foods(
   conn: pog.Connection,
-  user_id: String,
+  user_id: id.UserId,
   query: String,
   limit: Int,
 ) -> Result(List(types.CustomFood), StorageError) {
@@ -339,7 +340,7 @@ pub fn search_custom_foods(
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.text(user_id))
+    |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
     |> pog.parameter(pog.text(query))
     |> pog.parameter(pog.text(search_pattern))
     |> pog.parameter(pog.int(limit))
@@ -354,7 +355,7 @@ pub fn search_custom_foods(
 /// Get custom foods for user
 pub fn get_custom_foods_for_user(
   conn: pog.Connection,
-  user_id: String,
+  user_id: id.UserId,
 ) -> Result(List(types.CustomFood), StorageError) {
   let sql =
     "SELECT id, user_id, name, brand, description, serving_size, serving_unit, protein, fat, carbs, calories, fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k, vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium, phosphorus, potassium, zinc
@@ -362,7 +363,7 @@ pub fn get_custom_foods_for_user(
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.text(user_id))
+    |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
     |> pog.returning(custom_food_decoder())
     |> pog.execute(conn)
   {
@@ -374,15 +375,15 @@ pub fn get_custom_foods_for_user(
 /// Delete custom food
 pub fn delete_custom_food(
   conn: pog.Connection,
-  user_id: String,
-  food_id: String,
+  user_id: id.UserId,
+  food_id: id.CustomFoodId,
 ) -> Result(Nil, StorageError) {
   let sql = "DELETE FROM custom_foods WHERE id = $1 AND user_id = $2"
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.text(food_id))
-    |> pog.parameter(pog.text(user_id))
+    |> pog.parameter(pog.text(id.custom_food_id_to_string(food_id)))
+    |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
     |> pog.execute(conn)
   {
     Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
@@ -393,7 +394,7 @@ pub fn delete_custom_food(
 /// Update custom food
 pub fn update_custom_food(
   conn: pog.Connection,
-  user_id: String,
+  user_id: id.UserId,
   food: types.CustomFood,
 ) -> Result(types.CustomFood, StorageError) {
   let sql =
@@ -402,8 +403,8 @@ pub fn update_custom_food(
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.text(food.id))
-    |> pog.parameter(pog.text(user_id))
+    |> pog.parameter(pog.text(id.custom_food_id_to_string(food.id)))
+    |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
     |> pog.parameter(pog.text(food.name))
     |> pog.parameter(pog.nullable(pog.text, food.brand))
     |> pog.parameter(pog.nullable(pog.text, food.description))
@@ -430,7 +431,7 @@ pub fn update_custom_food(
 /// Get food nutrients
 pub fn get_food_nutrients(
   conn: pog.Connection,
-  fdc_id: Int,
+  fdc_id: id.FdcId,
 ) -> Result(List(FoodNutrientValue), StorageError) {
   let sql =
     "SELECT fn.nutrient_id, n.name, fn.amount, n.unit_name
@@ -448,7 +449,7 @@ pub fn get_food_nutrients(
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.int(fdc_id))
+    |> pog.parameter(pog.int(id.fdc_id_to_int(fdc_id)))
     |> pog.returning(decoder)
     |> pog.execute(conn)
   {
@@ -462,8 +463,8 @@ pub fn get_food_nutrients(
 // ============================================================================
 
 fn custom_food_decoder() -> decode.Decoder(types.CustomFood) {
-  use id <- decode.field(0, decode.string)
-  use user_id <- decode.field(1, decode.string)
+  use custom_food_id_str <- decode.field(0, decode.string)
+  use user_id_str <- decode.field(1, decode.string)
   use name <- decode.field(2, decode.string)
   use brand <- decode.field(3, decode.optional(decode.string))
   use description <- decode.field(4, decode.optional(decode.string))
@@ -567,8 +568,8 @@ fn custom_food_decoder() -> decode.Decoder(types.CustomFood) {
   }
 
   decode.success(types.CustomFood(
-    id: id,
-    user_id: user_id,
+    id: id.custom_food_id(custom_food_id_str),
+    user_id: id.user_id(user_id_str),
     name: name,
     brand: brand,
     description: description,

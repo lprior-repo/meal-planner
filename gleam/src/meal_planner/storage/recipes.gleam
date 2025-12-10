@@ -3,6 +3,7 @@ import gleam/dynamic/decode
 import gleam/list
 import gleam/result
 import gleam/string
+import meal_planner/id
 import meal_planner/postgres
 import meal_planner/storage/utils.{format_pog_error}
 import meal_planner/types.{
@@ -135,7 +136,7 @@ pub fn save_recipe(
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.text(recipe.id))
+    |> pog.parameter(pog.text(id.recipe_id_to_string(recipe.id)))
     |> pog.parameter(pog.text(recipe.name))
     |> pog.parameter(pog.text(ingredients_json))
     |> pog.parameter(pog.text(instructions_json))
@@ -177,7 +178,7 @@ pub fn get_all_recipes(
 /// Get a specific recipe by ID
 pub fn get_recipe_by_id(
   conn: pog.Connection,
-  recipe_id: String,
+  recipe_id: id.RecipeId,
 ) -> Result(Recipe, StorageError) {
   let sql =
     "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
@@ -186,7 +187,7 @@ pub fn get_recipe_by_id(
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.text(recipe_id))
+    |> pog.parameter(pog.text(id.recipe_id_to_string(recipe_id)))
     |> pog.returning(recipe_decoder())
     |> pog.execute(conn)
   {
@@ -203,13 +204,13 @@ pub fn get_recipe_by_id(
 /// Delete a recipe
 pub fn delete_recipe(
   conn: pog.Connection,
-  recipe_id: String,
+  recipe_id: id.RecipeId,
 ) -> Result(Nil, StorageError) {
   let sql = "DELETE FROM recipes WHERE id = $1"
 
   case
     pog.query(sql)
-    |> pog.parameter(pog.text(recipe_id))
+    |> pog.parameter(pog.text(id.recipe_id_to_string(recipe_id)))
     |> pog.execute(conn)
   {
     Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
@@ -259,7 +260,7 @@ pub fn filter_recipes(
      ORDER BY protein DESC, calories ASC"
 
   let decoder = {
-    use id <- decode.field(0, decode.string)
+    use recipe_id_str <- decode.field(0, decode.string)
 
     use name <- decode.field(1, decode.string)
 
@@ -292,7 +293,7 @@ pub fn filter_recipes(
     }
 
     decode.success(Recipe(
-      id: id,
+      id: id.recipe_id(recipe_id_str),
       name: name,
       ingredients: [],
       instructions: [],
@@ -320,7 +321,7 @@ pub fn filter_recipes(
 
 /// Recipe decoder helper
 fn recipe_decoder() -> decode.Decoder(Recipe) {
-  use id <- decode.field(0, decode.string)
+  use recipe_id_str <- decode.field(0, decode.string)
 
   use name <- decode.field(1, decode.string)
 
@@ -368,7 +369,7 @@ fn recipe_decoder() -> decode.Decoder(Recipe) {
   }
 
   decode.success(Recipe(
-    id: id,
+    id: id.recipe_id(recipe_id_str),
     name: name,
     ingredients: ingredients,
     instructions: instructions,
