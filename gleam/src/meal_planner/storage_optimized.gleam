@@ -43,7 +43,7 @@ pub fn search_foods_cached(
   limit: Int,
 ) -> #(SearchCache, Result(List(UsdaFood), StorageError)) {
   // Generate cache key
-  let cache_key = query_cache.search_key(query, limit)
+  let cache_key = "search:" <> query <> ":" <> int.to_string(limit)
 
   // Try cache first
   let #(updated_cache, cached_result) = query_cache.get(cache, cache_key)
@@ -146,7 +146,7 @@ pub fn search_foods_filtered_cached(
   limit: Int,
 ) -> #(SearchCache, Result(List(UsdaFood), StorageError)) {
   // Generate cache key
-  let cache_key = query_cache.search_key(query, limit)
+  let cache_key = "search:" <> query <> ":" <> int.to_string(limit)
 
   // Try cache first
   let #(updated_cache, cached_result) = query_cache.get(cache, cache_key)
@@ -245,7 +245,7 @@ fn search_foods_filtered_optimized(
 
 /// Get cache statistics for monitoring
 pub fn get_cache_stats(cache: SearchCache) -> query_cache.CacheStats {
-  query_cache.get_stats(cache)
+  query_cache.stats(cache)
 }
 
 /// Clear the search cache
