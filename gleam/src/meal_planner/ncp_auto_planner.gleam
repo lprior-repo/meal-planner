@@ -13,10 +13,15 @@ import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/auto_planner/recipe_scorer
 import meal_planner/auto_planner/types as auto_types
+import meal_planner/config.{type Config}
+import meal_planner/mealie/client
+import meal_planner/mealie/mapper
+import meal_planner/mealie/types as mealie_types
 
 // Simplified: removed diet_validator dependency
 import meal_planner/ncp
 import meal_planner/storage.{type StorageError}
+import meal_planner/storage/profile.{DatabaseError}
 import meal_planner/types.{type Macros, type Recipe, Macros}
 import pog
 
@@ -238,16 +243,16 @@ pub fn fetch_mealie_recipes(config: Config) -> Result(List(Recipe), StorageError
   // List all recipes (summaries)
   use recipe_summaries <- result.try(
     client.list_recipes(config)
-    |> result.map(fn(paginated) { paginated.items })
+    |> result.map(fn(paginated: mealie_types.MealiePaginatedResponse(mealie_types.MealieRecipeSummary)) { paginated.items })
     |> result.map_error(fn(client_err) {
-      storage.OtherError(client.error_to_string(client_err))
+      DatabaseError(client.error_to_string(client_err))
     }),
   )
 
   // Fetch full recipe details for each summary
   let full_recipes =
     recipe_summaries
-    |> list.filter_map(fn(summary) {
+    |> list.filter_map(fn(summary: mealie_types.MealieRecipeSummary) {
       case client.get_recipe(config, summary.slug) {
         Ok(full_recipe) -> Ok(full_recipe)
         Error(_) -> Error(Nil)
