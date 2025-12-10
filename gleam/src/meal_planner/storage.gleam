@@ -17,9 +17,7 @@ import meal_planner/storage/logs
 
 import meal_planner/storage/migrations
 
-import meal_planner/storage/analytics.{
-  record_search_event as analytics_record_search_event,
-}
+import meal_planner/storage/analytics
 
 // Re-export everything
 pub fn default_config() {
@@ -189,7 +187,7 @@ pub fn init_migrations() {
 
 // Analytics
 pub fn record_search_event(conn, event) {
-  analytics_record_search_event(conn, event)
+  analytics.record_search_event(conn, event)
 }
 
 // pub fn get_weekly_summary(conn, start_date) {

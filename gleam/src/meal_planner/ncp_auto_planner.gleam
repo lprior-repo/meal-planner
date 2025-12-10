@@ -9,7 +9,6 @@
 import gleam/float
 import gleam/int
 import gleam/list
-import gleam/option
 import gleam/result
 import meal_planner/auto_planner/recipe_scorer
 import meal_planner/auto_planner/types as auto_types
@@ -163,11 +162,11 @@ pub fn query_recipes_by_macro_deficit(
     _, _, True if deficit.carbs_pct <. -15.0 ->
       query_high_carb_recipes(conn, 40.0)
 
-    // Fat deficit
-    _, True, _ -> query_high_fat_recipes(conn, 20.0)
-
-    // Multiple deficits - get balanced recipes
+    // Multiple deficits - get balanced recipes (must be before single deficit cases)
     True, True, _ -> query_balanced_recipes(conn)
+
+    // Fat deficit (single)
+    _, True, _ -> query_high_fat_recipes(conn, 20.0)
 
     // Protein deficit (moderate)
     True, _, _ -> query_high_protein_recipes(conn, 25.0)
