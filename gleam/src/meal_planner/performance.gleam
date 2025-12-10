@@ -380,3 +380,291 @@ pub fn generate_phase2_report(
 
   report
 }
+
+// ============================================================================
+// SLA Monitoring (meal-planner-ous8)
+// ============================================================================
+
+/// Create initial monitoring state
+pub fn new_monitoring_state() -> MonitoringState {
+  MonitoringState(
+    dashboard_samples: [],
+    search_samples: [],
+    cache_hit_rates: [],
+    alerts: [],
+  )
+}
+
+/// Get SLA target for an endpoint
+pub fn get_sla_target(endpoint: Endpoint) -> Float {
+  case endpoint {
+    Dashboard -> constants.sla_dashboard_load_ms
+    Search -> constants.sla_search_latency_ms
+    FoodLookup -> constants.sla_search_latency_ms
+  }
+}
+
+/// Record a latency sample for an endpoint
+pub fn record_sample(
+  state: MonitoringState,
+  endpoint: Endpoint,
+  latency_ms: Float,
+) -> MonitoringState {
+  case endpoint {
+    Dashboard ->
+      MonitoringState(
+        ..state,
+        dashboard_samples: [latency_ms, ..state.dashboard_samples],
+      )
+    Search ->
+      MonitoringState(
+        ..state,
+        search_samples: [latency_ms, ..state.search_samples],
+      )
+    FoodLookup ->
+      MonitoringState(
+        ..state,
+        search_samples: [latency_ms, ..state.search_samples],
+      )
+  }
+}
+
+/// Record a cache hit rate observation
+pub fn record_cache_hit_rate(
+  state: MonitoringState,
+  hit_rate: Float,
+) -> MonitoringState {
+  MonitoringState(
+    ..state,
+    cache_hit_rates: [hit_rate, ..state.cache_hit_rates],
+  )
+}
+
+/// Calculate average of a sample list
+fn calculate_average(samples: List(Float)) -> Option(Float) {
+  case samples {
+    [] -> None
+    _ -> {
+      let sum = list.fold(samples, 0.0, fn(acc, x) { acc +. x })
+      let count = list.length(samples)
+      Some(sum /. int.to_float(count))
+    }
+  }
+}
+
+/// Check SLA compliance for an endpoint
+pub fn check_sla(state: MonitoringState, endpoint: Endpoint) -> SlaResult {
+  let samples = case endpoint {
+    Dashboard -> state.dashboard_samples
+    Search -> state.search_samples
+    FoodLookup -> state.search_samples
+  }
+
+  let target = get_sla_target(endpoint)
+  let sample_count = list.length(samples)
+
+  case calculate_average(samples) {
+    None ->
+      SlaResult(
+        endpoint: endpoint,
+        target_ms: target,
+        actual_ms: 0.0,
+        passed: True,
+        sample_count: 0,
+      )
+    Some(avg) ->
+      SlaResult(
+        endpoint: endpoint,
+        target_ms: target,
+        actual_ms: avg,
+        passed: avg <=. target,
+        sample_count: sample_count,
+      )
+  }
+}
+
+/// Check cache hit rate against SLA
+pub fn check_cache_hit_rate_sla(
+  state: MonitoringState,
+) -> Result(Float, PerformanceAlert) {
+  case calculate_average(state.cache_hit_rates) {
+    None -> Ok(0.0)
+    Some(avg) ->
+      case avg >=. constants.sla_cache_hit_rate {
+        True -> Ok(avg)
+        False ->
+          Error(CacheHitRateLow(
+            target_rate: constants.sla_cache_hit_rate,
+            actual_rate: avg,
+          ))
+      }
+  }
+}
+
+// ============================================================================
+// Regression Detection
+// ============================================================================
+
+/// Detect performance regression comparing baseline to current
+pub fn detect_regression(
+  metric_name: String,
+  baseline_ms: Float,
+  current_ms: Float,
+) -> Option(PerformanceAlert) {
+  case baseline_ms >. 0.0 {
+    False -> None
+    True -> {
+      let degradation = { current_ms -. baseline_ms } /. baseline_ms *. 100.0
+      case degradation >. constants.regression_threshold_percent {
+        True ->
+          Some(Regression(
+            metric_name: metric_name,
+            baseline_ms: baseline_ms,
+            current_ms: current_ms,
+            degradation_percent: degradation,
+          ))
+        False -> None
+      }
+    }
+  }
+}
+
+/// Run all SLA checks and collect alerts
+pub fn run_sla_checks(state: MonitoringState) -> List(PerformanceAlert) {
+  let dashboard_result = check_sla(state, Dashboard)
+  let search_result = check_sla(state, Search)
+
+  let alerts = []
+
+  // Check dashboard SLA
+  let alerts = case dashboard_result.passed {
+    True -> alerts
+    False -> [
+      SlaViolation(
+        endpoint: Dashboard,
+        target_ms: dashboard_result.target_ms,
+        actual_ms: dashboard_result.actual_ms,
+      ),
+      ..alerts
+    ]
+  }
+
+  // Check search SLA
+  let alerts = case search_result.passed {
+    True -> alerts
+    False -> [
+      SlaViolation(
+        endpoint: Search,
+        target_ms: search_result.target_ms,
+        actual_ms: search_result.actual_ms,
+      ),
+      ..alerts
+    ]
+  }
+
+  // Check cache hit rate
+  case check_cache_hit_rate_sla(state) {
+    Ok(_) -> alerts
+    Error(alert) -> [alert, ..alerts]
+  }
+}
+
+/// Format an endpoint name as string
+pub fn endpoint_to_string(endpoint: Endpoint) -> String {
+  case endpoint {
+    Dashboard -> "dashboard"
+    Search -> "search"
+    FoodLookup -> "food_lookup"
+  }
+}
+
+/// Format an alert for logging/display
+pub fn format_alert(alert: PerformanceAlert) -> String {
+  case alert {
+    SlaViolation(endpoint, target, actual) ->
+      "[SLA VIOLATION] "
+      <> endpoint_to_string(endpoint)
+      <> ": "
+      <> float.to_string(actual)
+      <> "ms > "
+      <> float.to_string(target)
+      <> "ms target"
+
+    CacheHitRateLow(target, actual) ->
+      "[CACHE ALERT] Hit rate "
+      <> float.to_string(actual *. 100.0)
+      <> "% < "
+      <> float.to_string(target *. 100.0)
+      <> "% target"
+
+    Regression(metric, baseline, current, degradation) ->
+      "[REGRESSION] "
+      <> metric
+      <> ": "
+      <> float.to_string(current)
+      <> "ms (+"
+      <> float.to_string(degradation)
+      <> "% from "
+      <> float.to_string(baseline)
+      <> "ms baseline)"
+  }
+}
+
+/// Print all current alerts
+pub fn print_alerts(alerts: List(PerformanceAlert)) -> Nil {
+  case alerts {
+    [] -> io.println("✓ All SLA targets met, no regressions detected")
+    _ -> {
+      io.println("\n=== Performance Alerts ===")
+      list.each(alerts, fn(alert) { io.println(format_alert(alert)) })
+      io.println("==========================\n")
+    }
+  }
+}
+
+/// Generate SLA status report
+pub fn generate_sla_report(state: MonitoringState) -> String {
+  let dashboard = check_sla(state, Dashboard)
+  let search = check_sla(state, Search)
+  let cache_status = case check_cache_hit_rate_sla(state) {
+    Ok(rate) -> "✓ " <> float.to_string(rate *. 100.0) <> "%"
+    Error(_) -> "✗ Below target"
+  }
+
+  string.concat([
+    "\n",
+    "╔════════════════════════════════════════════════════════════╗\n",
+    "║              SLA Performance Report                        ║\n",
+    "╠════════════════════════════════════════════════════════════╣\n",
+    "║ Dashboard Load Time:                                       ║\n",
+    "║   Target: <",
+    float.to_string(dashboard.target_ms),
+    "ms  Actual: ",
+    float.to_string(dashboard.actual_ms),
+    "ms  ",
+    case dashboard.passed {
+      True -> "✓"
+      False -> "✗"
+    },
+    "          ║\n",
+    "║                                                            ║\n",
+    "║ Search Latency:                                            ║\n",
+    "║   Target: <",
+    float.to_string(search.target_ms),
+    "ms   Actual: ",
+    float.to_string(search.actual_ms),
+    "ms   ",
+    case search.passed {
+      True -> "✓"
+      False -> "✗"
+    },
+    "           ║\n",
+    "║                                                            ║\n",
+    "║ Cache Hit Rate:                                            ║\n",
+    "║   Target: >80%    Status: ",
+    cache_status,
+    "                     ║\n",
+    "╚════════════════════════════════════════════════════════════╝\n",
+    "\n",
+  ])
+}
