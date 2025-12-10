@@ -5,9 +5,8 @@
 ///
 import gleam/float
 import gleam/int
-import gleam/list
 import gleam/option.{type Option, None, Some}
-import meal_planner/ncp.{type DeviationResult, type ReconciliationResult}
+import meal_planner/ncp.{type ReconciliationResult}
 
 /// Controller metrics state
 pub type ControllerMetrics {

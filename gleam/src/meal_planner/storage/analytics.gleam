@@ -3,10 +3,9 @@
 ///
 /// NOTE: This module is currently stubbed out pending migration to pog library.
 /// The pgo library API is incompatible with pog.
-import gleam/option.{None}
 import meal_planner/types.{
   type SearchAnalyticsEntry, type SearchAnalyticsEvent,
-  type SearchAnalyticsSummary, type SearchFilters, SearchAnalyticsSummary,
+  type SearchAnalyticsSummary, SearchAnalyticsSummary,
 }
 import pog
 
@@ -64,10 +63,4 @@ pub fn get_recent_searches(
 ) -> Result(List(SearchAnalyticsEntry), pog.QueryError) {
   // Stubbed - return empty list
   Ok([])
-}
-
-/// Parse filters from JSON string
-/// Returns default filters on parse error
-fn parse_filters_json(_json_str: String) -> SearchFilters {
-  types.SearchFilters(verified_only: False, branded_only: False, category: None)
 }

@@ -99,7 +99,7 @@ pub fn benchmark(
   test_fn: fn() -> Result(a, b),
 ) -> BenchmarkResult {
   let start_time = get_timestamp_ms()
-  let results = run_iterations(iterations, test_fn, [])
+  let _results = run_iterations(iterations, test_fn, [])
   let end_time = get_timestamp_ms()
 
   let total_time = int.to_float(end_time - start_time)
