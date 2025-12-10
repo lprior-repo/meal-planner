@@ -212,6 +212,56 @@ fn query_balanced_recipes(
 }
 
 // ============================================================================
+// Mealie Integration
+// ============================================================================
+
+/// Fetch recipes from Mealie and convert them to internal Recipe type
+///
+/// This function:
+/// 1. Calls client.list_recipes() to get MealieRecipeSummary list
+/// 2. For each summary, fetches the full MealieRecipe with client.get_recipe()
+/// 3. Converts each MealieRecipe to Recipe using mapper.mealie_to_recipe()
+///
+/// Returns a Result with the list of converted recipes or a StorageError
+///
+/// Example:
+/// ```gleam
+/// let config = config.load()
+/// case fetch_mealie_recipes(config) {
+///   Ok(recipes) -> {
+///     io.println("Fetched " <> int.to_string(list.length(recipes)) <> " recipes")
+///   }
+///   Error(err) -> io.println("Error: " <> storage.error_to_string(err))
+/// }
+/// ```
+pub fn fetch_mealie_recipes(config: Config) -> Result(List(Recipe), StorageError) {
+  // List all recipes (summaries)
+  use recipe_summaries <- result.try(
+    client.list_recipes(config)
+    |> result.map(fn(paginated) { paginated.items })
+    |> result.map_error(fn(client_err) {
+      storage.OtherError(client.error_to_string(client_err))
+    }),
+  )
+
+  // Fetch full recipe details for each summary
+  let full_recipes =
+    recipe_summaries
+    |> list.filter_map(fn(summary) {
+      case client.get_recipe(config, summary.slug) {
+        Ok(full_recipe) -> Ok(full_recipe)
+        Error(_) -> Error(Nil)
+        // Skip recipes that fail to fetch
+      }
+    })
+
+  // Convert Mealie recipes to internal Recipe type
+  let recipes = list.map(full_recipes, mapper.mealie_to_recipe)
+
+  Ok(recipes)
+}
+
+// ============================================================================
 // Recipe Scoring
 // ============================================================================
 
