@@ -3,8 +3,8 @@
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/storage/audit.{
-  type AuditChangeSummary, type RecipeSourceAuditEntry, AuditChangeSummary,
-  Delete, Insert, RecipeSourceAuditEntry, Update,
+  type RecipeSourceAuditEntry, AuditChangeSummary, Delete, Insert,
+  RecipeSourceAuditEntry, Update,
 }
 
 // ===================================================================

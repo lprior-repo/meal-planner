@@ -1,9 +1,17 @@
 /// Performance monitoring and benchmarking utilities
 /// Tracks query execution times and cache performance
 /// Target: Monitor 50% DB load reduction in Phase 2
+///
+/// SLA Targets (per meal-planner-ous8):
+/// - Dashboard load time: <20ms
+/// - Search latency: <5ms
+/// - Cache hit rate: >80%
+/// - Automated alerts for regressions
 import gleam/float
 import gleam/int
 import gleam/io
+import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/string
 import meal_planner/nutrition_constants as constants
 import meal_planner/query_cache
@@ -33,6 +41,52 @@ pub type BenchmarkResult {
     min_time_ms: Float,
     max_time_ms: Float,
     queries_per_second: Float,
+  )
+}
+
+/// Endpoint types for SLA monitoring
+pub type Endpoint {
+  Dashboard
+  Search
+  FoodLookup
+}
+
+/// SLA check result with target and actual values
+pub type SlaResult {
+  SlaResult(
+    endpoint: Endpoint,
+    target_ms: Float,
+    actual_ms: Float,
+    passed: Bool,
+    sample_count: Int,
+  )
+}
+
+/// Alert severity levels
+pub type AlertSeverity {
+  Warning
+  Critical
+}
+
+/// Performance alert for SLA violations or regressions
+pub type PerformanceAlert {
+  SlaViolation(endpoint: Endpoint, target_ms: Float, actual_ms: Float)
+  CacheHitRateLow(target_rate: Float, actual_rate: Float)
+  Regression(
+    metric_name: String,
+    baseline_ms: Float,
+    current_ms: Float,
+    degradation_percent: Float,
+  )
+}
+
+/// Aggregate monitoring state for ongoing tracking
+pub type MonitoringState {
+  MonitoringState(
+    dashboard_samples: List(Float),
+    search_samples: List(Float),
+    cache_hit_rates: List(Float),
+    alerts: List(PerformanceAlert),
   )
 }
 

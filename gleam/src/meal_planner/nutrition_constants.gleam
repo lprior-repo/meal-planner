@@ -240,3 +240,22 @@ pub const default_food_quality_score = 50
 pub const exact_match_priority = 100
 
 pub const partial_match_priority = 50
+
+// ===================================================================
+// PERFORMANCE SLA TARGETS
+// ===================================================================
+
+/// Dashboard load time target in milliseconds
+pub const sla_dashboard_load_ms = 20.0
+
+/// Search latency target in milliseconds
+pub const sla_search_latency_ms = 5.0
+
+/// Cache hit rate target (80% = 0.80)
+pub const sla_cache_hit_rate = 0.80
+
+/// Regression tolerance - alert if metric degrades by this percentage
+pub const regression_threshold_percent = 10.0
+
+/// Minimum samples needed before alerting on regression
+pub const min_samples_for_regression = 100
