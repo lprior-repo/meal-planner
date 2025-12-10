@@ -9,9 +9,9 @@ import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
 import meal_planner/storage/utils
 import meal_planner/types.{
-  type DailyLog, type FoodLogEntry, type Macros, type UserProfile,
-  Breakfast, DailyLog, Dinner, FoodLogEntry, Lunch, Macros, Maintain,
-  Moderate, Snack, UserProfile,
+  type DailyLog, type FoodLogEntry, type Macros, type UserProfile, Breakfast,
+  DailyLog, Dinner, FoodLogEntry, Lunch, Macros, Maintain, Moderate, Snack,
+  UserProfile,
 }
 import pog
 

@@ -39,7 +39,10 @@ pub fn save_auto_plan(
 
   // Join recipe IDs
   let recipe_ids =
-    string.join(list.map(plan.recipes, fn(r) { id.recipe_id_to_string(r.id) }), ",")
+    string.join(
+      list.map(plan.recipes, fn(r) { id.recipe_id_to_string(r.id) }),
+      ",",
+    )
 
   // Serialize config to JSON string
   let config_json =

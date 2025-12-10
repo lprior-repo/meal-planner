@@ -164,7 +164,8 @@ fn sync_entries(
 ) -> Result(SyncResult, ClientError) {
   case options.conflict_strategy {
     LocalWins -> sync_local_wins(config, local_entries, remote_entries, options)
-    RemoteWins -> Ok(SyncResult(created: [], updated: [], deleted: [], errors: []))
+    RemoteWins ->
+      Ok(SyncResult(created: [], updated: [], deleted: [], errors: []))
     Merge -> sync_merge(config, local_entries, remote_entries, options)
   }
 }
@@ -200,7 +201,8 @@ fn sync_local_wins(
     create_entries(config, to_create, options.default_entry_type)
 
   // Execute updates
-  let #(updated, update_errors) = update_entries(config, to_update, local_entries)
+  let #(updated, update_errors) =
+    update_entries(config, to_update, local_entries)
 
   // Execute deletes
   let #(deleted, delete_errors) = delete_entries(config, to_delete)
@@ -339,11 +341,12 @@ fn update_entries(
               ))
           }
         }
-        Error(_) -> Error(SyncError(
-          entry_date: remote.date,
-          entry_type: remote.entry_type,
-          error: client.ConfigError("No matching local entry found"),
-        ))
+        Error(_) ->
+          Error(SyncError(
+            entry_date: remote.date,
+            entry_type: remote.entry_type,
+            error: client.ConfigError("No matching local entry found"),
+          ))
       }
     })
 
