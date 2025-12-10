@@ -252,7 +252,7 @@ pub const sla_dashboard_load_ms = 20.0
 pub const sla_search_latency_ms = 5.0
 
 /// Cache hit rate target (80% = 0.80)
-pub const sla_cache_hit_rate = 0.80
+pub const sla_cache_hit_rate = 0.8
 
 /// Regression tolerance - alert if metric degrades by this percentage
 pub const regression_threshold_percent = 10.0

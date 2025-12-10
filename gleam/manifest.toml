@@ -63,3 +63,4 @@ qcheck = { version = ">= 1.0.0 and < 2.0.0" }
 qcheck_gleeunit_utils = { version = ">= 1.0.0 and < 2.0.0" }
 simplifile = { version = ">= 2.3.1 and < 3.0.0" }
 wisp = { version = ">= 2.0.0 and < 3.0.0" }
+gleam_regexp = { version = ">= 1.1.1 and < 2.0.0" }

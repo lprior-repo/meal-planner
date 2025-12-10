@@ -133,7 +133,11 @@ pub type MealieMealPlanEntry {
 
 /// Mealie API error response
 pub type MealieApiError {
-  MealieApiError(message: String, error: Option(String), exception: Option(String))
+  MealieApiError(
+    message: String,
+    error: Option(String),
+    exception: Option(String),
+  )
 }
 
 // ============================================================================
@@ -192,11 +196,7 @@ pub fn nutrition_decoder() -> Decoder(MealieNutrition) {
 pub fn unit_decoder() -> Decoder(MealieUnit) {
   use id <- decode.field("id", decode.string)
   use name <- decode.field("name", decode.string)
-  use abbreviation <- decode.optional_field(
-    "abbreviation",
-    "",
-    decode.string,
-  )
+  use abbreviation <- decode.optional_field("abbreviation", "", decode.string)
   decode.success(MealieUnit(id: id, name: name, abbreviation: abbreviation))
 }
 
@@ -508,7 +508,11 @@ pub fn meal_plan_entry_decoder() -> Decoder(MealieMealPlanEntry) {
 
 /// Decoder for API error
 pub fn api_error_decoder() -> Decoder(MealieApiError) {
-  use message <- decode.optional_field("message", "Unknown error", decode.string)
+  use message <- decode.optional_field(
+    "message",
+    "Unknown error",
+    decode.string,
+  )
   use error <- decode.optional_field(
     "error",
     None,
@@ -566,29 +570,23 @@ pub fn ingredient_to_json(i: MealieIngredient) -> Json {
   json.object([
     #("referenceId", json.string(i.reference_id)),
     #("quantity", optional_float(i.quantity)),
-    #(
-      "unit",
-      case i.unit {
-        Some(u) ->
-          json.object([
-            #("id", json.string(u.id)),
-            #("name", json.string(u.name)),
-            #("abbreviation", json.string(u.abbreviation)),
-          ])
-        None -> json.null()
-      },
-    ),
-    #(
-      "food",
-      case i.food {
-        Some(f) ->
-          json.object([
-            #("id", json.string(f.id)),
-            #("name", json.string(f.name)),
-          ])
-        None -> json.null()
-      },
-    ),
+    #("unit", case i.unit {
+      Some(u) ->
+        json.object([
+          #("id", json.string(u.id)),
+          #("name", json.string(u.name)),
+          #("abbreviation", json.string(u.abbreviation)),
+        ])
+      None -> json.null()
+    }),
+    #("food", case i.food {
+      Some(f) ->
+        json.object([
+          #("id", json.string(f.id)),
+          #("name", json.string(f.name)),
+        ])
+      None -> json.null()
+    }),
     #("note", optional_string(i.note)),
     #("isFood", json.bool(i.is_food)),
     #("disableAmount", json.bool(i.disable_amount)),

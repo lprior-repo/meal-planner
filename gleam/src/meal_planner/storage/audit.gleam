@@ -89,11 +89,9 @@ pub fn set_audit_context(
 ) -> Result(Nil, AuditError) {
   // Set session variables that will be captured by audit triggers
   // We need to run two SET commands
-  let set_user_sql =
-    "SELECT set_config('audit.changed_by', $1, true)"
+  let set_user_sql = "SELECT set_config('audit.changed_by', $1, true)"
 
-  let set_reason_sql =
-    "SELECT set_config('audit.change_reason', $1, true)"
+  let set_reason_sql = "SELECT set_config('audit.change_reason', $1, true)"
 
   case
     pog.query(set_user_sql)
@@ -344,7 +342,9 @@ pub fn format_audit_entry(entry: RecipeSourceAuditEntry) -> String {
     None -> ""
   }
 
-  "[" <> entry.operation_time <> "] "
+  "["
+  <> entry.operation_time
+  <> "] "
   <> op
   <> " "
   <> name

@@ -237,11 +237,21 @@ fn query_balanced_recipes(
 ///   Error(err) -> io.println("Error: " <> storage.error_to_string(err))
 /// }
 /// ```
-pub fn fetch_mealie_recipes(config: Config) -> Result(List(Recipe), StorageError) {
+pub fn fetch_mealie_recipes(
+  config: Config,
+) -> Result(List(Recipe), StorageError) {
   // List all recipes (summaries)
   use recipe_summaries <- result.try(
     client.list_recipes(config)
-    |> result.map(fn(paginated: mealie_types.MealiePaginatedResponse(mealie_types.MealieRecipeSummary)) { paginated.items })
+    |> result.map(
+      fn(
+        paginated: mealie_types.MealiePaginatedResponse(
+          mealie_types.MealieRecipeSummary,
+        ),
+      ) {
+        paginated.items
+      },
+    )
     |> result.map_error(fn(client_err) {
       DatabaseError(client.error_to_string(client_err))
     }),

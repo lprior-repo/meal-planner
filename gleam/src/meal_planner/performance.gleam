@@ -412,20 +412,20 @@ pub fn record_sample(
 ) -> MonitoringState {
   case endpoint {
     Dashboard ->
-      MonitoringState(
-        ..state,
-        dashboard_samples: [latency_ms, ..state.dashboard_samples],
-      )
+      MonitoringState(..state, dashboard_samples: [
+        latency_ms,
+        ..state.dashboard_samples
+      ])
     Search ->
-      MonitoringState(
-        ..state,
-        search_samples: [latency_ms, ..state.search_samples],
-      )
+      MonitoringState(..state, search_samples: [
+        latency_ms,
+        ..state.search_samples
+      ])
     FoodLookup ->
-      MonitoringState(
-        ..state,
-        search_samples: [latency_ms, ..state.search_samples],
-      )
+      MonitoringState(..state, search_samples: [
+        latency_ms,
+        ..state.search_samples
+      ])
   }
 }
 
@@ -434,10 +434,7 @@ pub fn record_cache_hit_rate(
   state: MonitoringState,
   hit_rate: Float,
 ) -> MonitoringState {
-  MonitoringState(
-    ..state,
-    cache_hit_rates: [hit_rate, ..state.cache_hit_rates],
-  )
+  MonitoringState(..state, cache_hit_rates: [hit_rate, ..state.cache_hit_rates])
 }
 
 /// Calculate average of a sample list
