@@ -4,13 +4,9 @@
 import gleam/float
 import gleam/int
 import gleam/io
-import gleam/list
-import gleam/result
 import gleam/string
 import meal_planner/nutrition_constants as constants
 import meal_planner/query_cache
-import meal_planner/storage
-import meal_planner/storage_optimized
 
 // ============================================================================
 // Performance Tracking Types

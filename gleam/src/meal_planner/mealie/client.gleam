@@ -1,0 +1,354 @@
+//// Mealie API HTTP client module
+//// Provides functions to interact with the Mealie v3.x REST API
+//// See: https://docs.mealie.io/documentation/getting-started/api-usage/
+
+import gleam/dynamic/decode
+import gleam/http
+import gleam/http/request
+import gleam/http/response
+import gleam/httpc
+import gleam/json
+import gleam/option.{None, Some}
+import gleam/result
+import gleam/string
+import gleam/uri
+import meal_planner/config.{type Config}
+import meal_planner/mealie/types.{
+  type MealieApiError, type MealieMealPlanEntry, type MealiePaginatedResponse,
+  type MealieRecipe, type MealieRecipeSummary, MealieApiError,
+}
+
+// ============================================================================
+// Error Types
+// ============================================================================
+
+/// Client-side errors that can occur when making API requests
+pub type ClientError {
+  /// HTTP request failed
+  HttpError(String)
+  /// JSON decoding failed
+  DecodeError(String)
+  /// API returned an error response
+  ApiError(MealieApiError)
+  /// Invalid configuration (missing base URL or token)
+  ConfigError(String)
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/// Build the full API URL from base URL and path
+fn build_url(base_url: String, path: String) -> String {
+  let base = string.trim(base_url)
+  let base = case string.ends_with(base, "/") {
+    True -> string.drop_end(base, 1)
+    False -> base
+  }
+  let path = case string.starts_with(path, "/") {
+    True -> path
+    False -> "/" <> path
+  }
+  base <> path
+}
+
+/// Add authorization header to a request
+fn add_auth_header(
+  req: request.Request(String),
+  token: String,
+) -> request.Request(String) {
+  request.set_header(req, "Authorization", "Bearer " <> token)
+}
+
+/// Add content-type header for JSON requests
+fn add_json_header(req: request.Request(String)) -> request.Request(String) {
+  request.set_header(req, "Content-Type", "application/json")
+}
+
+/// Execute an HTTP request and handle the response
+fn execute_request(
+  req: request.Request(String),
+) -> Result(response.Response(String), ClientError) {
+  case httpc.send(req) {
+    Ok(resp) -> Ok(resp)
+    Error(err) ->
+      Error(HttpError("HTTP request failed: " <> string.inspect(err)))
+  }
+}
+
+/// Parse JSON response with a decoder
+fn parse_response(
+  resp: response.Response(String),
+  decoder: decode.Decoder(a),
+) -> Result(a, ClientError) {
+  case resp.status {
+    200 | 201 -> {
+      case json.parse(resp.body, decoder) {
+        Ok(data) -> Ok(data)
+        Error(err) ->
+          Error(DecodeError("Failed to decode JSON: " <> string.inspect(err)))
+      }
+    }
+    _ -> {
+      // Try to parse as API error
+      case json.parse(resp.body, types.api_error_decoder()) {
+        Ok(api_err) -> Error(ApiError(api_err))
+        Error(_) ->
+          Error(
+            ApiError(MealieApiError(
+              message: "HTTP " <> string.inspect(resp.status),
+              error: None,
+              exception: None,
+            )),
+          )
+      }
+    }
+  }
+}
+
+/// Validate config has required Mealie settings
+fn validate_config(config: Config) -> Result(Config, ClientError) {
+  case config.mealie_base_url == "" || config.mealie_api_token == "" {
+    True ->
+      Error(ConfigError(
+        "Mealie base URL and API token are required. Set MEALIE_BASE_URL and MEALIE_API_TOKEN environment variables.",
+      ))
+    False -> Ok(config)
+  }
+}
+
+// ============================================================================
+// Public API Functions
+// ============================================================================
+
+/// List all recipes from Mealie
+///
+/// Returns a paginated list of recipe summaries.
+/// By default, returns the first page with up to 50 recipes.
+///
+/// Example:
+/// ```gleam
+/// let config = config.load()
+/// case list_recipes(config) {
+///   Ok(response) -> {
+///     io.println("Found " <> int.to_string(response.total) <> " recipes")
+///     list.each(response.items, fn(recipe) {
+///       io.println(recipe.name)
+///     })
+///   }
+///   Error(err) -> io.println("Error: " <> string.inspect(err))
+/// }
+/// ```
+pub fn list_recipes(
+  config: Config,
+) -> Result(MealiePaginatedResponse(MealieRecipeSummary), ClientError) {
+  use config <- result.try(validate_config(config))
+
+  let url = build_url(config.mealie_base_url, "/api/recipes")
+
+  case request.to(url) {
+    Ok(req) -> {
+      let req =
+        req
+        |> request.set_method(http.Get)
+        |> add_auth_header(config.mealie_api_token)
+
+      use resp <- result.try(execute_request(req))
+      parse_response(
+        resp,
+        types.paginated_decoder(types.recipe_summary_decoder()),
+      )
+    }
+    Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
+  }
+}
+
+/// Get a single recipe by slug
+///
+/// The slug is the URL-safe identifier for the recipe (e.g., "chicken-stir-fry").
+///
+/// Example:
+/// ```gleam
+/// case get_recipe(config, "chicken-stir-fry") {
+///   Ok(recipe) -> {
+///     io.println("Recipe: " <> recipe.name)
+///     io.println("Ingredients: " <> int.to_string(list.length(recipe.recipe_ingredient)))
+///   }
+///   Error(err) -> io.println("Error: " <> string.inspect(err))
+/// }
+/// ```
+pub fn get_recipe(
+  config: Config,
+  slug: String,
+) -> Result(MealieRecipe, ClientError) {
+  use config <- result.try(validate_config(config))
+
+  let url = build_url(config.mealie_base_url, "/api/recipes/" <> slug)
+
+  case request.to(url) {
+    Ok(req) -> {
+      let req =
+        req
+        |> request.set_method(http.Get)
+        |> add_auth_header(config.mealie_api_token)
+
+      use resp <- result.try(execute_request(req))
+      parse_response(resp, types.recipe_decoder())
+    }
+    Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
+  }
+}
+
+/// Search recipes by query string
+///
+/// Searches recipe names, descriptions, and ingredients.
+///
+/// Example:
+/// ```gleam
+/// case search_recipes(config, "chicken") {
+///   Ok(response) -> {
+///     io.println("Found " <> int.to_string(response.total) <> " matching recipes")
+///   }
+///   Error(err) -> io.println("Error: " <> string.inspect(err))
+/// }
+/// ```
+pub fn search_recipes(
+  config: Config,
+  query: String,
+) -> Result(MealiePaginatedResponse(MealieRecipeSummary), ClientError) {
+  use config <- result.try(validate_config(config))
+
+  // Mealie search endpoint: /api/recipes?search=query
+  let encoded_query = uri.percent_encode(query)
+  let url =
+    build_url(config.mealie_base_url, "/api/recipes?search=" <> encoded_query)
+
+  case request.to(url) {
+    Ok(req) -> {
+      let req =
+        req
+        |> request.set_method(http.Get)
+        |> add_auth_header(config.mealie_api_token)
+
+      use resp <- result.try(execute_request(req))
+      parse_response(
+        resp,
+        types.paginated_decoder(types.recipe_summary_decoder()),
+      )
+    }
+    Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
+  }
+}
+
+/// Get meal plan entries for a date range
+///
+/// Dates should be in ISO 8601 format (YYYY-MM-DD).
+///
+/// Example:
+/// ```gleam
+/// case get_meal_plans(config, "2025-12-09", "2025-12-15") {
+///   Ok(entries) -> {
+///     io.println("Found " <> int.to_string(list.length(entries)) <> " meal plan entries")
+///   }
+///   Error(err) -> io.println("Error: " <> string.inspect(err))
+/// }
+/// ```
+pub fn get_meal_plans(
+  config: Config,
+  start_date: String,
+  end_date: String,
+) -> Result(List(MealieMealPlanEntry), ClientError) {
+  use config <- result.try(validate_config(config))
+
+  // Mealie meal plans endpoint: /api/groups/mealplans?start_date=...&end_date=...
+  let url =
+    build_url(
+      config.mealie_base_url,
+      "/api/groups/mealplans?start_date="
+        <> start_date
+        <> "&end_date="
+        <> end_date,
+    )
+
+  case request.to(url) {
+    Ok(req) -> {
+      let req =
+        req
+        |> request.set_method(http.Get)
+        |> add_auth_header(config.mealie_api_token)
+
+      use resp <- result.try(execute_request(req))
+      parse_response(resp, decode.list(types.meal_plan_entry_decoder()))
+    }
+    Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
+  }
+}
+
+/// Create a new meal plan entry
+///
+/// The entry should have a date, entry_type (e.g., "dinner"), and optionally
+/// a recipe_id to link to a recipe.
+///
+/// Example:
+/// ```gleam
+/// let entry = MealieMealPlanEntry(
+///   id: "",  // Will be set by server
+///   date: "2025-12-10",
+///   entry_type: "dinner",
+///   title: Some("Chicken Stir Fry"),
+///   text: None,
+///   recipe_id: Some("chicken-stir-fry"),
+///   recipe: None,
+/// )
+/// case create_meal_plan_entry(config, entry) {
+///   Ok(created) -> io.println("Created meal plan entry: " <> created.id)
+///   Error(err) -> io.println("Error: " <> string.inspect(err))
+/// }
+/// ```
+pub fn create_meal_plan_entry(
+  config: Config,
+  entry: MealieMealPlanEntry,
+) -> Result(MealieMealPlanEntry, ClientError) {
+  use config <- result.try(validate_config(config))
+
+  let url = build_url(config.mealie_base_url, "/api/groups/mealplans")
+
+  let body =
+    types.meal_plan_entry_to_json(entry)
+    |> json.to_string
+
+  case request.to(url) {
+    Ok(req) -> {
+      let req =
+        req
+        |> request.set_method(http.Post)
+        |> add_auth_header(config.mealie_api_token)
+        |> add_json_header
+        |> request.set_body(body)
+
+      use resp <- result.try(execute_request(req))
+      parse_response(resp, types.meal_plan_entry_decoder())
+    }
+    Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
+  }
+}
+
+// ============================================================================
+// Error Conversion Helpers
+// ============================================================================
+
+/// Convert ClientError to a human-readable string
+pub fn error_to_string(error: ClientError) -> String {
+  case error {
+    HttpError(msg) -> "HTTP Error: " <> msg
+    DecodeError(msg) -> "JSON Decode Error: " <> msg
+    ApiError(api_err) -> {
+      let msg = "API Error: " <> api_err.message
+      case api_err.error {
+        Some(err) -> msg <> " (" <> err <> ")"
+        None -> msg
+      }
+    }
+    ConfigError(msg) -> "Configuration Error: " <> msg
+  }
+}
