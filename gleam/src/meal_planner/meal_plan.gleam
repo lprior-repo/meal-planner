@@ -3,6 +3,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/string
+import meal_planner/id
 import meal_planner/types.{
   type Ingredient, type Macros, type Recipe, type UserProfile, Low, Macros,
   Recipe, activity_level_to_display_string, daily_carb_target, daily_fat_target,
@@ -28,7 +29,7 @@ pub type DailyPlan {
 /// Create a default empty recipe
 pub fn default_recipe() -> Recipe {
   Recipe(
-    id: "",
+    id: id.recipe_id(""),
     name: "",
     ingredients: [],
     instructions: [],

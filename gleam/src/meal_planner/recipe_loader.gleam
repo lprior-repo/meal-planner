@@ -2,6 +2,7 @@ import glaml
 import gleam/list
 import gleam/result
 import gleam/string
+import meal_planner/id
 import meal_planner/types.{
   type FodmapLevel, type Ingredient, type Macros, type Recipe, High, Ingredient,
   Low, Macros, Medium, Recipe,
@@ -69,13 +70,13 @@ fn parse_recipe(node: glaml.Node) -> Result(Recipe, String) {
       use vertical_compliant <- result.try(get_bool(pairs, "vertical_compliant"))
 
       // Generate id from name if not provided
-      let recipe_id = case id {
+      let recipe_id_str = case id {
         "" -> string.lowercase(name) |> string.replace(" ", "-")
         _ -> id
       }
 
       Ok(Recipe(
-        id: recipe_id,
+        id: id.recipe_id(recipe_id_str),
         name: name,
         ingredients: ingredients,
         instructions: instructions,

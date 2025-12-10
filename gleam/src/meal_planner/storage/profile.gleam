@@ -4,6 +4,7 @@ import gleam/int
 import gleam/json
 import gleam/option.{None, Some}
 import gleam/result
+import meal_planner/id
 import meal_planner/ncp
 import meal_planner/postgres
 import meal_planner/storage/utils
@@ -276,7 +277,7 @@ pub fn get_user_profile(
      FROM user_profile WHERE id = 1"
 
   let decoder = {
-    use id <- decode.field(0, decode.int)
+    use user_id <- decode.field(0, decode.int)
     use bodyweight <- decode.field(1, decode.float)
     use activity_str <- decode.field(2, decode.string)
     use goal_str <- decode.field(3, decode.string)
@@ -311,7 +312,7 @@ pub fn get_user_profile(
     }
 
     decode.success(UserProfile(
-      id: int.to_string(id),
+      id: id.user_id(int.to_string(user_id)),
       bodyweight: bodyweight,
       activity_level: activity_level,
       goal: goal,

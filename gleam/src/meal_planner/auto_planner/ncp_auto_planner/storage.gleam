@@ -8,6 +8,7 @@ import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/auto_planner/types as auto_types
+import meal_planner/id
 import meal_planner/storage.{type StorageError}
 import meal_planner/storage/profile.{DatabaseError, NotFound}
 import meal_planner/types.{
@@ -37,7 +38,8 @@ pub fn save_auto_plan(
        config_json = EXCLUDED.config_json"
 
   // Join recipe IDs
-  let recipe_ids = string.join(list.map(plan.recipes, fn(r) { r.id }), ",")
+  let recipe_ids =
+    string.join(list.map(plan.recipes, fn(r) { id.recipe_id_to_string(r.id) }), ",")
 
   // Serialize config to JSON string
   let config_json =
@@ -169,7 +171,7 @@ fn load_recipes_by_ids(
 
 /// Decoder for recipe rows
 fn recipe_row_decoder() -> decode.Decoder(Recipe) {
-  use id <- decode.field(0, decode.string)
+  use id_str <- decode.field(0, decode.string)
   use name <- decode.field(1, decode.string)
   use ingredients_str <- decode.field(2, decode.string)
   use instructions_str <- decode.field(3, decode.string)
@@ -200,7 +202,7 @@ fn recipe_row_decoder() -> decode.Decoder(Recipe) {
   }
 
   decode.success(Recipe(
-    id: id,
+    id: id.recipe_id(id_str),
     name: name,
     ingredients: ingredients,
     instructions: instructions,

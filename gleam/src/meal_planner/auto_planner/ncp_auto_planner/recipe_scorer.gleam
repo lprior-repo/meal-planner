@@ -9,6 +9,7 @@ import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
+import meal_planner/id.{type RecipeId}
 import meal_planner/types.{type Macros, type Recipe}
 
 // ============================================================================
@@ -18,7 +19,7 @@ import meal_planner/types.{type Macros, type Recipe}
 /// Complete recipe score with breakdown
 pub type RecipeScore {
   RecipeScore(
-    recipe_id: String,
+    recipe_id: RecipeId,
     total_score: Float,
     diet_compliance_score: Float,
     macro_match_score: Float,

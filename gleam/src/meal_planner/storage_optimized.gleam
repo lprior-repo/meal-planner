@@ -4,6 +4,7 @@
 import gleam/dynamic/decode
 import gleam/int
 import gleam/option.{None, Some}
+import meal_planner/id
 import meal_planner/nutrition_constants as constants
 import meal_planner/query_cache
 import meal_planner/storage.{type StorageError, type UsdaFood}
@@ -109,13 +110,13 @@ fn search_foods_optimized(
      LIMIT $2"
 
   let decoder = {
-    use fdc_id <- decode.field(0, decode.int)
+    use fdc_id_int <- decode.field(0, decode.int)
     use description <- decode.field(1, decode.string)
     use data_type <- decode.field(2, decode.string)
     use category <- decode.field(3, decode.string)
     use serving_size <- decode.field(4, decode.optional(decode.string))
     decode.success(UsdaFood(
-      fdc_id: fdc_id,
+      fdc_id: id.fdc_id(fdc_id_int),
       description: description,
       data_type: data_type,
       category: category,
@@ -208,13 +209,13 @@ fn search_foods_filtered_optimized(
      LIMIT $2"
 
   let decoder = {
-    use fdc_id <- decode.field(0, decode.int)
+    use fdc_id_int <- decode.field(0, decode.int)
     use description <- decode.field(1, decode.string)
     use data_type <- decode.field(2, decode.string)
     use category <- decode.field(3, decode.string)
     use serving_size <- decode.field(4, decode.optional(decode.string))
     decode.success(UsdaFood(
-      fdc_id: fdc_id,
+      fdc_id: id.fdc_id(fdc_id_int),
       description: description,
       data_type: data_type,
       category: category,

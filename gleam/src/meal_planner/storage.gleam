@@ -1,5 +1,5 @@
 /// PostgreSQL storage module - Domain-driven organization
-/// 
+///
 /// This module re-exports all storage functionality from domain-specific submodules:
 /// - storage/profile: User profiles, nutrition state, and goals
 /// - storage/recipes: Recipe storage and retrieval
@@ -7,6 +7,7 @@
 /// - storage/logs: Food logging and daily/weekly summaries
 /// - storage/nutrients: Nutrient calculations and parsing
 /// - storage/migrations: Database migration utilities
+import meal_planner/id
 import meal_planner/storage/profile as profile_module
 import meal_planner/storage/profile.{
   type StorageError as ProfileStorageError, DatabaseError, InvalidInput,

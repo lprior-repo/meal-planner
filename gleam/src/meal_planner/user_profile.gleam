@@ -6,6 +6,7 @@ import gleam/int
 import gleam/io
 import gleam/option.{None}
 import gleam/string
+import meal_planner/id
 import meal_planner/types.{
   type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
   Moderate, Sedentary, UserProfile,
@@ -93,7 +94,7 @@ pub fn create_profile(
         Error(e) -> Error(e)
         Ok(m) ->
           Ok(UserProfile(
-            id: id,
+            id: id.user_id(id),
             bodyweight: w,
             activity_level: activity_level,
             goal: goal,
@@ -142,7 +143,7 @@ pub fn collect_interactive_profile() -> Result(UserProfile, ProfileError) {
   // Return a default profile for demonstration
   // In a full implementation with proper stdin support, this would collect data interactively
   Ok(UserProfile(
-    id: "default",
+    id: id.user_id("default"),
     bodyweight: 180.0,
     activity_level: Moderate,
     goal: Maintain,
