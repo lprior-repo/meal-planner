@@ -9,7 +9,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option
 import gleam/result
 import meal_planner/auto_planner/recipe_scorer
 import meal_planner/auto_planner/types as auto_types
@@ -167,8 +167,7 @@ pub fn query_recipes_by_macro_deficit(
     _, True, _ -> query_high_fat_recipes(conn, 20.0)
 
     // Multiple deficits - get balanced recipes
-    True, True, _ | True, _, True | _, True, True ->
-      query_balanced_recipes(conn)
+    True, True, _ -> query_balanced_recipes(conn)
 
     // Protein deficit (moderate)
     True, _, _ -> query_high_protein_recipes(conn, 25.0)

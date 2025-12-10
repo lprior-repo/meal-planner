@@ -55,7 +55,7 @@ pub fn load() -> Config {
     database_host: result.unwrap(envoy.get("DATABASE_HOST"), "localhost"),
     database_port: result.unwrap(
       envoy.get("DATABASE_PORT")
-        |> result.then(int.parse),
+        |> result.try(int.parse),
       5432,
     ),
     database_name: result.unwrap(envoy.get("DATABASE_NAME"), "meal_planner"),
@@ -63,13 +63,13 @@ pub fn load() -> Config {
     database_password: result.unwrap(envoy.get("DATABASE_PASSWORD"), ""),
     database_pool_size: result.unwrap(
       envoy.get("DATABASE_POOL_SIZE")
-        |> result.then(int.parse),
+        |> result.try(int.parse),
       10,
     ),
     // Server configuration
     port: result.unwrap(
       envoy.get("PORT")
-        |> result.then(int.parse),
+        |> result.try(int.parse),
       8080,
     ),
     environment: result.unwrap(envoy.get("ENVIRONMENT"), "development"),

@@ -5,7 +5,7 @@ import gleam/result
 import gleam/string
 import meal_planner/id
 import meal_planner/postgres
-import meal_planner/storage/utils.{format_pog_error}
+import meal_planner/storage/utils
 import meal_planner/types.{
   type Recipe, High, Ingredient, Low, Macros, Medium, Recipe,
 }
@@ -17,50 +17,6 @@ pub type StorageError {
   DatabaseError(String)
   InvalidInput(String)
   Unauthorized(String)
-}
-
-/// Valid USDA food categories for SQL injection prevention
-/// These are the official USDA FoodData Central categories
-const valid_food_categories = [
-  "Branded Foods",
-  "Dairy and Egg Products",
-  "Spices and Herbs",
-  "Baby Foods",
-  "Fats and Oils",
-  "Poultry Products",
-  "Fruits and Fruit Juices",
-  "Beef Products",
-  "Beverages",
-  "Vegetables and Vegetable Products",
-  "Nut and Seed Products",
-  "Legumes and Legume Products",
-  "Cereal Grains and Pasta",
-  "Fast Foods",
-  "Meals, Entrees, and Side Dishes",
-  "Snacks",
-  "Sweets",
-  "Soups, Sauces, and Gravies",
-  "Restaurant Foods",
-  "Pork Products",
-  "Lamb, Veal, and Game Products",
-  "Finfish and Shellfish Products",
-  "Baked Products",
-  "American Indian/Alaska Native Foods",
-]
-
-/// Validate category against whitelist to prevent SQL injection
-/// Returns Ok with the matched category or Error with message
-fn validate_category(category: String) -> Result(String, String) {
-  let trimmed = string.trim(category)
-
-  case
-    list.find(valid_food_categories, fn(valid) {
-      string.lowercase(valid) == string.lowercase(trimmed)
-    })
-  {
-    Ok(found) -> Ok(found)
-    Error(_) -> Error("Invalid food category: '" <> trimmed <> "'")
-  }
 }
 
 /// Database configuration (re-export from postgres module)
