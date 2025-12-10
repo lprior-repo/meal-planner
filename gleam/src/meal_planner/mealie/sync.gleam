@@ -17,6 +17,7 @@ import meal_planner/auto_planner/types as auto_types
 import meal_planner/config.{type Config}
 import meal_planner/id
 import meal_planner/mealie/client.{type ClientError}
+import meal_planner/mealie/mapper
 import meal_planner/mealie/types.{type MealieMealPlanEntry, MealieMealPlanEntry}
 import meal_planner/types as meal_types
 
@@ -74,6 +75,11 @@ pub type LocalMealPlanEntry {
     recipe_id: Option(String),
     text: Option(String),
   )
+}
+
+/// An imported meal plan entry with its converted recipe
+pub type ImportedMealPlan {
+  ImportedMealPlan(date: String, entry_type: String, recipe: meal_types.Recipe)
 }
 
 // ============================================================================
@@ -516,4 +522,70 @@ pub fn get_non_mealie_recipes(plan: auto_types.AutoMealPlan) -> List(String) {
       None -> Ok(recipe.name)
     }
   })
+}
+
+// ============================================================================
+// Fetch & Import from Mealie
+// ============================================================================
+
+/// Fetch meal plans from Mealie and import them as Recipe types
+///
+/// This fetches all meal plan entries for a date range, then fetches
+/// the full recipe details for each entry that has a recipe_id.
+///
+/// ## Example:
+/// ```gleam
+/// case fetch_and_import_meal_plans(config, "2025-12-10", "2025-12-16") {
+///   Ok(imports) -> {
+///     list.each(imports, fn(imp) {
+///       io.println(imp.date <> ": " <> imp.recipe.name)
+///     })
+///   }
+///   Error(err) -> io.println("Failed: " <> client.error_to_string(err))
+/// }
+/// ```
+pub fn fetch_and_import_meal_plans(
+  config: Config,
+  start_date: String,
+  end_date: String,
+) -> Result(List(ImportedMealPlan), ClientError) {
+  use entries <- result.try(client.get_meal_plans(config, start_date, end_date))
+
+  let imports =
+    list.filter_map(entries, fn(entry) {
+      case entry.recipe_id {
+        Some(recipe_id) -> {
+          case client.get_recipe(config, recipe_id) {
+            Ok(mealie_recipe) -> {
+              let recipe = mapper.mealie_to_recipe(mealie_recipe)
+              Ok(ImportedMealPlan(
+                date: entry.date,
+                entry_type: entry.entry_type,
+                recipe: recipe,
+              ))
+            }
+            Error(_) -> Error(Nil)
+          }
+        }
+        None -> Error(Nil)
+      }
+    })
+
+  Ok(imports)
+}
+
+/// Fetch meal plan recipes only (without date/type info)
+///
+/// Convenience function when you just need the Recipe list.
+pub fn fetch_meal_plan_recipes(
+  config: Config,
+  start_date: String,
+  end_date: String,
+) -> Result(List(meal_types.Recipe), ClientError) {
+  use imports <- result.try(fetch_and_import_meal_plans(
+    config,
+    start_date,
+    end_date,
+  ))
+  Ok(list.map(imports, fn(imp) { imp.recipe }))
 }
