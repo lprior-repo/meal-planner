@@ -4,6 +4,7 @@
 /// based on diet principles, macro targets, and variety preferences.
 import gleam/float
 import gleam/int
+import gleam/json
 import gleam/list
 import gleam/order
 import meal_planner/auto_planner/types as auto_types
@@ -128,6 +129,7 @@ pub fn calculate_variety_score(
 
 /// Score a recipe comprehensively using all dimensions
 /// Simplified version - diet compliance check without validator
+/// Works with internal Recipe type after conversion from MealieRecipe
 pub fn score_recipe(
   recipe: types.Recipe,
   config: AutoPlanConfig,
@@ -173,6 +175,18 @@ pub fn score_recipe(
     variety_score: variety_score,
     overall_score: overall,
   )
+}
+
+/// Score a Mealie recipe directly without conversion
+/// Converts MealieRecipe to internal Recipe type then scores it
+/// This provides a convenient interface for scoring Mealie recipes
+pub fn score_mealie_recipe(
+  mealie_recipe: mealie.MealieRecipe,
+  config: AutoPlanConfig,
+  already_selected: List(types.Recipe),
+) -> RecipeScore {
+  let recipe = mapper.mealie_to_recipe(mealie_recipe)
+  score_recipe(recipe, config, already_selected)
 }
 
 // ============================================================================
@@ -301,12 +315,18 @@ pub fn generate_auto_plan(
               // Generate plan ID (simple timestamp-based ID)
               let plan_id = "auto-plan-" <> generate_timestamp()
 
+              // Serialize recipes to JSON string
+              let recipe_json =
+                json.array(selected, types.recipe_to_json)
+                |> json.to_string
+
               Ok(auto_types.AutoMealPlan(
                 id: plan_id,
                 config: config,
                 recipes: selected,
                 total_macros: total_macros,
                 generated_at: generate_timestamp(),
+                recipe_json: recipe_json,
               ))
             }
           }
