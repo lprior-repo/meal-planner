@@ -484,7 +484,7 @@ pub fn get_recent_meals(
 /// Fetches fresh recipe names from Mealie API for mealie_recipe entries
 pub fn get_recent_meals_enriched(
   conn: pog.Connection,
-  cfg: config.Config,
+  _cfg: config.Config,
   limit: Int,
 ) -> Result(List(FoodLogEntry), StorageError) {
   use meals <- result.try(get_recent_meals(conn, limit))
