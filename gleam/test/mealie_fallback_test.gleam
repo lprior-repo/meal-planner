@@ -1,10 +1,8 @@
-import gleam/option.{None, Some}
+import gleam/option.{None}
 import gleeunit
 import gleeunit/should
 import meal_planner/mealie/fallback
-import meal_planner/mealie/types.{
-  MealieCategory, MealieIngredient, MealieInstruction, MealieRecipe, MealieTag,
-}
+import meal_planner/mealie/types.{MealieRecipe}
 
 pub fn main() {
   gleeunit.main()

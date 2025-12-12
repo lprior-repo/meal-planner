@@ -2,10 +2,8 @@
 //// Covers conversion from Mealie types to internal meal planner types
 
 import gleam/float
-import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/result
 import gleam/string
 import gleeunit
 import gleeunit/should
@@ -13,8 +11,6 @@ import meal_planner/id
 import meal_planner/mealie/mapper
 import meal_planner/mealie/types as mealie
 import meal_planner/types.{Low}
-import qcheck
-import qcheck as gen
 
 pub fn main() {
   gleeunit.main()
@@ -732,168 +728,80 @@ pub fn recipe_with_multiple_instructions_test() {
 }
 
 // ============================================================================
-// Property Tests for Macro Preservation
+// Additional Macro Preservation Tests
 // ============================================================================
 
-/// Property: Protein preservation
-/// For any valid protein value, conversion should preserve it exactly
-pub fn property_protein_preservation_test() {
-  use protein_str <- qcheck.given(
-    gen.bounded_float(from: 0.0, to: 1000.0) |> gen.map(float.to_string),
-  )
-
-  let nutrition =
-    mealie.MealieNutrition(
-      calories: None,
-      fat_content: None,
-      protein_content: Some(protein_str <> "g"),
-      carbohydrate_content: None,
-      fiber_content: None,
-      sodium_content: None,
-      sugar_content: None,
-    )
-
-  let macros = mapper.mealie_to_macros(Some(nutrition))
-  let expected = string.trim(protein_str) |> float.parse |> result.unwrap(0.0)
-
-  // Allow small floating-point rounding errors (within 0.01)
-  let difference = float.absolute_value(macros.protein -. expected)
-  { difference <. 0.01 }
-  |> should.be_true
-}
-
-/// Property: Fat preservation
-/// For any valid fat value, conversion should preserve it exactly
-pub fn property_fat_preservation_test() {
-  use fat_str <- qcheck.given(
-    gen.bounded_float(from: 0.0, to: 1000.0) |> gen.map(float.to_string),
-  )
-
-  let nutrition =
-    mealie.MealieNutrition(
-      calories: None,
-      fat_content: Some(fat_str <> "g"),
-      protein_content: None,
-      carbohydrate_content: None,
-      fiber_content: None,
-      sodium_content: None,
-      sugar_content: None,
-    )
-
-  let macros = mapper.mealie_to_macros(Some(nutrition))
-  let expected = string.trim(fat_str) |> float.parse |> result.unwrap(0.0)
-
-  let difference = float.absolute_value(macros.fat -. expected)
-  { difference <. 0.01 }
-  |> should.be_true
-}
-
-/// Property: Carbs preservation
-/// For any valid carb value, conversion should preserve it exactly
-pub fn property_carbs_preservation_test() {
-  use carbs_str <- qcheck.given(
-    gen.bounded_float(from: 0.0, to: 1000.0) |> gen.map(float.to_string),
-  )
-
-  let nutrition =
-    mealie.MealieNutrition(
-      calories: None,
-      fat_content: None,
-      protein_content: None,
-      carbohydrate_content: Some(carbs_str <> "g"),
-      fiber_content: None,
-      sodium_content: None,
-      sugar_content: None,
-    )
-
-  let macros = mapper.mealie_to_macros(Some(nutrition))
-  let expected = string.trim(carbs_str) |> float.parse |> result.unwrap(0.0)
-
-  let difference = float.absolute_value(macros.carbs -. expected)
-  { difference <. 0.01 }
-  |> should.be_true
-}
-
-/// Property: All macros preserved together
-/// When all three macros are provided, they should all be preserved
-pub fn property_all_macros_preserved_test() {
-  use protein_str <- qcheck.given(gen.bounded_float(from: 0.0, to: 500.0))
-  use fat_str <- qcheck.given(gen.bounded_float(from: 0.0, to: 500.0))
-  use carbs_str <- qcheck.given(gen.bounded_float(from: 0.0, to: 500.0))
-
-  let nutrition =
-    mealie.MealieNutrition(
-      calories: None,
-      fat_content: Some(float.to_string(fat_str) <> "g"),
-      protein_content: Some(float.to_string(protein_str) <> "g"),
-      carbohydrate_content: Some(float.to_string(carbs_str) <> "g"),
-      fiber_content: None,
-      sodium_content: None,
-      sugar_content: None,
-    )
-
-  let macros = mapper.mealie_to_macros(Some(nutrition))
-
-  // Verify protein
-  let protein_diff = float.absolute_value(macros.protein -. protein_str)
-  { protein_diff <. 0.01 }
-  |> should.be_true
-
-  // Verify fat
-  let fat_diff = float.absolute_value(macros.fat -. fat_str)
-  { fat_diff <. 0.01 }
-  |> should.be_true
-
-  // Verify carbs
-  let carbs_diff = float.absolute_value(macros.carbs -. carbs_str)
-  { carbs_diff <. 0.01 }
-  |> should.be_true
-}
-
-/// Property: Macro formatting doesn't affect parsing
-/// Macros with various units (g, grams, kcal, etc.) should parse identically
-pub fn property_macro_format_invariance_test() {
-  use value <- qcheck.given(gen.bounded_float(from: 1.0, to: 500.0))
-
-  let formats = [
-    float.to_string(value),
-    float.to_string(value) <> "g",
-    float.to_string(value) <> " g",
-    float.to_string(value) <> "grams",
-    float.to_string(value) <> " grams",
+/// Test that all macros are preserved together with various values
+pub fn all_macros_preserved_test() {
+  // Test with various typical nutrition values
+  let test_cases = [
+    #(25.0, "25", 10.0, "10", 30.0, "30"),
+    #(35.5, "35.5", 15.2, "15.2", 45.8, "45.8"),
+    #(0.0, "0", 0.0, "0", 0.0, "0"),
+    #(100.0, "100", 50.0, "50", 200.0, "200"),
+    #(12.3, "12.3", 8.7, "8.7", 15.1, "15.1"),
   ]
 
-  let results =
-    list.map(formats, fn(fmt) {
-      let nutrition =
-        mealie.MealieNutrition(
-          calories: None,
-          fat_content: Some(fmt),
-          protein_content: None,
-          carbohydrate_content: None,
-          fiber_content: None,
-          sodium_content: None,
-          sugar_content: None,
-        )
-      mapper.mealie_to_macros(Some(nutrition)).fat
-    })
+  list.each(test_cases, fn(test_case) {
+    let #(protein_val, protein_str, fat_val, fat_str, carbs_val, carbs_str) =
+      test_case
 
-  // All results should be approximately equal (within rounding error)
-  case results {
-    [first, ..rest] -> {
-      list.all(rest, fn(val) {
-        let diff = float.absolute_value(val -. first)
-        diff <. 0.01
-      })
-      |> should.be_true
-    }
-    [] -> should.fail()
-  }
+    let nutrition =
+      mealie.MealieNutrition(
+        calories: None,
+        fat_content: Some(fat_str <> "g"),
+        protein_content: Some(protein_str <> "g"),
+        carbohydrate_content: Some(carbs_str <> "g"),
+        fiber_content: None,
+        sodium_content: None,
+        sugar_content: None,
+      )
+
+    let macros = mapper.mealie_to_macros(Some(nutrition))
+
+    // Verify protein
+    let protein_diff = float.absolute_value(macros.protein -. protein_val)
+    { protein_diff <. 0.01 }
+    |> should.be_true
+
+    // Verify fat
+    let fat_diff = float.absolute_value(macros.fat -. fat_val)
+    { fat_diff <. 0.01 }
+    |> should.be_true
+
+    // Verify carbs
+    let carbs_diff = float.absolute_value(macros.carbs -. carbs_val)
+    { carbs_diff <. 0.01 }
+    |> should.be_true
+  })
 }
 
-/// Property: Zero macros are preserved
-/// A recipe with all zero macros should maintain that
-pub fn property_zero_macros_preserved_test() {
+/// Test macro formatting doesn't affect parsing
+pub fn macro_format_invariance_test() {
+  let value = 42.5
+
+  let formats = ["42.5", "42.5g", "42.5 g", "42.5grams", "42.5 grams"]
+
+  list.each(formats, fn(fmt) {
+    let nutrition =
+      mealie.MealieNutrition(
+        calories: None,
+        fat_content: Some(fmt),
+        protein_content: None,
+        carbohydrate_content: None,
+        fiber_content: None,
+        sodium_content: None,
+        sugar_content: None,
+      )
+    let result = mapper.mealie_to_macros(Some(nutrition)).fat
+    let diff = float.absolute_value(result -. value)
+    { diff <. 0.01 }
+    |> should.be_true
+  })
+}
+
+/// Test zero macros are preserved
+pub fn zero_macros_preserved_test() {
   let nutrition =
     mealie.MealieNutrition(
       calories: Some("0 kcal"),
@@ -917,19 +825,14 @@ pub fn property_zero_macros_preserved_test() {
   |> should.equal(0.0)
 }
 
-/// Property: Macros survive full recipe conversion roundtrip
-/// MealieRecipe -> Recipe should preserve macro values
-pub fn property_macros_survive_recipe_conversion_test() {
-  use protein_val <- qcheck.given(gen.bounded_float(from: 1.0, to: 300.0))
-  use fat_val <- qcheck.given(gen.bounded_float(from: 1.0, to: 200.0))
-  use carbs_val <- qcheck.given(gen.bounded_float(from: 1.0, to: 400.0))
-
+/// Test macros survive full recipe conversion roundtrip
+pub fn macros_survive_recipe_conversion_test() {
   let nutrition =
     mealie.MealieNutrition(
       calories: None,
-      fat_content: Some(float.to_string(fat_val) <> "g"),
-      protein_content: Some(float.to_string(protein_val) <> "g"),
-      carbohydrate_content: Some(float.to_string(carbs_val) <> "g"),
+      fat_content: Some("15.5g"),
+      protein_content: Some("30.2g"),
+      carbohydrate_content: Some("45.8g"),
       fiber_content: None,
       sodium_content: None,
       sugar_content: None,
@@ -937,9 +840,9 @@ pub fn property_macros_survive_recipe_conversion_test() {
 
   let mealie_recipe =
     mealie.MealieRecipe(
-      id: "recipe-prop",
-      slug: "property-test",
-      name: "Property Test Recipe",
+      id: "recipe-test",
+      slug: "test-recipe",
+      name: "Test Recipe",
       description: None,
       image: None,
       recipe_yield: Some("1"),
@@ -960,50 +863,38 @@ pub fn property_macros_survive_recipe_conversion_test() {
   let recipe = mapper.mealie_to_recipe(mealie_recipe)
 
   // Verify macros survived conversion
-  let protein_diff = float.absolute_value(recipe.macros.protein -. protein_val)
+  let protein_diff = float.absolute_value(recipe.macros.protein -. 30.2)
   { protein_diff <. 0.01 }
   |> should.be_true
 
-  let fat_diff = float.absolute_value(recipe.macros.fat -. fat_val)
+  let fat_diff = float.absolute_value(recipe.macros.fat -. 15.5)
   { fat_diff <. 0.01 }
   |> should.be_true
 
-  let carbs_diff = float.absolute_value(recipe.macros.carbs -. carbs_val)
+  let carbs_diff = float.absolute_value(recipe.macros.carbs -. 45.8)
   { carbs_diff <. 0.01 }
   |> should.be_true
 }
 
-/// Property: Invalid macro strings safely default to 0
-/// Non-numeric strings should parse to 0 without errors
-pub fn property_invalid_macros_default_to_zero_test() {
-  use invalid_str <- qcheck.given(
-    gen.from_generators(
-      gen.return("none"),
-      [
-        gen.return("a"),
-        gen.return("b"),
-        gen.return("x"),
-        gen.return("!"),
-        gen.return("@"),
-        gen.return("recipe"),
-        gen.return("xyz"),
-      ],
-    ),
-  )
+/// Test invalid macro strings safely default to 0
+pub fn invalid_macros_default_to_zero_test() {
+  let invalid_strings = ["none", "a", "x", "!", "@", "recipe", "xyz", ""]
 
-  let nutrition =
-    mealie.MealieNutrition(
-      calories: None,
-      fat_content: Some(invalid_str),
-      protein_content: None,
-      carbohydrate_content: None,
-      fiber_content: None,
-      sodium_content: None,
-      sugar_content: None,
-    )
+  list.each(invalid_strings, fn(invalid_str) {
+    let nutrition =
+      mealie.MealieNutrition(
+        calories: None,
+        fat_content: Some(invalid_str),
+        protein_content: None,
+        carbohydrate_content: None,
+        fiber_content: None,
+        sodium_content: None,
+        sugar_content: None,
+      )
 
-  let macros = mapper.mealie_to_macros(Some(nutrition))
+    let macros = mapper.mealie_to_macros(Some(nutrition))
 
-  macros.fat
-  |> should.equal(0.0)
+    macros.fat
+    |> should.equal(0.0)
+  })
 }

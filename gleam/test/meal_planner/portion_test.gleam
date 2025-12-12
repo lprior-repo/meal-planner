@@ -2,10 +2,7 @@ import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/id
-import meal_planner/mealie/types.{
-  MealieCategory, MealieIngredient, MealieInstruction, MealieNutrition,
-  MealieRecipe,
-} as mealie_types
+import meal_planner/mealie/types as mealie_types
 import meal_planner/portion.{
   calculate_portion_for_mealie_recipe, calculate_portion_for_target,
 }
@@ -67,7 +64,7 @@ pub fn calculate_portion_no_macros_recipe_test() {
 // Test calculate_portion_for_mealie_recipe basic
 pub fn calculate_portion_mealie_recipe_test() {
   let mealie_recipe =
-    MealieRecipe(
+    mealie_types.MealieRecipe(
       id: "mealie-123",
       slug: "test-beef-stew",
       name: "Beef Stew",
@@ -82,10 +79,10 @@ pub fn calculate_portion_mealie_recipe_test() {
       recipe_ingredient: [],
       recipe_instructions: [],
       recipe_category: [
-        MealieCategory(id: "cat1", name: "Main", slug: "main"),
+        mealie_types.MealieCategory(id: "cat1", name: "Main", slug: "main"),
       ],
       tags: [],
-      nutrition: Some(MealieNutrition(
+      nutrition: Some(mealie_types.MealieNutrition(
         calories: Some("300"),
         fat_content: Some("10"),
         protein_content: Some("30"),
@@ -112,7 +109,7 @@ pub fn calculate_portion_mealie_recipe_test() {
 // Test calculate_portion_for_mealie_recipe with nutrition strings containing units
 pub fn calculate_portion_mealie_recipe_with_units_test() {
   let mealie_recipe =
-    MealieRecipe(
+    mealie_types.MealieRecipe(
       id: "mealie-456",
       slug: "chicken-breast",
       name: "Chicken Breast",
@@ -127,10 +124,10 @@ pub fn calculate_portion_mealie_recipe_with_units_test() {
       recipe_ingredient: [],
       recipe_instructions: [],
       recipe_category: [
-        MealieCategory(id: "cat2", name: "Protein", slug: "protein"),
+        mealie_types.MealieCategory(id: "cat2", name: "Protein", slug: "protein"),
       ],
       tags: [],
-      nutrition: Some(MealieNutrition(
+      nutrition: Some(mealie_types.MealieNutrition(
         calories: Some("150"),
         fat_content: Some("5g"),
         protein_content: Some("25g"),
@@ -154,7 +151,7 @@ pub fn calculate_portion_mealie_recipe_with_units_test() {
 // Test calculate_portion_for_mealie_recipe with no nutrition
 pub fn calculate_portion_mealie_recipe_no_nutrition_test() {
   let mealie_recipe =
-    MealieRecipe(
+    mealie_types.MealieRecipe(
       id: "mealie-789",
       slug: "unknown-recipe",
       name: "Unknown Recipe",

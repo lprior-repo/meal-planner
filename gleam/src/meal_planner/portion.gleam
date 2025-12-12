@@ -5,13 +5,15 @@
 /// regardless of origin (Mealie, custom, etc).
 ///
 /// Ported from Go implementation in main.go
+import gleam/float as gleam_float
+import gleam/int as gleam_int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/string as gleam_string
 import meal_planner/id
 import meal_planner/mealie/types as mealie
 import meal_planner/types.{
-  type FodmapLevel, type Ingredient, type Macros, type Recipe, Ingredient, Low,
-  Macros, Recipe, macros_calories, macros_scale,
+  type Macros, type Recipe, Low, Macros, Recipe, macros_calories, macros_scale,
 }
 
 /// PortionCalculation represents a scaled recipe portion
@@ -178,17 +180,21 @@ fn parse_nutrition_value(value: Option(String)) -> Float {
 
 /// Extract float from a string (handles "100g", "30.5", etc.)
 fn extract_float_from_string(s: String) -> Result(Float, Nil) {
-  let trimmed = string_trim(s)
+  let trimmed = gleam_string.trim(s)
   // Try to parse the whole string as float first
-  case float_parse(trimmed) {
+  case gleam_float.parse(trimmed) {
     Ok(f) -> Ok(f)
     Error(_) -> {
       // Try to extract digits before unit (e.g., "100" from "100g")
       case extract_numeric_prefix(trimmed) {
         Some(num_str) ->
-          case float_parse(num_str) {
+          case gleam_float.parse(num_str) {
             Ok(f) -> Ok(f)
-            Error(_) -> Error(Nil)
+            Error(_) ->
+              case gleam_int.parse(num_str) {
+                Ok(i) -> Ok(gleam_int.to_float(i))
+                Error(_) -> Error(Nil)
+              }
           }
         None -> Error(Nil)
       }
@@ -198,27 +204,17 @@ fn extract_float_from_string(s: String) -> Result(Float, Nil) {
 
 /// Extract numeric prefix from a string (handles "100g" -> "100")
 fn extract_numeric_prefix(s: String) -> Option(String) {
-  case string_length(s) {
-    0 -> None
+  let graphemes = gleam_string.to_graphemes(s)
+  case graphemes {
+    [] -> None
     _ -> {
-      // Find the first non-numeric character
-      case find_first_non_numeric(s, 0) {
-        0 -> None
-        pos -> Some(string_substring(s, 0, pos))
-      }
-    }
-  }
-}
-
-/// Find position of first non-numeric character (including decimal point)
-fn find_first_non_numeric(s: String, pos: Int) -> Int {
-  case pos >= string_length(s) {
-    True -> pos
-    False -> {
-      let char = string_get_char_at(s, pos)
-      case char == "." || char == "-" || is_digit(char) {
-        True -> find_first_non_numeric(s, pos + 1)
-        False -> pos
+      let numeric_chars =
+        list.take_while(graphemes, fn(c) {
+          c == "." || c == "-" || is_digit(c)
+        })
+      case numeric_chars {
+        [] -> None
+        chars -> Some(gleam_string.concat(chars))
       }
     }
   }
@@ -357,24 +353,6 @@ fn recipe_category(recipe: mealie.MealieRecipe) -> String {
   }
 }
 
-@external(erlang, "erlang", "float")
-fn int_to_float(n: Int) -> Float
-
-// ============================================================================
-// String helper functions for Mealie nutrition parsing
-// ============================================================================
-
-@external(erlang, "string", "trim")
-fn string_trim(s: String) -> String
-
-@external(erlang, "erlang", "float")
-fn float_parse(s: String) -> Result(Float, Nil)
-
-@external(erlang, "string", "length")
-fn string_length(s: String) -> Int
-
-@external(erlang, "string", "slice")
-fn string_substring(s: String, start: Int, len: Int) -> String
-
-@external(erlang, "string", "sub_string")
-fn string_get_char_at(s: String, pos: Int) -> String
+fn int_to_float(n: Int) -> Float {
+  gleam_int.to_float(n)
+}

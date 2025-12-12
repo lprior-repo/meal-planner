@@ -4,6 +4,9 @@
 /// 1. Create a food log entry with a recipe slug
 /// 2. Validate the recipe exists before saving
 /// 3. Handle errors gracefully when recipe doesn't exist
+import gleam/list
+import gleam/option
+import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/id
@@ -108,8 +111,7 @@ pub fn recipe_not_found_validation_error_test() {
   let error = RecipeNotFound("non-existent-recipe")
   let message = error_to_message(error)
 
-  message
-  |> should.contain("non-existent-recipe")
+  string.contains(message, "non-existent-recipe")
   |> should.be_true()
 }
 
@@ -119,8 +121,7 @@ pub fn user_enters_typo_in_recipe_slug_test() {
   let error = RecipeNotFound(attempted_slug)
   let message = error_to_message(error)
 
-  message
-  |> should.contain("was not found in your recipe database")
+  string.contains(message, "was not found in your recipe database")
   |> should.be_true()
 }
 
@@ -128,8 +129,7 @@ pub fn empty_recipe_slug_validation_test() {
   let error = RecipeNotFound("")
   let message = error_to_message(error)
 
-  message
-  |> should.contain("was not found in your recipe database")
+  string.contains(message, "was not found in your recipe database")
   |> should.be_true()
 }
 
@@ -204,8 +204,7 @@ pub fn common_mealie_recipe_slugs_test() {
 pub fn complex_recipe_slug_test() {
   let complex_slug = "slow-cooked-beef-stew-with-root-vegetables"
 
-  complex_slug
-  |> should.contain("-")
+  string.contains(complex_slug, "-")
   |> should.be_true()
 }
 
@@ -219,8 +218,7 @@ pub fn graceful_error_handling_test() {
   let user_message = error_to_message(error)
 
   // User should get a helpful message
-  user_message
-  |> should.contain("recipe database")
+  string.contains(user_message, "recipe database")
   |> should.be_true()
 }
 
@@ -230,10 +228,7 @@ pub fn validation_prevents_orphaned_logs_test() {
   let invalid_recipe = "non-existent-recipe"
 
   case invalid_recipe {
-    "" -> should.fail("Should not reach here")
+    "" -> False |> should.be_true()
     _ -> True |> should.be_true()
   }
 }
-
-import gleam/list
-import gleam/option
