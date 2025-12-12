@@ -253,10 +253,10 @@ pub fn get_mapping_by_mealie_slug(
   |> pog.returning(mapping_decoder())
   |> pog.execute(db)
   |> result.map_error(fn(err) { DatabaseError(utils.format_pog_error(err)) })
-  |> result.try(fn(pog.Returned(_, rows)) {
-    case rows {
-      [first, ..] -> Ok(first)
-      [] -> Error(NotFound)
+  |> result.try(fn(result) {
+    case result {
+      pog.Returned(_, [first, ..]) -> Ok(first)
+      pog.Returned(_, []) -> Error(NotFound)
     }
   })
 }
@@ -279,10 +279,14 @@ pub fn get_mapping_by_tandoor_id(
   |> pog.returning(mapping_decoder())
   |> pog.execute(db)
   |> result.map_error(fn(err) { DatabaseError(utils.format_pog_error(err)) })
-  |> result.try(fn(pog.Returned(_, rows)) {
-    case rows {
-      [first, ..] -> Ok(first)
-      [] -> Error(NotFound)
+  |> result.try(fn(result) {
+    case result {
+      pog.Returned(_, rows) -> {
+        case rows {
+          [first, ..] -> Ok(first)
+          [] -> Error(NotFound)
+        }
+      }
     }
   })
 }
@@ -305,7 +309,7 @@ pub fn get_all_mappings(
   |> pog.returning(mapping_decoder())
   |> pog.execute(db)
   |> result.map_error(fn(err) { DatabaseError(utils.format_pog_error(err)) })
-  |> result.map(fn(pog.Returned(_, rows)) { rows })
+  |> result.map(fn(result) { case result { pog.Returned(_, rows) } { rows })
 }
 
 /// Get recent mappings (within the last N records)
@@ -327,7 +331,7 @@ pub fn get_recent_mappings(
   |> pog.returning(mapping_decoder())
   |> pog.execute(db)
   |> result.map_error(fn(err) { DatabaseError(utils.format_pog_error(err)) })
-  |> result.map(fn(pog.Returned(_, rows)) { rows })
+  |> result.map(fn(result) { case result { pog.Returned(_, rows) } { rows })
 }
 
 /// Count total mappings by status

@@ -45,27 +45,6 @@ pub fn diet_principle_from_string(s: String) -> Option(DietPrinciple) {
 }
 
 // ============================================================================
-// Recipe Source Types
-// ============================================================================
-
-/// Type of recipe source
-pub type RecipeSourceType {
-  Api
-  Scraper
-  Manual
-}
-
-/// Recipe source configuration
-pub type RecipeSource {
-  RecipeSource(
-    id: String,
-    name: String,
-    source_type: RecipeSourceType,
-    config: Option(String),
-  )
-}
-
-// ============================================================================
 // Auto Planner Configuration
 // ============================================================================
 
@@ -106,7 +85,7 @@ pub fn validate_config(config: AutoPlanConfig) -> Result(Nil, String) {
       Ok(_) ->
         // Check macro targets are positive
         case config.macro_targets {
-          types.Macros(p, f, c) if p <. 0.0 || f <. 0.0 || c <. 0.0 ->
+          Macros(p, f, c) if p <. 0.0 || f <. 0.0 || c <. 0.0 ->
             Error("macro_targets must be positive")
           _ -> Ok(Nil)
         }
@@ -136,29 +115,6 @@ pub type AutoMealPlan {
 
 pub fn diet_principle_to_json(dp: DietPrinciple) -> json.Json {
   json.string(diet_principle_to_string(dp))
-}
-
-pub fn recipe_source_type_to_string(rst: RecipeSourceType) -> String {
-  case rst {
-    Database -> "database"
-    Api -> "api"
-    UserProvided -> "user_provided"
-  }
-}
-
-pub fn recipe_source_to_json(rs: RecipeSource) -> json.Json {
-  let base = [
-    #("id", json.string(rs.id)),
-    #("name", json.string(rs.name)),
-    #("type", json.string(recipe_source_type_to_string(rs.source_type))),
-  ]
-
-  let fields = case rs.config {
-    Some(cfg) -> [#("config", json.string(cfg)), ..base]
-    None -> base
-  }
-
-  json.object(fields)
 }
 
 pub fn auto_plan_config_to_json(config: AutoPlanConfig) -> json.Json {
@@ -215,28 +171,5 @@ pub fn auto_plan_config_decoder() -> Decoder(AutoPlanConfig) {
     macro_targets: macro_targets,
     recipe_count: recipe_count,
     variety_factor: variety_factor,
-  ))
-}
-
-pub fn recipe_source_type_decoder() -> Decoder(RecipeSourceType) {
-  use s <- decode.then(decode.string)
-  case s {
-    "database" -> decode.success(Database)
-    "api" -> decode.success(Api)
-    "user_provided" -> decode.success(UserProvided)
-    _ -> decode.failure(Database, "RecipeSourceType")
-  }
-}
-
-pub fn recipe_source_decoder() -> Decoder(RecipeSource) {
-  use name <- decode.field("name", decode.string)
-  use source_type <- decode.field("type", recipe_source_type_decoder())
-  use config <- decode.field("config", decode.optional(decode.string))
-
-  decode.success(RecipeSource(
-    id: "generated-id",
-    name: name,
-    source_type: source_type,
-    config: config,
   ))
 }
