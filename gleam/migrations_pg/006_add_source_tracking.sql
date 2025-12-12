@@ -3,10 +3,11 @@
 -- - 'recipe': From recipes table
 -- - 'custom_food': From custom_foods table
 -- - 'usda_food': From USDA database (foods/food_nutrients tables)
+-- - 'tandoor_recipe': From Tandoor external recipes database
 
 -- Add source_type column with CHECK constraint
 ALTER TABLE food_logs ADD COLUMN source_type TEXT
-    CHECK (source_type IN ('recipe', 'custom_food', 'usda_food'));
+    CHECK (source_type IN ('recipe', 'custom_food', 'usda_food', 'tandoor_recipe'));
 
 -- Add source_id column (stores ID as TEXT for flexibility)
 ALTER TABLE food_logs ADD COLUMN source_id TEXT;
@@ -28,5 +29,5 @@ CREATE INDEX idx_food_logs_source ON food_logs(source_type, source_id);
 CREATE INDEX IF NOT EXISTS idx_food_logs_date ON food_logs(date);
 
 -- Add comment for documentation
-COMMENT ON COLUMN food_logs.source_type IS 'Source of logged food: recipe, custom_food, or usda_food';
+COMMENT ON COLUMN food_logs.source_type IS 'Source of logged food: recipe, custom_food, usda_food, or tandoor_recipe';
 COMMENT ON COLUMN food_logs.source_id IS 'ID of the source food item (recipe_id, custom_food_id, or fdc_id as text)';
