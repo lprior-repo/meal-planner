@@ -1,5 +1,9 @@
 # Change: Complete Mealie Codebase Cleanup
 
+## Status: COMPLETED (2025-12-12)
+
+This proposal has been implemented. Mealie has been completely removed from the codebase.
+
 ## Why
 While Mealie source files and Docker containers have been removed, the codebase is still littered with Mealie references in:
 - Import statements and type references
@@ -10,6 +14,30 @@ While Mealie source files and Docker containers have been removed, the codebase 
 - API comments and function names
 
 This creates confusion, prevents successful builds, and leaves dead code that could mislead future development. A comprehensive cleanup is needed to fully remove all Mealie integration code.
+
+## What Was Actually Completed
+
+### Fully Completed
+- Deleted entire `gleam/src/meal_planner/mealie/` directory (7 files, 3500+ LOC)
+- Deleted all Mealie test files (11 files)
+- Deleted all Mealie-specific documentation (5+ files)
+- Deleted example files that used Mealie API
+- Removed Mealie Docker container configuration
+- Replaced MEALIE env vars with TANDOOR in .env files
+- Created migration 025 to rename `mealie_recipe` to `tandoor_recipe`
+- Renamed `mealie_enrichment.gleam` to `tandoor_enrichment.gleam`
+- Updated test fixtures to use `tandoor_recipe`
+
+### Remaining References (Intentional)
+Most remaining "mealie" references are historical and should be preserved:
+- **Database migrations (019, 020, 022, 024, 025)** - Historical record of schema evolution
+- **Migration comments** - Document the rename from mealie_recipe to tandoor_recipe
+- **Rollback scripts** - Reference old mealie_recipe values for rollback purposes
+- **Test files** - Migration tests verify historical migrations work correctly
+- **Documentation** - Historical context in ROLLBACK_PROCEDURE.md, etc.
+- **Backup files** (.bak, .backup, .skip) - Can be deleted during general cleanup
+
+Total remaining: ~1092 occurrences across 59 files, mostly in migrations and historical docs.
 
 ## What Changes
 - **BREAKING**: Remove all Mealie type imports and replace with Tandoor equivalents
