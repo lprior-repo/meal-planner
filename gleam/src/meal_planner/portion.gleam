@@ -10,7 +10,7 @@ import gleam/option.{type Option, None, Some}
 import meal_planner/id
 import meal_planner/mealie/types as mealie
 import meal_planner/types.{
-  type FodmapLevel, type Macros, type Recipe, Low, Macros, Recipe, macros_calories, macros_scale,
+  type FodmapLevel, type Macros, type Recipe, Low macros_calories, macros_scale,
   
 }
 
