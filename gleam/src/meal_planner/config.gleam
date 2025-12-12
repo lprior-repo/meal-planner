@@ -66,10 +66,10 @@ pub type Config {
 /// - DATABASE_POOL_SIZE (default: 10)
 /// - PORT (default: 8080)
 /// - ENVIRONMENT (default: development)
-/// - MEALIE_BASE_URL (default: http://localhost:9000)
-/// - MEALIE_API_TOKEN (required in production)
-/// - MEALIE_CONNECT_TIMEOUT_MS (default: 5000)
-/// - MEALIE_REQUEST_TIMEOUT_MS (default: 30000)
+/// - TANDOOR_BASE_URL (default: http://localhost:8000)
+/// - TANDOOR_API_TOKEN (required in production)
+/// - TANDOOR_CONNECT_TIMEOUT_MS (default: 5000)
+/// - TANDOOR_REQUEST_TIMEOUT_MS (default: 30000)
 /// - TODOIST_API_KEY (optional)
 /// - USDA_API_KEY (optional)
 /// - OPENAI_API_KEY (optional)
@@ -103,20 +103,20 @@ pub fn load() -> Config {
       environment: result.unwrap(envoy.get("ENVIRONMENT"), "development"),
     )
 
-  let mealie =
-    MealieConfig(
+  let tandoor =
+    TandoorConfig(
       base_url: result.unwrap(
-        envoy.get("MEALIE_BASE_URL"),
-        "http://localhost:9000",
+        envoy.get("TANDOOR_BASE_URL"),
+        "http://localhost:8000",
       ),
-      api_token: result.unwrap(envoy.get("MEALIE_API_TOKEN"), ""),
+      api_token: result.unwrap(envoy.get("TANDOOR_API_TOKEN"), ""),
       connect_timeout_ms: result.unwrap(
-        envoy.get("MEALIE_CONNECT_TIMEOUT_MS")
+        envoy.get("TANDOOR_CONNECT_TIMEOUT_MS")
           |> result.try(int.parse),
         5000,
       ),
       request_timeout_ms: result.unwrap(
-        envoy.get("MEALIE_REQUEST_TIMEOUT_MS")
+        envoy.get("TANDOOR_REQUEST_TIMEOUT_MS")
           |> result.try(int.parse),
         30_000,
       ),
@@ -133,7 +133,7 @@ pub fn load() -> Config {
   Config(
     database: database,
     server: server,
-    mealie: mealie,
+    tandoor: tandoor,
     external_services: external_services,
   )
 }
@@ -143,7 +143,7 @@ pub fn load() -> Config {
 /// Returns True if all required production settings are configured
 pub fn is_production_ready(config: Config) -> Bool {
   config.server.environment == "production"
-  && config.mealie.api_token != ""
+  && config.tandoor.api_token != ""
   && config.database.password != ""
 }
 
@@ -167,9 +167,9 @@ pub fn database_url(config: Config) -> String {
   <> config.database.name
 }
 
-/// Check if Mealie integration is configured
-pub fn has_mealie_integration(config: Config) -> Bool {
-  config.mealie.api_token != ""
+/// Check if Tandoor integration is configured
+pub fn has_tandoor_integration(config: Config) -> Bool {
+  config.tandoor.api_token != ""
 }
 
 /// Check if OpenAI integration is configured

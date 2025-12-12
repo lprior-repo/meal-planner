@@ -1,4 +1,4 @@
-/// Tests for food log API with Mealie recipe slugs
+/// Tests for food log API with recipe data
 import gleam/list
 import gleam/option.{None, Some}
 import gleeunit
@@ -13,7 +13,7 @@ pub fn main() {
 // Tests
 // ============================================================================
 
-/// Test that FoodLogInput can be created with valid Mealie slug
+/// Test that FoodLogInput can be created with valid recipe slug
 pub fn test_create_food_log_input_valid_slug() {
   let input =
     logs.FoodLogInput(
@@ -191,7 +191,7 @@ pub fn test_food_log_input_iso_date_format() {
 }
 
 /// Test recipe slug with hyphens and lowercase
-pub fn test_food_log_mealie_slug_formats() {
+pub fn test_food_log_recipe_slug_formats() {
   let slugs = [
     "chicken-stir-fry",
     "grilled-salmon",

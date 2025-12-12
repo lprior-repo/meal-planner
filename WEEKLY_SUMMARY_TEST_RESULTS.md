@@ -28,12 +28,12 @@ Components:
 
 ## Test Scenarios
 
-### Scenario 1: Generate Weekly Summary with Mealie Recipes
-**Objective:** Verify weekly meal plan generation from Mealie recipes
+### Scenario 1: Generate Weekly Summary with Tandoor Recipes
+**Objective:** Verify weekly meal plan generation from Tandoor recipes
 
 **Steps:**
-1. Start Docker services (PostgreSQL + Mealie)
-2. Initialize Mealie with sample recipes
+1. Start Docker services (PostgreSQL + Tandoor)
+2. Initialize Tandoor with sample recipes
 3. Call `/api/meal-plan` POST endpoint
 4. Verify response contains 7 days of meals
 5. Validate each day has correct recipe metadata
@@ -43,8 +43,8 @@ Components:
 - Response includes `type: "meal_plan"`
 - `total_days: 7`
 - Each day contains meals with recipe metadata
-- All recipes sourced from Mealie API
-- Metadata shows generation source as "mealie_api"
+- All recipes sourced from Tandoor API
+- Metadata shows generation source as "tandoor_api"
 
 ### Scenario 2: Macro Calculations in Weekly Summary
 **Objective:** Verify accurate macro calculations for the entire week
@@ -57,7 +57,7 @@ Components:
 5. Check meal-per-day allocation
 
 **Expected Results:**
-- Macros accurately reflect Mealie recipe data
+- Macros accurately reflect Tandoor recipe data
 - Weekly totals are sum of all days
 - Per-day average is realistic
 - Macro distribution follows Vertical Diet if applicable

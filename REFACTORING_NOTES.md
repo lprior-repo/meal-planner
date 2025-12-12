@@ -25,18 +25,18 @@ pub type DatabaseConfig {
   DatabaseConfig(host: String, port: Int, name: String, user: String, password: String)
 }
 
-pub type MealieConfig {
-  MealieConfig(url: String, token: String)
+pub type TandoorConfig {
+  TandoorConfig(url: String, token: String)
 }
 
 pub type ServerConfig {
-  ServerConfig(port: Int, database: DatabaseConfig, mealie: MealieConfig)
+  ServerConfig(port: Int, database: DatabaseConfig, tandoor: TandoorConfig)
 }
 ```
 
 **Benefits:**
 - Logical grouping of related configuration
-- Easier to extend database or Mealie config independently
+- Easier to extend database or Tandoor config independently
 - Better encapsulation and single responsibility
 
 ### 2. Config (config.gleam) - 14 parameters → 4 grouped records
@@ -52,8 +52,8 @@ pub type Config {
     database_pool_size: Int,
     port: Int,
     environment: String,
-    mealie_base_url: String,
-    mealie_api_token: String,
+    tandoor_base_url: String,
+    tandoor_api_token: String,
     todoist_api_key: String,
     usda_api_key: String,
     openai_api_key: String,
@@ -72,8 +72,8 @@ pub type ServerConfig {
   ServerConfig(port: Int, environment: String)
 }
 
-pub type MealieConfig {
-  MealieConfig(base_url: String, api_token: String)
+pub type TandoorConfig {
+  TandoorConfig(base_url: String, api_token: String)
 }
 
 pub type ExternalServicesConfig {
@@ -89,7 +89,7 @@ pub type Config {
   Config(
     database: DatabaseConfig,
     server: ServerConfig,
-    mealie: MealieConfig,
+    tandoor: TandoorConfig,
     external_services: ExternalServicesConfig,
   )
 }

@@ -1,9 +1,8 @@
 /// Meal selection logic following Vertical Diet distribution guidelines
 ///
-/// This module works with Recipe domain types (converted from MealieRecipe via
-/// mealie/mapper). All meal selection algorithms operate on the internal Recipe
-/// type, regardless of whether the recipe originated from Mealie, a local database,
-/// or any other source.
+/// This module works with Recipe domain types from any source (Tandoor, local database,
+/// or other recipe providers). All meal selection algorithms operate on the internal
+/// Recipe type, regardless of origin.
 import gleam/list
 import gleam/string
 import meal_planner/types.{type Recipe, is_vertical_diet_compliant}
