@@ -1,4 +1,9 @@
 /// Portion calculation module for scaling recipes to hit macro targets
+///
+/// This module works with Recipe domain types (converted from MealieRecipe via
+/// mealie/mapper). Portion calculations are source-agnostic - they work with any
+/// Recipe regardless of origin (Mealie, custom, etc).
+///
 /// Ported from Go implementation in main.go
 import gleam/list
 import meal_planner/types.{type Macros, type Recipe, Macros}
