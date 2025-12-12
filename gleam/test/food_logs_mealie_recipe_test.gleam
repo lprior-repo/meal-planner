@@ -33,8 +33,8 @@ pub fn test_mealie_recipe_is_legacy_source_type() {
 pub fn test_food_log_entry_with_mealie_recipe_source_type() {
   let entry =
     types.FoodLogEntry(
-      id: meal_planner/id.log_entry_id("mealie-123-456"),
-      recipe_id: meal_planner/id.recipe_id("chicken-stir-fry"),
+      id: id.log_entry_id("mealie-123-456"),
+      recipe_id: id.recipe_id("chicken-stir-fry"),
       recipe_name: "Chicken Stir Fry",
       servings: 1.5,
       macros: types.Macros(protein: 35.5, fat: 12.3, carbs: 45.2),
@@ -56,8 +56,8 @@ pub fn test_food_log_entry_with_mealie_recipe_source_type() {
 pub fn test_mealie_recipe_log_with_micronutrients() {
   let entry =
     types.FoodLogEntry(
-      id: meal_planner/id.log_entry_id("mealie-789-001"),
-      recipe_id: meal_planner/id.recipe_id("salmon-bowl"),
+      id: id.log_entry_id("mealie-789-001"),
+      recipe_id: id.recipe_id("salmon-bowl"),
       recipe_name: "Salmon Bowl",
       servings: 2.0,
       macros: types.Macros(protein: 45.0, fat: 18.0, carbs: 55.0),
@@ -111,8 +111,8 @@ pub fn test_mealie_recipe_log_with_micronutrients() {
 pub fn test_multiple_mealie_recipe_meal_types() {
   let breakfast_entry =
     types.FoodLogEntry(
-      id: meal_planner/id.log_entry_id("mealie-breakfast-001"),
-      recipe_id: meal_planner/id.recipe_id("oatmeal-berries"),
+      id: id.log_entry_id("mealie-breakfast-001"),
+      recipe_id: id.recipe_id("oatmeal-berries"),
       recipe_name: "Oatmeal with Berries",
       servings: 1.0,
       macros: types.Macros(protein: 12.0, fat: 5.0, carbs: 48.0),
@@ -125,8 +125,8 @@ pub fn test_multiple_mealie_recipe_meal_types() {
 
   let lunch_entry =
     types.FoodLogEntry(
-      id: meal_planner/id.log_entry_id("mealie-lunch-001"),
-      recipe_id: meal_planner/id.recipe_id("turkey-sandwich"),
+      id: id.log_entry_id("mealie-lunch-001"),
+      recipe_id: id.recipe_id("turkey-sandwich"),
       recipe_name: "Turkey Sandwich",
       servings: 1.0,
       macros: types.Macros(protein: 28.0, fat: 8.0, carbs: 35.0),
@@ -139,8 +139,8 @@ pub fn test_multiple_mealie_recipe_meal_types() {
 
   let dinner_entry =
     types.FoodLogEntry(
-      id: meal_planner/id.log_entry_id("mealie-dinner-001"),
-      recipe_id: meal_planner/id.recipe_id("grilled-salmon"),
+      id: id.log_entry_id("mealie-dinner-001"),
+      recipe_id: id.recipe_id("grilled-salmon"),
       recipe_name: "Grilled Salmon",
       servings: 1.5,
       macros: types.Macros(protein: 42.0, fat: 20.0, carbs: 5.0),
@@ -153,8 +153,8 @@ pub fn test_multiple_mealie_recipe_meal_types() {
 
   let snack_entry =
     types.FoodLogEntry(
-      id: meal_planner/id.log_entry_id("mealie-snack-001"),
-      recipe_id: meal_planner/id.recipe_id("greek-yogurt"),
+      id: id.log_entry_id("mealie-snack-001"),
+      recipe_id: id.recipe_id("greek-yogurt"),
       recipe_name: "Greek Yogurt",
       servings: 1.0,
       macros: types.Macros(protein: 20.0, fat: 3.0, carbs: 6.0),
@@ -196,8 +196,8 @@ pub fn test_multiple_mealie_recipe_meal_types() {
 pub fn test_mealie_recipe_vs_tandoor_recipe_distinction() {
   let mealie_entry =
     types.FoodLogEntry(
-      id: meal_planner/id.log_entry_id("mealie-123"),
-      recipe_id: meal_planner/id.recipe_id("curry"),
+      id: id.log_entry_id("mealie-123"),
+      recipe_id: id.recipe_id("curry"),
       recipe_name: "Curry",
       servings: 1.0,
       macros: types.Macros(protein: 20.0, fat: 10.0, carbs: 30.0),
@@ -210,8 +210,8 @@ pub fn test_mealie_recipe_vs_tandoor_recipe_distinction() {
 
   let tandoor_entry =
     types.FoodLogEntry(
-      id: meal_planner/id.log_entry_id("tandoor-123"),
-      recipe_id: meal_planner/id.recipe_id("curry"),
+      id: id.log_entry_id("tandoor-123"),
+      recipe_id: id.recipe_id("curry"),
       recipe_name: "Curry",
       servings: 1.0,
       macros: types.Macros(protein: 20.0, fat: 10.0, carbs: 30.0),
@@ -245,10 +245,10 @@ pub fn test_mealie_recipe_slug_formats() {
 
   let entries =
     recipe_slugs
-    |> gleam/list.map(fn(slug) {
+    |> list.map(fn(slug) {
       types.FoodLogEntry(
-        id: meal_planner/id.log_entry_id("mealie-" <> slug),
-        recipe_id: meal_planner/id.recipe_id(slug),
+        id: id.log_entry_id("mealie-" <> slug),
+        recipe_id: id.recipe_id(slug),
         recipe_name: slug,
         servings: 1.0,
         macros: types.Macros(protein: 20.0, fat: 10.0, carbs: 30.0),
@@ -262,7 +262,7 @@ pub fn test_mealie_recipe_slug_formats() {
 
   // Verify all entries have mealie_recipe source_type
   entries
-  |> gleam/list.each(fn(entry) {
+  |> list.each(fn(entry) {
     entry.source_type
     |> should.equal("mealie_recipe")
   })
@@ -272,8 +272,8 @@ pub fn test_mealie_recipe_slug_formats() {
 pub fn test_mealie_recipe_minimal_data() {
   let entry =
     types.FoodLogEntry(
-      id: meal_planner/id.log_entry_id("mealie-minimal"),
-      recipe_id: meal_planner/id.recipe_id("test-recipe"),
+      id: id.log_entry_id("mealie-minimal"),
+      recipe_id: id.recipe_id("test-recipe"),
       recipe_name: "Test Recipe",
       servings: 1.0,
       macros: types.Macros(protein: 10.0, fat: 5.0, carbs: 15.0),
@@ -302,8 +302,8 @@ pub fn test_mealie_recipe_minimal_data() {
 pub fn test_mealie_recipe_maximum_data() {
   let entry =
     types.FoodLogEntry(
-      id: meal_planner/id.log_entry_id("mealie-maximum-data"),
-      recipe_id: meal_planner/id.recipe_id("premium-steak"),
+      id: id.log_entry_id("mealie-maximum-data"),
+      recipe_id: id.recipe_id("premium-steak"),
       recipe_name: "Premium Steak with Sides",
       servings: 2.0,
       macros: types.Macros(protein: 60.0, fat: 35.0, carbs: 40.0),
@@ -372,8 +372,8 @@ pub fn test_mealie_recipe_maximum_data() {
 pub fn test_mealie_recipe_backward_compatibility() {
   let old_mealie_log =
     types.FoodLogEntry(
-      id: meal_planner/id.log_entry_id("mealie-legacy-001"),
-      recipe_id: meal_planner/id.recipe_id("legacy-recipe"),
+      id: id.log_entry_id("mealie-legacy-001"),
+      recipe_id: id.recipe_id("legacy-recipe"),
       recipe_name: "Legacy Recipe from Mealie",
       servings: 1.5,
       macros: types.Macros(protein: 25.0, fat: 12.0, carbs: 40.0),
