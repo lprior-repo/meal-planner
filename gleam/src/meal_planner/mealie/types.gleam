@@ -651,6 +651,67 @@ pub fn meal_plan_entry_to_json(entry: MealieMealPlanEntry) -> Json {
   ])
 }
 
+/// Encode MealieCategory to JSON
+pub fn category_to_json(c: MealieCategory) -> Json {
+  json.object([
+    #("id", json.string(c.id)),
+    #("name", json.string(c.name)),
+    #("slug", json.string(c.slug)),
+  ])
+}
+
+/// Encode MealieTag to JSON
+pub fn tag_to_json(t: MealieTag) -> Json {
+  json.object([
+    #("id", json.string(t.id)),
+    #("name", json.string(t.name)),
+    #("slug", json.string(t.slug)),
+  ])
+}
+
+/// Encode MealieRecipe to JSON
+pub fn recipe_to_json(r: MealieRecipe) -> Json {
+  let optional_string = fn(opt) {
+    case opt {
+      Some(v) -> json.string(v)
+      None -> json.null()
+    }
+  }
+  let optional_int = fn(opt) {
+    case opt {
+      Some(v) -> json.int(v)
+      None -> json.null()
+    }
+  }
+
+  json.object([
+    #("id", json.string(r.id)),
+    #("slug", json.string(r.slug)),
+    #("name", json.string(r.name)),
+    #("description", optional_string(r.description)),
+    #("image", optional_string(r.image)),
+    #("recipeYield", optional_string(r.recipe_yield)),
+    #("totalTime", optional_string(r.total_time)),
+    #("prepTime", optional_string(r.prep_time)),
+    #("cookTime", optional_string(r.cook_time)),
+    #("rating", optional_int(r.rating)),
+    #("orgUrl", optional_string(r.org_url)),
+    #("recipeIngredient", json.array(r.recipe_ingredient, ingredient_to_json)),
+    #(
+      "recipeInstructions",
+      json.array(r.recipe_instructions, instruction_to_json),
+    ),
+    #("recipeCategory", json.array(r.recipe_category, category_to_json)),
+    #("tags", json.array(r.tags, tag_to_json)),
+    #("nutrition", case r.nutrition {
+      Some(n) -> nutrition_to_json(n)
+      None -> json.null()
+    }),
+    #("dateAdded", optional_string(r.date_added)),
+    #("dateUpdated", optional_string(r.date_updated)),
+  ])
+}
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
