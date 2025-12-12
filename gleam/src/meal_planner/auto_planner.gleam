@@ -114,20 +114,15 @@ fn is_recipe_compliant_with_principle(
     auto_types.VerticalDiet ->
       recipe.vertical_compliant && recipe.fodmap_level == types.Low
 
-    auto_types.TimFerriss ->
-      recipe.fodmap_level == types.Low
+    auto_types.TimFerriss -> recipe.fodmap_level == types.Low
 
-    auto_types.Paleo ->
-      recipe.fodmap_level == types.Low
+    auto_types.Paleo -> recipe.fodmap_level == types.Low
 
-    auto_types.Keto ->
-      recipe.fodmap_level == types.Low
+    auto_types.Keto -> recipe.fodmap_level == types.Low
 
-    auto_types.Mediterranean ->
-      recipe.fodmap_level == types.Low
+    auto_types.Mediterranean -> recipe.fodmap_level == types.Low
 
-    auto_types.HighProtein ->
-      True
+    auto_types.HighProtein -> True
   }
 }
 

@@ -3,7 +3,6 @@
 /// This module provides validation functions to ensure recipe slugs are valid
 /// and exist in the Mealie database before they are logged to the meal planner.
 /// This prevents orphaned log entries with non-existent recipes.
-
 import gleam/list
 import gleam/result
 import meal_planner/config.{type Config}
@@ -63,8 +62,9 @@ pub fn validate_recipe_slug(
       Error(client.MealieUnavailable(msg)) -> Error(ServiceUnavailable(msg))
       Error(client.HttpError(msg)) -> Error(ConnectionError(msg))
       Error(client.DecodeError(msg)) -> Error(ConnectionError(msg))
-      Error(client.ApiError(api_err)) -> Error(ServiceUnavailable(api_err.message))
-    }
+      Error(client.ApiError(api_err)) ->
+        Error(ServiceUnavailable(api_err.message))
+    },
   )
 
   Ok(resolved_slug)

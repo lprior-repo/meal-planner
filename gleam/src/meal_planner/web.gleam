@@ -298,7 +298,10 @@ fn meal_plan_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
           let body =
             json.object([
               #("error", json.string("No recipes available in Mealie")),
-              #("message", json.string("Cannot generate meal plan without recipes")),
+              #(
+                "message",
+                json.string("Cannot generate meal plan without recipes"),
+              ),
             ])
             |> json.to_string
 
@@ -309,8 +312,8 @@ fn meal_plan_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
           let daily_meals =
             list.index_map(selected_recipes, fn(recipe, day_index) {
               let _day_names = [
-                "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
-                "Sunday",
+                "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+                "Saturday", "Sunday",
               ]
               let day_name = case day_index {
                 0 -> "Monday"
@@ -334,20 +337,14 @@ fn meal_plan_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
                       #("recipe_id", json.string(r.id)),
                       #("recipe_name", json.string(r.name)),
                       #("recipe_slug", json.string(r.slug)),
-                      #(
-                        "image",
-                        case r.image {
-                          Some(img) -> json.string(img)
-                          None -> json.null()
-                        },
-                      ),
-                      #(
-                        "yield",
-                        case r.recipe_yield {
-                          Some(y) -> json.string(y)
-                          None -> json.null()
-                        },
-                      ),
+                      #("image", case r.image {
+                        Some(img) -> json.string(img)
+                        None -> json.null()
+                      }),
+                      #("yield", case r.recipe_yield {
+                        Some(y) -> json.string(y)
+                        None -> json.null()
+                      }),
                     ])
                   }),
                 ),
@@ -418,8 +415,14 @@ fn vertical_diet_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
               #("recipe_name", json.string(recipe.name)),
               #("compliant", json.bool(compliance.compliant)),
               #("score", json.int(compliance.score)),
-              #("reasons", json.array(compliance.reasons, fn(r) { json.string(r) })),
-              #("recommendations", json.array(compliance.recommendations, fn(r) { json.string(r) })),
+              #(
+                "reasons",
+                json.array(compliance.reasons, fn(r) { json.string(r) }),
+              ),
+              #(
+                "recommendations",
+                json.array(compliance.recommendations, fn(r) { json.string(r) }),
+              ),
               #("mealie_url", json.string(app_config.mealie.base_url)),
             ])
             |> json.to_string
@@ -434,7 +437,10 @@ fn vertical_diet_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
         json.object([
           #("error", json.string("Invalid request format")),
           #("message", json.string(err_msg)),
-          #("details", json.string("Expected JSON body with 'recipe_slug' field")),
+          #(
+            "details",
+            json.string("Expected JSON body with 'recipe_slug' field"),
+          ),
         ])
         |> json.to_string
 
@@ -452,10 +458,10 @@ fn extract_recipe_slug(body: dynamic.Dynamic) -> Result(String, String) {
 
   case decode.run(body, decoder) {
     Ok(slug) -> Ok(slug)
-    Error(_) -> Error("Missing required field: 'recipe_slug' (must be a string)")
+    Error(_) ->
+      Error("Missing required field: 'recipe_slug' (must be a string)")
   }
 }
-
 
 /// Recipe search endpoint
 /// GET /api/recipes/search?q={query}
@@ -583,9 +589,9 @@ fn recipe_slug_handler(
             Some(u) -> json.string(u)
             None -> json.null()
           }),
-          #("recipe_ingredient", json.array(
-            recipe.recipe_ingredient,
-            fn(ing) {
+          #(
+            "recipe_ingredient",
+            json.array(recipe.recipe_ingredient, fn(ing) {
               json.object([
                 #("reference_id", json.string(ing.reference_id)),
                 #("quantity", case ing.quantity {
@@ -617,11 +623,11 @@ fn recipe_slug_handler(
                 #("disable_amount", json.bool(ing.disable_amount)),
                 #("display", json.string(ing.display)),
               ])
-            },
-          )),
-          #("recipe_instructions", json.array(
-            recipe.recipe_instructions,
-            fn(instr) {
+            }),
+          ),
+          #(
+            "recipe_instructions",
+            json.array(recipe.recipe_instructions, fn(instr) {
               json.object([
                 #("id", json.string(instr.id)),
                 #("title", case instr.title {
@@ -630,25 +636,28 @@ fn recipe_slug_handler(
                 }),
                 #("text", json.string(instr.text)),
               ])
-            },
-          )),
-          #("recipe_category", json.array(
-            recipe.recipe_category,
-            fn(cat) {
+            }),
+          ),
+          #(
+            "recipe_category",
+            json.array(recipe.recipe_category, fn(cat) {
               json.object([
                 #("id", json.string(cat.id)),
                 #("name", json.string(cat.name)),
                 #("slug", json.string(cat.slug)),
               ])
-            },
-          )),
-          #("tags", json.array(recipe.tags, fn(tag) {
-            json.object([
-              #("id", json.string(tag.id)),
-              #("name", json.string(tag.name)),
-              #("slug", json.string(tag.slug)),
-            ])
-          })),
+            }),
+          ),
+          #(
+            "tags",
+            json.array(recipe.tags, fn(tag) {
+              json.object([
+                #("id", json.string(tag.id)),
+                #("name", json.string(tag.name)),
+                #("slug", json.string(tag.slug)),
+              ])
+            }),
+          ),
           #("nutrition", case recipe.nutrition {
             Some(n) ->
               json.object([

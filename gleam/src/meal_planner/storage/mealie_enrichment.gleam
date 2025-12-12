@@ -100,8 +100,7 @@ pub fn enrich_entries_with_mealie_data_batch(
             case entry.source_type {
               "mealie_recipe" -> {
                 case dict.get(recipe_map, entry.source_id) {
-                  Ok(recipe) ->
-                    FoodLogEntry(..entry, recipe_name: recipe.name)
+                  Ok(recipe) -> FoodLogEntry(..entry, recipe_name: recipe.name)
 
                   Error(_) -> entry
                 }

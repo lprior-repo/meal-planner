@@ -758,7 +758,8 @@ pub fn property_protein_preservation_test() {
 
   // Allow small floating-point rounding errors (within 0.01)
   let difference = float.absolute_value(macros.protein -. expected)
-  difference <. 0.01
+  difference
+  <. 0.01
   |> should.be_true()
 }
 
@@ -784,7 +785,8 @@ pub fn property_fat_preservation_test() {
   let expected = string.trim(fat_str) |> float.parse |> result.unwrap(0.0)
 
   let difference = float.absolute_value(macros.fat -. expected)
-  difference <. 0.01
+  difference
+  <. 0.01
   |> should.be_true()
 }
 
@@ -810,7 +812,8 @@ pub fn property_carbs_preservation_test() {
   let expected = string.trim(carbs_str) |> float.parse |> result.unwrap(0.0)
 
   let difference = float.absolute_value(macros.carbs -. expected)
-  difference <. 0.01
+  difference
+  <. 0.01
   |> should.be_true()
 }
 
@@ -836,17 +839,20 @@ pub fn property_all_macros_preserved_test() {
 
   // Verify protein
   let protein_diff = float.absolute_value(macros.protein -. protein_str)
-  protein_diff <. 0.01
+  protein_diff
+  <. 0.01
   |> should.be_true()
 
   // Verify fat
   let fat_diff = float.absolute_value(macros.fat -. fat_str)
-  fat_diff <. 0.01
+  fat_diff
+  <. 0.01
   |> should.be_true()
 
   // Verify carbs
   let carbs_diff = float.absolute_value(macros.carbs -. carbs_str)
-  carbs_diff <. 0.01
+  carbs_diff
+  <. 0.01
   |> should.be_true()
 }
 
@@ -961,28 +967,29 @@ pub fn property_macros_survive_recipe_conversion_test() {
 
   // Verify macros survived conversion
   let protein_diff = float.absolute_value(recipe.macros.protein -. protein_val)
-  protein_diff <. 0.01
+  protein_diff
+  <. 0.01
   |> should.be_true()
 
   let fat_diff = float.absolute_value(recipe.macros.fat -. fat_val)
-  fat_diff <. 0.01
+  fat_diff
+  <. 0.01
   |> should.be_true()
 
   let carbs_diff = float.absolute_value(recipe.macros.carbs -. carbs_val)
-  carbs_diff <. 0.01
+  carbs_diff
+  <. 0.01
   |> should.be_true()
 }
 
 /// Property: Invalid macro strings safely default to 0
 /// Non-numeric strings should parse to 0 without errors
 pub fn property_invalid_macros_default_to_zero_test() {
-  use invalid_str <- qcheck.given(
-    gen.string(
-      gen.element(["a", "b", "x", "!", "@", "recipe", "xyz", "none"]),
-      1,
-      5,
-    ),
-  )
+  use invalid_str <- qcheck.given(gen.string(
+    gen.element(["a", "b", "x", "!", "@", "recipe", "xyz", "none"]),
+    1,
+    5,
+  ))
 
   let nutrition =
     mealie.MealieNutrition(
