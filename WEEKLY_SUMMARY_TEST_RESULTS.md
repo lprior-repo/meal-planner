@@ -424,7 +424,7 @@ Currently all meals are "dinner". Should support:
 
 **Strengths:**
 - Proper error handling with retry logic
-- Fallback behavior for Mealie unavailability
+- Fallback behavior for Tandoor unavailability
 - Clean JSON response structure
 - Includes metadata about generation source
 - Proper HTTP status codes
@@ -460,7 +460,7 @@ Currently all meals are "dinner". Should support:
 ## Recommendations
 
 ### For Testing
-1. Set up local Mealie instance with sample recipes
+1. Set up local Tandoor instance with sample recipes
 2. Use curl or Postman for API endpoint testing
 3. Implement integration tests in Gleam test suite
 4. Add E2E tests for full workflow
