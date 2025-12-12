@@ -61,9 +61,8 @@ pub const min_limit = 1
 /// Create a cursor from an integer offset
 /// This uses a simple base64-like encoding that's URL-safe
 pub fn encode_cursor(offset: Int) -> Cursor {
-  offset
-  |> int.to_string
-  |> string.concat(["offset:", _])
+  let offset_str = int.to_string(offset)
+  "offset:" <> offset_str
 }
 
 /// Decode a cursor to get the integer offset
