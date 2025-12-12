@@ -12,8 +12,7 @@ import meal_planner/id
 import meal_planner/storage.{type StorageError}
 import meal_planner/storage/profile.{DatabaseError, NotFound}
 import meal_planner/types.{
-  type Recipe, High, Ingredient, Low, Macros, Medium, Recipe, recipe_to_json,
-  recipe_decoder,
+  type Recipe, Macros, recipe_to_json, recipe_decoder,
 }
 import pog
 
@@ -141,6 +140,7 @@ pub fn get_auto_plan(
                 generated_at: generated_at,
                 total_macros: total_macros,
                 config: config,
+                recipe_json: recipe_json,
               ))
           }
         }
