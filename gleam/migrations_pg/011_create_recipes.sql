@@ -1,3 +1,4 @@
+-- OBSOLETE: This migration is no longer used.
 -- Migration: Create recipes table with simplified structure for recipe management
 -- This table stores user-created and curated recipes with macro nutritional data
 
