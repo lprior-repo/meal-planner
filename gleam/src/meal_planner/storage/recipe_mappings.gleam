@@ -309,7 +309,7 @@ pub fn get_all_mappings(
   |> pog.returning(mapping_decoder())
   |> pog.execute(db)
   |> result.map_error(fn(err) { DatabaseError(utils.format_pog_error(err)) })
-  |> result.map(fn(result) { case result { pog.Returned(_, rows) } { rows })
+  |> result.map(fn(result) { case result { pog.Returned(_, rows) -> rows } })
 }
 
 /// Get recent mappings (within the last N records)
@@ -331,7 +331,7 @@ pub fn get_recent_mappings(
   |> pog.returning(mapping_decoder())
   |> pog.execute(db)
   |> result.map_error(fn(err) { DatabaseError(utils.format_pog_error(err)) })
-  |> result.map(fn(result) { case result { pog.Returned(_, rows) } { rows })
+  |> result.map(fn(result) { case result { pog.Returned(_, rows) -> rows } })
 }
 
 /// Count total mappings by status
@@ -354,9 +354,13 @@ pub fn count_mappings_by_status(
   |> pog.returning(decoder)
   |> pog.execute(db)
   |> result.map_error(fn(err) { DatabaseError(utils.format_pog_error(err)) })
-  |> result.try(fn(pog.Returned(_, rows)) {
-    case rows {
-      [count, ..] -> Ok(count)
+  |> result.try(fn(result) {
+    case result {
+      pog.Returned(_, rows) ->
+        case rows {
+          [count, ..] -> Ok(count)
+          _ -> Ok(0)
+        }
       _ -> Ok(0)
     }
   })
@@ -375,9 +379,13 @@ pub fn count_total_mappings(db: pog.Connection) -> Result(Int, RecipeMappingErro
   |> pog.returning(decoder)
   |> pog.execute(db)
   |> result.map_error(fn(err) { DatabaseError(utils.format_pog_error(err)) })
-  |> result.try(fn(pog.Returned(_, rows)) {
-    case rows {
-      [count, ..] -> Ok(count)
+  |> result.try(fn(result) {
+    case result {
+      pog.Returned(_, rows) ->
+        case rows {
+          [count, ..] -> Ok(count)
+          _ -> Ok(0)
+        }
       _ -> Ok(0)
     }
   })
