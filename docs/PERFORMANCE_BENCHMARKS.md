@@ -267,7 +267,7 @@ Tests verify graceful error handling:
 - **Synthetic recipes:** Generated with varied macros (protein: 25-70g, fat: 15-55g, carbs: 45-105g)
 - **Category distribution:** Evenly distributed across 5 categories (Protein, Vegetable, Grain, Dairy, Fruit)
 - **Vertical compliance:** ~33% of recipes marked as vertical-compliant
-- **Realistic scenario:** Mirrors actual Mealie database characteristics
+- **Realistic scenario:** Mirrors actual Tandoor database characteristics
 
 ### Measurement Approach
 
@@ -376,7 +376,7 @@ The system is production-ready with the following caveats:
 3. Caching should be implemented for frequently accessed configurations
 4. Monitoring should track response times by dataset size
 
-For typical meal planning use cases with 50-500 recipes from Mealie, expected response times are 50-300ms, providing an excellent user experience.
+For typical meal planning use cases with 50-500 recipes from Tandoor, expected response times are 50-300ms, providing an excellent user experience.
 
 ---
 
