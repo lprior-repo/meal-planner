@@ -1,8 +1,72 @@
+<!-- OPENSPEC:START -->
+# OpenSpec Instructions
+
+These instructions are for AI assistants working in this project.
+
+Always open `@/openspec/AGENTS.md` when the request:
+- Mentions planning or proposals (words like proposal, spec, change, plan)
+- Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
+- Sounds ambiguous and you need the authoritative spec before coding
+
+Use `@/openspec/AGENTS.md` to learn:
+- How to create and apply change proposals
+- Spec format and conventions
+- Project structure and guidelines
+
+Keep this managed block so 'openspec update' can refresh the instructions.
+
+<!-- OPENSPEC:END -->
+
 # Claude Code - Agent Mail + Beads + Worktree Coordination
 
-## 🚀 Automatic Session Start
+## 🚀 CRITICAL: Application Startup
 
-**Every session AUTOMATICALLY executes:**
+**BEFORE ANY WORK - ALWAYS USE THE AUTOMATED STARTUP:**
+
+```bash
+# ONE COMMAND TO RULE THEM ALL
+./run.sh start
+
+# OR with go-task (preferred - install: sudo pacman -S go-task)
+task start
+```
+
+This automated startup process:
+1. ✅ Checks all dependencies (Gleam, PostgreSQL, Docker)
+2. ✅ Verifies PostgreSQL is running
+3. ✅ Creates databases (`meal_planner` for app, `tandoor` for Tandoor - separate DBs)
+4. ✅ Starts Tandoor container (port 8000)
+5. ✅ Builds and starts API server (port 8080)
+6. ✅ Verifies all services are healthy
+
+**Access Points:**
+- **API Server:** http://localhost:8080/health
+- **Tandoor UI:** http://localhost:8000
+
+**Other useful commands:**
+```bash
+./run.sh status    # Check what's running
+./run.sh stop      # Stop everything
+./run.sh restart   # Restart all services
+./run.sh logs      # View API logs
+
+# Or with go-task:
+task status
+task stop
+task restart
+task api:logs
+task tandoor:logs
+```
+
+**NEVER manually start services** - always use the automated startup!
+
+**Database Separation:**
+- `meal_planner` database = Gleam app data (2M+ USDA foods)
+- `tandoor` database = Tandoor recipes and users (completely separate)
+
+## 🔄 Automatic Session Start
+
+**After services are running, every session AUTOMATICALLY executes:**
 
 ```javascript
 // 1. Register with Agent Mail
