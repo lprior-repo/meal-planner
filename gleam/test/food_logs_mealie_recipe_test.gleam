@@ -9,7 +9,6 @@ import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/id
-import meal_planner/storage/logs
 import meal_planner/types
 
 pub fn main() {
@@ -356,11 +355,8 @@ pub fn test_mealie_recipe_maximum_data() {
     None -> panic as "Expected micronutrients"
   }
 
-  micros.protein
-  |> should.equal(None)
-
-  micros.iron
-  |> should.equal(Some(3.5))
+  micros.calcium
+  |> should.equal(Some(400.0))
 
   micros.zinc
   |> should.equal(Some(4.0))
