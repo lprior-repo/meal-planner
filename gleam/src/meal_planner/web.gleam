@@ -12,6 +12,8 @@
 /// - Implements retry logic for transient failures
 /// - Provides detailed error responses
 ///
+import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/http
 import gleam/http/request
@@ -398,59 +400,59 @@ fn macro_calc_handler(req: wisp.Request) -> wisp.Response {
 /// Vertical diet compliance endpoint
 /// POST /api/vertical-diet/check
 /// Checks if Mealie recipes comply with vertical diet guidelines using recipe slugs
-// fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
-//   use <- wisp.require_method(req, http.Post)
-//   use body <- wisp.require_json(req)
-// 
-//   case extract_recipe_slug(body) {
-//     Ok(slug) -> {
-//       case retry.with_backoff(fn() { client.get_recipe(ctx.config, slug) }) {
-//         Ok(recipe) -> {
-//           let compliance = vertical_diet_compliance.check_compliance(recipe)
-// 
-//           let response_body =
-//             json.object([
-//               #("recipe_slug", json.string(recipe.slug)),
-//               #("recipe_name", json.string(recipe.name)),
-//               #("compliant", json.bool(compliance.compliant)),
-//               #("score", json.int(compliance.score)),
-//               #("reasons", json.array(list.map(compliance.reasons, fn(r) { json.string(r) }))),
-//               #("recommendations", json.array(list.map(compliance.recommendations, fn(r) { json.string(r) }))),
-//               #("mealie_url", json.string(ctx.config.mealie.url)),
-//             ])
-//             |> json.to_string
-// 
-//           wisp.json_response(response_body, 200)
-//         }
-//         Error(error) -> error_response(error)
-//       }
-//     }
-//     Error(err_msg) -> {
-//       let error_body =
-//         json.object([
-//           #("error", json.string("Invalid request format")),
-//           #("message", json.string(err_msg)),
-//           #("details", json.string("Expected JSON body with 'recipe_slug' field")),
-//         ])
-//         |> json.to_string
-// 
-//       wisp.json_response(error_body, 400)
-//     }
-//   }
-// }
+fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
+  use <- wisp.require_method(req, http.Post)
+  use body <- wisp.require_json(req)
 
-// /// Extract recipe slug from JSON request body
-// fn extract_recipe_slug(body: dynamic.Dynamic) -> Result(String, String) {
-//   let decoder = {
-//     use slug <- decode.field("recipe_slug", decode.string)
-//     decode.success(slug)
-//   }
-// 
-//   case decode.run(body, decoder) {
-//     Ok(slug) -> Ok(slug)
-//     Error(_) -> Error("Missing required field: 'recipe_slug' (must be a string)")
-//   }
-// }
+  case extract_recipe_slug(body) {
+    Ok(slug) -> {
+      case retry.with_backoff(fn() { client.get_recipe(ctx.config, slug) }) {
+        Ok(recipe) -> {
+          let compliance = vertical_diet_compliance.check_compliance(recipe)
+
+          let response_body =
+            json.object([
+              #("recipe_slug", json.string(recipe.slug)),
+              #("recipe_name", json.string(recipe.name)),
+              #("compliant", json.bool(compliance.compliant)),
+              #("score", json.int(compliance.score)),
+              #("reasons", json.array(compliance.reasons, fn(r) { json.string(r) })),
+              #("recommendations", json.array(compliance.recommendations, fn(r) { json.string(r) })),
+              #("mealie_url", json.string(ctx.config.mealie.url)),
+            ])
+            |> json.to_string
+
+          wisp.json_response(response_body, 200)
+        }
+        Error(error) -> error_response(error)
+      }
+    }
+    Error(err_msg) -> {
+      let error_body =
+        json.object([
+          #("error", json.string("Invalid request format")),
+          #("message", json.string(err_msg)),
+          #("details", json.string("Expected JSON body with 'recipe_slug' field")),
+        ])
+        |> json.to_string
+
+      wisp.json_response(error_body, 400)
+    }
+  }
+}
+
+/// Extract recipe slug from JSON request body
+fn extract_recipe_slug(body: dynamic.Dynamic) -> Result(String, String) {
+  let decoder = {
+    use slug <- decode.field("recipe_slug", decode.string)
+    decode.success(slug)
+  }
+
+  case decode.run(body, decoder) {
+    Ok(slug) -> Ok(slug)
+    Error(_) -> Error("Missing required field: 'recipe_slug' (must be a string)")
+  }
+}
 
 
 /// Recipe search endpoint

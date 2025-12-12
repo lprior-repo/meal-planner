@@ -321,7 +321,12 @@ fn validate_food_log_request(
 ) -> Result(Nil, String) {
   // Validate date format (basic ISO 8601 check)
   case string.length(request.date) {
-    10 if string.contains(request.date, "-") -> Ok(Nil)
+    10 -> {
+      case string.contains(request.date, "-") {
+        True -> Ok(Nil)
+        False -> Error("Invalid date format. Expected YYYY-MM-DD")
+      }
+    }
     _ -> Error("Invalid date format. Expected YYYY-MM-DD")
   }
   |> result.try(fn(_) {
