@@ -18,10 +18,13 @@ import gleam/int
 import gleam/io
 import gleam/json
 import gleam/option.{None, Some}
-import gleam/result
 import meal_planner/config
 import meal_planner/mealie/client
 import meal_planner/mealie/retry
+import meal_planner/meal_plan
+import meal_planner/auto_planner
+import meal_planner/mealie/types
+import gleam/string
 import mist
 import wisp
 import wisp/wisp_mist
@@ -97,6 +100,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["api", "meal-plan"] -> meal_plan_handler(req, ctx)
     ["api", "macros", "calculate"] -> macro_calc_handler(req)
     ["api", "vertical-diet", "check"] -> vertical_diet_handler(req, ctx)
+    ["api", "recipes"] -> recipes_handler(req, ctx)
 
     // Mealie integration endpoints
     ["api", "mealie", "recipes"] -> mealie_recipes_handler(req, ctx)
