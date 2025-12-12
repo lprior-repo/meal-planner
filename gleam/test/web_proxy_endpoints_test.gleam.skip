@@ -1,8 +1,8 @@
 /// Tests for web proxy endpoints
-/// Documents expected behavior for meal-planner-hc2t
+/// Documents expected behavior for Tandoor proxy integration
 ///
 /// This test suite documents the proxy endpoint behaviors and integration points
-/// between the meal planner API and the Mealie recipe management system.
+/// between the meal planner API and the Tandoor recipe management system.
 import gleeunit
 import gleeunit/should
 

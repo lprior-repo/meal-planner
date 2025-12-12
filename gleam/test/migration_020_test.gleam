@@ -1,7 +1,7 @@
 /// Tests for migration 020: Drop recipes_simplified table
 ///
 /// This migration drops the recipes_simplified table which became obsolete
-/// when we migrated to using Mealie as the sole source of truth for recipes.
+/// when we migrated to using Tandoor as the sole source of truth for recipes.
 ///
 /// NOTE: This is a unit test that documents the migration behavior.
 /// Integration tests that execute actual SQL should be run separately

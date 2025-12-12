@@ -1,8 +1,8 @@
 /// Integration tests for recipe validation with food logging
 ///
-/// These tests demonstrate the complete workflow:
+/// These tests demonstrate the complete workflow with Tandoor recipes:
 /// 1. Create a food log entry with a recipe slug
-/// 2. Validate the recipe exists before saving
+/// 2. Validate the recipe exists in Tandoor before saving
 /// 3. Handle errors gracefully when recipe doesn't exist
 import gleam/list
 import gleam/option
@@ -46,7 +46,7 @@ pub fn recipe_id_from_different_slugs_test() {
 // Food log entry construction with validation
 // ============================================================================
 
-pub fn construct_mealie_food_log_entry_test() {
+pub fn construct_tandoor_food_log_entry_test() {
   let entry =
     FoodLogEntry(
       id: id.log_entry_id("log-123"),
@@ -57,12 +57,12 @@ pub fn construct_mealie_food_log_entry_test() {
       micronutrients: option.None,
       meal_type: Breakfast,
       logged_at: "2025-12-12T12:00:00Z",
-      source_type: "mealie_recipe",
+      source_type: "tandoor_recipe",
       source_id: "chicken-stir-fry",
     )
 
   entry.source_type
-  |> should.equal("mealie_recipe")
+  |> should.equal("tandoor_recipe")
 }
 
 pub fn food_log_entry_with_usda_source_test() {
@@ -152,13 +152,13 @@ pub fn typical_user_workflow_test() {
       micronutrients: option.None,
       meal_type: Breakfast,
       logged_at: "2025-12-12T12:00:00Z",
-      source_type: "mealie_recipe",
+      source_type: "tandoor_recipe",
       source_id: recipe_slug,
     )
 
-  // 3. Entry should have Mealie source type
+  // 3. Entry should have Tandoor source type
   entry.source_type
-  |> should.equal("mealie_recipe")
+  |> should.equal("tandoor_recipe")
 }
 
 pub fn user_logs_multiple_recipes_test() {
@@ -188,7 +188,7 @@ pub fn batch_validation_workflow_test() {
 // Real-world recipe examples
 // ============================================================================
 
-pub fn common_mealie_recipe_slugs_test() {
+pub fn common_tandoor_recipe_slugs_test() {
   let common_recipes = [
     "chicken-breast",
     "salmon-fillet",
