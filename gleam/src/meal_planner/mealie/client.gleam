@@ -3,12 +3,10 @@
 //// See: https://docs.mealie.io/documentation/getting-started/api-usage/
 
 import gleam/dynamic/decode
-import gleam/erlang/process
 import gleam/http
 import gleam/http/request
 import gleam/http/response
 import gleam/httpc
-import gleam/int
 import gleam/json
 import gleam/option.{None, Some}
 import gleam/result
@@ -77,11 +75,16 @@ fn add_json_header(req: request.Request(String)) -> request.Request(String) {
   request.set_header(req, "Content-Type", "application/json")
 }
 
-/// Execute an HTTP request and handle the response
-fn execute_request(
+/// Execute an HTTP request with custom timeout configuration
+fn execute_request_with_timeout(
   req: request.Request(String),
+  timeout_ms: Int,
 ) -> Result(response.Response(String), ClientError) {
-  case httpc.send(req) {
+  let config =
+    httpc.configure()
+    |> httpc.timeout(timeout_ms)
+
+  case httpc.dispatch(config, req) {
     Ok(resp) -> Ok(resp)
     Error(err) ->
       Error(HttpError("HTTP request failed: " <> string.inspect(err)))
@@ -165,7 +168,10 @@ pub fn list_recipes(
         |> request.set_method(http.Get)
         |> add_auth_header(config.mealie.api_token)
 
-      use resp <- result.try(execute_request(req))
+      use resp <- result.try(execute_request_with_timeout(
+        req,
+        config.mealie.request_timeout_ms,
+      ))
       parse_response(
         resp,
         types.paginated_decoder(types.recipe_summary_decoder()),
@@ -204,7 +210,10 @@ pub fn get_recipe(
         |> request.set_method(http.Get)
         |> add_auth_header(config.mealie.api_token)
 
-      use resp <- result.try(execute_request(req))
+      use resp <- result.try(execute_request_with_timeout(
+        req,
+        config.mealie.request_timeout_ms,
+      ))
       parse_response(resp, types.recipe_decoder())
     }
     Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
@@ -242,7 +251,10 @@ pub fn search_recipes(
         |> request.set_method(http.Get)
         |> add_auth_header(config.mealie.api_token)
 
-      use resp <- result.try(execute_request(req))
+      use resp <- result.try(execute_request_with_timeout(
+        req,
+        config.mealie.request_timeout_ms,
+      ))
       parse_response(
         resp,
         types.paginated_decoder(types.recipe_summary_decoder()),
@@ -289,7 +301,10 @@ pub fn get_meal_plans(
         |> request.set_method(http.Get)
         |> add_auth_header(config.mealie.api_token)
 
-      use resp <- result.try(execute_request(req))
+      use resp <- result.try(execute_request_with_timeout(
+        req,
+        config.mealie.request_timeout_ms,
+      ))
       parse_response(resp, decode.list(types.meal_plan_entry_decoder()))
     }
     Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
@@ -338,7 +353,10 @@ pub fn create_meal_plan_entry(
         |> add_json_header
         |> request.set_body(body)
 
-      use resp <- result.try(execute_request(req))
+      use resp <- result.try(execute_request_with_timeout(
+        req,
+        config.mealie.request_timeout_ms,
+      ))
       parse_response(resp, types.meal_plan_entry_decoder())
     }
     Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
@@ -379,7 +397,10 @@ pub fn update_meal_plan_entry(
         |> add_json_header
         |> request.set_body(body)
 
-      use resp <- result.try(execute_request(req))
+      use resp <- result.try(execute_request_with_timeout(
+        req,
+        config.mealie.request_timeout_ms,
+      ))
       parse_response(resp, types.meal_plan_entry_decoder())
     }
     Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
@@ -411,7 +432,10 @@ pub fn delete_meal_plan_entry(
         |> request.set_method(http.Delete)
         |> add_auth_header(config.mealie.api_token)
 
-      use resp <- result.try(execute_request(req))
+      use resp <- result.try(execute_request_with_timeout(
+        req,
+        config.mealie.request_timeout_ms,
+      ))
       case resp.status {
         200 | 204 -> Ok(Nil)
         _ -> {

@@ -2,14 +2,11 @@
 ///
 /// This module re-exports all storage functionality from domain-specific submodules:
 /// - storage/profile: User profiles, nutrition state, and goals
-/// - storage/recipes: Recipe storage and retrieval
 /// - storage/foods: USDA food database and custom foods
 /// - storage/logs: Food logging and daily/weekly summaries
 /// - storage/nutrients: Nutrient calculations and parsing
 /// - storage/migrations: Database migration utilities
 import meal_planner/storage/profile as profile_module
-
-import meal_planner/storage/recipes
 
 import meal_planner/storage/foods
 
@@ -54,31 +51,6 @@ pub fn save_user_profile(conn, user_profile) {
 
 pub fn get_user_profile(conn) {
   profile_module.get_user_profile(conn)
-}
-
-// Recipe functions
-pub fn save_recipe(conn, recipe) {
-  recipes.save_recipe(conn, recipe)
-}
-
-pub fn get_all_recipes(conn) {
-  recipes.get_all_recipes(conn)
-}
-
-pub fn get_recipe_by_id(conn, id) {
-  recipes.get_recipe_by_id(conn, id)
-}
-
-pub fn delete_recipe(conn, id) {
-  recipes.delete_recipe(conn, id)
-}
-
-pub fn get_recipes_by_category(conn, category) {
-  recipes.get_recipes_by_category(conn, category)
-}
-
-pub fn filter_recipes(conn, min_protein, max_fat, max_calories) {
-  recipes.filter_recipes(conn, min_protein, max_fat, max_calories)
 }
 
 // pub fn search_foods(conn, query) {
