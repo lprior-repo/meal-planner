@@ -483,7 +483,7 @@ Currently all meals are "dinner". Should support:
 ### API Specification
 ```
 Endpoint: POST /api/meal-plan
-Purpose: Generate a 7-day meal plan from Mealie recipes
+Purpose: Generate a 7-day meal plan from Tandoor recipes
 
 Request:
 {
@@ -522,7 +522,7 @@ Response (200 OK):
 
 Error Responses:
 400: No recipes available (Bad Request)
-408: Request Timeout (Mealie unavailable)
+408: Request Timeout (Tandoor unavailable)
 503: Service Unavailable
 ```
 
@@ -533,10 +533,10 @@ Error Responses:
 | API Endpoint | meal_plan_handler in web.gleam | VERIFIED |
 | Weekly Plan Generation | generate_weekly_plan function | CODE AVAILABLE |
 | Macro Calculations | calculate_weekly_macros/get_weekly_macro_average | CODE AVAILABLE |
-| Recipe Details | JSON serialization of MealieRecipe | VERIFIED |
+| Recipe Details | JSON serialization of TandoorRecipe | VERIFIED |
 | Error Handling | with_retry_response + error_response functions | VERIFIED |
 | Performance | Single API call, O(1) operations | VERIFIED |
-| Mealie Integration | client.list_recipes, retry logic | VERIFIED |
+| Tandoor Integration | client.list_recipes, retry logic | VERIFIED |
 | HTTP Routing | path_segments matching for /api/meal-plan | VERIFIED |
 | JSON Response | Proper structure, null handling | VERIFIED |
 | Status Codes | 200, 400, 408, 502, 503 mapping | VERIFIED |
