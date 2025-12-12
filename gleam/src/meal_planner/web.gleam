@@ -385,7 +385,7 @@ fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
 
   case extract_recipe_slug(body) {
     Ok(slug) -> {
-      case retry.with_backoff(fn() { client.get_recipe(ctx.config.config, slug) }) {
+      case retry.with_backoff(fn() { client.get_recipe(ctx.config, slug) }) {
         Ok(recipe) -> {
           let compliance = vertical_diet_compliance.check_compliance(recipe)
 
@@ -395,12 +395,8 @@ fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
               #("recipe_name", json.string(recipe.name)),
               #("compliant", json.bool(compliance.compliant)),
               #("score", json.int(compliance.score)),
-              #("reasons", json.array(
-                list.map(compliance.reasons, json.string)
-              )),
-              #("recommendations", json.array(
-                list.map(compliance.recommendations, json.string)
-              )),
+              #("reasons", json.array(list.map(compliance.reasons, fn(r) { json.string(r) }))),
+              #("recommendations", json.array(list.map(compliance.recommendations, fn(r) { json.string(r) }))),
               #("mealie_url", json.string(ctx.config.mealie.url)),
             ])
             |> json.to_string
@@ -425,16 +421,14 @@ fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
 }
 
 /// Extract recipe slug from JSON request body
-fn extract_recipe_slug(body: json.Json) -> Result(String, String) {
-  case body {
-    json.Object(pairs) -> {
-      case list.find(pairs, fn(pair) { pair.0 == "recipe_slug" }) {
-        Ok(#(_, json.String(slug))) -> Ok(slug)
-        Ok(_) -> Error("'recipe_slug' must be a string")
-        Error(_) -> Error("Missing required field: 'recipe_slug'")
-      }
-    }
-    _ -> Error("Request body must be a JSON object")
+fn extract_recipe_slug(body: dynamic.Dynamic) -> Result(String, String) {
+  let decoder =
+    use slug <- decode.field("recipe_slug", decode.string)
+    decode.success(slug)
+
+  case decode.run(body, decoder) {
+    Ok(slug) -> Ok(slug)
+    Error(_) -> Error("Missing required field: 'recipe_slug' (must be a string)")
   }
 }
 
