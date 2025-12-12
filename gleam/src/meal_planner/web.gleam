@@ -1,14 +1,14 @@
 /// Web server module for the Meal Planner API
 ///
 /// This module provides HTTP endpoints for:
-/// - Health checks (with Mealie connectivity validation)
+/// - Health checks (with Tandoor connectivity validation)
 /// - Recipe scoring
 /// - AI meal planning
 /// - Macro calculations
 /// - Vertical diet compliance
 ///
 /// Error Handling:
-/// - Maps Mealie API errors to appropriate HTTP status codes
+/// - Maps Tandoor API errors to appropriate HTTP status codes
 /// - Implements retry logic for transient failures
 /// - Provides detailed error responses
 ///
@@ -23,9 +23,9 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import meal_planner/config
-import meal_planner/mealie/client
-import meal_planner/mealie/fallback
-import meal_planner/mealie/retry
+import meal_planner/tandoor/client
+import meal_planner/tandoor/fallback
+import meal_planner/tandoor/retry
 import meal_planner/vertical_diet_compliance
 import mist
 import wisp
@@ -42,14 +42,14 @@ pub type DatabaseConfig {
   )
 }
 
-/// Mealie API configuration
-pub type MealieConfig {
-  MealieConfig(url: String, token: String)
+/// Tandoor API configuration
+pub type TandoorConfig {
+  TandoorConfig(url: String, token: String)
 }
 
 /// Server configuration
 pub type ServerConfig {
-  ServerConfig(port: Int, database: DatabaseConfig, mealie: MealieConfig)
+  ServerConfig(port: Int, database: DatabaseConfig, tandoor: TandoorConfig)
 }
 
 /// Application context passed to handlers

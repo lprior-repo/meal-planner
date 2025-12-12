@@ -22,9 +22,9 @@ pub type ServerConfig {
   ServerConfig(port: Int, environment: String)
 }
 
-/// Mealie integration configuration
-pub type MealieConfig {
-  MealieConfig(
+/// Tandoor integration configuration
+pub type TandoorConfig {
+  TandoorConfig(
     base_url: String,
     api_token: String,
     connect_timeout_ms: Int,
@@ -47,7 +47,7 @@ pub type Config {
   Config(
     database: DatabaseConfig,
     server: ServerConfig,
-    mealie: MealieConfig,
+    tandoor: TandoorConfig,
     external_services: ExternalServicesConfig,
   )
 }

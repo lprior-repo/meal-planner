@@ -3,6 +3,7 @@
 /// This module provides the main entry point for the meal planner backend.
 /// It starts the HTTP server and integrates with Mealie for recipe management.
 ///
+import dot_env
 import envoy
 import gleam/int
 import gleam/io
@@ -11,6 +12,13 @@ import meal_planner/web
 
 /// Application entry point
 pub fn main() {
+  // Load .env file
+  dot_env.new()
+  |> dot_env.set_path(".env")
+  |> dot_env.set_debug(False)
+  |> dot_env.set_ignore_missing_file(True)
+  |> dot_env.load
+
   io.println("🍽️  Meal Planner Backend")
   io.println("========================")
   io.println("")
@@ -25,7 +33,7 @@ pub fn main() {
         <> ":"
         <> int.to_string(config.database.port),
       )
-      io.println("  - Mealie: " <> config.mealie.url)
+      io.println("  - Tandoor: " <> config.tandoor.url)
       io.println("  - Server port: " <> int.to_string(config.port))
       io.println("")
 
@@ -41,8 +49,8 @@ pub fn main() {
       io.println("  - DATABASE_NAME (default: meal_planner)")
       io.println("  - DATABASE_USER (default: postgres)")
       io.println("  - DATABASE_PASSWORD")
-      io.println("  - MEALIE_BASE_URL (default: http://localhost:9000)")
-      io.println("  - MEALIE_API_TOKEN (optional)")
+       io.println("  - TANDOOR_BASE_URL (default: http://localhost:9000)")
+       io.println("  - TANDOOR_API_TOKEN (optional)")
       io.println("  - PORT (default: 8080)")
       Nil
     }
@@ -73,13 +81,13 @@ fn load_config() -> Result(web.ServerConfig, String) {
       },
     )
 
-  let mealie =
-    web.MealieConfig(
-      url: envoy.get("MEALIE_BASE_URL")
-        |> result.unwrap("http://localhost:9000"),
-      token: envoy.get("MEALIE_API_TOKEN")
-        |> result.unwrap(""),
-    )
+   let tandoor =
+     web.TandoorConfig(
+       url: envoy.get("TANDOOR_BASE_URL")
+         |> result.unwrap("http://localhost:9000"),
+       token: envoy.get("TANDOOR_API_TOKEN")
+         |> result.unwrap(""),
+     )
 
-  Ok(web.ServerConfig(port: port, database: database, mealie: mealie))
+   Ok(web.ServerConfig(port: port, database: database, tandoor: tandoor))
 }

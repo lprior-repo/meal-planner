@@ -1,10 +1,10 @@
-/// Tests for the health check endpoint with Mealie connectivity verification
+/// Tests for the health check endpoint with Tandoor connectivity verification
 ///
 /// This test suite verifies that:
 /// 1. The /health endpoint returns 200 OK
 /// 2. Response includes service status
-/// 3. Mealie connectivity status is properly reported
-/// 4. Health checks work with and without Mealie configuration
+/// 3. Tandoor connectivity status is properly reported
+/// 4. Health checks work with and without Tandoor configuration
 ///
 /// Integration tests are documented in test/fixtures/health_scenarios.md
 import gleeunit

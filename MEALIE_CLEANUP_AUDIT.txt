@@ -1,0 +1,608 @@
+===============================================================================
+COMPREHENSIVE MEALIE REFERENCE AUDIT - MEAL PLANNER CODEBASE
+===============================================================================
+Generated: Fri Dec 12 2025
+Directory: /home/lewis/src/meal-planner
+
+SUMMARY
+=======
+Total Mealie References Found: 100+
+This report categorizes all files that contain "mealie" or "Mealie" references
+and provides guidance on what needs updating.
+
+===============================================================================
+CATEGORY 1: GLEAM SOURCE FILES WITH MEALIE IMPORTS OR TYPE REFERENCES
+===============================================================================
+
+A. MEALIE-SPECIFIC MODULES (TO BE REMOVED/MIGRATED)
+----------------------------------------------------
+
+1. /home/lewis/src/meal-planner/gleam/src/meal_planner/mealie/
+   - client.gleam         → Mealie API client (REMOVE)
+   - types.gleam          → MealieRecipe, MealieIngredient, etc. (REMOVE)
+   - mapper.gleam         → Conversion between Mealie types (REMOVE)
+   - sync.gleam           → Mealie sync logic (REMOVE)
+   - retry.gleam          → Mealie retry logic (REMOVE)
+   - connectivity.gleam   → Mealie connectivity checks (REMOVE)
+   - fallback.gleam       → Mealie fallback logic (REMOVE)
+
+   Status: These files should be DELETED entirely as they were part of the
+   Mealie integration that is being removed.
+
+
+B. GLEAM SOURCE FILES IMPORTING MEALIE MODULES (TO BE UPDATED)
+---------------------------------------------------------------
+
+2. /home/lewis/src/meal-planner/gleam/src/meal_planner.gleam
+   Lines: 36, 52, 53, 85-90
+   Content:
+   - io.println("  - Mealie: " <> config.mealie.url)
+   - "MEALIE_BASE_URL" environment variable handling
+   - "MEALIE_API_TOKEN" environment variable handling
+   - web.MealieConfig type reference (REMOVE)
+   
+   Needs: Replace with TandoorConfig, update env vars to TANDOOR_BASE_URL/TOKEN
+
+3. /home/lewis/src/meal-planner/gleam/src/meal_planner/config.gleam
+   Lines: 25, 26-50, 69-72, 106-136, 146, 170-172
+   Content:
+   - pub type MealieConfig { MealieConfig(url, api_token, connect_timeout, request_timeout) }
+   - MEALIE_BASE_URL, MEALIE_API_TOKEN env var handling
+   - MEALIE_CONNECT_TIMEOUT_MS, MEALIE_REQUEST_TIMEOUT_MS
+   - has_mealie_integration() function
+   
+   Needs: Rename MealieConfig → TandoorConfig, update env vars, update function names
+
+4. /home/lewis/src/meal-planner/gleam/src/meal_planner/web.gleam
+   Lines: 1-58
+   Content:
+   - pub type MealieConfig { MealieConfig(url: String, token: String) }
+   - pub type ServerConfig { ServerConfig(port, database, mealie: MealieConfig) }
+   - import meal_planner/mealie/client
+   - import meal_planner/mealie/fallback
+   - import meal_planner/mealie/retry
+   - Comments: "Health checks (with Mealie connectivity validation)"
+   - Handler: mealie_recipes_handler(), mealie_recipe_detail_handler()
+   - Error mapping: client_error_to_status(error: client.ClientError)
+   
+   Needs: Remove Mealie imports, rename types, update handlers for Tandoor
+
+5. /home/lewis/src/meal-planner/gleam/src/meal_planner/auto_planner.gleam
+   Lines: 11, 12, 63-77, 235-236
+   Content:
+   - import meal_planner/mealie/mapper
+   - import meal_planner/mealie/types as mealie
+   - pub fn filter_mealie_recipes_by_diet(mealie_recipes: List(mealie.MealieRecipe))
+   - Comments: "Filter Mealie recipes", "Converts MealieRecipe to Recipe first"
+   - Comments: "Works with internal Recipe type after conversion from MealieRecipe"
+   
+   Needs: Update to use Tandoor types, rename functions
+
+6. /home/lewis/src/meal-planner/gleam/src/meal_planner/portion.gleam
+   Content: References to Mealie recipe handling (needs inspection)
+   Needs: Update comments referencing Mealie recipes
+
+7. /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam
+   Content: References to Mealie in comments/logic (needs inspection)
+   Needs: Replace Mealie comments with Tandoor
+
+8. /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/mealie_enrichment.gleam
+   Lines: 1-50+
+   Content:
+   - import meal_planner/mealie/client as mealie
+   - pub fn enrich_entry_with_mealie_data(entry: FoodLogEntry, cfg: config.Config)
+   - Case match: "mealie_recipe" source type
+   - Comments: "Only enrich entries that are from Mealie recipes"
+   - mealie.get_recipe(cfg, recipe_slug) call
+   
+   Needs: RENAME FILE to tandoor_enrichment.gleam, update all function names and types
+
+9. /home/lewis/src/meal-planner/gleam/src/meal_planner/storage/recipe_validation.gleam
+   Content: May reference Mealie recipe validation (needs inspection)
+   Needs: Update to reference Tandoor instead
+
+10. /home/lewis/src/meal-planner/gleam/src/meal_planner/types.gleam
+    Content: May have MealieRecipe type definitions (needs inspection)
+    Needs: Remove Mealie types or convert to generic Recipe type
+
+11. /home/lewis/src/meal-planner/gleam/src/meal_planner/vertical_diet_compliance.gleam
+    Content: May reference Mealie types (needs inspection)
+    Needs: Update type references to generic Recipe
+
+12. /home/lewis/src/meal-planner/gleam/src/meal_planner/meal_selection.gleam
+    Content: May reference Mealie recipe selection (needs inspection)
+    Needs: Update to generic recipe selection
+
+13. /home/lewis/src/meal-planner/gleam/src/meal_planner/auto_planner/storage.gleam
+    Content: May reference Mealie recipe storage (needs inspection)
+    Needs: Update references
+
+14. /home/lewis/src/meal-planner/gleam/src/meal_planner/auto_planner/ncp_auto_planner/storage.gleam
+    Content: May reference Mealie recipe storage (needs inspection)
+    Needs: Update references
+
+15. /home/lewis/src/meal-planner/gleam/examples/bulk_create_recipes.gleam
+    Lines: 5-8, 14, 76
+    Content:
+    - import meal_planner/mealie/client
+    - import meal_planner/mealie/types.{ MealieRecipe, MealieCategory, MealieFood, ... }
+    - io.println("Creating ... recipes in Mealie...")
+    - fn all_recipes() -> List(MealieRecipe)
+    
+    Needs: Delete this example file (Mealie-specific)
+
+16. /home/lewis/src/meal-planner/gleam/src/examples/bulk_create_recipes.gleam
+    Lines: 5-8, 14, 76
+    Content: Same as above
+    Needs: Delete this example file (Mealie-specific)
+
+17. /home/lewis/src/meal-planner/gleam/examples/create_recipe_example.gleam
+    Content: Likely Mealie-specific example
+    Needs: Delete or migrate to Tandoor example
+
+
+===============================================================================
+CATEGORY 2: TEST FILES WITH MEALIE FIXTURES OR CONSTANTS
+===============================================================================
+
+1. /home/lewis/src/meal-planner/gleam/test/food_logs_constraint_test.gleam
+   Lines: 3-4, 18-24, 35-45, 79-80
+   Content:
+   - Comment: "after being updated to remove the 'recipe' source_type option and add support for 'mealie_recipe'"
+   - let valid_types = ["mealie_recipe", "custom_food", "usda_food"]
+   - Test assertions checking "mealie_recipe" value
+   - Comment: "Ensures source_type is one of: mealie_recipe (from Mealie API), custom_food, usda_food"
+   
+   Needs: Update constraint validation to use "tandoor_recipe" instead of "mealie_recipe"
+
+2. /home/lewis/src/meal-planner/gleam/test/audit_test.gleam
+   Lines: 136, 151
+   Content:
+   - new_name: Some("Mealie API")
+   - contains("Mealie API") test assertion
+   
+   Needs: Change "Mealie API" to "Tandoor API"
+
+3. /home/lewis/src/meal-planner/gleam/test/food_log_api_test.gleam
+   Content: May contain Mealie test fixtures (needs inspection)
+   Needs: Update fixtures to Tandoor
+
+4. /home/lewis/src/meal-planner/gleam/test/health_endpoint_test.gleam
+   Content: May test Mealie health checks (needs inspection)
+   Needs: Update to Tandoor health checks
+
+5. /home/lewis/src/meal-planner/gleam/test/recipe_fallback_endpoint_test.gleam
+   Content: May test Mealie fallback behavior (needs inspection)
+   Needs: Update to Tandoor fallback
+
+6. /home/lewis/src/meal-planner/gleam/test/recipe_search_test.gleam
+   Content: May reference Mealie recipe search (needs inspection)
+   Needs: Update to Tandoor recipe search
+
+7. /home/lewis/src/meal-planner/gleam/test/recipe_validation_integration_test.gleam
+   Content: May test Mealie validation (needs inspection)
+   Needs: Update to Tandoor validation
+
+8. /home/lewis/src/meal-planner/gleam/test/web_proxy_endpoints_test.gleam
+   Content: May test Mealie proxy endpoints (needs inspection)
+   Needs: Update to Tandoor endpoints
+
+9. /home/lewis/src/meal-planner/gleam/test/migration_019_test.gleam
+   Content: May reference old Mealie schema (needs inspection)
+   Needs: Update migration references
+
+10. /home/lewis/src/meal-planner/gleam/test/migration_020_test.gleam
+    Content: May reference old Mealie schema (needs inspection)
+    Needs: Update migration references
+
+11. /home/lewis/src/meal-planner/gleam/test/migration_023_test.gleam
+    Content: May reference Mealie migrations (needs inspection)
+    Needs: Update migration references
+
+12. /home/lewis/src/meal-planner/gleam/test/meal_planner/portion_test.gleam
+    Content: May have Mealie test fixtures (needs inspection)
+    Needs: Update fixtures
+
+
+===============================================================================
+CATEGORY 3: MIGRATION SQL FILES WITH MEALIE COMMENTS
+===============================================================================
+
+1. /home/lewis/src/meal-planner/gleam/migrations_pg/022_rename_recipe_to_mealie_recipe.sql
+   Content:
+   - Comment: "This migration updates the food_logs table to rename the source_type value 'recipe' to 'mealie_recipe'"
+   - SQL: UPDATE food_logs SET source_type = 'mealie_recipe' WHERE source_type = 'recipe'
+   - Comment: "Ensures source_type is one of: mealie_recipe (from Mealie API), custom_food (user-created), usda_food (USDA database)"
+   
+   Status: This migration is HISTORICAL - should be kept for rollback purposes
+   Note: This is part of the migration history from 'recipe' → 'mealie_recipe'
+   Future: Will need migration 025 to rename 'mealie_recipe' → 'tandoor_recipe'
+
+2. /home/lewis/src/meal-planner/gleam/migrations_pg/rollback/022_rename_recipe_to_mealie_recipe.sql
+   Status: KEEP - rollback file for historical accuracy
+
+Required New Migration (NOT YET CREATED):
+- /home/lewis/src/meal-planner/gleam/migrations_pg/025_rename_mealie_recipe_to_tandoor_recipe.sql
+  Needs:
+  - DROP old constraint
+  - UPDATE food_logs SET source_type = 'tandoor_recipe' WHERE source_type = 'mealie_recipe'
+  - ADD new constraint with 'tandoor_recipe' instead of 'mealie_recipe'
+
+
+===============================================================================
+CATEGORY 4: DOCUMENTATION FILES WITH MEALIE REFERENCES
+===============================================================================
+
+A. MEALIE-SPECIFIC DOCS (TO BE DELETED)
+---------------------------------------
+
+1. /home/lewis/src/meal-planner/docs/MEALIE_CREDENTIAL_VERIFICATION.md
+   Lines: 448
+   Status: DELETE - Mealie-specific documentation
+
+2. /home/lewis/src/meal-planner/docs/MEALIE_MIGRATION_GUIDE.md
+   Lines: 233
+   Status: DELETE - Mealie-specific documentation
+
+3. /home/lewis/src/meal-planner/docs/MEALIE_PERFORMANCE_BENCHMARKS.md
+   Lines: 639
+   Status: DELETE - Mealie-specific documentation
+
+4. /home/lewis/src/meal-planner/docs/MEALIE_TROUBLESHOOTING.md
+   Lines: 234
+   Status: DELETE - Mealie-specific documentation
+
+5. /home/lewis/src/meal-planner/MEALIE_DATABASE_SETUP.md
+   Status: DELETE - Mealie-specific documentation
+
+6. /home/lewis/src/meal-planner/MEALIE_INTEGRATION.md
+   Status: DELETE - Mealie-specific documentation
+
+7. /home/lewis/src/meal-planner/MEALIE_RESEARCH_FINDINGS.md
+   Status: DELETE - Mealie-specific documentation
+
+B. DOCS TO BE UPDATED (MEALIE → TANDOOR)
+-----------------------------------------
+
+1. /home/lewis/src/meal-planner/docs/MEAL_PLAN_GENERATION_TESTS.md
+   Needs: Replace Mealie references with Tandoor
+
+2. /home/lewis/src/meal-planner/docs/PERFORMANCE_BENCHMARKS.md
+   Needs: Update "Mealie database" to "Tandoor database"
+
+3. /home/lewis/src/meal-planner/docs/ROLLBACK_PROCEDURE.md
+   Needs: Replace Mealie examples with Tandoor
+
+4. /home/lewis/src/meal-planner/gleam/docs/TEST_REQUIREMENTS.md
+   Needs: Update any Mealie test references
+
+C. ROOT-LEVEL DOCS TO BE UPDATED
+---------------------------------
+
+1. /home/lewis/src/meal-planner/FOOD_LOG_API_UPDATE.md
+   Needs: Replace `save_food_log_from_mealie_recipe` with `save_food_log_from_tandoor_recipe`
+
+2. /home/lewis/src/meal-planner/REFACTORING_NOTES.md
+   Needs: Remove Mealie context
+
+3. /home/lewis/src/meal-planner/WEEKLY_SUMMARY_TEST_RESULTS.md
+   Needs: Update Mealie references
+
+4. /home/lewis/src/meal-planner/FOOD_LOG_API_UPDATE.md
+   Needs: Update references to mealie_recipe source type
+
+5. /home/lewis/src/meal-planner/FOOD_LOGS_VERIFICATION_SUMMARY.md
+   Needs: Update Mealie references (if present)
+
+D. OTHER DOCS NEEDING INSPECTION
+---------------------------------
+
+1. /home/lewis/src/meal-planner/ENVIRONMENT_SETUP.md
+   Needs: Check for Mealie setup instructions
+
+2. /home/lewis/src/meal-planner/DOCKER_SETUP.md
+   Needs: Check for Mealie Docker setup
+
+3. /home/lewis/src/meal-planner/README.md
+   Needs: Check for Mealie setup instructions
+
+
+===============================================================================
+CATEGORY 5: CONFIGURATION/BUILD FILES WITH MEALIE REFERENCES
+===============================================================================
+
+1. /home/lewis/src/meal-planner/Taskfile.yml
+   Lines: 5, 14, 19-28, 31, 33, 119-122, 163-189
+   Content:
+   - MEALIE_DB: 'mealie' variable
+   - "Start the entire meal planner application (Mealie + Database + API)" task
+   - "Start Mealie container" task (mealie:start)
+   - "Stop Mealie container" task (mealie:stop)
+   - Database creation: createdb -U {{.POSTGRES_USER}} {{.MEALIE_DB}}
+   - Docker container: ghcr.io/mealie-recipes/mealie:v3.6.1
+   - Volume: mealie_data:/app/data
+   
+   Needs: Replace all Mealie tasks with Tandoor tasks, update database name, update container reference
+
+2. /home/lewis/src/meal-planner/mealie.env.example
+   Content: Environment file for Mealie configuration
+   Needs: DELETE or rename to tandoor.env.example and update all variables
+   Current vars: POSTGRES_DB=mealie, BASE_URL, API_PORT, etc.
+   New vars: Should reference Tandoor instead
+
+3. /home/lewis/src/meal-planner/docker-compose.yml
+   Content: May contain Mealie service definition
+   Needs: Check for Mealie service and replace with Tandoor
+
+4. /home/lewis/src/meal-planner/gleam/.env
+   Content: May contain MEALIE_ prefixed variables
+   Needs: Update to TANDOOR_ prefixed variables
+
+5. /home/lewis/src/meal-planner/.serena.toml
+   Content: May contain Mealie references in configuration
+   Needs: Update Mealie service references (if any)
+
+6. /home/lewis/src/meal-planner/openspec/changes/complete-mealie-cleanup/
+   Status: This is the spec for the cleanup - NOT to be modified, tracks requirements
+
+
+===============================================================================
+CATEGORY 6: MEALIE-APP SUBDIRECTORY (EXTERNAL DEPENDENCY)
+===============================================================================
+
+/home/lewis/src/meal-planner/mealie-app/
+Status: This is the Mealie project included as a Git submodule or dependency
+Action: NO CHANGES NEEDED in this directory - it's external
+
+Note: The 100+ files in mealie-app/ are part of the Mealie project itself
+and should not be modified as part of this cleanup.
+
+
+===============================================================================
+DETAILED UPDATE CHECKLIST
+===============================================================================
+
+PHASE 1: TYPE/CONFIG UPDATES
+[ ] 1. Update gleam/src/meal_planner/config.gleam
+      - Rename MealieConfig → TandoorConfig
+      - Change MEALIE_* env vars → TANDOOR_*
+      - Rename has_mealie_integration() → has_tandoor_integration()
+      - Update field names: url, api_token (may need adaptation)
+
+[ ] 2. Update gleam/src/meal_planner/web.gleam
+      - Rename web.MealieConfig → web.TandoorConfig
+      - Remove mealie/* imports
+      - Add tandoor/* imports
+      - Update handler function names
+      - Update error mapping
+
+[ ] 3. Update gleam/src/meal_planner.gleam
+      - Update config loading for Tandoor
+      - Update env var handling
+      - Update startup logging
+
+[ ] 4. Update gleam/src/meal_planner/storage/mealie_enrichment.gleam
+      - RENAME FILE: mealie_enrichment.gleam → tandoor_enrichment.gleam
+      - Rename all functions: enrich_entry_with_mealie_data → enrich_entry_with_tandoor_data
+      - Update imports from mealie/client → tandoor/client
+      - Update source_type matching from "mealie_recipe" → "tandoor_recipe"
+
+PHASE 2: SOURCE CODE UPDATES (TYPE REFERENCES)
+[ ] 5. Update gleam/src/meal_planner/auto_planner.gleam
+      - Remove mealie/mapper import
+      - Remove mealie/types import
+      - Rename functions: filter_mealie_recipes_by_diet() → filter_tandoor_recipes_by_diet()
+      - Update type references from MealieRecipe → TandoorRecipe
+
+[ ] 6. Update gleam/src/meal_planner/portion.gleam
+      - Update Mealie recipe handling comments
+      - Update type references if present
+
+[ ] 7. Update gleam/src/meal_planner/storage/logs.gleam
+      - Replace Mealie comments with Tandoor
+      - Update source_type references if present
+
+[ ] 8. Update gleam/src/meal_planner/storage/recipe_validation.gleam
+      - Update validation logic for Tandoor recipes
+
+[ ] 9. Update gleam/src/meal_planner/types.gleam
+      - Remove MealieRecipe, MealieIngredient, MealieFood types
+      - Ensure generic Recipe type is available
+
+[ ] 10. Update gleam/src/meal_planner/vertical_diet_compliance.gleam
+       - Update type references from MealieRecipe → Recipe
+
+[ ] 11. Update gleam/src/meal_planner/meal_selection.gleam
+        - Update to generic recipe selection
+
+[ ] 12. Update gleam/src/meal_planner/auto_planner/storage.gleam
+        - Update Mealie references
+
+[ ] 13. Update gleam/src/meal_planner/auto_planner/ncp_auto_planner/storage.gleam
+        - Update Mealie references
+
+PHASE 3: TEST UPDATES
+[ ] 14. Update gleam/test/food_logs_constraint_test.gleam
+        - Change "mealie_recipe" → "tandoor_recipe" in valid_types list
+        - Update test assertions
+        - Update constraint documentation comments
+
+[ ] 15. Update gleam/test/audit_test.gleam
+        - Change "Mealie API" → "Tandoor API"
+
+[ ] 16. Update gleam/test/food_log_api_test.gleam
+        - Update fixtures
+
+[ ] 17. Update gleam/test/health_endpoint_test.gleam
+        - Update Mealie health checks → Tandoor health checks
+
+[ ] 18. Update gleam/test/recipe_fallback_endpoint_test.gleam
+        - Update Mealie fallback → Tandoor fallback
+
+[ ] 19. Update gleam/test/recipe_search_test.gleam
+        - Update type references
+
+[ ] 20. Update gleam/test/recipe_validation_integration_test.gleam
+        - Update validation references
+
+[ ] 21. Update gleam/test/web_proxy_endpoints_test.gleam
+        - Update endpoint references
+
+[ ] 22. Update gleam/test/migration_*.gleam
+        - Update migration references
+
+[ ] 23. Update gleam/test/meal_planner/portion_test.gleam
+        - Update test fixtures
+
+PHASE 4: MIGRATION FILES
+[ ] 24. Create NEW migration 025_rename_mealie_recipe_to_tandoor_recipe.sql
+        - DROP food_logs_source_type_check constraint
+        - UPDATE food_logs SET source_type = 'tandoor_recipe' WHERE source_type = 'mealie_recipe'
+        - ADD new constraint with 'tandoor_recipe'
+        - CREATE corresponding rollback file
+
+PHASE 5: DOCUMENTATION DELETIONS
+[ ] 25. Delete /home/lewis/src/meal-planner/docs/MEALIE_CREDENTIAL_VERIFICATION.md
+[ ] 26. Delete /home/lewis/src/meal-planner/docs/MEALIE_MIGRATION_GUIDE.md
+[ ] 27. Delete /home/lewis/src/meal-planner/docs/MEALIE_PERFORMANCE_BENCHMARKS.md
+[ ] 28. Delete /home/lewis/src/meal-planner/docs/MEALIE_TROUBLESHOOTING.md
+[ ] 29. Delete /home/lewis/src/meal-planner/MEALIE_DATABASE_SETUP.md
+[ ] 30. Delete /home/lewis/src/meal-planner/MEALIE_INTEGRATION.md
+[ ] 31. Delete /home/lewis/src/meal-planner/MEALIE_RESEARCH_FINDINGS.md
+
+PHASE 6: DOCUMENTATION UPDATES
+[ ] 32. Update /home/lewis/src/meal-planner/docs/MEAL_PLAN_GENERATION_TESTS.md
+        - Replace Mealie references with Tandoor
+
+[ ] 33. Update /home/lewis/src/meal-planner/docs/PERFORMANCE_BENCHMARKS.md
+        - Update "Mealie database" → "Tandoor database"
+
+[ ] 34. Update /home/lewis/src/meal-planner/docs/ROLLBACK_PROCEDURE.md
+        - Replace Mealie examples
+
+[ ] 35. Update /home/lewis/src/meal-planner/FOOD_LOG_API_UPDATE.md
+        - Replace `save_food_log_from_mealie_recipe` → `save_food_log_from_tandoor_recipe`
+
+[ ] 36. Update /home/lewis/src/meal-planner/REFACTORING_NOTES.md
+        - Remove Mealie context
+
+[ ] 37. Update /home/lewis/src/meal-planner/WEEKLY_SUMMARY_TEST_RESULTS.md
+        - Update Mealie references
+
+[ ] 38. Check /home/lewis/src/meal-planner/ENVIRONMENT_SETUP.md
+        - Remove Mealie setup instructions
+
+[ ] 39. Check /home/lewis/src/meal-planner/DOCKER_SETUP.md
+        - Remove Mealie Docker setup
+
+[ ] 40. Check /home/lewis/src/meal-planner/README.md
+        - Remove Mealie setup instructions
+
+PHASE 7: BUILD/CONFIG FILE UPDATES
+[ ] 41. Update /home/lewis/src/meal-planner/Taskfile.yml
+        - Remove all mealie:* tasks
+        - Remove MEALIE_DB variable
+        - Update "Mealie" references to "Tandoor"
+        - Add tandoor:* tasks if needed
+        - Update Docker container reference
+
+[ ] 42. Delete or rename /home/lewis/src/meal-planner/mealie.env.example
+        - If deleting: just remove the file
+        - If migrating: Create tandoor.env.example with equivalent variables
+
+[ ] 43. Update /home/lewis/src/meal-planner/docker-compose.yml
+        - Check for Mealie service definition
+        - Replace with Tandoor if present
+
+[ ] 44. Update /home/lewis/src/meal-planner/gleam/.env
+        - Replace MEALIE_* variables with TANDOOR_*
+
+PHASE 8: EXAMPLE FILE DELETIONS
+[ ] 45. Delete /home/lewis/src/meal-planner/gleam/examples/bulk_create_recipes.gleam
+        - Mealie-specific example
+
+[ ] 46. Delete /home/lewis/src/meal-planner/gleam/src/examples/bulk_create_recipes.gleam
+        - Mealie-specific example
+
+[ ] 47. Delete /home/lewis/src/meal-planner/gleam/examples/create_recipe_example.gleam
+        - Mealie-specific example (or migrate to Tandoor)
+
+PHASE 9: VERIFICATION
+[ ] 48. Run `gleam build` - should succeed without mealie module errors
+[ ] 49. Run `gleam test` - all tests should pass or fail independently of Mealie
+[ ] 50. Search codebase: grep -ri "mealie" gleam/src gleam/test --exclude-dir=mealie-app
+        - Should return ONLY references in migration history or comments about historical context
+
+PHASE 10: GIT CLEANUP
+[ ] 51. Commit all changes with message: "Remove Mealie integration, migrate to Tandoor"
+[ ] 52. Verify git status is clean
+
+
+===============================================================================
+CRITICAL NOTES
+===============================================================================
+
+1. HISTORICAL PRESERVATION:
+   - Migration file 022_rename_recipe_to_mealie_recipe.sql should be KEPT
+   - Its rollback file should be KEPT
+   - These maintain the audit trail of schema evolution
+
+2. NEW MIGRATION REQUIRED:
+   - Migration 025: rename mealie_recipe → tandoor_recipe
+   - This updates production databases from Mealie to Tandoor
+
+3. SOURCE TYPE MAPPING:
+   Old workflow: 'recipe' → 'mealie_recipe' (migration 022)
+   New workflow: 'mealie_recipe' → 'tandoor_recipe' (migration 025)
+
+4. MEALIE-APP DIRECTORY:
+   - This contains the external Mealie project as a Git submodule
+   - NO changes should be made to this directory
+   - It can remain in the repository for reference or be removed entirely
+
+5. TEST FIXTURES:
+   - All test fixtures using MealieRecipe should use generic Recipe or TandoorRecipe
+   - Update source_type assertions from "mealie_recipe" to "tandoor_recipe"
+
+6. BUILD SUCCESS:
+   - Gleam build MUST succeed without any "module not found" errors
+   - All Mealie modules must be completely removed or excluded
+
+7. ENVIRONMENT VARIABLES:
+   Update all references:
+   - MEALIE_BASE_URL → TANDOOR_BASE_URL
+   - MEALIE_API_TOKEN → TANDOOR_API_TOKEN
+   - MEALIE_CONNECT_TIMEOUT_MS → TANDOOR_CONNECT_TIMEOUT_MS
+   - MEALIE_REQUEST_TIMEOUT_MS → TANDOOR_REQUEST_TIMEOUT_MS
+
+
+===============================================================================
+FILE SUMMARY TABLE
+===============================================================================
+
+File Type                          Count    Action
+----------------------------------------------------
+Mealie source modules              7        DELETE
+Source files importing Mealie       13       UPDATE
+Test files with Mealie refs         12       UPDATE
+Migration files (Mealie)            1        KEEP (history)
+Migration files (Rollback)          1        KEEP (history)
+Mealie-specific docs                7        DELETE
+Docs to update (Mealie→Tandoor)     8        UPDATE
+Config/Build files                  6        UPDATE
+Example files (Mealie)              3        DELETE
+----------------------------------------------------
+Total files affected               58        (approx)
+
+Estimated work breakdown:
+- Phase 1-2 (Type updates):     8-12 hours
+- Phase 3 (Test updates):       4-6 hours
+- Phase 4 (Migration):          1-2 hours
+- Phase 5-6 (Docs):             3-5 hours
+- Phase 7 (Config):             1-2 hours
+- Phase 8 (Examples):           <1 hour
+- Phase 9 (Verification):       1-2 hours
+- Phase 10 (Git):               <1 hour
+----------------------------------------------------
+TOTAL ESTIMATE:                  20-32 hours
+
