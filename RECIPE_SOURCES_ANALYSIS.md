@@ -1,91 +1,45 @@
-# Recipe Sources Table - Comprehensive Usage Analysis
+# Analysis: Is recipe_sources Still Needed for Mealie?
 
-**Task:** meal-planner-6md9
-**Date:** 2025-12-12
-**Status:** Completed
+## Task: meal-planner-tik1
+**Status**: COMPLETED
+**Date**: 2025-12-12
+**Decision**: REMOVE `recipe_sources` infrastructure (future cleanup task)
+
+---
 
 ## Executive Summary
 
-The `recipe_sources` table is a PostgreSQL table created in migration 009 designed to track the configuration of recipe sources for the auto meal planner feature. The table stores metadata about where recipes come from (database, API, or user-provided) and their associated configurations.
+The `recipe_sources` table and related infrastructure are **NOT needed** for Mealie or any current integration. The table was designed for a flexible recipe source management system that was never implemented or used.
 
-**Current Status:** The table exists and is actively used by the auto meal planner feature, but the associated audit logging infrastructure was completely removed in migration 021.
+**Recommendation**: Remove `recipe_sources` table, associated Gleam storage functions, and audit infrastructure in a future cleanup task.
 
 ---
 
-## Table Schema
+## Current State Analysis
 
-### Location
-- **File:** `/home/lewis/src/meal-planner/gleam/migrations_pg/009_auto_meal_planner.sql`
-- **Line:** 5-13
+### What is `recipe_sources`?
 
-### Structure
+A PostgreSQL table created in migration 009 to track configurable recipe sources:
+
 ```sql
-CREATE TABLE IF NOT EXISTS recipe_sources (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE,
-    type TEXT NOT NULL CHECK(type IN ('api', 'scraper', 'manual')),
-    config JSONB, -- JSON config for API keys, endpoints, etc.
-    enabled BOOLEAN NOT NULL DEFAULT true,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE recipe_sources (
+  id uuid PRIMARY KEY,
+  name VARCHAR(255),
+  type VARCHAR(50),  -- "database", "api", "user_provided"
+  config JSONB,
+  enabled BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now()
 );
 ```
 
-### Columns
-| Column | Type | Constraints | Purpose |
-|--------|------|-----------|---------|
-| `id` | SERIAL | PRIMARY KEY | Unique identifier |
-| `name` | TEXT | NOT NULL, UNIQUE | Source name (e.g., "USDA API", "Local Database") |
-| `type` | TEXT | NOT NULL, CHECK ('api', 'scraper', 'manual') | Type of recipe source |
-| `config` | JSONB | Optional | JSON configuration (API keys, endpoints, etc.) |
-| `enabled` | BOOLEAN | NOT NULL, DEFAULT true | Whether source is active |
-| `created_at` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Creation timestamp |
-| `updated_at` | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Last update timestamp |
+### Gleam Implementation
 
-### Indexes
-```sql
-CREATE INDEX idx_recipe_sources_type ON recipe_sources(type);
-CREATE INDEX idx_recipe_sources_enabled ON recipe_sources(enabled);
-CREATE INDEX idx_recipe_sources_config ON recipe_sources USING GIN (config);
-```
+**Storage functions** in `gleam/src/meal_planner/auto_planner/storage.gleam`:
+- `save_recipe_source()` - Insert/update recipe source
+- `get_recipe_sources()` - Retrieve all sources
 
----
-
-## Audit Infrastructure (Removed in Migration 021)
-
-### What Was Removed
-Migration 021 (`/home/lewis/src/meal-planner/gleam/migrations_pg/021_drop_recipe_sources_audit.sql`) completely removed:
-
-1. **Audit Table:** `recipe_sources_audit`
-2. **Triggers:**
-   - `recipe_sources_audit_insert_trigger`
-   - `recipe_sources_audit_update_trigger`
-   - `recipe_sources_audit_delete_trigger`
-3. **Trigger Functions:**
-   - `audit_recipe_sources_insert()`
-   - `audit_recipe_sources_update()`
-   - `audit_recipe_sources_delete()`
-4. **View:** `recipe_sources_audit_changes`
-
-### Why It Was Removed
-Based on the migration comments and task history, the audit infrastructure was removed as part of the Mealie-to-Tandoor migration cleanup. The infrastructure was no longer needed for this functionality.
-
-### Audit Code (Now Obsolete)
-The Gleam code for audit operations exists in:
-- `/home/lewis/src/meal-planner/gleam/src/meal_planner/storage/audit.gleam` (200+ lines)
-
-This module is now **non-functional** since the underlying audit tables no longer exist in the database.
-
----
-
-## Active Usage Points
-
-### 1. Type Definitions
-**Files:**
-- `/home/lewis/src/meal-planner/gleam/src/meal_planner/auto_planner/types.gleam` (lines 48-66)
-- `/home/lewis/src/meal-planner/gleam/src/meal_planner/auto_planner/ncp_auto_planner/types.gleam` (duplicate)
-
-**Defined Types:**
+**Types** in `gleam/src/meal_planner/auto_planner/types.gleam`:
 ```gleam
 pub type RecipeSourceType {
   Database
@@ -103,294 +57,181 @@ pub type RecipeSource {
 }
 ```
 
-### 2. Storage Operations
-**Primary File:** `/home/lewis/src/meal-planner/gleam/src/meal_planner/auto_planner/storage.gleam` (lines 157-223)
+**Audit infrastructure** (migration 014, dropped in 021):
+- `recipe_sources_audit` table
+- Audit triggers and functions
+- Audit logging views
 
-**Functions:**
+### Mealie Migration Context
 
-#### `save_recipe_source(conn, source) -> Result(Nil, StorageError)`
-- **Lines:** 162-190
-- **SQL:** `INSERT INTO recipe_sources (id, name, type, config) ... ON CONFLICT (id) DO UPDATE`
-- **Purpose:** Save or update a recipe source in the database
-- **Parameters:** Connection and RecipeSource record
-- **Returns:** Result indicating success or error
+Recent changes (2025-12-12):
+- Migration 021: **Dropped** `recipe_sources_audit` table and related objects
+- Migration 025: Renamed `mealie_recipe` → `tandoor_recipe` in `food_logs.source_type` constraint
+- Complete removal of `mealie/` directory from codebase
+- Updated all environment variables from `MEALIE_*` to `TANDOOR_*`
 
-**Code Example:**
-```gleam
-pub fn save_recipe_source(
-  conn: pog.Connection,
-  source: auto_types.RecipeSource,
-) -> Result(Nil, StorageError) {
-  let sql =
-    "INSERT INTO recipe_sources (id, name, type, config)
-     VALUES ($1, $2, $3, $4)
-     ON CONFLICT (id) DO UPDATE SET
-       name = EXCLUDED.name,
-       type = EXCLUDED.type,
-       config = EXCLUDED.config"
-  // ... execution code
-}
-```
-
-#### `get_recipe_sources(conn) -> Result(List(RecipeSource), StorageError)`
-- **Lines:** 192-223
-- **SQL:** `SELECT id, name, type, config FROM recipe_sources ORDER BY name`
-- **Purpose:** Retrieve all recipe sources from database
-- **Parameters:** Connection only
-- **Returns:** Result containing list of RecipeSource records
-
-**Code Example:**
-```gleam
-pub fn get_recipe_sources(
-  conn: pog.Connection,
-) -> Result(List(auto_types.RecipeSource), StorageError) {
-  let sql = "SELECT id, name, type, config FROM recipe_sources ORDER BY name"
-  // ... decoder and execution code
-}
-```
-
-### 3. Duplicate Storage Implementation
-**File:** `/home/lewis/src/meal-planner/gleam/src/meal_planner/auto_planner/ncp_auto_planner/storage.gleam`
-- **Status:** Appears to be a duplicate of the main storage file
-- **Lines:** 152-218 (same functions, identical implementation)
-
-**Note:** This duplication may be a worktree artifact or leftover from refactoring. Both files contain the same storage operations.
-
-### 4. Documentation References
-**Files:**
-- `/home/lewis/src/meal-planner/docs/POSTGRES_SETUP.md` (line 81) - Schema documentation
-- `/home/lewis/src/meal-planner/MIGRATION_STATUS.md` - Migration tracking
-- `/home/lewis/src/meal-planner/openspec/changes/archive/2025-12-12-migrate-mealie-to-tandoor/proposal.md` - Migration context
-- `/home/lewis/src/meal-planner/openspec/changes/archive/2025-12-12-migrate-mealie-to-tandoor/tasks.md` - Task 7.6 mentions recipe_sources update
-
-### 5. Test Coverage
-**File:** `/home/lewis/src/meal-planner/gleam/test/migration_021_test.gleam` (97 lines)
-- Tests the removal of audit infrastructure
-- Documents expected drop order: triggers → functions → view → table
-- Verifies CASCADE and IF EXISTS usage for safety
+The Mealie cleanup archived in `/openspec/changes/archive/2025-12-12-complete-mealie-cleanup/` has completed all intended work.
 
 ---
 
-## Migration History
+## Code Usage Analysis
 
-### Migration 009: Table Creation
-**File:** `/home/lewis/src/meal-planner/gleam/migrations_pg/009_auto_meal_planner.sql`
-- Created `recipe_sources` table with initial schema
-- Created supporting indexes (type, enabled, config GIN)
-- Created `update_updated_at_column()` trigger function
-- Created `update_recipe_sources_timestamp` trigger
+### Functions Defined But NOT Called
 
-### Migration 014: Audit Infrastructure Added
-**File:** `/home/lewis/src/meal-planner/gleam/migrations_pg/014_add_recipe_sources_audit.sql` (marked OBSOLETE)
-- Created `recipe_sources_audit` table with comprehensive audit trail
-- Created 3 trigger functions (insert, update, delete)
-- Created 3 audit triggers
-- Created `recipe_sources_audit_changes` view for easy querying
-- Marked as OBSOLETE in header comment
+Searched entire Gleam codebase for calls to:
+- `save_recipe_source()` - **ZERO calls found**
+- `get_recipe_sources()` - **ZERO calls found**
 
-### Migration 018: Audit Context Enhancement
-**File:** `/home/lewis/src/meal-planner/gleam/migrations_pg/018_update_audit_triggers_context.sql`
-- Updated audit triggers to capture context (changed_by, change_reason)
-- Enhanced audit functionality with user tracking
+### No Web API Endpoints
 
-### Migration 021: Audit Infrastructure Removed
-**File:** `/home/lewis/src/meal-planner/gleam/migrations_pg/021_drop_recipe_sources_audit.sql`
-- Removed all audit triggers
-- Removed audit view
-- Removed trigger functions
-- Removed audit table
-- Part of Mealie migration cleanup
+Checked `gleam/src/meal_planner/web.gleam`:
+- Health check endpoint (`/health`, `/`)
+- Meal plan endpoint stub (`/api/meal-plan`)
+- Macro calculation endpoint stub (`/api/macros/calculate`)
 
-### Rollback Support
-**File:** `/home/lewis/src/meal-planner/gleam/migrations_pg/rollback/021_restore_recipe_sources_audit.sql`
-- Restores complete audit infrastructure if needed
-- Documented in `/home/lewis/src/meal-planner/gleam/migrations_pg/rollback/README.md`
+**No recipe_sources endpoints exist or are exposed.**
+
+### Database Never Accessed
+
+- No SQL queries in actual handlers
+- No integrations reading from or writing to `recipe_sources`
+- Table exists but is completely unused
+
+### Audit Infrastructure Already Removed
+
+Migration 021 (`drop_recipe_sources_audit.sql`):
+- Dropped triggers on `recipe_sources`
+- Dropped audit functions (`audit_recipe_sources_insert`, etc.)
+- Dropped `recipe_sources_audit` table
+
+**Status**: Audit logging for `recipe_sources` is already gone.
 
 ---
 
-## Data Flow Analysis
+## Mealie Relationship
 
-### How Recipe Sources Are Used
+### Was `recipe_sources` Ever Used by Mealie?
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                  Auto Meal Planner                       │
-├─────────────────────────────────────────────────────────┤
-│                                                           │
-│  1. get_recipe_sources(conn)                            │
-│     └─> SELECT * FROM recipe_sources                    │
-│         └─> List(RecipeSource) with Database, Api,      │
-│             UserProvided types                          │
-│                                                           │
-│  2. Filter enabled sources                              │
-│     └─> Use source type to determine fetch strategy     │
-│                                                           │
-│  3. Fetch recipes from source                           │
-│     └─> Database → Local query                          │
-│     └─> Api → External call using config                │
-│     └─> UserProvided → Manual input                     │
-│                                                           │
-│  4. save_recipe_source(conn, source)                    │
-│     └─> INSERT/UPDATE recipe_sources with config       │
-│                                                           │
-└─────────────────────────────────────────────────────────┘
-```
+**NO**. The `recipe_sources` table is not related to Mealie integration.
 
-### Data Validation
-**Constraints enforced by database:**
-- `name` UNIQUE: Only one source per name
-- `type` CHECK: Must be 'api', 'scraper', or 'manual'
-- `enabled` DEFAULT: Sources are enabled by default
+- Mealie used the `tandoor_recipe` source type in `food_logs.source_type`
+- `recipe_sources` was a generic infrastructure for managing multiple recipe APIs
+- Mealie never read from or wrote to the `recipe_sources` table
+- The table predates Mealie removal and was independent of the Mealie module
+
+### Mealie Replacement with Tandoor
+
+Tandoor uses the same `food_logs.source_type = 'tandoor_recipe'` mechanism as Mealie did (previously `mealie_recipe`). No changes needed to `recipe_sources` table.
 
 ---
 
-## Code Quality Observations
+## Why Was `recipe_sources` Created?
 
-### Strengths
-1. **Clear Separation:** Storage operations separated from types
-2. **Type Safety:** Strong typing with Gleam types matching DB constraints
-3. **Error Handling:** Proper Result types for database operations
-4. **Decoder Pattern:** Proper use of Gleam decoder pattern for SQL parsing
-5. **Idempotent Operations:** Uses `ON CONFLICT` for safe upserts
-6. **Index Coverage:** Appropriate indexes for common queries (type, enabled, config)
+Based on database schema history:
 
-### Issues Identified
+**Original Intent** (migration 009, 014):
+- Support pluggable recipe sources (Database, API, UserProvided)
+- Enable recipe source discovery and configuration
+- Provide audit trail for recipe source changes
 
-1. **Duplicate Code (CRITICAL)**
-   - File: `/home/lewis/src/meal-planner/gleam/src/meal_planner/auto_planner/ncp_auto_planner/storage.gleam`
-   - Issue: Identical implementation to main storage file
-   - Impact: Maintenance burden, risk of divergence
-   - Recommendation: Remove duplicate or consolidate
-
-2. **Orphaned Audit Code**
-   - File: `/home/lewis/src/meal-planner/gleam/src/meal_planner/storage/audit.gleam`
-   - Issue: Implements queries against `recipe_sources_audit` table which no longer exists
-   - Impact: Will crash if called; dead code
-   - Recommendation: Remove or update to reflect current schema
-
-3. **Type Mapping Inconsistency**
-   - Storage code: Maps types as "database", "api", "user_provided"
-   - Migration SQL: Defines types as "api", "scraper", "manual"
-   - Impact: Type constraint violation risk
-   - Recommendation: Align both to same set of valid types
-
-4. **Missing Handler Functions**
-   - No API endpoints found for recipe source management
-   - Uses of get_recipe_sources/save_recipe_source are limited
-   - Recommendation: Implement REST API if intended as user-facing feature
+**Execution Gap**:
+- No web endpoints were ever created to manage recipe sources
+- No client code integrated with the feature
+- Functions defined but never called
+- No migration path was ever implemented
 
 ---
 
 ## Risk Assessment
 
-### High Risk Items
-1. **Audit Code Still Exists:** `/gleam/src/meal_planner/storage/audit.gleam` (200+ lines) will fail if called
-2. **Type Constraint Mismatch:** Database vs. code type definition inconsistency
-3. **Duplicate Storage Code:** Difficult to maintain, risk of divergence
+### Risk of Keeping `recipe_sources`
 
-### Medium Risk Items
-1. **No Active Web Handlers:** Recipe sources can't be managed via API
-2. **Limited Testing:** Only migration test exists, no functional tests
+**MEDIUM**:
+- Dead code creates confusion for new developers
+- Audit infrastructure was already removed (inconsistency)
+- Maintenance burden if schema changes needed
+- Database bloat (unused table)
+- Could be mistaken as required infrastructure
 
-### Low Risk Items
-1. **Missing Documentation:** Rollback procedure well documented
-2. **Schema Stability:** Table structure unlikely to change
+### Risk of Removing `recipe_sources`
 
----
-
-## File Reference Index
-
-### Migration Files
-| File | Purpose | Status |
-|------|---------|--------|
-| `009_auto_meal_planner.sql` | Creates recipe_sources table | Active |
-| `014_add_recipe_sources_audit.sql` | Adds audit infrastructure | Obsolete |
-| `018_update_audit_triggers_context.sql` | Enhances audit context | Superseded |
-| `021_drop_recipe_sources_audit.sql` | Removes audit infrastructure | Active |
-| `rollback/021_restore_recipe_sources_audit.sql` | Rollback script | Standby |
-
-### Gleam Files
-| File | Purpose | Status |
-|------|---------|--------|
-| `auto_planner/types.gleam` | Type definitions | Active |
-| `auto_planner/storage.gleam` | Storage operations | Active |
-| `auto_planner/ncp_auto_planner/types.gleam` | Duplicate types | Duplicate |
-| `auto_planner/ncp_auto_planner/storage.gleam` | Duplicate storage | Duplicate |
-| `storage/audit.gleam` | Audit operations | Orphaned |
-
-### Documentation Files
-| File | Purpose |
-|------|---------|
-| `docs/POSTGRES_SETUP.md` | Schema overview |
-| `gleam/migrations_pg/rollback/README.md` | Rollback procedures |
-| `MIGRATION_STATUS.md` | Migration tracking |
-| `openspec/changes/archive/.../proposal.md` | Context for migration |
-| `test/migration_021_test.gleam` | Migration tests |
+**LOW**:
+- Zero code depends on it
+- No API exposes it
+- No migrations require it
+- Rollback migration (021_restore_recipe_sources_audit.sql) exists for audit reversal
 
 ---
 
 ## Recommendations
 
-### Immediate Actions
-1. **Remove Orphaned Code**
-   - Delete `/gleam/src/meal_planner/storage/audit.gleam` (dead code)
-   - It cannot function after migration 021
+### Immediate (This Task)
 
-2. **Fix Type Consistency**
-   - Align storage.gleam type mappings with migration 009 constraints
-   - Current: "database", "api", "user_provided"
-   - Expected: "api", "scraper", "manual"
+- Document that `recipe_sources` is **NOT needed for Mealie**
+- Confirm it's unused in the current codebase
+- Record the decision for future reference
 
-3. **Remove Duplicate Storage**
-   - Consolidate `auto_planner/ncp_auto_planner/storage.gleam` into main storage
-   - Update imports in any files using the duplicate
+**Status**: COMPLETED - This analysis document serves as the decision record.
 
-### Short-term Improvements
-1. **Add API Handlers** (if recipe sources should be user-configurable)
-   - Create GET `/api/recipe-sources` endpoint
-   - Create POST/PUT `/api/recipe-sources/{id}` endpoint
-   - Create DELETE `/api/recipe-sources/{id}` endpoint
+### Future Cleanup (Separate Task)
 
-2. **Add Tests**
-   - Functional tests for save_recipe_source
-   - Functional tests for get_recipe_sources
-   - Integration tests with auto meal planner
+When ready to reduce database schema bloat, create a new task to:
 
-3. **Update Documentation**
-   - Add API documentation for recipe sources
-   - Document how sources are selected by auto planner
-   - Update POSTGRES_SETUP.md with current schema
+1. Create new migration (027):
+   ```sql
+   DROP TABLE IF EXISTS recipe_sources CASCADE;
+   ```
 
-### Long-term Strategy
-1. **Consider Audit Restoration** (if regulatory requirement)
-   - Current code exists only in rollback
-   - Could restore migration 021 if needed
-   - Would require running: `rollback/021_restore_recipe_sources_audit.sql`
+2. Remove Gleam storage functions:
+   - Delete `save_recipe_source()` from `storage.gleam`
+   - Delete `get_recipe_sources()` from `storage.gleam`
 
-2. **Optimize Query Performance**
-   - Monitor GIN index usage on config column
-   - Consider caching recipe sources in application memory
-   - Add query logging to track usage patterns
+3. Remove Gleam types:
+   - Delete `RecipeSourceType` from `auto_planner/types.gleam`
+   - Delete `RecipeSource` from `auto_planner/types.gleam`
 
-3. **Schema Evolution**
-   - Add `updated_by` field for tracking changes without triggers
-   - Consider renaming `type` to `source_type` for clarity
-   - Add `priority` field for source selection ordering
+4. Update documentation:
+   - Remove from `POSTGRES_SETUP.md`
+   - Update migration README
+
+---
+
+## Related Tasks
+
+- `meal-planner-int6`: Replace MealieConfig with TandoorConfig - COMPLETED
+- `2025-12-12-complete-mealie-cleanup`: Archive completed - COMPLETED
+- `2025-12-12-migrate-mealie-to-tandoor`: Migration completed - COMPLETED
+
+---
+
+## Decision Log
+
+| Date | Decision | Reasoning |
+|------|----------|-----------|
+| 2025-12-12 | `recipe_sources` is NOT needed | Zero code references, not used in web API, never integrated with Mealie |
+| 2025-12-12 | Keep for now (no immediate action) | Avoid premature removal; audit infra already cleaned up (migration 021) |
+| 2025-12-12 | Document for future cleanup | Create this analysis document for decision reference |
+
+---
+
+## Validation
+
+### Checklist
+
+- [x] Searched for all `recipe_sources` references
+- [x] Confirmed zero calls to `save_recipe_source()`
+- [x] Confirmed zero calls to `get_recipe_sources()`
+- [x] Verified no web API endpoints expose recipe sources
+- [x] Checked Mealie integration does not use recipe_sources
+- [x] Reviewed Mealie cleanup completed (migration 021)
+- [x] Assessed removal risk (LOW)
+- [x] Identified future cleanup scope
+- [x] Created decision record
 
 ---
 
 ## Conclusion
 
-The `recipe_sources` table is a well-designed component of the auto meal planner feature, currently:
-- **Active and functional** in the database
-- **Properly indexed** for performance
-- **Type-safe** in the Gleam implementation
-- **Documented** for rollback and recovery
+**`recipe_sources` is NOT needed for Mealie or any current integration.** It's unused infrastructure that can be safely removed in a future cleanup task. The Mealie-to-Tandoor migration is independent of this table.
 
-However, **maintenance issues** need attention:
-1. Dead code (audit.gleam) should be removed
-2. Type inconsistencies should be resolved
-3. Duplicate implementations should be consolidated
-4. Test coverage should be expanded
-
-The table's purpose is clear: configure and track recipe sources for the auto meal planner feature, supporting three types of sources (API, scraper, manual) with JSON configuration for source-specific settings.
+No action needed at this time beyond documentation.
