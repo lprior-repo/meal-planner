@@ -3,8 +3,8 @@
 ## Overview
 
 This Docker Compose setup runs the complete meal planner stack:
-- **PostgreSQL 15**: Shared database with two databases (mealie, meal_planner)
-- **Mealie v3.6.1**: Recipe manager with Vue.js UI (port 9000)
+- **PostgreSQL 15**: Database for Gleam backend (meal_planner database)
+- **Tandoor**: Recipe manager with modern web UI (port 8000, separate tandoor database)
 - **Gleam Backend**: AI meal planning and macro calculations (port 8080)
 
 ## Quick Start
@@ -27,9 +27,6 @@ Edit `.env.docker` and set your values (optional - works with defaults):
 ```bash
 # PostgreSQL password (defaults to "postgres")
 POSTGRES_PASSWORD=your-secure-password
-
-# OpenAI API key for recipe scraping (optional)
-OPENAI_API_KEY=sk-...
 ```
 
 ### 3. Start Services
@@ -48,18 +45,18 @@ docker-compose logs -f
 
 ### 4. Access Applications
 
-- **Mealie UI**: http://localhost:9000
+- **Tandoor UI**: http://localhost:8000
   - Create your first user account (admin)
   - Generate API token in Settings > API Tokens
-  - Add the token to `.env.docker` as `MEALIE_API_TOKEN`
+  - Add the token to environment variables as `TANDOOR_API_TOKEN`
 
-- **Gleam API** (when implemented): http://localhost:8080
+- **Gleam API**: http://localhost:8080
   - Health check: http://localhost:8080/health
-  - API docs: http://localhost:8080/docs
+  - API documentation available in source
 
 - **PostgreSQL**: localhost:5432
-  - Database: `mealie` (for Mealie)
-  - Database: `meal_planner` (for Gleam)
+  - Database: `meal_planner` (for Gleam backend)
+  - Database: `tandoor` (for Tandoor, separate database)
   - User: `postgres`
   - Password: from `.env.docker`
 
@@ -71,24 +68,25 @@ docker-compose logs -f
 - **Container**: meal-planner-postgres
 - **Port**: 5432
 - **Databases**:
-  - `mealie` - Mealie recipe storage
   - `meal_planner` - Gleam backend storage
+  - `tandoor` - Tandoor recipe management
 - **Health check**: `pg_isready`
 - **Persistence**: `postgres_data` volume
 
-### Mealie
+### Tandoor
 
-- **Image**: ghcr.io/mealie-recipes/mealie:v3.6.1
-- **Container**: meal-planner-mealie
-- **Port**: 9000
+- **Image**: vabene1111/recipes:latest
+- **Container**: meal-planner-tandoor
+- **Port**: 8000
 - **Features**:
   - Recipe management with web scraping
   - Meal planning calendar
   - Shopping lists
   - User authentication
-  - OpenAI integration (optional)
-- **Health check**: `/api/app/about` endpoint
-- **Persistence**: `mealie_data` volume
+  - API for recipe synchronization
+- **Database**: Uses `tandoor` database (separate from meal_planner)
+- **Health check**: `/health` endpoint
+- **Persistence**: `tandoor_data` volume
 
 ### Gleam Backend
 
@@ -107,8 +105,8 @@ docker-compose logs -f
 
 On first start, PostgreSQL runs `scripts/init-db.sh` which:
 
-1. Creates `mealie` database
-2. Creates `meal_planner` database
+1. Creates `meal_planner` database for Gleam backend
+2. Creates `tandoor` database for Tandoor
 3. Grants all privileges to postgres user
 
 You can verify with:
@@ -144,7 +142,7 @@ docker-compose down -v
 docker-compose logs -f
 
 # Specific service
-docker-compose logs -f mealie
+docker-compose logs -f tandoor
 docker-compose logs -f gleam-backend
 docker-compose logs -f postgres
 ```
@@ -162,14 +160,14 @@ docker-compose build gleam-backend
 ### Access PostgreSQL
 
 ```bash
-docker-compose exec postgres psql -U postgres -d mealie
+docker-compose exec postgres psql -U postgres -d tandoor
 docker-compose exec postgres psql -U postgres -d meal_planner
 ```
 
 ### Restart a service
 
 ```bash
-docker-compose restart mealie
+docker-compose restart tandoor
 docker-compose restart gleam-backend
 ```
 
@@ -177,27 +175,20 @@ docker-compose restart gleam-backend
 
 ### Local Development with Docker Database
 
-You can use the Docker PostgreSQL instance for local development:
+You can use the Docker PostgreSQL and Tandoor instances for local development:
 
-1. Start only PostgreSQL:
+1. Start PostgreSQL and Tandoor:
    ```bash
-   docker-compose up -d postgres
+   docker-compose up -d postgres tandoor
    ```
 
-2. Run Mealie locally (requires Python 3.12):
-   ```bash
-   cd mealie-app
-   cp ../.env.docker .env
-   source venv/bin/activate
-   python -m mealie
-   ```
-
-3. Run Gleam backend locally:
+2. Run Gleam backend locally:
    ```bash
    cd gleam
    # Set environment variables
    export DATABASE_HOST=localhost
    export DATABASE_NAME=meal_planner
+   export TANDOOR_BASE_URL=http://localhost:8000
    gleam run
    ```
 
@@ -213,11 +204,11 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 
 ## Troubleshooting
 
-### Mealie won't start
+### Tandoor won't start
 
 Check logs:
 ```bash
-docker-compose logs mealie
+docker-compose logs tandoor
 ```
 
 Common issues:
@@ -272,8 +263,8 @@ docker-compose up -d
 │                  (meal-planner-network)                      │
 │                                                              │
 │  ┌────────────────┐        ┌─────────────────┐             │
-│  │   Mealie       │        │  Gleam Backend  │             │
-│  │   Port 9000    │◄──────►│   Port 8080     │             │
+│  │   Tandoor      │        │  Gleam Backend  │             │
+│  │   Port 8000    │◄──────►│   Port 8080     │             │
 │  └───────┬────────┘        └────────┬────────┘             │
 │          │                          │                       │
 │          │         ┌────────────────┴───────┐               │
@@ -281,7 +272,7 @@ docker-compose up -d
 │          └────────►│     PostgreSQL         │               │
 │                    │      Port 5432         │               │
 │                    │                        │               │
-│                    │  DB: mealie            │               │
+│                    │  DB: tandoor           │               │
 │                    │  DB: meal_planner      │               │
 │                    └────────────────────────┘               │
 │                                                              │
@@ -289,7 +280,7 @@ docker-compose up -d
                            │
                            │ Exposed Ports
                            ▼
-               Host: localhost:9000 (Mealie UI)
+               Host: localhost:8000 (Tandoor UI)
                Host: localhost:8080 (Gleam API)
                Host: localhost:5432 (PostgreSQL)
 ```
@@ -299,7 +290,7 @@ docker-compose up -d
 Data is persisted in Docker volumes:
 
 - `postgres_data`: PostgreSQL database files
-- `mealie_data`: Mealie application data (recipes, images, etc.)
+- `tandoor_data`: Tandoor application data (recipes, images, etc.)
 
 To backup data:
 
@@ -307,8 +298,8 @@ To backup data:
 # Backup PostgreSQL
 docker-compose exec postgres pg_dumpall -U postgres > backup.sql
 
-# Backup Mealie data
-docker run --rm -v meal-planner_mealie_data:/data -v $(pwd):/backup alpine tar czf /backup/mealie-backup.tar.gz /data
+# Backup Tandoor data
+docker run --rm -v meal-planner_tandoor_data:/data -v $(pwd):/backup alpine tar czf /backup/tandoor-backup.tar.gz /data
 ```
 
 To restore:
@@ -317,8 +308,8 @@ To restore:
 # Restore PostgreSQL
 cat backup.sql | docker-compose exec -T postgres psql -U postgres
 
-# Restore Mealie data
-docker run --rm -v meal-planner_mealie_data:/data -v $(pwd):/backup alpine tar xzf /backup/mealie-backup.tar.gz -C /
+# Restore Tandoor data
+docker run --rm -v meal-planner_tandoor_data:/data -v $(pwd):/backup alpine tar xzf /backup/tandoor-backup.tar.gz -C /
 ```
 
 ## Security Notes
@@ -326,13 +317,13 @@ docker run --rm -v meal-planner_mealie_data:/data -v $(pwd):/backup alpine tar x
 - Change `POSTGRES_PASSWORD` in production
 - Use environment-specific `.env.docker` files
 - Keep `.env.docker` out of version control (it's in `.gitignore`)
-- Generate strong API tokens in Mealie
+- Generate strong API tokens in Tandoor
 - Consider using Docker secrets for sensitive data in production
 
 ## Next Steps
 
-1. ✅ Docker Compose configured
-2. ⏭️ Implement Gleam HTTP server (meal-planner-wahn)
-3. ⏭️ Implement Mealie API client in Gleam (meal-planner-d9ln)
-4. ⏭️ Add AI endpoints to Gleam backend
-5. ⏭️ Test end-to-end integration
+1. ✅ Docker Compose configured with Tandoor
+2. ✅ Gleam HTTP server implemented
+3. ✅ Tandoor integration in progress
+4. ⏭️ Complete Tandoor API client in Gleam
+5. ⏭️ Test end-to-end integration with Tandoor recipes

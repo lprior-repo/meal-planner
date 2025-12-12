@@ -23,17 +23,20 @@ The meal planner application uses environment variables for configuration. This 
    DATABASE_PASSWORD=
    ```
 
-3. **Configure Mealie integration:**
+3. **Configure Tandoor integration:**
    ```bash
-   # Start Mealie
-   docker-compose up -d mealie
+   # Start Tandoor via automated startup
+   ./run.sh start
 
-   # Open http://localhost:9000
-   # Create account → Settings → API Tokens → Create token
+   # OR manually start Tandoor
+   docker-compose up -d tandoor
+
+   # Open http://localhost:8000
+   # Create account → Settings → API → Create token
 
    # Add to .env
-   MEALIE_BASE_URL=http://localhost:9000
-   MEALIE_API_TOKEN=your-token-here
+   TANDOOR_BASE_URL=http://localhost:8000
+   TANDOOR_API_TOKEN=your-token-here
    ```
 
 4. **Start the application:**
