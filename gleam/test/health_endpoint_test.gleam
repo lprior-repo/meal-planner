@@ -65,51 +65,51 @@ pub fn health_endpoint_includes_service_name_test() {
 }
 
 // ============================================================================
-// Mealie Connectivity Tests
+// Tandoor Connectivity Tests
 // ============================================================================
 
-/// Test health endpoint with Mealie properly configured and healthy
-pub fn mealie_connectivity_healthy_test() {
-  // When MEALIE_API_TOKEN is set and Mealie service is reachable:
-  // - mealie.status should be "healthy"
-  // - mealie.message should contain recipe count or connection success
-  // - mealie.configured should be true
+/// Test health endpoint with Tandoor properly configured and healthy
+pub fn tandoor_connectivity_healthy_test() {
+  // When TANDOOR_API_TOKEN is set and Tandoor service is reachable:
+  // - tandoor.status should be "healthy"
+  // - tandoor.message should contain recipe count or connection success
+  // - tandoor.configured should be true
   // - HTTP status should be 200 OK
 
   True
   |> should.be_true()
 }
 
-/// Test health endpoint when Mealie is not configured
-pub fn mealie_not_configured_test() {
-  // When MEALIE_API_TOKEN is not set:
-  // - mealie.status should be "not_configured"
-  // - mealie.message should explain that token is not set
-  // - mealie.configured should be false
+/// Test health endpoint when Tandoor is not configured
+pub fn tandoor_not_configured_test() {
+  // When TANDOOR_API_TOKEN is not set:
+  // - tandoor.status should be "not_configured"
+  // - tandoor.message should explain that token is not set
+  // - tandoor.configured should be false
   // - Overall health status should still be 200 OK (service is running)
 
   True
   |> should.be_true()
 }
 
-/// Test health endpoint when Mealie connection is refused
-pub fn mealie_connection_refused_test() {
-  // When Mealie service is down/unreachable (connection refused):
-  // - mealie.status should be "unreachable"
-  // - mealie.message should indicate connection failed
-  // - mealie.configured should be true (token is set)
+/// Test health endpoint when Tandoor connection is refused
+pub fn tandoor_connection_refused_test() {
+  // When Tandoor service is down/unreachable (connection refused):
+  // - tandoor.status should be "unreachable"
+  // - tandoor.message should indicate connection failed
+  // - tandoor.configured should be true (token is set)
   // - Overall health status should still be 200 OK
 
   True
   |> should.be_true()
 }
 
-/// Test health endpoint when Mealie request times out
-pub fn mealie_request_timeout_test() {
-  // When Mealie service is slow and request times out:
-  // - mealie.status should be "timeout"
-  // - mealie.message should indicate request timed out
-  // - mealie.configured should be true
+/// Test health endpoint when Tandoor request times out
+pub fn tandoor_request_timeout_test() {
+  // When Tandoor service is slow and request times out:
+  // - tandoor.status should be "timeout"
+  // - tandoor.message should indicate request timed out
+  // - tandoor.configured should be true
   // - Overall health status should still be 200 OK
 
   True
@@ -117,23 +117,23 @@ pub fn mealie_request_timeout_test() {
 }
 
 /// Test health endpoint when DNS resolution fails
-pub fn mealie_dns_resolution_failed_test() {
-  // When Mealie hostname cannot be resolved:
-  // - mealie.status should be "dns_failed"
-  // - mealie.message should indicate DNS lookup failed
-  // - mealie.configured should be true
+pub fn tandoor_dns_resolution_failed_test() {
+  // When Tandoor hostname cannot be resolved:
+  // - tandoor.status should be "dns_failed"
+  // - tandoor.message should indicate DNS lookup failed
+  // - tandoor.configured should be true
   // - Overall health status should still be 200 OK
 
   True
   |> should.be_true()
 }
 
-/// Test health endpoint when Mealie returns an error
-pub fn mealie_returns_error_test() {
-  // When Mealie API returns an error response:
-  // - mealie.status should be "error"
-  // - mealie.message should contain error details
-  // - mealie.configured should be true
+/// Test health endpoint when Tandoor returns an error
+pub fn tandoor_returns_error_test() {
+  // When Tandoor API returns an error response:
+  // - tandoor.status should be "error"
+  // - tandoor.message should contain error details
+  // - tandoor.configured should be true
   // - Overall health status should still be 200 OK
 
   True
@@ -212,16 +212,16 @@ pub fn health_endpoint_returns_json_content_type_test() {
 /// Test that health endpoint responds quickly
 pub fn health_endpoint_response_time_test() {
   // Health checks should complete quickly
-  // Target: < 100ms without Mealie
-  // Target: < 5s with Mealie connectivity check (includes network call)
+  // Target: < 100ms without Tandoor
+  // Target: < 5s with Tandoor connectivity check (includes network call)
 
   True
   |> should.be_true()
 }
 
-/// Test that health endpoint times out Mealie checks appropriately
-pub fn health_endpoint_mealie_timeout_configuration_test() {
-  // Mealie connectivity check should have a timeout
+/// Test that health endpoint times out Tandoor checks appropriately
+pub fn health_endpoint_tandoor_timeout_configuration_test() {
+  // Tandoor connectivity check should have a timeout
   // Current: 5000ms (5 seconds)
   // This prevents the health endpoint from hanging indefinitely
 
@@ -237,7 +237,7 @@ pub fn health_endpoint_mealie_timeout_configuration_test() {
 pub fn health_endpoint_development_environment_test() {
   // In development (no API token set):
   // - Service should report as healthy
-  // - Mealie should report as not_configured
+  // - Tandoor should report as not_configured
   // - Request should complete successfully
 
   True
@@ -246,21 +246,21 @@ pub fn health_endpoint_development_environment_test() {
 
 /// Test health endpoint in production environment
 pub fn health_endpoint_production_environment_test() {
-  // In production (API token set, Mealie configured):
+  // In production (API token set, Tandoor configured):
   // - Service should report as healthy
-  // - Mealie connectivity should be properly verified
+  // - Tandoor connectivity should be properly verified
   // - Request should complete successfully
 
   True
   |> should.be_true()
 }
 
-/// Test health endpoint with disabled Mealie integration
-pub fn health_endpoint_mealie_integration_disabled_test() {
-  // When Mealie integration is explicitly disabled:
+/// Test health endpoint with disabled Tandoor integration
+pub fn health_endpoint_tandoor_integration_disabled_test() {
+  // When Tandoor integration is explicitly disabled:
   // - Health endpoint should still work
-  // - Mealie should report as not_configured
-  // - Other endpoints should not require Mealie
+  // - Tandoor should report as not_configured
+  // - Other endpoints should not require Tandoor
 
   True
   |> should.be_true()
@@ -272,11 +272,11 @@ pub fn health_endpoint_mealie_integration_disabled_test() {
 
 /// Test health endpoint error response format
 pub fn health_endpoint_error_response_format_test() {
-  // Even when Mealie is down, error should be formatted as:
+  // Even when Tandoor is down, error should be formatted as:
   // {
-  //   "mealie": {
+  //   "tandoor": {
   //     "status": "unreachable",
-  //     "message": "Cannot connect to Mealie server",
+  //     "message": "Cannot connect to Tandoor server",
   //     "configured": true
   //   }
   // }
@@ -288,7 +288,7 @@ pub fn health_endpoint_error_response_format_test() {
 
 /// Test health endpoint with invalid configuration
 pub fn health_endpoint_invalid_configuration_test() {
-  // If Mealie base URL is malformed:
+  // If Tandoor base URL is malformed:
   // - Health check should handle gracefully
   // - Should not crash the service
   // - Should report configuration error
@@ -309,7 +309,7 @@ pub fn health_endpoint_invalid_configuration_test() {
 ///   "status": "healthy",
 ///   "service": "meal-planner",
 ///   "version": "1.0.0",
-///   "mealie": {
+///   "tandoor": {
 ///     "status": "healthy",
 ///     "message": "Connected successfully, found 42 recipes",
 ///     "configured": true
@@ -321,17 +321,17 @@ pub fn health_check_success_response_documentation_test() {
   |> should.be_true()
 }
 
-/// Documents the expected response format when Mealie is not configured
+/// Documents the expected response format when Tandoor is not configured
 ///
-/// Mealie Not Configured Response (200 OK):
+/// Tandoor Not Configured Response (200 OK):
 /// ```json
 /// {
 ///   "status": "healthy",
 ///   "service": "meal-planner",
 ///   "version": "1.0.0",
-///   "mealie": {
+///   "tandoor": {
 ///     "status": "not_configured",
-///     "message": "MEALIE_API_TOKEN not set",
+///     "message": "TANDOOR_API_TOKEN not set",
 ///     "configured": false
 ///   }
 /// }
@@ -341,17 +341,17 @@ pub fn health_check_not_configured_response_documentation_test() {
   |> should.be_true()
 }
 
-/// Documents the expected response format when Mealie is unreachable
+/// Documents the expected response format when Tandoor is unreachable
 ///
-/// Mealie Unreachable Response (200 OK):
+/// Tandoor Unreachable Response (200 OK):
 /// ```json
 /// {
 ///   "status": "healthy",
 ///   "service": "meal-planner",
 ///   "version": "1.0.0",
-///   "mealie": {
+///   "tandoor": {
 ///     "status": "unreachable",
-///     "message": "Cannot connect to Mealie server",
+///     "message": "Cannot connect to Tandoor server",
 ///     "configured": true
 ///   }
 /// }

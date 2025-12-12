@@ -1,28 +1,28 @@
-/// Helper module for enriching food log entries with Mealie recipe data
+/// Helper module for enriching food log entries with Tandoor recipe data
 import gleam/dict
 import gleam/list
 import meal_planner/config
-import meal_planner/mealie/client as mealie
+import meal_planner/tandoor/client as tandoor
 import meal_planner/types.{type FoodLogEntry, FoodLogEntry}
 
-/// Enrich a food log entry with recipe details from Mealie API
-/// Updates recipe_name if the entry is from a Mealie recipe
-pub fn enrich_entry_with_mealie_data(
+/// Enrich a food log entry with recipe details from Tandoor API
+/// Updates recipe_name if the entry is from a Tandoor recipe
+pub fn enrich_entry_with_tandoor_data(
   entry: FoodLogEntry,
   cfg: config.Config,
 ) -> FoodLogEntry {
-  // Only enrich entries that are from Mealie recipes
+  // Only enrich entries that are from Tandoor recipes
   case entry.source_type {
-    "mealie_recipe" -> {
-      // Fetch recipe details from Mealie
+    "tandoor_recipe" -> {
+      // Fetch recipe details from Tandoor
       let recipe_slug = entry.source_id
-      case mealie.get_recipe(cfg, recipe_slug) {
+      case tandoor.get_recipe(cfg, recipe_slug) {
         Ok(recipe) -> {
-          // Return entry with updated recipe name from Mealie
+          // Return entry with updated recipe name from Tandoor
           FoodLogEntry(..entry, recipe_name: recipe.name)
         }
         Error(_) -> {
-          // Mealie API call failed, return entry as-is
+          // Tandoor API call failed, return entry as-is
           entry
         }
       }
@@ -31,12 +31,12 @@ pub fn enrich_entry_with_mealie_data(
   }
 }
 
-/// Batch enrich multiple entries with Mealie data
-pub fn enrich_entries_with_mealie_data(
+/// Batch enrich multiple entries with Tandoor data
+pub fn enrich_entries_with_tandoor_data(
   entries: List(FoodLogEntry),
   cfg: config.Config,
 ) -> List(FoodLogEntry) {
-  list.map(entries, fn(entry) { enrich_entry_with_mealie_data(entry, cfg) })
+  list.map(entries, fn(entry) { enrich_entry_with_tandoor_data(entry, cfg) })
 }
 
 /// Batch enrich multiple entries with Mealie data using single API call
