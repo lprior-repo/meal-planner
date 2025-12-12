@@ -133,14 +133,21 @@ pub fn get_auto_plan(
 
           case config_result {
             Error(e) -> Error(DatabaseError(e))
-            Ok(config) ->
+            Ok(config) -> {
+              // Serialize recipes to JSON string
+              let recipe_json =
+                json.array(recipes, types.recipe_to_json)
+                |> json.to_string
+
               Ok(auto_types.AutoMealPlan(
                 id: plan_id,
                 recipes: recipes,
                 generated_at: generated_at,
                 total_macros: total_macros,
                 config: config,
+                recipe_json: recipe_json,
               ))
+            }
           }
         }
       }
