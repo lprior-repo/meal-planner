@@ -508,3 +508,307 @@ fn log_response(status: Int, body_length: Int) -> Nil {
     <> " bytes)"
   )
 }
+
+// ============================================================================
+// Recipe API Methods
+// ============================================================================
+
+/// Recipe type for API responses
+pub type Recipe {
+  Recipe(
+    id: Int,
+    name: String,
+    slug: String,
+    description: Option(String),
+    servings: Int,
+    servings_text: Option(String),
+    prep_time: Option(Int),
+    cook_time: Option(Int),
+    created_at: Option(String),
+    updated_at: Option(String),
+  )
+}
+
+/// Paginated recipe list response
+pub type RecipeListResponse {
+  RecipeListResponse(
+    count: Int,
+    next: Option(String),
+    previous: Option(String),
+    results: List(Recipe),
+  )
+}
+
+/// Request to create a new recipe
+pub type CreateRecipeRequest {
+  CreateRecipeRequest(
+    name: String,
+    description: Option(String),
+    servings: Int,
+    servings_text: Option(String),
+    prep_time: Option(Int),
+    cook_time: Option(Int),
+  )
+}
+
+/// Decode a Recipe from JSON
+pub fn recipe_decoder(json_value: json.Json) -> Result(Recipe, String) {
+  use id <- result.try(
+    json.field(json_value, "id")
+    |> result.try(json.int)
+    |> result.map_error(fn(_) { "Failed to parse id" })
+  )
+  use name <- result.try(
+    json.field(json_value, "name")
+    |> result.try(json.string)
+    |> result.map_error(fn(_) { "Failed to parse name" })
+  )
+  use slug <- result.try(
+    json.field(json_value, "slug")
+    |> result.try(json.string)
+    |> result.map_error(fn(_) { "Failed to parse slug" })
+  )
+  let description =
+    json.field(json_value, "description")
+    |> result.ok()
+    |> result.try(fn(val) {
+      case json.string(val) {
+        Ok(s) -> Ok(Some(s))
+        Error(_) -> Ok(None)
+      }
+    })
+    |> result.unwrap(None)
+  use servings <- result.try(
+    json.field(json_value, "servings")
+    |> result.try(json.int)
+    |> result.map_error(fn(_) { "Failed to parse servings" })
+  )
+  let servings_text =
+    json.field(json_value, "servings_text")
+    |> result.ok()
+    |> result.try(fn(val) {
+      case json.string(val) {
+        Ok(s) -> Ok(Some(s))
+        Error(_) -> Ok(None)
+      }
+    })
+    |> result.unwrap(None)
+  let prep_time =
+    json.field(json_value, "prep_time")
+    |> result.ok()
+    |> result.try(fn(val) {
+      case json.int(val) {
+        Ok(i) -> Ok(Some(i))
+        Error(_) -> Ok(None)
+      }
+    })
+    |> result.unwrap(None)
+  let cook_time =
+    json.field(json_value, "cook_time")
+    |> result.ok()
+    |> result.try(fn(val) {
+      case json.int(val) {
+        Ok(i) -> Ok(Some(i))
+        Error(_) -> Ok(None)
+      }
+    })
+    |> result.unwrap(None)
+  let created_at =
+    json.field(json_value, "created_at")
+    |> result.ok()
+    |> result.try(fn(val) {
+      case json.string(val) {
+        Ok(s) -> Ok(Some(s))
+        Error(_) -> Ok(None)
+      }
+    })
+    |> result.unwrap(None)
+  let updated_at =
+    json.field(json_value, "updated_at")
+    |> result.ok()
+    |> result.try(fn(val) {
+      case json.string(val) {
+        Ok(s) -> Ok(Some(s))
+        Error(_) -> Ok(None)
+      }
+    })
+    |> result.unwrap(None)
+
+  Ok(Recipe(
+    id: id,
+    name: name,
+    slug: slug,
+    description: description,
+    servings: servings,
+    servings_text: servings_text,
+    prep_time: prep_time,
+    cook_time: cook_time,
+    created_at: created_at,
+    updated_at: updated_at,
+  ))
+}
+
+/// Decode a paginated recipe list response
+fn recipe_list_decoder(
+  json_value: json.Json,
+) -> Result(RecipeListResponse, String) {
+  use count <- result.try(
+    json.field(json_value, "count")
+    |> result.try(json.int)
+    |> result.map_error(fn(_) { "Failed to parse count" })
+  )
+  let next =
+    json.field(json_value, "next")
+    |> result.ok()
+    |> result.try(fn(val) {
+      case json.string(val) {
+        Ok(s) -> Ok(Some(s))
+        Error(_) -> Ok(None)
+      }
+    })
+    |> result.unwrap(None)
+  let previous =
+    json.field(json_value, "previous")
+    |> result.ok()
+    |> result.try(fn(val) {
+      case json.string(val) {
+        Ok(s) -> Ok(Some(s))
+        Error(_) -> Ok(None)
+      }
+    })
+    |> result.unwrap(None)
+  use results <- result.try(
+    json.field(json_value, "results")
+    |> result.try(json.array)
+    |> result.map_error(fn(_) { "Failed to parse results" })
+    |> result.try(fn(arr) {
+      arr
+      |> list.try_map(recipe_decoder)
+    })
+  )
+
+  Ok(RecipeListResponse(
+    count: count,
+    next: next,
+    previous: previous,
+    results: results,
+  ))
+}
+
+/// Get all recipes from Tandoor API
+///
+/// # Arguments
+/// * `config` - Client configuration with API token
+/// * `limit` - Optional limit for number of results (default: 100)
+/// * `offset` - Optional offset for pagination (default: 0)
+///
+/// # Returns
+/// Result with paginated recipe list or error
+pub fn get_recipes(
+  config: ClientConfig,
+  limit: Option(Int),
+  offset: Option(Int),
+) -> Result(RecipeListResponse, TandoorError) {
+  let limit_val = option.unwrap(limit, 100)
+  let offset_val = option.unwrap(offset, 0)
+
+  let query_params = [
+    #("limit", int.to_string(limit_val)),
+    #("offset", int.to_string(offset_val)),
+  ]
+
+  use _req <- result.try(build_get_request(config, "/api/recipes/", query_params))
+
+  log_request("GET", "/api/recipes/")
+
+  // Note: This would need actual HTTP execution via httpc
+  // For now, return an error indicating the request was built
+  Error(NetworkError(
+    "HTTP execution not implemented in pure Gleam - use httpc.send(request) in runtime code",
+  ))
+}
+
+/// Get a single recipe by ID from Tandoor API
+///
+/// # Arguments
+/// * `config` - Client configuration with API token
+/// * `recipe_id` - The ID of the recipe to fetch
+///
+/// # Returns
+/// Result with recipe details or error
+pub fn get_recipe_by_id(
+  config: ClientConfig,
+  recipe_id: Int,
+) -> Result(Recipe, TandoorError) {
+  let path = "/api/recipes/" <> int.to_string(recipe_id) <> "/"
+
+  use _req <- result.try(build_get_request(config, path, []))
+
+  log_request("GET", path)
+
+  // Note: This would need actual HTTP execution via httpc
+  // For now, return an error indicating the request was built
+  Error(NetworkError(
+    "HTTP execution not implemented in pure Gleam - use httpc.send(request) in runtime code",
+  ))
+}
+
+/// Create a new recipe in Tandoor API
+///
+/// # Arguments
+/// * `config` - Client configuration with API token
+/// * `recipe_request` - Recipe data to create
+///
+/// # Returns
+/// Result with created recipe details or error
+pub fn create_recipe(
+  config: ClientConfig,
+  recipe_request: CreateRecipeRequest,
+) -> Result(Recipe, TandoorError) {
+  let body = encode_create_recipe(recipe_request)
+
+  use _req <- result.try(build_post_request(config, "/api/recipes/", body))
+
+  log_request("POST", "/api/recipes/")
+
+  // Note: This would need actual HTTP execution via httpc
+  // For now, return an error indicating the request was built
+  Error(NetworkError(
+    "HTTP execution not implemented in pure Gleam - use httpc.send(request) in runtime code",
+  ))
+}
+
+/// Encode a CreateRecipeRequest to JSON string
+fn encode_create_recipe(request: CreateRecipeRequest) -> String {
+  let prep_time_json = case request.prep_time {
+    Some(val) -> json.int(val)
+    None -> json.null()
+  }
+
+  let cook_time_json = case request.cook_time {
+    Some(val) -> json.int(val)
+    None -> json.null()
+  }
+
+  let description_json = case request.description {
+    Some(val) -> json.string(val)
+    None -> json.null()
+  }
+
+  let servings_text_json = case request.servings_text {
+    Some(val) -> json.string(val)
+    None -> json.null()
+  }
+
+  let body =
+    json.object([
+      #("name", json.string(request.name)),
+      #("description", description_json),
+      #("servings", json.int(request.servings)),
+      #("servings_text", servings_text_json),
+      #("prep_time", prep_time_json),
+      #("cook_time", cook_time_json),
+    ])
+
+  json.to_string(body)
+}
