@@ -140,7 +140,6 @@ pub fn get_auto_plan(
                 generated_at: generated_at,
                 total_macros: total_macros,
                 config: config,
-                recipe_json: recipe_json,
               ))
           }
         }
