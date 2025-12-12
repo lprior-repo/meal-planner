@@ -147,7 +147,9 @@ BEGIN
 END $$;
 
 -- Step 5: Drop the temporary transformation function
-DROP FUNCTION IF EXISTS transform_recipe_to_tandoor(TEXT);
+-- Note: We use a wildcard pattern since ANYELEMENT requires the function to be dropped with CASCADE
+-- if it's not going to be reused
+DROP FUNCTION IF EXISTS transform_recipe_to_tandoor(ANYELEMENT);
 
 -- Step 6: Create an index on the source field for faster Tandoor format queries (if JSONB)
 -- This helps with filtering recipes by source in the future
