@@ -51,23 +51,83 @@ fn count_list(items: List(a)) -> Int {
 // ============================================================================
 
 /// Filter recipes based on diet principle compliance
-/// Simplified version - uses recipe.vertical_compliant flag for Vertical Diet
-/// For other diets, returns all recipes (can be extended later)
+/// Works with internal Recipe type
+/// Supports all diet principles with appropriate compliance checks
 pub fn filter_by_diet_principles(
   recipes: List(types.Recipe),
   principles: List(DietPrinciple),
 ) -> List(types.Recipe) {
+  filter_recipes_by_principles(recipes, principles)
+}
+
+/// Filter Mealie recipes based on diet principles
+/// Converts MealieRecipe to Recipe first, then applies diet filtering
+/// This allows diet principles to work with Mealie API data
+pub fn filter_mealie_recipes_by_diet(
+  mealie_recipes: List(mealie.MealieRecipe),
+  principles: List(DietPrinciple),
+) -> List(mealie.MealieRecipe) {
   case principles {
-    [] -> recipes
-    _ ->
-      list.filter(recipes, fn(recipe) {
-        // For Vertical Diet, check both vertical_compliant flag and Low FODMAP
-        case list.any(principles, fn(p) { p == auto_types.VerticalDiet }) {
-          True -> recipe.vertical_compliant && recipe.fodmap_level == types.Low
-          // For other diets, accept all recipes (simplified - no validation)
-          False -> True
-        }
+    [] -> mealie_recipes
+    _ -> {
+      let recipes = list.map(mealie_recipes, mapper.mealie_to_recipe)
+      let filtered = filter_recipes_by_principles(recipes, principles)
+      let filtered_ids = list.map(filtered, fn(r) { r.id })
+      list.filter(mealie_recipes, fn(mealie_recipe) {
+        let recipe_id = mapper.mealie_to_recipe(mealie_recipe).id
+        list.any(filtered_ids, fn(id) { id == recipe_id })
       })
+    }
+  }
+}
+
+/// Internal helper: filter Recipe list by diet principles
+fn filter_recipes_by_principles(
+  recipes: List(types.Recipe),
+  principles: List(DietPrinciple),
+) -> List(types.Recipe) {
+  list.filter(recipes, fn(recipe) {
+    is_recipe_compliant_with_principles(recipe, principles)
+  })
+}
+
+/// Check if a recipe complies with all given diet principles
+fn is_recipe_compliant_with_principles(
+  recipe: types.Recipe,
+  principles: List(DietPrinciple),
+) -> Bool {
+  case principles {
+    [] -> True
+    _ ->
+      list.all(principles, fn(principle) {
+        is_recipe_compliant_with_principle(recipe, principle)
+      })
+  }
+}
+
+/// Check if a recipe complies with a single diet principle
+fn is_recipe_compliant_with_principle(
+  recipe: types.Recipe,
+  principle: DietPrinciple,
+) -> Bool {
+  case principle {
+    auto_types.VerticalDiet ->
+      recipe.vertical_compliant && recipe.fodmap_level == types.Low
+
+    auto_types.TimFerriss ->
+      recipe.fodmap_level == types.Low
+
+    auto_types.Paleo ->
+      recipe.fodmap_level == types.Low
+
+    auto_types.Keto ->
+      recipe.fodmap_level == types.Low
+
+    auto_types.Mediterranean ->
+      recipe.fodmap_level == types.Low
+
+    auto_types.HighProtein ->
+      True
   }
 }
 
