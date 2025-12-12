@@ -36,6 +36,15 @@ pub fn macros_add(a: Macros, b: Macros) -> Macros {
   )
 }
 
+/// Subtract two Macros (a - b)
+pub fn macros_subtract(a: Macros, b: Macros) -> Macros {
+  Macros(
+    protein: a.protein -. b.protein,
+    fat: a.fat -. b.fat,
+    carbs: a.carbs -. b.carbs,
+  )
+}
+
 /// Scale macros by a factor
 pub fn macros_scale(m: Macros, factor: Float) -> Macros {
   Macros(
@@ -53,6 +62,19 @@ pub fn macros_zero() -> Macros {
 /// Sum a list of macros
 pub fn macros_sum(macros: List(Macros)) -> Macros {
   list.fold(macros, macros_zero(), macros_add)
+}
+
+/// Average a list of macros
+/// Returns zero macros if list is empty
+pub fn macros_average(macros: List(Macros)) -> Macros {
+  let count = list.length(macros)
+  case count {
+    0 -> macros_zero()
+    _ -> {
+      let total = macros_sum(macros)
+      macros_scale(total, 1.0 /. int_to_float(count))
+    }
+  }
 }
 
 /// Calculate protein as a percentage of total calories (0.0 to 1.0)
@@ -127,11 +149,80 @@ pub fn macros_approximately_equal(a: Macros, b: Macros) -> Bool {
   protein_close && fat_close && carbs_close
 }
 
+/// Negate all macro values (useful for calculating deficits)
+pub fn macros_negate(m: Macros) -> Macros {
+  Macros(protein: 0.0 -. m.protein, fat: 0.0 -. m.fat, carbs: 0.0 -. m.carbs)
+}
+
+/// Get absolute values for all macros
+pub fn macros_abs(m: Macros) -> Macros {
+  Macros(
+    protein: float_abs(m.protein),
+    fat: float_abs(m.fat),
+    carbs: float_abs(m.carbs),
+  )
+}
+
+/// Get component-wise minimum of two Macros
+pub fn macros_min(a: Macros, b: Macros) -> Macros {
+  Macros(
+    protein: float_min(a.protein, b.protein),
+    fat: float_min(a.fat, b.fat),
+    carbs: float_min(a.carbs, b.carbs),
+  )
+}
+
+/// Get component-wise maximum of two Macros
+pub fn macros_max(a: Macros, b: Macros) -> Macros {
+  Macros(
+    protein: float_max(a.protein, b.protein),
+    fat: float_max(a.fat, b.fat),
+    carbs: float_max(a.carbs, b.carbs),
+  )
+}
+
+/// Clamp macro values to a minimum and maximum range
+pub fn macros_clamp(m: Macros, min: Float, max: Float) -> Macros {
+  Macros(
+    protein: float_clamp(m.protein, min, max),
+    fat: float_clamp(m.fat, min, max),
+    carbs: float_clamp(m.carbs, min, max),
+  )
+}
+
 /// Helper function for absolute value
 fn float_abs(x: Float) -> Float {
   case x <. 0.0 {
     True -> 0.0 -. x
     False -> x
+  }
+}
+
+/// Helper function for minimum of two floats
+fn float_min(a: Float, b: Float) -> Float {
+  case a <. b {
+    True -> a
+    False -> b
+  }
+}
+
+/// Helper function for maximum of two floats
+fn float_max(a: Float, b: Float) -> Float {
+  case a >. b {
+    True -> a
+    False -> b
+  }
+}
+
+/// Helper function to clamp a float to a range
+fn float_clamp(x: Float, min: Float, max: Float) -> Float {
+  case x <. min {
+    True -> min
+    False ->
+      case x >. max {
+        True -> max
+        False -> x
+      }
   }
 }
 

@@ -317,7 +317,7 @@ pub fn generate_auto_plan(
 /// Generate timestamp string in ISO8601 format with UTC timezone
 /// Format: YYYY-MM-DDTHH:MM:SSZ
 fn generate_timestamp() -> String {
-  let #(#(year, month, day), #(hour, min, sec)) = erlang_localtime()
+  let #(#(year, month, day), #(hour, min, sec)) = erlang_universaltime()
   int_to_string(year)
   <> "-"
   <> pad_two(month)
@@ -346,9 +346,9 @@ fn int_to_string(n: Int) -> String {
   int.to_string(n)
 }
 
-/// External function to get local time as {{year, month, day}, {hour, min, sec}}
-@external(erlang, "calendar", "local_time")
-fn erlang_localtime() -> #(#(Int, Int, Int), #(Int, Int, Int))
+/// External function to get UTC time as {{year, month, day}, {hour, min, sec}}
+@external(erlang, "calendar", "universal_time")
+fn erlang_universaltime() -> #(#(Int, Int, Int), #(Int, Int, Int))
 
 // ============================================================================
 // Helper Functions
