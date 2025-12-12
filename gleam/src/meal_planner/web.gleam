@@ -2,23 +2,12 @@
 ///
 /// This module provides HTTP endpoints for:
 /// - Health checks
-/// - Macro calculations
-/// - Meal planning (stub)
 ///
 import gleam/erlang/process
-import gleam/http
 import gleam/int
 import gleam/io
 import gleam/json
-import gleam/list
-import gleam/option.{type Option, None, Some}
-import gleam/result
-import meal_planner/auto_planner/recipe_scorer
 import meal_planner/config
-import meal_planner/id
-import meal_planner/pagination
-import meal_planner/types
-import meal_planner/vertical_diet_compliance
 import mist
 import wisp
 import wisp/wisp_mist
@@ -60,7 +49,7 @@ pub fn start(app_config: config.Config) -> Nil {
 }
 
 /// Main request router
-fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
+fn handle_request(req: wisp.Request, _ctx: Context) -> wisp.Response {
   use <- wisp.log_request(req)
 
   // Parse the request path
@@ -68,21 +57,6 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // Health check endpoint
     [] -> health_handler(req)
     ["health"] -> health_handler(req)
-
-    // API endpoints (stubs - to be implemented)
-    ["api", "meal-plan"] -> meal_plan_handler(req, ctx)
-    ["api", "macros", "calculate"] -> macro_calc_handler(req)
-
-    // Recipe migration progress endpoint
-    ["api", "migrations", "progress", migration_id] ->
-      migration_progress_handler(req, ctx, migration_id)
-
-    // Vertical diet compliance endpoint
-    ["api", "diet", "vertical", "compliance", recipe_id] ->
-      vertical_diet_compliance_handler(req, recipe_id)
-
-    // Paginated food search endpoint
-    ["api", "foods", "search"] -> food_search_handler(req)
 
     // 404 for unknown routes
     _ -> wisp.not_found()
@@ -106,217 +80,4 @@ fn health_handler(_req: wisp.Request) -> wisp.Response {
     |> json.to_string
 
   wisp.json_response(body, 200)
-}
-
-/// AI meal planning endpoint (stub)
-/// POST /api/meal-plan
-fn meal_plan_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
-  use <- wisp.require_method(req, http.Post)
-
-  let body =
-    json.object([
-      #("message", json.string("Meal planning endpoint - coming soon")),
-      #("status", json.string("not_implemented")),
-    ])
-    |> json.to_string
-
-  wisp.json_response(body, 501)
-}
-
-/// Macro calculation endpoint (stub)
-/// POST /api/macros/calculate
-fn macro_calc_handler(req: wisp.Request) -> wisp.Response {
-  use <- wisp.require_method(req, http.Post)
-
-  let body =
-    json.object([
-      #("message", json.string("Macro calculation endpoint - coming soon")),
-      #("status", json.string("not_implemented")),
-    ])
-    |> json.to_string
-
-  wisp.json_response(body, 501)
-}
-
-/// Recipe migration progress handler (stub)
-fn migration_progress_handler(
-  req: wisp.Request,
-  _ctx: Context,
-  migration_id: String,
-) -> wisp.Response {
-  use <- wisp.require_method(req, http.Get)
-
-  let body =
-    json.object([
-      #("migration_id", json.string(migration_id)),
-      #("total_recipes", json.int(100)),
-      #("migrated_count", json.int(45)),
-      #("failed_count", json.int(2)),
-      #("status", json.string("in_progress")),
-      #("progress_message", json.string("45 of 100 recipes migrated")),
-      #("progress_percentage", json.float(45.0)),
-    ])
-    |> json.to_string
-
-  wisp.json_response(body, 200)
-}
-
-/// Vertical diet compliance check endpoint
-/// GET /api/diet/vertical/compliance/{recipe_id}
-///
-/// Returns vertical diet compliance score and recommendations for a recipe.
-fn vertical_diet_compliance_handler(
-  req: wisp.Request,
-  recipe_id: String,
-) -> wisp.Response {
-  use <- wisp.require_method(req, http.Get)
-
-  // Create a mock recipe for testing the compliance checker
-  let mock_recipe = vertical_diet_compliance.Recipe(
-    name: "Grass-Fed Beef with White Rice and Spinach",
-    description: Some(
-      "A vertical diet compliant recipe with beef, rice, and vegetables",
-    ),
-    recipe_ingredient: [
-      vertical_diet_compliance.RecipeIngredient(display: "grass-fed beef"),
-      vertical_diet_compliance.RecipeIngredient(display: "white rice"),
-      vertical_diet_compliance.RecipeIngredient(display: "spinach"),
-      vertical_diet_compliance.RecipeIngredient(display: "carrot"),
-      vertical_diet_compliance.RecipeIngredient(display: "salt"),
-    ],
-    recipe_instructions: [
-      vertical_diet_compliance.RecipeInstruction(text: "Grill the beef"),
-      vertical_diet_compliance.RecipeInstruction(text: "Cook the white rice"),
-      vertical_diet_compliance.RecipeInstruction(
-        text: "Sauté the spinach and carrot",
-      ),
-      vertical_diet_compliance.RecipeInstruction(text: "Combine and serve"),
-    ],
-    rating: Some(5),
-  )
-
-  // Check compliance
-  let result = vertical_diet_compliance.check_compliance(mock_recipe)
-
-  // Build JSON response
-  let body =
-    json.object([
-      #("recipe_id", json.string(recipe_id)),
-      #("recipe_name", json.string(mock_recipe.name)),
-      #("compliant", json.bool(result.compliant)),
-      #("score", json.int(result.score)),
-      #("reasons", json.array(result.reasons, json.string)),
-      #("recommendations", json.array(result.recommendations, json.string)),
-    ])
-    |> json.to_string
-
-  wisp.json_response(body, 200)
-}
-
-/// Paginated food search endpoint
-/// GET /api/foods/search?q=<query>&limit=<limit>&cursor=<cursor>
-///
-/// Query parameters:
-///   - q (required): Search query string
-///   - limit (optional): Number of results (1-100, default 20)
-///   - cursor (optional): Pagination cursor for continuing results
-///
-/// Returns paginated response with items and pagination metadata
-fn food_search_handler(req: wisp.Request) -> wisp.Response {
-  use <- wisp.require_method(req, http.Get)
-
-  // Get query string from request
-  let query_string = wisp.get_query(req)
-
-  // Extract parameters from query string
-  let query_param = case query_string {
-    Ok(qs) ->
-      qs
-      |> list.find_map(fn(param) {
-        let #(key, value) = param
-        case key == "q" {
-          True -> Some(value)
-          False -> None
-        }
-      })
-    Error(_) -> None
-  }
-
-  let limit_param = case query_string {
-    Ok(qs) ->
-      qs
-      |> list.find_map(fn(param) {
-        let #(key, value) = param
-        case key == "limit" {
-          True -> Some(value)
-          False -> None
-        }
-      })
-    Error(_) -> None
-  }
-
-  let cursor_param = case query_string {
-    Ok(qs) ->
-      qs
-      |> list.find_map(fn(param) {
-        let #(key, value) = param
-        case key == "cursor" {
-          True -> Some(value)
-          False -> Nil
-        }
-      })
-    Error(_) -> None
-  }
-
-  // Handle missing query parameter
-  case query_param {
-    Error(_) -> {
-      let error_body =
-        json.object([#("error", json.string("Missing required parameter: q"))])
-        |> json.to_string
-      wisp.json_response(error_body, 400)
-    }
-    Ok(query) -> {
-      // Parse pagination parameters
-      case pagination.parse_query_params(limit_param, cursor_param) {
-        Error(e) -> {
-          let error_body =
-            json.object([
-              #("error", json.string("Pagination error: " <> e)),
-            ])
-            |> json.to_string
-          wisp.json_response(error_body, 400)
-        }
-        Ok(_params) -> {
-          // For now, return a placeholder response
-          // In a real implementation, this would query the database
-          let items = []
-          let page_info = types.PageInfo(
-            has_next: False,
-            has_previous: False,
-            next_cursor: None,
-            previous_cursor: None,
-            total_items: 0,
-          )
-
-          let response =
-            json.object([
-              #("items", json.array(items, fn(_) { json.null() })),
-              #("pagination", pagination.page_info_to_json(page_info)),
-            ])
-            |> json.to_string
-
-          wisp.json_response(response, 200)
-        }
-      }
-    }
-  }
-}
-
-// Helper function to convert Option to Result
-fn ok_or_error(opt: Option(a)) -> Result(a, Nil) {
-  case opt {
-    Some(v) -> Ok(v)
-    None -> Error(Nil)
-  }
 }
