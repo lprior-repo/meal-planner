@@ -1,8 +1,7 @@
 /// Portion calculation module for scaling recipes to hit macro targets
 ///
-/// This module works with both Recipe domain types and recipe data from external sources.
-/// Portion calculations are source-agnostic - they work with any Recipe
-/// regardless of origin (Tandoor, custom, etc).
+/// This module works with Recipe domain types for portion calculations.
+/// Portion calculations work with any Recipe regardless of origin.
 ///
 /// Ported from Go implementation in main.go
 import gleam/float as gleam_float
@@ -11,9 +10,8 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string as gleam_string
 import meal_planner/id
-import meal_planner/mealie/types as mealie
 import meal_planner/types.{
-  type Macros, type Recipe, Low, Macros, Recipe, macros_calories, macros_scale,
+  type Macros, type Recipe, Macros, macros_calories, macros_scale,
 }
 
 /// PortionCalculation represents a scaled recipe portion
@@ -148,208 +146,6 @@ pub fn calculate_daily_portions(
         calculate_portion_for_target(recipe, per_meal_macros)
       })
     }
-  }
-}
-
-/// Helper function to extract macros from external recipe nutrition data
-/// Returns Macros with zeros if nutrition is not available
-fn mealie_recipe_macros(recipe: mealie.MealieRecipe) -> Macros {
-  case recipe.nutrition {
-    None -> Macros(protein: 0.0, fat: 0.0, carbs: 0.0)
-    Some(nutrition) -> {
-      let protein = parse_nutrition_value(nutrition.protein_content)
-      let fat = parse_nutrition_value(nutrition.fat_content)
-      let carbs = parse_nutrition_value(nutrition.carbohydrate_content)
-      Macros(protein: protein, fat: fat, carbs: carbs)
-    }
-  }
-}
-
-/// Parse nutrition string to float (handles "100g", "15", "30.5", etc.)
-/// Returns 0.0 if parsing fails
-fn parse_nutrition_value(value: Option(String)) -> Float {
-  case value {
-    None -> 0.0
-    Some(s) ->
-      case extract_float_from_string(s) {
-        Ok(f) -> f
-        Error(_) -> 0.0
-      }
-  }
-}
-
-/// Extract float from a string (handles "100g", "30.5", etc.)
-fn extract_float_from_string(s: String) -> Result(Float, Nil) {
-  let trimmed = gleam_string.trim(s)
-  // Try to parse the whole string as float first
-  case gleam_float.parse(trimmed) {
-    Ok(f) -> Ok(f)
-    Error(_) -> {
-      // Try to extract digits before unit (e.g., "100" from "100g")
-      case extract_numeric_prefix(trimmed) {
-        Some(num_str) ->
-          case gleam_float.parse(num_str) {
-            Ok(f) -> Ok(f)
-            Error(_) ->
-              case gleam_int.parse(num_str) {
-                Ok(i) -> Ok(gleam_int.to_float(i))
-                Error(_) -> Error(Nil)
-              }
-          }
-        None -> Error(Nil)
-      }
-    }
-  }
-}
-
-/// Extract numeric prefix from a string (handles "100g" -> "100")
-fn extract_numeric_prefix(s: String) -> Option(String) {
-  let graphemes = gleam_string.to_graphemes(s)
-  case graphemes {
-    [] -> None
-    _ -> {
-      let numeric_chars =
-        list.take_while(graphemes, fn(c) {
-          c == "." || c == "-" || is_digit(c)
-        })
-      case numeric_chars {
-        [] -> None
-        chars -> Some(gleam_string.concat(chars))
-      }
-    }
-  }
-}
-
-/// Check if character is a digit
-fn is_digit(c: String) -> Bool {
-  case c {
-    "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" -> True
-    _ -> False
-  }
-}
-
-/// CalculatePortionForMealieRecipe scales external recipe data to hit target macros
-/// Prioritizes hitting protein target since it's the key constraint in Vertical Diet
-pub fn calculate_portion_for_mealie_recipe(
-  recipe: mealie.MealieRecipe,
-  target_macros: Macros,
-) -> PortionCalculation {
-  let recipe_macros = mealie_recipe_macros(recipe)
-
-  // If recipe has no macros defined, return 1.0 scale factor
-  let has_no_macros =
-    recipe_macros.protein == 0.0
-    && recipe_macros.fat == 0.0
-    && recipe_macros.carbs == 0.0
-
-  case has_no_macros {
-    True ->
-      PortionCalculation(
-        recipe: Recipe(
-          id: meal_recipe_id(recipe),
-          name: recipe.name,
-          ingredients: [],
-          instructions: [],
-          macros: recipe_macros,
-          servings: 1,
-          category: recipe_category(recipe),
-          fodmap_level: Low,
-          vertical_compliant: False,
-        ),
-        scale_factor: 1.0,
-        scaled_macros: recipe_macros,
-        meets_target: False,
-        variance: 100.0,
-      )
-    False -> {
-      // Calculate scale factor based on protein (primary macro)
-      let scale_factor = case
-        recipe_macros.protein >. 0.0 && target_macros.protein >. 0.0
-      {
-        True -> target_macros.protein /. recipe_macros.protein
-        False -> {
-          // Fallback to calories if no protein
-          let recipe_calories = macros_calories(recipe_macros)
-          let target_calories = macros_calories(target_macros)
-          case recipe_calories >. 0.0 && target_calories >. 0.0 {
-            True -> target_calories /. recipe_calories
-            False -> 1.0
-          }
-        }
-      }
-
-      // Cap scale factor to reasonable range (0.25x to 4x)
-      let capped_scale = case scale_factor {
-        s if s <. 0.25 -> 0.25
-        s if s >. 4.0 -> 4.0
-        s -> s
-      }
-
-      // Calculate scaled macros
-      let scaled_macros = macros_scale(recipe_macros, capped_scale)
-
-      // Calculate variance from target
-      let protein_var = case target_macros.protein >. 0.0 {
-        True -> {
-          let diff = scaled_macros.protein -. target_macros.protein
-          abs(diff /. target_macros.protein)
-        }
-        False -> 0.0
-      }
-
-      let fat_var = case target_macros.fat >. 0.0 {
-        True -> {
-          let diff = scaled_macros.fat -. target_macros.fat
-          abs(diff /. target_macros.fat)
-        }
-        False -> 0.0
-      }
-
-      let carbs_var = case target_macros.carbs >. 0.0 {
-        True -> {
-          let diff = scaled_macros.carbs -. target_macros.carbs
-          abs(diff /. target_macros.carbs)
-        }
-        False -> 0.0
-      }
-
-      // Average variance across macros
-      let variance = { protein_var +. fat_var +. carbs_var } /. 3.0 *. 100.0
-
-      // Check if within 5% tolerance (on protein primarily)
-      let meets_target = protein_var <=. 0.05
-
-      PortionCalculation(
-        recipe: Recipe(
-          id: meal_recipe_id(recipe),
-          name: recipe.name,
-          ingredients: [],
-          instructions: [],
-          macros: scaled_macros,
-          servings: 1,
-          category: recipe_category(recipe),
-          fodmap_level: Low,
-          vertical_compliant: False,
-        ),
-        scale_factor: capped_scale,
-        scaled_macros: scaled_macros,
-        meets_target: meets_target,
-        variance: variance,
-      )
-    }
-  }
-}
-
-/// Helper: Convert external recipe ID to RecipeId
-fn meal_recipe_id(recipe: mealie.MealieRecipe) -> id.RecipeId {
-  id.recipe_id("external-" <> recipe.slug)
-}
-
-/// Helper: Extract category from external recipe data
-fn recipe_category(recipe: mealie.MealieRecipe) -> String {
-  case recipe.recipe_category {
-    [first, ..] -> first.name
-    [] -> "Uncategorized"
   }
 }
 
