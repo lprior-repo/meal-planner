@@ -583,7 +583,11 @@ fn generate_plan_recursive(
 
       case suggestion_result.within_tolerance {
         // Goal reached
-        True ->
+        True -> {
+          let recipe_json =
+            json.array(selected_recipes, recipe_to_json)
+            |> json.to_string
+
           Ok(auto_types.AutoMealPlan(
             id: "auto-plan-" <> generate_id(),
             recipes: selected_recipes,
@@ -600,12 +604,17 @@ fn generate_plan_recursive(
               recipe_count: list.length(selected_recipes),
               variety_factor: config.variety_weight,
             ),
+            recipe_json: recipe_json,
           ))
+        }
 
         False ->
           case suggestion_result.suggestions {
-            [] ->
-              // No more suitable recipes
+            [] -> {
+              let recipe_json =
+                json.array(selected_recipes, recipe_to_json)
+                |> json.to_string
+
               Ok(auto_types.AutoMealPlan(
                 id: "auto-plan-" <> generate_id(),
                 recipes: selected_recipes,
@@ -624,7 +633,9 @@ fn generate_plan_recursive(
                   recipe_count: list.length(selected_recipes),
                   variety_factor: config.variety_weight,
                 ),
+                recipe_json: recipe_json,
               ))
+            }
 
             [top_suggestion, ..] -> {
               // Add top recipe and continue

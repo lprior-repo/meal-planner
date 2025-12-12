@@ -181,6 +181,7 @@ pub fn auto_meal_plan_to_json(plan: AutoMealPlan) -> json.Json {
     #("generated_at", json.string(plan.generated_at)),
     #("total_macros", types.macros_to_json(plan.total_macros)),
     #("config", auto_plan_config_to_json(plan.config)),
+    #("recipe_json", json.string(plan.recipe_json)),
   ])
 }
 
