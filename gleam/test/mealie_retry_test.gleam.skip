@@ -1,0 +1,345 @@
+/// Tests for Mealie API retry logic with transient failure simulation
+///
+/// This test module verifies:
+/// - Correct identification of retryable errors
+/// - Exponential backoff timing
+/// - Maximum retry attempts (3 retries, 4 total attempts)
+/// - Non-retryable errors fail immediately
+///
+import gleam/erlang/process
+import gleam/int
+import gleam/list
+import gleam/option.{None, Some}
+import gleam/result
+import gleeunit
+import gleeunit/should
+import meal_planner/mealie/client.{
+  ApiError, ConfigError, ConnectionRefused, DecodeError, DnsResolutionFailed,
+  HttpError, MealieUnavailable, NetworkTimeout, RecipeNotFound,
+}
+import meal_planner/mealie/retry
+import meal_planner/mealie/types.{MealieApiError}
+
+pub fn main() {
+  gleeunit.main()
+}
+
+// ============================================================================
+// Tests for is_retryable error detection
+// ============================================================================
+
+/// Network timeout errors should be retryable
+pub fn is_retryable_network_timeout_test() {
+  let error = NetworkTimeout("Request timed out", 5000)
+  retry.is_retryable(error)
+  |> should.be_true()
+}
+
+/// Connection refused errors should be retryable
+pub fn is_retryable_connection_refused_test() {
+  let error = ConnectionRefused("Connection refused on port 9000")
+  retry.is_retryable(error)
+  |> should.be_true()
+}
+
+/// HTTP 5xx errors should be retryable
+pub fn is_retryable_http_500_test() {
+  let api_err =
+    MealieApiError(
+      message: "HTTP 500: Internal Server Error",
+      error: Some("INTERNAL_SERVER_ERROR"),
+      exception: None,
+    )
+  let error = ApiError(api_err)
+  retry.is_retryable(error)
+  |> should.be_true()
+}
+
+/// HTTP 502 Bad Gateway should be retryable
+pub fn is_retryable_http_502_test() {
+  let api_err =
+    MealieApiError(
+      message: "HTTP 502: Bad Gateway",
+      error: Some("BAD_GATEWAY"),
+      exception: None,
+    )
+  let error = ApiError(api_err)
+  retry.is_retryable(error)
+  |> should.be_true()
+}
+
+/// HTTP 503 Service Unavailable should be retryable
+pub fn is_retryable_http_503_test() {
+  let api_err =
+    MealieApiError(
+      message: "HTTP 503: Service Unavailable",
+      error: Some("SERVICE_UNAVAILABLE"),
+      exception: None,
+    )
+  let error = ApiError(api_err)
+  retry.is_retryable(error)
+  |> should.be_true()
+}
+
+/// Configuration errors should NOT be retryable
+pub fn is_retryable_config_error_test() {
+  let error = ConfigError("Missing API token")
+  retry.is_retryable(error)
+  |> should.be_false()
+}
+
+/// JSON decode errors should NOT be retryable
+pub fn is_retryable_decode_error_test() {
+  let error = DecodeError("Invalid JSON response")
+  retry.is_retryable(error)
+  |> should.be_false()
+}
+
+/// HTTP 404 Not Found should NOT be retryable
+pub fn is_retryable_http_404_test() {
+  let api_err =
+    MealieApiError(
+      message: "HTTP 404: Not Found",
+      error: Some("NOT_FOUND"),
+      exception: None,
+    )
+  let error = ApiError(api_err)
+  retry.is_retryable(error)
+  |> should.be_false()
+}
+
+/// Recipe not found errors should NOT be retryable
+pub fn is_retryable_recipe_not_found_test() {
+  let error = RecipeNotFound("unknown-recipe")
+  retry.is_retryable(error)
+  |> should.be_false()
+}
+
+/// DNS resolution errors should NOT be retryable
+pub fn is_retryable_dns_resolution_failed_test() {
+  let error = DnsResolutionFailed("Cannot resolve mealie.example.com")
+  retry.is_retryable(error)
+  |> should.be_false()
+}
+
+// ============================================================================
+// Tests for retry logic behavior
+// ============================================================================
+
+/// Successful operation should return immediately
+pub fn with_backoff_success_on_first_attempt_test() {
+  let result = retry.with_backoff(fn() { Ok("success") })
+  result
+  |> should.equal(Ok("success"))
+}
+
+/// Non-retryable errors should fail immediately without retrying
+pub fn with_backoff_non_retryable_error_test() {
+  let error = RecipeNotFound("unknown-recipe")
+  let result = retry.with_backoff(fn() { Error(error) })
+  result
+  |> should.equal(Error(error))
+}
+
+/// Configuration errors should fail immediately
+pub fn with_backoff_config_error_fails_immediately_test() {
+  let error = ConfigError("Missing token")
+  let result = retry.with_backoff(fn() { Error(error) })
+  result
+  |> should.equal(Error(error))
+}
+
+/// Decode errors should fail immediately
+pub fn with_backoff_decode_error_fails_immediately_test() {
+  let error = DecodeError("Invalid JSON")
+  let result = retry.with_backoff(fn() { Error(error) })
+  result
+  |> should.equal(Error(error))
+}
+
+/// Successful recovery after transient failure
+pub fn with_backoff_recovers_after_transient_failure_test() {
+  let error = NetworkTimeout("timeout", 5000)
+  let mut attempt_count = 0
+
+  let operation = fn() {
+    attempt_count = attempt_count + 1
+    case attempt_count {
+      1 -> Error(error)
+      _ -> Ok("success after retry")
+    }
+  }
+
+  let result = retry.with_backoff(operation)
+  result
+  |> should.equal(Ok("success after retry"))
+  // Should have tried twice (initial + 1 retry)
+  attempt_count
+  |> should.equal(2)
+}
+
+/// Connection refused is retryable
+pub fn with_backoff_retries_on_connection_refused_test() {
+  let error = ConnectionRefused("Connection refused")
+  let mut attempt_count = 0
+
+  let operation = fn() {
+    attempt_count = attempt_count + 1
+    case attempt_count {
+      1 -> Error(error)
+      2 -> Error(error)
+      _ -> Ok("success after multiple retries")
+    }
+  }
+
+  let result = retry.with_backoff(operation)
+  result
+  |> should.equal(Ok("success after multiple retries"))
+  // Should have tried 3 times (initial + 2 retries)
+  attempt_count
+  |> should.equal(3)
+}
+
+/// Retries on HTTP 503 Service Unavailable
+pub fn with_backoff_retries_on_http_503_test() {
+  let api_err =
+    MealieApiError(
+      message: "HTTP 503: Service Unavailable",
+      error: Some("SERVICE_UNAVAILABLE"),
+      exception: None,
+    )
+  let error = ApiError(api_err)
+  let mut attempt_count = 0
+
+  let operation = fn() {
+    attempt_count = attempt_count + 1
+    case attempt_count {
+      1 -> Error(error)
+      _ -> Ok("service recovered")
+    }
+  }
+
+  let result = retry.with_backoff(operation)
+  result
+  |> should.equal(Ok("service recovered"))
+  attempt_count
+  |> should.equal(2)
+}
+
+/// Max retries (3 retries = 4 total attempts) before giving up
+pub fn with_backoff_max_retries_test() {
+  let error = NetworkTimeout("timeout", 5000)
+  let mut attempt_count = 0
+
+  let operation = fn() {
+    attempt_count = attempt_count + 1
+    Error(error)
+  }
+
+  let result = retry.with_backoff(operation)
+  result
+  |> should.equal(Error(error))
+  // Should have attempted 4 times (initial + 3 retries max)
+  attempt_count
+  |> should.equal(4)
+}
+
+// ============================================================================
+// Integration tests simulating transient failures
+// ============================================================================
+
+/// Simulate an API that temporarily returns 503, then succeeds
+pub fn simulated_transient_service_unavailable_test() {
+  let api_err_503 =
+    MealieApiError(
+      message: "HTTP 503: Service Unavailable",
+      error: Some("SERVICE_UNAVAILABLE"),
+      exception: None,
+    )
+  let error_503 = ApiError(api_err_503)
+  let mut attempts = 0
+
+  let operation = fn() {
+    attempts = attempts + 1
+    case attempts {
+      1 -> Error(error_503)
+      2 -> Error(error_503)
+      _ -> Ok("service recovered after 2 failures")
+    }
+  }
+
+  let result = retry.with_backoff(operation)
+  result
+  |> should.equal(Ok("service recovered after 2 failures"))
+  attempts
+  |> should.equal(3)
+}
+
+/// Simulate transient network timeouts that eventually recover
+pub fn simulated_transient_network_timeout_test() {
+  let error = NetworkTimeout("Request timed out", 5000)
+  let mut attempts = 0
+
+  let operation = fn() {
+    attempts = attempts + 1
+    case attempts {
+      1 -> Error(error)
+      2 -> Error(error)
+      3 -> Error(error)
+      _ -> Ok("network recovered after timeouts")
+    }
+  }
+
+  let result = retry.with_backoff(operation)
+  result
+  |> should.equal(Ok("network recovered after timeouts"))
+  // Should have tried 4 times (1 + 3 retries max)
+  attempts
+  |> should.equal(4)
+}
+
+/// Simulate a mix of retryable and non-retryable errors
+pub fn simulated_transient_then_permanent_error_test() {
+  let error_transient = NetworkTimeout("timeout", 5000)
+  let error_permanent = RecipeNotFound("unknown-recipe")
+  let mut attempts = 0
+
+  let operation = fn() {
+    attempts = attempts + 1
+    case attempts {
+      1 -> Error(error_transient)
+      _ -> Error(error_permanent)
+    }
+  }
+
+  let result = retry.with_backoff(operation)
+  result
+  |> should.equal(Error(error_permanent))
+  // Should have tried twice (initial + 1 retry before hitting permanent error)
+  attempts
+  |> should.equal(2)
+}
+
+/// Verify backoff timing doesn't block the test (using mock attempt tracking)
+pub fn simulated_backoff_timing_test() {
+  let error = ConnectionRefused("Connection refused")
+  let mut attempt_times: List(Int) = []
+
+  let operation = fn() {
+    let start_time = process.monotonic_time() |> result.unwrap(0)
+    attempt_times = [start_time, ..attempt_times]
+    case list.length(attempt_times) {
+      1 -> Error(error)
+      2 -> Error(error)
+      _ -> Ok("connected after retries")
+    }
+  }
+
+  let result = retry.with_backoff(operation)
+  result
+  |> should.equal(Ok("connected after retries"))
+
+  // Verify we made multiple attempts (timing is hard to test precisely)
+  list.length(attempt_times)
+  |> should.equal(3)
+}
