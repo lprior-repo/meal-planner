@@ -11,10 +11,7 @@ import meal_planner/auto_planner/types as auto_types
 import meal_planner/id
 import meal_planner/storage.{type StorageError}
 import meal_planner/storage/profile.{DatabaseError, NotFound}
-import meal_planner/types.{
-  type Recipe, High, Ingredient, Low, Macros, Medium, Recipe,
-  recipe_decoder,
-}
+import meal_planner/types.{Macros, recipe_decoder}
 import pog
 
 // ============================================================================

@@ -1,10 +1,8 @@
-import gleam/option.{None, Some}
+import gleam/option.{None}
 import gleeunit
 import gleeunit/should
 import meal_planner/mealie/fallback
-import meal_planner/mealie/types.{
-  MealieRecipe, MealieInstruction, MealieIngredient, MealieCategory, MealieTag,
-}
+import meal_planner/mealie/types.{MealieRecipe}
 
 pub fn main() {
   gleeunit.main()
@@ -158,5 +156,6 @@ pub fn fallback_recipe_hyphenated_slug_test() {
   let recipe = fallback.create_fallback_recipe(slug)
 
   recipe.slug |> should.equal(slug)
-  recipe.name |> should.equal("Unknown Recipe (very-long-recipe-name-with-many-hyphens)")
+  recipe.name
+  |> should.equal("Unknown Recipe (very-long-recipe-name-with-many-hyphens)")
 }

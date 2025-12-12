@@ -176,12 +176,18 @@ fn extract_first_number(s: String) -> Option(Int) {
 
 /// Use regex to extract the first number pattern from a string
 fn parse_number_regex(s: String) -> Result(String, Nil) {
-  // Pattern matches: optional minus, digits, optional decimal point and more digits
-  let assert Ok(re) = regexp.from_string("-?\\d+\\.?\\d*")
+  // Guard against very long strings that could cause regex timeout
+  case string.length(s) > 100 {
+    True -> Error(Nil)
+    False -> {
+      // Pattern matches: optional minus, digits, optional decimal point and more digits
+      let assert Ok(re) = regexp.from_string("-?\\d+\\.?\\d*")
 
-  case regexp.scan(re, s) {
-    [match, ..] -> Ok(match.content)
-    [] -> Error(Nil)
+      case regexp.scan(re, s) {
+        [match, ..] -> Ok(match.content)
+        [] -> Error(Nil)
+      }
+    }
   }
 }
 

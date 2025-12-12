@@ -11,9 +11,7 @@ import meal_planner/auto_planner/types as auto_types
 import meal_planner/id
 import meal_planner/storage.{type StorageError}
 import meal_planner/storage/profile.{DatabaseError, NotFound}
-import meal_planner/types.{
-  type Recipe, Macros, recipe_to_json, recipe_decoder,
-}
+import meal_planner/types.{Macros, recipe_decoder, recipe_to_json}
 import pog
 
 // ============================================================================
@@ -109,15 +107,11 @@ pub fn get_auto_plan(
     Ok(pog.Returned(0, _)) -> Error(NotFound)
     Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [row, ..])) -> {
-      let #(plan_id, generated_at, total_macros, config_json, recipe_json) =
-        row
+      let #(plan_id, generated_at, total_macros, config_json, recipe_json) = row
 
       // Parse recipes from recipe_json
       let recipes_result =
-        json.parse(
-          recipe_json,
-          using: decode.list(recipe_decoder()),
-        )
+        json.parse(recipe_json, using: decode.list(recipe_decoder()))
         |> result.map_error(fn(_) { "Failed to decode recipe JSON" })
 
       case recipes_result {
@@ -154,7 +148,6 @@ pub fn get_auto_plan(
     }
   }
 }
-
 
 // ============================================================================
 // Recipe Source Storage

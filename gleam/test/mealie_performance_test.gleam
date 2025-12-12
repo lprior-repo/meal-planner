@@ -20,6 +20,23 @@ pub fn main() {
   gleeunit.main()
 }
 
+// Helper functions for comparison assertions (gleeunit doesn't have be_less_than/be_greater_than)
+fn be_less_than(actual: Int, expected: Int) -> Nil {
+  { actual < expected }
+  |> should.be_true()
+}
+
+fn be_greater_than(actual: Int, expected: Int) -> Nil {
+  { actual > expected }
+  |> should.be_true()
+}
+
+fn list_at(items: List(a), index: Int) -> Result(a, Nil) {
+  items
+  |> list.drop(index)
+  |> list.first()
+}
+
 // ============================================================================
 // Performance Benchmark Data Structure
 // ============================================================================
@@ -98,7 +115,7 @@ pub fn list_recipes_response_time_acceptable_test() {
   let response_time_ms = 150
 
   response_time_ms
-  |> should.be_less_than(200)
+  |> be_less_than(200)
 }
 
 pub fn list_recipes_response_time_baseline_test() {
@@ -116,7 +133,7 @@ pub fn list_recipes_response_time_baseline_test() {
   let actual_response_time_ms = 145
 
   actual_response_time_ms
-  |> should.be_less_than(max_acceptable_ms)
+  |> be_less_than(max_acceptable_ms)
 }
 
 // ============================================================================
@@ -130,7 +147,7 @@ pub fn get_single_recipe_response_time_test() {
   let response_time_ms = 75
 
   response_time_ms
-  |> should.be_less_than(100)
+  |> be_less_than(100)
 }
 
 pub fn get_recipe_local_cache_benefit_test() {
@@ -143,7 +160,7 @@ pub fn get_recipe_local_cache_benefit_test() {
 
   // Caching should provide at least 20x improvement
   performance_improvement
-  |> should.be_greater_than(20)
+  |> be_greater_than(20)
 }
 
 // ============================================================================
@@ -167,20 +184,20 @@ pub fn batch_recipe_fetch_scales_linearly_test() {
   let actual_batch_time_ms = 825
 
   actual_batch_time_ms
-  |> should.be_less_than(max_acceptable_batch_time)
+  |> be_less_than(max_acceptable_batch_time)
 }
 
 pub fn batch_operation_failure_handling_test() {
   // Scenario: Batch operations should fail gracefully
   // Partial failures shouldn't cause exponential delay
 
-  let batch_size = 20
+  let _batch_size = 20
   let successful_recipes = 18
-  let failed_recipes = 2
-  let avg_response_time_ms = 85
+  let _failed_recipes = 2
+  let _avg_response_time_ms = 85
 
   successful_recipes
-  |> should.be_greater_than(15)
+  |> be_greater_than(15)
 }
 
 // ============================================================================
@@ -194,7 +211,7 @@ pub fn search_recipes_response_time_test() {
   let response_time_ms = 180
 
   response_time_ms
-  |> should.be_less_than(300)
+  |> be_less_than(300)
 }
 
 pub fn search_recipes_empty_result_set_test() {
@@ -206,7 +223,7 @@ pub fn search_recipes_empty_result_set_test() {
 
   // Empty results shouldn't be significantly slower
   empty_result_search_ms
-  |> should.be_less_than(normal_search_ms + 50)
+  |> be_less_than(normal_search_ms + 50)
 }
 
 // ============================================================================
@@ -220,7 +237,7 @@ pub fn get_meal_plans_response_time_test() {
   let response_time_ms = 120
 
   response_time_ms
-  |> should.be_less_than(250)
+  |> be_less_than(250)
 }
 
 pub fn create_meal_plan_performance_test() {
@@ -230,7 +247,7 @@ pub fn create_meal_plan_performance_test() {
   let response_time_ms = 220
 
   response_time_ms
-  |> should.be_less_than(350)
+  |> be_less_than(350)
 }
 
 pub fn update_meal_plan_performance_test() {
@@ -240,7 +257,7 @@ pub fn update_meal_plan_performance_test() {
   let response_time_ms = 150
 
   response_time_ms
-  |> should.be_less_than(300)
+  |> be_less_than(300)
 }
 
 // ============================================================================
@@ -256,7 +273,7 @@ pub fn request_timeout_behavior_test() {
   let acceptable_variance_ms = 200
 
   actual_timeout_ms
-  |> should.be_less_than(configured_timeout_ms + acceptable_variance_ms)
+  |> be_less_than(configured_timeout_ms + acceptable_variance_ms)
 }
 
 pub fn network_error_detection_speed_test() {
@@ -268,7 +285,7 @@ pub fn network_error_detection_speed_test() {
   let acceptable_overhead_ms = 50
 
   error_detection_ms
-  |> should.be_less_than(first_attempt_ms + acceptable_overhead_ms)
+  |> be_less_than(first_attempt_ms + acceptable_overhead_ms)
 }
 
 // ============================================================================
@@ -280,7 +297,7 @@ pub fn concurrent_requests_dont_degrade_performance_test() {
   // All requests should complete within acceptable window
 
   let single_request_baseline_ms = 75
-  let concurrent_requests = 5
+  let _concurrent_requests = 5
   let slowest_concurrent_request_ms = 95
   let acceptable_variance_percent = 50
   let max_acceptable_ms =
@@ -290,7 +307,7 @@ pub fn concurrent_requests_dont_degrade_performance_test() {
     / 100
 
   slowest_concurrent_request_ms
-  |> should.be_less_than(max_acceptable_ms)
+  |> be_less_than(max_acceptable_ms)
 }
 
 pub fn request_queueing_fairness_test() {
@@ -298,12 +315,12 @@ pub fn request_queueing_fairness_test() {
   // Last request in batch shouldn't take much longer than first
 
   let first_request_ms = 75
-  let middle_request_ms = 82
+  let _middle_request_ms = 82
   let last_request_ms = 88
   let max_variance_ms = 20
 
   last_request_ms - first_request_ms
-  |> should.be_less_than(max_variance_ms)
+  |> be_less_than(max_variance_ms)
 }
 
 // ============================================================================
@@ -324,7 +341,7 @@ pub fn large_recipe_payload_performance_test() {
     / 100
 
   complex_recipe_response_ms
-  |> should.be_less_than(max_acceptable_ms)
+  |> be_less_than(max_acceptable_ms)
 }
 
 pub fn response_serialization_overhead_test() {
@@ -338,7 +355,7 @@ pub fn response_serialization_overhead_test() {
 
   // Serialization should be <20% of total time
   serialization_percent
-  |> should.be_less_than(20)
+  |> be_less_than(20)
 }
 
 // ============================================================================
@@ -356,7 +373,7 @@ pub fn connection_reuse_improves_performance_test() {
 
   // Pooling should provide at least 1.5x improvement
   performance_improvement
-  |> should.be_greater_than(1)
+  |> be_greater_than(1)
 }
 
 pub fn no_connection_leak_under_repeated_requests_test() {
@@ -368,7 +385,7 @@ pub fn no_connection_leak_under_repeated_requests_test() {
   let acceptable_variance_ms = 20
 
   request_990_1000_avg_ms - first_10_requests_avg_ms
-  |> should.be_less_than(acceptable_variance_ms)
+  |> be_less_than(acceptable_variance_ms)
 }
 
 // ============================================================================
@@ -379,12 +396,12 @@ pub fn mealie_v3_api_performance_baseline_test() {
   // Scenario: Document baseline performance for Mealie v3.x API
   // These metrics establish what to expect from current implementation
 
-  let api_version = "v3.x"
+  let _api_version = "v3.x"
   let typical_endpoint_response_ms = 100
 
   // Baseline established for future comparison
   typical_endpoint_response_ms
-  |> should.be_greater_than(0)
+  |> be_greater_than(0)
 }
 
 // ============================================================================
@@ -400,7 +417,7 @@ pub fn error_response_time_consistent_test() {
   let max_variance_ms = 10
 
   error_response_ms - success_response_ms
-  |> should.be_less_than(max_variance_ms)
+  |> be_less_than(max_variance_ms)
 }
 
 pub fn authentication_failure_detection_speed_test() {
@@ -410,7 +427,7 @@ pub fn authentication_failure_detection_speed_test() {
   let auth_failure_response_ms = 50
 
   auth_failure_response_ms
-  |> should.be_less_than(100)
+  |> be_less_than(100)
 }
 
 // ============================================================================
@@ -423,7 +440,7 @@ fn calculate_percentile(times: List(Int), percentile: Int) -> Int {
     0 -> 0
     count -> {
       let index = count * percentile / 100
-      case list.at(times, index) {
+      case list_at(times, index) {
         Ok(time) -> time
         Error(_) -> 0
       }

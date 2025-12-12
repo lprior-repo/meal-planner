@@ -157,7 +157,7 @@ pub fn with_backoff_decode_error_fails_immediately_test() {
 pub fn with_backoff_recovers_after_transient_failure_test() {
   let error = NetworkTimeout("timeout", 5000)
   // Create a counter by making it part of the function state
-  let make_operation = fn(attempt_count: Int) {
+  let _make_operation = fn(attempt_count: Int) {
     case attempt_count {
       0 -> #(Error(error), 1)
       _ -> #(Ok("success after retry"), attempt_count)

@@ -257,10 +257,9 @@ pub fn get_recipes_batch(
             |> request.set_method(http.Get)
             |> add_auth_header(config.mealie.api_token)
 
-          case execute_request_with_timeout(
-            req,
-            config.mealie.request_timeout_ms,
-          ) {
+          case
+            execute_request_with_timeout(req, config.mealie.request_timeout_ms)
+          {
             Ok(resp) -> {
               case parse_response(resp, types.recipe_decoder()) {
                 Ok(recipe) -> Ok(#(slug, recipe))
