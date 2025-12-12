@@ -487,7 +487,7 @@ pub fn get_recent_meals_enriched(
   limit: Int,
 ) -> Result(List(FoodLogEntry), StorageError) {
   use meals <- result.try(get_recent_meals(conn, limit))
-  Ok(mealie_enrichment.enrich_entries_with_mealie_data(meals, cfg))
+  Ok(meals)
 }
 
 /// Get the 10 most recently logged USDA foods (distinct by fdc_id)
@@ -1386,7 +1386,7 @@ pub fn save_food_log_entry_with_validation(
 
 /// Internal helper to validate recipe exists in Mealie
 fn validate_recipe_exists(
-  config: config.Config,
+  _config: config.Config,
   recipe_id: id.RecipeId,
 ) -> Result(Nil, StorageError) {
   let recipe_slug = id.recipe_id_to_string(recipe_id)
