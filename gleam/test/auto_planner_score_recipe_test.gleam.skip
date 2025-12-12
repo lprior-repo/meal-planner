@@ -265,6 +265,10 @@ pub fn test_calculate_variety_score_different_category() {
   score |> should.equal(1.0)
 }
 
+// ============================================================================
+// Determinism Tests (Property-Based)
+// ============================================================================
+
 pub fn test_score_recipe_is_deterministic() {
   let recipe = create_test_recipe("Test", 25.0, 12.0, 35.0)
   let config = create_test_config(30.0, 10.0, 40.0, 1)
@@ -277,4 +281,189 @@ pub fn test_score_recipe_is_deterministic() {
   score1.diet_compliance_score |> should.equal(score2.diet_compliance_score)
   score1.macro_match_score |> should.equal(score2.macro_match_score)
   score1.variety_score |> should.equal(score2.variety_score)
+}
+
+pub fn test_score_recipe_deterministic_multiple_runs() {
+  let recipe = create_test_recipe("Salmon", 28.5, 15.3, 25.0)
+  let config = create_test_config(28.0, 12.0, 30.0, 2)
+
+  // Run scoring 10 times to ensure consistency
+  let scores =
+    list.range(0, 9)
+    |> list.map(fn(_) { auto_planner.score_recipe(recipe, config, []) })
+
+  // All scores should be identical
+  let first = list.first(scores)
+  case first {
+    Ok(baseline) ->
+      scores
+      |> list.all(fn(score) {
+        score.overall_score == baseline.overall_score
+        && score.macro_match_score == baseline.macro_match_score
+        && score.diet_compliance_score == baseline.diet_compliance_score
+        && score.variety_score == baseline.variety_score
+      })
+      |> should.be_true
+    Error(_) -> should.fail("Empty scores list")
+  }
+}
+
+pub fn test_score_recipe_deterministic_with_history() {
+  let recipe1 = create_test_recipe("Chicken", 30.0, 10.0, 40.0)
+  let recipe2 = create_test_recipe("Beef", 25.0, 15.0, 35.0)
+  let recipe3 = create_test_recipe("Fish", 28.0, 12.0, 38.0)
+  let config = create_test_config(30.0, 10.0, 40.0, 3)
+
+  // Score with history
+  let score1_run1 = auto_planner.score_recipe(recipe3, config, [recipe1, recipe2])
+  let score1_run2 = auto_planner.score_recipe(recipe3, config, [recipe1, recipe2])
+
+  // Different order of history should yield same result for same recipe
+  let score1_run3 = auto_planner.score_recipe(recipe3, config, [recipe2, recipe1])
+
+  score1_run1.overall_score |> should.equal(score1_run2.overall_score)
+  score1_run1.macro_match_score |> should.equal(score1_run2.macro_match_score)
+  score1_run1.variety_score |> should.equal(score1_run3.variety_score)
+}
+
+pub fn test_score_recipe_deterministic_macro_calculations() {
+  let recipe = create_test_recipe("Test", 25.5, 12.3, 35.7)
+  let config = create_test_config(30.0, 10.0, 40.0, 1)
+
+  // Run multiple times, checking that macro_match_score is consistent
+  let scores =
+    list.range(0, 19)
+    |> list.map(fn(_) { auto_planner.score_recipe(recipe, config, []) })
+
+  // Get the first macro_match_score as baseline
+  case list.first(scores) {
+    Ok(baseline) ->
+      scores
+      |> list.all(fn(score) { score.macro_match_score == baseline.macro_match_score })
+      |> should.be_true
+    Error(_) -> should.fail("Empty scores list")
+  }
+}
+
+pub fn test_score_recipe_deterministic_across_configs() {
+  let recipe = create_test_recipe("Turkey", 32.0, 8.0, 45.0)
+
+  // Same recipe with identical configs should score identically
+  let config1 = create_test_config(30.0, 10.0, 40.0, 2)
+  let config2 = create_test_config(30.0, 10.0, 40.0, 2)
+
+  let score1 = auto_planner.score_recipe(recipe, config1, [])
+  let score2 = auto_planner.score_recipe(recipe, config2, [])
+
+  score1.overall_score |> should.equal(score2.overall_score)
+  score1.diet_compliance_score |> should.equal(score2.diet_compliance_score)
+  score1.macro_match_score |> should.equal(score2.macro_match_score)
+  score1.variety_score |> should.equal(score2.variety_score)
+}
+
+pub fn test_calculate_variety_score_is_deterministic() {
+  let recipe = create_test_recipe("Pasta", 15.0, 8.0, 50.0)
+  let history = [
+    create_test_recipe("Chicken", 30.0, 10.0, 40.0),
+    create_test_recipe("Beef", 25.0, 15.0, 35.0),
+  ]
+
+  // Variety scoring should be deterministic
+  let scores =
+    list.range(0, 9)
+    |> list.map(fn(_) { auto_planner.calculate_variety_score(recipe, history) })
+
+  let first_score = list.first(scores)
+  case first_score {
+    Ok(baseline) ->
+      scores |> list.all(fn(s) { s == baseline }) |> should.be_true
+    Error(_) -> should.fail("Empty scores list")
+  }
+}
+
+pub fn test_score_mealie_recipe_deterministic() {
+  let mealie_recipe = create_test_mealie_recipe(
+    "test-dish",
+    "Test Dish",
+    "25",
+    "12",
+    "38",
+  )
+  let config = create_test_config(25.0, 12.0, 38.0, 1)
+
+  // Score Mealie recipe multiple times
+  let scores =
+    list.range(0, 9)
+    |> list.map(fn(_) { auto_planner.score_mealie_recipe(mealie_recipe, config, []) })
+
+  case list.first(scores) {
+    Ok(baseline) ->
+      scores
+      |> list.all(fn(score) {
+        score.overall_score == baseline.overall_score
+        && score.macro_match_score == baseline.macro_match_score
+      })
+      |> should.be_true
+    Error(_) -> should.fail("Empty scores list")
+  }
+}
+
+pub fn test_score_recipe_deterministic_edge_cases() {
+  // Test edge case: zero macros
+  let zero_recipe = create_test_recipe("Empty", 0.0, 0.0, 0.0)
+  let config = create_test_config(30.0, 10.0, 40.0, 1)
+
+  let score1 = auto_planner.score_recipe(zero_recipe, config, [])
+  let score2 = auto_planner.score_recipe(zero_recipe, config, [])
+
+  score1.overall_score |> should.equal(score2.overall_score)
+  score1.macro_match_score |> should.equal(score2.macro_match_score)
+
+  // Test edge case: very large macros
+  let large_recipe = create_test_recipe("Huge", 500.0, 300.0, 800.0)
+
+  let score3 = auto_planner.score_recipe(large_recipe, config, [])
+  let score4 = auto_planner.score_recipe(large_recipe, config, [])
+
+  score3.overall_score |> should.equal(score4.overall_score)
+  score3.macro_match_score |> should.equal(score4.macro_match_score)
+}
+
+pub fn test_score_recipe_deterministic_with_diet_principles() {
+  let recipe = types.Recipe(
+    id: id.recipe_id("VerticalDiet Test"),
+    name: "VerticalDiet Test",
+    ingredients: [],
+    instructions: [],
+    macros: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
+    servings: 1,
+    category: "Meat",
+    fodmap_level: types.Low,
+    vertical_compliant: True,
+  )
+
+  let config =
+    auto_types.AutoPlanConfig(
+      user_id: "test-user",
+      diet_principles: [auto_types.VerticalDiet],
+      macro_targets: types.Macros(protein: 30.0, fat: 10.0, carbs: 40.0),
+      recipe_count: 1,
+      variety_factor: 1.0,
+    )
+
+  // Run multiple times with diet principles
+  let scores =
+    list.range(0, 9)
+    |> list.map(fn(_) { auto_planner.score_recipe(recipe, config, []) })
+
+  case list.first(scores) {
+    Ok(baseline) ->
+      scores
+      |> list.all(fn(score) {
+        score.overall_score == baseline.overall_score
+        && score.diet_compliance_score == baseline.diet_compliance_score
+      })
+      |> should.be_true
+    Error(_) -> should.fail("Empty scores list")
+  }
 }

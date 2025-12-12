@@ -5,12 +5,15 @@ import gleeunit/should
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/string
+import gleam/option.{None}
 import meal_planner/auto_planner
 import meal_planner/auto_planner/types as auto_types
 import meal_planner/types.{
   type Recipe, Ingredient, Low, Macros, Recipe, activity_level_to_display_string,
   ActivityLevel, BalanceGoal, UserProfile,
 }
+import meal_planner/mealie/types
 import meal_planner/id
 
 // ============================================================================
@@ -335,10 +338,10 @@ pub fn auto_planner_insufficient_after_filter_test() {
   let recipes = generate_recipe_dataset(5)
     |> list.map(fn(r) { Recipe(..r, vertical_compliant: False) })
 
+  let base_config = create_test_config(3)
   let config =
-    create_test_config(3)
-    |> auto_types.AutoPlanConfig(
-      ..,
+    auto_types.AutoPlanConfig(
+      ..base_config,
       diet_principles: [auto_types.VerticalDiet],
     )
 
@@ -363,8 +366,8 @@ pub fn auto_planner_insufficient_after_filter_test() {
 // ============================================================================
 
 /// Convert Recipe to MealieRecipe format
-fn recipe_to_mealie(recipe: Recipe) -> meal_planner.mealie.types.MealieRecipe {
-  meal_planner.mealie.types.MealieRecipe(
+fn recipe_to_mealie(recipe: Recipe) -> types.MealieRecipe {
+  types.MealieRecipe(
     id: recipe.id.id,
     name: recipe.name,
     slug: string.lowercase(recipe.name),
