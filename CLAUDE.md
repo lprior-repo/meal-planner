@@ -402,16 +402,10 @@ vim gleam/src/meal_planner/storage.gleam
 
 ## 🔧 MCP Server Setup
 
-**Required:**
-```bash
-claude mcp add mcp-agent-mail npx mcp-agent-mail mcp start
-```
+**Agent Mail is configured globally** - no local setup required.
 
-### Verify Installation
+### Verify Connection
 ```bash
-# Check MCP server is running
-claude mcp list
-
 # Test Agent Mail connection
 mcp__mcp_agent_mail__health_check
 ```
