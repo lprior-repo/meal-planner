@@ -8,10 +8,10 @@
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import meal_planner/id
-import meal_planner/mealie/types.{type MealieRecipe}
+import meal_planner/mealie/types as mealie as mealie
 import meal_planner/types.{
-  type Macros, type Recipe, Low, Macros, macros_calories, macros_scale,
-  recipe_id,
+  type FodmapLevel, type Macros, type Recipe, Low, Recipe,
+  macros_calories, macros_scale,
 }
 
 /// PortionCalculation represents a scaled recipe portion
@@ -292,27 +292,39 @@ pub fn calculate_portion_for_mealie_recipe(
       // Calculate scaled macros
       let scaled_macros = macros_scale(recipe_macros, capped_scale)
 
+      // Destructure to help type inference
+      let Macros(
+        protein: scaled_protein,
+        fat: scaled_fat,
+        carbs: scaled_carbs,
+      ) = scaled_macros
+      let Macros(
+        protein: target_protein,
+        fat: target_fat,
+        carbs: target_carbs,
+      ) = target_macros
+
       // Calculate variance from target
-      let protein_var = case target_macros.protein >. 0.0 {
+      let protein_var = case target_protein >. 0.0 {
         True -> {
-          let diff = scaled_macros.protein -. target_macros.protein
-          abs(diff /. target_macros.protein)
+          let diff = scaled_protein -. target_protein
+          abs(diff /. target_protein)
         }
         False -> 0.0
       }
 
-      let fat_var = case target_macros.fat >. 0.0 {
+      let fat_var = case target_fat >. 0.0 {
         True -> {
-          let diff = scaled_macros.fat -. target_macros.fat
-          abs(diff /. target_macros.fat)
+          let diff = scaled_fat -. target_fat
+          abs(diff /. target_fat)
         }
         False -> 0.0
       }
 
-      let carbs_var = case target_macros.carbs >. 0.0 {
+      let carbs_var = case target_carbs >. 0.0 {
         True -> {
-          let diff = scaled_macros.carbs -. target_macros.carbs
-          abs(diff /. target_macros.carbs)
+          let diff = scaled_carbs -. target_carbs
+          abs(diff /. target_carbs)
         }
         False -> 0.0
       }
