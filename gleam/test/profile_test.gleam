@@ -454,7 +454,7 @@ pub fn test_create_profile_from_strings_whitespace() {
 pub fn test_create_profile_with_id_generation() {
   let result = create_profile("unique-id-123", 180.0, Moderate, Maintain, 3)
   case result {
-    Ok(profile) -> {
+    Ok(_profile) -> {
       // ID should be created properly
       should.be_true(True)
     }

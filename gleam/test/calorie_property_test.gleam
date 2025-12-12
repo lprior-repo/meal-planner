@@ -1,0 +1,670 @@
+/// Property-based tests for calorie calculations
+/// Tests mathematical properties and invariants of calorie calculations
+///
+/// This test suite validates:
+/// - Non-negative calorie calculations
+/// - Sum correctness for macro combinations
+/// - Scale invariants
+/// - Addition properties
+/// - Ratio calculations
+/// - Mathematical identities
+///
+/// Note: These are property tests written as traditional unit tests.
+/// Each test verifies a mathematical property that should hold for all inputs.
+///
+import gleam/list
+import gleeunit/should
+import meal_planner/types.{Macros}
+
+// ============================================================================
+// PROPERTY: Non-Negative Calories
+// ============================================================================
+
+pub fn calories_always_non_negative_with_varied_inputs_test() {
+  // Property: Calories from macros can never be negative
+  // Test with various input combinations
+  let test_cases = [
+    Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+    Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+    Macros(protein: 100.0, fat: 50.0, carbs: 200.0),
+    Macros(protein: 0.1, fat: 0.05, carbs: 0.2),
+    Macros(protein: 50.0, fat: 0.0, carbs: 0.0),
+    Macros(protein: 0.0, fat: 30.0, carbs: 0.0),
+    Macros(protein: 0.0, fat: 0.0, carbs: 100.0),
+    Macros(protein: 25.5, fat: 12.3, carbs: 45.7),
+  ]
+
+  test_cases
+  |> list.each(fn(macros) {
+    let calories = types.macros_calories(macros)
+    { calories >=. 0.0 } |> should.be_true
+  })
+}
+
+pub fn calories_zero_when_all_macros_zero_test() {
+  // Property: Zero macros should give zero calories
+  let zero_macros = types.macros_zero()
+  types.macros_calories(zero_macros)
+  |> should.equal(0.0)
+}
+
+pub fn calories_positive_when_any_macro_positive_test() {
+  // Property: Any positive macro should give positive calories
+  // Test protein
+  let protein_only = Macros(protein: 10.0, fat: 0.0, carbs: 0.0)
+  let protein_cals = types.macros_calories(protein_only)
+  { protein_cals >. 0.0 } |> should.be_true
+
+  // Test fat
+  let fat_only = Macros(protein: 0.0, fat: 10.0, carbs: 0.0)
+  let fat_cals = types.macros_calories(fat_only)
+  { fat_cals >. 0.0 } |> should.be_true
+
+  // Test carbs
+  let carbs_only = Macros(protein: 0.0, fat: 0.0, carbs: 10.0)
+  let carbs_cals = types.macros_calories(carbs_only)
+  { carbs_cals >. 0.0 } |> should.be_true
+}
+
+// ============================================================================
+// PROPERTY: Calorie Formula Correctness
+// ============================================================================
+
+pub fn protein_calories_formula_test() {
+  // Property: Protein calories = protein grams * 4
+  let test_cases = [
+    #(1.0, 4.0),
+    #(5.0, 20.0),
+    #(10.0, 40.0),
+    #(25.0, 100.0),
+    #(50.0, 200.0),
+    #(100.0, 400.0),
+  ]
+
+  test_cases
+  |> list.each(fn(test_case) {
+    let #(grams, expected) = test_case
+    let macros = Macros(protein: grams, fat: 0.0, carbs: 0.0)
+    types.macros_calories(macros)
+    |> should.equal(expected)
+  })
+}
+
+pub fn fat_calories_formula_test() {
+  // Property: Fat calories = fat grams * 9
+  let test_cases = [
+    #(1.0, 9.0),
+    #(5.0, 45.0),
+    #(10.0, 90.0),
+    #(25.0, 225.0),
+    #(50.0, 450.0),
+    #(100.0, 900.0),
+  ]
+
+  test_cases
+  |> list.each(fn(test_case) {
+    let #(grams, expected) = test_case
+    let macros = Macros(protein: 0.0, fat: grams, carbs: 0.0)
+    types.macros_calories(macros)
+    |> should.equal(expected)
+  })
+}
+
+pub fn carb_calories_formula_test() {
+  // Property: Carb calories = carb grams * 4
+  let test_cases = [
+    #(1.0, 4.0),
+    #(5.0, 20.0),
+    #(10.0, 40.0),
+    #(25.0, 100.0),
+    #(50.0, 200.0),
+    #(100.0, 400.0),
+  ]
+
+  test_cases
+  |> list.each(fn(test_case) {
+    let #(grams, expected) = test_case
+    let macros = Macros(protein: 0.0, fat: 0.0, carbs: grams)
+    types.macros_calories(macros)
+    |> should.equal(expected)
+  })
+}
+
+pub fn total_calories_is_sum_of_parts_test() {
+  // Property: Total calories = protein_cals + fat_cals + carb_cals
+  let test_cases = [
+    Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+    Macros(protein: 25.0, fat: 10.0, carbs: 50.0),
+    Macros(protein: 100.0, fat: 50.0, carbs: 200.0),
+    Macros(protein: 15.5, fat: 7.2, carbs: 33.8),
+    Macros(protein: 0.5, fat: 0.25, carbs: 1.0),
+  ]
+
+  test_cases
+  |> list.each(fn(macros) {
+    let total = types.macros_calories(macros)
+    let protein_cals = types.protein_calories(macros)
+    let fat_cals = types.fat_calories(macros)
+    let carb_cals = types.carb_calories(macros)
+    let sum = protein_cals +. fat_cals +. carb_cals
+
+    // Use approximate equality due to floating point precision
+    float_approximately_equal(total, sum, 0.0001)
+    |> should.be_true
+  })
+}
+
+// ============================================================================
+// PROPERTY: Scaling Properties
+// ============================================================================
+
+pub fn scaling_by_zero_gives_zero_calories_test() {
+  // Property: Scaling macros by 0 should give 0 calories
+  let test_cases = [
+    Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+    Macros(protein: 50.0, fat: 25.0, carbs: 100.0),
+    Macros(protein: 100.0, fat: 50.0, carbs: 200.0),
+  ]
+
+  test_cases
+  |> list.each(fn(macros) {
+    let scaled = types.macros_scale(macros, 0.0)
+    types.macros_calories(scaled)
+    |> should.equal(0.0)
+  })
+}
+
+pub fn scaling_by_one_preserves_calories_test() {
+  // Property: Scaling by 1.0 should preserve calories
+  let test_cases = [
+    Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+    Macros(protein: 25.0, fat: 15.0, carbs: 50.0),
+    Macros(protein: 100.0, fat: 50.0, carbs: 200.0),
+  ]
+
+  test_cases
+  |> list.each(fn(macros) {
+    let original_calories = types.macros_calories(macros)
+    let scaled = types.macros_scale(macros, 1.0)
+    let scaled_calories = types.macros_calories(scaled)
+
+    float_approximately_equal(original_calories, scaled_calories, 0.0001)
+    |> should.be_true
+  })
+}
+
+pub fn scaling_calories_is_linear_test() {
+  // Property: calories(scale(m, k)) = k * calories(m)
+  let test_cases = [
+    #(Macros(protein: 10.0, fat: 5.0, carbs: 20.0), 2.0),
+    #(Macros(protein: 25.0, fat: 10.0, carbs: 50.0), 0.5),
+    #(Macros(protein: 50.0, fat: 25.0, carbs: 100.0), 3.0),
+    #(Macros(protein: 15.0, fat: 7.0, carbs: 30.0), 0.25),
+    #(Macros(protein: 100.0, fat: 50.0, carbs: 200.0), 1.5),
+  ]
+
+  test_cases
+  |> list.each(fn(test_case) {
+    let #(macros, factor) = test_case
+    let original_calories = types.macros_calories(macros)
+    let scaled_macros = types.macros_scale(macros, factor)
+    let scaled_calories = types.macros_calories(scaled_macros)
+    let expected = original_calories *. factor
+
+    float_approximately_equal(scaled_calories, expected, 0.01)
+    |> should.be_true
+  })
+}
+
+pub fn double_macros_doubles_calories_test() {
+  // Property: Doubling macros should double calories
+  let test_cases = [
+    Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+    Macros(protein: 25.0, fat: 15.0, carbs: 50.0),
+    Macros(protein: 50.0, fat: 25.0, carbs: 100.0),
+  ]
+
+  test_cases
+  |> list.each(fn(macros) {
+    let original_calories = types.macros_calories(macros)
+    let doubled = types.macros_scale(macros, 2.0)
+    let doubled_calories = types.macros_calories(doubled)
+
+    float_approximately_equal(
+      doubled_calories,
+      original_calories *. 2.0,
+      0.0001,
+    )
+    |> should.be_true
+  })
+}
+
+pub fn halve_macros_halves_calories_test() {
+  // Property: Halving macros should halve calories
+  let test_cases = [
+    Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+    Macros(protein: 25.0, fat: 15.0, carbs: 50.0),
+    Macros(protein: 50.0, fat: 25.0, carbs: 100.0),
+  ]
+
+  test_cases
+  |> list.each(fn(macros) {
+    let original_calories = types.macros_calories(macros)
+    let halved = types.macros_scale(macros, 0.5)
+    let halved_calories = types.macros_calories(halved)
+
+    float_approximately_equal(halved_calories, original_calories /. 2.0, 0.0001)
+    |> should.be_true
+  })
+}
+
+// ============================================================================
+// PROPERTY: Addition Properties
+// ============================================================================
+
+pub fn adding_macros_adds_calories_test() {
+  // Property: calories(a + b) = calories(a) + calories(b)
+  let test_cases = [
+    #(
+      Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+      Macros(protein: 15.0, fat: 8.0, carbs: 30.0),
+    ),
+    #(
+      Macros(protein: 25.0, fat: 10.0, carbs: 50.0),
+      Macros(protein: 5.0, fat: 2.0, carbs: 10.0),
+    ),
+    #(
+      Macros(protein: 50.0, fat: 25.0, carbs: 100.0),
+      Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+    ),
+  ]
+
+  test_cases
+  |> list.each(fn(test_case) {
+    let #(macros_a, macros_b) = test_case
+    let cals_a = types.macros_calories(macros_a)
+    let cals_b = types.macros_calories(macros_b)
+    let sum_macros = types.macros_add(macros_a, macros_b)
+    let sum_calories = types.macros_calories(sum_macros)
+    let expected_sum = cals_a +. cals_b
+
+    float_approximately_equal(sum_calories, expected_sum, 0.01)
+    |> should.be_true
+  })
+}
+
+pub fn addition_is_commutative_test() {
+  // Property: macros_add(a, b) = macros_add(b, a) (in terms of calories)
+  let a = Macros(protein: 10.0, fat: 5.0, carbs: 20.0)
+  let b = Macros(protein: 15.0, fat: 8.0, carbs: 30.0)
+
+  let sum_ab = types.macros_add(a, b)
+  let sum_ba = types.macros_add(b, a)
+
+  let cals_ab = types.macros_calories(sum_ab)
+  let cals_ba = types.macros_calories(sum_ba)
+
+  float_approximately_equal(cals_ab, cals_ba, 0.0001)
+  |> should.be_true
+}
+
+pub fn addition_is_associative_test() {
+  // Property: (a + b) + c = a + (b + c) (in terms of calories)
+  let a = Macros(protein: 10.0, fat: 5.0, carbs: 20.0)
+  let b = Macros(protein: 15.0, fat: 8.0, carbs: 30.0)
+  let c = Macros(protein: 5.0, fat: 2.0, carbs: 10.0)
+
+  let left = types.macros_add(types.macros_add(a, b), c)
+  let right = types.macros_add(a, types.macros_add(b, c))
+
+  let cals_left = types.macros_calories(left)
+  let cals_right = types.macros_calories(right)
+
+  float_approximately_equal(cals_left, cals_right, 0.0001)
+  |> should.be_true
+}
+
+pub fn adding_zero_preserves_calories_test() {
+  // Property: macros_add(m, zero) = m (identity element)
+  let test_cases = [
+    Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+    Macros(protein: 25.0, fat: 15.0, carbs: 50.0),
+    Macros(protein: 50.0, fat: 25.0, carbs: 100.0),
+  ]
+
+  test_cases
+  |> list.each(fn(macros) {
+    let zero = types.macros_zero()
+    let sum = types.macros_add(macros, zero)
+
+    let original_cals = types.macros_calories(macros)
+    let sum_cals = types.macros_calories(sum)
+
+    float_approximately_equal(original_cals, sum_cals, 0.0001)
+    |> should.be_true
+  })
+}
+
+// ============================================================================
+// PROPERTY: Sum Correctness
+// ============================================================================
+
+pub fn macros_sum_empty_list_gives_zero_calories_test() {
+  // Property: Sum of empty list should give zero calories
+  let sum = types.macros_sum([])
+  types.macros_calories(sum)
+  |> should.equal(0.0)
+}
+
+pub fn macros_sum_single_element_preserves_calories_test() {
+  // Property: Sum of single element list equals that element
+  let test_cases = [
+    Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+    Macros(protein: 25.0, fat: 15.0, carbs: 50.0),
+    Macros(protein: 50.0, fat: 25.0, carbs: 100.0),
+  ]
+
+  test_cases
+  |> list.each(fn(macros) {
+    let sum = types.macros_sum([macros])
+
+    let original_cals = types.macros_calories(macros)
+    let sum_cals = types.macros_calories(sum)
+
+    float_approximately_equal(original_cals, sum_cals, 0.0001)
+    |> should.be_true
+  })
+}
+
+pub fn macros_sum_calories_equals_sum_of_calories_test() {
+  // Property: calories(sum(list)) = sum(map(list, calories))
+  let test_lists = [
+    [
+      Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+      Macros(protein: 15.0, fat: 8.0, carbs: 30.0),
+      Macros(protein: 5.0, fat: 2.0, carbs: 10.0),
+    ],
+    [
+      Macros(protein: 25.0, fat: 10.0, carbs: 50.0),
+      Macros(protein: 25.0, fat: 10.0, carbs: 50.0),
+    ],
+    [
+      Macros(protein: 50.0, fat: 25.0, carbs: 100.0),
+      Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+      Macros(protein: 5.0, fat: 2.5, carbs: 10.0),
+      Macros(protein: 15.0, fat: 7.5, carbs: 30.0),
+    ],
+  ]
+
+  test_lists
+  |> list.each(fn(macros_list) {
+    let sum_macros = types.macros_sum(macros_list)
+    let sum_calories = types.macros_calories(sum_macros)
+
+    let individual_calories = list.map(macros_list, types.macros_calories)
+    let expected_sum =
+      list.fold(individual_calories, 0.0, fn(acc, cal) { acc +. cal })
+
+    float_approximately_equal(sum_calories, expected_sum, 0.01)
+    |> should.be_true
+  })
+}
+
+// ============================================================================
+// PROPERTY: Ratio Calculations
+// ============================================================================
+
+pub fn ratios_sum_to_one_test() {
+  // Property: protein_ratio + fat_ratio + carb_ratio = 1.0 (for non-zero macros)
+  let test_cases = [
+    Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+    Macros(protein: 25.0, fat: 15.0, carbs: 50.0),
+    Macros(protein: 50.0, fat: 25.0, carbs: 100.0),
+    Macros(protein: 30.0, fat: 20.0, carbs: 80.0),
+    Macros(protein: 15.5, fat: 7.2, carbs: 33.8),
+  ]
+
+  test_cases
+  |> list.each(fn(macros) {
+    let p_ratio = types.protein_ratio(macros)
+    let f_ratio = types.fat_ratio(macros)
+    let c_ratio = types.carb_ratio(macros)
+    let sum = p_ratio +. f_ratio +. c_ratio
+
+    float_approximately_equal(sum, 1.0, 0.001)
+    |> should.be_true
+  })
+}
+
+pub fn ratios_always_between_zero_and_one_test() {
+  // Property: All ratios should be in [0.0, 1.0]
+  let test_cases = [
+    Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+    Macros(protein: 10.0, fat: 5.0, carbs: 20.0),
+    Macros(protein: 25.0, fat: 15.0, carbs: 50.0),
+    Macros(protein: 50.0, fat: 25.0, carbs: 100.0),
+    Macros(protein: 100.0, fat: 0.0, carbs: 0.0),
+    Macros(protein: 0.0, fat: 50.0, carbs: 0.0),
+    Macros(protein: 0.0, fat: 0.0, carbs: 100.0),
+  ]
+
+  test_cases
+  |> list.each(fn(macros) {
+    let p_ratio = types.protein_ratio(macros)
+    let f_ratio = types.fat_ratio(macros)
+    let c_ratio = types.carb_ratio(macros)
+
+    { p_ratio >=. 0.0 && p_ratio <=. 1.0 } |> should.be_true
+    { f_ratio >=. 0.0 && f_ratio <=. 1.0 } |> should.be_true
+    { c_ratio >=. 0.0 && c_ratio <=. 1.0 } |> should.be_true
+  })
+}
+
+pub fn zero_macros_gives_zero_ratios_test() {
+  // Property: Zero macros should give zero ratios (not undefined)
+  let zero = types.macros_zero()
+  types.protein_ratio(zero) |> should.equal(0.0)
+  types.fat_ratio(zero) |> should.equal(0.0)
+  types.carb_ratio(zero) |> should.equal(0.0)
+}
+
+pub fn protein_only_gives_full_protein_ratio_test() {
+  // Property: Protein-only macros should give 100% protein ratio
+  let protein_only = Macros(protein: 25.0, fat: 0.0, carbs: 0.0)
+  types.protein_ratio(protein_only) |> should.equal(1.0)
+  types.fat_ratio(protein_only) |> should.equal(0.0)
+  types.carb_ratio(protein_only) |> should.equal(0.0)
+}
+
+pub fn fat_only_gives_full_fat_ratio_test() {
+  // Property: Fat-only macros should give 100% fat ratio
+  let fat_only = Macros(protein: 0.0, fat: 11.11, carbs: 0.0)
+  types.protein_ratio(fat_only) |> should.equal(0.0)
+  types.fat_ratio(fat_only) |> should.equal(1.0)
+  types.carb_ratio(fat_only) |> should.equal(0.0)
+}
+
+pub fn carbs_only_gives_full_carb_ratio_test() {
+  // Property: Carbs-only macros should give 100% carb ratio
+  let carbs_only = Macros(protein: 0.0, fat: 0.0, carbs: 25.0)
+  types.protein_ratio(carbs_only) |> should.equal(0.0)
+  types.fat_ratio(carbs_only) |> should.equal(0.0)
+  types.carb_ratio(carbs_only) |> should.equal(1.0)
+}
+
+// ============================================================================
+// PROPERTY: Negative Value Detection
+// ============================================================================
+
+pub fn has_negative_values_detects_negative_protein_test() {
+  let macros = Macros(protein: -1.0, fat: 5.0, carbs: 10.0)
+  types.has_negative_values(macros) |> should.be_true
+}
+
+pub fn has_negative_values_detects_negative_fat_test() {
+  let macros = Macros(protein: 10.0, fat: -1.0, carbs: 10.0)
+  types.has_negative_values(macros) |> should.be_true
+}
+
+pub fn has_negative_values_detects_negative_carbs_test() {
+  let macros = Macros(protein: 10.0, fat: 5.0, carbs: -1.0)
+  types.has_negative_values(macros) |> should.be_true
+}
+
+pub fn has_negative_values_false_for_all_positive_test() {
+  let macros = Macros(protein: 10.0, fat: 5.0, carbs: 20.0)
+  types.has_negative_values(macros) |> should.be_false
+}
+
+pub fn has_negative_values_false_for_zero_test() {
+  let macros = types.macros_zero()
+  types.has_negative_values(macros) |> should.be_false
+}
+
+// ============================================================================
+// PROPERTY: Calorie Contribution
+// ============================================================================
+
+pub fn protein_and_carbs_equal_calories_per_gram_test() {
+  // Property: For same gram amounts, protein and carbs contribute equally
+  let grams = 10.0
+  let protein_macros = Macros(protein: grams, fat: 0.0, carbs: 0.0)
+  let carb_macros = Macros(protein: 0.0, fat: 0.0, carbs: grams)
+
+  let protein_cals = types.macros_calories(protein_macros)
+  let carb_cals = types.macros_calories(carb_macros)
+
+  // Protein and carbs equal (4 cal/g)
+  protein_cals |> should.equal(carb_cals)
+  protein_cals |> should.equal(40.0)
+}
+
+pub fn fat_most_calorie_dense_test() {
+  // Property: Fat has more calories per gram than protein or carbs
+  let grams = 10.0
+  let protein_macros = Macros(protein: grams, fat: 0.0, carbs: 0.0)
+  let fat_macros = Macros(protein: 0.0, fat: grams, carbs: 0.0)
+  let carb_macros = Macros(protein: 0.0, fat: 0.0, carbs: grams)
+
+  let protein_cals = types.macros_calories(protein_macros)
+  let fat_cals = types.macros_calories(fat_macros)
+  let carb_cals = types.macros_calories(carb_macros)
+
+  // Fat is highest (9 cal/g vs 4 cal/g)
+  { fat_cals >. protein_cals } |> should.be_true
+  { fat_cals >. carb_cals } |> should.be_true
+}
+
+pub fn fat_exactly_2_point_25_times_protein_carbs_test() {
+  // Property: 1g fat = 2.25x calories of 1g protein or carbs (9/4 = 2.25)
+  let fat_cals =
+    types.macros_calories(Macros(protein: 0.0, fat: 1.0, carbs: 0.0))
+  let protein_cals =
+    types.macros_calories(Macros(protein: 1.0, fat: 0.0, carbs: 0.0))
+  let carb_cals =
+    types.macros_calories(Macros(protein: 0.0, fat: 0.0, carbs: 1.0))
+
+  fat_cals |> should.equal(9.0)
+  protein_cals |> should.equal(4.0)
+  carb_cals |> should.equal(4.0)
+
+  // 9/4 = 2.25
+  float_approximately_equal(fat_cals /. protein_cals, 2.25, 0.001)
+  |> should.be_true
+}
+
+// ============================================================================
+// PROPERTY: Realistic Macros
+// ============================================================================
+
+pub fn typical_meal_calories_in_expected_range_test() {
+  // Property: Typical meal macros should give reasonable calorie counts
+
+  // Chicken breast: 50g protein, 5g fat, 0g carbs ≈ 245 cal
+  let chicken = Macros(protein: 50.0, fat: 5.0, carbs: 0.0)
+  let chicken_cals = types.macros_calories(chicken)
+  { chicken_cals >=. 240.0 && chicken_cals <=. 250.0 } |> should.be_true
+  chicken_cals |> should.equal(245.0)
+
+  // Rice: 0g protein, 0g fat, 50g carbs ≈ 200 cal
+  let rice = Macros(protein: 0.0, fat: 0.0, carbs: 50.0)
+  let rice_cals = types.macros_calories(rice)
+  rice_cals |> should.equal(200.0)
+
+  // Olive oil: 0g protein, 14g fat, 0g carbs ≈ 126 cal (1 tablespoon)
+  let oil = Macros(protein: 0.0, fat: 14.0, carbs: 0.0)
+  let oil_cals = types.macros_calories(oil)
+  oil_cals |> should.equal(126.0)
+}
+
+pub fn typical_daily_intake_test() {
+  // Property: Typical daily intake gives realistic calorie count
+  // ~2200 calorie diet: ~150g protein, ~67g fat, ~250g carbs
+  // 150*4 + 67*9 + 250*4 = 600 + 603 + 1000 = 2203
+  let daily = Macros(protein: 150.0, fat: 67.0, carbs: 250.0)
+  let daily_cals = types.macros_calories(daily)
+
+  // Should be around 2203 calories
+  { daily_cals >=. 2200.0 && daily_cals <=. 2210.0 } |> should.be_true
+  daily_cals |> should.equal(2203.0)
+}
+
+pub fn high_protein_meal_test() {
+  // Property: High protein meal (e.g., 4 eggs + protein shake)
+  // 4 eggs: ~24g protein, ~20g fat, ~2g carbs
+  // Protein shake: ~25g protein, ~2g fat, ~5g carbs
+  let meal = Macros(protein: 49.0, fat: 22.0, carbs: 7.0)
+  let meal_cals = types.macros_calories(meal)
+
+  // Should be around 422 calories
+  { meal_cals >=. 420.0 && meal_cals <=. 430.0 } |> should.be_true
+}
+
+// ============================================================================
+// PROPERTY: Edge Cases
+// ============================================================================
+
+pub fn very_small_values_test() {
+  // Property: Very small macro values should work correctly
+  let tiny = Macros(protein: 0.01, fat: 0.01, carbs: 0.01)
+  let cals = types.macros_calories(tiny)
+
+  // 0.01*4 + 0.01*9 + 0.01*4 = 0.17
+  float_approximately_equal(cals, 0.17, 0.001) |> should.be_true
+}
+
+pub fn very_large_values_test() {
+  // Property: Very large macro values should work correctly
+  let large = Macros(protein: 1000.0, fat: 500.0, carbs: 2000.0)
+  let cals = types.macros_calories(large)
+
+  // 1000*4 + 500*9 + 2000*4 = 4000 + 4500 + 8000 = 16500
+  cals |> should.equal(16_500.0)
+}
+
+pub fn fractional_grams_test() {
+  // Property: Fractional gram amounts should work correctly
+  let fractional = Macros(protein: 12.5, fat: 6.25, carbs: 25.75)
+  let cals = types.macros_calories(fractional)
+
+  // 12.5*4 + 6.25*9 + 25.75*4 = 50 + 56.25 + 103 = 209.25
+  float_approximately_equal(cals, 209.25, 0.01) |> should.be_true
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/// Compare two floats with tolerance for floating point errors
+fn float_approximately_equal(a: Float, b: Float, tolerance: Float) -> Bool {
+  let diff = float_abs(a -. b)
+  diff <. tolerance
+}
+
+/// Absolute value of a float
+fn float_abs(x: Float) -> Float {
+  case x <. 0.0 {
+    True -> 0.0 -. x
+    False -> x
+  }
+}

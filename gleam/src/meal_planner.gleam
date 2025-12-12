@@ -21,11 +21,11 @@ pub fn main() {
       io.println("✓ Configuration loaded")
       io.println(
         "  - Database: "
-        <> config.db_host
+        <> config.database.host
         <> ":"
-        <> int.to_string(config.db_port),
+        <> int.to_string(config.database.port),
       )
-      io.println("  - Mealie: " <> config.mealie_url)
+      io.println("  - Mealie: " <> config.mealie.url)
       io.println("  - Server port: " <> int.to_string(config.port))
       io.println("")
 
@@ -56,44 +56,30 @@ fn load_config() -> Result(web.ServerConfig, String) {
     |> result.try(int.parse)
     |> result.unwrap(8080)
 
-  let db_host =
-    envoy.get("DATABASE_HOST")
-    |> result.unwrap("localhost")
+  let database =
+    web.DatabaseConfig(
+      host: envoy.get("DATABASE_HOST")
+        |> result.unwrap("localhost"),
+      port: envoy.get("DATABASE_PORT")
+        |> result.try(int.parse)
+        |> result.unwrap(5432),
+      name: envoy.get("DATABASE_NAME")
+        |> result.unwrap("meal_planner"),
+      user: envoy.get("DATABASE_USER")
+        |> result.unwrap("postgres"),
+      password: case envoy.get("DATABASE_PASSWORD") {
+        Ok(pwd) -> pwd
+        Error(_) -> ""
+      },
+    )
 
-  let db_port =
-    envoy.get("DATABASE_PORT")
-    |> result.try(int.parse)
-    |> result.unwrap(5432)
+  let mealie =
+    web.MealieConfig(
+      url: envoy.get("MEALIE_BASE_URL")
+        |> result.unwrap("http://localhost:9000"),
+      token: envoy.get("MEALIE_API_TOKEN")
+        |> result.unwrap(""),
+    )
 
-  let db_name =
-    envoy.get("DATABASE_NAME")
-    |> result.unwrap("meal_planner")
-
-  let db_user =
-    envoy.get("DATABASE_USER")
-    |> result.unwrap("postgres")
-
-  let db_password = case envoy.get("DATABASE_PASSWORD") {
-    Ok(pwd) -> pwd
-    Error(_) -> ""
-  }
-
-  let mealie_url =
-    envoy.get("MEALIE_BASE_URL")
-    |> result.unwrap("http://localhost:9000")
-
-  let mealie_token =
-    envoy.get("MEALIE_API_TOKEN")
-    |> result.unwrap("")
-
-  Ok(web.ServerConfig(
-    port: port,
-    db_host: db_host,
-    db_port: db_port,
-    db_name: db_name,
-    db_user: db_user,
-    db_password: db_password,
-    mealie_url: mealie_url,
-    mealie_token: mealie_token,
-  ))
+  Ok(web.ServerConfig(port: port, database: database, mealie: mealie))
 }

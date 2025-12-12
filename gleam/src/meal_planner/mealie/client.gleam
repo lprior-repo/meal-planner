@@ -108,7 +108,7 @@ fn parse_response(
 
 /// Validate config has required Mealie settings
 fn validate_config(config: Config) -> Result(Config, ClientError) {
-  case config.mealie_base_url == "" || config.mealie_api_token == "" {
+  case config.mealie.base_url == "" || config.mealie.api_token == "" {
     True ->
       Error(ConfigError(
         "Mealie base URL and API token are required. Set MEALIE_BASE_URL and MEALIE_API_TOKEN environment variables.",
@@ -144,14 +144,14 @@ pub fn list_recipes(
 ) -> Result(MealiePaginatedResponse(MealieRecipeSummary), ClientError) {
   use config <- result.try(validate_config(config))
 
-  let url = build_url(config.mealie_base_url, "/api/recipes")
+  let url = build_url(config.mealie.base_url, "/api/recipes")
 
   case request.to(url) {
     Ok(req) -> {
       let req =
         req
         |> request.set_method(http.Get)
-        |> add_auth_header(config.mealie_api_token)
+        |> add_auth_header(config.mealie.api_token)
 
       use resp <- result.try(execute_request(req))
       parse_response(
@@ -183,14 +183,14 @@ pub fn get_recipe(
 ) -> Result(MealieRecipe, ClientError) {
   use config <- result.try(validate_config(config))
 
-  let url = build_url(config.mealie_base_url, "/api/recipes/" <> slug)
+  let url = build_url(config.mealie.base_url, "/api/recipes/" <> slug)
 
   case request.to(url) {
     Ok(req) -> {
       let req =
         req
         |> request.set_method(http.Get)
-        |> add_auth_header(config.mealie_api_token)
+        |> add_auth_header(config.mealie.api_token)
 
       use resp <- result.try(execute_request(req))
       parse_response(resp, types.recipe_decoder())
@@ -221,14 +221,14 @@ pub fn search_recipes(
   // Mealie search endpoint: /api/recipes?search=query
   let encoded_query = uri.percent_encode(query)
   let url =
-    build_url(config.mealie_base_url, "/api/recipes?search=" <> encoded_query)
+    build_url(config.mealie.base_url, "/api/recipes?search=" <> encoded_query)
 
   case request.to(url) {
     Ok(req) -> {
       let req =
         req
         |> request.set_method(http.Get)
-        |> add_auth_header(config.mealie_api_token)
+        |> add_auth_header(config.mealie.api_token)
 
       use resp <- result.try(execute_request(req))
       parse_response(
@@ -263,7 +263,7 @@ pub fn get_meal_plans(
   // Mealie meal plans endpoint: /api/groups/mealplans?start_date=...&end_date=...
   let url =
     build_url(
-      config.mealie_base_url,
+      config.mealie.base_url,
       "/api/groups/mealplans?start_date="
         <> start_date
         <> "&end_date="
@@ -275,7 +275,7 @@ pub fn get_meal_plans(
       let req =
         req
         |> request.set_method(http.Get)
-        |> add_auth_header(config.mealie_api_token)
+        |> add_auth_header(config.mealie.api_token)
 
       use resp <- result.try(execute_request(req))
       parse_response(resp, decode.list(types.meal_plan_entry_decoder()))
@@ -311,7 +311,7 @@ pub fn create_meal_plan_entry(
 ) -> Result(MealieMealPlanEntry, ClientError) {
   use config <- result.try(validate_config(config))
 
-  let url = build_url(config.mealie_base_url, "/api/groups/mealplans")
+  let url = build_url(config.mealie.base_url, "/api/groups/mealplans")
 
   let body =
     types.meal_plan_entry_to_json(entry)
@@ -322,7 +322,7 @@ pub fn create_meal_plan_entry(
       let req =
         req
         |> request.set_method(http.Post)
-        |> add_auth_header(config.mealie_api_token)
+        |> add_auth_header(config.mealie.api_token)
         |> add_json_header
         |> request.set_body(body)
 
@@ -352,7 +352,7 @@ pub fn update_meal_plan_entry(
   use config <- result.try(validate_config(config))
 
   let url =
-    build_url(config.mealie_base_url, "/api/groups/mealplans/" <> entry.id)
+    build_url(config.mealie.base_url, "/api/groups/mealplans/" <> entry.id)
 
   let body =
     types.meal_plan_entry_to_json(entry)
@@ -363,7 +363,7 @@ pub fn update_meal_plan_entry(
       let req =
         req
         |> request.set_method(http.Put)
-        |> add_auth_header(config.mealie_api_token)
+        |> add_auth_header(config.mealie.api_token)
         |> add_json_header
         |> request.set_body(body)
 
@@ -390,14 +390,14 @@ pub fn delete_meal_plan_entry(
   use config <- result.try(validate_config(config))
 
   let url =
-    build_url(config.mealie_base_url, "/api/groups/mealplans/" <> entry_id)
+    build_url(config.mealie.base_url, "/api/groups/mealplans/" <> entry_id)
 
   case request.to(url) {
     Ok(req) -> {
       let req =
         req
         |> request.set_method(http.Delete)
-        |> add_auth_header(config.mealie_api_token)
+        |> add_auth_header(config.mealie.api_token)
 
       use resp <- result.try(execute_request(req))
       case resp.status {
