@@ -8,7 +8,6 @@ import gleam/string
 import meal_planner/config
 import meal_planner/mealie/client as mealie
 import meal_planner/mealie/types as mealie_types
-import meal_planner/types as types
 import meal_planner/types.{type FoodLogEntry, FoodLogEntry, Macros}
 
 /// Parse a nutrition string from Mealie (e.g., "150 kcal" or "15.5 g")
@@ -81,7 +80,7 @@ pub fn enrich_entries_with_mealie_data_batch(
   let recipe_slugs =
     mealie_entries
     |> list.map(fn(entry) { entry.source_id })
-    |> list.unique_by(fn(slug) { slug })
+    |> list.unique
 
   // Skip batch fetch if no Mealie entries
   case recipe_slugs {
