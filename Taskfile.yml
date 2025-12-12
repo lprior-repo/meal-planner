@@ -1,290 +1,374 @@
 version: '3'
 
 vars:
-  SHARED_DIR: '{{.ROOT_DIR}}/shared'
-  SERVER_DIR: '{{.ROOT_DIR}}/server'
-  CLIENT_DIR: '{{.ROOT_DIR}}/client'
-  CLI_DIR: '{{.ROOT_DIR}}/gleam'
+  GLEAM_DIR: '{{.ROOT_DIR}}/gleam'
+  MEALIE_DB: 'mealie'
+  APP_DB: 'meal_planner'
+  POSTGRES_USER: 'postgres'
 
 tasks:
-  dev:
-    desc: "Main development task - compile all projects and start server"
-    deps:
-      - build
+  # ============================================================================
+  # Main Entry Point - Start Everything
+  # ============================================================================
+  start:
+    desc: "🚀 Start the entire meal planner application (Mealie + Database + API)"
     cmds:
-      - task: server:background
+      - task: banner
+      - task: check:dependencies
+      - task: db:ensure
+      - task: mealie:start
+      - task: api:start
+      - task: status
       - |
-        echo "🚀 Development environment started!"
         echo ""
-        echo "✅ All Gleam projects compiled:"
-        echo "   - shared (types)"
-        echo "   - server (Wisp backend)"
-        echo "   - client (Lustre SPA)"
-        echo "   - gleam (CLI tool)"
+        echo "✅ Meal Planner is ready!"
         echo ""
-        echo "🌐 Server running in background"
+        echo "📱 Access points:"
+        echo "   - API Server:    http://localhost:8080/health"
+        echo "   - Mealie UI:     http://localhost:9000"
         echo ""
-        echo "💡 Tip: Use 'task server:stop' to stop the background server"
+        echo "💡 Next steps:"
+        echo "   1. Open http://localhost:9000 to create Mealie account"
+        echo "   2. Generate API token: Settings > API Tokens"
+        echo "   3. Add to .env: MEALIE_API_TOKEN=<your-token>"
+        echo "   4. Run 'task restart' to apply token"
+        echo ""
 
+  banner:
+    desc: "Show startup banner"
+    cmds:
+      - |
+        echo "🍽️  Meal Planner - Full Stack Startup"
+        echo "======================================"
+        echo ""
+    silent: true
+
+  # ============================================================================
+  # Dependency Checks
+  # ============================================================================
+  check:dependencies:
+    desc: "Check required dependencies"
+    cmds:
+      - |
+        echo "🔍 Checking dependencies..."
+
+        # Check Gleam
+        if ! command -v gleam &> /dev/null; then
+          echo "❌ Gleam not found. Install from: https://gleam.run"
+          exit 1
+        fi
+        echo "   ✓ Gleam $(gleam --version | grep -oP '\d+\.\d+\.\d+')"
+
+        # Check PostgreSQL
+        if ! command -v psql &> /dev/null; then
+          echo "❌ PostgreSQL not found. Install: sudo pacman -S postgresql"
+          exit 1
+        fi
+        echo "   ✓ PostgreSQL $(psql --version | grep -oP '\d+\.\d+')"
+
+        # Check Docker
+        if ! command -v docker &> /dev/null; then
+          echo "❌ Docker not found. Install from: https://docker.com"
+          exit 1
+        fi
+        echo "   ✓ Docker $(docker --version | grep -oP '\d+\.\d+\.\d+')"
+
+        # Check go-task
+        if ! command -v task &> /dev/null; then
+          echo "❌ Task not found. Install: sudo pacman -S go-task"
+          exit 1
+        fi
+        echo "   ✓ Task $(task --version | grep -oP '\d+\.\d+\.\d+')"
+
+        echo ""
+    silent: true
+
+  # ============================================================================
+  # Database Management
+  # ============================================================================
+  db:ensure:
+    desc: "Ensure PostgreSQL is running and databases exist"
+    cmds:
+      - task: db:check-running
+      - task: db:create-if-missing
+      - task: db:verify
+
+  db:check-running:
+    desc: "Check if PostgreSQL is running"
+    cmds:
+      - |
+        echo "📊 Checking PostgreSQL..."
+        if ! pg_isready -q; then
+          echo "⚠️  PostgreSQL is not running. Starting..."
+          sudo systemctl start postgresql
+          sleep 2
+        fi
+        echo "   ✓ PostgreSQL is running"
+    silent: true
+
+  db:create-if-missing:
+    desc: "Create databases if they don't exist"
+    cmds:
+      - |
+        # Check and create meal_planner database
+        if ! psql -U {{.POSTGRES_USER}} -lqt | cut -d \| -f 1 | grep -qw {{.APP_DB}}; then
+          echo "   Creating {{.APP_DB}} database..."
+          createdb -U {{.POSTGRES_USER}} {{.APP_DB}}
+        fi
+
+        # Check and create mealie database
+        if ! psql -U {{.POSTGRES_USER}} -lqt | cut -d \| -f 1 | grep -qw {{.MEALIE_DB}}; then
+          echo "   Creating {{.MEALIE_DB}} database..."
+          createdb -U {{.POSTGRES_USER}} {{.MEALIE_DB}}
+        fi
+    silent: true
+
+  db:verify:
+    desc: "Verify database content"
+    cmds:
+      - |
+        FOOD_COUNT=$(psql -U {{.POSTGRES_USER}} -d {{.APP_DB}} -tAc "SELECT COUNT(*) FROM foods" 2>/dev/null || echo "0")
+        if [ "$FOOD_COUNT" -gt "0" ]; then
+          echo "   ✓ Database has $FOOD_COUNT foods"
+        else
+          echo "   ⚠️  Database is empty. Run migrations: task db:migrate"
+        fi
+        echo ""
+    silent: true
+
+  db:migrate:
+    desc: "Run database migrations"
+    dir: '{{.GLEAM_DIR}}'
+    cmds:
+      - |
+        echo "📊 Running migrations..."
+        for migration in migrations_pg/*.sql; do
+          echo "   Applying $(basename $migration)..."
+          psql -U {{.POSTGRES_USER}} -d {{.APP_DB}} -f "$migration"
+        done
+        echo "   ✓ Migrations complete"
+
+  db:import:
+    desc: "Import USDA food database (takes ~5 minutes)"
+    dir: '{{.GLEAM_DIR}}'
+    deps: [build]
+    cmds:
+      - |
+        echo "📥 Importing USDA food database..."
+        echo "   This will take approximately 5 minutes..."
+        gleam run -m scripts/init_pg
+        echo "   ✓ Import complete"
+
+  # ============================================================================
+  # Mealie Service
+  # ============================================================================
+  mealie:start:
+    desc: "Start Mealie container"
+    cmds:
+      - task: mealie:stop
+      - |
+        echo "🍲 Starting Mealie..."
+        docker run -d \
+          --name meal-planner-mealie \
+          --network host \
+          --restart unless-stopped \
+          -e DB_ENGINE=postgres \
+          -e POSTGRES_USER={{.POSTGRES_USER}} \
+          -e POSTGRES_PASSWORD=postgres \
+          -e POSTGRES_SERVER=localhost \
+          -e POSTGRES_PORT=5432 \
+          -e POSTGRES_DB={{.MEALIE_DB}} \
+          -e BASE_URL=http://localhost:9000 \
+          -e API_PORT=9000 \
+          -e API_DOCS=true \
+          -e ALLOW_SIGNUP=true \
+          -e ALLOW_PASSWORD_LOGIN=true \
+          -v mealie_data:/app/data \
+          ghcr.io/mealie-recipes/mealie:v3.6.1 > /dev/null
+
+        # Wait for Mealie to be ready
+        echo "   Waiting for Mealie to start..."
+        for i in {1..30}; do
+          if curl -sf http://localhost:9000/api/app/about > /dev/null 2>&1; then
+            echo "   ✓ Mealie is ready"
+            echo ""
+            break
+          fi
+          sleep 1
+        done
+    silent: true
+
+  mealie:stop:
+    desc: "Stop Mealie container"
+    cmds:
+      - docker rm -f meal-planner-mealie 2>/dev/null || true
+    silent: true
+
+  mealie:logs:
+    desc: "Show Mealie logs"
+    cmds:
+      - docker logs -f meal-planner-mealie
+
+  mealie:restart:
+    desc: "Restart Mealie"
+    cmds:
+      - task: mealie:stop
+      - task: mealie:start
+
+  # ============================================================================
+  # API Server
+  # ============================================================================
+  api:start:
+    desc: "Start the Gleam API server"
+    dir: '{{.GLEAM_DIR}}'
+    deps: [build]
+    cmds:
+      - task: api:stop
+      - |
+        echo "🚀 Starting API server..."
+        nohup gleam run > /tmp/meal-planner-api.log 2>&1 &
+        echo $! > /tmp/meal-planner-api.pid
+
+        # Wait for server to be ready
+        echo "   Waiting for API server..."
+        for i in {1..10}; do
+          if curl -sf http://localhost:8080/health > /dev/null 2>&1; then
+            echo "   ✓ API server is ready"
+            echo ""
+            break
+          fi
+          sleep 1
+        done
+    silent: true
+
+  api:stop:
+    desc: "Stop the API server"
+    cmds:
+      - |
+        if [ -f /tmp/meal-planner-api.pid ]; then
+          kill $(cat /tmp/meal-planner-api.pid) 2>/dev/null || true
+          rm /tmp/meal-planner-api.pid
+        fi
+        pkill -f "gleam run" 2>/dev/null || true
+    silent: true
+
+  api:logs:
+    desc: "Show API server logs"
+    cmds:
+      - tail -f /tmp/meal-planner-api.log
+
+  api:restart:
+    desc: "Restart the API server"
+    cmds:
+      - task: api:stop
+      - task: api:start
+
+  # ============================================================================
+  # Build Tasks
+  # ============================================================================
   build:
-    desc: "Compile all Gleam projects in dependency order"
-    deps:
-      - build:shared
-    cmds:
-      - task: build:server
-      - task: build:client
-      - task: build:cli
-
-  build:shared:
-    desc: "Compile shared types library"
-    dir: '{{.SHARED_DIR}}'
+    desc: "Build the Gleam application"
+    dir: '{{.GLEAM_DIR}}'
     sources:
-      - '{{.SHARED_DIR}}/src/**/*.gleam'
-      - '{{.SHARED_DIR}}/gleam.toml'
+      - 'src/**/*.gleam'
+      - 'gleam.toml'
     generates:
-      - '{{.SHARED_DIR}}/build/**/*'
+      - 'build/**/*'
     cmds:
       - gleam build
 
-  build:server:
-    desc: "Compile server (Wisp backend)"
-    dir: '{{.SERVER_DIR}}'
-    deps:
-      - build:shared
-    sources:
-      - '{{.SERVER_DIR}}/src/**/*.gleam'
-      - '{{.SERVER_DIR}}/gleam.toml'
-    generates:
-      - '{{.SERVER_DIR}}/build/**/*'
+  # ============================================================================
+  # Development Tasks
+  # ============================================================================
+  dev:
+    desc: "Development mode - build and run with auto-reload"
+    dir: '{{.GLEAM_DIR}}'
     cmds:
-      - gleam build
-
-  build:client:
-    desc: "Compile client (Lustre SPA)"
-    dir: '{{.CLIENT_DIR}}'
-    deps:
-      - build:shared
-    sources:
-      - '{{.CLIENT_DIR}}/src/**/*.gleam'
-      - '{{.CLIENT_DIR}}/gleam.toml'
-    generates:
-      - '{{.CLIENT_DIR}}/build/**/*'
-    cmds:
-      - gleam build
-
-  build:cli:
-    desc: "Compile CLI tool"
-    dir: '{{.CLI_DIR}}'
-    deps:
-      - build:shared
-    sources:
-      - '{{.CLI_DIR}}/src/**/*.gleam'
-      - '{{.CLI_DIR}}/gleam.toml'
-    generates:
-      - '{{.CLI_DIR}}/build/**/*'
-    cmds:
-      - gleam build
+      - task: build
+      - gleam run
 
   test:
-    desc: "Run all tests (main test suite in gleam/)"
-    dir: '{{.CLI_DIR}}'
-    deps:
-      - build:shared
+    desc: "Run all tests"
+    dir: '{{.GLEAM_DIR}}'
     cmds:
       - gleam test
-
-  test:server:
-    desc: "Run server tests"
-    dir: '{{.SERVER_DIR}}'
-    deps:
-      - build:shared
-    cmds:
-      - gleam test
-
-  test:client:
-    desc: "Run client tests"
-    dir: '{{.CLIENT_DIR}}'
-    deps:
-      - build:shared
-    cmds:
-      - gleam test
-
-  test:shared:
-    desc: "Run shared types tests"
-    dir: '{{.SHARED_DIR}}'
-    cmds:
-      - gleam test
-
-  test:all:
-    desc: "Run tests for all projects"
-    cmds:
-      - task: test:shared
-      - task: test
-      - task: test:server
-      - task: test:client
-
-  check:
-    desc: "Run gleam check on all projects to verify compilation"
-    cmds:
-      - task: check:shared
-      - task: check:server
-      - task: check:client
-      - task: check:cli
-
-  check:shared:
-    desc: "Check shared types compilation"
-    dir: '{{.SHARED_DIR}}'
-    cmds:
-      - gleam check
-
-  check:server:
-    desc: "Check server compilation"
-    dir: '{{.SERVER_DIR}}'
-    cmds:
-      - gleam check
-
-  check:client:
-    desc: "Check client compilation"
-    dir: '{{.CLIENT_DIR}}'
-    cmds:
-      - gleam check
-
-  check:cli:
-    desc: "Check CLI compilation"
-    dir: '{{.CLI_DIR}}'
-    cmds:
-      - gleam check
 
   format:
     desc: "Format all Gleam code"
-    cmds:
-      - task: format:shared
-      - task: format:server
-      - task: format:client
-      - task: format:cli
-
-  format:shared:
-    desc: "Format shared types code"
-    dir: '{{.SHARED_DIR}}'
-    cmds:
-      - gleam format
-
-  format:server:
-    desc: "Format server code"
-    dir: '{{.SERVER_DIR}}'
-    cmds:
-      - gleam format
-
-  format:client:
-    desc: "Format client code"
-    dir: '{{.CLIENT_DIR}}'
-    cmds:
-      - gleam format
-
-  format:cli:
-    desc: "Format CLI code"
-    dir: '{{.CLI_DIR}}'
+    dir: '{{.GLEAM_DIR}}'
     cmds:
       - gleam format
 
   clean:
-    desc: "Clean all build artifacts"
-    cmds:
-      - task: clean:shared
-      - task: clean:server
-      - task: clean:client
-      - task: clean:cli
-
-  clean:shared:
-    desc: "Clean shared types build artifacts"
-    dir: '{{.SHARED_DIR}}'
+    desc: "Clean build artifacts"
+    dir: '{{.GLEAM_DIR}}'
     cmds:
       - gleam clean
 
-  clean:server:
-    desc: "Clean server build artifacts"
-    dir: '{{.SERVER_DIR}}'
+  # ============================================================================
+  # Status & Management
+  # ============================================================================
+  status:
+    desc: "Show status of all services"
     cmds:
-      - gleam clean
+      - |
+        echo "📊 Service Status"
+        echo "=================="
+        echo ""
 
-  clean:client:
-    desc: "Clean client build artifacts"
-    dir: '{{.CLIENT_DIR}}'
-    cmds:
-      - gleam clean
+        # Database
+        if pg_isready -q; then
+          echo "✅ PostgreSQL: Running"
+        else
+          echo "❌ PostgreSQL: Stopped"
+        fi
 
-  clean:cli:
-    desc: "Clean CLI build artifacts"
-    dir: '{{.CLI_DIR}}'
-    cmds:
-      - gleam clean
+        # Mealie
+        if docker ps | grep -q meal-planner-mealie; then
+          if curl -sf http://localhost:9000/health > /dev/null 2>&1; then
+            echo "✅ Mealie: Running (http://localhost:9000)"
+          else
+            echo "⚠️  Mealie: Starting..."
+          fi
+        else
+          echo "❌ Mealie: Stopped"
+        fi
 
-  server:
-    desc: "Run the server"
-    dir: '{{.SERVER_DIR}}'
-    deps:
-      - build:server
-    cmds:
-      - gleam run
+        # API Server
+        if curl -sf http://localhost:8080/health > /dev/null 2>&1; then
+          echo "✅ API Server: Running (http://localhost:8080)"
+        else
+          echo "❌ API Server: Stopped"
+        fi
+        echo ""
 
-  server:background:
-    desc: "Run the server in the background"
-    dir: '{{.SERVER_DIR}}'
-    deps:
-      - build:server
+  stop:
+    desc: "Stop all services"
     cmds:
-      - gleam run &
+      - task: api:stop
+      - task: mealie:stop
+      - echo "🛑 All services stopped"
 
-  server:stop:
-    desc: "Stop the background server"
+  restart:
+    desc: "Restart all services"
     cmds:
-      - pkill -f "gleam run" || true
-      - echo "Server stopped"
+      - task: stop
+      - task: start
 
-  client:dev:
-    desc: "Run client development server"
-    dir: '{{.CLIENT_DIR}}'
-    deps:
-      - build:client
+  # ============================================================================
+  # Useful Commands
+  # ============================================================================
+  open:mealie:
+    desc: "Open Mealie in browser"
     cmds:
-      - gleam run -m lustre/dev start
+      - xdg-open http://localhost:9000 || open http://localhost:9000
 
-  cli:run:
-    desc: "Run the CLI tool"
-    dir: '{{.CLI_DIR}}'
-    deps:
-      - build:cli
+  open:api:
+    desc: "Open API health endpoint in browser"
     cmds:
-      - gleam run -- {{.CLI_ARGS}}
+      - xdg-open http://localhost:8080/health || open http://localhost:8080/health
 
-  deps:update:
-    desc: "Update dependencies for all projects"
+  help:
+    desc: "Show available tasks"
     cmds:
-      - task: deps:update:shared
-      - task: deps:update:server
-      - task: deps:update:client
-      - task: deps:update:cli
-
-  deps:update:shared:
-    desc: "Update shared dependencies"
-    dir: '{{.SHARED_DIR}}'
-    cmds:
-      - gleam update
-
-  deps:update:server:
-    desc: "Update server dependencies"
-    dir: '{{.SERVER_DIR}}'
-    cmds:
-      - gleam update
-
-  deps:update:client:
-    desc: "Update client dependencies"
-    dir: '{{.CLIENT_DIR}}'
-    cmds:
-      - gleam update
-
-  deps:update:cli:
-    desc: "Update CLI dependencies"
-    dir: '{{.CLI_DIR}}'
-    cmds:
-      - gleam update
+      - task --list

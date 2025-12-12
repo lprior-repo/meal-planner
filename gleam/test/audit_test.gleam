@@ -133,7 +133,7 @@ pub fn format_audit_entry_insert_test() {
       operation_time: "2024-01-15T10:30:00Z",
       record_id: 42,
       old_name: None,
-      new_name: Some("Mealie API"),
+      new_name: Some("Tandoor API"),
       old_type: None,
       new_type: Some("api"),
       old_enabled: None,

@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "WebSearch",
-      "Bash(bd list:*)"
+      "Bash(bd list:*)",
+      "Bash(gleam build:*)"
     ],
     "deny": [],
     "ask": []

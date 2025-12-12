@@ -1,4 +1,4 @@
-# Manual Test: View Weekly Summary with Mealie Recipes
+# Manual Test: View Weekly Summary with Tandoor Recipes
 
 **Task ID:** meal-planner-u3wz
 **Date:** 2025-12-12
@@ -6,7 +6,7 @@
 **Status:** In Progress
 
 ## Test Objective
-Verify that the weekly meal summary view correctly displays Mealie-sourced recipes with proper formatting, macros calculations, and interactive features.
+Verify that the weekly meal summary view correctly displays Tandoor-sourced recipes with proper formatting, macros calculations, and interactive features.
 
 ## Test Environment Setup
 
@@ -14,14 +14,14 @@ Verify that the weekly meal summary view correctly displays Mealie-sourced recip
 - [x] Docker and Docker Compose installed (Docker 29.1.1, Compose 2.40.3)
 - [x] Gleam 1.13.0 available
 - [x] PostgreSQL database migrations configured
-- [x] Mealie integration module implemented
+- [x] Tandoor integration module implemented
 - [x] Web handlers for API endpoints defined
 
 ### System Under Test
 ```
 Components:
-- Mealie v3.6.1: Recipe storage and API
-- PostgreSQL 15: Data persistence
+- Tandoor Recipes: Recipe storage and API
+- PostgreSQL 15: Data persistence (separate databases: meal_planner and tandoor)
 - Gleam Backend: Weekly plan generation and meal selection
 - Wisp Web Framework: HTTP request handling
 ```
