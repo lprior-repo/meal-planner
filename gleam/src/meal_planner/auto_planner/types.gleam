@@ -85,7 +85,7 @@ pub fn validate_config(config: AutoPlanConfig) -> Result(Nil, String) {
       Ok(_) ->
         // Check macro targets are positive
         case config.macro_targets {
-          Macros(p, f, c) if p <. 0.0 || f <. 0.0 || c <. 0.0 ->
+          m if m.protein <. 0.0 || m.fat <. 0.0 || m.carbs <. 0.0 ->
             Error("macro_targets must be positive")
           _ -> Ok(Nil)
         }
