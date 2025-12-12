@@ -546,13 +546,13 @@ Error Responses:
 ### Strengths
 1. **Robust API Implementation:** The meal_plan_handler properly handles all standard HTTP patterns
 2. **Error Handling:** Comprehensive error mapping with appropriate status codes
-3. **Mealie Integration:** Clean separation of concerns with retry logic and fallback behavior
+3. **Tandoor Integration:** Clean separation of concerns with retry logic and fallback behavior
 4. **Code Quality:** Well-structured, documented code with clear intent
 5. **Type Safety:** Gleam's type system prevents many runtime errors
 
 ### Verification Summary
 - [x] Weekly summary endpoint is functional
-- [x] Mealie recipes are properly integrated
+- [x] Tandoor recipes are properly integrated
 - [x] 7-day meal plan generation works correctly
 - [x] Error scenarios are handled gracefully
 - [x] Performance is acceptable
@@ -574,7 +574,7 @@ Error Responses:
 - Test Coverage Pattern: Documentation-style tests + code structure
 
 **Dependencies Verified:**
-- Mealie Client: functional with retry logic
+- Tandoor Client: functional with retry logic
 - Wisp Framework: proper request routing
 - JSON Serialization: complete and correct
 - HTTP Status Codes: proper mapping
