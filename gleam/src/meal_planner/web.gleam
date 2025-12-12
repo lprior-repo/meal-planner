@@ -20,13 +20,10 @@ import gleam/io
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/string
-import meal_planner/auto_planner
 import meal_planner/config
-import meal_planner/meal_plan
 import meal_planner/mealie/client
 import meal_planner/mealie/retry
-import meal_planner/mealie/types
+import meal_planner/vertical_diet_compliance
 import mist
 import wisp
 import wisp/wisp_mist
@@ -103,7 +100,6 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["api", "macros", "calculate"] -> macro_calc_handler(req)
     ["api", "vertical-diet", "check"] -> vertical_diet_handler(req, ctx)
     ["api", "recipes", "search"] -> recipe_search_handler(req, ctx)
-    ["api", "recipes"] -> recipes_handler(req, ctx)
     ["api", "recipes", slug] -> recipe_slug_handler(req, ctx, slug)
 
     // Mealie integration endpoints
@@ -543,6 +539,173 @@ fn recipes_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
         |> json.to_string
 
       wisp.json_response(body, 200)
+    },
+  )
+}
+
+/// Recipe by slug endpoint
+/// GET /api/recipes/:slug
+/// Fetches a recipe from Mealie by its slug
+fn recipe_slug_handler(
+  req: wisp.Request,
+  ctx: Context,
+  slug: String,
+) -> wisp.Response {
+  use <- wisp.require_method(req, http.Get)
+  let _ = ctx
+  let app_config = config.load()
+
+  with_retry_response(
+    fn() { client.get_recipe(app_config, slug) },
+    fn(recipe) {
+      let recipe_json =
+        json.object([
+          #("id", json.string(recipe.id)),
+          #("slug", json.string(recipe.slug)),
+          #("name", json.string(recipe.name)),
+          #("description", case recipe.description {
+            Some(desc) -> json.string(desc)
+            None -> json.null()
+          }),
+          #("image", case recipe.image {
+            Some(img) -> json.string(img)
+            None -> json.null()
+          }),
+          #("recipe_yield", case recipe.recipe_yield {
+            Some(y) -> json.string(y)
+            None -> json.null()
+          }),
+          #("total_time", case recipe.total_time {
+            Some(t) -> json.string(t)
+            None -> json.null()
+          }),
+          #("prep_time", case recipe.prep_time {
+            Some(t) -> json.string(t)
+            None -> json.null()
+          }),
+          #("cook_time", case recipe.cook_time {
+            Some(t) -> json.string(t)
+            None -> json.null()
+          }),
+          #("rating", case recipe.rating {
+            Some(r) -> json.int(r)
+            None -> json.null()
+          }),
+          #("org_url", case recipe.org_url {
+            Some(u) -> json.string(u)
+            None -> json.null()
+          }),
+          #("recipe_ingredient", json.array(
+            recipe.recipe_ingredient,
+            fn(ing) {
+              json.object([
+                #("reference_id", json.string(ing.reference_id)),
+                #("quantity", case ing.quantity {
+                  Some(q) -> json.float(q)
+                  None -> json.null()
+                }),
+                #("unit", case ing.unit {
+                  Some(u) ->
+                    json.object([
+                      #("id", json.string(u.id)),
+                      #("name", json.string(u.name)),
+                      #("abbreviation", json.string(u.abbreviation)),
+                    ])
+                  None -> json.null()
+                }),
+                #("food", case ing.food {
+                  Some(f) ->
+                    json.object([
+                      #("id", json.string(f.id)),
+                      #("name", json.string(f.name)),
+                    ])
+                  None -> json.null()
+                }),
+                #("note", case ing.note {
+                  Some(n) -> json.string(n)
+                  None -> json.null()
+                }),
+                #("is_food", json.bool(ing.is_food)),
+                #("disable_amount", json.bool(ing.disable_amount)),
+                #("display", json.string(ing.display)),
+              ])
+            },
+          )),
+          #("recipe_instructions", json.array(
+            recipe.recipe_instructions,
+            fn(instr) {
+              json.object([
+                #("id", json.string(instr.id)),
+                #("title", case instr.title {
+                  Some(t) -> json.string(t)
+                  None -> json.null()
+                }),
+                #("text", json.string(instr.text)),
+              ])
+            },
+          )),
+          #("recipe_category", json.array(
+            recipe.recipe_category,
+            fn(cat) {
+              json.object([
+                #("id", json.string(cat.id)),
+                #("name", json.string(cat.name)),
+                #("slug", json.string(cat.slug)),
+              ])
+            },
+          )),
+          #("tags", json.array(recipe.tags, fn(tag) {
+            json.object([
+              #("id", json.string(tag.id)),
+              #("name", json.string(tag.name)),
+              #("slug", json.string(tag.slug)),
+            ])
+          })),
+          #("nutrition", case recipe.nutrition {
+            Some(n) ->
+              json.object([
+                #("calories", case n.calories {
+                  Some(c) -> json.string(c)
+                  None -> json.null()
+                }),
+                #("fat_content", case n.fat_content {
+                  Some(f) -> json.string(f)
+                  None -> json.null()
+                }),
+                #("protein_content", case n.protein_content {
+                  Some(p) -> json.string(p)
+                  None -> json.null()
+                }),
+                #("carbohydrate_content", case n.carbohydrate_content {
+                  Some(c) -> json.string(c)
+                  None -> json.null()
+                }),
+                #("fiber_content", case n.fiber_content {
+                  Some(f) -> json.string(f)
+                  None -> json.null()
+                }),
+                #("sodium_content", case n.sodium_content {
+                  Some(s) -> json.string(s)
+                  None -> json.null()
+                }),
+                #("sugar_content", case n.sugar_content {
+                  Some(s) -> json.string(s)
+                  None -> json.null()
+                }),
+              ])
+            None -> json.null()
+          }),
+          #("date_added", case recipe.date_added {
+            Some(d) -> json.string(d)
+            None -> json.null()
+          }),
+          #("date_updated", case recipe.date_updated {
+            Some(d) -> json.string(d)
+            None -> json.null()
+          }),
+        ])
+
+      wisp.json_response(recipe_json |> json.to_string, 200)
     },
   )
 }
