@@ -1,36 +1,9 @@
 /// Helper module for enriching food log entries with Mealie recipe data
 import gleam/dict
-import gleam/float
 import gleam/list
-import gleam/option.{type Option, None, Some}
-import gleam/result
-import gleam/string
 import meal_planner/config
 import meal_planner/mealie/client as mealie
-import meal_planner/mealie/types as mealie_types
-import meal_planner/types.{type FoodLogEntry, FoodLogEntry, Macros}
-
-/// Parse a nutrition string from Mealie (e.g., "150 kcal" or "15.5 g")
-/// Returns the numeric value as a Float, or None if parsing fails
-fn parse_nutrition_value(value_opt: Option(String)) -> Option(Float) {
-  case value_opt {
-    None -> None
-    Some(value_str) -> {
-      // Extract numeric part from strings like "150 kcal" or "15.5 g"
-      let numeric_part =
-        value_str
-        |> string.trim
-        |> string.split(" ")
-        |> list.first
-        |> result.unwrap("")
-
-      case float.parse(numeric_part) {
-        Ok(val) -> Some(val)
-        Error(_) -> None
-      }
-    }
-  }
-}
+import meal_planner/types.{type FoodLogEntry, FoodLogEntry}
 
 /// Enrich a food log entry with recipe details from Mealie API
 /// Updates recipe_name if the entry is from a Mealie recipe
