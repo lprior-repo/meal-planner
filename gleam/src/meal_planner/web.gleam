@@ -84,10 +84,9 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["health"] -> health_handler(req)
 
     // API endpoints (to be implemented)
-    ["api", "recipes", "score"] -> recipe_score_handler(req)
-    ["api", "meal-plan"] -> meal_plan_handler(req)
+    ["api", "meal-plan"] -> meal_plan_handler(req, ctx)
     ["api", "macros", "calculate"] -> macro_calc_handler(req)
-    ["api", "vertical-diet", "check"] -> vertical_diet_handler(req)
+    ["api", "vertical-diet", "check"] -> vertical_diet_handler(req, ctx)
 
     // Mealie integration endpoints
     ["api", "mealie", "recipes"] -> mealie_recipes_handler(req, ctx)
@@ -113,34 +112,19 @@ fn health_handler(_req: wisp.Request) -> wisp.Response {
   wisp.json_response(body, 200)
 }
 
-/// Recipe scoring endpoint
-/// POST /api/recipes/score
-/// Scores recipes based on nutritional profile and user preferences
-fn recipe_score_handler(req: wisp.Request) -> wisp.Response {
-  use <- wisp.require_method(req, http.Post)
-
-  // TODO: Implement recipe scoring logic
-  let body =
-    json.object([
-      #("message", json.string("Recipe scoring endpoint - coming soon")),
-      #("status", json.string("not_implemented")),
-    ])
-    |> json.to_string
-
-  wisp.json_response(body, 501)
-}
-
 /// AI meal planning endpoint
 /// POST /api/meal-plan
-/// Generates optimized meal plans using AI
-fn meal_plan_handler(req: wisp.Request) -> wisp.Response {
+/// Generates optimized meal plans using Mealie recipes
+fn meal_plan_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
   use <- wisp.require_method(req, http.Post)
 
-  // TODO: Implement meal planning logic
+  // TODO: Implement meal planning logic using Mealie recipes
   let body =
     json.object([
       #("message", json.string("AI meal planning endpoint - coming soon")),
       #("status", json.string("not_implemented")),
+      #("note", json.string("Uses Mealie API for recipe data")),
+      #("mealie_url", json.string(ctx.config.mealie.url)),
     ])
     |> json.to_string
 
@@ -166,11 +150,11 @@ fn macro_calc_handler(req: wisp.Request) -> wisp.Response {
 
 /// Vertical diet compliance endpoint
 /// POST /api/vertical-diet/check
-/// Checks if recipes comply with vertical diet guidelines
-fn vertical_diet_handler(req: wisp.Request) -> wisp.Response {
+/// Checks if Mealie recipes comply with vertical diet guidelines
+fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
   use <- wisp.require_method(req, http.Post)
 
-  // TODO: Implement vertical diet compliance logic
+  // TODO: Implement vertical diet compliance logic using Mealie recipe data
   let body =
     json.object([
       #(
@@ -178,6 +162,8 @@ fn vertical_diet_handler(req: wisp.Request) -> wisp.Response {
         json.string("Vertical diet compliance endpoint - coming soon"),
       ),
       #("status", json.string("not_implemented")),
+      #("note", json.string("Uses Mealie API for recipe data")),
+      #("mealie_url", json.string(ctx.config.mealie.url)),
     ])
     |> json.to_string
 
