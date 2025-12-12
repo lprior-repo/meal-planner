@@ -8,9 +8,9 @@
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import meal_planner/id
-import meal_planner/mealie/types as mealie as mealie
+import meal_planner/mealie/types as mealie
 import meal_planner/types.{
-  type FodmapLevel, type Macros, type Recipe, Low, Recipe,
+  type FodmapLevel, type Macros, type Recipe, Low, Macros,
   macros_calories, macros_scale,
 }
 
@@ -151,7 +151,7 @@ pub fn calculate_daily_portions(
 
 /// Helper function to extract macros from MealieRecipe nutrition
 /// Returns Macros with zeros if nutrition is not available
-fn mealie_recipe_macros(recipe: MealieRecipe) -> Macros {
+fn mealie_recipe_macros(recipe:mealie.MealieRecipe) -> Macros {
   case recipe.nutrition {
     None -> Macros(protein: 0.0, fat: 0.0, carbs: 0.0)
     Some(nutrition) -> {
@@ -235,7 +235,7 @@ fn is_digit(c: String) -> Bool {
 /// CalculatePortionForMealieRecipe scales a MealieRecipe to hit target macros
 /// Prioritizes hitting protein target since it's the key constraint in Vertical Diet
 pub fn calculate_portion_for_mealie_recipe(
-  recipe: MealieRecipe,
+  recipe:mealie.MealieRecipe,
   target_macros: Macros,
 ) -> PortionCalculation {
   let recipe_macros = mealie_recipe_macros(recipe)
@@ -292,39 +292,27 @@ pub fn calculate_portion_for_mealie_recipe(
       // Calculate scaled macros
       let scaled_macros = macros_scale(recipe_macros, capped_scale)
 
-      // Destructure to help type inference
-      let Macros(
-        protein: scaled_protein,
-        fat: scaled_fat,
-        carbs: scaled_carbs,
-      ) = scaled_macros
-      let Macros(
-        protein: target_protein,
-        fat: target_fat,
-        carbs: target_carbs,
-      ) = target_macros
-
       // Calculate variance from target
-      let protein_var = case target_protein >. 0.0 {
+      let protein_var = case target_macros.protein >. 0.0 {
         True -> {
-          let diff = scaled_protein -. target_protein
-          abs(diff /. target_protein)
+          let diff = scaled_macros.protein -. target_macros.protein
+          abs(diff /. target_macros.protein)
         }
         False -> 0.0
       }
 
-      let fat_var = case target_fat >. 0.0 {
+      let fat_var = case target_macros.fat >. 0.0 {
         True -> {
-          let diff = scaled_fat -. target_fat
-          abs(diff /. target_fat)
+          let diff = scaled_macros.fat -. target_macros.fat
+          abs(diff /. target_macros.fat)
         }
         False -> 0.0
       }
 
-      let carbs_var = case target_carbs >. 0.0 {
+      let carbs_var = case target_macros.carbs >. 0.0 {
         True -> {
-          let diff = scaled_carbs -. target_carbs
-          abs(diff /. target_carbs)
+          let diff = scaled_macros.carbs -. target_macros.carbs
+          abs(diff /. target_macros.carbs)
         }
         False -> 0.0
       }
@@ -357,12 +345,12 @@ pub fn calculate_portion_for_mealie_recipe(
 }
 
 /// Helper: Convert MealieRecipe ID to RecipeId
-fn meal_recipe_id(recipe: MealieRecipe) -> id.RecipeId {
+fn meal_recipe_id(recipe:mealie.MealieRecipe) -> id.RecipeId {
   id.recipe_id("mealie-" <> recipe.slug)
 }
 
 /// Helper: Extract category from MealieRecipe
-fn recipe_category(recipe: MealieRecipe) -> String {
+fn recipe_category(recipe:mealie.MealieRecipe) -> String {
   case recipe.recipe_category {
     [first, ..] -> first.name
     [] -> "Uncategorized"
