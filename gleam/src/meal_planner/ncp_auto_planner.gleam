@@ -21,7 +21,7 @@ import meal_planner/mealie/types as mealie_types
 import meal_planner/ncp
 import meal_planner/storage.{type StorageError}
 import meal_planner/storage/profile.{DatabaseError}
-import meal_planner/types.{type Macros, type Recipe, Macros}
+import meal_planner/types.{type Macros, type Recipe, Macros, recipe_to_json}
 import pog
 
 // ============================================================================
@@ -537,7 +537,11 @@ fn generate_plan_recursive(
 ) -> Result(auto_types.AutoMealPlan, StorageError) {
   // Check if we've reached the recipe limit
   case remaining_recipes <= 0 {
-    True ->
+    True -> {
+      let recipe_json =
+        json.array(selected_recipes, recipe_to_json)
+        |> json.to_string
+
       Ok(auto_types.AutoMealPlan(
         id: "auto-plan-" <> generate_id(),
         recipes: selected_recipes,
@@ -554,7 +558,9 @@ fn generate_plan_recursive(
           recipe_count: list.length(selected_recipes),
           variety_factor: config.variety_weight,
         ),
+        recipe_json: recipe_json,
       ))
+    }
 
     False -> {
       // Update actual consumption with accumulated macros
@@ -688,4 +694,10 @@ fn get_current_timestamp() -> String {
   // This would use erlang's calendar module in production
   // For now, return a placeholder
   "2025-12-04T20:00:00Z"
+}
+
+/// Generate recipe JSON string from recipe list
+fn generate_recipe_json(recipes: List(Recipe)) -> String {
+  json.array(recipes, recipe_to_json)
+  |> json.to_string
 }

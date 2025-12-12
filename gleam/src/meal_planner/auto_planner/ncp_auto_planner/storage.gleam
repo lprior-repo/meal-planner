@@ -12,7 +12,8 @@ import meal_planner/id
 import meal_planner/storage.{type StorageError}
 import meal_planner/storage/profile.{DatabaseError, NotFound}
 import meal_planner/types.{
-  type Recipe, High, Ingredient, Low, Macros, Medium, Recipe,
+  type Recipe, High, Ingredient, Low, Macros, Medium, Recipe, recipe_to_json,
+  recipe_decoder,
 }
 import pog
 

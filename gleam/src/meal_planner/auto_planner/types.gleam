@@ -126,6 +126,7 @@ pub type AutoMealPlan {
     generated_at: String,
     total_macros: Macros,
     config: AutoPlanConfig,
+    recipe_json: String,
   )
 }
 
