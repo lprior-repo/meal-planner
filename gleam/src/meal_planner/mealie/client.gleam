@@ -457,6 +457,28 @@ pub fn delete_meal_plan_entry(
   }
 }
 
+/// Resolve a recipe slug to check if it exists
+///
+/// This function attempts to fetch a recipe by its slug from the Mealie API.
+/// It returns Ok(slug) if the recipe exists, or an error if it doesn't.
+/// This is useful for validating recipe slugs before logging them.
+///
+/// Example:
+/// ```gleam
+/// case resolve_recipe_slug(config, "chicken-stir-fry") {
+///   Ok(slug) -> io.println("Recipe '" <> slug <> "' exists")
+///   Error(RecipeNotFound(slug)) -> io.println("Recipe '" <> slug <> "' not found")
+///   Error(err) -> io.println("Error: " <> string.inspect(err))
+/// }
+/// ```
+pub fn resolve_recipe_slug(
+  config: Config,
+  slug: String,
+) -> Result(String, ClientError) {
+  use recipe <- result.try(get_recipe(config, slug))
+  Ok(recipe.slug)
+}
+
 /// Get recipes by category
 ///
 /// Fetches all recipes and filters them to only those that belong to the specified category.
