@@ -24,7 +24,12 @@ pub type ServerConfig {
 
 /// Mealie integration configuration
 pub type MealieConfig {
-  MealieConfig(base_url: String, api_token: String)
+  MealieConfig(
+    base_url: String,
+    api_token: String,
+    connect_timeout_ms: Int,
+    request_timeout_ms: Int,
+  )
 }
 
 /// External services configuration
@@ -63,6 +68,8 @@ pub type Config {
 /// - ENVIRONMENT (default: development)
 /// - MEALIE_BASE_URL (default: http://localhost:9000)
 /// - MEALIE_API_TOKEN (required in production)
+/// - MEALIE_CONNECT_TIMEOUT_MS (default: 5000)
+/// - MEALIE_REQUEST_TIMEOUT_MS (default: 30000)
 /// - TODOIST_API_KEY (optional)
 /// - USDA_API_KEY (optional)
 /// - OPENAI_API_KEY (optional)
@@ -103,6 +110,16 @@ pub fn load() -> Config {
         "http://localhost:9000",
       ),
       api_token: result.unwrap(envoy.get("MEALIE_API_TOKEN"), ""),
+      connect_timeout_ms: result.unwrap(
+        envoy.get("MEALIE_CONNECT_TIMEOUT_MS")
+          |> result.try(int.parse),
+        5000,
+      ),
+      request_timeout_ms: result.unwrap(
+        envoy.get("MEALIE_REQUEST_TIMEOUT_MS")
+          |> result.try(int.parse),
+        30_000,
+      ),
     )
 
   let external_services =
