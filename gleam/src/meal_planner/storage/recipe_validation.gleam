@@ -1,20 +1,20 @@
-/// Recipe validation module for verifying recipe slugs exist in Mealie before logging
+/// Recipe validation module for verifying recipe slugs exist in Tandoor before logging
 ///
 /// This module provides validation functions to ensure recipe slugs are valid
-/// and exist in the Mealie database before they are logged to the meal planner.
+/// and exist in the Tandoor database before they are logged to the meal planner.
 /// This prevents orphaned log entries with non-existent recipes.
 import gleam/list
 import gleam/result
 import meal_planner/config.{type Config}
-import meal_planner/mealie/client
-import meal_planner/mealie/retry
+import meal_planner/tandoor/client
+import meal_planner/tandoor/retry
 
 pub type ValidationError {
-  /// Recipe slug was not found in Mealie
+  /// Recipe slug was not found in Tandoor
   RecipeNotFound(slug: String)
   /// Connection error while validating recipe
   ConnectionError(message: String)
-  /// Mealie service is unavailable
+  /// Tandoor service is unavailable
   ServiceUnavailable(message: String)
   /// Configuration is missing or invalid
   ConfigurationError(message: String)
@@ -34,9 +34,9 @@ pub fn error_to_message(error: ValidationError) -> String {
   }
 }
 
-/// Validate that a recipe slug exists in Mealie before logging
+/// Validate that a recipe slug exists in Tandoor before logging
 ///
-/// This function attempts to fetch the recipe from Mealie to verify it exists.
+/// This function attempts to fetch the recipe from Tandoor to verify it exists.
 /// Returns Ok(slug) if the recipe exists, or an error if validation fails.
 ///
 /// Example:
@@ -59,7 +59,7 @@ pub fn validate_recipe_slug(
       Error(client.ConnectionRefused(msg)) -> Error(ConnectionError(msg))
       Error(client.DnsResolutionFailed(msg)) -> Error(ConnectionError(msg))
       Error(client.NetworkTimeout(msg, _)) -> Error(ConnectionError(msg))
-      Error(client.MealieUnavailable(msg)) -> Error(ServiceUnavailable(msg))
+      Error(client.TandoorUnavailable(msg)) -> Error(ServiceUnavailable(msg))
       Error(client.HttpError(msg)) -> Error(ConnectionError(msg))
       Error(client.DecodeError(msg)) -> Error(ConnectionError(msg))
       Error(client.ApiError(api_err)) ->

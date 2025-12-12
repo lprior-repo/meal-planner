@@ -119,12 +119,12 @@ pub type WeeklySummary {
 /// Validate source_type is one of the allowed values
 fn validate_source_type(source_type: String) -> Result(Nil, StorageError) {
   case source_type {
-    "mealie_recipe" | "custom_food" | "usda_food" -> Ok(Nil)
+    "tandoor_recipe" | "custom_food" | "usda_food" -> Ok(Nil)
     _ ->
       Error(DatabaseError(
         "Invalid source_type: "
         <> source_type
-        <> ". Must be one of: mealie_recipe, custom_food, usda_food",
+        <> ". Must be one of: tandoor_recipe, custom_food, usda_food",
       ))
   }
 }
@@ -285,7 +285,7 @@ pub fn delete_food_log(
 }
 
 /// Get recent meals (distinct by recipe, most recent first)
-/// For Mealie recipes, fetches fresh recipe names from Mealie API
+/// For Tandoor recipes, fetches fresh recipe names from Tandoor API
 pub fn get_recent_meals(
   conn: pog.Connection,
   limit: Int,
@@ -480,8 +480,8 @@ pub fn get_recent_meals(
   }
 }
 
-/// Get recent meals with Mealie enrichment
-/// Fetches fresh recipe names from Mealie API for mealie_recipe entries
+/// Get recent meals with Tandoor enrichment
+/// Fetches fresh recipe names from Tandoor API for tandoor_recipe entries
 pub fn get_recent_meals_enriched(
   conn: pog.Connection,
   _cfg: config.Config,
@@ -1355,7 +1355,7 @@ pub fn get_weekly_summary(
 
 /// Enhanced save_food_log_entry with recipe slug validation
 ///
-/// This function validates that a recipe slug exists in Mealie before saving the log entry.
+/// This function validates that a recipe slug exists in Tandoor before saving the log entry.
 /// If the recipe doesn't exist, it returns an error without saving.
 ///
 /// This prevents orphaned log entries for non-existent recipes.
@@ -1371,21 +1371,21 @@ pub fn save_food_log_entry_with_validation(
   date: String,
   entry: FoodLogEntry,
 ) -> Result(Nil, StorageError) {
-  // Only validate if this is a Mealie recipe
+  // Only validate if this is a Tandoor recipe
   case entry.source_type {
-    "mealie_recipe" -> {
-      // Validate the recipe exists in Mealie
+    "tandoor_recipe" -> {
+      // Validate the recipe exists in Tandoor
       use _ <- result.try(validate_recipe_exists(config, entry.recipe_id))
       save_food_log_entry(conn, date, entry)
     }
     _ -> {
-      // Skip validation for non-Mealie sources (custom foods, USDA foods)
+      // Skip validation for non-Tandoor sources (custom foods, USDA foods)
       save_food_log_entry(conn, date, entry)
     }
   }
 }
 
-/// Internal helper to validate recipe exists in Mealie
+/// Internal helper to validate recipe exists in Tandoor
 fn validate_recipe_exists(
   _config: config.Config,
   recipe_id: id.RecipeId,
@@ -1393,7 +1393,7 @@ fn validate_recipe_exists(
   let recipe_slug = id.recipe_id_to_string(recipe_id)
 
   // This is a simplified validation - in production, you might want to check
-  // the mealie/client module for recipe resolution
+  // the tandoor/client module for recipe resolution
   case recipe_slug {
     "" -> Error(DatabaseError("Invalid recipe slug: empty string"))
     _ -> Ok(Nil)
@@ -1403,13 +1403,13 @@ fn validate_recipe_exists(
 // ============================================================================
 
 // ============================================================================
-// Food Log Entry with Mealie Recipe Slug Support
+// Food Log Entry with Tandoor Recipe Slug Support
 // ============================================================================
 
-/// Input type for logging a meal with a Mealie recipe slug
+/// Input type for logging a meal with a Tandoor recipe slug
 ///
 /// This type is used by the API to accept meal log entries that reference
-/// recipes from Mealie using their slugs (e.g., "chicken-stir-fry").
+/// recipes from Tandoor using their slugs (e.g., "chicken-stir-fry").
 pub type FoodLogInput {
   FoodLogInput(
     date: String,
@@ -1445,12 +1445,12 @@ pub type FoodLogInput {
   )
 }
 
-/// Save a food log entry from a Mealie recipe slug
+/// Save a food log entry from a Tandoor recipe slug
 ///
-/// This function creates a FoodLogEntry from the provided input and Mealie recipe slug,
-/// then saves it to the database. The source_type is automatically set to 'mealie_recipe'
+/// This function creates a FoodLogEntry from the provided input and Tandoor recipe slug,
+/// then saves it to the database. The source_type is automatically set to 'tandoor_recipe'
 /// and the source_id is set to the recipe slug.
-pub fn save_food_log_from_mealie_recipe(
+pub fn save_food_log_from_tandoor_recipe(
   conn: pog.Connection,
   input: FoodLogInput,
 ) -> Result(String, StorageError) {
@@ -1550,7 +1550,7 @@ pub fn save_food_log_from_mealie_recipe(
       micronutrients: micronutrients,
       meal_type: meal_type,
       logged_at: "",
-      source_type: "mealie_recipe",
+      source_type: "tandoor_recipe",
       source_id: input.recipe_slug,
     )
 

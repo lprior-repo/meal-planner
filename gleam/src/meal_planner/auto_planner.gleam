@@ -58,27 +58,6 @@ pub fn filter_by_diet_principles(
   filter_recipes_by_principles(recipes, principles)
 }
 
-/// Filter Mealie recipes based on diet principles
-/// Converts MealieRecipe to Recipe first, then applies diet filtering
-/// This allows diet principles to work with Mealie API data
-pub fn filter_mealie_recipes_by_diet(
-  mealie_recipes: List(mealie.MealieRecipe),
-  principles: List(DietPrinciple),
-) -> List(mealie.MealieRecipe) {
-  case principles {
-    [] -> mealie_recipes
-    _ -> {
-      let recipes = list.map(mealie_recipes, mapper.mealie_to_recipe)
-      let filtered = filter_recipes_by_principles(recipes, principles)
-      let filtered_ids = list.map(filtered, fn(r) { r.id })
-      list.filter(mealie_recipes, fn(mealie_recipe) {
-        let recipe_id = mapper.mealie_to_recipe(mealie_recipe).id
-        list.any(filtered_ids, fn(id) { id == recipe_id })
-      })
-    }
-  }
-}
-
 /// Internal helper: filter Recipe list by diet principles
 fn filter_recipes_by_principles(
   recipes: List(types.Recipe),
@@ -230,18 +209,6 @@ pub fn score_recipe(
   )
 }
 
-/// Score a Mealie recipe directly without conversion
-/// Converts MealieRecipe to internal Recipe type then scores it
-/// This provides a convenient interface for scoring Mealie recipes
-pub fn score_mealie_recipe(
-  mealie_recipe: mealie.MealieRecipe,
-  config: AutoPlanConfig,
-  already_selected: List(types.Recipe),
-) -> RecipeScore {
-  let recipe = mapper.mealie_to_recipe(mealie_recipe)
-  score_recipe(recipe, config, already_selected)
-}
-
 // ============================================================================
 // Selection Functions
 // ============================================================================
@@ -311,14 +278,12 @@ fn select_top_n_helper(
 // Main Generation Function
 // ============================================================================
 
-/// Generate an auto meal plan from available Mealie recipes
-/// Converts MealieRecipe list to internal Recipe type for processing
+/// Generate an auto meal plan from available recipes
+/// Processes internal Recipe type for intelligent meal planning
 pub fn generate_auto_plan(
-  mealie_recipes: List(mealie.MealieRecipe),
+  recipes: List(types.Recipe),
   config: AutoPlanConfig,
 ) -> Result(AutoMealPlan, String) {
-  // Convert MealieRecipe list to internal Recipe type
-  let recipes = list.map(mealie_recipes, mapper.mealie_to_recipe)
 
   // Validate config
   case config.recipe_count < 1 {

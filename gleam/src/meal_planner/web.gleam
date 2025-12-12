@@ -1,32 +1,18 @@
 /// Web server module for the Meal Planner API
 ///
 /// This module provides HTTP endpoints for:
-/// - Health checks (with Tandoor connectivity validation)
+/// - Health checks
 /// - Recipe scoring
 /// - AI meal planning
 /// - Macro calculations
 /// - Vertical diet compliance
 ///
-/// Error Handling:
-/// - Maps Tandoor API errors to appropriate HTTP status codes
-/// - Implements retry logic for transient failures
-/// - Provides detailed error responses
-///
-import gleam/dynamic
-import gleam/dynamic/decode
 import gleam/erlang/process
 import gleam/http
-import gleam/http/request
 import gleam/int
 import gleam/io
 import gleam/json
-import gleam/list
-import gleam/option.{None, Some}
 import meal_planner/config
-import meal_planner/tandoor/client
-import meal_planner/tandoor/fallback
-import meal_planner/tandoor/retry
-import meal_planner/vertical_diet_compliance
 import mist
 import wisp
 import wisp/wisp_mist
@@ -42,14 +28,9 @@ pub type DatabaseConfig {
   )
 }
 
-/// Tandoor API configuration
-pub type TandoorConfig {
-  TandoorConfig(url: String, token: String)
-}
-
 /// Server configuration
 pub type ServerConfig {
-  ServerConfig(port: Int, database: DatabaseConfig, tandoor: TandoorConfig)
+  ServerConfig(port: Int, database: DatabaseConfig)
 }
 
 /// Application context passed to handlers
@@ -418,7 +399,7 @@ fn vertical_diet_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
                 "recommendations",
                 json.array(compliance.recommendations, fn(r) { json.string(r) }),
               ),
-              #("mealie_url", json.string(app_config.mealie.base_url)),
+              #("tandoor_url", json.string(app_config.tandoor.base_url)),
             ])
             |> json.to_string
 

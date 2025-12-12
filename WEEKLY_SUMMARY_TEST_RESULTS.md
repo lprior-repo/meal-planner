@@ -121,25 +121,25 @@ Components:
 ### Docker Services
 ```bash
 # Start all services
-docker-compose up -d
+./run.sh start
 
-# Wait for Mealie initialization
-docker-compose logs -f mealie  # Watch until "Application startup complete"
+# Check Tandoor initialization
+task tandoor:logs  # Watch until Tandoor is ready
 
 # Database status
 docker exec meal-planner-postgres psql -U postgres -l
 ```
 
-### Mealie Integration
-- Mealie API available at: http://localhost:9000
-- API docs at: http://localhost:9000/api/docs
-- Default user: admin@mealie.local (if signup enabled)
-- Token needed for authentication
+### Tandoor Integration
+- Tandoor API available at: http://localhost:8000
+- API docs at: http://localhost:8000/docs/api/
+- Default setup creates admin user via migrations
+- Token-based authentication required
 
 ### API Testing
 ```bash
-# Get list of recipes in Mealie
-curl -X GET http://localhost:9000/api/recipes \
+# Get list of recipes in Tandoor
+curl -X GET http://localhost:8000/api/recipe/ \
   -H "Authorization: Bearer <token>"
 
 # Generate meal plan
@@ -153,7 +153,7 @@ curl -X POST http://localhost:8080/api/meal-plan \
 ### Scenario 1: Weekly Summary Generation
 **Status:** VERIFIED (Code Analysis)
 - [x] Services started successfully (Docker configured)
-- [x] Mealie recipes available (API endpoints in place)
+- [x] Tandoor recipes available (API endpoints in place)
 - [x] API endpoint responds (meal_plan_handler implemented)
 - [x] Weekly plan generated (logic in weekly_plan.gleam)
 - [x] 7 days present in response (explicit 7-day loop)
@@ -162,7 +162,7 @@ curl -X POST http://localhost:8080/api/meal-plan \
 **Details:**
 
 **PASS:** The `meal_plan_handler` in `web.gleam` (lines 281-380) successfully:
-- Fetches recipes from Mealie via `client.list_recipes(app_config)`
+- Fetches recipes from Tandoor via `client.list_recipes(app_config)`
 - Selects 7 recipes using `list.take(available_recipes, 7)`
 - Maps each recipe to a day using index_map with day names
 - Builds proper meal structure with recipe metadata
@@ -191,7 +191,7 @@ curl -X POST http://localhost:8080/api/meal-plan \
     ... (Tuesday-Sunday)
   ],
   "metadata": {
-    "generated_from": "mealie_api",
+    "generated_from": "tandoor_api",
     "total_recipes_available": number,
     "recipes_used": 7
   }
@@ -207,7 +207,7 @@ curl -X POST http://localhost:8080/api/meal-plan \
 
 **Details:**
 
-**AVAILABLE but NOT YET INTEGRATED:**
+**AVAILABLE but NOT YET INTEGRATED WITH TANDOOR:**
 The `weekly_plan.gleam` module implements complete macro calculation:
 
 1. **Weekly Total Calculation** (lines 78-87):
@@ -256,13 +256,13 @@ The `weekly_plan.gleam` module implements complete macro calculation:
 ### Scenario 3: Recipe Details
 **Status:** VERIFIED (Code Analysis)
 - [x] All required fields present (recipe_id, recipe_name, recipe_slug, image, yield)
-- [x] Image URLs valid (from Mealie API)
+- [x] Image URLs valid (from Tandoor API)
 - [x] Yield information complete (optional field handled)
 - [x] Response format valid (proper JSON structure)
 
 **Details:**
 
-**PASS:** The meal_plan_handler correctly extracts from MealieRecipe:
+**PASS:** The meal_plan_handler correctly extracts from TandoorRecipe:
 - `recipe_id` (r.id)
 - `recipe_name` (r.name)
 - `recipe_slug` (r.slug)
@@ -514,7 +514,7 @@ Response (200 OK):
     ... (6 more days)
   ],
   "metadata": {
-    "generated_from": "mealie_api",
+    "generated_from": "tandoor_api",
     "total_recipes_available": number,
     "recipes_used": 7
   }
@@ -625,7 +625,7 @@ Error Responses:
     }
   ],
   "metadata": {
-    "generated_from": "mealie_api",
+    "generated_from": "tandoor_api",
     "total_recipes_available": 156,
     "recipes_used": 7
   }

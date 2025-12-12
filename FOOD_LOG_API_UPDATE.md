@@ -83,25 +83,25 @@ A new module for HTTP API handling that includes:
 
 ### 5. Added Comprehensive Tests in `food_log_api_test.gleam`
 Tests cover:
-- Creating FoodLogInput with valid Mealie slugs
+- Creating FoodLogInput with valid Tandoor slugs
 - All meal types (breakfast, lunch, dinner, snack)
 - Full micronutrient data
 - ISO 8601 date format validation
-- Various Mealie slug formats
+- Various Tandoor slug formats
 - Edge case: no micronutrients
 - Macro value edge cases
 - Partial micronutrient data
 
 ## Database Schema Integration
 The existing `food_logs` table already supports this change:
-- `source_type` column: Tracks source (mealie_recipe, custom_food, usda_food)
+- `source_type` column: Tracks source (tandoor_recipe, custom_food, usda_food)
 - `source_id` column: Stores the recipe slug or food ID
 - Composite index on (source_type, source_id) for efficient queries
 - Created in migration 006, updated in migration 022
 
 ## Source Tracking
 The food_logs table now properly distinguishes between:
-- **mealie_recipe**: Recipes from Mealie API (identified by slug)
+- **tandoor_recipe**: Recipes from Tandoor API (identified by slug)
 - **custom_food**: User-created custom food items
 - **usda_food**: Foods from USDA FoodData Central (identified by FDC ID)
 
@@ -123,7 +123,7 @@ let input = logs.FoodLogInput(
   // ... other micronutrients ...
 )
 
-case logs.save_food_log_from_mealie_recipe(conn, input) {
+case logs.save_food_log_from_tandoor_recipe(conn, input) {
   Ok(entry_id) ->
     io.println("Logged meal with ID: " <> entry_id)
   Error(err) ->
@@ -163,7 +163,7 @@ Response (201 Created):
 1. `/home/lewis/src/meal-planner/gleam/src/meal_planner/storage/logs.gleam`
    - Added `int` module import
    - Added `FoodLogInput` type
-   - Added `save_food_log_from_mealie_recipe` function
+   - Added `save_food_log_from_tandoor_recipe` function
 
 ## Files Created
 1. `/home/lewis/src/meal-planner/gleam/src/meal_planner/food_log_api.gleam`
@@ -176,7 +176,7 @@ Response (201 Created):
 
 ## Validation Rules
 - **date**: Must be ISO 8601 format (YYYY-MM-DD)
-- **recipe_slug**: Cannot be empty, must be valid Mealie slug
+- **recipe_slug**: Cannot be empty, must be valid Tandoor slug
 - **recipe_name**: Cannot be empty
 - **servings**: Must be > 0
 - **protein, fat, carbs**: Must be >= 0
@@ -201,5 +201,5 @@ Compilation successful (warnings only for unused code in other modules).
 
 ## Database Backward Compatibility
 - All changes are backward compatible
-- Existing 'recipe' entries were automatically migrated to 'mealie_recipe'
+- Existing 'recipe' entries were automatically migrated to 'tandoor_recipe'
 - No data loss or downtime required
