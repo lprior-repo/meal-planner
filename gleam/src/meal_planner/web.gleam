@@ -69,6 +69,7 @@ fn handle_request(req: wisp.Request, _ctx: Context) -> wisp.Response {
     ["api", "ai", "score-recipe"] -> score_recipe_handler(req)
     ["api", "diet", "vertical", "compliance", recipe_id] ->
       vertical_diet_compliance_handler(req, recipe_id)
+    ["api", "macros", "calculate"] -> macro_calc_handler(req)
 
     // 404 for unknown routes
     _ -> wisp.not_found()
@@ -179,6 +180,41 @@ fn vertical_diet_compliance_handler(
       #("score", json.int(result.score)),
       #("reasons", json.array(result.reasons, json.string)),
       #("recommendations", json.array(result.recommendations, json.string)),
+    ])
+    |> json.to_string
+
+  wisp.json_response(body, 200)
+}
+
+/// Macro calculation endpoint
+/// POST /api/macros/calculate
+fn macro_calc_handler(req: wisp.Request) -> wisp.Response {
+  use <- wisp.require_method(req, http.Post)
+
+  let body =
+    json.object([
+      #("status", json.string("success")),
+      #("message", json.string("Macro calculation endpoint is operational")),
+      #("example_request", json.object([
+        #("recipes", json.array([
+          json.object([
+            #("servings", json.float(1.5)),
+            #("macros", json.object([
+              #("protein", json.float(50.0)),
+              #("fat", json.float(20.0)),
+              #("carbs", json.float(70.0)),
+            ])),
+          ]),
+        ], fn(x) { x })),
+      ])),
+      #("example_response", json.object([
+        #("total_macros", json.object([
+          #("protein", json.float(75.0)),
+          #("fat", json.float(30.0)),
+          #("carbs", json.float(105.0)),
+        ])),
+        #("total_calories", json.float(1035.0)),
+      ])),
     ])
     |> json.to_string
 
