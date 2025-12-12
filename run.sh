@@ -7,7 +7,7 @@
 set -e
 
 GLEAM_DIR="./gleam"
-MEALIE_DB="mealie"
+TANDOOR_DB="tandoor"
 APP_DB="meal_planner"
 POSTGRES_USER="postgres"
 
@@ -68,10 +68,10 @@ create_databases() {
         createdb -U $POSTGRES_USER $APP_DB
     fi
 
-    # Check and create mealie database
-    if ! psql -U $POSTGRES_USER -lqt 2>/dev/null | cut -d \| -f 1 | grep -qw $MEALIE_DB; then
-        echo "   Creating $MEALIE_DB database..."
-        createdb -U $POSTGRES_USER $MEALIE_DB
+    # Check and create tandoor database
+    if ! psql -U $POSTGRES_USER -lqt 2>/dev/null | cut -d \| -f 1 | grep -qw $TANDOOR_DB; then
+        echo "   Creating $TANDOOR_DB database..."
+        createdb -U $POSTGRES_USER $TANDOOR_DB
     fi
 }
 
@@ -85,40 +85,41 @@ verify_database() {
     echo ""
 }
 
-start_mealie() {
-    echo -e "${BLUE}🍲 Starting Mealie...${NC}"
+start_tandoor() {
+    echo -e "${BLUE}🍲 Starting Tandoor...${NC}"
 
     # Stop if already running
-    docker rm -f meal-planner-mealie 2>/dev/null || true
+    docker rm -f meal-planner-tandoor 2>/dev/null || true
 
-    # Start Mealie
+    # Start Tandoor using host network to access local PostgreSQL
     docker run -d \
-        --name meal-planner-mealie \
+        --name meal-planner-tandoor \
         --network host \
         --restart unless-stopped \
-        -e DB_ENGINE=postgres \
+        -e DB_ENGINE=django.db.backends.postgresql \
+        -e POSTGRES_HOST=localhost \
+        -e POSTGRES_PORT=5432 \
+        -e POSTGRES_DB=$TANDOOR_DB \
         -e POSTGRES_USER=$POSTGRES_USER \
         -e POSTGRES_PASSWORD=postgres \
-        -e POSTGRES_SERVER=localhost \
-        -e POSTGRES_PORT=5432 \
-        -e POSTGRES_DB=$MEALIE_DB \
-        -e BASE_URL=http://localhost:9000 \
-        -e API_PORT=9000 \
-        -e API_DOCS=true \
-        -e ALLOW_SIGNUP=true \
-        -e ALLOW_PASSWORD_LOGIN=true \
-        -v mealie_data:/app/data \
-        ghcr.io/mealie-recipes/mealie:v3.6.1 > /dev/null
+        -e SECRET_KEY=${TANDOOR_SECRET_KEY:-changeme-insecure-key-for-dev} \
+        -e TIMEZONE=America/New_York \
+        -e ENABLE_PDF_EXPORT=1 \
+        -e ENABLE_SIGNUP=1 \
+        -e GUNICORN_MEDIA=0 \
+        -v tandoor_static:/opt/recipes/staticfiles \
+        -v tandoor_media:/opt/recipes/mediafiles \
+        vabene1111/recipes:latest > /dev/null
 
-    # Wait for Mealie to be ready
-    echo "   Waiting for Mealie to start..."
-    for i in {1..30}; do
-        if curl -sf http://localhost:9000/api/app/about > /dev/null 2>&1; then
-            echo -e "   ${GREEN}✓${NC} Mealie is ready"
+    # Wait for Tandoor to be ready
+    echo "   Waiting for Tandoor to start..."
+    for i in {1..60}; do
+        if curl -sf http://localhost:8000/ > /dev/null 2>&1; then
+            echo -e "   ${GREEN}✓${NC} Tandoor is ready at http://localhost:8000"
             echo ""
             break
         fi
-        sleep 1
+        sleep 2
     done
 }
 
@@ -161,11 +162,11 @@ show_status() {
         echo -e "${RED}❌ PostgreSQL: Stopped${NC}"
     fi
 
-    # Mealie
-    if docker ps | grep -q meal-planner-mealie; then
-        echo -e "${GREEN}✅ Mealie: Running (http://localhost:9000)${NC}"
+    # Tandoor
+    if docker ps | grep -q meal-planner-tandoor; then
+        echo -e "${GREEN}✅ Tandoor: Running (http://localhost:8000)${NC}"
     else
-        echo -e "${RED}❌ Mealie: Stopped${NC}"
+        echo -e "${RED}❌ Tandoor: Stopped${NC}"
     fi
 
     # API Server
@@ -187,8 +188,8 @@ stop_all() {
     fi
     pkill -f "gleam run" 2>/dev/null || true
 
-    # Stop Mealie
-    docker rm -f meal-planner-mealie 2>/dev/null || true
+    # Stop Tandoor
+    docker rm -f meal-planner-tandoor 2>/dev/null || true
 
     echo -e "${GREEN}✅ All services stopped${NC}"
 }
@@ -219,7 +220,7 @@ case "${1:-start}" in
         check_postgres
         create_databases
         verify_database
-        start_mealie
+        start_tandoor
         start_api
         show_status
 
@@ -228,7 +229,7 @@ case "${1:-start}" in
         echo ""
         echo "📱 Access points:"
         echo "   - API Server:    http://localhost:8080/health"
-        echo "   - Mealie UI:     http://localhost:9000"
+        echo "   - Tandoor UI:    http://localhost:8000"
         echo ""
         ;;
     stop)

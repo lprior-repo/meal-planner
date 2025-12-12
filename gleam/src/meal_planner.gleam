@@ -3,10 +3,9 @@
 /// This module provides the main entry point for the meal planner backend.
 ///
 import dot_env
-import envoy
 import gleam/int
 import gleam/io
-import gleam/result
+import meal_planner/config
 import meal_planner/web
 
 /// Application entry point
@@ -23,59 +22,42 @@ pub fn main() {
   io.println("")
 
   // Load configuration from environment
-  case load_config() {
-    Ok(config) -> {
-      io.println("✓ Configuration loaded")
-      io.println(
-        "  - Database: "
-        <> config.database.host
-        <> ":"
-        <> int.to_string(config.database.port),
-      )
-      io.println("  - Server port: " <> int.to_string(config.port))
-      io.println("")
+  let app_config = config.load()
 
-      // Start the web server
-      web.start(config)
-    }
-    Error(err) -> {
-      io.println("✗ Failed to load configuration: " <> err)
-      io.println("")
-      io.println("Required environment variables:")
-      io.println("  - DATABASE_HOST (default: localhost)")
-      io.println("  - DATABASE_PORT (default: 5432)")
-      io.println("  - DATABASE_NAME (default: meal_planner)")
-      io.println("  - DATABASE_USER (default: postgres)")
-      io.println("  - DATABASE_PASSWORD")
-      io.println("  - PORT (default: 8080)")
-      Nil
-    }
+  io.println("✓ Configuration loaded")
+  io.println(
+    "  - Database: "
+    <> app_config.database.host
+    <> ":"
+    <> int.to_string(app_config.database.port),
+  )
+  io.println(
+    "  - Server port: " <> int.to_string(app_config.server.port),
+  )
+  io.println(
+    "  - Tandoor: "
+    <> app_config.tandoor.base_url,
+  )
+  io.println(
+    "  - Environment: " <> app_config.server.environment,
+  )
+  io.println("")
+
+  // Check production readiness
+  case config.is_production_ready(app_config) {
+    True -> io.println("✓ Configuration is production ready")
+    False ->
+      case app_config.server.environment {
+        "production" -> {
+          io.println(
+            "⚠️  Running in production mode but missing some required settings",
+          )
+        }
+        _ -> io.println("ℹ Development mode configuration loaded")
+      }
   }
-}
+  io.println("")
 
-/// Load server configuration from environment variables
-fn load_config() -> Result(web.ServerConfig, String) {
-  let port =
-    envoy.get("PORT")
-    |> result.try(int.parse)
-    |> result.unwrap(8080)
-
-  let database =
-    web.DatabaseConfig(
-      host: envoy.get("DATABASE_HOST")
-        |> result.unwrap("localhost"),
-      port: envoy.get("DATABASE_PORT")
-        |> result.try(int.parse)
-        |> result.unwrap(5432),
-      name: envoy.get("DATABASE_NAME")
-        |> result.unwrap("meal_planner"),
-      user: envoy.get("DATABASE_USER")
-        |> result.unwrap("postgres"),
-      password: case envoy.get("DATABASE_PASSWORD") {
-        Ok(pwd) -> pwd
-        Error(_) -> ""
-      },
-    )
-
-  Ok(web.ServerConfig(port: port, database: database))
+  // Start the web server
+  web.start(app_config)
 }

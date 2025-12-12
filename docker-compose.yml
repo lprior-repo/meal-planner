@@ -21,6 +21,42 @@ services:
       timeout: 5s
       retries: 5
 
+  # Tandoor Recipes (Recipe Management System)
+  tandoor:
+    image: vabene1111/recipes:latest
+    container_name: meal-planner-tandoor
+    restart: unless-stopped
+    network_mode: "host"
+    environment:
+      # Database Configuration
+      DB_ENGINE: django.db.backends.postgresql
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: tandoor
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+
+      # Tandoor Configuration
+      SECRET_KEY: ${TANDOOR_SECRET_KEY:-changeme-insecure-key-for-dev}
+      TIMEZONE: America/New_York
+
+      # API & Features
+      ENABLE_PDF_EXPORT: 1
+      ENABLE_SIGNUP: 1
+      GUNICORN_MEDIA: 0
+
+      # URLs
+      SCRIPT_NAME: ""
+
+    volumes:
+      - tandoor_static:/opt/recipes/staticfiles
+      - tandoor_media:/opt/recipes/mediafiles
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Gleam Backend (AI Meal Planning + Macro Calculations)
   # Note: This will be built from source once the Gleam HTTP server is implemented
   gleam-backend:
@@ -47,6 +83,9 @@ services:
       PORT: 8080
       ENVIRONMENT: production
 
+      # Tandoor Integration
+      TANDOOR_BASE_URL: http://tandoor:8000
+
     volumes:
       - ./gleam:/app
     # Uncomment when Gleam HTTP server is ready
@@ -58,6 +97,10 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+  tandoor_static:
+    driver: local
+  tandoor_media:
     driver: local
 
 networks:

@@ -13,36 +13,21 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
+import meal_planner/config
 import meal_planner/pagination
 import meal_planner/types
 import mist
 import wisp
 import wisp/wisp_mist
 
-/// Database configuration
-pub type DatabaseConfig {
-  DatabaseConfig(
-    host: String,
-    port: Int,
-    name: String,
-    user: String,
-    password: String,
-  )
-}
-
-/// Server configuration
-pub type ServerConfig {
-  ServerConfig(port: Int, database: DatabaseConfig)
-}
-
 /// Application context passed to handlers
 pub type Context {
-  Context(config: ServerConfig)
+  Context(config: config.Config)
 }
 
 /// Start the HTTP server
-pub fn start(config: ServerConfig) -> Nil {
-  let ctx = Context(config: config)
+pub fn start(app_config: config.Config) -> Nil {
+  let ctx = Context(config: app_config)
 
   // Configure logging
   wisp.configure_logger()
@@ -59,12 +44,12 @@ pub fn start(config: ServerConfig) -> Nil {
   let assert Ok(_) =
     wisp_mist.handler(handler, secret_key_base)
     |> mist.new
-    |> mist.port(config.port)
+    |> mist.port(app_config.server.port)
     |> mist.start
 
   io.println(
     "🚀 Meal Planner API server started on http://localhost:"
-    <> int.to_string(config.port),
+    <> int.to_string(app_config.server.port),
   )
 
   // Keep the server running

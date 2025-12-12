@@ -610,3 +610,505 @@ pub fn has_remote_modifications(state: RecipeSyncState) -> Bool {
 pub fn detect_conflict(state: RecipeSyncState) -> Bool {
   has_local_modifications(state) && has_remote_modifications(state)
 }
+
+// ============================================================================
+// Recipe Mapping Audit Logging
+// ============================================================================
+
+/// Type for recipe mapping audit log entries
+pub type RecipeMappingAuditLog {
+  RecipeMappingAuditLog(
+    mapping_id: Int,
+    mealie_slug: String,
+    tandoor_id: Int,
+    mealie_name: String,
+    tandoor_name: String,
+    mapped_at: String,
+    notes: Option(String),
+    status: String,
+  )
+}
+
+/// Log a recipe mapping operation for audit trail
+///
+/// Records the mapping between a Mealie recipe slug and its Tandoor ID.
+/// This provides an audit trail for recipe imports and migrations.
+pub fn log_recipe_mapping(
+  db: pog.Connection,
+  mealie_slug: String,
+  tandoor_id: Int,
+  mealie_name: String,
+  tandoor_name: String,
+  notes: Option(String),
+  now: String,
+) -> Result(Int, String) {
+  let notes_str = case notes {
+    Some(n) -> n
+    None -> ""
+  }
+
+  let sql =
+    "INSERT INTO recipe_mappings
+     (mealie_slug, tandoor_id, mealie_name, tandoor_name, mapped_at, notes, status)
+     VALUES ($1, $2, $3, $4, $5, $6, 'active')
+     RETURNING mapping_id"
+
+  pog.query(sql)
+  |> pog.parameter(pog.text(mealie_slug))
+  |> pog.parameter(pog.int(tandoor_id))
+  |> pog.parameter(pog.text(mealie_name))
+  |> pog.parameter(pog.text(tandoor_name))
+  |> pog.parameter(pog.text(now))
+  |> pog.parameter(pog.text(notes_str))
+  |> pog.execute(db)
+  |> result.try(fn(rows) {
+    case rows {
+      [] -> Error("Failed to insert recipe mapping")
+      [row, ..] -> {
+        pog.col_int(row, 0)
+        |> result.map_error(fn(_) { "Failed to parse mapping_id" })
+      }
+    }
+  })
+}
+
+/// Get a recipe mapping by Mealie slug
+///
+/// Retrieves the mapping record for a specific Mealie recipe slug
+pub fn get_recipe_mapping(
+  db: pog.Connection,
+  mealie_slug: String,
+) -> Result(RecipeMappingAuditLog, String) {
+  let sql =
+    "SELECT mapping_id, mealie_slug, tandoor_id, mealie_name, tandoor_name,
+            mapped_at::text, notes, status
+     FROM recipe_mappings
+     WHERE mealie_slug = $1"
+
+  pog.query(sql)
+  |> pog.parameter(pog.text(mealie_slug))
+  |> pog.execute(db)
+  |> result.try(fn(rows) {
+    case rows {
+      [] -> Error("Recipe mapping not found: " <> mealie_slug)
+      [row, ..] -> {
+        use mapping_id <- result.try(
+          pog.col_int(row, 0)
+          |> result.map_error(fn(_) { "Failed to parse mapping_id" }),
+        )
+        use mealie_slug <- result.try(
+          pog.col_text(row, 1)
+          |> result.map_error(fn(_) { "Failed to parse mealie_slug" }),
+        )
+        use tandoor_id <- result.try(
+          pog.col_int(row, 2)
+          |> result.map_error(fn(_) { "Failed to parse tandoor_id" }),
+        )
+        use mealie_name <- result.try(
+          pog.col_text(row, 3)
+          |> result.map_error(fn(_) { "Failed to parse mealie_name" }),
+        )
+        use tandoor_name <- result.try(
+          pog.col_text(row, 4)
+          |> result.map_error(fn(_) { "Failed to parse tandoor_name" }),
+        )
+        use mapped_at <- result.try(
+          pog.col_text(row, 5)
+          |> result.map_error(fn(_) { "Failed to parse mapped_at" }),
+        )
+        use notes <- result.try(
+          pog.col_nullable_text(row, 6)
+          |> result.map_error(fn(_) { "Failed to parse notes" }),
+        )
+        use status <- result.try(
+          pog.col_text(row, 7)
+          |> result.map_error(fn(_) { "Failed to parse status" }),
+        )
+
+        Ok(RecipeMappingAuditLog(
+          mapping_id: mapping_id,
+          mealie_slug: mealie_slug,
+          tandoor_id: tandoor_id,
+          mealie_name: mealie_name,
+          tandoor_name: tandoor_name,
+          mapped_at: mapped_at,
+          notes: notes,
+          status: status,
+        ))
+      }
+    }
+  })
+}
+
+/// Get a recipe mapping by Tandoor ID
+///
+/// Retrieves the mapping record for a specific Tandoor recipe ID
+pub fn get_mapping_by_tandoor_id(
+  db: pog.Connection,
+  tandoor_id: Int,
+) -> Result(Option(RecipeMappingAuditLog), String) {
+  let sql =
+    "SELECT mapping_id, mealie_slug, tandoor_id, mealie_name, tandoor_name,
+            mapped_at::text, notes, status
+     FROM recipe_mappings
+     WHERE tandoor_id = $1
+     LIMIT 1"
+
+  pog.query(sql)
+  |> pog.parameter(pog.int(tandoor_id))
+  |> pog.execute(db)
+  |> result.try(fn(rows) {
+    case rows {
+      [] -> Ok(None)
+      [row, ..] -> {
+        use mapping_id <- result.try(
+          pog.col_int(row, 0)
+          |> result.map_error(fn(_) { "Failed to parse mapping_id" }),
+        )
+        use mealie_slug <- result.try(
+          pog.col_text(row, 1)
+          |> result.map_error(fn(_) { "Failed to parse mealie_slug" }),
+        )
+        use tandoor_id <- result.try(
+          pog.col_int(row, 2)
+          |> result.map_error(fn(_) { "Failed to parse tandoor_id" }),
+        )
+        use mealie_name <- result.try(
+          pog.col_text(row, 3)
+          |> result.map_error(fn(_) { "Failed to parse mealie_name" }),
+        )
+        use tandoor_name <- result.try(
+          pog.col_text(row, 4)
+          |> result.map_error(fn(_) { "Failed to parse tandoor_name" }),
+        )
+        use mapped_at <- result.try(
+          pog.col_text(row, 5)
+          |> result.map_error(fn(_) { "Failed to parse mapped_at" }),
+        )
+        use notes <- result.try(
+          pog.col_nullable_text(row, 6)
+          |> result.map_error(fn(_) { "Failed to parse notes" }),
+        )
+        use status <- result.try(
+          pog.col_text(row, 7)
+          |> result.map_error(fn(_) { "Failed to parse status" }),
+        )
+
+        Ok(Some(RecipeMappingAuditLog(
+          mapping_id: mapping_id,
+          mealie_slug: mealie_slug,
+          tandoor_id: tandoor_id,
+          mealie_name: mealie_name,
+          tandoor_name: tandoor_name,
+          mapped_at: mapped_at,
+          notes: notes,
+          status: status,
+        )))
+      }
+    }
+  })
+}
+
+/// Get all active recipe mappings
+///
+/// Retrieves all recipe mappings that are currently active
+pub fn get_active_mappings(
+  db: pog.Connection,
+) -> Result(List(RecipeMappingAuditLog), String) {
+  let sql =
+    "SELECT mapping_id, mealie_slug, tandoor_id, mealie_name, tandoor_name,
+            mapped_at::text, notes, status
+     FROM recipe_mappings
+     WHERE status = 'active'
+     ORDER BY mapped_at DESC"
+
+  pog.query(sql)
+  |> pog.execute(db)
+  |> result.try(fn(rows) {
+    rows
+    |> list.try_map(fn(row) {
+      use mapping_id <- result.try(
+        pog.col_int(row, 0)
+        |> result.map_error(fn(_) { "Failed to parse mapping_id" }),
+      )
+      use mealie_slug <- result.try(
+        pog.col_text(row, 1)
+        |> result.map_error(fn(_) { "Failed to parse mealie_slug" }),
+      )
+      use tandoor_id <- result.try(
+        pog.col_int(row, 2)
+        |> result.map_error(fn(_) { "Failed to parse tandoor_id" }),
+      )
+      use mealie_name <- result.try(
+        pog.col_text(row, 3)
+        |> result.map_error(fn(_) { "Failed to parse mealie_name" }),
+      )
+      use tandoor_name <- result.try(
+        pog.col_text(row, 4)
+        |> result.map_error(fn(_) { "Failed to parse tandoor_name" }),
+      )
+      use mapped_at <- result.try(
+        pog.col_text(row, 5)
+        |> result.map_error(fn(_) { "Failed to parse mapped_at" }),
+      )
+      use notes <- result.try(
+        pog.col_nullable_text(row, 6)
+        |> result.map_error(fn(_) { "Failed to parse notes" }),
+      )
+      use status <- result.try(
+        pog.col_text(row, 7)
+        |> result.map_error(fn(_) { "Failed to parse status" }),
+      )
+
+      Ok(RecipeMappingAuditLog(
+        mapping_id: mapping_id,
+        mealie_slug: mealie_slug,
+        tandoor_id: tandoor_id,
+        mealie_name: mealie_name,
+        tandoor_name: tandoor_name,
+        mapped_at: mapped_at,
+        notes: notes,
+        status: status,
+      ))
+    })
+  })
+}
+
+/// Get recent recipe mappings
+///
+/// Returns the N most recently mapped recipes
+pub fn get_recent_mappings(
+  db: pog.Connection,
+  limit: Int,
+) -> Result(List(RecipeMappingAuditLog), String) {
+  let sql =
+    "SELECT mapping_id, mealie_slug, tandoor_id, mealie_name, tandoor_name,
+            mapped_at::text, notes, status
+     FROM recipe_mappings
+     ORDER BY mapped_at DESC
+     LIMIT $1"
+
+  pog.query(sql)
+  |> pog.parameter(pog.int(limit))
+  |> pog.execute(db)
+  |> result.try(fn(rows) {
+    rows
+    |> list.try_map(fn(row) {
+      use mapping_id <- result.try(
+        pog.col_int(row, 0)
+        |> result.map_error(fn(_) { "Failed to parse mapping_id" }),
+      )
+      use mealie_slug <- result.try(
+        pog.col_text(row, 1)
+        |> result.map_error(fn(_) { "Failed to parse mealie_slug" }),
+      )
+      use tandoor_id <- result.try(
+        pog.col_int(row, 2)
+        |> result.map_error(fn(_) { "Failed to parse tandoor_id" }),
+      )
+      use mealie_name <- result.try(
+        pog.col_text(row, 3)
+        |> result.map_error(fn(_) { "Failed to parse mealie_name" }),
+      )
+      use tandoor_name <- result.try(
+        pog.col_text(row, 4)
+        |> result.map_error(fn(_) { "Failed to parse tandoor_name" }),
+      )
+      use mapped_at <- result.try(
+        pog.col_text(row, 5)
+        |> result.map_error(fn(_) { "Failed to parse mapped_at" }),
+      )
+      use notes <- result.try(
+        pog.col_nullable_text(row, 6)
+        |> result.map_error(fn(_) { "Failed to parse notes" }),
+      )
+      use status <- result.try(
+        pog.col_text(row, 7)
+        |> result.map_error(fn(_) { "Failed to parse status" }),
+      )
+
+      Ok(RecipeMappingAuditLog(
+        mapping_id: mapping_id,
+        mealie_slug: mealie_slug,
+        tandoor_id: tandoor_id,
+        mealie_name: mealie_name,
+        tandoor_name: tandoor_name,
+        mapped_at: mapped_at,
+        notes: notes,
+        status: status,
+      ))
+    })
+  })
+}
+
+/// Deprecate a recipe mapping
+///
+/// Marks a mapping as deprecated when a recipe is no longer needed
+pub fn deprecate_mapping(
+  db: pog.Connection,
+  mealie_slug: String,
+) -> Result(Nil, String) {
+  let sql =
+    "UPDATE recipe_mappings
+     SET status = 'deprecated'
+     WHERE mealie_slug = $1"
+
+  pog.query(sql)
+  |> pog.parameter(pog.text(mealie_slug))
+  |> pog.execute(db)
+  |> result.map_error(fn(_) { "Failed to deprecate recipe mapping" })
+  |> result.map(fn(_) { Nil })
+}
+
+/// Mark a recipe mapping as error
+///
+/// Records when a recipe mapping failed or encountered issues
+pub fn mark_mapping_error(
+  db: pog.Connection,
+  mealie_slug: String,
+  error_notes: String,
+) -> Result(Nil, String) {
+  let sql =
+    "UPDATE recipe_mappings
+     SET status = 'error', notes = $2
+     WHERE mealie_slug = $1"
+
+  pog.query(sql)
+  |> pog.parameter(pog.text(mealie_slug))
+  |> pog.parameter(pog.text(error_notes))
+  |> pog.execute(db)
+  |> result.map_error(fn(_) { "Failed to mark recipe mapping as error" })
+  |> result.map(fn(_) { Nil })
+}
+
+/// Count total recipe mappings by status
+///
+/// Returns the number of mappings in each status state
+pub fn count_mappings_by_status(
+  db: pog.Connection,
+) -> Result(List(#(String, Int)), String) {
+  let sql =
+    "SELECT status, COUNT(*)::int as count
+     FROM recipe_mappings
+     GROUP BY status
+     ORDER BY status"
+
+  pog.query(sql)
+  |> pog.execute(db)
+  |> result.try(fn(rows) {
+    rows
+    |> list.try_map(fn(row) {
+      use status <- result.try(
+        pog.col_text(row, 0)
+        |> result.map_error(fn(_) { "Failed to parse status" }),
+      )
+      use count <- result.try(
+        pog.col_int(row, 1)
+        |> result.map_error(fn(_) { "Failed to parse count" }),
+      )
+      Ok(#(status, count))
+    })
+  })
+}
+
+/// Get total count of recipe mappings
+///
+/// Returns the total number of recipe mappings in the audit log
+pub fn count_total_mappings(db: pog.Connection) -> Result(Int, String) {
+  let sql = "SELECT COUNT(*)::int FROM recipe_mappings"
+
+  pog.query(sql)
+  |> pog.execute(db)
+  |> result.try(fn(rows) {
+    case rows {
+      [] -> Ok(0)
+      [row, ..] -> {
+        pog.col_int(row, 0)
+        |> result.map_error(fn(_) { "Failed to parse count" })
+      }
+    }
+  })
+}
+
+/// Format recipe mapping for display
+///
+/// Creates a human-readable summary of a recipe mapping
+pub fn format_mapping(log: RecipeMappingAuditLog) -> String {
+  let notes_str = case log.notes {
+    Some(n) -> " - " <> n
+    None -> ""
+  }
+
+  "[" <> log.mapped_at <> "] " <> log.mealie_name <> " -> " <> log.tandoor_name
+  <> " (id: " <> int.to_string(log.tandoor_id) <> ", slug: " <> log.mealie_slug
+  <> ", status: " <> log.status <> ")" <> notes_str
+}
+
+/// Get mapping audit report for a time period
+///
+/// Returns mappings created within a specific time range
+pub fn get_mappings_in_period(
+  db: pog.Connection,
+  from_time: String,
+  to_time: String,
+) -> Result(List(RecipeMappingAuditLog), String) {
+  let sql =
+    "SELECT mapping_id, mealie_slug, tandoor_id, mealie_name, tandoor_name,
+            mapped_at::text, notes, status
+     FROM recipe_mappings
+     WHERE mapped_at >= $1 AND mapped_at <= $2
+     ORDER BY mapped_at DESC"
+
+  pog.query(sql)
+  |> pog.parameter(pog.text(from_time))
+  |> pog.parameter(pog.text(to_time))
+  |> pog.execute(db)
+  |> result.try(fn(rows) {
+    rows
+    |> list.try_map(fn(row) {
+      use mapping_id <- result.try(
+        pog.col_int(row, 0)
+        |> result.map_error(fn(_) { "Failed to parse mapping_id" }),
+      )
+      use mealie_slug <- result.try(
+        pog.col_text(row, 1)
+        |> result.map_error(fn(_) { "Failed to parse mealie_slug" }),
+      )
+      use tandoor_id <- result.try(
+        pog.col_int(row, 2)
+        |> result.map_error(fn(_) { "Failed to parse tandoor_id" }),
+      )
+      use mealie_name <- result.try(
+        pog.col_text(row, 3)
+        |> result.map_error(fn(_) { "Failed to parse mealie_name" }),
+      )
+      use tandoor_name <- result.try(
+        pog.col_text(row, 4)
+        |> result.map_error(fn(_) { "Failed to parse tandoor_name" }),
+      )
+      use mapped_at <- result.try(
+        pog.col_text(row, 5)
+        |> result.map_error(fn(_) { "Failed to parse mapped_at" }),
+      )
+      use notes <- result.try(
+        pog.col_nullable_text(row, 6)
+        |> result.map_error(fn(_) { "Failed to parse notes" }),
+      )
+      use status <- result.try(
+        pog.col_text(row, 7)
+        |> result.map_error(fn(_) { "Failed to parse status" }),
+      )
+
+      Ok(RecipeMappingAuditLog(
+        mapping_id: mapping_id,
+        mealie_slug: mealie_slug,
+        tandoor_id: tandoor_id,
+        mealie_name: mealie_name,
+        tandoor_name: tandoor_name,
+        mapped_at: mapped_at,
+        notes: notes,
+        status: status,
+      ))
+    })
+  })
+}
