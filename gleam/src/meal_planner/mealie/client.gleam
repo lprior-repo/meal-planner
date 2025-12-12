@@ -612,3 +612,54 @@ pub fn error_to_user_message(error: ClientError) -> String {
       "Recipe service is temporarily unavailable. Please try again later."
   }
 }
+
+/// Check Mealie health by pinging the /api/app/about endpoint
+///
+/// This function performs a health check against the Mealie API by requesting
+/// the /api/app/about endpoint. Returns the about response with version and
+/// configuration information if successful.
+///
+/// Note: This endpoint does NOT require authentication.
+///
+/// Example:
+/// ```gleam
+/// case check_health(config) {
+///   Ok(about) -> io.println("Mealie v" <> about.version <> " is healthy")
+///   Error(err) -> io.println("Health check failed: " <> error_to_string(err))
+/// }
+/// ```
+pub fn check_health(
+  config: Config,
+) -> Result(types.MealieAboutResponse, ClientError) {
+  let url = build_url(config.mealie.base_url, "/api/app/about")
+
+  case request.to(url) {
+    Ok(req) -> {
+      let req = request.set_method(req, http.Get)
+
+      use resp <- result.try(execute_request_with_timeout(req, 5000))
+      parse_response(resp, types.about_response_decoder())
+    }
+    Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
+  }
+}
+
+/// Check if Mealie is healthy (convenience function)
+///
+/// Returns True if the Mealie service is reachable and responding correctly,
+/// False otherwise. This is a simpler version of check_health that just
+/// returns a boolean.
+///
+/// Example:
+/// ```gleam
+/// case is_healthy(config) {
+///   True -> io.println("Mealie is up and running")
+///   False -> io.println("Mealie is down or unreachable")
+/// }
+/// ```
+pub fn is_healthy(config: Config) -> Bool {
+  case check_health(config) {
+    Ok(_) -> True
+    Error(_) -> False
+  }
+}
