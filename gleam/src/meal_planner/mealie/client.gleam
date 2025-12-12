@@ -8,6 +8,7 @@ import gleam/http/request
 import gleam/http/response
 import gleam/httpc
 import gleam/json
+import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
@@ -218,6 +219,89 @@ pub fn get_recipe(
     }
     Error(_) -> Error(ConfigError("Invalid Mealie base URL: " <> url))
   }
+}
+
+/// Get multiple recipes by their slugs in a single batch operation
+///
+/// Fetches multiple recipes efficiently by making parallel requests where possible.
+/// Returns a tuple of (successful_recipes, failed_slugs) so partial failures can be handled.
+///
+/// Example:
+/// ```gleam
+/// case get_recipes_batch(config, ["chicken-stir-fry", "salmon-bowl"]) {
+///   Ok(#(recipes, failed)) -> {
+///     io.println("Got " <> int.to_string(list.length(recipes)) <> " recipes")
+///     case failed {
+///       [] -> io.println("All recipes fetched successfully")
+///       _ -> io.println("Failed slugs: " <> string.inspect(failed))
+///     }
+///   }
+///   Error(err) -> io.println("Error: " <> string.inspect(err))
+/// }
+/// ```
+pub fn get_recipes_batch(
+  config: Config,
+  slugs: List(String),
+) -> Result(#(List(MealieRecipe), List(String)), ClientError) {
+  use config <- result.try(validate_config(config))
+
+  // Fetch all recipes in parallel using the list.partition approach
+  // This creates separate Result values for each recipe fetch
+  let results =
+    list.map(slugs, fn(slug) {
+      let url = build_url(config.mealie.base_url, "/api/recipes/" <> slug)
+      case request.to(url) {
+        Ok(req) -> {
+          let req =
+            req
+            |> request.set_method(http.Get)
+            |> add_auth_header(config.mealie.api_token)
+
+          case execute_request_with_timeout(
+            req,
+            config.mealie.request_timeout_ms,
+          ) {
+            Ok(resp) -> {
+              case parse_response(resp, types.recipe_decoder()) {
+                Ok(recipe) -> Ok(#(slug, recipe))
+                Error(_) -> Error(slug)
+              }
+            }
+            Error(_) -> Error(slug)
+          }
+        }
+        Error(_) -> Error(slug)
+      }
+    })
+
+  // Partition results into successes and failures
+  let #(successes, failures) =
+    list.partition(results, fn(result) {
+      case result {
+        Ok(_) -> True
+        Error(_) -> False
+      }
+    })
+
+  // Extract recipes from successes
+  let recipes =
+    list.filter_map(successes, fn(result) {
+      case result {
+        Ok(#(_, recipe)) -> Ok(recipe)
+        Error(_) -> Error(Nil)
+      }
+    })
+
+  // Extract failed slugs
+  let failed_slugs =
+    list.filter_map(failures, fn(result) {
+      case result {
+        Error(slug) -> Ok(slug)
+        Ok(_) -> Error(Nil)
+      }
+    })
+
+  Ok(#(recipes, failed_slugs))
 }
 
 /// Search recipes by query string

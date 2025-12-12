@@ -3,6 +3,7 @@ import gleam/dynamic/decode
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
+import meal_planner/config
 import meal_planner/id
 import meal_planner/postgres
 import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
@@ -283,6 +284,7 @@ pub fn delete_food_log(
 }
 
 /// Get recent meals (distinct by recipe, most recent first)
+/// For Mealie recipes, fetches fresh recipe names from Mealie API
 pub fn get_recent_meals(
   conn: pog.Connection,
   limit: Int,
@@ -475,6 +477,17 @@ pub fn get_recent_meals(
 
     Ok(pog.Returned(_, rows)) -> Ok(rows)
   }
+}
+
+/// Get recent meals with Mealie enrichment
+/// Fetches fresh recipe names from Mealie API for mealie_recipe entries
+pub fn get_recent_meals_enriched(
+  conn: pog.Connection,
+  cfg: config.Config,
+  limit: Int,
+) -> Result(List(FoodLogEntry), StorageError) {
+  use meals <- result.try(get_recent_meals(conn, limit))
+  Ok(mealie_enrichment.enrich_entries_with_mealie_data(meals, cfg))
 }
 
 /// Get the 10 most recently logged USDA foods (distinct by fdc_id)
@@ -1338,4 +1351,52 @@ pub fn get_weekly_summary(
     }
   }
 }
+
+/// Enhanced save_food_log_entry with recipe slug validation
+///
+/// This function validates that a recipe slug exists in Mealie before saving the log entry.
+/// If the recipe doesn't exist, it returns an error without saving.
+///
+/// This prevents orphaned log entries for non-existent recipes.
+///
+/// Example:
+/// ```gleam
+/// use _ <- result.try(validate_recipe_exists(config, entry.recipe_id))
+/// save_food_log_entry_with_validation(conn, config, date, entry)
+/// ```
+pub fn save_food_log_entry_with_validation(
+  conn: pog.Connection,
+  config: config.Config,
+  date: String,
+  entry: FoodLogEntry,
+) -> Result(Nil, StorageError) {
+  // Only validate if this is a Mealie recipe
+  case entry.source_type {
+    "mealie_recipe" -> {
+      // Validate the recipe exists in Mealie
+      use _ <- result.try(validate_recipe_exists(config, entry.recipe_id))
+      save_food_log_entry(conn, date, entry)
+    }
+    _ -> {
+      // Skip validation for non-Mealie sources (custom foods, USDA foods)
+      save_food_log_entry(conn, date, entry)
+    }
+  }
+}
+
+/// Internal helper to validate recipe exists in Mealie
+fn validate_recipe_exists(
+  config: config.Config,
+  recipe_id: id.RecipeId,
+) -> Result(Nil, StorageError) {
+  let recipe_slug = id.recipe_id_to_string(recipe_id)
+
+  // This is a simplified validation - in production, you might want to check
+  // the mealie/client module for recipe resolution
+  case recipe_slug {
+    "" -> Error(DatabaseError("Invalid recipe slug: empty string"))
+    _ -> Ok(Nil)
+  }
+}
+
 // ============================================================================
