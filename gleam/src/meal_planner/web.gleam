@@ -11,7 +11,7 @@ import gleam/int
 import gleam/io
 import gleam/json
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import meal_planner/auto_planner/recipe_scorer
 import meal_planner/config
@@ -183,12 +183,11 @@ fn food_search_handler(req: wisp.Request) -> wisp.Response {
       |> list.find_map(fn(param) {
         let #(key, value) = param
         case key == "q" {
-          True -> Ok(Some(value))
-          False -> Nil
+          True -> Some(value)
+          False -> None
         }
       })
-      |> ok_or_error(None)
-    Error(_) -> Error(None)
+    Error(_) -> None
   }
 
   let limit_param = case query_string {
@@ -197,12 +196,11 @@ fn food_search_handler(req: wisp.Request) -> wisp.Response {
       |> list.find_map(fn(param) {
         let #(key, value) = param
         case key == "limit" {
-          True -> Ok(Some(value))
-          False -> Nil
+          True -> Some(value)
+          False -> None
         }
       })
-      |> ok_or_error(None)
-    Error(_) -> Error(None)
+    Error(_) -> None
   }
 
   let cursor_param = case query_string {
@@ -211,12 +209,11 @@ fn food_search_handler(req: wisp.Request) -> wisp.Response {
       |> list.find_map(fn(param) {
         let #(key, value) = param
         case key == "cursor" {
-          True -> Ok(Some(value))
+          True -> Some(value)
           False -> Nil
         }
       })
-      |> ok_or_error(None)
-    Error(_) -> Error(None)
+    Error(_) -> None
   }
 
   // Handle missing query parameter
