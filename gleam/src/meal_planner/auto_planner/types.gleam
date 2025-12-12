@@ -50,9 +50,9 @@ pub fn diet_principle_from_string(s: String) -> Option(DietPrinciple) {
 
 /// Type of recipe source
 pub type RecipeSourceType {
-  Database
   Api
-  UserProvided
+  Scraper
+  Manual
 }
 
 /// Recipe source configuration

@@ -1,7 +1,7 @@
 /// Tests for migration 019: Drop recipes table
 ///
 /// This migration drops the recipes table to complete the migration to using
-/// Mealie as the sole source of truth for recipes.
+/// Tandoor as the sole source of truth for recipes.
 ///
 /// NOTE: This is a unit test that documents the migration behavior.
 /// Integration tests that execute actual SQL should be run separately
