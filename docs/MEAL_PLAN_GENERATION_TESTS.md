@@ -1,8 +1,8 @@
-# Meal Plan Generation Tests - Mealie Integration
+# Meal Plan Generation Tests - Tandoor Integration
 
 ## Overview
 
-This document outlines the comprehensive testing strategy for meal plan generation with real Mealie data in the meal-planner application.
+This document outlines the comprehensive testing strategy for meal plan generation with real Tandoor data in the meal-planner application.
 
 ## Test Scope
 
@@ -16,14 +16,14 @@ This document outlines the comprehensive testing strategy for meal plan generati
 - `generate_plan_requires_minimum_recipe_count_test`: Insufficient recipes error
 - `generate_plan_validates_recipe_count_test`: Zero recipe count validation
 
-### 2. Mealie Recipe Conversion
-- Convert MealieRecipe types to internal Recipe format
+### 2. Tandoor Recipe Conversion
+- Convert TandoorRecipe types to internal Recipe format
 - Preserve nutrition data during conversion
 - Handle minimal recipe data gracefully
 
 **Tests:**
-- `mealie_recipes_convert_to_internal_format_test`: Format conversion validation
-- `mealie_recipe_with_nutrition_extracts_fields_test`: Nutrition data extraction
+- `tandoor_recipes_convert_to_internal_format_test`: Format conversion validation
+- `tandoor_recipe_with_nutrition_extracts_fields_test`: Nutrition data extraction
 
 ### 3. Diet Filtering
 - Apply no filters and return all recipes
@@ -77,14 +77,14 @@ This document outlines the comprehensive testing strategy for meal plan generati
 ### Test Data Builders
 
 ```gleam
-// Create Mealie recipes with nutrition data
-fn create_test_mealie_recipe(
+// Create Tandoor recipes with nutrition data
+fn create_test_tandoor_recipe(
   id: String,
   name: String,
   protein: String,
   fat: String,
   carbs: String,
-) -> mealie.MealieRecipe
+) -> tandoor.TandoorRecipe
 
 // Create internal recipes with full control
 fn create_internal_recipe(
@@ -144,24 +144,24 @@ fn default_plan_config() -> auto_types.AutoPlanConfig {
 | Variety scoring | High | Tested |
 | Recipe scoring | High | Tested |
 | Plan generation | High | Tested |
-| Mealie conversion | High | Tested |
+| Tandoor conversion | High | Tested |
 | Configuration validation | High | Tested |
 
 ### Integration Test Coverage
 
 | Integration | Coverage | Status |
 |-------------|----------|--------|
-| Mealie → Internal conversion | High | Tested |
+| Tandoor → Internal conversion | High | Tested |
 | Plan generation with real data | High | Tested |
 | Config preservation | High | Tested |
 | Macro calculation | High | Tested |
 
 ## Test Data Specifications
 
-### Mealie Recipe Test Data
+### Tandoor Recipe Test Data
 
 ```gleam
-create_test_mealie_recipe(
+create_test_tandoor_recipe(
   "r1",
   "Chicken Breast",
   "40g",  // protein
@@ -213,8 +213,8 @@ create_internal_recipe(
 
 ### Test Environment
 - Database: Isolated test database per test
-- Mealie Client: Mocked or test instance
-- Real Data: Can use production Mealie recipes if available
+- Tandoor Client: Mocked or test instance
+- Real Data: Can use production Tandoor recipes if available
 
 ### Validation Steps
 1. Generate plan with 3 diverse recipes
@@ -237,7 +237,7 @@ create_internal_recipe(
 
 ## Known Limitations
 
-1. Test uses mocked Mealie data, not real API
+1. Test uses mocked Tandoor data, not real API
 2. Macro scoring is simplified (no allergen data)
 3. Diet filtering limited to Vertical Diet
 4. No persistence testing (database integration separate)
@@ -247,7 +247,7 @@ create_internal_recipe(
 1. Add property-based tests for scoring ranges
 2. Add fuzz testing for edge case recipes
 3. Add performance benchmarks
-4. Add end-to-end tests with real Mealie API
+4. Add end-to-end tests with real Tandoor API
 5. Add concurrent meal plan generation tests
 
 ## Running the Tests
@@ -272,7 +272,7 @@ gleam test --coverage coverage.html
 
 ### When to update tests
 - When meal planning algorithm changes
-- When Mealie types change
+- When Tandoor types change
 - When scoring weights change
 - When new diet principles added
 
@@ -287,4 +287,4 @@ gleam test --coverage coverage.html
 - `/docs/INTEGRATION_TESTING.md` - Integration test framework
 - `/docs/ARCHITECTURE.md` - System architecture
 - `/gleam/src/meal_planner/auto_planner.gleam` - Meal planner implementation
-- `/gleam/src/meal_planner/mealie/mapper.gleam` - Mealie conversion
+- `/gleam/src/meal_planner/tandoor/mapper.gleam` - Tandoor conversion

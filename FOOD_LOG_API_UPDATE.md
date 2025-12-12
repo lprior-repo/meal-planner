@@ -1,7 +1,7 @@
-# Food Log API Update - Mealie Recipe Slug Support
+# Food Log API Update - Tandoor Recipe Slug Support
 
 ## Task: meal-planner-5qes
-Update food log API to accept Mealie recipe slugs
+Update food log API to accept Tandoor recipe slugs
 
 ## Changes Made
 

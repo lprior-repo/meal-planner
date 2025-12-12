@@ -1,9 +1,29 @@
-/// Vertical diet compliance checker for Mealie recipes
+/// Vertical diet compliance checker for recipes
 /// Validates recipes against Stan Efferding's Vertical Diet principles
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
-import meal_planner/mealie/types
+
+/// Recipe ingredient for compliance checking
+pub type RecipeIngredient {
+  RecipeIngredient(display: String)
+}
+
+/// Recipe instruction for compliance checking
+pub type RecipeInstruction {
+  RecipeInstruction(text: String)
+}
+
+/// Recipe for vertical diet compliance checking
+pub type Recipe {
+  Recipe(
+    name: String,
+    description: option.Option(String),
+    recipe_ingredient: List(RecipeIngredient),
+    recipe_instructions: List(RecipeInstruction),
+    rating: option.Option(Int),
+  )
+}
 
 /// Vertical diet compliance check result
 pub type VerticalDietCompliance {
@@ -15,8 +35,8 @@ pub type VerticalDietCompliance {
   )
 }
 
-/// Check if a Mealie recipe complies with vertical diet guidelines
-pub fn check_compliance(recipe: types.MealieRecipe) -> VerticalDietCompliance {
+/// Check if a recipe complies with vertical diet guidelines
+pub fn check_compliance(recipe: Recipe) -> VerticalDietCompliance {
   let mut_reasons = []
   let mut_recommendations = []
   let mut_score = 0
@@ -127,7 +147,7 @@ pub fn check_compliance(recipe: types.MealieRecipe) -> VerticalDietCompliance {
 }
 
 /// Check if recipe contains red meat as primary protein
-fn contains_red_meat(recipe: types.MealieRecipe) -> Bool {
+fn contains_red_meat(recipe: Recipe) -> Bool {
   let red_meat_keywords = [
     "beef", "bison", "lamb", "venison", "steak", "ground beef", "chuck",
     "ribeye", "sirloin", "ground lamb",
@@ -164,7 +184,7 @@ fn contains_red_meat(recipe: types.MealieRecipe) -> Bool {
 }
 
 /// Check if recipe contains simple carbs (white rice, potatoes)
-fn contains_simple_carbs(recipe: types.MealieRecipe) -> Bool {
+fn contains_simple_carbs(recipe: Recipe) -> Bool {
   let carb_keywords = [
     "white rice", "rice", "white potato", "potato", "sweet potato",
     "jasmine rice", "basmati", "mashed potato", "baked potato",
@@ -201,7 +221,7 @@ fn contains_simple_carbs(recipe: types.MealieRecipe) -> Bool {
 }
 
 /// Check if recipe contains low FODMAP vegetables
-fn contains_low_fodmap_vegetables(recipe: types.MealieRecipe) -> Bool {
+fn contains_low_fodmap_vegetables(recipe: Recipe) -> Bool {
   let low_fodmap_keywords = [
     "carrot", "spinach", "kale", "lettuce", "bell pepper", "cucumber",
     "zucchini", "bok choy", "cabbage", "green bean", "broccoli",

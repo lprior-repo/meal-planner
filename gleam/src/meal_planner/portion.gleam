@@ -1,8 +1,8 @@
 /// Portion calculation module for scaling recipes to hit macro targets
 ///
-/// This module works with both Recipe domain types and mealie.MealieRecipe directly.
+/// This module works with both Recipe domain types and recipe data from external sources.
 /// Portion calculations are source-agnostic - they work with any Recipe
-/// regardless of origin (Mealie, custom, etc).
+/// regardless of origin (Tandoor, custom, etc).
 ///
 /// Ported from Go implementation in main.go
 import gleam/float as gleam_float
@@ -151,7 +151,7 @@ pub fn calculate_daily_portions(
   }
 }
 
-/// Helper function to extract macros from mealie.MealieRecipe nutrition
+/// Helper function to extract macros from external recipe nutrition data
 /// Returns Macros with zeros if nutrition is not available
 fn mealie_recipe_macros(recipe: mealie.MealieRecipe) -> Macros {
   case recipe.nutrition {
@@ -228,7 +228,7 @@ fn is_digit(c: String) -> Bool {
   }
 }
 
-/// CalculatePortionForMealieRecipe scales a mealie.MealieRecipe to hit target macros
+/// CalculatePortionForMealieRecipe scales external recipe data to hit target macros
 /// Prioritizes hitting protein target since it's the key constraint in Vertical Diet
 pub fn calculate_portion_for_mealie_recipe(
   recipe: mealie.MealieRecipe,
@@ -340,12 +340,12 @@ pub fn calculate_portion_for_mealie_recipe(
   }
 }
 
-/// Helper: Convert mealie.MealieRecipe ID to RecipeId
+/// Helper: Convert external recipe ID to RecipeId
 fn meal_recipe_id(recipe: mealie.MealieRecipe) -> id.RecipeId {
-  id.recipe_id("mealie-" <> recipe.slug)
+  id.recipe_id("external-" <> recipe.slug)
 }
 
-/// Helper: Extract category from mealie.MealieRecipe
+/// Helper: Extract category from external recipe data
 fn recipe_category(recipe: mealie.MealieRecipe) -> String {
   case recipe.recipe_category {
     [first, ..] -> first.name

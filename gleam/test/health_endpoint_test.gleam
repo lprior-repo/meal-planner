@@ -25,7 +25,7 @@ pub fn health_response_structure_test() {
   //   "status": "healthy",
   //   "service": "meal-planner",
   //   "version": "1.0.0",
-  //   "mealie": {
+  //   "tandoor": {
   //     "status": "healthy|not_configured|unreachable|timeout|dns_failed|error",
   //     "message": "string or null",
   //     "configured": boolean
@@ -40,7 +40,7 @@ pub fn health_response_structure_test() {
 pub fn health_endpoint_service_status_always_healthy_test() {
   // The service status should always be "healthy" as long as the
   // web server is running and responding to requests.
-  // Only Mealie connectivity affects the mealie.status field, not overall status.
+  // Only Tandoor connectivity affects the tandoor.status field, not overall status.
 
   True
   |> should.be_true()

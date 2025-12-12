@@ -105,11 +105,6 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["api", "recipes", "search"] -> recipe_search_handler(req, ctx)
     ["api", "recipes", slug] -> recipe_slug_handler(req, ctx, slug)
 
-    // Mealie integration endpoints
-    ["api", "mealie", "recipes"] -> mealie_recipes_handler(req, ctx)
-    ["api", "mealie", "recipes", id] ->
-      mealie_recipe_detail_handler(req, ctx, id)
-
     // 404 for unknown routes
     _ -> wisp.not_found()
   }
@@ -707,43 +702,3 @@ fn recipe_slug_handler(
   )
 }
 
-/// Mealie recipes list endpoint
-/// GET /api/mealie/recipes
-/// Fetches recipes from Mealie API
-fn mealie_recipes_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
-  use <- wisp.require_method(req, http.Get)
-
-  // TODO: Implement Mealie API client integration
-  let body =
-    json.object([
-      #("message", json.string("Mealie recipes endpoint - coming soon")),
-      #("status", json.string("not_implemented")),
-      #("mealie_url", json.string(ctx.config.mealie.url)),
-    ])
-    |> json.to_string
-
-  wisp.json_response(body, 501)
-}
-
-/// Mealie recipe detail endpoint
-/// GET /api/mealie/recipes/:id
-/// Fetches a specific recipe from Mealie API
-fn mealie_recipe_detail_handler(
-  req: wisp.Request,
-  ctx: Context,
-  id: String,
-) -> wisp.Response {
-  use <- wisp.require_method(req, http.Get)
-
-  // TODO: Implement Mealie API client integration
-  let body =
-    json.object([
-      #("message", json.string("Mealie recipe detail endpoint - coming soon")),
-      #("status", json.string("not_implemented")),
-      #("recipe_id", json.string(id)),
-      #("mealie_url", json.string(ctx.config.mealie.url)),
-    ])
-    |> json.to_string
-
-  wisp.json_response(body, 501)
-}

@@ -8,8 +8,6 @@ import gleam/json
 import gleam/list
 import gleam/order
 import meal_planner/auto_planner/types as auto_types
-import meal_planner/mealie/mapper
-import meal_planner/mealie/types as mealie
 import meal_planner/types
 
 // Re-export types for convenience
