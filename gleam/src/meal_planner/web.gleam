@@ -13,7 +13,9 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
+import meal_planner/auto_planner/recipe_scorer
 import meal_planner/config
+import meal_planner/id
 import meal_planner/pagination
 import meal_planner/types
 import meal_planner/vertical_diet_compliance

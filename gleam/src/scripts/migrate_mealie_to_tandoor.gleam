@@ -251,7 +251,8 @@ fn get_env_or_default(key: String, default: String) -> Result(String, String) {
 fn get_required_env(key: String, description: String) -> Result(String, String) {
   case envoy.get(key) {
     Ok(value) -> {
-      case string.length(value) > 0 {
+      let len = string.length(value)
+      case len > 0 {
         True -> Ok(value)
         False -> Error("Missing required environment variable: " <> description)
       }
