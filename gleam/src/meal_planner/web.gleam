@@ -102,7 +102,9 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["api", "meal-plan"] -> meal_plan_handler(req, ctx)
     ["api", "macros", "calculate"] -> macro_calc_handler(req)
     ["api", "vertical-diet", "check"] -> vertical_diet_handler(req, ctx)
+    ["api", "recipes", "search"] -> recipe_search_handler(req, ctx)
     ["api", "recipes"] -> recipes_handler(req, ctx)
+    ["api", "recipes", slug] -> recipe_slug_handler(req, ctx, slug)
 
     // Mealie integration endpoints
     ["api", "mealie", "recipes"] -> mealie_recipes_handler(req, ctx)
@@ -293,9 +295,15 @@ fn meal_plan_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
                 "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
                 "Sunday",
               ]
-              let day_name = case list.at(day_names, day_index) {
-                Ok(name) -> name
-                Error(Nil) -> "Day " <> int.to_string(day_index + 1)
+              let day_name = case day_index {
+                0 -> "Monday"
+                1 -> "Tuesday"
+                2 -> "Wednesday"
+                3 -> "Thursday"
+                4 -> "Friday"
+                5 -> "Saturday"
+                6 -> "Sunday"
+                _ -> "Day " <> int.to_string(day_index + 1)
               }
 
               json.object([
