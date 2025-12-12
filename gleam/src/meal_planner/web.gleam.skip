@@ -22,7 +22,6 @@ import gleam/list
 import gleam/option.{None, Some}
 import meal_planner/config
 import meal_planner/mealie/client
-import meal_planner/mealie/fallback
 import meal_planner/mealie/retry
 import meal_planner/vertical_diet_compliance
 import mist
@@ -102,12 +101,11 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["api", "vertical-diet", "check"] -> vertical_diet_handler(req, ctx)
     ["api", "recipes", "search"] -> recipe_search_handler(req, ctx)
     ["api", "recipes", slug] -> recipe_slug_handler(req, ctx, slug)
-    // API endpoints (to be implemented)
-    ["api", "meal-plan"] -> meal_plan_handler(req, ctx)
-    ["api", "macros", "calculate"] -> macro_calc_handler(req)
-    // ["api", "vertical-diet", "check"] -> vertical_diet_handler(req, ctx)
-    ["api", "recipes", "search"] -> recipe_search_handler(req, ctx)
-    // ["api", "recipes", slug] -> recipe_slug_handler(req, ctx, slug)
+
+    // Mealie integration endpoints
+    ["api", "mealie", "recipes"] -> mealie_recipes_handler(req, ctx)
+    ["api", "mealie", "recipes", id] ->
+      mealie_recipe_detail_handler(req, ctx, id)
 
     // 404 for unknown routes
     _ -> wisp.not_found()
@@ -170,24 +168,6 @@ fn with_retry_response(
   case retry.with_backoff(operation) {
     Ok(result) -> success_handler(result)
     Error(error) -> error_response(error)
-  }
-}
-
-/// Execute operation with retry logic and fallback on error
-/// Used for endpoints that should gracefully degrade when Mealie fetch fails
-/// by showing a fallback response (e.g., "Unknown Recipe (slug)")
-fn with_retry_and_fallback_response(
-  operation: fn() -> Result(a, client.ClientError),
-  fallback_provider: fn(client.ClientError) -> a,
-  success_handler: fn(a) -> wisp.Response,
-) -> wisp.Response {
-  case retry.with_backoff(operation) {
-    Ok(result) -> success_handler(result)
-    Error(error) -> {
-      // Use fallback on error instead of returning error response
-      let fallback_result = fallback_provider(error)
-      success_handler(fallback_result)
-    }
   }
 }
 
@@ -405,7 +385,7 @@ fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
 
   case extract_recipe_slug(body) {
     Ok(slug) -> {
-      case retry.with_backoff(fn() { client.get_recipe(ctx.config, slug) }) {
+      case retry.with_backoff(fn() { client.get_recipe(ctx.config.config, slug) }) {
         Ok(recipe) -> {
           let compliance = vertical_diet_compliance.check_compliance(recipe)
 
@@ -415,8 +395,12 @@ fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
               #("recipe_name", json.string(recipe.name)),
               #("compliant", json.bool(compliance.compliant)),
               #("score", json.int(compliance.score)),
-              #("reasons", json.array(list.map(compliance.reasons, fn(r) { json.string(r) }))),
-              #("recommendations", json.array(list.map(compliance.recommendations, fn(r) { json.string(r) }))),
+              #("reasons", json.array(
+                list.map(compliance.reasons, json.string)
+              )),
+              #("recommendations", json.array(
+                list.map(compliance.recommendations, json.string)
+              )),
               #("mealie_url", json.string(ctx.config.mealie.url)),
             ])
             |> json.to_string
@@ -441,15 +425,16 @@ fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
 }
 
 /// Extract recipe slug from JSON request body
-fn extract_recipe_slug(body: dynamic.Dynamic) -> Result(String, String) {
-  let decoder = {
-    use slug <- decode.field("recipe_slug", decode.string)
-    decode.success(slug)
-  }
-
-  case decode.run(body, decoder) {
-    Ok(slug) -> Ok(slug)
-    Error(_) -> Error("Missing required field: 'recipe_slug' (must be a string)")
+fn extract_recipe_slug(body: json.Json) -> Result(String, String) {
+  case body {
+    json.Object(pairs) -> {
+      case list.find(pairs, fn(pair) { pair.0 == "recipe_slug" }) {
+        Ok(#(_, json.String(slug))) -> Ok(slug)
+        Ok(_) -> Error("'recipe_slug' must be a string")
+        Error(_) -> Error("Missing required field: 'recipe_slug'")
+      }
+    }
+    _ -> Error("Request body must be a JSON object")
   }
 }
 
@@ -602,7 +587,6 @@ fn recipes_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
 /// Recipe by slug endpoint
 /// GET /api/recipes/:slug
 /// Fetches a recipe from Mealie by its slug
-/// On failure, returns a fallback recipe with the display name "Unknown Recipe (slug)"
 fn recipe_slug_handler(
   req: wisp.Request,
   ctx: Context,
@@ -612,9 +596,8 @@ fn recipe_slug_handler(
   let _ = ctx
   let app_config = config.load()
 
-  with_retry_and_fallback_response(
+  with_retry_response(
     fn() { client.get_recipe(app_config, slug) },
-    fn(_error) { fallback.create_fallback_recipe(slug) },
     fn(recipe) {
       let recipe_json =
         json.object([

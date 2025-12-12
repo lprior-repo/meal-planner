@@ -140,6 +140,10 @@ pub fn get_recent_meals(conn, limit) {
   logs.get_recent_meals(conn, limit)
 }
 
+pub fn get_recent_meals_enriched(conn, cfg, limit) {
+  logs.get_recent_meals_enriched(conn, cfg, limit)
+}
+
 pub fn get_daily_log(conn, date) {
   logs.get_daily_log(conn, date)
 }
