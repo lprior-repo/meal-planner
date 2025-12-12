@@ -85,7 +85,8 @@ pub fn test_migration_023_column_is_nullable() {
 
 /// Test that migration 023 documents the purpose
 pub fn test_migration_023_has_clear_intent() {
-  let purpose = "Stores full recipe data as JSONB for faster loading without joins"
+  let purpose =
+    "Stores full recipe data as JSONB for faster loading without joins"
 
   purpose
   |> should.not_equal("")

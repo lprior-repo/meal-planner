@@ -1,6 +1,5 @@
 /// Integration tests for recipe fallback functionality in web endpoints
 /// Tests that when Mealie API fails, the recipe_slug_handler returns a fallback recipe
-
 import gleeunit
 import gleeunit/should
 import meal_planner/mealie/fallback

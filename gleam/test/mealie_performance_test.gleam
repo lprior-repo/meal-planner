@@ -108,7 +108,10 @@ pub fn list_recipes_response_time_baseline_test() {
   let baseline_expected_ms = 100
   let acceptable_variance_percent = 50
   let max_acceptable_ms =
-    baseline_expected_ms + baseline_expected_ms * acceptable_variance_percent / 100
+    baseline_expected_ms
+    + baseline_expected_ms
+    * acceptable_variance_percent
+    / 100
 
   let actual_response_time_ms = 145
 
@@ -156,7 +159,10 @@ pub fn batch_recipe_fetch_scales_linearly_test() {
   let expected_total_time_ms = single_recipe_time_ms * batch_count
   let acceptable_overhead_percent = 20
   let max_acceptable_batch_time =
-    expected_total_time_ms + expected_total_time_ms * acceptable_overhead_percent / 100
+    expected_total_time_ms
+    + expected_total_time_ms
+    * acceptable_overhead_percent
+    / 100
 
   let actual_batch_time_ms = 825
 
@@ -278,7 +284,10 @@ pub fn concurrent_requests_dont_degrade_performance_test() {
   let slowest_concurrent_request_ms = 95
   let acceptable_variance_percent = 50
   let max_acceptable_ms =
-    single_request_baseline_ms + single_request_baseline_ms * acceptable_variance_percent / 100
+    single_request_baseline_ms
+    + single_request_baseline_ms
+    * acceptable_variance_percent
+    / 100
 
   slowest_concurrent_request_ms
   |> should.be_less_than(max_acceptable_ms)
@@ -309,7 +318,10 @@ pub fn large_recipe_payload_performance_test() {
   let complex_recipe_response_ms = 92
   let max_overhead_percent = 30
   let max_acceptable_ms =
-    simple_recipe_response_ms + simple_recipe_response_ms * max_overhead_percent / 100
+    simple_recipe_response_ms
+    + simple_recipe_response_ms
+    * max_overhead_percent
+    / 100
 
   complex_recipe_response_ms
   |> should.be_less_than(max_acceptable_ms)
@@ -321,7 +333,8 @@ pub fn response_serialization_overhead_test() {
 
   let total_response_time_ms = 150
   let estimated_serialization_ms = 15
-  let serialization_percent = estimated_serialization_ms * 100 / total_response_time_ms
+  let serialization_percent =
+    estimated_serialization_ms * 100 / total_response_time_ms
 
   // Serialization should be <20% of total time
   serialization_percent
@@ -338,7 +351,8 @@ pub fn connection_reuse_improves_performance_test() {
 
   let first_request_new_connection_ms = 150
   let second_request_pooled_connection_ms = 75
-  let performance_improvement = first_request_new_connection_ms / second_request_pooled_connection_ms
+  let performance_improvement =
+    first_request_new_connection_ms / second_request_pooled_connection_ms
 
   // Pooling should provide at least 1.5x improvement
   performance_improvement
@@ -418,7 +432,9 @@ fn calculate_percentile(times: List(Int), percentile: Int) -> Int {
 }
 
 /// Generate a summary report of performance metrics
-pub fn generate_performance_report(metrics: List(PerformanceMetrics)) -> BenchmarkReport {
+pub fn generate_performance_report(
+  metrics: List(PerformanceMetrics),
+) -> BenchmarkReport {
   let total = list.length(metrics)
   let successful =
     list.filter(metrics, fn(m) { m.success })
@@ -434,8 +450,7 @@ pub fn generate_performance_report(metrics: List(PerformanceMetrics)) -> Benchma
   let avg = case list.length(response_times) {
     0 -> 0
     count -> {
-      let sum =
-        list.fold(response_times, 0, fn(acc, time) { acc + time })
+      let sum = list.fold(response_times, 0, fn(acc, time) { acc + time })
       sum / count
     }
   }
@@ -474,17 +489,33 @@ pub fn format_performance_report(report: BenchmarkReport) -> String {
 
   let results =
     "Results:\n"
-    <> "  Total Tests: " <> int.to_string(report.total_tests) <> "\n"
-    <> "  Successful: " <> int.to_string(report.successful_tests) <> "\n"
-    <> "  Failed: " <> int.to_string(report.failed_tests) <> "\n"
+    <> "  Total Tests: "
+    <> int.to_string(report.total_tests)
+    <> "\n"
+    <> "  Successful: "
+    <> int.to_string(report.successful_tests)
+    <> "\n"
+    <> "  Failed: "
+    <> int.to_string(report.failed_tests)
+    <> "\n"
 
   let performance =
     "\nResponse Time Metrics (ms):\n"
-    <> "  Average: " <> int.to_string(report.avg_response_time_ms) <> "ms\n"
-    <> "  Minimum: " <> int.to_string(report.min_response_time_ms) <> "ms\n"
-    <> "  Maximum: " <> int.to_string(report.max_response_time_ms) <> "ms\n"
-    <> "  P95 (95th percentile): " <> int.to_string(report.p95_response_time_ms) <> "ms\n"
-    <> "  P99 (99th percentile): " <> int.to_string(report.p99_response_time_ms) <> "ms\n"
+    <> "  Average: "
+    <> int.to_string(report.avg_response_time_ms)
+    <> "ms\n"
+    <> "  Minimum: "
+    <> int.to_string(report.min_response_time_ms)
+    <> "ms\n"
+    <> "  Maximum: "
+    <> int.to_string(report.max_response_time_ms)
+    <> "ms\n"
+    <> "  P95 (95th percentile): "
+    <> int.to_string(report.p95_response_time_ms)
+    <> "ms\n"
+    <> "  P99 (99th percentile): "
+    <> int.to_string(report.p99_response_time_ms)
+    <> "ms\n"
 
   let interpretation =
     "\nPerformance Interpretation:\n"
@@ -500,27 +531,26 @@ pub fn format_performance_report(report: BenchmarkReport) -> String {
 // ============================================================================
 
 pub fn performance_report_generation_test() {
-  let metrics =
-    [
-      PerformanceMetrics(
-        endpoint: "/api/recipes",
-        operation: "list",
-        response_time_ms: 150,
-        status_code: 200,
-        payload_size_bytes: 25000,
-        success: True,
-        error_message: "",
-      ),
-      PerformanceMetrics(
-        endpoint: "/api/recipes/chicken-stir-fry",
-        operation: "get",
-        response_time_ms: 75,
-        status_code: 200,
-        payload_size_bytes: 5000,
-        success: True,
-        error_message: "",
-      ),
-    ]
+  let metrics = [
+    PerformanceMetrics(
+      endpoint: "/api/recipes",
+      operation: "list",
+      response_time_ms: 150,
+      status_code: 200,
+      payload_size_bytes: 25_000,
+      success: True,
+      error_message: "",
+    ),
+    PerformanceMetrics(
+      endpoint: "/api/recipes/chicken-stir-fry",
+      operation: "get",
+      response_time_ms: 75,
+      status_code: 200,
+      payload_size_bytes: 5000,
+      success: True,
+      error_message: "",
+    ),
+  ]
 
   let report = generate_performance_report(metrics)
 
@@ -529,18 +559,17 @@ pub fn performance_report_generation_test() {
 }
 
 pub fn performance_report_formatting_test() {
-  let metrics =
-    [
-      PerformanceMetrics(
-        endpoint: "/api/recipes",
-        operation: "list",
-        response_time_ms: 150,
-        status_code: 200,
-        payload_size_bytes: 25000,
-        success: True,
-        error_message: "",
-      ),
-    ]
+  let metrics = [
+    PerformanceMetrics(
+      endpoint: "/api/recipes",
+      operation: "list",
+      response_time_ms: 150,
+      status_code: 200,
+      payload_size_bytes: 25_000,
+      success: True,
+      error_message: "",
+    ),
+  ]
 
   let report = generate_performance_report(metrics)
   let formatted = format_performance_report(report)

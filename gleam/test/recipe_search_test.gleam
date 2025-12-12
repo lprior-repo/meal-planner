@@ -1,8 +1,8 @@
 /// Tests for recipe search endpoint
 /// Documents expected behavior for meal-planner-yvp5
-import gleeunit/should
 import gleam/json
 import gleam/option.{Some}
+import gleeunit/should
 import meal_planner/mealie/types
 
 pub fn recipe_search_endpoint_returns_json_test() {
