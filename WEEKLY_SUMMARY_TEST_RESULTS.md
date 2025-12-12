@@ -89,7 +89,7 @@ Components:
 
 **Test Cases:**
 - Empty recipe database
-- Mealie API unavailable
+- Tandoor API unavailable
 - Invalid request format
 - Network timeout scenarios
 
