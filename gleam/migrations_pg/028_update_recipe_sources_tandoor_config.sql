@@ -1,4 +1,4 @@
--- Migration 026: Update recipe_sources table for Tandoor configuration
+-- Migration 028: Update recipe_sources table for Tandoor configuration
 -- Ensures recipe source configuration supports Tandoor instead of Mealie
 -- Updates CHECK constraint on type column to use api/scraper/manual values
 -- Adds tandoor_api_key column for Tandoor-specific configuration
