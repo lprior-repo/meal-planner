@@ -681,7 +681,7 @@ The weekly meal summary feature with Tandoor recipe integration is fully impleme
 
 ## Related Documentation
 - API Specification: See metadata section and response examples above
-- Mealie Integration: `gleam/src/meal_planner/mealie/client.gleam`
+- Tandoor Integration: `gleam/src/meal_planner/tandoor/client.gleam`
 - Weekly Plan Logic: `gleam/src/meal_planner/weekly_plan.gleam`
 - Web Handlers: `gleam/src/meal_planner/web.gleam`
 - Test Patterns: `gleam/test/health_endpoint_test.gleam`
