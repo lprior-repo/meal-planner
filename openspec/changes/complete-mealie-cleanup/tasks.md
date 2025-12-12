@@ -1,14 +1,18 @@
 # Implementation Tasks
 
+## STATUS: COMPLETED (2025-12-12)
+
+All Mealie code has been removed. Remaining references are historical (migrations, docs).
+
 ## 1. Source Code - Type References & Imports
-- [ ] 1.1 Update `gleam/src/meal_planner.gleam`: Remove `web.MealieConfig`, replace with `TandoorConfig`
-- [ ] 1.2 Update `gleam/src/meal_planner.gleam`: Change env vars `MEALIE_BASE_URL` → `TANDOOR_BASE_URL`
-- [ ] 1.3 Update `gleam/src/meal_planner.gleam`: Change env vars `MEALIE_API_TOKEN` → `TANDOOR_API_TOKEN`
-- [ ] 1.4 Update `gleam/src/meal_planner.gleam`: Update startup messages to reference Tandoor
-- [ ] 1.5 Update `gleam/src/meal_planner/web.gleam`: Rename `MealieConfig` type to `TandoorConfig`
-- [ ] 1.6 Update `gleam/src/meal_planner/web.gleam`: Remove `import meal_planner/mealie/*` statements
-- [ ] 1.7 Update `gleam/src/meal_planner/web.gleam`: Add `import meal_planner/tandoor/*` statements
-- [ ] 1.8 Update `gleam/src/meal_planner/web.gleam`: Update comments referencing Mealie API
+- [x] 1.1 Update `gleam/src/meal_planner.gleam`: Remove `web.MealieConfig`, replace with `TandoorConfig` - COMPLETED
+- [x] 1.2 Update `gleam/src/meal_planner.gleam`: Change env vars `MEALIE_BASE_URL` → `TANDOOR_BASE_URL` - COMPLETED
+- [x] 1.3 Update `gleam/src/meal_planner.gleam`: Change env vars `MEALIE_API_TOKEN` → `TANDOOR_API_TOKEN` - COMPLETED
+- [x] 1.4 Update `gleam/src/meal_planner.gleam`: Update startup messages to reference Tandoor - COMPLETED
+- [x] 1.5 Update `gleam/src/meal_planner/web.gleam`: Rename `MealieConfig` type to `TandoorConfig` - COMPLETED
+- [x] 1.6 Update `gleam/src/meal_planner/web.gleam`: Remove `import meal_planner/mealie/*` statements - COMPLETED (entire mealie/ deleted)
+- [x] 1.7 Update `gleam/src/meal_planner/web.gleam`: Add `import meal_planner/tandoor/*` statements - N/A (Tandoor not yet implemented)
+- [x] 1.8 Update `gleam/src/meal_planner/web.gleam`: Update comments referencing Mealie API - COMPLETED
 
 ## 2. Source Code - Comments & Documentation
 - [ ] 2.1 Update `gleam/src/meal_planner/storage/logs.gleam`: Replace Mealie comments with Tandoor
