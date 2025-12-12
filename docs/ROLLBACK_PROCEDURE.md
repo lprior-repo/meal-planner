@@ -7,7 +7,7 @@ This document provides comprehensive guidance for rolling back deployments in th
 - A migration introduces data corruption or schema conflicts
 - Application code contains critical bugs or regressions
 - Performance degradation occurs after deployment
-- Integration issues arise with Mealie or external services
+- Integration issues arise with Tandoor or external services
 
 **Key Principle**: Always rollback database changes BEFORE code changes to maintain consistency.
 
@@ -429,8 +429,8 @@ curl http://localhost:8080/health
 
 ```gleam
 // File: gleam/src/meal_planner/features.gleam
-pub fn is_mealie_integration_enabled() -> Bool {
-  case env.get("FEATURE_MEALIE_ENABLED") {
+pub fn is_tandoor_integration_enabled() -> Bool {
+  case env.get("FEATURE_TANDOOR_ENABLED") {
     Ok("true") -> True
     _ -> False
   }
@@ -440,11 +440,11 @@ pub fn is_mealie_integration_enabled() -> Bool {
 Usage in handlers:
 
 ```gleam
-// File: gleam/src/meal_planner/web/handlers/meals.gleam
-pub fn get_meals(req: Request(Connection)) -> Response(String) {
-  case features.is_mealie_integration_enabled() {
-    True -> mealie.get_meals()  // New code path
-    False -> legacy.get_meals() // Fallback code path
+// File: gleam/src/meal_planner/web/handlers/recipes.gleam
+pub fn get_recipes(req: Request(Connection)) -> Response(String) {
+  case features.is_tandoor_integration_enabled() {
+    True -> tandoor.get_recipes()  // New code path
+    False -> legacy.get_recipes()  // Fallback code path
   }
 }
 ```
@@ -453,13 +453,13 @@ Rollback without code changes:
 
 ```bash
 # Set environment variable
-export FEATURE_MEALIE_ENABLED=false
+export FEATURE_TANDOOR_ENABLED=false
 
 # Restart application
 docker-compose restart meal-planner-gleam
 
 # Verify
-curl http://localhost:8080/api/meals
+curl http://localhost:8080/api/recipes
 
 # Logs should show using legacy path
 docker-compose logs meal-planner-gleam | grep "using legacy"
@@ -632,7 +632,7 @@ bash scripts/smoke-tests.sh
 
 ### 3.2 Coordinated Multi-Service Rollback
 
-**Scenario**: Changes affect both Gleam app and Mealie integration.
+**Scenario**: Changes affect both Gleam app and Tandoor integration.
 
 ```bash
 # Check all services status
@@ -643,14 +643,14 @@ docker-compose down
 
 # Backup databases
 pg_dump -h localhost -U postgres -d meal_planner -F custom -f meal_planner_backup.dump
-pg_dump -h localhost -U postgres -d mealie -F custom -f mealie_backup.dump
+pg_dump -h localhost -U postgres -d tandoor -F custom -f tandoor_backup.dump
 
 # Start PostgreSQL only
 docker-compose up -d meal-planner-postgres
 
 # Run database rollbacks
 psql -h localhost -U postgres -d meal_planner -c "..."
-psql -h localhost -U postgres -d mealie -c "..."
+psql -h localhost -U postgres -d tandoor -c "..."
 
 # Revert code
 git checkout v1.2.0
@@ -660,7 +660,7 @@ docker-compose up --build -d
 
 # Verify all services
 curl http://localhost:8080/health
-curl http://localhost:9000/api/about
+curl http://localhost:8000/api/about
 ```
 
 ---
