@@ -1,3 +1,4 @@
+-- OBSOLETE: This migration is no longer used.
 -- Migration 014: Audit Logging for recipe_sources (PostgreSQL)
 -- Adds comprehensive audit trail for INSERT/UPDATE/DELETE operations on recipe_sources table
 

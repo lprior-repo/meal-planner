@@ -1,3 +1,4 @@
+-- OBSOLETE: This migration is no longer used.
 -- Migration: Add Tim Ferriss Slow Carb Diet Recipe Examples
 -- Based on "The 4-Hour Body" principles:
 -- - High protein (30g+ per meal)
