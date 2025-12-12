@@ -6,9 +6,9 @@ Update food log API to accept Tandoor recipe slugs
 ## Changes Made
 
 ### 1. Updated Source Type Validation in `storage/logs.gleam`
-- The existing validation function already supports 'mealie_recipe' source type
-- Database constraint was updated in migration 022 to support 'mealie_recipe'
-- All legacy 'recipe' entries were migrated to 'mealie_recipe' in the database
+- The existing validation function already supports 'tandoor_recipe' source type
+- Database constraint was updated in migration 022 to support 'tandoor_recipe'
+- All legacy 'recipe' entries were migrated to 'tandoor_recipe' in the database
 
 ### 2. Added `FoodLogInput` Type in `storage/logs.gleam`
 A new public type for accepting food log entries via API:
@@ -16,7 +16,7 @@ A new public type for accepting food log entries via API:
 pub type FoodLogInput {
   FoodLogInput(
     date: String,                      // ISO 8601 format (YYYY-MM-DD)
-    recipe_slug: String,               // Mealie recipe slug (e.g., "chicken-stir-fry")
+    recipe_slug: String,               // Tandoor recipe slug (e.g., "chicken-stir-fry")
     recipe_name: String,               // Human-readable recipe name
     servings: Float,                   // Number of servings
     protein: Float,                    // Grams of protein
@@ -49,10 +49,10 @@ pub type FoodLogInput {
 }
 ```
 
-### 3. Added `save_food_log_from_mealie_recipe` Function
+### 3. Added `save_food_log_from_tandoor_recipe` Function
 A new public function in `storage/logs.gleam` that:
-- Accepts a `FoodLogInput` with Mealie recipe slug
-- Automatically sets `source_type` to 'mealie_recipe'
+- Accepts a `FoodLogInput` with Tandoor recipe slug
+- Automatically sets `source_type` to 'tandoor_recipe'
 - Sets `source_id` to the recipe slug
 - Generates a unique entry ID using recipe slug + random suffix
 - Parses meal type correctly
@@ -62,7 +62,7 @@ A new public function in `storage/logs.gleam` that:
 
 Function signature:
 ```gleam
-pub fn save_food_log_from_mealie_recipe(
+pub fn save_food_log_from_tandoor_recipe(
   conn: pog.Connection,
   input: FoodLogInput,
 ) -> Result(String, StorageError)

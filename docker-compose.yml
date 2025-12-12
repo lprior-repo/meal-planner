@@ -21,57 +21,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Mealie Recipe Manager (Python 3.12 + FastAPI + Vue.js)
-  mealie:
-    image: ghcr.io/mealie-recipes/mealie:v3.6.1
-    container_name: meal-planner-mealie
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-    ports:
-      - "9000:9000"
-    environment:
-      # Database Configuration
-      DB_ENGINE: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_SERVER: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: mealie
-
-      # API Configuration
-      BASE_URL: http://localhost:9000
-      API_PORT: 9000
-      API_DOCS: "true"
-
-      # Application Settings
-      ALLOW_SIGNUP: "true"
-      ALLOW_PASSWORD_LOGIN: "true"
-      DEFAULT_GROUP: Home
-      DEFAULT_HOUSEHOLD: Family
-
-      # Security
-      SECURITY_MAX_LOGIN_ATTEMPTS: 5
-      SECURITY_USER_LOCKOUT_TIME: 24
-
-      # Logging
-      LOG_LEVEL: INFO
-
-      # OpenAI Integration (optional - set via .env file)
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o}
-      OPENAI_ENABLE_IMAGE_SERVICES: ${OPENAI_ENABLE_IMAGE_SERVICES:-true}
-
-    volumes:
-      - mealie_data:/app/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/api/app/about"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
   # Gleam Backend (AI Meal Planning + Macro Calculations)
   # Note: This will be built from source once the Gleam HTTP server is implemented
   gleam-backend:
