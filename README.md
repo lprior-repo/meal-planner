@@ -76,10 +76,13 @@ psql -d meal_planner -f gleam/migrations_pg/010_optimize_search_performance.sql
 
 ### 4. Setup Tandoor (Recipe Management)
 
-Tandoor is an external recipe management system that integrates with the meal planner:
+Tandoor is the integrated recipe management system that works with the meal planner. Use the automated startup which handles this, or see below for manual setup:
 
 ```bash
-# Start Tandoor container (requires Docker)
+# Using automated startup (RECOMMENDED)
+./run.sh start
+
+# OR manually start Tandoor container (requires Docker)
 docker run -d \
   --name tandoor \
   -p 8000:8000 \
@@ -91,7 +94,7 @@ docker run -d \
   -e SECRET_KEY=your-secret-key \
   vabene1111/recipes:latest
 
-# Create Tandoor database
+# Create Tandoor database (if not using automated startup)
 createdb tandoor
 
 # Access Tandoor UI
@@ -101,7 +104,7 @@ open http://localhost:8000
 **Environment Variables for Tandoor Integration:**
 ```bash
 TANDOOR_BASE_URL=http://localhost:8000  # Tandoor API endpoint
-TANDOOR_API_TOKEN=your-api-token        # Get from Tandoor settings
+TANDOOR_API_TOKEN=your-api-token        # Get from Tandoor settings > API
 ```
 
 **Note**: Tandoor uses a separate `tandoor` database - do not mix with the `meal_planner` database.
