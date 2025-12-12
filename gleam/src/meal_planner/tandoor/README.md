@@ -134,6 +134,141 @@ case fallback.should_allow_request(state) {
 }
 ```
 
+### `sync.gleam` - Data Synchronization Utilities
+
+Provides comprehensive data synchronization tools for Tandoor recipe management.
+
+#### Features
+
+- **Sync Status Tracking**: Six-state sync status model
+  - `Synced`: Recipe is in sync with Tandoor
+  - `PendingSync`: Waiting to be synced
+  - `SyncFailed`: Last sync attempt failed
+  - `LocalChanges`: Local modifications not synced
+  - `RemoteChanges`: Remote modifications not applied
+  - `Conflict`: Both local and remote have changes
+
+- **Sync Session Management**: Track batch sync operations
+  - Create and monitor sync sessions
+  - Track progress (synced/failed/conflicts)
+  - Calculate completion percentage
+  - Generate progress reports
+
+- **Recipe Sync State**: Track individual recipe sync metadata
+  - Last sync timestamp
+  - Local/remote modification times
+  - Sync error messages
+  - Conflict detection
+
+- **Batch Operations**: Efficient handling of multiple recipes
+  - Query pending sync recipes
+  - Get recipes with conflicts
+  - Count by sync status
+  - Resolve conflicts (prefer local/remote)
+
+#### Types
+
+```gleam
+pub type SyncStatus {
+  Synced | PendingSync | SyncFailed | LocalChanges | RemoteChanges | Conflict
+}
+
+pub type SyncSession {
+  SyncSession(
+    session_id: String,
+    started_at: String,
+    completed_at: Option(String),
+    total_recipes: Int,
+    synced_count: Int,
+    failed_count: Int,
+    conflict_count: Int,
+  )
+}
+
+pub type RecipeSyncState {
+  RecipeSyncState(
+    tandoor_id: Int,
+    recipe_id: String,
+    sync_status: SyncStatus,
+    last_synced_at: Option(String),
+    local_modified_at: Option(String),
+    remote_modified_at: Option(String),
+    sync_error: Option(String),
+  )
+}
+```
+
+#### Key Functions
+
+**Session Management**:
+- `create_sync_session(db, id, total, started_at)` - Initialize batch sync
+- `get_sync_session(db, id)` - Retrieve session state
+- `complete_sync_session(db, id, completed_at)` - Mark session complete
+- `increment_synced(db, id)` - Update progress
+- `increment_failed(db, id)` - Track failures
+- `increment_conflicts(db, id)` - Track conflicts
+
+**Recipe Sync**:
+- `track_recipe_sync(db, id, recipe_id, status, now)` - Record sync state
+- `get_recipe_sync_state(db, id)` - Retrieve recipe state
+- `update_recipe_sync_status(db, id, status, error, now)` - Update status
+- `get_pending_sync_recipes(db)` - List recipes needing sync
+- `get_conflict_recipes(db)` - List conflicted recipes
+
+**Conflict Resolution**:
+- `detect_conflict(state)` - Check for local/remote conflicts
+- `resolve_conflict_local(db, id, now)` - Keep local version
+- `resolve_conflict_remote(db, id, now)` - Accept remote version
+- `has_local_modifications(state)` - Check for local changes
+- `has_remote_modifications(state)` - Check for remote changes
+
+**Reporting**:
+- `get_sync_progress_percentage(session)` - Calculate progress
+- `format_sync_report(session)` - Generate human-readable report
+- `count_by_sync_status(db)` - Get counts per status
+
+#### Usage Example
+
+```gleam
+import meal_planner/tandoor/sync
+
+// Start a batch sync session
+let session_id = "sync-2025-12-12-001"
+let assert Ok(_) = sync.create_sync_session(db, session_id, 100, now)
+
+// Process recipes
+let assert Ok(pending) = sync.get_pending_sync_recipes(db)
+list.map(pending, fn(recipe_state) {
+  case sync_to_tandoor(recipe_state) {
+    Ok(_) -> sync.increment_synced(db, session_id)
+    Error(reason) -> {
+      sync.update_recipe_sync_status(
+        db,
+        recipe_state.tandoor_id,
+        sync.SyncFailed,
+        Some(reason),
+        now
+      )
+      sync.increment_failed(db, session_id)
+    }
+  }
+})
+
+// Check for conflicts
+let assert Ok(conflicts) = sync.get_conflict_recipes(db)
+list.map(conflicts, fn(state) {
+  case resolve_conflict(state) {
+    PreferLocal -> sync.resolve_conflict_local(db, state.tandoor_id, now)
+    PreferRemote -> sync.resolve_conflict_remote(db, state.tandoor_id, now)
+  }
+})
+
+// Complete session and report
+let assert Ok(_) = sync.complete_sync_session(db, session_id, now)
+let assert Ok(final_session) = sync.get_sync_session(db, session_id)
+io.println(sync.format_sync_report(final_session))
+```
+
 ### `connectivity.gleam` (Optional)
 
 HTTP connectivity checking and timeout detection for service health monitoring.
