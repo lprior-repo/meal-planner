@@ -1,5 +1,6 @@
 /// PostgreSQL storage module for nutrition data persistence
 import gleam/dynamic/decode
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -1400,3 +1401,161 @@ fn validate_recipe_exists(
 }
 
 // ============================================================================
+
+// ============================================================================
+// Food Log Entry with Mealie Recipe Slug Support
+// ============================================================================
+
+/// Input type for logging a meal with a Mealie recipe slug
+///
+/// This type is used by the API to accept meal log entries that reference
+/// recipes from Mealie using their slugs (e.g., "chicken-stir-fry").
+pub type FoodLogInput {
+  FoodLogInput(
+    date: String,
+    recipe_slug: String,
+    recipe_name: String,
+    servings: Float,
+    protein: Float,
+    fat: Float,
+    carbs: Float,
+    meal_type: String,
+    // Optional micronutrients
+    fiber: Option(Float),
+    sugar: Option(Float),
+    sodium: Option(Float),
+    cholesterol: Option(Float),
+    vitamin_a: Option(Float),
+    vitamin_c: Option(Float),
+    vitamin_d: Option(Float),
+    vitamin_e: Option(Float),
+    vitamin_k: Option(Float),
+    vitamin_b6: Option(Float),
+    vitamin_b12: Option(Float),
+    folate: Option(Float),
+    thiamin: Option(Float),
+    riboflavin: Option(Float),
+    niacin: Option(Float),
+    calcium: Option(Float),
+    iron: Option(Float),
+    magnesium: Option(Float),
+    phosphorus: Option(Float),
+    potassium: Option(Float),
+    zinc: Option(Float),
+  )
+}
+
+/// Save a food log entry from a Mealie recipe slug
+///
+/// This function creates a FoodLogEntry from the provided input and Mealie recipe slug,
+/// then saves it to the database. The source_type is automatically set to 'mealie_recipe'
+/// and the source_id is set to the recipe slug.
+pub fn save_food_log_from_mealie_recipe(
+  conn: pog.Connection,
+  input: FoodLogInput,
+) -> Result(String, StorageError) {
+  // Generate unique ID for this log entry using recipe slug and random suffix
+  let random_suffix = int.to_string(int.random(999999))
+  let entry_id_str = input.recipe_slug <> "-" <> random_suffix
+
+  // Parse meal type
+  let meal_type = case input.meal_type {
+    "breakfast" -> Breakfast
+    "lunch" -> Lunch
+    "dinner" -> Dinner
+    _ -> Snack
+  }
+
+  // Create micronutrients if any are provided
+  let micronutrients = case
+    input.fiber,
+    input.sugar,
+    input.sodium,
+    input.cholesterol,
+    input.vitamin_a,
+    input.vitamin_c,
+    input.vitamin_d,
+    input.vitamin_e,
+    input.vitamin_k,
+    input.vitamin_b6,
+    input.vitamin_b12,
+    input.folate,
+    input.thiamin,
+    input.riboflavin,
+    input.niacin,
+    input.calcium,
+    input.iron,
+    input.magnesium,
+    input.phosphorus,
+    input.potassium,
+    input.zinc
+  {
+    None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None
+    -> None
+
+    _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ->
+      Some(types.Micronutrients(
+        fiber: input.fiber,
+        sugar: input.sugar,
+        sodium: input.sodium,
+        cholesterol: input.cholesterol,
+        vitamin_a: input.vitamin_a,
+        vitamin_c: input.vitamin_c,
+        vitamin_d: input.vitamin_d,
+        vitamin_e: input.vitamin_e,
+        vitamin_k: input.vitamin_k,
+        vitamin_b6: input.vitamin_b6,
+        vitamin_b12: input.vitamin_b12,
+        folate: input.folate,
+        thiamin: input.thiamin,
+        riboflavin: input.riboflavin,
+        niacin: input.niacin,
+        calcium: input.calcium,
+        iron: input.iron,
+        magnesium: input.magnesium,
+        phosphorus: input.phosphorus,
+        potassium: input.potassium,
+        zinc: input.zinc,
+      ))
+  }
+
+  // Create the FoodLogEntry
+  let entry = FoodLogEntry(
+    id: id.log_entry_id(entry_id_str),
+    recipe_id: id.recipe_id(input.recipe_slug),
+    recipe_name: input.recipe_name,
+    servings: input.servings,
+    macros: Macros(protein: input.protein, fat: input.fat, carbs: input.carbs),
+    micronutrients: micronutrients,
+    meal_type: meal_type,
+    logged_at: "",
+    source_type: "mealie_recipe",
+    source_id: input.recipe_slug,
+  )
+
+  // Save the entry to the database
+  use _ <- result.try(save_food_log_entry(conn, input.date, entry))
+
+  // Return the entry ID on success
+  Ok(entry_id_str)
+}
