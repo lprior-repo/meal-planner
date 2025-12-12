@@ -80,6 +80,13 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["api", "meal-plan"] -> meal_plan_handler(req, ctx)
     ["api", "macros", "calculate"] -> macro_calc_handler(req)
 
+    // Recipe migration progress endpoint
+    ["api", "migrations", "progress", migration_id] ->
+      migration_progress_handler(req, ctx, migration_id)
+
+    // Paginated food search endpoint
+    ["api", "foods", "search"] -> food_search_handler(req)
+
     // 404 for unknown routes
     _ -> wisp.not_found()
   }
