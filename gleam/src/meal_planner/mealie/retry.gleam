@@ -8,29 +8,7 @@
 import gleam/erlang/process
 import gleam/int
 import gleam/string
-import meal_planner/mealie/types.{type MealieApiError}
-
-/// Client-side errors (mirrored from client module)
-pub type ClientError {
-  /// HTTP request failed
-  HttpError(String)
-  /// JSON decoding failed
-  DecodeError(String)
-  /// API returned an error response
-  ApiError(MealieApiError)
-  /// Invalid configuration (missing base URL or token)
-  ConfigError(String)
-  /// Connection refused by server
-  ConnectionRefused(message: String)
-  /// Network request timed out
-  NetworkTimeout(message: String, timeout_ms: Int)
-  /// DNS resolution failed for hostname
-  DnsResolutionFailed(message: String)
-  /// Recipe not found with the given slug
-  RecipeNotFound(slug: String)
-  /// Mealie service is unavailable
-  MealieUnavailable(message: String)
-}
+import meal_planner/mealie/client.{type ClientError}
 
 /// Check if an error is retryable
 ///
@@ -47,11 +25,11 @@ pub type ClientError {
 pub fn is_retryable(error: ClientError) -> Bool {
   case error {
     // Retry on network timeouts
-    NetworkTimeout(_, _) -> True
+    client.NetworkTimeout(_, _) -> True
     // Retry on connection refused
-    ConnectionRefused(_) -> True
+    client.ConnectionRefused(_) -> True
     // Retry on HTTP 5xx errors (server errors)
-    ApiError(api_err) -> {
+    client.ApiError(api_err) -> {
       string.contains(api_err.message, "HTTP 5")
     }
     // Don't retry on:
