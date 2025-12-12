@@ -13,6 +13,7 @@ import meal_planner/storage.{type StorageError}
 import meal_planner/storage/profile.{DatabaseError, NotFound}
 import meal_planner/types.{
   type Recipe, High, Ingredient, Low, Macros, Medium, Recipe,
+  recipe_decoder,
 }
 import pog
 
@@ -120,24 +121,16 @@ pub fn get_auto_plan(
         recipe_json,
       ) = row
 
-      // Try to load recipes from recipe_json first (fast path)
+      // Parse recipes from recipe_json
       let recipes_result = case recipe_json {
         Some(json_str) -> {
           // Parse recipes from JSON
-          json.parse(json_str, using: decode.list(types.recipe_decoder()))
+          json.parse(json_str, using: decode.list(recipe_decoder()))
           |> result.map_error(fn(_) { "Failed to decode recipe JSON" })
         }
         None -> {
-          // Fallback to loading from database (slow path)
-          let recipe_ids = string.split(recipe_ids_str, ",")
-          load_recipes_by_ids(conn, recipe_ids)
-          |> result.map_error(fn(e) {
-            case e {
-              DatabaseError(msg) -> msg
-              NotFound -> "Recipes not found"
-              _ -> "Unknown error loading recipes"
-            }
-          })
+          // Recipe JSON should always be present; if missing, return error
+          Error("Recipe JSON data is missing")
         }
       }
 
@@ -155,92 +148,13 @@ pub fn get_auto_plan(
             generated_at: generated_at,
             total_macros: total_macros,
             config: config,
+            recipe_json: recipe_json |> option.unwrap(""),
           ))
         Error(e), _ -> Error(DatabaseError(e))
         _, Error(e) -> Error(DatabaseError(e))
       }
     }
   }
-}
-
-/// Load multiple recipes by their IDs
-fn load_recipes_by_ids(
-  conn: pog.Connection,
-  ids: List(String),
-) -> Result(List(Recipe), StorageError) {
-  case ids {
-    [] -> Ok([])
-    _ -> {
-      // Build placeholders for IN clause
-      let placeholders =
-        list.index_map(ids, fn(_, i) { "$" <> int.to_string(i + 1) })
-        |> string.join(", ")
-
-      let sql =
-        "SELECT id, name, ingredients, instructions, protein, fat, carbs, servings, category, fodmap_level, vertical_compliant
-         FROM recipes WHERE id IN ("
-        <> placeholders
-        <> ")"
-
-      let decoder = recipe_row_decoder()
-
-      // Build query with parameters
-      let query =
-        list.fold(ids, pog.query(sql), fn(q, id) {
-          pog.parameter(q, pog.text(id))
-        })
-
-      case pog.returning(query, decoder) |> pog.execute(conn) {
-        Error(e) -> Error(DatabaseError(format_pog_error(e)))
-        Ok(pog.Returned(_, recipes)) -> Ok(recipes)
-      }
-    }
-  }
-}
-
-/// Decoder for recipe rows
-fn recipe_row_decoder() -> decode.Decoder(Recipe) {
-  use id_str <- decode.field(0, decode.string)
-  use name <- decode.field(1, decode.string)
-  use ingredients_str <- decode.field(2, decode.string)
-  use instructions_str <- decode.field(3, decode.string)
-  use protein <- decode.field(4, decode.float)
-  use fat <- decode.field(5, decode.float)
-  use carbs <- decode.field(6, decode.float)
-  use servings <- decode.field(7, decode.int)
-  use category <- decode.field(8, decode.string)
-  use fodmap_str <- decode.field(9, decode.string)
-  use vertical_compliant <- decode.field(10, decode.bool)
-
-  let ingredients =
-    string.split(ingredients_str, "|")
-    |> list.map(fn(part) {
-      case string.split(part, ":") {
-        [name, quantity] -> Ingredient(name: name, quantity: quantity)
-        _ -> Ingredient(name: part, quantity: "")
-      }
-    })
-
-  let instructions = string.split(instructions_str, "|")
-
-  let fodmap_level = case fodmap_str {
-    "low" -> Low
-    "medium" -> Medium
-    "high" -> High
-    _ -> Low
-  }
-
-  decode.success(Recipe(
-    id: id.recipe_id(id_str),
-    name: name,
-    ingredients: ingredients,
-    instructions: instructions,
-    macros: Macros(protein: protein, fat: fat, carbs: carbs),
-    servings: servings,
-    category: category,
-    fodmap_level: fodmap_level,
-    vertical_compliant: vertical_compliant,
-  ))
 }
 
 // ============================================================================
