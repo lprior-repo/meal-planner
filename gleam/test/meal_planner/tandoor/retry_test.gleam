@@ -8,6 +8,7 @@
 /// - Success and failure scenarios
 
 import gleam/int
+import gleam/result
 import gleeunit
 import gleeunit/should
 import meal_planner/tandoor/retry
