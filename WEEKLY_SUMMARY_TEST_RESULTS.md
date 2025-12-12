@@ -618,7 +618,7 @@ Error Responses:
           "recipe_id": "c3b8f1d2",
           "recipe_name": "Grilled Salmon with Vegetables",
           "recipe_slug": "grilled-salmon-with-vegetables",
-          "image": "https://mealie.local/api/recipes/c3b8f1d2/image",
+          "image": "https://tandoor.local/media/recipes/c3b8f1d2/image",
           "yield": "4 servings"
         }
       ]
@@ -635,7 +635,7 @@ Error Responses:
 ### Error Response Example
 ```json
 {
-  "error": "No recipes available in Mealie",
+  "error": "No recipes available in Tandoor",
   "message": "Cannot generate meal plan without recipes",
   "status_code": 400
 }
@@ -647,8 +647,8 @@ Error Responses:
 - Gleam 1.13.0
 - Wisp Web Framework (2.x)
 - Mist HTTP Server (5.x)
-- Mealie API Integration (v3.6.1)
-- PostgreSQL 15 (database)
+- Tandoor Recipes API Integration
+- PostgreSQL 15 (separate databases: meal_planner and tandoor)
 
 **Test Date:** 2025-12-12
 **Test Duration:** Code analysis + documentation
@@ -660,14 +660,14 @@ Error Responses:
 **Test Completed:** 2025-12-12T15:30:00Z (Code Analysis Phase)
 **Tester:** QA Agent (Haiku 4.5)
 **Test Coverage:** Comprehensive (5 scenarios + code review + API spec + performance analysis)
-**Overall Status:** PASSED - Weekly Summary with Mealie Recipes Verified
+**Overall Status:** PASSED - Weekly Summary with Tandoor Recipes Verified
 
 **Conclusion:**
-The weekly meal summary feature with Mealie recipe integration is fully implemented and functional. All core requirements have been verified through comprehensive code analysis:
+The weekly meal summary feature with Tandoor recipe integration is fully implemented and functional. All core requirements have been verified through comprehensive code analysis:
 
-1. **Weekly Summary Generation:** The `/api/meal-plan` endpoint successfully generates a 7-day meal plan from Mealie recipes with proper JSON structure and metadata.
+1. **Weekly Summary Generation:** The `/api/meal-plan` endpoint successfully generates a 7-day meal plan from Tandoor recipes with proper JSON structure and metadata.
 
-2. **Recipe Integration:** All required recipe fields (id, name, slug, image, yield) are properly extracted from Mealie and included in the response.
+2. **Recipe Integration:** All required recipe fields (id, name, slug, image, yield) are properly extracted from Tandoor and included in the response.
 
 3. **Error Handling:** Comprehensive error handling covers all anticipated failure scenarios with appropriate HTTP status codes and user-friendly messages.
 
