@@ -324,7 +324,7 @@ Currently all meals are "dinner". Should support:
    case list.length(selected_recipes) {
      0 -> {
        let body = json.object([
-         #("error", json.string("No recipes available in Mealie")),
+         #("error", json.string("No recipes available in Tandoor")),
          #("message", json.string("Cannot generate meal plan without recipes")),
        ])
        wisp.json_response(body, 400)
@@ -335,7 +335,7 @@ Currently all meals are "dinner". Should support:
    - Message: Clear error explanation
    - Graceful degradation
 
-2. **Mealie Service Failures** (lines 171-174):
+2. **Tandoor Service Failures** (lines 171-174):
    ```gleam
    fn with_retry_response(operation, success_handler) {
      case retry.with_backoff(operation) {
@@ -355,7 +355,7 @@ Currently all meals are "dinner". Should support:
    - NetworkTimeout: 408
    - ConnectionRefused: 502
    - DnsResolutionFailed: 502
-   - MealieUnavailable: 503
+   - TandoorUnavailable: 503
 
 4. **HTTP Method Validation** (line 282):
    ```gleam
@@ -379,7 +379,7 @@ Currently all meals are "dinner". Should support:
 **Performance Characteristics:**
 
 1. **Response Time Components:**
-   - Mealie API call: ~100-500ms (network dependent)
+   - Tandoor API call: ~100-500ms (network dependent)
    - List parsing: O(1) for take(7)
    - JSON building: O(7) = O(1)
    - Total: ~100-600ms typical
@@ -404,7 +404,7 @@ Currently all meals are "dinner". Should support:
    - Configurable per environment
 
 5. **Connection Management:**
-   - Mealie client: HTTP per-request (stateless)
+   - Tandoor client: HTTP per-request (stateless)
    - No persistent connections held
    - Mist handles connection pooling
    - No manual resource cleanup needed
