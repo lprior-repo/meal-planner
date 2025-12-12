@@ -3,10 +3,12 @@
 //// See: https://docs.mealie.io/documentation/getting-started/api-usage/
 
 import gleam/dynamic/decode
+import gleam/erlang/process
 import gleam/http
 import gleam/http/request
 import gleam/http/response
 import gleam/httpc
+import gleam/int
 import gleam/json
 import gleam/option.{None, Some}
 import gleam/result
@@ -458,5 +460,47 @@ pub fn error_to_string(error: ClientError) -> String {
     DnsResolutionFailed(msg) -> "DNS Resolution Failed: " <> msg
     RecipeNotFound(slug) -> "Recipe Not Found: " <> slug
     MealieUnavailable(msg) -> "Mealie Unavailable: " <> msg
+  }
+}
+
+/// Convert ClientError to a simple, user-friendly message
+///
+/// This function strips out technical details and provides concise,
+/// actionable messages suitable for displaying to end users.
+///
+/// Example:
+/// ```gleam
+/// case get_recipe(config, "invalid-recipe") {
+///   Error(err) -> {
+///     let user_msg = error_to_user_message(err)
+///     io.println("Sorry: " <> user_msg)
+///   }
+///   Ok(recipe) -> // ...
+/// }
+/// ```
+pub fn error_to_user_message(error: ClientError) -> String {
+  case error {
+    HttpError(_) ->
+      "Unable to connect to recipe service. Please try again later."
+    DecodeError(_) ->
+      "Received invalid data from recipe service. Please try again."
+    ApiError(api_err) -> {
+      // Use the API's message if it's user-friendly, otherwise provide generic message
+      case api_err.message {
+        msg if msg != "" -> msg
+        _ -> "Recipe service error. Please try again later."
+      }
+    }
+    ConfigError(_) ->
+      "Recipe service is not properly configured. Please contact support."
+    ConnectionRefused(_) ->
+      "Cannot reach recipe service. Please check your connection and try again."
+    NetworkTimeout(_, _) ->
+      "Request timed out. The recipe service is taking too long to respond."
+    DnsResolutionFailed(_) ->
+      "Cannot find recipe service. Please check your internet connection."
+    RecipeNotFound(slug) -> "Recipe '" <> slug <> "' was not found."
+    MealieUnavailable(_) ->
+      "Recipe service is temporarily unavailable. Please try again later."
   }
 }
