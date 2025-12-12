@@ -114,7 +114,7 @@ pub fn get_auto_plan(
     Ok(pog.Returned(_, [row, ..])) -> {
       let #(
         plan_id,
-        recipe_ids_str,
+        _recipe_ids_str,
         generated_at,
         total_macros,
         config_json,
