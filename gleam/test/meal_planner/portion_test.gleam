@@ -80,7 +80,7 @@ pub fn calculate_portion_mealie_recipe_test() {
     recipe_category: [
       MealieCategory(id: "cat1", name: "Main", slug: "main"),
     ],
-    recipe_tags: [],
+    tags: [],
     nutrition: Some(
       MealieNutrition(
         calories: Some("300"),
@@ -92,6 +92,8 @@ pub fn calculate_portion_mealie_recipe_test() {
         sugar_content: None,
       ),
     ),
+    date_added: None,
+    date_updated: None,
   )
 
   let target = Macros(protein: 60.0, fat: 20.0, carbs: 40.0)
@@ -124,7 +126,7 @@ pub fn calculate_portion_mealie_recipe_with_units_test() {
     recipe_category: [
       MealieCategory(id: "cat2", name: "Protein", slug: "protein"),
     ],
-    recipe_tags: [],
+    tags: [],
     nutrition: Some(
       MealieNutrition(
         calories: Some("150"),
@@ -136,6 +138,8 @@ pub fn calculate_portion_mealie_recipe_with_units_test() {
         sugar_content: None,
       ),
     ),
+    date_added: None,
+    date_updated: None,
   )
 
   let target = Macros(protein: 50.0, fat: 10.0, carbs: 4.0)

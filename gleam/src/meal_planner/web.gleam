@@ -308,7 +308,7 @@ fn meal_plan_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
           // Build daily meal plans from selected recipes
           let daily_meals =
             list.index_map(selected_recipes, fn(recipe, day_index) {
-              let day_names = [
+              let _day_names = [
                 "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
                 "Sunday",
               ]
