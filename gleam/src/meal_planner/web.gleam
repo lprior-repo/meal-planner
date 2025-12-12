@@ -79,12 +79,9 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     [] -> health_handler(req)
     ["health"] -> health_handler(req)
 
-    // API endpoints
+    // API endpoints (stubs - to be implemented)
     ["api", "meal-plan"] -> meal_plan_handler(req, ctx)
     ["api", "macros", "calculate"] -> macro_calc_handler(req)
-    ["api", "vertical-diet", "check"] -> vertical_diet_handler(req, ctx)
-    ["api", "recipes", "search"] -> recipe_search_handler(req, ctx)
-    ["api", "recipes", slug] -> recipe_slug_handler(req, ctx, slug)
 
     // 404 for unknown routes
     _ -> wisp.not_found()
@@ -176,11 +173,11 @@ fn with_retry_and_fallback_response(
 /// Returns 200 OK with service status and Mealie connection status
 /// GET /health or /
 fn health_handler(_req: wisp.Request) -> wisp.Response {
-  // Load config to check Mealie
+  // Load config to check Tandoor
   let app_config = config.load()
 
-  // Check if Mealie is configured
-  let mealie_configured = config.has_mealie_integration(app_config)
+  // Check if Tandoor is configured
+  let mealie_configured = config.has_tandoor_integration(app_config)
 
   // Attempt to connect to Mealie if configured
   let mealie_status = case mealie_configured {

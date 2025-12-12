@@ -39,28 +39,28 @@ pub fn enrich_entries_with_tandoor_data(
   list.map(entries, fn(entry) { enrich_entry_with_tandoor_data(entry, cfg) })
 }
 
-/// Batch enrich multiple entries with Mealie data using single API call
+/// Batch enrich multiple entries with Tandoor data using single API call
 /// Fetches all unique recipes in one batch call instead of individual calls
 /// This significantly improves performance when enriching weekly summaries
-pub fn enrich_entries_with_mealie_data_batch(
+pub fn enrich_entries_with_tandoor_data_batch(
   entries: List(FoodLogEntry),
   cfg: config.Config,
 ) -> List(FoodLogEntry) {
-  // Collect all unique recipe slugs from Mealie entries
-  let mealie_entries =
-    list.filter(entries, fn(entry) { entry.source_type == "mealie_recipe" })
+  // Collect all unique recipe slugs from Tandoor entries
+  let tandoor_entries =
+    list.filter(entries, fn(entry) { entry.source_type == "tandoor_recipe" })
 
   let recipe_slugs =
-    mealie_entries
+    tandoor_entries
     |> list.map(fn(entry) { entry.source_id })
     |> list.unique
 
-  // Skip batch fetch if no Mealie entries
+  // Skip batch fetch if no Tandoor entries
   case recipe_slugs {
     [] -> entries
     _ -> {
       // Fetch all recipes in batch with single API call
-      case mealie.get_recipes_batch(cfg, recipe_slugs) {
+      case tandoor.get_recipes_batch(cfg, recipe_slugs) {
         Ok(#(recipes, _failed_slugs)) -> {
           // Build a map of slug -> recipe for O(1) lookup
           let recipe_map =
@@ -71,7 +71,7 @@ pub fn enrich_entries_with_mealie_data_batch(
           // Enrich entries using fetched recipes
           list.map(entries, fn(entry) {
             case entry.source_type {
-              "mealie_recipe" -> {
+              "tandoor_recipe" -> {
                 case dict.get(recipe_map, entry.source_id) {
                   Ok(recipe) -> FoodLogEntry(..entry, recipe_name: recipe.name)
 
@@ -85,7 +85,7 @@ pub fn enrich_entries_with_mealie_data_batch(
         Error(_) -> {
           // Batch fetch failed, fall back to individual fetching
           list.map(entries, fn(entry) {
-            enrich_entry_with_mealie_data(entry, cfg)
+            enrich_entry_with_tandoor_data(entry, cfg)
           })
         }
       }
