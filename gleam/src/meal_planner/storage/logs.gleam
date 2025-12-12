@@ -114,6 +114,19 @@ pub type WeeklySummary {
   )
 }
 
+/// Validate source_type is one of the allowed values
+fn validate_source_type(source_type: String) -> Result(Nil, StorageError) {
+  case source_type {
+    "mealie_recipe" | "custom_food" | "usda_food" -> Ok(Nil)
+    _ ->
+      Error(DatabaseError(
+        "Invalid source_type: "
+        <> source_type
+        <> ". Must be one of: mealie_recipe, custom_food, usda_food",
+      ))
+  }
+}
+
 /// Save a food log entry
 pub fn save_food_log(
   conn: pog.Connection,
@@ -523,6 +536,9 @@ pub fn save_food_log_entry(
   date: String,
   entry: FoodLogEntry,
 ) -> Result(Nil, StorageError) {
+  // Validate source_type before saving
+  use _ <- result.try(validate_source_type(entry.source_type))
+
   let sql =
     "INSERT INTO food_logs
 
