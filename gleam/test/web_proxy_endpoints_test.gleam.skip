@@ -11,26 +11,26 @@ pub fn main() {
 }
 
 // ============================================================================
-// 1. MEALIE RECIPES LIST PROXY ENDPOINT
+// 1. TANDOOR RECIPES LIST PROXY ENDPOINT
 // ============================================================================
-// Endpoint: GET /api/mealie/recipes
+// Endpoint: GET /api/tandoor/recipes
 // Status: NOT IMPLEMENTED (returns 501)
 //
 // ENDPOINT BEHAVIOR
 // =================
 // Current response:
 // {
-//   "message": "Mealie recipes endpoint - coming soon",
+//   "message": "Tandoor recipes endpoint - coming soon",
 //   "status": "not_implemented",
-//   "mealie_url": "http://localhost:9000"
+//   "tandoor_url": "http://localhost:8000"
 // }
 // HTTP Status: 501 Not Implemented
 //
 // EXPECTED BEHAVIOR (when implemented)
 // ===================================
-// Should proxy GET requests to Mealie API /api/recipes with:
-// - Authentication: Bearer token from MEALIE_API_TOKEN env var
-// - Response: JSON list of all recipes from Mealie
+// Should proxy GET requests to Tandoor API /api/recipes with:
+// - Authentication: Bearer token from TANDOOR_API_TOKEN env var
+// - Response: JSON list of all recipes from Tandoor
 //
 // Success response structure:
 // {
@@ -59,17 +59,17 @@ pub fn main() {
 // ERROR HANDLING
 // ==============
 // 401 Unauthorized:
-//   - If MEALIE_API_TOKEN is missing or invalid
+//   - If TANDOOR_API_TOKEN is missing or invalid
 //   - Response: {"error": "Invalid authentication", ...}
 //
 // 502 Bad Gateway:
-//   - If Mealie server connection refused or DNS failed
+//   - If Tandoor server connection refused or DNS failed
 //   - Status: client.ConnectionRefused(_) -> 502
 //   - Status: client.DnsResolutionFailed(_) -> 502
 //
 // 503 Service Unavailable:
-//   - If Mealie server is down
-//   - Status: client.MealieUnavailable(_) -> 503
+//   - If Tandoor server is down
+//   - Status: client.TandoorUnavailable(_) -> 503
 //
 // 504 Gateway Timeout:
 //   - If request times out (>30s default)
@@ -77,43 +77,43 @@ pub fn main() {
 //
 // AUTHENTICATION
 // ==============
-// - Token source: MEALIE_API_TOKEN environment variable
+// - Token source: TANDOOR_API_TOKEN environment variable
 // - Header: Authorization: Bearer {token}
-// - Behavior: Include in all requests to Mealie API
+// - Behavior: Include in all requests to Tandoor API
 // - Error handling: 401 if invalid/missing
 
-pub fn mealie_recipes_list_endpoint_test() {
+pub fn tandoor_recipes_list_endpoint_test() {
   // Verify endpoint documentation
   True |> should.be_true()
 }
 
 // ============================================================================
-// 2. MEALIE RECIPE DETAIL PROXY ENDPOINT
+// 2. TANDOOR RECIPE DETAIL PROXY ENDPOINT
 // ============================================================================
-// Endpoint: GET /api/mealie/recipes/:id
+// Endpoint: GET /api/tandoor/recipes/:id
 // Status: NOT IMPLEMENTED (returns 501)
 //
 // ENDPOINT BEHAVIOR
 // =================
 // Current response:
 // {
-//   "message": "Mealie recipe detail endpoint - coming soon",
+//   "message": "Tandoor recipe detail endpoint - coming soon",
 //   "status": "not_implemented",
 //   "recipe_id": "beef-stew",
-//   "mealie_url": "http://localhost:9000"
+//   "tandoor_url": "http://localhost:8000"
 // }
 // HTTP Status: 501 Not Implemented
 //
 // EXPECTED BEHAVIOR (when implemented)
 // ===================================
-// Should proxy GET requests to Mealie API /api/recipes/{slug} with:
+// Should proxy GET requests to Tandoor API /api/recipes/{slug} with:
 // - URL parameter: recipe slug or ID (e.g., "beef-stew")
-// - Authentication: Bearer token from MEALIE_API_TOKEN
-// - Response: Complete recipe details from Mealie
+// - Authentication: Bearer token from TANDOOR_API_TOKEN
+// - Response: Complete recipe details from Tandoor
 //
 // Success response includes:
 // {
-//   "id": "mealie-recipe-123",
+//   "id": "tandoor-recipe-123",
 //   "slug": "beef-stew",
 //   "name": "Beef Stew",
 //   "description": "Classic beef stew with potatoes",
@@ -165,7 +165,7 @@ pub fn mealie_recipes_list_endpoint_test() {
 // ERROR HANDLING
 // ==============
 // 404 Not Found:
-//   - Recipe slug does not exist in Mealie
+//   - Recipe slug does not exist in Tandoor
 //   - Status: client.RecipeNotFound(_) -> 404
 //   - Response: {"error": "Recipe 'beef-stew' was not found.", ...}
 //
@@ -174,12 +174,12 @@ pub fn mealie_recipes_list_endpoint_test() {
 //   - Response: {"error": "Invalid authentication", ...}
 //
 // 502 Bad Gateway:
-//   - Mealie connection issues
+//   - Tandoor connection issues
 //   - Status: client.ConnectionRefused(_) -> 502
 //
 // 503 Service Unavailable:
-//   - Mealie server down
-//   - Status: client.MealieUnavailable(_) -> 503
+//   - Tandoor server down
+//   - Status: client.TandoorUnavailable(_) -> 503
 //
 // FALLBACK HANDLING
 // =================
@@ -191,39 +191,39 @@ pub fn mealie_recipes_list_endpoint_test() {
 //   "id": "fallback-beef-stew",
 //   ... (other fields with fallback values)
 // }
-// This allows graceful degradation when Mealie is unavailable
+// This allows graceful degradation when Tandoor is unavailable
 
-pub fn mealie_recipe_detail_endpoint_test() {
+pub fn tandoor_recipe_detail_endpoint_test() {
   // Verify endpoint documentation
   True |> should.be_true()
 }
 
 // ============================================================================
-// 3. MEALIE AUTHENTICATION & TOKEN HANDLING
+// 3. TANDOOR AUTHENTICATION & TOKEN HANDLING
 // ============================================================================
 // CONFIGURATION
 // =============
-// Token source: MEALIE_API_TOKEN environment variable
+// Token source: TANDOOR_API_TOKEN environment variable
 // Token usage: Authorization: Bearer {token}
 // Validation: Token must be non-empty string
 //
 // REQUEST FLOW
 // ============
 // 1. Load config from environment (config.load())
-// 2. Check if token exists: config.has_mealie_integration(app_config)
+// 2. Check if token exists: config.has_tandoor_integration(app_config)
 // 3. Add header: Authorization: Bearer {token}
-// 4. Mealie validates token on server side
+// 4. Tandoor validates token on server side
 // 5. If invalid: return 401 Unauthorized
 //
 // ERROR CASES
 // ===========
 // Missing token:
-//   - Status: client.ConfigError("MEALIE_API_TOKEN not set")
+//   - Status: client.ConfigError("TANDOOR_API_TOKEN not set")
 //   - HTTP: 400 Bad Request
 //   - Message: "Recipe service is not properly configured"
 //
 // Invalid token:
-//   - Status: HTTP 401 from Mealie
+//   - Status: HTTP 401 from Tandoor
 //   - Proxied status: 401
 //   - Message: "Invalid authentication"
 //
@@ -232,17 +232,17 @@ pub fn mealie_recipe_detail_endpoint_test() {
 //   - Use client.error_to_user_message() which sanitizes output
 //   - Use client.error_to_string() for technical logs (also sanitizes)
 
-pub fn mealie_authentication_token_handling_test() {
+pub fn tandoor_authentication_token_handling_test() {
   // Verify token handling in auth flow
   True |> should.be_true()
 }
 
 // ============================================================================
-// 4. ERROR HANDLING FOR MEALIE PROXY
+// 4. ERROR HANDLING FOR TANDOOR PROXY
 // ============================================================================
 // ERROR TYPE MAPPING
 // ==================
-// Map Mealie ClientError to HTTP status codes:
+// Map Tandoor ClientError to HTTP status codes:
 //
 // ConfigError:         400 Bad Request
 // DecodeError:         400 Bad Request
@@ -252,7 +252,7 @@ pub fn mealie_authentication_token_handling_test() {
 // ApiError:            500 Internal Server Error
 // ConnectionRefused:   502 Bad Gateway
 // DnsResolutionFailed: 502 Bad Gateway
-// MealieUnavailable:   503 Service Unavailable
+// TandoorUnavailable:  503 Service Unavailable
 //
 // RETRY LOGIC
 // ===========
@@ -280,64 +280,64 @@ pub fn mealie_authentication_token_handling_test() {
 //   - Message: "Request timed out..."
 //
 // DNS resolution failure:
-//   - Cannot resolve mealie.example.com
+//   - Cannot resolve tandoor.example.com
 //   - Status: 502 Bad Gateway
 //   - Message: "Cannot find recipe service..."
 //
 // Connection refused:
-//   - Mealie port not accepting connections
+//   - Tandoor port not accepting connections
 //   - Status: 502 Bad Gateway
 //   - Message: "Cannot reach recipe service..."
 //
-// Mealie 500 error:
-//   - Mealie server internal error
-//   - Status: 500 (proxied from Mealie)
+// Tandoor 500 error:
+//   - Tandoor server internal error
+//   - Status: 500 (proxied from Tandoor)
 //   - Message: "Recipe service error..."
 //
-// Mealie 404:
-//   - Recipe not found in Mealie
+// Tandoor 404:
+//   - Recipe not found in Tandoor
 //   - Status: 404 (proxied)
 //   - Message: "Recipe was not found..."
 
-pub fn mealie_error_handling_connection_timeout_test() {
+pub fn tandoor_error_handling_connection_timeout_test() {
   // Verify timeout error handling (408)
   True |> should.be_true()
 }
 
-pub fn mealie_error_handling_dns_failure_test() {
+pub fn tandoor_error_handling_dns_failure_test() {
   // Verify DNS resolution failure (502)
   True |> should.be_true()
 }
 
-pub fn mealie_error_handling_connection_refused_test() {
+pub fn tandoor_error_handling_connection_refused_test() {
   // Verify connection refused (502)
   True |> should.be_true()
 }
 
-pub fn mealie_error_handling_mealie_500_test() {
-  // Verify Mealie 500 error is proxied (500)
+pub fn tandoor_error_handling_tandoor_500_test() {
+  // Verify Tandoor 500 error is proxied (500)
   True |> should.be_true()
 }
 
-pub fn mealie_error_handling_mealie_404_test() {
-  // Verify Mealie 404 is proxied (404)
+pub fn tandoor_error_handling_tandoor_404_test() {
+  // Verify Tandoor 404 is proxied (404)
   True |> should.be_true()
 }
 
-pub fn mealie_error_handling_invalid_token_test() {
+pub fn tandoor_error_handling_invalid_token_test() {
   // Verify invalid token returns 401
   True |> should.be_true()
 }
 
 // ============================================================================
-// 5. MEAL PLAN ENDPOINT WITH MEALIE INTEGRATION
+// 5. MEAL PLAN ENDPOINT WITH TANDOOR INTEGRATION
 // ============================================================================
 // Endpoint: POST /api/meal-plan
 // Status: PARTIALLY IMPLEMENTED (returns 200 with mock data)
 //
 // CURRENT BEHAVIOR
 // ================
-// Fetches recipes from Mealie API and generates meal plan
+// Fetches recipes from Tandoor API and generates meal plan
 // Returns HTTP 200 with generated meal plan
 //
 // Request body (optional JSON):
@@ -370,7 +370,7 @@ pub fn mealie_error_handling_invalid_token_test() {
 //     }
 //   ],
 //   "metadata": {
-//     "generated_from": "mealie_api",
+//     "generated_from": "tandoor_api",
 //     "total_recipes_available": 150,
 //     "recipes_used": 7
 //   }
@@ -379,17 +379,17 @@ pub fn mealie_error_handling_invalid_token_test() {
 // ERROR HANDLING
 // ==============
 // 400 Bad Request:
-//   - No recipes available in Mealie
+//   - No recipes available in Tandoor
 //   - Response includes error message
 //
 // 5xx errors:
-//   - Mealie connection issues
+//   - Tandoor connection issues
 //   - Error response with details
 //
-// MEALIE INTEGRATION FLOW
-// =======================
+// TANDOOR INTEGRATION FLOW
+// ========================
 // 1. POST /api/meal-plan request arrives
-// 2. Load config with Mealie token
+// 2. Load config with Tandoor token
 // 3. Call client.list_recipes(app_config) with retry
 // 4. For each recipe, build meal plan entry
 // 5. Return meal plan JSON to client
@@ -399,8 +399,8 @@ pub fn mealie_error_handling_invalid_token_test() {
 // Uses retry.with_backoff() for transient failures
 // Falls back to error response if all retries exhausted
 
-pub fn meal_plan_endpoint_with_mealie_test() {
-  // Verify meal plan generation with Mealie recipes
+pub fn meal_plan_endpoint_with_tandoor_test() {
+  // Verify meal plan generation with Tandoor recipes
   True |> should.be_true()
 }
 
@@ -409,20 +409,20 @@ pub fn meal_plan_endpoint_empty_recipes_test() {
   True |> should.be_true()
 }
 
-pub fn meal_plan_endpoint_mealie_unavailable_test() {
-  // Verify error handling when Mealie is down
+pub fn meal_plan_endpoint_tandoor_unavailable_test() {
+  // Verify error handling when Tandoor is down
   True |> should.be_true()
 }
 
 // ============================================================================
-// 6. VERTICAL DIET CHECK ENDPOINT WITH MEALIE
+// 6. VERTICAL DIET CHECK ENDPOINT WITH TANDOOR
 // ============================================================================
 // Endpoint: POST /api/vertical-diet/check
 // Status: IMPLEMENTED
 //
 // ENDPOINT BEHAVIOR
 // =================
-// Fetches recipe from Mealie and checks vertical diet compliance
+// Fetches recipe from Tandoor and checks vertical diet compliance
 //
 // Request format:
 // {
@@ -444,7 +444,7 @@ pub fn meal_plan_endpoint_mealie_unavailable_test() {
 //     "Great for main course",
 //     "Pair with carbohydrate source"
 //   ],
-//   "mealie_url": "http://localhost:9000"
+//   "tandoor_url": "http://localhost:8000"
 // }
 //
 // ERROR CASES
@@ -454,30 +454,30 @@ pub fn meal_plan_endpoint_mealie_unavailable_test() {
 //   - Response: {"error": "Invalid request format", ...}
 //
 // 404 Not Found:
-//   - Recipe not found in Mealie
+//   - Recipe not found in Tandoor
 //   - Status: client.RecipeNotFound(_) -> 404
 //
 // 502 Bad Gateway:
-//   - Mealie connection issues
+//   - Tandoor connection issues
 //   - Status: client.ConnectionRefused(_) -> 502
 //
 // 503 Service Unavailable:
-//   - Mealie server down
-//   - Status: client.MealieUnavailable(_) -> 503
+//   - Tandoor server down
+//   - Status: client.TandoorUnavailable(_) -> 503
 //
 // FLOW
 // ====
 // 1. POST /api/vertical-diet/check with recipe_slug
 // 2. Parse JSON body (with wisp.require_json)
 // 3. Extract recipe_slug field
-// 4. Fetch recipe from Mealie: client.get_recipe(app_config, slug)
+// 4. Fetch recipe from Tandoor: client.get_recipe(app_config, slug)
 // 5. Check compliance: vertical_diet_compliance.check_compliance(recipe)
 // 6. Return compliance report
 //
 // VERTICAL DIET COMPLIANCE CHECKING
 // =================================
 // Module: meal_planner/vertical_diet_compliance
-// Input: MealieRecipe
+// Input: TandoorRecipe
 // Output: ComplianceReport {
 //   compliant: Bool,
 //   score: Int (0-100),
@@ -485,8 +485,8 @@ pub fn meal_plan_endpoint_mealie_unavailable_test() {
 //   recommendations: List(String)
 // }
 //
-// MEALIE INTEGRATION
-// ==================
+// TANDOOR INTEGRATION
+// ===================
 // - Fetches complete recipe details including nutrition data
 // - Passes nutrition data to compliance checker
 // - Returns compliance report with recipe reference
@@ -502,24 +502,24 @@ pub fn vertical_diet_check_missing_recipe_slug_test() {
 }
 
 pub fn vertical_diet_check_recipe_not_found_test() {
-  // Verify 404 when Mealie recipe not found
+  // Verify 404 when Tandoor recipe not found
   True |> should.be_true()
 }
 
-pub fn vertical_diet_check_mealie_unavailable_test() {
-  // Verify error handling when Mealie down
+pub fn vertical_diet_check_tandoor_unavailable_test() {
+  // Verify error handling when Tandoor down
   True |> should.be_true()
 }
 
 // ============================================================================
-// 7. RECIPE SEARCH ENDPOINT WITH MEALIE
+// 7. RECIPE SEARCH ENDPOINT WITH TANDOOR
 // ============================================================================
 // Endpoint: GET /api/recipes/search?q={query}
 // Status: IMPLEMENTED
 //
 // ENDPOINT BEHAVIOR
 // =================
-// Searches recipes in Mealie by query string
+// Searches recipes in Tandoor by query string
 //
 // Request format:
 // GET /api/recipes/search?q=beef
@@ -548,10 +548,10 @@ pub fn vertical_diet_check_mealie_unavailable_test() {
 //   - Response: {"error": "Missing or empty search query", ...}
 //
 // 502 Bad Gateway:
-//   - Mealie connection issues
+//   - Tandoor connection issues
 //
 // 503 Service Unavailable:
-//   - Mealie server down
+//   - Tandoor server down
 //
 // FLOW
 // ====
@@ -577,50 +577,50 @@ pub fn recipe_search_missing_parameter_test() {
 }
 
 // ============================================================================
-// 8. HEALTH CHECK ENDPOINT WITH MEALIE CONNECTIVITY
+// 8. HEALTH CHECK ENDPOINT WITH TANDOOR CONNECTIVITY
 // ============================================================================
 // Endpoint: GET /health or GET /
 // Status: IMPLEMENTED
 //
 // ENDPOINT BEHAVIOR
 // =================
-// Returns service health status including Mealie connectivity
+// Returns service health status including Tandoor connectivity
 //
 // Response format (HTTP 200):
 // {
 //   "status": "healthy",
 //   "service": "meal-planner",
 //   "version": "1.0.0",
-//   "mealie": {
+//   "tandoor": {
 //     "status": "healthy|not_configured|unreachable|timeout|dns_failed|error",
 //     "message": "Connected successfully, found 150 recipes",
 //     "configured": true
 //   }
 // }
 //
-// MEALIE STATUS VALUES
+// TANDOOR STATUS VALUES
 // ====================
 // "healthy":
-//   - Token configured and Mealie responding
+//   - Token configured and Tandoor responding
 //   - Can list recipes
 //
 // "not_configured":
-//   - MEALIE_API_TOKEN environment variable not set
-//   - message: "MEALIE_API_TOKEN not set"
+//   - TANDOOR_API_TOKEN environment variable not set
+//   - message: "TANDOOR_API_TOKEN not set"
 //
 // "unreachable":
-//   - Token configured but Mealie connection refused
-//   - message: "Cannot connect to Mealie server"
+//   - Token configured but Tandoor connection refused
+//   - message: "Cannot connect to Tandoor server"
 //   - Status: client.ConnectionRefused(_)
 //
 // "timeout":
-//   - Token configured but Mealie not responding in time
-//   - message: "Mealie server not responding in time"
+//   - Token configured but Tandoor not responding in time
+//   - message: "Tandoor server not responding in time"
 //   - Status: client.NetworkTimeout(_, _)
 //
 // "dns_failed":
-//   - Cannot resolve Mealie hostname
-//   - message: "Cannot resolve Mealie hostname"
+//   - Cannot resolve Tandoor hostname
+//   - message: "Cannot resolve Tandoor hostname"
 //   - Status: client.DnsResolutionFailed(_)
 //
 // "error":
@@ -628,7 +628,7 @@ pub fn recipe_search_missing_parameter_test() {
 //   - message: User-friendly error description
 //
 // IMPORTANT: Overall service status is ALWAYS "healthy"
-// - Only Mealie connectivity affects mealie.status field
+// - Only Tandoor connectivity affects tandoor.status field
 // - Service health is determined by web server running
 // - This allows graceful degradation
 
@@ -642,28 +642,28 @@ pub fn health_check_service_status_always_healthy_test() {
   True |> should.be_true()
 }
 
-pub fn health_check_mealie_healthy_test() {
-  // Verify mealie.status when Mealie is reachable
+pub fn health_check_tandoor_healthy_test() {
+  // Verify tandoor.status when Tandoor is reachable
   True |> should.be_true()
 }
 
-pub fn health_check_mealie_not_configured_test() {
-  // Verify mealie.status when token not set
+pub fn health_check_tandoor_not_configured_test() {
+  // Verify tandoor.status when token not set
   True |> should.be_true()
 }
 
-pub fn health_check_mealie_unreachable_test() {
-  // Verify mealie.status when connection refused
+pub fn health_check_tandoor_unreachable_test() {
+  // Verify tandoor.status when connection refused
   True |> should.be_true()
 }
 
-pub fn health_check_mealie_timeout_test() {
-  // Verify mealie.status when request times out
+pub fn health_check_tandoor_timeout_test() {
+  // Verify tandoor.status when request times out
   True |> should.be_true()
 }
 
-pub fn health_check_mealie_dns_failed_test() {
-  // Verify mealie.status when DNS fails
+pub fn health_check_tandoor_dns_failed_test() {
+  // Verify tandoor.status when DNS fails
   True |> should.be_true()
 }
 
@@ -674,8 +674,8 @@ pub fn health_check_mealie_dns_failed_test() {
 // ============
 // GET endpoints:
 //   - /health (or /)
-//   - /api/mealie/recipes
-//   - /api/mealie/recipes/:id
+//   - /api/tandoor/recipes
+//   - /api/tandoor/recipes/:id
 //   - /api/recipes/search?q=query
 //
 // POST endpoints:
@@ -721,20 +721,20 @@ pub fn http_methods_validation_test() {
 //
 // IMPLEMENTED ENDPOINTS
 // =====================
-// 1. GET /health - Full Mealie connectivity check
-// 2. POST /api/meal-plan - Generates meal plan from Mealie recipes
+// 1. GET /health - Full Tandoor connectivity check
+// 2. POST /api/meal-plan - Generates meal plan from Tandoor recipes
 // 3. POST /api/vertical-diet/check - Checks vertical diet compliance
-// 4. GET /api/recipes/search - Searches Mealie recipes
+// 4. GET /api/recipes/search - Searches Tandoor recipes
 //
 // NOT IMPLEMENTED ENDPOINTS (return 501)
 // ======================================
-// 1. GET /api/mealie/recipes - Direct Mealie recipes proxy
-// 2. GET /api/mealie/recipes/:id - Direct Mealie recipe detail proxy
+// 1. GET /api/tandoor/recipes - Direct Tandoor recipes proxy
+// 2. GET /api/tandoor/recipes/:id - Direct Tandoor recipe detail proxy
 // 3. POST /api/macros/calculate - Macro calculation (stub)
 //
 // KEY BEHAVIORS TESTED
 // ====================
-// 1. Mealie API authentication token handling
+// 1. Tandoor API authentication token handling
 // 2. Error mapping from ClientError to HTTP status
 // 3. Retry logic with exponential backoff
 // 4. Fallback responses for graceful degradation
@@ -758,6 +758,6 @@ pub fn http_methods_validation_test() {
 // =======================
 // - API token never logged in full
 // - Error messages don't expose internal structure
-// - Token validation on Mealie server side
+// - Token validation on Tandoor server side
 // - Timeout protection against slow attacks
 // - Rate limiting (if configured)
