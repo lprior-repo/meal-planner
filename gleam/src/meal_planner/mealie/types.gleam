@@ -140,6 +140,17 @@ pub type MealieApiError {
   )
 }
 
+/// Mealie app information (from /api/app/about)
+/// Used for health checks and version information
+pub type MealieAboutResponse {
+  MealieAboutResponse(
+    version: String,
+    production: Bool,
+    demo_status: Bool,
+    allow_signup: Bool,
+  )
+}
+
 // ============================================================================
 // JSON Decoders
 // ============================================================================
@@ -527,6 +538,20 @@ pub fn api_error_decoder() -> Decoder(MealieApiError) {
     message: message,
     error: error,
     exception: exception,
+  ))
+}
+
+/// Decoder for about response
+pub fn about_response_decoder() -> Decoder(MealieAboutResponse) {
+  use version <- decode.field("version", decode.string)
+  use production <- decode.field("production", decode.bool)
+  use demo_status <- decode.field("demoStatus", decode.bool)
+  use allow_signup <- decode.field("allowSignup", decode.bool)
+  decode.success(MealieAboutResponse(
+    version: version,
+    production: production,
+    demo_status: demo_status,
+    allow_signup: allow_signup,
   ))
 }
 

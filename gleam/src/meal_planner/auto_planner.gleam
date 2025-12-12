@@ -7,6 +7,8 @@ import gleam/int
 import gleam/list
 import gleam/order
 import meal_planner/auto_planner/types as auto_types
+import meal_planner/mealie/mapper
+import meal_planner/mealie/types as mealie
 import meal_planner/types
 
 // Re-export types for convenience
@@ -242,11 +244,15 @@ fn select_top_n_helper(
 // Main Generation Function
 // ============================================================================
 
-/// Generate an auto meal plan from available recipes
+/// Generate an auto meal plan from available Mealie recipes
+/// Converts MealieRecipe list to internal Recipe type for processing
 pub fn generate_auto_plan(
-  recipes: List(types.Recipe),
+  mealie_recipes: List(mealie.MealieRecipe),
   config: AutoPlanConfig,
 ) -> Result(AutoMealPlan, String) {
+  // Convert MealieRecipe list to internal Recipe type
+  let recipes = list.map(mealie_recipes, mapper.mealie_to_recipe)
+
   // Validate config
   case config.recipe_count < 1 {
     True -> Error("recipe_count must be at least 1")
