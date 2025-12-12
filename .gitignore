@@ -75,7 +75,3 @@ test-output.txt
 
 # Large data directories
 db_export/
-mealie-app/.git
-
-# Python virtual environments
-mealie-app/venv/
