@@ -6,6 +6,7 @@
 /// NOTE: This is a unit test that documents the migration behavior.
 /// Integration tests that execute actual SQL should be run separately
 /// via: psql -U postgres -h localhost -d meal_planner_test -f migrations_pg/024_populate_recipe_json_for_existing_plans.sql
+import gleam/list
 import gleeunit
 import gleeunit/should
 
@@ -100,7 +101,8 @@ pub fn test_migration_024_preserves_recipe_fields() {
   ]
 
   required_fields
-  |> should.have_length(11)
+  |> list.length()
+  |> should.equal(11)
 }
 
 /// Test that migration 024 orders recipes by ID

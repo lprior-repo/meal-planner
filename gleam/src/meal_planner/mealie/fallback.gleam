@@ -1,10 +1,8 @@
 //// Fallback recipe creation for when Mealie API fetch fails
 //// Provides a degraded but functional recipe representation based on the recipe slug
 
-import gleam/option.{None, Some}
-import meal_planner/mealie/types.{
-  type MealieRecipe, MealieRecipe, MealieCategory, MealieTag, MealieNutrition,
-}
+import gleam/option.{None}
+import meal_planner/mealie/types.{type MealieRecipe, MealieRecipe}
 
 /// Create a fallback recipe when Mealie API fetch fails
 ///

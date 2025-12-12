@@ -1,6 +1,5 @@
 /// Integration tests for food logs display verification in staging
 /// Task: meal-planner-vdcy - Verify food logs display correctly in staging
-import gleam/list as gleam
 import gleeunit
 import gleeunit/should
 import meal_planner/storage/logs.{FoodSummaryItem, WeeklySummary}
@@ -66,8 +65,9 @@ pub fn macros_display_test() {
   let total_calories =
     macros.protein *. 4.0 +. macros.fat *. 9.0 +. macros.carbs *. 4.0
 
+  // protein: 35*4=140, fat: 18*9=162, carbs: 25*4=100, total=402
   total_calories
-  |> should.equal(426.0)
+  |> should.equal(402.0)
 }
 
 pub fn macros_aggregation_display_test() {
