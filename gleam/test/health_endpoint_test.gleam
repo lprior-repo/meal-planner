@@ -368,31 +368,31 @@ pub fn health_check_unreachable_response_documentation_test() {
 /// IMPLEMENTATION SUMMARY:
 ///
 /// The health check endpoint provides monitoring and diagnostics for the
-/// Meal Planner API with integrated Mealie connectivity verification.
+/// Meal Planner API with integrated Tandoor connectivity verification.
 ///
 /// Key Features:
 /// - Always returns 200 OK (service is running)
-/// - Reports Mealie connectivity separately from service health
-/// - Includes timeout to prevent hanging on unresponsive Mealie
-/// - Works with or without Mealie configuration
+/// - Reports Tandoor connectivity separately from service health
+/// - Includes timeout to prevent hanging on unresponsive Tandoor
+/// - Works with or without Tandoor configuration
 /// - Returns detailed JSON with status, service name, and version
 ///
 /// Environment Variables:
-/// - MEALIE_BASE_URL (default: http://localhost:9000)
-/// - MEALIE_API_TOKEN (optional, enables Mealie health check)
-/// - MEALIE_REQUEST_TIMEOUT_MS (default: 30000ms)
+/// - TANDOOR_BASE_URL (default: http://localhost:8000)
+/// - TANDOOR_API_TOKEN (optional, enables Tandoor health check)
+/// - TANDOOR_REQUEST_TIMEOUT_MS (default: 30000ms)
 ///
 /// Endpoints:
 /// - GET /        → Health check
 /// - GET /health  → Health check
 ///
-/// Status Values for Mealie:
-/// - "healthy"        - Connected successfully to Mealie
-/// - "not_configured" - MEALIE_API_TOKEN not set
-/// - "unreachable"    - Cannot connect to Mealie server
-/// - "timeout"        - Mealie server not responding in time
-/// - "dns_failed"     - Cannot resolve Mealie hostname
-/// - "error"          - Mealie returned an error response
+/// Status Values for Tandoor:
+/// - "healthy"        - Connected successfully to Tandoor
+/// - "not_configured" - TANDOOR_API_TOKEN not set
+/// - "unreachable"    - Cannot connect to Tandoor server
+/// - "timeout"        - Tandoor server not responding in time
+/// - "dns_failed"     - Cannot resolve Tandoor hostname
+/// - "error"          - Tandoor returned an error response
 pub fn implementation_summary_test() {
   True
   |> should.be_true()
