@@ -32,6 +32,16 @@ pub type ClientError {
   ApiError(MealieApiError)
   /// Invalid configuration (missing base URL or token)
   ConfigError(String)
+  /// Connection refused by server
+  ConnectionRefused(message: String)
+  /// Network request timed out
+  NetworkTimeout(message: String, timeout_ms: Int)
+  /// DNS resolution failed for hostname
+  DnsResolutionFailed(message: String)
+  /// Recipe not found with the given slug
+  RecipeNotFound(slug: String)
+  /// Mealie service is unavailable
+  MealieUnavailable(message: String)
 }
 
 // ============================================================================
@@ -438,5 +448,15 @@ pub fn error_to_string(error: ClientError) -> String {
       }
     }
     ConfigError(msg) -> "Configuration Error: " <> msg
+    ConnectionRefused(msg) -> "Connection Refused: " <> msg
+    NetworkTimeout(msg, timeout_ms) ->
+      "Network Timeout: "
+      <> msg
+      <> " (timeout: "
+      <> string.inspect(timeout_ms)
+      <> "ms)"
+    DnsResolutionFailed(msg) -> "DNS Resolution Failed: " <> msg
+    RecipeNotFound(slug) -> "Recipe Not Found: " <> slug
+    MealieUnavailable(msg) -> "Mealie Unavailable: " <> msg
   }
 }

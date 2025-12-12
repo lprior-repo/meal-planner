@@ -967,26 +967,102 @@ pub fn meal_type_decoder() -> Decoder(MealType) {
 
 /// Decoder for Micronutrients
 pub fn micronutrients_decoder() -> Decoder(Micronutrients) {
-  use fiber <- decode.optional_field("fiber", None, decode.optional(decode.float))
-  use sugar <- decode.optional_field("sugar", None, decode.optional(decode.float))
-  use sodium <- decode.optional_field("sodium", None, decode.optional(decode.float))
-  use cholesterol <- decode.optional_field("cholesterol", None, decode.optional(decode.float))
-  use vitamin_a <- decode.optional_field("vitamin_a", None, decode.optional(decode.float))
-  use vitamin_c <- decode.optional_field("vitamin_c", None, decode.optional(decode.float))
-  use vitamin_d <- decode.optional_field("vitamin_d", None, decode.optional(decode.float))
-  use vitamin_e <- decode.optional_field("vitamin_e", None, decode.optional(decode.float))
-  use vitamin_k <- decode.optional_field("vitamin_k", None, decode.optional(decode.float))
-  use vitamin_b6 <- decode.optional_field("vitamin_b6", None, decode.optional(decode.float))
-  use vitamin_b12 <- decode.optional_field("vitamin_b12", None, decode.optional(decode.float))
-  use folate <- decode.optional_field("folate", None, decode.optional(decode.float))
-  use thiamin <- decode.optional_field("thiamin", None, decode.optional(decode.float))
-  use riboflavin <- decode.optional_field("riboflavin", None, decode.optional(decode.float))
-  use niacin <- decode.optional_field("niacin", None, decode.optional(decode.float))
-  use calcium <- decode.optional_field("calcium", None, decode.optional(decode.float))
+  use fiber <- decode.optional_field(
+    "fiber",
+    None,
+    decode.optional(decode.float),
+  )
+  use sugar <- decode.optional_field(
+    "sugar",
+    None,
+    decode.optional(decode.float),
+  )
+  use sodium <- decode.optional_field(
+    "sodium",
+    None,
+    decode.optional(decode.float),
+  )
+  use cholesterol <- decode.optional_field(
+    "cholesterol",
+    None,
+    decode.optional(decode.float),
+  )
+  use vitamin_a <- decode.optional_field(
+    "vitamin_a",
+    None,
+    decode.optional(decode.float),
+  )
+  use vitamin_c <- decode.optional_field(
+    "vitamin_c",
+    None,
+    decode.optional(decode.float),
+  )
+  use vitamin_d <- decode.optional_field(
+    "vitamin_d",
+    None,
+    decode.optional(decode.float),
+  )
+  use vitamin_e <- decode.optional_field(
+    "vitamin_e",
+    None,
+    decode.optional(decode.float),
+  )
+  use vitamin_k <- decode.optional_field(
+    "vitamin_k",
+    None,
+    decode.optional(decode.float),
+  )
+  use vitamin_b6 <- decode.optional_field(
+    "vitamin_b6",
+    None,
+    decode.optional(decode.float),
+  )
+  use vitamin_b12 <- decode.optional_field(
+    "vitamin_b12",
+    None,
+    decode.optional(decode.float),
+  )
+  use folate <- decode.optional_field(
+    "folate",
+    None,
+    decode.optional(decode.float),
+  )
+  use thiamin <- decode.optional_field(
+    "thiamin",
+    None,
+    decode.optional(decode.float),
+  )
+  use riboflavin <- decode.optional_field(
+    "riboflavin",
+    None,
+    decode.optional(decode.float),
+  )
+  use niacin <- decode.optional_field(
+    "niacin",
+    None,
+    decode.optional(decode.float),
+  )
+  use calcium <- decode.optional_field(
+    "calcium",
+    None,
+    decode.optional(decode.float),
+  )
   use iron <- decode.optional_field("iron", None, decode.optional(decode.float))
-  use magnesium <- decode.optional_field("magnesium", None, decode.optional(decode.float))
-  use phosphorus <- decode.optional_field("phosphorus", None, decode.optional(decode.float))
-  use potassium <- decode.optional_field("potassium", None, decode.optional(decode.float))
+  use magnesium <- decode.optional_field(
+    "magnesium",
+    None,
+    decode.optional(decode.float),
+  )
+  use phosphorus <- decode.optional_field(
+    "phosphorus",
+    None,
+    decode.optional(decode.float),
+  )
+  use potassium <- decode.optional_field(
+    "potassium",
+    None,
+    decode.optional(decode.float),
+  )
   use zinc <- decode.optional_field("zinc", None, decode.optional(decode.float))
   decode.success(Micronutrients(
     fiber: fiber,
