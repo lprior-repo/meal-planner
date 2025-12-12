@@ -77,13 +77,5 @@ fn load_config() -> Result(web.ServerConfig, String) {
       },
     )
 
-  let tandoor =
-    web.TandoorConfig(
-      url: envoy.get("TANDOOR_BASE_URL")
-        |> result.unwrap("http://localhost:9000"),
-      token: envoy.get("TANDOOR_API_TOKEN")
-        |> result.unwrap(""),
-    )
-
-  Ok(web.ServerConfig(port: port, database: database, tandoor: tandoor))
+  Ok(web.ServerConfig(port: port, database: database))
 }

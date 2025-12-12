@@ -25,14 +25,9 @@ pub type DatabaseConfig {
   )
 }
 
-/// Tandoor API configuration
-pub type TandoorConfig {
-  TandoorConfig(url: String, token: String)
-}
-
 /// Server configuration
 pub type ServerConfig {
-  ServerConfig(port: Int, database: DatabaseConfig, tandoor: TandoorConfig)
+  ServerConfig(port: Int, database: DatabaseConfig)
 }
 
 /// Application context passed to handlers
