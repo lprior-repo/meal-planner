@@ -1,6 +1,11 @@
 /// Tests for web proxy endpoints
 /// Documents expected behavior for meal-planner-hc2t
+import gleeunit
 import gleeunit/should
+
+pub fn main() {
+  gleeunit.main()
+}
 
 // ============================================================================
 // Test Stubs - Document expected web proxy endpoint behavior
@@ -8,12 +13,19 @@ import gleeunit/should
 
 pub fn mealie_recipes_proxy_endpoint_stub_test() {
   // TEST: GET /api/mealie/recipes endpoint
+  // STATUS: Not implemented (returns 501 Not Implemented)
+  //
+  // Expected behavior when implemented:
   // - Should proxy requests to Mealie API /api/recipes
   // - Should include authentication token in request headers
   // - Should handle Mealie API responses (success and error)
   // - Should return JSON response with recipe list
   //
-  // Request flow:
+  // Current behavior:
+  // - Returns 501 Not Implemented
+  // - Response includes message: "Mealie recipes endpoint - coming soon"
+  //
+  // Request flow (when implemented):
   // 1. Client -> Meal Planner API: GET /api/mealie/recipes
   // 2. Meal Planner -> Mealie API: GET {mealie_url}/api/recipes
   //    Headers: Authorization: Bearer {token}
