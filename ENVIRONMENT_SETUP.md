@@ -69,19 +69,19 @@ The meal planner application uses environment variables for configuration. This 
 
 ### Integration Variables
 
-#### Mealie Integration (Required for Recipe Features)
+#### Tandoor Integration (Required for Recipe Features)
 
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
-| `MEALIE_BASE_URL` | Mealie API base URL | `http://localhost:9000` | Yes |
-| `MEALIE_API_TOKEN` | Mealie API authentication token | *(empty)* | Yes (production) |
+| `TANDOOR_BASE_URL` | Tandoor API base URL | `http://localhost:8000` | Yes |
+| `TANDOOR_API_TOKEN` | Tandoor API authentication token | *(empty)* | Yes (production) |
 
-**How to get MEALIE_API_TOKEN:**
+**How to get TANDOOR_API_TOKEN:**
 
-1. Start Mealie: `docker-compose up -d mealie`
-2. Open http://localhost:9000
+1. Start Tandoor: `docker-compose up -d tandoor` or `./run.sh start`
+2. Open http://localhost:8000
 3. Create an account (first user becomes admin)
-4. Navigate to: Settings → API Tokens
+4. Navigate to: Settings → API
 5. Click "Create Token"
 6. Copy the token and add to `.env`
 
@@ -107,9 +107,9 @@ DATABASE_NAME=meal_planner
 PORT=8080
 ENVIRONMENT=development
 
-# Mealie (running locally via Docker)
-MEALIE_BASE_URL=http://localhost:9000
-MEALIE_API_TOKEN=dev-token-from-mealie-ui
+# Tandoor (running locally via Docker)
+TANDOOR_BASE_URL=http://localhost:8000
+TANDOOR_API_TOKEN=dev-token-from-tandoor-ui
 ```
 
 ### Docker Development
@@ -119,7 +119,7 @@ MEALIE_API_TOKEN=dev-token-from-mealie-ui
 ```bash
 # Used by docker-compose.yml
 POSTGRES_PASSWORD=postgres
-MEALIE_API_TOKEN=
+TANDOOR_API_TOKEN=
 OPENAI_API_KEY=
 ```
 
@@ -139,9 +139,9 @@ DATABASE_POOL_SIZE=20
 PORT=8080
 ENVIRONMENT=production
 
-# Mealie (production instance)
-MEALIE_BASE_URL=https://mealie.example.com
-MEALIE_API_TOKEN=<production-token>
+# Tandoor (production instance)
+TANDOOR_BASE_URL=https://tandoor.example.com
+TANDOOR_API_TOKEN=<production-token>
 
 # External services
 OPENAI_API_KEY=<production-key>
@@ -165,9 +165,9 @@ pub fn main() {
   }
 
   // Check integrations
-  case config.has_mealie_integration(config) {
-    True -> io.println("✓ Mealie integration configured")
-    False -> io.println("⚠ Mealie integration not configured")
+  case config.has_tandoor_integration(config) {
+    True -> io.println("✓ Tandoor integration configured")
+    False -> io.println("⚠ Tandoor integration not configured")
   }
 }
 ```
@@ -175,7 +175,7 @@ pub fn main() {
 ### Production Validation Rules
 
 Production mode (`ENVIRONMENT=production`) requires:
-- ✅ `MEALIE_API_TOKEN` must be set
+- ✅ `TANDOOR_API_TOKEN` must be set
 - ✅ `DATABASE_PASSWORD` must be set
 - ✅ All connection strings valid
 
@@ -194,7 +194,7 @@ Production mode (`ENVIRONMENT=production`) requires:
    ```
 
 3. **Rotate API tokens regularly**
-   - Generate new Mealie tokens monthly
+   - Generate new Tandoor tokens monthly
    - Update OpenAI keys if compromised
 
 4. **Use different credentials per environment**

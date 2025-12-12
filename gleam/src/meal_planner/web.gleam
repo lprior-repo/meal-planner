@@ -16,6 +16,7 @@ import gleam/result
 import meal_planner/config
 import meal_planner/pagination
 import meal_planner/types
+import meal_planner/vertical_diet_compliance
 import mist
 import wisp
 import wisp/wisp_mist
@@ -73,6 +74,10 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // Recipe migration progress endpoint
     ["api", "migrations", "progress", migration_id] ->
       migration_progress_handler(req, ctx, migration_id)
+
+    // Vertical diet compliance endpoint
+    ["api", "diet", "vertical", "compliance", recipe_id] ->
+      vertical_diet_compliance_handler(req, recipe_id)
 
     // Paginated food search endpoint
     ["api", "foods", "search"] -> food_search_handler(req)

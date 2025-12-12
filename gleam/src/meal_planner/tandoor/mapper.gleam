@@ -337,7 +337,7 @@ type Order {
   Gt
 }
 
-/// Module import for int operations
+// Int and Order imports are defined at the top
 import gleam/int
 import gleam/order
 
