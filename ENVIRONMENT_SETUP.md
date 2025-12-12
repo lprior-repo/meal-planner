@@ -222,9 +222,9 @@ pub fn main() {
   io.println("Database: " <> db_url)
 
   // Check integrations
-  case config.has_mealie_integration(config) {
-    True -> setup_mealie_client(config.mealie_base_url, config.mealie_api_token)
-    False -> io.println("Mealie integration disabled")
+  case config.has_tandoor_integration(config) {
+    True -> setup_tandoor_client(config.tandoor_base_url, config.tandoor_api_token)
+    False -> io.println("Tandoor integration disabled")
   }
 }
 ```
@@ -244,7 +244,7 @@ config.is_production_ready(config) -> Bool
 config.database_url(config) -> String
 
 // Check integrations
-config.has_mealie_integration(config) -> Bool
+config.has_tandoor_integration(config) -> Bool
 config.has_openai_integration(config) -> Bool
 config.has_usda_integration(config) -> Bool
 ```

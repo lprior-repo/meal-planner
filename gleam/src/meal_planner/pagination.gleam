@@ -7,7 +7,6 @@ import gleam/json.{type Json}
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import meal_planner/id
 
 // ============================================================================
 // Pagination Types
@@ -218,15 +217,7 @@ pub fn parse_query_params(
     }
   }
 
-  result.try_combine([limit, cursor], fn(results) {
-    case results {
-      [limit_val, cursor_val] -> {
-        Ok(PaginationParams(
-          limit: limit_val,
-          cursor: cursor_val,
-        ))
-      }
-      _ -> Error("Internal pagination parsing error")
-    }
-  })
+  use limit_val <- result.try(limit)
+  use cursor_val <- result.try(cursor)
+  Ok(PaginationParams(limit: limit_val, cursor: cursor_val))
 }

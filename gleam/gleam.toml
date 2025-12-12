@@ -8,7 +8,7 @@ licences = ["MIT"]
 repository = { type = "github", user = "lprior-repo", repo = "meal-planner" }
 
 # Gleam compiler version
-gleam = ">= 1.0.0"
+gleam = ">= 1.4.0"
 
 [dependencies]
 # Standard library
