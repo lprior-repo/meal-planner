@@ -17,14 +17,15 @@ import gleam/http
 import gleam/int
 import gleam/io
 import gleam/json
+import gleam/list
 import gleam/option.{None, Some}
+import gleam/string
+import meal_planner/auto_planner
 import meal_planner/config
+import meal_planner/meal_plan
 import meal_planner/mealie/client
 import meal_planner/mealie/retry
-import meal_planner/meal_plan
-import meal_planner/auto_planner
 import meal_planner/mealie/types
-import gleam/string
 import mist
 import wisp
 import wisp/wisp_mist
@@ -178,7 +179,7 @@ fn with_retry_response(
 /// Health check endpoint with Mealie connectivity validation
 /// Returns 200 OK with service status and Mealie connection status
 /// GET /health or /
-fn health_handler(req: wisp.Request) -> wisp.Response {
+fn health_handler(_req: wisp.Request) -> wisp.Response {
   // Load config to check Mealie
   let app_config = config.load()
 
@@ -300,6 +301,151 @@ fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
     |> json.to_string
 
   wisp.json_response(body, 501)
+}
+
+/// Recipe search endpoint
+/// GET /api/recipes/search?q={query}
+/// Searches recipes from Mealie API by query string
+fn recipe_search_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
+  use <- wisp.require_method(req, http.Get)
+
+  // Extract the 'q' query parameter
+  let query = case request.get_query(req) {
+    Ok(params) -> {
+      // Find the 'q' parameter in the list
+      list.find_map(params, fn(param) {
+        case param {
+          #(key, value) if key == "q" -> Ok(value)
+          _ -> Error(Nil)
+        }
+      })
+    }
+    Error(_) -> Error(Nil)
+  }
+
+  // Load full config for Mealie client
+  let app_config = config.load()
+
+  case query {
+    Ok(search_query) if search_query != "" -> {
+      // Execute with retry logic for transient failures
+      with_retry_response(
+        fn() { client.search_recipes(app_config, search_query) },
+        fn(recipes_response) {
+          let body =
+            json.object([
+              #("query", json.string(search_query)),
+              #("total", json.int(recipes_response.total)),
+              #("page", json.int(recipes_response.page)),
+              #("per_page", json.int(recipes_response.per_page)),
+              #("total_pages", json.int(recipes_response.total_pages)),
+              #(
+                "items",
+                json.array(recipes_response.items, fn(recipe) {
+                  json.object([
+                    #("id", json.string(recipe.id)),
+                    #("name", json.string(recipe.name)),
+                    #("slug", json.string(recipe.slug)),
+                    #("image", case recipe.image {
+                      Some(img) -> json.string(img)
+                      None -> json.null()
+                    }),
+                  ])
+                }),
+              ),
+            ])
+            |> json.to_string
+
+          wisp.json_response(body, 200)
+        },
+      )
+    }
+    _ -> {
+      // Empty query parameter - return 400 Bad Request
+      let body =
+        json.object([
+          #("error", json.string("Missing or empty search query")),
+          #("message", json.string("The 'q' query parameter is required")),
+          #("status_code", json.int(400)),
+        ])
+        |> json.to_string
+
+      wisp.json_response(body, 400)
+    }
+  }
+}
+
+/// Recipe listing endpoint
+/// GET /api/recipes
+/// Proxies to Mealie's list_recipes endpoint with automatic retry on transient failures
+fn recipes_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
+  use <- wisp.require_method(req, http.Get)
+
+  // Load full config for Mealie client
+  let app_config = config.load()
+
+  // Execute with retry logic for transient failures
+  with_retry_response(
+    fn() { client.list_recipes(app_config) },
+    fn(recipes_response) {
+      let body =
+        json.object([
+          #("page", json.int(recipes_response.page)),
+          #("perPage", json.int(recipes_response.per_page)),
+          #("total", json.int(recipes_response.total)),
+          #("totalPages", json.int(recipes_response.total_pages)),
+          #(
+            "items",
+            json.array(recipes_response.items, fn(recipe) {
+              json.object([
+                #("id", json.string(recipe.id)),
+                #("name", json.string(recipe.name)),
+                #("slug", json.string(recipe.slug)),
+                #("description", case recipe.description {
+                  Some(desc) -> json.string(desc)
+                  None -> json.null()
+                }),
+                #("image", case recipe.image {
+                  Some(img) -> json.string(img)
+                  None -> json.null()
+                }),
+                #("rating", case recipe.rating {
+                  Some(r) -> json.int(r)
+                  None -> json.null()
+                }),
+                #("recipeYield", case recipe.recipe_yield {
+                  Some(y) -> json.string(y)
+                  None -> json.null()
+                }),
+                #("totalTime", case recipe.total_time {
+                  Some(t) -> json.string(t)
+                  None -> json.null()
+                }),
+                #("prepTime", case recipe.prep_time {
+                  Some(t) -> json.string(t)
+                  None -> json.null()
+                }),
+                #("cookTime", case recipe.cook_time {
+                  Some(t) -> json.string(t)
+                  None -> json.null()
+                }),
+              ])
+            }),
+          ),
+          #("next", case recipes_response.next {
+            Some(url) -> json.string(url)
+            None -> json.null()
+          }),
+          #("previous", case recipes_response.previous {
+            Some(url) -> json.string(url)
+            None -> json.null()
+          }),
+        ])
+        |> json.to_string
+
+      wisp.json_response(body, 200)
+    },
+  )
 }
 
 /// Mealie recipes list endpoint
