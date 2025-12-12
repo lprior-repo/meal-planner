@@ -16,18 +16,25 @@ import mist
 import wisp
 import wisp/wisp_mist
 
+/// Database configuration
+pub type DatabaseConfig {
+  DatabaseConfig(
+    host: String,
+    port: Int,
+    name: String,
+    user: String,
+    password: String,
+  )
+}
+
+/// Mealie API configuration
+pub type MealieConfig {
+  MealieConfig(url: String, token: String)
+}
+
 /// Server configuration
 pub type ServerConfig {
-  ServerConfig(
-    port: Int,
-    db_host: String,
-    db_port: Int,
-    db_name: String,
-    db_user: String,
-    db_password: String,
-    mealie_url: String,
-    mealie_token: String,
-  )
+  ServerConfig(port: Int, database: DatabaseConfig, mealie: MealieConfig)
 }
 
 /// Application context passed to handlers
@@ -77,10 +84,10 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["health"] -> health_handler(req)
 
     // API endpoints (to be implemented)
-    ["api", "recipes", "score"] -> recipe_score_handler(req, ctx)
-    ["api", "meal-plan"] -> meal_plan_handler(req, ctx)
-    ["api", "macros", "calculate"] -> macro_calc_handler(req, ctx)
-    ["api", "vertical-diet", "check"] -> vertical_diet_handler(req, ctx)
+    ["api", "recipes", "score"] -> recipe_score_handler(req)
+    ["api", "meal-plan"] -> meal_plan_handler(req)
+    ["api", "macros", "calculate"] -> macro_calc_handler(req)
+    ["api", "vertical-diet", "check"] -> vertical_diet_handler(req)
 
     // Mealie integration endpoints
     ["api", "mealie", "recipes"] -> mealie_recipes_handler(req, ctx)
@@ -109,7 +116,7 @@ fn health_handler(_req: wisp.Request) -> wisp.Response {
 /// Recipe scoring endpoint
 /// POST /api/recipes/score
 /// Scores recipes based on nutritional profile and user preferences
-fn recipe_score_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
+fn recipe_score_handler(req: wisp.Request) -> wisp.Response {
   use <- wisp.require_method(req, http.Post)
 
   // TODO: Implement recipe scoring logic
@@ -126,7 +133,7 @@ fn recipe_score_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
 /// AI meal planning endpoint
 /// POST /api/meal-plan
 /// Generates optimized meal plans using AI
-fn meal_plan_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
+fn meal_plan_handler(req: wisp.Request) -> wisp.Response {
   use <- wisp.require_method(req, http.Post)
 
   // TODO: Implement meal planning logic
@@ -143,7 +150,7 @@ fn meal_plan_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
 /// Macro calculation endpoint
 /// POST /api/macros/calculate
 /// Calculates macros for recipes and meals
-fn macro_calc_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
+fn macro_calc_handler(req: wisp.Request) -> wisp.Response {
   use <- wisp.require_method(req, http.Post)
 
   // TODO: Implement macro calculation logic
@@ -160,7 +167,7 @@ fn macro_calc_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
 /// Vertical diet compliance endpoint
 /// POST /api/vertical-diet/check
 /// Checks if recipes comply with vertical diet guidelines
-fn vertical_diet_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
+fn vertical_diet_handler(req: wisp.Request) -> wisp.Response {
   use <- wisp.require_method(req, http.Post)
 
   // TODO: Implement vertical diet compliance logic
@@ -188,7 +195,7 @@ fn mealie_recipes_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
     json.object([
       #("message", json.string("Mealie recipes endpoint - coming soon")),
       #("status", json.string("not_implemented")),
-      #("mealie_url", json.string(ctx.config.mealie_url)),
+      #("mealie_url", json.string(ctx.config.mealie.url)),
     ])
     |> json.to_string
 
@@ -211,7 +218,7 @@ fn mealie_recipe_detail_handler(
       #("message", json.string("Mealie recipe detail endpoint - coming soon")),
       #("status", json.string("not_implemented")),
       #("recipe_id", json.string(id)),
-      #("mealie_url", json.string(ctx.config.mealie_url)),
+      #("mealie_url", json.string(ctx.config.mealie.url)),
     ])
     |> json.to_string
 
