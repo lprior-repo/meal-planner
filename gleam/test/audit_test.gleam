@@ -148,7 +148,7 @@ pub fn format_audit_entry_insert_test() {
   { formatted |> contains("INSERT") } |> should.be_true
 
   // Should contain name
-  { formatted |> contains("Mealie API") } |> should.be_true
+  { formatted |> contains("Tandoor API") } |> should.be_true
 
   // Should contain record id
   { formatted |> contains("42") } |> should.be_true

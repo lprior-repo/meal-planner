@@ -4,12 +4,8 @@
 /// Portion calculations work with any Recipe regardless of origin.
 ///
 /// Ported from Go implementation in main.go
-import gleam/float as gleam_float
 import gleam/int as gleam_int
 import gleam/list
-import gleam/option.{type Option, None, Some}
-import gleam/string as gleam_string
-import meal_planner/id
 import meal_planner/types.{
   type Macros, type Recipe, Macros, macros_calories, macros_scale,
 }
