@@ -75,7 +75,8 @@ pub fn test_food_logs_constraint_uses_check_any() {
 
 /// Test that constraint is properly documented
 pub fn test_food_logs_constraint_documentation() {
-  let comment = "Ensures source_type is one of: mealie_recipe (from Mealie API), custom_food (user-created), usda_food (USDA database)"
+  let comment =
+    "Ensures source_type is one of: mealie_recipe (from Mealie API), custom_food (user-created), usda_food (USDA database)"
 
   comment
   |> should.not_equal("")

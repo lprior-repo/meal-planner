@@ -3,7 +3,7 @@
 
 import gleam/option.{None, Some}
 import meal_planner/mealie/types.{
-  type MealieRecipe, MealieRecipe, MealieCategory, MealieTag, MealieNutrition,
+  type MealieRecipe, MealieCategory, MealieNutrition, MealieRecipe, MealieTag,
 }
 
 /// Create a fallback recipe when Mealie API fetch fails

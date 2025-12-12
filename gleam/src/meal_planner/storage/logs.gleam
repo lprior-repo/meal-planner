@@ -1455,7 +1455,7 @@ pub fn save_food_log_from_mealie_recipe(
   input: FoodLogInput,
 ) -> Result(String, StorageError) {
   // Generate unique ID for this log entry using recipe slug and random suffix
-  let random_suffix = int.to_string(int.random(999999))
+  let random_suffix = int.to_string(int.random(999_999))
   let entry_id_str = input.recipe_slug <> "-" <> random_suffix
 
   // Parse meal type
@@ -1540,18 +1540,19 @@ pub fn save_food_log_from_mealie_recipe(
   }
 
   // Create the FoodLogEntry
-  let entry = FoodLogEntry(
-    id: id.log_entry_id(entry_id_str),
-    recipe_id: id.recipe_id(input.recipe_slug),
-    recipe_name: input.recipe_name,
-    servings: input.servings,
-    macros: Macros(protein: input.protein, fat: input.fat, carbs: input.carbs),
-    micronutrients: micronutrients,
-    meal_type: meal_type,
-    logged_at: "",
-    source_type: "mealie_recipe",
-    source_id: input.recipe_slug,
-  )
+  let entry =
+    FoodLogEntry(
+      id: id.log_entry_id(entry_id_str),
+      recipe_id: id.recipe_id(input.recipe_slug),
+      recipe_name: input.recipe_name,
+      servings: input.servings,
+      macros: Macros(protein: input.protein, fat: input.fat, carbs: input.carbs),
+      micronutrients: micronutrients,
+      meal_type: meal_type,
+      logged_at: "",
+      source_type: "mealie_recipe",
+      source_id: input.recipe_slug,
+    )
 
   // Save the entry to the database
   use _ <- result.try(save_food_log_entry(conn, input.date, entry))
@@ -1559,6 +1560,5 @@ pub fn save_food_log_from_mealie_recipe(
   // Return the entry ID on success
   Ok(entry_id_str)
 }
-
 /// Enhanced save_food_log_entry with recipe slug validation
 ///
