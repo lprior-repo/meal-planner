@@ -2,7 +2,6 @@ version: '3'
 
 vars:
   GLEAM_DIR: '{{.ROOT_DIR}}/gleam'
-  MEALIE_DB: 'mealie'
   APP_DB: 'meal_planner'
   POSTGRES_USER: 'postgres'
 
@@ -11,12 +10,11 @@ tasks:
   # Main Entry Point - Start Everything
   # ============================================================================
   start:
-    desc: "🚀 Start the entire meal planner application (Mealie + Database + API)"
+    desc: "🚀 Start the entire meal planner application (Database + API)"
     cmds:
       - task: banner
       - task: check:dependencies
       - task: db:ensure
-      - task: mealie:start
       - task: api:start
       - task: status
       - |
@@ -25,13 +23,6 @@ tasks:
         echo ""
         echo "📱 Access points:"
         echo "   - API Server:    http://localhost:8080/health"
-        echo "   - Mealie UI:     http://localhost:9000"
-        echo ""
-        echo "💡 Next steps:"
-        echo "   1. Open http://localhost:9000 to create Mealie account"
-        echo "   2. Generate API token: Settings > API Tokens"
-        echo "   3. Add to .env: MEALIE_API_TOKEN=<your-token>"
-        echo "   4. Run 'task restart' to apply token"
         echo ""
 
   banner:
@@ -115,12 +106,6 @@ tasks:
           echo "   Creating {{.APP_DB}} database..."
           createdb -U {{.POSTGRES_USER}} {{.APP_DB}}
         fi
-
-        # Check and create mealie database
-        if ! psql -U {{.POSTGRES_USER}} -lqt | cut -d \| -f 1 | grep -qw {{.MEALIE_DB}}; then
-          echo "   Creating {{.MEALIE_DB}} database..."
-          createdb -U {{.POSTGRES_USER}} {{.MEALIE_DB}}
-        fi
     silent: true
 
   db:verify:
@@ -158,62 +143,6 @@ tasks:
         echo "   This will take approximately 5 minutes..."
         gleam run -m scripts/init_pg
         echo "   ✓ Import complete"
-
-  # ============================================================================
-  # Mealie Service
-  # ============================================================================
-  mealie:start:
-    desc: "Start Mealie container"
-    cmds:
-      - task: mealie:stop
-      - |
-        echo "🍲 Starting Mealie..."
-        docker run -d \
-          --name meal-planner-mealie \
-          --network host \
-          --restart unless-stopped \
-          -e DB_ENGINE=postgres \
-          -e POSTGRES_USER={{.POSTGRES_USER}} \
-          -e POSTGRES_PASSWORD=postgres \
-          -e POSTGRES_SERVER=localhost \
-          -e POSTGRES_PORT=5432 \
-          -e POSTGRES_DB={{.MEALIE_DB}} \
-          -e BASE_URL=http://localhost:9000 \
-          -e API_PORT=9000 \
-          -e API_DOCS=true \
-          -e ALLOW_SIGNUP=true \
-          -e ALLOW_PASSWORD_LOGIN=true \
-          -v mealie_data:/app/data \
-          ghcr.io/mealie-recipes/mealie:v3.6.1 > /dev/null
-
-        # Wait for Mealie to be ready
-        echo "   Waiting for Mealie to start..."
-        for i in {1..30}; do
-          if curl -sf http://localhost:9000/api/app/about > /dev/null 2>&1; then
-            echo "   ✓ Mealie is ready"
-            echo ""
-            break
-          fi
-          sleep 1
-        done
-    silent: true
-
-  mealie:stop:
-    desc: "Stop Mealie container"
-    cmds:
-      - docker rm -f meal-planner-mealie 2>/dev/null || true
-    silent: true
-
-  mealie:logs:
-    desc: "Show Mealie logs"
-    cmds:
-      - docker logs -f meal-planner-mealie
-
-  mealie:restart:
-    desc: "Restart Mealie"
-    cmds:
-      - task: mealie:stop
-      - task: mealie:start
 
   # ============================================================================
   # API Server
@@ -323,17 +252,6 @@ tasks:
           echo "❌ PostgreSQL: Stopped"
         fi
 
-        # Mealie
-        if docker ps | grep -q meal-planner-mealie; then
-          if curl -sf http://localhost:9000/health > /dev/null 2>&1; then
-            echo "✅ Mealie: Running (http://localhost:9000)"
-          else
-            echo "⚠️  Mealie: Starting..."
-          fi
-        else
-          echo "❌ Mealie: Stopped"
-        fi
-
         # API Server
         if curl -sf http://localhost:8080/health > /dev/null 2>&1; then
           echo "✅ API Server: Running (http://localhost:8080)"
@@ -346,7 +264,6 @@ tasks:
     desc: "Stop all services"
     cmds:
       - task: api:stop
-      - task: mealie:stop
       - echo "🛑 All services stopped"
 
   restart:
@@ -358,11 +275,6 @@ tasks:
   # ============================================================================
   # Useful Commands
   # ============================================================================
-  open:mealie:
-    desc: "Open Mealie in browser"
-    cmds:
-      - xdg-open http://localhost:9000 || open http://localhost:9000
-
   open:api:
     desc: "Open API health endpoint in browser"
     cmds:
