@@ -715,7 +715,6 @@ pub fn http_methods_validation_test() {
   // Verify correct HTTP method enforcement
   True |> should.be_true()
 }
-
 // ============================================================================
 // SUMMARY OF PROXY ENDPOINT TESTING
 // ============================================================================
@@ -762,4 +761,3 @@ pub fn http_methods_validation_test() {
 // - Token validation on Mealie server side
 // - Timeout protection against slow attacks
 // - Rate limiting (if configured)
-

@@ -41,7 +41,8 @@ pub fn test_migration_019_uses_correct_sql_pattern() {
 /// Migration should have rollback documentation
 pub fn test_migration_019_has_rollback_documentation() {
   // Migration 019 should reference rollback file
-  let rollback_reference = "migrations_pg/rollback/019_restore_recipes_table.sql"
+  let rollback_reference =
+    "migrations_pg/rollback/019_restore_recipes_table.sql"
 
   rollback_reference
   |> should.not_equal("")

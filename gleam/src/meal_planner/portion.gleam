@@ -1,6 +1,6 @@
 /// Portion calculation module for scaling recipes to hit macro targets
 ///
-/// This module works with both Recipe domain types and MealieRecipe directly.
+/// This module works with both Recipe domain types and mealie.MealieRecipe directly.
 /// Portion calculations are source-agnostic - they work with any Recipe
 /// regardless of origin (Mealie, custom, etc).
 ///
@@ -8,10 +8,10 @@
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import meal_planner/id
-import meal_planner/mealie/types.{type MealieRecipe}
+import meal_planner/mealie/types as mealie
 import meal_planner/types.{
-  type FodmapLevel, type Macros, type Recipe, Low, Macros, Recipe,
-  macros_calories, macros_scale,
+  type FodmapLevel, type Macros, type Recipe, Low, Macros, Recipe, macros_calories, macros_scale,
+  
 }
 
 /// PortionCalculation represents a scaled recipe portion
@@ -149,9 +149,9 @@ pub fn calculate_daily_portions(
   }
 }
 
-/// Helper function to extract macros from MealieRecipe nutrition
+/// Helper function to extract macros from mealie.MealieRecipe nutrition
 /// Returns Macros with zeros if nutrition is not available
-fn mealie_recipe_macros(recipe:mealie.MealieRecipe) -> Macros {
+fn mealie_recipe_macros(recipe: mealie.MealieRecipe) -> Macros {
   case recipe.nutrition {
     None -> Macros(protein: 0.0, fat: 0.0, carbs: 0.0)
     Some(nutrition) -> {
@@ -232,10 +232,10 @@ fn is_digit(c: String) -> Bool {
   }
 }
 
-/// CalculatePortionForMealieRecipe scales a MealieRecipe to hit target macros
+/// CalculatePortionForMealieRecipe scales a mealie.MealieRecipe to hit target macros
 /// Prioritizes hitting protein target since it's the key constraint in Vertical Diet
 pub fn calculate_portion_for_mealie_recipe(
-  recipe:mealie.MealieRecipe,
+  recipe: mealie.MealieRecipe,
   target_macros: Macros,
 ) -> PortionCalculation {
   let recipe_macros = mealie_recipe_macros(recipe)
@@ -344,13 +344,13 @@ pub fn calculate_portion_for_mealie_recipe(
   }
 }
 
-/// Helper: Convert MealieRecipe ID to RecipeId
-fn meal_recipe_id(recipe:mealie.MealieRecipe) -> id.RecipeId {
+/// Helper: Convert mealie.MealieRecipe ID to RecipeId
+fn meal_recipe_id(recipe: mealie.MealieRecipe) -> id.RecipeId {
   id.recipe_id("mealie-" <> recipe.slug)
 }
 
-/// Helper: Extract category from MealieRecipe
-fn recipe_category(recipe:mealie.MealieRecipe) -> String {
+/// Helper: Extract category from mealie.MealieRecipe
+fn recipe_category(recipe: mealie.MealieRecipe) -> String {
   case recipe.recipe_category {
     [first, ..] -> first.name
     [] -> "Uncategorized"
