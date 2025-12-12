@@ -513,10 +513,19 @@ pub type FodmapLevel {
 
 /// Recipe with all nutritional and dietary information
 ///
-/// Note: This is the internal domain type for recipes. Recipes are sourced from
-/// the Mealie API and converted to this type using mealie/mapper.mealie_to_recipe().
-/// This type no longer corresponds to a database table - recipes are fetched from
-/// Mealie on-demand rather than being stored locally.
+/// DEPRECATED: Use MealieRecipe from mealie/types.gleam instead.
+///
+/// This type is the internal domain type for recipes sourced from Mealie API.
+/// It has been replaced by MealieRecipe which is the direct representation of
+/// Mealie API recipes and includes all recipe metadata.
+///
+/// Transition strategy:
+/// 1. Use MealieRecipe directly from Mealie API responses
+/// 2. Convert MealieRecipe to Recipe only when needed for legacy code paths
+/// 3. Update all code to work with MealieRecipe natively
+///
+/// Legacy note: This type no longer corresponds to a database table - recipes
+/// are fetched from Mealie on-demand rather than being stored locally.
 pub type Recipe {
   Recipe(
     id: RecipeId,

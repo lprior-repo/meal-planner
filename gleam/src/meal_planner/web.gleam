@@ -400,13 +400,15 @@ fn macro_calc_handler(req: wisp.Request) -> wisp.Response {
 /// Vertical diet compliance endpoint
 /// POST /api/vertical-diet/check
 /// Checks if Mealie recipes comply with vertical diet guidelines using recipe slugs
-fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
+fn vertical_diet_handler(req: wisp.Request, _ctx: Context) -> wisp.Response {
   use <- wisp.require_method(req, http.Post)
   use body <- wisp.require_json(req)
 
+  let app_config = config.load()
+
   case extract_recipe_slug(body) {
     Ok(slug) -> {
-      case retry.with_backoff(fn() { client.get_recipe(ctx.config, slug) }) {
+      case retry.with_backoff(fn() { client.get_recipe(app_config, slug) }) {
         Ok(recipe) -> {
           let compliance = vertical_diet_compliance.check_compliance(recipe)
 
@@ -418,7 +420,7 @@ fn vertical_diet_handler(req: wisp.Request, ctx: Context) -> wisp.Response {
               #("score", json.int(compliance.score)),
               #("reasons", json.array(compliance.reasons, fn(r) { json.string(r) })),
               #("recommendations", json.array(compliance.recommendations, fn(r) { json.string(r) })),
-              #("mealie_url", json.string(ctx.config.mealie.url)),
+              #("mealie_url", json.string(app_config.mealie.base_url)),
             ])
             |> json.to_string
 
