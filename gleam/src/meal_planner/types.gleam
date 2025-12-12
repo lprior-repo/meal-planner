@@ -442,7 +442,7 @@ pub type CustomFood {
 /// Type-safe food source tracking for food logs
 /// Prevents mismatched source_type and source_id through compile-time checking
 pub type FoodSource {
-  /// Food from recipes table
+  /// Food from Mealie recipe API (fetched dynamically, not stored locally)
   RecipeSource(recipe_id: RecipeId)
   /// Food from custom_foods table (includes user_id for authorization)
   CustomFoodSource(custom_food_id: CustomFoodId, user_id: UserId)
@@ -512,6 +512,11 @@ pub type FodmapLevel {
 }
 
 /// Recipe with all nutritional and dietary information
+///
+/// Note: This is the internal domain type for recipes. Recipes are sourced from
+/// the Mealie API and converted to this type using mealie/mapper.mealie_to_recipe().
+/// This type no longer corresponds to a database table - recipes are fetched from
+/// Mealie on-demand rather than being stored locally.
 pub type Recipe {
   Recipe(
     id: RecipeId,

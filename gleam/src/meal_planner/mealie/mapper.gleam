@@ -18,8 +18,23 @@ import meal_planner/types.{
 // ============================================================================
 
 /// Convert a MealieRecipe to internal Recipe type
-/// Generates RecipeId from slug, parses nutrition, and sets defaults for
-/// fodmap_level (Low) and vertical_compliant (False)
+///
+/// This is the primary conversion function for integrating Mealie recipes into
+/// the meal planner. It transforms Mealie's API format into our internal domain type.
+///
+/// Conversions:
+/// - ID: Generated from Mealie slug with "mealie-" prefix
+/// - Macros: Parsed from Mealie's nutrition strings (e.g., "30g", "150 kcal")
+/// - Servings: Extracted from recipeYield string
+/// - Category: First recipe category or "Uncategorized"
+/// - Defaults: fodmap_level=Low, vertical_compliant=False
+///
+/// Example:
+/// ```gleam
+/// let mealie_recipe = fetch_from_api()
+/// let recipe = mealie_to_recipe(mealie_recipe)
+/// // recipe.id will be RecipeId("mealie-beef-stew")
+/// ```
 pub fn mealie_to_recipe(mealie_recipe: mealie.MealieRecipe) -> Recipe {
   let recipe_id = id.recipe_id("mealie-" <> mealie_recipe.slug)
   let ingredients =
