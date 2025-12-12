@@ -5,11 +5,11 @@ import gleeunit/should
 pub fn recipe_search_endpoint_returns_json_test() {
   // TEST: GET /api/recipes/search?q=chicken endpoint
   // - Should require 'q' query parameter
-  // - Should proxy search to Mealie API
+  // - Should proxy search to Tandoor API
   // - Should return paginated recipe results
   // - Should handle empty query with 400
   //
-  // Response format:
+  // Response format (Tandoor API):
   // {
   //   "query": "chicken",
   //   "total": 42,
@@ -18,10 +18,18 @@ pub fn recipe_search_endpoint_returns_json_test() {
   //   "total_pages": 1,
   //   "items": [
   //     {
-  //       "id": "recipe-123",
+  //       "id": 123,
   //       "name": "Chicken Stir Fry",
-  //       "slug": "chicken-stir-fry",
-  //       "image": "https://..."
+  //       "servings": 4,
+  //       "servings_text": "4 servings",
+  //       "prep_time": 15,
+  //       "cook_time": 20,
+  //       "nutrition": {
+  //         "energy": 450,
+  //         "protein": 35.5,
+  //         "fat": 18.2,
+  //         "carbohydrates": 42.1
+  //       }
   //     }
   //   ]
   // }
@@ -38,33 +46,36 @@ pub fn recipe_search_with_empty_query_returns_400_test() {
   True |> should.be_true()
 }
 
-pub fn recipe_search_proxies_to_mealie_test() {
-  // TEST: Recipe search integration with Mealie API
-  // - Should call client.search_recipes with the query
-  // - Should handle Mealie errors (timeouts, unavailable, etc.)
+pub fn recipe_search_proxies_to_tandoor_test() {
+  // TEST: Recipe search integration with Tandoor API
+  // - Should call Tandoor API GET /api/recipes/?search=chicken
+  // - Should handle Tandoor errors (timeouts, unavailable, etc.)
   // - Should return appropriate HTTP status based on error type
   //
   // Error handling:
-  // - Mealie 503 -> 503 Service Unavailable
+  // - Tandoor 503 -> 503 Service Unavailable
   // - Network timeout -> 408 Request Timeout
   // - DNS failure -> 502 Bad Gateway
   // - Connection refused -> 502 Bad Gateway
+  // - Unauthorized (401) -> 401 Unauthorized (check API token)
 
   True |> should.be_true()
 }
 
 pub fn recipe_search_response_format_test() {
-  // TEST: Response JSON structure
+  // TEST: Response JSON structure for Tandoor recipes
   // - Must include query string in response
   // - Must include pagination info (page, per_page, total_pages, total)
-  // - Each item must have: id, name, slug, image
-  // - image can be null for recipes without images
+  // - Each item must have: id, name, servings, nutrition
+  // - nutrition object includes: energy, protein, fat, carbohydrates
+  // - Optional fields: servings_text, prep_time, cook_time
   //
-  // Response items structure matches MealieRecipeSummary:
-  // - id: String (UUID from Mealie)
+  // Response items structure matches TandoorRecipe:
+  // - id: Int (Tandoor recipe ID)
   // - name: String (recipe name)
-  // - slug: String (URL-safe identifier)
-  // - image: Option(String) (URL to recipe image)
+  // - servings: Int (default servings)
+  // - servings_text: String (human-readable serving description)
+  // - nutrition: Object with caloric and macronutrient data
 
   True |> should.be_true()
 }
