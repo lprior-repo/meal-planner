@@ -276,17 +276,17 @@ psql -U postgres -c "\l"
 # Verify credentials in .env match database
 ```
 
-### Mealie integration not working
+### Tandoor integration not working
 
 ```bash
-# Verify Mealie is running
-curl http://localhost:9000/api/app/about
+# Verify Tandoor is running
+curl http://localhost:8000/api/
 
 # Test API token
-curl -H "Authorization: Bearer YOUR_TOKEN" \
-     http://localhost:9000/api/recipes
+curl -H "Authorization: Token YOUR_TOKEN" \
+     http://localhost:8000/api/recipes/
 
-# Generate new token in Mealie UI if invalid
+# Generate new token in Tandoor UI if invalid
 ```
 
 ## File Locations
@@ -302,7 +302,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN" \
 
 1. ✅ Copy `.env.example` to `.env`
 2. ✅ Configure database (or use defaults)
-3. ✅ Start Mealie and generate API token
+3. ✅ Start Tandoor and generate API token
 4. ✅ Add token to `.env`
-5. ⏭️ Implement HTTP server (meal-planner-wahn)
-6. ⏭️ Implement Mealie API client (meal-planner-d9ln)
+5. ✅ HTTP server implemented
+6. ⏭️ Complete Tandoor API client in Gleam

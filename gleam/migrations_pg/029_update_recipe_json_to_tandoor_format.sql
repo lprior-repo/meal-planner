@@ -29,58 +29,90 @@
 BEGIN;
 
 -- Step 1: Create temporary function to transform legacy recipe format to Tandoor
-CREATE OR REPLACE FUNCTION transform_recipe_to_tandoor(recipe_json_text TEXT)
+-- Handles both TEXT and JSONB storage formats
+CREATE OR REPLACE FUNCTION transform_recipe_to_tandoor(recipe_json_input ANYELEMENT)
 RETURNS TEXT AS $$
 DECLARE
   recipe_obj JSONB;
   ingredients_array JSONB;
   instructions_array JSONB;
-  result_obj JSONB;
+  result_array JSONB := '[]'::JSONB;
+  recipe_elem JSONB;
+  i INT := 0;
 BEGIN
-  -- Parse the JSON string
-  recipe_obj := recipe_json_text::JSONB;
-
-  -- If it's already a JSONB object, work with it directly
-  -- If it's an array, extract the first element (recipes are stored individually)
-  IF recipe_obj -> 0 IS NOT NULL THEN
-    -- It's an array, process first element
-    recipe_obj := recipe_obj -> 0;
+  -- Convert input to JSONB regardless of type
+  IF recipe_json_input::TEXT IS NULL OR recipe_json_input::TEXT = 'null' THEN
+    RETURN NULL;
   END IF;
 
-  -- Extract and restructure ingredients to Tandoor format
-  -- Tandoor expects ingredients to have: id, name, original, description, unit, amount, etc.
-  -- For now, we'll keep the simple format and enhance on next iteration
-  ingredients_array := COALESCE(recipe_obj -> 'ingredients', '[]'::JSONB);
+  -- Try to parse as JSONB
+  BEGIN
+    recipe_obj := recipe_json_input::JSONB;
+  EXCEPTION WHEN OTHERS THEN
+    -- If parsing fails, return NULL to skip this record
+    RETURN NULL;
+  END;
 
-  -- Extract and maintain instructions array
-  instructions_array := COALESCE(recipe_obj -> 'instructions', '[]'::JSONB);
+  -- Check if it's an array of recipes or a single recipe
+  IF recipe_obj @> '[{}]'::JSONB OR (jsonb_typeof(recipe_obj) = 'array' AND recipe_obj -> 0 IS NOT NULL) THEN
+    -- It's an array, iterate through each recipe
+    FOR i IN 0..jsonb_array_length(recipe_obj) - 1 LOOP
+      recipe_elem := recipe_obj -> i;
 
-  -- Build the Tandoor format recipe object
-  result_obj := jsonb_build_object(
-    'id', COALESCE(recipe_obj ->> 'id', ''),
-    'name', COALESCE(recipe_obj ->> 'name', ''),
-    'ingredients', ingredients_array,
-    'instructions', instructions_array,
-    'macros', COALESCE(recipe_obj -> 'macros', '{}'::JSONB),
-    'servings', COALESCE((recipe_obj ->> 'servings')::INTEGER, 1),
-    'category', COALESCE(recipe_obj ->> 'category', ''),
-    'fodmap_level', COALESCE(recipe_obj ->> 'fodmap_level', 'medium'),
-    'vertical_compliant', COALESCE((recipe_obj ->> 'vertical_compliant')::BOOLEAN, FALSE),
-    'source', 'tandoor',
-    'created_at', NOW()::TEXT
-  );
+      -- Extract arrays
+      ingredients_array := COALESCE(recipe_elem -> 'ingredients', '[]'::JSONB);
+      instructions_array := COALESCE(recipe_elem -> 'instructions', '[]'::JSONB);
 
-  RETURN result_obj::TEXT;
+      -- Build Tandoor format for this recipe
+      result_array := result_array || jsonb_build_object(
+        'id', COALESCE(recipe_elem ->> 'id', ''),
+        'name', COALESCE(recipe_elem ->> 'name', ''),
+        'ingredients', ingredients_array,
+        'instructions', instructions_array,
+        'macros', COALESCE(recipe_elem -> 'macros', '{"protein":0,"fat":0,"carbs":0}'::JSONB),
+        'servings', COALESCE((recipe_elem ->> 'servings')::INTEGER, 1),
+        'category', COALESCE(recipe_elem ->> 'category', 'uncategorized'),
+        'fodmap_level', COALESCE(recipe_elem ->> 'fodmap_level', 'medium'),
+        'vertical_compliant', COALESCE((recipe_elem ->> 'vertical_compliant')::BOOLEAN, FALSE),
+        'source', 'tandoor'
+      )::JSONB;
+    END LOOP;
+    RETURN result_array::TEXT;
+  ELSE
+    -- It's a single recipe object
+    ingredients_array := COALESCE(recipe_obj -> 'ingredients', '[]'::JSONB);
+    instructions_array := COALESCE(recipe_obj -> 'instructions', '[]'::JSONB);
+
+    result_array := jsonb_build_array(
+      jsonb_build_object(
+        'id', COALESCE(recipe_obj ->> 'id', ''),
+        'name', COALESCE(recipe_obj ->> 'name', ''),
+        'ingredients', ingredients_array,
+        'instructions', instructions_array,
+        'macros', COALESCE(recipe_obj -> 'macros', '{"protein":0,"fat":0,"carbs":0}'::JSONB),
+        'servings', COALESCE((recipe_obj ->> 'servings')::INTEGER, 1),
+        'category', COALESCE(recipe_obj ->> 'category', 'uncategorized'),
+        'fodmap_level', COALESCE(recipe_obj ->> 'fodmap_level', 'medium'),
+        'vertical_compliant', COALESCE((recipe_obj ->> 'vertical_compliant')::BOOLEAN, FALSE),
+        'source', 'tandoor'
+      )
+    );
+    RETURN result_array::TEXT;
+  END IF;
+EXCEPTION WHEN OTHERS THEN
+  -- Log any unexpected errors and continue
+  RAISE WARNING 'Error transforming recipe JSON: %', SQLERRM;
+  RETURN NULL;
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
 -- Step 2: Update recipe_json for all auto_meal_plans that have non-null recipe_json
 -- This preserves the data while converting to Tandoor format
 UPDATE auto_meal_plans
-SET recipe_json = transform_recipe_to_tandoor(recipe_json)
+SET recipe_json = transform_recipe_to_tandoor(recipe_json)::JSONB
 WHERE recipe_json IS NOT NULL
-  AND recipe_json != 'null'
-  AND recipe_json != '';
+  AND recipe_json::TEXT != 'null'
+  AND recipe_json::TEXT != '';
 
 -- Step 3: Add a comment documenting the format
 COMMENT ON COLUMN auto_meal_plans.recipe_json IS 'Recipe data in Tandoor format as JSON string. Contains: id, name, ingredients, instructions, macros, servings, category, fodmap_level, vertical_compliant';
