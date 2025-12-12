@@ -74,7 +74,39 @@ psql -d meal_planner -f gleam/migrations_pg/009_auto_meal_planner.sql
 psql -d meal_planner -f gleam/migrations_pg/010_optimize_search_performance.sql
 ```
 
-### 4. Import USDA Food Database (Optional)
+### 4. Setup Tandoor (Recipe Management)
+
+Tandoor is an external recipe management system that integrates with the meal planner:
+
+```bash
+# Start Tandoor container (requires Docker)
+docker run -d \
+  --name tandoor \
+  -p 8000:8000 \
+  -e DB_ENGINE=django.db.backends.postgresql \
+  -e POSTGRES_HOST=localhost \
+  -e POSTGRES_PORT=5432 \
+  -e POSTGRES_DB=tandoor \
+  -e POSTGRES_USER=postgres \
+  -e SECRET_KEY=your-secret-key \
+  vabene1111/recipes:latest
+
+# Create Tandoor database
+createdb tandoor
+
+# Access Tandoor UI
+open http://localhost:8000
+```
+
+**Environment Variables for Tandoor Integration:**
+```bash
+TANDOOR_BASE_URL=http://localhost:8000  # Tandoor API endpoint
+TANDOOR_API_TOKEN=your-api-token        # Get from Tandoor settings
+```
+
+**Note**: Tandoor uses a separate `tandoor` database - do not mix with the `meal_planner` database.
+
+### 5. Import USDA Food Database (Optional)
 
 The USDA FoodData Central database can be imported for comprehensive food data:
 
@@ -91,13 +123,13 @@ This will import:
 
 **Performance**: Uses 32 concurrent workers for parallel imports (completes in minutes on modern hardware).
 
-### 5. Build the Project
+### 6. Build the Project
 
 ```bash
 gleam build
 ```
 
-### 6. Start the Web Server
+### 7. Start the Web Server
 
 ```bash
 # Start on port 8080
@@ -107,7 +139,9 @@ gleam run -m meal_planner/web
 PORT=3000 gleam run -m meal_planner/web
 ```
 
-Access the application at `http://localhost:8080`
+**Access Points:**
+- **Meal Planner**: `http://localhost:8080`
+- **Tandoor UI**: `http://localhost:8000`
 
 ## Configuration
 
@@ -124,6 +158,10 @@ DATABASE_POOL_SIZE=10          # Default: 10
 
 # Web server
 PORT=8080                       # Default: 8080
+
+# Tandoor integration
+TANDOOR_BASE_URL=http://localhost:8000  # Tandoor API endpoint
+TANDOOR_API_TOKEN=your-api-token        # Get from Tandoor settings > API
 ```
 
 ## Testing
