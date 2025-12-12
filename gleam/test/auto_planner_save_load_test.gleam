@@ -1,4 +1,4 @@
-/// Tests for auto planner save/load with recipe_json serialization
+/// Tests for auto planner save/load with Tandoor recipes
 ///
 /// This test suite verifies that:
 /// 1. Auto meal plans can be saved to the database with recipe_json
@@ -16,6 +16,7 @@ import gleam/list
 import gleam/float
 import gleam/string
 import gleam/int
+import meal_planner/id
 import meal_planner/auto_planner/types as auto_types
 import meal_planner/types.{
   type Recipe, type Macros, Recipe, Macros, Ingredient, FodmapLevel, Low,
@@ -32,7 +33,7 @@ pub fn main() {
 
 /// Create a test recipe with specific properties
 fn create_test_recipe(
-  id: Int,
+  id_num: Int,
   name: String,
   category: String,
   protein: Float,
@@ -41,7 +42,7 @@ fn create_test_recipe(
   vertical_compliant: Bool,
 ) -> Recipe {
   Recipe(
-    id: id,
+    id: id.recipe_id(int.to_string(id_num)),
     name: name,
     ingredients: [Ingredient(name: "test", quantity: "1.0 g")],
     instructions: ["Step 1"],
@@ -444,7 +445,7 @@ pub fn recipes_reconstructed_from_plan_recipe_json_test() {
 
 /// Test that total macros are correctly calculated from recipes
 pub fn total_macros_from_recipes_test() {
-  let recipes = [
+  let _recipes = [
     create_test_recipe(1, "Chicken", "protein", 30.0, 5.0, 2.0, True),
     create_test_recipe(2, "Broccoli", "vegetable", 5.0, 1.0, 8.0, True),
     create_test_recipe(3, "Rice", "carbs", 3.0, 0.5, 45.0, False),
@@ -543,10 +544,11 @@ pub fn plan_with_single_recipe_json_test() {
   // Should handle single recipe correctly
   json.to_string(auto_types.auto_meal_plan_to_json(plan))
   |> string.length()
-  |> should.be_greater_than(0)
+  |> fn(len) { len > 0 }()
+  |> should.be_true()
 }
 
-/// Test plan with maximum recipes
+/// Test plan with multiple recipes
 pub fn plan_with_many_recipes_json_test() {
   let recipes = list.range(1, 21)
   |> list.map(fn(i) {
@@ -606,12 +608,6 @@ pub fn complete_save_load_cycle_test() {
   let saved_json = auto_types.auto_meal_plan_to_json(original_plan) |> json.to_string()
 
   // Verify JSON is a valid string
-  saved_json
-  |> string.length()
-  |> should.be_greater_than(0)
+  string.length(saved_json) > 0
+  |> should.be_true()
 }
-
-import gleam/float
-import gleam/string
-import gleam/int
-import meal_planner/types
