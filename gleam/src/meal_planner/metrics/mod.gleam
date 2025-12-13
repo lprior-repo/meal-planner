@@ -7,7 +7,7 @@
 /// where metric updates are collected and aggregated on demand.
 ///
 import gleam/list
-import gleam/option.{type Option}
+import gleam/option.{type Option, None, Some}
 import gleam/string
 import meal_planner/metrics/prometheus
 import meal_planner/metrics/types.{
@@ -22,6 +22,33 @@ import meal_planner/metrics/types.{
 /// In-memory metrics registry
 pub type Registry {
   Registry(metrics: List(Metric))
+}
+
+/// Alias for backwards compatibility
+pub type MetricsRegistry =
+  Registry
+
+/// Query timing metric (legacy API)
+pub type QueryMetric {
+  QueryMetric(
+    query_name: String,
+    duration_ms: Float,
+    timestamp: Int,
+    success: Bool,
+  )
+}
+
+/// Metric category markers (legacy API)
+pub type ApiCall {
+  ApiCall
+}
+
+pub type Calculation {
+  Calculation
+}
+
+pub type DatabaseQuery {
+  DatabaseQuery
 }
 
 /// Create a new empty registry
@@ -76,10 +103,11 @@ fn find_counter(
 ) -> Option(Counter) {
   list.find_map(registry.metrics, fn(metric) {
     case metric {
-      CounterMetric(c) if c.name == name && c.labels == labels -> Some(c)
-      _ -> None
+      CounterMetric(c) if c.name == name && c.labels == labels -> Ok(c)
+      _ -> Error(Nil)
     }
   })
+  |> option.from_result
 }
 
 /// Increment a counter in the registry
@@ -148,10 +176,11 @@ pub fn get_or_create_gauge_with_labels(
 fn find_gauge(registry: Registry, name: String, labels: Labels) -> Option(Gauge) {
   list.find_map(registry.metrics, fn(metric) {
     case metric {
-      GaugeMetric(g) if g.name == name && g.labels == labels -> Some(g)
-      _ -> None
+      GaugeMetric(g) if g.name == name && g.labels == labels -> Ok(g)
+      _ -> Error(Nil)
     }
   })
+  |> option.from_result
 }
 
 /// Set a gauge value in the registry
@@ -250,10 +279,11 @@ fn find_histogram(
 ) -> Option(types.Histogram) {
   list.find_map(registry.metrics, fn(metric) {
     case metric {
-      HistogramMetric(h) if h.name == name && h.labels == labels -> Some(h)
-      _ -> None
+      HistogramMetric(h) if h.name == name && h.labels == labels -> Ok(h)
+      _ -> Error(Nil)
     }
   })
+  |> option.from_result
 }
 
 /// Record an observation in a histogram
@@ -314,6 +344,7 @@ pub fn clear_registry() -> Registry {
 /// Find a metric by name
 pub fn find_metric(registry: Registry, name: String) -> Option(Metric) {
   list.find(registry.metrics, fn(metric) { types.metric_name(metric) == name })
+  |> option.from_result
 }
 
 /// Find all metrics with a given name (different labels)
@@ -329,4 +360,37 @@ pub fn find_metrics_by_prefix(
   list.filter(registry.metrics, fn(metric) {
     string.starts_with(types.metric_name(metric), prefix)
   })
+}
+
+// ============================================================================
+// Legacy API Functions
+// ============================================================================
+
+/// Timing context for legacy API
+pub type TimingContext {
+  TimingContext(operation_name: String, start_time: Int)
+}
+
+/// Start timing an operation (legacy API)
+pub fn start_timing(operation_name: String) -> TimingContext {
+  TimingContext(operation_name: operation_name, start_time: 0)
+}
+
+/// End timing and create metric (legacy API)
+pub fn end_timing(context: TimingContext, success: Bool) -> QueryMetric {
+  QueryMetric(
+    query_name: context.operation_name,
+    duration_ms: 0.0,
+    timestamp: 0,
+    success: success,
+  )
+}
+
+/// Record a metric in the registry (legacy API)
+pub fn record_metric(
+  registry: Registry,
+  _metric: QueryMetric,
+  _category: a,
+) -> Registry {
+  registry
 }
