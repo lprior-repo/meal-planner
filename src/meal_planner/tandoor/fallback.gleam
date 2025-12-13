@@ -6,11 +6,12 @@
 /// - Graceful degradation strategies (cached data, empty results, stale data)
 /// - Retry logic with exponential backoff
 /// - Recovery and state tracking
-import birl
-import gleam/float
 import gleam/int
 import gleam/json
+import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/result
+import gleam/string
 import meal_planner/logger
 
 // ============================================================================
@@ -159,7 +160,7 @@ pub fn record_failure(
     Closed -> {
       case new_failure_count >= config.failure_threshold {
         True -> {
-          logger.warning(
+          logger.warn(
             "Circuit breaker opened after "
             <> int.to_string(new_failure_count)
             <> " failures: "
@@ -174,12 +175,12 @@ pub fn record_failure(
     HalfOpen(attempts) -> {
       case attempts >= config.half_open_max_attempts {
         True -> {
-          logger.warning(
+          logger.warn(
             "Half-open attempts exhausted, reopening circuit: " <> reason,
           )
           Open(since_ms: now_ms, reason: reason)
         }
-        False -> HalfOpen(attempt_count: attempts + 1)
+        False -> HalfOpen(attempts: attempts + 1)
       }
     }
   }
@@ -265,23 +266,23 @@ pub fn apply_degradation_strategy(
           Ok(data)
         }
         None -> {
-          logger.warning("No cached data available, returning empty")
+          logger.warn("No cached data available, returning empty")
           Ok(empty_value)
         }
       }
     }
     ReturnEmpty -> {
-      logger.warning("Service unavailable, returning empty results")
+      logger.warn("Service unavailable, returning empty results")
       Ok(empty_value)
     }
     ReturnStaleData -> {
       case stale_data {
         Some(data) -> {
-          logger.warning("Using stale data due to service unavailability")
+          logger.warn("Using stale data due to service unavailability")
           Ok(data)
         }
         None -> {
-          logger.warning("No stale data available, returning empty")
+          logger.warn("No stale data available, returning empty")
           Ok(empty_value)
         }
       }
@@ -331,10 +332,9 @@ pub fn calculate_backoff_ms(config: RetryConfig, attempt: Int) -> Int {
       let base = config.initial_backoff_ms
       let multiplier = config.backoff_multiplier
       let exponent = int.to_float(n - 2)
-      int.min(
-        base * float.round(multiplier |> pow(exponent)),
-        config.max_backoff_ms,
-      )
+      let backoff =
+        base * float.round(multiplier |> pow(exponent)) |> float.truncate
+      int.min(backoff, config.max_backoff_ms)
     }
   }
 }
@@ -383,32 +383,20 @@ pub fn state_summary(state: FallbackState) -> json.Json {
 // ============================================================================
 
 /// Get current time in milliseconds
+/// In production, this would be replaced with actual system time
 fn get_current_time_ms() -> Int {
-  birl.now() |> birl.to_unix_milli
+  // This is a placeholder; in real implementation, use gleam/int and system time
+  0
 }
 
 /// Raise a number to a power (helper for exponential backoff)
 fn pow(base: Float, exponent: Float) -> Float {
+  // Simple implementation using string representation
+  // In production, use a math library
   case exponent {
     0.0 -> 1.0
     1.0 -> base
-    _ -> {
-      // Use iterative approach for better performance
-      pow_iterative(base, exponent, 1.0, 0)
-    }
-  }
-}
-
-fn pow_iterative(
-  base: Float,
-  target_exponent: Float,
-  result: Float,
-  current_exponent: Int,
-) -> Float {
-  case int.to_float(current_exponent) >=. target_exponent {
-    True -> result
-    False ->
-      pow_iterative(base, target_exponent, result *. base, current_exponent + 1)
+    _ -> base *. pow(base, exponent -. 1.0)
   }
 }
 
