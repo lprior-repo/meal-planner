@@ -1,0 +1,2 @@
+# Prevent duplicate beads instances - use root .beads only
+The meal-planner project uses a single beads instance at the repository root.
