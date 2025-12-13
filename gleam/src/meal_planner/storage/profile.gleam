@@ -22,6 +22,24 @@ pub type StorageError {
   Unauthorized(String)
 }
 
+/// Convert a Result with pog.QueryError to a Result with StorageError
+///
+/// This helper eliminates the duplicate pattern:
+/// ```gleam
+/// case result {
+///   Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+///   Ok(x) -> Ok(x)
+/// }
+/// ```
+pub fn result_to_storage_error(
+  result: Result(a, pog.QueryError),
+) -> Result(a, StorageError) {
+  case result {
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+    Ok(value) -> Ok(value)
+  }
+}
+
 /// Database configuration (re-export from postgres module)
 pub type DbConfig =
   postgres.Config
@@ -55,18 +73,15 @@ pub fn save_nutrition_state(
        calories = EXCLUDED.calories,
        synced_at = NOW()"
 
-  case
-    pog.query(sql)
-    |> pog.parameter(pog.text(state.date))
-    |> pog.parameter(pog.float(state.consumed.protein))
-    |> pog.parameter(pog.float(state.consumed.fat))
-    |> pog.parameter(pog.float(state.consumed.carbs))
-    |> pog.parameter(pog.float(state.consumed.calories))
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-    Ok(_) -> Ok(Nil)
-  }
+  pog.query(sql)
+  |> pog.parameter(pog.text(state.date))
+  |> pog.parameter(pog.float(state.consumed.protein))
+  |> pog.parameter(pog.float(state.consumed.fat))
+  |> pog.parameter(pog.float(state.consumed.carbs))
+  |> pog.parameter(pog.float(state.consumed.calories))
+  |> pog.execute(conn)
+  |> result_to_storage_error
+  |> result.map(fn(_) { Nil })
 }
 
 /// Get nutrition state for a specific date
@@ -138,15 +153,15 @@ pub fn get_nutrition_history(
     ))
   }
 
-  case
-    pog.query(sql)
-    |> pog.parameter(pog.int(limit))
-    |> pog.returning(decoder)
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-    Ok(pog.Returned(_, rows)) -> Ok(rows)
-  }
+  pog.query(sql)
+  |> pog.parameter(pog.int(limit))
+  |> pog.returning(decoder)
+  |> pog.execute(conn)
+  |> result_to_storage_error
+  |> result.map(fn(ret) {
+    let pog.Returned(_, rows) = ret
+    rows
+  })
 }
 
 // ============================================================================
@@ -167,17 +182,14 @@ pub fn save_goals(
        daily_carbs = EXCLUDED.daily_carbs,
        daily_calories = EXCLUDED.daily_calories"
 
-  case
-    pog.query(sql)
-    |> pog.parameter(pog.float(goals.daily_protein))
-    |> pog.parameter(pog.float(goals.daily_fat))
-    |> pog.parameter(pog.float(goals.daily_carbs))
-    |> pog.parameter(pog.float(goals.daily_calories))
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-    Ok(_) -> Ok(Nil)
-  }
+  pog.query(sql)
+  |> pog.parameter(pog.float(goals.daily_protein))
+  |> pog.parameter(pog.float(goals.daily_fat))
+  |> pog.parameter(pog.float(goals.daily_carbs))
+  |> pog.parameter(pog.float(goals.daily_calories))
+  |> pog.execute(conn)
+  |> result_to_storage_error
+  |> result.map(fn(_) { Nil })
 }
 
 /// Get nutrition goals
@@ -254,18 +266,15 @@ pub fn save_user_profile(
     None -> pog.null()
   }
 
-  case
-    pog.query(sql)
-    |> pog.parameter(pog.float(profile.bodyweight))
-    |> pog.parameter(pog.text(activity_str))
-    |> pog.parameter(pog.text(goal_str))
-    |> pog.parameter(pog.int(profile.meals_per_day))
-    |> pog.parameter(micronutrient_goals_json)
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-    Ok(_) -> Ok(Nil)
-  }
+  pog.query(sql)
+  |> pog.parameter(pog.float(profile.bodyweight))
+  |> pog.parameter(pog.text(activity_str))
+  |> pog.parameter(pog.text(goal_str))
+  |> pog.parameter(pog.int(profile.meals_per_day))
+  |> pog.parameter(micronutrient_goals_json)
+  |> pog.execute(conn)
+  |> result_to_storage_error
+  |> result.map(fn(_) { Nil })
 }
 
 /// Get user profile
