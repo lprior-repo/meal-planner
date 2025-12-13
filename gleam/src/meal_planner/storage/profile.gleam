@@ -55,8 +55,7 @@ pub fn start_pool(config: DbConfig) -> Result(pog.Connection, String) {
   |> result.map_error(postgres.format_error)
 }
 
-// Nutrition State Storage Functions
-// ============================================================================
+// Nutrition State
 
 /// Save nutrition state for a specific date
 pub fn save_nutrition_state(
@@ -164,9 +163,7 @@ pub fn get_nutrition_history(
   })
 }
 
-// ============================================================================
-// Nutrition Goals Storage Functions
-// ============================================================================
+// Nutrition Goals
 
 /// Save nutrition goals
 pub fn save_goals(
@@ -225,9 +222,7 @@ pub fn get_goals(
   }
 }
 
-// ============================================================================
-// User Profile Storage Functions
-// ============================================================================
+// User Profile
 
 /// Save user profile
 pub fn save_user_profile(

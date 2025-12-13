@@ -12,10 +12,6 @@ import meal_planner/storage/utils
 import meal_planner/types
 import pog
 
-// ============================================================================
-// Type Exports
-// ============================================================================
-
 pub type UsdaFood {
   UsdaFood(
     fdc_id: id.FdcId,
@@ -39,9 +35,7 @@ pub type UsdaFoodWithNutrients {
   UsdaFoodWithNutrients(food: UsdaFood, nutrients: List(FoodNutrientValue))
 }
 
-// ============================================================================
-// USDA Foods - Search and Retrieval
-// ============================================================================
+// USDA Foods
 
 /// Search for USDA foods by query string
 pub fn search_foods(
@@ -259,9 +253,7 @@ pub fn get_food_categories(
   })
 }
 
-// ============================================================================
 // Custom Foods
-// ============================================================================
 
 /// Create custom food
 pub fn create_custom_food(
@@ -421,9 +413,7 @@ pub fn update_custom_food(
   }
 }
 
-// ============================================================================
-// Unified Search - Custom + USDA Foods
-// ============================================================================
+// Unified Search
 
 /// Unified food search - searches both custom foods and USDA foods
 /// Custom foods are prioritized and appear first in results
@@ -487,9 +477,7 @@ pub fn unified_search_foods(
   ))
 }
 
-// ============================================================================
 // Nutrients
-// ============================================================================
 
 /// Get food nutrients
 pub fn get_food_nutrients(
@@ -521,9 +509,7 @@ pub fn get_food_nutrients(
   }
 }
 
-// ============================================================================
 // Decoders
-// ============================================================================
 
 fn custom_food_decoder() -> decode.Decoder(types.CustomFood) {
   use custom_food_id_str <- decode.field(0, decode.string)
