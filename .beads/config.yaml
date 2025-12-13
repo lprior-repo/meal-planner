@@ -54,4 +54,4 @@ issue-prefix: "meal-planner"
 # - github.org
 # - github.repo
 # - sync.branch - Git branch for beads commits (use BEADS_SYNC_BRANCH env var or bd config set)
-sync-branch: main
+# sync-branch: main  # Disabled - we work directly on main, no separate sync branch needed
