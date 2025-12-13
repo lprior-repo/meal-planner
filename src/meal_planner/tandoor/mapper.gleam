@@ -6,13 +6,16 @@
 /// Tandoor API responses include detailed recipe information with nutrition data,
 /// steps with ingredient references, and metadata. This mapper normalizes that
 /// data into a consistent internal format for storage and processing.
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/order
 import gleam/result
 import gleam/string
 import meal_planner/id
 import meal_planner/types.{
-  type FodmapLevel, type Macros, type Recipe, High, Low, Macros, Medium, Recipe,
+  type FodmapLevel, type Ingredient, type Macros, type Recipe, High, Ingredient,
+  Low, Macros, Medium, Recipe,
 }
 
 /// Tandoor API nutrition data structure
@@ -99,7 +102,7 @@ pub fn tandoor_to_recipe(
   Ok(Recipe(
     id: recipe_id,
     name: tandoor_recipe.name,
-    ingredients: [],
+    ingredients: List([]),
     // TODO: Parse ingredients from steps when available
     instructions: instructions,
     macros: macros,
@@ -232,7 +235,7 @@ fn keyword_is_sauce(keyword: String) -> Bool {
 /// - FodmapLevel: Inferred level (Low, Medium, or High)
 fn infer_fodmap_level(
   keywords: List(String),
-  _description: String,
+  description: String,
 ) -> FodmapLevel {
   let lowercase_keywords =
     keywords
@@ -275,7 +278,7 @@ fn keyword_suggests_low_fodmap(keyword: String) -> Bool {
 /// Returns:
 /// - TandoorRecipe: Recipe in Tandoor API format
 pub fn recipe_to_tandoor(recipe: Recipe) -> TandoorRecipe {
-  let slug = id.recipe_id_to_string(recipe.id) |> string.replace("_", "-")
+  let slug = recipe.id.id |> string.replace("_", "-")
   let keywords =
     build_keywords(
       recipe.category,
@@ -342,9 +345,12 @@ fn build_recipe_steps(instructions: List(String)) -> List(TandoorRecipeStep) {
   })
 }
 
-// Int and Order imports are defined at the top
-import gleam/int
-import gleam/order
+/// Helper type for ordering
+type Order {
+  Lt
+  Eq
+  Gt
+}
 
 /// Helper to convert recipes in bulk
 ///
