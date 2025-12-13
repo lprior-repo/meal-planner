@@ -100,7 +100,7 @@ pub fn tandoor_to_recipe(
   Ok(Recipe(
     id: recipe_id,
     name: tandoor_recipe.name,
-    ingredients: List([]),
+    ingredients: [],
     // TODO: Parse ingredients from steps when available
     instructions: instructions,
     macros: macros,

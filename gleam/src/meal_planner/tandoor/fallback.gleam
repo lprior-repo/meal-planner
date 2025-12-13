@@ -6,13 +6,10 @@
 /// - Graceful degradation strategies (cached data, empty results, stale data)
 /// - Retry logic with exponential backoff
 /// - Recovery and state tracking
-import gleam/bool
 import gleam/int
 import gleam/json
-import gleam/list
+import gleam/float
 import gleam/option.{type Option, None, Some}
-import gleam/result
-import gleam/string
 import meal_planner/logger
 
 // ============================================================================
@@ -161,7 +158,7 @@ pub fn record_failure(
     Closed -> {
       case new_failure_count >= config.failure_threshold {
         True -> {
-          logger.warn(
+          logger.warning(
             "Circuit breaker opened after "
             <> int.to_string(new_failure_count)
             <> " failures: "
@@ -176,12 +173,12 @@ pub fn record_failure(
     HalfOpen(attempts) -> {
       case attempts >= config.half_open_max_attempts {
         True -> {
-          logger.warn(
+          logger.warning(
             "Half-open attempts exhausted, reopening circuit: " <> reason,
           )
           Open(since_ms: now_ms, reason: reason)
         }
-        False -> HalfOpen(attempts: attempts + 1)
+        False -> HalfOpen(attempt_count: attempts + 1)
       }
     }
   }
@@ -267,23 +264,23 @@ pub fn apply_degradation_strategy(
           Ok(data)
         }
         None -> {
-          logger.warn("No cached data available, returning empty")
+          logger.warning("No cached data available, returning empty")
           Ok(empty_value)
         }
       }
     }
     ReturnEmpty -> {
-      logger.warn("Service unavailable, returning empty results")
+      logger.warning("Service unavailable, returning empty results")
       Ok(empty_value)
     }
     ReturnStaleData -> {
       case stale_data {
         Some(data) -> {
-          logger.warn("Using stale data due to service unavailability")
+          logger.warning("Using stale data due to service unavailability")
           Ok(data)
         }
         None -> {
-          logger.warn("No stale data available, returning empty")
+          logger.warning("No stale data available, returning empty")
           Ok(empty_value)
         }
       }
@@ -333,9 +330,7 @@ pub fn calculate_backoff_ms(config: RetryConfig, attempt: Int) -> Int {
       let base = config.initial_backoff_ms
       let multiplier = config.backoff_multiplier
       let exponent = int.to_float(n - 2)
-      let backoff =
-        base * float.round(multiplier |> pow(exponent)) |> float.truncate
-      int.min(backoff, config.max_backoff_ms)
+        int.min(base * float.round(multiplier |> pow(exponent)), config.max_backoff_ms)
     }
   }
 }

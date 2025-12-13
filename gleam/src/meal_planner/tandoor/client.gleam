@@ -494,8 +494,6 @@ fn log_request(method: String, url: String) -> Nil {
 }
 
 /// Log a response for debugging
-
-
 // ============================================================================
 // Recipe API Methods
 // ============================================================================
@@ -586,8 +584,6 @@ pub fn recipe_decoder(json_value: dynamic.Dynamic) -> Result(Recipe, String) {
 }
 
 /// Decode a paginated recipe list response
-
-
 /// Get all recipes from Tandoor API
 ///
 /// # Arguments

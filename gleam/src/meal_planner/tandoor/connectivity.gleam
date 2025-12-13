@@ -9,12 +9,7 @@
 /// - HTTP errors from the API
 ///
 /// All checks are non-blocking and include timeout protection.
-import gleam/http
-import gleam/int
 import gleam/json
-import gleam/list
-import gleam/option
-import gleam/result
 import gleam/string
 import meal_planner/config
 import meal_planner/logger
@@ -32,7 +27,7 @@ pub type ConnectivityStatus {
   /// DNS resolution for Tandoor hostname failed
   DnsFailed
   /// Tandoor returned an error response
-  Error(String)
+  Failed(String)
 }
 
 /// Health check result for Tandoor
@@ -124,7 +119,7 @@ fn perform_connectivity_check(
 /// Perform the actual HTTP health request to Tandoor
 /// Returns Ok with response body or Error with error description
 fn perform_health_request(
-  config: config.Config,
+  _config: config.Config,
   url: String,
 ) -> Result(String, String) {
   // For now, we'll implement a basic check that validates the URL structure
@@ -155,8 +150,8 @@ fn error_to_status_and_message(error: String) -> #(ConnectivityStatus, String) {
     "timeout" -> #(Timeout, "Tandoor server not responding in time")
     "dns_failed" -> #(DnsFailed, "Cannot resolve Tandoor hostname")
     "connection_refused" -> #(Unreachable, "Cannot connect to Tandoor server")
-    "invalid_url" -> #(Error("invalid_url"), "Tandoor base URL is invalid")
-    msg -> #(Error(msg), "Tandoor error: " <> msg)
+    "invalid_url" -> #(Failed("invalid_url"), "Tandoor base URL is invalid")
+    msg -> #(Failed(msg), "Tandoor error: " <> msg)
   }
 }
 
@@ -184,7 +179,7 @@ fn status_to_json_string(status: ConnectivityStatus) -> json.Json {
     Unreachable -> "unreachable"
     Timeout -> "timeout"
     DnsFailed -> "dns_failed"
-    Error(_) -> "error"
+    Failed(_) -> "error"
   }
   json.string(status_str)
 }
