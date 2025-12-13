@@ -1,15 +1,4 @@
 {
-  "hooks": {
-    "SessionStart": [
-      { "type": "command", "command": "uv run python -m mcp_agent_mail.cli file_reservations active meal-planner" },
-      { "type": "command", "command": "uv run python -m mcp_agent_mail.cli acks pending meal-planner lewis --limit 20" }
-    ],
-    "PreToolUse": [
-      { "matcher": "Edit", "hooks": [ { "type": "command", "command": "uv run python -m mcp_agent_mail.cli file_reservations soon meal-planner --minutes 10" } ] }
-    ],
-    "PostToolUse": [
-      { "matcher": { "tool": "send_message" }, "hooks": [ { "type": "command", "command": "uv run python -m mcp_agent_mail.cli list-acks --project meal-planner --agent lewis --limit 10" } ] },
-      { "matcher": { "tool": "file_reservation_paths" }, "hooks": [ { "type": "command", "command": "uv run python -m mcp_agent_mail.cli file_reservations list meal-planner" } ] }
-    ]
-  }
+  "spinnerTipsEnabled": false,
+  "outputStyle": "default"
 }
