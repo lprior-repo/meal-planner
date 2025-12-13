@@ -434,9 +434,3 @@ fn get_timestamp() -> Int
 fn get_timestamp_ms() -> Int {
   get_timestamp() / 1_000_000
 }
-
-// ============================================================================
-// Module-level type imports
-// ============================================================================
-
-import meal_planner/metrics/types

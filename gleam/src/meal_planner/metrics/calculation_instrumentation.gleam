@@ -2,7 +2,6 @@
 ///
 /// These functions wrap macro calculations, meal generation, and other
 /// business logic to automatically collect performance metrics.
-import gleam/result
 import meal_planner/meal_plan.{type DailyPlan, type Meal, type WeeklyMealPlan}
 import meal_planner/meal_selection
 import meal_planner/metrics/calculations.{
@@ -10,7 +9,7 @@ import meal_planner/metrics/calculations.{
   time_pure_calculation,
 }
 import meal_planner/metrics/mod.{type MetricsRegistry}
-import meal_planner/types.{type Macros, type Recipe, type UserProfile}
+import meal_planner/types.{type Macros, type Recipe}
 
 // ============================================================================
 // Macro Calculation Instrumentation

@@ -10,6 +10,7 @@ import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/result
 import gleam/string
 import meal_planner/metrics/types.{
   type Counter, type Gauge, type Metric, type MetricCategory,
@@ -377,9 +378,6 @@ pub type Result(a, b) {
   Ok(a)
   Error(b)
 }
-
-// Module-level result functions
-import gleam/result
 
 /// Convert Result to Option
 fn result_to_option(r: Result(a, b)) -> Option(a) {

@@ -319,10 +319,6 @@ pub type MetricCollector =
 pub type OperationContext =
   OperationContext
 
-// Add these imports at the top level
-import meal_planner/metrics/types
-import meal_planner/tandoor/client
-
 // Compatibility shim for result operations
 pub type Result(a, b) {
   Ok(a)

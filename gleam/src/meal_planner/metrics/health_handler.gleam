@@ -4,10 +4,8 @@
 /// performance metrics and SLA status. It serves as an example of metrics
 /// integration into web handlers.
 import gleam/http
-import gleam/int
 import gleam/json
 import gleam/list
-import gleam/string
 import meal_planner/logger
 import meal_planner/metrics/context
 import meal_planner/metrics/mod.{

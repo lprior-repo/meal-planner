@@ -10,6 +10,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/result
 import gleam/string
 import meal_planner/metrics/collector.{type MetricCollector}
 import meal_planner/metrics/types.{
@@ -440,10 +441,3 @@ fn get_timestamp() -> Int
 fn get_timestamp_ms() -> Int {
   get_timestamp() / 1_000_000
 }
-
-// ============================================================================
-// Module-level imports
-// ============================================================================
-
-import gleam/result
-import meal_planner/metrics/types

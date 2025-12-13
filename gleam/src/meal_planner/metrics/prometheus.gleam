@@ -4,6 +4,7 @@
 /// Reference: https://prometheus.io/docs/instrumenting/exposition_formats/
 ///
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam/string
 import meal_planner/metrics/types.{
@@ -251,6 +252,3 @@ fn format_float_decimal(value: Float) -> String {
   // A production implementation would handle precision better
   float.to_string(value)
 }
-
-// Import statements needed
-import gleam/int
