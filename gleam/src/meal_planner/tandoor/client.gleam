@@ -332,7 +332,7 @@ pub fn parse_json_body(
   response: ApiResponse,
   decoder: fn(dynamic.Dynamic) -> Result(a, String),
 ) -> Result(a, TandoorError) {
-  case json.parse(response.body) {
+  case json.parse(response.body, using: decode.dynamic) {
     Ok(parsed_json) -> {
       case decoder(parsed_json) {
         Ok(value) -> Ok(value)

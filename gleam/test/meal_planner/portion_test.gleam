@@ -1,5 +1,4 @@
 import gleam/list
-import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/id
@@ -143,7 +142,7 @@ pub fn calculate_daily_portions_test() {
   should.equal(list.length(results), 2)
 
   // Each portion gets half of daily macros
-  let per_meal = Macros(protein: 70.0, fat: 25.0, carbs: 50.0)
+  let _per_meal = Macros(protein: 70.0, fat: 25.0, carbs: 50.0)
 
   // First recipe: 70/30 = 2.33x scale
   let first = list.first(results)

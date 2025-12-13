@@ -309,7 +309,7 @@ pub fn get_custom_foods_for_user_test() {
   let assert Ok(foods) = storage.get_custom_foods_for_user(conn, user_id)
 
   // Verify we have at least our 2 test foods
-  list.length(foods) |> should.be_at_least(2)
+  { list.length(foods) >= 2 } |> should.be_true()
 
   // Cleanup
   let assert Ok(_) = storage.delete_custom_food(conn, user_id, food_id_1)
@@ -349,13 +349,13 @@ pub fn unified_search_foods_test() {
     storage.unified_search_foods(conn, user_id, "chicken", 20)
 
   // Verify we have results
-  response.total_count |> should.be_at_least(1)
+  { response.total_count >= 1 } |> should.be_true()
 
   // Verify custom count is at least 1
-  response.custom_count |> should.be_at_least(1)
+  { response.custom_count >= 1 } |> should.be_true()
 
   // Verify USDA count is positive (chicken is common in USDA DB)
-  response.usda_count |> should.be_at_least(1)
+  { response.usda_count >= 1 } |> should.be_true()
 
   // Verify total equals sum
   response.total_count
@@ -384,7 +384,7 @@ pub fn unified_search_usda_only_test() {
     storage.unified_search_foods(conn, user_id, "beef", 10)
 
   // Should have USDA results
-  response.usda_count |> should.be_at_least(1)
+  { response.usda_count >= 1 } |> should.be_true()
 
   // Custom count should be 0 (no custom foods for this user)
   response.custom_count |> should.equal(0)
@@ -412,7 +412,7 @@ pub fn unified_search_respects_limit_test() {
     storage.unified_search_foods(conn, user_id, "chicken", limit)
 
   // Total count should not exceed limit
-  response.total_count |> should.be_at_most(limit)
+  { response.total_count <= limit } |> should.be_true()
 
   // Results list length should match total_count
   list.length(response.results) |> should.equal(response.total_count)
@@ -425,7 +425,7 @@ pub fn unified_search_custom_fills_limit_test() {
   let user_id = id.user_id("test-user-custom-fills-limit")
 
   // Create multiple custom foods
-  let food_ids = [
+  let _food_ids = [
     id.custom_food_id("test-custom-protein-1"),
     id.custom_food_id("test-custom-protein-2"),
     id.custom_food_id("test-custom-protein-3"),
