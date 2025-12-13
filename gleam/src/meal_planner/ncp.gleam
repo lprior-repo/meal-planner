@@ -658,9 +658,7 @@ fn float_to_string_fixed(f: Float, decimals: Int) -> String {
 @external(erlang, "erlang", "float")
 fn int_to_float(n: Int) -> Float
 
-// ============================================================================
-// Recipe Scoring and Selection Functions
-// ============================================================================
+// Recipe Scoring and Selection
 
 /// Score a recipe for how well it addresses a nutritional deviation
 /// Returns a score from 0.0 to 1.0, where higher scores indicate better fit

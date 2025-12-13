@@ -25,10 +25,6 @@ import meal_planner/types.{
 }
 import pog
 
-// ============================================================================
-// Database Configuration (re-exported from postgres module)
-// ============================================================================
-
 /// Database configuration (re-export from postgres module)
 pub type DbConfig =
   postgres.Config
@@ -44,9 +40,7 @@ pub fn start_pool(config: DbConfig) -> Result(pog.Connection, String) {
   |> result.map_error(postgres.format_error)
 }
 
-// ============================================================================
-// Type Re-exports from Entry Module
-// ============================================================================
+// Type Re-exports
 
 /// Food log entry type (re-exported from entries module)
 pub type FoodLog =
@@ -60,10 +54,6 @@ pub type Log =
 pub type FoodLogInput =
   entries.FoodLogInput
 
-// ============================================================================
-// Type Re-exports from Summaries Module
-// ============================================================================
-
 /// Food summary item for weekly aggregation (re-exported from summaries module)
 pub type FoodSummaryItem =
   summaries.FoodSummaryItem
@@ -72,9 +62,7 @@ pub type FoodSummaryItem =
 pub type WeeklySummary =
   summaries.WeeklySummary
 
-// ============================================================================
-// Entry Operations (from logs/entries.gleam)
-// ============================================================================
+// Entry Operations
 
 /// Save a food log entry
 pub fn save_food_log(
@@ -119,9 +107,7 @@ pub fn save_food_log_from_tandoor_recipe(
   entries.save_food_log_from_tandoor_recipe(conn, input)
 }
 
-// ============================================================================
-// Query Operations (from logs/queries.gleam)
-// ============================================================================
+// Query Operations
 
 /// Get food logs for a specific date
 pub fn get_food_logs_by_date(
@@ -173,9 +159,7 @@ pub fn get_daily_log(
   queries.get_daily_log(conn, date)
 }
 
-// ============================================================================
-// Summary Operations (from logs/summaries.gleam)
-// ============================================================================
+// Summary Operations
 
 /// Get weekly summary of nutrition data aggregated by food
 pub fn get_weekly_summary(
@@ -186,9 +170,7 @@ pub fn get_weekly_summary(
   summaries.get_weekly_summary(conn, user_id, start_date)
 }
 
-// ============================================================================
 // User Profile Helpers
-// ============================================================================
 
 /// Get user profile or return default if not found
 pub fn get_user_profile_or_default(conn: pog.Connection) -> UserProfile {
@@ -208,6 +190,3 @@ fn default_user_profile() -> UserProfile {
     micronutrient_goals: None,
   )
 }
-// ============================================================================
-// Private Helper Imports
-// ============================================================================
