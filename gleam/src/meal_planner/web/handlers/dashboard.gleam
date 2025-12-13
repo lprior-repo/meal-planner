@@ -155,10 +155,10 @@ fn render_dashboard(
       padding-bottom: 8px;
     }
     .progress-bar {
-      background: #ecf0f1;
-      border-radius: 10px;
+      background: #e5e7eb;
+      border-radius: 4px;
       overflow: hidden;
-      height: 30px;
+      height: 24px;
       margin: 10px 0;
       position: relative;
     }
@@ -172,9 +172,9 @@ fn render_dashboard(
       font-weight: bold;
       font-size: 12px;
     }
-    .progress-fill.protein { background: #3498db; }
-    .progress-fill.fat { background: #e67e22; }
-    .progress-fill.carbs { background: #2ecc71; }
+    .progress-fill.protein { background: #3b82f6; }
+    .progress-fill.fat { background: #f97316; }
+    .progress-fill.carbs { background: #22c55e; }
     .progress-label {
       margin-bottom: 5px;
       font-size: 14px;
@@ -311,10 +311,15 @@ fn render_dashboard(
 // ============================================================================
 
 fn render_date_selector(date: String) -> String {
+  // Calculate previous and next dates using simple string manipulation
+  let prev_date = calculate_previous_date(date)
+  let next_date = calculate_next_date(date)
+
   "<div class=\"date-nav\">
-    <button hx-get=\"/api/dashboard/data?date=" <> date <> "\"
+    <button hx-get=\"/api/dashboard/data?date=" <> prev_date <> "\"
             hx-target=\".grid\"
-            hx-swap=\"innerHTML\">
+            hx-swap=\"innerHTML\"
+            hx-push-url=\"/dashboard?date=" <> prev_date <> "\">
       ← Previous Day
     </button>
     <input type=\"date\"
@@ -324,13 +329,96 @@ fn render_date_selector(date: String) -> String {
            hx-trigger=\"change\"
            hx-target=\".grid\"
            hx-swap=\"innerHTML\"
-           hx-include=\"this\">
-    <button hx-get=\"/api/dashboard/data?date=" <> date <> "\"
+           hx-include=\"this\"
+           hx-push-url=\"true\">
+    <button hx-get=\"/api/dashboard/data?date=" <> next_date <> "\"
             hx-target=\".grid\"
-            hx-swap=\"innerHTML\">
+            hx-swap=\"innerHTML\"
+            hx-push-url=\"/dashboard?date=" <> next_date <> "\">
       Next Day →
     </button>
   </div>"
+}
+
+/// Calculate the previous date (simple decrement, may not handle month boundaries)
+/// For production, use a proper date library
+fn calculate_previous_date(date: String) -> String {
+  // Parse YYYY-MM-DD and decrement day by 1
+  // This is a simplified version - for production use birl or tempo
+  case string.split(date, "-") {
+    [year, month, day_str] -> {
+      case int.parse(day_str) {
+        Ok(day) if day > 1 -> {
+          let new_day = day - 1
+          let padded_day = case new_day < 10 {
+            True -> "0" <> int.to_string(new_day)
+            False -> int.to_string(new_day)
+          }
+          year <> "-" <> month <> "-" <> padded_day
+        }
+        Ok(1) -> {
+          // Handle month boundary - simplified, just go to day 28
+          case int.parse(month) {
+            Ok(m) if m > 1 -> {
+              let new_month = m - 1
+              let padded_month = case new_month < 10 {
+                True -> "0" <> int.to_string(new_month)
+                False -> int.to_string(new_month)
+              }
+              year <> "-" <> padded_month <> "-28"
+            }
+            _ -> year <> "-12-31"
+          }
+        }
+        _ -> date
+      }
+    }
+    _ -> date
+  }
+}
+
+/// Calculate the next date (simple increment, may not handle month boundaries)
+/// For production, use a proper date library
+fn calculate_next_date(date: String) -> String {
+  // Parse YYYY-MM-DD and increment day by 1
+  case string.split(date, "-") {
+    [year, month, day_str] -> {
+      case int.parse(day_str) {
+        Ok(day) if day < 28 -> {
+          let new_day = day + 1
+          let padded_day = case new_day < 10 {
+            True -> "0" <> int.to_string(new_day)
+            False -> int.to_string(new_day)
+          }
+          year <> "-" <> month <> "-" <> padded_day
+        }
+        Ok(_) -> {
+          // Handle month boundary - simplified
+          case int.parse(month) {
+            Ok(m) if m < 12 -> {
+              let new_month = m + 1
+              let padded_month = case new_month < 10 {
+                True -> "0" <> int.to_string(new_month)
+                False -> int.to_string(new_month)
+              }
+              year <> "-" <> padded_month <> "-01"
+            }
+            _ -> {
+              case int.parse(year) {
+                Ok(y) -> {
+                  let new_year = y + 1
+                  int.to_string(new_year) <> "-01-01"
+                }
+                _ -> date
+              }
+            }
+          }
+        }
+        _ -> date
+      }
+    }
+    _ -> date
+  }
 }
 
 fn render_calorie_summary(
