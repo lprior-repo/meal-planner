@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
-# Initialize PostgreSQL database for meal-planner
+# init-local-database.sh
+#
+# LOCAL DEVELOPMENT INITIALIZATION SCRIPT
+# Purpose: Set up the meal-planner database for local development
+#
+# This script:
+# 1. Starts the system PostgreSQL service (via systemctl)
+# 2. Waits for PostgreSQL to be ready
+# 3. Runs Gleam migrations to initialize the meal_planner database
+# 4. Provides next steps for development
+#
+# Usage: ./scripts/init-local-database.sh
+# Note: Requires sudo access to start PostgreSQL service
+#
+# NOT used in Docker environments - see init-docker-database.sh instead
 
 set -e
 
