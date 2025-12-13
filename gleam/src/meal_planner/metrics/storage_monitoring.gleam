@@ -7,7 +7,6 @@
 /// - storage_rows_affected: Rows modified by operations (counter)
 /// - storage_cache_hit_rate: Cache effectiveness (gauge)
 /// - storage_query_throughput: Queries per second (gauge)
-
 import gleam/float
 import gleam/int
 import gleam/list
@@ -44,13 +43,14 @@ pub fn record_query_success(
   let end_time_ms = get_timestamp_ms()
   let duration_ms = int.to_float(end_time_ms - context.start_time_ms)
 
-  let measurement = TimingMeasurement(
-    operation_name: context.operation_name,
-    duration_ms: duration_ms,
-    timestamp_ms: end_time_ms,
-    success: True,
-    error_message: "",
-  )
+  let measurement =
+    TimingMeasurement(
+      operation_name: context.operation_name,
+      duration_ms: duration_ms,
+      timestamp_ms: end_time_ms,
+      success: True,
+      error_message: "",
+    )
 
   let collector = collector.record_timing(collector, measurement)
 
@@ -87,26 +87,23 @@ pub fn record_query_failure(
   let end_time_ms = get_timestamp_ms()
   let duration_ms = int.to_float(end_time_ms - context.start_time_ms)
 
-  let measurement = TimingMeasurement(
-    operation_name: context.operation_name,
-    duration_ms: duration_ms,
-    timestamp_ms: end_time_ms,
-    success: False,
-    error_message: error_message,
-  )
+  let measurement =
+    TimingMeasurement(
+      operation_name: context.operation_name,
+      duration_ms: duration_ms,
+      timestamp_ms: end_time_ms,
+      success: False,
+      error_message: error_message,
+    )
 
   let collector = collector.record_timing(collector, measurement)
 
   // Extract query type from metadata
-  let query_type =
-    get_metadata_value(context.metadata, "query_type", "unknown")
+  let query_type = get_metadata_value(context.metadata, "query_type", "unknown")
 
-  collector.record_counter(
-    collector,
-    "storage_query_errors",
-    1,
-    [#("query_type", query_type)],
-  )
+  collector.record_counter(collector, "storage_query_errors", 1, [
+    #("query_type", query_type),
+  ])
 }
 
 // ============================================================================
@@ -121,12 +118,9 @@ pub fn record_insert(
   duration_ms: Float,
 ) -> MetricCollector {
   let collector =
-    collector.record_counter(
-      collector,
-      "storage_inserts",
-      rows_inserted,
-      [#("table", table_name)],
-    )
+    collector.record_counter(collector, "storage_inserts", rows_inserted, [
+      #("table", table_name),
+    ])
 
   collector.record_gauge(
     collector,
@@ -145,12 +139,9 @@ pub fn record_update(
   duration_ms: Float,
 ) -> MetricCollector {
   let collector =
-    collector.record_counter(
-      collector,
-      "storage_updates",
-      rows_updated,
-      [#("table", table_name)],
-    )
+    collector.record_counter(collector, "storage_updates", rows_updated, [
+      #("table", table_name),
+    ])
 
   collector.record_gauge(
     collector,
@@ -169,12 +160,9 @@ pub fn record_delete(
   duration_ms: Float,
 ) -> MetricCollector {
   let collector =
-    collector.record_counter(
-      collector,
-      "storage_deletes",
-      rows_deleted,
-      [#("table", table_name)],
-    )
+    collector.record_counter(collector, "storage_deletes", rows_deleted, [
+      #("table", table_name),
+    ])
 
   collector.record_gauge(
     collector,
@@ -198,12 +186,9 @@ pub fn record_complex_query(
   success: Bool,
 ) -> MetricCollector {
   let collector =
-    collector.record_counter(
-      collector,
-      "storage_complex_queries",
-      1,
-      [#("query_name", query_name)],
-    )
+    collector.record_counter(collector, "storage_complex_queries", 1, [
+      #("query_name", query_name),
+    ])
 
   let collector =
     collector.record_counter(
@@ -219,12 +204,9 @@ pub fn record_complex_query(
   }
 
   let collector =
-    collector.record_counter(
-      collector,
-      "storage_query_outcomes",
-      1,
-      [#("status", status)],
-    )
+    collector.record_counter(collector, "storage_query_outcomes", 1, [
+      #("status", status),
+    ])
 
   collector.record_gauge(
     collector,
@@ -244,12 +226,9 @@ pub fn record_cache_hit(
   collector: MetricCollector,
   cache_key: String,
 ) -> MetricCollector {
-  collector.record_counter(
-    collector,
-    "storage_cache_hits",
-    1,
-    [#("cache_key", cache_key)],
-  )
+  collector.record_counter(collector, "storage_cache_hits", 1, [
+    #("cache_key", cache_key),
+  ])
 }
 
 /// Record cache miss
@@ -257,12 +236,9 @@ pub fn record_cache_miss(
   collector: MetricCollector,
   cache_key: String,
 ) -> MetricCollector {
-  collector.record_counter(
-    collector,
-    "storage_cache_misses",
-    1,
-    [#("cache_key", cache_key)],
-  )
+  collector.record_counter(collector, "storage_cache_misses", 1, [
+    #("cache_key", cache_key),
+  ])
 }
 
 /// Record overall cache hit rate
@@ -369,9 +345,7 @@ pub fn record_connection_pool_state(
 
   let utilization = case max_connections > 0 {
     True ->
-      int.to_float(active_connections)
-      /. int.to_float(max_connections)
-      *. 100.0
+      int.to_float(active_connections) /. int.to_float(max_connections) *. 100.0
     False -> 0.0
   }
 

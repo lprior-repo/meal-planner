@@ -3,7 +3,6 @@
 /// This module provides retry mechanisms for transient failures when
 /// communicating with the Tandoor API. It implements exponential backoff
 /// to avoid overwhelming the service and to handle temporary network issues.
-
 import gleam/float
 import gleam/int
 import gleam/list
@@ -107,9 +106,8 @@ pub fn calculate_backoff(config: RetryConfig, attempt: Int) -> Int {
   // Apply jitter
   // For deterministic testing, jitter is calculated as a simple formula
   // In production, this would use random number generation
-  let jitter_amount = float.round(
-    int.to_float(delay_int) *. config.jitter_factor,
-  )
+  let jitter_amount =
+    float.round(int.to_float(delay_int) *. config.jitter_factor)
 
   delay_int + jitter_amount
 }
@@ -175,9 +173,7 @@ pub fn is_transient_network_error(error_message: String) -> Bool {
     "enetunreach",
   ]
 
-  list.any(transient_patterns, fn(pattern) {
-    string.contains(lower, pattern)
-  })
+  list.any(transient_patterns, fn(pattern) { string.contains(lower, pattern) })
 }
 
 /// Execute a function with automatic retry logic

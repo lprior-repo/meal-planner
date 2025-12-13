@@ -39,13 +39,17 @@ pub type VerticalDietCompliance {
 /// Check if a recipe complies with vertical diet guidelines
 pub fn check_compliance(recipe: Recipe) -> VerticalDietCompliance {
   // Validate recipe has minimum required data
-  case list.length(recipe.recipe_ingredient), list.length(recipe.recipe_instructions) {
-    0, _ | _, 0 -> VerticalDietCompliance(
-      compliant: False,
-      score: 0,
-      reasons: ["Recipe must have ingredients and instructions"],
-      recommendations: ["Add recipe ingredients and preparation instructions"],
-    )
+  case
+    list.length(recipe.recipe_ingredient),
+    list.length(recipe.recipe_instructions)
+  {
+    0, _ | _, 0 ->
+      VerticalDietCompliance(
+        compliant: False,
+        score: 0,
+        reasons: ["Recipe must have ingredients and instructions"],
+        recommendations: ["Add recipe ingredients and preparation instructions"],
+      )
     _, _ -> evaluate_recipe_compliance(recipe)
   }
 }
@@ -92,8 +96,13 @@ fn evaluate_recipe_compliance(recipe: Recipe) -> VerticalDietCompliance {
     None -> 0
   }
 
-  let total_score = protein_score + carb_score + vegetable_score + ingredient_score
-    + prep_score + quality_score
+  let total_score =
+    protein_score
+    + carb_score
+    + vegetable_score
+    + ingredient_score
+    + prep_score
+    + quality_score
 
   // Normalize score to 0-100 range
   let normalized_score = int.min(total_score, 100)

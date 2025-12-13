@@ -14,7 +14,6 @@
 /// - ConflictResolution: Conflict resolution strategies
 /// - PreferenceHint: Hints for automatic conflict resolution
 /// - ResolutionResult: Outcome of conflict resolution
-
 import gleam/option.{type Option}
 
 // ============================================================================
@@ -85,7 +84,8 @@ pub fn sync_status_from_string_unsafe(status: String) -> SyncStatus {
     "local_changes" -> LocalChanges
     "remote_changes" -> RemoteChanges
     "conflict" -> Conflict
-    _ -> Synced  // Default fallback
+    _ -> Synced
+    // Default fallback
   }
 }
 

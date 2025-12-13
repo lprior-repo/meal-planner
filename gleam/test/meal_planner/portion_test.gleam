@@ -4,7 +4,7 @@ import gleeunit
 import gleeunit/should
 import meal_planner/id
 import meal_planner/portion.{
-  calculate_portion_for_target, calculate_daily_portions,
+  calculate_daily_portions, calculate_portion_for_target,
 }
 import meal_planner/types.{Ingredient, Low, Macros, Recipe}
 

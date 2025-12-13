@@ -5,7 +5,6 @@
 ///
 /// The types are structured to match the Tandoor API schema while providing
 /// a clear separation between API types and internal application types.
-
 import gleam/option.{type Option}
 
 // ============================================================================
@@ -147,7 +146,11 @@ pub type TandoorUnitCreateRequest {
 
 /// Request to create a cooking step
 pub type TandoorStepCreateRequest {
-  TandoorStepCreateRequest(name: String, instructions: String, time: Option(Int))
+  TandoorStepCreateRequest(
+    name: String,
+    instructions: String,
+    time: Option(Int),
+  )
 }
 
 // ============================================================================

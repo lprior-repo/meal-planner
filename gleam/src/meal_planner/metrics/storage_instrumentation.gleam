@@ -2,14 +2,13 @@
 ///
 /// These functions wrap storage operations and automatically collect timing metrics.
 /// They maintain compatibility with existing code while adding performance visibility.
-
 import meal_planner/id
 import meal_planner/metrics/mod.{type MetricsRegistry, StorageQuery}
 import meal_planner/metrics/storage.{
   end_query_timing, record_query, start_query_timing,
 }
 import meal_planner/storage/foods.{
-  type UsdaFood, type UsdaFoodWithNutrients, type FoodNutrientValue,
+  type FoodNutrientValue, type UsdaFood, type UsdaFoodWithNutrients,
 }
 import meal_planner/storage/profile.{type StorageError}
 import meal_planner/types

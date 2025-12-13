@@ -184,7 +184,8 @@ pub fn test_complete_migration_scenario() {
       status: "in_progress",
     )
 
-  initial |> migration_progress.format_progress_message
+  initial
+  |> migration_progress.format_progress_message
   |> should.equal("0 of 5 recipes migrated")
 
   // After first batch
@@ -197,9 +198,11 @@ pub fn test_complete_migration_scenario() {
       status: "in_progress",
     )
 
-  after_first |> migration_progress.format_progress_message
+  after_first
+  |> migration_progress.format_progress_message
   |> should.equal("2 of 5 recipes migrated")
-  after_first |> migration_progress.get_progress_percentage
+  after_first
+  |> migration_progress.get_progress_percentage
   |> should.equal(40.0)
 
   // After completion
@@ -212,8 +215,10 @@ pub fn test_complete_migration_scenario() {
       status: "completed",
     )
 
-  completed |> migration_progress.format_progress_message
+  completed
+  |> migration_progress.format_progress_message
   |> should.equal("5 of 5 recipes migrated")
-  completed |> migration_progress.get_progress_percentage
+  completed
+  |> migration_progress.get_progress_percentage
   |> should.equal(100.0)
 }

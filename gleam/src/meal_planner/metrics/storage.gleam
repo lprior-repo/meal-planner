@@ -2,7 +2,6 @@
 ///
 /// This module provides utilities for easily adding timing instrumentation
 /// to storage queries without cluttering the business logic.
-
 import gleam/option.{type Option}
 import meal_planner/metrics/mod.{
   type MetricsRegistry, type QueryMetric, type TimingContext, StorageQuery,
@@ -15,18 +14,12 @@ import meal_planner/metrics/mod.{
 
 /// Timing context for a storage operation
 pub type StorageTimingContext {
-  StorageTimingContext(
-    query_name: String,
-    start_time: Int,
-  )
+  StorageTimingContext(query_name: String, start_time: Int)
 }
 
 /// Start timing a storage query
 pub fn start_query_timing(query_name: String) -> StorageTimingContext {
-  StorageTimingContext(
-    query_name: query_name,
-    start_time: get_timestamp_ms(),
-  )
+  StorageTimingContext(query_name: query_name, start_time: get_timestamp_ms())
 }
 
 /// Complete timing and create metric

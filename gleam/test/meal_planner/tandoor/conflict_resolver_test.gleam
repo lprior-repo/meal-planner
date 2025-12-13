@@ -150,10 +150,7 @@ pub fn test_which_is_more_recent_equal() {
 }
 
 pub fn test_which_is_more_recent_only_local() {
-  conflict_resolver.which_is_more_recent(
-    Some("2025-12-13T11:00:00Z"),
-    None,
-  )
+  conflict_resolver.which_is_more_recent(Some("2025-12-13T11:00:00Z"), None)
   |> should.equal(Some(#("local", "2025-12-13T11:00:00Z")))
 }
 
@@ -162,12 +159,13 @@ pub fn test_which_is_more_recent_only_local() {
 // ============================================================================
 
 pub fn test_describe_conflict_bidirectional() {
-  let desc = conflict_resolver.describe_conflict(
-    Some("2025-12-13T12:00:00Z"),
-    Some("2025-12-13T11:30:00Z"),
-    Some("2025-12-13T11:00:00Z"),
-  )
-  
+  let desc =
+    conflict_resolver.describe_conflict(
+      Some("2025-12-13T12:00:00Z"),
+      Some("2025-12-13T11:30:00Z"),
+      Some("2025-12-13T11:00:00Z"),
+    )
+
   desc
   |> should.contain("Local has modifications")
 }
@@ -180,9 +178,7 @@ pub fn test_conflict_type_to_string_bidirectional() {
 }
 
 pub fn test_conflict_type_to_string_local_only() {
-  conflict_resolver.conflict_type_to_string(
-    conflict_resolver.LocalOnlyConflict,
-  )
+  conflict_resolver.conflict_type_to_string(conflict_resolver.LocalOnlyConflict)
   |> should.equal("Local-only changes")
 }
 
@@ -213,8 +209,8 @@ pub fn test_strategy_to_string_manual_review() {
 }
 
 pub fn test_strategy_to_string_auto_resolve_more_recent() {
-  conflict_resolver.strategy_to_string(
-    conflict_resolver.AutoResolve(conflict_resolver.MoreRecent),
-  )
+  conflict_resolver.strategy_to_string(conflict_resolver.AutoResolve(
+    conflict_resolver.MoreRecent,
+  ))
   |> should.contain("Auto-resolve")
 }

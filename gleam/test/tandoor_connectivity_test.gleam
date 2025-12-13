@@ -7,7 +7,6 @@
 /// 4. Handles timeouts and DNS failures
 /// 5. Returns properly formatted health check results
 /// 6. Converts status values to JSON correctly
-
 import gleeunit
 import gleeunit/should
 import meal_planner/config
@@ -145,7 +144,8 @@ pub fn health_check_includes_response_time_test() {
   let result = connectivity.check_health(cfg)
 
   // Response time should be a non-negative number
-  result.timestamp_ms >= 0
+  result.timestamp_ms
+  >= 0
   |> should.be_true()
 }
 
@@ -155,12 +155,13 @@ pub fn health_check_includes_response_time_test() {
 
 /// Test that Healthy status converts to "healthy" JSON
 pub fn status_healthy_to_json_test() {
-  let result = connectivity.HealthCheckResult(
-    status: connectivity.Healthy,
-    message: "Connected successfully",
-    configured: True,
-    timestamp_ms: 100,
-  )
+  let result =
+    connectivity.HealthCheckResult(
+      status: connectivity.Healthy,
+      message: "Connected successfully",
+      configured: True,
+      timestamp_ms: 100,
+    )
 
   // The JSON should be an object with the correct status field
   result
@@ -172,12 +173,13 @@ pub fn status_healthy_to_json_test() {
 
 /// Test that NotConfigured status converts to "not_configured" JSON
 pub fn status_not_configured_to_json_test() {
-  let result = connectivity.HealthCheckResult(
-    status: connectivity.NotConfigured,
-    message: "No API token",
-    configured: False,
-    timestamp_ms: 50,
-  )
+  let result =
+    connectivity.HealthCheckResult(
+      status: connectivity.NotConfigured,
+      message: "No API token",
+      configured: False,
+      timestamp_ms: 50,
+    )
 
   // The JSON should be an object with the correct status field
   result
@@ -239,17 +241,18 @@ pub fn is_status_healthy_error_test() {
 
 /// Test that base URLs with and without trailing slash are handled
 pub fn base_url_with_trailing_slash_test() {
-  let cfg = config.Config(
-    database: test_config_with_tandoor().database,
-    server: test_config_with_tandoor().server,
-    tandoor: config.TandoorConfig(
-      base_url: "http://localhost:8000/",
-      api_token: "test-token",
-      connect_timeout_ms: 5000,
-      request_timeout_ms: 30_000,
-    ),
-    external_services: test_config_with_tandoor().external_services,
-  )
+  let cfg =
+    config.Config(
+      database: test_config_with_tandoor().database,
+      server: test_config_with_tandoor().server,
+      tandoor: config.TandoorConfig(
+        base_url: "http://localhost:8000/",
+        api_token: "test-token",
+        connect_timeout_ms: 5000,
+        request_timeout_ms: 30_000,
+      ),
+      external_services: test_config_with_tandoor().external_services,
+    )
 
   let result = connectivity.check_health(cfg)
   result.configured
@@ -258,17 +261,18 @@ pub fn base_url_with_trailing_slash_test() {
 
 /// Test that base URLs without trailing slash are handled
 pub fn base_url_without_trailing_slash_test() {
-  let cfg = config.Config(
-    database: test_config_with_tandoor().database,
-    server: test_config_with_tandoor().server,
-    tandoor: config.TandoorConfig(
-      base_url: "http://localhost:8000",
-      api_token: "test-token",
-      connect_timeout_ms: 5000,
-      request_timeout_ms: 30_000,
-    ),
-    external_services: test_config_with_tandoor().external_services,
-  )
+  let cfg =
+    config.Config(
+      database: test_config_with_tandoor().database,
+      server: test_config_with_tandoor().server,
+      tandoor: config.TandoorConfig(
+        base_url: "http://localhost:8000",
+        api_token: "test-token",
+        connect_timeout_ms: 5000,
+        request_timeout_ms: 30_000,
+      ),
+      external_services: test_config_with_tandoor().external_services,
+    )
 
   let result = connectivity.check_health(cfg)
   result.configured
@@ -305,17 +309,18 @@ pub fn production_environment_health_check_test() {
 
 /// Test that empty API token is treated as not configured
 pub fn empty_token_not_configured_test() {
-  let cfg = config.Config(
-    database: test_config_with_tandoor().database,
-    server: test_config_with_tandoor().server,
-    tandoor: config.TandoorConfig(
-      base_url: "http://localhost:8000",
-      api_token: "",
-      connect_timeout_ms: 5000,
-      request_timeout_ms: 30_000,
-    ),
-    external_services: test_config_with_tandoor().external_services,
-  )
+  let cfg =
+    config.Config(
+      database: test_config_with_tandoor().database,
+      server: test_config_with_tandoor().server,
+      tandoor: config.TandoorConfig(
+        base_url: "http://localhost:8000",
+        api_token: "",
+        connect_timeout_ms: 5000,
+        request_timeout_ms: 30_000,
+      ),
+      external_services: test_config_with_tandoor().external_services,
+    )
 
   let result = connectivity.check_health(cfg)
   case result.status {
@@ -327,17 +332,18 @@ pub fn empty_token_not_configured_test() {
 
 /// Test that whitespace-only API token is treated as configured
 pub fn whitespace_token_treated_as_configured_test() {
-  let cfg = config.Config(
-    database: test_config_with_tandoor().database,
-    server: test_config_with_tandoor().server,
-    tandoor: config.TandoorConfig(
-      base_url: "http://localhost:8000",
-      api_token: "  ",
-      connect_timeout_ms: 5000,
-      request_timeout_ms: 30_000,
-    ),
-    external_services: test_config_with_tandoor().external_services,
-  )
+  let cfg =
+    config.Config(
+      database: test_config_with_tandoor().database,
+      server: test_config_with_tandoor().server,
+      tandoor: config.TandoorConfig(
+        base_url: "http://localhost:8000",
+        api_token: "  ",
+        connect_timeout_ms: 5000,
+        request_timeout_ms: 30_000,
+      ),
+      external_services: test_config_with_tandoor().external_services,
+    )
 
   let result = connectivity.check_health(cfg)
   result.configured
@@ -423,12 +429,13 @@ pub fn module_exports_is_status_healthy_test() {
 /// Test that connectivity module exports health_check_to_json
 pub fn module_exports_health_check_to_json_test() {
   // connectivity.health_check_to_json should be available
-  let result = connectivity.HealthCheckResult(
-    status: connectivity.Healthy,
-    message: "Test",
-    configured: True,
-    timestamp_ms: 0,
-  )
+  let result =
+    connectivity.HealthCheckResult(
+      status: connectivity.Healthy,
+      message: "Test",
+      configured: True,
+      timestamp_ms: 0,
+    )
   let _ = connectivity.health_check_to_json(result)
   True
   |> should.be_true()

@@ -6,7 +6,6 @@
 /// - Aggregate statistics
 /// - Calculate percentiles
 /// - Export snapshots
-
 import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
@@ -16,8 +15,8 @@ import meal_planner/metrics/types.{
   type Counter, type Gauge, type Metric, type MetricCategory,
   type MetricSnapshot, type OperationContext, type TimingMeasurement,
   type TimingStats, CounterMetric, CustomMetrics, GaugeMetric, MetricSnapshot,
-  TimingMetric, TandoorApiMetrics, empty_timing_stats,
-  new_counter_with_labels, new_gauge, update_timing_stats,
+  TandoorApiMetrics, TimingMetric, empty_timing_stats, new_counter_with_labels,
+  new_gauge, update_timing_stats,
 }
 
 // ============================================================================
@@ -70,17 +69,22 @@ pub fn record_timing(
 
   let updated_percentiles = calculate_percentiles(updated_samples)
 
-  let final_stats = TimingStats(
-    ..updated_stats,
-    p95_time_ms: updated_percentiles.0,
-    p99_time_ms: updated_percentiles.1,
-  )
+  let final_stats =
+    TimingStats(
+      ..updated_stats,
+      p95_time_ms: updated_percentiles.0,
+      p99_time_ms: updated_percentiles.1,
+    )
 
   MetricCollector(
     timing_stats: dict.insert(collector.timing_stats, operation, final_stats),
     counters: collector.counters,
     gauges: collector.gauges,
-    timing_samples: dict.insert(collector.timing_samples, operation, updated_samples),
+    timing_samples: dict.insert(
+      collector.timing_samples,
+      operation,
+      updated_samples,
+    ),
   )
 }
 
@@ -94,8 +98,7 @@ pub fn record_counter(
   let key = format_counter_key(counter_name, labels)
 
   let updated_counter = case dict.get(collector.counters, key) {
-    Ok(existing) ->
-      types.Counter(..existing, value: existing.value + amount)
+    Ok(existing) -> types.Counter(..existing, value: existing.value + amount)
     Error(Nil) -> {
       let new_counter = new_counter_with_labels(counter_name, labels)
       types.Counter(..new_counter, value: amount)
@@ -169,9 +172,14 @@ pub fn snapshot_category(
       GaugeMetric(gauge)
     })
 
-  let all_metrics = list.concat([timing_metrics, counter_metrics, gauge_metrics])
+  let all_metrics =
+    list.concat([timing_metrics, counter_metrics, gauge_metrics])
 
-  MetricSnapshot(category: category, timestamp_ms: timestamp, metrics: all_metrics)
+  MetricSnapshot(
+    category: category,
+    timestamp_ms: timestamp,
+    metrics: all_metrics,
+  )
 }
 
 /// Generate snapshots for all categories
@@ -301,10 +309,7 @@ fn calculate_percentiles(samples: List(Float)) -> #(Float, Float) {
 // ============================================================================
 
 /// Format a counter key with labels
-fn format_counter_key(
-  name: String,
-  labels: List(#(String, String)),
-) -> String {
+fn format_counter_key(name: String, labels: List(#(String, String))) -> String {
   case list.is_empty(labels) {
     True -> name
     False -> {
@@ -322,10 +327,7 @@ fn format_counter_key(
 }
 
 /// Format a gauge key with labels
-fn format_gauge_key(
-  name: String,
-  labels: List(#(String, String)),
-) -> String {
+fn format_gauge_key(name: String, labels: List(#(String, String))) -> String {
   case list.is_empty(labels) {
     True -> name
     False -> {

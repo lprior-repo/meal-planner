@@ -6,15 +6,14 @@
 /// - Recipe sync state operations
 /// - Conflict detection and resolution
 /// - Progress tracking
-
-import gleeunit
-import gleeunit/should
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
+import gleeunit
+import gleeunit/should
 import meal_planner/tandoor/sync.{
   type RecipeSyncState, type SyncSession, Conflict, LocalChanges, PendingSync,
-  RemoteChanges, Synced, SyncFailed,
+  RemoteChanges, SyncFailed, Synced,
 }
 
 pub fn main() {
@@ -95,60 +94,64 @@ pub fn sync_status_from_string_invalid_test() {
 // ============================================================================
 
 pub fn get_sync_progress_percentage_empty_test() {
-  let session = SyncSession(
-    session_id: "test-session",
-    started_at: "2025-12-12T10:00:00Z",
-    completed_at: None,
-    total_recipes: 0,
-    synced_count: 0,
-    failed_count: 0,
-    conflict_count: 0,
-  )
+  let session =
+    SyncSession(
+      session_id: "test-session",
+      started_at: "2025-12-12T10:00:00Z",
+      completed_at: None,
+      total_recipes: 0,
+      synced_count: 0,
+      failed_count: 0,
+      conflict_count: 0,
+    )
 
   sync.get_sync_progress_percentage(session)
   |> should.equal(0.0)
 }
 
 pub fn get_sync_progress_percentage_partial_test() {
-  let session = SyncSession(
-    session_id: "test-session",
-    started_at: "2025-12-12T10:00:00Z",
-    completed_at: None,
-    total_recipes: 100,
-    synced_count: 45,
-    failed_count: 5,
-    conflict_count: 0,
-  )
+  let session =
+    SyncSession(
+      session_id: "test-session",
+      started_at: "2025-12-12T10:00:00Z",
+      completed_at: None,
+      total_recipes: 100,
+      synced_count: 45,
+      failed_count: 5,
+      conflict_count: 0,
+    )
 
   sync.get_sync_progress_percentage(session)
   |> should.equal(50.0)
 }
 
 pub fn get_sync_progress_percentage_complete_test() {
-  let session = SyncSession(
-    session_id: "test-session",
-    started_at: "2025-12-12T10:00:00Z",
-    completed_at: Some("2025-12-12T11:00:00Z"),
-    total_recipes: 100,
-    synced_count: 95,
-    failed_count: 5,
-    conflict_count: 0,
-  )
+  let session =
+    SyncSession(
+      session_id: "test-session",
+      started_at: "2025-12-12T10:00:00Z",
+      completed_at: Some("2025-12-12T11:00:00Z"),
+      total_recipes: 100,
+      synced_count: 95,
+      failed_count: 5,
+      conflict_count: 0,
+    )
 
   sync.get_sync_progress_percentage(session)
   |> should.equal(100.0)
 }
 
 pub fn format_sync_report_test() {
-  let session = SyncSession(
-    session_id: "test-session",
-    started_at: "2025-12-12T10:00:00Z",
-    completed_at: Some("2025-12-12T11:00:00Z"),
-    total_recipes: 100,
-    synced_count: 85,
-    failed_count: 10,
-    conflict_count: 5,
-  )
+  let session =
+    SyncSession(
+      session_id: "test-session",
+      started_at: "2025-12-12T10:00:00Z",
+      completed_at: Some("2025-12-12T11:00:00Z"),
+      total_recipes: 100,
+      synced_count: 85,
+      failed_count: 10,
+      conflict_count: 5,
+    )
 
   let report = sync.format_sync_report(session)
   report
@@ -233,15 +236,16 @@ pub fn has_local_modifications_false_test() {
 }
 
 pub fn has_local_modifications_no_sync_time_test() {
-  let state = RecipeSyncState(
-    tandoor_id: 127,
-    recipe_id: "recipe-127",
-    sync_status: LocalChanges,
-    last_synced_at: None,
-    local_modified_at: Some("2025-12-12T10:30:00Z"),
-    remote_modified_at: None,
-    sync_error: None,
-  )
+  let state =
+    RecipeSyncState(
+      tandoor_id: 127,
+      recipe_id: "recipe-127",
+      sync_status: LocalChanges,
+      last_synced_at: None,
+      local_modified_at: Some("2025-12-12T10:30:00Z"),
+      remote_modified_at: None,
+      sync_error: None,
+    )
   sync.has_local_modifications(state)
   |> should.be_true()
 }
@@ -259,15 +263,16 @@ pub fn has_remote_modifications_false_test() {
 }
 
 pub fn has_remote_modifications_no_sync_time_test() {
-  let state = RecipeSyncState(
-    tandoor_id: 128,
-    recipe_id: "recipe-128",
-    sync_status: RemoteChanges,
-    last_synced_at: None,
-    local_modified_at: None,
-    remote_modified_at: Some("2025-12-12T10:30:00Z"),
-    sync_error: None,
-  )
+  let state =
+    RecipeSyncState(
+      tandoor_id: 128,
+      recipe_id: "recipe-128",
+      sync_status: RemoteChanges,
+      last_synced_at: None,
+      local_modified_at: None,
+      remote_modified_at: Some("2025-12-12T10:30:00Z"),
+      sync_error: None,
+    )
   sync.has_remote_modifications(state)
   |> should.be_true()
 }
@@ -313,15 +318,16 @@ pub fn sync_session_in_progress_test() {
 }
 
 pub fn sync_session_completed_test() {
-  let session = SyncSession(
-    session_id: "test-session-001",
-    started_at: "2025-12-12T10:00:00Z",
-    completed_at: Some("2025-12-12T11:00:00Z"),
-    total_recipes: 50,
-    synced_count: 45,
-    failed_count: 5,
-    conflict_count: 0,
-  )
+  let session =
+    SyncSession(
+      session_id: "test-session-001",
+      started_at: "2025-12-12T10:00:00Z",
+      completed_at: Some("2025-12-12T11:00:00Z"),
+      total_recipes: 50,
+      synced_count: 45,
+      failed_count: 5,
+      conflict_count: 0,
+    )
   session.completed_at
   |> should.equal(Some("2025-12-12T11:00:00Z"))
 }
@@ -341,15 +347,16 @@ pub fn recipe_sync_state_properties_test() {
 }
 
 pub fn local_and_remote_modifications_both_test() {
-  let state = RecipeSyncState(
-    tandoor_id: 129,
-    recipe_id: "recipe-129",
-    sync_status: Conflict,
-    last_synced_at: Some("2025-12-12T10:00:00Z"),
-    local_modified_at: Some("2025-12-12T10:20:00Z"),
-    remote_modified_at: Some("2025-12-12T10:15:00Z"),
-    sync_error: None,
-  )
+  let state =
+    RecipeSyncState(
+      tandoor_id: 129,
+      recipe_id: "recipe-129",
+      sync_status: Conflict,
+      last_synced_at: Some("2025-12-12T10:00:00Z"),
+      local_modified_at: Some("2025-12-12T10:20:00Z"),
+      remote_modified_at: Some("2025-12-12T10:15:00Z"),
+      sync_error: None,
+    )
 
   sync.has_local_modifications(state)
   |> should.be_true()
@@ -361,15 +368,16 @@ pub fn local_and_remote_modifications_both_test() {
 
 pub fn sync_session_formula_percentage_test() {
   // 30 synced + 10 failed = 40 completed / 100 total = 40%
-  let session = SyncSession(
-    session_id: "test",
-    started_at: "2025-12-12T10:00:00Z",
-    completed_at: None,
-    total_recipes: 100,
-    synced_count: 30,
-    failed_count: 10,
-    conflict_count: 20,
-  )
+  let session =
+    SyncSession(
+      session_id: "test",
+      started_at: "2025-12-12T10:00:00Z",
+      completed_at: None,
+      total_recipes: 100,
+      synced_count: 30,
+      failed_count: 10,
+      conflict_count: 20,
+    )
 
   sync.get_sync_progress_percentage(session)
   |> should.equal(40.0)

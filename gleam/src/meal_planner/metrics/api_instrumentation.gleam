@@ -2,7 +2,6 @@
 ///
 /// These functions wrap external API calls (Tandoor, etc) and automatically
 /// collect timing metrics for monitoring.
-
 import gleam/result
 import meal_planner/metrics/api.{
   end_api_timing, record_api_call, start_api_timing,

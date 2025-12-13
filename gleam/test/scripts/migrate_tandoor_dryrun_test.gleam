@@ -6,13 +6,12 @@
 /// - Statistics calculation
 /// - Log file formatting
 /// - Error handling
-
-import gleeunit
-import gleeunit/should
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
+import gleeunit
+import gleeunit/should
 
 pub fn main() {
   gleeunit.main()
@@ -123,12 +122,13 @@ pub fn test_validate_recipes_with_invalid() {
 // ==============================================================================
 
 pub fn test_migration_result_success() {
-  let result = MigrationResult(
-    recipe_slug: "pasta",
-    tandoor_id: Some(123),
-    status: "success",
-    error: None,
-  )
+  let result =
+    MigrationResult(
+      recipe_slug: "pasta",
+      tandoor_id: Some(123),
+      status: "success",
+      error: None,
+    )
   result.status
   |> should.equal("success")
   result.tandoor_id
@@ -138,12 +138,13 @@ pub fn test_migration_result_success() {
 }
 
 pub fn test_migration_result_failure() {
-  let result = MigrationResult(
-    recipe_slug: "pasta",
-    tandoor_id: None,
-    status: "failed",
-    error: Some("Invalid ingredients"),
-  )
+  let result =
+    MigrationResult(
+      recipe_slug: "pasta",
+      tandoor_id: None,
+      status: "failed",
+      error: Some("Invalid ingredients"),
+    )
   result.status
   |> should.equal("failed")
   result.tandoor_id
@@ -179,13 +180,14 @@ pub fn test_count_failed_results() {
 // ==============================================================================
 
 pub fn test_migration_stats_creation() {
-  let stats = MigrationStats(
-    total_recipes: 10,
-    successful: 8,
-    failed: 2,
-    skipped: 0,
-    duration_seconds: 5.5,
-  )
+  let stats =
+    MigrationStats(
+      total_recipes: 10,
+      successful: 8,
+      failed: 2,
+      skipped: 0,
+      duration_seconds: 5.5,
+    )
   stats.total_recipes
   |> should.equal(10)
   stats.successful
@@ -195,26 +197,28 @@ pub fn test_migration_stats_creation() {
 }
 
 pub fn test_migration_stats_success_rate() {
-  let stats = MigrationStats(
-    total_recipes: 100,
-    successful: 95,
-    failed: 5,
-    skipped: 0,
-    duration_seconds: 10.0,
-  )
+  let stats =
+    MigrationStats(
+      total_recipes: 100,
+      successful: 95,
+      failed: 5,
+      skipped: 0,
+      duration_seconds: 10.0,
+    )
   let success_rate = stats.successful * 100 / stats.total_recipes
   success_rate
   |> should.equal(95)
 }
 
 pub fn test_migration_stats_zero_recipes() {
-  let stats = MigrationStats(
-    total_recipes: 0,
-    successful: 0,
-    failed: 0,
-    skipped: 0,
-    duration_seconds: 0.0,
-  )
+  let stats =
+    MigrationStats(
+      total_recipes: 0,
+      successful: 0,
+      failed: 0,
+      skipped: 0,
+      duration_seconds: 0.0,
+    )
   stats.total_recipes
   |> should.equal(0)
 }
@@ -299,15 +303,16 @@ pub fn test_validate_recipe_max_ingredients() {
 }
 
 pub fn test_large_batch_success_count() {
-  let results = list.range(1, 101)
-  |> list.map(fn(i) {
-    MigrationResult(
-      "recipe_" <> int.to_string(i),
-      Some(1000 + i),
-      "success",
-      None,
-    )
-  })
+  let results =
+    list.range(1, 101)
+    |> list.map(fn(i) {
+      MigrationResult(
+        "recipe_" <> int.to_string(i),
+        Some(1000 + i),
+        "success",
+        None,
+      )
+    })
 
   let successful = list.count(results, fn(r) { r.status == "success" })
   successful
@@ -315,25 +320,26 @@ pub fn test_large_batch_success_count() {
 }
 
 pub fn test_mixed_success_and_failure() {
-  let results = list.range(1, 11)
-  |> list.map(fn(i) {
-    case i % 2 {
-      0 ->
-        MigrationResult(
-          "recipe_" <> int.to_string(i),
-          Some(1000 + i),
-          "success",
-          None,
-        )
-      _ ->
-        MigrationResult(
-          "recipe_" <> int.to_string(i),
-          None,
-          "failed",
-          Some("Test error"),
-        )
-    }
-  })
+  let results =
+    list.range(1, 11)
+    |> list.map(fn(i) {
+      case i % 2 {
+        0 ->
+          MigrationResult(
+            "recipe_" <> int.to_string(i),
+            Some(1000 + i),
+            "success",
+            None,
+          )
+        _ ->
+          MigrationResult(
+            "recipe_" <> int.to_string(i),
+            None,
+            "failed",
+            Some("Test error"),
+          )
+      }
+    })
 
   let successful = list.count(results, fn(r) { r.status == "success" })
   let failed = list.count(results, fn(r) { r.status == "failed" })
@@ -368,12 +374,7 @@ fn validate_recipe(recipe: Recipe) -> Result(Nil, String) {
 
   case list.is_empty(errors) {
     True -> Ok(Nil)
-    False ->
-      Error(
-        recipe.slug
-        <> ": "
-        <> string.join(errors, ", "),
-      )
+    False -> Error(recipe.slug <> ": " <> string.join(errors, ", "))
   }
 }
 
@@ -385,7 +386,10 @@ fn validate_recipes(recipes: List(Recipe)) -> Result(Nil, String) {
 }
 
 fn format_log(results: List(MigrationResult)) -> String {
-  let header = "Tandoor Recipe Migration - Dry Run Log\n" <> "=" |> string.repeat(50) <> "\n\n"
+  let header =
+    "Tandoor Recipe Migration - Dry Run Log\n"
+    <> "=" |> string.repeat(50)
+    <> "\n\n"
 
   let body =
     results

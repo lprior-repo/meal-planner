@@ -31,16 +31,9 @@ pub fn main() {
     <> ":"
     <> int.to_string(app_config.database.port),
   )
-  io.println(
-    "  - Server port: " <> int.to_string(app_config.server.port),
-  )
-  io.println(
-    "  - Tandoor: "
-    <> app_config.tandoor.base_url,
-  )
-  io.println(
-    "  - Environment: " <> app_config.server.environment,
-  )
+  io.println("  - Server port: " <> int.to_string(app_config.server.port))
+  io.println("  - Tandoor: " <> app_config.tandoor.base_url)
+  io.println("  - Environment: " <> app_config.server.environment)
   io.println("")
 
   // Check production readiness

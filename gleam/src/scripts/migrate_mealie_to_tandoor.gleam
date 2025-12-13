@@ -26,7 +26,6 @@
 ///   DRY_RUN: Set to "true" for dry-run mode (no data changes)
 ///   BATCH_SIZE: Number of recipes to process per batch (default: 50)
 ///   LOG_FILE: Path to save migration log (optional)
-
 import envoy
 import gleam/erlang/process
 import gleam/float
@@ -132,10 +131,13 @@ pub fn main() {
       io.println("Configuration loaded:")
       io.println("  Mealie URL: " <> config.mealie_url)
       io.println("  Tandoor URL: " <> config.tandoor_url)
-      io.println("  Dry Run: " <> case config.dry_run {
-        True -> "YES"
-        False -> "NO"
-      })
+      io.println(
+        "  Dry Run: "
+        <> case config.dry_run {
+          True -> "YES"
+          False -> "NO"
+        },
+      )
       io.println("  Batch Size: " <> int.to_string(config.batch_size))
       io.println("")
 
@@ -160,9 +162,7 @@ pub fn main() {
           let db = started.data
           case verify_migration_table_exists(db) {
             False -> {
-              io.println(
-                "ERROR: recipe_mappings table not found in database",
-              )
+              io.println("ERROR: recipe_mappings table not found in database")
               io.println("Please run the required migrations first:")
               io.println(
                 "  psql -d meal_planner -f migrations_pg/024_add_recipe_mappings.sql",
@@ -197,10 +197,22 @@ pub fn main() {
 
 /// Load migration configuration from environment variables
 fn load_config() -> Result(MigrationConfig, String) {
-  use mealie_url <- result.try(get_env_or_default("MEALIE_URL", "http://localhost:8010"))
-  use tandoor_url <- result.try(get_env_or_default("TANDOOR_URL", "http://localhost:8000"))
-  use mealie_token <- result.try(get_required_env("MEALIE_TOKEN", "Mealie API token (MEALIE_TOKEN)"))
-  use tandoor_token <- result.try(get_required_env("TANDOOR_TOKEN", "Tandoor API token (TANDOOR_TOKEN)"))
+  use mealie_url <- result.try(get_env_or_default(
+    "MEALIE_URL",
+    "http://localhost:8010",
+  ))
+  use tandoor_url <- result.try(get_env_or_default(
+    "TANDOOR_URL",
+    "http://localhost:8000",
+  ))
+  use mealie_token <- result.try(get_required_env(
+    "MEALIE_TOKEN",
+    "Mealie API token (MEALIE_TOKEN)",
+  ))
+  use tandoor_token <- result.try(get_required_env(
+    "TANDOOR_TOKEN",
+    "Tandoor API token (TANDOOR_TOKEN)",
+  ))
 
   let dry_run = case envoy.get("DRY_RUN") {
     Ok(v) -> string.lowercase(v) == "true"
@@ -301,11 +313,7 @@ fn run_migration(
             |> list.index_map(fn(recipe, idx) {
               let percent = { idx + 1 } * 100 / recipe_count
               io.print(
-                "  ["
-                <> int.to_string(percent)
-                <> "%] "
-                <> recipe.name
-                <> " (",
+                "  [" <> int.to_string(percent) <> "%] " <> recipe.name <> " (",
               )
               io.print(int.to_string(recipe.ingredients_count))
               io.println(" ingredients)")
@@ -414,10 +422,8 @@ fn run_migration(
           io.println("")
 
           // Count results
-          let successful =
-            list.count(results, fn(r) { r.status == "success" })
-          let failed =
-            list.count(results, fn(r) { r.status == "failed" })
+          let successful = list.count(results, fn(r) { r.status == "success" })
+          let failed = list.count(results, fn(r) { r.status == "failed" })
           let skipped = list.count(results, fn(r) { r.status == "dry-run" })
 
           // Save log if requested
@@ -429,8 +435,7 @@ fn run_migration(
                   io.println("Log saved to: " <> path)
                   io.println("")
                 }
-                Error(_) ->
-                  io.println("Warning: Could not save log file")
+                Error(_) -> io.println("Warning: Could not save log file")
               }
             }
             None -> Nil
@@ -454,7 +459,9 @@ fn run_migration(
 // ============================================================================
 
 /// Fetch recipes from Mealie API
-fn fetch_mealie_recipes(config: MigrationConfig) -> Result(List(MealieRecipe), String) {
+fn fetch_mealie_recipes(
+  config: MigrationConfig,
+) -> Result(List(MealieRecipe), String) {
   let url = config.mealie_url <> "/api/v1/recipes?limit=1000&skip=0"
   let request =
     http.default_req()
@@ -474,18 +481,16 @@ fn fetch_mealie_recipes(config: MigrationConfig) -> Result(List(MealieRecipe), S
         }
         401 -> Error("Authentication failed - check MEALIE_TOKEN")
         404 -> Error("Mealie API endpoint not found")
-        _ ->
-          Error(
-            "Mealie API error: "
-            <> int.to_string(response.status),
-          )
+        _ -> Error("Mealie API error: " <> int.to_string(response.status))
       }
     }
   }
 }
 
 /// Parse Mealie API recipes response
-fn parse_mealie_recipes_response(body: String) -> Result(List(MealieRecipe), String) {
+fn parse_mealie_recipes_response(
+  body: String,
+) -> Result(List(MealieRecipe), String) {
   // Parse JSON array of recipes
   // This is a simplified parser - in production, would use proper JSON decoding
   case json.parse(body) {
@@ -530,11 +535,7 @@ fn create_tandoor_recipe(
         }
         401 -> Error("Authentication failed - check TANDOOR_TOKEN")
         400 -> Error("Invalid recipe data")
-        _ ->
-          Error(
-            "Tandoor API error: "
-            <> int.to_string(response.status),
-          )
+        _ -> Error("Tandoor API error: " <> int.to_string(response.status))
       }
     }
   }
@@ -565,7 +566,9 @@ fn build_tandoor_recipe_json(recipe: TandoorRecipeRequest) -> String {
 }
 
 /// Parse Tandoor API recipe creation response
-fn parse_tandoor_recipe_response(body: String) -> Result(TandoorRecipeResponse, String) {
+fn parse_tandoor_recipe_response(
+  body: String,
+) -> Result(TandoorRecipeResponse, String) {
   // Parse JSON response containing id and name
   case json.parse(body) {
     Error(_) -> Error("Invalid JSON response")
@@ -630,12 +633,7 @@ fn validate_mealie_recipe(recipe: MealieRecipe) -> Result(Nil, String) {
 
   case list.is_empty(errors) {
     True -> Ok(Nil)
-    False ->
-      Error(
-        recipe.slug
-        <> ": "
-        <> string.join(errors, ", "),
-      )
+    False -> Error(recipe.slug <> ": " <> string.join(errors, ", "))
   }
 }
 
@@ -656,9 +654,7 @@ fn format_mapping_error(err: recipe_mappings.RecipeMappingError) -> String {
 /// Format migration log for file output
 fn format_migration_log(results: List(RecipeMigrationResult)) -> String {
   let header =
-    "Mealie to Tandoor Migration Log\n"
-    <> string.repeat("=", 50)
-    <> "\n\n"
+    "Mealie to Tandoor Migration Log\n" <> string.repeat("=", 50) <> "\n\n"
 
   let body =
     results
@@ -698,8 +694,12 @@ fn print_usage() -> Nil {
   io.println("  gleam run -m scripts/migrate_mealie_to_tandoor")
   io.println("")
   io.println("Environment variables:")
-  io.println("  MEALIE_URL: Mealie instance URL (default: http://localhost:8010)")
-  io.println("  TANDOOR_URL: Tandoor instance URL (default: http://localhost:8000)")
+  io.println(
+    "  MEALIE_URL: Mealie instance URL (default: http://localhost:8010)",
+  )
+  io.println(
+    "  TANDOOR_URL: Tandoor instance URL (default: http://localhost:8000)",
+  )
   io.println("  MEALIE_TOKEN: Mealie API token (required)")
   io.println("  TANDOOR_TOKEN: Tandoor API token (required)")
   io.println("  DRY_RUN: Set to 'true' for dry-run mode")

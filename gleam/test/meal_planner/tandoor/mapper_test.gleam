@@ -1,7 +1,6 @@
 /// Tests for Tandoor mapper module
 ///
 /// Tests the conversion between Tandoor API format and internal Recipe format
-
 import gleam/list
 import gleam/option.{None, Some}
 import gleeunit
@@ -9,9 +8,9 @@ import gleeunit/should
 import meal_planner/id
 import meal_planner/tandoor/mapper.{
   type TandoorNutrition, type TandoorRecipe, type TandoorRecipeStep,
-  extract_category, infer_fodmap_level, recipe_to_tandoor, tandoor_to_recipe,
-  tandoor_recipes_to_list, tandoor_recipes_to_list_with_errors,
-  TandoorNutrition, TandoorRecipe, TandoorRecipeStep,
+  TandoorNutrition, TandoorRecipe, TandoorRecipeStep, extract_category,
+  infer_fodmap_level, recipe_to_tandoor, tandoor_recipes_to_list,
+  tandoor_recipes_to_list_with_errors, tandoor_to_recipe,
 }
 import meal_planner/types.{High, Low, Macros, Medium, Recipe}
 
@@ -45,7 +44,11 @@ fn make_tandoor_recipe(
       carbohydrates: Some(carbs),
     )),
     steps: [
-      TandoorRecipeStep(step: 1, instruction: "Mix ingredients", ingredients: []),
+      TandoorRecipeStep(
+        step: 1,
+        instruction: "Mix ingredients",
+        ingredients: [],
+      ),
       TandoorRecipeStep(step: 2, instruction: "Cook", ingredients: []),
     ],
   )
@@ -262,7 +265,8 @@ pub fn bulk_conversion_with_errors_test() {
     make_tandoor_recipe(1, "Valid Recipe", 30.0, 20.0, 50.0),
   ]
 
-  let #(successful, errors) = tandoor_recipes_to_list_with_errors(tandoor_recipes)
+  let #(successful, errors) =
+    tandoor_recipes_to_list_with_errors(tandoor_recipes)
 
   successful
   |> list.length()

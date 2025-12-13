@@ -5,24 +5,42 @@
 /// - recipes: Recipe scoring
 /// - diet: Vertical diet compliance checking
 /// - macros: Macro calculations
+/// - dashboard: Dashboard UI with nutrition tracking
 ///
 import gleam/erlang/process
 import gleam/int
 import gleam/io
 import meal_planner/config
+import meal_planner/postgres
 import meal_planner/web/handlers
 import mist
+import pog
 import wisp
 import wisp/wisp_mist
 
 /// Application context passed to handlers
 pub type Context {
-  Context(config: config.Config)
+  Context(config: config.Config, db: pog.Connection)
 }
 
 /// Start the HTTP server
 pub fn start(app_config: config.Config) -> Nil {
-  let ctx = Context(config: app_config)
+  // Connect to database
+  let db_config =
+    postgres.Config(
+      host: app_config.database.host,
+      port: app_config.database.port,
+      database: app_config.database.database,
+      user: app_config.database.user,
+      password: app_config.database.password,
+      pool_size: 10,
+      connection_timeout: 5000,
+    )
+
+  let assert Ok(db) = postgres.connect(db_config)
+  io.println("✓ Database connection established")
+
+  let ctx = Context(config: app_config, db: db)
 
   // Configure logging
   wisp.configure_logger()
@@ -52,7 +70,7 @@ pub fn start(app_config: config.Config) -> Nil {
 }
 
 /// Main request router
-fn handle_request(req: wisp.Request, _ctx: Context) -> wisp.Response {
+fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
   use <- wisp.log_request(req)
 
   // Parse the request path and route to appropriate handler
@@ -61,7 +79,11 @@ fn handle_request(req: wisp.Request, _ctx: Context) -> wisp.Response {
     [] -> handlers.handle_health(req)
     ["health"] -> handlers.handle_health(req)
 
+    // Dashboard UI
+    ["dashboard"] -> handlers.handle_dashboard(req, ctx.db)
+
     // API endpoints
+    ["api", "dashboard", "data"] -> handlers.handle_dashboard_data(req, ctx.db)
     ["api", "ai", "score-recipe"] -> handlers.handle_score_recipe(req)
     ["api", "diet", "vertical", "compliance", recipe_id] ->
       handlers.handle_diet_compliance(req, recipe_id)

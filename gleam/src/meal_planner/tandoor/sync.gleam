@@ -13,7 +13,6 @@
 ///
 /// Note: Core sync data models are defined in models.gleam for centralized
 /// management, following Hickey's principle: "Data is the core, put it in one place."
-
 import gleam/float
 import gleam/int
 import gleam/list
@@ -24,8 +23,7 @@ import pog
 
 import meal_planner/tandoor/models.{
   type RecipeSyncState, type SyncSession, type SyncStatus,
-  sync_status_from_string, sync_status_from_string_unsafe,
-  sync_status_to_string,
+  sync_status_from_string, sync_status_from_string_unsafe, sync_status_to_string,
 }
 
 /// Create a new sync session
@@ -121,7 +119,8 @@ pub fn increment_synced(
   db: pog.Connection,
   session_id: String,
 ) -> Result(Nil, String) {
-  let sql = "UPDATE tandoor_sync_sessions SET synced_count = synced_count + 1 WHERE session_id = $1"
+  let sql =
+    "UPDATE tandoor_sync_sessions SET synced_count = synced_count + 1 WHERE session_id = $1"
 
   pog.query(sql)
   |> pog.parameter(pog.text(session_id))
@@ -135,7 +134,8 @@ pub fn increment_failed(
   db: pog.Connection,
   session_id: String,
 ) -> Result(Nil, String) {
-  let sql = "UPDATE tandoor_sync_sessions SET failed_count = failed_count + 1 WHERE session_id = $1"
+  let sql =
+    "UPDATE tandoor_sync_sessions SET failed_count = failed_count + 1 WHERE session_id = $1"
 
   pog.query(sql)
   |> pog.parameter(pog.text(session_id))
@@ -149,7 +149,8 @@ pub fn increment_conflicts(
   db: pog.Connection,
   session_id: String,
 ) -> Result(Nil, String) {
-  let sql = "UPDATE tandoor_sync_sessions SET conflict_count = conflict_count + 1 WHERE session_id = $1"
+  let sql =
+    "UPDATE tandoor_sync_sessions SET conflict_count = conflict_count + 1 WHERE session_id = $1"
 
   pog.query(sql)
   |> pog.parameter(pog.text(session_id))
@@ -408,7 +409,10 @@ pub fn get_sync_progress_percentage(session: SyncSession) -> Float {
   case session.total_recipes {
     0 -> 0.0
     _ -> {
-      let progress = int.to_float(session.synced_count) /. int.to_float(session.total_recipes) *. 100.0
+      let progress =
+        int.to_float(session.synced_count)
+        /. int.to_float(session.total_recipes)
+        *. 100.0
       progress
     }
   }
@@ -424,13 +428,27 @@ pub fn format_sync_report(session: SyncSession) -> String {
     None -> "In Progress"
   }
 
-  "Sync Session " <> session.session_id <> "\n" <>
-  "Status: " <> status <> "\n" <>
-  "Total Recipes: " <> int.to_string(session.total_recipes) <> "\n" <>
-  "Synced: " <> int.to_string(session.synced_count) <> "\n" <>
-  "Failed: " <> int.to_string(session.failed_count) <> "\n" <>
-  "Conflicts: " <> int.to_string(session.conflict_count) <> "\n" <>
-  "Progress: " <> float.to_string(progress) <> "%"
+  "Sync Session "
+  <> session.session_id
+  <> "\n"
+  <> "Status: "
+  <> status
+  <> "\n"
+  <> "Total Recipes: "
+  <> int.to_string(session.total_recipes)
+  <> "\n"
+  <> "Synced: "
+  <> int.to_string(session.synced_count)
+  <> "\n"
+  <> "Failed: "
+  <> int.to_string(session.failed_count)
+  <> "\n"
+  <> "Conflicts: "
+  <> int.to_string(session.conflict_count)
+  <> "\n"
+  <> "Progress: "
+  <> float.to_string(progress)
+  <> "%"
 }
 
 /// Complete a sync session
@@ -441,7 +459,8 @@ pub fn complete_sync_session(
   session_id: String,
   completed_at: String,
 ) -> Result(Nil, String) {
-  let sql = "UPDATE tandoor_sync_sessions SET completed_at = $1 WHERE session_id = $2"
+  let sql =
+    "UPDATE tandoor_sync_sessions SET completed_at = $1 WHERE session_id = $2"
 
   pog.query(sql)
   |> pog.parameter(pog.text(completed_at))
@@ -716,16 +735,18 @@ pub fn get_mapping_by_tandoor_id(
           |> result.map_error(fn(_) { "Failed to parse status" }),
         )
 
-        Ok(Some(RecipeMappingAuditLog(
-          mapping_id: mapping_id,
-          mealie_slug: mealie_slug,
-          tandoor_id: tandoor_id,
-          mealie_name: mealie_name,
-          tandoor_name: tandoor_name,
-          mapped_at: mapped_at,
-          notes: notes,
-          status: status,
-        )))
+        Ok(
+          Some(RecipeMappingAuditLog(
+            mapping_id: mapping_id,
+            mealie_slug: mealie_slug,
+            tandoor_id: tandoor_id,
+            mealie_name: mealie_name,
+            tandoor_name: tandoor_name,
+            mapped_at: mapped_at,
+            notes: notes,
+            status: status,
+          )),
+        )
       }
     }
   })
@@ -961,9 +982,20 @@ pub fn format_mapping(log: RecipeMappingAuditLog) -> String {
     None -> ""
   }
 
-  "[" <> log.mapped_at <> "] " <> log.mealie_name <> " -> " <> log.tandoor_name
-  <> " (id: " <> int.to_string(log.tandoor_id) <> ", slug: " <> log.mealie_slug
-  <> ", status: " <> log.status <> ")" <> notes_str
+  "["
+  <> log.mapped_at
+  <> "] "
+  <> log.mealie_name
+  <> " -> "
+  <> log.tandoor_name
+  <> " (id: "
+  <> int.to_string(log.tandoor_id)
+  <> ", slug: "
+  <> log.mealie_slug
+  <> ", status: "
+  <> log.status
+  <> ")"
+  <> notes_str
 }
 
 /// Get mapping audit report for a time period

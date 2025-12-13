@@ -205,8 +205,7 @@ pub fn protein_minimum_boundary_inclusive_test() {
   let all = test_recipes()
   let filtered = filter_by_protein(all, Some(50.0), None)
 
-  let has_exact =
-    filtered |> list.any(fn(r) { r.macros.protein >=. 49.9 })
+  let has_exact = filtered |> list.any(fn(r) { r.macros.protein >=. 49.9 })
   has_exact |> should.be_true
 }
 
@@ -214,8 +213,7 @@ pub fn protein_maximum_boundary_inclusive_test() {
   let all = test_recipes()
   let filtered = filter_by_protein(all, None, Some(50.0))
 
-  let has_exact =
-    filtered |> list.any(fn(r) { r.macros.protein <=. 50.1 })
+  let has_exact = filtered |> list.any(fn(r) { r.macros.protein <=. 50.1 })
   has_exact |> should.be_true
 }
 
@@ -247,8 +245,7 @@ pub fn fat_filter_excludes_high_fat_test() {
   let all = test_recipes()
   let filtered = filter_by_fat(all, None, Some(15.0))
 
-  let has_high_fat =
-    filtered |> list.any(fn(r) { r.macros.fat >=. 40.0 })
+  let has_high_fat = filtered |> list.any(fn(r) { r.macros.fat >=. 40.0 })
   has_high_fat |> should.be_false
 }
 
@@ -280,8 +277,7 @@ pub fn carbs_filter_excludes_high_carbs_test() {
   let all = test_recipes()
   let filtered = filter_by_carbs(all, None, Some(40.0))
 
-  let has_high_carbs =
-    filtered |> list.any(fn(r) { r.macros.carbs >=. 70.0 })
+  let has_high_carbs = filtered |> list.any(fn(r) { r.macros.carbs >=. 70.0 })
   has_high_carbs |> should.be_false
 }
 
@@ -368,7 +364,10 @@ pub fn filter_single_recipe_no_match_test() {
 pub fn no_matching_recipes_excluded_test() {
   let all = test_recipes()
   let expected =
-    all |> list.filter(fn(r) { r.macros.protein >=. 25.0 && r.macros.protein <=. 50.0 })
+    all
+    |> list.filter(fn(r) {
+      r.macros.protein >=. 25.0 && r.macros.protein <=. 50.0
+    })
   let filtered = filter_by_protein(all, Some(25.0), Some(50.0))
 
   list.length(filtered) |> should.equal(list.length(expected))
@@ -384,8 +383,7 @@ pub fn exact_result_count_for_constraint_test() {
 pub fn idempotent_filtering_test() {
   let all = test_recipes()
   let once = filter_by_protein(all, Some(20.0), None)
-  let twice =
-    once |> filter_by_protein(Some(20.0), None)
+  let twice = once |> filter_by_protein(Some(20.0), None)
 
   once |> should.equal(twice)
 }
@@ -407,8 +405,7 @@ pub fn all_filtered_exist_in_original_test() {
 
   filtered
   |> list.each(fn(recipe) {
-    let exists =
-      all |> list.any(fn(r) { r.id == recipe.id })
+    let exists = all |> list.any(fn(r) { r.id == recipe.id })
     exists |> should.be_true
   })
 }

@@ -6,11 +6,10 @@
 /// 3. PageInfo creation
 /// 4. Query parameter parsing
 /// 5. Edge cases (boundaries, invalid inputs)
-
-import gleeunit
-import gleeunit/should
 import gleam/list
 import gleam/option.{None, Some}
+import gleeunit
+import gleeunit/should
 import meal_planner/pagination
 
 pub fn main() {
@@ -303,7 +302,8 @@ pub fn test_parse_query_params_limit_validation() {
 
 pub fn test_cursor_encode_decode_consistency() {
   let offsets = [0, 1, 10, 100, 1000, 10_000, 100_000]
-  let results = offsets
+  let results =
+    offsets
     |> list.map(fn(offset) {
       let cursor = pagination.encode_cursor(offset)
       let decoded = pagination.decode_cursor(cursor)
@@ -321,9 +321,10 @@ pub fn test_page_info_consistency() {
   let result_count = 10
   let total = 100
 
-  let page_info = pagination.create_page_info(offset, limit, result_count, total)
+  let page_info =
+    pagination.create_page_info(offset, limit, result_count, total)
   page_info.has_next
-    |> should.equal(result_count >= limit)
+  |> should.equal(result_count >= limit)
 }
 
 pub fn test_validate_preserves_values_in_range() {

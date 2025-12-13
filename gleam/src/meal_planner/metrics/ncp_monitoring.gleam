@@ -9,7 +9,6 @@
 /// - ncp_operations_total: Total NCP operations (counter)
 /// - ncp_calculation_errors: Failed calculations (counter)
 /// - ncp_consistency_rate: Consistency percentage (gauge)
-
 import gleam/float
 import gleam/int
 import gleam/list
@@ -32,7 +31,10 @@ pub fn start_macro_calculation(operation: String) -> OperationContext {
     operation_name: "ncp_macro_calculation_" <> operation,
     category: NcpCalculationMetrics,
     start_time_ms: start_time_ms,
-    metadata: [#("operation_type", "macro_calculation"), #("operation", operation)],
+    metadata: [
+      #("operation_type", "macro_calculation"),
+      #("operation", operation),
+    ],
   )
 }
 
@@ -45,13 +47,14 @@ pub fn record_macro_calculation_success(
   let end_time_ms = get_timestamp_ms()
   let duration_ms = int.to_float(end_time_ms - context.start_time_ms)
 
-  let measurement = TimingMeasurement(
-    operation_name: context.operation_name,
-    duration_ms: duration_ms,
-    timestamp_ms: end_time_ms,
-    success: True,
-    error_message: "",
-  )
+  let measurement =
+    TimingMeasurement(
+      operation_name: context.operation_name,
+      duration_ms: duration_ms,
+      timestamp_ms: end_time_ms,
+      success: True,
+      error_message: "",
+    )
 
   let collector = collector.record_timing(collector, measurement)
 
@@ -88,22 +91,20 @@ pub fn record_macro_calculation_failure(
   let end_time_ms = get_timestamp_ms()
   let duration_ms = int.to_float(end_time_ms - context.start_time_ms)
 
-  let measurement = TimingMeasurement(
-    operation_name: context.operation_name,
-    duration_ms: duration_ms,
-    timestamp_ms: end_time_ms,
-    success: False,
-    error_message: error_message,
-  )
+  let measurement =
+    TimingMeasurement(
+      operation_name: context.operation_name,
+      duration_ms: duration_ms,
+      timestamp_ms: end_time_ms,
+      success: False,
+      error_message: error_message,
+    )
 
   let collector = collector.record_timing(collector, measurement)
 
-  collector.record_counter(
-    collector,
-    "ncp_calculation_errors",
-    1,
-    [#("operation", "macro_calculation")],
-  )
+  collector.record_counter(collector, "ncp_calculation_errors", 1, [
+    #("operation", "macro_calculation"),
+  ])
 }
 
 // ============================================================================
@@ -131,13 +132,14 @@ pub fn record_deviation_calculation_success(
   let end_time_ms = get_timestamp_ms()
   let duration_ms = int.to_float(end_time_ms - context.start_time_ms)
 
-  let measurement = TimingMeasurement(
-    operation_name: context.operation_name,
-    duration_ms: duration_ms,
-    timestamp_ms: end_time_ms,
-    success: True,
-    error_message: "",
-  )
+  let measurement =
+    TimingMeasurement(
+      operation_name: context.operation_name,
+      duration_ms: duration_ms,
+      timestamp_ms: end_time_ms,
+      success: True,
+      error_message: "",
+    )
 
   let collector = collector.record_timing(collector, measurement)
 
@@ -181,13 +183,14 @@ pub fn record_reconciliation_success(
   let end_time_ms = get_timestamp_ms()
   let duration_ms = int.to_float(end_time_ms - context.start_time_ms)
 
-  let measurement = TimingMeasurement(
-    operation_name: context.operation_name,
-    duration_ms: duration_ms,
-    timestamp_ms: end_time_ms,
-    success: True,
-    error_message: "",
-  )
+  let measurement =
+    TimingMeasurement(
+      operation_name: context.operation_name,
+      duration_ms: duration_ms,
+      timestamp_ms: end_time_ms,
+      success: True,
+      error_message: "",
+    )
 
   let collector = collector.record_timing(collector, measurement)
 
@@ -208,12 +211,9 @@ pub fn record_reconciliation_success(
   }
 
   let collector =
-    collector.record_counter(
-      collector,
-      "ncp_tolerance_checks",
-      1,
-      [#("status", tolerance_status)],
-    )
+    collector.record_counter(collector, "ncp_tolerance_checks", 1, [
+      #("status", tolerance_status),
+    ])
 
   // Record days analyzed
   collector.record_gauge(
@@ -254,13 +254,14 @@ pub fn record_recipe_scoring_success(
   let end_time_ms = get_timestamp_ms()
   let duration_ms = int.to_float(end_time_ms - context.start_time_ms)
 
-  let measurement = TimingMeasurement(
-    operation_name: context.operation_name,
-    duration_ms: duration_ms,
-    timestamp_ms: end_time_ms,
-    success: True,
-    error_message: "",
-  )
+  let measurement =
+    TimingMeasurement(
+      operation_name: context.operation_name,
+      duration_ms: duration_ms,
+      timestamp_ms: end_time_ms,
+      success: True,
+      error_message: "",
+    )
 
   let collector = collector.record_timing(collector, measurement)
 
@@ -325,13 +326,14 @@ pub fn record_trend_analysis_success(
   let end_time_ms = get_timestamp_ms()
   let duration_ms = int.to_float(end_time_ms - context.start_time_ms)
 
-  let measurement = TimingMeasurement(
-    operation_name: context.operation_name,
-    duration_ms: duration_ms,
-    timestamp_ms: end_time_ms,
-    success: True,
-    error_message: "",
-  )
+  let measurement =
+    TimingMeasurement(
+      operation_name: context.operation_name,
+      duration_ms: duration_ms,
+      timestamp_ms: end_time_ms,
+      success: True,
+      error_message: "",
+    )
 
   let collector = collector.record_timing(collector, measurement)
 
@@ -352,12 +354,7 @@ pub fn record_trend_analysis_success(
       [],
     )
 
-  collector.record_counter(
-    collector,
-    "ncp_trends_stable",
-    stable_count,
-    [],
-  )
+  collector.record_counter(collector, "ncp_trends_stable", stable_count, [])
 }
 
 // ============================================================================
@@ -387,13 +384,14 @@ pub fn record_variability_calculation_success(
   let end_time_ms = get_timestamp_ms()
   let duration_ms = int.to_float(end_time_ms - context.start_time_ms)
 
-  let measurement = TimingMeasurement(
-    operation_name: context.operation_name,
-    duration_ms: duration_ms,
-    timestamp_ms: end_time_ms,
-    success: True,
-    error_message: "",
-  )
+  let measurement =
+    TimingMeasurement(
+      operation_name: context.operation_name,
+      duration_ms: duration_ms,
+      timestamp_ms: end_time_ms,
+      success: True,
+      error_message: "",
+    )
 
   let collector = collector.record_timing(collector, measurement)
 
