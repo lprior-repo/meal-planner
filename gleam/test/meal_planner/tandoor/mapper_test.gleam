@@ -306,6 +306,3 @@ pub fn instructions_ordering_test() {
     Error(_) -> should.fail("Conversion should succeed")
   }
 }
-
-// Import list module for additional tests
-import gleam/list
