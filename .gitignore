@@ -21,6 +21,7 @@ gleam/mcp_agent_mail/
 # Node modules
 node_modules/
 scripts/node_modules/
+.opencode/node_modules/
 
 # IDE
 .idea/
