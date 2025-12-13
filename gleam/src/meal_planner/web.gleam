@@ -82,12 +82,16 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // Dashboard UI
     ["dashboard"] -> handlers.handle_dashboard(req, ctx.db)
 
+    // Food logging UI
+    ["log", "food", fdc_id] -> handlers.handle_log_food_form(req, ctx.db, fdc_id)
+
     // API endpoints
     ["api", "dashboard", "data"] -> handlers.handle_dashboard_data(req, ctx.db)
     ["api", "ai", "score-recipe"] -> handlers.handle_score_recipe(req)
     ["api", "diet", "vertical", "compliance", recipe_id] ->
       handlers.handle_diet_compliance(req, recipe_id)
     ["api", "macros", "calculate"] -> handlers.handle_macros_calculate(req)
+    ["api", "logs", "food"] -> handlers.handle_log_food(req, ctx.db)
 
     // 404 for unknown routes
     _ -> wisp.not_found()

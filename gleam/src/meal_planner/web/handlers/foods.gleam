@@ -4,7 +4,6 @@
 /// - Displaying log food form with portion and meal selection
 /// - API endpoint for logging USDA foods with micronutrients
 ///
-import gleam/dynamic/decode
 import gleam/float
 import gleam/http
 import gleam/int
@@ -49,7 +48,7 @@ pub fn handle_log_food_form(
 
   // Parse FDC ID
   case int.parse(fdc_id_str) {
-    Error(_) -> wisp.bad_request()
+    Error(_) -> wisp.response(400)
     Ok(fdc_id_int) -> {
       let fdc_id = id.fdc_id(fdc_id_int)
 
@@ -126,12 +125,12 @@ pub fn handle_log_food(
           )
 
           // Scale micronutrients
-          let scaled_micros = scale_micronutrients(micronutrients, scale_factor)
+          let _scaled_micros = scale_micronutrients(micronutrients, scale_factor)
 
           // Create food log entry
-          let log_id = id.log_entry_id("log-" <> int.to_string(request.fdc_id) <> "-" <> request.date)
+          let log_id_str = "log-" <> int.to_string(request.fdc_id) <> "-" <> request.date
           let log_entry = entries.FoodLog(
-            id: log_id,
+            id: log_id_str,
             date: request.date,
             recipe_id: int.to_string(request.fdc_id),
             recipe_name: food_data.food.description,
@@ -141,29 +140,27 @@ pub fn handle_log_food(
             carbs: scaled_macros.carbs,
             meal_type: request.meal_type,
             logged_at: "",
-            source_type: "usda_food",
-            source_id: int.to_string(request.fdc_id),
-            fiber: scaled_micros.fiber,
-            sugar: scaled_micros.sugar,
-            sodium: scaled_micros.sodium,
-            cholesterol: scaled_micros.cholesterol,
-            vitamin_a: scaled_micros.vitamin_a,
-            vitamin_c: scaled_micros.vitamin_c,
-            vitamin_d: scaled_micros.vitamin_d,
-            vitamin_e: scaled_micros.vitamin_e,
-            vitamin_k: scaled_micros.vitamin_k,
-            vitamin_b6: scaled_micros.vitamin_b6,
-            vitamin_b12: scaled_micros.vitamin_b12,
-            folate: scaled_micros.folate,
-            thiamin: scaled_micros.thiamin,
-            riboflavin: scaled_micros.riboflavin,
-            niacin: scaled_micros.niacin,
-            calcium: scaled_micros.calcium,
-            iron: scaled_micros.iron,
-            magnesium: scaled_micros.magnesium,
-            phosphorus: scaled_micros.phosphorus,
-            potassium: scaled_micros.potassium,
-            zinc: scaled_micros.zinc,
+            fiber: micronutrients.fiber,
+            sugar: micronutrients.sugar,
+            sodium: micronutrients.sodium,
+            cholesterol: micronutrients.cholesterol,
+            vitamin_a: micronutrients.vitamin_a,
+            vitamin_c: micronutrients.vitamin_c,
+            vitamin_d: micronutrients.vitamin_d,
+            vitamin_e: micronutrients.vitamin_e,
+            vitamin_k: micronutrients.vitamin_k,
+            vitamin_b6: micronutrients.vitamin_b6,
+            vitamin_b12: micronutrients.vitamin_b12,
+            folate: micronutrients.folate,
+            thiamin: micronutrients.thiamin,
+            riboflavin: micronutrients.riboflavin,
+            niacin: micronutrients.niacin,
+            calcium: micronutrients.calcium,
+            iron: micronutrients.iron,
+            magnesium: micronutrients.magnesium,
+            phosphorus: micronutrients.phosphorus,
+            potassium: micronutrients.potassium,
+            zinc: micronutrients.zinc,
           )
 
           // Save to database
@@ -181,7 +178,7 @@ pub fn handle_log_food(
               let response =
                 json.object([
                   #("status", json.string("success")),
-                  #("log_id", json.string(id.log_entry_id_to_string(log_id))),
+                  #("log_id", json.string(log_id_str)),
                   #("food_name", json.string(food_data.food.description)),
                   #("grams", json.float(request.grams)),
                   #("macros", macros_to_json(scaled_macros)),
@@ -290,9 +287,54 @@ fn scale_optional(value: option.Option(Float), factor: Float) -> option.Option(F
 
 /// Parse log food request from JSON
 fn parse_log_food_request(body: String) -> Result(LogFoodRequest, String) {
-  // For now, return a simple parse error
-  // In production, use a proper JSON parser
-  Error("JSON parsing not yet implemented - use test data")
+  // Parse form-encoded data (HTMX sends form data, not JSON)
+  // Expected format: fdc_id=123&grams=150.0&meal_type=lunch&date=2025-12-13
+  case parse_form_data(body) {
+    Ok(data) -> {
+      // Extract and validate fields
+      case get_form_field(data, "fdc_id"), get_form_field(data, "grams"), get_form_field(data, "meal_type"), get_form_field(data, "date") {
+        Some(fdc_id_str), Some(grams_str), Some(meal_type), Some(date) -> {
+          case int.parse(fdc_id_str), float.parse(grams_str) {
+            Ok(fdc_id), Ok(grams) -> {
+              Ok(LogFoodRequest(
+                fdc_id: fdc_id,
+                grams: grams,
+                meal_type: meal_type,
+                date: date,
+              ))
+            }
+            _, _ -> Error("Invalid numeric values for fdc_id or grams")
+          }
+        }
+        _, _, _, _ -> Error("Missing required fields: fdc_id, grams, meal_type, or date")
+      }
+    }
+    Error(msg) -> Error(msg)
+  }
+}
+
+/// Parse form-encoded data into a list of key-value pairs
+fn parse_form_data(body: String) -> Result(List(#(String, String)), String) {
+  let pairs = string.split(body, "&")
+  let parsed = list.map(pairs, fn(pair) {
+    case string.split(pair, "=") {
+      [key, value] -> Ok(#(key, value))
+      _ -> Error("Invalid form data format")
+    }
+  })
+
+  // Check if all parsing succeeded
+  case list.all(parsed, result.is_ok) {
+    True -> Ok(list.filter_map(parsed, fn(x) { x }))
+    False -> Error("Failed to parse form data")
+  }
+}
+
+/// Get form field value by key
+fn get_form_field(data: List(#(String, String)), key: String) -> option.Option(String) {
+  list.find(data, fn(pair) { pair.0 == key })
+  |> result.map(fn(pair) { pair.1 })
+  |> option.from_result
 }
 
 /// Convert macros to JSON
@@ -310,46 +352,89 @@ fn build_log_food_form_html(
   macros: types.Macros,
 ) -> String {
   let fdc_id_str = int.to_string(id.fdc_id_to_int(food.fdc_id))
+  let calories = types.macros_calories(macros)
 
   "<!DOCTYPE html>
 <html>
 <head>
+  <meta charset=\"UTF-8\">
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
   <title>Log Food - " <> food.description <> "</title>
   <script src=\"https://unpkg.com/htmx.org@1.9.10\"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    h1 { color: #333; }
+    .info-section { background: #f5f5f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+    .info-section p { margin: 5px 0; }
+    .nutrition-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 15px 0; }
+    .nutrition-item { background: white; padding: 10px; border-radius: 4px; text-align: center; }
+    .nutrition-item strong { display: block; color: #666; font-size: 0.9em; }
+    .nutrition-item span { display: block; font-size: 1.5em; color: #333; margin-top: 5px; }
+    form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: 500; color: #555; }
+    input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
+    button { background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 4px; font-size: 16px; cursor: pointer; width: 100%; }
+    button:hover { background: #0056b3; }
+    #result { margin-top: 20px; padding: 15px; border-radius: 4px; }
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  </style>
 </head>
 <body>
   <h1>Log Food: " <> food.description <> "</h1>
 
-  <div>
+  <div class=\"info-section\">
     <p><strong>Category:</strong> " <> food.category <> "</p>
     <p><strong>Data Type:</strong> " <> food.data_type <> "</p>
-    <p><strong>Nutrition (per 100g):</strong></p>
-    <ul>
-      <li>Protein: " <> float.to_string(macros.protein) <> "g</li>
-      <li>Fat: " <> float.to_string(macros.fat) <> "g</li>
-      <li>Carbs: " <> float.to_string(macros.carbs) <> "g</li>
-    </ul>
+    <p><strong>Nutrition per 100g:</strong></p>
+    <div class=\"nutrition-grid\">
+      <div class=\"nutrition-item\">
+        <strong>Protein</strong>
+        <span>" <> float.to_string(macros.protein) <> "g</span>
+      </div>
+      <div class=\"nutrition-item\">
+        <strong>Fat</strong>
+        <span>" <> float.to_string(macros.fat) <> "g</span>
+      </div>
+      <div class=\"nutrition-item\">
+        <strong>Carbs</strong>
+        <span>" <> float.to_string(macros.carbs) <> "g</span>
+      </div>
+      <div class=\"nutrition-item\">
+        <strong>Calories</strong>
+        <span>" <> float.to_string(calories) <> "</span>
+      </div>
+    </div>
   </div>
 
   <form hx-post=\"/api/logs/food\" hx-target=\"#result\" hx-swap=\"innerHTML\">
     <input type=\"hidden\" name=\"fdc_id\" value=\"" <> fdc_id_str <> "\" />
-    <input type=\"hidden\" name=\"date\" value=\"2025-12-13\" />
+    <input type=\"hidden\" name=\"date\" id=\"date-input\" />
 
-    <label for=\"grams\">Portion (grams):</label>
-    <input type=\"number\" name=\"grams\" id=\"grams\" value=\"100\" step=\"0.1\" required />
+    <div class=\"form-group\">
+      <label for=\"grams\">Portion (grams):</label>
+      <input type=\"number\" name=\"grams\" id=\"grams\" value=\"100\" step=\"0.1\" min=\"0\" required />
+    </div>
 
-    <label for=\"meal_type\">Meal Type:</label>
-    <select name=\"meal_type\" id=\"meal_type\" required>
-      <option value=\"breakfast\">Breakfast</option>
-      <option value=\"lunch\">Lunch</option>
-      <option value=\"dinner\">Dinner</option>
-      <option value=\"snack\">Snack</option>
-    </select>
+    <div class=\"form-group\">
+      <label for=\"meal_type\">Meal Type:</label>
+      <select name=\"meal_type\" id=\"meal_type\" required>
+        <option value=\"breakfast\">Breakfast</option>
+        <option value=\"lunch\">Lunch</option>
+        <option value=\"dinner\">Dinner</option>
+        <option value=\"snack\">Snack</option>
+      </select>
+    </div>
 
     <button type=\"submit\">Log Food</button>
   </form>
 
   <div id=\"result\"></div>
+
+  <script>
+    document.getElementById('date-input').value = new Date().toISOString().split('T')[0];
+  </script>
 </body>
 </html>"
 }
