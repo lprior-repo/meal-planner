@@ -9,7 +9,6 @@
 /// - diet: Vertical diet compliance check endpoint
 /// - macros: Macro calculation endpoint
 /// - dashboard: Dashboard UI with nutrition tracking
-
 import meal_planner/web/handlers/dashboard
 import meal_planner/web/handlers/diet
 import meal_planner/web/handlers/foods
@@ -43,7 +42,10 @@ pub fn handle_macros_calculate(req: wisp.Request) -> wisp.Response {
 }
 
 /// Dashboard handler - GET /dashboard
-pub fn handle_dashboard(req: wisp.Request, conn: pog.Connection) -> wisp.Response {
+pub fn handle_dashboard(
+  req: wisp.Request,
+  conn: pog.Connection,
+) -> wisp.Response {
   dashboard.handle(req, conn)
 }
 
@@ -65,9 +67,6 @@ pub fn handle_log_food_form(
 }
 
 /// Log food API handler - POST /api/logs/food
-pub fn handle_log_food(
-  req: wisp.Request,
-  conn: pog.Connection,
-) -> wisp.Response {
+pub fn handle_log_food(req: wisp.Request, conn: pog.Connection) -> wisp.Response {
   foods.handle_log_food(req, conn)
 }

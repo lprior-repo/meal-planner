@@ -118,7 +118,8 @@ pub fn load_fatsecret_config() -> Option(FatSecretConfig) {
   let secret = envoy.get("FATSECRET_CONSUMER_SECRET") |> result.unwrap("")
 
   case string.is_empty(key), string.is_empty(secret) {
-    False, False -> Some(FatSecretConfig(consumer_key: key, consumer_secret: secret))
+    False, False ->
+      Some(FatSecretConfig(consumer_key: key, consumer_secret: secret))
     _, _ -> None
   }
 }

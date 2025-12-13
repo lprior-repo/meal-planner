@@ -6,7 +6,6 @@
 ///
 /// Separated from entry-level operations and complex queries to allow focused testing
 /// and maintenance of aggregation logic.
-
 import gleam/dynamic/decode
 import gleam/int
 import gleam/list
@@ -78,16 +77,17 @@ pub fn calculate_total_micronutrients(
 
 /// Calculate macros summary from a list of macros
 pub fn sum_macros(macros_list: List(Macros)) -> Macros {
-  list.fold(macros_list, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(
-    acc,
-    macros,
-  ) {
-    Macros(
-      protein: acc.protein +. macros.protein,
-      fat: acc.fat +. macros.fat,
-      carbs: acc.carbs +. macros.carbs,
-    )
-  })
+  list.fold(
+    macros_list,
+    Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
+    fn(acc, macros) {
+      Macros(
+        protein: acc.protein +. macros.protein,
+        fat: acc.fat +. macros.fat,
+        carbs: acc.carbs +. macros.carbs,
+      )
+    },
+  )
 }
 
 /// Calculate average macros from a list

@@ -38,8 +38,12 @@ fn group_metrics_by_name(metrics: List(Metric)) -> List(#(String, List(Metric)))
     let name = types.metric_name(metric)
     let base_name = extract_base_name(name)
 
-    case list.find(acc, fn(group) { let #(group_name, _) = group
-      group_name == base_name }) {
+    case
+      list.find(acc, fn(group) {
+        let #(group_name, _) = group
+        group_name == base_name
+      })
+    {
       Ok(group) -> {
         let #(_, existing) = group
         list.filter(acc, fn(g) { g.0 != base_name })

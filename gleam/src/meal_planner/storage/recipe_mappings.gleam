@@ -15,7 +15,6 @@
 /// - Log each recipe mapping as it's created during migration
 /// - Query mappings for reconciliation and debugging
 /// - Mark mappings as deprecated when recipes are removed
-
 import gleam/dynamic/decode
 import gleam/int
 import gleam/list
@@ -133,7 +132,9 @@ pub fn log_mapping(
   |> pog.execute(db)
   |> result.map_error(fn(err) {
     let error_msg = utils.format_pog_error(err)
-    let is_duplicate = string.contains(error_msg, "duplicate") || string.contains(error_msg, "unique")
+    let is_duplicate =
+      string.contains(error_msg, "duplicate")
+      || string.contains(error_msg, "unique")
     case is_duplicate {
       True -> DuplicateMapping
       False -> DatabaseError(error_msg)
@@ -191,21 +192,17 @@ pub fn log_batch_mappings(
         <> " ON CONFLICT (mealie_slug) DO NOTHING"
 
       let query_builder =
-        list.fold(
-          requests,
-          pog.query(sql),
-          fn(acc, req) {
-            acc
-            |> pog.parameter(pog.text(req.mealie_slug))
-            |> pog.parameter(pog.int(req.tandoor_id))
-            |> pog.parameter(pog.text(req.mealie_name))
-            |> pog.parameter(pog.text(req.tandoor_name))
-            |> pog.parameter(case req.notes {
-              Some(n) -> pog.text(n)
-              None -> pog.null()
-            })
-          },
-        )
+        list.fold(requests, pog.query(sql), fn(acc, req) {
+          acc
+          |> pog.parameter(pog.text(req.mealie_slug))
+          |> pog.parameter(pog.int(req.tandoor_id))
+          |> pog.parameter(pog.text(req.mealie_name))
+          |> pog.parameter(pog.text(req.tandoor_name))
+          |> pog.parameter(case req.notes {
+            Some(n) -> pog.text(n)
+            None -> pog.null()
+          })
+        })
 
       query_builder
       |> pog.execute(db)
@@ -309,7 +306,11 @@ pub fn get_all_mappings(
   |> pog.returning(mapping_decoder())
   |> pog.execute(db)
   |> result.map_error(fn(err) { DatabaseError(utils.format_pog_error(err)) })
-  |> result.map(fn(result) { case result { pog.Returned(_, rows) -> rows } })
+  |> result.map(fn(result) {
+    case result {
+      pog.Returned(_, rows) -> rows
+    }
+  })
 }
 
 /// Get recent mappings (within the last N records)
@@ -331,7 +332,11 @@ pub fn get_recent_mappings(
   |> pog.returning(mapping_decoder())
   |> pog.execute(db)
   |> result.map_error(fn(err) { DatabaseError(utils.format_pog_error(err)) })
-  |> result.map(fn(result) { case result { pog.Returned(_, rows) -> rows } })
+  |> result.map(fn(result) {
+    case result {
+      pog.Returned(_, rows) -> rows
+    }
+  })
 }
 
 /// Count total mappings by status
@@ -341,8 +346,7 @@ pub fn count_mappings_by_status(
   db: pog.Connection,
   status: MappingStatus,
 ) -> Result(Int, RecipeMappingError) {
-  let sql =
-    "SELECT COUNT(*)::int FROM recipe_mappings WHERE status = $1"
+  let sql = "SELECT COUNT(*)::int FROM recipe_mappings WHERE status = $1"
 
   let decoder = {
     use count <- decode.field(0, decode.int)
@@ -367,7 +371,9 @@ pub fn count_mappings_by_status(
 }
 
 /// Get total number of all mappings
-pub fn count_total_mappings(db: pog.Connection) -> Result(Int, RecipeMappingError) {
+pub fn count_total_mappings(
+  db: pog.Connection,
+) -> Result(Int, RecipeMappingError) {
   let sql = "SELECT COUNT(*)::int FROM recipe_mappings"
 
   let decoder = {

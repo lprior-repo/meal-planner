@@ -23,22 +23,26 @@ pub fn init_registry() -> MetricsRegistry {
 
 /// Export metrics to Prometheus format
 pub fn export_prometheus(registry: MetricsRegistry) -> String {
-  prometheus.export_prometheus(registry)
+  mod.export_prometheus(registry)
 }
 
 /// Export metrics as JSON
 pub fn export_json(registry: MetricsRegistry) -> String {
-  prometheus.export_json(registry)
+  // Convert to metrics list and format
+  let metrics = mod.get_metrics(registry)
+  prometheus.format_metrics(metrics)
 }
 
 /// Generate human-readable report
 pub fn generate_report(registry: MetricsRegistry) -> String {
-  prometheus.generate_report(registry)
+  let metrics = mod.get_metrics(registry)
+  prometheus.format_metrics(metrics)
 }
 
 /// Log current metrics status to console
 pub fn log_metrics(registry: MetricsRegistry) -> Nil {
-  let report = prometheus.generate_report(registry)
+  let metrics = mod.get_metrics(registry)
+  let report = prometheus.format_metrics(metrics)
   logger.info("Metrics Report")
   io.println(report)
 }

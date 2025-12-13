@@ -25,12 +25,7 @@ import wisp
 
 /// Request body for logging a USDA food
 pub type LogFoodRequest {
-  LogFoodRequest(
-    fdc_id: Int,
-    grams: Float,
-    meal_type: String,
-    date: String,
-  )
+  LogFoodRequest(fdc_id: Int, grams: Float, meal_type: String, date: String)
 }
 
 // ============================================================================
@@ -78,10 +73,7 @@ pub fn handle_log_food_form(
 ///   "meal_type": "lunch",
 ///   "date": "2025-12-13"
 /// }
-pub fn handle_log_food(
-  req: wisp.Request,
-  conn: pog.Connection,
-) -> wisp.Response {
+pub fn handle_log_food(req: wisp.Request, conn: pog.Connection) -> wisp.Response {
   use <- wisp.require_method(req, http.Post)
 
   // Read and parse request body
@@ -115,53 +107,58 @@ pub fn handle_log_food(
           // Calculate macros and micronutrients proportionally
           let scale_factor = request.grams /. 100.0
           let macros = extract_macros_from_nutrients(food_data.nutrients)
-          let micronutrients = extract_micronutrients_from_nutrients(food_data.nutrients)
+          let micronutrients =
+            extract_micronutrients_from_nutrients(food_data.nutrients)
 
           // Scale macros
-          let scaled_macros = types.Macros(
-            protein: macros.protein *. scale_factor,
-            fat: macros.fat *. scale_factor,
-            carbs: macros.carbs *. scale_factor,
-          )
+          let scaled_macros =
+            types.Macros(
+              protein: macros.protein *. scale_factor,
+              fat: macros.fat *. scale_factor,
+              carbs: macros.carbs *. scale_factor,
+            )
 
           // Scale micronutrients
-          let _scaled_micros = scale_micronutrients(micronutrients, scale_factor)
+          let _scaled_micros =
+            scale_micronutrients(micronutrients, scale_factor)
 
           // Create food log entry
-          let log_id_str = "log-" <> int.to_string(request.fdc_id) <> "-" <> request.date
-          let log_entry = entries.FoodLog(
-            id: log_id_str,
-            date: request.date,
-            recipe_id: int.to_string(request.fdc_id),
-            recipe_name: food_data.food.description,
-            servings: request.grams /. 100.0,
-            protein: scaled_macros.protein,
-            fat: scaled_macros.fat,
-            carbs: scaled_macros.carbs,
-            meal_type: request.meal_type,
-            logged_at: "",
-            fiber: micronutrients.fiber,
-            sugar: micronutrients.sugar,
-            sodium: micronutrients.sodium,
-            cholesterol: micronutrients.cholesterol,
-            vitamin_a: micronutrients.vitamin_a,
-            vitamin_c: micronutrients.vitamin_c,
-            vitamin_d: micronutrients.vitamin_d,
-            vitamin_e: micronutrients.vitamin_e,
-            vitamin_k: micronutrients.vitamin_k,
-            vitamin_b6: micronutrients.vitamin_b6,
-            vitamin_b12: micronutrients.vitamin_b12,
-            folate: micronutrients.folate,
-            thiamin: micronutrients.thiamin,
-            riboflavin: micronutrients.riboflavin,
-            niacin: micronutrients.niacin,
-            calcium: micronutrients.calcium,
-            iron: micronutrients.iron,
-            magnesium: micronutrients.magnesium,
-            phosphorus: micronutrients.phosphorus,
-            potassium: micronutrients.potassium,
-            zinc: micronutrients.zinc,
-          )
+          let log_id_str =
+            "log-" <> int.to_string(request.fdc_id) <> "-" <> request.date
+          let log_entry =
+            entries.FoodLog(
+              id: log_id_str,
+              date: request.date,
+              recipe_id: int.to_string(request.fdc_id),
+              recipe_name: food_data.food.description,
+              servings: request.grams /. 100.0,
+              protein: scaled_macros.protein,
+              fat: scaled_macros.fat,
+              carbs: scaled_macros.carbs,
+              meal_type: request.meal_type,
+              logged_at: "",
+              fiber: micronutrients.fiber,
+              sugar: micronutrients.sugar,
+              sodium: micronutrients.sodium,
+              cholesterol: micronutrients.cholesterol,
+              vitamin_a: micronutrients.vitamin_a,
+              vitamin_c: micronutrients.vitamin_c,
+              vitamin_d: micronutrients.vitamin_d,
+              vitamin_e: micronutrients.vitamin_e,
+              vitamin_k: micronutrients.vitamin_k,
+              vitamin_b6: micronutrients.vitamin_b6,
+              vitamin_b12: micronutrients.vitamin_b12,
+              folate: micronutrients.folate,
+              thiamin: micronutrients.thiamin,
+              riboflavin: micronutrients.riboflavin,
+              niacin: micronutrients.niacin,
+              calcium: micronutrients.calcium,
+              iron: micronutrients.iron,
+              magnesium: micronutrients.magnesium,
+              phosphorus: micronutrients.phosphorus,
+              potassium: micronutrients.potassium,
+              zinc: micronutrients.zinc,
+            )
 
           // Save to database
           case entries.save_food_log(conn, log_entry) {
@@ -278,7 +275,10 @@ fn scale_micronutrients(
 }
 
 /// Scale optional float
-fn scale_optional(value: option.Option(Float), factor: Float) -> option.Option(Float) {
+fn scale_optional(
+  value: option.Option(Float),
+  factor: Float,
+) -> option.Option(Float) {
   case value {
     Some(v) -> Some(v *. factor)
     None -> None
@@ -292,7 +292,12 @@ fn parse_log_food_request(body: String) -> Result(LogFoodRequest, String) {
   case parse_form_data(body) {
     Ok(data) -> {
       // Extract and validate fields
-      case get_form_field(data, "fdc_id"), get_form_field(data, "grams"), get_form_field(data, "meal_type"), get_form_field(data, "date") {
+      case
+        get_form_field(data, "fdc_id"),
+        get_form_field(data, "grams"),
+        get_form_field(data, "meal_type"),
+        get_form_field(data, "date")
+      {
         Some(fdc_id_str), Some(grams_str), Some(meal_type), Some(date) -> {
           case int.parse(fdc_id_str), float.parse(grams_str) {
             Ok(fdc_id), Ok(grams) -> {
@@ -306,7 +311,8 @@ fn parse_log_food_request(body: String) -> Result(LogFoodRequest, String) {
             _, _ -> Error("Invalid numeric values for fdc_id or grams")
           }
         }
-        _, _, _, _ -> Error("Missing required fields: fdc_id, grams, meal_type, or date")
+        _, _, _, _ ->
+          Error("Missing required fields: fdc_id, grams, meal_type, or date")
       }
     }
     Error(msg) -> Error(msg)
@@ -316,12 +322,13 @@ fn parse_log_food_request(body: String) -> Result(LogFoodRequest, String) {
 /// Parse form-encoded data into a list of key-value pairs
 fn parse_form_data(body: String) -> Result(List(#(String, String)), String) {
   let pairs = string.split(body, "&")
-  let parsed = list.map(pairs, fn(pair) {
-    case string.split(pair, "=") {
-      [key, value] -> Ok(#(key, value))
-      _ -> Error("Invalid form data format")
-    }
-  })
+  let parsed =
+    list.map(pairs, fn(pair) {
+      case string.split(pair, "=") {
+        [key, value] -> Ok(#(key, value))
+        _ -> Error("Invalid form data format")
+      }
+    })
 
   // Check if all parsing succeeded
   case list.all(parsed, result.is_ok) {
@@ -331,7 +338,10 @@ fn parse_form_data(body: String) -> Result(List(#(String, String)), String) {
 }
 
 /// Get form field value by key
-fn get_form_field(data: List(#(String, String)), key: String) -> option.Option(String) {
+fn get_form_field(
+  data: List(#(String, String)),
+  key: String,
+) -> option.Option(String) {
   list.find(data, fn(pair) { pair.0 == key })
   |> result.map(fn(pair) { pair.1 })
   |> option.from_result

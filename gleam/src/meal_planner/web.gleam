@@ -83,7 +83,8 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["dashboard"] -> handlers.handle_dashboard(req, ctx.db)
 
     // Food logging UI
-    ["log", "food", fdc_id] -> handlers.handle_log_food_form(req, ctx.db, fdc_id)
+    ["log", "food", fdc_id] ->
+      handlers.handle_log_food_form(req, ctx.db, fdc_id)
 
     // API endpoints
     ["api", "dashboard", "data"] -> handlers.handle_dashboard_data(req, ctx.db)

@@ -4,7 +4,6 @@
 /// This module provides utilities for tracking the progress of recipe migrations,
 /// including counting total recipes, tracking migrated count, and providing
 /// progress reporting (e.g., "X of Y recipes migrated").
-
 import gleam/int
 import gleam/result
 import pog
