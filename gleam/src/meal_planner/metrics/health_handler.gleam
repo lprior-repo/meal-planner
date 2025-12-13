@@ -160,7 +160,7 @@ pub fn handle_reset(
 
   // TODO: Add authorization check
   // For now, just create a new empty registry
-  let new_registry = meal_planner / metrics / mod.new_registry()
+  let new_registry = mod.new_registry()
 
   logger.info("Metrics reset requested")
 
