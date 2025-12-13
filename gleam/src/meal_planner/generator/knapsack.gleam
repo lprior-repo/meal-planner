@@ -15,12 +15,10 @@ pub type KnapsackError {
   TargetExceeded(total: Int)
 }
 
-/// Calculate calories from a recipe's macros
 fn recipe_calories(recipe: Recipe) -> Int {
   let macros = recipe.macros
   let calories = macros_calories(macros)
   let rounded = calories +. 0.5
-  // Simple truncation to int
   case rounded >=. 0.0 {
     True -> float_to_int(rounded)
     False -> 0
@@ -46,7 +44,6 @@ pub fn solve(
   recipes: List(Recipe),
   num_meals: Int,
 ) -> Result(List(Recipe), KnapsackError) {
-  // Validate inputs
   case target_calories <= 0 {
     True -> Error(InvalidTarget)
     False -> {
@@ -54,13 +51,10 @@ pub fn solve(
         0 -> Error(NoRecipes)
         len if len < num_meals -> Error(NotEnoughRecipes)
         _ -> {
-          // Calculate per-meal target
           let per_meal_target = target_calories / num_meals
 
-          // Greedy selection: repeatedly pick best matching recipe
           let selected = greedy_select(recipes, per_meal_target, num_meals, [])
 
-          // Verify total doesn't exceed target
           let total = calculate_total_calories(selected)
           case total > target_calories {
             True -> Error(TargetExceeded(total))
@@ -72,7 +66,6 @@ pub fn solve(
   }
 }
 
-/// Greedy selection: pick recipe closest to target for each meal
 fn greedy_select(
   available: List(Recipe),
   per_meal_target: Int,
@@ -82,7 +75,6 @@ fn greedy_select(
   case remaining {
     0 -> selected
     _ -> {
-      // Find recipe closest to per_meal_target
       case find_closest_recipe(available, per_meal_target) {
         Ok(#(recipe, rest)) -> {
           greedy_select(rest, per_meal_target, remaining - 1, [
@@ -96,7 +88,6 @@ fn greedy_select(
   }
 }
 
-/// Find the recipe closest to target calories
 fn find_closest_recipe(
   recipes: List(Recipe),
   target: Int,
@@ -110,7 +101,6 @@ fn find_closest_recipe(
   }
 }
 
-/// Helper to find closest recipe while tracking remaining recipes
 fn find_closest_helper(
   remaining: List(Recipe),
   target: Int,
@@ -120,7 +110,6 @@ fn find_closest_helper(
 ) -> Result(#(Recipe, List(Recipe)), Nil) {
   case remaining {
     [] -> {
-      // Return best recipe and all others (excluding it)
       let rest = list.append(excluded, [])
       Ok(#(best, rest))
     }
@@ -129,11 +118,9 @@ fn find_closest_helper(
       let diff = abs_diff(cal, target)
       case diff < best_diff {
         True -> {
-          // This is better, so add previous best to excluded
           find_closest_helper(rest, target, recipe, diff, [best, ..excluded])
         }
         False -> {
-          // Previous best is still better
           find_closest_helper(rest, target, best, best_diff, [
             recipe,
             ..excluded
@@ -144,7 +131,6 @@ fn find_closest_helper(
   }
 }
 
-/// Calculate absolute difference between two integers
 fn abs_diff(a: Int, b: Int) -> Int {
   let diff = a - b
   case diff < 0 {
@@ -153,7 +139,6 @@ fn abs_diff(a: Int, b: Int) -> Int {
   }
 }
 
-/// Calculate total calories from a list of recipes
 fn calculate_total_calories(recipes: List(Recipe)) -> Int {
   list.fold(recipes, 0, fn(acc, recipe) { acc + recipe_calories(recipe) })
 }

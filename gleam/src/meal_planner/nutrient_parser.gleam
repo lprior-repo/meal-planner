@@ -12,17 +12,13 @@ import meal_planner/types.{
   type Macros, type Micronutrients, Macros, Micronutrients,
 }
 
-/// USDA nutrient value from database
 pub type UsdaNutrient {
   UsdaNutrient(name: String, amount: Float, unit: String)
 }
 
-/// Parse USDA nutrients into Macros and Micronutrients
-/// Returns (macros, micronutrients_option, calories_option)
 pub fn parse_usda_nutrients(
   nutrients: List(UsdaNutrient),
 ) -> #(Macros, Option(Micronutrients), Option(Float)) {
-  // Extract macros (required)
   let protein = find_nutrient(nutrients, "Protein") |> convert_to_grams
   let fat = find_nutrient(nutrients, "Total lipid (fat)") |> convert_to_grams
   let carbs =
@@ -31,7 +27,6 @@ pub fn parse_usda_nutrients(
 
   let macros = Macros(protein: protein, fat: fat, carbs: carbs)
 
-  // Extract micronutrients (all optional)
   let fiber =
     find_nutrient(nutrients, "Fiber, total dietary")
     |> convert_to_grams_opt
@@ -83,7 +78,6 @@ pub fn parse_usda_nutrients(
 
   let zinc = find_nutrient(nutrients, "Zinc, Zn") |> convert_to_mg_opt
 
-  // Only create Micronutrients if at least one field is Some
   let micronutrients = case
     has_any_value([
       fiber,
@@ -139,11 +133,6 @@ pub fn parse_usda_nutrients(
   #(macros, micronutrients, energy)
 }
 
-// =============================================================================
-// PRIVATE HELPERS
-// =============================================================================
-
-/// Find a nutrient by name (case-insensitive partial match)
 fn find_nutrient(nutrients: List(UsdaNutrient), name: String) -> Option(Float) {
   let lower_name = string.lowercase(name)
 
@@ -153,7 +142,6 @@ fn find_nutrient(nutrients: List(UsdaNutrient), name: String) -> Option(Float) {
   |> option.map(fn(n) { n.amount })
 }
 
-/// Convert nutrient value to grams (required field, defaults to 0.0)
 fn convert_to_grams(value: Option(Float)) -> Float {
   case value {
     Some(v) -> v
@@ -161,22 +149,18 @@ fn convert_to_grams(value: Option(Float)) -> Float {
   }
 }
 
-/// Convert nutrient value to grams (optional field)
 fn convert_to_grams_opt(value: Option(Float)) -> Option(Float) {
   value
 }
 
-/// Convert nutrient value to milligrams (optional field)
 fn convert_to_mg_opt(value: Option(Float)) -> Option(Float) {
   value
 }
 
-/// Convert nutrient value to micrograms (optional field)
 fn convert_to_ug_opt(value: Option(Float)) -> Option(Float) {
   value
 }
 
-/// Check if any value in list is Some
 fn has_any_value(values: List(Option(a))) -> Bool {
   values
   |> list.any(fn(v) {
