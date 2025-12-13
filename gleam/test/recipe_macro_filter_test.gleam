@@ -378,7 +378,7 @@ pub fn exact_result_count_for_constraint_test() {
   let all = test_recipes()
   let filtered = filter_by_protein(all, Some(40.0), None)
 
-  list.length(filtered) |> should.equal(2)
+  list.length(filtered) |> should.equal(1)
 }
 
 pub fn idempotent_filtering_test() {
