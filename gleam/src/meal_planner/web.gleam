@@ -10,6 +10,7 @@
 import gleam/erlang/process
 import gleam/int
 import gleam/io
+import gleam/option
 import meal_planner/config
 import meal_planner/postgres
 import meal_planner/web/handlers
@@ -30,11 +31,10 @@ pub fn start(app_config: config.Config) -> Nil {
     postgres.Config(
       host: app_config.database.host,
       port: app_config.database.port,
-      database: app_config.database.database,
+      database: app_config.database.name,
       user: app_config.database.user,
-      password: app_config.database.password,
+      password: option.Some(app_config.database.password),
       pool_size: 10,
-      connection_timeout: 5000,
     )
 
   let assert Ok(db) = postgres.connect(db_config)

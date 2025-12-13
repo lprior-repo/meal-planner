@@ -575,6 +575,6 @@ fn render_daily_content(
 // ============================================================================
 
 fn float_to_string_1dp(f: Float) -> String {
-  let rounded = float.round(f *. 10.0) /. 10.0
+  let rounded = int.to_float(float.round(f *. 10.0)) /. 10.0
   float.to_string(rounded)
 }
