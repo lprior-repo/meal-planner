@@ -19,7 +19,7 @@ import meal_planner/config
 import meal_planner/id
 import meal_planner/postgres
 import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
-import meal_planner/storage/logs/entries.{type FoodLog, FoodLogInput}
+import meal_planner/storage/logs/entries
 import meal_planner/storage/logs/queries
 import meal_planner/storage/logs/summaries
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
@@ -63,8 +63,7 @@ pub type Log =
   queries.Log
 
 /// Input type for logging a meal with a Tandoor recipe slug (re-exported from entries module)
-pub type FoodLogInput =
-  entries.FoodLogInput
+pub type FoodLogInput = entries.FoodLogInput
 
 // ============================================================================
 // Type Re-exports from Summaries Module

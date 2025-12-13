@@ -1,11 +1,19 @@
-/// PostgreSQL storage module - Domain-driven organization
+/// PostgreSQL storage module - Facade Pattern
 ///
-/// This module re-exports all storage functionality from domain-specific submodules:
-/// - storage/profile: User profiles, nutrition state, and goals
-/// - storage/foods: USDA food database and custom foods
-/// - storage/logs: Food logging and daily/weekly summaries
-/// - storage/nutrients: Nutrient calculations and parsing
-/// - storage/migrations: Database migration utilities
+/// This module provides a unified interface to all storage functionality through
+/// the Facade Pattern. It re-exports public APIs from domain-specific submodules:
+///
+/// **Submodule Organization:**
+/// - storage/profile: User profiles, nutrition state, and goal management
+/// - storage/foods: USDA food database searching and custom food management
+/// - storage/logs: Food log entry operations and nutritional summaries
+/// - storage/migrations: Database schema initialization and updates
+/// - storage/analytics: Search event tracking and analytics
+///
+/// **Design Philosophy:**
+/// This facade keeps the public API simple and focused, while internal implementations
+/// are split across focused submodules. Callers use `meal_planner/storage` for all
+/// storage operations, ensuring a stable, well-organized interface.
 import meal_planner/storage/profile as profile_module
 
 import meal_planner/storage/foods
@@ -16,50 +24,62 @@ import meal_planner/storage/migrations
 
 import meal_planner/storage/analytics
 
-// Re-export everything
+// ============================================================================
+// Database Configuration (from storage/profile)
+// ============================================================================
+
+/// Get default database configuration for development/testing
 pub fn default_config() {
   profile_module.default_config()
 }
 
+/// Initialize connection pool with the given configuration
 pub fn start_pool(config) {
   profile_module.start_pool(config)
 }
 
-pub fn save_nutrition_state(conn, state) {
-  profile_module.save_nutrition_state(conn, state)
-}
+// ============================================================================
+// User Profile Management (from storage/profile)
+// ============================================================================
 
-pub fn get_nutrition_state(conn, date) {
-  profile_module.get_nutrition_state(conn, date)
-}
-
-pub fn get_nutrition_history(conn, days) {
-  profile_module.get_nutrition_history(conn, days)
-}
-
-pub fn save_goals(conn, goals) {
-  profile_module.save_goals(conn, goals)
-}
-
-pub fn get_goals(conn) {
-  profile_module.get_goals(conn)
-}
-
+/// Save user profile with bodyweight, activity level, and nutrition goals
 pub fn save_user_profile(conn, user_profile) {
   profile_module.save_user_profile(conn, user_profile)
 }
 
+/// Retrieve user profile or error if not found
 pub fn get_user_profile(conn) {
   profile_module.get_user_profile(conn)
 }
 
-// pub fn search_foods(conn, query) {
-//   foods.search_foods(conn, query)
-// }
+// ============================================================================
+// Nutrition State & Goals (from storage/profile)
+// ============================================================================
 
-// pub fn search_foods_filtered(conn, query, category) {
-//   foods.search_foods_filtered(conn, query, category)
-// }
+/// Save daily nutrition state snapshot (calories, macros achieved)
+pub fn save_nutrition_state(conn, state) {
+  profile_module.save_nutrition_state(conn, state)
+}
+
+/// Get nutrition state for a specific date
+pub fn get_nutrition_state(conn, date) {
+  profile_module.get_nutrition_state(conn, date)
+}
+
+/// Get nutrition state history for last N days
+pub fn get_nutrition_history(conn, days) {
+  profile_module.get_nutrition_history(conn, days)
+}
+
+/// Save user nutrition goals (calorie targets, macro ratios)
+pub fn save_goals(conn, goals) {
+  profile_module.save_goals(conn, goals)
+}
+
+/// Retrieve current nutrition goals
+pub fn get_goals(conn) {
+  profile_module.get_goals(conn)
+}
 
 // Custom food functions
 pub fn create_custom_food(conn, user_id, custom_food) {
@@ -84,6 +104,11 @@ pub fn delete_custom_food(conn, user_id, food_id) {
 
 pub fn search_custom_foods(conn, user_id, query, limit) {
   foods.search_custom_foods(conn, user_id, query, limit)
+}
+
+// Unified search (custom + USDA)
+pub fn unified_search_foods(conn, user_id, query, limit) {
+  foods.unified_search_foods(conn, user_id, query, limit)
 }
 
 // Food database functions
@@ -166,37 +191,10 @@ pub fn record_search_event(conn, event) {
   analytics.record_search_event(conn, event)
 }
 
-// pub fn get_weekly_summary(conn, start_date) {
-//   logs.get_weekly_summary(conn, start_date)
-// }
-
-// pub fn save_food_to_log(conn, user_id, meal_type, food) {
-//   logs.save_food_to_log(conn, user_id, meal_type, food)
-// }
-
-// pub fn get_recently_logged_foods(conn, user_id, limit) {
-//   logs.get_recently_logged_foods(conn, user_id, limit)
-// }
-
-// pub fn get_food_nutrients(conn, id) {
-//   nutrients.get_food_nutrients(conn, id)
-// }
-
-// pub fn parse_usda_macros(nutrients_list) {
-//   nutrients.parse_usda_macros(nutrients_list)
-// }
-
-// pub fn parse_usda_micronutrients(nutrients_list) {
-//   nutrients.parse_usda_micronutrients(nutrients_list)
-// }
-
-// pub fn calculate_total_macros(entries) {
-//   nutrients.calculate_total_macros(entries)
-// }
-
-// pub fn calculate_total_micronutrients(entries) {
-//   nutrients.calculate_total_micronutrients(entries)
-// }
+/// Get recently logged USDA foods for the user
+pub fn get_recently_logged_foods(conn, limit) {
+  logs.get_recently_logged_foods(conn, limit)
+}
 
 // init_migrations is re-exported directly from migrations import above
 

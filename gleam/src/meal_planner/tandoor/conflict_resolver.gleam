@@ -19,54 +19,7 @@ import gleam/result
 import gleam/string
 import pog
 
-// ============================================================================
-// Conflict Resolution Types
-// ============================================================================
-
-/// Type representing a conflict between local and remote versions
-pub type ConflictType {
-  /// Local has changes, remote doesn't
-  LocalOnlyConflict
-  /// Remote has changes, local doesn't
-  RemoteOnlyConflict
-  /// Both local and remote have conflicting changes
-  BidirectionalConflict
-}
-
-/// Strategy for resolving conflicts between local and remote versions
-pub type ConflictResolution {
-  /// Keep local version, overwrite remote
-  PreferLocal
-  /// Keep remote version, overwrite local
-  PreferRemote
-  /// Mark as pending, requires manual intervention
-  ManualReview
-  /// Use automatic conflict resolution based on timestamps
-  AutoResolve(prefer: PreferenceHint)
-}
-
-/// Hint for automatic conflict resolution
-pub type PreferenceHint {
-  /// Prefer the most recently modified version
-  MoreRecent
-  /// Prefer the local version
-  Local
-  /// Prefer the remote version
-  Remote
-}
-
-/// Result of conflict resolution attempt
-pub type ResolutionResult {
-  ResolutionResult(
-    tandoor_id: Int,
-    recipe_id: String,
-    was_conflicted: Bool,
-    conflict_type: Option(ConflictType),
-    resolution_strategy: ConflictResolution,
-    new_status: String,
-    resolved_at: String,
-  )
-}
+import meal_planner/tandoor/models
 
 // ============================================================================
 // Conflict Detection Functions
@@ -148,22 +101,22 @@ pub fn detect_conflict(
 /// Classify the type of conflict present in a recipe sync state
 ///
 /// Analyzes the modification timestamps to determine the conflict type:
-/// - LocalOnlyConflict: only local has changes
-/// - RemoteOnlyConflict: only remote has changes
-/// - BidirectionalConflict: both have changes
+/// - models.LocalOnlyConflict: only local has changes
+/// - models.RemoteOnlyConflict: only remote has changes
+/// - models.BidirectionalConflict: both have changes
 pub fn classify_conflict(
   local_modified_at: Option(String),
   remote_modified_at: Option(String),
   last_synced_at: Option(String),
-) -> Option(ConflictType) {
+) -> Option(models.ConflictType) {
   let local_mods = has_local_modifications(local_modified_at, last_synced_at)
   let remote_mods =
     has_remote_modifications(remote_modified_at, last_synced_at)
 
   case local_mods, remote_mods {
-    True, True -> Some(BidirectionalConflict)
-    True, False -> Some(LocalOnlyConflict)
-    False, True -> Some(RemoteOnlyConflict)
+    True, True -> Some(models.BidirectionalConflict)
+    True, False -> Some(models.LocalOnlyConflict)
+    False, True -> Some(models.RemoteOnlyConflict)
     False, False -> None
   }
 }
@@ -175,7 +128,7 @@ pub fn classify_conflict(
 /// Resolve a conflict between local and remote versions
 ///
 /// Applies the specified conflict resolution strategy and updates the database
-/// accordingly. Returns a ResolutionResult containing the outcome.
+/// accordingly. Returns a models.ResolutionResult containing the outcome.
 ///
 /// This function makes the conflict resolution decision explicit, following
 /// Rich Hickey's principle of avoiding implicit decisions.
@@ -191,7 +144,7 @@ pub fn classify_conflict(
 /// - `now`: Current timestamp
 ///
 /// # Returns
-/// Result containing the ResolutionResult on success, or error message on failure
+/// Result containing the models.ResolutionResult on success, or error message on failure
 pub fn resolve(
   db: pog.Connection,
   tandoor_id: Int,
@@ -199,9 +152,9 @@ pub fn resolve(
   local_modified_at: Option(String),
   remote_modified_at: Option(String),
   last_synced_at: Option(String),
-  strategy: ConflictResolution,
+  strategy: models.ConflictResolution,
   now: String,
-) -> Result(ResolutionResult, String) {
+) -> Result(models.ResolutionResult, String) {
   // Classify the conflict type
   let conflict_type =
     classify_conflict(local_modified_at, remote_modified_at, last_synced_at)
@@ -215,10 +168,10 @@ pub fn resolve(
 
   // Determine which status to set based on strategy
   let new_status = case strategy {
-    PreferLocal -> "local_changes"
-    PreferRemote -> "remote_changes"
-    ManualReview -> "conflict"
-    AutoResolve(hint) ->
+    models.PreferLocal -> "local_changes"
+    models.PreferRemote -> "remote_changes"
+    models.ManualReview -> "conflict"
+    models.AutoResolve(hint) ->
       resolve_with_hint(local_modified_at, remote_modified_at, hint)
   }
 
@@ -227,7 +180,7 @@ pub fn resolve(
     update_sync_status_in_db(db, tandoor_id, new_status, None, now),
   )
 
-  Ok(ResolutionResult(
+  Ok(models.ResolutionResult(
     tandoor_id: tandoor_id,
     recipe_id: recipe_id,
     was_conflicted: is_conflicted,
@@ -245,12 +198,12 @@ pub fn resolve(
 fn resolve_with_hint(
   local_modified_at: Option(String),
   remote_modified_at: Option(String),
-  hint: PreferenceHint,
+  hint: models.PreferenceHint,
 ) -> String {
   case hint {
     Local -> "local_changes"
     Remote -> "remote_changes"
-    MoreRecent -> {
+    models.MoreRecent -> {
       case local_modified_at, remote_modified_at {
         Some(local), Some(remote) ->
           case string.compare(local, remote) {
@@ -380,24 +333,24 @@ pub fn describe_conflict(
 }
 
 /// Get human-readable description of conflict type
-pub fn conflict_type_to_string(conflict_type: ConflictType) -> String {
+pub fn conflict_type_to_string(conflict_type: models.ConflictType) -> String {
   case conflict_type {
-    LocalOnlyConflict -> "Local-only changes"
-    RemoteOnlyConflict -> "Remote-only changes"
-    BidirectionalConflict -> "Bidirectional conflict"
+    models.LocalOnlyConflict -> "Local-only changes"
+    models.RemoteOnlyConflict -> "Remote-only changes"
+    models.BidirectionalConflict -> "Bidirectional conflict"
   }
 }
 
 /// Get human-readable description of resolution strategy
-pub fn strategy_to_string(strategy: ConflictResolution) -> String {
+pub fn strategy_to_string(strategy: models.ConflictResolution) -> String {
   case strategy {
-    PreferLocal -> "Prefer local version"
-    PreferRemote -> "Prefer remote version"
-    ManualReview -> "Manual review required"
-    AutoResolve(hint) ->
+    models.PreferLocal -> "Prefer local version"
+    models.PreferRemote -> "Prefer remote version"
+    models.ManualReview -> "Manual review required"
+    models.AutoResolve(hint) ->
       "Auto-resolve ("
       <> case hint {
-        MoreRecent -> "prefer most recent"
+        models.MoreRecent -> "prefer most recent"
         Local -> "prefer local"
         Remote -> "prefer remote"
       }

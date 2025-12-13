@@ -1,10 +1,12 @@
 /// Tests for food storage module - specifically testing for duplicate results
+/// and custom foods functionality with unified search
 import gleam/list
-import gleam/option.{None}
+import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/id
 import meal_planner/postgres
+import meal_planner/storage
 import meal_planner/storage/foods
 import meal_planner/types
 
