@@ -217,5 +217,4 @@ pub fn test_strategy_to_string_auto_resolve_more_recent() {
     conflict_resolver.AutoResolve(conflict_resolver.MoreRecent),
   )
   |> should.contain("Auto-resolve")
-  |> should.equal(Nil)
 }
