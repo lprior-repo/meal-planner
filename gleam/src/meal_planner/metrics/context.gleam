@@ -2,7 +2,6 @@
 ///
 /// This module manages the application-wide metrics registry and provides
 /// initialization and management functions for performance monitoring.
-
 import gleam/bool
 import gleam/io
 import meal_planner/logger

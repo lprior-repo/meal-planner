@@ -3,7 +3,6 @@
 /// This module provides enhanced health check functionality that includes
 /// performance metrics and SLA status. It serves as an example of metrics
 /// integration into web handlers.
-
 import gleam/http
 import gleam/int
 import gleam/json
@@ -12,8 +11,8 @@ import gleam/string
 import meal_planner/logger
 import meal_planner/metrics/context
 import meal_planner/metrics/mod.{
-  type MetricsRegistry, type MetricSnapshot, get_all_snapshots, ApiCall,
-  Calculation, StorageQuery,
+  type MetricSnapshot, type MetricsRegistry, ApiCall, Calculation, StorageQuery,
+  get_all_snapshots,
 }
 import wisp
 
@@ -53,11 +52,14 @@ fn get_health_status(registry: MetricsRegistry) -> List(#(String, json.Json)) {
     #("status", json.string("healthy")),
     #("service", json.string("meal-planner")),
     #("version", json.string("1.0.0")),
-    #("metrics", json.object([
-      #("storage_queries", storage_json),
-      #("api_calls", api_json),
-      #("calculations", calc_json),
-    ])),
+    #(
+      "metrics",
+      json.object([
+        #("storage_queries", storage_json),
+        #("api_calls", api_json),
+        #("calculations", calc_json),
+      ]),
+    ),
   ]
 }
 
@@ -97,7 +99,10 @@ pub fn handle_prometheus(
   let response =
     wisp.response(200)
     |> wisp.string_body(prometheus_text)
-    |> wisp.set_header("content-type", "text/plain; version=1.0.0; charset=utf-8")
+    |> wisp.set_header(
+      "content-type",
+      "text/plain; version=1.0.0; charset=utf-8",
+    )
 
   #(response, registry)
 }
@@ -155,7 +160,7 @@ pub fn handle_reset(
 
   // TODO: Add authorization check
   // For now, just create a new empty registry
-  let new_registry = meal_planner/metrics/mod.new_registry()
+  let new_registry = meal_planner / metrics / mod.new_registry()
 
   logger.info("Metrics reset requested")
 

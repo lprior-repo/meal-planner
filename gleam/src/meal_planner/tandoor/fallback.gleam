@@ -6,7 +6,6 @@
 /// - Graceful degradation strategies (cached data, empty results, stale data)
 /// - Retry logic with exponential backoff
 /// - Recovery and state tracking
-
 import gleam/bool
 import gleam/int
 import gleam/json
@@ -137,9 +136,7 @@ pub fn is_failed(health: ServiceHealth) -> Bool {
 // ============================================================================
 
 /// Record a successful operation and potentially close the circuit
-pub fn record_success(
-  state: FallbackState,
-) -> FallbackState {
+pub fn record_success(state: FallbackState) -> FallbackState {
   let now_ms = get_current_time_ms()
 
   FallbackState(
@@ -179,7 +176,9 @@ pub fn record_failure(
     HalfOpen(attempts) -> {
       case attempts >= config.half_open_max_attempts {
         True -> {
-          logger.warn("Half-open attempts exhausted, reopening circuit: " <> reason)
+          logger.warn(
+            "Half-open attempts exhausted, reopening circuit: " <> reason,
+          )
           Open(since_ms: now_ms, reason: reason)
         }
         False -> HalfOpen(attempts: attempts + 1)
@@ -236,14 +235,10 @@ pub fn should_allow_request(state: FallbackState) -> Bool {
 /// Get the current circuit breaker status as a string
 pub fn circuit_status_string(state: FallbackState) -> String {
   case state.circuit_state {
-    Closed ->
-      "Circuit CLOSED, failures: " <> int.to_string(state.failure_count)
-    Open(_, reason) ->
-      "Circuit OPEN (" <> reason <> "), will retry in 30s"
+    Closed -> "Circuit CLOSED, failures: " <> int.to_string(state.failure_count)
+    Open(_, reason) -> "Circuit OPEN (" <> reason <> "), will retry in 30s"
     HalfOpen(attempts) ->
-      "Circuit HALF-OPEN, attempt: "
-      <> int.to_string(attempts)
-      <> "/3"
+      "Circuit HALF-OPEN, attempt: " <> int.to_string(attempts) <> "/3"
   }
 }
 
@@ -325,23 +320,21 @@ pub fn default_retry_config() -> RetryConfig {
   RetryConfig(
     max_attempts: 3,
     initial_backoff_ms: 100,
-    max_backoff_ms: 5_000,
+    max_backoff_ms: 5000,
     backoff_multiplier: 2.0,
   )
 }
 
 /// Calculate backoff delay in milliseconds for attempt N (starting at 1)
-pub fn calculate_backoff_ms(
-  config: RetryConfig,
-  attempt: Int,
-) -> Int {
+pub fn calculate_backoff_ms(config: RetryConfig, attempt: Int) -> Int {
   case attempt {
     1 -> 0
     n -> {
       let base = config.initial_backoff_ms
       let multiplier = config.backoff_multiplier
       let exponent = int.to_float(n - 2)
-      let backoff = base * float.round(multiplier |> pow(exponent)) |> float.truncate
+      let backoff =
+        base * float.round(multiplier |> pow(exponent)) |> float.truncate
       int.min(backoff, config.max_backoff_ms)
     }
   }

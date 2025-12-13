@@ -23,12 +23,7 @@ pub type Labels =
 
 /// Counter: Monotonically increasing metric (only goes up)
 pub type Counter {
-  Counter(
-    name: String,
-    description: String,
-    value: Int,
-    labels: Labels,
-  )
+  Counter(name: String, description: String, value: Int, labels: Labels)
 }
 
 /// Histogram bucket boundary and count
@@ -50,12 +45,7 @@ pub type Histogram {
 
 /// Gauge: Current point-in-time value
 pub type Gauge {
-  Gauge(
-    name: String,
-    description: String,
-    value: Float,
-    labels: Labels,
-  )
+  Gauge(name: String, description: String, value: Float, labels: Labels)
 }
 
 /// Any registered metric (Counter | Histogram | Gauge)
@@ -89,7 +79,7 @@ pub type HistogramBuckets {
 pub fn default_histogram_buckets() -> List(Float) {
   [
     1.0, 5.0, 10.0, 25.0, 50.0, 100.0, 250.0, 500.0, 1000.0, 2500.0, 5000.0,
-    10000.0,
+    10_000.0,
   ]
 }
 

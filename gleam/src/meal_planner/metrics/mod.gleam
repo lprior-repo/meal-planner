@@ -43,9 +43,8 @@ pub fn get_or_create_counter(
     Some(counter) -> #(registry, counter)
     None -> {
       let new_counter = types.new_counter(name, description)
-      let updated = Registry(
-        metrics: [CounterMetric(new_counter), ..registry.metrics],
-      )
+      let updated =
+        Registry(metrics: [CounterMetric(new_counter), ..registry.metrics])
       #(updated, new_counter)
     }
   }
@@ -62,9 +61,8 @@ pub fn get_or_create_counter_with_labels(
     Some(counter) -> #(registry, counter)
     None -> {
       let new_counter = types.new_counter_with_labels(name, description, labels)
-      let updated = Registry(
-        metrics: [CounterMetric(new_counter), ..registry.metrics],
-      )
+      let updated =
+        Registry(metrics: [CounterMetric(new_counter), ..registry.metrics])
       #(updated, new_counter)
     }
   }
@@ -85,11 +83,7 @@ fn find_counter(
 }
 
 /// Increment a counter in the registry
-pub fn increment_counter(
-  registry: Registry,
-  name: String,
-  by: Int,
-) -> Registry {
+pub fn increment_counter(registry: Registry, name: String, by: Int) -> Registry {
   increment_counter_with_labels(registry, name, [], by)
 }
 
@@ -100,14 +94,14 @@ pub fn increment_counter_with_labels(
   labels: Labels,
   by: Int,
 ) -> Registry {
-  let updated_metrics = list.map(registry.metrics, fn(metric) {
-    case metric {
-      CounterMetric(c)
-        if c.name == name && c.labels == labels
-      -> CounterMetric(types.increment_counter(c, by))
-      _ -> metric
-    }
-  })
+  let updated_metrics =
+    list.map(registry.metrics, fn(metric) {
+      case metric {
+        CounterMetric(c) if c.name == name && c.labels == labels ->
+          CounterMetric(types.increment_counter(c, by))
+        _ -> metric
+      }
+    })
   Registry(metrics: updated_metrics)
 }
 
@@ -125,9 +119,8 @@ pub fn get_or_create_gauge(
     Some(gauge) -> #(registry, gauge)
     None -> {
       let new_gauge = types.new_gauge(name, description)
-      let updated = Registry(
-        metrics: [GaugeMetric(new_gauge), ..registry.metrics],
-      )
+      let updated =
+        Registry(metrics: [GaugeMetric(new_gauge), ..registry.metrics])
       #(updated, new_gauge)
     }
   }
@@ -144,20 +137,15 @@ pub fn get_or_create_gauge_with_labels(
     Some(gauge) -> #(registry, gauge)
     None -> {
       let new_gauge = types.new_gauge_with_labels(name, description, labels)
-      let updated = Registry(
-        metrics: [GaugeMetric(new_gauge), ..registry.metrics],
-      )
+      let updated =
+        Registry(metrics: [GaugeMetric(new_gauge), ..registry.metrics])
       #(updated, new_gauge)
     }
   }
 }
 
 /// Find a gauge by name and labels
-fn find_gauge(
-  registry: Registry,
-  name: String,
-  labels: Labels,
-) -> Option(Gauge) {
+fn find_gauge(registry: Registry, name: String, labels: Labels) -> Option(Gauge) {
   list.find_map(registry.metrics, fn(metric) {
     case metric {
       GaugeMetric(g) if g.name == name && g.labels == labels -> Some(g)
@@ -167,11 +155,7 @@ fn find_gauge(
 }
 
 /// Set a gauge value in the registry
-pub fn set_gauge(
-  registry: Registry,
-  name: String,
-  value: Float,
-) -> Registry {
+pub fn set_gauge(registry: Registry, name: String, value: Float) -> Registry {
   set_gauge_with_labels(registry, name, [], value)
 }
 
@@ -182,23 +166,19 @@ pub fn set_gauge_with_labels(
   labels: Labels,
   value: Float,
 ) -> Registry {
-  let updated_metrics = list.map(registry.metrics, fn(metric) {
-    case metric {
-      GaugeMetric(g)
-        if g.name == name && g.labels == labels
-      -> GaugeMetric(types.set_gauge(g, value))
-      _ -> metric
-    }
-  })
+  let updated_metrics =
+    list.map(registry.metrics, fn(metric) {
+      case metric {
+        GaugeMetric(g) if g.name == name && g.labels == labels ->
+          GaugeMetric(types.set_gauge(g, value))
+        _ -> metric
+      }
+    })
   Registry(metrics: updated_metrics)
 }
 
 /// Increment a gauge value in the registry
-pub fn add_gauge(
-  registry: Registry,
-  name: String,
-  value: Float,
-) -> Registry {
+pub fn add_gauge(registry: Registry, name: String, value: Float) -> Registry {
   add_gauge_with_labels(registry, name, [], value)
 }
 
@@ -209,14 +189,14 @@ pub fn add_gauge_with_labels(
   labels: Labels,
   value: Float,
 ) -> Registry {
-  let updated_metrics = list.map(registry.metrics, fn(metric) {
-    case metric {
-      GaugeMetric(g)
-        if g.name == name && g.labels == labels
-      -> GaugeMetric(types.add_gauge(g, value))
-      _ -> metric
-    }
-  })
+  let updated_metrics =
+    list.map(registry.metrics, fn(metric) {
+      case metric {
+        GaugeMetric(g) if g.name == name && g.labels == labels ->
+          GaugeMetric(types.add_gauge(g, value))
+        _ -> metric
+      }
+    })
   Registry(metrics: updated_metrics)
 }
 
@@ -235,9 +215,8 @@ pub fn get_or_create_histogram(
     Some(histogram) -> #(registry, histogram)
     None -> {
       let new_histogram = types.new_histogram(name, description, buckets)
-      let updated = Registry(
-        metrics: [HistogramMetric(new_histogram), ..registry.metrics],
-      )
+      let updated =
+        Registry(metrics: [HistogramMetric(new_histogram), ..registry.metrics])
       #(updated, new_histogram)
     }
   }
@@ -256,9 +235,8 @@ pub fn get_or_create_histogram_with_labels(
     None -> {
       let new_histogram =
         types.new_histogram_with_labels(name, description, buckets, labels)
-      let updated = Registry(
-        metrics: [HistogramMetric(new_histogram), ..registry.metrics],
-      )
+      let updated =
+        Registry(metrics: [HistogramMetric(new_histogram), ..registry.metrics])
       #(updated, new_histogram)
     }
   }
@@ -294,14 +272,14 @@ pub fn observe_histogram_with_labels(
   labels: Labels,
   value: Float,
 ) -> Registry {
-  let updated_metrics = list.map(registry.metrics, fn(metric) {
-    case metric {
-      HistogramMetric(h)
-        if h.name == name && h.labels == labels
-      -> HistogramMetric(types.observe_histogram(h, value))
-      _ -> metric
-    }
-  })
+  let updated_metrics =
+    list.map(registry.metrics, fn(metric) {
+      case metric {
+        HistogramMetric(h) if h.name == name && h.labels == labels ->
+          HistogramMetric(types.observe_histogram(h, value))
+        _ -> metric
+      }
+    })
   Registry(metrics: updated_metrics)
 }
 
@@ -335,20 +313,19 @@ pub fn clear_registry() -> Registry {
 
 /// Find a metric by name
 pub fn find_metric(registry: Registry, name: String) -> Option(Metric) {
-  list.find(registry.metrics, fn(metric) {
-    types.metric_name(metric) == name
-  })
+  list.find(registry.metrics, fn(metric) { types.metric_name(metric) == name })
 }
 
 /// Find all metrics with a given name (different labels)
 pub fn find_metrics_by_name(registry: Registry, name: String) -> List(Metric) {
-  list.filter(registry.metrics, fn(metric) {
-    types.metric_name(metric) == name
-  })
+  list.filter(registry.metrics, fn(metric) { types.metric_name(metric) == name })
 }
 
 /// Find all metrics matching a prefix
-pub fn find_metrics_by_prefix(registry: Registry, prefix: String) -> List(Metric) {
+pub fn find_metrics_by_prefix(
+  registry: Registry,
+  prefix: String,
+) -> List(Metric) {
   list.filter(registry.metrics, fn(metric) {
     string.starts_with(types.metric_name(metric), prefix)
   })

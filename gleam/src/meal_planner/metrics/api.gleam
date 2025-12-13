@@ -2,7 +2,6 @@
 ///
 /// This module provides utilities for timing and monitoring API calls
 /// to external services (Tandoor, etc).
-
 import gleam/option.{type Option}
 import meal_planner/metrics/mod.{
   type MetricsRegistry, type QueryMetric, ApiCall, end_timing, record_metric,
@@ -43,10 +42,7 @@ fn format_operation_name(context: ApiTimingContext) -> String {
 }
 
 /// Complete timing and create metric
-pub fn end_api_timing(
-  context: ApiTimingContext,
-  success: Bool,
-) -> QueryMetric {
+pub fn end_api_timing(context: ApiTimingContext, success: Bool) -> QueryMetric {
   let end_time = get_timestamp_ms()
   let duration = int.to_float(end_time - context.start_time)
   let operation_name = format_operation_name(context)

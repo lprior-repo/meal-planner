@@ -1,7 +1,6 @@
 /// Cursor-based pagination module
 /// Provides reusable types and functions for implementing cursor-based pagination
 /// across API endpoints.
-
 import gleam/int
 import gleam/json.{type Json}
 import gleam/option.{type Option, None, Some}
@@ -117,10 +116,7 @@ pub fn next_cursor(
 }
 
 /// Calculate previous cursor if not at start
-pub fn previous_cursor(
-  current_offset: Int,
-  limit: Int,
-) -> Option(Cursor) {
+pub fn previous_cursor(current_offset: Int, limit: Int) -> Option(Cursor) {
   case current_offset >= limit {
     True -> Some(encode_cursor(int.max(0, current_offset - limit)))
     False -> None
@@ -157,20 +153,14 @@ pub fn page_info_to_json(page_info: PageInfo) -> Json {
   json.object([
     #("has_next", json.bool(page_info.has_next)),
     #("has_previous", json.bool(page_info.has_previous)),
-    #(
-      "next_cursor",
-      case page_info.next_cursor {
-        Some(cursor) -> json.string(cursor)
-        None -> json.null()
-      },
-    ),
-    #(
-      "previous_cursor",
-      case page_info.previous_cursor {
-        Some(cursor) -> json.string(cursor)
-        None -> json.null()
-      },
-    ),
+    #("next_cursor", case page_info.next_cursor {
+      Some(cursor) -> json.string(cursor)
+      None -> json.null()
+    }),
+    #("previous_cursor", case page_info.previous_cursor {
+      Some(cursor) -> json.string(cursor)
+      None -> json.null()
+    }),
     #("total_items", json.int(page_info.total_items)),
   ])
 }

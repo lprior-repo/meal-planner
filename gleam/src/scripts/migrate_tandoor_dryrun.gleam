@@ -9,7 +9,6 @@
 ///
 /// Usage:
 ///   gleam run -m scripts/migrate_tandoor_dryrun   # Preview migration
-
 import envoy
 import gleam/dict
 import gleam/float
@@ -101,7 +100,9 @@ fn run_dry_run_migration(
   case list.is_empty(recipes) {
     True -> Error("No recipes to migrate")
     False -> {
-      io.println("Found " <> int.to_string(list.length(recipes)) <> " recipes to migrate")
+      io.println(
+        "Found " <> int.to_string(list.length(recipes)) <> " recipes to migrate",
+      )
       io.println("")
 
       // Validate all recipes first
@@ -117,10 +118,8 @@ fn run_dry_run_migration(
           let results = process_recipes_dry_run(recipes)
 
           // Count results
-          let successful =
-            list.count(results, fn(r) { r.status == "success" })
-          let failed =
-            list.count(results, fn(r) { r.status == "failed" })
+          let successful = list.count(results, fn(r) { r.status == "success" })
+          let failed = list.count(results, fn(r) { r.status == "failed" })
 
           // Save log if requested
           case log_file {
@@ -131,8 +130,7 @@ fn run_dry_run_migration(
                   io.println("")
                   io.println("Log saved to: " <> path)
                 }
-                Error(_) ->
-                  io.println("Warning: Could not save log file")
+                Error(_) -> io.println("Warning: Could not save log file")
               }
             }
             None -> Nil
@@ -154,15 +152,11 @@ fn run_dry_run_migration(
 }
 
 /// Process recipes in dry-run mode
-fn process_recipes_dry_run(
-  recipes: List(Recipe),
-) -> List(MigrationResult) {
+fn process_recipes_dry_run(recipes: List(Recipe)) -> List(MigrationResult) {
   list.index_map(recipes, fn(recipe, idx) {
     let total = list.length(recipes)
     let percent = { idx + 1 } * 100 / total
-    io.println(
-      "[" <> int.to_string(percent) <> "%] Preview: " <> recipe.name,
-    )
+    io.println("[" <> int.to_string(percent) <> "%] Preview: " <> recipe.name)
 
     // Validate recipe
     case validate_recipe(recipe) {
@@ -179,7 +173,8 @@ fn process_recipes_dry_run(
         // Simulate Tandoor ID that would be generated
         let simulated_id = 1000 + idx
         io.println(
-          "  Status: WOULD CREATE with Tandoor ID " <> int.to_string(simulated_id),
+          "  Status: WOULD CREATE with Tandoor ID "
+          <> int.to_string(simulated_id),
         )
         MigrationResult(
           recipe_slug: recipe.slug,
@@ -262,18 +257,16 @@ fn validate_recipe(recipe: Recipe) -> Result(Nil, String) {
 
   case list.is_empty(errors) {
     True -> Ok(Nil)
-    False ->
-      Error(
-        recipe.slug
-        <> ": "
-        <> string.join(errors, ", "),
-      )
+    False -> Error(recipe.slug <> ": " <> string.join(errors, ", "))
   }
 }
 
 /// Format results as log
 fn format_log(results: List(MigrationResult)) -> String {
-  let header = "Tandoor Recipe Migration - Dry Run Log\n" <> "=" |> string.repeat(50) <> "\n\n"
+  let header =
+    "Tandoor Recipe Migration - Dry Run Log\n"
+    <> "=" |> string.repeat(50)
+    <> "\n\n"
 
   let body =
     results

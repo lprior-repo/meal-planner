@@ -21,7 +21,11 @@ pub fn circuit_breaker_initial_state_test() {
 pub fn circuit_breaker_record_success_test() {
   let state = fallback.initial_fallback_state()
   let state_with_failure =
-    fallback.record_failure(state, fallback.default_circuit_breaker_config(), "Test failure")
+    fallback.record_failure(
+      state,
+      fallback.default_circuit_breaker_config(),
+      "Test failure",
+    )
 
   state_with_failure.failure_count |> should.equal(1)
 
@@ -61,7 +65,12 @@ pub fn apply_degradation_strategy_cached_test() {
   let empty_value = "empty"
 
   let result =
-    fallback.apply_degradation_strategy(strategy, cached_data, stale_data, empty_value)
+    fallback.apply_degradation_strategy(
+      strategy,
+      cached_data,
+      stale_data,
+      empty_value,
+    )
 
   result |> should.equal(Ok("cached_value"))
 }
@@ -74,7 +83,12 @@ pub fn apply_degradation_strategy_empty_fallback_test() {
   let empty_value = "empty"
 
   let result =
-    fallback.apply_degradation_strategy(strategy, cached_data, stale_data, empty_value)
+    fallback.apply_degradation_strategy(
+      strategy,
+      cached_data,
+      stale_data,
+      empty_value,
+    )
 
   result |> should.equal(Ok("empty"))
 }
@@ -87,7 +101,12 @@ pub fn apply_degradation_strategy_return_empty_test() {
   let empty_value = "empty"
 
   let result =
-    fallback.apply_degradation_strategy(strategy, cached_data, stale_data, empty_value)
+    fallback.apply_degradation_strategy(
+      strategy,
+      cached_data,
+      stale_data,
+      empty_value,
+    )
 
   result |> should.equal(Ok("empty"))
 }
@@ -106,7 +125,7 @@ pub fn retry_config_defaults_test() {
 
   config.max_attempts |> should.equal(3)
   config.initial_backoff_ms |> should.equal(100)
-  config.max_backoff_ms |> should.equal(5_000)
+  config.max_backoff_ms |> should.equal(5000)
 }
 
 /// Test should_retry respects max attempts

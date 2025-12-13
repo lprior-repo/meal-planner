@@ -11,7 +11,6 @@
 /// - api_call_errors_total: Count of failed API calls (counter)
 /// - api_endpoint_calls: Count of calls per endpoint (counter)
 /// - tandoor_connection_health: Current connection state (gauge)
-
 import gleam/float
 import gleam/int
 import gleam/list
@@ -50,25 +49,23 @@ pub fn record_api_success(
   let end_time_ms = get_timestamp_ms()
   let duration_ms = int.to_float(end_time_ms - context.start_time_ms)
 
-  let measurement = TimingMeasurement(
-    operation_name: context.operation_name,
-    duration_ms: duration_ms,
-    timestamp_ms: end_time_ms,
-    success: True,
-    error_message: "",
-  )
+  let measurement =
+    TimingMeasurement(
+      operation_name: context.operation_name,
+      duration_ms: duration_ms,
+      timestamp_ms: end_time_ms,
+      success: True,
+      error_message: "",
+    )
 
   // Record the timing
   let collector = collector.record_timing(collector, measurement)
 
   // Increment endpoint call counter
   let endpoint = get_metadata_value(context.metadata, "endpoint", "unknown")
-  collector.record_counter(
-    collector,
-    "tandoor_api_endpoint_calls",
-    1,
-    [#("endpoint", endpoint)],
-  )
+  collector.record_counter(collector, "tandoor_api_endpoint_calls", 1, [
+    #("endpoint", endpoint),
+  ])
 }
 
 /// Record a failed API call
@@ -83,13 +80,14 @@ pub fn record_api_failure(
   let error_message = client.error_to_string(error)
   let error_type = classify_error(error)
 
-  let measurement = TimingMeasurement(
-    operation_name: context.operation_name,
-    duration_ms: duration_ms,
-    timestamp_ms: end_time_ms,
-    success: False,
-    error_message: error_message,
-  )
+  let measurement =
+    TimingMeasurement(
+      operation_name: context.operation_name,
+      duration_ms: duration_ms,
+      timestamp_ms: end_time_ms,
+      success: False,
+      error_message: error_message,
+    )
 
   // Record the timing
   let collector = collector.record_timing(collector, measurement)
@@ -97,12 +95,10 @@ pub fn record_api_failure(
   // Increment error counter
   let endpoint = get_metadata_value(context.metadata, "endpoint", "unknown")
   let collector =
-    collector.record_counter(
-      collector,
-      "tandoor_api_errors",
-      1,
-      [#("endpoint", endpoint), #("error_type", error_type)],
-    )
+    collector.record_counter(collector, "tandoor_api_errors", 1, [
+      #("endpoint", endpoint),
+      #("error_type", error_type),
+    ])
 
   collector
 }
@@ -155,12 +151,11 @@ pub fn record_retry_attempt(
   attempt_number: Int,
   reason: String,
 ) -> MetricCollector {
-  collector.record_counter(
-    collector,
-    "tandoor_api_retry_attempts",
-    1,
-    [#("endpoint", endpoint), #("reason", reason), #("attempt", int.to_string(attempt_number))],
-  )
+  collector.record_counter(collector, "tandoor_api_retry_attempts", 1, [
+    #("endpoint", endpoint),
+    #("reason", reason),
+    #("attempt", int.to_string(attempt_number)),
+  ])
 }
 
 /// Record final success after retries
@@ -169,12 +164,10 @@ pub fn record_success_after_retries(
   endpoint: String,
   total_attempts: Int,
 ) -> MetricCollector {
-  collector.record_counter(
-    collector,
-    "tandoor_api_success_after_retries",
-    1,
-    [#("endpoint", endpoint), #("attempts", int.to_string(total_attempts))],
-  )
+  collector.record_counter(collector, "tandoor_api_success_after_retries", 1, [
+    #("endpoint", endpoint),
+    #("attempts", int.to_string(total_attempts)),
+  ])
 }
 
 /// Record final failure after exhausting retries
@@ -185,19 +178,15 @@ pub fn record_failure_after_retries(
   final_error: String,
 ) -> MetricCollector {
   let collector =
-    collector.record_counter(
-      collector,
-      "tandoor_api_exhausted_retries",
-      1,
-      [#("endpoint", endpoint), #("attempts", int.to_string(total_attempts))],
-    )
+    collector.record_counter(collector, "tandoor_api_exhausted_retries", 1, [
+      #("endpoint", endpoint),
+      #("attempts", int.to_string(total_attempts)),
+    ])
 
-  collector.record_counter(
-    collector,
-    "tandoor_api_final_errors",
-    1,
-    [#("endpoint", endpoint), #("error", final_error)],
-  )
+  collector.record_counter(collector, "tandoor_api_final_errors", 1, [
+    #("endpoint", endpoint),
+    #("error", final_error),
+  ])
 }
 
 // ============================================================================
@@ -324,8 +313,11 @@ fn get_timestamp_ms() -> Int {
 // ============================================================================
 
 /// Re-export types for monitoring context
-pub type MetricCollector = MetricCollector
-pub type OperationContext = OperationContext
+pub type MetricCollector =
+  MetricCollector
+
+pub type OperationContext =
+  OperationContext
 
 // Add these imports at the top level
 import meal_planner/metrics/types
@@ -337,10 +329,7 @@ pub type Result(a, b) {
   Error(b)
 }
 
-pub fn result_map(
-  r: Result(a, b),
-  f: fn(a) -> c,
-) -> Result(c, b) {
+pub fn result_map(r: Result(a, b), f: fn(a) -> c) -> Result(c, b) {
   case r {
     Ok(a) -> Ok(f(a))
     Error(b) -> Error(b)

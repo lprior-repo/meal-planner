@@ -1,13 +1,13 @@
 /// Tests for Prometheus metrics collection and export
 ///
-import gleeunit
-import gleeunit/should
-import gleam/string
 import gleam/list
 import gleam/option
+import gleam/string
+import gleeunit
+import gleeunit/should
 import meal_planner/metrics/mod as metrics
-import meal_planner/metrics/types
 import meal_planner/metrics/prometheus
+import meal_planner/metrics/types
 
 pub fn main() {
   gleeunit.main()
@@ -73,7 +73,8 @@ pub fn test_metrics_increment_counter_with_labels() {
       "Storage ops",
       labels,
     )
-  let reg2 = metrics.increment_counter_with_labels(reg1, "storage_ops", labels, 10)
+  let reg2 =
+    metrics.increment_counter_with_labels(reg1, "storage_ops", labels, 10)
 
   let metrics_list = metrics.find_metrics_by_name(reg2, "storage_ops")
   metrics_list |> list.length() |> should.equal(1)
@@ -86,7 +87,11 @@ pub fn test_metrics_increment_counter_with_labels() {
 pub fn test_metrics_create_gauge() {
   let registry = metrics.new_registry()
   let #(updated, gauge) =
-    metrics.get_or_create_gauge(registry, "active_connections", "Active connections")
+    metrics.get_or_create_gauge(
+      registry,
+      "active_connections",
+      "Active connections",
+    )
 
   gauge.name |> should.equal("active_connections")
   gauge.description |> should.equal("Active connections")
@@ -191,10 +196,14 @@ pub fn test_metrics_histogram_bucket_distribution() {
     )
 
   // Record values that fall into different buckets
-  let reg2 = metrics.observe_histogram(reg1, "timing", 5.0)   // Less than 10
-  let reg3 = metrics.observe_histogram(reg2, "timing", 25.0)  // Between 10 and 50
-  let reg4 = metrics.observe_histogram(reg3, "timing", 75.0)  // Between 50 and 100
-  let reg5 = metrics.observe_histogram(reg4, "timing", 200.0) // Between 100 and 500
+  let reg2 = metrics.observe_histogram(reg1, "timing", 5.0)
+  // Less than 10
+  let reg3 = metrics.observe_histogram(reg2, "timing", 25.0)
+  // Between 10 and 50
+  let reg4 = metrics.observe_histogram(reg3, "timing", 75.0)
+  // Between 50 and 100
+  let reg5 = metrics.observe_histogram(reg4, "timing", 200.0)
+  // Between 100 and 500
 
   let histogram = case metrics.find_metric(reg5, "timing") {
     Some(metrics.HistogramMetric(h)) -> h
@@ -206,11 +215,14 @@ pub fn test_metrics_histogram_bucket_distribution() {
   histogram.sum |> should.equal(305.0)
 
   // Each bucket should have cumulative count
-  let bucket_10 = case list.find(histogram.buckets, fn(b) { b.boundary == 10.0 }) {
+  let bucket_10 = case
+    list.find(histogram.buckets, fn(b) { b.boundary == 10.0 })
+  {
     Ok(b) -> b
     Error(_) -> panic
   }
-  bucket_10.count |> should.equal(1) // Only 5.0 falls in <= 10.0
+  bucket_10.count |> should.equal(1)
+  // Only 5.0 falls in <= 10.0
 }
 
 pub fn test_metrics_histogram_with_labels() {
@@ -239,8 +251,7 @@ pub fn test_metrics_find_metric_by_name() {
   let registry = metrics.new_registry()
   let #(reg1, _) =
     metrics.get_or_create_counter(registry, "test_counter", "Test")
-  let #(reg2, _) =
-    metrics.get_or_create_gauge(reg1, "test_gauge", "Test")
+  let #(reg2, _) = metrics.get_or_create_gauge(reg1, "test_gauge", "Test")
 
   let found = metrics.find_metric(reg2, "test_counter")
   case found {
@@ -252,7 +263,11 @@ pub fn test_metrics_find_metric_by_name() {
 pub fn test_metrics_find_metrics_by_prefix() {
   let registry = metrics.new_registry()
   let #(reg1, _) =
-    metrics.get_or_create_counter(registry, "http_requests_total", "HTTP requests")
+    metrics.get_or_create_counter(
+      registry,
+      "http_requests_total",
+      "HTTP requests",
+    )
   let #(reg2, _) =
     metrics.get_or_create_counter(reg1, "http_errors_total", "HTTP errors")
   let #(reg3, _) =
@@ -266,8 +281,7 @@ pub fn test_metrics_clear_registry() {
   let registry = metrics.new_registry()
   let #(reg1, _) =
     metrics.get_or_create_counter(registry, "test_counter", "Test")
-  let #(reg2, _) =
-    metrics.get_or_create_gauge(reg1, "test_gauge", "Test")
+  let #(reg2, _) = metrics.get_or_create_gauge(reg1, "test_gauge", "Test")
 
   metrics.metrics_count(reg2) |> should.equal(2)
 
@@ -282,26 +296,42 @@ pub fn test_metrics_clear_registry() {
 pub fn test_prometheus_format_counter() {
   let registry = metrics.new_registry()
   let #(reg1, _) =
-    metrics.get_or_create_counter(registry, "requests_total", "HTTP requests processed")
+    metrics.get_or_create_counter(
+      registry,
+      "requests_total",
+      "HTTP requests processed",
+    )
   let reg2 = metrics.increment_counter(reg1, "requests_total", 42)
 
   let output = metrics.export_prometheus(reg2)
 
-  output |> string.contains("# HELP requests_total HTTP requests processed") |> should.equal(True)
-  output |> string.contains("# TYPE requests_total counter") |> should.equal(True)
+  output
+  |> string.contains("# HELP requests_total HTTP requests processed")
+  |> should.equal(True)
+  output
+  |> string.contains("# TYPE requests_total counter")
+  |> should.equal(True)
   output |> string.contains("requests_total 42") |> should.equal(True)
 }
 
 pub fn test_prometheus_format_gauge() {
   let registry = metrics.new_registry()
   let #(reg1, _) =
-    metrics.get_or_create_gauge(registry, "active_connections", "Active connections")
+    metrics.get_or_create_gauge(
+      registry,
+      "active_connections",
+      "Active connections",
+    )
   let reg2 = metrics.set_gauge(reg1, "active_connections", 15.0)
 
   let output = metrics.export_prometheus(reg2)
 
-  output |> string.contains("# HELP active_connections Active connections") |> should.equal(True)
-  output |> string.contains("# TYPE active_connections gauge") |> should.equal(True)
+  output
+  |> string.contains("# HELP active_connections Active connections")
+  |> should.equal(True)
+  output
+  |> string.contains("# TYPE active_connections gauge")
+  |> should.equal(True)
   output |> string.contains("active_connections 15") |> should.equal(True)
 }
 
@@ -320,8 +350,14 @@ pub fn test_prometheus_format_histogram() {
 
   let output = metrics.export_prometheus(reg3)
 
-  output |> string.contains("# HELP request_duration_ms Request duration in milliseconds") |> should.equal(True)
-  output |> string.contains("# TYPE request_duration_ms histogram") |> should.equal(True)
+  output
+  |> string.contains(
+    "# HELP request_duration_ms Request duration in milliseconds",
+  )
+  |> should.equal(True)
+  output
+  |> string.contains("# TYPE request_duration_ms histogram")
+  |> should.equal(True)
   output |> string.contains("request_duration_ms_bucket") |> should.equal(True)
   output |> string.contains("request_duration_ms_sum") |> should.equal(True)
   output |> string.contains("request_duration_ms_count") |> should.equal(True)
@@ -340,7 +376,8 @@ pub fn test_prometheus_format_with_labels() {
       "Total operations",
       labels,
     )
-  let reg2 = metrics.increment_counter_with_labels(reg1, "operations_total", labels, 25)
+  let reg2 =
+    metrics.increment_counter_with_labels(reg1, "operations_total", labels, 25)
 
   let output = metrics.export_prometheus(reg2)
 
@@ -398,20 +435,12 @@ pub fn test_metrics_realistic_monitoring_scenario() {
 
   // Create API error counter
   let #(reg5, _) =
-    metrics.get_or_create_counter(
-      reg4,
-      "api_errors_total",
-      "Total API errors",
-    )
+    metrics.get_or_create_counter(reg4, "api_errors_total", "Total API errors")
   let reg6 = metrics.increment_counter(reg5, "api_errors_total", 3)
 
   // Create active requests gauge
   let #(reg7, _) =
-    metrics.get_or_create_gauge(
-      reg6,
-      "active_requests",
-      "Active requests",
-    )
+    metrics.get_or_create_gauge(reg6, "active_requests", "Active requests")
   let reg8 = metrics.set_gauge(reg7, "active_requests", 15.0)
 
   // Export and verify
@@ -460,5 +489,3 @@ pub fn test_find_label() {
     option.None -> True |> should.equal(True)
   }
 }
-
-

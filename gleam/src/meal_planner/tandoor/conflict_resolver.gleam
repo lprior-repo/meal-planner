@@ -12,7 +12,6 @@
 ///
 /// Based on principles from Martin Fowler (Extract Method/Class) and
 /// Rich Hickey (make decisions explicit, not implicit).
-
 import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
@@ -110,8 +109,7 @@ pub fn classify_conflict(
   last_synced_at: Option(String),
 ) -> Option(models.ConflictType) {
   let local_mods = has_local_modifications(local_modified_at, last_synced_at)
-  let remote_mods =
-    has_remote_modifications(remote_modified_at, last_synced_at)
+  let remote_mods = has_remote_modifications(remote_modified_at, last_synced_at)
 
   case local_mods, remote_mods {
     True, True -> Some(models.BidirectionalConflict)
@@ -160,11 +158,8 @@ pub fn resolve(
     classify_conflict(local_modified_at, remote_modified_at, last_synced_at)
 
   // Check if recipe is actually in conflict
-  let is_conflicted = detect_conflict(
-    local_modified_at,
-    remote_modified_at,
-    last_synced_at,
-  )
+  let is_conflicted =
+    detect_conflict(local_modified_at, remote_modified_at, last_synced_at)
 
   // Determine which status to set based on strategy
   let new_status = case strategy {
@@ -176,9 +171,13 @@ pub fn resolve(
   }
 
   // Update the sync status in the database
-  use _ <- result.try(
-    update_sync_status_in_db(db, tandoor_id, new_status, None, now),
-  )
+  use _ <- result.try(update_sync_status_in_db(
+    db,
+    tandoor_id,
+    new_status,
+    None,
+    now,
+  ))
 
   Ok(models.ResolutionResult(
     tandoor_id: tandoor_id,
@@ -307,23 +306,23 @@ pub fn describe_conflict(
   remote_modified_at: Option(String),
   last_synced_at: Option(String),
 ) -> String {
-  let local_status = case has_local_modifications(
-    local_modified_at,
-    last_synced_at,
-  ) {
+  let local_status = case
+    has_local_modifications(local_modified_at, last_synced_at)
+  {
     True -> "Local has modifications"
     False -> "Local unchanged"
   }
 
-  let remote_status = case has_remote_modifications(
-    remote_modified_at,
-    last_synced_at,
-  ) {
+  let remote_status = case
+    has_remote_modifications(remote_modified_at, last_synced_at)
+  {
     True -> "Remote has modifications"
     False -> "Remote unchanged"
   }
 
-  let recent = case which_is_more_recent(local_modified_at, remote_modified_at) {
+  let recent = case
+    which_is_more_recent(local_modified_at, remote_modified_at)
+  {
     Some(#(side, timestamp)) ->
       " (More recent: " <> side <> " at " <> timestamp <> ")"
     None -> ""

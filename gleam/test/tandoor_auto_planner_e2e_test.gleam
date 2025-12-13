@@ -13,16 +13,16 @@
 ///
 /// Note: This replaces the original meal-planner-l5tz task which asked for
 /// Mealie recipe testing. Tandoor is now the source of truth for recipes.
+import gleam/float
+import gleam/list
+import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
-import gleam/list
-import gleam/float
-import gleam/option.{None, Some}
-import meal_planner/types.{
-  type Recipe, type Macros, type FodmapLevel, Recipe, Macros, Ingredient, Low,
-  Medium, High,
-}
 import meal_planner/id
+import meal_planner/types.{
+  type FodmapLevel, type Macros, type Recipe, High, Ingredient, Low, Macros,
+  Medium, Recipe,
+}
 
 pub fn main() {
   gleeunit.main()
@@ -154,7 +154,8 @@ fn non_compliant_recipes() -> List(Recipe) {
 
 /// Test that recipes can be filtered by FODMAP level
 pub fn test_filter_recipes_by_fodmap_level() {
-  let recipes = list.concat([vertical_diet_protein_recipes(), non_compliant_recipes()])
+  let recipes =
+    list.concat([vertical_diet_protein_recipes(), non_compliant_recipes()])
   let low_fodmap = list.filter(recipes, fn(r) { r.fodmap_level == Low })
 
   low_fodmap
@@ -164,7 +165,8 @@ pub fn test_filter_recipes_by_fodmap_level() {
 
 /// Test filtering recipes marked as vertical diet compliant
 pub fn test_filter_recipes_by_vertical_compliance() {
-  let recipes = list.concat([vertical_diet_protein_recipes(), non_compliant_recipes()])
+  let recipes =
+    list.concat([vertical_diet_protein_recipes(), non_compliant_recipes()])
   let vertical = list.filter(recipes, fn(r) { r.vertical_compliant })
 
   vertical
@@ -174,10 +176,10 @@ pub fn test_filter_recipes_by_vertical_compliance() {
 
 /// Test combined filtering: vertical compliant AND low FODMAP
 pub fn test_filter_vertical_diet_recipes_combined() {
-  let recipes = list.concat([vertical_diet_protein_recipes(), non_compliant_recipes()])
-  let vertical_low = list.filter(recipes, fn(r) {
-    r.vertical_compliant && r.fodmap_level == Low
-  })
+  let recipes =
+    list.concat([vertical_diet_protein_recipes(), non_compliant_recipes()])
+  let vertical_low =
+    list.filter(recipes, fn(r) { r.vertical_compliant && r.fodmap_level == Low })
 
   vertical_low
   |> list.length()
@@ -231,20 +233,22 @@ pub fn test_macro_deviation_calculation() {
 
 /// Test macro scoring with good macro match
 pub fn test_good_macro_match() {
-  let recipe = create_tandoor_recipe(
-    "test-good",
-    "Good Macros",
-    "test",
-    50.0,
-    33.33,
-    66.67,
-    Low,
-    True,
-  )
+  let recipe =
+    create_tandoor_recipe(
+      "test-good",
+      "Good Macros",
+      "test",
+      50.0,
+      33.33,
+      66.67,
+      Low,
+      True,
+    )
 
   // Calculate how well macros match (target / recipe_count = 150/3, 100/3, 200/3)
   let target_protein = 150.0 /. 3.0
-  let protein_diff = float.absolute_value(recipe.macros.protein -. target_protein)
+  let protein_diff =
+    float.absolute_value(recipe.macros.protein -. target_protein)
   let protein_deviation = protein_diff /. target_protein
 
   // Should be reasonably close
@@ -254,20 +258,22 @@ pub fn test_good_macro_match() {
 
 /// Test macro scoring with poor macro match
 pub fn test_poor_macro_match() {
-  let recipe = create_tandoor_recipe(
-    "test-poor",
-    "Poor Macros",
-    "test",
-    5.0,
-    2.0,
-    5.0,
-    Low,
-    True,
-  )
+  let recipe =
+    create_tandoor_recipe(
+      "test-poor",
+      "Poor Macros",
+      "test",
+      5.0,
+      2.0,
+      5.0,
+      Low,
+      True,
+    )
 
   // These macros are very different from typical targets
   let target_protein = 150.0 /. 3.0
-  let protein_diff = float.absolute_value(recipe.macros.protein -. target_protein)
+  let protein_diff =
+    float.absolute_value(recipe.macros.protein -. target_protein)
   let protein_deviation = protein_diff /. target_protein
 
   // Should be significantly off
@@ -277,35 +283,39 @@ pub fn test_poor_macro_match() {
 
 /// Test diet compliance scoring
 pub fn test_diet_compliance_vertical() {
-  let compliant = create_tandoor_recipe(
-    "compliant",
-    "Vertical Compliant",
-    "beef",
-    40.0,
-    20.0,
-    10.0,
-    Low,
-    True,
-  )
+  let compliant =
+    create_tandoor_recipe(
+      "compliant",
+      "Vertical Compliant",
+      "beef",
+      40.0,
+      20.0,
+      10.0,
+      Low,
+      True,
+    )
 
-  let non_compliant = create_tandoor_recipe(
-    "non-compliant",
-    "Non-Compliant",
-    "wheat",
-    10.0,
-    2.0,
-    50.0,
-    High,
-    False,
-  )
+  let non_compliant =
+    create_tandoor_recipe(
+      "non-compliant",
+      "Non-Compliant",
+      "wheat",
+      10.0,
+      2.0,
+      50.0,
+      High,
+      False,
+    )
 
   // Compliant recipe should score high
-  let is_compliant = compliant.vertical_compliant && compliant.fodmap_level == Low
+  let is_compliant =
+    compliant.vertical_compliant && compliant.fodmap_level == Low
   is_compliant
   |> should.be_true()
 
   // Non-compliant should score low
-  let is_non_compliant = non_compliant.vertical_compliant && non_compliant.fodmap_level == Low
+  let is_non_compliant =
+    non_compliant.vertical_compliant && non_compliant.fodmap_level == Low
   is_non_compliant
   |> should.be_false()
 }
@@ -338,16 +348,17 @@ pub fn test_variety_penalizes_duplicates() {
 
 /// Test recipe has required Tandoor fields
 pub fn test_tandoor_recipe_structure() {
-  let recipe = create_tandoor_recipe(
-    "test-structure",
-    "Test Recipe",
-    "test",
-    30.0,
-    15.0,
-    20.0,
-    Low,
-    True,
-  )
+  let recipe =
+    create_tandoor_recipe(
+      "test-structure",
+      "Test Recipe",
+      "test",
+      30.0,
+      15.0,
+      20.0,
+      Low,
+      True,
+    )
 
   // Verify all required fields exist
   recipe.id
@@ -382,27 +393,29 @@ pub fn test_fodmap_levels() {
 
 /// Test vertical diet compliance flag
 pub fn test_vertical_compliance_flag() {
-  let compliant_recipe = create_tandoor_recipe(
-    "v-compliant",
-    "Vertical Compliant",
-    "beef",
-    40.0,
-    20.0,
-    10.0,
-    Low,
-    True,
-  )
+  let compliant_recipe =
+    create_tandoor_recipe(
+      "v-compliant",
+      "Vertical Compliant",
+      "beef",
+      40.0,
+      20.0,
+      10.0,
+      Low,
+      True,
+    )
 
-  let non_compliant_recipe = create_tandoor_recipe(
-    "v-non-compliant",
-    "Vertical Non-Compliant",
-    "wheat",
-    15.0,
-    3.0,
-    40.0,
-    High,
-    False,
-  )
+  let non_compliant_recipe =
+    create_tandoor_recipe(
+      "v-non-compliant",
+      "Vertical Non-Compliant",
+      "wheat",
+      15.0,
+      3.0,
+      40.0,
+      High,
+      False,
+    )
 
   compliant_recipe.vertical_compliant
   |> should.be_true()
@@ -468,26 +481,8 @@ pub fn test_single_recipe_selection() {
 /// Test total macro calculation from selected recipes
 pub fn test_total_macro_summation() {
   let recipes = [
-    create_tandoor_recipe(
-      "r1",
-      "Recipe 1",
-      "beef",
-      30.0,
-      20.0,
-      50.0,
-      Low,
-      True,
-    ),
-    create_tandoor_recipe(
-      "r2",
-      "Recipe 2",
-      "fish",
-      20.0,
-      15.0,
-      40.0,
-      Low,
-      True,
-    ),
+    create_tandoor_recipe("r1", "Recipe 1", "beef", 30.0, 20.0, 50.0, Low, True),
+    create_tandoor_recipe("r2", "Recipe 2", "fish", 20.0, 15.0, 40.0, Low, True),
   ]
 
   // Calculate totals manually
@@ -507,16 +502,8 @@ pub fn test_total_macro_summation() {
 
 /// Test macro calculation per recipe
 pub fn test_macro_per_recipe_calculation() {
-  let recipe = create_tandoor_recipe(
-    "test",
-    "Test",
-    "test",
-    45.0,
-    25.0,
-    15.0,
-    Low,
-    True,
-  )
+  let recipe =
+    create_tandoor_recipe("test", "Test", "test", 45.0, 25.0, 15.0, Low, True)
 
   recipe.macros.protein
   |> should.equal(45.0)
@@ -587,16 +574,17 @@ pub fn test_single_recipe_filtering() {
 
 /// Test recipes have Tandoor-specific fields populated
 pub fn test_tandoor_recipe_fields_populated() {
-  let recipe = create_tandoor_recipe(
-    "tandoor-test",
-    "Tandoor Recipe",
-    "tandoor-category",
-    30.0,
-    15.0,
-    20.0,
-    Low,
-    True,
-  )
+  let recipe =
+    create_tandoor_recipe(
+      "tandoor-test",
+      "Tandoor Recipe",
+      "tandoor-category",
+      30.0,
+      15.0,
+      20.0,
+      Low,
+      True,
+    )
 
   // Verify Tandoor-specific fields
   recipe.name
@@ -614,16 +602,17 @@ pub fn test_tandoor_recipe_fields_populated() {
 
 /// Test recipe ingredients are preserved from Tandoor
 pub fn test_tandoor_recipe_ingredients_preserved() {
-  let recipe = create_tandoor_recipe(
-    "tandoor-ingredients",
-    "With Ingredients",
-    "beef",
-    30.0,
-    15.0,
-    20.0,
-    Low,
-    True,
-  )
+  let recipe =
+    create_tandoor_recipe(
+      "tandoor-ingredients",
+      "With Ingredients",
+      "beef",
+      30.0,
+      15.0,
+      20.0,
+      Low,
+      True,
+    )
 
   recipe.ingredients
   |> list.length()
@@ -632,16 +621,17 @@ pub fn test_tandoor_recipe_ingredients_preserved() {
 
 /// Test recipe instructions are preserved
 pub fn test_tandoor_recipe_instructions_preserved() {
-  let recipe = create_tandoor_recipe(
-    "tandoor-instructions",
-    "With Instructions",
-    "beef",
-    30.0,
-    15.0,
-    20.0,
-    Low,
-    True,
-  )
+  let recipe =
+    create_tandoor_recipe(
+      "tandoor-instructions",
+      "With Instructions",
+      "beef",
+      30.0,
+      15.0,
+      20.0,
+      Low,
+      True,
+    )
 
   recipe.instructions
   |> list.length()
@@ -655,10 +645,11 @@ pub fn test_tandoor_recipe_instructions_preserved() {
 /// Test complete filtering workflow
 pub fn test_complete_filtering_workflow() {
   // Simulates: Fetch recipes from Tandoor -> Filter by diet -> Select top N
-  let all_recipes = list.concat([
-    vertical_diet_protein_recipes(),
-    non_compliant_recipes(),
-  ])
+  let all_recipes =
+    list.concat([
+      vertical_diet_protein_recipes(),
+      non_compliant_recipes(),
+    ])
 
   // Step 1: Fetch from Tandoor
   all_recipes
@@ -666,9 +657,10 @@ pub fn test_complete_filtering_workflow() {
   |> should.equal(8)
 
   // Step 2: Filter by Vertical Diet criteria
-  let filtered = list.filter(all_recipes, fn(r) {
-    r.vertical_compliant && r.fodmap_level == Low
-  })
+  let filtered =
+    list.filter(all_recipes, fn(r) {
+      r.vertical_compliant && r.fodmap_level == Low
+    })
 
   filtered
   |> list.length()

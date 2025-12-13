@@ -19,9 +19,9 @@ pub fn test_default_config() {
 pub fn test_with_timeout() {
   let config =
     client.default_config("http://localhost:8000", "test-token")
-    |> client.with_timeout(5_000)
+    |> client.with_timeout(5000)
 
-  config.timeout_ms |> should.equal(5_000)
+  config.timeout_ms |> should.equal(5000)
 }
 
 pub fn test_with_retry_config() {

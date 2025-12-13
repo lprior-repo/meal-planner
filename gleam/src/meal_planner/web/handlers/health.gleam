@@ -1,7 +1,6 @@
 /// Health check handler for the Meal Planner API
 ///
 /// This module provides the health check endpoint that returns the service status.
-
 import gleam/http
 import gleam/json
 import wisp

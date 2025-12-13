@@ -7,7 +7,6 @@
 /// - Note updates
 /// - Count operations
 /// - Error handling for duplicate slugs
-
 import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should

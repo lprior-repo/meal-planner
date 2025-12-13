@@ -10,12 +10,11 @@
 /// 3. Tracking batch operations
 /// 4. Recording error types
 /// 5. Monitoring resource usage
-
 import gleam/result
 import meal_planner/metrics/collector
-import meal_planner/metrics/tandoor_monitoring as tm
 import meal_planner/metrics/ncp_monitoring as nm
 import meal_planner/metrics/storage_monitoring as sm
+import meal_planner/metrics/tandoor_monitoring as tm
 import meal_planner/tandoor/client
 
 // ============================================================================
@@ -30,11 +29,12 @@ pub fn example_monitored_api_call(
   recipe_id: Int,
   max_retries: Int,
 ) -> Result(String, String) {
-  let context = tm.start_api_call("/api/recipes/" <> int.to_string(recipe_id) <> "/", "GET")
-  
+  let context =
+    tm.start_api_call("/api/recipes/" <> int.to_string(recipe_id) <> "/", "GET")
+
   // Make API call (pseudocode)
   let result = call_tandoor_api(api_token, recipe_id)
-  
+
   case result {
     Ok(response) -> {
       // Record success
@@ -44,18 +44,24 @@ pub fn example_monitored_api_call(
     Error(error) -> {
       // Record failure with error classification
       let _metrics = tm.record_api_failure(metrics, context, error)
-      
+
       // Determine if we should retry
       case should_retry(error, max_retries) {
         True -> {
-          let _metrics = tm.record_retry_attempt(
-            metrics,
-            "/api/recipes/" <> int.to_string(recipe_id) <> "/",
-            1,
-            classify_error(error)
-          )
+          let _metrics =
+            tm.record_retry_attempt(
+              metrics,
+              "/api/recipes/" <> int.to_string(recipe_id) <> "/",
+              1,
+              classify_error(error),
+            )
           // Recursive retry (simplified)
-          example_monitored_api_call(metrics, api_token, recipe_id, max_retries - 1)
+          example_monitored_api_call(
+            metrics,
+            api_token,
+            recipe_id,
+            max_retries - 1,
+          )
         }
         False -> Error(client.error_to_string(error))
       }
@@ -69,12 +75,12 @@ pub fn example_monitored_recipe_sync(
   recipes: List(String),
 ) -> collector.MetricCollector {
   let start_time = get_timestamp_ms()
-  
+
   let #(synced, failed) = sync_recipes_batch(recipes)
-  
+
   let end_time = get_timestamp_ms()
   let duration_ms = int.to_float(end_time - start_time)
-  
+
   tm.record_recipe_sync_batch(
     metrics,
     list.length(recipes),
@@ -95,13 +101,14 @@ pub fn example_monitored_deviation_calc(
   actual: NutritionData,
 ) -> #(collector.MetricCollector, DeviationResult) {
   let context = nm.start_deviation_calculation()
-  
+
   // Calculate deviation (pseudocode)
   let deviation = calculate_deviation(goals, actual)
-  
+
   let max_dev = max_absolute_deviation(deviation)
-  let metrics = nm.record_deviation_calculation_success(metrics, context, max_dev)
-  
+  let metrics =
+    nm.record_deviation_calculation_success(metrics, context, max_dev)
+
   #(metrics, deviation)
 }
 
@@ -112,20 +119,21 @@ pub fn example_monitored_reconciliation(
   goals: NutritionGoals,
 ) -> #(collector.MetricCollector, ReconciliationResult) {
   let rec_context = nm.start_reconciliation(list.length(history))
-  
+
   // Run reconciliation (pseudocode)
   let result = run_reconciliation(history, goals)
-  
+
   let consistency = calculate_consistency_rate(history, goals, 5.0)
-  
-  let metrics = nm.record_reconciliation_success(
-    metrics,
-    rec_context,
-    list.length(history),
-    consistency,
-    result.within_tolerance,
-  )
-  
+
+  let metrics =
+    nm.record_reconciliation_success(
+      metrics,
+      rec_context,
+      list.length(history),
+      consistency,
+      result.within_tolerance,
+    )
+
   #(metrics, result)
 }
 
@@ -136,18 +144,19 @@ pub fn example_monitored_recipe_scoring(
   recipes: List(ScoredRecipe),
 ) -> #(collector.MetricCollector, List(RecipeSuggestion)) {
   let context = nm.start_recipe_scoring(list.length(recipes))
-  
+
   // Score recipes
   let scored_recipes = score_recipes(deviation, recipes)
   let avg_score = calculate_avg_score(scored_recipes)
-  
-  let metrics = nm.record_recipe_scoring_success(
-    metrics,
-    context,
-    list.length(scored_recipes),
-    avg_score,
-  )
-  
+
+  let metrics =
+    nm.record_recipe_scoring_success(
+      metrics,
+      context,
+      list.length(scored_recipes),
+      avg_score,
+    )
+
   #(metrics, scored_recipes)
 }
 
@@ -163,13 +172,14 @@ pub fn example_monitored_query_select(
   date: String,
 ) -> Result(#(collector.MetricCollector, List(Food)), String) {
   let context = sm.start_query("select", table)
-  
+
   // Execute query
   let result = query_foods_by_date(conn, date)
-  
+
   case result {
     Ok(foods) -> {
-      let metrics = sm.record_query_success(metrics, context, list.length(foods))
+      let metrics =
+        sm.record_query_success(metrics, context, list.length(foods))
       Ok(#(metrics, foods))
     }
     Error(err) -> {
@@ -186,33 +196,29 @@ pub fn example_monitored_daily_log_query(
   date: String,
 ) -> Result(#(collector.MetricCollector, DailyLog), String) {
   let start_time = get_timestamp_ms()
-  
+
   // Execute complex query
   let result = get_daily_log(conn, date)
-  
+
   let end_time = get_timestamp_ms()
   let duration_ms = int.to_float(end_time - start_time)
-  
+
   case result {
     Ok(daily_log) -> {
       let row_count = list.length(daily_log.entries)
-      let metrics = sm.record_complex_query(
-        metrics,
-        "get_daily_log",
-        duration_ms,
-        row_count,
-        True,
-      )
+      let metrics =
+        sm.record_complex_query(
+          metrics,
+          "get_daily_log",
+          duration_ms,
+          row_count,
+          True,
+        )
       Ok(#(metrics, daily_log))
     }
     Error(err) -> {
-      let metrics = sm.record_complex_query(
-        metrics,
-        "get_daily_log",
-        duration_ms,
-        0,
-        False,
-      )
+      let metrics =
+        sm.record_complex_query(metrics, "get_daily_log", duration_ms, 0, False)
       Error(err)
     }
   }
@@ -226,12 +232,12 @@ pub fn example_monitored_insert(
   records: List(FoodLog),
 ) -> Result(#(collector.MetricCollector, Int), String) {
   let start_time = get_timestamp_ms()
-  
+
   let result = insert_records(conn, table, records)
-  
+
   let end_time = get_timestamp_ms()
   let duration_ms = int.to_float(end_time - start_time)
-  
+
   case result {
     Ok(count) -> {
       let metrics = sm.record_insert(metrics, table, count, duration_ms)
@@ -248,12 +254,12 @@ pub fn example_monitored_cache_lookup(
   key: String,
 ) -> #(collector.MetricCollector, Option(Value)) {
   let result = cache.get(cache, key)
-  
+
   let metrics = case result {
     Some(_val) -> sm.record_cache_hit(metrics, key)
     None -> sm.record_cache_miss(metrics, key)
   }
-  
+
   #(metrics, result)
 }
 
@@ -269,35 +275,38 @@ pub fn example_complete_workflow(
   date: String,
 ) -> Result(#(collector.MetricCollector, ReconciliationResult), String) {
   // Step 1: Get food logs for the day
-  use #(metrics, logs) <- result.try(example_monitored_daily_log_query(metrics, conn, date))
-  
+  use #(metrics, logs) <- result.try(example_monitored_daily_log_query(
+    metrics,
+    conn,
+    date,
+  ))
+
   // Step 2: Convert to nutrition data
   let nutrition_history = logs_to_nutrition_history(logs)
-  
+
   // Step 3: Get nutrition goals for user (would be another monitored query)
-  use #(metrics, goals) <- result.try(example_monitored_query_select(metrics, conn, "user_goals", user_id))
-  
-  // Step 4: Run reconciliation with monitoring
-  let #(metrics, result) = example_monitored_reconciliation(
+  use #(metrics, goals) <- result.try(example_monitored_query_select(
     metrics,
-    nutrition_history,
-    goals,
-  )
-  
+    conn,
+    "user_goals",
+    user_id,
+  ))
+
+  // Step 4: Run reconciliation with monitoring
+  let #(metrics, result) =
+    example_monitored_reconciliation(metrics, nutrition_history, goals)
+
   // Step 5: If outside tolerance, score recipes
   case result.within_tolerance {
     True -> Ok(#(metrics, result))
     False -> {
       // Get available recipes
       let recipes = get_available_recipes()
-      
+
       // Score them
-      let #(metrics, _suggestions) = example_monitored_recipe_scoring(
-        metrics,
-        result.deviation,
-        recipes,
-      )
-      
+      let #(metrics, _suggestions) =
+        example_monitored_recipe_scoring(metrics, result.deviation, recipes)
+
       Ok(#(metrics, result))
     }
   }
@@ -364,7 +373,10 @@ fn calculate_avg_score(_suggestions: List(RecipeSuggestion)) -> Float {
   0.0
 }
 
-fn query_foods_by_date(_conn: Connection, _date: String) -> Result(List(Food), String) {
+fn query_foods_by_date(
+  _conn: Connection,
+  _date: String,
+) -> Result(List(Food), String) {
   Ok([])
 }
 
@@ -397,24 +409,39 @@ fn get_timestamp_ms() -> Int {
 // ============================================================================
 
 pub type Connection
+
 pub type Cache
+
 pub type Value
+
 pub type Food
+
 pub type FoodLog
+
 pub type DailyLog
+
 pub type NutritionGoals
+
 pub type NutritionData
+
 pub type NutritionState
+
 pub type DeviationResult
+
 pub type ScoredRecipe
+
 pub type RecipeSuggestion
+
 pub type ReconciliationResult
+
 pub type Option(a) {
   Some(a)
   None
 }
+
 pub type Result(a, b) {
   Ok(a)
   Error(b)
 }
+
 pub type List(a)

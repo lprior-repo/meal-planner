@@ -48,7 +48,9 @@ pub fn main() {
         False -> {
           io.println("ERROR: migration_progress table not found")
           io.println("Please run migration 026 first:")
-          io.println("  psql -d meal_planner -f migrations_pg/026_add_migration_progress_tracking.sql")
+          io.println(
+            "  psql -d meal_planner -f migrations_pg/026_add_migration_progress_tracking.sql",
+          )
           Nil
         }
         True -> {
@@ -96,35 +98,36 @@ fn run_migration(db: pog.Connection, migration_id: String) -> Nil {
       // Simulate recipe migration with progress reporting
       let _ =
         sample_recipes
-        |> list.fold(
-          0,
-          fn(index, _recipe_name) {
-            // Simulate processing time
-            process.sleep(500)
+        |> list.fold(0, fn(index, _recipe_name) {
+          // Simulate processing time
+          process.sleep(500)
 
-            // Update progress
-            case migration_progress.increment_migrated(db, migration_id) {
-              Error(msg) -> {
-                io.println("Error updating progress: " <> msg)
-              }
-              Ok(Nil) -> {
-                // Get current progress
-                case migration_progress.get_progress(db, migration_id) {
-                  Error(msg) -> {
-                    io.println("Error fetching progress: " <> msg)
-                  }
-                  Ok(progress) -> {
-                    let percentage = migration_progress.get_progress_percentage(progress)
-                    let message = migration_progress.format_progress_message(progress)
-                    io.println(message <> " (" <> format_percentage(percentage) <> "%)")
-                  }
+          // Update progress
+          case migration_progress.increment_migrated(db, migration_id) {
+            Error(msg) -> {
+              io.println("Error updating progress: " <> msg)
+            }
+            Ok(Nil) -> {
+              // Get current progress
+              case migration_progress.get_progress(db, migration_id) {
+                Error(msg) -> {
+                  io.println("Error fetching progress: " <> msg)
+                }
+                Ok(progress) -> {
+                  let percentage =
+                    migration_progress.get_progress_percentage(progress)
+                  let message =
+                    migration_progress.format_progress_message(progress)
+                  io.println(
+                    message <> " (" <> format_percentage(percentage) <> "%)",
+                  )
                 }
               }
             }
+          }
 
-            index + 1
-          },
-        )
+          index + 1
+        })
 
       io.println("")
 

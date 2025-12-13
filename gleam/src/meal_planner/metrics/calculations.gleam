@@ -2,11 +2,10 @@
 ///
 /// This module provides utilities for timing macro calculations, meal generation,
 /// and other business logic operations.
-
 import gleam/option.{type Option}
 import meal_planner/metrics/mod.{
-  type MetricsRegistry, type QueryMetric, Calculation, end_timing,
-  record_metric, start_timing,
+  type MetricsRegistry, type QueryMetric, Calculation, end_timing, record_metric,
+  start_timing,
 }
 
 // ============================================================================
@@ -15,14 +14,13 @@ import meal_planner/metrics/mod.{
 
 /// Timing context for a calculation
 pub type CalculationTimingContext {
-  CalculationTimingContext(
-    operation_name: String,
-    start_time: Int,
-  )
+  CalculationTimingContext(operation_name: String, start_time: Int)
 }
 
 /// Start timing a calculation operation
-pub fn start_calculation_timing(operation_name: String) -> CalculationTimingContext {
+pub fn start_calculation_timing(
+  operation_name: String,
+) -> CalculationTimingContext {
   CalculationTimingContext(
     operation_name: operation_name,
     start_time: get_timestamp_ms(),

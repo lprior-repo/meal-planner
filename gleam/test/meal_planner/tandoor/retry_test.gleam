@@ -6,7 +6,6 @@
 /// - HTTP status code classification
 /// - Retry attempt counting
 /// - Success and failure scenarios
-
 import gleam/int
 import gleam/result
 import gleeunit
@@ -88,13 +87,14 @@ pub fn test_calculate_backoff_exponential_growth() {
 }
 
 pub fn test_calculate_backoff_respects_max_delay() {
-  let config = retry.RetryConfig(
-    max_attempts: 10,
-    initial_delay_ms: 10_000,
-    max_delay_ms: 30_000,
-    backoff_multiplier: 2.0,
-    jitter_factor: 0.0,
-  )
+  let config =
+    retry.RetryConfig(
+      max_attempts: 10,
+      initial_delay_ms: 10_000,
+      max_delay_ms: 30_000,
+      backoff_multiplier: 2.0,
+      jitter_factor: 0.0,
+    )
 
   // At attempt 5, would be 320,000ms without cap
   let delay = retry.calculate_backoff(config, 5)
@@ -195,7 +195,7 @@ pub fn test_is_transient_network_error_connection_refused() {
 
 pub fn test_is_transient_network_error_connection_reset() {
   retry.is_transient_network_error("Connection reset by peer")
-    |> should.be_true()
+  |> should.be_true()
 }
 
 pub fn test_is_transient_network_error_dns() {
@@ -217,7 +217,7 @@ pub fn test_is_transient_network_error_etimedout() {
 pub fn test_is_transient_network_error_not_transient() {
   retry.is_transient_network_error("Invalid URL") |> should.be_false()
   retry.is_transient_network_error("SSL certificate error")
-    |> should.be_false()
+  |> should.be_false()
   retry.is_transient_network_error("Not found") |> should.be_false()
 }
 
@@ -226,13 +226,14 @@ pub fn test_is_transient_network_error_not_transient() {
 // ============================================================================
 
 pub fn test_execute_with_retries_success_first_try() {
-  let config = retry.RetryConfig(
-    max_attempts: 3,
-    initial_delay_ms: 10,
-    max_delay_ms: 100,
-    backoff_multiplier: 2.0,
-    jitter_factor: 0.0,
-  )
+  let config =
+    retry.RetryConfig(
+      max_attempts: 3,
+      initial_delay_ms: 10,
+      max_delay_ms: 100,
+      backoff_multiplier: 2.0,
+      jitter_factor: 0.0,
+    )
 
   let result = retry.execute_with_retries(config, fn() { Ok(42) })
 
@@ -243,13 +244,14 @@ pub fn test_execute_with_retries_success_first_try() {
 }
 
 pub fn test_execute_with_retries_failure_after_max_attempts() {
-  let config = retry.RetryConfig(
-    max_attempts: 2,
-    initial_delay_ms: 10,
-    max_delay_ms: 100,
-    backoff_multiplier: 2.0,
-    jitter_factor: 0.0,
-  )
+  let config =
+    retry.RetryConfig(
+      max_attempts: 2,
+      initial_delay_ms: 10,
+      max_delay_ms: 100,
+      backoff_multiplier: 2.0,
+      jitter_factor: 0.0,
+    )
 
   let result = retry.execute_with_retries(config, fn() { Error(503) })
 
@@ -263,13 +265,14 @@ pub fn test_execute_with_retries_failure_after_max_attempts() {
 }
 
 pub fn test_execute_with_retries_does_not_retry_permanent_errors() {
-  let config = retry.RetryConfig(
-    max_attempts: 5,
-    initial_delay_ms: 10,
-    max_delay_ms: 100,
-    backoff_multiplier: 2.0,
-    jitter_factor: 0.0,
-  )
+  let config =
+    retry.RetryConfig(
+      max_attempts: 5,
+      initial_delay_ms: 10,
+      max_delay_ms: 100,
+      backoff_multiplier: 2.0,
+      jitter_factor: 0.0,
+    )
 
   let result = retry.execute_with_retries(config, fn() { Error(404) })
 
@@ -356,13 +359,15 @@ pub fn test_realistic_scenario_transient_failures() {
 
 pub fn test_backoff_schedule_matches_exponential_curve() {
   // Verify the backoff schedule follows exponential growth pattern
-  let config = retry.RetryConfig(
-    max_attempts: 5,
-    initial_delay_ms: 100,
-    max_delay_ms: 10_000,
-    backoff_multiplier: 2.0,
-    jitter_factor: 0.0, // No jitter for predictable testing
-  )
+  let config =
+    retry.RetryConfig(
+      max_attempts: 5,
+      initial_delay_ms: 100,
+      max_delay_ms: 10_000,
+      backoff_multiplier: 2.0,
+      jitter_factor: 0.0,
+      // No jitter for predictable testing
+    )
 
   let delay_0 = retry.calculate_backoff(config, 0)
   let delay_1 = retry.calculate_backoff(config, 1)

@@ -36,12 +36,7 @@ fn validate_recipe(recipe: Recipe) -> Result(Nil, String) {
 
   case list.is_empty(errors) {
     True -> Ok(Nil)
-    False ->
-      Error(
-        recipe.slug
-        <> ": "
-        <> string.join(errors, ", "),
-      )
+    False -> Error(recipe.slug <> ": " <> string.join(errors, ", "))
   }
 }
 
@@ -97,18 +92,12 @@ pub fn main() {
   // Validate all recipes
   let validation_results =
     recipes
-    |> list.map(fn(recipe) {
-      #(recipe.slug, validate_recipe(recipe))
-    })
+    |> list.map(fn(recipe) { #(recipe.slug, validate_recipe(recipe)) })
 
-  let successful = list.count(
-    validation_results,
-    fn(result) { result.1 |> result.is_ok },
-  )
-  let failed = list.count(
-    validation_results,
-    fn(result) { result.1 |> result.is_error },
-  )
+  let successful =
+    list.count(validation_results, fn(result) { result.1 |> result.is_ok })
+  let failed =
+    list.count(validation_results, fn(result) { result.1 |> result.is_error })
 
   io.println("Validation Results:")
   io.println("  Valid recipes: " <> int.to_string(successful))
@@ -119,10 +108,8 @@ pub fn main() {
   list.each(validation_results, fn(result) {
     let #(slug, validation) = result
     case validation {
-      Ok(_) ->
-        io.println("  [OK] " <> slug)
-      Error(err) ->
-        io.println("  [ERROR] " <> err)
+      Ok(_) -> io.println("  [OK] " <> slug)
+      Error(err) -> io.println("  [ERROR] " <> err)
     }
   })
 

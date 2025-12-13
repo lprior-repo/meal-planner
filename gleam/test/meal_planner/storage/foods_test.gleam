@@ -141,7 +141,8 @@ pub fn create_custom_food_test() {
     )
 
   // Create the custom food
-  let assert Ok(created) = storage.create_custom_food(conn, user_id, custom_food)
+  let assert Ok(created) =
+    storage.create_custom_food(conn, user_id, custom_food)
 
   // Verify it was created correctly
   created.name |> should.equal("Test Protein Shake")
@@ -222,7 +223,8 @@ pub fn update_custom_food_test() {
       calories: 332.0,
     )
 
-  let assert Ok(result) = storage.update_custom_food(conn, user_id, updated_food)
+  let assert Ok(result) =
+    storage.update_custom_food(conn, user_id, updated_food)
 
   // Verify update
   result.name |> should.equal("Updated Name")
@@ -488,9 +490,21 @@ pub fn unified_search_custom_fills_limit_test() {
 
   // Cleanup
   let assert Ok(_) =
-    storage.delete_custom_food(conn, user_id, id.custom_food_id("test-custom-protein-1"))
+    storage.delete_custom_food(
+      conn,
+      user_id,
+      id.custom_food_id("test-custom-protein-1"),
+    )
   let assert Ok(_) =
-    storage.delete_custom_food(conn, user_id, id.custom_food_id("test-custom-protein-2"))
+    storage.delete_custom_food(
+      conn,
+      user_id,
+      id.custom_food_id("test-custom-protein-2"),
+    )
   let assert Ok(_) =
-    storage.delete_custom_food(conn, user_id, id.custom_food_id("test-custom-protein-3"))
+    storage.delete_custom_food(
+      conn,
+      user_id,
+      id.custom_food_id("test-custom-protein-3"),
+    )
 }

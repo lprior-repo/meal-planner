@@ -6,7 +6,6 @@
 /// Tandoor API responses include detailed recipe information with nutrition data,
 /// steps with ingredient references, and metadata. This mapper normalizes that
 /// data into a consistent internal format for storage and processing.
-
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -27,7 +26,8 @@ pub type TandoorNutrition {
     // Protein in grams
     fat: Option(Float),
     // Fat in grams
-    carbohydrates: Option(Float), // Carbohydrates in grams
+    carbohydrates: Option(Float),
+    // Carbohydrates in grams
   )
 }
 
@@ -37,7 +37,8 @@ pub type TandoorRecipeStep {
   TandoorRecipeStep(
     step: Int,
     instruction: String,
-    ingredients: List(Int), // IDs of ingredients in this step
+    ingredients: List(Int),
+    // IDs of ingredients in this step
   )
 }
 
@@ -230,7 +231,10 @@ fn keyword_is_sauce(keyword: String) -> Bool {
 ///
 /// Returns:
 /// - FodmapLevel: Inferred level (Low, Medium, or High)
-fn infer_fodmap_level(keywords: List(String), description: String) -> FodmapLevel {
+fn infer_fodmap_level(
+  keywords: List(String),
+  description: String,
+) -> FodmapLevel {
   let lowercase_keywords =
     keywords
     |> list.map(string.lowercase)
@@ -273,7 +277,12 @@ fn keyword_suggests_low_fodmap(keyword: String) -> Bool {
 /// - TandoorRecipe: Recipe in Tandoor API format
 pub fn recipe_to_tandoor(recipe: Recipe) -> TandoorRecipe {
   let slug = recipe.id.id |> string.replace("_", "-")
-  let keywords = build_keywords(recipe.category, recipe.fodmap_level, recipe.vertical_compliant)
+  let keywords =
+    build_keywords(
+      recipe.category,
+      recipe.fodmap_level,
+      recipe.vertical_compliant,
+    )
 
   let nutrition =
     TandoorNutrition(
@@ -326,7 +335,11 @@ fn build_keywords(
 fn build_recipe_steps(instructions: List(String)) -> List(TandoorRecipeStep) {
   instructions
   |> list.index_map(fn(instruction, index) {
-    TandoorRecipeStep(step: index + 1, instruction: instruction, ingredients: [])
+    TandoorRecipeStep(
+      step: index + 1,
+      instruction: instruction,
+      ingredients: [],
+    )
   })
 }
 

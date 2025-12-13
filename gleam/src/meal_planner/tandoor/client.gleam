@@ -9,7 +9,6 @@
 ///
 /// The client is designed to work with gleam_httpc and follows functional
 /// programming principles with immutable state.
-
 import gleam/http
 import gleam/http/request
 import gleam/http/response
@@ -74,11 +73,7 @@ pub type ClientConfig {
 
 /// HTTP response from Tandoor API
 pub type ApiResponse {
-  ApiResponse(
-    status: Int,
-    headers: List(#(String, String)),
-    body: String,
-  )
+  ApiResponse(status: Int, headers: List(#(String, String)), body: String)
 }
 
 // ============================================================================
@@ -107,10 +102,7 @@ pub fn default_config(base_url: String, api_token: String) -> ClientConfig {
 }
 
 /// Create a client configuration with custom timeout
-pub fn with_timeout(
-  config: ClientConfig,
-  timeout_ms: Int,
-) -> ClientConfig {
+pub fn with_timeout(config: ClientConfig, timeout_ms: Int) -> ClientConfig {
   ClientConfig(
     base_url: config.base_url,
     api_token: config.api_token,
@@ -418,9 +410,7 @@ fn add_auth_header(
 }
 
 /// Add JSON content-type headers to request
-fn add_json_headers(
-  request: request.Request(String),
-) -> request.Request(String) {
+fn add_json_headers(request: request.Request(String)) -> request.Request(String) {
   request
   |> request.prepend_header("Content-Type", "application/json")
   |> request.prepend_header("Accept", "application/json")
@@ -505,7 +495,7 @@ fn log_response(status: Int, body_length: Int) -> Nil {
     <> int.to_string(status)
     <> " ("
     <> int.to_string(body_length)
-    <> " bytes)"
+    <> " bytes)",
   )
 }
 
@@ -556,17 +546,17 @@ pub fn recipe_decoder(json_value: json.Json) -> Result(Recipe, String) {
   use id <- result.try(
     json.field(json_value, "id")
     |> result.try(json.int)
-    |> result.map_error(fn(_) { "Failed to parse id" })
+    |> result.map_error(fn(_) { "Failed to parse id" }),
   )
   use name <- result.try(
     json.field(json_value, "name")
     |> result.try(json.string)
-    |> result.map_error(fn(_) { "Failed to parse name" })
+    |> result.map_error(fn(_) { "Failed to parse name" }),
   )
   use slug <- result.try(
     json.field(json_value, "slug")
     |> result.try(json.string)
-    |> result.map_error(fn(_) { "Failed to parse slug" })
+    |> result.map_error(fn(_) { "Failed to parse slug" }),
   )
   let description =
     json.field(json_value, "description")
@@ -581,7 +571,7 @@ pub fn recipe_decoder(json_value: json.Json) -> Result(Recipe, String) {
   use servings <- result.try(
     json.field(json_value, "servings")
     |> result.try(json.int)
-    |> result.map_error(fn(_) { "Failed to parse servings" })
+    |> result.map_error(fn(_) { "Failed to parse servings" }),
   )
   let servings_text =
     json.field(json_value, "servings_text")
@@ -655,7 +645,7 @@ fn recipe_list_decoder(
   use count <- result.try(
     json.field(json_value, "count")
     |> result.try(json.int)
-    |> result.map_error(fn(_) { "Failed to parse count" })
+    |> result.map_error(fn(_) { "Failed to parse count" }),
   )
   let next =
     json.field(json_value, "next")
@@ -684,7 +674,7 @@ fn recipe_list_decoder(
     |> result.try(fn(arr) {
       arr
       |> list.try_map(recipe_decoder)
-    })
+    }),
   )
 
   Ok(RecipeListResponse(
@@ -717,7 +707,11 @@ pub fn get_recipes(
     #("offset", int.to_string(offset_val)),
   ]
 
-  use _req <- result.try(build_get_request(config, "/api/recipes/", query_params))
+  use _req <- result.try(build_get_request(
+    config,
+    "/api/recipes/",
+    query_params,
+  ))
 
   log_request("GET", "/api/recipes/")
 

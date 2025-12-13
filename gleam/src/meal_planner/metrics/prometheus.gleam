@@ -19,7 +19,7 @@ import meal_planner/metrics/types.{
 pub fn format_metrics(metrics: List(Metric)) -> String {
   // Group metrics by base name
   let grouped = group_metrics_by_name(metrics)
-  
+
   // Format each metric group
   let formatted =
     list.map(grouped, fn(group) {
@@ -37,7 +37,7 @@ fn group_metrics_by_name(metrics: List(Metric)) -> List(#(String, List(Metric)))
   list.fold(metrics, [], fn(acc, metric) {
     let name = types.metric_name(metric)
     let base_name = extract_base_name(name)
-    
+
     case list.find(acc, fn(group) { group.0 == base_name }) {
       Ok(group) -> {
         let #(_, existing) = group
@@ -77,11 +77,11 @@ fn format_metric_group(base_name: String, metrics: List(Metric)) -> String {
     [first, ..] -> {
       let description = types.metric_description(first)
       let metric_type = get_metric_type(first)
-      
+
       let help_line = "# HELP " <> base_name <> " " <> description
       let type_line = "# TYPE " <> base_name <> " " <> metric_type
       let metric_lines = list.map(metrics, format_single_metric)
-      
+
       string.join([help_line, type_line, ..metric_lines], "\n")
     }
   }
@@ -109,7 +109,7 @@ fn format_single_metric(metric: Metric) -> String {
 fn format_counter(counter: types.Counter) -> String {
   let labels_str = format_labels(counter.labels)
   let value_str = int.to_string(counter.value)
-  
+
   case labels_str {
     "" -> counter.name <> " " <> value_str
     _ -> counter.name <> "{" <> labels_str <> "} " <> value_str
@@ -120,7 +120,7 @@ fn format_counter(counter: types.Counter) -> String {
 fn format_gauge(gauge: Gauge) -> String {
   let labels_str = format_labels(gauge.labels)
   let value_str = format_float(gauge.value)
-  
+
   case labels_str {
     "" -> gauge.name <> " " <> value_str
     _ -> gauge.name <> "{" <> labels_str <> "} " <> value_str
@@ -131,17 +131,18 @@ fn format_gauge(gauge: Gauge) -> String {
 fn format_histogram(histogram: Histogram) -> String {
   let base_name = extract_base_name(histogram.name)
   let labels_str = format_labels(histogram.labels)
-  
+
   // Format bucket lines
   let bucket_lines =
     list.map(histogram.buckets, fn(bucket) {
       format_histogram_bucket(base_name, bucket, labels_str)
     })
-  
+
   // Format sum and count lines
   let sum_line = format_histogram_sum(base_name, histogram.sum, labels_str)
-  let count_line = format_histogram_count(base_name, histogram.count, labels_str)
-  
+  let count_line =
+    format_histogram_count(base_name, histogram.count, labels_str)
+
   string.join(list.append(bucket_lines, [sum_line, count_line]), "\n")
 }
 
@@ -155,10 +156,10 @@ fn format_histogram_bucket(
     True -> "+Inf"
     False -> format_float(bucket.boundary)
   }
-  
+
   let count_str = int.to_string(bucket.count)
   let bucket_name = base_name <> "_bucket"
-  
+
   case labels_str {
     "" -> bucket_name <> "{le=\"" <> le_value <> "\"} " <> count_str
     _ ->
@@ -180,7 +181,7 @@ fn format_histogram_sum(
 ) -> String {
   let sum_name = base_name <> "_sum"
   let sum_str = format_float(sum)
-  
+
   case labels_str {
     "" -> sum_name <> " " <> sum_str
     _ -> sum_name <> "{" <> labels_str <> "} " <> sum_str
@@ -195,7 +196,7 @@ fn format_histogram_count(
 ) -> String {
   let count_name = base_name <> "_count"
   let count_str = int.to_string(count)
-  
+
   case labels_str {
     "" -> count_name <> " " <> count_str
     _ -> count_name <> "{" <> labels_str <> "} " <> count_str
@@ -233,19 +234,13 @@ fn escape_label_value(value: String) -> String {
 /// Format a float for Prometheus output
 /// Handles special values: NaN → NaN, Inf → +Inf, -Inf → -Inf
 fn format_float(value: Float) -> String {
-  // Check special values first
-  case float.is_infinite(value), float.is_nan(value), value >. 0.0 {
-    True, _, True -> "+Inf"
-    True, _, False -> "-Inf"
-    _, True, _ -> "NaN"
-    _, _, _ -> {
-      let str = float.to_string(value)
-      // Ensure no scientific notation for small numbers
-      case string.contains(str, "e") {
-        True -> format_float_decimal(value)
-        False -> str
-      }
-    }
+  // For now, just convert to string directly
+  // TODO: Handle NaN and Inf when gleam_stdlib adds is_nan/is_infinite functions
+  let str = float.to_string(value)
+  // Ensure no scientific notation for small numbers
+  case string.contains(str, "e") {
+    True -> format_float_decimal(value)
+    False -> str
   }
 }
 

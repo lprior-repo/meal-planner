@@ -9,7 +9,6 @@
 /// - HTTP errors from the API
 ///
 /// All checks are non-blocking and include timeout protection.
-
 import gleam/http
 import gleam/int
 import gleam/json

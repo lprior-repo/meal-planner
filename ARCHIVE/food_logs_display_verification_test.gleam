@@ -2,7 +2,7 @@
 /// Task: meal-planner-vdcy - Verify food logs display correctly in staging
 import gleeunit
 import gleeunit/should
-import meal_planner/storage/logs.{FoodSummaryItem, WeeklySummary}
+import meal_planner/storage/logs.{type FoodSummaryItem, type WeeklySummary, FoodSummaryItem, WeeklySummary}
 import meal_planner/types.{Breakfast, Macros}
 
 pub fn main() {
@@ -104,7 +104,7 @@ pub fn breakfast_meal_type_display_test() {
 }
 
 pub fn empty_weekly_summary_display_test() {
-  let empty =
+  let empty: WeeklySummary =
     WeeklySummary(
       total_logs: 0,
       avg_protein: 0.0,

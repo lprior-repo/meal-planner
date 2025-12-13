@@ -1,11 +1,11 @@
 /// Tests for the Tandoor fallback module - graceful degradation strategies
+import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
-import gleam/option.{None, Some}
 import meal_planner/tandoor/fallback.{
-  type CircuitBreakerConfig, type FallbackState, type FallbackStrategy,
-  Closed, HalfOpen, Open, UseCachedData, ReturnEmpty, ReturnStaleData,
-  FailFast, Healthy, Unhealthy, Degraded,
+  type CircuitBreakerConfig, type FallbackState, type FallbackStrategy, Closed,
+  Degraded, FailFast, HalfOpen, Healthy, Open, ReturnEmpty, ReturnStaleData,
+  Unhealthy, UseCachedData,
 }
 
 pub fn main() {
@@ -176,7 +176,8 @@ pub fn test_apply_strategy_fail_fast() {
   let stale = Some([4, 5, 6])
   let empty = []
 
-  let result = fallback.apply_degradation_strategy(FailFast, cached, stale, empty)
+  let result =
+    fallback.apply_degradation_strategy(FailFast, cached, stale, empty)
   result |> should.be_error()
 }
 
@@ -215,7 +216,7 @@ pub fn test_default_retry_config() {
   let config = fallback.default_retry_config()
   config.max_attempts |> should.equal(3)
   config.initial_backoff_ms |> should.equal(100)
-  config.max_backoff_ms |> should.equal(5_000)
+  config.max_backoff_ms |> should.equal(5000)
 }
 
 pub fn test_calculate_backoff_first_attempt() {
@@ -349,6 +350,7 @@ pub fn test_half_open_respects_max_attempts() {
   let updated = fallback.record_failure(state, config, "Half-open failure")
   case updated.circuit_state {
     Open(_, _) -> should.be_true(True)
-    _ -> should.fail("Circuit should reopen after exhausting half-open attempts")
+    _ ->
+      should.fail("Circuit should reopen after exhausting half-open attempts")
   }
 }
