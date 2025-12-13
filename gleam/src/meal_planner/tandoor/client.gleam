@@ -329,7 +329,7 @@ pub fn parse_response(
 /// Result with decoded data or ParseError
 pub fn parse_json_body(
   response: ApiResponse,
-  decoder: fn(json.Json) -> Result(a, String),
+  decoder: fn(dynamic.Dynamic) -> Result(a, String),
 ) -> Result(a, TandoorError) {
   case json.decode(response.body, dynamic.dynamic) {
     Ok(parsed_json) -> {
@@ -546,7 +546,7 @@ pub type CreateRecipeRequest {
 }
 
 /// Decode a Recipe from JSON
-pub fn recipe_decoder(json_value: json.Json) -> Result(Recipe, String) {
+pub fn recipe_decoder(json_value: dynamic.Dynamic) -> Result(Recipe, String) {
   use id <- result.try(
     dynamic.field(json_value, "id")
     |> result.try(dynamic.int)
