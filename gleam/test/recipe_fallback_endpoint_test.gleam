@@ -97,7 +97,7 @@ pub fn circuit_status_string_test() {
   let state = fallback.initial_fallback_state()
   let status = fallback.circuit_status_string(state)
 
-  status |> should.contain("Circuit CLOSED")
+  status |> should.equal("Circuit CLOSED, failures: 0")
 }
 
 /// Test retry configuration defaults
