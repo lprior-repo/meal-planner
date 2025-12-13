@@ -12,6 +12,7 @@
 
 import meal_planner/web/handlers/dashboard
 import meal_planner/web/handlers/diet
+import meal_planner/web/handlers/foods
 import meal_planner/web/handlers/health
 import meal_planner/web/handlers/macros
 import meal_planner/web/handlers/recipes
@@ -52,4 +53,21 @@ pub fn handle_dashboard_data(
   conn: pog.Connection,
 ) -> wisp.Response {
   dashboard.handle_data(req, conn)
+}
+
+/// Log food form handler - GET /log/food/{fdc_id}
+pub fn handle_log_food_form(
+  req: wisp.Request,
+  conn: pog.Connection,
+  fdc_id: String,
+) -> wisp.Response {
+  foods.handle_log_food_form(req, conn, fdc_id)
+}
+
+/// Log food API handler - POST /api/logs/food
+pub fn handle_log_food(
+  req: wisp.Request,
+  conn: pog.Connection,
+) -> wisp.Response {
+  foods.handle_log_food(req, conn)
 }
