@@ -314,8 +314,8 @@ fn float_to_string(value: Float, decimals: Int) -> String {
     }
     1 -> {
       let multiplied = value *. 10.0
-      let rounded = float.round(multiplied)
-      let int_val = float.truncate(rounded)
+      let rounded_int = float.round(multiplied)
+      let int_val = float.truncate(int.to_float(rounded_int))
       let whole = int_val / 10
       let decimal = int_val % 10
       int.to_string(whole) <> "." <> int.to_string(decimal)
