@@ -19,7 +19,7 @@ import meal_planner/config
 import meal_planner/id
 import meal_planner/postgres
 import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
-import meal_planner/storage/logs/entries
+import meal_planner/storage/logs/entries.{type FoodLog, FoodLogInput}
 import meal_planner/storage/logs/queries
 import meal_planner/storage/logs/summaries
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
@@ -192,15 +192,6 @@ pub fn get_weekly_summary(
   summaries.get_weekly_summary(conn, user_id, start_date)
 }
 
-/// Calculate macros summary from a list of macros
-pub fn sum_macros(macros_list: List(Macros)) -> Macros {
-  summaries.sum_macros(macros_list)
-}
-
-/// Calculate average macros from a list
-pub fn average_macros(macros_list: List(Macros)) -> Option(Macros) {
-  summaries.average_macros(macros_list)
-}
 
 // ============================================================================
 // User Profile Helpers
@@ -228,5 +219,3 @@ fn default_user_profile() -> UserProfile {
 // ============================================================================
 // Private Helper Imports
 // ============================================================================
-
-import meal_planner/storage/profile
