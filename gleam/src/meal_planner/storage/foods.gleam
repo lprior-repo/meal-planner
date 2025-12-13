@@ -5,7 +5,9 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/id
-import meal_planner/storage/profile.{type StorageError, DatabaseError, NotFound}
+import meal_planner/storage/profile.{
+  type StorageError, DatabaseError, NotFound, result_to_storage_error,
+}
 import meal_planner/storage/utils
 import meal_planner/types
 import pog
@@ -85,17 +87,17 @@ pub fn search_foods(
     ))
   }
 
-  case
-    pog.query(sql)
-    |> pog.parameter(pog.text(query))
-    |> pog.parameter(pog.text(search_pattern))
-    |> pog.parameter(pog.int(limit))
-    |> pog.returning(decoder)
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-    Ok(pog.Returned(_, rows)) -> Ok(rows)
-  }
+  pog.query(sql)
+  |> pog.parameter(pog.text(query))
+  |> pog.parameter(pog.text(search_pattern))
+  |> pog.parameter(pog.int(limit))
+  |> pog.returning(decoder)
+  |> pog.execute(conn)
+  |> result_to_storage_error
+  |> result.map(fn(ret) {
+    let pog.Returned(_, rows) = ret
+    rows
+  })
 }
 
 /// Search for foods with filters
@@ -154,18 +156,18 @@ pub fn search_foods_filtered_with_offset(
     ))
   }
 
-  case
-    pog.query(sql)
-    |> pog.parameter(pog.text(query))
-    |> pog.parameter(pog.text(search_pattern))
-    |> pog.parameter(pog.int(limit))
-    |> pog.parameter(pog.int(offset))
-    |> pog.returning(decoder)
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-    Ok(pog.Returned(_, rows)) -> Ok(rows)
-  }
+  pog.query(sql)
+  |> pog.parameter(pog.text(query))
+  |> pog.parameter(pog.text(search_pattern))
+  |> pog.parameter(pog.int(limit))
+  |> pog.parameter(pog.int(offset))
+  |> pog.returning(decoder)
+  |> pog.execute(conn)
+  |> result_to_storage_error
+  |> result.map(fn(ret) {
+    let pog.Returned(_, rows) = ret
+    rows
+  })
 }
 
 /// Get food by FDC ID
@@ -247,14 +249,14 @@ pub fn get_food_categories(
     decode.success(category)
   }
 
-  case
-    pog.query(sql)
-    |> pog.returning(decoder)
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-    Ok(pog.Returned(_, rows)) -> Ok(rows)
-  }
+  pog.query(sql)
+  |> pog.returning(decoder)
+  |> pog.execute(conn)
+  |> result_to_storage_error
+  |> result.map(fn(ret) {
+    let pog.Returned(_, rows) = ret
+    rows
+  })
 }
 
 // ============================================================================
@@ -336,18 +338,18 @@ pub fn search_custom_foods(
 
   let search_pattern = "%" <> query <> "%"
 
-  case
-    pog.query(sql)
-    |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
-    |> pog.parameter(pog.text(query))
-    |> pog.parameter(pog.text(search_pattern))
-    |> pog.parameter(pog.int(limit))
-    |> pog.returning(custom_food_decoder())
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-    Ok(pog.Returned(_, rows)) -> Ok(rows)
-  }
+  pog.query(sql)
+  |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
+  |> pog.parameter(pog.text(query))
+  |> pog.parameter(pog.text(search_pattern))
+  |> pog.parameter(pog.int(limit))
+  |> pog.returning(custom_food_decoder())
+  |> pog.execute(conn)
+  |> result_to_storage_error
+  |> result.map(fn(ret) {
+    let pog.Returned(_, rows) = ret
+    rows
+  })
 }
 
 /// Get custom foods for user
@@ -359,15 +361,15 @@ pub fn get_custom_foods_for_user(
     "SELECT id, user_id, name, brand, description, serving_size, serving_unit, protein, fat, carbs, calories, fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k, vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium, phosphorus, potassium, zinc
      FROM custom_foods WHERE user_id = $1 ORDER BY name"
 
-  case
-    pog.query(sql)
-    |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
-    |> pog.returning(custom_food_decoder())
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-    Ok(pog.Returned(_, rows)) -> Ok(rows)
-  }
+  pog.query(sql)
+  |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
+  |> pog.returning(custom_food_decoder())
+  |> pog.execute(conn)
+  |> result_to_storage_error
+  |> result.map(fn(ret) {
+    let pog.Returned(_, rows) = ret
+    rows
+  })
 }
 
 /// Delete custom food
@@ -378,15 +380,12 @@ pub fn delete_custom_food(
 ) -> Result(Nil, StorageError) {
   let sql = "DELETE FROM custom_foods WHERE id = $1 AND user_id = $2"
 
-  case
-    pog.query(sql)
-    |> pog.parameter(pog.text(id.custom_food_id_to_string(food_id)))
-    |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
-    |> pog.execute(conn)
-  {
-    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
-    Ok(_) -> Ok(Nil)
-  }
+  pog.query(sql)
+  |> pog.parameter(pog.text(id.custom_food_id_to_string(food_id)))
+  |> pog.parameter(pog.text(id.user_id_to_string(user_id)))
+  |> pog.execute(conn)
+  |> result_to_storage_error
+  |> result.map(fn(_) { Nil })
 }
 
 /// Update custom food
