@@ -9,6 +9,7 @@
 ///
 /// The client is designed to work with gleam_httpc and follows functional
 /// programming principles with immutable state.
+import gleam/dynamic
 import gleam/http
 import gleam/http/request
 import gleam/http/response
@@ -330,15 +331,15 @@ pub fn parse_json_body(
   response: ApiResponse,
   decoder: fn(json.Json) -> Result(a, String),
 ) -> Result(a, TandoorError) {
-  case json.parse(response.body) {
+  case json.decode(response.body, dynamic.dynamic) {
     Ok(parsed_json) -> {
       case decoder(parsed_json) {
         Ok(value) -> Ok(value)
         Error(error_msg) -> Error(ParseError(error_msg))
       }
     }
-    Error(parse_error) -> {
-      let error_msg = "Failed to parse JSON: " <> parse_error
+    Error(_) -> {
+      let error_msg = "Failed to parse JSON"
       Error(ParseError(error_msg))
     }
   }
@@ -431,7 +432,10 @@ fn build_url(
   query_params: List(#(String, String)),
 ) -> Result(String, String) {
   // Remove trailing slashes from base URL
-  let base = string.trim_end(base_url, "/")
+  let base = case string.ends_with(base_url, "/") {
+    True -> string.drop_end(base_url, 1)
+    False -> base_url
+  }
 
   // Ensure path starts with /
   let normalized_path = case string.starts_with(path, "/") {
@@ -544,80 +548,80 @@ pub type CreateRecipeRequest {
 /// Decode a Recipe from JSON
 pub fn recipe_decoder(json_value: json.Json) -> Result(Recipe, String) {
   use id <- result.try(
-    json.field(json_value, "id")
-    |> result.try(json.int)
+    dynamic.field(json_value, "id")
+    |> result.try(dynamic.int)
     |> result.map_error(fn(_) { "Failed to parse id" }),
   )
   use name <- result.try(
-    json.field(json_value, "name")
-    |> result.try(json.string)
+    dynamic.field(json_value, "name")
+    |> result.try(dynamic.string)
     |> result.map_error(fn(_) { "Failed to parse name" }),
   )
   use slug <- result.try(
-    json.field(json_value, "slug")
-    |> result.try(json.string)
+    dynamic.field(json_value, "slug")
+    |> result.try(dynamic.string)
     |> result.map_error(fn(_) { "Failed to parse slug" }),
   )
   let description =
-    json.field(json_value, "description")
+    dynamic.field(json_value, "description")
     |> result.ok()
     |> result.try(fn(val) {
-      case json.string(val) {
+      case dynamic.string(val) {
         Ok(s) -> Ok(Some(s))
         Error(_) -> Ok(None)
       }
     })
     |> result.unwrap(None)
   use servings <- result.try(
-    json.field(json_value, "servings")
-    |> result.try(json.int)
+    dynamic.field(json_value, "servings")
+    |> result.try(dynamic.int)
     |> result.map_error(fn(_) { "Failed to parse servings" }),
   )
   let servings_text =
-    json.field(json_value, "servings_text")
+    dynamic.field(json_value, "servings_text")
     |> result.ok()
     |> result.try(fn(val) {
-      case json.string(val) {
+      case dynamic.string(val) {
         Ok(s) -> Ok(Some(s))
         Error(_) -> Ok(None)
       }
     })
     |> result.unwrap(None)
   let prep_time =
-    json.field(json_value, "prep_time")
+    dynamic.field(json_value, "prep_time")
     |> result.ok()
     |> result.try(fn(val) {
-      case json.int(val) {
+      case dynamic.int(val) {
         Ok(i) -> Ok(Some(i))
         Error(_) -> Ok(None)
       }
     })
     |> result.unwrap(None)
   let cook_time =
-    json.field(json_value, "cook_time")
+    dynamic.field(json_value, "cook_time")
     |> result.ok()
     |> result.try(fn(val) {
-      case json.int(val) {
+      case dynamic.int(val) {
         Ok(i) -> Ok(Some(i))
         Error(_) -> Ok(None)
       }
     })
     |> result.unwrap(None)
   let created_at =
-    json.field(json_value, "created_at")
+    dynamic.field(json_value, "created_at")
     |> result.ok()
     |> result.try(fn(val) {
-      case json.string(val) {
+      case dynamic.string(val) {
         Ok(s) -> Ok(Some(s))
         Error(_) -> Ok(None)
       }
     })
     |> result.unwrap(None)
   let updated_at =
-    json.field(json_value, "updated_at")
+    dynamic.field(json_value, "updated_at")
     |> result.ok()
     |> result.try(fn(val) {
-      case json.string(val) {
+      case dynamic.string(val) {
         Ok(s) -> Ok(Some(s))
         Error(_) -> Ok(None)
       }
@@ -643,32 +647,32 @@ fn recipe_list_decoder(
   json_value: json.Json,
 ) -> Result(RecipeListResponse, String) {
   use count <- result.try(
-    json.field(json_value, "count")
-    |> result.try(json.int)
+    dynamic.field(json_value, "count")
+    |> result.try(dynamic.int)
     |> result.map_error(fn(_) { "Failed to parse count" }),
   )
   let next =
-    json.field(json_value, "next")
+    dynamic.field(json_value, "next")
     |> result.ok()
     |> result.try(fn(val) {
-      case json.string(val) {
+      case dynamic.string(val) {
         Ok(s) -> Ok(Some(s))
         Error(_) -> Ok(None)
       }
     })
     |> result.unwrap(None)
   let previous =
-    json.field(json_value, "previous")
+    dynamic.field(json_value, "previous")
     |> result.ok()
     |> result.try(fn(val) {
-      case json.string(val) {
+      case dynamic.string(val) {
         Ok(s) -> Ok(Some(s))
         Error(_) -> Ok(None)
       }
     })
     |> result.unwrap(None)
   use results <- result.try(
-    json.field(json_value, "results")
+    dynamic.field(json_value, "results")
     |> result.try(json.array)
     |> result.map_error(fn(_) { "Failed to parse results" })
     |> result.try(fn(arr) {
