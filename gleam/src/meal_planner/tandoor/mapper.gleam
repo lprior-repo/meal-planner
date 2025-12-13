@@ -6,8 +6,10 @@
 /// Tandoor API responses include detailed recipe information with nutrition data,
 /// steps with ingredient references, and metadata. This mapper normalizes that
 /// data into a consistent internal format for storage and processing.
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/order
 import gleam/result
 import gleam/string
 import meal_planner/id
@@ -349,10 +351,6 @@ type Order {
   Eq
   Gt
 }
-
-// Int and Order imports are defined at the top
-import gleam/int
-import gleam/order
 
 /// Helper to convert recipes in bulk
 ///

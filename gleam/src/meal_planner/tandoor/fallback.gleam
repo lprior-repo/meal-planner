@@ -6,7 +6,6 @@
 /// - Graceful degradation strategies (cached data, empty results, stale data)
 /// - Retry logic with exponential backoff
 /// - Recovery and state tracking
-import gleam/bool
 import gleam/int
 import gleam/json
 import gleam/list
