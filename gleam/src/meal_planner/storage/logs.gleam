@@ -9,7 +9,6 @@
 ///
 /// This facade re-exports all public functions, allowing external code to
 /// continue using the original import path: `meal_planner/storage/logs`.
-
 import gleam/dynamic/decode
 import gleam/int
 import gleam/list
@@ -63,7 +62,8 @@ pub type Log =
   queries.Log
 
 /// Input type for logging a meal with a Tandoor recipe slug (re-exported from entries module)
-pub type FoodLogInput = entries.FoodLogInput
+pub type FoodLogInput =
+  entries.FoodLogInput
 
 // ============================================================================
 // Type Re-exports from Summaries Module
@@ -191,7 +191,6 @@ pub fn get_weekly_summary(
   summaries.get_weekly_summary(conn, user_id, start_date)
 }
 
-
 // ============================================================================
 // User Profile Helpers
 // ============================================================================
@@ -214,7 +213,6 @@ fn default_user_profile() -> UserProfile {
     micronutrient_goals: None,
   )
 }
-
 // ============================================================================
 // Private Helper Imports
 // ============================================================================

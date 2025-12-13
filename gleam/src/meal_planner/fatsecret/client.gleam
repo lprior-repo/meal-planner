@@ -99,9 +99,7 @@ fn create_signature_base_string(
     params
     |> dict.to_list
     |> list.sort(fn(a, b) { string.compare(a.0, b.0) })
-    |> list.map(fn(pair) {
-      url_encode(pair.0) <> "=" <> url_encode(pair.1)
-    })
+    |> list.map(fn(pair) { url_encode(pair.0) <> "=" <> url_encode(pair.1) })
     |> string.join("&")
 
   // Create base string: METHOD&URL&PARAMS
@@ -109,10 +107,7 @@ fn create_signature_base_string(
 }
 
 /// Create HMAC-SHA1 signature
-fn create_signature(
-  base_string: String,
-  consumer_secret: String,
-) -> String {
+fn create_signature(base_string: String, consumer_secret: String) -> String {
   // For 2-legged OAuth (no user token), key is: consumer_secret&
   let signing_key = consumer_secret <> "&"
   let signature = hmac_sha1(<<signing_key:utf8>>, <<base_string:utf8>>)
@@ -169,9 +164,7 @@ fn make_request(
   let body =
     oauth_params
     |> dict.to_list
-    |> list.map(fn(pair) {
-      url_encode(pair.0) <> "=" <> url_encode(pair.1)
-    })
+    |> list.map(fn(pair) { url_encode(pair.0) <> "=" <> url_encode(pair.1) })
     |> string.join("&")
 
   // Create request

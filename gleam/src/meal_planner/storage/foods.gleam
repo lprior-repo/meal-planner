@@ -435,7 +435,12 @@ pub fn unified_search_foods(
   limit: Int,
 ) -> Result(types.FoodSearchResponse, StorageError) {
   // Search custom foods first (prioritized)
-  use custom_foods <- result.try(search_custom_foods(conn, user_id, query, limit))
+  use custom_foods <- result.try(search_custom_foods(
+    conn,
+    user_id,
+    query,
+    limit,
+  ))
 
   // Calculate remaining limit for USDA search
   let custom_count = list.length(custom_foods)
@@ -455,20 +460,20 @@ pub fn unified_search_foods(
   let usda_count = list.length(usda_foods)
 
   // Convert custom foods to FoodSearchResult
-  let custom_results = list.map(custom_foods, fn(food) {
-    types.CustomFoodResult(food)
-  })
+  let custom_results =
+    list.map(custom_foods, fn(food) { types.CustomFoodResult(food) })
 
   // Convert USDA foods to FoodSearchResult
-  let usda_results = list.map(usda_foods, fn(food) {
-    types.UsdaFoodResult(
-      food.fdc_id,
-      food.description,
-      food.data_type,
-      food.category,
-      food.serving_size,
-    )
-  })
+  let usda_results =
+    list.map(usda_foods, fn(food) {
+      types.UsdaFoodResult(
+        food.fdc_id,
+        food.description,
+        food.data_type,
+        food.category,
+        food.serving_size,
+      )
+    })
 
   // Combine results with custom foods first
   let all_results = list.append(custom_results, usda_results)

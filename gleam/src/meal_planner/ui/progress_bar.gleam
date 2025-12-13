@@ -15,7 +15,6 @@
 /// - Border radius: 4px
 /// - Background: light gray (#e5e7eb)
 /// - Fill colors: protein=#3b82f6, fat=#f97316, carbs=#22c55e
-
 import gleam/float
 import gleam/int
 

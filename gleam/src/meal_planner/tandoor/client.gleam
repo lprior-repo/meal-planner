@@ -10,6 +10,7 @@
 /// The client is designed to work with gleam_httpc and follows functional
 /// programming principles with immutable state.
 import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/http
 import gleam/http/request
 import gleam/http/response

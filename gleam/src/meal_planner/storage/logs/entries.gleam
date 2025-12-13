@@ -4,7 +4,6 @@
 /// - Saving food log entries with validation
 /// - Deleting log entries
 /// - Handling Tandoor recipe inputs
-
 import gleam/int
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -13,8 +12,8 @@ import meal_planner/id
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
 import meal_planner/storage/utils
 import meal_planner/types.{
-  type FoodLogEntry, type Macros, Breakfast, Dinner, FoodLogEntry, Lunch,
-  Macros, Snack,
+  type FoodLogEntry, type Macros, Breakfast, Dinner, FoodLogEntry, Lunch, Macros,
+  Snack,
 }
 import pog
 

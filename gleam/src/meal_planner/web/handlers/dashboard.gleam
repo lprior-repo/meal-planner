@@ -8,7 +8,6 @@
 /// - Date selector navigation
 ///
 /// All interactivity uses HTMX attributes only - NO JavaScript files.
-
 import gleam/float
 import gleam/http
 import gleam/int
@@ -493,7 +492,9 @@ fn render_macro_bar(
 
   "<div>
     <div class=\"progress-label\">
-      " <> label <> ": " <> float_to_string_1dp(current) <> "g / " <> float_to_string_1dp(target) <> "g
+      " <> label <> ": " <> float_to_string_1dp(current) <> "g / " <> float_to_string_1dp(
+    target,
+  ) <> "g
     </div>
     <div class=\"progress-bar\">
       <div class=\"progress-fill " <> css_class <> "\" style=\"width: " <> width_pct <> "%\">
@@ -567,7 +568,9 @@ fn render_micro_item(
       "<div class=\"micro-item " <> status_class <> "\">
         <div class=\"micro-name\">" <> name <> "</div>
         <div class=\"micro-value\">" <> float_to_string_1dp(c) <> unit <> "</div>
-        <div class=\"micro-target\">" <> float_to_string_1dp(pct) <> "% of " <> float_to_string_1dp(t) <> unit <> "</div>
+        <div class=\"micro-target\">" <> float_to_string_1dp(pct) <> "% of " <> float_to_string_1dp(
+        t,
+      ) <> unit <> "</div>
       </div>"
     }
     Some(c), None -> {
@@ -585,14 +588,12 @@ fn render_recent_foods(foods: List(storage.UsdaFood)) -> String {
   let chips = case list.is_empty(foods) {
     True -> "<div class=\"empty-state\">No recent foods</div>"
     False -> {
-      let chips_html = list.map(foods, fn(food) {
-        "<button class=\"chip\"
+      let chips_html = list.map(foods, fn(food) { "<button class=\"chip\"
                 hx-get=\"/api/foods/" <> id.fdc_id_to_string(food.fdc_id) <> "\"
                 hx-target=\"#food-details\"
                 hx-swap=\"innerHTML\">
           " <> food.description <> "
-        </button>"
-      })
+        </button>" })
       string.join(chips_html, "\n")
     }
   }

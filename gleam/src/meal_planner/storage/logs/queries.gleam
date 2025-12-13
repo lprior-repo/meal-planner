@@ -5,7 +5,6 @@
 /// - Getting daily logs with aggregated totals
 /// - Finding recently logged foods
 /// - Complex filtering and sorting operations
-
 import gleam/dynamic/decode
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -217,16 +216,18 @@ pub fn get_recently_logged_foods(
     use category <- decode.field(3, decode.string)
     use serving_size <- decode.field(4, decode.optional(decode.string))
 
-    decode.success(UsdaFood(
-      fdc_id: id.fdc_id(fdc_id_int),
-      description: description,
-      data_type: data_type,
-      category: category,
-      serving_size: case serving_size {
-        Some(size) -> size
-        None -> "100g"
-      },
-    ))
+    decode.success(
+      UsdaFood(
+        fdc_id: id.fdc_id(fdc_id_int),
+        description: description,
+        data_type: data_type,
+        category: category,
+        serving_size: case serving_size {
+          Some(size) -> size
+          None -> "100g"
+        },
+      ),
+    )
   }
 
   case
