@@ -12,7 +12,7 @@ import gleam/string
 import meal_planner/metrics/prometheus
 import meal_planner/metrics/types.{
   type Counter, type Gauge, type HistogramBuckets, type Labels, type Metric,
-  CounterMetric, DefaultBuckets, GaugeMetric, HistogramMetric,
+  CounterMetric, GaugeMetric, HistogramMetric,
 }
 
 // ============================================================================
