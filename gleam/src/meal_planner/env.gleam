@@ -1,6 +1,7 @@
 import dot_env
 import envoy
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 
@@ -12,6 +13,11 @@ pub type RequiredVars {
     sender_name: String,
     recipient_email: String,
   )
+}
+
+/// FatSecret API configuration for calorie tracking sync
+pub type FatSecretConfig {
+  FatSecretConfig(consumer_key: String, consumer_secret: String)
 }
 
 /// Error type for environment variable loading
@@ -101,4 +107,37 @@ pub fn load() -> Result(RequiredVars, EnvError) {
 /// Load email configuration (alias for load function)
 pub fn load_email_config() -> Result(RequiredVars, EnvError) {
   load()
+}
+
+/// Load FatSecret API configuration
+/// Returns Some(FatSecretConfig) if both credentials are present
+/// Returns None if credentials are missing (FatSecret sync disabled)
+pub fn load_fatsecret_config() -> Option(FatSecretConfig) {
+  load_dotenv()
+  let key = envoy.get("FATSECRET_CONSUMER_KEY") |> result.unwrap("")
+  let secret = envoy.get("FATSECRET_CONSUMER_SECRET") |> result.unwrap("")
+
+  case string.is_empty(key), string.is_empty(secret) {
+    False, False -> Some(FatSecretConfig(consumer_key: key, consumer_secret: secret))
+    _, _ -> None
+  }
+}
+
+/// Check if FatSecret integration is configured
+pub fn fatsecret_enabled() -> Bool {
+  case load_fatsecret_config() {
+    Some(_) -> True
+    None -> False
+  }
+}
+
+/// Get a single environment variable with default
+pub fn get_env(name: String, default: String) -> String {
+  load_dotenv()
+  envoy.get(name) |> result.unwrap(default)
+}
+
+/// Get database URL from environment
+pub fn get_database_url() -> String {
+  get_env("DATABASE_URL", "postgresql://postgres@localhost/meal_planner")
 }
