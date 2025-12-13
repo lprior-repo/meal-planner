@@ -240,6 +240,32 @@ bv --robot-diff        # Progress tracking
 | `resource-monitor.sh` | Monitor DB/disk/FD limits |
 | `setup-worktree-filters.sh` | Configure sparse-checkout per worktree |
 
+## 📦 Version Control & Archiving
+
+### Using Git History Instead of Archive Directories
+
+The ARCHIVE/ directory was removed in favor of using git's built-in history. All archived code remains fully accessible through git:
+
+```bash
+# View files that were in ARCHIVE/
+git log --all --full-history -- ARCHIVE/
+
+# Restore a specific archived file
+git show <commit>:ARCHIVE/path/to/file.gleam
+
+# View the full history of a specific file
+git log -p -- ARCHIVE/path/to/file.gleam
+
+# Search archived code
+git log --all -S "function_name" -- ARCHIVE/
+```
+
+**Benefits:**
+- No duplicate code cluttering the working directory
+- Full commit history and blame information preserved
+- Search and restore capabilities via git
+- Cleaner file structure
+
 ## 🛠️ Development Rules
 
 ### JavaScript Prohibition - CRITICAL RULE
