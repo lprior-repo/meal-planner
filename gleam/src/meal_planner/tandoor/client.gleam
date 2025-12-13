@@ -332,7 +332,7 @@ pub fn parse_json_body(
   response: ApiResponse,
   decoder: fn(dynamic.Dynamic) -> Result(a, String),
 ) -> Result(a, TandoorError) {
-  case json.decode(response.body, dynamic.dynamic) {
+  case json.parse(response.body) {
     Ok(parsed_json) -> {
       case decoder(parsed_json) {
         Ok(value) -> Ok(value)
@@ -494,15 +494,7 @@ fn log_request(method: String, url: String) -> Nil {
 }
 
 /// Log a response for debugging
-fn log_response(status: Int, body_length: Int) -> Nil {
-  logger.debug(
-    "Tandoor API response: "
-    <> int.to_string(status)
-    <> " ("
-    <> int.to_string(body_length)
-    <> " bytes)",
-  )
-}
+
 
 // ============================================================================
 // Recipe API Methods
@@ -546,90 +538,23 @@ pub type CreateRecipeRequest {
   )
 }
 
-/// Decode a Recipe from JSON
-pub fn recipe_decoder(json_value: dynamic.Dynamic) -> Result(Recipe, String) {
-  use id <- result.try(
-    dynamic.field(json_value, "id")
-    |> result.try(dynamic.int)
-    |> result.map_error(fn(_) { "Failed to parse id" }),
+/// Decoder for Recipe from JSON (internal)
+fn recipe_decoder_internal() -> decode.Decoder(Recipe) {
+  use id <- decode.field("id", decode.int)
+  use name <- decode.field("name", decode.string)
+  use slug <- decode.field("slug", decode.string)
+  use description <- decode.field("description", decode.optional(decode.string))
+  use servings <- decode.field("servings", decode.int)
+  use servings_text <- decode.field(
+    "servings_text",
+    decode.optional(decode.string),
   )
-  use name <- result.try(
-    dynamic.field(json_value, "name")
-    |> result.try(dynamic.string)
-    |> result.map_error(fn(_) { "Failed to parse name" }),
-  )
-  use slug <- result.try(
-    dynamic.field(json_value, "slug")
-    |> result.try(dynamic.string)
-    |> result.map_error(fn(_) { "Failed to parse slug" }),
-  )
-  let description =
-    dynamic.field(json_value, "description")
-    |> result.ok()
-    |> result.try(fn(val) {
-      case dynamic.string(val) {
-        Ok(s) -> Ok(Some(s))
-        Error(_) -> Ok(None)
-      }
-    })
-    |> result.unwrap(None)
-  use servings <- result.try(
-    dynamic.field(json_value, "servings")
-    |> result.try(dynamic.int)
-    |> result.map_error(fn(_) { "Failed to parse servings" }),
-  )
-  let servings_text =
-    dynamic.field(json_value, "servings_text")
-    |> result.ok()
-    |> result.try(fn(val) {
-      case dynamic.string(val) {
-        Ok(s) -> Ok(Some(s))
-        Error(_) -> Ok(None)
-      }
-    })
-    |> result.unwrap(None)
-  let prep_time =
-    dynamic.field(json_value, "prep_time")
-    |> result.ok()
-    |> result.try(fn(val) {
-      case dynamic.int(val) {
-        Ok(i) -> Ok(Some(i))
-        Error(_) -> Ok(None)
-      }
-    })
-    |> result.unwrap(None)
-  let cook_time =
-    dynamic.field(json_value, "cook_time")
-    |> result.ok()
-    |> result.try(fn(val) {
-      case dynamic.int(val) {
-        Ok(i) -> Ok(Some(i))
-        Error(_) -> Ok(None)
-      }
-    })
-    |> result.unwrap(None)
-  let created_at =
-    dynamic.field(json_value, "created_at")
-    |> result.ok()
-    |> result.try(fn(val) {
-      case dynamic.string(val) {
-        Ok(s) -> Ok(Some(s))
-        Error(_) -> Ok(None)
-      }
-    })
-    |> result.unwrap(None)
-  let updated_at =
-    dynamic.field(json_value, "updated_at")
-    |> result.ok()
-    |> result.try(fn(val) {
-      case dynamic.string(val) {
-        Ok(s) -> Ok(Some(s))
-        Error(_) -> Ok(None)
-      }
-    })
-    |> result.unwrap(None)
+  use prep_time <- decode.field("prep_time", decode.optional(decode.int))
+  use cook_time <- decode.field("cook_time", decode.optional(decode.int))
+  use created_at <- decode.field("created_at", decode.optional(decode.string))
+  use updated_at <- decode.field("updated_at", decode.optional(decode.string))
 
-  Ok(Recipe(
+  decode.success(Recipe(
     id: id,
     name: name,
     slug: slug,
@@ -643,52 +568,25 @@ pub fn recipe_decoder(json_value: dynamic.Dynamic) -> Result(Recipe, String) {
   ))
 }
 
-/// Decode a paginated recipe list response
-fn recipe_list_decoder(
-  json_value: json.Json,
-) -> Result(RecipeListResponse, String) {
-  use count <- result.try(
-    dynamic.field(json_value, "count")
-    |> result.try(dynamic.int)
-    |> result.map_error(fn(_) { "Failed to parse count" }),
-  )
-  let next =
-    dynamic.field(json_value, "next")
-    |> result.ok()
-    |> result.try(fn(val) {
-      case dynamic.string(val) {
-        Ok(s) -> Ok(Some(s))
-        Error(_) -> Ok(None)
-      }
-    })
-    |> result.unwrap(None)
-  let previous =
-    dynamic.field(json_value, "previous")
-    |> result.ok()
-    |> result.try(fn(val) {
-      case dynamic.string(val) {
-        Ok(s) -> Ok(Some(s))
-        Error(_) -> Ok(None)
-      }
-    })
-    |> result.unwrap(None)
-  use results <- result.try(
-    dynamic.field(json_value, "results")
-    |> result.try(json.array)
-    |> result.map_error(fn(_) { "Failed to parse results" })
-    |> result.try(fn(arr) {
-      arr
-      |> list.try_map(recipe_decoder)
-    }),
-  )
-
-  Ok(RecipeListResponse(
-    count: count,
-    next: next,
-    previous: previous,
-    results: results,
-  ))
+/// Decode a Recipe from JSON
+pub fn recipe_decoder(json_value: dynamic.Dynamic) -> Result(Recipe, String) {
+  decode.run(json_value, recipe_decoder_internal())
+  |> result.map_error(fn(errors) {
+    "Failed to decode recipe: "
+    <> string.join(
+      list.map(errors, fn(e) {
+        case e {
+          decode.DecodeError(expected, _found, path) ->
+            expected <> " at " <> string.join(path, ".")
+        }
+      }),
+      ", ",
+    )
+  })
 }
+
+/// Decode a paginated recipe list response
+
 
 /// Get all recipes from Tandoor API
 ///

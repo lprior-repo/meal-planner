@@ -9,23 +9,18 @@
 ///
 /// This facade re-exports all public functions, allowing external code to
 /// continue using the original import path: `meal_planner/storage/logs`.
-import gleam/dynamic/decode
-import gleam/int
-import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None}
 import gleam/result
 import meal_planner/config
 import meal_planner/id
 import meal_planner/postgres
-import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
+import meal_planner/storage/foods.{type UsdaFood}
 import meal_planner/storage/logs/entries
 import meal_planner/storage/logs/queries
 import meal_planner/storage/logs/summaries
-import meal_planner/storage/profile.{type StorageError, DatabaseError}
-import meal_planner/storage/utils
+import meal_planner/storage/profile.{type StorageError}
 import meal_planner/types.{
-  type DailyLog, type FoodLogEntry, type Macros, type UserProfile, Breakfast,
-  DailyLog, Dinner, FoodLogEntry, Lunch, Macros, Maintain, Moderate, Snack,
+  type DailyLog, type FoodLogEntry, type UserProfile, Maintain, Moderate,
   UserProfile,
 }
 import pog

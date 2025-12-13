@@ -15,13 +15,9 @@
 /// Example: A recipe with perfect macro match (100), good vertical compliance (80),
 /// and average variety (60) with weights {macro: 0.4, compliance: 0.4, variety: 0.2}
 /// yields: 100*0.4 + 80*0.4 + 60*0.2 = 84.0 final score
-import gleam/float
 import gleam/http
 import gleam/json
 import gleam/list
-import gleam/option
-import gleam/result
-import gleam/string
 import meal_planner/types
 import wisp
 
@@ -159,7 +155,7 @@ pub fn handle_score(req: wisp.Request) -> wisp.Response {
 }
 
 /// Attempt to read and parse the scoring request from HTTP body
-fn read_scoring_request(req: wisp.Request) -> Result(ScoringRequest, String) {
+fn read_scoring_request(_req: wisp.Request) -> Result(ScoringRequest, String) {
   // In a real implementation, we would use wisp.require_json or similar
   // For now, return a sample valid request to demonstrate the endpoint
   Ok(ScoringRequest(

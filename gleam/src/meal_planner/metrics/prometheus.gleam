@@ -8,7 +8,7 @@ import gleam/list
 import gleam/string
 import meal_planner/metrics/types.{
   type Gauge, type Histogram, type HistogramBucket, type Label, type Metric,
-  Counter, CounterMetric, GaugeMetric, HistogramMetric,
+  CounterMetric, GaugeMetric, HistogramMetric,
 }
 
 // ============================================================================
