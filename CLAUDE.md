@@ -350,55 +350,198 @@ await mcp__mcp_agent_mail__acknowledge_message({
 });
 ```
 
-## 📊 Worktree Best Practices
+## 📊 Worktree Pool Workflow
 
-### 1. **Always Use Coordinator**
+### Acquiring a Worktree
 
+**Option 1: Automatic Assignment (Recommended)**
 ```bash
-# ✅ Good - managed by coordinator
-./scripts/agent-coordinator.sh spawn 4 independent
+# Let the coordinator assign you to a track
+./scripts/agent-coordinator.sh spawn 1 independent
 
-# ❌ Bad - manual worktree creation
-git worktree add .agent-worktrees/my-wt
+# The coordinator will:
+# 1. Analyze available beads with `bd ready --json`
+# 2. Find independent tracks with `bv --robot-plan`
+# 3. Assign you to a worktree with appropriate file filters
+# 4. Set sparse-checkout to show only relevant files
 ```
 
-### 2. **Trust the File Filter**
-
-If a file isn't visible in your worktree, it's intentional:
-
+**Option 2: Manual Assignment**
 ```bash
-# ✅ Good - work within your scope
-vim gleam/src/meal_planner/web/handlers/home.gleam
+# Check available worktrees
+./scripts/worktree-pool-manager.sh status
 
-# ❌ Bad - file doesn't exist in your filtered worktree
-vim gleam/src/meal_planner/storage.gleam
+# Acquire a specific worktree
+./scripts/worktree-pool-manager.sh acquire pool-wt-1
+
+# Configure file filters for your task
+./scripts/setup-worktree-filters.sh pool-wt-1 "gleam/src/meal_planner/web/**/*.gleam"
+
+# Enter the worktree
+cd .agent-worktrees/pool-wt-1
 ```
 
-### 3. **Monitor Resources**
+### Working in Isolation
 
+**Setup Your Environment**:
 ```bash
-# Check system status
-./scripts/agent-coordinator.sh status
+# 1. Verify sparse-checkout is active
+git sparse-checkout list
 
-# Watch in real-time
-./scripts/agent-coordinator.sh monitor
+# 2. Claim your task
+bd update meal-planner-xyz --status=in_progress
 
-# Check for leaks
-./scripts/resource-monitor.sh detect-leaks
+# 3. Reserve files (optional but recommended)
+# Use agent-mail to reserve files and prevent conflicts
+source scripts/agent-mail-wrapper.sh
+agent_mail_reserve_files "gleam/src/meal_planner/web/handlers/*.gleam" "meal-planner-xyz" 3600
 ```
 
-### 4. **Clean Up Properly**
-
+**Development Workflow**:
 ```bash
-# At session end
+# 4. Make your changes (only visible files can be edited)
+vim gleam/src/meal_planner/web/handlers/recipes.gleam
+
+# 5. Run tests in worktree
+gleam test
+
+# 6. Format and check
+gleam format
+gleam build
+
+# 7. Commit in worktree
+git add .
+git commit -m "[meal-planner-xyz] Add recipe filtering"
+
+# 8. Push from worktree
+git push origin main  # or your branch
+```
+
+### Releasing the Worktree
+
+**Option 1: Automatic Cleanup**
+```bash
+# Let coordinator handle cleanup
 ./scripts/agent-coordinator.sh cleanup
 
-# This releases:
-# - Worktrees back to pool
-# - File reservations
-# - Database connections
-# - Any resource leaks
+# This automatically:
+# - Syncs any uncommitted work
+# - Releases file reservations
+# - Returns worktree to pool
+# - Closes database connections
 ```
+
+**Option 2: Manual Release**
+```bash
+# 1. Sync your changes back to main
+cd /home/lewis/src/meal-planner  # Return to main checkout
+git pull origin main
+
+# 2. Release file reservations
+source scripts/agent-mail-wrapper.sh
+agent_mail_release_files "meal-planner-xyz"
+
+# 3. Release worktree
+./scripts/worktree-pool-manager.sh release pool-wt-1
+
+# 4. Close your task
+bd close meal-planner-xyz --reason "Completed in worktree pool-wt-1"
+bd sync
+```
+
+### Scaling the Pool
+
+**Monitor Pool Capacity**:
+```bash
+# Check pool status
+./scripts/worktree-pool-manager.sh status
+
+# Expected output:
+# Worktree Pool Status:
+# - Total worktrees: 5
+# - Available: 2
+# - In use: 3
+# - Disk usage: 850MB / 3GB
+```
+
+**Scale Up (Add Worktrees)**:
+```bash
+# Add 2 more worktrees to pool
+./scripts/worktree-pool-manager.sh scale-up 2
+
+# Max pool size: 10 worktrees
+```
+
+**Scale Down (Remove Worktrees)**:
+```bash
+# Remove 1 worktree from pool (only if available)
+./scripts/worktree-pool-manager.sh scale-down 1
+
+# Min pool size: 3 worktrees
+```
+
+### Troubleshooting
+
+**Problem: No Available Worktrees**
+```bash
+# Check who's using worktrees
+./scripts/worktree-pool-manager.sh status
+
+# Option 1: Wait for release
+# Option 2: Scale up
+./scripts/worktree-pool-manager.sh scale-up 2
+
+# Option 3: Work in main checkout (last resort)
+cd /home/lewis/src/meal-planner
+```
+
+**Problem: File Not Visible in Worktree**
+```bash
+# Check current sparse-checkout
+git sparse-checkout list
+
+# Add more patterns if needed
+git sparse-checkout add "gleam/src/meal_planner/storage/*.gleam"
+
+# Or reconfigure filters
+./scripts/setup-worktree-filters.sh pool-wt-1 "gleam/src/**/*.gleam"
+```
+
+**Problem: Disk Space Warning**
+```bash
+# Check resource usage
+./scripts/resource-monitor.sh status
+
+# Clean up old build artifacts
+cd .agent-worktrees/pool-wt-1
+gleam clean
+
+# If critical, scale down pool
+./scripts/worktree-pool-manager.sh scale-down 2
+```
+
+**Problem: Database Connection Leaks**
+```bash
+# Detect leaks
+./scripts/resource-monitor.sh detect-leaks
+
+# Cleanup leaked connections
+./scripts/resource-monitor.sh cleanup-leaks
+
+# Check current connection count
+psql -d meal_planner -c "SELECT count(*) FROM pg_stat_activity WHERE datname='meal_planner';"
+```
+
+### Best Practices
+
+1. **Always Use Coordinator for Multi-Agent**: Let automation handle complexity
+2. **Trust the File Filter**: If you can't see a file, you shouldn't edit it
+3. **Monitor Resources**: Check pool status before long-running tasks
+4. **Clean Up Properly**: Release worktrees when done (enables reuse)
+5. **Commit Often in Worktree**: Don't lose work if pool gets recycled
+6. **Use File Reservations**: Prevent conflicts with other agents
+7. **Test in Worktree**: Run `gleam test` before pushing
+8. **Watch Disk Space**: Each worktree uses ~170MB
 
 ## 🔧 MCP Server Setup
 

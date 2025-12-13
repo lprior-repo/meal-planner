@@ -257,6 +257,7 @@ The application follows functional programming principles with OTP supervision:
 - **Pattern Matching**: Extensive use for control flow and error handling
 - **Result Types**: Errors handled with Result types, no exceptions
 - **OTP Supervision**: Fault-tolerant process supervision
+- **Performance Monitoring**: Prometheus metrics for Tandoor API, NCP calculations, and storage queries
 
 ### Database Schema
 
@@ -282,6 +283,39 @@ The application follows functional programming principles with OTP supervision:
 - **Caching**: In-memory cache for frequently accessed foods
 - **Parallel Imports**: 32 concurrent workers for USDA data import
 - **Batch Operations**: Bulk inserts for recipe ingredients
+
+### Performance Monitoring
+
+The application includes comprehensive Prometheus metrics for monitoring critical operations:
+
+**Metrics Categories**:
+1. **Tandoor API Monitoring** (`gleam/src/meal_planner/metrics/tandoor_monitoring.gleam`)
+   - API call duration and latency (p95, p99 percentiles)
+   - Error rates by endpoint
+   - Retry attempt tracking
+   - Request/response payload sizes
+
+2. **NCP Calculations** (`gleam/src/meal_planner/metrics/ncp_monitoring.gleam`)
+   - Deviation calculation timing
+   - Reconciliation duration
+   - Recipe scoring performance
+   - Nutrition consistency rates
+
+3. **Storage Queries** (`gleam/src/meal_planner/metrics/storage_monitoring.gleam`)
+   - Query execution time by type (SELECT, INSERT, UPDATE, DELETE)
+   - Cache hit/miss rates
+   - Rows processed and returned
+   - Query efficiency metrics
+
+**Metrics Endpoint**: Access Prometheus-formatted metrics at `/metrics` (when enabled)
+
+**Performance SLOs**:
+- Dashboard load: < 20ms
+- Search latency: < 5ms
+- Cache hit rate: > 80%
+- NCP reconciliation: < 100ms
+
+See `METRICS_INTEGRATION_GUIDE.md` for detailed integration instructions.
 
 ## Scripts
 
@@ -317,6 +351,10 @@ gleam run -m scripts/<script_name>
 - Prefer pattern matching over if/else chains
 
 ## Development Workflow
+
+### Quality Assurance
+
+This project uses the **Fractal Quality Loop** for systematic code quality validation. See `FRACTAL_QUALITY_LOOP.md` for the complete 4-pass workflow (Unit → Integration → E2E → Review). All code changes should achieve a truth score >= 0.95 before merging.
 
 ### Pre-commit Hooks
 
