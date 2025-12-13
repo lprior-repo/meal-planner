@@ -4,6 +4,7 @@ import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/storage/logs
+import meal_planner/storage/logs/entries
 
 pub fn main() {
   gleeunit.main()
@@ -16,7 +17,7 @@ pub fn main() {
 /// Test that FoodLogInput can be created with valid recipe slug
 pub fn test_create_food_log_input_valid_slug() {
   let input =
-    logs.FoodLogInput(
+    entries.FoodLogInput(
       date: "2025-12-12",
       recipe_slug: "chicken-stir-fry",
       recipe_name: "Chicken Stir Fry",
@@ -64,7 +65,7 @@ pub fn test_food_log_input_meal_types() {
 
   list.each(meal_types, fn(meal_type) {
     let input =
-      logs.FoodLogInput(
+      entries.FoodLogInput(
         date: "2025-12-12",
         recipe_slug: "test-recipe",
         recipe_name: "Test Recipe",
@@ -104,7 +105,7 @@ pub fn test_food_log_input_meal_types() {
 /// Test with full micronutrient data
 pub fn test_food_log_input_with_micronutrients() {
   let input =
-    logs.FoodLogInput(
+    entries.FoodLogInput(
       date: "2025-12-12",
       recipe_slug: "salmon-bowl",
       recipe_name: "Salmon Bowl",
@@ -153,7 +154,7 @@ pub fn test_food_log_input_iso_date_format() {
 
   list.each(valid_dates, fn(date) {
     let input =
-      logs.FoodLogInput(
+      entries.FoodLogInput(
         date: date,
         recipe_slug: "test",
         recipe_name: "Test",
@@ -202,7 +203,7 @@ pub fn test_food_log_recipe_slug_formats() {
 
   list.each(slugs, fn(slug) {
     let input =
-      logs.FoodLogInput(
+      entries.FoodLogInput(
         date: "2025-12-12",
         recipe_slug: slug,
         recipe_name: "Recipe Name",
@@ -242,7 +243,7 @@ pub fn test_food_log_recipe_slug_formats() {
 /// Test edge case: empty micronutrient values (all None)
 pub fn test_food_log_input_no_micronutrients() {
   let input =
-    logs.FoodLogInput(
+    entries.FoodLogInput(
       date: "2025-12-12",
       recipe_slug: "simple-meal",
       recipe_name: "Simple Meal",
@@ -285,7 +286,7 @@ pub fn test_food_log_input_no_micronutrients() {
 /// Test macro values with edge cases
 pub fn test_food_log_input_macro_values() {
   let input =
-    logs.FoodLogInput(
+    entries.FoodLogInput(
       date: "2025-12-12",
       recipe_slug: "test",
       recipe_name: "Test",

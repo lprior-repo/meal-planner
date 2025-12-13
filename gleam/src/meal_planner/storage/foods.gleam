@@ -1,6 +1,7 @@
 /// Food storage module - USDA foods and custom foods
 /// Handles searching, retrieving, and managing food data
 import gleam/dynamic/decode
+import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/id
@@ -419,6 +420,67 @@ pub fn update_custom_food(
     Ok(pog.Returned(_, [])) -> Error(NotFound)
     Ok(pog.Returned(_, [updated_food, ..])) -> Ok(updated_food)
   }
+}
+
+// ============================================================================
+// Unified Search - Custom + USDA Foods
+// ============================================================================
+
+/// Unified food search - searches both custom foods and USDA foods
+/// Custom foods are prioritized and appear first in results
+/// Returns FoodSearchResponse with separate counts for each source
+pub fn unified_search_foods(
+  conn: pog.Connection,
+  user_id: id.UserId,
+  query: String,
+  limit: Int,
+) -> Result(types.FoodSearchResponse, StorageError) {
+  // Search custom foods first (prioritized)
+  use custom_foods <- result.try(search_custom_foods(conn, user_id, query, limit))
+
+  // Calculate remaining limit for USDA search
+  let custom_count = list.length(custom_foods)
+  let remaining_limit = limit - custom_count
+
+  // Search USDA foods if we haven't reached the limit
+  let usda_foods = case remaining_limit > 0 {
+    True -> {
+      case search_foods(conn, query, remaining_limit) {
+        Ok(foods) -> foods
+        Error(_) -> []
+      }
+    }
+    False -> []
+  }
+
+  let usda_count = list.length(usda_foods)
+
+  // Convert custom foods to FoodSearchResult
+  let custom_results = list.map(custom_foods, fn(food) {
+    types.CustomFoodResult(food)
+  })
+
+  // Convert USDA foods to FoodSearchResult
+  let usda_results = list.map(usda_foods, fn(food) {
+    types.UsdaFoodResult(
+      food.fdc_id,
+      food.description,
+      food.data_type,
+      food.category,
+      food.serving_size,
+    )
+  })
+
+  // Combine results with custom foods first
+  let all_results = list.append(custom_results, usda_results)
+  let total_count = custom_count + usda_count
+
+  Ok(types.FoodSearchResponse(
+    results: all_results,
+    total_count: total_count,
+    custom_count: custom_count,
+    usda_count: usda_count,
+  ))
 }
 
 // ============================================================================

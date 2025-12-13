@@ -14,6 +14,7 @@
 /// Note: Core sync data models are defined in models.gleam for centralized
 /// management, following Hickey's principle: "Data is the core, put it in one place."
 
+import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -23,7 +24,8 @@ import pog
 
 import meal_planner/tandoor/models.{
   type RecipeSyncState, type SyncSession, type SyncStatus,
-  sync_status_from_string_unsafe, sync_status_to_string,
+  sync_status_from_string, sync_status_from_string_unsafe,
+  sync_status_to_string,
 }
 
 /// Create a new sync session
@@ -55,39 +57,105 @@ pub fn create_sync_session(
 /// Get current sync session
 ///
 /// Retrieves the state of an ongoing sync session.
-/// Delegates to sync_session module for session state retrieval.
 pub fn get_sync_session(
   db: pog.Connection,
   session_id: String,
 ) -> Result(SyncSession, String) {
-  sync_session.get(db, session_id)
+  let sql =
+    "SELECT session_id, started_at, completed_at, total_recipes, synced_count, failed_count, conflict_count
+     FROM tandoor_sync_sessions
+     WHERE session_id = $1"
+
+  pog.query(sql)
+  |> pog.parameter(pog.text(session_id))
+  |> pog.execute(db)
+  |> result.try(fn(rows) {
+    case rows {
+      [] -> Error("Sync session not found")
+      [row, ..] -> {
+        use sid <- result.try(
+          pog.col_text(row, 0)
+          |> result.map_error(fn(_) { "Failed to parse session_id" }),
+        )
+        use started_at <- result.try(
+          pog.col_text(row, 1)
+          |> result.map_error(fn(_) { "Failed to parse started_at" }),
+        )
+        use completed_at <- result.try(
+          pog.col_nullable_text(row, 2)
+          |> result.map_error(fn(_) { "Failed to parse completed_at" }),
+        )
+        use total_recipes <- result.try(
+          pog.col_int(row, 3)
+          |> result.map_error(fn(_) { "Failed to parse total_recipes" }),
+        )
+        use synced_count <- result.try(
+          pog.col_int(row, 4)
+          |> result.map_error(fn(_) { "Failed to parse synced_count" }),
+        )
+        use failed_count <- result.try(
+          pog.col_int(row, 5)
+          |> result.map_error(fn(_) { "Failed to parse failed_count" }),
+        )
+        use conflict_count <- result.try(
+          pog.col_int(row, 6)
+          |> result.map_error(fn(_) { "Failed to parse conflict_count" }),
+        )
+
+        Ok(models.SyncSession(
+          session_id: sid,
+          started_at: started_at,
+          completed_at: completed_at,
+          total_recipes: total_recipes,
+          synced_count: synced_count,
+          failed_count: failed_count,
+          conflict_count: conflict_count,
+        ))
+      }
+    }
+  })
 }
 
 /// Increment synced count for a session.
-/// Delegates to sync_session module.
 pub fn increment_synced(
   db: pog.Connection,
   session_id: String,
 ) -> Result(Nil, String) {
-  sync_session.increment_synced(db, session_id)
+  let sql = "UPDATE tandoor_sync_sessions SET synced_count = synced_count + 1 WHERE session_id = $1"
+
+  pog.query(sql)
+  |> pog.parameter(pog.text(session_id))
+  |> pog.execute(db)
+  |> result.map_error(fn(_) { "Failed to increment synced count" })
+  |> result.map(fn(_) { Nil })
 }
 
 /// Increment failed count for a session.
-/// Delegates to sync_session module.
 pub fn increment_failed(
   db: pog.Connection,
   session_id: String,
 ) -> Result(Nil, String) {
-  sync_session.increment_failed(db, session_id)
+  let sql = "UPDATE tandoor_sync_sessions SET failed_count = failed_count + 1 WHERE session_id = $1"
+
+  pog.query(sql)
+  |> pog.parameter(pog.text(session_id))
+  |> pog.execute(db)
+  |> result.map_error(fn(_) { "Failed to increment failed count" })
+  |> result.map(fn(_) { Nil })
 }
 
 /// Increment conflict count for a session.
-/// Delegates to sync_session module.
 pub fn increment_conflicts(
   db: pog.Connection,
   session_id: String,
 ) -> Result(Nil, String) {
-  sync_session.increment_conflicts(db, session_id)
+  let sql = "UPDATE tandoor_sync_sessions SET conflict_count = conflict_count + 1 WHERE session_id = $1"
+
+  pog.query(sql)
+  |> pog.parameter(pog.text(session_id))
+  |> pog.execute(db)
+  |> result.map_error(fn(_) { "Failed to increment conflict count" })
+  |> result.map(fn(_) { Nil })
 }
 
 /// Track recipe sync state
@@ -336,29 +404,51 @@ pub fn get_conflict_recipes(
 /// Get sync progress percentage
 ///
 /// Calculates the percentage of recipes successfully synced in a session.
-/// Delegates to sync_session module for analysis.
 pub fn get_sync_progress_percentage(session: SyncSession) -> Float {
-  sync_session.get_progress_percentage(session)
+  case session.total_recipes {
+    0 -> 0.0
+    _ -> {
+      let progress = int.to_float(session.synced_count) /. int.to_float(session.total_recipes) *. 100.0
+      progress
+    }
+  }
 }
 
 /// Format sync session report
 ///
 /// Creates a human-readable summary of sync session progress.
-/// Delegates to sync_session module for reporting.
 pub fn format_sync_report(session: SyncSession) -> String {
-  sync_session.format_report(session)
+  let progress = get_sync_progress_percentage(session)
+  let status = case session.completed_at {
+    Some(_) -> "Completed"
+    None -> "In Progress"
+  }
+
+  "Sync Session " <> session.session_id <> "\n" <>
+  "Status: " <> status <> "\n" <>
+  "Total Recipes: " <> int.to_string(session.total_recipes) <> "\n" <>
+  "Synced: " <> int.to_string(session.synced_count) <> "\n" <>
+  "Failed: " <> int.to_string(session.failed_count) <> "\n" <>
+  "Conflicts: " <> int.to_string(session.conflict_count) <> "\n" <>
+  "Progress: " <> float.to_string(progress) <> "%"
 }
 
 /// Complete a sync session
 ///
 /// Marks a sync session as completed and records the end time.
-/// Delegates to sync_session module for session state management.
 pub fn complete_sync_session(
   db: pog.Connection,
   session_id: String,
   completed_at: String,
 ) -> Result(Nil, String) {
-  sync_session.complete(db, session_id, completed_at)
+  let sql = "UPDATE tandoor_sync_sessions SET completed_at = $1 WHERE session_id = $2"
+
+  pog.query(sql)
+  |> pog.parameter(pog.text(completed_at))
+  |> pog.parameter(pog.text(session_id))
+  |> pog.execute(db)
+  |> result.map_error(fn(_) { "Failed to complete sync session" })
+  |> result.map(fn(_) { Nil })
 }
 
 /// Resolve conflict - prefer local
