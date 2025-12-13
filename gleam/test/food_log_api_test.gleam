@@ -3,7 +3,6 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
-import meal_planner/storage/logs
 import meal_planner/storage/logs/entries
 
 pub fn main() {
