@@ -5,7 +5,6 @@ import gleam/list
 import gleam/result
 import gleam/string
 
-// Unit types for measurement categories
 pub type UnitType {
   Weight
   Volume
@@ -13,7 +12,6 @@ pub type UnitType {
   Other
 }
 
-// Unit represents a measurement unit with conversion properties
 pub type Unit {
   Unit(
     name: String,
@@ -23,12 +21,10 @@ pub type Unit {
   )
 }
 
-// ParsedQuantity represents a parsed quantity with numeric value and unit
 pub type ParsedQuantity {
   ParsedQuantity(amount: Float, unit: Unit, raw: String)
 }
 
-// Common units with their conversion values
 pub fn unit_oz() -> Unit {
   Unit(name: "oz", unit_type: Weight, base_value: 1.0, aliases: [
     "ounce", "ounces",
@@ -65,7 +61,6 @@ pub fn unit_unknown() -> Unit {
   Unit(name: "", unit_type: Other, base_value: 0.0, aliases: [])
 }
 
-// Create lookup map for unit parsing
 fn create_unit_lookup() -> Dict(String, Unit) {
   dict.new()
   |> dict.insert("oz", unit_oz())
@@ -85,7 +80,6 @@ fn create_unit_lookup() -> Dict(String, Unit) {
   |> dict.insert("cups", unit_cup())
 }
 
-// Parse a number string, handling fractions like "1/2"
 fn parse_number(s: String) -> Result(Float, Nil) {
   let trimmed = string.trim(s)
 
@@ -136,7 +130,6 @@ fn parse_number(s: String) -> Result(Float, Nil) {
   }
 }
 
-// ParseQuantity parses a quantity string like "1 lb", "2.5 cups", "1/2 tsp"
 pub fn parse_quantity(s: String) -> ParsedQuantity {
   let trimmed = string.trim(s)
 
@@ -177,7 +170,6 @@ pub fn parse_quantity(s: String) -> ParsedQuantity {
   }
 }
 
-// CanConvert checks if two units can be converted to each other
 pub fn can_convert(a: Unit, b: Unit) -> Bool {
   case a.unit_type, b.unit_type {
     Other, _ -> False
@@ -187,12 +179,10 @@ pub fn can_convert(a: Unit, b: Unit) -> Bool {
   }
 }
 
-// ConvertToBase converts a quantity to its base unit (oz for weight, tsp for volume)
 pub fn convert_to_base(q: ParsedQuantity) -> Float {
   q.amount *. q.unit.base_value
 }
 
-// Format a float, removing unnecessary decimals
 fn format_float(f: Float) -> String {
   let rounded = int.to_float(float.round(f *. 10.0)) /. 10.0
   let i = float.truncate(rounded)
@@ -202,13 +192,11 @@ fn format_float(f: Float) -> String {
   }
 }
 
-// AggregateQuantities combines multiple quantities of the same ingredient
 pub fn aggregate_quantities(quantities: List(ParsedQuantity)) -> String {
   case quantities {
     [] -> ""
     [single] -> single.raw
     _ -> {
-      // Group by unit type
       let #(weight_total, volume_total, count_total, other_parts) =
         list.fold(quantities, #(0.0, 0.0, 0.0, []), fn(acc, q) {
           let #(w, v, c, o) = acc
@@ -222,7 +210,6 @@ pub fn aggregate_quantities(quantities: List(ParsedQuantity)) -> String {
 
       let result = []
 
-      // Format weight (prefer lb for >= 16 oz)
       let result = case weight_total >. 0.0 {
         True -> {
           case weight_total >=. 16.0 {
@@ -243,7 +230,6 @@ pub fn aggregate_quantities(quantities: List(ParsedQuantity)) -> String {
         False -> result
       }
 
-      // Format volume (prefer cups for >= 48 tsp, tbsp for >= 3 tsp)
       let result = case volume_total >. 0.0 {
         True -> {
           case volume_total >=. 48.0 {
@@ -265,13 +251,11 @@ pub fn aggregate_quantities(quantities: List(ParsedQuantity)) -> String {
         False -> result
       }
 
-      // Format count
       let result = case count_total >. 0.0 {
         True -> [format_float(count_total), ..result]
         False -> result
       }
 
-      // Add other parts that couldn't be parsed
       let result = list.append(result, list.reverse(other_parts))
 
       string.join(list.reverse(result), " + ")

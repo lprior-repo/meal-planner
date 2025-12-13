@@ -12,16 +12,10 @@ import meal_planner/id
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
 import meal_planner/storage/utils
 import meal_planner/types.{
-  type FoodLogEntry, Breakfast, Dinner, FoodLogEntry, Lunch, Macros,
-  Snack,
+  type FoodLogEntry, Breakfast, Dinner, FoodLogEntry, Lunch, Macros, Snack,
 }
 import pog
 
-// ============================================================================
-// Data Types
-// ============================================================================
-
-/// Food log entry type
 pub type FoodLog {
   FoodLog(
     id: String,
@@ -59,7 +53,6 @@ pub type FoodLog {
   )
 }
 
-/// Input type for logging a meal with a Tandoor recipe slug
 pub type FoodLogInput {
   FoodLogInput(
     date: String,
@@ -95,11 +88,6 @@ pub type FoodLogInput {
   )
 }
 
-// ============================================================================
-// Validation Functions
-// ============================================================================
-
-/// Validate source_type is one of the allowed values
 fn validate_source_type(source_type: String) -> Result(Nil, StorageError) {
   case source_type {
     "tandoor_recipe" | "custom_food" | "usda_food" -> Ok(Nil)
@@ -112,26 +100,18 @@ fn validate_source_type(source_type: String) -> Result(Nil, StorageError) {
   }
 }
 
-/// Internal helper to validate recipe exists in Tandoor
 fn validate_recipe_exists(
   _config: config.Config,
   recipe_id: id.RecipeId,
 ) -> Result(Nil, StorageError) {
   let recipe_slug = id.recipe_id_to_string(recipe_id)
 
-  // This is a simplified validation - in production, you might want to check
-  // the tandoor/client module for recipe resolution
   case recipe_slug {
     "" -> Error(DatabaseError("Invalid recipe slug: empty string"))
     _ -> Ok(Nil)
   }
 }
 
-// ============================================================================
-// Basic Save Operations
-// ============================================================================
-
-/// Save a food log entry
 pub fn save_food_log(
   conn: pog.Connection,
   log: FoodLog,
@@ -166,13 +146,11 @@ pub fn save_food_log(
   }
 }
 
-/// Save a food log entry using shared types
 pub fn save_food_log_entry(
   conn: pog.Connection,
   date: String,
   entry: FoodLogEntry,
 ) -> Result(Nil, StorageError) {
-  // Validate source_type before saving
   use _ <- result.try(validate_source_type(entry.source_type))
 
   let sql =
@@ -223,7 +201,6 @@ pub fn save_food_log_entry(
     Snack -> "snack"
   }
 
-  // Extract micronutrients from entry (handle Option)
   let #(
     fiber,
     sugar,
@@ -337,32 +314,21 @@ pub fn save_food_log_entry(
   }
 }
 
-/// Enhanced save_food_log_entry with recipe slug validation
 pub fn save_food_log_entry_with_validation(
   conn: pog.Connection,
   config: config.Config,
   date: String,
   entry: FoodLogEntry,
 ) -> Result(Nil, StorageError) {
-  // Only validate if this is a Tandoor recipe
   case entry.source_type {
     "tandoor_recipe" -> {
-      // Validate the recipe exists in Tandoor
       use _ <- result.try(validate_recipe_exists(config, entry.recipe_id))
       save_food_log_entry(conn, date, entry)
     }
-    _ -> {
-      // Skip validation for non-Tandoor sources (custom foods, USDA foods)
-      save_food_log_entry(conn, date, entry)
-    }
+    _ -> save_food_log_entry(conn, date, entry)
   }
 }
 
-// ============================================================================
-// Delete Operations
-// ============================================================================
-
-/// Delete a food log entry
 pub fn delete_food_log(
   conn: pog.Connection,
   log_id: id.LogEntryId,
@@ -379,24 +345,13 @@ pub fn delete_food_log(
   }
 }
 
-// ============================================================================
-// Tandoor Recipe Operations
-// ============================================================================
-
-/// Save a food log entry from a Tandoor recipe slug
-///
-/// This function creates a FoodLogEntry from the provided input and Tandoor recipe slug,
-/// then saves it to the database. The source_type is automatically set to 'tandoor_recipe'
-/// and the source_id is set to the recipe slug.
 pub fn save_food_log_from_tandoor_recipe(
   conn: pog.Connection,
   input: FoodLogInput,
 ) -> Result(String, StorageError) {
-  // Generate unique ID for this log entry using recipe slug and random suffix
   let random_suffix = int.to_string(int.random(999_999))
   let entry_id_str = input.recipe_slug <> "-" <> random_suffix
 
-  // Parse meal type
   let meal_type = case input.meal_type {
     "breakfast" -> Breakfast
     "lunch" -> Lunch
@@ -404,7 +359,6 @@ pub fn save_food_log_from_tandoor_recipe(
     _ -> Snack
   }
 
-  // Create micronutrients if any are provided
   let micronutrients = case
     input.fiber,
     input.sugar,
@@ -477,7 +431,6 @@ pub fn save_food_log_from_tandoor_recipe(
       ))
   }
 
-  // Create the FoodLogEntry
   let entry =
     FoodLogEntry(
       id: id.log_entry_id(entry_id_str),
@@ -492,9 +445,7 @@ pub fn save_food_log_from_tandoor_recipe(
       source_id: input.recipe_slug,
     )
 
-  // Save the entry to the database
   use _ <- result.try(save_food_log_entry(conn, input.date, entry))
 
-  // Return the entry ID on success
   Ok(entry_id_str)
 }
