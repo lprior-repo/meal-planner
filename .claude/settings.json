@@ -2,7 +2,6 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": {},
         "hooks": [
           { "type": "command", "command": "uv run python -m mcp_agent_mail.cli file_reservations active meal-planner" },
           { "type": "command", "command": "uv run python -m mcp_agent_mail.cli acks pending meal-planner lewis --limit 20" }
