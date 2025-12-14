@@ -70,10 +70,11 @@ pub fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // =========================================================================
     // FatSecret Foods API (2-legged OAuth, no user auth required)
     // =========================================================================
-    ["api", "fatsecret", "foods", food_id] ->
-      foods_handlers.handle_get_food(req, food_id)
+    // IMPORTANT: Specific routes MUST come before catch-all patterns!
     ["api", "fatsecret", "foods", "search"] ->
       foods_handlers.handle_search_foods(req)
+    ["api", "fatsecret", "foods", food_id] ->
+      foods_handlers.handle_get_food(req, food_id)
 
     // =========================================================================
     // FatSecret Recipes API (2-legged OAuth, no user auth required)
