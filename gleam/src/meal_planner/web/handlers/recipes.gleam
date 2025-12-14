@@ -109,6 +109,9 @@ type MacroTargets {
 ///
 /// Response: Array of scored recipes with breakdown
 pub fn handle_score(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Post)
 
   // Attempt to read and parse request body
