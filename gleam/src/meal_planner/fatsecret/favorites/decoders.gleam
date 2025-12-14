@@ -3,9 +3,8 @@
 /// Handles the complex nested structure of FatSecret API responses,
 /// including single vs. array food/recipe responses.
 import gleam/dynamic/decode
-import gleam/int
 import gleam/json
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None}
 import meal_planner/fatsecret/favorites/types
 
 pub type DecodeError {
@@ -24,6 +23,8 @@ fn favorite_food_decoder() -> decode.Decoder(types.FavoriteFood) {
   )
   use food_description <- decode.field("food_description", decode.string)
   use food_url <- decode.field("food_url", decode.string)
+  use serving_id <- decode.field("serving_id", decode.string)
+  use number_of_units <- decode.field("number_of_units", decode.string)
   decode.success(types.FavoriteFood(
     food_id:,
     food_name:,
@@ -31,6 +32,8 @@ fn favorite_food_decoder() -> decode.Decoder(types.FavoriteFood) {
     brand_name:,
     food_description:,
     food_url:,
+    serving_id:,
+    number_of_units:,
   ))
 }
 
@@ -46,7 +49,8 @@ fn most_eaten_food_decoder() -> decode.Decoder(types.MostEatenFood) {
   )
   use food_description <- decode.field("food_description", decode.string)
   use food_url <- decode.field("food_url", decode.string)
-  use eat_count <- decode.field("eat_count", decode.int)
+  use serving_id <- decode.field("serving_id", decode.string)
+  use number_of_units <- decode.field("number_of_units", decode.string)
   decode.success(types.MostEatenFood(
     food_id:,
     food_name:,
@@ -54,7 +58,8 @@ fn most_eaten_food_decoder() -> decode.Decoder(types.MostEatenFood) {
     brand_name:,
     food_description:,
     food_url:,
-    eat_count:,
+    serving_id:,
+    number_of_units:,
   ))
 }
 
@@ -70,6 +75,8 @@ fn recently_eaten_food_decoder() -> decode.Decoder(types.RecentlyEatenFood) {
   )
   use food_description <- decode.field("food_description", decode.string)
   use food_url <- decode.field("food_url", decode.string)
+  use serving_id <- decode.field("serving_id", decode.string)
+  use number_of_units <- decode.field("number_of_units", decode.string)
   decode.success(types.RecentlyEatenFood(
     food_id:,
     food_name:,
@@ -77,6 +84,8 @@ fn recently_eaten_food_decoder() -> decode.Decoder(types.RecentlyEatenFood) {
     brand_name:,
     food_description:,
     food_url:,
+    serving_id:,
+    number_of_units:,
   ))
 }
 
@@ -107,42 +116,15 @@ pub fn decode_favorite_foods(
 ) -> Result(types.FavoriteFoodsResponse, DecodeError) {
   // Try decoding as list first
   let list_decoder =
-    decode.at(
-      ["favorite_foods", "favorite_food"],
-      decode.list(favorite_food_decoder()),
-    )
+    decode.at(["foods", "food"], decode.list(favorite_food_decoder()))
 
   case json.parse(body, list_decoder) {
-    Ok(foods) -> {
-      // Extract pagination info
-      case decode_pagination(body) {
-        Ok(#(max_results, total_results, page_number)) ->
-          Ok(types.FavoriteFoodsResponse(
-            foods:,
-            max_results:,
-            total_results:,
-            page_number:,
-          ))
-        Error(e) -> Error(e)
-      }
-    }
+    Ok(foods) -> Ok(types.FavoriteFoodsResponse(foods:))
     Error(_) -> {
       // Try single item
-      let single_decoder =
-        decode.at(["favorite_foods", "favorite_food"], favorite_food_decoder())
+      let single_decoder = decode.at(["foods", "food"], favorite_food_decoder())
       case json.parse(body, single_decoder) {
-        Ok(food) -> {
-          case decode_pagination(body) {
-            Ok(#(max_results, total_results, page_number)) ->
-              Ok(types.FavoriteFoodsResponse(
-                foods: [food],
-                max_results:,
-                total_results:,
-                page_number:,
-              ))
-            Error(e) -> Error(e)
-          }
-        }
+        Ok(food) -> Ok(types.FavoriteFoodsResponse(foods: [food]))
         Error(_) -> Error(ParseError("Failed to parse favorite foods response"))
       }
     }
@@ -155,22 +137,16 @@ pub fn decode_most_eaten(
 ) -> Result(types.MostEatenResponse, DecodeError) {
   // Try decoding as list first
   let list_decoder =
-    decode.at(["most_eaten", "food"], decode.list(most_eaten_food_decoder()))
+    decode.at(["foods", "food"], decode.list(most_eaten_food_decoder()))
 
   case json.parse(body, list_decoder) {
-    Ok(foods) -> {
-      let meal = extract_meal_type(body)
-      Ok(types.MostEatenResponse(foods:, meal:))
-    }
+    Ok(foods) -> Ok(types.MostEatenResponse(foods:))
     Error(_) -> {
       // Try single item
       let single_decoder =
-        decode.at(["most_eaten", "food"], most_eaten_food_decoder())
+        decode.at(["foods", "food"], most_eaten_food_decoder())
       case json.parse(body, single_decoder) {
-        Ok(food) -> {
-          let meal = extract_meal_type(body)
-          Ok(types.MostEatenResponse(foods: [food], meal:))
-        }
+        Ok(food) -> Ok(types.MostEatenResponse(foods: [food]))
         Error(_) -> Error(ParseError("Failed to parse most eaten response"))
       }
     }
@@ -183,25 +159,16 @@ pub fn decode_recently_eaten(
 ) -> Result(types.RecentlyEatenResponse, DecodeError) {
   // Try decoding as list first
   let list_decoder =
-    decode.at(
-      ["recently_eaten", "food"],
-      decode.list(recently_eaten_food_decoder()),
-    )
+    decode.at(["foods", "food"], decode.list(recently_eaten_food_decoder()))
 
   case json.parse(body, list_decoder) {
-    Ok(foods) -> {
-      let meal = extract_meal_type(body)
-      Ok(types.RecentlyEatenResponse(foods:, meal:))
-    }
+    Ok(foods) -> Ok(types.RecentlyEatenResponse(foods:))
     Error(_) -> {
       // Try single item
       let single_decoder =
-        decode.at(["recently_eaten", "food"], recently_eaten_food_decoder())
+        decode.at(["foods", "food"], recently_eaten_food_decoder())
       case json.parse(body, single_decoder) {
-        Ok(food) -> {
-          let meal = extract_meal_type(body)
-          Ok(types.RecentlyEatenResponse(foods: [food], meal:))
-        }
+        Ok(food) -> Ok(types.RecentlyEatenResponse(foods: [food]))
         Error(_) -> Error(ParseError("Failed to parse recently eaten response"))
       }
     }
@@ -214,87 +181,19 @@ pub fn decode_favorite_recipes(
 ) -> Result(types.FavoriteRecipesResponse, DecodeError) {
   // Try decoding as list first
   let list_decoder =
-    decode.at(
-      ["favorite_recipes", "favorite_recipe"],
-      decode.list(favorite_recipe_decoder()),
-    )
+    decode.at(["recipes", "recipe"], decode.list(favorite_recipe_decoder()))
 
   case json.parse(body, list_decoder) {
-    Ok(recipes) -> {
-      case decode_pagination(body) {
-        Ok(#(max_results, total_results, page_number)) ->
-          Ok(types.FavoriteRecipesResponse(
-            recipes:,
-            max_results:,
-            total_results:,
-            page_number:,
-          ))
-        Error(e) -> Error(e)
-      }
-    }
+    Ok(recipes) -> Ok(types.FavoriteRecipesResponse(recipes:))
     Error(_) -> {
       // Try single item
       let single_decoder =
-        decode.at(
-          ["favorite_recipes", "favorite_recipe"],
-          favorite_recipe_decoder(),
-        )
+        decode.at(["recipes", "recipe"], favorite_recipe_decoder())
       case json.parse(body, single_decoder) {
-        Ok(recipe) -> {
-          case decode_pagination(body) {
-            Ok(#(max_results, total_results, page_number)) ->
-              Ok(types.FavoriteRecipesResponse(
-                recipes: [recipe],
-                max_results:,
-                total_results:,
-                page_number:,
-              ))
-            Error(e) -> Error(e)
-          }
-        }
+        Ok(recipe) -> Ok(types.FavoriteRecipesResponse(recipes: [recipe]))
         Error(_) ->
           Error(ParseError("Failed to parse favorite recipes response"))
       }
     }
   }
-}
-
-/// Helper to decode pagination info
-fn decode_pagination(body: String) -> Result(#(Int, Int, Int), DecodeError) {
-  let pagination_decoder = {
-    use max_results <- decode.field("max_results", decode_string_int())
-    use total_results <- decode.field("total_results", decode_string_int())
-    use page_number <- decode.field("page_number", decode_string_int())
-    decode.success(#(max_results, total_results, page_number))
-  }
-
-  case json.parse(body, pagination_decoder) {
-    Ok(result) -> Ok(result)
-    Error(_) -> Error(ParseError("Failed to parse pagination info"))
-  }
-}
-
-/// Helper to extract meal type from response
-fn extract_meal_type(body: String) -> Option(String) {
-  let meal_decoder = {
-    use meal <- decode.field("meal", decode.string)
-    decode.success(meal)
-  }
-  case json.parse(body, meal_decoder) {
-    Ok(meal) -> Some(meal)
-    Error(_) -> None
-  }
-}
-
-/// Decode a string that may be an int (FatSecret sometimes returns ints as strings)
-fn decode_string_int() -> decode.Decoder(Int) {
-  decode.one_of(decode.int, [
-    {
-      use str <- decode.then(decode.string)
-      case int.parse(str) {
-        Ok(i) -> decode.success(i)
-        Error(_) -> decode.failure(0, "Int")
-      }
-    },
-  ])
 }

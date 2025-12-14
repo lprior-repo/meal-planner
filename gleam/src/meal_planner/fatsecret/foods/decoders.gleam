@@ -23,18 +23,15 @@ import meal_planner/fatsecret/foods/types.{
 
 /// Decode a float that might be a string ("95.5") or number (95.5)
 fn flexible_float() -> decode.Decoder(Float) {
-  decode.one_of(
-    decode.float,
-    or: [
-      {
-        use s <- decode.then(decode.string)
-        case float.parse(s) {
-          Ok(f) -> decode.success(f)
-          Error(_) -> decode.failure(0.0, "Float")
-        }
-      },
-    ],
-  )
+  decode.one_of(decode.float, or: [
+    {
+      use s <- decode.then(decode.string)
+      case float.parse(s) {
+        Ok(f) -> decode.success(f)
+        Error(_) -> decode.failure(0.0, "Float")
+      }
+    },
+  ])
 }
 
 /// Decode an optional float that might be a string, number, or missing
@@ -44,18 +41,15 @@ fn optional_flexible_float() -> decode.Decoder(Option(Float)) {
 
 /// Decode an int that might be a string ("95") or number (95)
 fn flexible_int() -> decode.Decoder(Int) {
-  decode.one_of(
-    decode.int,
-    or: [
-      {
-        use s <- decode.then(decode.string)
-        case int.parse(s) {
-          Ok(i) -> decode.success(i)
-          Error(_) -> decode.failure(0, "Int")
-        }
-      },
-    ],
-  )
+  decode.one_of(decode.int, or: [
+    {
+      use s <- decode.then(decode.string)
+      case int.parse(s) {
+        Ok(i) -> decode.success(i)
+        Error(_) -> decode.failure(0, "Int")
+      }
+    },
+  ])
 }
 
 // ============================================================================
@@ -81,13 +75,16 @@ pub fn nutrition_decoder() -> decode.Decoder(Nutrition) {
     "monounsaturated_fat",
     optional_flexible_float(),
   )
+  use trans_fat <- decode.field("trans_fat", optional_flexible_float())
   use cholesterol <- decode.field("cholesterol", optional_flexible_float())
   use sodium <- decode.field("sodium", optional_flexible_float())
   use potassium <- decode.field("potassium", optional_flexible_float())
   use fiber <- decode.field("fiber", optional_flexible_float())
   use sugar <- decode.field("sugar", optional_flexible_float())
+  use added_sugars <- decode.field("added_sugars", optional_flexible_float())
   use vitamin_a <- decode.field("vitamin_a", optional_flexible_float())
   use vitamin_c <- decode.field("vitamin_c", optional_flexible_float())
+  use vitamin_d <- decode.field("vitamin_d", optional_flexible_float())
   use calcium <- decode.field("calcium", optional_flexible_float())
   use iron <- decode.field("iron", optional_flexible_float())
 
@@ -99,13 +96,16 @@ pub fn nutrition_decoder() -> decode.Decoder(Nutrition) {
     saturated_fat: saturated_fat,
     polyunsaturated_fat: polyunsaturated_fat,
     monounsaturated_fat: monounsaturated_fat,
+    trans_fat: trans_fat,
     cholesterol: cholesterol,
     sodium: sodium,
     potassium: potassium,
     fiber: fiber,
     sugar: sugar,
+    added_sugars: added_sugars,
     vitamin_a: vitamin_a,
     vitamin_c: vitamin_c,
+    vitamin_d: vitamin_d,
     calcium: calcium,
     iron: iron,
   ))
@@ -143,6 +143,7 @@ pub fn serving_decoder() -> decode.Decoder(Serving) {
     "measurement_description",
     decode.string,
   )
+  use is_default <- decode.field("is_default", decode.optional(flexible_int()))
 
   // Nutrition info is nested in the serving object
   use calories <- decode.field("calories", flexible_float())
@@ -158,13 +159,16 @@ pub fn serving_decoder() -> decode.Decoder(Serving) {
     "monounsaturated_fat",
     optional_flexible_float(),
   )
+  use trans_fat <- decode.field("trans_fat", optional_flexible_float())
   use cholesterol <- decode.field("cholesterol", optional_flexible_float())
   use sodium <- decode.field("sodium", optional_flexible_float())
   use potassium <- decode.field("potassium", optional_flexible_float())
   use fiber <- decode.field("fiber", optional_flexible_float())
   use sugar <- decode.field("sugar", optional_flexible_float())
+  use added_sugars <- decode.field("added_sugars", optional_flexible_float())
   use vitamin_a <- decode.field("vitamin_a", optional_flexible_float())
   use vitamin_c <- decode.field("vitamin_c", optional_flexible_float())
+  use vitamin_d <- decode.field("vitamin_d", optional_flexible_float())
   use calcium <- decode.field("calcium", optional_flexible_float())
   use iron <- decode.field("iron", optional_flexible_float())
 
@@ -177,13 +181,16 @@ pub fn serving_decoder() -> decode.Decoder(Serving) {
       saturated_fat: saturated_fat,
       polyunsaturated_fat: polyunsaturated_fat,
       monounsaturated_fat: monounsaturated_fat,
+      trans_fat: trans_fat,
       cholesterol: cholesterol,
       sodium: sodium,
       potassium: potassium,
       fiber: fiber,
       sugar: sugar,
+      added_sugars: added_sugars,
       vitamin_a: vitamin_a,
       vitamin_c: vitamin_c,
+      vitamin_d: vitamin_d,
       calcium: calcium,
       iron: iron,
     )
@@ -196,6 +203,7 @@ pub fn serving_decoder() -> decode.Decoder(Serving) {
     metric_serving_unit: metric_serving_unit,
     number_of_units: number_of_units,
     measurement_description: measurement_description,
+    is_default: is_default,
     nutrition: nutrition,
   ))
 }

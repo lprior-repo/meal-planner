@@ -28,7 +28,9 @@ import meal_planner/tandoor/types/mealplan/meal_plan.{
   type MealPlan, type MealPlanListResponse,
 }
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
-import meal_planner/tandoor/types/mealplan/meal_type.{meal_type_to_string, type MealType}
+import meal_planner/tandoor/types/mealplan/meal_type.{
+  type MealType, meal_type_to_string,
+}
 
 // ============================================================================
 // Types
@@ -612,7 +614,7 @@ fn execute_request(
 }
 
 /// Execute a request and parse the response
-fn execute_and_parse(
+pub fn execute_and_parse(
   req: request.Request(String),
 ) -> Result(ApiResponse, TandoorError) {
   use resp <- result.try(execute_request(req))
@@ -1657,6 +1659,7 @@ pub type CreateMealPlanRequest {
 /// # Returns
 /// Result with paginated meal plan list or error
 // FIXME(meal-planner-242): Incomplete MealPlan API implementation
+
 pub fn get_meal_plan(
   config: ClientConfig,
   from_date: Option(String),
@@ -1688,7 +1691,12 @@ pub fn get_meal_plan(
 
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
-      case decode.run(json_data, meal_plan_decoder.meal_plan_list_decoder_internal()) {
+      case
+        decode.run(
+          json_data,
+          meal_plan_decoder.meal_plan_list_decoder_internal(),
+        )
+      {
         Ok(meal_plan_list) -> Ok(meal_plan_list)
         Error(errors) -> {
           let error_msg =
@@ -1709,6 +1717,7 @@ pub fn get_meal_plan(
     Error(_) -> Error(ParseError("Invalid JSON response"))
   }
 }
+
 /// Create a meal plan entry in Tandoor
 ///
 /// # Arguments
@@ -1718,6 +1727,7 @@ pub fn get_meal_plan(
 /// # Returns
 /// Result with created meal plan entry or error
 // FIXME(meal-planner-242): Incomplete MealPlan API implementation
+
 pub fn create_meal_plan_entry(
   config: ClientConfig,
   entry: CreateMealPlanRequest,
@@ -1767,6 +1777,7 @@ pub fn create_meal_plan_entry(
     Error(_) -> Error(ParseError("Invalid JSON response"))
   }
 }
+
 // 
 // /// Delete a meal plan entry from Tandoor
 // ///
@@ -1788,6 +1799,7 @@ pub fn delete_meal_plan_entry(
   use _resp <- result.try(execute_and_parse(req))
   Ok(Nil)
 }
+
 /// Get today's meal plan entries
 ///
 /// # Arguments
@@ -1797,6 +1809,7 @@ pub fn delete_meal_plan_entry(
 /// # Returns
 /// Result with meal plan entries for today or error
 // FIXME(meal-planner-242): Incomplete MealPlan API implementation
+
 pub fn get_todays_meals(
   config: ClientConfig,
   today: String,

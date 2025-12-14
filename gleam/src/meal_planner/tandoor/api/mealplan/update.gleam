@@ -1,9 +1,8 @@
 /// MealPlan Update/Delete API
 ///
 /// This module provides functions to update and delete meal plan entries in the Tandoor API.
-import meal_planner/tandoor/client.{
-  type ClientConfig, type MealPlanEntry, type TandoorError,
-}
+import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
 import meal_planner/tandoor/core/ids.{type MealPlanId}
 import meal_planner/tandoor/types/mealplan/mealplan.{type MealPlanUpdate}
 

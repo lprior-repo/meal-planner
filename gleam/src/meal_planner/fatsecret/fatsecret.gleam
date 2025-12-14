@@ -212,17 +212,17 @@ pub type FavoritesMealFilter =
 // Favorites service functions
 pub const add_favorite_food = favorites_service.add_favorite_food
 
-pub const remove_favorite_food = favorites_service.remove_favorite_food
+pub const delete_favorite_food = favorites_service.delete_favorite_food
 
 pub const get_favorite_foods = favorites_service.get_favorite_foods
 
-pub const get_most_eaten_foods = favorites_service.get_most_eaten_foods
+pub const get_most_eaten = favorites_service.get_most_eaten
 
-pub const get_recently_eaten_foods = favorites_service.get_recently_eaten_foods
+pub const get_recently_eaten = favorites_service.get_recently_eaten
 
 pub const add_favorite_recipe = favorites_service.add_favorite_recipe
 
-pub const remove_favorite_recipe = favorites_service.remove_favorite_recipe
+pub const delete_favorite_recipe = favorites_service.delete_favorite_recipe
 
 pub const get_favorite_recipes = favorites_service.get_favorite_recipes
 
@@ -353,20 +353,22 @@ import meal_planner/fatsecret/weight/types as weight_types
 pub type WeightEntry =
   weight_types.WeightEntry
 
-/// Monthly summary of weight entries
-pub type MonthWeightSummary =
-  weight_types.MonthWeightSummary
+/// Weight update input
+pub type WeightUpdate =
+  weight_types.WeightUpdate
 
-/// Weight units (kg or lb)
-pub type WeightUnit =
-  weight_types.WeightUnit
+/// Daily weight summary
+pub type WeightDaySummary =
+  weight_types.WeightDaySummary
+
+/// Monthly summary of weight entries
+pub type WeightMonthSummary =
+  weight_types.WeightMonthSummary
 
 // Weight service functions
-pub const get_weight = weight_service.get_weight
-
 pub const update_weight = weight_service.update_weight
 
-pub const get_weight_month = weight_service.get_weight_month
+pub const get_weight_month_summary = weight_service.get_weight_month_summary
 
 // ============================================================================
 // Profile Domain
@@ -376,11 +378,22 @@ import meal_planner/fatsecret/profile/oauth as profile_oauth
 import meal_planner/fatsecret/profile/types as profile_types
 
 /// User profile information
-pub type UserProfile =
-  profile_types.UserProfile
+pub type Profile =
+  profile_types.Profile
 
-/// Step 1: Request authentication token
-pub const request_auth = profile_oauth.request_auth
+/// Profile auth response
+pub type ProfileAuth =
+  profile_types.ProfileAuth
+
+/// Profile create input
+pub type ProfileCreateInput =
+  profile_types.ProfileCreateInput
+
+/// Step 1: Get request token for OAuth
+pub const get_request_token = profile_oauth.get_request_token
+
+/// Step 2: Get authorization URL
+pub const get_authorization_url = profile_oauth.get_authorization_url
 
 /// Step 3: Exchange request token for access token
 pub const get_access_token = profile_oauth.get_access_token

@@ -8,6 +8,7 @@
 /// - Optional fields (icon, parent)
 /// - Tree structure fields (parent, numchild, full_name)
 import gleam/dynamic/decode
+import gleam/option.{None}
 import meal_planner/tandoor/types/keyword/keyword.{type Keyword, Keyword}
 
 /// Decode a Keyword from JSON
@@ -34,7 +35,11 @@ pub fn keyword_decoder() -> decode.Decoder(Keyword) {
   use name <- decode.field("name", decode.string)
   use label <- decode.field("label", decode.string)
   use description <- decode.field("description", decode.string)
-  use icon <- decode.field("icon", decode.optional(decode.string))
+  use icon <- decode.optional_field(
+    "icon",
+    None,
+    decode.optional(decode.string),
+  )
   use parent <- decode.field("parent", decode.optional(decode.int))
   use numchild <- decode.field("numchild", decode.int)
   use created_at <- decode.field("created_at", decode.string)

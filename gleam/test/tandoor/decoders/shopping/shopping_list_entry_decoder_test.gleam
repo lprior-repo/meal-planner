@@ -3,10 +3,11 @@
 /// Tests for decoding shopping list entries from Tandoor API responses.
 import gleam/dynamic/decode
 import gleam/json
+import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/decoders/shopping/shopping_list_entry_decoder.{
-  type ShoppingListEntryResponse, ShoppingListEntryResponse,
+  type ShoppingListEntryResponse,
 }
 
 /// Test decoding a complete shopping list entry with all fields populated
@@ -40,11 +41,9 @@ pub fn decode_entry_complete_test() {
       \"completed_at\": null
     }"
 
-  let result =
-    json.decode(
-      from: json_str,
-      using: shopping_list_entry_decoder.decode_entry(),
-    )
+  let assert Ok(json_data) = json.parse(json_str, using: decode.dynamic)
+  let result: Result(ShoppingListEntryResponse, _) =
+    decode.run(json_data, shopping_list_entry_decoder.decode_entry())
 
   case result {
     Ok(entry) -> {
@@ -66,7 +65,7 @@ pub fn decode_entry_complete_test() {
           food.description |> should.equal("Fresh red tomatoes")
           food.ignore_shopping |> should.equal(False)
         }
-        None -> should.fail("Expected food to be present")
+        None -> panic as "Expected food to be present"
       }
 
       // Verify nested unit object
@@ -76,15 +75,10 @@ pub fn decode_entry_complete_test() {
           unit.name |> should.equal("piece")
           unit.plural_name |> should.equal(Some("pieces"))
         }
-        None -> should.fail("Expected unit to be present")
+        None -> panic as "Expected unit to be present"
       }
     }
-    Error(errors) -> {
-      should.fail(
-        "Failed to decode shopping list entry: "
-        <> decode.errors_to_string(errors),
-      )
-    }
+    Error(_) -> panic as "Decoding should succeed"
   }
 }
 
@@ -103,11 +97,9 @@ pub fn decode_entry_minimal_test() {
       \"completed_at\": \"2025-12-14T13:30:00Z\"
     }"
 
-  let result =
-    json.decode(
-      from: json_str,
-      using: shopping_list_entry_decoder.decode_entry(),
-    )
+  let assert Ok(json_data) = json.parse(json_str, using: decode.dynamic)
+  let result: Result(ShoppingListEntryResponse, _) =
+    decode.run(json_data, shopping_list_entry_decoder.decode_entry())
 
   case result {
     Ok(entry) -> {
@@ -121,11 +113,7 @@ pub fn decode_entry_minimal_test() {
       entry.created_at |> should.equal("2025-12-14T13:00:00Z")
       entry.completed_at |> should.equal(Some("2025-12-14T13:30:00Z"))
     }
-    Error(errors) -> {
-      should.fail(
-        "Failed to decode minimal entry: " <> decode.errors_to_string(errors),
-      )
-    }
+    Error(_) -> panic as "Decoding should succeed"
   }
 }
 
@@ -159,16 +147,14 @@ pub fn decode_entry_list_test() {
       ]
     }"
 
+  let assert Ok(json_data) = json.parse(json_str, using: decode.dynamic)
   let result =
-    json.decode(
-      from: json_str,
-      using: shopping_list_entry_decoder.decode_entry_list(),
-    )
+    decode.run(json_data, shopping_list_entry_decoder.decode_entry_list())
 
   case result {
     Ok(entries) -> {
       // Verify we got 2 entries
-      entries |> should.have_length(2)
+      entries |> list.length |> should.equal(2)
 
       // Verify first entry
       let assert [first, second] = entries
@@ -182,11 +168,7 @@ pub fn decode_entry_list_test() {
       second.amount |> should.equal(1.0)
       second.completed_at |> should.equal(Some("2025-12-14T11:30:00Z"))
     }
-    Error(errors) -> {
-      should.fail(
-        "Failed to decode entry list: " <> decode.errors_to_string(errors),
-      )
-    }
+    Error(_) -> panic as "Decoding should succeed"
   }
 }
 
@@ -194,20 +176,14 @@ pub fn decode_entry_list_test() {
 pub fn decode_entry_list_empty_test() {
   let json_str = "{\"results\": []}"
 
+  let assert Ok(json_data) = json.parse(json_str, using: decode.dynamic)
   let result =
-    json.decode(
-      from: json_str,
-      using: shopping_list_entry_decoder.decode_entry_list(),
-    )
+    decode.run(json_data, shopping_list_entry_decoder.decode_entry_list())
 
   case result {
     Ok(entries) -> {
-      entries |> should.have_length(0)
+      entries |> list.length |> should.equal(0)
     }
-    Error(errors) -> {
-      should.fail(
-        "Failed to decode empty list: " <> decode.errors_to_string(errors),
-      )
-    }
+    Error(_) -> panic as "Decoding should succeed"
   }
 }

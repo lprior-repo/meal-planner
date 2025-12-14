@@ -8,7 +8,6 @@
 ///   POST/DELETE /api/fatsecret/favorites/recipes/:recipe_id
 ///   GET /api/fatsecret/favorites/recipes
 import gleam/http.{Delete, Get, Post}
-import gleam/http/response.{type Response}
 import gleam/int
 import gleam/json
 import gleam/list
@@ -19,14 +18,14 @@ import meal_planner/fatsecret/favorites/service
 import meal_planner/fatsecret/favorites/types
 import meal_planner/fatsecret/service as fatsecret_service
 import pog
-import wisp.{type Request}
+import wisp.{type Request, type Response}
 
 /// POST /api/fatsecret/favorites/foods/:food_id - Add food to favorites
 pub fn add_favorite_food(
   req: Request,
   conn: pog.Connection,
   food_id: String,
-) -> Response(String) {
+) -> Response {
   case req.method {
     Post -> {
       case service.add_favorite_food(conn, food_id) {
@@ -52,7 +51,7 @@ pub fn delete_favorite_food(
   req: Request,
   conn: pog.Connection,
   food_id: String,
-) -> Response(String) {
+) -> Response {
   case req.method {
     Delete -> {
       case service.delete_favorite_food(conn, food_id) {
@@ -77,7 +76,7 @@ pub fn delete_favorite_food(
 pub fn get_favorite_foods(
   req: Request,
   conn: pog.Connection,
-) -> Response(String) {
+) -> Response {
   case req.method {
     Get -> {
       let query_params = wisp.get_query(req)
@@ -104,10 +103,7 @@ pub fn get_favorite_foods(
           wisp.json_response(
             json.to_string(
               json.object([
-                #("foods", json.array(foods_json)),
-                #("max_results", json.int(response.max_results)),
-                #("total_results", json.int(response.total_results)),
-                #("page_number", json.int(response.page_number)),
+                #("foods", json.array(foods_json, fn(x) { x })),
               ]),
             ),
             200,
@@ -121,7 +117,7 @@ pub fn get_favorite_foods(
 }
 
 /// GET /api/fatsecret/favorites/foods/most-eaten - Get most eaten foods
-pub fn get_most_eaten(req: Request, conn: pog.Connection) -> Response(String) {
+pub fn get_most_eaten(req: Request, conn: pog.Connection) -> Response {
   case req.method {
     Get -> {
       let query_params = wisp.get_query(req)
@@ -141,18 +137,13 @@ pub fn get_most_eaten(req: Request, conn: pog.Connection) -> Response(String) {
                 }),
                 #("food_description", json.string(food.food_description)),
                 #("food_url", json.string(food.food_url)),
-                #("eat_count", json.int(food.eat_count)),
               ])
             })
 
           wisp.json_response(
             json.to_string(
               json.object([
-                #("foods", json.array(foods_json)),
-                #("meal", case response.meal {
-                  Some(m) -> json.string(m)
-                  None -> json.null()
-                }),
+                #("foods", json.array(foods_json, fn(x) { x })),
               ]),
             ),
             200,
@@ -169,7 +160,7 @@ pub fn get_most_eaten(req: Request, conn: pog.Connection) -> Response(String) {
 pub fn get_recently_eaten(
   req: Request,
   conn: pog.Connection,
-) -> Response(String) {
+) -> Response {
   case req.method {
     Get -> {
       let query_params = wisp.get_query(req)
@@ -195,11 +186,7 @@ pub fn get_recently_eaten(
           wisp.json_response(
             json.to_string(
               json.object([
-                #("foods", json.array(foods_json)),
-                #("meal", case response.meal {
-                  Some(m) -> json.string(m)
-                  None -> json.null()
-                }),
+                #("foods", json.array(foods_json, fn(x) { x })),
               ]),
             ),
             200,
@@ -217,7 +204,7 @@ pub fn add_favorite_recipe(
   req: Request,
   conn: pog.Connection,
   recipe_id: String,
-) -> Response(String) {
+) -> Response {
   case req.method {
     Post -> {
       case service.add_favorite_recipe(conn, recipe_id) {
@@ -243,7 +230,7 @@ pub fn delete_favorite_recipe(
   req: Request,
   conn: pog.Connection,
   recipe_id: String,
-) -> Response(String) {
+) -> Response {
   case req.method {
     Delete -> {
       case service.delete_favorite_recipe(conn, recipe_id) {
@@ -268,7 +255,7 @@ pub fn delete_favorite_recipe(
 pub fn get_favorite_recipes(
   req: Request,
   conn: pog.Connection,
-) -> Response(String) {
+) -> Response {
   case req.method {
     Get -> {
       let query_params = wisp.get_query(req)
@@ -294,10 +281,7 @@ pub fn get_favorite_recipes(
           wisp.json_response(
             json.to_string(
               json.object([
-                #("recipes", json.array(recipes_json)),
-                #("max_results", json.int(response.max_results)),
-                #("total_results", json.int(response.total_results)),
-                #("page_number", json.int(response.page_number)),
+                #("recipes", json.array(recipes_json, fn(x) { x })),
               ]),
             ),
             200,
@@ -340,7 +324,7 @@ fn parse_meal_filter(
 }
 
 /// Convert service error to HTTP error response
-fn error_response(error: fatsecret_service.ServiceError) -> Response(String) {
+fn error_response(error: fatsecret_service.ServiceError) -> Response {
   case error {
     fatsecret_service.NotConnected ->
       wisp.json_response(

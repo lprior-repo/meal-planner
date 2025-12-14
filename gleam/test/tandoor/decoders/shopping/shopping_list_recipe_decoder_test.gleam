@@ -1,8 +1,8 @@
 /// Shopping List Recipe Decoder Tests
 ///
 /// Tests for decoding shopping list recipes from Tandoor API responses.
-import gleam/dynamic/decode
 import gleam/json
+import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/core/ids
@@ -23,9 +23,9 @@ pub fn decode_shopping_list_recipe_with_recipe_test() {
       \"created_by\": 1
     }"
 
-  let result =
-    json.decode(
-      from: json_str,
+  let result: Result(ShoppingListRecipe, _) =
+    json.parse(
+      json_str,
       using: shopping_list_recipe_decoder.decode_shopping_list_recipe(),
     )
 
@@ -39,19 +39,15 @@ pub fn decode_shopping_list_recipe_with_recipe_test() {
 
       // Verify recipe is present
       case shopping_list.recipe {
-        Some(recipe_id) ->
-          recipe_id |> ids.recipe_id_to_int |> should.equal(42)
-        None -> should.fail("Expected recipe to be present")
+        Some(recipe_id) -> recipe_id |> ids.recipe_id_to_int |> should.equal(42)
+        None -> panic as "Expected recipe to be present"
       }
 
       // Verify mealplan is None
       shopping_list.mealplan |> should.equal(None)
     }
-    Error(errors) -> {
-      should.fail(
-        "Failed to decode shopping list recipe: "
-        <> decode.errors_to_string(errors),
-      )
+    Error(_) -> {
+      panic as "Failed to decode shopping list recipe"
     }
   }
 }
@@ -68,9 +64,9 @@ pub fn decode_shopping_list_recipe_with_mealplan_test() {
       \"created_by\": 5
     }"
 
-  let result =
-    json.decode(
-      from: json_str,
+  let result: Result(ShoppingListRecipe, _) =
+    json.parse(
+      json_str,
       using: shopping_list_recipe_decoder.decode_shopping_list_recipe(),
     )
 
@@ -88,14 +84,11 @@ pub fn decode_shopping_list_recipe_with_mealplan_test() {
       case shopping_list.mealplan {
         Some(mealplan_id) ->
           mealplan_id |> ids.meal_plan_id_to_int |> should.equal(7)
-        None -> should.fail("Expected mealplan to be present")
+        None -> panic as "Expected mealplan to be present"
       }
     }
-    Error(errors) -> {
-      should.fail(
-        "Failed to decode shopping list with mealplan: "
-        <> decode.errors_to_string(errors),
-      )
+    Error(_) -> {
+      panic as "Failed to decode shopping list with mealplan"
     }
   }
 }
@@ -112,9 +105,9 @@ pub fn decode_shopping_list_recipe_minimal_test() {
       \"created_by\": 2
     }"
 
-  let result =
-    json.decode(
-      from: json_str,
+  let result: Result(ShoppingListRecipe, _) =
+    json.parse(
+      json_str,
       using: shopping_list_recipe_decoder.decode_shopping_list_recipe(),
     )
 
@@ -127,11 +120,8 @@ pub fn decode_shopping_list_recipe_minimal_test() {
       shopping_list.recipe |> should.equal(None)
       shopping_list.mealplan |> should.equal(None)
     }
-    Error(errors) -> {
-      should.fail(
-        "Failed to decode minimal shopping list: "
-        <> decode.errors_to_string(errors),
-      )
+    Error(_) -> {
+      panic as "Failed to decode minimal shopping list"
     }
   }
 }
@@ -160,16 +150,16 @@ pub fn decode_shopping_list_recipe_list_test() {
       ]
     }"
 
-  let result =
-    json.decode(
-      from: json_str,
+  let result: Result(List(ShoppingListRecipe), _) =
+    json.parse(
+      json_str,
       using: shopping_list_recipe_decoder.decode_shopping_list_recipe_list(),
     )
 
   case result {
     Ok(shopping_lists) -> {
       // Verify we got 2 shopping lists
-      shopping_lists |> should.have_length(2)
+      shopping_lists |> list.length |> should.equal(2)
 
       // Verify first shopping list
       let assert [first, second] = shopping_lists
@@ -178,7 +168,7 @@ pub fn decode_shopping_list_recipe_list_test() {
       first.servings |> should.equal(2.0)
       case first.recipe {
         Some(recipe_id) -> recipe_id |> ids.recipe_id_to_int |> should.equal(10)
-        None -> should.fail("Expected recipe in first list")
+        None -> panic as "Expected recipe in first list"
       }
       first.mealplan |> should.equal(None)
 
@@ -190,14 +180,11 @@ pub fn decode_shopping_list_recipe_list_test() {
       case second.mealplan {
         Some(mealplan_id) ->
           mealplan_id |> ids.meal_plan_id_to_int |> should.equal(5)
-        None -> should.fail("Expected mealplan in second list")
+        None -> panic as "Expected mealplan in second list"
       }
     }
-    Error(errors) -> {
-      should.fail(
-        "Failed to decode shopping list recipe list: "
-        <> decode.errors_to_string(errors),
-      )
+    Error(_) -> {
+      panic as "Failed to decode shopping list recipe list"
     }
   }
 }
@@ -206,21 +193,18 @@ pub fn decode_shopping_list_recipe_list_test() {
 pub fn decode_shopping_list_recipe_list_empty_test() {
   let json_str = "{\"results\": []}"
 
-  let result =
-    json.decode(
-      from: json_str,
+  let result: Result(List(ShoppingListRecipe), _) =
+    json.parse(
+      json_str,
       using: shopping_list_recipe_decoder.decode_shopping_list_recipe_list(),
     )
 
   case result {
     Ok(shopping_lists) -> {
-      shopping_lists |> should.have_length(0)
+      shopping_lists |> list.length |> should.equal(0)
     }
-    Error(errors) -> {
-      should.fail(
-        "Failed to decode empty shopping list: "
-        <> decode.errors_to_string(errors),
-      )
+    Error(_) -> {
+      panic as "Failed to decode empty shopping list"
     }
   }
 }

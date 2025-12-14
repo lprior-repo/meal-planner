@@ -176,10 +176,8 @@ fn encode_direction(direction: types.RecipeDirection) -> json.Json {
 }
 
 fn encode_recipe_type(recipe_type: types.RecipeType) -> json.Json {
-  json.object([
-    #("recipe_type_id", json.string(recipe_type.recipe_type_id)),
-    #("recipe_type", json.string(recipe_type.recipe_type)),
-  ])
+  // RecipeType is just a String, so encode it directly
+  json.string(recipe_type)
 }
 
 fn encode_nutrition(recipe: types.Recipe) -> json.Json {

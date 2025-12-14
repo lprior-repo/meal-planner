@@ -9,6 +9,7 @@ import gleam/http
 import gleam/int
 import gleam/json
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/fatsecret/client
 import meal_planner/fatsecret/profile/service

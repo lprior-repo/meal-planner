@@ -56,7 +56,7 @@ pub fn handle_get_food(req: wisp.Request, food_id: String) -> wisp.Response {
 
   case service.get_food(food_id_typed) {
     Ok(food) -> {
-      json.to_string_builder(food_to_json(food))
+      json.to_string(food_to_json(food))
       |> wisp.json_response(200)
     }
     Error(service.NotConfigured) -> {
@@ -111,16 +111,18 @@ pub fn handle_search_foods(req: wisp.Request) -> wisp.Response {
   use <- wisp.require_method(req, http.Get)
 
   // Parse query parameters
-  let query_params = wisp.get_query(req) |> result.unwrap([])
+  let query_params = wisp.get_query(req)
 
   let query = get_query_param(query_params, "q")
   let page =
     get_query_param(query_params, "page")
-    |> option.then(int.parse)
+    |> option.map(int.parse)
+    |> option.then(option.from_result)
     |> option.unwrap(0)
   let limit =
     get_query_param(query_params, "limit")
-    |> option.then(int.parse)
+    |> option.map(int.parse)
+    |> option.then(option.from_result)
     |> option.map(clamp_limit)
     |> option.unwrap(20)
 
@@ -134,7 +136,7 @@ pub fn handle_search_foods(req: wisp.Request) -> wisp.Response {
         False ->
           case service.search_foods(q, page, limit) {
             Ok(response) -> {
-              json.to_string_builder(search_response_to_json(response))
+              json.to_string(search_response_to_json(response))
               |> wisp.json_response(200)
             }
             Error(service.NotConfigured) -> {
@@ -182,7 +184,7 @@ fn clamp_limit(limit: Int) -> Int {
 /// Create error response JSON
 fn error_response(status: Int, message: String) -> wisp.Response {
   json.object([#("error", json.string(message))])
-  |> json.to_string_builder
+  |> json.to_string
   |> wisp.json_response(status)
 }
 

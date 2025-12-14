@@ -54,6 +54,8 @@ pub fn serving_id_to_string(id: ServingId) -> String {
 ///
 /// Required fields (calories, macros) are always present.
 /// Optional micronutrients may be None if not provided by FatSecret.
+///
+/// Fields align with FatSecret API v5 food.get response.
 pub type Nutrition {
   Nutrition(
     /// Energy in kcal
@@ -70,6 +72,8 @@ pub type Nutrition {
     polyunsaturated_fat: Option(Float),
     /// Monounsaturated fat in grams
     monounsaturated_fat: Option(Float),
+    /// Trans fat in grams
+    trans_fat: Option(Float),
     /// Cholesterol in mg
     cholesterol: Option(Float),
     /// Sodium in mg
@@ -80,10 +84,14 @@ pub type Nutrition {
     fiber: Option(Float),
     /// Total sugars in grams
     sugar: Option(Float),
+    /// Added sugars in grams (separate from total sugars)
+    added_sugars: Option(Float),
     /// Vitamin A as % DV
     vitamin_a: Option(Float),
     /// Vitamin C as % DV
     vitamin_c: Option(Float),
+    /// Vitamin D as % DV
+    vitamin_d: Option(Float),
     /// Calcium as % DV
     calcium: Option(Float),
     /// Iron as % DV
@@ -99,6 +107,8 @@ pub type Nutrition {
 ///
 /// FatSecret provides multiple serving options per food (e.g., "1 cup", "100g").
 /// Each serving has complete nutrition information.
+///
+/// Aligns with FatSecret API v5 servings structure.
 pub type Serving {
   Serving(
     /// Unique serving identifier
@@ -115,6 +125,8 @@ pub type Serving {
     number_of_units: Float,
     /// Measurement description (e.g., "cup", "tablespoon")
     measurement_description: String,
+    /// Whether this is the default serving (1=yes, 0=no)
+    is_default: Option(Int),
     /// Complete nutrition information for this serving
     nutrition: Nutrition,
   )
@@ -124,10 +136,13 @@ pub type Serving {
 // Food Information
 // ============================================================================
 
-/// Complete food details from food.get.v4 API
+/// Complete food details from food.get.v5 API
 ///
 /// Contains all available information about a food including
 /// all serving options and complete nutrition data.
+///
+/// Note: Extended metadata fields (images, allergens, categories)
+/// are available in v5 API but deferred to future enhancement.
 pub type Food {
   Food(
     /// Unique food identifier
@@ -152,7 +167,7 @@ pub type Food {
 /// Single food search result from foods.search API
 ///
 /// This is a lightweight version of Food used in search results.
-/// To get complete details including servings, use food.get.v4.
+/// To get complete details including servings, use food.get.v5.
 pub type FoodSearchResult {
   FoodSearchResult(
     /// Unique food identifier

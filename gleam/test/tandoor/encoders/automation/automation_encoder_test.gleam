@@ -4,10 +4,11 @@
 /// Following TDD: these tests should FAIL first, then pass after implementation.
 import gleam/json
 import gleam/option.{None, Some}
+import gleam/string
 import gleeunit/should
 import meal_planner/tandoor/encoders/automation/automation_encoder
 import meal_planner/tandoor/types/automation/automation.{
-  Automation, FoodAlias, KeywordAlias,
+  DescriptionReplace, FoodAlias, KeywordAlias,
 }
 
 /// Test encoding AutomationCreateRequest for FoodAlias
@@ -40,7 +41,7 @@ pub fn encode_automation_create_with_param3_test() {
     automation_encoder.AutomationCreateRequest(
       name: "Desc Replace",
       description: "",
-      automation_type: automation_encoder.DescriptionReplace,
+      automation_type: DescriptionReplace,
       param_1: ".*",
       param_2: "ads.*",
       param_3: Some("removed"),
@@ -52,8 +53,8 @@ pub fn encode_automation_create_with_param3_test() {
   let json_string = json.to_string(encoded)
 
   // Should include param_3
-  json_string
-  |> should.contain("\"param_3\":\"removed\"")
+  string.contains(json_string, "\"param_3\":\"removed\"")
+  |> should.be_true
 }
 
 /// Test encoding AutomationUpdateRequest (partial)
@@ -74,10 +75,10 @@ pub fn encode_automation_update_partial_test() {
   let json_string = json.to_string(encoded)
 
   // Should only include provided fields
-  json_string
-  |> should.contain("\"name\":\"Updated Name\"")
-  json_string
-  |> should.contain("\"order\":5")
+  string.contains(json_string, "\"name\":\"Updated Name\"")
+  |> should.be_true
+  string.contains(json_string, "\"order\":5")
+  |> should.be_true
 }
 
 /// Test encoding disabled automation
@@ -97,6 +98,6 @@ pub fn encode_automation_disabled_test() {
   let encoded = automation_encoder.encode_automation_create_request(create_req)
   let json_string = json.to_string(encoded)
 
-  json_string
-  |> should.contain("\"disabled\":true")
+  string.contains(json_string, "\"disabled\":true")
+  |> should.be_true
 }

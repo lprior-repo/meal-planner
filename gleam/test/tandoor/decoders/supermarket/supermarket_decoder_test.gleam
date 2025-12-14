@@ -14,7 +14,7 @@ pub fn decode_minimal_supermarket_test() {
   let json_str =
     "{\"id\": 1, \"name\": \"Whole Foods\", \"category_to_supermarket\": []}"
 
-  let result = json.decode(from: json_str, using: supermarket_decoder.decoder())
+  let result = json.parse(json_str, using: supermarket_decoder.decoder())
 
   result
   |> should.be_ok
@@ -32,7 +32,7 @@ pub fn decode_complete_supermarket_test() {
   let json_str =
     "{\"id\": 2, \"name\": \"Trader Joe's\", \"description\": \"Neighborhood grocery store\", \"category_to_supermarket\": [{\"id\": 1, \"category\": 10, \"supermarket\": 2, \"order\": 0}, {\"id\": 2, \"category\": 20, \"supermarket\": 2, \"order\": 1}], \"open_data_slug\": \"trader-joes\"}"
 
-  let result = json.decode(from: json_str, using: supermarket_decoder.decoder())
+  let result = json.parse(json_str, using: supermarket_decoder.decoder())
 
   result
   |> should.be_ok
@@ -63,7 +63,7 @@ pub fn decode_supermarket_with_nulls_test() {
   let json_str =
     "{\"id\": 3, \"name\": \"Safeway\", \"description\": null, \"category_to_supermarket\": [], \"open_data_slug\": null}"
 
-  let result = json.decode(from: json_str, using: supermarket_decoder.decoder())
+  let result = json.parse(json_str, using: supermarket_decoder.decoder())
 
   result
   |> should.be_ok
@@ -80,7 +80,7 @@ pub fn decode_supermarket_with_nulls_test() {
 pub fn decode_supermarket_missing_id_test() {
   let json_str = "{\"name\": \"Kroger\", \"category_to_supermarket\": []}"
 
-  let result = json.decode(from: json_str, using: supermarket_decoder.decoder())
+  let result = json.parse(json_str, using: supermarket_decoder.decoder())
 
   result
   |> should.be_error
@@ -90,7 +90,7 @@ pub fn decode_supermarket_missing_id_test() {
 pub fn decode_supermarket_missing_name_test() {
   let json_str = "{\"id\": 5, \"category_to_supermarket\": []}"
 
-  let result = json.decode(from: json_str, using: supermarket_decoder.decoder())
+  let result = json.parse(json_str, using: supermarket_decoder.decoder())
 
   result
   |> should.be_error
@@ -100,7 +100,7 @@ pub fn decode_supermarket_missing_name_test() {
 pub fn decode_supermarket_missing_categories_test() {
   let json_str = "{\"id\": 6, \"name\": \"Albertsons\"}"
 
-  let result = json.decode(from: json_str, using: supermarket_decoder.decoder())
+  let result = json.parse(json_str, using: supermarket_decoder.decoder())
 
   result
   |> should.be_error
@@ -111,7 +111,7 @@ pub fn decode_supermarket_single_category_test() {
   let json_str =
     "{\"id\": 7, \"name\": \"Target\", \"category_to_supermarket\": [{\"id\": 100, \"category\": 5, \"supermarket\": 7, \"order\": 0}]}"
 
-  let result = json.decode(from: json_str, using: supermarket_decoder.decoder())
+  let result = json.parse(json_str, using: supermarket_decoder.decoder())
 
   result
   |> should.be_ok

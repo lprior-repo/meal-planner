@@ -71,6 +71,9 @@ pub fn decode_shopping_list_recipe() -> decode.Decoder(ShoppingListRecipe) {
 pub fn decode_shopping_list_recipe_list() -> decode.Decoder(
   List(ShoppingListRecipe),
 ) {
-  use results <- decode.field("results", decode.list(decode_shopping_list_recipe()))
+  use results <- decode.field(
+    "results",
+    decode.list(decode_shopping_list_recipe()),
+  )
   decode.success(results)
 }

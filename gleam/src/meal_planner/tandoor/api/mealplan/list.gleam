@@ -2,9 +2,8 @@
 ///
 /// This module provides functions to list meal plans from the Tandoor API.
 import gleam/option.{type Option}
-import meal_planner/tandoor/client.{
-  type ClientConfig, type MealPlanListResponse, type TandoorError,
-}
+import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlanListResponse}
 
 /// List meal plans from Tandoor API with optional date filtering
 ///

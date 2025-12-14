@@ -17,7 +17,7 @@
 /// export TANDOOR_PASSWORD=password
 /// gleam test
 /// ```
-import gleam/erlang/os
+import envoy
 import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/tandoor/client.{
@@ -33,14 +33,14 @@ import meal_planner/tandoor/client.{
 /// Result with authenticated client config or error message
 pub fn get_test_config() -> Result(ClientConfig, String) {
   use url <- result.try(
-    os.get_env("TANDOOR_URL")
+    envoy.get("TANDOOR_URL")
     |> result.replace_error(
       "TANDOOR_URL not set - set it to your Tandoor instance URL (e.g., http://localhost:8000)",
     ),
   )
 
   // Try session auth first (recommended)
-  case os.get_env("TANDOOR_USERNAME"), os.get_env("TANDOOR_PASSWORD") {
+  case envoy.get("TANDOOR_USERNAME"), envoy.get("TANDOOR_PASSWORD") {
     Ok(username), Ok(password) -> {
       let config = session_config(url, username, password)
       // Authenticate and return config
@@ -56,7 +56,7 @@ pub fn get_test_config() -> Result(ClientConfig, String) {
     _, _ -> {
       // Fall back to bearer token
       use token <- result.try(
-        os.get_env("TANDOOR_TOKEN")
+        envoy.get("TANDOOR_TOKEN")
         |> result.replace_error(
           "Neither TANDOOR_USERNAME/PASSWORD nor TANDOOR_TOKEN set - provide credentials for testing",
         ),
@@ -79,7 +79,7 @@ pub fn get_test_config_with_timeout(
 /// Returns True if TANDOOR_URL is not set (tests should be skipped).
 /// Returns False if TANDOOR_URL is set (tests can run).
 pub fn skip_if_no_tandoor() -> Bool {
-  case os.get_env("TANDOOR_URL") {
+  case envoy.get("TANDOOR_URL") {
     Ok(_) -> False
     Error(_) -> True
   }
@@ -87,7 +87,7 @@ pub fn skip_if_no_tandoor() -> Bool {
 
 /// Get environment variable or default value
 pub fn get_env_or_default(key: String, default: String) -> String {
-  case os.get_env(key) {
+  case envoy.get(key) {
     Ok(value) -> value
     Error(_) -> default
   }

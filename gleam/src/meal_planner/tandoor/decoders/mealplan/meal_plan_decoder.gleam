@@ -4,14 +4,14 @@
 /// Handles complex nested structures including recipes, meal types, and shared users.
 import gleam/dynamic
 import gleam/dynamic/decode
+import gleam/list
 import gleam/result
 import gleam/string
-import gleam/list
 import meal_planner/tandoor/decoders/mealplan/meal_type_decoder
 import meal_planner/tandoor/decoders/mealplan/user_decoder
 import meal_planner/tandoor/decoders/recipe/recipe_overview_decoder
 import meal_planner/tandoor/types/mealplan/meal_plan.{
-  type MealPlan, MealPlan, type MealPlanListResponse, MealPlanListResponse,
+  type MealPlan, type MealPlanListResponse, MealPlan, MealPlanListResponse,
 }
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{
   type MealPlanEntry, MealPlanEntry,
@@ -85,7 +85,10 @@ pub fn meal_plan_list_decoder_internal() -> decode.Decoder(MealPlanListResponse)
   use count <- decode.field("count", decode.int)
   use next <- decode.field("next", decode.optional(decode.string))
   use previous <- decode.field("previous", decode.optional(decode.string))
-  use results <- decode.field("results", decode.list(meal_plan_decoder_internal()))
+  use results <- decode.field(
+    "results",
+    decode.list(meal_plan_decoder_internal()),
+  )
 
   decode.success(MealPlanListResponse(
     count: count,

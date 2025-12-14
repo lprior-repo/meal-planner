@@ -173,10 +173,10 @@ pub fn user_json() -> String {
 
 /// Create paginated response JSON
 pub fn paginated_json(
-  count: Int,
-  results_json: String,
-  next: String,
-  previous: String,
+  count count: Int,
+  results_json results_json: String,
+  next next: String,
+  previous previous: String,
 ) -> String {
   let next_value = case next {
     "" -> "null"

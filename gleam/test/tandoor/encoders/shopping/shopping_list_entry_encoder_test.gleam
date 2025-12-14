@@ -37,13 +37,13 @@ pub fn encode_shopping_list_entry_create_minimal_test() {
 pub fn encode_shopping_list_entry_create_with_values_test() {
   let entry =
     ShoppingListEntryCreate(
-      list_recipe: Some(ids.shopping_list_id(1)),
-      food: Some(ids.food_id(42)),
-      unit: Some(ids.unit_id(5)),
+      list_recipe: Some(ids.shopping_list_id_from_int(1)),
+      food: Some(ids.food_id_from_int(42)),
+      unit: Some(ids.unit_id_from_int(5)),
       amount: 2.5,
       order: 3,
       checked: True,
-      ingredient: Some(ids.ingredient_id(100)),
+      ingredient: Some(ids.ingredient_id_from_int(100)),
       completed_at: Some("2025-12-14T14:00:00Z"),
       delay_until: Some("2025-12-15T10:00:00Z"),
       mealplan_id: Some(10),
@@ -87,13 +87,13 @@ pub fn encode_shopping_list_entry_update_minimal_test() {
 pub fn encode_shopping_list_entry_update_with_values_test() {
   let update =
     ShoppingListEntryUpdate(
-      list_recipe: Some(ids.shopping_list_id(2)),
-      food: Some(ids.food_id(99)),
-      unit: Some(ids.unit_id(7)),
+      list_recipe: Some(ids.shopping_list_id_from_int(2)),
+      food: Some(ids.food_id_from_int(99)),
+      unit: Some(ids.unit_id_from_int(7)),
       amount: 3.0,
       order: 1,
       checked: True,
-      ingredient: Some(ids.ingredient_id(200)),
+      ingredient: Some(ids.ingredient_id_from_int(200)),
       completed_at: Some("2025-12-14T15:00:00Z"),
       delay_until: None,
     )

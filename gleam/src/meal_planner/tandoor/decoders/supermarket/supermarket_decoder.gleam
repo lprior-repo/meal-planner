@@ -2,6 +2,7 @@
 ///
 /// Handles JSON decoding from Tandoor API responses
 import gleam/dynamic/decode
+import gleam/option.{None}
 import meal_planner/tandoor/types/supermarket/supermarket.{
   type Supermarket, type SupermarketCategoryRelation, Supermarket,
   SupermarketCategoryRelation,
@@ -49,13 +50,18 @@ fn category_relation_decoder() -> decode.Decoder(SupermarketCategoryRelation) {
 pub fn decoder() -> decode.Decoder(Supermarket) {
   use id <- decode.field("id", decode.int)
   use name <- decode.field("name", decode.string)
-  use description <- decode.field("description", decode.optional(decode.string))
+  use description <- decode.optional_field(
+    "description",
+    None,
+    decode.optional(decode.string),
+  )
   use category_to_supermarket <- decode.field(
     "category_to_supermarket",
     decode.list(category_relation_decoder()),
   )
-  use open_data_slug <- decode.field(
+  use open_data_slug <- decode.optional_field(
     "open_data_slug",
+    None,
     decode.optional(decode.string),
   )
 

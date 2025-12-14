@@ -41,8 +41,8 @@ let assert Ok(access_token) = oauth.get_access_token(
   verifier
 )
 
-// Store access_token.oauth_token and access_token.oauth_token_secret
-// in your database for this user
+// Store access_token credentials in your database for this user
+// Note: The token fields contain oauth_token and oauth_token_secret
 ```
 
 ### 2. Create Profile (First time for new user)
@@ -114,11 +114,14 @@ let assert Ok(profile_auth) = client.get_profile_auth(
 ```gleam
 pub type Profile {
   Profile(
-    goal_weight_kg: Option(Float),      // Goal weight in kg
-    last_weight_kg: Option(Float),      // Last recorded weight in kg
-    last_weight_date_int: Option(Int),  // Date as integer (YYYYMMDD)
-    height_cm: Option(Float),           // Height in cm
-    calorie_goal: Option(Int),          // Daily calorie goal
+    goal_weight_kg: Option(Float),        // Goal weight in kg
+    last_weight_kg: Option(Float),        // Last recorded weight in kg
+    last_weight_date_int: Option(Int),    // Date as integer (YYYYMMDD)
+    last_weight_comment: Option(String),  // Comment on last weight entry
+    height_cm: Option(Float),             // Height in cm
+    calorie_goal: Option(Int),            // Daily calorie goal
+    weight_measure: Option(String),       // Weight unit (e.g., "Kg")
+    height_measure: Option(String),       // Height unit (e.g., "Cm")
   )
 }
 ```
@@ -130,11 +133,13 @@ All fields are optional as users may not have set all values.
 ```gleam
 pub type ProfileAuth {
   ProfileAuth(
-    oauth_token: String,          // OAuth access token
-    oauth_token_secret: String,   // OAuth token secret
+    auth_token: String,   // OAuth access token (API returns as "auth_token")
+    auth_secret: String,  // OAuth token secret (API returns as "auth_secret")
   )
 }
 ```
+
+**IMPORTANT**: The FatSecret API returns these fields as `auth_token` and `auth_secret` in JSON responses from `profile.create` and `profile.get_auth`, NOT as `oauth_token` and `oauth_token_secret`.
 
 Store these credentials securely in your database for each user.
 

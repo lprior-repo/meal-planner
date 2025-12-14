@@ -7,6 +7,7 @@
 import gleam/option.{type Option}
 
 /// A favorite food item
+/// API: foods.get_favorites.v2
 pub type FavoriteFood {
   FavoriteFood(
     food_id: String,
@@ -15,10 +16,13 @@ pub type FavoriteFood {
     brand_name: Option(String),
     food_description: String,
     food_url: String,
+    serving_id: String,
+    number_of_units: String,
   )
 }
 
-/// A most-eaten food with consumption count
+/// A most-eaten food item
+/// API: foods.get_most_eaten.v2
 pub type MostEatenFood {
   MostEatenFood(
     food_id: String,
@@ -27,11 +31,13 @@ pub type MostEatenFood {
     brand_name: Option(String),
     food_description: String,
     food_url: String,
-    eat_count: Int,
+    serving_id: String,
+    number_of_units: String,
   )
 }
 
 /// A recently eaten food item
+/// API: foods.get_recently_eaten.v2
 pub type RecentlyEatenFood {
   RecentlyEatenFood(
     food_id: String,
@@ -40,10 +46,13 @@ pub type RecentlyEatenFood {
     brand_name: Option(String),
     food_description: String,
     food_url: String,
+    serving_id: String,
+    number_of_units: String,
   )
 }
 
 /// A favorite recipe
+/// API: recipes.get_favorites.v2
 pub type FavoriteRecipe {
   FavoriteRecipe(
     recipe_id: String,
@@ -54,34 +63,28 @@ pub type FavoriteRecipe {
   )
 }
 
-/// Response containing favorite foods with pagination
+/// Response containing favorite foods (no pagination per API docs)
+/// API: foods.get_favorites.v2
 pub type FavoriteFoodsResponse {
-  FavoriteFoodsResponse(
-    foods: List(FavoriteFood),
-    max_results: Int,
-    total_results: Int,
-    page_number: Int,
-  )
+  FavoriteFoodsResponse(foods: List(FavoriteFood))
 }
 
-/// Response containing most eaten foods
+/// Response containing most eaten foods (no pagination per API docs)
+/// API: foods.get_most_eaten.v2
 pub type MostEatenResponse {
-  MostEatenResponse(foods: List(MostEatenFood), meal: Option(String))
+  MostEatenResponse(foods: List(MostEatenFood))
 }
 
-/// Response containing recently eaten foods
+/// Response containing recently eaten foods (no pagination per API docs)
+/// API: foods.get_recently_eaten.v2
 pub type RecentlyEatenResponse {
-  RecentlyEatenResponse(foods: List(RecentlyEatenFood), meal: Option(String))
+  RecentlyEatenResponse(foods: List(RecentlyEatenFood))
 }
 
-/// Response containing favorite recipes with pagination
+/// Response containing favorite recipes (no pagination per API docs)
+/// API: recipes.get_favorites.v2
 pub type FavoriteRecipesResponse {
-  FavoriteRecipesResponse(
-    recipes: List(FavoriteRecipe),
-    max_results: Int,
-    total_results: Int,
-    page_number: Int,
-  )
+  FavoriteRecipesResponse(recipes: List(FavoriteRecipe))
 }
 
 /// Meal type filter for most/recently eaten queries

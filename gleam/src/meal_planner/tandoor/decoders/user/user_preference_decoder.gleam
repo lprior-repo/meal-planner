@@ -1,35 +1,22 @@
 /// UserPreference decoder for Tandoor SDK
 ///
 /// This module provides JSON decoders for UserPreference types from Tandoor API.
+import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/option.{None}
 import meal_planner/tandoor/decoders/user/user_decoder
 import meal_planner/tandoor/decoders/user/user_file_view_decoder
-import meal_planner/tandoor/types/user/user_preference.{UserPreference}
+import meal_planner/tandoor/types/user/user_preference.{
+  type UserPreference, UserPreference,
+}
 
-/// Decode a UserPreference from JSON
-///
-/// Decodes complete user preferences from Tandoor API.
-/// Handles nullable fields (image, plan_share, shopping_share) appropriately.
-///
-/// ## Example JSON
-/// ```json
-/// {
-///   "user": { ...user object... },
-///   "image": null,
-///   "theme": "BOOTSTRAP",
-///   "nav_bg_color": "#212529",
-///   "nav_text_color": "LIGHT",
-///   ...
-/// }
-/// ```
-pub fn decode(
-  json: dynamic.Dynamic,
-) -> Result(UserPreference, List(decode.DecodeError)) {
-  use user <- decode.field("user", user_decoder.decode)
-  use image <- decode.field(
+/// UserPreference decoder - returns a Decoder for use with decode.field, decode.run, etc.
+pub fn user_preference_decoder() -> decode.Decoder(UserPreference) {
+  use user <- decode.field("user", user_decoder.user_decoder())
+  use image <- decode.optional_field(
     "image",
-    decode.optional(user_file_view_decoder.decode),
+    None,
+    decode.optional(user_file_view_decoder.user_file_view_decoder()),
   )
   use theme <- decode.field("theme", decode.string)
   use nav_bg_color <- decode.field("nav_bg_color", decode.string)
@@ -39,9 +26,10 @@ pub fn decode(
   use default_page <- decode.field("default_page", decode.string)
   use use_fractions <- decode.field("use_fractions", decode.bool)
   use use_kj <- decode.field("use_kj", decode.bool)
-  use plan_share <- decode.field(
+  use plan_share <- decode.optional_field(
     "plan_share",
-    decode.optional(decode.list(user_decoder.decode)),
+    None,
+    decode.optional(decode.list(user_decoder.user_decoder())),
   )
   use nav_sticky <- decode.field("nav_sticky", decode.bool)
   use ingredient_decimals <- decode.field("ingredient_decimals", decode.int)
@@ -64,9 +52,10 @@ pub fn decode(
     "mealplan_autoexclude_onhand",
     decode.bool,
   )
-  use shopping_share <- decode.field(
+  use shopping_share <- decode.optional_field(
     "shopping_share",
-    decode.optional(decode.list(user_decoder.decode)),
+    None,
+    decode.optional(decode.list(user_decoder.user_decoder())),
   )
   use shopping_recent_days <- decode.field("shopping_recent_days", decode.int)
   use csv_delim <- decode.field("csv_delim", decode.string)
@@ -114,5 +103,11 @@ pub fn decode(
     show_step_ingredients: show_step_ingredients,
     food_children_exist: food_children_exist,
   ))
-  |> decode.run(json)
+}
+
+/// Decode a UserPreference from JSON - convenience wrapper
+pub fn decode(
+  json: dynamic.Dynamic,
+) -> Result(UserPreference, List(decode.DecodeError)) {
+  decode.run(json, user_preference_decoder())
 }

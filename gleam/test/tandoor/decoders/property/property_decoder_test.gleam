@@ -2,14 +2,14 @@
 ///
 /// This module tests JSON decoding of Property types.
 /// Following TDD: these tests should FAIL first, then pass after implementation.
-import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/json
+import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/decoders/property/property_decoder
 import meal_planner/tandoor/types/property/property.{
-  FoodProperty, Property, RecipeProperty,
+  type Property, FoodProperty, Property, RecipeProperty,
 }
 
 /// Test decoding a recipe property
@@ -90,10 +90,8 @@ pub fn decode_property_list_test() {
 
   result
   |> should.be_ok
-  |> fn(list) {
-    list
-    |> should.have_length(2)
-  }
+  |> list.length
+  |> should.equal(2)
 }
 
 /// Test decoding property with minimal fields
