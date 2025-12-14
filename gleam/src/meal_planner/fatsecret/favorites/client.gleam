@@ -5,16 +5,9 @@
 ///
 /// API Reference: https://platform.fatsecret.com/api/Default.aspx?screen=rapir
 import gleam/dict.{type Dict}
-import gleam/dynamic/decode
-import gleam/http
-import gleam/http/request
-import gleam/httpc
 import gleam/int
-import gleam/json
-import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import gleam/string
 import meal_planner/env.{type FatSecretConfig}
 import meal_planner/fatsecret/client.{type AccessToken, type FatSecretError}
 import meal_planner/fatsecret/favorites/decoders

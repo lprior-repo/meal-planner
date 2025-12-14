@@ -3,7 +3,7 @@
 /// JSON decoders for Profile API responses.
 /// All decoders handle the FatSecret API response format.
 import gleam/dynamic/decode
-import gleam/option.{type Option, None, Some}
+import gleam/option.{type Option}
 import meal_planner/fatsecret/profile/types
 
 // ============================================================================

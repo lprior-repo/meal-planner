@@ -11,13 +11,11 @@
 /// - DELETE /api/fatsecret/saved-meals/:id/items/:item_id - Delete meal item
 import gleam/dynamic
 import gleam/dynamic/decode
-import gleam/float
 import gleam/http
 import gleam/json
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/result
-import gleam/string
 import meal_planner/fatsecret/saved_meals/service
 import meal_planner/fatsecret/saved_meals/types
 import pog
@@ -80,7 +78,7 @@ pub fn handle_get_saved_meals(
   let meal_filter =
     list.find(query_params, fn(p) { p.0 == "meal" })
     |> result.map(fn(p) { p.1 })
-    |> result.then(types.meal_type_from_string)
+    |> result.try(types.meal_type_from_string)
     |> option.from_result
 
   case service.get_saved_meals(conn, meal_filter) {

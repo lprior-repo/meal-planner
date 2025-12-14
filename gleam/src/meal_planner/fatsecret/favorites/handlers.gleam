@@ -13,7 +13,6 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
-import gleam/string
 import meal_planner/fatsecret/favorites/service
 import meal_planner/fatsecret/favorites/types
 import meal_planner/fatsecret/service as fatsecret_service
@@ -296,7 +295,7 @@ fn parse_int_param(
 ) -> option.Option(Int) {
   params
   |> list.key_find(key)
-  |> result.then(int.parse)
+  |> result.try(int.parse)
   |> option.from_result
 }
 

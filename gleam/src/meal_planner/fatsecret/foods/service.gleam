@@ -1,7 +1,6 @@
 /// FatSecret Foods service layer
 /// Automatic configuration loading and error handling
-import gleam/int
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import meal_planner/env
 import meal_planner/fatsecret/foods/client
 import meal_planner/fatsecret/foods/types.{
