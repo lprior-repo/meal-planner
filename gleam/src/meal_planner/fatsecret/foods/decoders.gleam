@@ -23,16 +23,18 @@ import meal_planner/fatsecret/foods/types.{
 
 /// Decode a float that might be a string ("95.5") or number (95.5)
 fn flexible_float() -> decode.Decoder(Float) {
-  decode.one_of([
+  decode.one_of(
     decode.float,
-    {
-      use s <- decode.then(decode.string)
-      case float.parse(s) {
-        Ok(f) -> decode.success(f)
-        Error(_) -> decode.failure(float.Float, s)
-      }
-    },
-  ])
+    or: [
+      {
+        use s <- decode.then(decode.string)
+        case float.parse(s) {
+          Ok(f) -> decode.success(f)
+          Error(_) -> decode.failure(0.0, "Float")
+        }
+      },
+    ],
+  )
 }
 
 /// Decode an optional float that might be a string, number, or missing
@@ -42,16 +44,18 @@ fn optional_flexible_float() -> decode.Decoder(Option(Float)) {
 
 /// Decode an int that might be a string ("95") or number (95)
 fn flexible_int() -> decode.Decoder(Int) {
-  decode.one_of([
+  decode.one_of(
     decode.int,
-    {
-      use s <- decode.then(decode.string)
-      case int.parse(s) {
-        Ok(i) -> decode.success(i)
-        Error(_) -> decode.failure(int.Int, s)
-      }
-    },
-  ])
+    or: [
+      {
+        use s <- decode.then(decode.string)
+        case int.parse(s) {
+          Ok(i) -> decode.success(i)
+          Error(_) -> decode.failure(0, "Int")
+        }
+      },
+    ],
+  )
 }
 
 // ============================================================================
@@ -209,15 +213,17 @@ pub fn decode_serving(
 /// - `{"serving": {...}}` for 1 serving
 /// - `{"serving": [{...}, {...}]}` for multiple servings
 fn servings_list_decoder() -> decode.Decoder(List(Serving)) {
-  decode.one_of([
+  decode.one_of(
     // Try array first
     decode.list(serving_decoder()),
-    // Fallback to single object wrapped in list
-    {
-      use single <- decode.then(serving_decoder())
-      decode.success([single])
-    },
-  ])
+    or: [
+      // Fallback to single object wrapped in list
+      {
+        use single <- decode.then(serving_decoder())
+        decode.success([single])
+      },
+    ],
+  )
 }
 
 // ============================================================================
@@ -287,15 +293,17 @@ pub fn food_search_result_decoder() -> decode.Decoder(FoodSearchResult) {
 /// - `{"food": {...}}` for 1 result
 /// - `{"food": [{...}, {...}]}` for multiple results
 fn food_search_list_decoder() -> decode.Decoder(List(FoodSearchResult)) {
-  decode.one_of([
+  decode.one_of(
     // Try array first
     decode.list(food_search_result_decoder()),
-    // Fallback to single object wrapped in list
-    {
-      use single <- decode.then(food_search_result_decoder())
-      decode.success([single])
-    },
-  ])
+    or: [
+      // Fallback to single object wrapped in list
+      {
+        use single <- decode.then(food_search_result_decoder())
+        decode.success([single])
+      },
+    ],
+  )
 }
 
 /// Decoder for foods.search response

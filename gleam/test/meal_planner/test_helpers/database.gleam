@@ -5,7 +5,11 @@
 /// - Transaction helpers
 /// - Database cleanup utilities
 import envoy
+import gleam/erlang/process
+import gleam/int
 import gleam/option.{Some}
+import gleam/otp/actor
+import gleam/result
 import pog
 
 /// Get a test database connection
@@ -13,25 +17,33 @@ import pog
 /// Uses environment variables or defaults for test database.
 /// Expects: DATABASE_URL or individual DB_* variables
 pub fn get_test_connection() -> pog.Connection {
+  let pool_name = process.new_name(prefix: "test_db")
   let config = case envoy.get("DATABASE_URL") {
-    Ok(url) -> pog.url_config(url)
+    Ok(url) ->
+      pog.url_config(pool_name, url)
+      |> result.unwrap(pog.default_config(pool_name: pool_name))
     Error(_) -> {
-      pog.Config(
-        ..pog.default_config(),
-        host: envoy.get("DB_HOST") |> result.unwrap("localhost"),
-        port: envoy.get("DB_PORT")
-          |> result.try(int.parse)
-          |> result.unwrap(5432),
-        database: envoy.get("DB_NAME") |> result.unwrap("meal_planner"),
-        user: envoy.get("DB_USER") |> result.unwrap("postgres"),
-        password: envoy.get("DB_PASSWORD") |> result.map(Some),
-        ssl: False,
-        connection_parameters: [],
+      pog.default_config(pool_name: pool_name)
+      |> pog.host(envoy.get("DB_HOST") |> result.unwrap("localhost"))
+      |> pog.port(
+        envoy.get("DB_PORT")
+        |> result.try(int.parse)
+        |> result.unwrap(5432),
+      )
+      |> pog.database(envoy.get("DB_NAME") |> result.unwrap("meal_planner"))
+      |> pog.user(envoy.get("DB_USER") |> result.unwrap("postgres"))
+      |> pog.password(
+        envoy.get("DB_PASSWORD")
+        |> result.map(Some)
+        |> result.unwrap(Some("postgres")),
       )
     }
   }
 
-  pog.connect(config)
+  case pog.start(config) {
+    Ok(actor.Started(_pid, conn)) -> conn
+    Error(_) -> panic as "Failed to start test database connection"
+  }
 }
 
 /// Run a function within a database transaction that auto-rolls back
@@ -64,8 +76,8 @@ pub fn with_test_transaction(test_fn: fn(pog.Connection) -> a) -> a {
     pog.query("ROLLBACK")
     |> pog.execute(conn)
 
-  // Disconnect
-  pog.disconnect(conn)
+  // Note: pog 4.x uses connection pools that are managed automatically
+  // No explicit disconnect needed for test connections
 
   result
 }

@@ -14,6 +14,7 @@
 /// They modify the user's actual food diary, so use a test account only!
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/result
 import gleeunit/should
 import meal_planner/fatsecret/core/config
 import meal_planner/fatsecret/core/errors

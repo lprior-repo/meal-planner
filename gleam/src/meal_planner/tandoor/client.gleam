@@ -23,6 +23,9 @@ import gleam/result
 import gleam/string
 import gleam/uri
 import meal_planner/logger
+import meal_planner/tandoor/decoders/mealplan/meal_plan_decoder
+import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
+import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
 
 // ============================================================================
 // Types
@@ -1615,124 +1618,22 @@ fn encode_create_recipe(request: CreateRecipeRequest) -> String {
 // Meal Plan API Types
 // ============================================================================
 
-/// Meal type for a meal plan entry
-pub type MealType {
-  Breakfast
-  Lunch
-  Dinner
-  Snack
-  Other
-}
-
-/// Convert MealType to API string
-fn meal_type_to_string(meal_type: MealType) -> String {
-  case meal_type {
-    Breakfast -> "BREAKFAST"
-    Lunch -> "LUNCH"
-    Dinner -> "DINNER"
-    Snack -> "SNACK"
-    Other -> "OTHER"
-  }
-}
-
-/// Convert API string to MealType
-fn meal_type_from_string(s: String) -> MealType {
-  case string.uppercase(s) {
-    "BREAKFAST" -> Breakfast
-    "LUNCH" -> Lunch
-    "DINNER" -> Dinner
-    "SNACK" -> Snack
-    _ -> Other
-  }
-}
-
-/// Meal plan entry from Tandoor API
-pub type MealPlanEntry {
-  MealPlanEntry(
-    id: Int,
-    recipe: Option(Recipe),
-    recipe_name: String,
-    servings: Float,
-    note: String,
-    from_date: String,
-    to_date: String,
-    meal_type: MealType,
-    created_by: Int,
-  )
-}
-
 /// Request to create a meal plan entry
 pub type CreateMealPlanRequest {
   CreateMealPlanRequest(
+    title: String,
     recipe: Option(Int),
-    recipe_name: String,
     servings: Float,
     note: String,
     from_date: String,
     to_date: String,
-    meal_type: MealType,
-  )
-}
-
-/// Paginated meal plan response
-pub type MealPlanListResponse {
-  MealPlanListResponse(
-    count: Int,
-    next: Option(String),
-    previous: Option(String),
-    results: List(MealPlanEntry),
+    meal_type: Int,
   )
 }
 
 // ============================================================================
 // Meal Plan API Methods
 // ============================================================================
-
-/// Decoder for MealPlanEntry
-fn meal_plan_decoder_internal() -> decode.Decoder(MealPlanEntry) {
-  use id <- decode.field("id", decode.int)
-  use recipe <- decode.field(
-    "recipe",
-    decode.optional(recipe_decoder_internal()),
-  )
-  use recipe_name <- decode.field("recipe_name", decode.string)
-  use servings <- decode.field("servings", decode.float)
-  use note <- decode.field("note", decode.string)
-  use from_date <- decode.field("from_date", decode.string)
-  use to_date <- decode.field("to_date", decode.string)
-  use meal_type_str <- decode.field("meal_type", decode.string)
-  use created_by <- decode.field("created_by", decode.int)
-
-  decode.success(MealPlanEntry(
-    id: id,
-    recipe: recipe,
-    recipe_name: recipe_name,
-    servings: servings,
-    note: note,
-    from_date: from_date,
-    to_date: to_date,
-    meal_type: meal_type_from_string(meal_type_str),
-    created_by: created_by,
-  ))
-}
-
-/// Decoder for paginated meal plan list
-fn meal_plan_list_decoder_internal() -> decode.Decoder(MealPlanListResponse) {
-  use count <- decode.field("count", decode.int)
-  use next <- decode.field("next", decode.optional(decode.string))
-  use previous <- decode.field("previous", decode.optional(decode.string))
-  use results <- decode.field(
-    "results",
-    decode.list(meal_plan_decoder_internal()),
-  )
-
-  decode.success(MealPlanListResponse(
-    count: count,
-    next: next,
-    previous: previous,
-    results: results,
-  ))
-}
 
 /// Get meal plan entries from Tandoor API
 ///
