@@ -24,11 +24,11 @@ import gleam/option.{type Option}
 ///
 /// TODO: Implement once client has supermarket methods
 pub fn list_supermarkets(
-  config config: a,
-  limit limit: Option(Int),
-  offset offset: Option(Int),
+  config _config: a,
+  limit _limit: Option(Int),
+  offset _offset: Option(Int),
 ) -> Result(b, c) {
   // Placeholder - awaiting client implementation
   // Will delegate to: client.get_supermarkets(config, limit, offset)
-  Error(Nil)
+  todo as "Supermarket list not yet implemented"
 }

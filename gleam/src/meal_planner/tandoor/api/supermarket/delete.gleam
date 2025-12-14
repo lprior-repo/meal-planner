@@ -19,8 +19,8 @@
 /// ```
 ///
 /// TODO: Implement once client has supermarket methods
-pub fn delete_supermarket(config config: a, id id: Int) -> Result(Nil, b) {
+pub fn delete_supermarket(config _config: a, id _id: Int) -> Result(Nil, b) {
   // Placeholder - awaiting client implementation
   // Will delegate to: client.delete_supermarket(config, id)
-  Error(Nil)
+  todo as "Supermarket delete not yet implemented"
 }
