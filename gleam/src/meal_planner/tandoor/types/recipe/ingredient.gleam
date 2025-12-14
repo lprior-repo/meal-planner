@@ -3,21 +3,15 @@
 /// Represents an ingredient used in a recipe with food, unit, and amount.
 /// Based on the Tandoor API Ingredient schema.
 import gleam/option.{type Option}
+import meal_planner/tandoor/types/food/food.{type Food}
+import meal_planner/tandoor/types/unit/unit.{type Unit}
 
-// Placeholder types for related entities (will be defined by other agents)
+// Type aliases for foreign key references
 pub type FoodId =
   Int
 
 pub type UnitId =
   Int
-
-pub type Food {
-  Food(id: Int, name: String)
-}
-
-pub type Unit {
-  Unit(id: Int, name: String, abbreviation: String)
-}
 
 /// An ingredient in a recipe with food, amount, and units
 ///
