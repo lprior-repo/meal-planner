@@ -27,12 +27,12 @@
 ///
 /// TODO: Implement once client has supermarket methods and update types
 pub fn update_supermarket(
-  config config: a,
-  id id: Int,
-  name name: b,
-  description description: c,
+  config _config: a,
+  id _id: Int,
+  name _name: b,
+  description _description: c,
 ) -> Result(d, e) {
   // Placeholder - awaiting client implementation and encoder
   // Will delegate to: client.update_supermarket(config, id, data)
-  Error(Nil)
+  todo as "Supermarket update not yet implemented"
 }

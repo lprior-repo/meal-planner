@@ -19,8 +19,8 @@
 /// ```
 ///
 /// TODO: Implement once client has supermarket methods
-pub fn get_supermarket(config config: a, id id: Int) -> Result(b, c) {
+pub fn get_supermarket(config _config: a, id _id: Int) -> Result(b, c) {
   // Placeholder - awaiting client implementation
   // Will delegate to: client.get_supermarket(config, id)
-  Error(Nil)
+  todo as "Supermarket get not yet implemented"
 }
