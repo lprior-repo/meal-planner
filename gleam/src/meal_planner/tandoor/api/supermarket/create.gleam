@@ -1,9 +1,15 @@
 /// Supermarket Create API
 ///
 /// This module provides functions to create new supermarkets in Tandoor.
-///
-/// Note: This is a stub implementation. Full client integration pending.
-import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import gleam/dynamic/decode
+import gleam/httpc
+import gleam/json
+import gleam/result
+import meal_planner/tandoor/client.{
+  type ClientConfig, type TandoorError, NetworkError,
+}
+import meal_planner/tandoor/decoders/supermarket/supermarket_decoder
+import meal_planner/tandoor/encoders/supermarket/supermarket_create_encoder
 import meal_planner/tandoor/types/supermarket/supermarket.{type Supermarket}
 import meal_planner/tandoor/types/supermarket/supermarket_create.{
   type SupermarketCreateRequest,
@@ -20,20 +26,36 @@ import meal_planner/tandoor/types/supermarket/supermarket_create.{
 ///
 /// # Example
 /// ```gleam
-/// let config = ClientConfig(...)
+/// let config = client.bearer_config("http://localhost:8000", "token")
 /// let request = SupermarketCreateRequest(
 ///   name: "Whole Foods",
 ///   description: Some("Natural grocery store")
 /// )
 /// let result = create_supermarket(config, request)
 /// ```
-///
-/// TODO: Implement once client has supermarket methods
 pub fn create_supermarket(
-  config _config: ClientConfig,
-  request _request: SupermarketCreateRequest,
+  config: ClientConfig,
+  request: SupermarketCreateRequest,
 ) -> Result(Supermarket, TandoorError) {
-  // Placeholder - awaiting client implementation and encoder
-  // Will delegate to: client.create_supermarket(config, data)
-  todo as "Supermarket API not yet implemented"
+  let path = "/api/supermarket/"
+
+  // Encode request data to JSON
+  let body =
+    supermarket_create_encoder.encode_supermarket_create(request)
+    |> json.to_string
+
+  // Build and execute request
+  use req <- result.try(client.build_post_request(config, path, body))
+
+  use resp <- result.try(
+    httpc.send(req)
+    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
+  )
+
+  // Convert to ApiResponse and parse JSON
+  let api_resp = client.ApiResponse(resp.status, resp.headers, resp.body)
+  client.parse_json_body(api_resp, fn(dyn) {
+    decode.run(dyn, supermarket_decoder.decoder())
+    |> result.map_error(fn(_) { "Failed to decode created supermarket" })
+  })
 }
