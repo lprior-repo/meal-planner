@@ -1,15 +1,11 @@
 /// Unit CRUD API
 ///
 /// This module provides create, read, update, delete operations for units.
-import gleam/dynamic/decode
-import gleam/httpc
 import gleam/int
 import gleam/json
 import gleam/result
-import gleam/string
-import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, NetworkError, ParseError,
-}
+import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/unit/unit_decoder
 import meal_planner/tandoor/encoders/unit/unit_encoder
 import meal_planner/tandoor/types/unit/unit.{type Unit}
@@ -34,27 +30,9 @@ pub fn get_unit(
 ) -> Result(Unit, TandoorError) {
   let path = "/api/unit/" <> int.to_string(unit_id) <> "/"
 
-  // Build and execute GET request
-  use req <- result.try(client.build_get_request(config, path, []))
+  use resp <- result.try(crud_helpers.execute_get(config, path, []))
 
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, unit_decoder.decode_unit()) {
-        Ok(unit) -> Ok(unit)
-        Error(errors) -> {
-          let error_msg = "Failed to decode unit: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
+  crud_helpers.parse_json_single(resp, unit_decoder.decode_unit())
 }
 
 /// Create a new unit
@@ -82,28 +60,9 @@ pub fn create_unit(
     unit_encoder.encode_unit_create(name)
     |> json.to_string
 
-  // Build and execute POST request
-  use req <- result.try(client.build_post_request(config, path, request_body))
+  use resp <- result.try(crud_helpers.execute_post(config, path, request_body))
 
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, unit_decoder.decode_unit()) {
-        Ok(unit) -> Ok(unit)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode created unit: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
+  crud_helpers.parse_json_single(resp, unit_decoder.decode_unit())
 }
 
 /// Update an existing unit
@@ -134,28 +93,9 @@ pub fn update_unit(
     unit_encoder.encode_unit(unit)
     |> json.to_string
 
-  // Build and execute PATCH request
-  use req <- result.try(client.build_patch_request(config, path, request_body))
+  use resp <- result.try(crud_helpers.execute_patch(config, path, request_body))
 
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, unit_decoder.decode_unit()) {
-        Ok(updated_unit) -> Ok(updated_unit)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode updated unit: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
+  crud_helpers.parse_json_single(resp, unit_decoder.decode_unit())
 }
 
 /// Delete a unit
@@ -178,13 +118,7 @@ pub fn delete_unit(
 ) -> Result(Nil, TandoorError) {
   let path = "/api/unit/" <> int.to_string(unit_id) <> "/"
 
-  // Build and execute DELETE request
-  use req <- result.try(client.build_delete_request(config, path))
-
-  use _resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
+  use _resp <- result.try(crud_helpers.execute_delete(config, path))
 
   // DELETE returns 204 No Content on success
   Ok(Nil)
