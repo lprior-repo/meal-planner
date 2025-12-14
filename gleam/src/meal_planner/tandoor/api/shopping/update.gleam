@@ -49,7 +49,9 @@ pub fn update_shopping_list_entry(
   data data: ShoppingListEntryUpdate,
 ) -> Result(ShoppingListEntry, TandoorError) {
   let path =
-    "/api/shopping-list-entry/" <> int.to_string(ids.shopping_list_entry_id_to_int(id)) <> "/"
+    "/api/shopping-list-entry/"
+    <> int.to_string(ids.shopping_list_entry_id_to_int(id))
+    <> "/"
 
   // Encode shopping list entry data to JSON
   let request_body =

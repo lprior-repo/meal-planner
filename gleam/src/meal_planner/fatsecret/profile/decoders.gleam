@@ -24,6 +24,13 @@ fn optional_int() -> decode.Decoder(Option(Int)) {
   decode.optional(decode.int)
 }
 
+/// Decode optional string from JSON
+///
+/// FatSecret returns null for unset string values.
+fn optional_string() -> decode.Decoder(Option(String)) {
+  decode.optional(decode.string)
+}
+
 /// Decode Profile from JSON
 ///
 /// Example response:
@@ -33,8 +40,11 @@ fn optional_int() -> decode.Decoder(Option(Int)) {
 ///     "goal_weight_kg": 75.5,
 ///     "last_weight_kg": 80.2,
 ///     "last_weight_date_int": 20251214,
+///     "last_weight_comment": "Woohoo!",
 ///     "height_cm": 175.0,
-///     "calorie_goal": 2000
+///     "calorie_goal": 2000,
+///     "weight_measure": "Kg",
+///     "height_measure": "Cm"
 ///   }
 /// }
 /// ```
@@ -45,15 +55,24 @@ pub fn profile_decoder() -> decode.Decoder(types.Profile) {
     "last_weight_date_int",
     optional_int(),
   )
+  use last_weight_comment <- decode.field(
+    "last_weight_comment",
+    optional_string(),
+  )
   use height_cm <- decode.field("height_cm", optional_float())
   use calorie_goal <- decode.field("calorie_goal", optional_int())
+  use weight_measure <- decode.field("weight_measure", optional_string())
+  use height_measure <- decode.field("height_measure", optional_string())
 
   decode.success(types.Profile(
     goal_weight_kg: goal_weight_kg,
     last_weight_kg: last_weight_kg,
     last_weight_date_int: last_weight_date_int,
+    last_weight_comment: last_weight_comment,
     height_cm: height_cm,
     calorie_goal: calorie_goal,
+    weight_measure: weight_measure,
+    height_measure: height_measure,
   ))
 }
 
@@ -71,29 +90,32 @@ pub fn profile_response_decoder() -> decode.Decoder(types.Profile) {
 
 /// Decode ProfileAuth from JSON
 ///
-/// Example response from profile.create:
+/// Example response from profile.create and profile.get_auth:
 /// ```json
 /// {
-///   "profile_auth": {
-///     "oauth_token": "abc123",
-///     "oauth_token_secret": "xyz789"
+///   "profile": {
+///     "auth_token": "***REMOVED***",
+///     "auth_secret": "cadff7ef247744b4bff48fb2489451fc"
 ///   }
 /// }
 /// ```
+///
+/// CRITICAL: FatSecret returns "auth_token" and "auth_secret", NOT
+/// "oauth_token" and "oauth_token_secret" as the field names.
 pub fn profile_auth_decoder() -> decode.Decoder(types.ProfileAuth) {
-  use oauth_token <- decode.field("oauth_token", decode.string)
-  use oauth_token_secret <- decode.field("oauth_token_secret", decode.string)
+  use auth_token <- decode.field("auth_token", decode.string)
+  use auth_secret <- decode.field("auth_secret", decode.string)
 
   decode.success(types.ProfileAuth(
-    oauth_token: oauth_token,
-    oauth_token_secret: oauth_token_secret,
+    auth_token: auth_token,
+    auth_secret: auth_secret,
   ))
 }
 
 /// Decode ProfileAuth from API response wrapper
 ///
-/// FatSecret wraps the auth in a "profile_auth" field
+/// FatSecret wraps the auth in a "profile" field (NOT "profile_auth")
 pub fn profile_auth_response_decoder() -> decode.Decoder(types.ProfileAuth) {
-  use profile_auth <- decode.field("profile_auth", profile_auth_decoder())
+  use profile_auth <- decode.field("profile", profile_auth_decoder())
   decode.success(profile_auth)
 }

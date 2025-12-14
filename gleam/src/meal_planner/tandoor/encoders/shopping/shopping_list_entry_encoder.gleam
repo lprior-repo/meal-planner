@@ -68,17 +68,21 @@ fn encode_optional_string(opt: Option(String)) -> Json {
 ///
 /// # Returns
 /// JSON representation of the shopping list entry create request
-pub fn encode_shopping_list_entry_create(
-  entry: ShoppingListEntryCreate,
-) -> Json {
+pub fn encode_shopping_list_entry_create(entry: ShoppingListEntryCreate) -> Json {
   json.object([
-    #("list_recipe", encode_optional_int(entry.list_recipe, ids.shopping_list_id_to_int)),
+    #(
+      "list_recipe",
+      encode_optional_int(entry.list_recipe, ids.shopping_list_id_to_int),
+    ),
     #("food", encode_optional_int(entry.food, ids.food_id_to_int)),
     #("unit", encode_optional_int(entry.unit, ids.unit_id_to_int)),
     #("amount", json.float(entry.amount)),
     #("order", json.int(entry.order)),
     #("checked", json.bool(entry.checked)),
-    #("ingredient", encode_optional_int(entry.ingredient, ids.ingredient_id_to_int)),
+    #(
+      "ingredient",
+      encode_optional_int(entry.ingredient, ids.ingredient_id_to_int),
+    ),
     #("completed_at", encode_optional_string(entry.completed_at)),
     #("delay_until", encode_optional_string(entry.delay_until)),
     #("mealplan_id", case entry.mealplan_id {
@@ -122,13 +126,19 @@ pub fn encode_shopping_list_entry_update(
   update: ShoppingListEntryUpdate,
 ) -> Json {
   json.object([
-    #("list_recipe", encode_optional_int(update.list_recipe, ids.shopping_list_id_to_int)),
+    #(
+      "list_recipe",
+      encode_optional_int(update.list_recipe, ids.shopping_list_id_to_int),
+    ),
     #("food", encode_optional_int(update.food, ids.food_id_to_int)),
     #("unit", encode_optional_int(update.unit, ids.unit_id_to_int)),
     #("amount", json.float(update.amount)),
     #("order", json.int(update.order)),
     #("checked", json.bool(update.checked)),
-    #("ingredient", encode_optional_int(update.ingredient, ids.ingredient_id_to_int)),
+    #(
+      "ingredient",
+      encode_optional_int(update.ingredient, ids.ingredient_id_to_int),
+    ),
     #("completed_at", encode_optional_string(update.completed_at)),
     #("delay_until", encode_optional_string(update.delay_until)),
   ])

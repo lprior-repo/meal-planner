@@ -20,14 +20,21 @@ import meal_planner/fatsecret/exercise/types.{
 // Helper Decoders for FatSecret Quirks
 // ============================================================================
 
-/// Decode a float that might be a string ("95.5") or number (95.5)
+/// Decode a float that might be a string ("95.5" or "95") or number (95.5)
 fn flexible_float() -> decode.Decoder(Float) {
   decode.one_of(decode.float, [
     {
       use s <- decode.then(decode.string)
+      // Try parsing as float first
       case float.parse(s) {
         Ok(f) -> decode.success(f)
-        Error(_) -> decode.failure(0.0, "Float")
+        Error(_) -> {
+          // Fall back to parsing as int then converting to float
+          case int.parse(s) {
+            Ok(i) -> decode.success(int.to_float(i))
+            Error(_) -> decode.failure(0.0, "Float")
+          }
+        }
       }
     },
   ])
@@ -163,9 +170,7 @@ fn exercise_entries_list_decoder() -> decode.Decoder(List(ExerciseEntry)) {
 ///   }
 /// }
 /// ```
-pub fn decode_exercise_entries_response() -> decode.Decoder(
-  List(ExerciseEntry),
-) {
+pub fn decode_exercise_entries_response() -> decode.Decoder(List(ExerciseEntry)) {
   decode.at(
     ["exercise_entries", "exercise_entry"],
     exercise_entries_list_decoder(),
@@ -237,8 +242,6 @@ pub fn exercise_month_summary_decoder() -> decode.Decoder(ExerciseMonthSummary) 
 }
 
 /// Decode ExerciseMonthSummary from exercise_entries.get_month.v2 response
-pub fn decode_exercise_month_summary() -> decode.Decoder(
-  ExerciseMonthSummary,
-) {
+pub fn decode_exercise_month_summary() -> decode.Decoder(ExerciseMonthSummary) {
   decode.at(["month"], exercise_month_summary_decoder())
 }

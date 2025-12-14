@@ -48,8 +48,7 @@ pub fn get_unit(
       case decode.run(json_data, unit_decoder.decode_unit()) {
         Ok(unit) -> Ok(unit)
         Error(errors) -> {
-          let error_msg =
-            "Failed to decode unit: " <> string.inspect(errors)
+          let error_msg = "Failed to decode unit: " <> string.inspect(errors)
           Error(ParseError(error_msg))
         }
       }

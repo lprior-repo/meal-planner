@@ -5,7 +5,7 @@
 import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/list
-import gleam/option.{type Option}
+import gleam/option.{type Option, None}
 import gleam/result
 import gleam/string
 import meal_planner/tandoor/client.{type Recipe, Recipe}

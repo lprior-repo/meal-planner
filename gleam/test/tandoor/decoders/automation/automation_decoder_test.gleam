@@ -2,13 +2,14 @@
 ///
 /// This module tests JSON decoding of Automation types.
 /// Following TDD: these tests should FAIL first, then pass after implementation.
-import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/json
+import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/decoders/automation/automation_decoder
 import meal_planner/tandoor/types/automation/automation.{
-  Automation, DescriptionReplace, FoodAlias,
+  type Automation, Automation, DescriptionReplace, FoodAlias,
 }
 
 /// Test decoding a FoodAlias automation
@@ -95,10 +96,8 @@ pub fn decode_automation_list_test() {
 
   result
   |> should.be_ok
-  |> fn(list) {
-    list
-    |> should.have_length(2)
-  }
+  |> list.length
+  |> should.equal(2)
 }
 
 /// Test decoding with empty description

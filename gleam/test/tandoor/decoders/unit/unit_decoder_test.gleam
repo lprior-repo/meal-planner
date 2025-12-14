@@ -2,7 +2,7 @@ import gleam/json
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/decoders/unit/unit_decoder
-import meal_planner/tandoor/types/unit/unit.{Unit}
+import meal_planner/tandoor/types/unit/unit.{type Unit}
 
 pub fn decode_unit_full_test() {
   let json_str =
@@ -15,7 +15,8 @@ pub fn decode_unit_full_test() {
       \"open_data_slug\": \"g\"
     }"
 
-  let result = json.parse(json_str, using: unit_decoder.decode_unit)
+  let result: Result(Unit, _) =
+    json.parse(json_str, using: unit_decoder.decode_unit())
 
   case result {
     Ok(unit) -> {
@@ -47,7 +48,8 @@ pub fn decode_unit_minimal_test() {
       \"open_data_slug\": null
     }"
 
-  let result = json.parse(json_str, using: unit_decoder.decode_unit)
+  let result: Result(Unit, _) =
+    json.parse(json_str, using: unit_decoder.decode_unit())
 
   case result {
     Ok(unit) -> {
@@ -79,7 +81,8 @@ pub fn decode_unit_partial_fields_test() {
       \"open_data_slug\": \"l\"
     }"
 
-  let result = json.parse(json_str, using: unit_decoder.decode_unit)
+  let result: Result(Unit, _) =
+    json.parse(json_str, using: unit_decoder.decode_unit())
 
   case result {
     Ok(unit) -> {
@@ -103,22 +106,24 @@ pub fn decode_unit_partial_fields_test() {
 pub fn decode_unit_invalid_json_test() {
   let json_str = "{\"id\": \"not_a_number\"}"
 
-  let result = json.parse(json_str, using: unit_decoder.decode_unit)
+  let result: Result(Unit, _) =
+    json.parse(json_str, using: unit_decoder.decode_unit())
 
   case result {
     Ok(_) -> should.fail()
-    Error(_) -> should.be_ok()
+    Error(_) -> should.be_true(True)
   }
 }
 
 pub fn decode_unit_missing_required_fields_test() {
   let json_str = "{\"id\": 1}"
 
-  let result = json.parse(json_str, using: unit_decoder.decode_unit)
+  let result: Result(Unit, _) =
+    json.parse(json_str, using: unit_decoder.decode_unit())
 
   case result {
     Ok(_) -> should.fail()
-    Error(_) -> should.be_ok()
+    Error(_) -> should.be_true(True)
   }
 }
 
@@ -132,11 +137,12 @@ pub fn decode_unit_missing_name_test() {
       \"open_data_slug\": \"tbsp\"
     }"
 
-  let result = json.parse(json_str, using: unit_decoder.decode_unit)
+  let result: Result(Unit, _) =
+    json.parse(json_str, using: unit_decoder.decode_unit())
 
   case result {
     Ok(_) -> should.fail()
-    Error(_) -> should.be_ok()
+    Error(_) -> should.be_true(True)
   }
 }
 
@@ -151,7 +157,8 @@ pub fn decode_unit_empty_strings_test() {
       \"open_data_slug\": \"\"
     }"
 
-  let result = json.parse(json_str, using: unit_decoder.decode_unit)
+  let result: Result(Unit, _) =
+    json.parse(json_str, using: unit_decoder.decode_unit())
 
   case result {
     Ok(unit) -> {

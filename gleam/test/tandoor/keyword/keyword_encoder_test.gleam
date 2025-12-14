@@ -3,6 +3,7 @@
 /// This test suite validates JSON encoding of Keyword objects for Tandoor API.
 import gleam/json
 import gleam/option.{None, Some}
+import gleam/string
 import gleeunit/should
 import meal_planner/tandoor/encoders/keyword/keyword_encoder
 import meal_planner/tandoor/types/keyword/keyword.{Keyword}
@@ -25,20 +26,20 @@ pub fn encode_keyword_minimal_test() {
   let json_value = keyword_encoder.encode_keyword(keyword)
   let json_string = json.to_string(json_value)
 
-  json_string
-  |> should.match_substring("\"id\":1")
+  string.contains(json_string, "\"id\":1")
+  |> should.be_true
 
-  json_string
-  |> should.match_substring("\"name\":\"vegetarian\"")
+  string.contains(json_string, "\"name\":\"vegetarian\"")
+  |> should.be_true
 
-  json_string
-  |> should.match_substring("\"label\":\"Vegetarian\"")
+  string.contains(json_string, "\"label\":\"Vegetarian\"")
+  |> should.be_true
 
-  json_string
-  |> should.match_substring("\"description\":\"\"")
+  string.contains(json_string, "\"description\":\"\"")
+  |> should.be_true
 
-  json_string
-  |> should.match_substring("\"numchild\":0")
+  string.contains(json_string, "\"numchild\":0")
+  |> should.be_true
 }
 
 pub fn encode_keyword_with_icon_test() {
@@ -59,11 +60,11 @@ pub fn encode_keyword_with_icon_test() {
   let json_value = keyword_encoder.encode_keyword(keyword)
   let json_string = json.to_string(json_value)
 
-  json_string
-  |> should.match_substring("\"icon\":\"🇮🇹\"")
+  string.contains(json_string, "\"icon\":\"🇮🇹\"")
+  |> should.be_true
 
-  json_string
-  |> should.match_substring("\"description\":\"Italian cuisine\"")
+  string.contains(json_string, "\"description\":\"Italian cuisine\"")
+  |> should.be_true
 }
 
 pub fn encode_keyword_with_parent_test() {
@@ -84,11 +85,11 @@ pub fn encode_keyword_with_parent_test() {
   let json_value = keyword_encoder.encode_keyword(keyword)
   let json_string = json.to_string(json_value)
 
-  json_string
-  |> should.match_substring("\"parent\":1")
+  string.contains(json_string, "\"parent\":1")
+  |> should.be_true
 
-  json_string
-  |> should.match_substring("\"full_name\":\"Vegetarian > Vegan\"")
+  string.contains(json_string, "\"full_name\":\"Vegetarian > Vegan\"")
+  |> should.be_true
 }
 
 pub fn encode_keyword_with_children_test() {
@@ -109,11 +110,11 @@ pub fn encode_keyword_with_children_test() {
   let json_value = keyword_encoder.encode_keyword(keyword)
   let json_string = json.to_string(json_value)
 
-  json_string
-  |> should.match_substring("\"numchild\":5")
+  string.contains(json_string, "\"numchild\":5")
+  |> should.be_true
 
-  json_string
-  |> should.match_substring("\"icon\":\"🍽️\"")
+  string.contains(json_string, "\"icon\":\"🍽️\"")
+  |> should.be_true
 }
 
 pub fn encode_keyword_create_request_test() {
@@ -128,21 +129,21 @@ pub fn encode_keyword_create_request_test() {
   let json_value = keyword_encoder.encode_keyword_create_request(create_data)
   let json_string = json.to_string(json_value)
 
-  json_string
-  |> should.match_substring("\"name\":\"gluten-free\"")
+  string.contains(json_string, "\"name\":\"gluten-free\"")
+  |> should.be_true
 
-  json_string
-  |> should.match_substring("\"description\":\"Gluten-free recipes\"")
+  string.contains(json_string, "\"description\":\"Gluten-free recipes\"")
+  |> should.be_true
 
-  json_string
-  |> should.match_substring("\"icon\":\"🌾\"")
+  string.contains(json_string, "\"icon\":\"🌾\"")
+  |> should.be_true
 
   // Should not include readonly fields
-  json_string
-  |> should.not_match_substring("\"id\":")
+  string.contains(json_string, "\"id\":")
+  |> should.be_false
 
-  json_string
-  |> should.not_match_substring("\"created_at\":")
+  string.contains(json_string, "\"created_at\":")
+  |> should.be_false
 }
 
 pub fn encode_keyword_update_request_test() {
@@ -157,16 +158,16 @@ pub fn encode_keyword_update_request_test() {
   let json_value = keyword_encoder.encode_keyword_update_request(update_data)
   let json_string = json.to_string(json_value)
 
-  json_string
-  |> should.match_substring("\"name\":\"vegan-updated\"")
+  string.contains(json_string, "\"name\":\"vegan-updated\"")
+  |> should.be_true
 
-  json_string
-  |> should.match_substring("\"description\":\"Updated vegan description\"")
+  string.contains(json_string, "\"description\":\"Updated vegan description\"")
+  |> should.be_true
 
   // Should not include readonly fields
-  json_string
-  |> should.not_match_substring("\"label\":")
+  string.contains(json_string, "\"label\":")
+  |> should.be_false
 
-  json_string
-  |> should.not_match_substring("\"numchild\":")
+  string.contains(json_string, "\"numchild\":")
+  |> should.be_false
 }

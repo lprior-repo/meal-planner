@@ -37,8 +37,8 @@
 /// 5. **Opaque Types**: Type-safe IDs (FoodId, RecipeId, etc.)
 import gleam/option.{type Option}
 import meal_planner/fatsecret/core/config
-import meal_planner/fatsecret/core/errors
 import meal_planner/fatsecret/fatsecret
+import meal_planner/fatsecret/foods/client as foods_client
 import meal_planner/fatsecret/foods/service as foods_service
 import meal_planner/fatsecret/recipes/service as recipes_service
 
@@ -102,7 +102,9 @@ pub fn search_foods_legacy(
   page: Option(Int),
   max_results: Option(Int),
 ) -> Result(fatsecret.FoodSearchResponse, String) {
-  case foods_service.search_foods(query, page, max_results) {
+  let page_int = option.unwrap(page, 0)
+  let max_results_int = option.unwrap(max_results, 20)
+  case foods_service.search_foods(query, page_int, max_results_int) {
     Ok(response) -> Ok(response)
     Error(e) -> Error(legacy_error_message(e))
   }
@@ -208,7 +210,7 @@ fn legacy_error_message(error: foods_service.ServiceError) -> String {
   case error {
     foods_service.NotConfigured ->
       "FatSecret not configured. Set FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET"
-    foods_service.ApiError(api_error) -> errors.error_to_string(api_error)
+    foods_service.ApiError(api_error) -> foods_client.error_to_string(api_error)
   }
 }
 
@@ -219,7 +221,7 @@ fn legacy_error_message_recipe(
   case error {
     recipes_service.NotConfigured ->
       "FatSecret not configured. Set FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET"
-    recipes_service.ApiError(api_error) -> errors.error_to_string(api_error)
+    recipes_service.ApiError(api_error) -> foods_client.error_to_string(api_error)
   }
 }
 /// Migration helper for HTTP handlers

@@ -24,10 +24,16 @@ pub type Profile {
     last_weight_kg: Option(Float),
     /// Last weight date as integer (Unix timestamp or YYYYMMDD format)
     last_weight_date_int: Option(Int),
+    /// Comment on last weight entry
+    last_weight_comment: Option(String),
     /// Height in centimeters
     height_cm: Option(Float),
     /// Daily calorie goal
     calorie_goal: Option(Int),
+    /// Weight measurement unit (e.g., "Kg")
+    weight_measure: Option(String),
+    /// Height measurement unit (e.g., "Cm")
+    height_measure: Option(String),
   )
 }
 
@@ -35,17 +41,20 @@ pub type Profile {
 // Profile Authentication Types
 // ============================================================================
 
-/// Profile authentication tokens from profile.create API
+/// Profile authentication tokens from profile.create and profile.get_auth APIs
 ///
-/// After creating a profile, FatSecret returns OAuth credentials
-/// that can be used for all subsequent authenticated API calls.
+/// After creating a profile or retrieving auth credentials, FatSecret returns
+/// OAuth credentials that can be used for all subsequent authenticated API calls.
 /// These should be stored securely in your application.
+///
+/// IMPORTANT: The API returns these as "auth_token" and "auth_secret" in JSON,
+/// but they serve the same purpose as OAuth tokens.
 pub type ProfileAuth {
   ProfileAuth(
-    /// OAuth access token for the profile
-    oauth_token: String,
-    /// OAuth token secret for signing requests
-    oauth_token_secret: String,
+    /// OAuth access token for the profile (returned as "auth_token" in API)
+    auth_token: String,
+    /// OAuth token secret for signing requests (returned as "auth_secret" in API)
+    auth_secret: String,
   )
 }
 

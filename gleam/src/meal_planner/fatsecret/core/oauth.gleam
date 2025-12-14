@@ -112,8 +112,9 @@ pub fn oauth_encode(s: String) -> String {
       | "_"
       | "~" -> char
       _ -> {
-        let assert <<byte>> = <<char:utf8>>
-        "%" <> string.uppercase(int_to_hex(byte))
+        // Handle multi-byte UTF-8 characters by encoding each byte
+        let bytes = <<char:utf8>>
+        encode_bytes(bytes, 0, bit_array.byte_size(bytes), "")
       }
     }
   })
@@ -148,6 +149,19 @@ fn hex_digit(n: Int) -> String {
   }
 }
 
+// Encode bytes recursively to handle multi-byte UTF-8 characters
+fn encode_bytes(bytes: BitArray, index: Int, size: Int, acc: String) -> String {
+  case index >= size {
+    True -> acc
+    False -> {
+      let assert Ok(byte) = bit_array.slice(bytes, index, 1)
+      let assert <<byte_val:int>> = byte
+      let encoded = "%" <> string.uppercase(int_to_hex(byte_val))
+      encode_bytes(bytes, index + 1, size, acc <> encoded)
+    }
+  }
+}
+
 /// Create OAuth 1.0a signature base string
 ///
 /// Format: METHOD&URL&SORTED_PARAMS
@@ -170,6 +184,7 @@ pub fn create_signature_base_string(
 /// Create HMAC-SHA1 signature for OAuth 1.0a
 ///
 /// Signing key = consumer_secret& OR consumer_secret&token_secret
+/// Note: The signing key components are NOT percent-encoded per OAuth 1.0a spec
 /// Result is base64-encoded
 pub fn create_signature(
   base_string: String,
@@ -177,8 +192,8 @@ pub fn create_signature(
   token_secret: Option(String),
 ) -> String {
   let token_secret_str = option.unwrap(token_secret, "")
-  let signing_key =
-    oauth_encode(consumer_secret) <> "&" <> oauth_encode(token_secret_str)
+  // OAuth 1.0a spec: signing key is raw values, NOT percent-encoded
+  let signing_key = consumer_secret <> "&" <> token_secret_str
 
   crypto.hmac(<<base_string:utf8>>, crypto.Sha1, <<signing_key:utf8>>)
   |> bit_array.base64_encode(True)

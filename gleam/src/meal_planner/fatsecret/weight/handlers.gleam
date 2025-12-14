@@ -4,19 +4,16 @@
 ///   POST /api/fatsecret/weight - Update weight measurement
 ///   GET /api/fatsecret/weight/month/:year/:month - Get monthly summary
 import birl
-import gleam/dict
 import gleam/dynamic
-import gleam/float
+import gleam/dynamic/decode
 import gleam/http.{Get, Post}
-import gleam/http/response.{type Response}
 import gleam/int
 import gleam/json
 import gleam/list
-import gleam/option.{None, Some}
-import gleam/result
+import gleam/option.{type Option, None, Some}
 import meal_planner/fatsecret/diary/types as diary_types
 import meal_planner/fatsecret/weight/service
-import meal_planner/fatsecret/weight/types.{WeightUpdate}
+import meal_planner/fatsecret/weight/types.{type WeightUpdate, WeightUpdate}
 import pog
 import wisp.{type Request}
 
@@ -42,7 +39,7 @@ import wisp.{type Request}
 /// - 400: Invalid date (error 205/206)
 /// - 401: Not connected or auth revoked
 /// - 500: Server error
-pub fn update_weight(req: Request, conn: pog.Connection) -> Response(String) {
+pub fn update_weight(req: Request, conn: pog.Connection) -> wisp.Response {
   case req.method {
     Post -> {
       // Parse request body
@@ -112,7 +109,7 @@ pub fn get_weight_month(
   conn: pog.Connection,
   year: String,
   month: String,
-) -> Response(String) {
+) -> wisp.Response {
   case req.method {
     Get -> {
       // Parse year and month
@@ -152,9 +149,9 @@ pub fn get_weight_month(
                   wisp.json_response(
                     json.to_string(
                       json.object([
-                        #("month", json.int(summary.month)),
-                        #("year", json.int(summary.year)),
-                        #("days", json.array(days_json)),
+                        #("month", json.int(month_int)),
+                        #("year", json.int(year_int)),
+                        #("days", json.array(days_json, fn(x) { x })),
                       ]),
                     ),
                     200,
@@ -190,82 +187,76 @@ pub fn get_weight_month(
 // Helper Functions
 // ============================================================================
 
-/// Parse WeightUpdate from JSON request body
-fn parse_weight_update(body: String) -> Result(WeightUpdate, String) {
-  // Manual JSON parsing using dynamic decoder
-  use parsed <- result.try(
-    json.parse(body, dynamic.dict(dynamic.string, dynamic.dynamic))
-    |> result.map_error(fn(_) { "Invalid JSON format" }),
-  )
+/// Parse WeightUpdate from JSON request body (Dynamic from wisp.require_json)
+fn parse_weight_update(
+  body: dynamic.Dynamic,
+) -> Result(WeightUpdate, String) {
+  // Build decoder for all fields
+  let decoder = {
+    use weight_kg <- decode.field("weight_kg", decode.float)
+    use date_str <- decode.optional_field(
+      "date",
+      None,
+      decode.optional(decode.string),
+    )
+    use goal_weight_kg <- decode.optional_field(
+      "goal_weight_kg",
+      None,
+      decode.optional(decode.float),
+    )
+    use height_cm <- decode.optional_field(
+      "height_cm",
+      None,
+      decode.optional(decode.float),
+    )
+    use comment <- decode.optional_field(
+      "comment",
+      None,
+      decode.optional(decode.string),
+    )
+    decode.success(#(weight_kg, date_str, goal_weight_kg, height_cm, comment))
+  }
 
-  // Required: weight_kg
-  use weight_kg <- result.try(
-    dict.get(parsed, "weight_kg")
-    |> result.then(dynamic.float)
-    |> result.map_error(fn(_) { "Missing or invalid weight_kg" }),
-  )
-
-  // Optional: date (defaults to today if not provided)
-  let date_int = case dict.get(parsed, "date") {
-    Ok(date_dyn) ->
-      case dynamic.string(date_dyn) {
-        Ok(date_str) ->
-          case diary_types.date_to_int(date_str) {
+  case decode.run(body, decoder) {
+    Error(_) -> Error("Missing or invalid weight_kg")
+    Ok(#(weight_kg, date_str, goal_weight_kg, height_cm, comment)) -> {
+      // Handle date: if not provided, use today
+      let date_int_result = case date_str {
+        Some(ds) ->
+          case diary_types.date_to_int(ds) {
             Ok(di) -> Ok(di)
             Error(_) -> Error("Invalid date format (use YYYY-MM-DD)")
           }
-        Error(_) -> Error("Date must be a string")
+        None -> {
+          // Use today's date
+          let today = birl.now()
+          let day = birl.get_day(today)
+          let ds =
+            int.to_string(day.year)
+            <> "-"
+            <> pad_zero(day.month)
+            <> "-"
+            <> pad_zero(day.date)
+          case diary_types.date_to_int(ds) {
+            Ok(di) -> Ok(di)
+            Error(_) -> Error("Failed to calculate today's date")
+          }
+        }
       }
-    Error(_) -> {
-      // Use today's date
-      let today = birl.now()
-      let #(y, m, d) = birl.get_day(today)
-      let date_str =
-        int.to_string(y) <> "-" <> pad_zero(m) <> "-" <> pad_zero(d)
-      diary_types.date_to_int(date_str)
-      |> result.map_error(fn(_) { "Failed to calculate today's date" })
+
+      case date_int_result {
+        Error(msg) -> Error(msg)
+        Ok(date_int) ->
+          Ok(WeightUpdate(
+            current_weight_kg: weight_kg,
+            date_int: date_int,
+            goal_weight_kg: goal_weight_kg,
+            height_cm: height_cm,
+            comment: comment,
+          ))
+      }
     }
   }
-
-  use date_int <- result.try(date_int)
-
-  // Optional: goal_weight_kg
-  let goal_weight_kg = case dict.get(parsed, "goal_weight_kg") {
-    Ok(goal_dyn) ->
-      case dynamic.float(goal_dyn) {
-        Ok(goal) -> Some(goal)
-        Error(_) -> None
-      }
-    Error(_) -> None
-  }
-
-  // Optional: height_cm
-  let height_cm = case dict.get(parsed, "height_cm") {
-    Ok(height_dyn) ->
-      case dynamic.float(height_dyn) {
-        Ok(height) -> Some(height)
-        Error(_) -> None
-      }
-    Error(_) -> None
-  }
-
-  // Optional: comment
-  let comment = case dict.get(parsed, "comment") {
-    Ok(comment_dyn) ->
-      case dynamic.string(comment_dyn) {
-        Ok(c) -> Some(c)
-        Error(_) -> None
-      }
-    Error(_) -> None
-  }
-
-  Ok(WeightUpdate(
-    current_weight_kg: weight_kg,
-    date_int: date_int,
-    goal_weight_kg: goal_weight_kg,
-    height_cm: height_cm,
-    comment: comment,
-  ))
 }
 
 /// Pad single digit numbers with leading zero
@@ -277,7 +268,7 @@ fn pad_zero(n: Int) -> String {
 }
 
 /// Convert service error to HTTP error response
-fn error_response(error: service.ServiceError) -> Response(String) {
+fn error_response(error: service.ServiceError) -> wisp.Response {
   case error {
     service.NotConnected ->
       wisp.json_response(
@@ -344,7 +335,7 @@ fn error_response(error: service.ServiceError) -> Response(String) {
 /// Convert date validation errors to 400 Bad Request
 fn date_validation_error_response(
   error: service.ServiceError,
-) -> Response(String) {
+) -> wisp.Response {
   let #(error_code, message) = case error {
     service.DateTooFar -> #(
       "date_too_far",

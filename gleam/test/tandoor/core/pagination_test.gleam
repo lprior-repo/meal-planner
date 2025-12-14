@@ -95,7 +95,7 @@ pub fn paginated_decoder_decodes_complete_json_test() {
 
   let decoder = paginated_decoder(decode.int)
 
-  case json.decode(json_string, decoder) {
+  case json.parse(json_string, using: decoder) {
     Ok(response) -> {
       response.count
       |> should.equal(150)
@@ -124,7 +124,7 @@ pub fn paginated_decoder_handles_null_pagination_test() {
 
   let decoder = paginated_decoder(decode.string)
 
-  case json.decode(json_string, decoder) {
+  case json.parse(json_string, using: decoder) {
     Ok(response) -> {
       response.count
       |> should.equal(25)
@@ -153,7 +153,7 @@ pub fn paginated_decoder_handles_empty_results_test() {
 
   let decoder = paginated_decoder(decode.int)
 
-  case json.decode(json_string, decoder) {
+  case json.parse(json_string, using: decoder) {
     Ok(response) -> {
       response.count
       |> should.equal(0)
@@ -170,7 +170,7 @@ pub fn paginated_decoder_fails_on_invalid_json_test() {
 
   let decoder = paginated_decoder(decode.int)
 
-  case json.decode(invalid_json, decoder) {
+  case json.parse(invalid_json, using: decoder) {
     Ok(_) -> panic as "Expected decode to fail on invalid JSON"
     Error(_) -> Nil
   }
@@ -186,7 +186,7 @@ pub fn paginated_decoder_fails_on_missing_count_test() {
 
   let decoder = paginated_decoder(decode.int)
 
-  case json.decode(json_string, decoder) {
+  case json.parse(json_string, using: decoder) {
     Ok(_) -> panic as "Expected decode to fail without count"
     Error(_) -> Nil
   }

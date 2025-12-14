@@ -1,8 +1,8 @@
 /// FatSecret Recipes API client
 /// All recipe methods use 2-legged OAuth (no user token required)
 /// API Docs: https://platform.fatsecret.com/api/Default.aspx?screen=rapiref2
-import gleam/dynamic/decode
 import gleam/dict
+import gleam/dynamic/decode
 import gleam/int
 import gleam/json
 import gleam/option.{type Option}

@@ -7,10 +7,10 @@
 /// - 205: Weight date is more than 2 days from today
 /// - 206: Cannot update date earlier than existing weight entry
 import gleam/dict
+import gleam/dynamic/decode
 import gleam/float
 import gleam/int
 import gleam/json
-import gleam/dynamic/decode
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import meal_planner/fatsecret/core/config.{type FatSecretConfig}
@@ -67,7 +67,7 @@ pub fn update_weight(
       "current_weight_kg",
       float.to_string(update.current_weight_kg),
     )
-    |> dict.insert("date_int", int.to_string(update.date_int))
+    |> dict.insert("date", int.to_string(update.date_int))
 
   // Add optional parameters
   let params = case update.goal_weight_kg {
@@ -79,13 +79,13 @@ pub fn update_weight(
 
   let params = case update.height_cm {
     Some(height) -> {
-      dict.insert(params, "height_cm", float.to_string(height))
+      dict.insert(params, "current_height_cm", float.to_string(height))
     }
     None -> params
   }
 
   let params = case update.comment {
-    Some(comment) -> dict.insert(params, "weight_comment", comment)
+    Some(comment) -> dict.insert(params, "comment", comment)
     None -> params
   }
 
@@ -105,7 +105,7 @@ pub fn update_weight(
 // Weight Month Summary (3-legged)
 // ============================================================================
 
-/// Get weight measurements for a month (weight_month.get method)
+/// Get weight measurements for a month (weights.get_month method)
 ///
 /// Retrieves all weight measurements for a specific month.
 ///
@@ -130,12 +130,12 @@ pub fn get_weight_month_summary(
 ) -> Result(WeightMonthSummary, FatSecretError) {
   let params =
     dict.new()
-    |> dict.insert("date_int", int.to_string(date_int))
+    |> dict.insert("date", int.to_string(date_int))
 
   use body <- result.try(http.make_authenticated_request(
     config,
     token,
-    "weight_month.get",
+    "weights.get_month",
     params,
   ))
 

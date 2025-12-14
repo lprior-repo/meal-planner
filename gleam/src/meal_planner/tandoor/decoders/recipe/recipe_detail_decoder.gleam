@@ -10,9 +10,10 @@ import gleam/option.{type Option, None}
 import gleam/result
 import gleam/string
 import meal_planner/tandoor/client.{
-  type Food, type Ingredient, type Keyword, type NutritionInfo, type RecipeDetail,
-  type Step, type SupermarketCategory, type Unit, Food, Ingredient, Keyword,
-  NutritionInfo, RecipeDetail, Step, SupermarketCategory, Unit,
+  type Food, type Ingredient, type Keyword, type NutritionInfo,
+  type RecipeDetail, type Step, type SupermarketCategory, type Unit, Food,
+  Ingredient, Keyword, NutritionInfo, RecipeDetail, Step, SupermarketCategory,
+  Unit,
 }
 
 // ============================================================================
@@ -276,9 +277,7 @@ fn recipe_detail_decoder_internal() -> decode.Decoder(RecipeDetail) {
 ///   Error(_) -> // Handle JSON parse error
 /// }
 /// ```
-pub fn decoder(
-  json_value: dynamic.Dynamic,
-) -> Result(RecipeDetail, String) {
+pub fn decoder(json_value: dynamic.Dynamic) -> Result(RecipeDetail, String) {
   decode.run(json_value, recipe_detail_decoder_internal())
   |> result.map_error(fn(errors) {
     "Failed to decode recipe detail: "

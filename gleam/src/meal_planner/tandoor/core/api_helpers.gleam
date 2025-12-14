@@ -15,7 +15,7 @@ import gleam/list
 import gleam/result
 import gleam/string
 import meal_planner/tandoor/client.{
-  type ApiResponse, type TandoorError, NetworkError, ParseError,
+  type ApiResponse, type TandoorError, ApiResponse, NetworkError, ParseError,
 }
 
 // ============================================================================
@@ -117,9 +117,5 @@ fn execute_and_parse(
   )
 
   // Convert httpc Response to our ApiResponse type
-  Ok(ApiResponse(
-    status: resp.status,
-    headers: resp.headers,
-    body: resp.body,
-  ))
+  Ok(ApiResponse(status: resp.status, headers: resp.headers, body: resp.body))
 }

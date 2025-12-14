@@ -1,8 +1,9 @@
 /// Tests for Tandoor Keyword JSON decoder
 ///
 /// This test suite validates JSON decoding of Keyword objects from Tandoor API.
-import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/json
+import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/decoders/keyword/keyword_decoder
@@ -22,7 +23,9 @@ pub fn decode_keyword_minimal_test() {
     \"full_name\": \"Vegetarian\"
   }"
 
-  let result = json.decode(json_string, keyword_decoder.keyword_decoder())
+  let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
+  let result: Result(Keyword, _) =
+    decode.run(json_data, keyword_decoder.keyword_decoder())
 
   case result {
     Ok(keyword) -> {
@@ -63,7 +66,7 @@ pub fn decode_keyword_with_icon_test() {
     \"name\": \"italian\",
     \"label\": \"Italian\",
     \"description\": \"Italian cuisine\",
-    \"icon\": \"🇮🇹\",
+    \"icon\": \"flag_it\",
     \"parent\": null,
     \"numchild\": 0,
     \"created_at\": \"2024-01-02T00:00:00Z\",
@@ -71,12 +74,14 @@ pub fn decode_keyword_with_icon_test() {
     \"full_name\": \"Italian\"
   }"
 
-  let result = json.decode(json_string, keyword_decoder.keyword_decoder())
+  let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
+  let result: Result(Keyword, _) =
+    decode.run(json_data, keyword_decoder.keyword_decoder())
 
   case result {
     Ok(keyword) -> {
       keyword.icon
-      |> should.equal(Some("🇮🇹"))
+      |> should.equal(Some("flag_it"))
 
       keyword.description
       |> should.equal("Italian cuisine")
@@ -101,7 +106,9 @@ pub fn decode_keyword_with_parent_test() {
     \"full_name\": \"Vegetarian > Vegan\"
   }"
 
-  let result = json.decode(json_string, keyword_decoder.keyword_decoder())
+  let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
+  let result: Result(Keyword, _) =
+    decode.run(json_data, keyword_decoder.keyword_decoder())
 
   case result {
     Ok(keyword) -> {
@@ -131,7 +138,9 @@ pub fn decode_keyword_with_children_test() {
     \"full_name\": \"Cuisine\"
   }"
 
-  let result = json.decode(json_string, keyword_decoder.keyword_decoder())
+  let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
+  let result: Result(Keyword, _) =
+    decode.run(json_data, keyword_decoder.keyword_decoder())
 
   case result {
     Ok(keyword) -> {
@@ -174,13 +183,15 @@ pub fn decode_keyword_list_test() {
     }
   ]"
 
+  let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
   let result =
-    json.decode(json_string, dynamic.list(keyword_decoder.keyword_decoder()))
+    decode.run(json_data, decode.list(keyword_decoder.keyword_decoder()))
 
   case result {
     Ok(keywords) -> {
       keywords
-      |> should.have_length(2)
+      |> list.length
+      |> should.equal(2)
 
       let first = case keywords {
         [keyword, ..] -> keyword
@@ -205,7 +216,8 @@ pub fn decode_keyword_list_test() {
 pub fn decode_keyword_invalid_json_test() {
   let json_string = "{ \"invalid\": \"json\" }"
 
-  let result = json.decode(json_string, keyword_decoder.keyword_decoder())
+  let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
+  let result = decode.run(json_data, keyword_decoder.keyword_decoder())
 
   case result {
     Ok(_) -> {

@@ -2,7 +2,7 @@ import gleam/json
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/decoders/food/food_decoder
-import meal_planner/tandoor/types/food/food.{Food}
+import meal_planner/tandoor/types/food/food.{type Food}
 
 pub fn decode_food_full_test() {
   let json_str =
@@ -17,7 +17,7 @@ pub fn decode_food_full_test() {
       \"ignore_shopping\": false
     }"
 
-  let result = json.parse(json_str, using: food_decoder.decode_food)
+  let result: Result(Food, _) = json.parse(json_str, using: food_decoder.food_decoder())
 
   case result {
     Ok(food) -> {
@@ -51,7 +51,7 @@ pub fn decode_food_minimal_test() {
       \"ignore_shopping\": true
     }"
 
-  let result = json.parse(json_str, using: food_decoder.decode_food)
+  let result: Result(Food, _) = json.parse(json_str, using: food_decoder.food_decoder())
 
   case result {
     Ok(food) -> {
@@ -89,7 +89,7 @@ pub fn decode_food_with_recipe_test() {
       \"ignore_shopping\": false
     }"
 
-  let result = json.parse(json_str, using: food_decoder.decode_food)
+  let result: Result(Food, _) = json.parse(json_str, using: food_decoder.food_decoder())
 
   case result {
     Ok(food) -> {
@@ -125,7 +125,7 @@ pub fn decode_food_with_supermarket_category_test() {
       \"ignore_shopping\": false
     }"
 
-  let result = json.parse(json_str, using: food_decoder.decode_food)
+  let result: Result(Food, _) = json.parse(json_str, using: food_decoder.food_decoder())
 
   case result {
     Ok(food) -> {
@@ -141,21 +141,21 @@ pub fn decode_food_with_supermarket_category_test() {
 pub fn decode_food_invalid_json_test() {
   let json_str = "{\"id\": \"not_a_number\"}"
 
-  let result = json.parse(json_str, using: food_decoder.decode_food)
+  let result = json.parse(json_str, using: food_decoder.food_decoder())
 
   case result {
     Ok(_) -> should.fail()
-    Error(_) -> should.be_ok()
+    Error(_) -> should.be_true(True)
   }
 }
 
 pub fn decode_food_missing_required_fields_test() {
   let json_str = "{\"id\": 1}"
 
-  let result = json.parse(json_str, using: food_decoder.decode_food)
+  let result = json.parse(json_str, using: food_decoder.food_decoder())
 
   case result {
     Ok(_) -> should.fail()
-    Error(_) -> should.be_ok()
+    Error(_) -> should.be_true(True)
   }
 }

@@ -89,7 +89,7 @@ pub fn list_properties(
 /// Result with property or error
 pub fn get_property(
   config: ClientConfig,
-  property_id: Int,
+  property_id property_id: Int,
 ) -> Result(Property, TandoorError) {
   let path = "/api/property/" <> int.to_string(property_id) <> "/"
 
@@ -190,8 +190,8 @@ pub fn create_property(
 /// Result with updated property or error
 pub fn update_property(
   config: ClientConfig,
-  property_id: Int,
-  update_data: PropertyUpdateRequest,
+  property_id property_id: Int,
+  update_data update_data: PropertyUpdateRequest,
 ) -> Result(Property, TandoorError) {
   let path = "/api/property/" <> int.to_string(property_id) <> "/"
   let body =
@@ -241,7 +241,7 @@ pub fn update_property(
 /// Result with unit or error
 pub fn delete_property(
   config: ClientConfig,
-  property_id: Int,
+  property_id property_id: Int,
 ) -> Result(Nil, TandoorError) {
   let path = "/api/property/" <> int.to_string(property_id) <> "/"
 

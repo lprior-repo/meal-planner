@@ -17,10 +17,10 @@ import gleam/result
 import meal_planner/env
 import meal_planner/tandoor/client as tandoor
 
-import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
 import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
+import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
 import meal_planner/tandoor/types/mealplan/meal_type.{
-  type MealType, meal_type_from_string, meal_type_to_string
+  type MealType, meal_type_from_string, meal_type_to_string,
 }
 import meal_planner/tandoor/types/recipe/recipe_overview.{type RecipeOverview}
 import wisp
@@ -189,10 +189,7 @@ pub fn handle_get_meal_plan(req: wisp.Request) -> wisp.Response {
               #("count", json.int(response.count)),
               #("next", json.nullable(response.next, json.string)),
               #("previous", json.nullable(response.previous, json.string)),
-              #(
-                "results",
-                json.array(response.results, meal_plan_to_json),
-              ),
+              #("results", json.array(response.results, meal_plan_to_json)),
             ])
             |> json.to_string
           wisp.json_response(body, 200)
@@ -454,11 +451,16 @@ fn meal_plan_entry_to_json(entry: MealPlanEntry) -> json.Json {
     #("servings", json.float(entry.servings)),
     #("from_date", json.string(entry.from_date)),
     #("to_date", json.string(entry.to_date)),
-    #("meal_type", json.string(meal_type_to_string(meal_type_from_string(int.to_string(entry.meal_type_id))))),
+    #(
+      "meal_type",
+      json.string(
+        meal_type_to_string(
+          meal_type_from_string(int.to_string(entry.meal_type_id)),
+        ),
+      ),
+    ),
   ])
 }
-
-
 
 /// Parse meal plan creation request from JSON body
 fn parse_meal_plan_request(

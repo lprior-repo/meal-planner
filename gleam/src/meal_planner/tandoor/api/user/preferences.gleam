@@ -54,7 +54,7 @@ pub fn get_current_user_preferences(
   // Parse JSON response - API returns array with single element
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
-      case decode.run(json_data, decode.list(user_preference_decoder.decode)) {
+      case decode.run(json_data, decode.list(user_preference_decoder.user_preference_decoder())) {
         Ok([first, ..]) -> Ok(first)
         Ok([]) -> Error(ParseError("No preferences returned for current user"))
         Error(errors) -> {
@@ -103,7 +103,7 @@ pub fn get_user_preferences(
   // Parse JSON response
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
-      case decode.run(json_data, user_preference_decoder.decode) {
+      case decode.run(json_data, user_preference_decoder.user_preference_decoder()) {
         Ok(preferences) -> Ok(preferences)
         Error(errors) -> {
           let error_msg =
@@ -164,7 +164,7 @@ pub fn update_user_preferences(
   // Parse JSON response
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
-      case decode.run(json_data, user_preference_decoder.decode) {
+      case decode.run(json_data, user_preference_decoder.user_preference_decoder()) {
         Ok(preferences) -> Ok(preferences)
         Error(errors) -> {
           let error_msg =

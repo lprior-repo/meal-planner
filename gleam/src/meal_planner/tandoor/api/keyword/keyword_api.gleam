@@ -228,7 +228,7 @@ pub fn create_keyword(
 pub fn update_keyword(
   config: ClientConfig,
   keyword_id keyword_id: Int,
-  update_data: KeywordUpdateRequest,
+  data update_data: KeywordUpdateRequest,
 ) -> Result(Keyword, TandoorError) {
   let path = "/api/keyword/" <> int.to_string(keyword_id) <> "/"
 

@@ -31,7 +31,7 @@ pub fn encode_shopping_list_recipe_create_with_recipe_test() {
   let list =
     ShoppingListRecipeCreate(
       name: "Weekly Meal Prep",
-      recipe: Some(ids.recipe_id(100)),
+      recipe: Some(ids.recipe_id_from_int(100)),
       mealplan: None,
       servings: 4.0,
     )
@@ -51,7 +51,7 @@ pub fn encode_shopping_list_recipe_create_with_mealplan_test() {
     ShoppingListRecipeCreate(
       name: "Meal Plan Shopping",
       recipe: None,
-      mealplan: Some(ids.meal_plan_id(5)),
+      mealplan: Some(ids.meal_plan_id_from_int(5)),
       servings: 2.0,
     )
 
@@ -88,8 +88,8 @@ pub fn encode_shopping_list_recipe_update_with_values_test() {
   let update =
     ShoppingListRecipeUpdate(
       name: "Complete Meal Prep",
-      recipe: Some(ids.recipe_id(200)),
-      mealplan: Some(ids.meal_plan_id(10)),
+      recipe: Some(ids.recipe_id_from_int(200)),
+      mealplan: Some(ids.meal_plan_id_from_int(10)),
       servings: 6.0,
     )
 

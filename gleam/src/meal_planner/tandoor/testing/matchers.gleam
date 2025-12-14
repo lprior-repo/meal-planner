@@ -2,47 +2,51 @@
 ///
 /// This module provides helper functions for asserting HTTP request properties
 /// in tests. Matchers can be combined to create complex assertions.
-import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/http
 import gleam/json
 import gleam/list
-import gleam/option.{Some}
-import gleam/regex
-import gleam/result
+import gleam/regexp
 import gleam/string
-import meal_planner/tandoor/core/http.{type HttpRequest}
+import meal_planner/tandoor/core/http as tandoor_http
 
 /// Request predicate type
 pub type RequestPredicate =
-  fn(HttpRequest) -> Bool
+  fn(tandoor_http.HttpRequest) -> Bool
 
 // ============================================================================
 // Basic Matchers
 // ============================================================================
 
 /// Assert request method matches
-pub fn assert_method(request: HttpRequest, method: http.Method) -> Bool {
+pub fn assert_method(
+  request: tandoor_http.HttpRequest,
+  method: http.Method,
+) -> Bool {
   request.method == method
 }
 
 /// Assert request URL matches exactly
-pub fn assert_url(request: HttpRequest, url: String) -> Bool {
+pub fn assert_url(request: tandoor_http.HttpRequest, url: String) -> Bool {
   request.url == url
 }
 
 /// Assert request URL matches a pattern (wildcard support)
-pub fn assert_url_matches(request: HttpRequest, pattern: String) -> Bool {
+pub fn assert_url_matches(
+  request: tandoor_http.HttpRequest,
+  pattern: String,
+) -> Bool {
   // Simple wildcard matching - convert * to .*
   let regex_pattern = string.replace(pattern, "*", ".*")
-  case regex.from_string(regex_pattern) {
-    Ok(re) -> regex.check(re, request.url)
+  case regexp.from_string(regex_pattern) {
+    Ok(re) -> regexp.check(re, request.url)
     Error(_) -> False
   }
 }
 
 /// Assert request has a specific header with value
 pub fn assert_header(
-  request: HttpRequest,
+  request: tandoor_http.HttpRequest,
   header_name: String,
   header_value: String,
 ) -> Bool {
@@ -54,7 +58,10 @@ pub fn assert_header(
 }
 
 /// Assert request has a specific header (any value)
-pub fn assert_has_header(request: HttpRequest, header_name: String) -> Bool {
+pub fn assert_has_header(
+  request: tandoor_http.HttpRequest,
+  header_name: String,
+) -> Bool {
   let lowercase_name = string.lowercase(header_name)
   list.any(request.headers, fn(header) {
     let #(name, _value) = header
@@ -63,22 +70,25 @@ pub fn assert_has_header(request: HttpRequest, header_name: String) -> Bool {
 }
 
 /// Assert request body matches exactly
-pub fn assert_body(request: HttpRequest, body: String) -> Bool {
+pub fn assert_body(request: tandoor_http.HttpRequest, body: String) -> Bool {
   request.body == body
 }
 
 /// Assert request body contains a substring
-pub fn assert_body_contains(request: HttpRequest, substring: String) -> Bool {
+pub fn assert_body_contains(
+  request: tandoor_http.HttpRequest,
+  substring: String,
+) -> Bool {
   string.contains(request.body, substring)
 }
 
 /// Assert JSON body has a specific field value
 pub fn assert_json_field(
-  request: HttpRequest,
+  request: tandoor_http.HttpRequest,
   field: String,
   expected_value: String,
 ) -> Result(Nil, String) {
-  case json.parse(request.body) {
+  case json.parse(request.body, using: decode.dynamic) {
     Ok(_json) -> {
       // For now, use simple string matching
       case string.contains(request.body, "\"" <> field <> "\"") {
@@ -95,7 +105,10 @@ pub fn assert_json_field(
 }
 
 /// Assert request matches a custom predicate
-pub fn assert_matches(request: HttpRequest, predicate: RequestPredicate) -> Bool {
+pub fn assert_matches(
+  request: tandoor_http.HttpRequest,
+  predicate: RequestPredicate,
+) -> Bool {
   predicate(request)
 }
 

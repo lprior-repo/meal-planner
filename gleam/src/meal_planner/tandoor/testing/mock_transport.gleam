@@ -2,10 +2,9 @@
 ///
 /// This module provides a mock implementation of HttpTransport that can be
 /// configured with expected requests and responses for unit testing.
-import gleam/http
+import gleam/http as gleam_http
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/result
 import meal_planner/tandoor/core/http.{
   type HttpRequest, type HttpResponse, type HttpTransport, HttpRequest,
   HttpResponse,
@@ -92,33 +91,32 @@ pub fn execute(
   request: HttpRequest,
 ) -> Result(HttpResponse, String) {
   // Verify request matcher if present
-  case mock.request_matcher {
-    Some(matcher) ->
-      case matcher(request) {
-        True -> Nil
-        False -> Error("Request did not match expected pattern")
-      }
-    None -> Ok(Nil)
+  let matcher_ok = case mock.request_matcher {
+    Some(matcher) -> matcher(request)
+    None -> True
   }
 
-  // Determine which response to use
-  let response = case mock.conditional_response {
-    // Conditional response takes precedence
-    Some(responder) -> responder(request)
-    None ->
-      case mock.response_queue {
-        // Use queued response if available
-        [first, ..] -> first
-        [] ->
-          // Fall back to static response
-          case mock.response {
-            Some(resp) -> resp
-            None -> Error("No response configured for mock transport")
+  case matcher_ok {
+    False -> Error("Request did not match expected pattern")
+    True -> {
+      // Determine which response to use
+      case mock.conditional_response {
+        // Conditional response takes precedence
+        Some(responder) -> responder(request)
+        None ->
+          case mock.response_queue {
+            // Use queued response if available
+            [first, ..] -> first
+            [] ->
+              // Fall back to static response
+              case mock.response {
+                Some(resp) -> resp
+                None -> Error("No response configured for mock transport")
+              }
           }
       }
+    }
   }
-
-  response
 }
 
 /// Convert mock transport to HttpTransport function type
@@ -134,7 +132,7 @@ pub fn verify_called(mock: MockTransport, expected_calls: Int) -> Bool {
 /// Verify that the mock was called with a specific method
 pub fn verify_called_with_method(
   mock: MockTransport,
-  method: http.Method,
+  method: gleam_http.Method,
 ) -> Bool {
   list.any(mock.call_history, fn(req) { req.method == method })
 }

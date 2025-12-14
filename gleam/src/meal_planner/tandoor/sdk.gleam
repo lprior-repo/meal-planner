@@ -16,7 +16,7 @@
 /// ```
 import gleam/option.{type Option, None, Some}
 import meal_planner/tandoor/client.{
-  type AuthMethod, type ClientConfig, BearerAuth, SessionAuth,
+  type ClientConfig, BearerAuth, SessionAuth,
 }
 import meal_planner/tandoor/core/http.{type HttpTransport}
 
@@ -26,12 +26,6 @@ pub type TandoorError =
 
 pub type AuthMethod =
   client.AuthMethod
-
-pub type BearerAuth =
-  client.BearerAuth
-
-pub type SessionAuth =
-  client.SessionAuth
 
 // ============================================================================
 // SDK Configuration

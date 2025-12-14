@@ -1,9 +1,8 @@
 /// MealPlan Get API
 ///
 /// This module provides functions to get a single meal plan entry from the Tandoor API.
-import meal_planner/tandoor/client.{
-  type ClientConfig, type MealPlanEntry, type TandoorError,
-}
+import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
 import meal_planner/tandoor/core/ids.{type MealPlanId}
 
 /// Get a single meal plan entry by ID from Tandoor API

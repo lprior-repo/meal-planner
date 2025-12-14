@@ -93,25 +93,25 @@ pub fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // Favorite Foods
     ["api", "fatsecret", "favorites", "foods"] ->
       case req.method {
-        http.Get -> favorites_handlers.list_favorite_foods(req, ctx.db)
+        http.Get -> favorites_handlers.get_favorite_foods(req, ctx.db)
         _ -> wisp.method_not_allowed([http.Get])
       }
     ["api", "fatsecret", "favorites", "foods", "most-eaten"] ->
-      favorites_handlers.get_most_eaten_foods(req, ctx.db)
+      favorites_handlers.get_most_eaten(req, ctx.db)
     ["api", "fatsecret", "favorites", "foods", "recently-eaten"] ->
-      favorites_handlers.get_recently_eaten_foods(req, ctx.db)
+      favorites_handlers.get_recently_eaten(req, ctx.db)
     ["api", "fatsecret", "favorites", "foods", food_id] ->
       case req.method {
         http.Post -> favorites_handlers.add_favorite_food(req, ctx.db, food_id)
         http.Delete ->
-          favorites_handlers.remove_favorite_food(req, ctx.db, food_id)
+          favorites_handlers.delete_favorite_food(req, ctx.db, food_id)
         _ -> wisp.method_not_allowed([http.Post, http.Delete])
       }
 
     // Favorite Recipes
     ["api", "fatsecret", "favorites", "recipes"] ->
       case req.method {
-        http.Get -> favorites_handlers.list_favorite_recipes(req, ctx.db)
+        http.Get -> favorites_handlers.get_favorite_recipes(req, ctx.db)
         _ -> wisp.method_not_allowed([http.Get])
       }
     ["api", "fatsecret", "favorites", "recipes", recipe_id] ->
@@ -119,7 +119,7 @@ pub fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
         http.Post ->
           favorites_handlers.add_favorite_recipe(req, ctx.db, recipe_id)
         http.Delete ->
-          favorites_handlers.remove_favorite_recipe(req, ctx.db, recipe_id)
+          favorites_handlers.delete_favorite_recipe(req, ctx.db, recipe_id)
         _ -> wisp.method_not_allowed([http.Post, http.Delete])
       }
 

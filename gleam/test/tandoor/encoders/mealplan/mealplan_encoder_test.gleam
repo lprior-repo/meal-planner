@@ -4,6 +4,7 @@
 /// for the Tandoor API.
 import gleam/json
 import gleam/option.{None, Some}
+import gleam/string
 import gleeunit/should
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/encoders/mealplan/mealplan_encoder
@@ -72,8 +73,8 @@ pub fn encode_meal_plan_create_all_meal_types_test() {
     let encoded = mealplan_encoder.encode_meal_plan_create(create)
     let json_string = json.to_string(encoded)
 
-    json_string
-    |> should.contain("\"meal_type\":\"" <> expected <> "\"")
+    string.contains(json_string, "\"meal_type\":\"" <> expected <> "\"")
+    |> should.be_true
   }
 
   test_meal_type(Breakfast, "breakfast")

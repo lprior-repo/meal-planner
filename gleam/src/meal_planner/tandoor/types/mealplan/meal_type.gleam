@@ -33,11 +33,55 @@ pub fn meal_type_to_string(meal_type: MealType) -> String {
 
 pub fn meal_type_from_string(s: String) -> MealType {
   case s {
-    "BREAKFAST" -> MealType(id: 1, name: "Breakfast", order: 1, time: None, color: None, default: False, created_by: 0)
-    "LUNCH" -> MealType(id: 2, name: "Lunch", order: 2, time: None, color: None, default: False, created_by: 0)
-    "DINNER" -> MealType(id: 3, name: "Dinner", order: 3, time: None, color: None, default: False, created_by: 0)
-    "SNACK" -> MealType(id: 4, name: "Snack", order: 4, time: None, color: None, default: False, created_by: 0)
-    _ -> MealType(id: 5, name: "Other", order: 5, time: None, color: None, default: False, created_by: 0)
+    "BREAKFAST" ->
+      MealType(
+        id: 1,
+        name: "Breakfast",
+        order: 1,
+        time: None,
+        color: None,
+        default: False,
+        created_by: 0,
+      )
+    "LUNCH" ->
+      MealType(
+        id: 2,
+        name: "Lunch",
+        order: 2,
+        time: None,
+        color: None,
+        default: False,
+        created_by: 0,
+      )
+    "DINNER" ->
+      MealType(
+        id: 3,
+        name: "Dinner",
+        order: 3,
+        time: None,
+        color: None,
+        default: False,
+        created_by: 0,
+      )
+    "SNACK" ->
+      MealType(
+        id: 4,
+        name: "Snack",
+        order: 4,
+        time: None,
+        color: None,
+        default: False,
+        created_by: 0,
+      )
+    _ ->
+      MealType(
+        id: 5,
+        name: "Other",
+        order: 5,
+        time: None,
+        color: None,
+        default: False,
+        created_by: 0,
+      )
   }
 }
-

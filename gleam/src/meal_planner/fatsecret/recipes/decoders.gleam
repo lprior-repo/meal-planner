@@ -7,7 +7,11 @@ import meal_planner/fatsecret/recipes/types
 pub fn recipe_ingredient_decoder() -> decode.Decoder(types.RecipeIngredient) {
   use food_id <- decode.field("food_id", decode.string)
   use food_name <- decode.field("food_name", decode.string)
-  use serving_id <- decode.optional_field("serving_id", None, decode.optional(decode.string))
+  use serving_id <- decode.optional_field(
+    "serving_id",
+    None,
+    decode.optional(decode.string),
+  )
   use number_of_units <- decode.field("number_of_units", decode.float)
   use measurement_description <- decode.field(
     "measurement_description",
@@ -17,7 +21,11 @@ pub fn recipe_ingredient_decoder() -> decode.Decoder(types.RecipeIngredient) {
     "ingredient_description",
     decode.string,
   )
-  use ingredient_url <- decode.optional_field("ingredient_url", None, decode.optional(decode.string))
+  use ingredient_url <- decode.optional_field(
+    "ingredient_url",
+    None,
+    decode.optional(decode.string),
+  )
 
   decode.success(types.RecipeIngredient(
     food_id:,
@@ -55,15 +63,27 @@ pub fn recipe_decoder() -> decode.Decoder(types.Recipe) {
   use recipe_name <- decode.field("recipe_name", decode.string)
   use recipe_url <- decode.field("recipe_url", decode.string)
   use recipe_description <- decode.field("recipe_description", decode.string)
-  use recipe_image <- decode.optional_field("recipe_image", None, decode.optional(decode.string))
+  use recipe_image <- decode.optional_field(
+    "recipe_image",
+    None,
+    decode.optional(decode.string),
+  )
   use number_of_servings <- decode.field("number_of_servings", decode.float)
   use preparation_time_min <- decode.optional_field(
     "preparation_time_min",
     None,
     decode.optional(decode.int),
   )
-  use cooking_time_min <- decode.optional_field("cooking_time_min", None, decode.optional(decode.int))
-  use rating <- decode.optional_field("rating", None, decode.optional(decode.float))
+  use cooking_time_min <- decode.optional_field(
+    "cooking_time_min",
+    None,
+    decode.optional(decode.int),
+  )
+  use rating <- decode.optional_field(
+    "rating",
+    None,
+    decode.optional(decode.float),
+  )
 
   // Recipe types can be a list or a single object
   use recipe_types <- decode.field(
@@ -108,11 +128,27 @@ pub fn recipe_decoder() -> decode.Decoder(types.Recipe) {
   )
 
   // Nutritional information (all optional)
-  use calories <- decode.optional_field("calories", None, decode.optional(decode.float))
-  use carbohydrate <- decode.optional_field("carbohydrate", None, decode.optional(decode.float))
-  use protein <- decode.optional_field("protein", None, decode.optional(decode.float))
+  use calories <- decode.optional_field(
+    "calories",
+    None,
+    decode.optional(decode.float),
+  )
+  use carbohydrate <- decode.optional_field(
+    "carbohydrate",
+    None,
+    decode.optional(decode.float),
+  )
+  use protein <- decode.optional_field(
+    "protein",
+    None,
+    decode.optional(decode.float),
+  )
   use fat <- decode.optional_field("fat", None, decode.optional(decode.float))
-  use saturated_fat <- decode.optional_field("saturated_fat", None, decode.optional(decode.float))
+  use saturated_fat <- decode.optional_field(
+    "saturated_fat",
+    None,
+    decode.optional(decode.float),
+  )
   use polyunsaturated_fat <- decode.optional_field(
     "polyunsaturated_fat",
     None,
@@ -123,14 +159,46 @@ pub fn recipe_decoder() -> decode.Decoder(types.Recipe) {
     None,
     decode.optional(decode.float),
   )
-  use cholesterol <- decode.optional_field("cholesterol", None, decode.optional(decode.float))
-  use sodium <- decode.optional_field("sodium", None, decode.optional(decode.float))
-  use potassium <- decode.optional_field("potassium", None, decode.optional(decode.float))
-  use fiber <- decode.optional_field("fiber", None, decode.optional(decode.float))
-  use sugar <- decode.optional_field("sugar", None, decode.optional(decode.float))
-  use vitamin_a <- decode.optional_field("vitamin_a", None, decode.optional(decode.float))
-  use vitamin_c <- decode.optional_field("vitamin_c", None, decode.optional(decode.float))
-  use calcium <- decode.optional_field("calcium", None, decode.optional(decode.float))
+  use cholesterol <- decode.optional_field(
+    "cholesterol",
+    None,
+    decode.optional(decode.float),
+  )
+  use sodium <- decode.optional_field(
+    "sodium",
+    None,
+    decode.optional(decode.float),
+  )
+  use potassium <- decode.optional_field(
+    "potassium",
+    None,
+    decode.optional(decode.float),
+  )
+  use fiber <- decode.optional_field(
+    "fiber",
+    None,
+    decode.optional(decode.float),
+  )
+  use sugar <- decode.optional_field(
+    "sugar",
+    None,
+    decode.optional(decode.float),
+  )
+  use vitamin_a <- decode.optional_field(
+    "vitamin_a",
+    None,
+    decode.optional(decode.float),
+  )
+  use vitamin_c <- decode.optional_field(
+    "vitamin_c",
+    None,
+    decode.optional(decode.float),
+  )
+  use calcium <- decode.optional_field(
+    "calcium",
+    None,
+    decode.optional(decode.float),
+  )
   use iron <- decode.optional_field("iron", None, decode.optional(decode.float))
 
   decode.success(types.Recipe(
@@ -173,7 +241,11 @@ pub fn recipe_search_result_decoder() -> decode.Decoder(
   use recipe_name <- decode.field("recipe_name", decode.string)
   use recipe_description <- decode.field("recipe_description", decode.string)
   use recipe_url <- decode.field("recipe_url", decode.string)
-  use recipe_image <- decode.optional_field("recipe_image", None, decode.optional(decode.string))
+  use recipe_image <- decode.optional_field(
+    "recipe_image",
+    None,
+    decode.optional(decode.string),
+  )
 
   decode.success(types.RecipeSearchResult(
     recipe_id: types.recipe_id(recipe_id),

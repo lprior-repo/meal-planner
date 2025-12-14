@@ -1,10 +1,9 @@
-import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/json
-import gleam/option.{None, Some}
+import gleam/option.{None}
 import gleeunit/should
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/user/user_decoder
-import meal_planner/tandoor/types/user/user
 
 pub fn user_decoder_basic_fields_test() {
   let json_str =
@@ -19,7 +18,7 @@ pub fn user_decoder_basic_fields_test() {
       \"is_active\": true
     }"
 
-  let assert Ok(decoded_json) = json.decode(json_str, dynamic.dynamic)
+  let assert Ok(decoded_json) = json.parse(json_str, using: decode.dynamic)
   let result = user_decoder.decode(decoded_json)
 
   should.be_ok(result)
@@ -65,7 +64,7 @@ pub fn user_decoder_minimal_fields_test() {
       \"is_active\": false
     }"
 
-  let assert Ok(decoded_json) = json.decode(json_str, dynamic.dynamic)
+  let assert Ok(decoded_json) = json.parse(json_str, using: decode.dynamic)
   let result = user_decoder.decode(decoded_json)
 
   should.be_ok(result)
@@ -105,7 +104,7 @@ pub fn user_decoder_missing_required_field_test() {
       \"display_name\": \"Test User\"
     }"
 
-  let assert Ok(decoded_json) = json.decode(json_str, dynamic.dynamic)
+  let assert Ok(decoded_json) = json.parse(json_str, using: decode.dynamic)
   let result = user_decoder.decode(decoded_json)
 
   should.be_error(result)

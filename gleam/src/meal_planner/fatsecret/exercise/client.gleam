@@ -186,6 +186,9 @@ pub fn edit_exercise_entry(
 /// This is a 3-legged OAuth request (requires user access token).
 /// Creates a new exercise entry in the user's diary.
 ///
+/// NOTE: FatSecret uses exercise_entry.edit for BOTH create and update operations.
+/// To create, omit exercise_entry_id parameter. To edit, include it.
+///
 /// ## Example
 /// ```gleam
 /// let date_int = types.date_to_int("2025-12-14") |> result.unwrap(0)
@@ -214,10 +217,11 @@ pub fn create_exercise_entry(
     |> dict.insert("date", int.to_string(input.date_int))
 
   // Use base client's make_authenticated_request function
+  // NOTE: Using exercise_entry.edit without exercise_entry_id creates a new entry
   use response_json <- result.try(base_client.make_authenticated_request(
     config,
     access_token,
-    "exercise_entry.create",
+    "exercise_entry.edit",
     params,
   ))
 

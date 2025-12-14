@@ -6,10 +6,12 @@ import gleam/httpc
 import gleam/int
 import gleam/json
 import gleam/list
+import gleam/option.{None}
 import gleam/result
 import gleam/string
 import meal_planner/tandoor/client.{
   type ClientConfig, type Recipe, type TandoorError, NetworkError, ParseError,
+  Recipe,
 }
 import meal_planner/tandoor/encoders/recipe/recipe_update_encoder
 import meal_planner/tandoor/types/recipe/recipe_update.{type RecipeUpdate}

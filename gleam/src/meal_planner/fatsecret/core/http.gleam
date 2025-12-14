@@ -50,30 +50,45 @@ pub fn make_oauth_request(
       token_secret,
     )
 
-  // Encode parameters as application/x-www-form-urlencoded
-  let body =
-    oauth_params
-    |> dict.to_list
-    |> list.map(fn(pair) {
-      oauth.oauth_encode(pair.0) <> "=" <> oauth.oauth_encode(pair.1)
-    })
-    |> string.join("&")
+  // Build request based on HTTP method
+  let req = case method {
+    "GET" -> {
+      // For GET: parameters go in query string
+      let query_string =
+        oauth_params
+        |> dict.to_list
+        |> list.map(fn(pair) {
+          // Values are already in the dict, just need URL encoding for transport
+          pair.0 <> "=" <> oauth.oauth_encode(pair.1)
+        })
+        |> string.join("&")
 
-  // Determine HTTP method
-  let http_method = case method {
-    "GET" -> http.Get
-    _ -> http.Post
+      request.new()
+      |> request.set_method(http.Get)
+      |> request.set_scheme(http.Https)
+      |> request.set_host(host)
+      |> request.set_path(path <> "?" <> query_string)
+    }
+    _ -> {
+      // For POST: parameters go in body
+      let body =
+        oauth_params
+        |> dict.to_list
+        |> list.map(fn(pair) {
+          // Values are already in the dict, just need URL encoding for transport
+          pair.0 <> "=" <> oauth.oauth_encode(pair.1)
+        })
+        |> string.join("&")
+
+      request.new()
+      |> request.set_method(http.Post)
+      |> request.set_scheme(http.Https)
+      |> request.set_host(host)
+      |> request.set_path(path)
+      |> request.set_header("Content-Type", "application/x-www-form-urlencoded")
+      |> request.set_body(body)
+    }
   }
-
-  // Build and send request
-  let req =
-    request.new()
-    |> request.set_method(http_method)
-    |> request.set_scheme(http.Https)
-    |> request.set_host(host)
-    |> request.set_path(path)
-    |> request.set_header("Content-Type", "application/x-www-form-urlencoded")
-    |> request.set_body(body)
 
   case httpc.send(req) {
     Ok(response) -> {

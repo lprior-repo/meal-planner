@@ -4,6 +4,7 @@
 /// Following TDD: these tests should FAIL first, then pass after implementation.
 import gleam/json
 import gleam/option.{None, Some}
+import gleam/string
 import gleeunit/should
 import meal_planner/tandoor/encoders/property/property_encoder
 import meal_planner/tandoor/types/property/property.{
@@ -46,10 +47,10 @@ pub fn encode_property_create_food_with_unit_test() {
   let json_string = json.to_string(encoded)
 
   // Should include unit
-  json_string
-  |> should.contain("\"unit\":\"grams\"")
-  json_string
-  |> should.contain("\"property_type\":\"FOOD\"")
+  string.contains(json_string, "\"unit\":\"grams\"")
+  |> should.be_true
+  string.contains(json_string, "\"property_type\":\"FOOD\"")
+  |> should.be_true
 }
 
 /// Test encoding PropertyUpdateRequest (partial)
@@ -67,10 +68,10 @@ pub fn encode_property_update_partial_test() {
   let json_string = json.to_string(encoded)
 
   // Should only include provided fields
-  json_string
-  |> should.contain("\"name\":\"Updated Name\"")
-  json_string
-  |> should.contain("\"unit\":\"ml\"")
+  string.contains(json_string, "\"name\":\"Updated Name\"")
+  |> should.be_true
+  string.contains(json_string, "\"unit\":\"ml\"")
+  |> should.be_true
 }
 
 /// Test encoding with empty description
@@ -87,6 +88,6 @@ pub fn encode_property_empty_description_test() {
   let encoded = property_encoder.encode_property_create_request(create_req)
   let json_string = json.to_string(encoded)
 
-  json_string
-  |> should.contain("\"description\":\"\"")
+  string.contains(json_string, "\"description\":\"\"")
+  |> should.be_true
 }

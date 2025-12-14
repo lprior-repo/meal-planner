@@ -1,11 +1,14 @@
 /// Tests for Import/Export decoders
 ///
 /// This test module verifies JSON decoding for ImportLog and ExportLog types.
+import gleam/dynamic/decode
 import gleam/json
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/decoders/import_export/export_log_decoder
 import meal_planner/tandoor/decoders/import_export/import_log_decoder
+import meal_planner/tandoor/types/import_export/export_log.{type ExportLog}
+import meal_planner/tandoor/types/import_export/import_log.{type ImportLog}
 
 pub fn import_log_decode_complete_test() {
   // Arrange - JSON from Tandoor API with keyword
@@ -33,8 +36,10 @@ pub fn import_log_decode_complete_test() {
       \"created_at\": \"2024-12-14T12:00:00Z\"
     }"
 
-  // Act
-  let result = json.decode(json_string, import_log_decoder.import_log_decoder())
+  // Act - parse JSON and decode
+  let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
+  let result: Result(ImportLog, _) =
+    decode.run(json_data, import_log_decoder.import_log_decoder())
 
   // Assert
   case result {
@@ -66,8 +71,10 @@ pub fn export_log_decode_complete_test() {
       \"created_at\": \"2024-12-14T13:00:00Z\"
     }"
 
-  // Act
-  let result = json.decode(json_string, export_log_decoder.export_log_decoder())
+  // Act - parse JSON and decode
+  let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
+  let result: Result(ExportLog, _) =
+    decode.run(json_data, export_log_decoder.export_log_decoder())
 
   // Assert
   case result {

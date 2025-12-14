@@ -60,13 +60,15 @@ pub type WeightDaySummary {
 /// Monthly weight summary
 ///
 /// Contains weight measurements for each day in the month that has data.
+/// The FatSecret API returns date ranges using from_date_int/to_date_int
+/// rather than explicit month/year fields.
 pub type WeightMonthSummary {
   WeightMonthSummary(
+    /// Start date of the month as days since Unix epoch
+    from_date_int: Int,
+    /// End date of the month as days since Unix epoch
+    to_date_int: Int,
     /// List of daily weight measurements
     days: List(WeightDaySummary),
-    /// Month (1-12)
-    month: Int,
-    /// Year (e.g., 2024)
-    year: Int,
   )
 }

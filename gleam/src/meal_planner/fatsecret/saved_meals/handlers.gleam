@@ -9,6 +9,8 @@
 /// - POST   /api/fatsecret/saved-meals/:id/items - Add meal item
 /// - PUT    /api/fatsecret/saved-meals/:id/items/:item_id - Edit meal item
 /// - DELETE /api/fatsecret/saved-meals/:id/items/:item_id - Delete meal item
+import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/float
 import gleam/http
 import gleam/json
@@ -35,23 +37,20 @@ pub fn handle_create_saved_meal(
   use <- wisp.require_method(req, http.Post)
   use body <- wisp.require_json(req)
 
-  let name_result = json.decode(body, json.field("name", json.string))
-  let description_result =
-    json.decode(body, json.optional_field("description", json.string))
-  let meals_result =
-    json.decode(
-      body,
-      json.field("meals", json.list(json.string))
-        |> json.then(fn(meal_strings) {
-          let meals =
-            meal_strings
-            |> list.filter_map(types.meal_type_from_string)
-          json.success(meals)
-        }),
+  let decoder = {
+    use name <- decode.field("name", decode.string)
+    use description <- decode.optional_field(
+      "description",
+      None,
+      decode.optional(decode.string),
     )
+    use meal_strings <- decode.field("meals", decode.list(decode.string))
+    let meals = list.filter_map(meal_strings, types.meal_type_from_string)
+    decode.success(#(name, description, meals))
+  }
 
-  case name_result, description_result, meals_result {
-    Ok(name), Ok(description), Ok(meals) -> {
+  case decode.run(body, decoder) {
+    Ok(#(name, description, meals)) -> {
       case service.create_saved_meal(conn, name, description, meals) {
         Ok(id) -> {
           let response =
@@ -65,7 +64,7 @@ pub fn handle_create_saved_meal(
         Error(e) -> error_response(500, service.error_to_string(e))
       }
     }
-    _, _, _ -> error_response(400, "Invalid request body")
+    Error(_) -> error_response(400, "Invalid request body")
   }
 }
 
@@ -128,28 +127,35 @@ pub fn handle_edit_saved_meal(
   use <- wisp.require_method(req, http.Put)
   use body <- wisp.require_json(req)
 
-  let name = json.decode(body, json.optional_field("name", json.string))
-  let description =
-    json.decode(body, json.optional_field("description", json.string))
-  let meals =
-    json.decode(
-      body,
-      json.optional_field("meals", json.list(json.string))
-        |> json.then(fn(opt_meal_strings) {
-          case opt_meal_strings {
-            Some(meal_strings) -> {
-              let parsed =
-                meal_strings
-                |> list.filter_map(types.meal_type_from_string)
-              json.success(Some(parsed))
-            }
-            None -> json.success(None)
-          }
-        }),
+  let decoder = {
+    use name_opt <- decode.optional_field(
+      "name",
+      None,
+      decode.optional(decode.string),
     )
+    use desc_opt <- decode.optional_field(
+      "description",
+      None,
+      decode.optional(decode.string),
+    )
+    use meals_opt <- decode.optional_field("meals", None, {
+      use opt_strings <- decode.then(
+        decode.optional(decode.list(decode.string)),
+      )
+      case opt_strings {
+        Some(meal_strings) -> {
+          let parsed =
+            list.filter_map(meal_strings, types.meal_type_from_string)
+          decode.success(Some(parsed))
+        }
+        None -> decode.success(None)
+      }
+    })
+    decode.success(#(name_opt, desc_opt, meals_opt))
+  }
 
-  case name, description, meals {
-    Ok(name_opt), Ok(desc_opt), Ok(meals_opt) -> {
+  case decode.run(body, decoder) {
+    Ok(#(name_opt, desc_opt, meals_opt)) -> {
       let id = types.saved_meal_id_from_string(saved_meal_id)
       case service.edit_saved_meal(conn, id, name_opt, desc_opt, meals_opt) {
         Ok(Nil) -> {
@@ -161,7 +167,7 @@ pub fn handle_edit_saved_meal(
         Error(e) -> error_response(500, service.error_to_string(e))
       }
     }
-    _, _, _ -> error_response(400, "Invalid request body")
+    Error(_) -> error_response(400, "Invalid request body")
   }
 }
 
@@ -313,38 +319,45 @@ pub fn handle_delete_saved_meal_item(
 // =============================================================================
 
 fn parse_saved_meal_item_input(
-  body: json.Json,
+  body: dynamic.Dynamic,
 ) -> Result(types.SavedMealItemInput, String) {
   // Try ByFoodId first
-  case
-    json.decode(body, json.field("food_id", json.string)),
-    json.decode(body, json.field("serving_id", json.string)),
-    json.decode(body, json.field("number_of_units", json.float))
-  {
-    Ok(food_id), Ok(serving_id), Ok(units) ->
-      Ok(types.ByFoodId(food_id:, serving_id:, number_of_units: units))
-    _, _, _ -> {
+  let by_food_id_decoder = {
+    use food_id <- decode.field("food_id", decode.string)
+    use serving_id <- decode.field("serving_id", decode.string)
+    use number_of_units <- decode.field("number_of_units", decode.float)
+    decode.success(types.ByFoodId(food_id:, serving_id:, number_of_units:))
+  }
+
+  case decode.run(body, by_food_id_decoder) {
+    Ok(item) -> Ok(item)
+    Error(_) -> {
       // Try ByNutrition
-      case
-        json.decode(body, json.field("food_entry_name", json.string)),
-        json.decode(body, json.field("serving_description", json.string)),
-        json.decode(body, json.field("number_of_units", json.float)),
-        json.decode(body, json.field("calories", json.float)),
-        json.decode(body, json.field("carbohydrate", json.float)),
-        json.decode(body, json.field("protein", json.float)),
-        json.decode(body, json.field("fat", json.float))
-      {
-        Ok(name), Ok(serving), Ok(units), Ok(cal), Ok(carbs), Ok(prot), Ok(fat) ->
-          Ok(types.ByNutrition(
-            food_entry_name: name,
-            serving_description: serving,
-            number_of_units: units,
-            calories: cal,
-            carbohydrate: carbs,
-            protein: prot,
-            fat: fat,
-          ))
-        _, _, _, _, _, _, _ ->
+      let by_nutrition_decoder = {
+        use food_entry_name <- decode.field("food_entry_name", decode.string)
+        use serving_description <- decode.field(
+          "serving_description",
+          decode.string,
+        )
+        use number_of_units <- decode.field("number_of_units", decode.float)
+        use calories <- decode.field("calories", decode.float)
+        use carbohydrate <- decode.field("carbohydrate", decode.float)
+        use protein <- decode.field("protein", decode.float)
+        use fat <- decode.field("fat", decode.float)
+        decode.success(types.ByNutrition(
+          food_entry_name:,
+          serving_description:,
+          number_of_units:,
+          calories:,
+          carbohydrate:,
+          protein:,
+          fat:,
+        ))
+      }
+
+      case decode.run(body, by_nutrition_decoder) {
+        Ok(item) -> Ok(item)
+        Error(_) ->
           Error(
             "Invalid item format. Provide either (food_id, serving_id, number_of_units) or (food_entry_name, serving_description, number_of_units, calories, carbohydrate, protein, fat)",
           )

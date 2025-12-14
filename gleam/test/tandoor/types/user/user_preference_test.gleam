@@ -1,4 +1,4 @@
-import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/json
 import gleam/option.{None, Some}
 import gleeunit/should
@@ -49,7 +49,7 @@ pub fn user_preference_decoder_basic_test() {
       \"food_children_exist\": false
     }"
 
-  let assert Ok(decoded_json) = json.decode(json_str, dynamic.dynamic)
+  let assert Ok(decoded_json) = json.parse(json_str, using: decode.dynamic)
   let result = user_preference_decoder.decode(decoded_json)
 
   should.be_ok(result)
@@ -138,7 +138,7 @@ pub fn user_preference_decoder_with_optional_image_test() {
       \"food_children_exist\": true
     }"
 
-  let assert Ok(decoded_json) = json.decode(json_str, dynamic.dynamic)
+  let assert Ok(decoded_json) = json.parse(json_str, using: decode.dynamic)
   let result = user_preference_decoder.decode(decoded_json)
 
   should.be_ok(result)
@@ -168,7 +168,7 @@ pub fn user_preference_decoder_missing_required_field_test() {
       \"default_unit\": \"g\"
     }"
 
-  let assert Ok(decoded_json) = json.decode(json_str, dynamic.dynamic)
+  let assert Ok(decoded_json) = json.parse(json_str, using: decode.dynamic)
   let result = user_preference_decoder.decode(decoded_json)
 
   should.be_error(result)

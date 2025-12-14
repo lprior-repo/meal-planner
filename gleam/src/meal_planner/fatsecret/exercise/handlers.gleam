@@ -101,9 +101,7 @@ pub fn handle_get_exercise(
 ///   ]
 /// }
 /// ```
-pub fn handle_get_exercise_entries(
-  req: wisp.Request,
-) -> wisp.Response {
+pub fn handle_get_exercise_entries(req: wisp.Request) -> wisp.Response {
   use <- wisp.require_method(req, http.Get)
 
   // TODO: Extract access_token from Authorization header
@@ -136,9 +134,7 @@ pub fn handle_get_exercise_entries(
 ///   "success": true
 /// }
 /// ```
-pub fn handle_edit_exercise_entry(
-  req: wisp.Request,
-) -> wisp.Response {
+pub fn handle_edit_exercise_entry(req: wisp.Request) -> wisp.Response {
   use <- wisp.require_method(req, http.Put)
 
   // TODO: Extract access_token from Authorization header
@@ -218,9 +214,7 @@ pub fn handle_get_exercise_month(
 ///   "success": true
 /// }
 /// ```
-pub fn handle_commit_exercise_day(
-  req: wisp.Request,
-) -> wisp.Response {
+pub fn handle_commit_exercise_day(req: wisp.Request) -> wisp.Response {
   use <- wisp.require_method(req, http.Post)
 
   // TODO: Extract access_token from Authorization header
@@ -288,5 +282,3 @@ fn exercise_to_json(exercise: types.Exercise) -> json.Json {
     #("calories_per_hour", json.float(exercise.calories_per_hour)),
   ])
 }
-
-

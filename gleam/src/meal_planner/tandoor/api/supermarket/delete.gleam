@@ -1,7 +1,6 @@
 /// Supermarket Delete API
 ///
 /// This module provides functions to delete supermarkets from the Tandoor API.
-
 import gleam/int
 import gleam/result
 import meal_planner/logger
