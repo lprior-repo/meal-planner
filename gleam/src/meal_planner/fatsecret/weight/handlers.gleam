@@ -1,0 +1,369 @@
+/// HTTP handlers for FatSecret Weight endpoints
+///
+/// Routes:
+///   POST /api/fatsecret/weight - Update weight measurement
+///   GET /api/fatsecret/weight/month/:year/:month - Get monthly summary
+import birl
+import gleam/dict
+import gleam/dynamic
+import gleam/float
+import gleam/http.{Get, Post}
+import gleam/http/response.{type Response}
+import gleam/int
+import gleam/json
+import gleam/list
+import gleam/option.{None, Some}
+import gleam/result
+import meal_planner/fatsecret/diary/types as diary_types
+import meal_planner/fatsecret/weight/service
+import meal_planner/fatsecret/weight/types.{WeightUpdate}
+import pog
+import wisp.{type Request}
+
+// ============================================================================
+// POST /api/fatsecret/weight - Update weight measurement
+// ============================================================================
+
+/// POST /api/fatsecret/weight - Log a weight measurement
+///
+/// Request body (JSON):
+/// ```json
+/// {
+///   "weight_kg": 75.5,
+///   "date": "2024-01-15",        // Optional, defaults to today
+///   "goal_weight_kg": 70.0,      // Optional
+///   "height_cm": 175.0,          // Optional
+///   "comment": "Morning weight"   // Optional
+/// }
+/// ```
+///
+/// Returns:
+/// - 200: Success
+/// - 400: Invalid date (error 205/206)
+/// - 401: Not connected or auth revoked
+/// - 500: Server error
+pub fn update_weight(req: Request, conn: pog.Connection) -> Response(String) {
+  case req.method {
+    Post -> {
+      // Parse request body
+      use body <- wisp.require_json(req)
+
+      case parse_weight_update(body) {
+        Error(msg) ->
+          wisp.json_response(
+            json.to_string(
+              json.object([
+                #("error", json.string("invalid_request")),
+                #("message", json.string(msg)),
+              ]),
+            ),
+            400,
+          )
+
+        Ok(update) -> {
+          case service.update_weight(conn, update) {
+            Ok(_) ->
+              wisp.json_response(
+                json.to_string(
+                  json.object([
+                    #("success", json.bool(True)),
+                    #("message", json.string("Weight updated successfully")),
+                  ]),
+                ),
+                200,
+              )
+
+            Error(e) -> {
+              // Map date validation errors to 400
+              case service.is_date_validation_error(e) {
+                True -> date_validation_error_response(e)
+                False -> error_response(e)
+              }
+            }
+          }
+        }
+      }
+    }
+    _ -> wisp.method_not_allowed([Post])
+  }
+}
+
+// ============================================================================
+// GET /api/fatsecret/weight/month/:year/:month - Get monthly summary
+// ============================================================================
+
+/// GET /api/fatsecret/weight/month/:year/:month - Get weight measurements for a month
+///
+/// Example: GET /api/fatsecret/weight/month/2024/1
+///
+/// Returns:
+/// ```json
+/// {
+///   "month": 1,
+///   "year": 2024,
+///   "days": [
+///     { "date": "2024-01-15", "weight_kg": 75.5, "date_int": 19723 },
+///     { "date": "2024-01-16", "weight_kg": 75.3, "date_int": 19724 }
+///   ]
+/// }
+/// ```
+pub fn get_weight_month(
+  req: Request,
+  conn: pog.Connection,
+  year: String,
+  month: String,
+) -> Response(String) {
+  case req.method {
+    Get -> {
+      // Parse year and month
+      case int.parse(year), int.parse(month) {
+        Ok(year_int), Ok(month_int) if month_int >= 1 && month_int <= 12 -> {
+          // Calculate date_int for first day of month
+          let date_str =
+            int.to_string(year_int) <> "-" <> pad_zero(month_int) <> "-01"
+
+          case diary_types.date_to_int(date_str) {
+            Error(_) ->
+              wisp.json_response(
+                json.to_string(
+                  json.object([
+                    #("error", json.string("invalid_date")),
+                    #("message", json.string("Invalid year/month")),
+                  ]),
+                ),
+                400,
+              )
+
+            Ok(date_int) -> {
+              case service.get_weight_month_summary(conn, date_int) {
+                Ok(summary) -> {
+                  let days_json =
+                    list.map(summary.days, fn(day) {
+                      json.object([
+                        #(
+                          "date",
+                          json.string(diary_types.int_to_date(day.date_int)),
+                        ),
+                        #("weight_kg", json.float(day.weight_kg)),
+                        #("date_int", json.int(day.date_int)),
+                      ])
+                    })
+
+                  wisp.json_response(
+                    json.to_string(
+                      json.object([
+                        #("month", json.int(summary.month)),
+                        #("year", json.int(summary.year)),
+                        #("days", json.array(days_json)),
+                      ]),
+                    ),
+                    200,
+                  )
+                }
+
+                Error(e) -> error_response(e)
+              }
+            }
+          }
+        }
+
+        _, _ ->
+          wisp.json_response(
+            json.to_string(
+              json.object([
+                #("error", json.string("invalid_parameters")),
+                #(
+                  "message",
+                  json.string("Year and month must be valid integers"),
+                ),
+              ]),
+            ),
+            400,
+          )
+      }
+    }
+    _ -> wisp.method_not_allowed([Get])
+  }
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/// Parse WeightUpdate from JSON request body
+fn parse_weight_update(body: String) -> Result(WeightUpdate, String) {
+  // Manual JSON parsing using dynamic decoder
+  use parsed <- result.try(
+    json.parse(body, dynamic.dict(dynamic.string, dynamic.dynamic))
+    |> result.map_error(fn(_) { "Invalid JSON format" }),
+  )
+
+  // Required: weight_kg
+  use weight_kg <- result.try(
+    dict.get(parsed, "weight_kg")
+    |> result.then(dynamic.float)
+    |> result.map_error(fn(_) { "Missing or invalid weight_kg" }),
+  )
+
+  // Optional: date (defaults to today if not provided)
+  let date_int = case dict.get(parsed, "date") {
+    Ok(date_dyn) ->
+      case dynamic.string(date_dyn) {
+        Ok(date_str) ->
+          case diary_types.date_to_int(date_str) {
+            Ok(di) -> Ok(di)
+            Error(_) -> Error("Invalid date format (use YYYY-MM-DD)")
+          }
+        Error(_) -> Error("Date must be a string")
+      }
+    Error(_) -> {
+      // Use today's date
+      let today = birl.now()
+      let #(y, m, d) = birl.get_day(today)
+      let date_str =
+        int.to_string(y) <> "-" <> pad_zero(m) <> "-" <> pad_zero(d)
+      diary_types.date_to_int(date_str)
+      |> result.map_error(fn(_) { "Failed to calculate today's date" })
+    }
+  }
+
+  use date_int <- result.try(date_int)
+
+  // Optional: goal_weight_kg
+  let goal_weight_kg = case dict.get(parsed, "goal_weight_kg") {
+    Ok(goal_dyn) ->
+      case dynamic.float(goal_dyn) {
+        Ok(goal) -> Some(goal)
+        Error(_) -> None
+      }
+    Error(_) -> None
+  }
+
+  // Optional: height_cm
+  let height_cm = case dict.get(parsed, "height_cm") {
+    Ok(height_dyn) ->
+      case dynamic.float(height_dyn) {
+        Ok(height) -> Some(height)
+        Error(_) -> None
+      }
+    Error(_) -> None
+  }
+
+  // Optional: comment
+  let comment = case dict.get(parsed, "comment") {
+    Ok(comment_dyn) ->
+      case dynamic.string(comment_dyn) {
+        Ok(c) -> Some(c)
+        Error(_) -> None
+      }
+    Error(_) -> None
+  }
+
+  Ok(WeightUpdate(
+    current_weight_kg: weight_kg,
+    date_int: date_int,
+    goal_weight_kg: goal_weight_kg,
+    height_cm: height_cm,
+    comment: comment,
+  ))
+}
+
+/// Pad single digit numbers with leading zero
+fn pad_zero(n: Int) -> String {
+  case n < 10 {
+    True -> "0" <> int.to_string(n)
+    False -> int.to_string(n)
+  }
+}
+
+/// Convert service error to HTTP error response
+fn error_response(error: service.ServiceError) -> Response(String) {
+  case error {
+    service.NotConnected ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("error", json.string("not_connected")),
+            #(
+              "message",
+              json.string(
+                "FatSecret account not connected. Please connect first.",
+              ),
+            ),
+          ]),
+        ),
+        401,
+      )
+
+    service.NotConfigured ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("error", json.string("not_configured")),
+            #(
+              "message",
+              json.string("FatSecret API credentials not configured."),
+            ),
+          ]),
+        ),
+        500,
+      )
+
+    service.AuthRevoked ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("error", json.string("auth_revoked")),
+            #(
+              "message",
+              json.string(
+                "FatSecret authorization revoked. Please reconnect your account.",
+              ),
+            ),
+          ]),
+        ),
+        401,
+      )
+
+    service.DateTooFar
+    | service.DateEarlierThanExisting
+    | service.ApiError(_)
+    | service.StorageError(_) ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("error", json.string("api_error")),
+            #("message", json.string(service.error_to_message(error))),
+          ]),
+        ),
+        500,
+      )
+  }
+}
+
+/// Convert date validation errors to 400 Bad Request
+fn date_validation_error_response(
+  error: service.ServiceError,
+) -> Response(String) {
+  let #(error_code, message) = case error {
+    service.DateTooFar -> #(
+      "date_too_far",
+      "Weight date must be within 2 days of today",
+    )
+    service.DateEarlierThanExisting -> #(
+      "date_earlier_than_existing",
+      "Cannot update a date earlier than existing weight entries",
+    )
+    _ -> #("unknown", "Unknown date validation error")
+  }
+
+  wisp.json_response(
+    json.to_string(
+      json.object([
+        #("error", json.string(error_code)),
+        #("message", json.string(message)),
+      ]),
+    ),
+    400,
+  )
+}
