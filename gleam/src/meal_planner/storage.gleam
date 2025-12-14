@@ -8,7 +8,6 @@
 /// - storage/foods: USDA food database searching and custom food management
 /// - storage/logs: Food log entry operations and nutritional summaries
 /// - storage/migrations: Database schema initialization and updates
-/// - storage/analytics: Search event tracking and analytics
 ///
 /// **Design Philosophy:**
 /// This facade keeps the public API simple and focused, while internal implementations
@@ -21,9 +20,6 @@ import meal_planner/storage/foods
 import meal_planner/storage/logs
 
 import meal_planner/storage/migrations
-
-// TODO: Re-enable when analytics module is implemented
-// import meal_planner/storage/analytics
 
 // ============================================================================
 // Database Configuration (from storage/profile)
@@ -186,12 +182,6 @@ pub fn get_weekly_summary(conn, user_id, start_date) {
 pub fn init_migrations() {
   migrations.init_migrations()
 }
-
-// Analytics
-// TODO: Re-enable when analytics module is implemented
-// pub fn record_search_event(conn, event) {
-//   analytics.record_search_event(conn, event)
-// }
 
 /// Get recently logged USDA foods for the user
 pub fn get_recently_logged_foods(conn, limit) {
