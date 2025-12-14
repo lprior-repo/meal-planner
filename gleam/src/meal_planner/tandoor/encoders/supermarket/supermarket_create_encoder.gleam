@@ -33,13 +33,12 @@ import meal_planner/tandoor/types/supermarket/supermarket_create.{
 ///
 /// # Returns
 /// JSON representation of the supermarket create request
-pub fn encode_supermarket_create(
-  supermarket: SupermarketCreateRequest,
-) -> Json {
+pub fn encode_supermarket_create(supermarket: SupermarketCreateRequest) -> Json {
   let base = [#("name", json.string(supermarket.name))]
 
   let with_description = case supermarket.description {
-    option.Some(desc) -> list.append(base, [#("description", json.string(desc))])
+    option.Some(desc) ->
+      list.append(base, [#("description", json.string(desc))])
     option.None -> base
   }
 

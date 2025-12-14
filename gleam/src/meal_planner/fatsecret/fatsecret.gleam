@@ -443,8 +443,8 @@ pub const save_exercise_template = exercise_service.save_exercise_template
 // ============================================================================
 
 import meal_planner/fatsecret/profile/oauth as profile_oauth
-import meal_planner/fatsecret/profile/types as profile_types
 import meal_planner/fatsecret/profile/service as profile_service
+import meal_planner/fatsecret/profile/types as profile_types
 
 /// User profile information
 pub type Profile =

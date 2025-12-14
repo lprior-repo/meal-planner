@@ -17,7 +17,8 @@ pub fn decode_food_full_test() {
       \"ignore_shopping\": false
     }"
 
-  let result: Result(Food, _) = json.parse(json_str, using: food_decoder.food_decoder())
+  let result: Result(Food, _) =
+    json.parse(json_str, using: food_decoder.food_decoder())
 
   case result {
     Ok(food) -> {
@@ -51,7 +52,8 @@ pub fn decode_food_minimal_test() {
       \"ignore_shopping\": true
     }"
 
-  let result: Result(Food, _) = json.parse(json_str, using: food_decoder.food_decoder())
+  let result: Result(Food, _) =
+    json.parse(json_str, using: food_decoder.food_decoder())
 
   case result {
     Ok(food) -> {
@@ -89,7 +91,8 @@ pub fn decode_food_with_recipe_test() {
       \"ignore_shopping\": false
     }"
 
-  let result: Result(Food, _) = json.parse(json_str, using: food_decoder.food_decoder())
+  let result: Result(Food, _) =
+    json.parse(json_str, using: food_decoder.food_decoder())
 
   case result {
     Ok(food) -> {
@@ -125,7 +128,8 @@ pub fn decode_food_with_supermarket_category_test() {
       \"ignore_shopping\": false
     }"
 
-  let result: Result(Food, _) = json.parse(json_str, using: food_decoder.food_decoder())
+  let result: Result(Food, _) =
+    json.parse(json_str, using: food_decoder.food_decoder())
 
   case result {
     Ok(food) -> {

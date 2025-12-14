@@ -2,16 +2,17 @@
 ///
 /// This module provides CRUD operations for managing keywords/tags via Tandoor API.
 /// Keywords are used to categorize recipes and form a hierarchical tree structure.
-import gleam/dynamic/decode
-import gleam/httpc
+///
+/// Refactored to use CRUD helpers - 60%+ line reduction.
 import gleam/int
 import gleam/json
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import gleam/string
-import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, NetworkError, ParseError,
+import meal_planner/tandoor/api/crud_helpers.{
+  execute_delete, execute_get, execute_patch, execute_post, parse_json_list,
+  parse_json_single,
 }
+import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/keyword/keyword_decoder
 import meal_planner/tandoor/encoders/keyword/keyword_encoder.{
   type KeywordCreateRequest, type KeywordUpdateRequest,
@@ -67,33 +68,8 @@ pub fn list_keywords_by_parent(
     None -> [#("parent", "null")]
   }
 
-  use req <- result.try(client.build_get_request(
-    config,
-    "/api/keyword/",
-    query_params,
-  ))
-
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case
-        decode.run(json_data, decode.list(keyword_decoder.keyword_decoder()))
-      {
-        Ok(keywords) -> Ok(keywords)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode keyword list: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
+  use resp <- result.try(execute_get(config, "/api/keyword/", query_params))
+  parse_json_list(resp, keyword_decoder.keyword_decoder())
 }
 
 // ============================================================================
@@ -119,27 +95,8 @@ pub fn get_keyword(
   keyword_id keyword_id: Int,
 ) -> Result(Keyword, TandoorError) {
   let path = "/api/keyword/" <> int.to_string(keyword_id) <> "/"
-
-  use req <- result.try(client.build_get_request(config, path, []))
-
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, keyword_decoder.keyword_decoder()) {
-        Ok(keyword) -> Ok(keyword)
-        Error(errors) -> {
-          let error_msg = "Failed to decode keyword: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
+  use resp <- result.try(execute_get(config, path, []))
+  parse_json_single(resp, keyword_decoder.keyword_decoder())
 }
 
 // ============================================================================
@@ -170,34 +127,12 @@ pub fn create_keyword(
   config: ClientConfig,
   create_data: KeywordCreateRequest,
 ) -> Result(Keyword, TandoorError) {
-  let path = "/api/keyword/"
-
-  // Encode keyword data to JSON
   let body =
     keyword_encoder.encode_keyword_create_request(create_data)
     |> json.to_string
 
-  use req <- result.try(client.build_post_request(config, path, body))
-
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, keyword_decoder.keyword_decoder()) {
-        Ok(keyword) -> Ok(keyword)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode created keyword: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
+  use resp <- result.try(execute_post(config, "/api/keyword/", body))
+  parse_json_single(resp, keyword_decoder.keyword_decoder())
 }
 
 // ============================================================================
@@ -231,33 +166,12 @@ pub fn update_keyword(
   data update_data: KeywordUpdateRequest,
 ) -> Result(Keyword, TandoorError) {
   let path = "/api/keyword/" <> int.to_string(keyword_id) <> "/"
-
-  // Encode update data to JSON
   let body =
     keyword_encoder.encode_keyword_update_request(update_data)
     |> json.to_string
 
-  use req <- result.try(client.build_patch_request(config, path, body))
-
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, keyword_decoder.keyword_decoder()) {
-        Ok(keyword) -> Ok(keyword)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode updated keyword: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
+  use resp <- result.try(execute_patch(config, path, body))
+  parse_json_single(resp, keyword_decoder.keyword_decoder())
 }
 
 // ============================================================================
@@ -283,13 +197,6 @@ pub fn delete_keyword(
   keyword_id keyword_id: Int,
 ) -> Result(Nil, TandoorError) {
   let path = "/api/keyword/" <> int.to_string(keyword_id) <> "/"
-
-  use req <- result.try(client.build_delete_request(config, path))
-
-  use _resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
+  use _resp <- result.try(execute_delete(config, path))
   Ok(Nil)
 }

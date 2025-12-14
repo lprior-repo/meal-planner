@@ -263,25 +263,25 @@ pub fn recipe_search_response_decoder() -> decode.Decoder(
   use recipes <- decode.field(
     "recipes",
     decode.one_of(
-      // Multiple results
+      // Multiple results: recipes.recipe is an array
       decode.at(["recipe"], decode.list(recipe_search_result_decoder())),
       [
-        // Single result
+        // Single result: recipes.recipe is an object
         decode.at(
           ["recipe"],
           decode.map(recipe_search_result_decoder(), fn(r) { [r] }),
         ),
-        // No results
-        decode.success([]),
       ],
-    ),
+    )
+      // Fallback to empty list if "recipes" field doesn't have "recipe" key (empty results)
+      |> decode.optional,
   )
   use max_results <- decode.field("max_results", decode.int)
   use total_results <- decode.field("total_results", decode.int)
   use page_number <- decode.field("page_number", decode.int)
 
   decode.success(types.RecipeSearchResponse(
-    recipes:,
+    recipes: option.unwrap(recipes, []),
     max_results:,
     total_results:,
     page_number:,

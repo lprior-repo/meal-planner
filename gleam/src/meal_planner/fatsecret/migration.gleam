@@ -221,7 +221,8 @@ fn legacy_error_message_recipe(
   case error {
     recipes_service.NotConfigured ->
       "FatSecret not configured. Set FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET"
-    recipes_service.ApiError(api_error) -> foods_client.error_to_string(api_error)
+    recipes_service.ApiError(api_error) ->
+      foods_client.error_to_string(api_error)
   }
 }
 /// Migration helper for HTTP handlers

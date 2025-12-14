@@ -188,9 +188,7 @@ pub fn get_weight_month(
 // ============================================================================
 
 /// Parse WeightUpdate from JSON request body (Dynamic from wisp.require_json)
-fn parse_weight_update(
-  body: dynamic.Dynamic,
-) -> Result(WeightUpdate, String) {
+fn parse_weight_update(body: dynamic.Dynamic) -> Result(WeightUpdate, String) {
   // Build decoder for all fields
   let decoder = {
     use weight_kg <- decode.field("weight_kg", decode.float)
@@ -333,9 +331,7 @@ fn error_response(error: service.ServiceError) -> wisp.Response {
 }
 
 /// Convert date validation errors to 400 Bad Request
-fn date_validation_error_response(
-  error: service.ServiceError,
-) -> wisp.Response {
+fn date_validation_error_response(error: service.ServiceError) -> wisp.Response {
   let #(error_code, message) = case error {
     service.DateTooFar -> #(
       "date_too_far",

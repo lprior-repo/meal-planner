@@ -136,16 +136,17 @@ pub fn create_entry(req: Request, conn: pog.Connection) -> Response {
 ///   "sugar": 0.0
 /// }
 /// ```
-pub fn get_entry(req: Request, conn: pog.Connection, entry_id: String) -> Response {
+pub fn get_entry(
+  req: Request,
+  conn: pog.Connection,
+  entry_id: String,
+) -> Response {
   case req.method {
     Get -> {
       let entry_id_obj = types.food_entry_id(entry_id)
       case service.get_food_entry(conn, entry_id_obj) {
         Ok(entry) ->
-          wisp.json_response(
-            json.to_string(food_entry_to_json(entry)),
-            200,
-          )
+          wisp.json_response(json.to_string(food_entry_to_json(entry)), 200)
 
         Error(e) -> error_response(e)
       }
@@ -228,7 +229,11 @@ pub fn update_entry(
 /// - 200: Success
 /// - 401: Not connected or auth revoked
 /// - 500: Server error
-pub fn delete_entry(req: Request, conn: pog.Connection, entry_id: String) -> Response {
+pub fn delete_entry(
+  req: Request,
+  conn: pog.Connection,
+  entry_id: String,
+) -> Response {
   case req.method {
     Delete -> {
       let entry_id_obj = types.food_entry_id(entry_id)
@@ -276,7 +281,11 @@ pub fn delete_entry(req: Request, conn: pog.Connection, entry_id: String) -> Res
 ///   }
 /// }
 /// ```
-pub fn get_day(req: Request, conn: pog.Connection, date_int_str: String) -> Response {
+pub fn get_day(
+  req: Request,
+  conn: pog.Connection,
+  date_int_str: String,
+) -> Response {
   case req.method {
     Get -> {
       case int.parse(date_int_str) {
@@ -298,9 +307,8 @@ pub fn get_day(req: Request, conn: pog.Connection, date_int_str: String) -> Resp
               let totals = calculate_day_totals(entries)
               let date_str = types.int_to_date(date_int)
 
-              let entries_json = list.map(entries, fn(entry) {
-                food_entry_to_json(entry)
-              })
+              let entries_json =
+                list.map(entries, fn(entry) { food_entry_to_json(entry) })
 
               wisp.json_response(
                 json.to_string(
@@ -351,7 +359,11 @@ pub fn get_day(req: Request, conn: pog.Connection, date_int_str: String) -> Resp
 ///   ]
 /// }
 /// ```
-pub fn get_month(req: Request, conn: pog.Connection, date_int_str: String) -> Response {
+pub fn get_month(
+  req: Request,
+  conn: pog.Connection,
+  date_int_str: String,
+) -> Response {
   case req.method {
     Get -> {
       case int.parse(date_int_str) {
@@ -369,16 +381,17 @@ pub fn get_month(req: Request, conn: pog.Connection, date_int_str: String) -> Re
         Ok(date_int) -> {
           case service.get_month_summary(conn, date_int) {
             Ok(summary) -> {
-              let days_json = list.map(summary.days, fn(day) {
-                json.object([
-                  #("date_int", json.int(day.date_int)),
-                  #("date", json.string(types.int_to_date(day.date_int))),
-                  #("calories", json.float(day.calories)),
-                  #("carbohydrate", json.float(day.carbohydrate)),
-                  #("protein", json.float(day.protein)),
-                  #("fat", json.float(day.fat)),
-                ])
-              })
+              let days_json =
+                list.map(summary.days, fn(day) {
+                  json.object([
+                    #("date_int", json.int(day.date_int)),
+                    #("date", json.string(types.int_to_date(day.date_int))),
+                    #("calories", json.float(day.calories)),
+                    #("carbohydrate", json.float(day.carbohydrate)),
+                    #("protein", json.float(day.protein)),
+                    #("fat", json.float(day.fat)),
+                  ])
+                })
 
               wisp.json_response(
                 json.to_string(
@@ -416,8 +429,10 @@ pub fn handle_diary_routes(req: Request, conn: pog.Connection) -> Response {
         Delete -> delete_entry(req, conn, entry_id)
         _ -> wisp.method_not_allowed([Get, Patch, Delete])
       }
-    ["api", "fatsecret", "diary", "day", date_int] -> get_day(req, conn, date_int)
-    ["api", "fatsecret", "diary", "month", date_int] -> get_month(req, conn, date_int)
+    ["api", "fatsecret", "diary", "day", date_int] ->
+      get_day(req, conn, date_int)
+    ["api", "fatsecret", "diary", "month", date_int] ->
+      get_month(req, conn, date_int)
     _ -> wisp.not_found()
   }
 }
@@ -427,7 +442,9 @@ pub fn handle_diary_routes(req: Request, conn: pog.Connection) -> Response {
 // ============================================================================
 
 /// Parse FoodEntryInput from JSON request body
-fn parse_food_entry_input(body: dynamic.Dynamic) -> Result(FoodEntryInput, String) {
+fn parse_food_entry_input(
+  body: dynamic.Dynamic,
+) -> Result(FoodEntryInput, String) {
   let decoder = {
     use entry_type <- decode.field("type", decode.string)
 
@@ -446,13 +463,16 @@ fn parse_food_entry_input(body: dynamic.Dynamic) -> Result(FoodEntryInput, Strin
         // Parse meal type
         case types.meal_type_from_string(meal_str) {
           Error(_) ->
-            decode.failure(FromFood(
-              food_id: "",
-              serving_id: "",
-              number_of_units: 0.0,
-              meal: types.Breakfast,
-              date_int: 0,
-            ), "Invalid meal type")
+            decode.failure(
+              FromFood(
+                food_id: "",
+                serving_id: "",
+                number_of_units: 0.0,
+                meal: types.Breakfast,
+                date_int: 0,
+              ),
+              "Invalid meal type",
+            )
           Ok(meal) -> {
             // Handle date
             let date_int_result = case date_str {
@@ -479,13 +499,17 @@ fn parse_food_entry_input(body: dynamic.Dynamic) -> Result(FoodEntryInput, Strin
             }
 
             case date_int_result {
-              Error(msg) -> decode.failure(FromFood(
-                food_id: "",
-                serving_id: "",
-                number_of_units: 0.0,
-                meal: meal,
-                date_int: 0,
-              ), msg)
+              Error(msg) ->
+                decode.failure(
+                  FromFood(
+                    food_id: "",
+                    serving_id: "",
+                    number_of_units: 0.0,
+                    meal: meal,
+                    date_int: 0,
+                  ),
+                  msg,
+                )
               Ok(date_int) ->
                 decode.success(FromFood(
                   food_id: food_id,
@@ -520,17 +544,20 @@ fn parse_food_entry_input(body: dynamic.Dynamic) -> Result(FoodEntryInput, Strin
         // Parse meal type
         case types.meal_type_from_string(meal_str) {
           Error(_) ->
-            decode.failure(Custom(
-              food_entry_name: "",
-              serving_description: "",
-              number_of_units: 0.0,
-              meal: types.Breakfast,
-              date_int: 0,
-              calories: 0.0,
-              carbohydrate: 0.0,
-              protein: 0.0,
-              fat: 0.0,
-            ), "Invalid meal type")
+            decode.failure(
+              Custom(
+                food_entry_name: "",
+                serving_description: "",
+                number_of_units: 0.0,
+                meal: types.Breakfast,
+                date_int: 0,
+                calories: 0.0,
+                carbohydrate: 0.0,
+                protein: 0.0,
+                fat: 0.0,
+              ),
+              "Invalid meal type",
+            )
           Ok(meal) -> {
             // Handle date
             let date_int_result = case date_str {
@@ -557,17 +584,21 @@ fn parse_food_entry_input(body: dynamic.Dynamic) -> Result(FoodEntryInput, Strin
             }
 
             case date_int_result {
-              Error(msg) -> decode.failure(Custom(
-                food_entry_name: "",
-                serving_description: "",
-                number_of_units: 0.0,
-                meal: meal,
-                date_int: 0,
-                calories: 0.0,
-                carbohydrate: 0.0,
-                protein: 0.0,
-                fat: 0.0,
-              ), msg)
+              Error(msg) ->
+                decode.failure(
+                  Custom(
+                    food_entry_name: "",
+                    serving_description: "",
+                    number_of_units: 0.0,
+                    meal: meal,
+                    date_int: 0,
+                    calories: 0.0,
+                    carbohydrate: 0.0,
+                    protein: 0.0,
+                    fat: 0.0,
+                  ),
+                  msg,
+                )
               Ok(date_int) ->
                 decode.success(Custom(
                   food_entry_name: food_entry_name,
@@ -586,25 +617,29 @@ fn parse_food_entry_input(body: dynamic.Dynamic) -> Result(FoodEntryInput, Strin
       }
 
       _ ->
-        decode.failure(FromFood(
-          food_id: "",
-          serving_id: "",
-          number_of_units: 0.0,
-          meal: types.Breakfast,
-          date_int: 0,
-        ), "Entry type must be 'from_food' or 'custom'")
+        decode.failure(
+          FromFood(
+            food_id: "",
+            serving_id: "",
+            number_of_units: 0.0,
+            meal: types.Breakfast,
+            date_int: 0,
+          ),
+          "Entry type must be 'from_food' or 'custom'",
+        )
     }
   }
 
   case decode.run(body, decoder) {
-    Error(_) ->
-      Error("Invalid request body - missing required fields")
+    Error(_) -> Error("Invalid request body - missing required fields")
     Ok(input) -> Ok(input)
   }
 }
 
 /// Parse FoodEntryUpdate from JSON request body
-fn parse_food_entry_update(body: dynamic.Dynamic) -> Result(FoodEntryUpdate, String) {
+fn parse_food_entry_update(
+  body: dynamic.Dynamic,
+) -> Result(FoodEntryUpdate, String) {
   let decoder = {
     use number_of_units <- decode.optional_field(
       "number_of_units",
@@ -629,7 +664,10 @@ fn parse_food_entry_update(body: dynamic.Dynamic) -> Result(FoodEntryUpdate, Str
 
     case meal_result {
       Error(msg) ->
-        decode.failure(types.FoodEntryUpdate(number_of_units: None, meal: None), msg)
+        decode.failure(
+          types.FoodEntryUpdate(number_of_units: None, meal: None),
+          msg,
+        )
       Ok(meal) ->
         decode.success(types.FoodEntryUpdate(
           number_of_units: number_of_units,
@@ -647,7 +685,10 @@ fn parse_food_entry_update(body: dynamic.Dynamic) -> Result(FoodEntryUpdate, Str
 /// Convert FoodEntry to JSON representation
 fn food_entry_to_json(entry: FoodEntry) -> json.Json {
   json.object([
-    #("food_entry_id", json.string(types.food_entry_id_to_string(entry.food_entry_id))),
+    #(
+      "food_entry_id",
+      json.string(types.food_entry_id_to_string(entry.food_entry_id)),
+    ),
     #("food_entry_name", json.string(entry.food_entry_name)),
     #("food_entry_description", json.string(entry.food_entry_description)),
     #("food_id", json.string(entry.food_id)),
@@ -659,62 +700,38 @@ fn food_entry_to_json(entry: FoodEntry) -> json.Json {
     #("carbohydrate", json.float(entry.carbohydrate)),
     #("protein", json.float(entry.protein)),
     #("fat", json.float(entry.fat)),
-    #(
-      "saturated_fat",
-      case entry.saturated_fat {
-        Some(f) -> json.float(f)
-        None -> json.null()
-      },
-    ),
-    #(
-      "polyunsaturated_fat",
-      case entry.polyunsaturated_fat {
-        Some(f) -> json.float(f)
-        None -> json.null()
-      },
-    ),
-    #(
-      "monounsaturated_fat",
-      case entry.monounsaturated_fat {
-        Some(f) -> json.float(f)
-        None -> json.null()
-      },
-    ),
-    #(
-      "cholesterol",
-      case entry.cholesterol {
-        Some(f) -> json.float(f)
-        None -> json.null()
-      },
-    ),
-    #(
-      "sodium",
-      case entry.sodium {
-        Some(f) -> json.float(f)
-        None -> json.null()
-      },
-    ),
-    #(
-      "potassium",
-      case entry.potassium {
-        Some(f) -> json.float(f)
-        None -> json.null()
-      },
-    ),
-    #(
-      "fiber",
-      case entry.fiber {
-        Some(f) -> json.float(f)
-        None -> json.null()
-      },
-    ),
-    #(
-      "sugar",
-      case entry.sugar {
-        Some(f) -> json.float(f)
-        None -> json.null()
-      },
-    ),
+    #("saturated_fat", case entry.saturated_fat {
+      Some(f) -> json.float(f)
+      None -> json.null()
+    }),
+    #("polyunsaturated_fat", case entry.polyunsaturated_fat {
+      Some(f) -> json.float(f)
+      None -> json.null()
+    }),
+    #("monounsaturated_fat", case entry.monounsaturated_fat {
+      Some(f) -> json.float(f)
+      None -> json.null()
+    }),
+    #("cholesterol", case entry.cholesterol {
+      Some(f) -> json.float(f)
+      None -> json.null()
+    }),
+    #("sodium", case entry.sodium {
+      Some(f) -> json.float(f)
+      None -> json.null()
+    }),
+    #("potassium", case entry.potassium {
+      Some(f) -> json.float(f)
+      None -> json.null()
+    }),
+    #("fiber", case entry.fiber {
+      Some(f) -> json.float(f)
+      None -> json.null()
+    }),
+    #("sugar", case entry.sugar {
+      Some(f) -> json.float(f)
+      None -> json.null()
+    }),
   ])
 }
 
@@ -784,8 +801,7 @@ fn error_response(error: service.ServiceError) -> Response {
         401,
       )
 
-    service.ApiError(_)
-    | service.StorageError(_) ->
+    service.ApiError(_) | service.StorageError(_) ->
       wisp.json_response(
         json.to_string(
           json.object([

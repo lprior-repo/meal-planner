@@ -13,6 +13,7 @@
 /// - dashboard: Dashboard UI with nutrition tracking
 /// - fatsecret: FatSecret OAuth 3-legged authentication
 /// - tandoor: Tandoor Recipe Manager integration
+import meal_planner/fatsecret/foods/handlers as foods_handlers
 import meal_planner/web/handlers/diet
 import meal_planner/web/handlers/fatsecret
 
@@ -161,6 +162,23 @@ pub fn handle_fatsecret_get_recipe(
   recipe_id: String,
 ) -> wisp.Response {
   fatsecret.handle_get_recipe(req, recipe_id)
+}
+
+// ============================================================================
+// FatSecret Foods API Handlers
+// ============================================================================
+
+/// FatSecret search foods - GET /api/fatsecret/foods/search
+pub fn handle_fatsecret_search_foods(req: wisp.Request) -> wisp.Response {
+  foods_handlers.handle_search_foods(req)
+}
+
+/// FatSecret get food - GET /api/fatsecret/foods/:id
+pub fn handle_fatsecret_get_food(
+  req: wisp.Request,
+  food_id: String,
+) -> wisp.Response {
+  foods_handlers.handle_get_food(req, food_id)
 }
 
 // ============================================================================

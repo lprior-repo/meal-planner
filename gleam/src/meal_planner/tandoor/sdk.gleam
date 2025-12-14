@@ -15,9 +15,7 @@
 /// let assert Ok(foods) = sdk |> foods.list()
 /// ```
 import gleam/option.{type Option, None, Some}
-import meal_planner/tandoor/client.{
-  type ClientConfig, BearerAuth, SessionAuth,
-}
+import meal_planner/tandoor/client.{type ClientConfig, BearerAuth, SessionAuth}
 import meal_planner/tandoor/core/http.{type HttpTransport}
 
 // Re-export commonly used types for convenience

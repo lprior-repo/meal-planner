@@ -9,29 +9,16 @@
 /// - create_property: Create a new property
 /// - update_property: Update an existing property
 /// - delete_property: Delete a property
-import gleam/dynamic/decode
-import gleam/http/request
-import gleam/http/response
-import gleam/httpc
 import gleam/int
 import gleam/json
-import gleam/list
-import gleam/option.{type Option}
 import gleam/result
-import gleam/string
-import meal_planner/logger
-import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, NetworkError, ParseError,
-}
+import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/property/property_decoder
 import meal_planner/tandoor/encoders/property/property_encoder.{
   type PropertyCreateRequest, type PropertyUpdateRequest,
 }
 import meal_planner/tandoor/types/property/property.{type Property}
-
-// ============================================================================
-// List Properties
-// ============================================================================
 
 /// Get all properties from Tandoor API
 ///
@@ -40,44 +27,21 @@ import meal_planner/tandoor/types/property/property.{type Property}
 ///
 /// # Returns
 /// Result with list of properties or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let result = list_properties(config)
+/// ```
 pub fn list_properties(
   config: ClientConfig,
 ) -> Result(List(Property), TandoorError) {
-  use req <- result.try(client.build_get_request(config, "/api/property/", []))
-  logger.debug("Tandoor GET /api/property/")
+  let path = "/api/property/"
 
-  use resp <- result.try(execute_and_parse(config, req))
+  use resp <- result.try(crud_helpers.execute_get(config, path, []))
 
-  // Parse as list of properties
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case
-        decode.run(json_data, decode.list(property_decoder.property_decoder()))
-      {
-        Ok(properties) -> Ok(properties)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode property list: "
-            <> string.join(
-              list.map(errors, fn(e) {
-                case e {
-                  decode.DecodeError(expected, _found, path) ->
-                    expected <> " at " <> string.join(path, ".")
-                }
-              }),
-              ", ",
-            )
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
-  }
+  crud_helpers.parse_json_list(resp, property_decoder.property_decoder())
 }
-
-// ============================================================================
-// Get Property
-// ============================================================================
 
 /// Get a single property by ID
 ///
@@ -87,44 +51,22 @@ pub fn list_properties(
 ///
 /// # Returns
 /// Result with property or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let result = get_property(config, property_id: 1)
+/// ```
 pub fn get_property(
   config: ClientConfig,
   property_id property_id: Int,
 ) -> Result(Property, TandoorError) {
   let path = "/api/property/" <> int.to_string(property_id) <> "/"
 
-  use req <- result.try(client.build_get_request(config, path, []))
-  logger.debug("Tandoor GET " <> path)
+  use resp <- result.try(crud_helpers.execute_get(config, path, []))
 
-  use resp <- result.try(execute_and_parse(config, req))
-
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, property_decoder.property_decoder()) {
-        Ok(property) -> Ok(property)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode property: "
-            <> string.join(
-              list.map(errors, fn(e) {
-                case e {
-                  decode.DecodeError(expected, _found, path) ->
-                    expected <> " at " <> string.join(path, ".")
-                }
-              }),
-              ", ",
-            )
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
-  }
+  crud_helpers.parse_json_single(resp, property_decoder.property_decoder())
 }
-
-// ============================================================================
-// Create Property
-// ============================================================================
 
 /// Create a new property in Tandoor
 ///
@@ -134,50 +76,27 @@ pub fn get_property(
 ///
 /// # Returns
 /// Result with created property or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let request = PropertyCreateRequest(name: "rating", property_type: "number")
+/// let result = create_property(config, request)
+/// ```
 pub fn create_property(
   config: ClientConfig,
   create_data: PropertyCreateRequest,
 ) -> Result(Property, TandoorError) {
-  let body =
+  let path = "/api/property/"
+
+  let request_body =
     property_encoder.encode_property_create_request(create_data)
     |> json.to_string
 
-  use req <- result.try(client.build_post_request(
-    config,
-    "/api/property/",
-    body,
-  ))
-  logger.debug("Tandoor POST /api/property/")
+  use resp <- result.try(crud_helpers.execute_post(config, path, request_body))
 
-  use resp <- result.try(execute_and_parse(config, req))
-
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, property_decoder.property_decoder()) {
-        Ok(property) -> Ok(property)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode created property: "
-            <> string.join(
-              list.map(errors, fn(e) {
-                case e {
-                  decode.DecodeError(expected, _found, path) ->
-                    expected <> " at " <> string.join(path, ".")
-                }
-              }),
-              ", ",
-            )
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
-  }
+  crud_helpers.parse_json_single(resp, property_decoder.property_decoder())
 }
-
-// ============================================================================
-// Update Property
-// ============================================================================
 
 /// Update an existing property in Tandoor
 ///
@@ -188,48 +107,28 @@ pub fn create_property(
 ///
 /// # Returns
 /// Result with updated property or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let request = PropertyUpdateRequest(name: option.Some("new_name"), ...)
+/// let result = update_property(config, property_id: 1, update_data: request)
+/// ```
 pub fn update_property(
   config: ClientConfig,
   property_id property_id: Int,
   update_data update_data: PropertyUpdateRequest,
 ) -> Result(Property, TandoorError) {
   let path = "/api/property/" <> int.to_string(property_id) <> "/"
-  let body =
+
+  let request_body =
     property_encoder.encode_property_update_request(update_data)
     |> json.to_string
 
-  use req <- result.try(client.build_patch_request(config, path, body))
-  logger.debug("Tandoor PATCH " <> path)
+  use resp <- result.try(crud_helpers.execute_patch(config, path, request_body))
 
-  use resp <- result.try(execute_and_parse(config, req))
-
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, property_decoder.property_decoder()) {
-        Ok(property) -> Ok(property)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode updated property: "
-            <> string.join(
-              list.map(errors, fn(e) {
-                case e {
-                  decode.DecodeError(expected, _found, path) ->
-                    expected <> " at " <> string.join(path, ".")
-                }
-              }),
-              ", ",
-            )
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
-  }
+  crud_helpers.parse_json_single(resp, property_decoder.property_decoder())
 }
-
-// ============================================================================
-// Delete Property
-// ============================================================================
 
 /// Delete a property from Tandoor
 ///
@@ -238,39 +137,21 @@ pub fn update_property(
 /// * `property_id` - Property ID to delete
 ///
 /// # Returns
-/// Result with unit or error
+/// Result with Nil on success or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let result = delete_property(config, property_id: 1)
+/// ```
 pub fn delete_property(
   config: ClientConfig,
   property_id property_id: Int,
 ) -> Result(Nil, TandoorError) {
   let path = "/api/property/" <> int.to_string(property_id) <> "/"
 
-  use req <- result.try(client.build_delete_request(config, path))
-  logger.debug("Tandoor DELETE " <> path)
+  use _resp <- result.try(crud_helpers.execute_delete(config, path))
 
-  use _resp <- result.try(execute_and_parse(config, req))
+  // DELETE returns 204 No Content on success
   Ok(Nil)
-}
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/// Execute request and parse response
-fn execute_and_parse(
-  _config: ClientConfig,
-  req: request.Request(String),
-) -> Result(client.ApiResponse, TandoorError) {
-  use resp <- result.try(execute_request(req))
-  client.parse_response(resp)
-}
-
-/// Execute HTTP request
-fn execute_request(
-  req: request.Request(String),
-) -> Result(response.Response(String), TandoorError) {
-  case httpc.send(req) {
-    Ok(resp) -> Ok(resp)
-    Error(_) -> Error(NetworkError("Failed to connect to Tandoor"))
-  }
 }
