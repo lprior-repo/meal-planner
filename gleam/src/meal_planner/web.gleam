@@ -8,6 +8,7 @@
 /// - dashboard: Dashboard UI with nutrition tracking
 ///
 import gleam/erlang/process
+import gleam/http
 import gleam/int
 import gleam/io
 import gleam/option
@@ -73,6 +74,9 @@ pub fn start(app_config: config.Config) -> Nil {
 fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
   use <- wisp.log_request(req)
 
+  let base_url =
+    "http://localhost:" <> int.to_string(ctx.config.server.port)
+
   // Parse the request path and route to appropriate handler
   case wisp.path_segments(req) {
     // Health check endpoint
@@ -86,6 +90,15 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["log", "food", fdc_id] ->
       handlers.handle_log_food_form(req, ctx.db, fdc_id)
 
+    // FatSecret OAuth 3-legged flow
+    ["fatsecret", "connect"] ->
+      handlers.handle_fatsecret_connect(req, ctx.db, base_url)
+    ["fatsecret", "callback"] ->
+      handlers.handle_fatsecret_callback(req, ctx.db)
+    ["fatsecret", "status"] -> handlers.handle_fatsecret_status(req, ctx.db)
+    ["fatsecret", "disconnect"] ->
+      handlers.handle_fatsecret_disconnect(req, ctx.db)
+
     // API endpoints
     ["api", "dashboard", "data"] -> handlers.handle_dashboard_data(req, ctx.db)
     ["api", "ai", "score-recipe"] -> handlers.handle_score_recipe(req)
@@ -93,6 +106,27 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
       handlers.handle_diet_compliance(req, recipe_id)
     ["api", "macros", "calculate"] -> handlers.handle_macros_calculate(req)
     ["api", "logs", "food"] -> handlers.handle_log_food(req, ctx.db)
+
+    // FatSecret API endpoints (requires 3-legged auth)
+    ["api", "fatsecret", "profile"] ->
+      handlers.handle_fatsecret_profile(req, ctx.db)
+    ["api", "fatsecret", "entries"] ->
+      handlers.handle_fatsecret_entries(req, ctx.db)
+
+    // Tandoor Recipe Manager
+    ["tandoor", "status"] -> handlers.handle_tandoor_status(req)
+    ["api", "tandoor", "recipes"] -> handlers.handle_tandoor_list_recipes(req)
+    ["api", "tandoor", "recipes", recipe_id] ->
+      handlers.handle_tandoor_get_recipe(req, recipe_id)
+    ["api", "tandoor", "meal-plan"] -> {
+      case req.method {
+        http.Get -> handlers.handle_tandoor_get_meal_plan(req)
+        http.Post -> handlers.handle_tandoor_create_meal_plan(req)
+        _ -> wisp.method_not_allowed([http.Get, http.Post])
+      }
+    }
+    ["api", "tandoor", "meal-plan", entry_id] ->
+      handlers.handle_tandoor_delete_meal_plan(req, entry_id)
 
     // 404 for unknown routes
     _ -> wisp.not_found()
