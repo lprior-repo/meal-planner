@@ -11,6 +11,7 @@
 ///
 /// The resulting access token can be used with profile/client.gleam functions.
 import gleam/dict
+import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/string

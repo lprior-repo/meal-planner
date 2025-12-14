@@ -183,7 +183,8 @@ pub fn decode_saved_meals_response_multiple_test() {
     |> should.be_ok
 
   result.saved_meals
-  |> should.have_length(2)
+  |> list.length
+  |> should.equal(2)
 
   result.meal_filter
   |> should.equal(Some("breakfast"))
@@ -214,7 +215,7 @@ pub fn decode_saved_meals_response_single_test() {
     |> should.be_ok
 
   result.saved_meals
-  |> should.have_length(1)
+  |> list.length |> should.equal(1)
 
   result.meal_filter
   |> should.equal(None)
@@ -257,7 +258,7 @@ pub fn decode_saved_meal_items_response_test() {
     |> should.be_ok
 
   result.items
-  |> should.have_length(2)
+  |> list.length |> should.equal(2)
 
   let first = result.items |> list.first |> should.be_ok
   first.food_entry_name
@@ -278,7 +279,7 @@ pub fn decode_saved_meal_items_response_empty_test() {
     |> should.be_ok
 
   result.items
-  |> should.have_length(0)
+  |> list.length |> should.equal(0)
 }
 
 pub fn decode_saved_meal_id_response_test() {

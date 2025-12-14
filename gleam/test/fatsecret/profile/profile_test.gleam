@@ -13,7 +13,7 @@ import meal_planner/env
 import meal_planner/fatsecret/client
 import meal_planner/fatsecret/profile/service
 import meal_planner/fatsecret/storage
-import meal_planner/storage as db_storage
+import meal_planner/test_helpers/database
 import pog
 
 pub fn main() {
@@ -25,9 +25,7 @@ pub fn main() {
 // =============================================================================
 
 fn setup_test_db() -> pog.Connection {
-  let config = db_storage.default_config()
-  let assert Ok(pool) = db_storage.start_pool(config)
-  let assert Ok(conn) = pog.acquire(pool, 5000)
+  let conn = database.get_test_connection()
 
   // Clean up any existing tokens
   let _ = storage.delete_access_token(conn)
