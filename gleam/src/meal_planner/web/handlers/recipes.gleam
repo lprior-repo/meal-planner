@@ -205,9 +205,12 @@ pub fn handle_score(req: wisp.Request) -> wisp.Response {
 }
 
 /// Attempt to read and parse the scoring request from HTTP body
-fn read_scoring_request(_req: wisp.Request) -> Result(ScoringRequest, String) {
-  // In a real implementation, we would use wisp.require_json or similar
-  // For now, return a sample valid request to demonstrate the endpoint
+fn read_scoring_request(req: wisp.Request) -> Result(ScoringRequest, String) {
+  // Use wisp.require_json to ensure body is valid JSON
+  use _body <- result.try(wisp.require_json(req))
+  
+  // For now, return a valid sample request to demonstrate the endpoint works
+  // TODO: Implement full JSON decoding to extract actual request data
   Ok(ScoringRequest(
     recipes: [
       ScoringRecipeInput(
@@ -215,13 +218,6 @@ fn read_scoring_request(_req: wisp.Request) -> Result(ScoringRequest, String) {
         name: "High-Protein Steak",
         macros: types.Macros(protein: 60.0, fat: 35.0, carbs: 8.0),
         vertical_compliant: True,
-        fodmap_level: "low",
-      ),
-      ScoringRecipeInput(
-        id: "sample-recipe-2",
-        name: "Balanced Chicken Bowl",
-        macros: types.Macros(protein: 45.0, fat: 20.0, carbs: 50.0),
-        vertical_compliant: False,
         fodmap_level: "low",
       ),
     ],
