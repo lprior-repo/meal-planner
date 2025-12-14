@@ -28,8 +28,12 @@ import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types.{type TandoorRecipe}
 import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
+import meal_planner/tandoor/types/mealplan/meal_type.{
+  type MealType as ComplexMealType,
+}
 import meal_planner/tandoor/types/mealplan/mealplan.{
-  type MealPlanCreate, type MealType, Breakfast, Dinner, Lunch, Other, Snack,
+  type MealPlanCreate, type MealType as SimpleMealType, Breakfast, Dinner, Lunch,
+  Other, Snack,
 }
 import wisp
 
@@ -290,28 +294,6 @@ type ConfigError {
   ConfigError(status: Int, message: String)
 }
 
-/// Convert MealType enum to string
-fn meal_type_to_string(meal_type: MealType) -> String {
-  case meal_type {
-    Breakfast -> "breakfast"
-    Lunch -> "lunch"
-    Dinner -> "dinner"
-    Snack -> "snack"
-    Other -> "other"
-  }
-}
-
-/// Convert string to MealType enum
-fn meal_type_from_string(s: String) -> MealType {
-  case s {
-    "breakfast" -> Breakfast
-    "lunch" -> Lunch
-    "dinner" -> Dinner
-    "snack" -> Snack
-    _ -> Other
-  }
-}
-
 /// Get authenticated Tandoor client config
 fn get_authenticated_config() -> Result(ClientConfig, ConfigError) {
   case env.load_tandoor_config() {
@@ -398,12 +380,12 @@ fn meal_plan_to_json(entry: MealPlan) -> json.Json {
       Some(r) -> json.int(r.id)
       None -> json.null()
     }),
-    #("recipe_name", json.string(entry.title)),
+    #("recipe_name", json.string(entry.recipe_name)),
     #("servings", json.float(entry.servings)),
     #("note", json.string(entry.note)),
     #("from_date", json.string(entry.from_date)),
     #("to_date", json.string(entry.to_date)),
-    #("meal_type", json.string(meal_type_to_string(entry.meal_type))),
+    #("meal_type", json.string(entry.meal_type_name)),
     #("created_by", json.int(entry.created_by)),
   ])
 }
@@ -420,14 +402,7 @@ fn meal_plan_entry_to_json(entry: MealPlanEntry) -> json.Json {
     #("servings", json.float(entry.servings)),
     #("from_date", json.string(entry.from_date)),
     #("to_date", json.string(entry.to_date)),
-    #(
-      "meal_type",
-      json.string(
-        meal_type_to_string(
-          meal_type_from_string(int.to_string(entry.meal_type_id)),
-        ),
-      ),
-    ),
+    #("meal_type", json.string(entry.meal_type_name)),
   ])
 }
 
