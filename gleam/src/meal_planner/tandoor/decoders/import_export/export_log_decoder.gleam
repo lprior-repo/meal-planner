@@ -8,7 +8,9 @@
 /// - Export progress tracking fields
 /// - Cache management fields (duration, expiry status)
 import gleam/dynamic/decode
-import meal_planner/tandoor/types/import_export/export_log.{type ExportLog, ExportLog}
+import meal_planner/tandoor/types/import_export/export_log.{
+  type ExportLog, ExportLog,
+}
 
 /// Decode an ExportLog from JSON
 ///

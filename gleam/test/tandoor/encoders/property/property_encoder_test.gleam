@@ -6,7 +6,9 @@ import gleam/json
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/encoders/property/property_encoder
-import meal_planner/tandoor/types/property/property.{FoodProperty, RecipeProperty}
+import meal_planner/tandoor/types/property/property.{
+  FoodProperty, RecipeProperty,
+}
 
 /// Test encoding PropertyCreateRequest for recipe
 pub fn encode_property_create_recipe_test() {

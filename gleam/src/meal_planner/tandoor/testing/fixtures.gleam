@@ -35,12 +35,8 @@ pub fn recipe_simple_json() -> String {
 /// Recipe with custom ID
 pub fn recipe_with_id_json(id: Int) -> String {
   "{
-    \"id\": "
-  <> int.to_string(id)
-  <> ",
-    \"name\": \"Test Recipe "
-  <> int.to_string(id)
-  <> "\",
+    \"id\": " <> int.to_string(id) <> ",
+    \"name\": \"Test Recipe " <> int.to_string(id) <> "\",
     \"description\": \"Test recipe\",
     \"servings\": 4
   }"
@@ -49,12 +45,8 @@ pub fn recipe_with_id_json(id: Int) -> String {
 /// Recipe with custom name
 pub fn recipe_with_name_json(id: Int, name: String) -> String {
   "{
-    \"id\": "
-  <> int.to_string(id)
-  <> ",
-    \"name\": \""
-  <> name
-  <> "\",
+    \"id\": " <> int.to_string(id) <> ",
+    \"name\": \"" <> name <> "\",
     \"description\": \"Test recipe\",
     \"servings\": 4
   }"
@@ -75,24 +67,16 @@ pub fn food_json() -> String {
 /// Food with custom ID
 pub fn food_with_id_json(id: Int) -> String {
   "{
-    \"id\": "
-  <> int.to_string(id)
-  <> ",
-    \"name\": \"Test Food "
-  <> int.to_string(id)
-  <> "\"
+    \"id\": " <> int.to_string(id) <> ",
+    \"name\": \"Test Food " <> int.to_string(id) <> "\"
   }"
 }
 
 /// Food with custom ID and name
 pub fn food_with_name_json(id: Int, name: String) -> String {
   "{
-    \"id\": "
-  <> int.to_string(id)
-  <> ",
-    \"name\": \""
-  <> name
-  <> "\"
+    \"id\": " <> int.to_string(id) <> ",
+    \"name\": \"" <> name <> "\"
   }"
 }
 
@@ -127,12 +111,8 @@ pub fn keyword_json() -> String {
 /// Keyword with custom ID
 pub fn keyword_with_id_json(id: Int, name: String) -> String {
   "{
-    \"id\": "
-  <> int.to_string(id)
-  <> ",
-    \"name\": \""
-  <> name
-  <> "\"
+    \"id\": " <> int.to_string(id) <> ",
+    \"name\": \"" <> name <> "\"
   }"
 }
 
@@ -152,15 +132,9 @@ pub fn unit_json() -> String {
 /// Unit with custom ID
 pub fn unit_with_id_json(id: Int, name: String) -> String {
   "{
-    \"id\": "
-  <> int.to_string(id)
-  <> ",
-    \"name\": \""
-  <> name
-  <> "\",
-    \"plural_name\": \""
-  <> name
-  <> "s\"
+    \"id\": " <> int.to_string(id) <> ",
+    \"name\": \"" <> name <> "\",
+    \"plural_name\": \"" <> name <> "s\"
   }"
 }
 
@@ -215,18 +189,10 @@ pub fn paginated_json(
   }
 
   "{
-    \"count\": "
-  <> int.to_string(count)
-  <> ",
-    \"next\": "
-  <> next_value
-  <> ",
-    \"previous\": "
-  <> previous_value
-  <> ",
-    \"results\": "
-  <> results_json
-  <> "
+    \"count\": " <> int.to_string(count) <> ",
+    \"next\": " <> next_value <> ",
+    \"previous\": " <> previous_value <> ",
+    \"results\": " <> results_json <> "
   }"
 }
 
@@ -238,8 +204,7 @@ pub fn empty_paginated_json() -> String {
 /// Paginated recipes
 pub fn paginated_recipes_json(count: Int, page_size: Int) -> String {
   // Generate array of recipe JSONs
-  let recipes =
-    "[" <> string.join(list_of_recipe_ids(page_size), ", ") <> "]"
+  let recipes = "[" <> string.join(list_of_recipe_ids(page_size), ", ") <> "]"
 
   paginated_json(count: count, results_json: recipes, next: "", previous: "")
 }
@@ -259,12 +224,8 @@ fn list_of_recipe_ids(count: Int) -> List(String) {
 /// Error response fixture
 pub fn error_json(status: Int, detail: String) -> String {
   "{
-    \"status\": "
-  <> int.to_string(status)
-  <> ",
-    \"detail\": \""
-  <> detail
-  <> "\"
+    \"status\": " <> int.to_string(status) <> ",
+    \"detail\": \"" <> detail <> "\"
   }"
 }
 

@@ -59,8 +59,7 @@ pub fn update_food(
         Ok(food) -> Ok(food)
         Error(errors) -> {
           let error_msg =
-            "Failed to decode updated food: "
-            <> string.inspect(errors)
+            "Failed to decode updated food: " <> string.inspect(errors)
           Error(ParseError(error_msg))
         }
       }

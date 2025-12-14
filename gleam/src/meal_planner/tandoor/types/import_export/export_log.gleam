@@ -5,7 +5,6 @@
 /// (ZIP, PDF, JSON, etc.) and manage export caching.
 ///
 /// This type corresponds to the Tandoor API's ExportLog schema.
-
 /// Export log tracking the status of a recipe export operation
 ///
 /// Fields:

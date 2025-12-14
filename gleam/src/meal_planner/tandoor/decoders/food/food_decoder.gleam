@@ -22,10 +22,7 @@ import meal_planner/tandoor/types/food/food_simple.{type FoodSimple, FoodSimple}
 pub fn food_simple_decoder() -> decode.Decoder(FoodSimple) {
   use id <- decode.field("id", decode.int)
   use name <- decode.field("name", decode.string)
-  use plural_name <- decode.field(
-    "plural_name",
-    decode.optional(decode.string),
-  )
+  use plural_name <- decode.field("plural_name", decode.optional(decode.string))
 
   decode.success(FoodSimple(id: id, name: name, plural_name: plural_name))
 }
@@ -53,10 +50,7 @@ pub fn decode_food_simple(
 pub fn food_decoder() -> decode.Decoder(Food) {
   use id <- decode.field("id", decode.int)
   use name <- decode.field("name", decode.string)
-  use plural_name <- decode.field(
-    "plural_name",
-    decode.optional(decode.string),
-  )
+  use plural_name <- decode.field("plural_name", decode.optional(decode.string))
   use description <- decode.field("description", decode.string)
   use recipe <- decode.field("recipe", decode.optional(food_simple_decoder()))
   use food_onhand <- decode.field("food_onhand", decode.optional(decode.bool))

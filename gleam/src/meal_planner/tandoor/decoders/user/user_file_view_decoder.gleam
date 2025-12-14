@@ -4,7 +4,9 @@
 import gleam/dynamic
 import gleam/dynamic/decode
 import meal_planner/tandoor/decoders/user/user_decoder
-import meal_planner/tandoor/types/user/user_file_view.{type UserFileView, UserFileView}
+import meal_planner/tandoor/types/user/user_file_view.{
+  type UserFileView, UserFileView,
+}
 
 /// UserFileView decoder - returns a Decoder for use with decode.field, decode.run, etc.
 pub fn user_file_view_decoder() -> decode.Decoder(UserFileView) {

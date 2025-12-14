@@ -9,7 +9,8 @@ import meal_planner/tandoor/testing/matchers
 
 /// Test: Match request method
 pub fn match_method_test() {
-  let request = HttpRequest(method: http.Get, url: "/api/recipe", headers: [], body: "")
+  let request =
+    HttpRequest(method: http.Get, url: "/api/recipe", headers: [], body: "")
 
   matchers.assert_method(request, http.Get) |> should.be_true()
   matchers.assert_method(request, http.Post) |> should.be_false()
@@ -17,7 +18,8 @@ pub fn match_method_test() {
 
 /// Test: Match request URL
 pub fn match_url_test() {
-  let request = HttpRequest(method: http.Get, url: "/api/recipe/42", headers: [], body: "")
+  let request =
+    HttpRequest(method: http.Get, url: "/api/recipe/42", headers: [], body: "")
 
   matchers.assert_url(request, "/api/recipe/42") |> should.be_true()
   matchers.assert_url(request, "/api/recipe/1") |> should.be_false()
@@ -25,7 +27,8 @@ pub fn match_url_test() {
 
 /// Test: Match URL with pattern
 pub fn match_url_pattern_test() {
-  let request = HttpRequest(method: http.Get, url: "/api/recipe/42", headers: [], body: "")
+  let request =
+    HttpRequest(method: http.Get, url: "/api/recipe/42", headers: [], body: "")
 
   matchers.assert_url_matches(request, "/api/recipe/*") |> should.be_true()
   matchers.assert_url_matches(request, "/api/food/*") |> should.be_false()
@@ -124,8 +127,7 @@ pub fn match_custom_predicate_test() {
 
   // Custom matcher: POST requests with JSON content type
   let is_json_post = fn(req: HttpRequest) {
-    req.method == http.Post
-    && matchers.assert_has_header(req, "Content-Type")
+    req.method == http.Post && matchers.assert_has_header(req, "Content-Type")
   }
 
   matchers.assert_matches(request, is_json_post) |> should.be_true()

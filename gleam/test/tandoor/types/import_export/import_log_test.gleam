@@ -2,10 +2,10 @@
 ///
 /// This test module verifies the ImportLog and ExportLog types
 /// can be constructed correctly and have the expected fields.
-import gleeunit/should
 import gleam/option.{None, Some}
-import meal_planner/tandoor/types/import_export/import_log.{ImportLog}
+import gleeunit/should
 import meal_planner/tandoor/types/import_export/export_log.{ExportLog}
+import meal_planner/tandoor/types/import_export/import_log.{ImportLog}
 import meal_planner/tandoor/types/keyword/keyword.{Keyword}
 
 pub fn import_log_construction_test() {

@@ -472,7 +472,8 @@ fn check_api_error(body: String) -> Result(String, FatSecretError) {
 }
 
 /// Make 2-legged API request (signed but no user token)
-fn make_api_request(
+/// Exposed as public for use by recipe/exercise/etc. modules
+pub fn make_api_request(
   config: FatSecretConfig,
   method_name: String,
   params: Dict(String, String),
@@ -575,7 +576,7 @@ pub fn verify_setup() -> Result(Bool, FatSecretError) {
 // =============================================================================
 
 /// Make authenticated API request with user's access token
-fn make_authenticated_request(
+pub fn make_authenticated_request(
   config: FatSecretConfig,
   access_token: AccessToken,
   method_name: String,

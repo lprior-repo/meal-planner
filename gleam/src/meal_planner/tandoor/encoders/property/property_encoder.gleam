@@ -50,13 +50,10 @@ pub fn encode_property_create_request(req: PropertyCreateRequest) -> Json {
     #("name", json.string(req.name)),
     #("description", json.string(req.description)),
     #("property_type", json.string(property_type_to_string(req.property_type))),
-    #(
-      "unit",
-      case req.unit {
-        Some(unit) -> json.string(unit)
-        None -> json.null()
-      },
-    ),
+    #("unit", case req.unit {
+      Some(unit) -> json.string(unit)
+      None -> json.null()
+    }),
     #("order", json.int(req.order)),
   ])
 }

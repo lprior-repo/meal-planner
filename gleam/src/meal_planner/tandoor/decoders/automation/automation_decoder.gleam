@@ -4,8 +4,8 @@
 /// Handles all automation types: FOOD_ALIAS, UNIT_ALIAS, KEYWORD_ALIAS, DESCRIPTION_REPLACE.
 import gleam/dynamic/decode
 import meal_planner/tandoor/types/automation/automation.{
-  type Automation, type AutomationType, Automation, DescriptionReplace, FoodAlias,
-  KeywordAlias, UnitAlias,
+  type Automation, type AutomationType, Automation, DescriptionReplace,
+  FoodAlias, KeywordAlias, UnitAlias,
 }
 
 /// Decode AutomationType from JSON string
@@ -16,11 +16,7 @@ fn automation_type_decoder() -> decode.Decoder(AutomationType) {
     "UNIT_ALIAS" -> decode.success(UnitAlias)
     "KEYWORD_ALIAS" -> decode.success(KeywordAlias)
     "DESCRIPTION_REPLACE" -> decode.success(DescriptionReplace)
-    _ ->
-      decode.failure(
-        FoodAlias,
-        "Unknown automation type: " <> type_string,
-      )
+    _ -> decode.failure(FoodAlias, "Unknown automation type: " <> type_string)
   }
 }
 

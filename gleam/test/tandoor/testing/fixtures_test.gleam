@@ -113,10 +113,7 @@ pub fn empty_list_fixture_test() {
 
 /// Test: Error response fixture
 pub fn error_response_fixture_test() {
-  let fixture = fixtures.error_response(
-    status: 404,
-    detail: "Recipe not found",
-  )
+  let fixture = fixtures.error_response(status: 404, detail: "Recipe not found")
 
   fixture.status |> should.equal(404)
   fixture.detail |> should.equal("Recipe not found")

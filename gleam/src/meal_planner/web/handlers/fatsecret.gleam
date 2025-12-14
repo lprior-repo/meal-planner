@@ -5,6 +5,12 @@
 /// - GET /fatsecret/callback - Handle OAuth callback, exchange for access token
 /// - GET /fatsecret/status - Check connection status (JSON)
 /// - POST /fatsecret/disconnect - Remove stored access token
+///
+/// Recipe API Routes (2-legged, no auth):
+/// - GET /api/fatsecret/recipes/:id - Get recipe by ID
+/// - GET /api/fatsecret/recipes/search - Search recipes
+/// - GET /api/fatsecret/recipes/types - Get recipe types
+/// - GET /api/fatsecret/recipes/search/type/:type_id - Search by type
 import gleam/http
 import gleam/int
 import gleam/json
@@ -14,6 +20,7 @@ import gleam/result
 import gleam/string
 import meal_planner/env
 import meal_planner/fatsecret/client as fatsecret
+import meal_planner/fatsecret/recipes/handlers as recipe_handlers
 import meal_planner/fatsecret/service as fatsecret_service
 import meal_planner/fatsecret/storage
 import pog
@@ -455,4 +462,31 @@ fn html_response(status: Int, body: String) -> wisp.Response {
   wisp.response(status)
   |> wisp.set_header("content-type", "text/html; charset=utf-8")
   |> wisp.set_body(wisp.Text(html))
+}
+
+// =============================================================================
+// Recipe API Handlers (2-legged OAuth, no user auth required)
+// =============================================================================
+
+/// GET /api/fatsecret/recipes/types
+pub fn handle_get_recipe_types(req: wisp.Request) -> wisp.Response {
+  recipe_handlers.handle_get_recipe_types(req)
+}
+
+/// GET /api/fatsecret/recipes/search
+pub fn handle_search_recipes(req: wisp.Request) -> wisp.Response {
+  recipe_handlers.handle_search_recipes(req)
+}
+
+/// GET /api/fatsecret/recipes/search/type/:type_id
+pub fn handle_search_recipes_by_type(
+  req: wisp.Request,
+  type_id: String,
+) -> wisp.Response {
+  recipe_handlers.handle_search_recipes_by_type(req, type_id)
+}
+
+/// GET /api/fatsecret/recipes/:id
+pub fn handle_get_recipe(req: wisp.Request, recipe_id: String) -> wisp.Response {
+  recipe_handlers.handle_get_recipe(req, recipe_id)
 }

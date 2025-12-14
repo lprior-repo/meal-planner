@@ -3,10 +3,10 @@
 /// This module provides JSON decoders for paginated ExportLog lists
 /// from the Tandoor API.
 import gleam/dynamic/decode
+import meal_planner/tandoor/decoders/import_export/export_log_decoder
 import meal_planner/tandoor/types/import_export/export_log_list.{
   type ExportLogList, ExportLogList,
 }
-import meal_planner/tandoor/decoders/import_export/export_log_decoder
 
 /// Decode a paginated ExportLogList from JSON
 ///
