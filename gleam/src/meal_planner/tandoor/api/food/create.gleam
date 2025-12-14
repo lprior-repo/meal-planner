@@ -48,12 +48,10 @@ pub fn create_food(
     |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
   )
 
-  // Parse JSON response
-  use body <- result.try(client.parse_json_body(resp.body))
-
-  // Decode created food item
-  decode.run(body, recipe_decoder.food_decoder())
-  |> result.map_error(fn(err) {
-    ParseError("Failed to decode created food: " <> err)
+  // Convert to ApiResponse and parse JSON
+  let api_resp = client.ApiResponse(resp.status, resp.headers, resp.body)
+  client.parse_json_body(api_resp, fn(dyn) {
+    decode.run(dyn, recipe_decoder.food_decoder())
+    |> result.map_error(fn(_) { "Failed to decode created food" })
   })
 }
