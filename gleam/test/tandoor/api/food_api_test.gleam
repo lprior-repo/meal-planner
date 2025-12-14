@@ -7,12 +7,10 @@
 /// For now, we test the API function signatures and types.
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/tandoor/api/food/create as food_create
-import meal_planner/tandoor/api/food/get as food_get
-import meal_planner/tandoor/api/food/list as food_list
-import meal_planner/tandoor/client.{
-  type ClientConfig, AuthenticationError, BearerAuth, ClientConfig,
-}
+import meal_planner/tandoor/api/food/create
+import meal_planner/tandoor/api/food/get
+import meal_planner/tandoor/api/food/list
+import meal_planner/tandoor/client.{type ClientConfig, BearerAuth, ClientConfig}
 import meal_planner/tandoor/types.{TandoorFoodCreateRequest}
 
 /// Helper to create a test client config
@@ -32,7 +30,7 @@ pub fn list_foods_signature_test() {
 
   // This will fail with network error since no server is running
   // But it tests that the function exists and has correct types
-  let result = food_list.list_foods(config, limit: Some(10), page: None)
+  let result = list.list_foods(config, limit: Some(10), page: None)
 
   // Should return Result type - we expect an error since no server
   result
@@ -43,7 +41,7 @@ pub fn list_foods_signature_test() {
 pub fn list_foods_with_pagination_test() {
   let config = test_config()
 
-  let result = food_list.list_foods(config, limit: Some(20), page: Some(2))
+  let result = list.list_foods(config, limit: Some(20), page: Some(2))
 
   // Should return Result type
   result
@@ -55,7 +53,7 @@ pub fn get_food_signature_test() {
   let config = test_config()
 
   // This will fail with network error
-  let result = food_get.get_food(config, food_id: 1)
+  let result = get.get_food(config, food_id: 1)
 
   // Should return Result type
   result
@@ -68,7 +66,7 @@ pub fn create_food_signature_test() {
   let food_data = TandoorFoodCreateRequest(name: "Test Food")
 
   // This will fail with network error
-  let result = food_create.create_food(config, food_data)
+  let result = create.create_food(config, food_data)
 
   // Should return Result type
   result
@@ -86,7 +84,7 @@ pub fn invalid_auth_error_test() {
       max_retries: 0,
     )
 
-  let result = food_list.list_foods(config, limit: None, page: None)
+  let result = list.list_foods(config, limit: None, page: None)
 
   // Should be an error (either auth or network)
   result

@@ -5,16 +5,13 @@
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/api/keyword/keyword_api
-import meal_planner/tandoor/client.{TandoorClient}
+import meal_planner/tandoor/client.{type ClientConfig}
 import meal_planner/tandoor/encoders/keyword/keyword_encoder
 
 // Helper to create a test client
 // In real tests, this would connect to a test Tandoor instance
-fn create_test_client() -> TandoorClient {
-  TandoorClient(
-    base_url: "http://localhost:8000",
-    api_token: "test-token-12345",
-  )
+fn create_test_client() -> ClientConfig {
+  client.bearer_config("http://localhost:8000", "test-token-12345")
 }
 
 pub fn list_keywords_test() {
