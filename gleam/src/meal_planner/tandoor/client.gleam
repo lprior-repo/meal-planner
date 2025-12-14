@@ -24,8 +24,11 @@ import gleam/string
 import gleam/uri
 import meal_planner/logger
 import meal_planner/tandoor/decoders/mealplan/meal_plan_decoder
-import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
+import meal_planner/tandoor/types/mealplan/meal_plan.{
+  type MealPlan, type MealPlanListResponse,
+}
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
+import meal_planner/tandoor/types/mealplan/meal_type.{meal_type_to_string, type MealType}
 
 // ============================================================================
 // Types
@@ -1627,7 +1630,7 @@ pub type CreateMealPlanRequest {
     note: String,
     from_date: String,
     to_date: String,
-    meal_type: Int,
+    meal_type: MealType,
   )
 }
 
@@ -1644,118 +1647,126 @@ pub type CreateMealPlanRequest {
 ///
 /// # Returns
 /// Result with paginated meal plan list or error
+/// Get meal plan entries from Tandoor API
+///
+/// # Arguments
+/// * `config` - Client configuration with API token
+/// * `from_date` - Optional start date filter (YYYY-MM-DD)
+/// * `to_date` - Optional end date filter (YYYY-MM-DD)
+///
+/// # Returns
+/// Result with paginated meal plan list or error
 // FIXME(meal-planner-242): Incomplete MealPlan API implementation
-// pub fn get_meal_plan(
-// pub fn get_meal_plan(
-//   from_date: Option(String),
-//   to_date: Option(String),
-// ) -> Result(MealPlanListResponse, TandoorError) {
-//   let query_params =
-//     []
-//     |> fn(params) {
-//       case from_date {
-//         Some(d) -> [#("from_date", d), ..params]
-//         None -> params
-//       }
-//     }
-//     |> fn(params) {
-//       case to_date {
-//         Some(d) -> [#("to_date", d), ..params]
-//         None -> params
-//       }
-//     }
-// 
-//   use req <- result.try(build_get_request(
-//     config,
-//     "/api/meal-plan/",
-//     query_params,
-//   ))
-//   logger.debug("Tandoor GET /api/meal-plan/")
-// 
-//   use resp <- result.try(execute_and_parse(req))
-// 
-//   case json.parse(resp.body, using: decode.dynamic) {
-//     Ok(json_data) -> {
-//       case decode.run(json_data, meal_plan_list_decoder_internal()) {
-//         Ok(meal_plan_list) -> Ok(meal_plan_list)
-//         Error(errors) -> {
-//           let error_msg =
-//             "Failed to decode meal plan: "
-//             <> string.join(
-//               list.map(errors, fn(e) {
-//                 case e {
-//                   decode.DecodeError(expected, _found, path) ->
-//                     expected <> " at " <> string.join(path, ".")
-//                 }
-//               }),
-//               ", ",
-//             )
-//           Error(ParseError(error_msg))
-//         }
-//       }
-//     }
-//     Error(_) -> Error(ParseError("Invalid JSON response"))
-//   }
-// }
-// 
-// /// Create a meal plan entry in Tandoor
-// ///
-// /// # Arguments
-// /// * `config` - Client configuration with API token
-// /// * `entry` - Meal plan entry to create
-// ///
-// /// # Returns
-// /// Result with created meal plan entry or error
+pub fn get_meal_plan(
+  config: ClientConfig,
+  from_date: Option(String),
+  to_date: Option(String),
+) -> Result(MealPlanListResponse, TandoorError) {
+  let query_params =
+    []
+    |> fn(params) {
+      case from_date {
+        Some(d) -> [#("from_date", d), ..params]
+        None -> params
+      }
+    }
+    |> fn(params) {
+      case to_date {
+        Some(d) -> [#("to_date", d), ..params]
+        None -> params
+      }
+    }
+
+  use req <- result.try(build_get_request(
+    config,
+    "/api/meal-plan/",
+    query_params,
+  ))
+  logger.debug("Tandoor GET /api/meal-plan/")
+
+  use resp <- result.try(execute_and_parse(req))
+
+  case json.parse(resp.body, using: decode.dynamic) {
+    Ok(json_data) -> {
+      case decode.run(json_data, meal_plan_decoder.meal_plan_list_decoder_internal()) {
+        Ok(meal_plan_list) -> Ok(meal_plan_list)
+        Error(errors) -> {
+          let error_msg =
+            "Failed to decode meal plan: "
+            <> string.join(
+              list.map(errors, fn(e) {
+                case e {
+                  decode.DecodeError(expected, _found, path) ->
+                    expected <> " at " <> string.join(path, ".")
+                }
+              }),
+              ", ",
+            )
+          Error(ParseError(error_msg))
+        }
+      }
+    }
+    Error(_) -> Error(ParseError("Invalid JSON response"))
+  }
+}
+/// Create a meal plan entry in Tandoor
+///
+/// # Arguments
+/// * `config` - Client configuration with API token
+/// * `entry` - Meal plan entry to create
+///
+/// # Returns
+/// Result with created meal plan entry or error
 // FIXME(meal-planner-242): Incomplete MealPlan API implementation
-// pub fn create_meal_plan_entry(
-// pub fn create_meal_plan_entry(
-//   entry: CreateMealPlanRequest,
-// ) -> Result(MealPlanEntry, TandoorError) {
-//   let recipe_json = case entry.recipe {
-//     Some(id) -> json.int(id)
-//     None -> json.null()
-//   }
-// 
-//   let body =
-//     json.object([
-//       #("recipe", recipe_json),
-//       #("recipe_name", json.string(entry.recipe_name)),
-//       #("servings", json.float(entry.servings)),
-//       #("note", json.string(entry.note)),
-//       #("from_date", json.string(entry.from_date)),
-//       #("to_date", json.string(entry.to_date)),
-//       #("meal_type", json.string(meal_type_to_string(entry.meal_type))),
-//     ])
-//     |> json.to_string
-// 
-//   use req <- result.try(build_post_request(config, "/api/meal-plan/", body))
-//   logger.debug("Tandoor POST /api/meal-plan/")
-// 
-//   use resp <- result.try(execute_and_parse(req))
-// 
-//   case json.parse(resp.body, using: decode.dynamic) {
-//     Ok(json_data) -> {
-//       case decode.run(json_data, meal_plan_decoder_internal()) {
-//         Ok(meal_plan) -> Ok(meal_plan)
-//         Error(errors) -> {
-//           let error_msg =
-//             "Failed to decode created meal plan: "
-//             <> string.join(
-//               list.map(errors, fn(e) {
-//                 case e {
-//                   decode.DecodeError(expected, _found, path) ->
-//                     expected <> " at " <> string.join(path, ".")
-//                 }
-//               }),
-//               ", ",
-//             )
-//           Error(ParseError(error_msg))
-//         }
-//       }
-//     }
-//     Error(_) -> Error(ParseError("Invalid JSON response"))
-//   }
-// }
+pub fn create_meal_plan_entry(
+  config: ClientConfig,
+  entry: CreateMealPlanRequest,
+) -> Result(MealPlanEntry, TandoorError) {
+  let recipe_json = case entry.recipe {
+    Some(id) -> json.int(id)
+    None -> json.null()
+  }
+
+  let body =
+    json.object([
+      #("recipe", recipe_json),
+      #("recipe_name", json.string(entry.title)),
+      #("servings", json.float(entry.servings)),
+      #("note", json.string(entry.note)),
+      #("from_date", json.string(entry.from_date)),
+      #("to_date", json.string(entry.to_date)),
+      #("meal_type", json.string(meal_type_to_string(entry.meal_type))),
+    ])
+    |> json.to_string
+
+  use req <- result.try(build_post_request(config, "/api/meal-plan/", body))
+  logger.debug("Tandoor POST /api/meal-plan/")
+
+  use resp <- result.try(execute_and_parse(req))
+
+  case json.parse(resp.body, using: decode.dynamic) {
+    Ok(json_data) -> {
+      case decode.run(json_data, meal_plan_decoder.meal_plan_entry_decoder()) {
+        Ok(meal_plan) -> Ok(meal_plan)
+        Error(errors) -> {
+          let error_msg =
+            "Failed to decode created meal plan: "
+            <> string.join(
+              list.map(errors, fn(e) {
+                case e {
+                  decode.DecodeError(expected, _found, path) ->
+                    expected <> " at " <> string.join(path, ".")
+                }
+              }),
+              ", ",
+            )
+          Error(ParseError(error_msg))
+        }
+      }
+    }
+    Error(_) -> Error(ParseError("Invalid JSON response"))
+  }
+}
 // 
 // /// Delete a meal plan entry from Tandoor
 // ///
@@ -1777,7 +1788,6 @@ pub fn delete_meal_plan_entry(
   use _resp <- result.try(execute_and_parse(req))
   Ok(Nil)
 }
-
 /// Get today's meal plan entries
 ///
 /// # Arguments
@@ -1787,9 +1797,9 @@ pub fn delete_meal_plan_entry(
 /// # Returns
 /// Result with meal plan entries for today or error
 // FIXME(meal-planner-242): Incomplete MealPlan API implementation
-// pub fn get_todays_meals(
-// pub fn get_todays_meals(
-//   today: String,
-// ) -> Result(MealPlanListResponse, TandoorError) {
-//   get_meal_plan(config, Some(today), Some(today))
-// }
+pub fn get_todays_meals(
+  config: ClientConfig,
+  today: String,
+) -> Result(MealPlanListResponse, TandoorError) {
+  get_meal_plan(config, Some(today), Some(today))
+}

@@ -5,7 +5,7 @@ import gleam/dynamic/decode
 import gleam/int
 import gleam/json
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/env.{type FatSecretConfig}
@@ -112,7 +112,7 @@ pub fn get_exercise_entries(
   ))
 
   // Parse JSON response with type-safe decoders
-  case json.parse(response_json, decoders.decode_exercise_entries_response) {
+  case json.parse(response_json, decoders.decode_exercise_entries_response()) {
     Ok(entries) -> Ok(entries)
     Error(_) ->
       Error(base_client.ParseError(
@@ -279,7 +279,7 @@ pub fn get_exercise_month_summary(
   ))
 
   // Parse JSON response with type-safe decoders
-  case json.parse(response_json, decoders.decode_exercise_month_summary) {
+  case json.parse(response_json, decoders.decode_exercise_month_summary()) {
     Ok(summary) -> Ok(summary)
     Error(_) ->
       Error(base_client.ParseError(

@@ -2,7 +2,7 @@
 ///
 /// High-level API with automatic token management for favorites operations.
 /// Loads access token from database and handles auth errors gracefully.
-import gleam/option.{type Option}
+import gleam/option.{type Option, None, Some}
 import meal_planner/env
 import meal_planner/fatsecret/client
 import meal_planner/fatsecret/favorites/client as favorites_client

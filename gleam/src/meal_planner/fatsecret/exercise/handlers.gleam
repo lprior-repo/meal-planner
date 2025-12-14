@@ -10,10 +10,8 @@
 import gleam/http
 import gleam/int
 import gleam/json
-import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
-import gleam/string
 import meal_planner/fatsecret/exercise/service
 import meal_planner/fatsecret/exercise/types
 import wisp
@@ -52,7 +50,7 @@ pub fn handle_get_exercise(
 
   case service.get_exercise(exercise_id_typed) {
     Ok(exercise) -> {
-      json.to_string_builder(exercise_to_json(exercise))
+      json.to_string(exercise_to_json(exercise))
       |> wisp.json_response(200)
     }
     Error(service.NotConfigured) -> {
@@ -105,7 +103,6 @@ pub fn handle_get_exercise(
 /// ```
 pub fn handle_get_exercise_entries(
   req: wisp.Request,
-  date: String,
 ) -> wisp.Response {
   use <- wisp.require_method(req, http.Get)
 
@@ -141,7 +138,6 @@ pub fn handle_get_exercise_entries(
 /// ```
 pub fn handle_edit_exercise_entry(
   req: wisp.Request,
-  entry_id: String,
 ) -> wisp.Response {
   use <- wisp.require_method(req, http.Put)
 
@@ -224,7 +220,6 @@ pub fn handle_get_exercise_month(
 /// ```
 pub fn handle_commit_exercise_day(
   req: wisp.Request,
-  date: String,
 ) -> wisp.Response {
   use <- wisp.require_method(req, http.Post)
 
@@ -274,7 +269,7 @@ pub fn handle_save_exercise_template(req: wisp.Request) -> wisp.Response {
 /// Create error response JSON
 fn error_response(status: Int, message: String) -> wisp.Response {
   json.object([#("error", json.string(message))])
-  |> json.to_string_builder
+  |> json.to_string
   |> wisp.json_response(status)
 }
 
@@ -294,39 +289,4 @@ fn exercise_to_json(exercise: types.Exercise) -> json.Json {
   ])
 }
 
-/// Encode ExerciseEntry to JSON
-fn exercise_entry_to_json(entry: types.ExerciseEntry) -> json.Json {
-  json.object([
-    #(
-      "exercise_entry_id",
-      json.string(types.exercise_entry_id_to_string(entry.exercise_entry_id)),
-    ),
-    #(
-      "exercise_id",
-      json.string(types.exercise_id_to_string(entry.exercise_id)),
-    ),
-    #("exercise_name", json.string(entry.exercise_name)),
-    #("duration_min", json.int(entry.duration_min)),
-    #("calories", json.float(entry.calories)),
-    #("date", json.string(types.int_to_date(entry.date_int))),
-  ])
-}
 
-/// Encode ExerciseDaySummary to JSON
-fn exercise_day_summary_to_json(day: types.ExerciseDaySummary) -> json.Json {
-  json.object([
-    #("date", json.string(types.int_to_date(day.date_int))),
-    #("exercise_calories", json.float(day.exercise_calories)),
-  ])
-}
-
-/// Encode ExerciseMonthSummary to JSON
-fn exercise_month_summary_to_json(
-  summary: types.ExerciseMonthSummary,
-) -> json.Json {
-  json.object([
-    #("month", json.int(summary.month)),
-    #("year", json.int(summary.year)),
-    #("days", json.array(summary.days, exercise_day_summary_to_json)),
-  ])
-}

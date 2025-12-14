@@ -163,15 +163,12 @@ fn exercise_entries_list_decoder() -> decode.Decoder(List(ExerciseEntry)) {
 ///   }
 /// }
 /// ```
-pub fn decode_exercise_entries_response(
-  json: dynamic.Dynamic,
-) -> Result(List(ExerciseEntry), List(decode.DecodeError)) {
-  decode.run(
-    json,
-    decode.at(
-      ["exercise_entries", "exercise_entry"],
-      exercise_entries_list_decoder(),
-    ),
+pub fn decode_exercise_entries_response() -> decode.Decoder(
+  List(ExerciseEntry),
+) {
+  decode.at(
+    ["exercise_entries", "exercise_entry"],
+    exercise_entries_list_decoder(),
   )
 }
 
@@ -240,8 +237,8 @@ pub fn exercise_month_summary_decoder() -> decode.Decoder(ExerciseMonthSummary) 
 }
 
 /// Decode ExerciseMonthSummary from exercise_entries.get_month.v2 response
-pub fn decode_exercise_month_summary(
-  json: dynamic.Dynamic,
-) -> Result(ExerciseMonthSummary, List(decode.DecodeError)) {
-  decode.run(json, decode.at(["month"], exercise_month_summary_decoder()))
+pub fn decode_exercise_month_summary() -> decode.Decoder(
+  ExerciseMonthSummary,
+) {
+  decode.at(["month"], exercise_month_summary_decoder())
 }
