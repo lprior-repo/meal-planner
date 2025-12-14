@@ -6,8 +6,8 @@ import gleam/int
 import gleam/result
 import meal_planner/tandoor/api/crud_helpers
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
-import meal_planner/tandoor/decoders/recipe/recipe_decoder
-import meal_planner/tandoor/types.{type TandoorFood}
+import meal_planner/tandoor/decoders/food/food_decoder
+import meal_planner/tandoor/types/food/food.{type Food}
 
 /// Get a single food item by ID from Tandoor API
 ///
@@ -26,9 +26,9 @@ import meal_planner/tandoor/types.{type TandoorFood}
 pub fn get_food(
   config: ClientConfig,
   food_id food_id: Int,
-) -> Result(TandoorFood, TandoorError) {
+) -> Result(Food, TandoorError) {
   let path = "/api/food/" <> int.to_string(food_id) <> "/"
 
   use resp <- result.try(crud_helpers.execute_get(config, path, []))
-  crud_helpers.parse_json_single(resp, recipe_decoder.food_decoder())
+  crud_helpers.parse_json_single(resp, food_decoder.food_decoder())
 }
