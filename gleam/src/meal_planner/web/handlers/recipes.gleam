@@ -15,8 +15,6 @@
 /// Example: A recipe with perfect macro match (100), good vertical compliance (80),
 /// and average variety (60) with weights {macro: 0.4, compliance: 0.4, variety: 0.2}
 /// yields: 100*0.4 + 80*0.4 + 60*0.2 = 84.0 final score
-import gleam/dynamic
-import gleam/dynamic/decode
 import gleam/http
 import gleam/json
 import gleam/list
@@ -206,28 +204,13 @@ pub fn handle_score(req: wisp.Request) -> wisp.Response {
 
 /// Attempt to read and parse the scoring request from HTTP body
 fn read_scoring_request(req: wisp.Request) -> Result(ScoringRequest, String) {
-  // Use wisp.require_json to ensure body is valid JSON
-  use _body <- result.try(wisp.require_json(req))
+  use body <- result.try(wisp.require_json(req))
   
-  // For now, return a valid sample request to demonstrate the endpoint works
-  // TODO: Implement full JSON decoding to extract actual request data
-  Ok(ScoringRequest(
-    recipes: [
-      ScoringRecipeInput(
-        id: "sample-recipe-1",
-        name: "High-Protein Steak",
-        macros: types.Macros(protein: 60.0, fat: 35.0, carbs: 8.0),
-        vertical_compliant: True,
-        fodmap_level: "low",
-      ),
-    ],
-    macro_targets: MacroTargets(protein: 40.0, fat: 25.0, carbs: 35.0),
-    weights: ScoringWeights(
-      diet_compliance: 0.4,
-      macro_match: 0.5,
-      variety: 0.1,
-    ),
-  ))
+  // Parse the JSON body using the scoring request decoder
+  decode.run(body, scoring_request_decoder())
+  |> result.map_error(fn(errs) {
+    "Failed to parse scoring request: " <> string.inspect(errs)
+  })
 }
 
 /// Score a single recipe against targets with weights
