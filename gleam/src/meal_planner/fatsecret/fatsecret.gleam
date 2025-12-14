@@ -371,11 +371,80 @@ pub const update_weight = weight_service.update_weight
 pub const get_weight_month_summary = weight_service.get_weight_month_summary
 
 // ============================================================================
+// Exercise Domain
+// ============================================================================
+
+import meal_planner/fatsecret/exercise/service as exercise_service
+import meal_planner/fatsecret/exercise/types as exercise_types
+
+/// Service-level error for Exercise API
+pub type ExerciseServiceError =
+  exercise_service.ServiceError
+
+/// Opaque type for exercise IDs
+pub type ExerciseId =
+  exercise_types.ExerciseId
+
+/// Opaque type for exercise entry IDs
+pub type ExerciseEntryId =
+  exercise_types.ExerciseEntryId
+
+/// Exercise details
+pub type Exercise =
+  exercise_types.Exercise
+
+/// Exercise entry
+pub type ExerciseEntry =
+  exercise_types.ExerciseEntry
+
+/// Input for creating exercise entries
+pub type ExerciseEntryInput =
+  exercise_types.ExerciseEntryInput
+
+/// Update for exercise entries
+pub type ExerciseEntryUpdate =
+  exercise_types.ExerciseEntryUpdate
+
+/// Monthly exercise summary
+pub type ExerciseMonthSummary =
+  exercise_types.ExerciseMonthSummary
+
+// Exercise ID constructors
+pub const exercise_id = exercise_types.exercise_id
+
+pub const exercise_id_to_string = exercise_types.exercise_id_to_string
+
+pub const exercise_entry_id = exercise_types.exercise_entry_id
+
+pub const exercise_entry_id_to_string = exercise_types.exercise_entry_id_to_string
+
+// Date conversion functions for exercise
+pub const exercise_date_to_int = exercise_types.date_to_int
+
+pub const exercise_int_to_date = exercise_types.int_to_date
+
+// Exercise service functions
+pub const get_exercise = exercise_service.get_exercise
+
+pub const get_exercise_entries = exercise_service.get_exercise_entries
+
+pub const create_exercise_entry = exercise_service.create_exercise_entry
+
+pub const edit_exercise_entry = exercise_service.edit_exercise_entry
+
+pub const get_exercise_month_summary = exercise_service.get_exercise_month_summary
+
+pub const commit_exercise_day = exercise_service.commit_exercise_day
+
+pub const save_exercise_template = exercise_service.save_exercise_template
+
+// ============================================================================
 // Profile Domain
 // ============================================================================
 
 import meal_planner/fatsecret/profile/oauth as profile_oauth
 import meal_planner/fatsecret/profile/types as profile_types
+import meal_planner/fatsecret/profile/service as profile_service
 
 /// User profile information
 pub type Profile =
@@ -389,6 +458,10 @@ pub type ProfileAuth =
 pub type ProfileCreateInput =
   profile_types.ProfileCreateInput
 
+/// Service-level error for Profile API
+pub type ProfileServiceError =
+  profile_service.ServiceError
+
 /// Step 1: Get request token for OAuth
 pub const get_request_token = profile_oauth.get_request_token
 
@@ -397,4 +470,16 @@ pub const get_authorization_url = profile_oauth.get_authorization_url
 
 /// Step 3: Exchange request token for access token
 pub const get_access_token = profile_oauth.get_access_token
-// Note: Profile service functions will be added when the service module is created
+
+// Profile service functions
+pub const get_profile_with_auth = profile_service.get_profile
+
+pub const check_profile_status = profile_service.check_status
+
+pub const start_profile_connect = profile_service.start_connect
+
+pub const complete_profile_connect = profile_service.complete_connect
+
+pub const disconnect_profile = profile_service.disconnect
+
+pub const validate_profile_connection = profile_service.validate_connection
