@@ -11,6 +11,9 @@ import wisp
 ///
 /// Calculates total macros from recipe servings and individual macros.
 pub fn handle_calculate(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Post)
 
   let body =

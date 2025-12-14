@@ -13,6 +13,9 @@ import wisp
 ///
 /// Returns vertical diet compliance score and recommendations for a recipe.
 pub fn handle_compliance(req: wisp.Request, recipe_id: String) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   // Create a mock recipe for testing the compliance checker
