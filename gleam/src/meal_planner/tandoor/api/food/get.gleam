@@ -5,12 +5,14 @@
 import gleam/dynamic/decode
 import gleam/httpc
 import gleam/int
+import gleam/json
 import gleam/result
+import gleam/string
 import meal_planner/tandoor/client.{
   type ClientConfig, type TandoorError, NetworkError, ParseError,
 }
-import meal_planner/tandoor/decoders/recipe/recipe_decoder
-import meal_planner/tandoor/types.{type TandoorFood}
+import meal_planner/tandoor/decoders/food/food_decoder
+import meal_planner/tandoor/types/food/food.{type Food}
 
 /// Get a single food item by ID from Tandoor API
 ///
@@ -29,11 +31,11 @@ import meal_planner/tandoor/types.{type TandoorFood}
 pub fn get_food(
   config: ClientConfig,
   food_id food_id: Int,
-) -> Result(TandoorFood, TandoorError) {
+) -> Result(Food, TandoorError) {
   let path = "/api/food/" <> int.to_string(food_id) <> "/"
 
   // Build and execute request
-  use req <- result.try(client.build_get_request(config, path))
+  use req <- result.try(client.build_get_request(config, path, []))
 
   use resp <- result.try(
     httpc.send(req)
@@ -41,9 +43,18 @@ pub fn get_food(
   )
 
   // Parse JSON response
-  use body <- result.try(client.parse_json_body(resp.body))
-
-  // Decode food item
-  decode.run(body, recipe_decoder.food_decoder())
-  |> result.map_error(fn(err) { ParseError("Failed to decode food: " <> err) })
+  case json.parse(resp.body, using: decode.dynamic) {
+    Ok(json_data) -> {
+      case decode.run(json_data, food_decoder.food_decoder()) {
+        Ok(food) -> Ok(food)
+        Error(errors) -> {
+          let error_msg =
+            "Failed to decode food: "
+            <> string.inspect(errors)
+          Error(ParseError(error_msg))
+        }
+      }
+    }
+    Error(_) -> Error(ParseError("Failed to parse JSON response"))
+  }
 }

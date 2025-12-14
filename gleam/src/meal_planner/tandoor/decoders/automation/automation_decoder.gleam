@@ -3,8 +3,6 @@
 /// This module provides JSON decoders for Automation types.
 /// Handles all automation types: FOOD_ALIAS, UNIT_ALIAS, KEYWORD_ALIAS, DESCRIPTION_REPLACE.
 import gleam/dynamic/decode
-import gleam/option.{type Option}
-import gleam/result
 import meal_planner/tandoor/types/automation/automation.{
   type Automation, type AutomationType, Automation, DescriptionReplace, FoodAlias,
   KeywordAlias, UnitAlias,

@@ -12,7 +12,6 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
-import gleam/uri
 import meal_planner/env
 import meal_planner/fatsecret/client as fatsecret
 import meal_planner/fatsecret/service as fatsecret_service

@@ -6,7 +6,7 @@ import gleam/httpc
 import gleam/json
 import gleam/result
 import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, NetworkError, ParseError,
+  type ClientConfig, type TandoorError, NetworkError,
 }
 import meal_planner/tandoor/decoders/recipe/recipe_decoder
 import meal_planner/tandoor/encoders/food/food_encoder

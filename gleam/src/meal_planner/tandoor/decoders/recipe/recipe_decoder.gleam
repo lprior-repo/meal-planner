@@ -9,7 +9,6 @@
 /// - Nested objects (ingredients, steps, nutrition, keywords)
 /// - Lists and arrays
 import gleam/dynamic/decode
-import gleam/option.{type Option}
 import meal_planner/tandoor/types.{
   type TandoorFood, type TandoorIngredient, type TandoorKeyword,
   type TandoorNutrition, type TandoorRecipe, type TandoorStep, type TandoorUnit,
