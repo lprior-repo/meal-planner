@@ -1,0 +1,201 @@
+import gleam/dynamic/decode
+
+/// Type-safe wrapper for Recipe IDs
+pub opaque type RecipeId {
+  RecipeId(Int)
+}
+
+/// Type-safe wrapper for Food IDs
+pub opaque type FoodId {
+  FoodId(Int)
+}
+
+/// Type-safe wrapper for Unit IDs
+pub opaque type UnitId {
+  UnitId(Int)
+}
+
+/// Type-safe wrapper for Keyword IDs
+pub opaque type KeywordId {
+  KeywordId(Int)
+}
+
+/// Type-safe wrapper for MealPlan IDs
+pub opaque type MealPlanId {
+  MealPlanId(Int)
+}
+
+/// Type-safe wrapper for Step IDs
+pub opaque type StepId {
+  StepId(Int)
+}
+
+/// Type-safe wrapper for Ingredient IDs
+pub opaque type IngredientId {
+  IngredientId(Int)
+}
+
+/// Type-safe wrapper for User IDs
+pub opaque type UserId {
+  UserId(Int)
+}
+
+/// Type-safe wrapper for Supermarket IDs
+pub opaque type SupermarketId {
+  SupermarketId(Int)
+}
+
+/// Type-safe wrapper for Storage IDs
+pub opaque type StorageId {
+  StorageId(Int)
+}
+
+// RecipeId functions
+pub fn recipe_id_to_int(id: RecipeId) -> Int {
+  let RecipeId(n) = id
+  n
+}
+
+pub fn recipe_id_from_int(n: Int) -> RecipeId {
+  RecipeId(n)
+}
+
+pub fn recipe_id_decoder() -> decode.Decoder(RecipeId) {
+  decode.int
+  |> decode.map(RecipeId)
+}
+
+// FoodId functions
+pub fn food_id_to_int(id: FoodId) -> Int {
+  let FoodId(n) = id
+  n
+}
+
+pub fn food_id_from_int(n: Int) -> FoodId {
+  FoodId(n)
+}
+
+pub fn food_id_decoder() -> decode.Decoder(FoodId) {
+  decode.int
+  |> decode.map(FoodId)
+}
+
+// UnitId functions
+pub fn unit_id_to_int(id: UnitId) -> Int {
+  let UnitId(n) = id
+  n
+}
+
+pub fn unit_id_from_int(n: Int) -> UnitId {
+  UnitId(n)
+}
+
+pub fn unit_id_decoder() -> decode.Decoder(UnitId) {
+  decode.int
+  |> decode.map(UnitId)
+}
+
+// KeywordId functions
+pub fn keyword_id_to_int(id: KeywordId) -> Int {
+  let KeywordId(n) = id
+  n
+}
+
+pub fn keyword_id_from_int(n: Int) -> KeywordId {
+  KeywordId(n)
+}
+
+pub fn keyword_id_decoder() -> decode.Decoder(KeywordId) {
+  decode.int
+  |> decode.map(KeywordId)
+}
+
+// MealPlanId functions
+pub fn meal_plan_id_to_int(id: MealPlanId) -> Int {
+  let MealPlanId(n) = id
+  n
+}
+
+pub fn meal_plan_id_from_int(n: Int) -> MealPlanId {
+  MealPlanId(n)
+}
+
+pub fn meal_plan_id_decoder() -> decode.Decoder(MealPlanId) {
+  decode.int
+  |> decode.map(MealPlanId)
+}
+
+// StepId functions
+pub fn step_id_to_int(id: StepId) -> Int {
+  let StepId(n) = id
+  n
+}
+
+pub fn step_id_from_int(n: Int) -> StepId {
+  StepId(n)
+}
+
+pub fn step_id_decoder() -> decode.Decoder(StepId) {
+  decode.int
+  |> decode.map(StepId)
+}
+
+// IngredientId functions
+pub fn ingredient_id_to_int(id: IngredientId) -> Int {
+  let IngredientId(n) = id
+  n
+}
+
+pub fn ingredient_id_from_int(n: Int) -> IngredientId {
+  IngredientId(n)
+}
+
+pub fn ingredient_id_decoder() -> decode.Decoder(IngredientId) {
+  decode.int
+  |> decode.map(IngredientId)
+}
+
+// UserId functions
+pub fn user_id_to_int(id: UserId) -> Int {
+  let UserId(n) = id
+  n
+}
+
+pub fn user_id_from_int(n: Int) -> UserId {
+  UserId(n)
+}
+
+pub fn user_id_decoder() -> decode.Decoder(UserId) {
+  decode.int
+  |> decode.map(UserId)
+}
+
+// SupermarketId functions
+pub fn supermarket_id_to_int(id: SupermarketId) -> Int {
+  let SupermarketId(n) = id
+  n
+}
+
+pub fn supermarket_id_from_int(n: Int) -> SupermarketId {
+  SupermarketId(n)
+}
+
+pub fn supermarket_id_decoder() -> decode.Decoder(SupermarketId) {
+  decode.int
+  |> decode.map(SupermarketId)
+}
+
+// StorageId functions
+pub fn storage_id_to_int(id: StorageId) -> Int {
+  let StorageId(n) = id
+  n
+}
+
+pub fn storage_id_from_int(n: Int) -> StorageId {
+  StorageId(n)
+}
+
+pub fn storage_id_decoder() -> decode.Decoder(StorageId) {
+  decode.int
+  |> decode.map(StorageId)
+}
