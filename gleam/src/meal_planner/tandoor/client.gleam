@@ -1016,7 +1016,11 @@ fn supermarket_category_decoder() -> decode.Decoder(SupermarketCategory) {
   use name <- decode.field("name", decode.string)
   use description <- decode.optional_field("description", "", decode.string)
 
-  decode.success(SupermarketCategory(id: id, name: name, description: description))
+  decode.success(SupermarketCategory(
+    id: id,
+    name: name,
+    description: description,
+  ))
 }
 
 /// Decoder for Unit
@@ -1066,8 +1070,16 @@ fn food_decoder() -> decode.Decoder(Food) {
 /// Decoder for Ingredient
 fn ingredient_decoder() -> decode.Decoder(Ingredient) {
   use id <- decode.field("id", decode.int)
-  use food <- decode.optional_field("food", None, decode.optional(food_decoder()))
-  use unit <- decode.optional_field("unit", None, decode.optional(unit_decoder()))
+  use food <- decode.optional_field(
+    "food",
+    None,
+    decode.optional(food_decoder()),
+  )
+  use unit <- decode.optional_field(
+    "unit",
+    None,
+    decode.optional(unit_decoder()),
+  )
   use amount <- decode.optional_field("amount", 0.0, decode.float)
   use note <- decode.optional_field("note", "", decode.string)
   use is_header <- decode.optional_field("is_header", False, decode.bool)
@@ -1111,7 +1123,11 @@ fn step_decoder() -> decode.Decoder(Step) {
   )
   use time <- decode.optional_field("time", 0, decode.int)
   use order <- decode.optional_field("order", 0, decode.int)
-  use show_as_header <- decode.optional_field("show_as_header", False, decode.bool)
+  use show_as_header <- decode.optional_field(
+    "show_as_header",
+    False,
+    decode.bool,
+  )
   use show_ingredients_table <- decode.optional_field(
     "show_ingredients_table",
     True,
@@ -1153,7 +1169,11 @@ fn nutrition_decoder() -> decode.Decoder(NutritionInfo) {
 fn recipe_detail_decoder_internal() -> decode.Decoder(RecipeDetail) {
   use id <- decode.field("id", decode.int)
   use name <- decode.field("name", decode.string)
-  use slug <- decode.optional_field("slug", None, decode.optional(decode.string))
+  use slug <- decode.optional_field(
+    "slug",
+    None,
+    decode.optional(decode.string),
+  )
   use description <- decode.optional_field(
     "description",
     None,
@@ -1243,7 +1263,11 @@ pub fn recipe_detail_decoder(
 fn recipe_decoder_internal() -> decode.Decoder(Recipe) {
   use id <- decode.field("id", decode.int)
   use name <- decode.field("name", decode.string)
-  use slug <- decode.optional_field("slug", None, decode.optional(decode.string))
+  use slug <- decode.optional_field(
+    "slug",
+    None,
+    decode.optional(decode.string),
+  )
   use description <- decode.optional_field(
     "description",
     None,
@@ -1531,9 +1555,11 @@ pub fn delete_recipe(
 /// # Returns
 /// Result with True if connected, or error
 pub fn test_connection(config: ClientConfig) -> Result(Bool, TandoorError) {
-  use req <- result.try(build_get_request(config, "/api/recipe/", [
-    #("limit", "1"),
-  ]))
+  use req <- result.try(
+    build_get_request(config, "/api/recipe/", [
+      #("limit", "1"),
+    ]),
+  )
   logger.debug("Tandoor connection test")
 
   case execute_and_parse(req) {
@@ -1665,7 +1691,10 @@ pub type MealPlanListResponse {
 /// Decoder for MealPlanEntry
 fn meal_plan_decoder_internal() -> decode.Decoder(MealPlanEntry) {
   use id <- decode.field("id", decode.int)
-  use recipe <- decode.field("recipe", decode.optional(recipe_decoder_internal()))
+  use recipe <- decode.field(
+    "recipe",
+    decode.optional(recipe_decoder_internal()),
+  )
   use recipe_name <- decode.field("recipe_name", decode.string)
   use servings <- decode.field("servings", decode.float)
   use note <- decode.field("note", decode.string)
@@ -1734,7 +1763,11 @@ pub fn get_meal_plan(
       }
     }
 
-  use req <- result.try(build_get_request(config, "/api/meal-plan/", query_params))
+  use req <- result.try(build_get_request(
+    config,
+    "/api/meal-plan/",
+    query_params,
+  ))
   logger.debug("Tandoor GET /api/meal-plan/")
 
   use resp <- result.try(execute_and_parse(req))

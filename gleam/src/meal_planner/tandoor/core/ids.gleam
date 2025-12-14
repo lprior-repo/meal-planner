@@ -50,6 +50,16 @@ pub opaque type StorageId {
   StorageId(Int)
 }
 
+/// Type-safe wrapper for ShoppingList IDs
+pub opaque type ShoppingListId {
+  ShoppingListId(Int)
+}
+
+/// Type-safe wrapper for ShoppingListEntry IDs
+pub opaque type ShoppingListEntryId {
+  ShoppingListEntryId(Int)
+}
+
 // RecipeId functions
 pub fn recipe_id_to_int(id: RecipeId) -> Int {
   let RecipeId(n) = id
@@ -198,4 +208,34 @@ pub fn storage_id_from_int(n: Int) -> StorageId {
 pub fn storage_id_decoder() -> decode.Decoder(StorageId) {
   decode.int
   |> decode.map(StorageId)
+}
+
+// ShoppingListId functions
+pub fn shopping_list_id_to_int(id: ShoppingListId) -> Int {
+  let ShoppingListId(n) = id
+  n
+}
+
+pub fn shopping_list_id_from_int(n: Int) -> ShoppingListId {
+  ShoppingListId(n)
+}
+
+pub fn shopping_list_id_decoder() -> decode.Decoder(ShoppingListId) {
+  decode.int
+  |> decode.map(ShoppingListId)
+}
+
+// ShoppingListEntryId functions
+pub fn shopping_list_entry_id_to_int(id: ShoppingListEntryId) -> Int {
+  let ShoppingListEntryId(n) = id
+  n
+}
+
+pub fn shopping_list_entry_id_from_int(n: Int) -> ShoppingListEntryId {
+  ShoppingListEntryId(n)
+}
+
+pub fn shopping_list_entry_id_decoder() -> decode.Decoder(ShoppingListEntryId) {
+  decode.int
+  |> decode.map(ShoppingListEntryId)
 }

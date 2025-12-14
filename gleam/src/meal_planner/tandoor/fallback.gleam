@@ -6,9 +6,9 @@
 /// - Graceful degradation strategies (cached data, empty results, stale data)
 /// - Retry logic with exponential backoff
 /// - Recovery and state tracking
+import gleam/float
 import gleam/int
 import gleam/json
-import gleam/float
 import gleam/option.{type Option, None, Some}
 import meal_planner/logger
 
@@ -330,7 +330,10 @@ pub fn calculate_backoff_ms(config: RetryConfig, attempt: Int) -> Int {
       let base = config.initial_backoff_ms
       let multiplier = config.backoff_multiplier
       let exponent = int.to_float(n - 2)
-        int.min(base * float.round(multiplier |> pow(exponent)), config.max_backoff_ms)
+      int.min(
+        base * float.round(multiplier |> pow(exponent)),
+        config.max_backoff_ms,
+      )
     }
   }
 }

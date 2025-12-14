@@ -22,7 +22,8 @@ import meal_planner/storage/logs
 
 import meal_planner/storage/migrations
 
-import meal_planner/storage/analytics
+// TODO: Re-enable when analytics module is implemented
+// import meal_planner/storage/analytics
 
 // ============================================================================
 // Database Configuration (from storage/profile)
@@ -187,9 +188,10 @@ pub fn init_migrations() {
 }
 
 // Analytics
-pub fn record_search_event(conn, event) {
-  analytics.record_search_event(conn, event)
-}
+// TODO: Re-enable when analytics module is implemented
+// pub fn record_search_event(conn, event) {
+//   analytics.record_search_event(conn, event)
+// }
 
 /// Get recently logged USDA foods for the user
 pub fn get_recently_logged_foods(conn, limit) {

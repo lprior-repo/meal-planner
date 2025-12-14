@@ -79,8 +79,7 @@ pub fn start(app_config: config.Config) -> Nil {
 fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
   use <- wisp.log_request(req)
 
-  let base_url =
-    "http://localhost:" <> int.to_string(ctx.config.server.port)
+  let base_url = "http://localhost:" <> int.to_string(ctx.config.server.port)
 
   // Parse the request path and route to appropriate handler
   case wisp.path_segments(req) {
@@ -98,8 +97,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // FatSecret OAuth 3-legged flow
     ["fatsecret", "connect"] ->
       handlers.handle_fatsecret_connect(req, ctx.db, base_url)
-    ["fatsecret", "callback"] ->
-      handlers.handle_fatsecret_callback(req, ctx.db)
+    ["fatsecret", "callback"] -> handlers.handle_fatsecret_callback(req, ctx.db)
     ["fatsecret", "status"] -> handlers.handle_fatsecret_status(req, ctx.db)
     ["fatsecret", "disconnect"] ->
       handlers.handle_fatsecret_disconnect(req, ctx.db)

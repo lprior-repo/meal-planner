@@ -20,14 +20,17 @@ pub fn main() {
   io.println("Testing Tandoor API Connection (Session Auth)...")
   io.println("")
 
-  let base_url = result.unwrap(envoy.get("TANDOOR_URL"), "http://localhost:8000")
+  let base_url =
+    result.unwrap(envoy.get("TANDOOR_URL"), "http://localhost:8000")
   let username = result.unwrap(envoy.get("TANDOOR_USERNAME"), "admin")
   let password = result.unwrap(envoy.get("TANDOOR_PASSWORD"), "")
 
   case string.is_empty(password) {
     True -> {
       io.println("Tandoor not configured")
-      io.println("Set TANDOOR_URL, TANDOOR_USERNAME, and TANDOOR_PASSWORD in .env")
+      io.println(
+        "Set TANDOOR_URL, TANDOOR_USERNAME, and TANDOOR_PASSWORD in .env",
+      )
       io.println("")
       io.println("Example .env entries:")
       io.println("  TANDOOR_URL=http://localhost:8000")
@@ -73,16 +76,14 @@ fn test_login(config: tandoor.ClientConfig) {
 fn test_recipes(config: tandoor.ClientConfig) {
   case tandoor.get_recipes(config, Some(10), None) {
     Ok(response) -> {
-      io.println(
-        "  ✓ Found "
-        <> string.inspect(response.count)
-        <> " recipes",
-      )
+      io.println("  ✓ Found " <> string.inspect(response.count) <> " recipes")
       case response.results {
         [first, ..] -> {
           io.println("    First recipe: " <> first.name)
           io.println("")
-          io.println("Step 3: Testing recipe detail (with ingredients, steps, nutrition)...")
+          io.println(
+            "Step 3: Testing recipe detail (with ingredients, steps, nutrition)...",
+          )
           test_recipe_detail(config, first.id)
         }
         [] -> {
@@ -115,8 +116,12 @@ fn test_recipe_detail(config: tandoor.ClientConfig, recipe_id: Int) {
         Some(nutrition) -> {
           io.println("    Nutrition (per serving):")
           io.println("      Calories: " <> float.to_string(nutrition.calories))
-          io.println("      Protein: " <> float.to_string(nutrition.proteins) <> "g")
-          io.println("      Carbs: " <> float.to_string(nutrition.carbohydrates) <> "g")
+          io.println(
+            "      Protein: " <> float.to_string(nutrition.proteins) <> "g",
+          )
+          io.println(
+            "      Carbs: " <> float.to_string(nutrition.carbohydrates) <> "g",
+          )
           io.println("      Fat: " <> float.to_string(nutrition.fats) <> "g")
         }
         None -> {
@@ -143,10 +148,14 @@ fn test_recipe_detail(config: tandoor.ClientConfig, recipe_id: Int) {
                 Some(u) -> u.name
                 None -> ""
               }
-              io.println("      First ingredient: "
-                <> float.to_string(ing.amount) <> " "
-                <> unit_name <> " "
-                <> food_name)
+              io.println(
+                "      First ingredient: "
+                <> float.to_string(ing.amount)
+                <> " "
+                <> unit_name
+                <> " "
+                <> food_name,
+              )
             }
             [] -> Nil
           }
@@ -155,7 +164,9 @@ fn test_recipe_detail(config: tandoor.ClientConfig, recipe_id: Int) {
       }
     }
     Error(e) -> {
-      io.println("  ✗ Failed to fetch recipe detail: " <> tandoor.error_to_string(e))
+      io.println(
+        "  ✗ Failed to fetch recipe detail: " <> tandoor.error_to_string(e),
+      )
     }
   }
 }
@@ -164,9 +175,7 @@ fn test_meal_plan(config: tandoor.ClientConfig) {
   case tandoor.get_meal_plan(config, None, None) {
     Ok(response) -> {
       io.println(
-        "  ✓ Found "
-        <> string.inspect(response.count)
-        <> " meal plan entries",
+        "  ✓ Found " <> string.inspect(response.count) <> " meal plan entries",
       )
     }
     Error(e) -> {

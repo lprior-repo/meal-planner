@@ -111,12 +111,72 @@ fn oauth_encode(s: String) -> String {
   |> string.to_graphemes
   |> list.map(fn(char) {
     case char {
-      "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L"
-      | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X"
-      | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j"
-      | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v"
-      | "w" | "x" | "y" | "z" | "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7"
-      | "8" | "9" | "-" | "." | "_" | "~" -> char
+      "A"
+      | "B"
+      | "C"
+      | "D"
+      | "E"
+      | "F"
+      | "G"
+      | "H"
+      | "I"
+      | "J"
+      | "K"
+      | "L"
+      | "M"
+      | "N"
+      | "O"
+      | "P"
+      | "Q"
+      | "R"
+      | "S"
+      | "T"
+      | "U"
+      | "V"
+      | "W"
+      | "X"
+      | "Y"
+      | "Z"
+      | "a"
+      | "b"
+      | "c"
+      | "d"
+      | "e"
+      | "f"
+      | "g"
+      | "h"
+      | "i"
+      | "j"
+      | "k"
+      | "l"
+      | "m"
+      | "n"
+      | "o"
+      | "p"
+      | "q"
+      | "r"
+      | "s"
+      | "t"
+      | "u"
+      | "v"
+      | "w"
+      | "x"
+      | "y"
+      | "z"
+      | "0"
+      | "1"
+      | "2"
+      | "3"
+      | "4"
+      | "5"
+      | "6"
+      | "7"
+      | "8"
+      | "9"
+      | "-"
+      | "."
+      | "_"
+      | "~" -> char
       _ -> {
         let assert <<byte>> = <<char:utf8>>
         "%" <> string.uppercase(int_to_hex(byte))
@@ -215,7 +275,8 @@ fn build_oauth1_params(
     })
 
   let base_string = create_signature_base_string(method, url, params)
-  let signature = create_signature(base_string, config.consumer_secret, token_secret)
+  let signature =
+    create_signature(base_string, config.consumer_secret, token_secret)
 
   dict.insert(params, "oauth_signature", signature)
 }
@@ -272,7 +333,8 @@ fn parse_oauth_response(body: String) -> Dict(String, String) {
   |> string.split("&")
   |> list.filter_map(fn(pair) {
     case string.split(pair, "=") {
-      [key, value] -> Ok(#(key, uri.percent_decode(value) |> result.unwrap(value)))
+      [key, value] ->
+        Ok(#(key, uri.percent_decode(value) |> result.unwrap(value)))
       _ -> Error(Nil)
     }
   })
@@ -380,7 +442,10 @@ pub fn get_access_token(
 
   let response = parse_oauth_response(body)
 
-  case dict.get(response, "oauth_token"), dict.get(response, "oauth_token_secret") {
+  case
+    dict.get(response, "oauth_token"),
+    dict.get(response, "oauth_token_secret")
+  {
     Ok(token), Ok(secret) ->
       Ok(AccessToken(oauth_token: token, oauth_token_secret: secret))
     _, _ -> Error(ParseError("Failed to parse access token: " <> body))
@@ -544,7 +609,12 @@ pub fn get_food_entries(
     dict.new()
     |> dict.insert("date", date)
 
-  make_authenticated_request(config, access_token, "food_entries.get.v2", params)
+  make_authenticated_request(
+    config,
+    access_token,
+    "food_entries.get.v2",
+    params,
+  )
 }
 
 /// Create a food entry in user's diary (requires 3-legged auth)

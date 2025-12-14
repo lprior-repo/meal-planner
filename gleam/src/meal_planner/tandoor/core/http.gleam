@@ -1,6 +1,8 @@
+import gleam/dynamic/decode
 import gleam/http
 import gleam/http/request.{type Request}
 import gleam/httpc
+import gleam/option.{type Option}
 import gleam/result
 
 /// HTTP request type containing method, URL, headers, and body
@@ -87,4 +89,41 @@ pub fn execute_request(
   http_request: HttpRequest,
 ) -> Result(HttpResponse, String) {
   transport(http_request)
+}
+
+// ============================================================================
+// Pagination Types
+// ============================================================================
+
+/// Paginated response from Tandoor API
+/// Generic type allows for different result types (recipes, foods, etc.)
+pub type PaginatedResponse(a) {
+  PaginatedResponse(
+    /// Total count of items
+    count: Int,
+    /// URL to next page (if any)
+    next: Option(String),
+    /// URL to previous page (if any)
+    previous: Option(String),
+    /// List of results for this page
+    results: List(a),
+  )
+}
+
+/// Create a decoder for paginated responses
+/// Takes a decoder for the result type and returns a decoder for PaginatedResponse
+pub fn paginated_decoder(
+  result_decoder: decode.Decoder(a),
+) -> decode.Decoder(PaginatedResponse(a)) {
+  use count <- decode.field("count", decode.int)
+  use next <- decode.field("next", decode.optional(decode.string))
+  use previous <- decode.field("previous", decode.optional(decode.string))
+  use results <- decode.field("results", decode.list(result_decoder))
+
+  decode.success(PaginatedResponse(
+    count: count,
+    next: next,
+    previous: previous,
+    results: results,
+  ))
 }

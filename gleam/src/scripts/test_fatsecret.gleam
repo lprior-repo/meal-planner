@@ -18,7 +18,8 @@ pub fn main() {
   io.println("")
 
   let consumer_key = result.unwrap(envoy.get("FATSECRET_CONSUMER_KEY"), "")
-  let consumer_secret = result.unwrap(envoy.get("FATSECRET_CONSUMER_SECRET"), "")
+  let consumer_secret =
+    result.unwrap(envoy.get("FATSECRET_CONSUMER_SECRET"), "")
 
   case string.is_empty(consumer_key) || string.is_empty(consumer_secret) {
     True -> {
@@ -52,7 +53,9 @@ fn test_search(config: env.FatSecretConfig) {
       |> list.each(fn(food) {
         io.println("  " <> food.food_name)
         io.println("    ID: " <> food.food_id)
-        io.println("    " <> string.slice(food.food_description, 0, 50) <> "...")
+        io.println(
+          "    " <> string.slice(food.food_description, 0, 50) <> "...",
+        )
         io.println("")
       })
 
@@ -73,9 +76,12 @@ fn test_request_token(config: env.FatSecretConfig) {
   case fatsecret.get_request_token(config, "oob") {
     Ok(token) -> {
       io.println("  Request token obtained!")
-      io.println("    Token: " <> string.slice(token.oauth_token, 0, 20) <> "...")
       io.println(
-        "    Callback confirmed: " <> string.inspect(token.oauth_callback_confirmed),
+        "    Token: " <> string.slice(token.oauth_token, 0, 20) <> "...",
+      )
+      io.println(
+        "    Callback confirmed: "
+        <> string.inspect(token.oauth_callback_confirmed),
       )
       io.println("")
 

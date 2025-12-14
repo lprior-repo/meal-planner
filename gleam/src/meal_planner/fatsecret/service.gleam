@@ -88,8 +88,10 @@ pub fn get_profile(conn: pog.Connection) -> Result(String, ServiceError) {
               let _ = storage.touch_access_token(conn)
               Ok(profile)
             }
-            Error(client.RequestFailed(status: 401, body: _)) -> Error(AuthRevoked)
-            Error(client.RequestFailed(status: 403, body: _)) -> Error(AuthRevoked)
+            Error(client.RequestFailed(status: 401, body: _)) ->
+              Error(AuthRevoked)
+            Error(client.RequestFailed(status: 403, body: _)) ->
+              Error(AuthRevoked)
             Error(e) -> Error(ApiError(e))
           }
         }
@@ -114,8 +116,10 @@ pub fn get_food_entries(
               let _ = storage.touch_access_token(conn)
               Ok(entries)
             }
-            Error(client.RequestFailed(status: 401, body: _)) -> Error(AuthRevoked)
-            Error(client.RequestFailed(status: 403, body: _)) -> Error(AuthRevoked)
+            Error(client.RequestFailed(status: 401, body: _)) ->
+              Error(AuthRevoked)
+            Error(client.RequestFailed(status: 403, body: _)) ->
+              Error(AuthRevoked)
             Error(e) -> Error(ApiError(e))
           }
         }
@@ -140,8 +144,10 @@ pub fn create_food_entry(
               let _ = storage.touch_access_token(conn)
               Ok(result)
             }
-            Error(client.RequestFailed(status: 401, body: _)) -> Error(AuthRevoked)
-            Error(client.RequestFailed(status: 403, body: _)) -> Error(AuthRevoked)
+            Error(client.RequestFailed(status: 401, body: _)) ->
+              Error(AuthRevoked)
+            Error(client.RequestFailed(status: 403, body: _)) ->
+              Error(AuthRevoked)
             Error(e) -> Error(ApiError(e))
           }
         }
@@ -213,8 +219,7 @@ pub fn startup_check(conn: pog.Connection) -> String {
           let _ = storage.delete_access_token(conn)
           "⚠ FatSecret: Token was revoked - visit /fatsecret/connect to reconnect"
         }
-        Error(e) ->
-          "⚠ FatSecret: Validation failed - " <> error_to_string(e)
+        Error(e) -> "⚠ FatSecret: Validation failed - " <> error_to_string(e)
       }
     }
   }

@@ -111,7 +111,8 @@ fn extract_nonce_ciphertext_tag(
       let ciphertext =
         bit_array.slice(combined, 12, ciphertext_len) |> result.unwrap(<<>>)
       let tag =
-        bit_array.slice(combined, 12 + ciphertext_len, 16) |> result.unwrap(<<>>)
+        bit_array.slice(combined, 12 + ciphertext_len, 16)
+        |> result.unwrap(<<>>)
       Ok(#(nonce, ciphertext, tag))
     }
     False -> Error(InvalidCiphertext)

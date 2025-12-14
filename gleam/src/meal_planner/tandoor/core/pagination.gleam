@@ -19,8 +19,8 @@ pub fn paginated_decoder(
   item_decoder: decode.Decoder(a),
 ) -> decode.Decoder(PaginatedResponse(a)) {
   use count <- decode.field("count", decode.int)
-  use next <- decode.optional_field("next", decode.string)
-  use previous <- decode.optional_field("previous", decode.string)
+  use next <- decode.field("next", decode.optional(decode.string))
+  use previous <- decode.field("previous", decode.optional(decode.string))
   use results <- decode.field("results", decode.list(item_decoder))
 
   decode.success(PaginatedResponse(
