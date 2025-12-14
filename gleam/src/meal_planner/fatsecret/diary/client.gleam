@@ -15,14 +15,9 @@ import meal_planner/fatsecret/core/http
 import meal_planner/fatsecret/core/oauth.{type AccessToken}
 import meal_planner/fatsecret/diary/decoders
 import meal_planner/fatsecret/diary/types.{
-  type FoodEntry,
-  type FoodEntryId,
-  type FoodEntryInput,
-  type FoodEntryUpdate,
-  type MealType,
-  type MonthSummary,
-}
-import meal_planner/fatsecret/diary/types as diary_types
+  type FoodEntry, type FoodEntryId, type FoodEntryInput, type FoodEntryUpdate,
+  type MonthSummary, FromFood, Custom,
+} as diary_types
 
 pub fn create_food_entry(
   config: FatSecretConfig,
