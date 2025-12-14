@@ -13,6 +13,7 @@ import gleam/int
 import gleam/io
 import gleam/option
 import meal_planner/config
+import meal_planner/fatsecret/service as fatsecret_service
 import meal_planner/postgres
 import meal_planner/web/handlers
 import mist
@@ -40,6 +41,10 @@ pub fn start(app_config: config.Config) -> Nil {
 
   let assert Ok(db) = postgres.connect(db_config)
   io.println("✓ Database connection established")
+
+  // Validate FatSecret connection at startup
+  let fatsecret_status = fatsecret_service.startup_check(db)
+  io.println(fatsecret_status)
 
   let ctx = Context(config: app_config, db: db)
 
