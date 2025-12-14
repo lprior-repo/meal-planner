@@ -18,13 +18,12 @@ import gleam/option.{type Option}
 import gleam/result
 import meal_planner/env.{type FatSecretConfig}
 import meal_planner/fatsecret/client.{
-  type AccessToken, type FatSecretError, ApiError, ParseError, RequestFailed,
+  type AccessToken, type FatSecretError, ParseError,
 }
 import meal_planner/fatsecret/saved_meals/decoders
 import meal_planner/fatsecret/saved_meals/types.{
-  type MealType, type SavedMeal, type SavedMealId, type SavedMealItem,
-  type SavedMealItemId, type SavedMealItemInput, type SavedMealItemsResponse,
-  type SavedMealsResponse,
+  type MealType, type SavedMealId, type SavedMealItemId, type SavedMealItemInput,
+  type SavedMealItemsResponse, type SavedMealsResponse,
 }
 
 // =============================================================================

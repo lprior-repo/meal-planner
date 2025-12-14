@@ -6,6 +6,7 @@
 /// - Graceful degradation strategies (cached data, empty results, stale data)
 /// - Retry logic with exponential backoff
 /// - Recovery and state tracking
+import birl
 import gleam/float
 import gleam/int
 import gleam/json
@@ -388,17 +389,13 @@ fn get_current_time_ms() -> Int {
 
 /// Raise a number to a power (helper for exponential backoff)
 fn pow(base: Float, exponent: Float) -> Float {
-  case float.is_nan(exponent) || float.is_nan(base) {
-    True -> float.nan
-    False ->
-      case exponent {
-        0.0 -> 1.0
-        1.0 -> base
-        _ -> {
-          // Use iterative approach for better performance
-          pow_iterative(base, exponent, 1.0, 0)
-        }
-      }
+  case exponent {
+    0.0 -> 1.0
+    1.0 -> base
+    _ -> {
+      // Use iterative approach for better performance
+      pow_iterative(base, exponent, 1.0, 0)
+    }
   }
 }
 
@@ -408,7 +405,7 @@ fn pow_iterative(
   result: Float,
   current_exponent: Int,
 ) -> Float {
-  case int.to_float(current_exponent) >= target_exponent {
+  case int.to_float(current_exponent) >=. target_exponent {
     True -> result
     False ->
       pow_iterative(base, target_exponent, result *. base, current_exponent + 1)

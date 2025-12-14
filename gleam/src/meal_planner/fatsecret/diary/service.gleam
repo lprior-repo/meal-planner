@@ -5,8 +5,7 @@
 import gleam/option
 import meal_planner/env.{load_fatsecret_config as load_env_fatsecret_config}
 import meal_planner/fatsecret/core/config.{FatSecretConfig}
-import meal_planner/fatsecret/core/errors.{type FatSecretError}
-import meal_planner/fatsecret/core/errors as core_errors
+import meal_planner/fatsecret/core/errors.{type FatSecretError} as core_errors
 import meal_planner/fatsecret/core/oauth.{type AccessToken, AccessToken}
 import meal_planner/fatsecret/diary/client as diary_client
 import meal_planner/fatsecret/diary/types.{
@@ -69,9 +68,9 @@ pub fn create_food_entry(
               let _ = storage.touch_access_token(conn)
               Ok(entry_id)
             }
-            Error(errors.RequestFailed(status: 401, body: _)) ->
+            Error(core_errors.RequestFailed(status: 401, body: _)) ->
               Error(AuthRevoked)
-            Error(errors.RequestFailed(status: 403, body: _)) ->
+            Error(core_errors.RequestFailed(status: 403, body: _)) ->
               Error(AuthRevoked)
             Error(e) -> Error(ApiError(e))
           }
@@ -120,9 +119,9 @@ pub fn get_food_entry(
               let _ = storage.touch_access_token(conn)
               Ok(entry)
             }
-            Error(errors.RequestFailed(status: 401, body: _)) ->
+            Error(core_errors.RequestFailed(status: 401, body: _)) ->
               Error(AuthRevoked)
-            Error(errors.RequestFailed(status: 403, body: _)) ->
+            Error(core_errors.RequestFailed(status: 403, body: _)) ->
               Error(AuthRevoked)
             Error(e) -> Error(ApiError(e))
           }
@@ -174,9 +173,9 @@ pub fn update_food_entry(
               let _ = storage.touch_access_token(conn)
               Ok(nil)
             }
-            Error(errors.RequestFailed(status: 401, body: _)) ->
+            Error(core_errors.RequestFailed(status: 401, body: _)) ->
               Error(AuthRevoked)
-            Error(errors.RequestFailed(status: 403, body: _)) ->
+            Error(core_errors.RequestFailed(status: 403, body: _)) ->
               Error(AuthRevoked)
             Error(e) -> Error(ApiError(e))
           }
@@ -225,9 +224,9 @@ pub fn delete_food_entry(
               let _ = storage.touch_access_token(conn)
               Ok(nil)
             }
-            Error(errors.RequestFailed(status: 401, body: _)) ->
+            Error(core_errors.RequestFailed(status: 401, body: _)) ->
               Error(AuthRevoked)
-            Error(errors.RequestFailed(status: 403, body: _)) ->
+            Error(core_errors.RequestFailed(status: 403, body: _)) ->
               Error(AuthRevoked)
             Error(e) -> Error(ApiError(e))
           }
@@ -276,9 +275,9 @@ pub fn get_day_entries(
               let _ = storage.touch_access_token(conn)
               Ok(entries)
             }
-            Error(errors.RequestFailed(status: 401, body: _)) ->
+            Error(core_errors.RequestFailed(status: 401, body: _)) ->
               Error(AuthRevoked)
-            Error(errors.RequestFailed(status: 403, body: _)) ->
+            Error(core_errors.RequestFailed(status: 403, body: _)) ->
               Error(AuthRevoked)
             Error(e) -> Error(ApiError(e))
           }
@@ -327,9 +326,9 @@ pub fn get_month_summary(
               let _ = storage.touch_access_token(conn)
               Ok(summary)
             }
-            Error(errors.RequestFailed(status: 401, body: _)) ->
+            Error(core_errors.RequestFailed(status: 401, body: _)) ->
               Error(AuthRevoked)
-            Error(errors.RequestFailed(status: 403, body: _)) ->
+            Error(core_errors.RequestFailed(status: 403, body: _)) ->
               Error(AuthRevoked)
             Error(e) -> Error(ApiError(e))
           }

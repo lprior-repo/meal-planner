@@ -14,11 +14,11 @@ import gleam/http.{Delete, Get, Patch, Post}
 import gleam/int
 import gleam/json
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import meal_planner/fatsecret/diary/service
 import meal_planner/fatsecret/diary/types.{
   type FoodEntry, type FoodEntryId, type FoodEntryInput, type FoodEntryUpdate,
-  type MealType, Custom, FromFood,
+  Custom, FromFood,
 }
 import pog
 import wisp.{type Request, type Response}

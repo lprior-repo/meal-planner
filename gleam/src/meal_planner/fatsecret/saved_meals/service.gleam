@@ -4,15 +4,13 @@
 /// - Loads stored tokens from database
 /// - Makes authenticated API calls without manual token handling
 /// - Detects auth failures and reports status clearly
-import gleam/list
 import gleam/option.{type Option, None, Some}
 import meal_planner/env
 import meal_planner/fatsecret/client
 import meal_planner/fatsecret/saved_meals/client as saved_meals_client
 import meal_planner/fatsecret/saved_meals/types.{
-  type MealType, type SavedMeal, type SavedMealId, type SavedMealItem,
-  type SavedMealItemId, type SavedMealItemInput, type SavedMealItemsResponse,
-  type SavedMealsResponse,
+  type MealType, type SavedMealId, type SavedMealItemId, type SavedMealItemInput,
+  type SavedMealItemsResponse, type SavedMealsResponse,
 }
 import meal_planner/fatsecret/service as fatsecret_service
 import meal_planner/fatsecret/storage

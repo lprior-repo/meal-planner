@@ -2,9 +2,6 @@
 /// Uses OAuth 1.0a for all API access (both 2-legged and 3-legged)
 ///
 /// API Docs: https://platform.fatsecret.com/api/Default.aspx?screen=rapih
-import birl
-import gleam/bit_array
-import gleam/crypto
 import gleam/dict.{type Dict}
 import gleam/dynamic/decode
 import gleam/float

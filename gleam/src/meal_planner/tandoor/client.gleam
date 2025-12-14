@@ -24,9 +24,7 @@ import gleam/string
 import gleam/uri
 import meal_planner/logger
 import meal_planner/tandoor/decoders/mealplan/meal_plan_decoder
-import meal_planner/tandoor/types/mealplan/meal_plan.{
-  type MealPlan, type MealPlanListResponse,
-}
+import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlanListResponse}
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
 import meal_planner/tandoor/types/mealplan/meal_type.{
   type MealType, meal_type_to_string,

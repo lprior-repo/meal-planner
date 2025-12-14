@@ -4,22 +4,12 @@
 import gleam/dynamic/decode
 import gleam/float
 import gleam/list
-import gleam/option.{type Option, None, Some}
-import gleam/result
+import gleam/option.{type Option, None}
 import gleam/string
 import meal_planner/fatsecret/saved_meals/types.{
   type MealType, type SavedMeal, type SavedMealItem, type SavedMealItemsResponse,
   type SavedMealsResponse, SavedMeal, SavedMealItem, SavedMealItemsResponse,
   SavedMealsResponse,
-}
-
-/// Decode a single meal type string
-fn meal_type_decoder() -> decode.Decoder(MealType) {
-  use raw <- decode.then(decode.string)
-  case types.meal_type_from_string(raw) {
-    Ok(meal_type) -> decode.success(meal_type)
-    Error(_) -> decode.failure(types.Other, "Invalid meal type: " <> raw)
-  }
 }
 
 /// Decode a comma-separated list of meal types
