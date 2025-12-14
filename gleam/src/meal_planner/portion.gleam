@@ -7,8 +7,7 @@
 import gleam/int as gleam_int
 import gleam/list
 import meal_planner/types.{
-  type FodmapLevel, type Macros, type Recipe, Low, Macros, macros_calories,
-  macros_scale,
+  type Macros, type Recipe, Macros, macros_calories, macros_scale,
 }
 
 /// PortionCalculation represents a scaled recipe portion
