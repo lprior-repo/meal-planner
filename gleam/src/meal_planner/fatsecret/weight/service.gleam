@@ -2,16 +2,11 @@
 ///
 /// High-level API for weight operations with automatic OAuth handling.
 /// Loads stored tokens from database and handles authentication errors.
-import gleam/option.{type Option}
-import meal_planner/env.{
-  type FatSecretConfig as EnvFatSecretConfig,
-  load_fatsecret_config as load_env_fatsecret_config,
-}
-import meal_planner/fatsecret/core/config.{
-  type FatSecretConfig as CoreFatSecretConfig, FatSecretConfig,
-}
+import gleam/option
+import meal_planner/env.{load_fatsecret_config as load_env_fatsecret_config}
+import meal_planner/fatsecret/core/config.{FatSecretConfig}
 import meal_planner/fatsecret/core/errors.{
-  type ApiErrorCode, type FatSecretError, WeightDateEarlier, WeightDateTooFar,
+  type FatSecretError, RequestFailed, WeightDateEarlier, WeightDateTooFar,
 }
 import meal_planner/fatsecret/core/oauth.{type AccessToken, AccessToken}
 import meal_planner/fatsecret/storage
@@ -89,10 +84,8 @@ pub fn update_weight(
               }
             }
             // Auth errors
-            Error(errors.RequestFailed(status: 401, body: _)) ->
-              Error(AuthRevoked)
-            Error(errors.RequestFailed(status: 403, body: _)) ->
-              Error(AuthRevoked)
+            Error(RequestFailed(status: 401, body: _)) -> Error(AuthRevoked)
+            Error(RequestFailed(status: 403, body: _)) -> Error(AuthRevoked)
             // Generic errors
             Error(e) -> Error(ApiError(e))
           }
@@ -141,10 +134,8 @@ pub fn get_weight_month_summary(
               let _ = storage.touch_access_token(conn)
               Ok(summary)
             }
-            Error(errors.RequestFailed(status: 401, body: _)) ->
-              Error(AuthRevoked)
-            Error(errors.RequestFailed(status: 403, body: _)) ->
-              Error(AuthRevoked)
+            Error(RequestFailed(status: 401, body: _)) -> Error(AuthRevoked)
+            Error(RequestFailed(status: 403, body: _)) -> Error(AuthRevoked)
             Error(e) -> Error(ApiError(e))
           }
         }

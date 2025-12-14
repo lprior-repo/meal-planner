@@ -11,7 +11,7 @@ import gleam/dynamic/decode
 import gleam/float
 import gleam/int
 import gleam/json
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/fatsecret/core/config.{type FatSecretConfig}
 import meal_planner/fatsecret/core/errors.{type FatSecretError}

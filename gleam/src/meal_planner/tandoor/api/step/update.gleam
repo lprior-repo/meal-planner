@@ -35,12 +35,12 @@ import meal_planner/tandoor/types/recipe/step.{type Step}
 ///   show_ingredients_table: None,
 ///   file: None
 /// )
-/// let result = update_step(config, step_id: 42, request)
+/// let result = update_step(config, step_id: 42, request: request)
 /// ```
 pub fn update_step(
   config: ClientConfig,
   step_id step_id: Int,
-  request: StepUpdateRequest,
+  request request: StepUpdateRequest,
 ) -> Result(Step, TandoorError) {
   // Build path with step ID
   let path = "/api/step/" <> int.to_string(step_id) <> "/"
@@ -78,12 +78,12 @@ pub fn update_step(
 ///   show_ingredients_table: True,
 ///   file: None
 /// )
-/// let result = replace_step(config, step_id: 42, request)
+/// let result = replace_step(config, step_id: 42, request: request)
 /// ```
 pub fn replace_step(
   config: ClientConfig,
   step_id step_id: Int,
-  request: step_encoder.StepCreateRequest,
+  request request: step_encoder.StepCreateRequest,
 ) -> Result(Step, TandoorError) {
   // Build path with step ID
   let path = "/api/step/" <> int.to_string(step_id) <> "/"
