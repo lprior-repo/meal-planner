@@ -1,28 +1,30 @@
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/tandoor/types/recipe/ingredient.{Ingredient}
 import meal_planner/tandoor/types/food/food.{Food}
+import meal_planner/tandoor/types/recipe/ingredient.{Ingredient}
 import meal_planner/tandoor/types/unit/unit.{Unit}
 
 pub fn ingredient_creation_test() {
-  let tomato = Food(
-    id: 1,
-    name: "Tomato",
-    plural_name: Some("Tomatoes"),
-    description: "A red fruit",
-    recipe: None,
-    food_onhand: None,
-    supermarket_category: None,
-    ignore_shopping: False,
-  )
-  let gram = Unit(
-    id: 1,
-    name: "Gram",
-    plural_name: Some("Grams"),
-    description: Some("A unit of mass"),
-    base_unit: None,
-    open_data_slug: None,
-  )
+  let tomato =
+    Food(
+      id: 1,
+      name: "Tomato",
+      plural_name: Some("Tomatoes"),
+      description: "A red fruit",
+      recipe: None,
+      food_onhand: None,
+      supermarket_category: None,
+      ignore_shopping: False,
+    )
+  let gram =
+    Unit(
+      id: 1,
+      name: "Gram",
+      plural_name: Some("Grams"),
+      description: Some("A unit of mass"),
+      base_unit: None,
+      open_data_slug: None,
+    )
 
   let ingredient =
     Ingredient(
@@ -74,16 +76,17 @@ pub fn ingredient_header_test() {
 }
 
 pub fn ingredient_no_amount_test() {
-  let salt = Food(
-    id: 2,
-    name: "Salt",
-    plural_name: None,
-    description: "Sodium chloride",
-    recipe: None,
-    food_onhand: None,
-    supermarket_category: None,
-    ignore_shopping: False,
-  )
+  let salt =
+    Food(
+      id: 2,
+      name: "Salt",
+      plural_name: None,
+      description: "Sodium chloride",
+      recipe: None,
+      food_onhand: None,
+      supermarket_category: None,
+      ignore_shopping: False,
+    )
 
   let ingredient =
     Ingredient(
@@ -108,24 +111,26 @@ pub fn ingredient_no_amount_test() {
 }
 
 pub fn ingredient_with_note_test() {
-  let flour = Food(
-    id: 3,
-    name: "All-purpose flour",
-    plural_name: None,
-    description: "A type of wheat flour",
-    recipe: None,
-    food_onhand: None,
-    supermarket_category: None,
-    ignore_shopping: False,
-  )
-  let cup = Unit(
-    id: 2,
-    name: "Cup",
-    plural_name: Some("Cups"),
-    description: Some("Volume measurement"),
-    base_unit: None,
-    open_data_slug: None,
-  )
+  let flour =
+    Food(
+      id: 3,
+      name: "All-purpose flour",
+      plural_name: None,
+      description: "A type of wheat flour",
+      recipe: None,
+      food_onhand: None,
+      supermarket_category: None,
+      ignore_shopping: False,
+    )
+  let cup =
+    Unit(
+      id: 2,
+      name: "Cup",
+      plural_name: Some("Cups"),
+      description: Some("Volume measurement"),
+      base_unit: None,
+      open_data_slug: None,
+    )
 
   let ingredient =
     Ingredient(
