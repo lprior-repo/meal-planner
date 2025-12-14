@@ -31,42 +31,29 @@ fn automation_type_decoder() -> decode.Decoder(AutomationType) {
 /// # Returns
 /// Decoder for Automation type
 pub fn automation_decoder() -> decode.Decoder(Automation) {
-  decode.into({
-    use id <- decode.parameter
-    use name <- decode.parameter
-    use description <- decode.parameter
-    use automation_type <- decode.parameter
-    use param_1 <- decode.parameter
-    use param_2 <- decode.parameter
-    use param_3 <- decode.parameter
-    use order <- decode.parameter
-    use disabled <- decode.parameter
-    use created_at <- decode.parameter
-    use updated_at <- decode.parameter
+  use id <- decode.field("id", decode.int)
+  use name <- decode.field("name", decode.string)
+  use description <- decode.field("description", decode.string)
+  use automation_type <- decode.field("type", automation_type_decoder())
+  use param_1 <- decode.field("param_1", decode.string)
+  use param_2 <- decode.field("param_2", decode.string)
+  use param_3 <- decode.field("param_3", decode.optional(decode.string))
+  use order <- decode.field("order", decode.int)
+  use disabled <- decode.field("disabled", decode.bool)
+  use created_at <- decode.field("created_at", decode.string)
+  use updated_at <- decode.field("updated_at", decode.string)
 
-    Automation(
-      id:,
-      name:,
-      description:,
-      automation_type:,
-      param_1:,
-      param_2:,
-      param_3:,
-      order:,
-      disabled:,
-      created_at:,
-      updated_at:,
-    )
-  })
-  |> decode.field("id", decode.int)
-  |> decode.field("name", decode.string)
-  |> decode.field("description", decode.string)
-  |> decode.field("type", automation_type_decoder())
-  |> decode.field("param_1", decode.string)
-  |> decode.field("param_2", decode.string)
-  |> decode.field("param_3", decode.optional(decode.string))
-  |> decode.field("order", decode.int)
-  |> decode.field("disabled", decode.bool)
-  |> decode.field("created_at", decode.string)
-  |> decode.field("updated_at", decode.string)
+  decode.success(Automation(
+    id: id,
+    name: name,
+    description: description,
+    automation_type: automation_type,
+    param_1: param_1,
+    param_2: param_2,
+    param_3: param_3,
+    order: order,
+    disabled: disabled,
+    created_at: created_at,
+    updated_at: updated_at,
+  ))
 }

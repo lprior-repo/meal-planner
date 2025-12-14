@@ -126,6 +126,111 @@ pub fn get_automation(
 }
 
 // ============================================================================
+// Create Automation
+// ============================================================================
+
+/// Create a new automation in Tandoor
+///
+/// # Arguments
+/// * `config` - Client configuration
+/// * `create_data` - Automation creation data
+///
+/// # Returns
+/// Result with created automation or error
+pub fn create_automation(
+  config: ClientConfig,
+  create_data: AutomationCreateRequest,
+) -> Result(Automation, TandoorError) {
+  let body =
+    automation_encoder.encode_automation_create_request(create_data)
+    |> json.to_string
+
+  use req <- result.try(client.build_post_request(
+    config,
+    "/api/automation/",
+    body,
+  ))
+  logger.debug("Tandoor POST /api/automation/")
+
+  use resp <- result.try(execute_and_parse(config, req))
+
+  case json.parse(resp.body, using: decode.dynamic) {
+    Ok(json_data) -> {
+      case decode.run(json_data, automation_decoder.automation_decoder()) {
+        Ok(automation) -> Ok(automation)
+        Error(errors) -> {
+          let error_msg =
+            "Failed to decode created automation: "
+            <> string.join(
+              list.map(errors, fn(e) {
+                case e {
+                  decode.DecodeError(expected, _found, path) ->
+                    expected <> " at " <> string.join(path, ".")
+                }
+              }),
+              ", ",
+            )
+          Error(ParseError(error_msg))
+        }
+      }
+    }
+    Error(_) -> Error(ParseError("Invalid JSON response"))
+  }
+}
+
+// ============================================================================
+// Update Automation
+// ============================================================================
+
+/// Update an existing automation in Tandoor
+///
+/// # Arguments
+/// * `config` - Client configuration
+/// * `automation_id` - Automation ID to update
+/// * `update_data` - Automation update data (partial update supported)
+///
+/// # Returns
+/// Result with updated automation or error
+pub fn update_automation(
+  config: ClientConfig,
+  automation_id: Int,
+  update_data: AutomationUpdateRequest,
+) -> Result(Automation, TandoorError) {
+  let path = "/api/automation/" <> int.to_string(automation_id) <> "/"
+  let body =
+    automation_encoder.encode_automation_update_request(update_data)
+    |> json.to_string
+
+  use req <- result.try(client.build_patch_request(config, path, body))
+  logger.debug("Tandoor PATCH " <> path)
+
+  use resp <- result.try(execute_and_parse(config, req))
+
+  case json.parse(resp.body, using: decode.dynamic) {
+    Ok(json_data) -> {
+      case decode.run(json_data, automation_decoder.automation_decoder()) {
+        Ok(automation) -> Ok(automation)
+        Error(errors) -> {
+          let error_msg =
+            "Failed to decode updated automation: "
+            <> string.join(
+              list.map(errors, fn(e) {
+                case e {
+                  decode.DecodeError(expected, _found, path) ->
+                    expected <> " at " <> string.join(path, ".")
+                }
+              }),
+              ", ",
+            )
+          Error(ParseError(error_msg))
+        }
+      }
+    }
+    Error(_) -> Error(ParseError("Invalid JSON response"))
+  }
+}
+
+// ============================================================================
 // Delete Automation
 // ============================================================================
 
