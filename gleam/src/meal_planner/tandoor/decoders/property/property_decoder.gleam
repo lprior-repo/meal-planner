@@ -24,33 +24,23 @@ fn property_type_decoder() -> decode.Decoder(PropertyType) {
 /// # Returns
 /// Decoder for Property type
 pub fn property_decoder() -> decode.Decoder(Property) {
-  decode.into({
-    use id <- decode.parameter
-    use name <- decode.parameter
-    use description <- decode.parameter
-    use property_type <- decode.parameter
-    use unit <- decode.parameter
-    use order <- decode.parameter
-    use created_at <- decode.parameter
-    use updated_at <- decode.parameter
+  use id <- decode.field("id", decode.int)
+  use name <- decode.field("name", decode.string)
+  use description <- decode.field("description", decode.string)
+  use property_type <- decode.field("property_type", property_type_decoder())
+  use unit <- decode.field("unit", decode.optional(decode.string))
+  use order <- decode.field("order", decode.int)
+  use created_at <- decode.field("created_at", decode.string)
+  use updated_at <- decode.field("updated_at", decode.string)
 
-    Property(
-      id:,
-      name:,
-      description:,
-      property_type:,
-      unit:,
-      order:,
-      created_at:,
-      updated_at:,
-    )
-  })
-  |> decode.field("id", decode.int)
-  |> decode.field("name", decode.string)
-  |> decode.field("description", decode.string)
-  |> decode.field("property_type", property_type_decoder())
-  |> decode.field("unit", decode.optional(decode.string))
-  |> decode.field("order", decode.int)
-  |> decode.field("created_at", decode.string)
-  |> decode.field("updated_at", decode.string)
+  decode.success(Property(
+    id: id,
+    name: name,
+    description: description,
+    property_type: property_type,
+    unit: unit,
+    order: order,
+    created_at: created_at,
+    updated_at: updated_at,
+  ))
 }
