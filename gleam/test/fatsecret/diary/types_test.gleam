@@ -2,7 +2,6 @@
 ///
 /// Focuses on date conversion functions which are critical for
 /// the FatSecret API integration.
-
 import gleam/list
 import gleam/string
 import gleeunit

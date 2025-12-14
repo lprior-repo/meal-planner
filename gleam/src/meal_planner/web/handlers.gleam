@@ -137,6 +137,32 @@ pub fn handle_fatsecret_entries(
   fatsecret.handle_get_entries(req, conn)
 }
 
+/// FatSecret get recipe types - GET /api/fatsecret/recipes/types
+pub fn handle_fatsecret_recipe_types(req: wisp.Request) -> wisp.Response {
+  fatsecret.handle_get_recipe_types(req)
+}
+
+/// FatSecret search recipes - GET /api/fatsecret/recipes/search
+pub fn handle_fatsecret_search_recipes(req: wisp.Request) -> wisp.Response {
+  fatsecret.handle_search_recipes(req)
+}
+
+/// FatSecret search recipes by type - GET /api/fatsecret/recipes/search/type/:type_id
+pub fn handle_fatsecret_search_recipes_by_type(
+  req: wisp.Request,
+  type_id: String,
+) -> wisp.Response {
+  fatsecret.handle_search_recipes_by_type(req, type_id)
+}
+
+/// FatSecret get recipe - GET /api/fatsecret/recipes/:id
+pub fn handle_fatsecret_get_recipe(
+  req: wisp.Request,
+  recipe_id: String,
+) -> wisp.Response {
+  fatsecret.handle_get_recipe(req, recipe_id)
+}
+
 // ============================================================================
 // Tandoor Recipe Manager Handlers
 // ============================================================================

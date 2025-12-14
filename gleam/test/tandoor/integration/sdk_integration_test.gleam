@@ -25,11 +25,9 @@ pub fn recipe_crud_workflow_test() {
     // Update response
     |> mock_transport.queue_response(
       builders.success()
-      |> builders.with_body(
-        fixtures.to_json(
-          fixtures.recipe() |> fixtures.with_name("Updated Recipe"),
-        ),
-      ),
+      |> builders.with_body(fixtures.to_json(
+        fixtures.recipe() |> fixtures.with_name("Updated Recipe"),
+      )),
     )
     // Delete response
     |> mock_transport.queue_response(builders.no_content())
@@ -60,17 +58,15 @@ pub fn recipe_crud_workflow_test() {
 pub fn recipe_search_workflow_test() {
   let mock =
     mock_transport.new()
-    |> mock_transport.with_response(
-      builders.paginated(
-        count: 50,
-        next: "http://api/recipes?page=2",
-        previous: "",
-        results: fixtures.to_json([
-          fixtures.recipe() |> fixtures.with_id(1),
-          fixtures.recipe() |> fixtures.with_id(2),
-        ]),
-      ),
-    )
+    |> mock_transport.with_response(builders.paginated(
+      count: 50,
+      next: "http://api/recipes?page=2",
+      previous: "",
+      results: fixtures.to_json([
+        fixtures.recipe() |> fixtures.with_id(1),
+        fixtures.recipe() |> fixtures.with_id(2),
+      ]),
+    ))
 
   let sdk =
     sdk.new(base_url: "http://localhost:8000", auth: sdk.BearerAuth("token"))
@@ -124,14 +120,12 @@ pub fn meal_planning_workflow_test() {
       |> builders.with_body(fixtures.to_json(fixtures.mealplan())),
     )
     // List mealplans
-    |> mock_transport.queue_response(
-      builders.paginated(
-        count: 7,
-        next: "",
-        previous: "",
-        results: fixtures.to_json([fixtures.mealplan()]),
-      ),
-    )
+    |> mock_transport.queue_response(builders.paginated(
+      count: 7,
+      next: "",
+      previous: "",
+      results: fixtures.to_json([fixtures.mealplan()]),
+    ))
 
   let sdk =
     sdk.new(base_url: "http://localhost:8000", auth: sdk.BearerAuth("token"))

@@ -105,8 +105,7 @@ pub fn build_response_with_headers_test() {
 
 /// Test: Build JSON response with automatic headers
 pub fn build_json_response_test() {
-  let response =
-    builders.json(200, "{\"name\": \"Test\"}")
+  let response = builders.json(200, "{\"name\": \"Test\"}")
 
   response.status |> should.equal(200)
   response.body |> should.equal("{\"name\": \"Test\"}")
@@ -133,11 +132,7 @@ pub fn build_paginated_response_test() {
 /// Test: Build recipe response from fixture
 pub fn build_recipe_from_fixture_test() {
   let response =
-    builders.recipe_response(
-      id: 1,
-      name: "Chocolate Cake",
-      servings: 8,
-    )
+    builders.recipe_response(id: 1, name: "Chocolate Cake", servings: 8)
 
   response.status |> should.equal(200)
   builders.assert_body_contains(response, "Chocolate Cake") |> should.be_true()
@@ -146,11 +141,7 @@ pub fn build_recipe_from_fixture_test() {
 
 /// Test: Build food response from fixture
 pub fn build_food_from_fixture_test() {
-  let response =
-    builders.food_response(
-      id: 42,
-      name: "Tomato",
-    )
+  let response = builders.food_response(id: 42, name: "Tomato")
 
   response.status |> should.equal(200)
   builders.assert_body_contains(response, "Tomato") |> should.be_true()

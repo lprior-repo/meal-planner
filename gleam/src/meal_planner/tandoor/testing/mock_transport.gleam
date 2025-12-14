@@ -113,8 +113,7 @@ pub fn execute(
           // Fall back to static response
           case mock.response {
             Some(resp) -> resp
-            None ->
-              Error("No response configured for mock transport")
+            None -> Error("No response configured for mock transport")
           }
       }
   }
@@ -152,8 +151,5 @@ pub fn get_call_history(mock: MockTransport) -> List(HttpRequest) {
 
 /// Record a request in call history (for internal use)
 fn record_call(mock: MockTransport, request: HttpRequest) -> MockTransport {
-  MockTransport(
-    ..mock,
-    call_history: list.append(mock.call_history, [request]),
-  )
+  MockTransport(..mock, call_history: list.append(mock.call_history, [request]))
 }

@@ -34,9 +34,11 @@ pub fn create_sdk_with_session_test() {
 pub fn sdk_recipe_operations_test() {
   let mock =
     mock_transport.new()
-    |> mock_transport.with_response(
-      builders.recipe_response(id: 1, name: "Test Recipe", servings: 4),
-    )
+    |> mock_transport.with_response(builders.recipe_response(
+      id: 1,
+      name: "Test Recipe",
+      servings: 4,
+    ))
 
   let sdk =
     sdk.new(base_url: "http://localhost:8000", auth: sdk.BearerAuth("token"))
@@ -52,9 +54,10 @@ pub fn sdk_recipe_operations_test() {
 pub fn sdk_food_operations_test() {
   let mock =
     mock_transport.new()
-    |> mock_transport.with_response(
-      builders.food_response(id: 42, name: "Tomato"),
-    )
+    |> mock_transport.with_response(builders.food_response(
+      id: 42,
+      name: "Tomato",
+    ))
 
   let sdk =
     sdk.new(base_url: "http://localhost:8000", auth: sdk.BearerAuth("token"))

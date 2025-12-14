@@ -60,12 +60,16 @@ pub fn list_foods(
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
       // Decode paginated response with food items
-      case decode.run(json_data, http.paginated_decoder(recipe_decoder.food_decoder())) {
+      case
+        decode.run(
+          json_data,
+          http.paginated_decoder(recipe_decoder.food_decoder()),
+        )
+      {
         Ok(paginated) -> Ok(paginated)
         Error(errors) -> {
           let error_msg =
-            "Failed to decode food list: "
-            <> string.inspect(errors)
+            "Failed to decode food list: " <> string.inspect(errors)
           Error(ParseError(error_msg))
         }
       }

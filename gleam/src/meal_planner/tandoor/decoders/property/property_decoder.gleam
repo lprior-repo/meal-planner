@@ -15,7 +15,8 @@ fn property_type_decoder() -> decode.Decoder(PropertyType) {
   case type_string {
     "RECIPE" -> decode.success(RecipeProperty)
     "FOOD" -> decode.success(FoodProperty)
-    _ -> decode.failure(RecipeProperty, "Unknown property type: " <> type_string)
+    _ ->
+      decode.failure(RecipeProperty, "Unknown property type: " <> type_string)
   }
 }
 

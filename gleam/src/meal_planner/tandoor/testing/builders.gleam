@@ -71,9 +71,12 @@ pub fn with_header(
   name: String,
   value: String,
 ) -> HttpResponse {
-  HttpResponse(..response, headers: list.append(response.headers, [
-    #(name, value),
-  ]))
+  HttpResponse(
+    ..response,
+    headers: list.append(response.headers, [
+      #(name, value),
+    ]),
+  )
 }
 
 // ============================================================================
@@ -82,9 +85,13 @@ pub fn with_header(
 
 /// Create a JSON response with automatic Content-Type header
 pub fn json(status: Int, body: String) -> HttpResponse {
-  HttpResponse(status: status, headers: [
-    #("Content-Type", "application/json"),
-  ], body: body)
+  HttpResponse(
+    status: status,
+    headers: [
+      #("Content-Type", "application/json"),
+    ],
+    body: body,
+  )
 }
 
 /// Create a paginated response

@@ -116,6 +116,16 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["api", "fatsecret", "entries"] ->
       handlers.handle_fatsecret_entries(req, ctx.db)
 
+    // FatSecret Recipes API (2-legged, no auth required)
+    ["api", "fatsecret", "recipes", "types"] ->
+      handlers.handle_fatsecret_recipe_types(req)
+    ["api", "fatsecret", "recipes", "search"] ->
+      handlers.handle_fatsecret_search_recipes(req)
+    ["api", "fatsecret", "recipes", "search", "type", type_id] ->
+      handlers.handle_fatsecret_search_recipes_by_type(req, type_id)
+    ["api", "fatsecret", "recipes", recipe_id] ->
+      handlers.handle_fatsecret_get_recipe(req, recipe_id)
+
     // Tandoor Recipe Manager
     ["tandoor", "status"] -> handlers.handle_tandoor_status(req)
     ["api", "tandoor", "recipes"] -> handlers.handle_tandoor_list_recipes(req)

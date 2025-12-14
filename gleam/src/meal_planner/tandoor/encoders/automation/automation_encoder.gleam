@@ -60,13 +60,10 @@ pub fn encode_automation_create_request(req: AutomationCreateRequest) -> Json {
     #("type", json.string(automation_type_to_string(req.automation_type))),
     #("param_1", json.string(req.param_1)),
     #("param_2", json.string(req.param_2)),
-    #(
-      "param_3",
-      case req.param_3 {
-        Some(val) -> json.string(val)
-        None -> json.null()
-      },
-    ),
+    #("param_3", case req.param_3 {
+      Some(val) -> json.string(val)
+      None -> json.null()
+    }),
     #("order", json.int(req.order)),
     #("disabled", json.bool(req.disabled)),
   ])
@@ -114,13 +111,10 @@ pub fn encode_automation_update_request(req: AutomationUpdateRequest) -> Json {
 
   let fields = case req.param_3 {
     Some(opt_p3) -> [
-      #(
-        "param_3",
-        case opt_p3 {
-          Some(p3) -> json.string(p3)
-          None -> json.null()
-        },
-      ),
+      #("param_3", case opt_p3 {
+        Some(p3) -> json.string(p3)
+        None -> json.null()
+      }),
       ..fields
     ]
     None -> fields

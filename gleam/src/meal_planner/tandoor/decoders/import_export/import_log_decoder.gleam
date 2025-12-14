@@ -8,8 +8,10 @@
 /// - Optional keyword field (nested Keyword object)
 /// - Import progress tracking fields
 import gleam/dynamic/decode
-import meal_planner/tandoor/types/import_export/import_log.{type ImportLog, ImportLog}
 import meal_planner/tandoor/decoders/keyword/keyword_decoder
+import meal_planner/tandoor/types/import_export/import_log.{
+  type ImportLog, ImportLog,
+}
 
 /// Decode an ImportLog from JSON
 ///

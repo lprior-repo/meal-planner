@@ -48,9 +48,7 @@ pub fn get_food(
       case decode.run(json_data, food_decoder.food_decoder()) {
         Ok(food) -> Ok(food)
         Error(errors) -> {
-          let error_msg =
-            "Failed to decode food: "
-            <> string.inspect(errors)
+          let error_msg = "Failed to decode food: " <> string.inspect(errors)
           Error(ParseError(error_msg))
         }
       }

@@ -3,9 +3,9 @@
 /// This module provides functions to create meal plan entries in the Tandoor API.
 import gleam/option
 import meal_planner/tandoor/client.{
-  type ClientConfig, type MealPlanEntry, type TandoorError, Breakfast as ClientBreakfast,
-  CreateMealPlanRequest, Dinner as ClientDinner, Lunch as ClientLunch,
-  Other as ClientOther, Snack as ClientSnack,
+  type ClientConfig, type MealPlanEntry, type TandoorError,
+  Breakfast as ClientBreakfast, CreateMealPlanRequest, Dinner as ClientDinner,
+  Lunch as ClientLunch, Other as ClientOther, Snack as ClientSnack,
 }
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types/mealplan/mealplan.{

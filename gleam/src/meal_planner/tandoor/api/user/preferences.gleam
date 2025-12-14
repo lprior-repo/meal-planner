@@ -15,7 +15,9 @@ import gleam/httpc
 import gleam/int
 import gleam/json
 import gleam/result
-import meal_planner/tandoor/core/error.{type TandoorError, NetworkError, ParseError}
+import meal_planner/tandoor/core/error.{
+  type TandoorError, NetworkError, ParseError,
+}
 import meal_planner/tandoor/core/http as tandoor_http
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/user/user_preference_decoder
@@ -53,7 +55,9 @@ pub fn get_current_user_preferences(
   use resp <- result.try(
     httpc.send(req)
     |> result.map_error(fn(err) {
-      NetworkError("Failed to fetch user preferences: " <> string_from_error(err))
+      NetworkError(
+        "Failed to fetch user preferences: " <> string_from_error(err),
+      )
     }),
   )
 

@@ -42,7 +42,9 @@ import meal_planner/tandoor/types/automation/automation.{type Automation}
 pub fn list_automations(
   config: ClientConfig,
 ) -> Result(List(Automation), TandoorError) {
-  use req <- result.try(client.build_get_request(config, "/api/automation/", []))
+  use req <- result.try(
+    client.build_get_request(config, "/api/automation/", []),
+  )
   logger.debug("Tandoor GET /api/automation/")
 
   use resp <- result.try(execute_and_parse(config, req))

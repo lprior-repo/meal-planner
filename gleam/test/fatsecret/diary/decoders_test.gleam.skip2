@@ -1,5 +1,4 @@
 /// Tests for FatSecret diary decoders
-
 import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/json
