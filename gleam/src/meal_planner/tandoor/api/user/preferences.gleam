@@ -6,15 +6,13 @@
 /// - GET /api/user-preference/ - List all preferences (returns current user's)
 /// - GET /api/user-preference/{user_id}/ - Get specific user's preferences
 /// - PATCH /api/user-preference/{user_id}/ - Update preferences
-import gleam/dynamic/decode
-import gleam/httpc
+///
+/// Refactored to use CRUD helpers for reduced boilerplate.
 import gleam/int
 import gleam/json
 import gleam/result
-import gleam/string
-import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, NetworkError, ParseError,
-}
+import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/user/user_preference_decoder
 import meal_planner/tandoor/encoders/user/user_preference_encoder.{
@@ -41,30 +39,23 @@ import meal_planner/tandoor/types/user/user_preference.{type UserPreference}
 pub fn get_current_user_preferences(
   config: ClientConfig,
 ) -> Result(UserPreference, TandoorError) {
-  // Build GET request
-  use req <- result.try(
-    client.build_get_request(config, "/api/user-preference/", []),
-  )
+  // Execute GET request
+  use resp <- result.try(crud_helpers.execute_get(
+    config,
+    "/api/user-preference/",
+    [],
+  ))
 
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
+  // Parse as list and extract first element
+  use prefs_list <- result.try(crud_helpers.parse_json_list(
+    resp,
+    user_preference_decoder.user_preference_decoder(),
+  ))
 
-  // Parse JSON response - API returns array with single element
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, decode.list(user_preference_decoder.user_preference_decoder())) {
-        Ok([first, ..]) -> Ok(first)
-        Ok([]) -> Error(ParseError("No preferences returned for current user"))
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode preferences: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
+  // API returns array with single element
+  case prefs_list {
+    [first, ..] -> Ok(first)
+    [] -> Error(client.ParseError("No preferences returned for current user"))
   }
 }
 
@@ -92,28 +83,12 @@ pub fn get_user_preferences(
   let user_id_int = ids.user_id_to_int(user_id)
   let path = "/api/user-preference/" <> int.to_string(user_id_int) <> "/"
 
-  // Build GET request
-  use req <- result.try(client.build_get_request(config, path, []))
-
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
+  // Execute GET request and parse response
+  use resp <- result.try(crud_helpers.execute_get(config, path, []))
+  crud_helpers.parse_json_single(
+    resp,
+    user_preference_decoder.user_preference_decoder(),
   )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, user_preference_decoder.user_preference_decoder()) {
-        Ok(preferences) -> Ok(preferences)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode preferences: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
 }
 
 /// Update user preferences
@@ -153,28 +128,12 @@ pub fn update_user_preferences(
     user_preference_encoder.encode_update(update)
     |> json.to_string
 
-  // Build PATCH request
-  use req <- result.try(client.build_patch_request(config, path, request_body))
-
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
+  // Execute PATCH request and parse response
+  use resp <- result.try(crud_helpers.execute_patch(config, path, request_body))
+  crud_helpers.parse_json_single(
+    resp,
+    user_preference_decoder.user_preference_decoder(),
   )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, user_preference_decoder.user_preference_decoder()) {
-        Ok(preferences) -> Ok(preferences)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode updated preferences: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
 }
 
 /// Get current user's preferences (convenience alias)
