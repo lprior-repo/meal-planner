@@ -11,7 +11,7 @@ import gleam/http
 import gleam/int
 import gleam/json
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/result
 
 import meal_planner/env
@@ -20,9 +20,8 @@ import meal_planner/tandoor/client as tandoor
 import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
 import meal_planner/tandoor/types/mealplan/meal_type.{
-  type MealType, meal_type_from_string, meal_type_to_string,
+  meal_type_from_string, meal_type_to_string,
 }
-import meal_planner/tandoor/types/recipe/recipe_overview.{type RecipeOverview}
 import wisp
 
 /// GET /tandoor/status

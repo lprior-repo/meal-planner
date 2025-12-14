@@ -382,20 +382,36 @@ pub fn state_summary(state: FallbackState) -> json.Json {
 // ============================================================================
 
 /// Get current time in milliseconds
-/// In production, this would be replaced with actual system time
 fn get_current_time_ms() -> Int {
-  // This is a placeholder; in real implementation, use gleam/int and system time
-  0
+  birl.now() |> birl.to_unix_milli
 }
 
 /// Raise a number to a power (helper for exponential backoff)
 fn pow(base: Float, exponent: Float) -> Float {
-  // Simple implementation using string representation
-  // In production, use a math library
-  case exponent {
-    0.0 -> 1.0
-    1.0 -> base
-    _ -> base *. pow(base, exponent -. 1.0)
+  case float.is_nan(exponent) || float.is_nan(base) {
+    True -> float.nan
+    False ->
+      case exponent {
+        0.0 -> 1.0
+        1.0 -> base
+        _ -> {
+          // Use iterative approach for better performance
+          pow_iterative(base, exponent, 1.0, 0)
+        }
+      }
+  }
+}
+
+fn pow_iterative(
+  base: Float,
+  target_exponent: Float,
+  result: Float,
+  current_exponent: Int,
+) -> Float {
+  case int.to_float(current_exponent) >= target_exponent {
+    True -> result
+    False ->
+      pow_iterative(base, target_exponent, result *. base, current_exponent + 1)
   }
 }
 

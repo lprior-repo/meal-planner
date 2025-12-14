@@ -2,17 +2,10 @@
 ///
 /// High-level API for food diary operations with automatic OAuth handling.
 /// Loads stored tokens from database and handles authentication errors.
-import gleam/option.{type Option}
-import meal_planner/env.{
-  type FatSecretConfig as EnvFatSecretConfig,
-  load_fatsecret_config as load_env_fatsecret_config,
-}
-import meal_planner/fatsecret/core/config.{
-  type FatSecretConfig as CoreFatSecretConfig, FatSecretConfig,
-}
-import meal_planner/fatsecret/core/errors.{
-  type ApiErrorCode, type FatSecretError,
-}
+import gleam/option
+import meal_planner/env.{load_fatsecret_config as load_env_fatsecret_config}
+import meal_planner/fatsecret/core/config.{FatSecretConfig}
+import meal_planner/fatsecret/core/errors.{type FatSecretError}
 import meal_planner/fatsecret/core/errors as core_errors
 import meal_planner/fatsecret/core/oauth.{type AccessToken, AccessToken}
 import meal_planner/fatsecret/diary/client as diary_client

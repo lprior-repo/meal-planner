@@ -15,10 +15,10 @@ import meal_planner/tandoor/api/mealplan/get
 import meal_planner/tandoor/api/mealplan/list
 import meal_planner/tandoor/api/mealplan/update
 import meal_planner/tandoor/client.{NetworkError, bearer_config}
-import meal_planner/tandoor/types/mealplan/meal_plan_entry.{
-  type MealPlanEntry, MealPlanEntry,
+import meal_planner/tandoor/core/ids
+import meal_planner/tandoor/types/mealplan/mealplan.{
+  Breakfast, Dinner, Lunch, MealPlanCreate, MealPlanUpdate,
 }
-import meal_planner/tandoor/types/mealplan/meal_type.{Breakfast, Dinner, Lunch}
 
 // ============================================================================
 // Test Configuration
@@ -38,7 +38,7 @@ fn test_config() -> client.ClientConfig {
 
 pub fn get_mealplan_delegates_to_client_test() {
   let config = test_config()
-  let result = get.get_mealplan(config, mealplan_id: 1)
+  let result = get.get_meal_plan(config, id: ids.meal_plan_id_from_int(1))
 
   should.be_error(result)
   case result {
@@ -54,9 +54,9 @@ pub fn get_mealplan_delegates_to_client_test() {
 pub fn get_mealplan_accepts_different_ids_test() {
   let config = test_config()
 
-  let result1 = get.get_mealplan(config, mealplan_id: 1)
-  let result2 = get.get_mealplan(config, mealplan_id: 999)
-  let result3 = get.get_mealplan(config, mealplan_id: 42)
+  let result1 = get.get_meal_plan(config, id: ids.meal_plan_id_from_int(1))
+  let result2 = get.get_meal_plan(config, id: ids.meal_plan_id_from_int(999))
+  let result3 = get.get_meal_plan(config, id: ids.meal_plan_id_from_int(42))
 
   should.be_error(result1)
   should.be_error(result2)
@@ -65,7 +65,7 @@ pub fn get_mealplan_accepts_different_ids_test() {
 
 pub fn get_mealplan_with_zero_id_test() {
   let config = test_config()
-  let result = get.get_mealplan(config, mealplan_id: 0)
+  let result = get.get_meal_plan(config, id: ids.meal_plan_id_from_int(0))
 
   should.be_error(result)
 }
@@ -76,7 +76,7 @@ pub fn get_mealplan_with_zero_id_test() {
 
 pub fn list_mealplans_delegates_to_client_test() {
   let config = test_config()
-  let result = list.list_mealplans(config)
+  let result = list.list_meal_plans(config, from_date: None, to_date: None)
 
   should.be_error(result)
   case result {
@@ -92,13 +92,7 @@ pub fn list_mealplans_delegates_to_client_test() {
 pub fn list_mealplans_with_from_date_test() {
   let config = test_config()
   let result =
-    list.list_mealplans_with_options(
-      config,
-      Some("2025-01-01"),
-      None,
-      None,
-      None,
-    )
+    list.list_meal_plans(config, from_date: Some("2025-01-01"), to_date: None)
 
   should.be_error(result)
 }
@@ -106,13 +100,7 @@ pub fn list_mealplans_with_from_date_test() {
 pub fn list_mealplans_with_to_date_test() {
   let config = test_config()
   let result =
-    list.list_mealplans_with_options(
-      config,
-      None,
-      Some("2025-12-31"),
-      None,
-      None,
-    )
+    list.list_meal_plans(config, from_date: None, to_date: Some("2025-12-31"))
 
   should.be_error(result)
 }
@@ -120,12 +108,10 @@ pub fn list_mealplans_with_to_date_test() {
 pub fn list_mealplans_with_date_range_test() {
   let config = test_config()
   let result =
-    list.list_mealplans_with_options(
+    list.list_meal_plans(
       config,
-      Some("2025-01-01"),
-      Some("2025-12-31"),
-      None,
-      None,
+      from_date: Some("2025-01-01"),
+      to_date: Some("2025-12-31"),
     )
 
   should.be_error(result)
@@ -133,16 +119,14 @@ pub fn list_mealplans_with_date_range_test() {
 
 pub fn list_mealplans_with_limit_test() {
   let config = test_config()
-  let result =
-    list.list_mealplans_with_options(config, None, None, Some(10), None)
+  let result = list.list_meal_plans(config, from_date: None, to_date: None)
 
   should.be_error(result)
 }
 
 pub fn list_mealplans_with_offset_test() {
   let config = test_config()
-  let result =
-    list.list_mealplans_with_options(config, None, None, None, Some(20))
+  let result = list.list_meal_plans(config, from_date: None, to_date: None)
 
   should.be_error(result)
 }
@@ -150,12 +134,10 @@ pub fn list_mealplans_with_offset_test() {
 pub fn list_mealplans_with_all_options_test() {
   let config = test_config()
   let result =
-    list.list_mealplans_with_options(
+    list.list_meal_plans(
       config,
-      Some("2025-01-01"),
-      Some("2025-12-31"),
-      Some(50),
-      Some(100),
+      from_date: Some("2025-01-01"),
+      to_date: Some("2025-12-31"),
     )
 
   should.be_error(result)
@@ -164,13 +146,7 @@ pub fn list_mealplans_with_all_options_test() {
 pub fn list_mealplans_with_invalid_date_format_test() {
   let config = test_config()
   let result =
-    list.list_mealplans_with_options(
-      config,
-      Some("01/01/2025"),
-      None,
-      None,
-      None,
-    )
+    list.list_meal_plans(config, from_date: Some("01/01/2025"), to_date: None)
 
   // Should attempt call (API will validate)
   should.be_error(result)
@@ -179,12 +155,10 @@ pub fn list_mealplans_with_invalid_date_format_test() {
 pub fn list_mealplans_with_reversed_date_range_test() {
   let config = test_config()
   let result =
-    list.list_mealplans_with_options(
+    list.list_meal_plans(
       config,
-      Some("2025-12-31"),
-      Some("2025-01-01"),
-      None,
-      None,
+      from_date: Some("2025-12-31"),
+      to_date: Some("2025-01-01"),
     )
 
   // Should attempt call (API will handle invalid range)
@@ -194,12 +168,10 @@ pub fn list_mealplans_with_reversed_date_range_test() {
 pub fn list_mealplans_with_same_from_to_date_test() {
   let config = test_config()
   let result =
-    list.list_mealplans_with_options(
+    list.list_meal_plans(
       config,
-      Some("2025-06-15"),
-      Some("2025-06-15"),
-      None,
-      None,
+      from_date: Some("2025-06-15"),
+      to_date: Some("2025-06-15"),
     )
 
   should.be_error(result)
@@ -211,16 +183,17 @@ pub fn list_mealplans_with_same_from_to_date_test() {
 
 pub fn create_mealplan_breakfast_test() {
   let config = test_config()
-  let result =
-    create.create_mealplan(
-      config,
-      recipe: Some(1),
+  let data =
+    MealPlanCreate(
+      recipe: Some(ids.recipe_id_from_int(1)),
+      recipe_name: "Breakfast Recipe",
       servings: 2.0,
       note: "",
       from_date: "2025-06-15",
       to_date: "2025-06-15",
       meal_type: Breakfast,
     )
+  let result = create.create_meal_plan(config, data)
 
   should.be_error(result)
   case result {

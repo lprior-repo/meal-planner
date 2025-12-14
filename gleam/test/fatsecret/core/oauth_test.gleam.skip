@@ -1,4 +1,4 @@
-import fatsecret/core/oauth
+import meal_planner/fatsecret/core/oauth
 import gleam/dict
 import gleam/option.{None, Some}
 import gleam/string

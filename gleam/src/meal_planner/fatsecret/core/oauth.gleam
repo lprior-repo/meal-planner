@@ -44,81 +44,28 @@ pub fn oauth_encode(s: String) -> String {
   s
   |> string.to_graphemes
   |> list.map(fn(char) {
-    case char {
-      "A"
-      | "B"
-      | "C"
-      | "D"
-      | "E"
-      | "F"
-      | "G"
-      | "H"
-      | "I"
-      | "J"
-      | "K"
-      | "L"
-      | "M"
-      | "N"
-      | "O"
-      | "P"
-      | "Q"
-      | "R"
-      | "S"
-      | "T"
-      | "U"
-      | "V"
-      | "W"
-      | "X"
-      | "Y"
-      | "Z"
-      | "a"
-      | "b"
-      | "c"
-      | "d"
-      | "e"
-      | "f"
-      | "g"
-      | "h"
-      | "i"
-      | "j"
-      | "k"
-      | "l"
-      | "m"
-      | "n"
-      | "o"
-      | "p"
-      | "q"
-      | "r"
-      | "s"
-      | "t"
-      | "u"
-      | "v"
-      | "w"
-      | "x"
-      | "y"
-      | "z"
-      | "0"
-      | "1"
-      | "2"
-      | "3"
-      | "4"
-      | "5"
-      | "6"
-      | "7"
-      | "8"
-      | "9"
-      | "-"
-      | "."
-      | "_"
-      | "~" -> char
-      _ -> {
-        // Handle multi-byte UTF-8 characters by encoding each byte
-        let bytes = <<char:utf8>>
-        encode_bytes(bytes, 0, bit_array.byte_size(bytes), "")
-      }
+    case is_unreserved_char(char) {
+      True -> char
+      False ->
+        case char {
+          "-" | "." | "_" | "~" -> char
+          _ -> {
+            // Handle multi-byte UTF-8 characters by encoding each byte
+            let bytes = <<char:utf8>>
+            encode_bytes(bytes, 0, bit_array.byte_size(bytes), "")
+          }
+        }
     }
   })
   |> string.concat
+}
+
+// Helper to check if character is alphanumeric (A-Z, a-z, 0-9)
+fn is_unreserved_char(char: String) -> Bool {
+  string.contains(
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+    char,
+  )
 }
 
 fn int_to_hex(n: Int) -> String {
