@@ -14,6 +14,7 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
+import meal_planner/fatsecret/service as fatsecret_service
 import meal_planner/id
 import meal_planner/storage
 import meal_planner/types
@@ -52,7 +53,10 @@ pub fn handle(req: wisp.Request, conn: pog.Connection) -> wisp.Response {
     Error(_) -> None
   }
 
-  let html = render_dashboard(date, daily_log, recent_foods, profile)
+  // Get FatSecret connection status
+  let fatsecret_status = fatsecret_service.check_status(conn)
+
+  let html = render_dashboard(date, daily_log, recent_foods, profile, fatsecret_status)
   wisp.html_response(html, 200)
 }
 
@@ -88,6 +92,7 @@ fn render_dashboard(
   daily_log: Option(types.DailyLog),
   recent_foods: List(storage.UsdaFood),
   profile: Option(types.UserProfile),
+  fatsecret_status: fatsecret_service.ConnectionStatus,
 ) -> String {
   "<!DOCTYPE html>
 <html lang=\"en\">
@@ -261,6 +266,35 @@ fn render_dashboard(
       padding: 40px 20px;
       color: #95a5a6;
     }
+    .integration-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .integration-status.connected { background: #d4edda; border: 1px solid #28a745; }
+    .integration-status.disconnected { background: #fff3cd; border: 1px solid #ffc107; }
+    .integration-status.error { background: #f8d7da; border: 1px solid #dc3545; }
+    .status-icon { font-size: 24px; }
+    .status-text { flex: 1; }
+    .status-label { font-weight: 600; color: #2c3e50; }
+    .status-detail { font-size: 12px; color: #6c757d; }
+    .connect-btn {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .connect-btn:hover { background: #2980b9; }
+    .connect-btn.success { background: #28a745; }
+    .connect-btn.success:hover { background: #218838; }
     .summary-stats {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -294,6 +328,7 @@ fn render_dashboard(
     </header>
 
     <div class=\"grid\">
+      " <> render_integrations_status(fatsecret_status) <> "
       " <> render_calorie_summary(daily_log, profile) <> "
       " <> render_macro_progress(daily_log, profile) <> "
       " <> render_micronutrients(daily_log, profile) <> "
@@ -308,6 +343,53 @@ fn render_dashboard(
 // ============================================================================
 // Component Renderers
 // ============================================================================
+
+fn render_integrations_status(fatsecret_status: fatsecret_service.ConnectionStatus) -> String {
+  let fatsecret_html = case fatsecret_status {
+    fatsecret_service.Connected(_) ->
+      "<div class=\"integration-status connected\">
+        <span class=\"status-icon\">✓</span>
+        <div class=\"status-text\">
+          <div class=\"status-label\">FatSecret</div>
+          <div class=\"status-detail\">Connected - syncing your food diary</div>
+        </div>
+        <a href=\"/fatsecret/status\" class=\"connect-btn success\">Manage</a>
+      </div>"
+
+    fatsecret_service.Disconnected(reason) ->
+      "<div class=\"integration-status disconnected\">
+        <span class=\"status-icon\">⚠</span>
+        <div class=\"status-text\">
+          <div class=\"status-label\">FatSecret</div>
+          <div class=\"status-detail\">" <> reason <> "</div>
+        </div>
+        <a href=\"/fatsecret/connect\" class=\"connect-btn\">Connect</a>
+      </div>"
+
+    fatsecret_service.ConfigMissing ->
+      "<div class=\"integration-status error\">
+        <span class=\"status-icon\">✗</span>
+        <div class=\"status-text\">
+          <div class=\"status-label\">FatSecret</div>
+          <div class=\"status-detail\">API keys not configured</div>
+        </div>
+      </div>"
+
+    fatsecret_service.EncryptionKeyMissing ->
+      "<div class=\"integration-status error\">
+        <span class=\"status-icon\">✗</span>
+        <div class=\"status-text\">
+          <div class=\"status-label\">FatSecret</div>
+          <div class=\"status-detail\">OAUTH_ENCRYPTION_KEY not set</div>
+        </div>
+      </div>"
+  }
+
+  "<div class=\"card\">
+    <h2>Integrations</h2>
+    " <> fatsecret_html <> "
+  </div>"
+}
 
 fn render_date_selector(date: String) -> String {
   // Calculate previous and next dates using simple string manipulation

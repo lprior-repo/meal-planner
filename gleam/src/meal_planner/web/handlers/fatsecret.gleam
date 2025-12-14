@@ -15,6 +15,7 @@ import gleam/string
 import gleam/uri
 import meal_planner/env
 import meal_planner/fatsecret/client as fatsecret
+import meal_planner/fatsecret/service as fatsecret_service
 import meal_planner/fatsecret/storage
 import pog
 import wisp
@@ -219,23 +220,98 @@ fn complete_oauth_flow(
 }
 
 /// GET /fatsecret/status
-/// Returns JSON status of the FatSecret connection
+/// Returns HTML status page with management options
 pub fn handle_status(req: wisp.Request, conn: pog.Connection) -> wisp.Response {
   use <- wisp.require_method(req, http.Get)
 
-  let connected = storage.is_connected(conn)
-  let config_present = env.load_fatsecret_config() |> option.is_some
-  let encryption_configured = storage.encryption_configured()
+  let status = fatsecret_service.check_status(conn)
 
-  let body =
-    json.object([
-      #("connected", json.bool(connected)),
-      #("configured", json.bool(config_present)),
-      #("encryption_configured", json.bool(encryption_configured)),
-    ])
-    |> json.to_string
+  let status_html = case status {
+    fatsecret_service.Connected(_) -> {
+      // Validate the connection is actually working
+      case fatsecret_service.validate_connection(conn) {
+        Ok(True) ->
+          "<div class=\"status connected\">
+            <h2>✓ Connected to FatSecret</h2>
+            <p>Your account is linked and working correctly.</p>
+            <form action=\"/fatsecret/disconnect\" method=\"POST\" style=\"margin-top: 20px;\">
+              <button type=\"submit\" class=\"btn danger\">Disconnect</button>
+            </form>
+          </div>"
+        Ok(False) ->
+          "<div class=\"status warning\">
+            <h2>⚠ Connection Expired</h2>
+            <p>Your FatSecret authorization was revoked. Please reconnect.</p>
+            <a href=\"/fatsecret/connect\" class=\"btn\">Reconnect to FatSecret</a>
+          </div>"
+        Error(_) ->
+          "<div class=\"status warning\">
+            <h2>⚠ Connection Issue</h2>
+            <p>Could not verify connection. The API may be temporarily unavailable.</p>
+            <a href=\"/fatsecret/connect\" class=\"btn\">Reconnect</a>
+          </div>"
+      }
+    }
 
-  wisp.json_response(body, 200)
+    fatsecret_service.Disconnected(_) ->
+      "<div class=\"status disconnected\">
+        <h2>Not Connected</h2>
+        <p>Connect your FatSecret account to sync your food diary automatically.</p>
+        <a href=\"/fatsecret/connect\" class=\"btn\">Connect to FatSecret</a>
+      </div>"
+
+    fatsecret_service.ConfigMissing ->
+      "<div class=\"status error\">
+        <h2>✗ Not Configured</h2>
+        <p>FatSecret API credentials are not set. Add FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET to your .env file.</p>
+      </div>"
+
+    fatsecret_service.EncryptionKeyMissing ->
+      "<div class=\"status error\">
+        <h2>✗ Encryption Not Configured</h2>
+        <p>OAUTH_ENCRYPTION_KEY is required for secure token storage.</p>
+        <p>Generate one with: <code>openssl rand -hex 32</code></p>
+      </div>"
+  }
+
+  let html =
+    "<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=\"utf-8\">
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+  <title>FatSecret Status</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f5f5f5; }
+    .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    h1 { color: #333; margin-bottom: 20px; }
+    h2 { margin-top: 0; }
+    p { color: #666; line-height: 1.6; }
+    .status { padding: 20px; border-radius: 6px; margin-bottom: 20px; }
+    .status.connected { background: #d4edda; border: 1px solid #28a745; }
+    .status.disconnected { background: #fff3cd; border: 1px solid #ffc107; }
+    .status.warning { background: #fff3cd; border: 1px solid #ffc107; }
+    .status.error { background: #f8d7da; border: 1px solid #dc3545; }
+    .btn { display: inline-block; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 4px; border: none; cursor: pointer; font-size: 16px; }
+    .btn:hover { background: #2980b9; }
+    .btn.danger { background: #dc3545; }
+    .btn.danger:hover { background: #c82333; }
+    code { background: #e9ecef; padding: 2px 6px; border-radius: 3px; }
+    .back-link { display: block; margin-top: 20px; color: #3498db; }
+  </style>
+</head>
+<body>
+  <div class=\"card\">
+    <h1>FatSecret Integration</h1>
+    " <> status_html <> "
+    <a href=\"/dashboard\" class=\"back-link\">← Back to Dashboard</a>
+  </div>
+</body>
+</html>"
+
+  wisp.response(200)
+  |> wisp.set_header("content-type", "text/html; charset=utf-8")
+  |> wisp.set_body(wisp.Text(html))
 }
 
 /// POST /fatsecret/disconnect
@@ -273,19 +349,16 @@ pub fn handle_get_profile(
 ) -> wisp.Response {
   use <- wisp.require_method(req, http.Get)
 
-  case env.load_fatsecret_config(), storage.get_access_token_opt(conn) {
-    Some(config), Some(access_token) -> {
-      case fatsecret.get_profile(config, access_token) {
-        Ok(profile_json) -> {
-          wisp.json_response(profile_json, 200)
-        }
-        Error(e) -> {
-          error_response(500, "Failed to get profile: " <> error_to_string(e))
-        }
-      }
-    }
-    None, _ -> error_response(500, "FatSecret not configured")
-    _, None -> error_response(401, "Not connected to FatSecret")
+  case fatsecret_service.get_profile(conn) {
+    Ok(profile_json) -> wisp.json_response(profile_json, 200)
+    Error(fatsecret_service.NotConnected) ->
+      error_response(401, "Not connected to FatSecret. Visit /fatsecret/connect to authorize.")
+    Error(fatsecret_service.NotConfigured) ->
+      error_response(500, "FatSecret API not configured")
+    Error(fatsecret_service.AuthRevoked) ->
+      error_response(401, "FatSecret authorization was revoked. Please reconnect.")
+    Error(e) ->
+      error_response(500, "Failed to get profile: " <> fatsecret_service.error_to_string(e))
   }
 }
 
@@ -306,16 +379,16 @@ pub fn handle_get_entries(
   case string.is_empty(date) {
     True -> error_response(400, "Missing 'date' query parameter (YYYY-MM-DD)")
     False -> {
-      case env.load_fatsecret_config(), storage.get_access_token_opt(conn) {
-        Some(config), Some(access_token) -> {
-          case fatsecret.get_food_entries(config, access_token, date) {
-            Ok(entries_json) -> wisp.json_response(entries_json, 200)
-            Error(e) ->
-              error_response(500, "Failed to get entries: " <> error_to_string(e))
-          }
-        }
-        None, _ -> error_response(500, "FatSecret not configured")
-        _, None -> error_response(401, "Not connected to FatSecret")
+      case fatsecret_service.get_food_entries(conn, date) {
+        Ok(entries_json) -> wisp.json_response(entries_json, 200)
+        Error(fatsecret_service.NotConnected) ->
+          error_response(401, "Not connected to FatSecret. Visit /fatsecret/connect to authorize.")
+        Error(fatsecret_service.NotConfigured) ->
+          error_response(500, "FatSecret API not configured")
+        Error(fatsecret_service.AuthRevoked) ->
+          error_response(401, "FatSecret authorization was revoked. Please reconnect.")
+        Error(e) ->
+          error_response(500, "Failed to get entries: " <> fatsecret_service.error_to_string(e))
       }
     }
   }
