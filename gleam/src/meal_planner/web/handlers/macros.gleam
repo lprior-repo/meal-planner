@@ -2,10 +2,12 @@
 ///
 /// This module provides the macro calculation endpoint that aggregates
 /// nutritional information across recipes.
+import gleam/dynamic/decode
 import gleam/http
 import gleam/json
 import gleam/list
 import gleam/result
+import gleam/string
 import meal_planner/types
 import wisp
 
@@ -67,16 +69,38 @@ pub fn handle_calculate(req: wisp.Request) -> wisp.Response {
   }
 }
 
+// JSON Decoders for type-safe request parsing
+
+fn macros_decoder() -> decode.Decoder(types.Macros) {
+  decode.into(types.Macros)
+  |> decode.field("protein", decode.float)
+  |> decode.field("fat", decode.float)
+  |> decode.field("carbs", decode.float)
+  |> decode.build
+}
+
+fn recipe_serving_decoder() -> decode.Decoder(RecipeServing) {
+  decode.into(RecipeServing)
+  |> decode.field("servings", decode.float)
+  |> decode.field("macros", macros_decoder())
+  |> decode.build
+}
+
+fn macros_request_decoder() -> decode.Decoder(MacrosRequest) {
+  decode.into(MacrosRequest)
+  |> decode.field("recipes", decode.list(recipe_serving_decoder()))
+  |> decode.build
+}
+
 /// Parse macro calculation request from HTTP body
 fn parse_macros_request(req: wisp.Request) -> Result(MacrosRequest, String) {
-  use _body <- result.try(wisp.require_json(req))
+  use body <- result.try(wisp.require_json(req))
   
-  // TODO: Implement full JSON decoding to extract recipes array
-  // For now, return a sample valid request
-  Ok(MacrosRequest(recipes: [
-    RecipeServing(servings: 1.5, macros: types.Macros(protein: 50.0, fat: 20.0, carbs: 70.0)),
-    RecipeServing(servings: 1.0, macros: types.Macros(protein: 35.0, fat: 12.0, carbs: 45.0)),
-  ]))
+  // Parse the JSON body using the macros request decoder
+  decode.run(body, macros_request_decoder())
+  |> result.map_error(fn(errs) {
+    "Failed to parse macros request: " <> string.inspect(errs)
+  })
 }
 
 /// Calculate total macros across all recipes with servings
