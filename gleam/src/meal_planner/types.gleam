@@ -1359,54 +1359,6 @@ pub fn float_to_1dp_string(f: Float) -> String {
 }
 
 // ============================================================================
-// Search Analytics Types
-// ============================================================================
-
-/// Search analytics event for tracking search behavior
-pub type SearchAnalyticsEvent {
-  SearchAnalyticsEvent(
-    user_id: String,
-    search_term: String,
-    filters: SearchFilters,
-    result_count: Int,
-    custom_count: Int,
-    usda_count: Int,
-    session_id: Option(String),
-  )
-}
-
-/// Search analytics entry (stored in database)
-pub type SearchAnalyticsEntry {
-  SearchAnalyticsEntry(
-    id: Int,
-    user_id: String,
-    search_term: String,
-    search_timestamp: String,
-    filters: SearchFilters,
-    result_count: Int,
-    custom_count: Int,
-    usda_count: Int,
-    selected_food_id: Option(Int),
-    selected_position: Option(Int),
-    selection_timestamp: Option(String),
-    time_to_selection_ms: Option(Int),
-    session_id: Option(String),
-    zero_results: Bool,
-    abandoned: Bool,
-  )
-}
-
-/// Search analytics summary for reports
-pub type SearchAnalyticsSummary {
-  SearchAnalyticsSummary(
-    total_searches: Int,
-    unique_terms: Int,
-    avg_results: Float,
-    top_searches: List(#(String, Int)),
-  )
-}
-
-// ============================================================================
 // Pagination Types
 // ============================================================================
 
