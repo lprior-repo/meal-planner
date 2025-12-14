@@ -2,7 +2,10 @@
 ///
 /// This module provides functions to list meal plans from the Tandoor API.
 import gleam/option.{type Option}
+import gleam/result
+import meal_planner/tandoor/api/crud_helpers
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/decoders/mealplan/meal_plan_decoder
 import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlanListResponse}
 
 /// List meal plans from Tandoor API with optional date filtering
@@ -14,12 +17,45 @@ import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlanListResponse}
 ///
 /// # Returns
 /// Result with paginated meal plan list or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let result = list_meal_plans(
+///   config,
+///   from_date: Some("2024-01-01"),
+///   to_date: Some("2024-01-31")
+/// )
+/// ```
 pub fn list_meal_plans(
   config: ClientConfig,
   from_date from_date: Option(String),
   to_date to_date: Option(String),
 ) -> Result(MealPlanListResponse, TandoorError) {
-  // Use the existing client method - delegate to it
-  // This provides a cleaner API surface while reusing existing implementation
-  client.get_meal_plan(config, from_date, to_date)
+  let path = "/api/meal-plan/"
+
+  // Build query parameters from optional date filters
+  let query_params =
+    []
+    |> fn(params) {
+      case from_date {
+        option.Some(d) -> [#("from_date", d), ..params]
+        option.None -> params
+      }
+    }
+    |> fn(params) {
+      case to_date {
+        option.Some(d) -> [#("to_date", d), ..params]
+        option.None -> params
+      }
+    }
+
+  // Execute GET request using CRUD helpers
+  use resp <- result.try(crud_helpers.execute_get(config, path, query_params))
+
+  // Parse JSON response using meal plan list decoder
+  crud_helpers.parse_json_single(
+    resp,
+    meal_plan_decoder.meal_plan_list_decoder_internal(),
+  )
 }

@@ -1,9 +1,15 @@
 /// MealPlan Update/Delete API
 ///
 /// This module provides functions to update and delete meal plan entries in the Tandoor API.
+import gleam/int
+import gleam/json
+import gleam/result
+import meal_planner/tandoor/api/crud_helpers
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
-import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
 import meal_planner/tandoor/core/ids.{type MealPlanId}
+import meal_planner/tandoor/decoders/mealplan/meal_plan_decoder
+import meal_planner/tandoor/encoders/mealplan/mealplan_encoder
+import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
 import meal_planner/tandoor/types/mealplan/mealplan.{type MealPlanUpdate}
 
 /// Update a meal plan entry in Tandoor API
@@ -16,18 +22,41 @@ import meal_planner/tandoor/types/mealplan/mealplan.{type MealPlanUpdate}
 /// # Returns
 /// Result with updated meal plan entry or error
 ///
-/// # Note
-/// The Tandoor API may not support PATCH updates for meal plans.
-/// This function is a placeholder for when the API supports it.
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let data = MealPlanUpdate(
+///   recipe: Some(recipe_id),
+///   recipe_name: "Updated Dinner",
+///   servings: 6.0,
+///   note: "More guests",
+///   from_date: "2024-01-15",
+///   to_date: "2024-01-15",
+///   meal_type: Dinner,
+/// )
+/// let result = update_meal_plan(config, id: meal_plan_id, data: data)
+/// ```
 pub fn update_meal_plan(
-  _config: ClientConfig,
-  _id: MealPlanId,
-  _data: MealPlanUpdate,
+  config: ClientConfig,
+  id: MealPlanId,
+  data: MealPlanUpdate,
 ) -> Result(MealPlanEntry, TandoorError) {
-  // TODO: Implement when Tandoor API provides a PATCH endpoint for meal plans
-  Error(client.BadRequestError(
-    "update_meal_plan not yet supported - delete and recreate instead",
-  ))
+  let path =
+    "/api/meal-plan/" <> int.to_string(ids.meal_plan_id_to_int(id)) <> "/"
+
+  // Encode meal plan update data to JSON
+  let request_body =
+    mealplan_encoder.encode_meal_plan_update(data)
+    |> json.to_string
+
+  // Execute PATCH request using CRUD helpers
+  use resp <- result.try(crud_helpers.execute_patch(config, path, request_body))
+
+  // Parse JSON response using meal plan entry decoder
+  crud_helpers.parse_json_single(
+    resp,
+    meal_plan_decoder.meal_plan_entry_decoder(),
+  )
 }
 
 /// Delete a meal plan entry from Tandoor API
@@ -38,13 +67,22 @@ pub fn update_meal_plan(
 ///
 /// # Returns
 /// Result with unit or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let result = delete_meal_plan(config, id: meal_plan_id)
+/// ```
 pub fn delete_meal_plan(
   config: ClientConfig,
   id: MealPlanId,
 ) -> Result(Nil, TandoorError) {
-  // Convert SDK type to raw int for client
-  let entry_id = ids.meal_plan_id_to_int(id)
+  let path =
+    "/api/meal-plan/" <> int.to_string(ids.meal_plan_id_to_int(id)) <> "/"
 
-  // Use the existing client method - delegate to it
-  client.delete_meal_plan_entry(config, entry_id)
+  // Execute DELETE request using CRUD helpers
+  use _resp <- result.try(crud_helpers.execute_delete(config, path))
+
+  // DELETE returns 204 No Content on success
+  Ok(Nil)
 }
