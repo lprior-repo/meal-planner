@@ -25,11 +25,11 @@
 ///
 /// TODO: Implement once client has supermarket methods and create types
 pub fn create_supermarket(
-  config config: a,
-  name name: String,
-  description description: b,
+  config _config: a,
+  name _name: String,
+  description _description: b,
 ) -> Result(c, d) {
   // Placeholder - awaiting client implementation and encoder
   // Will delegate to: client.create_supermarket(config, data)
-  Error(Nil)
+  todo as "Supermarket API not yet implemented"
 }
