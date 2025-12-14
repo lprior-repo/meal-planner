@@ -166,7 +166,9 @@ fn complete_oauth_flow(
               oauth_callback_confirmed: True,
             )
 
-          case fatsecret.get_access_token(config, request_token, oauth_verifier) {
+          case
+            fatsecret.get_access_token(config, request_token, oauth_verifier)
+          {
             Ok(access_token) -> {
               case storage.store_access_token(conn, access_token) {
                 Ok(Nil) -> {
@@ -198,7 +200,10 @@ fn complete_oauth_flow(
               )
             }
             Error(e) -> {
-              error_response(500, "Failed to get access token: " <> error_to_string(e))
+              error_response(
+                500,
+                "Failed to get access token: " <> error_to_string(e),
+              )
             }
           }
         }
@@ -274,8 +279,7 @@ pub fn handle_status(req: wisp.Request, conn: pog.Connection) -> wisp.Response {
       </div>"
   }
 
-  let html =
-    "<!DOCTYPE html>
+  let html = "<!DOCTYPE html>
 <html>
 <head>
   <meta charset=\"utf-8\">
@@ -352,13 +356,22 @@ pub fn handle_get_profile(
   case fatsecret_service.get_profile(conn) {
     Ok(profile_json) -> wisp.json_response(profile_json, 200)
     Error(fatsecret_service.NotConnected) ->
-      error_response(401, "Not connected to FatSecret. Visit /fatsecret/connect to authorize.")
+      error_response(
+        401,
+        "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
+      )
     Error(fatsecret_service.NotConfigured) ->
       error_response(500, "FatSecret API not configured")
     Error(fatsecret_service.AuthRevoked) ->
-      error_response(401, "FatSecret authorization was revoked. Please reconnect.")
+      error_response(
+        401,
+        "FatSecret authorization was revoked. Please reconnect.",
+      )
     Error(e) ->
-      error_response(500, "Failed to get profile: " <> fatsecret_service.error_to_string(e))
+      error_response(
+        500,
+        "Failed to get profile: " <> fatsecret_service.error_to_string(e),
+      )
   }
 }
 
@@ -382,13 +395,22 @@ pub fn handle_get_entries(
       case fatsecret_service.get_food_entries(conn, date) {
         Ok(entries_json) -> wisp.json_response(entries_json, 200)
         Error(fatsecret_service.NotConnected) ->
-          error_response(401, "Not connected to FatSecret. Visit /fatsecret/connect to authorize.")
+          error_response(
+            401,
+            "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
+          )
         Error(fatsecret_service.NotConfigured) ->
           error_response(500, "FatSecret API not configured")
         Error(fatsecret_service.AuthRevoked) ->
-          error_response(401, "FatSecret authorization was revoked. Please reconnect.")
+          error_response(
+            401,
+            "FatSecret authorization was revoked. Please reconnect.",
+          )
         Error(e) ->
-          error_response(500, "Failed to get entries: " <> fatsecret_service.error_to_string(e))
+          error_response(
+            500,
+            "Failed to get entries: " <> fatsecret_service.error_to_string(e),
+          )
       }
     }
   }
@@ -416,8 +438,7 @@ fn error_response(status: Int, message: String) -> wisp.Response {
 }
 
 fn html_response(status: Int, body: String) -> wisp.Response {
-  let html =
-    "<!DOCTYPE html>
+  let html = "<!DOCTYPE html>
 <html>
 <head>
   <meta charset=\"utf-8\">
@@ -430,9 +451,7 @@ fn html_response(status: Int, body: String) -> wisp.Response {
     a { color: #0066cc; }
   </style>
 </head>
-<body>"
-    <> body
-    <> "</body></html>"
+<body>" <> body <> "</body></html>"
 
   wisp.response(status)
   |> wisp.set_header("content-type", "text/html; charset=utf-8")

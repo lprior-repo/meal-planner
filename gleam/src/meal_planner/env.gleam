@@ -153,7 +153,11 @@ pub fn load_tandoor_config() -> Option(TandoorConfig) {
   let username = envoy.get("TANDOOR_USERNAME") |> result.unwrap("")
   let password = envoy.get("TANDOOR_PASSWORD") |> result.unwrap("")
 
-  case string.is_empty(url), string.is_empty(username), string.is_empty(password) {
+  case
+    string.is_empty(url),
+    string.is_empty(username),
+    string.is_empty(password)
+  {
     False, False, False ->
       Some(TandoorConfig(base_url: url, username: username, password: password))
     _, _, _ -> None

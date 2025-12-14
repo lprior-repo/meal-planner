@@ -1,3 +1,5 @@
+// TODO: Re-enable when modules are available
+// import meal_planner/web/handlers/dashboard
 /// Web handlers facade module
 ///
 /// This module re-exports all handler functions from the handlers subdirectory.
@@ -11,10 +13,10 @@
 /// - dashboard: Dashboard UI with nutrition tracking
 /// - fatsecret: FatSecret OAuth 3-legged authentication
 /// - tandoor: Tandoor Recipe Manager integration
-import meal_planner/web/handlers/dashboard
 import meal_planner/web/handlers/diet
 import meal_planner/web/handlers/fatsecret
-import meal_planner/web/handlers/foods
+
+// import meal_planner/web/handlers/foods
 import meal_planner/web/handlers/health
 import meal_planner/web/handlers/macros
 import meal_planner/web/handlers/recipes
@@ -46,33 +48,44 @@ pub fn handle_macros_calculate(req: wisp.Request) -> wisp.Response {
 }
 
 /// Dashboard handler - GET /dashboard
+/// TODO: Re-enable when dashboard module is available
 pub fn handle_dashboard(
-  req: wisp.Request,
-  conn: pog.Connection,
+  _req: wisp.Request,
+  _conn: pog.Connection,
 ) -> wisp.Response {
-  dashboard.handle(req, conn)
+  wisp.response(501)
+  |> wisp.string_body("Dashboard handler not yet implemented")
 }
 
 /// Dashboard data handler - GET /api/dashboard/data
+/// TODO: Re-enable when dashboard module is available
 pub fn handle_dashboard_data(
-  req: wisp.Request,
-  conn: pog.Connection,
+  _req: wisp.Request,
+  _conn: pog.Connection,
 ) -> wisp.Response {
-  dashboard.handle_data(req, conn)
+  wisp.response(501)
+  |> wisp.string_body("Dashboard data handler not yet implemented")
 }
 
 /// Log food form handler - GET /log/food/{fdc_id}
+/// TODO: Re-enable when foods module is available
 pub fn handle_log_food_form(
-  req: wisp.Request,
-  conn: pog.Connection,
-  fdc_id: String,
+  _req: wisp.Request,
+  _conn: pog.Connection,
+  _fdc_id: String,
 ) -> wisp.Response {
-  foods.handle_log_food_form(req, conn, fdc_id)
+  wisp.response(501)
+  |> wisp.string_body("Log food form handler not yet implemented")
 }
 
 /// Log food API handler - POST /api/logs/food
-pub fn handle_log_food(req: wisp.Request, conn: pog.Connection) -> wisp.Response {
-  foods.handle_log_food(req, conn)
+/// TODO: Re-enable when foods module is available
+pub fn handle_log_food(
+  _req: wisp.Request,
+  _conn: pog.Connection,
+) -> wisp.Response {
+  wisp.response(501)
+  |> wisp.string_body("Log food handler not yet implemented")
 }
 
 /// FatSecret OAuth connect - GET /fatsecret/connect

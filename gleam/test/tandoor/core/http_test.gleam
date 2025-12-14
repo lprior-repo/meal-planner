@@ -35,7 +35,9 @@ pub fn create_failing_mock_transport(
   fn(_request: http_transport.HttpRequest) -> Result(
     http_transport.HttpResponse,
     String,
-  ) { Error(error_message) }
+  ) {
+    Error(error_message)
+  }
 }
 
 // Tests for HttpRequest type
@@ -205,7 +207,10 @@ pub fn execute_request_preserves_headers_test() {
   let response = result |> result.unwrap(http_transport.HttpResponse(0, [], ""))
 
   response.headers
-  |> should.equal([#("X-Custom", "value"), #("Content-Type", "application/json")])
+  |> should.equal([
+    #("X-Custom", "value"),
+    #("Content-Type", "application/json"),
+  ])
 }
 
 // Tests for default transport creation

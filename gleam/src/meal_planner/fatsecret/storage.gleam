@@ -176,8 +176,7 @@ pub fn delete_access_token(conn: pog.Connection) -> Result(Nil, StorageError) {
 
 /// Update last_used_at timestamp
 pub fn touch_access_token(conn: pog.Connection) -> Result(Nil, StorageError) {
-  let sql =
-    "UPDATE fatsecret_oauth_token SET last_used_at = NOW() WHERE id = 1"
+  let sql = "UPDATE fatsecret_oauth_token SET last_used_at = NOW() WHERE id = 1"
 
   case pog.query(sql) |> pog.execute(conn) {
     Ok(_) -> Ok(Nil)
@@ -186,7 +185,9 @@ pub fn touch_access_token(conn: pog.Connection) -> Result(Nil, StorageError) {
 }
 
 /// Cleanup expired pending tokens
-pub fn cleanup_expired_pending(conn: pog.Connection) -> Result(Int, StorageError) {
+pub fn cleanup_expired_pending(
+  conn: pog.Connection,
+) -> Result(Int, StorageError) {
   let sql = "SELECT cleanup_fatsecret_pending_tokens()"
 
   let decoder = decode.at([0], decode.int)
@@ -220,7 +221,8 @@ fn pog_error_to_string(error: pog.QueryError) -> String {
 fn crypto_error_to_string(error: crypto.CryptoError) -> String {
   case error {
     crypto.KeyNotConfigured -> "OAUTH_ENCRYPTION_KEY not set"
-    crypto.KeyInvalidLength -> "OAUTH_ENCRYPTION_KEY must be 64 hex chars (32 bytes)"
+    crypto.KeyInvalidLength ->
+      "OAUTH_ENCRYPTION_KEY must be 64 hex chars (32 bytes)"
     crypto.EncryptionFailed -> "Encryption failed"
     crypto.DecryptionFailed -> "Decryption failed"
     crypto.InvalidCiphertext -> "Invalid ciphertext"

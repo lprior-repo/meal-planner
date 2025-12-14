@@ -31,7 +31,12 @@ pub fn handle_status(req: wisp.Request) -> wisp.Response {
         json.object([
           #("connected", json.bool(False)),
           #("configured", json.bool(False)),
-          #("message", json.string("Tandoor not configured. Set TANDOOR_URL, TANDOOR_USERNAME, TANDOOR_PASSWORD in .env")),
+          #(
+            "message",
+            json.string(
+              "Tandoor not configured. Set TANDOOR_URL, TANDOOR_USERNAME, TANDOOR_PASSWORD in .env",
+            ),
+          ),
         ])
         |> json.to_string
       wisp.json_response(body, 200)
@@ -48,7 +53,8 @@ pub fn handle_status(req: wisp.Request) -> wisp.Response {
           wisp.json_response(body, 200)
         }
         Some(cfg) -> {
-          let config = tandoor.session_config(cfg.base_url, cfg.username, cfg.password)
+          let config =
+            tandoor.session_config(cfg.base_url, cfg.username, cfg.password)
           case tandoor.login(config) {
             Ok(_) -> {
               let body =
@@ -110,7 +116,11 @@ pub fn handle_list_recipes(req: wisp.Request) -> wisp.Response {
             |> json.to_string
           wisp.json_response(body, 200)
         }
-        Error(e) -> error_response(500, "Failed to fetch recipes: " <> tandoor.error_to_string(e))
+        Error(e) ->
+          error_response(
+            500,
+            "Failed to fetch recipes: " <> tandoor.error_to_string(e),
+          )
       }
     }
   }
@@ -132,8 +142,13 @@ pub fn handle_get_recipe(req: wisp.Request, recipe_id: String) -> wisp.Response 
               let body = recipe_detail_to_json(detail) |> json.to_string
               wisp.json_response(body, 200)
             }
-            Error(tandoor.NotFoundError(_)) -> error_response(404, "Recipe not found")
-            Error(e) -> error_response(500, "Failed to fetch recipe: " <> tandoor.error_to_string(e))
+            Error(tandoor.NotFoundError(_)) ->
+              error_response(404, "Recipe not found")
+            Error(e) ->
+              error_response(
+                500,
+                "Failed to fetch recipe: " <> tandoor.error_to_string(e),
+              )
           }
         }
       }
@@ -167,12 +182,19 @@ pub fn handle_get_meal_plan(req: wisp.Request) -> wisp.Response {
               #("count", json.int(response.count)),
               #("next", json.nullable(response.next, json.string)),
               #("previous", json.nullable(response.previous, json.string)),
-              #("results", json.array(response.results, meal_plan_entry_to_json)),
+              #(
+                "results",
+                json.array(response.results, meal_plan_entry_to_json),
+              ),
             ])
             |> json.to_string
           wisp.json_response(body, 200)
         }
-        Error(e) -> error_response(500, "Failed to fetch meal plan: " <> tandoor.error_to_string(e))
+        Error(e) ->
+          error_response(
+            500,
+            "Failed to fetch meal plan: " <> tandoor.error_to_string(e),
+          )
       }
     }
   }
@@ -196,7 +218,11 @@ pub fn handle_create_meal_plan(req: wisp.Request) -> wisp.Response {
               let body = meal_plan_entry_to_json(created) |> json.to_string
               wisp.json_response(body, 201)
             }
-            Error(e) -> error_response(500, "Failed to create meal plan: " <> tandoor.error_to_string(e))
+            Error(e) ->
+              error_response(
+                500,
+                "Failed to create meal plan: " <> tandoor.error_to_string(e),
+              )
           }
         }
       }
@@ -206,7 +232,10 @@ pub fn handle_create_meal_plan(req: wisp.Request) -> wisp.Response {
 
 /// DELETE /api/tandoor/meal-plan/:id
 /// Deletes a meal plan entry
-pub fn handle_delete_meal_plan(req: wisp.Request, entry_id: String) -> wisp.Response {
+pub fn handle_delete_meal_plan(
+  req: wisp.Request,
+  entry_id: String,
+) -> wisp.Response {
   use <- wisp.require_method(req, http.Delete)
 
   case int.parse(entry_id) {
@@ -225,8 +254,13 @@ pub fn handle_delete_meal_plan(req: wisp.Request, entry_id: String) -> wisp.Resp
                 |> json.to_string
               wisp.json_response(body, 200)
             }
-            Error(tandoor.NotFoundError(_)) -> error_response(404, "Meal plan entry not found")
-            Error(e) -> error_response(500, "Failed to delete meal plan: " <> tandoor.error_to_string(e))
+            Error(tandoor.NotFoundError(_)) ->
+              error_response(404, "Meal plan entry not found")
+            Error(e) ->
+              error_response(
+                500,
+                "Failed to delete meal plan: " <> tandoor.error_to_string(e),
+              )
           }
         }
       }
@@ -247,10 +281,15 @@ fn get_authenticated_config() -> Result(tandoor.ClientConfig, ConfigError) {
   case env.load_tandoor_config() {
     None -> Error(ConfigError(500, "Tandoor not configured"))
     Some(cfg) -> {
-      let config = tandoor.session_config(cfg.base_url, cfg.username, cfg.password)
+      let config =
+        tandoor.session_config(cfg.base_url, cfg.username, cfg.password)
       case tandoor.login(config) {
         Ok(auth_config) -> Ok(auth_config)
-        Error(e) -> Error(ConfigError(502, "Tandoor authentication failed: " <> tandoor.error_to_string(e)))
+        Error(e) ->
+          Error(ConfigError(
+            502,
+            "Tandoor authentication failed: " <> tandoor.error_to_string(e),
+          ))
       }
     }
   }
@@ -417,22 +456,37 @@ fn meal_type_from_string(s: String) -> tandoor.MealType {
 }
 
 /// Parse meal plan creation request from JSON body
-fn parse_meal_plan_request(body: String) -> Result(tandoor.CreateMealPlanRequest, String) {
+fn parse_meal_plan_request(
+  body: String,
+) -> Result(tandoor.CreateMealPlanRequest, String) {
   let decoder = create_meal_plan_request_decoder()
   case json.parse(body, decoder) {
     Ok(request) -> Ok(request)
-    Error(_) -> Error("Invalid request: expected JSON with recipe_name, from_date, to_date fields")
+    Error(_) ->
+      Error(
+        "Invalid request: expected JSON with recipe_name, from_date, to_date fields",
+      )
   }
 }
 
-fn create_meal_plan_request_decoder() -> decode.Decoder(tandoor.CreateMealPlanRequest) {
-  use recipe <- decode.optional_field("recipe", None, decode.optional(decode.int))
+fn create_meal_plan_request_decoder() -> decode.Decoder(
+  tandoor.CreateMealPlanRequest,
+) {
+  use recipe <- decode.optional_field(
+    "recipe",
+    None,
+    decode.optional(decode.int),
+  )
   use recipe_name <- decode.field("recipe_name", decode.string)
   use servings <- decode.optional_field("servings", 1.0, decode.float)
   use note <- decode.optional_field("note", "", decode.string)
   use from_date <- decode.field("from_date", decode.string)
   use to_date <- decode.field("to_date", decode.string)
-  use meal_type_str <- decode.optional_field("meal_type", "OTHER", decode.string)
+  use meal_type_str <- decode.optional_field(
+    "meal_type",
+    "OTHER",
+    decode.string,
+  )
 
   let meal_type = meal_type_from_string(meal_type_str)
 
