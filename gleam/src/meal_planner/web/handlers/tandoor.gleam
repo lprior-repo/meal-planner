@@ -28,10 +28,9 @@ import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types.{type TandoorRecipe}
 import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
-import meal_planner/tandoor/types/mealplan/meal_type.{
-  meal_type_from_string, meal_type_to_string,
+import meal_planner/tandoor/types/mealplan/mealplan.{
+  type MealPlanCreate, type MealType, Breakfast, Dinner, Lunch, Other, Snack,
 }
-import meal_planner/tandoor/types/mealplan/mealplan.{type MealPlanCreate}
 import wisp
 
 /// GET /tandoor/status
@@ -291,6 +290,28 @@ type ConfigError {
   ConfigError(status: Int, message: String)
 }
 
+/// Convert MealType enum to string
+fn meal_type_to_string(meal_type: MealType) -> String {
+  case meal_type {
+    Breakfast -> "breakfast"
+    Lunch -> "lunch"
+    Dinner -> "dinner"
+    Snack -> "snack"
+    Other -> "other"
+  }
+}
+
+/// Convert string to MealType enum
+fn meal_type_from_string(s: String) -> MealType {
+  case s {
+    "breakfast" -> Breakfast
+    "lunch" -> Lunch
+    "dinner" -> Dinner
+    "snack" -> Snack
+    _ -> Other
+  }
+}
+
 /// Get authenticated Tandoor client config
 fn get_authenticated_config() -> Result(ClientConfig, ConfigError) {
   case env.load_tandoor_config() {
@@ -423,7 +444,7 @@ fn parse_meal_plan_request(body: String) -> Result(MealPlanCreate, String) {
 }
 
 fn create_meal_plan_request_decoder() -> decode.Decoder(MealPlanCreate) {
-  use recipe <- decode.optional_field(
+  use recipe_id_int <- decode.optional_field(
     "recipe",
     None,
     decode.optional(decode.int),
@@ -435,11 +456,24 @@ fn create_meal_plan_request_decoder() -> decode.Decoder(MealPlanCreate) {
   use to_date <- decode.field("to_date", decode.string)
   use meal_type_str <- decode.optional_field(
     "meal_type",
-    "OTHER",
+    "other",
     decode.string,
   )
 
-  let meal_type = meal_type_from_string(meal_type_str)
+  // Convert Option(Int) to Option(RecipeId)
+  let recipe = case recipe_id_int {
+    Some(id) -> Some(ids.recipe_id_from_int(id))
+    None -> None
+  }
+
+  // Convert string to MealType enum
+  let meal_type = case meal_type_str {
+    "breakfast" -> Breakfast
+    "lunch" -> Lunch
+    "dinner" -> Dinner
+    "snack" -> Snack
+    _ -> Other
+  }
 
   decode.success(mealplan.MealPlanCreate(
     recipe: recipe,
