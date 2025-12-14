@@ -474,12 +474,6 @@ pub const get_access_token = profile_oauth.get_access_token
 // Profile service functions
 pub const get_profile_with_auth = profile_service.get_profile
 
-pub const check_profile_status = profile_service.check_status
+pub const create_profile_with_auth = profile_service.create_profile
 
-pub const start_profile_connect = profile_service.start_connect
-
-pub const complete_profile_connect = profile_service.complete_connect
-
-pub const disconnect_profile = profile_service.disconnect
-
-pub const validate_profile_connection = profile_service.validate_connection
+pub const get_profile_auth_with_stored_token = profile_service.get_profile_auth
