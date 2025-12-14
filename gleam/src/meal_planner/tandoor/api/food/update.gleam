@@ -6,6 +6,7 @@ import gleam/httpc
 import gleam/int
 import gleam/json
 import gleam/result
+import gleam/string
 import meal_planner/tandoor/client.{
   type ClientConfig, type TandoorError, NetworkError, ParseError,
 }
@@ -29,22 +30,22 @@ import meal_planner/tandoor/types.{
 /// ```gleam
 /// let config = client.bearer_config("http://localhost:8000", "token")
 /// let food_data = TandoorFoodCreateRequest(name: "Cherry Tomato")
-/// let result = update_food(config, food_id: 42, food_data)
+/// let result = update_food(config, food_id: 42, food_data: food_data)
 /// ```
 pub fn update_food(
   config: ClientConfig,
   food_id food_id: Int,
-  food_data: TandoorFoodCreateRequest,
+  food_data food_data: TandoorFoodCreateRequest,
 ) -> Result(TandoorFood, TandoorError) {
   let path = "/api/food/" <> int.to_string(food_id) <> "/"
 
   // Encode food data to JSON
-  let body =
+  let request_body =
     food_encoder.encode_food_create(food_data)
     |> json.to_string
 
   // Build and execute PATCH request
-  use req <- result.try(client.build_patch_request(config, path, body))
+  use req <- result.try(client.build_patch_request(config, path, request_body))
 
   use resp <- result.try(
     httpc.send(req)
@@ -52,11 +53,18 @@ pub fn update_food(
   )
 
   // Parse JSON response
-  use body <- result.try(client.parse_json_body(resp.body))
-
-  // Decode updated food item
-  decode.run(body, recipe_decoder.food_decoder())
-  |> result.map_error(fn(err) {
-    ParseError("Failed to decode updated food: " <> err)
-  })
+  case json.parse(resp.body, using: decode.dynamic) {
+    Ok(json_data) -> {
+      case decode.run(json_data, recipe_decoder.food_decoder()) {
+        Ok(food) -> Ok(food)
+        Error(errors) -> {
+          let error_msg =
+            "Failed to decode updated food: "
+            <> string.inspect(errors)
+          Error(ParseError(error_msg))
+        }
+      }
+    }
+    Error(_) -> Error(ParseError("Failed to parse JSON response"))
+  }
 }

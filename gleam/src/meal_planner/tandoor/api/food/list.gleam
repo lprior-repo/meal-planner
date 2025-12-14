@@ -3,11 +3,12 @@
 /// This module provides functions to list foods from the Tandoor API
 /// with pagination support.
 import gleam/dynamic/decode
-import gleam/http/request
 import gleam/httpc
 import gleam/int
+import gleam/json
 import gleam/option.{type Option}
 import gleam/result
+import gleam/string
 import meal_planner/tandoor/client.{
   type ClientConfig, type TandoorError, NetworkError, ParseError,
 }
@@ -48,19 +49,27 @@ pub fn list_foods(
   }
 
   // Build and execute request
-  use req <- result.try(client.build_get_request(config, path))
+  use req <- result.try(client.build_get_request(config, path, []))
 
   use resp <- result.try(
     httpc.send(req)
     |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
   )
 
-  // Parse paginated response
-  use body <- result.try(client.parse_json_body(resp.body))
-
-  // Decode paginated response with food items
-  decode.run(body, http.paginated_decoder(recipe_decoder.food_decoder()))
-  |> result.map_error(fn(err) {
-    ParseError("Failed to decode food list: " <> err)
-  })
+  // Parse JSON response
+  case json.parse(resp.body, using: decode.dynamic) {
+    Ok(json_data) -> {
+      // Decode paginated response with food items
+      case decode.run(json_data, http.paginated_decoder(recipe_decoder.food_decoder())) {
+        Ok(paginated) -> Ok(paginated)
+        Error(errors) -> {
+          let error_msg =
+            "Failed to decode food list: "
+            <> string.inspect(errors)
+          Error(ParseError(error_msg))
+        }
+      }
+    }
+    Error(_) -> Error(ParseError("Failed to parse JSON response"))
+  }
 }

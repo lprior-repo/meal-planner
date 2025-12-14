@@ -16,7 +16,6 @@ import gleam/httpc
 import gleam/int
 import gleam/json
 import gleam/list
-import gleam/option.{type Option}
 import gleam/result
 import gleam/string
 import meal_planner/logger
