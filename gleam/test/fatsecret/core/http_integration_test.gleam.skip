@@ -1,6 +1,5 @@
 /// Integration tests for the FatSecret HTTP client
-import gleam/dict
-import gleam/option.{None}
+import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/fatsecret/core/config
@@ -35,7 +34,7 @@ pub fn config_api_host_test() {
 pub fn oauth_nonce_generation_test() {
   let nonce = oauth.generate_nonce()
   // Nonce should be 32 hex characters (16 bytes = 32 hex chars)
-  should.be_true(String.length(nonce) == 32)
+  should.be_true(string.length(nonce) == 32)
 }
 
 pub fn oauth_encode_unreserved_test() {

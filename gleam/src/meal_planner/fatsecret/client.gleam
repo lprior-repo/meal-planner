@@ -19,6 +19,7 @@ import gleam/result
 import gleam/string
 import gleam/uri
 import meal_planner/env.{type FatSecretConfig}
+import meal_planner/fatsecret/core/oauth
 
 const api_host = "platform.fatsecret.com"
 
@@ -93,156 +94,8 @@ fn url_encode(s: String) -> String {
   uri.percent_encode(s)
 }
 
-/// Generate OAuth nonce
-fn generate_nonce() -> String {
-  crypto.strong_random_bytes(16)
-  |> bit_array.base16_encode
-  |> string.lowercase
-}
-
-/// Get current Unix timestamp in seconds
-fn unix_timestamp() -> Int {
-  birl.now() |> birl.to_unix
-}
-
-/// RFC 3986 percent-encoding for OAuth 1.0a
-fn oauth_encode(s: String) -> String {
-  s
-  |> string.to_graphemes
-  |> list.map(fn(char) {
-    case char {
-      "A"
-      | "B"
-      | "C"
-      | "D"
-      | "E"
-      | "F"
-      | "G"
-      | "H"
-      | "I"
-      | "J"
-      | "K"
-      | "L"
-      | "M"
-      | "N"
-      | "O"
-      | "P"
-      | "Q"
-      | "R"
-      | "S"
-      | "T"
-      | "U"
-      | "V"
-      | "W"
-      | "X"
-      | "Y"
-      | "Z"
-      | "a"
-      | "b"
-      | "c"
-      | "d"
-      | "e"
-      | "f"
-      | "g"
-      | "h"
-      | "i"
-      | "j"
-      | "k"
-      | "l"
-      | "m"
-      | "n"
-      | "o"
-      | "p"
-      | "q"
-      | "r"
-      | "s"
-      | "t"
-      | "u"
-      | "v"
-      | "w"
-      | "x"
-      | "y"
-      | "z"
-      | "0"
-      | "1"
-      | "2"
-      | "3"
-      | "4"
-      | "5"
-      | "6"
-      | "7"
-      | "8"
-      | "9"
-      | "-"
-      | "."
-      | "_"
-      | "~" -> char
-      _ -> {
-        let assert <<byte>> = <<char:utf8>>
-        "%" <> string.uppercase(int_to_hex(byte))
-      }
-    }
-  })
-  |> string.concat
-}
-
-fn int_to_hex(n: Int) -> String {
-  let high = n / 16
-  let low = n % 16
-  hex_digit(high) <> hex_digit(low)
-}
-
-fn hex_digit(n: Int) -> String {
-  case n {
-    0 -> "0"
-    1 -> "1"
-    2 -> "2"
-    3 -> "3"
-    4 -> "4"
-    5 -> "5"
-    6 -> "6"
-    7 -> "7"
-    8 -> "8"
-    9 -> "9"
-    10 -> "A"
-    11 -> "B"
-    12 -> "C"
-    13 -> "D"
-    14 -> "E"
-    15 -> "F"
-    _ -> "0"
-  }
-}
-
-/// Create OAuth 1.0a signature base string
-fn create_signature_base_string(
-  method: String,
-  url: String,
-  params: Dict(String, String),
-) -> String {
-  let sorted_params =
-    params
-    |> dict.to_list
-    |> list.sort(fn(a, b) { string.compare(a.0, b.0) })
-    |> list.map(fn(pair) { oauth_encode(pair.0) <> "=" <> oauth_encode(pair.1) })
-    |> string.join("&")
-
-  method <> "&" <> oauth_encode(url) <> "&" <> oauth_encode(sorted_params)
-}
-
-/// Create HMAC-SHA1 signature for OAuth 1.0a
-fn create_signature(
-  base_string: String,
-  consumer_secret: String,
-  token_secret: Option(String),
-) -> String {
-  let token_secret_str = option.unwrap(token_secret, "")
-  let signing_key =
-    oauth_encode(consumer_secret) <> "&" <> oauth_encode(token_secret_str)
-
-  crypto.hmac(<<base_string:utf8>>, crypto.Sha1, <<signing_key:utf8>>)
-  |> bit_array.base64_encode(True)
-}
+// OAuth functions are now imported from meal_planner/fatsecret/core/oauth module
+// Use oauth.generate_nonce(), oauth.unix_timestamp(), oauth.oauth_encode(), etc.
 
 /// Build OAuth 1.0a parameters and sign the request
 fn build_oauth1_params(
@@ -253,32 +106,15 @@ fn build_oauth1_params(
   token: Option(String),
   token_secret: Option(String),
 ) -> Dict(String, String) {
-  let timestamp = int.to_string(unix_timestamp())
-  let nonce = generate_nonce()
-
-  let params =
-    dict.new()
-    |> dict.insert("oauth_consumer_key", config.consumer_key)
-    |> dict.insert("oauth_signature_method", "HMAC-SHA1")
-    |> dict.insert("oauth_timestamp", timestamp)
-    |> dict.insert("oauth_nonce", nonce)
-    |> dict.insert("oauth_version", "1.0")
-
-  let params = case token {
-    Some(t) -> dict.insert(params, "oauth_token", t)
-    None -> params
-  }
-
-  let params =
-    dict.fold(extra_params, params, fn(acc, key, value) {
-      dict.insert(acc, key, value)
-    })
-
-  let base_string = create_signature_base_string(method, url, params)
-  let signature =
-    create_signature(base_string, config.consumer_secret, token_secret)
-
-  dict.insert(params, "oauth_signature", signature)
+  oauth.build_oauth_params(
+    config.consumer_key,
+    config.consumer_secret,
+    method,
+    url,
+    extra_params,
+    token,
+    token_secret,
+  )
 }
 
 /// Make OAuth 1.0a signed request
@@ -299,7 +135,10 @@ fn make_oauth1_request(
   let body =
     oauth_params
     |> dict.to_list
-    |> list.map(fn(pair) { oauth_encode(pair.0) <> "=" <> oauth_encode(pair.1) })
+    |> list.map(fn(pair) {
+      let #(key, value) = pair
+      oauth.oauth_encode(key) <> "=" <> oauth.oauth_encode(value)
+    })
     |> string.join("&")
 
   let http_method = case method {
@@ -344,37 +183,6 @@ fn parse_oauth_response(body: String) -> Dict(String, String) {
 // =============================================================================
 // OAuth 1.0a 3-Legged Flow
 // =============================================================================
-
-/// Debug OAuth 1.0a - print the signature components
-pub fn debug_oauth1(config: FatSecretConfig) -> String {
-  let url = "https://" <> auth_host <> "/oauth/request_token"
-  let timestamp = int.to_string(unix_timestamp())
-  let nonce = generate_nonce()
-
-  let params =
-    dict.new()
-    |> dict.insert("oauth_callback", "oob")
-    |> dict.insert("oauth_consumer_key", config.consumer_key)
-    |> dict.insert("oauth_signature_method", "HMAC-SHA1")
-    |> dict.insert("oauth_timestamp", timestamp)
-    |> dict.insert("oauth_nonce", nonce)
-    |> dict.insert("oauth_version", "1.0")
-
-  let base_string = create_signature_base_string("POST", url, params)
-  let signing_key = oauth_encode(config.consumer_secret) <> "&"
-  let signature = create_signature(base_string, config.consumer_secret, None)
-
-  "URL: "
-  <> url
-  <> "\n\nParams:\n"
-  <> string.inspect(dict.to_list(params))
-  <> "\n\nBase string:\n"
-  <> base_string
-  <> "\n\nSigning key: "
-  <> signing_key
-  <> "\n\nSignature: "
-  <> signature
-}
 
 /// Step 1: Get request token
 pub fn get_request_token(
