@@ -27,12 +27,12 @@ pub fn ingredient_creation_test() {
 
   case ingredient.food {
     Some(food) -> food.name |> should.equal("Tomato")
-    None -> should.fail("Expected food to be present")
+    None -> should.fail()
   }
 
   case ingredient.unit {
     Some(unit) -> unit.abbreviation |> should.equal("g")
-    None -> should.fail("Expected unit to be present")
+    None -> should.fail()
   }
 }
 
@@ -76,7 +76,7 @@ pub fn ingredient_no_amount_test() {
 
   case ingredient.note {
     Some(note) -> note |> should.equal("to taste")
-    None -> should.fail("Expected note to be present")
+    None -> should.fail()
   }
 }
 
@@ -101,11 +101,11 @@ pub fn ingredient_with_note_test() {
 
   case ingredient.note {
     Some(note) -> note |> should.equal("sifted")
-    None -> should.fail("Expected note to be present")
+    None -> should.fail()
   }
 
   case ingredient.food {
     Some(food) -> food.name |> should.equal("All-purpose flour")
-    None -> should.fail("Expected food to be present")
+    None -> should.fail()
   }
 }

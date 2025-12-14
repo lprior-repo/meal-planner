@@ -1,4 +1,4 @@
-import gleam/json
+import gleam/dynamic
 import gleeunit
 import gleeunit/should
 import meal_planner/tandoor/core/ids
@@ -15,8 +15,8 @@ pub fn recipe_id_from_int_test() {
 }
 
 pub fn recipe_id_decoder_test() {
-  let json_str = "42"
-  let assert Ok(parsed) = json.decode(json_str, ids.recipe_id_decoder())
+  let json_value = dynamic.from(42)
+  let assert Ok(parsed) = ids.recipe_id_decoder()(json_value)
   ids.recipe_id_to_int(parsed)
   |> should.equal(42)
 }
@@ -29,8 +29,8 @@ pub fn food_id_from_int_test() {
 }
 
 pub fn food_id_decoder_test() {
-  let json_str = "123"
-  let assert Ok(parsed) = json.decode(json_str, ids.food_id_decoder())
+  let json_value = dynamic.from(123)
+  let assert Ok(parsed) = ids.food_id_decoder()(json_value)
   ids.food_id_to_int(parsed)
   |> should.equal(123)
 }
@@ -43,8 +43,8 @@ pub fn unit_id_from_int_test() {
 }
 
 pub fn unit_id_decoder_test() {
-  let json_str = "5"
-  let assert Ok(parsed) = json.decode(json_str, ids.unit_id_decoder())
+  let json_value = dynamic.from(5)
+  let assert Ok(parsed) = ids.unit_id_decoder()(json_value)
   ids.unit_id_to_int(parsed)
   |> should.equal(5)
 }
@@ -57,8 +57,8 @@ pub fn keyword_id_from_int_test() {
 }
 
 pub fn keyword_id_decoder_test() {
-  let json_str = "789"
-  let assert Ok(parsed) = json.decode(json_str, ids.keyword_id_decoder())
+  let json_value = dynamic.from(789)
+  let assert Ok(parsed) = ids.keyword_id_decoder()(json_value)
   ids.keyword_id_to_int(parsed)
   |> should.equal(789)
 }
@@ -71,8 +71,8 @@ pub fn meal_plan_id_from_int_test() {
 }
 
 pub fn meal_plan_id_decoder_test() {
-  let json_str = "10"
-  let assert Ok(parsed) = json.decode(json_str, ids.meal_plan_id_decoder())
+  let json_value = dynamic.from(10)
+  let assert Ok(parsed) = ids.meal_plan_id_decoder()(json_value)
   ids.meal_plan_id_to_int(parsed)
   |> should.equal(10)
 }
@@ -85,8 +85,8 @@ pub fn step_id_from_int_test() {
 }
 
 pub fn step_id_decoder_test() {
-  let json_str = "55"
-  let assert Ok(parsed) = json.decode(json_str, ids.step_id_decoder())
+  let json_value = dynamic.from(55)
+  let assert Ok(parsed) = ids.step_id_decoder()(json_value)
   ids.step_id_to_int(parsed)
   |> should.equal(55)
 }
@@ -99,8 +99,8 @@ pub fn ingredient_id_from_int_test() {
 }
 
 pub fn ingredient_id_decoder_test() {
-  let json_str = "999"
-  let assert Ok(parsed) = json.decode(json_str, ids.ingredient_id_decoder())
+  let json_value = dynamic.from(999)
+  let assert Ok(parsed) = ids.ingredient_id_decoder()(json_value)
   ids.ingredient_id_to_int(parsed)
   |> should.equal(999)
 }
@@ -113,8 +113,8 @@ pub fn user_id_from_int_test() {
 }
 
 pub fn user_id_decoder_test() {
-  let json_str = "1"
-  let assert Ok(parsed) = json.decode(json_str, ids.user_id_decoder())
+  let json_value = dynamic.from(1)
+  let assert Ok(parsed) = ids.user_id_decoder()(json_value)
   ids.user_id_to_int(parsed)
   |> should.equal(1)
 }
@@ -127,8 +127,8 @@ pub fn supermarket_id_from_int_test() {
 }
 
 pub fn supermarket_id_decoder_test() {
-  let json_str = "77"
-  let assert Ok(parsed) = json.decode(json_str, ids.supermarket_id_decoder())
+  let json_value = dynamic.from(77)
+  let assert Ok(parsed) = ids.supermarket_id_decoder()(json_value)
   ids.supermarket_id_to_int(parsed)
   |> should.equal(77)
 }
@@ -141,8 +141,8 @@ pub fn storage_id_from_int_test() {
 }
 
 pub fn storage_id_decoder_test() {
-  let json_str = "333"
-  let assert Ok(parsed) = json.decode(json_str, ids.storage_id_decoder())
+  let json_value = dynamic.from(333)
+  let assert Ok(parsed) = ids.storage_id_decoder()(json_value)
   ids.storage_id_to_int(parsed)
   |> should.equal(333)
 }
