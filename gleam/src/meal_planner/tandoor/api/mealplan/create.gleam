@@ -4,7 +4,7 @@
 import gleam/option
 import meal_planner/tandoor/client.{
   type ClientConfig, type CreateMealPlanRequest, type MealPlanEntry,
-  type TandoorError,
+  type TandoorError, CreateMealPlanRequest,
 }
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types/mealplan/mealplan.{type MealPlanCreate}
