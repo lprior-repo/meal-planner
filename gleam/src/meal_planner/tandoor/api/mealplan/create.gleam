@@ -1,14 +1,14 @@
 /// MealPlan Create API
 ///
 /// This module provides functions to create meal plan entries in the Tandoor API.
-import gleam/option
+import gleam/json
+import gleam/result
+import meal_planner/tandoor/api/crud_helpers
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
-import meal_planner/tandoor/core/ids
+import meal_planner/tandoor/decoders/mealplan/meal_plan_decoder
+import meal_planner/tandoor/encoders/mealplan/mealplan_encoder
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
-import meal_planner/tandoor/types/mealplan/meal_type as client_meal_type
-import meal_planner/tandoor/types/mealplan/mealplan.{
-  type MealPlanCreate, type MealType, Breakfast, Dinner, Lunch, Other, Snack,
-}
+import meal_planner/tandoor/types/mealplan/mealplan.{type MealPlanCreate}
 
 /// Create a new meal plan entry in Tandoor API
 ///
@@ -18,38 +18,38 @@ import meal_planner/tandoor/types/mealplan/mealplan.{
 ///
 /// # Returns
 /// Result with created meal plan entry or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let data = MealPlanCreate(
+///   recipe: Some(recipe_id),
+///   recipe_name: "Dinner",
+///   servings: 4.0,
+///   note: "Family dinner",
+///   from_date: "2024-01-15",
+///   to_date: "2024-01-15",
+///   meal_type: Dinner,
+/// )
+/// let result = create_meal_plan(config, data)
+/// ```
 pub fn create_meal_plan(
   config: ClientConfig,
   data: MealPlanCreate,
 ) -> Result(MealPlanEntry, TandoorError) {
-  // Convert SDK type to client type
-  let request =
-    client.CreateMealPlanRequest(
-      title: data.recipe_name,
-      recipe: data.recipe |> option.map(ids.recipe_id_to_int),
-      servings: data.servings,
-      note: data.note,
-      from_date: data.from_date,
-      to_date: data.to_date,
-      meal_type: convert_meal_type_for_client(data.meal_type),
-    )
+  let path = "/api/meal-plan/"
 
-  // Use the existing client method - delegate to it
-  // This provides a cleaner API surface while reusing existing implementation
-  client.create_meal_plan_entry(config, request)
-}
+  // Encode meal plan data to JSON
+  let request_body =
+    mealplan_encoder.encode_meal_plan_create(data)
+    |> json.to_string
 
-/// Convert SDK MealType enum to client's MealType record
-fn convert_meal_type_for_client(
-  mt: MealType,
-) -> client_meal_type.MealType {
-  // The client uses meal_type.MealType which is a record type
-  // We need to convert from the enum to a suitable record
-  client_meal_type.meal_type_from_string(case mt {
-    Breakfast -> "BREAKFAST"
-    Lunch -> "LUNCH"
-    Dinner -> "DINNER"
-    Snack -> "SNACK"
-    Other -> "OTHER"
-  })
+  // Execute POST request using CRUD helpers
+  use resp <- result.try(crud_helpers.execute_post(config, path, request_body))
+
+  // Parse JSON response using meal plan entry decoder
+  crud_helpers.parse_json_single(
+    resp,
+    meal_plan_decoder.meal_plan_entry_decoder(),
+  )
 }

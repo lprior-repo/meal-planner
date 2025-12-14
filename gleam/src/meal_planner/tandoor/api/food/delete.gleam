@@ -1,12 +1,10 @@
 /// Food Delete API
 ///
 /// This module provides functions to delete food items from the Tandoor API.
-import gleam/httpc
 import gleam/int
 import gleam/result
-import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, NetworkError,
-}
+import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 
 /// Delete a food item from Tandoor API
 ///
@@ -28,14 +26,6 @@ pub fn delete_food(
 ) -> Result(Nil, TandoorError) {
   let path = "/api/food/" <> int.to_string(food_id) <> "/"
 
-  // Build and execute DELETE request
-  use req <- result.try(client.build_delete_request(config, path))
-
-  use _resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // DELETE returns 204 No Content on success
+  use _resp <- result.try(crud_helpers.execute_delete(config, path))
   Ok(Nil)
 }
