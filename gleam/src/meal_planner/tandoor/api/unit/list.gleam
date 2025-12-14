@@ -3,15 +3,14 @@
 /// This module provides functions to list units from the Tandoor API
 /// with pagination support.
 import gleam/dynamic/decode
-import gleam/httpc
 import gleam/int
 import gleam/json
+import gleam/list
 import gleam/option.{type Option}
 import gleam/result
 import gleam/string
-import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, NetworkError, ParseError,
-}
+import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/decoders/unit/unit_decoder
 import meal_planner/tandoor/types/unit/unit.{type Unit}
@@ -36,30 +35,44 @@ pub fn list_units(
   limit limit: Option(Int),
   page page: Option(Int),
 ) -> Result(PaginatedResponse(Unit), TandoorError) {
-  // Build query parameters
-  let path = case limit, page {
-    option.Some(l), option.Some(p) ->
-      "/api/unit/?page_size="
-      <> int.to_string(l)
-      <> "&page="
-      <> int.to_string(p)
-    option.Some(l), option.None -> "/api/unit/?page_size=" <> int.to_string(l)
-    option.None, option.Some(p) -> "/api/unit/?page=" <> int.to_string(p)
-    option.None, option.None -> "/api/unit/"
+  // Build query parameters list
+  let query_params = build_query_params(limit, page)
+
+  // Execute GET request
+  use resp <- result.try(crud_helpers.execute_get(
+    config,
+    "/api/unit/",
+    query_params,
+  ))
+
+  // Parse JSON response using the paginated decoder
+  parse_paginated_response(resp)
+}
+
+/// Build query parameters from limit and page options
+fn build_query_params(
+  limit: Option(Int),
+  page: Option(Int),
+) -> List(#(String, String)) {
+  let limit_params = case limit {
+    option.Some(l) -> [#("page_size", int.to_string(l))]
+    option.None -> []
   }
 
-  // Build and execute request
-  use req <- result.try(client.build_get_request(config, path, []))
+  let page_params = case page {
+    option.Some(p) -> [#("page", int.to_string(p))]
+    option.None -> []
+  }
 
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
+  list.append(limit_params, page_params)
+}
 
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
+/// Parse paginated response from JSON
+fn parse_paginated_response(
+  response: client.ApiResponse,
+) -> Result(PaginatedResponse(Unit), TandoorError) {
+  case json.parse(response.body, using: decode.dynamic) {
     Ok(json_data) -> {
-      // Decode paginated response with unit items
       case
         decode.run(
           json_data,
@@ -69,11 +82,20 @@ pub fn list_units(
         Ok(paginated) -> Ok(paginated)
         Error(errors) -> {
           let error_msg =
-            "Failed to decode unit list: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
+            "Failed to decode unit list: "
+            <> string.join(
+              list.map(errors, fn(e) {
+                case e {
+                  decode.DecodeError(expected, _found, path) ->
+                    expected <> " at " <> string.join(path, ".")
+                }
+              }),
+              ", ",
+            )
+          Error(client.ParseError(error_msg))
         }
       }
     }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
+    Error(_) -> Error(client.ParseError("Invalid JSON response"))
   }
 }
