@@ -8,6 +8,7 @@
 /// - Get profile data (fetch user profile from FatSecret API)
 /// - Validate connection (test if stored token is still valid)
 import gleam/option.{type Option, None, Some}
+import gleam/result
 import meal_planner/env
 import meal_planner/fatsecret/client
 import meal_planner/fatsecret/storage

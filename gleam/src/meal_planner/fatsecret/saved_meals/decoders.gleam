@@ -38,8 +38,7 @@ fn meal_types_decoder() -> decode.Decoder(List(MealType)) {
 
 /// Decode float, handling string numbers from API
 fn float_decoder() -> decode.Decoder(Float) {
-  decode.any([
-    decode.float,
+  decode.one_of(decode.float, [
     {
       use s <- decode.then(decode.string)
       case float.parse(s) {
@@ -111,20 +110,26 @@ pub fn saved_meal_item_decoder() -> decode.Decoder(SavedMealItem) {
 pub fn saved_meals_response_decoder() -> decode.Decoder(SavedMealsResponse) {
   use saved_meals <- decode.field("saved_meals", {
     use saved_meal <- decode.field("saved_meal", {
-      decode.any([
+      decode.one_of(
         // Array of meals
         decode.list(saved_meal_decoder()),
-        // Single meal
-        {
-          use meal <- decode.then(saved_meal_decoder())
-          decode.success([meal])
-        },
-      ])
+        [
+          // Single meal
+          {
+            use meal <- decode.then(saved_meal_decoder())
+            decode.success([meal])
+          },
+        ],
+      )
     })
     decode.success(saved_meal)
   })
 
-  use meal_filter <- decode.optional_field("meal_filter", decode.string)
+  use meal_filter <- decode.optional_field(
+    "meal_filter",
+    None,
+    decode.optional(decode.string),
+  )
 
   decode.success(SavedMealsResponse(saved_meals:, meal_filter:))
 }
@@ -138,17 +143,19 @@ pub fn saved_meal_items_response_decoder() -> decode.Decoder(
 
   use items <- decode.field("saved_meal_items", {
     use saved_meal_item <- decode.field("saved_meal_item", {
-      decode.any([
+      decode.one_of(
         // Array of items
         decode.list(saved_meal_item_decoder()),
-        // Single item
-        {
-          use item <- decode.then(saved_meal_item_decoder())
-          decode.success([item])
-        },
-        // Empty (no items)
-        { decode.success([]) },
-      ])
+        [
+          // Single item
+          {
+            use item <- decode.then(saved_meal_item_decoder())
+            decode.success([item])
+          },
+          // Empty (no items)
+          { decode.success([]) },
+        ],
+      )
     })
     decode.success(saved_meal_item)
   })
