@@ -61,7 +61,8 @@ pub fn profile_decoder() -> decode.Decoder(types.Profile) {
 ///
 /// FatSecret wraps the profile in a "profile" field
 pub fn profile_response_decoder() -> decode.Decoder(types.Profile) {
-  decode.field("profile", profile_decoder())
+  use profile <- decode.field("profile", profile_decoder())
+  decode.success(profile)
 }
 
 // ============================================================================
@@ -93,5 +94,6 @@ pub fn profile_auth_decoder() -> decode.Decoder(types.ProfileAuth) {
 ///
 /// FatSecret wraps the auth in a "profile_auth" field
 pub fn profile_auth_response_decoder() -> decode.Decoder(types.ProfileAuth) {
-  decode.field("profile_auth", profile_auth_decoder())
+  use profile_auth <- decode.field("profile_auth", profile_auth_decoder())
+  decode.success(profile_auth)
 }

@@ -19,9 +19,13 @@
 /// ```
 import gleam/dynamic/decode
 import gleam/option.{type Option}
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/food/food_decoder
 import meal_planner/tandoor/decoders/unit/unit_decoder
 import meal_planner/tandoor/types/food/food.{type Food}
+import meal_planner/tandoor/types/shopping/shopping_list_entry.{
+  type ShoppingListEntry, ShoppingListEntry,
+}
 import meal_planner/tandoor/types/unit/unit.{type Unit}
 
 /// Shopping list entry from API response
@@ -95,4 +99,68 @@ pub fn decode_entry() -> decode.Decoder(ShoppingListEntryResponse) {
 pub fn decode_entry_list() -> decode.Decoder(List(ShoppingListEntryResponse)) {
   use results <- decode.field("results", decode.list(decode_entry()))
   decode.success(results)
+}
+
+/// Decode a ShoppingListEntry from JSON (for internal use)
+///
+/// This decoder handles the full ShoppingListEntry type with all fields
+/// including those returned by the API.
+///
+/// Example API response:
+/// ```json
+/// {
+///   "id": 1,
+///   "list_recipe": 5,
+///   "food": 10,
+///   "unit": 2,
+///   "amount": 3.0,
+///   "order": 0,
+///   "checked": false,
+///   "ingredient": null,
+///   "created_by": 1,
+///   "created_at": "2025-12-14T12:00:00Z",
+///   "updated_at": "2025-12-14T12:00:00Z",
+///   "completed_at": null,
+///   "delay_until": null
+/// }
+/// ```
+pub fn decoder() -> decode.Decoder(ShoppingListEntry) {
+  use id <- decode.field("id", ids.shopping_list_entry_id_decoder())
+  use list_recipe <- decode.field(
+    "list_recipe",
+    decode.optional(ids.shopping_list_id_decoder()),
+  )
+  use food <- decode.field("food", decode.optional(ids.food_id_decoder()))
+  use unit <- decode.field("unit", decode.optional(ids.unit_id_decoder()))
+  use amount <- decode.field("amount", decode.float)
+  use order <- decode.field("order", decode.int)
+  use checked <- decode.field("checked", decode.bool)
+  use ingredient <- decode.field(
+    "ingredient",
+    decode.optional(ids.ingredient_id_decoder()),
+  )
+  use created_by <- decode.field("created_by", ids.user_id_decoder())
+  use created_at <- decode.field("created_at", decode.string)
+  use updated_at <- decode.field("updated_at", decode.string)
+  use completed_at <- decode.field(
+    "completed_at",
+    decode.optional(decode.string),
+  )
+  use delay_until <- decode.field("delay_until", decode.optional(decode.string))
+
+  decode.success(ShoppingListEntry(
+    id: id,
+    list_recipe: list_recipe,
+    food: food,
+    unit: unit,
+    amount: amount,
+    order: order,
+    checked: checked,
+    ingredient: ingredient,
+    created_by: created_by,
+    created_at: created_at,
+    updated_at: updated_at,
+    completed_at: completed_at,
+    delay_until: delay_until,
+  ))
 }

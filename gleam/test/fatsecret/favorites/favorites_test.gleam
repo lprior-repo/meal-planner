@@ -65,7 +65,8 @@ pub fn decode_favorite_foods_single_test() {
   |> should.be_ok
   |> fn(response) {
     response.foods
-    |> should.have_length(1)
+    |> list.length
+    |> should.equal(1)
 
     let food = response.foods |> list.first |> should.be_ok
 
@@ -117,7 +118,7 @@ pub fn decode_favorite_foods_multiple_test() {
   result
   |> should.be_ok
   |> fn(response) {
-    response.foods |> should.have_length(2)
+    response.foods |> list.length |> should.equal(2)
     response.max_results |> should.equal(50)
     response.total_results |> should.equal(2)
 
@@ -151,7 +152,7 @@ pub fn decode_most_eaten_test() {
   |> should.be_ok
   |> fn(response) {
     response.meal |> should.equal(Some("breakfast"))
-    response.foods |> should.have_length(1)
+    response.foods |> list.length |> should.equal(1)
 
     let food = response.foods |> list.first |> should.be_ok
     food.eat_count |> should.equal(42)
@@ -178,7 +179,7 @@ pub fn decode_recently_eaten_test() {
   |> should.be_ok
   |> fn(response) {
     response.meal |> should.equal(None)
-    response.foods |> should.have_length(1)
+    response.foods |> list.length |> should.equal(1)
 
     let food = response.foods |> list.first |> should.be_ok
     food.food_id |> should.equal("222")
@@ -208,7 +209,7 @@ pub fn decode_favorite_recipes_test() {
   result
   |> should.be_ok
   |> fn(response) {
-    response.recipes |> should.have_length(1)
+    response.recipes |> list.length |> should.equal(1)
     response.max_results |> should.equal(20)
     response.total_results |> should.equal(1)
     response.page_number |> should.equal(0)

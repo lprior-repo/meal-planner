@@ -9,7 +9,9 @@
 /// - Parse errors (malformed responses)
 ///
 /// These tests use both real API calls and simulated error conditions.
+import gleam/list
 import gleam/option.{None, Some}
+import gleam/string
 import gleeunit/should
 import meal_planner/fatsecret/core/config
 import meal_planner/fatsecret/core/errors

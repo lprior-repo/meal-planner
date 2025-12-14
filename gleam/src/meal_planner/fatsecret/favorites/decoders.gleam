@@ -5,9 +5,7 @@
 import gleam/dynamic/decode
 import gleam/int
 import gleam/json
-import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/result
 import meal_planner/fatsecret/favorites/types
 
 pub type DecodeError {
@@ -19,7 +17,11 @@ fn favorite_food_decoder() -> decode.Decoder(types.FavoriteFood) {
   use food_id <- decode.field("food_id", decode.string)
   use food_name <- decode.field("food_name", decode.string)
   use food_type <- decode.field("food_type", decode.string)
-  use brand_name <- decode.optional_field("brand_name", decode.string)
+  use brand_name <- decode.optional_field(
+    "brand_name",
+    None,
+    decode.optional(decode.string),
+  )
   use food_description <- decode.field("food_description", decode.string)
   use food_url <- decode.field("food_url", decode.string)
   decode.success(types.FavoriteFood(
@@ -37,7 +39,11 @@ fn most_eaten_food_decoder() -> decode.Decoder(types.MostEatenFood) {
   use food_id <- decode.field("food_id", decode.string)
   use food_name <- decode.field("food_name", decode.string)
   use food_type <- decode.field("food_type", decode.string)
-  use brand_name <- decode.optional_field("brand_name", decode.string)
+  use brand_name <- decode.optional_field(
+    "brand_name",
+    None,
+    decode.optional(decode.string),
+  )
   use food_description <- decode.field("food_description", decode.string)
   use food_url <- decode.field("food_url", decode.string)
   use eat_count <- decode.field("eat_count", decode.int)
@@ -57,7 +63,11 @@ fn recently_eaten_food_decoder() -> decode.Decoder(types.RecentlyEatenFood) {
   use food_id <- decode.field("food_id", decode.string)
   use food_name <- decode.field("food_name", decode.string)
   use food_type <- decode.field("food_type", decode.string)
-  use brand_name <- decode.optional_field("brand_name", decode.string)
+  use brand_name <- decode.optional_field(
+    "brand_name",
+    None,
+    decode.optional(decode.string),
+  )
   use food_description <- decode.field("food_description", decode.string)
   use food_url <- decode.field("food_url", decode.string)
   decode.success(types.RecentlyEatenFood(
@@ -76,7 +86,11 @@ fn favorite_recipe_decoder() -> decode.Decoder(types.FavoriteRecipe) {
   use recipe_name <- decode.field("recipe_name", decode.string)
   use recipe_description <- decode.field("recipe_description", decode.string)
   use recipe_url <- decode.field("recipe_url", decode.string)
-  use recipe_image <- decode.optional_field("recipe_image", decode.string)
+  use recipe_image <- decode.optional_field(
+    "recipe_image",
+    None,
+    decode.optional(decode.string),
+  )
   decode.success(types.FavoriteRecipe(
     recipe_id:,
     recipe_name:,
@@ -262,7 +276,10 @@ fn decode_pagination(body: String) -> Result(#(Int, Int, Int), DecodeError) {
 
 /// Helper to extract meal type from response
 fn extract_meal_type(body: String) -> Option(String) {
-  let meal_decoder = decode.field("meal", decode.string)
+  let meal_decoder = {
+    use meal <- decode.field("meal", decode.string)
+    decode.success(meal)
+  }
   case json.parse(body, meal_decoder) {
     Ok(meal) -> Some(meal)
     Error(_) -> None
@@ -271,13 +288,12 @@ fn extract_meal_type(body: String) -> Option(String) {
 
 /// Decode a string that may be an int (FatSecret sometimes returns ints as strings)
 fn decode_string_int() -> decode.Decoder(Int) {
-  decode.any([
-    decode.int,
+  decode.one_of(decode.int, [
     {
       use str <- decode.then(decode.string)
       case int.parse(str) {
         Ok(i) -> decode.success(i)
-        Error(_) -> decode.failure(str, "int")
+        Error(_) -> decode.failure(0, "Int")
       }
     },
   ])

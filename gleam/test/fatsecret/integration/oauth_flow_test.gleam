@@ -10,6 +10,7 @@
 /// WARNING: These tests require valid FatSecret API credentials and will
 /// make real API calls. They should be run sparingly to avoid rate limits.
 import gleam/option.{None, Some}
+import gleam/string
 import gleeunit/should
 import meal_planner/fatsecret/core/config
 import meal_planner/fatsecret/core/errors
