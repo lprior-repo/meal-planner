@@ -1,9 +1,9 @@
 /// FatSecret Foods API client
 /// Provides type-safe wrappers around the base FatSecret client
-import gleam/dict.{type Dict}
+import gleam/dict
 import gleam/int
 import gleam/json
-import gleam/option.{type Option, None, Some}
+import gleam/option.{type Option, None}
 import gleam/result
 import meal_planner/env.{type FatSecretConfig}
 import meal_planner/fatsecret/client as base_client
