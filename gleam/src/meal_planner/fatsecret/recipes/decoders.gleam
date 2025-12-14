@@ -1,6 +1,6 @@
 /// FatSecret Recipes API JSON decoders
 import gleam/dynamic/decode
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None}
 import meal_planner/fatsecret/recipes/types
 
 /// Decode recipe ingredient from JSON
@@ -44,12 +44,9 @@ pub fn recipe_direction_decoder() -> decode.Decoder(types.RecipeDirection) {
   ))
 }
 
-/// Decode recipe type from JSON
+/// Decode recipe type from JSON (simple string)
 pub fn recipe_type_decoder() -> decode.Decoder(types.RecipeType) {
-  use recipe_type_id <- decode.field("recipe_type_id", decode.string)
-  use recipe_type <- decode.field("recipe_type", decode.string)
-
-  decode.success(types.RecipeType(recipe_type_id:, recipe_type:))
+  decode.string
 }
 
 /// Decode complete recipe from JSON (recipe.get.v2)

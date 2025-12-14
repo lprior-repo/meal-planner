@@ -58,10 +58,9 @@ pub fn recipe_direction_creation_test() {
 }
 
 pub fn recipe_type_creation_test() {
-  let recipe_type =
-    types.RecipeType(recipe_type_id: "1", recipe_type: "Breakfast")
+  let recipe_type: types.RecipeType = "Breakfast"
 
-  recipe_type.recipe_type
+  recipe_type
   |> should.equal("Breakfast")
 }
 
@@ -77,7 +76,7 @@ pub fn recipe_creation_test() {
       preparation_time_min: Some(15),
       cooking_time_min: Some(30),
       rating: Some(4.5),
-      recipe_types: [types.RecipeType("1", "Breakfast")],
+      recipe_types: ["Breakfast"],
       ingredients: [],
       directions: [],
       calories: Some(250.0),
@@ -162,11 +161,7 @@ pub fn recipe_search_response_creation_test() {
 
 pub fn recipe_types_response_creation_test() {
   let response =
-    types.RecipeTypesResponse(recipe_types: [
-      types.RecipeType("1", "Breakfast"),
-      types.RecipeType("2", "Lunch"),
-      types.RecipeType("3", "Dinner"),
-    ])
+    types.RecipeTypesResponse(recipe_types: ["Breakfast", "Lunch", "Dinner"])
 
   response.recipe_types
   |> list.length
