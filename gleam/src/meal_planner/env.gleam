@@ -20,6 +20,11 @@ pub type FatSecretConfig {
   FatSecretConfig(consumer_key: String, consumer_secret: String)
 }
 
+/// Tandoor Recipe Manager configuration
+pub type TandoorConfig {
+  TandoorConfig(base_url: String, username: String, password: String)
+}
+
 /// Error type for environment variable loading
 pub type EnvError {
   MissingVars(missing: List(String))
@@ -90,6 +95,13 @@ pub fn format_error(error: EnvError) -> String {
 /// Load .env file from the project root
 /// Silently ignores missing .env file (common in production)
 pub fn load_dotenv() -> Nil {
+  // Try parent directory first (when running from gleam/), then current dir
+  dot_env.new()
+  |> dot_env.set_path("../.env")
+  |> dot_env.set_debug(False)
+  |> dot_env.set_ignore_missing_file(True)
+  |> dot_env.load
+
   dot_env.new()
   |> dot_env.set_path(".env")
   |> dot_env.set_debug(False)
@@ -127,6 +139,30 @@ pub fn load_fatsecret_config() -> Option(FatSecretConfig) {
 /// Check if FatSecret integration is configured
 pub fn fatsecret_enabled() -> Bool {
   case load_fatsecret_config() {
+    Some(_) -> True
+    None -> False
+  }
+}
+
+/// Load Tandoor Recipe Manager configuration
+/// Returns Some(TandoorConfig) if URL, username, and password are present
+/// Returns None if any credential is missing (Tandoor integration disabled)
+pub fn load_tandoor_config() -> Option(TandoorConfig) {
+  load_dotenv()
+  let url = envoy.get("TANDOOR_URL") |> result.unwrap("")
+  let username = envoy.get("TANDOOR_USERNAME") |> result.unwrap("")
+  let password = envoy.get("TANDOOR_PASSWORD") |> result.unwrap("")
+
+  case string.is_empty(url), string.is_empty(username), string.is_empty(password) {
+    False, False, False ->
+      Some(TandoorConfig(base_url: url, username: username, password: password))
+    _, _, _ -> None
+  }
+}
+
+/// Check if Tandoor integration is configured
+pub fn tandoor_enabled() -> Bool {
+  case load_tandoor_config() {
     Some(_) -> True
     None -> False
   }

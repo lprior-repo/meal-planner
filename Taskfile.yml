@@ -235,6 +235,86 @@ tasks:
       - gleam clean
 
   # ============================================================================
+  # Tandoor Recipe Manager
+  # ============================================================================
+  tandoor:start:
+    desc: "🍳 Start Tandoor recipe manager"
+    cmds:
+      - |
+        echo "🍳 Starting Tandoor..."
+
+        # Check if already running
+        if docker ps --format '{{.Names}}' | grep -q '^tandoor$'; then
+          echo "   ✓ Tandoor is already running"
+          exit 0
+        fi
+
+        # Check if container exists but stopped
+        if docker ps -a --format '{{.Names}}' | grep -q '^tandoor$'; then
+          echo "   Restarting existing container..."
+          docker start tandoor
+        else
+          echo "   Creating new Tandoor container..."
+          docker run -d \
+            --name tandoor \
+            -p 8000:80 \
+            -e SECRET_KEY="dev-secret-key-not-for-production-use-123456789" \
+            -e ALLOWED_HOSTS="*" \
+            -e CSRF_TRUSTED_ORIGINS="http://localhost:8000" \
+            -v tandoor_staticfiles:/opt/recipes/staticfiles \
+            -v tandoor_mediafiles:/opt/recipes/mediafiles \
+            -v tandoor_db:/opt/recipes/database \
+            vabene1111/recipes:latest
+        fi
+
+        # Wait for Tandoor to be ready
+        echo "   Waiting for Tandoor to start..."
+        for i in {1..30}; do
+          if curl -sf http://localhost:8000 > /dev/null 2>&1; then
+            echo "   ✓ Tandoor is ready at http://localhost:8000"
+            echo ""
+            echo "   📝 First time setup:"
+            echo "      1. Visit http://localhost:8000"
+            echo "      2. Create admin account"
+            echo "      3. Go to Settings > API > Create Token"
+            echo "      4. Set TANDOOR_API_TOKEN in your .env"
+            break
+          fi
+          sleep 2
+        done
+    silent: true
+
+  tandoor:stop:
+    desc: "Stop Tandoor"
+    cmds:
+      - docker stop tandoor 2>/dev/null || true
+      - echo "   ✓ Tandoor stopped"
+    silent: true
+
+  tandoor:logs:
+    desc: "Show Tandoor logs"
+    cmds:
+      - docker logs -f tandoor
+
+  tandoor:shell:
+    desc: "Open shell in Tandoor container"
+    cmds:
+      - docker exec -it tandoor /bin/bash
+
+  tandoor:db:create:
+    desc: "Create Tandoor database"
+    cmds:
+      - |
+        if ! psql -U {{.POSTGRES_USER}} -lqt | cut -d \| -f 1 | grep -qw tandoor; then
+          echo "   Creating tandoor database..."
+          createdb -U {{.POSTGRES_USER}} tandoor
+          echo "   ✓ Database created"
+        else
+          echo "   ✓ Tandoor database exists"
+        fi
+    silent: true
+
+  # ============================================================================
   # Status & Management
   # ============================================================================
   status:
@@ -258,12 +338,20 @@ tasks:
         else
           echo "❌ API Server: Stopped"
         fi
+
+        # Tandoor
+        if docker ps --format '{{.Names}}' | grep -q '^tandoor$'; then
+          echo "✅ Tandoor: Running (http://localhost:8000)"
+        else
+          echo "❌ Tandoor: Stopped (run: task tandoor:start)"
+        fi
         echo ""
 
   stop:
     desc: "Stop all services"
     cmds:
       - task: api:stop
+      - task: tandoor:stop
       - echo "🛑 All services stopped"
 
   restart:

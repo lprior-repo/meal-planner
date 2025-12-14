@@ -93,9 +93,13 @@ pub fn conservative_config() -> RetryConfig {
 /// ```
 pub fn calculate_backoff(config: RetryConfig, attempt: Int) -> Int {
   // Base exponential calculation: initial_delay * (multiplier ^ attempt)
-  let base_delay =
-    int.to_float(config.initial_delay_ms)
-    *. float.power(config.backoff_multiplier, int.to_float(attempt))
+  let power_result =
+    float.power(config.backoff_multiplier, int.to_float(attempt))
+  let multiplier = case power_result {
+    Ok(v) -> v
+    Error(_) -> 1.0
+  }
+  let base_delay = int.to_float(config.initial_delay_ms) *. multiplier
 
   // Cap at max_delay
   let capped_delay = float.min(base_delay, int.to_float(config.max_delay_ms))

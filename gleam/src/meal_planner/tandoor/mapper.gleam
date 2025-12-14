@@ -276,7 +276,7 @@ fn keyword_suggests_low_fodmap(keyword: String) -> Bool {
 /// Returns:
 /// - TandoorRecipe: Recipe in Tandoor API format
 pub fn recipe_to_tandoor(recipe: Recipe) -> TandoorRecipe {
-  let slug = recipe.id.id |> string.replace("_", "-")
+  let slug = id.recipe_id_to_string(recipe.id) |> string.replace("_", "-")
   let keywords =
     build_keywords(
       recipe.category,
