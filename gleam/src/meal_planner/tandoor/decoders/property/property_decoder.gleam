@@ -3,8 +3,6 @@
 /// This module provides JSON decoders for Property types.
 /// Handles both RECIPE and FOOD property types.
 import gleam/dynamic/decode
-import gleam/option.{type Option}
-import gleam/result
 import meal_planner/tandoor/types/property/property.{
   type Property, type PropertyType, FoodProperty, Property, RecipeProperty,
 }

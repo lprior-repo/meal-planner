@@ -10,7 +10,7 @@ import gleam/http.{Get, Post}
 import gleam/int
 import gleam/json
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import meal_planner/fatsecret/diary/types as diary_types
 import meal_planner/fatsecret/weight/service
 import meal_planner/fatsecret/weight/types.{type WeightUpdate, WeightUpdate}
