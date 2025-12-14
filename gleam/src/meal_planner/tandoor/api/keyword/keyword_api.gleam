@@ -2,25 +2,13 @@
 ///
 /// This module provides CRUD operations for managing keywords/tags via Tandoor API.
 /// Keywords are used to categorize recipes and form a hierarchical tree structure.
-///
-/// Operations:
-/// - list_keywords: Get all keywords or filter by parent
-/// - get_keyword: Get a single keyword by ID
-/// - create_keyword: Create a new keyword
-/// - update_keyword: Update an existing keyword
-/// - delete_keyword: Delete a keyword
-import gleam/dynamic
 import gleam/dynamic/decode
-import gleam/http/request
-import gleam/http/response
 import gleam/httpc
 import gleam/int
 import gleam/json
-import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import meal_planner/logger
 import meal_planner/tandoor/client.{
   type ClientConfig, type TandoorError, NetworkError, ParseError,
 }
@@ -41,6 +29,12 @@ import meal_planner/tandoor/types/keyword/keyword.{type Keyword}
 ///
 /// # Returns
 /// Result with list of keywords or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let result = list_keywords(config)
+/// ```
 pub fn list_keywords(
   config: ClientConfig,
 ) -> Result(List(Keyword), TandoorError) {
@@ -55,6 +49,15 @@ pub fn list_keywords(
 ///
 /// # Returns
 /// Result with list of keywords or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// // Get root keywords
+/// let result = list_keywords_by_parent(config, None)
+/// // Get children of keyword 5
+/// let result = list_keywords_by_parent(config, Some(5))
+/// ```
 pub fn list_keywords_by_parent(
   config: ClientConfig,
   parent_id: Option(Int),
@@ -69,11 +72,13 @@ pub fn list_keywords_by_parent(
     "/api/keyword/",
     query_params,
   ))
-  logger.debug("Tandoor GET /api/keyword/")
 
-  use resp <- result.try(execute_and_parse(config, req))
+  use resp <- result.try(
+    httpc.send(req)
+    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
+  )
 
-  // Parse as list of keywords
+  // Parse JSON response
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
       case
@@ -82,21 +87,12 @@ pub fn list_keywords_by_parent(
         Ok(keywords) -> Ok(keywords)
         Error(errors) -> {
           let error_msg =
-            "Failed to decode keyword list: "
-            <> string.join(
-              list.map(errors, fn(e) {
-                case e {
-                  decode.DecodeError(expected, _found, path) ->
-                    expected <> " at " <> string.join(path, ".")
-                }
-              }),
-              ", ",
-            )
+            "Failed to decode keyword list: " <> string.inspect(errors)
           Error(ParseError(error_msg))
         }
       }
     }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
+    Error(_) -> Error(ParseError("Failed to parse JSON response"))
   }
 }
 
@@ -112,38 +108,37 @@ pub fn list_keywords_by_parent(
 ///
 /// # Returns
 /// Result with keyword or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let result = get_keyword(config, keyword_id: 42)
+/// ```
 pub fn get_keyword(
   config: ClientConfig,
-  keyword_id: Int,
+  keyword_id keyword_id: Int,
 ) -> Result(Keyword, TandoorError) {
   let path = "/api/keyword/" <> int.to_string(keyword_id) <> "/"
 
   use req <- result.try(client.build_get_request(config, path, []))
-  logger.debug("Tandoor GET " <> path)
 
-  use resp <- result.try(execute_and_parse(config, req))
+  use resp <- result.try(
+    httpc.send(req)
+    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
+  )
 
+  // Parse JSON response
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
       case decode.run(json_data, keyword_decoder.keyword_decoder()) {
         Ok(keyword) -> Ok(keyword)
         Error(errors) -> {
-          let error_msg =
-            "Failed to decode keyword: "
-            <> string.join(
-              list.map(errors, fn(e) {
-                case e {
-                  decode.DecodeError(expected, _found, path) ->
-                    expected <> " at " <> string.join(path, ".")
-                }
-              }),
-              ", ",
-            )
+          let error_msg = "Failed to decode keyword: " <> string.inspect(errors)
           Error(ParseError(error_msg))
         }
       }
     }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
+    Error(_) -> Error(ParseError("Failed to parse JSON response"))
   }
 }
 
@@ -159,40 +154,49 @@ pub fn get_keyword(
 ///
 /// # Returns
 /// Result with created keyword or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let data = KeywordCreateRequest(
+///   name: "vegetarian",
+///   description: "Vegetarian recipes",
+///   icon: Some("🥗"),
+///   parent: None,
+/// )
+/// let result = create_keyword(config, data)
+/// ```
 pub fn create_keyword(
   config: ClientConfig,
   create_data: KeywordCreateRequest,
 ) -> Result(Keyword, TandoorError) {
+  let path = "/api/keyword/"
+
+  // Encode keyword data to JSON
   let body =
     keyword_encoder.encode_keyword_create_request(create_data)
     |> json.to_string
 
-  use req <- result.try(client.build_post_request(config, "/api/keyword/", body))
-  logger.debug("Tandoor POST /api/keyword/")
+  use req <- result.try(client.build_post_request(config, path, body))
 
-  use resp <- result.try(execute_and_parse(config, req))
+  use resp <- result.try(
+    httpc.send(req)
+    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
+  )
 
+  // Parse JSON response
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
       case decode.run(json_data, keyword_decoder.keyword_decoder()) {
         Ok(keyword) -> Ok(keyword)
         Error(errors) -> {
           let error_msg =
-            "Failed to decode created keyword: "
-            <> string.join(
-              list.map(errors, fn(e) {
-                case e {
-                  decode.DecodeError(expected, _found, path) ->
-                    expected <> " at " <> string.join(path, ".")
-                }
-              }),
-              ", ",
-            )
+            "Failed to decode created keyword: " <> string.inspect(errors)
           Error(ParseError(error_msg))
         }
       }
     }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
+    Error(_) -> Error(ParseError("Failed to parse JSON response"))
   }
 }
 
@@ -209,42 +213,50 @@ pub fn create_keyword(
 ///
 /// # Returns
 /// Result with updated keyword or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let data = KeywordUpdateRequest(
+///   name: Some("vegan"),
+///   description: Some("Vegan recipes only"),
+///   icon: None,
+///   parent: None,
+/// )
+/// let result = update_keyword(config, keyword_id: 42, data)
+/// ```
 pub fn update_keyword(
   config: ClientConfig,
-  keyword_id: Int,
+  keyword_id keyword_id: Int,
   update_data: KeywordUpdateRequest,
 ) -> Result(Keyword, TandoorError) {
   let path = "/api/keyword/" <> int.to_string(keyword_id) <> "/"
+
+  // Encode update data to JSON
   let body =
     keyword_encoder.encode_keyword_update_request(update_data)
     |> json.to_string
 
   use req <- result.try(client.build_patch_request(config, path, body))
-  logger.debug("Tandoor PATCH " <> path)
 
-  use resp <- result.try(execute_and_parse(config, req))
+  use resp <- result.try(
+    httpc.send(req)
+    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
+  )
 
+  // Parse JSON response
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
       case decode.run(json_data, keyword_decoder.keyword_decoder()) {
         Ok(keyword) -> Ok(keyword)
         Error(errors) -> {
           let error_msg =
-            "Failed to decode updated keyword: "
-            <> string.join(
-              list.map(errors, fn(e) {
-                case e {
-                  decode.DecodeError(expected, _found, path) ->
-                    expected <> " at " <> string.join(path, ".")
-                }
-              }),
-              ", ",
-            )
+            "Failed to decode updated keyword: " <> string.inspect(errors)
           Error(ParseError(error_msg))
         }
       }
     }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
+    Error(_) -> Error(ParseError("Failed to parse JSON response"))
   }
 }
 
@@ -260,38 +272,24 @@ pub fn update_keyword(
 ///
 /// # Returns
 /// Result with unit or error
+///
+/// # Example
+/// ```gleam
+/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let result = delete_keyword(config, keyword_id: 42)
+/// ```
 pub fn delete_keyword(
   config: ClientConfig,
-  keyword_id: Int,
+  keyword_id keyword_id: Int,
 ) -> Result(Nil, TandoorError) {
   let path = "/api/keyword/" <> int.to_string(keyword_id) <> "/"
 
   use req <- result.try(client.build_delete_request(config, path))
-  logger.debug("Tandoor DELETE " <> path)
 
-  use _resp <- result.try(execute_and_parse(config, req))
+  use _resp <- result.try(
+    httpc.send(req)
+    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
+  )
+
   Ok(Nil)
-}
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/// Execute request and parse response
-fn execute_and_parse(
-  _config: ClientConfig,
-  req: request.Request(String),
-) -> Result(client.ApiResponse, TandoorError) {
-  use resp <- result.try(execute_request(req))
-  client.parse_response(resp)
-}
-
-/// Execute HTTP request
-fn execute_request(
-  req: request.Request(String),
-) -> Result(response.Response(String), TandoorError) {
-  case httpc.send(req) {
-    Ok(resp) -> Ok(resp)
-    Error(_) -> Error(NetworkError("Failed to connect to Tandoor"))
-  }
 }
