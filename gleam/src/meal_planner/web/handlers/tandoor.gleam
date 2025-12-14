@@ -11,11 +11,18 @@ import gleam/http
 import gleam/int
 import gleam/json
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/result
-import gleam/string
+
 import meal_planner/env
 import meal_planner/tandoor/client as tandoor
+
+import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
+import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
+import meal_planner/tandoor/types/mealplan/meal_type.{
+  type MealType, meal_type_from_string, meal_type_to_string
+}
+import meal_planner/tandoor/types/recipe/recipe_overview.{type RecipeOverview}
 import wisp
 
 /// GET /tandoor/status
@@ -184,7 +191,7 @@ pub fn handle_get_meal_plan(req: wisp.Request) -> wisp.Response {
               #("previous", json.nullable(response.previous, json.string)),
               #(
                 "results",
-                json.array(response.results, meal_plan_entry_to_json),
+                json.array(response.results, meal_plan_to_json),
               ),
             ])
             |> json.to_string
@@ -417,15 +424,15 @@ fn keyword_to_json(kw: tandoor.Keyword) -> json.Json {
   ])
 }
 
-/// Convert MealPlanEntry to JSON
-fn meal_plan_entry_to_json(entry: tandoor.MealPlanEntry) -> json.Json {
+/// Convert MealPlan to JSON
+fn meal_plan_to_json(entry: MealPlan) -> json.Json {
   json.object([
     #("id", json.int(entry.id)),
     #("recipe", case entry.recipe {
-      Some(r) -> recipe_to_json(r)
+      Some(r) -> json.int(r.id)
       None -> json.null()
     }),
-    #("recipe_name", json.string(entry.recipe_name)),
+    #("recipe_name", json.string(entry.title)),
     #("servings", json.float(entry.servings)),
     #("note", json.string(entry.note)),
     #("from_date", json.string(entry.from_date)),
@@ -435,25 +442,23 @@ fn meal_plan_entry_to_json(entry: tandoor.MealPlanEntry) -> json.Json {
   ])
 }
 
-fn meal_type_to_string(meal_type: tandoor.MealType) -> String {
-  case meal_type {
-    tandoor.Breakfast -> "BREAKFAST"
-    tandoor.Lunch -> "LUNCH"
-    tandoor.Dinner -> "DINNER"
-    tandoor.Snack -> "SNACK"
-    tandoor.Other -> "OTHER"
-  }
+/// Convert MealPlanEntry to JSON
+fn meal_plan_entry_to_json(entry: MealPlanEntry) -> json.Json {
+  json.object([
+    #("id", json.int(entry.id)),
+    #("recipe", case entry.recipe_id {
+      Some(r_id) -> json.int(r_id)
+      None -> json.null()
+    }),
+    #("recipe_name", json.string(entry.recipe_name)),
+    #("servings", json.float(entry.servings)),
+    #("from_date", json.string(entry.from_date)),
+    #("to_date", json.string(entry.to_date)),
+    #("meal_type", json.string(meal_type_to_string(meal_type_from_string(int.to_string(entry.meal_type_id))))),
+  ])
 }
 
-fn meal_type_from_string(s: String) -> tandoor.MealType {
-  case string.uppercase(s) {
-    "BREAKFAST" -> tandoor.Breakfast
-    "LUNCH" -> tandoor.Lunch
-    "DINNER" -> tandoor.Dinner
-    "SNACK" -> tandoor.Snack
-    _ -> tandoor.Other
-  }
-}
+
 
 /// Parse meal plan creation request from JSON body
 fn parse_meal_plan_request(
@@ -477,7 +482,7 @@ fn create_meal_plan_request_decoder() -> decode.Decoder(
     None,
     decode.optional(decode.int),
   )
-  use recipe_name <- decode.field("recipe_name", decode.string)
+  use title <- decode.field("title", decode.string)
   use servings <- decode.optional_field("servings", 1.0, decode.float)
   use note <- decode.optional_field("note", "", decode.string)
   use from_date <- decode.field("from_date", decode.string)
@@ -492,7 +497,7 @@ fn create_meal_plan_request_decoder() -> decode.Decoder(
 
   decode.success(tandoor.CreateMealPlanRequest(
     recipe: recipe,
-    recipe_name: recipe_name,
+    title: title,
     servings: servings,
     note: note,
     from_date: from_date,

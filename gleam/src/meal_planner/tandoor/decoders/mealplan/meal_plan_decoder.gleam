@@ -2,11 +2,17 @@
 ///
 /// Provides JSON decoders for MealPlan types from the Tandoor API.
 /// Handles complex nested structures including recipes, meal types, and shared users.
+import gleam/dynamic
 import gleam/dynamic/decode
+import gleam/result
+import gleam/string
+import gleam/list
 import meal_planner/tandoor/decoders/mealplan/meal_type_decoder
 import meal_planner/tandoor/decoders/mealplan/user_decoder
 import meal_planner/tandoor/decoders/recipe/recipe_overview_decoder
-import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan, MealPlan}
+import meal_planner/tandoor/types/mealplan/meal_plan.{
+  type MealPlan, MealPlan, type MealPlanListResponse, MealPlanListResponse,
+}
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{
   type MealPlanEntry, MealPlanEntry,
 }
@@ -32,7 +38,7 @@ import meal_planner/tandoor/types/mealplan/meal_plan_entry.{
 ///   "shopping": true
 /// }
 /// ```
-pub fn meal_plan_decoder() -> decode.Decoder(MealPlan) {
+pub fn meal_plan_decoder_internal() -> decode.Decoder(MealPlan) {
   use id <- decode.field("id", decode.int)
   use title <- decode.field("title", decode.string)
   use recipe <- decode.field(
@@ -73,6 +79,38 @@ pub fn meal_plan_decoder() -> decode.Decoder(MealPlan) {
     meal_type_name: meal_type_name,
     shopping: shopping,
   ))
+}
+
+pub fn meal_plan_list_decoder_internal() -> decode.Decoder(MealPlanListResponse) {
+  use count <- decode.field("count", decode.int)
+  use next <- decode.field("next", decode.optional(decode.string))
+  use previous <- decode.field("previous", decode.optional(decode.string))
+  use results <- decode.field("results", decode.list(meal_plan_decoder_internal()))
+
+  decode.success(MealPlanListResponse(
+    count: count,
+    next: next,
+    previous: previous,
+    results: results,
+  ))
+}
+
+pub fn meal_plan_decoder(
+  json_value: dynamic.Dynamic,
+) -> Result(MealPlan, String) {
+  decode.run(json_value, meal_plan_decoder_internal())
+  |> result.map_error(fn(errors) {
+    "Failed to decode meal plan: "
+    <> string.join(
+      list.map(errors, fn(e) {
+        case e {
+          decode.DecodeError(expected, _found, path) ->
+            expected <> " at " <> string.join(path, ".")
+        }
+      }),
+      ", ",
+    )
+  })
 }
 
 /// Decode a simplified MealPlanEntry from JSON

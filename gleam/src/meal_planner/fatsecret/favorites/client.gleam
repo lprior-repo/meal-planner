@@ -114,7 +114,7 @@ pub fn get_favorite_foods_parsed(
 
   case decoders.decode_favorite_foods(response) {
     Ok(foods) -> Ok(foods)
-    Error(decoders.ParseError(msg)) -> Error(ParseError(msg))
+    Error(decoders.ParseError(msg)) -> Error(client.ParseError(msg))
   }
 }
 
@@ -154,7 +154,7 @@ pub fn get_most_eaten_parsed(
 
   case decoders.decode_most_eaten(response) {
     Ok(foods) -> Ok(foods)
-    Error(decoders.ParseError(msg)) -> Error(ParseError(msg))
+    Error(decoders.ParseError(msg)) -> Error(client.ParseError(msg))
   }
 }
 
@@ -194,7 +194,7 @@ pub fn get_recently_eaten_parsed(
 
   case decoders.decode_recently_eaten(response) {
     Ok(foods) -> Ok(foods)
-    Error(decoders.ParseError(msg)) -> Error(ParseError(msg))
+    Error(decoders.ParseError(msg)) -> Error(client.ParseError(msg))
   }
 }
 
@@ -284,6 +284,6 @@ pub fn get_favorite_recipes_parsed(
 
   case decoders.decode_favorite_recipes(response) {
     Ok(recipes) -> Ok(recipes)
-    Error(decoders.ParseError(msg)) -> Error(ParseError(msg))
+    Error(decoders.ParseError(msg)) -> Error(client.ParseError(msg))
   }
 }

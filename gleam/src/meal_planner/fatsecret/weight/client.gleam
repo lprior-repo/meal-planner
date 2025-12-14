@@ -10,6 +10,7 @@ import gleam/dict
 import gleam/float
 import gleam/int
 import gleam/json
+import gleam/dynamic/decode
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import meal_planner/fatsecret/core/config.{type FatSecretConfig}

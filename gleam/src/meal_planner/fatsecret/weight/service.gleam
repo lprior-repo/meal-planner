@@ -3,12 +3,14 @@
 /// High-level API for weight operations with automatic OAuth handling.
 /// Loads stored tokens from database and handles authentication errors.
 import gleam/option.{type Option}
-import meal_planner/env
+import meal_planner/env.{type FatSecretConfig as EnvFatSecretConfig, load_fatsecret_config as load_env_fatsecret_config}
 import meal_planner/fatsecret/core/errors.{
   type ApiErrorCode, type FatSecretError, WeightDateEarlier, WeightDateTooFar,
 }
 import meal_planner/fatsecret/storage
-import meal_planner/fatsecret/weight/client
+import meal_planner/fatsecret/core/config.{type FatSecretConfig as CoreFatSecretConfig, FatSecretConfig}
+import meal_planner/fatsecret/client.{type AccessToken}
+import meal_planner/fatsecret/weight/client as weight_client
 import meal_planner/fatsecret/weight/types.{
   type WeightMonthSummary, type WeightUpdate,
 }
@@ -51,14 +53,22 @@ pub fn update_weight(
   conn: pog.Connection,
   update: WeightUpdate,
 ) -> Result(Nil, ServiceError) {
-  case env.load_fatsecret_config() {
+  case load_env_fatsecret_config() {
     option.None -> Error(NotConfigured)
     option.Some(config) -> {
       case get_token(conn) {
         Error(e) -> Error(e)
         Ok(token) -> {
-          case client.update_weight(config, token, update) {
-            Ok(nil) -> {
+                              case weight_client.update_weight(
+                                CoreFatSecretConfig(
+                                  consumer_key: config.consumer_key,
+                                  consumer_secret: config.consumer_secret,
+                                  api_host: option.None,
+                                  auth_host: option.None,
+                                ),
+                                token,
+                                update,
+                              ) {            Ok(nil) -> {
               let _ = storage.touch_access_token(conn)
               Ok(nil)
             }
@@ -101,14 +111,22 @@ pub fn get_weight_month_summary(
   conn: pog.Connection,
   date_int: Int,
 ) -> Result(WeightMonthSummary, ServiceError) {
-  case env.load_fatsecret_config() {
+  case load_env_fatsecret_config() {
     option.None -> Error(NotConfigured)
     option.Some(config) -> {
       case get_token(conn) {
         Error(e) -> Error(e)
         Ok(token) -> {
-          case client.get_weight_month_summary(config, token, date_int) {
-            Ok(summary) -> {
+                              case weight_client.get_weight_month_summary(
+                                CoreFatSecretConfig(
+                                  consumer_key: config.consumer_key,
+                                  consumer_secret: config.consumer_secret,
+                                  api_host: option.None,
+                                  auth_host: option.None,
+                                ),
+                                token,
+                                date_int,
+                              ) {            Ok(summary) -> {
               let _ = storage.touch_access_token(conn)
               Ok(summary)
             }
@@ -129,7 +147,7 @@ pub fn get_weight_month_summary(
 // ============================================================================
 
 /// Get stored access token with error mapping
-fn get_token(conn: pog.Connection) -> Result(client.AccessToken, ServiceError) {
+fn get_token(conn: pog.Connection) -> Result(AccessToken, ServiceError) {
   case storage.encryption_configured() {
     False -> Error(StorageError("OAUTH_ENCRYPTION_KEY not set"))
     True -> {

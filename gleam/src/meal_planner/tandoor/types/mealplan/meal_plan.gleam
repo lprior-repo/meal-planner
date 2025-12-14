@@ -37,3 +37,12 @@ pub type MealPlan {
     shopping: Bool,
   )
 }
+
+pub type MealPlanListResponse {
+  MealPlanListResponse(
+    count: Int,
+    next: Option(String),
+    previous: Option(String),
+    results: List(MealPlan),
+  )
+}
