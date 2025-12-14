@@ -4,7 +4,6 @@
 /// Consolidates: get, list, create, update, delete, and recipe operations.
 ///
 /// **Refactored**: Uses crud_helpers for 60%+ line reduction
-import gleam/dynamic/decode
 import gleam/int
 import gleam/json
 import gleam/list
@@ -13,7 +12,9 @@ import gleam/result
 import meal_planner/tandoor/api/crud_helpers
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
-import meal_planner/tandoor/decoders/shopping/shopping_list_entry_decoder
+import meal_planner/tandoor/decoders/shopping/shopping_list_entry_decoder.{
+  type ShoppingListEntryResponse,
+}
 import meal_planner/tandoor/encoders/shopping/shopping_list_encoder
 import meal_planner/tandoor/types/shopping/shopping_list_entry.{
   type ShoppingListEntry, type ShoppingListEntryCreate,
@@ -63,7 +64,7 @@ pub fn list(
   checked: Option(Bool),
   limit: Option(Int),
   offset: Option(Int),
-) -> Result(PaginatedResponse(ShoppingListEntry), TandoorError) {
+) -> Result(PaginatedResponse(ShoppingListEntryResponse), TandoorError) {
   let params = build_query_params(checked, limit, offset)
   use resp <- result.try(crud_helpers.execute_get(
     config,
@@ -218,6 +219,6 @@ fn build_query_params(
     option.None -> []
   }
 
-  // Concatenate all non-empty parameter lists
-  list.concat([checked_param, limit_param, offset_param])
+  // Flatten all parameter lists together
+  list.flatten([checked_param, limit_param, offset_param])
 }

@@ -2,16 +2,12 @@
 ///
 /// This module provides CRUD operations for supermarket categories in the Tandoor API.
 /// Categories are used to organize foods by store aisles/sections.
-import gleam/dynamic/decode
-import gleam/httpc
 import gleam/int
 import gleam/json
 import gleam/option.{type Option}
 import gleam/result
-import gleam/string
-import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, NetworkError, ParseError,
-}
+import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/decoders/supermarket/supermarket_category_decoder
 import meal_planner/tandoor/encoders/supermarket/supermarket_category_encoder
@@ -43,48 +39,26 @@ pub fn list_categories(
   offset offset: Option(Int),
 ) -> Result(PaginatedResponse(SupermarketCategory), TandoorError) {
   // Build query parameters
-  let path = case limit, offset {
-    option.Some(l), option.Some(o) ->
-      "/api/supermarket-category/?page_size="
-      <> int.to_string(l)
-      <> "&offset="
-      <> int.to_string(o)
-    option.Some(l), option.None ->
-      "/api/supermarket-category/?page_size=" <> int.to_string(l)
-    option.None, option.Some(o) ->
-      "/api/supermarket-category/?offset=" <> int.to_string(o)
-    option.None, option.None -> "/api/supermarket-category/"
+  let query_params = case limit, offset {
+    option.Some(l), option.Some(o) -> [
+      #("page_size", int.to_string(l)),
+      #("offset", int.to_string(o)),
+    ]
+    option.Some(l), option.None -> [#("page_size", int.to_string(l))]
+    option.None, option.Some(o) -> [#("offset", int.to_string(o))]
+    option.None, option.None -> []
   }
 
-  // Build and execute request
-  use req <- result.try(client.build_get_request(config, path, []))
-
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
+  // Execute GET and parse paginated response
+  use resp <- result.try(crud_helpers.execute_get(
+    config,
+    "/api/supermarket-category/",
+    query_params,
+  ))
+  crud_helpers.parse_json_paginated(
+    resp,
+    supermarket_category_decoder.decoder(),
   )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      // Decode paginated response with category items
-      case
-        decode.run(
-          json_data,
-          http.paginated_decoder(supermarket_category_decoder.decoder()),
-        )
-      {
-        Ok(paginated) -> Ok(paginated)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode supermarket category list: "
-            <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
 }
 
 /// Get a single supermarket category by ID from Tandoor API
@@ -107,28 +81,9 @@ pub fn get_category(
 ) -> Result(SupermarketCategory, TandoorError) {
   let path = "/api/supermarket-category/" <> int.to_string(category_id) <> "/"
 
-  // Build and execute request
-  use req <- result.try(client.build_get_request(config, path, []))
-
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, supermarket_category_decoder.decoder()) {
-        Ok(category) -> Ok(category)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode supermarket category: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
+  // Execute GET and parse single response
+  use resp <- result.try(crud_helpers.execute_get(config, path, []))
+  crud_helpers.parse_json_single(resp, supermarket_category_decoder.decoder())
 }
 
 /// Create a new supermarket category in Tandoor API
@@ -153,8 +108,6 @@ pub fn create_category(
   config: ClientConfig,
   category_data: SupermarketCategoryCreateRequest,
 ) -> Result(SupermarketCategory, TandoorError) {
-  let path = "/api/supermarket-category/"
-
   // Encode category data to JSON
   let body =
     supermarket_category_encoder.encode_supermarket_category_create(
@@ -162,20 +115,13 @@ pub fn create_category(
     )
     |> json.to_string
 
-  // Build and execute request
-  use req <- result.try(client.build_post_request(config, path, body))
-
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // Convert to ApiResponse and parse JSON
-  let api_resp = client.ApiResponse(resp.status, resp.headers, resp.body)
-  client.parse_json_body(api_resp, fn(dyn) {
-    decode.run(dyn, supermarket_category_decoder.decoder())
-    |> result.map_error(fn(_) { "Failed to decode created category" })
-  })
+  // Execute POST and parse single response
+  use resp <- result.try(crud_helpers.execute_post(
+    config,
+    "/api/supermarket-category/",
+    body,
+  ))
+  crud_helpers.parse_json_single(resp, supermarket_category_decoder.decoder())
 }
 
 /// Update an existing supermarket category in Tandoor API
@@ -205,34 +151,15 @@ pub fn update_category(
   let path = "/api/supermarket-category/" <> int.to_string(category_id) <> "/"
 
   // Encode category data to JSON
-  let request_body =
+  let body =
     supermarket_category_encoder.encode_supermarket_category_create(
       category_data,
     )
     |> json.to_string
 
-  // Build and execute PATCH request
-  use req <- result.try(client.build_patch_request(config, path, request_body))
-
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, supermarket_category_decoder.decoder()) {
-        Ok(category) -> Ok(category)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode updated category: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
+  // Execute PATCH and parse single response
+  use resp <- result.try(crud_helpers.execute_patch(config, path, body))
+  crud_helpers.parse_json_single(resp, supermarket_category_decoder.decoder())
 }
 
 /// Delete a supermarket category from Tandoor API
@@ -255,14 +182,7 @@ pub fn delete_category(
 ) -> Result(Nil, TandoorError) {
   let path = "/api/supermarket-category/" <> int.to_string(category_id) <> "/"
 
-  // Build and execute DELETE request
-  use req <- result.try(client.build_delete_request(config, path))
-
-  use _resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // DELETE returns 204 No Content on success
-  Ok(Nil)
+  // Execute DELETE and verify empty response
+  use resp <- result.try(crud_helpers.execute_delete(config, path))
+  crud_helpers.parse_empty_response(resp)
 }

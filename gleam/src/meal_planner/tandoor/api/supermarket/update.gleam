@@ -1,15 +1,11 @@
 /// Supermarket Update API
 ///
 /// This module provides functions to update existing supermarkets in Tandoor.
-import gleam/dynamic/decode
-import gleam/httpc
 import gleam/int
 import gleam/json
 import gleam/result
-import gleam/string
-import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, NetworkError, ParseError,
-}
+import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/supermarket/supermarket_decoder
 import meal_planner/tandoor/encoders/supermarket/supermarket_encoder
 import meal_planner/tandoor/types/supermarket/supermarket.{type Supermarket}
@@ -44,30 +40,11 @@ pub fn update_supermarket(
   let path = "/api/supermarket/" <> int.to_string(id) <> "/"
 
   // Encode supermarket data to JSON
-  let request_body =
+  let body =
     supermarket_encoder.encode_supermarket_create(supermarket_data)
     |> json.to_string
 
-  // Build and execute PATCH request
-  use req <- result.try(client.build_patch_request(config, path, request_body))
-
-  use resp <- result.try(
-    httpc.send(req)
-    |> result.map_error(fn(_err) { NetworkError("Failed to connect to API") }),
-  )
-
-  // Parse JSON response
-  case json.parse(resp.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case decode.run(json_data, supermarket_decoder.decoder()) {
-        Ok(supermarket) -> Ok(supermarket)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode updated supermarket: " <> string.inspect(errors)
-          Error(ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(ParseError("Failed to parse JSON response"))
-  }
+  // Execute PATCH and parse single response
+  use resp <- result.try(crud_helpers.execute_patch(config, path, body))
+  crud_helpers.parse_json_single(resp, supermarket_decoder.decoder())
 }
