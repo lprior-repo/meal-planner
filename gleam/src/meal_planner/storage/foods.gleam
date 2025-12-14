@@ -10,6 +10,7 @@ import meal_planner/storage/profile.{
 }
 import meal_planner/storage/utils
 import meal_planner/types
+import meal_planner/utils/micronutrients as micro_utils
 import pog
 
 pub type UsdaFood {
@@ -545,76 +546,30 @@ fn custom_food_decoder() -> decode.Decoder(types.CustomFood) {
   use potassium <- decode.field(30, decode.optional(decode.float))
   use zinc <- decode.field(31, decode.optional(decode.float))
 
-  let micronutrients = case
-    fiber,
-    sugar,
-    sodium,
-    cholesterol,
-    vitamin_a,
-    vitamin_c,
-    vitamin_d,
-    vitamin_e,
-    vitamin_k,
-    vitamin_b6,
-    vitamin_b12,
-    folate,
-    thiamin,
-    riboflavin,
-    niacin,
-    calcium,
-    iron,
-    magnesium,
-    phosphorus,
-    potassium,
-    zinc
-  {
-    None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None
-    -> None
-    _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ->
-      Some(types.Micronutrients(
-        fiber: fiber,
-        sugar: sugar,
-        sodium: sodium,
-        cholesterol: cholesterol,
-        vitamin_a: vitamin_a,
-        vitamin_c: vitamin_c,
-        vitamin_d: vitamin_d,
-        vitamin_e: vitamin_e,
-        vitamin_k: vitamin_k,
-        vitamin_b6: vitamin_b6,
-        vitamin_b12: vitamin_b12,
-        folate: folate,
-        thiamin: thiamin,
-        riboflavin: riboflavin,
-        niacin: niacin,
-        calcium: calcium,
-        iron: iron,
-        magnesium: magnesium,
-        phosphorus: phosphorus,
-        potassium: potassium,
-        zinc: zinc,
-      ))
-  }
+  let micronutrients =
+    micro_utils.build_micronutrients(
+      fiber,
+      sugar,
+      sodium,
+      cholesterol,
+      vitamin_a,
+      vitamin_c,
+      vitamin_d,
+      vitamin_e,
+      vitamin_k,
+      vitamin_b6,
+      vitamin_b12,
+      folate,
+      thiamin,
+      riboflavin,
+      niacin,
+      calcium,
+      iron,
+      magnesium,
+      phosphorus,
+      potassium,
+      zinc,
+    )
 
   decode.success(types.CustomFood(
     id: id.custom_food_id(custom_food_id_str),

@@ -1,7 +1,7 @@
 /// Complex query operations for food logs
 ///
 /// This module handles advanced queries on food log data:
-/// - Retrieving recent meals (with Tandoor enrichment)  
+/// - Retrieving recent meals (with Tandoor enrichment)
 /// - Getting daily logs with aggregated totals
 /// - Finding recently logged foods
 /// - Complex filtering and sorting operations
@@ -18,6 +18,8 @@ import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type Macros, Breakfast, DailyLog, Dinner,
   FoodLogEntry, Lunch, Macros, Snack,
 }
+import meal_planner/utils/macros as macros_utils
+import meal_planner/utils/micronutrients as micro_utils
 import pog
 
 // ============================================================================
@@ -179,8 +181,8 @@ pub fn get_daily_log(
     Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
 
     Ok(pog.Returned(_, entries)) -> {
-      let total_macros = calculate_total_macros(entries)
-      let total_micronutrients = calculate_total_micronutrients(entries)
+      let total_macros = macros_utils.calculate_total_macros(entries)
+      let total_micronutrients = micro_utils.calculate_total_micronutrients(entries)
 
       Ok(DailyLog(
         date: date,
@@ -242,7 +244,7 @@ pub fn get_recently_logged_foods(
 }
 
 // ============================================================================
-// Helper Functions
+// Decoders
 // ============================================================================
 
 /// Decoder for FoodLogEntry from database rows
@@ -288,77 +290,30 @@ fn food_log_entry_decoder() -> decode.Decoder(FoodLogEntry) {
     _ -> Snack
   }
 
-  let micronutrients = case
-    fiber,
-    sugar,
-    sodium,
-    cholesterol,
-    vitamin_a,
-    vitamin_c,
-    vitamin_d,
-    vitamin_e,
-    vitamin_k,
-    vitamin_b6,
-    vitamin_b12,
-    folate,
-    thiamin,
-    riboflavin,
-    niacin,
-    calcium,
-    iron,
-    magnesium,
-    phosphorus,
-    potassium,
-    zinc
-  {
-    None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None
-    -> None
-
-    _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ->
-      Some(types.Micronutrients(
-        fiber: fiber,
-        sugar: sugar,
-        sodium: sodium,
-        cholesterol: cholesterol,
-        vitamin_a: vitamin_a,
-        vitamin_c: vitamin_c,
-        vitamin_d: vitamin_d,
-        vitamin_e: vitamin_e,
-        vitamin_k: vitamin_k,
-        vitamin_b6: vitamin_b6,
-        vitamin_b12: vitamin_b12,
-        folate: folate,
-        thiamin: thiamin,
-        riboflavin: riboflavin,
-        niacin: niacin,
-        calcium: calcium,
-        iron: iron,
-        magnesium: magnesium,
-        phosphorus: phosphorus,
-        potassium: potassium,
-        zinc: zinc,
-      ))
-  }
+  let micronutrients =
+    micro_utils.build_micronutrients(
+      fiber,
+      sugar,
+      sodium,
+      cholesterol,
+      vitamin_a,
+      vitamin_c,
+      vitamin_d,
+      vitamin_e,
+      vitamin_k,
+      vitamin_b6,
+      vitamin_b12,
+      folate,
+      thiamin,
+      riboflavin,
+      niacin,
+      calcium,
+      iron,
+      magnesium,
+      phosphorus,
+      potassium,
+      zinc,
+    )
 
   decode.success(FoodLogEntry(
     id: id.log_entry_id(log_entry_id_str),
@@ -372,33 +327,4 @@ fn food_log_entry_decoder() -> decode.Decoder(FoodLogEntry) {
     source_type: source_type,
     source_id: source_id,
   ))
-}
-
-/// Calculate total macros from food log entries
-fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
-  list.fold(entries, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(acc, entry) {
-    Macros(
-      protein: acc.protein +. entry.macros.protein,
-      fat: acc.fat +. entry.macros.fat,
-      carbs: acc.carbs +. entry.macros.carbs,
-    )
-  })
-}
-
-/// Calculate total micronutrients from food log entries
-fn calculate_total_micronutrients(
-  entries: List(FoodLogEntry),
-) -> Option(types.Micronutrients) {
-  let micros_list =
-    list.filter_map(entries, fn(entry) {
-      case entry.micronutrients {
-        Some(m) -> Ok(m)
-        None -> Error(Nil)
-      }
-    })
-
-  case micros_list {
-    [] -> None
-    _ -> Some(types.micronutrients_sum(micros_list))
-  }
 }

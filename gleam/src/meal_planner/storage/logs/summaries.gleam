@@ -7,12 +7,13 @@
 /// Separated from entry-level operations and complex queries to allow focused testing
 /// and maintenance of aggregation logic.
 import gleam/dynamic/decode
-import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
 import meal_planner/storage/utils
-import meal_planner/types.{type FoodLogEntry, type Macros, Macros}
+import meal_planner/types.{type Macros}
+import meal_planner/utils/macros as macros_utils
+import meal_planner/utils/micronutrients as utils_micro
 import pog
 
 // ============================================================================
@@ -43,67 +44,33 @@ pub type WeeklySummary {
 }
 
 // ============================================================================
-// Macro Calculations
+// Re-exported Macro Calculations (for backward compatibility)
 // ============================================================================
 
 /// Calculate total macros from food log entries
-pub fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
-  list.fold(entries, Macros(protein: 0.0, fat: 0.0, carbs: 0.0), fn(acc, entry) {
-    Macros(
-      protein: acc.protein +. entry.macros.protein,
-      fat: acc.fat +. entry.macros.fat,
-      carbs: acc.carbs +. entry.macros.carbs,
-    )
-  })
+/// Re-exported from utils/macros module
+pub fn calculate_total_macros(entries: List(types.FoodLogEntry)) -> Macros {
+  macros_utils.calculate_total_macros(entries)
 }
 
 /// Calculate total micronutrients from food log entries
+/// Re-exported from utils/micronutrients module
 pub fn calculate_total_micronutrients(
-  entries: List(FoodLogEntry),
+  entries: List(types.FoodLogEntry),
 ) -> Option(types.Micronutrients) {
-  let micros_list =
-    list.filter_map(entries, fn(entry) {
-      case entry.micronutrients {
-        Some(m) -> Ok(m)
-        None -> Error(Nil)
-      }
-    })
-
-  case micros_list {
-    [] -> None
-    _ -> Some(types.micronutrients_sum(micros_list))
-  }
+  utils_micro.calculate_total_micronutrients(entries)
 }
 
 /// Calculate macros summary from a list of macros
+/// Re-exported from utils/macros module
 pub fn sum_macros(macros_list: List(Macros)) -> Macros {
-  list.fold(
-    macros_list,
-    Macros(protein: 0.0, fat: 0.0, carbs: 0.0),
-    fn(acc, macros) {
-      Macros(
-        protein: acc.protein +. macros.protein,
-        fat: acc.fat +. macros.fat,
-        carbs: acc.carbs +. macros.carbs,
-      )
-    },
-  )
+  macros_utils.sum_macros(macros_list)
 }
 
 /// Calculate average macros from a list
+/// Re-exported from utils/macros module
 pub fn average_macros(macros_list: List(Macros)) -> Option(Macros) {
-  case list.length(macros_list) {
-    0 -> None
-    count -> {
-      let total = sum_macros(macros_list)
-      let count_float = int.to_float(count)
-      Some(Macros(
-        protein: total.protein /. count_float,
-        fat: total.fat /. count_float,
-        carbs: total.carbs /. count_float,
-      ))
-    }
-  }
+  macros_utils.average_macros(macros_list)
 }
 
 // ============================================================================
