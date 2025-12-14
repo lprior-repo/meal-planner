@@ -45,16 +45,22 @@ This module provides API wrappers for Tandoor's import/export functionality:
 - [x] ExportLogList JSON decoder (`decoders/import_export/export_log_list_decoder.gleam`)
 - [x] Comprehensive type tests (`test/tandoor/import_export/types_test.gleam`)
 - [x] Comprehensive decoder tests (`test/tandoor/import_export/decoder_test.gleam`)
+- [x] **API wrapper functions** (`api/import_export/import_export_api.gleam`)
+  - [x] `list_import_logs()` - List import logs with pagination
+  - [x] `get_import_log()` - Get single import log by ID
+  - [x] `list_export_logs()` - List export logs with pagination
+  - [x] `get_export_log()` - Get single export log by ID
+- [x] **API tests** (`test/tandoor/api/import_export/import_export_api_test.gleam`)
+- [x] **Documentation** (`api/import_export/examples.md`)
 
 ### ⏸️ Blocked
 
 - [ ] Import/Export encoders (blocked by file reservation conflict with GreenStone on `encoders/**/*.gleam`)
-- [ ] API endpoint implementations (blocked by existing compilation errors in codebase)
+- [ ] CREATE/UPDATE/DELETE endpoints (requires encoders)
 
 ### 📝 Pending
 
-- [ ] API wrapper functions (import_log.gleam, export_log.gleam)
-- [ ] Integration tests
+- [ ] Integration tests with live Tandoor instance
 
 ## Blockers
 
@@ -97,15 +103,18 @@ All tests are written following TDD protocol:
 
 ## Usage Examples
 
-### Get Import Logs
+See [examples.md](examples.md) for comprehensive usage examples.
+
+### Quick Start - List Import Logs
 
 ```gleam
-import meal_planner/tandoor/api/import_export/import_log
+import meal_planner/tandoor/api/import_export/import_export_api
 import meal_planner/tandoor/client
+import gleam/option
 
 pub fn get_recent_imports(config: client.ClientConfig) {
   // List recent import logs (paginated)
-  case import_log.list_import_logs(config, page: Some(1), page_size: Some(20)) {
+  case import_export_api.list_import_logs(config, limit: option.Some(20), offset: option.Some(0)) {
     Ok(log_list) -> {
       // Process log_list.results
       io.println("Total imports: " <> int.to_string(log_list.count))
@@ -117,11 +126,11 @@ pub fn get_recent_imports(config: client.ClientConfig) {
 }
 ```
 
-### Get Specific Import
+### Quick Start - Get Specific Import
 
 ```gleam
 pub fn check_import_status(config: client.ClientConfig, import_id: Int) {
-  case import_log.get_import_log(config, import_id) {
+  case import_export_api.get_import_log(config, log_id: import_id) {
     Ok(log) -> {
       case log.running {
         True -> io.println("Import still in progress: " <> log.msg)
@@ -130,25 +139,6 @@ pub fn check_import_status(config: client.ClientConfig, import_id: Int) {
     }
     Error(client.NotFoundError(_)) -> io.println("Import not found")
     Error(err) -> io.println("Error: " <> string.inspect(err))
-  }
-}
-```
-
-### Start New Export
-
-```gleam
-pub fn export_recipes(config: client.ClientConfig, recipe_ids: List(Int)) {
-  let export_request = export_log.ExportRequest(
-    export_type: "zip",
-    recipe_ids: recipe_ids,
-  )
-
-  case export_log.create_export(config, export_request) {
-    Ok(log) -> {
-      io.println("Export started with ID: " <> int.to_string(log.id))
-      // Poll log.id for completion
-    }
-    Error(err) -> io.println("Export failed: " <> string.inspect(err))
   }
 }
 ```
@@ -185,26 +175,36 @@ gleam/src/meal_planner/tandoor/
 │   ├── import_log_list_decoder.gleam
 │   └── export_log_list_decoder.gleam
 └── api/import_export/
-    └── README.md (this file)
+    ├── import_export_api.gleam  (NEW - API wrapper)
+    ├── examples.md              (NEW - Usage examples)
+    └── README.md                (this file)
 
-gleam/test/tandoor/import_export/
-├── types_test.gleam
-└── decoder_test.gleam
+gleam/test/tandoor/
+├── types/import_export/
+│   └── import_log_test.gleam
+├── decoders/import_export/
+│   └── import_log_decoder_test.gleam
+└── api/import_export/
+    └── import_export_api_test.gleam  (NEW - API tests)
 ```
 
 ## Beads Status
 
 | Bead ID | Task | Status |
 |---------|------|--------|
-| meal-planner-1kk.1 | [SDK] Type: ImportLog | ✅ Complete |
-| meal-planner-1kk.2 | [SDK] Type: ExportLog | ✅ Complete |
-| meal-planner-1kk.3 | [SDK] Decoder: Import/Export | ✅ Complete |
-| meal-planner-1kk.4 | [SDK] Encoder: Import/Export | ⏸️ Blocked (GreenStone) |
-| meal-planner-1kk.5 | [SDK] API: Import endpoints | ⏸️ Blocked (compilation errors) |
-| meal-planner-1kk.6 | [SDK] API: Export endpoints | ⏸️ Blocked (compilation errors) |
+| meal-planner-4q3 | [SDK] Import/Export API implementation | ✅ Complete |
+
+**Completed Features:**
+- ✅ `list_import_logs()` with pagination support
+- ✅ `get_import_log()` by ID
+- ✅ `list_export_logs()` with pagination support
+- ✅ `get_export_log()` by ID
+- ✅ Complete type-safe error handling
+- ✅ Comprehensive documentation and examples
+- ✅ Unit tests for all functions
 
 ---
 
-**Agent**: BlueMountain (Agent 22)
-**Thread**: tandoor-sdk-swarm
+**Agent**: Current Session
+**Task**: meal-planner-4q3
 **Date**: 2025-12-14
