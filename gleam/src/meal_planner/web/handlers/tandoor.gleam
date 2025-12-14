@@ -15,13 +15,23 @@ import gleam/option.{None, Some}
 import gleam/result
 
 import meal_planner/env
-import meal_planner/tandoor/client as tandoor
-
+import meal_planner/tandoor/client.{
+  type ClientConfig, type TandoorError, AuthenticationError, NotFoundError,
+  error_to_string, login, session_config,
+}
+import meal_planner/tandoor/api/recipe/get as recipe_get
+import meal_planner/tandoor/api/recipe/list as recipe_list
+import meal_planner/tandoor/api/mealplan/create as mealplan_create
+import meal_planner/tandoor/api/mealplan/list as mealplan_list
+import meal_planner/tandoor/api/mealplan/update as mealplan_update
+import meal_planner/tandoor/core/ids
+import meal_planner/tandoor/types.{type TandoorRecipe}
 import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
 import meal_planner/tandoor/types/mealplan/meal_type.{
   meal_type_from_string, meal_type_to_string,
 }
+import meal_planner/tandoor/types/mealplan/mealplan.{type MealPlanCreate}
 import wisp
 
 /// GET /tandoor/status
@@ -59,9 +69,8 @@ pub fn handle_status(req: wisp.Request) -> wisp.Response {
           wisp.json_response(body, 200)
         }
         Some(cfg) -> {
-          let config =
-            tandoor.session_config(cfg.base_url, cfg.username, cfg.password)
-          case tandoor.login(config) {
+          let config = session_config(cfg.base_url, cfg.username, cfg.password)
+          case login(config) {
             Ok(_) -> {
               let body =
                 json.object([
@@ -77,7 +86,7 @@ pub fn handle_status(req: wisp.Request) -> wisp.Response {
                 json.object([
                   #("connected", json.bool(False)),
                   #("configured", json.bool(True)),
-                  #("error", json.string(tandoor.error_to_string(e))),
+                  #("error", json.string(error_to_string(e))),
                 ])
                 |> json.to_string
               wisp.json_response(body, 200)
@@ -110,7 +119,7 @@ pub fn handle_list_recipes(req: wisp.Request) -> wisp.Response {
   case get_authenticated_config() {
     Error(e) -> error_response(e.status, e.message)
     Ok(config) -> {
-      case tandoor.get_recipes(config, limit, offset) {
+      case recipe_list.list_recipes(config, limit: limit, offset: offset) {
         Ok(response) -> {
           let body =
             json.object([
@@ -125,7 +134,7 @@ pub fn handle_list_recipes(req: wisp.Request) -> wisp.Response {
         Error(e) ->
           error_response(
             500,
-            "Failed to fetch recipes: " <> tandoor.error_to_string(e),
+            "Failed to fetch recipes: " <> error_to_string(e),
           )
       }
     }
@@ -143,17 +152,16 @@ pub fn handle_get_recipe(req: wisp.Request, recipe_id: String) -> wisp.Response 
       case get_authenticated_config() {
         Error(e) -> error_response(e.status, e.message)
         Ok(config) -> {
-          case tandoor.get_recipe_detail(config, id) {
-            Ok(detail) -> {
-              let body = recipe_detail_to_json(detail) |> json.to_string
+          case recipe_get.get_recipe(config, recipe_id: id) {
+            Ok(recipe) -> {
+              let body = recipe_to_json(recipe) |> json.to_string
               wisp.json_response(body, 200)
             }
-            Error(tandoor.NotFoundError(_)) ->
-              error_response(404, "Recipe not found")
+            Error(NotFoundError(_)) -> error_response(404, "Recipe not found")
             Error(e) ->
               error_response(
                 500,
-                "Failed to fetch recipe: " <> tandoor.error_to_string(e),
+                "Failed to fetch recipe: " <> error_to_string(e),
               )
           }
         }
@@ -181,7 +189,13 @@ pub fn handle_get_meal_plan(req: wisp.Request) -> wisp.Response {
   case get_authenticated_config() {
     Error(e) -> error_response(e.status, e.message)
     Ok(config) -> {
-      case tandoor.get_meal_plan(config, from_date, to_date) {
+      case
+        mealplan_list.list_meal_plans(
+          config,
+          from_date: from_date,
+          to_date: to_date,
+        )
+      {
         Ok(response) -> {
           let body =
             json.object([
@@ -194,10 +208,7 @@ pub fn handle_get_meal_plan(req: wisp.Request) -> wisp.Response {
           wisp.json_response(body, 200)
         }
         Error(e) ->
-          error_response(
-            500,
-            "Failed to fetch meal plan: " <> tandoor.error_to_string(e),
-          )
+          error_response(500, "Failed to fetch meal plan: " <> error_to_string(e))
       }
     }
   }
@@ -216,7 +227,7 @@ pub fn handle_create_meal_plan(req: wisp.Request) -> wisp.Response {
       case parse_meal_plan_request(body) {
         Error(msg) -> error_response(400, msg)
         Ok(entry_request) -> {
-          case tandoor.create_meal_plan_entry(config, entry_request) {
+          case mealplan_create.create_meal_plan(config, entry_request) {
             Ok(created) -> {
               let body = meal_plan_entry_to_json(created) |> json.to_string
               wisp.json_response(body, 201)
@@ -224,7 +235,7 @@ pub fn handle_create_meal_plan(req: wisp.Request) -> wisp.Response {
             Error(e) ->
               error_response(
                 500,
-                "Failed to create meal plan: " <> tandoor.error_to_string(e),
+                "Failed to create meal plan: " <> error_to_string(e),
               )
           }
         }
@@ -247,7 +258,8 @@ pub fn handle_delete_meal_plan(
       case get_authenticated_config() {
         Error(e) -> error_response(e.status, e.message)
         Ok(config) -> {
-          case tandoor.delete_meal_plan_entry(config, id) {
+          let meal_plan_id = ids.meal_plan_id_from_int(id)
+          case mealplan_update.delete_meal_plan(config, meal_plan_id) {
             Ok(_) -> {
               let body =
                 json.object([
@@ -257,12 +269,12 @@ pub fn handle_delete_meal_plan(
                 |> json.to_string
               wisp.json_response(body, 200)
             }
-            Error(tandoor.NotFoundError(_)) ->
+            Error(NotFoundError(_)) ->
               error_response(404, "Meal plan entry not found")
             Error(e) ->
               error_response(
                 500,
-                "Failed to delete meal plan: " <> tandoor.error_to_string(e),
+                "Failed to delete meal plan: " <> error_to_string(e),
               )
           }
         }
@@ -280,18 +292,17 @@ type ConfigError {
 }
 
 /// Get authenticated Tandoor client config
-fn get_authenticated_config() -> Result(tandoor.ClientConfig, ConfigError) {
+fn get_authenticated_config() -> Result(ClientConfig, ConfigError) {
   case env.load_tandoor_config() {
     None -> Error(ConfigError(500, "Tandoor not configured"))
     Some(cfg) -> {
-      let config =
-        tandoor.session_config(cfg.base_url, cfg.username, cfg.password)
-      case tandoor.login(config) {
+      let config = session_config(cfg.base_url, cfg.username, cfg.password)
+      case login(config) {
         Ok(auth_config) -> Ok(auth_config)
         Error(e) ->
           Error(ConfigError(
             502,
-            "Tandoor authentication failed: " <> tandoor.error_to_string(e),
+            "Tandoor authentication failed: " <> error_to_string(e),
           ))
       }
     }
@@ -307,116 +318,54 @@ fn error_response(status: Int, message: String) -> wisp.Response {
 }
 
 /// Convert Recipe to JSON
-fn recipe_to_json(recipe: tandoor.Recipe) -> json.Json {
+fn recipe_to_json(recipe: TandoorRecipe) -> json.Json {
   json.object([
     #("id", json.int(recipe.id)),
     #("name", json.string(recipe.name)),
-    #("slug", json.nullable(recipe.slug, json.string)),
-    #("description", json.nullable(recipe.description, json.string)),
+    #("description", json.string(recipe.description)),
     #("servings", json.int(recipe.servings)),
-    #("servings_text", json.nullable(recipe.servings_text, json.string)),
-    #("working_time", json.nullable(recipe.working_time, json.int)),
-    #("waiting_time", json.nullable(recipe.waiting_time, json.int)),
-    #("created_at", json.nullable(recipe.created_at, json.string)),
-    #("updated_at", json.nullable(recipe.updated_at, json.string)),
-  ])
-}
-
-/// Convert RecipeDetail to JSON (full recipe with steps, ingredients, nutrition)
-fn recipe_detail_to_json(detail: tandoor.RecipeDetail) -> json.Json {
-  json.object([
-    #("id", json.int(detail.id)),
-    #("name", json.string(detail.name)),
-    #("slug", json.nullable(detail.slug, json.string)),
-    #("description", json.nullable(detail.description, json.string)),
-    #("servings", json.int(detail.servings)),
-    #("servings_text", json.nullable(detail.servings_text, json.string)),
-    #("working_time", json.nullable(detail.working_time, json.int)),
-    #("waiting_time", json.nullable(detail.waiting_time, json.int)),
-    #("source_url", json.nullable(detail.source_url, json.string)),
-    #("steps", json.array(detail.steps, step_to_json)),
-    #("nutrition", case detail.nutrition {
+    #("servings_text", json.string(recipe.servings_text)),
+    #("working_time", json.int(recipe.prep_time)),
+    #("waiting_time", json.int(recipe.cooking_time)),
+    #("created_at", json.string(recipe.created_at)),
+    #("updated_at", json.string(recipe.updated_at)),
+    #("steps", json.array(recipe.steps, step_to_json)),
+    #("nutrition", case recipe.nutrition {
       Some(n) -> nutrition_to_json(n)
       None -> json.null()
     }),
-    #("keywords", json.array(detail.keywords, keyword_to_json)),
-    #("created_at", json.nullable(detail.created_at, json.string)),
-    #("updated_at", json.nullable(detail.updated_at, json.string)),
+    #("keywords", json.array(recipe.keywords, keyword_to_json)),
   ])
 }
 
 /// Convert Step to JSON
-fn step_to_json(step: tandoor.Step) -> json.Json {
+fn step_to_json(step: types.TandoorStep) -> json.Json {
   json.object([
     #("id", json.int(step.id)),
     #("name", json.string(step.name)),
-    #("instruction", json.string(step.instruction)),
+    #("instructions", json.string(step.instructions)),
     #("time", json.int(step.time)),
-    #("order", json.int(step.order)),
-    #("ingredients", json.array(step.ingredients, ingredient_to_json)),
-    #("show_as_header", json.bool(step.show_as_header)),
-    #("show_ingredients_table", json.bool(step.show_ingredients_table)),
   ])
 }
 
-/// Convert Ingredient to JSON
-fn ingredient_to_json(ing: tandoor.Ingredient) -> json.Json {
+/// Convert Nutrition to JSON
+fn nutrition_to_json(n: types.TandoorNutrition) -> json.Json {
   json.object([
-    #("id", json.int(ing.id)),
-    #("amount", json.float(ing.amount)),
-    #("note", json.string(ing.note)),
-    #("is_header", json.bool(ing.is_header)),
-    #("no_amount", json.bool(ing.no_amount)),
-    #("original_text", json.nullable(ing.original_text, json.string)),
-    #("food", case ing.food {
-      Some(f) -> food_to_json(f)
-      None -> json.null()
-    }),
-    #("unit", case ing.unit {
-      Some(u) -> unit_to_json(u)
-      None -> json.null()
-    }),
-  ])
-}
-
-/// Convert Food to JSON
-fn food_to_json(food: tandoor.Food) -> json.Json {
-  json.object([
-    #("id", json.int(food.id)),
-    #("name", json.string(food.name)),
-    #("plural_name", json.nullable(food.plural_name, json.string)),
-    #("description", json.string(food.description)),
-  ])
-}
-
-/// Convert Unit to JSON
-fn unit_to_json(unit: tandoor.Unit) -> json.Json {
-  json.object([
-    #("id", json.int(unit.id)),
-    #("name", json.string(unit.name)),
-    #("plural_name", json.nullable(unit.plural_name, json.string)),
-    #("description", json.string(unit.description)),
-  ])
-}
-
-/// Convert NutritionInfo to JSON
-fn nutrition_to_json(n: tandoor.NutritionInfo) -> json.Json {
-  json.object([
-    #("id", json.int(n.id)),
     #("calories", json.float(n.calories)),
-    #("proteins", json.float(n.proteins)),
-    #("carbohydrates", json.float(n.carbohydrates)),
+    #("carbs", json.float(n.carbs)),
+    #("protein", json.float(n.protein)),
     #("fats", json.float(n.fats)),
-    #("source", json.string(n.source)),
+    #("fiber", json.float(n.fiber)),
+    #("sugars", json.nullable(n.sugars, json.float)),
+    #("sodium", json.nullable(n.sodium, json.float)),
   ])
 }
 
 /// Convert Keyword to JSON
-fn keyword_to_json(kw: tandoor.Keyword) -> json.Json {
+fn keyword_to_json(kw: types.TandoorKeyword) -> json.Json {
   json.object([
     #("id", json.int(kw.id)),
     #("name", json.string(kw.name)),
-    #("description", json.string(kw.description)),
   ])
 }
 
@@ -462,9 +411,7 @@ fn meal_plan_entry_to_json(entry: MealPlanEntry) -> json.Json {
 }
 
 /// Parse meal plan creation request from JSON body
-fn parse_meal_plan_request(
-  body: String,
-) -> Result(tandoor.CreateMealPlanRequest, String) {
+fn parse_meal_plan_request(body: String) -> Result(MealPlanCreate, String) {
   let decoder = create_meal_plan_request_decoder()
   case json.parse(body, decoder) {
     Ok(request) -> Ok(request)
@@ -475,15 +422,13 @@ fn parse_meal_plan_request(
   }
 }
 
-fn create_meal_plan_request_decoder() -> decode.Decoder(
-  tandoor.CreateMealPlanRequest,
-) {
+fn create_meal_plan_request_decoder() -> decode.Decoder(MealPlanCreate) {
   use recipe <- decode.optional_field(
     "recipe",
     None,
     decode.optional(decode.int),
   )
-  use title <- decode.field("title", decode.string)
+  use recipe_name <- decode.field("recipe_name", decode.string)
   use servings <- decode.optional_field("servings", 1.0, decode.float)
   use note <- decode.optional_field("note", "", decode.string)
   use from_date <- decode.field("from_date", decode.string)
@@ -496,9 +441,9 @@ fn create_meal_plan_request_decoder() -> decode.Decoder(
 
   let meal_type = meal_type_from_string(meal_type_str)
 
-  decode.success(tandoor.CreateMealPlanRequest(
+  decode.success(mealplan.MealPlanCreate(
     recipe: recipe,
-    title: title,
+    recipe_name: recipe_name,
     servings: servings,
     note: note,
     from_date: from_date,

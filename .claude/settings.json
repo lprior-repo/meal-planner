@@ -10,7 +10,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": { "tools": ["Edit"] },
+        "matcher": "Edit",
         "hooks": [
           { "type": "command", "command": "uv run python -m mcp_agent_mail.cli file_reservations soon meal-planner --minutes 10" }
         ]
@@ -18,13 +18,13 @@
     ],
     "PostToolUse": [
       {
-        "matcher": { "tools": ["mcp__mcp_agent_mail__send_message"] },
+        "matcher": "send_message",
         "hooks": [
           { "type": "command", "command": "uv run python -m mcp_agent_mail.cli list-acks --project meal-planner --agent lewis --limit 10" }
         ]
       },
       {
-        "matcher": { "tools": ["mcp__mcp_agent_mail__file_reservation_paths"] },
+        "matcher": "file_reservation_paths",
         "hooks": [
           { "type": "command", "command": "uv run python -m mcp_agent_mail.cli file_reservations list meal-planner" }
         ]
