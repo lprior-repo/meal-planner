@@ -15,9 +15,12 @@
 /// Example: A recipe with perfect macro match (100), good vertical compliance (80),
 /// and average variety (60) with weights {macro: 0.4, compliance: 0.4, variety: 0.2}
 /// yields: 100*0.4 + 80*0.4 + 60*0.2 = 84.0 final score
+import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/http
 import gleam/json
 import gleam/list
+import gleam/result
 import meal_planner/types
 import wisp
 
@@ -87,6 +90,50 @@ type ScoringRecipeInput {
 /// Macro targets for scoring
 type MacroTargets {
   MacroTargets(protein: Float, fat: Float, carbs: Float)
+}
+
+// JSON Decoders for type-safe request parsing
+
+fn macros_decoder() -> decode.Decoder(types.Macros) {
+  decode.into(types.Macros)
+  |> decode.field("protein", decode.float)
+  |> decode.field("fat", decode.float)
+  |> decode.field("carbs", decode.float)
+  |> decode.build
+}
+
+fn scoring_recipe_input_decoder() -> decode.Decoder(ScoringRecipeInput) {
+  decode.into(ScoringRecipeInput)
+  |> decode.field("id", decode.string)
+  |> decode.field("name", decode.string)
+  |> decode.field("macros", macros_decoder())
+  |> decode.field("vertical_compliant", decode.bool)
+  |> decode.field("fodmap_level", decode.string)
+  |> decode.build
+}
+
+fn macro_targets_decoder() -> decode.Decoder(MacroTargets) {
+  decode.into(MacroTargets)
+  |> decode.field("protein", decode.float)
+  |> decode.field("fat", decode.float)
+  |> decode.field("carbs", decode.float)
+  |> decode.build
+}
+
+fn scoring_weights_decoder() -> decode.Decoder(ScoringWeights) {
+  decode.into(ScoringWeights)
+  |> decode.field("diet_compliance", decode.float)
+  |> decode.field("macro_match", decode.float)
+  |> decode.field("variety", decode.float)
+  |> decode.build
+}
+
+fn scoring_request_decoder() -> decode.Decoder(ScoringRequest) {
+  decode.into(ScoringRequest)
+  |> decode.field("recipes", decode.list(scoring_recipe_input_decoder()))
+  |> decode.field("macro_targets", macro_targets_decoder())
+  |> decode.field("weights", scoring_weights_decoder())
+  |> decode.build
 }
 
 /// Recipe scoring endpoint
