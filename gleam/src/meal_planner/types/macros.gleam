@@ -4,6 +4,7 @@
 /// Uses: 4cal/g protein, 9cal/g fat, 4cal/g carbs
 
 import gleam/float
+import gleam/int
 import gleam/json.{type Json}
 import gleam/list
 

@@ -3,37 +3,15 @@
 /// Unified search results across USDA and custom foods.
 
 import gleam/dynamic/decode.{type Decoder}
-import gleam/json
 import gleam/json.{type Json}
-import gleam/option.{type Option}
-import meal_planner/id
-import meal_planner/id.{type FdcId}
+import gleam/option.{type Option, None}
+import meal_planner/id.{type FdcId, fdc_id, fdc_id_decoder, fdc_id_to_json}
+import meal_planner/types.{
+  type CustomFood, type FoodSearchResponse, type FoodSearchResult,
+  CustomFoodResult, FoodSearchResponse, UsdaFoodResult, custom_food_decoder,
+  custom_food_to_json,
+}
 import meal_planner/types/custom_food
-import meal_planner/types/custom_food.{type CustomFood}
-
-/// Unified search result with source identification
-pub type FoodSearchResult {
-  /// Custom food result (user-created)
-  CustomFoodResult(food: CustomFood)
-  /// USDA food result (from national database)
-  UsdaFoodResult(
-    fdc_id: FdcId,
-    description: String,
-    data_type: String,
-    category: String,
-    serving_size: String,
-  )
-}
-
-/// Search response wrapper with metadata
-pub type FoodSearchResponse {
-  FoodSearchResponse(
-    results: List(FoodSearchResult),
-    total_count: Int,
-    custom_count: Int,
-    usda_count: Int,
-  )
-}
 
 /// Search error types
 pub type FoodSearchError {
@@ -61,7 +39,7 @@ pub fn food_search_result_to_json(r: FoodSearchResult) -> Json {
     CustomFoodResult(food) ->
       json.object([
         #("type", json.string("custom")),
-        #("data", custom_food.to_json(food)),
+        #("data", custom_food_to_json(food)),
       ])
     UsdaFoodResult(fdc_id, description, data_type, category, serving_size) ->
       json.object([
@@ -69,7 +47,7 @@ pub fn food_search_result_to_json(r: FoodSearchResult) -> Json {
         #(
           "data",
           json.object([
-            #("fdc_id", id.fdc_id_to_json(fdc_id)),
+            #("fdc_id", fdc_id_to_json(fdc_id)),
             #("description", json.string(description)),
             #("data_type", json.string(data_type)),
             #("category", json.string(category)),
@@ -93,31 +71,38 @@ pub fn food_search_response_to_json(resp: FoodSearchResponse) -> Json {
 // JSON Deserialization
 // ============================================================================
 
+fn custom_result_decoder() -> Decoder(FoodSearchResult) {
+  use food <- decode.then(custom_food_decoder())
+  decode.success(CustomFoodResult(food))
+}
+
+fn usda_result_decoder() -> Decoder(FoodSearchResult) {
+  use fdc_id <- decode.field("fdc_id", fdc_id_decoder())
+  use description <- decode.field("description", decode.string)
+  use data_type <- decode.field("data_type", decode.string)
+  use category <- decode.field("category", decode.string)
+  use serving_size <- decode.field("serving_size", decode.string)
+  decode.success(UsdaFoodResult(
+    fdc_id: fdc_id,
+    description: description,
+    data_type: data_type,
+    category: category,
+    serving_size: serving_size,
+  ))
+}
+
 pub fn food_search_result_decoder() -> Decoder(FoodSearchResult) {
   use type_field <- decode.field("type", decode.string)
   case type_field {
     "custom" -> {
-      use data <- decode.field("data", custom_food.decoder())
-      decode.success(CustomFoodResult(data))
+      use result <- decode.field("data", custom_result_decoder())
+      decode.success(result)
     }
     "usda" -> {
-      use data <- decode.field("data", fn(d) {
-        use fdc_id <- decode.field("fdc_id", id.fdc_id_decoder())(d)
-        use description <- decode.field("description", decode.string)(d)
-        use data_type <- decode.field("data_type", decode.string)(d)
-        use category <- decode.field("category", decode.string)(d)
-        use serving_size <- decode.field("serving_size", decode.string)(d)
-        decode.success(UsdaFoodResult(
-          fdc_id: fdc_id,
-          description: description,
-          data_type: data_type,
-          category: category,
-          serving_size: serving_size,
-        ))
-      })
-      decode.success(data)
+      use result <- decode.field("data", usda_result_decoder())
+      decode.success(result)
     }
-    _ -> decode.failure(UsdaFoodResult(fdc_id: 0, description: "", data_type: "", category: None, serving_size: None), "FoodSearchResult")
+    _ -> decode.failure(UsdaFoodResult(fdc_id: fdc_id(0), description: "", data_type: "", category: "", serving_size: ""), "FoodSearchResult")
   }
 }
 

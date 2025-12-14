@@ -5,17 +5,13 @@
 import gleam/dynamic/decode.{type Decoder}
 import gleam/float
 import gleam/int
-import gleam/json
 import gleam/json.{type Json}
-import gleam/option
-import gleam/option.{type Option}
-import meal_planner/id
-import meal_planner/id.{type UserId}
-import meal_planner/types/macros
+import gleam/option.{type Option, None, Some}
+import meal_planner/id.{type UserId, user_id_decoder, user_id_to_json}
 import meal_planner/types/macros.{type Macros}
-import meal_planner/types/micronutrients
 import meal_planner/types/micronutrients.{
-  type Micronutrients, type MicronutrientGoals,
+  type MicronutrientGoals, type Micronutrients, decoder as micronutrients_decoder,
+  to_json as micronutrients_to_json,
 }
 
 /// Activity level for calorie/macro calculations
@@ -122,7 +118,7 @@ fn goal_to_string(g: Goal) -> String {
 pub fn to_json(u: UserProfile) -> Json {
   let targets = daily_macro_targets(u)
   let base_fields = [
-    #("id", id.user_id_to_json(u.id)),
+    #("id", user_id_to_json(u.id)),
     #("bodyweight", json.float(u.bodyweight)),
     #(
       "activity_level",
@@ -135,10 +131,10 @@ pub fn to_json(u: UserProfile) -> Json {
 
   let fields = case u.micronutrient_goals {
     Some(goals) -> [
-      #("micronutrient_goals", micronutrients.to_json(goals)),
+      #("micronutrient_goals", micronutrients_to_json(goals)),
       ..base_fields
     ]
-    option.None -> base_fields
+    None -> base_fields
   }
 
   json.object(fields)
@@ -169,14 +165,14 @@ fn goal_decoder() -> Decoder(Goal) {
 }
 
 pub fn decoder() -> Decoder(UserProfile) {
-  use user_id <- decode.field("id", id.user_id_decoder())
+  use user_id <- decode.field("id", user_id_decoder())
   use bodyweight <- decode.field("bodyweight", decode.float)
   use activity_level <- decode.field("activity_level", activity_level_decoder())
   use goal <- decode.field("goal", goal_decoder())
   use meals_per_day <- decode.field("meals_per_day", decode.int)
   use micronutrient_goals <- decode.field(
     "micronutrient_goals",
-    decode.optional(micronutrients.decoder()),
+    decode.optional(micronutrients_decoder()),
   )
   decode.success(UserProfile(
     id: user_id,
