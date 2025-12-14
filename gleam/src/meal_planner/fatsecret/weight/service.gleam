@@ -7,13 +7,13 @@ import meal_planner/env.{
   type FatSecretConfig as EnvFatSecretConfig,
   load_fatsecret_config as load_env_fatsecret_config,
 }
-import meal_planner/fatsecret/core/oauth.{type AccessToken, AccessToken}
 import meal_planner/fatsecret/core/config.{
   type FatSecretConfig as CoreFatSecretConfig, FatSecretConfig,
 }
 import meal_planner/fatsecret/core/errors.{
   type ApiErrorCode, type FatSecretError, WeightDateEarlier, WeightDateTooFar,
 }
+import meal_planner/fatsecret/core/oauth.{type AccessToken, AccessToken}
 import meal_planner/fatsecret/storage
 import meal_planner/fatsecret/weight/client as weight_client
 import meal_planner/fatsecret/weight/types.{

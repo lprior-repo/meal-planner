@@ -40,11 +40,9 @@ pub fn get_current_user_preferences(
   config: ClientConfig,
 ) -> Result(UserPreference, TandoorError) {
   // Execute GET request
-  use resp <- result.try(crud_helpers.execute_get(
-    config,
-    "/api/user-preference/",
-    [],
-  ))
+  use resp <- result.try(
+    crud_helpers.execute_get(config, "/api/user-preference/", []),
+  )
 
   // Parse as list and extract first element
   use prefs_list <- result.try(crud_helpers.parse_json_list(

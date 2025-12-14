@@ -73,10 +73,7 @@ pub fn delete_favorite_food(
 }
 
 /// GET /api/fatsecret/favorites/foods - Get favorite foods
-pub fn get_favorite_foods(
-  req: Request,
-  conn: pog.Connection,
-) -> Response {
+pub fn get_favorite_foods(req: Request, conn: pog.Connection) -> Response {
   case req.method {
     Get -> {
       let query_params = wisp.get_query(req)
@@ -157,10 +154,7 @@ pub fn get_most_eaten(req: Request, conn: pog.Connection) -> Response {
 }
 
 /// GET /api/fatsecret/favorites/foods/recently-eaten - Get recently eaten foods
-pub fn get_recently_eaten(
-  req: Request,
-  conn: pog.Connection,
-) -> Response {
+pub fn get_recently_eaten(req: Request, conn: pog.Connection) -> Response {
   case req.method {
     Get -> {
       let query_params = wisp.get_query(req)
@@ -252,10 +246,7 @@ pub fn delete_favorite_recipe(
 }
 
 /// GET /api/fatsecret/favorites/recipes - Get favorite recipes
-pub fn get_favorite_recipes(
-  req: Request,
-  conn: pog.Connection,
-) -> Response {
+pub fn get_favorite_recipes(req: Request, conn: pog.Connection) -> Response {
   case req.method {
     Get -> {
       let query_params = wisp.get_query(req)

@@ -7,11 +7,7 @@ import gleam/int
 import gleam/io
 import meal_planner/config
 import meal_planner/fatsecret/favorites/handlers as favorites_handlers
-import meal_planner/fatsecret/foods/handlers as foods_handlers
-import meal_planner/fatsecret/profile/oauth as profile_oauth
-import meal_planner/fatsecret/recipes/handlers as recipes_handlers
 import meal_planner/fatsecret/saved_meals/handlers as saved_meals_handlers
-import meal_planner/fatsecret/service as fatsecret_service
 import meal_planner/web/handlers
 import pog
 import wisp
@@ -72,9 +68,9 @@ pub fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // =========================================================================
     // IMPORTANT: Specific routes MUST come before catch-all patterns!
     ["api", "fatsecret", "foods", "search"] ->
-      foods_handlers.handle_search_foods(req)
+      handlers.handle_fatsecret_search_foods(req)
     ["api", "fatsecret", "foods", food_id] ->
-      foods_handlers.handle_get_food(req, food_id)
+      handlers.handle_fatsecret_get_food(req, food_id)
 
     // =========================================================================
     // FatSecret Recipes API (2-legged OAuth, no user auth required)

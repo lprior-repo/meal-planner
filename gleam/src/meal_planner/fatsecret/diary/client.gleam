@@ -16,7 +16,7 @@ import meal_planner/fatsecret/core/oauth.{type AccessToken}
 import meal_planner/fatsecret/diary/decoders
 import meal_planner/fatsecret/diary/types.{
   type FoodEntry, type FoodEntryId, type FoodEntryInput, type FoodEntryUpdate,
-  type MonthSummary, FromFood, Custom,
+  type MonthSummary, Custom, FromFood,
 } as diary_types
 
 pub fn create_food_entry(
@@ -112,8 +112,7 @@ pub fn edit_food_entry(
     )
 
   let params = case number_of_units {
-    option.Some(n) ->
-      dict.insert(params, "number_of_units", float.to_string(n))
+    option.Some(n) -> dict.insert(params, "number_of_units", float.to_string(n))
     option.None -> params
   }
 
@@ -207,10 +206,7 @@ pub fn get_month_summary(
     params,
   ))
 
-  json.parse(
-    body,
-    decode.at(["month"], decoders.month_summary_decoder()),
-  )
+  json.parse(body, decode.at(["month"], decoders.month_summary_decoder()))
   |> result.map_error(fn(_) {
     errors.ParseError("Failed to parse month summary response")
   })

@@ -7,16 +7,14 @@ import meal_planner/env.{
   type FatSecretConfig as EnvFatSecretConfig,
   load_fatsecret_config as load_env_fatsecret_config,
 }
-import meal_planner/fatsecret/core/oauth.{type AccessToken, AccessToken}
 import meal_planner/fatsecret/core/config.{
   type FatSecretConfig as CoreFatSecretConfig, FatSecretConfig,
 }
 import meal_planner/fatsecret/core/errors
-import meal_planner/fatsecret/storage
+import meal_planner/fatsecret/core/oauth.{type AccessToken, AccessToken}
 import meal_planner/fatsecret/profile/client as profile_client
-import meal_planner/fatsecret/profile/types.{
-  type Profile, type ProfileAuth,
-}
+import meal_planner/fatsecret/profile/types.{type Profile, type ProfileAuth}
+import meal_planner/fatsecret/storage
 import pog
 
 // ============================================================================
@@ -44,9 +42,7 @@ pub type ServiceError {
 /// Returns:
 /// - Ok(Profile) with user's profile data
 /// - Error(ServiceError) on failure
-pub fn get_profile(
-  conn: pog.Connection,
-) -> Result(Profile, ServiceError) {
+pub fn get_profile(conn: pog.Connection) -> Result(Profile, ServiceError) {
   case load_env_fatsecret_config() {
     option.None -> Error(NotConfigured)
     option.Some(config) -> {

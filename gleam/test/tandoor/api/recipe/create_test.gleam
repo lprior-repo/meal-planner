@@ -5,7 +5,10 @@
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/api/recipe/create
-import meal_planner/tandoor/client.{CreateRecipeRequest}
+import meal_planner/tandoor/client
+import meal_planner/tandoor/encoders/recipe/recipe_create_encoder.{
+  CreateRecipeRequest,
+}
 
 pub fn create_recipe_delegates_to_client_test() {
   // Verify function exists and has correct signature
