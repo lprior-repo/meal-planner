@@ -36,10 +36,9 @@ pub type RecipeDirection {
   RecipeDirection(direction_number: Int, direction_description: String)
 }
 
-/// Recipe category/type
-pub type RecipeType {
-  RecipeType(recipe_type_id: String, recipe_type: String)
-}
+/// Recipe category/type (simple string like "Main Dish", "Appetizers", etc.)
+pub type RecipeType =
+  String
 
 /// Complete recipe details (from recipe.get.v2)
 pub type Recipe {
