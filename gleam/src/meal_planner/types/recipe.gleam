@@ -4,46 +4,16 @@
 /// Recipes are fetched from Tandoor API on-demand rather than being stored locally.
 
 import gleam/dynamic/decode.{type Decoder}
-import gleam/json
 import gleam/json.{type Json}
 import gleam/list
 import gleam/string
-import meal_planner/id
-import meal_planner/id.{type RecipeId}
+import meal_planner/id.{type RecipeId, recipe_id_decoder, recipe_id_to_json}
+import meal_planner/types.{
+  type FodmapLevel, type Ingredient, type Macros, type Micronutrients,
+  type Recipe, High, Ingredient, Low, Medium, Recipe, macros_decoder,
+  macros_scale, macros_to_json, macros_to_string,
+}
 import meal_planner/types/macros
-import meal_planner/types/macros.{type Macros}
-import meal_planner/types/micronutrients
-import meal_planner/types/micronutrients.{type Micronutrients}
-
-/// Ingredient with name and quantity description
-pub type Ingredient {
-  Ingredient(name: String, quantity: String)
-}
-
-/// FODMAP level for digestive health tracking
-pub type FodmapLevel {
-  Low
-  Medium
-  High
-}
-
-/// Recipe with all nutritional and dietary information
-///
-/// This type represents recipes from the Tandoor recipe manager.
-/// Recipes are fetched from Tandoor API on-demand rather than being stored locally.
-pub type Recipe {
-  Recipe(
-    id: RecipeId,
-    name: String,
-    ingredients: List(Ingredient),
-    instructions: List(String),
-    macros: Macros,
-    servings: Int,
-    category: String,
-    fodmap_level: FodmapLevel,
-    vertical_compliant: Bool,
-  )
-}
 
 /// Check if recipe meets Vertical Diet requirements
 /// Must be explicitly marked compliant and have low FODMAP
@@ -62,7 +32,7 @@ pub fn total_macros(recipe: Recipe) -> Macros {
     s if s <= 0 -> 1
     s -> s
   }
-  macros.scale(recipe.macros, int_to_float(servings))
+  macros_scale(recipe.macros, int_to_float(servings))
 }
 
 // ============================================================================
@@ -86,11 +56,11 @@ pub fn fodmap_level_to_string(f: FodmapLevel) -> String {
 
 pub fn recipe_to_json(r: Recipe) -> Json {
   json.object([
-    #("id", id.recipe_id_to_json(r.id)),
+    #("id", recipe_id_to_json(r.id)),
     #("name", json.string(r.name)),
     #("ingredients", json.array(r.ingredients, ingredient_to_json)),
     #("instructions", json.array(r.instructions, json.string)),
-    #("macros", macros.to_json(r.macros)),
+    #("macros", macros_to_json(r.macros)),
     #("servings", json.int(r.servings)),
     #("category", json.string(r.category)),
     #("fodmap_level", json.string(fodmap_level_to_string(r.fodmap_level))),
@@ -119,14 +89,14 @@ pub fn ingredient_decoder() -> Decoder(Ingredient) {
 }
 
 pub fn recipe_decoder() -> Decoder(Recipe) {
-  use recipe_id <- decode.field("id", id.recipe_id_decoder())
+  use recipe_id <- decode.field("id", recipe_id_decoder())
   use name <- decode.field("name", decode.string)
   use ingredients <- decode.field(
     "ingredients",
     decode.list(ingredient_decoder()),
   )
   use instructions <- decode.field("instructions", decode.list(decode.string))
-  use macros_val <- decode.field("macros", macros.decoder())
+  use macros_val <- decode.field("macros", macros_decoder())
   use servings <- decode.field("servings", decode.int)
   use category <- decode.field("category", decode.string)
   use fodmap_level <- decode.field("fodmap_level", fodmap_level_decoder())
@@ -182,7 +152,7 @@ pub fn recipe_to_display_string(recipe: Recipe) -> String {
   recipe.name
   <> "\n"
   <> "Macros: "
-  <> macros.to_string(recipe.macros)
+  <> macros_to_string(recipe.macros)
   <> "\n\n"
   <> "Ingredients:\n"
   <> ingredients_str

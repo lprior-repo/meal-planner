@@ -3,15 +3,10 @@
 /// User-defined foods with complete nutritional information.
 
 import gleam/dynamic/decode.{type Decoder}
-import gleam/json
 import gleam/json.{type Json}
-import gleam/option
-import gleam/option.{type Option}
-import meal_planner/id
+import gleam/option.{type Option, None, Some}
 import meal_planner/id.{type CustomFoodId, type UserId}
-import meal_planner/types/macros
 import meal_planner/types/macros.{type Macros}
-import meal_planner/types/micronutrients
 import meal_planner/types/micronutrients.{type Micronutrients}
 
 /// User-defined custom food with complete nutritional information
