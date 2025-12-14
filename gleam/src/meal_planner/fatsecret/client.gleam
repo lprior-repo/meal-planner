@@ -237,7 +237,7 @@ pub fn get_access_token(
 
   use body <- result.try(make_oauth1_request(
     config,
-    "GET",
+    "POST",
     auth_host,
     "/oauth/access_token",
     params,
