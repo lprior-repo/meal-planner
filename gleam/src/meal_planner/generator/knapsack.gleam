@@ -2,7 +2,6 @@
 /// Uses a greedy algorithm to select meals that best match the target calories.
 import gleam/int
 import gleam/list
-import gleam/string
 import meal_planner/logger
 import meal_planner/types.{type Recipe, macros_calories}
 

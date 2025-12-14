@@ -14,6 +14,7 @@ import meal_planner/storage/utils
 import meal_planner/types.{
   type FoodLogEntry, Breakfast, Dinner, FoodLogEntry, Lunch, Macros, Snack,
 }
+import meal_planner/utils/micronutrients as micro_utils
 import pog
 
 pub type FoodLog {
@@ -223,55 +224,7 @@ pub fn save_food_log_entry(
     phosphorus,
     potassium,
     zinc,
-  ) = case entry.micronutrients {
-    Some(m) -> #(
-      m.fiber,
-      m.sugar,
-      m.sodium,
-      m.cholesterol,
-      m.vitamin_a,
-      m.vitamin_c,
-      m.vitamin_d,
-      m.vitamin_e,
-      m.vitamin_k,
-      m.vitamin_b6,
-      m.vitamin_b12,
-      m.folate,
-      m.thiamin,
-      m.riboflavin,
-      m.niacin,
-      m.calcium,
-      m.iron,
-      m.magnesium,
-      m.phosphorus,
-      m.potassium,
-      m.zinc,
-    )
-
-    None -> #(
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-    )
-  }
+  ) = micro_utils.extract_micronutrient_values(entry.micronutrients)
 
   case
     pog.query(sql)
@@ -359,77 +312,30 @@ pub fn save_food_log_from_tandoor_recipe(
     _ -> Snack
   }
 
-  let micronutrients = case
-    input.fiber,
-    input.sugar,
-    input.sodium,
-    input.cholesterol,
-    input.vitamin_a,
-    input.vitamin_c,
-    input.vitamin_d,
-    input.vitamin_e,
-    input.vitamin_k,
-    input.vitamin_b6,
-    input.vitamin_b12,
-    input.folate,
-    input.thiamin,
-    input.riboflavin,
-    input.niacin,
-    input.calcium,
-    input.iron,
-    input.magnesium,
-    input.phosphorus,
-    input.potassium,
-    input.zinc
-  {
-    None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None,
-      None
-    -> None
-
-    _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ ->
-      Some(types.Micronutrients(
-        fiber: input.fiber,
-        sugar: input.sugar,
-        sodium: input.sodium,
-        cholesterol: input.cholesterol,
-        vitamin_a: input.vitamin_a,
-        vitamin_c: input.vitamin_c,
-        vitamin_d: input.vitamin_d,
-        vitamin_e: input.vitamin_e,
-        vitamin_k: input.vitamin_k,
-        vitamin_b6: input.vitamin_b6,
-        vitamin_b12: input.vitamin_b12,
-        folate: input.folate,
-        thiamin: input.thiamin,
-        riboflavin: input.riboflavin,
-        niacin: input.niacin,
-        calcium: input.calcium,
-        iron: input.iron,
-        magnesium: input.magnesium,
-        phosphorus: input.phosphorus,
-        potassium: input.potassium,
-        zinc: input.zinc,
-      ))
-  }
+  let micronutrients =
+    micro_utils.build_micronutrients(
+      input.fiber,
+      input.sugar,
+      input.sodium,
+      input.cholesterol,
+      input.vitamin_a,
+      input.vitamin_c,
+      input.vitamin_d,
+      input.vitamin_e,
+      input.vitamin_k,
+      input.vitamin_b6,
+      input.vitamin_b12,
+      input.folate,
+      input.thiamin,
+      input.riboflavin,
+      input.niacin,
+      input.calcium,
+      input.iron,
+      input.magnesium,
+      input.phosphorus,
+      input.potassium,
+      input.zinc,
+    )
 
   let entry =
     FoodLogEntry(
