@@ -8,9 +8,7 @@ import gleeunit
 import gleeunit/should
 import meal_planner/fatsecret/core/errors
 import meal_planner/fatsecret/weight/decoders
-import meal_planner/fatsecret/weight/types.{
-  WeightDaySummary, WeightEntry, WeightMonthSummary, WeightUpdate,
-}
+import meal_planner/fatsecret/weight/types.{WeightDaySummary, WeightUpdate}
 
 pub fn main() {
   gleeunit.main()

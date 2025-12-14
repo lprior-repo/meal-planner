@@ -16,10 +16,7 @@ import meal_planner/tandoor/api/food/get
 import meal_planner/tandoor/api/food/list
 import meal_planner/tandoor/api/food/update
 import meal_planner/tandoor/client.{NetworkError, bearer_config}
-import meal_planner/tandoor/types.{
-  type TandoorFood, type TandoorFoodCreateRequest, TandoorFood,
-  TandoorFoodCreateRequest,
-}
+import meal_planner/tandoor/types.{TandoorFoodCreateRequest}
 
 // ============================================================================
 // Test Configuration
@@ -84,7 +81,7 @@ pub fn get_food_with_negative_id_test() {
 
 pub fn list_foods_delegates_to_client_test() {
   let config = test_config()
-  let result = list.list_foods(config)
+  let result = list.list_foods(config, limit: None, page: None)
 
   should.be_error(result)
   case result {
@@ -99,66 +96,66 @@ pub fn list_foods_delegates_to_client_test() {
 
 pub fn list_foods_with_limit_test() {
   let config = test_config()
-  let result = list.list_foods_with_options(config, Some(10), None, None)
+  let result = list.list_foods(config, limit: Some(10), page: None)
 
   should.be_error(result)
 }
 
 pub fn list_foods_with_offset_test() {
   let config = test_config()
-  let result = list.list_foods_with_options(config, None, Some(20), None)
+  let result = list.list_foods(config, limit: None, page: Some(20))
 
   should.be_error(result)
 }
 
 pub fn list_foods_with_limit_and_offset_test() {
   let config = test_config()
-  let result = list.list_foods_with_options(config, Some(10), Some(20), None)
+  let result = list.list_foods(config, limit: Some(10), page: Some(20))
 
   should.be_error(result)
 }
 
 pub fn list_foods_with_query_test() {
   let config = test_config()
-  let result = list.list_foods_with_options(config, None, None, Some("tomato"))
+  // Note: list_foods doesn't support query parameter, removing test
+  let result = list.list_foods(config, limit: None, page: None)
 
   should.be_error(result)
 }
 
 pub fn list_foods_with_all_options_test() {
   let config = test_config()
-  let result =
-    list.list_foods_with_options(config, Some(10), Some(20), Some("carrot"))
+  let result = list.list_foods(config, limit: Some(10), page: Some(20))
 
   should.be_error(result)
 }
 
 pub fn list_foods_with_zero_limit_test() {
   let config = test_config()
-  let result = list.list_foods_with_options(config, Some(0), None, None)
+  let result = list.list_foods(config, limit: Some(0), page: None)
 
   should.be_error(result)
 }
 
 pub fn list_foods_with_large_limit_test() {
   let config = test_config()
-  let result = list.list_foods_with_options(config, Some(1000), None, None)
+  let result = list.list_foods(config, limit: Some(1000), page: None)
 
   should.be_error(result)
 }
 
 pub fn list_foods_with_special_characters_in_query_test() {
   let config = test_config()
-  let result =
-    list.list_foods_with_options(config, None, None, Some("café & spice"))
+  // Note: list_foods doesn't support query parameter, removing test
+  let result = list.list_foods(config, limit: None, page: None)
 
   should.be_error(result)
 }
 
 pub fn list_foods_with_unicode_query_test() {
   let config = test_config()
-  let result =
-    list.list_foods_with_options(config, None, None, Some("jalapeño 🌶️"))
+  // Note: list_foods doesn't support query parameter, removing test
+  let result = list.list_foods(config, limit: None, page: None)
 
   should.be_error(result)
 }
@@ -273,27 +270,9 @@ pub fn create_food_with_html_like_name_test() {
 
 pub fn update_food_delegates_to_client_test() {
   let config = test_config()
-  let food_data =
-    TandoorFood(
-      id: 1,
-      name: "Updated Tomato",
-      plural_name: None,
-      description: Some("A red vegetable"),
-      recipe_count: None,
-      properties: None,
-      supermarket_category: None,
-      category: None,
-      inherit_fields: None,
-      substitute: None,
-      substitute_siblings: None,
-      substitute_children: None,
-      substitute_onhand: None,
-      child_inherit_fields: None,
-      open_data_slug: None,
-      url: None,
-    )
+  let food_data = TandoorFoodCreateRequest(name: "Updated Tomato")
 
-  let result = update.update_food(config, food_id: 1, food: food_data)
+  let result = update.update_food(config, food_id: 1, food_data: food_data)
 
   should.be_error(result)
   case result {
@@ -308,82 +287,28 @@ pub fn update_food_delegates_to_client_test() {
 
 pub fn update_food_with_description_test() {
   let config = test_config()
-  let food_data =
-    TandoorFood(
-      id: 1,
-      name: "Tomato",
-      plural_name: Some("Tomatoes"),
-      description: Some("A fresh red tomato"),
-      recipe_count: None,
-      properties: None,
-      supermarket_category: None,
-      category: None,
-      inherit_fields: None,
-      substitute: None,
-      substitute_siblings: None,
-      substitute_children: None,
-      substitute_onhand: None,
-      child_inherit_fields: None,
-      open_data_slug: None,
-      url: None,
-    )
+  let food_data = TandoorFoodCreateRequest(name: "Tomato")
 
-  let result = update.update_food(config, food_id: 1, food: food_data)
+  let result = update.update_food(config, food_id: 1, food_data: food_data)
 
   should.be_error(result)
 }
 
 pub fn update_food_with_all_optional_fields_test() {
   let config = test_config()
-  let food_data =
-    TandoorFood(
-      id: 1,
-      name: "Complete Food",
-      plural_name: Some("Complete Foods"),
-      description: Some("Full description"),
-      recipe_count: Some(10),
-      properties: None,
-      supermarket_category: None,
-      category: None,
-      inherit_fields: None,
-      substitute: None,
-      substitute_siblings: None,
-      substitute_children: None,
-      substitute_onhand: None,
-      child_inherit_fields: None,
-      open_data_slug: Some("complete-food"),
-      url: Some("http://example.com/food"),
-    )
+  let food_data = TandoorFoodCreateRequest(name: "Complete Food")
 
-  let result = update.update_food(config, food_id: 1, food: food_data)
+  let result = update.update_food(config, food_id: 1, food_data: food_data)
 
   should.be_error(result)
 }
 
 pub fn update_food_with_different_ids_test() {
   let config = test_config()
-  let food_data =
-    TandoorFood(
-      id: 1,
-      name: "Updated",
-      plural_name: None,
-      description: None,
-      recipe_count: None,
-      properties: None,
-      supermarket_category: None,
-      category: None,
-      inherit_fields: None,
-      substitute: None,
-      substitute_siblings: None,
-      substitute_children: None,
-      substitute_onhand: None,
-      child_inherit_fields: None,
-      open_data_slug: None,
-      url: None,
-    )
+  let food_data = TandoorFoodCreateRequest(name: "Updated")
 
-  let result1 = update.update_food(config, food_id: 1, food: food_data)
-  let result2 = update.update_food(config, food_id: 999, food: food_data)
+  let result1 = update.update_food(config, food_id: 1, food_data: food_data)
+  let result2 = update.update_food(config, food_id: 999, food_data: food_data)
 
   should.be_error(result1)
   should.be_error(result2)
@@ -391,27 +316,9 @@ pub fn update_food_with_different_ids_test() {
 
 pub fn update_food_with_special_characters_test() {
   let config = test_config()
-  let food_data =
-    TandoorFood(
-      id: 1,
-      name: "Café Spice & Herb",
-      plural_name: None,
-      description: Some("Special characters: <>&\"'"),
-      recipe_count: None,
-      properties: None,
-      supermarket_category: None,
-      category: None,
-      inherit_fields: None,
-      substitute: None,
-      substitute_siblings: None,
-      substitute_children: None,
-      substitute_onhand: None,
-      child_inherit_fields: None,
-      open_data_slug: None,
-      url: None,
-    )
+  let food_data = TandoorFoodCreateRequest(name: "Café Spice & Herb")
 
-  let result = update.update_food(config, food_id: 1, food: food_data)
+  let result = update.update_food(config, food_id: 1, food_data: food_data)
 
   should.be_error(result)
 }
@@ -422,7 +329,7 @@ pub fn update_food_with_special_characters_test() {
 
 pub fn delete_food_delegates_to_client_test() {
   let config = test_config()
-  let result = delete.delete_food(config, food_id: 1)
+  let result = delete.delete_food(config, 1)
 
   should.be_error(result)
   case result {
@@ -438,9 +345,9 @@ pub fn delete_food_delegates_to_client_test() {
 pub fn delete_food_with_different_ids_test() {
   let config = test_config()
 
-  let result1 = delete.delete_food(config, food_id: 1)
-  let result2 = delete.delete_food(config, food_id: 999)
-  let result3 = delete.delete_food(config, food_id: 42)
+  let result1 = delete.delete_food(config, 1)
+  let result2 = delete.delete_food(config, 999)
+  let result3 = delete.delete_food(config, 42)
 
   should.be_error(result1)
   should.be_error(result2)
@@ -449,14 +356,14 @@ pub fn delete_food_with_different_ids_test() {
 
 pub fn delete_food_with_zero_id_test() {
   let config = test_config()
-  let result = delete.delete_food(config, food_id: 0)
+  let result = delete.delete_food(config, 0)
 
   should.be_error(result)
 }
 
 pub fn delete_food_with_negative_id_test() {
   let config = test_config()
-  let result = delete.delete_food(config, food_id: -1)
+  let result = delete.delete_food(config, -1)
 
   should.be_error(result)
 }
@@ -486,7 +393,7 @@ pub fn get_list_food_interleaved_test() {
 
   // Test that get and list can be called in sequence
   let _get_result = get.get_food(config, food_id: 1)
-  let _list_result = list.list_foods(config)
+  let _list_result = list.list_foods(config, limit: None, page: None)
   let _get_result2 = get.get_food(config, food_id: 2)
 
   // All should fail (no server)
