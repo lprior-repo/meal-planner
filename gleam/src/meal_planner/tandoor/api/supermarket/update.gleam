@@ -1,10 +1,8 @@
 /// Supermarket Update API
 ///
 /// This module provides functions to update existing supermarkets in Tandoor.
-import gleam/int
 import gleam/json
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/supermarket/supermarket_decoder
 import meal_planner/tandoor/encoders/supermarket/supermarket_encoder
@@ -37,14 +35,17 @@ pub fn update_supermarket(
   id id: Int,
   supermarket_data supermarket_data: SupermarketCreateRequest,
 ) -> Result(Supermarket, TandoorError) {
-  let path = "/api/supermarket/" <> int.to_string(id) <> "/"
-
   // Encode supermarket data to JSON
   let body =
     supermarket_encoder.encode_supermarket_create(supermarket_data)
     |> json.to_string
 
-  // Execute PATCH and parse single response
-  use resp <- result.try(crud_helpers.execute_patch(config, path, body))
-  crud_helpers.parse_json_single(resp, supermarket_decoder.decoder())
+  // Use generic_crud to update supermarket
+  generic_crud.update(
+    config,
+    "/api/supermarket/",
+    id,
+    body,
+    supermarket_decoder.decoder(),
+  )
 }

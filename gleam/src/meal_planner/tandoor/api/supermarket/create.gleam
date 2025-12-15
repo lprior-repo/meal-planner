@@ -2,8 +2,7 @@
 ///
 /// This module provides functions to create new supermarkets in Tandoor.
 import gleam/json
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/supermarket/supermarket_decoder
 import meal_planner/tandoor/encoders/supermarket/supermarket_create_encoder
@@ -39,11 +38,11 @@ pub fn create_supermarket(
     supermarket_create_encoder.encode_supermarket_create(request)
     |> json.to_string
 
-  // Execute POST and parse single response
-  use resp <- result.try(crud_helpers.execute_post(
+  // Use generic_crud to create supermarket
+  generic_crud.create(
     config,
     "/api/supermarket/",
     body,
-  ))
-  crud_helpers.parse_json_single(resp, supermarket_decoder.decoder())
+    supermarket_decoder.decoder(),
+  )
 }
