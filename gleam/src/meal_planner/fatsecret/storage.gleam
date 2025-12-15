@@ -233,3 +233,48 @@ fn crypto_error_to_string(error: crypto.CryptoError) -> String {
 pub fn encryption_configured() -> Bool {
   crypto.is_configured()
 }
+
+/// Verify if stored token exists and is valid (not expired)
+/// Returns verification status with details
+pub type TokenValidity {
+  TokenValid
+  TokenNotFound
+  TokenOld(days_since_connected: Int)
+}
+
+/// Check if the stored OAuth token is valid
+/// Verifies:
+/// 1. Token exists in database
+/// 2. Token is not too old (connected within reasonable timeframe)
+pub fn verify_token_validity(
+  conn: pog.Connection,
+) -> Result(TokenValidity, StorageError) {
+  let sql =
+    "
+    SELECT 
+      EXTRACT(EPOCH FROM (NOW() - connected_at))::INT / 86400 as days_since_connected
+    FROM fatsecret_oauth_token 
+    WHERE id = 1
+  "
+
+  let decoder = decode.at([0], decode.int)
+
+  case
+    pog.query(sql)
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Ok(pog.Returned(_, [days_since_connected])) -> {
+      // Token exists, check age
+      // FatSecret OAuth tokens don't expire, but we check if connected within
+      // reasonable timeframe (e.g., less than 365 days)
+      case days_since_connected {
+        days if days < 365 -> Ok(TokenValid)
+        days -> Ok(TokenOld(days_since_connected: days))
+      }
+    }
+    Ok(pog.Returned(_, [])) -> Ok(TokenNotFound)
+    Ok(_) -> Ok(TokenNotFound)
+    Error(e) -> Error(DatabaseError(pog_error_to_string(e)))
+  }
+}
