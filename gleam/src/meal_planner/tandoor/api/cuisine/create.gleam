@@ -2,8 +2,7 @@
 ///
 /// This module provides functions to create new cuisines in the Tandoor API.
 import gleam/json
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/cuisine/cuisine_decoder
 import meal_planner/tandoor/encoders/cuisine/cuisine_encoder
@@ -35,11 +34,14 @@ pub fn create_cuisine(
   config: ClientConfig,
   cuisine_data: CuisineCreateRequest,
 ) -> Result(Cuisine, TandoorError) {
-  let path = "/api/cuisine/"
   let body =
     cuisine_encoder.encode_cuisine_create_request(cuisine_data)
     |> json.to_string
 
-  use resp <- result.try(crud_helpers.execute_post(config, path, body))
-  crud_helpers.parse_json_single(resp, cuisine_decoder.cuisine_decoder())
+  generic_crud.create(
+    config,
+    "/api/cuisine/",
+    body,
+    cuisine_decoder.cuisine_decoder(),
+  )
 }

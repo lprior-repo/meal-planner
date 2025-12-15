@@ -3,8 +3,7 @@
 /// This module provides functions to list cuisines from the Tandoor API.
 import gleam/int
 import gleam/option.{type Option, None, Some}
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/cuisine/cuisine_decoder
 import meal_planner/tandoor/types/cuisine/cuisine.{type Cuisine}
@@ -53,10 +52,10 @@ pub fn list_cuisines_by_parent(
     Some(id) -> [#("parent", int.to_string(id))]
     None -> [#("parent", "null")]
   }
-  use resp <- result.try(crud_helpers.execute_get(
+  generic_crud.list(
     config,
     "/api/cuisine/",
     query_params,
-  ))
-  crud_helpers.parse_json_list(resp, cuisine_decoder.cuisine_decoder())
+    cuisine_decoder.cuisine_decoder(),
+  )
 }
