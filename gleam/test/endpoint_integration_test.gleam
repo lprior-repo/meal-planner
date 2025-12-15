@@ -38,7 +38,7 @@ pub fn main() {
 const base_url = "http://localhost:8080"
 
 /// Date for Dec 15, 2025 (today)
-const date_int_dec_15_2025 = 20_558
+const date_int_dec_15_2025 = 20_437
 
 /// Example food entry ID from FatSecret API
 const example_entry_id = "21967322831"
@@ -75,12 +75,12 @@ fn log_response(status: Int, body_preview: String) -> Nil {
 // SECTION 1: FatSecret Diary Day Entries (GET /api/fatsecret/diary/day/:date_int)
 // ============================================================================
 
-/// Test 1: GET /api/fatsecret/diary/day/20558 (2025-12-15)
+/// Test 1: GET /api/fatsecret/diary/day/20437 (2025-12-15)
 /// Expected: Returns food entries for today with proper nutrition data
 pub fn test_get_day_entries_dec_15_2025_test() {
   io.println("")
   io.println("═══════════════════════════════════════════════════════════════")
-  io.println("TEST 1: GET /api/fatsecret/diary/day/20558 (2025-12-15)")
+  io.println("TEST 1: GET /api/fatsecret/diary/day/20437 (2025-12-15)")
   io.println("═══════════════════════════════════════════════════════════════")
 
   // Test date conversion first
@@ -127,11 +127,11 @@ pub fn test_get_day_entries_dec_15_2025_test() {
 // SECTION 2: FatSecret Month Summary (GET /api/fatsecret/diary/month/:date_int)
 // ============================================================================
 
-/// Test 2: GET /api/fatsecret/diary/month/20558 (December 2025)
+/// Test 2: GET /api/fatsecret/diary/month/20437 (December 2025)
 /// Expected: Returns month summary with daily breakdown
 pub fn test_get_month_summary_test() {
   io.println("═══════════════════════════════════════════════════════════════")
-  io.println("TEST 2: GET /api/fatsecret/diary/month/20558 (Dec 2025)")
+  io.println("TEST 2: GET /api/fatsecret/diary/month/20437 (Dec 2025)")
   io.println("═══════════════════════════════════════════════════════════════")
 
   io.println("")
@@ -220,7 +220,7 @@ pub fn test_create_entry_from_food_test() {
       #("serving_id", json.string("12345")),
       #("number_of_units", json.float(1.5)),
       #("meal", json.string("lunch")),
-      #("date", json.string("2025-12-15")),
+      #("date_int", json.int(date_int_dec_15_2025)),
     ])
 
   io.println("")
@@ -262,7 +262,7 @@ pub fn test_create_entry_custom_test() {
       #("serving_description", json.string("Large bowl")),
       #("number_of_units", json.float(1.0)),
       #("meal", json.string("lunch")),
-      #("date", json.string("2025-12-15")),
+      #("date_int", json.int(date_int_dec_15_2025)),
       #("calories", json.float(350.0)),
       #("carbohydrate", json.float(40.0)),
       #("protein", json.float(15.0)),
