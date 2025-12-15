@@ -1,10 +1,8 @@
 /// Cuisine Update API
 ///
 /// This module provides functions to update existing cuisines in the Tandoor API.
-import gleam/int
 import gleam/json
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/cuisine/cuisine_decoder
 import meal_planner/tandoor/encoders/cuisine/cuisine_encoder
@@ -38,11 +36,15 @@ pub fn update_cuisine(
   cuisine_id cuisine_id: Int,
   data update_data: CuisineUpdateRequest,
 ) -> Result(Cuisine, TandoorError) {
-  let path = "/api/cuisine/" <> int.to_string(cuisine_id) <> "/"
   let body =
     cuisine_encoder.encode_cuisine_update_request(update_data)
     |> json.to_string
 
-  use resp <- result.try(crud_helpers.execute_patch(config, path, body))
-  crud_helpers.parse_json_single(resp, cuisine_decoder.cuisine_decoder())
+  generic_crud.update(
+    config,
+    "/api/cuisine/",
+    cuisine_id,
+    body,
+    cuisine_decoder.cuisine_decoder(),
+  )
 }
