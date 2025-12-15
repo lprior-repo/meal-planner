@@ -1,6 +1,6 @@
 /// FatSecret Recipes API JSON decoders
 import gleam/dynamic/decode
-import gleam/option.{None}
+import gleam/option.{None, Some}
 import meal_planner/fatsecret/recipes/types
 
 /// Decode recipe ingredient from JSON
@@ -285,11 +285,10 @@ pub fn recipe_search_response_decoder() -> decode.Decoder(
   use total_results <- decode.field("total_results", decode.int)
   use page_number <- decode.field("page_number", decode.int)
 
-  // Flatten the nested Option
+  // recipes is Option(List) - unwrap it
   let recipes_list = case recipes {
+    Some(list) -> list
     None -> []
-    Some(None) -> []
-    Some(Some(list)) -> list
   }
 
   decode.success(types.RecipeSearchResponse(

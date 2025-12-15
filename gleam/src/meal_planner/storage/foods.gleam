@@ -2,7 +2,6 @@
 /// Handles searching, retrieving, and managing food data
 import gleam/dynamic/decode
 import gleam/list
-import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/id
 import meal_planner/storage/profile.{

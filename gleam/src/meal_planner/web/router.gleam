@@ -89,21 +89,28 @@ pub fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // FatSecret Favorites API (3-legged OAuth, requires user auth)
     // =========================================================================
     // Favorite Foods
-    ["api", "fatsecret", "favorites", "foods"] ->
+    // IMPORTANT: Specific routes must come BEFORE catch-all patterns
+    ["api", "fatsecret", "favorites", "foods", "most-eaten"] ->
       case req.method {
-        http.Get -> favorites_handlers.get_favorite_foods(req, ctx.db)
+        http.Get -> favorites_handlers.get_most_eaten(req, ctx.db)
         _ -> wisp.method_not_allowed([http.Get])
       }
-    ["api", "fatsecret", "favorites", "foods", "most-eaten"] ->
-      favorites_handlers.get_most_eaten(req, ctx.db)
     ["api", "fatsecret", "favorites", "foods", "recently-eaten"] ->
-      favorites_handlers.get_recently_eaten(req, ctx.db)
+      case req.method {
+        http.Get -> favorites_handlers.get_recently_eaten(req, ctx.db)
+        _ -> wisp.method_not_allowed([http.Get])
+      }
     ["api", "fatsecret", "favorites", "foods", food_id] ->
       case req.method {
         http.Post -> favorites_handlers.add_favorite_food(req, ctx.db, food_id)
         http.Delete ->
           favorites_handlers.delete_favorite_food(req, ctx.db, food_id)
         _ -> wisp.method_not_allowed([http.Post, http.Delete])
+      }
+    ["api", "fatsecret", "favorites", "foods"] ->
+      case req.method {
+        http.Get -> favorites_handlers.get_favorite_foods(req, ctx.db)
+        _ -> wisp.method_not_allowed([http.Get])
       }
 
     // Favorite Recipes

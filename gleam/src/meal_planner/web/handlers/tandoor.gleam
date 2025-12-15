@@ -16,8 +16,8 @@ import gleam/result
 
 import meal_planner/env
 import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, AuthenticationError, NotFoundError,
-  error_to_string, login, session_config,
+  type ClientConfig, AuthenticationError, NotFoundError, error_to_string, login,
+  session_config,
 }
 import meal_planner/tandoor/api/recipe/get as recipe_get
 import meal_planner/tandoor/api/recipe/list as recipe_list
@@ -28,12 +28,8 @@ import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types.{type TandoorRecipe}
 import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
-import meal_planner/tandoor/types/mealplan/meal_type.{
-  type MealType as ComplexMealType,
-}
 import meal_planner/tandoor/types/mealplan/mealplan.{
-  type MealPlanCreate, type MealType as SimpleMealType, Breakfast, Dinner, Lunch,
-  Other, Snack,
+  type MealPlanCreate, Breakfast, Dinner, Lunch, Other, Snack,
 }
 import wisp
 
