@@ -148,3 +148,45 @@ pub fn get_weight_month_summary(
     errors.ParseError("Failed to parse weight month summary")
   })
 }
+
+// ============================================================================
+// Weight Get by Date (3-legged)
+// ============================================================================
+
+/// Get weight measurement for a specific date (weight.get method)
+///
+/// Retrieves the weight measurement for a specific date.
+///
+/// Parameters:
+/// - config: FatSecret API configuration
+/// - token: User's OAuth access token
+/// - date_int: Date as days since Unix epoch
+///
+/// Returns:
+/// - Ok(WeightEntry) with the weight data
+/// - Error(FatSecretError) on API failure
+pub fn get_weight_by_date(
+  config: FatSecretConfig,
+  token: AccessToken,
+  date_int: Int,
+) -> Result(types.WeightEntry, FatSecretError) {
+  let params =
+    dict.new()
+    |> dict.insert("date", int.to_string(date_int))
+
+  use body <- result.try(http.make_authenticated_request(
+    config,
+    token,
+    "weight.get",
+    params,
+  ))
+
+  // Parse response
+  json.parse(
+    body,
+    decode.at(["weight"], decoders.weight_entry_decoder()),
+  )
+  |> result.map_error(fn(_) {
+    errors.ParseError("Failed to parse weight entry")
+  })
+}
