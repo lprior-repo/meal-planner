@@ -1,9 +1,7 @@
 /// Ingredient Delete API
 ///
 /// This module provides functions to delete ingredient items from the Tandoor API.
-import gleam/int
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 
 /// Delete an ingredient item from Tandoor API
@@ -24,8 +22,5 @@ pub fn delete_ingredient(
   config: ClientConfig,
   ingredient_id: Int,
 ) -> Result(Nil, TandoorError) {
-  let path = "/api/ingredient/" <> int.to_string(ingredient_id) <> "/"
-
-  use _resp <- result.try(crud_helpers.execute_delete(config, path))
-  Ok(Nil)
+  generic_crud.delete(config, "/api/ingredient/", ingredient_id)
 }

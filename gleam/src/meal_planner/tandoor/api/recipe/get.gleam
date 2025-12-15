@@ -2,9 +2,7 @@
 ///
 /// This module provides functions to get a single recipe by ID from the
 /// Tandoor API.
-import gleam/int
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/recipe/recipe_decoder
 import meal_planner/tandoor/types.{type TandoorRecipe}
@@ -27,11 +25,11 @@ pub fn get_recipe(
   config: ClientConfig,
   recipe_id recipe_id: Int,
 ) -> Result(TandoorRecipe, TandoorError) {
-  let path = "/api/recipe/" <> int.to_string(recipe_id) <> "/"
-
-  // Execute GET request using CRUD helper
-  use resp <- result.try(crud_helpers.execute_get(config, path, []))
-
-  // Parse JSON response using generic helper and standard recipe decoder
-  crud_helpers.parse_json_single(resp, recipe_decoder.recipe_decoder())
+  // Get recipe using generic CRUD function
+  generic_crud.get(
+    config,
+    "/api/recipe/",
+    recipe_id,
+    recipe_decoder.recipe_decoder(),
+  )
 }
