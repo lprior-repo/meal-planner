@@ -9,9 +9,9 @@ import gleam/option
 /// Expected JSON structure:
 /// ```json
 /// {
-///   "export_type": "json_recipe",
+///   "export_type": "zip",
 ///   "msg": "Exported 10 recipes",
-///   "keyword": 42
+///   "cache_duration": 3600
 /// }
 /// ```
 pub fn export_log_create_request_decoder() -> decode.Decoder(
@@ -23,10 +23,10 @@ pub fn export_log_create_request_decoder() -> decode.Decoder(
     option.None,
     decode.optional(decode.string),
   )
-  use keyword <- decode.optional_field(
-    "keyword",
+  use cache_duration <- decode.optional_field(
+    "cache_duration",
     option.None,
     decode.optional(decode.int),
   )
-  decode.success(#(export_type, msg, keyword))
+  decode.success(#(export_type, msg, cache_duration))
 }
