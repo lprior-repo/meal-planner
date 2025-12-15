@@ -58,6 +58,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import meal_planner/tandoor/api/crud_helpers
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/core/http.{type PaginatedResponse}
 
 // ============================================================================
 // Path Builders
@@ -150,6 +151,38 @@ pub fn list(
   let path = build_path(base_path, None)
   use resp <- result.try(crud_helpers.execute_get(config, path, query_params))
   crud_helpers.parse_json_list(resp, decoder)
+}
+
+/// List resources with pagination support
+///
+/// # Arguments
+/// * `config` - Client configuration with authentication
+/// * `base_path` - Base API path like "/api/unit/"
+/// * `query_params` - Optional query parameters as key-value pairs (e.g., page, page_size)
+/// * `decoder` - Decoder for response type
+///
+/// # Returns
+/// Result with paginated response containing results, count, and pagination links
+///
+/// # Example
+/// ```gleam
+/// use paginated <- result.try(list_paginated(
+///   config,
+///   "/api/unit/",
+///   [#("page_size", "25"), #("page", "1")],
+///   unit_decoder(),
+/// ))
+/// Ok(paginated)
+/// ```
+pub fn list_paginated(
+  config: ClientConfig,
+  base_path: String,
+  query_params: List(#(String, String)),
+  decoder: decode.Decoder(a),
+) -> Result(PaginatedResponse(a), TandoorError) {
+  let path = build_path(base_path, None)
+  use resp <- result.try(crud_helpers.execute_get(config, path, query_params))
+  crud_helpers.parse_json_paginated(resp, decoder)
 }
 
 /// Create a new resource
