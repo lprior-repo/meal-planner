@@ -1,9 +1,10 @@
 //// HTTP client helper for integration tests
 
+import gleam/http
+import gleam/http/request
+import gleam/http/response
 import gleam/httpc
 import gleam/result
-
-const base_url = "http://localhost:8080"
 
 pub type HttpError {
   ServerNotRunning
@@ -12,18 +13,55 @@ pub type HttpError {
 }
 
 pub fn get(path: String) -> Result(#(Int, String), HttpError) {
-  let url = base_url <> path
-  Ok(#(200, ""))
+  request.new()
+  |> request.set_method(http.Get)
+  |> request.set_host("localhost")
+  |> request.set_port(8080)
+  |> request.set_path(path)
+  |> httpc.send
+  |> result.map(fn(resp: response.Response(String)) {
+    #(resp.status, resp.body)
+  })
+  |> result.map_error(fn(_) { ServerNotRunning })
 }
 
-pub fn post(path: String, _body: String) -> Result(#(Int, String), HttpError) {
-  Ok(#(201, ""))
+pub fn post(path: String, body: String) -> Result(#(Int, String), HttpError) {
+  request.new()
+  |> request.set_method(http.Post)
+  |> request.set_host("localhost")
+  |> request.set_port(8080)
+  |> request.set_path(path)
+  |> request.set_body(body)
+  |> httpc.send
+  |> result.map(fn(resp: response.Response(String)) {
+    #(resp.status, resp.body)
+  })
+  |> result.map_error(fn(_) { ServerNotRunning })
 }
 
-pub fn patch(path: String, _body: String) -> Result(#(Int, String), HttpError) {
-  Ok(#(200, ""))
+pub fn patch(path: String, body: String) -> Result(#(Int, String), HttpError) {
+  request.new()
+  |> request.set_method(http.Patch)
+  |> request.set_host("localhost")
+  |> request.set_port(8080)
+  |> request.set_path(path)
+  |> request.set_body(body)
+  |> httpc.send
+  |> result.map(fn(resp: response.Response(String)) {
+    #(resp.status, resp.body)
+  })
+  |> result.map_error(fn(_) { ServerNotRunning })
 }
 
 pub fn delete(path: String) -> Result(#(Int, String), HttpError) {
-  Ok(#(204, ""))
+  request.new()
+  |> request.set_method(http.Delete)
+  |> request.set_host("localhost")
+  |> request.set_port(8080)
+  |> request.set_path(path)
+  |> httpc.send
+  |> result.map(fn(resp: response.Response(String)) {
+    #(resp.status, resp.body)
+  })
+  |> result.map_error(fn(_) { ServerNotRunning })
 }
