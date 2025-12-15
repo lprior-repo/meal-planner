@@ -82,6 +82,8 @@ pub fn get_favorite_foods(req: Request, conn: pog.Connection) -> Response {
       json.object([#("foods", json.array(foods_json, fn(x) { x }))])
       |> json.to_string
       |> wisp.json_response(200)
+    }
+
     Error(e) -> error_response(e)
   }
 }
@@ -113,6 +115,8 @@ pub fn get_most_eaten(req: Request, conn: pog.Connection) -> Response {
       json.object([#("foods", json.array(foods_json, fn(x) { x }))])
       |> json.to_string
       |> wisp.json_response(200)
+    }
+
     Error(e) -> error_response(e)
   }
 }
@@ -144,6 +148,8 @@ pub fn get_recently_eaten(req: Request, conn: pog.Connection) -> Response {
       json.object([#("foods", json.array(foods_json, fn(x) { x }))])
       |> json.to_string
       |> wisp.json_response(200)
+    }
+
     Error(e) -> error_response(e)
   }
 }
@@ -209,6 +215,8 @@ pub fn get_favorite_recipes(req: Request, conn: pog.Connection) -> Response {
       json.object([#("recipes", json.array(recipes_json, fn(x) { x }))])
       |> json.to_string
       |> wisp.json_response(200)
+    }
+
     Error(e) -> error_response(e)
   }
 }

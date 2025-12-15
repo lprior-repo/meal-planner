@@ -67,6 +67,7 @@ pub fn handle_search_recipes(req: wisp.Request) -> wisp.Response {
               <> service.error_to_string(service.ApiError(e)),
           )
       }
+    }
   }
 }
 
