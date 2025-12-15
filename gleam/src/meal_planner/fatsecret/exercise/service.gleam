@@ -251,6 +251,33 @@ pub fn save_exercise_template(
   }
 }
 
+/// Delete an exercise entry
+///
+/// Automatically loads FatSecret configuration from environment.
+/// Requires user's OAuth access token for authentication.
+///
+/// ## Example
+/// ```gleam
+/// case delete_exercise_entry(access_token, entry_id) {
+///   Ok(_) -> io.println("Deleted")
+///   Error(e) -> io.println(error_to_string(e))
+/// }
+/// ```
+pub fn delete_exercise_entry(
+  access_token: client.AccessToken,
+  entry_id: ExerciseEntryId,
+) -> Result(Nil, ServiceError) {
+  case env.load_fatsecret_config() {
+    None -> Error(NotConfigured)
+    Some(config) -> {
+      case client.delete_exercise_entry(config, access_token, entry_id) {
+        Ok(_) -> Ok(Nil)
+        Error(e) -> Error(ApiError(e))
+      }
+    }
+  }
+}
+
 // ============================================================================
 // Error Handling
 // ============================================================================
