@@ -59,6 +59,9 @@ birl = ">= 1.8.0 and < 2.0.0"
 # Testing framework
 gleeunit = ">= 1.9.0 and < 2.0.0"
 
+# Snapshot testing for complex data structures
+birdie = ">= 1.0.0 and < 2.0.0"
+
 # Property-based testing
 qcheck = ">= 1.0.0 and < 2.0.0"
 qcheck_gleeunit_utils = ">= 1.0.0 and < 2.0.0"
