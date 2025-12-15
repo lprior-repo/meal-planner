@@ -1,18 +1,37 @@
 /// Tandoor Recipe Manager web handlers
 ///
-/// This module provides basic endpoints for checking Tandoor connection.
-/// Full CRUD operations are available via the Tandoor API functions
-/// in meal_planner/tandoor/api/* modules.
+/// This module provides endpoints for Tandoor Recipe Manager integration,
+/// including:
+/// - Status checking
+/// - Units listing
+/// - Keywords listing
+/// - Supermarkets CRUD operations
+/// - Supermarket Categories CRUD operations
 
+import gleam/dynamic
+import gleam/http
+import gleam/int
 import gleam/json
 import gleam/option
+import gleam/result
 
 import meal_planner/env
 import meal_planner/tandoor/client
 import meal_planner/tandoor/api/unit/list as unit_list
 import meal_planner/tandoor/api/keyword/keyword_api
+import meal_planner/tandoor/api/supermarket/category as supermarket_category
+import meal_planner/tandoor/api/supermarket/create as supermarket_create
+import meal_planner/tandoor/api/supermarket/delete as supermarket_delete
+import meal_planner/tandoor/api/supermarket/get as supermarket_get
+import meal_planner/tandoor/api/supermarket/list as supermarket_list
+import meal_planner/tandoor/api/supermarket/update as supermarket_update
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/web/handlers/shopping_list
+import meal_planner/tandoor/types/supermarket/supermarket_category_create.{
+  type SupermarketCategoryCreateRequest,
+}
+import meal_planner/tandoor/types/supermarket/supermarket_create.{
+  type SupermarketCreateRequest,
+}
 
 import wisp
 
@@ -50,7 +69,6 @@ fn get_authenticated_client() -> Result(client.ClientConfig, wisp.Response) {
 /// Main router for Tandoor API requests
 pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
   let path = wisp.path_segments(req)
-  let method = req.method
 
   case path {
     // Status endpoint
@@ -127,32 +145,402 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
       }
     }
 
-    // Shopping List Entries
-    ["api", "tandoor", "shopping-list-entries"] -> {
-      case method {
-        wisp.Get -> shopping_list.handle_list(req)
-        wisp.Post -> shopping_list.handle_create(req)
-        _ -> wisp.method_not_allowed([wisp.Get, wisp.Post])
-      }
-    }
+    // Supermarkets (GET list, POST create)
+    ["api", "tandoor", "supermarkets"] ->
+      handle_supermarkets_collection(req)
 
-    // Shopping List Entry by ID
-    ["api", "tandoor", "shopping-list-entries", id_str] -> {
-      case method {
-        wisp.Get -> shopping_list.handle_get(req, id_str)
-        wisp.Delete -> shopping_list.handle_delete(req, id_str)
-        _ -> wisp.method_not_allowed([wisp.Get, wisp.Delete])
-      }
-    }
+    // Supermarket by ID (GET, PATCH, DELETE)
+    ["api", "tandoor", "supermarkets", supermarket_id] ->
+      handle_supermarket_by_id(req, supermarket_id)
 
-    // Add Recipe to Shopping List
-    ["api", "tandoor", "shopping-list-recipe"] -> {
-      case method {
-        wisp.Post -> shopping_list.handle_add_recipe(req)
-        _ -> wisp.method_not_allowed([wisp.Post])
-      }
-    }
+    // Supermarket Categories (GET list, POST create)
+    ["api", "tandoor", "supermarket-categories"] ->
+      handle_categories_collection(req)
+
+    // Supermarket Category by ID (GET, PATCH, DELETE)
+    ["api", "tandoor", "supermarket-categories", category_id] ->
+      handle_category_by_id(req, category_id)
 
     _ -> wisp.not_found()
   }
+}
+
+// =============================================================================
+// Supermarket Collection Handler
+// =============================================================================
+
+fn handle_supermarkets_collection(req: wisp.Request) -> wisp.Response {
+  case req.method {
+    http.Get -> handle_list_supermarkets(req)
+    http.Post -> handle_create_supermarket(req)
+    _ -> wisp.method_not_allowed([http.Get, http.Post])
+  }
+}
+
+fn handle_list_supermarkets(req: wisp.Request) -> wisp.Response {
+  case get_authenticated_client() {
+    Ok(config) -> {
+      case supermarket_list.list_supermarkets(
+        config,
+        limit: option.None,
+        page: option.None,
+      ) {
+        Ok(response) -> {
+          let results_json =
+            json.array(response.results, fn(supermarket) {
+              json.object([
+                #("id", json.int(supermarket.id)),
+                #("name", json.string(supermarket.name)),
+                #(
+                  "description",
+                  helpers.encode_optional_string(supermarket.description),
+                ),
+              ])
+            })
+
+          json.object([
+            #("count", json.int(response.count)),
+            #("next", helpers.encode_optional_string(response.next)),
+            #("previous", helpers.encode_optional_string(response.previous)),
+            #("results", results_json),
+          ])
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+fn handle_create_supermarket(req: wisp.Request) -> wisp.Response {
+  use body <- wisp.require_json(req)
+
+  case parse_supermarket_create_request(body) {
+    Ok(request) -> {
+      case get_authenticated_client() {
+        Ok(config) -> {
+          case supermarket_create.create_supermarket(config, request) {
+            Ok(supermarket) -> {
+              json.object([
+                #("id", json.int(supermarket.id)),
+                #("name", json.string(supermarket.name)),
+                #(
+                  "description",
+                  helpers.encode_optional_string(supermarket.description),
+                ),
+              ])
+              |> json.to_string
+              |> wisp.json_response(201)
+            }
+            Error(_) -> helpers.error_response(500, "Failed to create supermarket")
+          }
+        }
+        Error(resp) -> resp
+      }
+    }
+    Error(msg) -> helpers.error_response(400, msg)
+  }
+}
+
+// =============================================================================
+// Supermarket Item Handler
+// =============================================================================
+
+fn handle_supermarket_by_id(
+  req: wisp.Request,
+  supermarket_id: String,
+) -> wisp.Response {
+  case int.parse(supermarket_id) {
+    Ok(id) -> {
+      case req.method {
+        http.Get -> handle_get_supermarket(req, id)
+        http.Patch -> handle_update_supermarket(req, id)
+        http.Delete -> handle_delete_supermarket(req, id)
+        _ -> wisp.method_not_allowed([http.Get, http.Patch, http.Delete])
+      }
+    }
+    Error(_) -> helpers.error_response(400, "Invalid supermarket ID")
+  }
+}
+
+fn handle_get_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
+  case get_authenticated_client() {
+    Ok(config) -> {
+      case supermarket_get.get_supermarket(config, id: id) {
+        Ok(supermarket) -> {
+          json.object([
+            #("id", json.int(supermarket.id)),
+            #("name", json.string(supermarket.name)),
+            #(
+              "description",
+              helpers.encode_optional_string(supermarket.description),
+            ),
+          ])
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+fn handle_update_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
+  use body <- wisp.require_json(req)
+
+  case parse_supermarket_create_request(body) {
+    Ok(request) -> {
+      case get_authenticated_client() {
+        Ok(config) -> {
+          case supermarket_update.update_supermarket(
+            config,
+            id: id,
+            supermarket_data: request,
+          ) {
+            Ok(supermarket) -> {
+              json.object([
+                #("id", json.int(supermarket.id)),
+                #("name", json.string(supermarket.name)),
+                #(
+                  "description",
+                  helpers.encode_optional_string(supermarket.description),
+                ),
+              ])
+              |> json.to_string
+              |> wisp.json_response(200)
+            }
+            Error(_) -> helpers.error_response(500, "Failed to update supermarket")
+          }
+        }
+        Error(resp) -> resp
+      }
+    }
+    Error(msg) -> helpers.error_response(400, msg)
+  }
+}
+
+fn handle_delete_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
+  case get_authenticated_client() {
+    Ok(config) -> {
+      case supermarket_delete.delete_supermarket(config, id: id) {
+        Ok(Nil) -> wisp.response(204)
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+// =============================================================================
+// Supermarket Category Collection Handler
+// =============================================================================
+
+fn handle_categories_collection(req: wisp.Request) -> wisp.Response {
+  case req.method {
+    http.Get -> handle_list_categories(req)
+    http.Post -> handle_create_category(req)
+    _ -> wisp.method_not_allowed([http.Get, http.Post])
+  }
+}
+
+fn handle_list_categories(req: wisp.Request) -> wisp.Response {
+  case get_authenticated_client() {
+    Ok(config) -> {
+      case supermarket_category.list_categories(
+        config,
+        limit: option.None,
+        offset: option.None,
+      ) {
+        Ok(response) -> {
+          let results_json =
+            json.array(response.results, fn(category) {
+              json.object([
+                #("id", json.int(category.id)),
+                #("name", json.string(category.name)),
+                #(
+                  "description",
+                  helpers.encode_optional_string(category.description),
+                ),
+              ])
+            })
+
+          json.object([
+            #("count", json.int(response.count)),
+            #("next", helpers.encode_optional_string(response.next)),
+            #("previous", helpers.encode_optional_string(response.previous)),
+            #("results", results_json),
+          ])
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+fn handle_create_category(req: wisp.Request) -> wisp.Response {
+  use body <- wisp.require_json(req)
+
+  case parse_supermarket_category_create_request(body) {
+    Ok(request) -> {
+      case get_authenticated_client() {
+        Ok(config) -> {
+          case supermarket_category.create_category(config, request) {
+            Ok(category) -> {
+              json.object([
+                #("id", json.int(category.id)),
+                #("name", json.string(category.name)),
+                #(
+                  "description",
+                  helpers.encode_optional_string(category.description),
+                ),
+              ])
+              |> json.to_string
+              |> wisp.json_response(201)
+            }
+            Error(_) -> helpers.error_response(500, "Failed to create category")
+          }
+        }
+        Error(resp) -> resp
+      }
+    }
+    Error(msg) -> helpers.error_response(400, msg)
+  }
+}
+
+// =============================================================================
+// Supermarket Category Item Handler
+// =============================================================================
+
+fn handle_category_by_id(req: wisp.Request, category_id: String) -> wisp.Response {
+  case int.parse(category_id) {
+    Ok(id) -> {
+      case req.method {
+        http.Get -> handle_get_category(req, id)
+        http.Patch -> handle_update_category(req, id)
+        http.Delete -> handle_delete_category(req, id)
+        _ -> wisp.method_not_allowed([http.Get, http.Patch, http.Delete])
+      }
+    }
+    Error(_) -> helpers.error_response(400, "Invalid category ID")
+  }
+}
+
+fn handle_get_category(req: wisp.Request, id: Int) -> wisp.Response {
+  case get_authenticated_client() {
+    Ok(config) -> {
+      case supermarket_category.get_category(config, category_id: id) {
+        Ok(category) -> {
+          json.object([
+            #("id", json.int(category.id)),
+            #("name", json.string(category.name)),
+            #(
+              "description",
+              helpers.encode_optional_string(category.description),
+            ),
+          ])
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+fn handle_update_category(req: wisp.Request, id: Int) -> wisp.Response {
+  use body <- wisp.require_json(req)
+
+  case parse_supermarket_category_create_request(body) {
+    Ok(request) -> {
+      case get_authenticated_client() {
+        Ok(config) -> {
+          case supermarket_category.update_category(
+            config,
+            category_id: id,
+            category_data: request,
+          ) {
+            Ok(category) -> {
+              json.object([
+                #("id", json.int(category.id)),
+                #("name", json.string(category.name)),
+                #(
+                  "description",
+                  helpers.encode_optional_string(category.description),
+                ),
+              ])
+              |> json.to_string
+              |> wisp.json_response(200)
+            }
+            Error(_) -> helpers.error_response(500, "Failed to update category")
+          }
+        }
+        Error(resp) -> resp
+      }
+    }
+    Error(msg) -> helpers.error_response(400, msg)
+  }
+}
+
+fn handle_delete_category(req: wisp.Request, id: Int) -> wisp.Response {
+  case get_authenticated_client() {
+    Ok(config) -> {
+      case supermarket_category.delete_category(config, category_id: id) {
+        Ok(Nil) -> wisp.response(204)
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+// =============================================================================
+// JSON Decoders
+// =============================================================================
+
+fn parse_supermarket_create_request(
+  json_data: dynamic.Dynamic,
+) -> Result(SupermarketCreateRequest, String) {
+  let name_decoder = dynamic.field("name", of: dynamic.string)
+  let description_decoder =
+    dynamic.optional_field("description", of: dynamic.string)
+
+  use name <- result.try(
+    name_decoder(json_data)
+    |> result.map_error(fn(_) { "Missing or invalid 'name' field" }),
+  )
+  use description <- result.try(
+    description_decoder(json_data)
+    |> result.map_error(fn(_) { "Invalid 'description' field" }),
+  )
+
+  Ok(SupermarketCreateRequest(name: name, description: description))
+}
+
+fn parse_supermarket_category_create_request(
+  json_data: dynamic.Dynamic,
+) -> Result(SupermarketCategoryCreateRequest, String) {
+  let name_decoder = dynamic.field("name", of: dynamic.string)
+  let description_decoder =
+    dynamic.optional_field("description", of: dynamic.string)
+
+  use name <- result.try(
+    name_decoder(json_data)
+    |> result.map_error(fn(_) { "Missing or invalid 'name' field" }),
+  )
+  use description <- result.try(
+    description_decoder(json_data)
+    |> result.map_error(fn(_) { "Invalid 'description' field" }),
+  )
+
+  Ok(SupermarketCategoryCreateRequest(
+    name: name,
+    description: description,
+  ))
 }

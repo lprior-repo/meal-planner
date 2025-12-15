@@ -1660,6 +1660,167 @@ paths:
                 items:
                   $ref: '#/components/schemas/TandoorKeyword'
 
+  /api/tandoor/shopping-list-entries:
+    get:
+      tags: [Tandoor]
+      summary: List shopping list entries
+      description: Get paginated list of shopping list entries from Tandoor with optional filtering
+      operationId: getTandoorShoppingListEntries
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: checked
+          in: query
+          description: Filter by checked status (true/false)
+          required: false
+          schema:
+            type: boolean
+        - name: page_size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: Offset for pagination
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: Paginated shopping list entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorPaginatedShoppingListEntries'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+    post:
+      tags: [Tandoor]
+      summary: Create shopping list entry
+      description: Create a new shopping list entry in Tandoor
+      operationId: createTandoorShoppingListEntry
+      security:
+        - tandoorBasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TandoorShoppingListEntryCreate'
+      responses:
+        '201':
+          description: Shopping list entry created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorShoppingListEntry'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /api/tandoor/shopping-list-entries/{id}:
+    get:
+      tags: [Tandoor]
+      summary: Get shopping list entry
+      description: Get a single shopping list entry by ID from Tandoor
+      operationId: getTandoorShoppingListEntry
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Shopping list entry ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Shopping list entry details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorShoppingListEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+    delete:
+      tags: [Tandoor]
+      summary: Delete shopping list entry
+      description: Delete a shopping list entry from Tandoor
+      operationId: deleteTandoorShoppingListEntry
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Shopping list entry ID
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Shopping list entry deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /api/tandoor/shopping-list-recipe:
+    post:
+      tags: [Tandoor]
+      summary: Add recipe to shopping list
+      description: Add all ingredients from a recipe to the shopping list
+      operationId: addRecipeToShoppingList
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: recipe_id
+          in: query
+          required: true
+          description: Recipe ID to add
+          schema:
+            type: integer
+        - name: servings
+          in: query
+          required: false
+          description: Number of servings (default 1)
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+      responses:
+        '201':
+          description: Recipe ingredients added to shopping list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TandoorShoppingListEntry'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
   /api/tandoor/steps:
     get:
       tags: [Tandoor]
@@ -1810,6 +1971,254 @@ paths:
           $ref: '#/components/responses/NotFound'
         '502':
           $ref: '#/components/responses/BadGateway'
+
+  /api/tandoor/supermarkets:
+    get:
+      tags: [Tandoor]
+      summary: List supermarkets
+      description: Get paginated list of supermarkets from Tandoor
+      operationId: getTandoorSupermarkets
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Paginated supermarket list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorPaginatedSupermarkets'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: [Tandoor]
+      summary: Create supermarket
+      description: Create a new supermarket in Tandoor
+      operationId: postTandoorSupermarket
+      security:
+        - tandoorBasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TandoorSupermarketCreate'
+      responses:
+        '201':
+          description: Supermarket created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorSupermarket'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/tandoor/supermarkets/{id}:
+    get:
+      tags: [Tandoor]
+      summary: Get supermarket details
+      description: Get detailed information for a specific Tandoor supermarket
+      operationId: getTandoorSupermarket
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor supermarket ID
+      responses:
+        '200':
+          description: Supermarket details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorSupermarket'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Tandoor]
+      summary: Update supermarket
+      description: Update an existing supermarket in Tandoor
+      operationId: patchTandoorSupermarket
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor supermarket ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TandoorSupermarketCreate'
+      responses:
+        '200':
+          description: Supermarket updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorSupermarket'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Tandoor]
+      summary: Delete supermarket
+      description: Delete a supermarket from Tandoor
+      operationId: deleteTandoorSupermarket
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor supermarket ID
+      responses:
+        '204':
+          description: Supermarket deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/tandoor/supermarket-categories:
+    get:
+      tags: [Tandoor]
+      summary: List supermarket categories
+      description: Get paginated list of supermarket categories from Tandoor
+      operationId: getTandoorSupermarketCategories
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: Number of results per page
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          description: Offset for pagination
+      responses:
+        '200':
+          description: Paginated supermarket category list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorPaginatedSupermarketCategories'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: [Tandoor]
+      summary: Create supermarket category
+      description: Create a new supermarket category in Tandoor
+      operationId: postTandoorSupermarketCategory
+      security:
+        - tandoorBasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TandoorSupermarketCategoryCreate'
+      responses:
+        '201':
+          description: Supermarket category created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorSupermarketCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/tandoor/supermarket-categories/{id}:
+    get:
+      tags: [Tandoor]
+      summary: Get supermarket category details
+      description: Get detailed information for a specific supermarket category
+      operationId: getTandoorSupermarketCategory
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor supermarket category ID
+      responses:
+        '200':
+          description: Supermarket category details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorSupermarketCategory'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Tandoor]
+      summary: Update supermarket category
+      description: Update an existing supermarket category in Tandoor
+      operationId: patchTandoorSupermarketCategory
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor supermarket category ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TandoorSupermarketCategoryCreate'
+      responses:
+        '200':
+          description: Supermarket category updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorSupermarketCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Tandoor]
+      summary: Delete supermarket category
+      description: Delete a supermarket category from Tandoor
+      operationId: deleteTandoorSupermarketCategory
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor supermarket category ID
+      responses:
+        '204':
+          description: Supermarket category deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /api/tandoor/import-logs:
     get:
