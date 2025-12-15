@@ -200,3 +200,30 @@ pub type FoodSearchResponse {
     page_number: Int,
   )
 }
+
+// ============================================================================
+// Autocomplete Results
+// ============================================================================
+
+/// Single food autocomplete suggestion from foods.autocomplete.v2 API
+///
+/// This is a lightweight suggestion used for autocomplete dropdowns.
+/// Contains minimal information to show in a suggestion list.
+pub type FoodSuggestion {
+  FoodSuggestion(
+    /// Unique food identifier
+    food_id: FoodId,
+    /// Food name for display
+    food_name: String,
+  )
+}
+
+/// Response from foods.autocomplete.v2 API
+///
+/// Contains autocomplete suggestions for a partial food name.
+pub type FoodAutocompleteResponse {
+  FoodAutocompleteResponse(
+    /// List of matching food suggestions
+    suggestions: List(FoodSuggestion),
+  )
+}

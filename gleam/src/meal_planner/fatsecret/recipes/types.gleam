@@ -100,3 +100,26 @@ pub type RecipeSearchResponse {
 pub type RecipeTypesResponse {
   RecipeTypesResponse(recipe_types: List(RecipeType))
 }
+
+/// Single recipe autocomplete suggestion from recipes.autocomplete.v2 API
+///
+/// This is a lightweight suggestion used for autocomplete dropdowns.
+/// Contains minimal information to show in a suggestion list.
+pub type RecipeSuggestion {
+  RecipeSuggestion(
+    /// Unique recipe identifier
+    recipe_id: RecipeId,
+    /// Recipe name for display
+    recipe_name: String,
+  )
+}
+
+/// Response from recipes.autocomplete.v2 API
+///
+/// Contains autocomplete suggestions for a partial recipe name.
+pub type RecipeAutocompleteResponse {
+  RecipeAutocompleteResponse(
+    /// List of matching recipe suggestions
+    suggestions: List(RecipeSuggestion),
+  )
+}

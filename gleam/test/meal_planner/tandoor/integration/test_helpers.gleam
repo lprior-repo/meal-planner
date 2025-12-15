@@ -31,12 +31,11 @@ import meal_planner/tandoor/client.{
 /// # Returns
 /// Result with authenticated client config or error message
 pub fn get_test_config() -> Result(ClientConfig, String) {
-  use url <- result.try(
-    envoy.get("TANDOOR_URL")
-    |> result.replace_error(
-      "TANDOOR_URL not set - set it to your Tandoor instance URL (e.g., http://localhost:8000)",
-    ),
-  )
+  // Use infrastructure defaults if environment variables not set
+  let url = case envoy.get("TANDOOR_URL") {
+    Ok(url) -> url
+    Error(_) -> "http://localhost:8100"
+  }
 
   // Try session auth first (recommended)
   case envoy.get("TANDOOR_USERNAME"), envoy.get("TANDOOR_PASSWORD") {
@@ -53,14 +52,22 @@ pub fn get_test_config() -> Result(ClientConfig, String) {
       }
     }
     _, _ -> {
-      // Fall back to bearer token
-      use token <- result.try(
-        envoy.get("TANDOOR_TOKEN")
-        |> result.replace_error(
-          "Neither TANDOOR_USERNAME/PASSWORD nor TANDOOR_TOKEN set - provide credentials for testing",
-        ),
-      )
-      Ok(bearer_config(url, token))
+      // Try default credentials from infrastructure setup
+      case envoy.get("TANDOOR_TOKEN") {
+        Ok(token) -> Ok(bearer_config(url, token))
+        Error(_) -> {
+          // Use default admin/admin credentials
+          let config = session_config(url, "admin", "admin")
+          case ensure_authenticated(config) {
+            Ok(authenticated_config) -> Ok(authenticated_config)
+            Error(err) ->
+              Error(
+                "Failed to authenticate with default credentials (admin/admin): "
+                <> client.error_to_string(err),
+              )
+          }
+        }
+      }
     }
   }
 }
@@ -75,13 +82,10 @@ pub fn get_test_config_with_timeout(
 
 /// Check if integration tests should be skipped
 ///
-/// Returns True if TANDOOR_URL is not set (tests should be skipped).
-/// Returns False if TANDOOR_URL is set (tests can run).
+/// Always returns False - tests use infrastructure defaults when env vars not set
 pub fn skip_if_no_tandoor() -> Bool {
-  case envoy.get("TANDOOR_URL") {
-    Ok(_) -> False
-    Error(_) -> True
-  }
+  // Never skip - use infrastructure defaults (http://localhost:8100, admin/admin)
+  False
 }
 
 /// Get environment variable or default value
