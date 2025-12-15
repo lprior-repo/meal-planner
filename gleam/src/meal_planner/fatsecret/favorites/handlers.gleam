@@ -28,10 +28,20 @@ pub fn add_favorite_food(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Post)
+<<<<<<< Updated upstream
 
   case service.add_favorite_food(conn, food_id) {
     Ok(_) -> helpers.success_message("Food added to favorites")
     Error(e) -> error_response(e)
+=======
+  {
+      case service.add_favorite_food(conn, food_id) {
+        Ok(_) -> helpers.success_message("Food added to favorites")
+        Error(e) -> error_response(e)
+      }
+    }
+    _ -> wisp.method_not_allowed([Post])
+>>>>>>> Stashed changes
   }
 }
 
@@ -45,10 +55,20 @@ pub fn delete_favorite_food(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Delete)
+<<<<<<< Updated upstream
 
   case service.delete_favorite_food(conn, food_id) {
     Ok(_) -> helpers.success_message("Food removed from favorites")
     Error(e) -> error_response(e)
+=======
+  {
+      case service.delete_favorite_food(conn, food_id) {
+        Ok(_) -> helpers.success_message("Food removed from favorites")
+        Error(e) -> error_response(e)
+      }
+    }
+    _ -> wisp.method_not_allowed([Delete])
+>>>>>>> Stashed changes
   }
 }
 
@@ -58,11 +78,19 @@ pub fn get_favorite_foods(req: Request, conn: pog.Connection) -> Response {
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Get)
+<<<<<<< Updated upstream
+=======
+  {
+      let query_params = wisp.get_query(req)
+      let max_results = helpers.parse_int_param(query_params, "max_results")
+      let page_number = helpers.parse_int_param(query_params, "page")
+>>>>>>> Stashed changes
 
   let query_params = wisp.get_query(req)
   let max_results = helpers.parse_int_param(query_params, "max_results")
   let page_number = helpers.parse_int_param(query_params, "page")
 
+<<<<<<< Updated upstream
   case service.get_favorite_foods(conn, max_results, page_number) {
     Ok(response) -> {
       let foods_json =
@@ -84,6 +112,14 @@ pub fn get_favorite_foods(req: Request, conn: pog.Connection) -> Response {
 
     Error(e) -> error_response(e)
   }
+=======
+          json.object([#("foods", json.array(foods_json, fn(x) { x }))])
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(e) -> error_response(e)
+      }
+>>>>>>> Stashed changes
 }
 
 /// GET /api/fatsecret/favorites/foods/most-eaten - Get most eaten foods
@@ -92,10 +128,17 @@ pub fn get_most_eaten(req: Request, conn: pog.Connection) -> Response {
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Get)
+<<<<<<< Updated upstream
+=======
+  {
+      let query_params = wisp.get_query(req)
+      let meal_filter = parse_meal_filter(query_params)
+>>>>>>> Stashed changes
 
   let query_params = wisp.get_query(req)
   let meal_filter = parse_meal_filter(query_params)
 
+<<<<<<< Updated upstream
   case service.get_most_eaten(conn, meal_filter) {
     Ok(response) -> {
       let foods_json =
@@ -117,6 +160,14 @@ pub fn get_most_eaten(req: Request, conn: pog.Connection) -> Response {
 
     Error(e) -> error_response(e)
   }
+=======
+          json.object([#("foods", json.array(foods_json, fn(x) { x }))])
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(e) -> error_response(e)
+      }
+>>>>>>> Stashed changes
 }
 
 /// GET /api/fatsecret/favorites/foods/recently-eaten - Get recently eaten foods
@@ -125,6 +176,12 @@ pub fn get_recently_eaten(req: Request, conn: pog.Connection) -> Response {
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Get)
+<<<<<<< Updated upstream
+=======
+  {
+      let query_params = wisp.get_query(req)
+      let meal_filter = parse_meal_filter(query_params)
+>>>>>>> Stashed changes
 
   let query_params = wisp.get_query(req)
   let meal_filter = parse_meal_filter(query_params)
