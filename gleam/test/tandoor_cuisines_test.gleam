@@ -1,10 +1,10 @@
 /// Tests for Tandoor Cuisines JSON encoding
+import gleam/option
 import gleeunit
 import gleeunit/should
-import gleam/option
 
-import meal_planner/web/handlers/tandoor_cuisines
 import meal_planner/tandoor/types/cuisine/cuisine
+import meal_planner/web/handlers/tandoor_cuisines
 
 pub fn main() {
   gleeunit.main()
