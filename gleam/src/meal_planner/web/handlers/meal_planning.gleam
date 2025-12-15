@@ -100,6 +100,59 @@ pub fn handle_generate(
   }
 }
 
+/// Sync meals to FatSecret diary
+/// POST /api/meal-planning/sync
+///
+/// Request body:
+/// ```json
+/// {
+///   "selections": [
+///     {
+///       "date": "2025-12-16",
+///       "meal_type": "dinner",
+///       "recipe_id": 1,
+///       "servings": 2.0
+///     }
+///   ]
+/// }
+/// ```
+///
+/// Returns:
+/// - 200: Success with sync results
+/// - 400: Invalid request
+/// - 500: Server error
+pub fn handle_sync_meals(
+  req: wisp.Request,
+  tandoor_config: ClientConfig,
+) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, http.Post)
+  use body <- wisp.require_string_body(req)
+
+  case parse_meal_plan_request(body) {
+    Error(msg) -> responses.bad_request(msg)
+    Ok(request) -> {
+      // For now, just return a message that sync is ready
+      // Full implementation would need FatSecret OAuth token from request or database
+      let response_data =
+        json.object([
+          #("status", json.string("ready_for_sync")),
+          #("meals_to_sync", json.int(list.length(request.selections))),
+          #(
+            "message",
+            json.string(
+              "Meals ready to sync to FatSecret. FatSecret OAuth token needed.",
+            ),
+          ),
+        ])
+
+      responses.json_ok(response_data)
+    }
+  }
+}
+
 /// Get list of available MVP recipes
 /// GET /api/meal-planning/recipes
 ///

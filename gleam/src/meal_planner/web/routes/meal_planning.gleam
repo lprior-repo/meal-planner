@@ -3,6 +3,7 @@
 /// Handles all meal planning endpoints:
 /// - GET /api/meal-planning/recipes - List available MVP recipes
 /// - POST /api/meal-planning/generate - Generate a complete meal plan
+/// - POST /api/meal-planning/sync - Sync meals to FatSecret diary
 import gleam/option.{None, Some}
 import meal_planner/config
 import meal_planner/tandoor/client.{type ClientConfig, bearer_config}
@@ -28,6 +29,12 @@ pub fn route(
       // Convert Config.TandoorConfig to client.ClientConfig
       let tandoor_client_config = build_tandoor_client_config(ctx.config)
       Some(meal_planning.handle_generate(req, tandoor_client_config))
+    }
+
+    // POST /api/meal-planning/sync
+    ["api", "meal-planning", "sync"] -> {
+      let tandoor_client_config = build_tandoor_client_config(ctx.config)
+      Some(meal_planning.handle_sync_meals(req, tandoor_client_config))
     }
 
     // No match
