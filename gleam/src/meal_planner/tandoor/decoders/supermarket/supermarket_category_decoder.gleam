@@ -2,7 +2,7 @@
 ///
 /// Handles JSON decoding from Tandoor API responses
 import gleam/dynamic/decode
-import gleam/option.{type Option, None}
+import gleam/option.{None}
 import meal_planner/tandoor/types/supermarket/supermarket_category.{
   type SupermarketCategory, SupermarketCategory,
 }

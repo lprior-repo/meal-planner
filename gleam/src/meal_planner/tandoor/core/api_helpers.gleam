@@ -5,10 +5,8 @@
 /// - Sending requests that expect no response body (DELETE operations)
 ///
 /// These helpers eliminate repetitive error handling code across API modules.
-import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/http/request
-import gleam/http/response
 import gleam/httpc
 import gleam/json
 import gleam/list

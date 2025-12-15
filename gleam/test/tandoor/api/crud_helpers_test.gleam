@@ -3,13 +3,9 @@
 /// This module tests the generic CRUD helper functions used across the Tandoor SDK.
 /// Tests cover: HTTP execution, response parsing, error handling.
 import gleam/dynamic/decode
-import gleam/json
 import gleeunit/should
 import meal_planner/tandoor/api/crud_helpers
-import meal_planner/tandoor/client.{
-  type ApiResponse, ApiResponse, NetworkError, ParseError,
-}
-import meal_planner/tandoor/core/http.{type PaginatedResponse}
+import meal_planner/tandoor/client.{ApiResponse, ParseError}
 
 // ============================================================================
 // Mock Data Structures

@@ -18,7 +18,6 @@
 /// gleam test
 /// ```
 import envoy
-import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/tandoor/client.{
   type ClientConfig, type TandoorError, bearer_config, ensure_authenticated,

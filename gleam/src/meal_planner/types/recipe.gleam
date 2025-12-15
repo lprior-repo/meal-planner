@@ -7,13 +7,12 @@ import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/list
 import gleam/string
-import meal_planner/id.{type RecipeId, recipe_id_decoder, recipe_id_to_json}
+import meal_planner/id.{recipe_id_decoder, recipe_id_to_json}
 import meal_planner/types.{
-  type FodmapLevel, type Ingredient, type Macros, type Micronutrients,
-  type Recipe, High, Ingredient, Low, Medium, Recipe, macros_decoder,
-  macros_scale, macros_to_json, macros_to_string,
+  type FodmapLevel, type Ingredient, type Macros, type Recipe, High, Ingredient,
+  Low, Medium, Recipe, macros_decoder, macros_scale, macros_to_json,
+  macros_to_string,
 }
-import meal_planner/types/macros
 
 /// Check if recipe meets Vertical Diet requirements
 /// Must be explicitly marked compliant and have low FODMAP

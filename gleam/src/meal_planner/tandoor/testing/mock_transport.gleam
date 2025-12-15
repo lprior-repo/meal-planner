@@ -6,8 +6,7 @@ import gleam/http as gleam_http
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import meal_planner/tandoor/core/http.{
-  type HttpRequest, type HttpResponse, type HttpTransport, HttpRequest,
-  HttpResponse,
+  type HttpRequest, type HttpResponse, type HttpTransport,
 }
 
 /// Request matcher function type
@@ -145,9 +144,4 @@ pub fn verify_called_with_url(mock: MockTransport, url: String) -> Bool {
 /// Get the call history
 pub fn get_call_history(mock: MockTransport) -> List(HttpRequest) {
   mock.call_history
-}
-
-/// Record a request in call history (for internal use)
-fn record_call(mock: MockTransport, request: HttpRequest) -> MockTransport {
-  MockTransport(..mock, call_history: list.append(mock.call_history, [request]))
 }

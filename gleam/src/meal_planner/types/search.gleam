@@ -4,14 +4,12 @@
 
 import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
-import gleam/option.{type Option, None}
-import meal_planner/id.{type FdcId, fdc_id, fdc_id_decoder, fdc_id_to_json}
+import gleam/option.{type Option}
+import meal_planner/id.{fdc_id, fdc_id_decoder, fdc_id_to_json}
 import meal_planner/types.{
-  type CustomFood, type FoodSearchResponse, type FoodSearchResult,
-  CustomFoodResult, FoodSearchResponse, UsdaFoodResult, custom_food_decoder,
-  custom_food_to_json,
+  type FoodSearchResponse, type FoodSearchResult, CustomFoodResult,
+  FoodSearchResponse, UsdaFoodResult, custom_food_decoder, custom_food_to_json,
 }
-import meal_planner/types/custom_food
 
 /// Search error types
 pub type FoodSearchError {

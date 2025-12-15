@@ -10,7 +10,7 @@ import gleam/option.{type Option, None, Some}
 import meal_planner/id.{type UserId, user_id_decoder, user_id_to_json}
 import meal_planner/types/macros.{type Macros}
 import meal_planner/types/micronutrients.{
-  type MicronutrientGoals, type Micronutrients, decoder as micronutrients_decoder,
+  type MicronutrientGoals, decoder as micronutrients_decoder,
   to_json as micronutrients_to_json,
 }
 

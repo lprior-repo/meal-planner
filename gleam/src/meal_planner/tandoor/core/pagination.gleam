@@ -179,7 +179,7 @@ fn find_param(params: List(#(String, String)), key: String) -> Option(Int) {
   params
   |> list.find(fn(pair) { pair.0 == key })
   |> result.map(fn(pair) { pair.1 })
-  |> result.then(int.parse)
+  |> result.try(int.parse)
   |> option.from_result
 }
 

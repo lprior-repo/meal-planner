@@ -9,10 +9,9 @@
 /// - Clean, minimal JSON output matching Tandoor API expectations
 import gleam/json.{type Json}
 import gleam/option.{type Option, None, Some}
-import meal_planner/tandoor/core/ids.{type MealPlanId, type RecipeId}
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types/shopping/shopping_list_recipe.{
   type ShoppingListRecipeCreate, type ShoppingListRecipeUpdate,
-  ShoppingListRecipeCreate, ShoppingListRecipeUpdate,
 }
 
 // ============================================================================

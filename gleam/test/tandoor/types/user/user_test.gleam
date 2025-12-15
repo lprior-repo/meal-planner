@@ -1,6 +1,5 @@
 import gleam/dynamic/decode
 import gleam/json
-import gleam/option.{None}
 import gleeunit/should
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/user/user_decoder

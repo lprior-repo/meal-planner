@@ -5,7 +5,7 @@
 /// - Deleting log entries
 /// - Handling Tandoor recipe inputs
 import gleam/int
-import gleam/option.{type Option, None, Some}
+import gleam/option.{type Option}
 import gleam/result
 import meal_planner/config
 import meal_planner/id
