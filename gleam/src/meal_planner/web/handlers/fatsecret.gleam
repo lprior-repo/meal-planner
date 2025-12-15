@@ -36,6 +36,9 @@ pub fn handle_connect(
   conn: pog.Connection,
   base_url: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   case storage.encryption_configured() {
@@ -114,6 +117,9 @@ fn handle_connect_with_config(
 /// 2. Exchanges the authorized request token for an access token
 /// 3. Stores the access token for future API calls
 pub fn handle_callback(req: wisp.Request, conn: pog.Connection) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let query_params = wisp.get_query(req)
@@ -233,6 +239,9 @@ fn complete_oauth_flow(
 /// GET /fatsecret/status
 /// Returns HTML status page with management options
 pub fn handle_status(req: wisp.Request, conn: pog.Connection) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let status = fatsecret_service.check_status(conn)
@@ -330,6 +339,9 @@ pub fn handle_disconnect(
   req: wisp.Request,
   conn: pog.Connection,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Post)
 
   case storage.delete_access_token(conn) {
@@ -357,6 +369,9 @@ pub fn handle_get_profile(
   req: wisp.Request,
   conn: pog.Connection,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   case fatsecret_service.get_profile(conn) {
@@ -387,6 +402,9 @@ pub fn handle_get_entries(
   req: wisp.Request,
   conn: pog.Connection,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let query_params = wisp.get_query(req)
@@ -470,11 +488,17 @@ fn html_response(status: Int, body: String) -> wisp.Response {
 
 /// GET /api/fatsecret/recipes/types
 pub fn handle_get_recipe_types(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   recipe_handlers.handle_get_recipe_types(req)
 }
 
 /// GET /api/fatsecret/recipes/search
 pub fn handle_search_recipes(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   recipe_handlers.handle_search_recipes(req)
 }
 
@@ -483,10 +507,16 @@ pub fn handle_search_recipes_by_type(
   req: wisp.Request,
   type_id: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   recipe_handlers.handle_search_recipes_by_type(req, type_id)
 }
 
 /// GET /api/fatsecret/recipes/:id
 pub fn handle_get_recipe(req: wisp.Request, recipe_id: String) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   recipe_handlers.handle_get_recipe(req, recipe_id)
 }
