@@ -32,6 +32,9 @@ pub fn handle_create_saved_meal(
   req: wisp.Request,
   conn: pog.Connection,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Post)
   use body <- wisp.require_json(req)
 
@@ -72,6 +75,9 @@ pub fn handle_get_saved_meals(
   req: wisp.Request,
   conn: pog.Connection,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let query_params = wisp.get_query(req)
@@ -122,6 +128,9 @@ pub fn handle_edit_saved_meal(
   conn: pog.Connection,
   saved_meal_id: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Put)
   use body <- wisp.require_json(req)
 
@@ -176,6 +185,9 @@ pub fn handle_delete_saved_meal(
   conn: pog.Connection,
   saved_meal_id: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Delete)
 
   let id = types.saved_meal_id_from_string(saved_meal_id)
@@ -201,6 +213,9 @@ pub fn handle_get_saved_meal_items(
   conn: pog.Connection,
   saved_meal_id: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let id = types.saved_meal_id_from_string(saved_meal_id)
@@ -236,6 +251,9 @@ pub fn handle_add_saved_meal_item(
   conn: pog.Connection,
   saved_meal_id: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Post)
   use body <- wisp.require_json(req)
 
@@ -270,6 +288,9 @@ pub fn handle_edit_saved_meal_item(
   _saved_meal_id: String,
   saved_meal_item_id: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Put)
   use body <- wisp.require_json(req)
 
@@ -298,6 +319,9 @@ pub fn handle_delete_saved_meal_item(
   _saved_meal_id: String,
   saved_meal_item_id: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Delete)
 
   let item_id = types.saved_meal_item_id_from_string(saved_meal_item_id)

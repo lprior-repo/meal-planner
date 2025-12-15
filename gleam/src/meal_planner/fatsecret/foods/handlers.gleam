@@ -51,6 +51,9 @@ import wisp
 /// - 500: FatSecret not configured
 /// - 502: API error
 pub fn handle_get_food(req: wisp.Request, food_id: String) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let food_id_typed = types.food_id(food_id)
@@ -110,6 +113,9 @@ pub fn handle_get_food(req: wisp.Request, food_id: String) -> wisp.Response {
 /// }
 /// ```
 pub fn handle_search_foods(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let query_params = wisp.get_query(req)

@@ -62,8 +62,11 @@ import wisp.{type Request, type Response}
 /// - 401: Not connected or auth revoked
 /// - 500: Server error
 pub fn create_entry(req: Request, conn: pog.Connection) -> Response {
-  case req.method {
-    Post -> {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, Post)
+  {
       use body <- wisp.require_json(req)
 
       case parse_food_entry_input(body) {
@@ -140,8 +143,11 @@ pub fn get_entry(
   conn: pog.Connection,
   entry_id: String,
 ) -> Response {
-  case req.method {
-    Get -> {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, Get)
+  {
       let entry_id_obj = types.food_entry_id(entry_id)
       case service.get_food_entry(conn, entry_id_obj) {
         Ok(entry) ->
@@ -179,8 +185,11 @@ pub fn update_entry(
   conn: pog.Connection,
   entry_id: String,
 ) -> Response {
-  case req.method {
-    Patch -> {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, Patch)
+  {
       use body <- wisp.require_json(req)
 
       case parse_food_entry_update(body) {
@@ -233,8 +242,11 @@ pub fn delete_entry(
   conn: pog.Connection,
   entry_id: String,
 ) -> Response {
-  case req.method {
-    Delete -> {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, Delete)
+  {
       let entry_id_obj = types.food_entry_id(entry_id)
       case service.delete_food_entry(conn, entry_id_obj) {
         Ok(_) ->
@@ -285,8 +297,11 @@ pub fn get_day(
   conn: pog.Connection,
   date_int_str: String,
 ) -> Response {
-  case req.method {
-    Get -> {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, Get)
+  {
       case int.parse(date_int_str) {
         Error(_) ->
           wisp.json_response(
@@ -363,8 +378,11 @@ pub fn get_month(
   conn: pog.Connection,
   date_int_str: String,
 ) -> Response {
-  case req.method {
-    Get -> {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, Get)
+  {
       case int.parse(date_int_str) {
         Error(_) ->
           wisp.json_response(
@@ -408,10 +426,7 @@ pub fn get_month(
           }
         }
       }
-    }
-    _ -> wisp.method_not_allowed([Get])
   }
-}
 
 // ============================================================================
 // Routing Function

@@ -15,6 +15,9 @@ import wisp
 /// GET /api/fatsecret/recipes/:id
 /// Get recipe details by ID
 pub fn handle_get_recipe(req: wisp.Request, recipe_id: String) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   case service.get_recipe(types.recipe_id(recipe_id)) {
@@ -35,6 +38,9 @@ pub fn handle_get_recipe(req: wisp.Request, recipe_id: String) -> wisp.Response 
 /// GET /api/fatsecret/recipes/search?q=query&page=1&max_results=20
 /// Search for recipes
 pub fn handle_search_recipes(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let query_params = wisp.get_query(req)
@@ -68,6 +74,9 @@ pub fn handle_search_recipes(req: wisp.Request) -> wisp.Response {
 /// GET /api/fatsecret/recipes/types
 /// Get all recipe types/categories
 pub fn handle_get_recipe_types(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   case service.get_recipe_types() {
@@ -92,6 +101,9 @@ pub fn handle_search_recipes_by_type(
   req: wisp.Request,
   type_id: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let query_params = wisp.get_query(req)
