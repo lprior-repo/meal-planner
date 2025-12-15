@@ -105,11 +105,7 @@ fn multiple_entries_response_json() -> String {
 
 /// Empty entries response
 fn empty_entries_response_json() -> String {
-  "{"
-  <> "  \"food_entries\": {"
-  <> "    \"food_entry\": []"
-  <> "  }"
-  <> "}"
+  "{" <> "  \"food_entries\": {" <> "    \"food_entry\": []" <> "  }" <> "}"
 }
 
 // ============================================================================
@@ -257,7 +253,8 @@ pub fn decode_month_summary_test() {
     <> "  }"
     <> "}"
 
-  let assert Ok(decoded) = json.parse(json_str, decoders.month_summary_decoder())
+  let assert Ok(decoded) =
+    json.parse(json_str, decoders.month_summary_decoder())
 
   decoded.month |> should.equal(1)
   decoded.year |> should.equal(2024)
