@@ -14,38 +14,11 @@ pub type SetupResult {
 }
 
 /// Check if we're running integration tests
+/// Now always returns True to enable automatic infrastructure setup
 pub fn should_setup_infrastructure() -> Bool {
-  // Check if TANDOOR_TEST_URL is set, indicating integration test mode
-  case envoy.get("TANDOOR_TEST_URL") {
-    Ok(_) -> True
-    Error(_) -> {
-      // Also check standard TANDOOR_URL
-      case envoy.get("TANDOOR_URL") {
-        Ok(_) -> True
-        Error(_) -> {
-          // Check if we're explicitly in test mode
-          case envoy.get("GLEAM_TEST_MODE") {
-            Ok("integration") -> True
-            _ -> False
-          }
-        }
-      }
-    }
-  }
-}
-
-/// Main setup function - runs infrastructure setup script
-pub fn setup_test_infrastructure() -> SetupResult {
-  io.println("\n🚀 Setting up integration test infrastructure...\n")
-  io.println(
-    "⚠️  Note: Automatic infrastructure setup requires manual intervention",
-  )
-  io.println("Please run: ../scripts/setup-integration-tests.sh setup\n")
-
-  // For now, just assume infrastructure is already running
-  // Users must manually start docker-compose before running tests
-
-  SetupSuccess
+  // Always attempt to set up infrastructure
+  // The infrastructure_setup module will determine if it's actually needed
+  True
 }
 
 /// Cleanup infrastructure after tests
@@ -53,14 +26,15 @@ pub fn cleanup_test_infrastructure() -> Nil {
   case should_setup_infrastructure() {
     True -> {
       io.println("\n🧹 Note: Services are still running for debugging")
-      io.println("To stop: ../scripts/setup-integration-tests.sh stop")
-      io.println("To cleanup: ../scripts/setup-integration-tests.sh cleanup\n")
+      io.println("To stop: ./scripts/setup-integration-tests.sh stop")
+      io.println("To cleanup: ./scripts/setup-integration-tests.sh cleanup\n")
     }
     False -> Nil
   }
 }
 
 /// Global test initialization - called before any tests
+/// This function runs automatically and handles infrastructure setup
 pub fn initialize_tests() -> SetupResult {
   io.println("\n" <> string.repeat("=", 60))
   io.println("  Meal Planner Test Suite")
@@ -68,8 +42,8 @@ pub fn initialize_tests() -> SetupResult {
 
   case should_setup_infrastructure() {
     True -> {
-      io.println("🔧 Integration test mode detected")
-      io.println("🔍 Checking if infrastructure is running...")
+      io.println("🔧 Attempting automatic infrastructure setup...")
+      io.println("🔍 Checking Docker and services...\n")
 
       let config = infrastructure_setup.default_config()
 
@@ -82,7 +56,7 @@ pub fn initialize_tests() -> SetupResult {
         Error(msg) -> {
           io.println("⚠️  Infrastructure setup issue: " <> msg)
           io.println(
-            "Integration tests may fail if services are not available\n",
+            "Integration tests will attempt to run if services are available\n",
           )
           SetupSuccess  // Continue anyway - tests will fail gracefully if needed
         }

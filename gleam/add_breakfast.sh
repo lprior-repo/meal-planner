@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Add breakfast entries to FatSecret for Monday-Friday
-# Using actual FatSecret food IDs and serving IDs
+# Using custom entries with exact FatSecret nutrition data
 
 API_URL="http://localhost:8080/api/fatsecret/diary/entries"
 
@@ -15,17 +15,22 @@ for day in {15..19}; do
   echo "📅 $day_name, $date"
   echo "-------------------"
 
-  # Add Dannon Light & Fit (food_id: 78442, serving_id: 118069)
+  # Add Dannon Light & Fit - Lemon (from FatSecret food_id: 78442)
   echo -n "  Adding Dannon Light & Fit Yogurt... "
   result=$(curl -s -X POST "$API_URL" \
     -H "Content-Type: application/json" \
     -d "{
-      \"type\": \"from_food\",
+      \"type\": \"custom\",
       \"food_id\": \"78442\",
-      \"serving_id\": \"118069\",
+      \"food_entry_name\": \"Light & Fit Yogurt - Lemon\",
+      \"serving_description\": \"1 container\",
       \"number_of_units\": 1.0,
       \"meal\": \"breakfast\",
-      \"date\": \"$date\"
+      \"date\": \"$date\",
+      \"calories\": 80.0,
+      \"carbohydrate\": 8.0,
+      \"protein\": 12.0,
+      \"fat\": 0.0
     }")
 
   if echo "$result" | jq -e '.success' > /dev/null 2>&1; then
@@ -34,17 +39,22 @@ for day in {15..19}; do
     echo "✗ $(echo "$result" | jq -r '.message // .error')"
   fi
 
-  # Add Isopure Zero Carb (food_id: 45885109, serving_id: 39412696)
+  # Add Isopure Zero Carb Unflavored (from FatSecret food_id: 45885109)
   echo -n "  Adding Isopure Zero Carb Protein... "
   result=$(curl -s -X POST "$API_URL" \
     -H "Content-Type: application/json" \
     -d "{
-      \"type\": \"from_food\",
+      \"type\": \"custom\",
       \"food_id\": \"45885109\",
-      \"serving_id\": \"39412696\",
+      \"food_entry_name\": \"Isopure Zero Carb Unflavored\",
+      \"serving_description\": \"1 scoop\",
       \"number_of_units\": 1.0,
       \"meal\": \"breakfast\",
-      \"date\": \"$date\"
+      \"date\": \"$date\",
+      \"calories\": 100.0,
+      \"carbohydrate\": 0.0,
+      \"protein\": 25.0,
+      \"fat\": 0.0
     }")
 
   if echo "$result" | jq -e '.success' > /dev/null 2>&1; then
@@ -53,21 +63,26 @@ for day in {15..19}; do
     echo "✗ $(echo "$result" | jq -r '.message // .error')"
   fi
 
-  # Add Mixed Berries (food_id: 91621, serving_id: 131951)
+  # Add Mixed Berries (from FatSecret food_id: 91621)
   echo -n "  Adding Mixed Berries (1 cup)... "
   result=$(curl -s -X POST "$API_URL" \
     -H "Content-Type: application/json" \
     -d "{
-      \"type\": \"from_food\",
+      \"type\": \"custom\",
       \"food_id\": \"91621\",
-      \"serving_id\": \"131951\",
+      \"food_entry_name\": \"Best Yet Mixed Berries\",
+      \"serving_description\": \"1 cup\",
       \"number_of_units\": 1.0,
       \"meal\": \"breakfast\",
-      \"date\": \"$date\"
+      \"date\": \"$date\",
+      \"calories\": 70.0,
+      \"carbohydrate\": 16.0,
+      \"protein\": 1.0,
+      \"fat\": 0.0
     }")
 
   if echo "$result" | jq -e '.success' > /dev/null 2>&1; then
-    echo "✓ (70 cal, 16g carbs)"
+    echo "✓ (70 cal, 1g protein, 16g carbs)"
   else
     echo "✗ $(echo "$result" | jq -r '.message // .error')"
   fi
