@@ -1,7 +1,6 @@
 /// Tandoor Cuisines CRUD handlers
 ///
 /// This module provides all CRUD operations for Tandoor cuisines.
-
 import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/http
@@ -11,14 +10,14 @@ import gleam/option
 import gleam/result
 
 import meal_planner/env
-import meal_planner/tandoor/client
-import meal_planner/tandoor/api/cuisine/list as cuisine_list
-import meal_planner/tandoor/api/cuisine/get as cuisine_get
 import meal_planner/tandoor/api/cuisine/create as cuisine_create
-import meal_planner/tandoor/api/cuisine/update as cuisine_update
 import meal_planner/tandoor/api/cuisine/delete as cuisine_delete
-import meal_planner/tandoor/types/cuisine/cuisine
+import meal_planner/tandoor/api/cuisine/get as cuisine_get
+import meal_planner/tandoor/api/cuisine/list as cuisine_list
+import meal_planner/tandoor/api/cuisine/update as cuisine_update
+import meal_planner/tandoor/client
 import meal_planner/tandoor/handlers/helpers
+import meal_planner/tandoor/types/cuisine/cuisine
 
 import wisp
 
@@ -26,11 +25,12 @@ import wisp
 fn get_authenticated_client() -> Result(client.ClientConfig, wisp.Response) {
   case env.load_tandoor_config() {
     option.Some(tandoor_cfg) -> {
-      let config = client.session_config(
-        tandoor_cfg.base_url,
-        tandoor_cfg.username,
-        tandoor_cfg.password,
-      )
+      let config =
+        client.session_config(
+          tandoor_cfg.base_url,
+          tandoor_cfg.username,
+          tandoor_cfg.password,
+        )
       case client.login(config) {
         Ok(auth_config) -> Ok(auth_config)
         Error(e) -> {
@@ -66,7 +66,10 @@ pub fn handle_cuisines_collection(req: wisp.Request) -> wisp.Response {
 /// Handle GET /api/tandoor/cuisines/:id (get cuisine)
 /// PUT /api/tandoor/cuisines/:id (update cuisine)
 /// DELETE /api/tandoor/cuisines/:id (delete cuisine)
-pub fn handle_cuisine_by_id(req: wisp.Request, cuisine_id: String) -> wisp.Response {
+pub fn handle_cuisine_by_id(
+  req: wisp.Request,
+  cuisine_id: String,
+) -> wisp.Response {
   case int.parse(cuisine_id) {
     Ok(_id) -> {
       case req.method {
@@ -93,7 +96,10 @@ pub fn handle_list_cuisines(req: wisp.Request) -> wisp.Response {
             json.object([
               #("id", json.int(cuisine.id)),
               #("name", json.string(cuisine.name)),
-              #("description", helpers.encode_optional_string(cuisine.description)),
+              #(
+                "description",
+                helpers.encode_optional_string(cuisine.description),
+              ),
               #("icon", helpers.encode_optional_string(cuisine.icon)),
               #("parent", case cuisine.parent {
                 option.Some(parent_id) -> json.int(parent_id)
@@ -115,7 +121,10 @@ pub fn handle_list_cuisines(req: wisp.Request) -> wisp.Response {
 }
 
 /// Get a single cuisine by ID
-pub fn handle_get_cuisine(_req: wisp.Request, cuisine_id: String) -> wisp.Response {
+pub fn handle_get_cuisine(
+  _req: wisp.Request,
+  cuisine_id: String,
+) -> wisp.Response {
   case int.parse(cuisine_id) {
     Ok(id) -> {
       case get_authenticated_client() {
@@ -125,7 +134,10 @@ pub fn handle_get_cuisine(_req: wisp.Request, cuisine_id: String) -> wisp.Respon
               json.object([
                 #("id", json.int(cuisine.id)),
                 #("name", json.string(cuisine.name)),
-                #("description", helpers.encode_optional_string(cuisine.description)),
+                #(
+                  "description",
+                  helpers.encode_optional_string(cuisine.description),
+                ),
                 #("icon", helpers.encode_optional_string(cuisine.icon)),
                 #("parent", case cuisine.parent {
                   option.Some(parent_id) -> json.int(parent_id)
@@ -161,7 +173,10 @@ pub fn handle_create_cuisine(req: wisp.Request) -> wisp.Response {
               json.object([
                 #("id", json.int(cuisine.id)),
                 #("name", json.string(cuisine.name)),
-                #("description", helpers.encode_optional_string(cuisine.description)),
+                #(
+                  "description",
+                  helpers.encode_optional_string(cuisine.description),
+                ),
                 #("icon", helpers.encode_optional_string(cuisine.icon)),
                 #("parent", case cuisine.parent {
                   option.Some(parent_id) -> json.int(parent_id)
@@ -185,7 +200,10 @@ pub fn handle_create_cuisine(req: wisp.Request) -> wisp.Response {
 }
 
 /// Update an existing cuisine
-pub fn handle_update_cuisine(req: wisp.Request, cuisine_id: String) -> wisp.Response {
+pub fn handle_update_cuisine(
+  req: wisp.Request,
+  cuisine_id: String,
+) -> wisp.Response {
   use json_body <- wisp.require_json(req)
 
   case int.parse(cuisine_id) {
@@ -194,12 +212,21 @@ pub fn handle_update_cuisine(req: wisp.Request, cuisine_id: String) -> wisp.Resp
         Ok(cuisine_request) -> {
           case get_authenticated_client() {
             Ok(config) -> {
-              case cuisine_update.update_cuisine(config, cuisine_id: id, data: cuisine_request) {
+              case
+                cuisine_update.update_cuisine(
+                  config,
+                  cuisine_id: id,
+                  data: cuisine_request,
+                )
+              {
                 Ok(cuisine) -> {
                   json.object([
                     #("id", json.int(cuisine.id)),
                     #("name", json.string(cuisine.name)),
-                    #("description", helpers.encode_optional_string(cuisine.description)),
+                    #(
+                      "description",
+                      helpers.encode_optional_string(cuisine.description),
+                    ),
                     #("icon", helpers.encode_optional_string(cuisine.icon)),
                     #("parent", case cuisine.parent {
                       option.Some(parent_id) -> json.int(parent_id)
@@ -212,7 +239,8 @@ pub fn handle_update_cuisine(req: wisp.Request, cuisine_id: String) -> wisp.Resp
                   |> json.to_string
                   |> wisp.json_response(200)
                 }
-                Error(_) -> helpers.error_response(500, "Failed to update cuisine")
+                Error(_) ->
+                  helpers.error_response(500, "Failed to update cuisine")
               }
             }
             Error(resp) -> resp
@@ -226,7 +254,10 @@ pub fn handle_update_cuisine(req: wisp.Request, cuisine_id: String) -> wisp.Resp
 }
 
 /// Delete a cuisine
-pub fn handle_delete_cuisine(_req: wisp.Request, cuisine_id: String) -> wisp.Response {
+pub fn handle_delete_cuisine(
+  _req: wisp.Request,
+  cuisine_id: String,
+) -> wisp.Response {
   case int.parse(cuisine_id) {
     Ok(id) -> {
       case get_authenticated_client() {
@@ -264,9 +295,18 @@ fn cuisine_create_decoder() -> decode.Decoder(cuisine.CuisineCreateRequest) {
 /// Decoder for cuisine update request
 fn cuisine_update_decoder() -> decode.Decoder(cuisine.CuisineUpdateRequest) {
   use name <- decode.field("name", decode.optional(decode.string))
-  use description <- decode.field("description", decode.optional(decode.optional(decode.string)))
-  use icon <- decode.field("icon", decode.optional(decode.optional(decode.string)))
-  use parent <- decode.field("parent", decode.optional(decode.optional(decode.int)))
+  use description <- decode.field(
+    "description",
+    decode.optional(decode.optional(decode.string)),
+  )
+  use icon <- decode.field(
+    "icon",
+    decode.optional(decode.optional(decode.string)),
+  )
+  use parent <- decode.field(
+    "parent",
+    decode.optional(decode.optional(decode.int)),
+  )
   decode.success(cuisine.CuisineUpdateRequest(
     name: name,
     description: description,

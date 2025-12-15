@@ -7,7 +7,6 @@
 /// - Get single shopping list entry details
 /// - Update shopping list entry (mark as checked, etc.)
 /// - Delete shopping list entry
-
 import gleam/dynamic/decode
 import gleam/int
 import gleam/json
@@ -29,11 +28,12 @@ import wisp
 fn get_authenticated_client() -> Result(client.ClientConfig, wisp.Response) {
   case env.load_tandoor_config() {
     Some(tandoor_cfg) -> {
-      let config = client.session_config(
-        tandoor_cfg.base_url,
-        tandoor_cfg.username,
-        tandoor_cfg.password,
-      )
+      let config =
+        client.session_config(
+          tandoor_cfg.base_url,
+          tandoor_cfg.username,
+          tandoor_cfg.password,
+        )
       case client.login(config) {
         Ok(auth_config) -> Ok(auth_config)
         Error(e) -> {
@@ -100,17 +100,19 @@ fn entry_response_to_json(entry: ShoppingListEntryResponse) -> json.Json {
     #("order", json.int(entry.order)),
     #("checked", json.bool(entry.checked)),
     #("food", case entry.food {
-      Some(food) -> json.object([
-        #("id", json.int(food.id)),
-        #("name", json.string(food.name)),
-      ])
+      Some(food) ->
+        json.object([
+          #("id", json.int(food.id)),
+          #("name", json.string(food.name)),
+        ])
       None -> json.null()
     }),
     #("unit", case entry.unit {
-      Some(unit) -> json.object([
-        #("id", json.int(unit.id)),
-        #("name", json.string(unit.name)),
-      ])
+      Some(unit) ->
+        json.object([
+          #("id", json.int(unit.id)),
+          #("name", json.string(unit.name)),
+        ])
       None -> json.null()
     }),
     #("list_recipe", helpers.encode_optional_int(entry.list_recipe)),
@@ -125,15 +127,27 @@ fn entry_to_json(entry: ShoppingListEntry) -> json.Json {
     #("amount", json.float(entry.amount)),
     #("order", json.int(entry.order)),
     #("checked", json.bool(entry.checked)),
-    #("food", helpers.encode_optional_int(option.map(entry.food, ids.food_id_to_int))),
-    #("unit", helpers.encode_optional_int(option.map(entry.unit, ids.unit_id_to_int))),
+    #(
+      "food",
+      helpers.encode_optional_int(option.map(entry.food, ids.food_id_to_int)),
+    ),
+    #(
+      "unit",
+      helpers.encode_optional_int(option.map(entry.unit, ids.unit_id_to_int)),
+    ),
     #(
       "list_recipe",
-      helpers.encode_optional_int(option.map(entry.list_recipe, ids.shopping_list_id_to_int)),
+      helpers.encode_optional_int(option.map(
+        entry.list_recipe,
+        ids.shopping_list_id_to_int,
+      )),
     ),
     #(
       "ingredient",
-      helpers.encode_optional_int(option.map(entry.ingredient, ids.ingredient_id_to_int)),
+      helpers.encode_optional_int(option.map(
+        entry.ingredient,
+        ids.ingredient_id_to_int,
+      )),
     ),
     #("completed_at", helpers.encode_optional_string(entry.completed_at)),
     #("delay_until", helpers.encode_optional_string(entry.delay_until)),
@@ -149,19 +163,22 @@ pub fn handle_list(req: wisp.Request) -> wisp.Response {
 
       case shopping_list.list(config, checked, limit, offset) {
         Ok(response) -> {
-          let results_json = json.array(response.results, entry_response_to_json)
+          let results_json =
+            json.array(response.results, entry_response_to_json)
 
-          let response_json = helpers.paginated_response(
-            results_json,
-            response.count,
-            response.next,
-            response.previous,
-          )
+          let response_json =
+            helpers.paginated_response(
+              results_json,
+              response.count,
+              response.next,
+              response.previous,
+            )
 
           json.to_string(response_json)
           |> wisp.json_response(200)
         }
-        Error(_) -> helpers.error_response(502, "Failed to fetch shopping list entries")
+        Error(_) ->
+          helpers.error_response(502, "Failed to fetch shopping list entries")
       }
     }
     Error(resp) -> resp
@@ -186,18 +203,19 @@ pub fn handle_create(req: wisp.Request) -> wisp.Response {
 
       case decode.run(body, decode_create_request()) {
         Ok(#(food, unit, amount, order, checked)) -> {
-          let entry = ShoppingListEntryCreate(
-            list_recipe: None,
-            food: Some(ids.food_id_from_int(food)),
-            unit: Some(ids.unit_id_from_int(unit)),
-            amount: amount,
-            order: order,
-            checked: checked,
-            ingredient: None,
-            completed_at: None,
-            delay_until: None,
-            mealplan_id: None,
-          )
+          let entry =
+            ShoppingListEntryCreate(
+              list_recipe: None,
+              food: Some(ids.food_id_from_int(food)),
+              unit: Some(ids.unit_id_from_int(unit)),
+              amount: amount,
+              order: order,
+              checked: checked,
+              ingredient: None,
+              completed_at: None,
+              delay_until: None,
+              mealplan_id: None,
+            )
 
           case shopping_list.create(config, entry) {
             Ok(created) -> {
@@ -206,7 +224,10 @@ pub fn handle_create(req: wisp.Request) -> wisp.Response {
               |> wisp.json_response(201)
             }
             Error(_) ->
-              helpers.error_response(502, "Failed to create shopping list entry")
+              helpers.error_response(
+                502,
+                "Failed to create shopping list entry",
+              )
           }
         }
         Error(_) ->
@@ -236,7 +257,10 @@ pub fn handle_add_recipe(req: wisp.Request) -> wisp.Response {
               |> wisp.json_response(201)
             }
             Error(_) ->
-              helpers.error_response(502, "Failed to add recipe to shopping list")
+              helpers.error_response(
+                502,
+                "Failed to add recipe to shopping list",
+              )
           }
         }
         Error(resp) -> resp
@@ -282,7 +306,10 @@ pub fn handle_delete(_req: wisp.Request, id_str: String) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(204)
             Error(_) ->
-              helpers.error_response(502, "Failed to delete shopping list entry")
+              helpers.error_response(
+                502,
+                "Failed to delete shopping list entry",
+              )
           }
         }
         Error(_) ->

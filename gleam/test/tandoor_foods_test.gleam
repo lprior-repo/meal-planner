@@ -3,16 +3,15 @@
 /// This module tests the complete CRUD lifecycle for Tandoor Foods
 /// including list, get, create, update, and delete operations.
 /// Tests are designed to work with a running Tandoor instance.
-
-import gleeunit/should
 import gleam/io
-import gleam/option
 import gleam/list
-import meal_planner/tandoor/api/food/list as food_list
-import meal_planner/tandoor/api/food/get as food_get
+import gleam/option
+import gleeunit/should
 import meal_planner/tandoor/api/food/create as food_create
-import meal_planner/tandoor/api/food/update as food_update
 import meal_planner/tandoor/api/food/delete as food_delete
+import meal_planner/tandoor/api/food/get as food_get
+import meal_planner/tandoor/api/food/list as food_list
+import meal_planner/tandoor/api/food/update as food_update
 import meal_planner/tandoor/client
 import meal_planner/tandoor/types.{TandoorFoodCreateRequest}
 import test_setup
@@ -65,8 +64,7 @@ pub fn list_foods_with_pagination_test() {
   print_test_info("List foods with pagination")
   case get_test_client() {
     Ok(config) -> {
-      let result =
-        food_list.list_foods(config, option.Some(5), option.Some(1))
+      let result = food_list.list_foods(config, option.Some(5), option.Some(1))
       should.be_ok(result)
       Nil
     }
@@ -329,7 +327,8 @@ pub fn update_food_with_new_name_test() {
   case get_test_client() {
     Ok(config) -> {
       let food_data = TandoorFoodCreateRequest(name: "Updated Apple")
-      let result = food_update.update_food(config, food_id: 1, food_data: food_data)
+      let result =
+        food_update.update_food(config, food_id: 1, food_data: food_data)
       case result {
         Ok(_) | Error(_) -> Nil
       }
@@ -346,8 +345,10 @@ pub fn update_food_with_different_ids_test() {
   case get_test_client() {
     Ok(config) -> {
       let food_data = TandoorFoodCreateRequest(name: "Updated Food")
-      let _result1 = food_update.update_food(config, food_id: 1, food_data: food_data)
-      let _result2 = food_update.update_food(config, food_id: 2, food_data: food_data)
+      let _result1 =
+        food_update.update_food(config, food_id: 1, food_data: food_data)
+      let _result2 =
+        food_update.update_food(config, food_id: 2, food_data: food_data)
       Nil
     }
     Error(_) -> {
@@ -362,7 +363,8 @@ pub fn update_food_with_unicode_name_test() {
   case get_test_client() {
     Ok(config) -> {
       let food_data = TandoorFoodCreateRequest(name: "Crème Fraîche Updated")
-      let result = food_update.update_food(config, food_id: 5, food_data: food_data)
+      let result =
+        food_update.update_food(config, food_id: 5, food_data: food_data)
       case result {
         Ok(_) | Error(_) -> Nil
       }
@@ -378,8 +380,10 @@ pub fn update_food_with_special_characters_test() {
   print_test_info("Update food with special characters")
   case get_test_client() {
     Ok(config) -> {
-      let food_data = TandoorFoodCreateRequest(name: "Black Pepper (Ground) - Premium")
-      let result = food_update.update_food(config, food_id: 3, food_data: food_data)
+      let food_data =
+        TandoorFoodCreateRequest(name: "Black Pepper (Ground) - Premium")
+      let result =
+        food_update.update_food(config, food_id: 3, food_data: food_data)
       case result {
         Ok(_) | Error(_) -> Nil
       }
@@ -396,7 +400,8 @@ pub fn update_food_delegates_to_api_test() {
   case get_test_client() {
     Ok(config) -> {
       let food_data = TandoorFoodCreateRequest(name: "Delegation Update Test")
-      let result = food_update.update_food(config, food_id: 10, food_data: food_data)
+      let result =
+        food_update.update_food(config, food_id: 10, food_data: food_data)
       case result {
         Ok(_) | Error(_) -> Nil
       }
@@ -542,7 +547,12 @@ pub fn create_and_list_workflow_test() {
       case create_result {
         Ok(_created_food) -> {
           // Verify we can list foods
-          let list_result = food_list.list_foods(config, limit: option.Some(1), page: option.None)
+          let list_result =
+            food_list.list_foods(
+              config,
+              limit: option.Some(1),
+              page: option.None,
+            )
           should.be_ok(list_result)
           io.println("    ✓ Created food and verified list")
         }
