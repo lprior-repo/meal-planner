@@ -4,9 +4,7 @@
 /// Only writable fields are included - readonly fields (user, food_inherit_default,
 /// food_children_exist) are excluded from update requests.
 import gleam/json.{type Json}
-import gleam/list
 import gleam/option.{type Option, None, Some}
-import meal_planner/tandoor/core/ids
 
 /// Request to update user preferences
 ///

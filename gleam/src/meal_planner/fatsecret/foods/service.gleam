@@ -76,7 +76,7 @@ pub fn search_foods(
   case env.load_fatsecret_config() {
     None -> Error(NotConfigured)
     Some(config) -> {
-      case client.search_foods(config, query, Some(page), Some(max_results)) {
+      case client.search_foods(config, query, page, max_results) {
         Ok(response) -> Ok(response)
         Error(e) -> Error(ApiError(e))
       }

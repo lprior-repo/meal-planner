@@ -5,9 +5,22 @@
 ///
 /// The decoder handles all optional Float fields and the source string,
 /// making it resilient to partial nutrition data from various sources.
+import gleam/dynamic
 import gleam/dynamic/decode
+import gleam/int
 import meal_planner/tandoor/types/recipe/nutrition.{
   type NutritionInfo, NutritionInfo,
+}
+
+// ============================================================================
+// Helper Decoders
+// ============================================================================
+
+/// Decoder that accepts both int and float values, converting int to float
+fn decode_flexible_float() -> decode.Decoder(Float) {
+  decode.one_of(decode.float, or: [
+    decode.int |> decode.map(fn(n) { int.to_float(n) }),
+  ])
 }
 
 // ============================================================================
@@ -38,11 +51,11 @@ pub fn nutrition_info_decoder() -> decode.Decoder(NutritionInfo) {
   use id <- decode.field("id", decode.int)
   use carbohydrates <- decode.field(
     "carbohydrates",
-    decode.optional(decode.float),
+    decode.optional(decode_flexible_float()),
   )
-  use fats <- decode.field("fats", decode.optional(decode.float))
-  use proteins <- decode.field("proteins", decode.optional(decode.float))
-  use calories <- decode.field("calories", decode.optional(decode.float))
+  use fats <- decode.field("fats", decode.optional(decode_flexible_float()))
+  use proteins <- decode.field("proteins", decode.optional(decode_flexible_float()))
+  use calories <- decode.field("calories", decode.optional(decode_flexible_float()))
   use source <- decode.field("source", decode.optional(decode.string))
 
   decode.success(NutritionInfo(
@@ -53,4 +66,14 @@ pub fn nutrition_info_decoder() -> decode.Decoder(NutritionInfo) {
     calories: calories,
     source: source,
   ))
+}
+
+/// Decode a NutritionInfo from JSON - convenience wrapper
+///
+/// This function is a convenience wrapper around nutrition_info_decoder()
+/// for direct use with JSON data.
+pub fn decode_nutrition_info(
+  json: dynamic.Dynamic,
+) -> Result(NutritionInfo, List(decode.DecodeError)) {
+  decode.run(json, nutrition_info_decoder())
 }

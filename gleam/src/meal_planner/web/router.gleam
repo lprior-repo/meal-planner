@@ -208,7 +208,7 @@ pub fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
         // TODO: implement exercise handlers
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
-    ["api", "fatsecret", "exercise-entries", entry_id] ->
+    ["api", "fatsecret", "exercise-entries", _entry_id] ->
       case req.method {
         http.Put ->
           // PUT /api/fatsecret/exercise-entries/:entry_id - Update entry

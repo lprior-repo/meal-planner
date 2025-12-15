@@ -16,7 +16,6 @@ pub fn authentication_error_creates_variant_test() {
 
   case error {
     AuthenticationError -> True
-    _ -> False
   }
   |> should.be_true()
 }
@@ -27,7 +26,6 @@ pub fn authorization_error_creates_variant_test() {
 
   case error {
     AuthorizationError -> True
-    _ -> False
   }
   |> should.be_true()
 }
@@ -41,7 +39,6 @@ pub fn not_found_error_stores_message_test() {
       msg
       |> should.equal("Recipe with ID 123 not found")
     }
-    _ -> panic as "Expected NotFoundError variant"
   }
 }
 
@@ -54,7 +51,6 @@ pub fn bad_request_error_stores_message_test() {
       msg
       |> should.equal("Invalid recipe data: missing name field")
     }
-    _ -> panic as "Expected BadRequestError variant"
   }
 }
 
@@ -69,7 +65,6 @@ pub fn server_error_stores_code_and_message_test() {
       msg
       |> should.equal("Internal server error occurred")
     }
-    _ -> panic as "Expected ServerError variant"
   }
 }
 
@@ -83,7 +78,6 @@ pub fn server_error_handles_various_status_codes_test() {
       code
       |> should.equal(502)
     }
-    _ -> panic as "Expected ServerError variant"
   }
 
   case error_503 {
@@ -91,7 +85,6 @@ pub fn server_error_handles_various_status_codes_test() {
       code
       |> should.equal(503)
     }
-    _ -> panic as "Expected ServerError variant"
   }
 }
 
@@ -104,7 +97,6 @@ pub fn network_error_stores_message_test() {
       msg
       |> should.equal("Connection refused: could not reach server")
     }
-    _ -> panic as "Expected NetworkError variant"
   }
 }
 
@@ -114,7 +106,6 @@ pub fn timeout_error_creates_variant_test() {
 
   case error {
     TimeoutError -> True
-    _ -> False
   }
   |> should.be_true()
 }
@@ -128,7 +119,6 @@ pub fn parse_error_stores_message_test() {
       msg
       |> should.equal("Invalid JSON: unexpected token at line 5")
     }
-    _ -> panic as "Expected ParseError variant"
   }
 }
 
@@ -141,7 +131,6 @@ pub fn unknown_error_stores_message_test() {
       msg
       |> should.equal("Unexpected error occurred during API call")
     }
-    _ -> panic as "Expected UnknownError variant"
   }
 }
 
@@ -315,7 +304,6 @@ pub fn server_error_handles_zero_status_code_test() {
       msg
       |> should.equal("Unknown status")
     }
-    _ -> panic as "Expected ServerError variant"
   }
 
   error_to_string(error)

@@ -5,8 +5,7 @@ import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/tandoor/core/pagination.{
-  type PageParams, type PaginatedResponse, PageParams, PaginatedResponse,
-  paginated_decoder,
+  PageParams, PaginatedResponse, paginated_decoder,
 }
 
 pub fn main() {

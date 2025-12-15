@@ -30,7 +30,9 @@ pub fn decode_ingredient_full_test() {
         \"id\": 2,
         \"name\": \"gram\",
         \"plural_name\": \"grams\",
-        \"description\": \"Metric unit\"
+        \"description\": \"Metric unit\",
+        \"base_unit\": null,
+        \"open_data_slug\": null
       },
       \"amount\": 250.0,
       \"note\": \"diced\",
@@ -179,7 +181,9 @@ pub fn decode_ingredient_with_unit_only_test() {
         \"id\": 3,
         \"name\": \"cup\",
         \"plural_name\": \"cups\",
-        \"description\": \"US cup\"
+        \"description\": \"US cup\",
+        \"base_unit\": null,
+        \"open_data_slug\": null
       },
       \"amount\": 1.5,
       \"note\": null,

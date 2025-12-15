@@ -2,7 +2,6 @@
 ///
 /// This module provides builder functions for creating HTTP responses in tests.
 /// Builders support fluent API for easy response construction.
-import gleam/json
 import gleam/list
 import gleam/string
 import meal_planner/tandoor/core/http.{type HttpResponse, HttpResponse}

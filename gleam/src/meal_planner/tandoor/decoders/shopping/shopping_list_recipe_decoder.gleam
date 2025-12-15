@@ -15,7 +15,6 @@
 /// }
 /// ```
 import gleam/dynamic/decode
-import gleam/option
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types/shopping/shopping_list_recipe.{
   type ShoppingListRecipe, ShoppingListRecipe,

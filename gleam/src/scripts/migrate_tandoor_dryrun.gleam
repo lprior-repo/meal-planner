@@ -10,8 +10,6 @@
 /// Usage:
 ///   gleam run -m scripts/migrate_tandoor_dryrun   # Preview migration
 import envoy
-import gleam/dict
-import gleam/float
 import gleam/int
 import gleam/io
 import gleam/list

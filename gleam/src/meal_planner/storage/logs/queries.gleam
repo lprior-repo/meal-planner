@@ -6,7 +6,6 @@
 /// - Finding recently logged foods
 /// - Complex filtering and sorting operations
 import gleam/dynamic/decode
-import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import meal_planner/config
@@ -15,8 +14,8 @@ import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
 import meal_planner/storage/utils
 import meal_planner/types.{
-  type DailyLog, type FoodLogEntry, type Macros, Breakfast, DailyLog, Dinner,
-  FoodLogEntry, Lunch, Macros, Snack,
+  type DailyLog, type FoodLogEntry, Breakfast, DailyLog, Dinner, FoodLogEntry,
+  Lunch, Macros, Snack,
 }
 import meal_planner/utils/macros as macros_utils
 import meal_planner/utils/micronutrients as micro_utils

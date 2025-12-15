@@ -1,354 +1,352 @@
-# Claude Code - Agent Mail + Beads
+# Claude Code Configuration - SPARC Development Environment
 
-## 🚀 CRITICAL: Application Startup
+## 🚨 CRITICAL: CONCURRENT EXECUTION & FILE MANAGEMENT
 
-**BEFORE ANY WORK - ALWAYS USE THE AUTOMATED STARTUP:**
+**ABSOLUTE RULES**:
+1. ALL operations MUST be concurrent/parallel in a single message
+2. **NEVER save working files, text/mds and tests to the root folder**
+3. ALWAYS organize files in appropriate subdirectories
+4. **USE CLAUDE CODE'S TASK TOOL** for spawning agents concurrently, not just MCP
 
-```bash
-# ONE COMMAND TO RULE THEM ALL
-./run.sh start
+### ⚡ GOLDEN RULE: "1 MESSAGE = ALL RELATED OPERATIONS"
 
-# OR with go-task (preferred - install: sudo pacman -S go-task)
-task start
-```
+**MANDATORY PATTERNS:**
+- **TodoWrite**: ALWAYS batch ALL todos in ONE call (5-10+ todos minimum)
+- **Task tool (Claude Code)**: ALWAYS spawn ALL agents in ONE message with full instructions
+- **File operations**: ALWAYS batch ALL reads/writes/edits in ONE message
+- **Bash commands**: ALWAYS batch ALL terminal operations in ONE message
+- **Memory operations**: ALWAYS batch ALL memory store/retrieve in ONE message
 
-This automated startup process:
-1. ✅ Checks all dependencies (Gleam, PostgreSQL, Docker)
-2. ✅ Verifies PostgreSQL is running
-3. ✅ Creates databases (`meal_planner` for app, `tandoor` for Tandoor - separate DBs)
-4. ✅ Starts Tandoor container (port 8000)
-5. ✅ Builds and starts API server (port 8080)
-6. ✅ Verifies all services are healthy
+### 🎯 CRITICAL: Claude Code Task Tool for Agent Execution
 
-**Access Points:**
-- **API Server:** http://localhost:8080/health
-- **Tandoor UI:** http://localhost:8000
-
-**Other useful commands:**
-```bash
-./run.sh status    # Check what's running
-./run.sh stop      # Stop everything
-./run.sh restart   # Restart all services
-./run.sh logs      # View API logs
-
-# Or with go-task:
-task status
-task stop
-task restart
-task api:logs
-task tandoor:logs
-```
-
-**NEVER manually start services** - always use the automated startup!
-
-**Database Separation:**
-- `meal_planner` database = Gleam app data (2M+ USDA foods)
-- `tandoor` database = Tandoor recipes and users (completely separate)
-
-## 🔄 Automatic Session Start
-
-**After services are running, every session AUTOMATICALLY executes:**
-
+**Claude Code's Task tool is the PRIMARY way to spawn agents:**
 ```javascript
-// 1. Register with Agent Mail
-const session = await mcp__mcp_agent_mail__macro_start_session({
-  human_key: "/home/lewis/src/meal-planner",
-  program: "claude-code",
-  model: "claude-sonnet-4-5",
-  task_description: "Session work",
-  inbox_limit: 20
-});
-// Returns: { agent: { name: "BlueLake" }, inbox: [...] }
-
-// 2. Load Beads context
-bd ready --json          // Available work (no blockers)
-bv --robot-insights     // High-impact tasks
-```
-
-## 📋 Standard Work Flow
-
-### Starting New Work
-```javascript
-// 1. Check available work
-bd ready --json
-bv --robot-priority
-
-// 2. Select and claim task
-bd update bd-123 --status=in_progress
-
-// 3. Reserve files
-await mcp__mcp_agent_mail__file_reservation_paths({
-  project_key: "/home/lewis/src/meal-planner",
-  agent_name: session.agent.name,
-  paths: ["gleam/src/**/*.gleam"],
-  ttl_seconds: 3600,
-  exclusive: true,
-  reason: "bd-123"
-});
-
-// 4. Announce start
-await mcp__mcp_agent_mail__send_message({
-  project_key: "/home/lewis/src/meal-planner",
-  sender_name: session.agent.name,
-  to: ["coordinator"],
-  thread_id: "bd-123",
-  subject: "[bd-123] Starting work",
-  body_md: "Working on task..."
-});
-```
-
-### Completing Work
-```bash
-# 1. Close task
-bd close bd-123 --reason "Completed"
-
-# 2. Release files
-mcp__mcp_agent_mail__release_file_reservations(...)
-
-# 3. Final message
-send_message(..., thread_id: "bd-123", body: "Completed")
-
-# 4. Sync and push
-bd sync
-git add .
-git commit -m "[bd-123] Implementation"
-git push
-```
-
-## 🎯 Key Integrations
-
-### Agent Mail
-- **Registration**: Auto-register at session start
-- **Coordination**: Thread-based messaging with `thread_id=bd-###`
-- **File Safety**: Reserve files before editing with `reason=bd-###`
-- **Resources**: `resource://inbox/{Agent}?project=...`
-
-### Beads
-- **Task Selection**: `bd ready --json` for available work
-- **Graph Analysis**: `bv --robot-insights` for impact
-- **Status Updates**: `bd update bd-### --status=...`
-- **Dependencies**: `bd dep add bd-### bd-###`
-
-### Beads Viewer Robot Flags
-```bash
-bv --robot-help        # AI commands
-bv --robot-insights    # PageRank + critical path
-bv --robot-plan        # Parallel execution tracks
-bv --robot-priority    # Task recommendations
-bv --robot-diff        # Progress tracking
-```
-
-
-
-## 📦 Version Control & Archiving
-
-### Using Git History Instead of Archive Directories
-
-The ARCHIVE/ directory was removed in favor of using git's built-in history. All archived code remains fully accessible through git:
-
-```bash
-# View files that were in ARCHIVE/
-git log --all --full-history -- ARCHIVE/
-
-# Restore a specific archived file
-git show <commit>:ARCHIVE/path/to/file.gleam
-
-# View the full history of a specific file
-git log -p -- ARCHIVE/path/to/file.gleam
-
-# Search archived code
-git log --all -S "function_name" -- ARCHIVE/
-```
-
-**Benefits:**
-- No duplicate code cluttering the working directory
-- Full commit history and blame information preserved
-- Search and restore capabilities via git
-- Cleaner file structure
-
-## 🛠️ Development Rules
-
-### JavaScript Prohibition - CRITICAL RULE
-**NO JAVASCRIPT FILES ALLOWED IN THIS PROJECT**
-
-- ❌ **NEVER** create `.js` files
-- ❌ **NEVER** write custom JavaScript code
-- ✅ **ONLY EXCEPTION**: HTMX library (already included in base template)
-- ✅ **ALL** interactivity MUST use HTMX attributes:
-  - `hx-get` - GET request
-  - `hx-post` - POST request
-  - `hx-target` - Where to insert response
-  - `hx-swap` - How to swap content (innerHTML, outerHTML, etc)
-  - `hx-trigger` - What triggers the request (change, click, etc)
-  - `hx-push-url` - Update browser URL
-
-**HTMX Usage Examples:**
-```html
-<!-- Filter chips with server-side updates -->
-<button hx-get="/api/foods/search?filter=vegetable"
-        hx-target="#results"
-        hx-swap="innerHTML">
-  Vegetables
-</button>
-
-<!-- Dropdown with auto-submit -->
-<select hx-get="/api/foods/search"
-        hx-trigger="change"
-        hx-target="#results"
-        hx-push-url="true">
-  <option value="dairy">Dairy</option>
-</select>
-
-<!-- Form with dynamic updates -->
-<form hx-post="/api/logs"
-      hx-target="#log-list"
-      hx-swap="afterbegin">
-  <input name="food_id" />
-</form>
-```
-
-### File Organization
-- `/gleam/src` - Gleam source
-- `/gleam/test` - Tests
-- `/gleam/migrations_pg` - PostgreSQL migrations
-- **NEVER** save to root folder
-- **NEVER** create JavaScript files
-
-### Concurrent Execution
-```javascript
-// ✅ CORRECT: Batch all operations in single message
+// ✅ CORRECT: Use Claude Code's Task tool for parallel agent execution
 [Single Message]:
-  Task("agent1", "...", "coder")
-  Task("agent2", "...", "tester")
-  TodoWrite({ todos: [5-10 todos] })
-  Read("file1.gleam")
-  Read("file2.gleam")
-  Edit("file3.gleam", old, new)
-  Bash("gleam test && gleam build")
-
-// ❌ WRONG: Multiple messages
-Message 1: Task(...)
-Message 2: TodoWrite(...)
-Message 3: Read(...)
+  Task("Research agent", "Analyze requirements and patterns...", "researcher")
+  Task("Coder agent", "Implement core features...", "coder")
+  Task("Tester agent", "Create comprehensive tests...", "tester")
+  Task("Reviewer agent", "Review code quality...", "reviewer")
+  Task("Architect agent", "Design system architecture...", "system-architect")
 ```
 
-## 🚨 Session Close Protocol
+**MCP tools are ONLY for coordination setup:**
+- `mcp__claude-flow__swarm_init` - Initialize coordination topology
+- `mcp__claude-flow__agent_spawn` - Define agent types for coordination
+- `mcp__claude-flow__task_orchestrate` - Orchestrate high-level workflows
 
-**MANDATORY before saying "done":**
-```bash
-[ ] git status
-[ ] git add <files>
-[ ] bd sync
-[ ] git commit -m "[bd-###] Description"
-[ ] bd sync
-[ ] git push
-```
+### 📁 File Organization Rules
 
-## 🎯 Agent Coordination
+**NEVER save to root folder. Use these directories:**
+- `/src` - Source code files
+- `/tests` - Test files
+- `/docs` - Documentation and markdown files
+- `/config` - Configuration files
+- `/scripts` - Utility scripts
+- `/examples` - Example code
 
-### File Reservations
-- Reserve **before** editing
-- Use `reason="bd-###"` for traceability
-- Release when done or use `ttl_seconds` for auto-expiry
-- Check conflicts with other agents
+## Project Overview
 
-### Thread Communication
-- Use `thread_id="bd-###"` for all messages
-- Subject format: `[bd-###] Brief description`
-- Set `ack_required=true` for decisions
-- Reply to threads to maintain context
+This project uses SPARC (Specification, Pseudocode, Architecture, Refinement, Completion) methodology with Claude-Flow orchestration for systematic Test-Driven Development.
 
-### Inbox Checking
-```javascript
-// Check for new messages
-const messages = await mcp__mcp_agent_mail__fetch_inbox({
-  project_key: "/home/lewis/src/meal-planner",
-  agent_name: session.agent.name,
-  since_ts: "2025-12-03T00:00:00Z",
-  urgent_only: false
-});
+## SPARC Commands
 
-// Acknowledge important messages
-await mcp__mcp_agent_mail__acknowledge_message({
-  project_key: "/home/lewis/src/meal-planner",
-  agent_name: session.agent.name,
-  message_id: 123
-});
-```
+### Core Commands
+- `npx claude-flow sparc modes` - List available modes
+- `npx claude-flow sparc run <mode> "<task>"` - Execute specific mode
+- `npx claude-flow sparc tdd "<feature>"` - Run complete TDD workflow
+- `npx claude-flow sparc info <mode>` - Get mode details
 
+### Batchtools Commands
+- `npx claude-flow sparc batch <modes> "<task>"` - Parallel execution
+- `npx claude-flow sparc pipeline "<task>"` - Full pipeline processing
+- `npx claude-flow sparc concurrent <mode> "<tasks-file>"` - Multi-task processing
 
+### Build Commands
+- `npm run build` - Build project
+- `npm run test` - Run tests
+- `npm run lint` - Linting
+- `npm run typecheck` - Type checking
 
-## 🔧 MCP Server Setup
+## SPARC Workflow Phases
 
-**Agent Mail is configured globally** - no local setup required.
+1. **Specification** - Requirements analysis (`sparc run spec-pseudocode`)
+2. **Pseudocode** - Algorithm design (`sparc run spec-pseudocode`)
+3. **Architecture** - System design (`sparc run architect`)
+4. **Refinement** - TDD implementation (`sparc tdd`)
+5. **Completion** - Integration (`sparc run integration`)
 
-### Verify Connection
-```bash
-# Test Agent Mail connection
-mcp__mcp_agent_mail__health_check
-```
+## Code Style & Best Practices
 
-## 🔍 Common Workflows
+- **Modular Design**: Files under 500 lines
+- **Environment Safety**: Never hardcode secrets
+- **Test-First**: Write tests before implementation
+- **Clean Architecture**: Separate concerns
+- **Documentation**: Keep updated
 
-### Continue Existing Work
-```javascript
-// Resume work on bd-123
-const thread = await mcp__mcp_agent_mail__macro_prepare_thread({
-  project_key: "/home/lewis/src/meal-planner",
-  thread_id: "bd-123",
-  program: "claude-code",
-  model: "claude-sonnet-4-5",
-  llm_mode: true,
-  include_inbox_bodies: true
-});
-// Returns: thread summary, participants, action items
-```
+## 🚀 Available Agents (54 Total)
 
-### Coordinate with Other Agents
-```javascript
-// Request contact with another agent
-await mcp__mcp_agent_mail__macro_contact_handshake({
-  project_key: "/home/lewis/src/meal-planner",
-  requester: session.agent.name,
-  target: "OtherAgent",
-  reason: "Need to coordinate on bd-123",
-  auto_accept: false
-});
-```
+### Core Development
+`coder`, `reviewer`, `tester`, `planner`, `researcher`
 
-### Handle File Conflicts
-```javascript
-// Check who has file reserved
-const conflicts = await mcp__mcp_agent_mail__file_reservation_paths({
-  project_key: "/home/lewis/src/meal-planner",
-  agent_name: session.agent.name,
-  paths: ["gleam/src/meal_planner/web.gleam"],
-  exclusive: true,
-  reason: "bd-123"
-});
+### Swarm Coordination
+`hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`, `collective-intelligence-coordinator`, `swarm-memory-manager`
 
-if (conflicts.conflicts.length > 0) {
-  // Wait or coordinate with holder
-  console.log("File reserved by:", conflicts.conflicts[0].holders);
-}
-```
+### Consensus & Distributed
+`byzantine-coordinator`, `raft-manager`, `gossip-coordinator`, `consensus-builder`, `crdt-synchronizer`, `quorum-manager`, `security-manager`
 
-## 📈 System Limits & Safety
+### Performance & Optimization
+`perf-analyzer`, `performance-benchmarker`, `task-orchestrator`, `memory-coordinator`, `smart-agent`
 
-| Resource | Warning | Critical | Action |
-|----------|---------|----------|---------| 
-| DB Connections | 40 | 50 | Queue agents |
-| Disk Usage | 2.8GB | 3GB | Block new work |
-| File Descriptors | 80% | 95% | Alert & cleanup |
+### GitHub & Repository
+`github-modes`, `pr-manager`, `code-review-swarm`, `issue-tracker`, `release-manager`, `workflow-automation`, `project-board-sync`, `repo-architect`, `multi-repo-swarm`
 
-## 🐛 Troubleshooting
+### SPARC Methodology
+`sparc-coord`, `sparc-coder`, `specification`, `pseudocode`, `architecture`, `refinement`
 
-### Database Issues
+### Specialized Development
+`backend-dev`, `mobile-dev`, `ml-developer`, `cicd-engineer`, `api-docs`, `system-architect`, `code-analyzer`, `base-template-generator`
+
+### Testing & Validation
+`tdd-london-swarm`, `production-validator`
+
+### Migration & Planning
+`migration-planner`, `swarm-init`
+
+## 🎯 Claude Code vs MCP Tools
+
+### Claude Code Handles ALL EXECUTION:
+- **Task tool**: Spawn and run agents concurrently for actual work
+- File operations (Read, Write, Edit, MultiEdit, Glob, Grep)
+- Code generation and programming
+- Bash commands and system operations
+- Implementation work
+- Project navigation and analysis
+- TodoWrite and task management
+- Git operations
+- Package management
+- Testing and debugging
+
+### MCP Tools ONLY COORDINATE:
+- Swarm initialization (topology setup)
+- Agent type definitions (coordination patterns)
+- Task orchestration (high-level planning)
+- Memory management
+- Neural features
+- Performance tracking
+- GitHub integration
+
+**KEY**: MCP coordinates the strategy, Claude Code's Task tool executes with real agents.
+
+## 🚀 Quick Setup
 
 ```bash
-psql -d meal_planner -c "SELECT count(*) FROM pg_stat_activity WHERE datname='meal_planner';"
+# Add MCP servers (Claude Flow required, others optional)
+claude mcp add claude-flow npx claude-flow@alpha mcp start
+claude mcp add ruv-swarm npx ruv-swarm mcp start  # Optional: Enhanced coordination
+claude mcp add flow-nexus npx flow-nexus@latest mcp start  # Optional: Cloud features
 ```
+
+## MCP Tool Categories
+
+### Coordination
+`swarm_init`, `agent_spawn`, `task_orchestrate`
+
+### Monitoring
+`swarm_status`, `agent_list`, `agent_metrics`, `task_status`, `task_results`
+
+### Memory & Neural
+`memory_usage`, `neural_status`, `neural_train`, `neural_patterns`
+
+### GitHub Integration
+`github_swarm`, `repo_analyze`, `pr_enhance`, `issue_triage`, `code_review`
+
+### System
+`benchmark_run`, `features_detect`, `swarm_monitor`
+
+### Flow-Nexus MCP Tools (Optional Advanced Features)
+Flow-Nexus extends MCP capabilities with 70+ cloud-based orchestration tools:
+
+**Key MCP Tool Categories:**
+- **Swarm & Agents**: `swarm_init`, `swarm_scale`, `agent_spawn`, `task_orchestrate`
+- **Sandboxes**: `sandbox_create`, `sandbox_execute`, `sandbox_upload` (cloud execution)
+- **Templates**: `template_list`, `template_deploy` (pre-built project templates)
+- **Neural AI**: `neural_train`, `neural_patterns`, `seraphina_chat` (AI assistant)
+- **GitHub**: `github_repo_analyze`, `github_pr_manage` (repository management)
+- **Real-time**: `execution_stream_subscribe`, `realtime_subscribe` (live monitoring)
+- **Storage**: `storage_upload`, `storage_list` (cloud file management)
+
+**Authentication Required:**
+- Register: `mcp__flow-nexus__user_register` or `npx flow-nexus@latest register`
+- Login: `mcp__flow-nexus__user_login` or `npx flow-nexus@latest login`
+- Access 70+ specialized MCP tools for advanced orchestration
+
+## 🚀 Agent Execution Flow with Claude Code
+
+### The Correct Pattern:
+
+1. **Optional**: Use MCP tools to set up coordination topology
+2. **REQUIRED**: Use Claude Code's Task tool to spawn agents that do actual work
+3. **REQUIRED**: Each agent runs hooks for coordination
+4. **REQUIRED**: Batch all operations in single messages
+
+### Example Full-Stack Development:
+
+```javascript
+// Single message with all agent spawning via Claude Code's Task tool
+[Parallel Agent Execution]:
+  Task("Backend Developer", "Build REST API with Express. Use hooks for coordination.", "backend-dev")
+  Task("Frontend Developer", "Create React UI. Coordinate with backend via memory.", "coder")
+  Task("Database Architect", "Design PostgreSQL schema. Store schema in memory.", "code-analyzer")
+  Task("Test Engineer", "Write Jest tests. Check memory for API contracts.", "tester")
+  Task("DevOps Engineer", "Setup Docker and CI/CD. Document in memory.", "cicd-engineer")
+  Task("Security Auditor", "Review authentication. Report findings via hooks.", "reviewer")
+  
+  // All todos batched together
+  TodoWrite { todos: [...8-10 todos...] }
+  
+  // All file operations together
+  Write "backend/server.js"
+  Write "frontend/App.jsx"
+  Write "database/schema.sql"
+```
+
+## 📋 Agent Coordination Protocol
+
+### Every Agent Spawned via Task Tool MUST:
+
+**1️⃣ BEFORE Work:**
+```bash
+npx claude-flow@alpha hooks pre-task --description "[task]"
+npx claude-flow@alpha hooks session-restore --session-id "swarm-[id]"
+```
+
+**2️⃣ DURING Work:**
+```bash
+npx claude-flow@alpha hooks post-edit --file "[file]" --memory-key "swarm/[agent]/[step]"
+npx claude-flow@alpha hooks notify --message "[what was done]"
+```
+
+**3️⃣ AFTER Work:**
+```bash
+npx claude-flow@alpha hooks post-task --task-id "[task]"
+npx claude-flow@alpha hooks session-end --export-metrics true
+```
+
+## 🎯 Concurrent Execution Examples
+
+### ✅ CORRECT WORKFLOW: MCP Coordinates, Claude Code Executes
+
+```javascript
+// Step 1: MCP tools set up coordination (optional, for complex tasks)
+[Single Message - Coordination Setup]:
+  mcp__claude-flow__swarm_init { topology: "mesh", maxAgents: 6 }
+  mcp__claude-flow__agent_spawn { type: "researcher" }
+  mcp__claude-flow__agent_spawn { type: "coder" }
+  mcp__claude-flow__agent_spawn { type: "tester" }
+
+// Step 2: Claude Code Task tool spawns ACTUAL agents that do the work
+[Single Message - Parallel Agent Execution]:
+  // Claude Code's Task tool spawns real agents concurrently
+  Task("Research agent", "Analyze API requirements and best practices. Check memory for prior decisions.", "researcher")
+  Task("Coder agent", "Implement REST endpoints with authentication. Coordinate via hooks.", "coder")
+  Task("Database agent", "Design and implement database schema. Store decisions in memory.", "code-analyzer")
+  Task("Tester agent", "Create comprehensive test suite with 90% coverage.", "tester")
+  Task("Reviewer agent", "Review code quality and security. Document findings.", "reviewer")
+  
+  // Batch ALL todos in ONE call
+  TodoWrite { todos: [
+    {id: "1", content: "Research API patterns", status: "in_progress", priority: "high"},
+    {id: "2", content: "Design database schema", status: "in_progress", priority: "high"},
+    {id: "3", content: "Implement authentication", status: "pending", priority: "high"},
+    {id: "4", content: "Build REST endpoints", status: "pending", priority: "high"},
+    {id: "5", content: "Write unit tests", status: "pending", priority: "medium"},
+    {id: "6", content: "Integration tests", status: "pending", priority: "medium"},
+    {id: "7", content: "API documentation", status: "pending", priority: "low"},
+    {id: "8", content: "Performance optimization", status: "pending", priority: "low"}
+  ]}
+  
+  // Parallel file operations
+  Bash "mkdir -p app/{src,tests,docs,config}"
+  Write "app/package.json"
+  Write "app/src/server.js"
+  Write "app/tests/server.test.js"
+  Write "app/docs/API.md"
+```
+
+### ❌ WRONG (Multiple Messages):
+```javascript
+Message 1: mcp__claude-flow__swarm_init
+Message 2: Task("agent 1")
+Message 3: TodoWrite { todos: [single todo] }
+Message 4: Write "file.js"
+// This breaks parallel coordination!
+```
+
+## Performance Benefits
+
+- **84.8% SWE-Bench solve rate**
+- **32.3% token reduction**
+- **2.8-4.4x speed improvement**
+- **27+ neural models**
+
+## Hooks Integration
+
+### Pre-Operation
+- Auto-assign agents by file type
+- Validate commands for safety
+- Prepare resources automatically
+- Optimize topology by complexity
+- Cache searches
+
+### Post-Operation
+- Auto-format code
+- Train neural patterns
+- Update memory
+- Analyze performance
+- Track token usage
+
+### Session Management
+- Generate summaries
+- Persist state
+- Track metrics
+- Restore context
+- Export workflows
+
+## Advanced Features (v2.0.0)
+
+- 🚀 Automatic Topology Selection
+- ⚡ Parallel Execution (2.8-4.4x speed)
+- 🧠 Neural Training
+- 📊 Bottleneck Analysis
+- 🤖 Smart Auto-Spawning
+- 🛡️ Self-Healing Workflows
+- 💾 Cross-Session Memory
+- 🔗 GitHub Integration
+
+## Integration Tips
+
+1. Start with basic swarm init
+2. Scale agents gradually
+3. Use memory for context
+4. Monitor progress regularly
+5. Train patterns from success
+6. Enable hooks automation
+7. Use GitHub tools first
+
+## Support
+
+- Documentation: https://github.com/ruvnet/claude-flow
+- Issues: https://github.com/ruvnet/claude-flow/issues
+- Flow-Nexus Platform: https://flow-nexus.ruv.io (registration required for cloud features)
 
 ---
 
-**Remember:** Agent Mail coordinates, Beads tracks!
+Remember: **Claude Flow coordinates, Claude Code creates!**
+
+# important-instruction-reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+Never save working files, text/mds and tests to the root folder.

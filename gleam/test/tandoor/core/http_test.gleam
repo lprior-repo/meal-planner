@@ -17,7 +17,7 @@ pub type MockResponse {
 pub fn create_mock_transport(
   mock_response: MockResponse,
 ) -> http_transport.HttpTransport {
-  fn(request: http_transport.HttpRequest) -> Result(
+  fn(_request: http_transport.HttpRequest) -> Result(
     http_transport.HttpResponse,
     String,
   ) {

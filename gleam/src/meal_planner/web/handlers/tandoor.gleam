@@ -16,8 +16,7 @@ import gleam/result
 
 import meal_planner/env
 import meal_planner/tandoor/client.{
-  type ClientConfig, AuthenticationError, NotFoundError, error_to_string, login,
-  session_config,
+  type ClientConfig, NotFoundError, error_to_string, login, session_config,
 }
 import meal_planner/tandoor/api/recipe/get as recipe_get
 import meal_planner/tandoor/api/recipe/list as recipe_list

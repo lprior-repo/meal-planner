@@ -4,7 +4,6 @@ import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/user/user_preference_decoder
-import meal_planner/tandoor/types/user/user_preference
 
 pub fn user_preference_decoder_basic_test() {
   let json_str =

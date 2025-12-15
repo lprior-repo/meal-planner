@@ -8,7 +8,7 @@
 /// and maintenance of aggregation logic.
 import gleam/dynamic/decode
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{type Option, Some}
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
 import meal_planner/storage/utils
 import meal_planner/types.{type Macros}

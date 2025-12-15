@@ -3,7 +3,6 @@
 /// This module provides pre-configured test fixtures as JSON strings
 /// for use in unit and integration tests.
 import gleam/int
-import gleam/json
 import gleam/string
 
 // ============================================================================
