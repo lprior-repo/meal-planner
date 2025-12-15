@@ -1,6 +1,7 @@
 /// Nutrition Control Plane MVP Handler
 import gleam/float
 import gleam/http
+import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
@@ -99,9 +100,14 @@ fn parse_meals_from_query(
       |> list.filter_map(fn(pair) {
         case string.split(pair, ",") {
           [name, servings_str] -> {
+            // Try to parse as float first, then as int
             case float.parse(servings_str) {
               Ok(servings) -> Ok(#(name, servings))
-              Error(_) -> Error(Nil)
+              Error(_) ->
+                case int.parse(servings_str) {
+                  Ok(servings_int) -> Ok(#(name, int.to_float(servings_int)))
+                  Error(_) -> Error(Nil)
+                }
             }
           }
           _ -> Error(Nil)
