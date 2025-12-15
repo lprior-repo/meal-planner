@@ -1,7 +1,13 @@
 /// Recipe scoring handler for the Meal Planner API
+///
+/// This module provides the recipe scoring endpoint using Wisp's idiomatic patterns:
+/// - wisp.require_method() for HTTP method validation
+/// - wisp.require_string_body() for request body handling
+/// - Centralized response builders from web/responses
 import gleam/dynamic/decode
 import gleam/http
 import gleam/json
+import meal_planner/web/responses
 import wisp
 
 /// Scoring request from client
@@ -30,6 +36,14 @@ type ScoringWeights {
 
 /// Recipe scoring endpoint
 /// POST /api/ai/score-recipe
+///
+/// Uses Wisp's idiomatic patterns:
+/// - wisp.log_request() for request logging
+/// - wisp.rescue_crashes() for error recovery
+/// - wisp.handle_head() for HEAD method support
+/// - wisp.require_method() to enforce POST-only
+/// - wisp.require_string_body() to get request body
+/// - Centralized response builders for consistent error responses
 pub fn handle_score(req: wisp.Request) -> wisp.Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
@@ -38,26 +52,12 @@ pub fn handle_score(req: wisp.Request) -> wisp.Response {
   use body <- wisp.require_string_body(req)
 
   case parse_scoring_request(body) {
-    Error(msg) -> {
-      let response =
-        json.object([
-          #("status", json.string("error")),
-          #("error", json.string("Invalid request")),
-          #("message", json.string(msg)),
-        ])
-        |> json.to_string
-      wisp.json_response(response, 400)
-    }
+    Error(msg) -> responses.bad_request(msg)
     Ok(_scoring_request) -> {
       // TODO: Implement actual scoring logic
-      let response =
-        json.object([
-          #("status", json.string("error")),
-          #("error", json.string("Recipe scoring not yet fully implemented")),
-          #("message", json.string("Scoring algorithm needs to be implemented")),
-        ])
-        |> json.to_string
-      wisp.json_response(response, 501)
+      responses.not_implemented(
+        "Recipe scoring algorithm needs to be implemented",
+      )
     }
   }
 }
