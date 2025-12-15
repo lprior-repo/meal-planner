@@ -125,6 +125,8 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // FatSecret Foods API (2-legged OAuth, no user auth required)
     // =========================================================================
     // IMPORTANT: Specific routes MUST come before catch-all patterns!
+    ["api", "fatsecret", "foods", "autocomplete"] ->
+      handlers.handle_fatsecret_autocomplete_foods(req)
     ["api", "fatsecret", "foods", "search"] ->
       handlers.handle_fatsecret_search_foods(req)
     ["api", "fatsecret", "foods", food_id] ->
@@ -133,6 +135,8 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // =========================================================================
     // FatSecret Recipes API (2-legged OAuth, no user auth required)
     // =========================================================================
+    ["api", "fatsecret", "recipes", "autocomplete"] ->
+      handlers.handle_fatsecret_autocomplete_recipes(req)
     ["api", "fatsecret", "recipes", "types"] ->
       handlers.handle_fatsecret_recipe_types(req)
     ["api", "fatsecret", "recipes", "search"] ->
@@ -188,24 +192,19 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
       case req.method {
         http.Put ->
           saved_meals_handlers.handle_edit_saved_meal(req, ctx.db, meal_id)
-        http.Delete ->
-          wisp.not_found()
+        http.Delete -> wisp.not_found()
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
     ["api", "fatsecret", "saved-meals", _meal_id, "items"] ->
       case req.method {
-        http.Get ->
-          wisp.not_found()
-        http.Post ->
-          wisp.not_found()
+        http.Get -> wisp.not_found()
+        http.Post -> wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
     ["api", "fatsecret", "saved-meals", _meal_id, "items", _item_id] ->
       case req.method {
-        http.Put ->
-          wisp.not_found()
-        http.Delete ->
-          wisp.not_found()
+        http.Put -> wisp.not_found()
+        http.Delete -> wisp.not_found()
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
 
@@ -235,18 +234,14 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
       }
     ["api", "fatsecret", "exercise-entries"] ->
       case req.method {
-        http.Get ->
-          wisp.not_found()
-        http.Post ->
-          wisp.not_found()
+        http.Get -> wisp.not_found()
+        http.Post -> wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
     ["api", "fatsecret", "exercise-entries", _entry_id] ->
       case req.method {
-        http.Put ->
-          wisp.not_found()
-        http.Delete ->
-          wisp.not_found()
+        http.Put -> wisp.not_found()
+        http.Delete -> wisp.not_found()
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
 
@@ -255,16 +250,13 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // =========================================================================
     ["api", "fatsecret", "weight"] ->
       case req.method {
-        http.Get ->
-          wisp.not_found()
-        http.Post ->
-          wisp.not_found()
+        http.Get -> wisp.not_found()
+        http.Post -> wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
     ["api", "fatsecret", "weight", "month", _year, _month] ->
       case req.method {
-        http.Get ->
-          wisp.not_found()
+        http.Get -> wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get])
       }
 
@@ -272,7 +264,13 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // FatSecret Profile API (3-legged OAuth, requires user auth)
     // =========================================================================
     ["api", "fatsecret", "profile"] ->
-      handlers.handle_fatsecret_profile(req, ctx.db)
+      case req.method {
+        http.Get -> handlers.handle_fatsecret_profile(req, ctx.db)
+        http.Post -> handlers.handle_fatsecret_create_profile(req, ctx.db)
+        _ -> wisp.method_not_allowed([http.Get, http.Post])
+      }
+    ["api", "fatsecret", "profile", "auth"] ->
+      handlers.handle_fatsecret_get_profile_auth(req, ctx.db)
 
     // =========================================================================
     // Legacy API Endpoints (being refactored to use new SDK)
@@ -300,14 +298,10 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // =========================================================================
     // Tandoor Import/Export API
     // =========================================================================
-    ["api", "tandoor", "import-logs"] ->
-      wisp.not_found()
-    ["api", "tandoor", "import-logs", _log_id] ->
-      wisp.not_found()
-    ["api", "tandoor", "export-logs"] ->
-      wisp.not_found()
-    ["api", "tandoor", "export-logs", _log_id] ->
-      wisp.not_found()
+    ["api", "tandoor", "import-logs"] -> wisp.not_found()
+    ["api", "tandoor", "import-logs", _log_id] -> wisp.not_found()
+    ["api", "tandoor", "export-logs"] -> wisp.not_found()
+    ["api", "tandoor", "export-logs", _log_id] -> wisp.not_found()
 
     // =========================================================================
     // 404 Not Found
