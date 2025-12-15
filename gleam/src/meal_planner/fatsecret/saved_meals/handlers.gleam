@@ -15,6 +15,7 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
+import meal_planner/fatsecret/client
 import meal_planner/fatsecret/saved_meals/service
 import meal_planner/fatsecret/saved_meals/types
 import pog
@@ -182,6 +183,58 @@ pub fn handle_edit_saved_meal(
   }
 }
 
+/// GET /api/fatsecret/saved-meals/:id/items
+/// Get items in a saved meal
+pub fn handle_get_saved_meal_items(
+  req: wisp.Request,
+  conn: pog.Connection,
+  saved_meal_id: String,
+) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, http.Get)
+
+  let id = types.saved_meal_id_from_string(saved_meal_id)
+  case service.get_saved_meal_items(conn, id) {
+    Ok(response) -> {
+      let items_json =
+        response.items
+        |> list.map(saved_meal_item_to_json)
+        |> json.array(fn(x) { x })
+
+      let json_response =
+        json.object([
+          #(
+            "saved_meal_id",
+            json.string(types.saved_meal_id_to_string(response.saved_meal_id)),
+          ),
+          #("items", items_json),
+        ])
+        |> json.to_string
+
+      wisp.json_response(json_response, 200)
+    }
+
+    Error(service.NotConnected) ->
+      error_response(
+        401,
+        "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
+      )
+
+    Error(service.AuthRevoked) ->
+      error_response(
+        401,
+        "FatSecret authorization was revoked. Please reconnect.",
+      )
+
+    Error(service.ApiError(client.RequestFailed(status: 404, body: _))) ->
+      error_response(404, "Saved meal not found")
+
+    Error(e) -> error_response(500, service.error_to_string(e))
+  }
+}
+
 // =============================================================================
 // Helper Functions
 // =============================================================================
@@ -205,6 +258,23 @@ fn saved_meal_to_json(meal: types.SavedMeal) -> json.Json {
     #("carbohydrate", json.float(meal.carbohydrate)),
     #("protein", json.float(meal.protein)),
     #("fat", json.float(meal.fat)),
+  ])
+}
+
+fn saved_meal_item_to_json(item: types.SavedMealItem) -> json.Json {
+  json.object([
+    #(
+      "saved_meal_item_id",
+      json.string(types.saved_meal_item_id_to_string(item.saved_meal_item_id)),
+    ),
+    #("food_id", json.string(item.food_id)),
+    #("food_entry_name", json.string(item.food_entry_name)),
+    #("serving_id", json.string(item.serving_id)),
+    #("number_of_units", json.float(item.number_of_units)),
+    #("calories", json.float(item.calories)),
+    #("carbohydrate", json.float(item.carbohydrate)),
+    #("protein", json.float(item.protein)),
+    #("fat", json.float(item.fat)),
   ])
 }
 
