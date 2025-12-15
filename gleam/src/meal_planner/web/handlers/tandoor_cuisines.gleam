@@ -3,6 +3,8 @@
 /// This module provides all CRUD operations for Tandoor cuisines.
 
 import gleam/dynamic
+import gleam/dynamic/decode
+import gleam/http
 import gleam/int
 import gleam/json
 import gleam/option
@@ -55,9 +57,9 @@ fn get_authenticated_client() -> Result(client.ClientConfig, wisp.Response) {
 /// and POST /api/tandoor/cuisines (create cuisine)
 pub fn handle_cuisines_collection(req: wisp.Request) -> wisp.Response {
   case req.method {
-    wisp.Get -> handle_list_cuisines(req)
-    wisp.Post -> handle_create_cuisine(req)
-    _ -> wisp.method_not_allowed([wisp.Get, wisp.Post])
+    http.Get -> handle_list_cuisines(req)
+    http.Post -> handle_create_cuisine(req)
+    _ -> wisp.method_not_allowed([http.Get, http.Post])
   }
 }
 
@@ -65,11 +67,16 @@ pub fn handle_cuisines_collection(req: wisp.Request) -> wisp.Response {
 /// PUT /api/tandoor/cuisines/:id (update cuisine)
 /// DELETE /api/tandoor/cuisines/:id (delete cuisine)
 pub fn handle_cuisine_by_id(req: wisp.Request, cuisine_id: String) -> wisp.Response {
-  case req.method {
-    wisp.Get -> handle_get_cuisine(req, cuisine_id)
-    wisp.Put -> handle_update_cuisine(req, cuisine_id)
-    wisp.Delete -> handle_delete_cuisine(req, cuisine_id)
-    _ -> wisp.method_not_allowed([wisp.Get, wisp.Put, wisp.Delete])
+  case int.parse(cuisine_id) {
+    Ok(_id) -> {
+      case req.method {
+        http.Get -> handle_get_cuisine(req, cuisine_id)
+        http.Put -> handle_update_cuisine(req, cuisine_id)
+        http.Delete -> handle_delete_cuisine(req, cuisine_id)
+        _ -> wisp.method_not_allowed([http.Get, http.Put, http.Delete])
+      }
+    }
+    Error(_) -> helpers.error_response(400, "Invalid cuisine ID")
   }
 }
 
@@ -108,7 +115,7 @@ pub fn handle_list_cuisines(req: wisp.Request) -> wisp.Response {
 }
 
 /// Get a single cuisine by ID
-pub fn handle_get_cuisine(req: wisp.Request, cuisine_id: String) -> wisp.Response {
+pub fn handle_get_cuisine(_req: wisp.Request, cuisine_id: String) -> wisp.Response {
   case int.parse(cuisine_id) {
     Ok(id) -> {
       case get_authenticated_client() {
@@ -219,7 +226,7 @@ pub fn handle_update_cuisine(req: wisp.Request, cuisine_id: String) -> wisp.Resp
 }
 
 /// Delete a cuisine
-pub fn handle_delete_cuisine(req: wisp.Request, cuisine_id: String) -> wisp.Response {
+pub fn handle_delete_cuisine(_req: wisp.Request, cuisine_id: String) -> wisp.Response {
   case int.parse(cuisine_id) {
     Ok(id) -> {
       case get_authenticated_client() {
@@ -240,33 +247,13 @@ pub fn handle_delete_cuisine(req: wisp.Request, cuisine_id: String) -> wisp.Resp
 // JSON Decoders for Cuisine Requests
 // =============================================================================
 
-/// Parse JSON body into CuisineCreateRequest
-fn parse_cuisine_create_request(
-  json_data: dynamic.Dynamic,
-) -> Result(cuisine.CuisineCreateRequest, String) {
-  let name_decoder = dynamic.field("name", dynamic.string)
-  let description_decoder = dynamic.optional_field("description", dynamic.string)
-  let icon_decoder = dynamic.optional_field("icon", dynamic.string)
-  let parent_decoder = dynamic.optional_field("parent", dynamic.int)
-
-  use name <- result.try(
-    name_decoder(json_data)
-    |> result.map_error(fn(_) { "Missing or invalid 'name' field" }),
-  )
-  use description <- result.try(
-    description_decoder(json_data)
-    |> result.map_error(fn(_) { "Invalid 'description' field" }),
-  )
-  use icon <- result.try(
-    icon_decoder(json_data)
-    |> result.map_error(fn(_) { "Invalid 'icon' field" }),
-  )
-  use parent <- result.try(
-    parent_decoder(json_data)
-    |> result.map_error(fn(_) { "Invalid 'parent' field" }),
-  )
-
-  Ok(cuisine.CuisineCreateRequest(
+/// Decoder for cuisine create request
+fn cuisine_create_decoder() -> decode.Decoder(cuisine.CuisineCreateRequest) {
+  use name <- decode.field("name", decode.string)
+  use description <- decode.field("description", decode.optional(decode.string))
+  use icon <- decode.field("icon", decode.optional(decode.string))
+  use parent <- decode.field("parent", decode.optional(decode.int))
+  decode.success(cuisine.CuisineCreateRequest(
     name: name,
     description: description,
     icon: icon,
@@ -274,36 +261,32 @@ fn parse_cuisine_create_request(
   ))
 }
 
-/// Parse JSON body into CuisineUpdateRequest
-fn parse_cuisine_update_request(
-  json_data: dynamic.Dynamic,
-) -> Result(cuisine.CuisineUpdateRequest, String) {
-  let name_decoder = dynamic.optional_field("name", dynamic.string)
-  let description_decoder = dynamic.optional_field("description", dynamic.optional(dynamic.string))
-  let icon_decoder = dynamic.optional_field("icon", dynamic.optional(dynamic.string))
-  let parent_decoder = dynamic.optional_field("parent", dynamic.optional(dynamic.int))
-
-  use name <- result.try(
-    name_decoder(json_data)
-    |> result.map_error(fn(_) { "Invalid 'name' field" }),
-  )
-  use description <- result.try(
-    description_decoder(json_data)
-    |> result.map_error(fn(_) { "Invalid 'description' field" }),
-  )
-  use icon <- result.try(
-    icon_decoder(json_data)
-    |> result.map_error(fn(_) { "Invalid 'icon' field" }),
-  )
-  use parent <- result.try(
-    parent_decoder(json_data)
-    |> result.map_error(fn(_) { "Invalid 'parent' field" }),
-  )
-
-  Ok(cuisine.CuisineUpdateRequest(
+/// Decoder for cuisine update request
+fn cuisine_update_decoder() -> decode.Decoder(cuisine.CuisineUpdateRequest) {
+  use name <- decode.field("name", decode.optional(decode.string))
+  use description <- decode.field("description", decode.optional(decode.optional(decode.string)))
+  use icon <- decode.field("icon", decode.optional(decode.optional(decode.string)))
+  use parent <- decode.field("parent", decode.optional(decode.optional(decode.int)))
+  decode.success(cuisine.CuisineUpdateRequest(
     name: name,
     description: description,
     icon: icon,
     parent: parent,
   ))
+}
+
+/// Parse JSON body into CuisineCreateRequest
+fn parse_cuisine_create_request(
+  json_data: dynamic.Dynamic,
+) -> Result(cuisine.CuisineCreateRequest, String) {
+  decode.run(json_data, cuisine_create_decoder())
+  |> result.map_error(fn(_) { "Invalid cuisine create request" })
+}
+
+/// Parse JSON body into CuisineUpdateRequest
+fn parse_cuisine_update_request(
+  json_data: dynamic.Dynamic,
+) -> Result(cuisine.CuisineUpdateRequest, String) {
+  decode.run(json_data, cuisine_update_decoder())
+  |> result.map_error(fn(_) { "Invalid cuisine update request" })
 }
