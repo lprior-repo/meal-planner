@@ -1,7 +1,7 @@
 /// Tests for Nutrition Control Plane MVP
+import gleam/list
 import gleeunit
 import gleeunit/should
-import gleam/list
 import meal_planner/mvp_recipes
 import meal_planner/ncp
 
@@ -33,8 +33,7 @@ pub fn recipes_have_valid_macros_test() {
 
 pub fn recipes_have_non_empty_names_test() {
   let recipes = mvp_recipes.all_recipes()
-  let all_have_names =
-    list.all(recipes, fn(recipe) { recipe.name != "" })
+  let all_have_names = list.all(recipes, fn(recipe) { recipe.name != "" })
   all_have_names
   |> should.equal(True)
 }
@@ -78,7 +77,8 @@ pub fn deviation_calculation_protein_high_test() {
 }
 
 pub fn deviation_within_tolerance_test() {
-  let consumed = ncp.NutritionData(protein: 150.0, fat: 65.0, carbs: 200.0, calories: 1850.0)
+  let consumed =
+    ncp.NutritionData(protein: 150.0, fat: 65.0, carbs: 200.0, calories: 1850.0)
   let goals = ncp.get_default_goals()
   let deviation = ncp.calculate_deviation(goals, consumed)
 
@@ -96,11 +96,11 @@ pub fn select_top_recipes_returns_array_test() {
   let recipes = mvp_recipes.all_recipes()
 
   let suggestions = ncp.select_top_recipes(deviation, recipes, 3)
-  
+
   // Should return at most 3 suggestions
   list.length(suggestions)
   |> should.be_less_than_or_equal(3)
-  
+
   // All suggestions should have positive scores
   list.all(suggestions, fn(s) { s.score >. 0.0 })
   |> should.equal(True)
@@ -114,7 +114,7 @@ pub fn select_top_recipes_less_than_available_test() {
   let recipes = mvp_recipes.all_recipes()
 
   let suggestions = ncp.select_top_recipes(deviation, recipes, 1)
-  
+
   // Should return at most 1 suggestion
   list.length(suggestions)
   |> should.be_less_than_or_equal(1)
@@ -141,7 +141,12 @@ pub fn deviation_on_zero_consumption_test() {
 
 pub fn deviation_exceeds_tolerance_test() {
   let consumed =
-    ncp.NutritionData(protein: 300.0, fat: 200.0, carbs: 500.0, calories: 4000.0)
+    ncp.NutritionData(
+      protein: 300.0,
+      fat: 200.0,
+      carbs: 500.0,
+      calories: 4000.0,
+    )
   let goals = ncp.get_default_goals()
   let deviation = ncp.calculate_deviation(goals, consumed)
 
