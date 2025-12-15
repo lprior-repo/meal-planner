@@ -7,8 +7,10 @@ import gleam/dynamic/decode
 import gleam/float
 import gleam/int
 import gleam/json
+import gleam/list
 import gleam/option
 import gleam/result
+import gleam/string
 import meal_planner/fatsecret/core/config.{type FatSecretConfig}
 import meal_planner/fatsecret/core/errors.{type FatSecretError}
 import meal_planner/fatsecret/core/http
@@ -18,6 +20,7 @@ import meal_planner/fatsecret/diary/types.{
   type FoodEntry, type FoodEntryId, type FoodEntryInput, type FoodEntryUpdate,
   type MonthSummary,
 } as diary_types
+import meal_planner/logger
 
 pub fn create_food_entry(
   config: FatSecretConfig,
@@ -168,6 +171,13 @@ pub fn get_food_entries(
   token: AccessToken,
   date_int: Int,
 ) -> Result(List(FoodEntry), FatSecretError) {
+  // Step 1: Log the request
+  let _ =
+    logger.info(
+      "FatSecret: Requesting food entries for date_int="
+      <> int.to_string(date_int),
+    )
+
   let params =
     dict.new()
     |> dict.insert("date_int", int.to_string(date_int))
@@ -179,35 +189,61 @@ pub fn get_food_entries(
     params,
   ))
 
-  // Try multiple decoding strategies to handle different response formats:
-  // 1. food_entries.food_entry as an array
-  // 2. food_entries.food_entry as a single object (wrap in list)
-  // 3. If food_entry is missing or null, return empty list
-  // 4. If food_entries is completely missing, return empty list
-  json.parse(
-    body,
-    decode.one_of(
-      // Strategy 1: Standard format with array
-      decode.at(
-        ["food_entries", "food_entry"],
-        decode.list(decoders.food_entry_decoder()),
-      ),
-      [
-        // Strategy 2: Single entry (not in array)
+  // Step 2: Log the raw response (truncated for large responses)
+  let truncated_body = case string.length(body) > 1000 {
+    True -> string.slice(body, 0, 1000) <> "...(truncated)"
+    False -> body
+  }
+  let _ = logger.debug("FatSecret API response: " <> truncated_body)
+
+  // Step 3: Try to parse the response
+  let parse_result =
+    json.parse(
+      body,
+      decode.one_of(
+        // Strategy 1: Standard format with array
         decode.at(
           ["food_entries", "food_entry"],
-          single_entry_to_list_decoder(),
+          decode.list(decoders.food_entry_decoder()),
         ),
-        // Strategy 3: Missing food_entry key or null value returns empty list
-        decode.at(["food_entries"], decode.success([])),
-        // Strategy 4: Fallback to empty list if structure completely different
-        decode.success([]),
-      ],
-    ),
-  )
-  |> result.map_error(fn(_) {
-    errors.ParseError("Failed to parse food entries response")
-  })
+        [
+          // Strategy 2: Single entry (not in array)
+          decode.at(
+            ["food_entries", "food_entry"],
+            single_entry_to_list_decoder(),
+          ),
+          // Strategy 3: Missing food_entry key or null value returns empty list
+          decode.at(["food_entries"], decode.success([])),
+          // Strategy 4: Fallback to empty list if structure completely different
+          decode.success([]),
+        ],
+      ),
+    )
+
+  // Step 4: Log the parsing result
+  case parse_result {
+    Ok(entries) -> {
+      let entry_count = list.length(entries)
+      let total_calories =
+        list.fold(entries, 0.0, fn(acc, entry) { acc +. entry.calories })
+      let _ =
+        logger.info(
+          "FatSecret: Parsed "
+          <> int.to_string(entry_count)
+          <> " entries, total calories="
+          <> float.to_string(total_calories),
+        )
+      Ok(entries)
+    }
+    Error(_) -> {
+      let _ =
+        logger.error(
+          "FatSecret: Failed to parse food entries response for date_int="
+          <> int.to_string(date_int),
+        )
+      Error(errors.ParseError("Failed to parse food entries response"))
+    }
+  }
 }
 
 pub fn get_month_summary(
