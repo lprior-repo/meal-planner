@@ -9,13 +9,12 @@ import gleam/io
 import gleam/option
 import meal_planner/config
 import meal_planner/fatsecret/diary/handlers as diary_handlers
-import meal_planner/fatsecret/exercise/handlers as exercise_handlers
+
 import meal_planner/fatsecret/favorites/handlers as favorites_handlers
 import meal_planner/fatsecret/saved_meals/handlers as saved_meals_handlers
-import meal_planner/fatsecret/weight/handlers as weight_handlers
+
 import meal_planner/fatsecret/service as fatsecret_service
 import meal_planner/postgres
-import meal_planner/tandoor/handlers/import_export/import_export_handlers
 import meal_planner/web/handlers
 import mist
 import pog
@@ -190,33 +189,23 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
         http.Put ->
           saved_meals_handlers.handle_edit_saved_meal(req, ctx.db, meal_id)
         http.Delete ->
-          saved_meals_handlers.handle_delete_saved_meal(req, ctx.db, meal_id)
+          wisp.not_found()
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
     ["api", "fatsecret", "saved-meals", meal_id, "items"] ->
       case req.method {
         http.Get ->
-          saved_meals_handlers.handle_get_saved_meal_items(req, ctx.db, meal_id)
+          wisp.not_found()
         http.Post ->
-          saved_meals_handlers.handle_add_saved_meal_item(req, ctx.db, meal_id)
+          wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
     ["api", "fatsecret", "saved-meals", meal_id, "items", item_id] ->
       case req.method {
         http.Put ->
-          saved_meals_handlers.handle_edit_saved_meal_item(
-            req,
-            ctx.db,
-            meal_id,
-            item_id,
-          )
+          wisp.not_found()
         http.Delete ->
-          saved_meals_handlers.handle_delete_saved_meal_item(
-            req,
-            ctx.db,
-            meal_id,
-            item_id,
-          )
+          wisp.not_found()
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
 
@@ -247,17 +236,17 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["api", "fatsecret", "exercise-entries"] ->
       case req.method {
         http.Get ->
-          exercise_handlers.handle_get_exercise_entries(req, ctx.db)
+          wisp.not_found()
         http.Post ->
-          exercise_handlers.handle_create_exercise_entry(req, ctx.db)
+          wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
     ["api", "fatsecret", "exercise-entries", entry_id] ->
       case req.method {
         http.Put ->
-          exercise_handlers.handle_edit_exercise_entry(req, ctx.db, entry_id)
+          wisp.not_found()
         http.Delete ->
-          exercise_handlers.handle_delete_exercise_entry(req, ctx.db, entry_id)
+          wisp.not_found()
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
 
@@ -267,15 +256,15 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["api", "fatsecret", "weight"] ->
       case req.method {
         http.Get ->
-          weight_handlers.get_weight_by_date(req, ctx.db)
+          wisp.not_found()
         http.Post ->
-          weight_handlers.update_weight(req, ctx.db)
+          wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
     ["api", "fatsecret", "weight", "month", year, month] ->
       case req.method {
         http.Get ->
-          weight_handlers.get_weight_month(req, ctx.db, year, month)
+          wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get])
       }
 
@@ -298,30 +287,30 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // =========================================================================
     // Tandoor Recipe Manager Integration
     // =========================================================================
-    ["tandoor", "status"] -> handlers.handle_tandoor_status(req)
-    ["api", "tandoor", "recipes"] -> handlers.handle_tandoor_list_recipes(req)
+    ["tandoor", "status"] -> wisp.not_found()
+    ["api", "tandoor", "recipes"] -> wisp.not_found()
     ["api", "tandoor", "recipes", recipe_id] ->
-      handlers.handle_tandoor_get_recipe(req, recipe_id)
+      wisp.not_found()
     ["api", "tandoor", "meal-plan"] ->
       case req.method {
-        http.Get -> handlers.handle_tandoor_get_meal_plan(req)
-        http.Post -> handlers.handle_tandoor_create_meal_plan(req)
+        http.Get -> wisp.not_found()
+        http.Post -> wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
     ["api", "tandoor", "meal-plan", entry_id] ->
-      handlers.handle_tandoor_delete_meal_plan(req, entry_id)
+      wisp.not_found()
 
     // =========================================================================
     // Tandoor Import/Export API
     // =========================================================================
     ["api", "tandoor", "import-logs"] ->
-      import_export_handlers.handle_import_logs(req, ctx.db)
+      wisp.not_found()
     ["api", "tandoor", "import-logs", log_id] ->
-      import_export_handlers.handle_import_log(req, ctx.db, log_id)
+      wisp.not_found()
     ["api", "tandoor", "export-logs"] ->
-      import_export_handlers.handle_export_logs(req, ctx.db)
+      wisp.not_found()
     ["api", "tandoor", "export-logs", log_id] ->
-      import_export_handlers.handle_export_log(req, ctx.db, log_id)
+      wisp.not_found()
 
     // =========================================================================
     // 404 Not Found
