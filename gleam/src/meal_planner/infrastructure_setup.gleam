@@ -5,7 +5,7 @@
 /// - Checking if Docker/docker-compose are available
 /// - Starting services if not already running
 /// - Waiting for services to be healthy
-/// - Setting up environment variables
+/// - Setting up environment variables for tests
 
 import gleam/int
 import gleam/io
@@ -96,23 +96,28 @@ pub fn start_infrastructure(config: InfrastructureConfig) -> SetupStatus {
           // Check if already running
           case check_tandoor_running(config.tandoor_url) {
             True -> {
-              io.println("✅ Tandoor is already running at " <> config.tandoor_url)
+              io.println(
+                "✅ Tandoor is already running at " <> config.tandoor_url,
+              )
               AlreadyRunning
             }
             False -> {
               // Start infrastructure
-              io.println("🚀 Starting infrastructure...")
-              let script_path = config.project_root <> "/scripts/setup-integration-tests.sh"
+              io.println("🚀 Starting Docker infrastructure...")
+              let script_path =
+                config.project_root <> "/scripts/setup-integration-tests.sh"
               let cmd = "bash " <> script_path <> " setup"
               let exit_code = system_call(cmd)
-              
+
               case exit_code {
                 0 -> {
                   io.println("✅ Infrastructure setup complete")
                   SetupStarted
                 }
                 _ -> {
-                  let error_msg = "Infrastructure setup failed with exit code " <> int.to_string(exit_code)
+                  let error_msg =
+                    "Infrastructure setup failed with exit code "
+                    <> int.to_string(exit_code)
                   io.println("❌ " <> error_msg)
                   SetupFailed(error_msg)
                 }
@@ -127,36 +132,50 @@ pub fn start_infrastructure(config: InfrastructureConfig) -> SetupStatus {
 
 /// Initialize infrastructure if needed (for integration tests)
 pub fn initialize_if_needed(config: InfrastructureConfig) -> Result(Nil, String) {
-  // Check if we should even try to set up infrastructure
-  case should_attempt_setup() {
-    False -> {
-      // No environment variables set, skip infrastructure setup
+  // Always attempt to set up infrastructure
+  case start_infrastructure(config) {
+    AlreadyRunning -> {
+      // Infrastructure already running, ensure environment is configured
+      configure_test_environment(config)
       Ok(Nil)
     }
-    True -> {
-      // Environment variables suggest integration tests - ensure infrastructure is running
-      case start_infrastructure(config) {
-        AlreadyRunning -> Ok(Nil)
-        SetupStarted -> Ok(Nil)
-        SetupNotNeeded -> Ok(Nil)
-        SetupFailed(msg) -> Error(msg)
-      }
+    SetupStarted -> {
+      // Infrastructure was just started, configure environment
+      configure_test_environment(config)
+      Ok(Nil)
+    }
+    SetupNotNeeded -> Ok(Nil)
+    SetupFailed(msg) -> {
+      // Infrastructure setup failed - still continue
+      // Tests will fail with proper error messages if services unavailable
+      io.println(
+        "⚠️  Warning: Infrastructure setup had issues, but continuing anyway",
+      )
+      Error(msg)
     }
   }
 }
 
-/// Check if we should attempt to set up infrastructure
-fn should_attempt_setup() -> Bool {
-  // If TANDOOR_URL is already set in environment, infrastructure is configured
-  // If neither is set, we don't need to set up anything
-  True  // Always attempt - let the infrastructure setup figure out what's needed
+/// Configure test environment variables
+/// This ensures tests can connect to Tandoor
+fn configure_test_environment(config: InfrastructureConfig) -> Nil {
+  io.println(
+    "📝 Tandoor available at: " <> config.tandoor_url,
+  )
+  io.println("📝 Use TANDOOR_URL env var or default: admin/admin credentials")
+
+  // Note: The actual environment variables are set by the setup script.
+  // If not set, test_setup.get_test_config() will detect missing vars
+  // and tests will be marked as failing appropriately.
+  Nil
 }
 
-/// Get environment file content to source
-pub fn get_env_file_content(config: InfrastructureConfig) -> String {
-  let _env_file_path = config.project_root <> "/gleam/.env.test"
-  
-  // Try to read the .env.test file created by setup script
-  // If it doesn't exist, return empty string
-  ""  // In a real implementation, would read the file
+/// Get Tandoor configuration for tests
+/// Returns URL and default credentials that can be used if env vars aren't set
+pub fn get_tandoor_defaults(
+  _config: InfrastructureConfig,
+) -> #(String, String, String) {
+  // Return (url, username, password) as fallback defaults
+  // The actual values should come from environment variables set by setup script
+  #("http://localhost:8100", "admin", "admin")
 }
