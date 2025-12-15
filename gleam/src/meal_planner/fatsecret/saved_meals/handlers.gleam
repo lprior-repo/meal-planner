@@ -62,8 +62,11 @@ pub fn handle_create_saved_meal(
             |> json.to_string
           wisp.json_response(response, 201)
         }
+
         Error(e) -> error_response(500, service.error_to_string(e))
       }
+    }
+
     Error(_) -> error_response(400, "Invalid request body")
   }
 }
@@ -104,16 +107,20 @@ pub fn handle_get_saved_meals(
         |> json.to_string
 
       wisp.json_response(json_response, 200)
+    }
+
     Error(service.NotConnected) ->
       error_response(
         401,
         "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
       )
+
     Error(service.AuthRevoked) ->
       error_response(
         401,
         "FatSecret authorization was revoked. Please reconnect.",
       )
+
     Error(e) -> error_response(500, service.error_to_string(e))
   }
 }
@@ -155,6 +162,7 @@ pub fn handle_edit_saved_meal(
         }
         None -> decode.success(None)
       }
+    })
     decode.success(#(name_opt, desc_opt, meals_opt))
   }
 
@@ -170,160 +178,8 @@ pub fn handle_edit_saved_meal(
         }
         Error(e) -> error_response(500, service.error_to_string(e))
       }
+    }
     Error(_) -> error_response(400, "Invalid request body")
-  }
-}
-
-/// DELETE /api/fatsecret/saved-meals/:id
-/// Delete a saved meal
-pub fn handle_delete_saved_meal(
-  req: wisp.Request,
-  conn: pog.Connection,
-  saved_meal_id: String,
-) -> wisp.Response {
-  use <- wisp.log_request(req)
-  use <- wisp.rescue_crashes
-  use req <- wisp.handle_head(req)
-  use <- wisp.require_method(req, http.Delete)
-
-  let id = types.saved_meal_id_from_string(saved_meal_id)
-  case service.delete_saved_meal(conn, id) {
-    Ok(Nil) -> {
-      let response =
-        json.object([#("success", json.bool(True))])
-        |> json.to_string
-      wisp.json_response(response, 200)
-    Error(e) -> error_response(500, service.error_to_string(e))
-  }
-}
-
-// =============================================================================
-// Saved Meal Items Handlers
-// =============================================================================
-
-/// GET /api/fatsecret/saved-meals/:id/items
-/// Get items in a saved meal
-pub fn handle_get_saved_meal_items(
-  req: wisp.Request,
-  conn: pog.Connection,
-  saved_meal_id: String,
-) -> wisp.Response {
-  use <- wisp.log_request(req)
-  use <- wisp.rescue_crashes
-  use req <- wisp.handle_head(req)
-  use <- wisp.require_method(req, http.Get)
-
-  let id = types.saved_meal_id_from_string(saved_meal_id)
-  case service.get_saved_meal_items(conn, id) {
-    Ok(response) -> {
-      let items_json =
-        response.items
-        |> list.map(saved_meal_item_to_json)
-        |> json.array(fn(x) { x })
-
-      let json_response =
-        json.object([
-          #(
-            "saved_meal_id",
-            json.string(types.saved_meal_id_to_string(response.saved_meal_id)),
-          ),
-          #("items", items_json),
-        ])
-        |> json.to_string
-
-      wisp.json_response(json_response, 200)
-    Error(e) -> error_response(500, service.error_to_string(e))
-  }
-}
-
-/// POST /api/fatsecret/saved-meals/:id/items
-/// Add a food item to a saved meal
-/// Body: {"food_id": "...", "serving_id": "...", "number_of_units": 1.5}
-///    OR {"food_entry_name": "...", "serving_description": "...", "number_of_units": 1, "calories": 200, ...}
-pub fn handle_add_saved_meal_item(
-  req: wisp.Request,
-  conn: pog.Connection,
-  saved_meal_id: String,
-) -> wisp.Response {
-  use <- wisp.log_request(req)
-  use <- wisp.rescue_crashes
-  use req <- wisp.handle_head(req)
-  use <- wisp.require_method(req, http.Post)
-  use body <- wisp.require_json(req)
-
-  case parse_saved_meal_item_input(body) {
-    Ok(item) -> {
-      let id = types.saved_meal_id_from_string(saved_meal_id)
-      case service.add_saved_meal_item(conn, id, item) {
-        Ok(item_id) -> {
-          let response =
-            json.object([
-              #("success", json.bool(True)),
-              #(
-                "saved_meal_item_id",
-                json.string(types.saved_meal_item_id_to_string(item_id)),
-              ),
-            ])
-            |> json.to_string
-          wisp.json_response(response, 201)
-        }
-        Error(e) -> error_response(500, service.error_to_string(e))
-      }
-    Error(msg) -> error_response(400, msg)
-  }
-}
-
-/// PUT /api/fatsecret/saved-meals/:id/items/:item_id
-/// Edit a saved meal item
-pub fn handle_edit_saved_meal_item(
-  req: wisp.Request,
-  conn: pog.Connection,
-  _saved_meal_id: String,
-  saved_meal_item_id: String,
-) -> wisp.Response {
-  use <- wisp.log_request(req)
-  use <- wisp.rescue_crashes
-  use req <- wisp.handle_head(req)
-  use <- wisp.require_method(req, http.Put)
-  use body <- wisp.require_json(req)
-
-  case parse_saved_meal_item_input(body) {
-    Ok(item) -> {
-      let item_id = types.saved_meal_item_id_from_string(saved_meal_item_id)
-      case service.edit_saved_meal_item(conn, item_id, item) {
-        Ok(Nil) -> {
-          let response =
-            json.object([#("success", json.bool(True))])
-            |> json.to_string
-          wisp.json_response(response, 200)
-        }
-        Error(e) -> error_response(500, service.error_to_string(e))
-      }
-    Error(msg) -> error_response(400, msg)
-  }
-}
-
-/// DELETE /api/fatsecret/saved-meals/:id/items/:item_id
-/// Delete a saved meal item
-pub fn handle_delete_saved_meal_item(
-  req: wisp.Request,
-  conn: pog.Connection,
-  _saved_meal_id: String,
-  saved_meal_item_id: String,
-) -> wisp.Response {
-  use <- wisp.log_request(req)
-  use <- wisp.rescue_crashes
-  use req <- wisp.handle_head(req)
-  use <- wisp.require_method(req, http.Delete)
-
-  let item_id = types.saved_meal_item_id_from_string(saved_meal_item_id)
-  case service.delete_saved_meal_item(conn, item_id) {
-    Ok(Nil) -> {
-      let response =
-        json.object([#("success", json.bool(True))])
-        |> json.to_string
-      wisp.json_response(response, 200)
-    Error(e) -> error_response(500, service.error_to_string(e))
   }
 }
 
@@ -375,6 +231,7 @@ fn parse_saved_meal_item_input(
             "Invalid item format. Provide either (food_id, serving_id, number_of_units) or (food_entry_name, serving_description, number_of_units, calories, carbohydrate, protein, fat)",
           )
       }
+    }
   }
 }
 
@@ -388,6 +245,7 @@ fn saved_meal_to_json(meal: types.SavedMeal) -> json.Json {
     #("saved_meal_description", case meal.saved_meal_description {
       Some(desc) -> json.string(desc)
       None -> json.null()
+    }),
     #(
       "meals",
       json.array(meal.meals, fn(m) { json.string(types.meal_type_to_string(m)) }),
