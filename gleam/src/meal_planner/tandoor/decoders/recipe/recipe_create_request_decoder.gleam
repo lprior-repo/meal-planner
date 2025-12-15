@@ -2,7 +2,6 @@
 ///
 /// This module provides a JSON decoder for recipe creation requests
 /// following the gleam/dynamic/decode pattern.
-import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/option
 

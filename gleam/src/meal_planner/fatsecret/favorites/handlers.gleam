@@ -8,11 +8,9 @@
 ///   POST/DELETE /api/fatsecret/favorites/recipes/:recipe_id
 ///   GET /api/fatsecret/favorites/recipes
 import gleam/http.{Delete, Get, Post}
-import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/result
 import meal_planner/fatsecret/favorites/service
 import meal_planner/fatsecret/favorites/types
 import meal_planner/fatsecret/service as fatsecret_service
