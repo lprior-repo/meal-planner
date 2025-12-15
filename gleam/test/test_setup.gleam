@@ -5,6 +5,7 @@ import envoy
 import gleam/io
 import gleam/string
 import meal_planner/tandoor/client
+import meal_planner/infrastructure_setup
 
 /// Setup result type
 pub type SetupResult {
@@ -18,10 +19,16 @@ pub fn should_setup_infrastructure() -> Bool {
   case envoy.get("TANDOOR_TEST_URL") {
     Ok(_) -> True
     Error(_) -> {
-      // Check if we're explicitly in test mode
-      case envoy.get("GLEAM_TEST_MODE") {
-        Ok("integration") -> True
-        _ -> False
+      // Also check standard TANDOOR_URL
+      case envoy.get("TANDOOR_URL") {
+        Ok(_) -> True
+        Error(_) -> {
+          // Check if we're explicitly in test mode
+          case envoy.get("GLEAM_TEST_MODE") {
+            Ok("integration") -> True
+            _ -> False
+          }
+        }
       }
     }
   }
@@ -62,12 +69,24 @@ pub fn initialize_tests() -> SetupResult {
   case should_setup_infrastructure() {
     True -> {
       io.println("🔧 Integration test mode detected")
-      io.println("Assuming infrastructure is already running...")
-      io.println("If tests fail, ensure Docker containers are up:")
-      io.println(
-        "  cd /home/lewis/src/meal-planner && ../scripts/setup-integration-tests.sh setup\n",
-      )
-      SetupSuccess
+      io.println("🔍 Checking if infrastructure is running...")
+
+      let config = infrastructure_setup.default_config()
+
+      // Attempt to start infrastructure if not already running
+      case infrastructure_setup.initialize_if_needed(config) {
+        Ok(Nil) -> {
+          io.println("✅ Infrastructure ready for integration tests\n")
+          SetupSuccess
+        }
+        Error(msg) -> {
+          io.println("⚠️  Infrastructure setup issue: " <> msg)
+          io.println(
+            "Integration tests may fail if services are not available\n",
+          )
+          SetupSuccess  // Continue anyway - tests will fail gracefully if needed
+        }
+      }
     }
     False -> {
       io.println("📝 Unit test mode - skipping infrastructure setup")
@@ -79,21 +98,29 @@ pub fn initialize_tests() -> SetupResult {
 /// Get Tandoor client configuration for testing
 /// Returns configuration if environment is set up for integration testing
 pub fn get_test_config() -> Result(client.ClientConfig, String) {
-  case envoy.get("TANDOOR_TEST_URL") {
-    Ok(base_url) -> {
-      case envoy.get("TANDOOR_TEST_USER") {
-        Ok(username) -> {
-          case envoy.get("TANDOOR_TEST_PASS") {
-            Ok(password) -> {
-              let config = client.session_config(base_url, username, password)
-              Ok(config)
-            }
-            Error(_) -> Error("TANDOOR_TEST_PASS not set")
-          }
-        }
-        Error(_) -> Error("TANDOOR_TEST_USER not set")
-      }
+  // Try TANDOOR_TEST_URL first, then TANDOOR_URL
+  let base_url = case envoy.get("TANDOOR_TEST_URL") {
+    Ok(url) -> Ok(url)
+    Error(_) -> envoy.get("TANDOOR_URL")
+  }
+
+  let username = case envoy.get("TANDOOR_TEST_USER") {
+    Ok(user) -> Ok(user)
+    Error(_) -> envoy.get("TANDOOR_USERNAME")
+  }
+
+  let password = case envoy.get("TANDOOR_TEST_PASS") {
+    Ok(pass) -> Ok(pass)
+    Error(_) -> envoy.get("TANDOOR_PASSWORD")
+  }
+
+  case base_url, username, password {
+    Ok(url), Ok(user), Ok(pass) -> {
+      let config = client.session_config(url, user, pass)
+      Ok(config)
     }
-    Error(_) -> Error("TANDOOR_TEST_URL not set")
+    Error(_), _, _ -> Error("TANDOOR_URL not set")
+    _, Error(_), _ -> Error("TANDOOR_USERNAME not set")
+    _, _, Error(_) -> Error("TANDOOR_PASSWORD not set")
   }
 }
