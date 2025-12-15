@@ -65,7 +65,8 @@ pub fn create_food_entry(
     params,
   ))
 
-  json.parse(body, decode.at(["food_entry_id"], decode.string))
+  // Parse the response - FatSecret returns {"food_entry_id": {"value": "12345"}}
+  json.parse(body, decode.at(["food_entry_id", "value"], decode.string))
   |> result.map(diary_types.food_entry_id)
   |> result.map_error(fn(_) {
     errors.ParseError("Failed to parse food entry ID from create response")

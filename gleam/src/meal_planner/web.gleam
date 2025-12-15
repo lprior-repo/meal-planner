@@ -192,7 +192,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
           wisp.not_found()
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
-    ["api", "fatsecret", "saved-meals", meal_id, "items"] ->
+    ["api", "fatsecret", "saved-meals", _meal_id, "items"] ->
       case req.method {
         http.Get ->
           wisp.not_found()
@@ -200,7 +200,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
           wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
-    ["api", "fatsecret", "saved-meals", meal_id, "items", item_id] ->
+    ["api", "fatsecret", "saved-meals", _meal_id, "items", _item_id] ->
       case req.method {
         http.Put ->
           wisp.not_found()
@@ -241,7 +241,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
           wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
-    ["api", "fatsecret", "exercise-entries", entry_id] ->
+    ["api", "fatsecret", "exercise-entries", _entry_id] ->
       case req.method {
         http.Put ->
           wisp.not_found()
@@ -261,7 +261,7 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
           wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
-    ["api", "fatsecret", "weight", "month", year, month] ->
+    ["api", "fatsecret", "weight", "month", _year, _month] ->
       case req.method {
         http.Get ->
           wisp.not_found()
@@ -289,12 +289,12 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // =========================================================================
     ["tandoor", "status"] -> handlers.handle_tandoor_routes(req)
     ["api", "tandoor", "recipes"] -> handlers.handle_tandoor_routes(req)
-    ["api", "tandoor", "recipes", recipe_id] ->
+    ["api", "tandoor", "recipes", _recipe_id] ->
       handlers.handle_tandoor_routes(req)
     ["api", "tandoor", "units"] -> handlers.handle_tandoor_routes(req)
     ["api", "tandoor", "keywords"] -> handlers.handle_tandoor_routes(req)
     ["api", "tandoor", "meal-plans"] -> handlers.handle_tandoor_routes(req)
-    ["api", "tandoor", "meal-plans", entry_id] ->
+    ["api", "tandoor", "meal-plans", _entry_id] ->
       handlers.handle_tandoor_routes(req)
 
     // =========================================================================
@@ -302,11 +302,11 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // =========================================================================
     ["api", "tandoor", "import-logs"] ->
       wisp.not_found()
-    ["api", "tandoor", "import-logs", log_id] ->
+    ["api", "tandoor", "import-logs", _log_id] ->
       wisp.not_found()
     ["api", "tandoor", "export-logs"] ->
       wisp.not_found()
-    ["api", "tandoor", "export-logs", log_id] ->
+    ["api", "tandoor", "export-logs", _log_id] ->
       wisp.not_found()
 
     // =========================================================================
