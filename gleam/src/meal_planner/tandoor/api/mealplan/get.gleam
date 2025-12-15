@@ -1,9 +1,7 @@
 /// MealPlan Get API
 ///
 /// This module provides functions to get a single meal plan entry from the Tandoor API.
-import gleam/int
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/ids.{type MealPlanId}
 import meal_planner/tandoor/decoders/mealplan/meal_plan_decoder
@@ -27,15 +25,10 @@ pub fn get_meal_plan(
   config: ClientConfig,
   id: MealPlanId,
 ) -> Result(MealPlanEntry, TandoorError) {
-  let path =
-    "/api/meal-plan/" <> int.to_string(ids.meal_plan_id_to_int(id)) <> "/"
-
-  // Execute GET request using CRUD helpers
-  use resp <- result.try(crud_helpers.execute_get(config, path, []))
-
-  // Parse JSON response using meal plan entry decoder
-  crud_helpers.parse_json_single(
-    resp,
+  generic_crud.get(
+    config,
+    "/api/meal-plan/",
+    ids.meal_plan_id_to_int(id),
     meal_plan_decoder.meal_plan_entry_decoder(),
   )
 }

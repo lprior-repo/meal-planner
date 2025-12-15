@@ -51,6 +51,8 @@ pub fn list_meal_plans(
     }
 
   // Execute GET request using CRUD helpers
+  // Note: We use crud_helpers directly here because the response is a paginated object,
+  // not a simple list, so we can't use generic_crud.list() which expects List(a)
   use resp <- result.try(crud_helpers.execute_get(config, path, query_params))
 
   // Parse JSON response using meal plan list decoder
