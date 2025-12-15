@@ -520,3 +520,108 @@ pub fn handle_get_recipe(req: wisp.Request, recipe_id: String) -> wisp.Response 
   use req <- wisp.handle_head(req)
   recipe_handlers.handle_get_recipe(req, recipe_id)
 }
+
+// =============================================================================
+// Profile Management Handlers (3-legged OAuth, user auth required)
+// =============================================================================
+
+/// POST /api/fatsecret/profile
+/// Create a new FatSecret profile for the authenticated user
+pub fn handle_create_profile(
+  req: wisp.Request,
+  conn: pog.Connection,
+) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, http.Post)
+
+  case wisp.json_body(req) {
+    Ok(json_data) -> {
+      use user_id <- wisp.require_string_field(json_data, "user_id")
+
+      case fatsecret_service.create_profile(conn, user_id) {
+        Ok(profile_auth) -> {
+          let body =
+            json.object([
+              #("auth_token", json.string(profile_auth.auth_token)),
+              #("auth_secret", json.string(profile_auth.auth_secret)),
+              #("message", json.string("Profile created successfully")),
+            ])
+            |> json.to_string
+
+          wisp.json_response(body, 201)
+        }
+        Error(fatsecret_service.NotConnected) ->
+          error_response(
+            401,
+            "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
+          )
+        Error(fatsecret_service.NotConfigured) ->
+          error_response(500, "FatSecret API not configured")
+        Error(fatsecret_service.AuthRevoked) ->
+          error_response(
+            401,
+            "FatSecret authorization was revoked. Please reconnect.",
+          )
+        Error(fatsecret_service.StorageError(msg)) ->
+          error_response(500, "Storage error: " <> msg)
+        Error(fatsecret_service.ApiError(inner)) ->
+          error_response(500, error_to_string(inner))
+      }
+    }
+    Error(_) -> error_response(400, "Invalid JSON body")
+  }
+}
+
+/// GET /api/fatsecret/profile/auth?user_id=...
+/// Get profile authentication credentials for a user
+pub fn handle_get_profile_auth(
+  req: wisp.Request,
+  conn: pog.Connection,
+) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, http.Get)
+
+  let query_params = wisp.get_query(req)
+  let user_id =
+    list.find(query_params, fn(p) { p.0 == "user_id" })
+    |> result.map(fn(p) { p.1 })
+    |> result.unwrap("")
+
+  case string.is_empty(user_id) {
+    True -> error_response(400, "Missing 'user_id' query parameter")
+    False -> {
+      case fatsecret_service.get_profile_auth(conn, user_id) {
+        Ok(profile_auth) -> {
+          let body =
+            json.object([
+              #("auth_token", json.string(profile_auth.auth_token)),
+              #("auth_secret", json.string(profile_auth.auth_secret)),
+            ])
+            |> json.to_string
+
+          wisp.json_response(body, 200)
+        }
+        Error(fatsecret_service.NotConnected) ->
+          error_response(
+            401,
+            "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
+          )
+        Error(fatsecret_service.NotConfigured) ->
+          error_response(500, "FatSecret API not configured")
+        Error(fatsecret_service.AuthRevoked) ->
+          error_response(
+            401,
+            "FatSecret authorization was revoked. Please reconnect.",
+          )
+        Error(fatsecret_service.StorageError(msg)) ->
+          error_response(500, "Storage error: " <> msg)
+        Error(fatsecret_service.ApiError(inner)) ->
+          error_response(500, error_to_string(inner))
+      }
+    }
+  }
+}
