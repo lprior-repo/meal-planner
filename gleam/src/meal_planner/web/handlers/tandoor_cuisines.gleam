@@ -9,49 +9,15 @@ import gleam/json
 import gleam/option
 import gleam/result
 
-import meal_planner/env
 import meal_planner/tandoor/api/cuisine/create as cuisine_create
 import meal_planner/tandoor/api/cuisine/delete as cuisine_delete
 import meal_planner/tandoor/api/cuisine/get as cuisine_get
 import meal_planner/tandoor/api/cuisine/list as cuisine_list
 import meal_planner/tandoor/api/cuisine/update as cuisine_update
-import meal_planner/tandoor/client
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/types/cuisine/cuisine
 
 import wisp
-
-/// Get Tandoor client config with authentication
-fn get_authenticated_client() -> Result(client.ClientConfig, wisp.Response) {
-  case env.load_tandoor_config() {
-    option.Some(tandoor_cfg) -> {
-      let config =
-        client.session_config(
-          tandoor_cfg.base_url,
-          tandoor_cfg.username,
-          tandoor_cfg.password,
-        )
-      case client.login(config) {
-        Ok(auth_config) -> Ok(auth_config)
-        Error(e) -> {
-          let #(status, message) = case e {
-            client.AuthenticationError(msg) -> #(401, msg)
-            client.AuthorizationError(msg) -> #(403, msg)
-            client.NotFoundError(resource) -> #(404, resource)
-            client.BadRequestError(msg) -> #(400, msg)
-            client.ServerError(s, msg) -> #(s, msg)
-            client.NetworkError(msg) -> #(502, msg)
-            client.TimeoutError -> #(504, "Request timed out")
-            client.ParseError(msg) -> #(500, msg)
-            client.UnknownError(msg) -> #(500, msg)
-          }
-          Error(helpers.error_response(status, message))
-        }
-      }
-    }
-    option.None -> Error(helpers.error_response(502, "Tandoor not configured"))
-  }
-}
 
 /// Handle GET /api/tandoor/cuisines (list cuisines)
 /// and POST /api/tandoor/cuisines (create cuisine)
@@ -88,7 +54,7 @@ pub fn handle_list_cuisines(req: wisp.Request) -> wisp.Response {
   let query = wisp.get_query(req)
   let parent_filter = helpers.parse_int_param(query, "parent")
 
-  case get_authenticated_client() {
+  case helpers.get_authenticated_client() {
     Ok(config) -> {
       case cuisine_list.list_cuisines_by_parent(config, parent_filter) {
         Ok(cuisines) -> {
@@ -127,7 +93,7 @@ pub fn handle_get_cuisine(
 ) -> wisp.Response {
   case int.parse(cuisine_id) {
     Ok(id) -> {
-      case get_authenticated_client() {
+      case helpers.get_authenticated_client() {
         Ok(config) -> {
           case cuisine_get.get_cuisine(config, cuisine_id: id) {
             Ok(cuisine) -> {
@@ -166,7 +132,7 @@ pub fn handle_create_cuisine(req: wisp.Request) -> wisp.Response {
 
   case parse_cuisine_create_request(json_body) {
     Ok(cuisine_request) -> {
-      case get_authenticated_client() {
+      case helpers.get_authenticated_client() {
         Ok(config) -> {
           case cuisine_create.create_cuisine(config, cuisine_request) {
             Ok(cuisine) -> {
@@ -210,7 +176,7 @@ pub fn handle_update_cuisine(
     Ok(id) -> {
       case parse_cuisine_update_request(json_body) {
         Ok(cuisine_request) -> {
-          case get_authenticated_client() {
+          case helpers.get_authenticated_client() {
             Ok(config) -> {
               case
                 cuisine_update.update_cuisine(
@@ -260,7 +226,7 @@ pub fn handle_delete_cuisine(
 ) -> wisp.Response {
   case int.parse(cuisine_id) {
     Ok(id) -> {
-      case get_authenticated_client() {
+      case helpers.get_authenticated_client() {
         Ok(config) -> {
           case cuisine_delete.delete_cuisine(config, cuisine_id: id) {
             Ok(_) -> wisp.no_content()
