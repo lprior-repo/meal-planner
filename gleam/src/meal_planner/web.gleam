@@ -121,6 +121,26 @@ pub fn print_routes() -> Nil {
   io.println("  PATCH  /api/tandoor/export-logs/:id       - Update export log")
   io.println("  DELETE /api/tandoor/export-logs/:id       - Delete export log")
   io.println("")
-  io.println("Diary, Exercise, Weight APIs coming soon...")
+  io.println("Diary (3-legged):")
+  io.println(
+    "  POST   /api/fatsecret/diary/entries                 - Create entry",
+  )
+  io.println(
+    "  GET    /api/fatsecret/diary/entries/:entry_id       - Get entry",
+  )
+  io.println(
+    "  PATCH  /api/fatsecret/diary/entries/:entry_id       - Update entry",
+  )
+  io.println(
+    "  DELETE /api/fatsecret/diary/entries/:entry_id       - Delete entry",
+  )
+  io.println(
+    "  GET    /api/fatsecret/diary/day/:date_int           - Get day entries",
+  )
+  io.println(
+    "  GET    /api/fatsecret/diary/month/:date_int         - Get month summary",
+  )
+  io.println("")
+  io.println("Exercise, Weight APIs coming soon...")
   io.println("")
 }
