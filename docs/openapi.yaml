@@ -649,41 +649,97 @@ paths:
     get:
       tags: [FatSecret Favorites]
       summary: Get most eaten foods
-      description: Get user's most frequently eaten foods
+      description: |
+        Get user's most frequently eaten foods based on diary history.
+
+        **IMPLEMENTED** ✓
+
+        Optional meal filter to narrow results to specific meal types.
+        Returns list of foods with serving information.
       operationId: getMostEatenFoods
       security:
         - fatSecretOAuth: []
       parameters:
-        - $ref: '#/components/parameters/MaxResults'
+        - name: meal
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [all, breakfast, lunch, dinner, snack]
+          description: Filter by meal type (optional)
+          example: lunch
       responses:
         '200':
           description: Most eaten foods
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FoodDetails'
+                type: object
+                properties:
+                  foods:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FoodDetails'
+              example:
+                foods:
+                  - food_id: "4142"
+                    food_name: "Banana"
+                    food_type: "Generic"
+                    brand_name: null
+                    food_description: "Per 100g - Calories: 89kcal | Fat: 0.33g | Carbs: 22.84g | Protein: 1.09g"
+                    food_url: "https://www.fatsecret.com/calories-nutrition/generic/banana"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '502':
+          $ref: '#/components/responses/BadGateway'
 
   /api/fatsecret/favorites/foods/recently-eaten:
     get:
       tags: [FatSecret Favorites]
       summary: Get recently eaten foods
-      description: Get user's recently eaten foods
+      description: |
+        Get user's recently eaten foods based on diary history.
+
+        **IMPLEMENTED** ✓
+
+        Optional meal filter to narrow results to specific meal types.
+        Returns list of foods with serving information.
       operationId: getRecentlyEatenFoods
       security:
         - fatSecretOAuth: []
       parameters:
-        - $ref: '#/components/parameters/MaxResults'
+        - name: meal
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [all, breakfast, lunch, dinner, snack]
+          description: Filter by meal type (optional)
+          example: breakfast
       responses:
         '200':
           description: Recently eaten foods
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FoodDetails'
+                type: object
+                properties:
+                  foods:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FoodDetails'
+              example:
+                foods:
+                  - food_id: "52874"
+                    food_name: "Oatmeal"
+                    food_type: "Generic"
+                    brand_name: null
+                    food_description: "Per 100g - Calories: 68kcal | Fat: 1.36g | Carbs: 12.0g | Protein: 2.37g"
+                    food_url: "https://www.fatsecret.com/calories-nutrition/generic/oatmeal"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '502':
+          $ref: '#/components/responses/BadGateway'
 
   /api/fatsecret/favorites/recipes:
     get:
@@ -1159,6 +1215,41 @@ paths:
               schema:
                 $ref: '#/components/schemas/TandoorPaginatedMealPlans'
 
+    post:
+      tags: [Tandoor]
+      summary: Create meal plan entry
+      description: Create a new meal plan entry
+      operationId: createTandoorMealPlan
+      security:
+        - tandoorBasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TandoorMealPlanInput'
+            example:
+              recipe_name: Chocolate Chip Cookies
+              recipe: 1
+              from_date: '2025-12-14'
+              to_date: '2025-12-14'
+              meal_type: snack
+              servings: 2.0
+              note: Afternoon treat
+      responses:
+        '201':
+          description: Meal plan entry created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorMealPlanCreated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
   /api/tandoor/meal-plans/{id}:
     get:
       tags: [Tandoor]
@@ -1180,6 +1271,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TandoorMealPlan'
+
+    delete:
+      tags: [Tandoor]
+      summary: Delete meal plan entry
+      description: Delete a meal plan entry by ID
+      operationId: deleteTandoorMealPlan
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Meal plan entry ID
+      responses:
+        '200':
+          description: Entry deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Meal plan entry deleted
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
 
   /api/tandoor/units:
     get:
@@ -2001,6 +2129,61 @@ components:
           type: integer
         created_by:
           type: integer
+
+    TandoorMealPlanInput:
+      type: object
+      properties:
+        recipe:
+          type: integer
+          nullable: true
+          description: Recipe ID to link (optional)
+        recipe_name:
+          type: string
+          description: Name of the meal
+        from_date:
+          type: string
+          format: date
+          description: Start date (YYYY-MM-DD)
+        to_date:
+          type: string
+          format: date
+          description: End date (YYYY-MM-DD)
+        meal_type:
+          type: string
+          enum: [breakfast, lunch, dinner, snack, other]
+          description: Type of meal
+        servings:
+          type: number
+          default: 1.0
+          description: Number of servings
+        note:
+          type: string
+          description: Additional notes
+      required:
+        - recipe_name
+        - from_date
+        - to_date
+
+    TandoorMealPlanCreated:
+      type: object
+      properties:
+        id:
+          type: integer
+        recipe:
+          type: integer
+          nullable: true
+        recipe_name:
+          type: string
+        servings:
+          type: number
+        from_date:
+          type: string
+          format: date
+        to_date:
+          type: string
+          format: date
+        meal_type:
+          type: string
 
     TandoorPaginatedUnits:
       type: object

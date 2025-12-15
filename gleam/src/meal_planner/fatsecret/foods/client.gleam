@@ -179,6 +179,66 @@ pub fn search_foods_simple(
 }
 
 // ============================================================================
+// Food Barcode Lookup API (food.find_id_for_barcode.v2)
+// ============================================================================
+
+/// Find food ID by barcode using food.find_id_for_barcode.v2 endpoint
+///
+/// This is a 2-legged OAuth request (no user token required).
+/// Returns the food ID associated with the barcode, which can then be used
+/// with get_food() to retrieve full nutrition details.
+///
+/// ## Parameters
+/// - config: FatSecret API configuration
+/// - barcode: Barcode string (UPC, EAN13, EAN8, etc.)
+/// - barcode_type: Optional barcode type ("upc", "ean13", "ean8")
+///
+/// ## Example
+/// ```gleam
+/// let config = env.load_fatsecret_config() |> option.unwrap(default_config)
+/// case find_food_by_barcode(config, "012000161551", option.Some("upc")) {
+///   Ok(food) -> io.println("Food: " <> food.food_name)
+///   Error(e) -> io.println("Error: " <> error_to_string(e))
+/// }
+/// ```
+pub fn find_food_by_barcode(
+  config: FatSecretConfig,
+  barcode: String,
+  barcode_type: Option(String),
+) -> Result(Food, FatSecretError) {
+  // Build parameters for barcode lookup
+  let params = case barcode_type {
+    option.Some(btype) ->
+      dict.new()
+      |> dict.insert("barcode", barcode)
+      |> dict.insert("barcode_type", btype)
+    option.None ->
+      dict.new()
+      |> dict.insert("barcode", barcode)
+  }
+
+  // Use base client's make_api_request function
+  use response_json <- result.try(base_client.make_api_request(
+    config,
+    "food.find_id_for_barcode.v2",
+    params,
+  ))
+
+  // Parse JSON response to extract food_id
+  use food_id_value <- result.try(
+    json.parse(response_json, decoders.barcode_lookup_decoder())
+    |> result.map_error(fn(_) {
+      base_client.ParseError(
+        "Failed to decode barcode lookup response: " <> response_json,
+      )
+    }),
+  )
+
+  // Now fetch the complete food details using the found food_id
+  get_food(config, food_id_value)
+}
+
+// ============================================================================
 // Helper Functions
 // ============================================================================
 

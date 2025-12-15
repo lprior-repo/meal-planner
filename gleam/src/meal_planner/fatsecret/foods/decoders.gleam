@@ -341,3 +341,59 @@ pub fn decode_food_search_response(
 ) -> Result(FoodSearchResponse, List(decode.DecodeError)) {
   decode.run(json, food_search_response_decoder())
 }
+
+// ============================================================================
+// Autocomplete Decoders
+// ============================================================================
+
+/// Decoder for a single food autocomplete suggestion
+pub fn food_suggestion_decoder() -> decode.Decoder(types.FoodSuggestion) {
+  use food_id_str <- decode.field("food_id", decode.string)
+  use food_name <- decode.field("food_name", decode.string)
+
+  decode.success(types.FoodSuggestion(
+    food_id: types.food_id(food_id_str),
+    food_name: food_name,
+  ))
+}
+
+/// Decode autocomplete suggestions list handling single-vs-array quirk
+///
+/// FatSecret returns:
+/// - `{"suggestion": {...}}` for 1 suggestion
+/// - `{"suggestion": [{...}, {...}]}` for multiple suggestions
+fn food_suggestion_list_decoder() -> decode.Decoder(List(types.FoodSuggestion)) {
+  decode.one_of(
+    // Try array first
+    decode.list(food_suggestion_decoder()),
+    or: [
+      // Fallback to single object wrapped in list
+      {
+        use single <- decode.then(food_suggestion_decoder())
+        decode.success([single])
+      },
+    ],
+  )
+}
+
+/// Decoder for foods.autocomplete.v2 response
+pub fn food_autocomplete_response_decoder() -> decode.Decoder(
+  types.FoodAutocompleteResponse,
+) {
+  use suggestions <- decode.field("suggestions", {
+    use suggestion_list <- decode.field(
+      "suggestion",
+      food_suggestion_list_decoder(),
+    )
+    decode.success(suggestion_list)
+  })
+
+  decode.success(types.FoodAutocompleteResponse(suggestions: suggestions))
+}
+
+/// Decode FoodAutocompleteResponse from foods.autocomplete.v2 API response
+pub fn decode_food_autocomplete_response(
+  json: dynamic.Dynamic,
+) -> Result(types.FoodAutocompleteResponse, List(decode.DecodeError)) {
+  decode.run(json, food_autocomplete_response_decoder())
+}
