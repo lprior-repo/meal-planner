@@ -61,6 +61,76 @@ pub fn get_authenticated_client() -> Result(client.ClientConfig, wisp.Response) 
 }
 
 // =============================================================================
+// Handler Composition - Flattened Pipeline Utilities
+// =============================================================================
+
+/// Execute authenticated API call in Result pipeline
+///
+/// Flattens nested case expressions by combining authentication + API call.
+/// Returns Result for use in pipelines, avoiding nested case boilerplate.
+///
+/// # Example
+/// ```gleam
+/// use config <- result.try(authenticated_api_call())
+/// use results <- result.map(api_function(config))
+/// json.to_string(encode_results(results))
+/// |> wisp.json_response(200)
+/// ```
+pub fn authenticated_api_call() -> Result(client.ClientConfig, wisp.Response) {
+  get_authenticated_client()
+}
+
+/// Flatten Result into wisp.Response with JSON encoding
+///
+/// Takes a Result containing data to encode and converts it into an HTTP response.
+/// Eliminates manual case expressions when combined with authentication pipeline.
+///
+/// # Arguments
+/// * `result` - Result(T, E) from API call
+/// * `encode_fn` - Function to encode T into json.Json
+/// * `status` - HTTP status code for success
+/// * `error_msg` - Error message for failures
+///
+/// # Returns
+/// wisp.Response with encoded data or error
+pub fn flatten_api_result(
+  result: Result(a, Nil),
+  encode_fn: fn(a) -> json.Json,
+  status: Int,
+  error_msg: String,
+) -> wisp.Response {
+  case result {
+    Ok(data) -> {
+      encode_fn(data)
+      |> json.to_string
+      |> wisp.json_response(status)
+    }
+    Error(_) -> error_response(500, error_msg)
+  }
+}
+
+/// Flatten authentication + API call result into response
+///
+/// Single-step flattening of the 3-level pattern:
+/// 1. get_authenticated_client()
+/// 2. api_call(config)
+/// 3. JSON encode + Response
+///
+/// Usage:
+/// ```gleam
+/// let result = api_call(config)
+/// flatten_authenticated_result(result, encode_fn, 200, "API failed")
+/// ```
+pub fn flatten_authenticated_result(
+  result: Result(a, Nil),
+  encode_fn: fn(a) -> json.Json,
+  status: Int,
+  error_msg: String,
+) -> wisp.Response {
+  flatten_api_result(result, encode_fn, status, error_msg)
+}
+
+// =============================================================================
 // Optional Value JSON Encoders
 // =============================================================================
 
