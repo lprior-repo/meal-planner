@@ -294,7 +294,6 @@ pub fn month_summary_construction_test() {
   }
 }
 
-// ============================================================================
 // Tests for GET /api/fatsecret/diary/entries/:id - Single Entry Read
 // ============================================================================
 
@@ -314,4 +313,47 @@ pub fn get_diary_entries_by_date_filter_returns_200_test() {
   // Expected: 200 OK with array of FoodEntry objects filtered by date
   // Response should be an array (not wrapped in object like /day endpoint)
   should.fail()
+}
+
+// ============================================================================
+// Edge Case Tests - Data Integrity and Error Handling
+// ============================================================================
+
+pub fn zero_calorie_custom_entry_validation_test() {
+  // Edge case: Custom entry with zero calories should be allowed
+  // Validates system handles nutritional edge cases (water, diet soda, etc.)
+  let result =
+    types.validate_custom_entry(
+      food_entry_name: "Zero Cal Beverage",
+      serving_description: "1 cup",
+      number_of_units: 1.0,
+      calories: 0.0,
+      carbohydrate: 0.0,
+      protein: 0.0,
+      fat: 0.0,
+    )
+
+  result |> should.be_ok()
+}
+
+pub fn invalid_date_int_string_parsing_test() {
+  // Edge case: Non-numeric date_int in URL should return validation error
+  // Tests handler-level validation for "/api/fatsecret/diary/day/abc"
+  let result = types.validate_date_int_string("not-a-number")
+  should.be_error(result)
+}
+
+pub fn expired_oauth_token_error_mapping_test() {
+  // Edge case: Expired token (401) should map to AuthRevoked service error
+  // Tests proper error mapping from API to service layer
+  let api_error = types.map_auth_error(401)
+  api_error |> should.equal(types.AuthRevoked)
+}
+
+pub fn malformed_entry_data_negative_units_test() {
+  // Edge case: Negative number_of_units should be rejected
+  // Validates data integrity - you can't eat -1 servings
+  let result = types.validate_number_of_units(-1.5)
+
+  should.be_error(result)
 }

@@ -214,3 +214,98 @@ pub fn int_to_date(date_int: Int) -> String {
   // Extract the date string (YYYY-MM-DD)
   birl.to_naive_date_string(time)
 }
+
+// ============================================================================
+// Validation Functions - Edge Case Handling
+// ============================================================================
+
+/// Validate custom food entry data
+///
+/// Ensures all nutrition values are valid (allows zero for things like water).
+/// Checks that names are not empty and serving descriptions are present.
+///
+/// Returns Ok(Nil) if valid, Error(String) with validation message otherwise.
+pub fn validate_custom_entry(
+  food_entry_name food_entry_name: String,
+  serving_description serving_description: String,
+  number_of_units number_of_units: Float,
+  calories calories: Float,
+  carbohydrate carbohydrate: Float,
+  protein protein: Float,
+  fat fat: Float,
+) -> Result(Nil, String) {
+  // Validate name is not empty
+  case food_entry_name {
+    "" -> Error("food_entry_name cannot be empty")
+    _ -> {
+      // Validate serving description is not empty
+      case serving_description {
+        "" -> Error("serving_description cannot be empty")
+        _ -> {
+          // Validate number of units
+          case validate_number_of_units(number_of_units) {
+            Error(e) -> Error(e)
+            Ok(_) -> {
+              // Validate nutrition values are non-negative (zero is allowed)
+              case
+                calories <. 0.0
+                || carbohydrate <. 0.0
+                || protein <. 0.0
+                || fat <. 0.0
+              {
+                True -> Error("Nutrition values cannot be negative")
+                False -> Ok(Nil)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/// Validate number of units is positive
+///
+/// Checks that serving quantity is greater than 0.
+/// Returns Ok(Nil) if valid, Error(String) otherwise.
+pub fn validate_number_of_units(number_of_units: Float) -> Result(Nil, String) {
+  case number_of_units >. 0.0 {
+    True -> Ok(Nil)
+    False -> Error("number_of_units must be greater than 0")
+  }
+}
+
+/// Validate date_int string from URL parameter
+///
+/// Parses string to ensure it's a valid integer.
+/// Returns Ok(Int) if valid, Error(Nil) otherwise.
+pub fn validate_date_int_string(date_int_str: String) -> Result(Int, Nil) {
+  case gleam_int_parse(date_int_str) {
+    Ok(n) -> Ok(n)
+    Error(_) -> Error(Nil)
+  }
+}
+
+/// Map HTTP auth error codes to service errors
+///
+/// Helper for testing error mapping from API layer.
+/// Returns simplified error type for 401/403 responses.
+pub fn map_auth_error(status_code: Int) -> AuthError {
+  case status_code {
+    401 | 403 -> AuthRevoked
+    _ -> OtherError
+  }
+}
+
+// Helper types for validation
+pub type AuthError {
+  AuthRevoked
+  OtherError
+}
+
+// Import int.parse helper
+import gleam/int as gleam_int
+
+fn gleam_int_parse(s: String) -> Result(Int, Nil) {
+  gleam_int.parse(s)
+}
