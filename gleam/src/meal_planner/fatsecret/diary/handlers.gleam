@@ -444,6 +444,7 @@ fn parse_food_entry_input(
     case entry_type {
       "from_food" -> {
         use food_id <- decode.field("food_id", decode.string)
+        use food_entry_name <- decode.field("food_entry_name", decode.string)
         use serving_id <- decode.field("serving_id", decode.string)
         use number_of_units <- decode.field("number_of_units", decode.float)
         use meal_str <- decode.field("meal", decode.string)
@@ -459,6 +460,7 @@ fn parse_food_entry_input(
             decode.failure(
               FromFood(
                 food_id: "",
+                food_entry_name: "",
                 serving_id: "",
                 number_of_units: 0.0,
                 meal: types.Breakfast,
@@ -496,6 +498,7 @@ fn parse_food_entry_input(
                 decode.failure(
                   FromFood(
                     food_id: "",
+                    food_entry_name: "",
                     serving_id: "",
                     number_of_units: 0.0,
                     meal: meal,
@@ -506,6 +509,7 @@ fn parse_food_entry_input(
               Ok(date_int) ->
                 decode.success(FromFood(
                   food_id: food_id,
+                  food_entry_name: food_entry_name,
                   serving_id: serving_id,
                   number_of_units: number_of_units,
                   meal: meal,
@@ -613,6 +617,7 @@ fn parse_food_entry_input(
         decode.failure(
           FromFood(
             food_id: "",
+            food_entry_name: "",
             serving_id: "",
             number_of_units: 0.0,
             meal: types.Breakfast,
