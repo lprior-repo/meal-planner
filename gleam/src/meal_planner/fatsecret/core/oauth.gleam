@@ -9,6 +9,7 @@ import gleam/dict.{type Dict}
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/result
 import gleam/string
 
 /// OAuth 1.0a request token (from Step 1 of 3-legged flow)
@@ -184,5 +185,61 @@ pub fn build_oauth_params(
   let base_string = create_signature_base_string(method, url, params)
   let signature = create_signature(base_string, consumer_secret, token_secret)
 
-  dict.insert(params, "oauth_signature", signature)
+    dict.insert(params, "oauth_signature", signature)
+}
+
+/// Parse OAuth response string (key=value&key2=value2) into a dictionary
+pub fn parse_oauth_response(response: String) -> Dict(String, String) {
+  response
+  |> string.split("&")
+  |> list.fold(dict.new(), fn(acc, pair) {
+    case string.split(pair, "=") {
+      [key, value] -> dict.insert(acc, key, value)
+      _ -> acc
+    }
+  })
+}
+
+/// Parse request token response from OAuth 1.0a step 1
+pub fn parse_request_token(
+  response: String,
+) -> Result(RequestToken, String) {
+  let params = parse_oauth_response(response)
+
+  case dict.get(params, "oauth_token") {
+    Error(_) -> Error("Missing oauth_token")
+    Ok(token) ->
+      case dict.get(params, "oauth_token_secret") {
+        Error(_) -> Error("Missing oauth_token_secret")
+        Ok(secret) -> {
+          let callback_confirmed =
+            dict.get(params, "oauth_callback_confirmed")
+            |> result.map(fn(v) { v == "true" })
+            |> result.unwrap(False)
+
+          Ok(RequestToken(
+            oauth_token: token,
+            oauth_token_secret: secret,
+            oauth_callback_confirmed: callback_confirmed,
+          ))
+        }
+      }
+  }
+}
+
+/// Parse access token response from OAuth 1.0a step 3
+pub fn parse_access_token(
+  response: String,
+) -> Result(AccessToken, String) {
+  let params = parse_oauth_response(response)
+
+  case dict.get(params, "oauth_token") {
+    Error(_) -> Error("Missing oauth_token")
+    Ok(token) ->
+      case dict.get(params, "oauth_token_secret") {
+        Error(_) -> Error("Missing oauth_token_secret")
+        Ok(secret) ->
+          Ok(AccessToken(oauth_token: token, oauth_token_secret: secret))
+      }
+  }
 }
