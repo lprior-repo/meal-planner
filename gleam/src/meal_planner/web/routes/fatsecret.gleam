@@ -155,9 +155,10 @@ fn route_saved_meals(
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
 
-    [_meal_id, "items"] ->
+    [meal_id, "items"] ->
       case req.method {
-        http.Get -> wisp.not_found()
+        http.Get ->
+          saved_meals_handlers.handle_get_saved_meal_items(req, db, meal_id)
         http.Post -> wisp.not_found()
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
