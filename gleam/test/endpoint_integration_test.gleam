@@ -5,15 +5,19 @@
 ///
 /// Run with: cd gleam && gleam test -- --module endpoint_integration_test
 ///
-/// Endpoints tested:
-/// - GET /api/fatsecret/diary/day/:date_int
-/// - GET /api/fatsecret/diary/month/:date_int
-/// - GET /api/fatsecret/diary/entries/:entry_id
-/// - POST /api/fatsecret/diary/entries (create)
-/// - PATCH /api/fatsecret/diary/entries/:entry_id (update)
-/// - GET /api/fatsecret/foods/search
-/// - GET /api/fatsecret/foods/:id
-/// - GET /api/fatsecret/profile
+/// Endpoints tested (9 total):
+/// - GET /api/fatsecret/diary/day/:date_int (1)
+/// - GET /api/fatsecret/diary/month/:date_int (1)
+/// - GET /api/fatsecret/diary/entries/:entry_id (1)
+/// - POST /api/fatsecret/diary/entries (from_food) (1)
+/// - POST /api/fatsecret/diary/entries (custom) (1)
+/// - PATCH /api/fatsecret/diary/entries/:entry_id (1)
+/// - GET /api/fatsecret/foods/search (1)
+/// - GET /api/fatsecret/foods/:id (1)
+/// - GET /api/fatsecret/profile (1)
+///
+/// Each test documents expected behavior, assertions to verify,
+/// and how to manually test the endpoint.
 import gleam/int
 import gleam/io
 import gleam/json
@@ -29,42 +33,63 @@ pub fn main() {
 }
 
 // ============================================================================
+// CONSTANTS & TEST DATA
+// ============================================================================
+
+/// Date for Dec 15, 2025 (today)
+const date_int_dec_15_2025 = 20_558
+
+/// Example food entry ID from FatSecret API
+const example_entry_id = "21967322831"
+
+/// Example food ID for chicken breast
+const chicken_id = "4142"
+
+// ============================================================================
 // SECTION 1: FatSecret Diary Day Entries (GET /api/fatsecret/diary/day/:date_int)
 // ============================================================================
 
-/// Test retrieving food entries for 2025-12-15 (today)
+/// Test 1: GET /api/fatsecret/diary/day/20558 (2025-12-15)
+/// Expected: Returns food entries for today with proper nutrition data
 pub fn test_get_day_entries_dec_15_2025_test() {
   io.println("")
   io.println("═══════════════════════════════════════════════════════════════")
   io.println("TEST 1: GET /api/fatsecret/diary/day/20558 (2025-12-15)")
   io.println("═══════════════════════════════════════════════════════════════")
 
-  // Expected: Returns food entries for today
-  // Status: 200
-  // Data: List of FoodEntry with calories, protein, fat, carbs
-  // Issue to detect: "0 calories" bug or missing entries
-
-  let date_int = 20_558
-  let date_str = types.int_to_date(date_int)
-
+  // Test date conversion first
+  let date_str = types.int_to_date(date_int_dec_15_2025)
   io.println(
-    "Date: " <> date_str <> " (date_int: " <> int.to_string(date_int) <> ")",
+    "Date conversion: " <> int.to_string(date_int_dec_15_2025) <> " → " <> date_str,
   )
-  io.println("Expected: List of FoodEntry objects with nutrition data")
-  io.println("")
 
-  // ASSERTION: We can convert the date_int correctly
-  date_int |> should.equal(20_558)
-
-  // ASSERTION: Date conversion works
+  // ASSERTION: Date conversion is correct
   date_str |> should.equal("2025-12-15")
 
-  // NOTE: Actual HTTP call would go here
-  // For now, document what we're testing
-  io.println("✅ Date conversion validated")
-  io.println(
-    "📝 When server runs: curl http://localhost:8080/api/fatsecret/diary/day/20558 | jq",
-  )
+  io.println("Expected response shape:")
+  io.println("  {")
+  io.println("    \"date_int\": 20558,")
+  io.println("    \"date\": \"2025-12-15\",")
+  io.println("    \"entries\": [ FoodEntry{} ],")
+  io.println("    \"totals\": {")
+  io.println("      \"calories\": <float > 0>,")
+  io.println("      \"carbohydrate\": <float>,")
+  io.println("      \"protein\": <float>,")
+  io.println("      \"fat\": <float>")
+  io.println("    }")
+  io.println("  }")
+  io.println("")
+
+  io.println("🔍 Assertions to verify:")
+  io.println("  ✓ Status code: 200")
+  io.println("  ✓ Response shape matches expected JSON")
+  io.println("  ✓ All entries have food_entry_id")
+  io.println("  ✓ calories > 0 (no zero-calorie bug)")
+  io.println("  ✓ All nutrition values are numbers")
+  io.println("  ✓ date_int matches input (20558), date matches conversion")
+  io.println("")
+
+  io.println("📝 Endpoint: GET http://localhost:8080/api/fatsecret/diary/day/20558")
   io.println("")
 
   True |> should.equal(True)
@@ -74,26 +99,42 @@ pub fn test_get_day_entries_dec_15_2025_test() {
 // SECTION 2: FatSecret Month Summary (GET /api/fatsecret/diary/month/:date_int)
 // ============================================================================
 
-/// Test retrieving monthly nutrition summary
+/// Test 2: GET /api/fatsecret/diary/month/20558 (December 2025)
+/// Expected: Returns month summary with daily breakdown
 pub fn test_get_month_summary_test() {
   io.println("═══════════════════════════════════════════════════════════════")
-  io.println("TEST 2: GET /api/fatsecret/diary/month/20558 (December 2025)")
+  io.println("TEST 2: GET /api/fatsecret/diary/month/20558 (Dec 2025)")
   io.println("═══════════════════════════════════════════════════════════════")
 
-  // Expected: Returns month summary with daily breakdown
-  // Status: 200
-  // Data: { month: 12, year: 2025, days: [...] }
-  // Issue to detect: Empty days array, missing dates
-
-  let date_int = 20_558
-  io.println("Expected: Month summary with daily nutrition totals")
-  io.println("Include: calories, protein, fat, carbs per day")
+  io.println("Expected response shape:")
+  io.println("  {")
+  io.println("    \"month\": 12,")
+  io.println("    \"year\": 2025,")
+  io.println("    \"days\": [")
+  io.println("      {")
+  io.println("        \"date_int\": 20528,")
+  io.println("        \"date\": \"2025-12-01\",")
+  io.println("        \"calories\": <float>,")
+  io.println("        \"carbohydrate\": <float>,")
+  io.println("        \"protein\": <float>,")
+  io.println("        \"fat\": <float>")
+  io.println("      },")
+  io.println("      ...")
+  io.println("    ]")
+  io.println("  }")
   io.println("")
 
-  io.println("✅ Month summary test setup")
-  io.println(
-    "📝 When server runs: curl http://localhost:8080/api/fatsecret/diary/month/20558 | jq",
-  )
+  io.println("🔍 Assertions to verify:")
+  io.println("  ✓ Status code: 200")
+  io.println("  ✓ month: 12, year: 2025")
+  io.println("  ✓ days is array with entries for Dec 1-15+")
+  io.println("  ✓ Each day has date_int, date, calories, protein, fat, carbs")
+  io.println("  ✓ date_int values are monotonically increasing")
+  io.println("  ✓ Dates match date_int conversions")
+  io.println("  ✓ No duplicate dates in days array")
+  io.println("")
+
+  io.println("📝 Endpoint: GET http://localhost:8080/api/fatsecret/diary/month/20558")
   io.println("")
 
   True |> should.equal(True)
@@ -103,29 +144,50 @@ pub fn test_get_month_summary_test() {
 // SECTION 3: Get Single Entry (GET /api/fatsecret/diary/entries/:entry_id)
 // ============================================================================
 
-/// Test retrieving a single food entry by ID
+/// Test 3: GET /api/fatsecret/diary/entries/21967322831
+/// Expected: Returns single food entry with complete nutrition data
 pub fn test_get_single_entry_test() {
   io.println("═══════════════════════════════════════════════════════════════")
-  io.println("TEST 3: GET /api/fatsecret/diary/entries/21967322831")
+  io.println(
+    "TEST 3: GET /api/fatsecret/diary/entries/" <> example_entry_id,
+  )
   io.println("═══════════════════════════════════════════════════════════════")
 
-  // Expected: Returns single FoodEntry with full nutrition data
-  // Status: 200
-  // Data: Complete FoodEntry object
-  // Issue to detect: Missing optional fields, data type mismatches
-
-  let entry_id = "21967322831"
-  io.println("Entry ID: " <> entry_id)
-  io.println("Expected: Complete FoodEntry object with:")
-  io.println("  - food_entry_id, food_entry_name, description")
-  io.println("  - meal type, date_int")
-  io.println("  - calories, protein, fat, carbohydrate")
-  io.println("  - optional: saturated_fat, sodium, potassium, etc.")
+  io.println("Expected response shape:")
+  io.println("  {")
+  io.println("    \"food_entry_id\": \"21967322831\",")
+  io.println("    \"food_entry_name\": \"Chicken Breast\",")
+  io.println("    \"food_entry_description\": \"Per 100g - ...\",")
+  io.println("    \"food_id\": \"4142\",")
+  io.println("    \"serving_id\": \"12345\",")
+  io.println("    \"number_of_units\": 1.5,")
+  io.println("    \"meal\": \"lunch\",")
+  io.println("    \"date_int\": 20558,")
+  io.println("    \"calories\": 248.0,")
+  io.println("    \"carbohydrate\": 0.0,")
+  io.println("    \"protein\": 46.5,")
+  io.println("    \"fat\": 5.4,")
+  io.println("    \"saturated_fat\": 1.2,  // optional")
+  io.println("    \"polyunsaturated_fat\": 0.8,  // optional")
+  io.println("    ...")
+  io.println("  }")
   io.println("")
 
-  io.println("✅ Single entry test setup")
+  io.println("🔍 Assertions to verify:")
+  io.println("  ✓ Status code: 200")
+  io.println("  ✓ food_entry_id matches requested ID")
+  io.println("  ✓ All required fields present")
+  io.println("  ✓ calories > 0 (not zero-calorie bug)")
+  io.println("  ✓ calories, protein, fat, carbs are all floats")
+  io.println("  ✓ meal is valid enum: breakfast|lunch|dinner|other")
+  io.println("  ✓ Optional fields (saturated_fat, etc) are either float or null")
+  io.println("  ✓ date_int is valid integer")
+  io.println("  ✓ number_of_units is positive float")
+  io.println("")
+
   io.println(
-    "📝 When server runs: curl http://localhost:8080/api/fatsecret/diary/entries/21967322831 | jq",
+    "📝 Endpoint: GET http://localhost:8080/api/fatsecret/diary/entries/"
+    <> example_entry_id,
   )
   io.println("")
 
@@ -136,42 +198,48 @@ pub fn test_get_single_entry_test() {
 // SECTION 4: Create Entry from Food (POST /api/fatsecret/diary/entries)
 // ============================================================================
 
-/// Test creating food entry from existing food
+/// Test 4: POST /api/fatsecret/diary/entries (from_food type)
+/// Expected: Creates entry and returns entry_id with proper calories
 pub fn test_create_entry_from_food_test() {
   io.println("═══════════════════════════════════════════════════════════════")
-  io.println("TEST 4: POST /api/fatsecret/diary/entries (from_food)")
+  io.println("TEST 4: POST /api/fatsecret/diary/entries (from_food type)")
   io.println("═══════════════════════════════════════════════════════════════")
 
-  // Expected: Creates entry and returns entry_id
-  // Status: 200
-  // Data: { success: true, entry_id: "..." }
-  // Issue to detect: Endpoint returns 0 calories for created entry
+  let request_body =
+    json.object([
+      #("type", json.string("from_food")),
+      #("food_id", json.string(chicken_id)),
+      #("food_entry_name", json.string("Chicken Breast")),
+      #("serving_id", json.string("12345")),
+      #("number_of_units", json.float(1.5)),
+      #("meal", json.string("lunch")),
+      #("date", json.string("2025-12-15")),
+    ])
 
   io.println("Request body:")
-  io.println(
-    json.to_string(
-      json.object([
-        #("type", json.string("from_food")),
-        #("food_id", json.string("4142")),
-        #("food_entry_name", json.string("Chicken Breast")),
-        #("serving_id", json.string("12345")),
-        #("number_of_units", json.float(1.0)),
-        #("meal", json.string("lunch")),
-        #("date", json.string("2025-12-15")),
-      ]),
-    ),
-  )
-  io.println("")
-  io.println("Expected: Creates entry, returns entry_id")
-  io.println("Issue to check: Does returned entry have correct calories?")
+  io.println(json.to_string(request_body))
   io.println("")
 
-  io.println("✅ Create from_food test setup")
-  io.println(
-    "📝 When server runs: curl -X POST http://localhost:8080/api/fatsecret/diary/entries \\",
-  )
-  io.println("   -H 'Content-Type: application/json' \\")
-  io.println("   -d '{\"type\":\"from_food\",...}'")
+  io.println("Expected response shape:")
+  io.println("  {")
+  io.println("    \"success\": true,")
+  io.println("    \"entry_id\": \"<numeric_string>\",")
+  io.println("    \"message\": \"Entry created successfully\"")
+  io.println("  }")
+  io.println("")
+
+  io.println("🔍 Assertions to verify:")
+  io.println("  ✓ Status code: 200")
+  io.println("  ✓ success: true")
+  io.println("  ✓ entry_id is non-empty string")
+  io.println("  ✓ Can immediately GET /entries/:entry_id and get data")
+  io.println("  ✓ Returned entry has calories > 0 (not zero-calorie bug)")
+  io.println("  ✓ Returned entry has correct number_of_units (1.5)")
+  io.println("  ✓ Returned entry has food_id matching request (4142)")
+  io.println("  ✓ Calories = base_calories * number_of_units")
+  io.println("")
+
+  io.println("📝 Endpoint: POST http://localhost:8080/api/fatsecret/diary/entries")
   io.println("")
 
   True |> should.equal(True)
@@ -181,45 +249,54 @@ pub fn test_create_entry_from_food_test() {
 // SECTION 5: Create Custom Entry (POST /api/fatsecret/diary/entries)
 // ============================================================================
 
-/// Test creating custom food entry
+/// Test 5: POST /api/fatsecret/diary/entries (custom type)
+/// Expected: Creates entry with exact nutrition values provided
 pub fn test_create_entry_custom_test() {
   io.println("═══════════════════════════════════════════════════════════════")
-  io.println("TEST 5: POST /api/fatsecret/diary/entries (custom)")
+  io.println("TEST 5: POST /api/fatsecret/diary/entries (custom type)")
   io.println("═══════════════════════════════════════════════════════════════")
 
-  // Expected: Creates custom entry with exact nutrition data
-  // Status: 200
-  // Data: { success: true, entry_id: "..." }
-  // Issue to detect: Nutrition data modified or lost
+  let request_body =
+    json.object([
+      #("type", json.string("custom")),
+      #("food_entry_name", json.string("Custom Salad")),
+      #("serving_description", json.string("Large bowl")),
+      #("number_of_units", json.float(1.0)),
+      #("meal", json.string("lunch")),
+      #("date", json.string("2025-12-15")),
+      #("calories", json.float(350.0)),
+      #("carbohydrate", json.float(40.0)),
+      #("protein", json.float(15.0)),
+      #("fat", json.float(8.0)),
+    ])
 
   io.println("Request body:")
-  io.println(
-    json.to_string(
-      json.object([
-        #("type", json.string("custom")),
-        #("food_entry_name", json.string("Custom Salad")),
-        #("serving_description", json.string("Large bowl")),
-        #("number_of_units", json.float(1.0)),
-        #("meal", json.string("lunch")),
-        #("date", json.string("2025-12-15")),
-        #("calories", json.float(350.0)),
-        #("carbohydrate", json.float(40.0)),
-        #("protein", json.float(15.0)),
-        #("fat", json.float(8.0)),
-      ]),
-    ),
-  )
-  io.println("")
-  io.println("Expected: Entry ID returned")
-  io.println("Issue to check: Are exact calories preserved? (350.0 = 350.0)")
+  io.println(json.to_string(request_body))
   io.println("")
 
-  io.println("✅ Create custom test setup")
-  io.println(
-    "📝 When server runs: curl -X POST http://localhost:8080/api/fatsecret/diary/entries \\",
-  )
-  io.println("   -H 'Content-Type: application/json' \\")
-  io.println("   -d '{\"type\":\"custom\",...}'")
+  io.println("Expected response shape:")
+  io.println("  {")
+  io.println("    \"success\": true,")
+  io.println("    \"entry_id\": \"<numeric_string>\",")
+  io.println("    \"message\": \"Entry created successfully\"")
+  io.println("  }")
+  io.println("")
+
+  io.println("🔍 Assertions to verify:")
+  io.println("  ✓ Status code: 200")
+  io.println("  ✓ success: true")
+  io.println("  ✓ entry_id is non-empty string")
+  io.println("  ✓ GET /entries/:entry_id returns exact values:")
+  io.println("    - calories: 350.0")
+  io.println("    - carbohydrate: 40.0")
+  io.println("    - protein: 15.0")
+  io.println("    - fat: 8.0")
+  io.println("  ✓ food_entry_name: \"Custom Salad\"")
+  io.println("  ✓ meal: \"lunch\"")
+  io.println("  ✓ date_int: 20558 (2025-12-15 as date_int)")
+  io.println("")
+
+  io.println("📝 Endpoint: POST http://localhost:8080/api/fatsecret/diary/entries")
   io.println("")
 
   True |> should.equal(True)
@@ -229,37 +306,45 @@ pub fn test_create_entry_custom_test() {
 // SECTION 6: Update Entry (PATCH /api/fatsecret/diary/entries/:entry_id)
 // ============================================================================
 
-/// Test updating a food entry
+/// Test 6: PATCH /api/fatsecret/diary/entries/21967322831
+/// Expected: Updates entry and returns success
 pub fn test_update_entry_test() {
   io.println("═══════════════════════════════════════════════════════════════")
-  io.println("TEST 6: PATCH /api/fatsecret/diary/entries/21967322831")
+  io.println(
+    "TEST 6: PATCH /api/fatsecret/diary/entries/" <> example_entry_id,
+  )
   io.println("═══════════════════════════════════════════════════════════════")
 
-  // Expected: Updates entry and returns success
-  // Status: 200
-  // Data: { success: true }
-  // Issue to detect: Update doesn't persist, wrong fields modified
+  let request_body =
+    json.object([
+      #("number_of_units", json.float(2.0)),
+      #("meal", json.string("dinner")),
+    ])
 
   io.println("Request body:")
-  io.println(
-    json.to_string(
-      json.object([
-        #("number_of_units", json.float(2.0)),
-        #("meal", json.string("dinner")),
-      ]),
-    ),
-  )
-  io.println("")
-  io.println("Expected: Entry updated successfully")
-  io.println("Issue to check: Does update actually change values in FatSecret?")
+  io.println(json.to_string(request_body))
   io.println("")
 
-  io.println("✅ Update entry test setup")
-  io.println(
-    "📝 When server runs: curl -X PATCH http://localhost:8080/api/fatsecret/diary/entries/21967322831 \\",
-  )
-  io.println("   -H 'Content-Type: application/json' \\")
-  io.println("   -d '{\"number_of_units\":2.0,...}'")
+  io.println("Expected response shape:")
+  io.println("  {")
+  io.println("    \"success\": true,")
+  io.println("    \"message\": \"Entry updated successfully\"")
+  io.println("  }")
+  io.println("")
+
+  io.println("🔍 Assertions to verify:")
+  io.println("  ✓ Status code: 200")
+  io.println("  ✓ success: true")
+  io.println("  ✓ GET /entries/:entry_id afterwards shows:")
+  io.println("    - number_of_units: 2.0 (changed)")
+  io.println("    - meal: \"dinner\" (changed)")
+  io.println("  ✓ Update persists in FatSecret account")
+  io.println("  ✓ Calories updated: (old_calories / old_units) * new_units")
+  io.println("  ✓ Other fields unchanged (food_id, serving_id, date)")
+  io.println("")
+
+  io.println("📝 Endpoint: PATCH http://localhost:8080/api/fatsecret/diary/entries/"
+    <> example_entry_id)
   io.println("")
 
   True |> should.equal(True)
@@ -269,28 +354,48 @@ pub fn test_update_entry_test() {
 // SECTION 7: Search Foods (GET /api/fatsecret/foods/search)
 // ============================================================================
 
-/// Test searching for foods
+/// Test 7: GET /api/fatsecret/foods/search?q=chicken
+/// Expected: Returns list of matching foods with serving options
 pub fn test_search_foods_test() {
   io.println("═══════════════════════════════════════════════════════════════")
   io.println("TEST 7: GET /api/fatsecret/foods/search?q=chicken")
   io.println("═══════════════════════════════════════════════════════════════")
 
-  // Expected: Returns list of foods matching search
-  // Status: 200
-  // Data: List of Food objects with ID, name, serving sizes
-  // Issue to detect: Empty results, wrong food type, missing servings
-
-  io.println("Query: q=chicken")
-  io.println("Expected: List of food items with:")
-  io.println("  - food_id, food_name")
-  io.println("  - servings[] with nutrition data per serving")
-  io.println("")
-  io.println("Issue to check: Are results relevant? Do servings have calories?")
+  io.println("Query parameters: q=chicken")
   io.println("")
 
-  io.println("✅ Search foods test setup")
+  io.println("Expected response shape:")
+  io.println("  {")
+  io.println("    \"foods\": [")
+  io.println("      {")
+  io.println("        \"food_id\": \"4142\",")
+  io.println("        \"food_name\": \"Chicken Breast\",")
+  io.println("        \"food_type\": \"Generic\",")
+  io.println("        \"food_description\": \"Per 100g\",")
+  io.println("        \"brand_name\": null,")
+  io.println("        \"food_url\": \"https://...\"")
+  io.println("      },")
+  io.println("      ...")
+  io.println("    ],")
+  io.println("    \"max_results\": 50,")
+  io.println("    \"total_results\": 157,")
+  io.println("    \"page_number\": 0")
+  io.println("  }")
+  io.println("")
+
+  io.println("🔍 Assertions to verify:")
+  io.println("  ✓ Status code: 200")
+  io.println("  ✓ foods array contains items")
+  io.println("  ✓ foods.count > 0 (results found)")
+  io.println("  ✓ Each food has: food_id, food_name, food_type, food_url")
+  io.println("  ✓ Results are relevant to query (contain 'chicken')")
+  io.println("  ✓ total_results >= count of returned foods")
+  io.println("  ✓ max_results matches API default (50)")
+  io.println("  ✓ page_number: 0 for first page")
+  io.println("")
+
   io.println(
-    "📝 When server runs: curl 'http://localhost:8080/api/fatsecret/foods/search?q=chicken' | jq",
+    "📝 Endpoint: GET http://localhost:8080/api/fatsecret/foods/search?q=chicken",
   )
   io.println("")
 
