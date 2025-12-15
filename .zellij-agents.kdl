@@ -1,0 +1,44 @@
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            text: "Meal Planner Multi-Agent Development"
+        }
+    }
+    tab {
+        pane {
+            pane size=1 {
+                command: "/home/lewis/src/meal-planner/scripts/agent-runner.sh" "agent-1"
+            }
+            pane size=1 {
+                command: "/home/lewis/src/meal-planner/scripts/agent-runner.sh" "agent-2"
+            }
+            pane {
+                command: "/home/lewis/src/meal-planner/scripts/agent-runner.sh" "agent-3"
+            }
+        pane {
+            pane size=1 {
+                command: "/home/lewis/src/meal-planner/scripts/agent-runner.sh" "agent-4"
+            }
+            pane size=1 {
+                command: "/home/lewis/src/meal-planner/scripts/agent-runner.sh" "agent-5"
+            }
+            pane {
+                command: "/home/lewis/src/meal-planner/scripts/agent-runner.sh" "agent-6"
+            }
+        pane {
+            pane size=1 {
+                command: "/home/lewis/src/meal-planner/scripts/agent-runner.sh" "agent-7"
+            }
+            pane size=1 {
+                command: "/home/lewis/src/meal-planner/scripts/agent-runner.sh" "agent-8"
+            }
+            pane {
+                command: "/home/lewis/src/meal-planner/scripts/agent-runner.sh" "agent-9"
+            }
+        pane {
+            pane size=1 {
+                command: "/home/lewis/src/meal-planner/scripts/agent-runner.sh" "agent-10"
+            }
+        }
+    }
+}
