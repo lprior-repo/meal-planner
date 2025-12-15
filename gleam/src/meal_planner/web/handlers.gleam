@@ -181,6 +181,16 @@ pub fn handle_fatsecret_get_food(
   foods_handlers.handle_get_food(req, food_id)
 }
 
+/// Handle GET /api/fatsecret/foods/autocomplete
+pub fn handle_fatsecret_autocomplete_foods(req: wisp.Request) -> wisp.Response {
+  foods_handlers.handle_autocomplete_foods(req)
+}
+
+/// Handle GET /api/fatsecret/recipes/autocomplete
+pub fn handle_fatsecret_autocomplete_recipes(req: wisp.Request) -> wisp.Response {
+  fatsecret.handle_autocomplete_recipes(req)
+}
+
 // ============================================================================
 // Tandoor Recipe Manager Handlers
 // ============================================================================
