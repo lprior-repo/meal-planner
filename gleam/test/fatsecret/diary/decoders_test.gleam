@@ -261,6 +261,40 @@ pub fn decode_month_summary_test() {
   list.length(decoded.days) |> should.equal(2)
 }
 
+/// Test MonthSummary with single day (not in array)
+pub fn decode_month_summary_single_day_test() {
+  let json_str =
+    "{"
+    <> "  \"month\": \"2\","
+    <> "  \"year\": \"2024\","
+    <> "  \"days\": {"
+    <> "    \"day\": {"
+    <> "      \"date_int\": \"19724\","
+    <> "      \"calories\": \"1950\","
+    <> "      \"carbohydrate\": \"180\","
+    <> "      \"protein\": \"140\","
+    <> "      \"fat\": \"65\""
+    <> "    }"
+    <> "  }"
+    <> "}"
+
+  let assert Ok(decoded) =
+    json.parse(json_str, decoders.month_summary_decoder())
+
+  decoded.month |> should.equal(2)
+  decoded.year |> should.equal(2024)
+  list.length(decoded.days) |> should.equal(1)
+
+  // Verify the single day was parsed correctly
+  let first = case decoded.days {
+    [day] -> day
+    _ -> panic as "Expected exactly one day"
+  }
+
+  first.date_int |> should.equal(19_724)
+  first.calories |> should.equal(1950.0)
+}
+
 // ============================================================================
 // Edge Case Tests: Optional Fields
 // ============================================================================
