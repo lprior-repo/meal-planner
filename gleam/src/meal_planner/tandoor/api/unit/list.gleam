@@ -2,14 +2,10 @@
 ///
 /// This module provides functions to list units from the Tandoor API
 /// with pagination support.
-import gleam/dynamic/decode
 import gleam/int
-import gleam/json
 import gleam/list
 import gleam/option.{type Option}
-import gleam/result
-import gleam/string
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/decoders/unit/unit_decoder
@@ -38,15 +34,13 @@ pub fn list_units(
   // Build query parameters list
   let query_params = build_query_params(limit, page)
 
-  // Execute GET request
-  use resp <- result.try(crud_helpers.execute_get(
+  // Use generic_crud.list_paginated for paginated unit listing
+  generic_crud.list_paginated(
     config,
     "/api/unit/",
     query_params,
-  ))
-
-  // Parse JSON response using the paginated decoder
-  parse_paginated_response(resp)
+    unit_decoder.decode_unit(),
+  )
 }
 
 /// Build query parameters from limit and page options
@@ -65,37 +59,4 @@ fn build_query_params(
   }
 
   list.append(limit_params, page_params)
-}
-
-/// Parse paginated response from JSON
-fn parse_paginated_response(
-  response: client.ApiResponse,
-) -> Result(PaginatedResponse(Unit), TandoorError) {
-  case json.parse(response.body, using: decode.dynamic) {
-    Ok(json_data) -> {
-      case
-        decode.run(
-          json_data,
-          http.paginated_decoder(unit_decoder.decode_unit()),
-        )
-      {
-        Ok(paginated) -> Ok(paginated)
-        Error(errors) -> {
-          let error_msg =
-            "Failed to decode unit list: "
-            <> string.join(
-              list.map(errors, fn(e) {
-                case e {
-                  decode.DecodeError(expected, _found, path) ->
-                    expected <> " at " <> string.join(path, ".")
-                }
-              }),
-              ", ",
-            )
-          Error(client.ParseError(error_msg))
-        }
-      }
-    }
-    Error(_) -> Error(client.ParseError("Invalid JSON response"))
-  }
 }
