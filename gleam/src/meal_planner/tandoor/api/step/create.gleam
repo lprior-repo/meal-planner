@@ -2,8 +2,7 @@
 ///
 /// This module provides functions to create new steps in the Tandoor API.
 import gleam/json
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/recipe/step_decoder
 import meal_planner/tandoor/encoders/recipe/step_encoder.{
@@ -42,13 +41,11 @@ pub fn create_step(
   // Encode step data to JSON
   let request_body = encode_step_create(request) |> json.to_string
 
-  // Execute POST request using CRUD helper
-  use resp <- result.try(crud_helpers.execute_post(
+  // Create step using generic CRUD function
+  generic_crud.create(
     config,
     "/api/step/",
     request_body,
-  ))
-
-  // Parse JSON response using single object helper
-  crud_helpers.parse_json_single(resp, step_decoder.step_decoder())
+    step_decoder.step_decoder(),
+  )
 }
