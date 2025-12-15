@@ -42,6 +42,18 @@ import meal_planner/tandoor/api/supermarket/list as supermarket_list
 import meal_planner/tandoor/api/supermarket/update as supermarket_update
 import meal_planner/tandoor/api/unit/list as unit_list
 import meal_planner/tandoor/core/ids.{meal_plan_id_from_int, recipe_id_from_int}
+import meal_planner/tandoor/decoders/import_export/export_log_create_request_decoder
+import meal_planner/tandoor/decoders/import_export/export_log_update_request_decoder
+import meal_planner/tandoor/decoders/import_export/import_log_create_request_decoder
+import meal_planner/tandoor/decoders/import_export/import_log_update_request_decoder
+import meal_planner/tandoor/encoders/import_export/export_log_encoder.{
+  type ExportLogCreateRequest, type ExportLogUpdateRequest,
+  ExportLogCreateRequest, ExportLogUpdateRequest,
+}
+import meal_planner/tandoor/encoders/import_export/import_log_encoder.{
+  type ImportLogCreateRequest, type ImportLogUpdateRequest,
+  ImportLogCreateRequest, ImportLogUpdateRequest,
+}
 import meal_planner/tandoor/encoders/recipe/recipe_create_encoder.{
   type CreateRecipeRequest, CreateRecipeRequest,
 }
@@ -178,11 +190,15 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
     // Ingredients (GET list only)
     ["api", "tandoor", "ingredients"] -> handle_ingredients_collection(req)
 
-    // Import Logs (GET list only)
+    // Import Logs
     ["api", "tandoor", "import-logs"] -> handle_import_logs_collection(req)
+    ["api", "tandoor", "import-logs", log_id] ->
+      handle_import_log_by_id(req, log_id)
 
-    // Export Logs (GET list only)
+    // Export Logs
     ["api", "tandoor", "export-logs"] -> handle_export_logs_collection(req)
+    ["api", "tandoor", "export-logs", log_id] ->
+      handle_export_log_by_id(req, log_id)
 
     // Supermarkets (GET list, POST create)
     ["api", "tandoor", "supermarkets"] -> handle_supermarkets_collection(req)
@@ -668,7 +684,8 @@ fn handle_list_ingredients(_req: wisp.Request) -> wisp.Response {
 fn handle_import_logs_collection(req: wisp.Request) -> wisp.Response {
   case req.method {
     http.Get -> handle_list_import_logs(req)
-    _ -> wisp.method_not_allowed([http.Get])
+    http.Post -> handle_create_import_log(req)
+    _ -> wisp.method_not_allowed([http.Get, http.Post])
   }
 }
 
@@ -710,6 +727,98 @@ fn handle_list_import_logs(req: wisp.Request) -> wisp.Response {
   }
 }
 
+fn handle_create_import_log(req: wisp.Request) -> wisp.Response {
+  use body <- wisp.require_json(req)
+
+  case parse_import_log_create_request(body) {
+    Ok(request) -> {
+      case helpers.get_authenticated_client() {
+        Ok(config) -> {
+          case import_export_api.create_import_log(config, request) {
+            Ok(log) -> {
+              encode_import_log(log)
+              |> json.to_string
+              |> wisp.json_response(201)
+            }
+            Error(_) ->
+              helpers.error_response(500, "Failed to create import log")
+          }
+        }
+        Error(resp) -> resp
+      }
+    }
+    Error(msg) -> helpers.error_response(400, msg)
+  }
+}
+
+fn handle_import_log_by_id(req: wisp.Request, log_id: String) -> wisp.Response {
+  case int.parse(log_id) {
+    Ok(id) -> {
+      case req.method {
+        http.Get -> handle_get_import_log(req, id)
+        http.Patch -> handle_update_import_log(req, id)
+        http.Delete -> handle_delete_import_log(req, id)
+        _ -> wisp.method_not_allowed([http.Get, http.Patch, http.Delete])
+      }
+    }
+    Error(_) -> helpers.error_response(400, "Invalid log ID")
+  }
+}
+
+fn handle_get_import_log(_req: wisp.Request, id: Int) -> wisp.Response {
+  case helpers.get_authenticated_client() {
+    Ok(config) -> {
+      case import_export_api.get_import_log(config, log_id: id) {
+        Ok(log) -> {
+          encode_import_log(log)
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+fn handle_update_import_log(req: wisp.Request, id: Int) -> wisp.Response {
+  use body <- wisp.require_json(req)
+
+  case parse_import_log_update_request(body) {
+    Ok(request) -> {
+      case helpers.get_authenticated_client() {
+        Ok(config) -> {
+          case
+            import_export_api.update_import_log(config, request, log_id: id)
+          {
+            Ok(log) -> {
+              encode_import_log(log)
+              |> json.to_string
+              |> wisp.json_response(200)
+            }
+            Error(_) ->
+              helpers.error_response(500, "Failed to update import log")
+          }
+        }
+        Error(resp) -> resp
+      }
+    }
+    Error(msg) -> helpers.error_response(400, msg)
+  }
+}
+
+fn handle_delete_import_log(_req: wisp.Request, id: Int) -> wisp.Response {
+  case helpers.get_authenticated_client() {
+    Ok(config) -> {
+      case import_export_api.delete_import_log(config, log_id: id) {
+        Ok(Nil) -> wisp.response(204)
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
 // =============================================================================
 // Export Logs Collection Handler
 // =============================================================================
@@ -717,7 +826,8 @@ fn handle_list_import_logs(req: wisp.Request) -> wisp.Response {
 fn handle_export_logs_collection(req: wisp.Request) -> wisp.Response {
   case req.method {
     http.Get -> handle_list_export_logs(req)
-    _ -> wisp.method_not_allowed([http.Get])
+    http.Post -> handle_create_export_log(req)
+    _ -> wisp.method_not_allowed([http.Get, http.Post])
   }
 }
 
@@ -752,6 +862,98 @@ fn handle_list_export_logs(req: wisp.Request) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+fn handle_create_export_log(req: wisp.Request) -> wisp.Response {
+  use body <- wisp.require_json(req)
+
+  case parse_export_log_create_request(body) {
+    Ok(request) -> {
+      case helpers.get_authenticated_client() {
+        Ok(config) -> {
+          case import_export_api.create_export_log(config, request) {
+            Ok(log) -> {
+              encode_export_log(log)
+              |> json.to_string
+              |> wisp.json_response(201)
+            }
+            Error(_) ->
+              helpers.error_response(500, "Failed to create export log")
+          }
+        }
+        Error(resp) -> resp
+      }
+    }
+    Error(msg) -> helpers.error_response(400, msg)
+  }
+}
+
+fn handle_export_log_by_id(req: wisp.Request, log_id: String) -> wisp.Response {
+  case int.parse(log_id) {
+    Ok(id) -> {
+      case req.method {
+        http.Get -> handle_get_export_log(req, id)
+        http.Patch -> handle_update_export_log(req, id)
+        http.Delete -> handle_delete_export_log(req, id)
+        _ -> wisp.method_not_allowed([http.Get, http.Patch, http.Delete])
+      }
+    }
+    Error(_) -> helpers.error_response(400, "Invalid log ID")
+  }
+}
+
+fn handle_get_export_log(_req: wisp.Request, id: Int) -> wisp.Response {
+  case helpers.get_authenticated_client() {
+    Ok(config) -> {
+      case import_export_api.get_export_log(config, log_id: id) {
+        Ok(log) -> {
+          encode_export_log(log)
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+fn handle_update_export_log(req: wisp.Request, id: Int) -> wisp.Response {
+  use body <- wisp.require_json(req)
+
+  case parse_export_log_update_request(body) {
+    Ok(request) -> {
+      case helpers.get_authenticated_client() {
+        Ok(config) -> {
+          case
+            import_export_api.update_export_log(config, request, log_id: id)
+          {
+            Ok(log) -> {
+              encode_export_log(log)
+              |> json.to_string
+              |> wisp.json_response(200)
+            }
+            Error(_) ->
+              helpers.error_response(500, "Failed to update export log")
+          }
+        }
+        Error(resp) -> resp
+      }
+    }
+    Error(msg) -> helpers.error_response(400, msg)
+  }
+}
+
+fn handle_delete_export_log(_req: wisp.Request, id: Int) -> wisp.Response {
+  case helpers.get_authenticated_client() {
+    Ok(config) -> {
+      case import_export_api.delete_export_log(config, log_id: id) {
+        Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }
     }
@@ -1561,4 +1763,74 @@ fn supermarket_category_create_decoder() -> decode.Decoder(
     name: name,
     description: description,
   ))
+}
+
+fn parse_import_log_create_request(
+  json_data: dynamic.Dynamic,
+) -> Result(ImportLogCreateRequest, String) {
+  decode.run(
+    json_data,
+    import_log_create_request_decoder.import_log_create_request_decoder(),
+  )
+  |> result.map(fn(tuple) {
+    let #(import_type, msg, keyword) = tuple
+    ImportLogCreateRequest(import_type: import_type, msg: msg, keyword: keyword)
+  })
+  |> result.map_error(fn(_) { "Invalid import log create request" })
+}
+
+fn parse_import_log_update_request(
+  json_data: dynamic.Dynamic,
+) -> Result(ImportLogUpdateRequest, String) {
+  decode.run(
+    json_data,
+    import_log_update_request_decoder.import_log_update_request_decoder(),
+  )
+  |> result.map(fn(tuple) {
+    let #(import_type, msg, running, keyword) = tuple
+    ImportLogUpdateRequest(
+      import_type: import_type,
+      msg: msg,
+      running: running,
+      keyword: keyword,
+    )
+  })
+  |> result.map_error(fn(_) { "Invalid import log update request" })
+}
+
+fn parse_export_log_create_request(
+  json_data: dynamic.Dynamic,
+) -> Result(ExportLogCreateRequest, String) {
+  decode.run(
+    json_data,
+    export_log_create_request_decoder.export_log_create_request_decoder(),
+  )
+  |> result.map(fn(tuple) {
+    let #(export_type, msg, cache_duration) = tuple
+    ExportLogCreateRequest(
+      export_type: export_type,
+      msg: msg,
+      cache_duration: cache_duration,
+    )
+  })
+  |> result.map_error(fn(_) { "Invalid export log create request" })
+}
+
+fn parse_export_log_update_request(
+  json_data: dynamic.Dynamic,
+) -> Result(ExportLogUpdateRequest, String) {
+  decode.run(
+    json_data,
+    export_log_update_request_decoder.export_log_update_request_decoder(),
+  )
+  |> result.map(fn(tuple) {
+    let #(export_type, msg, running, cache_duration) = tuple
+    ExportLogUpdateRequest(
+      export_type: export_type,
+      msg: msg,
+      running: running,
+      cache_duration: cache_duration,
+    )
+  })
+  |> result.map_error(fn(_) { "Invalid export log update request" })
 }
