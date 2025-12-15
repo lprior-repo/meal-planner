@@ -63,20 +63,17 @@ pub fn handle_get_food(req: wisp.Request, food_id: String) -> wisp.Response {
       helpers.encode_food(food)
       |> json.to_string
       |> wisp.json_response(200)
-    }
     Error(service.NotConfigured) -> {
       helpers.error_response(
         500,
         "FatSecret API not configured. Set FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET.",
       )
-    }
     Error(service.ApiError(inner)) -> {
       helpers.error_response(
         502,
         "FatSecret API error: "
           <> service.error_to_string(service.ApiError(inner)),
       )
-    }
   }
 }
 
