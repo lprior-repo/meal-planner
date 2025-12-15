@@ -119,14 +119,12 @@ fn format_nutrition_summary(nutrition_data: List(MealNutrition)) -> String {
   case list.is_empty(nutrition_data) {
     True -> "No nutrition data available"
     False -> {
-      let total_calories =
-        nutrition_data
-        |> list.fold(0.0, fn(acc, meal) { acc +. meal.calories })
-
+      let calorie_list = nutrition_data |> list.map(fn(m) { m.calories })
+      let protein_list = nutrition_data |> list.map(fn(m) { m.protein_g })
+      let total_calories = sum_floats(calorie_list)
+      let total_protein = sum_floats(protein_list)
       let avg_protein =
-        nutrition_data
-        |> list.fold(0.0, fn(acc, meal) { acc +. meal.protein_g })
-        /. int_to_float(list.length(nutrition_data))
+        total_protein /. int_to_float(list.length(nutrition_data))
 
       "Total meals: "
       <> int_to_string(list.length(nutrition_data))
@@ -139,6 +137,10 @@ fn format_nutrition_summary(nutrition_data: List(MealNutrition)) -> String {
       <> "g"
     }
   }
+}
+
+fn sum_floats(floats: List(Float)) -> Float {
+  floats |> list.fold(0.0, fn(acc, val) { acc +. val })
 }
 
 // ============================================================================
