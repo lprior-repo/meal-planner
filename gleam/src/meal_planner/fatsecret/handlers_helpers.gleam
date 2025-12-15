@@ -6,6 +6,7 @@
 /// - Success/error response builders
 /// - Food and recipe JSON encoders
 
+import gleam/float
 import gleam/http
 import gleam/int
 import gleam/json
