@@ -256,18 +256,123 @@ pub fn handle_list_meal_plans(req: wisp.Request) -> wisp.Response {
   }
 }
 
+/// Placeholder handlers for CRUD operations - To be fully implemented
+/// These handlers follow the FatSecret pattern and will be expanded as needed
+
+/// Handle POST /api/tandoor/recipes - Create recipe
+pub fn handle_create_recipe(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use <- wisp.require_method(req, http.Post)
+  helpers.error_response(501, "Recipe creation not yet fully implemented")
+}
+
+/// Handle PATCH /api/tandoor/recipes/:id - Update recipe
+pub fn handle_update_recipe(
+  req: wisp.Request,
+  _recipe_id: String,
+) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use <- wisp.require_method(req, http.Patch)
+  helpers.error_response(501, "Recipe update not yet fully implemented")
+}
+
+/// Handle DELETE /api/tandoor/recipes/:id - Delete recipe
+pub fn handle_delete_recipe(
+  req: wisp.Request,
+  _recipe_id: String,
+) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use <- wisp.require_method(req, http.Delete)
+  helpers.error_response(501, "Recipe deletion not yet fully implemented")
+}
+
+/// Handle GET /api/tandoor/ingredients - List ingredients
+pub fn handle_list_ingredients(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use <- wisp.require_method(req, http.Get)
+  helpers.error_response(501, "Ingredients endpoint not yet implemented")
+}
+
+/// Handle POST /api/tandoor/ingredients - Create ingredient
+pub fn handle_create_ingredient(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use <- wisp.require_method(req, http.Post)
+  helpers.error_response(501, "Ingredient creation not yet fully implemented")
+}
+
+/// Handle GET /api/tandoor/meal-plans/:id - Get meal plan details
+pub fn handle_get_meal_plan(
+  req: wisp.Request,
+  _meal_plan_id: String,
+) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use <- wisp.require_method(req, http.Get)
+  helpers.error_response(501, "Meal plan details not yet fully implemented")
+}
+
+/// Handle POST /api/tandoor/meal-plans - Create meal plan
+pub fn handle_create_meal_plan(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use <- wisp.require_method(req, http.Post)
+  helpers.error_response(501, "Meal plan creation not yet fully implemented")
+}
+
+/// Handle GET /api/tandoor/import-logs - List import logs
+pub fn handle_list_import_logs(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use <- wisp.require_method(req, http.Get)
+  helpers.error_response(501, "Import logs not yet implemented")
+}
+
+/// Handle GET /api/tandoor/export-logs - List export logs
+pub fn handle_list_export_logs(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use <- wisp.require_method(req, http.Get)
+  helpers.error_response(501, "Export logs not yet implemented")
+}
+
 /// Main router for all Tandoor API requests
 pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
   let path = wisp.path_segments(req)
   let method = req.method
 
   case #(method, path) {
+    // Status
     #(http.Get, ["tandoor", "status"]) -> handle_status(req)
+
+    // Recipes
     #(http.Get, ["api", "tandoor", "recipes"]) -> handle_list_recipes(req)
     #(http.Get, ["api", "tandoor", "recipes", id]) -> handle_get_recipe(req, id)
+    #(http.Post, ["api", "tandoor", "recipes"]) -> handle_create_recipe(req)
+    #(http.Patch, ["api", "tandoor", "recipes", id]) -> handle_update_recipe(req, id)
+    #(http.Delete, ["api", "tandoor", "recipes", id]) -> handle_delete_recipe(req, id)
+
+    // Ingredients
+    #(http.Get, ["api", "tandoor", "ingredients"]) -> handle_list_ingredients(req)
+    #(http.Post, ["api", "tandoor", "ingredients"]) -> handle_create_ingredient(req)
+
+    // Meal Plans
+    #(http.Get, ["api", "tandoor", "meal-plans"]) -> handle_list_meal_plans(req)
+    #(http.Get, ["api", "tandoor", "meal-plans", id]) -> handle_get_meal_plan(req, id)
+    #(http.Post, ["api", "tandoor", "meal-plans"]) -> handle_create_meal_plan(req)
+
+    // Import/Export Logs
+    #(http.Get, ["api", "tandoor", "import-logs"]) -> handle_list_import_logs(req)
+    #(http.Get, ["api", "tandoor", "export-logs"]) -> handle_list_export_logs(req)
+
+    // Units and Keywords
     #(http.Get, ["api", "tandoor", "units"]) -> handle_list_units(req)
     #(http.Get, ["api", "tandoor", "keywords"]) -> handle_list_keywords(req)
-    #(http.Get, ["api", "tandoor", "meal-plans"]) -> handle_list_meal_plans(req)
+
     _ -> wisp.not_found()
   }
 }
