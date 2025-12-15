@@ -260,3 +260,147 @@ pub fn decode_month_summary_test() {
   decoded.year |> should.equal(2024)
   list.length(decoded.days) |> should.equal(2)
 }
+
+// ============================================================================
+// Edge Case Tests: Optional Fields
+// ============================================================================
+
+/// Test entry with missing optional micronutrient fields
+pub fn decode_entry_without_optional_fields_test() {
+  let json_str =
+    "{"
+    <> "  \"food_entry_id\": \"123456\","
+    <> "  \"food_entry_name\": \"Apple\","
+    <> "  \"food_entry_description\": \"Raw apple\","
+    <> "  \"food_id\": \"1000\","
+    <> "  \"serving_id\": \"5000\","
+    <> "  \"number_of_units\": \"1.0\","
+    <> "  \"meal\": \"snack\","
+    <> "  \"date_int\": \"19723\","
+    <> "  \"calories\": \"95\","
+    <> "  \"carbohydrate\": \"25\","
+    <> "  \"protein\": \"0.5\","
+    <> "  \"fat\": \"0.3\""
+    <> "}"
+
+  let assert Ok(decoded) = json.parse(json_str, decoders.food_entry_decoder())
+
+  decoded.food_entry_name |> should.equal("Apple")
+  decoded.calories |> should.equal(95.0)
+
+  // Optional fields should be None when missing
+  decoded.saturated_fat |> should.equal(None)
+  decoded.cholesterol |> should.equal(None)
+  decoded.sodium |> should.equal(None)
+}
+
+/// Test entry with single entry not in array format
+pub fn decode_single_entry_as_object_test() {
+  let json_str =
+    "{"
+    <> "  \"food_entries\": {"
+    <> "    \"food_entry\": {"
+    <> "      \"food_entry_id\": \"123456\","
+    <> "      \"food_entry_name\": \"Banana\","
+    <> "      \"food_entry_description\": \"Yellow banana\","
+    <> "      \"food_id\": \"3000\","
+    <> "      \"serving_id\": \"30000\","
+    <> "      \"number_of_units\": \"1.0\","
+    <> "      \"meal\": \"breakfast\","
+    <> "      \"date_int\": \"19723\","
+    <> "      \"calories\": \"89\","
+    <> "      \"carbohydrate\": \"23\","
+    <> "      \"protein\": \"1.1\","
+    <> "      \"fat\": \"0.3\""
+    <> "    }"
+    <> "  }"
+    <> "}"
+
+  // Test parsing with fallback strategy
+  let decoder =
+    decode.one_of(
+      decode.at(
+        ["food_entries", "food_entry"],
+        decode.list(decoders.food_entry_decoder()),
+      ),
+      [
+        decode.at(
+          ["food_entries", "food_entry"],
+          single_entry_to_list_decoder(),
+        ),
+        decode.success([]),
+      ],
+    )
+
+  let assert Ok(decoded) = json.parse(json_str, decoder)
+  list.length(decoded) |> should.equal(1)
+
+  let first = case decoded {
+    [entry] -> entry
+    _ -> panic as "Expected exactly one entry"
+  }
+
+  first.food_entry_name |> should.equal("Banana")
+  first.calories |> should.equal(89.0)
+}
+
+/// Test parsing of large calorie values
+pub fn decode_entry_with_large_calories_test() {
+  let json_str =
+    "{"
+    <> "  \"food_entry_id\": \"999999\","
+    <> "  \"food_entry_name\": \"Feast\","
+    <> "  \"food_entry_description\": \"Large meal\","
+    <> "  \"food_id\": \"50000\","
+    <> "  \"serving_id\": \"500000\","
+    <> "  \"number_of_units\": \"10.0\","
+    <> "  \"meal\": \"dinner\","
+    <> "  \"date_int\": \"19723\","
+    <> "  \"calories\": \"5000\","
+    <> "  \"carbohydrate\": \"500\","
+    <> "  \"protein\": \"200\","
+    <> "  \"fat\": \"250\""
+    <> "}"
+
+  let assert Ok(decoded) = json.parse(json_str, decoders.food_entry_decoder())
+
+  decoded.calories |> should.equal(5000.0)
+  decoded.carbohydrate |> should.equal(500.0)
+  decoded.protein |> should.equal(200.0)
+  decoded.fat |> should.equal(250.0)
+}
+
+/// Test parsing of very small decimal values
+pub fn decode_entry_with_small_decimals_test() {
+  let json_str =
+    "{"
+    <> "  \"food_entry_id\": \"123456\","
+    <> "  \"food_entry_name\": \"Spice\","
+    <> "  \"food_entry_description\": \"Pinch of salt\","
+    <> "  \"food_id\": \"20000\","
+    <> "  \"serving_id\": \"200000\","
+    <> "  \"number_of_units\": \"0.001\","
+    <> "  \"meal\": \"snack\","
+    <> "  \"date_int\": \"19723\","
+    <> "  \"calories\": \"0.1\","
+    <> "  \"carbohydrate\": \"0.01\","
+    <> "  \"protein\": \"0.001\","
+    <> "  \"fat\": \"0.0\""
+    <> "}"
+
+  let assert Ok(decoded) = json.parse(json_str, decoders.food_entry_decoder())
+
+  decoded.number_of_units |> should.equal(0.001)
+  decoded.calories |> should.equal(0.1)
+  decoded.carbohydrate |> should.equal(0.01)
+  decoded.protein |> should.equal(0.001)
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+fn single_entry_to_list_decoder() -> decode.Decoder(List(types.FoodEntry)) {
+  use entry <- decode.then(decoders.food_entry_decoder())
+  decode.success([entry])
+}
