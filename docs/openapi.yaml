@@ -1344,6 +1344,162 @@ paths:
               schema:
                 $ref: '#/components/schemas/TandoorPaginatedIngredients'
 
+  /api/tandoor/foods:
+    get:
+      tags: [Tandoor]
+      summary: List foods
+      description: Get paginated list of foods from Tandoor with optional filtering
+      operationId: getTandoorFoods
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: Number of results to return
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          description: Number of results to skip
+        - name: query
+          in: query
+          schema:
+            type: string
+          description: Search query to filter foods by name
+      responses:
+        '200':
+          description: Paginated food list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorPaginatedFoods'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+    post:
+      tags: [Tandoor]
+      summary: Create food
+      description: Create a new food item in Tandoor
+      operationId: createTandoorFood
+      security:
+        - tandoorBasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TandoorFoodCreate'
+            example:
+              name: Tomato
+      responses:
+        '201':
+          description: Food created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorFood'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /api/tandoor/foods/{id}:
+    get:
+      tags: [Tandoor]
+      summary: Get food details
+      description: Get detailed information for a specific Tandoor food
+      operationId: getTandoorFood
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor food ID
+      responses:
+        '200':
+          description: Food details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorFood'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+    patch:
+      tags: [Tandoor]
+      summary: Update food
+      description: Update a food item in Tandoor
+      operationId: updateTandoorFood
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor food ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TandoorFoodCreate'
+            example:
+              name: Cherry Tomato
+      responses:
+        '200':
+          description: Food updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorFood'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+    delete:
+      tags: [Tandoor]
+      summary: Delete food
+      description: Delete a food item from Tandoor
+      operationId: deleteTandoorFood
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor food ID
+      responses:
+        '204':
+          description: Food deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
   /api/tandoor/meal-plans:
     get:
       tags: [Tandoor]
@@ -2398,6 +2554,55 @@ components:
           type: string
         ignore_shopping:
           type: boolean
+
+    TandoorPaginatedFoods:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TandoorFood'
+
+    TandoorFood:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        plural_name:
+          type: string
+          nullable: true
+        description:
+          type: string
+        recipe:
+          type: integer
+          nullable: true
+        food_onhand:
+          type: integer
+          nullable: true
+        supermarket_category:
+          type: integer
+          nullable: true
+        ignore_shopping:
+          type: boolean
+
+    TandoorFoodCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the food item
+      required:
+        - name
 
     TandoorPaginatedMealPlans:
       type: object

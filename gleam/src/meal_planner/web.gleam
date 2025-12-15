@@ -296,6 +296,17 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
       handlers.handle_tandoor_routes(req)
 
     // =========================================================================
+    // Tandoor Supermarkets API
+    // =========================================================================
+    ["api", "tandoor", "supermarkets"] -> handlers.handle_tandoor_routes(req)
+    ["api", "tandoor", "supermarkets", _supermarket_id] ->
+      handlers.handle_tandoor_routes(req)
+    ["api", "tandoor", "supermarket-categories"] ->
+      handlers.handle_tandoor_routes(req)
+    ["api", "tandoor", "supermarket-categories", _category_id] ->
+      handlers.handle_tandoor_routes(req)
+
+    // =========================================================================
     // Tandoor Import/Export API
     // =========================================================================
     ["api", "tandoor", "import-logs"] -> wisp.not_found()

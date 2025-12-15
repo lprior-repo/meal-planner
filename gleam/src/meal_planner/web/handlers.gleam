@@ -183,12 +183,18 @@ pub fn handle_fatsecret_get_food(
 
 /// Handle GET /api/fatsecret/foods/autocomplete
 pub fn handle_fatsecret_autocomplete_foods(req: wisp.Request) -> wisp.Response {
-  foods_handlers.handle_autocomplete_foods(req)
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  wisp.not_found()
 }
 
 /// Handle GET /api/fatsecret/recipes/autocomplete
 pub fn handle_fatsecret_autocomplete_recipes(req: wisp.Request) -> wisp.Response {
-  fatsecret.handle_autocomplete_recipes(req)
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  wisp.not_found()
 }
 
 // ============================================================================
