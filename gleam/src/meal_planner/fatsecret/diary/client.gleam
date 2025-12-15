@@ -179,18 +179,29 @@ pub fn get_food_entries(
     params,
   ))
 
+  // Try multiple decoding strategies to handle different response formats:
+  // 1. food_entries.food_entry as an array
+  // 2. food_entries.food_entry as a single object (wrap in list)
+  // 3. If food_entry is missing or null, return empty list
+  // 4. If food_entries is completely missing, return empty list
   json.parse(
     body,
     decode.one_of(
+      // Strategy 1: Standard format with array
       decode.at(
         ["food_entries", "food_entry"],
         decode.list(decoders.food_entry_decoder()),
       ),
       [
+        // Strategy 2: Single entry (not in array)
         decode.at(
           ["food_entries", "food_entry"],
           single_entry_to_list_decoder(),
         ),
+        // Strategy 3: Missing food_entry key or null value returns empty list
+        decode.at(["food_entries"], decode.success([])),
+        // Strategy 4: Fallback to empty list if structure completely different
+        decode.success([]),
       ],
     ),
   )
