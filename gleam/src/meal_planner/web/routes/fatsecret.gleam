@@ -228,7 +228,8 @@ fn route_profile(
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
 
-    ["auth"] -> handlers.handle_fatsecret_get_profile_auth(req, db)
+    ["auth", user_id] ->
+      handlers.handle_fatsecret_get_profile_auth(req, db, user_id)
 
     _ -> wisp.not_found()
   }
