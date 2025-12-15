@@ -16,7 +16,7 @@ import gleeunit
 import gleeunit/should
 import meal_planner/config
 import meal_planner/env
-import meal_planner/web/router
+import meal_planner/web
 import pog
 import wisp
 import wisp/testing
@@ -29,7 +29,7 @@ pub fn main() {
 // Test Setup & Helpers
 // ============================================================================
 
-fn get_test_context() -> router.Context {
+fn get_test_context() -> web.Context {
   let config = config.load()
   let db =
     pog.default_config()
@@ -40,7 +40,7 @@ fn get_test_context() -> router.Context {
     |> pog.pool_size(1)
     |> pog.connect
 
-  router.Context(config: config, db: db)
+  web.Context(config: config, db: db)
 }
 
 fn make_request(method: http.Method, path: String, body: String) -> wisp.Request {
