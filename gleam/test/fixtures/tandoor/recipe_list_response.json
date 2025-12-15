@@ -1,0 +1,41 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "name": "Chicken Stir Fry",
+      "description": "Quick and healthy chicken stir fry with vegetables",
+      "image": "http://localhost:8000/media/recipes/chicken-stir-fry.jpg",
+      "servings": 4,
+      "keywords": ["dinner", "quick", "healthy"],
+      "working_time": 15,
+      "waiting_time": 10,
+      "source_url": null,
+      "internal": true,
+      "nutrition": null,
+      "steps": ["Cut chicken into pieces", "Stir fry vegetables", "Combine and serve"],
+      "created_by": 1,
+      "created_at": "2025-01-01T12:00:00Z",
+      "updated_at": "2025-01-02T14:30:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Greek Salad",
+      "description": "Fresh Mediterranean salad with feta cheese",
+      "image": null,
+      "servings": 2,
+      "keywords": ["salad", "vegetarian", "lunch"],
+      "working_time": 10,
+      "waiting_time": 0,
+      "source_url": "https://example.com/greek-salad",
+      "internal": false,
+      "nutrition": null,
+      "steps": ["Chop vegetables", "Add feta and olives", "Dress with olive oil"],
+      "created_by": 1,
+      "created_at": "2025-01-03T10:00:00Z",
+      "updated_at": "2025-01-03T10:00:00Z"
+    }
+  ]
+}

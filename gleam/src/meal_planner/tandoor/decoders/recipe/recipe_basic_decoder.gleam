@@ -4,11 +4,9 @@
 /// list endpoints. This is the basic recipe type without nested steps/ingredients.
 import gleam/dynamic
 import gleam/dynamic/decode
-import gleam/list
 import gleam/option.{None}
-import gleam/result
-import gleam/string
 import meal_planner/tandoor/client.{type Recipe, Recipe}
+import meal_planner/tandoor/decoders/decoder_combinators
 
 /// Decoder for Recipe from JSON (internal)
 fn recipe_decoder_internal() -> decode.Decoder(Recipe) {
@@ -88,17 +86,9 @@ fn recipe_decoder_internal() -> decode.Decoder(Recipe) {
 /// }
 /// ```
 pub fn decoder(json_value: dynamic.Dynamic) -> Result(Recipe, String) {
-  decode.run(json_value, recipe_decoder_internal())
-  |> result.map_error(fn(errors) {
-    "Failed to decode recipe: "
-    <> string.join(
-      list.map(errors, fn(e) {
-        case e {
-          decode.DecodeError(expected, _found, path) ->
-            expected <> " at " <> string.join(path, ".")
-        }
-      }),
-      ", ",
-    )
-  })
+  decoder_combinators.run_decoder(
+    json_value,
+    recipe_decoder_internal(),
+    "Failed to decode recipe",
+  )
 }

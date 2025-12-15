@@ -7,6 +7,7 @@ import gleam/dynamic/decode
 import gleam/list
 import gleam/result
 import gleam/string
+import meal_planner/tandoor/decoders/decoder_combinators
 import meal_planner/tandoor/decoders/mealplan/meal_type_decoder
 import meal_planner/tandoor/decoders/mealplan/user_decoder
 import meal_planner/tandoor/decoders/recipe/recipe_overview_decoder
@@ -101,19 +102,11 @@ pub fn meal_plan_list_decoder_internal() -> decode.Decoder(MealPlanListResponse)
 pub fn meal_plan_decoder(
   json_value: dynamic.Dynamic,
 ) -> Result(MealPlan, String) {
-  decode.run(json_value, meal_plan_decoder_internal())
-  |> result.map_error(fn(errors) {
-    "Failed to decode meal plan: "
-    <> string.join(
-      list.map(errors, fn(e) {
-        case e {
-          decode.DecodeError(expected, _found, path) ->
-            expected <> " at " <> string.join(path, ".")
-        }
-      }),
-      ", ",
-    )
-  })
+  decoder_combinators.run_decoder(
+    json_value,
+    meal_plan_decoder_internal(),
+    "Failed to decode meal plan",
+  )
 }
 
 /// Decode a simplified MealPlanEntry from JSON
