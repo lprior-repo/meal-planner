@@ -260,28 +260,40 @@ pub fn recipe_search_result_decoder() -> decode.Decoder(
 pub fn recipe_search_response_decoder() -> decode.Decoder(
   types.RecipeSearchResponse,
 ) {
-  use recipes <- decode.field(
+  // The recipes field can have:
+  // 1. Multiple results: recipes.recipe is an array of objects
+  // 2. Single result: recipes.recipe is a single object
+  // 3. No results: recipes field may not have recipe key or be empty
+  use recipes <- decode.optional_field(
     "recipes",
-    decode.one_of(
-      // Multiple results: recipes.recipe is an array
-      decode.at(["recipe"], decode.list(recipe_search_result_decoder())),
-      [
-        // Single result: recipes.recipe is an object
-        decode.at(
-          ["recipe"],
-          decode.map(recipe_search_result_decoder(), fn(r) { [r] }),
-        ),
-      ],
-    )
-      // Fallback to empty list if "recipes" field doesn't have "recipe" key (empty results)
-      |> decode.optional,
+    None,
+    decode.optional(
+      decode.one_of(
+        // Multiple results: recipes.recipe is an array
+        decode.at(["recipe"], decode.list(recipe_search_result_decoder())),
+        [
+          // Single result: recipes.recipe is an object
+          decode.at(
+            ["recipe"],
+            decode.map(recipe_search_result_decoder(), fn(r) { [r] }),
+          ),
+        ],
+      ),
+    ),
   )
   use max_results <- decode.field("max_results", decode.int)
   use total_results <- decode.field("total_results", decode.int)
   use page_number <- decode.field("page_number", decode.int)
 
+  // Flatten the nested Option
+  let recipes_list = case recipes {
+    None -> []
+    Some(None) -> []
+    Some(Some(list)) -> list
+  }
+
   decode.success(types.RecipeSearchResponse(
-    recipes: option.unwrap(recipes, []),
+    recipes: recipes_list,
     max_results:,
     total_results:,
     page_number:,
