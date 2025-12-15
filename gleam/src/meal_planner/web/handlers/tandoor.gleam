@@ -13,6 +13,7 @@ import gleam/dynamic/decode
 import gleam/http
 import gleam/int
 import gleam/json
+import gleam/list
 import gleam/option
 import gleam/result
 
@@ -671,15 +672,23 @@ fn handle_import_logs_collection(req: wisp.Request) -> wisp.Response {
   }
 }
 
-fn handle_list_import_logs(_req: wisp.Request) -> wisp.Response {
+fn handle_list_import_logs(req: wisp.Request) -> wisp.Response {
+  let query_params = wisp.get_query(req)
+  let limit =
+    list.find(query_params, fn(p) { p.0 == "limit" })
+    |> result.map(fn(p) { p.1 })
+    |> result.try(int.parse)
+    |> option.from_result
+  let offset =
+    list.find(query_params, fn(p) { p.0 == "offset" })
+    |> result.map(fn(p) { p.1 })
+    |> result.try(int.parse)
+    |> option.from_result
+
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        import_export_api.list_import_logs(
-          config,
-          limit: option.None,
-          offset: option.None,
-        )
+        import_export_api.list_import_logs(config, limit: limit, offset: offset)
       {
         Ok(response) -> {
           let results_json =
@@ -712,15 +721,23 @@ fn handle_export_logs_collection(req: wisp.Request) -> wisp.Response {
   }
 }
 
-fn handle_list_export_logs(_req: wisp.Request) -> wisp.Response {
+fn handle_list_export_logs(req: wisp.Request) -> wisp.Response {
+  let query_params = wisp.get_query(req)
+  let limit =
+    list.find(query_params, fn(p) { p.0 == "limit" })
+    |> result.map(fn(p) { p.1 })
+    |> result.try(int.parse)
+    |> option.from_result
+  let offset =
+    list.find(query_params, fn(p) { p.0 == "offset" })
+    |> result.map(fn(p) { p.1 })
+    |> result.try(int.parse)
+    |> option.from_result
+
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        import_export_api.list_export_logs(
-          config,
-          limit: option.None,
-          offset: option.None,
-        )
+        import_export_api.list_export_logs(config, limit: limit, offset: offset)
       {
         Ok(response) -> {
           let results_json =
