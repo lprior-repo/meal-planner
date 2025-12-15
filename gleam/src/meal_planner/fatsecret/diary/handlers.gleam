@@ -66,44 +66,39 @@ pub fn create_entry(req: Request, conn: pog.Connection) -> Response {
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Post)
-  {
-      use body <- wisp.require_json(req)
+  use body <- wisp.require_json(req)
 
-      case parse_food_entry_input(body) {
-        Error(msg) ->
+  case parse_food_entry_input(body) {
+    Error(msg) ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("error", json.string("invalid_request")),
+            #("message", json.string(msg)),
+          ]),
+        ),
+        400,
+      )
+
+    Ok(input) -> {
+      case service.create_food_entry(conn, input) {
+        Ok(entry_id) ->
           wisp.json_response(
             json.to_string(
               json.object([
-                #("error", json.string("invalid_request")),
-                #("message", json.string(msg)),
+                #("success", json.bool(True)),
+                #(
+                  "entry_id",
+                  json.string(types.food_entry_id_to_string(entry_id)),
+                ),
+                #("message", json.string("Entry created successfully")),
               ]),
             ),
-            400,
+            200,
           )
 
-        Ok(input) -> {
-          case service.create_food_entry(conn, input) {
-            Ok(entry_id) ->
-              wisp.json_response(
-                json.to_string(
-                  json.object([
-                    #("success", json.bool(True)),
-                    #(
-                      "entry_id",
-                      json.string(types.food_entry_id_to_string(entry_id)),
-                    ),
-                    #("message", json.string("Entry created successfully")),
-                  ]),
-                ),
-                200,
-              )
-
-            Error(e) -> error_response(e)
-          }
-        }
+        Error(e) -> error_response(e)
       }
-    }
-    _ -> wisp.method_not_allowed([Post])
   }
 }
 
@@ -147,16 +142,12 @@ pub fn get_entry(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Get)
-  {
-      let entry_id_obj = types.food_entry_id(entry_id)
-      case service.get_food_entry(conn, entry_id_obj) {
-        Ok(entry) ->
-          wisp.json_response(json.to_string(food_entry_to_json(entry)), 200)
+  let entry_id_obj = types.food_entry_id(entry_id)
+  case service.get_food_entry(conn, entry_id_obj) {
+    Ok(entry) ->
+      wisp.json_response(json.to_string(food_entry_to_json(entry)), 200)
 
-        Error(e) -> error_response(e)
-      }
-    }
-    _ -> wisp.method_not_allowed([Get])
+    Error(e) -> error_response(e)
   }
 }
 
@@ -189,41 +180,36 @@ pub fn update_entry(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Patch)
-  {
-      use body <- wisp.require_json(req)
+  use body <- wisp.require_json(req)
 
-      case parse_food_entry_update(body) {
-        Error(msg) ->
+  case parse_food_entry_update(body) {
+    Error(msg) ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("error", json.string("invalid_request")),
+            #("message", json.string(msg)),
+          ]),
+        ),
+        400,
+      )
+
+    Ok(update) -> {
+      let entry_id_obj = types.food_entry_id(entry_id)
+      case service.update_food_entry(conn, entry_id_obj, update) {
+        Ok(_) ->
           wisp.json_response(
             json.to_string(
               json.object([
-                #("error", json.string("invalid_request")),
-                #("message", json.string(msg)),
+                #("success", json.bool(True)),
+                #("message", json.string("Entry updated successfully")),
               ]),
             ),
-            400,
+            200,
           )
 
-        Ok(update) -> {
-          let entry_id_obj = types.food_entry_id(entry_id)
-          case service.update_food_entry(conn, entry_id_obj, update) {
-            Ok(_) ->
-              wisp.json_response(
-                json.to_string(
-                  json.object([
-                    #("success", json.bool(True)),
-                    #("message", json.string("Entry updated successfully")),
-                  ]),
-                ),
-                200,
-              )
-
-            Error(e) -> error_response(e)
-          }
-        }
+        Error(e) -> error_response(e)
       }
-    }
-    _ -> wisp.method_not_allowed([Patch])
   }
 }
 
@@ -246,24 +232,20 @@ pub fn delete_entry(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Delete)
-  {
-      let entry_id_obj = types.food_entry_id(entry_id)
-      case service.delete_food_entry(conn, entry_id_obj) {
-        Ok(_) ->
-          wisp.json_response(
-            json.to_string(
-              json.object([
-                #("success", json.bool(True)),
-                #("message", json.string("Entry deleted successfully")),
-              ]),
-            ),
-            200,
-          )
+  let entry_id_obj = types.food_entry_id(entry_id)
+  case service.delete_food_entry(conn, entry_id_obj) {
+    Ok(_) ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("success", json.bool(True)),
+            #("message", json.string("Entry deleted successfully")),
+          ]),
+        ),
+        200,
+      )
 
-        Error(e) -> error_response(e)
-      }
-    }
-    _ -> wisp.method_not_allowed([Delete])
+    Error(e) -> error_response(e)
   }
 }
 
@@ -301,56 +283,51 @@ pub fn get_day(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Get)
-  {
-      case int.parse(date_int_str) {
-        Error(_) ->
+  case int.parse(date_int_str) {
+    Error(_) ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("error", json.string("invalid_parameters")),
+            #("message", json.string("date_int must be a valid integer")),
+          ]),
+        ),
+        400,
+      )
+
+    Ok(date_int) -> {
+      case service.get_day_entries(conn, date_int) {
+        Ok(entries) -> {
+          // Calculate totals
+          let totals = calculate_day_totals(entries)
+          let date_str = types.int_to_date(date_int)
+
+          let entries_json =
+            list.map(entries, fn(entry) { food_entry_to_json(entry) })
+
           wisp.json_response(
             json.to_string(
               json.object([
-                #("error", json.string("invalid_parameters")),
-                #("message", json.string("date_int must be a valid integer")),
-              ]),
-            ),
-            400,
-          )
-
-        Ok(date_int) -> {
-          case service.get_day_entries(conn, date_int) {
-            Ok(entries) -> {
-              // Calculate totals
-              let totals = calculate_day_totals(entries)
-              let date_str = types.int_to_date(date_int)
-
-              let entries_json =
-                list.map(entries, fn(entry) { food_entry_to_json(entry) })
-
-              wisp.json_response(
-                json.to_string(
+                #("date_int", json.int(date_int)),
+                #("date", json.string(date_str)),
+                #("entries", json.array(entries_json, fn(x) { x })),
+                #(
+                  "totals",
                   json.object([
-                    #("date_int", json.int(date_int)),
-                    #("date", json.string(date_str)),
-                    #("entries", json.array(entries_json, fn(x) { x })),
-                    #(
-                      "totals",
-                      json.object([
-                        #("calories", json.float(totals.calories)),
-                        #("carbohydrate", json.float(totals.carbohydrate)),
-                        #("protein", json.float(totals.protein)),
-                        #("fat", json.float(totals.fat)),
-                      ]),
-                    ),
+                    #("calories", json.float(totals.calories)),
+                    #("carbohydrate", json.float(totals.carbohydrate)),
+                    #("protein", json.float(totals.protein)),
+                    #("fat", json.float(totals.fat)),
                   ]),
                 ),
-                200,
-              )
-            }
-
-            Error(e) -> error_response(e)
-          }
+              ]),
+            ),
+            200,
+          )
         }
+
+        Error(e) -> error_response(e)
       }
-    }
-    _ -> wisp.method_not_allowed([Get])
   }
 }
 
@@ -382,51 +359,49 @@ pub fn get_month(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Get)
-  {
-      case int.parse(date_int_str) {
-        Error(_) ->
+  case int.parse(date_int_str) {
+    Error(_) ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("error", json.string("invalid_parameters")),
+            #("message", json.string("date_int must be a valid integer")),
+          ]),
+        ),
+        400,
+      )
+
+    Ok(date_int) -> {
+      case service.get_month_summary(conn, date_int) {
+        Ok(summary) -> {
+          let days_json =
+            list.map(summary.days, fn(day) {
+              json.object([
+                #("date_int", json.int(day.date_int)),
+                #("date", json.string(types.int_to_date(day.date_int))),
+                #("calories", json.float(day.calories)),
+                #("carbohydrate", json.float(day.carbohydrate)),
+                #("protein", json.float(day.protein)),
+                #("fat", json.float(day.fat)),
+              ])
+            })
+
           wisp.json_response(
             json.to_string(
               json.object([
-                #("error", json.string("invalid_parameters")),
-                #("message", json.string("date_int must be a valid integer")),
+                #("month", json.int(summary.month)),
+                #("year", json.int(summary.year)),
+                #("days", json.array(days_json, fn(x) { x })),
               ]),
             ),
-            400,
+            200,
           )
-
-        Ok(date_int) -> {
-          case service.get_month_summary(conn, date_int) {
-            Ok(summary) -> {
-              let days_json =
-                list.map(summary.days, fn(day) {
-                  json.object([
-                    #("date_int", json.int(day.date_int)),
-                    #("date", json.string(types.int_to_date(day.date_int))),
-                    #("calories", json.float(day.calories)),
-                    #("carbohydrate", json.float(day.carbohydrate)),
-                    #("protein", json.float(day.protein)),
-                    #("fat", json.float(day.fat)),
-                  ])
-                })
-
-              wisp.json_response(
-                json.to_string(
-                  json.object([
-                    #("month", json.int(summary.month)),
-                    #("year", json.int(summary.year)),
-                    #("days", json.array(days_json, fn(x) { x })),
-                  ]),
-                ),
-                200,
-              )
-            }
-
-            Error(e) -> error_response(e)
-          }
         }
+
+        Error(e) -> error_response(e)
       }
   }
+}
 
 // ============================================================================
 // Routing Function

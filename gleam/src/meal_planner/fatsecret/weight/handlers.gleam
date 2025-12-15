@@ -44,7 +44,6 @@ pub fn update_weight(req: Request, conn: pog.Connection) -> wisp.Response {
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Post)
-  {
       // Parse request body
       use body <- wisp.require_json(req)
 
@@ -114,7 +113,6 @@ pub fn get_weight_month(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Get)
-  {
       // Parse year and month
       case int.parse(year), int.parse(month) {
         Ok(year_int), Ok(month_int) if month_int >= 1 && month_int <= 12 -> {
@@ -181,8 +179,6 @@ pub fn get_weight_month(
             400,
           )
       }
-    }
-    _ -> wisp.method_not_allowed([Get])
   }
 }
 

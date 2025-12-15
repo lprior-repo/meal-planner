@@ -54,24 +54,20 @@ pub fn handle_get_exercise(
     Ok(exercise) -> {
       json.to_string(exercise_to_json(exercise))
       |> wisp.json_response(200)
-    }
     Error(service.NotConfigured) -> {
       error_response(
         500,
         "FatSecret API not configured. Set FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET.",
       )
-    }
     Error(service.ApiError(inner)) -> {
       error_response(
         502,
         "FatSecret API error: "
           <> service.error_to_string(service.ApiError(inner)),
       )
-    }
     Error(service.NotAuthenticated) -> {
       // Should not happen for 2-legged endpoints
       error_response(500, "Unexpected authentication error")
-    }
   }
 }
 
@@ -202,7 +198,6 @@ pub fn handle_get_exercise_month(
       // TODO: Extract access_token from Authorization header
       // For now, return not implemented
       error_response(501, "Authentication not yet implemented")
-    }
   }
 }
 

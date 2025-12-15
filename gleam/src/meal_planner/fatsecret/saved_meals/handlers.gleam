@@ -64,7 +64,6 @@ pub fn handle_create_saved_meal(
         }
         Error(e) -> error_response(500, service.error_to_string(e))
       }
-    }
     Error(_) -> error_response(400, "Invalid request body")
   }
 }
@@ -105,7 +104,6 @@ pub fn handle_get_saved_meals(
         |> json.to_string
 
       wisp.json_response(json_response, 200)
-    }
     Error(service.NotConnected) ->
       error_response(
         401,
@@ -157,7 +155,6 @@ pub fn handle_edit_saved_meal(
         }
         None -> decode.success(None)
       }
-    })
     decode.success(#(name_opt, desc_opt, meals_opt))
   }
 
@@ -173,7 +170,6 @@ pub fn handle_edit_saved_meal(
         }
         Error(e) -> error_response(500, service.error_to_string(e))
       }
-    }
     Error(_) -> error_response(400, "Invalid request body")
   }
 }
@@ -197,7 +193,6 @@ pub fn handle_delete_saved_meal(
         json.object([#("success", json.bool(True))])
         |> json.to_string
       wisp.json_response(response, 200)
-    }
     Error(e) -> error_response(500, service.error_to_string(e))
   }
 }
@@ -237,7 +232,6 @@ pub fn handle_get_saved_meal_items(
         |> json.to_string
 
       wisp.json_response(json_response, 200)
-    }
     Error(e) -> error_response(500, service.error_to_string(e))
   }
 }
@@ -275,7 +269,6 @@ pub fn handle_add_saved_meal_item(
         }
         Error(e) -> error_response(500, service.error_to_string(e))
       }
-    }
     Error(msg) -> error_response(400, msg)
   }
 }
@@ -306,7 +299,6 @@ pub fn handle_edit_saved_meal_item(
         }
         Error(e) -> error_response(500, service.error_to_string(e))
       }
-    }
     Error(msg) -> error_response(400, msg)
   }
 }
@@ -331,7 +323,6 @@ pub fn handle_delete_saved_meal_item(
         json.object([#("success", json.bool(True))])
         |> json.to_string
       wisp.json_response(response, 200)
-    }
     Error(e) -> error_response(500, service.error_to_string(e))
   }
 }
@@ -384,7 +375,6 @@ fn parse_saved_meal_item_input(
             "Invalid item format. Provide either (food_id, serving_id, number_of_units) or (food_entry_name, serving_description, number_of_units, calories, carbohydrate, protein, fat)",
           )
       }
-    }
   }
 }
 
@@ -398,7 +388,6 @@ fn saved_meal_to_json(meal: types.SavedMeal) -> json.Json {
     #("saved_meal_description", case meal.saved_meal_description {
       Some(desc) -> json.string(desc)
       None -> json.null()
-    }),
     #(
       "meals",
       json.array(meal.meals, fn(m) { json.string(types.meal_type_to_string(m)) }),
