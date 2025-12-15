@@ -4,7 +4,6 @@
 /// including list, get, create, update, and delete operations.
 /// Tests are designed to work with a running Tandoor instance.
 
-import envoy
 import gleeunit/should
 import gleam/io
 import gleam/option
@@ -182,19 +181,11 @@ pub fn get_food_with_various_ids_test() {
   print_test_info("Get food with various IDs")
   case get_test_client() {
     Ok(config) -> {
-      let result1 = food_get.get_food(config, food_id: 1)
-      let result2 = food_get.get_food(config, food_id: 2)
-      let result3 = food_get.get_food(config, food_id: 999)
+      let _result1 = food_get.get_food(config, food_id: 1)
+      let _result2 = food_get.get_food(config, food_id: 2)
+      let _result3 = food_get.get_food(config, food_id: 999)
       // All should return results (Ok or Error)
-      case result1 {
-        Ok(_) | Error(_) -> Nil
-      }
-      case result2 {
-        Ok(_) | Error(_) -> Nil
-      }
-      case result3 {
-        Ok(_) | Error(_) -> Nil
-      }
+      Nil
     }
     Error(_) -> {
       io.println("    ⚠️  Skipping - Tandoor not configured")
@@ -355,14 +346,9 @@ pub fn update_food_with_different_ids_test() {
   case get_test_client() {
     Ok(config) -> {
       let food_data = TandoorFoodCreateRequest(name: "Updated Food")
-      let result1 = food_update.update_food(config, food_id: 1, food_data: food_data)
-      let result2 = food_update.update_food(config, food_id: 2, food_data: food_data)
-      case result1 {
-        Ok(_) | Error(_) -> Nil
-      }
-      case result2 {
-        Ok(_) | Error(_) -> Nil
-      }
+      let _result1 = food_update.update_food(config, food_id: 1, food_data: food_data)
+      let _result2 = food_update.update_food(config, food_id: 2, food_data: food_data)
+      Nil
     }
     Error(_) -> {
       io.println("    ⚠️  Skipping - Tandoor not configured")
@@ -446,18 +432,10 @@ pub fn delete_food_with_different_ids_test() {
   print_test_info("Delete food with different IDs")
   case get_test_client() {
     Ok(config) -> {
-      let result1 = food_delete.delete_food(config, 1)
-      let result2 = food_delete.delete_food(config, 2)
-      let result3 = food_delete.delete_food(config, 999)
-      case result1 {
-        Ok(_) | Error(_) -> Nil
-      }
-      case result2 {
-        Ok(_) | Error(_) -> Nil
-      }
-      case result3 {
-        Ok(_) | Error(_) -> Nil
-      }
+      let _result1 = food_delete.delete_food(config, 1)
+      let _result2 = food_delete.delete_food(config, 2)
+      let _result3 = food_delete.delete_food(config, 999)
+      Nil
     }
     Error(_) -> {
       io.println("    ⚠️  Skipping - Tandoor not configured")
@@ -562,7 +540,7 @@ pub fn create_and_list_workflow_test() {
       let create_result = food_create.create_food(config, food_data)
 
       case create_result {
-        Ok(created_food) -> {
+        Ok(_created_food) -> {
           // Verify we can list foods
           let list_result = food_list.list_foods(config, limit: option.Some(1), page: option.None)
           should.be_ok(list_result)
