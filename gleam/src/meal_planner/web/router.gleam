@@ -6,6 +6,7 @@ import gleam/http
 import gleam/int
 import gleam/io
 import meal_planner/config
+import meal_planner/fatsecret/diary/handlers as diary_handlers
 import meal_planner/fatsecret/favorites/handlers as favorites_handlers
 import meal_planner/fatsecret/saved_meals/handlers as saved_meals_handlers
 import meal_planner/web/handlers
@@ -167,34 +168,16 @@ pub fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // =========================================================================
     // FatSecret Diary API (3-legged OAuth, requires user auth)
     // =========================================================================
-    ["api", "fatsecret", "diary"] ->
-      case req.method {
-        http.Get ->
-          // GET /api/fatsecret/diary?date=YYYY-MM-DD - Get day's entries
-          handlers.handle_fatsecret_entries(req, ctx.db)
-        http.Post ->
-          // POST /api/fatsecret/diary - Create new entry
-          wisp.not_found()
-        // TODO: implement diary handlers
-        _ -> wisp.method_not_allowed([http.Get, http.Post])
-      }
-    ["api", "fatsecret", "diary", entry_id] ->
-      case req.method {
-        http.Put ->
-          // PUT /api/fatsecret/diary/:entry_id - Update entry
-          wisp.not_found()
-        // TODO: implement diary handlers
-        http.Delete ->
-          // DELETE /api/fatsecret/diary/:entry_id - Delete entry
-          wisp.not_found()
-        // TODO: implement diary handlers
-        _ -> wisp.method_not_allowed([http.Put, http.Delete])
-      }
-    ["api", "fatsecret", "diary", "month"] ->
-      // GET /api/fatsecret/diary/month?year=2024&month=12 - Month summary
-      wisp.not_found()
-
-    // TODO: implement diary handlers
+    // Delegated routing to diary handlers module (production-ready, 824 lines)
+    // Handles:
+    //   POST /api/fatsecret/diary/entries - Create food entry
+    //   GET /api/fatsecret/diary/entries/:entry_id - Get single entry
+    //   PATCH /api/fatsecret/diary/entries/:entry_id - Edit entry
+    //   DELETE /api/fatsecret/diary/entries/:entry_id - Delete entry
+    //   GET /api/fatsecret/diary/day/:date_int - Get all entries for date
+    //   GET /api/fatsecret/diary/month/:date_int - Get month summary
+    ["api", "fatsecret", "diary", ..] ->
+      diary_handlers.handle_diary_routes(req, ctx.db)
     // =========================================================================
     // FatSecret Exercise API (3-legged OAuth, requires user auth)
     // =========================================================================
