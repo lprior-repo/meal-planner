@@ -868,23 +868,25 @@ paths:
       tags:
         - FatSecret - Profile
       summary: Get user profile
-      description: Returns user profile information (requires 3-legged OAuth)
+      description: Returns user profile information from FatSecret (requires 3-legged OAuth)
       responses:
         200:
           description: User profile
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserProfile'
+                $ref: '#/components/schemas/FatSecretProfile'
         401:
           description: Not authenticated
+        500:
+          description: Server error
 
     post:
       operationId: createUserProfile
       tags:
         - FatSecret - Profile
       summary: Create user profile
-      description: Creates or initializes user profile (requires 3-legged OAuth)
+      description: Creates a new FatSecret profile and returns OAuth credentials (requires 3-legged OAuth)
       requestBody:
         required: true
         content:
@@ -892,37 +894,66 @@ paths:
             schema:
               type: object
               properties:
-                weight_lbs:
-                  type: number
-                height_cm:
-                  type: number
-                activity_level:
+                user_id:
                   type: string
-      responses:
-        201:
-          description: Profile created
-        401:
-          description: Not authenticated
-
-  /api/fatsecret/profile/auth:
-    get:
-      operationId: getProfileAuthDetails
-      tags:
-        - FatSecret - Profile
-      summary: Get profile authentication details
-      description: Returns authentication and authorization details
+                  description: Your application's unique user identifier
+              required:
+                - user_id
       responses:
         200:
-          description: Auth details
+          description: Profile created successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  user_id:
-                    type: string
-                  is_authenticated:
+                  success:
                     type: boolean
+                  auth_token:
+                    type: string
+                    description: OAuth access token for the profile
+                  auth_secret:
+                    type: string
+                    description: OAuth token secret for signing requests
+        400:
+          description: Invalid request (missing user_id)
+        401:
+          description: Not authenticated
+        500:
+          description: Server error
+
+  /api/fatsecret/profile/auth/{userId}:
+    get:
+      operationId: getProfileAuthCredentials
+      tags:
+        - FatSecret - Profile
+      summary: Get profile authentication credentials
+      description: Returns OAuth credentials for a specific user profile (requires 3-legged OAuth)
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Your application's unique user identifier
+      responses:
+        200:
+          description: Profile authentication credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auth_token:
+                    type: string
+                    description: OAuth access token
+                  auth_secret:
+                    type: string
+                    description: OAuth token secret
+        401:
+          description: Not authenticated or authorization revoked
+        500:
+          description: Server error
 
   /tandoor/status:
     get:
@@ -1774,3 +1805,32 @@ components:
           type: number
         daily_fat_goal_g:
           type: number
+
+    FatSecretProfile:
+      type: object
+      description: FatSecret user profile information
+      properties:
+        goal_weight_kg:
+          type: number
+          description: Goal weight in kilograms (optional)
+        last_weight_kg:
+          type: number
+          description: Last recorded weight in kilograms (optional)
+        last_weight_date_int:
+          type: integer
+          description: Last weight date as integer (Unix timestamp or YYYYMMDD format)
+        last_weight_comment:
+          type: string
+          description: Comment on last weight entry (optional)
+        height_cm:
+          type: number
+          description: Height in centimeters (optional)
+        calorie_goal:
+          type: integer
+          description: Daily calorie goal (optional)
+        weight_measure:
+          type: string
+          description: Weight measurement unit (e.g., "Kg")
+        height_measure:
+          type: string
+          description: Height measurement unit (e.g., "Cm")
