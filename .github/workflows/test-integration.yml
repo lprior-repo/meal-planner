@@ -1,0 +1,55 @@
+name: Integration Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Erlang/OTP and Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '26.0'
+          gleam-version: '1.6.4'
+
+      - name: Cache build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            gleam/build
+            gleam/_build
+          key: ${{ runner.os }}-gleam-${{ hashFiles('gleam/gleam.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gleam-
+
+      - name: Build project
+        working-directory: gleam
+        run: gleam build
+        env:
+          GLEAM_TARGET: erlang
+
+      - name: Run tests
+        working-directory: gleam
+        run: gleam test
+        env:
+          GLEAM_TARGET: erlang
+
+      - name: Report test results
+        if: always()
+        run: |
+          if [ $? -eq 0 ]; then
+            echo "✅ All tests passed!"
+          else
+            echo "❌ Tests failed - check output above"
+            exit 1
+          fi
