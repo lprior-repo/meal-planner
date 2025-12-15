@@ -8,6 +8,7 @@
 ///   POST/DELETE /api/fatsecret/favorites/recipes/:recipe_id
 ///   GET /api/fatsecret/favorites/recipes
 import gleam/http.{Delete, Get, Post}
+import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
@@ -29,9 +30,33 @@ pub fn add_favorite_food(
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Post)
 
-  case service.add_favorite_food(conn, food_id) {
-    Ok(_) -> helpers.success_message("Food added to favorites")
-    Error(e) -> error_response(e)
+  // Validate food ID format (must be numeric for FatSecret API)
+  case int.parse(food_id) {
+    Error(_) ->
+      helpers.error_response(
+        400,
+        "Invalid food_id format. Must be a numeric value.",
+      )
+    Ok(_) -> {
+      // Check if already in favorites
+      case service.get_favorite_foods(conn, None, None) {
+        Ok(favorites) -> {
+          let already_exists =
+            list.any(favorites.foods, fn(food) { food.food_id == food_id })
+
+          case already_exists {
+            True -> helpers.error_response(409, "Food is already in favorites")
+            False -> {
+              case service.add_favorite_food(conn, food_id) {
+                Ok(_) -> helpers.success_message("Food added to favorites")
+                Error(e) -> error_response(e)
+              }
+            }
+          }
+        }
+        Error(e) -> error_response(e)
+      }
+    }
   }
 }
 
@@ -46,8 +71,22 @@ pub fn delete_favorite_food(
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Delete)
 
-  case service.delete_favorite_food(conn, food_id) {
-    Ok(_) -> helpers.success_message("Food removed from favorites")
+  // Check if food exists in favorites before deleting
+  case service.get_favorite_foods(conn, None, None) {
+    Ok(favorites) -> {
+      let exists =
+        list.any(favorites.foods, fn(food) { food.food_id == food_id })
+
+      case exists {
+        False -> helpers.error_response(404, "Food not found in favorites")
+        True -> {
+          case service.delete_favorite_food(conn, food_id) {
+            Ok(_) -> helpers.success_message("Food removed from favorites")
+            Error(e) -> error_response(e)
+          }
+        }
+      }
+    }
     Error(e) -> error_response(e)
   }
 }
