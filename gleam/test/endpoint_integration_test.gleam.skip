@@ -24,8 +24,8 @@ import gleam/result
 import gleam/string
 import gleeunit
 import gleeunit/should
-import integration/helpers/assertions
 import integration/helpers/http
+import integration/helpers/assertions
 
 pub fn main() {
   gleeunit.main()
@@ -40,45 +40,8 @@ const base_url = "http://localhost:8080"
 const test_food_id = "4142"
 
 // ============================================================================
-// HTTP HELPERS - Using gleam_httpc patterns from codebase
+// NOTE: HTTP helpers and assertions are now in integration/helpers/ modules
 // ============================================================================
-
-/// Make GET request to endpoint
-/// NOTE: This is simplified for testing - in production use proper HTTP client
-fn http_get(path: String) -> Result(#(Int, String), String) {
-  let url = base_url <> path
-  io.println("  📡 GET " <> url)
-
-  // For now, return a placeholder that shows the endpoint structure
-  // In a real integration test run, the server would respond with actual data
-  io.println("  ⚠️  HTTP client not fully configured in test mode")
-  io.println(
-    "  To run LIVE tests, ensure server is running and uncomment httpc.send()",
-  )
-
-  // Placeholder: Server not running yet
-  Error("Server not running - start with: gleam run")
-}
-
-/// Parse JSON response - check if it looks like valid JSON
-fn parse_json(body: String) -> Result(String, String) {
-  // Simple check: valid JSON responses should start with { or [
-  case string.starts_with(body, "{"), string.starts_with(body, "[") {
-    True, _ | _, True -> {
-      // Additional check: contains closing braces
-      case string.contains(body, "}"), string.contains(body, "]") {
-        True, _ | _, True -> Ok(body)
-        _, _ -> Error("Malformed JSON")
-      }
-    }
-    _, _ -> Error("Invalid JSON response")
-  }
-}
-
-/// Check if string contains a field name (simple check)
-fn has_field(body: String, field: String) -> Bool {
-  string.contains(body, "\"" <> field <> "\"")
-}
 
 // ============================================================================
 // TEST 1: GET /api/fatsecret/diary/day/:date_int
@@ -112,32 +75,50 @@ pub fn test_1_diary_day_returns_200_and_valid_json_test() {
   io.println("")
   io.println("Making request...")
 
-  case http_get("/api/fatsecret/diary/day/20437") {
-    Ok(#(status, body)) -> {
+  case http.get("/api/fatsecret/diary/day/20437") {
+    Ok(response) -> {
+      let #(status, body) = response
       io.println("✅ Response status: " <> int.to_string(status))
 
       // ASSERTION: Status code is 200
-      status |> should.equal(200)
-
-      // ASSERTION: Response is valid JSON
-      case parse_json(body) {
-        Ok(data) -> {
-          io.println("  ✓ Valid JSON response")
-          // ASSERTION: Has required fields
-          has_field(data, "entries") |> should.equal(True)
-          has_field(data, "totals") |> should.equal(True)
-          io.println(
-            "  ✓ Response shape validated (has 'entries' and 'totals')",
-          )
+      response
+      |> assertions.assert_status(200)
+      |> result.map(fn(_) {
+        // ASSERTION: Response is valid JSON
+        case assertions.assert_valid_json(body) {
+          Ok(data) -> {
+            io.println("  ✓ Valid JSON response")
+            // ASSERTION: Has required fields
+            case assertions.assert_has_field(data, "entries") {
+              Ok(_) -> {
+                case assertions.assert_has_field(data, "totals") {
+                  Ok(_) -> {
+                    io.println(
+                      "  ✓ Response shape validated (has 'entries' and 'totals')",
+                    )
+                  }
+                  Error(e) -> {
+                    io.println("  ✗ Field validation error: " <> e)
+                    should.fail()
+                  }
+                }
+              }
+              Error(e) -> {
+                io.println("  ✗ Field validation error: " <> e)
+                should.fail()
+              }
+            }
+          }
+          Error(e) -> {
+            io.println("  ✗ JSON parse error: " <> e)
+            should.fail()
+          }
         }
-        Error(e) -> {
-          io.println("  ✗ JSON parse error: " <> e)
-          should.fail()
-        }
-      }
+      })
+      |> should.be_ok()
     }
-    Error(e) -> {
-      io.println("⚠️  " <> e)
+    Error(_e) -> {
+      io.println("⚠️  Server connection error")
       io.println("  Make sure server is running: gleam run")
       should.fail()
     }
@@ -176,27 +157,53 @@ pub fn test_2_diary_month_returns_200_and_valid_json_test() {
   io.println("")
   io.println("Making request...")
 
-  case http_get("/api/fatsecret/diary/month/20437") {
-    Ok(#(status, body)) -> {
+  case http.get("/api/fatsecret/diary/month/20437") {
+    Ok(response) -> {
+      let #(status, body) = response
       io.println("✅ Response status: " <> int.to_string(status))
-      status |> should.equal(200)
 
-      case parse_json(body) {
-        Ok(data) -> {
-          io.println("  ✓ Valid JSON response")
-          has_field(data, "days") |> should.equal(True)
-          has_field(data, "month") |> should.equal(True)
-          has_field(data, "year") |> should.equal(True)
-          io.println("  ✓ Response shape validated")
+      response
+      |> assertions.assert_status(200)
+      |> result.map(fn(_) {
+        case assertions.assert_valid_json(body) {
+          Ok(data) -> {
+            io.println("  ✓ Valid JSON response")
+            case assertions.assert_has_field(data, "days") {
+              Ok(_) -> {
+                case assertions.assert_has_field(data, "month") {
+                  Ok(_) -> {
+                    case assertions.assert_has_field(data, "year") {
+                      Ok(_) -> {
+                        io.println("  ✓ Response shape validated")
+                      }
+                      Error(e) -> {
+                        io.println("  ✗ Field validation error: " <> e)
+                        should.fail()
+                      }
+                    }
+                  }
+                  Error(e) -> {
+                    io.println("  ✗ Field validation error: " <> e)
+                    should.fail()
+                  }
+                }
+              }
+              Error(e) -> {
+                io.println("  ✗ Field validation error: " <> e)
+                should.fail()
+              }
+            }
+          }
+          Error(e) -> {
+            io.println("  ✗ JSON parse error: " <> e)
+            should.fail()
+          }
         }
-        Error(e) -> {
-          io.println("  ✗ JSON parse error: " <> e)
-          should.fail()
-        }
-      }
+      })
+      |> should.be_ok()
     }
-    Error(e) -> {
-      io.println("⚠️  " <> e)
+    Error(_e) -> {
+      io.println("⚠️  Server connection error")
       should.fail()
     }
   }
@@ -235,26 +242,45 @@ pub fn test_3_search_foods_returns_200_and_valid_json_test() {
   io.println("")
   io.println("Making request...")
 
-  case http_get("/api/fatsecret/foods/search?q=chicken") {
-    Ok(#(status, body)) -> {
+  case http.get("/api/fatsecret/foods/search?q=chicken") {
+    Ok(response) -> {
+      let #(status, body) = response
       io.println("✅ Response status: " <> int.to_string(status))
-      status |> should.equal(200)
 
-      case parse_json(body) {
-        Ok(data) -> {
-          io.println("  ✓ Valid JSON response")
-          has_field(data, "foods") |> should.equal(True)
-          has_field(data, "total_results") |> should.equal(True)
-          io.println("  ✓ Response shape validated")
+      response
+      |> assertions.assert_status(200)
+      |> result.map(fn(_) {
+        case assertions.assert_valid_json(body) {
+          Ok(data) -> {
+            io.println("  ✓ Valid JSON response")
+            case assertions.assert_has_field(data, "foods") {
+              Ok(_) -> {
+                case assertions.assert_has_field(data, "total_results") {
+                  Ok(_) -> {
+                    io.println("  ✓ Response shape validated")
+                  }
+                  Error(e) -> {
+                    io.println("  ✗ Field validation error: " <> e)
+                    should.fail()
+                  }
+                }
+              }
+              Error(e) -> {
+                io.println("  ✗ Field validation error: " <> e)
+                should.fail()
+              }
+            }
+          }
+          Error(e) -> {
+            io.println("  ✗ JSON parse error: " <> e)
+            should.fail()
+          }
         }
-        Error(e) -> {
-          io.println("  ✗ JSON parse error: " <> e)
-          should.fail()
-        }
-      }
+      })
+      |> should.be_ok()
     }
-    Error(e) -> {
-      io.println("⚠️  " <> e)
+    Error(_e) -> {
+      io.println("⚠️  Server connection error")
       should.fail()
     }
   }
@@ -294,26 +320,45 @@ pub fn test_4_get_food_detail_returns_200_and_valid_json_test() {
   io.println("")
   io.println("Making request...")
 
-  case http_get("/api/fatsecret/foods/" <> test_food_id) {
-    Ok(#(status, body)) -> {
+  case http.get("/api/fatsecret/foods/" <> test_food_id) {
+    Ok(response) -> {
+      let #(status, body) = response
       io.println("✅ Response status: " <> int.to_string(status))
-      status |> should.equal(200)
 
-      case parse_json(body) {
-        Ok(data) -> {
-          io.println("  ✓ Valid JSON response")
-          has_field(data, "food_id") |> should.equal(True)
-          has_field(data, "servings") |> should.equal(True)
-          io.println("  ✓ Response shape validated")
+      response
+      |> assertions.assert_status(200)
+      |> result.map(fn(_) {
+        case assertions.assert_valid_json(body) {
+          Ok(data) -> {
+            io.println("  ✓ Valid JSON response")
+            case assertions.assert_has_field(data, "food_id") {
+              Ok(_) -> {
+                case assertions.assert_has_field(data, "servings") {
+                  Ok(_) -> {
+                    io.println("  ✓ Response shape validated")
+                  }
+                  Error(e) -> {
+                    io.println("  ✗ Field validation error: " <> e)
+                    should.fail()
+                  }
+                }
+              }
+              Error(e) -> {
+                io.println("  ✗ Field validation error: " <> e)
+                should.fail()
+              }
+            }
+          }
+          Error(e) -> {
+            io.println("  ✗ JSON parse error: " <> e)
+            should.fail()
+          }
         }
-        Error(e) -> {
-          io.println("  ✗ JSON parse error: " <> e)
-          should.fail()
-        }
-      }
+      })
+      |> should.be_ok()
     }
-    Error(e) -> {
-      io.println("⚠️  " <> e)
+    Error(_e) -> {
+      io.println("⚠️  Server connection error")
       should.fail()
     }
   }
@@ -352,26 +397,45 @@ pub fn test_5_get_profile_returns_200_and_valid_json_test() {
   io.println("")
   io.println("Making request...")
 
-  case http_get("/api/fatsecret/profile") {
-    Ok(#(status, body)) -> {
+  case http.get("/api/fatsecret/profile") {
+    Ok(response) -> {
+      let #(status, body) = response
       io.println("✅ Response status: " <> int.to_string(status))
-      status |> should.equal(200)
 
-      case parse_json(body) {
-        Ok(data) -> {
-          io.println("  ✓ Valid JSON response")
-          has_field(data, "user_id") |> should.equal(True)
-          has_field(data, "first_name") |> should.equal(True)
-          io.println("  ✓ Response shape validated")
+      response
+      |> assertions.assert_status(200)
+      |> result.map(fn(_) {
+        case assertions.assert_valid_json(body) {
+          Ok(data) -> {
+            io.println("  ✓ Valid JSON response")
+            case assertions.assert_has_field(data, "user_id") {
+              Ok(_) -> {
+                case assertions.assert_has_field(data, "first_name") {
+                  Ok(_) -> {
+                    io.println("  ✓ Response shape validated")
+                  }
+                  Error(e) -> {
+                    io.println("  ✗ Field validation error: " <> e)
+                    should.fail()
+                  }
+                }
+              }
+              Error(e) -> {
+                io.println("  ✗ Field validation error: " <> e)
+                should.fail()
+              }
+            }
+          }
+          Error(e) -> {
+            io.println("  ✗ JSON parse error: " <> e)
+            should.fail()
+          }
         }
-        Error(e) -> {
-          io.println("  ✗ JSON parse error: " <> e)
-          should.fail()
-        }
-      }
+      })
+      |> should.be_ok()
     }
-    Error(e) -> {
-      io.println("⚠️  " <> e)
+    Error(_e) -> {
+      io.println("⚠️  Server connection error")
       should.fail()
     }
   }
