@@ -1,39 +1,13 @@
 /// Tandoor Recipe Manager web handlers
 ///
-/// Comprehensive Tandoor API endpoints structured like FatSecret handlers
+/// Basic Tandoor API status and list endpoints
 ///
 /// Routes:
-///
-/// Status:
 /// - GET /tandoor/status - Check Tandoor connection status
-///
-/// Recipes:
-/// - GET /api/tandoor/recipes - List recipes (paginated)
-/// - GET /api/tandoor/recipes/:id - Get recipe details
-/// - POST /api/tandoor/recipes - Create recipe
-/// - PATCH /api/tandoor/recipes/:id - Update recipe
-/// - DELETE /api/tandoor/recipes/:id - Delete recipe
-///
-/// Ingredients:
-/// - GET /api/tandoor/ingredients - List ingredients (paginated)
-/// - GET /api/tandoor/ingredients/:id - Get ingredient details
-/// - POST /api/tandoor/ingredients - Create ingredient
-/// - PATCH /api/tandoor/ingredients/:id - Update ingredient
-/// - DELETE /api/tandoor/ingredients/:id - Delete ingredient
-///
-/// Meal Plans:
-/// - GET /api/tandoor/meal-plans - List meal plans (paginated, date-filtered)
-/// - GET /api/tandoor/meal-plans/:id - Get meal plan details
-/// - POST /api/tandoor/meal-plans - Create meal plan entry
-/// - PATCH /api/tandoor/meal-plans/:id - Update meal plan entry
-/// - DELETE /api/tandoor/meal-plans/:id - Delete meal plan entry
-///
-/// Keywords:
-/// - GET /api/tandoor/keywords - List keywords
-/// - GET /api/tandoor/keywords/:id - Get keyword details
-///
-/// Units:
+/// - GET /api/tandoor/recipes - List recipes
 /// - GET /api/tandoor/units - List measurement units
+/// - GET /api/tandoor/keywords - List keywords
+/// - GET /api/tandoor/meal-plans - List meal plans
 
 import gleam/http
 import gleam/int
@@ -106,7 +80,6 @@ pub fn handle_list_recipes(req: wisp.Request) -> wisp.Response {
     Ok(config) -> {
       case recipe_list.list_recipes(config, limit: limit, offset: offset) {
         Ok(response) -> {
-          // Map PaginatedResponse to JSON
           let results_json =
             json.array(
               response.results,
@@ -298,4 +271,3 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
     _ -> wisp.not_found()
   }
 }
-
