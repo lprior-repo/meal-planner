@@ -1,7 +1,6 @@
 //// Tests for HTTP client helper module
 //// These tests verify basic HTTP method functionality
 
-import gleeunit
 import gleeunit/should
 import integration/helpers/http
 
