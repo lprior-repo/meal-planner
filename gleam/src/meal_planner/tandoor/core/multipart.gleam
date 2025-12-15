@@ -148,7 +148,8 @@ fn encode_part(part: MultipartPart, boundary: String) -> BitArray {
 /// Encode a text field part
 fn encode_text_field(name: String, value: String, boundary: String) -> BitArray {
   let boundary_line = "--" <> boundary <> "\r\n"
-  let disposition = "Content-Disposition: form-data; name=\"" <> name <> "\"\r\n"
+  let disposition =
+    "Content-Disposition: form-data; name=\"" <> name <> "\"\r\n"
   let blank_line = "\r\n"
   let value_line = value <> "\r\n"
 
@@ -221,27 +222,36 @@ fn encode_final_boundary(boundary: String) -> BitArray {
 pub fn detect_mime_type(filename: String) -> String {
   let lower_filename = string.lowercase(filename)
 
-  case string.ends_with(lower_filename, ".jpg") || string.ends_with(lower_filename, ".jpeg") {
+  case
+    string.ends_with(lower_filename, ".jpg")
+    || string.ends_with(lower_filename, ".jpeg")
+  {
     True -> "image/jpeg"
-    False -> case string.ends_with(lower_filename, ".png") {
-      True -> "image/png"
-      False -> case string.ends_with(lower_filename, ".gif") {
-        True -> "image/gif"
-        False -> case string.ends_with(lower_filename, ".webp") {
-          True -> "image/webp"
-          False -> case string.ends_with(lower_filename, ".svg") {
-            True -> "image/svg+xml"
-            False -> case string.ends_with(lower_filename, ".bmp") {
-              True -> "image/bmp"
-              False -> case string.ends_with(lower_filename, ".ico") {
-                True -> "image/x-icon"
-                False -> "application/octet-stream"
+    False ->
+      case string.ends_with(lower_filename, ".png") {
+        True -> "image/png"
+        False ->
+          case string.ends_with(lower_filename, ".gif") {
+            True -> "image/gif"
+            False ->
+              case string.ends_with(lower_filename, ".webp") {
+                True -> "image/webp"
+                False ->
+                  case string.ends_with(lower_filename, ".svg") {
+                    True -> "image/svg+xml"
+                    False ->
+                      case string.ends_with(lower_filename, ".bmp") {
+                        True -> "image/bmp"
+                        False ->
+                          case string.ends_with(lower_filename, ".ico") {
+                            True -> "image/x-icon"
+                            False -> "application/octet-stream"
+                          }
+                      }
+                  }
               }
-            }
           }
-        }
       }
-    }
   }
 }
 

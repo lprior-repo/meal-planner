@@ -32,10 +32,22 @@ pub fn ingredient_create_request_decoder() -> decode.Decoder(
     option.Option(String),
   ),
 ) {
-  use food <- decode.optional_field("food", option.None, decode.optional(decode.int))
-  use unit <- decode.optional_field("unit", option.None, decode.optional(decode.int))
+  use food <- decode.optional_field(
+    "food",
+    option.None,
+    decode.optional(decode.int),
+  )
+  use unit <- decode.optional_field(
+    "unit",
+    option.None,
+    decode.optional(decode.int),
+  )
   use amount <- decode.field("amount", decode.float)
-  use note <- decode.optional_field("note", option.None, decode.optional(decode.string))
+  use note <- decode.optional_field(
+    "note",
+    option.None,
+    decode.optional(decode.string),
+  )
   use order <- decode.field("order", decode.int)
   use is_header <- decode.field("is_header", decode.bool)
   use no_amount <- decode.field("no_amount", decode.bool)
@@ -44,5 +56,14 @@ pub fn ingredient_create_request_decoder() -> decode.Decoder(
     option.None,
     decode.optional(decode.string),
   )
-  decode.success(#(food, unit, amount, note, order, is_header, no_amount, original_text))
+  decode.success(#(
+    food,
+    unit,
+    amount,
+    note,
+    order,
+    is_header,
+    no_amount,
+    original_text,
+  ))
 }

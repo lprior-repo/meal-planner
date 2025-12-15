@@ -17,8 +17,9 @@
 /// export TANDOOR_PASSWORD=password
 /// gleam test
 /// ```
-import envoy
+import gleam/option
 import gleam/result
+import meal_planner/env
 import meal_planner/tandoor/client.{
   type ClientConfig, type TandoorError, bearer_config, ensure_authenticated,
   session_config,
@@ -26,47 +27,44 @@ import meal_planner/tandoor/client.{
 
 /// Get test configuration from environment variables
 ///
-/// Tries session auth first (TANDOOR_USERNAME/PASSWORD), falls back to bearer token.
+/// Uses centralized env.gleam module for consistency.
+/// Tries session auth first (TANDOOR_USERNAME/PASSWORD), falls back to infrastructure defaults.
 ///
 /// # Returns
 /// Result with authenticated client config or error message
 pub fn get_test_config() -> Result(ClientConfig, String) {
-  // Use infrastructure defaults if environment variables not set
-  let url = case envoy.get("TANDOOR_URL") {
-    Ok(url) -> url
-    Error(_) -> "http://localhost:8100"
-  }
+  // Use centralized env module to load Tandoor configuration
+  case env.load_tandoor_config() {
+    option.Some(tandoor_config) -> {
+      // Use configuration from environment variables
+      let config =
+        session_config(
+          tandoor_config.base_url,
+          tandoor_config.username,
+          tandoor_config.password,
+        )
 
-  // Try session auth first (recommended)
-  case envoy.get("TANDOOR_USERNAME"), envoy.get("TANDOOR_PASSWORD") {
-    Ok(username), Ok(password) -> {
-      let config = session_config(url, username, password)
       // Authenticate and return config
       case ensure_authenticated(config) {
         Ok(authenticated_config) -> Ok(authenticated_config)
         Error(err) ->
           Error(
-            "Failed to authenticate with Tandoor: "
+            "Failed to authenticate with Tandoor (from env): "
             <> client.error_to_string(err),
           )
       }
     }
-    _, _ -> {
-      // Try default credentials from infrastructure setup
-      case envoy.get("TANDOOR_TOKEN") {
-        Ok(token) -> Ok(bearer_config(url, token))
-        Error(_) -> {
-          // Use default admin/admin credentials
-          let config = session_config(url, "admin", "admin")
-          case ensure_authenticated(config) {
-            Ok(authenticated_config) -> Ok(authenticated_config)
-            Error(err) ->
-              Error(
-                "Failed to authenticate with default credentials (admin/admin): "
-                <> client.error_to_string(err),
-              )
-          }
-        }
+    option.None -> {
+      // Fall back to infrastructure defaults (http://localhost:8100, admin/admin)
+      // This matches what docker-compose.test.yml provides
+      let config = session_config("http://localhost:8100", "admin", "admin")
+      case ensure_authenticated(config) {
+        Ok(authenticated_config) -> Ok(authenticated_config)
+        Error(err) ->
+          Error(
+            "Failed to authenticate with default credentials (admin/admin): "
+            <> client.error_to_string(err),
+          )
       }
     }
   }
@@ -90,10 +88,7 @@ pub fn skip_if_no_tandoor() -> Bool {
 
 /// Get environment variable or default value
 pub fn get_env_or_default(key: String, default: String) -> String {
-  case envoy.get(key) {
-    Ok(value) -> value
-    Error(_) -> default
-  }
+  env.get_env(key, default)
 }
 
 /// Helper to run a test only if Tandoor is available

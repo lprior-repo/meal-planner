@@ -12,6 +12,7 @@ import meal_planner/tandoor/client
 import meal_planner/tandoor/api/unit/list as unit_list
 import meal_planner/tandoor/api/keyword/keyword_api
 import meal_planner/tandoor/handlers/helpers
+import meal_planner/web/handlers/shopping_list
 
 import wisp
 
@@ -49,6 +50,7 @@ fn get_authenticated_client() -> Result(client.ClientConfig, wisp.Response) {
 /// Main router for Tandoor API requests
 pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
   let path = wisp.path_segments(req)
+  let method = req.method
 
   case path {
     // Status endpoint
@@ -122,6 +124,32 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
           }
         }
         Error(resp) -> resp
+      }
+    }
+
+    // Shopping List Entries
+    ["api", "tandoor", "shopping-list-entries"] -> {
+      case method {
+        wisp.Get -> shopping_list.handle_list(req)
+        wisp.Post -> shopping_list.handle_create(req)
+        _ -> wisp.method_not_allowed([wisp.Get, wisp.Post])
+      }
+    }
+
+    // Shopping List Entry by ID
+    ["api", "tandoor", "shopping-list-entries", id_str] -> {
+      case method {
+        wisp.Get -> shopping_list.handle_get(req, id_str)
+        wisp.Delete -> shopping_list.handle_delete(req, id_str)
+        _ -> wisp.method_not_allowed([wisp.Get, wisp.Delete])
+      }
+    }
+
+    // Add Recipe to Shopping List
+    ["api", "tandoor", "shopping-list-recipe"] -> {
+      case method {
+        wisp.Post -> shopping_list.handle_add_recipe(req)
+        _ -> wisp.method_not_allowed([wisp.Post])
       }
     }
 

@@ -5,7 +5,6 @@
 /// - Query parameter parsing
 /// - Success/error response builders
 /// - Food and recipe JSON encoders
-
 import gleam/float
 import gleam/http
 import gleam/int
@@ -269,14 +268,9 @@ pub fn encode_food_search_result(
 }
 
 /// Encode a favorite food (simplified) to JSON
-pub fn encode_favorite_food(food: #(
-  String,
-  String,
-  String,
-  Option(String),
-  String,
-  String,
-)) -> json.Json {
+pub fn encode_favorite_food(
+  food: #(String, String, String, Option(String), String, String),
+) -> json.Json {
   let #(food_id, food_name, food_type, brand_name, food_description, food_url) =
     food
   json.object([
@@ -296,7 +290,10 @@ pub fn encode_favorite_food(food: #(
 /// Encode a Recipe to JSON
 pub fn encode_recipe(recipe: recipe_types.Recipe) -> json.Json {
   json.object([
-    #("recipe_id", json.string(recipe_types.recipe_id_to_string(recipe.recipe_id))),
+    #(
+      "recipe_id",
+      json.string(recipe_types.recipe_id_to_string(recipe.recipe_id)),
+    ),
     #("recipe_name", json.string(recipe.recipe_name)),
     #("recipe_url", json.string(recipe.recipe_url)),
     #("recipe_description", json.string(recipe.recipe_description)),
@@ -368,7 +365,10 @@ pub fn encode_recipe_search_result(
   result: recipe_types.RecipeSearchResult,
 ) -> json.Json {
   json.object([
-    #("recipe_id", json.string(recipe_types.recipe_id_to_string(result.recipe_id))),
+    #(
+      "recipe_id",
+      json.string(recipe_types.recipe_id_to_string(result.recipe_id)),
+    ),
     #("recipe_name", json.string(result.recipe_name)),
     #("recipe_description", json.string(result.recipe_description)),
     #("recipe_url", json.string(result.recipe_url)),
@@ -377,13 +377,9 @@ pub fn encode_recipe_search_result(
 }
 
 /// Encode a favorite recipe (simplified) to JSON
-pub fn encode_favorite_recipe(recipe: #(
-  String,
-  String,
-  String,
-  String,
-  Option(String),
-)) -> json.Json {
+pub fn encode_favorite_recipe(
+  recipe: #(String, String, String, String, Option(String)),
+) -> json.Json {
   let #(recipe_id, recipe_name, recipe_description, recipe_url, recipe_image) =
     recipe
   json.object([
@@ -419,8 +415,7 @@ pub fn validate_required_string(
   param_name: String,
 ) -> Result(String, #(Int, String)) {
   case value {
-    None ->
-      Error(#(400, "Missing required query parameter: " <> param_name))
+    None -> Error(#(400, "Missing required query parameter: " <> param_name))
     Some(s) -> {
       case string.is_empty(s) {
         True ->
@@ -444,4 +439,24 @@ pub fn require_method(
     True -> Ok(Nil)
     False -> Error(wisp.method_not_allowed([expected]))
   }
+}
+
+/// Encode FoodSuggestion to JSON
+pub fn encode_food_suggestion(
+  suggestion: food_types.FoodSuggestion,
+) -> json.Json {
+  json.object([
+    #("food_id", json.string(food_types.food_id_to_string(suggestion.food_id))),
+    #("food_name", json.string(suggestion.food_name)),
+  ])
+}
+
+/// Encode RecipeSuggestion to JSON
+pub fn encode_recipe_suggestion(
+  suggestion: recipe_types.RecipeSuggestion,
+) -> json.Json {
+  json.object([
+    #("recipe_id", json.string(recipe_types.recipe_id_to_string(suggestion.recipe_id))),
+    #("recipe_name", json.string(suggestion.recipe_name)),
+  ])
 }

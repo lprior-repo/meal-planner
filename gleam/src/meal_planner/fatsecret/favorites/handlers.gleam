@@ -13,8 +13,8 @@ import gleam/list
 import gleam/option.{None, Some}
 import meal_planner/fatsecret/favorites/service
 import meal_planner/fatsecret/favorites/types
-import meal_planner/fatsecret/service as fatsecret_service
 import meal_planner/fatsecret/handlers_helpers as helpers
+import meal_planner/fatsecret/service as fatsecret_service
 import pog
 import wisp.{type Request, type Response}
 
