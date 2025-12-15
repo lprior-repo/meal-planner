@@ -63,14 +63,14 @@ services:
       # Debug (only for testing)
       DEBUG: 0
     ports:
-      - "8100:8080"
+      - "8100:80"
     volumes:
       - tandoor_test_staticfiles:/opt/recipes/staticfiles
       - tandoor_test_mediafiles:/opt/recipes/mediafiles
     networks:
       - tandoor_test_network
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80"]
       interval: 30s
       timeout: 10s
       retries: 5
