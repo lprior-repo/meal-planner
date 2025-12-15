@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Add breakfast entries to FatSecret for Monday-Friday
-# Using custom entries with exact FatSecret nutrition data
+# Using from_food entries with food_entry_name
 
 API_URL="http://localhost:8080/api/fatsecret/diary/entries"
 
@@ -20,17 +20,13 @@ for day in {15..19}; do
   result=$(curl -s -X POST "$API_URL" \
     -H "Content-Type: application/json" \
     -d "{
-      \"type\": \"custom\",
+      \"type\": \"from_food\",
       \"food_id\": \"78442\",
       \"food_entry_name\": \"Light & Fit Yogurt - Lemon\",
-      \"serving_description\": \"1 container\",
+      \"serving_id\": \"118069\",
       \"number_of_units\": 1.0,
       \"meal\": \"breakfast\",
-      \"date\": \"$date\",
-      \"calories\": 80.0,
-      \"carbohydrate\": 8.0,
-      \"protein\": 12.0,
-      \"fat\": 0.0
+      \"date\": \"$date\"
     }")
 
   if echo "$result" | jq -e '.success' > /dev/null 2>&1; then
@@ -44,17 +40,13 @@ for day in {15..19}; do
   result=$(curl -s -X POST "$API_URL" \
     -H "Content-Type: application/json" \
     -d "{
-      \"type\": \"custom\",
+      \"type\": \"from_food\",
       \"food_id\": \"45885109\",
       \"food_entry_name\": \"Isopure Zero Carb Unflavored\",
-      \"serving_description\": \"1 scoop\",
+      \"serving_id\": \"39412696\",
       \"number_of_units\": 1.0,
       \"meal\": \"breakfast\",
-      \"date\": \"$date\",
-      \"calories\": 100.0,
-      \"carbohydrate\": 0.0,
-      \"protein\": 25.0,
-      \"fat\": 0.0
+      \"date\": \"$date\"
     }")
 
   if echo "$result" | jq -e '.success' > /dev/null 2>&1; then
@@ -68,17 +60,13 @@ for day in {15..19}; do
   result=$(curl -s -X POST "$API_URL" \
     -H "Content-Type: application/json" \
     -d "{
-      \"type\": \"custom\",
+      \"type\": \"from_food\",
       \"food_id\": \"91621\",
       \"food_entry_name\": \"Best Yet Mixed Berries\",
-      \"serving_description\": \"1 cup\",
+      \"serving_id\": \"131951\",
       \"number_of_units\": 1.0,
       \"meal\": \"breakfast\",
-      \"date\": \"$date\",
-      \"calories\": 70.0,
-      \"carbohydrate\": 16.0,
-      \"protein\": 1.0,
-      \"fat\": 0.0
+      \"date\": \"$date\"
     }")
 
   if echo "$result" | jq -e '.success' > /dev/null 2>&1; then
