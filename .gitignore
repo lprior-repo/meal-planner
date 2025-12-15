@@ -79,6 +79,7 @@ test-output.txt
 db_export/
 
 # Claude Flow generated files
+.claude/
 .claude/settings.local.json
 .mcp.json
 claude-flow.config.json
