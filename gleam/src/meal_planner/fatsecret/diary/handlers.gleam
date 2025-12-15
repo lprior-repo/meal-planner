@@ -17,7 +17,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import meal_planner/fatsecret/diary/service
 import meal_planner/fatsecret/diary/types.{
-  type FoodEntry, type FoodEntryId, type FoodEntryInput, type FoodEntryUpdate,
+  type FoodEntry, type FoodEntryInput, type FoodEntryUpdate,
   Custom, FromFood,
 }
 import pog
