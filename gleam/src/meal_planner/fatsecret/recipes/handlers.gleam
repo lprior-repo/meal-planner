@@ -1,12 +1,7 @@
 /// FatSecret Recipes HTTP handlers
 /// Endpoints for browsing and searching recipes
 import gleam/http
-import gleam/int
 import gleam/json
-import gleam/list
-import gleam/option
-import gleam/result
-import gleam/string
 import meal_planner/fatsecret/recipes/service
 import meal_planner/fatsecret/recipes/types
 import meal_planner/fatsecret/handlers_helpers as helpers

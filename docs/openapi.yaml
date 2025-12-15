@@ -1,0 +1,2319 @@
+openapi: 3.1.0
+info:
+  title: Meal Planner API
+  version: 1.0.0
+  description: |
+    Comprehensive API for meal planning, nutrition tracking, and recipe management.
+
+    Integrates with:
+    - **FatSecret Platform API** - Nutrition data, food diary, favorites
+    - **Tandoor Recipe Manager** - Recipe storage and meal planning
+    - **Custom APIs** - Recipe scoring, macro calculations, diet compliance
+
+    ## Authentication
+
+    ### FatSecret APIs
+    - **2-Legged OAuth**: Public endpoints (foods/recipes search) - automatic via consumer key/secret
+    - **3-Legged OAuth**: User-specific endpoints (diary, favorites, profile) - requires OAuth flow
+
+    ### Tandoor APIs
+    - **Basic Authentication**: Uses username/password credentials
+
+  contact:
+    name: Meal Planner Support
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: https://api.meal-planner.example.com
+    description: Production server
+
+tags:
+  - name: Health
+    description: Health check and status endpoints
+  - name: FatSecret OAuth
+    description: FatSecret OAuth 3-legged authentication flow
+  - name: FatSecret Foods
+    description: Food search and nutrition data (2-legged OAuth)
+  - name: FatSecret Recipes
+    description: Recipe search and details (2-legged OAuth)
+  - name: FatSecret Profile
+    description: User profile data (3-legged OAuth required)
+  - name: FatSecret Diary
+    description: Food diary management (3-legged OAuth required)
+  - name: FatSecret Favorites
+    description: Favorite foods and recipes (3-legged OAuth required)
+  - name: FatSecret Saved Meals
+    description: Saved meal templates (3-legged OAuth required)
+  - name: FatSecret Exercise
+    description: Exercise tracking (NOT YET IMPLEMENTED)
+  - name: FatSecret Weight
+    description: Weight tracking (NOT YET IMPLEMENTED)
+  - name: Tandoor
+    description: Tandoor Recipe Manager integration (read-only)
+  - name: Custom APIs
+    description: Recipe scoring, macro calculations, diet compliance
+
+paths:
+  # =============================================================================
+  # HEALTH & STATUS
+  # =============================================================================
+  /:
+    get:
+      tags: [Health]
+      summary: Health check (root)
+      description: Root health check endpoint (alias for /health)
+      operationId: getHealthRoot
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      description: Returns service health status
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  # =============================================================================
+  # FATSECRET OAUTH FLOW (3-Legged Authentication)
+  # =============================================================================
+  /fatsecret/connect:
+    get:
+      tags: [FatSecret OAuth]
+      summary: Start OAuth flow
+      description: Initiates 3-legged OAuth flow by redirecting to FatSecret authorization page
+      operationId: fatSecretConnect
+      responses:
+        '302':
+          description: Redirect to FatSecret authorization page
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /fatsecret/callback:
+    get:
+      tags: [FatSecret OAuth]
+      summary: OAuth callback handler
+      description: Handles OAuth callback from FatSecret after user authorization
+      operationId: fatSecretCallback
+      parameters:
+        - name: oauth_token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: OAuth token from FatSecret
+        - name: oauth_verifier
+          in: query
+          required: true
+          schema:
+            type: string
+          description: OAuth verifier code
+      responses:
+        '200':
+          description: Successfully authenticated (HTML page)
+          content:
+            text/html:
+              schema:
+                type: string
+        '302':
+          description: Redirect after authentication
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /fatsecret/status:
+    get:
+      tags: [FatSecret OAuth]
+      summary: Check authentication status
+      description: Returns current FatSecret OAuth connection status
+      operationId: fatSecretStatus
+      responses:
+        '200':
+          description: Authentication status (HTML page)
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /fatsecret/disconnect:
+    post:
+      tags: [FatSecret OAuth]
+      summary: Disconnect FatSecret
+      description: Revokes OAuth access token and disconnects from FatSecret
+      operationId: fatSecretDisconnect
+      responses:
+        '200':
+          description: Successfully disconnected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Successfully disconnected from FatSecret
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # =============================================================================
+  # FATSECRET FOODS API (2-Legged OAuth - Public)
+  # =============================================================================
+  /api/fatsecret/foods/search:
+    get:
+      tags: [FatSecret Foods]
+      summary: Search foods
+      description: Search FatSecret food database (2-legged OAuth - no user auth required)
+      operationId: searchFoods
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: Search query
+          example: banana
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Page number (0-indexed)
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+          description: Results per page
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodSearchResults'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/fatsecret/foods/{food_id}:
+    get:
+      tags: [FatSecret Foods]
+      summary: Get food details
+      description: Get detailed nutrition information for a specific food
+      operationId: getFoodDetails
+      parameters:
+        - name: food_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: FatSecret food ID
+          example: '4142'
+      responses:
+        '200':
+          description: Food details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodDetails'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  # =============================================================================
+  # FATSECRET RECIPES API (2-Legged OAuth - Public)
+  # =============================================================================
+  /api/fatsecret/recipes/types:
+    get:
+      tags: [FatSecret Recipes]
+      summary: List recipe categories
+      description: Get list of available recipe categories/types
+      operationId: getRecipeTypes
+      responses:
+        '200':
+          description: Recipe categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipeType'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/fatsecret/recipes/search:
+    get:
+      tags: [FatSecret Recipes]
+      summary: Search recipes
+      description: Search FatSecret recipe database
+      operationId: searchRecipes
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+          description: Search query
+          example: pasta carbonara
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+      responses:
+        '200':
+          description: Recipe search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipeSearchResults'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/fatsecret/recipes/search/type/{type_id}:
+    get:
+      tags: [FatSecret Recipes]
+      summary: Search recipes by category
+      description: Search recipes within a specific category
+      operationId: searchRecipesByType
+      parameters:
+        - name: type_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Recipe type/category ID
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Recipes in category
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipeSearchResults'
+
+  /api/fatsecret/recipes/{recipe_id}:
+    get:
+      tags: [FatSecret Recipes]
+      summary: Get recipe details
+      description: Get detailed recipe information including ingredients and steps
+      operationId: getRecipeDetails
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: FatSecret recipe ID
+      responses:
+        '200':
+          description: Recipe details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipeDetails'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # =============================================================================
+  # FATSECRET PROFILE API (3-Legged OAuth Required)
+  # =============================================================================
+  /api/fatsecret/profile:
+    get:
+      tags: [FatSecret Profile]
+      summary: Get user profile
+      description: Get authenticated user's profile information (requires 3-legged OAuth)
+      operationId: getUserProfile
+      security:
+        - fatSecretOAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /api/fatsecret/entries:
+    get:
+      tags: [FatSecret Profile]
+      summary: Get food entries for date
+      description: Get user's food diary entries for a specific date
+      operationId: getFoodEntries
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Date in YYYY-MM-DD format
+          example: '2024-01-15'
+      responses:
+        '200':
+          description: Food entries for date
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # =============================================================================
+  # FATSECRET DIARY API (3-Legged OAuth Required)
+  # =============================================================================
+  /api/fatsecret/diary/entries:
+    post:
+      tags: [FatSecret Diary]
+      summary: Create food diary entry
+      description: Add new food entry to diary
+      operationId: createDiaryEntry
+      security:
+        - fatSecretOAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/FoodEntryFromFood'
+                - $ref: '#/components/schemas/FoodEntryCustom'
+            examples:
+              fromFood:
+                summary: Entry from existing food
+                value:
+                  type: from_food
+                  food_id: '4142'
+                  serving_id: '12345'
+                  number_of_units: 1.5
+                  meal: lunch
+                  date: '2024-01-15'
+              custom:
+                summary: Custom food entry
+                value:
+                  type: custom
+                  food_entry_name: Custom Salad
+                  serving_description: Large bowl
+                  number_of_units: 1.0
+                  meal: lunch
+                  date: '2024-01-15'
+                  calories: 350.0
+                  carbohydrate: 40.0
+                  protein: 15.0
+                  fat: 8.0
+      responses:
+        '200':
+          description: Entry created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodEntry'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/fatsecret/diary/entries/{entry_id}:
+    get:
+      tags: [FatSecret Diary]
+      summary: Get diary entry
+      description: Get single food diary entry by ID
+      operationId: getDiaryEntry
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntryId'
+      responses:
+        '200':
+          description: Diary entry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodEntry'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags: [FatSecret Diary]
+      summary: Edit diary entry
+      description: Update existing food diary entry
+      operationId: updateDiaryEntry
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntryId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodEntryUpdate'
+      responses:
+        '200':
+          description: Entry updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodEntry'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [FatSecret Diary]
+      summary: Delete diary entry
+      description: Remove food diary entry
+      operationId: deleteDiaryEntry
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntryId'
+      responses:
+        '204':
+          description: Entry deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/fatsecret/diary/day/{date_int}:
+    get:
+      tags: [FatSecret Diary]
+      summary: Get entries for date
+      description: Get all diary entries for a specific date
+      operationId: getDayEntries
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: date_int
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Date as integer (Unix timestamp or YYYYMMDD)
+          example: 20240115
+      responses:
+        '200':
+          description: Entries for the day
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodEntry'
+
+  /api/fatsecret/diary/month/{date_int}:
+    get:
+      tags: [FatSecret Diary]
+      summary: Get month summary
+      description: Get summary of diary entries for entire month
+      operationId: getMonthSummary
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: date_int
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Month as integer (YYYYMM)
+          example: 202401
+      responses:
+        '200':
+          description: Monthly summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthSummary'
+
+  # =============================================================================
+  # FATSECRET FAVORITES API (3-Legged OAuth Required)
+  # =============================================================================
+  /api/fatsecret/favorites/foods:
+    get:
+      tags: [FatSecret Favorites]
+      summary: List favorite foods
+      description: Get user's favorite foods list
+      operationId: getFavoriteFoods
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - $ref: '#/components/parameters/MaxResults'
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: List of favorite foods
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodDetails'
+
+  /api/fatsecret/favorites/foods/{food_id}:
+    post:
+      tags: [FatSecret Favorites]
+      summary: Add food to favorites
+      description: Add a food to user's favorites list
+      operationId: addFavoriteFood
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: food_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Food added to favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+    delete:
+      tags: [FatSecret Favorites]
+      summary: Remove food from favorites
+      description: Remove a food from user's favorites list
+      operationId: removeFavoriteFood
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: food_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Food removed from favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/fatsecret/favorites/foods/most-eaten:
+    get:
+      tags: [FatSecret Favorites]
+      summary: Get most eaten foods
+      description: Get user's most frequently eaten foods
+      operationId: getMostEatenFoods
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - $ref: '#/components/parameters/MaxResults'
+      responses:
+        '200':
+          description: Most eaten foods
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodDetails'
+
+  /api/fatsecret/favorites/foods/recently-eaten:
+    get:
+      tags: [FatSecret Favorites]
+      summary: Get recently eaten foods
+      description: Get user's recently eaten foods
+      operationId: getRecentlyEatenFoods
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - $ref: '#/components/parameters/MaxResults'
+      responses:
+        '200':
+          description: Recently eaten foods
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodDetails'
+
+  /api/fatsecret/favorites/recipes:
+    get:
+      tags: [FatSecret Favorites]
+      summary: List favorite recipes
+      description: Get user's favorite recipes list
+      operationId: getFavoriteRecipes
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - $ref: '#/components/parameters/MaxResults'
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: List of favorite recipes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipeDetails'
+
+  /api/fatsecret/favorites/recipes/{recipe_id}:
+    post:
+      tags: [FatSecret Favorites]
+      summary: Add recipe to favorites
+      description: Add a recipe to user's favorites list
+      operationId: addFavoriteRecipe
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Recipe added to favorites
+
+    delete:
+      tags: [FatSecret Favorites]
+      summary: Remove recipe from favorites
+      description: Remove a recipe from user's favorites list
+      operationId: removeFavoriteRecipe
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Recipe removed from favorites
+
+  # =============================================================================
+  # FATSECRET SAVED MEALS API (3-Legged OAuth Required)
+  # =============================================================================
+  /api/fatsecret/saved-meals:
+    get:
+      tags: [FatSecret Saved Meals]
+      summary: List saved meals
+      description: Get user's saved meal templates
+      operationId: getSavedMeals
+      security:
+        - fatSecretOAuth: []
+      responses:
+        '200':
+          description: List of saved meals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SavedMeal'
+
+    post:
+      tags: [FatSecret Saved Meals]
+      summary: Create saved meal
+      description: Create new saved meal template
+      operationId: createSavedMeal
+      security:
+        - fatSecretOAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavedMealInput'
+      responses:
+        '201':
+          description: Saved meal created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedMeal'
+
+  /api/fatsecret/saved-meals/{meal_id}:
+    put:
+      tags: [FatSecret Saved Meals]
+      summary: Edit saved meal
+      description: Update saved meal template
+      operationId: updateSavedMeal
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: meal_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavedMealInput'
+      responses:
+        '200':
+          description: Saved meal updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedMeal'
+
+    delete:
+      tags: [FatSecret Saved Meals]
+      summary: Delete saved meal
+      description: Remove saved meal template
+      operationId: deleteSavedMeal
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: meal_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Saved meal deleted
+
+  /api/fatsecret/saved-meals/{meal_id}/items:
+    get:
+      tags: [FatSecret Saved Meals]
+      summary: Get meal items
+      description: Get items in saved meal template
+      operationId: getSavedMealItems
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: meal_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Meal items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SavedMealItem'
+
+    post:
+      tags: [FatSecret Saved Meals]
+      summary: Add item to meal
+      description: Add food item to saved meal template
+      operationId: addSavedMealItem
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: meal_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavedMealItemInput'
+      responses:
+        '201':
+          description: Item added to meal
+
+  /api/fatsecret/saved-meals/{meal_id}/items/{item_id}:
+    put:
+      tags: [FatSecret Saved Meals]
+      summary: Edit meal item
+      description: Update item in saved meal template
+      operationId: updateSavedMealItem
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: meal_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavedMealItemInput'
+      responses:
+        '200':
+          description: Item updated
+
+    delete:
+      tags: [FatSecret Saved Meals]
+      summary: Delete meal item
+      description: Remove item from saved meal template
+      operationId: deleteSavedMealItem
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: meal_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Item deleted
+
+  # =============================================================================
+  # FATSECRET EXERCISE API (NOT YET IMPLEMENTED)
+  # =============================================================================
+  /api/fatsecret/exercises:
+    get:
+      tags: [FatSecret Exercise]
+      summary: Search exercises (NOT IMPLEMENTED)
+      description: Search exercise database
+      operationId: searchExercises
+      security:
+        - fatSecretOAuth: []
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+  /api/fatsecret/exercise-entries:
+    get:
+      tags: [FatSecret Exercise]
+      summary: Get exercise entries (NOT IMPLEMENTED)
+      operationId: getExerciseEntries
+      security:
+        - fatSecretOAuth: []
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+    post:
+      tags: [FatSecret Exercise]
+      summary: Create exercise entry (NOT IMPLEMENTED)
+      operationId: createExerciseEntry
+      security:
+        - fatSecretOAuth: []
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+  /api/fatsecret/exercise-entries/{entry_id}:
+    put:
+      tags: [FatSecret Exercise]
+      summary: Edit exercise entry (NOT IMPLEMENTED)
+      operationId: updateExerciseEntry
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntryId'
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+    delete:
+      tags: [FatSecret Exercise]
+      summary: Delete exercise entry (NOT IMPLEMENTED)
+      operationId: deleteExerciseEntry
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntryId'
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+  # =============================================================================
+  # FATSECRET WEIGHT API (NOT YET IMPLEMENTED)
+  # =============================================================================
+  /api/fatsecret/weight:
+    get:
+      tags: [FatSecret Weight]
+      summary: Get weight history (NOT IMPLEMENTED)
+      operationId: getWeightHistory
+      security:
+        - fatSecretOAuth: []
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+    post:
+      tags: [FatSecret Weight]
+      summary: Log weight (NOT IMPLEMENTED)
+      operationId: logWeight
+      security:
+        - fatSecretOAuth: []
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+  /api/fatsecret/weight/month/{year}/{month}:
+    get:
+      tags: [FatSecret Weight]
+      summary: Get monthly weight stats (NOT IMPLEMENTED)
+      operationId: getMonthlyWeightStats
+      security:
+        - fatSecretOAuth: []
+      parameters:
+        - name: year
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: month
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+  # =============================================================================
+  # TANDOOR RECIPE MANAGER (Read-Only GET Endpoints)
+  # =============================================================================
+  /tandoor/status:
+    get:
+      tags: [Tandoor]
+      summary: Check Tandoor connection
+      description: Verify Tandoor API connectivity and authentication
+      operationId: getTandoorStatus
+      security:
+        - tandoorBasicAuth: []
+      responses:
+        '200':
+          description: Tandoor is connected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: connected
+                  service:
+                    type: string
+                    example: tandoor
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /api/tandoor/recipes:
+    get:
+      tags: [Tandoor]
+      summary: List recipes
+      description: Get paginated list of recipes from Tandoor
+      operationId: getTandoorRecipes
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: Paginated recipe list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorPaginatedRecipes'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/tandoor/recipes/{id}:
+    get:
+      tags: [Tandoor]
+      summary: Get recipe details
+      description: Get detailed information for a specific Tandoor recipe
+      operationId: getTandoorRecipe
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor recipe ID
+      responses:
+        '200':
+          description: Recipe details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorRecipe'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/tandoor/ingredients:
+    get:
+      tags: [Tandoor]
+      summary: List ingredients
+      description: Get paginated list of ingredients from Tandoor
+      operationId: getTandoorIngredients
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Paginated ingredient list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorPaginatedIngredients'
+
+  /api/tandoor/meal-plans:
+    get:
+      tags: [Tandoor]
+      summary: List meal plans
+      description: Get paginated list of meal plans from Tandoor
+      operationId: getTandoorMealPlans
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Start date (YYYY-MM-DD)
+        - name: to_date
+          in: query
+          schema:
+            type: string
+            format: date
+          description: End date (YYYY-MM-DD)
+      responses:
+        '200':
+          description: Paginated meal plan list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorPaginatedMealPlans'
+
+  /api/tandoor/meal-plans/{id}:
+    get:
+      tags: [Tandoor]
+      summary: Get meal plan details
+      description: Get detailed information for a specific Tandoor meal plan
+      operationId: getTandoorMealPlan
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Meal plan details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorMealPlan'
+
+  /api/tandoor/units:
+    get:
+      tags: [Tandoor]
+      summary: List measurement units
+      description: Get paginated list of measurement units from Tandoor
+      operationId: getTandoorUnits
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Paginated unit list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorPaginatedUnits'
+
+  /api/tandoor/keywords:
+    get:
+      tags: [Tandoor]
+      summary: List keywords
+      description: Get list of recipe keywords/tags from Tandoor
+      operationId: getTandoorKeywords
+      security:
+        - tandoorBasicAuth: []
+      responses:
+        '200':
+          description: Keyword list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TandoorKeyword'
+
+  /api/tandoor/import-logs:
+    get:
+      tags: [Tandoor]
+      summary: List import logs
+      description: Get paginated list of import logs from Tandoor
+      operationId: getTandoorImportLogs
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: Paginated import log list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorPaginatedLogs'
+
+  /api/tandoor/export-logs:
+    get:
+      tags: [Tandoor]
+      summary: List export logs
+      description: Get paginated list of export logs from Tandoor
+      operationId: getTandoorExportLogs
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: Paginated export log list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorPaginatedLogs'
+
+  # =============================================================================
+  # CUSTOM APIs - Recipe Scoring & Macro Calculations
+  # =============================================================================
+  /api/ai/score-recipe:
+    post:
+      tags: [Custom APIs]
+      summary: Score recipe (NOT IMPLEMENTED)
+      description: Score recipes against macro targets using AI
+      operationId: scoreRecipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScoringRequest'
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+  /api/macros/calculate:
+    post:
+      tags: [Custom APIs]
+      summary: Calculate total macros
+      description: Calculate aggregated macronutrients from multiple recipes
+      operationId: calculateMacros
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MacrosRequest'
+            example:
+              recipes:
+                - recipe_id: '123'
+                  servings: 2.0
+                  macros:
+                    protein: 25.0
+                    fat: 10.0
+                    carbs: 45.0
+                - recipe_id: '456'
+                  servings: 1.5
+                  macros:
+                    protein: 30.0
+                    fat: 15.0
+                    carbs: 20.0
+      responses:
+        '200':
+          description: Total macronutrients calculated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MacrosResponse'
+              example:
+                total_macros:
+                  protein: 95.0
+                  fat: 42.5
+                  carbs: 120.0
+                  calories: 1255.0
+                recipe_count: 2
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/diet/vertical/compliance/{recipe_id}:
+    get:
+      tags: [Custom APIs]
+      summary: Check vertical diet compliance
+      description: Evaluate recipe compliance with Vertical Diet principles
+      operationId: checkVerticalDietCompliance
+      parameters:
+        - name: recipe_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Recipe ID to evaluate
+      responses:
+        '200':
+          description: Compliance evaluation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerticalDietCompliance'
+              example:
+                recipe_id: '123'
+                recipe_name: Steak and Rice
+                compliance:
+                  compliant: true
+                  score: 92
+                  reasons:
+                    - High-quality protein source
+                    - Contains white rice (easy to digest carbs)
+                    - Low in FODMAPs
+                  recommendations:
+                    - Add spinach for micronutrients
+                    - Consider bone broth for sodium
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # =============================================================================
+  # DASHBOARD (NOT YET IMPLEMENTED)
+  # =============================================================================
+  /dashboard:
+    get:
+      tags: [Custom APIs]
+      summary: Dashboard UI (NOT IMPLEMENTED)
+      operationId: getDashboard
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+  /api/dashboard/data:
+    get:
+      tags: [Custom APIs]
+      summary: Dashboard data (NOT IMPLEMENTED)
+      operationId: getDashboardData
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+  /log/food/{fdc_id}:
+    get:
+      tags: [Custom APIs]
+      summary: Food logging form (NOT IMPLEMENTED)
+      operationId: getFoodLogForm
+      parameters:
+        - name: fdc_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+  /api/logs/food:
+    post:
+      tags: [Custom APIs]
+      summary: Log food entry (NOT IMPLEMENTED)
+      operationId: logFood
+      responses:
+        '501':
+          $ref: '#/components/responses/NotImplemented'
+
+# =============================================================================
+# COMPONENTS
+# =============================================================================
+components:
+  securitySchemes:
+    fatSecretOAuth:
+      type: oauth2
+      description: FatSecret 3-legged OAuth (user authentication required)
+      flows:
+        authorizationCode:
+          authorizationUrl: /fatsecret/connect
+          tokenUrl: /fatsecret/callback
+          scopes: {}
+
+    tandoorBasicAuth:
+      type: http
+      scheme: basic
+      description: Tandoor Recipe Manager Basic Authentication (username/password)
+
+  parameters:
+    EntryId:
+      name: entry_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Food diary entry ID
+
+    MaxResults:
+      name: max_results
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 20
+      description: Maximum results per page
+
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Page number (0-indexed)
+
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Results per page
+
+    Offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Number of items to skip
+
+  schemas:
+    # =========================================================================
+    # HEALTH
+    # =========================================================================
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: healthy
+        service:
+          type: string
+          example: meal-planner
+        version:
+          type: string
+          example: 1.0.0
+      required:
+        - status
+        - service
+
+    # =========================================================================
+    # FATSECRET FOODS
+    # =========================================================================
+    FoodSearchResults:
+      type: object
+      properties:
+        foods:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoodSummary'
+        total_results:
+          type: integer
+        max_results:
+          type: integer
+        page_number:
+          type: integer
+
+    FoodSummary:
+      type: object
+      properties:
+        food_id:
+          type: string
+        food_name:
+          type: string
+        food_type:
+          type: string
+          enum: [Generic, Brand]
+        food_description:
+          type: string
+        brand_name:
+          type: string
+
+    FoodDetails:
+      type: object
+      properties:
+        food_id:
+          type: string
+        food_name:
+          type: string
+        food_type:
+          type: string
+        food_url:
+          type: string
+        brand_name:
+          type: string
+        servings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Serving'
+
+    Serving:
+      type: object
+      properties:
+        serving_id:
+          type: string
+        serving_description:
+          type: string
+        metric_serving_amount:
+          type: number
+        metric_serving_unit:
+          type: string
+        number_of_units:
+          type: number
+        measurement_description:
+          type: string
+        calories:
+          type: number
+        carbohydrate:
+          type: number
+        protein:
+          type: number
+        fat:
+          type: number
+        saturated_fat:
+          type: number
+        polyunsaturated_fat:
+          type: number
+        monounsaturated_fat:
+          type: number
+        trans_fat:
+          type: number
+        cholesterol:
+          type: number
+        sodium:
+          type: number
+        potassium:
+          type: number
+        fiber:
+          type: number
+        sugar:
+          type: number
+        vitamin_a:
+          type: number
+        vitamin_c:
+          type: number
+        calcium:
+          type: number
+        iron:
+          type: number
+
+    # =========================================================================
+    # FATSECRET RECIPES
+    # =========================================================================
+    RecipeType:
+      type: object
+      properties:
+        recipe_type_id:
+          type: string
+        recipe_type_name:
+          type: string
+
+    RecipeSearchResults:
+      type: object
+      properties:
+        recipes:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeSummary'
+        total_results:
+          type: integer
+        max_results:
+          type: integer
+        page_number:
+          type: integer
+
+    RecipeSummary:
+      type: object
+      properties:
+        recipe_id:
+          type: string
+        recipe_name:
+          type: string
+        recipe_description:
+          type: string
+        recipe_url:
+          type: string
+        recipe_image:
+          type: string
+        calories:
+          type: number
+
+    RecipeDetails:
+      type: object
+      properties:
+        recipe_id:
+          type: string
+        recipe_name:
+          type: string
+        recipe_description:
+          type: string
+        recipe_url:
+          type: string
+        recipe_images:
+          type: array
+          items:
+            type: string
+        recipe_types:
+          type: array
+          items:
+            type: string
+        preparation_time_min:
+          type: integer
+        cooking_time_min:
+          type: integer
+        number_of_servings:
+          type: integer
+        ingredients:
+          type: array
+          items:
+            type: object
+            properties:
+              ingredient_description:
+                type: string
+              ingredient_url:
+                type: string
+              food_id:
+                type: string
+              serving_id:
+                type: string
+        directions:
+          type: array
+          items:
+            type: object
+            properties:
+              direction_number:
+                type: integer
+              direction_description:
+                type: string
+        serving_sizes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Serving'
+
+    # =========================================================================
+    # FATSECRET PROFILE & DIARY
+    # =========================================================================
+    UserProfile:
+      type: object
+      properties:
+        user_id:
+          type: string
+        goal:
+          type: string
+        height_cm:
+          type: number
+        weight_kg:
+          type: number
+        age:
+          type: integer
+        gender:
+          type: string
+        activity_level:
+          type: string
+
+    FoodEntry:
+      type: object
+      properties:
+        food_entry_id:
+          type: string
+        food_id:
+          type: string
+        food_entry_name:
+          type: string
+        serving_id:
+          type: string
+        serving_description:
+          type: string
+        number_of_units:
+          type: number
+        meal:
+          type: string
+          enum: [breakfast, lunch, dinner, snack]
+        date:
+          type: string
+          format: date
+        calories:
+          type: number
+        carbohydrate:
+          type: number
+        protein:
+          type: number
+        fat:
+          type: number
+
+    FoodEntryFromFood:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [from_food]
+        food_id:
+          type: string
+        serving_id:
+          type: string
+        number_of_units:
+          type: number
+        meal:
+          type: string
+          enum: [breakfast, lunch, dinner, snack]
+        date:
+          type: string
+          format: date
+      required:
+        - type
+        - food_id
+        - serving_id
+        - number_of_units
+        - meal
+        - date
+
+    FoodEntryCustom:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [custom]
+        food_entry_name:
+          type: string
+        serving_description:
+          type: string
+        number_of_units:
+          type: number
+        meal:
+          type: string
+          enum: [breakfast, lunch, dinner, snack]
+        date:
+          type: string
+          format: date
+        calories:
+          type: number
+        carbohydrate:
+          type: number
+        protein:
+          type: number
+        fat:
+          type: number
+      required:
+        - type
+        - food_entry_name
+        - serving_description
+        - number_of_units
+        - meal
+        - date
+
+    FoodEntryUpdate:
+      type: object
+      properties:
+        number_of_units:
+          type: number
+        meal:
+          type: string
+          enum: [breakfast, lunch, dinner, snack]
+        calories:
+          type: number
+        carbohydrate:
+          type: number
+        protein:
+          type: number
+        fat:
+          type: number
+
+    MonthSummary:
+      type: object
+      properties:
+        month:
+          type: string
+        days:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              total_calories:
+                type: number
+              total_carbs:
+                type: number
+              total_protein:
+                type: number
+              total_fat:
+                type: number
+
+    # =========================================================================
+    # FATSECRET SAVED MEALS
+    # =========================================================================
+    SavedMeal:
+      type: object
+      properties:
+        saved_meal_id:
+          type: string
+        saved_meal_name:
+          type: string
+        saved_meal_description:
+          type: string
+
+    SavedMealInput:
+      type: object
+      properties:
+        saved_meal_name:
+          type: string
+        saved_meal_description:
+          type: string
+      required:
+        - saved_meal_name
+
+    SavedMealItem:
+      type: object
+      properties:
+        food_id:
+          type: string
+        food_entry_name:
+          type: string
+        serving_id:
+          type: string
+        number_of_units:
+          type: number
+
+    SavedMealItemInput:
+      type: object
+      properties:
+        food_id:
+          type: string
+        serving_id:
+          type: string
+        number_of_units:
+          type: number
+      required:
+        - food_id
+        - serving_id
+        - number_of_units
+
+    # =========================================================================
+    # TANDOOR
+    # =========================================================================
+    TandoorPaginatedRecipes:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TandoorRecipe'
+
+    TandoorRecipe:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        servings:
+          type: integer
+        servings_text:
+          type: string
+        working_time:
+          type: integer
+        waiting_time:
+          type: integer
+        created_by:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        internal:
+          type: boolean
+        keywords:
+          type: array
+          items:
+            $ref: '#/components/schemas/TandoorKeyword'
+        steps:
+          type: array
+          items:
+            type: object
+        nutrition:
+          type: object
+
+    TandoorPaginatedIngredients:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TandoorIngredient'
+
+    TandoorIngredient:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        plural_name:
+          type: string
+        ignore_shopping:
+          type: boolean
+
+    TandoorPaginatedMealPlans:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TandoorMealPlan'
+
+    TandoorMealPlan:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        recipe:
+          type: integer
+        servings:
+          type: number
+        note:
+          type: string
+        from_date:
+          type: string
+          format: date
+        to_date:
+          type: string
+          format: date
+        meal_type:
+          type: integer
+        created_by:
+          type: integer
+
+    TandoorPaginatedUnits:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TandoorUnit'
+
+    TandoorUnit:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        plural_name:
+          type: string
+        description:
+          type: string
+
+    TandoorKeyword:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        icon:
+          type: string
+
+    TandoorPaginatedLogs:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              type:
+                type: string
+              msg:
+                type: string
+              keyword:
+                type: string
+              created_at:
+                type: string
+                format: date-time
+
+    # =========================================================================
+    # CUSTOM APIS - SCORING & MACROS
+    # =========================================================================
+    ScoringRequest:
+      type: object
+      properties:
+        recipes:
+          type: array
+          items:
+            type: object
+            properties:
+              recipe_id:
+                type: string
+              servings:
+                type: number
+        targets:
+          type: object
+          properties:
+            protein:
+              type: number
+            fat:
+              type: number
+            carbs:
+              type: number
+        weights:
+          type: object
+          properties:
+            protein_weight:
+              type: number
+              default: 1.0
+            fat_weight:
+              type: number
+              default: 1.0
+            carbs_weight:
+              type: number
+              default: 1.0
+      required:
+        - recipes
+        - targets
+
+    MacrosRequest:
+      type: object
+      properties:
+        recipes:
+          type: array
+          items:
+            type: object
+            properties:
+              recipe_id:
+                type: string
+              servings:
+                type: number
+              macros:
+                $ref: '#/components/schemas/MacroData'
+            required:
+              - recipe_id
+              - servings
+              - macros
+      required:
+        - recipes
+
+    MacroData:
+      type: object
+      properties:
+        protein:
+          type: number
+        fat:
+          type: number
+        carbs:
+          type: number
+      required:
+        - protein
+        - fat
+        - carbs
+
+    MacrosResponse:
+      type: object
+      properties:
+        total_macros:
+          type: object
+          properties:
+            protein:
+              type: number
+            fat:
+              type: number
+            carbs:
+              type: number
+            calories:
+              type: number
+        recipe_count:
+          type: integer
+
+    VerticalDietCompliance:
+      type: object
+      properties:
+        recipe_id:
+          type: string
+        recipe_name:
+          type: string
+        compliance:
+          type: object
+          properties:
+            compliant:
+              type: boolean
+            score:
+              type: integer
+              minimum: 0
+              maximum: 100
+            reasons:
+              type: array
+              items:
+                type: string
+            recommendations:
+              type: array
+              items:
+                type: string
+
+    # =========================================================================
+    # ERROR RESPONSES
+    # =========================================================================
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+        - message
+
+    ValidationError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Validation Error
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Bad Request
+            message: Invalid parameters provided
+
+    Unauthorized:
+      description: Unauthorized - authentication required or failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Unauthorized
+            message: Authentication required. Please connect to FatSecret first.
+
+    Forbidden:
+      description: Forbidden - insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Forbidden
+            message: You do not have permission to access this resource
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Not Found
+            message: The requested resource does not exist
+
+    Conflict:
+      description: Conflict - resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Conflict
+            message: Resource already exists
+
+    UnsupportedMediaType:
+      description: Unsupported media type
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Unsupported Media Type
+            message: Content-Type must be application/json
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Internal Server Error
+            message: An unexpected error occurred
+
+    NotImplemented:
+      description: Not implemented
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Not Implemented
+            message: This feature is not yet implemented
+
+    BadGateway:
+      description: Bad gateway - external API error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Bad Gateway
+            message: Error communicating with external service
+
+    ServiceUnavailable:
+      description: Service unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Service Unavailable
+            message: The service is temporarily unavailable

@@ -4,12 +4,8 @@
 /// - GET /api/fatsecret/foods/:id - Get food details by ID
 /// - GET /api/fatsecret/foods/search?q=...&page=0&limit=20 - Search foods
 import gleam/http
-import gleam/int
 import gleam/json
-import gleam/list
-import gleam/option.{None, Some}
-import gleam/result
-import gleam/string
+import gleam/option
 import meal_planner/fatsecret/foods/service
 import meal_planner/fatsecret/foods/types
 import meal_planner/fatsecret/handlers_helpers as helpers

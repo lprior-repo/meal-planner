@@ -8,7 +8,6 @@
 ///
 /// All responses use wisp.json_response for proper JSON handling
 /// and include appropriate status codes and Content-Type headers.
-import gleam/int
 import gleam/json
 import wisp
 

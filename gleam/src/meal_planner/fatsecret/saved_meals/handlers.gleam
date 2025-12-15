@@ -9,7 +9,6 @@
 /// - POST   /api/fatsecret/saved-meals/:id/items - Add meal item
 /// - PUT    /api/fatsecret/saved-meals/:id/items/:item_id - Edit meal item
 /// - DELETE /api/fatsecret/saved-meals/:id/items/:item_id - Delete meal item
-import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/http
 import gleam/json
@@ -187,54 +186,6 @@ pub fn handle_edit_saved_meal(
 // Helper Functions
 // =============================================================================
 
-fn parse_saved_meal_item_input(
-  body: dynamic.Dynamic,
-) -> Result(types.SavedMealItemInput, String) {
-  // Try ByFoodId first
-  let by_food_id_decoder = {
-    use food_id <- decode.field("food_id", decode.string)
-    use serving_id <- decode.field("serving_id", decode.string)
-    use number_of_units <- decode.field("number_of_units", decode.float)
-    decode.success(types.ByFoodId(food_id:, serving_id:, number_of_units:))
-  }
-
-  case decode.run(body, by_food_id_decoder) {
-    Ok(item) -> Ok(item)
-    Error(_) -> {
-      // Try ByNutrition
-      let by_nutrition_decoder = {
-        use food_entry_name <- decode.field("food_entry_name", decode.string)
-        use serving_description <- decode.field(
-          "serving_description",
-          decode.string,
-        )
-        use number_of_units <- decode.field("number_of_units", decode.float)
-        use calories <- decode.field("calories", decode.float)
-        use carbohydrate <- decode.field("carbohydrate", decode.float)
-        use protein <- decode.field("protein", decode.float)
-        use fat <- decode.field("fat", decode.float)
-        decode.success(types.ByNutrition(
-          food_entry_name:,
-          serving_description:,
-          number_of_units:,
-          calories:,
-          carbohydrate:,
-          protein:,
-          fat:,
-        ))
-      }
-
-      case decode.run(body, by_nutrition_decoder) {
-        Ok(item) -> Ok(item)
-        Error(_) ->
-          Error(
-            "Invalid item format. Provide either (food_id, serving_id, number_of_units) or (food_entry_name, serving_description, number_of_units, calories, carbohydrate, protein, fat)",
-          )
-      }
-    }
-  }
-}
-
 fn saved_meal_to_json(meal: types.SavedMeal) -> json.Json {
   json.object([
     #(
@@ -254,23 +205,6 @@ fn saved_meal_to_json(meal: types.SavedMeal) -> json.Json {
     #("carbohydrate", json.float(meal.carbohydrate)),
     #("protein", json.float(meal.protein)),
     #("fat", json.float(meal.fat)),
-  ])
-}
-
-fn saved_meal_item_to_json(item: types.SavedMealItem) -> json.Json {
-  json.object([
-    #(
-      "saved_meal_item_id",
-      json.string(types.saved_meal_item_id_to_string(item.saved_meal_item_id)),
-    ),
-    #("food_id", json.string(item.food_id)),
-    #("food_entry_name", json.string(item.food_entry_name)),
-    #("serving_id", json.string(item.serving_id)),
-    #("number_of_units", json.float(item.number_of_units)),
-    #("calories", json.float(item.calories)),
-    #("carbohydrate", json.float(item.carbohydrate)),
-    #("protein", json.float(item.protein)),
-    #("fat", json.float(item.fat)),
   ])
 }
 

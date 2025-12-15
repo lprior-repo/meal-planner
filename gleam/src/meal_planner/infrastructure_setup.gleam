@@ -9,9 +9,7 @@
 
 import gleam/int
 import gleam/io
-import gleam/option.{type Option, None, Some}
-import gleam/result
-import gleam/string
+import gleam/option.{None, Some}
 
 /// Infrastructure configuration
 pub type InfrastructureConfig {
@@ -156,7 +154,7 @@ fn should_attempt_setup() -> Bool {
 
 /// Get environment file content to source
 pub fn get_env_file_content(config: InfrastructureConfig) -> String {
-  let env_file_path = config.project_root <> "/gleam/.env.test"
+  let _env_file_path = config.project_root <> "/gleam/.env.test"
   
   // Try to read the .env.test file created by setup script
   // If it doesn't exist, return empty string
