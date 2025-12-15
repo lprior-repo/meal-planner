@@ -64,10 +64,14 @@ pub fn route(
       Some(handlers.handle_tandoor_routes(req))
 
     // Import/Export Logs
-    ["api", "tandoor", "import-logs"] -> Some(wisp.not_found())
-    ["api", "tandoor", "import-logs", _log_id] -> Some(wisp.not_found())
-    ["api", "tandoor", "export-logs"] -> Some(wisp.not_found())
-    ["api", "tandoor", "export-logs", _log_id] -> Some(wisp.not_found())
+    ["api", "tandoor", "import-logs"] ->
+      Some(handlers.handle_tandoor_routes(req))
+    ["api", "tandoor", "import-logs", _log_id] ->
+      Some(handlers.handle_tandoor_routes(req))
+    ["api", "tandoor", "export-logs"] ->
+      Some(handlers.handle_tandoor_routes(req))
+    ["api", "tandoor", "export-logs", _log_id] ->
+      Some(handlers.handle_tandoor_routes(req))
 
     _ -> None
   }
