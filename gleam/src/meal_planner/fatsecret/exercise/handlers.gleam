@@ -264,8 +264,24 @@ pub fn handle_delete_exercise_entry(
 
   case extract_access_token(req) {
     Error(msg) -> error_response(401, msg)
-    Ok(_token) -> {
-      error_response(501, "Delete exercise entry not yet implemented")
+    Ok(token) -> {
+      let entry_id_obj = types.exercise_entry_id(entry_id)
+      case service.delete_exercise_entry(token, entry_id_obj) {
+        Ok(_) -> {
+          json.object([
+            #("success", json.bool(True)),
+            #("message", json.string("Exercise entry deleted successfully")),
+          ])
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(service.NotConfigured) ->
+          error_response(500, "FatSecret not configured")
+        Error(service.NotAuthenticated) ->
+          error_response(401, "Not authenticated")
+        Error(service.ApiError(e)) ->
+          error_response(500, "API error: " <> service.error_to_string(service.ApiError(e)))
+      }
     }
   }
 }
