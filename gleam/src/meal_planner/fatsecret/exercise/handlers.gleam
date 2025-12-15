@@ -62,20 +62,24 @@ pub fn handle_get_exercise(
     Ok(exercise) -> {
       json.to_string(exercise_to_json(exercise))
       |> wisp.json_response(200)
+    }
     Error(service.NotConfigured) -> {
       error_response(
         500,
         "FatSecret API not configured. Set FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET.",
       )
+    }
     Error(service.ApiError(inner)) -> {
       error_response(
         502,
         "FatSecret API error: "
           <> service.error_to_string(service.ApiError(inner)),
       )
+    }
     Error(service.NotAuthenticated) -> {
       // Should not happen for 2-legged endpoints
       error_response(500, "Unexpected authentication error")
+    }
   }
 }
 
@@ -161,8 +165,24 @@ pub fn handle_create_exercise_entry(
       use body <- wisp.require_json(req)
       case parse_exercise_entry_input(body) {
         Error(msg) -> error_response(400, msg)
-        Ok(_input) -> {
-          error_response(501, "Create exercise entry not yet implemented")
+        Ok(input) -> {
+          case service.create_exercise_entry(token, input) {
+            Ok(entry_id) -> {
+              json.object([
+                #("success", json.bool(True)),
+                #("entry_id", json.string(types.exercise_entry_id_to_string(entry_id))),
+                #("message", json.string("Exercise entry created successfully")),
+              ])
+              |> json.to_string
+              |> wisp.json_response(200)
+            }
+            Error(service.NotConfigured) ->
+              error_response(500, "FatSecret not configured")
+            Error(service.NotAuthenticated) ->
+              error_response(401, "Not authenticated")
+            Error(service.ApiError(e)) ->
+              error_response(500, "API error: " <> service.error_to_string(service.ApiError(e)))
+          }
         }
       }
     }
@@ -199,12 +219,28 @@ pub fn handle_edit_exercise_entry(
 
   case extract_access_token(req) {
     Error(msg) -> error_response(401, msg)
-    Ok(_token) -> {
+    Ok(token) -> {
       use body <- wisp.require_json(req)
       case parse_exercise_entry_update(body) {
         Error(msg) -> error_response(400, msg)
-        Ok(_update) -> {
-          error_response(501, "Edit exercise entry not yet implemented")
+        Ok(update) -> {
+          let entry_id_obj = types.exercise_entry_id(entry_id)
+          case service.edit_exercise_entry(token, entry_id_obj, update) {
+            Ok(_) -> {
+              json.object([
+                #("success", json.bool(True)),
+                #("message", json.string("Exercise entry updated successfully")),
+              ])
+              |> json.to_string
+              |> wisp.json_response(200)
+            }
+            Error(service.NotConfigured) ->
+              error_response(500, "FatSecret not configured")
+            Error(service.NotAuthenticated) ->
+              error_response(401, "Not authenticated")
+            Error(service.ApiError(e)) ->
+              error_response(500, "API error: " <> service.error_to_string(service.ApiError(e)))
+          }
         }
       }
     }

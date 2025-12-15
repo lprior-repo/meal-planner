@@ -378,6 +378,50 @@ pub fn save_exercise_template(
 // Helper Functions
 // ============================================================================
 
+/// Delete an exercise entry
+///
+/// This is a 3-legged OAuth request (requires user access token).
+/// Removes an exercise entry from the user's diary.
+///
+/// ## Parameters
+/// - config: FatSecret API configuration
+/// - access_token: User's OAuth access token
+/// - entry_id: Exercise entry ID to delete
+///
+/// ## Example
+/// ```gleam
+/// case delete_exercise_entry(config, access_token, entry_id) {
+///   Ok(_) -> io.println("Exercise entry deleted")
+///   Error(e) -> io.println("Error: " <> error_to_string(e))
+/// }
+/// ```
+pub fn delete_exercise_entry(
+  config: FatSecretConfig,
+  access_token: AccessToken,
+  entry_id: ExerciseEntryId,
+) -> Result(Nil, FatSecretError) {
+  let params =
+    dict.new()
+    |> dict.insert(
+      "exercise_entry_id",
+      types.exercise_entry_id_to_string(entry_id),
+    )
+
+  // Use base client's make_authenticated_request function
+  use _response_json <- result.try(base_client.make_authenticated_request(
+    config,
+    access_token,
+    "exercise_entry.delete",
+    params,
+  ))
+
+  Ok(Nil)
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
 /// Convert error to user-friendly string
 pub fn error_to_string(error: FatSecretError) -> String {
   case error {
