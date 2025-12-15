@@ -122,6 +122,7 @@ pub type FoodEntryInput {
   /// Create entry from FatSecret database food
   FromFood(
     food_id: String,
+    food_entry_name: String,
     serving_id: String,
     number_of_units: Float,
     meal: MealType,
