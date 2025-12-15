@@ -35,6 +35,9 @@ import wisp
 /// GET /tandoor/status
 /// Returns JSON status of the Tandoor connection
 pub fn handle_status(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let config_present = env.load_tandoor_config() |> option.is_some
@@ -99,6 +102,9 @@ pub fn handle_status(req: wisp.Request) -> wisp.Response {
 /// GET /api/tandoor/recipes?limit=N&offset=N
 /// Returns paginated list of recipes from Tandoor
 pub fn handle_list_recipes(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let query_params = wisp.get_query(req)
@@ -139,6 +145,9 @@ pub fn handle_list_recipes(req: wisp.Request) -> wisp.Response {
 /// GET /api/tandoor/recipes/:id
 /// Returns full recipe detail with ingredients, steps, and nutrition
 pub fn handle_get_recipe(req: wisp.Request, recipe_id: String) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   case int.parse(recipe_id) {
@@ -168,6 +177,9 @@ pub fn handle_get_recipe(req: wisp.Request, recipe_id: String) -> wisp.Response 
 /// GET /api/tandoor/meal-plan?from_date=YYYY-MM-DD&to_date=YYYY-MM-DD
 /// Returns meal plan entries for the specified date range
 pub fn handle_get_meal_plan(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let query_params = wisp.get_query(req)
@@ -215,6 +227,9 @@ pub fn handle_get_meal_plan(req: wisp.Request) -> wisp.Response {
 /// POST /api/tandoor/meal-plan
 /// Creates a new meal plan entry
 pub fn handle_create_meal_plan(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Post)
 
   case get_authenticated_config() {
@@ -248,6 +263,9 @@ pub fn handle_delete_meal_plan(
   req: wisp.Request,
   entry_id: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Delete)
 
   case int.parse(entry_id) {
