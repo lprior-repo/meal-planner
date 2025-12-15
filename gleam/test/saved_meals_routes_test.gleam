@@ -9,7 +9,7 @@ import gleam/http
 import gleam/option.{None}
 import gleeunit/should
 import meal_planner/config
-import meal_planner/web/router
+import meal_planner/web
 import pog
 import meal_planner/test_helpers/database
 import wisp
@@ -174,7 +174,7 @@ pub fn saved_meals_method_not_allowed_test() {
 }
 
 // Helper function to create test context
-fn setup_context(db: pog.Connection) -> router.Context {
+fn setup_context(db: pog.Connection) -> web.Context {
   let cfg =
     config.Config(
       database: config.DatabaseConfig(
@@ -188,5 +188,5 @@ fn setup_context(db: pog.Connection) -> router.Context {
       tandoor: None,
     )
 
-  router.Context(config: cfg, db: db)
+  web.Context(config: cfg, db: db)
 }
