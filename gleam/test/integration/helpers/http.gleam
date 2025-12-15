@@ -12,6 +12,7 @@ pub type HttpError {
   InvalidUrl(String)
 }
 
+/// Perform HTTP GET request
 pub fn get(path: String) -> Result(#(Int, String), HttpError) {
   let req =
     request.new()
@@ -58,6 +59,7 @@ pub fn patch(path: String, body: String) -> Result(#(Int, String), HttpError) {
   }
 }
 
+/// Perform HTTP DELETE request
 pub fn delete(path: String) -> Result(#(Int, String), HttpError) {
   let req =
     request.new()
