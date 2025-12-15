@@ -2,8 +2,7 @@
 ///
 /// This module provides functions to create meal plan entries in the Tandoor API.
 import gleam/json
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/mealplan/meal_plan_decoder
 import meal_planner/tandoor/encoders/mealplan/mealplan_encoder
@@ -37,19 +36,14 @@ pub fn create_meal_plan(
   config: ClientConfig,
   data: MealPlanCreate,
 ) -> Result(MealPlanEntry, TandoorError) {
-  let path = "/api/meal-plan/"
-
-  // Encode meal plan data to JSON
-  let request_body =
+  let body =
     mealplan_encoder.encode_meal_plan_create(data)
     |> json.to_string
 
-  // Execute POST request using CRUD helpers
-  use resp <- result.try(crud_helpers.execute_post(config, path, request_body))
-
-  // Parse JSON response using meal plan entry decoder
-  crud_helpers.parse_json_single(
-    resp,
+  generic_crud.create(
+    config,
+    "/api/meal-plan/",
+    body,
     meal_plan_decoder.meal_plan_entry_decoder(),
   )
 }

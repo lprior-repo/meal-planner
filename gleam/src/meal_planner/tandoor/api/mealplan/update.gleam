@@ -5,6 +5,7 @@ import gleam/int
 import gleam/json
 import gleam/result
 import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/ids.{type MealPlanId}
 import meal_planner/tandoor/decoders/mealplan/meal_plan_decoder
@@ -41,20 +42,15 @@ pub fn update_meal_plan(
   id: MealPlanId,
   data: MealPlanUpdate,
 ) -> Result(MealPlanEntry, TandoorError) {
-  let path =
-    "/api/meal-plan/" <> int.to_string(ids.meal_plan_id_to_int(id)) <> "/"
-
-  // Encode meal plan update data to JSON
-  let request_body =
+  let body =
     mealplan_encoder.encode_meal_plan_update(data)
     |> json.to_string
 
-  // Execute PATCH request using CRUD helpers
-  use resp <- result.try(crud_helpers.execute_patch(config, path, request_body))
-
-  // Parse JSON response using meal plan entry decoder
-  crud_helpers.parse_json_single(
-    resp,
+  generic_crud.update(
+    config,
+    "/api/meal-plan/",
+    ids.meal_plan_id_to_int(id),
+    body,
     meal_plan_decoder.meal_plan_entry_decoder(),
   )
 }
