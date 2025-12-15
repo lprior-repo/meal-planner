@@ -3,7 +3,7 @@
 /// Routes:
 /// - GET /api/nutrition/daily-status - Get daily nutrition status
 /// - GET /api/nutrition/recommend-dinner - Get dinner recommendations
-import gleam/option.{type Option, None, Some}
+import gleam/option.{type Option}
 import meal_planner/web/handlers/nutrition
 import meal_planner/web/routes/types
 import wisp
