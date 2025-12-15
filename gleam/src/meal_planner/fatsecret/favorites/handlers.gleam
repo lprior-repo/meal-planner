@@ -16,6 +16,7 @@ import gleam/result
 import meal_planner/fatsecret/favorites/service
 import meal_planner/fatsecret/favorites/types
 import meal_planner/fatsecret/service as fatsecret_service
+import meal_planner/fatsecret/handlers_helpers as helpers
 import pog
 import wisp.{type Request, type Response}
 
@@ -28,16 +29,7 @@ pub fn add_favorite_food(
   case req.method {
     Post -> {
       case service.add_favorite_food(conn, food_id) {
-        Ok(_) ->
-          wisp.json_response(
-            json.to_string(
-              json.object([
-                #("success", json.bool(True)),
-                #("message", json.string("Food added to favorites")),
-              ]),
-            ),
-            200,
-          )
+        Ok(_) -> helpers.success_message("Food added to favorites")
         Error(e) -> error_response(e)
       }
     }
@@ -54,16 +46,7 @@ pub fn delete_favorite_food(
   case req.method {
     Delete -> {
       case service.delete_favorite_food(conn, food_id) {
-        Ok(_) ->
-          wisp.json_response(
-            json.to_string(
-              json.object([
-                #("success", json.bool(True)),
-                #("message", json.string("Food removed from favorites")),
-              ]),
-            ),
-            200,
-          )
+        Ok(_) -> helpers.success_message("Food removed from favorites")
         Error(e) -> error_response(e)
       }
     }
@@ -76,34 +59,26 @@ pub fn get_favorite_foods(req: Request, conn: pog.Connection) -> Response {
   case req.method {
     Get -> {
       let query_params = wisp.get_query(req)
-      let max_results = parse_int_param(query_params, "max_results")
-      let page_number = parse_int_param(query_params, "page")
+      let max_results = helpers.parse_int_param(query_params, "max_results")
+      let page_number = helpers.parse_int_param(query_params, "page")
 
       case service.get_favorite_foods(conn, max_results, page_number) {
         Ok(response) -> {
           let foods_json =
             list.map(response.foods, fn(food) {
-              json.object([
-                #("food_id", json.string(food.food_id)),
-                #("food_name", json.string(food.food_name)),
-                #("food_type", json.string(food.food_type)),
-                #("brand_name", case food.brand_name {
-                  Some(b) -> json.string(b)
-                  None -> json.null()
-                }),
-                #("food_description", json.string(food.food_description)),
-                #("food_url", json.string(food.food_url)),
-              ])
+              helpers.encode_favorite_food(#(
+                food.food_id,
+                food.food_name,
+                food.food_type,
+                food.brand_name,
+                food.food_description,
+                food.food_url,
+              ))
             })
 
-          wisp.json_response(
-            json.to_string(
-              json.object([
-                #("foods", json.array(foods_json, fn(x) { x })),
-              ]),
-            ),
-            200,
-          )
+          json.object([#("foods", json.array(foods_json, fn(x) { x }))])
+          |> json.to_string
+          |> wisp.json_response(200)
         }
         Error(e) -> error_response(e)
       }
@@ -123,27 +98,19 @@ pub fn get_most_eaten(req: Request, conn: pog.Connection) -> Response {
         Ok(response) -> {
           let foods_json =
             list.map(response.foods, fn(food) {
-              json.object([
-                #("food_id", json.string(food.food_id)),
-                #("food_name", json.string(food.food_name)),
-                #("food_type", json.string(food.food_type)),
-                #("brand_name", case food.brand_name {
-                  Some(b) -> json.string(b)
-                  None -> json.null()
-                }),
-                #("food_description", json.string(food.food_description)),
-                #("food_url", json.string(food.food_url)),
-              ])
+              helpers.encode_favorite_food(#(
+                food.food_id,
+                food.food_name,
+                food.food_type,
+                food.brand_name,
+                food.food_description,
+                food.food_url,
+              ))
             })
 
-          wisp.json_response(
-            json.to_string(
-              json.object([
-                #("foods", json.array(foods_json, fn(x) { x })),
-              ]),
-            ),
-            200,
-          )
+          json.object([#("foods", json.array(foods_json, fn(x) { x }))])
+          |> json.to_string
+          |> wisp.json_response(200)
         }
         Error(e) -> error_response(e)
       }
@@ -163,27 +130,19 @@ pub fn get_recently_eaten(req: Request, conn: pog.Connection) -> Response {
         Ok(response) -> {
           let foods_json =
             list.map(response.foods, fn(food) {
-              json.object([
-                #("food_id", json.string(food.food_id)),
-                #("food_name", json.string(food.food_name)),
-                #("food_type", json.string(food.food_type)),
-                #("brand_name", case food.brand_name {
-                  Some(b) -> json.string(b)
-                  None -> json.null()
-                }),
-                #("food_description", json.string(food.food_description)),
-                #("food_url", json.string(food.food_url)),
-              ])
+              helpers.encode_favorite_food(#(
+                food.food_id,
+                food.food_name,
+                food.food_type,
+                food.brand_name,
+                food.food_description,
+                food.food_url,
+              ))
             })
 
-          wisp.json_response(
-            json.to_string(
-              json.object([
-                #("foods", json.array(foods_json, fn(x) { x })),
-              ]),
-            ),
-            200,
-          )
+          json.object([#("foods", json.array(foods_json, fn(x) { x }))])
+          |> json.to_string
+          |> wisp.json_response(200)
         }
         Error(e) -> error_response(e)
       }
@@ -201,16 +160,7 @@ pub fn add_favorite_recipe(
   case req.method {
     Post -> {
       case service.add_favorite_recipe(conn, recipe_id) {
-        Ok(_) ->
-          wisp.json_response(
-            json.to_string(
-              json.object([
-                #("success", json.bool(True)),
-                #("message", json.string("Recipe added to favorites")),
-              ]),
-            ),
-            200,
-          )
+        Ok(_) -> helpers.success_message("Recipe added to favorites")
         Error(e) -> error_response(e)
       }
     }
@@ -227,16 +177,7 @@ pub fn delete_favorite_recipe(
   case req.method {
     Delete -> {
       case service.delete_favorite_recipe(conn, recipe_id) {
-        Ok(_) ->
-          wisp.json_response(
-            json.to_string(
-              json.object([
-                #("success", json.bool(True)),
-                #("message", json.string("Recipe removed from favorites")),
-              ]),
-            ),
-            200,
-          )
+        Ok(_) -> helpers.success_message("Recipe removed from favorites")
         Error(e) -> error_response(e)
       }
     }
@@ -249,33 +190,25 @@ pub fn get_favorite_recipes(req: Request, conn: pog.Connection) -> Response {
   case req.method {
     Get -> {
       let query_params = wisp.get_query(req)
-      let max_results = parse_int_param(query_params, "max_results")
-      let page_number = parse_int_param(query_params, "page")
+      let max_results = helpers.parse_int_param(query_params, "max_results")
+      let page_number = helpers.parse_int_param(query_params, "page")
 
       case service.get_favorite_recipes(conn, max_results, page_number) {
         Ok(response) -> {
           let recipes_json =
             list.map(response.recipes, fn(recipe) {
-              json.object([
-                #("recipe_id", json.string(recipe.recipe_id)),
-                #("recipe_name", json.string(recipe.recipe_name)),
-                #("recipe_description", json.string(recipe.recipe_description)),
-                #("recipe_url", json.string(recipe.recipe_url)),
-                #("recipe_image", case recipe.recipe_image {
-                  Some(img) -> json.string(img)
-                  None -> json.null()
-                }),
-              ])
+              helpers.encode_favorite_recipe(#(
+                recipe.recipe_id,
+                recipe.recipe_name,
+                recipe.recipe_description,
+                recipe.recipe_url,
+                recipe.recipe_image,
+              ))
             })
 
-          wisp.json_response(
-            json.to_string(
-              json.object([
-                #("recipes", json.array(recipes_json, fn(x) { x })),
-              ]),
-            ),
-            200,
-          )
+          json.object([#("recipes", json.array(recipes_json, fn(x) { x }))])
+          |> json.to_string
+          |> wisp.json_response(200)
         }
         Error(e) -> error_response(e)
       }
@@ -287,17 +220,6 @@ pub fn get_favorite_recipes(req: Request, conn: pog.Connection) -> Response {
 // =============================================================================
 // Helpers
 // =============================================================================
-
-/// Parse optional integer query parameter
-fn parse_int_param(
-  params: List(#(String, String)),
-  key: String,
-) -> option.Option(Int) {
-  params
-  |> list.key_find(key)
-  |> result.try(int.parse)
-  |> option.from_result
-}
 
 /// Parse meal filter from query params
 fn parse_meal_filter(
@@ -315,73 +237,5 @@ fn parse_meal_filter(
 
 /// Convert service error to HTTP error response
 fn error_response(error: fatsecret_service.ServiceError) -> Response {
-  case error {
-    fatsecret_service.NotConnected ->
-      wisp.json_response(
-        json.to_string(
-          json.object([
-            #("error", json.string("not_connected")),
-            #(
-              "message",
-              json.string(
-                "FatSecret account not connected. Please connect first.",
-              ),
-            ),
-          ]),
-        ),
-        401,
-      )
-
-    fatsecret_service.NotConfigured ->
-      wisp.json_response(
-        json.to_string(
-          json.object([
-            #("error", json.string("not_configured")),
-            #(
-              "message",
-              json.string("FatSecret API credentials not configured."),
-            ),
-          ]),
-        ),
-        500,
-      )
-
-    fatsecret_service.AuthRevoked ->
-      wisp.json_response(
-        json.to_string(
-          json.object([
-            #("error", json.string("auth_revoked")),
-            #(
-              "message",
-              json.string(
-                "FatSecret authorization revoked. Please reconnect your account.",
-              ),
-            ),
-          ]),
-        ),
-        401,
-      )
-
-    fatsecret_service.EncryptionError(msg) ->
-      wisp.json_response(
-        json.to_string(
-          json.object([
-            #("error", json.string("encryption_error")),
-            #("message", json.string(msg)),
-          ]),
-        ),
-        500,
-      )
-
-    fatsecret_service.ApiError(_) | fatsecret_service.StorageError(_) ->
-      wisp.json_response(
-        json.to_string(
-          json.object([
-            #("error", json.string("api_error")),
-            #("message", json.string(fatsecret_service.error_to_string(error))),
-          ]),
-        ),
-        500,
-      )
-  }
+  helpers.service_error_response(error)
 }
