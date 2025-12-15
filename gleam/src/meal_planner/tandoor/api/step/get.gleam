@@ -2,9 +2,7 @@
 ///
 /// This module provides functions to get a single step by ID from the
 /// Tandoor API.
-import gleam/int
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/recipe/step_decoder
 import meal_planner/tandoor/types/recipe/step.{type Step}
@@ -27,12 +25,6 @@ pub fn get_step(
   config: ClientConfig,
   step_id step_id: Int,
 ) -> Result(Step, TandoorError) {
-  // Build path with step ID
-  let path = "/api/step/" <> int.to_string(step_id) <> "/"
-
-  // Execute GET request using CRUD helper
-  use resp <- result.try(crud_helpers.execute_get(config, path, []))
-
-  // Parse JSON response using single object helper
-  crud_helpers.parse_json_single(resp, step_decoder.step_decoder())
+  // Get step using generic CRUD function
+  generic_crud.get(config, "/api/step/", step_id, step_decoder.step_decoder())
 }
