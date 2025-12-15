@@ -1,5 +1,3 @@
-// TODO: Re-enable when modules are available
-// import meal_planner/web/handlers/dashboard
 /// Web handlers facade module
 ///
 /// This module re-exports all handler functions from the handlers subdirectory.
@@ -11,13 +9,9 @@
 /// - diet: Vertical diet compliance check endpoint
 /// - macros: Macro calculation endpoint
 /// - dashboard: Dashboard UI with nutrition tracking
-/// - fatsecret: FatSecret OAuth 3-legged authentication
 /// - tandoor: Tandoor Recipe Manager integration
 import meal_planner/fatsecret/foods/handlers as foods_handlers
 import meal_planner/web/handlers/diet
-import meal_planner/web/handlers/fatsecret
-
-// import meal_planner/web/handlers/foods
 import meal_planner/web/handlers/health
 import meal_planner/web/handlers/macros
 import meal_planner/web/handlers/recipes
@@ -89,79 +83,34 @@ pub fn handle_log_food(
   |> wisp.string_body("Log food handler not yet implemented")
 }
 
-/// FatSecret OAuth connect - GET /fatsecret/connect
-pub fn handle_fatsecret_connect(
-  req: wisp.Request,
-  conn: pog.Connection,
-  base_url: String,
-) -> wisp.Response {
-  fatsecret.handle_connect(req, conn, base_url)
-}
-
-/// FatSecret OAuth callback - GET /fatsecret/callback
-pub fn handle_fatsecret_callback(
-  req: wisp.Request,
-  conn: pog.Connection,
-) -> wisp.Response {
-  fatsecret.handle_callback(req, conn)
-}
-
-/// FatSecret status - GET /fatsecret/status
-pub fn handle_fatsecret_status(
-  req: wisp.Request,
-  conn: pog.Connection,
-) -> wisp.Response {
-  fatsecret.handle_status(req, conn)
-}
-
-/// FatSecret disconnect - POST /fatsecret/disconnect
-pub fn handle_fatsecret_disconnect(
-  req: wisp.Request,
-  conn: pog.Connection,
-) -> wisp.Response {
-  fatsecret.handle_disconnect(req, conn)
-}
-
-/// FatSecret get profile - GET /api/fatsecret/profile
-pub fn handle_fatsecret_profile(
-  req: wisp.Request,
-  conn: pog.Connection,
-) -> wisp.Response {
-  fatsecret.handle_get_profile(req, conn)
-}
-
-/// FatSecret get entries - GET /api/fatsecret/entries
-pub fn handle_fatsecret_entries(
-  req: wisp.Request,
-  conn: pog.Connection,
-) -> wisp.Response {
-  fatsecret.handle_get_entries(req, conn)
-}
-
 /// FatSecret get recipe types - GET /api/fatsecret/recipes/types
-pub fn handle_fatsecret_recipe_types(req: wisp.Request) -> wisp.Response {
-  fatsecret.handle_get_recipe_types(req)
+pub fn handle_fatsecret_recipe_types(_req: wisp.Request) -> wisp.Response {
+  wisp.response(501)
+  |> wisp.string_body("Recipe types handler not yet implemented")
 }
 
 /// FatSecret search recipes - GET /api/fatsecret/recipes/search
-pub fn handle_fatsecret_search_recipes(req: wisp.Request) -> wisp.Response {
-  fatsecret.handle_search_recipes(req)
+pub fn handle_fatsecret_search_recipes(_req: wisp.Request) -> wisp.Response {
+  wisp.response(501)
+  |> wisp.string_body("Recipe search handler not yet implemented")
 }
 
 /// FatSecret search recipes by type - GET /api/fatsecret/recipes/search/type/:type_id
 pub fn handle_fatsecret_search_recipes_by_type(
-  req: wisp.Request,
-  type_id: String,
+  _req: wisp.Request,
+  _type_id: String,
 ) -> wisp.Response {
-  fatsecret.handle_search_recipes_by_type(req, type_id)
+  wisp.response(501)
+  |> wisp.string_body("Recipe type search handler not yet implemented")
 }
 
 /// FatSecret get recipe - GET /api/fatsecret/recipes/:id
 pub fn handle_fatsecret_get_recipe(
-  req: wisp.Request,
-  recipe_id: String,
+  _req: wisp.Request,
+  _recipe_id: String,
 ) -> wisp.Response {
-  fatsecret.handle_get_recipe(req, recipe_id)
+  wisp.response(501)
+  |> wisp.string_body("Get recipe handler not yet implemented")
 }
 
 // ============================================================================
@@ -185,7 +134,7 @@ pub fn handle_fatsecret_get_food(
 pub fn handle_fatsecret_autocomplete_foods(req: wisp.Request) -> wisp.Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
-  use req <- wisp.handle_head(req)
+  use _req <- wisp.handle_head(req)
   wisp.not_found()
 }
 
@@ -193,7 +142,7 @@ pub fn handle_fatsecret_autocomplete_foods(req: wisp.Request) -> wisp.Response {
 pub fn handle_fatsecret_autocomplete_recipes(req: wisp.Request) -> wisp.Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
-  use req <- wisp.handle_head(req)
+  use _req <- wisp.handle_head(req)
   wisp.not_found()
 }
 
@@ -211,4 +160,72 @@ pub fn handle_fatsecret_autocomplete_recipes(req: wisp.Request) -> wisp.Response
 /// - GET /api/tandoor/units
 pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
   tandoor.handle_tandoor_routes(req)
+}
+
+// ============================================================================
+// FatSecret OAuth 3-Legged Flow Handlers
+// ============================================================================
+
+/// FatSecret OAuth connect - GET /fatsecret/connect
+pub fn handle_fatsecret_connect(
+  _req: wisp.Request,
+  _conn: pog.Connection,
+  _base_url: String,
+) -> wisp.Response {
+  wisp.response(501)
+  |> wisp.string_body("FatSecret OAuth connect handler not yet implemented")
+}
+
+/// FatSecret OAuth callback - GET /fatsecret/callback
+pub fn handle_fatsecret_callback(
+  _req: wisp.Request,
+  _conn: pog.Connection,
+) -> wisp.Response {
+  wisp.response(501)
+  |> wisp.string_body("FatSecret OAuth callback handler not yet implemented")
+}
+
+/// FatSecret status - GET /fatsecret/status
+pub fn handle_fatsecret_status(
+  _req: wisp.Request,
+  _conn: pog.Connection,
+) -> wisp.Response {
+  wisp.response(501)
+  |> wisp.string_body("FatSecret status handler not yet implemented")
+}
+
+/// FatSecret disconnect - POST /fatsecret/disconnect
+pub fn handle_fatsecret_disconnect(
+  _req: wisp.Request,
+  _conn: pog.Connection,
+) -> wisp.Response {
+  wisp.response(501)
+  |> wisp.string_body("FatSecret disconnect handler not yet implemented")
+}
+
+/// FatSecret get profile - GET /api/fatsecret/profile
+pub fn handle_fatsecret_profile(
+  _req: wisp.Request,
+  _conn: pog.Connection,
+) -> wisp.Response {
+  wisp.response(501)
+  |> wisp.string_body("FatSecret get profile handler not yet implemented")
+}
+
+/// FatSecret create profile - POST /api/fatsecret/profile
+pub fn handle_fatsecret_create_profile(
+  _req: wisp.Request,
+  _conn: pog.Connection,
+) -> wisp.Response {
+  wisp.response(501)
+  |> wisp.string_body("FatSecret create profile handler not yet implemented")
+}
+
+/// FatSecret get profile auth - GET /api/fatsecret/profile/auth
+pub fn handle_fatsecret_get_profile_auth(
+  _req: wisp.Request,
+  _conn: pog.Connection,
+) -> wisp.Response {
+  wisp.response(501)
+  |> wisp.string_body("FatSecret get profile auth handler not yet implemented")
 }

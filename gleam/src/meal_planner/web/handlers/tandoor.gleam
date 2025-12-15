@@ -9,6 +9,7 @@
 /// - Supermarket Categories CRUD operations
 
 import gleam/dynamic
+import gleam/dynamic/decode
 import gleam/http
 import gleam/int
 import gleam/json
@@ -20,17 +21,17 @@ import meal_planner/tandoor/client
 import meal_planner/tandoor/api/unit/list as unit_list
 import meal_planner/tandoor/api/keyword/keyword_api
 import meal_planner/tandoor/api/supermarket/category as supermarket_category
-import meal_planner/tandoor/api/supermarket/create as supermarket_create
+import meal_planner/tandoor/api/supermarket/create as supermarket_create_api
 import meal_planner/tandoor/api/supermarket/delete as supermarket_delete
 import meal_planner/tandoor/api/supermarket/get as supermarket_get
 import meal_planner/tandoor/api/supermarket/list as supermarket_list
 import meal_planner/tandoor/api/supermarket/update as supermarket_update
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/types/supermarket/supermarket_category_create.{
-  type SupermarketCategoryCreateRequest,
+  type SupermarketCategoryCreateRequest, SupermarketCategoryCreateRequest,
 }
 import meal_planner/tandoor/types/supermarket/supermarket_create.{
-  type SupermarketCreateRequest,
+  type SupermarketCreateRequest, SupermarketCreateRequest,
 }
 
 import wisp
@@ -177,7 +178,7 @@ fn handle_supermarkets_collection(req: wisp.Request) -> wisp.Response {
   }
 }
 
-fn handle_list_supermarkets(req: wisp.Request) -> wisp.Response {
+fn handle_list_supermarkets(_req: wisp.Request) -> wisp.Response {
   case get_authenticated_client() {
     Ok(config) -> {
       case supermarket_list.list_supermarkets(
@@ -221,7 +222,7 @@ fn handle_create_supermarket(req: wisp.Request) -> wisp.Response {
     Ok(request) -> {
       case get_authenticated_client() {
         Ok(config) -> {
-          case supermarket_create.create_supermarket(config, request) {
+          case supermarket_create_api.create_supermarket(config, request) {
             Ok(supermarket) -> {
               json.object([
                 #("id", json.int(supermarket.id)),
@@ -265,7 +266,7 @@ fn handle_supermarket_by_id(
   }
 }
 
-fn handle_get_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
+fn handle_get_supermarket(_req: wisp.Request, id: Int) -> wisp.Response {
   case get_authenticated_client() {
     Ok(config) -> {
       case supermarket_get.get_supermarket(config, id: id) {
@@ -322,10 +323,10 @@ fn handle_update_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
   }
 }
 
-fn handle_delete_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
+fn handle_delete_supermarket(_req: wisp.Request, id: Int) -> wisp.Response {
   case get_authenticated_client() {
     Ok(config) -> {
-      case supermarket_delete.delete_supermarket(config, id: id) {
+      case supermarket_delete.delete_supermarket(config, id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }
@@ -346,7 +347,7 @@ fn handle_categories_collection(req: wisp.Request) -> wisp.Response {
   }
 }
 
-fn handle_list_categories(req: wisp.Request) -> wisp.Response {
+fn handle_list_categories(_req: wisp.Request) -> wisp.Response {
   case get_authenticated_client() {
     Ok(config) -> {
       case supermarket_category.list_categories(
@@ -431,7 +432,7 @@ fn handle_category_by_id(req: wisp.Request, category_id: String) -> wisp.Respons
   }
 }
 
-fn handle_get_category(req: wisp.Request, id: Int) -> wisp.Response {
+fn handle_get_category(_req: wisp.Request, id: Int) -> wisp.Response {
   case get_authenticated_client() {
     Ok(config) -> {
       case supermarket_category.get_category(config, category_id: id) {
@@ -488,10 +489,10 @@ fn handle_update_category(req: wisp.Request, id: Int) -> wisp.Response {
   }
 }
 
-fn handle_delete_category(req: wisp.Request, id: Int) -> wisp.Response {
+fn handle_delete_category(_req: wisp.Request, id: Int) -> wisp.Response {
   case get_authenticated_client() {
     Ok(config) -> {
-      case supermarket_category.delete_category(config, category_id: id) {
+      case supermarket_category.delete_category(config, id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }
@@ -507,39 +508,29 @@ fn handle_delete_category(req: wisp.Request, id: Int) -> wisp.Response {
 fn parse_supermarket_create_request(
   json_data: dynamic.Dynamic,
 ) -> Result(SupermarketCreateRequest, String) {
-  let name_decoder = dynamic.field("name", of: dynamic.string)
-  let description_decoder =
-    dynamic.optional_field("description", of: dynamic.string)
+  decode.run(json_data, supermarket_create_decoder())
+  |> result.map_error(fn(_) { "Invalid supermarket create request" })
+}
 
-  use name <- result.try(
-    name_decoder(json_data)
-    |> result.map_error(fn(_) { "Missing or invalid 'name' field" }),
-  )
-  use description <- result.try(
-    description_decoder(json_data)
-    |> result.map_error(fn(_) { "Invalid 'description' field" }),
-  )
-
-  Ok(SupermarketCreateRequest(name: name, description: description))
+fn supermarket_create_decoder() -> decode.Decoder(SupermarketCreateRequest) {
+  use name <- decode.field("name", decode.string)
+  use description <- decode.field("description", decode.optional(decode.string))
+  decode.success(SupermarketCreateRequest(name: name, description: description))
 }
 
 fn parse_supermarket_category_create_request(
   json_data: dynamic.Dynamic,
 ) -> Result(SupermarketCategoryCreateRequest, String) {
-  let name_decoder = dynamic.field("name", of: dynamic.string)
-  let description_decoder =
-    dynamic.optional_field("description", of: dynamic.string)
+  decode.run(json_data, supermarket_category_create_decoder())
+  |> result.map_error(fn(_) { "Invalid category create request" })
+}
 
-  use name <- result.try(
-    name_decoder(json_data)
-    |> result.map_error(fn(_) { "Missing or invalid 'name' field" }),
-  )
-  use description <- result.try(
-    description_decoder(json_data)
-    |> result.map_error(fn(_) { "Invalid 'description' field" }),
-  )
-
-  Ok(SupermarketCategoryCreateRequest(
+fn supermarket_category_create_decoder() -> decode.Decoder(
+  SupermarketCategoryCreateRequest,
+) {
+  use name <- decode.field("name", decode.string)
+  use description <- decode.field("description", decode.optional(decode.string))
+  decode.success(SupermarketCategoryCreateRequest(
     name: name,
     description: description,
   ))
