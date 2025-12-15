@@ -16,6 +16,7 @@ import gleam/json
 import gleam/option
 import gleam/result
 
+import meal_planner/tandoor/api/import_export/import_export_api
 import meal_planner/tandoor/api/ingredient/list as ingredient_list
 import meal_planner/tandoor/api/keyword/keyword_api
 import meal_planner/tandoor/api/mealplan/create as mealplan_create_api
@@ -52,6 +53,8 @@ import meal_planner/tandoor/types.{
   type TandoorIngredient, type TandoorKeyword, type TandoorNutrition,
   type TandoorRecipe, type TandoorStep,
 }
+import meal_planner/tandoor/types/import_export/export_log.{type ExportLog}
+import meal_planner/tandoor/types/import_export/import_log.{type ImportLog}
 import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
 import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
 import meal_planner/tandoor/types/mealplan/meal_type.{
@@ -173,6 +176,12 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
 
     // Ingredients (GET list only)
     ["api", "tandoor", "ingredients"] -> handle_ingredients_collection(req)
+
+    // Import Logs (GET list only)
+    ["api", "tandoor", "import-logs"] -> handle_import_logs_collection(req)
+
+    // Export Logs (GET list only)
+    ["api", "tandoor", "export-logs"] -> handle_export_logs_collection(req)
 
     // Supermarkets (GET list, POST create)
     ["api", "tandoor", "supermarkets"] -> handle_supermarkets_collection(req)
@@ -634,6 +643,88 @@ fn handle_list_ingredients(_req: wisp.Request) -> wisp.Response {
             json.array(response.results, fn(ingredient) {
               encode_ingredient_detail(ingredient)
             })
+
+          json.object([
+            #("count", json.int(response.count)),
+            #("next", helpers.encode_optional_string(response.next)),
+            #("previous", helpers.encode_optional_string(response.previous)),
+            #("results", results_json),
+          ])
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+// =============================================================================
+// Import Logs Collection Handler
+// =============================================================================
+
+fn handle_import_logs_collection(req: wisp.Request) -> wisp.Response {
+  case req.method {
+    http.Get -> handle_list_import_logs(req)
+    _ -> wisp.method_not_allowed([http.Get])
+  }
+}
+
+fn handle_list_import_logs(_req: wisp.Request) -> wisp.Response {
+  case helpers.get_authenticated_client() {
+    Ok(config) -> {
+      case
+        import_export_api.list_import_logs(
+          config,
+          limit: option.None,
+          offset: option.None,
+        )
+      {
+        Ok(response) -> {
+          let results_json =
+            json.array(response.results, fn(log) { encode_import_log(log) })
+
+          json.object([
+            #("count", json.int(response.count)),
+            #("next", helpers.encode_optional_string(response.next)),
+            #("previous", helpers.encode_optional_string(response.previous)),
+            #("results", results_json),
+          ])
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+// =============================================================================
+// Export Logs Collection Handler
+// =============================================================================
+
+fn handle_export_logs_collection(req: wisp.Request) -> wisp.Response {
+  case req.method {
+    http.Get -> handle_list_export_logs(req)
+    _ -> wisp.method_not_allowed([http.Get])
+  }
+}
+
+fn handle_list_export_logs(_req: wisp.Request) -> wisp.Response {
+  case helpers.get_authenticated_client() {
+    Ok(config) -> {
+      case
+        import_export_api.list_export_logs(
+          config,
+          limit: option.None,
+          offset: option.None,
+        )
+      {
+        Ok(response) -> {
+          let results_json =
+            json.array(response.results, fn(log) { encode_export_log(log) })
 
           json.object([
             #("count", json.int(response.count)),
@@ -1173,6 +1264,48 @@ fn encode_ingredient_detail(ingredient: Ingredient) -> json.Json {
     #("is_header", json.bool(ingredient.is_header)),
     #("no_amount", json.bool(ingredient.no_amount)),
     #("original_text", helpers.encode_optional_string(ingredient.original_text)),
+  ])
+}
+
+// =============================================================================
+// Import/Export Logs JSON Encoding
+// =============================================================================
+
+fn encode_import_log(log: ImportLog) -> json.Json {
+  let keyword_json = case log.keyword {
+    option.Some(keyword) ->
+      json.object([
+        #("id", json.int(keyword.id)),
+        #("name", json.string(keyword.name)),
+      ])
+    option.None -> json.null()
+  }
+
+  json.object([
+    #("id", json.int(log.id)),
+    #("import_type", json.string(log.import_type)),
+    #("msg", json.string(log.msg)),
+    #("running", json.bool(log.running)),
+    #("keyword", keyword_json),
+    #("total_recipes", json.int(log.total_recipes)),
+    #("imported_recipes", json.int(log.imported_recipes)),
+    #("created_by", json.int(log.created_by)),
+    #("created_at", json.string(log.created_at)),
+  ])
+}
+
+fn encode_export_log(log: ExportLog) -> json.Json {
+  json.object([
+    #("id", json.int(log.id)),
+    #("export_type", json.string(log.export_type)),
+    #("msg", json.string(log.msg)),
+    #("running", json.bool(log.running)),
+    #("total_recipes", json.int(log.total_recipes)),
+    #("exported_recipes", json.int(log.exported_recipes)),
+    #("cache_duration", json.int(log.cache_duration)),
+    #("possibly_not_expired", json.bool(log.possibly_not_expired)),
+    #("created_by", json.int(log.created_by)),
+    #("created_at", json.string(log.created_at)),
   ])
 }
 
