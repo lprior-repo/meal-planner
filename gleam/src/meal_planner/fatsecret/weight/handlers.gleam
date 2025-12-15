@@ -40,8 +40,11 @@ import wisp.{type Request}
 /// - 401: Not connected or auth revoked
 /// - 500: Server error
 pub fn update_weight(req: Request, conn: pog.Connection) -> wisp.Response {
-  case req.method {
-    Post -> {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, Post)
+  {
       // Parse request body
       use body <- wisp.require_json(req)
 
@@ -80,10 +83,7 @@ pub fn update_weight(req: Request, conn: pog.Connection) -> wisp.Response {
           }
         }
       }
-    }
-    _ -> wisp.method_not_allowed([Post])
   }
-}
 
 // ============================================================================
 // GET /api/fatsecret/weight/month/:year/:month - Get monthly summary
@@ -110,8 +110,11 @@ pub fn get_weight_month(
   year: String,
   month: String,
 ) -> wisp.Response {
-  case req.method {
-    Get -> {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, Get)
+  {
       // Parse year and month
       case int.parse(year), int.parse(month) {
         Ok(year_int), Ok(month_int) if month_int >= 1 && month_int <= 12 -> {

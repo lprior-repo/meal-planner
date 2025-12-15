@@ -43,6 +43,9 @@ pub fn handle_get_exercise(
   req: wisp.Request,
   exercise_id: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   let exercise_id_typed = types.exercise_id(exercise_id)
@@ -101,6 +104,9 @@ pub fn handle_get_exercise(
 /// }
 /// ```
 pub fn handle_get_exercise_entries(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   // TODO: Extract access_token from Authorization header
@@ -134,6 +140,9 @@ pub fn handle_get_exercise_entries(req: wisp.Request) -> wisp.Response {
 /// }
 /// ```
 pub fn handle_edit_exercise_entry(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Put)
 
   // TODO: Extract access_token from Authorization header
@@ -177,6 +186,9 @@ pub fn handle_get_exercise_month(
   year_str: String,
   month_str: String,
 ) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Get)
 
   // Parse year and month
@@ -214,6 +226,9 @@ pub fn handle_get_exercise_month(
 /// }
 /// ```
 pub fn handle_commit_exercise_day(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Post)
 
   // TODO: Extract access_token from Authorization header
@@ -247,6 +262,9 @@ pub fn handle_commit_exercise_day(req: wisp.Request) -> wisp.Response {
 /// }
 /// ```
 pub fn handle_save_exercise_template(req: wisp.Request) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, http.Post)
 
   // TODO: Extract access_token from Authorization header
