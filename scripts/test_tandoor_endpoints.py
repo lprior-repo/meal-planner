@@ -48,7 +48,7 @@ def get_headers() -> Dict[str, str]:
     }
     
     if TANDOOR_API_TOKEN:
-        headers["Authorization"] = f"Token {TANDOOR_API_TOKEN}"
+        headers["Authorization"] = f"Bearer {TANDOOR_API_TOKEN}"
     
     return headers
 
@@ -200,6 +200,33 @@ def main():
     print("=" * 60)
     print()
     
+    # Validate token if present
+    if TANDOOR_API_TOKEN:
+        headers = get_headers()
+        try:
+            # Try a test request to validate token
+            response = requests.get(
+                f"{TANDOOR_BASE_URL}/api/recipe/",
+                headers=headers,
+                timeout=5
+            )
+            if response.status_code == 403 and "credentials were not provided" in response.text:
+                print("⚠️  Token validation failed!")
+                print("   The token format 'Bearer {token}' was used, but:")
+                print("   - The token ID alone (tda_...) is NOT sufficient")
+                print("   - You need the full token SECRET (only shown at creation)")
+                print("")
+                print("To create a new token:")
+                print("  1. Log into Tandoor Admin")
+                print("  2. Create new API token with read+write scope")
+                print("  3. Copy the full token SECRET immediately")
+                print("  4. Export: export TANDOOR_API_TOKEN='<full_secret>'")
+                print("")
+                print("=" * 60)
+                print()
+        except Exception:
+            pass
+    
     # Load spec
     spec = load_openapi_spec()
     endpoints = extract_endpoints(spec)
@@ -256,8 +283,8 @@ def main():
     auth_failures = [e for e, m, c in status_groups["failed"] if c in [401, 403]]
     if auth_failures:
         print(f"⚠️  Auth issues detected: {len(auth_failures)} endpoints")
-        print("   Ensure TANDOOR_API_TOKEN is set and valid:")
-        print("   export TANDOOR_API_TOKEN=<your_token>")
+        print("   Token may be missing or invalid.")
+        print("   Set with: export TANDOOR_API_TOKEN=<your_full_token_secret>")
     
     # Exit code
     sys.exit(0 if failed == 0 else 1)
