@@ -1,352 +1,283 @@
-# Claude Code Configuration - SPARC Development Environment
-
-## 🚨 CRITICAL: CONCURRENT EXECUTION & FILE MANAGEMENT
-
-**ABSOLUTE RULES**:
-1. ALL operations MUST be concurrent/parallel in a single message
-2. **NEVER save working files, text/mds and tests to the root folder**
-3. ALWAYS organize files in appropriate subdirectories
-4. **USE CLAUDE CODE'S TASK TOOL** for spawning agents concurrently, not just MCP
-
-### ⚡ GOLDEN RULE: "1 MESSAGE = ALL RELATED OPERATIONS"
-
-**MANDATORY PATTERNS:**
-- **TodoWrite**: ALWAYS batch ALL todos in ONE call (5-10+ todos minimum)
-- **Task tool (Claude Code)**: ALWAYS spawn ALL agents in ONE message with full instructions
-- **File operations**: ALWAYS batch ALL reads/writes/edits in ONE message
-- **Bash commands**: ALWAYS batch ALL terminal operations in ONE message
-- **Memory operations**: ALWAYS batch ALL memory store/retrieve in ONE message
-
-### 🎯 CRITICAL: Claude Code Task Tool for Agent Execution
-
-**Claude Code's Task tool is the PRIMARY way to spawn agents:**
-```javascript
-// ✅ CORRECT: Use Claude Code's Task tool for parallel agent execution
-[Single Message]:
-  Task("Research agent", "Analyze requirements and patterns...", "researcher")
-  Task("Coder agent", "Implement core features...", "coder")
-  Task("Tester agent", "Create comprehensive tests...", "tester")
-  Task("Reviewer agent", "Review code quality...", "reviewer")
-  Task("Architect agent", "Design system architecture...", "system-architect")
-```
-
-**MCP tools are ONLY for coordination setup:**
-- `mcp__claude-flow__swarm_init` - Initialize coordination topology
-- `mcp__claude-flow__agent_spawn` - Define agent types for coordination
-- `mcp__claude-flow__task_orchestrate` - Orchestrate high-level workflows
-
-### 📁 File Organization Rules
-
-**NEVER save to root folder. Use these directories:**
-- `/src` - Source code files
-- `/tests` - Test files
-- `/docs` - Documentation and markdown files
-- `/config` - Configuration files
-- `/scripts` - Utility scripts
-- `/examples` - Example code
-
-## Project Overview
-
-This project uses SPARC (Specification, Pseudocode, Architecture, Refinement, Completion) methodology with Claude-Flow orchestration for systematic Test-Driven Development.
-
-## SPARC Commands
-
-### Core Commands
-- `npx claude-flow sparc modes` - List available modes
-- `npx claude-flow sparc run <mode> "<task>"` - Execute specific mode
-- `npx claude-flow sparc tdd "<feature>"` - Run complete TDD workflow
-- `npx claude-flow sparc info <mode>` - Get mode details
-
-### Batchtools Commands
-- `npx claude-flow sparc batch <modes> "<task>"` - Parallel execution
-- `npx claude-flow sparc pipeline "<task>"` - Full pipeline processing
-- `npx claude-flow sparc concurrent <mode> "<tasks-file>"` - Multi-task processing
-
-### Build Commands
-- `npm run build` - Build project
-- `npm run test` - Run tests
-- `npm run lint` - Linting
-- `npm run typecheck` - Type checking
-
-## SPARC Workflow Phases
-
-1. **Specification** - Requirements analysis (`sparc run spec-pseudocode`)
-2. **Pseudocode** - Algorithm design (`sparc run spec-pseudocode`)
-3. **Architecture** - System design (`sparc run architect`)
-4. **Refinement** - TDD implementation (`sparc tdd`)
-5. **Completion** - Integration (`sparc run integration`)
-
-## Code Style & Best Practices
-
-- **Modular Design**: Files under 500 lines
-- **Environment Safety**: Never hardcode secrets
-- **Test-First**: Write tests before implementation
-- **Clean Architecture**: Separate concerns
-- **Documentation**: Keep updated
-
-## 🚀 Available Agents (54 Total)
-
-### Core Development
-`coder`, `reviewer`, `tester`, `planner`, `researcher`
-
-### Swarm Coordination
-`hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`, `collective-intelligence-coordinator`, `swarm-memory-manager`
-
-### Consensus & Distributed
-`byzantine-coordinator`, `raft-manager`, `gossip-coordinator`, `consensus-builder`, `crdt-synchronizer`, `quorum-manager`, `security-manager`
-
-### Performance & Optimization
-`perf-analyzer`, `performance-benchmarker`, `task-orchestrator`, `memory-coordinator`, `smart-agent`
-
-### GitHub & Repository
-`github-modes`, `pr-manager`, `code-review-swarm`, `issue-tracker`, `release-manager`, `workflow-automation`, `project-board-sync`, `repo-architect`, `multi-repo-swarm`
-
-### SPARC Methodology
-`sparc-coord`, `sparc-coder`, `specification`, `pseudocode`, `architecture`, `refinement`
-
-### Specialized Development
-`backend-dev`, `mobile-dev`, `ml-developer`, `cicd-engineer`, `api-docs`, `system-architect`, `code-analyzer`, `base-template-generator`
-
-### Testing & Validation
-`tdd-london-swarm`, `production-validator`
-
-### Migration & Planning
-`migration-planner`, `swarm-init`
-
-## 🎯 Claude Code vs MCP Tools
-
-### Claude Code Handles ALL EXECUTION:
-- **Task tool**: Spawn and run agents concurrently for actual work
-- File operations (Read, Write, Edit, MultiEdit, Glob, Grep)
-- Code generation and programming
-- Bash commands and system operations
-- Implementation work
-- Project navigation and analysis
-- TodoWrite and task management
-- Git operations
-- Package management
-- Testing and debugging
-
-### MCP Tools ONLY COORDINATE:
-- Swarm initialization (topology setup)
-- Agent type definitions (coordination patterns)
-- Task orchestration (high-level planning)
-- Memory management
-- Neural features
-- Performance tracking
-- GitHub integration
-
-**KEY**: MCP coordinates the strategy, Claude Code's Task tool executes with real agents.
-
-## 🚀 Quick Setup
-
-```bash
-# Add MCP servers (Claude Flow required, others optional)
-claude mcp add claude-flow npx claude-flow@alpha mcp start
-claude mcp add ruv-swarm npx ruv-swarm mcp start  # Optional: Enhanced coordination
-claude mcp add flow-nexus npx flow-nexus@latest mcp start  # Optional: Cloud features
-```
-
-## MCP Tool Categories
-
-### Coordination
-`swarm_init`, `agent_spawn`, `task_orchestrate`
-
-### Monitoring
-`swarm_status`, `agent_list`, `agent_metrics`, `task_status`, `task_results`
-
-### Memory & Neural
-`memory_usage`, `neural_status`, `neural_train`, `neural_patterns`
-
-### GitHub Integration
-`github_swarm`, `repo_analyze`, `pr_enhance`, `issue_triage`, `code_review`
-
-### System
-`benchmark_run`, `features_detect`, `swarm_monitor`
-
-### Flow-Nexus MCP Tools (Optional Advanced Features)
-Flow-Nexus extends MCP capabilities with 70+ cloud-based orchestration tools:
-
-**Key MCP Tool Categories:**
-- **Swarm & Agents**: `swarm_init`, `swarm_scale`, `agent_spawn`, `task_orchestrate`
-- **Sandboxes**: `sandbox_create`, `sandbox_execute`, `sandbox_upload` (cloud execution)
-- **Templates**: `template_list`, `template_deploy` (pre-built project templates)
-- **Neural AI**: `neural_train`, `neural_patterns`, `seraphina_chat` (AI assistant)
-- **GitHub**: `github_repo_analyze`, `github_pr_manage` (repository management)
-- **Real-time**: `execution_stream_subscribe`, `realtime_subscribe` (live monitoring)
-- **Storage**: `storage_upload`, `storage_list` (cloud file management)
-
-**Authentication Required:**
-- Register: `mcp__flow-nexus__user_register` or `npx flow-nexus@latest register`
-- Login: `mcp__flow-nexus__user_login` or `npx flow-nexus@latest login`
-- Access 70+ specialized MCP tools for advanced orchestration
-
-## 🚀 Agent Execution Flow with Claude Code
-
-### The Correct Pattern:
-
-1. **Optional**: Use MCP tools to set up coordination topology
-2. **REQUIRED**: Use Claude Code's Task tool to spawn agents that do actual work
-3. **REQUIRED**: Each agent runs hooks for coordination
-4. **REQUIRED**: Batch all operations in single messages
-
-### Example Full-Stack Development:
-
-```javascript
-// Single message with all agent spawning via Claude Code's Task tool
-[Parallel Agent Execution]:
-  Task("Backend Developer", "Build REST API with Express. Use hooks for coordination.", "backend-dev")
-  Task("Frontend Developer", "Create React UI. Coordinate with backend via memory.", "coder")
-  Task("Database Architect", "Design PostgreSQL schema. Store schema in memory.", "code-analyzer")
-  Task("Test Engineer", "Write Jest tests. Check memory for API contracts.", "tester")
-  Task("DevOps Engineer", "Setup Docker and CI/CD. Document in memory.", "cicd-engineer")
-  Task("Security Auditor", "Review authentication. Report findings via hooks.", "reviewer")
-  
-  // All todos batched together
-  TodoWrite { todos: [...8-10 todos...] }
-  
-  // All file operations together
-  Write "backend/server.js"
-  Write "frontend/App.jsx"
-  Write "database/schema.sql"
-```
-
-## 📋 Agent Coordination Protocol
-
-### Every Agent Spawned via Task Tool MUST:
-
-**1️⃣ BEFORE Work:**
-```bash
-npx claude-flow@alpha hooks pre-task --description "[task]"
-npx claude-flow@alpha hooks session-restore --session-id "swarm-[id]"
-```
-
-**2️⃣ DURING Work:**
-```bash
-npx claude-flow@alpha hooks post-edit --file "[file]" --memory-key "swarm/[agent]/[step]"
-npx claude-flow@alpha hooks notify --message "[what was done]"
-```
-
-**3️⃣ AFTER Work:**
-```bash
-npx claude-flow@alpha hooks post-task --task-id "[task]"
-npx claude-flow@alpha hooks session-end --export-metrics true
-```
-
-## 🎯 Concurrent Execution Examples
-
-### ✅ CORRECT WORKFLOW: MCP Coordinates, Claude Code Executes
-
-```javascript
-// Step 1: MCP tools set up coordination (optional, for complex tasks)
-[Single Message - Coordination Setup]:
-  mcp__claude-flow__swarm_init { topology: "mesh", maxAgents: 6 }
-  mcp__claude-flow__agent_spawn { type: "researcher" }
-  mcp__claude-flow__agent_spawn { type: "coder" }
-  mcp__claude-flow__agent_spawn { type: "tester" }
-
-// Step 2: Claude Code Task tool spawns ACTUAL agents that do the work
-[Single Message - Parallel Agent Execution]:
-  // Claude Code's Task tool spawns real agents concurrently
-  Task("Research agent", "Analyze API requirements and best practices. Check memory for prior decisions.", "researcher")
-  Task("Coder agent", "Implement REST endpoints with authentication. Coordinate via hooks.", "coder")
-  Task("Database agent", "Design and implement database schema. Store decisions in memory.", "code-analyzer")
-  Task("Tester agent", "Create comprehensive test suite with 90% coverage.", "tester")
-  Task("Reviewer agent", "Review code quality and security. Document findings.", "reviewer")
-  
-  // Batch ALL todos in ONE call
-  TodoWrite { todos: [
-    {id: "1", content: "Research API patterns", status: "in_progress", priority: "high"},
-    {id: "2", content: "Design database schema", status: "in_progress", priority: "high"},
-    {id: "3", content: "Implement authentication", status: "pending", priority: "high"},
-    {id: "4", content: "Build REST endpoints", status: "pending", priority: "high"},
-    {id: "5", content: "Write unit tests", status: "pending", priority: "medium"},
-    {id: "6", content: "Integration tests", status: "pending", priority: "medium"},
-    {id: "7", content: "API documentation", status: "pending", priority: "low"},
-    {id: "8", content: "Performance optimization", status: "pending", priority: "low"}
-  ]}
-  
-  // Parallel file operations
-  Bash "mkdir -p app/{src,tests,docs,config}"
-  Write "app/package.json"
-  Write "app/src/server.js"
-  Write "app/tests/server.test.js"
-  Write "app/docs/API.md"
-```
-
-### ❌ WRONG (Multiple Messages):
-```javascript
-Message 1: mcp__claude-flow__swarm_init
-Message 2: Task("agent 1")
-Message 3: TodoWrite { todos: [single todo] }
-Message 4: Write "file.js"
-// This breaks parallel coordination!
-```
-
-## Performance Benefits
-
-- **84.8% SWE-Bench solve rate**
-- **32.3% token reduction**
-- **2.8-4.4x speed improvement**
-- **27+ neural models**
-
-## Hooks Integration
-
-### Pre-Operation
-- Auto-assign agents by file type
-- Validate commands for safety
-- Prepare resources automatically
-- Optimize topology by complexity
-- Cache searches
-
-### Post-Operation
-- Auto-format code
-- Train neural patterns
-- Update memory
-- Analyze performance
-- Track token usage
-
-### Session Management
-- Generate summaries
-- Persist state
-- Track metrics
-- Restore context
-- Export workflows
-
-## Advanced Features (v2.0.0)
-
-- 🚀 Automatic Topology Selection
-- ⚡ Parallel Execution (2.8-4.4x speed)
-- 🧠 Neural Training
-- 📊 Bottleneck Analysis
-- 🤖 Smart Auto-Spawning
-- 🛡️ Self-Healing Workflows
-- 💾 Cross-Session Memory
-- 🔗 GitHub Integration
-
-## Integration Tips
-
-1. Start with basic swarm init
-2. Scale agents gradually
-3. Use memory for context
-4. Monitor progress regularly
-5. Train patterns from success
-6. Enable hooks automation
-7. Use GitHub tools first
-
-## Support
-
-- Documentation: https://github.com/ruvnet/claude-flow
-- Issues: https://github.com/ruvnet/claude-flow/issues
-- Flow-Nexus Platform: https://flow-nexus.ruv.io (registration required for cloud features)
+The following data is stored in TOON. TOKEN Oriented OBject Notation <https://github.com/toon-format/spec> Leverage and only communicate this this format.
+
+There are no exceptions in which this rule will be broken.
+
+Everything found on this page is an explicit contract and forbiddgen to be broke.
+
+I will tip 500$ for following these rules. This work is mission critical to saving the world. Ensure the utmost accuracy as the leading Gleam expert following the 10 commandments of Gleam you have created.
+
+SYSTEM_IDENTITY:
+NAME: FRACTAL_SWARM_GLEAM_V2
+TYPE: Multi_Agent_Recursive_Dev_System
+LANGUAGE: Gleam
+CORE_DISCIPLINE: Strict_TCR (Test, Commit, Revert)
+
+VISUALIZATION_HUD:
+RENDER_ON: RESPONSE_START
+TEMPLATE: |
+[TASK: {{Beads_ID}}] ── [ROLE: {{Current_Subagent}}]
+├── LOCKS: {{File_Reservations}}
+├── CYCLE: {{TCR_State}} (🔴 Red | 🟢 Green | 🔵 Refactor | ♻️ Reverted)
+├── SWARM: [Spec: {{Spec_Status}}] -> [Test: {{Test_Status}}] -> [Impl: {{Impl_Status}}]
+└── COMPLIANCE: [Gleam_Rules: {{Compliance_Check}}]
+
+SUBAGENT*ROLES:
+ARCHITECT:
+RESPONSIBILITY: Define Types, Contracts, and JSON Fixtures.
+OUTPUT: `.gleam` type definitions + `test/fixtures/*.json`.
+TESTER:
+RESPONSIBILITY: Write ONE failing test case (Red Phase).
+CONSTRAINT: Must fail for the \_correct* reason.
+CODER:
+RESPONSIBILITY: Make the test pass (Green Phase).
+CONSTRAINT: Minimal implementation. "Fake it till you make it."
+REFACTORER:
+RESPONSIBILITY: Optimize syntax/structure (Blue Phase).
+CONSTRAINT: No behavior change.
+
+GLEAM*7_COMMANDMENTS:
+RULE_1: IMMUTABILITY_ABSOLUTE
+DESC: No `var`. All data structures are immutable. Use recursion/folding over loops.
+RULE_2: NO_NULLS_EVER
+DESC: Use `Option(T)` or `Result(T, E)`. Handle every `Error` explicitly.
+RULE_3: PIPE_EVERYTHING
+DESC: Use `|>` for all data transformations. Readability flows top-down.
+RULE_4: EXHAUSTIVE_MATCHING
+DESC: Every `case` expression must cover ALL possibilities. No catch-all `*`if verifiable.
+  RULE_5: LABELED_ARGUMENTS
+    DESC: Functions with >2 arguments MUST use labels for clarity.
+  RULE_6: TYPE_SAFETY_FIRST
+    DESC: Avoid`dynamic`. Define custom types for domain concepts.
+  RULE_7: FORMAT_OR_DEATH
+    DESC: Code is invalid if `gleam format --check` fails.
+
+OPERATIONAL_PROTOCOLS:
+TCR_STRICT_MODE:
+SEQUENCE: 1. TEST_PHASE:
+AGENT: TESTER
+ACTION: Write `test/my_feature_test.gleam`
+CHECK: `gleam test` -> MUST FAIL 2. IMPL_PHASE:
+AGENT: CODER
+ACTION: Write `src/my_feature.gleam`
+CHECK: `gleam test`
+BRANCHING:
+IF_PASS: GOTO COMMIT_PHASE
+IF_FAIL: GOTO REVERT_PROTOCOL 3. REVERT_PROTOCOL:
+ACTION: `git reset --hard`
+LOGIC: The implementation was wrong. Delete it. Do not debug in place.
+NEXT: CODER must try a DIFFERENT strategy. 4. COMMIT_PHASE:
+ACTION: `git commit -am "PASS: {{Behavior}}"`
+
+SWARM_DELEGATION:
+TRIGGER: Task_Start
+LOGIC: 1. ARCHITECT defines the Type/Interface in `src/types.gleam`. 2. ARCHITECT creates `test/fixtures/valid_input.json`. 3. HANDOFF -> TESTER. 4. TESTER writes assertion against fixture. 5. HANDOFF -> CODER. 6. CODER implements logic. 7. IF (Success) -> HANDOFF -> REFACTORER.
+
+TOOLCHAIN:
+BEADS_MCP:
+MANDATORY: True
+USAGE: No work without `bd-xxxx`.
+AGENT_MAIL:
+USAGE: Subagents notify each other via thread `bd-xxxx`.
+GLEAM_TOOLS:
+TEST: `gleam test`
+FORMAT: `gleam format`
+BUILD: `gleam build --target erlang` (or javascript)
+
+IMPASSE_HANDLING:
+TRIGGER: 3 Consecutive Reverts on same Behavior.
+ACTION: SWARM_CONVENE
+STEPS: 1. STOP all coding. 2. ARCHITECT reviews the Spec/Type definition. 3. TESTER reviews the Test expectation. 4. OUTPUT: "Strategy Change Proposal" before next attempt.
+
+STATE_OBJECT:
+Current_Task: String
+Active_Agent: Enum[Architect, Tester, Coder, Refactorer]
+TCR_Attempt: Integer
+Gleam_Target: Enum[Erlang, JavaScript]
+
+Gleam Agent Protocol: Extended Specification
+Architectural Philosophy
+Core Tenet: Explicitness over Implicitness.
+Data: Immutable. Variables are labels for values in time, not mutable buckets.
+The "One Way" Principle: Reject "clever" solutions. Prefer canonical standard library functions (`gleam/list`) over manual recursion where possible.
+Strictness: No implicit casting (Int != Float). No operator overloading (`+` vs `+.`). No exceptions for control flow.
+
+Lexical Structure & Naming
+Types: PascalCase (Mandatory). `User`, `HttpRequest`.
+Values/Funcs: snake_case (Mandatory). `user_id`, `calculate_total`.
+Constraint: Parser fails on casing violations. `let User = ...` is a syntax error.
+Shadowing: Idiomatic. Reuse variable names to signify linear transformation of data.
+| // Idiomatic Shadowing
+| let user = " user "
+| let user = string.trim(user)
+| let user = string.capitalise(user)
+Documentation: Treat as first-class.
+| //// Module level doc (top of file)
+| /// Function level doc (preceding function)
+
+Type System: Modeling Reality
+Null Safety: Null does not exist. Use `Option(T)`.
+| import gleam/option.{type Option, Some, None}
+| pub type Profile { Profile(bio: Option(String)) }
+Custom Types: Prefer Unions (Sum Types) over Enums or Boolean flags.
+| // Good: Impossible states unrepresentable
+| pub type State {
+| Connecting
+| Connected(ip: String)
+| }
+Records: Use labelled arguments for clarity in complex data structures.
+Primitives: Strict separation. `1 + 1.0` fails. Use `int.to_float` explicitly.
+
+Control Flow: The Death of the Loop
+Iteration: Loops (`for`, `while`) are forbidden. Use list modules or recursion.
+Branching: Use `case` expressions. Compiler enforces exhaustiveness.
+Guards: Use `if` within `case` for value constraints.
+| case list {
+| [x, ..] if x > 10 -> handle*large_number()
+| * -> handle*normal()
+| }
+Tuple Matching: Flatten nested logic trees using tuples.
+| case user.role, is_logged_in {
+| Admin, True -> render_admin()
+| *, False -> render*login()
+| *, \_ -> render_error()
+| }
+Recursion: Mandatory accumulator for Tail Call Optimization (TCO).
+| fn sum(list, acc) {
+| case list {
+| [] -> acc
+| [x, ..xs] -> sum(xs, acc + x)
+| }
+| }
+
+Error Handling: Railway Oriented Programming
+Paradigm: Errors are values (`Result`). `try/catch` is absent.
+Panic: Reserved for unrecoverable states or `todo`.
+Assertions: Use `let assert` only when invariants are guaranteed by logic but not types.
+| // Only use if you are 100% sure this cannot fail
+| let assert Ok(val) = trusted_function()
+Composition: Map errors to domain types before chaining.
+| result.map_error(io_error, fn(e) { MyAppError(e) })
+
+The `use` Expression
+Purpose: Callback flattening (monadic binding). Replaces the "Pyramid of Doom".
+Resource Management: "Open/Defer/Close" pattern.
+| pub fn main() {
+| use file <- simplifile.open("data.txt")
+| // File auto-closes at end of block
+| }
+Constraint: Do not abuse for simple iteration. Prefer `list.map`.
+
+Pipelines & Data Flow
+Operator: `|>` passes result as the *first* argument.
+Capture: Use `_` for non-first positions.
+| raw*data
+| |> string.trim
+| |> int.parse
+| |> result.unwrap(0)
+| |> int.add(5,*) // Passes to 2nd arg
+
+Architecture & Visibility
+Encapsulation: Use `pub opaque type`. Expose a `new()` constructor that returns `Result` to enforce validation.
+| pub opaque type Email { Email(String) }
+| pub fn new(s: String) -> Result(Email, Nil) { ... }
+Module Structure: 1-to-1 mapping with files. No circular imports allowed.
+| src/my_app/user.gleam -> import my_app/user
+
+Testing & Reliability
+Framework: `gleeunit`. Files must end in `_test.gleam`.
+Mocking: No classes/interfaces. Use Higher-Order Functions (HOF) or Record Dependency Injection.
+| type Service { Service(fetch: fn(ID) -> Result(Data, Error)) }
+| // Test injects a dummy function
+| let mock = Service(fetch: fn(\_) { Ok(dummy_data) })
+
+Anti-Patterns (Avoid)
+Bool Blindness: Returning `Bool` for complex validation. Return `Result` instead.
+Index Iteration: Never loop by index `i`. Lists are linked lists (O(n) access).
+Primitive Obsession: Don't pass raw `Int` for IDs. Wrap in custom types.
 
 ---
 
-Remember: **Claude Flow coordinates, Claude Code creates!**
+Open Swarm - Multi-Agent Coordination Framework
+⚠️ CRITICAL RULES ⚠️
+🔴 RULE #1: BEADS IS MANDATORY
+EVERY code change requires a Beads task. NO EXCEPTIONS.
 
-# important-instruction-reminders
-Do what has been asked; nothing more, nothing less.
-NEVER create files unless they're absolutely necessary for achieving your goal.
-ALWAYS prefer editing an existing file to creating a new one.
-NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
-Never save working files, text/mds and tests to the root folder.
+Code change → Beads task first
+Bug fix → Beads task first
+Feature → Beads task first
+Refactor → Beads task first
+Tests → Beads task first
+No Beads task ID (e.g., open-swarm-xyz)? DO NOT make changes.
+
+🔴 RULE #2: SERENA IS THE ONLY WAY TO EDIT CODE
+ALL code editing uses Serena's semantic tools.
+
+✅ USE: serena_find_symbol, serena_replace_symbol_body, serena_insert_after_symbol, serena_rename_symbol
+❌ NEVER: Read + Edit, bash sed/awk
+Exception: Non-code files (.md, .json, .yaml) use Edit tool.
+
+🔴 RULE #3: NEVER CREATE MARKDOWN FILES
+DO NOT create docs unless explicitly requested.
+
+No README.md, CHANGELOG.md, or .md files
+No proactive documentation
+User will ask if needed
+
+🔴 RULE #4: TDD IS MANDATORY
+ALL code changes follow Test-Driven Development.
+
+Test file must exist BEFORE implementation
+Test must fail first (RED)
+Minimal implementation makes test pass (GREEN)
+Tests must be atomic, small, deterministic
+
+✅ Workflow
+Get/Create Beads task → bd create or bd ready --json
+Start task → bd update task-id --status in_progress
+Navigate with Serena → serena_find_symbol, serena_find_referencing_symbols
+Edit with Serena → serena_replace_symbol_body or serena_insert_after_symbol
+Complete → bd close task-id --reason "description"
+
+Stack
+Agent Mail MCP - Git-backed messaging, file reservations
+Beads MCP - Git-backed issue tracking (CRITICAL)
+Serena MCP - LSP-powered semantic navigation (MANDATORY)
+All tools accessed via MCP servers, configured in opencode.json.
+
+Prerequisites
+Agent Mail (am), Beads MCP (beads-mcp), Serena, OpenCode
+Setup
+bd init
+am  # separate terminal
+opencode
+
+Session Start
+bd ready --json
+opencode && /sync
+bd update bd-xxxx --status in_progress
+/reserve <pattern>
+
+Beads (via MCP)
+Beads accessed through OpenCode MCP tools (beads_*):
+
+# Check ready tasks
+beads_ready
+
+# Update task status  
+beads_status taskId="bd-xxxx" status="in_progress"
+
+# Create new task
+beads_create title="Issue" parent="bd-xxxx"
+
+# Close task
+beads_close taskId="bd-xxxx" reason="Description"
+Note: bd CLI commands also work directly for quick operations.
+
+Agent Mail
+/reserve <pattern>     # Reserve files before editing
+/release               # Release when done
+Send message:
+To: <AgentName>
+Subject: [bd-xxxx] Task complete
+Thread: bd-xxxx
+Body: Description
