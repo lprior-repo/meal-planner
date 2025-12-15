@@ -4,6 +4,7 @@
 import envoy
 import gleam/io
 import gleam/string
+import meal_planner/tandoor/client
 
 /// Setup result type
 pub type SetupResult {
@@ -72,5 +73,27 @@ pub fn initialize_tests() -> SetupResult {
       io.println("📝 Unit test mode - skipping infrastructure setup")
       SetupSuccess
     }
+  }
+}
+
+/// Get Tandoor client configuration for testing
+/// Returns configuration if environment is set up for integration testing
+pub fn get_test_config() -> Result(client.ClientConfig, String) {
+  case envoy.get("TANDOOR_TEST_URL") {
+    Ok(base_url) -> {
+      case envoy.get("TANDOOR_TEST_USERNAME") {
+        Ok(username) -> {
+          case envoy.get("TANDOOR_TEST_PASSWORD") {
+            Ok(password) -> {
+              let config = client.session_config(base_url, username, password)
+              Ok(config)
+            }
+            Error(_) -> Error("TANDOOR_TEST_PASSWORD not set")
+          }
+        }
+        Error(_) -> Error("TANDOOR_TEST_USERNAME not set")
+      }
+    }
+    Error(_) -> Error("TANDOOR_TEST_URL not set")
   }
 }
