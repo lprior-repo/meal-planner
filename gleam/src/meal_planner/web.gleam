@@ -287,18 +287,15 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // =========================================================================
     // Tandoor Recipe Manager Integration
     // =========================================================================
-    ["tandoor", "status"] -> wisp.not_found()
-    ["api", "tandoor", "recipes"] -> wisp.not_found()
+    ["tandoor", "status"] -> handlers.handle_tandoor_routes(req)
+    ["api", "tandoor", "recipes"] -> handlers.handle_tandoor_routes(req)
     ["api", "tandoor", "recipes", recipe_id] ->
-      wisp.not_found()
-    ["api", "tandoor", "meal-plan"] ->
-      case req.method {
-        http.Get -> wisp.not_found()
-        http.Post -> wisp.not_found()
-        _ -> wisp.method_not_allowed([http.Get, http.Post])
-      }
-    ["api", "tandoor", "meal-plan", entry_id] ->
-      wisp.not_found()
+      handlers.handle_tandoor_routes(req)
+    ["api", "tandoor", "units"] -> handlers.handle_tandoor_routes(req)
+    ["api", "tandoor", "keywords"] -> handlers.handle_tandoor_routes(req)
+    ["api", "tandoor", "meal-plans"] -> handlers.handle_tandoor_routes(req)
+    ["api", "tandoor", "meal-plans", entry_id] ->
+      handlers.handle_tandoor_routes(req)
 
     // =========================================================================
     // Tandoor Import/Export API
