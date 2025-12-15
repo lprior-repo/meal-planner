@@ -1,13 +1,3 @@
-/// Recipe Image API
-///
-/// This module provides functions to upload and manage images for recipes in the Tandoor API.
-///
-/// ## Status: Temporarily Stubbed
-///
-/// Image upload functionality requires binary body support in the HTTP module.
-/// This will be implemented in a future update.
-import meal_planner/tandoor/client
-
 // TODO: Fix image upload - requires binary body support in HTTP module
 // Temporarily stubbed to allow builds to complete
 pub fn upload_recipe_image(
