@@ -11,9 +11,7 @@ import gleam/dynamic/decode
 import gleam/int
 import gleam/json
 import gleam/option.{type Option, None, Some}
-import meal_planner/env
 import meal_planner/tandoor/api/shopping_list
-import meal_planner/tandoor/client
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/shopping/shopping_list_entry_decoder.{
   type ShoppingListEntryResponse,
@@ -23,38 +21,6 @@ import meal_planner/tandoor/types/shopping/shopping_list_entry.{
   type ShoppingListEntry, ShoppingListEntryCreate,
 }
 import wisp
-
-/// Get Tandoor client config with authentication
-fn get_authenticated_client() -> Result(client.ClientConfig, wisp.Response) {
-  case env.load_tandoor_config() {
-    Some(tandoor_cfg) -> {
-      let config =
-        client.session_config(
-          tandoor_cfg.base_url,
-          tandoor_cfg.username,
-          tandoor_cfg.password,
-        )
-      case client.login(config) {
-        Ok(auth_config) -> Ok(auth_config)
-        Error(e) -> {
-          let #(status, message) = case e {
-            client.AuthenticationError(msg) -> #(401, msg)
-            client.AuthorizationError(msg) -> #(403, msg)
-            client.NotFoundError(resource) -> #(404, resource)
-            client.BadRequestError(msg) -> #(400, msg)
-            client.ServerError(s, msg) -> #(s, msg)
-            client.NetworkError(msg) -> #(502, msg)
-            client.TimeoutError -> #(504, "Request timed out")
-            client.ParseError(msg) -> #(500, msg)
-            client.UnknownError(msg) -> #(500, msg)
-          }
-          Error(helpers.error_response(status, message))
-        }
-      }
-    }
-    None -> Error(helpers.error_response(502, "Tandoor not configured"))
-  }
-}
 
 /// Extract query parameters for list endpoint
 fn extract_list_params(
@@ -156,7 +122,7 @@ fn entry_to_json(entry: ShoppingListEntry) -> json.Json {
 
 /// List shopping list entries - GET /api/tandoor/shopping-list-entries
 pub fn handle_list(req: wisp.Request) -> wisp.Response {
-  case get_authenticated_client() {
+  case helpers.get_authenticated_client() {
     Ok(config) -> {
       let params = wisp.get_query(req)
       let #(checked, limit, offset) = extract_list_params(params)
@@ -197,7 +163,7 @@ fn decode_create_request() -> decode.Decoder(#(Int, Int, Float, Int, Bool)) {
 
 /// Create shopping list entry - POST /api/tandoor/shopping-list-entries
 pub fn handle_create(req: wisp.Request) -> wisp.Response {
-  case get_authenticated_client() {
+  case helpers.get_authenticated_client() {
     Ok(config) -> {
       use body <- wisp.require_json(req)
 
@@ -243,7 +209,7 @@ pub fn handle_create(req: wisp.Request) -> wisp.Response {
 
 /// Add recipe to shopping list - POST /api/tandoor/shopping-list-recipe
 pub fn handle_add_recipe(req: wisp.Request) -> wisp.Response {
-  case get_authenticated_client() {
+  case helpers.get_authenticated_client() {
     Ok(config) -> {
       let params = wisp.get_query(req)
 
@@ -272,7 +238,7 @@ pub fn handle_add_recipe(req: wisp.Request) -> wisp.Response {
 
 /// Get single shopping list entry - GET /api/tandoor/shopping-list-entries/{id}
 pub fn handle_get(_req: wisp.Request, id_str: String) -> wisp.Response {
-  case get_authenticated_client() {
+  case helpers.get_authenticated_client() {
     Ok(config) -> {
       case int.parse(id_str) {
         Ok(id) -> {
@@ -296,7 +262,7 @@ pub fn handle_get(_req: wisp.Request, id_str: String) -> wisp.Response {
 
 /// Delete shopping list entry - DELETE /api/tandoor/shopping-list-entries/{id}
 pub fn handle_delete(_req: wisp.Request, id_str: String) -> wisp.Response {
-  case get_authenticated_client() {
+  case helpers.get_authenticated_client() {
     Ok(config) -> {
       case int.parse(id_str) {
         Ok(id) -> {

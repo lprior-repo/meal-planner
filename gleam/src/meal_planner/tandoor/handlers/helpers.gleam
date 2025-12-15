@@ -5,6 +5,7 @@
 /// - Query parameter parsing
 /// - Success/error response builders
 /// - Tandoor entity JSON encoders
+/// - Authentication client setup
 import gleam/float
 import gleam/int
 import gleam/json
@@ -12,7 +13,52 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
+import meal_planner/env
+import meal_planner/tandoor/client
 import wisp
+
+// =============================================================================
+// Authentication & Client Setup
+// =============================================================================
+
+/// Get Tandoor client config with authentication
+///
+/// Loads Tandoor configuration from environment variables, creates a session
+/// config, and authenticates with the Tandoor server.
+///
+/// # Returns
+/// - Ok(ClientConfig) - Authenticated client configuration ready to use
+/// - Error(wisp.Response) - HTTP error response with appropriate status code
+pub fn get_authenticated_client() -> Result(client.ClientConfig, wisp.Response) {
+  case env.load_tandoor_config() {
+    Some(tandoor_cfg) -> {
+      let config =
+        client.session_config(
+          tandoor_cfg.base_url,
+          tandoor_cfg.username,
+          tandoor_cfg.password,
+        )
+      case client.login(config) {
+        Ok(auth_config) -> Ok(auth_config)
+        Error(e) -> {
+          let #(status, message) = case e {
+            client.AuthenticationError(msg) -> #(401, msg)
+            client.AuthorizationError(msg) -> #(403, msg)
+            client.NotFoundError(resource) -> #(404, resource)
+            client.BadRequestError(msg) -> #(400, msg)
+            client.ServerError(s, msg) -> #(s, msg)
+            client.NetworkError(msg) -> #(502, msg)
+            client.TimeoutError -> #(504, "Request timed out")
+            client.ParseError(msg) -> #(500, msg)
+            client.UnknownError(msg) -> #(500, msg)
+          }
+          Error(error_response(status, message))
+        }
+      }
+    }
+    None -> Error(error_response(502, "Tandoor not configured"))
+  }
+}
 
 // =============================================================================
 // Optional Value JSON Encoders
