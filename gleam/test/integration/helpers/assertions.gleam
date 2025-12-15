@@ -1,7 +1,13 @@
 //// Assertion helpers for integration tests
 //// Composable assertion functions for API response validation
 
+import gleam/int
+import gleam/io
+import gleam/list
+import gleam/result
 import gleam/string
+import gleeunit/should
+import integration/helpers/http
 
 /// Assert HTTP response status code matches expected value
 pub fn assert_status(
@@ -74,5 +80,61 @@ pub fn assert_non_empty_string(
   case string.contains(body, search_pattern) {
     True -> Ok(body)
     False -> Error("String field '" <> field_name <> "' is empty or missing")
+  }
+}
+
+/// Assert response has multiple fields
+pub fn assert_has_fields(
+  body: String,
+  field_names: List(String),
+) -> Result(String, String) {
+  field_names
+  |> list.try_fold(body, fn(acc, field) { assert_has_field(acc, field) })
+}
+
+/// Validate JSON response with field checks
+pub fn validate_json_with_fields(body: String, field_names: List(String)) -> Nil {
+  case assert_valid_json(body) {
+    Ok(data) -> {
+      io.println("  ✓ Valid JSON response")
+      case assert_has_fields(data, field_names) {
+        Ok(_) -> {
+          io.println("  ✓ Response shape validated")
+          Nil
+        }
+        Error(e) -> {
+          io.println("  ✗ Field validation error: " <> e)
+          should.fail()
+        }
+      }
+    }
+    Error(e) -> {
+      io.println("  ✗ JSON parse error: " <> e)
+      should.fail()
+    }
+  }
+}
+
+/// Run endpoint test with standard assertions
+pub fn test_endpoint(
+  endpoint: String,
+  expected_status: Int,
+  required_fields: List(String),
+) -> Nil {
+  case http.get(endpoint) {
+    Ok(response) -> {
+      let #(status, body) = response
+      io.println("✅ Response status: " <> int.to_string(status))
+
+      response
+      |> assert_status(expected_status)
+      |> result.map(fn(_) { validate_json_with_fields(body, required_fields) })
+      |> should.be_ok()
+    }
+    Error(_e) -> {
+      io.println("⚠️  Server connection error")
+      io.println("  Make sure server is running: gleam run")
+      should.fail()
+    }
   }
 }

@@ -9,17 +9,12 @@
 /// Related to Issue: meal-planner-2b8 (GET /api/fatsecret/diary/day/20437 returns 0 calories)
 ///
 /// Run with: cd gleam && gleam test
-import gleam/dict
 import gleam/dynamic/decode
 import gleam/int
 import gleam/json
 import gleam/list
-import gleam/option.{None, Some}
-import gleam/result
 import gleeunit
 import gleeunit/should
-import meal_planner/fatsecret/core/config
-import meal_planner/fatsecret/diary/client
 import meal_planner/fatsecret/diary/decoders
 import meal_planner/fatsecret/diary/types
 import meal_planner/fatsecret/storage
@@ -111,7 +106,7 @@ pub fn parse_null_food_entry_response_test() {
       // Should fallback to empty list
       list.length(entries) |> should.equal(0)
     }
-    Error(e) -> {
+    Error(_e) -> {
       // Log error for debugging
       // This might indicate API response format we're not handling
       should.fail()
