@@ -51,6 +51,8 @@ tags:
     description: Weight tracking (3-legged OAuth)
   - name: FatSecret - Profile
     description: User profile management (3-legged OAuth)
+  - name: FatSecret - Raw REST API
+    description: Direct FatSecret Platform API endpoints (OAuth 1.0a)
   - name: Tandoor Integration
     description: Recipe management via Tandoor
   - name: Nutrition Control
@@ -818,11 +820,19 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DiaryEntry'
+                $ref: '#/components/schemas/FoodEntriesResponse'
+        400:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         401:
           description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/fatsecret/diary/month/{dateInt}:
     get:
@@ -844,23 +854,338 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    date:
-                      type: string
-                      format: date
-                    calories:
-                      type: number
-                    protein_g:
-                      type: number
-                    carbs_g:
-                      type: number
-                    fat_g:
-                      type: number
+                $ref: '#/components/schemas/MonthSummaryResponse'
+        400:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         401:
           description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /food-entries/v2:
+    get:
+      operationId: getFoodEntries
+      tags:
+        - FatSecret - Raw REST API
+      summary: Get food entries from diary
+      description: Returns food entries for a specific date or entry ID from FatSecret Platform API
+      security:
+        - OAuth1: []
+      parameters:
+        - name: date_int
+          in: query
+          schema:
+            type: integer
+          description: "Date as days since Unix epoch. Required if food_entry_id is not provided."
+        - name: food_entry_id
+          in: query
+          schema:
+            type: integer
+          description: "Specific entry ID. Required if date_int is not provided."
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json, xml]
+            default: json
+      responses:
+        200:
+          description: Food entries retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodEntriesResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /food-entries/month/v1:
+    get:
+      operationId: getFoodEntriesMonth
+      tags:
+        - FatSecret - Raw REST API
+      summary: Get monthly food entry summary
+      description: Returns monthly summary of food entries and nutrition data from FatSecret Platform API
+      security:
+        - OAuth1: []
+      parameters:
+        - name: date_int
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: "Date as days since Unix epoch"
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json, xml]
+            default: json
+      responses:
+        200:
+          description: Monthly summary retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonthSummaryResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /food-entries/v1:
+    post:
+      operationId: createFoodEntry
+      tags:
+        - FatSecret - Raw REST API
+      summary: Create a new food entry
+      description: Adds a food entry to the user's diary in FatSecret Platform API
+      security:
+        - OAuth1: []
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json]
+            default: json
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - food_id
+                - food_entry_name
+                - serving_id
+                - number_of_units
+                - meal
+                - date
+              properties:
+                food_id:
+                  type: integer
+                  format: int64
+                  description: FatSecret food ID
+                food_entry_name:
+                  type: string
+                  description: Name of the food entry
+                serving_id:
+                  type: integer
+                  format: int64
+                  description: Serving ID from FatSecret
+                number_of_units:
+                  type: number
+                  description: Number of servings
+                meal:
+                  type: string
+                  enum: [breakfast, lunch, dinner, other]
+                  description: Meal type
+                date:
+                  type: integer
+                  description: Date as days since Unix epoch
+      responses:
+        200:
+          description: Entry created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodEntriesResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      operationId: editFoodEntry
+      tags:
+        - FatSecret - Raw REST API
+      summary: Edit an existing food entry
+      description: Updates an existing food entry in FatSecret Platform API
+      security:
+        - OAuth1: []
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json]
+            default: json
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - food_entry_id
+              properties:
+                food_entry_id:
+                  type: integer
+                  format: int64
+                  description: Entry ID to edit
+                food_entry_name:
+                  type: string
+                  description: Updated entry name
+                serving_id:
+                  type: integer
+                  format: int64
+                  description: Updated serving ID
+                number_of_units:
+                  type: number
+                  description: Updated number of servings
+                meal:
+                  type: string
+                  enum: [breakfast, lunch, dinner, other]
+                  description: Updated meal type
+      responses:
+        200:
+          description: Entry updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      operationId: deleteFoodEntry
+      tags:
+        - FatSecret - Raw REST API
+      summary: Delete a food entry
+      description: Removes a food entry from the user's diary in FatSecret Platform API
+      security:
+        - OAuth1: []
+      parameters:
+        - name: food_entry_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Entry ID to delete
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json]
+            default: json
+      responses:
+        200:
+          description: Entry deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /food-entries/copy/v1:
+    post:
+      operationId: copyFoodEntries
+      tags:
+        - FatSecret - Raw REST API
+      summary: Copy food entries between dates (planned)
+      description: Copies food entries from one date to another in FatSecret Platform API. Not yet implemented in Gleam client.
+      security:
+        - OAuth1: []
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json]
+            default: json
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - from_date
+                - to_date
+              properties:
+                from_date:
+                  type: integer
+                  description: Source date as days since Unix epoch
+                to_date:
+                  type: integer
+                  description: Destination date as days since Unix epoch
+                meal:
+                  type: string
+                  enum: [breakfast, lunch, dinner, other]
+                  description: "Optional: Restrict copying to specific meal type"
+      responses:
+        200:
+          description: Entries copied successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/fatsecret/profile:
     get:
@@ -1752,8 +2077,116 @@ components:
         total_fat_g:
           type: number
 
+    FoodEntry:
+      type: object
+      description: Complete food diary entry from FatSecret
+      required:
+        - food_entry_id
+        - food_entry_name
+        - food_entry_description
+        - food_id
+        - serving_id
+        - number_of_units
+        - meal
+        - date_int
+        - calories
+        - carbohydrate
+        - protein
+        - fat
+      properties:
+        food_entry_id:
+          type: string
+          description: Unique entry ID from FatSecret
+          example: "987654"
+        food_entry_name:
+          type: string
+          description: Entry display name
+          example: "Chicken Breast"
+        food_entry_description:
+          type: string
+          description: Full description including serving size info
+          example: "Per 100g - 165kcal"
+        food_id:
+          type: string
+          description: Food ID from FatSecret database
+          example: "4142"
+        serving_id:
+          type: string
+          description: Serving ID from FatSecret database
+          example: "12345"
+        number_of_units:
+          type: number
+          format: float
+          description: Number of servings consumed
+          example: 1.5
+        meal:
+          type: string
+          enum: [breakfast, lunch, dinner, other]
+          description: Meal type
+        date_int:
+          type: integer
+          description: Date as days since Unix epoch
+          example: 19723
+        calories:
+          type: number
+          format: float
+        carbohydrate:
+          type: number
+          format: float
+          description: Carbohydrates in grams
+        protein:
+          type: number
+          format: float
+          description: Protein in grams
+        fat:
+          type: number
+          format: float
+          description: Fat in grams
+        saturated_fat:
+          type: number
+          format: float
+          nullable: true
+          description: Saturated fat in grams
+        polyunsaturated_fat:
+          type: number
+          format: float
+          nullable: true
+          description: Polyunsaturated fat in grams
+        monounsaturated_fat:
+          type: number
+          format: float
+          nullable: true
+          description: Monounsaturated fat in grams
+        cholesterol:
+          type: number
+          format: float
+          nullable: true
+          description: Cholesterol in milligrams
+        sodium:
+          type: number
+          format: float
+          nullable: true
+          description: Sodium in milligrams
+        potassium:
+          type: number
+          format: float
+          nullable: true
+          description: Potassium in milligrams
+        fiber:
+          type: number
+          format: float
+          nullable: true
+          description: Dietary fiber in grams
+        sugar:
+          type: number
+          format: float
+          nullable: true
+          description: Sugar in grams
+
     DiaryEntry:
       type: object
+      deprecated: true
+      description: Deprecated - use FoodEntry instead
       properties:
         entry_id:
           type: integer
@@ -1783,6 +2216,116 @@ components:
         updated_at:
           type: string
           format: date-time
+
+    ErrorResponse:
+      type: object
+      description: FatSecret API error response with specific error codes
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: integer
+              description: FatSecret-specific error code
+              enum:
+                - 2     # MissingOAuthParameter
+                - 3     # UnsupportedOAuthParameter
+                - 4     # InvalidSignatureMethod
+                - 5     # InvalidConsumerCredentials
+                - 6     # InvalidOrExpiredToken
+                - 7     # InvalidSignature
+                - 8     # InvalidNonce
+                - 9     # InvalidAccessToken
+                - 13    # InvalidMethod
+                - 14    # ApiUnavailable
+                - 101   # MissingRequiredParameter
+                - 106   # InvalidId
+                - 107   # InvalidSearchValue
+                - 108   # InvalidDate
+                - 205   # WeightDateTooFar
+                - 206   # WeightDateEarlier
+                - 207   # NoEntries
+            message:
+              type: string
+              description: Human-readable error message
+
+    SuccessResponse:
+      type: object
+      description: Successful operation response
+      properties:
+        success:
+          type: object
+          properties:
+            value:
+              type: string
+              example: "1"
+
+    DaySummary:
+      type: object
+      description: Daily nutrition summary
+      properties:
+        date_int:
+          type: integer
+          description: Date as days since Unix epoch
+        calories:
+          type: number
+          format: float
+        carbohydrate:
+          type: number
+          format: float
+          description: Carbohydrates in grams
+        protein:
+          type: number
+          format: float
+          description: Protein in grams
+        fat:
+          type: number
+          format: float
+          description: Fat in grams
+
+    FoodEntriesResponse:
+      type: object
+      description: FatSecret food entries response with flexible formatting
+      properties:
+        food_entries:
+          type: object
+          properties:
+            food_entry:
+              oneOf:
+                - $ref: '#/components/schemas/FoodEntry'
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/FoodEntry'
+                - type: "null"
+
+    MonthSummaryResponse:
+      type: object
+      description: Monthly nutrition summary with daily breakdowns
+      properties:
+        month:
+          type: object
+          required:
+            - from_date_int
+            - to_date_int
+          properties:
+            from_date_int:
+              type: integer
+              description: Start date as days since Unix epoch
+            to_date_int:
+              type: integer
+              description: End date as days since Unix epoch
+            day:
+              oneOf:
+                - $ref: '#/components/schemas/DaySummary'
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/DaySummary'
+                - type: "null"
 
     UserProfile:
       type: object

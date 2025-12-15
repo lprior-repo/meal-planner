@@ -37,6 +37,8 @@ pub type ApiErrorCode {
   // 205
   WeightDateEarlier
   // 206
+  NoEntries
+  // 207
   UnknownError(code: Int)
 }
 
@@ -70,6 +72,7 @@ pub fn code_from_int(code: Int) -> ApiErrorCode {
     108 -> InvalidDate
     205 -> WeightDateTooFar
     206 -> WeightDateEarlier
+    207 -> NoEntries
     _ -> UnknownError(code)
   }
 }
@@ -93,6 +96,7 @@ pub fn code_to_int(code: ApiErrorCode) -> Int {
     InvalidDate -> 108
     WeightDateTooFar -> 205
     WeightDateEarlier -> 206
+    NoEntries -> 207
     UnknownError(n) -> n
   }
 }
@@ -116,6 +120,7 @@ pub fn code_to_string(code: ApiErrorCode) -> String {
     InvalidDate -> "Invalid Date"
     WeightDateTooFar -> "Weight Date Too Far in Future"
     WeightDateEarlier -> "Weight Date Earlier Than Expected"
+    NoEntries -> "No Entries Found"
     UnknownError(n) -> "Unknown Error (" <> int.to_string(n) <> ")"
   }
 }
