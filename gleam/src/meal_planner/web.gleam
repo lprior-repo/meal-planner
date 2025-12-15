@@ -247,25 +247,17 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["api", "fatsecret", "exercise-entries"] ->
       case req.method {
         http.Get ->
-          // GET /api/fatsecret/exercise-entries?date=YYYY-MM-DD - Get day's entries
-          wisp.not_found()
-        // TODO: implement exercise handlers
+          exercise_handlers.handle_get_exercise_entries(req, ctx.db)
         http.Post ->
-          // POST /api/fatsecret/exercise-entries - Create new entry
-          wisp.not_found()
-        // TODO: implement exercise handlers
+          exercise_handlers.handle_create_exercise_entry(req, ctx.db)
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
-    ["api", "fatsecret", "exercise-entries", _entry_id] ->
+    ["api", "fatsecret", "exercise-entries", entry_id] ->
       case req.method {
         http.Put ->
-          // PUT /api/fatsecret/exercise-entries/:entry_id - Update entry
-          wisp.not_found()
-        // TODO: implement exercise handlers
+          exercise_handlers.handle_edit_exercise_entry(req, ctx.db, entry_id)
         http.Delete ->
-          // DELETE /api/fatsecret/exercise-entries/:entry_id - Delete entry
-          wisp.not_found()
-        // TODO: implement exercise handlers
+          exercise_handlers.handle_delete_exercise_entry(req, ctx.db, entry_id)
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
 

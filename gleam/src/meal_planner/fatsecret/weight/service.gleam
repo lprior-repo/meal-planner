@@ -182,6 +182,51 @@ pub fn error_to_message(error: ServiceError) -> String {
   }
 }
 
+/// Get weight measurement for a specific date with automatic token handling
+///
+/// Parameters:
+/// - conn: Database connection
+/// - date_int: Date as days since Unix epoch
+///
+/// Returns:
+/// - Ok(WeightEntry) with the weight data
+/// - Error(ServiceError) on failure
+pub fn get_weight_by_date(
+  conn: pog.Connection,
+  date_int: Int,
+) -> Result(types.WeightEntry, ServiceError) {
+  case load_env_fatsecret_config() {
+    option.None -> Error(NotConfigured)
+    option.Some(config) -> {
+      case get_token(conn) {
+        Error(e) -> Error(e)
+        Ok(token) -> {
+          case
+            weight_client.get_weight_by_date(
+              FatSecretConfig(
+                consumer_key: config.consumer_key,
+                consumer_secret: config.consumer_secret,
+                api_host: option.None,
+                auth_host: option.None,
+              ),
+              token,
+              date_int,
+            )
+          {
+            Ok(entry) -> {
+              let _ = storage.touch_access_token(conn)
+              Ok(entry)
+            }
+            Error(RequestFailed(status: 401, body: _)) -> Error(AuthRevoked)
+            Error(RequestFailed(status: 403, body: _)) -> Error(AuthRevoked)
+            Error(e) -> Error(ApiError(e))
+          }
+        }
+      }
+    }
+  }
+}
+
 /// Check if error is a date validation error (should be 400 Bad Request)
 pub fn is_date_validation_error(error: ServiceError) -> Bool {
   case error {
