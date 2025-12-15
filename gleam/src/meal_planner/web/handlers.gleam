@@ -11,6 +11,7 @@
 /// - dashboard: Dashboard UI with nutrition tracking
 /// - tandoor: Tandoor Recipe Manager integration
 import meal_planner/fatsecret/foods/handlers as foods_handlers
+import meal_planner/fatsecret/profile/handlers as profile_handlers
 import meal_planner/web/handlers/diet
 import meal_planner/web/handlers/health
 import meal_planner/web/handlers/macros
@@ -205,27 +206,25 @@ pub fn handle_fatsecret_disconnect(
 
 /// FatSecret get profile - GET /api/fatsecret/profile
 pub fn handle_fatsecret_profile(
-  _req: wisp.Request,
-  _conn: pog.Connection,
+  req: wisp.Request,
+  conn: pog.Connection,
 ) -> wisp.Response {
-  wisp.response(501)
-  |> wisp.string_body("FatSecret get profile handler not yet implemented")
+  profile_handlers.get_profile(req, conn)
 }
 
 /// FatSecret create profile - POST /api/fatsecret/profile
 pub fn handle_fatsecret_create_profile(
-  _req: wisp.Request,
-  _conn: pog.Connection,
+  req: wisp.Request,
+  conn: pog.Connection,
 ) -> wisp.Response {
-  wisp.response(501)
-  |> wisp.string_body("FatSecret create profile handler not yet implemented")
+  profile_handlers.create_profile(req, conn)
 }
 
-/// FatSecret get profile auth - GET /api/fatsecret/profile/auth
+/// FatSecret get profile auth - GET /api/fatsecret/profile/auth/:user_id
 pub fn handle_fatsecret_get_profile_auth(
-  _req: wisp.Request,
-  _conn: pog.Connection,
+  req: wisp.Request,
+  conn: pog.Connection,
+  user_id: String,
 ) -> wisp.Response {
-  wisp.response(501)
-  |> wisp.string_body("FatSecret get profile auth handler not yet implemented")
+  profile_handlers.get_profile_auth(req, conn, user_id)
 }
