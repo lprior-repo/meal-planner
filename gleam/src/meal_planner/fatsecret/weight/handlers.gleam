@@ -339,11 +339,11 @@ fn get_query_param(req: Request, param: String) -> option.Option(String) {
       |> string.split("&")
       |> list.find(fn(pair) {
         case string.split(pair, "=") {
-          [key, value] if key == param -> True
+          [key, _value] if key == param -> True
           _ -> False
         }
       })
-      |> result.then(fn(pair) {
+      |> result.try(fn(pair) {
         case string.split(pair, "=") {
           [_key, value] -> Ok(value)
           _ -> Error(Nil)
