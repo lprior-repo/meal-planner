@@ -293,3 +293,25 @@ pub fn month_summary_construction_test() {
     }
   }
 }
+
+// ============================================================================
+// Tests for GET /api/fatsecret/diary/entries/:id - Single Entry Read
+// ============================================================================
+
+pub fn get_single_diary_entry_returns_200_test() {
+  // This test will verify GET /api/fatsecret/diary/entries/:id
+  // Expected: 200 OK with complete FoodEntry JSON
+  // Fields: food_entry_id, food_entry_name, calories, protein, fat, carbs, meal, date_int
+  should.fail()
+}
+
+// ============================================================================
+// Tests for GET /api/fatsecret/diary/entries?filter=date - Batch Read
+// ============================================================================
+
+pub fn get_diary_entries_by_date_filter_returns_200_test() {
+  // This test will verify GET /api/fatsecret/diary/entries?filter=date
+  // Expected: 200 OK with array of FoodEntry objects filtered by date
+  // Response should be an array (not wrapped in object like /day endpoint)
+  should.fail()
+}
