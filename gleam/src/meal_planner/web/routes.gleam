@@ -12,6 +12,7 @@ import meal_planner/web/routes/auth
 import meal_planner/web/routes/fatsecret
 import meal_planner/web/routes/health
 import meal_planner/web/routes/legacy
+import meal_planner/web/routes/nutrition
 import meal_planner/web/routes/tandoor
 import meal_planner/web/routes/types
 import wisp
@@ -26,22 +27,26 @@ pub type Context =
 pub fn route(req: wisp.Request, ctx: Context) -> wisp.Response {
   let segments = wisp.path_segments(req)
 
-  // Try each router in order: health -> auth -> fatsecret -> tandoor -> legacy -> 404
+  // Try each router in order: health -> auth -> nutrition -> fatsecret -> tandoor -> legacy -> 404
   case health.route(req, segments, ctx) {
     Some(resp) -> resp
     None ->
       case auth.route(req, segments, ctx) {
         Some(resp) -> resp
         None ->
-          case fatsecret.route(req, segments, ctx) {
+          case nutrition.route(req, segments, ctx) {
             Some(resp) -> resp
             None ->
-              case tandoor.route(req, segments, ctx) {
+              case fatsecret.route(req, segments, ctx) {
                 Some(resp) -> resp
                 None ->
-                  case legacy.route(req, segments, ctx) {
+                  case tandoor.route(req, segments, ctx) {
                     Some(resp) -> resp
-                    None -> wisp.not_found()
+                    None ->
+                      case legacy.route(req, segments, ctx) {
+                        Some(resp) -> resp
+                        None -> wisp.not_found()
+                      }
                   }
               }
           }
