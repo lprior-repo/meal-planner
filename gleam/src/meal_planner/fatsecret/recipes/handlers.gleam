@@ -2,9 +2,9 @@
 /// Endpoints for browsing and searching recipes
 import gleam/http
 import gleam/json
+import meal_planner/fatsecret/handlers_helpers as helpers
 import meal_planner/fatsecret/recipes/service
 import meal_planner/fatsecret/recipes/types
-import meal_planner/fatsecret/handlers_helpers as helpers
 import wisp
 
 /// GET /api/fatsecret/recipes/:id
@@ -128,7 +128,10 @@ pub fn handle_search_recipes_by_type(
 
 fn encode_search_response(response: types.RecipeSearchResponse) -> json.Json {
   json.object([
-    #("recipes", json.array(response.recipes, helpers.encode_recipe_search_result)),
+    #(
+      "recipes",
+      json.array(response.recipes, helpers.encode_recipe_search_result),
+    ),
     #("max_results", json.int(response.max_results)),
     #("total_results", json.int(response.total_results)),
     #("page_number", json.int(response.page_number)),
@@ -139,6 +142,9 @@ fn encode_recipe_types_response(
   response: types.RecipeTypesResponse,
 ) -> json.Json {
   json.object([
-    #("recipe_types", json.array(response.recipe_types, helpers.encode_recipe_type)),
+    #(
+      "recipe_types",
+      json.array(response.recipe_types, helpers.encode_recipe_type),
+    ),
   ])
 }

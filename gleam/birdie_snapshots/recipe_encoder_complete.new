@@ -1,0 +1,5 @@
+---
+version: 1.5.2
+title: recipe_encoder_complete
+---
+{"name":"Complex Recipe","description":"A delicious recipe","servings":4,"servings_text":"4 servings","working_time":30,"waiting_time":60,"steps":[{"instruction":"","ingredients":[]}]}

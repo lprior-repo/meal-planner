@@ -1,0 +1,5 @@
+---
+version: 1.5.2
+title: recipe_encoder_consistency
+---
+{"name":"Test Recipe","description":null,"servings":3,"servings_text":null,"working_time":0,"waiting_time":0,"steps":[{"instruction":"","ingredients":[]}]}

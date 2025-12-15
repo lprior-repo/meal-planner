@@ -456,7 +456,10 @@ pub fn encode_recipe_suggestion(
   suggestion: recipe_types.RecipeSuggestion,
 ) -> json.Json {
   json.object([
-    #("recipe_id", json.string(recipe_types.recipe_id_to_string(suggestion.recipe_id))),
+    #(
+      "recipe_id",
+      json.string(recipe_types.recipe_id_to_string(suggestion.recipe_id)),
+    ),
     #("recipe_name", json.string(suggestion.recipe_name)),
   ])
 }

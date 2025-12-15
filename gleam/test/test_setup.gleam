@@ -4,8 +4,8 @@
 import envoy
 import gleam/io
 import gleam/string
-import meal_planner/tandoor/client
 import meal_planner/infrastructure_setup
+import meal_planner/tandoor/client
 
 /// Setup result type
 pub type SetupResult {
@@ -58,7 +58,8 @@ pub fn initialize_tests() -> SetupResult {
           io.println(
             "Integration tests will attempt to run if services are available\n",
           )
-          SetupSuccess  // Continue anyway - tests will fail gracefully if needed
+          SetupSuccess
+          // Continue anyway - tests will fail gracefully if needed
         }
       }
     }
