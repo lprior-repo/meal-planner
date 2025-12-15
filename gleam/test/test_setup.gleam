@@ -81,17 +81,17 @@ pub fn initialize_tests() -> SetupResult {
 pub fn get_test_config() -> Result(client.ClientConfig, String) {
   case envoy.get("TANDOOR_TEST_URL") {
     Ok(base_url) -> {
-      case envoy.get("TANDOOR_TEST_USERNAME") {
+      case envoy.get("TANDOOR_TEST_USER") {
         Ok(username) -> {
-          case envoy.get("TANDOOR_TEST_PASSWORD") {
+          case envoy.get("TANDOOR_TEST_PASS") {
             Ok(password) -> {
               let config = client.session_config(base_url, username, password)
               Ok(config)
             }
-            Error(_) -> Error("TANDOOR_TEST_PASSWORD not set")
+            Error(_) -> Error("TANDOOR_TEST_PASS not set")
           }
         }
-        Error(_) -> Error("TANDOOR_TEST_USERNAME not set")
+        Error(_) -> Error("TANDOOR_TEST_USER not set")
       }
     }
     Error(_) -> Error("TANDOOR_TEST_URL not set")
