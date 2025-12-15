@@ -58,24 +58,7 @@ pub fn handle_list_cuisines(req: wisp.Request) -> wisp.Response {
     Ok(config) -> {
       case cuisine_list.list_cuisines_by_parent(config, parent_filter) {
         Ok(cuisines) -> {
-          json.array(cuisines, fn(cuisine) {
-            json.object([
-              #("id", json.int(cuisine.id)),
-              #("name", json.string(cuisine.name)),
-              #(
-                "description",
-                helpers.encode_optional_string(cuisine.description),
-              ),
-              #("icon", helpers.encode_optional_string(cuisine.icon)),
-              #("parent", case cuisine.parent {
-                option.Some(parent_id) -> json.int(parent_id)
-                option.None -> json.null()
-              }),
-              #("num_recipes", json.int(cuisine.num_recipes)),
-              #("created_at", json.string(cuisine.created_at)),
-              #("updated_at", json.string(cuisine.updated_at)),
-            ])
-          })
+          json.array(cuisines, encode_cuisine)
           |> json.to_string
           |> wisp.json_response(200)
         }
@@ -97,22 +80,7 @@ pub fn handle_get_cuisine(
         Ok(config) -> {
           case cuisine_get.get_cuisine(config, cuisine_id: id) {
             Ok(cuisine) -> {
-              json.object([
-                #("id", json.int(cuisine.id)),
-                #("name", json.string(cuisine.name)),
-                #(
-                  "description",
-                  helpers.encode_optional_string(cuisine.description),
-                ),
-                #("icon", helpers.encode_optional_string(cuisine.icon)),
-                #("parent", case cuisine.parent {
-                  option.Some(parent_id) -> json.int(parent_id)
-                  option.None -> json.null()
-                }),
-                #("num_recipes", json.int(cuisine.num_recipes)),
-                #("created_at", json.string(cuisine.created_at)),
-                #("updated_at", json.string(cuisine.updated_at)),
-              ])
+              encode_cuisine(cuisine)
               |> json.to_string
               |> wisp.json_response(200)
             }
@@ -136,22 +104,7 @@ pub fn handle_create_cuisine(req: wisp.Request) -> wisp.Response {
         Ok(config) -> {
           case cuisine_create.create_cuisine(config, cuisine_request) {
             Ok(cuisine) -> {
-              json.object([
-                #("id", json.int(cuisine.id)),
-                #("name", json.string(cuisine.name)),
-                #(
-                  "description",
-                  helpers.encode_optional_string(cuisine.description),
-                ),
-                #("icon", helpers.encode_optional_string(cuisine.icon)),
-                #("parent", case cuisine.parent {
-                  option.Some(parent_id) -> json.int(parent_id)
-                  option.None -> json.null()
-                }),
-                #("num_recipes", json.int(cuisine.num_recipes)),
-                #("created_at", json.string(cuisine.created_at)),
-                #("updated_at", json.string(cuisine.updated_at)),
-              ])
+              encode_cuisine(cuisine)
               |> json.to_string
               |> wisp.json_response(201)
             }
@@ -186,22 +139,7 @@ pub fn handle_update_cuisine(
                 )
               {
                 Ok(cuisine) -> {
-                  json.object([
-                    #("id", json.int(cuisine.id)),
-                    #("name", json.string(cuisine.name)),
-                    #(
-                      "description",
-                      helpers.encode_optional_string(cuisine.description),
-                    ),
-                    #("icon", helpers.encode_optional_string(cuisine.icon)),
-                    #("parent", case cuisine.parent {
-                      option.Some(parent_id) -> json.int(parent_id)
-                      option.None -> json.null()
-                    }),
-                    #("num_recipes", json.int(cuisine.num_recipes)),
-                    #("created_at", json.string(cuisine.created_at)),
-                    #("updated_at", json.string(cuisine.updated_at)),
-                  ])
+                  encode_cuisine(cuisine)
                   |> json.to_string
                   |> wisp.json_response(200)
                 }
@@ -238,6 +176,27 @@ pub fn handle_delete_cuisine(
     }
     Error(_) -> helpers.error_response(400, "Invalid cuisine ID")
   }
+}
+
+// =============================================================================
+// JSON Encoders for Cuisine
+// =============================================================================
+
+/// Encode a Cuisine to JSON
+pub fn encode_cuisine(cuisine: cuisine.Cuisine) -> json.Json {
+  json.object([
+    #("id", json.int(cuisine.id)),
+    #("name", json.string(cuisine.name)),
+    #("description", helpers.encode_optional_string(cuisine.description)),
+    #("icon", helpers.encode_optional_string(cuisine.icon)),
+    #("parent", case cuisine.parent {
+      option.Some(parent_id) -> json.int(parent_id)
+      option.None -> json.null()
+    }),
+    #("num_recipes", json.int(cuisine.num_recipes)),
+    #("created_at", json.string(cuisine.created_at)),
+    #("updated_at", json.string(cuisine.updated_at)),
+  ])
 }
 
 // =============================================================================
