@@ -16,6 +16,7 @@ import gleam/json
 import gleam/option
 import gleam/result
 
+import meal_planner/tandoor/api/ingredient/list as ingredient_list
 import meal_planner/tandoor/api/keyword/keyword_api
 import meal_planner/tandoor/api/mealplan/create as mealplan_create_api
 import meal_planner/tandoor/api/mealplan/get as mealplan_get
@@ -60,6 +61,7 @@ import meal_planner/tandoor/types/mealplan/mealplan.{
   type MealPlanCreate, type MealPlanUpdate, MealPlanCreate, MealPlanUpdate,
   meal_type_from_string as mp_meal_type_from_string,
 }
+import meal_planner/tandoor/types/recipe/ingredient.{type Ingredient}
 import meal_planner/tandoor/types/recipe/recipe_update as recipe_update_type
 import meal_planner/tandoor/types/recipe/step.{type Step}
 import meal_planner/tandoor/types/supermarket/supermarket_category_create.{
@@ -168,6 +170,9 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
 
     // Step by ID (GET, PATCH, DELETE)
     ["api", "tandoor", "steps", step_id] -> handle_step_by_id(req, step_id)
+
+    // Ingredients (GET list only)
+    ["api", "tandoor", "ingredients"] -> handle_ingredients_collection(req)
 
     // Supermarkets (GET list, POST create)
     ["api", "tandoor", "supermarkets"] -> handle_supermarkets_collection(req)
@@ -596,6 +601,49 @@ fn handle_delete_step(_req: wisp.Request, id: Int) -> wisp.Response {
     Ok(config) -> {
       case step_delete.delete_step(config, id) {
         Ok(Nil) -> wisp.response(204)
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+// =============================================================================
+// Ingredients Collection Handler
+// =============================================================================
+
+fn handle_ingredients_collection(req: wisp.Request) -> wisp.Response {
+  case req.method {
+    http.Get -> handle_list_ingredients(req)
+    _ -> wisp.method_not_allowed([http.Get])
+  }
+}
+
+fn handle_list_ingredients(_req: wisp.Request) -> wisp.Response {
+  case helpers.get_authenticated_client() {
+    Ok(config) -> {
+      case
+        ingredient_list.list_ingredients(
+          config,
+          limit: option.None,
+          page: option.None,
+        )
+      {
+        Ok(response) -> {
+          let results_json =
+            json.array(response.results, fn(ingredient) {
+              encode_ingredient_detail(ingredient)
+            })
+
+          json.object([
+            #("count", json.int(response.count)),
+            #("next", helpers.encode_optional_string(response.next)),
+            #("previous", helpers.encode_optional_string(response.previous)),
+            #("results", results_json),
+          ])
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
         Error(_) -> wisp.not_found()
       }
     }
@@ -1086,6 +1134,45 @@ fn encode_meal_plan_entry(entry: MealPlanEntry) -> json.Json {
     #("meal_type_id", json.int(entry.meal_type_id)),
     #("meal_type_name", json.string(entry.meal_type_name)),
     #("shopping", json.bool(entry.shopping)),
+  ])
+}
+
+// =============================================================================
+// Ingredient JSON Encoding
+// =============================================================================
+
+fn encode_ingredient_detail(ingredient: Ingredient) -> json.Json {
+  let food_json = case ingredient.food {
+    option.Some(food) ->
+      json.object([
+        #("id", json.int(food.id)),
+        #("name", json.string(food.name)),
+        #("plural_name", helpers.encode_optional_string(food.plural_name)),
+        #("description", json.string(food.description)),
+      ])
+    option.None -> json.null()
+  }
+
+  let unit_json = case ingredient.unit {
+    option.Some(unit) ->
+      json.object([
+        #("id", json.int(unit.id)),
+        #("name", json.string(unit.name)),
+        #("plural_name", helpers.encode_optional_string(unit.plural_name)),
+      ])
+    option.None -> json.null()
+  }
+
+  json.object([
+    #("id", json.int(ingredient.id)),
+    #("food", food_json),
+    #("unit", unit_json),
+    #("amount", json.float(ingredient.amount)),
+    #("note", helpers.encode_optional_string(ingredient.note)),
+    #("order", json.int(ingredient.order)),
+    #("is_header", json.bool(ingredient.is_header)),
+    #("no_amount", json.bool(ingredient.no_amount)),
+    #("original_text", helpers.encode_optional_string(ingredient.original_text)),
   ])
 }
 
