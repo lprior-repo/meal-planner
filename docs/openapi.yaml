@@ -2258,6 +2258,127 @@ paths:
               schema:
                 $ref: '#/components/schemas/TandoorPaginatedLogs'
 
+  /api/tandoor/user-preferences:
+    get:
+      tags: [Tandoor]
+      summary: Get current user preferences
+      description: Get preferences for the authenticated user
+      operationId: getTandoorUserPreferences
+      security:
+        - tandoorBasicAuth: []
+      responses:
+        '200':
+          description: Current user preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorUserPreference'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    patch:
+      tags: [Tandoor]
+      summary: Update current user preferences
+      description: Update preferences for the authenticated user
+      operationId: updateTandoorUserPreferences
+      security:
+        - tandoorBasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TandoorUserPreferenceUpdate'
+            example:
+              user_id: 1
+              theme: FLATLY
+              use_fractions: true
+              default_unit: g
+      responses:
+        '200':
+          description: Updated user preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorUserPreference'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/tandoor/user-preferences/{user_id}:
+    get:
+      tags: [Tandoor]
+      summary: Get user preferences by ID
+      description: Get preferences for a specific user
+      operationId: getTandoorUserPreferencesById
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor user ID
+      responses:
+        '200':
+          description: User preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorUserPreference'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    patch:
+      tags: [Tandoor]
+      summary: Update user preferences by ID
+      description: Update preferences for a specific user
+      operationId: updateTandoorUserPreferencesById
+      security:
+        - tandoorBasicAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Tandoor user ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TandoorUserPreferenceUpdate'
+            example:
+              theme: FLATLY
+              use_fractions: true
+              default_unit: ml
+      responses:
+        '200':
+          description: Updated user preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TandoorUserPreference'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
   # =============================================================================
   # CUSTOM APIs - Recipe Scoring & Macro Calculations
   # =============================================================================
@@ -3303,6 +3424,180 @@ components:
               created_at:
                 type: string
                 format: date-time
+
+    TandoorUserPreference:
+      type: object
+      description: User preferences in Tandoor including UI theme, units, and meal planning settings
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+            username:
+              type: string
+            email:
+              type: string
+        image:
+          type: string
+          nullable: true
+          description: Profile image file path
+        theme:
+          type: string
+          example: FLATLY
+        nav_bg_color:
+          type: string
+          example: '#333333'
+        nav_text_color:
+          type: string
+          enum: [LIGHT, DARK]
+        nav_show_logo:
+          type: boolean
+        default_unit:
+          type: string
+          example: g
+        default_page:
+          type: string
+          example: SEARCH
+        use_fractions:
+          type: boolean
+          description: Whether to use fractions for measurements (e.g., 1/2 cup)
+        use_kj:
+          type: boolean
+          description: Whether to use kilojoules instead of calories
+        plan_share:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              username:
+                type: string
+              email:
+                type: string
+          description: Users to share meal plans with
+        nav_sticky:
+          type: boolean
+          description: Whether navigation bar sticks to top when scrolling
+        ingredient_decimals:
+          type: integer
+          description: Number of decimal places for ingredient amounts
+        comments:
+          type: boolean
+        shopping_auto_sync:
+          type: integer
+          description: Auto-sync interval for shopping list in seconds
+        mealplan_autoadd_shopping:
+          type: boolean
+          description: Whether to automatically add meal plan items to shopping list
+        food_inherit_default:
+          type: string
+          description: Default food inheritance behavior (read-only)
+        default_delay:
+          type: number
+          format: float
+          description: Default delay for recipe steps in minutes
+        mealplan_autoinclude_related:
+          type: boolean
+        mealplan_autoexclude_onhand:
+          type: boolean
+        shopping_share:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              username:
+                type: string
+              email:
+                type: string
+        shopping_recent_days:
+          type: integer
+          description: How many days of recent shopping history to show
+        csv_delim:
+          type: string
+          example: ','
+        csv_prefix:
+          type: string
+        filter_to_supermarket:
+          type: boolean
+        shopping_add_onhand:
+          type: boolean
+        left_handed:
+          type: boolean
+          description: Whether UI is optimized for left-handed use
+        show_step_ingredients:
+          type: boolean
+        food_children_exist:
+          type: boolean
+          description: Whether any foods have children (read-only)
+
+    TandoorUserPreferenceUpdate:
+      type: object
+      description: Partial update request for user preferences - only include fields to update
+      properties:
+        user_id:
+          type: integer
+          description: User ID (only required for /api/tandoor/user-preferences endpoint)
+        theme:
+          type: string
+        nav_bg_color:
+          type: string
+        nav_text_color:
+          type: string
+        nav_show_logo:
+          type: boolean
+        default_unit:
+          type: string
+        default_page:
+          type: string
+        use_fractions:
+          type: boolean
+        use_kj:
+          type: boolean
+        plan_share:
+          type: array
+          items:
+            type: integer
+        nav_sticky:
+          type: boolean
+        ingredient_decimals:
+          type: integer
+        comments:
+          type: boolean
+        shopping_auto_sync:
+          type: integer
+        mealplan_autoadd_shopping:
+          type: boolean
+        default_delay:
+          type: number
+          format: float
+        mealplan_autoinclude_related:
+          type: boolean
+        mealplan_autoexclude_onhand:
+          type: boolean
+        shopping_share:
+          type: array
+          items:
+            type: integer
+        shopping_recent_days:
+          type: integer
+        csv_delim:
+          type: string
+        csv_prefix:
+          type: string
+        filter_to_supermarket:
+          type: boolean
+        shopping_add_onhand:
+          type: boolean
+        left_handed:
+          type: boolean
+        show_step_ingredients:
+          type: boolean
 
     # =========================================================================
     # CUSTOM APIS - SCORING & MACROS
