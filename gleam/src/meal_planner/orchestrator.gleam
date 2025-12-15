@@ -8,9 +8,13 @@
 import gleam/int
 import gleam/list
 import gleam/result
+import meal_planner/fatsecret/core/config.{type FatSecretConfig}
+import meal_planner/fatsecret/core/oauth.{type AccessToken}
 import meal_planner/grocery_list.{type GroceryList}
 import meal_planner/meal_prep_ai.{type MealPrepPlan}
-import meal_planner/meal_sync.{type MealNutrition, type MealSelection}
+import meal_planner/meal_sync.{
+  type MealNutrition, type MealSelection, type MealSyncResult, sync_meals,
+}
 import meal_planner/tandoor/client.{type ClientConfig}
 
 // ============================================================================
@@ -24,6 +28,14 @@ pub type MealPlanningResult {
     grocery_list: GroceryList,
     meal_prep_plan: MealPrepPlan,
     nutrition_data: List(MealNutrition),
+  )
+}
+
+/// Complete meal planning with FatSecret sync result
+pub type MealPlanningWithSyncResult {
+  MealPlanningWithSyncResult(
+    plan: MealPlanningResult,
+    sync_results: List(MealSyncResult),
   )
 }
 
@@ -80,6 +92,31 @@ pub fn plan_meals(
       ))
     }
   }
+}
+
+/// Execute the complete meal planning workflow with FatSecret sync
+///
+/// This orchestrates the full workflow:
+/// 1. Plan meals (recipes, grocery list, nutrition)
+/// 2. Sync meals to FatSecret diary
+/// 3. Return both planning and sync results
+pub fn plan_and_sync_meals(
+  tandoor_config: ClientConfig,
+  fatsecret_config: FatSecretConfig,
+  fatsecret_token: AccessToken,
+  meal_selections: List(MealSelection),
+) -> Result(MealPlanningWithSyncResult, String) {
+  use plan <- result.try(plan_meals(tandoor_config, meal_selections))
+
+  let sync_results =
+    sync_meals(
+      tandoor_config,
+      fatsecret_config,
+      fatsecret_token,
+      meal_selections,
+    )
+
+  Ok(MealPlanningWithSyncResult(plan:, sync_results:))
 }
 
 // ============================================================================
