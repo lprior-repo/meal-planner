@@ -1647,16 +1647,6 @@ pub type CreateMealPlanRequest {
 ///
 /// # Returns
 /// Result with paginated meal plan list or error
-/// Get meal plan entries from Tandoor API
-///
-/// # Arguments
-/// * `config` - Client configuration with API token
-/// * `from_date` - Optional start date filter (YYYY-MM-DD)
-/// * `to_date` - Optional end date filter (YYYY-MM-DD)
-///
-/// # Returns
-/// Result with paginated meal plan list or error
-// FIXME(meal-planner-242): Incomplete MealPlan API implementation
 
 pub fn get_meal_plan(
   config: ClientConfig,
@@ -1724,7 +1714,6 @@ pub fn get_meal_plan(
 ///
 /// # Returns
 /// Result with created meal plan entry or error
-// FIXME(meal-planner-242): Incomplete MealPlan API implementation
 
 pub fn create_meal_plan_entry(
   config: ClientConfig,
@@ -1806,7 +1795,6 @@ pub fn delete_meal_plan_entry(
 ///
 /// # Returns
 /// Result with meal plan entries for today or error
-// FIXME(meal-planner-242): Incomplete MealPlan API implementation
 
 pub fn get_todays_meals(
   config: ClientConfig,
