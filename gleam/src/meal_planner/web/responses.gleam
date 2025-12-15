@@ -39,7 +39,6 @@ pub fn json_created(body: json.Json) -> wisp.Response {
 /// Create a 204 No Content response (empty body)
 pub fn no_content() -> wisp.Response {
   wisp.response(204)
-  |> wisp.set_body(wisp.Empty)
 }
 
 // ============================================================================
