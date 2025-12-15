@@ -3,7 +3,7 @@
 ///
 /// Reference: https://platform.fatsecret.com/docs/v2/food_entries.get
 ///
-/// Run with: cd gleam && gleam test -- --module fatsecret/diary/decoders_test
+/// Run with: cd gleam && gleam test
 import gleam/dynamic/decode
 import gleam/json
 import gleam/list

@@ -15,6 +15,7 @@ import meal_planner/tandoor/client.{
   Ingredient, Keyword, NutritionInfo, RecipeDetail, Step, SupermarketCategory,
   Unit,
 }
+import meal_planner/tandoor/decoders/decoder_combinators
 
 // ============================================================================
 // Component Decoders
@@ -278,17 +279,9 @@ fn recipe_detail_decoder_internal() -> decode.Decoder(RecipeDetail) {
 /// }
 /// ```
 pub fn decoder(json_value: dynamic.Dynamic) -> Result(RecipeDetail, String) {
-  decode.run(json_value, recipe_detail_decoder_internal())
-  |> result.map_error(fn(errors) {
-    "Failed to decode recipe detail: "
-    <> string.join(
-      list.map(errors, fn(e) {
-        case e {
-          decode.DecodeError(expected, _found, path) ->
-            expected <> " at " <> string.join(path, ".")
-        }
-      }),
-      ", ",
-    )
-  })
+  decoder_combinators.run_decoder(
+    json_value,
+    recipe_detail_decoder_internal(),
+    "Failed to decode recipe detail",
+  )
 }
