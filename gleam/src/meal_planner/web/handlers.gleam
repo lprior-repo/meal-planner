@@ -185,38 +185,14 @@ pub fn handle_fatsecret_get_food(
 // Tandoor Recipe Manager Handlers
 // ============================================================================
 
-/// Tandoor status - GET /tandoor/status
-pub fn handle_tandoor_status(req: wisp.Request) -> wisp.Response {
-  tandoor.handle_status(req)
-}
-
-/// Tandoor list recipes - GET /api/tandoor/recipes
-pub fn handle_tandoor_list_recipes(req: wisp.Request) -> wisp.Response {
-  tandoor.handle_list_recipes(req)
-}
-
-/// Tandoor get recipe - GET /api/tandoor/recipes/:id
-pub fn handle_tandoor_get_recipe(
-  req: wisp.Request,
-  recipe_id: String,
-) -> wisp.Response {
-  tandoor.handle_get_recipe(req, recipe_id)
-}
-
-/// Tandoor get meal plan - GET /api/tandoor/meal-plan
-pub fn handle_tandoor_get_meal_plan(req: wisp.Request) -> wisp.Response {
-  tandoor.handle_get_meal_plan(req)
-}
-
-/// Tandoor create meal plan - POST /api/tandoor/meal-plan
-pub fn handle_tandoor_create_meal_plan(req: wisp.Request) -> wisp.Response {
-  tandoor.handle_create_meal_plan(req)
-}
-
-/// Tandoor delete meal plan - DELETE /api/tandoor/meal-plan/:id
-pub fn handle_tandoor_delete_meal_plan(
-  req: wisp.Request,
-  entry_id: String,
-) -> wisp.Response {
-  tandoor.handle_delete_meal_plan(req, entry_id)
+/// Main Tandoor router - routes all Tandoor API requests
+/// Handles all endpoints:
+/// - GET /tandoor/status
+/// - GET/POST/PATCH/DELETE /api/tandoor/recipes/*
+/// - GET/POST/PATCH/DELETE /api/tandoor/ingredients/*
+/// - GET/POST/PATCH/DELETE /api/tandoor/meal-plans/*
+/// - GET /api/tandoor/keywords/*
+/// - GET /api/tandoor/units
+pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
+  tandoor.handle_tandoor_routes(req)
 }

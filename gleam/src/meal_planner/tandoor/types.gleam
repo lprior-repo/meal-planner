@@ -161,6 +161,44 @@ pub type TandoorStepCreateRequest {
 }
 
 // ============================================================================
+// Handler Request Types (simplified for API handlers)
+// ============================================================================
+
+/// Request to create a new recipe
+pub type TandoorRecipeCreate {
+  TandoorRecipeCreate(
+    name: String,
+    description: String,
+    servings: Int,
+    servings_text: String,
+    working_time: Int,
+    waiting_time: Int,
+  )
+}
+
+/// Request to update an existing recipe
+pub type TandoorRecipeUpdate {
+  TandoorRecipeUpdate(
+    name: Option(String),
+    description: Option(String),
+    servings: Option(Int),
+    servings_text: Option(String),
+    working_time: Option(Int),
+    waiting_time: Option(Int),
+  )
+}
+
+/// Request to create a new ingredient
+pub type TandoorIngredientCreate {
+  TandoorIngredientCreate(name: String, unit: Int)
+}
+
+/// Request to update an ingredient
+pub type TandoorIngredientUpdate {
+  TandoorIngredientUpdate(name: Option(String), unit: Option(Int))
+}
+
+// ============================================================================
 // Error Types
 // ============================================================================
 
