@@ -6,7 +6,6 @@
 /// - Starting services if not already running
 /// - Waiting for services to be healthy
 /// - Setting up environment variables for tests
-
 import gleam/int
 import gleam/io
 import gleam/option.{None, Some}
@@ -159,9 +158,7 @@ pub fn initialize_if_needed(config: InfrastructureConfig) -> Result(Nil, String)
 /// Configure test environment variables
 /// This ensures tests can connect to Tandoor
 fn configure_test_environment(config: InfrastructureConfig) -> Nil {
-  io.println(
-    "📝 Tandoor available at: " <> config.tandoor_url,
-  )
+  io.println("📝 Tandoor available at: " <> config.tandoor_url)
   io.println("📝 Use TANDOOR_URL env var or default: admin/admin credentials")
 
   // Note: The actual environment variables are set by the setup script.

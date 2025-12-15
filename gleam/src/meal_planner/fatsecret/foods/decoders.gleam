@@ -397,3 +397,28 @@ pub fn decode_food_autocomplete_response(
 ) -> Result(types.FoodAutocompleteResponse, List(decode.DecodeError)) {
   decode.run(json, food_autocomplete_response_decoder())
 }
+
+// ============================================================================
+// Barcode Lookup Decoder
+// ============================================================================
+
+/// Decoder for food.find_id_for_barcode.v2 response
+///
+/// The API returns:
+/// ```json
+/// {"food_id": {"value": "12345"}}
+/// ```
+pub fn barcode_lookup_decoder() -> decode.Decoder(types.FoodId) {
+  use food_id_obj <- decode.field("food_id", {
+    use food_id_str <- decode.field("value", decode.string)
+    decode.success(types.food_id(food_id_str))
+  })
+  decode.success(food_id_obj)
+}
+
+/// Decode barcode lookup response from food.find_id_for_barcode.v2 API
+pub fn decode_barcode_lookup(
+  json: dynamic.Dynamic,
+) -> Result(types.FoodId, List(decode.DecodeError)) {
+  decode.run(json, barcode_lookup_decoder())
+}

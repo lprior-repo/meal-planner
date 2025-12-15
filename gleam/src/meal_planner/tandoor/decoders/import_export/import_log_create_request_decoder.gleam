@@ -18,7 +18,15 @@ pub fn import_log_create_request_decoder() -> decode.Decoder(
   #(String, option.Option(String), option.Option(Int)),
 ) {
   use import_type <- decode.field("import_type", decode.string)
-  use msg <- decode.optional_field("msg", option.None, decode.optional(decode.string))
-  use keyword <- decode.optional_field("keyword", option.None, decode.optional(decode.int))
+  use msg <- decode.optional_field(
+    "msg",
+    option.None,
+    decode.optional(decode.string),
+  )
+  use keyword <- decode.optional_field(
+    "keyword",
+    option.None,
+    decode.optional(decode.int),
+  )
   decode.success(#(import_type, msg, keyword))
 }

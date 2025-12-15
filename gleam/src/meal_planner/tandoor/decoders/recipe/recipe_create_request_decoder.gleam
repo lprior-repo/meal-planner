@@ -19,7 +19,14 @@ import gleam/option
 /// }
 /// ```
 pub fn create_recipe_request_decoder() -> decode.Decoder(
-  #(String, option.Option(String), Int, option.Option(String), option.Option(Int), option.Option(Int)),
+  #(
+    String,
+    option.Option(String),
+    Int,
+    option.Option(String),
+    option.Option(Int),
+    option.Option(Int),
+  ),
 ) {
   use name <- decode.field("name", decode.string)
   use description <- decode.optional_field(
@@ -43,5 +50,12 @@ pub fn create_recipe_request_decoder() -> decode.Decoder(
     option.None,
     decode.optional(decode.int),
   )
-  decode.success(#(name, description, servings, servings_text, working_time, waiting_time))
+  decode.success(#(
+    name,
+    description,
+    servings,
+    servings_text,
+    working_time,
+    waiting_time,
+  ))
 }

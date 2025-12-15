@@ -21,7 +21,7 @@ import meal_planner/tandoor/api/mealplan/list as mealplan_list
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/integration/test_helpers
 import meal_planner/tandoor/types/mealplan/mealplan.{
-  Breakfast, Dinner, MealPlanCreate, Lunch,
+  Breakfast, Dinner, Lunch, MealPlanCreate,
 }
 
 /// Test: Create meal plan via API

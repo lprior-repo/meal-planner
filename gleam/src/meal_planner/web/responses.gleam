@@ -212,15 +212,12 @@ pub fn paginated_response(
 /// ```
 pub fn validation_error(errors: List(#(String, String))) -> wisp.Response {
   let error_array =
-    json.array(
-      errors,
-      fn(field_error) {
-        json.object([
-          #("field", json.string(field_error.0)),
-          #("message", json.string(field_error.1)),
-        ])
-      },
-    )
+    json.array(errors, fn(field_error) {
+      json.object([
+        #("field", json.string(field_error.0)),
+        #("message", json.string(field_error.1)),
+      ])
+    })
 
   let body =
     json.object([

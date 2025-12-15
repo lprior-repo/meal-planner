@@ -1647,7 +1647,6 @@ pub type CreateMealPlanRequest {
 ///
 /// # Returns
 /// Result with paginated meal plan list or error
-
 pub fn get_meal_plan(
   config: ClientConfig,
   from_date: Option(String),
@@ -1714,7 +1713,6 @@ pub fn get_meal_plan(
 ///
 /// # Returns
 /// Result with created meal plan entry or error
-
 pub fn create_meal_plan_entry(
   config: ClientConfig,
   entry: CreateMealPlanRequest,
@@ -1795,7 +1793,6 @@ pub fn delete_meal_plan_entry(
 ///
 /// # Returns
 /// Result with meal plan entries for today or error
-
 pub fn get_todays_meals(
   config: ClientConfig,
   today: String,

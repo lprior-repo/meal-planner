@@ -182,10 +182,7 @@ pub fn get_weight_by_date(
   ))
 
   // Parse response
-  json.parse(
-    body,
-    decode.at(["weight"], decoders.weight_entry_decoder()),
-  )
+  json.parse(body, decode.at(["weight"], decoders.weight_entry_decoder()))
   |> result.map_error(fn(_) {
     errors.ParseError("Failed to parse weight entry")
   })

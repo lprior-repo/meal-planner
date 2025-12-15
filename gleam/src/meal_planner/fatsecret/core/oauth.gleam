@@ -185,7 +185,7 @@ pub fn build_oauth_params(
   let base_string = create_signature_base_string(method, url, params)
   let signature = create_signature(base_string, consumer_secret, token_secret)
 
-    dict.insert(params, "oauth_signature", signature)
+  dict.insert(params, "oauth_signature", signature)
 }
 
 /// Parse OAuth response string (key=value&key2=value2) into a dictionary
@@ -201,9 +201,7 @@ pub fn parse_oauth_response(response: String) -> Dict(String, String) {
 }
 
 /// Parse request token response from OAuth 1.0a step 1
-pub fn parse_request_token(
-  response: String,
-) -> Result(RequestToken, String) {
+pub fn parse_request_token(response: String) -> Result(RequestToken, String) {
   let params = parse_oauth_response(response)
 
   case dict.get(params, "oauth_token") {
@@ -228,9 +226,7 @@ pub fn parse_request_token(
 }
 
 /// Parse access token response from OAuth 1.0a step 3
-pub fn parse_access_token(
-  response: String,
-) -> Result(AccessToken, String) {
+pub fn parse_access_token(response: String) -> Result(AccessToken, String) {
   let params = parse_oauth_response(response)
 
   case dict.get(params, "oauth_token") {

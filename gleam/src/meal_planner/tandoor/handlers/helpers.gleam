@@ -5,7 +5,6 @@
 /// - Query parameter parsing
 /// - Success/error response builders
 /// - Tandoor entity JSON encoders
-
 import gleam/float
 import gleam/int
 import gleam/json

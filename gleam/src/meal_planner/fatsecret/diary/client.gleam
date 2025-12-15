@@ -25,7 +25,14 @@ pub fn create_food_entry(
   input: FoodEntryInput,
 ) -> Result(FoodEntryId, FatSecretError) {
   let params = case input {
-    diary_types.FromFood(food_id, food_entry_name, serving_id, number_of_units, meal, date_int) -> {
+    diary_types.FromFood(
+      food_id,
+      food_entry_name,
+      serving_id,
+      number_of_units,
+      meal,
+      date_int,
+    ) -> {
       dict.new()
       |> dict.insert("food_id", food_id)
       |> dict.insert("food_entry_name", food_entry_name)
