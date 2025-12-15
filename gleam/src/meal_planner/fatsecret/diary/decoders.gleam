@@ -3,6 +3,8 @@
 /// JSON decoders for food diary types from the FatSecret API.
 /// Follows the gleam/dynamic decode pattern for type-safe parsing.
 import gleam/dynamic/decode
+import gleam/float
+import gleam/int
 import gleam/option.{None}
 import meal_planner/fatsecret/diary/types.{
   type DaySummary, type FoodEntry, type FoodEntryId, type MealType,
@@ -243,43 +245,22 @@ fn single_day_to_list_decoder() -> decode.Decoder(List(DaySummary)) {
 // String Parsing Helpers
 // ============================================================================
 
-/// Parse float from string with error handling
-@external(erlang, "erlang", "binary_to_float")
-fn erlang_binary_to_float(s: String) -> Float
-
-/// Parse int from string
-@external(erlang, "erlang", "binary_to_integer")
-fn erlang_binary_to_integer(s: String) -> Int
-
 /// Parse float from string, handling both "1.5" and "1" formats
 fn parse_float(s: String) -> Result(Float, Nil) {
-  // Try as float first
-  case try_parse_float(s) {
+  // Try parsing as float first using gleam/float
+  case float.parse(s) {
     Ok(f) -> Ok(f)
     Error(_) -> {
-      // If that fails, try parsing as int then convert
-      case parse_int(s) {
-        Ok(i) -> Ok(int_to_float(i))
+      // If that fails, try parsing as int then convert to float
+      case int.parse(s) {
+        Ok(i) -> Ok(int.to_float(i))
         Error(_) -> Error(Nil)
       }
     }
   }
 }
 
-/// Try to parse string as float
-fn try_parse_float(s: String) -> Result(Float, Nil) {
-  case erlang_binary_to_float(s) {
-    f -> Ok(f)
-  }
-}
-
-/// Parse int from string
+/// Parse int from string using gleam/int
 fn parse_int(s: String) -> Result(Int, Nil) {
-  case erlang_binary_to_integer(s) {
-    i -> Ok(i)
-  }
+  int.parse(s)
 }
-
-/// Convert int to float
-@external(erlang, "erlang", "float")
-fn int_to_float(i: Int) -> Float
