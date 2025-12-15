@@ -181,7 +181,8 @@ pub fn get_daily_log(
 
     Ok(pog.Returned(_, entries)) -> {
       let total_macros = macros_utils.calculate_total_macros(entries)
-      let total_micronutrients = micro_utils.calculate_total_micronutrients(entries)
+      let total_micronutrients =
+        micro_utils.calculate_total_micronutrients(entries)
 
       Ok(DailyLog(
         date: date,

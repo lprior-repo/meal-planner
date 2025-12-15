@@ -15,28 +15,17 @@ type ScoringRequest {
 
 /// Individual recipe input for scoring
 type ScoringRecipeInput {
-  ScoringRecipeInput(
-    recipe_id: String,
-    servings: Float,
-  )
+  ScoringRecipeInput(recipe_id: String, servings: Float)
 }
 
 /// Macro targets for the day
 type MacroTargets {
-  MacroTargets(
-    protein: Float,
-    fat: Float,
-    carbs: Float,
-  )
+  MacroTargets(protein: Float, fat: Float, carbs: Float)
 }
 
 /// Weighting for scoring
 type ScoringWeights {
-  ScoringWeights(
-    protein_weight: Float,
-    fat_weight: Float,
-    carbs_weight: Float,
-  )
+  ScoringWeights(protein_weight: Float, fat_weight: Float, carbs_weight: Float)
 }
 
 /// Recipe scoring endpoint
@@ -65,10 +54,7 @@ pub fn handle_score(req: wisp.Request) -> wisp.Response {
         json.object([
           #("status", json.string("error")),
           #("error", json.string("Recipe scoring not yet fully implemented")),
-          #(
-            "message",
-            json.string("Scoring algorithm needs to be implemented"),
-          ),
+          #("message", json.string("Scoring algorithm needs to be implemented")),
         ])
         |> json.to_string
       wisp.json_response(response, 501)
@@ -95,7 +81,11 @@ fn scoring_request_decoder() -> decode.Decoder(ScoringRequest) {
   use recipes <- decode.field("recipes", decode.list(scoring_recipe_decoder()))
   use targets <- decode.field("targets", macro_targets_decoder())
   use weights <- decode.field("weights", scoring_weights_decoder())
-  decode.success(ScoringRequest(recipes: recipes, targets: targets, weights: weights))
+  decode.success(ScoringRequest(
+    recipes: recipes,
+    targets: targets,
+    weights: weights,
+  ))
 }
 
 fn scoring_recipe_decoder() -> decode.Decoder(ScoringRecipeInput) {
@@ -112,8 +102,16 @@ fn macro_targets_decoder() -> decode.Decoder(MacroTargets) {
 }
 
 fn scoring_weights_decoder() -> decode.Decoder(ScoringWeights) {
-  use protein_weight <- decode.optional_field("protein_weight", 1.0, decode.float)
+  use protein_weight <- decode.optional_field(
+    "protein_weight",
+    1.0,
+    decode.float,
+  )
   use fat_weight <- decode.optional_field("fat_weight", 1.0, decode.float)
   use carbs_weight <- decode.optional_field("carbs_weight", 1.0, decode.float)
-  decode.success(ScoringWeights(protein_weight: protein_weight, fat_weight: fat_weight, carbs_weight: carbs_weight))
+  decode.success(ScoringWeights(
+    protein_weight: protein_weight,
+    fat_weight: fat_weight,
+    carbs_weight: carbs_weight,
+  ))
 }

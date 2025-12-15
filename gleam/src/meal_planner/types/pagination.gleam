@@ -1,7 +1,6 @@
 /// Pagination types and operations
 ///
 /// Cursor-based pagination support for large result sets.
-
 /// Pagination cursor - opaque string representing position in result set
 pub type Cursor =
   String

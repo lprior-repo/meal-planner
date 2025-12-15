@@ -1,7 +1,6 @@
 /// Food source tracking
 ///
 /// Type-safe food source identification preventing mismatched source_type and source_id.
-
 import meal_planner/id.{
   type CustomFoodId, type FdcId, type RecipeId, type UserId,
 }

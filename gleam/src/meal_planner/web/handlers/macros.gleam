@@ -10,27 +10,17 @@ import wisp
 
 /// Macro calculation request
 type MacrosRequest {
-  MacrosRequest(
-    recipes: List(MacrosRecipeInput),
-  )
+  MacrosRequest(recipes: List(MacrosRecipeInput))
 }
 
 /// Individual recipe for macro calculation
 type MacrosRecipeInput {
-  MacrosRecipeInput(
-    recipe_id: String,
-    servings: Float,
-    macros: MacrosData,
-  )
+  MacrosRecipeInput(recipe_id: String, servings: Float, macros: MacrosData)
 }
 
 /// Macro data for a recipe
 type MacrosData {
-  MacrosData(
-    protein: Float,
-    fat: Float,
-    carbs: Float,
-  )
+  MacrosData(protein: Float, fat: Float, carbs: Float)
 }
 
 /// Macro calculation endpoint
@@ -78,10 +68,7 @@ fn parse_macros_request(body: String) -> Result(MacrosRequest, String) {
   let decoder = macros_request_decoder()
   case json.parse(body, decoder) {
     Ok(request) -> Ok(request)
-    Error(_) ->
-      Error(
-        "Invalid request: expected JSON with recipes array",
-      )
+    Error(_) -> Error("Invalid request: expected JSON with recipes array")
   }
 }
 
@@ -94,7 +81,11 @@ fn macros_recipe_decoder() -> decode.Decoder(MacrosRecipeInput) {
   use recipe_id <- decode.field("recipe_id", decode.string)
   use servings <- decode.field("servings", decode.float)
   use macros_data <- decode.field("macros", macros_data_decoder())
-  decode.success(MacrosRecipeInput(recipe_id: recipe_id, servings: servings, macros: macros_data))
+  decode.success(MacrosRecipeInput(
+    recipe_id: recipe_id,
+    servings: servings,
+    macros: macros_data,
+  ))
 }
 
 fn macros_data_decoder() -> decode.Decoder(MacrosData) {
@@ -130,10 +121,17 @@ fn aggregate_macros(recipes: List(MacrosRecipeInput)) -> AggregatedMacros {
     )
   }
 
-  let result = list.fold(recipes, AggregatedMacros(0.0, 0.0, 0.0, 0.0), aggregate)
+  let result =
+    list.fold(recipes, AggregatedMacros(0.0, 0.0, 0.0, 0.0), aggregate)
 
   // Calculate calories: 4 cal/g protein, 9 cal/g fat, 4 cal/g carbs
-  let calories = result.total_protein *. 4.0 +. result.total_fat *. 9.0 +. result.total_carbs *. 4.0
+  let calories =
+    result.total_protein
+    *. 4.0
+    +. result.total_fat
+    *. 9.0
+    +. result.total_carbs
+    *. 4.0
   AggregatedMacros(
     total_protein: result.total_protein,
     total_fat: result.total_fat,

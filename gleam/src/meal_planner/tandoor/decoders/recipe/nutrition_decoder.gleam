@@ -54,8 +54,14 @@ pub fn nutrition_info_decoder() -> decode.Decoder(NutritionInfo) {
     decode.optional(decode_flexible_float()),
   )
   use fats <- decode.field("fats", decode.optional(decode_flexible_float()))
-  use proteins <- decode.field("proteins", decode.optional(decode_flexible_float()))
-  use calories <- decode.field("calories", decode.optional(decode_flexible_float()))
+  use proteins <- decode.field(
+    "proteins",
+    decode.optional(decode_flexible_float()),
+  )
+  use calories <- decode.field(
+    "calories",
+    decode.optional(decode_flexible_float()),
+  )
   use source <- decode.field("source", decode.optional(decode.string))
 
   decode.success(NutritionInfo(

@@ -58,20 +58,21 @@ pub fn get_food(
 // Food Search API (foods.search)
 // ============================================================================
 
-/// Search for foods using the foods.search endpoint
+/// Search for foods with optional pagination parameters
 ///
 /// This is a 2-legged OAuth request (no user token required).
 /// Returns paginated search results with basic food information.
+/// This is the core implementation that other search functions call.
 ///
 /// ## Parameters
 /// - query: Search term (e.g., "apple", "chicken breast")
-/// - page: Page number (0-indexed), None for first page
+/// - page: Page number (0-indexed), None for first page (0)
 /// - max_results: Results per page (1-50), None for default (20)
 ///
 /// ## Example
 /// ```gleam
 /// let config = env.load_fatsecret_config() |> option.unwrap(default_config)
-/// case search_foods(config, "banana", Some(0), Some(20)) {
+/// case list_foods_with_options(config, "banana", Some(0), Some(20)) {
 ///   Ok(response) -> {
 ///     io.println("Found " <> int.to_string(response.total_results) <> " results")
 ///     list.each(response.foods, fn(food) {
@@ -81,7 +82,7 @@ pub fn get_food(
 ///   Error(e) -> io.println("Error: " <> error_to_string(e))
 /// }
 /// ```
-pub fn search_foods(
+pub fn list_foods_with_options(
   config: FatSecretConfig,
   query: String,
   page: Option(Int),
@@ -115,7 +116,51 @@ pub fn search_foods(
   }
 }
 
+/// Search for foods using the foods.search endpoint
+///
+/// This is a convenience wrapper around `list_foods_with_options` that takes
+/// concrete Int values instead of Option(Int). Use this when you have specific
+/// page and max_results values.
+///
+/// This is a 2-legged OAuth request (no user token required).
+/// Returns paginated search results with basic food information.
+///
+/// ## Parameters
+/// - query: Search term (e.g., "apple", "chicken breast")
+/// - page: Page number (0-indexed)
+/// - max_results: Results per page (1-50)
+///
+/// ## Example
+/// ```gleam
+/// let config = env.load_fatsecret_config() |> option.unwrap(default_config)
+/// case search_foods(config, "banana", 0, 20) {
+///   Ok(response) -> {
+///     io.println("Found " <> int.to_string(response.total_results) <> " results")
+///     list.each(response.foods, fn(food) {
+///       io.println("- " <> food.food_name)
+///     })
+///   }
+///   Error(e) -> io.println("Error: " <> error_to_string(e))
+/// }
+/// ```
+pub fn search_foods(
+  config: FatSecretConfig,
+  query: String,
+  page: Int,
+  max_results: Int,
+) -> Result(FoodSearchResponse, FatSecretError) {
+  list_foods_with_options(
+    config,
+    query,
+    option.Some(page),
+    option.Some(max_results),
+  )
+}
+
 /// Simplified search with defaults (page 0, max 20 results)
+///
+/// This is a convenience wrapper that uses default pagination values.
+/// Use this for simple searches where you don't need pagination control.
 ///
 /// ## Example
 /// ```gleam
@@ -130,7 +175,7 @@ pub fn search_foods_simple(
   config: FatSecretConfig,
   query: String,
 ) -> Result(FoodSearchResponse, FatSecretError) {
-  search_foods(config, query, None, None)
+  list_foods_with_options(config, query, None, None)
 }
 
 // ============================================================================

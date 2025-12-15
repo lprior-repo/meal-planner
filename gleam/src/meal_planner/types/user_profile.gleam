@@ -1,7 +1,6 @@
 /// User profile types and operations
 ///
 /// Handles user fitness goals, activity levels, and personalized nutrition targets.
-
 import gleam/dynamic/decode.{type Decoder}
 import gleam/float
 import gleam/int
@@ -120,10 +119,7 @@ pub fn to_json(u: UserProfile) -> Json {
   let base_fields = [
     #("id", user_id_to_json(u.id)),
     #("bodyweight", json.float(u.bodyweight)),
-    #(
-      "activity_level",
-      json.string(activity_level_to_string(u.activity_level)),
-    ),
+    #("activity_level", json.string(activity_level_to_string(u.activity_level))),
     #("goal", json.string(goal_to_string(u.goal))),
     #("meals_per_day", json.int(u.meals_per_day)),
     #("daily_targets", macros.to_json(targets)),

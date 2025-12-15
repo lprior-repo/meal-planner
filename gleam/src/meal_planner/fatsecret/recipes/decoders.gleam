@@ -267,19 +267,17 @@ pub fn recipe_search_response_decoder() -> decode.Decoder(
   use recipes <- decode.optional_field(
     "recipes",
     None,
-    decode.optional(
-      decode.one_of(
-        // Multiple results: recipes.recipe is an array
-        decode.at(["recipe"], decode.list(recipe_search_result_decoder())),
-        [
-          // Single result: recipes.recipe is an object
-          decode.at(
-            ["recipe"],
-            decode.map(recipe_search_result_decoder(), fn(r) { [r] }),
-          ),
-        ],
-      ),
-    ),
+    decode.optional(decode.one_of(
+      // Multiple results: recipes.recipe is an array
+      decode.at(["recipe"], decode.list(recipe_search_result_decoder())),
+      [
+        // Single result: recipes.recipe is an object
+        decode.at(
+          ["recipe"],
+          decode.map(recipe_search_result_decoder(), fn(r) { [r] }),
+        ),
+      ],
+    )),
   )
   use max_results <- decode.field("max_results", decode.int)
   use total_results <- decode.field("total_results", decode.int)

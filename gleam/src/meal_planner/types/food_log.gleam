@@ -1,7 +1,6 @@
 /// Food log types and operations
 ///
 /// Tracks user's food consumption with meal type and nutritional data.
-
 import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/option.{None, Some}

@@ -27,12 +27,12 @@ pub fn error_to_string(error: GeneratorError) -> String {
   case error {
     InvalidSlot(slot) ->
       "Invalid meal slot '" <> slot <> "'. Must be breakfast, lunch, or dinner"
-    SlotNotFound(slot) ->
-      "Meal slot '" <> slot <> "' not found in daily plan"
+    SlotNotFound(slot) -> "Meal slot '" <> slot <> "' not found in daily plan"
     KnapsackError(ks_error) ->
       "Meal selection failed: " <> knapsack.error_to_string(ks_error)
     NoRecipesAvailable -> "No recipes available for meal planning"
-    InvalidTarget -> "Invalid calorie target. Must be positive and at least 300 calories"
+    InvalidTarget ->
+      "Invalid calorie target. Must be positive and at least 300 calories"
     InsufficientRecipes(needed, got) ->
       "Not enough meals selected. Needed "
       <> int.to_string(needed)
@@ -116,9 +116,7 @@ pub fn regenerate_slot(
   case list.length(day_plan.meals) > idx {
     False -> {
       logger.error(
-        "Regenerate slot failed: Slot '"
-        <> slot
-        <> "' not found in daily plan",
+        "Regenerate slot failed: Slot '" <> slot <> "' not found in daily plan",
       )
       Error(SlotNotFound(slot))
     }
