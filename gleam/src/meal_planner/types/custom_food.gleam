@@ -1,7 +1,6 @@
 /// Custom food types and operations
 ///
 /// User-defined foods with complete nutritional information.
-
 import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/option.{type Option, Some}

@@ -2,7 +2,6 @@
 ///
 /// Handles vitamins, minerals, fiber, sugar, sodium tracking.
 /// All values are optional as not all foods have complete micronutrient data.
-
 import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/list

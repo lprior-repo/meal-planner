@@ -15,14 +15,14 @@ import gleam/option.{None, Some}
 import gleam/result
 
 import meal_planner/env
-import meal_planner/tandoor/client.{
-  type ClientConfig, NotFoundError, error_to_string, login, session_config,
-}
-import meal_planner/tandoor/api/recipe/get as recipe_get
-import meal_planner/tandoor/api/recipe/list as recipe_list
 import meal_planner/tandoor/api/mealplan/create as mealplan_create
 import meal_planner/tandoor/api/mealplan/list as mealplan_list
 import meal_planner/tandoor/api/mealplan/update as mealplan_update
+import meal_planner/tandoor/api/recipe/get as recipe_get
+import meal_planner/tandoor/api/recipe/list as recipe_list
+import meal_planner/tandoor/client.{
+  type ClientConfig, NotFoundError, error_to_string, login, session_config,
+}
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types.{type TandoorRecipe}
 import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
@@ -130,10 +130,7 @@ pub fn handle_list_recipes(req: wisp.Request) -> wisp.Response {
           wisp.json_response(body, 200)
         }
         Error(e) ->
-          error_response(
-            500,
-            "Failed to fetch recipes: " <> error_to_string(e),
-          )
+          error_response(500, "Failed to fetch recipes: " <> error_to_string(e))
       }
     }
   }
@@ -206,7 +203,10 @@ pub fn handle_get_meal_plan(req: wisp.Request) -> wisp.Response {
           wisp.json_response(body, 200)
         }
         Error(e) ->
-          error_response(500, "Failed to fetch meal plan: " <> error_to_string(e))
+          error_response(
+            500,
+            "Failed to fetch meal plan: " <> error_to_string(e),
+          )
       }
     }
   }

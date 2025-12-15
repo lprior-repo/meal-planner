@@ -2,7 +2,6 @@
 ///
 /// Replaces primitive obsession by creating type-safe wrappers for common measurements.
 /// This prevents mixing grams with milliliters, calories with kilograms, etc.
-
 /// Grams - mass measurement for food (protein, fat, carbs)
 pub type Grams =
   Float
@@ -42,7 +41,8 @@ pub fn grams(value: Float) -> Result(Grams, String) {
 /// Create calories value with validation (must be >= 0)
 pub fn calories(value: Float) -> Result(Calories, String) {
   case value <. 0.0 {
-    True -> Error("Calories must be non-negative, got " <> float_to_string(value))
+    True ->
+      Error("Calories must be non-negative, got " <> float_to_string(value))
     False -> Ok(value)
   }
 }
@@ -72,7 +72,8 @@ pub fn portion_multiplier(value: Float) -> Result(PortionMultiplier, String) {
 /// Create milligrams value with validation (must be >= 0)
 pub fn milligrams(value: Float) -> Result(Milligrams, String) {
   case value <. 0.0 {
-    True -> Error("Milligrams must be non-negative, got " <> float_to_string(value))
+    True ->
+      Error("Milligrams must be non-negative, got " <> float_to_string(value))
     False -> Ok(value)
   }
 }
@@ -80,7 +81,8 @@ pub fn milligrams(value: Float) -> Result(Milligrams, String) {
 /// Create micrograms value with validation (must be >= 0)
 pub fn micrograms(value: Float) -> Result(Micrograms, String) {
   case value <. 0.0 {
-    True -> Error("Micrograms must be non-negative, got " <> float_to_string(value))
+    True ->
+      Error("Micrograms must be non-negative, got " <> float_to_string(value))
     False -> Ok(value)
   }
 }

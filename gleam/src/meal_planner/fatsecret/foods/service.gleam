@@ -45,7 +45,51 @@ pub fn get_food(food_id: FoodId) -> Result(Food, ServiceError) {
   }
 }
 
+/// Search for foods with optional pagination parameters
+///
+/// This is the core implementation that other search functions call.
+/// Automatically loads FatSecret configuration from environment.
+/// Returns ServiceError if not configured.
+///
+/// ## Parameters
+/// - query: Search term (e.g., "apple", "chicken breast")
+/// - page: Page number (0-indexed), None for first page (0)
+/// - max_results: Results per page (1-50), None for default (20)
+///
+/// ## Example
+/// ```gleam
+/// case list_foods_with_options("banana", Some(0), Some(20)) {
+///   Ok(response) -> {
+///     io.println("Found " <> int.to_string(response.total_results))
+///     list.each(response.foods, fn(food) {
+///       io.println("- " <> food.food_name)
+///     })
+///   }
+///   Error(NotConfigured) -> io.println("FatSecret not configured")
+///   Error(ApiError(e)) -> io.println("API error")
+/// }
+/// ```
+pub fn list_foods_with_options(
+  query: String,
+  page: option.Option(Int),
+  max_results: option.Option(Int),
+) -> Result(FoodSearchResponse, ServiceError) {
+  case env.load_fatsecret_config() {
+    None -> Error(NotConfigured)
+    Some(config) -> {
+      case client.list_foods_with_options(config, query, page, max_results) {
+        Ok(response) -> Ok(response)
+        Error(e) -> Error(ApiError(e))
+      }
+    }
+  }
+}
+
 /// Search for foods with pagination
+///
+/// This is a convenience wrapper around `list_foods_with_options` that takes
+/// concrete Int values instead of Option(Int). Use this when you have specific
+/// page and max_results values.
 ///
 /// Automatically loads FatSecret configuration from environment.
 /// Returns ServiceError if not configured.
@@ -53,7 +97,7 @@ pub fn get_food(food_id: FoodId) -> Result(Food, ServiceError) {
 /// ## Parameters
 /// - query: Search term (e.g., "apple", "chicken breast")
 /// - page: Page number (0-indexed)
-/// - max_results: Results per page (1-50, default 20)
+/// - max_results: Results per page (1-50)
 ///
 /// ## Example
 /// ```gleam
@@ -73,18 +117,13 @@ pub fn search_foods(
   page: Int,
   max_results: Int,
 ) -> Result(FoodSearchResponse, ServiceError) {
-  case env.load_fatsecret_config() {
-    None -> Error(NotConfigured)
-    Some(config) -> {
-      case client.search_foods(config, query, page, max_results) {
-        Ok(response) -> Ok(response)
-        Error(e) -> Error(ApiError(e))
-      }
-    }
-  }
+  list_foods_with_options(query, Some(page), Some(max_results))
 }
 
 /// Simplified search with default page 0 and 20 results
+///
+/// This is a convenience wrapper that uses default pagination values.
+/// Use this for simple searches where you don't need pagination control.
 ///
 /// ## Example
 /// ```gleam
@@ -98,7 +137,7 @@ pub fn search_foods(
 pub fn search_foods_simple(
   query: String,
 ) -> Result(FoodSearchResponse, ServiceError) {
-  search_foods(query, 0, 20)
+  list_foods_with_options(query, None, None)
 }
 
 // ============================================================================

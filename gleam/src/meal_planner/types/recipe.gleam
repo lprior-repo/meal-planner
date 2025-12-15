@@ -2,7 +2,6 @@
 ///
 /// Represents recipes from the Tandoor recipe manager.
 /// Recipes are fetched from Tandoor API on-demand rather than being stored locally.
-
 import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/list

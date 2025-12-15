@@ -1,7 +1,6 @@
 /// Food search types and operations
 ///
 /// Unified search results across USDA and custom foods.
-
 import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/option.{type Option}
@@ -100,7 +99,17 @@ pub fn food_search_result_decoder() -> Decoder(FoodSearchResult) {
       use result <- decode.field("data", usda_result_decoder())
       decode.success(result)
     }
-    _ -> decode.failure(UsdaFoodResult(fdc_id: fdc_id(0), description: "", data_type: "", category: "", serving_size: ""), "FoodSearchResult")
+    _ ->
+      decode.failure(
+        UsdaFoodResult(
+          fdc_id: fdc_id(0),
+          description: "",
+          data_type: "",
+          category: "",
+          serving_size: "",
+        ),
+        "FoodSearchResult",
+      )
   }
 }
 

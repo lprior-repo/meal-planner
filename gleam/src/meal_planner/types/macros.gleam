@@ -2,7 +2,6 @@
 ///
 /// Handles protein, fat, carbohydrate values and calorie calculations.
 /// Uses: 4cal/g protein, 9cal/g fat, 4cal/g carbs
-
 import gleam/float
 import gleam/int
 import gleam/json.{type Json}
