@@ -11,6 +11,7 @@ import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/result
 import gleam/string
 import meal_planner/fatsecret/diary/types as diary_types
 import meal_planner/fatsecret/weight/service
@@ -45,45 +46,45 @@ pub fn update_weight(req: Request, conn: pog.Connection) -> wisp.Response {
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Post)
-      // Parse request body
-      use body <- wisp.require_json(req)
+  // Parse request body
+  use body <- wisp.require_json(req)
 
-      case parse_weight_update(body) {
-        Error(msg) ->
+  case parse_weight_update(body) {
+    Error(msg) ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("error", json.string("invalid_request")),
+            #("message", json.string(msg)),
+          ]),
+        ),
+        400,
+      )
+
+    Ok(update) -> {
+      case service.update_weight(conn, update) {
+        Ok(_) ->
           wisp.json_response(
             json.to_string(
               json.object([
-                #("error", json.string("invalid_request")),
-                #("message", json.string(msg)),
+                #("success", json.bool(True)),
+                #("message", json.string("Weight updated successfully")),
               ]),
             ),
-            400,
+            200,
           )
 
-        Ok(update) -> {
-          case service.update_weight(conn, update) {
-            Ok(_) ->
-              wisp.json_response(
-                json.to_string(
-                  json.object([
-                    #("success", json.bool(True)),
-                    #("message", json.string("Weight updated successfully")),
-                  ]),
-                ),
-                200,
-              )
-
-            Error(e) -> {
-              // Map date validation errors to 400
-              case service.is_date_validation_error(e) {
-                True -> date_validation_error_response(e)
-                False -> error_response(e)
-              }
-            }
+        Error(e) -> {
+          // Map date validation errors to 400
+          case service.is_date_validation_error(e) {
+            True -> date_validation_error_response(e)
+            False -> error_response(e)
           }
         }
       }
+    }
   }
+}
 
 // ============================================================================
 // GET /api/fatsecret/weight?date=YYYY-MM-DD - Get weight for specific date
@@ -107,60 +108,60 @@ pub fn get_weight_by_date(req: Request, conn: pog.Connection) -> wisp.Response {
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Get)
-      // Extract date from query parameter
-      case get_query_param(req, "date") {
-        None ->
+  // Extract date from query parameter
+  case get_query_param(req, "date") {
+    None ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("error", json.string("missing_parameter")),
+            #("message", json.string("Missing required query parameter: date")),
+          ]),
+        ),
+        400,
+      )
+
+    Some(date_str) -> {
+      case diary_types.date_to_int(date_str) {
+        Error(_) ->
           wisp.json_response(
             json.to_string(
               json.object([
-                #("error", json.string("missing_parameter")),
-                #("message", json.string("Missing required query parameter: date")),
+                #("error", json.string("invalid_date")),
+                #(
+                  "message",
+                  json.string("Invalid date format (use YYYY-MM-DD)"),
+                ),
               ]),
             ),
             400,
           )
 
-        Some(date_str) -> {
-          case diary_types.date_to_int(date_str) {
-            Error(_) ->
+        Ok(date_int) -> {
+          case service.get_weight_by_date(conn, date_int) {
+            Ok(weight) -> {
               wisp.json_response(
                 json.to_string(
                   json.object([
-                    #("error", json.string("invalid_date")),
                     #(
-                      "message",
-                      json.string("Invalid date format (use YYYY-MM-DD)"),
+                      "date",
+                      json.string(diary_types.int_to_date(weight.date_int)),
                     ),
+                    #("weight_kg", json.float(weight.weight_kg)),
+                    #("date_int", json.int(weight.date_int)),
                   ]),
                 ),
-                400,
+                200,
               )
-
-            Ok(date_int) -> {
-              case service.get_weight_by_date(conn, date_int) {
-                Ok(weight) -> {
-                  wisp.json_response(
-                    json.to_string(
-                      json.object([
-                        #(
-                          "date",
-                          json.string(diary_types.int_to_date(weight.date_int)),
-                        ),
-                        #("weight_kg", json.float(weight.weight_kg)),
-                        #("date_int", json.int(weight.date_int)),
-                      ]),
-                    ),
-                    200,
-                  )
-                }
-
-                Error(e) -> error_response(e)
-              }
             }
+
+            Error(e) -> error_response(e)
           }
         }
       }
+    }
   }
+}
 
 // ============================================================================
 // GET /api/fatsecret/weight/month/:year/:month - Get monthly summary
@@ -191,72 +192,69 @@ pub fn get_weight_month(
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
   use <- wisp.require_method(req, Get)
-      // Parse year and month
-      case int.parse(year), int.parse(month) {
-        Ok(year_int), Ok(month_int) if month_int >= 1 && month_int <= 12 -> {
-          // Calculate date_int for first day of month
-          let date_str =
-            int.to_string(year_int) <> "-" <> pad_zero(month_int) <> "-01"
+  // Parse year and month
+  case int.parse(year), int.parse(month) {
+    Ok(year_int), Ok(month_int) if month_int >= 1 && month_int <= 12 -> {
+      // Calculate date_int for first day of month
+      let date_str =
+        int.to_string(year_int) <> "-" <> pad_zero(month_int) <> "-01"
 
-          case diary_types.date_to_int(date_str) {
-            Error(_) ->
-              wisp.json_response(
-                json.to_string(
-                  json.object([
-                    #("error", json.string("invalid_date")),
-                    #("message", json.string("Invalid year/month")),
-                  ]),
-                ),
-                400,
-              )
-
-            Ok(date_int) -> {
-              case service.get_weight_month_summary(conn, date_int) {
-                Ok(summary) -> {
-                  let days_json =
-                    list.map(summary.days, fn(day) {
-                      json.object([
-                        #(
-                          "date",
-                          json.string(diary_types.int_to_date(day.date_int)),
-                        ),
-                        #("weight_kg", json.float(day.weight_kg)),
-                        #("date_int", json.int(day.date_int)),
-                      ])
-                    })
-
-                  wisp.json_response(
-                    json.to_string(
-                      json.object([
-                        #("month", json.int(month_int)),
-                        #("year", json.int(year_int)),
-                        #("days", json.array(days_json, fn(x) { x })),
-                      ]),
-                    ),
-                    200,
-                  )
-                }
-
-                Error(e) -> error_response(e)
-              }
-            }
-          }
-        }
-
-        _, _ ->
+      case diary_types.date_to_int(date_str) {
+        Error(_) ->
           wisp.json_response(
             json.to_string(
               json.object([
-                #("error", json.string("invalid_parameters")),
-                #(
-                  "message",
-                  json.string("Year and month must be valid integers"),
-                ),
+                #("error", json.string("invalid_date")),
+                #("message", json.string("Invalid year/month")),
               ]),
             ),
             400,
           )
+
+        Ok(date_int) -> {
+          case service.get_weight_month_summary(conn, date_int) {
+            Ok(summary) -> {
+              let days_json =
+                list.map(summary.days, fn(day) {
+                  json.object([
+                    #(
+                      "date",
+                      json.string(diary_types.int_to_date(day.date_int)),
+                    ),
+                    #("weight_kg", json.float(day.weight_kg)),
+                    #("date_int", json.int(day.date_int)),
+                  ])
+                })
+
+              wisp.json_response(
+                json.to_string(
+                  json.object([
+                    #("month", json.int(month_int)),
+                    #("year", json.int(year_int)),
+                    #("days", json.array(days_json, fn(x) { x })),
+                  ]),
+                ),
+                200,
+              )
+            }
+
+            Error(e) -> error_response(e)
+          }
+        }
       }
+    }
+
+    _, _ ->
+      wisp.json_response(
+        json.to_string(
+          json.object([
+            #("error", json.string("invalid_parameters")),
+            #("message", json.string("Year and month must be valid integers")),
+          ]),
+        ),
+        400,
+      )
+  }
 }
 
 // ============================================================================
@@ -339,12 +337,19 @@ fn get_query_param(req: Request, param: String) -> option.Option(String) {
     Some(query) -> {
       query
       |> string.split("&")
-      |> list.find_map(fn(pair) {
+      |> list.find(fn(pair) {
         case string.split(pair, "=") {
-          [key, value] if key == param -> Some(value)
-          _ -> None
+          [key, value] if key == param -> True
+          _ -> False
         }
       })
+      |> result.then(fn(pair) {
+        case string.split(pair, "=") {
+          [_key, value] -> Ok(value)
+          _ -> Error(Nil)
+        }
+      })
+      |> option.from_result
     }
     None -> None
   }
