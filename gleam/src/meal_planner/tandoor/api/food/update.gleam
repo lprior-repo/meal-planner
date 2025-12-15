@@ -1,10 +1,8 @@
 /// Food Update API
 ///
 /// This module provides functions to update existing food items in the Tandoor API.
-import gleam/int
 import gleam/json
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/food/food_decoder
 import meal_planner/tandoor/encoders/food/food_encoder
@@ -32,9 +30,13 @@ pub fn update_food(
   food_id food_id: Int,
   food_data food_data: TandoorFoodCreateRequest,
 ) -> Result(Food, TandoorError) {
-  let path = "/api/food/" <> int.to_string(food_id) <> "/"
   let body = food_encoder.encode_food_create(food_data) |> json.to_string
 
-  use resp <- result.try(crud_helpers.execute_patch(config, path, body))
-  crud_helpers.parse_json_single(resp, food_decoder.food_decoder())
+  generic_crud.update(
+    config,
+    "/api/food/",
+    food_id,
+    body,
+    food_decoder.food_decoder(),
+  )
 }
