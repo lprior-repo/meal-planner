@@ -11,6 +11,7 @@ import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/string
 import meal_planner/fatsecret/diary/types as diary_types
 import meal_planner/fatsecret/weight/service
 import meal_planner/fatsecret/weight/types.{type WeightUpdate, WeightUpdate}
@@ -77,6 +78,83 @@ pub fn update_weight(req: Request, conn: pog.Connection) -> wisp.Response {
               case service.is_date_validation_error(e) {
                 True -> date_validation_error_response(e)
                 False -> error_response(e)
+              }
+            }
+          }
+        }
+      }
+  }
+
+// ============================================================================
+// GET /api/fatsecret/weight?date=YYYY-MM-DD - Get weight for specific date
+// ============================================================================
+
+/// GET /api/fatsecret/weight?date=YYYY-MM-DD - Get weight for a specific date
+///
+/// Query parameters:
+/// - date: YYYY-MM-DD format (required)
+///
+/// Returns:
+/// ```json
+/// {
+///   "date": "2024-01-15",
+///   "weight_kg": 75.5,
+///   "date_int": 19723
+/// }
+/// ```
+pub fn get_weight_by_date(req: Request, conn: pog.Connection) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, Get)
+      // Extract date from query parameter
+      case get_query_param(req, "date") {
+        None ->
+          wisp.json_response(
+            json.to_string(
+              json.object([
+                #("error", json.string("missing_parameter")),
+                #("message", json.string("Missing required query parameter: date")),
+              ]),
+            ),
+            400,
+          )
+
+        Some(date_str) -> {
+          case diary_types.date_to_int(date_str) {
+            Error(_) ->
+              wisp.json_response(
+                json.to_string(
+                  json.object([
+                    #("error", json.string("invalid_date")),
+                    #(
+                      "message",
+                      json.string("Invalid date format (use YYYY-MM-DD)"),
+                    ),
+                  ]),
+                ),
+                400,
+              )
+
+            Ok(date_int) -> {
+              case service.get_weight_by_date(conn, date_int) {
+                Ok(weight) -> {
+                  wisp.json_response(
+                    json.to_string(
+                      json.object([
+                        #(
+                          "date",
+                          json.string(diary_types.int_to_date(weight.date_int)),
+                        ),
+                        #("weight_kg", json.float(weight.weight_kg)),
+                        #("date_int", json.int(weight.date_int)),
+                      ]),
+                    ),
+                    200,
+                  )
+                }
+
+                Error(e) -> error_response(e)
               }
             }
           }
@@ -253,6 +331,23 @@ fn parse_weight_update(body: dynamic.Dynamic) -> Result(WeightUpdate, String) {
           ))
       }
     }
+  }
+}
+
+/// Get query parameter from request
+fn get_query_param(req: Request, param: String) -> option.Option(String) {
+  case req.query {
+    Some(query) -> {
+      query
+      |> string.split("&")
+      |> list.find_map(fn(pair) {
+        case string.split(pair, "=") {
+          [key, value] if key == param -> Some(value)
+          _ -> None
+        }
+      })
+    }
+    None -> None
   }
 }
 

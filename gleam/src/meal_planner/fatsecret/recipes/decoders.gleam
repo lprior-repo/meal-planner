@@ -260,41 +260,38 @@ pub fn recipe_search_result_decoder() -> decode.Decoder(
 pub fn recipe_search_response_decoder() -> decode.Decoder(
   types.RecipeSearchResponse,
 ) {
-  // The recipes field can have:
-  // 1. Multiple results: recipes.recipe is an array of objects
-  // 2. Single result: recipes.recipe is a single object
-  // 3. No results: recipes field may not have recipe key or be empty
-  use recipes <- decode.optional_field(
-    "recipes",
-    None,
-    decode.optional(decode.one_of(
-      // Multiple results: recipes.recipe is an array
-      decode.at(["recipe"], decode.list(recipe_search_result_decoder())),
-      [
-        // Single result: recipes.recipe is an object
-        decode.at(
-          ["recipe"],
+  // The recipes field contains nested recipe/max_results/total_results/page_number
+  // Structure: { recipes: { recipe: [...], max_results: N, total_results: N, page_number: N } }
+  decode.at(["recipes"], {
+    use recipes <- decode.optional_field(
+      "recipe",
+      None,
+      decode.optional(decode.one_of(
+        // Multiple results: recipes.recipe is an array
+        decode.list(recipe_search_result_decoder()),
+        [
+          // Single result: recipes.recipe is an object
           decode.map(recipe_search_result_decoder(), fn(r) { [r] }),
-        ),
-      ],
-    )),
-  )
-  use max_results <- decode.field("max_results", decode.int)
-  use total_results <- decode.field("total_results", decode.int)
-  use page_number <- decode.field("page_number", decode.int)
+        ],
+      )),
+    )
+    use max_results <- decode.field("max_results", decode.int)
+    use total_results <- decode.field("total_results", decode.int)
+    use page_number <- decode.field("page_number", decode.int)
 
-  // recipes is Option(List) - unwrap option
-  let recipes_list = case recipes {
-    None -> []
-    Some(list) -> list
-  }
+    // recipes is Option(List) - unwrap option
+    let recipes_list = case recipes {
+      None -> []
+      Some(list) -> list
+    }
 
-  decode.success(types.RecipeSearchResponse(
-    recipes: recipes_list,
-    max_results:,
-    total_results:,
-    page_number:,
-  ))
+    decode.success(types.RecipeSearchResponse(
+      recipes: recipes_list,
+      max_results:,
+      total_results:,
+      page_number:,
+    ))
+  })
 }
 
 /// Decode recipe types response from JSON (recipe_types.get.v2)

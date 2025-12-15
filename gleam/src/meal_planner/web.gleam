@@ -9,8 +9,10 @@ import gleam/io
 import gleam/option
 import meal_planner/config
 import meal_planner/fatsecret/diary/handlers as diary_handlers
+import meal_planner/fatsecret/exercise/handlers as exercise_handlers
 import meal_planner/fatsecret/favorites/handlers as favorites_handlers
 import meal_planner/fatsecret/saved_meals/handlers as saved_meals_handlers
+import meal_planner/fatsecret/weight/handlers as weight_handlers
 import meal_planner/fatsecret/service as fatsecret_service
 import meal_planner/postgres
 import meal_planner/tandoor/handlers/import_export/import_export_handlers
@@ -273,21 +275,15 @@ fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     ["api", "fatsecret", "weight"] ->
       case req.method {
         http.Get ->
-          // GET /api/fatsecret/weight?date=YYYY-MM-DD - Get weight for date
-          wisp.not_found()
-        // TODO: implement weight handlers
+          weight_handlers.get_weight_by_date(req, ctx.db)
         http.Post ->
-          // POST /api/fatsecret/weight - Update weight for date
-          wisp.not_found()
-        // TODO: implement weight handlers
+          weight_handlers.update_weight(req, ctx.db)
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
-    ["api", "fatsecret", "weight", "month"] ->
+    ["api", "fatsecret", "weight", "month", year, month] ->
       case req.method {
         http.Get ->
-          // GET /api/fatsecret/weight/month?year=2024&month=12 - Month summary
-          wisp.not_found()
-        // TODO: implement weight handlers
+          weight_handlers.get_weight_month(req, ctx.db, year, month)
         _ -> wisp.method_not_allowed([http.Get])
       }
 
