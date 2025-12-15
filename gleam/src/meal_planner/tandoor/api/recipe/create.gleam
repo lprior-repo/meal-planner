@@ -2,8 +2,7 @@
 ///
 /// This module provides functions to create new recipes in the Tandoor API.
 import gleam/json
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/recipe/recipe_decoder
 import meal_planner/tandoor/encoders/recipe/recipe_create_encoder.{
@@ -42,13 +41,11 @@ pub fn create_recipe(
     recipe_create_encoder.encode_create_recipe(request)
     |> json.to_string
 
-  // Execute POST request using CRUD helper
-  use resp <- result.try(crud_helpers.execute_post(
+  // Create recipe using generic CRUD function
+  generic_crud.create(
     config,
     "/api/recipe/",
     request_body,
-  ))
-
-  // Parse JSON response using generic helper and standard recipe decoder
-  crud_helpers.parse_json_single(resp, recipe_decoder.recipe_decoder())
+    recipe_decoder.recipe_decoder(),
+  )
 }

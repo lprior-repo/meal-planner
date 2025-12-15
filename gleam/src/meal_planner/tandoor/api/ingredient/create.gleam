@@ -2,8 +2,7 @@
 ///
 /// This module provides functions to create new ingredient items in the Tandoor API.
 import gleam/json
-import gleam/result
-import meal_planner/tandoor/api/crud_helpers
+import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/decoders/ingredient/ingredient_decoder
 import meal_planner/tandoor/encoders/ingredient/ingredient_encoder.{
@@ -39,11 +38,14 @@ pub fn create_ingredient(
   config: ClientConfig,
   ingredient_data: IngredientCreateRequest,
 ) -> Result(Ingredient, TandoorError) {
-  let path = "/api/ingredient/"
   let body =
     ingredient_encoder.encode_ingredient_create(ingredient_data)
     |> json.to_string
 
-  use resp <- result.try(crud_helpers.execute_post(config, path, body))
-  crud_helpers.parse_json_single(resp, ingredient_decoder.ingredient_decoder())
+  generic_crud.create(
+    config,
+    "/api/ingredient/",
+    body,
+    ingredient_decoder.ingredient_decoder(),
+  )
 }
