@@ -283,10 +283,10 @@ pub fn recipe_search_response_decoder() -> decode.Decoder(
   use total_results <- decode.field("total_results", decode.int)
   use page_number <- decode.field("page_number", decode.int)
 
-  // recipes is Option(List) - unwrap it
+  // recipes is Option(List) - unwrap option
   let recipes_list = case recipes {
-    Some(list) -> list
     None -> []
+    Some(list) -> list
   }
 
   decode.success(types.RecipeSearchResponse(

@@ -9,6 +9,7 @@ import meal_planner/config
 import meal_planner/fatsecret/diary/handlers as diary_handlers
 import meal_planner/fatsecret/favorites/handlers as favorites_handlers
 import meal_planner/fatsecret/saved_meals/handlers as saved_meals_handlers
+import meal_planner/tandoor/handlers/import_export/import_export_handlers
 import meal_planner/web/handlers
 import pog
 import wisp
@@ -90,16 +91,11 @@ pub fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
     // =========================================================================
     // Favorite Foods
     // IMPORTANT: Specific routes must come BEFORE catch-all patterns
+    // Note: Handlers check methods internally - no need for double-checking
     ["api", "fatsecret", "favorites", "foods", "most-eaten"] ->
-      case req.method {
-        http.Get -> favorites_handlers.get_most_eaten(req, ctx.db)
-        _ -> wisp.method_not_allowed([http.Get])
-      }
+      favorites_handlers.get_most_eaten(req, ctx.db)
     ["api", "fatsecret", "favorites", "foods", "recently-eaten"] ->
-      case req.method {
-        http.Get -> favorites_handlers.get_recently_eaten(req, ctx.db)
-        _ -> wisp.method_not_allowed([http.Get])
-      }
+      favorites_handlers.get_recently_eaten(req, ctx.db)
     ["api", "fatsecret", "favorites", "foods", food_id] ->
       case req.method {
         http.Post -> favorites_handlers.add_favorite_food(req, ctx.db, food_id)
@@ -108,17 +104,12 @@ pub fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
         _ -> wisp.method_not_allowed([http.Post, http.Delete])
       }
     ["api", "fatsecret", "favorites", "foods"] ->
-      case req.method {
-        http.Get -> favorites_handlers.get_favorite_foods(req, ctx.db)
-        _ -> wisp.method_not_allowed([http.Get])
-      }
+      favorites_handlers.get_favorite_foods(req, ctx.db)
 
     // Favorite Recipes
+    // Note: Handlers check methods internally - no need for double-checking
     ["api", "fatsecret", "favorites", "recipes"] ->
-      case req.method {
-        http.Get -> favorites_handlers.get_favorite_recipes(req, ctx.db)
-        _ -> wisp.method_not_allowed([http.Get])
-      }
+      favorites_handlers.get_favorite_recipes(req, ctx.db)
     ["api", "fatsecret", "favorites", "recipes", recipe_id] ->
       case req.method {
         http.Post ->
@@ -278,6 +269,18 @@ pub fn handle_request(req: wisp.Request, ctx: Context) -> wisp.Response {
       handlers.handle_tandoor_delete_meal_plan(req, entry_id)
 
     // =========================================================================
+    // Tandoor Import/Export API
+    // =========================================================================
+    ["api", "tandoor", "import-logs"] ->
+      import_export_handlers.handle_import_logs(req, ctx.db)
+    ["api", "tandoor", "import-logs", log_id] ->
+      import_export_handlers.handle_import_log(req, ctx.db, log_id)
+    ["api", "tandoor", "export-logs"] ->
+      import_export_handlers.handle_export_logs(req, ctx.db)
+    ["api", "tandoor", "export-logs", log_id] ->
+      import_export_handlers.handle_export_log(req, ctx.db, log_id)
+
+    // =========================================================================
     // 404 Not Found
     // =========================================================================
     _ -> wisp.not_found()
@@ -329,6 +332,18 @@ pub fn print_routes() -> Nil {
   io.println("")
   io.println("Profile (3-legged):")
   io.println("  GET  /api/fatsecret/profile               - Get user profile")
+  io.println("")
+  io.println("Tandoor Import/Export:")
+  io.println("  GET    /api/tandoor/import-logs           - List import logs")
+  io.println("  POST   /api/tandoor/import-logs           - Create import log")
+  io.println("  GET    /api/tandoor/import-logs/:id       - Get import log")
+  io.println("  PATCH  /api/tandoor/import-logs/:id       - Update import log")
+  io.println("  DELETE /api/tandoor/import-logs/:id       - Delete import log")
+  io.println("  GET    /api/tandoor/export-logs           - List export logs")
+  io.println("  POST   /api/tandoor/export-logs           - Create export log")
+  io.println("  GET    /api/tandoor/export-logs/:id       - Get export log")
+  io.println("  PATCH  /api/tandoor/export-logs/:id       - Update export log")
+  io.println("  DELETE /api/tandoor/export-logs/:id       - Delete export log")
   io.println("")
   io.println("Diary, Exercise, Weight APIs coming soon...")
   io.println("")
