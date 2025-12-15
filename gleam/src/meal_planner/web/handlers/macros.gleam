@@ -1,11 +1,17 @@
 /// Macro calculation handler for the Meal Planner API
 ///
-/// This module provides the macro calculation endpoint that aggregates
-/// nutritional information across recipes.
+/// This module provides the macro calculation endpoint using Wisp's idiomatic patterns:
+/// - wisp.require_method() for HTTP method enforcement
+/// - wisp.require_string_body() for request body parsing
+/// - Centralized response builders from web/responses
+///
+/// The endpoint aggregates nutritional information across recipes
+/// and returns total macros calculated from individual recipe servings.
 import gleam/dynamic/decode
 import gleam/http
 import gleam/json
 import gleam/list
+import meal_planner/web/responses
 import wisp
 
 /// Macro calculation request
@@ -27,6 +33,13 @@ type MacrosData {
 /// POST /api/macros/calculate
 ///
 /// Calculates total macros from recipe servings and individual macros.
+/// Uses Wisp's idiomatic patterns:
+/// - wisp.log_request() for request logging
+/// - wisp.rescue_crashes() for error recovery
+/// - wisp.handle_head() for HEAD support
+/// - wisp.require_method() to enforce POST-only
+/// - wisp.require_string_body() to get request body
+/// - Centralized response builders for consistent responses
 pub fn handle_calculate(req: wisp.Request) -> wisp.Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
@@ -35,27 +48,17 @@ pub fn handle_calculate(req: wisp.Request) -> wisp.Response {
   use body <- wisp.require_string_body(req)
 
   case parse_macros_request(body) {
-    Error(msg) -> {
-      let response =
-        json.object([
-          #("status", json.string("error")),
-          #("error", json.string("Invalid request")),
-          #("message", json.string(msg)),
-        ])
-        |> json.to_string
-      wisp.json_response(response, 400)
-    }
+    Error(msg) -> responses.bad_request(msg)
     Ok(request) -> {
       // Aggregate macros across all recipes
       let aggregated = aggregate_macros(request.recipes)
-      let response =
+      let response_data =
         json.object([
-          #("status", json.string("success")),
           #("total_macros", aggregated_to_json(aggregated)),
           #("recipe_count", json.int(list.length(request.recipes))),
         ])
-        |> json.to_string
-      wisp.json_response(response, 200)
+
+      responses.json_ok(response_data)
     }
   }
 }

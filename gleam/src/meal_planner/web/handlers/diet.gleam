@@ -1,7 +1,11 @@
 /// Vertical diet compliance handler for the Meal Planner API
 ///
-/// This module provides the diet compliance check endpoint that evaluates
-/// recipes against vertical diet principles.
+/// This module provides the diet compliance check endpoint using Wisp's idiomatic patterns:
+/// - wisp.require_method() for HTTP method enforcement
+/// - Centralized response builders from web/responses
+///
+/// Evaluates recipes against vertical diet principles and returns
+/// a compliance score with recommendations.
 import gleam/float
 import gleam/http
 import gleam/json
@@ -10,12 +14,19 @@ import gleam/option
 import meal_planner/fatsecret/recipes/service as recipe_service
 import meal_planner/fatsecret/recipes/types as fatsecret_types
 import meal_planner/vertical_diet_compliance as vdc
+import meal_planner/web/responses
 import wisp
 
 /// Vertical diet compliance check endpoint
 /// GET /api/diet/vertical/compliance/{recipe_id}
 ///
 /// Returns vertical diet compliance score and recommendations for a recipe.
+/// Uses Wisp's idiomatic patterns:
+/// - wisp.log_request() for request logging
+/// - wisp.rescue_crashes() for error recovery
+/// - wisp.handle_head() for HEAD support
+/// - wisp.require_method() to enforce GET-only
+/// - Centralized response builders for consistent error responses
 pub fn handle_compliance(req: wisp.Request, recipe_id: String) -> wisp.Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
@@ -23,54 +34,20 @@ pub fn handle_compliance(req: wisp.Request, recipe_id: String) -> wisp.Response 
   use <- wisp.require_method(req, http.Get)
 
   case validate_recipe_id(recipe_id) {
-    Error(msg) -> {
-      let response =
-        json.object([
-          #("status", json.string("error")),
-          #("error", json.string("Invalid recipe ID")),
-          #("message", json.string(msg)),
-          #("recipe_id", json.string(recipe_id)),
-        ])
-        |> json.to_string
-      wisp.json_response(response, 400)
-    }
+    Error(msg) -> responses.bad_request(msg)
     Ok(valid_id) -> {
       // Fetch recipe from FatSecret API
       case recipe_service.get_recipe(fatsecret_types.recipe_id(valid_id)) {
         Error(recipe_service.NotConfigured) -> {
-          let response =
-            json.object([
-              #("status", json.string("error")),
-              #("error", json.string("FatSecret API not configured")),
-              #(
-                "message",
-                json.string(
-                  "FatSecret API credentials are missing. Please configure FATSECRET_CLIENT_ID and FATSECRET_CLIENT_SECRET",
-                ),
-              ),
-              #("recipe_id", json.string(recipe_id)),
-            ])
-            |> json.to_string
-          wisp.json_response(response, 500)
+          responses.internal_error(
+            "FatSecret API not configured. Please set FATSECRET_CLIENT_ID and FATSECRET_CLIENT_SECRET",
+          )
         }
         Error(recipe_service.ApiError(error)) -> {
-          let response =
-            json.object([
-              #("status", json.string("error")),
-              #("error", json.string("Failed to fetch recipe")),
-              #(
-                "message",
-                json.string(
-                  "Error fetching recipe from FatSecret: "
-                  <> recipe_service.error_to_string(recipe_service.ApiError(
-                    error,
-                  )),
-                ),
-              ),
-              #("recipe_id", json.string(recipe_id)),
-            ])
-            |> json.to_string
-          wisp.json_response(response, 500)
+          let error_msg =
+            "Error fetching recipe from FatSecret: "
+            <> recipe_service.error_to_string(recipe_service.ApiError(error))
+          responses.bad_gateway(error_msg)
         }
         Ok(fatsecret_recipe) -> {
           // Convert FatSecret recipe to vertical diet compliance format
@@ -80,15 +57,14 @@ pub fn handle_compliance(req: wisp.Request, recipe_id: String) -> wisp.Response 
           let compliance = vdc.check_compliance(compliance_recipe)
 
           // Return compliance results
-          let response =
+          let response_data =
             json.object([
-              #("status", json.string("success")),
               #("recipe_id", json.string(recipe_id)),
               #("recipe_name", json.string(fatsecret_recipe.recipe_name)),
               #("compliance", encode_compliance(compliance)),
             ])
-            |> json.to_string
-          wisp.json_response(response, 200)
+
+          responses.json_ok(response_data)
         }
       }
     }
