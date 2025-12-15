@@ -101,6 +101,7 @@ pub fn create_entry(req: Request, conn: pog.Connection) -> Response {
       }
   }
 }
+}
 
 // ============================================================================
 // GET /api/fatsecret/diary/entries/:entry_id - Get single entry
@@ -211,6 +212,7 @@ pub fn update_entry(
         Error(e) -> error_response(e)
       }
   }
+}
 }
 
 // ============================================================================
