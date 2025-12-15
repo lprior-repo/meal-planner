@@ -70,27 +70,55 @@ pub fn handle_list_cuisines(req: wisp.Request) -> wisp.Response {
 }
 
 /// Get a single cuisine by ID
+///
+/// CONSOLIDATION: Flattened 3-level nesting into pipeline using result.try
+/// Pattern:
+///   case parse_id() {
+///     case get_config() {
+///       case api_call() { ... }
+///     }
+///   }
+/// Becomes:
+///   use id <- result.try(int.parse(id_string))
+///   use config <- result.try(get_auth())
+///   use data <- result.map(api_call())
 pub fn handle_get_cuisine(
   _req: wisp.Request,
   cuisine_id: String,
 ) -> wisp.Response {
-  case int.parse(cuisine_id) {
-    Ok(id) -> {
-      case helpers.get_authenticated_client() {
-        Ok(config) -> {
-          case cuisine_get.get_cuisine(config, cuisine_id: id) {
-            Ok(cuisine) -> {
-              encode_cuisine(cuisine)
-              |> json.to_string
-              |> wisp.json_response(200)
-            }
-            Error(_) -> wisp.not_found()
-          }
-        }
-        Error(resp) -> resp
-      }
-    }
-    Error(_) -> helpers.error_response(400, "Invalid cuisine ID")
+  // Step 1: Parse and validate ID parameter
+  let result = {
+    use id <- result.try(
+      int.parse(cuisine_id)
+      |> result.map_error(fn(_) {
+        helpers.error_response(400, "Invalid cuisine ID")
+      }),
+    )
+
+    // Step 2: Authenticate client
+    use config <- result.try(
+      helpers.get_authenticated_client()
+      |> result.map_error(fn(resp) { resp }),
+    )
+
+    // Step 3: Make API call
+    use cuisine <- result.try(
+      cuisine_get.get_cuisine(config, cuisine_id: id)
+      |> result.map_error(fn(_) { wisp.not_found() }),
+    )
+
+    // Step 4: Encode and respond (no error case)
+    Ok(
+      encode_cuisine(cuisine)
+      |> json.to_string
+      |> wisp.json_response(200),
+    )
+  }
+
+  // Return the final response, extracting from Result
+  case result {
+    Ok(response) -> response
+    Error(response) -> response
   }
 }
 
