@@ -13,6 +13,27 @@
 /// - id: Unique identifier
 /// - name: Human-readable field name (e.g., "Nutrition", "Price")
 /// - field: Machine-friendly field identifier (e.g., "nutrition", "price")
+
+import gleam/dynamic/decode
+
 pub type FoodInheritField {
   FoodInheritField(id: Int, name: String, field: String)
+}
+
+/// Decode a FoodInheritField from JSON
+///
+/// Example JSON structure:
+/// ```json
+/// {
+///   "id": 1,
+///   "name": "Nutrition",
+///   "field": "nutrition"
+/// }
+/// ```
+pub fn food_inherit_field_decoder() -> decode.Decoder(FoodInheritField) {
+  use id <- decode.field("id", decode.int)
+  use name <- decode.field("name", decode.string)
+  use field <- decode.field("field", decode.string)
+
+  decode.success(FoodInheritField(id: id, name: name, field: field))
 }
