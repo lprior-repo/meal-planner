@@ -1396,3 +1396,145 @@ pub type PageInfo {
 pub type PaginatedResponse(item_type) {
   PaginatedResponse(items: List(item_type), page_info: PageInfo)
 }
+
+// ============================================================================
+// Email Command Types
+// ============================================================================
+
+/// Day of the week
+pub type DayOfWeek {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
+}
+
+/// Scope for meal plan regeneration
+pub type RegenerationScope {
+  SingleMeal
+  SingleDay
+  FullWeek
+}
+
+/// Email command variants
+pub type EmailCommand {
+  AdjustMeal(day: DayOfWeek, meal_type: MealType, recipe_id: RecipeId)
+  AddPreference(preference: String)
+  RemoveDislike(food_name: String)
+  RegeneratePlan(scope: RegenerationScope, constraints: Option(String))
+  SkipMeal(day: DayOfWeek, meal_type: MealType)
+}
+
+/// Error types for email command parsing
+pub type EmailCommandError {
+  InvalidCommand(reason: String)
+  AmbiguousCommand(message: String)
+  MissingContext(required: String)
+}
+
+/// Incoming email request
+pub type EmailRequest {
+  EmailRequest(
+    from_email: String,
+    subject: String,
+    body: String,
+    is_reply: Bool,
+  )
+}
+
+/// Result of executing an email command
+pub type CommandExecutionResult {
+  CommandExecutionResult(
+    success: Bool,
+    message: String,
+    command: Option(EmailCommand),
+  )
+}
+
+// ============================================================================
+// Email Command JSON Encoders/Decoders
+// ============================================================================
+
+pub fn day_of_week_to_string(day: DayOfWeek) -> String {
+  case day {
+    Monday -> "Monday"
+    Tuesday -> "Tuesday"
+    Wednesday -> "Wednesday"
+    Thursday -> "Thursday"
+    Friday -> "Friday"
+    Saturday -> "Saturday"
+    Sunday -> "Sunday"
+  }
+}
+
+pub fn day_of_week_from_string(s: String) -> Option(DayOfWeek) {
+  case string.lowercase(s) {
+    "monday" -> Some(Monday)
+    "tuesday" -> Some(Tuesday)
+    "wednesday" -> Some(Wednesday)
+    "thursday" -> Some(Thursday)
+    "friday" -> Some(Friday)
+    "saturday" -> Some(Saturday)
+    "sunday" -> Some(Sunday)
+    _ -> None
+  }
+}
+
+pub fn regeneration_scope_to_string(scope: RegenerationScope) -> String {
+  case scope {
+    SingleMeal -> "single_meal"
+    SingleDay -> "single_day"
+    FullWeek -> "full_week"
+  }
+}
+
+pub fn email_command_to_json(cmd: EmailCommand) -> Json {
+  case cmd {
+    AdjustMeal(day, meal_type, recipe_id) ->
+      json.object([
+        #("type", json.string("adjust_meal")),
+        #("day", json.string(day_of_week_to_string(day))),
+        #("meal_type", json.string(meal_type_to_string(meal_type))),
+        #("recipe_id", json.string(id.recipe_id_to_string(recipe_id))),
+      ])
+    AddPreference(pref) ->
+      json.object([
+        #("type", json.string("add_preference")),
+        #("preference", json.string(pref)),
+      ])
+    RemoveDislike(food) ->
+      json.object([
+        #("type", json.string("remove_dislike")),
+        #("food_name", json.string(food)),
+      ])
+    RegeneratePlan(scope, constraints) ->
+      json.object([
+        #("type", json.string("regenerate_plan")),
+        #("scope", json.string(regeneration_scope_to_string(scope))),
+        #("constraints", case constraints {
+          Some(c) -> json.string(c)
+          None -> json.null()
+        }),
+      ])
+    SkipMeal(day, meal_type) ->
+      json.object([
+        #("type", json.string("skip_meal")),
+        #("day", json.string(day_of_week_to_string(day))),
+        #("meal_type", json.string(meal_type_to_string(meal_type))),
+      ])
+  }
+}
+
+pub fn command_execution_result_to_json(result: CommandExecutionResult) -> Json {
+  json.object([
+    #("success", json.bool(result.success)),
+    #("message", json.string(result.message)),
+    #("command", case result.command {
+      Some(cmd) -> email_command_to_json(cmd)
+      None -> json.null()
+    }),
+  ])
+}

@@ -23,6 +23,10 @@ import meal_planner/tandoor/core/ids.{
   type IngredientId, type StepId, ingredient_id_decoder, ingredient_id_to_int,
   step_id_decoder, step_id_to_int,
 }
+import meal_planner/tandoor/ingredient.{
+  type Ingredient, encode_ingredient, ingredient_decoder,
+}
+import meal_planner/tandoor/recipe.{type Recipe, recipe_decoder}
 
 // ============================================================================
 // Types
@@ -50,12 +54,15 @@ pub type Step {
     name: String,
     instruction: String,
     instruction_markdown: Option(String),
-    ingredients: List(IngredientId),
+    ingredients: List(Ingredient),
     time: Int,
     order: Int,
     show_as_header: Bool,
     show_ingredients_table: Bool,
     file: Option(String),
+    step_recipe: Option(Int),
+    step_recipe_data: Option(Recipe),
+    numrecipe: Int,
   )
 }
 
@@ -129,7 +136,7 @@ pub fn step_decoder() -> decode.Decoder(Step) {
   )
   use ingredients <- decode.field(
     "ingredients",
-    decode.list(ingredient_id_decoder()),
+    decode.list(ingredient_decoder()),
   )
   use time <- decode.field("time", decode.int)
   use order <- decode.field("order", decode.int)
@@ -139,6 +146,12 @@ pub fn step_decoder() -> decode.Decoder(Step) {
     decode.bool,
   )
   use file <- decode.field("file", decode.optional(decode.string))
+  use step_recipe <- decode.field("step_recipe", decode.optional(decode.int))
+  use step_recipe_data <- decode.field(
+    "step_recipe_data",
+    decode.optional(recipe_decoder()),
+  )
+  use numrecipe <- decode.field("numrecipe", decode.int)
 
   decode.success(Step(
     id: id,
@@ -151,6 +164,9 @@ pub fn step_decoder() -> decode.Decoder(Step) {
     show_as_header: show_as_header,
     show_ingredients_table: show_ingredients_table,
     file: file,
+    step_recipe: step_recipe,
+    step_recipe_data: step_recipe_data,
+    numrecipe: numrecipe,
   ))
 }
 
@@ -186,6 +202,9 @@ pub fn simple_step_decoder() -> decode.Decoder(Step) {
     show_as_header: False,
     show_ingredients_table: False,
     file: None,
+    step_recipe: None,
+    step_recipe_data: None,
+    numrecipe: 0,
   ))
 }
 
@@ -207,7 +226,7 @@ pub fn encode_step(step: Step) -> Json {
     }),
     #(
       "ingredients",
-      json.array(step.ingredients, fn(id) { json.int(ingredient_id_to_int(id)) }),
+      json.array(step.ingredients, fn(ingredient) { encode_ingredient(ingredient) }),
     ),
     #("time", json.int(step.time)),
     #("order", json.int(step.order)),
@@ -217,6 +236,15 @@ pub fn encode_step(step: Step) -> Json {
       Some(f) -> json.string(f)
       None -> json.null()
     }),
+    #("step_recipe", case step.step_recipe {
+      Some(sr) -> json.int(sr)
+      None -> json.null()
+    }),
+    #("step_recipe_data", case step.step_recipe_data {
+      Some(_data) -> json.null()
+      None -> json.null()
+    }),
+    #("numrecipe", json.int(step.numrecipe)),
   ])
 }
 

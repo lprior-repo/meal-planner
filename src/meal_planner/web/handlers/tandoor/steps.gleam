@@ -12,6 +12,7 @@ import gleam/result
 
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/helpers
+import meal_planner/tandoor/ingredient
 import meal_planner/tandoor/step.{
   type Step, type StepCreateRequest, type StepUpdateRequest,
   StepCreateRequest, StepUpdateRequest,
@@ -163,8 +164,8 @@ fn encode_recipe_step(step: Step) -> json.Json {
     ),
     #(
       "ingredients",
-      json.array(step.ingredients, fn(id) {
-        json.int(ids.ingredient_id_to_int(id))
+      json.array(step.ingredients, fn(ingredient) {
+        ingredient.encode_ingredient(ingredient)
       }),
     ),
     #("time", json.int(step.time)),
