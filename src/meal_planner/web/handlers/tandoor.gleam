@@ -31,6 +31,7 @@ import meal_planner/web/handlers/tandoor/supermarket_categories
 import meal_planner/web/handlers/tandoor/supermarkets
 import meal_planner/web/handlers/tandoor/tandoor_recipes
 import meal_planner/web/handlers/tandoor/units
+import meal_planner/web/handlers/tandoor_cuisines
 
 import wisp
 
@@ -59,6 +60,14 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
 
     // Keywords (GET only)
     ["api", "tandoor", "keywords"] -> keywords.handle_keywords(req)
+
+    // Cuisines (GET list, POST create)
+    ["api", "tandoor", "cuisines"] ->
+      tandoor_cuisines.handle_cuisines_collection(req)
+
+    // Cuisine by ID (GET, PUT, DELETE)
+    ["api", "tandoor", "cuisines", cuisine_id] ->
+      tandoor_cuisines.handle_cuisine_by_id(req, cuisine_id)
 
     // Recipes (GET list, POST create)
     ["api", "tandoor", "recipes"] ->
