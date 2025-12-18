@@ -1,0 +1,3119 @@
+warning: Unused private constant
+  ┌─ /home/lewis/src/meal-planner/gleam/test/integration/helpers/http.gleam:7:1
+  │
+7 │ const base_url = "http://localhost:8080"
+  │ ^^^^^^^^^^^^^^ This private constant is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_debug_api_response_test.gleam:3:1
+  │
+3 │ import gleam/dynamic/decode
+  │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_debug_api_response_test.gleam:5:1
+  │
+5 │ import gleam/json
+  │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_debug_api_response_test.gleam:7:1
+  │
+7 │ import gleam/result
+  │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_debug_api_response_test.gleam:11:44
+   │
+11 │ import meal_planner/fatsecret/core/config.{FatSecretConfig}
+   │                                            ^^^^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_debug_api_response_test.gleam:12:1
+   │
+12 │ import meal_planner/fatsecret/core/http
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_debug_api_response_test.gleam:13:43
+   │
+13 │ import meal_planner/fatsecret/core/oauth.{AccessToken}
+   │                                           ^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_debug_api_response_test.gleam:14:1
+   │
+14 │ import meal_planner/fatsecret/storage
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_debug_api_response_test.gleam:15:1
+   │
+15 │ import pog
+   │ ^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused variable
+   ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_debug_api_response_test.gleam:70:10
+   │
+70 │     Some(config) -> {
+   │          ^^^^^^ This variable is never used
+
+Hint: You can ignore it with an underscore: `_config`.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_diary_endpoints_test.gleam:12:1
+   │
+12 │ import gleam/dynamic/decode
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_diary_endpoints_test.gleam:13:1
+   │
+13 │ import gleam/json
+   │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unreachable pattern
+    ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_diary_endpoints_test.gleam:156:5
+    │
+156 │     types.Custom(..) -> should.fail()
+    │     ^^^^^^^^^^^^^^^^
+
+This pattern cannot be reached as it matches on a variant of a type which
+is never present.
+
+Hint: It can be safely removed.
+
+warning: Unreachable pattern
+    ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_diary_endpoints_test.gleam:175:5
+    │
+175 │     types.FromFood(..) -> should.fail()
+    │     ^^^^^^^^^^^^^^^^^^
+
+This pattern cannot be reached as it matches on a variant of a type which
+is never present.
+
+Hint: It can be safely removed.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/test/fatsecret_edge_cases_test.gleam:7:1
+  │
+7 │ import meal_planner/fatsecret/diary/client
+  │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/decoders/mealplan/meal_plan_decoder.gleam:7:1
+  │
+7 │ import gleam/list
+  │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/decoders/mealplan/meal_plan_decoder.gleam:8:1
+  │
+8 │ import gleam/result
+  │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/decoders/mealplan/meal_plan_decoder.gleam:9:1
+  │
+9 │ import gleam/string
+  │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/test/integration/helpers/openapi_validator.gleam:5:1
+  │
+5 │ import gleam/list
+  │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/test/integration/helpers/openapi_validator.gleam:6:1
+  │
+6 │ import gleam/result
+  │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/gleam/test/integration/helpers/openapi_validator.gleam:77:1
+   │
+77 │ fn is_empty(s: String) -> Bool {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/gleam/test/integration/helpers/openapi_validator.gleam:82:1
+   │
+82 │ fn is_positive(n: Float) -> Bool {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/gleam/test/integration/helpers/openapi_validator.gleam:87:1
+   │
+87 │ fn is_non_negative(n: Float) -> Bool {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/gleam/test/integration/helpers/openapi_validator.gleam:92:1
+   │
+92 │ fn is_valid_date(date_str: String) -> Bool {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/tandoor.gleam:11:1
+   │
+11 │ import gleam/dynamic
+   │ ^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/tandoor.gleam:12:1
+   │
+12 │ import gleam/dynamic/decode
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/tandoor.gleam:13:1
+   │
+13 │ import gleam/http
+   │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/tandoor.gleam:14:1
+   │
+14 │ import gleam/int
+   │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/tandoor.gleam:16:1
+   │
+16 │ import gleam/list
+   │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/tandoor.gleam:17:1
+   │
+17 │ import gleam/option
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/tandoor.gleam:18:1
+   │
+18 │ import gleam/result
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/tandoor.gleam:22:36
+   │
+22 │ import meal_planner/tandoor/types.{type TandoorKeyword}
+   │                                    ^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/tandoor.gleam:24:3
+   │
+24 │   type SupermarketCategoryCreateRequest, SupermarketCategoryCreateRequest,
+   │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/tandoor.gleam:24:42
+   │
+24 │   type SupermarketCategoryCreateRequest, SupermarketCategoryCreateRequest,
+   │                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers.gleam:174:3
+    │
+174 │   base_url: String,
+    │   ^^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_base_url`.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/grocery_list.gleam:8:22
+  │
+8 │ import gleam/option.{type Option, None, Some}
+  │                      ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/grocery_list.gleam:11:37
+   │
+11 │ import meal_planner/tandoor/client.{type Food, type Ingredient, type Unit}
+   │                                     ^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/grocery_list.gleam:11:65
+   │
+11 │ import meal_planner/tandoor/client.{type Food, type Ingredient, type Unit}
+   │                                                                 ^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/meal_sync.gleam:23:22
+   │
+23 │   type ClientConfig, type RecipeDetail, get_recipe_detail,
+   │                      ^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/meal_prep_ai.gleam:7:1
+  │
+7 │ import gleam/result
+  │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/meal_planning.gleam:14:1
+   │
+14 │ import gleam/result
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/meal_planning.gleam:31:1
+   │
+31 │ type MealPlanResponse {
+   │ ^^^^^^^^^^^^^^^^^^^^^ This private type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private constructor
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/meal_planning.gleam:32:3
+   │  
+32 │ ╭   MealPlanResponse(
+33 │ │     recipes_selected: Int,
+34 │ │     grocery_list_items: Int,
+35 │ │     total_prep_time_min: Int,
+36 │ │     formatted_plan: String,
+37 │ │   )
+   │ ╰───^ This private constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/web/handlers/meal_planning.gleam:126:3
+    │
+126 │   tandoor_config: ClientConfig,
+    │   ^^^^^^^^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_tandoor_config`.
+
+warning: Unreachable pattern
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/config_test.gleam:14:5
+   │
+14 │     _ -> should.fail()
+   │     ^
+
+This pattern cannot be reached as a previous pattern matches the same
+values.
+
+Hint: It can be safely removed.
+
+warning: Unreachable pattern
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/config_test.gleam:31:5
+   │
+31 │     _ -> should.fail()
+   │     ^
+
+This pattern cannot be reached as a previous pattern matches the same
+values.
+
+Hint: It can be safely removed.
+
+warning: Unused imported item
+  ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/postgres_test.gleam:2:22
+  │
+2 │ import gleam/option.{None, Some}
+  │                      ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+  ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/postgres_test.gleam:2:28
+  │
+2 │ import gleam/option.{None, Some}
+  │                            ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/clients/auth.gleam:18:3
+   │
+18 │   type AuthMethod, type ClientConfig, type TandoorError, AuthenticationError,
+   │   ^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planner/tandoor/clients/meal_plans_test.gleam:8:3
+  │
+8 │   type CreateMealPlanRequest, CreateMealPlanRequest,
+  │   ^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/clients/request_builder.gleam:8:22
+  │
+8 │ import gleam/option.{type Option, None, Some}
+  │                      ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/decoders/recipe/recipe_detail_decoder.gleam:8:1
+  │
+8 │ import gleam/list
+  │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/decoders/recipe/recipe_detail_decoder.gleam:10:1
+   │
+10 │ import gleam/result
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/decoders/recipe/recipe_detail_decoder.gleam:11:1
+   │
+11 │ import gleam/string
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_planning_orchestration_test.gleam:11:32
+   │
+11 │ import meal_planner/meal_sync.{MealSelection}
+   │                                ^^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/test/meal_sync_integration_test.gleam:8:1
+  │
+8 │ import gleam/list
+  │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported value
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_sync_integration_test.gleam:13:37
+   │
+13 │   type SyncStatus, Failed, Success, format_sync_report,
+   │                                     ^^^^^^^^^^^^^^^^^^ This imported value is never used
+
+Hint: You can safely remove it.
+
+warning: Unreachable pattern
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_sync_integration_test.gleam:38:5
+   │
+38 │     Failed(_) -> should.fail()
+   │     ^^^^^^^^^
+
+This pattern cannot be reached as it matches on a variant of a type which
+is never present.
+
+Hint: It can be safely removed.
+
+warning: Unreachable pattern
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_sync_integration_test.gleam:46:5
+   │
+46 │     Success(_) -> should.fail()
+   │     ^^^^^^^^^^
+
+This pattern cannot be reached as it matches on a variant of a type which
+is never present.
+
+Hint: It can be safely removed.
+
+warning: Unused variable
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_sync_integration_test.gleam:65:7
+   │
+65 │   let meal_name = "Grilled Chicken Breast"
+   │       ^^^^^^^^^ This variable is never used
+
+Hint: You can ignore it with an underscore: `_meal_name`.
+
+warning: Unused variable
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_sync_integration_test.gleam:89:7
+   │
+89 │   let dinner = "dinner"
+   │       ^^^^^^ This variable is never used
+
+Hint: You can ignore it with an underscore: `_dinner`.
+
+warning: Unused variable
+   ┌─ /home/lewis/src/meal-planner/gleam/test/meal_sync_integration_test.gleam:90:7
+   │
+90 │   let snack = "snack"
+   │       ^^^^^ This variable is never used
+
+Hint: You can ignore it with an underscore: `_snack`.
+
+warning: Unused variable
+    ┌─ /home/lewis/src/meal-planner/gleam/test/run_live_ncp_test.gleam:197:7
+    │
+197 │   let result =
+    │       ^^^^^^ This variable is never used
+
+Hint: You can ignore it with an underscore: `_result`.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/gleam/test/tandoor/clients/auth_test.gleam:6:3
+  │
+6 │   type ClientConfig, BearerAuth, ClientConfig, SessionAuth,
+  │   ^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/gleam/test/tandoor/clients/response_test.gleam:4:1
+  │
+4 │ import gleam/json
+  │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+   Compiled in 0.10s
+    Running meal_planner_test.main
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+🔍 Checking FatSecret diary for today...
+
+To get your real calorie data for today:
+
+Option 1 - Via Gleam REPL:
+  gleam repl
+  import meal_planner/fatsecret/diary/service
+  service.get_day_entries(db, 20250115)
+
+Option 2 - Via HTTP API:
+  curl http://localhost:8080/api/fatsecret/diary/day/20250115
+
+Option 3 - Quick script (what I can create):
+  I'll pull your real data and show total calories
+
+═══════════════════════════════════════════════════════════════
+EXAMPLE OUTPUT (with real data):
+═══════════════════════════════════════════════════════════════
+
+📅 Date: January 15, 2025
+
+🍽️  YOUR MEALS TODAY:
+  Breakfast (08:30)
+    Scrambled Eggs (2) - 155 cal
+    Whole Wheat Toast (2) - 160 cal
+    Orange Juice (8oz) - 110 cal
+    → Subtotal: 425 cal
+
+  Snack (10:30)
+    Greek Yogurt (150g) - 130 cal
+    → Subtotal: 130 cal
+
+  Lunch (12:30)
+    Grilled Chicken (150g) - 240 cal
+    Brown Rice (1 cup) - 210 cal
+    Broccoli (100g) - 35 cal
+    → Subtotal: 485 cal
+
+  Snack (15:00)
+    Almonds (1oz) - 165 cal
+    → Subtotal: 165 cal
+
+  Dinner (19:00)
+    Salmon Fillet (150g) - 280 cal
+    Sweet Potato (150g) - 115 cal
+    Green Salad (200g) - 45 cal
+    → Subtotal: 440 cal
+
+═══════════════════════════════════════════════════════════════
+📊 TOTAL: 1,645 calories logged so far today
+🎯 Goal: 2,500 calories
+📈 Still need: 855 calories to reach goal
+═══════════════════════════════════════════════════════════════
+
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: POST /api/fatsecret/diary/entries - Basic Entry
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/diary/entries
+
+✓ Request payload:
+  {
+    "type": "from_food",
+    "food_id": "4142",
+    "food_entry_name": "Chicken Breast",
+    "serving_id": "12345",
+    "number_of_units": 1.0,
+    "meal": "lunch",
+    "date": "2025-12-15"
+  }
+
+✓ Expected: 201 Created with entry_id
+
+🔍 Assertions to verify:
+  • Status code is 201
+  • Response has 'success' field (true)
+  • Response has 'entry_id' (string, non-empty)
+  • Response has 'message' confirmation
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/diary/entries \
+    -H 'Content-Type: application/json' \
+    -d '{"type":"from_food","food_id":"4142","food_entry_name":"Chicken Breast","serving_id":"12345","number_of_units":1.0,"meal":"lunch","date":"2025-12-15"}' \
+    | jq
+
+🐛 Debugging: Entry creation fails
+  • Verify food_id and serving_id exist in FatSecret database
+  • Check OAuth token is valid (not expired/revoked)
+  • Ensure date format is YYYY-MM-DD
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: diary_creation_integration_test.test_1_create_basic_diary_entry_returns_201_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 2: POST /api/fatsecret/diary/entries - Bulk Creation
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/diary/entries (bulk mode)
+
+✓ Request payload:
+  {
+    "entries": [
+      {
+        "type": "from_food",
+        "food_id": "4142",
+        "food_entry_name": "Chicken Breast",
+        "serving_id": "12345",
+        "number_of_units": 1.0,
+        "meal": "lunch",
+        "date": "2025-12-15"
+      },
+      {
+        "type": "custom",
+        "food_entry_name": "Custom Salad",
+        "serving_description": "Large bowl",
+        "number_of_units": 1.0,
+        "meal": "lunch",
+        "date": "2025-12-15",
+        "calories": 350.0,
+        "carbohydrate": 40.0,
+        "protein": 15.0,
+        "fat": 8.0
+      }
+    ]
+  }
+
+✓ Expected: 201 Created with multiple entry_ids
+
+🔍 Assertions to verify:
+  • Status code is 201
+  • Response has 'success' field (true)
+  • Response has 'entry_ids' array
+  • Array length matches number of entries (2)
+  • Each entry_id is a non-empty string
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/diary/entries \
+    -H 'Content-Type: application/json' \
+    -d '{"entries":[{"type":"from_food","food_id":"4142","food_entry_name":"Chicken Breast","serving_id":"12345","number_of_units":1.0,"meal":"lunch","date":"2025-12-15"},{"type":"custom","food_entry_name":"Custom Salad","serving_description":"Large bowl","number_of_units":1.0,"meal":"lunch","date":"2025-12-15","calories":350.0,"carbohydrate":40.0,"protein":15.0,"fat":8.0}]}' \
+    | jq
+
+🐛 Debugging: Bulk creation fails
+  • Verify all entries have valid data
+  • Check if endpoint supports bulk operations
+  • Ensure request doesn't exceed size limits
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: diary_creation_integration_test.test_2_create_bulk_diary_entries_returns_201_multi_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 3: POST /api/fatsecret/diary/entries - With Multiplier
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/diary/entries
+
+✓ Request payload:
+  {
+    "type": "from_food",
+    "food_id": "4142",
+    "food_entry_name": "Chicken Breast",
+    "serving_id": "12345",
+    "number_of_units": 2.5,
+    "meal": "dinner",
+    "date": "2025-12-15"
+  }
+
+✓ Expected: 201 Created with calculated nutrition values
+
+🔍 Assertions to verify:
+  • Status code is 201
+  • Response has 'success' field (true)
+  • Response has 'entry_id' (string, non-empty)
+  • Response includes 'calculated_calories' field
+  • Calories are multiplied by number_of_units (2.5x)
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/diary/entries \
+    -H 'Content-Type: application/json' \
+    -d '{"type":"from_food","food_id":"4142","food_entry_name":"Chicken Breast","serving_id":"12345","number_of_units":2.5,"meal":"dinner","date":"2025-12-15"}' \
+    | jq
+
+🐛 Debugging: Multiplier calculation incorrect
+  • Verify number_of_units is being applied to all nutrition values
+  • Check serving_id has base nutrition data
+  • Ensure float precision doesn't cause rounding errors
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: diary_creation_integration_test.test_3_create_entry_with_multiplier_returns_201_calculated_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+📊 DIARY ENTRY CREATION TEST SUMMARY
+═══════════════════════════════════════════════════════════════
+
+✅ 3 Diary Entry Creation Tests
+
+Test Coverage:
+  1. Basic entry creation (single food from database)
+     - Validates 201 status code
+     - Confirms entry_id is returned
+
+  2. Bulk entries creation (multiple entries in one request)
+     - Tests both from_food and custom entry types
+     - Validates entry_ids array response
+
+  3. Entry with multiplier/servings (number_of_units > 1.0)
+     - Tests serving size calculations
+     - Validates calculated nutrition values
+
+═══════════════════════════════════════════════════════════════
+TO RUN TESTS:
+═══════════════════════════════════════════════════════════════
+
+Terminal 1 - Start the server:
+  cd gleam
+  gleam run
+
+Terminal 2 - Run the integration tests:
+  cd gleam
+  gleam test -- --module diary_creation_integration_test
+
+Expected output:
+  ✅ All 3 tests pass with 201 status codes
+  ✅ Each response includes entry_id(s)
+  ✅ Request payloads are properly validated
+
+[32m.[39m═══════════════════════════════════════════════════════════════
+📊 DIARY DELETION INTEGRATION TEST SUMMARY
+═══════════════════════════════════════════════════════════════
+
+✅ 2 Diary Entry Deletion Tests
+
+Tests cover:
+  • Single entry deletion (DELETE /entries/:id)
+  • Bulk entry deletion (DELETE /entries with body)
+  • Cleanup verification (deleted entries return 404)
+  • 204 No Content response validation
+
+Each test includes:
+  • Endpoint URL & HTTP method
+  • Expected response (204 with empty body)
+  • Post-deletion verification
+  • Curl commands for manual testing
+  • Debugging guidance for common issues
+
+═══════════════════════════════════════════════════════════════
+TO RUN TESTS:
+═══════════════════════════════════════════════════════════════
+
+Terminal 1 - Start the server:
+  cd gleam
+  gleam run
+
+Terminal 2 - Run the integration tests:
+  cd gleam
+  gleam test -- --module diary_delete_integration_test
+
+Expected output:
+  ✅ Both tests pass with 204 status codes
+  ✅ Deleted entries return 404 on subsequent GET
+  ✅ Empty response body for 204 status
+
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: DELETE /api/fatsecret/diary/entries/123456789
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  DELETE /api/fatsecret/diary/entries/123456789 (Single entry deletion)
+
+✓ Expected: 204 No Content (entry deleted successfully)
+
+🔍 Assertions to verify:
+  • Status code is 204 (No Content)
+  • Response body is empty (standard for 204)
+  • Entry is removed from FatSecret diary
+  • Subsequent GET returns 404 for deleted entry
+
+📋 Curl command for manual testing:
+  curl -X DELETE http://localhost:8080/api/fatsecret/diary/entries/123456789
+
+🐛 Debugging: Deletion failures
+  • 404: Entry ID doesn't exist - verify entry was created
+  • 401: OAuth token expired - reconnect FatSecret account
+  • 500: FatSecret API error - check API credentials
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: diary_delete_integration_test.test_1_delete_single_diary_entry_returns_204_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 2: DELETE /api/fatsecret/diary/entries (bulk)
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  DELETE /api/fatsecret/diary/entries (Bulk entry deletion)
+
+✓ Request body (JSON):
+  {
+    "entry_ids": ["123456789", "987654321"]
+  }
+
+✓ Expected: 204 No Content (all entries deleted)
+
+🔍 Assertions to verify:
+  • Status code is 204 (No Content)
+  • Response body is empty (standard for 204)
+  • All entries removed from FatSecret diary
+  • Subsequent GETs return 404 for all deleted entries
+
+📋 Curl command for manual testing:
+  curl -X DELETE http://localhost:8080/api/fatsecret/diary/entries \
+    -H 'Content-Type: application/json' \
+    -d '{"entry_ids":["123456789","987654321"]}'
+
+🐛 Debugging: Bulk deletion issues
+  • Partial deletion: Some entries deleted, others remain
+  • All fail: Check if any entry IDs are invalid
+  • Transaction rollback: FatSecret API should be atomic
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: diary_delete_integration_test.test_2_delete_multiple_diary_entries_returns_204_test
+[36m info[39m: 
+False
+should equal
+True
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: GET /api/fatsecret/diary/day/20437
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/diary/day/20437 (2025-12-15)
+
+✓ Expected: 200 OK with food entries for today
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'entries' array
+  • Response has 'totals' with calories, protein, fat, carbs
+  • Each entry has: food_entry_id (string), calories (float > 0)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/diary/day/20437 | jq
+
+🐛 Debugging: Zero-calorie bug
+  If calories = 0, check FatSecret API serving sizes
+  Verify entry matches FatSecret web app
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: endpoint_integration_test.test_1_diary_day_returns_200_and_valid_json_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 2: GET /api/fatsecret/diary/month/20437
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/diary/month/20437 (December 2025)
+
+✓ Expected: 200 OK with daily summary for month
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'days' array
+  • Has 'month' (12) and 'year' (2025)
+  • Each day has: date_int (integer), calories (float)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/diary/month/20437 | jq
+
+🐛 Debugging: Month mismatch
+  Verify date_int 20437 corresponds to December 2025
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: endpoint_integration_test.test_2_diary_month_returns_200_and_valid_json_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 3: GET /api/fatsecret/foods/search?q=chicken
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/foods/search?q=chicken
+
+✓ Expected: 200 OK with list of matching foods
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'foods' array
+  • Has 'total_results' (integer > 0)
+  • Each food has: food_id (string), food_name (string)
+
+📋 Curl command for manual testing:
+  curl -s 'http://localhost:8080/api/fatsecret/foods/search?q=chicken' | jq
+
+🐛 Debugging: No results returned
+  If foods array is empty, FatSecret API key may be expired
+  Verify FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: endpoint_integration_test.test_3_search_foods_returns_200_and_valid_json_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 5: GET /api/fatsecret/profile
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/profile
+
+✓ Expected: 200 OK with user profile data
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Has basic fields: user_id, first_name, last_name
+  • Has biometric data: weight (float > 0), height (int > 0)
+  • Profile matches FatSecret web app
+  • Goal weight is reasonable if set
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/profile | jq
+
+🐛 Debugging: Stale profile data
+  If data is outdated, OAuth token may be expired
+  Check database for fresh FatSecret OAuth tokens
+  Verify last sync timestamp is recent
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: endpoint_integration_test.test_5_get_profile_returns_200_and_valid_json_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+📊 LIVE INTEGRATION TEST SUMMARY
+═══════════════════════════════════════════════════════════════
+
+✅ 5 Live HTTP tests to real endpoints
+
+Each test includes:
+  • Endpoint URL & HTTP method
+  • Expected response shape with realistic sample data
+  • Assertions: status codes, data types, field presence
+  • Numeric constraints (calories > 0, heights > 0, etc.)
+  • Curl commands for manual testing
+  • Debugging guidance for common issues
+
+═══════════════════════════════════════════════════════════════
+TO RUN TESTS:
+═══════════════════════════════════════════════════════════════
+
+Terminal 1 - Start the server:
+  cd gleam
+  gleam run
+
+Terminal 2 - Run the integration tests:
+  cd gleam
+  gleam test -- --module endpoint_integration_test
+
+Expected output:
+  ✅ All 5 tests pass with 200 status codes
+  ✅ Each response validates JSON shape
+  ✅ Required fields present and typed correctly
+
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 6: GET /fatsecret/connect
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 302 redirect to FatSecret OAuth provider
+
+❌ HTTP request failed: Server not running
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: endpoint_integration_test.test_6_fatsecret_connect_returns_302_redirect_test
+[36m info[39m: 
+False
+should equal
+True
+
+═══════════════════════════════════════════════════════════════
+TEST 7: GET /fatsecret/status
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with auth status JSON
+
+❌ HTTP request failed: Server not running
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: endpoint_integration_test.test_7_fatsecret_status_returns_200_test
+[36m info[39m: 
+False
+should equal
+True
+
+═══════════════════════════════════════════════════════════════
+TEST 8: POST /fatsecret/disconnect (not connected)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 404 when no OAuth connection exists
+
+❌ HTTP request failed: Server not running
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: endpoint_integration_test.test_8_fatsecret_disconnect_not_connected_returns_404_test
+[36m info[39m: 
+False
+should equal
+True
+
+═══════════════════════════════════════════════════════════════
+TEST 9: GET /api/fatsecret/foods/autocomplete?q=chicken
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with autocomplete suggestions
+
+❌ HTTP request failed: Server not running
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: endpoint_integration_test.test_9_fatsecret_foods_autocomplete_test
+[36m info[39m: 
+False
+should equal
+True
+
+═══════════════════════════════════════════════════════════════
+TEST 10: GET /api/fatsecret/recipes/autocomplete?q=pasta
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with recipe suggestions
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 11: GET /api/fatsecret/recipes/search?q=salad
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with matching recipes
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 12: GET /api/fatsecret/recipes/types
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with recipe type categories
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 13: GET /api/fatsecret/recipes/search/type/1
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with recipes of specified type
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 14: GET /api/fatsecret/recipes/999999999 (invalid ID)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 404 Not Found
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 15: GET /api/fatsecret/recipes/123 (valid recipe)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with recipe details
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 16: GET /api/fatsecret/recipes/search?q= (empty query)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 400 Bad Request or 200 with default results
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 17: GET /api/fatsecret/recipes/autocomplete?q= (empty)
+═══════════════════════════════════════════════════════════════
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 18: GET /api/fatsecret/recipes/search?q=123 (numeric)
+═══════════════════════════════════════════════════════════════
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 19: GET /api/fatsecret/favorites/foods
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with user's favorite foods
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 20: GET /api/fatsecret/favorites/recipes
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with user's favorite recipes
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 21: GET /api/fatsecret/favorites/foods (empty list)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with empty array or minimal list
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 23: POST /api/fatsecret/favorites/recipes
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200/201 after adding recipe to favorites
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 25: DELETE /api/fatsecret/favorites/recipes/:id
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 204 No Content
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 26: GET /api/fatsecret/favorites/foods/most-eaten
+═══════════════════════════════════════════════════════════════
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 27: GET /api/fatsecret/favorites/foods/recently-eaten
+═══════════════════════════════════════════════════════════════
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 29: DELETE /api/fatsecret/favorites/foods/999999999
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 404 Not Found
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 30: GET /api/fatsecret/favorites/foods (auth check)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 (gracefully handle or 401 if not authenticated)
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 31: POST /api/fatsecret/diary/entries (Create)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 201 Created with new entry ID
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 32: GET /api/fatsecret/diary/entries/:id (Read)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with entry details
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 33: PATCH /api/fatsecret/diary/entries/:id (Update)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with updated entry
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 34: DELETE /api/fatsecret/diary/entries/:id (Delete)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 204 No Content or 200 OK
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 35: Diary Edge Case - Zero Calorie Entries
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: System handles zero-calorie entries gracefully
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 36: Diary Edge Case - Invalid date_int
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 400 Bad Request or 404 Not Found
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 37: Diary Edge Case - Expired OAuth Token
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 401 Unauthorized if token invalid
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 38: Diary Edge Case - Bulk Operations
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: System handles multiple entries efficiently
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 39: GET /api/fatsecret/saved-meals (List)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with saved meals array
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 40: POST /api/fatsecret/saved-meals (Create)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 201 Created with new meal ID
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 41: PUT /api/fatsecret/saved-meals/:id (Update)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with updated meal
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 42: Saved Meals Edge Case - Empty List
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 with empty array or message
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 43: Saved Meals Edge Case - Invalid Meal ID
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 404 Not Found
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 44: GET /api/fatsecret/profile (Retrieve)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK with profile data or 404 if not set
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 45: POST /api/fatsecret/profile (Update)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200 OK or 201 Created with updated profile
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 46: Profile Edge Case - Invalid Data
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 400 Bad Request with validation error
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 47: Error Response Format Validation
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: All error responses follow consistent format
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 48: Pagination Consistency
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: Pagination parameters work across endpoints
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 49: Content-Type Header Validation
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: All JSON responses have correct content-type
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 50: Concurrent Request Handling
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: System handles multiple simultaneous requests
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 51: Large Payload Handling
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: System handles large request/response bodies
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 52: Special Characters in Query Parameters
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: System handles special characters safely
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 53: Unicode Character Handling
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: System correctly processes Unicode in requests
+
+
+[90mendpoint_integration_test.test_53_unicode_handling_test[39m
+An unexpected error occurred:
+
+  UnexpectedHttpcError(InvalidUri)
+
+═══════════════════════════════════════════════════════════════
+TEST 54: Rate Limiting Handling
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: System gracefully handles rate limit responses
+
+⚠️  Skipping - Server not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 55: Request Timeout Handling
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: System handles request timeouts gracefully
+
+⚠️  Skipping - Server not configured or timed out
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 56: Network Resilience & Retry Logic
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: Transient errors are handled appropriately
+
+⚠️  Network error handled appropriately
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 57: Comprehensive Endpoint Coverage Summary
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoints covered:
+  • OAuth: connect, status, disconnect
+  • Foods: search, get, autocomplete, favorites
+  • Recipes: search, types, details, autocomplete, favorites
+  • Diary: day, month, entries (CRUD)
+  • Saved Meals: list, create, update
+  • Profile: get, update
+  • Edge cases: pagination, error formats, special chars
+
+🎯 Expected: All 57 tests cover major API functionality
+
+⚠️  Test suite reachable - all endpoints can be tested when server is running
+[32m.[39m═══════════════════════════════════════════════════════════════
+TEST 4: GET /api/fatsecret/foods/4142
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/foods/4142 (Chicken Breast)
+
+✓ Expected: 200 OK with food details and serving options
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'food_id' (string)
+  • Response has 'servings' array
+  • Each serving has: serving_id, serving_description
+  • Each serving has nutrition data (calories, protein, etc.)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/foods/4142 | jq
+
+🐛 Debugging: Missing nutrition data
+  If servings have null calories, FatSecret returned incomplete data
+  Try searching for food again to verify it exists
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: endpoint_integration_test.test_4_get_food_detail_returns_200_and_valid_json_test
+[36m info[39m: 
+False
+should equal
+True
+
+═══════════════════════════════════════════════════════════════
+TEST 22: POST /api/fatsecret/favorites/foods
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200/201 after adding food to favorites
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 24: DELETE /api/fatsecret/favorites/foods/:id
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 204 No Content or 200 OK
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 28: POST /api/fatsecret/favorites/foods (duplicate)
+═══════════════════════════════════════════════════════════════
+
+✓ Expected: 200/201 or 409 Conflict
+
+⚠️  Skipping - Requires FatSecret OAuth connection
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret@diary@update_test.patch_diary_entry_single_field_update_test
+[36m info[39m: 
+False
+should equal
+True
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret@diary@update_test.patch_diary_entry_bulk_update_test
+[36m info[39m: 
+False
+should equal
+True
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret@oauth_token_validity_test.encryption_configured_test
+[36m info[39m: 
+False
+should equal
+True
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret@oauth_token_validity_test.date_int_for_problem_date_test
+[36m info[39m: 
+20437
+should equal
+20558
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret@oauth_token_validity_test.token_exists_and_is_recent_test
+[36m info[39m: 
+False
+should equal
+True
+
+═══════════════════════════════════════════════════════════════
+TEST 1: GET /api/fatsecret/saved-meals (Empty List)
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/saved-meals
+
+✓ Expected: 200 OK with empty saved_meals array
+
+🔍 Assertions to verify:
+  • Status code is 200 (not 404)
+  • Response has 'saved_meals' array
+  • Array is empty: []
+  • Response has 'meal_filter' field (null when no filter)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/saved-meals | jq
+
+🐛 Edge case: User with no saved meals
+  Should NOT return 404
+  Should return 200 with empty array
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret@saved_meals@edge_cases_test.test_1_empty_saved_meals_returns_200_with_empty_array_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 2: GET /api/fatsecret/saved-meals/99999999/items
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/saved-meals/99999999/items
+
+✓ Expected: 404 Not Found
+
+🔍 Assertions to verify:
+  • Status code is 404 (not 200 or 500)
+  • Response has 'error' field
+  • Error message indicates meal not found
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/saved-meals/99999999/items | jq
+
+🐛 Edge case: Invalid meal ID
+  Should NOT return 500 (server error)
+  Should return 404 (not found)
+  Should have clear error message
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret@saved_meals@edge_cases_test.test_2_invalid_saved_meal_id_returns_404_test
+[36m info[39m: 
+False
+should equal
+True
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+╔════════════════════════════════════════════════════════════════╗
+║          FATSECRET API RESPONSE FORMAT DEBUG                  ║
+║              Capturing Real API Response for 12/15/2025        ║
+╚════════════════════════════════════════════════════════════════╝
+
+🔍 Checking database connection...
+❌ FatSecret config not loaded from environment variables
+
+Required environment variables:
+  - FATSECRET_CONSUMER_KEY
+  - FATSECRET_CONSUMER_SECRET
+
+If you have an OAuth token in the database, the API call will work.
+But this test can't access the database from the test environment.
+
+📋 MANUAL TEST INSTRUCTIONS:
+   Run this command to see the actual FatSecret API response:
+
+   curl -s -H 'Authorization: OAuth oauth_token=YOUR_TOKEN' \
+     'https://www.fatsecret.com/oauth/rest/server.api?method=food_entries.get&date_int=20251215' \
+     | jq .
+
+
+═══════════════════════════════════════════════════════════════
+✅ Test Complete
+═══════════════════════════════════════════════════════════════
+
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: GET /api/fatsecret/favorites/recipes
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/favorites/recipes
+
+✓ Expected: 200 OK with list of favorite recipes
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'recipes' array
+  • Each recipe has: recipe_id, recipe_name, recipe_description
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/favorites/recipes | jq
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_favorite_recipes_test.test_1_get_favorite_recipes_returns_200_and_list_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 2: POST /api/fatsecret/favorites/recipes
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/favorites/recipes
+
+✓ Expected: 201 Created when adding recipe to favorites
+
+🔍 Assertions to verify:
+  • Status code is 201
+  • Response confirms recipe added
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/favorites/recipes
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_favorite_recipes_test.test_2_add_favorite_recipe_returns_201_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 3: DELETE /api/fatsecret/favorites/recipes/:id
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  DELETE /api/fatsecret/favorites/recipes/12345
+
+✓ Expected: 204 No Content when removing recipe from favorites
+
+🔍 Assertions to verify:
+  • Status code is 204
+
+📋 Curl command for manual testing:
+  curl -X DELETE http://localhost:8080/api/fatsecret/favorites/recipes/12345
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_favorite_recipes_test.test_3_delete_favorite_recipe_returns_204_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 4: GET /api/fatsecret/favorites/recipes?page=1&max_results=10
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/favorites/recipes?page=1&max_results=10
+
+✓ Expected: 200 OK with paginated results
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'recipes' array
+  • Pagination parameters respected
+
+📋 Curl command for manual testing:
+  curl -s 'http://localhost:8080/api/fatsecret/favorites/recipes?page=1&max_results=10' | jq
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_favorite_recipes_test.test_4_favorite_recipes_pagination_returns_200_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 5: GET /api/fatsecret/favorites/recipes?cuisine=italian
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/favorites/recipes?cuisine=italian
+
+✓ Expected: 200 OK with filtered results by cuisine type
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'recipes' array
+  • Results filtered by cuisine parameter
+
+📋 Curl command for manual testing:
+  curl -s 'http://localhost:8080/api/fatsecret/favorites/recipes?cuisine=italian' | jq
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_favorite_recipes_test.test_5_favorite_recipes_filter_by_cuisine_returns_200_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+📊 FAVORITE RECIPES INTEGRATION TEST SUMMARY
+═══════════════════════════════════════════════════════════════
+
+✅ 5 Favorite Recipe Endpoint Tests
+
+Test Coverage:
+  1. GET /api/fatsecret/favorites/recipes -> 200 with list
+  2. POST /api/fatsecret/favorites/recipes -> 201 created
+  3. DELETE /api/fatsecret/favorites/recipes/:id -> 204 deleted
+  4. List pagination -> 200 with limit/offset
+  5. Filter by cuisine -> 200 with filtered results
+
+Each test validates:
+  • Correct HTTP status codes
+  • Response shape and JSON structure
+  • Required fields present
+
+═══════════════════════════════════════════════════════════════
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: GET /api/fatsecret/favorites/foods
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/favorites/foods
+
+✓ Expected: 200 OK with list of favorite foods
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'foods' array
+  • Each food has: food_id (string), food_name (string)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/favorites/foods | jq
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_favorites_foods_endpoints_test.test_1_get_favorite_foods_returns_200_and_valid_json_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 4: GET /api/fatsecret/favorites/foods/most-eaten
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/favorites/foods/most-eaten
+
+✓ Expected: 200 OK with list of most eaten foods
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'foods' array
+  • Each food has: food_id (string), food_name (string)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/favorites/foods/most-eaten | jq
+
+🐛 Debugging: Meal filter parameter
+  Optional: ?meal=breakfast|lunch|dinner|snack|all
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_favorites_foods_endpoints_test.test_4_get_most_eaten_foods_returns_200_and_valid_json_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 5: GET /api/fatsecret/favorites/foods/recently-eaten
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/favorites/foods/recently-eaten
+
+✓ Expected: 200 OK with list of recently eaten foods
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'foods' array
+  • Each food has: food_id (string), food_name (string)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/favorites/foods/recently-eaten | jq
+
+🐛 Debugging: Meal filter parameter
+  Optional: ?meal=breakfast|lunch|dinner|snack|all
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_favorites_foods_endpoints_test.test_5_get_recently_eaten_foods_returns_200_and_valid_json_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 2: POST /api/fatsecret/favorites/foods/:food_id
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/favorites/foods/4142
+
+✓ Expected: 201 Created with success message
+
+🔍 Assertions to verify:
+  • Status code is 201
+  • Response has 'message' field
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/favorites/foods/4142
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_favorites_foods_endpoints_test.test_2_add_favorite_food_returns_201_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 3: DELETE /api/fatsecret/favorites/foods/:food_id
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  DELETE /api/fatsecret/favorites/foods/4142
+
+✓ Expected: 204 No Content
+
+🔍 Assertions to verify:
+  • Status code is 204
+
+📋 Curl command for manual testing:
+  curl -X DELETE http://localhost:8080/api/fatsecret/favorites/foods/4142
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_favorites_foods_endpoints_test.test_3_delete_favorite_food_returns_204_test
+[36m info[39m: 
+False
+should equal
+True
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: GET /api/fatsecret/foods/search?q=chicken
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/foods/search?q=chicken
+
+✓ Expected: 200 OK with list of matching foods
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'foods' array
+  • Has 'total_results' (integer > 0)
+  • Each food has: food_id (string), food_name (string)
+
+📋 Curl command for manual testing:
+  curl -s 'http://localhost:8080/api/fatsecret/foods/search?q=chicken' | jq
+
+🐛 Debugging: No results returned
+  If foods array is empty, FatSecret API key may be expired
+  Verify FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_foods_endpoints_test.test_1_search_foods_returns_200_and_valid_json_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 2: GET /api/fatsecret/foods/search (empty query)
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/foods/search?q=
+
+✓ Expected: 400 Bad Request (empty query parameter)
+
+🔍 Assertions to verify:
+  • Status code is 400
+  • Response indicates invalid query parameter
+
+📋 Curl command for manual testing:
+  curl -s 'http://localhost:8080/api/fatsecret/foods/search?q=' | jq
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_foods_endpoints_test.test_2_search_foods_empty_query_returns_400_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 3: GET /api/fatsecret/foods/search (missing query)
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/foods/search
+
+✓ Expected: 400 Bad Request (missing query parameter)
+
+🔍 Assertions to verify:
+  • Status code is 400
+  • Response indicates missing required query parameter
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/foods/search | jq
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_foods_endpoints_test.test_3_search_foods_missing_query_returns_400_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 6: GET /api/fatsecret/foods/search?q=apple&page=0&limit=5
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/foods/search?q=apple&page=0&limit=5
+
+✓ Expected: 200 OK with paginated results
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'foods' array
+  • Response has pagination fields (page_number, max_results)
+  • max_results field reflects the limit parameter (5)
+  • page_number field reflects the page parameter (0)
+
+📋 Curl command for manual testing:
+  curl -s 'http://localhost:8080/api/fatsecret/foods/search?q=apple&page=0&limit=5' | jq
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_foods_endpoints_test.test_6_search_foods_with_pagination_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+📊 FATSECRET FOODS ENDPOINTS TEST SUMMARY
+═══════════════════════════════════════════════════════════════
+
+✅ 6 Live HTTP tests to FatSecret Foods endpoints
+
+Coverage:
+  • Search endpoint (happy path + 2 edge cases + pagination)
+  • Get food detail (happy path + numeric ID edge case)
+
+Test breakdown:
+  1. Search with query → 200
+  2. Search with empty query → 400
+  3. Search with missing query → 400
+  4. Get food by ID → 200
+  5. Get food by numeric ID → 200/404
+  6. Search with pagination params → 200
+
+Each test includes:
+  • Endpoint URL & HTTP method
+  • Expected response shape with validation
+  • Assertions: status codes, data types, field presence
+  • Edge case handling (missing/empty params)
+  • Curl commands for manual testing
+  • Debugging guidance for common issues
+
+═══════════════════════════════════════════════════════════════
+TO RUN TESTS:
+═══════════════════════════════════════════════════════════════
+
+Terminal 1 - Start the server:
+  cd gleam
+  gleam run
+
+Terminal 2 - Run the integration tests:
+  cd gleam
+  gleam test -- --module fatsecret_foods_endpoints_test
+
+Expected output:
+  ✅ Tests 1, 4, 6 pass with 200 status codes
+  ✅ Tests 2, 3 pass with 400 status codes
+  ✅ Test 5 passes with 200 or 404 status code
+
+[32m.[39m═══════════════════════════════════════════════════════════════
+TEST 4: GET /api/fatsecret/foods/4142
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/foods/4142 (Chicken Breast)
+
+✓ Expected: 200 OK with food details and serving options
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'food_id' (string)
+  • Response has 'servings' array
+  • Each serving has: serving_id, serving_description
+  • Each serving has nutrition data (calories, protein, etc.)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/foods/4142 | jq
+
+🐛 Debugging: Missing nutrition data
+  If servings have null calories, FatSecret returned incomplete data
+  Try searching for food again to verify it exists
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_foods_endpoints_test.test_4_get_food_detail_returns_200_and_valid_json_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 5: GET /api/fatsecret/foods/12345 (numeric string ID)
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/foods/12345 (testing numeric ID handling)
+
+✓ Expected: 200 OK or 404 Not Found (both valid)
+
+🔍 Assertions to verify:
+  • Status code is 200 or 404
+  • If 200: Response has valid food structure
+  • If 404: Food not found (acceptable)
+  • Edge case: numeric string IDs handled correctly
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/foods/12345 | jq
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: fatsecret_foods_endpoints_test.test_5_get_food_numeric_id_returns_200_or_404_test
+[36m info[39m: 
+False
+should equal
+True
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: GET /api/fatsecret/favorites/foods (empty list)
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/favorites/foods
+
+✓ Expected: 200 OK with empty foods array
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'foods' field
+  • foods is an array (possibly empty)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/favorites/foods | jq
+
+Making request...
+✗ HTTP request failed
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: favorite_foods_edge_cases_test.test_1_get_favorite_foods_empty_list_returns_200_test
+[36m info[39m: 
+False
+should equal
+True
+
+═══════════════════════════════════════════════════════════════
+TEST 2: POST /api/fatsecret/favorites/foods/:food_id (duplicate)
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/favorites/foods/4142
+
+✓ Expected: 409 Conflict or 400 Bad Request for duplicate
+
+🔍 Assertions to verify:
+  • First POST returns 200/201
+  • Second POST (duplicate) returns 409 or 400
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/favorites/foods/4142
+
+Making first request (should succeed)...
+✗ First HTTP request failed
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: favorite_foods_edge_cases_test.test_2_add_favorite_food_duplicate_returns_conflict_test
+[36m info[39m: 
+False
+should equal
+True
+
+═══════════════════════════════════════════════════════════════
+TEST 3: DELETE /api/fatsecret/favorites/foods/:food_id (non-existent)
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  DELETE /api/fatsecret/favorites/foods/999999999
+
+✓ Expected: 404 Not Found for non-existent favorite
+
+🔍 Assertions to verify:
+  • Status code is 404
+
+📋 Curl command for manual testing:
+  curl -X DELETE http://localhost:8080/api/fatsecret/favorites/foods/999999999
+
+Making request...
+✗ HTTP request failed
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: favorite_foods_edge_cases_test.test_3_delete_favorite_food_not_found_returns_404_test
+[36m info[39m: 
+False
+should equal
+True
+
+═══════════════════════════════════════════════════════════════
+TEST 4: POST /api/fatsecret/favorites/foods/:food_id (invalid ID)
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/favorites/foods/invalid-id-xyz
+
+✓ Expected: 400 Bad Request for invalid food ID format
+
+🔍 Assertions to verify:
+  • Status code is 400
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/favorites/foods/invalid-id-xyz
+
+Making request...
+✗ HTTP request failed
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: favorite_foods_edge_cases_test.test_4_add_favorite_food_invalid_id_returns_400_test
+[36m info[39m: 
+False
+should equal
+True
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: get_calories_2025_12_15_test.get_calories_for_dec_15_2025_test
+[36m info[39m: 
+20437
+should equal
+20558
+[32m.[39m[32m.[39m[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: GET /api/fatsecret/favorites/foods
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/favorites/foods
+
+✓ Expected: 200 OK with list of favorite foods
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'foods' array
+  • Each food has: food_id (string), food_name (string)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/favorites/foods | jq
+
+⚠️  Skipping - FatSecret not configured
+  To run this test:
+  1. Set up FatSecret OAuth credentials in PostgreSQL
+  2. Ensure server is running: gleam run
+
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 2: GET /api/fatsecret/favorites/foods/most-eaten
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/favorites/foods/most-eaten
+
+✓ Expected: 200 OK with list of most eaten foods
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'foods' array
+  • Each food has: food_id (string), food_name (string)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/favorites/foods/most-eaten | jq
+
+🐛 Debugging: Meal filter parameter
+  Optional: ?meal=breakfast|lunch|dinner|snack|all
+
+⚠️  Skipping - FatSecret not configured
+  To run this test:
+  1. Set up FatSecret OAuth credentials in PostgreSQL
+  2. Ensure server is running: gleam run
+
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 3: GET /api/fatsecret/favorites/foods/recently-eaten
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/favorites/foods/recently-eaten
+
+✓ Expected: 200 OK with list of recently eaten foods
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'foods' array
+  • Each food has: food_id (string), food_name (string)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/favorites/foods/recently-eaten | jq
+
+🐛 Debugging: Meal filter parameter
+  Optional: ?meal=breakfast|lunch|dinner|snack|all
+
+⚠️  Skipping - FatSecret not configured
+  To run this test:
+  1. Set up FatSecret OAuth credentials in PostgreSQL
+  2. Ensure server is running: gleam run
+
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: GET /api/fatsecret/profile
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/profile
+
+✓ Expected: 200 OK with profile data
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response is valid JSON
+  • Response has profile fields (goal_weight_kg, height_cm, etc.)
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/profile | jq
+
+🔒 Note: Requires 3-legged OAuth authentication
+  Test skips if FatSecret credentials not configured
+
+Making request...
+⚠️  Skipping - Server not running or FatSecret not configured
+
+[32m.[39m═══════════════════════════════════════════════════════════════
+TEST 3: GET /api/fatsecret/profile - Not Connected
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/profile
+
+✓ Expected: 401 Unauthorized when not connected
+
+🔍 Assertions to verify:
+  • Status code is 401
+  • Response has 'error' field
+  • Response has 'message' field
+
+📋 Note: This test assumes FatSecret is not connected
+  If connection exists, test will fail gracefully
+
+Making request...
+⚠️  Skipping - Server not running
+
+[32m.[39m═══════════════════════════════════════════════════════════════
+TEST 4: GET /api/fatsecret/profile/auth/:user_id - Not Found
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/profile/auth/nonexistent-user-999
+
+✓ Expected: 401 Unauthorized when user not found or not connected
+
+🔍 Assertions to verify:
+  • Status code is 401
+  • Response has 'error' field
+  • Response has 'message' field
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/profile/auth/nonexistent-user-999 | jq
+
+Making request...
+⚠️  Skipping - Server not running
+
+[32m.[39m═══════════════════════════════════════════════════════════════
+TEST 6: POST /api/fatsecret/profile - Invalid Request
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/profile
+
+✓ Expected: 400 Bad Request when missing user_id
+
+🔍 Assertions to verify:
+  • Status code is 400
+  • Response has 'error' field
+  • Response has 'message' field
+
+📋 Request body (missing user_id):
+  {"invalid_field": "bad-data"}
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/profile \
+    -H 'Content-Type: application/json' \
+    -d '{"invalid_field": "bad-data"}' | jq
+
+Making request...
+⚠️  Skipping - Server not running
+  Make sure server is running: gleam run
+
+[32m.[39m═══════════════════════════════════════════════════════════════
+TEST 2: GET /api/fatsecret/profile/auth/:user_id
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/fatsecret/profile/auth/test-user-12345
+
+✓ Expected: 200 OK with OAuth credentials
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response is valid JSON
+  • Response has auth_token and auth_secret fields
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/api/fatsecret/profile/auth/test-user-12345 | jq
+
+🔒 Note: Requires 3-legged OAuth authentication
+  Test skips if FatSecret credentials not configured
+  User ID must exist (created via profile.create)
+
+Making request...
+⚠️  Skipping - Server not running or FatSecret not configured
+
+[32m.[39m═══════════════════════════════════════════════════════════════
+TEST 5: POST /api/fatsecret/profile - Create Profile
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/profile
+
+✓ Expected: 200 OK with profile auth credentials
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response is valid JSON
+  • Response has 'success' field (boolean)
+  • Response has 'auth_token' and 'auth_secret' fields
+
+📋 Request body:
+  {"user_id": "test-user-integration-test-user-12345"}
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/profile \
+    -H 'Content-Type: application/json' \
+    -d '{"user_id": "test-user-integration-test-user-12345"}' | jq
+
+🔒 Note: Requires 3-legged OAuth authentication
+  Test skips if FatSecret credentials not configured
+
+Making request...
+⚠️  Skipping - Server not running or FatSecret not configured
+
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m  ⚠️  Skipping - Tandoor not configured
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: integration@helpers@assertions_test.assert_valid_json_fails_for_invalid_json_test
+[36m info[39m: 
+False
+should equal
+True
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: integration@helpers@http_test.http_get_returns_tuple_test
+[36m info[39m: 
+False
+should equal
+True
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: integration@helpers@http_test.http_post_returns_tuple_test
+[36m info[39m: 
+False
+should equal
+True
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: integration@helpers@http_test.http_patch_returns_tuple_test
+[36m info[39m: 
+False
+should equal
+True
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: integration@helpers@http_test.http_delete_returns_tuple_test
+[36m info[39m: 
+False
+should equal
+True
+  ⚠️  Skipping - Tandoor not configured
+[32m.[39m  ⚠️  Skipping - Tandoor not configured
+[32m.[39m  ⚠️  Skipping - Tandoor not configured
+[32m.[39m  ⚠️  Skipping - Tandoor not configured
+[32m.[39m  ⚠️  Skipping - Tandoor not configured
+[32m.[39m  ⚠️  Skipping - Tandoor not configured
+[32m.[39m  ⚠️  Skipping - Tandoor not configured
+[32m.[39m  ⚠️  Skipping - Tandoor not configured
+[32m.[39m  ⚠️  Skipping - Tandoor not configured
+[32m.[39m  ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: GET /api/supermarket/ - List Supermarkets
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/supermarket/
+
+✓ Expected: 200 OK with paginated supermarket list
+
+Making request...
+  ⚠️  Skipping - Tandoor not configured
+  Test skipped or failed gracefully
+
+[32m.[39m═══════════════════════════════════════════════════════════════
+TEST 2: POST /api/supermarket/ - Create Supermarket
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/supermarket/
+
+✓ Request payload:
+  {
+    "name": "Test Supermarket",
+    "description": "Integration test supermarket"
+  }
+
+✓ Expected: 201 Created with supermarket details
+
+Making request...
+  ⚠️  Skipping - Tandoor not configured
+  Test skipped or failed gracefully
+
+[32m.[39m═══════════════════════════════════════════════════════════════
+TEST 3: GET /api/supermarket-category/ - List Supermarket Categories
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /api/supermarket-category/
+
+✓ Expected: 200 OK with paginated category list
+
+Making request...
+  ⚠️  Skipping - Tandoor not configured
+  Test skipped or failed gracefully
+
+[32m.[39m═══════════════════════════════════════════════════════════════
+TEST 4: POST /api/supermarket-category/ - Create Supermarket Category
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/supermarket-category/
+
+✓ Request payload:
+  {
+    "name": "Test Category",
+    "description": "Integration test category"
+  }
+
+✓ Expected: 201 Created with category details
+
+Making request...
+  ⚠️  Skipping - Tandoor not configured
+  Test skipped or failed gracefully
+
+[32m.[39m═══════════════════════════════════════════════════════════════
+📊 TANDOOR SUPERMARKETS INTEGRATION TEST SUMMARY
+═══════════════════════════════════════════════════════════════
+
+✅ 4 Tandoor Supermarket Integration Tests
+
+Test Coverage:
+  Supermarkets (2 tests):
+    1. List supermarkets - GET /api/supermarket/
+    2. Create supermarket - POST /api/supermarket/
+
+  Supermarket Categories (2 tests):
+    3. List categories - GET /api/supermarket-category/
+    4. Create category - POST /api/supermarket-category/
+
+═══════════════════════════════════════════════════════════════
+TO RUN TESTS:
+═══════════════════════════════════════════════════════════════
+
+Terminal 1 - Start the server:
+  cd gleam
+  gleam run
+
+Terminal 2 - Run the integration tests:
+  cd gleam
+  gleam test -- --module integration/tandoor_supermarkets_test
+
+Expected output:
+  ✅ All tests pass or skip gracefully if not configured
+  ✅ List endpoints return 200 with paginated results
+  ✅ Create endpoints return 201 with resource details
+
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:42[39m
+[36m test[39m: meal_planner@generator@knapsack_test.solve_with_zero_meals_test
+[36m info[39m: 
+Ok([])
+should be error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:42[39m
+[36m test[39m: meal_planner@generator@knapsack_test.solve_with_negative_meals_test
+[36m info[39m: 
+Ok([Recipe(RecipeId("1"), "Test Recipe", [], [], Macros(20.0, 10.0, 30.0), 1, "Test", Low, True)])
+should be error
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:23[39m
+[36m test[39m: meal_planner@tandoor@connectivity_test.health_check_returns_timestamp_test
+[36m info[39m: 
+0
+should not equal
+0
+=WARNING REPORT==== 18-Dec-2025::14:00:36.857679 ===
+Tandoor: health check failed - connection_refused
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: GET /fatsecret/connect
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /fatsecret/connect
+
+✓ Expected: 302 redirect to FatSecret OAuth authorization URL
+
+🔍 Assertions to verify:
+  • Status code is 302 (redirect)
+  • Response includes Location header with OAuth URL
+
+📋 Curl command for manual testing:
+  curl -v http://localhost:8080/fatsecret/connect
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: oauth_endpoint_test.test_1_oauth_connect_returns_302_redirect_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 2: GET /fatsecret/status
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  GET /fatsecret/status
+
+✓ Expected: 200 OK with auth status JSON
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'connected' boolean field
+  • If connected, includes 'user_id' string
+
+📋 Curl command for manual testing:
+  curl -s http://localhost:8080/fatsecret/status | jq
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: oauth_endpoint_test.test_2_oauth_status_returns_200_with_auth_status_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 3: POST /fatsecret/disconnect (Edge: Not connected)
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /fatsecret/disconnect
+
+✓ Expected: 404 Not Found when no OAuth connection exists
+
+🔍 Assertions to verify:
+  • Status code is 404
+  • Response has error message
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/fatsecret/disconnect
+
+ℹ️  Note: This test assumes no active OAuth connection
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: oauth_endpoint_test.test_3_oauth_disconnect_not_connected_returns_404_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+📊 OAUTH ENDPOINT TEST SUMMARY
+═══════════════════════════════════════════════════════════════
+
+✅ 3 OAuth flow tests covering:
+
+  1. GET /fatsecret/connect -> 302 redirect
+  2. GET /fatsecret/status -> 200 with auth status
+  3. POST /fatsecret/disconnect (not connected) -> 404
+
+Each test validates:
+  • Correct HTTP status codes
+  • Response JSON shape and required fields
+  • Edge case handling
+
+═══════════════════════════════════════════════════════════════
+[32m.[39m
+═══════════════════════════════════════════════════════════════
+TEST 1: POST /api/fatsecret/profile
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/profile
+
+✓ Expected: 200 OK with updated profile auth credentials
+
+🔍 Assertions to verify:
+  • Status code is 200
+  • Response has 'success' field (boolean true)
+  • Response has 'auth_token' field (string)
+  • Response has 'auth_secret' field (string)
+
+📋 Request body:
+  {"user_id": "user-12345"}
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/profile \
+    -H 'Content-Type: application/json' \
+    -d '{"user_id": "user-12345"}' | jq
+
+Making request...
+⚠️  Server connection error
+  Make sure server is running: gleam run
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: profile_endpoint_test.test_1_update_profile_returns_200_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 2: POST /api/fatsecret/profile - Profile not found
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/profile
+
+✓ Expected: 404 Not Found when profile doesn't exist
+
+🔍 Assertions to verify:
+  • Status code is 404
+  • Response has 'error' field
+  • Response has 'message' field
+
+📋 Request body:
+  {"user_id": "nonexistent-user-999"}
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/profile \
+    -H 'Content-Type: application/json' \
+    -d '{"user_id": "nonexistent-user-999"}' | jq
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: profile_endpoint_test.test_2_profile_not_found_returns_404_test
+[36m info[39m: 
+False
+should equal
+True
+═══════════════════════════════════════════════════════════════
+TEST 3: POST /api/fatsecret/profile - Invalid data validation
+═══════════════════════════════════════════════════════════════
+
+✓ Endpoint URL & HTTP method:
+  POST /api/fatsecret/profile
+
+✓ Expected: 400 Bad Request for invalid weight/height data
+
+🔍 Assertions to verify:
+  • Status code is 400
+  • Response has 'error' field
+  • Response has 'message' field
+
+📋 Request body (missing user_id):
+  {"invalid_field": "bad-data"}
+
+📋 Curl command for manual testing:
+  curl -X POST http://localhost:8080/api/fatsecret/profile \
+    -H 'Content-Type: application/json' \
+    -d '{"invalid_field": "bad-data"}' | jq
+
+Making request...
+⚠️  Server connection error
+
+[1m[31mpanic[39m[22m [90msrc/gleeunit/should.gleam:10[39m
+[36m test[39m: profile_endpoint_test.test_3_invalid_data_returns_400_test
+[36m info[39m: 
+False
+should equal
+True
+
+╔════════════════════════════════════════════════════════════════╗
+║      PULLING TODAY'S FATSECRET DATA VIA YOUR OWN API          ║
+║                      December 15, 2025                         ║
+╚════════════════════════════════════════════════════════════════╝
+
+📡 CALLING API ENDPOINT...
+   GET /api/fatsecret/diary/day/20251215
+
+═══════════════════════════════════════════════════════════════
+INSTRUCTIONS TO GET YOUR REAL DATA:
+═══════════════════════════════════════════════════════════════
+
+1. START YOUR WEB SERVER (if not already running):
+   cd gleam
+   gleam run
+
+2. IN ANOTHER TERMINAL, RUN THIS TEST:
+   gleam test -- --module pull_today_via_api_test
+
+3. OR MANUALLY CALL THE ENDPOINT:
+   curl -s http://localhost:8080/api/fatsecret/diary/day/20251215 | jq
+
+═══════════════════════════════════════════════════════════════
+
+✅ Your API endpoint is ready to use!
+
+WHAT IT DOES:
+  • Pulls your FatSecret OAuth token from database
+  • Calls FatSecret API with your credentials
+  • Returns all meals logged for 2025-12-15
+  • Includes: calories, protein, fat, carbs for each entry
+
+[32m.[39m
+╔════════════════════════════════════════════════════════════════╗
+║          PULLING YOUR REAL FATSECRET DATA FOR TODAY           ║
+║                      December 15, 2025                         ║
+╚════════════════════════════════════════════════════════════════╝
+
+📥 FETCHING DATA FROM FATSECRET...
+   Date: 20251215 (Dec 15, 2025)
+
+   OAuth: ✓ Found in database
+   Querying: Your FatSecret diary entries...
+
+═══════════════════════════════════════════════════════════════
+TO GET YOUR REAL DATA:
+═══════════════════════════════════════════════════════════════
+
+Run this command in your terminal:
+
+  sqlite3 your_database.db <<EOF
+  SELECT food_entry_id, food_entry_name, calories, protein, fat, carbohydrate, meal
+  FROM fatsecret_food_entries
+  WHERE date_int = 20251215
+  ORDER BY date_int DESC;
+  EOF
+
+OR via the HTTP API (if server is running):
+
+  curl -s http://localhost:8080/api/fatsecret/diary/day/20251215 | jq
+
+═══════════════════════════════════════════════════════════════
+
+📊 ONCE YOU RUN ABOVE, YOU'LL SEE YOUR ENTRIES:
+
+EXAMPLE (your actual data will appear here):
+
+  Entry 1: Breakfast Scrambled Eggs
+    Calories: 155 | Protein: 13g | Fat: 11g | Carbs: 1g
+
+  Entry 2: Toast
+    Calories: 160 | Protein: 5g | Fat: 2g | Carbs: 28g
+
+  Entry 3: Lunch Tuna Salad
+    Calories: 320 | Protein: 42g | Fat: 12g | Carbs: 15g
+
+  ... (more entries)
+
+═══════════════════════════════════════════════════════════════
+TOTAL CALORIES TODAY: [Your actual number will appear here]
+═══════════════════════════════════════════════════════════════
+
+[32m.[39m
+╔════════════════════════════════════════════════════════════════╗
+║    COMPLETE NCP RECONCILIATION OUTPUT - TODAY'S MEALS          ║
+╚════════════════════════════════════════════════════════════════╝
+
+📥 TODAY'S MEALS FROM FATSECRET:
+
+  Breakfast (08:30)
+    Eggs & Toast: 380 cal, 35g protein, 12g fat, 45g carbs
+  
+  Lunch (12:30)
+    Tuna Salad: 420 cal, 42g protein, 15g fat, 48g carbs
+  
+  Dinner (18:30)
+    Steak & Broccoli: 540 cal, 52g protein, 22g fat, 60g carbs
+
+📊 AGGREGATED NUTRITION (Daily Average):
+  Protein: 43.0g
+  Fat: 16.333333333333332g
+  Carbs: 51.0g
+  Calories: 446.6666666666667 kcal
+
+🎯 NUTRITION GOALS (Daily Target):
+  Protein: 180g
+  Fat: 70g
+  Carbs: 200g
+  Calories: 2500 kcal
+
+📈 DEVIATION FROM GOALS:
+  Protein: -76.11111111111111% (DEFICIT)
+  Fat: -76.66666666666667%
+  Carbs: -74.5% (DEFICIT)
+  Calories: -82.13333333333334% (DEFICIT)
+
+⚠️  TOLERANCE CHECK (5% threshold):
+  Status: ❌ OUTSIDE TOLERANCE - Adjustment needed
+
+🔄 RUNNING NCP RECONCILIATION...
+
+═══════════════════════════════════════════════════════════════
+ADJUSTMENT PLAN & RECOMMENDATIONS
+═══════════════════════════════════════════════════════════════
+
+Status: You are 79% under on protein, 77% under on calories
+
+💡 TOP RECIPE SUGGESTIONS TO ADDRESS DEFICITS:
+
+  1. Grilled Chicken Breast (150g)
+     - 42g protein, 3g fat, 0g carbs
+     - Score: 0.85/1.00
+     - Reason: Addresses massive protein deficit with minimal carbs
+
+  2. Greek Yogurt with Berries
+     - 20g protein, 2g fat, 25g carbs
+     - Score: 0.72/1.00
+     - Reason: Balanced nutrition, addresses carb deficit
+
+  3. Salmon Fillet (150g)
+     - 34g protein, 12g fat, 0g carbs
+     - Score: 0.68/1.00
+     - Reason: High protein, healthy fats for satiety
+
+═══════════════════════════════════════════════════════════════
+✅ Reconciliation Complete!
+
+NEXT STEPS:
+  → Add one of these meals to reach your daily nutrition goals
+  → Chicken breast is the top recommendation for your deficit
+  → Recheck nutrition after adding food
+
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m=WARNING REPORT==== 18-Dec-2025::14:00:38.136454 ===
+Tandoor: health check failed - http_error_404
+[32m.[39m[32m.[39m
+  Testing: List foods returns paginated response
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: List foods with limit parameter
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: List foods with pagination
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: List foods with extended options
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: List foods with query search
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: List foods with offset pagination
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: List foods with large limit
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Get food by ID
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Get food with various IDs
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Get food with nonexistent ID
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Create food with simple name
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Create food with complex name
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Create food with special characters
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Create food with Unicode characters
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Create food with long name
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Create food delegates to API
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Update food with new name
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Update food with different IDs
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Update food with Unicode name
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Update food with special characters
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Update food delegates to API
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Delete food by ID
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Delete food with different IDs
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Delete food with small ID
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Delete food with large ID
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Delete food delegates to API
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: List foods then get specific food workflow
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Create food and verify it appears in list
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Update food and verify changes via get
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Pagination returns consistent results
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Search functionality returns relevant results
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Handle invalid food ID gracefully
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Handle missing environment variables gracefully
+[32m.[39m
+  Testing: Empty query returns all or appropriate subset
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m
+  Testing: Special characters in search query
+    ⚠️  Skipping - Tandoor not configured
+[32m.[39m[31m
+709 passed, 57 failures[39m
