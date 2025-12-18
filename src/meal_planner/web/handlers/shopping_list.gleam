@@ -93,13 +93,11 @@ fn entry_to_json(entry: ShoppingListEntry) -> json.Json {
     #("checked", json.bool(entry.checked)),
     #(
       "food",
-      helpers.encode_optional_int(option.map(entry.food, fn(f) {
-        ids.food_id_to_int(f.id)
-      })),
+      helpers.encode_optional_int(option.map(entry.food, ids.food_id_to_int)),
     ),
     #(
       "unit",
-      helpers.encode_optional_int(option.map(entry.unit, fn(u) { u.id })),
+      helpers.encode_optional_int(option.map(entry.unit, ids.unit_id_to_int)),
     ),
     #(
       "list_recipe",
@@ -172,8 +170,8 @@ pub fn handle_create(req: wisp.Request) -> wisp.Response {
           let entry =
             ShoppingListEntryCreate(
               list_recipe: None,
-              food: Some(food),
-              unit: Some(unit),
+              food: Some(ids.food_id_from_int(food)),
+              unit: Some(ids.unit_id_from_int(unit)),
               amount: amount,
               order: order,
               checked: checked,
