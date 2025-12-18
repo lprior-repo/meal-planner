@@ -372,3 +372,210 @@ pub fn error_to_message(error: ServiceError) -> String {
     ApiError(inner) -> core_errors.error_to_string(inner)
   }
 }
+
+// ============================================================================
+// Copy/Template Operations
+// ============================================================================
+
+/// Copy all food entries from one date to another with automatic token handling
+///
+/// Parameters:
+/// - conn: Database connection
+/// - from_date_int: Source date (days since epoch)
+/// - to_date_int: Destination date (days since epoch)
+///
+/// Returns:
+/// - Ok(Nil) on success
+/// - Error(ServiceError) on failure
+pub fn copy_entries(
+  conn: pog.Connection,
+  from_date_int: Int,
+  to_date_int: Int,
+) -> Result(Nil, ServiceError) {
+  case load_env_fatsecret_config() {
+    option.None -> Error(NotConfigured)
+    option.Some(config) -> {
+      case get_token(conn) {
+        Error(e) -> Error(e)
+        Ok(token) -> {
+          case
+            diary_client.copy_entries(
+              FatSecretConfig(
+                consumer_key: config.consumer_key,
+                consumer_secret: config.consumer_secret,
+                api_host: option.None,
+                auth_host: option.None,
+              ),
+              token,
+              from_date_int,
+              to_date_int,
+            )
+          {
+            Ok(nil) -> {
+              let _ = storage.touch_access_token(conn)
+              Ok(nil)
+            }
+            Error(core_errors.RequestFailed(status: 401, body: _)) ->
+              Error(AuthRevoked)
+            Error(core_errors.RequestFailed(status: 403, body: _)) ->
+              Error(AuthRevoked)
+            Error(e) -> Error(ApiError(e))
+          }
+        }
+      }
+    }
+  }
+}
+
+/// Copy entries for a specific meal from one date/meal to another
+///
+/// Parameters:
+/// - conn: Database connection
+/// - from_date_int: Source date
+/// - from_meal: Source meal type
+/// - to_date_int: Destination date
+/// - to_meal: Destination meal type
+///
+/// Returns:
+/// - Ok(Nil) on success
+/// - Error(ServiceError) on failure
+pub fn copy_meal(
+  conn: pog.Connection,
+  from_date_int: Int,
+  from_meal: types.MealType,
+  to_date_int: Int,
+  to_meal: types.MealType,
+) -> Result(Nil, ServiceError) {
+  case load_env_fatsecret_config() {
+    option.None -> Error(NotConfigured)
+    option.Some(config) -> {
+      case get_token(conn) {
+        Error(e) -> Error(e)
+        Ok(token) -> {
+          case
+            diary_client.copy_meal(
+              FatSecretConfig(
+                consumer_key: config.consumer_key,
+                consumer_secret: config.consumer_secret,
+                api_host: option.None,
+                auth_host: option.None,
+              ),
+              token,
+              from_date_int,
+              from_meal,
+              to_date_int,
+              to_meal,
+            )
+          {
+            Ok(nil) -> {
+              let _ = storage.touch_access_token(conn)
+              Ok(nil)
+            }
+            Error(core_errors.RequestFailed(status: 401, body: _)) ->
+              Error(AuthRevoked)
+            Error(core_errors.RequestFailed(status: 403, body: _)) ->
+              Error(AuthRevoked)
+            Error(e) -> Error(ApiError(e))
+          }
+        }
+      }
+    }
+  }
+}
+
+/// Commit/finalize a day's diary entries with automatic token handling
+///
+/// Parameters:
+/// - conn: Database connection
+/// - date_int: Date to commit (days since epoch)
+///
+/// Returns:
+/// - Ok(Nil) on success
+/// - Error(ServiceError) on failure
+pub fn commit_day(
+  conn: pog.Connection,
+  date_int: Int,
+) -> Result(Nil, ServiceError) {
+  case load_env_fatsecret_config() {
+    option.None -> Error(NotConfigured)
+    option.Some(config) -> {
+      case get_token(conn) {
+        Error(e) -> Error(e)
+        Ok(token) -> {
+          case
+            diary_client.commit_day(
+              FatSecretConfig(
+                consumer_key: config.consumer_key,
+                consumer_secret: config.consumer_secret,
+                api_host: option.None,
+                auth_host: option.None,
+              ),
+              token,
+              date_int,
+            )
+          {
+            Ok(nil) -> {
+              let _ = storage.touch_access_token(conn)
+              Ok(nil)
+            }
+            Error(core_errors.RequestFailed(status: 401, body: _)) ->
+              Error(AuthRevoked)
+            Error(core_errors.RequestFailed(status: 403, body: _)) ->
+              Error(AuthRevoked)
+            Error(e) -> Error(ApiError(e))
+          }
+        }
+      }
+    }
+  }
+}
+
+/// Save a day's entries as a reusable template with automatic token handling
+///
+/// Parameters:
+/// - conn: Database connection
+/// - date_int: Date whose entries to save (days since epoch)
+/// - template_name: Name for the template
+///
+/// Returns:
+/// - Ok(Nil) on success
+/// - Error(ServiceError) on failure
+pub fn save_template(
+  conn: pog.Connection,
+  date_int: Int,
+  template_name: String,
+) -> Result(Nil, ServiceError) {
+  case load_env_fatsecret_config() {
+    option.None -> Error(NotConfigured)
+    option.Some(config) -> {
+      case get_token(conn) {
+        Error(e) -> Error(e)
+        Ok(token) -> {
+          case
+            diary_client.save_template(
+              FatSecretConfig(
+                consumer_key: config.consumer_key,
+                consumer_secret: config.consumer_secret,
+                api_host: option.None,
+                auth_host: option.None,
+              ),
+              token,
+              date_int,
+              template_name,
+            )
+          {
+            Ok(nil) -> {
+              let _ = storage.touch_access_token(conn)
+              Ok(nil)
+            }
+            Error(core_errors.RequestFailed(status: 401, body: _)) ->
+              Error(AuthRevoked)
+            Error(core_errors.RequestFailed(status: 403, body: _)) ->
+              Error(AuthRevoked)
+            Error(e) -> Error(ApiError(e))
+          }
+        }
+      }
+    }
+  }
+}
