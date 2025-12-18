@@ -7,14 +7,12 @@ import gleam/json
 import gleam/option
 import gleam/result
 
-import meal_planner/tandoor/api/supermarket/create as supermarket_create_api
-import meal_planner/tandoor/api/supermarket/delete as supermarket_delete
-import meal_planner/tandoor/api/supermarket/get as supermarket_get
-import meal_planner/tandoor/api/supermarket/list as supermarket_list
-import meal_planner/tandoor/api/supermarket/update as supermarket_update
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types/supermarket/supermarket_create.{
-  type SupermarketCreateRequest, SupermarketCreateRequest,
+import meal_planner/tandoor/supermarket.{
+  type Supermarket, type SupermarketCreateRequest,
+  SupermarketCreateRequest,
+  list_supermarkets, get_supermarket, create_supermarket,
+  update_supermarket, delete_supermarket,
 }
 
 import wisp
@@ -54,7 +52,7 @@ fn handle_list_supermarkets(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        supermarket_list.list_supermarkets(
+        list_supermarkets(
           config,
           limit: option.None,
           page: option.None,
@@ -96,7 +94,7 @@ fn handle_create_supermarket(req: wisp.Request) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case supermarket_create_api.create_supermarket(config, request) {
+          case create_supermarket(config, request) {
             Ok(supermarket) -> {
               json.object([
                 #("id", json.int(supermarket.id)),
@@ -123,7 +121,7 @@ fn handle_create_supermarket(req: wisp.Request) -> wisp.Response {
 fn handle_get_supermarket(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case supermarket_get.get_supermarket(config, id: id) {
+      case get_supermarket(config, id: id) {
         Ok(supermarket) -> {
           json.object([
             #("id", json.int(supermarket.id)),
@@ -151,10 +149,10 @@ fn handle_update_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
           case
-            supermarket_update.update_supermarket(
+            update_supermarket(
               config,
               id: id,
-              supermarket_data: request,
+              data: request,
             )
           {
             Ok(supermarket) -> {
@@ -183,7 +181,7 @@ fn handle_update_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
 fn handle_delete_supermarket(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case supermarket_delete.delete_supermarket(config, id) {
+      case delete_supermarket(config, id: id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }

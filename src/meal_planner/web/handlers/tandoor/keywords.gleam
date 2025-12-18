@@ -3,8 +3,8 @@
 /// Handles GET requests for the /api/tandoor/keywords endpoint.
 /// Extracted from the main tandoor.gleam handler following TDD/TCR workflow.
 import gleam/json
-import meal_planner/tandoor/api/keyword/keyword_api
 import meal_planner/tandoor/handlers/helpers
+import meal_planner/tandoor/keyword
 import wisp
 
 /// Handle keywords endpoint requests
@@ -14,7 +14,7 @@ import wisp
 pub fn handle_keywords(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case keyword_api.list_keywords(config) {
+      case keyword.list_keywords(config) {
         Ok(keywords) -> {
           json.array(keywords, fn(keyword) {
             json.object([

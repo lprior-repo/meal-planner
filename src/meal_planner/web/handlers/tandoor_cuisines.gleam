@@ -9,14 +9,14 @@ import gleam/json
 import gleam/option
 import gleam/result
 
-import meal_planner/tandoor/api/cuisine/create as cuisine_create
-import meal_planner/tandoor/api/cuisine/delete as cuisine_delete
-import meal_planner/tandoor/api/cuisine/get as cuisine_get
-import meal_planner/tandoor/api/cuisine/list as cuisine_list
-import meal_planner/tandoor/api/cuisine/update as cuisine_update
 import meal_planner/tandoor/core/ids
+import meal_planner/tandoor/cuisine.{
+  type Cuisine, type CuisineCreateRequest, type CuisineUpdateRequest,
+  CuisineCreateRequest, CuisineUpdateRequest,
+  list_cuisines_by_parent, get_cuisine, create_cuisine, update_cuisine,
+  delete_cuisine,
+}
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types/cuisine/cuisine
 
 import wisp
 
@@ -58,7 +58,7 @@ pub fn handle_list_cuisines(req: wisp.Request) -> wisp.Response {
 
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case cuisine_list.list_cuisines_by_parent(config, parent_cuisine_id) {
+      case list_cuisines_by_parent(config, parent_cuisine_id) {
         Ok(cuisines) -> {
           json.array(cuisines, encode_cuisine)
           |> json.to_string
@@ -105,7 +105,7 @@ pub fn handle_get_cuisine(
 
     // Step 3: Make API call
     use cuisine <- result.try(
-      cuisine_get.get_cuisine(config, cuisine_id: ids.cuisine_id_from_int(id))
+      get_cuisine(config, cuisine_id: ids.cuisine_id_from_int(id))
       |> result.map_error(fn(_) { wisp.not_found() }),
     )
 
@@ -132,7 +132,7 @@ pub fn handle_create_cuisine(req: wisp.Request) -> wisp.Response {
     Ok(cuisine_request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case cuisine_create.create_cuisine(config, cuisine_request) {
+          case create_cuisine(config, cuisine_request) {
             Ok(cuisine) -> {
               encode_cuisine(cuisine)
               |> json.to_string
@@ -162,7 +162,7 @@ pub fn handle_update_cuisine(
           case helpers.get_authenticated_client() {
             Ok(config) -> {
               case
-                cuisine_update.update_cuisine(
+                update_cuisine(
                   config,
                   cuisine_id: ids.cuisine_id_from_int(id),
                   data: cuisine_request,
@@ -197,7 +197,7 @@ pub fn handle_delete_cuisine(
       case helpers.get_authenticated_client() {
         Ok(config) -> {
           case
-            cuisine_delete.delete_cuisine(
+            delete_cuisine(
               config,
               cuisine_id: ids.cuisine_id_from_int(id),
             )

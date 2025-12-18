@@ -20,18 +20,13 @@ import gleam/int
 import gleam/json
 import gleam/option.{type Option}
 import gleam/result
-import meal_planner/tandoor/api/supermarket/category as supermarket_category
-import meal_planner/tandoor/api/supermarket/create as supermarket_create_api
-import meal_planner/tandoor/api/supermarket/delete as supermarket_delete
-import meal_planner/tandoor/api/supermarket/get as supermarket_get
-import meal_planner/tandoor/api/supermarket/list as supermarket_list
-import meal_planner/tandoor/api/supermarket/update as supermarket_update
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types/supermarket/supermarket_category_create.{
-  type SupermarketCategoryCreateRequest, SupermarketCategoryCreateRequest,
-}
-import meal_planner/tandoor/types/supermarket/supermarket_create.{
-  type SupermarketCreateRequest, SupermarketCreateRequest,
+import meal_planner/tandoor/supermarket.{
+  type Supermarket, type SupermarketCategory,
+  type SupermarketCreateRequest, type SupermarketCategoryCreateRequest,
+  SupermarketCreateRequest, SupermarketCategoryCreateRequest,
+  list_supermarkets, get_supermarket, create_supermarket, update_supermarket, delete_supermarket,
+  list_categories, get_category, create_category, update_category, delete_category,
 }
 import wisp
 
@@ -75,7 +70,7 @@ fn handle_list_supermarkets(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        supermarket_list.list_supermarkets(
+        list_supermarkets(
           config,
           limit: option.None,
           page: option.None,
@@ -114,7 +109,7 @@ fn handle_create_supermarket(req: wisp.Request) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case supermarket_create_api.create_supermarket(config, request) {
+          case create_supermarket(config, request) {
             Ok(supermarket) -> {
               encode_supermarket(#(
                 supermarket.id,
@@ -159,7 +154,7 @@ pub fn handle_supermarket_by_id(
 fn handle_get_supermarket(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case supermarket_get.get_supermarket(config, id: id) {
+      case get_supermarket(config, id: id) {
         Ok(supermarket) -> {
           encode_supermarket(#(
             supermarket.id,
@@ -184,10 +179,10 @@ fn handle_update_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
           case
-            supermarket_update.update_supermarket(
+            update_supermarket(
               config,
               id: id,
-              supermarket_data: request,
+              data: request,
             )
           {
             Ok(supermarket) -> {
@@ -213,7 +208,7 @@ fn handle_update_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
 fn handle_delete_supermarket(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case supermarket_delete.delete_supermarket(config, id) {
+      case delete_supermarket(config, id: id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }
@@ -238,7 +233,7 @@ fn handle_list_categories(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        supermarket_category.list_categories(
+        list_categories(
           config,
           limit: option.None,
           offset: option.None,
@@ -277,7 +272,7 @@ fn handle_create_category(req: wisp.Request) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case supermarket_category.create_category(config, request) {
+          case create_category(config, request) {
             Ok(category) -> {
               encode_category(#(
                 category.id,
@@ -321,7 +316,7 @@ pub fn handle_category_by_id(
 fn handle_get_category(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case supermarket_category.get_category(config, category_id: id) {
+      case get_category(config, category_id: id) {
         Ok(category) -> {
           encode_category(#(category.id, category.name, category.description))
           |> json.to_string
@@ -342,7 +337,7 @@ fn handle_update_category(req: wisp.Request, id: Int) -> wisp.Response {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
           case
-            supermarket_category.update_category(
+            update_category(
               config,
               category_id: id,
               category_data: request,
@@ -370,7 +365,7 @@ fn handle_update_category(req: wisp.Request, id: Int) -> wisp.Response {
 fn handle_delete_category(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case supermarket_category.delete_category(config, id) {
+      case delete_category(config, category_id: id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }

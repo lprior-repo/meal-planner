@@ -13,10 +13,11 @@ import gleam/int
 import gleam/json
 import gleam/option
 import gleam/result
-import meal_planner/tandoor/api/supermarket/category as supermarket_category
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types/supermarket/supermarket_category_create.{
-  type SupermarketCategoryCreateRequest, SupermarketCategoryCreateRequest,
+import meal_planner/tandoor/supermarket.{
+  type SupermarketCategory, type SupermarketCategoryCreateRequest,
+  SupermarketCategoryCreateRequest,
+  list_categories, get_category, create_category, update_category, delete_category,
 }
 import wisp
 
@@ -41,7 +42,7 @@ fn handle_list_categories(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        supermarket_category.list_categories(
+        list_categories(
           config,
           limit: option.None,
           offset: option.None,
@@ -83,7 +84,7 @@ fn handle_create_category(req: wisp.Request) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case supermarket_category.create_category(config, request) {
+          case create_category(config, request) {
             Ok(category) -> {
               json.object([
                 #("id", json.int(category.id)),
@@ -136,7 +137,7 @@ pub fn handle_category_by_id(
 fn handle_get_category(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case supermarket_category.get_category(config, category_id: id) {
+      case get_category(config, category_id: id) {
         Ok(category) -> {
           json.object([
             #("id", json.int(category.id)),
@@ -164,7 +165,7 @@ fn handle_update_category(req: wisp.Request, id: Int) -> wisp.Response {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
           case
-            supermarket_category.update_category(
+            update_category(
               config,
               category_id: id,
               category_data: request,
@@ -195,7 +196,7 @@ fn handle_update_category(req: wisp.Request, id: Int) -> wisp.Response {
 fn handle_delete_category(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case supermarket_category.delete_category(config, id) {
+      case delete_category(config, category_id: id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }

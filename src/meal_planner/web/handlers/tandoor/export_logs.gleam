@@ -8,15 +8,14 @@ import gleam/list
 import gleam/option
 import gleam/result
 
-import meal_planner/tandoor/api/import_export/import_export_api
-import meal_planner/tandoor/decoders/import_export/export_log_create_request_decoder
-import meal_planner/tandoor/decoders/import_export/export_log_update_request_decoder
-import meal_planner/tandoor/encoders/import_export/export_log_encoder.{
-  type ExportLogCreateRequest, type ExportLogUpdateRequest,
-  ExportLogCreateRequest, ExportLogUpdateRequest,
-}
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types/import_export/export_log.{type ExportLog}
+import meal_planner/tandoor/import_export.{
+  type ExportLog, type ExportLogCreateRequest, type ExportLogUpdateRequest,
+  ExportLogCreateRequest, ExportLogUpdateRequest, encode_export_log,
+  export_log_create_request_decoder, export_log_update_request_decoder,
+  list_export_logs, create_export_log, get_export_log, update_export_log,
+  delete_export_log,
+}
 
 import wisp
 
@@ -67,7 +66,7 @@ fn handle_list_export_logs(req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        import_export_api.list_export_logs(config, limit: limit, offset: offset)
+        list_export_logs(config, limit: limit, offset: offset)
       {
         Ok(response) -> {
           let results_json =
@@ -96,7 +95,7 @@ fn handle_create_export_log(req: wisp.Request) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case import_export_api.create_export_log(config, request) {
+          case create_export_log(config, request) {
             Ok(log) -> {
               encode_export_log(log)
               |> json.to_string
@@ -116,7 +115,7 @@ fn handle_create_export_log(req: wisp.Request) -> wisp.Response {
 fn handle_get_export_log(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case import_export_api.get_export_log(config, log_id: id) {
+      case get_export_log(config, log_id: id) {
         Ok(log) -> {
           encode_export_log(log)
           |> json.to_string
@@ -137,7 +136,7 @@ fn handle_update_export_log(req: wisp.Request, id: Int) -> wisp.Response {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
           case
-            import_export_api.update_export_log(config, request, log_id: id)
+            update_export_log(config, request, log_id: id)
           {
             Ok(log) -> {
               encode_export_log(log)
@@ -158,7 +157,7 @@ fn handle_update_export_log(req: wisp.Request, id: Int) -> wisp.Response {
 fn handle_delete_export_log(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case import_export_api.delete_export_log(config, log_id: id) {
+      case delete_export_log(config, log_id: id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }
@@ -189,36 +188,13 @@ fn encode_export_log(log: ExportLog) -> json.Json {
 fn parse_export_log_create_request(
   json_data: dynamic.Dynamic,
 ) -> Result(ExportLogCreateRequest, String) {
-  decode.run(
-    json_data,
-    export_log_create_request_decoder.export_log_create_request_decoder(),
-  )
-  |> result.map(fn(tuple) {
-    let #(export_type, msg, cache_duration) = tuple
-    ExportLogCreateRequest(
-      export_type: export_type,
-      msg: msg,
-      cache_duration: cache_duration,
-    )
-  })
+  decode.run(json_data, export_log_create_request_decoder())
   |> result.map_error(fn(_) { "Invalid export log create request" })
 }
 
 fn parse_export_log_update_request(
   json_data: dynamic.Dynamic,
 ) -> Result(ExportLogUpdateRequest, String) {
-  decode.run(
-    json_data,
-    export_log_update_request_decoder.export_log_update_request_decoder(),
-  )
-  |> result.map(fn(tuple) {
-    let #(export_type, msg, running, cache_duration) = tuple
-    ExportLogUpdateRequest(
-      export_type: export_type,
-      msg: msg,
-      running: running,
-      cache_duration: cache_duration,
-    )
-  })
+  decode.run(json_data, export_log_update_request_decoder())
   |> result.map_error(fn(_) { "Invalid export log update request" })
 }

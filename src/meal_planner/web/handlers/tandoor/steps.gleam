@@ -10,18 +10,13 @@ import gleam/list
 import gleam/option
 import gleam/result
 
-import meal_planner/tandoor/api/step/create as step_create_api
-import meal_planner/tandoor/api/step/delete as step_delete
-import meal_planner/tandoor/api/step/get as step_get
-import meal_planner/tandoor/api/step/list as step_list
-import meal_planner/tandoor/api/step/update as step_update
 import meal_planner/tandoor/core/ids
-import meal_planner/tandoor/encoders/recipe/step_encoder.{
-  type StepCreateRequest, type StepUpdateRequest, StepCreateRequest,
-  StepUpdateRequest,
-}
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types/recipe/step.{type Step}
+import meal_planner/tandoor/step.{
+  type Step, type StepCreateRequest, type StepUpdateRequest,
+  StepCreateRequest, StepUpdateRequest,
+  list_steps, get_step, create_step, update_step, delete_step,
+}
 
 import wisp
 
@@ -40,7 +35,7 @@ pub fn handle_steps_collection(req: wisp.Request) -> wisp.Response {
 fn handle_list_steps(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case step_list.list_steps(config, limit: option.None, page: option.None) {
+      case list_steps(config, limit: option.None, page: option.None) {
         Ok(response) -> {
           let results_json =
             json.array(response.results, fn(step) { encode_recipe_step(step) })
@@ -68,7 +63,7 @@ fn handle_create_step(req: wisp.Request) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case step_create_api.create_step(config, request) {
+          case create_step(config, request) {
             Ok(step) -> {
               encode_recipe_step(step)
               |> json.to_string
@@ -105,7 +100,7 @@ pub fn handle_step_by_id(req: wisp.Request, step_id: String) -> wisp.Response {
 fn handle_get_step(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case step_get.get_step(config, step_id: id) {
+      case get_step(config, step_id: id) {
         Ok(step) -> {
           encode_recipe_step(step)
           |> json.to_string
@@ -125,7 +120,7 @@ fn handle_update_step(req: wisp.Request, id: Int) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case step_update.update_step(config, step_id: id, request: request) {
+          case update_step(config, step_id: id, data: request) {
             Ok(step) -> {
               encode_recipe_step(step)
               |> json.to_string
@@ -144,7 +139,7 @@ fn handle_update_step(req: wisp.Request, id: Int) -> wisp.Response {
 fn handle_delete_step(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case step_delete.delete_step(config, id) {
+      case delete_step(config, step_id: id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }

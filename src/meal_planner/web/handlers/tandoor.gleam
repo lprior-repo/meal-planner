@@ -18,9 +18,6 @@ import gleam/option
 import gleam/result
 
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types/supermarket/supermarket_category_create.{
-  type SupermarketCategoryCreateRequest, SupermarketCategoryCreateRequest,
-}
 import meal_planner/web/handlers/tandoor/export_logs
 import meal_planner/web/handlers/tandoor/import_logs
 import meal_planner/web/handlers/tandoor/ingredients

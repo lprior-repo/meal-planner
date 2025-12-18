@@ -7,8 +7,8 @@ import gleam/option
 import gleam/string
 
 import meal_planner/tandoor/core/ids
+import meal_planner/tandoor/cuisine.{type Cuisine, Cuisine}
 import meal_planner/tandoor/handlers/handler_wrapper
-import meal_planner/tandoor/types/cuisine/cuisine
 
 import gleeunit
 import gleeunit/should
@@ -18,8 +18,8 @@ pub fn main() {
 }
 
 // Test fixtures
-fn mock_cuisine() -> cuisine.Cuisine {
-  cuisine.Cuisine(
+fn mock_cuisine() -> Cuisine {
+  Cuisine(
     id: ids.cuisine_id_from_int(1),
     name: "Italian",
     description: option.Some("Italian cuisine"),
@@ -31,10 +31,10 @@ fn mock_cuisine() -> cuisine.Cuisine {
   )
 }
 
-fn cuisine_to_json(cuisine: cuisine.Cuisine) -> json.Json {
+fn cuisine_to_json(c: Cuisine) -> json.Json {
   json.object([
-    #("id", json.int(ids.cuisine_id_to_int(cuisine.id))),
-    #("name", json.string(cuisine.name)),
+    #("id", json.int(ids.cuisine_id_to_int(c.id))),
+    #("name", json.string(c.name)),
   ])
 }
 

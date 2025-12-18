@@ -11,14 +11,12 @@ import gleam/dynamic/decode
 import gleam/int
 import gleam/json
 import gleam/option.{type Option, None, Some}
-import meal_planner/tandoor/api/shopping_list
 import meal_planner/tandoor/core/ids
-import meal_planner/tandoor/decoders/shopping/shopping_list_entry_decoder.{
-  type ShoppingListEntryResponse,
-}
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types/shopping/shopping_list_entry.{
-  type ShoppingListEntry, ShoppingListEntryCreate,
+import meal_planner/tandoor/shopping.{
+  type ShoppingListEntry, type ShoppingListEntryResponse,
+  ShoppingListEntryCreate,
+  list_entries, create_entry, get_entry, delete_entry, add_recipe_to_shopping_list,
 }
 import wisp
 
@@ -129,7 +127,7 @@ pub fn handle_list(req: wisp.Request) -> wisp.Response {
       let params = wisp.get_query(req)
       let #(checked, limit, offset) = extract_list_params(params)
 
-      case shopping_list.list(config, checked, limit, offset) {
+      case list_entries(config, checked: checked, limit: limit, offset: offset) {
         Ok(response) -> {
           let results_json =
             json.array(response.results, entry_response_to_json)
@@ -185,7 +183,7 @@ pub fn handle_create(req: wisp.Request) -> wisp.Response {
               mealplan_id: None,
             )
 
-          case shopping_list.create(config, entry) {
+          case create_entry(config, entry) {
             Ok(created) -> {
               let response_json = entry_to_json(created)
               json.to_string(response_json)
@@ -217,7 +215,7 @@ pub fn handle_add_recipe(req: wisp.Request) -> wisp.Response {
 
       case extract_add_recipe_params(params) {
         Ok(#(recipe_id, servings)) -> {
-          case shopping_list.add_recipe(config, recipe_id, servings) {
+          case add_recipe_to_shopping_list(config, recipe_id: recipe_id, servings: servings) {
             Ok(entries) -> {
               let results_json = json.array(entries, entry_to_json)
 
@@ -244,7 +242,7 @@ pub fn handle_get(_req: wisp.Request, id_str: String) -> wisp.Response {
     Ok(config) -> {
       case int.parse(id_str) {
         Ok(id) -> {
-          case shopping_list.get(config, id) {
+          case get_entry(config, entry_id: id) {
             Ok(entry) -> {
               let response_json = entry_to_json(entry)
               json.to_string(response_json)
@@ -268,7 +266,7 @@ pub fn handle_delete(_req: wisp.Request, id_str: String) -> wisp.Response {
     Ok(config) -> {
       case int.parse(id_str) {
         Ok(id) -> {
-          case shopping_list.delete(config, id) {
+          case delete_entry(config, entry_id: id) {
             Ok(Nil) ->
               json.object([#("success", json.bool(True))])
               |> json.to_string

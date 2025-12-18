@@ -5,10 +5,11 @@
 import gleam/http
 import gleam/json
 import gleam/option
-import meal_planner/tandoor/api/ingredient/list as ingredient_list
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types/recipe/ingredient.{type Ingredient}
+import meal_planner/tandoor/ingredient.{
+  type Ingredient, encode_ingredient, list_ingredients,
+}
 import wisp
 
 // =============================================================================
@@ -30,7 +31,7 @@ fn handle_list_ingredients(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        ingredient_list.list_ingredients(
+        list_ingredients(
           config,
           limit: option.None,
           page: option.None,

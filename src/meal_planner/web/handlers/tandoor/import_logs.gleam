@@ -8,15 +8,14 @@ import gleam/list
 import gleam/option
 import gleam/result
 
-import meal_planner/tandoor/api/import_export/import_export_api
-import meal_planner/tandoor/decoders/import_export/import_log_create_request_decoder
-import meal_planner/tandoor/decoders/import_export/import_log_update_request_decoder
-import meal_planner/tandoor/encoders/import_export/import_log_encoder.{
-  type ImportLogCreateRequest, type ImportLogUpdateRequest,
-  ImportLogCreateRequest, ImportLogUpdateRequest,
-}
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types/import_export/import_log.{type ImportLog}
+import meal_planner/tandoor/import_export.{
+  type ImportLog, type ImportLogCreateRequest, type ImportLogUpdateRequest,
+  ImportLogCreateRequest, ImportLogUpdateRequest, encode_import_log,
+  import_log_create_request_decoder, import_log_update_request_decoder,
+  list_import_logs, create_import_log, get_import_log, update_import_log,
+  delete_import_log,
+}
 
 import wisp
 
@@ -67,7 +66,7 @@ fn handle_list_import_logs(req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        import_export_api.list_import_logs(config, limit: limit, offset: offset)
+        list_import_logs(config, limit: limit, offset: offset)
       {
         Ok(response) -> {
           let results_json =
@@ -96,7 +95,7 @@ fn handle_create_import_log(req: wisp.Request) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case import_export_api.create_import_log(config, request) {
+          case create_import_log(config, request) {
             Ok(log) -> {
               encode_import_log(log)
               |> json.to_string
@@ -116,7 +115,7 @@ fn handle_create_import_log(req: wisp.Request) -> wisp.Response {
 fn handle_get_import_log(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case import_export_api.get_import_log(config, log_id: id) {
+      case get_import_log(config, log_id: id) {
         Ok(log) -> {
           encode_import_log(log)
           |> json.to_string
@@ -137,7 +136,7 @@ fn handle_update_import_log(req: wisp.Request, id: Int) -> wisp.Response {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
           case
-            import_export_api.update_import_log(config, request, log_id: id)
+            update_import_log(config, request, log_id: id)
           {
             Ok(log) -> {
               encode_import_log(log)
@@ -158,7 +157,7 @@ fn handle_update_import_log(req: wisp.Request, id: Int) -> wisp.Response {
 fn handle_delete_import_log(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case import_export_api.delete_import_log(config, log_id: id) {
+      case delete_import_log(config, log_id: id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }
@@ -197,32 +196,13 @@ fn encode_import_log(log: ImportLog) -> json.Json {
 fn parse_import_log_create_request(
   json_data: dynamic.Dynamic,
 ) -> Result(ImportLogCreateRequest, String) {
-  decode.run(
-    json_data,
-    import_log_create_request_decoder.import_log_create_request_decoder(),
-  )
-  |> result.map(fn(tuple) {
-    let #(import_type, msg, keyword) = tuple
-    ImportLogCreateRequest(import_type: import_type, msg: msg, keyword: keyword)
-  })
+  decode.run(json_data, import_log_create_request_decoder())
   |> result.map_error(fn(_) { "Invalid import log create request" })
 }
 
 fn parse_import_log_update_request(
   json_data: dynamic.Dynamic,
 ) -> Result(ImportLogUpdateRequest, String) {
-  decode.run(
-    json_data,
-    import_log_update_request_decoder.import_log_update_request_decoder(),
-  )
-  |> result.map(fn(tuple) {
-    let #(import_type, msg, running, keyword) = tuple
-    ImportLogUpdateRequest(
-      import_type: import_type,
-      msg: msg,
-      running: running,
-      keyword: keyword,
-    )
-  })
+  decode.run(json_data, import_log_update_request_decoder())
   |> result.map_error(fn(_) { "Invalid import log update request" })
 }

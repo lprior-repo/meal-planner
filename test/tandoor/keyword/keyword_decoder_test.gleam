@@ -6,8 +6,7 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/tandoor/decoders/keyword/keyword_decoder
-import meal_planner/tandoor/types/keyword/keyword.{type Keyword}
+import meal_planner/tandoor/keyword.{type Keyword}
 
 pub fn decode_keyword_minimal_test() {
   let json_string =
@@ -25,7 +24,7 @@ pub fn decode_keyword_minimal_test() {
 
   let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
   let result: Result(Keyword, _) =
-    decode.run(json_data, keyword_decoder.keyword_decoder())
+    decode.run(json_data, keyword.keyword_decoder())
 
   case result {
     Ok(keyword) -> {
@@ -76,7 +75,7 @@ pub fn decode_keyword_with_icon_test() {
 
   let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
   let result: Result(Keyword, _) =
-    decode.run(json_data, keyword_decoder.keyword_decoder())
+    decode.run(json_data, keyword.keyword_decoder())
 
   case result {
     Ok(keyword) -> {
@@ -108,7 +107,7 @@ pub fn decode_keyword_with_parent_test() {
 
   let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
   let result: Result(Keyword, _) =
-    decode.run(json_data, keyword_decoder.keyword_decoder())
+    decode.run(json_data, keyword.keyword_decoder())
 
   case result {
     Ok(keyword) -> {
@@ -140,7 +139,7 @@ pub fn decode_keyword_with_children_test() {
 
   let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
   let result: Result(Keyword, _) =
-    decode.run(json_data, keyword_decoder.keyword_decoder())
+    decode.run(json_data, keyword.keyword_decoder())
 
   case result {
     Ok(keyword) -> {
@@ -184,8 +183,7 @@ pub fn decode_keyword_list_test() {
   ]"
 
   let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
-  let result =
-    decode.run(json_data, decode.list(keyword_decoder.keyword_decoder()))
+  let result = decode.run(json_data, decode.list(keyword.keyword_decoder()))
 
   case result {
     Ok(keywords) -> {
@@ -217,7 +215,7 @@ pub fn decode_keyword_invalid_json_test() {
   let json_string = "{ \"invalid\": \"json\" }"
 
   let assert Ok(json_data) = json.parse(json_string, using: decode.dynamic)
-  let result = decode.run(json_data, keyword_decoder.keyword_decoder())
+  let result = decode.run(json_data, keyword.keyword_decoder())
 
   case result {
     Ok(_) -> {
