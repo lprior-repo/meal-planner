@@ -15,14 +15,12 @@ import gleam/json
 import gleam/option
 import gleam/result
 
-import meal_planner/tandoor/client.{
-  type Keyword, type NutritionInfo, type Step,
-}
+import meal_planner/tandoor/client.{type Keyword, type NutritionInfo, type Step}
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/recipe.{
-  type Recipe, type RecipeDetail, type RecipeCreateRequest, type RecipeUpdate,
-  RecipeCreateRequest, RecipeUpdate,
-  list_recipes, get_recipe, create_recipe, update_recipe, delete_recipe,
+  type Recipe, type RecipeCreateRequest, type RecipeDetail, type RecipeUpdate,
+  RecipeCreateRequest, RecipeUpdate, create_recipe, delete_recipe, get_recipe,
+  list_recipes, update_recipe,
 }
 
 import wisp
@@ -42,13 +40,7 @@ pub fn handle_recipes_collection(req: wisp.Request) -> wisp.Response {
 fn handle_list_recipes(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case
-        list_recipes(
-          config,
-          limit: option.None,
-          offset: option.None,
-        )
-      {
+      case list_recipes(config, limit: option.None, offset: option.None) {
         Ok(response) -> {
           let results_json =
             json.array(response.results, fn(r) { encode_recipe_simple(r) })
@@ -136,13 +128,7 @@ fn handle_update_recipe(req: wisp.Request, id: Int) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case
-            update_recipe(
-              config,
-              recipe_id: id,
-              data: request,
-            )
-          {
+          case update_recipe(config, recipe_id: id, data: request) {
             Ok(r) -> {
               encode_recipe_detail(r)
               |> json.to_string

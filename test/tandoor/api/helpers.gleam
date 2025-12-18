@@ -54,7 +54,9 @@ pub fn not_found_response() {
 
 /// Create a server error response (status 500)
 pub fn server_error_response() {
-  ApiResponse(status: 500, body: "{\"error\": \"Internal server error\"}", headers: [])
+  ApiResponse(
+    status: 500,
+    body: "{\"error\": \"Internal server error\"}",
+    headers: [],
+  )
 }
-
-

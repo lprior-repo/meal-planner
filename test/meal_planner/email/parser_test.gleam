@@ -119,8 +119,7 @@ pub fn parse_skip_meal_test() {
 
 // Test: Email without @Claude mention
 pub fn no_command_test() {
-  let email =
-    "Hey, just wanted to let you know I enjoyed the salmon this week!"
+  let email = "Hey, just wanted to let you know I enjoyed the salmon this week!"
 
   let result = parser.parse_email(email)
 

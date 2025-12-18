@@ -1610,4 +1610,3 @@ fn encode_create_recipe(request: CreateRecipeRequest) -> String {
 
   json.to_string(body)
 }
-

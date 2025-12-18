@@ -15,8 +15,8 @@ import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/shopping.{
   type ShoppingListEntry, type ShoppingListEntryResponse,
-  ShoppingListEntryCreate,
-  list_entries, create_entry, get_entry, delete_entry, add_recipe_to_shopping_list,
+  ShoppingListEntryCreate, add_recipe_to_shopping_list, create_entry,
+  delete_entry, get_entry, list_entries,
 }
 import wisp
 
@@ -125,7 +125,9 @@ pub fn handle_list(req: wisp.Request) -> wisp.Response {
       let params = wisp.get_query(req)
       let #(checked, limit, offset) = extract_list_params(params)
 
-      case list_entries(config, checked: checked, limit: limit, offset: offset) {
+      case
+        list_entries(config, checked: checked, limit: limit, offset: offset)
+      {
         Ok(response) -> {
           let results_json =
             json.array(response.results, entry_response_to_json)
@@ -213,7 +215,13 @@ pub fn handle_add_recipe(req: wisp.Request) -> wisp.Response {
 
       case extract_add_recipe_params(params) {
         Ok(#(recipe_id, servings)) -> {
-          case add_recipe_to_shopping_list(config, recipe_id: recipe_id, servings: servings) {
+          case
+            add_recipe_to_shopping_list(
+              config,
+              recipe_id: recipe_id,
+              servings: servings,
+            )
+          {
             Ok(entries) -> {
               let results_json = json.array(entries, entry_to_json)
 

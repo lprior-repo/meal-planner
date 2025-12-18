@@ -3,8 +3,8 @@
 /// Represents an individual recipe within a recipe book.
 /// Maps recipes to recipe books for organizing collections.
 /// Based on the Tandoor API RecipeBookEntry schema.
-import meal_planner/tandoor/types/recipe/recipe_book.{type RecipeBook}
 import meal_planner/tandoor/recipe.{type RecipeOverview}
+import meal_planner/tandoor/types/recipe/recipe_book.{type RecipeBook}
 
 // Type aliases for foreign key references
 pub type RecipeBookId =

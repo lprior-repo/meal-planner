@@ -2,7 +2,6 @@
 ///
 /// Represents commands that Lewis can send via email to adjust meal plans,
 /// preferences, and trigger regenerations.
-
 import gleam/option.{type Option}
 
 /// Day of the week for meal plan adjustments
