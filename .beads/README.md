@@ -1,81 +1,89 @@
-# Beads - AI-Native Issue Tracking
+# Beads Task Tracking System
 
-Welcome to Beads! This repository uses **Beads** for issue tracking - a modern, AI-native tool designed to live directly in your codebase alongside your code.
+This directory contains the Beads database and configuration for the meal-planner project.
 
-## What is Beads?
+## Structure
 
-Beads is issue tracking that lives in your repo, making it perfect for AI coding agents and developers who want their issues close to their code. No web UI required - everything works through the CLI and integrates seamlessly with git.
-
-**Learn more:** [github.com/steveyegge/beads](https://github.com/steveyegge/beads)
+```
+.beads/
+├── beads.db                  # SQLite database with all tasks
+├── viewer_config.json        # Viewer configuration for parallel planning
+└── README.md                 # This file
+```
 
 ## Quick Start
 
-### Essential Commands
+### View Tasks
 
 ```bash
-# Create new issues
-bd create "Add user authentication"
+# List all ready tasks
+bd ready
 
-# View all issues
-bd list
+# Show specific task
+bd show meal-planner-xt0.1
 
-# View issue details
-bd show <issue-id>
-
-# Update issue status
-bd update <issue-id> --status in-progress
-bd update <issue-id> --status done
-
-# Sync with git remote
-bd sync
+# List all tasks with filters
+bd list --status open --priority 1
 ```
 
-### Working with Issues
-
-Issues in Beads are:
-- **Git-native**: Stored in `.beads/issues.jsonl` and synced like code
-- **AI-friendly**: CLI-first design works perfectly with AI coding agents
-- **Branch-aware**: Issues can follow your branch workflow
-- **Always in sync**: Auto-syncs with your commits
-
-## Why Beads?
-
-✨ **AI-Native Design**
-- Built specifically for AI-assisted development workflows
-- CLI-first interface works seamlessly with AI coding agents
-- No context switching to web UIs
-
-🚀 **Developer Focused**
-- Issues live in your repo, right next to your code
-- Works offline, syncs when you push
-- Fast, lightweight, and stays out of your way
-
-🔧 **Git Integration**
-- Automatic sync with git commits
-- Branch-aware issue tracking
-- Intelligent JSONL merge resolution
-
-## Get Started with Beads
-
-Try Beads in your own projects:
+### Create Tasks
 
 ```bash
-# Install Beads
-curl -sSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash
+# Create new task
+bd create --title "Fix bug in grocery list" --type bug --priority 2
 
-# Initialize in your repo
-bd init
-
-# Create your first issue
-bd create "Try out Beads"
+# Create epic
+bd create --title "V2 Features" --type epic --priority 3
 ```
 
-## Learn More
+### Update Tasks
 
-- **Documentation**: [github.com/steveyegge/beads/docs](https://github.com/steveyegge/beads/tree/main/docs)
-- **Quick Start Guide**: Run `bd quickstart`
-- **Examples**: [github.com/steveyegge/beads/examples](https://github.com/steveyegge/beads/tree/main/examples)
+```bash
+# Mark task as in progress
+bd update meal-planner-xt0.1 --status in_progress
+
+# Close task
+bd close meal-planner-xt0.1 --reason "Implementation complete"
+
+# Add notes
+bd update meal-planner-xt0.1 --notes "Integrated with FatSecret API"
+```
+
+### Dependencies
+
+```bash
+# Create dependency
+bd dep meal-planner-xt0.2 --depends-on meal-planner-xt0.1 --type blocks
+
+# View dependencies
+bd show meal-planner-xt0.4
+```
+
+## Viewer Configuration
+
+The `viewer_config.json` supports:
+
+- **Status Colors** - Color-coded task statuses for quick visualization
+- **Priority Levels** - Map numeric priority to semantic labels
+- **Reporting** - Burndown charts, velocity, cycle time analysis
+- **Parallel Planning** - Configure multi-agent swarm settings
+- **Git Integration** - Auto-link commits to tasks
+
+## Workflow Integration
+
+### Commit Messages
+
+Every commit should reference a Beads task:
+
+```bash
+git commit -m "PASS: [meal-planner-xt0.1] Fix grocery list aggregation"
+```
+
+## For More Information
+
+See `SPARC_WORKFLOW.md` in project root.
 
 ---
 
-*Beads: Issue tracking that moves at the speed of thought* ⚡
+**Last Updated:** 2025-12-18
+**Status:** Active Development
