@@ -272,3 +272,134 @@ fn single_entry_to_list_decoder() -> decode.Decoder(List(FoodEntry)) {
   use entry <- decode.then(decoders.food_entry_decoder())
   decode.success([entry])
 }
+
+// ============================================================================
+// Copy/Template Operations (food_entry.copy, food_entry.copy_meal, etc.)
+// ============================================================================
+
+/// Copy all food entries from one date to another
+///
+/// FatSecret API: food_entry.copy
+/// Copies all diary entries from the source date to the target date.
+///
+/// Parameters:
+/// - from_date_int: Source date (days since epoch)
+/// - to_date_int: Destination date (days since epoch)
+///
+/// Returns: Ok(Nil) on success, Error on failure
+pub fn copy_entries(
+  config: FatSecretConfig,
+  token: AccessToken,
+  from_date_int: Int,
+  to_date_int: Int,
+) -> Result(Nil, FatSecretError) {
+  let params =
+    dict.new()
+    |> dict.insert("from_date_int", int.to_string(from_date_int))
+    |> dict.insert("to_date_int", int.to_string(to_date_int))
+
+  use _body <- result.try(http.make_authenticated_request(
+    config,
+    token,
+    "food_entry.copy",
+    params,
+  ))
+
+  Ok(Nil)
+}
+
+/// Copy entries for a specific meal from one date/meal to another
+///
+/// FatSecret API: food_entry.copy_meal
+/// Copies diary entries from a specific meal slot to another meal slot.
+///
+/// Parameters:
+/// - from_date_int: Source date (days since epoch)
+/// - from_meal: Source meal type (breakfast, lunch, dinner, other)
+/// - to_date_int: Destination date (days since epoch)
+/// - to_meal: Destination meal type
+///
+/// Returns: Ok(Nil) on success, Error on failure
+pub fn copy_meal(
+  config: FatSecretConfig,
+  token: AccessToken,
+  from_date_int: Int,
+  from_meal: diary_types.MealType,
+  to_date_int: Int,
+  to_meal: diary_types.MealType,
+) -> Result(Nil, FatSecretError) {
+  let params =
+    dict.new()
+    |> dict.insert("from_date_int", int.to_string(from_date_int))
+    |> dict.insert("from_meal", diary_types.meal_type_to_string(from_meal))
+    |> dict.insert("to_date_int", int.to_string(to_date_int))
+    |> dict.insert("to_meal", diary_types.meal_type_to_string(to_meal))
+
+  use _body <- result.try(http.make_authenticated_request(
+    config,
+    token,
+    "food_entry.copy_meal",
+    params,
+  ))
+
+  Ok(Nil)
+}
+
+/// Commit/finalize a day's diary entries
+///
+/// FatSecret API: food_entry.commit_day
+/// Marks a day as complete/finalized in FatSecret.
+///
+/// Parameters:
+/// - date_int: Date to commit (days since epoch)
+///
+/// Returns: Ok(Nil) on success, Error on failure
+pub fn commit_day(
+  config: FatSecretConfig,
+  token: AccessToken,
+  date_int: Int,
+) -> Result(Nil, FatSecretError) {
+  let params =
+    dict.new()
+    |> dict.insert("date_int", int.to_string(date_int))
+
+  use _body <- result.try(http.make_authenticated_request(
+    config,
+    token,
+    "food_entry.commit_day",
+    params,
+  ))
+
+  Ok(Nil)
+}
+
+/// Save a day's entries as a reusable template
+///
+/// FatSecret API: food_entry.save_template
+/// Saves all entries from the specified date as a named template for reuse.
+///
+/// Parameters:
+/// - date_int: Date whose entries to save (days since epoch)
+/// - template_name: Name for the template
+///
+/// Returns: Ok(Nil) on success, Error on failure
+pub fn save_template(
+  config: FatSecretConfig,
+  token: AccessToken,
+  date_int: Int,
+  template_name: String,
+) -> Result(Nil, FatSecretError) {
+  let params =
+    dict.new()
+    |> dict.insert("date_int", int.to_string(date_int))
+    |> dict.insert("template_name", template_name)
+
+  use _body <- result.try(http.make_authenticated_request(
+    config,
+    token,
+    "food_entry.save_template",
+    params,
+  ))
+
+  Ok(Nil)
+}
