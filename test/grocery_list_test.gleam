@@ -190,8 +190,7 @@ pub fn from_ingredients_empty_list_test() {
 // ============================================================================
 
 pub fn merge_combines_lists_test() {
-  let list1 =
-    from_ingredients([test_ingredient("Chicken", 1.0, "lbs", "Meat")])
+  let list1 = from_ingredients([test_ingredient("Chicken", 1.0, "lbs", "Meat")])
 
   let list2 =
     from_ingredients([test_ingredient("Onion", 2.0, "units", "Produce")])
@@ -204,11 +203,9 @@ pub fn merge_combines_lists_test() {
 }
 
 pub fn merge_sums_same_ingredients_test() {
-  let list1 =
-    from_ingredients([test_ingredient("Chicken", 1.0, "lbs", "Meat")])
+  let list1 = from_ingredients([test_ingredient("Chicken", 1.0, "lbs", "Meat")])
 
-  let list2 =
-    from_ingredients([test_ingredient("Chicken", 2.0, "lbs", "Meat")])
+  let list2 = from_ingredients([test_ingredient("Chicken", 2.0, "lbs", "Meat")])
 
   let result = merge([list1, list2])
 

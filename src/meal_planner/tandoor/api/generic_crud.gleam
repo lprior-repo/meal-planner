@@ -16,8 +16,13 @@ import gleam/dynamic/decode
 import gleam/http
 import gleam/int
 import gleam/json
+import gleam/list
 import gleam/option.{type Option}
-import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import gleam/result
+import gleam/string
+import meal_planner/tandoor/client.{
+  type ClientConfig, type TandoorError, NetworkError, ParseError,
+}
 import meal_planner/tandoor/core/http as core_http
 import wisp.{type Request, type Response}
 
@@ -218,6 +223,35 @@ fn encode_optional_string(opt: Option(String)) -> json.Json {
   }
 }
 
+/// Parse JSON response body using a decoder
+fn parse_json_response(
+  body: String,
+  decoder: decode.Decoder(item),
+) -> Result(item, TandoorError) {
+  case json.parse(body, using: decode.dynamic) {
+    Ok(json_data) -> {
+      case decode.run(json_data, decoder) {
+        Ok(item) -> Ok(item)
+        Error(errors) -> {
+          let error_msg =
+            "Failed to decode response: "
+            <> string.join(
+              list.map(errors, fn(e) {
+                case e {
+                  decode.DecodeError(expected, _found, path) ->
+                    expected <> " at " <> string.join(path, ".")
+                }
+              }),
+              ", ",
+            )
+          Error(ParseError(error_msg))
+        }
+      }
+    }
+    Error(_) -> Error(ParseError("Invalid JSON response"))
+  }
+}
+
 // =============================================================================
 // Generic CRUD API Operations (GREEN PHASE - Minimal Implementation)
 // =============================================================================
@@ -241,13 +275,14 @@ fn encode_optional_string(opt: Option(String)) -> json.Json {
 /// ## Implementation Notes
 /// Use `core_http.post_json` for HTTP POST with authentication.
 pub fn create(
-  _config: ClientConfig,
-  _path: String,
-  _body: String,
-  _decoder: decode.Decoder(item),
+  config: ClientConfig,
+  path: String,
+  body: String,
+  decoder: decode.Decoder(item),
 ) -> Result(item, TandoorError) {
-  // TODO: Implement HTTP POST request using core_http.post_json
-  todo as "Generic create not yet implemented"
+  use req <- result.try(client.build_post_request(config, path, body))
+  use resp <- result.try(client.execute_and_parse(req))
+  parse_json_response(resp.body, decoder)
 }
 
 /// Generic GET operation for Tandoor API
@@ -268,13 +303,15 @@ pub fn create(
 /// ## Implementation Notes
 /// Append ID to path and use `core_http.get_json` for authenticated request.
 pub fn get(
-  _config: ClientConfig,
-  _path: String,
-  _id: Int,
-  _decoder: decode.Decoder(item),
+  config: ClientConfig,
+  path: String,
+  id: Int,
+  decoder: decode.Decoder(item),
 ) -> Result(item, TandoorError) {
-  // TODO: Implement HTTP GET request using core_http.get_json
-  todo as "Generic get not yet implemented"
+  let full_path = path <> int.to_string(id) <> "/"
+  use req <- result.try(client.build_get_request(config, full_path, []))
+  use resp <- result.try(client.execute_and_parse(req))
+  parse_json_response(resp.body, decoder)
 }
 
 /// Generic UPDATE operation for Tandoor API
@@ -297,14 +334,16 @@ pub fn get(
 /// ## Implementation Notes
 /// Use `core_http.patch_json` for HTTP PATCH with authentication.
 pub fn update(
-  _config: ClientConfig,
-  _path: String,
-  _id: Int,
-  _body: String,
-  _decoder: decode.Decoder(item),
+  config: ClientConfig,
+  path: String,
+  id: Int,
+  body: String,
+  decoder: decode.Decoder(item),
 ) -> Result(item, TandoorError) {
-  // TODO: Implement HTTP PATCH request using core_http.patch_json
-  todo as "Generic update not yet implemented"
+  let full_path = path <> int.to_string(id) <> "/"
+  use req <- result.try(client.build_patch_request(config, full_path, body))
+  use resp <- result.try(client.execute_and_parse(req))
+  parse_json_response(resp.body, decoder)
 }
 
 /// Generic DELETE operation for Tandoor API
@@ -325,12 +364,14 @@ pub fn update(
 /// Use `core_http.delete` for HTTP DELETE with authentication.
 /// Typically returns 204 No Content on success.
 pub fn delete(
-  _config: ClientConfig,
-  _path: String,
-  _id: Int,
+  config: ClientConfig,
+  path: String,
+  id: Int,
 ) -> Result(Nil, TandoorError) {
-  // TODO: Implement HTTP DELETE request using core_http.delete
-  todo as "Generic delete not yet implemented"
+  let full_path = path <> int.to_string(id) <> "/"
+  use req <- result.try(client.build_delete_request(config, full_path))
+  use _resp <- result.try(client.execute_and_parse(req))
+  Ok(Nil)
 }
 
 /// Generic LIST operation for Tandoor API (simple list without pagination)
@@ -352,13 +393,14 @@ pub fn delete(
 /// Use `core_http.get_json_list` for simple list fetching.
 /// For pagination support, use `list_paginated` instead.
 pub fn list(
-  _config: ClientConfig,
-  _path: String,
-  _params: List(#(String, String)),
-  _decoder: decode.Decoder(item),
+  config: ClientConfig,
+  path: String,
+  params: List(#(String, String)),
+  decoder: decode.Decoder(item),
 ) -> Result(List(item), TandoorError) {
-  // TODO: Implement HTTP GET request using core_http.get_json_list
-  todo as "Generic list not yet implemented"
+  use req <- result.try(client.build_get_request(config, path, params))
+  use resp <- result.try(client.execute_and_parse(req))
+  parse_json_response(resp.body, decode.list(decoder))
 }
 
 /// Generic PAGINATED LIST operation for Tandoor API
@@ -388,11 +430,12 @@ pub fn list(
 /// Use `core_http.get_paginated_json` for paginated list fetching.
 /// Response includes next/previous links for navigation.
 pub fn list_paginated(
-  _config: ClientConfig,
-  _path: String,
-  _params: List(#(String, String)),
-  _decoder: decode.Decoder(item),
+  config: ClientConfig,
+  path: String,
+  params: List(#(String, String)),
+  decoder: decode.Decoder(item),
 ) -> Result(core_http.PaginatedResponse(item), TandoorError) {
-  // TODO: Implement HTTP GET request using core_http.get_paginated_json
-  todo as "Generic list_paginated not yet implemented"
+  use req <- result.try(client.build_get_request(config, path, params))
+  use resp <- result.try(client.execute_and_parse(req))
+  parse_json_response(resp.body, core_http.paginated_decoder(decoder))
 }
