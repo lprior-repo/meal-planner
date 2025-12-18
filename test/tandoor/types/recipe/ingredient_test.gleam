@@ -38,6 +38,10 @@ pub fn ingredient_creation_test() {
       is_header: False,
       no_amount: False,
       original_text: Some("250g fresh, ripe tomatoes"),
+      conversions: [],
+      used_in_recipes: [],
+      always_use_plural_unit: False,
+      always_use_plural_food: False,
     )
 
   ingredient.id |> should.equal(1)
@@ -69,6 +73,10 @@ pub fn ingredient_header_test() {
       is_header: True,
       no_amount: True,
       original_text: Some("For the sauce:"),
+      conversions: [],
+      used_in_recipes: [],
+      always_use_plural_unit: False,
+      always_use_plural_food: False,
     )
 
   ingredient.is_header |> should.equal(True)
@@ -100,6 +108,10 @@ pub fn ingredient_no_amount_test() {
       is_header: False,
       no_amount: True,
       original_text: Some("Salt to taste"),
+      conversions: [],
+      used_in_recipes: [],
+      always_use_plural_unit: False,
+      always_use_plural_food: False,
     )
 
   ingredient.no_amount |> should.equal(True)
@@ -144,6 +156,10 @@ pub fn ingredient_with_note_test() {
       is_header: False,
       no_amount: False,
       original_text: Some("2 1/2 cups all-purpose flour, sifted"),
+      conversions: [],
+      used_in_recipes: [],
+      always_use_plural_unit: False,
+      always_use_plural_food: False,
     )
 
   ingredient.amount |> should.equal(2.5)

@@ -18,10 +18,18 @@ import meal_planner/tandoor/types/shopping/shopping_list_entry.{
 // Helper Functions
 // ============================================================================
 
-/// Encode an optional integer ID
+/// Encode an optional integer ID with conversion function
 fn encode_optional_int(opt: Option(a), to_int: fn(a) -> Int) -> Json {
   case opt {
     Some(value) -> json.int(to_int(value))
+    None -> json.null()
+  }
+}
+
+/// Encode an optional plain integer
+fn encode_optional_plain_int(opt: Option(Int)) -> Json {
+  case opt {
+    Some(value) -> json.int(value)
     None -> json.null()
   }
 }
@@ -71,8 +79,8 @@ pub fn encode_shopping_list_entry_create(entry: ShoppingListEntryCreate) -> Json
       "list_recipe",
       encode_optional_int(entry.list_recipe, ids.shopping_list_id_to_int),
     ),
-    #("food", encode_optional_int(entry.food, ids.food_id_to_int)),
-    #("unit", encode_optional_int(entry.unit, ids.unit_id_to_int)),
+    #("food", encode_optional_plain_int(entry.food)),
+    #("unit", encode_optional_plain_int(entry.unit)),
     #("amount", json.float(entry.amount)),
     #("order", json.int(entry.order)),
     #("checked", json.bool(entry.checked)),
@@ -82,10 +90,7 @@ pub fn encode_shopping_list_entry_create(entry: ShoppingListEntryCreate) -> Json
     ),
     #("completed_at", encode_optional_string(entry.completed_at)),
     #("delay_until", encode_optional_string(entry.delay_until)),
-    #("mealplan_id", case entry.mealplan_id {
-      Some(id) -> json.int(id)
-      None -> json.null()
-    }),
+    #("mealplan_id", encode_optional_plain_int(entry.mealplan_id)),
   ])
 }
 
@@ -127,8 +132,8 @@ pub fn encode_shopping_list_entry_update(
       "list_recipe",
       encode_optional_int(update.list_recipe, ids.shopping_list_id_to_int),
     ),
-    #("food", encode_optional_int(update.food, ids.food_id_to_int)),
-    #("unit", encode_optional_int(update.unit, ids.unit_id_to_int)),
+    #("food", encode_optional_plain_int(update.food)),
+    #("unit", encode_optional_plain_int(update.unit)),
     #("amount", json.float(update.amount)),
     #("order", json.int(update.order)),
     #("checked", json.bool(update.checked)),

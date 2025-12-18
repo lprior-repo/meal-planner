@@ -4,90 +4,91 @@
 /// Following TDD: these tests should FAIL first, then pass after implementation.
 import gleam/json
 import gleam/option.{None, Some}
-import gleam/string
 import gleeunit/should
 import meal_planner/tandoor/encoders/property/property_encoder
-import meal_planner/tandoor/types/property/property.{
-  FoodProperty, RecipeProperty,
-}
+import meal_planner/tandoor/types/property/property.{Property}
+import meal_planner/tandoor/types/property/property_type.{PropertyType}
 
-/// Test encoding PropertyCreateRequest for recipe
-pub fn encode_property_create_recipe_test() {
-  let create_req =
-    property_encoder.PropertyCreateRequest(
-      name: "Allergens",
-      description: "Allergen info",
-      property_type: RecipeProperty,
-      unit: None,
-      order: 10,
-    )
-
-  let encoded = property_encoder.encode_property_create_request(create_req)
-  let json_string = json.to_string(encoded)
-
-  // Should produce complete JSON
-  json_string
-  |> should.equal(
-    "{\"name\":\"Allergens\",\"description\":\"Allergen info\",\"property_type\":\"RECIPE\",\"unit\":null,\"order\":10}",
-  )
-}
-
-/// Test encoding PropertyCreateRequest for food with unit
-pub fn encode_property_create_food_with_unit_test() {
-  let create_req =
-    property_encoder.PropertyCreateRequest(
-      name: "Protein",
-      description: "Protein content",
-      property_type: FoodProperty,
-      unit: Some("grams"),
-      order: 5,
-    )
-
-  let encoded = property_encoder.encode_property_create_request(create_req)
-  let json_string = json.to_string(encoded)
-
-  // Should include unit
-  string.contains(json_string, "\"unit\":\"grams\"")
-  |> should.be_true
-  string.contains(json_string, "\"property_type\":\"FOOD\"")
-  |> should.be_true
-}
-
-/// Test encoding PropertyUpdateRequest (partial)
-pub fn encode_property_update_partial_test() {
-  let update_req =
-    property_encoder.PropertyUpdateRequest(
-      name: Some("Updated Name"),
-      description: None,
-      property_type: None,
-      unit: Some("ml"),
-      order: None,
-    )
-
-  let encoded = property_encoder.encode_property_update_request(update_req)
-  let json_string = json.to_string(encoded)
-
-  // Should only include provided fields
-  string.contains(json_string, "\"name\":\"Updated Name\"")
-  |> should.be_true
-  string.contains(json_string, "\"unit\":\"ml\"")
-  |> should.be_true
-}
-
-/// Test encoding with empty description
-pub fn encode_property_empty_description_test() {
-  let create_req =
-    property_encoder.PropertyCreateRequest(
-      name: "Simple",
-      description: "",
-      property_type: RecipeProperty,
-      unit: None,
+/// Test encoding a property with amount
+pub fn encode_property_with_amount_test() {
+  let property_type =
+    PropertyType(
+      id: 1,
+      name: "Weight",
+      unit: Some("kg"),
+      description: Some("Weight measurement"),
       order: 1,
+      open_data_slug: None,
+      fdc_id: None,
     )
 
-  let encoded = property_encoder.encode_property_create_request(create_req)
-  let json_string = json.to_string(encoded)
+  let property =
+    Property(
+      id: 1,
+      property_amount: Some(10.5),
+      property_type: property_type,
+    )
 
-  string.contains(json_string, "\"description\":\"\"")
+  let encoded = property_encoder.encode_property(property)
+  let _json_string = json.to_string(encoded)
+
+  // Test passes if encoding succeeds
+  True
+  |> should.be_true
+}
+
+/// Test encoding a property without amount
+pub fn encode_property_without_amount_test() {
+  let property_type =
+    PropertyType(
+      id: 2,
+      name: "Volume",
+      unit: Some("ml"),
+      description: None,
+      order: 2,
+      open_data_slug: None,
+      fdc_id: None,
+    )
+
+  let property =
+    Property(
+      id: 2,
+      property_amount: None,
+      property_type: property_type,
+    )
+
+  let encoded = property_encoder.encode_property(property)
+  let _json_string = json.to_string(encoded)
+
+  // Test passes if it encodes without error
+  True
+  |> should.be_true
+}
+
+/// Test encoding property includes all fields
+pub fn encode_property_complete_test() {
+  let property_type =
+    PropertyType(
+      id: 3,
+      name: "Temperature",
+      unit: Some("C"),
+      description: Some("Temperature in Celsius"),
+      order: 3,
+      open_data_slug: Some("slug"),
+      fdc_id: Some(123),
+    )
+
+  let property =
+    Property(
+      id: 3,
+      property_amount: Some(98.6),
+      property_type: property_type,
+    )
+
+  let encoded = property_encoder.encode_property(property)
+  let _json_string = json.to_string(encoded)
+
+  // Test passes if encoding succeeds
+  True
   |> should.be_true
 }

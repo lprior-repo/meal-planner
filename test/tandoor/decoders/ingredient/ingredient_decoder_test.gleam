@@ -40,7 +40,11 @@ pub fn decode_ingredient_full_test() {
       \"order\": 1,
       \"is_header\": false,
       \"no_amount\": false,
-      \"original_text\": \"250g tomatoes, diced\"
+      \"original_text\": \"250g tomatoes, diced\",
+      \"conversions\": [],
+      \"used_in_recipes\": [],
+      \"always_use_plural_unit\": false,
+      \"always_use_plural_food\": false
     }"
 
   let result: Result(Ingredient, _) =
@@ -98,7 +102,11 @@ pub fn decode_ingredient_minimal_test() {
       \"order\": 0,
       \"is_header\": false,
       \"no_amount\": true,
-      \"original_text\": null
+      \"original_text\": null,
+      \"conversions\": [],
+      \"used_in_recipes\": [],
+      \"always_use_plural_unit\": false,
+      \"always_use_plural_food\": false
     }"
 
   let result: Result(Ingredient, _) =

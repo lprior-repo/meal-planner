@@ -17,8 +17,8 @@ pub fn create_shopping_list_entry_delegates_to_client_test() {
   let entry =
     ShoppingListEntryCreate(
       list_recipe: None,
-      food: Some(ids.food_id_from_int(1)),
-      unit: Some(ids.unit_id_from_int(1)),
+      food: Some(1),
+      unit: Some(1),
       amount: 2.5,
       order: 0,
       checked: False,
@@ -64,8 +64,8 @@ pub fn create_with_food_and_unit_test() {
   let entry =
     ShoppingListEntryCreate(
       list_recipe: None,
-      food: Some(ids.food_id_from_int(42)),
-      unit: Some(ids.unit_id_from_int(2)),
+      food: Some(42),
+      unit: Some(2),
       amount: 3.0,
       order: 1,
       checked: False,
@@ -86,8 +86,8 @@ pub fn create_with_all_fields_test() {
   let entry =
     ShoppingListEntryCreate(
       list_recipe: Some(ids.shopping_list_id_from_int(5)),
-      food: Some(ids.food_id_from_int(10)),
-      unit: Some(ids.unit_id_from_int(3)),
+      food: Some(10),
+      unit: Some(3),
       amount: 2.5,
       order: 2,
       checked: True,

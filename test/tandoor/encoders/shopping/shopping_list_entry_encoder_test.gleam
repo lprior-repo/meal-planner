@@ -38,8 +38,8 @@ pub fn encode_shopping_list_entry_create_with_values_test() {
   let entry =
     ShoppingListEntryCreate(
       list_recipe: Some(ids.shopping_list_id_from_int(1)),
-      food: Some(ids.food_id_from_int(42)),
-      unit: Some(ids.unit_id_from_int(5)),
+      food: Some(42),
+      unit: Some(5),
       amount: 2.5,
       order: 3,
       checked: True,
@@ -88,8 +88,8 @@ pub fn encode_shopping_list_entry_update_with_values_test() {
   let update =
     ShoppingListEntryUpdate(
       list_recipe: Some(ids.shopping_list_id_from_int(2)),
-      food: Some(ids.food_id_from_int(99)),
-      unit: Some(ids.unit_id_from_int(7)),
+      food: Some(99),
+      unit: Some(7),
       amount: 3.0,
       order: 1,
       checked: True,
