@@ -22,7 +22,24 @@ pub fn main() {
   io.println("")
 
   // Load configuration from environment
-  let app_config = config.load()
+  let app_config = case config.load() {
+    Ok(cfg) -> cfg
+    Error(config.MissingEnvVar(name)) -> {
+      io.println("❌ Missing required environment variable: " <> name)
+      panic as "Configuration error: missing required environment variable"
+    }
+    Error(config.InvalidEnvVar(name, value, expected)) -> {
+      io.println(
+        "❌ Invalid value for "
+        <> name
+        <> ": got '"
+        <> value
+        <> "', expected "
+        <> expected,
+      )
+      panic as "Configuration error: invalid environment variable value"
+    }
+  }
 
   io.println("✓ Configuration loaded")
   io.println(

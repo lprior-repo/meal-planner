@@ -5,6 +5,12 @@ import envoy
 import gleam/int
 import gleam/result
 
+/// Configuration error type
+pub type ConfigError {
+  MissingEnvVar(name: String)
+  InvalidEnvVar(name: String, value: String, expected: String)
+}
+
 /// Database configuration
 pub type DatabaseConfig {
   DatabaseConfig(
@@ -52,9 +58,34 @@ pub type Config {
   )
 }
 
+/// Get environment variable with a default value
+fn get_env_or(name: String, default: String) -> String {
+  envoy.get(name)
+  |> result.unwrap(default)
+}
+
+/// Get optional environment variable (returns empty string if not set)
+fn get_env_optional(name: String) -> String {
+  envoy.get(name)
+  |> result.unwrap("")
+}
+
+/// Parse integer from environment variable with default
+fn get_env_int(name: String, default: Int) -> Result(Int, ConfigError) {
+  case envoy.get(name) {
+    Ok(value) ->
+      case int.parse(value) {
+        Ok(parsed) -> Ok(parsed)
+        Error(_) ->
+          Error(InvalidEnvVar(name: name, value: value, expected: "integer"))
+      }
+    Error(_) -> Ok(default)
+  }
+}
+
 /// Load configuration from environment variables
 ///
-/// Returns a Config struct with all required settings.
+/// Returns a Result with Config on success or ConfigError on failure.
 /// Uses sensible defaults for development.
 ///
 /// Environment variables:
@@ -67,75 +98,64 @@ pub type Config {
 /// - PORT (default: 8080)
 /// - ENVIRONMENT (default: development)
 /// - TANDOOR_BASE_URL (default: http://localhost:8000)
-/// - TANDOOR_API_TOKEN (required in production)
+/// - TANDOOR_API_TOKEN (optional)
 /// - TANDOOR_CONNECT_TIMEOUT_MS (default: 5000)
 /// - TANDOOR_REQUEST_TIMEOUT_MS (default: 30000)
 /// - TODOIST_API_KEY (optional)
 /// - USDA_API_KEY (optional)
 /// - OPENAI_API_KEY (optional)
 /// - OPENAI_MODEL (default: gpt-4o)
-pub fn load() -> Config {
+pub fn load() -> Result(Config, ConfigError) {
+  use database_port <- result.try(get_env_int("DATABASE_PORT", 5432))
+  use database_pool_size <- result.try(get_env_int("DATABASE_POOL_SIZE", 10))
+  use server_port <- result.try(get_env_int("PORT", 8080))
+  use tandoor_connect_timeout <- result.try(get_env_int(
+    "TANDOOR_CONNECT_TIMEOUT_MS",
+    5000,
+  ))
+  use tandoor_request_timeout <- result.try(get_env_int(
+    "TANDOOR_REQUEST_TIMEOUT_MS",
+    30_000,
+  ))
+
   let database =
     DatabaseConfig(
-      host: result.unwrap(envoy.get("DATABASE_HOST"), "localhost"),
-      port: result.unwrap(
-        envoy.get("DATABASE_PORT")
-          |> result.try(int.parse),
-        5432,
-      ),
-      name: result.unwrap(envoy.get("DATABASE_NAME"), "meal_planner"),
-      user: result.unwrap(envoy.get("DATABASE_USER"), "postgres"),
-      password: result.unwrap(envoy.get("DATABASE_PASSWORD"), ""),
-      pool_size: result.unwrap(
-        envoy.get("DATABASE_POOL_SIZE")
-          |> result.try(int.parse),
-        10,
-      ),
+      host: get_env_or("DATABASE_HOST", "localhost"),
+      port: database_port,
+      name: get_env_or("DATABASE_NAME", "meal_planner"),
+      user: get_env_or("DATABASE_USER", "postgres"),
+      password: get_env_optional("DATABASE_PASSWORD"),
+      pool_size: database_pool_size,
     )
 
   let server =
     ServerConfig(
-      port: result.unwrap(
-        envoy.get("PORT")
-          |> result.try(int.parse),
-        8080,
-      ),
-      environment: result.unwrap(envoy.get("ENVIRONMENT"), "development"),
+      port: server_port,
+      environment: get_env_or("ENVIRONMENT", "development"),
     )
 
   let tandoor =
     TandoorConfig(
-      base_url: result.unwrap(
-        envoy.get("TANDOOR_BASE_URL"),
-        "http://localhost:8000",
-      ),
-      api_token: result.unwrap(envoy.get("TANDOOR_API_TOKEN"), ""),
-      connect_timeout_ms: result.unwrap(
-        envoy.get("TANDOOR_CONNECT_TIMEOUT_MS")
-          |> result.try(int.parse),
-        5000,
-      ),
-      request_timeout_ms: result.unwrap(
-        envoy.get("TANDOOR_REQUEST_TIMEOUT_MS")
-          |> result.try(int.parse),
-        30_000,
-      ),
+      base_url: get_env_or("TANDOOR_BASE_URL", "http://localhost:8000"),
+      api_token: get_env_optional("TANDOOR_API_TOKEN"),
+      connect_timeout_ms: tandoor_connect_timeout,
+      request_timeout_ms: tandoor_request_timeout,
     )
 
   let external_services =
     ExternalServicesConfig(
-      todoist_api_key: result.unwrap(envoy.get("TODOIST_API_KEY"), ""),
-      usda_api_key: result.unwrap(envoy.get("USDA_API_KEY"), ""),
-      openai_api_key: result.unwrap(envoy.get("OPENAI_API_KEY"), ""),
-      openai_model: result.unwrap(envoy.get("OPENAI_MODEL"), "gpt-4o"),
+      todoist_api_key: get_env_optional("TODOIST_API_KEY"),
+      usda_api_key: get_env_optional("USDA_API_KEY"),
+      openai_api_key: get_env_optional("OPENAI_API_KEY"),
+      openai_model: get_env_or("OPENAI_MODEL", "gpt-4o"),
     )
 
-  Config(
+  Ok(Config(
     database: database,
     server: server,
     tandoor: tandoor,
     external_services: external_services,
-  )
+  ))
 }
 
 /// Check if the configuration is valid for production use

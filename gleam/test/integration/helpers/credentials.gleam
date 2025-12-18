@@ -47,14 +47,18 @@ fn load_tandoor_from_env() -> Option(TandoorCreds) {
 /// Load FatSecret OAuth credentials from PostgreSQL database
 fn load_fatsecret_from_db() -> Option(FatSecretCreds) {
   // Try to connect to database and get access token
-  case postgres.config_from_env() |> postgres.connect() {
-    Ok(conn) ->
-      case storage.get_access_token(conn) {
-        Ok(token) ->
-          Some(FatSecretCreds(
-            oauth_token: token.oauth_token,
-            oauth_token_secret: token.oauth_token_secret,
-          ))
+  case postgres.config_from_env() {
+    Ok(config) ->
+      case postgres.connect(config) {
+        Ok(conn) ->
+          case storage.get_access_token(conn) {
+            Ok(token) ->
+              Some(FatSecretCreds(
+                oauth_token: token.oauth_token,
+                oauth_token_secret: token.oauth_token_secret,
+              ))
+            Error(_) -> None
+          }
         Error(_) -> None
       }
     Error(_) -> None
