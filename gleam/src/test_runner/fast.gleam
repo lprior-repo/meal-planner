@@ -1,9 +1,7 @@
 /// Fast Test Runner - Unit tests only, maximum parallelism
 ///
-/// Skips integration tests that require external services
-/// Uses EUnit's inparallel for maximum BEAM scheduler utilization
-///
-/// 100% Gleam implementation using BEAM FFI
+/// 100% Pure Gleam - no external Erlang files needed!
+/// Uses @external to call BEAM runtime directly.
 import gleam/dynamic.{type Dynamic}
 import gleam/int
 import gleam/io
@@ -26,14 +24,16 @@ pub fn main() {
   io.println("")
 
   case run_all_parallel(fast_modules) {
-    Ok(count) -> {
+    True -> {
       io.println("")
-      io.println("✅ All " <> int.to_string(count) <> " test modules completed!")
+      io.println(
+        "✅ All " <> int.to_string(module_count) <> " test modules passed!",
+      )
       halt(0)
     }
-    Error(msg) -> {
+    False -> {
       io.println("")
-      io.println("❌ Test failures: " <> msg)
+      io.println("❌ Some tests failed")
       halt(1)
     }
   }
@@ -51,7 +51,10 @@ fn is_fast_test(module_name: String) -> Bool {
 
 /// Discover test modules matching a glob pattern
 fn discover_test_modules(pattern: String) -> List(String) {
-  find_files(pattern)
+  pattern
+  |> to_charlist
+  |> find_files_charlist
+  |> list.map(charlist_to_string)
   |> list.map(gleam_to_module_name)
 }
 
@@ -63,42 +66,68 @@ fn gleam_to_module_name(path: String) -> String {
   |> string.replace("/", "@")
 }
 
-/// Run all tests in parallel using EUnit's inparallel
-fn run_all_parallel(module_names: List(String)) -> Result(Int, String) {
-  let atoms = list.map(module_names, string_to_atom)
-  let tests = wrap_inparallel(atoms)
-  let options = make_options()
+/// Run all tests in parallel using EUnit's inparallel wrapper
+fn run_all_parallel(module_names: List(String)) -> Bool {
+  let atoms = list.map(module_names, to_atom)
 
-  case run_eunit(tests, options) {
-    Ok(_) -> Ok(list.length(module_names))
-    Error(reason) -> Error(format_error(reason))
-  }
+  // Create {inparallel, [atoms]} tuple for EUnit
+  let tests = make_inparallel_tuple(atoms)
+
+  // Run with verbose option
+  let verbose_atom = to_atom("verbose")
+  run_eunit_tests(tests, [verbose_atom])
 }
 
 // =============================================================================
-// Erlang FFI - Direct calls to BEAM runtime
+// Erlang FFI - Pure Gleam with @external declarations
 // =============================================================================
 
 @external(erlang, "erlang", "halt")
 fn halt(code: Int) -> Nil
 
-@external(erlang, "filelib", "wildcard")
-fn find_files(pattern: String) -> List(String)
+/// Convert Gleam string (binary) to Erlang charlist
+@external(erlang, "erlang", "binary_to_list")
+fn to_charlist(binary: String) -> Dynamic
 
+/// Convert Erlang charlist to Gleam string (binary)
+@external(erlang, "erlang", "list_to_binary")
+fn charlist_to_string(charlist: Dynamic) -> String
+
+/// Find files matching a glob pattern (takes charlist, returns list of charlists)
+@external(erlang, "filelib", "wildcard")
+fn find_files_charlist(pattern: Dynamic) -> List(Dynamic)
+
+/// Convert string to Erlang atom
 @external(erlang, "erlang", "binary_to_atom")
-fn string_to_atom(name: String) -> Dynamic
+fn to_atom(name: String) -> Dynamic
+
+/// Create {inparallel, Tests} tuple - Gleam tuples work directly!
+fn make_inparallel_tuple(tests: List(Dynamic)) -> Dynamic {
+  // Gleam #() tuples are Erlang tuples at runtime
+  coerce(#(to_atom("inparallel"), tests))
+}
+
+/// Type coercion helper - identity at runtime
+@external(erlang, "gleam_stdlib", "identity")
+fn coerce(value: a) -> Dynamic
+
+/// Run EUnit and check if all tests pass
+fn run_eunit_tests(tests: Dynamic, options: List(Dynamic)) -> Bool {
+  case eunit_test(tests, options) {
+    // EUnit returns 'ok' atom on success
+    "ok" -> True
+    _ -> False
+  }
+}
+
+/// Call eunit:test/2 and convert result to string for pattern matching
+fn eunit_test(tests: Dynamic, options: List(Dynamic)) -> String {
+  let result = eunit_test_raw(tests, options)
+  atom_to_string(result)
+}
 
 @external(erlang, "eunit", "test")
-fn run_eunit(tests: Dynamic, options: Dynamic) -> Result(Dynamic, Dynamic)
+fn eunit_test_raw(tests: Dynamic, options: List(Dynamic)) -> Dynamic
 
-/// Create EUnit options list
-@external(erlang, "test_runner@fast_ffi", "make_options")
-fn make_options() -> Dynamic
-
-/// Wrap tests in {inparallel, Tests} tuple
-@external(erlang, "test_runner@fast_ffi", "wrap_inparallel")
-fn wrap_inparallel(tests: List(Dynamic)) -> Dynamic
-
-/// Format error for display
-@external(erlang, "test_runner@fast_ffi", "format_error")
-fn format_error(reason: Dynamic) -> String
+@external(erlang, "erlang", "atom_to_binary")
+fn atom_to_string(atom: Dynamic) -> String
