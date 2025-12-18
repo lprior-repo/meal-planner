@@ -11,8 +11,8 @@ import gleam/option.{None, Some}
 import meal_planner/web/routes/auth
 import meal_planner/web/routes/fatsecret
 import meal_planner/web/routes/health
-import meal_planner/web/routes/misc
 import meal_planner/web/routes/meal_planning
+import meal_planner/web/routes/misc
 import meal_planner/web/routes/nutrition
 import meal_planner/web/routes/tandoor
 import meal_planner/web/routes/types
