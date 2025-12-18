@@ -13,6 +13,7 @@
 import gleam/http
 import gleam/option.{type Option, None, Some}
 import meal_planner/fatsecret/diary/handlers as diary_handlers
+import meal_planner/fatsecret/exercise/handlers as exercise_handlers
 import meal_planner/fatsecret/favorites/handlers as favorites_handlers
 import meal_planner/fatsecret/saved_meals/handlers as saved_meals_handlers
 import meal_planner/web/handlers
@@ -48,8 +49,8 @@ pub fn route(
       Some(diary_handlers.handle_diary_routes(req, ctx.db))
 
     // Exercise API (3-legged OAuth)
-    ["api", "fatsecret", "exercises", ..ex_segments] ->
-      Some(route_exercises(req, ex_segments))
+    ["api", "fatsecret", "exercises", ..] ->
+      Some(exercise_handlers.handle_exercise_routes(req, ctx.db))
 
     // Weight API (3-legged OAuth)
     ["api", "fatsecret", "weight", ..weight_segments] ->
@@ -170,21 +171,6 @@ fn route_saved_meals(
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
 
-    _ -> wisp.not_found()
-  }
-}
-
-// ============================================================================
-// Exercise API Routing
-// ============================================================================
-
-fn route_exercises(req: wisp.Request, segments: List(String)) -> wisp.Response {
-  case segments {
-    [] ->
-      case req.method {
-        http.Get -> wisp.not_found()
-        _ -> wisp.method_not_allowed([http.Get])
-      }
     _ -> wisp.not_found()
   }
 }
