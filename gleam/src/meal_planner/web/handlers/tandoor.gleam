@@ -34,6 +34,7 @@ import meal_planner/tandoor/api/step/delete as step_delete
 import meal_planner/tandoor/api/step/get as step_get
 import meal_planner/tandoor/api/step/list as step_list
 import meal_planner/tandoor/api/step/update as step_update
+import meal_planner/tandoor/api/supermarket/category as supermarket_category
 import meal_planner/tandoor/api/supermarket/create as supermarket_create_api
 import meal_planner/tandoor/api/supermarket/delete as supermarket_delete
 import meal_planner/tandoor/api/supermarket/get as supermarket_get
