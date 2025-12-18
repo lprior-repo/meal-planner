@@ -5,11 +5,11 @@ import gleam/list
 import gleeunit/should
 import meal_planner/generator/weekly.{
   type Constraints, type DailyMacros, type DayMeals, type GenerationError,
-  type MacroComparison, type MealType, type WeeklyMealPlan, Constraints,
-  DayMeals, Dinner, LockedMeal, NotEnoughRecipes, OnTarget, Over, Under,
-  WeeklyMealPlan, analyze_plan, calculate_daily_macros, days_count,
-  generate_weekly_plan, generate_weekly_plan_with_constraints, is_plan_balanced,
-  total_weekly_macros,
+  type MacroComparison, type MealType, type RotationEntry, type WeeklyMealPlan,
+  Constraints, DayMeals, Dinner, LockedMeal, NotEnoughRecipes, OnTarget, Over,
+  RotationEntry, Under, WeeklyMealPlan, analyze_plan, calculate_daily_macros,
+  days_count, filter_by_rotation, generate_weekly_plan,
+  generate_weekly_plan_with_constraints, is_plan_balanced, total_weekly_macros,
 }
 import meal_planner/id
 import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
@@ -385,4 +385,49 @@ pub fn empty_constraints_generates_normal_plan_test() {
     Ok(plan) -> days_count(plan) |> should.equal(7)
     Error(_) -> should.fail()
   }
+}
+
+// ============================================================================
+// TCR Cycle 5: Rotation History Tests
+// ============================================================================
+
+pub fn filter_by_rotation_excludes_recent_recipes_test() {
+  let all_recipes = [
+    test_recipe("Fresh Recipe", 30.0, 15.0, 40.0),
+    test_recipe("Recent Recipe", 35.0, 12.0, 45.0),
+    test_recipe("Old Recipe", 25.0, 18.0, 35.0),
+  ]
+  // Recent recipe was used 10 days ago (within 30-day window)
+  let history = [RotationEntry(recipe_name: "Recent Recipe", days_ago: 10)]
+
+  let available = filter_by_rotation(all_recipes, history, 30)
+
+  // Should exclude "Recent Recipe"
+  list.length(available) |> should.equal(2)
+  list.any(available, fn(r) { r.name == "Fresh Recipe" }) |> should.be_true
+  list.any(available, fn(r) { r.name == "Old Recipe" }) |> should.be_true
+  list.any(available, fn(r) { r.name == "Recent Recipe" }) |> should.be_false
+}
+
+pub fn filter_by_rotation_includes_old_recipes_test() {
+  let all_recipes = [test_recipe("Old Recipe", 30.0, 15.0, 40.0)]
+  // Recipe was used 35 days ago (outside 30-day window)
+  let history = [RotationEntry(recipe_name: "Old Recipe", days_ago: 35)]
+
+  let available = filter_by_rotation(all_recipes, history, 30)
+
+  // Should include the old recipe
+  list.length(available) |> should.equal(1)
+}
+
+pub fn filter_by_rotation_with_empty_history_returns_all_test() {
+  let all_recipes = [
+    test_recipe("Recipe1", 30.0, 15.0, 40.0),
+    test_recipe("Recipe2", 35.0, 12.0, 45.0),
+  ]
+  let history: List(RotationEntry) = []
+
+  let available = filter_by_rotation(all_recipes, history, 30)
+
+  list.length(available) |> should.equal(2)
 }
