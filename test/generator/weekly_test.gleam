@@ -4,10 +4,12 @@
 import gleam/list
 import gleeunit/should
 import meal_planner/generator/weekly.{
-  type DailyMacros, type DayMeals, type GenerationError, type MacroComparison,
-  type WeeklyMealPlan, DayMeals, NotEnoughRecipes, OnTarget, Over, Under,
+  type Constraints, type DailyMacros, type DayMeals, type GenerationError,
+  type MacroComparison, type MealType, type WeeklyMealPlan, Constraints,
+  DayMeals, Dinner, LockedMeal, NotEnoughRecipes, OnTarget, Over, Under,
   WeeklyMealPlan, analyze_plan, calculate_daily_macros, days_count,
-  generate_weekly_plan, is_plan_balanced, total_weekly_macros,
+  generate_weekly_plan, generate_weekly_plan_with_constraints, is_plan_balanced,
+  total_weekly_macros,
 }
 import meal_planner/id
 import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
@@ -321,4 +323,66 @@ pub fn is_plan_balanced_returns_false_when_under_target_test() {
     )
 
   is_plan_balanced(plan) |> should.be_false
+}
+
+// ============================================================================
+// TCR Cycle 4: Constraint Types Tests
+// ============================================================================
+
+pub fn locked_meal_sets_specific_recipe_test() {
+  let special_recipe = test_recipe("Locked Pasta", 45.0, 20.0, 80.0)
+  let recipes = [
+    test_recipe("Recipe1", 30.0, 15.0, 40.0),
+    test_recipe("Recipe2", 35.0, 12.0, 45.0),
+    test_recipe("Recipe3", 25.0, 18.0, 35.0),
+  ]
+  let constraints =
+    Constraints(
+      locked_meals: [
+        LockedMeal(day: "Friday", meal_type: Dinner, recipe: special_recipe),
+      ],
+      travel_dates: [],
+    )
+
+  let result =
+    generate_weekly_plan_with_constraints(
+      "2025-12-22",
+      recipes,
+      target_macros(),
+      constraints,
+    )
+
+  case result {
+    Ok(plan) -> {
+      // Find Friday and check dinner
+      let friday = list.find(plan.days, fn(d: DayMeals) { d.day == "Friday" })
+      case friday {
+        Ok(day) -> day.dinner.name |> should.equal("Locked Pasta")
+        Error(_) -> should.fail()
+      }
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+pub fn empty_constraints_generates_normal_plan_test() {
+  let recipes = [
+    test_recipe("Recipe1", 30.0, 15.0, 40.0),
+    test_recipe("Recipe2", 35.0, 12.0, 45.0),
+    test_recipe("Recipe3", 25.0, 18.0, 35.0),
+  ]
+  let constraints = Constraints(locked_meals: [], travel_dates: [])
+
+  let result =
+    generate_weekly_plan_with_constraints(
+      "2025-12-22",
+      recipes,
+      target_macros(),
+      constraints,
+    )
+
+  case result {
+    Ok(plan) -> days_count(plan) |> should.equal(7)
+    Error(_) -> should.fail()
+  }
 }
