@@ -2,7 +2,7 @@
 /// Provides connection pooling and configuration for PostgreSQL database
 ///
 /// Usage:
-///   let config = postgres.config_from_env()
+///   let assert Ok(config) = postgres.config_from_env()
 ///   let assert Ok(db) = postgres.connect(config)
 ///
 import envoy
@@ -26,6 +26,12 @@ pub type Config {
   )
 }
 
+/// Configuration errors
+pub type ConfigError {
+  MissingEnvVar(String)
+  ParseError(field: String, value: String)
+}
+
 /// Connection errors
 pub type ConnectionError {
   InitTimeout
@@ -46,41 +52,58 @@ pub fn default_config() -> Config {
   )
 }
 
+/// Get environment variable or return error
+fn get_env_or_error(var_name: String) -> Result(String, ConfigError) {
+  envoy.get(var_name)
+  |> result.map_error(fn(_) { MissingEnvVar(var_name) })
+}
+
+/// Parse integer or return error with context
+fn parse_int_or_error(
+  value: String,
+  field_name: String,
+) -> Result(Int, ConfigError) {
+  int.parse(value)
+  |> result.map_error(fn(_) { ParseError(field: field_name, value: value) })
+}
+
 /// Create configuration from environment variables
-/// Falls back to defaults if variables not set
+/// Returns error if required variables are missing or invalid
 ///
-/// Environment variables:
-/// - DATABASE_HOST (default: localhost)
-/// - DATABASE_PORT (default: 5432)
-/// - DATABASE_NAME (default: meal_planner)
-/// - DATABASE_USER (default: postgres)
-/// - DATABASE_PASSWORD (optional)
-/// - DATABASE_POOL_SIZE (default: 10)
-pub fn config_from_env() -> Config {
-  let host = result.unwrap(envoy.get("DATABASE_HOST"), "localhost")
-  let port =
-    envoy.get("DATABASE_PORT")
-    |> result.try(int.parse)
-    |> result.unwrap(5432)
-  let database = result.unwrap(envoy.get("DATABASE_NAME"), "meal_planner")
-  let user = result.unwrap(envoy.get("DATABASE_USER"), "postgres")
+/// Required environment variables:
+/// - DATABASE_HOST
+/// - DATABASE_PORT
+/// - DATABASE_NAME
+/// - DATABASE_USER
+/// - DATABASE_POOL_SIZE
+///
+/// Optional environment variables:
+/// - DATABASE_PASSWORD
+pub fn config_from_env() -> Result(Config, ConfigError) {
+  use host <- result.try(get_env_or_error("DATABASE_HOST"))
+  use port_str <- result.try(get_env_or_error("DATABASE_PORT"))
+  use port <- result.try(parse_int_or_error(port_str, "DATABASE_PORT"))
+  use database <- result.try(get_env_or_error("DATABASE_NAME"))
+  use user <- result.try(get_env_or_error("DATABASE_USER"))
+  use pool_size_str <- result.try(get_env_or_error("DATABASE_POOL_SIZE"))
+  use pool_size <- result.try(parse_int_or_error(
+    pool_size_str,
+    "DATABASE_POOL_SIZE",
+  ))
+
   let password = case envoy.get("DATABASE_PASSWORD") {
     Ok(pw) -> Some(pw)
     Error(_) -> None
   }
-  let pool_size =
-    envoy.get("DATABASE_POOL_SIZE")
-    |> result.try(int.parse)
-    |> result.unwrap(10)
 
-  Config(
+  Ok(Config(
     host: host,
     port: port,
     database: database,
     user: user,
     password: password,
     pool_size: pool_size,
-  )
+  ))
 }
 
 /// Convert Config to pog.Config
