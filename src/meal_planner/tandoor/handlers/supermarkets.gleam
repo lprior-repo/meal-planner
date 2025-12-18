@@ -84,22 +84,19 @@ fn handle_list_supermarkets(_req: wisp.Request) -> wisp.Response {
         Ok(response) -> {
           let results_json =
             json.array(response.results, fn(supermarket) {
-              json.object([
-                #("id", json.int(supermarket.id)),
-                #("name", json.string(supermarket.name)),
-                #(
-                  "description",
-                  helpers.encode_optional_string(supermarket.description),
-                ),
-              ])
+              encode_supermarket(#(
+                supermarket.id,
+                supermarket.name,
+                supermarket.description,
+              ))
             })
 
-          json.object([
-            #("count", json.int(response.count)),
-            #("next", helpers.encode_optional_string(response.next)),
-            #("previous", helpers.encode_optional_string(response.previous)),
-            #("results", results_json),
-          ])
+          helpers.paginated_response(
+            results_json,
+            response.count,
+            response.next,
+            response.previous,
+          )
           |> json.to_string
           |> wisp.json_response(200)
         }
@@ -119,14 +116,11 @@ fn handle_create_supermarket(req: wisp.Request) -> wisp.Response {
         Ok(config) -> {
           case supermarket_create_api.create_supermarket(config, request) {
             Ok(supermarket) -> {
-              json.object([
-                #("id", json.int(supermarket.id)),
-                #("name", json.string(supermarket.name)),
-                #(
-                  "description",
-                  helpers.encode_optional_string(supermarket.description),
-                ),
-              ])
+              encode_supermarket(#(
+                supermarket.id,
+                supermarket.name,
+                supermarket.description,
+              ))
               |> json.to_string
               |> wisp.json_response(201)
             }
@@ -167,14 +161,11 @@ fn handle_get_supermarket(_req: wisp.Request, id: Int) -> wisp.Response {
     Ok(config) -> {
       case supermarket_get.get_supermarket(config, id: id) {
         Ok(supermarket) -> {
-          json.object([
-            #("id", json.int(supermarket.id)),
-            #("name", json.string(supermarket.name)),
-            #(
-              "description",
-              helpers.encode_optional_string(supermarket.description),
-            ),
-          ])
+          encode_supermarket(#(
+            supermarket.id,
+            supermarket.name,
+            supermarket.description,
+          ))
           |> json.to_string
           |> wisp.json_response(200)
         }
@@ -200,14 +191,11 @@ fn handle_update_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
             )
           {
             Ok(supermarket) -> {
-              json.object([
-                #("id", json.int(supermarket.id)),
-                #("name", json.string(supermarket.name)),
-                #(
-                  "description",
-                  helpers.encode_optional_string(supermarket.description),
-                ),
-              ])
+              encode_supermarket(#(
+                supermarket.id,
+                supermarket.name,
+                supermarket.description,
+              ))
               |> json.to_string
               |> wisp.json_response(200)
             }
@@ -259,22 +247,19 @@ fn handle_list_categories(_req: wisp.Request) -> wisp.Response {
         Ok(response) -> {
           let results_json =
             json.array(response.results, fn(category) {
-              json.object([
-                #("id", json.int(category.id)),
-                #("name", json.string(category.name)),
-                #(
-                  "description",
-                  helpers.encode_optional_string(category.description),
-                ),
-              ])
+              encode_category(#(
+                category.id,
+                category.name,
+                category.description,
+              ))
             })
 
-          json.object([
-            #("count", json.int(response.count)),
-            #("next", helpers.encode_optional_string(response.next)),
-            #("previous", helpers.encode_optional_string(response.previous)),
-            #("results", results_json),
-          ])
+          helpers.paginated_response(
+            results_json,
+            response.count,
+            response.next,
+            response.previous,
+          )
           |> json.to_string
           |> wisp.json_response(200)
         }
@@ -294,14 +279,11 @@ fn handle_create_category(req: wisp.Request) -> wisp.Response {
         Ok(config) -> {
           case supermarket_category.create_category(config, request) {
             Ok(category) -> {
-              json.object([
-                #("id", json.int(category.id)),
-                #("name", json.string(category.name)),
-                #(
-                  "description",
-                  helpers.encode_optional_string(category.description),
-                ),
-              ])
+              encode_category(#(
+                category.id,
+                category.name,
+                category.description,
+              ))
               |> json.to_string
               |> wisp.json_response(201)
             }
@@ -341,14 +323,7 @@ fn handle_get_category(_req: wisp.Request, id: Int) -> wisp.Response {
     Ok(config) -> {
       case supermarket_category.get_category(config, category_id: id) {
         Ok(category) -> {
-          json.object([
-            #("id", json.int(category.id)),
-            #("name", json.string(category.name)),
-            #(
-              "description",
-              helpers.encode_optional_string(category.description),
-            ),
-          ])
+          encode_category(#(category.id, category.name, category.description))
           |> json.to_string
           |> wisp.json_response(200)
         }
@@ -374,14 +349,11 @@ fn handle_update_category(req: wisp.Request, id: Int) -> wisp.Response {
             )
           {
             Ok(category) -> {
-              json.object([
-                #("id", json.int(category.id)),
-                #("name", json.string(category.name)),
-                #(
-                  "description",
-                  helpers.encode_optional_string(category.description),
-                ),
-              ])
+              encode_category(#(
+                category.id,
+                category.name,
+                category.description,
+              ))
               |> json.to_string
               |> wisp.json_response(200)
             }
