@@ -11,6 +11,8 @@ pub type KnapsackError {
   NoRecipes
   /// Target calories is invalid (zero or negative)
   InvalidTarget
+  /// Number of meals is invalid (zero or negative)
+  InvalidMealCount
   /// Not enough recipes to fill requested meal count
   NotEnoughRecipes
   /// Target calories exceeded
@@ -22,6 +24,7 @@ pub fn error_to_string(error: KnapsackError) -> String {
   case error {
     NoRecipes -> "No recipes available for meal selection"
     InvalidTarget -> "Target calories must be greater than zero"
+    InvalidMealCount -> "Number of meals must be greater than zero"
     NotEnoughRecipes ->
       "Not enough unique recipes to fill all requested meal slots"
     TargetExceeded(total) ->
@@ -60,77 +63,88 @@ pub fn solve(
   recipes: List(Recipe),
   num_meals: Int,
 ) -> Result(List(Recipe), KnapsackError) {
-  case target_calories <= 0 {
+  case num_meals <= 0 {
     True -> {
       logger.error(
-        "Knapsack solver failed: Invalid target calories ("
-        <> int.to_string(target_calories)
+        "Knapsack solver failed: Invalid number of meals ("
+        <> int.to_string(num_meals)
         <> ")",
       )
-      Error(InvalidTarget)
+      Error(InvalidMealCount)
     }
-    False -> {
-      case list.length(recipes) {
-        0 -> {
+    False ->
+      case target_calories <= 0 {
+        True -> {
           logger.error(
-            "Knapsack solver failed: No recipes available for selection",
-          )
-          Error(NoRecipes)
-        }
-        len if len < num_meals -> {
-          logger.error(
-            "Knapsack solver failed: Not enough recipes. Need "
-            <> int.to_string(num_meals)
-            <> " meals but only have "
-            <> int.to_string(len)
-            <> " recipes",
-          )
-          Error(NotEnoughRecipes)
-        }
-        _ -> {
-          let per_meal_target = target_calories / num_meals
-          logger.debug(
-            "Knapsack solver: Selecting "
-            <> int.to_string(num_meals)
-            <> " meals from "
-            <> int.to_string(list.length(recipes))
-            <> " recipes. Target: "
+            "Knapsack solver failed: Invalid target calories ("
             <> int.to_string(target_calories)
-            <> " cal, per-meal: "
-            <> int.to_string(per_meal_target)
-            <> " cal",
+            <> ")",
           )
-
-          let selected = greedy_select(recipes, per_meal_target, num_meals, [])
-
-          let total = calculate_total_calories(selected)
-          case total > target_calories {
-            True -> {
+          Error(InvalidTarget)
+        }
+        False ->
+          case list.length(recipes) {
+            0 -> {
               logger.error(
-                "Knapsack solver failed: Selected meals exceed target. Total: "
-                <> int.to_string(total)
-                <> " cal, target: "
+                "Knapsack solver failed: No recipes available for selection",
+              )
+              Error(NoRecipes)
+            }
+            len if len < num_meals -> {
+              logger.error(
+                "Knapsack solver failed: Not enough recipes. Need "
+                <> int.to_string(num_meals)
+                <> " meals but only have "
+                <> int.to_string(len)
+                <> " recipes",
+              )
+              Error(NotEnoughRecipes)
+            }
+            _ -> {
+              let per_meal_target = target_calories / num_meals
+              logger.debug(
+                "Knapsack solver: Selecting "
+                <> int.to_string(num_meals)
+                <> " meals from "
+                <> int.to_string(list.length(recipes))
+                <> " recipes. Target: "
                 <> int.to_string(target_calories)
+                <> " cal, per-meal: "
+                <> int.to_string(per_meal_target)
                 <> " cal",
               )
-              Error(TargetExceeded(total))
-            }
-            False -> {
-              logger.info(
-                "Knapsack solver succeeded: Selected "
-                <> int.to_string(list.length(selected))
-                <> " meals with total "
-                <> int.to_string(total)
-                <> " calories (target: "
-                <> int.to_string(target_calories)
-                <> ")",
-              )
-              Ok(selected)
+
+              let selected =
+                greedy_select(recipes, per_meal_target, num_meals, [])
+
+              let total = calculate_total_calories(selected)
+              case total > target_calories {
+                True -> {
+                  logger.error(
+                    "Knapsack solver failed: Selected meals exceed target. Total: "
+                    <> int.to_string(total)
+                    <> " cal, target: "
+                    <> int.to_string(target_calories)
+                    <> " cal",
+                  )
+                  Error(TargetExceeded(total))
+                }
+                False -> {
+                  logger.info(
+                    "Knapsack solver succeeded: Selected "
+                    <> int.to_string(list.length(selected))
+                    <> " meals with total "
+                    <> int.to_string(total)
+                    <> " calories (target: "
+                    <> int.to_string(target_calories)
+                    <> ")",
+                  )
+                  Ok(selected)
+                }
+              }
             }
           }
-        }
       }
-    }
   }
 }
 
