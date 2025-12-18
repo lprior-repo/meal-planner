@@ -21,6 +21,10 @@ import meal_planner/tandoor/api/crud_helpers.{
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/core/ids.{type FoodId}
+import meal_planner/tandoor/property.{type Property, property_decoder}
+import meal_planner/tandoor/supermarket.{supermarket_category_decoder, type SupermarketCategory}
+import meal_planner/tandoor/types/food/food_inherit_field.{food_inherit_field_decoder, type FoodInheritField}
+import meal_planner/tandoor/unit.{decode_unit, type Unit}
 
 // ============================================================================
 // Types
@@ -51,8 +55,18 @@ pub type Food {
     description: String,
     recipe: Option(FoodSimple),
     food_onhand: Option(Bool),
-    supermarket_category: Option(Int),
+    supermarket_category: Option(SupermarketCategory),
     ignore_shopping: Bool,
+    shopping: String,
+    url: Option(String),
+    properties: Option(List(Property)),
+    properties_food_amount: Float,
+    properties_food_unit: Option(Unit),
+    fdc_id: Option(Int),
+    parent: Option(Int),
+    numchild: Int,
+    inherit_fields: Option(List(FoodInheritField)),
+    full_name: String,
   )
 }
 
@@ -88,6 +102,12 @@ pub type FoodUpdateRequest {
     food_onhand: Option(Option(Bool)),
     supermarket_category: Option(Option(Int)),
     ignore_shopping: Option(Bool),
+    shopping: Option(String),
+    url: Option(Option(String)),
+    properties_food_amount: Option(Float),
+    properties_food_unit: Option(Option(Int)),
+    fdc_id: Option(Option(Int)),
+    parent: Option(Option(Int)),
   )
 }
 
@@ -143,9 +163,31 @@ pub fn food_decoder() -> decode.Decoder(Food) {
   use food_onhand <- decode.field("food_onhand", decode.optional(decode.bool))
   use supermarket_category <- decode.field(
     "supermarket_category",
-    decode.optional(decode.int),
+    decode.optional(supermarket_category_decoder()),
   )
   use ignore_shopping <- decode.field("ignore_shopping", decode.bool)
+  use shopping <- decode.field("shopping", decode.string)
+  use url <- decode.field("url", decode.optional(decode.string))
+  use properties <- decode.field(
+    "properties",
+    decode.optional(decode.list(property_decoder())),
+  )
+  use properties_food_amount <- decode.field(
+    "properties_food_amount",
+    decode.float,
+  )
+  use properties_food_unit <- decode.field(
+    "properties_food_unit",
+    decode.optional(decode_unit()),
+  )
+  use fdc_id <- decode.field("fdc_id", decode.optional(decode.int))
+  use parent <- decode.field("parent", decode.optional(decode.int))
+  use numchild <- decode.field("numchild", decode.int)
+  use inherit_fields <- decode.field(
+    "inherit_fields",
+    decode.optional(decode.list(food_inherit_field_decoder())),
+  )
+  use full_name <- decode.field("full_name", decode.string)
 
   decode.success(Food(
     id: id,
@@ -156,6 +198,16 @@ pub fn food_decoder() -> decode.Decoder(Food) {
     food_onhand: food_onhand,
     supermarket_category: supermarket_category,
     ignore_shopping: ignore_shopping,
+    shopping: shopping,
+    url: url,
+    properties: properties,
+    properties_food_amount: properties_food_amount,
+    properties_food_unit: properties_food_unit,
+    fdc_id: fdc_id,
+    parent: parent,
+    numchild: numchild,
+    inherit_fields: inherit_fields,
+    full_name: full_name,
   ))
 }
 
@@ -184,10 +236,38 @@ pub fn encode_food(food: Food) -> Json {
       None -> json.null()
     }),
     #("supermarket_category", case food.supermarket_category {
-      Some(cat) -> json.int(cat)
+      Some(cat) -> encode_supermarket_category(cat)
       None -> json.null()
     }),
     #("ignore_shopping", json.bool(food.ignore_shopping)),
+    #("shopping", json.string(food.shopping)),
+    #("url", case food.url {
+      Some(url) -> json.string(url)
+      None -> json.null()
+    }),
+    #("properties", case food.properties {
+      Some(props) -> json.array(props, encode_property)
+      None -> json.null()
+    }),
+    #("properties_food_amount", json.float(food.properties_food_amount)),
+    #("properties_food_unit", case food.properties_food_unit {
+      Some(unit) -> encode_unit(unit)
+      None -> json.null()
+    }),
+    #("fdc_id", case food.fdc_id {
+      Some(fdc) -> json.int(fdc)
+      None -> json.null()
+    }),
+    #("parent", case food.parent {
+      Some(parent) -> json.int(parent)
+      None -> json.null()
+    }),
+    #("numchild", json.int(food.numchild)),
+    #("inherit_fields", case food.inherit_fields {
+      Some(fields) -> json.array(fields, encode_food_inherit_field)
+      None -> json.null()
+    }),
+    #("full_name", json.string(food.full_name)),
   ])
 }
 
@@ -202,6 +282,75 @@ pub fn encode_food_simple(food: FoodSimple) -> Json {
       Some(plural) -> json.string(plural)
       None -> json.null()
     }),
+  ])
+}
+
+/// Encode a SupermarketCategory to JSON
+fn encode_supermarket_category(cat: SupermarketCategory) -> Json {
+  json.object([
+    #("id", json.int(cat.id)),
+    #("name", json.string(cat.name)),
+    #("description", case cat.description {
+      Some(desc) -> json.string(desc)
+      None -> json.null()
+    }),
+    #("open_data_slug", case cat.open_data_slug {
+      Some(slug) -> json.string(slug)
+      None -> json.null()
+    }),
+  ])
+}
+
+/// Encode a Property to JSON
+fn encode_property(prop: Property) -> Json {
+  json.object([
+    #("id", json.int(ids.property_id_to_int(prop.id))),
+    #("name", json.string(prop.name)),
+    #("description", json.string(prop.description)),
+    #("property_type", json.string(case prop.property_type {
+      property.RecipeProperty -> "RECIPE"
+      property.FoodProperty -> "FOOD"
+    })),
+    #("unit", case prop.unit {
+      Some(unit) -> json.string(unit)
+      None -> json.null()
+    }),
+    #("order", json.int(prop.order)),
+    #("created_at", json.string(prop.created_at)),
+    #("updated_at", json.string(prop.updated_at)),
+  ])
+}
+
+/// Encode a Unit to JSON
+fn encode_unit(unit: Unit) -> Json {
+  json.object([
+    #("id", json.int(unit.id)),
+    #("name", json.string(unit.name)),
+    #("plural_name", case unit.plural_name {
+      Some(plural) -> json.string(plural)
+      None -> json.null()
+    }),
+    #("description", case unit.description {
+      Some(desc) -> json.string(desc)
+      None -> json.null()
+    }),
+    #("base_unit", case unit.base_unit {
+      Some(base) -> json.string(base)
+      None -> json.null()
+    }),
+    #("open_data_slug", case unit.open_data_slug {
+      Some(slug) -> json.string(slug)
+      None -> json.null()
+    }),
+  ])
+}
+
+/// Encode a FoodInheritField to JSON
+fn encode_food_inherit_field(field: FoodInheritField) -> Json {
+  json.object([
+    #("id", json.int(field.id)),
+    #("name", json.string(field.name)),
+    #("field", json.string(field.field)),
   ])
 }
 
