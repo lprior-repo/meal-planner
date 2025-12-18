@@ -25,10 +25,9 @@ import meal_planner/tandoor/api/crud_helpers.{
 }
 import meal_planner/tandoor/client.{
   type ClientConfig, type Food, type Ingredient, type Keyword,
-  type NutritionInfo as ClientNutritionInfo, type Step,
-  type SupermarketCategory, type TandoorError, type Unit, Food, Ingredient,
-  Keyword, NutritionInfo as ClientNutritionInfo, Step, SupermarketCategory,
-  Unit,
+  type NutritionInfo as ClientNutritionInfo, type Step, type SupermarketCategory,
+  type TandoorError, type Unit, Food, Ingredient, Keyword,
+  NutritionInfo as ClientNutritionInfo, Step, SupermarketCategory, Unit,
 }
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/decoders/decoder_combinators
@@ -109,7 +108,7 @@ pub type RecipeDetail {
 /// - name: Recipe name
 /// - description: Recipe description
 /// - image: Optional recipe image URL
-/// - keywords: List of keyword/tag names
+/// - keywords: List of Keyword objects (id, name, description)
 /// - rating: Optional user rating (0.0 - 5.0)
 /// - last_cooked: Optional last cooked date (ISO 8601 format)
 pub type RecipeOverview {
@@ -118,7 +117,7 @@ pub type RecipeOverview {
     name: String,
     description: String,
     image: Option(String),
-    keywords: List(String),
+    keywords: List(Keyword),
     rating: Option(Float),
     last_cooked: Option(String),
   )
@@ -400,7 +399,7 @@ pub fn recipe_overview_decoder() -> decode.Decoder(RecipeOverview) {
   use name <- decode.field("name", decode.string)
   use description <- decode.field("description", decode.string)
   use image <- decode.field("image", decode.optional(decode.string))
-  use keywords <- decode.field("keywords", decode.list(decode.string))
+  use keywords <- decode.field("keywords", decode.list(keyword_decoder()))
   use rating <- decode.field("rating", decode.optional(decode.float))
   use last_cooked <- decode.field("last_cooked", decode.optional(decode.string))
 
@@ -622,6 +621,15 @@ fn decode_flexible_float() -> decode.Decoder(Float) {
 // ============================================================================
 // Encoders
 // ============================================================================
+
+/// Helper to encode Keyword to JSON
+fn encode_keyword(keyword: Keyword) -> Json {
+  json.object([
+    #("id", json.int(keyword.id)),
+    #("name", json.string(keyword.name)),
+    #("description", json.string(keyword.description)),
+  ])
+}
 
 /// Encode a RecipeCreateRequest to JSON
 ///

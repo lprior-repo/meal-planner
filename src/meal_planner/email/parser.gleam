@@ -2,7 +2,6 @@
 ///
 /// Parses Lewis's email replies to extract @Claude mentions and convert them
 /// into structured EmailCommand types.
-
 import gleam/option.{type Option, None, Some}
 import gleam/string
 import meal_planner/email/command.{
@@ -231,7 +230,9 @@ fn parse_meal(meal_str: String) -> Option(MealType) {
 }
 
 // Helper: Parse regeneration scope
-fn parse_regeneration_scope(scope_str: String) -> Option(command.RegenerationScope) {
+fn parse_regeneration_scope(
+  scope_str: String,
+) -> Option(command.RegenerationScope) {
   case scope_str {
     "week" -> Some(command.FullWeek)
     "day" -> Some(command.FullWeek)
