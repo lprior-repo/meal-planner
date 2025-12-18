@@ -43,6 +43,12 @@ pub type WeeklyMealPlan {
   WeeklyMealPlan(week_of: String, days: List(DayMeals), target_macros: Macros)
 }
 
+/// Errors that can occur during meal plan generation
+pub type GenerationError {
+  /// Not enough recipes to fill all meals
+  NotEnoughRecipes
+}
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -101,4 +107,49 @@ pub fn total_weekly_macros(plan: WeeklyMealPlan) -> Macros {
   plan.days
   |> list.map(sum_day_macros)
   |> list.fold(macros_zero(), macros_add)
+}
+
+/// Get element at index from list (wrapping around if needed)
+fn get_at(lst: List(a), idx: Int) -> a {
+  let count = list.length(lst)
+  let wrapped_idx = idx % count
+  let assert Ok(elem) =
+    lst
+    |> list.drop(wrapped_idx)
+    |> list.first
+  elem
+}
+
+/// Generate a weekly meal plan from available recipes
+/// Requires at least 3 recipes (one for each meal type)
+pub fn generate_weekly_plan(
+  week_of: String,
+  recipes: List(Recipe),
+  target: Macros,
+) -> Result(WeeklyMealPlan, GenerationError) {
+  let recipe_count = list.length(recipes)
+  case recipe_count < 3 {
+    True -> Error(NotEnoughRecipes)
+    False -> {
+      let day_names = [
+        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+        "Sunday",
+      ]
+      let days =
+        day_names
+        |> list.index_map(fn(day_name, idx) {
+          // Cycle through recipes for variety
+          let breakfast = get_at(recipes, idx)
+          let lunch = get_at(recipes, idx + 1)
+          let dinner = get_at(recipes, idx + 2)
+          DayMeals(
+            day: day_name,
+            breakfast: breakfast,
+            lunch: lunch,
+            dinner: dinner,
+          )
+        })
+      Ok(WeeklyMealPlan(week_of: week_of, days: days, target_macros: target))
+    }
+  }
 }
