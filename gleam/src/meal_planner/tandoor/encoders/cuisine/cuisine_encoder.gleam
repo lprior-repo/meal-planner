@@ -9,6 +9,7 @@
 import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{None, Some}
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types/cuisine/cuisine.{
   type Cuisine, type CuisineCreateRequest, type CuisineUpdateRequest,
 }
@@ -18,7 +19,7 @@ import meal_planner/tandoor/types/cuisine/cuisine.{
 /// This includes all fields for GET responses and complete representations.
 pub fn encode_cuisine(cuisine: Cuisine) -> Json {
   json.object([
-    #("id", json.int(cuisine.id)),
+    #("id", json.int(ids.cuisine_id_to_int(cuisine.id))),
     #("name", json.string(cuisine.name)),
     #("description", case cuisine.description {
       Some(desc) -> json.string(desc)
@@ -29,7 +30,7 @@ pub fn encode_cuisine(cuisine: Cuisine) -> Json {
       None -> json.null()
     }),
     #("parent", case cuisine.parent {
-      Some(parent_id) -> json.int(parent_id)
+      Some(parent_id) -> json.int(ids.cuisine_id_to_int(parent_id))
       None -> json.null()
     }),
     #("num_recipes", json.int(cuisine.num_recipes)),

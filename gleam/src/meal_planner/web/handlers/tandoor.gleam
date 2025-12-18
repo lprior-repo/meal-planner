@@ -41,7 +41,10 @@ import meal_planner/tandoor/api/supermarket/get as supermarket_get
 import meal_planner/tandoor/api/supermarket/list as supermarket_list
 import meal_planner/tandoor/api/supermarket/update as supermarket_update
 import meal_planner/tandoor/api/unit/list as unit_list
-import meal_planner/tandoor/core/ids.{meal_plan_id_from_int, recipe_id_from_int}
+import meal_planner/tandoor/core/ids.{
+  food_id_to_int, ingredient_id_from_int, ingredient_id_to_int,
+  meal_plan_id_from_int, recipe_id_from_int, step_id_to_int,
+}
 import meal_planner/tandoor/decoders/import_export/export_log_create_request_decoder
 import meal_planner/tandoor/decoders/import_export/export_log_update_request_decoder
 import meal_planner/tandoor/decoders/import_export/import_log_create_request_decoder
@@ -1457,7 +1460,7 @@ fn encode_ingredient_detail(ingredient: Ingredient) -> json.Json {
   let food_json = case ingredient.food {
     option.Some(food) ->
       json.object([
-        #("id", json.int(food.id)),
+        #("id", json.int(food_id_to_int(food.id))),
         #("name", json.string(food.name)),
         #("plural_name", helpers.encode_optional_string(food.plural_name)),
         #("description", json.string(food.description)),
@@ -1648,14 +1651,17 @@ fn recipe_update_decoder() -> decode.Decoder(recipe_update_type.RecipeUpdate) {
 
 fn encode_recipe_step(step: Step) -> json.Json {
   json.object([
-    #("id", json.int(step.id)),
+    #("id", json.int(step_id_to_int(step.id))),
     #("name", json.string(step.name)),
     #("instruction", json.string(step.instruction)),
     #(
       "instruction_markdown",
       helpers.encode_optional_string(step.instruction_markdown),
     ),
-    #("ingredients", json.array(step.ingredients, json.int)),
+    #(
+      "ingredients",
+      json.array(step.ingredients, fn(id) { json.int(ingredient_id_to_int(id)) }),
+    ),
     #("time", json.int(step.time)),
     #("order", json.int(step.order)),
     #("show_as_header", json.bool(step.show_as_header)),
@@ -1686,7 +1692,7 @@ fn step_create_decoder() -> decode.Decoder(StepCreateRequest) {
   decode.success(StepCreateRequest(
     name: name,
     instruction: instruction,
-    ingredients: ingredients,
+    ingredients: list.map(ingredients, ingredient_id_from_int),
     time: time,
     order: order,
     show_as_header: show_as_header,
@@ -1723,7 +1729,9 @@ fn step_update_decoder() -> decode.Decoder(StepUpdateRequest) {
   decode.success(StepUpdateRequest(
     name: name,
     instruction: instruction,
-    ingredients: ingredients,
+    ingredients: option.map(ingredients, fn(ids_list) {
+      list.map(ids_list, ingredient_id_from_int)
+    }),
     time: time,
     order: order,
     show_as_header: show_as_header,

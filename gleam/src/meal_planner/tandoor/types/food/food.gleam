@@ -1,4 +1,5 @@
 import gleam/option.{type Option}
+import meal_planner/tandoor/core/ids.{type FoodId}
 import meal_planner/tandoor/types/food/food_simple.{type FoodSimple}
 
 /// Complete food type with full metadata
@@ -10,7 +11,7 @@ import meal_planner/tandoor/types/food/food_simple.{type FoodSimple}
 pub type Food {
   Food(
     /// Tandoor food ID
-    id: Int,
+    id: FoodId,
     /// Food name
     name: String,
     /// Optional plural form of the food name

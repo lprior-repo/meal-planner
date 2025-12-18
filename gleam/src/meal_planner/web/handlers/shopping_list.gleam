@@ -68,7 +68,7 @@ fn entry_response_to_json(entry: ShoppingListEntryResponse) -> json.Json {
     #("food", case entry.food {
       Some(food) ->
         json.object([
-          #("id", json.int(food.id)),
+          #("id", json.int(ids.food_id_to_int(food.id))),
           #("name", json.string(food.name)),
         ])
       None -> json.null()

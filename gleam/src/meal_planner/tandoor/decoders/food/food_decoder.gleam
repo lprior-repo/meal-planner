@@ -9,6 +9,7 @@
 /// - Nested objects (recipe as FoodSimple)
 import gleam/dynamic
 import gleam/dynamic/decode
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types/food/food.{type Food, Food}
 import meal_planner/tandoor/types/food/food_simple.{type FoodSimple, FoodSimple}
 
@@ -20,7 +21,7 @@ import meal_planner/tandoor/types/food/food_simple.{type FoodSimple, FoodSimple}
 ///
 /// This is the core decoder that can be composed with other decoders.
 pub fn food_simple_decoder() -> decode.Decoder(FoodSimple) {
-  use id <- decode.field("id", decode.int)
+  use id <- decode.field("id", ids.food_id_decoder())
   use name <- decode.field("name", decode.string)
   use plural_name <- decode.field("plural_name", decode.optional(decode.string))
 
@@ -48,7 +49,7 @@ pub fn decode_food_simple(
 ///
 /// This is the core decoder that can be composed with other decoders.
 pub fn food_decoder() -> decode.Decoder(Food) {
-  use id <- decode.field("id", decode.int)
+  use id <- decode.field("id", ids.food_id_decoder())
   use name <- decode.field("name", decode.string)
   use plural_name <- decode.field("plural_name", decode.optional(decode.string))
   use description <- decode.field("description", decode.string)

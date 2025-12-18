@@ -1,4 +1,5 @@
 /// Tests for Step Create API with StepId opaque type
+import gleam/list
 import gleam/option
 import gleeunit/should
 import meal_planner/tandoor/core/ids
@@ -31,7 +32,8 @@ pub fn step_uses_step_id_test() {
 
   // Verify ingredients are IngredientId
   step.ingredients
-  |> should.have_length(2)
+  |> list.length
+  |> should.equal(2)
 }
 
 /// Test that StepCreateRequest uses IngredientId for ingredients
@@ -53,5 +55,6 @@ pub fn step_create_request_uses_ingredient_id_test() {
 
   // Verify ingredients are IngredientId
   request.ingredients
-  |> should.have_length(2)
+  |> list.length
+  |> should.equal(2)
 }

@@ -5,6 +5,7 @@
 import gleam/json
 import gleam/option.{None, Some}
 import gleeunit/should
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/ingredient/ingredient_decoder
 import meal_planner/tandoor/types/recipe/ingredient.{type Ingredient}
 
@@ -65,7 +66,7 @@ pub fn decode_ingredient_full_test() {
       case ingredient.food {
         Some(food) -> {
           food.id
-          |> should.equal(5)
+          |> should.equal(ids.food_id_from_int(5))
           food.name
           |> should.equal("Tomato")
         }
@@ -159,7 +160,7 @@ pub fn decode_ingredient_with_food_only_test() {
       case ingredient.food {
         Some(food) -> {
           food.id
-          |> should.equal(10)
+          |> should.equal(ids.food_id_from_int(10))
           food.name
           |> should.equal("Garlic")
         }

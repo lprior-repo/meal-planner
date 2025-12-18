@@ -4,6 +4,7 @@
 import gleam/json
 import meal_planner/tandoor/api/generic_crud
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/core/ids.{type CuisineId, cuisine_id_to_int}
 import meal_planner/tandoor/decoders/cuisine/cuisine_decoder
 import meal_planner/tandoor/encoders/cuisine/cuisine_encoder
 import meal_planner/tandoor/types/cuisine/cuisine.{
@@ -23,17 +24,18 @@ import meal_planner/tandoor/types/cuisine/cuisine.{
 /// # Example
 /// ```gleam
 /// let config = client.bearer_config("http://localhost:8000", "token")
+/// let cuisine_id = ids.cuisine_id_from_int(5)
 /// let update_data = CuisineUpdateRequest(
 ///   name: Some("Northern Italian"),
 ///   description: Some(Some("Cuisine from Northern Italy")),
 ///   icon: None,
 ///   parent: None,
 /// )
-/// let result = update_cuisine(config, cuisine_id: 5, data: update_data)
+/// let result = update_cuisine(config, cuisine_id: cuisine_id, data: update_data)
 /// ```
 pub fn update_cuisine(
   config: ClientConfig,
-  cuisine_id cuisine_id: Int,
+  cuisine_id cuisine_id: CuisineId,
   data update_data: CuisineUpdateRequest,
 ) -> Result(Cuisine, TandoorError) {
   let body =
@@ -43,7 +45,7 @@ pub fn update_cuisine(
   generic_crud.update(
     config,
     "/api/cuisine/",
-    cuisine_id,
+    cuisine_id_to_int(cuisine_id),
     body,
     cuisine_decoder.cuisine_decoder(),
   )

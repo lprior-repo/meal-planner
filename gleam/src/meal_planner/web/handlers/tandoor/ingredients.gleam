@@ -6,6 +6,7 @@ import gleam/http
 import gleam/json
 import gleam/option
 import meal_planner/tandoor/api/ingredient/list as ingredient_list
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/types/recipe/ingredient.{type Ingredient}
 import wisp
@@ -65,7 +66,7 @@ fn encode_ingredient_detail(ingredient: Ingredient) -> json.Json {
   let food_json = case ingredient.food {
     option.Some(food) ->
       json.object([
-        #("id", json.int(food.id)),
+        #("id", json.int(ids.food_id_to_int(food.id))),
         #("name", json.string(food.name)),
         #("plural_name", helpers.encode_optional_string(food.plural_name)),
         #("description", json.string(food.description)),

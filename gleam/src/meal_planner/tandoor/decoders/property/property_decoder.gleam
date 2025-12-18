@@ -3,6 +3,7 @@
 /// This module provides JSON decoders for Property types.
 /// Handles both RECIPE and FOOD property types.
 import gleam/dynamic/decode
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types/property/property.{
   type Property, type PropertyType, FoodProperty, Property, RecipeProperty,
 }
@@ -23,7 +24,7 @@ fn property_type_decoder() -> decode.Decoder(PropertyType) {
 /// # Returns
 /// Decoder for Property type
 pub fn property_decoder() -> decode.Decoder(Property) {
-  use id <- decode.field("id", decode.int)
+  use id <- decode.field("id", ids.property_id_decoder())
   use name <- decode.field("name", decode.string)
   use description <- decode.field("description", decode.string)
   use property_type <- decode.field("property_type", property_type_decoder())

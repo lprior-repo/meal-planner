@@ -14,6 +14,7 @@ import gleam/json
 import gleam/result
 import meal_planner/tandoor/api/crud_helpers
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/core/ids.{type PropertyId}
 import meal_planner/tandoor/decoders/property/property_decoder
 import meal_planner/tandoor/encoders/property/property_encoder.{
   type PropertyCreateRequest, type PropertyUpdateRequest,
@@ -59,9 +60,12 @@ pub fn list_properties(
 /// ```
 pub fn get_property(
   config: ClientConfig,
-  property_id property_id: Int,
+  property_id property_id: PropertyId,
 ) -> Result(Property, TandoorError) {
-  let path = "/api/property/" <> int.to_string(property_id) <> "/"
+  let path =
+    "/api/property/"
+    <> int.to_string(ids.property_id_to_int(property_id))
+    <> "/"
 
   use resp <- result.try(crud_helpers.execute_get(config, path, []))
 
@@ -116,10 +120,13 @@ pub fn create_property(
 /// ```
 pub fn update_property(
   config: ClientConfig,
-  property_id property_id: Int,
+  property_id property_id: PropertyId,
   update_data update_data: PropertyUpdateRequest,
 ) -> Result(Property, TandoorError) {
-  let path = "/api/property/" <> int.to_string(property_id) <> "/"
+  let path =
+    "/api/property/"
+    <> int.to_string(ids.property_id_to_int(property_id))
+    <> "/"
 
   let request_body =
     property_encoder.encode_property_update_request(update_data)
@@ -146,9 +153,12 @@ pub fn update_property(
 /// ```
 pub fn delete_property(
   config: ClientConfig,
-  property_id property_id: Int,
+  property_id property_id: PropertyId,
 ) -> Result(Nil, TandoorError) {
-  let path = "/api/property/" <> int.to_string(property_id) <> "/"
+  let path =
+    "/api/property/"
+    <> int.to_string(ids.property_id_to_int(property_id))
+    <> "/"
 
   use _resp <- result.try(crud_helpers.execute_delete(config, path))
 
