@@ -4,6 +4,7 @@
 /// Supports both simple step data and full step details with all optional fields.
 import gleam/dynamic/decode
 import gleam/option
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types/recipe/step.{type Step, Step}
 
 /// Decode a Step from JSON
@@ -29,14 +30,17 @@ import meal_planner/tandoor/types/recipe/step.{type Step, Step}
 /// }
 /// ```
 pub fn step_decoder() -> decode.Decoder(Step) {
-  use id <- decode.field("id", decode.int)
+  use id <- decode.field("id", ids.step_id_decoder())
   use name <- decode.field("name", decode.string)
   use instruction <- decode.field("instruction", decode.string)
   use instruction_markdown <- decode.field(
     "instruction_markdown",
     decode.optional(decode.string),
   )
-  use ingredients <- decode.field("ingredients", decode.list(decode.int))
+  use ingredients <- decode.field(
+    "ingredients",
+    decode.list(ids.ingredient_id_decoder()),
+  )
   use time <- decode.field("time", decode.int)
   use order <- decode.field("order", decode.int)
   use show_as_header <- decode.field("show_as_header", decode.bool)
@@ -75,7 +79,7 @@ pub fn step_decoder() -> decode.Decoder(Step) {
 /// }
 /// ```
 pub fn simple_step_decoder() -> decode.Decoder(Step) {
-  use id <- decode.field("id", decode.int)
+  use id <- decode.field("id", ids.step_id_decoder())
   use name <- decode.field("name", decode.string)
   use instructions <- decode.field("instructions", decode.string)
   use time <- decode.field("time", decode.int)

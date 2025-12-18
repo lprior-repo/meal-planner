@@ -10,6 +10,7 @@
 import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{type Option}
+import meal_planner/tandoor/core/ids.{type IngredientId}
 
 // ============================================================================
 // Step Create/Update Request Types
@@ -25,7 +26,7 @@ pub type StepCreateRequest {
     // Short step name/title (max 128 chars)
     instruction: String,
     // Full instruction text (plaintext)
-    ingredients: List(Int),
+    ingredients: List(IngredientId),
     // List of ingredient IDs used in this step
     time: Int,
     // Time required in minutes
@@ -48,7 +49,7 @@ pub type StepUpdateRequest {
   StepUpdateRequest(
     name: Option(String),
     instruction: Option(String),
-    ingredients: Option(List(Int)),
+    ingredients: Option(List(IngredientId)),
     time: Option(Int),
     order: Option(Int),
     show_as_header: Option(Bool),
@@ -91,7 +92,12 @@ pub fn encode_step_create(step: StepCreateRequest) -> Json {
   json.object([
     #("name", json.string(step.name)),
     #("instruction", json.string(step.instruction)),
-    #("ingredients", json.array(step.ingredients, json.int)),
+    #(
+      "ingredients",
+      json.array(step.ingredients, fn(id) {
+        json.int(ids.ingredient_id_to_int(id))
+      }),
+    ),
     #("time", json.int(step.time)),
     #("order", json.int(step.order)),
     #("show_as_header", json.bool(step.show_as_header)),
@@ -190,10 +196,11 @@ fn encode_optional_bool(value: Option(Bool)) -> Json {
   }
 }
 
-/// Encode optional integer list field (None becomes null)
-fn encode_optional_int_list(value: Option(List(Int))) -> Json {
+/// Encode optional ingredient ID list field (None becomes null)
+fn encode_optional_int_list(value: Option(List(IngredientId))) -> Json {
   case value {
-    option.Some(v) -> json.array(v, json.int)
+    option.Some(v) ->
+      json.array(v, fn(id) { json.int(ids.ingredient_id_to_int(id)) })
     option.None -> json.null()
   }
 }

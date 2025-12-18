@@ -3,6 +3,7 @@
 /// Represents a single step in a recipe's cooking instructions.
 /// Based on the Tandoor API Step schema (PatchedStep).
 import gleam/option.{type Option}
+import meal_planner/tandoor/core/ids.{type IngredientId, type StepId}
 
 /// A single step in a recipe's instructions
 ///
@@ -22,11 +23,11 @@ import gleam/option.{type Option}
 /// - `file`: Optional attached file (image, video, etc.)
 pub type Step {
   Step(
-    id: Int,
+    id: StepId,
     name: String,
     instruction: String,
     instruction_markdown: Option(String),
-    ingredients: List(Int),
+    ingredients: List(IngredientId),
     time: Int,
     order: Int,
     show_as_header: Bool,
