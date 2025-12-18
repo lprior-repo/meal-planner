@@ -80,12 +80,7 @@ pub fn get_meal_plan(
 
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
-      case
-        decode.run(
-          json_data,
-          meal_plan_list_decoder(),
-        )
-      {
+      case decode.run(json_data, meal_plan_list_decoder()) {
         Ok(meal_plan_list) -> Ok(meal_plan_list)
         Error(errors) -> {
           let error_msg =

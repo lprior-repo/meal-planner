@@ -514,10 +514,7 @@ pub fn get_current_user_preferences(
 ) -> Result(UserPreference, TandoorError) {
   use resp <- result.try(execute_get(config, "/api/user-preference/", []))
 
-  use prefs_list <- result.try(parse_json_list(
-    resp,
-    user_preference_decoder(),
-  ))
+  use prefs_list <- result.try(parse_json_list(resp, user_preference_decoder()))
 
   case prefs_list {
     [first, ..] -> Ok(first)

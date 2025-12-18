@@ -16,8 +16,8 @@ import gleam/result
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/supermarket.{
   type SupermarketCategory, type SupermarketCategoryCreateRequest,
-  SupermarketCategoryCreateRequest,
-  list_categories, get_category, create_category, update_category, delete_category,
+  SupermarketCategoryCreateRequest, create_category, delete_category,
+  get_category, list_categories, update_category,
 }
 import wisp
 
@@ -41,13 +41,7 @@ pub fn handle_categories_collection(req: wisp.Request) -> wisp.Response {
 fn handle_list_categories(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case
-        list_categories(
-          config,
-          limit: option.None,
-          offset: option.None,
-        )
-      {
+      case list_categories(config, limit: option.None, offset: option.None) {
         Ok(response) -> {
           let results_json =
             json.array(response.results, fn(category) {
@@ -165,11 +159,7 @@ fn handle_update_category(req: wisp.Request, id: Int) -> wisp.Response {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
           case
-            update_category(
-              config,
-              category_id: id,
-              category_data: request,
-            )
+            update_category(config, category_id: id, category_data: request)
           {
             Ok(category) -> {
               json.object([

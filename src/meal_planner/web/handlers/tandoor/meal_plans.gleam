@@ -15,10 +15,10 @@ import gleam/option
 import gleam/result
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/mealplan.{
-  type MealPlan, type MealPlanEntry, type MealPlanCreateRequest,
+  type MealPlan, type MealPlanCreateRequest, type MealPlanEntry,
   type MealPlanUpdateRequest, MealPlanCreateRequest, MealPlanUpdateRequest,
-  encode_meal_plan, list_meal_plans, get_meal_plan, create_meal_plan,
-  update_meal_plan, delete_meal_plan, meal_type_to_string,
+  create_meal_plan, delete_meal_plan, encode_meal_plan, get_meal_plan,
+  list_meal_plans, meal_type_to_string, update_meal_plan,
 }
 import wisp
 
@@ -39,11 +39,7 @@ fn handle_list_meal_plans(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        list_meal_plans(
-          config,
-          from_date: option.None,
-          to_date: option.None,
-        )
+        list_meal_plans(config, from_date: option.None, to_date: option.None)
       {
         Ok(response) -> {
           let results_json =
@@ -136,13 +132,7 @@ fn handle_update_meal_plan(req: wisp.Request, id: Int) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case
-            update_meal_plan(
-              config,
-              meal_plan_id: id,
-              data: request,
-            )
-          {
+          case update_meal_plan(config, meal_plan_id: id, data: request) {
             Ok(meal_plan) -> {
               encode_meal_plan(meal_plan)
               |> json.to_string

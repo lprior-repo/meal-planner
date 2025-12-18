@@ -11,10 +11,10 @@ import gleam/result
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/import_export.{
   type ExportLog, type ExportLogCreateRequest, type ExportLogUpdateRequest,
-  ExportLogCreateRequest, ExportLogUpdateRequest, encode_export_log,
-  export_log_create_request_decoder, export_log_update_request_decoder,
-  list_export_logs, create_export_log, get_export_log, update_export_log,
-  delete_export_log,
+  ExportLogCreateRequest, ExportLogUpdateRequest, create_export_log,
+  delete_export_log, encode_export_log, export_log_create_request_decoder,
+  export_log_update_request_decoder, get_export_log, list_export_logs,
+  update_export_log,
 }
 
 import wisp
@@ -65,9 +65,7 @@ fn handle_list_export_logs(req: wisp.Request) -> wisp.Response {
 
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case
-        list_export_logs(config, limit: limit, offset: offset)
-      {
+      case list_export_logs(config, limit: limit, offset: offset) {
         Ok(response) -> {
           let results_json =
             json.array(response.results, fn(log) { encode_export_log(log) })
@@ -135,9 +133,7 @@ fn handle_update_export_log(req: wisp.Request, id: Int) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case
-            update_export_log(config, request, log_id: id)
-          {
+          case update_export_log(config, request, log_id: id) {
             Ok(log) -> {
               encode_export_log(log)
               |> json.to_string

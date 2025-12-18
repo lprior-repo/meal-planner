@@ -14,9 +14,8 @@ import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/ingredient
 import meal_planner/tandoor/step.{
-  type Step, type StepCreateRequest, type StepUpdateRequest,
-  StepCreateRequest, StepUpdateRequest,
-  list_steps, get_step, create_step, update_step, delete_step,
+  type Step, type StepCreateRequest, type StepUpdateRequest, StepCreateRequest,
+  StepUpdateRequest, create_step, delete_step, get_step, list_steps, update_step,
 }
 
 import wisp

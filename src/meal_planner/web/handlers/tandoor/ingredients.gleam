@@ -30,13 +30,7 @@ pub fn handle_ingredients_collection(req: wisp.Request) -> wisp.Response {
 fn handle_list_ingredients(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case
-        list_ingredients(
-          config,
-          limit: option.None,
-          page: option.None,
-        )
-      {
+      case list_ingredients(config, limit: option.None, page: option.None) {
         Ok(response) -> {
           let results_json =
             json.array(response.results, fn(ingredient) {
