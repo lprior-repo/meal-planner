@@ -4,6 +4,7 @@
 //// Part of the Autonomous Nutritional Control Plane (meal-planner-918).
 
 import gleam/list
+import gleam/result
 import meal_planner/types.{
   type Macros, type Recipe, Macros, macros_add, macros_calories, macros_zero,
 }
@@ -47,6 +48,23 @@ pub type WeeklyMealPlan {
 pub type GenerationError {
   /// Not enough recipes to fill all meals
   NotEnoughRecipes
+}
+
+/// Meal type for locked meals
+pub type MealType {
+  Breakfast
+  Lunch
+  Dinner
+}
+
+/// A locked meal constraint
+pub type LockedMeal {
+  LockedMeal(day: String, meal_type: MealType, recipe: Recipe)
+}
+
+/// Constraints for meal plan generation
+pub type Constraints {
+  Constraints(locked_meals: List(LockedMeal), travel_dates: List(String))
 }
 
 // ============================================================================
@@ -158,6 +176,62 @@ pub fn generate_weekly_plan(
           let breakfast = get_at(recipes, idx)
           let lunch = get_at(recipes, idx + 1)
           let dinner = get_at(recipes, idx + 2)
+          DayMeals(
+            day: day_name,
+            breakfast: breakfast,
+            lunch: lunch,
+            dinner: dinner,
+          )
+        })
+      Ok(WeeklyMealPlan(week_of: week_of, days: days, target_macros: target))
+    }
+  }
+}
+
+/// Find a locked meal for a specific day and meal type
+fn find_locked_meal(
+  constraints: Constraints,
+  day: String,
+  meal_type: MealType,
+) -> Result(Recipe, Nil) {
+  constraints.locked_meals
+  |> list.find(fn(lm) { lm.day == day && lm.meal_type == meal_type })
+  |> result.map(fn(lm) { lm.recipe })
+}
+
+/// Generate a weekly meal plan with constraints
+pub fn generate_weekly_plan_with_constraints(
+  week_of: String,
+  recipes: List(Recipe),
+  target: Macros,
+  constraints: Constraints,
+) -> Result(WeeklyMealPlan, GenerationError) {
+  let recipe_count = list.length(recipes)
+  case recipe_count < 3 {
+    True -> Error(NotEnoughRecipes)
+    False -> {
+      let day_names = [
+        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+        "Sunday",
+      ]
+      let days =
+        day_names
+        |> list.index_map(fn(day_name, idx) {
+          // Check for locked meals, otherwise use default
+          let breakfast = case
+            find_locked_meal(constraints, day_name, Breakfast)
+          {
+            Ok(recipe) -> recipe
+            Error(_) -> get_at(recipes, idx)
+          }
+          let lunch = case find_locked_meal(constraints, day_name, Lunch) {
+            Ok(recipe) -> recipe
+            Error(_) -> get_at(recipes, idx + 1)
+          }
+          let dinner = case find_locked_meal(constraints, day_name, Dinner) {
+            Ok(recipe) -> recipe
+            Error(_) -> get_at(recipes, idx + 2)
+          }
           DayMeals(
             day: day_name,
             breakfast: breakfast,
