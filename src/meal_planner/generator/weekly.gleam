@@ -276,3 +276,24 @@ pub fn generate_weekly_plan_with_constraints(
     }
   }
 }
+
+/// Generate a weekly meal plan with constraints and rotation history
+/// Filters out recently used recipes before generating
+pub fn generate_plan_with_rotation(
+  week_of: String,
+  recipes: List(Recipe),
+  target: Macros,
+  constraints: Constraints,
+  history: List(RotationEntry),
+  rotation_days: Int,
+) -> Result(WeeklyMealPlan, GenerationError) {
+  // Filter out recently used recipes
+  let available_recipes = filter_by_rotation(recipes, history, rotation_days)
+  // Generate plan with filtered recipes
+  generate_weekly_plan_with_constraints(
+    week_of,
+    available_recipes,
+    target,
+    constraints,
+  )
+}
