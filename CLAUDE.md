@@ -12,6 +12,10 @@ TYPE: Multi_Agent_Recursive_Dev_System
 LANGUAGE: Gleam
 CORE_DISCIPLINE: Strict_TCR (Test, Commit, Revert)
 
+TESTING:
+COMMAND: `cd gleam && make test` (parallel, 0.8s)
+FALLBACK: `gleam test` (sequential, slow)
+
 VISUALIZATION_HUD:
 RENDER_ON: RESPONSE_START
 TEMPLATE: |
