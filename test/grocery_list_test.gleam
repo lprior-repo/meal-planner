@@ -3,13 +3,21 @@
 import gleam/dict
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/string
 import gleeunit/should
+import meal_planner/generator/weekly.{DayMeals, WeeklyMealPlan}
 import meal_planner/grocery_list.{
   GroceryItem, GroceryList, format_as_json, format_as_text, from_ingredients,
   merge,
 }
+import meal_planner/id
 import meal_planner/tandoor/client.{
-  type Ingredient, Food, Ingredient, SupermarketCategory, Unit,
+  type Ingredient as TandoorIngredient, Food, Ingredient as TandoorIngredientC,
+  SupermarketCategory, Unit,
+}
+import meal_planner/types.{
+  type Ingredient as SimpleIngredient, type Recipe, Ingredient, Low, Macros,
+  Recipe,
 }
 
 // ============================================================================
@@ -22,8 +30,8 @@ fn test_ingredient(
   amount: Float,
   unit_name: String,
   category_name: String,
-) -> Ingredient {
-  Ingredient(
+) -> TandoorIngredient {
+  TandoorIngredientC(
     id: 1,
     food: Some(Food(
       id: 1,
@@ -46,8 +54,8 @@ fn test_ingredient(
 }
 
 /// Create a header ingredient (should be filtered out)
-fn header_ingredient(name: String) -> Ingredient {
-  Ingredient(
+fn header_ingredient(name: String) -> TandoorIngredient {
+  TandoorIngredientC(
     id: 1,
     food: Some(Food(
       id: 1,
@@ -66,8 +74,8 @@ fn header_ingredient(name: String) -> Ingredient {
 }
 
 /// Create an ingredient without food (should be filtered out)
-fn foodless_ingredient() -> Ingredient {
-  Ingredient(
+fn foodless_ingredient() -> TandoorIngredient {
+  TandoorIngredientC(
     id: 1,
     food: None,
     unit: None,
@@ -305,10 +313,142 @@ pub fn format_as_json_includes_item_data_test() {
 }
 
 // ============================================================================
-// Helper for string contains
+// from_simple_ingredients Tests (for types.Ingredient)
 // ============================================================================
 
-import gleam/string
+pub fn from_simple_ingredients_creates_list_test() {
+  let ingredients = [
+    Ingredient(name: "Chicken", quantity: "2 lbs"),
+    Ingredient(name: "Rice", quantity: "1 cup"),
+  ]
+
+  let result = grocery_list.from_simple_ingredients(ingredients)
+
+  list.length(result.all_items)
+  |> should.equal(2)
+}
+
+pub fn from_simple_ingredients_groups_by_name_test() {
+  let ingredients = [
+    Ingredient(name: "Chicken", quantity: "1 lb"),
+    Ingredient(name: "Chicken", quantity: "2 lbs"),
+    Ingredient(name: "Rice", quantity: "1 cup"),
+  ]
+
+  let result = grocery_list.from_simple_ingredients(ingredients)
+
+  // Should combine same ingredients
+  list.length(result.all_items)
+  |> should.equal(2)
+}
+
+pub fn from_simple_ingredients_empty_list_test() {
+  let result = grocery_list.from_simple_ingredients([])
+
+  list.length(result.all_items)
+  |> should.equal(0)
+}
+
+// ============================================================================
+// from_weekly_plan Tests
+// ============================================================================
+
+fn simple_recipe(name: String, ingredients: List(SimpleIngredient)) -> Recipe {
+  Recipe(
+    id: id.recipe_id("1"),
+    name: name,
+    ingredients: ingredients,
+    instructions: [],
+    macros: Macros(protein: 30.0, fat: 15.0, carbs: 40.0),
+    servings: 1,
+    category: "Test",
+    fodmap_level: Low,
+    vertical_compliant: True,
+  )
+}
+
+pub fn from_weekly_plan_collects_all_ingredients_test() {
+  let chicken_recipe =
+    simple_recipe("Chicken Dinner", [
+      Ingredient(name: "Chicken", quantity: "1 lb"),
+    ])
+
+  let rice_recipe =
+    simple_recipe("Rice Bowl", [
+      Ingredient(name: "Rice", quantity: "2 cups"),
+    ])
+
+  let plan =
+    WeeklyMealPlan(
+      week_of: "2025-12-22",
+      days: [
+        DayMeals(
+          day: "Monday",
+          breakfast: chicken_recipe,
+          lunch: rice_recipe,
+          dinner: chicken_recipe,
+        ),
+      ],
+      target_macros: Macros(protein: 150.0, fat: 75.0, carbs: 200.0),
+    )
+
+  let result = grocery_list.from_weekly_plan(plan)
+
+  // Should have Chicken (combined) and Rice
+  list.length(result.all_items)
+  |> should.equal(2)
+}
+
+pub fn from_weekly_plan_combines_same_ingredients_test() {
+  let recipe =
+    simple_recipe("Test Recipe", [
+      Ingredient(name: "Chicken", quantity: "1 lb"),
+    ])
+
+  let plan =
+    WeeklyMealPlan(
+      week_of: "2025-12-22",
+      days: [
+        DayMeals(
+          day: "Monday",
+          breakfast: recipe,
+          lunch: recipe,
+          dinner: recipe,
+        ),
+        DayMeals(
+          day: "Tuesday",
+          breakfast: recipe,
+          lunch: recipe,
+          dinner: recipe,
+        ),
+      ],
+      target_macros: Macros(protein: 150.0, fat: 75.0, carbs: 200.0),
+    )
+
+  let result = grocery_list.from_weekly_plan(plan)
+
+  // All "Chicken" should be combined into one item
+  list.length(result.all_items)
+  |> should.equal(1)
+}
+
+pub fn from_weekly_plan_empty_plan_test() {
+  let plan =
+    WeeklyMealPlan(
+      week_of: "2025-12-22",
+      days: [],
+      target_macros: Macros(protein: 150.0, fat: 75.0, carbs: 200.0),
+    )
+
+  let result = grocery_list.from_weekly_plan(plan)
+
+  list.length(result.all_items)
+  |> should.equal(0)
+}
+
+// ============================================================================
+// Helper for string contains
+// ============================================================================
 
 fn string_contains(haystack: String, needle: String) -> Bool {
   string.contains(haystack, needle)
