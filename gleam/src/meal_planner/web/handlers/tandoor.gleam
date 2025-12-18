@@ -23,14 +23,14 @@ import meal_planner/tandoor/types.{type TandoorKeyword}
 import meal_planner/tandoor/types/supermarket/supermarket_category_create.{
   type SupermarketCategoryCreateRequest, SupermarketCategoryCreateRequest,
 }
-import meal_planner/web/handlers/tandoor/steps
-import meal_planner/web/handlers/tandoor/import_logs
 import meal_planner/web/handlers/tandoor/export_logs
-import meal_planner/web/handlers/tandoor/supermarkets
-import meal_planner/web/handlers/tandoor/supermarket_categories
-import meal_planner/web/handlers/tandoor/tandoor_recipes
-import meal_planner/web/handlers/tandoor/meal_plans
+import meal_planner/web/handlers/tandoor/import_logs
 import meal_planner/web/handlers/tandoor/ingredients
+import meal_planner/web/handlers/tandoor/meal_plans
+import meal_planner/web/handlers/tandoor/steps
+import meal_planner/web/handlers/tandoor/supermarket_categories
+import meal_planner/web/handlers/tandoor/supermarkets
+import meal_planner/web/handlers/tandoor/tandoor_recipes
 import meal_planner/web/handlers/tandoor/units
 
 import wisp
@@ -81,14 +81,16 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
     }
 
     // Recipes (GET list, POST create)
-    ["api", "tandoor", "recipes"] -> tandoor_recipes.handle_recipes_collection(req)
+    ["api", "tandoor", "recipes"] ->
+      tandoor_recipes.handle_recipes_collection(req)
 
     // Recipe by ID (GET, PATCH, DELETE)
     ["api", "tandoor", "recipes", recipe_id] ->
       tandoor_recipes.handle_recipe_by_id(req, recipe_id)
 
     // Meal Plans (GET list, POST create)
-    ["api", "tandoor", "meal-plans"] -> meal_plans.handle_meal_plans_collection(req)
+    ["api", "tandoor", "meal-plans"] ->
+      meal_plans.handle_meal_plans_collection(req)
 
     // Meal Plan by ID (GET, PATCH, DELETE)
     ["api", "tandoor", "meal-plans", meal_plan_id] ->
@@ -102,20 +104,24 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
       steps.handle_step_by_id(req, step_id)
 
     // Ingredients (GET list only)
-    ["api", "tandoor", "ingredients"] -> ingredients.handle_ingredients_collection(req)
+    ["api", "tandoor", "ingredients"] ->
+      ingredients.handle_ingredients_collection(req)
 
     // Import Logs
-    ["api", "tandoor", "import-logs"] -> import_logs.handle_import_logs_collection(req)
+    ["api", "tandoor", "import-logs"] ->
+      import_logs.handle_import_logs_collection(req)
     ["api", "tandoor", "import-logs", log_id] ->
       import_logs.handle_import_log_by_id(req, log_id)
 
     // Export Logs
-    ["api", "tandoor", "export-logs"] -> export_logs.handle_export_logs_collection(req)
+    ["api", "tandoor", "export-logs"] ->
+      export_logs.handle_export_logs_collection(req)
     ["api", "tandoor", "export-logs", log_id] ->
       export_logs.handle_export_log_by_id(req, log_id)
 
     // Supermarkets (GET list, POST create)
-    ["api", "tandoor", "supermarkets"] -> supermarkets.handle_supermarkets_collection(req)
+    ["api", "tandoor", "supermarkets"] ->
+      supermarkets.handle_supermarkets_collection(req)
 
     // Supermarket by ID (GET, PATCH, DELETE)
     ["api", "tandoor", "supermarkets", supermarket_id] ->
