@@ -2,7 +2,7 @@
 import gleam/option
 import gleeunit
 import gleeunit/should
-
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types/cuisine/cuisine
 import meal_planner/web/handlers/tandoor_cuisines
 
@@ -14,11 +14,11 @@ pub fn main() {
 pub fn test_encode_cuisine_with_all_fields() {
   let test_cuisine =
     cuisine.Cuisine(
-      id: 1,
+      id: ids.cuisine_id_from_int(1),
       name: "Italian",
       description: option.Some("Italian cuisine"),
       icon: option.Some("🇮🇹"),
-      parent: option.Some(5),
+      parent: option.Some(ids.cuisine_id_from_int(5)),
       num_recipes: 42,
       created_at: "2025-01-01T00:00:00Z",
       updated_at: "2025-01-02T00:00:00Z",
@@ -34,7 +34,7 @@ pub fn test_encode_cuisine_with_all_fields() {
 pub fn test_encode_cuisine_with_none_fields() {
   let test_cuisine =
     cuisine.Cuisine(
-      id: 2,
+      id: ids.cuisine_id_from_int(2),
       name: "Minimal",
       description: option.None,
       icon: option.None,

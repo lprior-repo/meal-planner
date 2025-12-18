@@ -3,6 +3,7 @@
 /// Cuisines represent the cultural or regional origin of recipes (e.g., Italian, Mexican, Thai).
 /// In Tandoor, cuisines are typically managed as a specialized keyword category.
 import gleam/option.{type Option}
+import meal_planner/tandoor/core/ids.{type CuisineId}
 
 /// Cuisine data structure from Tandoor API
 ///
@@ -20,11 +21,11 @@ import gleam/option.{type Option}
 /// - updated_at: Timestamp when last modified (readonly)
 pub type Cuisine {
   Cuisine(
-    id: Int,
+    id: CuisineId,
     name: String,
     description: Option(String),
     icon: Option(String),
-    parent: Option(Int),
+    parent: Option(CuisineId),
     num_recipes: Int,
     created_at: String,
     updated_at: String,

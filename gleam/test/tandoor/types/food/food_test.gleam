@@ -1,14 +1,20 @@
 import gleam/option.{None, Some}
 import gleeunit/should
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types/food/food.{Food}
 import meal_planner/tandoor/types/food/food_simple.{FoodSimple}
 
 pub fn food_full_constructor_test() {
-  let recipe = FoodSimple(id: 100, name: "Pasta Recipe", plural_name: None)
+  let recipe =
+    FoodSimple(
+      id: ids.food_id_from_int(100),
+      name: "Pasta Recipe",
+      plural_name: None,
+    )
 
   let food =
     Food(
-      id: 1,
+      id: ids.food_id_from_int(1),
       name: "Tomato",
       plural_name: Some("Tomatoes"),
       description: "Fresh red tomatoes",
@@ -19,7 +25,7 @@ pub fn food_full_constructor_test() {
     )
 
   food.id
-  |> should.equal(1)
+  |> should.equal(ids.food_id_from_int(1))
 
   food.name
   |> should.equal("Tomato")
@@ -40,7 +46,7 @@ pub fn food_full_constructor_test() {
 pub fn food_minimal_test() {
   let food =
     Food(
-      id: 2,
+      id: ids.food_id_from_int(2),
       name: "Garlic",
       plural_name: None,
       description: "",
@@ -51,7 +57,7 @@ pub fn food_minimal_test() {
     )
 
   food.id
-  |> should.equal(2)
+  |> should.equal(ids.food_id_from_int(2))
 
   food.name
   |> should.equal("Garlic")
@@ -72,7 +78,7 @@ pub fn food_minimal_test() {
 pub fn food_optional_fields_test() {
   let food1 =
     Food(
-      id: 3,
+      id: ids.food_id_from_int(3),
       name: "Onion",
       plural_name: Some("Onions"),
       description: "Yellow onions",
@@ -84,7 +90,7 @@ pub fn food_optional_fields_test() {
 
   let food2 =
     Food(
-      id: 4,
+      id: ids.food_id_from_int(4),
       name: "Salt",
       plural_name: None,
       description: "Sea salt",
@@ -102,11 +108,15 @@ pub fn food_optional_fields_test() {
 
 pub fn food_with_recipe_test() {
   let recipe =
-    FoodSimple(id: 200, name: "Tomato Sauce", plural_name: Some("Sauces"))
+    FoodSimple(
+      id: ids.food_id_from_int(200),
+      name: "Tomato Sauce",
+      plural_name: Some("Sauces"),
+    )
 
   let food =
     Food(
-      id: 5,
+      id: ids.food_id_from_int(5),
       name: "Tomato Sauce",
       plural_name: None,
       description: "Homemade sauce",
@@ -119,7 +129,7 @@ pub fn food_with_recipe_test() {
   case food.recipe {
     Some(r) -> {
       r.id
-      |> should.equal(200)
+      |> should.equal(ids.food_id_from_int(200))
       r.name
       |> should.equal("Tomato Sauce")
     }

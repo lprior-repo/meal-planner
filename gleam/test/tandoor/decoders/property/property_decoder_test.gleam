@@ -7,6 +7,7 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/property/property_decoder
 import meal_planner/tandoor/types/property/property.{
   type Property, FoodProperty, Property, RecipeProperty,
@@ -25,7 +26,7 @@ pub fn decode_property_recipe_test() {
   result
   |> should.be_ok
   |> should.equal(Property(
-    id: 1,
+    id: ids.property_id_from_int(1),
     name: "Allergens",
     description: "Contains allergen information",
     property_type: RecipeProperty,
@@ -49,7 +50,7 @@ pub fn decode_property_food_with_unit_test() {
   result
   |> should.be_ok
   |> should.equal(Property(
-    id: 2,
+    id: ids.property_id_from_int(2),
     name: "Protein",
     description: "Custom protein measurement",
     property_type: FoodProperty,

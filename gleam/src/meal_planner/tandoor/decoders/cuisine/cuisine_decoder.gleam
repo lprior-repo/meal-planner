@@ -8,7 +8,8 @@
 /// - Optional fields (description, icon, parent)
 /// - Hierarchical structure (parent for nested cuisines)
 import gleam/dynamic/decode
-import gleam/option.{None}
+import gleam/option
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types/cuisine/cuisine.{type Cuisine, Cuisine}
 
 /// Decode a Cuisine from JSON
@@ -33,12 +34,12 @@ pub fn cuisine_decoder() -> decode.Decoder(Cuisine) {
   use name <- decode.field("name", decode.string)
   use description <- decode.optional_field(
     "description",
-    None,
+    option.None,
     decode.optional(decode.string),
   )
   use icon <- decode.optional_field(
     "icon",
-    None,
+    option.None,
     decode.optional(decode.string),
   )
   use parent <- decode.field("parent", decode.optional(decode.int))
@@ -47,11 +48,11 @@ pub fn cuisine_decoder() -> decode.Decoder(Cuisine) {
   use updated_at <- decode.field("updated_at", decode.string)
 
   decode.success(Cuisine(
-    id: id,
+    id: ids.cuisine_id_from_int(id),
     name: name,
     description: description,
     icon: icon,
-    parent: parent,
+    parent: option.map(parent, ids.cuisine_id_from_int),
     num_recipes: num_recipes,
     created_at: created_at,
     updated_at: updated_at,

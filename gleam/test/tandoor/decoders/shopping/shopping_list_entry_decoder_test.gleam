@@ -6,6 +6,7 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/shopping/shopping_list_entry_decoder.{
   type ShoppingListEntryResponse,
 }
@@ -59,7 +60,7 @@ pub fn decode_entry_complete_test() {
       // Verify nested food object
       case entry.food {
         Some(food) -> {
-          food.id |> should.equal(10)
+          food.id |> should.equal(ids.food_id_from_int(10))
           food.name |> should.equal("Tomato")
           food.plural_name |> should.equal(Some("Tomatoes"))
           food.description |> should.equal("Fresh red tomatoes")

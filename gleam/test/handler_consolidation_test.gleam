@@ -6,6 +6,7 @@ import gleam/json
 import gleam/option
 import gleam/string
 
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/handler_wrapper
 import meal_planner/tandoor/types/cuisine/cuisine
 
@@ -19,7 +20,7 @@ pub fn main() {
 // Test fixtures
 fn mock_cuisine() -> cuisine.Cuisine {
   cuisine.Cuisine(
-    id: 1,
+    id: ids.cuisine_id_from_int(1),
     name: "Italian",
     description: option.Some("Italian cuisine"),
     icon: option.None,
@@ -32,7 +33,7 @@ fn mock_cuisine() -> cuisine.Cuisine {
 
 fn cuisine_to_json(cuisine: cuisine.Cuisine) -> json.Json {
   json.object([
-    #("id", json.int(cuisine.id)),
+    #("id", json.int(ids.cuisine_id_to_int(cuisine.id))),
     #("name", json.string(cuisine.name)),
   ])
 }

@@ -6,6 +6,7 @@ import gleam/dynamic/decode
 import gleam/http
 import gleam/int
 import gleam/json
+import gleam/list
 import gleam/option
 import gleam/result
 
@@ -14,6 +15,7 @@ import meal_planner/tandoor/api/step/delete as step_delete
 import meal_planner/tandoor/api/step/get as step_get
 import meal_planner/tandoor/api/step/list as step_list
 import meal_planner/tandoor/api/step/update as step_update
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/encoders/recipe/step_encoder.{
   type StepCreateRequest, type StepUpdateRequest, StepCreateRequest,
   StepUpdateRequest,
@@ -157,14 +159,19 @@ fn handle_delete_step(_req: wisp.Request, id: Int) -> wisp.Response {
 
 fn encode_recipe_step(step: Step) -> json.Json {
   json.object([
-    #("id", json.int(step.id)),
+    #("id", json.int(ids.step_id_to_int(step.id))),
     #("name", json.string(step.name)),
     #("instruction", json.string(step.instruction)),
     #(
       "instruction_markdown",
       helpers.encode_optional_string(step.instruction_markdown),
     ),
-    #("ingredients", json.array(step.ingredients, json.int)),
+    #(
+      "ingredients",
+      json.array(step.ingredients, fn(id) {
+        json.int(ids.ingredient_id_to_int(id))
+      }),
+    ),
     #("time", json.int(step.time)),
     #("order", json.int(step.order)),
     #("show_as_header", json.bool(step.show_as_header)),
@@ -195,7 +202,7 @@ fn step_create_decoder() -> decode.Decoder(StepCreateRequest) {
   decode.success(StepCreateRequest(
     name: name,
     instruction: instruction,
-    ingredients: ingredients,
+    ingredients: list.map(ingredients, ids.ingredient_id_from_int),
     time: time,
     order: order,
     show_as_header: show_as_header,
@@ -232,7 +239,9 @@ fn step_update_decoder() -> decode.Decoder(StepUpdateRequest) {
   decode.success(StepUpdateRequest(
     name: name,
     instruction: instruction,
-    ingredients: ingredients,
+    ingredients: option.map(ingredients, fn(ids_list) {
+      list.map(ids_list, ids.ingredient_id_from_int)
+    }),
     time: time,
     order: order,
     show_as_header: show_as_header,

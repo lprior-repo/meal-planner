@@ -14,6 +14,7 @@ import meal_planner/tandoor/api/cuisine/delete as cuisine_delete
 import meal_planner/tandoor/api/cuisine/get as cuisine_get
 import meal_planner/tandoor/api/cuisine/list as cuisine_list
 import meal_planner/tandoor/api/cuisine/update as cuisine_update
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/types/cuisine/cuisine
 
@@ -53,10 +54,11 @@ pub fn handle_cuisine_by_id(
 pub fn handle_list_cuisines(req: wisp.Request) -> wisp.Response {
   let query = wisp.get_query(req)
   let parent_filter = helpers.parse_int_param(query, "parent")
+  let parent_cuisine_id = option.map(parent_filter, ids.cuisine_id_from_int)
 
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case cuisine_list.list_cuisines_by_parent(config, parent_filter) {
+      case cuisine_list.list_cuisines_by_parent(config, parent_cuisine_id) {
         Ok(cuisines) -> {
           json.array(cuisines, encode_cuisine)
           |> json.to_string
@@ -103,7 +105,7 @@ pub fn handle_get_cuisine(
 
     // Step 3: Make API call
     use cuisine <- result.try(
-      cuisine_get.get_cuisine(config, cuisine_id: id)
+      cuisine_get.get_cuisine(config, cuisine_id: ids.cuisine_id_from_int(id))
       |> result.map_error(fn(_) { wisp.not_found() }),
     )
 
@@ -162,7 +164,7 @@ pub fn handle_update_cuisine(
               case
                 cuisine_update.update_cuisine(
                   config,
-                  cuisine_id: id,
+                  cuisine_id: ids.cuisine_id_from_int(id),
                   data: cuisine_request,
                 )
               {
@@ -194,7 +196,12 @@ pub fn handle_delete_cuisine(
     Ok(id) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case cuisine_delete.delete_cuisine(config, cuisine_id: id) {
+          case
+            cuisine_delete.delete_cuisine(
+              config,
+              cuisine_id: ids.cuisine_id_from_int(id),
+            )
+          {
             Ok(_) -> wisp.no_content()
             Error(_) -> helpers.error_response(500, "Failed to delete cuisine")
           }
@@ -213,12 +220,12 @@ pub fn handle_delete_cuisine(
 /// Encode a Cuisine to JSON
 pub fn encode_cuisine(cuisine: cuisine.Cuisine) -> json.Json {
   json.object([
-    #("id", json.int(cuisine.id)),
+    #("id", json.int(ids.cuisine_id_to_int(cuisine.id))),
     #("name", json.string(cuisine.name)),
     #("description", helpers.encode_optional_string(cuisine.description)),
     #("icon", helpers.encode_optional_string(cuisine.icon)),
     #("parent", case cuisine.parent {
-      option.Some(parent_id) -> json.int(parent_id)
+      option.Some(parent_id) -> json.int(ids.cuisine_id_to_int(parent_id))
       option.None -> json.null()
     }),
     #("num_recipes", json.int(cuisine.num_recipes)),

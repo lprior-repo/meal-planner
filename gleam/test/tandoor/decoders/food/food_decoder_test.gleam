@@ -1,6 +1,7 @@
 import gleam/json
 import gleam/option.{None, Some}
 import gleeunit/should
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/food/food_decoder
 import meal_planner/tandoor/types/food/food.{type Food}
 
@@ -23,7 +24,7 @@ pub fn decode_food_full_test() {
   case result {
     Ok(food) -> {
       food.id
-      |> should.equal(1)
+      |> should.equal(ids.food_id_from_int(1))
       food.name
       |> should.equal("Tomato")
       food.plural_name
@@ -58,7 +59,7 @@ pub fn decode_food_minimal_test() {
   case result {
     Ok(food) -> {
       food.id
-      |> should.equal(2)
+      |> should.equal(ids.food_id_from_int(2))
       food.name
       |> should.equal("Garlic")
       food.plural_name
@@ -97,12 +98,12 @@ pub fn decode_food_with_recipe_test() {
   case result {
     Ok(food) -> {
       food.id
-      |> should.equal(3)
+      |> should.equal(ids.food_id_from_int(3))
 
       case food.recipe {
         Some(recipe) -> {
           recipe.id
-          |> should.equal(100)
+          |> should.equal(ids.food_id_from_int(100))
           recipe.name
           |> should.equal("Sauce Recipe")
           recipe.plural_name
@@ -134,7 +135,7 @@ pub fn decode_food_with_supermarket_category_test() {
   case result {
     Ok(food) -> {
       food.id
-      |> should.equal(4)
+      |> should.equal(ids.food_id_from_int(4))
       food.supermarket_category
       |> should.equal(Some(5))
     }

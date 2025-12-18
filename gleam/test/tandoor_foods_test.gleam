@@ -13,6 +13,7 @@ import meal_planner/tandoor/api/food/get as food_get
 import meal_planner/tandoor/api/food/list as food_list
 import meal_planner/tandoor/api/food/update as food_update
 import meal_planner/tandoor/client
+import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/types.{TandoorFoodCreateRequest}
 import test_setup
 
@@ -514,7 +515,11 @@ pub fn list_then_get_workflow_test() {
           case list.first(response.results) {
             Ok(first_food) -> {
               // Then get the specific food
-              let get_result = food_get.get_food(config, food_id: first_food.id)
+              let get_result =
+                food_get.get_food(
+                  config,
+                  food_id: ids.food_id_to_int(first_food.id),
+                )
               case get_result {
                 Ok(_) | Error(_) -> Nil
               }

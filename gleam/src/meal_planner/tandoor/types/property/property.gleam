@@ -12,6 +12,7 @@
 ///
 /// Based on Tandoor API 2.3.6 specification.
 import gleam/option.{type Option}
+import meal_planner/tandoor/core/ids.{type PropertyId}
 
 /// Property type (recipe or food)
 pub type PropertyType {
@@ -35,7 +36,7 @@ pub type PropertyType {
 /// - updated_at: Last update timestamp (readonly)
 pub type Property {
   Property(
-    id: Int,
+    id: PropertyId,
     name: String,
     description: String,
     property_type: PropertyType,
