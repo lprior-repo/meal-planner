@@ -239,3 +239,48 @@ pub fn shopping_list_entry_id_decoder() -> decode.Decoder(ShoppingListEntryId) {
   decode.int
   |> decode.map(ShoppingListEntryId)
 }
+
+// ImportLogId functions
+pub fn import_log_id_to_int(id: ImportLogId) -> Int {
+  let ImportLogId(n) = id
+  n
+}
+
+pub fn import_log_id_from_int(n: Int) -> ImportLogId {
+  ImportLogId(n)
+}
+
+pub fn import_log_id_decoder() -> decode.Decoder(ImportLogId) {
+  decode.int
+  |> decode.map(ImportLogId)
+}
+
+// ExportLogId functions
+pub fn export_log_id_to_int(id: ExportLogId) -> Int {
+  let ExportLogId(n) = id
+  n
+}
+
+pub fn export_log_id_from_int(n: Int) -> ExportLogId {
+  ExportLogId(n)
+}
+
+pub fn export_log_id_decoder() -> decode.Decoder(ExportLogId) {
+  decode.int
+  |> decode.map(ExportLogId)
+}
+
+// PropertyId functions
+pub fn property_id_to_int(id: PropertyId) -> Int {
+  let PropertyId(n) = id
+  n
+}
+
+pub fn property_id_from_int(n: Int) -> PropertyId {
+  PropertyId(n)
+}
+
+pub fn property_id_decoder() -> decode.Decoder(PropertyId) {
+  decode.int
+  |> decode.map(PropertyId)
+}
