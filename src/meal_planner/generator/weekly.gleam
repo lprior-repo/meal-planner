@@ -120,6 +120,22 @@ fn get_at(lst: List(a), idx: Int) -> a {
   elem
 }
 
+/// Analyze a meal plan and return daily macro summaries
+pub fn analyze_plan(plan: WeeklyMealPlan) -> List(DailyMacros) {
+  plan.days
+  |> list.map(fn(day) { calculate_daily_macros(day, plan.target_macros) })
+}
+
+/// Check if all days in a plan are within macro targets (±10%)
+pub fn is_plan_balanced(plan: WeeklyMealPlan) -> Bool {
+  let analysis = analyze_plan(plan)
+  list.all(analysis, fn(daily) {
+    daily.protein_status == OnTarget
+    && daily.fat_status == OnTarget
+    && daily.carbs_status == OnTarget
+  })
+}
+
 /// Generate a weekly meal plan from available recipes
 /// Requires at least 3 recipes (one for each meal type)
 pub fn generate_weekly_plan(

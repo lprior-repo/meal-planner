@@ -6,8 +6,8 @@ import gleeunit/should
 import meal_planner/generator/weekly.{
   type DailyMacros, type DayMeals, type GenerationError, type MacroComparison,
   type WeeklyMealPlan, DayMeals, NotEnoughRecipes, OnTarget, Over, Under,
-  WeeklyMealPlan, calculate_daily_macros, days_count, generate_weekly_plan,
-  total_weekly_macros,
+  WeeklyMealPlan, analyze_plan, calculate_daily_macros, days_count,
+  generate_weekly_plan, is_plan_balanced, total_weekly_macros,
 }
 import meal_planner/id
 import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
@@ -242,4 +242,83 @@ pub fn generate_weekly_plan_assigns_all_meals_test() {
     }
     Error(_) -> should.fail()
   }
+}
+
+// ============================================================================
+// TCR Cycle 3: Macro Validation Tests
+// ============================================================================
+
+pub fn analyze_plan_returns_daily_macros_for_each_day_test() {
+  let day = test_day_meals()
+  let plan =
+    WeeklyMealPlan(
+      week_of: "2025-12-22",
+      days: [day, day, day, day, day, day, day],
+      target_macros: target_macros(),
+    )
+
+  let analysis = analyze_plan(plan)
+
+  // Should return 7 daily macro summaries
+  list.length(analysis) |> should.equal(7)
+}
+
+pub fn analyze_plan_calculates_correct_macros_test() {
+  let day = test_day_meals()
+  let plan =
+    WeeklyMealPlan(
+      week_of: "2025-12-22",
+      days: [day],
+      target_macros: target_macros(),
+    )
+
+  let analysis = analyze_plan(plan)
+  let assert [first_day] = analysis
+
+  // From test_day_meals: 95g protein, 45g fat, 27g carbs
+  first_day.actual.protein |> should.equal(95.0)
+  first_day.actual.fat |> should.equal(45.0)
+  first_day.actual.carbs |> should.equal(27.0)
+}
+
+pub fn is_plan_balanced_returns_true_when_all_days_on_target_test() {
+  // Create recipes that sum to exactly the target
+  // Target: 150g protein, 65g fat, 200g carbs
+  let balanced_day =
+    DayMeals(
+      day: "Monday",
+      // 50g protein + 22g fat + 67g carbs each meal = 150/66/201
+      breakfast: test_recipe("B", 50.0, 22.0, 67.0),
+      lunch: test_recipe("L", 50.0, 22.0, 67.0),
+      dinner: test_recipe("D", 50.0, 22.0, 67.0),
+    )
+  let plan =
+    WeeklyMealPlan(
+      week_of: "2025-12-22",
+      days: [
+        balanced_day,
+        balanced_day,
+        balanced_day,
+        balanced_day,
+        balanced_day,
+        balanced_day,
+        balanced_day,
+      ],
+      target_macros: target_macros(),
+    )
+
+  is_plan_balanced(plan) |> should.be_true
+}
+
+pub fn is_plan_balanced_returns_false_when_under_target_test() {
+  // Use test_day_meals which is under target
+  let day = test_day_meals()
+  let plan =
+    WeeklyMealPlan(
+      week_of: "2025-12-22",
+      days: [day, day, day, day, day, day, day],
+      target_macros: target_macros(),
+    )
+
+  is_plan_balanced(plan) |> should.be_false
 }
