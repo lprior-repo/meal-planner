@@ -1,48 +1,28 @@
 /// Tandoor Property type definition
 ///
-/// This module defines the Property type used for custom properties on recipes and foods in Tandoor.
+/// This module defines the Property type - an instance/value of a PropertyType applied to an entity.
 /// Properties allow users to add custom metadata fields beyond the standard attributes.
 ///
-/// Examples:
-/// - Allergen information
-/// - Dietary restrictions
-/// - Meal prep time categories
-/// - Custom nutrition facts
-/// - Source/origin tracking
+/// Note: Property is the VALUE (instance with an amount).
+/// PropertyType is the TEMPLATE (schema/definition).
+///
+/// Examples of Property values:
+/// - Recipe has allergen "Peanuts" (property_amount = "Yes")
+/// - Food has prep time 15 minutes (property_amount = "15")
 ///
 /// Based on Tandoor API 2.3.6 specification.
 import gleam/option.{type Option}
-import meal_planner/tandoor/core/ids.{type PropertyId}
+import meal_planner/tandoor/types/property/property_type.{type PropertyType}
 
-/// Property type (recipe or food)
-pub type PropertyType {
-  RecipeProperty
-  FoodProperty
-}
-
-/// Custom property for recipes or foods
+/// Custom property instance/value for recipes or foods
 ///
-/// Properties extend Tandoor's data model with user-defined fields.
-/// They can be used for filtering, searching, and custom workflows.
+/// Property represents a specific VALUE of a PropertyType applied to a recipe or food.
+/// It connects a PropertyType (the schema) with an amount (the value).
 ///
 /// Fields:
-/// - id: Unique identifier
-/// - name: Property name (required)
-/// - description: Optional detailed description
-/// - property_type: Whether this applies to recipes or foods
-/// - unit: Optional unit of measurement
-/// - order: Display order (lower numbers first)
-/// - created_at: Creation timestamp (readonly)
-/// - updated_at: Last update timestamp (readonly)
+/// - id: Unique identifier for this property instance
+/// - property_amount: The value/amount for this property (nullable, depends on type)
+/// - property_type: Reference to the PropertyType template (schema)
 pub type Property {
-  Property(
-    id: PropertyId,
-    name: String,
-    description: String,
-    property_type: PropertyType,
-    unit: Option(String),
-    order: Int,
-    created_at: String,
-    updated_at: String,
-  )
+  Property(id: Int, property_amount: Option(Float), property_type: PropertyType)
 }

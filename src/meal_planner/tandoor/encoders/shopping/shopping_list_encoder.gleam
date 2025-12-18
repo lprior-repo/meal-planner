@@ -202,18 +202,18 @@ fn encode_optional_shopping_list_id(id: Option(ids.ShoppingListId)) -> Json {
   }
 }
 
-/// Encode optional FoodId
-fn encode_optional_food_id(id: Option(ids.FoodId)) -> Json {
+/// Encode optional Food Int ID
+fn encode_optional_food_id(id: Option(Int)) -> Json {
   case id {
-    option.Some(id) -> json.int(ids.food_id_to_int(id))
+    option.Some(i) -> json.int(i)
     option.None -> json.null()
   }
 }
 
-/// Encode optional UnitId
-fn encode_optional_unit_id(id: Option(ids.UnitId)) -> Json {
+/// Encode optional Unit Int ID
+fn encode_optional_unit_id(id: Option(Int)) -> Json {
   case id {
-    option.Some(id) -> json.int(ids.unit_id_to_int(id))
+    option.Some(i) -> json.int(i)
     option.None -> json.null()
   }
 }

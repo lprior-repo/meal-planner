@@ -1,7 +1,8 @@
 /// Tandoor SDK - Recipe Ingredient Type
 ///
 /// Represents an ingredient used in a recipe with food, unit, and amount.
-/// Based on the Tandoor API Ingredient schema.
+/// Based on the Tandoor API Ingredient schema (API 2.3.6).
+import gleam/dynamic.{type Dynamic}
 import gleam/option.{type Option}
 import meal_planner/tandoor/types/food/food.{type Food}
 import meal_planner/tandoor/types/unit/unit.{type Unit}
@@ -28,6 +29,10 @@ pub type UnitId =
 /// - `is_header`: If true, display as section header (e.g., "For the sauce:")
 /// - `no_amount`: If true, amount is not specified (e.g., "Salt to taste")
 /// - `original_text`: Original text as parsed/entered (max 512 chars)
+/// - `conversions`: Unit conversion options for this ingredient (readonly)
+/// - `used_in_recipes`: Recipes using this food as an ingredient (readonly)
+/// - `always_use_plural_unit`: Whether to always pluralize the unit
+/// - `always_use_plural_food`: Whether to always pluralize the food name
 pub type Ingredient {
   Ingredient(
     id: Int,
@@ -39,5 +44,9 @@ pub type Ingredient {
     is_header: Bool,
     no_amount: Bool,
     original_text: Option(String),
+    conversions: List(Dynamic),
+    used_in_recipes: List(Dynamic),
+    always_use_plural_unit: Bool,
+    always_use_plural_food: Bool,
   )
 }

@@ -1,46 +1,31 @@
 /// Property decoder for Tandoor SDK
 ///
 /// This module provides JSON decoders for Property types.
-/// Handles both RECIPE and FOOD property types.
+/// Property represents an instance/value of a PropertyType applied to a recipe or food.
 import gleam/dynamic/decode
-import meal_planner/tandoor/core/ids
-import meal_planner/tandoor/types/property/property.{
-  type Property, type PropertyType, FoodProperty, Property, RecipeProperty,
-}
-
-/// Decode PropertyType from JSON string
-fn property_type_decoder() -> decode.Decoder(PropertyType) {
-  use type_string <- decode.then(decode.string)
-  case type_string {
-    "RECIPE" -> decode.success(RecipeProperty)
-    "FOOD" -> decode.success(FoodProperty)
-    _ ->
-      decode.failure(RecipeProperty, "Unknown property type: " <> type_string)
-  }
-}
+import meal_planner/tandoor/decoders/property/property_type_decoder
+import meal_planner/tandoor/types/property/property.{type Property, Property}
 
 /// Decode Property from JSON
+///
+/// Property is an instance with an amount and a reference to a PropertyType template.
 ///
 /// # Returns
 /// Decoder for Property type
 pub fn property_decoder() -> decode.Decoder(Property) {
-  use id <- decode.field("id", ids.property_id_decoder())
-  use name <- decode.field("name", decode.string)
-  use description <- decode.field("description", decode.string)
-  use property_type <- decode.field("property_type", property_type_decoder())
-  use unit <- decode.field("unit", decode.optional(decode.string))
-  use order <- decode.field("order", decode.int)
-  use created_at <- decode.field("created_at", decode.string)
-  use updated_at <- decode.field("updated_at", decode.string)
+  use id <- decode.field("id", decode.int)
+  use property_amount <- decode.field(
+    "property_amount",
+    decode.optional(decode.float),
+  )
+  use property_type <- decode.field(
+    "property_type",
+    property_type_decoder.property_type_decoder(),
+  )
 
   decode.success(Property(
     id: id,
-    name: name,
-    description: description,
+    property_amount: property_amount,
     property_type: property_type,
-    unit: unit,
-    order: order,
-    created_at: created_at,
-    updated_at: updated_at,
   ))
 }

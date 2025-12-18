@@ -21,12 +21,18 @@ import gleam/dynamic/decode
 import gleam/option.{type Option}
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/decoders/food/food_decoder
+import meal_planner/tandoor/decoders/shopping/shopping_list_recipe_decoder
 import meal_planner/tandoor/decoders/unit/unit_decoder
+import meal_planner/tandoor/decoders/user/user_decoder
 import meal_planner/tandoor/types/food/food.{type Food}
 import meal_planner/tandoor/types/shopping/shopping_list_entry.{
   type ShoppingListEntry, ShoppingListEntry,
 }
+import meal_planner/tandoor/types/shopping/shopping_list_recipe.{
+  type ShoppingListRecipe,
+}
 import meal_planner/tandoor/types/unit/unit.{type Unit}
+import meal_planner/tandoor/types/user/user.{type User}
 
 /// Shopping list entry from API response
 /// Contains nested Food and Unit objects instead of IDs
@@ -130,8 +136,8 @@ pub fn decoder() -> decode.Decoder(ShoppingListEntry) {
     "list_recipe",
     decode.optional(ids.shopping_list_id_decoder()),
   )
-  use food <- decode.field("food", decode.optional(ids.food_id_decoder()))
-  use unit <- decode.field("unit", decode.optional(ids.unit_id_decoder()))
+  use food <- decode.field("food", decode.optional(food_decoder.food_decoder()))
+  use unit <- decode.field("unit", decode.optional(unit_decoder.decode_unit()))
   use amount <- decode.field("amount", decode.float)
   use order <- decode.field("order", decode.int)
   use checked <- decode.field("checked", decode.bool)
@@ -139,7 +145,11 @@ pub fn decoder() -> decode.Decoder(ShoppingListEntry) {
     "ingredient",
     decode.optional(ids.ingredient_id_decoder()),
   )
-  use created_by <- decode.field("created_by", ids.user_id_decoder())
+  use created_by <- decode.field("created_by", user_decoder.user_decoder())
+  use list_recipe_data <- decode.field(
+    "list_recipe_data",
+    decode.optional(shopping_list_recipe_decoder.decode_shopping_list_recipe()),
+  )
   use created_at <- decode.field("created_at", decode.string)
   use updated_at <- decode.field("updated_at", decode.string)
   use completed_at <- decode.field(
@@ -158,6 +168,7 @@ pub fn decoder() -> decode.Decoder(ShoppingListEntry) {
     checked: checked,
     ingredient: ingredient,
     created_by: created_by,
+    list_recipe_data: list_recipe_data,
     created_at: created_at,
     updated_at: updated_at,
     completed_at: completed_at,

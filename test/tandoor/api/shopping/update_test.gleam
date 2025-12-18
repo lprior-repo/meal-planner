@@ -17,8 +17,8 @@ pub fn update_shopping_list_entry_delegates_to_client_test() {
   let update =
     ShoppingListEntryUpdate(
       list_recipe: None,
-      food: Some(ids.food_id_from_int(1)),
-      unit: Some(ids.unit_id_from_int(1)),
+      food: Some(1),
+      unit: Some(1),
       amount: 3.0,
       order: 0,
       checked: True,
@@ -108,8 +108,8 @@ pub fn update_with_all_fields_test() {
   let update =
     ShoppingListEntryUpdate(
       list_recipe: Some(ids.shopping_list_id_from_int(10)),
-      food: Some(ids.food_id_from_int(20)),
-      unit: Some(ids.unit_id_from_int(5)),
+      food: Some(20),
+      unit: Some(5),
       amount: 4.0,
       order: 3,
       checked: True,
