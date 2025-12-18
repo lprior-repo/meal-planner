@@ -9,6 +9,7 @@
 /// - HTTP errors from the API
 ///
 /// All checks are non-blocking and include timeout protection.
+import birl
 import gleam/json
 import gleam/string
 import meal_planner/config
@@ -156,9 +157,9 @@ fn error_to_status_and_message(error: String) -> #(ConnectivityStatus, String) {
 }
 
 /// Get current timestamp in milliseconds
-/// This is a helper function that in production would call Erlang's timer functions
 fn get_current_timestamp_ms() -> Int {
-  0
+  birl.now()
+  |> birl.to_unix_milli
 }
 
 /// Convert health check result to JSON for HTTP responses
