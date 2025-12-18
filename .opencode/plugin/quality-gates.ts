@@ -40,7 +40,7 @@ export const QualityGatesPlugin: Plugin = async ({ project, client, $, directory
 
   // Helper: Detect project type
   const detectProject = async (): Promise<"gleam" | "go" | "both" | "unknown"> => {
-    const hasGleam = await $`test -f gleam/gleam.toml && echo "yes"`.text().catch(() => "")
+    const hasGleam = await $`test -f gleam.toml && echo "yes"`.text().catch(() => "")
     const hasGo = await $`test -f go.mod && echo "yes"`.text().catch(() => "")
     
     if (hasGleam.includes("yes") && hasGo.includes("yes")) return "both"
@@ -75,7 +75,7 @@ export const QualityGatesPlugin: Plugin = async ({ project, client, $, directory
 
       if (projectType === "gleam" || projectType === "both") {
         // Gleam format check
-        const fmtResult = await $`cd gleam && gleam format --check . 2>&1`.text().catch((e) => e.message)
+        const fmtResult = await $`gleam format --check . 2>&1`.text().catch((e) => e.message)
         if (fmtResult.includes("would reformat")) {
           issues.push("Gleam files need formatting")
           output += `Gleam format issues:\n${fmtResult}\n`
@@ -118,7 +118,7 @@ export const QualityGatesPlugin: Plugin = async ({ project, client, $, directory
       }
 
       if (projectType === "gleam" || projectType === "both") {
-        const testResult = await $`cd gleam && gleam test 2>&1`.text().catch((e) => e.message)
+        const testResult = await $`gleam test 2>&1`.text().catch((e) => e.message)
         output += `Gleam tests:\n${testResult}\n`
         
         if (testResult.includes("FAILED") || testResult.includes("error:")) {
@@ -161,7 +161,7 @@ export const QualityGatesPlugin: Plugin = async ({ project, client, $, directory
       }
 
       if (projectType === "gleam" || projectType === "both") {
-        const buildResult = await $`cd gleam && gleam build 2>&1`.text().catch((e) => e.message)
+        const buildResult = await $`gleam build 2>&1`.text().catch((e) => e.message)
         output += `Gleam build:\n${buildResult}\n`
         
         if (buildResult.includes("error:")) {
@@ -204,7 +204,7 @@ export const QualityGatesPlugin: Plugin = async ({ project, client, $, directory
       }
 
       if (projectType === "gleam" || projectType === "both") {
-        const checkResult = await $`cd gleam && gleam check 2>&1`.text().catch((e) => e.message)
+        const checkResult = await $`gleam check 2>&1`.text().catch((e) => e.message)
         output += `Gleam check:\n${checkResult}\n`
         
         if (checkResult.includes("error:")) {
@@ -442,7 +442,7 @@ export const QualityGatesPlugin: Plugin = async ({ project, client, $, directory
             }
 
             if (projectType === "gleam" || projectType === "both") {
-              await $`cd gleam && gleam format .`.quiet()
+              await $`gleam format .`.quiet()
               output += "✅ Gleam files formatted\n"
             }
 

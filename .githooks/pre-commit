@@ -21,12 +21,8 @@
 
 set -e
 
-# Determine if we're in a monorepo with gleam/ subdirectory
-if [ -d gleam ]; then
-    GLEAM_DIR="gleam"
-else
-    GLEAM_DIR="."
-fi
+# Gleam project is at root
+GLEAM_DIR="."
 
 echo "🔍 Running pre-commit quality gates..."
 

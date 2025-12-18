@@ -13,14 +13,14 @@ if [[ "$COMMIT_SOURCE" == "" ]]; then
     cd "$(git rev-parse --show-toplevel)"
 
     # Quick check if build would fail
-    if [[ -f "gleam/gleam.toml" ]]; then
-        if ! (cd gleam && gleam build >/dev/null 2>&1); then
+    if [[ -f "gleam.toml" ]]; then
+        if ! (gleam build >/dev/null 2>&1); then
             # Add reminder at the bottom of commit message
             echo "" >> "$COMMIT_MSG_FILE"
             echo "# ⚠️  WARNING: Code has compilation errors!" >> "$COMMIT_MSG_FILE"
             echo "#" >> "$COMMIT_MSG_FILE"
             echo "# REMINDER: Fix errors before pushing/merging to main!" >> "$COMMIT_MSG_FILE"
-            echo "# Run: cd gleam && gleam build" >> "$COMMIT_MSG_FILE"
+            echo "# Run: gleam build" >> "$COMMIT_MSG_FILE"
             echo "#" >> "$COMMIT_MSG_FILE"
             echo "# If you used --no-verify, you MUST fix these before:" >> "$COMMIT_MSG_FILE"
             echo "#   • git push (will be blocked by pre-push hook)" >> "$COMMIT_MSG_FILE"

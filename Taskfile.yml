@@ -1,7 +1,6 @@
 version: '3'
 
 vars:
-  GLEAM_DIR: '{{.ROOT_DIR}}/gleam'
   APP_DB: 'meal_planner'
   POSTGRES_USER: 'postgres'
 
@@ -116,26 +115,24 @@ tasks:
         if [ "$FOOD_COUNT" -gt "0" ]; then
           echo "   ✓ Database has $FOOD_COUNT foods"
         else
-          echo "   ⚠️  Database is empty. Run migrations: task db:migrate"
+          echo "   ⚠️  Database is empty. Run schema files: task db:migrate"
         fi
         echo ""
     silent: true
 
   db:migrate:
-    desc: "Run database migrations"
-    dir: '{{.GLEAM_DIR}}'
+    desc: "Run database schema"
     cmds:
       - |
-        echo "📊 Running migrations..."
-        for migration in migrations_pg/*.sql; do
-          echo "   Applying $(basename $migration)..."
-          psql -U {{.POSTGRES_USER}} -d {{.APP_DB}} -f "$migration"
+        echo "📊 Running schema..."
+        for schema_file in schema/*.sql; do
+          echo "   Applying $(basename $schema_file)..."
+          psql -U {{.POSTGRES_USER}} -d {{.APP_DB}} -f "$schema_file"
         done
-        echo "   ✓ Migrations complete"
+        echo "   ✓ Schema complete"
 
   db:import:
     desc: "Import USDA food database (takes ~5 minutes)"
-    dir: '{{.GLEAM_DIR}}'
     deps: [build]
     cmds:
       - |
@@ -149,7 +146,6 @@ tasks:
   # ============================================================================
   api:start:
     desc: "Start the Gleam API server"
-    dir: '{{.GLEAM_DIR}}'
     deps: [build]
     cmds:
       - task: api:stop
@@ -197,7 +193,6 @@ tasks:
   # ============================================================================
   build:
     desc: "Build the Gleam application"
-    dir: '{{.GLEAM_DIR}}'
     sources:
       - 'src/**/*.gleam'
       - 'gleam.toml'
@@ -211,26 +206,22 @@ tasks:
   # ============================================================================
   dev:
     desc: "Development mode - build and run with auto-reload"
-    dir: '{{.GLEAM_DIR}}'
     cmds:
       - task: build
       - gleam run
 
   test:
     desc: "Run all tests"
-    dir: '{{.GLEAM_DIR}}'
     cmds:
       - gleam test
 
   format:
     desc: "Format all Gleam code"
-    dir: '{{.GLEAM_DIR}}'
     cmds:
       - gleam format
 
   clean:
     desc: "Clean build artifacts"
-    dir: '{{.GLEAM_DIR}}'
     cmds:
       - gleam clean
 

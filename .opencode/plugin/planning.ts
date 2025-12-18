@@ -13,7 +13,7 @@ import { tool } from "@opencode-ai/plugin"
  * - file_reserve: Reserve files for exclusive editing
  */
 
-const PROJECT_KEY = "/home/lewis/src/meal-planner"
+const PROJECT_KEY = "."
 
 export const PlanningPlugin: Plugin = async ({ project, client, $, directory }) => {
   console.log("[planning] Plugin initialized")
