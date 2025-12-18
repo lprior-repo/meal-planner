@@ -235,31 +235,131 @@ Test must fail first (RED)
 Minimal implementation makes test pass (GREEN)
 Tests must be atomic, small, deterministic
 
+🔴 RULE #5: MEM0 MEMORY INTEGRATION IS MANDATORY
+ALL significant work must capture learnings to mem0 vector store.
+Memory is LOCAL (Ollama + Qdrant), fully offline, no cloud.
+See Memory Protocol section below.
+
 ✅ Workflow
 Get/Create Beads task → bd create or bd ready --json
+Search memories → search_memories(query) for context
 Start task → bd update task-id --status in_progress
 Navigate with Serena → serena_find_symbol, serena_find_referencing_symbols
 Edit with Serena → serena_replace_symbol_body or serena_insert_after_symbol
 Complete → bd close task-id --reason "description"
+Save learnings → save_memory(formatted_summary)
+Push changes → git add/commit/push && bd sync
 
 Stack
 Agent Mail MCP - Git-backed messaging, file reservations
 Beads MCP - Git-backed issue tracking (CRITICAL)
 Serena MCP - LSP-powered semantic navigation (MANDATORY)
+mem0 MCP - Vector store for persistent learnings (MANDATORY)
 All tools accessed via MCP servers, configured in opencode.json.
 
 Prerequisites
-Agent Mail (am), Beads MCP (beads-mcp), Serena, OpenCode
+Agent Mail (am), Beads MCP (beads-mcp), Serena, mem0 (Ollama), OpenCode
 Setup
 bd init
 am  # separate terminal
+mem0 mcp server (stdio mode)
 opencode
 
 Session Start
-bd ready --json
+bd ready --json                       # Find available tasks
+search_memories("task_context")       # Retrieve relevant context
 opencode && /sync
 bd update bd-xxxx --status in_progress
 /reserve <pattern>
+
+## Memory Protocol (MANDATORY)
+
+### When to Save (Decision Tree)
+Save memory IF ANY of these are true:
+1. **Code Architecture Decision** - Why was this pattern chosen over alternatives?
+   - Format: `meal-planner: [Component] uses [Pattern] instead of [Alternative] - rationale: [Why]`
+   - Example: `meal-planner: tandoor/handlers uses CrudHandler abstraction instead of inline handlers - rationale: reduces 2000+ lines duplication, consistent error handling, testable`
+
+2. **Bug Root Cause + Solution** - Problem discovered and fixed
+   - Format: `meal-planner: [Component] bug - cause: [Root cause], fix: [Solution], impact: [Scope]`
+   - Example: `meal-planner: query builders bug - cause: limit/offset not parsed from URL params, fix: use gleam/http.get_query, impact: pagination now works in 9 handlers`
+
+3. **Project Context Evolved** - Architecture, constraints, or patterns changed
+   - Format: `meal-planner: [Category] update - [What changed], [Why], [Files affected]`
+   - Example: `meal-planner: encoder consolidation - extracted 150-200 lines duplication into query_builders module, files: tandoor handlers (9 files)`
+
+4. **Test Patterns Discovered** - Useful test fixtures, factories, or assertions
+   - Format: `meal-planner: test pattern - [Name], usage: [When to use], pattern: [Code snippet]`
+   - Example: `meal-planner: test pattern - response mocking, usage: when testing handlers that make HTTP calls, pattern: ResponseMock(body: "...", status: 200)`
+
+5. **Gleam Idiom Lessons** - Anti-patterns avoided or idioms mastered
+   - Format: `meal-planner: gleam idiom - [Pattern name], do: [What to do], avoid: [What not to do]`
+   - Example: `meal-planner: gleam idiom - result chaining, do: use result.try() for railway-oriented pipelines, avoid: nested case statements for multiple Results`
+
+### When NOT to Save
+❌ Trivial syntax fixes
+❌ Obvious one-liners
+❌ Things already in Beads (task descriptions already capture intent)
+❌ Generic knowledge (use global CLAUDE.md instead)
+❌ Temporary debugging notes
+
+### Memory Format (STRICT)
+
+**GOOD:**
+```
+meal-planner: tandoor/handlers - pagination logic consolidates 9 handlers, eliminates 50+ lines duplication per handler. Uses limit/offset from query params, returns ListResponse envelope. Pattern: build_pagination_params() → pog.select().limit().offset() → encode_response()
+```
+
+**BAD:**
+```
+Consolidation helps code quality
+We refactored things
+Pagination is important
+```
+
+### Memory Search Protocol (At Task Start)
+
+Before starting ANY task:
+```
+search_memories("bd-xxxx task_name")        # Search by task
+search_memories("component_name")            # Search by component
+search_memories("pattern_name")              # Search by pattern
+search_memories("bug_fix")                   # Find related fixes
+```
+
+Example workflow:
+1. `bd ready --json` → Get bd-1234 "Implement exercise handlers"
+2. `search_memories("exercise handlers")` → Retrieve related patterns/decisions
+3. Read results → Understand prior work in handlers, constraints, patterns
+4. `bd update bd-1234 --status in_progress`
+5. Start coding with full context
+
+### Memory Archival (Task Completion)
+
+When `bd close bd-xxxx`:
+
+1. **Did this task involve architecture/patterns?**
+   → Save: `meal-planner: [component] pattern - [what/why/how]`
+
+2. **Did this task fix a bug?**
+   → Save: `meal-planner: bug fix - cause: [cause], solution: [code pattern], impact: [scope]`
+
+3. **Did this task consolidate code?**
+   → Save: `meal-planner: consolidation - [before/after], duplication eliminated: [X lines], pattern: [extraction name]`
+
+4. **Did this task discover a Gleam idiom?**
+   → Save: `meal-planner: gleam idiom - [name], do: [pattern], avoid: [anti-pattern]`
+
+Example after completing bd-xxx (Encoder duplication):
+```
+save_memory("""
+meal-planner: encoder consolidation - 9 tandoor handlers had 150-200 lines of duplicate pagination encoder logic. Extracted into query_builders.encode_list_response(). Pattern:
+- build_pagination_params(limit, offset) → json.Object
+- encode_list_response(items, count, next, prev) → string
+Benefits: 1350+ lines eliminated, consistent error handling, single source of truth.
+Related: bd-xxx (query_builders refactor)
+""")
+```
 
 Beads (via MCP)
 Beads accessed through OpenCode MCP tools (beads_*):
@@ -267,7 +367,7 @@ Beads accessed through OpenCode MCP tools (beads_*):
 # Check ready tasks
 beads_ready
 
-# Update task status  
+# Update task status
 beads_status taskId="bd-xxxx" status="in_progress"
 
 # Create new task
