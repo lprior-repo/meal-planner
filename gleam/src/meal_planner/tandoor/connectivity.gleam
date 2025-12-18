@@ -10,7 +10,10 @@
 ///
 /// All checks are non-blocking and include timeout protection.
 import birl
+import gleam/http/request
+import gleam/httpc
 import gleam/json
+import gleam/result
 import gleam/string
 import meal_planner/config
 import meal_planner/logger
@@ -123,26 +126,28 @@ fn perform_health_request(
   _config: config.Config,
   url: String,
 ) -> Result(String, String) {
-  // For now, we'll implement a basic check that validates the URL structure
-  // and returns a success message indicating connectivity would be checked
-  // This allows the module to be functional without requiring actual HTTP calls
-  // in the compilation environment
+  // Build HTTP GET request
+  let request_result =
+    request.to(url)
+    |> result.map_error(fn(_) { "invalid_url" })
 
-  // Validate URL format
-  case validate_url(url) {
-    False -> Error("invalid_url")
-    True -> {
-      // In a production environment with runtime HTTP capability,
-      // this would make an actual request to Tandoor.
-      // For now, return success to indicate the check would pass.
-      Ok("Tandoor health check response (mock)")
+  use req <- result.try(request_result)
+
+  // Execute the HTTP request with timeout handling
+  case httpc.send(req) {
+    Ok(response) -> {
+      case response.status {
+        200 -> Ok(response.body)
+        status -> Error("http_error_" <> string.inspect(status))
+      }
+    }
+    Error(_) -> {
+      // Network errors could be: connection refused, timeout, DNS failure, etc.
+      // We classify them as "connection_refused" for simplicity
+      // The httpc library doesn't provide detailed error information
+      Error("connection_refused")
     }
   }
-}
-
-/// Validate that a URL has the expected format
-fn validate_url(url: String) -> Bool {
-  string.starts_with(url, "http://") || string.starts_with(url, "https://")
 }
 
 /// Convert error type to status and message

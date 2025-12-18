@@ -60,6 +60,31 @@ pub opaque type ShoppingListEntryId {
   ShoppingListEntryId(Int)
 }
 
+/// Type-safe wrapper for Property IDs
+pub opaque type PropertyId {
+  PropertyId(Int)
+}
+
+/// Type-safe wrapper for ExportLog IDs
+pub opaque type ExportLogId {
+  ExportLogId(Int)
+}
+
+/// Type-safe wrapper for ImportLog IDs
+pub opaque type ImportLogId {
+  ImportLogId(Int)
+}
+
+/// Type-safe wrapper for Cuisine IDs
+pub opaque type CuisineId {
+  CuisineId(Int)
+}
+
+/// Type-safe wrapper for Category IDs
+pub opaque type CategoryId {
+  CategoryId(Int)
+}
+
 // RecipeId functions
 pub fn recipe_id_to_int(id: RecipeId) -> Int {
   let RecipeId(n) = id
@@ -283,4 +308,34 @@ pub fn property_id_from_int(n: Int) -> PropertyId {
 pub fn property_id_decoder() -> decode.Decoder(PropertyId) {
   decode.int
   |> decode.map(PropertyId)
+}
+
+// CuisineId functions
+pub fn cuisine_id_to_int(id: CuisineId) -> Int {
+  let CuisineId(n) = id
+  n
+}
+
+pub fn cuisine_id_from_int(n: Int) -> CuisineId {
+  CuisineId(n)
+}
+
+pub fn cuisine_id_decoder() -> decode.Decoder(CuisineId) {
+  decode.int
+  |> decode.map(CuisineId)
+}
+
+// CategoryId functions
+pub fn category_id_to_int(id: CategoryId) -> Int {
+  let CategoryId(n) = id
+  n
+}
+
+pub fn category_id_from_int(n: Int) -> CategoryId {
+  CategoryId(n)
+}
+
+pub fn category_id_decoder() -> decode.Decoder(CategoryId) {
+  decode.int
+  |> decode.map(CategoryId)
 }
