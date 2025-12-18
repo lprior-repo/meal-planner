@@ -115,21 +115,21 @@ tasks:
         if [ "$FOOD_COUNT" -gt "0" ]; then
           echo "   ✓ Database has $FOOD_COUNT foods"
         else
-          echo "   ⚠️  Database is empty. Run migrations: task db:migrate"
+          echo "   ⚠️  Database is empty. Run schema files: task db:migrate"
         fi
         echo ""
     silent: true
 
   db:migrate:
-    desc: "Run database migrations"
+    desc: "Run database schema"
     cmds:
       - |
-        echo "📊 Running migrations..."
-        for migration in migrations_pg/*.sql; do
-          echo "   Applying $(basename $migration)..."
-          psql -U {{.POSTGRES_USER}} -d {{.APP_DB}} -f "$migration"
+        echo "📊 Running schema..."
+        for schema_file in schema/*.sql; do
+          echo "   Applying $(basename $schema_file)..."
+          psql -U {{.POSTGRES_USER}} -d {{.APP_DB}} -f "$schema_file"
         done
-        echo "   ✓ Migrations complete"
+        echo "   ✓ Schema complete"
 
   db:import:
     desc: "Import USDA food database (takes ~5 minutes)"

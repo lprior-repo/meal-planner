@@ -7,7 +7,7 @@
 /// - storage/profile: User profiles, nutrition state, and goal management
 /// - storage/foods: USDA food database searching and custom food management
 /// - storage/logs: Food log entry operations and nutritional summaries
-/// - storage/migrations: Database schema initialization and updates
+/// - storage/schema: Database schema initialization and updates
 ///
 /// **Design Philosophy:**
 /// This facade keeps the public API simple and focused, while internal implementations
@@ -19,7 +19,7 @@ import meal_planner/storage/foods
 
 import meal_planner/storage/logs
 
-import meal_planner/storage/migrations
+import meal_planner/storage/schema
 
 // ============================================================================
 // Database Configuration (from storage/profile)
@@ -178,9 +178,9 @@ pub fn get_weekly_summary(conn, user_id, start_date) {
   logs.get_weekly_summary(conn, user_id, start_date)
 }
 
-// Migrations
-pub fn init_migrations() {
-  migrations.init_migrations()
+// Schema initialization
+pub fn init_schema() {
+  schema.init_schema()
 }
 
 /// Get recently logged USDA foods for the user
@@ -188,7 +188,7 @@ pub fn get_recently_logged_foods(conn, limit) {
   logs.get_recently_logged_foods(conn, limit)
 }
 
-// init_migrations is re-exported directly from migrations import above
+// init_schema is re-exported directly from schema import above
 
 // Re-export types for type annotations
 pub type StorageError =

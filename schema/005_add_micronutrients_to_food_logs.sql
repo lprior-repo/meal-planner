@@ -1,4 +1,4 @@
--- Migration 005: Add micronutrients to food_logs
+-- Schema change 005: Add micronutrients to food_logs
 -- Adds 21 micronutrient columns for complete nutrition tracking
 -- All columns are REAL NULL for backward compatibility
 

@@ -1,8 +1,8 @@
 -- ============================================================================
--- Migration: Rename source_type 'recipe' to 'mealie_recipe'
+-- Schema change: Rename source_type 'recipe' to 'mealie_recipe'
 -- ============================================================================
 --
--- This migration updates the food_logs table to rename the source_type value
+-- This schema change updates the food_logs table to rename the source_type value
 -- 'recipe' to 'mealie_recipe' to better reflect that these logs come from
 -- Mealie recipe sources, not the deprecated local recipes table.
 --
@@ -43,7 +43,7 @@ COMMENT ON CONSTRAINT food_logs_source_type_check ON food_logs IS
 -- Performance Notes
 -- ============================================================================
 --
--- This migration is safe to run on production:
+-- This schema change is safe to run on production:
 -- - UPDATE is fast (should be 0 rows if 'recipe' was never used)
 -- - Constraint changes are quick
 -- - No data loss

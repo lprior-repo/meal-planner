@@ -1,4 +1,4 @@
--- Migration: Create search analytics tracking table
+-- Schema change: Create search analytics tracking table
 -- Date: 2025-12-08
 -- Purpose: Track search quality metrics for optimization
 

@@ -1,5 +1,5 @@
 -- Add micronutrient goals to user_profile table
--- Migration 016: Add micronutrient_goals column to track daily micronutrient targets
+-- Schema change 016: Add micronutrient_goals column to track daily micronutrient targets
 
 ALTER TABLE user_profile
 ADD COLUMN IF NOT EXISTS micronutrient_goals TEXT;

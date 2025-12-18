@@ -11,7 +11,7 @@ import gleam/option.{None, Some}
 import meal_planner/web/routes/auth
 import meal_planner/web/routes/fatsecret
 import meal_planner/web/routes/health
-import meal_planner/web/routes/legacy
+import meal_planner/web/routes/misc
 import meal_planner/web/routes/meal_planning
 import meal_planner/web/routes/nutrition
 import meal_planner/web/routes/tandoor
@@ -28,7 +28,7 @@ pub type Context =
 pub fn route(req: wisp.Request, ctx: Context) -> wisp.Response {
   let segments = wisp.path_segments(req)
 
-  // Try each router in order: health -> auth -> nutrition -> meal_planning -> fatsecret -> tandoor -> legacy -> 404
+  // Try each router in order: health -> auth -> nutrition -> meal_planning -> fatsecret -> tandoor -> misc -> 404
   case health.route(req, segments, ctx) {
     Some(resp) -> resp
     None ->
@@ -47,7 +47,7 @@ pub fn route(req: wisp.Request, ctx: Context) -> wisp.Response {
                       case tandoor.route(req, segments, ctx) {
                         Some(resp) -> resp
                         None ->
-                          case legacy.route(req, segments, ctx) {
+                          case misc.route(req, segments, ctx) {
                             Some(resp) -> resp
                             None -> wisp.not_found()
                           }

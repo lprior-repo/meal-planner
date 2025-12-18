@@ -76,7 +76,7 @@ cd gleam
 gleam test --target erlang
 ```
 
-**Note:** As of commit time, tests are blocked by compilation errors in other modules (`pagination.gleam`, `nutrition_decoder.gleam`) due to `gleam/dynamic` API migration. These are unrelated to this module.
+**Note:** As of commit time, tests are blocked by compilation errors in other modules (`pagination.gleam`, `nutrition_decoder.gleam`) due to `gleam/dynamic` API transition. These are unrelated to this module.
 
 ### Standalone Verification
 
@@ -143,11 +143,11 @@ This module is a foundational piece for:
 ## Known Issues
 
 - None in this module
-- Blocked tests are due to external decoder migration (other agents' work)
+- Blocked tests are due to external decoder transition (other agents' work)
 
 ## Next Steps for Other Agents
 
-1. Fix `gleam/dynamic` → `gleam/dynamic/decode` migration in:
+1. Fix `gleam/dynamic` → `gleam/dynamic/decode` transition in:
    - `tandoor/core/pagination.gleam` (use new decode API)
    - `tandoor/decoders/recipe/nutrition_decoder.gleam` (decoder return types)
 

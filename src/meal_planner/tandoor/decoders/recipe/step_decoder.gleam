@@ -64,7 +64,7 @@ pub fn step_decoder() -> decode.Decoder(Step) {
   ))
 }
 
-/// Decode a simple Step from JSON (legacy format)
+/// Decode a simple Step from JSON (simplified format)
 ///
 /// Supports the old TandoorStep format with minimal fields.
 /// Used for backwards compatibility with existing recipe decoders.

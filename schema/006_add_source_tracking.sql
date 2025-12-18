@@ -1,4 +1,4 @@
--- Migration 006: Add source tracking to food_logs (PostgreSQL version)
+-- Schema change 006: Add source tracking to food_logs (PostgreSQL version)
 -- Allows tracking whether a logged food came from:
 -- - 'recipe': From recipes table
 -- - 'custom_food': From custom_foods table

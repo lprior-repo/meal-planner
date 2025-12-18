@@ -1,8 +1,8 @@
 -- ============================================================================
--- Migration 029: Update recipe_json fields to Tandoor format
+-- Schema change 029: Update recipe_json fields to Tandoor format
 -- ============================================================================
 --
--- This migration updates the recipe_json column in auto_meal_plans to store
+-- This schema change updates the recipe_json column in auto_meal_plans to store
 -- recipes in Tandoor format instead of the legacy internal format.
 --
 -- Changes:
@@ -21,7 +21,7 @@
 -- - fodmap_level
 -- - vertical_compliant
 --
--- Note: This migration assumes recipe_json is stored as TEXT (JSON string)
+-- Note: This schema change assumes recipe_json is stored as TEXT (JSON string)
 -- and converts it to proper Tandoor format while maintaining backward compatibility.
 --
 -- ============================================================================
@@ -162,11 +162,11 @@ COMMIT;
 -- Rollback Strategy
 -- ============================================================================
 --
--- If this migration needs to be rolled back, you would need to:
+-- If this schema change needs to be rolled back, you would need to:
 -- 1. Restore the recipe_json from a backup (since the transformation may not be reversible)
--- 2. Or, maintain a separate column with the original format before applying this migration
+-- 2. Or, maintain a separate column with the original format before applying this schema change
 --
--- For future migrations, consider:
+-- For future schema changes, consider:
 -- - Adding a recipe_json_backup column before transformation
 -- - Or using versioning to track which format is stored
 --

@@ -1,5 +1,5 @@
--- OBSOLETE: This migration is no longer used.
--- Migration 014: Audit Logging for recipe_sources (PostgreSQL)
+-- OBSOLETE: This schema change is no longer used.
+-- Schema change 014: Audit Logging for recipe_sources (PostgreSQL)
 -- Adds comprehensive audit trail for INSERT/UPDATE/DELETE operations on recipe_sources table
 
 -- Create audit table to track all changes to recipe_sources

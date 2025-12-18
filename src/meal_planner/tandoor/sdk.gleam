@@ -137,10 +137,10 @@ pub fn to_client_config(sdk: SDK) -> ClientConfig {
 // }
 
 // ============================================================================
-// Migration Helpers
+// Transition Helpers
 // ============================================================================
 
-/// Create SDK from existing ClientConfig (migration helper)
+/// Create SDK from existing ClientConfig (transition helper)
 pub fn from_client_config(config: ClientConfig) -> SDK {
   SDK(
     base_url: config.base_url,
@@ -170,7 +170,7 @@ pub fn with_session(base_url: String, username: String, password: String) -> SDK
 }
 
 // ============================================================================
-// NoAuth Type (for testing/migration)
+// NoAuth Type (for testing/transition)
 // ============================================================================
 
 /// No authentication (for testing)

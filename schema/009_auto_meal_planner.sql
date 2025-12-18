@@ -1,4 +1,4 @@
--- Migration 009: Auto Meal Planner Schema (PostgreSQL)
+-- Schema change 009: Auto Meal Planner Schema (PostgreSQL)
 -- Adds tables for recipe sources, auto-generated meal plans, and diet compliance tracking
 
 -- Recipe sources table for API/scraper configuration

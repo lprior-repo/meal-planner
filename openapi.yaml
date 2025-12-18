@@ -57,8 +57,8 @@ tags:
     description: Recipe management via Tandoor
   - name: Nutrition Control
     description: Nutrition state tracking and recommendations
-  - name: Legacy
-    description: Legacy endpoints being phased out
+  - name: Misc
+    description: Miscellaneous utility endpoints
 
 paths:
   /:
@@ -1840,9 +1840,9 @@ paths:
     get:
       operationId: getDashboard
       tags:
-        - Legacy
+        - Misc
       summary: Dashboard page (deprecated)
-      description: Legacy dashboard endpoint - use /api/nutrition/daily-status instead
+      description: Dashboard endpoint - use /api/nutrition/daily-status instead
       deprecated: true
       responses:
         200:
@@ -1852,9 +1852,9 @@ paths:
     get:
       operationId: getLogFoodForm
       tags:
-        - Legacy
+        - Misc
       summary: Food logging form (deprecated)
-      description: Legacy food logging form - consider using diary endpoints
+      description: Food logging form - consider using diary endpoints
       deprecated: true
       parameters:
         - name: fdcId
@@ -1870,9 +1870,9 @@ paths:
     get:
       operationId: getDashboardData
       tags:
-        - Legacy
+        - Misc
       summary: Dashboard data (deprecated)
-      description: Legacy endpoint - use /api/nutrition/daily-status instead
+      description: Endpoint - use /api/nutrition/daily-status instead
       deprecated: true
       responses:
         200:
@@ -1882,7 +1882,7 @@ paths:
     post:
       operationId: scoreRecipe
       tags:
-        - Legacy
+        - Misc
       summary: Score recipe (deprecated)
       description: AI-based recipe scoring - scoring moved to compliance analysis
       deprecated: true
@@ -1900,7 +1900,7 @@ paths:
     get:
       operationId: checkVerticalDietCompliance
       tags:
-        - Legacy
+        - Misc
       summary: Check Vertical Diet compliance (deprecated)
       description: Checks if recipe complies with Vertical Diet principles
       deprecated: true
@@ -1918,7 +1918,7 @@ paths:
     post:
       operationId: calculateMacros
       tags:
-        - Legacy
+        - Misc
       summary: Calculate macros (deprecated)
       description: Calculate macronutrients - use diary endpoints instead
       deprecated: true
@@ -1936,9 +1936,9 @@ paths:
     post:
       operationId: logFood
       tags:
-        - Legacy
+        - Misc
       summary: Log food (deprecated)
-      description: Legacy food logging - use /api/fatsecret/diary/entries instead
+      description: Food logging - use /api/fatsecret/diary/entries instead
       deprecated: true
       requestBody:
         required: true

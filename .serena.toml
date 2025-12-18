@@ -98,7 +98,7 @@ target = "erlang"
 src_dir = "src"
 test_dir = "test"
 build_dir = "build"
-migrations_dir = "migrations_pg"
+migrations_dir = "schema"
 
 # Key modules to understand
 core_modules = [

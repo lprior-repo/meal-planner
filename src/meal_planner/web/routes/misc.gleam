@@ -1,27 +1,27 @@
-//// Legacy endpoint routing module
+//// Miscellaneous endpoint routing module
 ////
-//// Routes that are being phased out or miscellaneous:
+//// Routes for dashboard and utility endpoints:
 //// - Dashboard UI: /dashboard, /log/food/:id
-//// - Legacy API: /api/dashboard/data, /api/ai/score-recipe, etc.
+//// - Utility API: /api/dashboard/data, /api/ai/score-recipe, etc.
 
 import gleam/option.{type Option, None, Some}
 import meal_planner/web/handlers
 import meal_planner/web/routes/types
 import wisp
 
-/// Route legacy and miscellaneous requests
+/// Route miscellaneous requests
 pub fn route(
   req: wisp.Request,
   segments: List(String),
   ctx: types.Context,
 ) -> Option(wisp.Response) {
   case segments {
-    // Dashboard UI (legacy)
+    // Dashboard UI
     ["dashboard"] -> Some(handlers.handle_dashboard(req, ctx.db))
     ["log", "food", fdc_id] ->
       Some(handlers.handle_log_food_form(req, ctx.db, fdc_id))
 
-    // Legacy API endpoints
+    // Utility API endpoints
     ["api", "dashboard", "data"] ->
       Some(handlers.handle_dashboard_data(req, ctx.db))
     ["api", "ai", "score-recipe"] -> Some(handlers.handle_score_recipe(req))

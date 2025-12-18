@@ -349,7 +349,7 @@ The helpers support:
 - ✓ Absolute and relative URLs
 - ✓ HTTP and HTTPS schemes
 
-## Migration Guide
+## Transition Guide
 
 If you're currently handling pagination manually:
 

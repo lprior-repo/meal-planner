@@ -1,5 +1,5 @@
--- OBSOLETE: This migration is no longer used.
--- Migration: Add Tim Ferriss Slow Carb Diet Recipe Examples
+-- OBSOLETE: This schema change is no longer used.
+-- Schema change: Add Tim Ferriss Slow Carb Diet Recipe Examples
 -- Based on "The 4-Hour Body" principles:
 -- - High protein (30g+ per meal)
 -- - Legumes (black beans, lentils, pinto beans)

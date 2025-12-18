@@ -5,7 +5,7 @@
 /// - foods: USDA food database and custom foods
 /// - logs: Food logging and daily/weekly summaries
 /// - nutrients: Nutrient calculations and parsing
-/// - migrations: Database migration utilities
+/// - schema: Database schema initialization utilities
 ///
 /// Import this module with:
 /// ```
@@ -19,7 +19,7 @@
 /// import meal_planner/storage/foods
 /// import meal_planner/storage/logs
 /// import meal_planner/storage/nutrients
-/// import meal_planner/storage/migrations
+/// import meal_planner/storage/schema
 /// ```
 // This file serves as documentation and organization hub
 // All functionality is in submodules - see them for actual API

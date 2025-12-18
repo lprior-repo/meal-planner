@@ -1,8 +1,8 @@
 -- ============================================================================
--- Migration 025: Migrate from Mealie to Tandoor Recipe System
+-- Schema change 025: Migrate from Mealie to Tandoor Recipe System
 -- ============================================================================
 --
--- This migration handles the transition from Mealie to Tandoor as the primary
+-- This schema change handles the transition from Mealie to Tandoor as the primary
 -- recipe management system. It updates database constraints, renames source types,
 -- and prepares for recipe JSON format conversion.
 --
@@ -10,7 +10,7 @@
 -- 1. Update food_logs.source_type constraint: remove 'mealie_recipe', add 'tandoor_recipe'
 -- 2. Migrate existing 'mealie_recipe' entries to 'tandoor_recipe'
 -- 3. Update recipe_sources table configuration for Tandoor
--- 4. Create migration progress tracking table for monitoring the transition
+-- 4. Create schema change progress tracking table for monitoring the transition
 --
 -- ============================================================================
 
@@ -72,18 +72,18 @@ WHERE source_type = 'mealie_recipe';
 -- Step 5: Update auto_meal_plans table - prepare recipe_json for Tandoor format
 -- ============================================================================
 
--- Note: The recipe_json column already exists (created in migration 023)
--- This comment documents that application-level migration will handle JSON transformation
+-- Note: The recipe_json column already exists (created in schema change 023)
+-- This comment documents that application-level schema change will handle JSON transformation
 -- from Mealie format to Tandoor format, as this is safer than complex SQL transformations
 
 COMMENT ON COLUMN auto_meal_plans.recipe_json IS
 'Full recipe data serialized as JSON in Tandoor API format. Updated during application-level migration from Mealie format.';
 
 -- ============================================================================
--- Step 6: Create migration progress tracking table
+-- Step 6: Create schema change progress tracking table
 -- ============================================================================
 
--- This table tracks the migration progress from Mealie to Tandoor
+-- This table tracks the schema change progress from Mealie to Tandoor
 -- It helps with monitoring and debugging the transition
 CREATE TABLE IF NOT EXISTS migration_progress (
     migration_id TEXT PRIMARY KEY,
@@ -98,11 +98,11 @@ CREATE TABLE IF NOT EXISTS migration_progress (
     metadata JSONB
 );
 
--- Create index for querying recent migrations
+-- Create index for querying recent schema changes
 CREATE INDEX IF NOT EXISTS idx_migration_progress_status
 ON migration_progress(status, started_at DESC);
 
--- Insert record for this specific migration
+-- Insert record for this specific schema change
 INSERT INTO migration_progress (
     migration_id,
     migration_name,
@@ -130,19 +130,19 @@ COMMENT ON CONSTRAINT food_logs_source_type_check ON food_logs IS
 'Ensures source_type is one of: tandoor_recipe (from Tandoor API), custom_food (user-created), usda_food (USDA database)';
 
 COMMENT ON TABLE migration_progress IS
-'Tracks migration progress from Mealie to Tandoor. Used for monitoring and debugging the transition process.';
+'Tracks schema change progress from Mealie to Tandoor. Used for monitoring and debugging the transition process.';
 
 COMMENT ON COLUMN migration_progress.migration_id IS
-'Unique identifier for the migration (e.g., 025_migrate_mealie_to_tandoor)';
+'Unique identifier for the schema change (e.g., 025_migrate_mealie_to_tandoor)';
 
 COMMENT ON COLUMN migration_progress.migration_name IS
-'Human-readable name of the migration';
+'Human-readable name of the schema change';
 
 COMMENT ON COLUMN migration_progress.started_at IS
-'Timestamp when migration started (UTC)';
+'Timestamp when schema change started (UTC)';
 
 COMMENT ON COLUMN migration_progress.completed_at IS
-'Timestamp when migration completed (NULL if still in progress)';
+'Timestamp when schema change completed (NULL if still in progress)';
 
 COMMENT ON COLUMN migration_progress.status IS
 'Current status: in_progress, completed, failed, or rolled_back';
@@ -154,16 +154,16 @@ COMMENT ON COLUMN migration_progress.records_total IS
 'Total number of records to process';
 
 COMMENT ON COLUMN migration_progress.error_message IS
-'Error details if migration failed';
+'Error details if schema change failed';
 
 COMMENT ON COLUMN migration_progress.metadata IS
-'JSON metadata about the migration (source system, target system, affected tables, etc.)';
+'JSON metadata about the schema change (source system, target system, affected tables, etc.)';
 
 -- ============================================================================
 -- Performance Notes
 -- ============================================================================
 --
--- This migration is safe to run on production:
+-- This schema change is safe to run on production:
 --
 -- 1. Constraint Changes:
 --    - Dropping and recreating constraint is fast
@@ -180,7 +180,7 @@ COMMENT ON COLUMN migration_progress.metadata IS
 --    - Indexes: Created in parallel, minimal impact
 --    - Estimated time: < 1 second
 --
--- Total estimated migration time: < 5 seconds
+-- Total estimated schema change time: < 5 seconds
 -- No table locks required
 -- No downtime required
 --
@@ -193,7 +193,7 @@ COMMENT ON COLUMN migration_progress.metadata IS
 -- Rollback Strategy
 -- ============================================================================
 --
--- If critical issues are discovered, this migration can be rolled back:
+-- If critical issues are discovered, this schema change can be rolled back:
 --
 -- 1. Reverse data updates:
 --    UPDATE food_logs SET source_type = 'mealie_recipe'
@@ -211,14 +211,14 @@ COMMENT ON COLUMN migration_progress.metadata IS
 --    DROP TABLE migration_progress;
 --
 -- ============================================================================
--- Recipe JSON Format Migration
+-- Recipe JSON Format Schema Change
 -- ============================================================================
 --
--- NOTE: The recipe_json column was created in migration 023 and contains recipe
+-- NOTE: The recipe_json column was created in schema change 023 and contains recipe
 -- data in Mealie format. The conversion to Tandoor format happens at the
 -- application level (in Gleam code) for better control and validation.
 --
--- Application-level migration (handled in migration script):
+-- Application-level schema change (handled in schema change script):
 -- - Gleam script: gleam/src/scripts/migrate_mealie_to_tandoor.gleam
 -- - Transforms Mealie JSON schema → Tandoor JSON schema
 -- - Validates nutrition data accuracy
@@ -234,7 +234,7 @@ COMMENT ON COLUMN migration_progress.metadata IS
 -- Verification Queries
 -- ============================================================================
 --
--- After migration, verify the changes:
+-- After schema change, verify the changes:
 --
 -- 1. Check food_logs have been updated:
 --    SELECT COUNT(*), source_type FROM food_logs GROUP BY source_type;
@@ -244,9 +244,9 @@ COMMENT ON COLUMN migration_progress.metadata IS
 --    SELECT * FROM recipe_sources WHERE source_type = 'tandoor_recipe';
 --    -- Should show Tandoor API endpoint and token configuration
 --
--- 3. Check migration progress:
+-- 3. Check schema change progress:
 --    SELECT * FROM migration_progress WHERE migration_id = '025_migrate_mealie_to_tandoor';
---    -- Should show status='completed' when application migration is done
+--    -- Should show status='completed' when application schema change is done
 --
 -- 4. Verify constraint is working:
 --    INSERT INTO food_logs (id, date, recipe_id, recipe_name, servings, protein, fat, carbs, meal_type, source_type, source_id)

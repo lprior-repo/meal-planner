@@ -1,5 +1,5 @@
--- OBSOLETE: This migration is no longer used.
--- Migration: Add Vertical Diet Example Recipes
+-- OBSOLETE: This schema change is no longer used.
+-- Schema change: Add Vertical Diet Example Recipes
 -- Stan Efferding's Vertical Diet principles: red meat, white rice, easy digestion, low FODMAP
 -- Focus: nutrient density, easy digestion, performance optimization
 

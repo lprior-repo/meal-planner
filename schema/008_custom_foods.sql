@@ -1,4 +1,4 @@
--- Migration 008: Create custom_foods table
+-- Schema change 008: Create custom_foods table
 -- User-defined custom foods with complete nutritional information including 21 micronutrients
 
 CREATE TABLE IF NOT EXISTS custom_foods (

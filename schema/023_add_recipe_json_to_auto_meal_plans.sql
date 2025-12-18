@@ -1,4 +1,4 @@
--- Migration 023: Add recipe_json column to auto_meal_plans
+-- Schema change 023: Add recipe_json column to auto_meal_plans
 -- Stores full recipe data as JSONB for faster loading without joins
 
 -- Add recipe_json column

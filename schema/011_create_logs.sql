@@ -1,6 +1,6 @@
--- OBSOLETE: This migration is no longer used.
+-- OBSOLETE: This schema change is no longer used.
 -- ============================================================================
--- Migration: Create Logs Table
+-- Schema change: Create Logs Table
 -- ============================================================================
 --
 -- Creates the logs table for tracking food item logs with:

@@ -660,7 +660,7 @@ pub type FoodLogEntry {
     micronutrients: Option(Micronutrients),
     meal_type: MealType,
     logged_at: String,
-    // Source tracking (from migration 006)
+    // Source tracking (from schema 006)
     source_type: String,
     source_id: String,
   )

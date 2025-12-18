@@ -213,7 +213,7 @@ test/tandoor/integration/
 - `meal-planner-gt1.3`: Response builders
 - `meal-planner-gt1.4`: Test fixtures
 - `meal-planner-xs9.1`: TandoorSDK facade
-- `meal-planner-xs9.2`: Migration path
+- `meal-planner-xs9.2`: Transition path
 - `meal-planner-xs9.3`: Integration tests
 
 ## Future Enhancements

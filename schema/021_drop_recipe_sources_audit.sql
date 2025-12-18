@@ -1,4 +1,4 @@
--- Migration 021: Drop recipe_sources_audit table and related objects
+-- Schema change 021: Drop recipe_sources_audit table and related objects
 -- Removes the audit logging system for recipe_sources table
 
 -- Drop triggers first (they depend on functions)

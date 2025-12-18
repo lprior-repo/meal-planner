@@ -1,4 +1,4 @@
--- Migration 018: Update audit triggers to capture session context
+-- Schema change 018: Update audit triggers to capture session context
 -- Enables application-level tracking of changed_by and change_reason
 
 -- Update INSERT trigger to capture session context

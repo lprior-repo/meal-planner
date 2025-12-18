@@ -1,8 +1,8 @@
 -- ============================================================================
--- Migration: Optimize Filtered Food Search Performance
+-- Schema change: Optimize Filtered Food Search Performance
 -- ============================================================================
 --
--- This migration adds composite and partial indexes to significantly improve
+-- This schema change adds composite and partial indexes to significantly improve
 -- performance of search_foods_filtered queries with data_type and category
 -- filters.
 --
@@ -113,7 +113,7 @@ ANALYZE foods;
 -- Verification Queries
 -- ============================================================================
 --
--- Run these after migration to verify index effectiveness:
+-- Run these after schema change to verify index effectiveness:
 --
 -- 1. Check index size:
 --    SELECT indexrelname, pg_size_pretty(pg_relation_size(indexrelid))

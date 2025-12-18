@@ -1,5 +1,5 @@
--- Migration 024: Populate recipe_json for existing auto_meal_plans
--- This migration populates the recipe_json column in auto_meal_plans
+-- Schema change 024: Populate recipe_json for existing auto_meal_plans
+-- This schema change populates the recipe_json column in auto_meal_plans
 -- by aggregating recipe data from the recipes table based on recipe_ids
 --
 -- Strategy:
@@ -8,7 +8,7 @@
 -- 3. Aggregate results into a JSON array
 -- 4. Store in recipe_json column
 --
--- Note: This is a data population migration that runs once to hydrate
+-- Note: This is a data population schema change that runs once to hydrate
 -- existing meal plans with denormalized recipe data for performance.
 
 BEGIN;
