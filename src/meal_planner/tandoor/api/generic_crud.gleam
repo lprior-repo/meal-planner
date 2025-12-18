@@ -78,8 +78,22 @@ pub type CrudHandler(item, create_req, update_req, error) {
 /// Handle collection endpoint (GET list or POST create)
 ///
 /// Routes:
-/// - GET /resource → list all items
-/// - POST /resource → create new item
+/// - GET /resource → list all items with pagination
+/// - POST /resource → create new item (not yet implemented)
+///
+/// ## Example
+/// ```gleam
+/// let handler = CrudHandler(
+///   list: fn() { supermarkets_api.list(config) },
+///   // ... other handlers
+/// )
+/// handle_collection(request, handler)
+/// ```
+///
+/// ## Returns
+/// - 200 with JSON list on successful GET
+/// - 404 for POST (pending implementation)
+/// - 405 for unsupported methods
 pub fn handle_collection(
   req: Request,
   handler: CrudHandler(item, create_req, update_req, error),
@@ -94,9 +108,26 @@ pub fn handle_collection(
 /// Handle item endpoint (GET, PATCH, DELETE)
 ///
 /// Routes:
-/// - GET /resource/:id → get item
-/// - PATCH /resource/:id → update item
-/// - DELETE /resource/:id → delete item
+/// - GET /resource/:id → get item by ID
+/// - PATCH /resource/:id → update item (not yet implemented)
+/// - DELETE /resource/:id → delete item by ID
+///
+/// ## Example
+/// ```gleam
+/// let handler = CrudHandler(
+///   get: fn(id) { supermarkets_api.get(config, id) },
+///   delete: fn(id) { supermarkets_api.delete(config, id) },
+///   // ... other handlers
+/// )
+/// handle_item(request, handler, "42")
+/// ```
+///
+/// ## Returns
+/// - 200 with JSON item on successful GET
+/// - 204 on successful DELETE
+/// - 400 if ID is not a valid integer
+/// - 404 for PATCH (pending implementation)
+/// - 405 for unsupported methods
 pub fn handle_item(
   req: Request,
   handler: CrudHandler(item, create_req, update_req, error),
@@ -169,6 +200,17 @@ fn handle_delete(
 // =============================================================================
 
 /// Encode optional string to JSON (null if None)
+///
+/// Used for pagination links (next/previous) which may be null.
+///
+/// ## Examples
+/// ```gleam
+/// encode_optional_string(Some("https://api.com/page2"))
+/// // => json.string("https://api.com/page2")
+///
+/// encode_optional_string(None)
+/// // => json.null()
+/// ```
 fn encode_optional_string(opt: Option(String)) -> json.Json {
   case opt {
     option.Some(s) -> json.string(s)
@@ -182,33 +224,78 @@ fn encode_optional_string(opt: Option(String)) -> json.Json {
 
 /// Generic CREATE operation for Tandoor API
 ///
-/// Makes POST request to create a new resource
+/// Makes POST request to create a new resource.
+///
+/// ## Parameters
+/// - `config`: Tandoor client configuration (base URL, auth token)
+/// - `path`: API endpoint path (e.g., "/api/supermarket/")
+/// - `body`: JSON request body as string
+/// - `decoder`: Dynamic decoder for parsing response
+///
+/// ## Example
+/// ```gleam
+/// let body = json.object([#("name", json.string("Whole Foods"))])
+/// create(config, "/api/supermarket/", json.to_string(body), supermarket_decoder)
+/// ```
+///
+/// ## Implementation Notes
+/// Use `core_http.post_json` for HTTP POST with authentication.
 pub fn create(
   _config: ClientConfig,
   _path: String,
   _body: String,
   _decoder: decode.Decoder(item),
 ) -> Result(item, TandoorError) {
-  // TODO: Implement HTTP POST request
+  // TODO: Implement HTTP POST request using core_http.post_json
   todo as "Generic create not yet implemented"
 }
 
 /// Generic GET operation for Tandoor API
 ///
-/// Makes GET request for a specific resource by ID
+/// Makes GET request for a specific resource by ID.
+///
+/// ## Parameters
+/// - `config`: Tandoor client configuration (base URL, auth token)
+/// - `path`: API endpoint path without ID (e.g., "/api/supermarket/")
+/// - `id`: Resource ID to fetch
+/// - `decoder`: Dynamic decoder for parsing response
+///
+/// ## Example
+/// ```gleam
+/// get(config, "/api/supermarket/", 42, supermarket_decoder)
+/// ```
+///
+/// ## Implementation Notes
+/// Append ID to path and use `core_http.get_json` for authenticated request.
 pub fn get(
   _config: ClientConfig,
   _path: String,
   _id: Int,
   _decoder: decode.Decoder(item),
 ) -> Result(item, TandoorError) {
-  // TODO: Implement HTTP GET request
+  // TODO: Implement HTTP GET request using core_http.get_json
   todo as "Generic get not yet implemented"
 }
 
 /// Generic UPDATE operation for Tandoor API
 ///
-/// Makes PATCH request to update a resource
+/// Makes PATCH request to update a resource.
+///
+/// ## Parameters
+/// - `config`: Tandoor client configuration (base URL, auth token)
+/// - `path`: API endpoint path without ID (e.g., "/api/supermarket/")
+/// - `id`: Resource ID to update
+/// - `body`: JSON request body with fields to update
+/// - `decoder`: Dynamic decoder for parsing updated response
+///
+/// ## Example
+/// ```gleam
+/// let body = json.object([#("name", json.string("Whole Foods Market"))])
+/// update(config, "/api/supermarket/", 42, json.to_string(body), supermarket_decoder)
+/// ```
+///
+/// ## Implementation Notes
+/// Use `core_http.patch_json` for HTTP PATCH with authentication.
 pub fn update(
   _config: ClientConfig,
   _path: String,
@@ -216,44 +303,96 @@ pub fn update(
   _body: String,
   _decoder: decode.Decoder(item),
 ) -> Result(item, TandoorError) {
-  // TODO: Implement HTTP PATCH request
+  // TODO: Implement HTTP PATCH request using core_http.patch_json
   todo as "Generic update not yet implemented"
 }
 
 /// Generic DELETE operation for Tandoor API
 ///
-/// Makes DELETE request to remove a resource
+/// Makes DELETE request to remove a resource.
+///
+/// ## Parameters
+/// - `config`: Tandoor client configuration (base URL, auth token)
+/// - `path`: API endpoint path without ID (e.g., "/api/supermarket/")
+/// - `id`: Resource ID to delete
+///
+/// ## Example
+/// ```gleam
+/// delete(config, "/api/supermarket/", 42)
+/// ```
+///
+/// ## Implementation Notes
+/// Use `core_http.delete` for HTTP DELETE with authentication.
+/// Typically returns 204 No Content on success.
 pub fn delete(
   _config: ClientConfig,
   _path: String,
   _id: Int,
 ) -> Result(Nil, TandoorError) {
-  // TODO: Implement HTTP DELETE request
+  // TODO: Implement HTTP DELETE request using core_http.delete
   todo as "Generic delete not yet implemented"
 }
 
 /// Generic LIST operation for Tandoor API (simple list without pagination)
 ///
-/// Makes GET request to list all resources
+/// Makes GET request to list all resources.
+///
+/// ## Parameters
+/// - `config`: Tandoor client configuration (base URL, auth token)
+/// - `path`: API endpoint path (e.g., "/api/supermarket/")
+/// - `params`: Query parameters as key-value pairs (e.g., [#("query", "organic")])
+/// - `decoder`: Dynamic decoder for parsing individual items
+///
+/// ## Example
+/// ```gleam
+/// list(config, "/api/supermarket/", [#("limit", "100")], supermarket_decoder)
+/// ```
+///
+/// ## Implementation Notes
+/// Use `core_http.get_json_list` for simple list fetching.
+/// For pagination support, use `list_paginated` instead.
 pub fn list(
   _config: ClientConfig,
   _path: String,
   _params: List(#(String, String)),
   _decoder: decode.Decoder(item),
 ) -> Result(List(item), TandoorError) {
-  // TODO: Implement HTTP GET request for list
+  // TODO: Implement HTTP GET request using core_http.get_json_list
   todo as "Generic list not yet implemented"
 }
 
 /// Generic PAGINATED LIST operation for Tandoor API
 ///
-/// Makes GET request to list resources with pagination support
+/// Makes GET request to list resources with pagination support.
+///
+/// ## Parameters
+/// - `config`: Tandoor client configuration (base URL, auth token)
+/// - `path`: API endpoint path (e.g., "/api/supermarket/")
+/// - `params`: Query parameters including pagination (e.g., [#("page", "2"), #("limit", "25")])
+/// - `decoder`: Dynamic decoder for parsing individual items
+///
+/// ## Example
+/// ```gleam
+/// list_paginated(
+///   config,
+///   "/api/supermarket/",
+///   [#("page", "1"), #("limit", "50")],
+///   supermarket_decoder
+/// )
+/// ```
+///
+/// ## Returns
+/// `PaginatedResponse` with count, next/previous URLs, and results list.
+///
+/// ## Implementation Notes
+/// Use `core_http.get_paginated_json` for paginated list fetching.
+/// Response includes next/previous links for navigation.
 pub fn list_paginated(
   _config: ClientConfig,
   _path: String,
   _params: List(#(String, String)),
   _decoder: decode.Decoder(item),
 ) -> Result(core_http.PaginatedResponse(item), TandoorError) {
-  // TODO: Implement HTTP GET request with pagination
+  // TODO: Implement HTTP GET request using core_http.get_paginated_json
   todo as "Generic list_paginated not yet implemented"
 }
