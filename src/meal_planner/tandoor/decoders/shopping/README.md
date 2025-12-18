@@ -103,6 +103,6 @@ This separation allows proper handling of the API response format while maintain
 
 ## See Also
 
-- `/home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/decoders/food/food_decoder.gleam` - Food decoder
-- `/home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/decoders/unit/unit_decoder.gleam` - Unit decoder
-- `/home/lewis/src/meal-planner/gleam/test/tandoor/decoders/shopping/shopping_list_entry_decoder_test.gleam` - Test examples
+- `src/meal_planner/tandoor/decoders/food/food_decoder.gleam` - Food decoder
+- `src/meal_planner/tandoor/decoders/unit/unit_decoder.gleam` - Unit decoder
+- `test/tandoor/decoders/shopping/shopping_list_entry_decoder_test.gleam` - Test examples

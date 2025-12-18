@@ -4,13 +4,11 @@ echo "🍽️  MEAL SYNC VERIFICATION"
 echo "════════════════════════════════════════"
 echo ""
 
-cd gleam
-
 echo "✓ Testing meal sync module..."
 gleam test -- --module meal_sync_integration_test 2>&1 | grep -E "(passed|failed|Testing)"
 
 echo ""
-echo "✓ Testing orchestrator module..."  
+echo "✓ Testing orchestrator module..."
 gleam test -- --module meal_planning_orchestration_test 2>&1 | grep -E "(passed|failed|Testing)"
 
 echo ""

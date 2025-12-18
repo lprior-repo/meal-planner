@@ -32,8 +32,8 @@ pub type SetupStatus {
 /// Get default infrastructure configuration
 pub fn default_config() -> InfrastructureConfig {
   InfrastructureConfig(
-    docker_compose_file: "gleam/docker-compose.test.yml",
-    project_root: "/home/lewis/src/meal-planner",
+    docker_compose_file: "docker-compose.test.yml",
+    project_root: ".",
     tandoor_url: "http://localhost:8100",
     tandoor_port: 8100,
     max_wait_seconds: 120,

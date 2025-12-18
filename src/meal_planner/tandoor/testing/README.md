@@ -188,7 +188,7 @@ pub fn recipe_crud_workflow_test() {
 ## File Structure
 
 ```
-gleam/src/meal_planner/tandoor/testing/
+src/meal_planner/tandoor/testing/
 ├── README.md                    # This file
 ├── mock_transport.gleam         # Mock HTTP transport
 ├── matchers.gleam               # Request matchers
@@ -196,13 +196,13 @@ gleam/src/meal_planner/tandoor/testing/
 ├── fixtures.gleam               # Test fixtures
 └── fixtures/                    # JSON fixture files (future)
 
-gleam/test/tandoor/testing/
+test/tandoor/testing/
 ├── mock_transport_test.gleam    # Mock transport tests
 ├── matchers_test.gleam          # Matcher tests
 ├── builders_test.gleam          # Builder tests
 └── fixtures_test.gleam          # Fixture tests
 
-gleam/test/tandoor/integration/
+test/tandoor/integration/
 └── sdk_integration_test.gleam   # SDK integration tests
 ```
 

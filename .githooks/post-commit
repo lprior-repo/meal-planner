@@ -18,9 +18,9 @@ readonly NC='\033[0m'
 # Check if build would pass
 cd "$(git rev-parse --show-toplevel)"
 
-if [[ -f "gleam/gleam.toml" ]]; then
+if [[ -f "gleam.toml" ]]; then
     # Quick build check (silent)
-    if ! (cd gleam && gleam build >/dev/null 2>&1); then
+    if ! (gleam build >/dev/null 2>&1); then
         echo ""
         echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         echo -e "${RED}${BOLD}  ⚠ WARNING: COMMIT HAS COMPILATION ERRORS${NC}"
@@ -41,7 +41,7 @@ if [[ -f "gleam/gleam.toml" ]]; then
         echo "  The pre-push hook will BLOCK your push until errors are fixed!"
         echo ""
         echo -e "${BOLD}To fix now:${NC}"
-        echo "  1. Run: cd gleam && gleam build"
+        echo "  1. Run: gleam build"
         echo "  2. Fix the errors shown"
         echo "  3. Commit the fixes: git add . && git commit -m 'Fix compilation errors'"
         echo ""
@@ -52,7 +52,7 @@ if [[ -f "gleam/gleam.toml" ]]; then
         echo ""
         echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         echo ""
-        echo "See errors by running: cd gleam && gleam build"
+        echo "See errors by running: gleam build"
         echo ""
     fi
 fi

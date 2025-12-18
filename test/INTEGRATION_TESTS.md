@@ -32,10 +32,10 @@ Test results: **568 passed, 10 failures** (failures due to missing Tandoor confi
 ### Phase 1: Core Infrastructure (COMPLETE)
 Helper modules that all integration tests depend on.
 
-**Location:** `/home/lewis/src/meal-planner/gleam/test/integration/helpers/`
+**Location:** `test/integration/helpers/`
 
 #### HTTP Client (`http.gleam`)
-Wrapper around `gleam/httpc` for making requests to `http://localhost:8080`.
+Wrapper around `httpc` for making requests to `http://localhost:8080`.
 
 **Functions:**
 - `get(path: String) -> Result(#(Int, String), HttpError)`
@@ -96,7 +96,7 @@ Composable assertion functions for API response validation.
 
 ### Phase 2: FatSecret Integration Tests (COMPLETE)
 
-**Location:** `/home/lewis/src/meal-planner/gleam/test/endpoint_integration_test.gleam`
+**Location:** `test/endpoint_integration_test.gleam`
 
 **Current tests (5):**
 
@@ -188,10 +188,10 @@ curl -s http://localhost:8080/api/fatsecret/profile | jq
 
 ### Phase 3: Tandoor Integration Tests (EXTENSIVE)
 
-**Location:** `/home/lewis/src/meal-planner/gleam/test/tandoor/`
+**Location:** `test/tandoor/`
 
 Comprehensive CRUD tests for all Tandoor API domains. See separate documentation:
-- `/home/lewis/src/meal-planner/gleam/test/tandoor/integration/README.md`
+- `test/tandoor/integration/README.md`
 
 **Test domains:**
 - Recipe API (full CRUD)
@@ -206,7 +206,7 @@ Comprehensive CRUD tests for all Tandoor API domains. See separate documentation
 ### Business Logic Tests
 
 #### Meal Planning Orchestration
-**Location:** `/home/lewis/src/meal-planner/gleam/test/meal_planning_orchestration_test.gleam`
+**Location:** `test/meal_planning_orchestration_test.gleam`
 
 Tests the end-to-end meal planning workflow:
 1. Recipe selection from MVP recipes (15 recipes)
@@ -219,7 +219,7 @@ Tests the end-to-end meal planning workflow:
 - `mvp_recipes_available_test` - Verifies 15 MVP recipes exist
 
 #### Meal Sync Integration
-**Location:** `/home/lewis/src/meal-planner/gleam/test/meal_sync_integration_test.gleam`
+**Location:** `test/meal_sync_integration_test.gleam`
 
 Tests FatSecret diary synchronization layer.
 
@@ -296,7 +296,7 @@ Testing: GET /api/fatsecret/diary/day/:date_int
 
 ### Environment Variables
 
-Create `/home/lewis/src/meal-planner/gleam/.env`:
+Create `gleam/.env`:
 
 ```bash
 # FatSecret OAuth (loaded from database)
@@ -685,7 +685,7 @@ jobs:
 ## Resources
 
 - [Gleam Language Documentation](https://gleam.run/)
-- [Gleam Testing Guide](https://gleam.run/writing-gleam/testing/)
+- [Gleam Testing Documentation](https://gleam.run/writing-gleam/testing/)
 - [FatSecret API Documentation](https://platform.fatsecret.com/api/)
 - [Tandoor API Documentation](https://docs.tandoor.dev/)
 - [Gleeunit Testing Framework](https://hexdocs.pm/gleeunit/)

@@ -15,7 +15,7 @@ import type { Plugin } from "@opencode-ai/plugin"
  */
 
 // Configuration
-const PROJECT_KEY = "/home/lewis/src/meal-planner"
+const PROJECT_KEY = "."
 const AGENT_MAIL_URL = "http://127.0.0.1:8765"
 
 // State tracking

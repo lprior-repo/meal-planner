@@ -57,7 +57,7 @@ Implemented module with:
 ## Testing
 
 ### Test File
-`/home/lewis/src/meal-planner/gleam/test/tandoor/core/http_test.gleam`
+`test/tandoor/core/http_test.gleam`
 
 ### Test Coverage
 - ✓ HttpRequest creation
@@ -160,6 +160,6 @@ This module is a foundational piece for:
 
 ## File Locations
 
-- Implementation: `/home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/core/http.gleam`
-- Tests: `/home/lewis/src/meal-planner/gleam/test/tandoor/core/http_test.gleam`
-- This README: `/home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/core/HTTP_TRANSPORT_README.md`
+- Implementation: `src/meal_planner/tandoor/core/http.gleam`
+- Tests: `test/tandoor/core/http_test.gleam`
+- This README: `src/meal_planner/tandoor/core/HTTP_TRANSPORT_README.md`

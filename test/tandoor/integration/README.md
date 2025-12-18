@@ -68,7 +68,7 @@ The test instance will be available at:
 
 ### Setting Environment Variables
 
-Create a `.env.test` file in the `gleam/` directory:
+Create a `.env.test` file in the gleam directory:
 
 ```bash
 # Tandoor Test Instance
@@ -288,4 +288,4 @@ When adding new integration tests:
 
 - [Tandoor API Documentation](https://docs.tandoor.dev/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
-- [Gleam Testing Guide](https://gleam.run/writing-gleam/testing/)
+- [Gleam Testing Documentation](https://gleam.run/writing-gleam/testing/)

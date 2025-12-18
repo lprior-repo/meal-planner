@@ -1,7 +1,6 @@
 version: '3'
 
 vars:
-  GLEAM_DIR: '{{.ROOT_DIR}}/gleam'
   APP_DB: 'meal_planner'
   POSTGRES_USER: 'postgres'
 
@@ -123,7 +122,6 @@ tasks:
 
   db:migrate:
     desc: "Run database migrations"
-    dir: '{{.GLEAM_DIR}}'
     cmds:
       - |
         echo "📊 Running migrations..."
@@ -135,7 +133,6 @@ tasks:
 
   db:import:
     desc: "Import USDA food database (takes ~5 minutes)"
-    dir: '{{.GLEAM_DIR}}'
     deps: [build]
     cmds:
       - |
@@ -149,7 +146,6 @@ tasks:
   # ============================================================================
   api:start:
     desc: "Start the Gleam API server"
-    dir: '{{.GLEAM_DIR}}'
     deps: [build]
     cmds:
       - task: api:stop
@@ -197,7 +193,6 @@ tasks:
   # ============================================================================
   build:
     desc: "Build the Gleam application"
-    dir: '{{.GLEAM_DIR}}'
     sources:
       - 'src/**/*.gleam'
       - 'gleam.toml'
@@ -211,26 +206,22 @@ tasks:
   # ============================================================================
   dev:
     desc: "Development mode - build and run with auto-reload"
-    dir: '{{.GLEAM_DIR}}'
     cmds:
       - task: build
       - gleam run
 
   test:
     desc: "Run all tests"
-    dir: '{{.GLEAM_DIR}}'
     cmds:
       - gleam test
 
   format:
     desc: "Format all Gleam code"
-    dir: '{{.GLEAM_DIR}}'
     cmds:
       - gleam format
 
   clean:
     desc: "Clean build artifacts"
-    dir: '{{.GLEAM_DIR}}'
     cmds:
       - gleam clean
 

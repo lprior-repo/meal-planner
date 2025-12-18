@@ -1,5 +1,5 @@
 # Gleam build artifacts
-gleam/build/
+build/
 client/build/
 server/build/
 shared/build/
@@ -16,7 +16,6 @@ erl_crash.dump
 # MCP config (contains local tokens)
 .mcp.json
 mcp_agent_mail/
-gleam/mcp_agent_mail/
 
 # Node modules
 node_modules/

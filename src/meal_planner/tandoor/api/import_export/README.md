@@ -66,7 +66,7 @@ This module provides API wrappers for Tandoor's import/export functionality:
 
 ### 1. File Reservation Conflict
 
-**Issue**: GreenStone (Agent) has exclusive reservation on `gleam/src/meal_planner/tandoor/encoders/**/*.gleam`
+**Issue**: GreenStone (Agent) has exclusive reservation on `src/meal_planner/tandoor/encoders/**/*.gleam`
 
 **Impact**: Cannot implement:
 - `encoders/import_export/import_log_encoder.gleam`
@@ -163,7 +163,7 @@ All types are fully type-safe with:
 ## Files Created
 
 ```
-gleam/src/meal_planner/tandoor/
+src/meal_planner/tandoor/
 ├── types/import_export/
 │   ├── import_log.gleam
 │   ├── export_log.gleam
@@ -179,7 +179,7 @@ gleam/src/meal_planner/tandoor/
     ├── examples.md              (NEW - Usage examples)
     └── README.md                (this file)
 
-gleam/test/tandoor/
+test/tandoor/
 ├── types/import_export/
 │   └── import_log_test.gleam
 ├── decoders/import_export/

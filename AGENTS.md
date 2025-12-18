@@ -25,11 +25,11 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 ```python
 # 1. Ensure project exists
-ensure_project(project_key="/home/lewis/src/meal-planner")
+ensure_project(project_key=".")
 
 # 2. Register agent identity (auto-generates adjective+noun name)
 register_agent(
-    project_key="/home/lewis/src/meal-planner",
+    project_key=".",
     program="claude-code",
     model="opus-4.1",
     task_description="Your current task"
@@ -54,7 +54,7 @@ register_agent(
 ### How to use effectively
 
 #### Same Repository
-- **Register identity**: Call `ensure_project`, then `register_agent` using this repo's absolute path as `project_key`
+- **Register identity**: Call `ensure_project`, then `register_agent` using "." as `project_key`
 - **Reserve files before editing**: `file_reservation_paths(project_key, agent_name, ["src/**"], ttl_seconds=3600, exclusive=true)`
 - **Communicate with threads**: Use `send_message(..., thread_id="bd-123")`; check inbox with `fetch_inbox`
 - **Read fast**: `resource://inbox/{Agent}?project=<abs-path>&limit=20` or `resource://thread/{id}?project=<abs-path>&include_bodies=true`
@@ -441,10 +441,10 @@ Before doing ANY work, agents MUST:
 
 ```python
 # 1. Register with the project
-ensure_project(project_key="/home/lewis/src/meal-planner")
+ensure_project(project_key=".")
 
 # 2. Register agent identity
-register_agent(project_key="/home/lewis/src/meal-planner", agent_name="auto")
+register_agent(project_key=".", agent_name="auto")
 # Returns: {"agent_name": "GreenCastle", ...}
 ```
 
@@ -455,7 +455,7 @@ register_agent(project_key="/home/lewis/src/meal-planner", agent_name="auto")
 ```python
 # Before editing any file:
 file_reservation_paths(
-    project_key="/home/lewis/src/meal-planner",
+    project_key=".",
     agent_name="YOUR_AGENT_NAME",
     paths=["path/to/file.go"],
     ttl_seconds=300,
@@ -477,7 +477,7 @@ file_reservation_paths(
 ```python
 # Announce starting work on a bead
 send_message(
-    project_key="/home/lewis/src/meal-planner",
+    project_key=".",
     sender_name="YOUR_AGENT_NAME",
     recipients=["broadcast"],
     subject="[bd-123] Starting work",
@@ -488,7 +488,8 @@ send_message(
 
 # Request assistance or handoff
 send_message(
-    ...
+    project_key=".",
+    sender_name="YOUR_AGENT_NAME",
     recipients=["OtherAgent"],
     subject="[bd-123] Need help with tests",
     body_md="Can you review the test approach?",
@@ -504,14 +505,15 @@ fetch_inbox(project_key, agent_name)
 ```python
 # Release all file reservations
 release_file_reservations(
-    project_key="/home/lewis/src/meal-planner",
+    project_key=".",
     agent_name="YOUR_AGENT_NAME",
     paths=["all"]  # or list specific paths
 )
 
 # Announce session end
 send_message(
-    ...
+    project_key=".",
+    sender_name="YOUR_AGENT_NAME",
     recipients=["broadcast"],
     subject="[bd-123] Session complete",
     body_md="Completed: ...\nRemaining: ..."
@@ -522,7 +524,7 @@ send_message(
 
 If another agent has a file you need:
 
-1. **Check reservation**: `list_file_reservations(project_key, path_filter="path/to/file")`
+1. **Check reservation**: `list_file_reservations(project_key=".", path_filter="path/to/file")`
 2. **Send message**: Request release via `send_message(..., ack_required=True)`
 3. **Wait or pivot**: Either wait for release or work on a different bead
 4. **NEVER force**: Do not edit files reserved by other agents

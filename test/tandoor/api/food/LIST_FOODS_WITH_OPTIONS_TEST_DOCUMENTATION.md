@@ -12,7 +12,7 @@
 Comprehensive test suite for `list_foods_with_options()` function with 14 test cases covering all parameter combinations and edge cases.
 
 ### Test File
-- **Location:** `/home/lewis/src/meal-planner/gleam/test/tandoor/api/food/list_test.gleam`
+- **Location:** `test/tandoor/api/food/list_test.gleam`
 - **Total Tests:** 19 (5 existing for `list_foods` + 14 new for `list_foods_with_options`)
 
 ---
@@ -398,9 +398,9 @@ Expected output:
 
 ## Related Files
 
-- **Tests:** `/home/lewis/src/meal-planner/gleam/test/tandoor/api/food/list_test.gleam`
-- **Implementation:** `/home/lewis/src/meal-planner/gleam/src/meal_planner/tandoor/api/food/list.gleam` (Agent 9)
-- **Analysis:** `/home/lewis/src/meal-planner/TANDOOR_API_SIGNATURE_ANALYSIS.md`
+- **Tests:** `test/tandoor/api/food/list_test.gleam`
+- **Implementation:** `src/meal_planner/tandoor/api/food/list.gleam` (Agent 9)
+- **Analysis:** `TANDOOR_API_SIGNATURE_ANALYSIS.md`
 
 ---
 

@@ -9,14 +9,14 @@ file_encoding = "utf-8"
 
 # Project structure
 root = "."
-source_dirs = ["gleam/src"]
-test_dirs = ["gleam/test"]
+source_dirs = ["src"]
+test_dirs = ["test"]
 
 [paths]
 # Include patterns for code analysis
 include = [
-    "gleam/src/**/*.gleam",
-    "gleam/test/**/*.gleam",
+    "src/**/*.gleam",
+    "test/**/*.gleam",
     "*.md",
     "*.toml",
     "*.yml",
@@ -25,8 +25,8 @@ include = [
 
 # Exclude patterns
 exclude = [
-    "gleam/build/**",
-    "gleam/manifest.toml",
+    "build/**",
+    "manifest.toml",
     "**/node_modules/**",
     "**/.git/**",
     "**/__pycache__/**",
@@ -95,10 +95,10 @@ version = "1.13.0"
 target = "erlang"
 
 # Important directories
-src_dir = "gleam/src"
-test_dir = "gleam/test"
-build_dir = "gleam/build"
-migrations_dir = "gleam/migrations_pg"
+src_dir = "src"
+test_dir = "test"
+build_dir = "build"
+migrations_dir = "migrations_pg"
 
 # Key modules to understand
 core_modules = [
@@ -146,10 +146,10 @@ guidelines = """
 startup = "./run.sh start"
 
 # Test command
-test_command = "cd gleam && gleam test"
+test_command = "gleam test"
 
 # Build command
-build_command = "cd gleam && gleam build"
+build_command = "gleam build"
 
 # Format command
-format_command = "cd gleam && gleam format"
+format_command = "gleam format"

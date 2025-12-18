@@ -102,7 +102,7 @@ The test suite includes a complete Docker Compose configuration:
 
 ### Quick Start
 ```bash
-cd gleam/test/tandoor/integration
+cd test/tandoor/integration
 ./run-integration-tests.sh setup   # First-time setup
 ./run-integration-tests.sh test    # Run all tests
 ```
@@ -175,7 +175,7 @@ To use these tests:
 ## File Locations
 
 ```
-gleam/
+meal-planner/
 ├── docker-compose.test.yml              # Docker Compose setup
 └── test/
     └── tandoor/

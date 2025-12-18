@@ -23,7 +23,6 @@ echo ""
 
 # Step 2: Verify Gleam formatting
 echo -e "${BLUE}2️⃣  Verifying Gleam code formatting...${NC}"
-cd gleam
 gleam format --check
 echo -e "${GREEN}✓ Code formatting OK${NC}"
 echo ""
@@ -57,8 +56,6 @@ for module in "${modules[@]}"; do
   fi
 done
 echo ""
-
-cd ..
 
 # Step 6: Git sync
 echo -e "${BLUE}6️⃣  Syncing with Beads...${NC}"
