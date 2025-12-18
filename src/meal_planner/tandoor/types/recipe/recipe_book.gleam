@@ -5,7 +5,7 @@
 /// Based on the Tandoor API RecipeBook schema.
 import gleam/dynamic.{type Dynamic}
 import gleam/option.{type Option}
-import meal_planner/tandoor/types/mealplan/user.{type User}
+import meal_planner/tandoor/user.{type User}
 
 // Type alias for recipe book ID references
 pub type RecipeBookId =

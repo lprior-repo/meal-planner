@@ -7,8 +7,8 @@
 /// Based on Tandoor API 2.3.6 specification.
 import gleam/option.{type Option}
 import meal_planner/tandoor/core/ids.{type UserId}
-import meal_planner/tandoor/types/food/food.{type Food}
-import meal_planner/tandoor/types/unit/unit.{type Unit}
+import meal_planner/tandoor/food.{type Food}
+import meal_planner/tandoor/unit.{type Unit}
 
 /// Defines a conversion between two units
 ///
