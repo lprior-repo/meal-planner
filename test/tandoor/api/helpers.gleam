@@ -38,46 +38,23 @@ pub fn test_config_with_url(url: String) -> ClientConfig {
 // ============================================================================
 
 /// Create a successful JSON response (status 200)
-pub fn json_response_200(body: String) -> ApiResponse {
+pub fn json_response_200(body: String) {
   ApiResponse(status: 200, body: body, headers: [])
 }
 
 /// Create a successful empty response (status 204)
-pub fn empty_response_204() -> ApiResponse {
+pub fn empty_response_204() {
   ApiResponse(status: 204, body: "", headers: [])
 }
 
 /// Create a not-found response (status 404)
-pub fn not_found_response() -> ApiResponse {
+pub fn not_found_response() {
   ApiResponse(status: 404, body: "{\"error\": \"Not found\"}", headers: [])
 }
 
 /// Create a server error response (status 500)
-pub fn server_error_response() -> ApiResponse {
+pub fn server_error_response() {
   ApiResponse(status: 500, body: "{\"error\": \"Internal server error\"}", headers: [])
 }
 
-/// Create a paginated list response (status 200)
-pub fn paginated_response_200(count: Int, next: Option(String), previous: Option(String), results: String) -> ApiResponse {
-  let next_str = case next {
-    Some(url) -> "\"" <> url <> "\""
-    None -> "null"
-  }
-  let prev_str = case previous {
-    Some(url) -> "\"" <> url <> "\""
-    None -> "null"
-  }
-  let body = "{\"count\": " <> count |> int.to_string <> ", \"next\": " <> next_str <> ", \"previous\": " <> prev_str <> ", \"results\": " <> results <> "}"
-  ApiResponse(status: 200, body: body, headers: [])
-}
-
-// ============================================================================
-// Assertion Helpers
-// ============================================================================
-
-/// Assert that a result is an error (used for delegation tests without running server)
-/// Typical usage: result |> assert_delegation_fails
-pub fn assert_delegation_fails(result: Result(t, e)) -> Nil {
-  should.be_error(result)
-}
 
