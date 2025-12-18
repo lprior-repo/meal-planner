@@ -4,8 +4,8 @@
 /// Extracted from the main tandoor.gleam handler following TDD/TCR workflow.
 import gleam/json
 import gleam/option
-import meal_planner/tandoor/api/unit/list as unit_list
 import meal_planner/tandoor/handlers/helpers
+import meal_planner/tandoor/unit
 import wisp
 
 /// Handle units endpoint requests
@@ -15,7 +15,7 @@ import wisp
 pub fn handle_units(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case unit_list.list_units(config, limit: option.None, page: option.None) {
+      case unit.list_units(config, limit: option.None, page: option.None) {
         Ok(response) -> {
           let results_json =
             json.array(response.results, fn(unit) {

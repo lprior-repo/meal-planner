@@ -13,20 +13,12 @@ import gleam/int
 import gleam/json
 import gleam/option
 import gleam/result
-import meal_planner/tandoor/api/mealplan/create as mealplan_create_api
-import meal_planner/tandoor/api/mealplan/get as mealplan_get
-import meal_planner/tandoor/api/mealplan/list as mealplan_list
-import meal_planner/tandoor/api/mealplan/update as mealplan_update
-import meal_planner/tandoor/core/ids.{meal_plan_id_from_int, recipe_id_from_int}
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlan}
-import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
-import meal_planner/tandoor/types/mealplan/meal_type.{
-  meal_type_to_string as mt_to_string,
-}
-import meal_planner/tandoor/types/mealplan/mealplan.{
-  type MealPlanCreate, type MealPlanUpdate, MealPlanCreate, MealPlanUpdate,
-  meal_type_from_string as mp_meal_type_from_string,
+import meal_planner/tandoor/mealplan.{
+  type MealPlan, type MealPlanEntry, type MealPlanCreateRequest,
+  type MealPlanUpdateRequest, MealPlanCreateRequest, MealPlanUpdateRequest,
+  encode_meal_plan, list_meal_plans, get_meal_plan, create_meal_plan,
+  update_meal_plan, delete_meal_plan, meal_type_to_string,
 }
 import wisp
 
@@ -47,7 +39,7 @@ fn handle_list_meal_plans(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        mealplan_list.list_meal_plans(
+        list_meal_plans(
           config,
           from_date: option.None,
           to_date: option.None,
@@ -82,9 +74,9 @@ fn handle_create_meal_plan(req: wisp.Request) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case mealplan_create_api.create_meal_plan(config, request) {
+          case create_meal_plan(config, request) {
             Ok(meal_plan) -> {
-              encode_meal_plan_entry(meal_plan)
+              encode_meal_plan(meal_plan)
               |> json.to_string
               |> wisp.json_response(201)
             }
@@ -124,9 +116,9 @@ pub fn handle_meal_plan_by_id(
 fn handle_get_meal_plan(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case mealplan_get.get_meal_plan(config, meal_plan_id_from_int(id)) {
+      case get_meal_plan(config, meal_plan_id: id) {
         Ok(meal_plan) -> {
-          encode_meal_plan_entry(meal_plan)
+          encode_meal_plan(meal_plan)
           |> json.to_string
           |> wisp.json_response(200)
         }
@@ -145,14 +137,14 @@ fn handle_update_meal_plan(req: wisp.Request, id: Int) -> wisp.Response {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
           case
-            mealplan_update.update_meal_plan(
+            update_meal_plan(
               config,
-              meal_plan_id_from_int(id),
-              request,
+              meal_plan_id: id,
+              data: request,
             )
           {
             Ok(meal_plan) -> {
-              encode_meal_plan_entry(meal_plan)
+              encode_meal_plan(meal_plan)
               |> json.to_string
               |> wisp.json_response(200)
             }
@@ -170,7 +162,7 @@ fn handle_update_meal_plan(req: wisp.Request, id: Int) -> wisp.Response {
 fn handle_delete_meal_plan(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case mealplan_update.delete_meal_plan(config, meal_plan_id_from_int(id)) {
+      case delete_meal_plan(config, meal_plan_id: id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }
@@ -213,7 +205,7 @@ fn encode_meal_plan(meal_plan: MealPlan) -> json.Json {
     #("note_markdown", json.string(meal_plan.note_markdown)),
     #("from_date", json.string(meal_plan.from_date)),
     #("to_date", json.string(meal_plan.to_date)),
-    #("meal_type", json.string(mt_to_string(meal_plan.meal_type))),
+    #("meal_type", json.string(meal_type_to_string(meal_plan.meal_type))),
     #("created_by", json.int(meal_plan.created_by)),
     #("shared", shared_json),
     #("recipe_name", json.string(meal_plan.recipe_name)),
@@ -243,58 +235,55 @@ fn encode_meal_plan_entry(entry: MealPlanEntry) -> json.Json {
 
 fn parse_meal_plan_create_request(
   json_data: dynamic.Dynamic,
-) -> Result(MealPlanCreate, String) {
+) -> Result(MealPlanCreateRequest, String) {
   decode.run(json_data, meal_plan_create_decoder())
   |> result.map_error(fn(_) { "Invalid meal plan create request" })
 }
 
-fn meal_plan_create_decoder() -> decode.Decoder(MealPlanCreate) {
-  use recipe <- decode.field(
-    "recipe",
-    decode.optional(decode.int |> decode.map(recipe_id_from_int)),
-  )
-  use recipe_name <- decode.field("recipe_name", decode.string)
+fn meal_plan_create_decoder() -> decode.Decoder(MealPlanCreateRequest) {
+  use recipe <- decode.field("recipe", decode.optional(decode.int))
+  use title <- decode.field("title", decode.string)
   use servings <- decode.field("servings", decode.float)
   use note <- decode.field("note", decode.string)
   use from_date <- decode.field("from_date", decode.string)
   use to_date <- decode.field("to_date", decode.string)
-  use meal_type <- decode.field("meal_type", decode.string)
-  decode.success(MealPlanCreate(
+  use meal_type <- decode.field("meal_type", decode.int)
+  decode.success(MealPlanCreateRequest(
     recipe: recipe,
-    recipe_name: recipe_name,
+    title: title,
     servings: servings,
     note: note,
     from_date: from_date,
     to_date: to_date,
-    meal_type: mp_meal_type_from_string(meal_type),
+    meal_type: meal_type,
   ))
 }
 
 fn parse_meal_plan_update_request(
   json_data: dynamic.Dynamic,
-) -> Result(MealPlanUpdate, String) {
+) -> Result(MealPlanUpdateRequest, String) {
   decode.run(json_data, meal_plan_update_decoder())
   |> result.map_error(fn(_) { "Invalid meal plan update request" })
 }
 
-fn meal_plan_update_decoder() -> decode.Decoder(MealPlanUpdate) {
+fn meal_plan_update_decoder() -> decode.Decoder(MealPlanUpdateRequest) {
   use recipe <- decode.field(
     "recipe",
-    decode.optional(decode.int |> decode.map(recipe_id_from_int)),
+    decode.optional(decode.optional(decode.int)),
   )
-  use recipe_name <- decode.field("recipe_name", decode.string)
-  use servings <- decode.field("servings", decode.float)
-  use note <- decode.field("note", decode.string)
-  use from_date <- decode.field("from_date", decode.string)
-  use to_date <- decode.field("to_date", decode.string)
-  use meal_type <- decode.field("meal_type", decode.string)
-  decode.success(MealPlanUpdate(
+  use title <- decode.field("title", decode.optional(decode.string))
+  use servings <- decode.field("servings", decode.optional(decode.float))
+  use note <- decode.field("note", decode.optional(decode.string))
+  use from_date <- decode.field("from_date", decode.optional(decode.string))
+  use to_date <- decode.field("to_date", decode.optional(decode.string))
+  use meal_type <- decode.field("meal_type", decode.optional(decode.int))
+  decode.success(MealPlanUpdateRequest(
     recipe: recipe,
-    recipe_name: recipe_name,
+    title: title,
     servings: servings,
     note: note,
     from_date: from_date,
     to_date: to_date,
-    meal_type: mp_meal_type_from_string(meal_type),
+    meal_type: meal_type,
   ))
 }

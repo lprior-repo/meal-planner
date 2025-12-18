@@ -14,11 +14,9 @@ import meal_planner/tandoor/client.{
   type ClientConfig, type TandoorError, ParseError, build_delete_request,
   build_get_request, build_post_request, execute_and_parse,
 }
-import meal_planner/tandoor/decoders/mealplan/meal_plan_decoder
-import meal_planner/tandoor/types/mealplan/meal_plan.{type MealPlanListResponse}
-import meal_planner/tandoor/types/mealplan/meal_plan_entry.{type MealPlanEntry}
-import meal_planner/tandoor/types/mealplan/meal_type.{
-  type MealType, meal_type_to_string,
+import meal_planner/tandoor/mealplan.{
+  type MealPlanEntry, type MealPlanListResponse, type MealType,
+  meal_plan_list_decoder, meal_type_to_string,
 }
 
 // ============================================================================
@@ -85,7 +83,7 @@ pub fn get_meal_plan(
       case
         decode.run(
           json_data,
-          meal_plan_decoder.meal_plan_list_decoder_internal(),
+          meal_plan_list_decoder(),
         )
       {
         Ok(meal_plan_list) -> Ok(meal_plan_list)
@@ -145,7 +143,7 @@ pub fn create_meal_plan_entry(
 
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
-      case decode.run(json_data, meal_plan_decoder.meal_plan_entry_decoder()) {
+      case decode.run(json_data, mealplan.meal_plan_entry_decoder()) {
         Ok(meal_plan) -> Ok(meal_plan)
         Error(errors) -> {
           let error_msg =

@@ -5,8 +5,7 @@ import gleam/json
 import gleam/option.{None, Some}
 import gleam/string
 import gleeunit/should
-import meal_planner/tandoor/encoders/keyword/keyword_encoder
-import meal_planner/tandoor/types/keyword/keyword.{Keyword}
+import meal_planner/tandoor/keyword.{Keyword}
 
 pub fn encode_keyword_minimal_test() {
   let keyword =
@@ -23,7 +22,7 @@ pub fn encode_keyword_minimal_test() {
       full_name: "Vegetarian",
     )
 
-  let json_value = keyword_encoder.encode_keyword(keyword)
+  let json_value = keyword.encode_keyword(keyword)
   let json_string = json.to_string(json_value)
 
   string.contains(json_string, "\"id\":1")
@@ -57,7 +56,7 @@ pub fn encode_keyword_with_icon_test() {
       full_name: "Italian",
     )
 
-  let json_value = keyword_encoder.encode_keyword(keyword)
+  let json_value = keyword.encode_keyword(keyword)
   let json_string = json.to_string(json_value)
 
   string.contains(json_string, "\"icon\":\"🇮🇹\"")
@@ -82,7 +81,7 @@ pub fn encode_keyword_with_parent_test() {
       full_name: "Vegetarian > Vegan",
     )
 
-  let json_value = keyword_encoder.encode_keyword(keyword)
+  let json_value = keyword.encode_keyword(keyword)
   let json_string = json.to_string(json_value)
 
   string.contains(json_string, "\"parent\":1")
@@ -107,7 +106,7 @@ pub fn encode_keyword_with_children_test() {
       full_name: "Cuisine",
     )
 
-  let json_value = keyword_encoder.encode_keyword(keyword)
+  let json_value = keyword.encode_keyword(keyword)
   let json_string = json.to_string(json_value)
 
   string.contains(json_string, "\"numchild\":5")
@@ -119,14 +118,14 @@ pub fn encode_keyword_with_children_test() {
 
 pub fn encode_keyword_create_request_test() {
   let create_data =
-    keyword_encoder.KeywordCreateRequest(
+    keyword.KeywordCreateRequest(
       name: "gluten-free",
       description: "Gluten-free recipes",
       icon: Some("🌾"),
       parent: None,
     )
 
-  let json_value = keyword_encoder.encode_keyword_create_request(create_data)
+  let json_value = keyword.encode_keyword_create_request(create_data)
   let json_string = json.to_string(json_value)
 
   string.contains(json_string, "\"name\":\"gluten-free\"")
@@ -148,14 +147,14 @@ pub fn encode_keyword_create_request_test() {
 
 pub fn encode_keyword_update_request_test() {
   let update_data =
-    keyword_encoder.KeywordUpdateRequest(
+    keyword.KeywordUpdateRequest(
       name: Some("vegan-updated"),
       description: Some("Updated vegan description"),
       icon: None,
       parent: None,
     )
 
-  let json_value = keyword_encoder.encode_keyword_update_request(update_data)
+  let json_value = keyword.encode_keyword_update_request(update_data)
   let json_string = json.to_string(json_value)
 
   string.contains(json_string, "\"name\":\"vegan-updated\"")

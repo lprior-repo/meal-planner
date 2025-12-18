@@ -15,20 +15,15 @@ import gleam/json
 import gleam/option
 import gleam/result
 
-import meal_planner/tandoor/api/recipe/create as recipe_create_api
-import meal_planner/tandoor/api/recipe/delete as recipe_delete
-import meal_planner/tandoor/api/recipe/get as recipe_get
-import meal_planner/tandoor/api/recipe/list as recipe_list
-import meal_planner/tandoor/api/recipe/update as recipe_update
-import meal_planner/tandoor/encoders/recipe/recipe_create_encoder.{
-  type CreateRecipeRequest, CreateRecipeRequest,
+import meal_planner/tandoor/client.{
+  type Keyword, type NutritionInfo, type Step,
 }
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/types.{
-  type TandoorIngredient, type TandoorKeyword, type TandoorNutrition,
-  type TandoorRecipe, type TandoorStep,
+import meal_planner/tandoor/recipe.{
+  type Recipe, type RecipeDetail, type RecipeCreateRequest, type RecipeUpdate,
+  RecipeCreateRequest, RecipeUpdate,
+  list_recipes, get_recipe, create_recipe, update_recipe, delete_recipe,
 }
-import meal_planner/tandoor/types/recipe/recipe_update as recipe_update_type
 
 import wisp
 
@@ -48,7 +43,7 @@ fn handle_list_recipes(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
       case
-        recipe_list.list_recipes(
+        list_recipes(
           config,
           limit: option.None,
           offset: option.None,
@@ -56,7 +51,7 @@ fn handle_list_recipes(_req: wisp.Request) -> wisp.Response {
       {
         Ok(response) -> {
           let results_json =
-            json.array(response.results, fn(recipe) { encode_recipe(recipe) })
+            json.array(response.results, fn(r) { encode_recipe_simple(r) })
 
           helpers.paginated_response(
             results_json,
@@ -81,9 +76,9 @@ fn handle_create_recipe(req: wisp.Request) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case recipe_create_api.create_recipe(config, request) {
-            Ok(recipe) -> {
-              encode_recipe(recipe)
+          case create_recipe(config, request) {
+            Ok(r) -> {
+              encode_recipe_detail(r)
               |> json.to_string
               |> wisp.json_response(201)
             }
@@ -121,9 +116,9 @@ pub fn handle_recipe_by_id(
 fn handle_get_recipe(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case recipe_get.get_recipe(config, recipe_id: id) {
-        Ok(recipe) -> {
-          encode_recipe(recipe)
+      case get_recipe(config, recipe_id: id) {
+        Ok(r) -> {
+          encode_recipe_detail(r)
           |> json.to_string
           |> wisp.json_response(200)
         }
@@ -142,14 +137,14 @@ fn handle_update_recipe(req: wisp.Request, id: Int) -> wisp.Response {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
           case
-            recipe_update.update_recipe(
+            update_recipe(
               config,
               recipe_id: id,
-              update_data: request,
+              data: request,
             )
           {
-            Ok(recipe) -> {
-              encode_recipe(recipe)
+            Ok(r) -> {
+              encode_recipe_detail(r)
               |> json.to_string
               |> wisp.json_response(200)
             }
@@ -166,7 +161,7 @@ fn handle_update_recipe(req: wisp.Request, id: Int) -> wisp.Response {
 fn handle_delete_recipe(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case recipe_delete.delete_recipe(config, id) {
+      case delete_recipe(config, recipe_id: id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }
@@ -179,76 +174,69 @@ fn handle_delete_recipe(_req: wisp.Request, id: Int) -> wisp.Response {
 // Recipe JSON Encoding and Decoding
 // =============================================================================
 
-fn encode_recipe(recipe: TandoorRecipe) -> json.Json {
+/// Encode a simple Recipe (for list responses)
+fn encode_recipe_simple(recipe: Recipe) -> json.Json {
+  json.object([
+    #("id", json.int(recipe.id)),
+    #("name", json.string(recipe.name)),
+    #("slug", helpers.encode_optional_string(recipe.slug)),
+    #("description", helpers.encode_optional_string(recipe.description)),
+    #("servings", json.int(recipe.servings)),
+    #("servings_text", helpers.encode_optional_string(recipe.servings_text)),
+    #("working_time", helpers.encode_optional_int(recipe.working_time)),
+    #("waiting_time", helpers.encode_optional_int(recipe.waiting_time)),
+    #("created_at", helpers.encode_optional_string(recipe.created_at)),
+    #("updated_at", helpers.encode_optional_string(recipe.updated_at)),
+  ])
+}
+
+/// Encode a detailed RecipeDetail (for single recipe responses)
+fn encode_recipe_detail(recipe: RecipeDetail) -> json.Json {
   let nutrition_json = case recipe.nutrition {
-    option.Some(nutrition) -> encode_nutrition(nutrition)
+    option.Some(n) -> encode_nutrition(n)
     option.None -> json.null()
   }
 
   json.object([
     #("id", json.int(recipe.id)),
     #("name", json.string(recipe.name)),
-    #("description", json.string(recipe.description)),
+    #("slug", helpers.encode_optional_string(recipe.slug)),
+    #("description", helpers.encode_optional_string(recipe.description)),
     #("servings", json.int(recipe.servings)),
-    #("servings_text", json.string(recipe.servings_text)),
-    #("prep_time", json.int(recipe.prep_time)),
-    #("cooking_time", json.int(recipe.cooking_time)),
-    #("ingredients", json.array(recipe.ingredients, encode_ingredient)),
+    #("servings_text", helpers.encode_optional_string(recipe.servings_text)),
+    #("working_time", helpers.encode_optional_int(recipe.working_time)),
+    #("waiting_time", helpers.encode_optional_int(recipe.waiting_time)),
+    #("created_at", helpers.encode_optional_string(recipe.created_at)),
+    #("updated_at", helpers.encode_optional_string(recipe.updated_at)),
     #("steps", json.array(recipe.steps, encode_step)),
     #("nutrition", nutrition_json),
     #("keywords", json.array(recipe.keywords, encode_keyword)),
-    #("image", helpers.encode_optional_string(recipe.image)),
-    #("internal_id", helpers.encode_optional_string(recipe.internal_id)),
-    #("created_at", json.string(recipe.created_at)),
-    #("updated_at", json.string(recipe.updated_at)),
+    #("source_url", helpers.encode_optional_string(recipe.source_url)),
   ])
 }
 
-fn encode_ingredient(ingredient: TandoorIngredient) -> json.Json {
-  json.object([
-    #("id", json.int(ingredient.id)),
-    #(
-      "food",
-      json.object([
-        #("id", json.int(ingredient.food.id)),
-        #("name", json.string(ingredient.food.name)),
-      ]),
-    ),
-    #(
-      "unit",
-      json.object([
-        #("id", json.int(ingredient.unit.id)),
-        #("name", json.string(ingredient.unit.name)),
-        #("abbreviation", json.string(ingredient.unit.abbreviation)),
-      ]),
-    ),
-    #("amount", json.float(ingredient.amount)),
-    #("note", json.string(ingredient.note)),
-  ])
-}
-
-fn encode_step(step: TandoorStep) -> json.Json {
+fn encode_step(step: Step) -> json.Json {
   json.object([
     #("id", json.int(step.id)),
     #("name", json.string(step.name)),
-    #("instructions", json.string(step.instructions)),
+    #("instruction", json.string(step.instruction)),
     #("time", json.int(step.time)),
+    #("order", json.int(step.order)),
   ])
 }
 
-fn encode_nutrition(nutrition: TandoorNutrition) -> json.Json {
+fn encode_nutrition(nutrition: NutritionInfo) -> json.Json {
   json.object([
+    #("id", json.int(nutrition.id)),
     #("calories", json.float(nutrition.calories)),
-    #("carbs", json.float(nutrition.carbs)),
-    #("protein", json.float(nutrition.protein)),
+    #("carbs", json.float(nutrition.carbohydrates)),
+    #("protein", json.float(nutrition.proteins)),
     #("fats", json.float(nutrition.fats)),
-    #("fiber", json.float(nutrition.fiber)),
-    #("sugars", helpers.encode_optional_float(nutrition.sugars)),
-    #("sodium", helpers.encode_optional_float(nutrition.sodium)),
+    #("source", json.string(nutrition.source)),
   ])
 }
 
-fn encode_keyword(keyword: TandoorKeyword) -> json.Json {
+fn encode_keyword(keyword: Keyword) -> json.Json {
   json.object([
     #("id", json.int(keyword.id)),
     #("name", json.string(keyword.name)),
@@ -257,12 +245,12 @@ fn encode_keyword(keyword: TandoorKeyword) -> json.Json {
 
 fn parse_recipe_create_request(
   json_data: dynamic.Dynamic,
-) -> Result(CreateRecipeRequest, String) {
+) -> Result(RecipeCreateRequest, String) {
   decode.run(json_data, recipe_create_decoder())
   |> result.map_error(fn(_) { "Invalid recipe create request" })
 }
 
-fn recipe_create_decoder() -> decode.Decoder(CreateRecipeRequest) {
+fn recipe_create_decoder() -> decode.Decoder(RecipeCreateRequest) {
   use name <- decode.field("name", decode.string)
   use description <- decode.field("description", decode.optional(decode.string))
   use servings <- decode.field("servings", decode.int)
@@ -272,7 +260,7 @@ fn recipe_create_decoder() -> decode.Decoder(CreateRecipeRequest) {
   )
   use working_time <- decode.field("working_time", decode.optional(decode.int))
   use waiting_time <- decode.field("waiting_time", decode.optional(decode.int))
-  decode.success(CreateRecipeRequest(
+  decode.success(RecipeCreateRequest(
     name: name,
     description: description,
     servings: servings,
@@ -284,12 +272,12 @@ fn recipe_create_decoder() -> decode.Decoder(CreateRecipeRequest) {
 
 fn parse_recipe_update_request(
   json_data: dynamic.Dynamic,
-) -> Result(recipe_update_type.RecipeUpdate, String) {
+) -> Result(RecipeUpdate, String) {
   decode.run(json_data, recipe_update_decoder())
   |> result.map_error(fn(_) { "Invalid recipe update request" })
 }
 
-fn recipe_update_decoder() -> decode.Decoder(recipe_update_type.RecipeUpdate) {
+fn recipe_update_decoder() -> decode.Decoder(RecipeUpdate) {
   use name <- decode.field("name", decode.optional(decode.string))
   use description <- decode.field("description", decode.optional(decode.string))
   use servings <- decode.field("servings", decode.optional(decode.int))
@@ -299,7 +287,7 @@ fn recipe_update_decoder() -> decode.Decoder(recipe_update_type.RecipeUpdate) {
   )
   use working_time <- decode.field("working_time", decode.optional(decode.int))
   use waiting_time <- decode.field("waiting_time", decode.optional(decode.int))
-  decode.success(recipe_update_type.RecipeUpdate(
+  decode.success(RecipeUpdate(
     name: name,
     description: description,
     servings: servings,
