@@ -160,7 +160,7 @@ reserve_files() {
   "agent_name": "$agent_name",
   "reserved_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
   "ttl_seconds": 3600,
-  "paths": ["src/**", "test/**", "gleam/"]
+  "paths": ["src/**", "test/**"]
 }
 EOF
     

@@ -60,9 +60,9 @@ export const TddWorkflowPlugin: Plugin = async ({ project, client, $, directory 
   const runTests = async (): Promise<{ pass: boolean; output: string }> => {
     try {
       // Try Gleam first
-      const gleamToml = await $`test -f gleam/gleam.toml && echo "gleam"`.text().catch(() => "")
+      const gleamToml = await $`test -f gleam.toml && echo "gleam"`.text().catch(() => "")
       if (gleamToml.includes("gleam")) {
-        const result = await $`cd gleam && gleam test 2>&1`.text()
+        const result = await $`gleam test 2>&1`.text()
         const pass = !result.includes("FAILED") && !result.includes("error:")
         return { pass, output: result }
       }

@@ -97,7 +97,7 @@ Developers sometimes use `git commit --no-verify` to skip pre-commit hooks when:
 ### Normal workflow (recommended)
 ```bash
 # Make changes
-vim gleam/src/my_file.gleam
+vim src/my_file.gleam
 
 # Commit (pre-commit runs)
 git commit -m "Add feature"
@@ -111,14 +111,14 @@ git push
 ### WIP workflow (using --no-verify)
 ```bash
 # Make changes (code doesn't compile yet)
-vim gleam/src/my_file.gleam
+vim src/my_file.gleam
 
 # Commit WIP (bypass pre-commit)
 git commit --no-verify -m "WIP: partial implementation"
 ⚠ Post-commit warns: "Code has compilation errors!"
 
 # Continue working...
-vim gleam/src/my_file.gleam
+vim src/my_file.gleam
 
 # Fix compilation errors
 gleam build
@@ -235,14 +235,14 @@ fi
 ### Test pre-commit
 ```bash
 # Break the build
-echo "invalid gleam" >> gleam/src/meal_planner/web.gleam
+echo "invalid gleam" >> src/meal_planner/web.gleam
 
 # Try to commit
 git commit -m "Test"
 # Should fail
 
 # Fix it
-git restore gleam/src/meal_planner/web.gleam
+git restore src/meal_planner/web.gleam
 ```
 
 ### Test post-commit

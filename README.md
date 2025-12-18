@@ -47,7 +47,7 @@ A modern web application for meal planning and nutrition tracking built with Gle
 
 ```bash
 git clone https://github.com/lprior-repo/meal-planner
-cd meal-planner/gleam
+cd meal-planner
 ```
 
 ### 2. Install Dependencies
@@ -58,20 +58,20 @@ gleam deps download
 
 ### 3. Setup PostgreSQL Database
 
-Create the database and run migrations:
+Create the database and run schema files:
 
 ```bash
 # Create database
 createdb meal_planner
 
-# Run migrations (in order from gleam/migrations_pg/)
-psql -d meal_planner -f gleam/migrations_pg/001_schema_migrations.sql
-psql -d meal_planner -f gleam/migrations_pg/002_usda_tables.sql
-psql -d meal_planner -f gleam/migrations_pg/003_app_tables.sql
-psql -d meal_planner -f gleam/migrations_pg/005_add_micronutrients_to_food_logs.sql
-psql -d meal_planner -f gleam/migrations_pg/006_add_source_tracking.sql
-psql -d meal_planner -f gleam/migrations_pg/009_auto_meal_planner.sql
-psql -d meal_planner -f gleam/migrations_pg/010_optimize_search_performance.sql
+# Run schema files (in order from schema/)
+psql -d meal_planner -f schema/001_schema_migrations.sql
+psql -d meal_planner -f schema/002_usda_tables.sql
+psql -d meal_planner -f schema/003_app_tables.sql
+psql -d meal_planner -f schema/005_add_micronutrients_to_food_logs.sql
+psql -d meal_planner -f schema/006_add_source_tracking.sql
+psql -d meal_planner -f schema/009_auto_meal_planner.sql
+psql -d meal_planner -f schema/010_optimize_search_performance.sql
 ```
 
 ### 4. Setup Tandoor (Recipe Management)
@@ -192,7 +192,7 @@ gleam test --target erlang --module postgres_test
 ## Project Structure
 
 ```
-gleam/
+.
 ├── src/
 │   └── meal_planner/
 │       ├── web.gleam              # Wisp web server & routes
@@ -219,7 +219,7 @@ gleam/
 │   └── fixtures/                  # Test data
 ├── priv/
 │   └── static/                    # CSS, JS, images
-├── migrations_pg/                 # PostgreSQL migrations
+├── schema/                        # PostgreSQL schema definitions
 └── gleam.toml                     # Project configuration
 ```
 
@@ -289,19 +289,19 @@ The application follows functional programming principles with OTP supervision:
 The application includes comprehensive Prometheus metrics for monitoring critical operations:
 
 **Metrics Categories**:
-1. **Tandoor API Monitoring** (`gleam/src/meal_planner/metrics/tandoor_monitoring.gleam`)
+1. **Tandoor API Monitoring** (`src/meal_planner/metrics/tandoor_monitoring.gleam`)
    - API call duration and latency (p95, p99 percentiles)
    - Error rates by endpoint
    - Retry attempt tracking
    - Request/response payload sizes
 
-2. **NCP Calculations** (`gleam/src/meal_planner/metrics/ncp_monitoring.gleam`)
+2. **NCP Calculations** (`src/meal_planner/metrics/ncp_monitoring.gleam`)
    - Deviation calculation timing
    - Reconciliation duration
    - Recipe scoring performance
    - Nutrition consistency rates
 
-3. **Storage Queries** (`gleam/src/meal_planner/metrics/storage_monitoring.gleam`)
+3. **Storage Queries** (`src/meal_planner/metrics/storage_monitoring.gleam`)
    - Query execution time by type (SELECT, INSERT, UPDATE, DELETE)
    - Cache hit/miss rates
    - Rows processed and returned
@@ -322,7 +322,7 @@ See `METRICS_INTEGRATION_GUIDE.md` for detailed integration instructions.
 Located in `src/scripts/`:
 
 - `init_pg.gleam` - Initialize PostgreSQL database and import USDA data
-- `import_recipes.gleam` - Import recipes from YAML files (legacy)
+- `import_recipes.gleam` - Import recipes from YAML files
 - `restore_db.gleam` - Database backup/restore utilities
 
 Run scripts with:
@@ -421,7 +421,7 @@ MIT License - see LICENSE file for details.
 - **Gleam Community** - Excellent functional programming language and ecosystem
 - **BEAM/OTP** - Rock-solid foundation for concurrent applications
 
-## Legacy Code
+## Deprecated Code
 
 The original Go implementation has been archived in `_archive/go/`. The project has been fully rewritten in Gleam with modern web technologies.
 

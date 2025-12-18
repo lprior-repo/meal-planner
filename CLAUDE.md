@@ -13,7 +13,7 @@ LANGUAGE: Gleam
 CORE_DISCIPLINE: Strict_TCR (Test, Commit, Revert)
 
 TESTING:
-COMMAND: `cd gleam && make test` (parallel, 0.8s)
+COMMAND: `make test` (parallel, 0.8s)
 FALLBACK: `gleam test` (sequential, slow)
 
 VISUALIZATION_HUD:

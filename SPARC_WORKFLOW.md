@@ -85,13 +85,13 @@ Commit message format:
 ```
 [Requirements]
     ↓
-[ARCHITECT: Design Types] → (gleam/src/types.gleam)
+[ARCHITECT: Design Types] → (src/types.gleam)
     ↓
-[TESTER: Write Tests] → (gleam/test/*_test.gleam) → RED
+[TESTER: Write Tests] → (test/*_test.gleam) → RED
     ↓
-[CODER: Implement] → (gleam/src/*.gleam) → GREEN
+[CODER: Implement] → (src/*.gleam) → GREEN
     ↓
-[REFACTORER: Optimize] → (gleam/src/*.gleam) → BLUE
+[REFACTORER: Optimize] → (src/*.gleam) → BLUE
     ↓
 [CI: Commit] → git commit
     ↓
@@ -174,7 +174,6 @@ git reset --hard
 ## File Structure
 
 ```
-gleam/
 ├── src/
 │   └── meal_planner/
 │       ├── types.gleam              # Domain types
@@ -202,14 +201,14 @@ gleam/
 
 #### Step 1: ARCHITECT
 ```gleam
-// gleam/src/meal_planner/grocery_list.gleam
+// src/meal_planner/grocery_list.gleam
 pub type GroceryItem { ... }
 pub type GroceryList { ... }
 ```
 
 #### Step 2: TESTER
 ```gleam
-// gleam/test/grocery_list_test.gleam
+// test/grocery_list_test.gleam
 pub fn test_from_ingredients_combines_same_food() {
   let ing1 = ingredient("Tomato", 2.0, "cups")
   let ing2 = ingredient("Tomato", 1.5, "cups")
@@ -277,7 +276,7 @@ bd close meal-planner-xt0.1 --reason "Complete implementation with merge support
 ## Resources
 
 - Gleam Documentation: https://gleam.run/
-- Project Structure: `gleam/`
-- Test Helpers: `gleam/test/integration/helpers/`
+- Project Structure: `src/`
+- Test Helpers: `test/integration/helpers/`
 - Task Tracking: `bd --help`
 - Beads Database: `.beads/beads.db`
