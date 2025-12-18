@@ -85,6 +85,7 @@ import meal_planner/tandoor/types/supermarket/supermarket_category_create.{
 import meal_planner/tandoor/types/supermarket/supermarket_create.{
   type SupermarketCreateRequest, SupermarketCreateRequest,
 }
+import meal_planner/web/handlers/tandoor/steps
 
 import wisp
 
@@ -181,10 +182,11 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
       handle_meal_plan_by_id(req, meal_plan_id)
 
     // Steps (GET list, POST create)
-    ["api", "tandoor", "steps"] -> handle_steps_collection(req)
+    ["api", "tandoor", "steps"] -> steps.handle_steps_collection(req)
 
     // Step by ID (GET, PATCH, DELETE)
-    ["api", "tandoor", "steps", step_id] -> handle_step_by_id(req, step_id)
+    ["api", "tandoor", "steps", step_id] ->
+      steps.handle_step_by_id(req, step_id)
 
     // Ingredients (GET list only)
     ["api", "tandoor", "ingredients"] -> handle_ingredients_collection(req)
@@ -1743,6 +1745,7 @@ fn parse_supermarket_create_request(
 fn supermarket_create_decoder() -> decode.Decoder(SupermarketCreateRequest) {
   use name <- decode.field("name", decode.string)
   use description <- decode.field("description", decode.optional(decode.string))
+  decode.success(SupermarketCreateRequest(name: name, description: description))
   decode.success(SupermarketCreateRequest(name: name, description: description))
 }
 
