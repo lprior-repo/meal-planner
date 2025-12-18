@@ -10,6 +10,7 @@
 /// - macros: Macro calculation endpoint
 /// - dashboard: Dashboard UI with nutrition tracking
 /// - tandoor: Tandoor Recipe Manager integration
+import meal_planner/email/handler as email_handler
 import meal_planner/fatsecret/foods/handlers as foods_handlers
 import meal_planner/fatsecret/profile/handlers as profile_handlers
 import meal_planner/web/handlers/diet
