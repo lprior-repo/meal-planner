@@ -1,11 +1,13 @@
-//// TCR Cycle 1: Weekly Generation Engine Types
-//// GREEN PHASE - Implementing to pass tests
+//// TCR Cycle 2: Weekly Generation Engine
+//// Testing types and generation functions
 
+import gleam/list
 import gleeunit/should
 import meal_planner/generator/weekly.{
-  type DailyMacros, type DayMeals, type MacroComparison, type WeeklyMealPlan,
-  DayMeals, OnTarget, Over, Under, WeeklyMealPlan, calculate_daily_macros,
-  days_count, total_weekly_macros,
+  type DailyMacros, type DayMeals, type GenerationError, type MacroComparison,
+  type WeeklyMealPlan, DayMeals, NotEnoughRecipes, OnTarget, Over, Under,
+  WeeklyMealPlan, calculate_daily_macros, days_count, generate_weekly_plan,
+  total_weekly_macros,
 }
 import meal_planner/id
 import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
@@ -170,4 +172,74 @@ pub fn macro_comparison_over_target_test() {
   daily.fat_status |> should.equal(Over)
   // 240g carbs vs 150g = 160% = Over
   daily.carbs_status |> should.equal(Over)
+}
+
+// ============================================================================
+// TCR Cycle 2: Generation Function Tests
+// ============================================================================
+
+pub fn generate_weekly_plan_creates_seven_days_test() {
+  let recipes = [
+    test_recipe("Recipe1", 30.0, 15.0, 40.0),
+    test_recipe("Recipe2", 35.0, 12.0, 45.0),
+    test_recipe("Recipe3", 25.0, 18.0, 35.0),
+    test_recipe("Recipe4", 40.0, 10.0, 50.0),
+    test_recipe("Recipe5", 28.0, 14.0, 38.0),
+    test_recipe("Recipe6", 32.0, 16.0, 42.0),
+    test_recipe("Recipe7", 38.0, 11.0, 48.0),
+  ]
+  let target = target_macros()
+
+  let result = generate_weekly_plan("2025-12-22", recipes, target)
+
+  case result {
+    Ok(plan) -> {
+      days_count(plan) |> should.equal(7)
+      plan.week_of |> should.equal("2025-12-22")
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+pub fn generate_weekly_plan_fails_with_insufficient_recipes_test() {
+  // Only 2 recipes - not enough for 7 days × 3 meals = 21 meals
+  let recipes = [
+    test_recipe("Recipe1", 30.0, 15.0, 40.0),
+    test_recipe("Recipe2", 35.0, 12.0, 45.0),
+  ]
+  let target = target_macros()
+
+  let result = generate_weekly_plan("2025-12-22", recipes, target)
+
+  case result {
+    Ok(_) -> should.fail()
+    Error(NotEnoughRecipes) -> should.be_true(True)
+  }
+}
+
+pub fn generate_weekly_plan_assigns_all_meals_test() {
+  let recipes = [
+    test_recipe("Breakfast1", 30.0, 15.0, 40.0),
+    test_recipe("Breakfast2", 28.0, 14.0, 38.0),
+    test_recipe("Lunch1", 45.0, 12.0, 55.0),
+    test_recipe("Lunch2", 42.0, 14.0, 52.0),
+    test_recipe("Dinner1", 50.0, 20.0, 30.0),
+    test_recipe("Dinner2", 48.0, 18.0, 32.0),
+    test_recipe("Extra", 35.0, 16.0, 45.0),
+  ]
+  let target = target_macros()
+
+  let result = generate_weekly_plan("2025-12-22", recipes, target)
+
+  case result {
+    Ok(plan) -> {
+      // Each day should have non-empty meal names
+      list.each(plan.days, fn(day: DayMeals) {
+        should.not_equal(day.breakfast.name, "")
+        should.not_equal(day.lunch.name, "")
+        should.not_equal(day.dinner.name, "")
+      })
+    }
+    Error(_) -> should.fail()
+  }
 }
