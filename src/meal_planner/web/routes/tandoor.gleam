@@ -3,9 +3,11 @@
 //// Routes:
 //// - /tandoor/status
 //// - /api/tandoor/recipes/*
+//// - /api/tandoor/cuisines/*
 //// - /api/tandoor/units
 //// - /api/tandoor/keywords
 //// - /api/tandoor/meal-plans/*
+//// - /api/tandoor/steps/*
 //// - /api/tandoor/shopping-list-entries/*
 //// - /api/tandoor/shopping-list-recipe
 //// - /api/tandoor/supermarkets/*
@@ -33,6 +35,11 @@ pub fn route(
     ["api", "tandoor", "recipes", _recipe_id] ->
       Some(handlers.handle_tandoor_routes(req))
 
+    // Cuisines
+    ["api", "tandoor", "cuisines"] -> Some(handlers.handle_tandoor_routes(req))
+    ["api", "tandoor", "cuisines", _cuisine_id] ->
+      Some(handlers.handle_tandoor_routes(req))
+
     // Units
     ["api", "tandoor", "units"] -> Some(handlers.handle_tandoor_routes(req))
 
@@ -43,6 +50,11 @@ pub fn route(
     ["api", "tandoor", "meal-plans"] ->
       Some(handlers.handle_tandoor_routes(req))
     ["api", "tandoor", "meal-plans", _entry_id] ->
+      Some(handlers.handle_tandoor_routes(req))
+
+    // Steps
+    ["api", "tandoor", "steps"] -> Some(handlers.handle_tandoor_routes(req))
+    ["api", "tandoor", "steps", _step_id] ->
       Some(handlers.handle_tandoor_routes(req))
 
     // Shopping Lists
