@@ -10,9 +10,11 @@
 /// - macros: Macro calculation endpoint
 /// - dashboard: Dashboard UI with nutrition tracking
 /// - tandoor: Tandoor Recipe Manager integration
+import meal_planner/email/executor as email_executor
 import meal_planner/email/handler as email_handler
 import meal_planner/fatsecret/foods/handlers as foods_handlers
 import meal_planner/fatsecret/profile/handlers as profile_handlers
+import meal_planner/types
 import meal_planner/web/handlers/diet
 import meal_planner/web/handlers/health
 import meal_planner/web/handlers/macros
@@ -242,4 +244,17 @@ pub fn handle_fatsecret_get_profile_auth(
   user_id: String,
 ) -> wisp.Response {
   profile_handlers.get_profile_auth(req, conn, user_id)
+}
+
+// ============================================================================
+// Email Command Executor
+// ============================================================================
+
+/// Execute parsed email command with database connection
+/// Routes command to appropriate handler (adjust meal, preferences, regeneration, etc.)
+pub fn execute_email_command(
+  command: types.EmailCommand,
+  conn: pog.Connection,
+) -> types.CommandExecutionResult {
+  email_executor.execute_command(command, conn)
 }
