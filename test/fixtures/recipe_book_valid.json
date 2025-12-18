@@ -1,0 +1,29 @@
+{
+  "id": 1,
+  "name": "Weekly Meal Plans",
+  "description": "Collection of recipes used in weekly meal planning rotations",
+  "shared": [
+    {
+      "id": 1,
+      "username": "lewis",
+      "email": "lewis@example.com",
+      "first_name": "Lewis",
+      "last_name": "Prior"
+    },
+    {
+      "id": 2,
+      "username": "partner",
+      "email": "partner@example.com",
+      "first_name": "Partner",
+      "last_name": "Name"
+    }
+  ],
+  "created_by": {
+    "id": 1,
+    "username": "lewis",
+    "email": "lewis@example.com",
+    "first_name": "Lewis",
+    "last_name": "Prior"
+  },
+  "filter": null
+}

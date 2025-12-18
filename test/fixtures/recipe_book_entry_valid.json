@@ -1,0 +1,60 @@
+{
+  "id": 1,
+  "book": 1,
+  "book_content": {
+    "id": 1,
+    "name": "Weekly Meal Plans",
+    "description": "Collection of recipes used in weekly meal planning rotations",
+    "shared": [
+      {
+        "id": 1,
+        "username": "lewis",
+        "email": "lewis@example.com",
+        "first_name": "Lewis",
+        "last_name": "Prior"
+      }
+    ],
+    "created_by": {
+      "id": 1,
+      "username": "lewis",
+      "email": "lewis@example.com",
+      "first_name": "Lewis",
+      "last_name": "Prior"
+    },
+    "filter": null
+  },
+  "recipe": 123,
+  "recipe_content": {
+    "id": 123,
+    "name": "Chocolate Chip Cookies",
+    "description": "Classic chocolate chip cookies with vanilla",
+    "image": "https://tandoor.example.com/media/recipes/123.jpg",
+    "keywords": [
+      {
+        "id": 1,
+        "name": "dessert"
+      },
+      {
+        "id": 2,
+        "name": "baking"
+      }
+    ],
+    "rating": 4.5,
+    "last_cooked": "2025-12-15T14:30:00Z",
+    "working_time": 15,
+    "waiting_time": 12,
+    "created_by": {
+      "id": 1,
+      "username": "lewis",
+      "email": "lewis@example.com",
+      "first_name": "Lewis",
+      "last_name": "Prior"
+    },
+    "created_at": "2025-10-01T10:00:00Z",
+    "updated_at": "2025-12-15T14:30:00Z",
+    "internal": false,
+    "private": false,
+    "servings": 24,
+    "servings_text": "24 cookies"
+  }
+}
