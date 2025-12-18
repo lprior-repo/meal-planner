@@ -132,6 +132,11 @@ pub fn total_weekly_macros(plan: WeeklyMealPlan) -> Macros {
   |> list.fold(macros_zero(), macros_add)
 }
 
+/// Check if a day is a travel day
+pub fn is_travel_day(day: String, constraints: Constraints) -> Bool {
+  list.contains(constraints.travel_dates, day)
+}
+
 /// Filter recipes by rotation history
 /// Excludes recipes used within the rotation_days window
 pub fn filter_by_rotation(

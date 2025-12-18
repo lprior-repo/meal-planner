@@ -9,7 +9,8 @@ import meal_planner/generator/weekly.{
   Constraints, DayMeals, Dinner, LockedMeal, NotEnoughRecipes, OnTarget, Over,
   RotationEntry, Under, WeeklyMealPlan, analyze_plan, calculate_daily_macros,
   days_count, filter_by_rotation, generate_weekly_plan,
-  generate_weekly_plan_with_constraints, is_plan_balanced, total_weekly_macros,
+  generate_weekly_plan_with_constraints, is_plan_balanced, is_travel_day,
+  total_weekly_macros,
 }
 import meal_planner/id
 import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
@@ -430,4 +431,29 @@ pub fn filter_by_rotation_with_empty_history_returns_all_test() {
   let available = filter_by_rotation(all_recipes, history, 30)
 
   list.length(available) |> should.equal(2)
+}
+
+// ============================================================================
+// TCR Cycle 6: Travel Date Tests
+// ============================================================================
+
+pub fn is_travel_day_returns_true_for_matching_day_test() {
+  let constraints =
+    Constraints(locked_meals: [], travel_dates: ["Tuesday", "Wednesday"])
+
+  is_travel_day("Tuesday", constraints) |> should.be_true
+  is_travel_day("Wednesday", constraints) |> should.be_true
+}
+
+pub fn is_travel_day_returns_false_for_non_travel_day_test() {
+  let constraints = Constraints(locked_meals: [], travel_dates: ["Tuesday"])
+
+  is_travel_day("Monday", constraints) |> should.be_false
+  is_travel_day("Friday", constraints) |> should.be_false
+}
+
+pub fn is_travel_day_returns_false_with_empty_travel_dates_test() {
+  let constraints = Constraints(locked_meals: [], travel_dates: [])
+
+  is_travel_day("Monday", constraints) |> should.be_false
 }
