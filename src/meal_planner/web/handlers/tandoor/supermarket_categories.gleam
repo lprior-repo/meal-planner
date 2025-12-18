@@ -60,12 +60,12 @@ fn handle_list_categories(_req: wisp.Request) -> wisp.Response {
               ])
             })
 
-          json.object([
-            #("count", json.int(response.count)),
-            #("next", helpers.encode_optional_string(response.next)),
-            #("previous", helpers.encode_optional_string(response.previous)),
-            #("results", results_json),
-          ])
+          helpers.paginated_response(
+            results_json,
+            response.count,
+            response.next,
+            response.previous,
+          )
           |> json.to_string
           |> wisp.json_response(200)
         }
