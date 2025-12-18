@@ -8,7 +8,9 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
+import meal_planner/generator/weekly.{type DayMeals, type WeeklyMealPlan}
 import meal_planner/tandoor/client.{type Food, type Ingredient, type Unit}
+import meal_planner/types.{type Ingredient as SimpleIngredient}
 
 // ============================================================================
 // Types
@@ -316,4 +318,83 @@ pub fn merge(lists: List(GroceryList)) -> GroceryList {
     })
 
   GroceryList(by_category: by_category, all_items: merged_items)
+}
+
+// ============================================================================
+// Simple Ingredient Support (for types.Ingredient)
+// ============================================================================
+
+/// Generate a grocery list from simple ingredients (name + quantity string)
+///
+/// This works with the types.Ingredient type which has just name and quantity.
+/// Ingredients with the same name are combined into a single item.
+pub fn from_simple_ingredients(
+  ingredients: List(SimpleIngredient),
+) -> GroceryList {
+  // Group ingredients by name
+  let grouped =
+    ingredients
+    |> list.fold(dict.new(), fn(acc, ing) {
+      let current =
+        dict.get(acc, ing.name)
+        |> result.unwrap([])
+      dict.insert(acc, ing.name, [ing, ..current])
+    })
+
+  // Convert to grocery items
+  let items =
+    grouped
+    |> dict.to_list
+    |> list.map(fn(entry) {
+      let #(name, ings) = entry
+      // Combine quantities as comma-separated list
+      let quantities =
+        ings
+        |> list.map(fn(i: SimpleIngredient) { i.quantity })
+        |> string.join(", ")
+
+      GroceryItem(
+        name: name,
+        quantity: 0.0,
+        // Not applicable for simple ingredients
+        unit: quantities,
+        // Store quantities in unit field
+        category: "Uncategorized",
+        source_ingredients: list.map(ings, fn(i: SimpleIngredient) {
+          i.name <> ": " <> i.quantity
+        }),
+      )
+    })
+
+  // All items go to "Uncategorized"
+  let by_category = case list.is_empty(items) {
+    True -> dict.new()
+    False -> dict.from_list([#("Uncategorized", items)])
+  }
+
+  GroceryList(by_category: by_category, all_items: items)
+}
+
+// ============================================================================
+// Weekly Plan Integration
+// ============================================================================
+
+/// Generate a grocery list from a weekly meal plan
+///
+/// Collects all ingredients from all recipes in the plan and combines them.
+pub fn from_weekly_plan(plan: WeeklyMealPlan) -> GroceryList {
+  // Collect all ingredients from all days
+  let all_ingredients =
+    plan.days
+    |> list.flat_map(fn(day: DayMeals) {
+      // Get ingredients from each meal
+      list.flatten([
+        day.breakfast.ingredients,
+        day.lunch.ingredients,
+        day.dinner.ingredients,
+      ])
+    })
+
+  // Use from_simple_ingredients to process them
+  from_simple_ingredients(all_ingredients)
 }
