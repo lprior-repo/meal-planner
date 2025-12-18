@@ -67,6 +67,11 @@ pub type Constraints {
   Constraints(locked_meals: List(LockedMeal), travel_dates: List(String))
 }
 
+/// Rotation history entry tracking recipe usage
+pub type RotationEntry {
+  RotationEntry(recipe_name: String, days_ago: Int)
+}
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -125,6 +130,29 @@ pub fn total_weekly_macros(plan: WeeklyMealPlan) -> Macros {
   plan.days
   |> list.map(sum_day_macros)
   |> list.fold(macros_zero(), macros_add)
+}
+
+/// Filter recipes by rotation history
+/// Excludes recipes used within the rotation_days window
+pub fn filter_by_rotation(
+  recipes: List(Recipe),
+  history: List(RotationEntry),
+  rotation_days: Int,
+) -> List(Recipe) {
+  recipes
+  |> list.filter(fn(recipe) {
+    // Check if this recipe is in the recent history
+    let recent_use =
+      history
+      |> list.find(fn(entry) {
+        entry.recipe_name == recipe.name && entry.days_ago < rotation_days
+      })
+    // Keep recipe only if NOT found in recent history
+    case recent_use {
+      Ok(_) -> False
+      Error(_) -> True
+    }
+  })
 }
 
 /// Get element at index from list (wrapping around if needed)
