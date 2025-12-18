@@ -8,9 +8,9 @@ import meal_planner/generator/weekly.{
   type MacroComparison, type MealType, type RotationEntry, type WeeklyMealPlan,
   Constraints, DayMeals, Dinner, LockedMeal, NotEnoughRecipes, OnTarget, Over,
   RotationEntry, Under, WeeklyMealPlan, analyze_plan, calculate_daily_macros,
-  days_count, filter_by_rotation, generate_weekly_plan,
-  generate_weekly_plan_with_constraints, is_plan_balanced, is_travel_day,
-  total_weekly_macros,
+  days_count, filter_by_rotation, generate_plan_with_rotation,
+  generate_weekly_plan, generate_weekly_plan_with_constraints, is_plan_balanced,
+  is_travel_day, total_weekly_macros,
 }
 import meal_planner/id
 import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
@@ -456,4 +456,72 @@ pub fn is_travel_day_returns_false_with_empty_travel_dates_test() {
   let constraints = Constraints(locked_meals: [], travel_dates: [])
 
   is_travel_day("Monday", constraints) |> should.be_false
+}
+
+// ============================================================================
+// TCR Cycle 7: Full Generation with Rotation History
+// ============================================================================
+
+pub fn generate_with_rotation_excludes_recent_recipes_test() {
+  let recipes = [
+    test_recipe("Fresh1", 30.0, 15.0, 40.0),
+    test_recipe("Fresh2", 35.0, 12.0, 45.0),
+    test_recipe("Fresh3", 25.0, 18.0, 35.0),
+    test_recipe("Recent", 40.0, 20.0, 50.0),
+  ]
+  let constraints = Constraints(locked_meals: [], travel_dates: [])
+  // "Recent" was used 5 days ago - should be excluded
+  let history = [RotationEntry(recipe_name: "Recent", days_ago: 5)]
+
+  let result =
+    generate_plan_with_rotation(
+      "2025-12-22",
+      recipes,
+      target_macros(),
+      constraints,
+      history,
+      30,
+    )
+
+  case result {
+    Ok(plan) -> {
+      // "Recent" should NOT appear in any meal
+      let has_recent =
+        list.any(plan.days, fn(day: DayMeals) {
+          day.breakfast.name == "Recent"
+          || day.lunch.name == "Recent"
+          || day.dinner.name == "Recent"
+        })
+      has_recent |> should.be_false
+    }
+    Error(_) -> should.fail()
+  }
+}
+
+pub fn generate_with_rotation_fails_if_all_recipes_excluded_test() {
+  let recipes = [
+    test_recipe("Recipe1", 30.0, 15.0, 40.0),
+    test_recipe("Recipe2", 35.0, 12.0, 45.0),
+  ]
+  let constraints = Constraints(locked_meals: [], travel_dates: [])
+  // Both recipes used recently - all excluded
+  let history = [
+    RotationEntry(recipe_name: "Recipe1", days_ago: 5),
+    RotationEntry(recipe_name: "Recipe2", days_ago: 10),
+  ]
+
+  let result =
+    generate_plan_with_rotation(
+      "2025-12-22",
+      recipes,
+      target_macros(),
+      constraints,
+      history,
+      30,
+    )
+
+  case result {
+    Ok(_) -> should.fail()
+    Error(NotEnoughRecipes) -> should.be_true(True)
+  }
 }
