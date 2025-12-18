@@ -10,6 +10,7 @@
 /// - macros: Macro calculation endpoint
 /// - dashboard: Dashboard UI with nutrition tracking
 /// - tandoor: Tandoor Recipe Manager integration
+import meal_planner/email/confirmation as email_confirmation
 import meal_planner/email/executor as email_executor
 import meal_planner/email/handler as email_handler
 import meal_planner/fatsecret/foods/handlers as foods_handlers
@@ -257,4 +258,13 @@ pub fn execute_email_command(
   conn: pog.Connection,
 ) -> types.CommandExecutionResult {
   email_executor.execute_command(command, conn)
+}
+
+/// Generate confirmation email for executed command
+/// Returns email with formatted subject, body, and HTML content
+pub fn generate_confirmation_email(
+  result: types.CommandExecutionResult,
+  user_email: String,
+) -> email_confirmation.ConfirmationEmail {
+  email_confirmation.generate_confirmation(result, user_email)
 }
