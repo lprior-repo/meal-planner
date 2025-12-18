@@ -12,9 +12,8 @@ import gleam/result
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/cuisine.{
   type Cuisine, type CuisineCreateRequest, type CuisineUpdateRequest,
-  CuisineCreateRequest, CuisineUpdateRequest,
-  list_cuisines_by_parent, get_cuisine, create_cuisine, update_cuisine,
-  delete_cuisine,
+  CuisineCreateRequest, CuisineUpdateRequest, create_cuisine, delete_cuisine,
+  get_cuisine, list_cuisines_by_parent, update_cuisine,
 }
 import meal_planner/tandoor/handlers/helpers
 
@@ -196,12 +195,7 @@ pub fn handle_delete_cuisine(
     Ok(id) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case
-            delete_cuisine(
-              config,
-              cuisine_id: ids.cuisine_id_from_int(id),
-            )
-          {
+          case delete_cuisine(config, cuisine_id: ids.cuisine_id_from_int(id)) {
             Ok(_) -> wisp.no_content()
             Error(_) -> helpers.error_response(500, "Failed to delete cuisine")
           }

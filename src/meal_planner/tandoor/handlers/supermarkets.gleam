@@ -23,10 +23,11 @@ import gleam/result
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/supermarket.{
   type Supermarket, type SupermarketCategory,
-  type SupermarketCreateRequest, type SupermarketCategoryCreateRequest,
-  SupermarketCreateRequest, SupermarketCategoryCreateRequest,
-  list_supermarkets, get_supermarket, create_supermarket, update_supermarket, delete_supermarket,
-  list_categories, get_category, create_category, update_category, delete_category,
+  type SupermarketCategoryCreateRequest, type SupermarketCreateRequest,
+  SupermarketCategoryCreateRequest, SupermarketCreateRequest, create_category,
+  create_supermarket, delete_category, delete_supermarket, get_category,
+  get_supermarket, list_categories, list_supermarkets, update_category,
+  update_supermarket,
 }
 import wisp
 
@@ -69,13 +70,7 @@ pub fn handle_supermarkets_collection(req: wisp.Request) -> wisp.Response {
 fn handle_list_supermarkets(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case
-        list_supermarkets(
-          config,
-          limit: option.None,
-          page: option.None,
-        )
-      {
+      case list_supermarkets(config, limit: option.None, page: option.None) {
         Ok(response) -> {
           let results_json =
             json.array(response.results, fn(supermarket) {
@@ -178,13 +173,7 @@ fn handle_update_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case
-            update_supermarket(
-              config,
-              id: id,
-              data: request,
-            )
-          {
+          case update_supermarket(config, id: id, data: request) {
             Ok(supermarket) -> {
               encode_supermarket(#(
                 supermarket.id,
@@ -232,13 +221,7 @@ pub fn handle_categories_collection(req: wisp.Request) -> wisp.Response {
 fn handle_list_categories(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case
-        list_categories(
-          config,
-          limit: option.None,
-          offset: option.None,
-        )
-      {
+      case list_categories(config, limit: option.None, offset: option.None) {
         Ok(response) -> {
           let results_json =
             json.array(response.results, fn(category) {
@@ -337,11 +320,7 @@ fn handle_update_category(req: wisp.Request, id: Int) -> wisp.Response {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
           case
-            update_category(
-              config,
-              category_id: id,
-              category_data: request,
-            )
+            update_category(config, category_id: id, category_data: request)
           {
             Ok(category) -> {
               encode_category(#(

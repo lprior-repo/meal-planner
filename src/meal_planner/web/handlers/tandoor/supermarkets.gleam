@@ -9,10 +9,9 @@ import gleam/result
 
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/supermarket.{
-  type Supermarket, type SupermarketCreateRequest,
-  SupermarketCreateRequest,
-  list_supermarkets, get_supermarket, create_supermarket,
-  update_supermarket, delete_supermarket,
+  type Supermarket, type SupermarketCreateRequest, SupermarketCreateRequest,
+  create_supermarket, delete_supermarket, get_supermarket, list_supermarkets,
+  update_supermarket,
 }
 
 import wisp
@@ -51,13 +50,7 @@ pub fn handle_supermarket_by_id(
 fn handle_list_supermarkets(_req: wisp.Request) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case
-        list_supermarkets(
-          config,
-          limit: option.None,
-          page: option.None,
-        )
-      {
+      case list_supermarkets(config, limit: option.None, page: option.None) {
         Ok(response) -> {
           let results_json =
             json.array(response.results, fn(supermarket) {
@@ -148,13 +141,7 @@ fn handle_update_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case
-            update_supermarket(
-              config,
-              id: id,
-              data: request,
-            )
-          {
+          case update_supermarket(config, id: id, data: request) {
             Ok(supermarket) -> {
               json.object([
                 #("id", json.int(supermarket.id)),

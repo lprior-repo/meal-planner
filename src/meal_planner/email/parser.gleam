@@ -76,10 +76,6 @@ fn parse_adjust_command(body: String) -> Result(EmailCommand, EmailCommandError)
           Error(InvalidCommand(
             reason: "Missing day or meal type in adjust command",
           ))
-      }
-    }
-  }
-}
 
 fn parse_regenerate_command(
   body: String,
@@ -189,9 +185,6 @@ fn parse_skip_command(body: String) -> Result(EmailCommand, EmailCommandError) {
           Error(InvalidCommand(
             reason: "Missing meal type or day in skip command",
           ))
-      }
-    }
-  }
 }
 
 fn string_to_meal_type(s: String) -> Option(MealType) {

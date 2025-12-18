@@ -18,6 +18,7 @@ import meal_planner/tandoor/api/crud_helpers.{
   execute_delete, execute_get, execute_patch, execute_post, parse_json_single,
 }
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/keyword
 import meal_planner/tandoor/recipe.{type RecipeOverview, recipe_overview_decoder}
 
 // ============================================================================
@@ -206,7 +207,10 @@ pub fn meal_plan_decoder() -> decode.Decoder(MealPlan) {
   use to_date <- decode.field("to_date", decode.string)
   use meal_type <- decode.field("meal_type", meal_type_decoder())
   use created_by <- decode.field("created_by", decode.int)
-  use shared <- decode.field("shared", decode.optional(decode.list(user_decoder())))
+  use shared <- decode.field(
+    "shared",
+    decode.optional(decode.list(user_decoder())),
+  )
   use recipe_name <- decode.field("recipe_name", decode.string)
   use meal_type_name <- decode.field("meal_type_name", decode.string)
   use shopping <- decode.field("shopping", decode.bool)
@@ -364,6 +368,15 @@ pub fn user_decoder() -> decode.Decoder(User) {
 // Encoders
 // ============================================================================
 
+/// Helper to encode Keyword to JSON
+fn encode_keyword_json(kw: client.Keyword) -> Json {
+  json.object([
+    #("id", json.int(kw.id)),
+    #("name", json.string(kw.name)),
+    #("description", json.string(kw.description)),
+  ])
+}
+
 /// Encode a RecipeOverview to JSON
 fn encode_recipe_overview(recipe: RecipeOverview) -> Json {
   json.object([
@@ -374,7 +387,7 @@ fn encode_recipe_overview(recipe: RecipeOverview) -> Json {
       Some(img) -> json.string(img)
       None -> json.null()
     }),
-    #("keywords", json.array(recipe.keywords, json.string)),
+    #("keywords", json.array(recipe.keywords, encode_keyword_json)),
     #("rating", case recipe.rating {
       Some(r) -> json.float(r)
       None -> json.null()
@@ -516,15 +529,17 @@ pub fn encode_meal_plan_update_request(request: MealPlanUpdateRequest) -> Json {
     None -> []
   }
 
-  json.object(list.flatten([
-    recipe_field,
-    title_field,
-    servings_field,
-    note_field,
-    from_date_field,
-    to_date_field,
-    meal_type_field,
-  ]))
+  json.object(
+    list.flatten([
+      recipe_field,
+      title_field,
+      servings_field,
+      note_field,
+      from_date_field,
+      to_date_field,
+      meal_type_field,
+    ]),
+  )
 }
 
 // ============================================================================
