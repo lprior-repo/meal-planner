@@ -102,7 +102,7 @@ pub fn tandoor_to_recipe(
   Ok(Recipe(
     id: recipe_id,
     name: tandoor_recipe.name,
-    ingredients: List([]),
+    ingredients: [],
     // TODO: Parse ingredients from steps when available
     instructions: instructions,
     macros: macros,
@@ -278,7 +278,7 @@ fn keyword_suggests_low_fodmap(keyword: String) -> Bool {
 /// Returns:
 /// - TandoorRecipe: Recipe in Tandoor API format
 pub fn recipe_to_tandoor(recipe: Recipe) -> TandoorRecipe {
-  let slug = recipe.id.id |> string.replace("_", "-")
+  let slug = recipe.id |> id.recipe_id_to_string |> string.replace("_", "-")
   let keywords =
     build_keywords(
       recipe.category,
