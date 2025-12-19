@@ -13,6 +13,7 @@
 //// - WeeklyTrends → weekly_trends.analyze_weekly_trends()
 
 import birl
+import gleam/int
 import gleam/json
 import gleam/option.{None, Some}
 import gleam/result
@@ -26,6 +27,267 @@ import meal_planner/scheduler/types.{
   WeeklyGeneration, WeeklyTrends,
 }
 import pog
+
+// ============================================================================
+// Executor Configuration Types
+// ============================================================================
+
+/// Configuration for job executor behavior
+pub type ExecutorConfig {
+  ExecutorConfig(
+    /// Maximum retry attempts for failed jobs
+    max_retries: Int,
+    /// Backoff delay in milliseconds between retries
+    retry_backoff_ms: Int,
+    /// Maximum concurrent job executions
+    concurrent_jobs: Int,
+  )
+}
+
+/// Job execution error types (covers both transient and permanent failures)
+pub type JobError {
+  /// Job execution timed out
+  TimeoutError(timeout_ms: Int)
+  /// Maximum retry attempts exceeded
+  MaxRetriesExceeded
+  /// API returned error response (transient - retry)
+  ApiError(code: Int, message: String)
+  /// Invalid job type specified (permanent - no retry)
+  InvalidJobType
+  /// Database error (permanent - no retry)
+  DatabaseError(message: String)
+}
+
+/// Enhanced execution context with retry tracking
+pub type ExecutionContext {
+  ExecutionContext(
+    /// Job being executed
+    job: ScheduledJob,
+    /// Current attempt number (1-indexed)
+    attempt: Int,
+    /// Unix timestamp (milliseconds) when execution started
+    started_at: Int,
+    /// Executor configuration
+    config: ExecutorConfig,
+  )
+}
+
+/// Result type for weekly meal plan generation
+pub type GenerationResult {
+  GenerationResult(
+    /// Number of meals generated
+    meals_generated: Int,
+    /// Recipes used in plan
+    recipe_ids: List(Int),
+    /// Total calories planned
+    total_calories: Float,
+    /// Generation success status
+    status: String,
+  )
+}
+
+/// Result type for FatSecret sync operations
+pub type SyncResult {
+  SyncResult(
+    /// Number of meals successfully synced
+    synced: Int,
+    /// Number of meals skipped (already synced)
+    skipped: Int,
+    /// Number of meals that failed to sync
+    failed: Int,
+    /// Error messages from failed syncs
+    errors: List(String),
+  )
+}
+
+// ============================================================================
+// Default Configuration
+// ============================================================================
+
+/// Default executor configuration
+///
+/// - 3 retries for transient failures
+/// - 60 second (60000ms) exponential backoff
+/// - 5 concurrent job limit
+pub fn default_config() -> ExecutorConfig {
+  ExecutorConfig(max_retries: 3, retry_backoff_ms: 60_000, concurrent_jobs: 5)
+}
+
+// ============================================================================
+// Core Executor Function Signatures (Type Contracts)
+// ============================================================================
+
+/// Execute a scheduled job with retry logic
+///
+/// This function:
+/// 1. Creates execution context with attempt tracking
+/// 2. Sets job status to Running
+/// 3. Calls appropriate handler based on job_type
+/// 4. Records execution results (output or error)
+/// 5. Returns JobExecution record
+///
+/// Retry behavior:
+/// - Transient failures (ApiError, TimeoutError): Retry with exponential backoff
+/// - Permanent failures (InvalidJobType, DatabaseError): No retry
+///
+/// Parameters:
+/// - job: ScheduledJob to execute
+/// - config: ExecutorConfig with retry/concurrency settings
+///
+/// Returns:
+/// - Ok(JobExecution) with execution metadata and output
+/// - Error(JobError) on permanent failure or max retries exceeded
+pub fn execute_job(
+  job: ScheduledJob,
+  config: ExecutorConfig,
+) -> Result(JobExecution, JobError) {
+  // Implementation will be defined in GREEN phase
+  Error(InvalidJobType)
+}
+
+/// Retry a failed job with delay
+///
+/// This function:
+/// 1. Validates job exists and is retryable
+/// 2. Schedules retry with specified delay
+/// 3. Increments attempt counter
+///
+/// Parameters:
+/// - job_id: String identifier for job to retry
+/// - delay_ms: Milliseconds to wait before retry
+///
+/// Returns:
+/// - Ok(Nil) if retry scheduled successfully
+/// - Error(JobError) if job not found or max retries exceeded
+pub fn retry_failed_job(job_id: String, delay_ms: Int) -> Result(Nil, JobError) {
+  // Implementation will be defined in GREEN phase
+  Error(InvalidJobType)
+}
+
+/// Handle weekly meal plan generation request
+///
+/// This function:
+/// 1. Validates execution context
+/// 2. Calls meal plan generation service
+/// 3. Transforms result to GenerationResult
+/// 4. Updates job status and output
+///
+/// Parameters:
+/// - context: ExecutionContext with job and config
+///
+/// Returns:
+/// - Ok(GenerationResult) with generation statistics
+/// - Error(JobError) on failure (ApiError, TimeoutError, etc.)
+pub fn handle_generation_request(
+  context: ExecutionContext,
+) -> Result(GenerationResult, JobError) {
+  // Implementation will be defined in GREEN phase
+  Error(InvalidJobType)
+}
+
+/// Handle FatSecret auto-sync request
+///
+/// This function:
+/// 1. Validates execution context
+/// 2. Calls FatSecret sync service
+/// 3. Transforms result to SyncResult
+/// 4. Updates job status and output
+///
+/// Parameters:
+/// - context: ExecutionContext with job and config
+///
+/// Returns:
+/// - Ok(SyncResult) with sync statistics
+/// - Error(JobError) on failure (ApiError, TimeoutError, etc.)
+pub fn handle_sync_request(
+  context: ExecutionContext,
+) -> Result(SyncResult, JobError) {
+  // Implementation will be defined in GREEN phase
+  Error(InvalidJobType)
+}
+
+// ============================================================================
+// Error Classification (Retry Logic)
+// ============================================================================
+
+/// Determine if error is transient (should retry)
+///
+/// Transient errors:
+/// - ApiError (API may recover)
+/// - TimeoutError (may succeed on retry)
+///
+/// Permanent errors:
+/// - InvalidJobType (will never succeed)
+/// - DatabaseError (requires intervention)
+/// - MaxRetriesExceeded (already exhausted retries)
+pub fn is_transient_error(error: JobError) -> Bool {
+  case error {
+    ApiError(_, _) -> True
+    TimeoutError(_) -> True
+    InvalidJobType -> False
+    DatabaseError(_) -> False
+    MaxRetriesExceeded -> False
+  }
+}
+
+/// Calculate exponential backoff delay
+///
+/// Formula: base_ms * 2^attempt
+///
+/// Parameters:
+/// - base_ms: Base delay in milliseconds
+/// - attempt: Current attempt number (0-indexed)
+///
+/// Returns:
+/// - Delay in milliseconds (capped at 32x base)
+pub fn calculate_backoff(base_ms: Int, attempt: Int) -> Int {
+  case attempt {
+    0 -> base_ms
+    1 -> base_ms * 2
+    2 -> base_ms * 4
+    3 -> base_ms * 8
+    4 -> base_ms * 16
+    _ -> base_ms * 32
+    // Cap at 32x
+  }
+}
+
+// ============================================================================
+// JSON Encoders for Results
+// ============================================================================
+
+/// Encode GenerationResult to JSON for job output
+pub fn generation_result_to_json(result: GenerationResult) -> json.Json {
+  json.object([
+    #("meals_generated", json.int(result.meals_generated)),
+    #("recipe_ids", json.array(result.recipe_ids, fn(id) { json.int(id) })),
+    #("total_calories", json.float(result.total_calories)),
+    #("status", json.string(result.status)),
+  ])
+}
+
+/// Encode SyncResult to JSON for job output
+pub fn sync_result_to_json(result: SyncResult) -> json.Json {
+  json.object([
+    #("synced", json.int(result.synced)),
+    #("skipped", json.int(result.skipped)),
+    #("failed", json.int(result.failed)),
+    #("errors", json.array(result.errors, json.string)),
+  ])
+}
+
+/// Encode JobError to human-readable message
+pub fn job_error_to_message(error: JobError) -> String {
+  case error {
+    TimeoutError(ms) ->
+      "Job execution timed out after " <> int.to_string(ms) <> "ms"
+    MaxRetriesExceeded -> "Maximum retry attempts exceeded"
+    ApiError(code, message) ->
+      "API error (code " <> int.to_string(code) <> "): " <> message
+    InvalidJobType -> "Invalid job type specified"
+    DatabaseError(message) -> "Database error: " <> message
+  }
+}
 
 // ============================================================================
 // Main Executor Function
