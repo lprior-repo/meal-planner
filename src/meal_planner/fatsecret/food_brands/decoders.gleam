@@ -21,13 +21,12 @@ import meal_planner/fatsecret/food_brands/types.{
 /// Returns Manufacturer for unknown types (FatSecret fallback behavior)
 fn brand_type_decoder() -> decode.Decoder(BrandType) {
   use type_str <- decode.then(decode.string)
-  let brand_type = case type_str {
+  decode.success(case type_str {
     "manufacturer" -> Manufacturer
     "restaurant" -> Restaurant
     "supermarket" -> Supermarket
-    _ -> Manufacturer // Default to Manufacturer for unknown types
-  }
-  decode.success(brand_type)
+    _ -> Manufacturer
+  })
 }
 
 // ============================================================================
