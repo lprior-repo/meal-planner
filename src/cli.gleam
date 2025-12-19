@@ -7,13 +7,11 @@
 /// This module detects which mode to use and delegates accordingly.
 import argv
 import dot_env
-import gleam/erlang/process
 import gleam/io
-import gleam/list
 import meal_planner/cli/glint_commands
 import meal_planner/cli/shore_app
-import meal_planner/cli/types
 import meal_planner/config
+import meal_planner/error
 
 /// Main entry point - detects mode and delegates
 pub fn main() {
@@ -43,16 +41,24 @@ pub fn main() {
       }
     }
     Error(config_error) -> {
-      io.println_error(
-        "❌ Configuration Error: " <> config.format_error(config_error),
-      )
-      // Exit with error code 1
-      exit_with_code(1)
+      let err = case config_error {
+        config.MissingEnvVar(name) ->
+          error.config_error(
+            "Missing required environment variable: " <> name,
+            "Ensure the variable is set in your .env file or environment.",
+          )
+        config.InvalidEnvVar(name, value, expected) ->
+          error.config_error(
+            "Invalid value for "
+              <> name
+              <> ": got '"
+              <> value
+              <> "', expected "
+              <> expected,
+            "Check your environment variable configuration for correct format and values.",
+          )
+      }
+      io.println(error.format_error(err))
     }
   }
-}
-
-/// Helper to exit with specific code
-fn exit_with_code(code: Int) -> Nil {
-  process.exit(code)
 }

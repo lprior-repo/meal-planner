@@ -2,6 +2,7 @@
 ///
 /// Wraps long-running operations (API calls, DB queries) as Shore effect functions
 import meal_planner/cli/types.{type Msg}
+import meal_planner/fatsecret/foods/types as food_types
 import meal_planner/ncp
 import meal_planner/scheduler/job_manager
 import meal_planner/scheduler/types as scheduler_types
@@ -10,7 +11,7 @@ import meal_planner/scheduler/types as scheduler_types
 /// Returns an effect function that Shore will execute
 pub fn search_foods(
   query: String,
-  on_result: fn(Result(List(Nil), String)) -> Msg,
+  on_result: fn(Result(List(food_types.Food), String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
     // TODO: Call actual foods_service.search(query)
