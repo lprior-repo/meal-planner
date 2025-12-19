@@ -1,0 +1,132 @@
+name: Release Build
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: meal_planner_test
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Gleam
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27"
+          gleam-version: "1.4.0"
+          elixir-version: "1.17"
+
+      - name: Restore Gleam cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/gleam
+            build/
+          key: ${{ runner.os }}-gleam-${{ hashFiles('gleam.toml') }}
+
+      - name: Install dependencies
+        run: gleam deps download
+
+      - name: Build project
+        run: gleam build
+
+      - name: Format check
+        run: gleam format --check
+
+      - name: Run all tests
+        run: gleam test
+        env:
+          TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/meal_planner_test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Gleam
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27"
+          gleam-version: "1.4.0"
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/gleam
+          key: ${{ runner.os }}-gleam-${{ hashFiles('gleam.toml') }}
+
+      - name: Install dependencies
+        run: gleam deps download
+
+      - name: Build release
+        run: gleam build --target erlang
+
+      - name: Create version file
+        run: |
+          VERSION=$(git describe --tags --always --dirty)
+          echo "Version: $VERSION"
+          echo "$VERSION" > build/VERSION
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            build/
+            !build/.cache
+          retention-days: 30
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            build/
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to GitHub Packages
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          echo "Publishing release version: ${{ github.ref }}"
+          # Add your package publishing commands here if needed

@@ -1,0 +1,94 @@
+name: CLI Test Suite
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: meal_planner_test
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Gleam
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27"
+          gleam-version: "1.4.0"
+          elixir-version: "1.17"
+
+      - name: Restore Gleam cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/gleam
+            build/
+          key: ${{ runner.os }}-gleam-${{ hashFiles('gleam.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gleam-
+
+      - name: Install dependencies
+        run: gleam deps download
+
+      - name: Build project
+        run: gleam build
+
+      - name: Format check
+        run: gleam format --check
+
+      - name: Run tests
+        run: gleam test
+        env:
+          TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/meal_planner_test
+
+      - name: CLI smoke tests
+        run: |
+          make cli-test
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/meal_planner_test
+
+  code-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Gleam
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27"
+          gleam-version: "1.4.0"
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/gleam
+          key: ${{ runner.os }}-gleam-${{ hashFiles('gleam.toml') }}
+
+      - name: Install dependencies
+        run: gleam deps download
+
+      - name: Type checking
+        run: gleam build
+
+      - name: Formatting
+        run: gleam format --check

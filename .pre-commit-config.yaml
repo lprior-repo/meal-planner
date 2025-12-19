@@ -1,0 +1,80 @@
+default_language_version:
+  gleam: "1.4.0"
+
+repos:
+  # Gleam formatting and linting
+  - repo: local
+    hooks:
+      - id: gleam-format
+        name: Gleam Format
+        entry: gleam format
+        language: system
+        types: [gleam]
+        pass_filenames: false
+        description: Format Gleam code
+
+      - id: gleam-format-check
+        name: Gleam Format Check
+        entry: gleam format --check
+        language: system
+        types: [gleam]
+        pass_filenames: false
+        stages: [commit]
+        description: Check Gleam code formatting
+
+      - id: gleam-build
+        name: Gleam Build
+        entry: gleam build
+        language: system
+        types: [gleam]
+        pass_filenames: false
+        stages: [commit]
+        description: Verify Gleam code compiles
+
+      - id: gleam-test-fast
+        name: Gleam Fast Tests
+        entry: gleam run -m test_runner/fast
+        language: system
+        types: [gleam]
+        pass_filenames: false
+        stages: [commit]
+        description: Run fast test suite
+
+  # YAML validation
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-yaml
+        name: Check YAML
+        args: [--unsafe]
+
+      - id: check-json
+        name: Check JSON
+
+      - id: check-toml
+        name: Check TOML
+
+      - id: trailing-whitespace
+        name: Trim Trailing Whitespace
+
+      - id: end-of-file-fixer
+        name: Fix End of File
+
+      - id: check-case-conflict
+        name: Check Case Conflict
+
+      - id: detect-private-key
+        name: Detect Private Keys
+
+      - id: mixed-line-ending
+        name: Mixed Line Ending
+        args: [--fix=lf]
+
+  # Conventional commits
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.0.0
+    hooks:
+      - id: conventional-pre-commit
+        name: Conventional Commit
+        stages: [commit-msg]
+        args: [--force-scope]
