@@ -7,8 +7,7 @@ import gleam/string
 import gleeunit/should
 import meal_planner/generator/weekly.{DayMeals, WeeklyMealPlan}
 import meal_planner/grocery_list.{
-  GroceryItem, GroceryList, format_as_json, format_as_text, from_ingredients,
-  merge,
+  format_as_json, format_as_text, from_ingredients, merge,
 }
 import meal_planner/id
 import meal_planner/tandoor/client.{

@@ -2,7 +2,7 @@
 import gleeunit
 import gleeunit/should
 import meal_planner/email/parser
-import meal_planner/types.{type EmailRequest, EmailRequest}
+import meal_planner/types.{EmailRequest}
 
 pub fn main() {
   gleeunit.main()

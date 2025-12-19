@@ -7,10 +7,10 @@ import gleam/int
 import gleam/json
 import gleam/option
 import meal_planner/id.{type JobId}
+import meal_planner/scheduler/errors.{type AppError}
 import meal_planner/scheduler/types.{
   type JobExecution, type JobFrequency, type JobType, type ScheduledJob,
-  type SchedulerError, type TriggerSource, JobExecution, Pending, Running,
-  ScheduledJob,
+  type TriggerSource, JobExecution, Pending, Running, ScheduledJob,
 }
 
 // ============================================================================
@@ -22,7 +22,7 @@ pub fn create_job(
   job_type job_type: JobType,
   frequency frequency: JobFrequency,
   trigger_source trigger_source: TriggerSource,
-) -> Result(ScheduledJob, SchedulerError) {
+) -> Result(ScheduledJob, AppError) {
   // Generate job ID based on type and timestamp
   let job_id = generate_job_id(job_type)
 
@@ -60,7 +60,7 @@ pub fn create_job(
 // ============================================================================
 
 /// Mark job as running and create execution record
-pub fn mark_job_running(job_id: JobId) -> Result(JobExecution, SchedulerError) {
+pub fn mark_job_running(job_id: JobId) -> Result(JobExecution, AppError) {
   // Get current timestamp
   let now = birl.now() |> birl.to_iso8601
 
@@ -83,7 +83,7 @@ pub fn mark_job_running(job_id: JobId) -> Result(JobExecution, SchedulerError) {
 pub fn mark_job_completed(
   job_id: JobId,
   output output: option.Option(json.Json),
-) -> Result(Nil, SchedulerError) {
+) -> Result(Nil, AppError) {
   // Stub implementation for GREEN phase
   let _ = job_id
   let _ = output
@@ -94,7 +94,7 @@ pub fn mark_job_completed(
 pub fn mark_job_failed(
   job_id: JobId,
   error error: String,
-) -> Result(Nil, SchedulerError) {
+) -> Result(Nil, AppError) {
   // Stub implementation for GREEN phase
   let _ = job_id
   let _ = error
@@ -108,7 +108,7 @@ pub fn mark_job_failed(
 /// Get next pending jobs by priority
 pub fn get_next_pending_jobs(
   limit limit: Int,
-) -> Result(List(ScheduledJob), SchedulerError) {
+) -> Result(List(ScheduledJob), AppError) {
   // Stub implementation for GREEN phase - return empty list
   let _ = limit
   Ok([])

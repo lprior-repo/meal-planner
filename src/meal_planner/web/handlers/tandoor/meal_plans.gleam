@@ -15,10 +15,10 @@ import gleam/option
 import gleam/result
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/mealplan.{
-  type MealPlan, type MealPlanCreateRequest, type MealPlanEntry,
-  type MealPlanUpdateRequest, MealPlanCreateRequest, MealPlanUpdateRequest,
-  create_meal_plan, delete_meal_plan, encode_meal_plan, get_meal_plan,
-  list_meal_plans, meal_type_to_string, update_meal_plan,
+  type MealPlan, type MealPlanCreateRequest, type MealPlanUpdateRequest,
+  MealPlanCreateRequest, MealPlanUpdateRequest, create_meal_plan,
+  delete_meal_plan, get_meal_plan, list_meal_plans, meal_type_to_string,
+  update_meal_plan,
 }
 import wisp
 
@@ -201,21 +201,6 @@ fn encode_meal_plan(meal_plan: MealPlan) -> json.Json {
     #("recipe_name", json.string(meal_plan.recipe_name)),
     #("meal_type_name", json.string(meal_plan.meal_type_name)),
     #("shopping", json.bool(meal_plan.shopping)),
-  ])
-}
-
-fn encode_meal_plan_entry(entry: MealPlanEntry) -> json.Json {
-  json.object([
-    #("id", json.int(entry.id)),
-    #("title", json.string(entry.title)),
-    #("recipe_id", helpers.encode_optional_int(entry.recipe_id)),
-    #("recipe_name", json.string(entry.recipe_name)),
-    #("servings", json.float(entry.servings)),
-    #("from_date", json.string(entry.from_date)),
-    #("to_date", json.string(entry.to_date)),
-    #("meal_type_id", json.int(entry.meal_type_id)),
-    #("meal_type_name", json.string(entry.meal_type_name)),
-    #("shopping", json.bool(entry.shopping)),
   ])
 }
 

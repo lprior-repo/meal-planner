@@ -4,7 +4,6 @@
 /// considering recipes, cookware, and minimal work principles.
 import gleam/int
 import gleam/list
-import gleam/result
 import gleam/string
 import meal_planner/tandoor/client.{type RecipeDetail}
 

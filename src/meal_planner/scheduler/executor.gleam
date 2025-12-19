@@ -21,11 +21,11 @@ import meal_planner/advisor/daily_recommendations
 import meal_planner/advisor/weekly_trends
 import meal_planner/id
 import meal_planner/postgres
+import meal_planner/scheduler/errors.{type AppError}
 import meal_planner/scheduler/job_manager
 import meal_planner/scheduler/types.{
-  type JobExecution, type ScheduledJob, type SchedulerError, AutoSync,
-  DailyAdvisor, DatabaseError as SchedulerDatabaseError, ExecutionFailed,
-  JobExecution, Running, WeeklyGeneration, WeeklyTrends,
+  type JobExecution, type ScheduledJob, AutoSync, DailyAdvisor, JobExecution,
+  Running, WeeklyGeneration, WeeklyTrends,
 }
 import pog
 
@@ -45,19 +45,8 @@ pub type ExecutorConfig {
   )
 }
 
-/// Job execution error types (covers both transient and permanent failures)
-pub type JobError {
-  /// Job execution timed out
-  TimeoutError(timeout_ms: Int)
-  /// Maximum retry attempts exceeded
-  MaxRetriesExceeded
-  /// API returned error response (transient - retry)
-  ApiError(code: Int, message: String)
-  /// Invalid job type specified (permanent - no retry)
-  InvalidJobType
-  /// Database error (permanent - no retry)
-  DatabaseError(message: String)
-}
+// Note: JobError has been replaced with AppError from meal_planner/scheduler/errors
+// See errors.gleam for the unified error type definition
 
 /// Enhanced execution context with retry tracking
 pub type ExecutionContext {
@@ -137,13 +126,13 @@ pub fn default_config() -> ExecutorConfig {
 ///
 /// Returns:
 /// - Ok(JobExecution) with execution metadata and output
-/// - Error(JobError) on permanent failure or max retries exceeded
+/// - Error(AppError) on permanent failure or max retries exceeded
 pub fn execute_job(
   job: ScheduledJob,
   config: ExecutorConfig,
-) -> Result(JobExecution, JobError) {
+) -> Result(JobExecution, AppError) {
   // Implementation will be defined in GREEN phase
-  Error(InvalidJobType)
+  Error(errors.InvalidJobType("unknown"))
 }
 
 /// Retry a failed job with delay
@@ -159,10 +148,10 @@ pub fn execute_job(
 ///
 /// Returns:
 /// - Ok(Nil) if retry scheduled successfully
-/// - Error(JobError) if job not found or max retries exceeded
-pub fn retry_failed_job(job_id: String, delay_ms: Int) -> Result(Nil, JobError) {
+/// - Error(AppError) if job not found or max retries exceeded
+pub fn retry_failed_job(job_id: String, delay_ms: Int) -> Result(Nil, AppError) {
   // Implementation will be defined in GREEN phase
-  Error(InvalidJobType)
+  Error(errors.InvalidJobType("unknown"))
 }
 
 /// Handle weekly meal plan generation request
@@ -178,12 +167,12 @@ pub fn retry_failed_job(job_id: String, delay_ms: Int) -> Result(Nil, JobError) 
 ///
 /// Returns:
 /// - Ok(GenerationResult) with generation statistics
-/// - Error(JobError) on failure (ApiError, TimeoutError, etc.)
+/// - Error(AppError) on failure (ApiError, TimeoutError, etc.)
 pub fn handle_generation_request(
   context: ExecutionContext,
-) -> Result(GenerationResult, JobError) {
+) -> Result(GenerationResult, AppError) {
   // Implementation will be defined in GREEN phase
-  Error(InvalidJobType)
+  Error(errors.InvalidJobType("unknown"))
 }
 
 /// Handle FatSecret auto-sync request
@@ -199,51 +188,23 @@ pub fn handle_generation_request(
 ///
 /// Returns:
 /// - Ok(SyncResult) with sync statistics
-/// - Error(JobError) on failure (ApiError, TimeoutError, etc.)
+/// - Error(AppError) on failure (ApiError, TimeoutError, etc.)
 pub fn handle_sync_request(
   context: ExecutionContext,
-) -> Result(SyncResult, JobError) {
+) -> Result(SyncResult, AppError) {
   // Implementation will be defined in GREEN phase
-  Error(InvalidJobType)
+  Error(errors.InvalidJobType("unknown"))
 }
 
 // ============================================================================
 // Error Classification (Retry Logic)
 // ============================================================================
 
-/// Determine if error is transient (should retry)
-///
-/// Transient errors:
-/// - ApiError (API may recover)
-/// - TimeoutError (may succeed on retry)
-///
-/// Permanent errors:
-/// - InvalidJobType (will never succeed)
-/// - DatabaseError (requires intervention)
-/// - MaxRetriesExceeded (already exhausted retries)
-pub fn is_transient_error(error: JobError) -> Bool {
-  case error {
-    ApiError(_, _) -> True
-    TimeoutError(_) -> True
-    InvalidJobType -> False
-    DatabaseError(_) -> False
-    MaxRetriesExceeded -> False
-  }
-}
-
-/// Determine if job should be retried based on error type
-///
-/// This is an alias for is_transient_error to make intent clearer in retry logic.
-///
-/// Parameters:
-/// - error: JobError to classify
-///
-/// Returns:
-/// - True if error is transient and job should be retried
-/// - False if error is permanent and job should not be retried
-pub fn should_retry(error: JobError) -> Bool {
-  is_transient_error(error)
-}
+// Note: Error classification functions are now in meal_planner/scheduler/errors
+// - errors.is_transient_error(error: AppError) -> Bool
+// - errors.should_retry(error: AppError) -> Bool
+// - errors.error_to_string(error: AppError) -> String
+// - errors.error_severity(error: AppError) -> ErrorSeverity
 
 /// Calculate exponential backoff delay
 ///
@@ -305,17 +266,10 @@ pub fn sync_result_to_json(result: SyncResult) -> json.Json {
   ])
 }
 
-/// Encode JobError to human-readable message
-pub fn job_error_to_message(error: JobError) -> String {
-  case error {
-    TimeoutError(ms) ->
-      "Job execution timed out after " <> int.to_string(ms) <> "ms"
-    MaxRetriesExceeded -> "Maximum retry attempts exceeded"
-    ApiError(code, message) ->
-      "API error (code " <> int.to_string(code) <> "): " <> message
-    InvalidJobType -> "Invalid job type specified"
-    DatabaseError(message) -> "Database error: " <> message
-  }
+/// Encode AppError to human-readable message
+/// (Wrapper around errors.error_to_string for backward compatibility)
+pub fn job_error_to_message(error: AppError) -> String {
+  errors.error_to_string(error)
 }
 
 // ============================================================================
@@ -335,10 +289,10 @@ pub fn job_error_to_message(error: JobError) -> String {
 ///
 /// Returns:
 /// - Ok(JobExecution) with execution results
-/// - Error(SchedulerError) on failure
+/// - Error(AppError) on failure
 pub fn execute_scheduled_job(
   job: ScheduledJob,
-) -> Result(JobExecution, SchedulerError) {
+) -> Result(JobExecution, AppError) {
   // Get database connection for handlers
   use db <- result.try(get_db_connection())
 
@@ -388,12 +342,12 @@ fn route_job_to_handler(
 ///
 /// Returns:
 /// - Ok(JobExecution) with updated status
-/// - Error(SchedulerError) on failure
+/// - Error(AppError) on failure
 fn process_handler_result(
   job: ScheduledJob,
   execution: JobExecution,
   handler_result: Result(json.Json, String),
-) -> Result(JobExecution, SchedulerError) {
+) -> Result(JobExecution, AppError) {
   case handler_result {
     Ok(output) -> handle_success(job, execution, output)
     Error(error_msg) -> handle_error(job, error_msg)
@@ -415,7 +369,7 @@ fn handle_success(
   job: ScheduledJob,
   execution: JobExecution,
   output: json.Json,
-) -> Result(JobExecution, SchedulerError) {
+) -> Result(JobExecution, AppError) {
   let now = birl.now() |> birl.to_iso8601
 
   // Mark job as completed
@@ -448,18 +402,18 @@ fn handle_success(
 /// - error_msg: Error message from handler
 ///
 /// Returns:
-/// - Error(SchedulerError) with execution failure details
+/// - Error(AppError) with execution failure details
 fn handle_error(
   job: ScheduledJob,
   error_msg: String,
-) -> Result(JobExecution, SchedulerError) {
+) -> Result(JobExecution, AppError) {
   // Mark job as failed
   case mark_job_failed(id.job_id_to_string(job.id), error_msg) {
     Ok(_) -> Nil
     Error(_) -> Nil
   }
 
-  Error(ExecutionFailed(job.id, error_msg))
+  Error(errors.ExecutionFailed(job.id, error_msg))
 }
 
 // ============================================================================
@@ -567,8 +521,8 @@ fn execute_weekly_trends(db: pog.Connection) -> Result(json.Json, String) {
 ///
 /// Returns:
 /// - Ok(JobExecution) with running status
-/// - Error(SchedulerError) on database failure
-fn mark_job_started(job_id: String) -> Result(JobExecution, SchedulerError) {
+/// - Error(AppError) on database failure
+fn mark_job_started(job_id: String) -> Result(JobExecution, AppError) {
   job_manager.mark_job_running(id.job_id(job_id))
 }
 
@@ -582,11 +536,11 @@ fn mark_job_started(job_id: String) -> Result(JobExecution, SchedulerError) {
 ///
 /// Returns:
 /// - Ok(Nil) on success
-/// - Error(SchedulerError) on database failure
+/// - Error(AppError) on database failure
 fn mark_job_completed(
   job_id: String,
   output: json.Json,
-) -> Result(Nil, SchedulerError) {
+) -> Result(Nil, AppError) {
   job_manager.mark_job_completed(id.job_id(job_id), Some(output))
 }
 
@@ -600,11 +554,8 @@ fn mark_job_completed(
 ///
 /// Returns:
 /// - Ok(Nil) on success
-/// - Error(SchedulerError) on database failure
-fn mark_job_failed(
-  job_id: String,
-  error_msg: String,
-) -> Result(Nil, SchedulerError) {
+/// - Error(AppError) on database failure
+fn mark_job_failed(job_id: String, error_msg: String) -> Result(Nil, AppError) {
   job_manager.mark_job_failed(id.job_id(job_id), error_msg)
 }
 
@@ -613,14 +564,13 @@ fn mark_job_failed(
 // ============================================================================
 
 /// Get database connection
-fn get_db_connection() -> Result(pog.Connection, SchedulerError) {
+fn get_db_connection() -> Result(pog.Connection, AppError) {
   case postgres.config_from_env() {
     Ok(config) ->
       case postgres.connect(config) {
         Ok(db) -> Ok(db)
-        Error(_) ->
-          Error(SchedulerDatabaseError("Failed to connect to database"))
+        Error(_) -> Error(errors.DatabaseError("Failed to connect to database"))
       }
-    Error(_) -> Error(SchedulerDatabaseError("Failed to load database config"))
+    Error(_) -> Error(errors.DatabaseError("Failed to load database config"))
   }
 }

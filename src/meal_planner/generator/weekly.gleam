@@ -15,7 +15,7 @@
 import gleam/list
 import gleam/result
 import meal_planner/types.{
-  type Macros, type Recipe, Macros, macros_add, macros_calories, macros_zero,
+  type Macros, type Recipe, macros_add, macros_calories, macros_zero,
 }
 
 // ============================================================================
@@ -98,9 +98,6 @@ const min_rotation_count: Int = 2
 
 /// Minimum total recipes for basic generation
 const min_total_recipes: Int = 3
-
-/// Macro tolerance threshold (±10%)
-const tolerance_threshold: Float = 0.1
 
 // ============================================================================
 // Helper Functions - Macro Calculations

@@ -4,7 +4,6 @@ import gleam/dynamic/decode
 import gleam/json
 import gleeunit
 import gleeunit/should
-import meal_planner/fatsecret/diary/client
 
 pub fn main() {
   gleeunit.main()

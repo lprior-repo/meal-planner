@@ -1,18 +1,10 @@
 /// Debug test to show actual FatSecret API response format
 /// This test captures the raw HTTP response to diagnose parsing issues
-import gleam/dynamic/decode
 import gleam/io
-import gleam/json
 import gleam/option.{None, Some}
-import gleam/result
 import gleeunit
 import gleeunit/should
 import meal_planner/env
-import meal_planner/fatsecret/core/config.{FatSecretConfig}
-import meal_planner/fatsecret/core/http
-import meal_planner/fatsecret/core/oauth.{AccessToken}
-import meal_planner/fatsecret/storage
-import pog
 
 pub fn main() {
   gleeunit.main()
@@ -67,7 +59,7 @@ pub fn show_fatsecret_api_response_test() {
       io.println("     | jq .")
       io.println("")
     }
-    Some(config) -> {
+    Some(_config) -> {
       io.println("✅ FatSecret config found!")
       io.println("")
       io.println(

@@ -11,8 +11,7 @@ import gleam/result
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/import_export.{
   type ImportLog, type ImportLogCreateRequest, type ImportLogUpdateRequest,
-  ImportLogCreateRequest, ImportLogUpdateRequest, create_import_log,
-  delete_import_log, encode_import_log, get_import_log,
+  create_import_log, delete_import_log, get_import_log,
   import_log_create_request_decoder, import_log_update_request_decoder,
   list_import_logs, update_import_log,
 }

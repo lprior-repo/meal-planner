@@ -3,11 +3,7 @@
 /// RED PHASE: These tests verify the exercise handlers implement proper
 /// authorization header extraction and JSON body parsing for FatSecret
 /// exercise endpoints.
-import gleam/http
-import gleam/json
 import gleeunit
-import gleeunit/should
-import meal_planner/fatsecret/exercise/handlers
 
 pub fn main() {
   gleeunit.main()

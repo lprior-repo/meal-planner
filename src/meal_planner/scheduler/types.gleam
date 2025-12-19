@@ -13,6 +13,7 @@ import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/option.{type Option, None, Some}
 import meal_planner/id.{type JobId, type UserId}
+import meal_planner/scheduler/errors.{type AppError}
 
 // ============================================================================
 // Job Types
@@ -182,28 +183,17 @@ pub type SchedulerConfig {
 }
 
 // ============================================================================
-// Error Types
+// Error Types (DEPRECATED - Use AppError from meal_planner/scheduler/errors)
 // ============================================================================
 
-/// Scheduler-specific errors
-pub type SchedulerError {
-  /// Job not found in database
-  JobNotFound(job_id: JobId)
-  /// Job already running
-  JobAlreadyRunning(job_id: JobId)
-  /// Job execution failed
-  ExecutionFailed(job_id: JobId, reason: String)
-  /// Maximum retry attempts exceeded
-  MaxRetriesExceeded(job_id: JobId)
-  /// Invalid job configuration
-  InvalidConfiguration(reason: String)
-  /// Database error
-  DatabaseError(message: String)
-  /// Scheduler not enabled
-  SchedulerDisabled
-  /// Job dependency not met
-  DependencyNotMet(job_id: JobId, dependency: JobId)
-}
+// NOTE: SchedulerError has been replaced with AppError from scheduler/errors.gleam
+// This provides backward compatibility for existing code.
+// All new code should use AppError directly.
+
+/// DEPRECATED: Use AppError from meal_planner/scheduler/errors instead
+/// This type alias provides backward compatibility during migration
+pub type SchedulerError =
+  AppError
 
 // ============================================================================
 // Job Queue Operations

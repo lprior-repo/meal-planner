@@ -8,15 +8,7 @@
 /// - Recipes CRUD operations
 /// - Supermarkets CRUD operations
 /// - Supermarket Categories CRUD operations
-import gleam/dynamic
-import gleam/dynamic/decode
-import gleam/http
-import gleam/int
 import gleam/json
-import gleam/list
-import gleam/option
-import gleam/result
-
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/web/handlers/tandoor/export_logs
 import meal_planner/web/handlers/tandoor/import_logs
