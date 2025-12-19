@@ -1,0 +1,10 @@
+{
+  "week_of": "2025-12-22",
+  "constraints": {
+    "travel_dates": [],
+    "locked_meals": [],
+    "macro_adjustment": "balanced",
+    "meal_skips": [],
+    "preferences": []
+  }
+}
