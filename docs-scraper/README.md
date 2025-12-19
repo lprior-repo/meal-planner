@@ -44,6 +44,37 @@ npm test
 npm run format
 ```
 
+## Available Scrapers
+
+### RecipesScraper
+
+Scrapes FatSecret Recipes API documentation for the following endpoints:
+
+- `recipes.search.v3` - Search for recipes
+- `recipe.get.v2` - Get recipe details by ID
+- `recipe.types.get` - List recipe types and categories
+
+**Usage:**
+
+```typescript
+import { scrapeRecipesDocs } from './src/index.js';
+
+await scrapeRecipesDocs({
+  outputPath: 'output/markdown/recipes',
+});
+```
+
+Or run the example:
+
+```bash
+tsx examples/scrape-recipes.ts
+```
+
+**Output:**
+
+- Markdown files in `output/markdown/recipes/`
+- JSON fixtures in `output/fixtures/recipes/`
+
 ## Configuration
 
 - `playwright.config.ts` - Playwright browser settings
