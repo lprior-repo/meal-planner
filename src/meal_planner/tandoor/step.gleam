@@ -226,7 +226,9 @@ pub fn encode_step(step: Step) -> Json {
     }),
     #(
       "ingredients",
-      json.array(step.ingredients, fn(ingredient) { encode_ingredient(ingredient) }),
+      json.array(step.ingredients, fn(ingredient) {
+        encode_ingredient(ingredient)
+      }),
     ),
     #("time", json.int(step.time)),
     #("order", json.int(step.order)),

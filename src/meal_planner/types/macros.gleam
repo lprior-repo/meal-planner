@@ -208,6 +208,68 @@ pub fn decoder() -> Decoder(Macros) {
 }
 
 // ============================================================================
+// Comparison and Analysis
+// ============================================================================
+
+/// Comparison result for macro value vs target
+pub type MacroComparison {
+  /// Within ±10% of target
+  OnTarget
+  /// Below 90% of target
+  Under
+  /// Above 110% of target
+  Over
+}
+
+/// Compare actual macro value to target, return comparison status
+/// OnTarget: within ±10%, Under: <90%, Over: >110%
+pub fn compare_to_target(actual: Float, target: Float) -> MacroComparison {
+  case target <=. 0.0 {
+    True -> OnTarget
+    False -> {
+      let ratio = actual /. target
+      case ratio <. 0.9 {
+        True -> Under
+        False ->
+          case ratio >. 1.1 {
+            True -> Over
+            False -> OnTarget
+          }
+      }
+    }
+  }
+}
+
+/// Encode MacroComparison to JSON string
+pub fn macro_comparison_to_json(mc: MacroComparison) -> Json {
+  case mc {
+    OnTarget -> json.string("on_target")
+    Under -> json.string("under")
+    Over -> json.string("over")
+  }
+}
+
+/// Decode MacroComparison from JSON
+pub fn macro_comparison_decoder() -> Decoder(MacroComparison) {
+  use s <- decode.then(decode.string)
+  case s {
+    "on_target" -> decode.success(OnTarget)
+    "under" -> decode.success(Under)
+    "over" -> decode.success(Over)
+    _ -> decode.failure(OnTarget, "MacroComparison")
+  }
+}
+
+/// Format MacroComparison as readable string
+pub fn macro_comparison_to_string(mc: MacroComparison) -> String {
+  case mc {
+    OnTarget -> "On Target"
+    Under -> "Under Target"
+    Over -> "Over Target"
+  }
+}
+
+// ============================================================================
 // Display Formatting
 // ============================================================================
 

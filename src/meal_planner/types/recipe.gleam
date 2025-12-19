@@ -1,68 +1,156 @@
-/// Recipe types and operations
-///
-/// Represents recipes from the Tandoor recipe manager.
-/// Recipes are fetched from Tandoor API on-demand rather than being stored locally.
+//// Recipe Types for Meal Planning
+////
+//// Simplified recipe types for the autonomous meal planning system.
+//// Wraps Tandoor Recipe type with nutrition per serving.
+//// Part of NORTH STAR epic (meal-planner-918).
+
 import gleam/dynamic/decode.{type Decoder}
+import gleam/int
 import gleam/json.{type Json}
-import gleam/list
-import gleam/string
-import meal_planner/id.{recipe_id_decoder, recipe_id_to_json}
-import meal_planner/types.{
-  type FodmapLevel, type Ingredient, type Macros, type Recipe, High, Ingredient,
-  Low, Medium, Recipe, macros_decoder, macros_scale, macros_to_json,
-  macros_to_string,
+import gleam/option.{type Option, None, Some}
+import gleam/result
+import meal_planner/id.{type RecipeId}
+import meal_planner/types/macros.{type Macros}
+
+// ============================================================================
+// Core Types
+// ============================================================================
+
+/// Simplified recipe for meal planning with nutrition per serving
+/// This is the primary recipe type used in meal plan generation
+pub opaque type MealPlanRecipe {
+  MealPlanRecipe(
+    /// Tandoor recipe ID
+    id: RecipeId,
+    /// Recipe name
+    name: String,
+    /// Number of servings this recipe makes
+    servings: Int,
+    /// Macros PER SERVING (not total)
+    macros: Macros,
+    /// Optional recipe image URL
+    image: Option(String),
+    /// Prep time in minutes
+    prep_time: Int,
+    /// Cook time in minutes
+    cook_time: Int,
+  )
 }
 
-/// Check if recipe meets Vertical Diet requirements
-/// Must be explicitly marked compliant and have low FODMAP
-pub fn is_vertical_diet_compliant(recipe: Recipe) -> Bool {
-  recipe.vertical_compliant && recipe.fodmap_level == Low
+/// Constructor for MealPlanRecipe with validation
+pub fn new_meal_plan_recipe(
+  id id: RecipeId,
+  name name: String,
+  servings servings: Int,
+  macros macros: Macros,
+  image image: Option(String),
+  prep_time prep_time: Int,
+  cook_time cook_time: Int,
+) -> Result(MealPlanRecipe, String) {
+  // Validate servings > 0
+  case servings > 0 {
+    False ->
+      Error(
+        "Recipe servings must be greater than 0, got "
+        <> int.to_string(servings),
+      )
+    True -> {
+      // Validate prep_time >= 0
+      case prep_time >= 0 {
+        False ->
+          Error("Prep time must be >= 0, got " <> int.to_string(prep_time))
+        True -> {
+          // Validate cook_time >= 0
+          case cook_time >= 0 {
+            False ->
+              Error("Cook time must be >= 0, got " <> int.to_string(cook_time))
+            True ->
+              Ok(MealPlanRecipe(
+                id: id,
+                name: name,
+                servings: servings,
+                macros: macros,
+                image: image,
+                prep_time: prep_time,
+                cook_time: cook_time,
+              ))
+          }
+        }
+      }
+    }
+  }
 }
 
-/// Returns macros per serving (macros are already stored per serving)
-pub fn macros_per_serving(recipe: Recipe) -> Macros {
+/// Get recipe ID
+pub fn recipe_id(recipe: MealPlanRecipe) -> RecipeId {
+  recipe.id
+}
+
+/// Get recipe name
+pub fn recipe_name(recipe: MealPlanRecipe) -> String {
+  recipe.name
+}
+
+/// Get servings count
+pub fn recipe_servings(recipe: MealPlanRecipe) -> Int {
+  recipe.servings
+}
+
+/// Get macros per serving
+pub fn recipe_macros_per_serving(recipe: MealPlanRecipe) -> Macros {
   recipe.macros
 }
 
-/// Returns total macros for all servings
-pub fn total_macros(recipe: Recipe) -> Macros {
-  let servings = case recipe.servings {
-    s if s <= 0 -> 1
-    s -> s
-  }
-  macros_scale(recipe.macros, int_to_float(servings))
+/// Get total macros for all servings
+pub fn recipe_total_macros(recipe: MealPlanRecipe) -> Macros {
+  let servings_factor = int.to_float(recipe.servings)
+  macros.scale(recipe.macros, servings_factor)
+}
+
+/// Get recipe image
+pub fn recipe_image(recipe: MealPlanRecipe) -> Option(String) {
+  recipe.image
+}
+
+/// Get prep time
+pub fn recipe_prep_time(recipe: MealPlanRecipe) -> Int {
+  recipe.prep_time
+}
+
+/// Get cook time
+pub fn recipe_cook_time(recipe: MealPlanRecipe) -> Int {
+  recipe.cook_time
+}
+
+/// Get total time (prep + cook)
+pub fn recipe_total_time(recipe: MealPlanRecipe) -> Int {
+  recipe.prep_time + recipe.cook_time
+}
+
+/// Check if recipe meets quick prep constraint (≤15 minutes prep)
+pub fn is_quick_prep(recipe: MealPlanRecipe) -> Bool {
+  recipe.prep_time <= 15
 }
 
 // ============================================================================
 // JSON Serialization
 // ============================================================================
 
-pub fn ingredient_to_json(i: Ingredient) -> Json {
-  json.object([
-    #("name", json.string(i.name)),
-    #("quantity", json.string(i.quantity)),
-  ])
-}
-
-pub fn fodmap_level_to_string(f: FodmapLevel) -> String {
-  case f {
-    Low -> "low"
-    Medium -> "medium"
-    High -> "high"
+/// Encode MealPlanRecipe to JSON
+pub fn meal_plan_recipe_to_json(recipe: MealPlanRecipe) -> Json {
+  let image_json = case recipe.image {
+    Some(url) -> json.string(url)
+    None -> json.null()
   }
-}
 
-pub fn recipe_to_json(r: Recipe) -> Json {
   json.object([
-    #("id", recipe_id_to_json(r.id)),
-    #("name", json.string(r.name)),
-    #("ingredients", json.array(r.ingredients, ingredient_to_json)),
-    #("instructions", json.array(r.instructions, json.string)),
-    #("macros", macros_to_json(r.macros)),
-    #("servings", json.int(r.servings)),
-    #("category", json.string(r.category)),
-    #("fodmap_level", json.string(fodmap_level_to_string(r.fodmap_level))),
-    #("vertical_compliant", json.bool(r.vertical_compliant)),
+    #("id", id.recipe_id_to_json(recipe.id)),
+    #("name", json.string(recipe.name)),
+    #("servings", json.int(recipe.servings)),
+    #("macros", macros.to_json(recipe.macros)),
+    #("image", image_json),
+    #("prep_time", json.int(recipe.prep_time)),
+    #("cook_time", json.int(recipe.cook_time)),
   ])
 }
 
@@ -70,45 +158,24 @@ pub fn recipe_to_json(r: Recipe) -> Json {
 // JSON Deserialization
 // ============================================================================
 
-pub fn fodmap_level_decoder() -> Decoder(FodmapLevel) {
-  use s <- decode.then(decode.string)
-  case s {
-    "low" -> decode.success(Low)
-    "medium" -> decode.success(Medium)
-    "high" -> decode.success(High)
-    _ -> decode.failure(Low, "FodmapLevel")
-  }
-}
-
-pub fn ingredient_decoder() -> Decoder(Ingredient) {
+/// Decode MealPlanRecipe from JSON
+pub fn meal_plan_recipe_decoder() -> Decoder(MealPlanRecipe) {
+  use id <- decode.field("id", id.recipe_id_decoder())
   use name <- decode.field("name", decode.string)
-  use quantity <- decode.field("quantity", decode.string)
-  decode.success(Ingredient(name: name, quantity: quantity))
-}
-
-pub fn recipe_decoder() -> Decoder(Recipe) {
-  use recipe_id <- decode.field("id", recipe_id_decoder())
-  use name <- decode.field("name", decode.string)
-  use ingredients <- decode.field(
-    "ingredients",
-    decode.list(ingredient_decoder()),
-  )
-  use instructions <- decode.field("instructions", decode.list(decode.string))
-  use macros_val <- decode.field("macros", macros_decoder())
   use servings <- decode.field("servings", decode.int)
-  use category <- decode.field("category", decode.string)
-  use fodmap_level <- decode.field("fodmap_level", fodmap_level_decoder())
-  use vertical_compliant <- decode.field("vertical_compliant", decode.bool)
-  decode.success(Recipe(
-    id: recipe_id,
+  use macros <- decode.field("macros", macros.decoder())
+  use image <- decode.field("image", decode.optional(decode.string))
+  use prep_time <- decode.field("prep_time", decode.int)
+  use cook_time <- decode.field("cook_time", decode.int)
+
+  decode.success(MealPlanRecipe(
+    id: id,
     name: name,
-    ingredients: ingredients,
-    instructions: instructions,
-    macros: macros_val,
     servings: servings,
-    category: category,
-    fodmap_level: fodmap_level,
-    vertical_compliant: vertical_compliant,
+    macros: macros,
+    image: image,
+    prep_time: prep_time,
+    cook_time: cook_time,
   ))
 }
 
@@ -116,54 +183,14 @@ pub fn recipe_decoder() -> Decoder(Recipe) {
 // Display Formatting
 // ============================================================================
 
-/// Format ingredient as a readable line (e.g., "- Flour: 2 cups")
-pub fn ingredient_to_display_string(ing: Ingredient) -> String {
-  "  - " <> ing.name <> ": " <> ing.quantity
-}
-
-/// Format a single ingredient line for shopping list (indented)
-pub fn ingredient_to_shopping_list_line(ing: Ingredient) -> String {
-  "    - " <> ing.name <> ": " <> ing.quantity
-}
-
-/// Format FODMAP level as a readable string
-pub fn fodmap_level_to_display_string(level: FodmapLevel) -> String {
-  case level {
-    Low -> "Low"
-    Medium -> "Medium"
-    High -> "High"
-  }
-}
-
-/// Format recipe as a complete, readable string
-pub fn recipe_to_display_string(recipe: Recipe) -> String {
-  let ingredients_str =
-    list.map(recipe.ingredients, ingredient_to_display_string)
-    |> string.join("\n")
-
-  let instructions_str =
-    list.index_map(recipe.instructions, fn(inst, i) {
-      "  " <> int.to_string(i + 1) <> ". " <> inst
-    })
-    |> string.join("\n")
-
+/// Format recipe as a readable string with macros
+pub fn to_string(recipe: MealPlanRecipe) -> String {
   recipe.name
-  <> "\n"
-  <> "Macros: "
-  <> macros_to_string(recipe.macros)
-  <> "\n\n"
-  <> "Ingredients:\n"
-  <> ingredients_str
-  <> "\n\n"
-  <> "Instructions:\n"
-  <> instructions_str
+  <> " ("
+  <> int.to_string(recipe.servings)
+  <> " servings, "
+  <> int.to_string(recipe_total_time(recipe))
+  <> " min) - "
+  <> macros.to_string(recipe.macros)
+  <> " per serving"
 }
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-@external(erlang, "erlang", "float")
-fn int_to_float(n: Int) -> Float
-
-import gleam/int

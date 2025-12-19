@@ -2,11 +2,11 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/tandoor/core/ids
+import meal_planner/tandoor/food.{Food}
 import meal_planner/tandoor/property.{FoodProperty, Property}
 import meal_planner/tandoor/supermarket.{SupermarketCategory}
 import meal_planner/tandoor/types/food/food_inherit_field.{FoodInheritField}
 import meal_planner/tandoor/unit.{Unit}
-import meal_planner/tandoor/food.{Food}
 
 pub fn food_full_constructor_test() {
   let food =
@@ -47,7 +47,7 @@ pub fn food_full_constructor_test() {
         base_unit: None,
         open_data_slug: None,
       )),
-      fdc_id: Some(123456),
+      fdc_id: Some(123_456),
       parent: Some(2),
       numchild: 0,
       inherit_fields: Some([
@@ -72,7 +72,7 @@ pub fn food_full_constructor_test() {
   |> should.equal(Some("https://example.com/tomato"))
 
   food.fdc_id
-  |> should.equal(Some(123456))
+  |> should.equal(Some(123_456))
 
   food.parent
   |> should.equal(Some(2))
@@ -178,7 +178,7 @@ pub fn food_properties_field_test() {
         base_unit: Some("gram"),
         open_data_slug: None,
       )),
-      fdc_id: Some(789012),
+      fdc_id: Some(789_012),
       parent: Some(5),
       numchild: 2,
       inherit_fields: Some([

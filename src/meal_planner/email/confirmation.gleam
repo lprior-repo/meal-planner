@@ -6,15 +6,14 @@
 /// - Updated meal plan (if modified)
 /// - Macro verification (still on track)
 /// - Next steps or additional information
-
 import gleam/option.{type Option, None, Some}
 import gleam/string
 
 import meal_planner/types.{
   type CommandExecutionResult, type EmailCommand, type Macros,
   type RegenerationScope, AddPreference, AdjustMeal, Breakfast,
-  CommandExecutionResult, Dinner, Lunch, RemoveDislike, RegeneratePlan,
-  SkipMeal, Snack,
+  CommandExecutionResult, Dinner, Lunch, RegeneratePlan, RemoveDislike, SkipMeal,
+  Snack,
 }
 
 // =============================================================================

@@ -13,7 +13,6 @@
 /// - id: Unique identifier
 /// - name: Human-readable field name (e.g., "Nutrition", "Price")
 /// - field: Machine-friendly field identifier (e.g., "nutrition", "price")
-
 import gleam/dynamic/decode
 
 pub type FoodInheritField {

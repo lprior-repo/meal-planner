@@ -8,15 +8,14 @@
 /// - SkipMeal: Marks meal as skipped for specific day
 ///
 /// All execution results are returned as CommandExecutionResult.
-
 import gleam/option.{type Option, None, Some}
 import pog
 
 import meal_planner/id.{type RecipeId}
 import meal_planner/types.{
-  type CommandExecutionResult, type DayOfWeek, type EmailCommand,
-  type MealType, type RegenerationScope, AddPreference, AdjustMeal,
-  CommandExecutionResult, RemoveDislike, RegeneratePlan, SkipMeal,
+  type CommandExecutionResult, type DayOfWeek, type EmailCommand, type MealType,
+  type RegenerationScope, AddPreference, AdjustMeal, CommandExecutionResult,
+  RegeneratePlan, RemoveDislike, SkipMeal,
 }
 
 // =============================================================================
@@ -34,14 +33,11 @@ pub fn execute_command(
   case command {
     AdjustMeal(day, meal_type, recipe_id) ->
       execute_adjust_meal(day, meal_type, recipe_id, conn)
-    AddPreference(preference) ->
-      execute_add_preference(preference, conn)
-    RemoveDislike(food_name) ->
-      execute_remove_dislike(food_name, conn)
+    AddPreference(preference) -> execute_add_preference(preference, conn)
+    RemoveDislike(food_name) -> execute_remove_dislike(food_name, conn)
     RegeneratePlan(scope, constraints) ->
       execute_regenerate_plan(scope, constraints, conn)
-    SkipMeal(day, meal_type) ->
-      execute_skip_meal(day, meal_type, conn)
+    SkipMeal(day, meal_type) -> execute_skip_meal(day, meal_type, conn)
   }
 }
 
@@ -59,9 +55,10 @@ fn execute_adjust_meal(
   // For now, return success with placeholder message
   CommandExecutionResult(
     success: True,
-    message: "Updated " <> meal_type_to_string(meal_type) <> " for " <> day_to_string(
-      day,
-    ),
+    message: "Updated "
+      <> meal_type_to_string(meal_type)
+      <> " for "
+      <> day_to_string(day),
     command: Some(AdjustMeal(day, meal_type, recipe_id)),
   )
 }
@@ -121,9 +118,10 @@ fn execute_skip_meal(
   // For now, return success with placeholder message
   CommandExecutionResult(
     success: True,
-    message: "Skipped " <> meal_type_to_string(meal_type) <> " on " <> day_to_string(
-      day,
-    ),
+    message: "Skipped "
+      <> meal_type_to_string(meal_type)
+      <> " on "
+      <> day_to_string(day),
     command: Some(SkipMeal(day, meal_type)),
   )
 }

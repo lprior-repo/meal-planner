@@ -1,0 +1,386 @@
+{
+  "week_of": "2025-12-22",
+  "target_macros": {
+    "protein": 180.0,
+    "fat": 60.0,
+    "carbs": 200.0
+  },
+  "total_macros": {
+    "protein": 1260.0,
+    "fat": 420.0,
+    "carbs": 1400.0
+  },
+  "days": [
+    {
+      "day": "Monday",
+      "breakfast": {
+        "id": "recipe-101",
+        "name": "Protein Pancakes",
+        "servings": 2,
+        "macros": {
+          "protein": 50.0,
+          "fat": 18.0,
+          "carbs": 65.0
+        },
+        "image": "https://example.com/pancakes.jpg",
+        "prep_time": 10,
+        "cook_time": 15
+      },
+      "lunch": {
+        "id": "recipe-201",
+        "name": "Grilled Chicken Salad",
+        "servings": 4,
+        "macros": {
+          "protein": 65.0,
+          "fat": 22.0,
+          "carbs": 68.0
+        },
+        "image": "https://example.com/chicken_salad.jpg",
+        "prep_time": 15,
+        "cook_time": 20
+      },
+      "dinner": {
+        "id": "recipe-301",
+        "name": "Salmon with Roasted Vegetables",
+        "servings": 4,
+        "macros": {
+          "protein": 65.0,
+          "fat": 20.0,
+          "carbs": 67.0
+        },
+        "image": "https://example.com/salmon.jpg",
+        "prep_time": 10,
+        "cook_time": 25
+      },
+      "macros": {
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0
+        },
+        "calories": 2060.0,
+        "protein_status": "on_target",
+        "fat_status": "on_target",
+        "carbs_status": "on_target"
+      }
+    },
+    {
+      "day": "Tuesday",
+      "breakfast": {
+        "id": "recipe-102",
+        "name": "Greek Yogurt Bowl",
+        "servings": 1,
+        "macros": {
+          "protein": 52.0,
+          "fat": 19.0,
+          "carbs": 70.0
+        },
+        "image": "https://example.com/yogurt.jpg",
+        "prep_time": 5,
+        "cook_time": 0
+      },
+      "lunch": {
+        "id": "recipe-201",
+        "name": "Grilled Chicken Salad",
+        "servings": 4,
+        "macros": {
+          "protein": 68.0,
+          "fat": 21.0,
+          "carbs": 65.0
+        },
+        "image": "https://example.com/chicken_salad.jpg",
+        "prep_time": 15,
+        "cook_time": 20
+      },
+      "dinner": {
+        "id": "recipe-302",
+        "name": "Beef Stir Fry",
+        "servings": 4,
+        "macros": {
+          "protein": 60.0,
+          "fat": 20.0,
+          "carbs": 65.0
+        },
+        "image": "https://example.com/stirfry.jpg",
+        "prep_time": 12,
+        "cook_time": 18
+      },
+      "macros": {
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0
+        },
+        "calories": 2060.0,
+        "protein_status": "on_target",
+        "fat_status": "on_target",
+        "carbs_status": "on_target"
+      }
+    },
+    {
+      "day": "Wednesday",
+      "breakfast": {
+        "id": "recipe-103",
+        "name": "Scrambled Eggs with Toast",
+        "servings": 1,
+        "macros": {
+          "protein": 55.0,
+          "fat": 21.0,
+          "carbs": 68.0
+        },
+        "image": null,
+        "prep_time": 8,
+        "cook_time": 10
+      },
+      "lunch": {
+        "id": "recipe-202",
+        "name": "Turkey Wrap",
+        "servings": 4,
+        "macros": {
+          "protein": 63.0,
+          "fat": 19.0,
+          "carbs": 66.0
+        },
+        "image": "https://example.com/wrap.jpg",
+        "prep_time": 10,
+        "cook_time": 0
+      },
+      "dinner": {
+        "id": "recipe-301",
+        "name": "Salmon with Roasted Vegetables",
+        "servings": 4,
+        "macros": {
+          "protein": 62.0,
+          "fat": 20.0,
+          "carbs": 66.0
+        },
+        "image": "https://example.com/salmon.jpg",
+        "prep_time": 10,
+        "cook_time": 25
+      },
+      "macros": {
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0
+        },
+        "calories": 2060.0,
+        "protein_status": "on_target",
+        "fat_status": "on_target",
+        "carbs_status": "on_target"
+      }
+    },
+    {
+      "day": "Thursday",
+      "breakfast": {
+        "id": "recipe-104",
+        "name": "Oatmeal with Berries",
+        "servings": 1,
+        "macros": {
+          "protein": 48.0,
+          "fat": 17.0,
+          "carbs": 72.0
+        },
+        "image": "https://example.com/oatmeal.jpg",
+        "prep_time": 5,
+        "cook_time": 5
+      },
+      "lunch": {
+        "id": "recipe-202",
+        "name": "Turkey Wrap",
+        "servings": 4,
+        "macros": {
+          "protein": 66.0,
+          "fat": 22.0,
+          "carbs": 64.0
+        },
+        "image": "https://example.com/wrap.jpg",
+        "prep_time": 10,
+        "cook_time": 0
+      },
+      "dinner": {
+        "id": "recipe-302",
+        "name": "Beef Stir Fry",
+        "servings": 4,
+        "macros": {
+          "protein": 66.0,
+          "fat": 21.0,
+          "carbs": 64.0
+        },
+        "image": "https://example.com/stirfry.jpg",
+        "prep_time": 12,
+        "cook_time": 18
+      },
+      "macros": {
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0
+        },
+        "calories": 2060.0,
+        "protein_status": "on_target",
+        "fat_status": "on_target",
+        "carbs_status": "on_target"
+      }
+    },
+    {
+      "day": "Friday",
+      "breakfast": {
+        "id": "recipe-105",
+        "name": "Smoothie Bowl",
+        "servings": 1,
+        "macros": {
+          "protein": 54.0,
+          "fat": 18.0,
+          "carbs": 69.0
+        },
+        "image": "https://example.com/smoothie.jpg",
+        "prep_time": 10,
+        "cook_time": 0
+      },
+      "lunch": {
+        "id": "recipe-201",
+        "name": "Grilled Chicken Salad",
+        "servings": 4,
+        "macros": {
+          "protein": 64.0,
+          "fat": 21.0,
+          "carbs": 66.0
+        },
+        "image": "https://example.com/chicken_salad.jpg",
+        "prep_time": 15,
+        "cook_time": 20
+      },
+      "dinner": {
+        "id": "recipe-301",
+        "name": "Salmon with Roasted Vegetables",
+        "servings": 4,
+        "macros": {
+          "protein": 62.0,
+          "fat": 21.0,
+          "carbs": 65.0
+        },
+        "image": "https://example.com/salmon.jpg",
+        "prep_time": 10,
+        "cook_time": 25
+      },
+      "macros": {
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0
+        },
+        "calories": 2060.0,
+        "protein_status": "on_target",
+        "fat_status": "on_target",
+        "carbs_status": "on_target"
+      }
+    },
+    {
+      "day": "Saturday",
+      "breakfast": {
+        "id": "recipe-106",
+        "name": "French Toast",
+        "servings": 2,
+        "macros": {
+          "protein": 56.0,
+          "fat": 19.0,
+          "carbs": 70.0
+        },
+        "image": null,
+        "prep_time": 8,
+        "cook_time": 12
+      },
+      "lunch": {
+        "id": "recipe-202",
+        "name": "Turkey Wrap",
+        "servings": 4,
+        "macros": {
+          "protein": 62.0,
+          "fat": 20.0,
+          "carbs": 65.0
+        },
+        "image": "https://example.com/wrap.jpg",
+        "prep_time": 10,
+        "cook_time": 0
+      },
+      "dinner": {
+        "id": "recipe-302",
+        "name": "Beef Stir Fry",
+        "servings": 4,
+        "macros": {
+          "protein": 62.0,
+          "fat": 21.0,
+          "carbs": 65.0
+        },
+        "image": "https://example.com/stirfry.jpg",
+        "prep_time": 12,
+        "cook_time": 18
+      },
+      "macros": {
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0
+        },
+        "calories": 2060.0,
+        "protein_status": "on_target",
+        "fat_status": "on_target",
+        "carbs_status": "on_target"
+      }
+    },
+    {
+      "day": "Sunday",
+      "breakfast": {
+        "id": "recipe-107",
+        "name": "Breakfast Burrito",
+        "servings": 2,
+        "macros": {
+          "protein": 58.0,
+          "fat": 20.0,
+          "carbs": 68.0
+        },
+        "image": "https://example.com/burrito.jpg",
+        "prep_time": 12,
+        "cook_time": 10
+      },
+      "lunch": {
+        "id": "recipe-201",
+        "name": "Grilled Chicken Salad",
+        "servings": 4,
+        "macros": {
+          "protein": 64.0,
+          "fat": 20.0,
+          "carbs": 67.0
+        },
+        "image": "https://example.com/chicken_salad.jpg",
+        "prep_time": 15,
+        "cook_time": 20
+      },
+      "dinner": {
+        "id": "recipe-301",
+        "name": "Salmon with Roasted Vegetables",
+        "servings": 4,
+        "macros": {
+          "protein": 58.0,
+          "fat": 20.0,
+          "carbs": 65.0
+        },
+        "image": "https://example.com/salmon.jpg",
+        "prep_time": 10,
+        "cook_time": 25
+      },
+      "macros": {
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0
+        },
+        "calories": 2060.0,
+        "protein_status": "on_target",
+        "fat_status": "on_target",
+        "carbs_status": "on_target"
+      }
+    }
+  ]
+}
