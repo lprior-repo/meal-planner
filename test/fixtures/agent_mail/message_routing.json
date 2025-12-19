@@ -1,0 +1,54 @@
+{
+  "description": "Agent Mail MCP - Message Routing Fixture",
+  "scenario": "Message exchange between agents with threading",
+  "messages": [
+    {
+      "id": "msg-001",
+      "sender_name": "GreenCastle",
+      "recipients": ["BlueTower"],
+      "subject": "[bd-123] Implementation complete",
+      "body_md": "Auth module retry logic implemented. Ready for testing.",
+      "thread_id": "bd-123",
+      "ack_required": true,
+      "sent_at": "2025-12-19T11:00:00Z"
+    },
+    {
+      "id": "msg-002",
+      "sender_name": "BlueTower",
+      "recipients": ["GreenCastle"],
+      "subject": "Re: [bd-123] Implementation complete",
+      "body_md": "Received. Starting test implementation now.",
+      "thread_id": "bd-123",
+      "ack_required": false,
+      "sent_at": "2025-12-19T11:05:00Z",
+      "in_reply_to": "msg-001"
+    },
+    {
+      "id": "msg-003",
+      "sender_name": "GreenCastle",
+      "recipients": ["broadcast"],
+      "subject": "[bd-123] Announcement: Auth module changes",
+      "body_md": "All agents: Auth module has been updated with retry logic. Please review.",
+      "thread_id": "bd-123",
+      "ack_required": false,
+      "sent_at": "2025-12-19T11:10:00Z"
+    }
+  ],
+  "expected_behavior": {
+    "fetch_inbox": {
+      "BlueTower": ["msg-001", "msg-003"],
+      "GreenCastle": ["msg-002", "msg-003"],
+      "RedPhoenix": ["msg-003"]
+    },
+    "thread_retrieval": {
+      "bd-123": ["msg-001", "msg-002", "msg-003"]
+    },
+    "acknowledgments": {
+      "msg-001": {
+        "required": true,
+        "acknowledged_by": "BlueTower",
+        "acknowledged_at": "2025-12-19T11:05:30Z"
+      }
+    }
+  }
+}

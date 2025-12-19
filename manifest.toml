@@ -67,7 +67,7 @@ argv = { version = ">= 1.0.0" }
 birdie = { version = ">= 1.0.0 and < 2.0.0" }
 birl = { version = ">= 1.8.0 and < 2.0.0" }
 dot_env = { version = ">= 1.0.0" }
-envoy = { version = ">= 1.0.0" }
+envoy = { version = ">= 1.1.0 and < 2.0.0" }
 filepath = { version = ">= 1.0.0" }
 glaml = { version = ">= 3.0.0" }
 gleam_crypto = { version = ">= 1.5.1 and < 2.0.0" }

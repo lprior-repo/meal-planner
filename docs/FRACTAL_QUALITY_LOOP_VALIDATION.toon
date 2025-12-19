@@ -1,0 +1,2260 @@
+DOCUMENT:
+  TITLE: "Fractal Quality Loop: Systematic Validation Workflow"
+  VERSION: "1.0.0"
+  DATE: "2025-12-19"
+  AUTHOR: "FRACTAL_SWARM_GLEAM_V2"
+  PURPOSE: "Complete reference for TCR workflow, multi-agent coordination, Gleam enforcement, and quality gates"
+
+SYSTEM_IDENTITY:
+  NAME: "FRACTAL_SWARM_GLEAM_V2"
+  TYPE: "Multi_Agent_Recursive_Dev_System"
+  LANGUAGE: "Gleam"
+  CORE_DISCIPLINE: "Strict_TCR (Test, Commit, Revert)"
+  PHILOSOPHY: "Quality emerges from systematic, layered validation in fractal patterns"
+
+# ============================================================================
+# SECTION 1: TCR WORKFLOW (Test-Commit-Revert)
+# ============================================================================
+
+TCR_WORKFLOW:
+  OVERVIEW: "Strict discipline where code only advances through passing tests"
+  PHASES: ["RED", "GREEN", "BLUE", "REVERT"]
+  MANDATORY_TOOLS: ["gleam test", "gleam format", "git"]
+
+  PHASE_RED:
+    NAME: "Write Failing Tests"
+    AGENT: "TESTER"
+    OBJECTIVE: "Create test that fails for the CORRECT reason"
+
+    STEPS:
+      STEP_1:
+        ACTION: "Write test file"
+        LOCATION: "test/{feature}_test.gleam"
+        TEMPLATE: |
+          import gleeunit
+          import gleeunit/should
+          import {module_under_test}
+
+          pub fn {behavior}_test() {
+            // ARRANGE: Setup test data
+            let input = {test_input}
+
+            // ACT: Execute behavior
+            let result = {module_under_test}.{function}(input)
+
+            // ASSERT: Verify expected outcome
+            result
+            |> should.equal({expected_output})
+          }
+
+      STEP_2:
+        ACTION: "Execute test suite"
+        COMMAND: "make test"
+        FALLBACK: "gleam test"
+        EXPECTED_OUTCOME: "FAIL"
+        VALIDATION: "Test MUST fail. If it passes, test is incorrectly written."
+
+      STEP_3:
+        ACTION: "Verify failure reason"
+        CHECK: "Error message indicates missing implementation (not syntax error)"
+        EXAMPLES:
+          GOOD: "Function {name} is not defined"
+          GOOD: "Expected Ok(_) but got Error(_)"
+          BAD: "Syntax error on line 42"
+          BAD: "Module not found"
+
+      STEP_4:
+        ACTION: "Commit test"
+        COMMAND: "git add test/{feature}_test.gleam && git commit -m 'RED: {behavior} test'"
+        RATIONALE: "Red tests are valuable artifacts documenting expected behavior"
+
+    ANTI_PATTERNS:
+      PATTERN_1:
+        NAME: "Test passes immediately"
+        PROBLEM: "Test doesn't actually verify new behavior"
+        SOLUTION: "Rewrite test to check unimplemented behavior"
+
+      PATTERN_2:
+        NAME: "Syntax errors instead of logical failures"
+        PROBLEM: "Test has bugs, not testing real behavior"
+        SOLUTION: "Fix test code before proceeding"
+
+      PATTERN_3:
+        NAME: "Testing multiple behaviors in one test"
+        PROBLEM: "Violates atomic test principle"
+        SOLUTION: "Split into separate test functions"
+
+    DECISION_TREE:
+      IF: "Test fails"
+        AND: "Failure is due to missing implementation"
+        THEN: "PROCEED to GREEN phase"
+
+      IF: "Test passes"
+        THEN: "REWRITE test - it's not testing new behavior"
+
+      IF: "Test fails"
+        AND: "Failure is syntax/compilation error"
+        THEN: "FIX test syntax first"
+
+  PHASE_GREEN:
+    NAME: "Implement Minimal Code"
+    AGENT: "CODER"
+    OBJECTIVE: "Make test pass with simplest possible implementation"
+    CONSTRAINT: "Minimal code only. 'Fake it till you make it.'"
+
+    STEPS:
+      STEP_1:
+        ACTION: "Create implementation file"
+        LOCATION: "src/{feature}.gleam"
+        PRINCIPLE: "Start with simplest solution that could possibly work"
+
+      STEP_2:
+        ACTION: "Implement function"
+        GUIDELINES:
+          RULE_1: "Return hardcoded value if only one test case"
+          RULE_2: "Use if/case for 2-3 cases"
+          RULE_3: "Only generalize when >3 test cases demand it"
+
+        EXAMPLE_PROGRESSION:
+          ONE_TEST: |
+            // ONE test case - hardcode it
+            pub fn calculate_total(items: List(Int)) -> Int {
+              42  // The only test expects 42
+            }
+
+          TWO_TESTS: |
+            // TWO test cases - branch
+            pub fn calculate_total(items: List(Int)) -> Int {
+              case items {
+                [] -> 0
+                _ -> 42
+              }
+            }
+
+          THREE_PLUS_TESTS: |
+            // THREE+ cases - generalize
+            pub fn calculate_total(items: List(Int)) -> Int {
+              list.fold(items, 0, fn(acc, item) { acc + item })
+            }
+
+      STEP_3:
+        ACTION: "Run tests"
+        COMMAND: "make test"
+        EXPECTED_OUTCOME: "PASS"
+
+      STEP_4:
+        ACTION: "Verify Gleam compliance"
+        COMMAND: "gleam format --check"
+        REQUIRED: "Must pass before commit"
+
+      STEP_5:
+        ACTION: "Conditional commit or revert"
+        BRANCHING:
+          IF_PASS:
+            COMMAND: "git add src/{feature}.gleam && git commit -m 'GREEN: {behavior}'"
+            NEXT: "PROCEED to BLUE phase"
+
+          IF_FAIL:
+            COMMAND: "git reset --hard HEAD"
+            RATIONALE: "Implementation was wrong. Delete it. Try different approach."
+            NEXT: "RETURN to GREEN phase with new strategy"
+
+    ANTI_PATTERNS:
+      PATTERN_1:
+        NAME: "Over-engineering on first pass"
+        PROBLEM: "Adding abstraction before it's needed"
+        SOLUTION: "Simplify to barely passing code"
+
+      PATTERN_2:
+        NAME: "Debugging failing implementation"
+        PROBLEM: "Wasting time on broken approach"
+        SOLUTION: "Revert and try different strategy"
+
+      PATTERN_3:
+        NAME: "Skipping format check"
+        PROBLEM: "Code doesn't meet quality gate"
+        SOLUTION: "Always run gleam format before commit"
+
+    REVERT_PROTOCOL:
+      TRIGGER: "Test still fails after implementation attempt"
+
+      IMMEDIATE_ACTION:
+        STEP_1: "git reset --hard HEAD"
+        STEP_2: "Delete all implementation changes"
+        STEP_3: "Return to clean RED state"
+
+      ANALYSIS:
+        QUESTION_1: "Was the approach fundamentally flawed?"
+        QUESTION_2: "Did I try to implement too much at once?"
+        QUESTION_3: "Is the test expectation correct?"
+
+      NEXT_ATTEMPT:
+        STRATEGY: "Try DIFFERENT implementation approach"
+        CONSTRAINT: "If 3 consecutive reverts, trigger IMPASSE_HANDLING"
+
+  PHASE_BLUE:
+    NAME: "Refactor for Quality"
+    AGENT: "REFACTORER"
+    OBJECTIVE: "Improve code structure WITHOUT changing behavior"
+    CONSTRAINT: "Tests must stay GREEN throughout"
+
+    STEPS:
+      STEP_1:
+        ACTION: "Review code for refactoring opportunities"
+        TARGETS:
+          TARGET_1: "Extract repeated logic into functions"
+          TARGET_2: "Improve variable naming"
+          TARGET_3: "Simplify nested case expressions"
+          TARGET_4: "Apply Gleam idioms (pipe operator, etc.)"
+          TARGET_5: "Add documentation"
+
+      STEP_2:
+        ACTION: "Make ONE refactoring change at a time"
+        PRINCIPLE: "Small steps maintain safety"
+
+      STEP_3:
+        ACTION: "Run tests after EACH change"
+        COMMAND: "make test"
+        SAFETY_NET: "Tests verify behavior unchanged"
+
+      STEP_4:
+        ACTION: "Run format check"
+        COMMAND: "gleam format --check"
+
+      STEP_5:
+        ACTION: "Commit if green"
+        COMMAND: "git add . && git commit -m 'BLUE: {refactoring description}'"
+        CONDITION: "Only commit if tests pass"
+
+      STEP_6:
+        ACTION: "Revert if tests fail"
+        COMMAND: "git reset --hard HEAD"
+        RATIONALE: "Refactoring broke behavior - undo it"
+
+    REFACTORING_CATALOG:
+      EXTRACT_FUNCTION:
+        WHEN: "Code block used multiple times OR complex logic"
+        EXAMPLE: |
+          // BEFORE: Repeated validation
+          case user.email {
+            "" -> Error("Empty email")
+            email if !string.contains(email, "@") -> Error("Invalid")
+            email -> Ok(email)
+          }
+
+          // AFTER: Extracted function
+          pub fn validate_email(email: String) -> Result(String, String) {
+            case email {
+              "" -> Error("Empty email")
+              email if !string.contains(email, "@") -> Error("Invalid")
+              email -> Ok(email)
+            }
+          }
+
+      PIPELINE_CONVERSION:
+        WHEN: "Nested function calls reduce readability"
+        EXAMPLE: |
+          // BEFORE: Nested calls
+          let result = process(clean(parse(input)))
+
+          // AFTER: Pipeline
+          let result =
+            input
+            |> parse
+            |> clean
+            |> process
+
+      TYPE_EXTRACTION:
+        WHEN: "Primitive types carry domain meaning"
+        EXAMPLE: |
+          // BEFORE: String for email
+          pub fn send_email(email: String) -> Result(Nil, String)
+
+          // AFTER: Custom type
+          pub type Email { Email(String) }
+          pub fn send_email(email: Email) -> Result(Nil, String)
+
+      EXHAUSTIVE_PATTERNS:
+        WHEN: "Case expressions use catch-all _"
+        EXAMPLE: |
+          // BEFORE: Catch-all hides bugs
+          case status {
+            Active -> handle_active()
+            _ -> handle_other()
+          }
+
+          // AFTER: Explicit cases
+          case status {
+            Active -> handle_active()
+            Inactive -> handle_inactive()
+            Pending -> handle_pending()
+          }
+
+    ANTI_PATTERNS:
+      PATTERN_1:
+        NAME: "Changing behavior during refactor"
+        PROBLEM: "Tests fail because logic changed"
+        SOLUTION: "Revert and separate behavior change into new RED-GREEN cycle"
+
+      PATTERN_2:
+        NAME: "Multiple refactorings in one commit"
+        PROBLEM: "Can't isolate which change broke tests"
+        SOLUTION: "One refactoring per commit"
+
+      PATTERN_3:
+        NAME: "Refactoring without tests"
+        PROBLEM: "No safety net for behavior preservation"
+        SOLUTION: "Write tests first if missing coverage"
+
+  REVERT_PHASE:
+    NAME: "Revert on Failure"
+    TRIGGER: "Tests fail during GREEN or BLUE phase"
+    PHILOSOPHY: "Fast failure is better than slow debugging"
+
+    IMMEDIATE_ACTIONS:
+      ACTION_1:
+        COMMAND: "git reset --hard HEAD"
+        EFFECT: "Destroy all uncommitted changes"
+
+      ACTION_2:
+        COMMAND: "make test"
+        VALIDATION: "Verify we're back to known good state"
+
+    ANALYSIS_PHASE:
+      QUESTION_1: "What was the attempted change?"
+      QUESTION_2: "Why did it fail?"
+      QUESTION_3: "What different approach could work?"
+      QUESTION_4: "Is the test itself correct?"
+
+    RETRY_DECISION_TREE:
+      IF: "First revert for this behavior"
+        THEN: "Try different implementation approach"
+
+      IF: "Second revert for this behavior"
+        THEN: "Simplify approach - aim for barely passing"
+
+      IF: "Third revert for this behavior"
+        THEN: "TRIGGER IMPASSE_HANDLING"
+
+    IMPASSE_HANDLING:
+      TRIGGER: "3 consecutive reverts on same behavior"
+
+      ACTIONS:
+        ACTION_1: "STOP all coding immediately"
+        ACTION_2: "CONVENE swarm agents for review"
+
+        ARCHITECT_REVIEW:
+          TASK: "Review type definitions and contracts"
+          QUESTIONS:
+            Q1: "Is the interface design sound?"
+            Q2: "Are we modeling the domain correctly?"
+            Q3: "Should we split this into smaller pieces?"
+
+        TESTER_REVIEW:
+          TASK: "Review test expectations"
+          QUESTIONS:
+            Q1: "Is the test asking for the right behavior?"
+            Q2: "Is the test too broad?"
+            Q3: "Should we test smaller behaviors first?"
+
+        CODER_REVIEW:
+          TASK: "Review implementation approach"
+          QUESTIONS:
+            Q1: "Are we missing a prerequisite function?"
+            Q2: "Do we need to refactor existing code first?"
+            Q3: "Is there a library that solves this?"
+
+      OUTPUT:
+        DELIVERABLE: "Strategy Change Proposal document"
+        CONTENTS:
+          SECTION_1: "Problem analysis"
+          SECTION_2: "Root cause of repeated failures"
+          SECTION_3: "Proposed new approach"
+          SECTION_4: "Revised test or interface if needed"
+
+      ESCALATION:
+        IF: "Impasse persists after strategy change"
+        THEN: "Create Beads issue for research/design spike"
+        COMMAND: "bd create 'Research: {problem}' -t task -p 1"
+
+# ============================================================================
+# SECTION 2: MULTI-AGENT COORDINATION
+# ============================================================================
+
+MULTI_AGENT_COORDINATION:
+  OVERVIEW: "Specialized agents collaborate through well-defined handoffs"
+  COMMUNICATION: "Agent Mail (git-backed messaging)"
+  SYNCHRONIZATION: "File reservations prevent conflicts"
+
+  AGENT_ROLES:
+    ARCHITECT:
+      RESPONSIBILITY: "Define types, contracts, and test fixtures"
+
+      DELIVERABLES:
+        DELIVERABLE_1:
+          ARTIFACT: "Type definitions"
+          LOCATION: "src/types.gleam"
+          CONTENT: |
+            /// Domain types for {feature}
+            pub type {EntityName} {
+              {EntityName}(
+                id: Int,
+                name: String,
+                status: Status,
+              )
+            }
+
+            pub type Status {
+              Active
+              Inactive
+              Pending
+            }
+
+        DELIVERABLE_2:
+          ARTIFACT: "Test fixtures"
+          LOCATION: "test/fixtures/{feature}.json"
+          CONTENT: |
+            {
+              "valid_input": {
+                "id": 1,
+                "name": "Example",
+                "status": "Active"
+              },
+              "invalid_input": {
+                "id": -1,
+                "name": "",
+                "status": "Unknown"
+              }
+            }
+
+        DELIVERABLE_3:
+          ARTIFACT: "Function signatures"
+          LOCATION: "src/{feature}.gleam"
+          CONTENT: |
+            /// Process {entity} according to business rules
+            pub fn process_{entity}(
+              entity: {EntityName},
+            ) -> Result({EntityName}, String)
+
+      HANDOFF_CRITERIA:
+        CRITERION_1: "All types compile"
+        CRITERION_2: "Test fixtures are valid JSON"
+        CRITERION_3: "Function signatures documented"
+
+      HANDOFF_MESSAGE:
+        TO: "TESTER"
+        SUBJECT: "[bd-{task_id}] Spec complete"
+        BODY: |
+          Types defined in src/types.gleam
+          Fixtures at test/fixtures/{feature}.json
+          Signatures in src/{feature}.gleam
+
+          Ready for test implementation.
+
+    TESTER:
+      RESPONSIBILITY: "Write ONE failing test per behavior (RED phase)"
+      CONSTRAINT: "Test must fail for correct reason"
+
+      WORKFLOW:
+        STEP_1:
+          ACTION: "Receive handoff from ARCHITECT"
+          VALIDATE: "Types and fixtures exist and compile"
+
+        STEP_2:
+          ACTION: "Reserve test file"
+          COMMAND: "/reserve test/{feature}_test.gleam"
+          RATIONALE: "Prevent concurrent modifications"
+
+        STEP_3:
+          ACTION: "Write atomic test"
+          PRINCIPLE: "One behavior per test function"
+          TEMPLATE: |
+            import gleeunit/should
+            import gleam/json
+            import simplifile
+            import {module_under_test}
+
+            pub fn {behavior}_test() {
+              // Load fixture
+              let assert Ok(fixture_json) =
+                simplifile.read("test/fixtures/{feature}.json")
+
+              let assert Ok(fixture) =
+                json.decode(fixture_json, {decoder})
+
+              // Execute behavior
+              let result = {module_under_test}.{function}(fixture)
+
+              // Assert expectation
+              result
+              |> should.be_ok
+              |> should.equal({expected_value})
+            }
+
+        STEP_4:
+          ACTION: "Verify test fails"
+          COMMAND: "make test"
+          EXPECTED: "Failure due to missing implementation"
+
+        STEP_5:
+          ACTION: "Commit RED test"
+          COMMAND: "git add test/{feature}_test.gleam && git commit -m 'RED: {behavior}'"
+
+        STEP_6:
+          ACTION: "Release file and handoff"
+          COMMAND: "/release test/{feature}_test.gleam"
+
+      HANDOFF_MESSAGE:
+        TO: "CODER"
+        SUBJECT: "[bd-{task_id}] RED test ready"
+        BODY: |
+          Test written: test/{feature}_test.gleam
+          Test currently fails with: {error_message}
+          Expected behavior: {behavior_description}
+
+          Ready for implementation.
+
+      ANTI_PATTERNS:
+        PATTERN_1:
+          NAME: "Multiple behaviors in one test"
+          PROBLEM: "Violates atomic test principle"
+          SOLUTION: "Split into separate test functions"
+
+        PATTERN_2:
+          NAME: "Test passes before implementation"
+          PROBLEM: "Not testing new behavior"
+          SOLUTION: "Rewrite to verify unimplemented logic"
+
+    CODER:
+      RESPONSIBILITY: "Make test pass with minimal implementation (GREEN phase)"
+      CONSTRAINT: "Simplest code that passes"
+
+      WORKFLOW:
+        STEP_1:
+          ACTION: "Receive handoff from TESTER"
+          VALIDATE: "RED test exists and fails correctly"
+
+        STEP_2:
+          ACTION: "Reserve implementation file"
+          COMMAND: "/reserve src/{feature}.gleam"
+
+        STEP_3:
+          ACTION: "Implement minimal solution"
+          STRATEGY: "Start simple, generalize only when needed"
+          EXAMPLES:
+            STRATEGY_1:
+              NAME: "Hardcode for single test"
+              CODE: |
+                pub fn process_entity(entity: Entity) -> Result(Entity, String) {
+                  Ok(entity)  // Simplest passing implementation
+                }
+
+            STRATEGY_2:
+              NAME: "Branch for two tests"
+              CODE: |
+                pub fn process_entity(entity: Entity) -> Result(Entity, String) {
+                  case entity.status {
+                    Active -> Ok(entity)
+                    _ -> Error("Not active")
+                  }
+                }
+
+            STRATEGY_3:
+              NAME: "Generalize for three+ tests"
+              CODE: |
+                pub fn process_entity(entity: Entity) -> Result(Entity, String) {
+                  entity
+                  |> validate_status
+                  |> result.try(validate_name)
+                  |> result.map(fn(e) { Entity(..e, processed: True) })
+                }
+
+        STEP_4:
+          ACTION: "Run tests"
+          COMMAND: "make test"
+
+        STEP_5:
+          ACTION: "Format check"
+          COMMAND: "gleam format --check"
+
+        STEP_6:
+          ACTION: "Commit or revert"
+          BRANCHING:
+            IF_PASS:
+              COMMAND: "git add src/{feature}.gleam && git commit -m 'GREEN: {behavior}'"
+              NEXT: "Release file and handoff to REFACTORER"
+
+            IF_FAIL:
+              COMMAND: "git reset --hard HEAD"
+              NEXT: "Try different implementation approach"
+
+      HANDOFF_MESSAGE:
+        TO: "REFACTORER"
+        SUBJECT: "[bd-{task_id}] GREEN - tests pass"
+        BODY: |
+          Implementation complete: src/{feature}.gleam
+          All tests passing
+          Format check passed
+
+          Ready for refactoring.
+
+      REVERT_SCENARIOS:
+        SCENARIO_1:
+          TRIGGER: "Tests still fail"
+          ACTION: "git reset --hard && try different approach"
+
+        SCENARIO_2:
+          TRIGGER: "Format check fails"
+          ACTION: "gleam format && rerun tests"
+
+        SCENARIO_3:
+          TRIGGER: "3 consecutive reverts"
+          ACTION: "TRIGGER IMPASSE_HANDLING"
+
+    REFACTORER:
+      RESPONSIBILITY: "Optimize code structure (BLUE phase)"
+      CONSTRAINT: "No behavior changes - tests must stay green"
+
+      WORKFLOW:
+        STEP_1:
+          ACTION: "Receive handoff from CODER"
+          VALIDATE: "Tests are green"
+
+        STEP_2:
+          ACTION: "Reserve files for refactoring"
+          COMMAND: "/reserve src/{feature}.gleam test/{feature}_test.gleam"
+
+        STEP_3:
+          ACTION: "Identify refactoring opportunities"
+          CHECKLIST:
+            ITEM_1: "Duplicate code to extract"
+            ITEM_2: "Long functions to split"
+            ITEM_3: "Unclear names to improve"
+            ITEM_4: "Nested cases to flatten"
+            ITEM_5: "Imperative style to convert to pipelines"
+            ITEM_6: "Missing documentation"
+
+        STEP_4:
+          ACTION: "Apply ONE refactoring"
+          PRINCIPLE: "Small atomic changes"
+
+        STEP_5:
+          ACTION: "Run tests immediately"
+          COMMAND: "make test"
+          SAFETY_NET: "Verify behavior unchanged"
+
+        STEP_6:
+          ACTION: "Commit or revert refactoring"
+          BRANCHING:
+            IF_GREEN:
+              COMMAND: "git add . && git commit -m 'BLUE: {refactoring description}'"
+              NEXT: "Repeat for next refactoring"
+
+            IF_RED:
+              COMMAND: "git reset --hard HEAD"
+              NEXT: "Skip this refactoring, try different one"
+
+        STEP_7:
+          ACTION: "Release files when complete"
+          COMMAND: "/release"
+
+      REFACTORING_PRIORITIES:
+        PRIORITY_1:
+          NAME: "Gleam 7 Commandments compliance"
+          IMPORTANCE: "Critical"
+
+        PRIORITY_2:
+          NAME: "Code duplication elimination"
+          IMPORTANCE: "High"
+
+        PRIORITY_3:
+          NAME: "Naming clarity"
+          IMPORTANCE: "High"
+
+        PRIORITY_4:
+          NAME: "Documentation completeness"
+          IMPORTANCE: "Medium"
+
+        PRIORITY_5:
+          NAME: "Performance optimization"
+          IMPORTANCE: "Low (only if measured bottleneck)"
+
+      COMPLETION_MESSAGE:
+        TO: "ARCHITECT"
+        SUBJECT: "[bd-{task_id}] BLUE complete - cycle done"
+        BODY: |
+          Refactoring complete
+          All tests green
+          Code complies with Gleam 7 Commandments
+
+          Feature {feature} complete. Ready for next behavior.
+
+  COORDINATION_PROTOCOLS:
+    FILE_RESERVATION:
+      COMMAND: "/reserve {file_pattern}"
+      PURPOSE: "Prevent concurrent modifications"
+      SCOPE: "Agent owns file until /release"
+
+      EXAMPLE:
+        AGENT: "TESTER"
+        ACTION: "/reserve test/user_validation_test.gleam"
+        EFFECT: "Other agents cannot modify file until released"
+
+    MESSAGE_THREADING:
+      FORMAT: "Thread: bd-{task_id}"
+      PURPOSE: "Group related messages by Beads task"
+
+      EXAMPLE: |
+        To: CODER
+        Subject: [bd-t3u] Spec ready
+        Thread: bd-t3u
+
+        Types defined in src/types.gleam.
+        Ready for implementation.
+
+    HANDOFF_CHECKLIST:
+      ARCHITECT_TO_TESTER:
+        REQUIRED:
+          ITEM_1: "Types compile"
+          ITEM_2: "Fixtures valid"
+          ITEM_3: "Signatures documented"
+
+      TESTER_TO_CODER:
+        REQUIRED:
+          ITEM_1: "Test fails correctly"
+          ITEM_2: "Test committed"
+          ITEM_3: "Behavior documented in test"
+
+      CODER_TO_REFACTORER:
+        REQUIRED:
+          ITEM_1: "Tests pass"
+          ITEM_2: "Format check passes"
+          ITEM_3: "Implementation committed"
+
+      REFACTORER_TO_ARCHITECT:
+        REQUIRED:
+          ITEM_1: "Tests still pass"
+          ITEM_2: "Code quality improved"
+          ITEM_3: "Gleam 7 Commandments verified"
+
+# ============================================================================
+# SECTION 3: GLEAM 7 COMMANDMENTS ENFORCEMENT
+# ============================================================================
+
+GLEAM_7_COMMANDMENTS:
+  OVERVIEW: "Non-negotiable language idioms enforced at all phases"
+  ENFORCEMENT: "Checked during BLUE phase and quality gates"
+
+  COMMANDMENT_1:
+    RULE: "IMMUTABILITY_ABSOLUTE"
+    STATEMENT: "No `var`. All data structures are immutable."
+    RATIONALE: "Immutability eliminates entire classes of bugs"
+
+    CORRECT_EXAMPLES:
+      EXAMPLE_1:
+        DESCRIPTION: "Value transformation"
+        CODE: |
+          let user = fetch_user(id)
+          let user = update_email(user, new_email)
+          let user = save_user(user)
+
+      EXAMPLE_2:
+        DESCRIPTION: "Accumulator in recursion"
+        CODE: |
+          fn sum(list: List(Int), acc: Int) -> Int {
+            case list {
+              [] -> acc
+              [x, ..xs] -> sum(xs, acc + x)
+            }
+          }
+
+      EXAMPLE_3:
+        DESCRIPTION: "Record update syntax"
+        CODE: |
+          let updated_user = User(..user, email: new_email)
+
+    VIOLATIONS:
+      VIOLATION_1:
+        BAD_CODE: "let mut counter = 0"
+        PROBLEM: "Mutable variable"
+        FIX: "Use recursion with accumulator"
+
+      VIOLATION_2:
+        BAD_CODE: |
+          let user = fetch_user(id)
+          user.email = new_email  // Mutation
+        PROBLEM: "Direct field mutation"
+        FIX: "let user = User(..user, email: new_email)"
+
+    COMMON_PITFALLS:
+      PITFALL_1:
+        SCENARIO: "Need to update value in loop"
+        WRONG_APPROACH: "Use mutable variable"
+        RIGHT_APPROACH: "Use list.fold with accumulator"
+        EXAMPLE: |
+          // Right way
+          let total = list.fold(numbers, 0, fn(acc, n) { acc + n })
+
+      PITFALL_2:
+        SCENARIO: "Need to build up a list"
+        WRONG_APPROACH: "Mutate list in place"
+        RIGHT_APPROACH: "Use list.map or list.fold"
+        EXAMPLE: |
+          // Right way
+          let doubled = list.map(numbers, fn(n) { n * 2 })
+
+    ENFORCEMENT:
+      PHASE: "Code review in BLUE phase"
+      AUTOMATED: "Compiler rejects var keyword"
+      MANUAL: "Reviewer checks for accumulator patterns"
+
+  COMMANDMENT_2:
+    RULE: "NO_NULLS_EVER"
+    STATEMENT: "Use Option(T) or Result(T, E). Handle every Error explicitly."
+    RATIONALE: "Null pointer exceptions impossible by design"
+
+    CORRECT_EXAMPLES:
+      EXAMPLE_1:
+        DESCRIPTION: "Optional value"
+        CODE: |
+          import gleam/option.{type Option, Some, None}
+
+          pub type User {
+            User(
+              id: Int,
+              bio: Option(String),  // May or may not exist
+            )
+          }
+
+          pub fn get_bio(user: User) -> String {
+            case user.bio {
+              Some(text) -> text
+              None -> "No bio available"
+            }
+          }
+
+      EXAMPLE_2:
+        DESCRIPTION: "Operation that can fail"
+        CODE: |
+          pub fn parse_age(input: String) -> Result(Int, String) {
+            case int.parse(input) {
+              Ok(age) if age >= 0 && age <= 150 -> Ok(age)
+              Ok(_) -> Error("Age out of range")
+              Error(_) -> Error("Invalid number")
+            }
+          }
+
+      EXAMPLE_3:
+        DESCRIPTION: "Chaining operations"
+        CODE: |
+          pub fn process_user(input: String) -> Result(User, String) {
+            input
+            |> parse_user_json
+            |> result.try(validate_user)
+            |> result.try(save_user)
+          }
+
+    VIOLATIONS:
+      VIOLATION_1:
+        BAD_CODE: "pub fn find_user(id: Int) -> User"
+        PROBLEM: "No way to handle 'not found' case"
+        FIX: "pub fn find_user(id: Int) -> Result(User, String)"
+
+      VIOLATION_2:
+        BAD_CODE: |
+          case result {
+            Ok(value) -> use_value(value)
+            _ -> panic  // Hiding errors
+          }
+        PROBLEM: "Error cases ignored with panic"
+        FIX: |
+          case result {
+            Ok(value) -> use_value(value)
+            Error(e) -> handle_error(e)
+          }
+
+    COMMON_PITFALLS:
+      PITFALL_1:
+        SCENARIO: "Database query might return nothing"
+        WRONG_APPROACH: "Return entity directly, panic if not found"
+        RIGHT_APPROACH: "Return Option(Entity)"
+        EXAMPLE: |
+          pub fn find_by_id(id: Int) -> Option(User) {
+            // Query returns Some(user) or None
+          }
+
+      PITFALL_2:
+        SCENARIO: "Multiple operations can fail"
+        WRONG_APPROACH: "Nested case statements"
+        RIGHT_APPROACH: "Railway-oriented programming with result.try"
+        EXAMPLE: |
+          pub fn create_account(data: FormData) -> Result(Account, Error) {
+            data
+            |> validate_email
+            |> result.try(check_email_unique)
+            |> result.try(hash_password)
+            |> result.try(save_to_db)
+          }
+
+    ENFORCEMENT:
+      PHASE: "Type system enforces at compile time"
+      AUTOMATED: "Compiler requires exhaustive case matching"
+      MANUAL: "Code review checks for improper error handling"
+
+  COMMANDMENT_3:
+    RULE: "PIPE_EVERYTHING"
+    STATEMENT: "Use |> for all data transformations"
+    RATIONALE: "Top-down readability mirrors data flow"
+
+    CORRECT_EXAMPLES:
+      EXAMPLE_1:
+        DESCRIPTION: "Simple pipeline"
+        CODE: |
+          input
+          |> string.trim
+          |> string.lowercase
+          |> string.split(",")
+          |> list.map(string.trim)
+
+      EXAMPLE_2:
+        DESCRIPTION: "Pipeline with result handling"
+        CODE: |
+          user_input
+          |> validate_format
+          |> result.try(parse_to_int)
+          |> result.map(fn(n) { n * 2 })
+          |> result.unwrap(0)
+
+      EXAMPLE_3:
+        DESCRIPTION: "Non-first argument with capture"
+        CODE: |
+          items
+          |> list.filter(fn(item) { item.active })
+          |> list.map(fn(item) { item.name })
+          |> string.join(", ")
+
+    VIOLATIONS:
+      VIOLATION_1:
+        BAD_CODE: "let result = process(clean(parse(input)))"
+        PROBLEM: "Nested calls, hard to read"
+        FIX: |
+          let result =
+            input
+            |> parse
+            |> clean
+            |> process
+
+      VIOLATION_2:
+        BAD_CODE: |
+          let parsed = parse(input)
+          let cleaned = clean(parsed)
+          let processed = process(cleaned)
+        PROBLEM: "Unnecessary intermediate variables"
+        FIX: |
+          let result =
+            input
+            |> parse
+            |> clean
+            |> process
+
+    COMMON_PITFALLS:
+      PITFALL_1:
+        SCENARIO: "Function expects argument in non-first position"
+        WRONG_APPROACH: "Break pipeline with intermediate variable"
+        RIGHT_APPROACH: "Use anonymous function or capture"
+        EXAMPLE: |
+          // string.append(suffix, string) - suffix is first
+          items
+          |> list.map(fn(item) { string.append("_suffix", item) })
+
+      PITFALL_2:
+        SCENARIO: "Need to pass multiple arguments"
+        WRONG_APPROACH: "Abandon pipeline"
+        RIGHT_APPROACH: "Use anonymous function"
+        EXAMPLE: |
+          input
+          |> parse
+          |> result.map(fn(data) {
+               process_with_config(data, config, options)
+             })
+
+    ENFORCEMENT:
+      PHASE: "Code review in BLUE phase"
+      AUTOMATED: "Linter can detect nested function calls"
+      MANUAL: "Reviewer checks for pipeline opportunities"
+
+  COMMANDMENT_4:
+    RULE: "EXHAUSTIVE_MATCHING"
+    STATEMENT: "Every case expression must cover ALL possibilities"
+    RATIONALE: "Compiler catches unhandled cases"
+
+    CORRECT_EXAMPLES:
+      EXAMPLE_1:
+        DESCRIPTION: "Complete pattern matching"
+        CODE: |
+          pub type Status {
+            Active
+            Inactive
+            Pending
+          }
+
+          pub fn status_message(status: Status) -> String {
+            case status {
+              Active -> "User is active"
+              Inactive -> "User is inactive"
+              Pending -> "User is pending"
+            }
+          }
+
+      EXAMPLE_2:
+        DESCRIPTION: "Result handling"
+        CODE: |
+          case result {
+            Ok(value) -> process_value(value)
+            Error(e) -> handle_error(e)
+          }
+
+      EXAMPLE_3:
+        DESCRIPTION: "List patterns"
+        CODE: |
+          case list {
+            [] -> "Empty list"
+            [x] -> "Single item: " <> int.to_string(x)
+            [x, y] -> "Two items"
+            [_, _, _ , ..] -> "Three or more items"
+          }
+
+    VIOLATIONS:
+      VIOLATION_1:
+        BAD_CODE: |
+          case status {
+            Active -> "Active"
+            _ -> "Other"  // Hides Inactive vs Pending distinction
+          }
+        PROBLEM: "Catch-all hides meaningful cases"
+        FIX: "List all cases explicitly"
+
+      VIOLATION_2:
+        BAD_CODE: |
+          case result {
+            Ok(value) -> value
+            // Missing Error case - won't compile
+          }
+        PROBLEM: "Incomplete pattern matching"
+        FIX: "Add Error(e) -> ... branch"
+
+    COMMON_PITFALLS:
+      PITFALL_1:
+        SCENARIO: "Adding new variant to custom type"
+        PROBLEM: "Existing case expressions become incomplete"
+        SOLUTION: "Compiler will catch all locations needing update"
+        EXAMPLE: |
+          // Add Suspended to Status type
+          pub type Status {
+            Active
+            Inactive
+            Pending
+            Suspended  // New variant
+          }
+
+          // Compiler now requires this be handled everywhere
+
+      PITFALL_2:
+        SCENARIO: "Many similar cases"
+        WRONG_APPROACH: "Use _ catch-all"
+        RIGHT_APPROACH: "Group with multiple patterns or guards"
+        EXAMPLE: |
+          case status {
+            Active | Pending -> "Allowed"  // Multiple patterns
+            Inactive | Suspended -> "Not allowed"
+          }
+
+    ENFORCEMENT:
+      PHASE: "Compile time"
+      AUTOMATED: "Compiler rejects incomplete patterns"
+      MANUAL: "Code review discourages unnecessary catch-alls"
+
+  COMMANDMENT_5:
+    RULE: "LABELED_ARGUMENTS"
+    STATEMENT: "Functions with >2 arguments MUST use labels"
+    RATIONALE: "Clarity at call sites prevents errors"
+
+    CORRECT_EXAMPLES:
+      EXAMPLE_1:
+        DESCRIPTION: "Function with labeled arguments"
+        CODE: |
+          pub fn create_user(
+            name name: String,
+            email email: String,
+            age age: Int,
+          ) -> User {
+            User(name: name, email: email, age: age)
+          }
+
+          // Call site is self-documenting
+          create_user(
+            name: "Alice",
+            email: "alice@example.com",
+            age: 30,
+          )
+
+      EXAMPLE_2:
+        DESCRIPTION: "Optional arguments with defaults"
+        CODE: |
+          pub fn fetch_users(
+            limit limit: Int,
+            offset offset: Int,
+            sort_by sort_by: String,
+          ) -> List(User) {
+            // Implementation
+          }
+
+          fetch_users(limit: 10, offset: 0, sort_by: "name")
+
+    VIOLATIONS:
+      VIOLATION_1:
+        BAD_CODE: |
+          pub fn create_user(name: String, email: String, age: Int) -> User
+          create_user("Alice", "alice@example.com", 30)  // What is 30?
+        PROBLEM: "Unclear what arguments mean"
+        FIX: |
+          pub fn create_user(
+            name name: String,
+            email email: String,
+            age age: Int,
+          ) -> User
+
+      VIOLATION_2:
+        BAD_CODE: "process(data, true, false, 10)"
+        PROBLEM: "Boolean and number arguments unclear"
+        FIX: "process(data: data, validate: True, retry: False, timeout: 10)"
+
+    COMMON_PITFALLS:
+      PITFALL_1:
+        SCENARIO: "Function grows from 2 to 3 arguments"
+        PROBLEM: "Didn't add labels when crossing threshold"
+        SOLUTION: "Add labels when refactoring to 3+ arguments"
+
+      PITFALL_2:
+        SCENARIO: "Similar types in sequence"
+        PROBLEM: "Easy to swap arguments"
+        SOLUTION: "Use labels even for 2 arguments if both same type"
+        EXAMPLE: |
+          // Bad: easy to swap
+          pub fn divide(a: Float, b: Float) -> Float
+
+          // Good: clear intent
+          pub fn divide(numerator num: Float, denominator denom: Float) -> Float
+
+    ENFORCEMENT:
+      PHASE: "Code review in BLUE phase"
+      AUTOMATED: "Linter can check argument count"
+      MANUAL: "Reviewer enforces label usage"
+
+  COMMANDMENT_6:
+    RULE: "TYPE_SAFETY_FIRST"
+    STATEMENT: "Avoid dynamic. Define custom types for domain concepts."
+    RATIONALE: "Type system catches bugs at compile time"
+
+    CORRECT_EXAMPLES:
+      EXAMPLE_1:
+        DESCRIPTION: "Domain types instead of primitives"
+        CODE: |
+          pub type UserId {
+            UserId(Int)
+          }
+
+          pub type Email {
+            Email(String)
+          }
+
+          pub fn send_email(to: Email, from: Email) -> Result(Nil, String)
+
+      EXAMPLE_2:
+        DESCRIPTION: "Sum types for states"
+        CODE: |
+          pub type ConnectionState {
+            Disconnected
+            Connecting
+            Connected(ip_address: String, port: Int)
+            Failed(reason: String)
+          }
+
+      EXAMPLE_3:
+        DESCRIPTION: "Phantom types for validation"
+        CODE: |
+          pub opaque type Validated(a) {
+            Validated(a)
+          }
+
+          pub fn validate_email(email: String) -> Result(Validated(Email), String)
+
+    VIOLATIONS:
+      VIOLATION_1:
+        BAD_CODE: "pub fn process(data: Dynamic) -> Dynamic"
+        PROBLEM: "Type safety abandoned"
+        FIX: "Define specific types for input and output"
+
+      VIOLATION_2:
+        BAD_CODE: |
+          pub fn get_user_id(user: User) -> Int
+          pub fn get_product_id(product: Product) -> Int
+          // Can accidentally pass product ID to user function
+        PROBLEM: "Primitive obsession"
+        FIX: |
+          pub type UserId { UserId(Int) }
+          pub type ProductId { ProductId(Int) }
+          // Now type system prevents mixing
+
+    COMMON_PITFALLS:
+      PITFALL_1:
+        SCENARIO: "JSON decoding"
+        WRONG_APPROACH: "Work with Dynamic throughout code"
+        RIGHT_APPROACH: "Decode to typed structure at boundary"
+        EXAMPLE: |
+          pub fn decode_user(json: String) -> Result(User, String) {
+            json.decode(json, user_decoder)  // Dynamic only at boundary
+          }
+
+      PITFALL_2:
+        SCENARIO: "Need flexibility for different types"
+        WRONG_APPROACH: "Use Dynamic"
+        RIGHT_APPROACH: "Use generic types or sum types"
+        EXAMPLE: |
+          pub type ApiResponse(data) {
+            Success(data: data)
+            Error(message: String)
+          }
+
+    ENFORCEMENT:
+      PHASE: "Design phase (ARCHITECT) and code review"
+      AUTOMATED: "Grep for Dynamic usage"
+      MANUAL: "Reviewer checks for custom types"
+
+  COMMANDMENT_7:
+    RULE: "FORMAT_OR_DEATH"
+    STATEMENT: "Code is invalid if gleam format --check fails"
+    RATIONALE: "Consistent formatting reduces cognitive load"
+
+    CORRECT_EXAMPLES:
+      EXAMPLE_1:
+        DESCRIPTION: "Properly formatted function"
+        CODE: |
+          pub fn process_user(
+            user: User,
+            config: Config,
+          ) -> Result(User, Error) {
+            user
+            |> validate_user
+            |> result.try(fn(u) { apply_config(u, config) })
+            |> result.try(save_user)
+          }
+
+      EXAMPLE_2:
+        DESCRIPTION: "Formatted case expression"
+        CODE: |
+          case result {
+            Ok(value) -> {
+              let processed = process(value)
+              save(processed)
+            }
+            Error(e) -> {
+              log_error(e)
+              Error(e)
+            }
+          }
+
+    VIOLATIONS:
+      VIOLATION_1:
+        BAD_CODE: |
+          pub fn process(x:Int)->Int{x+1}  // No spacing
+        PROBLEM: "Inconsistent formatting"
+        FIX: "Run gleam format"
+
+      VIOLATION_2:
+        BAD_CODE: |
+          case result {Ok(value) -> use_value(value) Error(e) -> handle(e)}
+        PROBLEM: "Single line case expression"
+        FIX: "gleam format will fix automatically"
+
+    ENFORCEMENT:
+      PHASE: "Every commit"
+      AUTOMATED: |
+        # Pre-commit hook
+        gleam format --check || {
+          echo "Format check failed. Run: gleam format"
+          exit 1
+        }
+
+      MANUAL: "Never commit without format check passing"
+
+    WORKFLOW_INTEGRATION:
+      GREEN_PHASE:
+        ACTION: "Run gleam format --check before commit"
+        COMMAND: "gleam format && make test && git commit"
+
+      BLUE_PHASE:
+        ACTION: "Format after each refactoring"
+        COMMAND: "gleam format && make test"
+
+      CI_GATE:
+        ACTION: "Automated format check in CI"
+        FAILURE: "Build fails if format check fails"
+
+# ============================================================================
+# SECTION 4: QUALITY GATES
+# ============================================================================
+
+QUALITY_GATES:
+  OVERVIEW: "Mandatory checkpoints before code advances"
+  ENFORCEMENT: "Automated where possible, manual review where not"
+
+  GATE_1:
+    NAME: "Format Check"
+    COMMAND: "gleam format --check"
+    WHEN: "Before every commit (GREEN and BLUE phases)"
+
+    PASSING_CRITERIA:
+      CRITERION_1: "Exit code 0"
+      CRITERION_2: "No files need formatting"
+
+    FAILURE_RESPONSE:
+      STEP_1: "Run gleam format (no --check flag)"
+      STEP_2: "Review formatting changes"
+      STEP_3: "Rerun tests to verify no behavior change"
+      STEP_4: "Commit formatted code"
+
+    AUTOMATION: |
+      # Git pre-commit hook
+      #!/bin/bash
+      gleam format --check
+      if [ $? -ne 0 ]; then
+        echo "❌ Format check failed"
+        echo "Run: gleam format"
+        exit 1
+      fi
+
+    BYPASS: "NEVER - no exceptions"
+
+  GATE_2:
+    NAME: "Test Suite"
+    COMMAND: "make test"
+    FALLBACK: "gleam test"
+    WHEN: "After every code change"
+
+    PASSING_CRITERIA:
+      CRITERION_1: "All tests pass (100%)"
+      CRITERION_2: "No compilation errors"
+      CRITERION_3: "No warnings"
+
+    FAILURE_RESPONSE:
+      RED_PHASE:
+        IF_FAIL: "Expected - continue to GREEN phase"
+
+      GREEN_PHASE:
+        IF_FAIL: "REVERT - git reset --hard HEAD"
+
+      BLUE_PHASE:
+        IF_FAIL: "REVERT - refactoring broke behavior"
+
+    METRICS:
+      METRIC_1:
+        NAME: "Test execution time"
+        TARGET: "< 1 second for unit tests"
+        COMMAND: "make test  # Parallel execution"
+
+      METRIC_2:
+        NAME: "Code coverage"
+        TARGET: "> 80% line coverage"
+        COMMAND: "gleam test --coverage"
+
+    AUTOMATION: |
+      # Continuous integration
+      test:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v3
+          - uses: erlef/setup-beam@v1
+          - run: gleam deps download
+          - run: gleam test
+          - run: gleam format --check
+
+    BYPASS: "NEVER - no exceptions"
+
+  GATE_3:
+    NAME: "Compiler Warnings"
+    COMMAND: "gleam build"
+    WHEN: "After implementation (GREEN phase) and refactoring (BLUE phase)"
+
+    PASSING_CRITERIA:
+      CRITERION_1: "Zero warnings"
+      CRITERION_2: "Build succeeds"
+
+    COMMON_WARNINGS:
+      WARNING_1:
+        MESSAGE: "Unused import"
+        FIX: "Remove unused import statement"
+
+      WARNING_2:
+        MESSAGE: "Unused variable"
+        FIX: "Prefix with _ if intentionally unused: let _unused = ..."
+
+      WARNING_3:
+        MESSAGE: "Unused function"
+        FIX: "Remove function or add pub if meant to be exported"
+
+      WARNING_4:
+        MESSAGE: "Unreachable case"
+        FIX: "Remove unreachable branch or fix logic"
+
+    FAILURE_RESPONSE:
+      STEP_1: "Read warning message"
+      STEP_2: "Fix issue"
+      STEP_3: "Rerun gleam build"
+      STEP_4: "Run tests to verify fix"
+
+    AUTOMATION: |
+      # CI build check
+      - run: gleam build 2>&1 | tee build.log
+      - run: |
+          if grep -i "warning" build.log; then
+            echo "❌ Build has warnings"
+            exit 1
+          fi
+
+    BYPASS: "NEVER - warnings indicate code quality issues"
+
+  GATE_4:
+    NAME: "Gleam 7 Commandments Compliance"
+    WHEN: "Code review in BLUE phase"
+
+    CHECKLIST:
+      CHECK_1:
+        RULE: "IMMUTABILITY_ABSOLUTE"
+        VERIFY: "No mutable variables, all updates create new values"
+        AUTOMATED: "Compiler enforces"
+
+      CHECK_2:
+        RULE: "NO_NULLS_EVER"
+        VERIFY: "All optionals use Option(T), all failures use Result(T, E)"
+        AUTOMATED: "Type system enforces"
+
+      CHECK_3:
+        RULE: "PIPE_EVERYTHING"
+        VERIFY: "Data transformations use |> pipeline operator"
+        MANUAL: "Code review"
+
+      CHECK_4:
+        RULE: "EXHAUSTIVE_MATCHING"
+        VERIFY: "All case expressions handle all variants"
+        AUTOMATED: "Compiler enforces"
+
+      CHECK_5:
+        RULE: "LABELED_ARGUMENTS"
+        VERIFY: "Functions with >2 arguments use labels"
+        MANUAL: "Code review"
+
+      CHECK_6:
+        RULE: "TYPE_SAFETY_FIRST"
+        VERIFY: "Custom types for domain concepts, avoid Dynamic"
+        MANUAL: "Code review + grep for Dynamic"
+
+      CHECK_7:
+        RULE: "FORMAT_OR_DEATH"
+        VERIFY: "gleam format --check passes"
+        AUTOMATED: "Pre-commit hook"
+
+    FAILURE_RESPONSE:
+      STEP_1: "Identify which commandment violated"
+      STEP_2: "Refactor to comply"
+      STEP_3: "Run tests to verify behavior preserved"
+      STEP_4: "Commit refactoring"
+
+    AUTOMATION: |
+      # Automated checks where possible
+      check_compliance:
+        - gleam format --check
+        - gleam build  # Type system checks
+        - grep -r "Dynamic" src/ && exit 1 || true
+        - # Manual review for pipeline and labels
+
+    BYPASS: "NEVER - these are core language idioms"
+
+  GATE_5:
+    NAME: "Beads Task Tracking"
+    WHEN: "Before any code change"
+
+    REQUIREMENTS:
+      REQ_1:
+        RULE: "Active Beads task exists"
+        VERIFY: "bd ready --json shows task"
+
+      REQ_2:
+        RULE: "Task status is in_progress"
+        VERIFY: "bd show {task-id} shows status: in_progress"
+
+      REQ_3:
+        RULE: "Commits reference task ID"
+        VERIFY: "git log shows [bd-{task-id}] in commit messages"
+
+    WORKFLOW:
+      STEP_1:
+        ACTION: "Check for ready tasks"
+        COMMAND: "bd ready --json"
+
+      STEP_2:
+        ACTION: "Update task to in_progress"
+        COMMAND: "bd update {task-id} --status in_progress"
+
+      STEP_3:
+        ACTION: "Perform work (TCR cycle)"
+
+      STEP_4:
+        ACTION: "Close task on completion"
+        COMMAND: "bd close {task-id} --reason 'Completed {behavior}'"
+
+      STEP_5:
+        ACTION: "Sync Beads database"
+        COMMAND: "bd sync"
+
+    FAILURE_RESPONSE:
+      SCENARIO_1:
+        CONDITION: "No active task"
+        ACTION: "Create task: bd create 'Implement {feature}' -t feature"
+
+      SCENARIO_2:
+        CONDITION: "Work done without task tracking"
+        ACTION: "Create task retroactively and document work"
+
+    AUTOMATION: |
+      # Pre-commit hook to check for task reference
+      #!/bin/bash
+      commit_msg=$(git log -1 --pretty=%B)
+      if ! echo "$commit_msg" | grep -q "\[bd-"; then
+        echo "❌ Commit must reference Beads task [bd-XXX]"
+        exit 1
+      fi
+
+    BYPASS: "NEVER - all work must be tracked"
+
+  INTEGRATION_CHECK:
+    NAME: "All gates together"
+    WHEN: "Before pushing to remote"
+
+    COMMAND_SEQUENCE: |
+      #!/bin/bash
+      set -e  # Exit on first failure
+
+      echo "=== Running Quality Gates ==="
+
+      echo "📋 Gate 1: Format check"
+      gleam format --check || {
+        echo "❌ Format check failed"
+        exit 1
+      }
+
+      echo "🧪 Gate 2: Test suite"
+      make test || {
+        echo "❌ Tests failed"
+        exit 1
+      }
+
+      echo "⚙️ Gate 3: Compiler warnings"
+      gleam build 2>&1 | tee build.log
+      if grep -i "warning" build.log; then
+        echo "❌ Build has warnings"
+        exit 1
+      fi
+
+      echo "📖 Gate 4: Gleam 7 Commandments"
+      # Automated checks
+      grep -r "Dynamic" src/ && {
+        echo "⚠️ Found Dynamic usage - review needed"
+      } || true
+
+      echo "📝 Gate 5: Beads tracking"
+      bd ready --json  # Verify Beads functional
+
+      echo "✅ All quality gates passed"
+
+    FAILURE_HANDLING:
+      PRINCIPLE: "Fix before proceeding"
+      ACTION: "Do not push with failing gates"
+      EXCEPTION: "None - quality is non-negotiable"
+
+# ============================================================================
+# SECTION 5: DECISION TREES
+# ============================================================================
+
+DECISION_TREES:
+  OVERVIEW: "Common scenarios with step-by-step guidance"
+
+  TREE_1:
+    SCENARIO: "Starting new feature"
+
+    FLOWCHART: |
+      START
+       │
+       ├─→ Has Beads task?
+       │    ├─ No → Create: bd create "{feature}" -t feature
+       │    └─ Yes → Continue
+       │
+       ├─→ Update status: bd update {id} --status in_progress
+       │
+       ├─→ ARCHITECT: Define types and contracts
+       │    ├─ Create src/types.gleam
+       │    ├─ Create test/fixtures/{feature}.json
+       │    └─ Define function signatures
+       │
+       ├─→ Handoff to TESTER
+       │
+       ├─→ TESTER: Write failing test (RED)
+       │    ├─ Write test/{feature}_test.gleam
+       │    ├─ Run: make test (should FAIL)
+       │    └─ Commit: git commit -m "RED: {behavior}"
+       │
+       ├─→ Handoff to CODER
+       │
+       ├─→ CODER: Implement (GREEN)
+       │    ├─ Write src/{feature}.gleam
+       │    ├─ Run: make test
+       │    │    ├─ Pass? → Continue
+       │    │    └─ Fail? → git reset --hard, try again
+       │    ├─ Run: gleam format --check
+       │    └─ Commit: git commit -m "GREEN: {behavior}"
+       │
+       ├─→ Handoff to REFACTORER
+       │
+       ├─→ REFACTORER: Optimize (BLUE)
+       │    ├─ Identify refactoring opportunity
+       │    ├─ Make ONE change
+       │    ├─ Run: make test
+       │    │    ├─ Pass? → Commit
+       │    │    └─ Fail? → git reset --hard
+       │    └─ Repeat for next refactoring
+       │
+       ├─→ All behaviors done?
+       │    ├─ No → Return to TESTER for next behavior
+       │    └─ Yes → Continue
+       │
+       ├─→ Run quality gates
+       │    ├─ gleam format --check
+       │    ├─ make test
+       │    └─ gleam build
+       │
+       ├─→ Close task: bd close {id} --reason "Complete"
+       │
+       └─→ END
+
+  TREE_2:
+    SCENARIO: "Test fails during GREEN phase"
+
+    FLOWCHART: |
+      START: Test fails
+       │
+       ├─→ Is this first attempt?
+       │    ├─ Yes → Analyze why test failed
+       │    │         ├─→ Logic error? → Try different approach
+       │    │         ├─→ Missing function? → Implement it
+       │    │         └─→ Wrong algorithm? → Research alternatives
+       │    │
+       │    ├─ No (2nd attempt) →
+       │    │    └─→ git reset --hard HEAD
+       │    │         └─→ Simplify approach - aim for barely passing
+       │    │
+       │    └─ No (3rd attempt) →
+       │         └─→ TRIGGER IMPASSE_HANDLING
+       │              ├─→ STOP coding
+       │              ├─→ ARCHITECT reviews types
+       │              ├─→ TESTER reviews test
+       │              ├─→ CODER reviews approach
+       │              └─→ OUTPUT: Strategy Change Proposal
+       │
+       ├─→ git reset --hard HEAD
+       │
+       ├─→ Try new implementation strategy
+       │
+       └─→ Run tests again
+            ├─ Pass? → Commit and proceed to BLUE
+            └─ Fail? → Increment attempt counter, loop
+
+  TREE_3:
+    SCENARIO: "Refactoring breaks tests (BLUE phase)"
+
+    FLOWCHART: |
+      START: Tests fail after refactoring
+       │
+       ├─→ Did refactoring change behavior?
+       │    ├─ Yes → This isn't refactoring, it's a new feature
+       │    │         └─→ Revert: git reset --hard HEAD
+       │    │              └─→ Create new RED test for new behavior
+       │    │
+       │    └─ No → Refactoring has bug
+       │              └─→ Continue below
+       │
+       ├─→ git reset --hard HEAD  (Revert refactoring)
+       │
+       ├─→ Can you fix the refactoring?
+       │    ├─ Yes → Try again with fixed approach
+       │    │         └─→ Make change
+       │    │              └─→ Run tests
+       │    │                   ├─ Pass? → Commit
+       │    │                   └─ Fail? → Revert again
+       │    │
+       │    └─ No → Skip this refactoring
+       │              └─→ Document why in code comment
+       │              └─→ Move to next refactoring
+       │
+       └─→ END
+
+  TREE_4:
+    SCENARIO: "Deciding between Option and Result"
+
+    FLOWCHART: |
+      START: Function might not return value
+       │
+       ├─→ Is absence of value an ERROR condition?
+       │    │
+       │    ├─ Yes → Use Result(T, E)
+       │    │    Example: parse_int("abc") → Error("Invalid number")
+       │    │    Rationale: Not a number IS an error
+       │    │
+       │    └─ No → Use Option(T)
+       │         Example: find_user(999) → None
+       │         Rationale: User might legitimately not exist
+       │
+       ├─→ Need to communicate WHY it failed?
+       │    │
+       │    ├─ Yes → Use Result(T, E) with descriptive Error
+       │    │    Example: Result(User, DatabaseError)
+       │    │
+       │    └─ No → Use Option(T)
+       │         Example: Option(Config)
+       │
+       └─→ Multiple failure modes?
+            │
+            ├─ Yes → Definitely Result(T, E)
+            │    Define Error as sum type:
+            │    pub type Error {
+            │      NotFound
+            │      ValidationFailed(String)
+            │      DatabaseError(String)
+            │    }
+            │
+            └─ No → Option(T) probably sufficient
+
+  TREE_5:
+    SCENARIO: "Code review finds Gleam commandment violation"
+
+    FLOWCHART: |
+      START: Violation found
+       │
+       ├─→ Which commandment violated?
+       │
+       ├─→ IMMUTABILITY?
+       │    └─→ Replace mutable pattern with recursion/fold
+       │         └─→ Run tests → Pass? → Commit
+       │
+       ├─→ NO_NULLS?
+       │    └─→ Wrap in Option(T) or Result(T, E)
+       │         └─→ Update all call sites
+       │              └─→ Run tests → Pass? → Commit
+       │
+       ├─→ PIPE_EVERYTHING?
+       │    └─→ Convert nested calls to pipeline
+       │         └─→ gleam format
+       │              └─→ Run tests → Pass? → Commit
+       │
+       ├─→ EXHAUSTIVE_MATCHING?
+       │    └─→ Expand case expression with all variants
+       │         └─→ Compiler will guide
+       │              └─→ Run tests → Pass? → Commit
+       │
+       ├─→ LABELED_ARGUMENTS?
+       │    └─→ Add labels to function definition
+       │         └─→ Update all call sites
+       │              └─→ Run tests → Pass? → Commit
+       │
+       ├─→ TYPE_SAFETY_FIRST?
+       │    └─→ Replace Dynamic with concrete types
+       │         └─→ Define custom types if needed
+       │              └─→ Run tests → Pass? → Commit
+       │
+       └─→ FORMAT_OR_DEATH?
+            └─→ Run gleam format
+                 └─→ Commit formatted code
+
+# ============================================================================
+# SECTION 6: COMMON SCENARIOS & EXAMPLES
+# ============================================================================
+
+EXECUTABLE_EXAMPLES:
+  OVERVIEW: "Complete worked examples of TCR workflow"
+
+  EXAMPLE_1:
+    NAME: "Implement email validation"
+    BEADS_TASK: "bd-123"
+
+    PHASE_ARCHITECT:
+      AGENT: "ARCHITECT"
+
+      ACTION_1:
+        FILE: "src/types.gleam"
+        CODE: |
+          /// Email address domain type
+          pub opaque type Email {
+            Email(String)
+          }
+
+          /// Validation error types
+          pub type ValidationError {
+            EmptyEmail
+            InvalidFormat
+            TooLong
+          }
+
+      ACTION_2:
+        FILE: "test/fixtures/emails.json"
+        CODE: |
+          {
+            "valid": [
+              "user@example.com",
+              "name.surname@company.co.uk",
+              "test+tag@domain.io"
+            ],
+            "invalid_empty": "",
+            "invalid_no_at": "notanemail.com",
+            "invalid_no_domain": "user@",
+            "invalid_too_long": "very...long...email...address...@domain.com"
+          }
+
+      ACTION_3:
+        FILE: "src/email.gleam"
+        CODE: |
+          import types.{type Email, type ValidationError}
+
+          /// Validate and create Email from String
+          pub fn from_string(
+            input: String,
+          ) -> Result(Email, ValidationError) {
+            todo  // To be implemented
+          }
+
+      HANDOFF:
+        TO: "TESTER"
+        MESSAGE: "Email types defined. Ready for tests."
+
+    PHASE_RED:
+      AGENT: "TESTER"
+
+      ACTION_1:
+        FILE: "test/email_test.gleam"
+        CODE: |
+          import gleeunit
+          import gleeunit/should
+          import email
+          import types.{EmptyEmail}
+
+          pub fn validate_empty_email_test() {
+            email.from_string("")
+            |> should.equal(Error(EmptyEmail))
+          }
+
+      ACTION_2:
+        COMMAND: "make test"
+        OUTPUT: |
+          Compiling email
+          error: Undefined function
+            ┌─ src/email.gleam:5:3
+            │
+          5 │   todo  // To be implemented
+            │   ^^^^ `from_string` is not implemented
+
+          ✗ Test failed (function not implemented)
+
+      ACTION_3:
+        COMMAND: "git add test/email_test.gleam && git commit -m 'RED: validate empty email'"
+
+      HANDOFF:
+        TO: "CODER"
+        MESSAGE: "Test fails correctly. Needs from_string implementation."
+
+    PHASE_GREEN_ATTEMPT_1:
+      AGENT: "CODER"
+
+      ACTION_1:
+        FILE: "src/email.gleam"
+        CODE: |
+          import types.{type Email, Email, type ValidationError, EmptyEmail}
+
+          pub fn from_string(
+            input: String,
+          ) -> Result(Email, ValidationError) {
+            case input {
+              "" -> Error(EmptyEmail)
+              email -> Ok(Email(email))  // Minimal implementation
+            }
+          }
+
+      ACTION_2:
+        COMMAND: "make test"
+        OUTPUT: |
+          Compiling email
+          Running tests...
+
+          ✓ validate_empty_email_test
+
+          1 test, 0 failures
+          Finished in 0.02 seconds
+
+      ACTION_3:
+        COMMAND: "gleam format --check"
+        OUTPUT: "All files formatted correctly"
+
+      ACTION_4:
+        COMMAND: "git add src/email.gleam && git commit -m 'GREEN: validate empty email'"
+
+      HANDOFF:
+        TO: "TESTER"
+        MESSAGE: "Empty email validation works. Ready for next test."
+
+    PHASE_RED_2:
+      AGENT: "TESTER"
+
+      ACTION_1:
+        FILE: "test/email_test.gleam"
+        CODE: |
+          pub fn validate_no_at_symbol_test() {
+            email.from_string("notanemail.com")
+            |> should.equal(Error(InvalidFormat))
+          }
+
+      ACTION_2:
+        COMMAND: "make test"
+        OUTPUT: |
+          ✓ validate_empty_email_test
+          ✗ validate_no_at_symbol_test
+            Expected: Error(InvalidFormat)
+            Got: Ok(Email("notanemail.com"))
+
+      ACTION_3:
+        COMMAND: "git add test/email_test.gleam && git commit -m 'RED: validate email format'"
+
+      HANDOFF:
+        TO: "CODER"
+
+    PHASE_GREEN_2:
+      AGENT: "CODER"
+
+      ACTION_1:
+        FILE: "src/email.gleam"
+        CODE: |
+          import gleam/string
+
+          pub fn from_string(
+            input: String,
+          ) -> Result(Email, ValidationError) {
+            case input {
+              "" -> Error(EmptyEmail)
+              email if !string.contains(email, "@") -> Error(InvalidFormat)
+              email -> Ok(Email(email))
+            }
+          }
+
+      ACTION_2:
+        COMMAND: "make test"
+        OUTPUT: |
+          ✓ validate_empty_email_test
+          ✓ validate_no_at_symbol_test
+
+          2 tests, 0 failures
+
+      ACTION_3:
+        COMMAND: "git add src/email.gleam && git commit -m 'GREEN: validate @ symbol'"
+
+      HANDOFF:
+        TO: "REFACTORER"
+        MESSAGE: "Both tests pass. Ready for refactoring."
+
+    PHASE_BLUE:
+      AGENT: "REFACTORER"
+
+      REFACTORING_1:
+        NAME: "Extract validation logic"
+        BEFORE: |
+          pub fn from_string(input: String) -> Result(Email, ValidationError) {
+            case input {
+              "" -> Error(EmptyEmail)
+              email if !string.contains(email, "@") -> Error(InvalidFormat)
+              email -> Ok(Email(email))
+            }
+          }
+
+        AFTER: |
+          pub fn from_string(input: String) -> Result(Email, ValidationError) {
+            input
+            |> validate_not_empty
+            |> result.try(validate_has_at)
+            |> result.map(Email)
+          }
+
+          fn validate_not_empty(input: String) -> Result(String, ValidationError) {
+            case input {
+              "" -> Error(EmptyEmail)
+              email -> Ok(email)
+            }
+          }
+
+          fn validate_has_at(input: String) -> Result(String, ValidationError) {
+            case string.contains(input, "@") {
+              True -> Ok(input)
+              False -> Error(InvalidFormat)
+            }
+          }
+
+        COMMAND: "make test"
+        OUTPUT: "2 tests, 0 failures"
+
+        COMMAND_2: "git add src/email.gleam && git commit -m 'BLUE: extract validation functions'"
+
+      REFACTORING_2:
+        NAME: "Add documentation"
+        CODE: |
+          /// Validates email is not empty
+          fn validate_not_empty(input: String) -> Result(String, ValidationError) {
+            case input {
+              "" -> Error(EmptyEmail)
+              email -> Ok(email)
+            }
+          }
+
+          /// Validates email contains @ symbol
+          fn validate_has_at(input: String) -> Result(String, ValidationError) {
+            case string.contains(input, "@") {
+              True -> Ok(input)
+              False -> Error(InvalidFormat)
+            }
+          }
+
+        COMMAND: "make test"
+        OUTPUT: "2 tests, 0 failures"
+
+        COMMAND_2: "git add src/email.gleam && git commit -m 'BLUE: add documentation'"
+
+      COMPLETION:
+        COMMAND: "bd close bd-123 --reason 'Email validation implemented with empty and @ checks'"
+
+  EXAMPLE_2:
+    NAME: "Revert scenario during GREEN phase"
+    BEADS_TASK: "bd-456"
+
+    CONTEXT:
+      DESCRIPTION: "Implementing list sum function"
+      RED_TEST: |
+        pub fn sum_empty_list_test() {
+          list_utils.sum([])
+          |> should.equal(0)
+        }
+
+    GREEN_ATTEMPT_1:
+      STRATEGY: "Direct recursion without accumulator"
+      CODE: |
+        pub fn sum(list: List(Int)) -> Int {
+          case list {
+            [] -> 0
+            [x, ..xs] -> x + sum(xs)  // NOT tail recursive
+          }
+        }
+
+      TEST_RESULT: "PASS"
+      PROBLEM: "Works but not tail-call optimized - will stack overflow on large lists"
+      DECISION: "Accept for now, will refactor in BLUE phase"
+      COMMIT: "git commit -m 'GREEN: sum empty list'"
+
+    RED_TEST_2:
+      TEST: |
+        pub fn sum_large_list_test() {
+          let large_list = list.range(1, 100_000)
+          list_utils.sum(large_list)
+          |> should.equal(5_000_050_000)
+        }
+
+      TEST_RESULT: "Stack overflow"
+      COMMIT: "git commit -m 'RED: sum large list'"
+
+    GREEN_ATTEMPT_2:
+      STRATEGY: "Add accumulator for tail recursion"
+      CODE: |
+        pub fn sum(list: List(Int)) -> Int {
+          sum_helper(list, 0)
+        }
+
+        fn sum_helper(list: List(Int), acc: Int) -> Int {
+          case list {
+            [] -> acc
+            [x, ..xs] -> sum_helper(xs, acc + x)  // Tail recursive
+          }
+        }
+
+      TEST_RESULT: "FAIL - wrong answer"
+      ERROR: "Expected 5000050000, got 0"
+      ANALYSIS: "Bug in accumulator logic"
+
+      ACTION: "git reset --hard HEAD"
+      DECISION: "Revert and try again"
+
+    GREEN_ATTEMPT_3:
+      STRATEGY: "Fix accumulator initialization"
+      CODE: |
+        pub fn sum(list: List(Int)) -> Int {
+          do_sum(list, 0)  // Start with 0 accumulator
+        }
+
+        fn do_sum(list: List(Int), acc: Int) -> Int {
+          case list {
+            [] -> acc
+            [first, ..rest] -> do_sum(rest, acc + first)
+          }
+        }
+
+      TEST_RESULT: "PASS - both tests pass"
+      COMMIT: "git commit -m 'GREEN: sum large list with tail recursion'"
+
+      HANDOFF: "To REFACTORER"
+
+  EXAMPLE_3:
+    NAME: "Impasse handling - 3 consecutive reverts"
+    BEADS_TASK: "bd-789"
+    FEATURE: "Parse ISO 8601 datetime"
+
+    ATTEMPT_1:
+      STRATEGY: "Manual string parsing"
+      CODE: "Complex regex and string splitting logic"
+      TEST_RESULT: "FAIL - edge cases not handled"
+      ACTION: "git reset --hard HEAD"
+
+    ATTEMPT_2:
+      STRATEGY: "Different parsing approach with split"
+      CODE: "String split on T and Z characters"
+      TEST_RESULT: "FAIL - timezone parsing broken"
+      ACTION: "git reset --hard HEAD"
+
+    ATTEMPT_3:
+      STRATEGY: "Combine both approaches"
+      CODE: "Hybrid of attempts 1 and 2"
+      TEST_RESULT: "FAIL - still broken on edge cases"
+      ACTION: "git reset --hard HEAD"
+
+      TRIGGER: "IMPASSE_HANDLING (3 reverts)"
+
+    SWARM_CONVENE:
+      ARCHITECT_REVIEW:
+        FINDING: "ISO 8601 is complex - too many edge cases for manual parsing"
+        RECOMMENDATION: "Use existing library if available"
+
+      TESTER_REVIEW:
+        FINDING: "Test expects full ISO 8601 support including timezones"
+        RECOMMENDATION: "Could narrow scope to simpler datetime format"
+
+      CODER_REVIEW:
+        FINDING: "Trying to build parser from scratch"
+        RECOMMENDATION: "Research if gleam has datetime library"
+
+      RESEARCH:
+        DISCOVERY: "birl library provides ISO 8601 parsing"
+        COMMAND: "gleam add birl"
+
+      STRATEGY_CHANGE_PROPOSAL:
+        DECISION: "Use birl library instead of custom parser"
+        NEW_APPROACH: |
+          import birl
+
+          pub fn parse_datetime(input: String) -> Result(DateTime, String) {
+            birl.parse(input)
+            |> result.map_error(fn(_) { "Invalid datetime format" })
+          }
+
+        NEW_TEST: |
+          pub fn parse_iso_datetime_test() {
+            datetime.parse_datetime("2024-01-15T10:30:00Z")
+            |> should.be_ok
+          }
+
+    ATTEMPT_4_WITH_NEW_STRATEGY:
+      CODE: "Using birl library"
+      TEST_RESULT: "PASS"
+      COMMIT: "git commit -m 'GREEN: parse ISO datetime using birl library'"
+
+      LEARNING: "Don't reinvent wheel - use libraries for complex formats"
+
+# ============================================================================
+# SECTION 7: APPENDIX
+# ============================================================================
+
+APPENDIX:
+
+  QUICK_REFERENCE:
+    TCR_COMMANDS:
+      RED: "Write test → make test (should fail) → git commit -m 'RED: behavior'"
+      GREEN: "Implement → make test → gleam format --check → git commit -m 'GREEN: behavior'"
+      BLUE: "Refactor → make test → git commit -m 'BLUE: refactoring'"
+      REVERT: "git reset --hard HEAD"
+
+    QUALITY_GATES:
+      FORMAT: "gleam format --check"
+      TESTS: "make test"
+      BUILD: "gleam build"
+      BEADS: "bd ready --json && bd update {id} --status in_progress"
+
+    AGENT_HANDOFFS:
+      ARCHITECT_TO_TESTER: "Types compile + fixtures valid + signatures documented"
+      TESTER_TO_CODER: "Test fails correctly + test committed"
+      CODER_TO_REFACTORER: "Tests pass + format passes + committed"
+      REFACTORER_TO_ARCHITECT: "Tests pass + quality improved"
+
+  GLOSSARY:
+    TCR: "Test-Commit-Revert - strict TDD discipline"
+    RED: "Phase where test is written and must fail"
+    GREEN: "Phase where minimal implementation makes test pass"
+    BLUE: "Phase where code is refactored without behavior change"
+    REVERT: "Undo changes via git reset when tests fail unexpectedly"
+    BEADS: "Git-backed issue tracking system (MCP tool)"
+    AGENT_MAIL: "Git-backed messaging between agents"
+    SERENA: "LSP-powered semantic code navigation"
+    FRACTAL_QUALITY_LOOP: "Layered validation from lint to architecture"
+    IMPASSE: "3 consecutive reverts trigger swarm review"
+    QUALITY_GATE: "Mandatory checkpoint before code advances"
+
+  TROUBLESHOOTING:
+    PROBLEM_1:
+      SYMPTOM: "Tests pass in RED phase"
+      DIAGNOSIS: "Test not actually testing new behavior"
+      SOLUTION: "Rewrite test to verify unimplemented functionality"
+
+    PROBLEM_2:
+      SYMPTOM: "Repeated reverts in GREEN phase"
+      DIAGNOSIS: "Approach too complex or fundamentally flawed"
+      SOLUTION: "Simplify - try barely passing implementation first"
+
+    PROBLEM_3:
+      SYMPTOM: "Tests fail after refactoring in BLUE"
+      DIAGNOSIS: "Refactoring changed behavior"
+      SOLUTION: "Revert refactoring - behavior changes need new RED test"
+
+    PROBLEM_4:
+      SYMPTOM: "gleam format --check fails"
+      DIAGNOSIS: "Code not formatted to standard"
+      SOLUTION: "Run gleam format (without --check), then commit"
+
+    PROBLEM_5:
+      SYMPTOM: "Work done without Beads task"
+      DIAGNOSIS: "Skipped mandatory tracking"
+      SOLUTION: "Create task retroactively: bd create 'Work done: ...' && bd close"
+
+META:
+  DOCUMENT_FORMAT: "TOON (TOKEN Oriented Object Notation)"
+  COMPLIANCE: "All rules are mandatory contracts"
+  UPDATES: "Version controlled alongside codebase"
+  ENFORCEMENT: "Automated gates + code review + agent protocols"
+
+END_DOCUMENT

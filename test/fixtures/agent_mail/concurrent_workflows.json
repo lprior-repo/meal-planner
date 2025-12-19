@@ -1,0 +1,259 @@
+{
+  "description": "Agent Mail MCP - Concurrent Agent Workflows",
+  "scenario": "Multiple agents coordinating on related tasks",
+  "workflow": {
+    "name": "Parallel feature development",
+    "description": "Three agents working on different modules simultaneously",
+    "agents": [
+      {
+        "name": "GreenCastle",
+        "role": "Implementation",
+        "assigned_tasks": ["bd-150", "bd-151"],
+        "capabilities": ["gleam", "implementation", "architecture"]
+      },
+      {
+        "name": "BlueTower",
+        "role": "Testing",
+        "assigned_tasks": ["bd-152", "bd-153"],
+        "capabilities": ["testing", "tdd", "quality-assurance"]
+      },
+      {
+        "name": "RedPhoenix",
+        "role": "Refactoring",
+        "assigned_tasks": ["bd-154"],
+        "capabilities": ["refactoring", "optimization", "code-review"]
+      }
+    ],
+    "execution_timeline": [
+      {
+        "time": "T0: 2025-12-19T15:00:00Z",
+        "events": [
+          {
+            "agent": "GreenCastle",
+            "action": "register_agent"
+          },
+          {
+            "agent": "BlueTower",
+            "action": "register_agent"
+          },
+          {
+            "agent": "RedPhoenix",
+            "action": "register_agent"
+          }
+        ]
+      },
+      {
+        "time": "T1: 2025-12-19T15:01:00Z",
+        "events": [
+          {
+            "agent": "GreenCastle",
+            "action": "file_reservation_paths",
+            "paths": ["src/meal_planner/auth.gleam"],
+            "reason": "bd-150"
+          },
+          {
+            "agent": "BlueTower",
+            "action": "file_reservation_paths",
+            "paths": ["test/auth_test.gleam"],
+            "reason": "bd-152"
+          },
+          {
+            "agent": "RedPhoenix",
+            "action": "file_reservation_paths",
+            "paths": ["src/meal_planner/config.gleam"],
+            "reason": "bd-154"
+          }
+        ],
+        "expected_result": "All reservations succeed (no conflicts)"
+      },
+      {
+        "time": "T2: 2025-12-19T15:05:00Z",
+        "events": [
+          {
+            "agent": "GreenCastle",
+            "action": "send_message",
+            "recipients": ["BlueTower"],
+            "subject": "[bd-150] Implementation checkpoint",
+            "body_md": "Auth interface defined. Ready for test scaffolding.",
+            "thread_id": "bd-150"
+          }
+        ]
+      },
+      {
+        "time": "T3: 2025-12-19T15:10:00Z",
+        "events": [
+          {
+            "agent": "BlueTower",
+            "action": "reply_message",
+            "to_message": "msg-from-T2",
+            "body_md": "Test scaffold complete. Proceeding with test cases.",
+            "thread_id": "bd-150"
+          },
+          {
+            "agent": "GreenCastle",
+            "action": "update_task_status",
+            "bead_id": "bd-150",
+            "status": "InProgress"
+          }
+        ]
+      },
+      {
+        "time": "T4: 2025-12-19T15:20:00Z",
+        "events": [
+          {
+            "agent": "GreenCastle",
+            "action": "update_task_status",
+            "bead_id": "bd-150",
+            "status": "Completed"
+          },
+          {
+            "agent": "GreenCastle",
+            "action": "release_file_reservations",
+            "paths": ["src/meal_planner/auth.gleam"]
+          },
+          {
+            "agent": "GreenCastle",
+            "action": "send_message",
+            "recipients": ["broadcast"],
+            "subject": "[bd-150] Task completed",
+            "body_md": "Auth implementation complete. Available for review.",
+            "thread_id": "bd-150"
+          }
+        ]
+      },
+      {
+        "time": "T5: 2025-12-19T15:25:00Z",
+        "events": [
+          {
+            "agent": "RedPhoenix",
+            "action": "send_message",
+            "recipients": ["GreenCastle"],
+            "subject": "[bd-154] Need auth.gleam access",
+            "body_md": "Requesting access to auth.gleam for refactoring pass.",
+            "thread_id": "bd-154",
+            "ack_required": true
+          }
+        ]
+      },
+      {
+        "time": "T6: 2025-12-19T15:26:00Z",
+        "events": [
+          {
+            "agent": "GreenCastle",
+            "action": "acknowledge_message",
+            "message_id": "msg-from-T5"
+          },
+          {
+            "agent": "RedPhoenix",
+            "action": "file_reservation_paths",
+            "paths": ["src/meal_planner/auth.gleam"],
+            "reason": "bd-154"
+          }
+        ],
+        "expected_result": "Reservation succeeds (GreenCastle released)"
+      }
+    ]
+  },
+  "handoff_workflow": {
+    "description": "Task handoff between agents during execution",
+    "scenario": "Specialist agent hands off to generalist",
+    "steps": [
+      {
+        "step": 1,
+        "agent": "GreenCastle",
+        "action": "Implement complex auth logic (50% complete)"
+      },
+      {
+        "step": 2,
+        "agent": "GreenCastle",
+        "action": "Realize need for specialist knowledge in cryptography"
+      },
+      {
+        "step": 3,
+        "agent": "GreenCastle",
+        "action": "send_message to RedPhoenix requesting handoff",
+        "message": {
+          "subject": "[bd-150] Requesting handoff for crypto implementation",
+          "body_md": "Need crypto expert. Current progress: 50%. Files: auth.gleam",
+          "ack_required": true
+        }
+      },
+      {
+        "step": 4,
+        "agent": "RedPhoenix",
+        "action": "acknowledge_message and accept handoff"
+      },
+      {
+        "step": 5,
+        "agent": "GreenCastle",
+        "action": "handoff_task",
+        "from_agent": "GreenCastle",
+        "to_agent": "RedPhoenix",
+        "bead_id": "bd-150"
+      },
+      {
+        "step": 6,
+        "agent": "RedPhoenix",
+        "action": "Continue implementation with specialist knowledge"
+      },
+      {
+        "step": 7,
+        "agent": "RedPhoenix",
+        "action": "update_task_status to Completed"
+      }
+    ],
+    "expected_result": {
+      "task_completed": true,
+      "handoff_successful": true,
+      "coordination_messages": 4,
+      "file_ownership_transferred": true
+    }
+  },
+  "parallel_testing_workflow": {
+    "description": "Multiple agents running parallel test suites",
+    "agents": [
+      {
+        "name": "BlueTower",
+        "test_suite": "unit tests",
+        "files": ["test/auth_test.gleam"]
+      },
+      {
+        "name": "GreenCastle",
+        "test_suite": "integration tests",
+        "files": ["test/auth_integration_test.gleam"]
+      },
+      {
+        "name": "RedPhoenix",
+        "test_suite": "performance tests",
+        "files": ["test/performance/auth_benchmark_test.gleam"]
+      }
+    ],
+    "coordination": {
+      "no_file_conflicts": true,
+      "parallel_execution": true,
+      "aggregate_results": true
+    },
+    "expected_behavior": {
+      "all_tests_run": true,
+      "results_collected": true,
+      "summary_generated": true
+    }
+  },
+  "expected_behavior": {
+    "concurrency": {
+      "supports_parallel_agents": true,
+      "no_race_conditions": true,
+      "atomic_file_reservations": true
+    },
+    "coordination": {
+      "message_ordering_preserved": true,
+      "thread_consistency_maintained": true,
+      "handoff_integrity": true
+    },
+    "scalability": {
+      "supports_multiple_agents": true,
+      "handles_message_volume": true,
+      "efficient_resource_allocation": true
+    }
+  }
+}

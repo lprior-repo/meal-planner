@@ -40,7 +40,7 @@ mist = ">= 5.0.0 and < 6.0.0"
 lustre = ">= 5.0.0 and < 6.0.0"
 
 # Environment variables
-envoy = ">= 1.0.0"
+envoy = ">= 1.1.0 and < 2.0.0"
 
 # .env file loading
 dot_env = ">= 1.0.0"

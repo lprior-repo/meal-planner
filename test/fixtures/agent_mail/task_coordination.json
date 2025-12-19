@@ -1,0 +1,118 @@
+{
+  "description": "Agent Mail MCP - Task Coordination Fixture",
+  "scenario": "Multi-agent task assignment with handoffs",
+  "tasks": [
+    {
+      "bead_id": "bd-123",
+      "assigned_agent": "GreenCastle",
+      "reserved_files": ["src/meal_planner/auth.gleam"],
+      "status": "InProgress",
+      "thread_id": "bd-123",
+      "started_at": "2025-12-19T13:00:00Z"
+    },
+    {
+      "bead_id": "bd-124",
+      "assigned_agent": "BlueTower",
+      "reserved_files": ["test/auth_test.gleam"],
+      "status": "InProgress",
+      "thread_id": "bd-124",
+      "started_at": "2025-12-19T13:05:00Z"
+    },
+    {
+      "bead_id": "bd-125",
+      "assigned_agent": "RedPhoenix",
+      "reserved_files": ["src/meal_planner/config.gleam"],
+      "status": "Blocked",
+      "thread_id": "bd-125",
+      "started_at": "2025-12-19T13:10:00Z",
+      "blocked_by": ["bd-123"]
+    },
+    {
+      "bead_id": "bd-126",
+      "assigned_agent": "GreenCastle",
+      "reserved_files": ["src/meal_planner/types.gleam"],
+      "status": "Completed",
+      "thread_id": "bd-126",
+      "started_at": "2025-12-19T12:00:00Z",
+      "completed_at": "2025-12-19T12:30:00Z"
+    }
+  ],
+  "handoff_scenario": {
+    "description": "Transfer task from specialist to generalist",
+    "bead_id": "bd-123",
+    "from_agent": "GreenCastle",
+    "to_agent": "BlueTower",
+    "reason": "GreenCastle needed for higher priority task",
+    "steps": [
+      {
+        "action": "release_file_reservations",
+        "agent": "GreenCastle",
+        "paths": ["src/meal_planner/auth.gleam"]
+      },
+      {
+        "action": "send_handoff_message",
+        "from": "GreenCastle",
+        "to": "BlueTower",
+        "thread_id": "bd-123",
+        "body_md": "Handing off bd-123 due to priority shift. Current progress: 60% complete."
+      },
+      {
+        "action": "file_reservation_paths",
+        "agent": "BlueTower",
+        "paths": ["src/meal_planner/auth.gleam"],
+        "reason": "bd-123"
+      },
+      {
+        "action": "update_task_assignment",
+        "bead_id": "bd-123",
+        "new_agent": "BlueTower"
+      }
+    ],
+    "expected_result": {
+      "bead_id": "bd-123",
+      "assigned_agent": "BlueTower",
+      "status": "InProgress",
+      "reserved_files": ["src/meal_planner/auth.gleam"],
+      "handoff_count": 1
+    }
+  },
+  "parallel_execution": {
+    "description": "Multiple agents working on independent tasks",
+    "agents": [
+      {
+        "name": "GreenCastle",
+        "task": "bd-127",
+        "files": ["src/meal_planner/cache.gleam"]
+      },
+      {
+        "name": "BlueTower",
+        "task": "bd-128",
+        "files": ["src/meal_planner/storage.gleam"]
+      },
+      {
+        "name": "RedPhoenix",
+        "task": "bd-129",
+        "files": ["src/meal_planner/logger.gleam"]
+      }
+    ],
+    "expected_behavior": {
+      "no_conflicts": true,
+      "all_in_progress": true,
+      "parallel_execution": true
+    }
+  },
+  "expected_behavior": {
+    "list_active_tasks": {
+      "count": 2,
+      "statuses": ["InProgress", "Blocked"]
+    },
+    "get_task_by_bead": {
+      "bd-123": "returns TaskCoordination",
+      "bd-999": "returns error (not found)"
+    },
+    "status_transitions": {
+      "valid": ["NotStarted -> InProgress", "InProgress -> Completed", "InProgress -> Failed", "Failed -> InProgress (retry)"],
+      "invalid": ["Completed -> InProgress", "NotStarted -> Completed"]
+    }
+  }
+}
