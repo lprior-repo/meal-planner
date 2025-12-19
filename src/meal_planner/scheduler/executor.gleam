@@ -230,6 +230,20 @@ pub fn is_transient_error(error: JobError) -> Bool {
   }
 }
 
+/// Determine if job should be retried based on error type
+///
+/// This is an alias for is_transient_error to make intent clearer in retry logic.
+///
+/// Parameters:
+/// - error: JobError to classify
+///
+/// Returns:
+/// - True if error is transient and job should be retried
+/// - False if error is permanent and job should not be retried
+pub fn should_retry(error: JobError) -> Bool {
+  is_transient_error(error)
+}
+
 /// Calculate exponential backoff delay
 ///
 /// Formula: base_ms * 2^attempt
@@ -250,6 +264,20 @@ pub fn calculate_backoff(base_ms: Int, attempt: Int) -> Int {
     _ -> base_ms * 32
     // Cap at 32x
   }
+}
+
+/// Calculate backoff delay for a given error and context
+///
+/// Uses exponential backoff based on attempt number.
+/// This is a higher-level wrapper around calculate_backoff.
+///
+/// Parameters:
+/// - context: ExecutionContext with attempt number and config
+///
+/// Returns:
+/// - Delay in milliseconds for next retry
+pub fn calculate_backoff_delay(context: ExecutionContext) -> Int {
+  calculate_backoff(context.config.retry_backoff_ms, context.attempt)
 }
 
 // ============================================================================
@@ -313,53 +341,124 @@ pub fn execute_scheduled_job(
   // Get database connection for handlers
   use db <- result.try(get_db_connection())
 
-  // Mark job as running first
-  use execution <- result.try(job_manager.mark_job_running(job.id))
+  // Mark job as running and get execution record
+  use execution <- result.try(mark_job_started(job.id))
 
-  // Get current timestamp for execution tracking
-  let now = birl.now() |> birl.to_iso8601
+  // Route to handler based on job type
+  let handler_result = route_job_to_handler(job.job_type, db)
 
-  // Route based on job type
-  let handler_result = case job.job_type {
+  // Process handler result and update job status
+  process_handler_result(job, execution, handler_result)
+}
+
+/// Route job to appropriate handler based on JobType
+///
+/// This creates a lookup table mapping JobType to handler functions.
+/// Each handler returns Result(json.Json, String).
+///
+/// Parameters:
+/// - job_type: JobType to route
+/// - db: Database connection for handlers
+///
+/// Returns:
+/// - Ok(json.Json) with handler output
+/// - Error(String) with error message
+fn route_job_to_handler(
+  job_type: types.JobType,
+  db: pog.Connection,
+) -> Result(json.Json, String) {
+  case job_type {
     WeeklyGeneration -> execute_weekly_generation(db)
     AutoSync -> execute_auto_sync(db)
     DailyAdvisor -> execute_daily_advisor(db)
     WeeklyTrends -> execute_weekly_trends(db)
   }
+}
 
-  // Handle execution result
+/// Process handler result and update job status accordingly
+///
+/// On success: marks job completed with output
+/// On failure: marks job failed with error message
+///
+/// Parameters:
+/// - job: Original ScheduledJob
+/// - execution: JobExecution record from mark_job_started
+/// - handler_result: Result from handler execution
+///
+/// Returns:
+/// - Ok(JobExecution) with updated status
+/// - Error(SchedulerError) on failure
+fn process_handler_result(
+  job: ScheduledJob,
+  execution: JobExecution,
+  handler_result: Result(json.Json, String),
+) -> Result(JobExecution, SchedulerError) {
   case handler_result {
-    Ok(output) -> {
-      // Mark job as completed
-      case job_manager.mark_job_completed(job.id, Some(output)) {
-        Ok(_) -> Nil
-        Error(_) -> Nil
-      }
-
-      Ok(JobExecution(
-        id: 0,
-        // Will be set by database
-        job_id: job.id,
-        started_at: execution.started_at,
-        completed_at: Some(now),
-        status: types.Completed,
-        error_message: None,
-        attempt_number: execution.attempt_number,
-        duration_ms: None,
-        output: Some(output),
-        triggered_by: execution.triggered_by,
-      ))
-    }
-    Error(error_msg) -> {
-      // Mark job as failed
-      case job_manager.mark_job_failed(job.id, error_msg) {
-        Ok(_) -> Nil
-        Error(_) -> Nil
-      }
-
-      Error(ExecutionFailed(job.id, error_msg))
-    }
+    Ok(output) -> handle_success(job, execution, output)
+    Error(error_msg) -> handle_error(job, error_msg)
   }
+}
+
+/// Handle successful job execution
+///
+/// Marks job as completed and returns updated JobExecution
+///
+/// Parameters:
+/// - job: Original ScheduledJob
+/// - execution: JobExecution from mark_job_started
+/// - output: JSON output from handler
+///
+/// Returns:
+/// - Ok(JobExecution) with completed status and output
+fn handle_success(
+  job: ScheduledJob,
+  execution: JobExecution,
+  output: json.Json,
+) -> Result(JobExecution, SchedulerError) {
+  let now = birl.now() |> birl.to_iso8601
+
+  // Mark job as completed
+  case mark_job_completed(job.id, output) {
+    Ok(_) -> Nil
+    Error(_) -> Nil
+  }
+
+  Ok(JobExecution(
+    id: 0,
+    // Will be set by database
+    job_id: job.id,
+    started_at: execution.started_at,
+    completed_at: Some(now),
+    status: types.Completed,
+    error_message: None,
+    attempt_number: execution.attempt_number,
+    duration_ms: None,
+    output: Some(output),
+    triggered_by: execution.triggered_by,
+  ))
+}
+
+/// Handle failed job execution
+///
+/// Marks job as failed and returns error
+///
+/// Parameters:
+/// - job: Original ScheduledJob
+/// - error_msg: Error message from handler
+///
+/// Returns:
+/// - Error(SchedulerError) with execution failure details
+fn handle_error(
+  job: ScheduledJob,
+  error_msg: String,
+) -> Result(JobExecution, SchedulerError) {
+  // Mark job as failed
+  case mark_job_failed(job.id, error_msg) {
+    Ok(_) -> Nil
+    Error(_) -> Nil
+  }
+
+  Error(ExecutionFailed(job.id, error_msg))
 }
 
 // ============================================================================
@@ -452,6 +551,60 @@ fn execute_weekly_trends(db: pog.Connection) -> Result(json.Json, String) {
       #("recommendations", json.array(trends.recommendations, json.string)),
     ]),
   )
+}
+
+// ============================================================================
+// Job State Management
+// ============================================================================
+
+/// Mark job as started (Running status)
+///
+/// Updates job status to Running and returns JobExecution record
+///
+/// Parameters:
+/// - job_id: Job identifier
+///
+/// Returns:
+/// - Ok(JobExecution) with running status
+/// - Error(SchedulerError) on database failure
+fn mark_job_started(job_id: String) -> Result(JobExecution, SchedulerError) {
+  job_manager.mark_job_running(job_id)
+}
+
+/// Mark job as completed with output
+///
+/// Updates job status to Completed and stores output JSON
+///
+/// Parameters:
+/// - job_id: Job identifier
+/// - output: JSON output from handler
+///
+/// Returns:
+/// - Ok(Nil) on success
+/// - Error(SchedulerError) on database failure
+fn mark_job_completed(
+  job_id: String,
+  output: json.Json,
+) -> Result(Nil, SchedulerError) {
+  job_manager.mark_job_completed(job_id, Some(output))
+}
+
+/// Mark job as failed with error message
+///
+/// Updates job status to Failed and stores error message
+///
+/// Parameters:
+/// - job_id: Job identifier
+/// - error_msg: Error message from handler
+///
+/// Returns:
+/// - Ok(Nil) on success
+/// - Error(SchedulerError) on database failure
+fn mark_job_failed(
+  job_id: String,
+  error_msg: String,
+) -> Result(Nil, SchedulerError) {
+  job_manager.mark_job_failed(job_id, error_msg)
 }
 
 // ============================================================================
