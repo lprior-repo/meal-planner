@@ -17,7 +17,7 @@ export function createMarkdownConverter(): TurndownService {
 
   // Custom rules can be added here
   turndown.addRule('strikethrough', {
-    filter: ['del', 's', 'strike'],
+    filter: ['del', 's', 'strike'] as any,
     replacement: (content) => `~~${content}~~`,
   });
 
