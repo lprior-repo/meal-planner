@@ -105,7 +105,7 @@ pub fn log_meals_batch(
     })
 
   // If all failed, return error
-  case list.length(succeeded) == 0, list.length(failed) > 0 {
+  case succeeded == [], failed != [] {
     True, True -> {
       let error_messages = list.map(failed, fn(f) { errors.to_string(f.1) })
       Error(errors.BatchPartialFailure(
@@ -161,13 +161,13 @@ pub fn create_daily_batch(
 
 /// Check if batch operation was fully successful
 pub fn is_full_success(result: BatchResult(a)) -> Bool {
-  list.length(result.failed) == 0
+  result.failed == []
 }
 
 /// Check if batch operation had partial failures
 pub fn is_partial_success(result: BatchResult(a)) -> Bool {
-  let has_successes = list.length(result.succeeded) > 0
-  let has_failures = list.length(result.failed) > 0
+  let has_successes = result.succeeded != []
+  let has_failures = result.failed != []
   has_successes && has_failures
 }
 
