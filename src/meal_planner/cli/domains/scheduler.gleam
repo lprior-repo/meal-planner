@@ -5,6 +5,7 @@
 /// - Viewing job execution status
 /// - Manually triggering jobs
 /// - Real-time status updates
+import gleam/float
 import gleam/int
 import gleam/io
 import gleam/list
@@ -274,4 +275,92 @@ fn pad_right(s: String, width: Int) -> String {
 fn job_id_to_string(job_id: JobId) -> String {
   // Convert JobId to string representation
   id.job_id_to_string(job_id)
+}
+
+/// Format execution duration in seconds
+pub fn format_duration(duration_ms: Option(Int)) -> String {
+  case duration_ms {
+    Some(ms) -> {
+      let seconds = int.to_float(ms) /. 1000.0
+      let seconds_str = float_to_string_2dp(seconds)
+      seconds_str <> "s"
+    }
+    None -> "-"
+  }
+}
+
+/// Build a formatted table of job executions
+pub fn build_executions_table(executions: List(types.JobExecution)) -> String {
+  let header =
+    "┌────┬────────────────────┬──────────┬─────────┬─────────────┐\n"
+    <> "│ ID │ Started At         │ Status   │ Attempt │ Duration    │\n"
+    <> "├────┼────────────────────┼──────────┼─────────┼─────────────┤"
+
+  let rows =
+    executions
+    |> list.map(fn(exec) { build_execution_row(exec) })
+    |> string.join("")
+
+  let footer =
+    "\n└────┴────────────────────┴──────────┴─────────┴─────────────┘"
+
+  case executions {
+    [] ->
+      header
+      <> "\n│ No executions found                                         │"
+      <> footer
+    _ -> header <> rows <> footer
+  }
+}
+
+fn build_execution_row(exec: types.JobExecution) -> String {
+  let id_cell = pad_right(int.to_string(exec.id), 2)
+  let started_cell = pad_right(format_timestamp(exec.started_at), 18)
+  let status_cell = pad_right(format_job_status(exec.status), 8)
+  let attempt_cell = pad_right(int.to_string(exec.attempt_number), 7)
+  let duration_cell = pad_right(format_duration(exec.duration_ms), 11)
+
+  "\n│ "
+  <> id_cell
+  <> " │ "
+  <> started_cell
+  <> " │ "
+  <> status_cell
+  <> " │ "
+  <> attempt_cell
+  <> " │ "
+  <> duration_cell
+  <> " │"
+}
+
+fn format_timestamp(iso_timestamp: String) -> String {
+  // Extract just the time portion (HH:MM:SS) from ISO8601 timestamp
+  // Example: "2025-12-19T10:30:45Z" -> "10:30:45"
+  case string.split(iso_timestamp, "T") {
+    [_, time_part] -> {
+      case string.split(time_part, "Z") {
+        [time, ..] -> {
+          case string.split(time, ".") {
+            [hms, ..] -> hms
+            _ -> time
+          }
+        }
+        _ -> time_part
+      }
+    }
+    _ -> iso_timestamp
+  }
+}
+
+fn float_to_string_2dp(value: Float) -> String {
+  // Format float with 2 decimal places
+  // This is a simple implementation - in production would use proper formatting
+  let int_part = float.truncate(value)
+  let decimal_part =
+    float.truncate({ value -. int.to_float(int_part) } *. 100.0)
+  let decimal_str = case decimal_part < 10 {
+    True -> "0" <> int.to_string(decimal_part)
+    False -> int.to_string(decimal_part)
+  }
+  int.to_string(int_part) <> "." <> decimal_str
 }
