@@ -52,8 +52,8 @@ pub fn constraint_to_generation_to_email_workflow_test() {
   generation_result
   |> should.be_ok
 
-  // Email generation not implemented yet
-  True |> should.be_true
+  // Email generation not implemented yet - MUST FAIL
+  should.fail()
 }
 
 // ============================================================================
@@ -89,11 +89,11 @@ pub fn email_feedback_loop_updates_meal_plan_test() {
           command: Some(AdjustMeal(Friday, Dinner, recipe_id)),
         )
 
-      let confirmation =
+      let _confirmation =
         confirmation.generate_confirmation(exec_result, "lewis@example.com")
 
-      // Email sender not implemented
-      confirmation.subject |> string.contains("Friday") |> should.be_true
+      // Email sender not implemented - MUST FAIL
+      should.fail()
     }
     _ -> should.fail()
   }
@@ -122,8 +122,8 @@ pub fn weekly_sync_rhythm_completes_full_cycle_test() {
       |> list.length
       |> should.equal(7)
 
-      // Auto-sync, advisor emails, and trends not implemented
-      True |> should.be_true
+      // Auto-sync, advisor emails, and trends not implemented - MUST FAIL
+      should.fail()
     }
     Error(_) -> should.fail()
   }
@@ -155,8 +155,8 @@ pub fn generation_respects_combined_constraints_test() {
       |> list.length
       |> should.equal(7)
 
-      // Multi-constraint generation not implemented
-      True |> should.be_true
+      // Multi-constraint generation not implemented - MUST FAIL
+      should.fail()
     }
     Error(_) -> should.fail()
   }
