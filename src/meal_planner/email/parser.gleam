@@ -5,11 +5,9 @@ import gleam/string
 import meal_planner/id
 import meal_planner/types.{
   type EmailCommand, type EmailCommandError, type EmailRequest, type MealType,
-  type RegenerationScope,
-  AddPreference, AdjustMeal, Breakfast, Dinner, EmailRequest, FullWeek,
-  InvalidCommand, Lunch, RegeneratePlan, RemoveDislike, SingleDay, SingleMeal,
-  Snack, SkipMeal,
-  day_of_week_from_string,
+  type RegenerationScope, AddPreference, AdjustMeal, Breakfast, Dinner,
+  EmailRequest, FullWeek, InvalidCommand, Lunch, RegeneratePlan, RemoveDislike,
+  SingleDay, SingleMeal, SkipMeal, Snack, day_of_week_from_string,
 }
 
 pub fn parse_email_command(
@@ -30,7 +28,10 @@ fn parse_command_body(body: String) -> Result(EmailCommand, EmailCommandError) {
       case string.contains(trimmed, "regenerate") {
         True -> parse_regenerate_command(trimmed)
         False ->
-          case string.contains(trimmed, "hate") || string.contains(trimmed, "don't like") {
+          case
+            string.contains(trimmed, "hate")
+            || string.contains(trimmed, "don't like")
+          {
             True -> parse_dislike_command(trimmed)
             False ->
               case string.contains(trimmed, "add") {
@@ -51,25 +52,28 @@ fn parse_adjust_command(body: String) -> Result(EmailCommand, EmailCommandError)
   let words = string.split(body, " ")
   let result = find_word_index(words, "adjust")
   case result {
-    None ->
-      Error(InvalidCommand(reason: "Could not find 'adjust' in command"))
+    None -> Error(InvalidCommand(reason: "Could not find 'adjust' in command"))
     Some(idx) -> {
       let remaining = list.drop(words, idx + 1)
       case remaining {
         [day_str, meal_str, ..] -> {
           let day_result = day_of_week_from_string(day_str)
           let meal_result = string_to_meal_type(meal_str)
+
+          // Extract recipe name if "to" keyword is present
+          let recipe_id = case string.split(body, " to ") {
+            [_, recipe_name] -> {
+              let trimmed_recipe = string.trim(recipe_name)
+              id.recipe_id(trimmed_recipe)
+            }
+            _ -> id.recipe_id("recipe-123")
+          }
+
           case day_result, meal_result {
             Some(day), Some(meal) ->
-              Ok(AdjustMeal(
-                day: day,
-                meal_type: meal,
-                recipe_id: id.recipe_id("recipe-123"),
-              ))
+              Ok(AdjustMeal(day: day, meal_type: meal, recipe_id: recipe_id))
             _, _ ->
-              Error(InvalidCommand(
-                reason: "Could not parse day or meal type",
-              ))
+              Error(InvalidCommand(reason: "Could not parse day or meal type"))
           }
         }
         _ ->
@@ -113,13 +117,13 @@ fn parse_regenerate_command(
   case scope {
     Some(s) -> Ok(RegeneratePlan(scope: s, constraints: constraints))
     None ->
-      Error(InvalidCommand(
-        reason: "Could not determine regeneration scope",
-      ))
+      Error(InvalidCommand(reason: "Could not determine regeneration scope"))
   }
 }
 
-fn parse_dislike_command(body: String) -> Result(EmailCommand, EmailCommandError) {
+fn parse_dislike_command(
+  body: String,
+) -> Result(EmailCommand, EmailCommandError) {
   let food = case string.contains(body, "hate") {
     True -> extract_after_word(body, "hate")
     False -> extract_after_word(body, "don't like")
@@ -168,8 +172,7 @@ fn parse_skip_command(body: String) -> Result(EmailCommand, EmailCommandError) {
   let words = string.split(body, " ")
   let result = find_word_index(words, "skip")
   case result {
-    None ->
-      Error(InvalidCommand(reason: "Could not find 'skip' in command"))
+    None -> Error(InvalidCommand(reason: "Could not find 'skip' in command"))
     Some(idx) -> {
       let remaining = list.drop(words, idx + 1)
       case remaining {
@@ -177,12 +180,9 @@ fn parse_skip_command(body: String) -> Result(EmailCommand, EmailCommandError) {
           let meal_result = string_to_meal_type(meal_str)
           let day_result = day_of_week_from_string(day_str)
           case meal_result, day_result {
-            Some(meal), Some(day) ->
-              Ok(SkipMeal(day: day, meal_type: meal))
+            Some(meal), Some(day) -> Ok(SkipMeal(day: day, meal_type: meal))
             _, _ ->
-              Error(InvalidCommand(
-                reason: "Could not parse meal type or day",
-              ))
+              Error(InvalidCommand(reason: "Could not parse meal type or day"))
           }
         }
         _ ->

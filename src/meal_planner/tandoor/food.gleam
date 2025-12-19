@@ -22,9 +22,13 @@ import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/core/ids.{type FoodId}
 import meal_planner/tandoor/property.{type Property, property_decoder}
-import meal_planner/tandoor/supermarket.{supermarket_category_decoder, type SupermarketCategory}
-import meal_planner/tandoor/types/food/food_inherit_field.{food_inherit_field_decoder, type FoodInheritField}
-import meal_planner/tandoor/unit.{decode_unit, type Unit}
+import meal_planner/tandoor/supermarket.{
+  type SupermarketCategory, supermarket_category_decoder,
+}
+import meal_planner/tandoor/types/food/food_inherit_field.{
+  type FoodInheritField, food_inherit_field_decoder,
+}
+import meal_planner/tandoor/unit.{type Unit, decode_unit}
 
 // ============================================================================
 // Types
@@ -307,10 +311,13 @@ fn encode_property(prop: Property) -> Json {
     #("id", json.int(ids.property_id_to_int(prop.id))),
     #("name", json.string(prop.name)),
     #("description", json.string(prop.description)),
-    #("property_type", json.string(case prop.property_type {
-      property.RecipeProperty -> "RECIPE"
-      property.FoodProperty -> "FOOD"
-    })),
+    #(
+      "property_type",
+      json.string(case prop.property_type {
+        property.RecipeProperty -> "RECIPE"
+        property.FoodProperty -> "FOOD"
+      }),
+    ),
     #("unit", case prop.unit {
       Some(unit) -> json.string(unit)
       None -> json.null()

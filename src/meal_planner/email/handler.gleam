@@ -11,8 +11,7 @@ import gleam/result
 
 import meal_planner/email/parser
 import meal_planner/types.{
-  type EmailCommand, type EmailCommandError,
-  EmailRequest, InvalidCommand,
+  type EmailCommand, type EmailCommandError, EmailRequest, InvalidCommand,
 }
 
 import wisp
@@ -55,32 +54,35 @@ pub fn handle_email_webhook(req: wisp.Request) -> wisp.Response {
 
   case parse_webhook_payload(body) {
     Ok(payload) -> {
-      let email = EmailRequest(
-        from_email: payload.from,
-        subject: payload.subject,
-        body: payload.body,
-        is_reply: payload.is_reply,
-      )
+      let email =
+        EmailRequest(
+          from_email: payload.from,
+          subject: payload.subject,
+          body: payload.body,
+          is_reply: payload.is_reply,
+        )
 
       case parser.parse_email_command(email) {
         Ok(command) -> {
-          let response = EmailWebhookResponse(
-            success: True,
-            command: Some(command),
-            error: None,
-            message: "Command parsed successfully",
-          )
+          let response =
+            EmailWebhookResponse(
+              success: True,
+              command: Some(command),
+              error: None,
+              message: "Command parsed successfully",
+            )
           encode_webhook_response(response)
           |> json.to_string
           |> wisp.json_response(200)
         }
         Error(error_msg) -> {
-          let response = EmailWebhookResponse(
-            success: False,
-            command: None,
-            error: Some(error_to_string(error_msg)),
-            message: "Failed to parse email command",
-          )
+          let response =
+            EmailWebhookResponse(
+              success: False,
+              command: None,
+              error: Some(error_to_string(error_msg)),
+              message: "Failed to parse email command",
+            )
           encode_webhook_response(response)
           |> json.to_string
           |> wisp.json_response(400)
@@ -88,12 +90,13 @@ pub fn handle_email_webhook(req: wisp.Request) -> wisp.Response {
       }
     }
     Error(msg) -> {
-      let response = EmailWebhookResponse(
-        success: False,
-        command: None,
-        error: Some(msg),
-        message: "Invalid webhook payload",
-      )
+      let response =
+        EmailWebhookResponse(
+          success: False,
+          command: None,
+          error: Some(msg),
+          message: "Invalid webhook payload",
+        )
       encode_webhook_response(response)
       |> json.to_string
       |> wisp.json_response(400)

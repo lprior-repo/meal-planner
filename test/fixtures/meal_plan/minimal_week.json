@@ -1,0 +1,386 @@
+{
+  "week_of": "2026-01-05",
+  "target_macros": {
+    "protein": 150.0,
+    "fat": 50.0,
+    "carbs": 150.0
+  },
+  "total_macros": {
+    "protein": 1050.0,
+    "fat": 350.0,
+    "carbs": 1050.0
+  },
+  "days": [
+    {
+      "day": "Monday",
+      "breakfast": {
+        "id": "recipe-001",
+        "name": "Simple Oats",
+        "servings": 1,
+        "macros": {
+          "protein": 20.0,
+          "fat": 5.0,
+          "carbs": 40.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 5
+      },
+      "lunch": {
+        "id": "recipe-002",
+        "name": "Basic Chicken",
+        "servings": 1,
+        "macros": {
+          "protein": 50.0,
+          "fat": 15.0,
+          "carbs": 10.0
+        },
+        "image": null,
+        "prep_time": 10,
+        "cook_time": 20
+      },
+      "dinner": {
+        "id": "recipe-003",
+        "name": "Rice and Beans",
+        "servings": 2,
+        "macros": {
+          "protein": 25.0,
+          "fat": 8.0,
+          "carbs": 45.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 15
+      },
+      "macros": {
+        "actual": {
+          "protein": 95.0,
+          "fat": 28.0,
+          "carbs": 95.0
+        },
+        "calories": 1012.0,
+        "protein_status": "under",
+        "fat_status": "under",
+        "carbs_status": "under"
+      }
+    },
+    {
+      "day": "Tuesday",
+      "breakfast": {
+        "id": "recipe-004",
+        "name": "Eggs",
+        "servings": 1,
+        "macros": {
+          "protein": 18.0,
+          "fat": 12.0,
+          "carbs": 5.0
+        },
+        "image": null,
+        "prep_time": 3,
+        "cook_time": 5
+      },
+      "lunch": {
+        "id": "recipe-002",
+        "name": "Basic Chicken",
+        "servings": 1,
+        "macros": {
+          "protein": 50.0,
+          "fat": 15.0,
+          "carbs": 10.0
+        },
+        "image": null,
+        "prep_time": 10,
+        "cook_time": 20
+      },
+      "dinner": {
+        "id": "recipe-005",
+        "name": "Pasta",
+        "servings": 2,
+        "macros": {
+          "protein": 30.0,
+          "fat": 10.0,
+          "carbs": 60.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 15
+      },
+      "macros": {
+        "actual": {
+          "protein": 98.0,
+          "fat": 37.0,
+          "carbs": 75.0
+        },
+        "calories": 993.0,
+        "protein_status": "under",
+        "fat_status": "under",
+        "carbs_status": "under"
+      }
+    },
+    {
+      "day": "Wednesday",
+      "breakfast": {
+        "id": "recipe-001",
+        "name": "Simple Oats",
+        "servings": 1,
+        "macros": {
+          "protein": 20.0,
+          "fat": 5.0,
+          "carbs": 40.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 5
+      },
+      "lunch": {
+        "id": "recipe-006",
+        "name": "Tuna",
+        "servings": 1,
+        "macros": {
+          "protein": 45.0,
+          "fat": 8.0,
+          "carbs": 15.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 0
+      },
+      "dinner": {
+        "id": "recipe-003",
+        "name": "Rice and Beans",
+        "servings": 2,
+        "macros": {
+          "protein": 25.0,
+          "fat": 8.0,
+          "carbs": 45.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 15
+      },
+      "macros": {
+        "actual": {
+          "protein": 90.0,
+          "fat": 21.0,
+          "carbs": 100.0
+        },
+        "calories": 969.0,
+        "protein_status": "under",
+        "fat_status": "under",
+        "carbs_status": "under"
+      }
+    },
+    {
+      "day": "Thursday",
+      "breakfast": {
+        "id": "recipe-004",
+        "name": "Eggs",
+        "servings": 1,
+        "macros": {
+          "protein": 18.0,
+          "fat": 12.0,
+          "carbs": 5.0
+        },
+        "image": null,
+        "prep_time": 3,
+        "cook_time": 5
+      },
+      "lunch": {
+        "id": "recipe-006",
+        "name": "Tuna",
+        "servings": 1,
+        "macros": {
+          "protein": 45.0,
+          "fat": 8.0,
+          "carbs": 15.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 0
+      },
+      "dinner": {
+        "id": "recipe-005",
+        "name": "Pasta",
+        "servings": 2,
+        "macros": {
+          "protein": 30.0,
+          "fat": 10.0,
+          "carbs": 60.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 15
+      },
+      "macros": {
+        "actual": {
+          "protein": 93.0,
+          "fat": 30.0,
+          "carbs": 80.0
+        },
+        "calories": 962.0,
+        "protein_status": "under",
+        "fat_status": "under",
+        "carbs_status": "under"
+      }
+    },
+    {
+      "day": "Friday",
+      "breakfast": {
+        "id": "recipe-001",
+        "name": "Simple Oats",
+        "servings": 1,
+        "macros": {
+          "protein": 20.0,
+          "fat": 5.0,
+          "carbs": 40.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 5
+      },
+      "lunch": {
+        "id": "recipe-002",
+        "name": "Basic Chicken",
+        "servings": 1,
+        "macros": {
+          "protein": 50.0,
+          "fat": 15.0,
+          "carbs": 10.0
+        },
+        "image": null,
+        "prep_time": 10,
+        "cook_time": 20
+      },
+      "dinner": {
+        "id": "recipe-003",
+        "name": "Rice and Beans",
+        "servings": 2,
+        "macros": {
+          "protein": 25.0,
+          "fat": 8.0,
+          "carbs": 45.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 15
+      },
+      "macros": {
+        "actual": {
+          "protein": 95.0,
+          "fat": 28.0,
+          "carbs": 95.0
+        },
+        "calories": 1012.0,
+        "protein_status": "under",
+        "fat_status": "under",
+        "carbs_status": "under"
+      }
+    },
+    {
+      "day": "Saturday",
+      "breakfast": {
+        "id": "recipe-004",
+        "name": "Eggs",
+        "servings": 1,
+        "macros": {
+          "protein": 18.0,
+          "fat": 12.0,
+          "carbs": 5.0
+        },
+        "image": null,
+        "prep_time": 3,
+        "cook_time": 5
+      },
+      "lunch": {
+        "id": "recipe-006",
+        "name": "Tuna",
+        "servings": 1,
+        "macros": {
+          "protein": 45.0,
+          "fat": 8.0,
+          "carbs": 15.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 0
+      },
+      "dinner": {
+        "id": "recipe-005",
+        "name": "Pasta",
+        "servings": 2,
+        "macros": {
+          "protein": 30.0,
+          "fat": 10.0,
+          "carbs": 60.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 15
+      },
+      "macros": {
+        "actual": {
+          "protein": 93.0,
+          "fat": 30.0,
+          "carbs": 80.0
+        },
+        "calories": 962.0,
+        "protein_status": "under",
+        "fat_status": "under",
+        "carbs_status": "under"
+      }
+    },
+    {
+      "day": "Sunday",
+      "breakfast": {
+        "id": "recipe-001",
+        "name": "Simple Oats",
+        "servings": 1,
+        "macros": {
+          "protein": 20.0,
+          "fat": 5.0,
+          "carbs": 40.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 5
+      },
+      "lunch": {
+        "id": "recipe-002",
+        "name": "Basic Chicken",
+        "servings": 1,
+        "macros": {
+          "protein": 50.0,
+          "fat": 15.0,
+          "carbs": 10.0
+        },
+        "image": null,
+        "prep_time": 10,
+        "cook_time": 20
+      },
+      "dinner": {
+        "id": "recipe-003",
+        "name": "Rice and Beans",
+        "servings": 2,
+        "macros": {
+          "protein": 25.0,
+          "fat": 8.0,
+          "carbs": 45.0
+        },
+        "image": null,
+        "prep_time": 5,
+        "cook_time": 15
+      },
+      "macros": {
+        "actual": {
+          "protein": 95.0,
+          "fat": 28.0,
+          "carbs": 95.0
+        },
+        "calories": 1012.0,
+        "protein_status": "under",
+        "fat_status": "under",
+        "carbs_status": "under"
+      }
+    }
+  ]
+}
