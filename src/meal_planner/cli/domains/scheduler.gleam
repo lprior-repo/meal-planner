@@ -12,9 +12,9 @@ import gleam/string
 import meal_planner/id.{type JobId}
 import meal_planner/scheduler/types.{
   type JobFrequency, type JobPriority, type JobStatus, type JobType,
-  type ScheduledJob, type TriggerSource, AutoSync, Completed, Critical,
-  DailyAdvisor, Daily, Dependent, EveryNHours, Failed, High, Low, Manual, Medium,
-  Once, Pending, Retry, Running, Scheduled, WeeklyGeneration, WeeklyTrends, Weekly,
+  type ScheduledJob, type TriggerSource, AutoSync, Completed, Critical, Daily,
+  DailyAdvisor, Dependent, EveryNHours, Failed, High, Low, Manual, Medium, Once,
+  Pending, Retry, Running, Scheduled, Weekly, WeeklyGeneration, WeeklyTrends,
 }
 
 // ============================================================================
@@ -94,7 +94,8 @@ pub fn build_jobs_table(jobs: List(ScheduledJob)) -> String {
     |> list.map(fn(job) { build_job_row(job) })
     |> string.join("")
 
-  let footer = "\n└────────────────────┴──────────────────┴──────────┴──────────┘"
+  let footer =
+    "\n└────────────────────┴──────────────────┴──────────┴──────────┘"
 
   case jobs {
     [] ->
