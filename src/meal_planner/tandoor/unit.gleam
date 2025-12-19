@@ -9,7 +9,7 @@ import gleam/dynamic/decode
 import gleam/int
 import gleam/json.{type Json}
 import gleam/list
-import gleam/option.{type Option}
+import gleam/option.{type Option, None}
 import gleam/result
 import meal_planner/tandoor/api/crud_helpers
 import meal_planner/tandoor/api/generic_crud
@@ -69,11 +69,24 @@ pub type Unit {
 pub fn decode_unit() -> decode.Decoder(Unit) {
   use id <- decode.field("id", decode.int)
   use name <- decode.field("name", decode.string)
-  use plural_name <- decode.field("plural_name", decode.optional(decode.string))
-  use description <- decode.field("description", decode.optional(decode.string))
-  use base_unit <- decode.field("base_unit", decode.optional(decode.string))
-  use open_data_slug <- decode.field(
+  use plural_name <- decode.optional_field(
+    "plural_name",
+    None,
+    decode.optional(decode.string),
+  )
+  use description <- decode.optional_field(
+    "description",
+    None,
+    decode.optional(decode.string),
+  )
+  use base_unit <- decode.optional_field(
+    "base_unit",
+    None,
+    decode.optional(decode.string),
+  )
+  use open_data_slug <- decode.optional_field(
     "open_data_slug",
+    None,
     decode.optional(decode.string),
   )
 
