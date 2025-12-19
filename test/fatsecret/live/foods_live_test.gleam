@@ -120,11 +120,10 @@ pub fn list_brands_live_test() {
 
       // Verify we got at least one brand
       should.be_true(list.length(response.brands) > 0)
-      should.be_true(response.total_results > 0)
 
       io.println(
         "SUCCESS: list_brands_live_test - found "
-        <> int.to_string(response.total_results)
+        <> int.to_string(list.length(response.brands))
         <> " brands",
       )
       Nil
@@ -151,7 +150,6 @@ pub fn list_brands_with_filter_live_test() {
           config,
           option.Some("K"),
           option.None,
-          option.None,
         )
 
       // Assert: Should succeed and return filtered brands
@@ -167,7 +165,7 @@ pub fn list_brands_with_filter_live_test() {
 
       io.println(
         "SUCCESS: list_brands_with_filter_live_test - found "
-        <> int.to_string(response.total_results)
+        <> int.to_string(list.length(response.brands))
         <> " brands starting with 'K'",
       )
       Nil
@@ -202,11 +200,10 @@ pub fn search_foods_simple_live_test() {
 
       // Verify we got at least one food
       should.be_true(list.length(response.foods) > 0)
-      should.be_true(response.total_results > 0)
 
       io.println(
         "SUCCESS: search_foods_simple_live_test - found "
-        <> int.to_string(response.total_results)
+        <> int.to_string(list.length(response.foods))
         <> " results",
       )
       Nil

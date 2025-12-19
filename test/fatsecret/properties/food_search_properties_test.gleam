@@ -8,6 +8,7 @@
 import fatsecret/properties/generators
 import gleam/json
 import gleam/list
+import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/fatsecret/foods/decoders
 

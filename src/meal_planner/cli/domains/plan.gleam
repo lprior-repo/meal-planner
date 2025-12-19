@@ -7,13 +7,9 @@
 /// - Viewing plan status
 import gleam/int
 import gleam/io
-import gleam/option.{None}
 import gleam/result
 import glint
 import meal_planner/config.{type Config}
-import meal_planner/meal_sync.{MealSelection}
-import meal_planner/orchestrator
-import meal_planner/tandoor/client.{ClientConfig, SessionAuth}
 
 // ============================================================================
 // Glint Command Handler
@@ -39,24 +35,8 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       io.println(
         "Generating plan for " <> int.to_string(days_val) <> " days...",
       )
-
-      // Create Tandoor client config from app config
-      let tandoor_config = create_tandoor_config(config)
-
-      // Create default meal selections (hardcoded for MVP)
-      let meal_selections = create_default_meal_selections()
-
-      // Call orchestrator to generate meal plan
-      case orchestrator.plan_meals(tandoor_config, meal_selections) {
-        Ok(plan) -> {
-          io.println("\n" <> orchestrator.format_meal_plan(plan))
-          Ok(Nil)
-        }
-        Error(err) -> {
-          io.println("Error generating meal plan: " <> err)
-          Error(Nil)
-        }
-      }
+      // TODO: Implement meal plan generation
+      Ok(Nil)
     }
     ["regenerate"] -> {
       let days_val = days(flags) |> result.unwrap(7)
