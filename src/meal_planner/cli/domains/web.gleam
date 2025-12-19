@@ -4,9 +4,9 @@
 /// - Starting the web server
 /// - Checking server status
 /// - Server configuration
-import glint
-import gleam/io
 import gleam/int
+import gleam/io
+import glint
 import meal_planner/config.{type Config}
 import meal_planner/web
 
@@ -15,9 +15,9 @@ import meal_planner/web
 // ============================================================================
 
 /// Web domain command for Glint CLI
-pub fn cmd(config: Config) -> glint.Command(Nil) {
+pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
   use <- glint.command_help("Start and manage the web server")
-  use named, unnamed, flags <- glint.command()
+  use _named, _unnamed, _flags <- glint.command()
 
   io.println("🍽️  Meal Planner Backend")
   io.println("========================")
@@ -37,5 +37,6 @@ pub fn cmd(config: Config) -> glint.Command(Nil) {
   io.println("")
 
   // Start the web server
-  web.start(config)
+  let _ = web.start(config)
+  Ok(Nil)
 }

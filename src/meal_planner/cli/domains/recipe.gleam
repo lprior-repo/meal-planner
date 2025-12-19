@@ -5,10 +5,10 @@
 /// - Listing recipes
 /// - Adding new recipes
 /// - Viewing recipe details
-import glint
 import gleam/int
 import gleam/io
 import gleam/result
+import glint
 import meal_planner/config.{type Config}
 
 // ============================================================================
@@ -16,17 +16,17 @@ import meal_planner/config.{type Config}
 // ============================================================================
 
 /// Recipe domain command for Glint CLI
-pub fn cmd(_config: Config) -> glint.Command(Nil) {
+pub fn cmd(_config: Config) -> glint.Command(Result(Nil, Nil)) {
   use <- glint.command_help("Manage recipes from Tandoor and FatSecret")
   use query <- glint.flag(
     glint.string_flag("query")
-    |> glint.flag_help("Search query for recipes")
+    |> glint.flag_help("Search query for recipes"),
   )
   use id <- glint.flag(
     glint.int_flag("id")
-    |> glint.flag_help("Recipe ID for details")
+    |> glint.flag_help("Recipe ID for details"),
   )
-  use named, unnamed, flags <- glint.command()
+  use _named, unnamed, flags <- glint.command()
 
   case query(flags), id(flags) {
     Ok(q), _ -> {

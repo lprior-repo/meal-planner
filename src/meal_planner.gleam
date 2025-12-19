@@ -7,7 +7,6 @@
 ///
 import argv
 import dot_env
-import gleam/erlang/process
 import gleam/int
 import gleam/io
 import gleam/list
@@ -45,7 +44,6 @@ pub fn main() {
           "Ensure the variable is set in your .env file or environment.",
         )
       io.println(error.format_error(err))
-      process.exit(error.exit_code_to_int(error.get_exit_code(err)))
     }
     Error(config.InvalidEnvVar(name, value, expected)) -> {
       let err =
@@ -59,7 +57,6 @@ pub fn main() {
           "Check your environment variable configuration for correct format and values.",
         )
       io.println(error.format_error(err))
-      process.exit(error.exit_code_to_int(error.get_exit_code(err)))
     }
   }
 }

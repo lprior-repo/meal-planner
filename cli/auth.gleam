@@ -210,7 +210,7 @@ pub fn load_token(base_dir: String) -> Result(TokenStorage, AuthError) {
     ))
   }
 
-  json.decode(decrypted, decoder)
+  json.parse(from: decrypted, using: decoder)
   |> result.map_error(fn(_) { InvalidToken })
 }
 

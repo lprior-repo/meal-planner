@@ -5,6 +5,7 @@
 ///
 /// Cache entries are stored in ~/.meal-planner/cache/ with JSON encoding.
 /// Each cache entry includes the value and expiration timestamp.
+import gleam/dynamic/decode
 import gleam/dynamic
 import gleam/json
 import gleam/list
@@ -70,19 +71,14 @@ fn encode_cache_entry(entry: CacheEntry) -> String {
 
 /// Decode a cache entry from JSON string
 fn decode_cache_entry(json_str: String) -> Result(CacheEntry, String) {
-  use parsed <- result.try(
-    json.decode(json_str, decode_entry_dynamic)
-    |> result.map_error(fn(_) { "Failed to parse cache entry JSON" }),
-  )
-  Ok(parsed)
-}
+  let decoder = {
+    use value <- decode.field("value", decode.string)
+    use expires_at <- decode.field("expires_at", decode.int)
+    decode.success(CacheEntry(value: value, expires_at: expires_at))
+  }
 
-fn decode_entry_dynamic(
-  data: dynamic.Dynamic,
-) -> Result(CacheEntry, List(dynamic.DecodeError)) {
-  use value <- result.try(dynamic.field("value", dynamic.string)(data))
-  use expires_at <- result.try(dynamic.field("expires_at", dynamic.int)(data))
-  Ok(CacheEntry(value: value, expires_at: expires_at))
+  json.parse(from: json_str, using: decoder)
+  |> result.map_error(fn(_errors) { "Failed to parse cache entry JSON" })
 }
 
 /// Cache a response with TTL in hours

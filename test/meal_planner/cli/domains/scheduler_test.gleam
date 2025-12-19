@@ -1,6 +1,9 @@
 /// Tests for scheduler CLI domain
+import birl
+import gleam/option
 import gleeunit/should
 import meal_planner/cli/domains/scheduler
+import meal_planner/id
 import meal_planner/scheduler/types
 
 pub fn format_job_type_test() {
@@ -77,4 +80,53 @@ pub fn format_trigger_source_test() {
 
   scheduler.format_trigger_source(types.Retry)
   |> should.equal("Retry")
+}
+
+pub fn build_executions_table_test() {
+  let now = birl.now() |> birl.to_iso8601
+  let job_id = id.job_id("job_test_123")
+
+  let executions = [
+    types.JobExecution(
+      id: 1,
+      job_id: job_id,
+      started_at: now,
+      completed_at: option.Some(now),
+      status: types.Completed,
+      error_message: option.None,
+      attempt_number: 1,
+      duration_ms: option.Some(1500),
+      output: option.None,
+      triggered_by: types.Manual,
+    ),
+  ]
+
+  let table = scheduler.build_executions_table(executions)
+
+  // Should contain headers and at least one row
+  table
+  |> should.not_equal("")
+}
+
+pub fn build_executions_table_empty_test() {
+  let executions = []
+  let table = scheduler.build_executions_table(executions)
+
+  // Should contain headers even with empty executions
+  table
+  |> should.not_equal("")
+}
+
+pub fn format_duration_test() {
+  scheduler.format_duration(option.Some(1500))
+  |> should.equal("1.50s")
+
+  scheduler.format_duration(option.Some(500))
+  |> should.equal("0.50s")
+
+  scheduler.format_duration(option.Some(60_000))
+  |> should.equal("60.00s")
+
+  scheduler.format_duration(option.None)
+  |> should.equal("-")
 }
