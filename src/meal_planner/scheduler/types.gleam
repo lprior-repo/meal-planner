@@ -11,7 +11,7 @@
 
 import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
-import gleam/option.{type Option}
+import gleam/option.{type Option, None, Some}
 import meal_planner/id.{type JobId, type UserId}
 
 // ============================================================================
