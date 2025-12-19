@@ -1,0 +1,90 @@
+{
+  "week_id": "week-001",
+  "start_date": "2025-12-22",
+  "meals": [
+    {
+      "day": "monday",
+      "meal_type": "breakfast",
+      "recipe_id": "recipe-101",
+      "recipe_name": "Protein Pancakes",
+      "servings": 2,
+      "macros_per_serving": {
+        "protein": 25.0,
+        "fat": 9.0,
+        "carbs": 32.5
+      }
+    },
+    {
+      "day": "monday",
+      "meal_type": "lunch",
+      "recipe_id": "recipe-102",
+      "recipe_name": "Grilled Chicken Salad",
+      "servings": 1,
+      "macros_per_serving": {
+        "protein": 40.0,
+        "fat": 12.0,
+        "carbs": 15.0
+      }
+    },
+    {
+      "day": "monday",
+      "meal_type": "dinner",
+      "recipe_id": "recipe-103",
+      "recipe_name": "Salmon with Quinoa",
+      "servings": 1,
+      "macros_per_serving": {
+        "protein": 35.0,
+        "fat": 18.0,
+        "carbs": 45.0
+      }
+    },
+    {
+      "day": "tuesday",
+      "meal_type": "breakfast",
+      "recipe_id": "recipe-104",
+      "recipe_name": "Greek Yogurt Bowl",
+      "servings": 1,
+      "macros_per_serving": {
+        "protein": 20.0,
+        "fat": 8.0,
+        "carbs": 30.0
+      }
+    },
+    {
+      "day": "tuesday",
+      "meal_type": "lunch",
+      "recipe_id": "recipe-105",
+      "recipe_name": "Turkey Wrap",
+      "servings": 2,
+      "macros_per_serving": {
+        "protein": 28.0,
+        "fat": 10.0,
+        "carbs": 35.0
+      }
+    },
+    {
+      "day": "tuesday",
+      "meal_type": "dinner",
+      "recipe_id": "recipe-106",
+      "recipe_name": "Beef Stir Fry",
+      "servings": 1,
+      "macros_per_serving": {
+        "protein": 38.0,
+        "fat": 15.0,
+        "carbs": 40.0
+      }
+    },
+    {
+      "day": "wednesday",
+      "meal_type": "breakfast",
+      "recipe_id": "recipe-107",
+      "recipe_name": "Omelette with Veggies",
+      "servings": 1,
+      "macros_per_serving": {
+        "protein": 22.0,
+        "fat": 14.0,
+        "carbs": 8.0
+      }
+    }
+  ]
+}

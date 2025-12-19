@@ -2,7 +2,6 @@
 ///
 /// Tests for 30-day meal rotation eligibility checking.
 /// Part of meal-planner-918 (rotation logic).
-
 import gleam/list
 import gleeunit
 import gleeunit/should

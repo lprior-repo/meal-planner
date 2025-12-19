@@ -2,7 +2,6 @@
 ///
 /// Manages 30-day meal rotation eligibility to prevent recipe fatigue.
 /// Part of meal-planner-918 (Weekly Generation Engine).
-
 import birl
 import gleam/list
 import gleam/result
@@ -73,10 +72,7 @@ pub fn is_eligible_for_selection(
 ///
 /// ## Returns
 /// Ok(days) on success, Error(Nil) if date parsing fails
-pub fn days_between_dates(
-  from: String,
-  to: String,
-) -> Result(Int, Nil) {
+pub fn days_between_dates(from: String, to: String) -> Result(Int, Nil) {
   // Parse from date
   use from_time <- result.try(birl.from_naive(from <> "T00:00:00"))
 
