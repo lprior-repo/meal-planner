@@ -1,0 +1,709 @@
+{
+  "meal_plan": {
+    "week_of": "2025-12-22",
+    "target_macros": {
+      "protein": 180.0,
+      "fat": 60.0,
+      "carbs": 200.0,
+      "calories": 2060.0
+    },
+    "days": [
+      {
+        "day": "Monday",
+        "breakfast": {
+          "id": "recipe-101",
+          "name": "Protein Pancakes",
+          "ingredients": [
+            {
+              "name": "Oats",
+              "quantity": "1 cup"
+            },
+            {
+              "name": "Eggs",
+              "quantity": "2 large"
+            }
+          ],
+          "instructions": [
+            "Blend oats",
+            "Mix with eggs",
+            "Cook on griddle"
+          ],
+          "macros": {
+            "protein": 50.0,
+            "fat": 18.0,
+            "carbs": 65.0,
+            "calories": 618.0
+          },
+          "servings": 2,
+          "category": "Breakfast",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "lunch": {
+          "id": "recipe-201",
+          "name": "Grilled Chicken Salad",
+          "ingredients": [
+            {
+              "name": "Chicken breast",
+              "quantity": "200g"
+            },
+            {
+              "name": "Mixed greens",
+              "quantity": "2 cups"
+            }
+          ],
+          "instructions": [
+            "Grill chicken",
+            "Assemble salad"
+          ],
+          "macros": {
+            "protein": 65.0,
+            "fat": 22.0,
+            "carbs": 68.0,
+            "calories": 726.0
+          },
+          "servings": 4,
+          "category": "Lunch",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "dinner": {
+          "id": "recipe-301",
+          "name": "Salmon with Roasted Vegetables",
+          "ingredients": [
+            {
+              "name": "Salmon fillet",
+              "quantity": "150g"
+            },
+            {
+              "name": "Broccoli",
+              "quantity": "1 cup"
+            }
+          ],
+          "instructions": [
+            "Bake salmon",
+            "Roast vegetables"
+          ],
+          "macros": {
+            "protein": 65.0,
+            "fat": 20.0,
+            "carbs": 67.0,
+            "calories": 716.0
+          },
+          "servings": 4,
+          "category": "Dinner",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        }
+      },
+      {
+        "day": "Tuesday",
+        "breakfast": {
+          "id": "recipe-102",
+          "name": "Greek Yogurt Bowl",
+          "ingredients": [
+            {
+              "name": "Greek yogurt",
+              "quantity": "200g"
+            }
+          ],
+          "instructions": [
+            "Mix yogurt with berries"
+          ],
+          "macros": {
+            "protein": 52.0,
+            "fat": 19.0,
+            "carbs": 70.0,
+            "calories": 659.0
+          },
+          "servings": 1,
+          "category": "Breakfast",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "lunch": {
+          "id": "recipe-201",
+          "name": "Grilled Chicken Salad",
+          "ingredients": [
+            {
+              "name": "Chicken breast",
+              "quantity": "200g"
+            }
+          ],
+          "instructions": [
+            "Grill chicken",
+            "Assemble salad"
+          ],
+          "macros": {
+            "protein": 68.0,
+            "fat": 21.0,
+            "carbs": 65.0,
+            "calories": 726.0
+          },
+          "servings": 4,
+          "category": "Lunch",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "dinner": {
+          "id": "recipe-302",
+          "name": "Beef Stir Fry",
+          "ingredients": [
+            {
+              "name": "Beef strips",
+              "quantity": "200g"
+            }
+          ],
+          "instructions": [
+            "Stir fry beef with vegetables"
+          ],
+          "macros": {
+            "protein": 60.0,
+            "fat": 20.0,
+            "carbs": 65.0,
+            "calories": 680.0
+          },
+          "servings": 4,
+          "category": "Dinner",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        }
+      },
+      {
+        "day": "Wednesday",
+        "breakfast": {
+          "id": "recipe-101",
+          "name": "Protein Pancakes",
+          "ingredients": [
+            {
+              "name": "Oats",
+              "quantity": "1 cup"
+            }
+          ],
+          "instructions": [
+            "Make pancakes"
+          ],
+          "macros": {
+            "protein": 48.0,
+            "fat": 18.0,
+            "carbs": 72.0,
+            "calories": 648.0
+          },
+          "servings": 2,
+          "category": "Breakfast",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "lunch": {
+          "id": "recipe-202",
+          "name": "Turkey Wrap",
+          "ingredients": [
+            {
+              "name": "Turkey slices",
+              "quantity": "150g"
+            }
+          ],
+          "instructions": [
+            "Wrap ingredients in tortilla"
+          ],
+          "macros": {
+            "protein": 65.0,
+            "fat": 22.0,
+            "carbs": 63.0,
+            "calories": 710.0
+          },
+          "servings": 4,
+          "category": "Lunch",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "dinner": {
+          "id": "recipe-301",
+          "name": "Salmon with Roasted Vegetables",
+          "ingredients": [
+            {
+              "name": "Salmon fillet",
+              "quantity": "150g"
+            }
+          ],
+          "instructions": [
+            "Bake salmon"
+          ],
+          "macros": {
+            "protein": 67.0,
+            "fat": 20.0,
+            "carbs": 65.0,
+            "calories": 716.0
+          },
+          "servings": 4,
+          "category": "Dinner",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        }
+      },
+      {
+        "day": "Thursday",
+        "breakfast": {
+          "id": "recipe-102",
+          "name": "Greek Yogurt Bowl",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 50.0,
+            "fat": 19.0,
+            "carbs": 71.0,
+            "calories": 659.0
+          },
+          "servings": 1,
+          "category": "Breakfast",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "lunch": {
+          "id": "recipe-202",
+          "name": "Turkey Wrap",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 64.0,
+            "fat": 21.0,
+            "carbs": 65.0,
+            "calories": 710.0
+          },
+          "servings": 4,
+          "category": "Lunch",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "dinner": {
+          "id": "recipe-302",
+          "name": "Beef Stir Fry",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 66.0,
+            "fat": 20.0,
+            "carbs": 64.0,
+            "calories": 700.0
+          },
+          "servings": 4,
+          "category": "Dinner",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        }
+      },
+      {
+        "day": "Friday",
+        "breakfast": {
+          "id": "recipe-101",
+          "name": "Protein Pancakes",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 54.0,
+            "fat": 18.0,
+            "carbs": 69.0,
+            "calories": 658.0
+          },
+          "servings": 2,
+          "category": "Breakfast",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "lunch": {
+          "id": "recipe-201",
+          "name": "Grilled Chicken Salad",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 64.0,
+            "fat": 21.0,
+            "carbs": 66.0,
+            "calories": 715.0
+          },
+          "servings": 4,
+          "category": "Lunch",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "dinner": {
+          "id": "recipe-301",
+          "name": "Salmon with Roasted Vegetables",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 62.0,
+            "fat": 21.0,
+            "carbs": 65.0,
+            "calories": 699.0
+          },
+          "servings": 4,
+          "category": "Dinner",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        }
+      },
+      {
+        "day": "Saturday",
+        "breakfast": {
+          "id": "recipe-102",
+          "name": "Greek Yogurt Bowl",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 51.0,
+            "fat": 19.0,
+            "carbs": 70.0,
+            "calories": 660.0
+          },
+          "servings": 1,
+          "category": "Breakfast",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "lunch": {
+          "id": "recipe-202",
+          "name": "Turkey Wrap",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 62.0,
+            "fat": 20.0,
+            "carbs": 65.0,
+            "calories": 690.0
+          },
+          "servings": 4,
+          "category": "Lunch",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "dinner": {
+          "id": "recipe-302",
+          "name": "Beef Stir Fry",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 67.0,
+            "fat": 21.0,
+            "carbs": 65.0,
+            "calories": 725.0
+          },
+          "servings": 4,
+          "category": "Dinner",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        }
+      },
+      {
+        "day": "Sunday",
+        "breakfast": {
+          "id": "recipe-101",
+          "name": "Protein Pancakes",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 53.0,
+            "fat": 18.0,
+            "carbs": 68.0,
+            "calories": 650.0
+          },
+          "servings": 2,
+          "category": "Breakfast",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "lunch": {
+          "id": "recipe-201",
+          "name": "Grilled Chicken Salad",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 64.0,
+            "fat": 20.0,
+            "carbs": 67.0,
+            "calories": 715.0
+          },
+          "servings": 4,
+          "category": "Lunch",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        },
+        "dinner": {
+          "id": "recipe-301",
+          "name": "Salmon with Roasted Vegetables",
+          "ingredients": [],
+          "instructions": [],
+          "macros": {
+            "protein": 63.0,
+            "fat": 20.0,
+            "carbs": 65.0,
+            "calories": 696.0
+          },
+          "servings": 4,
+          "category": "Dinner",
+          "fodmap_level": "low",
+          "vertical_compliant": true
+        }
+      }
+    ]
+  },
+  "grocery_list": {
+    "items": [
+      {
+        "name": "Chicken breast",
+        "quantity": 600.0,
+        "unit": "g",
+        "category": "Meat & Seafood"
+      },
+      {
+        "name": "Salmon fillet",
+        "quantity": 450.0,
+        "unit": "g",
+        "category": "Meat & Seafood"
+      },
+      {
+        "name": "Oats",
+        "quantity": 3.0,
+        "unit": "cups",
+        "category": "Grains"
+      },
+      {
+        "name": "Greek yogurt",
+        "quantity": 600.0,
+        "unit": "g",
+        "category": "Dairy"
+      },
+      {
+        "name": "Eggs",
+        "quantity": 6.0,
+        "unit": "large",
+        "category": "Dairy"
+      }
+    ],
+    "total_items": 5
+  },
+  "prep_instructions": [
+    {
+      "recipe_id": 101,
+      "recipe_name": "Protein Pancakes",
+      "steps": [
+        {
+          "sequence": 1,
+          "description": "Blend oats into flour consistency",
+          "ingredients": ["Oats"],
+          "time_minutes": 2
+        },
+        {
+          "sequence": 2,
+          "description": "Mix with eggs and mashed banana",
+          "ingredients": ["Eggs", "Banana"],
+          "time_minutes": 3
+        },
+        {
+          "sequence": 3,
+          "description": "Cook on griddle until golden brown",
+          "ingredients": [],
+          "time_minutes": 10
+        }
+      ],
+      "total_time_minutes": 15,
+      "batch_size": 6
+    },
+    {
+      "recipe_id": 201,
+      "recipe_name": "Grilled Chicken Salad",
+      "steps": [
+        {
+          "sequence": 1,
+          "description": "Season and grill chicken breast",
+          "ingredients": ["Chicken breast", "Salt", "Pepper"],
+          "time_minutes": 20
+        },
+        {
+          "sequence": 2,
+          "description": "Prepare mixed greens and vegetables",
+          "ingredients": ["Mixed greens", "Tomatoes", "Cucumbers"],
+          "time_minutes": 10
+        },
+        {
+          "sequence": 3,
+          "description": "Slice chicken and assemble salad",
+          "ingredients": [],
+          "time_minutes": 5
+        }
+      ],
+      "total_time_minutes": 35,
+      "batch_size": 12
+    }
+  ],
+  "macro_summary": {
+    "weekly_total": {
+      "protein": 1260.0,
+      "fat": 420.0,
+      "carbs": 1400.0,
+      "calories": 14420.0
+    },
+    "daily_average": {
+      "protein": 180.0,
+      "fat": 60.0,
+      "carbs": 200.0,
+      "calories": 2060.0
+    },
+    "daily_breakdowns": [
+      {
+        "day": "Monday",
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "target": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "deviation": {
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 0.0,
+          "calories": 0.0
+        },
+        "calories": 2060.0
+      },
+      {
+        "day": "Tuesday",
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "target": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "deviation": {
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 0.0,
+          "calories": 0.0
+        },
+        "calories": 2060.0
+      },
+      {
+        "day": "Wednesday",
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "target": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "deviation": {
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 0.0,
+          "calories": 0.0
+        },
+        "calories": 2060.0
+      },
+      {
+        "day": "Thursday",
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "target": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "deviation": {
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 0.0,
+          "calories": 0.0
+        },
+        "calories": 2060.0
+      },
+      {
+        "day": "Friday",
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "target": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "deviation": {
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 0.0,
+          "calories": 0.0
+        },
+        "calories": 2060.0
+      },
+      {
+        "day": "Saturday",
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "target": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "deviation": {
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 0.0,
+          "calories": 0.0
+        },
+        "calories": 2060.0
+      },
+      {
+        "day": "Sunday",
+        "actual": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "target": {
+          "protein": 180.0,
+          "fat": 60.0,
+          "carbs": 200.0,
+          "calories": 2060.0
+        },
+        "deviation": {
+          "protein": 0.0,
+          "fat": 0.0,
+          "carbs": 0.0,
+          "calories": 0.0
+        },
+        "calories": 2060.0
+      }
+    ]
+  }
+}
