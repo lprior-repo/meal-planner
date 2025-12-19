@@ -57,7 +57,9 @@ pub fn start() -> actor.StartResult(Supervisor) {
 /// The NCP controller runs the nutrition reconciliation loop,
 /// comparing actual nutrition state with goals and generating
 /// alerts/recommendations when deviations occur.
-fn ncp_controller_child() -> supervision.ChildSpecification(Subject(ControllerMessage)) {
+fn ncp_controller_child() -> supervision.ChildSpecification(
+  Subject(ControllerMessage),
+) {
   supervision.worker(start_ncp_controller)
   |> supervision.restart(supervision.Permanent)
 }
@@ -137,7 +139,9 @@ pub fn start_with_config(
   // Configure logger before starting supervision tree
   logger.configure()
 
-  io.println("[Supervisor] Starting Meal Planner supervision tree (custom config)...")
+  io.println(
+    "[Supervisor] Starting Meal Planner supervision tree (custom config)...",
+  )
 
   supervisor.new(supervisor.OneForOne)
   |> supervisor.restart_tolerance(

@@ -74,35 +74,27 @@ pub fn record_reconciliation(
 
   // Update running averages
   let dev = result.deviation
-  let new_avg_protein = update_running_avg(
-    metrics.avg_protein_deviation,
-    dev.protein_pct,
-    new_count,
-  )
-  let new_avg_fat = update_running_avg(
-    metrics.avg_fat_deviation,
-    dev.fat_pct,
-    new_count,
-  )
-  let new_avg_carbs = update_running_avg(
-    metrics.avg_carbs_deviation,
-    dev.carbs_pct,
-    new_count,
-  )
+  let new_avg_protein =
+    update_running_avg(
+      metrics.avg_protein_deviation,
+      dev.protein_pct,
+      new_count,
+    )
+  let new_avg_fat =
+    update_running_avg(metrics.avg_fat_deviation, dev.fat_pct, new_count)
+  let new_avg_carbs =
+    update_running_avg(metrics.avg_carbs_deviation, dev.carbs_pct, new_count)
 
   // Update max deviations
-  let new_max_protein = float.max(
-    metrics.max_protein_deviation,
-    float.absolute_value(dev.protein_pct),
-  )
-  let new_max_fat = float.max(
-    metrics.max_fat_deviation,
-    float.absolute_value(dev.fat_pct),
-  )
-  let new_max_carbs = float.max(
-    metrics.max_carbs_deviation,
-    float.absolute_value(dev.carbs_pct),
-  )
+  let new_max_protein =
+    float.max(
+      metrics.max_protein_deviation,
+      float.absolute_value(dev.protein_pct),
+    )
+  let new_max_fat =
+    float.max(metrics.max_fat_deviation, float.absolute_value(dev.fat_pct))
+  let new_max_carbs =
+    float.max(metrics.max_carbs_deviation, float.absolute_value(dev.carbs_pct))
 
   // Calculate consistency rate
   let consistency = case new_count {
@@ -149,9 +141,11 @@ pub fn get_health_score(metrics: ControllerMetrics) -> Int {
 
   // Add deviation score (40% weight) - lower deviation = higher score
   let avg_dev =
-    { float.absolute_value(metrics.avg_protein_deviation)
-    +. float.absolute_value(metrics.avg_fat_deviation)
-    +. float.absolute_value(metrics.avg_carbs_deviation) }
+    {
+      float.absolute_value(metrics.avg_protein_deviation)
+      +. float.absolute_value(metrics.avg_fat_deviation)
+      +. float.absolute_value(metrics.avg_carbs_deviation)
+    }
     /. 3.0
   let deviation_score = float.max(0.0, { 100.0 -. avg_dev *. 2.0 }) *. 0.4
 

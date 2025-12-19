@@ -21,12 +21,15 @@ import meal_planner/tandoor/recipe
 // ============================================================================
 
 /// Tandoor domain command for Glint CLI
-pub fn cmd(_config: Config) -> glint.Command(Result(Nil, Nil)) {
+pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
   use <- glint.command_help("Manage recipes and categories from Tandoor")
   use limit <- glint.flag(
     glint.int_flag("limit")
     |> glint.flag_help("Limit number of results")
     |> glint.flag_default(50),
+  )
+  use id <- glint.flag(
+    glint.int_flag("id") |> glint.flag_help("Recipe ID for delete command"),
   )
   use _named, unnamed, flags <- glint.command()
 
@@ -46,11 +49,30 @@ pub fn cmd(_config: Config) -> glint.Command(Result(Nil, Nil)) {
       io.println("Updating recipe metadata in Tandoor...")
       Ok(Nil)
     }
+    ["delete"] -> {
+      case parse_delete_args(["delete"], id: id(flags)) {
+        Ok(recipe_id) -> {
+          case delete_recipe_command(config, recipe_id: recipe_id) {
+            Ok(_) -> Ok(Nil)
+            Error(msg) -> {
+              io.println(msg)
+              Error(Nil)
+            }
+          }
+        }
+        Error(msg) -> {
+          io.println(msg)
+          io.println("Usage: mp tandoor delete --id <recipe_id>")
+          Error(Nil)
+        }
+      }
+    }
     _ -> {
       io.println("Tandoor commands:")
       io.println("  mp tandoor sync")
       io.println("  mp tandoor categories --limit 100")
       io.println("  mp tandoor update")
+      io.println("  mp tandoor delete --id <recipe_id>")
       Ok(Nil)
     }
   }
@@ -164,12 +186,26 @@ pub fn parse_delete_args(
 }
 
 /// Delete a recipe
+/// Delete a recipe
 pub fn delete_recipe_command(
-  _config: Config,
-  recipe_id _recipe_id: Int,
+  config: Config,
+  recipe_id recipe_id: Int,
 ) -> Result(Nil, String) {
-  // TODO: Implement actual delete logic
-  Ok(Nil)
+  let tandoor_config =
+    client.bearer_config(config.tandoor.base_url, config.tandoor.api_token)
+
+  case recipe.delete_recipe(tandoor_config, recipe_id: recipe_id) {
+    Ok(_) -> {
+      io.println(
+        "Recipe " <> int.to_string(recipe_id) <> " deleted successfully",
+      )
+      Ok(Nil)
+    }
+    Error(e) -> {
+      let error_msg = client.error_to_string(e)
+      Error("Failed to delete recipe: " <> error_msg)
+    }
+  }
 }
 
 /// Parse get command args

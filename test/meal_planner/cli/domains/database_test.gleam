@@ -1,4 +1,5 @@
 /// Tests for database CLI domain
+import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/cli/domains/database
 import meal_planner/config
@@ -7,7 +8,6 @@ import meal_planner/postgres
 import meal_planner/storage
 import meal_planner/storage/foods
 import meal_planner/types
-import gleam/option.{None, Some}
 
 pub fn format_food_list_test() {
   let foods = [

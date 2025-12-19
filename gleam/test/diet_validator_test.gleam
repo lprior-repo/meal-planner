@@ -419,12 +419,9 @@ pub fn calculate_protein_per_serving_multiple_servings_test() {
 
 pub fn compliance_result_creation_test() {
   let result =
-    ComplianceResult(
-      compliant: True,
-      score: 0.95,
-      violations: [],
-      warnings: ["Minor suggestion"],
-    )
+    ComplianceResult(compliant: True, score: 0.95, violations: [], warnings: [
+      "Minor suggestion",
+    ])
 
   result.compliant |> should.be_true()
   result.score |> should.equal(0.95)

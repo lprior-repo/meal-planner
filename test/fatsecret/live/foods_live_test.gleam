@@ -65,7 +65,11 @@ pub fn autocomplete_foods_with_max_results_live_test() {
     Ok(config) -> {
       // Act: Call real API with max_results limit
       let result =
-        foods_client.autocomplete_foods_with_options(config, "apple", option.Some(3))
+        foods_client.autocomplete_foods_with_options(
+          config,
+          "apple",
+          option.Some(3),
+        )
 
       // Assert: Should succeed and respect max_results
       should.be_ok(result)

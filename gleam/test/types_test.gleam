@@ -838,9 +838,9 @@ pub fn food_source_custom_food_source_test() {
 }
 
 pub fn food_source_usda_source_test() {
-  let source = types.UsdaFoodSource(12345)
+  let source = types.UsdaFoodSource(12_345)
   case source {
-    types.UsdaFoodSource(fdc_id) -> fdc_id |> should.equal(12345)
+    types.UsdaFoodSource(fdc_id) -> fdc_id |> should.equal(12_345)
     _ -> should.fail()
   }
 }
