@@ -16,6 +16,7 @@ import meal_planner/fatsecret/diary/handlers as diary_handlers
 import meal_planner/fatsecret/exercise/handlers as exercise_handlers
 import meal_planner/fatsecret/favorites/handlers as favorites_handlers
 import meal_planner/fatsecret/saved_meals/handlers as saved_meals_handlers
+import meal_planner/fatsecret/weight/handlers as weight_handlers
 import meal_planner/web/handlers
 import meal_planner/web/routes/types
 import pog
@@ -54,7 +55,7 @@ pub fn route(
 
     // Weight API (3-legged OAuth)
     ["api", "fatsecret", "weight", ..weight_segments] ->
-      Some(route_weight(req, weight_segments))
+      Some(route_weight(req, weight_segments, ctx.db))
 
     // Profile API (3-legged OAuth)
     ["api", "fatsecret", "profile", ..profile_segments] ->
@@ -152,7 +153,8 @@ fn route_saved_meals(
       case req.method {
         http.Put ->
           saved_meals_handlers.handle_edit_saved_meal(req, db, meal_id)
-        http.Delete -> wisp.not_found()
+        http.Delete ->
+          saved_meals_handlers.handle_delete_saved_meal(req, db, meal_id)
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
 
@@ -160,14 +162,27 @@ fn route_saved_meals(
       case req.method {
         http.Get ->
           saved_meals_handlers.handle_get_saved_meal_items(req, db, meal_id)
-        http.Post -> wisp.not_found()
+        http.Post ->
+          saved_meals_handlers.handle_add_saved_meal_item(req, db, meal_id)
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
 
-    [_meal_id, "items", _item_id] ->
+    [meal_id, "items", item_id] ->
       case req.method {
-        http.Put -> wisp.not_found()
-        http.Delete -> wisp.not_found()
+        http.Put ->
+          saved_meals_handlers.handle_edit_saved_meal_item(
+            req,
+            db,
+            meal_id,
+            item_id,
+          )
+        http.Delete ->
+          saved_meals_handlers.handle_delete_saved_meal_item(
+            req,
+            db,
+            meal_id,
+            item_id,
+          )
         _ -> wisp.method_not_allowed([http.Put, http.Delete])
       }
 
@@ -179,18 +194,22 @@ fn route_saved_meals(
 // Weight API Routing
 // ============================================================================
 
-fn route_weight(req: wisp.Request, segments: List(String)) -> wisp.Response {
+fn route_weight(
+  req: wisp.Request,
+  segments: List(String),
+  db: pog.Connection,
+) -> wisp.Response {
   case segments {
     [] ->
       case req.method {
-        http.Get -> wisp.not_found()
-        http.Post -> wisp.not_found()
+        http.Get -> weight_handlers.get_weight_by_date(req, db)
+        http.Post -> weight_handlers.update_weight(req, db)
         _ -> wisp.method_not_allowed([http.Get, http.Post])
       }
 
-    ["month", _year, _month] ->
+    ["month", year, month] ->
       case req.method {
-        http.Get -> wisp.not_found()
+        http.Get -> weight_handlers.get_weight_month(req, db, year, month)
         _ -> wisp.method_not_allowed([http.Get])
       }
 
