@@ -7,16 +7,23 @@
 
 export { type ScraperConfig, type ScraperResult } from './types.js';
 
-// Scrapers will be exported here as they are created
-// export { scrapeFatSecretDocs } from './scrapers/fatsecret.js';
-// export { scrapeTandoorDocs } from './scrapers/tandoor.js';
+// Scrapers
+export { RecipesScraper, scrapeRecipesDocs } from './scrapers/recipes.js';
+export { ProfileScraper, scrapeProfileDocs } from './scrapers/profile.js';
 
 /**
  * Main function to run scrapers
  */
 async function main() {
   console.log('Documentation scraper ready.');
-  console.log('Add specific scrapers to src/scrapers/ to begin.');
+
+  // Example: Run the recipes scraper
+  // Uncomment to execute:
+  // await scrapeRecipesDocs();
+
+  console.log('Available scrapers:');
+  console.log('  - RecipesScraper: FatSecret Recipes API documentation');
+  console.log('  - ProfileScraper: FatSecret Profile API (3-legged OAuth) documentation');
 }
 
 // Run if called directly

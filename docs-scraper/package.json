@@ -7,6 +7,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "scrape": "tsx src/index.ts",
+    "scrape:profile": "tsx scripts/scrape-profile.ts",
+    "scrape:recipes": "tsx scripts/scrape-recipes.ts",
     "build": "tsc",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
