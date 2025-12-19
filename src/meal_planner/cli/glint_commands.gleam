@@ -1,55 +1,36 @@
 /// CLI commands module
 ///
-/// Handles non-interactive command execution for the meal planner CLI
+/// Glint-based command routing for the unified CLI+TUI application.
+/// Routes to domain-specific command handlers based on subcommand.
+import glint
 import gleam/io
-import gleam/list
-import gleam/string
 import meal_planner/config.{type Config}
+import meal_planner/cli/domains/recipe
+import meal_planner/cli/domains/plan
+import meal_planner/cli/domains/nutrition
+import meal_planner/cli/domains/scheduler
+import meal_planner/cli/domains/web
 
+/// Main CLI entry point - routes commands to appropriate domain handlers
 pub fn run(config: Config, args: List(String)) -> Nil {
-  // Basic command handling for FatSecret foods search
-  // More complete implementation would use Glint for full parsing
-  case args {
-    ["fatsecret", "foods", "search", ..rest] -> {
-      handle_foods_search(config, rest)
-    }
-    ["help"] | ["--help"] | ["-h"] -> {
-      show_help()
-    }
-    _ -> {
-      io.println("Unknown command. Use 'help' for available commands.")
+  // Build the Glint app with all domain subcommands
+  let app =
+    glint.new()
+    |> glint.with_name("mp")
+    |> glint.global_help("Meal Planner - CLI and TUI for meal planning")
+    |> glint.add(at: ["recipe"], do: recipe.cmd(config))
+    |> glint.add(at: ["plan"], do: plan.cmd(config))
+    |> glint.add(at: ["nutrition"], do: nutrition.cmd(config))
+    |> glint.add(at: ["scheduler"], do: scheduler.cmd(config))
+    |> glint.add(at: ["web"], do: web.cmd(config))
+
+  // Execute the Glint app with provided arguments
+  let result = glint.run(app, args)
+
+  case result {
+    Ok(_) -> Nil
+    Error(err) -> {
+      io.println("Error: " <> glint.error_to_string(err))
     }
   }
-}
-
-fn handle_foods_search(config: Config, args: List(String)) -> Nil {
-  // Extract --query parameter
-  let query = case
-    list.find(args, fn(arg) { string.starts_with(arg, "--query=") })
-  {
-    Ok(arg) -> string.slice(arg, 8, string.length(arg))
-    Error(_) -> ""
-  }
-
-  case query {
-    "" -> {
-      io.println("Error: --query parameter required")
-      io.println("Usage: fatsecret foods search --query \"chicken\"")
-    }
-    _ -> {
-      io.println("Searching for: " <> query)
-      io.println("FatSecret API call would execute here")
-      io.println("Config database: " <> config.database.host)
-    }
-  }
-}
-
-fn show_help() -> Nil {
-  io.println("Meal Planner CLI - Available Commands:")
-  io.println("")
-  io.println("fatsecret foods search --query \"<search>\"")
-  io.println("  Search for foods in FatSecret database")
-  io.println("")
-  io.println("help, --help, -h")
-  io.println("  Show this help message")
 }
