@@ -1,6 +1,7 @@
 /// View - Screen rendering (Elm Architecture)
 ///
 /// Renders the current screen based on model state
+import gleam/option.{None, Some}
 import meal_planner/cli/types
 
 /// Render the current screen
