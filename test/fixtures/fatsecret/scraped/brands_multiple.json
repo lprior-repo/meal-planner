@@ -1,0 +1,19 @@
+{
+  "brands": [
+    {
+      "brand_id": "1",
+      "brand_name": "Kraft Foods",
+      "brand_type": "manufacturer"
+    },
+    {
+      "brand_id": "2",
+      "brand_name": "McDonald's",
+      "brand_type": "restaurant"
+    },
+    {
+      "brand_id": "3",
+      "brand_name": "Whole Foods Market",
+      "brand_type": "supermarket"
+    }
+  ]
+}
