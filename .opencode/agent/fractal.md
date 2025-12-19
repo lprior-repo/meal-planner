@@ -1,7 +1,7 @@
 ---
 description: Fractal Orchestrator - Master controller for complete SDLC. Handles planning, building, reviewing, refactoring, debugging, and deployment through recursive fractal loops.
 mode: primary
-model: anthropic/claude-sonnet-4-20250514
+model: qwen/qwen3-30b
 temperature: 0.2
 tools:
   write: true

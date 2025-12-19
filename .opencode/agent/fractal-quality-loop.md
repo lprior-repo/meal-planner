@@ -1,7 +1,7 @@
 ---
 description: Fractal Quality Loop - orchestrates multi-pass QA with linting, tests, code review, architecture analysis, and Beads integration
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
+model: qwen/qwen3-30b
 temperature: 0.1
 tools:
   write: true
