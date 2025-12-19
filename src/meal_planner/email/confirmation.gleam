@@ -167,22 +167,9 @@ fn generate_skip_meal_email(
 // =============================================================================
 
 fn meal_type_to_string(meal: types.MealType) -> String {
-  case meal {
-    Breakfast -> "Breakfast"
-    Lunch -> "Lunch"
-    Dinner -> "Dinner"
-    Snack -> "Snack"
-  }
+  types.meal_type_to_string(meal)
 }
 
 fn day_to_string(day: types.DayOfWeek) -> String {
-  case day {
-    types.Monday -> "Monday"
-    types.Tuesday -> "Tuesday"
-    types.Wednesday -> "Wednesday"
-    types.Thursday -> "Thursday"
-    types.Friday -> "Friday"
-    types.Saturday -> "Saturday"
-    types.Sunday -> "Sunday"
-  }
+  types.day_of_week_to_string(day)
 }

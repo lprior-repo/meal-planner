@@ -34,6 +34,11 @@ pub opaque type LogEntryId {
   LogEntryId(value: String)
 }
 
+/// Job ID (scheduled job identifier)
+pub opaque type JobId {
+  JobId(value: String)
+}
+
 // ============================================================================
 // FdcId Constructors and Accessors
 // ============================================================================
@@ -145,6 +150,26 @@ pub fn log_entry_id_to_string(id: LogEntryId) -> String {
 }
 
 // ============================================================================
+// JobId Constructors and Accessors
+// ============================================================================
+
+pub fn job_id(value: String) -> JobId {
+  JobId(value)
+}
+
+pub fn job_id_validated(value: String) -> Result(JobId, String) {
+  let trimmed = string.trim(value)
+  case string.length(trimmed) {
+    0 -> Error("Job ID cannot be empty")
+    _ -> Ok(JobId(trimmed))
+  }
+}
+
+pub fn job_id_to_string(id: JobId) -> String {
+  id.value
+}
+
+// ============================================================================
 // JSON Encoding
 // ============================================================================
 
@@ -165,6 +190,10 @@ pub fn custom_food_id_to_json(id: CustomFoodId) -> Json {
 }
 
 pub fn log_entry_id_to_json(id: LogEntryId) -> Json {
+  json.string(id.value)
+}
+
+pub fn job_id_to_json(id: JobId) -> Json {
   json.string(id.value)
 }
 
@@ -216,6 +245,14 @@ pub fn log_entry_id_decoder() -> Decoder(LogEntryId) {
   }
 }
 
+pub fn job_id_decoder() -> Decoder(JobId) {
+  use value <- decode.then(decode.string)
+  case job_id_validated(value) {
+    Ok(id) -> decode.success(id)
+    Error(msg) -> decode.failure(JobId(""), msg)
+  }
+}
+
 // ============================================================================
 // Equality
 // ============================================================================
@@ -237,5 +274,9 @@ pub fn custom_food_id_equal(a: CustomFoodId, b: CustomFoodId) -> Bool {
 }
 
 pub fn log_entry_id_equal(a: LogEntryId, b: LogEntryId) -> Bool {
+  a.value == b.value
+}
+
+pub fn job_id_equal(a: JobId, b: JobId) -> Bool {
   a.value == b.value
 }
