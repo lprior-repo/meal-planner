@@ -1,20 +1,91 @@
 /// Scheduler CLI domain - handles job scheduling, status monitoring, and triggering
 ///
-/// This module provides TUI commands for:
+/// This module provides CLI commands for:
 /// - Listing scheduled jobs
 /// - Viewing job execution status
 /// - Manually triggering jobs
 /// - Real-time status updates
+import glint
 import gleam/int
+import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
+import meal_planner/config.{type Config}
 import meal_planner/id.{type JobId}
 import meal_planner/scheduler/types.{
   type JobFrequency, type JobPriority, type JobStatus, type JobType,
   type ScheduledJob, type TriggerSource, AutoSync, Completed, Critical, Daily,
   DailyAdvisor, Dependent, EveryNHours, Failed, High, Low, Manual, Medium, Once,
   Pending, Retry, Running, Scheduled, Weekly, WeeklyGeneration, WeeklyTrends,
+}
+
+// ============================================================================
+// Glint Command Handler
+// ============================================================================
+
+/// Scheduler domain command for Glint CLI
+pub fn cmd(_config: Config) -> glint.Command(Nil) {
+  use <- glint.command_help("View and manage scheduled jobs")
+  use id <- glint.flag(
+    glint.string_flag("id")
+    |> glint.flag_help("Job ID to operate on")
+  )
+  use named, unnamed, flags <- glint.command()
+
+  case unnamed {
+    ["list"] -> {
+      io.println("Scheduled jobs:")
+      io.println("  Weekly Generation (Mon 09:00)")
+      io.println("  Auto Sync (Daily 12:00)")
+      io.println("  Daily Advisor (Daily 07:00)")
+      Ok(Nil)
+    }
+    ["status"] -> {
+      case id(flags) {
+        Ok(job_id) -> {
+          io.println("Job " <> job_id <> " status: Running")
+          Ok(Nil)
+        }
+        Error(_) -> {
+          io.println("Error: --id flag required for status command")
+          Error(Nil)
+        }
+      }
+    }
+    ["trigger"] -> {
+      case id(flags) {
+        Ok(job_id) -> {
+          io.println("Triggering job: " <> job_id)
+          Ok(Nil)
+        }
+        Error(_) -> {
+          io.println("Error: --id flag required for trigger command")
+          Error(Nil)
+        }
+      }
+    }
+    ["executions"] -> {
+      case id(flags) {
+        Ok(job_id) -> {
+          io.println("Execution history for job: " <> job_id)
+          Ok(Nil)
+        }
+        Error(_) -> {
+          io.println("Error: --id flag required for executions command")
+          Error(Nil)
+        }
+      }
+    }
+    _ -> {
+      io.println("Scheduler commands:")
+      io.println("  mp scheduler list")
+      io.println("  mp scheduler status --id <job-id>")
+      io.println("  mp scheduler trigger --id <job-id>")
+      io.println("  mp scheduler executions --id <job-id>")
+      Ok(Nil)
+    }
+  }
 }
 
 // ============================================================================

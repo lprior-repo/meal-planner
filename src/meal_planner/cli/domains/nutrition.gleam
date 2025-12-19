@@ -1,18 +1,86 @@
 /// Nutrition CLI domain - handles nutrition analysis, goals, trends, and compliance
 ///
-/// This module provides TUI commands for:
+/// This module provides CLI commands for:
 /// - Setting and viewing nutrition goals
 /// - Analyzing daily nutrition data
 /// - Viewing nutrition trends over time
 /// - Checking compliance with goals
+import glint
 import gleam/float
 import gleam/int
+import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/result
 import gleam/string
+import meal_planner/config.{type Config}
+import meal_planner/ncp
 import meal_planner/ncp.{
   type DeviationResult, type NutritionData, type NutritionGoals,
   type TrendDirection, Decreasing, Increasing, Stable,
+}
+
+// ============================================================================
+// Glint Command Handler
+// ============================================================================
+
+/// Nutrition domain command for Glint CLI
+pub fn cmd(_config: Config) -> glint.Command(Nil) {
+  use <- glint.command_help("View and manage nutrition goals and analysis")
+  use date <- glint.flag(
+    glint.string_flag("date")
+    |> glint.flag_help("Date for nutrition report (YYYY-MM-DD)")
+    |> glint.flag_default("today")
+  )
+  use days <- glint.flag(
+    glint.int_flag("days")
+    |> glint.flag_help("Number of days for trends")
+    |> glint.flag_default(7)
+  )
+  use tolerance <- glint.flag(
+    glint.float_flag("tolerance")
+    |> glint.flag_help("Tolerance percentage for compliance check")
+    |> glint.flag_default(10.0)
+  )
+  use named, unnamed, flags <- glint.command()
+
+  case unnamed {
+    ["report"] -> {
+      let report_date = date(flags) |> result.unwrap("today")
+      io.println("Nutrition report for: " <> report_date)
+      Ok(Nil)
+    }
+    ["goals"] -> {
+      io.println("Current nutrition goals:")
+      io.println(format_goals(ncp.get_default_goals()))
+      Ok(Nil)
+    }
+    ["trends"] -> {
+      let trend_days = days(flags) |> result.unwrap(7)
+      io.println("Trends for last " <> int.to_string(trend_days) <> " days")
+      Ok(Nil)
+    }
+    ["compliance"] -> {
+      let comp_date = date(flags) |> result.unwrap("today")
+      let tol = tolerance(flags) |> result.unwrap(10.0)
+      io.println(
+        "Compliance check for "
+        <> comp_date
+        <> " (tolerance: "
+        <> float.to_string(tol)
+        <> "%)",
+      )
+      Ok(Nil)
+    }
+    _ -> {
+      io.println("Nutrition commands:")
+      io.println("  mp nutrition report --date 2025-12-19")
+      io.println("  mp nutrition goals")
+      io.println("  mp nutrition trends --days 7")
+      io.println("  mp nutrition compliance --date 2025-12-19 --tolerance 10")
+      Ok(Nil)
+    }
+  }
 }
 
 // ============================================================================

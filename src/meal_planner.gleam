@@ -1,17 +1,23 @@
 /// Meal Planner - Backend for meal planning with nutritional tracking
 ///
-/// This module provides the main entry point for the meal planner backend.
-/// Integrates robust error handling with proper exit codes and graceful shutdown.
+/// This module provides the main entry point for the meal planner application.
+/// Supports both CLI and TUI modes:
+/// - `mp` (no args) → launches interactive TUI
+/// - `mp <domain> <command> [flags]` → executes CLI command
 ///
+import argv
 import dot_env
 import gleam/erlang/process
 import gleam/int
 import gleam/io
+import gleam/list
+import meal_planner/cli/glint_commands
+import meal_planner/cli/shore_app
 import meal_planner/config
 import meal_planner/error
 import meal_planner/web
 
-/// Application entry point with error handling and exit codes
+/// Application entry point - routes to CLI or TUI based on arguments
 pub fn main() {
   // Load .env file
   dot_env.new()
@@ -20,42 +26,17 @@ pub fn main() {
   |> dot_env.set_ignore_missing_file(True)
   |> dot_env.load
 
-  io.println("🍽️  Meal Planner Backend")
-  io.println("========================")
-  io.println("")
-
   // Load configuration from environment with error handling
   case config.load() {
     Ok(app_config) -> {
-      io.println("✓ Configuration loaded")
-      io.println(
-        "  - Database: "
-        <> app_config.database.host
-        <> ":"
-        <> int.to_string(app_config.database.port),
-      )
-      io.println("  - Server port: " <> int.to_string(app_config.server.port))
-      io.println("  - Tandoor: " <> app_config.tandoor.base_url)
-      io.println("  - Environment: " <> app_config.server.environment)
-      io.println("")
+      // Get command-line arguments (skip program name)
+      let args = argv.load().arguments
 
-      // Check production readiness
-      case config.is_production_ready(app_config) {
-        True -> io.println("✓ Configuration is production ready")
-        False ->
-          case app_config.server.environment {
-            "production" -> {
-              io.println(
-                "⚠️  Running in production mode but missing some required settings",
-              )
-            }
-            _ -> io.println("ℹ Development mode configuration loaded")
-          }
+      // If no arguments provided, launch interactive TUI
+      case args {
+        [] -> shore_app.start(app_config)
+        _ -> glint_commands.run(app_config, args)
       }
-      io.println("")
-
-      // Start the web server
-      web.start(app_config)
     }
     Error(config.MissingEnvVar(name)) -> {
       let err =
