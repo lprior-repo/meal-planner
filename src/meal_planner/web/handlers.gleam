@@ -10,10 +10,19 @@
 /// - macros: Macro calculation endpoint
 /// - dashboard: Dashboard UI with nutrition tracking
 /// - tandoor: Tandoor Recipe Manager integration
+import gleam/list
+import gleam/option.{None, Some}
+import gleam/result
 import meal_planner/email/confirmation as email_confirmation
 import meal_planner/email/executor as email_executor
+import meal_planner/fatsecret/client
+import meal_planner/fatsecret/core/config
+import meal_planner/fatsecret/core/oauth as core_oauth
 import meal_planner/fatsecret/foods/handlers as foods_handlers
 import meal_planner/fatsecret/profile/handlers as profile_handlers
+import meal_planner/fatsecret/profile/oauth as profile_oauth
+import meal_planner/fatsecret/service
+import meal_planner/fatsecret/storage
 import meal_planner/types
 import meal_planner/web/handlers/diet
 import meal_planner/web/handlers/health
@@ -173,34 +182,169 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
 /// FatSecret OAuth connect - GET /fatsecret/connect
 pub fn handle_fatsecret_connect(
   _req: wisp.Request,
-  _conn: pog.Connection,
-  _base_url: String,
+  conn: pog.Connection,
+  base_url: String,
 ) -> wisp.Response {
-  // Minimal implementation: Return 302 redirect to OAuth provider
-  let oauth_url =
-    "https://www.fatsecret.com/oauth/authorize?oauth_token=example_token"
-
-  wisp.response(302)
-  |> wisp.set_header("location", oauth_url)
-  |> wisp.string_body("")
+  case config.from_env() {
+    None -> {
+      wisp.response(500)
+      |> wisp.set_header("content-type", "application/json")
+      |> wisp.string_body(
+        "{\"error\":\"FatSecret API credentials not configured\"}",
+      )
+    }
+    Some(cfg) -> {
+      let callback_url = base_url <> "/fatsecret/callback"
+      case profile_oauth.get_request_token(cfg, callback_url) {
+        Error(_) -> {
+          wisp.response(500)
+          |> wisp.set_header("content-type", "application/json")
+          |> wisp.string_body(
+            "{\"error\":\"Failed to get OAuth request token\"}",
+          )
+        }
+        Ok(request_token) -> {
+          // Convert from core/oauth.RequestToken to client.RequestToken for storage
+          let storage_token =
+            client.RequestToken(
+              oauth_token: request_token.oauth_token,
+              oauth_token_secret: request_token.oauth_token_secret,
+              oauth_callback_confirmed: request_token.oauth_callback_confirmed,
+            )
+          // Store the request token for the callback
+          case storage.store_pending_token(conn, storage_token) {
+            Error(_) -> {
+              wisp.response(500)
+              |> wisp.set_header("content-type", "application/json")
+              |> wisp.string_body(
+                "{\"error\":\"Failed to store pending OAuth token\"}",
+              )
+            }
+            Ok(Nil) -> {
+              // Redirect user to FatSecret authorization page
+              let auth_url =
+                profile_oauth.get_authorization_url(cfg, request_token)
+              wisp.response(302)
+              |> wisp.set_header("location", auth_url)
+              |> wisp.string_body("")
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 /// FatSecret OAuth callback - GET /fatsecret/callback
+/// Receives oauth_token and oauth_verifier from FatSecret after user authorization
 pub fn handle_fatsecret_callback(
-  _req: wisp.Request,
-  _conn: pog.Connection,
+  req: wisp.Request,
+  conn: pog.Connection,
 ) -> wisp.Response {
-  wisp.response(501)
-  |> wisp.string_body("FatSecret OAuth callback handler not yet implemented")
+  // Get oauth_token and oauth_verifier from query params
+  let query = wisp.get_query(req)
+  let oauth_token =
+    list.find(query, fn(pair) { pair.0 == "oauth_token" })
+    |> result.map(fn(pair) { pair.1 })
+  let oauth_verifier =
+    list.find(query, fn(pair) { pair.0 == "oauth_verifier" })
+    |> result.map(fn(pair) { pair.1 })
+
+  case oauth_token, oauth_verifier {
+    Error(_), _ | _, Error(_) -> {
+      wisp.response(400)
+      |> wisp.set_header("content-type", "application/json")
+      |> wisp.string_body(
+        "{\"error\":\"Missing oauth_token or oauth_verifier parameter\"}",
+      )
+    }
+    Ok(token), Ok(verifier) -> {
+      // Get the pending token secret from storage
+      case storage.get_pending_token(conn, token) {
+        Error(_) -> {
+          wisp.response(400)
+          |> wisp.set_header("content-type", "application/json")
+          |> wisp.string_body(
+            "{\"error\":\"OAuth token expired or not found. Please try connecting again.\"}",
+          )
+        }
+        Ok(token_secret) -> {
+          case config.from_env() {
+            None -> {
+              wisp.response(500)
+              |> wisp.set_header("content-type", "application/json")
+              |> wisp.string_body(
+                "{\"error\":\"FatSecret API credentials not configured\"}",
+              )
+            }
+            Some(cfg) -> {
+              // Reconstruct the request token for the exchange
+              let request_token =
+                core_oauth.RequestToken(
+                  oauth_token: token,
+                  oauth_token_secret: token_secret,
+                  oauth_callback_confirmed: True,
+                )
+              // Exchange for access token
+              case
+                profile_oauth.get_access_token(cfg, request_token, verifier)
+              {
+                Error(_) -> {
+                  wisp.response(500)
+                  |> wisp.set_header("content-type", "application/json")
+                  |> wisp.string_body(
+                    "{\"error\":\"Failed to exchange OAuth token\"}",
+                  )
+                }
+                Ok(access_token) -> {
+                  // Convert and store the access token
+                  let storage_access_token =
+                    client.AccessToken(
+                      oauth_token: access_token.oauth_token,
+                      oauth_token_secret: access_token.oauth_token_secret,
+                    )
+                  case storage.store_access_token(conn, storage_access_token) {
+                    Error(_) -> {
+                      wisp.response(500)
+                      |> wisp.set_header("content-type", "application/json")
+                      |> wisp.string_body(
+                        "{\"error\":\"Failed to store access token\"}",
+                      )
+                    }
+                    Ok(Nil) -> {
+                      // Success! Redirect to status page or show success message
+                      wisp.response(200)
+                      |> wisp.set_header("content-type", "application/json")
+                      |> wisp.string_body(
+                        "{\"success\":true,\"message\":\"FatSecret connected successfully!\"}",
+                      )
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 /// FatSecret status - GET /fatsecret/status
 pub fn handle_fatsecret_status(
   _req: wisp.Request,
-  _conn: pog.Connection,
+  conn: pog.Connection,
 ) -> wisp.Response {
-  // Minimal implementation: Return 200 with auth status
-  let json_body = "{\"connected\":false}"
+  let status = service.check_status(conn)
+  let json_body = case status {
+    service.Connected(_) -> "{\"connected\":true}"
+    service.Disconnected(reason) ->
+      "{\"connected\":false,\"reason\":\"" <> reason <> "\"}"
+    service.ConfigMissing ->
+      "{\"connected\":false,\"reason\":\"FatSecret API not configured\"}"
+    service.EncryptionKeyMissing ->
+      "{\"connected\":false,\"reason\":\"Encryption key not configured\"}"
+  }
 
   wisp.response(200)
   |> wisp.set_header("content-type", "application/json")
@@ -210,15 +354,29 @@ pub fn handle_fatsecret_status(
 /// FatSecret disconnect - POST /fatsecret/disconnect
 pub fn handle_fatsecret_disconnect(
   _req: wisp.Request,
-  _conn: pog.Connection,
+  conn: pog.Connection,
 ) -> wisp.Response {
-  // Minimal implementation: Return 404 (not connected) or 200 (success)
-  // For now, always return 404 since test assumes no active connection
-  let json_body = "{\"error\":\"No OAuth connection found\"}"
-
-  wisp.response(404)
-  |> wisp.set_header("content-type", "application/json")
-  |> wisp.string_body(json_body)
+  case storage.is_connected(conn) {
+    False -> {
+      wisp.response(404)
+      |> wisp.set_header("content-type", "application/json")
+      |> wisp.string_body("{\"error\":\"No OAuth connection found\"}")
+    }
+    True -> {
+      case storage.delete_access_token(conn) {
+        Ok(Nil) -> {
+          wisp.response(200)
+          |> wisp.set_header("content-type", "application/json")
+          |> wisp.string_body("{\"disconnected\":true}")
+        }
+        Error(_) -> {
+          wisp.response(500)
+          |> wisp.set_header("content-type", "application/json")
+          |> wisp.string_body("{\"error\":\"Failed to disconnect\"}")
+        }
+      }
+    }
+  }
 }
 
 /// FatSecret get profile - GET /api/fatsecret/profile
