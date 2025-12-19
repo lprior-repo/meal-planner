@@ -19,6 +19,7 @@ import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/advisor/daily_recommendations
 import meal_planner/advisor/weekly_trends
+import meal_planner/id
 import meal_planner/postgres
 import meal_planner/scheduler/job_manager
 import meal_planner/scheduler/types.{
@@ -342,7 +343,7 @@ pub fn execute_scheduled_job(
   use db <- result.try(get_db_connection())
 
   // Mark job as running and get execution record
-  use execution <- result.try(mark_job_started(job.id))
+  use execution <- result.try(mark_job_started(id.job_id_to_string(job.id)))
 
   // Route to handler based on job type
   let handler_result = route_job_to_handler(job.job_type, db)
@@ -418,7 +419,7 @@ fn handle_success(
   let now = birl.now() |> birl.to_iso8601
 
   // Mark job as completed
-  case mark_job_completed(job.id, output) {
+  case mark_job_completed(id.job_id_to_string(job.id), output) {
     Ok(_) -> Nil
     Error(_) -> Nil
   }
@@ -453,7 +454,7 @@ fn handle_error(
   error_msg: String,
 ) -> Result(JobExecution, SchedulerError) {
   // Mark job as failed
-  case mark_job_failed(job.id, error_msg) {
+  case mark_job_failed(id.job_id_to_string(job.id), error_msg) {
     Ok(_) -> Nil
     Error(_) -> Nil
   }
@@ -568,7 +569,7 @@ fn execute_weekly_trends(db: pog.Connection) -> Result(json.Json, String) {
 /// - Ok(JobExecution) with running status
 /// - Error(SchedulerError) on database failure
 fn mark_job_started(job_id: String) -> Result(JobExecution, SchedulerError) {
-  job_manager.mark_job_running(job_id)
+  job_manager.mark_job_running(id.job_id(job_id))
 }
 
 /// Mark job as completed with output
@@ -586,7 +587,7 @@ fn mark_job_completed(
   job_id: String,
   output: json.Json,
 ) -> Result(Nil, SchedulerError) {
-  job_manager.mark_job_completed(job_id, Some(output))
+  job_manager.mark_job_completed(id.job_id(job_id), Some(output))
 }
 
 /// Mark job as failed with error message
@@ -604,7 +605,7 @@ fn mark_job_failed(
   job_id: String,
   error_msg: String,
 ) -> Result(Nil, SchedulerError) {
-  job_manager.mark_job_failed(job_id, error_msg)
+  job_manager.mark_job_failed(id.job_id(job_id), error_msg)
 }
 
 // ============================================================================
