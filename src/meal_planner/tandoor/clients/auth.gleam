@@ -20,6 +20,63 @@ import meal_planner/tandoor/client.{
 }
 
 // ============================================================================
+// Client Configuration
+// ============================================================================
+
+/// Create a client configuration with session-based authentication
+///
+/// This creates a config object for session-based auth. You must call login()
+/// to establish the actual session.
+///
+/// # Arguments
+/// * `base_url` - Base URL for Tandoor (e.g., "http://localhost:8000")
+/// * `username` - Tandoor username
+/// * `password` - Tandoor password
+///
+/// # Returns
+/// ClientConfig with session auth (not yet authenticated)
+pub fn session_config(
+  base_url: String,
+  username: String,
+  password: String,
+) -> ClientConfig {
+  ClientConfig(
+    base_url: base_url,
+    auth: SessionAuth(
+      username: username,
+      password: password,
+      session_id: None,
+      csrf_token: None,
+    ),
+    timeout_ms: 10_000,
+    retry_on_transient: True,
+    max_retries: 3,
+  )
+}
+
+/// Create a client configuration with Bearer token authentication
+///
+/// Use this for OAuth2 tokens. Note: Token-based auth may not work with
+/// Tandoor's multi-tenant scope system - prefer session_config for full
+/// API access.
+///
+/// # Arguments
+/// * `base_url` - Base URL for Tandoor (e.g., "http://localhost:8000")
+/// * `token` - Bearer token (OAuth2 access token)
+///
+/// # Returns
+/// ClientConfig with bearer auth
+pub fn bearer_config(base_url: String, token: String) -> ClientConfig {
+  ClientConfig(
+    base_url: base_url,
+    auth: BearerAuth(token: token),
+    timeout_ms: 10_000,
+    retry_on_transient: True,
+    max_retries: 3,
+  )
+}
+
+// ============================================================================
 // Session Authentication
 // ============================================================================
 
@@ -292,6 +349,62 @@ fn with_session(
     BearerAuth(_) -> config
   }
 }
+
+/// Add authentication headers based on auth method
+///
+/// This function adds appropriate headers for Bearer or Session authentication.
+/// For session auth with CSRF token, includes the X-CSRFToken header when
+/// include_csrf is True.
+///
+/// # Arguments
+/// * `req` - HTTP request to add headers to
+/// * `auth` - Authentication method (Bearer or Session)
+/// * `include_csrf` - Whether to include CSRF token for mutating requests
+///
+/// # Returns
+/// Request with authentication headers added
+pub fn add_auth_headers(
+  req: request.Request(String),
+  auth: AuthMethod,
+  include_csrf: Bool,
+) -> request.Request(String) {
+  case auth {
+    BearerAuth(token) -> {
+      let auth_header = "Bearer " <> token
+      request.prepend_header(req, "Authorization", auth_header)
+    }
+    SessionAuth(username, password, session_id, csrf_token) -> {
+      case session_id {
+        Some(sid) -> {
+          // Add session cookie
+          let req_with_session =
+            request.prepend_header(req, "Cookie", "sessionid=" <> sid)
+
+          // Add CSRF token for mutating requests
+          case include_csrf, csrf_token {
+            True, Some(csrf) ->
+              request.prepend_header(req_with_session, "X-CSRFToken", csrf)
+            _, _ -> req_with_session
+          }
+        }
+        None -> {
+          // No session yet - use basic auth for login
+          let credentials = base64_encode(username <> ":" <> password)
+          request.prepend_header(req, "Authorization", "Basic " <> credentials)
+        }
+      }
+    }
+  }
+}
+
+/// Simple base64 encoding (for basic auth)
+fn base64_encode(input: String) -> String {
+  // Use Erlang's base64 module for encoding
+  do_base64_encode(input)
+}
+
+@external(erlang, "base64", "encode")
+fn do_base64_encode(input: String) -> String
 
 /// URL encode a string for query parameters
 fn uri_encode(value: String) -> String {
