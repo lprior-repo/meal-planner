@@ -1,0 +1,22 @@
+{
+  "suggestions": {
+    "suggestion": [
+      {
+        "food_id": "35755",
+        "food_name": "Banana"
+      },
+      {
+        "food_id": "35756",
+        "food_name": "Banana Bread"
+      },
+      {
+        "food_id": "35757",
+        "food_name": "Banana Chips"
+      },
+      {
+        "food_id": "35758",
+        "food_name": "Banana Smoothie"
+      }
+    ]
+  }
+}

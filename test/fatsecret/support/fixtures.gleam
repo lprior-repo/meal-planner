@@ -7,6 +7,7 @@
 /// - Optional fields
 /// - Brand vs generic foods
 import gleam/string
+import simplifile
 
 // ============================================================================
 // Food API Responses (food.get.v5)
@@ -454,4 +455,27 @@ pub fn oauth_error() -> String {
 
 pub fn not_found_error() -> String {
   error_response(110, "Food not found")
+}
+
+// ============================================================================
+// Scraped JSON Fixture Loading
+// ============================================================================
+
+/// Load a scraped JSON fixture from test/fixtures/fatsecret/scraped/
+///
+/// This function loads realistic API responses scraped from actual FatSecret
+/// API calls. These fixtures preserve all quirks and edge cases.
+///
+/// Usage:
+/// ```gleam
+/// let assert Ok(json) = load_scraped_fixture("autocomplete_multiple")
+/// let result = json.parse(json, decoder())
+/// ```
+pub fn load_scraped_fixture(name: String) -> Result(String, Nil) {
+  let filepath = "test/fixtures/fatsecret/scraped/" <> name <> ".json"
+
+  case simplifile.read(filepath) {
+    Ok(content) -> Ok(content)
+    Error(_) -> Error(Nil)
+  }
 }
