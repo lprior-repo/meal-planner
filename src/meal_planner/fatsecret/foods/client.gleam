@@ -9,8 +9,7 @@ import meal_planner/env.{type FatSecretConfig}
 import meal_planner/fatsecret/client as base_client
 import meal_planner/fatsecret/foods/decoders
 import meal_planner/fatsecret/foods/types.{
-  type Food, type FoodAutocompleteResponse, type FoodId,
-  type FoodSearchResponse,
+  type Food, type FoodAutocompleteResponse, type FoodId, type FoodSearchResponse,
 }
 
 // Re-export error types from base client
@@ -269,6 +268,7 @@ pub fn autocomplete_foods_with_options(
   expression: String,
   max_results: option.Option(Int),
 ) -> Result(FoodAutocompleteResponse, FatSecretError) {
+  // Build autocomplete parameters
   let params = dict.new() |> dict.insert("expression", expression)
 
   let params = case max_results {
@@ -276,12 +276,14 @@ pub fn autocomplete_foods_with_options(
     option.None -> params
   }
 
+  // Use base client's make_api_request function
   use response_json <- result.try(base_client.make_api_request(
     config,
     "foods.autocomplete.v2",
     params,
   ))
 
+  // Parse JSON response with type-safe decoders
   json.parse(response_json, decoders.food_autocomplete_response_decoder())
   |> result.map_error(fn(_) {
     base_client.ParseError(
