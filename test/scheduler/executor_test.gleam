@@ -12,8 +12,8 @@ import gleeunit/should
 import meal_planner/id
 import meal_planner/scheduler/executor
 import meal_planner/scheduler/types.{
-  AutoSync, DailyAdvisor, EveryNHours, High, Pending, RetryPolicy, ScheduledJob,
-  WeeklyGeneration, WeeklyTrends,
+  type ScheduledJob, AutoSync, DailyAdvisor, EveryNHours, High, Pending,
+  RetryPolicy, ScheduledJob, WeeklyGeneration, WeeklyTrends,
 }
 
 pub fn main() {
