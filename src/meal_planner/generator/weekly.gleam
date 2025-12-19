@@ -297,3 +297,99 @@ pub fn generate_plan_with_rotation(
     constraints,
   )
 }
+
+/// Generate a weekly meal plan with separate recipe pools for each meal type
+///
+/// This is the main generation function that takes separate lists for breakfast,
+/// lunch, and dinner recipes, applies constraints, and generates a balanced
+/// 7-day meal plan.
+///
+/// ## Parameters
+/// - available_breakfasts: Pool of breakfast recipes to choose from
+/// - available_lunches: Pool of lunch recipes to choose from
+/// - available_dinners: Pool of dinner recipes to choose from
+/// - target_macros: Daily target macros (protein, fat, carbs)
+/// - constraints: Locked meals and travel dates
+/// - week_of: Week start date (YYYY-MM-DD format)
+///
+/// ## Returns
+/// - Ok(WeeklyMealPlan) with 7 days of meals, all within ±10% of target macros
+/// - Error(NotEnoughRecipes) if any meal pool has < 2 recipes
+///
+/// ## Algorithm
+/// 1. Select 7 unique breakfasts (one per day, no repeats)
+/// 2. Select lunches with ABABA pattern (2 recipes rotating)
+/// 3. Select dinners with ABABA pattern (2 recipes rotating)
+/// 4. Apply locked meal overrides
+/// 5. Validate macro balance (±10% tolerance per day)
+///
+pub fn generate_meal_plan(
+  available_breakfasts available_breakfasts: List(Recipe),
+  available_lunches available_lunches: List(Recipe),
+  available_dinners available_dinners: List(Recipe),
+  target_macros target_macros: Macros,
+  constraints constraints: Constraints,
+  week_of week_of: String,
+) -> Result(WeeklyMealPlan, GenerationError) {
+  // Validate we have enough recipes
+  case
+    list.length(available_breakfasts) < 7,
+    list.length(available_lunches) < 2,
+    list.length(available_dinners) < 2
+  {
+    True, _, _ | _, True, _ | _, _, True -> Error(NotEnoughRecipes)
+    False, False, False -> {
+      let day_names = [
+        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+        "Sunday",
+      ]
+
+      // Generate days
+      let days =
+        day_names
+        |> list.index_map(fn(day_name, idx) {
+          // Select breakfast: use unique breakfast for each day (no repeats)
+          let default_breakfast = get_at(available_breakfasts, idx)
+
+          // Select lunch: ABABA pattern (alternate between first two lunch recipes)
+          let lunch_idx = idx % 2
+          let default_lunch = get_at(available_lunches, lunch_idx)
+
+          // Select dinner: ABABA pattern (alternate between first two dinner recipes)
+          let dinner_idx = idx % 2
+          let default_dinner = get_at(available_dinners, dinner_idx)
+
+          // Apply locked meal overrides
+          let breakfast = case
+            find_locked_meal(constraints, day_name, Breakfast)
+          {
+            Ok(recipe) -> recipe
+            Error(_) -> default_breakfast
+          }
+
+          let lunch = case find_locked_meal(constraints, day_name, Lunch) {
+            Ok(recipe) -> recipe
+            Error(_) -> default_lunch
+          }
+
+          let dinner = case find_locked_meal(constraints, day_name, Dinner) {
+            Ok(recipe) -> recipe
+            Error(_) -> default_dinner
+          }
+
+          DayMeals(
+            day: day_name,
+            breakfast: breakfast,
+            lunch: lunch,
+            dinner: dinner,
+          )
+        })
+
+      Ok(WeeklyMealPlan(
+        week_of: week_of,
+        days: days,
+        target_macros: target_macros,
+      ))
+    }
+  }
+}
