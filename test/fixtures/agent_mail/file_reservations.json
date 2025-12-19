@@ -1,0 +1,80 @@
+{
+  "description": "Agent Mail MCP - File Reservation Fixture",
+  "scenario": "File coordination with exclusive locks and conflicts",
+  "reservations": [
+    {
+      "agent_name": "GreenCastle",
+      "paths": ["src/meal_planner/auth.gleam"],
+      "ttl_seconds": 300,
+      "exclusive": true,
+      "reason": "bd-123",
+      "reserved_at": "2025-12-19T12:00:00Z"
+    },
+    {
+      "agent_name": "BlueTower",
+      "paths": ["test/auth_test.gleam"],
+      "ttl_seconds": 300,
+      "exclusive": true,
+      "reason": "bd-124",
+      "reserved_at": "2025-12-19T12:01:00Z"
+    },
+    {
+      "agent_name": "RedPhoenix",
+      "paths": ["src/meal_planner/config.gleam", "src/meal_planner/env.gleam"],
+      "ttl_seconds": 600,
+      "exclusive": true,
+      "reason": "bd-125",
+      "reserved_at": "2025-12-19T12:02:00Z"
+    }
+  ],
+  "conflict_scenarios": [
+    {
+      "description": "Exclusive lock conflict",
+      "agent_name": "BlueTower",
+      "paths": ["src/meal_planner/auth.gleam"],
+      "expected_result": "FILE_RESERVATION_CONFLICT",
+      "conflicting_with": "GreenCastle",
+      "reason": "File already exclusively reserved"
+    },
+    {
+      "description": "Overlapping glob patterns",
+      "agent_name": "RedPhoenix",
+      "paths": ["src/meal_planner/**"],
+      "expected_result": "FILE_RESERVATION_CONFLICT",
+      "conflicting_with": ["GreenCastle", "RedPhoenix"],
+      "reason": "Glob pattern overlaps with existing reservations"
+    }
+  ],
+  "expiry_scenarios": [
+    {
+      "description": "TTL expiration",
+      "reservation": {
+        "agent_name": "GreenCastle",
+        "paths": ["src/meal_planner/temp.gleam"],
+        "ttl_seconds": 1,
+        "exclusive": true,
+        "reason": "bd-126",
+        "reserved_at": "2025-12-19T12:00:00Z"
+      },
+      "check_at": "2025-12-19T12:00:02Z",
+      "expected_result": "expired",
+      "can_be_reserved_by": "any agent"
+    }
+  ],
+  "expected_behavior": {
+    "list_reservations": {
+      "active_count": 3,
+      "by_agent": {
+        "GreenCastle": 1,
+        "BlueTower": 1,
+        "RedPhoenix": 2
+      }
+    },
+    "release_on_completion": {
+      "agent": "GreenCastle",
+      "bead_id": "bd-123",
+      "action": "release all paths",
+      "post_state": "available for reservation"
+    }
+  }
+}
