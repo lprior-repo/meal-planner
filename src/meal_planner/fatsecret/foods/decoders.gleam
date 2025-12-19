@@ -11,7 +11,7 @@ import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/float
 import gleam/int
-import gleam/option.{type Option}
+import gleam/option.{type Option, None}
 import meal_planner/fatsecret/foods/types.{
   type Food, type FoodSearchResponse, type FoodSearchResult, type Nutrition,
   type Serving, Food, FoodSearchResponse, FoodSearchResult, Nutrition, Serving,
@@ -246,7 +246,11 @@ pub fn food_decoder() -> decode.Decoder(Food) {
   use food_name <- decode.field("food_name", decode.string)
   use food_type <- decode.field("food_type", decode.string)
   use food_url <- decode.field("food_url", decode.string)
-  use brand_name <- decode.field("brand_name", decode.optional(decode.string))
+  use brand_name <- decode.optional_field(
+    "brand_name",
+    None,
+    decode.optional(decode.string),
+  )
   use servings <- decode.field("servings", {
     use servings_obj <- decode.field("serving", servings_list_decoder())
     decode.success(servings_obj)
@@ -282,7 +286,11 @@ pub fn food_search_result_decoder() -> decode.Decoder(FoodSearchResult) {
   use food_name <- decode.field("food_name", decode.string)
   use food_type <- decode.field("food_type", decode.string)
   use food_description <- decode.field("food_description", decode.string)
-  use brand_name <- decode.field("brand_name", decode.optional(decode.string))
+  use brand_name <- decode.optional_field(
+    "brand_name",
+    None,
+    decode.optional(decode.string),
+  )
   use food_url <- decode.field("food_url", decode.string)
 
   decode.success(FoodSearchResult(
