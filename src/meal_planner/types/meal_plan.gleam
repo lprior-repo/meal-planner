@@ -1,6 +1,40 @@
 //// Meal Plan Core Types
 ////
-//// Defines the types for autonomous meal planning system.
+//// Defines the core types for the autonomous meal planning system.
+////
+//// This module provides opaque types for meal plans with:
+//// - DailyMacros: Tracks actual macros vs target with status (OnTarget/Over/Under)
+//// - DayMeals: A single day's meals (breakfast, lunch, dinner) with macro totals
+//// - MealPlan: Complete 7-day meal plan with weekly macro tracking
+////
+//// ## Example
+////
+//// ```gleam
+//// import meal_planner/types/meal_plan
+//// import meal_planner/types/macros
+////
+//// let target = macros.new(protein: 150.0, fat: 60.0, carbs: 200.0)
+//// let breakfast = // ... create MealPlanRecipe
+//// let lunch = // ... create MealPlanRecipe
+//// let dinner = // ... create MealPlanRecipe
+////
+//// // Create a day's meals
+//// let day_result = meal_plan.new_day_meals(
+////   day: "Monday",
+////   breakfast: breakfast,
+////   lunch: lunch,
+////   dinner: dinner,
+////   target_macros: target,
+//// )
+////
+//// // Create a full week plan
+//// let week_result = meal_plan.new_meal_plan(
+////   week_of: "2025-01-01",
+////   days: [monday, tuesday, ...],
+////   target_macros: target,
+//// )
+//// ```
+////
 //// Part of NORTH STAR epic (meal-planner-918).
 
 import gleam/dynamic/decode.{type Decoder}
@@ -16,7 +50,13 @@ import meal_planner/types/recipe.{type MealPlanRecipe}
 // Core Types
 // ============================================================================
 
-/// Daily macro totals with comparison to targets
+/// Daily macro totals with comparison to targets.
+///
+/// Opaque type that tracks actual macros consumed vs target macros,
+/// calculating status for each macro (protein, fat, carbs) to show
+/// whether you're OnTarget, Over, or Under the goal.
+///
+/// Use `new_daily_macros()` to construct with automatic status calculation.
 pub opaque type DailyMacros {
   DailyMacros(
     actual: Macros,
@@ -27,7 +67,20 @@ pub opaque type DailyMacros {
   )
 }
 
-/// Constructor for DailyMacros with validation
+/// Constructor for DailyMacros with validation.
+///
+/// Creates a DailyMacros instance by comparing actual macros to target macros.
+/// Automatically calculates calories and macro status (OnTarget/Over/Under).
+///
+/// ## Example
+///
+/// ```gleam
+/// let target = macros.new(protein: 150.0, fat: 60.0, carbs: 200.0)
+/// let actual = macros.new(protein: 145.0, fat: 58.0, carbs: 210.0)
+///
+/// let daily_result = new_daily_macros(actual, target)
+/// // Returns DailyMacros with status for each macro
+/// ```
 pub fn new_daily_macros(
   actual: Macros,
   target: Macros,
@@ -68,7 +121,13 @@ pub fn daily_macros_carbs_status(dm: DailyMacros) -> MacroComparison {
   dm.carbs_status
 }
 
-/// A single day's meals (breakfast, lunch, dinner)
+/// A single day's meals (breakfast, lunch, dinner).
+///
+/// Opaque type representing all meals for a single day with automatic
+/// macro calculation and tracking. Validates that macros are calculated
+/// correctly by summing all three meals and comparing to daily targets.
+///
+/// Use `new_day_meals()` to construct with automatic macro totaling.
 pub opaque type DayMeals {
   DayMeals(
     day: String,
@@ -79,7 +138,25 @@ pub opaque type DayMeals {
   )
 }
 
-/// Constructor for DayMeals with validation
+/// Constructor for DayMeals with validation.
+///
+/// Creates a DayMeals instance by combining breakfast, lunch, and dinner.
+/// Automatically calculates total daily macros and compares to target.
+///
+/// ## Example
+///
+/// ```gleam
+/// let target = macros.new(protein: 150.0, fat: 60.0, carbs: 200.0)
+///
+/// let day_result = new_day_meals(
+///   day: "Monday",
+///   breakfast: breakfast_recipe,
+///   lunch: lunch_recipe,
+///   dinner: dinner_recipe,
+///   target_macros: target,
+/// )
+/// // Returns Result(DayMeals, String)
+/// ```
 pub fn new_day_meals(
   day day: String,
   breakfast breakfast: MealPlanRecipe,
@@ -130,7 +207,12 @@ pub fn day_meals_macros(dm: DayMeals) -> DailyMacros {
   dm.macros
 }
 
-/// Complete 7-day meal plan with consolidated grocery list
+/// Complete 7-day meal plan with weekly macro tracking.
+///
+/// Opaque type representing a full week of meals (exactly 7 days).
+/// Validates day count and automatically calculates weekly macro totals.
+///
+/// Use `new_meal_plan()` to construct with automatic validation.
 pub opaque type MealPlan {
   MealPlan(
     week_of: String,
@@ -140,7 +222,28 @@ pub opaque type MealPlan {
   )
 }
 
-/// Constructor for MealPlan with validation
+/// Constructor for MealPlan with validation.
+///
+/// Creates a MealPlan instance from a list of DayMeals. Validates that
+/// exactly 7 days are provided and calculates total weekly macros.
+///
+/// ## Example
+///
+/// ```gleam
+/// let target = macros.new(protein: 150.0, fat: 60.0, carbs: 200.0)
+/// let days = [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+///
+/// let plan_result = new_meal_plan(
+///   week_of: "2025-01-06",
+///   days: days,
+///   target_macros: target,
+/// )
+///
+/// case plan_result {
+///   Ok(plan) -> // 7-day plan created successfully
+///   Error(msg) -> // "MealPlan must have exactly 7 days, got N"
+/// }
+/// ```
 pub fn new_meal_plan(
   week_of week_of: String,
   days days: List(DayMeals),
@@ -186,7 +289,17 @@ pub fn meal_plan_total_macros(plan: MealPlan) -> Macros {
   plan.total_macros
 }
 
-/// Calculate average daily macros for the week
+/// Calculate average daily macros for the week.
+///
+/// Divides total weekly macros by number of days (usually 7).
+/// Useful for analyzing whether weekly nutrition is balanced.
+///
+/// ## Example
+///
+/// ```gleam
+/// let avg = meal_plan_avg_daily_macros(plan)
+/// // Returns Macros with average protein, fat, carbs per day
+/// ```
 pub fn meal_plan_avg_daily_macros(plan: MealPlan) -> Macros {
   let days_count = list.length(plan.days) |> int.to_float
   case days_count >. 0.0 {
