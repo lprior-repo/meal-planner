@@ -23,8 +23,8 @@ import meal_planner/postgres
 import meal_planner/scheduler/job_manager
 import meal_planner/scheduler/types.{
   type JobExecution, type ScheduledJob, type SchedulerError, AutoSync,
-  DailyAdvisor, DatabaseError, ExecutionFailed, JobExecution, Running,
-  WeeklyGeneration, WeeklyTrends,
+  DailyAdvisor, DatabaseError as SchedulerDatabaseError, ExecutionFailed,
+  JobExecution, Running, WeeklyGeneration, WeeklyTrends,
 }
 import pog
 
@@ -464,8 +464,9 @@ fn get_db_connection() -> Result(pog.Connection, SchedulerError) {
     Ok(config) ->
       case postgres.connect(config) {
         Ok(db) -> Ok(db)
-        Error(_) -> Error(DatabaseError("Failed to connect to database"))
+        Error(_) ->
+          Error(SchedulerDatabaseError("Failed to connect to database"))
       }
-    Error(_) -> Error(DatabaseError("Failed to load database config"))
+    Error(_) -> Error(SchedulerDatabaseError("Failed to load database config"))
   }
 }

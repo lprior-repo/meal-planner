@@ -1,0 +1,29 @@
+{
+  "travel_dates": {
+    "monday": true,
+    "tuesday": true,
+    "wednesday": false,
+    "thursday": false,
+    "friday": false,
+    "saturday": false,
+    "sunday": false
+  },
+  "locked_meals": [
+    {
+      "day": "Friday",
+      "meal_type": "Dinner",
+      "recipe_id": "recipe-301",
+      "recipe_name": "Salmon with Roasted Vegetables"
+    }
+  ],
+  "preferences": {
+    "avoid_seafood": true,
+    "vertical_diet": true,
+    "high_protein": true
+  },
+  "macro_adjustments": {
+    "protein": 200.0,
+    "fat": 65.0,
+    "carbs": 180.0
+  }
+}
