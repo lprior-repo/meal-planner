@@ -3,12 +3,17 @@
 /// This module provides HTML email templates for:
 /// - Weekly nutrition summaries
 /// - NCP (Nutrition Compliance Plan) alerts
+/// - Daily advisor recommendations
 ///
 /// Templates use inline CSS for maximum email client compatibility.
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/string
+import meal_planner/advisor/daily_recommendations.{
+  type AdvisorEmail, type MacroTrend,
+}
 import meal_planner/storage/logs/summaries.{
   type FoodSummaryItem, type WeeklySummary,
 }
@@ -325,4 +330,155 @@ fn float_to_string(value: Float, decimals: Int) -> String {
       float.to_string(value)
     }
   }
+}
+
+// ============================================================================
+// Daily Advisor Email
+// ============================================================================
+
+/// Render a daily nutrition advisor email with recommendations
+/// Returns a complete HTML email with inline styles
+pub fn render_daily_advisor_email(advisor: AdvisorEmail) -> String {
+  let header = render_header("Daily Nutrition Recap - " <> advisor.date)
+
+  let today_stats =
+    render_daily_stats_section(advisor.actual_macros, advisor.target_macros)
+
+  let insights_section = render_insights_section(advisor.insights)
+
+  let trend_section = case advisor.seven_day_trend {
+    Some(trend) -> render_trend_section(trend)
+    None -> ""
+  }
+
+  let footer = render_footer()
+
+  wrap_in_html_template(
+    header <> today_stats <> insights_section <> trend_section <> footer,
+  )
+}
+
+fn render_daily_stats_section(
+  actual: daily_recommendations.Macros,
+  target: daily_recommendations.Macros,
+) -> String {
+  let cal_diff = actual.calories -. target.calories
+  let cal_percent = cal_diff /. target.calories *. 100.0
+
+  "<div style=\"padding: 30px; background-color: #f8f9fa;\">"
+  <> "<h2 style=\"color: #333; margin: 0 0 20px 0;\">Today's Stats</h2>"
+  <> "<table style=\"width: 100%; border-collapse: collapse; background-color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);\">"
+  <> "<thead>"
+  <> "<tr style=\"background-color: #f8f9fa;\">"
+  <> "<th style=\"padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;\">Macro</th>"
+  <> "<th style=\"padding: 12px; text-align: center; border-bottom: 2px solid #dee2e6;\">Actual</th>"
+  <> "<th style=\"padding: 12px; text-align: center; border-bottom: 2px solid #dee2e6;\">Target</th>"
+  <> "<th style=\"padding: 12px; text-align: center; border-bottom: 2px solid #dee2e6;\">Status</th>"
+  <> "</tr>"
+  <> "</thead>"
+  <> "<tbody>"
+  <> render_macro_status_row(
+    "Calories",
+    actual.calories,
+    target.calories,
+    "cal",
+  )
+  <> render_macro_status_row("Protein", actual.protein, target.protein, "g")
+  <> render_macro_status_row("Fat", actual.fat, target.fat, "g")
+  <> render_macro_status_row("Carbs", actual.carbs, target.carbs, "g")
+  <> "</tbody>"
+  <> "</table>"
+  <> "</div>"
+}
+
+fn render_macro_status_row(
+  name: String,
+  actual: Float,
+  target: Float,
+  unit: String,
+) -> String {
+  let diff = actual -. target
+  let percent_diff = diff /. target *. 100.0
+
+  let status_color = case percent_diff {
+    p if p <. -10.0 -> "#dc2626"
+    // Red (under)
+    p if p >. 10.0 -> "#f59e0b"
+    // Orange (over)
+    _ -> "#10b981"
+    // Green (on track)
+  }
+
+  let status_text = case percent_diff {
+    p if p <. -10.0 -> "Under (" <> float_to_string(percent_diff, 0) <> "%)"
+    p if p >. 10.0 -> "Over (+" <> float_to_string(percent_diff, 0) <> "%)"
+    _ -> "On Track"
+  }
+
+  "<tr style=\"border-bottom: 1px solid #dee2e6;\">"
+  <> "<td style=\"padding: 12px;\">"
+  <> name
+  <> "</td>"
+  <> "<td style=\"padding: 12px; text-align: center;\">"
+  <> float_to_string(actual, 1)
+  <> unit
+  <> "</td>"
+  <> "<td style=\"padding: 12px; text-align: center;\">"
+  <> float_to_string(target, 1)
+  <> unit
+  <> "</td>"
+  <> "<td style=\"padding: 12px; text-align: center; color: "
+  <> status_color
+  <> "; font-weight: bold;\">"
+  <> status_text
+  <> "</td>"
+  <> "</tr>"
+}
+
+fn render_insights_section(insights: List(String)) -> String {
+  case insights {
+    [] -> ""
+    _ -> {
+      "<div style=\"padding: 30px; background-color: #f0f9ff;\">"
+      <> "<h2 style=\"color: #333; margin: 0 0 20px 0;\">Insights & Recommendations</h2>"
+      <> "<ul style=\"margin: 0; padding-left: 20px; line-height: 1.8;\">"
+      <> render_insight_items(insights)
+      <> "</ul>"
+      <> "</div>"
+    }
+  }
+}
+
+fn render_insight_items(insights: List(String)) -> String {
+  insights
+  |> list.map(fn(insight) { "<li>" <> insight <> "</li>" })
+  |> string.join("")
+}
+
+fn render_trend_section(trend: MacroTrend) -> String {
+  "<div style=\"padding: 30px;\">"
+  <> "<h2 style=\"color: #333; margin: 0 0 20px 0;\">7-Day Trend</h2>"
+  <> "<div style=\"display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;\">"
+  <> render_stat_card(
+    "Avg Calories",
+    float_to_string(trend.avg_calories, 0),
+    "#764ba2",
+  )
+  <> render_stat_card(
+    "Avg Protein",
+    float_to_string(trend.avg_protein, 1) <> "g",
+    "#10b981",
+  )
+  <> render_stat_card(
+    "Avg Fat",
+    float_to_string(trend.avg_fat, 1) <> "g",
+    "#f59e0b",
+  )
+  <> render_stat_card(
+    "Avg Carbs",
+    float_to_string(trend.avg_carbs, 1) <> "g",
+    "#3b82f6",
+  )
+  <> "</div>"
+  <> "</div>"
 }
