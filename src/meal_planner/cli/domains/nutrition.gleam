@@ -5,7 +5,6 @@
 /// - Analyzing daily nutrition data
 /// - Viewing nutrition trends over time
 /// - Checking compliance with goals
-import glint
 import gleam/float
 import gleam/int
 import gleam/io
@@ -13,11 +12,11 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
+import glint
 import meal_planner/config.{type Config}
-import meal_planner/ncp
 import meal_planner/ncp.{
   type DeviationResult, type NutritionData, type NutritionGoals,
-  type TrendDirection, Decreasing, Increasing, Stable,
+  type TrendDirection, Decreasing, Increasing, Stable, get_default_goals,
 }
 
 // ============================================================================
@@ -25,24 +24,24 @@ import meal_planner/ncp.{
 // ============================================================================
 
 /// Nutrition domain command for Glint CLI
-pub fn cmd(_config: Config) -> glint.Command(Nil) {
+pub fn cmd(_config: Config) -> glint.Command(Result(Nil, Nil)) {
   use <- glint.command_help("View and manage nutrition goals and analysis")
   use date <- glint.flag(
     glint.string_flag("date")
     |> glint.flag_help("Date for nutrition report (YYYY-MM-DD)")
-    |> glint.flag_default("today")
+    |> glint.flag_default("today"),
   )
   use days <- glint.flag(
     glint.int_flag("days")
     |> glint.flag_help("Number of days for trends")
-    |> glint.flag_default(7)
+    |> glint.flag_default(7),
   )
   use tolerance <- glint.flag(
     glint.float_flag("tolerance")
     |> glint.flag_help("Tolerance percentage for compliance check")
-    |> glint.flag_default(10.0)
+    |> glint.flag_default(10.0),
   )
-  use named, unnamed, flags <- glint.command()
+  use _named, unnamed, flags <- glint.command()
 
   case unnamed {
     ["report"] -> {
@@ -52,7 +51,7 @@ pub fn cmd(_config: Config) -> glint.Command(Nil) {
     }
     ["goals"] -> {
       io.println("Current nutrition goals:")
-      io.println(format_goals(ncp.get_default_goals()))
+      io.println(format_goals(get_default_goals()))
       Ok(Nil)
     }
     ["trends"] -> {

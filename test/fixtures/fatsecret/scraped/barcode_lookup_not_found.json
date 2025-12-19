@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": 106,
+    "message": "No food found for the given barcode"
+  }
+}

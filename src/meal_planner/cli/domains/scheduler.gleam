@@ -5,12 +5,12 @@
 /// - Viewing job execution status
 /// - Manually triggering jobs
 /// - Real-time status updates
-import glint
 import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
+import glint
 import meal_planner/config.{type Config}
 import meal_planner/id.{type JobId}
 import meal_planner/scheduler/types.{
@@ -25,13 +25,13 @@ import meal_planner/scheduler/types.{
 // ============================================================================
 
 /// Scheduler domain command for Glint CLI
-pub fn cmd(_config: Config) -> glint.Command(Nil) {
+pub fn cmd(_config: Config) -> glint.Command(Result(Nil, Nil)) {
   use <- glint.command_help("View and manage scheduled jobs")
   use id <- glint.flag(
     glint.string_flag("id")
-    |> glint.flag_help("Job ID to operate on")
+    |> glint.flag_help("Job ID to operate on"),
   )
-  use named, unnamed, flags <- glint.command()
+  use _named, unnamed, flags <- glint.command()
 
   case unnamed {
     ["list"] -> {
