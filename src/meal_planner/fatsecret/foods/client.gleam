@@ -9,7 +9,8 @@ import meal_planner/env.{type FatSecretConfig}
 import meal_planner/fatsecret/client as base_client
 import meal_planner/fatsecret/foods/decoders
 import meal_planner/fatsecret/foods/types.{
-  type Food, type FoodId, type FoodSearchResponse,
+  type Food, type FoodAutocompleteResponse, type FoodId,
+  type FoodSearchResponse,
 }
 
 // Re-export error types from base client
@@ -236,6 +237,84 @@ pub fn find_food_by_barcode(
 
   // Now fetch the complete food details using the found food_id
   get_food(config, food_id_value)
+}
+
+// ============================================================================
+// Food Autocomplete API (foods.autocomplete.v2)
+// ============================================================================
+
+/// Get food suggestions with optional max results using foods.autocomplete.v2 endpoint
+///
+/// This is a 2-legged OAuth request (no user token required).
+/// Returns a list of food suggestions matching the search expression.
+///
+/// ## Parameters
+/// - expression: Search term for autocomplete (required)
+/// - max_results: Maximum suggestions to return (optional, default varies by API)
+///
+/// ## Example
+/// ```gleam
+/// let config = env.load_fatsecret_config() |> option.unwrap(default_config)
+/// case autocomplete_foods_with_options(config, "banan", Some(10)) {
+///   Ok(response) -> {
+///     list.each(response.suggestions, fn(suggestion) {
+///       io.println("- " <> suggestion.food_name)
+///     })
+///   }
+///   Error(e) -> io.println("Error: " <> error_to_string(e))
+/// }
+/// ```
+pub fn autocomplete_foods_with_options(
+  config: FatSecretConfig,
+  expression: String,
+  max_results: option.Option(Int),
+) -> Result(FoodAutocompleteResponse, FatSecretError) {
+  let params = dict.new() |> dict.insert("expression", expression)
+
+  let params = case max_results {
+    option.Some(max) -> dict.insert(params, "max_results", int.to_string(max))
+    option.None -> params
+  }
+
+  use response_json <- result.try(base_client.make_api_request(
+    config,
+    "foods.autocomplete.v2",
+    params,
+  ))
+
+  json.parse(response_json, decoders.food_autocomplete_response_decoder())
+  |> result.map_error(fn(_) {
+    base_client.ParseError(
+      "Failed to decode autocomplete response: " <> response_json,
+    )
+  })
+}
+
+/// Get food suggestions using foods.autocomplete.v2 endpoint
+///
+/// This is a convenience wrapper around `autocomplete_foods_with_options` that
+/// uses no max_results limit. Use this for simple autocomplete suggestions.
+///
+/// This is a 2-legged OAuth request (no user token required).
+/// Returns a list of food suggestions matching the search expression.
+///
+/// ## Example
+/// ```gleam
+/// let config = env.load_fatsecret_config() |> option.unwrap(default_config)
+/// case autocomplete_foods(config, "apple") {
+///   Ok(response) -> {
+///     list.each(response.suggestions, fn(suggestion) {
+///       io.println("- " <> suggestion.food_name)
+///     })
+///   }
+///   Error(e) -> io.println("Error: " <> error_to_string(e))
+/// }
+/// ```
+pub fn autocomplete_foods(
+  config: FatSecretConfig,
+  expression: String,
+) -> Result(FoodAutocompleteResponse, FatSecretError) {
+  autocomplete_foods_with_options(config, expression, option.None)
 }
 
 // ============================================================================
