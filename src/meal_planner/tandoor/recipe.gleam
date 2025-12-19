@@ -501,7 +501,12 @@ fn unit_decoder() -> decode.Decoder(Unit) {
     None,
     decode.optional(decode.string),
   )
-  use description <- decode.optional_field("description", "", decode.string)
+  // Handle null description by using optional decoder and unwrapping to empty string
+  use description <- decode.field(
+    "description",
+    decode.optional(decode.string)
+      |> decode.map(option.unwrap(_, "")),
+  )
 
   decode.success(Unit(
     id: id,
@@ -548,7 +553,12 @@ fn ingredient_decoder() -> decode.Decoder(Ingredient) {
     decode.optional(unit_decoder()),
   )
   use amount <- decode.optional_field("amount", 0.0, decode.float)
-  use note <- decode.optional_field("note", "", decode.string)
+  // Handle null note by using optional decoder and unwrapping to empty string
+  use note <- decode.field(
+    "note",
+    decode.optional(decode.string)
+      |> decode.map(option.unwrap(_, "")),
+  )
   use is_header <- decode.optional_field("is_header", False, decode.bool)
   use no_amount <- decode.optional_field("no_amount", False, decode.bool)
   use original_text <- decode.optional_field(
