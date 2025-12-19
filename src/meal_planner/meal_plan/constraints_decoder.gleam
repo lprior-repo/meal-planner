@@ -1,7 +1,6 @@
 /// JSON decoders for meal planning constraints
 ///
 /// Provides decoders that parse JSON constraint data into Gleam types.
-
 import gleam/dynamic/decode
 import meal_planner/meal_plan/constraints
 
@@ -12,7 +11,10 @@ import meal_planner/meal_plan/constraints
 /// Decode a Constraint from JSON
 pub fn constraint_decoder() -> decode.Decoder(constraints.Constraints) {
   use week_of <- decode.field("week_of", decode.string)
-  use constraints_inner <- decode.field("constraints", constraints_inner_decoder())
+  use constraints_inner <- decode.field(
+    "constraints",
+    constraints_inner_decoder(),
+  )
   decode.success(constraints.Constraints(
     week_of: week_of,
     travel_dates: constraints_inner.0,

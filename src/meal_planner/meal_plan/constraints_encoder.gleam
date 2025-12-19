@@ -1,7 +1,6 @@
 /// JSON encoders for meal planning constraints
 ///
 /// Provides encoders that convert Gleam constraint types to JSON strings.
-
 import gleam/json
 import meal_planner/meal_plan/constraints
 
@@ -17,9 +16,7 @@ pub fn encode_constraint(constraint: constraints.Constraints) -> String {
 }
 
 /// Convert Constraint to JSON value
-fn constraint_to_json(
-  constraint: constraints.Constraints,
-) -> json.Json {
+fn constraint_to_json(constraint: constraints.Constraints) -> json.Json {
   json.object([
     #("week_of", json.string(constraint.week_of)),
     #(
@@ -30,7 +27,10 @@ fn constraint_to_json(
           "locked_meals",
           json.array(constraint.locked_meals, locked_meal_to_json),
         ),
-        #("macro_adjustment", macro_adjustment_to_json(constraint.macro_adjustment)),
+        #(
+          "macro_adjustment",
+          macro_adjustment_to_json(constraint.macro_adjustment),
+        ),
         #("meal_skips", json.array(constraint.meal_skips, json.string)),
         #("preferences", json.array(constraint.preferences, json.string)),
       ]),
@@ -86,9 +86,7 @@ fn macro_adjustment_to_json(
   json.string(macro_adjustment_to_string(adjustment))
 }
 
-fn macro_adjustment_to_string(
-  adjustment: constraints.MacroAdjustment,
-) -> String {
+fn macro_adjustment_to_string(adjustment: constraints.MacroAdjustment) -> String {
   case adjustment {
     constraints.HighProtein -> "high_protein"
     constraints.LowCarb -> "low_carb"

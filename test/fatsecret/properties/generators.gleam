@@ -13,8 +13,7 @@ pub fn flexible_float_strings() -> List(String) {
     // Standard float strings with decimal point
     "0.0", "1.0", "2.0", "5.0", "42.0", "100.0", "999.0",
     // Common decimal values
-    "1.5", "3.14", "0.99", "42.42", "100.1",
-    "0.5", "0.25", "10.5", "99.99",
+    "1.5", "3.14", "0.99", "42.42", "100.1", "0.5", "0.25", "10.5", "99.99",
     // Larger decimal values
     "123.456", "1.001",
   ]

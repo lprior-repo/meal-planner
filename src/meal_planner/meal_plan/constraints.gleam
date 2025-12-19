@@ -2,7 +2,6 @@
 ///
 /// Provides validation for user-supplied constraints like travel dates,
 /// locked meals, macro adjustments, and recipe IDs.
-
 import gleam/int
 import gleam/list
 import gleam/result
@@ -90,10 +89,11 @@ fn max_day_in_month(month: Int, year: Int) -> Int {
   case month {
     1 | 3 | 5 | 7 | 8 | 10 | 12 -> 31
     4 | 6 | 9 | 11 -> 30
-    2 -> case is_leap_year(year) {
-      True -> 29
-      False -> 28
-    }
+    2 ->
+      case is_leap_year(year) {
+        True -> 29
+        False -> 28
+      }
     _ -> 31
   }
 }
@@ -119,7 +119,9 @@ pub fn validate_recipe_id_positive(recipe_id: Int) -> Result(Int, String) {
 }
 
 /// Validate that travel dates are consecutive
-pub fn validate_travel_dates(dates: List(String)) -> Result(List(String), String) {
+pub fn validate_travel_dates(
+  dates: List(String),
+) -> Result(List(String), String) {
   case dates {
     [] -> Ok([])
     [single] -> {
@@ -129,12 +131,13 @@ pub fn validate_travel_dates(dates: List(String)) -> Result(List(String), String
     }
     _ -> {
       // Multiple dates: validate all are valid format, then check consecutiveness
-      let all_valid = list.all(dates, fn(d) {
-        case validate_date(d) {
-          Ok(_) -> True
-          Error(_) -> False
-        }
-      })
+      let all_valid =
+        list.all(dates, fn(d) {
+          case validate_date(d) {
+            Ok(_) -> True
+            Error(_) -> False
+          }
+        })
       case all_valid {
         False -> Error("Invalid travel dates: some dates have invalid format")
         True -> {
@@ -142,8 +145,7 @@ pub fn validate_travel_dates(dates: List(String)) -> Result(List(String), String
           let sorted_dates = list.sort(dates, string.compare)
           case are_dates_consecutive(sorted_dates) {
             True -> Ok(dates)
-            False ->
-              Error("Invalid travel dates: dates must be consecutive")
+            False -> Error("Invalid travel dates: dates must be consecutive")
           }
         }
       }
@@ -244,7 +246,9 @@ pub fn day_of_week_from_string(s: String) -> Result(DayOfWeek, String) {
 }
 
 /// Parse MacroAdjustment from string
-pub fn macro_adjustment_from_string(s: String) -> Result(MacroAdjustment, String) {
+pub fn macro_adjustment_from_string(
+  s: String,
+) -> Result(MacroAdjustment, String) {
   case s {
     "high_protein" -> Ok(HighProtein)
     "low_carb" -> Ok(LowCarb)
