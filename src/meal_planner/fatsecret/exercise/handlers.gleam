@@ -10,7 +10,7 @@
 import gleam/dynamic
 import gleam/http.{Delete, Get, Post, Put}
 import gleam/json
-import gleam/option.{None, Some}
+import gleam/option
 import pog
 import wisp.{type Request, type Response}
 
@@ -31,7 +31,7 @@ import wisp.{type Request, type Response}
 /// - 200: List of exercise entries
 /// - 401: Not authorized or auth revoked
 /// - 500: Server error
-pub fn get_exercises(req: Request, conn: pog.Connection) -> Response {
+pub fn get_exercises(req: Request, _conn: pog.Connection) -> Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
@@ -70,7 +70,7 @@ pub fn get_exercises(req: Request, conn: pog.Connection) -> Response {
 /// - 400: Invalid request
 /// - 401: Not authorized
 /// - 500: Server error
-pub fn create_exercise_entry(req: Request, conn: pog.Connection) -> Response {
+pub fn create_exercise_entry(req: Request, _conn: pog.Connection) -> Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
   use req <- wisp.handle_head(req)
@@ -129,7 +129,7 @@ pub fn create_exercise_entry(req: Request, conn: pog.Connection) -> Response {
 /// - 500: Server error
 pub fn get_exercise_entry(
   req: Request,
-  conn: pog.Connection,
+  _conn: pog.Connection,
   entry_id: String,
 ) -> Response {
   use <- wisp.log_request(req)
@@ -172,8 +172,8 @@ pub fn get_exercise_entry(
 /// - 500: Server error
 pub fn update_exercise_entry(
   req: Request,
-  conn: pog.Connection,
-  entry_id: String,
+  _conn: pog.Connection,
+  _entry_id: String,
 ) -> Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
@@ -220,7 +220,7 @@ pub fn update_exercise_entry(
 /// - 500: Server error
 pub fn delete_exercise_entry(
   req: Request,
-  conn: pog.Connection,
+  _conn: pog.Connection,
   entry_id: String,
 ) -> Response {
   use <- wisp.log_request(req)

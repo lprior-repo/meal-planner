@@ -7,13 +7,10 @@
 /// - Macro verification (still on track)
 /// - Next steps or additional information
 import gleam/option.{type Option, None, Some}
-import gleam/string
 
 import meal_planner/types.{
-  type CommandExecutionResult, type EmailCommand, type Macros,
-  type RegenerationScope, AddPreference, AdjustMeal, Breakfast,
-  CommandExecutionResult, Dinner, Lunch, RegeneratePlan, RemoveDislike, SkipMeal,
-  Snack,
+  type CommandExecutionResult, type EmailCommand, type RegenerationScope,
+  AddPreference, AdjustMeal, RegeneratePlan, RemoveDislike, SkipMeal,
 }
 
 // =============================================================================
@@ -161,15 +158,6 @@ fn generate_skip_meal_email(
     "<h2>Meal Skipped ✓</h2><p>" <> message <> "</p>",
   )
 }
-
 // =============================================================================
 // Helper Functions
 // =============================================================================
-
-fn meal_type_to_string(meal: types.MealType) -> String {
-  types.meal_type_to_string(meal)
-}
-
-fn day_to_string(day: types.DayOfWeek) -> String {
-  types.day_of_week_to_string(day)
-}
