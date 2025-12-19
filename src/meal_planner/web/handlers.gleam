@@ -12,7 +12,6 @@
 /// - tandoor: Tandoor Recipe Manager integration
 import meal_planner/email/confirmation as email_confirmation
 import meal_planner/email/executor as email_executor
-import meal_planner/email/handler as email_handler
 import meal_planner/fatsecret/foods/handlers as foods_handlers
 import meal_planner/fatsecret/profile/handlers as profile_handlers
 import meal_planner/types
@@ -175,7 +174,7 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
 pub fn handle_fatsecret_connect(
   _req: wisp.Request,
   _conn: pog.Connection,
-  base_url: String,
+  _base_url: String,
 ) -> wisp.Response {
   // Minimal implementation: Return 302 redirect to OAuth provider
   let oauth_url =

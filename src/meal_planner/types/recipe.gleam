@@ -44,7 +44,6 @@ import gleam/dynamic/decode.{type Decoder}
 import gleam/int
 import gleam/json.{type Json}
 import gleam/option.{type Option, None, Some}
-import gleam/result
 import meal_planner/id.{type RecipeId}
 import meal_planner/types/macros.{type Macros}
 

@@ -5,11 +5,11 @@
 import gleam/dict.{type Dict}
 import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/generator/weekly.{type DayMeals, type WeeklyMealPlan}
-import meal_planner/tandoor/client.{type Food, type Ingredient, type Unit}
+import meal_planner/tandoor/client.{type Ingredient}
 import meal_planner/types.{type Ingredient as SimpleIngredient}
 
 // ============================================================================

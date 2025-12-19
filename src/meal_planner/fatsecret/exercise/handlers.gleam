@@ -10,7 +10,6 @@
 import gleam/dynamic
 import gleam/http.{Delete, Get, Post, Put}
 import gleam/json
-import gleam/option
 import pog
 import wisp.{type Request, type Response}
 
@@ -263,13 +262,13 @@ pub fn handle_exercise_routes(req: Request, conn: pog.Connection) -> Response {
 // ============================================================================
 
 /// Parse exercise entry input from JSON request body
-fn parse_exercise_entry_input(body: dynamic.Dynamic) -> Result(Nil, String) {
+fn parse_exercise_entry_input(_body: dynamic.Dynamic) -> Result(Nil, String) {
   // TODO: Implement JSON parsing for exercise entry creation
   Error("Not implemented")
 }
 
 /// Parse exercise entry update from JSON request body
-fn parse_exercise_entry_update(body: dynamic.Dynamic) -> Result(Nil, String) {
+fn parse_exercise_entry_update(_body: dynamic.Dynamic) -> Result(Nil, String) {
   // TODO: Implement JSON parsing for exercise entry updates
   Error("Not implemented")
 }

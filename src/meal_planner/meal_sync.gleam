@@ -19,9 +19,7 @@ import meal_planner/fatsecret/diary/types.{
   food_entry_id_to_string,
 }
 import meal_planner/grocery_list.{type GroceryList}
-import meal_planner/tandoor/client.{
-  type ClientConfig, type RecipeDetail, get_recipe_detail,
-}
+import meal_planner/tandoor/client.{type ClientConfig, get_recipe_detail}
 
 // ============================================================================
 // Types

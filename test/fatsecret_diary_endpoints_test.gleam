@@ -9,8 +9,6 @@
 /// - GET /api/fatsecret/diary/month/:date_int - Get month summary
 ///
 /// Run with: cd gleam && gleam test
-import gleam/dynamic/decode
-import gleam/json
 import gleam/list
 import gleam/option
 import gleam/result
@@ -153,7 +151,6 @@ pub fn from_food_entry_construction_test() {
       meal |> should.equal(types.Dinner)
       date_int |> should.equal(19_723)
     }
-    types.Custom(..) -> should.fail()
   }
 }
 
@@ -172,7 +169,6 @@ pub fn custom_entry_construction_test() {
     )
 
   case entry {
-    types.FromFood(..) -> should.fail()
     types.Custom(
       food_entry_name,
       serving_description,

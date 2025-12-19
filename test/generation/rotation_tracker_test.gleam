@@ -6,8 +6,8 @@ import gleam/list
 import gleeunit
 import gleeunit/should
 import meal_planner/generation/rotation_tracker.{
-  type MealRotationHistory, MealRotationHistory, days_between_dates,
-  is_eligible_for_selection, update_rotation_history,
+  MealRotationHistory, days_between_dates, is_eligible_for_selection,
+  update_rotation_history,
 }
 
 pub fn main() {
