@@ -6,7 +6,6 @@
 ///
 /// Opaque types are used for IDs to ensure type safety and prevent
 /// accidental mixing of different ID types.
-
 // ============================================================================
 // Opaque ID Types
 // ============================================================================

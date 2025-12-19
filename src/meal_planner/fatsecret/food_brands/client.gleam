@@ -66,32 +66,50 @@ pub fn list_brands_with_options(
   starts_with: Option(String),
   brand_type: Option(BrandType),
 ) -> Result(BrandsResponse, FatSecretError) {
-  // Build search parameters
-  let params = dict.new()
+  let params =
+    dict.new()
+    |> add_optional_param("starts_with", starts_with)
+    |> add_optional_param_mapped("brand_type", brand_type, brand_type_to_string)
 
-  let params = case starts_with {
-    Some(letter) -> dict.insert(params, "starts_with", letter)
-    None -> params
-  }
-
-  let params = case brand_type {
-    Some(btype) -> dict.insert(params, "brand_type", brand_type_to_string(btype))
-    None -> params
-  }
-
-  // Use base client's make_api_request function
   use response_json <- result.try(base_client.make_api_request(
     config,
     "brands.get.v2",
     params,
   ))
 
-  // Parse JSON response with type-safe decoders
-  case json.parse(response_json, decoders.brands_response_decoder()) {
-    Ok(brands_response) -> Ok(brands_response)
-    Error(_) ->
-      Error(base_client.ParseError(
-        "Failed to decode brands response: " <> response_json,
-      ))
+  json.parse(response_json, decoders.brands_response_decoder())
+  |> result.map_error(fn(_) {
+    base_client.ParseError(
+      "Failed to decode brands response: " <> response_json,
+    )
+  })
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/// Add an optional string parameter to a dict
+fn add_optional_param(
+  params: dict.Dict(String, String),
+  key: String,
+  value: Option(String),
+) -> dict.Dict(String, String) {
+  case value {
+    Some(v) -> dict.insert(params, key, v)
+    None -> params
+  }
+}
+
+/// Add an optional parameter that needs transformation before adding
+fn add_optional_param_mapped(
+  params: dict.Dict(String, String),
+  key: String,
+  value: Option(a),
+  transform: fn(a) -> String,
+) -> dict.Dict(String, String) {
+  case value {
+    Some(v) -> dict.insert(params, key, transform(v))
+    None -> params
   }
 }
