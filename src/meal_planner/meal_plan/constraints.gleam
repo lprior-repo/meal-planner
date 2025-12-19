@@ -57,30 +57,31 @@ pub type Constraints {
 
 /// Validate a date string in ISO 8601 format (YYYY-MM-DD)
 pub fn validate_date(date_string: String) -> Result(String, String) {
-  case string.split(date_string, "-") {
-    [year, month, day] -> {
-      use y <- result.try(parse_int(year, "Invalid year"))
-      use m <- result.try(parse_int(month, "Invalid month"))
-      use d <- result.try(parse_int(day, "Invalid day"))
+  use parts <- result.try(case string.split(date_string, "-") {
+    [y, m, d] -> Ok(#(y, m, d))
+    _ -> Error("Invalid date format: expected YYYY-MM-DD")
+  })
 
-      case m >= 1 && m <= 12 && d >= 1 {
-        False -> Error("Invalid date: month must be 1-12, day must be > 0")
-        True -> {
-          let max_day = max_day_in_month(m, y)
-          case d <= max_day {
-            True -> Ok(date_string)
-            False ->
-              Error(
-                "Invalid date: day must be 1-"
-                <> int.to_string(max_day)
-                <> " for month "
-                <> int.to_string(m),
-              )
-          }
-        }
+  let #(year_str, month_str, day_str) = parts
+  use year <- result.try(parse_int(year_str, "Invalid year"))
+  use month <- result.try(parse_int(month_str, "Invalid month"))
+  use day <- result.try(parse_int(day_str, "Invalid day"))
+
+  case month >= 1 && month <= 12 && day >= 1 {
+    False -> Error("Invalid date: month must be 1-12, day must be > 0")
+    True -> {
+      let max_day = max_day_in_month(month, year)
+      case day <= max_day {
+        True -> Ok(date_string)
+        False ->
+          Error(
+            "Invalid date: day must be 1-"
+            <> int.to_string(max_day)
+            <> " for month "
+            <> int.to_string(month),
+          )
       }
     }
-    _ -> Error("Invalid date format: expected YYYY-MM-DD")
   }
 }
 
@@ -101,13 +102,11 @@ fn max_day_in_month(month: Int, year: Int) -> Int {
 fn is_leap_year(year: Int) -> Bool {
   case year % 400 {
     0 -> True
-    _ -> case year % 100 {
-      0 -> False
-      _ -> case year % 4 {
-        0 -> True
-        _ -> False
+    _ ->
+      case year % 100 {
+        0 -> False
+        _ -> year % 4 == 0
       }
-    }
   }
 }
 
