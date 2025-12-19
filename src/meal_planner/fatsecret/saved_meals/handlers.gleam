@@ -278,6 +278,404 @@ fn saved_meal_item_to_json(item: types.SavedMealItem) -> json.Json {
   ])
 }
 
+/// DELETE /api/fatsecret/saved-meals/:id
+/// Delete a saved meal
+pub fn handle_delete_saved_meal(
+  req: wisp.Request,
+  conn: pog.Connection,
+  saved_meal_id: String,
+) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, http.Delete)
+
+  let id = types.saved_meal_id_from_string(saved_meal_id)
+  case service.delete_saved_meal(conn, id) {
+    Ok(Nil) -> {
+      let response =
+        json.object([#("success", json.bool(True))])
+        |> json.to_string
+      wisp.json_response(response, 200)
+    }
+
+    Error(service.NotConnected) ->
+      error_response(
+        401,
+        "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
+      )
+
+    Error(service.AuthRevoked) ->
+      error_response(
+        401,
+        "FatSecret authorization was revoked. Please reconnect.",
+      )
+
+    Error(service.ApiError(client.RequestFailed(status: 404, body: _))) ->
+      error_response(404, "Saved meal not found")
+
+    Error(e) -> error_response(500, service.error_to_string(e))
+  }
+}
+
+/// POST /api/fatsecret/saved-meals/:id/items
+/// Add a food item to a saved meal
+pub fn handle_add_saved_meal_item(
+  req: wisp.Request,
+  conn: pog.Connection,
+  saved_meal_id: String,
+) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, http.Post)
+  use body <- wisp.require_json(req)
+
+  let item_decoder = {
+    use food_id_opt <- decode.optional_field(
+      "food_id",
+      None,
+      decode.optional(decode.string),
+    )
+    use serving_id_opt <- decode.optional_field(
+      "serving_id",
+      None,
+      decode.optional(decode.string),
+    )
+    use number_of_units_opt <- decode.optional_field(
+      "number_of_units",
+      None,
+      decode.optional(decode.float),
+    )
+    use food_entry_name_opt <- decode.optional_field(
+      "food_entry_name",
+      None,
+      decode.optional(decode.string),
+    )
+    use serving_description_opt <- decode.optional_field(
+      "serving_description",
+      None,
+      decode.optional(decode.string),
+    )
+    use calories_opt <- decode.optional_field(
+      "calories",
+      None,
+      decode.optional(decode.float),
+    )
+    use carbohydrate_opt <- decode.optional_field(
+      "carbohydrate",
+      None,
+      decode.optional(decode.float),
+    )
+    use protein_opt <- decode.optional_field(
+      "protein",
+      None,
+      decode.optional(decode.float),
+    )
+    use fat_opt <- decode.optional_field(
+      "fat",
+      None,
+      decode.optional(decode.float),
+    )
+    decode.success(#(
+      food_id_opt,
+      serving_id_opt,
+      number_of_units_opt,
+      food_entry_name_opt,
+      serving_description_opt,
+      calories_opt,
+      carbohydrate_opt,
+      protein_opt,
+      fat_opt,
+    ))
+  }
+
+  case decode.run(body, item_decoder) {
+    Ok(#(
+      Some(food_id),
+      Some(serving_id),
+      Some(number_of_units),
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+    )) -> {
+      let item_input = types.ByFoodId(food_id, serving_id, number_of_units)
+      let meal_id = types.saved_meal_id_from_string(saved_meal_id)
+      case service.add_saved_meal_item(conn, meal_id, item_input) {
+        Ok(item_id) -> {
+          let response =
+            json.object([
+              #("success", json.bool(True)),
+              #(
+                "saved_meal_item_id",
+                json.string(types.saved_meal_item_id_to_string(item_id)),
+              ),
+            ])
+            |> json.to_string
+          wisp.json_response(response, 201)
+        }
+        Error(service.NotConnected) ->
+          error_response(
+            401,
+            "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
+          )
+        Error(service.AuthRevoked) ->
+          error_response(
+            401,
+            "FatSecret authorization was revoked. Please reconnect.",
+          )
+        Error(e) -> error_response(500, service.error_to_string(e))
+      }
+    }
+    Ok(#(
+      None,
+      None,
+      Some(number_of_units),
+      Some(food_entry_name),
+      Some(serving_description),
+      Some(calories),
+      Some(carbohydrate),
+      Some(protein),
+      Some(fat),
+    )) -> {
+      let item_input =
+        types.ByNutrition(
+          food_entry_name,
+          serving_description,
+          number_of_units,
+          calories,
+          carbohydrate,
+          protein,
+          fat,
+        )
+      let meal_id = types.saved_meal_id_from_string(saved_meal_id)
+      case service.add_saved_meal_item(conn, meal_id, item_input) {
+        Ok(item_id) -> {
+          let response =
+            json.object([
+              #("success", json.bool(True)),
+              #(
+                "saved_meal_item_id",
+                json.string(types.saved_meal_item_id_to_string(item_id)),
+              ),
+            ])
+            |> json.to_string
+          wisp.json_response(response, 201)
+        }
+        Error(service.NotConnected) ->
+          error_response(
+            401,
+            "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
+          )
+        Error(service.AuthRevoked) ->
+          error_response(
+            401,
+            "FatSecret authorization was revoked. Please reconnect.",
+          )
+        Error(e) -> error_response(500, service.error_to_string(e))
+      }
+    }
+    _ -> error_response(400, "Invalid request body")
+  }
+}
+
+/// PUT /api/fatsecret/saved-meals/:id/items/:item_id
+/// Edit a saved meal item
+pub fn handle_edit_saved_meal_item(
+  req: wisp.Request,
+  conn: pog.Connection,
+  _saved_meal_id: String,
+  item_id: String,
+) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, http.Put)
+  use body <- wisp.require_json(req)
+
+  let item_decoder = {
+    use food_id_opt <- decode.optional_field(
+      "food_id",
+      None,
+      decode.optional(decode.string),
+    )
+    use serving_id_opt <- decode.optional_field(
+      "serving_id",
+      None,
+      decode.optional(decode.string),
+    )
+    use number_of_units_opt <- decode.optional_field(
+      "number_of_units",
+      None,
+      decode.optional(decode.float),
+    )
+    use food_entry_name_opt <- decode.optional_field(
+      "food_entry_name",
+      None,
+      decode.optional(decode.string),
+    )
+    use serving_description_opt <- decode.optional_field(
+      "serving_description",
+      None,
+      decode.optional(decode.string),
+    )
+    use calories_opt <- decode.optional_field(
+      "calories",
+      None,
+      decode.optional(decode.float),
+    )
+    use carbohydrate_opt <- decode.optional_field(
+      "carbohydrate",
+      None,
+      decode.optional(decode.float),
+    )
+    use protein_opt <- decode.optional_field(
+      "protein",
+      None,
+      decode.optional(decode.float),
+    )
+    use fat_opt <- decode.optional_field(
+      "fat",
+      None,
+      decode.optional(decode.float),
+    )
+    decode.success(#(
+      food_id_opt,
+      serving_id_opt,
+      number_of_units_opt,
+      food_entry_name_opt,
+      serving_description_opt,
+      calories_opt,
+      carbohydrate_opt,
+      protein_opt,
+      fat_opt,
+    ))
+  }
+
+  case decode.run(body, item_decoder) {
+    Ok(#(
+      Some(food_id),
+      Some(serving_id),
+      Some(number_of_units),
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+    )) -> {
+      let item_input = types.ByFoodId(food_id, serving_id, number_of_units)
+      let item_id_typed = types.saved_meal_item_id_from_string(item_id)
+      case service.edit_saved_meal_item(conn, item_id_typed, item_input) {
+        Ok(Nil) -> {
+          let response =
+            json.object([#("success", json.bool(True))])
+            |> json.to_string
+          wisp.json_response(response, 200)
+        }
+        Error(service.NotConnected) ->
+          error_response(
+            401,
+            "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
+          )
+        Error(service.AuthRevoked) ->
+          error_response(
+            401,
+            "FatSecret authorization was revoked. Please reconnect.",
+          )
+        Error(e) -> error_response(500, service.error_to_string(e))
+      }
+    }
+    Ok(#(
+      None,
+      None,
+      Some(number_of_units),
+      Some(food_entry_name),
+      Some(serving_description),
+      Some(calories),
+      Some(carbohydrate),
+      Some(protein),
+      Some(fat),
+    )) -> {
+      let item_input =
+        types.ByNutrition(
+          food_entry_name,
+          serving_description,
+          number_of_units,
+          calories,
+          carbohydrate,
+          protein,
+          fat,
+        )
+      let item_id_typed = types.saved_meal_item_id_from_string(item_id)
+      case service.edit_saved_meal_item(conn, item_id_typed, item_input) {
+        Ok(Nil) -> {
+          let response =
+            json.object([#("success", json.bool(True))])
+            |> json.to_string
+          wisp.json_response(response, 200)
+        }
+        Error(service.NotConnected) ->
+          error_response(
+            401,
+            "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
+          )
+        Error(service.AuthRevoked) ->
+          error_response(
+            401,
+            "FatSecret authorization was revoked. Please reconnect.",
+          )
+        Error(e) -> error_response(500, service.error_to_string(e))
+      }
+    }
+    _ -> error_response(400, "Invalid request body")
+  }
+}
+
+/// DELETE /api/fatsecret/saved-meals/:id/items/:item_id
+/// Delete a saved meal item
+pub fn handle_delete_saved_meal_item(
+  req: wisp.Request,
+  conn: pog.Connection,
+  _saved_meal_id: String,
+  item_id: String,
+) -> wisp.Response {
+  use <- wisp.log_request(req)
+  use <- wisp.rescue_crashes
+  use req <- wisp.handle_head(req)
+  use <- wisp.require_method(req, http.Delete)
+
+  let item_id_typed = types.saved_meal_item_id_from_string(item_id)
+  case service.delete_saved_meal_item(conn, item_id_typed) {
+    Ok(Nil) -> {
+      let response =
+        json.object([#("success", json.bool(True))])
+        |> json.to_string
+      wisp.json_response(response, 200)
+    }
+
+    Error(service.NotConnected) ->
+      error_response(
+        401,
+        "Not connected to FatSecret. Visit /fatsecret/connect to authorize.",
+      )
+
+    Error(service.AuthRevoked) ->
+      error_response(
+        401,
+        "FatSecret authorization was revoked. Please reconnect.",
+      )
+
+    Error(service.ApiError(client.RequestFailed(status: 404, body: _))) ->
+      error_response(404, "Saved meal item not found")
+
+    Error(e) -> error_response(500, service.error_to_string(e))
+  }
+}
+
 fn error_response(status: Int, message: String) -> wisp.Response {
   let body =
     json.object([#("error", json.string(message))])
