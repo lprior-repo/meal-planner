@@ -50,7 +50,11 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       Ok(Nil)
     }
     ["delete"] -> {
-      case parse_delete_args(["delete"], id: id(flags)) {
+      let recipe_id_opt = case id(flags) {
+        Ok(id_val) -> option.Some(id_val)
+        Error(_) -> option.None
+      }
+      case parse_delete_args(["delete"], id: recipe_id_opt) {
         Ok(recipe_id) -> {
           case delete_recipe_command(config, recipe_id: recipe_id) {
             Ok(_) -> Ok(Nil)
