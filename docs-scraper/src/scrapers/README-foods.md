@@ -60,23 +60,23 @@ Example:
 
 ### Parameters
 
-| Name   | Type   | Required | Description              |
-| ------ | ------ | -------- | ------------------------ |
-| query  | string | Yes      | Search query text        |
-| limit  | number | No       | Maximum results to return|
-| offset | number | No       | Pagination offset        |
+| Name   | Type   | Required | Description               |
+| ------ | ------ | -------- | ------------------------- |
+| query  | string | Yes      | Search query text         |
+| limit  | number | No       | Maximum results to return |
+| offset | number | No       | Pagination offset         |
 
 ### Response Example
 
 \`\`\`json
 {
-  "foods": [
-    {
-      "food_id": "12345",
-      "food_name": "Apple",
-      "food_type": "Generic"
-    }
-  ]
+"foods": [
+{
+"food_id": "12345",
+"food_name": "Apple",
+"food_type": "Generic"
+}
+]
 }
 \`\`\`
 ```
@@ -120,11 +120,7 @@ const params = await scraper.extractParameters(tableHtml);
 // Returns: [{ name: 'food_id', type: 'string', required: true, description: '' }]
 
 // Save documentation and fixture
-await scraper.saveOutput(
-  'foods.search.v3',
-  '# Foods Search\n\nSearch for foods...',
-  { foods: [] }
-);
+await scraper.saveOutput('foods.search.v3', '# Foods Search\n\nSearch for foods...', { foods: [] });
 ```
 
 ## Testing

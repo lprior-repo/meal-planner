@@ -9,6 +9,7 @@
     "scrape": "tsx src/index.ts",
     "scrape:profile": "tsx scripts/scrape-profile.ts",
     "scrape:recipes": "tsx scripts/scrape-recipes.ts",
+    "scrape:brands": "tsx scripts/scrape-brands.ts",
     "build": "tsc",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
