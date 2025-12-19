@@ -58,18 +58,25 @@ pub fn main() {
       web.start(app_config)
     }
     Error(config.MissingEnvVar(name)) -> {
-      let err = error.config_error(
-        "Missing required environment variable: " <> name,
-        "Ensure the variable is set in your .env file or environment.",
-      )
+      let err =
+        error.config_error(
+          "Missing required environment variable: " <> name,
+          "Ensure the variable is set in your .env file or environment.",
+        )
       io.println(error.format_error(err))
       process.exit(error.exit_code_to_int(error.get_exit_code(err)))
     }
     Error(config.InvalidEnvVar(name, value, expected)) -> {
-      let err = error.config_error(
-        "Invalid value for " <> name <> ": got '" <> value <> "', expected " <> expected,
-        "Check your environment variable configuration for correct format and values.",
-      )
+      let err =
+        error.config_error(
+          "Invalid value for "
+            <> name
+            <> ": got '"
+            <> value
+            <> "', expected "
+            <> expected,
+          "Check your environment variable configuration for correct format and values.",
+        )
       io.println(error.format_error(err))
       process.exit(error.exit_code_to_int(error.get_exit_code(err)))
     }
