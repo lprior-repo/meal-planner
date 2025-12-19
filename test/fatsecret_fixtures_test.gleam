@@ -6,7 +6,7 @@ import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/fatsecret/foods/types.{type FoodId}
-import test/helpers/fatsecret_fixtures
+import fatsecret_fixtures
 
 pub fn main() {
   gleeunit.main()
