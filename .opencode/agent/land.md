@@ -1,7 +1,7 @@
 ---
 description: "Land the plane agent - executes mandatory session end workflow with git push. MUST complete before ending."
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
+model: qwen/qwen3-30b
 temperature: 0.0
 tools:
   read: true

@@ -1,7 +1,7 @@
 ---
 description: Planning Architect - Decomposes features, bugs, or tasks into atomic beads. Use before performing multi-step work.
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
+model: qwen/qwen3-30b
 temperature: 0.1
 tools:
   write: false
