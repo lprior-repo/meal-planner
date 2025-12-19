@@ -4,10 +4,10 @@ import gleam/dynamic/decode
 import gleam/json
 import gleeunit
 import gleeunit/should
-import simplifile
 import meal_planner/meal_plan/constraints
 import meal_planner/meal_plan/constraints_decoder
 import meal_planner/meal_plan/constraints_encoder
+import simplifile
 
 pub fn main() {
   gleeunit.main()
@@ -19,36 +19,45 @@ pub fn main() {
 
 /// Test: Full constraint with all fields round-trips through JSON
 pub fn constraint_json_full_roundtrip_test() {
-  let assert Ok(json_string) = simplifile.read("test/fixtures/meal_plan/constraint_full.json")
+  let assert Ok(json_string) =
+    simplifile.read("test/fixtures/meal_plan/constraint_full.json")
   let assert Ok(json_value) = json.parse(json_string, using: decode.dynamic)
-  let assert Ok(constraint) = decode.run(json_value, constraints_decoder.constraint_decoder())
+  let assert Ok(constraint) =
+    decode.run(json_value, constraints_decoder.constraint_decoder())
   let encoded = constraints_encoder.encode_constraint(constraint)
   let assert Ok(json_value2) = json.parse(encoded, using: decode.dynamic)
-  let assert Ok(decoded) = decode.run(json_value2, constraints_decoder.constraint_decoder())
+  let assert Ok(decoded) =
+    decode.run(json_value2, constraints_decoder.constraint_decoder())
 
   constraint |> should.equal(decoded)
 }
 
 /// Test: Minimal constraint (only required fields) round-trips through JSON
 pub fn constraint_json_minimal_roundtrip_test() {
-  let assert Ok(json_string) = simplifile.read("test/fixtures/meal_plan/constraint_minimal.json")
+  let assert Ok(json_string) =
+    simplifile.read("test/fixtures/meal_plan/constraint_minimal.json")
   let assert Ok(json_value) = json.parse(json_string, using: decode.dynamic)
-  let assert Ok(constraint) = decode.run(json_value, constraints_decoder.constraint_decoder())
+  let assert Ok(constraint) =
+    decode.run(json_value, constraints_decoder.constraint_decoder())
   let encoded = constraints_encoder.encode_constraint(constraint)
   let assert Ok(json_value2) = json.parse(encoded, using: decode.dynamic)
-  let assert Ok(decoded) = decode.run(json_value2, constraints_decoder.constraint_decoder())
+  let assert Ok(decoded) =
+    decode.run(json_value2, constraints_decoder.constraint_decoder())
 
   constraint |> should.equal(decoded)
 }
 
 /// Test: Complex constraint with multiple locked meals and travel dates
 pub fn constraint_json_complex_roundtrip_test() {
-  let assert Ok(json_string) = simplifile.read("test/fixtures/meal_plan/constraint_complex.json")
+  let assert Ok(json_string) =
+    simplifile.read("test/fixtures/meal_plan/constraint_complex.json")
   let assert Ok(json_value) = json.parse(json_string, using: decode.dynamic)
-  let assert Ok(constraint) = decode.run(json_value, constraints_decoder.constraint_decoder())
+  let assert Ok(constraint) =
+    decode.run(json_value, constraints_decoder.constraint_decoder())
   let encoded = constraints_encoder.encode_constraint(constraint)
   let assert Ok(json_value2) = json.parse(encoded, using: decode.dynamic)
-  let assert Ok(decoded) = decode.run(json_value2, constraints_decoder.constraint_decoder())
+  let assert Ok(decoded) =
+    decode.run(json_value2, constraints_decoder.constraint_decoder())
 
   constraint |> should.equal(decoded)
 }
