@@ -7,11 +7,13 @@ The ProfileScraper extracts documentation for FatSecret's Profile API, which use
 ## Target Endpoints
 
 ### OAuth Flow Endpoints
+
 - `profile.request_token` - Obtain request token
 - `profile.authorize` - User authorization
 - `profile.access_token` - Exchange for access token
 
 ### Profile Management Endpoints
+
 - `profile.get` - Get user profile information
 - `profile.foods.create` - Add food to diary
 - `profile.food_diary.get` - Get food diary entries
@@ -22,12 +24,14 @@ The ProfileScraper extracts documentation for FatSecret's Profile API, which use
 ## Usage
 
 ### From npm scripts
+
 ```bash
 cd docs-scraper
 npm run scrape:profile
 ```
 
 ### From code
+
 ```typescript
 import { scrapeProfileDocs } from './scrapers/profile.js';
 
@@ -35,6 +39,7 @@ await scrapeProfileDocs();
 ```
 
 ### With custom configuration
+
 ```typescript
 import { ProfileScraper } from './scrapers/profile.js';
 
@@ -51,6 +56,7 @@ await scraper.run();
 ### Markdown Documentation
 
 **`output/markdown/profile/oauth-flow.md`**
+
 - Complete OAuth 1.0a flow documentation
 - Step-by-step authorization process
 - Signature generation guidelines
@@ -58,6 +64,7 @@ await scraper.run();
 - Error handling
 
 **`output/markdown/profile/endpoints.md`**
+
 - Detailed endpoint documentation
 - HTTP methods and URLs
 - Parameter specifications
@@ -65,11 +72,13 @@ await scraper.run();
 - Request/response examples
 
 **`output/markdown/profile/[scraped-page-title].md`**
+
 - Raw scraped content from FatSecret docs
 
 ### JSON Fixtures
 
 **`output/fixtures/profile/[endpoint_name]_response.json`**
+
 - Example JSON responses for each endpoint
 - Used for testing and development
 
@@ -93,25 +102,31 @@ The scraper documents the complete 3-legged OAuth flow:
 ## Implementation Notes
 
 ### OAuth Signature Generation
+
 The scraper documents OAuth signature requirements:
+
 - HMAC-SHA1 signature method
 - Parameter ordering and encoding
 - Base string construction
 - Signing key format: `consumer_secret&token_secret`
 
 ### Scopes
+
 Different endpoints require different OAuth scopes:
+
 - `basic` - Profile information
 - `diary` - Food and exercise diary access
 - `weight` - Weight management
 - `meals` - Saved meals access
 
 ### Token Expiration
+
 FatSecret OAuth access tokens do not expire. Once obtained, they remain valid until the user explicitly revokes access.
 
 ## Testing
 
 The scraper generates JSON fixtures that can be used for:
+
 - Integration testing
 - Mock API responses
 - Type validation
@@ -120,6 +135,7 @@ The scraper generates JSON fixtures that can be used for:
 ## Error Handling
 
 The scraper documents common OAuth errors:
+
 - `401 Unauthorized` - Invalid credentials
 - `403 Forbidden` - Insufficient scopes
 - `oauth_problem=token_rejected` - Authorization failed
