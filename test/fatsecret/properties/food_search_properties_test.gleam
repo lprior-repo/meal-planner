@@ -17,8 +17,7 @@ pub fn food_search_response_decodes_all_edge_cases_test() {
 
   test_cases
   |> list.each(fn(json_str) {
-    let result =
-      json.parse(json_str, decoders.food_search_response_decoder())
+    let result = json.parse(json_str, decoders.food_search_response_decoder())
 
     should.be_ok(result)
   })
@@ -170,8 +169,7 @@ pub fn food_search_pagination_100_iterations_test() {
       <> int_to_string(page_number)
       <> "}}"
 
-    let result =
-      json.parse(json_str, decoders.food_search_response_decoder())
+    let result = json.parse(json_str, decoders.food_search_response_decoder())
 
     should.be_ok(result)
     case result {
@@ -201,8 +199,7 @@ pub fn food_search_comprehensive_100_iterations_test() {
         "{\"foods\": {\"food\": [], \"max_results\": \"50\", \"total_results\": \"0\", \"page_number\": \"0\"}}"
     }
 
-    let result =
-      json.parse(test_case, decoders.food_search_response_decoder())
+    let result = json.parse(test_case, decoders.food_search_response_decoder())
 
     should.be_ok(result)
 

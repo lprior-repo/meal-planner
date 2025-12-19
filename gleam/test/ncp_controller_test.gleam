@@ -6,7 +6,7 @@ import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/ncp.{
   DeviationResult, NutritionData, NutritionGoals, NutritionState,
-  ReconciliationResult, RecipeSuggestion, ScoredRecipe,
+  RecipeSuggestion, ReconciliationResult, ScoredRecipe,
 }
 import meal_planner/ncp_alerts
 import meal_planner/ncp_controller
@@ -268,7 +268,9 @@ pub fn export_metrics_returns_all_key_metrics_test() {
 // Helper Functions
 // ============================================================================
 
-fn create_test_reconciliation_result(within_tolerance: Bool) -> ReconciliationResult {
+fn create_test_reconciliation_result(
+  within_tolerance: Bool,
+) -> ReconciliationResult {
   ncp.ReconciliationResult(
     date: "2025-12-02",
     average_consumed: NutritionData(

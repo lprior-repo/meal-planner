@@ -122,7 +122,9 @@ pub type ControllerStatus {
 }
 
 /// Start the NCP controller as an OTP actor
-pub fn start(config: ControllerConfig) -> actor.StartResult(Subject(ControllerMessage)) {
+pub fn start(
+  config: ControllerConfig,
+) -> actor.StartResult(Subject(ControllerMessage)) {
   let initial_state =
     ControllerState(
       config: config,
@@ -158,7 +160,9 @@ fn handle_message(
 }
 
 /// Run a reconciliation cycle
-fn handle_reconcile(state: ControllerState) -> actor.Next(ControllerState, ControllerMessage) {
+fn handle_reconcile(
+  state: ControllerState,
+) -> actor.Next(ControllerState, ControllerMessage) {
   io.println("[NCP Controller] Running reconciliation...")
 
   // Get database path
@@ -168,7 +172,9 @@ fn handle_reconcile(state: ControllerState) -> actor.Next(ControllerState, Contr
   let result =
     storage.with_connection(db_path, fn(conn) {
       // 1. OBSERVE: Get current nutrition state
-      let history = case storage.get_nutrition_history(conn, state.config.history_days) {
+      let history = case
+        storage.get_nutrition_history(conn, state.config.history_days)
+      {
         Ok(h) -> h
         Error(_) -> []
       }
@@ -452,7 +458,10 @@ fn format_suggestions_message(suggestions: List(RecipeSuggestion)) -> String {
 }
 
 /// Schedule next reconciliation
-fn schedule_next_reconcile(self: Subject(ControllerMessage), delay_ms: Int) -> Nil {
+fn schedule_next_reconcile(
+  self: Subject(ControllerMessage),
+  delay_ms: Int,
+) -> Nil {
   // Use Erlang timer to send message after delay
   let _ = send_after(self, Reconcile, delay_ms)
   Nil
@@ -467,11 +476,7 @@ fn recipe_to_scored(recipe: Recipe) -> ScoredRecipe {
 fn get_today_date() -> String {
   // Use Erlang's date functions
   let #(year, month, day) = erlang_date()
-  int.to_string(year)
-  <> "-"
-  <> pad_int(month)
-  <> "-"
-  <> pad_int(day)
+  int.to_string(year) <> "-" <> pad_int(month) <> "-" <> pad_int(day)
 }
 
 /// Pad integer to 2 digits
