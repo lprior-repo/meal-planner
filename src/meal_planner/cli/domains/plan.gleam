@@ -1,13 +1,21 @@
 /// Plan CLI domain - handles meal plan generation and regeneration
 import birl
+import gleam/dict.{type Dict}
+import gleam/float
 import gleam/int
 import gleam/io
+import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
+import gleam/string
 import glint
 import meal_planner/config.{type Config}
 import meal_planner/meal_sync.{type MealSelection, MealSelection}
 import meal_planner/orchestrator
 import meal_planner/tandoor/client.{type ClientConfig, BearerAuth, ClientConfig}
+import meal_planner/tandoor/mealplan.{
+  type MealPlanEntry, type MealPlanListResponse,
+}
 
 // ============================================================================
 // Helper Functions
