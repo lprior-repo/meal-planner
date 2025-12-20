@@ -14,6 +14,7 @@
 /// - None values are excluded from the result
 /// - Parameter order is normalized for consistency
 import gleam/int
+import gleam/list
 import gleam/option.{type Option, None, Some}
 
 /// Build pagination parameters from limit and offset
@@ -181,6 +182,116 @@ pub fn build_recipe_list_params(
   offset: Option(Int),
 ) -> List(#(String, String)) {
   build_pagination_params(limit, offset)
+}
+
+/// Build recipe list query parameters with filtering support
+///
+/// Builds parameters for recipe list endpoint with optional filters for
+/// author, difficulty, and tags. Combines pagination with filtering.
+///
+/// # Arguments
+/// * `limit` - Optional page size
+/// * `offset` - Optional skip count
+/// * `author_id` - Optional author filter (user ID)
+/// * `difficulty` - Optional difficulty filter (e.g., "easy", "medium", "hard")
+/// * `tags` - Optional tags filter (comma-separated tag IDs)
+///
+/// # Returns
+/// List of query parameters
+///
+/// # Example
+/// ```gleam
+/// build_recipe_filter_params(
+///   Some(25),
+///   Some(0),
+///   Some(1),
+///   Some("easy"),
+///   Some("5,6")
+/// )
+/// // => [#("tags", "5,6"), #("difficulty", "easy"), #("author_id", "1"), #("offset", "0"), #("limit", "25")]
+/// ```
+pub fn build_recipe_filter_params(
+  limit: Option(Int),
+  offset: Option(Int),
+  author_id: Option(Int),
+  difficulty: Option(String),
+  tags: Option(String),
+) -> List(#(String, String)) {
+  let params = []
+  let params = add_optional_int_param(params, "limit", limit)
+  let params = add_optional_int_param(params, "offset", offset)
+  let params = add_optional_int_param(params, "author_id", author_id)
+  let params = add_optional_string_param(params, "difficulty", difficulty)
+  let params = add_optional_string_param(params, "tags", tags)
+  params
+}
+
+/// Build recipe search query parameters
+///
+/// Builds parameters for recipe search endpoint with query and pagination.
+/// Combines search term with pagination parameters.
+///
+/// # Arguments
+/// * `query` - Search query string
+/// * `limit` - Optional page size
+/// * `offset` - Optional skip count
+///
+/// # Returns
+/// List of query parameters
+///
+/// # Example
+/// ```gleam
+/// build_recipe_search_params(Some("chicken"), Some(20), Some(0))
+/// // => [#("query", "chicken"), #("offset", "0"), #("limit", "20")]
+/// ```
+pub fn build_recipe_search_params(
+  query: Option(String),
+  limit: Option(Int),
+  offset: Option(Int),
+) -> List(#(String, String)) {
+  let params = []
+  let params = add_optional_int_param(params, "limit", limit)
+  let params = add_optional_int_param(params, "offset", offset)
+  let params = add_optional_string_param(params, "query", query)
+  params
+}
+
+/// Merge filter parameters with base query parameters
+///
+/// Combines recipe filters into a single parameter list, with later parameters
+/// taking precedence over earlier ones for keys that appear in both.
+///
+/// # Arguments
+/// * `base` - Base pagination parameters
+/// * `filters` - Additional filter parameters
+///
+/// # Returns
+/// Merged parameter list
+///
+/// # Example
+/// ```gleam
+/// let base = build_recipe_list_params(Some(20), Some(0))
+/// let filters = [#("author_id", "1"), #("difficulty", "easy")]
+/// merge_recipe_filters(base, filters)
+/// // => [...base params..., #("difficulty", "easy"), #("author_id", "1")]
+/// ```
+pub fn merge_recipe_filters(
+  base: List(#(String, String)),
+  filters: List(#(String, String)),
+) -> List(#(String, String)) {
+  // Build a set of keys from filters for quick lookup
+  let filter_keys =
+    filters
+    |> list.map(fn(pair) { pair.0 })
+    |> list.unique
+
+  // Keep base params that aren't overridden
+  let filtered_base =
+    base
+    |> list.filter(fn(pair) { !list.contains(filter_keys, pair.0) })
+
+  // Combine: filters first (for precedence), then kept base params
+  list.append(filters, filtered_base)
 }
 
 /// Build ingredient list query parameters
