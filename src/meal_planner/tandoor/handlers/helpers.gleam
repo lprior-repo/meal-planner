@@ -6,6 +6,8 @@
 /// - Success/error response builders
 /// - Tandoor entity JSON encoders
 /// - Authentication client setup
+///
+/// Re-exports common functions from shared/response_encoders to reduce duplication.
 import gleam/float
 import gleam/int
 import gleam/json
@@ -14,6 +16,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/env
+import meal_planner/shared/response_encoders
 import meal_planner/tandoor/client
 import wisp
 

@@ -511,7 +511,7 @@ pub fn is_feature_enabled(config: Config, feature: Feature) -> Bool {
     FeatureTodoist -> config.external_services.todoist_api_key != ""
     FeatureHealthCheck -> get_env_bool("ENABLE_HEALTH_CHECK", True)
     FeatureRateLimiting -> config.performance.rate_limit_requests > 0
-    FeatureCORS -> list.length(config.server.cors_allowed_origins) > 0
+    FeatureCORS -> config.server.cors_allowed_origins != []
   }
 }
 

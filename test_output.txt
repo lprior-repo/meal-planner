@@ -1,0 +1,1234 @@
+gleam run -m test_runner/fast
+  Compiling meal_planner
+warning: Inefficient use of `list.length`
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/config.gleam:514:20
+    │
+514 │     FeatureCORS -> list.length(config.server.cors_allowed_origins) > 0
+    │                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The `list.length` function has to iterate across the whole
+list to calculate the length, which is wasteful if you only
+need to know if the list is empty or not.
+
+Hint: You can use `the_list != []` instead.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/tandoor/recipe.gleam:15:1
+   │
+15 │ import gleam/dynamic
+   │ ^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported value
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/tandoor/recipe.gleam:23:61
+   │
+23 │   execute_delete, execute_get, execute_patch, execute_post, parse_json_list,
+   │                                                             ^^^^^^^^^^^^^^^ This imported value is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/tandoor/recipe.gleam:33:1
+   │
+33 │ import meal_planner/tandoor/decoders/decoder_combinators
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/tandoor/recipe.gleam:636:1
+    │
+636 │ fn encode_keyword(keyword: Keyword) -> Json {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/domains/recipe.gleam:12:1
+   │
+12 │ import gleam/result
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unreachable pattern
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/domains/recipe.gleam:337:5
+    │
+337 │     ["search"] -> {
+    │     ^^^^^^^^^^
+
+This pattern cannot be reached as a previous pattern matches the same
+values.
+
+Hint: It can be safely removed.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/storage/scheduler.gleam:12:17
+   │
+12 │   type JobType, type RetryPolicy, type ScheduledJob, type TriggerSource,
+   │                 ^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/storage/scheduler.gleam:12:54
+   │
+12 │   type JobType, type RetryPolicy, type ScheduledJob, type TriggerSource,
+   │                                                      ^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/domains/scheduler.gleam:394:1
+    │
+394 │ fn normalize_job_name(job_name: String) -> String {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/sync_scheduler.gleam:9:1
+  │
+9 │ import gleam/result
+  │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/sync_scheduler.gleam:13:3
+   │
+13 │   type ScheduledJob, type SchedulerError, AutoSync, EveryNHours, Scheduled,
+   │   ^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/sync_scheduler.gleam:13:43
+   │
+13 │   type ScheduledJob, type SchedulerError, AutoSync, EveryNHours, Scheduled,
+   │                                           ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/sync_scheduler.gleam:13:53
+   │
+13 │   type ScheduledJob, type SchedulerError, AutoSync, EveryNHours, Scheduled,
+   │                                                     ^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/sync_scheduler.gleam:13:66
+   │
+13 │   type ScheduledJob, type SchedulerError, AutoSync, EveryNHours, Scheduled,
+   │                                                                  ^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+  ┌─ /home/lewis/src/meal-planner/src/meal_planner/fatsecret/recipes/decoders.gleam:3:28
+  │
+3 │ import gleam/option.{None, Some}
+  │                            ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported value
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/tandoor/import_export.gleam:20:61
+   │
+20 │   execute_delete, execute_get, execute_patch, execute_post, parse_json_list,
+   │                                                             ^^^^^^^^^^^^^^^ This imported value is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/tandoor/api/generic_crud.gleam:24:41
+   │
+24 │   type ClientConfig, type TandoorError, NetworkError, ParseError,
+   │                                         ^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported value
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/tandoor/ingredients.gleam:11:20
+   │
+11 │   type Ingredient, encode_ingredient, list_ingredients,
+   │                    ^^^^^^^^^^^^^^^^^ This imported value is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/tandoor/mealplan.gleam:21:1
+   │
+21 │ import meal_planner/tandoor/keyword
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported value
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/tandoor/step.gleam:23:35
+   │
+23 │   type IngredientId, type StepId, ingredient_id_decoder, ingredient_id_to_int,
+   │                                   ^^^^^^^^^^^^^^^^^^^^^ This imported value is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/tandoor/supermarket_categories.gleam:18:3
+   │
+18 │   type SupermarketCategory, type SupermarketCategoryCreateRequest,
+   │   ^^^^^^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/tandoor/supermarkets.gleam:12:3
+   │
+12 │   type Supermarket, type SupermarketCreateRequest, SupermarketCreateRequest,
+   │   ^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/tandoor/user.gleam:15:1
+   │
+15 │ import gleam/list
+   │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/tandoor_cuisines.gleam:14:3
+   │
+14 │   type Cuisine, type CuisineCreateRequest, type CuisineUpdateRequest,
+   │   ^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/tandoor_cuisines.gleam:14:17
+   │
+14 │   type Cuisine, type CuisineCreateRequest, type CuisineUpdateRequest,
+   │                 ^^^^^^^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/tandoor_cuisines.gleam:14:44
+   │
+14 │   type Cuisine, type CuisineCreateRequest, type CuisineUpdateRequest,
+   │                                            ^^^^^^^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/tandoor_cuisines.gleam:15:3
+   │
+15 │   CuisineCreateRequest, CuisineUpdateRequest, create_cuisine, delete_cuisine,
+   │   ^^^^^^^^^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/tandoor_cuisines.gleam:15:25
+   │
+15 │   CuisineCreateRequest, CuisineUpdateRequest, create_cuisine, delete_cuisine,
+   │                         ^^^^^^^^^^^^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Deprecated value used
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/fatsecret/exercise/handlers.gleam:497:13
+    │
+497 │   |> result.then(fn(update) {
+    │             ^^^^ This value has been deprecated
+
+It was deprecated with this message: This function is an alias of
+result.try, use that instead
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/meal_planning.gleam:14:1
+   │
+14 │ import gleam/result
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/meal_planning.gleam:31:1
+   │
+31 │ type MealPlanResponse {
+   │ ^^^^^^^^^^^^^^^^^^^^^ This private type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private constructor
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/meal_planning.gleam:32:3
+   │  
+32 │ ╭   MealPlanResponse(
+33 │ │     recipes_selected: Int,
+34 │ │     grocery_list_items: Int,
+35 │ │     total_prep_time_min: Int,
+36 │ │     formatted_plan: String,
+37 │ │   )
+   │ ╰───^ This private constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/web/handlers/meal_planning.gleam:126:3
+    │
+126 │   tandoor_config: ClientConfig,
+    │   ^^^^^^^^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_tandoor_config`.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/shore_app.gleam:11:1
+   │
+11 │ import meal_planner/cli/update
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/shore_app.gleam:12:1
+   │
+12 │ import meal_planner/cli/view
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/test/cli/fatsecret_detail_test.gleam:6:1
+  │
+6 │ import gleam/list
+  │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/domains/nutrition.gleam:8:1
+  │
+8 │ import birl
+  │ ^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/domains/nutrition.gleam:13:22
+   │
+13 │ import gleam/option.{type Option, None, Some}
+   │                      ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/domains/nutrition.gleam:18:1
+   │
+18 │ import meal_planner/fatsecret/diary/service as diary_service
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/domains/nutrition.gleam:19:1
+   │
+19 │ import meal_planner/fatsecret/diary/types as diary_types
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/domains/nutrition.gleam:28:3
+   │
+28 │   type StorageError, DatabaseError, InvalidInput, NotFound, Unauthorized,
+   │   ^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/domains/nutrition.gleam:465:3
+    │
+465 │   config: Config,
+    │   ^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_config`.
+
+warning: Todo found
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/exercise/handlers_test.gleam:15:3
+   │
+15 │   todo
+   │   ^^^^ This code is incomplete
+
+This code will crash if it is run. Be sure to finish it before
+running your program.
+
+warning: Todo found
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/exercise/handlers_test.gleam:20:3
+   │
+20 │   todo
+   │   ^^^^ This code is incomplete
+
+This code will crash if it is run. Be sure to finish it before
+running your program.
+
+warning: Todo found
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/exercise/handlers_test.gleam:25:3
+   │
+25 │   todo
+   │   ^^^^ This code is incomplete
+
+This code will crash if it is run. Be sure to finish it before
+running your program.
+
+warning: Todo found
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/exercise/handlers_test.gleam:30:3
+   │
+30 │   todo
+   │   ^^^^ This code is incomplete
+
+This code will crash if it is run. Be sure to finish it before
+running your program.
+
+warning: Todo found
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/exercise/handlers_test.gleam:35:3
+   │
+35 │   todo
+   │   ^^^^ This code is incomplete
+
+This code will crash if it is run. Be sure to finish it before
+running your program.
+
+warning: Todo found
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/exercise/handlers_test.gleam:40:3
+   │
+40 │   todo
+   │   ^^^^ This code is incomplete
+
+This code will crash if it is run. Be sure to finish it before
+running your program.
+
+warning: Todo found
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/exercise/handlers_test.gleam:45:3
+   │
+45 │   todo
+   │   ^^^^ This code is incomplete
+
+This code will crash if it is run. Be sure to finish it before
+running your program.
+
+warning: Todo found
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/exercise/handlers_test.gleam:50:3
+   │
+50 │   todo
+   │   ^^^^ This code is incomplete
+
+This code will crash if it is run. Be sure to finish it before
+running your program.
+
+warning: Todo found
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/exercise/handlers_test.gleam:55:3
+   │
+55 │   todo
+   │   ^^^^ This code is incomplete
+
+This code will crash if it is run. Be sure to finish it before
+running your program.
+
+warning: Todo found
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/exercise/handlers_test.gleam:60:3
+   │
+60 │   todo
+   │   ^^^^ This code is incomplete
+
+This code will crash if it is run. Be sure to finish it before
+running your program.
+
+warning: Todo found
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/exercise/handlers_test.gleam:65:3
+   │
+65 │   todo
+   │   ^^^^ This code is incomplete
+
+This code will crash if it is run. Be sure to finish it before
+running your program.
+
+warning: Inefficient use of `list.length`
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/live/foods_live_test.gleam:41:22
+   │
+41 │       should.be_true(list.length(suggestions.suggestions) > 0)
+   │                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The `list.length` function has to iterate across the whole
+list to calculate the length, which is wasteful if you only
+need to know if the list is empty or not.
+
+Hint: You can use `the_list != []` instead.
+
+warning: Inefficient use of `list.length`
+   ┌─ /home/lewis/src/meal-planner/test/fatsecret/live/foods_live_test.gleam:84:22
+   │
+84 │       should.be_true(list.length(suggestions.suggestions) > 0)
+   │                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The `list.length` function has to iterate across the whole
+list to calculate the length, which is wasteful if you only
+need to know if the list is empty or not.
+
+Hint: You can use `the_list != []` instead.
+
+warning: Inefficient use of `list.length`
+    ┌─ /home/lewis/src/meal-planner/test/fatsecret/live/foods_live_test.gleam:122:22
+    │
+122 │       should.be_true(list.length(response.brands) > 0)
+    │                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The `list.length` function has to iterate across the whole
+list to calculate the length, which is wasteful if you only
+need to know if the list is empty or not.
+
+Hint: You can use `the_list != []` instead.
+
+warning: Inefficient use of `list.length`
+    ┌─ /home/lewis/src/meal-planner/test/fatsecret/live/foods_live_test.gleam:164:22
+    │
+164 │       should.be_true(list.length(response.brands) > 0)
+    │                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The `list.length` function has to iterate across the whole
+list to calculate the length, which is wasteful if you only
+need to know if the list is empty or not.
+
+Hint: You can use `the_list != []` instead.
+
+warning: Inefficient use of `list.length`
+    ┌─ /home/lewis/src/meal-planner/test/fatsecret/live/foods_live_test.gleam:202:22
+    │
+202 │       should.be_true(list.length(response.foods) > 0)
+    │                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The `list.length` function has to iterate across the whole
+list to calculate the length, which is wasteful if you only
+need to know if the list is empty or not.
+
+Hint: You can use `the_list != []` instead.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/generation/locked_meals.gleam:13:62
+   │
+13 │   type Constraints, type DayMeals, type MealType, Breakfast, DayMeals, Dinner,
+   │                                                              ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/test/generation/locked_meals_test.gleam:10:3
+   │
+10 │   type LockConflict, LockConflict, apply_locked_meals, check_lock_conflicts,
+   │   ^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/test/generation/locked_meals_test.gleam:13:3
+   │
+13 │   type Constraints, type DayMeals, type MealType, Breakfast, Constraints,
+   │   ^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/test/generation/locked_meals_test.gleam:13:36
+   │
+13 │   type Constraints, type DayMeals, type MealType, Breakfast, Constraints,
+   │                                    ^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/test/generation/weekly_generation_test.gleam:13:1
+   │
+13 │ import gleam/option
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/test/generation/weekly_generation_test.gleam:17:3
+   │
+17 │   Breakfast, Constraints, DayMeals, Dinner, LockedMeal, Lunch,
+   │   ^^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/test/generation/weekly_generation_test.gleam:17:27
+   │
+17 │   Breakfast, Constraints, DayMeals, Dinner, LockedMeal, Lunch,
+   │                           ^^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/test/generation/weekly_generation_test.gleam:17:57
+   │
+17 │   Breakfast, Constraints, DayMeals, Dinner, LockedMeal, Lunch,
+   │                                                         ^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/test/generator/weekly_test.gleam:7:3
+  │
+7 │   type Constraints, type DailyMacros, type DayMeals, type GenerationError,
+  │   ^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/test/generator/weekly_test.gleam:7:21
+  │
+7 │   type Constraints, type DailyMacros, type DayMeals, type GenerationError,
+  │                     ^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/test/generator/weekly_test.gleam:7:54
+  │
+7 │   type Constraints, type DailyMacros, type DayMeals, type GenerationError,
+  │                                                      ^^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/test/generator/weekly_test.gleam:8:3
+  │
+8 │   type MacroComparison, type MealType, type RotationEntry, type WeeklyMealPlan,
+  │   ^^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/test/generator/weekly_test.gleam:8:25
+  │
+8 │   type MacroComparison, type MealType, type RotationEntry, type WeeklyMealPlan,
+  │                         ^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/test/generator/weekly_test.gleam:8:60
+  │
+8 │   type MacroComparison, type MealType, type RotationEntry, type WeeklyMealPlan,
+  │                                                            ^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/test/integration/tandoor/foods_handler_test.gleam:17:35
+   │
+17 │ import meal_planner/tandoor/food.{Food, FoodCreateRequest, FoodUpdateRequest}
+   │                                   ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unreachable pattern
+   ┌─ /home/lewis/src/meal-planner/test/integration/tandoor/foods_handler_test.gleam:49:5
+   │
+49 │     None -> should.fail()
+   │     ^^^^
+
+This pattern cannot be reached as it matches on a variant of a type which
+is never present.
+
+Hint: It can be safely removed.
+
+warning: Unreachable pattern
+    ┌─ /home/lewis/src/meal-planner/test/integration/tandoor/foods_handler_test.gleam:269:5
+    │
+269 │     None -> should.fail()
+    │     ^^^^
+
+This pattern cannot be reached as it matches on a variant of a type which
+is never present.
+
+Hint: It can be safely removed.
+
+warning: Unreachable pattern
+    ┌─ /home/lewis/src/meal-planner/test/integration/tandoor/foods_handler_test.gleam:281:5
+    │
+281 │     None -> should.fail()
+    │     ^^^^
+
+This pattern cannot be reached as it matches on a variant of a type which
+is never present.
+
+Hint: It can be safely removed.
+
+warning: Unreachable pattern
+   ┌─ /home/lewis/src/meal-planner/test/integration/tandoor/recipes_handler_test.gleam:78:5
+   │
+78 │     None -> should.fail()
+   │     ^^^^
+
+This pattern cannot be reached as it matches on a variant of a type which
+is never present.
+
+Hint: It can be safely removed.
+
+warning: Unreachable pattern
+   ┌─ /home/lewis/src/meal-planner/test/integration/tandoor/recipes_handler_test.gleam:91:5
+   │
+91 │     None -> should.fail()
+   │     ^^^^
+
+This pattern cannot be reached as it matches on a variant of a type which
+is never present.
+
+Hint: It can be safely removed.
+
+warning: Unreachable pattern
+    ┌─ /home/lewis/src/meal-planner/test/integration/tandoor/recipes_handler_test.gleam:462:5
+    │
+462 │     None -> should.fail()
+    │     ^^^^
+
+This pattern cannot be reached as it matches on a variant of a type which
+is never present.
+
+Hint: It can be safely removed.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/src/meal_planner/meal_plan/constraints.gleam:9:1
+  │
+9 │ import meal_planner/types
+  │ ^^^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/meal_plan/constraints_encoder.gleam:52:1
+   │
+52 │ fn meal_type_to_json(meal_type: constraints.MealType) -> json.Json {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused private function
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/meal_plan/constraints_encoder.gleam:66:1
+   │
+66 │ fn day_of_week_to_json(day: constraints.DayOfWeek) -> json.Json {
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/advisor/daily_recommendations.gleam:11:1
+   │
+11 │ import gleam/string
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Duplicate import
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/advisor/daily_recommendations.gleam:14:1
+   │
+13 │ import meal_planner/fatsecret/diary/types as diary_types
+   │ -------------------------------------------------------- First imported here
+14 │ import meal_planner/fatsecret/diary/types.{type DaySummary, type FoodEntry}
+   │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Reimported here
+
+The meal_planner/fatsecret/diary/types module has been imported twice.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/advisor/daily_recommendations.gleam:14:44
+   │
+14 │ import meal_planner/fatsecret/diary/types.{type DaySummary, type FoodEntry}
+   │                                            ^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/advisor/recommendations.gleam:11:22
+   │
+11 │ import gleam/option.{type Option, None, Some}
+   │                      ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/advisor/recommendations.gleam:11:35
+   │
+11 │ import gleam/option.{type Option, None, Some}
+   │                                   ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/advisor/recommendations.gleam:11:41
+   │
+11 │ import gleam/option.{type Option, None, Some}
+   │                                         ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/advisor/recommendations.gleam:12:1
+   │
+12 │ import gleam/string
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/advisor/recommendations.gleam:455:3
+    │
+455 │   targets: NutritionTargets,
+    │   ^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_targets`.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/automation/macro_optimizer.gleam:40:1
+   │
+40 │ import gleam/float
+   │ ^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/automation/macro_optimizer.gleam:41:1
+   │
+41 │ import gleam/int
+   │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/automation/macro_optimizer.gleam:43:22
+   │
+43 │ import gleam/option.{type Option, None, Some}
+   │                      ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/automation/macro_optimizer.gleam:43:35
+   │
+43 │ import gleam/option.{type Option, None, Some}
+   │                                   ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/automation/macro_optimizer.gleam:43:41
+   │
+43 │ import gleam/option.{type Option, None, Some}
+   │                                         ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+  ┌─ /home/lewis/src/meal-planner/src/meal_planner/generator/types.gleam:9:22
+  │
+9 │ import gleam/option.{type Option, None, Some}
+  │                      ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/generator/types.gleam:13:1
+   │
+13 │ import meal_planner/id
+   │ ^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported value
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/automation/plan_generator.gleam:21:3
+   │
+21 │   macros_subtract,
+   │   ^^^^^^^^^^^^^^^ This imported value is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/automation/plan_generator.gleam:567:3
+    │
+567 │   plan: weekly.WeeklyMealPlan,
+    │   ^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_plan`.
+
+warning: Unused imported module
+  ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/cache.gleam:8:1
+  │
+8 │ import gleam/dynamic
+  │ ^^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/cli/tui.gleam:10:22
+   │
+10 │ import gleam/option.{type Option, None, Some}
+   │                      ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/errors.gleam:16:20
+   │
+16 │ import gleam/http.{type Header}
+   │                    ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/errors.gleam:21:41
+   │
+21 │ import gleam/option.{type Option, None, Some}
+   │                                         ^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/openapi/generator.gleam:15:1
+   │
+15 │ import gleam/int
+   │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/openapi/cli.gleam:15:1
+   │
+15 │ import gleam/list
+   │ ^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/executor.gleam:16:1
+   │
+16 │ import gleam/int
+   │ ^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported item
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/executor.gleam:28:3
+   │
+28 │   Running, WeeklyGeneration, WeeklyTrends,
+   │   ^^^^^^^ This imported constructor is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/executor.gleam:131:3
+    │
+131 │   job: ScheduledJob,
+    │   ^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_job`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/executor.gleam:132:3
+    │
+132 │   config: ExecutorConfig,
+    │   ^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_config`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/executor.gleam:152:25
+    │
+152 │ pub fn retry_failed_job(job_id: String, delay_ms: Int) -> Result(Nil, AppError) {
+    │                         ^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_job_id`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/executor.gleam:152:41
+    │
+152 │ pub fn retry_failed_job(job_id: String, delay_ms: Int) -> Result(Nil, AppError) {
+    │                                         ^^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_delay_ms`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/executor.gleam:172:3
+    │
+172 │   context: ExecutionContext,
+    │   ^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_context`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/executor.gleam:193:3
+    │
+193 │   context: ExecutionContext,
+    │   ^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_context`.
+
+warning: Unused value
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/executor.gleam:376:3
+    │  
+376 │ ╭   case mark_job_completed(id.job_id_to_string(job.id), output) {
+377 │ │     Ok(_) -> Nil
+378 │ │     Error(_) -> Nil
+379 │ │   }
+    │ ╰───^ This value is never used
+
+This expression computes a value without any side effects, but then the
+value isn't used at all. You might want to assign it to a variable, or
+delete the expression entirely if it's not needed.
+
+warning: Unused value
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/executor.gleam:411:3
+    │  
+411 │ ╭   case mark_job_failed(id.job_id_to_string(job.id), error_msg) {
+412 │ │     Ok(_) -> Nil
+413 │ │     Error(_) -> Nil
+414 │ │   }
+    │ ╰───^ This value is never used
+
+This expression computes a value without any side effects, but then the
+value isn't used at all. You might want to assign it to a variable, or
+delete the expression entirely if it's not needed.
+
+warning: Unused imported module
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:18:1
+   │
+18 │ import gleam/result
+   │ ^^^^^^^^^^^^^^^^^^^ This imported module is never used
+
+Hint: You can safely remove it.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:22:28
+   │
+22 │ import meal_planner/types.{type Macros, Macros}
+   │                            ^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:60:3
+   │
+60 │   conn: pog.Connection,
+   │   ^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_conn`.
+
+warning: Unused function argument
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:61:3
+   │
+61 │   user_id: UserId,
+   │   ^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_user_id`.
+
+warning: Unused function argument
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:94:3
+   │
+94 │   conn: pog.Connection,
+   │   ^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_conn`.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:131:1
+    │  
+131 │ ╭ fn fetch_user_constraints(
+132 │ │   conn: pog.Connection,
+133 │ │   user_id: UserId,
+134 │ │ ) -> Result(weekly.Constraints, GenerationError) {
+    │ ╰────────────────────────────────────────────────^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:132:3
+    │
+132 │   conn: pog.Connection,
+    │   ^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_conn`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:133:3
+    │
+133 │   user_id: UserId,
+    │   ^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_user_id`.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:140:1
+    │  
+140 │ ╭ fn fetch_weekly_trends(
+141 │ │   conn: pog.Connection,
+142 │ │   user_id: UserId,
+143 │ │ ) -> Result(Nil, GenerationError) {
+    │ ╰─────────────────────────────────^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:141:3
+    │
+141 │   conn: pog.Connection,
+    │   ^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_conn`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:142:3
+    │
+142 │   user_id: UserId,
+    │   ^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_user_id`.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:149:1
+    │  
+149 │ ╭ fn fetch_fatsecret_profile(
+150 │ │   conn: pog.Connection,
+151 │ │   user_id: UserId,
+152 │ │ ) -> Result(Nil, GenerationError) {
+    │ ╰─────────────────────────────────^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:150:3
+    │
+150 │   conn: pog.Connection,
+    │   ^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_conn`.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:151:3
+    │
+151 │   user_id: UserId,
+    │   ^^^^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_user_id`.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:158:1
+    │
+158 │ fn fetch_tandoor_recipes(conn: pog.Connection) -> Result(Nil, GenerationError) {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:158:26
+    │
+158 │ fn fetch_tandoor_recipes(conn: pog.Connection) -> Result(Nil, GenerationError) {
+    │                          ^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_conn`.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:164:1
+    │
+164 │ fn calculate_grocery_list(plan: WeeklyMealPlan) -> Result(Nil, GenerationError) {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:164:27
+    │
+164 │ fn calculate_grocery_list(plan: WeeklyMealPlan) -> Result(Nil, GenerationError) {
+    │                           ^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_plan`.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:170:1
+    │
+170 │ fn generate_email_output(plan: WeeklyMealPlan) -> Result(Nil, GenerationError) {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:170:26
+    │
+170 │ fn generate_email_output(plan: WeeklyMealPlan) -> Result(Nil, GenerationError) {
+    │                          ^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_plan`.
+
+warning: Unused private function
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:176:1
+    │
+176 │ fn stage_fatsecret_upload(plan: WeeklyMealPlan) -> Result(Nil, GenerationError) {
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ This private function is never used
+
+Hint: You can safely remove it.
+
+warning: Unused function argument
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/generation_scheduler.gleam:176:27
+    │
+176 │ fn stage_fatsecret_upload(plan: WeeklyMealPlan) -> Result(Nil, GenerationError) {
+    │                           ^^^^ This argument is never used
+
+Hint: You can ignore it with an underscore: `_plan`.
+
+warning: Unused imported type
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/recurrence.gleam:14:3
+   │
+14 │   type RecurrencePattern, type RecurrenceRule,
+   │   ^^^^^^^^^^^^^^^^^^^^^^ This imported type is never used
+
+Hint: You can safely remove it.
+
+error: Type mismatch
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/recurrence.gleam:31:5
+   │
+31 │     advanced.Custom(_) -> None
+   │     ^^^^^^^^^^^^^^^^^^
+
+Expected type:
+
+    RecurrencePattern
+
+Found type:
+
+    advanced.DietaryRestriction
+
+error: Unknown module value
+   ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/recurrence.gleam:87:26
+   │
+87 │         |> birl.add(birl.seconds(seconds_to_add))
+   │                          ^^^^^^^
+
+The module `birl` does not have a `seconds` value.
+
+error: Type mismatch
+    ┌─ /home/lewis/src/meal-planner/src/meal_planner/scheduler/recurrence.gleam:208:5
+    │
+208 │     advanced.Custom(_) -> True
+    │     ^^^^^^^^^^^^^^^^^^
+
+Expected type:
+
+    RecurrencePattern
+
+Found type:
+
+    advanced.DietaryRestriction
+
+make: *** [Makefile:27: test] Error 1

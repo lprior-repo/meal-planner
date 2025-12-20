@@ -9,7 +9,8 @@ import gleam/option.{type Option, None, Some}
 
 /// Micronutrient values (vitamins and minerals)
 /// All fields are optional as not all foods have complete micronutrient data
-pub type Micronutrients {
+/// Opaque type ensures all values that are present are non-negative
+pub opaque type Micronutrients {
   Micronutrients(
     fiber: Option(Float),
     sugar: Option(Float),
@@ -33,6 +34,229 @@ pub type Micronutrients {
     potassium: Option(Float),
     zinc: Option(Float),
   )
+}
+
+/// Create a Micronutrients value with validation
+/// All non-None values must be non-negative
+pub fn new(
+  fiber: Option(Float),
+  sugar: Option(Float),
+  sodium: Option(Float),
+  cholesterol: Option(Float),
+  vitamin_a: Option(Float),
+  vitamin_c: Option(Float),
+  vitamin_d: Option(Float),
+  vitamin_e: Option(Float),
+  vitamin_k: Option(Float),
+  vitamin_b6: Option(Float),
+  vitamin_b12: Option(Float),
+  folate: Option(Float),
+  thiamin: Option(Float),
+  riboflavin: Option(Float),
+  niacin: Option(Float),
+  calcium: Option(Float),
+  iron: Option(Float),
+  magnesium: Option(Float),
+  phosphorus: Option(Float),
+  potassium: Option(Float),
+  zinc: Option(Float),
+) -> Result(Micronutrients, String) {
+  let values = [
+    fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d,
+    vitamin_e, vitamin_k, vitamin_b6, vitamin_b12, folate, thiamin, riboflavin,
+    niacin, calcium, iron, magnesium, phosphorus, potassium, zinc,
+  ]
+  case has_negative_value(values) {
+    True -> Error("All micronutrient values must be non-negative")
+    False ->
+      Ok(Micronutrients(
+        fiber: fiber,
+        sugar: sugar,
+        sodium: sodium,
+        cholesterol: cholesterol,
+        vitamin_a: vitamin_a,
+        vitamin_c: vitamin_c,
+        vitamin_d: vitamin_d,
+        vitamin_e: vitamin_e,
+        vitamin_k: vitamin_k,
+        vitamin_b6: vitamin_b6,
+        vitamin_b12: vitamin_b12,
+        folate: folate,
+        thiamin: thiamin,
+        riboflavin: riboflavin,
+        niacin: niacin,
+        calcium: calcium,
+        iron: iron,
+        magnesium: magnesium,
+        phosphorus: phosphorus,
+        potassium: potassium,
+        zinc: zinc,
+      ))
+  }
+}
+
+/// Create a Micronutrients value without validation (use only when values are guaranteed safe)
+pub fn new_unchecked(
+  fiber: Option(Float),
+  sugar: Option(Float),
+  sodium: Option(Float),
+  cholesterol: Option(Float),
+  vitamin_a: Option(Float),
+  vitamin_c: Option(Float),
+  vitamin_d: Option(Float),
+  vitamin_e: Option(Float),
+  vitamin_k: Option(Float),
+  vitamin_b6: Option(Float),
+  vitamin_b12: Option(Float),
+  folate: Option(Float),
+  thiamin: Option(Float),
+  riboflavin: Option(Float),
+  niacin: Option(Float),
+  calcium: Option(Float),
+  iron: Option(Float),
+  magnesium: Option(Float),
+  phosphorus: Option(Float),
+  potassium: Option(Float),
+  zinc: Option(Float),
+) -> Micronutrients {
+  Micronutrients(
+    fiber: fiber,
+    sugar: sugar,
+    sodium: sodium,
+    cholesterol: cholesterol,
+    vitamin_a: vitamin_a,
+    vitamin_c: vitamin_c,
+    vitamin_d: vitamin_d,
+    vitamin_e: vitamin_e,
+    vitamin_k: vitamin_k,
+    vitamin_b6: vitamin_b6,
+    vitamin_b12: vitamin_b12,
+    folate: folate,
+    thiamin: thiamin,
+    riboflavin: riboflavin,
+    niacin: niacin,
+    calcium: calcium,
+    iron: iron,
+    magnesium: magnesium,
+    phosphorus: phosphorus,
+    potassium: potassium,
+    zinc: zinc,
+  )
+}
+
+/// Helper to check if any Optional Float value is negative
+fn has_negative_value(values: List(Option(Float))) -> Bool {
+  list.any(values, fn(v) {
+    case v {
+      Some(x) -> x <. 0.0
+      None -> False
+    }
+  })
+}
+
+/// Extract fiber value
+pub fn fiber(m: Micronutrients) -> Option(Float) {
+  m.fiber
+}
+
+/// Extract sugar value
+pub fn sugar(m: Micronutrients) -> Option(Float) {
+  m.sugar
+}
+
+/// Extract sodium value
+pub fn sodium(m: Micronutrients) -> Option(Float) {
+  m.sodium
+}
+
+/// Extract cholesterol value
+pub fn cholesterol(m: Micronutrients) -> Option(Float) {
+  m.cholesterol
+}
+
+/// Extract vitamin_a value
+pub fn vitamin_a(m: Micronutrients) -> Option(Float) {
+  m.vitamin_a
+}
+
+/// Extract vitamin_c value
+pub fn vitamin_c(m: Micronutrients) -> Option(Float) {
+  m.vitamin_c
+}
+
+/// Extract vitamin_d value
+pub fn vitamin_d(m: Micronutrients) -> Option(Float) {
+  m.vitamin_d
+}
+
+/// Extract vitamin_e value
+pub fn vitamin_e(m: Micronutrients) -> Option(Float) {
+  m.vitamin_e
+}
+
+/// Extract vitamin_k value
+pub fn vitamin_k(m: Micronutrients) -> Option(Float) {
+  m.vitamin_k
+}
+
+/// Extract vitamin_b6 value
+pub fn vitamin_b6(m: Micronutrients) -> Option(Float) {
+  m.vitamin_b6
+}
+
+/// Extract vitamin_b12 value
+pub fn vitamin_b12(m: Micronutrients) -> Option(Float) {
+  m.vitamin_b12
+}
+
+/// Extract folate value
+pub fn folate(m: Micronutrients) -> Option(Float) {
+  m.folate
+}
+
+/// Extract thiamin value
+pub fn thiamin(m: Micronutrients) -> Option(Float) {
+  m.thiamin
+}
+
+/// Extract riboflavin value
+pub fn riboflavin(m: Micronutrients) -> Option(Float) {
+  m.riboflavin
+}
+
+/// Extract niacin value
+pub fn niacin(m: Micronutrients) -> Option(Float) {
+  m.niacin
+}
+
+/// Extract calcium value
+pub fn calcium(m: Micronutrients) -> Option(Float) {
+  m.calcium
+}
+
+/// Extract iron value
+pub fn iron(m: Micronutrients) -> Option(Float) {
+  m.iron
+}
+
+/// Extract magnesium value
+pub fn magnesium(m: Micronutrients) -> Option(Float) {
+  m.magnesium
+}
+
+/// Extract phosphorus value
+pub fn phosphorus(m: Micronutrients) -> Option(Float) {
+  m.phosphorus
+}
+
+/// Extract potassium value
+pub fn potassium(m: Micronutrients) -> Option(Float) {
+  m.potassium
+}
+
+/// Extract zinc value
+pub fn zinc(m: Micronutrients) -> Option(Float) {
+  m.zinc
 }
 
 /// MicronutrientGoals - same structure as Micronutrients but used for targets/goals

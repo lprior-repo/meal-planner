@@ -845,3 +845,133 @@ pub fn generate_reason(deviation: DeviationResult, macros: Macros) -> String {
     }
   }
 }
+
+// ============================================================================
+// NEW FUNCTIONS: Core Nutrition Calculations (TDD Implementation)
+// ============================================================================
+
+/// Calculate daily totals from a list of nutrition states (sums all meals for the day)
+/// Returns total nutrition data by summing all meals consumed
+pub fn calculate_daily_totals(meals: List(NutritionState)) -> NutritionData {
+  case meals {
+    [] -> NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
+    _ -> {
+      list.fold(
+        meals,
+        NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0),
+        fn(acc, meal) {
+          NutritionData(
+            protein: acc.protein +. meal.consumed.protein,
+            fat: acc.fat +. meal.consumed.fat,
+            carbs: acc.carbs +. meal.consumed.carbs,
+            calories: acc.calories +. meal.consumed.calories,
+          )
+        },
+      )
+    }
+  }
+}
+
+/// Calculate macro percentages from nutrition data
+/// Returns tuple of (protein_pct, fat_pct, carbs_pct) based on calorie contribution
+/// Formula: (macro_grams * calories_per_gram) / total_calories * 100
+pub fn calculate_macro_percentages(
+  data: NutritionData,
+) -> #(Float, Float, Float) {
+  case data.calories {
+    0.0 -> #(0.0, 0.0, 0.0)
+    _ -> {
+      let protein_pct = { data.protein *. 4.0 } /. data.calories *. 100.0
+      let fat_pct = { data.fat *. 9.0 } /. data.calories *. 100.0
+      let carbs_pct = { data.carbs *. 4.0 } /. data.calories *. 100.0
+      #(protein_pct, fat_pct, carbs_pct)
+    }
+  }
+}
+
+/// Check if consumed macros meet daily targets
+/// Returns True if within 10% tolerance of goals, False otherwise
+pub fn check_macro_targets(
+  consumed: NutritionData,
+  goals: NutritionGoals,
+) -> Bool {
+  let deviation = calculate_deviation(goals, consumed)
+  let tolerance = 10.0
+
+  float.absolute_value(deviation.protein_pct) <=. tolerance
+  && float.absolute_value(deviation.fat_pct) <=. tolerance
+  && float.absolute_value(deviation.carbs_pct) <=. tolerance
+  && float.absolute_value(deviation.calories_pct) <=. tolerance
+}
+
+/// Suggest macro adjustments needed to reach daily goals
+/// Returns a string recommendation for what adjustments to make
+pub fn suggest_macro_adjustments(
+  consumed: NutritionData,
+  goals: NutritionGoals,
+) -> String {
+  let deviation = calculate_deviation(goals, consumed)
+  let tolerance = 5.0
+
+  // Check if on target
+  let is_on_target =
+    float.absolute_value(deviation.protein_pct) <=. tolerance
+    && float.absolute_value(deviation.fat_pct) <=. tolerance
+    && float.absolute_value(deviation.carbs_pct) <=. tolerance
+
+  case is_on_target {
+    True -> "Perfect macros - you're on target! Excellent nutrition balance."
+    False -> {
+      let suggestions = []
+
+      // Add suggestions for deficits
+      let suggestions = case deviation.protein_pct <. -5.0 {
+        True -> list.append(suggestions, ["Add more protein"])
+        False -> suggestions
+      }
+
+      let suggestions = case deviation.fat_pct <. -5.0 {
+        True -> list.append(suggestions, ["Add more healthy fats"])
+        False -> suggestions
+      }
+
+      let suggestions = case deviation.carbs_pct <. -5.0 {
+        True -> list.append(suggestions, ["Add more carbs"])
+        False -> suggestions
+      }
+
+      // Add warnings for excess
+      let suggestions = case deviation.protein_pct >. 15.0 {
+        True -> list.append(suggestions, ["Reduce protein intake"])
+        False -> suggestions
+      }
+
+      let suggestions = case deviation.fat_pct >. 15.0 {
+        True -> list.append(suggestions, ["Reduce fat intake"])
+        False -> suggestions
+      }
+
+      let suggestions = case deviation.carbs_pct >. 15.0 {
+        True -> list.append(suggestions, ["Reduce carbs intake"])
+        False -> suggestions
+      }
+
+      case suggestions {
+        [] -> "Close to target. Keep monitoring your intake."
+        _ ->
+          "Adjustments needed: "
+          <> string.concat(list.intersperse(suggestions, ", "))
+      }
+    }
+  }
+}
+
+/// Estimate daily calories from macronutrients
+/// Uses standard calorie values: 4 cal/g protein, 9 cal/g fat, 4 cal/g carbs
+pub fn estimate_daily_calories(
+  protein: Float,
+  fat: Float,
+  carbs: Float,
+) -> Float {
+  { protein *. 4.0 } +. { fat *. 9.0 } +. { carbs *. 4.0 }
+}

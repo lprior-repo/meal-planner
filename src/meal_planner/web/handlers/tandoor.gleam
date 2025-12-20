@@ -15,12 +15,12 @@ import meal_planner/web/handlers/tandoor/import_logs
 import meal_planner/web/handlers/tandoor/ingredients
 import meal_planner/web/handlers/tandoor/keywords
 import meal_planner/web/handlers/tandoor/meal_plans
+import meal_planner/web/handlers/tandoor/preferences
+import meal_planner/web/handlers/tandoor/recipes
 import meal_planner/web/handlers/tandoor/steps
 import meal_planner/web/handlers/tandoor/supermarket_categories
 import meal_planner/web/handlers/tandoor/supermarkets
-import meal_planner/web/handlers/tandoor/recipes
 import meal_planner/web/handlers/tandoor/units
-import meal_planner/web/handlers/tandoor/preferences
 import meal_planner/web/handlers/tandoor_cuisines
 
 import wisp
@@ -60,8 +60,7 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
       tandoor_cuisines.handle_cuisine_by_id(req, cuisine_id)
 
     // Recipes (GET list, POST create)
-    ["api", "tandoor", "recipes"] ->
-      recipes.handle_recipes_collection(req)
+    ["api", "tandoor", "recipes"] -> recipes.handle_recipes_collection(req)
 
     // Recipe by ID (GET, PATCH, DELETE)
     ["api", "tandoor", "recipes", recipe_id] ->

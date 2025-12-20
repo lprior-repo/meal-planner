@@ -213,20 +213,20 @@ pub fn identify_nutrition_patterns(
     True ->
       list.append(patterns, [
         "protein_deficiency: averaging "
-          <> float.to_string(avg_protein)
-          <> "g vs "
-          <> float.to_string(targets.daily_protein)
-          <> "g target",
+        <> float.to_string(avg_protein)
+        <> "g vs "
+        <> float.to_string(targets.daily_protein)
+        <> "g target",
       ])
     False ->
       case avg_protein >. targets.daily_protein *. 1.15 {
         True ->
           list.append(patterns, [
             "protein_overage: averaging "
-              <> float.to_string(avg_protein)
-              <> "g vs "
-              <> float.to_string(targets.daily_protein)
-              <> "g target",
+            <> float.to_string(avg_protein)
+            <> "g vs "
+            <> float.to_string(targets.daily_protein)
+            <> "g target",
           ])
         False -> patterns
       }
@@ -237,20 +237,20 @@ pub fn identify_nutrition_patterns(
     True ->
       list.append(patterns, [
         "carb_deficiency: averaging "
-          <> float.to_string(avg_carbs)
-          <> "g vs "
-          <> float.to_string(targets.daily_carbs)
-          <> "g target",
+        <> float.to_string(avg_carbs)
+        <> "g vs "
+        <> float.to_string(targets.daily_carbs)
+        <> "g target",
       ])
     False ->
       case avg_carbs >. targets.daily_carbs *. 1.15 {
         True ->
           list.append(patterns, [
             "carb_overage: averaging "
-              <> float.to_string(avg_carbs)
-              <> "g vs "
-              <> float.to_string(targets.daily_carbs)
-              <> "g target",
+            <> float.to_string(avg_carbs)
+            <> "g vs "
+            <> float.to_string(targets.daily_carbs)
+            <> "g target",
           ])
         False -> patterns
       }
@@ -261,20 +261,20 @@ pub fn identify_nutrition_patterns(
     True ->
       list.append(patterns, [
         "fat_deficiency: averaging "
-          <> float.to_string(avg_fat)
-          <> "g vs "
-          <> float.to_string(targets.daily_fat)
-          <> "g target",
+        <> float.to_string(avg_fat)
+        <> "g vs "
+        <> float.to_string(targets.daily_fat)
+        <> "g target",
       ])
     False ->
       case avg_fat >. targets.daily_fat *. 1.15 {
         True ->
           list.append(patterns, [
             "fat_overage: averaging "
-              <> float.to_string(avg_fat)
-              <> "g vs "
-              <> float.to_string(targets.daily_fat)
-              <> "g target",
+            <> float.to_string(avg_fat)
+            <> "g vs "
+            <> float.to_string(targets.daily_fat)
+            <> "g target",
           ])
         False -> patterns
       }
@@ -285,20 +285,20 @@ pub fn identify_nutrition_patterns(
     True ->
       list.append(patterns, [
         "calorie_deficit: averaging "
-          <> float.to_string(avg_calories)
-          <> " vs "
-          <> float.to_string(targets.daily_calories)
-          <> " target",
+        <> float.to_string(avg_calories)
+        <> " vs "
+        <> float.to_string(targets.daily_calories)
+        <> " target",
       ])
     False ->
       case avg_calories >. targets.daily_calories *. 1.15 {
         True ->
           list.append(patterns, [
             "calorie_surplus: averaging "
-              <> float.to_string(avg_calories)
-              <> " vs "
-              <> float.to_string(targets.daily_calories)
-              <> " target",
+            <> float.to_string(avg_calories)
+            <> " vs "
+            <> float.to_string(targets.daily_calories)
+            <> " target",
           ])
         False -> patterns
       }

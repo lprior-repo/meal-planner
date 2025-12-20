@@ -194,10 +194,7 @@ pub fn get_selected_food(
 // ============================================================================
 
 /// Process popup messages and return updated state with result
-pub fn update(
-  state: PopupState,
-  msg: PopupMsg,
-) -> #(PopupState, PopupResult) {
+pub fn update(state: PopupState, msg: PopupMsg) -> #(PopupState, PopupResult) {
   case msg {
     Open -> #(PopupState(..state, is_visible: True), NoAction)
 
@@ -275,12 +272,7 @@ fn render_popup(state: PopupState) -> shore.Node(PopupMsg) {
     ui.text_styled("Food Search", Some(style.Cyan), None),
     ui.hr_styled(style.Cyan),
     ui.br(),
-    ui.input(
-      "Search:",
-      state.search_query,
-      style.Pct(60),
-      UpdateQuery,
-    ),
+    ui.input("Search:", state.search_query, style.Pct(60), UpdateQuery),
     ui.br(),
     render_status(state),
     ui.br(),
@@ -326,7 +318,8 @@ fn render_result_item(
     False -> "  "
   }
 
-  let food_name = foods_types.food_id_to_string(food.food_id)
+  let food_name =
+    foods_types.food_id_to_string(food.food_id)
     |> string.slice(0, 50)
 
   let display_text =

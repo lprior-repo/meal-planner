@@ -28,7 +28,7 @@ pub fn next_occurrence(
     advanced.WeeklyOnDays(weekdays) ->
       next_weekly_occurrence(from_date, weekdays)
     advanced.MonthlyOnDay(day) -> next_monthly_occurrence(from_date, day)
-    advanced.Custom(_) -> None
+    advanced.CustomPattern(_) -> None
   }
 }
 
@@ -82,9 +82,9 @@ fn add_days(date: String, days: Int) -> Option(String) {
   case parse_iso_date(date) {
     Ok(time) -> {
       let seconds_to_add = days * 24 * 60 * 60
-      let new_time =
-        time
-        |> birl.add(birl.seconds(seconds_to_add))
+      let unix_seconds = birl.to_unix(time)
+      let new_unix = unix_seconds + seconds_to_add
+      let new_time = birl.from_unix(new_unix)
       Some(birl.to_iso8601(new_time))
     }
     Error(_) -> None
@@ -205,7 +205,7 @@ pub fn validate_rule(rule: RecurrenceRule) -> Bool {
       && list.all(weekdays, fn(day) { day >= 0 && day <= 6 })
     }
     advanced.MonthlyOnDay(day) -> day >= 1 && day <= 31
-    advanced.Custom(_) -> True
+    advanced.CustomPattern(_) -> True
   }
 
   let valid_dates = case rule.end_date {

@@ -8,6 +8,7 @@
 ///
 /// Note: TandoorFood (2-field) is used for recipe ingredient references only.
 /// For full food API operations, use the Food type from meal_planner/tandoor/types/food/food.
+import gleam/int
 import gleam/option.{type Option}
 
 // ============================================================================
@@ -15,13 +16,56 @@ import gleam/option.{type Option}
 // ============================================================================
 
 /// Paginated recipe list response from Tandoor API
-pub type RecipeListResponse {
+/// Opaque type ensures count is non-negative
+pub opaque type RecipeListResponse {
   RecipeListResponse(
     count: Int,
     next: Option(String),
     previous: Option(String),
     results: List(TandoorRecipe),
   )
+}
+
+/// Create a RecipeListResponse with validation
+/// count must be non-negative and match results length
+pub fn new_recipe_list_response(
+  count: Int,
+  next: Option(String),
+  previous: Option(String),
+  results: List(TandoorRecipe),
+) -> Result(RecipeListResponse, String) {
+  case count < 0 {
+    True -> Error("Count must be non-negative, got: " <> int.to_string(count))
+    False ->
+      Ok(RecipeListResponse(
+        count: count,
+        next: next,
+        previous: previous,
+        results: results,
+      ))
+  }
+}
+
+/// Get the total count from recipe list response
+pub fn recipe_list_response_count(r: RecipeListResponse) -> Int {
+  r.count
+}
+
+/// Get the next page URL from recipe list response
+pub fn recipe_list_response_next(r: RecipeListResponse) -> Option(String) {
+  r.next
+}
+
+/// Get the previous page URL from recipe list response
+pub fn recipe_list_response_previous(r: RecipeListResponse) -> Option(String) {
+  r.previous
+}
+
+/// Get the recipe results from recipe list response
+pub fn recipe_list_response_results(
+  r: RecipeListResponse,
+) -> List(TandoorRecipe) {
+  r.results
 }
 
 // ============================================================================

@@ -15,9 +15,7 @@ import meal_planner/tandoor/client.{type ClientConfig, ApiResponse}
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/food.{type Food, Food, FoodSimple}
 import meal_planner/tandoor/keyword.{type Keyword, Keyword}
-import meal_planner/tandoor/property.{
-  type Property, FoodProperty, Property,
-}
+import meal_planner/tandoor/property.{type Property, FoodProperty, Property}
 import meal_planner/tandoor/supermarket.{
   type SupermarketCategory, SupermarketCategory,
 }
@@ -132,12 +130,25 @@ pub fn test_supermarket_category() -> SupermarketCategory {
 
 /// Create a minimal test SupermarketCategory
 pub fn test_supermarket_category_minimal() -> SupermarketCategory {
-  SupermarketCategory(id: 1, name: "Groceries", description: None, open_data_slug: None)
+  SupermarketCategory(
+    id: 1,
+    name: "Groceries",
+    description: None,
+    open_data_slug: None,
+  )
 }
 
 /// Create a test SupermarketCategory with custom ID and name
-pub fn test_supermarket_category_with_id_name(id: Int, name: String) -> SupermarketCategory {
-  SupermarketCategory(id: id, name: name, description: None, open_data_slug: None)
+pub fn test_supermarket_category_with_id_name(
+  id: Int,
+  name: String,
+) -> SupermarketCategory {
+  SupermarketCategory(
+    id: id,
+    name: name,
+    description: None,
+    open_data_slug: None,
+  )
 }
 
 /// Create a test Property with default values
@@ -228,16 +239,15 @@ pub fn test_food_with_id(id: Int) -> Food {
 /// Create a test Food with custom ID and name
 pub fn test_food_with_id_name(id: Int, name: String) -> Food {
   let base = test_food()
-  Food(
-    ..base,
-    id: ids.food_id_from_int(id),
-    name: name,
-    full_name: name,
-  )
+  Food(..base, id: ids.food_id_from_int(id), name: name, full_name: name)
 }
 
 /// Create a test Food with custom description
-pub fn test_food_with_description(id: Int, name: String, description: String) -> Food {
+pub fn test_food_with_description(
+  id: Int,
+  name: String,
+  description: String,
+) -> Food {
   let base = test_food()
   Food(
     ..base,

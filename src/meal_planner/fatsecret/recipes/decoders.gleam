@@ -1,6 +1,6 @@
 /// FatSecret Recipes API JSON decoders
 import gleam/dynamic/decode
-import gleam/option.{None, Some}
+import gleam/option.{None}
 import meal_planner/fatsecret/recipes/types
 
 /// Decode recipe ingredient from JSON

@@ -18,7 +18,9 @@ import meal_planner/config.{type Config}
 
 /// Advisor domain command for Glint CLI
 pub fn cmd(_config: Config) -> glint.Command(Result(Nil, Nil)) {
-  use <- glint.command_help("Get AI-powered meal planning advice and recommendations")
+  use <- glint.command_help(
+    "Get AI-powered meal planning advice and recommendations",
+  )
   use days <- glint.flag(
     glint.int_flag("days")
     |> glint.flag_help("Number of days for trend analysis")
@@ -34,7 +36,11 @@ pub fn cmd(_config: Config) -> glint.Command(Result(Nil, Nil)) {
     }
     ["trends"] -> {
       let trend_days = days(flags) |> result.unwrap(7)
-      io.println("Analyzing trends for the last " <> int.to_string(trend_days) <> " days...")
+      io.println(
+        "Analyzing trends for the last "
+        <> int.to_string(trend_days)
+        <> " days...",
+      )
       io.println("(Trend analysis implementation pending)")
       Ok(Nil)
     }

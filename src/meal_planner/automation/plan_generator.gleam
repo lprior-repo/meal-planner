@@ -1,12 +1,13 @@
 //// Meal Plan Generator - Automation Logic
 ////
-import gleam/dict
 //// Implements the core meal plan generation algorithm:
 //// 1. Filter recipes by dietary preferences
 //// 2. Score recipes by nutritional alignment
 //// 3. Build optimal 7-day meal plan
 ////
 //// Part of the Autonomous Nutritional Control Plane (meal-planner-918)
+
+import gleam/dict
 
 import gleam/float
 import gleam/list
