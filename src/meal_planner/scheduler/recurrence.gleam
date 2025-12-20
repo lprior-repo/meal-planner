@@ -10,9 +10,8 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import meal_planner/scheduler/advanced.{
-  type RecurrencePattern, type RecurrenceRule,
-}
+import gleam/string
+import meal_planner/scheduler/advanced.{type RecurrenceRule}
 
 // ============================================================================
 // Date Calculation
@@ -85,9 +84,18 @@ fn add_days(date: String, days: Int) -> Option(String) {
       let unix_seconds = birl.to_unix(time)
       let new_unix = unix_seconds + seconds_to_add
       let new_time = birl.from_unix(new_unix)
-      Some(birl.to_iso8601(new_time))
+      Some(extract_date_only(birl.to_iso8601(new_time)))
     }
     Error(_) -> None
+  }
+}
+
+/// Extract date-only portion from ISO 8601 timestamp
+/// Converts "2025-01-08T01:00:00.000Z" to "2025-01-08"
+fn extract_date_only(iso_string: String) -> String {
+  case string.length(iso_string) {
+    len if len >= 10 -> string.slice(iso_string, 0, 10)
+    _ -> iso_string
   }
 }
 
@@ -129,8 +137,13 @@ fn next_monthly_occurrence(from_date: String, day: Int) -> Option(String) {
 // ============================================================================
 
 /// Parse ISO 8601 date string to birl Time
+/// Handles both date-only (YYYY-MM-DD) and full ISO format
 fn parse_iso_date(date: String) -> Result(birl.Time, Nil) {
-  birl.parse(date)
+  let date_to_parse = case string.length(date) {
+    len if len == 10 -> date <> "T00:00:00Z"
+    _ -> date
+  }
+  birl.parse(date_to_parse)
   |> result.map_error(fn(_) { Nil })
 }
 
