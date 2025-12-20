@@ -760,14 +760,15 @@ pub fn set_goal(
         Error(err) -> Error(err)
         Ok(_current_goals) -> {
           // Return confirmation (in real implementation, would save to DB)
+          let unit = case goal_type {
+            "calories" -> " kcal"
+            _ -> "g"
+          }
           let confirmation =
             string.capitalise(goal_type)
             <> " goal set to "
             <> int.to_string(value)
-            <> case goal_type {
-              "calories" -> " kcal"
-              _ -> "g"
-            }
+            <> unit
 
           Ok(confirmation)
         }
