@@ -7,18 +7,17 @@
 //// - Preference weighting
 
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/result
 import meal_planner/id.{type RecipeId}
 import meal_planner/scheduler/advanced.{
-  type Constraint, type ConstraintResult, type ConstraintSeverity,
-  type MealSchedule, type OptimizationObjective, type OptimizationResult,
-  type ScheduleConflict, type ScheduledMeal, PartiallySatisfied, Satisfied,
-  Violated,
+  type Constraint, type ConstraintResult, type MealSchedule,
+  type OptimizationObjective, type OptimizationResult, type ScheduleConflict,
+  type ScheduledMeal, PartiallySatisfied, Satisfied, Violated,
 }
 import meal_planner/scheduler/errors.{type AppError}
-import meal_planner/types/macros.{type Macros}
+import meal_planner/types/macros
 
 // ============================================================================
 // Solver Configuration

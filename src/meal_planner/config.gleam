@@ -221,11 +221,11 @@ fn parse_environment(env_str: String) -> Environment {
 /// Parse log level from string
 fn parse_log_level(level_str: String) -> LogLevel {
   case string.lowercase(level_str) {
-    "debug" -> Debug
-    "info" -> Info
-    "warn" -> Warn
-    "error" -> Error
-    _ -> Info
+    "debug" -> DebugLevel
+    "info" -> InfoLevel
+    "warn" -> WarnLevel
+    "error" -> ErrorLevel
+    _ -> InfoLevel
   }
 }
 

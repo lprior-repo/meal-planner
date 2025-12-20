@@ -7,14 +7,12 @@
 ///
 import argv
 import dot_env
-import gleam/int
 import gleam/io
-import gleam/list
+import gleam/string
 import meal_planner/cli/glint_commands
 import meal_planner/cli/shore_app
 import meal_planner/config
 import meal_planner/error
-import meal_planner/web
 
 /// Application entry point - routes to CLI or TUI based on arguments
 pub fn main() {
@@ -55,6 +53,14 @@ pub fn main() {
             <> "', expected "
             <> expected,
           "Check your environment variable configuration for correct format and values.",
+        )
+      io.println(error.format_error(err))
+    }
+    Error(config.ValidationError(errors)) -> {
+      let err =
+        error.config_error(
+          "Configuration validation failed: " <> string.join(errors, ", "),
+          "Fix the configuration errors listed above.",
         )
       io.println(error.format_error(err))
     }

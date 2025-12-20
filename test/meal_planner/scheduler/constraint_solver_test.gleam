@@ -110,8 +110,9 @@ pub fn evaluate_constraints_all_satisfied_test() {
     advanced.TimeLimit(max_minutes: 300),
   ]
 
-  constraint_solver.evaluate_constraints(constraints, schedule)
-  |> should.be_true(fn(score) { score >=. 0.9 })
+  let score = constraint_solver.evaluate_constraints(constraints, schedule)
+  { score >=. 0.9 }
+  |> should.be_true
 }
 
 pub fn detect_time_conflicts_none_test() {

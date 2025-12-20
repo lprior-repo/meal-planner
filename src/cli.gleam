@@ -8,6 +8,7 @@
 import argv
 import dot_env
 import gleam/io
+import gleam/string
 import meal_planner/cli/glint_commands
 import meal_planner/cli/shore_app
 import meal_planner/config
@@ -56,6 +57,11 @@ pub fn main() {
               <> "', expected "
               <> expected,
             "Check your environment variable configuration for correct format and values.",
+          )
+        config.ValidationError(errors) ->
+          error.config_error(
+            "Configuration validation failed: " <> string.join(errors, ", "),
+            "Fix the configuration errors listed above.",
           )
       }
       io.println(error.format_error(err))

@@ -31,7 +31,6 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
   )
   io.println("  - Server port: " <> int.to_string(config.server.port))
   io.println("  - Tandoor: " <> config.tandoor.base_url)
-  io.println("  - Environment: " <> config.server.environment)
   io.println("")
   io.println("Starting web server...")
   io.println("")
