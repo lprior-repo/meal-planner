@@ -1,18 +1,28 @@
 /// Food Search Popup - Reusable TUI Component
 ///
-/// This module provides a reusable popup component for searching foods
-/// in the meal planner TUI. It encapsulates:
-/// - Search state management (query, results, selection)
-/// - Keyboard handling (navigation, selection, cancel)
-/// - Rendering logic (popup display, results list)
+/// Encapsulates food search state, rendering, keyboard handling (1-9 selection,
+/// arrow navigation), and async food API calls. Designed to be imported by
+/// multiple screens (Diary, FatSecret domain, etc).
 ///
-/// The component follows the Elm Architecture pattern used by the Shore framework.
+/// ## Architecture
+///
+/// - SearchState: Component state (active, query, results, selected_index, loading, error)
+/// - FoodSearchMsg: Component messages (pure state transitions)
+/// - render(): Pure UI rendering based on state
+/// - update(): Pure state machine (returns new state + effects)
+/// - search_foods_effect(): Async effect calling FatSecret API
+///
+/// ## Integration Pattern
+///
+/// Parent screens wrap SearchState in their Model and FoodSearchMsg in their Msg.
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/string
+import gleam/result
+import meal_planner/env
+import meal_planner/fatsecret/foods/client as foods_client
 import meal_planner/fatsecret/foods/types as foods_types
-import shore
+import shore/key.{type Key}
 import shore/style
 import shore/ui
 
@@ -20,71 +30,91 @@ import shore/ui
 // Types
 // ============================================================================
 
-/// State for the food search popup component
-pub type PopupState {
-  PopupState(
-    /// Whether the popup is currently visible
-    is_visible: Bool,
-    /// Current search query text
-    search_query: String,
-    /// Search results from FatSecret API
-    results: List(foods_types.FoodSearchResult),
+/// Search component state
+///
+/// Encapsulates all state needed for food search UI. Parent screens embed this
+/// in their Model.
+pub type SearchState {
+  SearchState(
+    /// Whether the search popup is visible
+    active: Bool,
+    /// Current search query string
+    query: String,
+    /// Search results (max 9 items for 1-9 selection)
+    results: List(FoodSearchResult),
     /// Currently selected result index (0-based)
     selected_index: Int,
-    /// Whether search is in progress
-    is_loading: Bool,
-    /// Error message if search failed
-    error_message: Option(String),
+    /// Whether an async search is in progress
+    loading: Bool,
+    /// Error message to display (if any)
+    error: Option(String),
   )
 }
 
-/// Messages for popup interactions
-pub type PopupMsg {
-  /// Open the popup
-  Open
-  /// Close the popup
-  Close
-  /// Update search query
-  UpdateQuery(String)
-  /// Trigger search
-  Search
-  /// Navigate up in results list
-  SelectPrevious
-  /// Navigate down in results list
-  SelectNext
+/// Lightweight search result for display
+///
+/// Extracted from FatSecret FoodSearchResult with fields needed for UI.
+/// Avoids coupling to FatSecret types in UI layer.
+pub type FoodSearchResult {
+  FoodSearchResult(
+    /// Unique food identifier
+    food_id: String,
+    /// Food name for display
+    food_name: String,
+    /// Food type (e.g., "Brand", "Generic")
+    food_type: String,
+    /// Brand name (if applicable)
+    brand_name: Option(String),
+    /// Combined description from FatSecret
+    food_description: String,
+  )
+}
+
+/// Component messages
+///
+/// Pure state transitions. Effects are returned from update() function.
+pub type FoodSearchMsg {
+  /// Activate the search popup (show it)
+  SearchActivate
+  /// Update search query (triggers async search)
+  SearchQuery(String)
+  /// Async search results arrived
+  GotSearchResults(Result(List(foods_types.FoodSearchResult), String))
+  /// Select result by number key (1-9)
+  SelectByNumber(Int)
+  /// Navigate selection with arrow keys
+  SelectByArrow(Direction)
   /// Confirm selection (Enter key)
-  ConfirmSelection
-  /// Set search results
-  SetResults(List(foods_types.FoodSearchResult))
-  /// Set error message
-  SetError(String)
-  /// Set loading state
-  SetLoading(Bool)
+  SearchConfirm
+  /// Cancel search (Escape key)
+  SearchCancel
+  /// Clear error message
+  ClearError
+  /// Food selected (emitted on confirm, parent handles)
+  FoodSelected(food_id: String, food_name: String)
 }
 
-/// Result of a popup action (for parent component)
-pub type PopupResult {
-  /// No action taken
-  NoAction
-  /// Popup was closed without selection
-  Cancelled
-  /// Food was selected
-  FoodSelected(foods_types.FoodSearchResult)
+/// Arrow key direction for navigation
+pub type Direction {
+  Up
+  Down
 }
 
 // ============================================================================
-// State Management
+// Initial State
 // ============================================================================
 
-/// Create initial popup state (hidden)
-pub fn init() -> PopupState {
-  PopupState(
-    is_visible: False,
-    search_query: "",
+/// Create initial SearchState (inactive, empty)
+///
+/// Parent screens call this in their init() function.
+pub fn init() -> SearchState {
+  SearchState(
+    active: False,
+    query: "",
     results: [],
     selected_index: 0,
-    is_loading: False,
-    error_message: None,
+    loading: False,
+    error: None,
   )
 }
 
