@@ -6,10 +6,10 @@
 /// - Format cron expressions as human-readable text
 ///
 /// These tests MUST fail initially (RED), then implementation makes them pass (GREEN)
-
 import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
+import meal_planner/cli/domains/scheduler
 import meal_planner/id
 import meal_planner/scheduler/types.{
   type JobFrequency, type JobPriority, type JobStatus, type JobType,
@@ -17,7 +17,6 @@ import meal_planner/scheduler/types.{
   High, Low, Medium, Pending, Running, ScheduledJob, Weekly, WeeklyGeneration,
   WeeklyTrends,
 }
-import meal_planner/cli/domains/scheduler
 
 pub fn main() {
   gleeunit.main()
