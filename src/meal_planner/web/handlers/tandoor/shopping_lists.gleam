@@ -223,7 +223,7 @@ fn encode_shopping_list_entry_response(
 
 fn encode_food(food: Food) -> json.Json {
   json.object([
-    #("id", json.int(food.id)),
+    #("id", json.int(ids.food_id_to_int(food.id))),
     #("name", json.string(food.name)),
   ])
 }
