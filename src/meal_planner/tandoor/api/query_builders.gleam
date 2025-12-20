@@ -160,6 +160,76 @@ pub fn build_food_list_params(
   params
 }
 
+/// Build food list query parameters with category filtering
+///
+/// Builds parameters for food list endpoint with optional category filter.
+/// Combines search term, pagination, and category filtering.
+///
+/// # Arguments
+/// * `limit` - Optional page size
+/// * `offset` - Optional skip count
+/// * `query` - Optional search query string
+/// * `category` - Optional category filter (supermarket category ID)
+///
+/// # Returns
+/// List of query parameters
+///
+/// # Example
+/// ```gleam
+/// build_food_list_with_category(Some(20), Some(0), Some("tomato"), Some(5))
+/// // => [#("category", "5"), #("query", "tomato"), #("offset", "0"), #("limit", "20")]
+/// ```
+pub fn build_food_list_with_category(
+  limit: Option(Int),
+  offset: Option(Int),
+  query: Option(String),
+  category: Option(Int),
+) -> List(#(String, String)) {
+  let params = []
+  let params = add_optional_int_param(params, "limit", limit)
+  let params = add_optional_int_param(params, "offset", offset)
+  let params = add_optional_string_param(params, "query", query)
+  let params = add_optional_int_param(params, "category", category)
+  params
+}
+
+/// Build food search parameters with nutrition info option
+///
+/// Builds parameters for food search with optional nutrition data inclusion.
+/// Useful for detailed food info requests.
+///
+/// # Arguments
+/// * `query` - Search query string
+/// * `limit` - Optional page size
+/// * `offset` - Optional skip count
+/// * `include_nutrition` - Optional flag to include nutrition info
+///
+/// # Returns
+/// List of query parameters
+///
+/// # Example
+/// ```gleam
+/// build_food_search_with_nutrition(Some("chicken"), Some(20), Some(0), Some(True))
+/// // => [#("include_nutrition", "true"), #("query", "chicken"), #("offset", "0"), #("limit", "20")]
+/// ```
+pub fn build_food_search_with_nutrition(
+  query: Option(String),
+  limit: Option(Int),
+  offset: Option(Int),
+  include_nutrition: Option(Bool),
+) -> List(#(String, String)) {
+  let params = []
+  let params = add_optional_int_param(params, "limit", limit)
+  let params = add_optional_int_param(params, "offset", offset)
+  let params = add_optional_string_param(params, "query", query)
+  let params = case include_nutrition {
+    Some(True) -> [#("include_nutrition", "true"), ..params]
+    Some(False) -> [#("include_nutrition", "false"), ..params]
+    None -> params
+  }
+  params
+}
+
 /// Build recipe list query parameters
 ///
 /// Builds limit and offset parameters for recipe list pagination.
@@ -347,4 +417,71 @@ pub fn build_cuisine_list_params(
     Some(id) -> [#("parent", int.to_string(id))]
     None -> [#("parent", "null")]
   }
+}
+
+/// Build shopping list query parameters
+///
+/// Builds parameters for shopping list endpoint with optional recipe filter.
+/// Supports pagination for list operations.
+///
+/// # Arguments
+/// * `limit` - Optional page size
+/// * `offset` - Optional skip count
+/// * `recipe_id` - Optional filter to shopping lists for specific recipe
+///
+/// # Returns
+/// List of query parameters
+///
+/// # Example
+/// ```gleam
+/// build_shopping_list_params(Some(20), Some(0), Some(5))
+/// // => [#("recipe_id", "5"), #("offset", "0"), #("limit", "20")]
+/// ```
+pub fn build_shopping_list_params(
+  limit: Option(Int),
+  offset: Option(Int),
+  recipe_id: Option(Int),
+) -> List(#(String, String)) {
+  let params = []
+  let params = add_optional_int_param(params, "limit", limit)
+  let params = add_optional_int_param(params, "offset", offset)
+  let params = add_optional_int_param(params, "recipe_id", recipe_id)
+  params
+}
+
+/// Build shopping list item filter parameters
+///
+/// Builds parameters for filtering shopping list items by status (checked/unchecked)
+/// and optional category grouping.
+///
+/// # Arguments
+/// * `limit` - Optional page size
+/// * `offset` - Optional skip count
+/// * `checked` - Optional filter for checked status (Some(True)=checked, Some(False)=unchecked, None=all)
+/// * `category_id` - Optional filter by category
+///
+/// # Returns
+/// List of query parameters
+///
+/// # Example
+/// ```gleam
+/// build_shopping_list_item_params(Some(50), Some(0), Some(False), None)
+/// // => [#("checked", "false"), #("offset", "0"), #("limit", "50")]
+/// ```
+pub fn build_shopping_list_item_params(
+  limit: Option(Int),
+  offset: Option(Int),
+  checked: Option(Bool),
+  category_id: Option(Int),
+) -> List(#(String, String)) {
+  let params = []
+  let params = add_optional_int_param(params, "limit", limit)
+  let params = add_optional_int_param(params, "offset", offset)
+  let params = case checked {
+    Some(True) -> [#("checked", "true"), ..params]
+    Some(False) -> [#("checked", "false"), ..params]
+    None -> params
+  }
+  let params = add_optional_int_param(params, "category_id", category_id)
+  params
 }
