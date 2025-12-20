@@ -98,6 +98,105 @@ pub fn regenerate_meals(
 }
 
 // ============================================================================
+// Meal Plan Delete Functions  
+// ============================================================================
+
+/// Delete meal plan for a specific date
+///
+/// # Arguments
+/// * `config` - Application configuration
+/// * `date` - Date string in YYYY-MM-DD format
+/// * `confirmed` - Confirmation flag (must be True for safety)
+///
+/// # Returns
+/// Success message or error
+///
+/// # Safety
+/// Requires explicit confirmation flag to prevent accidental deletion
+pub fn delete_meal_plan_by_date(
+  config: Config,
+  date: String,
+  confirmed confirmed: Bool,
+) -> Result(String, String) {
+  case confirmed {
+    False ->
+      Error(
+        "Deletion requires explicit confirmation. Use --confirm flag to proceed.",
+      )
+    True -> {
+      use _ <- result.try(parse_date(date))
+      let tandoor_config = create_tandoor_config(config)
+
+      use response <- result.try(
+        mealplan.list_meal_plans(
+          tandoor_config,
+          from_date: Some(date),
+          to_date: Some(date),
+        )
+        |> result.map_error(fn(err) {
+          "Failed to fetch meal plans: " <> string.inspect(err)
+        }),
+      )
+
+      case response.results {
+        [] -> Error("No meal plans found for date: " <> date)
+        meal_plans -> {
+          let delete_results =
+            list.map(meal_plans, fn(meal_plan) {
+              mealplan.delete_meal_plan(
+                tandoor_config,
+                meal_plan_id: meal_plan.id,
+              )
+              |> result.map_error(fn(err) {
+                "Failed to delete meal plan "
+                <> int.to_string(meal_plan.id)
+                <> ": "
+                <> string.inspect(err)
+              })
+            })
+
+          let all_succeeded =
+            list.all(delete_results, fn(result) {
+              case result {
+                Ok(_) -> True
+                Error(_) -> False
+              }
+            })
+
+          case all_succeeded {
+            True -> {
+              let count = list.length(meal_plans)
+              Ok(
+                "Successfully deleted "
+                <> int.to_string(count)
+                <> " meal plan"
+                <> case count {
+                  1 -> ""
+                  _ -> "s"
+                }
+                <> " for "
+                <> date,
+              )
+            }
+            False -> {
+              let errors =
+                list.filter_map(delete_results, fn(result) {
+                  case result {
+                    Error(err) -> Ok(err)
+                    Ok(_) -> Error(Nil)
+                  }
+                })
+
+              Error("Some deletions failed:\n" <> string.join(errors, "\n"))
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
 // Meal Plan List Functions
 // ============================================================================
 
