@@ -242,3 +242,150 @@ pub fn parse_search_args(
     option.None -> Error("Required flag --query is missing")
   }
 }
+
+// ============================================================================
+// Update Recipe Command Functions
+// ============================================================================
+
+/// Parse update command args
+pub fn parse_update_args(
+  _args: List(String),
+  id id: option.Option(Int),
+) -> Result(Int, String) {
+  case id {
+    option.Some(recipe_id) if recipe_id > 0 -> Ok(recipe_id)
+    option.Some(_) -> Error("Recipe ID must be a positive integer")
+    option.None -> Error("Required flag --id is missing")
+  }
+}
+
+/// Build a RecipeUpdate from CLI flags, validating that at least one field is provided
+pub fn build_recipe_update_from_flags(
+  name name: option.Option(String),
+  description description: option.Option(String),
+  servings servings: option.Option(Int),
+  servings_text servings_text: option.Option(String),
+  working_time working_time: option.Option(Int),
+  waiting_time waiting_time: option.Option(Int),
+) -> Result(recipe.RecipeUpdate, String) {
+  // Validate at least one field is provided
+  let has_field = case
+    name,
+    description,
+    servings,
+    servings_text,
+    working_time,
+    waiting_time
+  {
+    option.None, option.None, option.None, option.None, option.None, option.None
+    -> False
+    _, _, _, _, _, _ -> True
+  }
+
+  case has_field {
+    False -> Error("At least one field must be specified for update")
+    True -> {
+      // Validate field values
+      use _ <- result.try(validate_name(name))
+      use _ <- result.try(validate_servings(servings))
+      use _ <- result.try(validate_working_time(working_time))
+      use _ <- result.try(validate_waiting_time(waiting_time))
+
+      Ok(recipe.RecipeUpdate(
+        name: name,
+        description: description,
+        servings: servings,
+        servings_text: servings_text,
+        working_time: working_time,
+        waiting_time: waiting_time,
+      ))
+    }
+  }
+}
+
+fn validate_name(name: option.Option(String)) -> Result(Nil, String) {
+  case name {
+    option.Some("") -> Error("Field 'name' cannot be empty")
+    option.Some(_) -> Ok(Nil)
+    option.None -> Ok(Nil)
+  }
+}
+
+fn validate_servings(servings: option.Option(Int)) -> Result(Nil, String) {
+  case servings {
+    option.Some(s) if s <= 0 -> Error("Field 'servings' must be positive")
+    option.Some(_) -> Ok(Nil)
+    option.None -> Ok(Nil)
+  }
+}
+
+fn validate_working_time(
+  working_time: option.Option(Int),
+) -> Result(Nil, String) {
+  case working_time {
+    option.Some(t) if t < 0 ->
+      Error("Field 'working_time' must be non-negative")
+    option.Some(_) -> Ok(Nil)
+    option.None -> Ok(Nil)
+  }
+}
+
+fn validate_waiting_time(
+  waiting_time: option.Option(Int),
+) -> Result(Nil, String) {
+  case waiting_time {
+    option.Some(t) if t < 0 ->
+      Error("Field 'waiting_time' must be non-negative")
+    option.Some(_) -> Ok(Nil)
+    option.None -> Ok(Nil)
+  }
+}
+
+/// Update a recipe using the Tandoor API
+pub fn update_recipe_command(
+  config: Config,
+  recipe_id recipe_id: Int,
+  name name: option.Option(String),
+  description description: option.Option(String),
+  servings servings: option.Option(Int),
+  servings_text servings_text: option.Option(String),
+  working_time working_time: option.Option(Int),
+  waiting_time waiting_time: option.Option(Int),
+) -> Result(recipe.RecipeDetail, String) {
+  // Build update data from flags
+  use update_data <- result.try(build_recipe_update_from_flags(
+    name: name,
+    description: description,
+    servings: servings,
+    servings_text: servings_text,
+    working_time: working_time,
+    waiting_time: waiting_time,
+  ))
+
+  let tandoor_config =
+    client.bearer_config(config.tandoor.base_url, config.tandoor.api_token)
+
+  case
+    recipe.update_recipe(
+      tandoor_config,
+      recipe_id: recipe_id,
+      data: update_data,
+    )
+  {
+    Ok(recipe_detail) -> {
+      io.println("Recipe updated successfully!")
+      io.println("Recipe ID: " <> int.to_string(recipe_detail.id))
+      io.println("Name: " <> recipe_detail.name)
+      Ok(recipe_detail)
+    }
+    Error(e) -> {
+      let error_msg = client.error_to_string(e)
+      Error(
+        "Failed to update recipe "
+        <> int.to_string(recipe_id)
+        <> ": "
+        <> error_msg,
+      )
+    }
+  }
+}
