@@ -4,11 +4,14 @@
 //// Part of NORTH STAR epic (meal-planner-gsa).
 
 import birl
+import gleam/int
 import gleam/json
 import gleam/list
+import gleam/option
 import gleam/string
 import meal_planner/config.{type Config}
 import meal_planner/id.{type UserId}
+import meal_planner/scheduler/job_manager
 import meal_planner/scheduler/types.{type SchedulerError}
 
 // ============================================================================
@@ -25,11 +28,53 @@ pub type SyncResult {
 // ============================================================================
 
 /// Trigger automatic sync of today's meal plan to FatSecret diary
-pub fn trigger_auto_sync(_user_id: UserId) -> Result(SyncResult, SchedulerError) {
+pub fn trigger_auto_sync(user_id: UserId) -> Result(SyncResult, SchedulerError) {
+  // Step 1: Create job execution record
+  let job_id =
+    id.job_id(
+      "auto_sync_" <> { birl.now() |> birl.to_unix_milli |> int.to_string },
+    )
+  let execution = job_manager.mark_job_running(job_id)
+
+  case execution {
+    Ok(_exec) -> {
+      // Step 2: Perform the sync operation
+      let sync_result = perform_fatsecret_sync(user_id)
+
+      // Step 3: Update execution record with results
+      case sync_result {
+        Ok(result) -> {
+          // Mark job as completed with output
+          let output = sync_result_to_json(result) |> option.Some
+          let _ = job_manager.mark_job_completed(job_id, output)
+          Ok(result)
+        }
+        Error(err) -> {
+          // Mark job as failed
+          let _ = job_manager.mark_job_failed(job_id, "Sync failed")
+          Error(err)
+        }
+      }
+    }
+    Error(err) -> Error(err)
+  }
+}
+
+/// Perform the actual FatSecret diary sync
+/// TODO: Implement when FatSecret sync module is ready
+fn perform_fatsecret_sync(
+  _user_id: UserId,
+) -> Result(SyncResult, SchedulerError) {
   // Get today's date in YYYY-MM-DD format
   let _today = get_today_date()
 
   // TODO: Implement full sync logic when database queries are ready
+  // This would:
+  // 1. Fetch today's meal plan from local database
+  // 2. For each meal entry, create/update FatSecret diary entry
+  // 3. Track synced/skipped/failed counts
+  // 4. Return comprehensive result
+
   // For now, return empty result
   Ok(SyncResult(synced: 0, skipped: 0, failed: 0, errors: []))
 }
