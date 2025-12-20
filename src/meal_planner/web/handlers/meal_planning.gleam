@@ -11,7 +11,6 @@ import gleam/dynamic/decode
 import gleam/http
 import gleam/json
 import gleam/list
-import gleam/result
 import meal_planner/meal_sync.{type MealSelection, MealSelection}
 import meal_planner/mvp_recipes
 import meal_planner/orchestrator
@@ -28,15 +27,6 @@ type MealPlanRequest {
 }
 
 /// Response with complete meal plan
-type MealPlanResponse {
-  MealPlanResponse(
-    recipes_selected: Int,
-    grocery_list_items: Int,
-    total_prep_time_min: Int,
-    formatted_plan: String,
-  )
-}
-
 /// Generate a complete meal plan
 /// POST /api/meal-planning/generate
 ///
@@ -123,7 +113,7 @@ pub fn handle_generate(
 /// - 500: Server error
 pub fn handle_sync_meals(
   req: wisp.Request,
-  tandoor_config: ClientConfig,
+  _tandoor_config: ClientConfig,
 ) -> wisp.Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes

@@ -7,18 +7,15 @@
 //// - Configuration validation
 //// - User-friendly startup messages
 
-import envoy
 import gleam/erlang/process
 import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option.{Some}
-import gleam/result
 import gleam/string
 import meal_planner/config.{
-  type Config, Config, Development, FeatureFatSecret, FeatureTandoor, Production,
-  Staging, has_fatsecret_integration, has_tandoor_integration,
-  is_feature_enabled,
+  type Config, Development, Production, Staging, has_fatsecret_integration,
+  has_tandoor_integration,
 }
 
 /// Service health status

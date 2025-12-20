@@ -76,7 +76,6 @@ pub fn view_state_main_view_test() {
   // THEN: Can pattern match without errors
   case view_state {
     diary.MainView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -88,7 +87,6 @@ pub fn view_state_search_popup_test() {
   // THEN: Can pattern match correctly
   case view_state {
     diary.SearchPopup -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -100,7 +98,6 @@ pub fn view_state_date_picker_test() {
   // THEN: Can pattern match and extract date_input
   case view_state {
     diary.DatePicker(date_input) -> date_input
-    _ -> ""
   }
   |> should.equal("2025-12-20")
 }
@@ -113,7 +110,6 @@ pub fn view_state_confirm_delete_test() {
   // THEN: Can pattern match and extract entry_id
   case view_state {
     diary.ConfirmDelete(id) -> diary_types.food_entry_id_to_string(id)
-    _ -> ""
   }
   |> should.equal("12345")
 }

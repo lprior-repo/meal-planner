@@ -7,12 +7,9 @@
 import gleam/list
 import gleeunit/should
 import meal_planner/generation/locked_meals.{
-  type LockConflict, LockConflict, apply_locked_meals, check_lock_conflicts,
+  LockConflict, apply_locked_meals, check_lock_conflicts,
 }
-import meal_planner/generator/weekly.{
-  type Constraints, type DayMeals, type MealType, Breakfast, Constraints,
-  DayMeals, Dinner, LockedMeal, Lunch,
-}
+import meal_planner/generator/weekly.{type DayMeals, Dinner, LockedMeal, Lunch}
 import meal_planner/id
 import meal_planner/types.{type Recipe, Low, Macros, Recipe}
 

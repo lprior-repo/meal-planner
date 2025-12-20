@@ -16,7 +16,6 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/env
-import meal_planner/shared/response_encoders
 import meal_planner/tandoor/client
 import wisp
 

@@ -5,7 +5,6 @@
 ///
 /// Cache entries are stored in ~/.meal-planner/cache/ with JSON encoding.
 /// Each cache entry includes the value and expiration timestamp.
-import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/json
 import gleam/list

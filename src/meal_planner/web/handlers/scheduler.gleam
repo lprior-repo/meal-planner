@@ -6,7 +6,6 @@
 //// - Trigger immediate job execution
 
 import gleam/json
-import gleam/list
 import gleam/option.{None, Some}
 import meal_planner/id
 import meal_planner/scheduler/types as scheduler_types
@@ -49,7 +48,7 @@ pub fn handle_list_jobs(db: pog.Connection) -> wisp.Response {
 }
 
 /// Handle GET /scheduler/executions - List execution history
-pub fn handle_list_executions(db: pog.Connection) -> wisp.Response {
+pub fn handle_list_executions(_db: pog.Connection) -> wisp.Response {
   // For now, return empty array since we need to implement a query that lists all executions
   // TODO: Implement scheduler_storage.list_all_executions()
   let body =

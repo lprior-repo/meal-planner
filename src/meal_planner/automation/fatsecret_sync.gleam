@@ -4,14 +4,8 @@
 /// - Nutrition profile similarity
 /// - Name matching
 /// - Meal type alignment
-import gleam/float
-import gleam/list
-import gleam/option.{type Option, None}
-import gleam/result
-import gleam/string
-import meal_planner/fatsecret/diary/types.{
-  type FoodEntry, type MealType, Breakfast, Dinner, Lunch, Snack,
-}
+import gleam/option.{None}
+import meal_planner/fatsecret/diary/types.{type FoodEntry}
 import meal_planner/tandoor/mealplan.{type MealPlan}
 
 pub type SyncResult {

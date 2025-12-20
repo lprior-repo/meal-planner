@@ -19,7 +19,6 @@ import meal_planner/generator/weekly
 import meal_planner/grocery_list
 import meal_planner/types.{
   type FodmapLevel, type Macros, type Recipe, High, Low, Medium, macros_calories,
-  macros_subtract,
 }
 
 // ============================================================================

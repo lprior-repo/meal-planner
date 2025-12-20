@@ -9,16 +9,11 @@
 //// 3. Macro balance within ±10% tolerance
 //// 4. Travel constraint handling and locked meals
 
-import gleam/list
-import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
-import meal_planner/generator/weekly.{
-  type Constraints, type DayMeals, Breakfast, Constraints, DayMeals, Dinner,
-  LockedMeal, Lunch,
-}
+import meal_planner/generator/weekly.{type DayMeals, Dinner, LockedMeal, Lunch}
 import meal_planner/id
-import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
+import meal_planner/types.{type Recipe, Low, Macros, Recipe}
 
 pub fn main() {
   gleeunit.main()

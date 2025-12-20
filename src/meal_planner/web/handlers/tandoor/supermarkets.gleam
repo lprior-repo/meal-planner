@@ -9,9 +9,8 @@ import gleam/result
 
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/supermarket.{
-  type Supermarket, type SupermarketCreateRequest, SupermarketCreateRequest,
-  create_supermarket, delete_supermarket, get_supermarket, list_supermarkets,
-  update_supermarket,
+  type SupermarketCreateRequest, SupermarketCreateRequest, create_supermarket,
+  delete_supermarket, get_supermarket, list_supermarkets, update_supermarket,
 }
 
 import wisp

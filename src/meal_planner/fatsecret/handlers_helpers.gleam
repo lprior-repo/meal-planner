@@ -18,7 +18,6 @@ import gleam/string
 import meal_planner/fatsecret/foods/types as food_types
 import meal_planner/fatsecret/recipes/types as recipe_types
 import meal_planner/fatsecret/service as fatsecret_service
-import meal_planner/shared/response_encoders
 import wisp
 
 // =============================================================================

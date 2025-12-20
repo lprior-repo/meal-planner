@@ -7,7 +7,7 @@
 /// - Visual feedback and styling
 import gleam/erlang/process
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import meal_planner/cli/model
 import meal_planner/cli/types
 import meal_planner/config.{type Config}

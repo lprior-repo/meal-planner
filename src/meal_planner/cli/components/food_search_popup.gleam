@@ -2,7 +2,6 @@
 ///
 /// This is a minimal stub to allow tests to compile.
 /// Full implementation pending.
-import gleam/list
 import gleam/option.{type Option}
 import meal_planner/fatsecret/foods/types
 

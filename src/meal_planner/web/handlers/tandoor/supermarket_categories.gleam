@@ -15,9 +15,9 @@ import gleam/option
 import gleam/result
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/supermarket.{
-  type SupermarketCategory, type SupermarketCategoryCreateRequest,
-  SupermarketCategoryCreateRequest, create_category, delete_category,
-  get_category, list_categories, update_category,
+  type SupermarketCategoryCreateRequest, SupermarketCategoryCreateRequest,
+  create_category, delete_category, get_category, list_categories,
+  update_category,
 }
 import wisp
 

@@ -12,7 +12,6 @@ import gleeunit/should
 import meal_planner/cli/domains/scheduler
 import meal_planner/id
 import meal_planner/scheduler/types.{
-  type JobExecution as JobExecutionType, type ScheduledJob as ScheduledJobType,
   AutoSync, Completed, High, JobExecution, Once, RetryPolicy, Running, Scheduled,
   ScheduledJob,
 }
