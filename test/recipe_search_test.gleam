@@ -225,8 +225,7 @@ pub fn recipe_search_format_output_test() {
   //   recipes: List(Recipe),
   //   query: String
   // ) -> String
-  let formatted =
-    recipe_cmd.format_recipe_search_results([], query: "test")
+  let formatted = recipe_cmd.format_recipe_search_results([], query: "test")
 
   // Should contain header with query
   formatted

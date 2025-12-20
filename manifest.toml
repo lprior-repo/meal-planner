@@ -77,7 +77,7 @@ gleam_httpc = { version = ">= 5.0.0 and < 6.0.0" }
 gleam_json = { version = ">= 3.1.0 and < 4.0.0" }
 gleam_otp = { version = ">= 0.10.0" }
 gleam_regexp = { version = ">= 1.1.1 and < 2.0.0" }
-gleam_stdlib = { version = ">= 0.65.0" }
+gleam_stdlib = { version = ">= 0.67.1 and < 1.0.0" }
 gleeunit = { version = ">= 1.9.0 and < 2.0.0" }
 glint = { version = ">= 1.0.0" }
 logging = { version = ">= 1.0.0" }

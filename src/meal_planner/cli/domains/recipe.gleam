@@ -5,11 +5,10 @@
 /// - Listing recipes
 /// - Adding new recipes
 /// - Viewing recipe details
-import gleam/int
+import gleam/float
 import gleam/io
 import gleam/list
-import gleam/option.{type Option, None, Some}
-import gleam/result
+import gleam/option.{None, Some}
 import gleam/string
 import glint
 import meal_planner/config.{type Config}
@@ -83,10 +82,7 @@ fn format_recipe_detail(recipe_detail: recipe.RecipeDetail) -> String {
             "" -> ""
             name -> name <> ": "
           }
-          int.to_string(idx + 1)
-          <> ". "
-          <> step_name
-          <> step.instruction
+          int.to_string(idx + 1) <> ". " <> step_name <> step.instruction
         })
         |> string.join("\n")
       }
@@ -107,7 +103,7 @@ fn format_recipe_detail(recipe_detail: recipe.RecipeDetail) -> String {
 /// Format optional float for display
 fn format_float(value: Float) -> String {
   // Round to 1 decimal place
-  let rounded = { value *. 10.0 } |> int.truncate |> int.to_float
+  let rounded = { value *. 10.0 } |> float.truncate |> int.to_float
   let result = rounded /. 10.0
   string.inspect(result)
 }
@@ -122,7 +118,9 @@ pub fn detail_handler(config: Config, recipe_id: Int) -> Result(Nil, Nil) {
       Ok(Nil)
     }
     Error(client.NotFoundError(_)) -> {
-      io.println("Error: Recipe not found (ID: " <> int.to_string(recipe_id) <> ")")
+      io.println(
+        "Error: Recipe not found (ID: " <> int.to_string(recipe_id) <> ")",
+      )
       Error(Nil)
     }
     Error(err) -> {
@@ -165,7 +163,9 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
           case int.parse(id_str) {
             Ok(recipe_id) -> detail_handler(config, recipe_id)
             Error(_) -> {
-              io.println("Error: Invalid recipe ID. Expected a number, got: " <> id_str)
+              io.println(
+                "Error: Invalid recipe ID. Expected a number, got: " <> id_str,
+              )
               Error(Nil)
             }
           }
