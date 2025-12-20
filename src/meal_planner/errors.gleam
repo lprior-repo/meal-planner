@@ -13,12 +13,11 @@
 //// - Logging and monitoring integration
 
 import gleam/dict.{type Dict}
-import gleam/http.{type Header}
 import gleam/http/response.{type Response}
 import gleam/int
 import gleam/json.{type Json}
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{type Option, None}
 import gleam/result
 import gleam/string
 import meal_planner/fatsecret/core/errors as fatsecret_errors

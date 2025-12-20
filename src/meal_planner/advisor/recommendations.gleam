@@ -8,8 +8,6 @@
 import gleam/float
 import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
-import gleam/string
 import meal_planner/advisor/weekly_trends.{
   type NutritionTargets, type WeeklyTrends,
 }

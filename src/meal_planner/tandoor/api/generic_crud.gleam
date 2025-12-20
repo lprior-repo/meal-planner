@@ -21,7 +21,7 @@ import gleam/option.{type Option}
 import gleam/result
 import gleam/string
 import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, NetworkError, ParseError,
+  type ClientConfig, type TandoorError, ParseError,
 }
 import meal_planner/tandoor/core/http as core_http
 import wisp.{type Request, type Response}

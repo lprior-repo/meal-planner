@@ -464,7 +464,7 @@ pub fn cmd(app_config: Config) -> glint.Command(Result(Nil, Nil)) {
     glint.string_flag("query")
     |> glint.flag_help("Food search query"),
   )
-  use id <- glint.flag(
+  use _id <- glint.flag(
     glint.int_flag("id")
     |> glint.flag_help("Recipe or food ID"),
   )

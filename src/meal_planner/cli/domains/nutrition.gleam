@@ -5,18 +5,15 @@
 /// - Analyzing daily nutrition data
 /// - Viewing nutrition trends over time
 /// - Checking compliance with goals
-import birl
 import gleam/float
 import gleam/int
 import gleam/io
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import glint
 import meal_planner/config.{type Config}
-import meal_planner/fatsecret/diary/service as diary_service
-import meal_planner/fatsecret/diary/types as diary_types
 import meal_planner/ncp.{
   type DeviationResult, type NutritionData, type NutritionGoals,
   type TrendDirection, Decreasing, Increasing, NutritionData, NutritionGoals,
@@ -25,7 +22,7 @@ import meal_planner/ncp.{
 import meal_planner/postgres
 import meal_planner/storage
 import meal_planner/storage/profile.{
-  type StorageError, DatabaseError, InvalidInput, NotFound, Unauthorized,
+  DatabaseError, InvalidInput, NotFound, Unauthorized,
 }
 import meal_planner/types
 
@@ -571,7 +568,7 @@ pub fn display_trends(
 
 /// Display trends with provided goals
 fn display_trends_with_goals(
-  config: Config,
+  _config: Config,
   days_count: Int,
   goals: NutritionGoals,
 ) -> Result(String, String) {

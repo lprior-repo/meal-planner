@@ -8,8 +8,6 @@
 import gleam/io
 import meal_planner/cli/model
 import meal_planner/cli/types
-import meal_planner/cli/update
-import meal_planner/cli/view
 import meal_planner/config
 
 /// Launch the interactive TUI application

@@ -10,8 +10,7 @@
 import gleam/list
 import gleam/result
 import meal_planner/generator/weekly.{
-  type Constraints, type DayMeals, type MealType, Breakfast, DayMeals, Dinner,
-  Lunch,
+  type Constraints, type DayMeals, type MealType, Breakfast, Dinner, Lunch,
 }
 import meal_planner/types.{type Recipe}
 

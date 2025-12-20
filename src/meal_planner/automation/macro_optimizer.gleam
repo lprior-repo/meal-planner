@@ -37,10 +37,7 @@
 //// }
 //// ```
 
-import gleam/float
-import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
 import gleam/order.{type Order}
 import meal_planner/types/macros.{type Macros}
 import meal_planner/types/recipe.{type MealPlanRecipe}

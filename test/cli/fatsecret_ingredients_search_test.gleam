@@ -8,7 +8,7 @@ import meal_planner/config
 /// Test: ingredients command searches for foods and returns results
 pub fn ingredients_search_returns_results_test() {
   // Create test config with all required fields
-  let test_config =
+  let _test_config =
     config.Config(
       environment: config.Development,
       database: config.DatabaseConfig(

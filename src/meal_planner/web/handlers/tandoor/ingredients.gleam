@@ -7,9 +7,7 @@ import gleam/json
 import gleam/option
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/ingredient.{
-  type Ingredient, encode_ingredient, list_ingredients,
-}
+import meal_planner/tandoor/ingredient.{type Ingredient, list_ingredients}
 import wisp
 
 // =============================================================================

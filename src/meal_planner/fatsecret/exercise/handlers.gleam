@@ -494,7 +494,7 @@ fn parse_exercise_entry_update(
 
   decode.run(body, decoder)
   |> result.map_error(fn(_) { "Invalid request body" })
-  |> result.then(fn(update) {
+  |> result.try(fn(update) {
     // Validate at least one field is provided
     case update.exercise_id, update.duration_min {
       None, None -> Error("At least one field must be provided for update")

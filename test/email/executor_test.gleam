@@ -5,7 +5,6 @@
 import gleeunit
 import gleeunit/should
 
-import meal_planner/email/executor
 import meal_planner/id
 import meal_planner/types.{AddPreference, AdjustMeal, Breakfast, Friday}
 

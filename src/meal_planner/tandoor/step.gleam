@@ -20,8 +20,8 @@ import meal_planner/tandoor/api/crud_helpers.{
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/core/ids.{
-  type IngredientId, type StepId, ingredient_id_decoder, ingredient_id_to_int,
-  step_id_decoder, step_id_to_int,
+  type IngredientId, type StepId, ingredient_id_to_int, step_id_decoder,
+  step_id_to_int,
 }
 import meal_planner/tandoor/ingredient.{
   type Ingredient, encode_ingredient, ingredient_decoder,

@@ -12,7 +12,6 @@ import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/int
 import gleam/json.{type Json}
-import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import meal_planner/tandoor/api/crud_helpers.{
