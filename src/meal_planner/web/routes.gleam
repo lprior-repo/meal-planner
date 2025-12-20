@@ -15,11 +15,8 @@ import meal_planner/web/routes/meal_planning
 import meal_planner/web/routes/misc
 import meal_planner/web/routes/nutrition
 import meal_planner/web/routes/tandoor
-import meal_planner/web/routes/types
+import meal_planner/web/routes/types.{type Context}
 import wisp
-
-pub type Context =
-  types.Context
 
 /// Route request to appropriate domain router
 ///

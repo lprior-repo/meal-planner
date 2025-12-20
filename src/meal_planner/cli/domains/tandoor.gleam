@@ -14,6 +14,8 @@ import gleam/option
 import gleam/result
 import glint
 import meal_planner/config.{type Config}
+import meal_planner/scheduler/errors
+import meal_planner/scheduler/sync_scheduler
 import meal_planner/tandoor/client
 import meal_planner/tandoor/recipe
 
@@ -36,10 +38,35 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
 
   case unnamed {
     ["sync"] -> {
-      case sync_recipes(config, full: False) {
-        Ok(_) -> Ok(Nil)
-        Error(msg) -> {
-          io.println(msg)
+      io.println("Starting full Tandoor synchronization...")
+      io.println(
+        "This will sync recipes, ingredients, meal plans, and shopping lists.",
+      )
+      io.println("")
+
+      case sync_scheduler.trigger_full_sync() {
+        Ok(result) -> {
+          io.println("Synchronization complete!")
+          io.println("")
+          io.println("Results:")
+          io.println("  Synced:  " <> int.to_string(result.synced))
+          io.println("  Skipped: " <> int.to_string(result.skipped))
+          io.println("  Failed:  " <> int.to_string(result.failed))
+
+          case result.errors {
+            [] -> Nil
+            errors -> {
+              io.println("")
+              io.println("Errors encountered:")
+              list.each(errors, fn(err) { io.println("  - " <> err) })
+            }
+          }
+
+          Ok(Nil)
+        }
+        Error(err) -> {
+          io.println("Synchronization failed!")
+          io.println("Error: " <> errors.error_to_string(err))
           Error(Nil)
         }
       }

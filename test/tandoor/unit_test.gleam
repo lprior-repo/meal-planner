@@ -8,21 +8,14 @@ import gleam/string
 import gleeunit/should
 import meal_planner/tandoor/client
 import meal_planner/tandoor/unit.{type Unit, Unit}
+import tandoor/api/helpers as test_helpers
 
 // ============================================================================
 // Type Construction Tests
 // ============================================================================
 
 pub fn unit_full_constructor_test() {
-  let unit =
-    Unit(
-      id: 1,
-      name: "gram",
-      plural_name: Some("grams"),
-      description: Some("Metric unit of mass"),
-      base_unit: Some("kilogram"),
-      open_data_slug: Some("g"),
-    )
+  let unit = test_helpers.test_unit()
 
   unit.id |> should.equal(1)
   unit.name |> should.equal("gram")
@@ -33,15 +26,8 @@ pub fn unit_full_constructor_test() {
 }
 
 pub fn unit_minimal_test() {
-  let unit =
-    Unit(
-      id: 2,
-      name: "piece",
-      plural_name: None,
-      description: None,
-      base_unit: None,
-      open_data_slug: None,
-    )
+  let base = test_helpers.test_unit_minimal()
+  let unit = Unit(..base, id: 2, name: "piece")
 
   unit.id |> should.equal(2)
   unit.name |> should.equal("piece")

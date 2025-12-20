@@ -13,10 +13,12 @@
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
+import meal_planner/config
 import meal_planner/email/confirmation as email_confirmation
-import meal_planner/email/executor as email_executor
+
+// import meal_planner/email/executor as email_executor
 import meal_planner/fatsecret/client
-import meal_planner/fatsecret/core/config
+import meal_planner/fatsecret/core/config as fs_config
 import meal_planner/fatsecret/core/oauth as core_oauth
 import meal_planner/fatsecret/foods/handlers as foods_handlers
 import meal_planner/fatsecret/profile/handlers as profile_handlers
@@ -35,6 +37,15 @@ import wisp
 /// Health check handler - GET /health or /
 pub fn handle_health(req: wisp.Request) -> wisp.Response {
   health.handle(req)
+}
+
+/// Detailed health check handler - GET /health/detailed
+pub fn handle_health_detailed(
+  req: wisp.Request,
+  db: pog.Connection,
+  app_config: config.Config,
+) -> wisp.Response {
+  health.handle_detailed(req, db, app_config)
 }
 
 /// Recipe scoring handler - POST /api/ai/score-recipe
@@ -171,6 +182,7 @@ pub fn handle_fatsecret_autocomplete_recipes(req: wisp.Request) -> wisp.Response
 /// - GET/POST/PATCH/DELETE /api/tandoor/meal-plans/*
 /// - GET /api/tandoor/keywords/*
 /// - GET /api/tandoor/units
+/// - GET/PUT /api/tandoor/preferences
 pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
   tandoor.handle_tandoor_routes(req)
 }
@@ -185,7 +197,7 @@ pub fn handle_fatsecret_connect(
   conn: pog.Connection,
   base_url: String,
 ) -> wisp.Response {
-  case config.from_env() {
+  case fs_config.from_env() {
     None -> {
       wisp.response(500)
       |> wisp.set_header("content-type", "application/json")
@@ -269,7 +281,7 @@ pub fn handle_fatsecret_callback(
           )
         }
         Ok(token_secret) -> {
-          case config.from_env() {
+          case fs_config.from_env() {
             None -> {
               wisp.response(500)
               |> wisp.set_header("content-type", "application/json")
@@ -412,9 +424,14 @@ pub fn handle_fatsecret_get_profile_auth(
 /// Routes command to appropriate handler (adjust meal, preferences, regeneration, etc.)
 pub fn execute_email_command(
   command: types.EmailCommand,
-  conn: pog.Connection,
+  _conn: pog.Connection,
 ) -> types.CommandExecutionResult {
-  email_executor.execute_command(command, conn)
+  types.CommandExecutionResult(
+    success: False,
+    message: "Email executor temporarily disabled",
+    command: option.Some(command),
+  )
+  // email_executor.execute_command(command, conn)
 }
 
 /// Generate confirmation email for executed command

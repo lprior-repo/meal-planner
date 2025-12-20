@@ -1765,6 +1765,178 @@ paths:
         204:
           description: Export log deleted
 
+  /api/tandoor/preferences:
+    get:
+      operationId: getUserPreferences
+      tags:
+        - Tandoor Integration
+      summary: Get user preferences
+      description: Get the current authenticated user's Tandoor preferences
+      responses:
+        200:
+          description: User preferences
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      display_name:
+                        type: string
+                      is_staff:
+                        type: boolean
+                      is_superuser:
+                        type: boolean
+                      is_active:
+                        type: boolean
+                  theme:
+                    type: string
+                    example: BOOTSTRAP
+                  nav_bg_color:
+                    type: string
+                    example: "#343a40"
+                  nav_text_color:
+                    type: string
+                    example: LIGHT
+                  nav_show_logo:
+                    type: boolean
+                  default_unit:
+                    type: string
+                    example: g
+                  default_page:
+                    type: string
+                    example: SEARCH
+                  use_fractions:
+                    type: boolean
+                  use_kj:
+                    type: boolean
+                  nav_sticky:
+                    type: boolean
+                  ingredient_decimals:
+                    type: integer
+                  comments:
+                    type: boolean
+                  shopping_auto_sync:
+                    type: integer
+                  mealplan_autoadd_shopping:
+                    type: boolean
+                  food_inherit_default:
+                    type: string
+                  default_delay:
+                    type: number
+                  mealplan_autoinclude_related:
+                    type: boolean
+                  mealplan_autoexclude_onhand:
+                    type: boolean
+                  shopping_recent_days:
+                    type: integer
+                  csv_delim:
+                    type: string
+                  csv_prefix:
+                    type: string
+                  filter_to_supermarket:
+                    type: boolean
+                  shopping_add_onhand:
+                    type: boolean
+                  left_handed:
+                    type: boolean
+                  show_step_ingredients:
+                    type: boolean
+                  food_children_exist:
+                    type: boolean
+        500:
+          description: Failed to get user preferences
+
+    put:
+      operationId: updateUserPreferences
+      tags:
+        - Tandoor Integration
+      summary: Update user preferences
+      description: Update the current authenticated user's Tandoor preferences (partial updates supported)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                theme:
+                  type: string
+                  example: FLATLY
+                nav_bg_color:
+                  type: string
+                nav_text_color:
+                  type: string
+                nav_show_logo:
+                  type: boolean
+                default_unit:
+                  type: string
+                default_page:
+                  type: string
+                use_fractions:
+                  type: boolean
+                use_kj:
+                  type: boolean
+                plan_share:
+                  type: array
+                  items:
+                    type: integer
+                nav_sticky:
+                  type: boolean
+                ingredient_decimals:
+                  type: integer
+                comments:
+                  type: boolean
+                shopping_auto_sync:
+                  type: integer
+                mealplan_autoadd_shopping:
+                  type: boolean
+                default_delay:
+                  type: number
+                mealplan_autoinclude_related:
+                  type: boolean
+                mealplan_autoexclude_onhand:
+                  type: boolean
+                shopping_share:
+                  type: array
+                  items:
+                    type: integer
+                shopping_recent_days:
+                  type: integer
+                csv_delim:
+                  type: string
+                csv_prefix:
+                  type: string
+                filter_to_supermarket:
+                  type: boolean
+                shopping_add_onhand:
+                  type: boolean
+                left_handed:
+                  type: boolean
+                show_step_ingredients:
+                  type: boolean
+      responses:
+        200:
+          description: Preferences updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        400:
+          description: Invalid request
+        500:
+          description: Failed to update preferences
+
   /api/nutrition/daily-status:
     get:
       operationId: getDailyNutritionStatus

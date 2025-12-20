@@ -18,8 +18,9 @@ import meal_planner/web/handlers/tandoor/meal_plans
 import meal_planner/web/handlers/tandoor/steps
 import meal_planner/web/handlers/tandoor/supermarket_categories
 import meal_planner/web/handlers/tandoor/supermarkets
-import meal_planner/web/handlers/tandoor/tandoor_recipes
+import meal_planner/web/handlers/tandoor/recipes
 import meal_planner/web/handlers/tandoor/units
+import meal_planner/web/handlers/tandoor/preferences
 import meal_planner/web/handlers/tandoor_cuisines
 
 import wisp
@@ -60,11 +61,11 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
 
     // Recipes (GET list, POST create)
     ["api", "tandoor", "recipes"] ->
-      tandoor_recipes.handle_recipes_collection(req)
+      recipes.handle_recipes_collection(req)
 
     // Recipe by ID (GET, PATCH, DELETE)
     ["api", "tandoor", "recipes", recipe_id] ->
-      tandoor_recipes.handle_recipe_by_id(req, recipe_id)
+      recipes.handle_recipe_by_id(req, recipe_id)
 
     // Meal Plans (GET list, POST create)
     ["api", "tandoor", "meal-plans"] ->
@@ -112,6 +113,9 @@ pub fn handle_tandoor_routes(req: wisp.Request) -> wisp.Response {
     // Supermarket Category by ID (GET, PATCH, DELETE)
     ["api", "tandoor", "supermarket-categories", category_id] ->
       supermarket_categories.handle_category_by_id(req, category_id)
+
+    // User Preferences (GET, PUT)
+    ["api", "tandoor", "preferences"] -> preferences.handle_preferences(req)
 
     _ -> wisp.not_found()
   }
