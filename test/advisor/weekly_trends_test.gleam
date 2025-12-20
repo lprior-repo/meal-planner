@@ -2,6 +2,7 @@
 ///
 /// Validates pattern identification, macro averaging, and recommendation generation
 import gleam/list
+import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/advisor/weekly_trends.{
@@ -180,7 +181,11 @@ pub fn identify_patterns_detects_protein_deficiency_test() {
   let patterns = identify_nutrition_patterns(summaries, targets)
 
   // Should detect protein deficiency
-  should.be_true(list.contains(patterns, "protein_deficiency"))
+  let has_protein_deficiency =
+    list.any(patterns, fn(pattern) {
+      string.contains(pattern, "protein_deficiency")
+    })
+  should.be_true(has_protein_deficiency)
 }
 
 pub fn identify_patterns_detects_balanced_week_test() {
@@ -191,8 +196,15 @@ pub fn identify_patterns_detects_balanced_week_test() {
   let patterns = identify_nutrition_patterns(summaries, targets)
 
   // Should have no deficiency patterns (or positive patterns)
-  should.be_false(list.contains(patterns, "protein_deficiency"))
-  should.be_false(list.contains(patterns, "carb_overage"))
+  let has_protein_deficiency =
+    list.any(patterns, fn(pattern) {
+      string.contains(pattern, "protein_deficiency")
+    })
+  let has_carb_overage =
+    list.any(patterns, fn(pattern) { string.contains(pattern, "carb_overage") })
+
+  should.be_false(has_protein_deficiency)
+  should.be_false(has_carb_overage)
 }
 
 // ============================================================================

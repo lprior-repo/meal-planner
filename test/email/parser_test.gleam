@@ -1,12 +1,8 @@
 /// Tests for email command parsing
-import gleam/option.{Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/email/parser
-import meal_planner/types.{
-  AddPreference, AdjustMeal, Breakfast, Dinner, EmailRequest, Friday, Lunch,
-  RemoveDislike, SkipMeal,
-}
+import meal_planner/types.{EmailRequest}
 
 pub fn main() {
   gleeunit.main()
