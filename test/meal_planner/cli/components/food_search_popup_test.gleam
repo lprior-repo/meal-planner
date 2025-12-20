@@ -42,8 +42,8 @@ fn create_mock_food(id: String, name: String) -> foods_types.FoodSearchResult {
 fn create_mock_foods(count: Int) -> List(foods_types.FoodSearchResult) {
   list.range(1, count)
   |> list.map(fn(i) {
-    let id = "food_" <> i |> int.to_string
-    let name = "Test Food " <> i |> int.to_string
+    let id = "food_" <> int.to_string(i)
+    let name = "Test Food " <> int.to_string(i)
     create_mock_food(id, name)
   })
 }
