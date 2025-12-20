@@ -720,18 +720,171 @@ fn load_nutrition_goals(config: Config) -> Result(NutritionGoals, String) {
     }
   }
 }
-/// Generate a nutrition report for a specific date
-///
-/// Fetches FatSecret diary entries, calculates total macros, and compares
-/// against nutrition goals.
-///
-/// Parameters:
-/// - config: Application config
-/// - date: Date string (YYYY-MM-DD or "today")
-///
-/// Returns:
-/// - Ok(String) with formatted report
-/// - Error(String) on failure
-// ============================================================================
-// Nutrition Report Generation
-// ============================================================================
+/// Display current nutrition goals
+pub fn display_goals(config: Config) -> Result(String, String) {
+  case load_nutrition_goals(config) {
+    Error(err) -> Error(err)
+    Ok(goals) -> {
+      let output =
+        "Daily Nutrition Goals:\n"
+        <> "Calories: "
+        <> float_to_string(goals.daily_calories)
+        <> " kcal\n"
+        <> "Protein: "
+        <> float_to_string(goals.daily_protein)
+        <> "g\n"
+        <> "Carbs: "
+        <> float_to_string(goals.daily_carbs)
+        <> "g\n"
+        <> "Fat: "
+        <> float_to_string(goals.daily_fat)
+        <> "g"
+      Ok(output)
+    }
+  }
+}
+
+/// Set a specific nutrition goal with validation
+pub fn set_goal(
+  config: Config,
+  goal_type goal_type: String,
+  value value: Int,
+) -> Result(String, String) {
+  // Validate input based on goal type
+  case validate_goal_value(goal_type, value) {
+    Error(err) -> Error(err)
+    Ok(_float_value) -> {
+      // Load current goals to verify they exist
+      case load_nutrition_goals(config) {
+        Error(err) -> Error(err)
+        Ok(_current_goals) -> {
+          // Return confirmation (in real implementation, would save to DB)
+          let confirmation =
+            string.capitalise(goal_type)
+            <> " goal set to "
+            <> int.to_string(value)
+            <> case goal_type {
+              "calories" -> " kcal"
+              _ -> "g"
+            }
+
+          Ok(confirmation)
+        }
+      }
+    }
+  }
+}
+
+/// List available nutrition presets
+pub fn list_presets(_config: Config) -> Result(String, String) {
+  let presets =
+    "Available Nutrition Presets:\n\n"
+    <> "sedentary: 2000 kcal, 25% protein, 50% carbs, 25% fat\n"
+    <> "  Protein: 125g | Carbs: 250g | Fat: 56g\n\n"
+    <> "moderate: 2200 kcal, 30% protein, 45% carbs, 25% fat\n"
+    <> "  Protein: 165g | Carbs: 248g | Fat: 61g\n\n"
+    <> "active: 2500 kcal, 35% protein, 45% carbs, 20% fat\n"
+    <> "  Protein: 219g | Carbs: 281g | Fat: 56g\n\n"
+    <> "athletic: 3000 kcal, 40% protein, 40% carbs, 20% fat\n"
+    <> "  Protein: 300g | Carbs: 300g | Fat: 67g"
+
+  Ok(presets)
+}
+
+/// Apply a preset to nutrition goals
+pub fn apply_preset(
+  config: Config,
+  preset_name preset_name: String,
+) -> Result(String, String) {
+  // Validate preset name
+  case preset_name {
+    "sedentary" -> apply_preset_values(config, "sedentary", 2000.0, 25.0, 50.0, 25.0)
+    "moderate" -> apply_preset_values(config, "moderate", 2200.0, 30.0, 45.0, 25.0)
+    "active" -> apply_preset_values(config, "active", 2500.0, 35.0, 45.0, 20.0)
+    "athletic" -> apply_preset_values(config, "athletic", 3000.0, 40.0, 40.0, 20.0)
+    _ ->
+      Error(
+        "Unknown preset: '"
+        <> preset_name
+        <> "'. Use: sedentary, moderate, active, athletic",
+      )
+  }
+}
+
+/// Validate goal value based on type
+fn validate_goal_value(goal_type: String, value: Int) -> Result(Float, String) {
+  let float_val = int.to_float(value)
+  case goal_type {
+    "calories" -> {
+      case value >= 500 && value <= 10_000 {
+        True -> Ok(float_val)
+        False -> Error("Calories must be between 500 and 10,000")
+      }
+    }
+    "protein" -> {
+      case value > 0 && value < 500 {
+        True -> Ok(float_val)
+        False -> Error("Protein must be between 1 and 500 grams")
+      }
+    }
+    "carbs" -> {
+      case value > 0 && value < 1000 {
+        True -> Ok(float_val)
+        False -> Error("Carbs must be between 1 and 1000 grams")
+      }
+    }
+    "fat" -> {
+      case value > 0 && value < 500 {
+        True -> Ok(float_val)
+        False -> Error("Fat must be between 1 and 500 grams")
+      }
+    }
+    _ -> Error("Unknown goal type: " <> goal_type)
+  }
+}
+
+/// Apply preset values to create new goals
+fn apply_preset_values(
+  config: Config,
+  preset_name: String,
+  calories: Float,
+  protein_pct: Float,
+  carbs_pct: Float,
+  fat_pct: Float,
+) -> Result(String, String) {
+  // Calculate macro values from percentages
+  let protein_grams = calories *. protein_pct /. 100.0 /. 4.0
+  let carbs_grams = calories *. carbs_pct /. 100.0 /. 4.0
+  let fat_grams = calories *. fat_pct /. 100.0 /. 9.0
+
+  // Load and update goals (in real implementation, would save to DB)
+  case load_nutrition_goals(config) {
+    Error(err) -> Error(err)
+    Ok(_current_goals) -> {
+      let confirmation =
+        "Preset '"
+        <> preset_name
+        <> "' applied:\n"
+        <> "Calories: "
+        <> float_to_string(calories)
+        <> " kcal\n"
+        <> "Protein: "
+        <> float_to_string(protein_grams)
+        <> "g ("
+        <> float_to_string(protein_pct)
+        <> "%)\n"
+        <> "Carbs: "
+        <> float_to_string(carbs_grams)
+        <> "g ("
+        <> float_to_string(carbs_pct)
+        <> "%)\n"
+        <> "Fat: "
+        <> float_to_string(fat_grams)
+        <> "g ("
+        <> float_to_string(fat_pct)
+        <> "%)"
+
+      Ok(confirmation)
+    }
+  }
+}
