@@ -17,6 +17,8 @@ import meal_planner/config.{type Config}
 import meal_planner/scheduler/errors
 import meal_planner/scheduler/sync_scheduler
 import meal_planner/tandoor/client
+import meal_planner/tandoor/cuisine
+import meal_planner/tandoor/keyword
 import meal_planner/tandoor/recipe
 
 // ============================================================================
@@ -32,7 +34,29 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
     |> glint.flag_default(50),
   )
   use id <- glint.flag(
-    glint.int_flag("id") |> glint.flag_help("Recipe ID for delete command"),
+    glint.int_flag("id")
+    |> glint.flag_help("Recipe ID for update/delete commands"),
+  )
+  use name <- glint.flag(
+    glint.string_flag("name") |> glint.flag_help("Recipe name"),
+  )
+  use description <- glint.flag(
+    glint.string_flag("description") |> glint.flag_help("Recipe description"),
+  )
+  use servings <- glint.flag(
+    glint.int_flag("servings") |> glint.flag_help("Number of servings"),
+  )
+  use servings_text <- glint.flag(
+    glint.string_flag("servings-text")
+    |> glint.flag_help("Servings text (e.g., '4 people')"),
+  )
+  use working_time <- glint.flag(
+    glint.int_flag("working-time")
+    |> glint.flag_help("Working time in minutes"),
+  )
+  use waiting_time <- glint.flag(
+    glint.int_flag("waiting-time")
+    |> glint.flag_help("Waiting time in minutes"),
   )
   use _named, unnamed, flags <- glint.command()
 
@@ -79,8 +103,68 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       Ok(Nil)
     }
     ["update"] -> {
-      io.println("Updating recipe metadata in Tandoor...")
-      Ok(Nil)
+      // Parse recipe ID from flags
+      let recipe_id_opt = case id(flags) {
+        Ok(id_val) -> option.Some(id_val)
+        Error(_) -> option.None
+      }
+
+      case parse_update_args(["update"], id: recipe_id_opt) {
+        Ok(recipe_id) -> {
+          // Extract optional update fields from flags
+          let name_opt = case name(flags) {
+            Ok(n) -> option.Some(n)
+            Error(_) -> option.None
+          }
+          let description_opt = case description(flags) {
+            Ok(d) -> option.Some(d)
+            Error(_) -> option.None
+          }
+          let servings_opt = case servings(flags) {
+            Ok(s) -> option.Some(s)
+            Error(_) -> option.None
+          }
+          let servings_text_opt = case servings_text(flags) {
+            Ok(st) -> option.Some(st)
+            Error(_) -> option.None
+          }
+          let working_time_opt = case working_time(flags) {
+            Ok(wt) -> option.Some(wt)
+            Error(_) -> option.None
+          }
+          let waiting_time_opt = case waiting_time(flags) {
+            Ok(wt) -> option.Some(wt)
+            Error(_) -> option.None
+          }
+
+          // Call update_recipe_command with extracted flags
+          case
+            update_recipe_command(
+              config,
+              recipe_id: recipe_id,
+              name: name_opt,
+              description: description_opt,
+              servings: servings_opt,
+              servings_text: servings_text_opt,
+              working_time: working_time_opt,
+              waiting_time: waiting_time_opt,
+            )
+          {
+            Ok(_) -> Ok(Nil)
+            Error(msg) -> {
+              io.println(msg)
+              Error(Nil)
+            }
+          }
+        }
+        Error(msg) -> {
+          io.println(msg)
+          io.println(
+            "Usage: mp tandoor update --id <recipe_id> [--name <name>] [--servings <n>] ...",
+          )
+          Error(Nil)
+        }
+      }
     }
     ["delete"] -> {
       let recipe_id_opt = case id(flags) {
@@ -108,7 +192,9 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       io.println("Tandoor commands:")
       io.println("  mp tandoor sync")
       io.println("  mp tandoor categories --limit 100")
-      io.println("  mp tandoor update")
+      io.println(
+        "  mp tandoor update --id <recipe_id> [--name <name>] [--servings <n>] ...",
+      )
       io.println("  mp tandoor delete --id <recipe_id>")
       Ok(Nil)
     }
@@ -493,6 +579,73 @@ pub fn sync_recipes_with_limit(
     Error(e) -> {
       let error_msg = client.error_to_string(e)
       Error("Failed to sync recipes: " <> error_msg)
+    }
+  }
+}
+
+// ============================================================================
+// List Categories Command
+// ============================================================================
+
+/// List recipe categories from Tandoor API
+///
+/// Fetches cuisines and keywords (categories) from Tandoor and displays them
+/// with recipe counts.
+///
+/// Parameters:
+/// - config: Application configuration with Tandoor settings
+/// - limit: Maximum number of categories to display (currently unused, fetches all)
+///
+/// Returns:
+/// - Ok(Nil) on success with categories displayed
+/// - Error(String) with error message on failure
+pub fn list_categories_handler(
+  config: Config,
+  limit _limit: Int,
+) -> Result(Nil, String) {
+  io.println("Fetching categories from Tandoor...")
+  io.println("")
+
+  let tandoor_config =
+    client.bearer_config(config.tandoor.base_url, config.tandoor.api_token)
+
+  // Fetch cuisines
+  case cuisine.list_cuisines(tandoor_config) {
+    Ok(cuisines) -> {
+      io.println("Cuisines:")
+      cuisines
+      |> list.each(fn(c) {
+        io.println(
+          "  - "
+          <> c.name
+          <> " ("
+          <> int.to_string(c.num_recipes)
+          <> " recipes)",
+        )
+      })
+      io.println("")
+    }
+    Error(e) -> {
+      let error_msg = client.error_to_string(e)
+      io.println("Warning: Failed to fetch cuisines: " <> error_msg)
+      io.println("")
+    }
+  }
+
+  // Fetch keywords
+  case keyword.list_keywords(tandoor_config) {
+    Ok(keywords) -> {
+      io.println("Keywords:")
+      keywords
+      |> list.each(fn(k) {
+        io.println("  - " <> k.label <> " (" <> k.full_name <> ")")
+      })
+      io.println("")
+      Ok(Nil)
+    }
+    Error(e) -> {
+      let error_msg = client.error_to_string(e)
+      Error("Failed to fetch keywords: " <> error_msg)
     }
   }
 }
