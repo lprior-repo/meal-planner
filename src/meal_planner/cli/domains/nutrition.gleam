@@ -85,10 +85,22 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
     }
     ["goals"] -> {
       // Check if any goal flags were provided
-      let calories_val = calories(flags) |> result.to_option
-      let protein_val = protein(flags) |> result.to_option
-      let carbs_val = carbs(flags) |> result.to_option
-      let fat_val = fat(flags) |> result.to_option
+      let calories_val = case calories(flags) {
+        Ok(val) -> Some(val)
+        Error(_) -> None
+      }
+      let protein_val = case protein(flags) {
+        Ok(val) -> Some(val)
+        Error(_) -> None
+      }
+      let carbs_val = case carbs(flags) {
+        Ok(val) -> Some(val)
+        Error(_) -> None
+      }
+      let fat_val = case fat(flags) {
+        Ok(val) -> Some(val)
+        Error(_) -> None
+      }
 
       case calories_val, protein_val, carbs_val, fat_val {
         None, None, None, None -> {
