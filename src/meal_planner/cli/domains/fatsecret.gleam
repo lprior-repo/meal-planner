@@ -70,6 +70,74 @@ pub fn detail_handler(
   }
 }
 
+/// Handler for `mp fatsecret ingredients <QUERY>` command
+///
+/// Searches for foods/ingredients and displays:
+/// - Food name and brand
+/// - Food ID for detailed lookup
+/// - Basic nutrition description
+pub fn ingredients_search_handler(
+  config: Config,
+  query: String,
+) -> Result(Nil, String) {
+  // Validate query is not empty
+  case string.trim(query) {
+    "" ->
+      Error("Search query is required. Usage: mp fatsecret ingredients <QUERY>")
+    trimmed_query -> {
+      // Get FatSecret config from main config
+      case config.external_services.fatsecret {
+        option.None ->
+          Error(
+            "FatSecret API not configured. Please set credentials in config.",
+          )
+        option.Some(fs_config) -> {
+          // Convert config.FatSecretConfig to env.FatSecretConfig format
+          let env_config =
+            env.FatSecretConfig(
+              consumer_key: fs_config.consumer_key,
+              consumer_secret: fs_config.consumer_secret,
+            )
+
+          // Call FatSecret API to search for foods
+          case foods_client.search_foods_simple(env_config, trimmed_query) {
+            Ok(response) -> {
+              // Display results header
+              io.println(
+                "Found "
+                <> int.to_string(response.total_results)
+                <> " results for: "
+                <> trimmed_query,
+              )
+              io.println("")
+
+              // Display each food result
+              list.each(response.foods, fn(food) {
+                io.println("• " <> food.food_name)
+                case food.brand_name {
+                  option.Some(brand) -> io.println("  Brand: " <> brand)
+                  option.None -> Nil
+                }
+                io.println(
+                  "  ID: " <> food_types.food_id_to_string(food.food_id),
+                )
+                io.println("  " <> food.food_description)
+                io.println("")
+              })
+
+              Ok(Nil)
+            }
+            Error(error) -> {
+              let error_msg = foods_client.error_to_string(error)
+              Error("Failed to search foods: " <> error_msg)
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 /// Handler for listing recipe ingredients with nutrition info
 ///
 /// Fetches recipe details from FatSecret API and displays:
@@ -469,24 +537,26 @@ pub fn cmd(app_config: Config) -> glint.Command(Result(Nil, Nil)) {
         }
       }
     }
-    ["ingredients"] -> {
-      case id(flags) {
-        Ok(recipe_id) -> {
-          io.println(
-            "Fetching ingredients for recipe: " <> int.to_string(recipe_id),
-          )
-          Ok(Nil)
-        }
-        Error(_) -> {
-          io.println("Error: --id flag required for ingredients")
+    ["ingredients", query_arg] -> {
+      // Search for foods/ingredients with the given query
+      case ingredients_search_handler(app_config, query_arg) {
+        Ok(_) -> Ok(Nil)
+        Error(err_msg) -> {
+          io.println("Error: " <> err_msg)
           Error(Nil)
         }
       }
     }
+    ["ingredients"] -> {
+      io.println("Error: Search query required")
+      io.println("Usage: mp fatsecret ingredients <query>")
+      io.println("Example: mp fatsecret ingredients chicken")
+      Error(Nil)
+    }
     _ -> {
       io.println("FatSecret commands:")
       io.println("  mp fatsecret search --query \"<food>\"")
-      io.println("  mp fatsecret ingredients --id <recipe-id>")
+      io.println("  mp fatsecret ingredients <query>")
       Ok(Nil)
     }
   }
