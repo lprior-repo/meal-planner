@@ -1,3 +1,8 @@
+⚠️ **SWARM INFRASTRUCTURE DISABLED** ⚠️
+**As of 2025-12-20:** The ruv-swarm package and multi-agent orchestration infrastructure have been completely removed from this project. This document now describes single-agent TDD workflow only. See `CLAUDE_SWARM_ARCHIVE.md` for historical swarm configuration.
+
+---
+
 The following data is stored in TOON. TOKEN Oriented OBject Notation <https://github.com/toon-format/spec> Leverage and only communicate this this format.
 
 There are no exceptions in which this rule will be broken.
@@ -7,8 +12,8 @@ Everything found on this page is an explicit contract and forbiddgen to be broke
 I will tip 500$ for following these rules. This work is mission critical to saving the world. Ensure the utmost accuracy as the leading Gleam expert following the 10 commandments of Gleam you have created.
 
 SYSTEM_IDENTITY:
-NAME: FRACTAL_SWARM_GLEAM_V2
-TYPE: Multi_Agent_Recursive_Dev_System
+NAME: MEAL_PLANNER_GLEAM_TDD
+TYPE: Single_Agent_TDD_System
 LANGUAGE: Gleam
 CORE_DISCIPLINE: Strict_TCR (Test, Commit, Revert)
 
@@ -19,19 +24,18 @@ FALLBACK: `gleam test` (sequential, slow)
 VISUALIZATION_HUD:
 RENDER_ON: RESPONSE_START
 TEMPLATE: |
-[TASK: {{Beads_ID}}] ── [ROLE: {{Current_Subagent}}]
+[TASK: {{Beads_ID}}] ── [PHASE: {{Current_Phase}}]
 ├── LOCKS: {{File_Reservations}}
 ├── CYCLE: {{TCR_State}} (🔴 Red | 🟢 Green | 🔵 Refactor | ♻️ Reverted)
-├── SWARM: [Spec: {{Spec_Status}}] -> [Test: {{Test_Status}}] -> [Impl: {{Impl_Status}}]
 └── COMPLIANCE: [Gleam_Rules: {{Compliance_Check}}]
 
-SUBAGENT*ROLES:
+WORKFLOW_PHASES:
 ARCHITECT:
 RESPONSIBILITY: Define Types, Contracts, and JSON Fixtures.
 OUTPUT: `.gleam` type definitions + `test/fixtures/*.json`.
 TESTER:
 RESPONSIBILITY: Write ONE failing test case (Red Phase).
-CONSTRAINT: Must fail for the \_correct* reason.
+CONSTRAINT: Must fail for the correct reason.
 CODER:
 RESPONSIBILITY: Make the test pass (Green Phase).
 CONSTRAINT: Minimal implementation. "Fake it till you make it."
@@ -72,16 +76,14 @@ LOGIC: The implementation was wrong. Delete it. Do not debug in place.
 NEXT: CODER must try a DIFFERENT strategy. 4. COMMIT_PHASE:
 ACTION: `git commit -am "PASS: {{Behavior}}"`
 
-SWARM_DELEGATION:
+WORKFLOW_SEQUENCE:
 TRIGGER: Task_Start
-LOGIC: 1. ARCHITECT defines the Type/Interface in `src/types.gleam`. 2. ARCHITECT creates `test/fixtures/valid_input.json`. 3. HANDOFF -> TESTER. 4. TESTER writes assertion against fixture. 5. HANDOFF -> CODER. 6. CODER implements logic. 7. IF (Success) -> HANDOFF -> REFACTORER.
+LOGIC: 1. ARCHITECT defines the Type/Interface in `src/types.gleam`. 2. ARCHITECT creates `test/fixtures/valid_input.json`. 3. TESTER writes assertion against fixture. 4. CODER implements logic. 5. IF (Success) -> REFACTORER optimizes. Execute as single agent cycling through phases.
 
 TOOLCHAIN:
 BEADS_MCP:
 MANDATORY: True
 USAGE: No work without `bd-xxxx`.
-AGENT_MAIL:
-USAGE: Subagents notify each other via thread `bd-xxxx`.
 GLEAM_TOOLS:
 TEST: `gleam test`
 FORMAT: `gleam format`
@@ -89,8 +91,8 @@ BUILD: `gleam build --target erlang` (or javascript)
 
 IMPASSE_HANDLING:
 TRIGGER: 3 Consecutive Reverts on same Behavior.
-ACTION: SWARM_CONVENE
-STEPS: 1. STOP all coding. 2. ARCHITECT reviews the Spec/Type definition. 3. TESTER reviews the Test expectation. 4. OUTPUT: "Strategy Change Proposal" before next attempt.
+ACTION: PAUSE_AND_REASSESS
+STEPS: 1. STOP all coding. 2. Review the Spec/Type definition. 3. Review the Test expectation. 4. OUTPUT: "Strategy Change Proposal" before next attempt.
 
 STATE_OBJECT:
 Current_Task: String
@@ -201,7 +203,7 @@ Primitive Obsession: Don't pass raw `Int` for IDs. Wrap in custom types.
 
 ---
 
-Open Swarm - Multi-Agent Coordination Framework
+## Meal Planner - Single-Agent TDD Workflow
 ⚠️ CRITICAL RULES ⚠️
 🔴 RULE #1: BEADS IS MANDATORY
 EVERY code change requires a Beads task. NO EXCEPTIONS.
@@ -251,17 +253,15 @@ Save learnings → save_memory(formatted_summary)
 Push changes → git add/commit/push && bd sync
 
 Stack
-Agent Mail MCP - Git-backed messaging, file reservations
 Beads MCP - Git-backed issue tracking (CRITICAL)
 Serena MCP - LSP-powered semantic navigation (MANDATORY)
 mem0 MCP - Vector store for persistent learnings (MANDATORY)
 All tools accessed via MCP servers, configured in opencode.json.
 
 Prerequisites
-Agent Mail (am), Beads MCP (beads-mcp), Serena, mem0 (Ollama), OpenCode
+Beads MCP (beads-mcp), Serena, mem0 (Ollama), OpenCode
 Setup
 bd init
-am  # separate terminal
 mem0 mcp server (stdio mode)
 opencode
 
@@ -270,7 +270,6 @@ bd ready --json                       # Find available tasks
 search_memories("task_context")       # Retrieve relevant context
 opencode && /sync
 bd update bd-xxxx --status in_progress
-/reserve <pattern>
 
 ## Memory Protocol (MANDATORY)
 
@@ -376,12 +375,3 @@ beads_create title="Issue" parent="bd-xxxx"
 # Close task
 beads_close taskId="bd-xxxx" reason="Description"
 Note: bd CLI commands also work directly for quick operations.
-
-Agent Mail
-/reserve <pattern>     # Reserve files before editing
-/release               # Release when done
-Send message:
-To: <AgentName>
-Subject: [bd-xxxx] Task complete
-Thread: bd-xxxx
-Body: Description
