@@ -12,7 +12,8 @@ import meal_planner/cli/domains/diary
 import meal_planner/cli/domains/preferences
 import meal_planner/cli/domains/recipe
 import meal_planner/cli/domains/scheduler
-import meal_planner/cli/domains/tandoor
+
+// import meal_planner/cli/domains/tandoor
 import meal_planner/cli/domains/web
 import meal_planner/config.{type Config}
 
@@ -28,7 +29,7 @@ pub fn run(config: Config, args: List(String)) -> Nil {
     // |> glint.add(at: ["nutrition"], do: nutrition.cmd(config))
     |> glint.add(at: ["scheduler"], do: scheduler.cmd(config))
     //     |> glint.add(at: ["fatsecret"], do: fatsecret.cmd(config))
-    |> glint.add(at: ["tandoor"], do: tandoor.cmd(config))
+    // |> glint.add(at: ["tandoor"], do: tandoor.cmd(config))
     |> glint.add(at: ["web"], do: web.cmd(config))
     |> glint.add(at: ["diary"], do: diary.cmd(config))
     |> glint.add(at: ["preferences"], do: preferences.cmd(config))
