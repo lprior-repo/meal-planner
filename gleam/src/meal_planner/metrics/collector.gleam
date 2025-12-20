@@ -10,6 +10,7 @@ import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{type Option}
 import gleam/result
 import gleam/string
 import meal_planner/metrics/types.{
@@ -266,7 +267,7 @@ pub fn slowest_operation(collector: MetricCollector) -> Option(TimingStats) {
     let #(_key, stats) = item
     stats
   })
-  |> result.to_option()
+  |> option.from_result()
 }
 
 // ============================================================================

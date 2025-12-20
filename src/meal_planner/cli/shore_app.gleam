@@ -49,7 +49,6 @@ fn display_tui_placeholder(model: types.Model) -> Nil {
   io.println("╚════════════════════════════════════════════════╝")
   io.println("")
   io.println("ℹ️  TUI mode initializing with:")
-  io.println("   - Server: " <> model.config.server.environment)
   io.println("   - Database: " <> model.config.database.host)
   io.println("")
   io.println("💡 Shore TUI framework integration in progress...")

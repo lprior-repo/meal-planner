@@ -236,7 +236,7 @@ pub fn add_context(error: AppError, key: String, value: String) -> AppError {
 /// Get context value from error
 pub fn get_context(error: AppError, key: String) -> Option(String) {
   case error {
-    WrappedError(_, _, ctx) -> dict.get(ctx, key) |> result.to_option
+    WrappedError(_, _, ctx) -> dict.get(ctx, key) |> option.from_result
     _ -> None
   }
 }

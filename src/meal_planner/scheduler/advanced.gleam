@@ -26,7 +26,7 @@ pub type RecurrencePattern {
   /// Repeat monthly on specific day of month
   MonthlyOnDay(day: Int)
   /// Custom cron-like pattern
-  Custom(pattern: String)
+  CustomPattern(pattern: String)
 }
 
 /// Recurrence rule for meal plans
@@ -284,7 +284,7 @@ pub type ScheduledMeal {
 
 /// Check if value is within range
 pub fn in_range(value: Float, range: FloatRange) -> Bool {
-  value >= range.min && value <= range.max
+  value >=. range.min && value <=. range.max
 }
 
 /// Calculate constraint satisfaction score (0-1)
@@ -314,7 +314,7 @@ pub fn dietary_restriction_to_string(restriction: DietaryRestriction) -> String 
     GlutenFree -> "gluten_free"
     DairyFree -> "dairy_free"
     LowCarb -> "low_carb"
-    Custom(_) -> "custom"
+    Custom(..) -> "custom"
   }
 }
 
