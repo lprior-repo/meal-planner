@@ -12,11 +12,12 @@ pub fn slowest_operation_returns_some_when_stats_exist_test() {
   // Create a collector with some timing data
   let collector = collector.new()
 
-  let context = types.OperationContext(
-    category: types.TandoorApiMetrics,
-    operation: "fetch_recipe",
-    labels: [],
-  )
+  let context =
+    types.OperationContext(
+      category: types.TandoorApiMetrics,
+      operation: "fetch_recipe",
+      labels: [],
+    )
 
   // Record a timing measurement
   let collector = collector.record_timing(collector, context, 150.0)

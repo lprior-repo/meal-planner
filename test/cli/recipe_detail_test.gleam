@@ -138,7 +138,7 @@ pub fn test_recipe_detail_displays_all_fields() {
 /// EXPECTED: This test MUST FAIL until error handling exists
 pub fn test_recipe_detail_not_found_returns_error() {
   let cfg = mock_config()
-  let invalid_id = 99999
+  let invalid_id = 99_999
 
   // This will fail because recipe_cmd.detail/2 doesn't exist yet
   // When implemented, should return Error(Nil) for 404/not found
@@ -154,7 +154,7 @@ pub fn test_recipe_detail_not_found_returns_error() {
 /// EXPECTED: This test MUST FAIL until error handling exists
 pub fn test_recipe_detail_not_found_displays_error_message() {
   let cfg = mock_config()
-  let invalid_id = 99999
+  let invalid_id = 99_999
 
   // This will fail because recipe_cmd.detail/2 doesn't exist yet
   // When implemented, should print error message before returning Error

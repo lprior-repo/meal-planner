@@ -56,12 +56,7 @@ fn mock_paginated_response(
   count: Int,
   results: List(Recipe),
 ) -> PaginatedResponse(Recipe) {
-  PaginatedResponse(
-    count: count,
-    next: None,
-    previous: None,
-    results: results,
-  )
+  PaginatedResponse(count: count, next: None, previous: None, results: results)
 }
 
 /// Test config for CLI commands
@@ -243,7 +238,6 @@ pub fn recipe_list_invalid_offset_test() {
   result
   |> should.be_error()
 }
-
 // ============================================================================
 // Future Tests (commented out - implement in subsequent iterations)
 // ============================================================================

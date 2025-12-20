@@ -83,10 +83,7 @@ fn get_test_config() -> config.Config {
       pool_size: 1,
       connection_timeout_ms: 5000,
     ),
-    server: config.ServerConfig(
-      port: 8080,
-      cors_allowed_origins: [],
-    ),
+    server: config.ServerConfig(port: 8080, cors_allowed_origins: []),
     tandoor: config.TandoorConfig(
       base_url: "http://localhost:8000",
       api_token: "test-token",
@@ -106,10 +103,7 @@ fn get_test_config() -> config.Config {
       database_password: "",
       tandoor_token: "test-token",
     ),
-    logging: config.LoggingConfig(
-      level: config.InfoLevel,
-      debug_mode: False,
-    ),
+    logging: config.LoggingConfig(level: config.InfoLevel, debug_mode: False),
     performance: config.PerformanceConfig(
       request_timeout_ms: 10_000,
       connection_timeout_ms: 5000,
