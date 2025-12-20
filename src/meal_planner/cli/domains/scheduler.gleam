@@ -364,3 +364,23 @@ fn float_to_string_2dp(value: Float) -> String {
   }
   int.to_string(int_part) <> "." <> decimal_str
 }
+
+/// Normalize job name to database job_type format
+/// Examples:
+/// - "daily_meal_plan" -> "daily_advisor"
+/// - "weekly_generation" -> "weekly_generation"
+/// - "auto_sync" -> "auto_sync"
+fn normalize_job_name(job_name: String) -> String {
+  // Normalize the job name to match database job_type values
+  case string.lowercase(job_name) {
+    "daily_meal_plan" -> "daily_advisor"
+    "daily_advisor" -> "daily_advisor"
+    "weekly_generation" -> "weekly_generation"
+    "weekly_gen" -> "weekly_generation"
+    "auto_sync" -> "auto_sync"
+    "sync" -> "auto_sync"
+    "weekly_trends" -> "weekly_trends"
+    "trends" -> "weekly_trends"
+    _ -> job_name
+  }
+}
