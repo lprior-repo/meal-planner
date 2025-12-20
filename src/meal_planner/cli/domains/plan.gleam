@@ -14,7 +14,7 @@ import meal_planner/meal_sync.{type MealSelection, MealSelection}
 import meal_planner/orchestrator
 import meal_planner/tandoor/client.{type ClientConfig, BearerAuth, ClientConfig}
 import meal_planner/tandoor/mealplan.{
-  type MealPlanEntry, type MealPlanListResponse, MealPlanEntry,
+  type MealPlanEntry, type MealPlanListResponse,
 }
 
 // ============================================================================
@@ -301,6 +301,156 @@ fn format_meal_entry(meal: MealPlanEntry) -> String {
 }
 
 // ============================================================================
+// Show Single Meal Plan
+// ============================================================================
+
+/// Show meal plan for a specific date
+///
+/// Displays all meals for the given date, grouped by meal type and ordered
+/// by meal type order (Breakfast, Lunch, Dinner, Snack, etc.)
+///
+/// # Arguments
+/// * `config` - Application configuration
+/// * `date` - Date in YYYY-MM-DD format
+///
+/// # Returns
+/// Ok(Nil) on success with meal plan printed, Error(Nil) on failure
+///
+/// # Example
+/// ```gleam
+/// show_plan(config, "2025-12-19")
+/// // Output:
+/// // Meal Plan for 2025-12-19
+/// //
+/// // Breakfast
+/// //   Scrambled Eggs (2 servings)
+/// //
+/// // Lunch
+/// //   Chicken Salad (1 serving)
+/// // ...
+/// ```
+pub fn show_plan(config: Config, date: String) -> Result(Nil, Nil) {
+  // Validate date format
+  case parse_date(date) {
+    Error(err) -> {
+      io.println(err)
+      Error(Nil)
+    }
+    Ok(_) -> {
+      // Create Tandoor config
+      let tandoor_config = create_tandoor_config(config)
+
+      // Query meal plans for the specific date
+      case
+        mealplan.list_meal_plans(
+          tandoor_config,
+          from_date: Some(date),
+          to_date: Some(date),
+        )
+      {
+        Error(err) -> {
+          io.println("Failed to fetch meal plans: " <> string.inspect(err))
+          Error(Nil)
+        }
+        Ok(response) -> {
+          // Display the meal plan
+          display_meal_plan(date, response)
+          Ok(Nil)
+        }
+      }
+    }
+  }
+}
+
+/// Display a meal plan for a specific date
+///
+/// Groups meals by meal type and displays them in order
+fn display_meal_plan(date: String, response: MealPlanListResponse) -> Nil {
+  io.println("Meal Plan for " <> date)
+  io.println("")
+
+  case response.results {
+    [] -> {
+      io.println("No meals planned for this date")
+      Nil
+    }
+    meals -> {
+      // Group meals by meal type name
+      let grouped = group_by_meal_type(meals)
+
+      // Get all unique meal types and sort by meal type order
+      let sorted_meal_types = get_sorted_meal_types(meals)
+
+      // Display each meal type group
+      list.each(sorted_meal_types, fn(meal_type_name) {
+        case dict.get(grouped, meal_type_name) {
+          Ok(meals_in_type) -> {
+            io.println(meal_type_name)
+            list.each(meals_in_type, fn(meal) {
+              io.println(
+                "  "
+                <> meal.recipe_name
+                <> " ("
+                <> format_servings(meal.servings)
+                <> ")",
+              )
+            })
+            io.println("")
+          }
+          Error(_) -> Nil
+        }
+      })
+
+      // TODO: Display nutrition totals (requires fetching recipe details)
+      Nil
+    }
+  }
+}
+
+/// Group meal plans by meal type name
+fn group_by_meal_type(
+  meals: List(mealplan.MealPlan),
+) -> Dict(String, List(mealplan.MealPlan)) {
+  list.fold(meals, dict.new(), fn(acc, meal) {
+    dict.upsert(acc, meal.meal_type_name, fn(existing) {
+      case existing {
+        Some(meal_list) -> [meal, ..meal_list]
+        None -> [meal]
+      }
+    })
+  })
+}
+
+/// Get sorted list of meal type names based on meal type order
+fn get_sorted_meal_types(meals: List(mealplan.MealPlan)) -> List(String) {
+  meals
+  |> list.map(fn(meal) { #(meal.meal_type_name, meal.meal_type.order) })
+  |> list.unique
+  |> list.sort(fn(a, b) {
+    let #(_name_a, order_a) = a
+    let #(_name_b, order_b) = b
+    int.compare(order_a, order_b)
+  })
+  |> list.map(fn(tuple) {
+    let #(name, _order) = tuple
+    name
+  })
+}
+
+/// Format servings for display
+fn format_servings(servings: Float) -> String {
+  let servings_str = case float.floor(servings) == servings {
+    True -> int.to_string(float.round(servings))
+    False -> float.to_string(servings)
+  }
+
+  case servings_str {
+    "1" -> "1 serving"
+    _ -> servings_str <> " servings"
+  }
+}
+
+// ============================================================================
 // Glint Command Handler
 // ============================================================================
 
@@ -328,8 +478,8 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
 
   case unnamed {
     ["list"] -> {
-      let start = start_date(flags) |> result.to_option
-      let end = end_date(flags) |> result.to_option
+      let start = start_date(flags) |> option.from_result
+      let end = end_date(flags) |> option.from_result
 
       case
         list_meal_plans_with_filters(config, start_date: start, end_date: end)

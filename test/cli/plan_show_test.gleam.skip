@@ -146,30 +146,57 @@ fn mock_snack_meal() -> MealPlan {
 
 /// Mock paginated response with all meals for a day
 fn mock_daily_meal_plan() -> MealPlanListResponse {
-  MealPlanListResponse(
-    count: 4,
-    next: None,
-    previous: None,
-    results: [
-      mock_breakfast_meal(),
-      mock_lunch_meal(),
-      mock_snack_meal(),
-      mock_dinner_meal(),
-    ],
-  )
+  MealPlanListResponse(count: 4, next: None, previous: None, results: [
+    mock_breakfast_meal(),
+    mock_lunch_meal(),
+    mock_snack_meal(),
+    mock_dinner_meal(),
+  ])
 }
 
 /// Test config for CLI commands
 fn test_config() -> config.Config {
   config.Config(
-    tandoor_url: "http://localhost:8000",
-    tandoor_token: "test_token",
-    fatsecret_client_id: "test_client_id",
-    fatsecret_client_secret: "test_client_secret",
-    database_url: "postgres://localhost/meal_planner_test",
-    openai_api_key: Some("test_openai_key"),
-    anthropic_api_key: None,
-    env: config.Development,
+    environment: config.Development,
+    database: config.DatabaseConfig(
+      host: "localhost",
+      port: 5432,
+      name: "meal_planner_test",
+      user: "test_user",
+      password: "test_password",
+      pool_size: 10,
+      connection_timeout_ms: 5000,
+    ),
+    server: config.ServerConfig(port: 8080, cors_allowed_origins: []),
+    tandoor: config.TandoorConfig(
+      base_url: "http://localhost:8000",
+      api_token: "test_token",
+      connect_timeout_ms: 5000,
+      request_timeout_ms: 30_000,
+    ),
+    external_services: config.ExternalServicesConfig(
+      fatsecret: Some(config.FatSecretConfig(
+        consumer_key: "test_client_id",
+        consumer_secret: "test_client_secret",
+      )),
+      todoist_api_key: "test_todoist",
+      usda_api_key: "test_usda",
+      openai_api_key: "test_openai",
+      openai_model: "gpt-4",
+    ),
+    secrets: config.SecretsConfig(
+      oauth_encryption_key: None,
+      jwt_secret: None,
+      database_password: "test_password",
+      tandoor_token: "test_token",
+    ),
+    logging: config.LoggingConfig(level: config.InfoLevel, debug_mode: False),
+    performance: config.PerformanceConfig(
+      request_timeout_ms: 30_000,
+      connection_timeout_ms: 5000,
+      max_concurrent_requests: 100,
+      rate_limit_requests: 1000,
+    ),
   )
 }
 
@@ -468,7 +495,6 @@ pub fn plan_show_displays_servings_test() {
   result
   |> should.be_ok()
 }
-
 // ============================================================================
 // Future Tests (commented out - implement in subsequent iterations)
 // ============================================================================

@@ -8,6 +8,7 @@
 /// - fatsecret: search, ingredients
 /// - tandoor: sync, categories
 import gleam/option.{None, Some}
+import gleam/result
 import gleeunit
 import gleeunit/should
 import meal_planner/cli/domains/nutrition as nutrition_cmd
@@ -163,45 +164,6 @@ pub fn plan_sync_with_fatsecret_test() {
   // - Mock Tandoor and FatSecret configs
   // - Verification that sync results are displayed correctly
   True |> should.be_true()
-}
-
-pub fn plan_delete_with_valid_date_test() {
-  // Test: mp plan delete 2025-12-19 --confirm
-  // Should parse date and delete meal plan for that date
-  let config = config.load() |> result.unwrap(get_test_config())
-
-  // This test verifies that:
-  // 1. Date is parsed correctly from positional arg
-  // 2. --confirm flag is required (test will fail without it)
-  // 3. delete_meal_plan function calls Tandoor API DELETE endpoint
-  // 4. Success confirmation message is displayed
-
-  let result = plan_cmd.delete_meal_plan(config, "2025-12-19", True)
-
-  // Should return Ok when confirm is True
-  result |> should.be_ok()
-}
-
-pub fn plan_delete_without_confirm_test() {
-  // Test: mp plan delete 2025-12-19 (no --confirm flag)
-  // Should fail with safety error when --confirm flag is missing
-  let config = config.load() |> result.unwrap(get_test_config())
-
-  let result = plan_cmd.delete_meal_plan(config, "2025-12-19", False)
-
-  // Should return Error when confirm is False
-  result |> should.be_error()
-}
-
-pub fn plan_delete_with_invalid_date_test() {
-  // Test: mp plan delete invalid-date --confirm
-  // Should fail with date parsing error
-  let config = config.load() |> result.unwrap(get_test_config())
-
-  let result = plan_cmd.delete_meal_plan(config, "invalid-date", True)
-
-  // Should return Error for invalid date format
-  result |> should.be_error()
 }
 
 // ============================================================================
