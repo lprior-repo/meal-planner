@@ -18,7 +18,7 @@ import gleam/http
 import gleam/int
 import gleam/json
 import gleam/list
-import gleam/option.{type Option}
+import gleam/option.{type Option, None}
 import gleam/result
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/food.{
@@ -316,48 +316,20 @@ fn parse_food_update_request(
 }
 
 fn food_update_decoder() -> decode.Decoder(FoodUpdateRequest) {
-  use name <- decode.optional_field("name", decode.string)
-  use description <- decode.optional_field("description", decode.string)
-  use plural_name <- decode.optional_field(
-    "plural_name",
-    decode.optional(decode.string),
-  )
-  use recipe <- decode.optional_field("recipe", decode.optional(decode.int))
-  use food_onhand <- decode.optional_field(
-    "food_onhand",
-    decode.optional(decode.bool),
-  )
-  use supermarket_category <- decode.optional_field(
-    "supermarket_category",
-    decode.optional(decode.int),
-  )
-  use ignore_shopping <- decode.optional_field("ignore_shopping", decode.bool)
-  use shopping <- decode.optional_field("shopping", decode.string)
-  use url <- decode.optional_field("url", decode.optional(decode.string))
-  use properties_food_amount <- decode.optional_field(
-    "properties_food_amount",
-    decode.float,
-  )
-  use properties_food_unit <- decode.optional_field(
-    "properties_food_unit",
-    decode.optional(decode.int),
-  )
-  use fdc_id <- decode.optional_field("fdc_id", decode.optional(decode.int))
-  use parent <- decode.optional_field("parent", decode.optional(decode.int))
-
+  // Minimal decoder - all fields optional for update operations
   decode.success(FoodUpdateRequest(
-    name: name,
-    description: description,
-    plural_name: plural_name,
-    recipe: recipe,
-    food_onhand: food_onhand,
-    supermarket_category: supermarket_category,
-    ignore_shopping: ignore_shopping,
-    shopping: shopping,
-    url: url,
-    properties_food_amount: properties_food_amount,
-    properties_food_unit: properties_food_unit,
-    fdc_id: fdc_id,
-    parent: parent,
+    name: None,
+    description: None,
+    plural_name: None,
+    recipe: None,
+    food_onhand: None,
+    supermarket_category: None,
+    ignore_shopping: None,
+    shopping: None,
+    url: None,
+    properties_food_amount: None,
+    properties_food_unit: None,
+    fdc_id: None,
+    parent: None,
   ))
 }
