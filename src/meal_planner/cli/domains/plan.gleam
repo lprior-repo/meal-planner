@@ -494,6 +494,10 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
         }
       }
     }
+    ["show", date_arg] -> {
+      // Show meal plan for a specific date
+      show_plan(config, date_arg)
+    }
     ["generate"] -> {
       let days_val = days(flags) |> result.unwrap(7)
       io.println(
@@ -527,6 +531,7 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       io.println(
         "  mp plan list [--start-date YYYY-MM-DD] [--end-date YYYY-MM-DD]",
       )
+      io.println("  mp plan show <YYYY-MM-DD>")
       io.println("  mp plan generate --days 7")
       io.println("  mp plan regenerate --date 2025-12-19 --days 7")
       io.println("  mp plan sync")

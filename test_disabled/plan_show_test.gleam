@@ -17,13 +17,11 @@
 //// - CLI command defined in meal_planner/cli/domains/plan.gleam
 //// - Uses glint for flag parsing
 
-import gleam/int
 import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/cli/domains/plan as plan_cmd
 import meal_planner/config
-import meal_planner/tandoor/client.{type Keyword, Keyword}
 import meal_planner/tandoor/mealplan.{
   type MealPlan, type MealPlanListResponse, type MealType, MealPlan,
   MealPlanListResponse, MealType,
@@ -406,41 +404,6 @@ pub fn plan_show_empty_meal_plan_test() {
   |> should.be_ok()
 }
 
-/// Test: mp plan show with API error
-///
-/// EXPECTED FAILURE: plan_cmd.show_plan does not handle API errors
-///
-/// This test validates error handling:
-/// 1. Tandoor API returns error (500, network timeout, auth failure)
-/// 2. Returns Error with user-friendly message
-/// 3. Does not panic or crash
-///
-/// Constraint: Must handle all TandoorError variants gracefully
-pub fn plan_show_api_error_test() {
-  let cfg = test_config()
-  let date = "2025-12-19"
-
-  // When: Tandoor API is unavailable or returns error
-  // Note: This test requires mocking the API response
-  // For now, we assume plan_cmd.show_plan will handle Result(_, TandoorError)
-  let result = plan_cmd.show_plan(cfg, date)
-
-  // Then: should handle error gracefully
-  // Implementation should:
-  // 1. Call tandoor/mealplan.list_meal_plans()
-  // 2. Handle Result(MealPlanListResponse, TandoorError)
-  // 3. Map TandoorError to user-friendly message
-  // 4. Return Error(Nil) with error printed
-  // This will FAIL because plan_cmd.show_plan does not exist
-  //
-  // NOTE: This test will initially pass if API succeeds,
-  // but is documented for future error handling implementation
-  case result {
-    Ok(_) -> should.be_ok(Ok(Nil))
-    Error(_) -> should.be_error(Error(Nil))
-  }
-}
-
 /// Test: mp plan show displays meals grouped by meal type
 ///
 /// EXPECTED FAILURE: plan_cmd.show_plan does not group/order meals by type
@@ -495,30 +458,3 @@ pub fn plan_show_displays_servings_test() {
   result
   |> should.be_ok()
 }
-// ============================================================================
-// Future Tests (commented out - implement in subsequent iterations)
-// ============================================================================
-
-// /// Test: mp plan show with --format json flag
-// /// Validates JSON output format instead of human-readable text
-// pub fn plan_show_format_json_test() {
-//   // When: --format json flag is provided
-//   // Then: should output meal plan as JSON
-//   todo as "Implement after basic show functionality works"
-// }
-
-// /// Test: mp plan show with date range (--from / --to)
-// /// Validates showing meal plan for multiple days (weekly view)
-// pub fn plan_show_date_range_test() {
-//   // When: --from 2025-12-19 --to 2025-12-25
-//   // Then: should display all meals for the week
-//   todo as "Implement after basic single-day show works"
-// }
-
-// /// Test: mp plan show includes notes for each meal
-// /// Validates that meal notes are displayed
-// pub fn plan_show_displays_notes_test() {
-//   // When: meal has note field populated
-//   // Then: should display note under meal entry
-//   todo as "Implement after basic show functionality works"
-// }
