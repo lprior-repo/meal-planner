@@ -167,6 +167,195 @@ TANDOOR_BASE_URL=http://localhost:8000  # Tandoor API endpoint
 TANDOOR_API_TOKEN=your-api-token        # Get from Tandoor settings > API
 ```
 
+## CLI Usage
+
+The `mp` command-line interface provides two modes:
+
+1. **Interactive TUI Mode** - Run `mp` with no arguments to launch the interactive terminal UI
+2. **Non-Interactive CLI Mode** - Run `mp <command>` for direct command execution
+
+### CLI Commands
+
+#### Recipe Commands
+
+Search, list, and view recipe details from Tandoor:
+
+| Command | Description | Flags | Example |
+|---------|-------------|-------|---------|
+| `mp recipe search <QUERY>` | Search recipes by name/description | `--limit N` (default: 20) | `mp recipe search "chicken pasta" --limit 10` |
+| `mp recipe list` | List all recipes with pagination | `--limit N`, `--offset N` | `mp recipe list --limit 50 --offset 100` |
+| `mp recipe detail <ID>` | Show full recipe details (ingredients, steps, nutrition) | None | `mp recipe detail 42` |
+
+**Example Output:**
+```bash
+$ mp recipe search chicken --limit 5
+
+Found 3 recipe(s) matching 'chicken':
+
+[123] Grilled Chicken Salad
+  Fresh greens with herb-marinated grilled chicken breast...
+
+[456] Thai Basil Chicken
+  Spicy stir-fried chicken with holy basil and vegetables...
+
+[789] Chicken Tikka Masala
+  Creamy tomato curry with tender chicken pieces...
+```
+
+#### Plan Commands
+
+Generate, view, and manage weekly meal plans:
+
+| Command | Description | Flags | Example |
+|---------|-------------|-------|---------|
+| `mp plan list` | List all meal plans | `--start-date YYYY-MM-DD`, `--end-date YYYY-MM-DD` | `mp plan list --start-date 2025-12-19 --end-date 2025-12-25` |
+| `mp plan show <DATE>` | Show meal plan for specific date | None | `mp plan show 2025-12-19` |
+| `mp plan generate` | Generate new meal plan | `--days N` (default: 7) | `mp plan generate --days 14` |
+| `mp plan regenerate` | Regenerate meal plan for date range | `--date YYYY-MM-DD`, `--days N` (default: 7) | `mp plan regenerate --date 2025-12-19 --days 7` |
+| `mp plan delete <DATE>` | Delete meal plan for specific date | `--confirm` (required) | `mp plan delete 2025-12-19 --confirm` |
+| `mp plan sync` | Sync meal plan with Tandoor | None | `mp plan sync` |
+
+**Example Output:**
+```bash
+$ mp plan show 2025-12-19
+
+Meal Plan for 2025-12-19
+
+Breakfast
+  Scrambled Eggs (2 servings)
+
+Lunch
+  Chicken Salad (1 serving)
+
+Dinner
+  Grilled Salmon (1 serving)
+```
+
+#### Nutrition Commands
+
+Track nutrition goals and daily intake:
+
+| Command | Description | Flags | Example |
+|---------|-------------|-------|---------|
+| `mp nutrition goals` | View current nutrition goals | None | `mp nutrition goals` |
+| `mp nutrition log <DATE>` | View food log for specific date | None | `mp nutrition log 2025-12-19` |
+| `mp nutrition track` | Start interactive nutrition tracking | None | `mp nutrition track` |
+| `mp nutrition macros` | View current macro totals | None | `mp nutrition macros` |
+
+#### Scheduler Commands
+
+View and manage scheduled jobs (meal plan generation, sync, advisors):
+
+| Command | Description | Flags | Example |
+|---------|-------------|-------|---------|
+| `mp scheduler list` | List all scheduled jobs | None | `mp scheduler list` |
+| `mp scheduler status` | View job execution status | `--id <job-id>` | `mp scheduler status --id weekly-gen` |
+| `mp scheduler trigger` | Manually trigger a job | `--id <job-id>` | `mp scheduler trigger --id daily-advisor` |
+| `mp scheduler executions` | View job execution history | `--id <job-id>` | `mp scheduler executions --id auto-sync` |
+
+**Example Output:**
+```bash
+$ mp scheduler list
+
+Scheduled jobs:
+  Weekly Generation (Mon 09:00)
+  Auto Sync (Daily 12:00)
+  Daily Advisor (Daily 07:00)
+```
+
+#### FatSecret Commands
+
+Search foods and track nutrition from FatSecret database:
+
+| Command | Description | Flags | Example |
+|---------|-------------|-------|---------|
+| `mp fatsecret search <QUERY>` | Search FatSecret food database | `--limit N` | `mp fatsecret search "brown rice" --limit 10` |
+| `mp fatsecret food <ID>` | Get detailed food information | None | `mp fatsecret food 12345` |
+| `mp fatsecret diary <DATE>` | View food diary for date | None | `mp fatsecret diary 2025-12-19` |
+
+#### Tandoor Commands
+
+Manage recipe synchronization and categories:
+
+| Command | Description | Flags | Example |
+|---------|-------------|-------|---------|
+| `mp tandoor sync` | Sync all recipes from Tandoor | None | `mp tandoor sync` |
+| `mp tandoor categories` | List recipe categories | `--limit N` (default: 50) | `mp tandoor categories --limit 100` |
+| `mp tandoor update` | Update recipe metadata | None | `mp tandoor update` |
+| `mp tandoor delete` | Delete a recipe from Tandoor | `--id <recipe_id>` | `mp tandoor delete --id 123` |
+
+#### Web Server Commands
+
+Start and manage the web application server:
+
+| Command | Description | Flags | Example |
+|---------|-------------|-------|---------|
+| `mp web` | Start the web server | None | `mp web` |
+
+**Example Output:**
+```bash
+$ mp web
+
+🍽️  Meal Planner Backend
+========================
+
+✓ Configuration loaded
+  - Database: localhost:5432
+  - Server port: 8080
+  - Tandoor: http://localhost:8000
+
+Starting web server...
+```
+
+### Common Workflows
+
+**Weekly Meal Planning:**
+```bash
+# Generate a fresh meal plan for the week
+mp plan generate --days 7
+
+# View today's meals
+mp plan show 2025-12-19
+
+# Regenerate if you don't like the plan
+mp plan regenerate --date 2025-12-19 --days 7
+```
+
+**Recipe Discovery:**
+```bash
+# Search for recipes
+mp recipe search "pasta" --limit 10
+
+# View full details
+mp recipe detail 456
+
+# Add to meal plan (through TUI or web interface)
+```
+
+**Nutrition Tracking:**
+```bash
+# View today's nutrition goals
+mp nutrition goals
+
+# Check current macro totals
+mp nutrition macros
+
+# View food log for a specific date
+mp nutrition log 2025-12-19
+```
+
+**Recipe Management:**
+```bash
+# Sync latest recipes from Tandoor
+mp tandoor sync
+
+# List all recipes
+mp recipe list --limit 100
+
+# Delete a recipe
+mp tandoor delete --id 123
+```
+
 ## Testing
 
 The project has comprehensive test coverage with unit, integration, and property-based tests:
