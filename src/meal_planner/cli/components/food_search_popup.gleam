@@ -61,6 +61,19 @@ pub type Direction {
 }
 
 // ============================================================================
+// Helper Functions
+// ============================================================================
+
+fn get_at(items: List(a), index: Int) -> Result(a, Nil) {
+  case index, items {
+    _, [] -> Error(Nil)
+    0, [first, ..] -> Ok(first)
+    n, [_, ..rest] if n > 0 -> get_at(rest, n - 1)
+    _, _ -> Error(Nil)
+  }
+}
+
+// ============================================================================
 // Initial State
 // ============================================================================
 
@@ -121,7 +134,7 @@ fn render_results(
   selected_index: Int,
 ) -> ui.Node(FoodSearchMsg) {
   results
-  |> list.index_map(fn(idx, result) {
+  |> list.index_map(fn(result, idx) {
     let is_selected = idx == selected_index
     let number = idx + 1 |> int.to_string
     let fg = case is_selected {
@@ -143,14 +156,14 @@ fn render_results(
       }
 
     ui.button_id_styled(
-      id: "food_" <> number,
-      text: display_text,
-      key: key.Char(number),
-      event: SelectByNumber(idx + 1),
-      fg: fg,
-      bg: bg,
-      focus_fg: Some(style.Black),
-      focus_bg: Some(style.Green),
+      "food_" <> number,
+      display_text,
+      key.Char(number),
+      SelectByNumber(idx + 1),
+      fg,
+      bg,
+      Some(style.Black),
+      Some(style.Green),
     )
   })
   |> list.intersperse(ui.br())
@@ -210,7 +223,7 @@ pub fn update(
       #(new_state, [])
     }
 
-    GotSearchResults(Err(err)) -> {
+    GotSearchResults(Error(err)) -> {
       let new_state = SearchState(..state, error: Some(err), loading: False)
       #(new_state, [])
     }
@@ -241,7 +254,7 @@ pub fn update(
     }
 
     SearchConfirm -> {
-      case list.at(state.results, state.selected_index) {
+      case get_at(state.results, state.selected_index) {
         Ok(selected) -> {
           let effect = fn() {
             FoodSelected(
@@ -287,10 +300,10 @@ fn search_foods_effect(query: String) -> FoodSearchMsg {
           case foods_client.search_foods(config, query, 0, 9) {
             Ok(response) -> GotSearchResults(Ok(response.foods))
             Error(err) ->
-              GotSearchResults(Err(foods_client.error_to_string(err)))
+              GotSearchResults(Error(foods_client.error_to_string(err)))
           }
         }
-        None -> GotSearchResults(Err("FatSecret API not configured"))
+        None -> GotSearchResults(Error("FatSecret API not configured"))
       }
     }
   }
