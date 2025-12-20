@@ -19,8 +19,8 @@ import meal_planner/fatsecret/diary/service as diary_service
 import meal_planner/fatsecret/diary/types as diary_types
 import meal_planner/ncp.{
   type DeviationResult, type NutritionData, type NutritionGoals,
-  type TrendDirection, Decreasing, Increasing, NutritionData, Stable,
-  get_default_goals,
+  type TrendDirection, Decreasing, Increasing, NutritionData, NutritionGoals,
+  Stable, get_default_goals,
 }
 import meal_planner/postgres
 import meal_planner/storage
