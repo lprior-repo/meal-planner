@@ -257,3 +257,38 @@ pub fn build_pagination_links(
 
   Some(#(next_url, prev_url))
 }
+
+/// Build FatSecret brands search parameters
+///
+/// Builds parameters for FatSecret brands search endpoint with pagination.
+/// Supports search query and result limiting.
+///
+/// # Arguments
+/// * `search_term` - Optional search query for brand name filtering
+/// * `page` - Optional page number for pagination
+/// * `max_results` - Optional max results per page
+/// * `max_limit` - Maximum allowed limit (clamping)
+///
+/// # Returns
+/// PaginationParams with normalized limit and offset
+///
+/// # Example
+/// ```gleam
+/// build_brands_search_params(Some("coca"), Some(1), Some(20), 50)
+/// // Returns: PaginationParams(limit: 20, offset: 20)
+/// ```
+pub fn build_brands_search_params(
+  search_term: Option(String),
+  page: Option(Int),
+  max_results: Option(Int),
+  max_limit: Int,
+) -> #(PaginationParams, List(#(String, String))) {
+  let pagination = build_page_pagination(page, max_results, max_limit)
+
+  let search_params = case search_term {
+    Some(term) -> [#("search", term)]
+    None -> []
+  }
+
+  #(pagination, search_params)
+}
