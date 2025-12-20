@@ -19,6 +19,7 @@ import gleam/http.{type Header}
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/order
 import gleam/result
 import gleam/string
 import wisp
@@ -127,10 +128,22 @@ pub fn resolve_latest(version: ApiVersion) -> ApiVersion {
 ///
 /// Checks Accept-Version header. Returns default version if not found.
 pub fn extract_version(req: wisp.Request) -> ApiVersion {
-  wisp.get_header(req, version_header)
-  |> result.then(parse_version)
-  |> result.unwrap(default_version)
-  |> resolve_latest
+  case req.headers
+    |> list.find(fn(header) {
+      string.lowercase(header.0) == string.lowercase(version_header)
+    })
+  {
+    Ok(header) -> {
+      header.1
+      |> parse_version
+      |> result.unwrap(default_version)
+      |> resolve_latest
+    }
+    Error(_) -> {
+      default_version
+      |> resolve_latest
+    }
+  }
 }
 
 /// Create versioned request wrapper
