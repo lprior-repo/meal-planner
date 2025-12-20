@@ -6,9 +6,9 @@ import glint
 
 // import meal_planner/cli/domains/fatsecret
 // import meal_planner/cli/domains/nutrition
-// // import meal_planner/cli/domains/plan
 import meal_planner/cli/domains/advisor
 import meal_planner/cli/domains/diary
+import meal_planner/cli/domains/plan
 import meal_planner/cli/domains/preferences
 import meal_planner/cli/domains/recipe
 import meal_planner/cli/domains/scheduler
@@ -25,7 +25,7 @@ pub fn run(config: Config, args: List(String)) -> Nil {
     |> glint.with_name("mp")
     |> glint.global_help("Meal Planner - CLI and TUI for meal planning")
     |> glint.add(at: ["recipe"], do: recipe.cmd(config))
-    // |> glint.add(at: ["plan"], do: plan.cmd(config))
+    |> glint.add(at: ["plan"], do: plan.cmd(config))
     // |> glint.add(at: ["nutrition"], do: nutrition.cmd(config))
     |> glint.add(at: ["scheduler"], do: scheduler.cmd(config))
     //     |> glint.add(at: ["fatsecret"], do: fatsecret.cmd(config))
@@ -39,3 +39,4 @@ pub fn run(config: Config, args: List(String)) -> Nil {
   let _ = glint.run(app, args)
   Nil
 }
+
