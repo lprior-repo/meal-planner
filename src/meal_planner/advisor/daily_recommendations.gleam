@@ -9,7 +9,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import meal_planner/fatsecret/diary/service as diary_service
-import meal_planner/fatsecret/diary/types.{type FoodEntry}
+import meal_planner/fatsecret/diary/types.{type FoodEntry} as diary_types
 import meal_planner/fatsecret/profile/service as profile_service
 import meal_planner/fatsecret/profile/types as profile_types
 import pog
