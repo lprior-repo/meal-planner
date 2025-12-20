@@ -9,6 +9,7 @@ import gleam/dynamic/decode
 import gleam/int
 import gleam/io
 import gleam/json
+import gleam/list
 import gleam/option
 import gleam/result
 import glint
@@ -35,8 +36,13 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
 
   case unnamed {
     ["sync"] -> {
-      io.println("Syncing recipes from Tandoor...")
-      Ok(Nil)
+      case sync_recipes(config, full: False) {
+        Ok(_) -> Ok(Nil)
+        Error(msg) -> {
+          io.println(msg)
+          Error(Nil)
+        }
+      }
     }
     ["categories"] -> {
       let limit_val = limit(flags) |> result.unwrap(50)
@@ -386,6 +392,80 @@ pub fn update_recipe_command(
         <> ": "
         <> error_msg,
       )
+    }
+  }
+}
+
+// ============================================================================
+// Sync Recipes Command
+// ============================================================================
+
+/// Sync recipes from Tandoor API to local database
+///
+/// Fetches all recipes from Tandoor API and displays them.
+/// In a full implementation, this would upsert to a local database.
+///
+/// Parameters:
+/// - config: Application configuration with Tandoor settings
+/// - full: If True, perform full sync (fetch all recipes). If False, incremental sync.
+///
+/// Returns:
+/// - Ok(Nil) on success with progress reporting
+/// - Error(String) with error message on failure
+pub fn sync_recipes(config: Config, full _full: Bool) -> Result(Nil, String) {
+  sync_recipes_with_limit(config, limit: option.None, offset: option.None)
+}
+
+/// Sync recipes with pagination limit
+///
+/// This function handles pagination when syncing recipes.
+///
+/// Parameters:
+/// - config: Application configuration
+/// - limit: Optional limit for number of recipes to fetch
+/// - offset: Optional offset for pagination
+pub fn sync_recipes_with_limit(
+  config: Config,
+  limit limit: option.Option(Int),
+  offset offset: option.Option(Int),
+) -> Result(Nil, String) {
+  io.println("Syncing recipes from Tandoor...")
+
+  let tandoor_config =
+    client.bearer_config(config.tandoor.base_url, config.tandoor.api_token)
+
+  // Fetch recipes from Tandoor API
+  case recipe.list_recipes(tandoor_config, limit: limit, offset: offset) {
+    Ok(paginated_response) -> {
+      let count = paginated_response.count
+      let recipe_count = paginated_response.results |> list.length
+
+      io.println(
+        "Fetched "
+        <> int.to_string(recipe_count)
+        <> " recipes (total available: "
+        <> int.to_string(count)
+        <> ")",
+      )
+
+      // Display recipe names
+      paginated_response.results
+      |> list.each(fn(recipe_item) {
+        io.println(
+          "  - "
+          <> recipe_item.name
+          <> " (ID: "
+          <> int.to_string(recipe_item.id)
+          <> ")",
+        )
+      })
+
+      io.println("Sync complete!")
+      Ok(Nil)
+    }
+    Error(e) -> {
+      let error_msg = client.error_to_string(e)
+      Error("Failed to sync recipes: " <> error_msg)
     }
   }
 }

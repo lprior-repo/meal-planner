@@ -20,7 +20,7 @@
 import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
-import meal_planner/cli/domains/tandoor as tandoor_cmd
+import meal_planner/cli/domains/tandoor_categories as tandoor_cmd
 import meal_planner/config
 import meal_planner/tandoor/keyword.{type Keyword, Keyword}
 
