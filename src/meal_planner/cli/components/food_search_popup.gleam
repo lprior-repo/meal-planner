@@ -3,18 +3,6 @@
 /// Encapsulates food search state, rendering, keyboard handling (1-9 selection,
 /// arrow navigation), and async food API calls. Designed to be imported by
 /// multiple screens (Diary, FatSecret domain, etc).
-///
-/// ## Architecture
-///
-/// - SearchState: Component state (active, query, results, selected_index, loading, error)
-/// - FoodSearchMsg: Component messages (pure state transitions)
-/// - render(): Pure UI rendering based on state
-/// - update(): Pure state machine (returns new state + effects)
-/// - search_foods_effect(): Async effect calling FatSecret API
-///
-/// ## Integration Pattern
-///
-/// Parent screens wrap SearchState in their Model and FoodSearchMsg in their Msg.
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -31,66 +19,38 @@ import shore/ui
 // ============================================================================
 
 /// Search component state
-///
-/// Encapsulates all state needed for food search UI. Parent screens embed this
-/// in their Model.
 pub type SearchState {
   SearchState(
-    /// Whether the search popup is visible
     active: Bool,
-    /// Current search query string
     query: String,
-    /// Search results (max 9 items for 1-9 selection)
     results: List(FoodSearchResult),
-    /// Currently selected result index (0-based)
     selected_index: Int,
-    /// Whether an async search is in progress
     loading: Bool,
-    /// Error message to display (if any)
     error: Option(String),
   )
 }
 
 /// Lightweight search result for display
-///
-/// Extracted from FatSecret FoodSearchResult with fields needed for UI.
-/// Avoids coupling to FatSecret types in UI layer.
 pub type FoodSearchResult {
   FoodSearchResult(
-    /// Unique food identifier
     food_id: String,
-    /// Food name for display
     food_name: String,
-    /// Food type (e.g., "Brand", "Generic")
     food_type: String,
-    /// Brand name (if applicable)
     brand_name: Option(String),
-    /// Combined description from FatSecret
     food_description: String,
   )
 }
 
 /// Component messages
-///
-/// Pure state transitions. Effects are returned from update() function.
 pub type FoodSearchMsg {
-  /// Activate the search popup (show it)
   SearchActivate
-  /// Update search query (triggers async search)
   SearchQuery(String)
-  /// Async search results arrived
   GotSearchResults(Result(List(foods_types.FoodSearchResult), String))
-  /// Select result by number key (1-9)
   SelectByNumber(Int)
-  /// Navigate selection with arrow keys
   SelectByArrow(Direction)
-  /// Confirm selection (Enter key)
   SearchConfirm
-  /// Cancel search (Escape key)
   SearchCancel
-  /// Clear error message
   ClearError
-  /// Food selected (emitted on confirm, parent handles)
   FoodSelected(food_id: String, food_name: String)
 }
 
@@ -104,9 +64,6 @@ pub type Direction {
 // Initial State
 // ============================================================================
 
-/// Create initial SearchState (inactive, empty)
-///
-/// Parent screens call this in their init() function.
 pub fn init() -> SearchState {
   SearchState(
     active: False,
@@ -118,293 +75,223 @@ pub fn init() -> SearchState {
   )
 }
 
-/// Open the popup with optional initial query
-pub fn open(state: PopupState, initial_query: Option(String)) -> PopupState {
-  let query = case initial_query {
-    Some(q) -> q
-    None -> ""
-  }
-  PopupState(
-    ..state,
-    is_visible: True,
-    search_query: query,
-    selected_index: 0,
-    error_message: None,
-  )
-}
-
-/// Close the popup and reset state
-pub fn close(state: PopupState) -> PopupState {
-  PopupState(
-    ..state,
-    is_visible: False,
-    search_query: "",
-    results: [],
-    selected_index: 0,
-    error_message: None,
-  )
-}
-
-/// Update search query
-pub fn update_query(state: PopupState, query: String) -> PopupState {
-  PopupState(..state, search_query: query, error_message: None)
-}
-
-/// Set search results
-pub fn set_results(
-  state: PopupState,
-  results: List(foods_types.FoodSearchResult),
-) -> PopupState {
-  PopupState(
-    ..state,
-    results: results,
-    is_loading: False,
-    selected_index: 0,
-    error_message: None,
-  )
-}
-
-/// Set error message
-pub fn set_error(state: PopupState, message: String) -> PopupState {
-  PopupState(
-    ..state,
-    error_message: Some(message),
-    is_loading: False,
-    results: [],
-  )
-}
-
-/// Set loading state
-pub fn set_loading(state: PopupState, loading: Bool) -> PopupState {
-  PopupState(..state, is_loading: loading, error_message: None)
-}
-
-/// Move selection up (with wrapping)
-pub fn select_previous(state: PopupState) -> PopupState {
-  let results_count = list.length(state.results)
-  case results_count {
-    0 -> state
-    _ -> {
-      let new_index = case state.selected_index {
-        0 -> results_count - 1
-        n -> n - 1
-      }
-      PopupState(..state, selected_index: new_index)
-    }
-  }
-}
-
-/// Move selection down (with wrapping)
-pub fn select_next(state: PopupState) -> PopupState {
-  let results_count = list.length(state.results)
-  case results_count {
-    0 -> state
-    _ -> {
-      let new_index = case state.selected_index {
-        n if n >= results_count - 1 -> 0
-        n -> n + 1
-      }
-      PopupState(..state, selected_index: new_index)
-    }
-  }
-}
-
-/// Get currently selected food (if any)
-pub fn get_selected_food(
-  state: PopupState,
-) -> Option(foods_types.FoodSearchResult) {
-  state.results
-  |> list.drop(state.selected_index)
-  |> list.first
-  |> option.from_result
-}
-
 // ============================================================================
-// Update Logic
+// View (Rendering)
 // ============================================================================
 
-/// Process popup messages and return updated state with result
-pub fn update(state: PopupState, msg: PopupMsg) -> #(PopupState, PopupResult) {
-  case msg {
-    Open -> #(PopupState(..state, is_visible: True), NoAction)
-
-    Close -> #(close(state), Cancelled)
-
-    UpdateQuery(query) -> #(update_query(state, query), NoAction)
-
-    Search -> #(set_loading(state, True), NoAction)
-
-    SelectPrevious -> #(select_previous(state), NoAction)
-
-    SelectNext -> #(select_next(state), NoAction)
-
-    ConfirmSelection -> {
-      case get_selected_food(state) {
-        Some(food) -> #(close(state), FoodSelected(food))
-        None -> #(state, NoAction)
-      }
-    }
-
-    SetResults(results) -> #(set_results(state, results), NoAction)
-
-    SetError(message) -> #(set_error(state, message), NoAction)
-
-    SetLoading(loading) -> #(set_loading(state, loading), NoAction)
-  }
-}
-
-// ============================================================================
-// Keyboard Handling
-// ============================================================================
-
-/// Handle keyboard input for the popup
-pub fn handle_key(state: PopupState, key_input: String) -> PopupMsg {
-  case key_input {
-    // Escape key - close popup
-    "\u{001B}" -> Close
-
-    // Enter key - confirm selection or search
-    "\n" | "\r" -> {
-      case list.is_empty(state.results) {
-        True -> Search
-        False -> ConfirmSelection
-      }
-    }
-
-    // Up arrow - navigate up
-    "\u{001B}[A" -> SelectPrevious
-
-    // Down arrow - navigate down
-    "\u{001B}[D" -> SelectNext
-
-    // Default - no action
-    _ -> UpdateQuery(state.search_query)
-  }
-}
-
-// ============================================================================
-// Rendering
-// ============================================================================
-
-/// Render the popup as a Shore UI node
-pub fn view(state: PopupState) -> shore.Node(PopupMsg) {
-  case state.is_visible {
+pub fn render(state: SearchState) -> ui.Node(FoodSearchMsg) {
+  case state.active {
     False -> ui.text("")
     True -> render_popup(state)
   }
 }
 
-/// Render the popup content
-fn render_popup(state: PopupState) -> shore.Node(PopupMsg) {
+fn render_popup(state: SearchState) -> ui.Node(FoodSearchMsg) {
   ui.col([
     ui.br(),
-    ui.hr_styled(style.Cyan),
-    ui.text_styled("Food Search", Some(style.Cyan), None),
-    ui.hr_styled(style.Cyan),
+    ui.text_styled("FOOD SEARCH", Some(style.Green), None),
+    ui.hr_styled(style.Green),
     ui.br(),
-    ui.input("Search:", state.search_query, style.Pct(60), UpdateQuery),
+    ui.input("Query:", state.query, style.Pct(80), SearchQuery),
     ui.br(),
-    render_status(state),
+    case state.loading {
+      True -> ui.text_styled("Searching...", Some(style.Yellow), None)
+      False ->
+        case state.results {
+          [] -> ui.text("(no results)")
+          results -> render_results(results, state.selected_index)
+        }
+    },
     ui.br(),
-    render_results(state),
+    case state.error {
+      None -> ui.text("")
+      Some(err) -> ui.text_styled("Error: " <> err, Some(style.Red), None)
+    },
     ui.br(),
-    ui.hr_styled(style.Cyan),
-    render_help_text(),
+    ui.text_styled(
+      "[1-9] Select | [↑↓] Navigate | [Enter] Confirm | [Esc] Cancel",
+      Some(style.Cyan),
+      None,
+    ),
   ])
 }
 
-/// Render status message (loading/error)
-fn render_status(state: PopupState) -> shore.Node(PopupMsg) {
-  case state.is_loading, state.error_message {
-    True, _ -> ui.text_styled("Searching...", Some(style.Yellow), None)
-    False, Some(error) -> ui.text_styled(error, Some(style.Red), None)
-    False, None -> ui.text("")
-  }
+fn render_results(
+  results: List(FoodSearchResult),
+  selected_index: Int,
+) -> ui.Node(FoodSearchMsg) {
+  results
+  |> list.index_map(fn(idx, result) {
+    let is_selected = idx == selected_index
+    let number = idx + 1 |> int.to_string
+    let fg = case is_selected {
+      True -> Some(style.Black)
+      False -> Some(style.White)
+    }
+    let bg = case is_selected {
+      True -> Some(style.Blue)
+      False -> None
+    }
+
+    let display_text =
+      number
+      <> ". "
+      <> result.food_name
+      <> case result.brand_name {
+        Some(brand) -> " (" <> brand <> ")"
+        None -> ""
+      }
+
+    ui.button_id_styled(
+      id: "food_" <> number,
+      text: display_text,
+      key: key.Char(number),
+      event: SelectByNumber(idx + 1),
+      fg: fg,
+      bg: bg,
+      focus_fg: Some(style.Black),
+      focus_bg: Some(style.Green),
+    )
+  })
+  |> list.intersperse(ui.br())
+  |> ui.col
 }
 
-/// Render search results list
-fn render_results(state: PopupState) -> shore.Node(PopupMsg) {
-  case list.is_empty(state.results) {
-    True -> ui.text("")
-    False -> {
-      let result_nodes =
-        state.results
-        |> list.index_map(fn(food, idx) {
-          render_result_item(food, idx, idx == state.selected_index)
+// ============================================================================
+// Update (State Machine)
+// ============================================================================
+
+pub fn update(
+  state: SearchState,
+  msg: FoodSearchMsg,
+) -> #(SearchState, List(fn() -> FoodSearchMsg)) {
+  case msg {
+    SearchActivate -> {
+      let new_state =
+        SearchState(
+          ..state,
+          active: True,
+          query: "",
+          results: [],
+          selected_index: 0,
+          error: None,
+        )
+      #(new_state, [])
+    }
+
+    SearchQuery(q) -> {
+      let new_state = SearchState(..state, query: q, loading: True)
+      let effect = fn() { search_foods_effect(q) }
+      #(new_state, [effect])
+    }
+
+    GotSearchResults(Ok(foods)) -> {
+      let results =
+        foods
+        |> list.take(9)
+        |> list.map(fn(food) {
+          FoodSearchResult(
+            food_id: foods_types.food_id_to_string(food.food_id),
+            food_name: food.food_name,
+            food_type: food.food_type,
+            brand_name: food.brand_name,
+            food_description: food.food_description,
+          )
         })
-      ui.col(result_nodes)
+
+      let new_state =
+        SearchState(
+          ..state,
+          results: results,
+          loading: False,
+          selected_index: 0,
+          error: None,
+        )
+      #(new_state, [])
+    }
+
+    GotSearchResults(Err(err)) -> {
+      let new_state = SearchState(..state, error: Some(err), loading: False)
+      #(new_state, [])
+    }
+
+    SelectByNumber(n) -> {
+      let new_state = SearchState(..state, selected_index: n - 1)
+      #(new_state, [])
+    }
+
+    SelectByArrow(Up) -> {
+      let max_index = list.length(state.results) - 1
+      let idx = case state.selected_index {
+        0 -> max_index
+        n -> n - 1
+      }
+      let new_state = SearchState(..state, selected_index: idx)
+      #(new_state, [])
+    }
+
+    SelectByArrow(Down) -> {
+      let max_index = list.length(state.results) - 1
+      let idx = case state.selected_index < max_index {
+        True -> state.selected_index + 1
+        False -> 0
+      }
+      let new_state = SearchState(..state, selected_index: idx)
+      #(new_state, [])
+    }
+
+    SearchConfirm -> {
+      case list.at(state.results, state.selected_index) {
+        Ok(selected) -> {
+          let effect = fn() {
+            FoodSelected(
+              food_id: selected.food_id,
+              food_name: selected.food_name,
+            )
+          }
+          let new_state = SearchState(..state, active: False)
+          #(new_state, [effect])
+        }
+        Error(_) -> #(state, [])
+      }
+    }
+
+    SearchCancel -> {
+      let new_state =
+        SearchState(..state, active: False, query: "", results: [], error: None)
+      #(new_state, [])
+    }
+
+    ClearError -> {
+      let new_state = SearchState(..state, error: None)
+      #(new_state, [])
+    }
+
+    FoodSelected(_food_id, _food_name) -> {
+      // Parent screen should handle this message
+      #(state, [])
     }
   }
 }
 
-/// Render a single result item
-fn render_result_item(
-  food: foods_types.FoodSearchResult,
-  index: Int,
-  is_selected: Bool,
-) -> shore.Node(PopupMsg) {
-  let prefix = case is_selected {
-    True -> "> "
-    False -> "  "
-  }
-
-  let food_name =
-    foods_types.food_id_to_string(food.food_id)
-    |> string.slice(0, 50)
-
-  let display_text =
-    prefix
-    <> int.to_string(index + 1)
-    <> ". "
-    <> food.food_name
-    <> " - "
-    <> food_name
-
-  case is_selected {
-    True -> ui.text_styled(display_text, Some(style.Green), None)
-    False -> ui.text(display_text)
-  }
-}
-
-/// Render help text
-fn render_help_text() -> shore.Node(PopupMsg) {
-  ui.text_styled(
-    "↑/↓: Navigate | Enter: Select | Esc: Cancel",
-    Some(style.Cyan),
-    None,
-  )
-}
-
 // ============================================================================
-// Helper Functions
+// Effects
 // ============================================================================
 
-/// Check if popup is visible
-pub fn is_visible(state: PopupState) -> Bool {
-  state.is_visible
-}
-
-/// Get current search query
-pub fn get_query(state: PopupState) -> String {
-  state.search_query
-}
-
-/// Get number of results
-pub fn get_results_count(state: PopupState) -> Int {
-  list.length(state.results)
-}
-
-/// Check if loading
-pub fn is_loading(state: PopupState) -> Bool {
-  state.is_loading
-}
-
-/// Get error message if present
-pub fn get_error(state: PopupState) -> Option(String) {
-  state.error_message
-}
-
-/// Get selected index
-pub fn get_selected_index(state: PopupState) -> Int {
-  state.selected_index
+fn search_foods_effect(query: String) -> FoodSearchMsg {
+  case query {
+    "" -> GotSearchResults(Ok([]))
+    _ -> {
+      case env.load_fatsecret_config() {
+        Some(config) -> {
+          case foods_client.search_foods(config, query, 0, 9) {
+            Ok(response) -> GotSearchResults(Ok(response.foods))
+            Error(err) ->
+              GotSearchResults(Err(foods_client.error_to_string(err)))
+          }
+        }
+        None -> GotSearchResults(Err("FatSecret API not configured"))
+      }
+    }
+  }
 }
