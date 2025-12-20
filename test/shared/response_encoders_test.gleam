@@ -110,7 +110,8 @@ pub fn error_message_test() {
 }
 
 pub fn error_with_code_test() {
-  let response = response_encoders.error_with_code("NOT_FOUND", "Resource not found")
+  let response =
+    response_encoders.error_with_code("NOT_FOUND", "Resource not found")
   let encoded = json.to_string(response)
 
   encoded

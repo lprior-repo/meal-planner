@@ -16,6 +16,7 @@ import meal_planner/fatsecret/favorites/service
 import meal_planner/fatsecret/favorites/types
 import meal_planner/fatsecret/handlers_helpers as helpers
 import meal_planner/fatsecret/service as fatsecret_service
+import meal_planner/shared/query_builders
 import pog
 import wisp.{type Request, type Response}
 
@@ -99,8 +100,9 @@ pub fn get_favorite_foods(req: Request, conn: pog.Connection) -> Response {
   use <- wisp.require_method(req, Get)
 
   let query_params = wisp.get_query(req)
-  let max_results = helpers.parse_int_param(query_params, "max_results")
-  let page_number = helpers.parse_int_param(query_params, "page")
+  let max_results =
+    query_builders.parse_int_parameter(query_params, "max_results")
+  let page_number = query_builders.parse_int_parameter(query_params, "page")
 
   case service.get_favorite_foods(conn, max_results, page_number) {
     Ok(response) -> {
@@ -233,8 +235,9 @@ pub fn get_favorite_recipes(req: Request, conn: pog.Connection) -> Response {
   use <- wisp.require_method(req, Get)
 
   let query_params = wisp.get_query(req)
-  let max_results = helpers.parse_int_param(query_params, "max_results")
-  let page_number = helpers.parse_int_param(query_params, "page")
+  let max_results =
+    query_builders.parse_int_parameter(query_params, "max_results")
+  let page_number = query_builders.parse_int_parameter(query_params, "page")
 
   case service.get_favorite_recipes(conn, max_results, page_number) {
     Ok(response) -> {

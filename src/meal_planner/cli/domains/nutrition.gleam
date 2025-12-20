@@ -720,6 +720,7 @@ fn load_nutrition_goals(config: Config) -> Result(NutritionGoals, String) {
     }
   }
 }
+
 /// Display current nutrition goals
 pub fn display_goals(config: Config) -> Result(String, String) {
   case load_nutrition_goals(config) {
@@ -798,10 +799,13 @@ pub fn apply_preset(
 ) -> Result(String, String) {
   // Validate preset name
   case preset_name {
-    "sedentary" -> apply_preset_values(config, "sedentary", 2000.0, 25.0, 50.0, 25.0)
-    "moderate" -> apply_preset_values(config, "moderate", 2200.0, 30.0, 45.0, 25.0)
+    "sedentary" ->
+      apply_preset_values(config, "sedentary", 2000.0, 25.0, 50.0, 25.0)
+    "moderate" ->
+      apply_preset_values(config, "moderate", 2200.0, 30.0, 45.0, 25.0)
     "active" -> apply_preset_values(config, "active", 2500.0, 35.0, 45.0, 20.0)
-    "athletic" -> apply_preset_values(config, "athletic", 3000.0, 40.0, 40.0, 20.0)
+    "athletic" ->
+      apply_preset_values(config, "athletic", 3000.0, 40.0, 40.0, 20.0)
     _ ->
       Error(
         "Unknown preset: '"

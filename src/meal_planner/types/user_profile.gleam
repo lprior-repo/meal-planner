@@ -28,7 +28,8 @@ pub type Goal {
 }
 
 /// User profile for personalized nutrition targets
-pub type UserProfile {
+/// Opaque type ensures all values are validated
+pub opaque type UserProfile {
   UserProfile(
     id: UserId,
     bodyweight: Float,
@@ -37,6 +38,71 @@ pub type UserProfile {
     meals_per_day: Int,
     micronutrient_goals: Option(MicronutrientGoals),
   )
+}
+
+/// Create a UserProfile with validation
+/// bodyweight must be positive, meals_per_day must be between 1 and 10
+pub fn new_user_profile(
+  id: UserId,
+  bodyweight: Float,
+  activity_level: ActivityLevel,
+  goal: Goal,
+  meals_per_day: Int,
+  micronutrient_goals: Option(MicronutrientGoals),
+) -> Result(UserProfile, String) {
+  case bodyweight <=. 0.0 {
+    True ->
+      Error("Bodyweight must be positive, got: " <> float.to_string(bodyweight))
+    False ->
+      case meals_per_day < 1 || meals_per_day > 10 {
+        True ->
+          Error(
+            "Meals per day must be between 1 and 10, got: "
+            <> int.to_string(meals_per_day),
+          )
+        False ->
+          Ok(UserProfile(
+            id: id,
+            bodyweight: bodyweight,
+            activity_level: activity_level,
+            goal: goal,
+            meals_per_day: meals_per_day,
+            micronutrient_goals: micronutrient_goals,
+          ))
+      }
+  }
+}
+
+/// Get the user ID
+pub fn user_profile_id(u: UserProfile) -> UserId {
+  u.id
+}
+
+/// Get the bodyweight
+pub fn user_profile_bodyweight(u: UserProfile) -> Float {
+  u.bodyweight
+}
+
+/// Get the activity level
+pub fn user_profile_activity_level(u: UserProfile) -> ActivityLevel {
+  u.activity_level
+}
+
+/// Get the fitness goal
+pub fn user_profile_goal(u: UserProfile) -> Goal {
+  u.goal
+}
+
+/// Get the meals per day
+pub fn user_profile_meals_per_day(u: UserProfile) -> Int {
+  u.meals_per_day
+}
+
+/// Get the micronutrient goals
+pub fn user_profile_micronutrient_goals(
+  u: UserProfile,
+) -> Option(MicronutrientGoals) {
+  u.micronutrient_goals
 }
 
 /// Calculate daily protein target (0.8-1g per lb bodyweight)

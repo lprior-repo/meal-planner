@@ -22,8 +22,10 @@
 import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
+import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
+import gleam/string
 import wisp
 
 // ============================================================================
@@ -256,8 +258,10 @@ pub fn reset_user_limit(limiter: RateLimiter, user_id: String) -> RateLimiter {
 fn get_user_id(req: wisp.Request) -> String {
   // Use remote IP as user identifier
   // In production: parse Authorization header, session cookie, etc.
-  case wisp.get_header(req, "x-forwarded-for") {
-    Ok(ip) -> ip
+  case list.find(req.headers, fn(header) {
+    string.lowercase(header.0) == "x-forwarded-for"
+  }) {
+    Ok(#(_, ip)) -> ip
     Error(_) -> "unknown"
   }
 }

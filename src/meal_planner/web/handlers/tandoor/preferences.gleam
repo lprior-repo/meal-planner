@@ -10,7 +10,8 @@ import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/user.{
   type UserPreference, type UserPreferenceUpdateRequest,
-  UserPreferenceUpdateRequest, get_current_user_preferences, update_user_preferences,
+  UserPreferenceUpdateRequest, get_current_user_preferences,
+  update_user_preferences,
 }
 
 import wisp
@@ -37,7 +38,8 @@ fn handle_get_preferences(_req: wisp.Request) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> helpers.error_response(500, "Failed to get user preferences")
+        Error(_) ->
+          helpers.error_response(500, "Failed to get user preferences")
       }
     }
     Error(resp) -> resp
@@ -67,7 +69,10 @@ fn handle_update_preferences(req: wisp.Request) -> wisp.Response {
                   |> wisp.json_response(200)
                 }
                 Error(_) ->
-                  helpers.error_response(500, "Failed to update user preferences")
+                  helpers.error_response(
+                    500,
+                    "Failed to update user preferences",
+                  )
               }
             }
             Error(_) ->
@@ -103,13 +108,10 @@ fn encode_user_preference(pref: UserPreference) -> json.Json {
         #("is_active", json.bool(pref.user.is_active)),
       ]),
     ),
-    #(
-      "image",
-      case pref.image {
-        option.Some(img) -> encode_user_file_view(img)
-        option.None -> json.null()
-      },
-    ),
+    #("image", case pref.image {
+      option.Some(img) -> encode_user_file_view(img)
+      option.None -> json.null()
+    }),
     #("theme", json.string(pref.theme)),
     #("nav_bg_color", json.string(pref.nav_bg_color)),
     #("nav_text_color", json.string(pref.nav_text_color)),
@@ -118,13 +120,10 @@ fn encode_user_preference(pref: UserPreference) -> json.Json {
     #("default_page", json.string(pref.default_page)),
     #("use_fractions", json.bool(pref.use_fractions)),
     #("use_kj", json.bool(pref.use_kj)),
-    #(
-      "plan_share",
-      case pref.plan_share {
-        option.Some(users) -> json.array(users, encode_user)
-        option.None -> json.null()
-      },
-    ),
+    #("plan_share", case pref.plan_share {
+      option.Some(users) -> json.array(users, encode_user)
+      option.None -> json.null()
+    }),
     #("nav_sticky", json.bool(pref.nav_sticky)),
     #("ingredient_decimals", json.int(pref.ingredient_decimals)),
     #("comments", json.bool(pref.comments)),
@@ -140,13 +139,10 @@ fn encode_user_preference(pref: UserPreference) -> json.Json {
       "mealplan_autoexclude_onhand",
       json.bool(pref.mealplan_autoexclude_onhand),
     ),
-    #(
-      "shopping_share",
-      case pref.shopping_share {
-        option.Some(users) -> json.array(users, encode_user)
-        option.None -> json.null()
-      },
-    ),
+    #("shopping_share", case pref.shopping_share {
+      option.Some(users) -> json.array(users, encode_user)
+      option.None -> json.null()
+    }),
     #("shopping_recent_days", json.int(pref.shopping_recent_days)),
     #("csv_delim", json.string(pref.csv_delim)),
     #("csv_prefix", json.string(pref.csv_prefix)),
@@ -194,10 +190,14 @@ fn parse_user_preference_update_request(
   |> result.map_error(fn(_) { "Invalid user preference update request" })
 }
 
-fn user_preference_update_decoder() -> decode.Decoder(UserPreferenceUpdateRequest) {
-  use theme <- decode.optional_field("theme", option.None, decode.optional(
-    decode.string,
-  ))
+fn user_preference_update_decoder() -> decode.Decoder(
+  UserPreferenceUpdateRequest,
+) {
+  use theme <- decode.optional_field(
+    "theme",
+    option.None,
+    decode.optional(decode.string),
+  )
   use nav_bg_color <- decode.optional_field(
     "nav_bg_color",
     option.None,

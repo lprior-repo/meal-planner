@@ -69,7 +69,8 @@ pub fn generate_occurrences_within_date_range_test() {
 
   occurrences
   |> list.length
-  |> should.be_true(fn(len) { len >= 4 && len <= 5 })
+  |> fn(len) { len >= 4 && len <= 5 }
+  |> should.be_true
 }
 
 pub fn validate_rule_valid_every_n_days_test() {

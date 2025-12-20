@@ -8,7 +8,6 @@
 /// - Error handling and loading states
 ///
 /// Test count: 11 test cases as required
-
 import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should

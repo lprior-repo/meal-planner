@@ -6,12 +6,9 @@
 import birl
 import gleam/json
 import gleam/list
-import gleam/result
 import gleam/string
 import meal_planner/id.{type UserId}
-import meal_planner/scheduler/types.{
-  type ScheduledJob, type SchedulerError, AutoSync, EveryNHours, Scheduled,
-}
+import meal_planner/scheduler/types.{type SchedulerError}
 
 // ============================================================================
 // Core Types

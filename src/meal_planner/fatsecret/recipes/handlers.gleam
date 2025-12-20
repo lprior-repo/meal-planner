@@ -5,6 +5,7 @@ import gleam/json
 import meal_planner/fatsecret/handlers_helpers as helpers
 import meal_planner/fatsecret/recipes/service
 import meal_planner/fatsecret/recipes/types
+import meal_planner/shared/query_builders
 import wisp
 
 /// GET /api/fatsecret/recipes/:id
@@ -45,8 +46,9 @@ pub fn handle_search_recipes(req: wisp.Request) -> wisp.Response {
   case helpers.validate_required_string(query, "q") {
     Error(#(status, msg)) -> helpers.error_response(status, msg)
     Ok(q) -> {
-      let page_number = helpers.parse_int_param(query_params, "page")
-      let max_results = helpers.parse_int_param(query_params, "max_results")
+      let page_number = query_builders.parse_int_parameter(query_params, "page")
+      let max_results =
+        query_builders.parse_int_parameter(query_params, "max_results")
 
       case service.search_recipes(q, page_number, max_results) {
         Ok(search_response) ->
@@ -103,8 +105,9 @@ pub fn handle_search_recipes_by_type(
 
   let query_params = wisp.get_query(req)
 
-  let page_number = helpers.parse_int_param(query_params, "page")
-  let max_results = helpers.parse_int_param(query_params, "max_results")
+  let page_number = query_builders.parse_int_parameter(query_params, "page")
+  let max_results =
+    query_builders.parse_int_parameter(query_params, "max_results")
 
   case service.search_recipes_by_type(type_id, page_number, max_results) {
     Ok(search_response) ->

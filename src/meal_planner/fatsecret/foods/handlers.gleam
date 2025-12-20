@@ -9,6 +9,7 @@ import gleam/option
 import meal_planner/fatsecret/foods/service
 import meal_planner/fatsecret/foods/types
 import meal_planner/fatsecret/handlers_helpers as helpers
+import meal_planner/shared/query_builders
 import wisp
 
 // ============================================================================
@@ -119,18 +120,20 @@ pub fn handle_search_foods(req: wisp.Request) -> wisp.Response {
   let query_params = wisp.get_query(req)
 
   let query = helpers.get_query_param(query_params, "q")
-  let page =
-    helpers.parse_int_param(query_params, "page")
-    |> option.unwrap(0)
-  let limit =
-    helpers.parse_int_param(query_params, "limit")
-    |> option.map(helpers.clamp_limit)
-    |> option.unwrap(20)
+  let page = query_builders.parse_int_parameter(query_params, "page")
+  let limit = query_builders.parse_int_parameter(query_params, "limit")
 
   case helpers.validate_required_string(query, "q") {
     Error(#(status, msg)) -> helpers.error_response(status, msg)
-    Ok(q) ->
-      case service.search_foods(q, page, limit) {
+    Ok(q) -> {
+      let pagination = query_builders.build_page_pagination(page, limit, 50)
+      case
+        service.search_foods(
+          q,
+          pagination.offset / pagination.limit,
+          pagination.limit,
+        )
+      {
         Ok(response) -> {
           search_response_to_json(response)
           |> json.to_string
@@ -150,6 +153,7 @@ pub fn handle_search_foods(req: wisp.Request) -> wisp.Response {
           )
         }
       }
+    }
   }
 }
 

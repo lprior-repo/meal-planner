@@ -9,7 +9,6 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/result
 import gleam/string
 import glint
 import meal_planner/config.{type Config}
@@ -317,33 +316,38 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
   use _named, unnamed, flags <- glint.command()
 
   case unnamed {
-    ["search", query] -> {
-      // mp recipe search <QUERY> [--limit N]
-      let limit_opt = case limit(flags) {
-        Ok(l) -> Some(l)
-        Error(_) -> None
-      }
-      search_handler(config, query, limit_opt)
-    }
     ["search", ..rest] -> {
-      // mp recipe search <MULTI WORD QUERY>
-      let query = string.join(rest, " ")
-      let limit_opt = case limit(flags) {
-        Ok(l) -> Some(l)
-        Error(_) -> None
+      // mp recipe search <QUERY> [--limit N] or <MULTI WORD QUERY>
+      case rest {
+        [] -> {
+          // mp recipe search (no query)
+          io.println("Error: Search query is required")
+          io.println("")
+          io.println("Usage: mp recipe search <QUERY> [--limit N]")
+          io.println("")
+          io.println("Examples:")
+          io.println("  mp recipe search chicken")
+          io.println("  mp recipe search 'pasta carbonara' --limit 5")
+          Error(Nil)
+        }
+        [query] -> {
+          // mp recipe search <QUERY> [--limit N]
+          let limit_opt = case limit(flags) {
+            Ok(l) -> Some(l)
+            Error(_) -> None
+          }
+          search_handler(config, query, limit_opt)
+        }
+        _ -> {
+          // mp recipe search <MULTI WORD QUERY>
+          let query = string.join(rest, " ")
+          let limit_opt = case limit(flags) {
+            Ok(l) -> Some(l)
+            Error(_) -> None
+          }
+          search_handler(config, query, limit_opt)
+        }
       }
-      search_handler(config, query, limit_opt)
-    }
-    ["search"] -> {
-      // mp recipe search (no query)
-      io.println("Error: Search query is required")
-      io.println("")
-      io.println("Usage: mp recipe search <QUERY> [--limit N]")
-      io.println("")
-      io.println("Examples:")
-      io.println("  mp recipe search chicken")
-      io.println("  mp recipe search 'pasta carbonara' --limit 5")
-      Error(Nil)
     }
     ["detail", id_str] -> {
       // mp recipe detail <ID>

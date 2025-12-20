@@ -9,11 +9,10 @@ import gleam/option.{None, Some}
 import meal_planner/id.{type JobId}
 import meal_planner/scheduler/types.{
   type JobExecution, type JobFrequency, type JobPriority, type JobStatus,
-  type JobType, type RetryPolicy, type ScheduledJob, type TriggerSource,
-  AutoSync, Completed, Critical, Daily, DailyAdvisor, Dependent, EveryNHours,
-  Failed, High, JobExecution, Low, Manual, Medium, Once, Pending, Retry,
-  RetryPolicy, Running, Scheduled, ScheduledJob, Weekly, WeeklyGeneration,
-  WeeklyTrends,
+  type JobType, type ScheduledJob, AutoSync, Completed, Critical, Daily,
+  DailyAdvisor, Dependent, EveryNHours, Failed, High, JobExecution, Low, Manual,
+  Medium, Once, Pending, Retry, RetryPolicy, Running, Scheduled, ScheduledJob,
+  Weekly, WeeklyGeneration, WeeklyTrends,
 }
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
 import meal_planner/storage/utils

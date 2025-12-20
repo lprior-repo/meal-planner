@@ -12,7 +12,6 @@
 /// - RecipeUpdate: Request type for partial recipe updates
 ///
 /// Based on Tandoor API specification.
-import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/int
 import gleam/json.{type Json}
@@ -20,8 +19,8 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import meal_planner/tandoor/api/crud_helpers.{
-  execute_delete, execute_get, execute_patch, execute_post, parse_json_list,
-  parse_json_paginated, parse_json_single,
+  execute_delete, execute_get, execute_patch, execute_post, parse_json_paginated,
+  parse_json_single,
 }
 import meal_planner/tandoor/client.{
   type ClientConfig, type Food, type Ingredient, type Keyword,
@@ -30,7 +29,6 @@ import meal_planner/tandoor/client.{
   NutritionInfo as ClientNutritionInfo, Step, SupermarketCategory, Unit,
 }
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
-import meal_planner/tandoor/decoders/decoder_combinators
 
 // ============================================================================
 // Types
@@ -631,15 +629,6 @@ fn decode_flexible_float() -> decode.Decoder(Float) {
 // ============================================================================
 // Encoders
 // ============================================================================
-
-/// Helper to encode Keyword to JSON
-fn encode_keyword(keyword: Keyword) -> Json {
-  json.object([
-    #("id", json.int(keyword.id)),
-    #("name", json.string(keyword.name)),
-    #("description", json.string(keyword.description)),
-  ])
-}
 
 /// Encode a RecipeCreateRequest to JSON
 ///

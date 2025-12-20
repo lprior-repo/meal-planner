@@ -5,6 +5,8 @@
 /// - Query parameter parsing
 /// - Success/error response builders
 /// - Food and recipe JSON encoders
+///
+/// Re-exports common functions from shared/response_encoders to reduce duplication.
 import gleam/float
 import gleam/http
 import gleam/int
@@ -16,6 +18,7 @@ import gleam/string
 import meal_planner/fatsecret/foods/types as food_types
 import meal_planner/fatsecret/recipes/types as recipe_types
 import meal_planner/fatsecret/service as fatsecret_service
+import meal_planner/shared/response_encoders
 import wisp
 
 // =============================================================================
