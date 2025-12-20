@@ -202,6 +202,106 @@ pub type ShoppingListRecipeUpdate {
 }
 
 // ============================================================================
+// Types - Shopping List Query and Category Grouping
+// ============================================================================
+
+/// Query parameters for filtering shopping list entries
+///
+/// This type encapsulates all possible query parameters when fetching
+/// shopping list entries from the Tandoor API.
+///
+/// Fields:
+/// - checked: Filter by checked status (None = all items)
+/// - mealplan: Filter by meal plan ID
+/// - updated_after: Return only items updated after this timestamp (ISO 8601)
+/// - limit: Maximum number of results to return (page_size)
+/// - offset: Offset for pagination
+pub type ShoppingListQuery {
+  ShoppingListQuery(
+    /// Filter by checked status (true/false/None for all)
+    checked: Option(Bool),
+    /// Filter by meal plan ID
+    mealplan: Option(Int),
+    /// Filter by update timestamp (ISO 8601)
+    updated_after: Option(String),
+    /// Pagination limit (page_size)
+    limit: Option(Int),
+    /// Pagination offset
+    offset: Option(Int),
+  )
+}
+
+/// Shopping list item with category information for display
+///
+/// This type extends ShoppingListEntryResponse with computed category
+/// information for UI rendering and grouping.
+///
+/// The category is derived from the food's supermarket_category field
+/// and is used to group items by store aisle/section.
+pub type ShoppingListItem {
+  ShoppingListItem(
+    /// Entry ID
+    id: Int,
+    /// Food item (nested object, optional)
+    food: Option(Food),
+    /// Unit of measurement (nested object, optional)
+    unit: Option(Unit),
+    /// Amount/quantity
+    amount: Float,
+    /// Display order in the list
+    order: Int,
+    /// Whether this item has been checked off
+    checked: Bool,
+    /// Creation timestamp (ISO 8601)
+    created_at: String,
+    /// When the item was checked/completed (optional)
+    completed_at: Option(String),
+    /// Derived category for grouping (from food.supermarket_category)
+    category: Option(CategoryInfo),
+  )
+}
+
+/// Category information for grouping shopping list items
+///
+/// This type represents the supermarket category extracted from a food item
+/// for the purpose of grouping items by store section/aisle.
+pub type CategoryInfo {
+  CategoryInfo(
+    /// Category ID
+    id: Int,
+    /// Category name (e.g., "Produce", "Dairy", "Frozen Foods")
+    name: String,
+    /// Optional category description
+    description: Option(String),
+  )
+}
+
+/// Shopping list grouped by category
+///
+/// This type represents a shopping list organized by supermarket categories
+/// for easier shopping navigation (e.g., all produce items together).
+pub type GroupedShoppingList {
+  GroupedShoppingList(
+    /// Items organized by category
+    categories: List(CategoryGroup),
+    /// Items without a category (uncategorized)
+    uncategorized: List(ShoppingListItem),
+  )
+}
+
+/// A group of shopping list items in the same category
+///
+/// Represents all items that belong to a specific supermarket category.
+pub type CategoryGroup {
+  CategoryGroup(
+    /// Category information
+    category: CategoryInfo,
+    /// All items in this category
+    items: List(ShoppingListItem),
+  )
+}
+
+// ============================================================================
 // Decoders - ShoppingList
 // ============================================================================
 
@@ -816,4 +916,190 @@ fn build_entry_query_params(
 
   // Flatten all parameter lists together
   list.flatten([checked_param, limit_param, offset_param])
+}
+
+// ============================================================================
+// Query Builders
+// ============================================================================
+
+/// Create a default/empty shopping list query
+///
+/// Returns a query with all fields set to None, which will fetch all items
+/// without any filtering.
+///
+/// # Example
+/// ```gleam
+/// let query = empty_query()
+/// // ShoppingListQuery with all None fields
+/// ```
+pub fn empty_query() -> ShoppingListQuery {
+  ShoppingListQuery(
+    checked: None,
+    mealplan: None,
+    updated_after: None,
+    limit: None,
+    offset: None,
+  )
+}
+
+/// Build query parameters from a ShoppingListQuery
+///
+/// Converts a ShoppingListQuery into a list of URL query parameter tuples
+/// that can be used with the Tandoor API.
+///
+/// # Example
+/// ```gleam
+/// let query = ShoppingListQuery(
+///   checked: Some(False),
+///   mealplan: Some(123),
+///   updated_after: None,
+///   limit: Some(20),
+///   offset: Some(0),
+/// )
+/// let params = build_query_params(query)
+/// // [#("checked", "false"), #("mealplan", "123"), #("page_size", "20"), #("offset", "0")]
+/// ```
+pub fn build_query_params(query: ShoppingListQuery) -> List(#(String, String)) {
+  let checked_param = case query.checked {
+    Some(True) -> [#("checked", "true")]
+    Some(False) -> [#("checked", "false")]
+    None -> []
+  }
+
+  let mealplan_param = case query.mealplan {
+    Some(id) -> [#("mealplan", int.to_string(id))]
+    None -> []
+  }
+
+  let updated_after_param = case query.updated_after {
+    Some(timestamp) -> [#("updated_after", timestamp)]
+    None -> []
+  }
+
+  let limit_param = case query.limit {
+    Some(l) -> [#("page_size", int.to_string(l))]
+    None -> []
+  }
+
+  let offset_param = case query.offset {
+    Some(o) -> [#("offset", int.to_string(o))]
+    None -> []
+  }
+
+  list.flatten([
+    checked_param,
+    mealplan_param,
+    updated_after_param,
+    limit_param,
+    offset_param,
+  ])
+}
+
+/// Set the checked filter on a query
+///
+/// # Example
+/// ```gleam
+/// empty_query()
+/// |> with_checked(Some(False))  // Only unchecked items
+/// ```
+pub fn with_checked(
+  query: ShoppingListQuery,
+  checked: Option(Bool),
+) -> ShoppingListQuery {
+  ShoppingListQuery(..query, checked: checked)
+}
+
+/// Set the mealplan filter on a query
+///
+/// # Example
+/// ```gleam
+/// empty_query()
+/// |> with_mealplan(Some(123))
+/// ```
+pub fn with_mealplan(
+  query: ShoppingListQuery,
+  mealplan: Option(Int),
+) -> ShoppingListQuery {
+  ShoppingListQuery(..query, mealplan: mealplan)
+}
+
+/// Set the updated_after filter on a query
+///
+/// # Example
+/// ```gleam
+/// empty_query()
+/// |> with_updated_after(Some("2025-12-20T10:00:00Z"))
+/// ```
+pub fn with_updated_after(
+  query: ShoppingListQuery,
+  updated_after: Option(String),
+) -> ShoppingListQuery {
+  ShoppingListQuery(..query, updated_after: updated_after)
+}
+
+/// Set pagination limit on a query
+///
+/// # Example
+/// ```gleam
+/// empty_query()
+/// |> with_limit(Some(50))
+/// ```
+pub fn with_limit(
+  query: ShoppingListQuery,
+  limit: Option(Int),
+) -> ShoppingListQuery {
+  ShoppingListQuery(..query, limit: limit)
+}
+
+/// Set pagination offset on a query
+///
+/// # Example
+/// ```gleam
+/// empty_query()
+/// |> with_offset(Some(20))
+/// ```
+pub fn with_offset(
+  query: ShoppingListQuery,
+  offset: Option(Int),
+) -> ShoppingListQuery {
+  ShoppingListQuery(..query, offset: offset)
+}
+
+/// Convert ShoppingListEntryResponse to ShoppingListItem
+///
+/// Extracts category information from the food's supermarket_category field
+/// and creates a ShoppingListItem for display/grouping purposes.
+///
+/// # Example
+/// ```gleam
+/// let item = entry_response_to_item(entry_response)
+/// ```
+pub fn entry_response_to_item(
+  entry: ShoppingListEntryResponse,
+) -> ShoppingListItem {
+  let category = case entry.food {
+    Some(food) ->
+      case food.supermarket_category {
+        Some(cat) ->
+          Some(CategoryInfo(
+            id: cat.id,
+            name: cat.name,
+            description: cat.description,
+          ))
+        None -> None
+      }
+    None -> None
+  }
+
+  ShoppingListItem(
+    id: entry.id,
+    food: entry.food,
+    unit: entry.unit,
+    amount: entry.amount,
+    order: entry.order,
+    checked: entry.checked,
+    created_at: entry.created_at,
+    completed_at: entry.completed_at,
+    category: category,
+  )
 }

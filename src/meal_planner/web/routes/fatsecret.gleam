@@ -1,6 +1,7 @@
 //// FatSecret API routing module
 ////
 //// Routes (organized by resource type):
+//// - Brands: /api/fatsecret/brands
 //// - Foods: /api/fatsecret/foods/*
 //// - Recipes: /api/fatsecret/recipes/*
 //// - Favorites: /api/fatsecret/favorites/*
@@ -18,6 +19,7 @@ import meal_planner/fatsecret/favorites/handlers as favorites_handlers
 import meal_planner/fatsecret/saved_meals/handlers as saved_meals_handlers
 import meal_planner/fatsecret/weight/handlers as weight_handlers
 import meal_planner/web/handlers
+import meal_planner/web/handlers/fatsecret/brands as brands_handler
 import meal_planner/web/routes/types
 import pog
 import wisp
@@ -29,6 +31,9 @@ pub fn route(
   ctx: types.Context,
 ) -> Option(wisp.Response) {
   case segments {
+    // Brands API (2-legged OAuth)
+    ["api", "fatsecret", "brands"] -> Some(brands_handler.handle_brands(req))
+
     // Foods API (2-legged OAuth)
     ["api", "fatsecret", "foods", ..food_segments] ->
       Some(route_foods(req, food_segments))

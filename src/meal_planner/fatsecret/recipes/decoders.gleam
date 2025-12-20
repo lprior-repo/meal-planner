@@ -265,28 +265,22 @@ pub fn recipe_search_response_decoder() -> decode.Decoder(
   decode.at(["recipes"], {
     use recipes <- decode.optional_field(
       "recipe",
-      None,
-      decode.optional(decode.one_of(
+      [],
+      decode.one_of(
         // Multiple results: recipes.recipe is an array
         decode.list(recipe_search_result_decoder()),
         [
           // Single result: recipes.recipe is an object
           decode.map(recipe_search_result_decoder(), fn(r) { [r] }),
         ],
-      )),
+      ),
     )
     use max_results <- decode.field("max_results", decode.int)
     use total_results <- decode.field("total_results", decode.int)
     use page_number <- decode.field("page_number", decode.int)
 
-    // recipes is Option(List) - unwrap option
-    let recipes_list = case recipes {
-      None -> []
-      Some(list) -> list
-    }
-
     decode.success(types.RecipeSearchResponse(
-      recipes: recipes_list,
+      recipes:,
       max_results:,
       total_results:,
       page_number:,

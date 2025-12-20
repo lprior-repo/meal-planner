@@ -14,6 +14,7 @@
 //// - /api/tandoor/supermarket-categories/*
 //// - /api/tandoor/import-logs/*
 //// - /api/tandoor/export-logs/*
+//// - /api/tandoor/preferences
 
 import gleam/option.{type Option, None, Some}
 import meal_planner/web/handlers
@@ -83,6 +84,10 @@ pub fn route(
     ["api", "tandoor", "export-logs"] ->
       Some(handlers.handle_tandoor_routes(req))
     ["api", "tandoor", "export-logs", _log_id] ->
+      Some(handlers.handle_tandoor_routes(req))
+
+    // User Preferences
+    ["api", "tandoor", "preferences"] ->
       Some(handlers.handle_tandoor_routes(req))
 
     _ -> None

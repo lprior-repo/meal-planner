@@ -36,6 +36,32 @@ pub fn trigger_auto_sync(_user_id: UserId) -> Result(SyncResult, SchedulerError)
   Ok(SyncResult(synced: 0, skipped: 0, failed: 0, errors: []))
 }
 
+/// Trigger full synchronization of all Tandoor data to local storage
+///
+/// Synchronizes:
+/// - Recipes
+/// - Ingredients
+/// - Meal plans
+/// - Shopping lists
+///
+/// This is the foundation for offline access and caching.
+///
+/// Returns:
+/// - Ok(SyncResult) with counts of synced/skipped/failed items
+/// - Error(SchedulerError) on failure
+pub fn trigger_full_sync() -> Result(SyncResult, SchedulerError) {
+  // TODO: Implement full sync logic
+  // 1. Fetch all recipes from Tandoor API
+  // 2. Fetch all ingredients
+  // 3. Fetch all meal plans
+  // 4. Fetch all shopping lists
+  // 5. Store locally in database
+  // 6. Return summary statistics
+
+  // For now, return empty result indicating no items synced yet
+  Ok(SyncResult(synced: 0, skipped: 0, failed: 0, errors: []))
+}
+
 // ============================================================================
 // Helper Functions
 // ============================================================================

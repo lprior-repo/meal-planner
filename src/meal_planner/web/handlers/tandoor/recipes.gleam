@@ -1,117 +1,284 @@
-/// Recipe scoring handler for the Meal Planner API
+/// Tandoor Recipe handlers
 ///
-/// This module provides the recipe scoring endpoint using Wisp's idiomatic patterns:
-/// - wisp.require_method() for HTTP method validation
-/// - wisp.require_string_body() for request body handling
-/// - Centralized response builders from web/responses
+/// This module provides HTTP handler functions for Tandoor recipe operations:
+/// - Listing recipes
+/// - Creating recipes
+/// - Getting a recipe by ID
+/// - Updating recipes
+/// - Deleting recipes
+/// - JSON encoding/decoding for recipes
+import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/http
+import gleam/int
 import gleam/json
-import meal_planner/web/responses
+import gleam/option
+import gleam/result
+
+import meal_planner/tandoor/client.{type Keyword, type NutritionInfo, type Step}
+import meal_planner/tandoor/handlers/helpers
+import meal_planner/tandoor/recipe.{
+  type Recipe, type RecipeCreateRequest, type RecipeDetail, type RecipeUpdate,
+  RecipeCreateRequest, RecipeUpdate, create_recipe, delete_recipe, get_recipe,
+  list_recipes, update_recipe,
+}
+
 import wisp
 
-/// Scoring request from client
-type ScoringRequest {
-  ScoringRequest(
-    recipes: List(ScoringRecipeInput),
-    targets: MacroTargets,
-    weights: ScoringWeights,
-  )
+// =============================================================================
+// Recipe Collection Handler
+// =============================================================================
+
+pub fn handle_recipes_collection(req: wisp.Request) -> wisp.Response {
+  case req.method {
+    http.Get -> handle_list_recipes(req)
+    http.Post -> handle_create_recipe(req)
+    _ -> wisp.method_not_allowed([http.Get, http.Post])
+  }
 }
 
-/// Individual recipe input for scoring
-type ScoringRecipeInput {
-  ScoringRecipeInput(recipe_id: String, servings: Float)
-}
+fn handle_list_recipes(_req: wisp.Request) -> wisp.Response {
+  case helpers.get_authenticated_client() {
+    Ok(config) -> {
+      case list_recipes(config, limit: option.None, offset: option.None) {
+        Ok(response) -> {
+          let results_json =
+            json.array(response.results, fn(r) { encode_recipe_simple(r) })
 
-/// Macro targets for the day
-type MacroTargets {
-  MacroTargets(protein: Float, fat: Float, carbs: Float)
-}
-
-/// Weighting for scoring
-type ScoringWeights {
-  ScoringWeights(protein_weight: Float, fat_weight: Float, carbs_weight: Float)
-}
-
-/// Recipe scoring endpoint
-/// POST /api/ai/score-recipe
-///
-/// Uses Wisp's idiomatic patterns:
-/// - wisp.log_request() for request logging
-/// - wisp.rescue_crashes() for error recovery
-/// - wisp.handle_head() for HEAD method support
-/// - wisp.require_method() to enforce POST-only
-/// - wisp.require_string_body() to get request body
-/// - Centralized response builders for consistent error responses
-pub fn handle_score(req: wisp.Request) -> wisp.Response {
-  use <- wisp.log_request(req)
-  use <- wisp.rescue_crashes
-  use req <- wisp.handle_head(req)
-  use <- wisp.require_method(req, http.Post)
-  use body <- wisp.require_string_body(req)
-
-  case parse_scoring_request(body) {
-    Error(msg) -> responses.bad_request(msg)
-    Ok(_scoring_request) -> {
-      // TODO: Implement actual scoring logic
-      responses.not_implemented(
-        "Recipe scoring algorithm needs to be implemented",
-      )
+          helpers.paginated_response(
+            results_json,
+            response.count,
+            response.next,
+            response.previous,
+          )
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(_) -> wisp.not_found()
+      }
     }
+    Error(resp) -> resp
   }
 }
 
-// ============================================================================
-// JSON Parsing
-// ============================================================================
+fn handle_create_recipe(req: wisp.Request) -> wisp.Response {
+  use body <- wisp.require_json(req)
 
-fn parse_scoring_request(body: String) -> Result(ScoringRequest, String) {
-  let decoder = scoring_request_decoder()
-  case json.parse(body, decoder) {
-    Ok(request) -> Ok(request)
-    Error(_) ->
-      Error(
-        "Invalid request: expected JSON with recipes, targets, and weights fields",
-      )
+  case parse_recipe_create_request(body) {
+    Ok(request) -> {
+      case helpers.get_authenticated_client() {
+        Ok(config) -> {
+          case create_recipe(config, request) {
+            Ok(r) -> {
+              encode_recipe_detail(r)
+              |> json.to_string
+              |> wisp.json_response(201)
+            }
+            Error(_) -> helpers.error_response(500, "Failed to create recipe")
+          }
+        }
+        Error(resp) -> resp
+      }
+    }
+    Error(msg) -> helpers.error_response(400, msg)
   }
 }
 
-fn scoring_request_decoder() -> decode.Decoder(ScoringRequest) {
-  use recipes <- decode.field("recipes", decode.list(scoring_recipe_decoder()))
-  use targets <- decode.field("targets", macro_targets_decoder())
-  use weights <- decode.field("weights", scoring_weights_decoder())
-  decode.success(ScoringRequest(
-    recipes: recipes,
-    targets: targets,
-    weights: weights,
+// =============================================================================
+// Recipe Item Handler
+// =============================================================================
+
+pub fn handle_recipe_by_id(
+  req: wisp.Request,
+  recipe_id: String,
+) -> wisp.Response {
+  case int.parse(recipe_id) {
+    Ok(id) -> {
+      case req.method {
+        http.Get -> handle_get_recipe(req, id)
+        http.Patch -> handle_update_recipe(req, id)
+        http.Delete -> handle_delete_recipe(req, id)
+        _ -> wisp.method_not_allowed([http.Get, http.Patch, http.Delete])
+      }
+    }
+    Error(_) -> helpers.error_response(400, "Invalid recipe ID")
+  }
+}
+
+fn handle_get_recipe(_req: wisp.Request, id: Int) -> wisp.Response {
+  case helpers.get_authenticated_client() {
+    Ok(config) -> {
+      case get_recipe(config, recipe_id: id) {
+        Ok(r) -> {
+          encode_recipe_detail(r)
+          |> json.to_string
+          |> wisp.json_response(200)
+        }
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+fn handle_update_recipe(req: wisp.Request, id: Int) -> wisp.Response {
+  use body <- wisp.require_json(req)
+
+  case parse_recipe_update_request(body) {
+    Ok(request) -> {
+      case helpers.get_authenticated_client() {
+        Ok(config) -> {
+          case update_recipe(config, recipe_id: id, data: request) {
+            Ok(r) -> {
+              encode_recipe_detail(r)
+              |> json.to_string
+              |> wisp.json_response(200)
+            }
+            Error(_) -> helpers.error_response(500, "Failed to update recipe")
+          }
+        }
+        Error(resp) -> resp
+      }
+    }
+    Error(msg) -> helpers.error_response(400, msg)
+  }
+}
+
+fn handle_delete_recipe(_req: wisp.Request, id: Int) -> wisp.Response {
+  case helpers.get_authenticated_client() {
+    Ok(config) -> {
+      case delete_recipe(config, recipe_id: id) {
+        Ok(Nil) -> wisp.response(204)
+        Error(_) -> wisp.not_found()
+      }
+    }
+    Error(resp) -> resp
+  }
+}
+
+// =============================================================================
+// Recipe JSON Encoding and Decoding
+// =============================================================================
+
+/// Encode a simple Recipe (for list responses)
+fn encode_recipe_simple(recipe: Recipe) -> json.Json {
+  json.object([
+    #("id", json.int(recipe.id)),
+    #("name", json.string(recipe.name)),
+    #("slug", helpers.encode_optional_string(recipe.slug)),
+    #("description", helpers.encode_optional_string(recipe.description)),
+    #("servings", json.int(recipe.servings)),
+    #("servings_text", helpers.encode_optional_string(recipe.servings_text)),
+    #("working_time", helpers.encode_optional_int(recipe.working_time)),
+    #("waiting_time", helpers.encode_optional_int(recipe.waiting_time)),
+    #("created_at", helpers.encode_optional_string(recipe.created_at)),
+    #("updated_at", helpers.encode_optional_string(recipe.updated_at)),
+  ])
+}
+
+/// Encode a detailed RecipeDetail (for single recipe responses)
+fn encode_recipe_detail(recipe: RecipeDetail) -> json.Json {
+  let nutrition_json = case recipe.nutrition {
+    option.Some(n) -> encode_nutrition(n)
+    option.None -> json.null()
+  }
+
+  json.object([
+    #("id", json.int(recipe.id)),
+    #("name", json.string(recipe.name)),
+    #("slug", helpers.encode_optional_string(recipe.slug)),
+    #("description", helpers.encode_optional_string(recipe.description)),
+    #("servings", json.int(recipe.servings)),
+    #("servings_text", helpers.encode_optional_string(recipe.servings_text)),
+    #("working_time", helpers.encode_optional_int(recipe.working_time)),
+    #("waiting_time", helpers.encode_optional_int(recipe.waiting_time)),
+    #("created_at", helpers.encode_optional_string(recipe.created_at)),
+    #("updated_at", helpers.encode_optional_string(recipe.updated_at)),
+    #("steps", json.array(recipe.steps, encode_step)),
+    #("nutrition", nutrition_json),
+    #("keywords", json.array(recipe.keywords, encode_keyword)),
+    #("source_url", helpers.encode_optional_string(recipe.source_url)),
+  ])
+}
+
+fn encode_step(step: Step) -> json.Json {
+  json.object([
+    #("id", json.int(step.id)),
+    #("name", json.string(step.name)),
+    #("instruction", json.string(step.instruction)),
+    #("time", json.int(step.time)),
+    #("order", json.int(step.order)),
+  ])
+}
+
+fn encode_nutrition(nutrition: NutritionInfo) -> json.Json {
+  json.object([
+    #("id", json.int(nutrition.id)),
+    #("calories", json.float(nutrition.calories)),
+    #("carbs", json.float(nutrition.carbohydrates)),
+    #("protein", json.float(nutrition.proteins)),
+    #("fats", json.float(nutrition.fats)),
+    #("source", json.string(nutrition.source)),
+  ])
+}
+
+fn encode_keyword(keyword: Keyword) -> json.Json {
+  json.object([
+    #("id", json.int(keyword.id)),
+    #("name", json.string(keyword.name)),
+  ])
+}
+
+fn parse_recipe_create_request(
+  json_data: dynamic.Dynamic,
+) -> Result(RecipeCreateRequest, String) {
+  decode.run(json_data, recipe_create_decoder())
+  |> result.map_error(fn(_) { "Invalid recipe create request" })
+}
+
+fn recipe_create_decoder() -> decode.Decoder(RecipeCreateRequest) {
+  use name <- decode.field("name", decode.string)
+  use description <- decode.field("description", decode.optional(decode.string))
+  use servings <- decode.field("servings", decode.int)
+  use servings_text <- decode.field(
+    "servings_text",
+    decode.optional(decode.string),
+  )
+  use working_time <- decode.field("working_time", decode.optional(decode.int))
+  use waiting_time <- decode.field("waiting_time", decode.optional(decode.int))
+  decode.success(RecipeCreateRequest(
+    name: name,
+    description: description,
+    servings: servings,
+    servings_text: servings_text,
+    working_time: working_time,
+    waiting_time: waiting_time,
   ))
 }
 
-fn scoring_recipe_decoder() -> decode.Decoder(ScoringRecipeInput) {
-  use recipe_id <- decode.field("recipe_id", decode.string)
-  use servings <- decode.field("servings", decode.float)
-  decode.success(ScoringRecipeInput(recipe_id: recipe_id, servings: servings))
+fn parse_recipe_update_request(
+  json_data: dynamic.Dynamic,
+) -> Result(RecipeUpdate, String) {
+  decode.run(json_data, recipe_update_decoder())
+  |> result.map_error(fn(_) { "Invalid recipe update request" })
 }
 
-fn macro_targets_decoder() -> decode.Decoder(MacroTargets) {
-  use protein <- decode.field("protein", decode.float)
-  use fat <- decode.field("fat", decode.float)
-  use carbs <- decode.field("carbs", decode.float)
-  decode.success(MacroTargets(protein: protein, fat: fat, carbs: carbs))
-}
-
-fn scoring_weights_decoder() -> decode.Decoder(ScoringWeights) {
-  use protein_weight <- decode.optional_field(
-    "protein_weight",
-    1.0,
-    decode.float,
+fn recipe_update_decoder() -> decode.Decoder(RecipeUpdate) {
+  use name <- decode.field("name", decode.optional(decode.string))
+  use description <- decode.field("description", decode.optional(decode.string))
+  use servings <- decode.field("servings", decode.optional(decode.int))
+  use servings_text <- decode.field(
+    "servings_text",
+    decode.optional(decode.string),
   )
-  use fat_weight <- decode.optional_field("fat_weight", 1.0, decode.float)
-  use carbs_weight <- decode.optional_field("carbs_weight", 1.0, decode.float)
-  decode.success(ScoringWeights(
-    protein_weight: protein_weight,
-    fat_weight: fat_weight,
-    carbs_weight: carbs_weight,
+  use working_time <- decode.field("working_time", decode.optional(decode.int))
+  use waiting_time <- decode.field("waiting_time", decode.optional(decode.int))
+  decode.success(RecipeUpdate(
+    name: name,
+    description: description,
+    servings: servings,
+    servings_text: servings_text,
+    working_time: working_time,
+    waiting_time: waiting_time,
   ))
 }

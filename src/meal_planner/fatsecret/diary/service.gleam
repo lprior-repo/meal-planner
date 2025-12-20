@@ -10,7 +10,7 @@ import meal_planner/fatsecret/core/oauth.{type AccessToken, AccessToken}
 import meal_planner/fatsecret/diary/client as diary_client
 import meal_planner/fatsecret/diary/types.{
   type FoodEntry, type FoodEntryId, type FoodEntryInput, type FoodEntryUpdate,
-  type MonthSummary,
+  type MealType, type MonthSummary,
 }
 import meal_planner/fatsecret/storage
 import pog
@@ -442,9 +442,9 @@ pub fn copy_entries(
 pub fn copy_meal(
   conn: pog.Connection,
   from_date_int: Int,
-  from_meal: types.MealType,
+  from_meal: MealType,
   to_date_int: Int,
-  to_meal: types.MealType,
+  to_meal: MealType,
 ) -> Result(Nil, ServiceError) {
   case load_env_fatsecret_config() {
     option.None -> Error(NotConfigured)

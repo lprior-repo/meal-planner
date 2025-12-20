@@ -10,23 +10,27 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/result
 import gleam/string
 import glint
 import meal_planner/config.{type Config}
 import meal_planner/id.{type JobId}
+import meal_planner/postgres
 import meal_planner/scheduler/types.{
   type JobFrequency, type JobPriority, type JobStatus, type JobType,
   type ScheduledJob, type TriggerSource, AutoSync, Completed, Critical, Daily,
   DailyAdvisor, Dependent, EveryNHours, Failed, High, Low, Manual, Medium, Once,
   Pending, Retry, Running, Scheduled, Weekly, WeeklyGeneration, WeeklyTrends,
 }
+import meal_planner/storage/scheduler as scheduler_storage
+import pog
 
 // ============================================================================
 // Glint Command Handler
 // ============================================================================
 
 /// Scheduler domain command for Glint CLI
-pub fn cmd(_config: Config) -> glint.Command(Result(Nil, Nil)) {
+pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
   use <- glint.command_help("View and manage scheduled jobs")
   use id <- glint.flag(
     glint.string_flag("id")
@@ -36,11 +40,28 @@ pub fn cmd(_config: Config) -> glint.Command(Result(Nil, Nil)) {
 
   case unnamed {
     ["list"] -> {
-      io.println("Scheduled jobs:")
-      io.println("  Weekly Generation (Mon 09:00)")
-      io.println("  Auto Sync (Daily 12:00)")
-      io.println("  Daily Advisor (Daily 07:00)")
-      Ok(Nil)
+      // Create database connection
+      case create_db_connection(config) {
+        Ok(conn) -> {
+          // Query all scheduled jobs
+          case scheduler_storage.list_scheduled_jobs(conn) {
+            Ok(jobs) -> {
+              // Display jobs table
+              io.println("\nScheduled Jobs\n")
+              io.println(build_jobs_table(jobs))
+              Ok(Nil)
+            }
+            Error(_) -> {
+              io.println("Error: Failed to list scheduled jobs")
+              Error(Nil)
+            }
+          }
+        }
+        Error(err_msg) -> {
+          io.println("Error: Failed to connect to database: " <> err_msg)
+          Error(Nil)
+        }
+      }
     }
     ["status"] -> {
       case id(flags) {
@@ -383,4 +404,20 @@ fn normalize_job_name(job_name: String) -> String {
     "trends" -> "weekly_trends"
     _ -> job_name
   }
+}
+
+/// Create a database connection from config
+fn create_db_connection(config: Config) -> Result(pog.Connection, String) {
+  let db_config =
+    postgres.Config(
+      host: config.database.host,
+      port: config.database.port,
+      database: config.database.name,
+      user: config.database.user,
+      password: Some(config.database.password),
+      pool_size: 1,
+    )
+
+  postgres.connect(db_config)
+  |> result.map_error(postgres.format_error)
 }
