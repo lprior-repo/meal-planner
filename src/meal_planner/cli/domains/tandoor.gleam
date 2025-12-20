@@ -68,7 +68,7 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       )
       io.println("")
 
-      case sync_scheduler.trigger_full_sync(config) {
+      case sync_scheduler.trigger_full_sync() {
         Ok(result) -> {
           io.println("Synchronization complete!")
           io.println("")
