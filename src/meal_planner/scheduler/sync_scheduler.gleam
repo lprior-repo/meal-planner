@@ -7,6 +7,7 @@ import birl
 import gleam/json
 import gleam/list
 import gleam/string
+import meal_planner/config.{type Config}
 import meal_planner/id.{type UserId}
 import meal_planner/scheduler/types.{type SchedulerError}
 
@@ -46,7 +47,7 @@ pub fn trigger_auto_sync(_user_id: UserId) -> Result(SyncResult, SchedulerError)
 /// Returns:
 /// - Ok(SyncResult) with counts of synced/skipped/failed items
 /// - Error(SchedulerError) on failure
-pub fn trigger_full_sync() -> Result(SyncResult, SchedulerError) {
+pub fn trigger_full_sync(_config: Config) -> Result(SyncResult, SchedulerError) {
   // TODO: Implement full sync logic
   // 1. Fetch all recipes from Tandoor API
   // 2. Fetch all ingredients
