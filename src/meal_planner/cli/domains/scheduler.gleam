@@ -65,9 +65,41 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
     }
     ["status"] -> {
       case id(flags) {
-        Ok(job_id) -> {
-          io.println("Job " <> job_id <> " status: Running")
-          Ok(Nil)
+        Ok(job_id_str) -> {
+          // Create database connection
+          case create_db_connection(config) {
+            Ok(conn) -> {
+              let job_id = id.job_id(job_id_str)
+              // Query job details
+              case scheduler_storage.get_scheduled_job(conn, job_id) {
+                Ok(job) -> {
+                  // Display job status
+                  io.println("\n" <> build_job_status_view(job))
+
+                  // Query and display execution history
+                  case scheduler_storage.get_job_executions(conn, job_id, 10) {
+                    Ok(executions) -> {
+                      io.println("\nRecent Executions (last 10):\n")
+                      io.println(build_executions_table(executions))
+                      Ok(Nil)
+                    }
+                    Error(_) -> {
+                      io.println("\nNo execution history found")
+                      Ok(Nil)
+                    }
+                  }
+                }
+                Error(_) -> {
+                  io.println("Error: Job not found: " <> job_id_str)
+                  Error(Nil)
+                }
+              }
+            }
+            Error(err_msg) -> {
+              io.println("Error: Failed to connect to database: " <> err_msg)
+              Error(Nil)
+            }
+          }
         }
         Error(_) -> {
           io.println("Error: --id flag required for status command")

@@ -12,7 +12,8 @@ import gleeunit/should
 import meal_planner/cli/domains/scheduler
 import meal_planner/id
 import meal_planner/scheduler/types.{
-  Completed, High, JobExecution, Once, RetryPolicy, Running, Scheduled,
+  type JobExecution as JobExecutionType, type ScheduledJob as ScheduledJobType,
+  AutoSync, Completed, High, JobExecution, Once, RetryPolicy, Running, Scheduled,
   ScheduledJob,
 }
 
@@ -29,7 +30,7 @@ pub fn build_job_status_view_formats_correctly_test() {
   let job =
     ScheduledJob(
       id: id.job_id("test-job-id"),
-      job_type: types.AutoSync,
+      job_type: AutoSync,
       frequency: Once,
       status: Running,
       priority: High,
