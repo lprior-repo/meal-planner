@@ -247,6 +247,61 @@ fn search_handler(
   }
 }
 
+/// List recipes with pagination and search
+pub fn list_handler(
+  config: Config,
+  limit: Option(Int),
+  offset: Option(Int),
+  _search: Option(String),
+) -> Result(Nil, Nil) {
+  let tandoor_config = create_tandoor_config(config)
+
+  // Call Tandoor API to list recipes
+  case recipe.list_recipes(tandoor_config, limit: limit, offset: offset) {
+    Ok(response) -> {
+      // Display results
+      io.println(
+        "\nRecipes (showing "
+        <> int.to_string(list.length(response.results))
+        <> " of "
+        <> int.to_string(response.count)
+        <> "):",
+      )
+      io.println(
+        "─────────────────────────────────────────────────────────────────────",
+      )
+
+      response.results
+      |> list.each(fn(r) {
+        let description = case r.description {
+          Some(desc) -> " - " <> desc
+          None -> ""
+        }
+        io.println(
+          "  [" <> int.to_string(r.id) <> "] " <> r.name <> description,
+        )
+      })
+
+      io.println(
+        "─────────────────────────────────────────────────────────────────────",
+      )
+
+      // Show pagination info
+      case response.next {
+        Some(_) ->
+          io.println("(More results available - use --offset to see next page)")
+        None -> io.println("(End of results)")
+      }
+
+      Ok(Nil)
+    }
+    Error(err) -> {
+      io.println("Error listing recipes: " <> string.inspect(err))
+      Error(Nil)
+    }
+  }
+}
+
 // ============================================================================
 // Glint Command Handler
 // ============================================================================
