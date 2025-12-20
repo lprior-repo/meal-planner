@@ -51,6 +51,22 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
     |> glint.flag_help("Tolerance percentage for compliance check")
     |> glint.flag_default(10.0),
   )
+  use calories <- glint.flag(
+    glint.int_flag("calories")
+    |> glint.flag_help("Daily calorie target (500-10000)"),
+  )
+  use protein <- glint.flag(
+    glint.int_flag("protein")
+    |> glint.flag_help("Daily protein target in grams (1-500)"),
+  )
+  use carbs <- glint.flag(
+    glint.int_flag("carbs")
+    |> glint.flag_help("Daily carbs target in grams (1-1000)"),
+  )
+  use fat <- glint.flag(
+    glint.int_flag("fat")
+    |> glint.flag_help("Daily fat target in grams (1-500)"),
+  )
   use _named, unnamed, flags <- glint.command()
 
   case unnamed {
@@ -68,9 +84,90 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       }
     }
     ["goals"] -> {
-      io.println("Current nutrition goals:")
-      io.println(format_goals(get_default_goals()))
-      Ok(Nil)
+      // Check if any goal flags were provided
+      let calories_val = calories(flags) |> result.to_option
+      let protein_val = protein(flags) |> result.to_option
+      let carbs_val = carbs(flags) |> result.to_option
+      let fat_val = fat(flags) |> result.to_option
+
+      case calories_val, protein_val, carbs_val, fat_val {
+        None, None, None, None -> {
+          // No flags provided, display current goals
+          case display_goals(config) {
+            Ok(output) -> {
+              io.println(output)
+              Ok(Nil)
+            }
+            Error(_) -> {
+              io.println("Using default goals:")
+              io.println(format_goals(get_default_goals()))
+              Ok(Nil)
+            }
+          }
+        }
+        _, _, _, _ -> {
+          // At least one flag provided, set goals
+          let results = [
+            case calories_val {
+              Some(val) -> set_goal(config, goal_type: "calories", value: val)
+              None -> Ok("")
+            },
+            case protein_val {
+              Some(val) -> set_goal(config, goal_type: "protein", value: val)
+              None -> Ok("")
+            },
+            case carbs_val {
+              Some(val) -> set_goal(config, goal_type: "carbs", value: val)
+              None -> Ok("")
+            },
+            case fat_val {
+              Some(val) -> set_goal(config, goal_type: "fat", value: val)
+              None -> Ok("")
+            },
+          ]
+
+          // Check if all succeeded
+          let all_ok =
+            list.all(results, fn(r) {
+              case r {
+                Ok(_) -> True
+                Error(_) -> False
+              }
+            })
+
+          case all_ok {
+            True -> {
+              io.println("✓ Nutrition goals updated successfully")
+              case display_goals(config) {
+                Ok(output) -> {
+                  io.println("\n" <> output)
+                  Ok(Nil)
+                }
+                Error(_) -> Ok(Nil)
+              }
+            }
+            False -> {
+              // Find first error
+              let error_msg =
+                list.find(results, fn(r) {
+                  case r {
+                    Error(_) -> True
+                    Ok(_) -> False
+                  }
+                })
+                |> result.unwrap(Error("Unknown error"))
+
+              case error_msg {
+                Error(msg) -> {
+                  io.println("Error: " <> msg)
+                  Error(Nil)
+                }
+                Ok(_) -> Error(Nil)
+              }
+            }
+          }
+        }
+      }
     }
     ["trends"] -> {
       let trend_days = days(flags) |> result.unwrap(7)
@@ -755,22 +852,84 @@ pub fn set_goal(
   case validate_goal_value(goal_type, value) {
     Error(err) -> Error(err)
     Ok(_float_value) -> {
-      // Load current goals to verify they exist
-      case load_nutrition_goals(config) {
-        Error(err) -> Error(err)
-        Ok(_current_goals) -> {
-          // Return confirmation (in real implementation, would save to DB)
-          let unit = case goal_type {
-            "calories" -> " kcal"
-            _ -> "g"
-          }
-          let confirmation =
-            string.capitalise(goal_type)
-            <> " goal set to "
-            <> int.to_string(value)
-            <> unit
+      // Load current goals or use defaults
+      let current_goals = case load_nutrition_goals(config) {
+        Error(_) -> get_default_goals()
+        Ok(goals) -> goals
+      }
 
-          Ok(confirmation)
+      // Create updated goals with the new value
+      let float_value = int.to_float(value)
+      let updated_goals = case goal_type {
+        "calories" ->
+          NutritionGoals(
+            daily_calories: float_value,
+            daily_protein: current_goals.daily_protein,
+            daily_carbs: current_goals.daily_carbs,
+            daily_fat: current_goals.daily_fat,
+          )
+        "protein" ->
+          NutritionGoals(
+            daily_calories: current_goals.daily_calories,
+            daily_protein: float_value,
+            daily_carbs: current_goals.daily_carbs,
+            daily_fat: current_goals.daily_fat,
+          )
+        "carbs" ->
+          NutritionGoals(
+            daily_calories: current_goals.daily_calories,
+            daily_protein: current_goals.daily_protein,
+            daily_carbs: float_value,
+            daily_fat: current_goals.daily_fat,
+          )
+        "fat" ->
+          NutritionGoals(
+            daily_calories: current_goals.daily_calories,
+            daily_protein: current_goals.daily_protein,
+            daily_carbs: current_goals.daily_carbs,
+            daily_fat: float_value,
+          )
+        _ -> current_goals
+      }
+
+      // Save to database
+      let db_config =
+        postgres.Config(
+          host: config.database.host,
+          port: config.database.port,
+          database: config.database.name,
+          user: config.database.user,
+          password: case config.database.password {
+            "" -> None
+            pwd -> Some(pwd)
+          },
+          pool_size: config.database.pool_size,
+        )
+
+      case postgres.connect(db_config) {
+        Error(err) ->
+          Error("Database connection failed: " <> postgres.format_error(err))
+        Ok(conn) -> {
+          case storage.save_goals(conn, updated_goals) {
+            Error(DatabaseError(msg)) -> Error("Failed to save goals: " <> msg)
+            Error(InvalidInput(msg)) -> Error("Invalid input: " <> msg)
+            Error(Unauthorized(msg)) -> Error("Unauthorized: " <> msg)
+            Error(NotFound) -> Error("Profile not found")
+            Ok(_) -> {
+              // Return confirmation
+              let unit = case goal_type {
+                "calories" -> " kcal"
+                _ -> "g"
+              }
+              let confirmation =
+                string.capitalise(goal_type)
+                <> " goal set to "
+                <> int.to_string(value)
+                <> unit
+
+              Ok(confirmation)
+            }
+          }
         }
       }
     }
