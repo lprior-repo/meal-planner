@@ -1,5 +1,3 @@
-# Gleam build artifacts
-build/
 _build/
 
 # Erlang

@@ -1,7 +1,0 @@
----
-version: 1.5.2
-title: recipe_encoder_minimal
-file: ./test/tandoor/encoder_snapshots_test.gleam
-test_name: recipe_encoder_minimal_test
----
-{"name":"Simple Recipe","description":null,"servings":1,"servings_text":null,"working_time":0,"waiting_time":0,"steps":[{"instruction":"","ingredients":[]}]}

@@ -258,9 +258,11 @@ pub fn reset_user_limit(limiter: RateLimiter, user_id: String) -> RateLimiter {
 fn get_user_id(req: wisp.Request) -> String {
   // Use remote IP as user identifier
   // In production: parse Authorization header, session cookie, etc.
-  case list.find(req.headers, fn(header) {
-    string.lowercase(header.0) == "x-forwarded-for"
-  }) {
+  case
+    list.find(req.headers, fn(header) {
+      string.lowercase(header.0) == "x-forwarded-for"
+    })
+  {
     Ok(#(_, ip)) -> ip
     Error(_) -> "unknown"
   }

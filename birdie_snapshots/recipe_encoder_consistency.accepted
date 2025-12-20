@@ -1,7 +1,0 @@
----
-version: 1.5.2
-title: recipe_encoder_consistency
-file: ./test/tandoor/encoder_snapshots_test.gleam
-test_name: recipe_encoder_consistency_test
----
-{"name":"Test Recipe","description":null,"servings":3,"servings_text":null,"working_time":0,"waiting_time":0,"steps":[{"instruction":"","ingredients":[]}]}

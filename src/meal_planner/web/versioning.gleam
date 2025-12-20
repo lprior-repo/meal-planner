@@ -128,7 +128,8 @@ pub fn resolve_latest(version: ApiVersion) -> ApiVersion {
 ///
 /// Checks Accept-Version header. Returns default version if not found.
 pub fn extract_version(req: wisp.Request) -> ApiVersion {
-  case req.headers
+  case
+    req.headers
     |> list.find(fn(header) {
       string.lowercase(header.0) == string.lowercase(version_header)
     })

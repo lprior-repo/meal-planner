@@ -1,7 +1,0 @@
----
-version: 1.5.2
-title: recipe_encoder_special_chars
-file: ./test/tandoor/encoder_snapshots_test.gleam
-test_name: recipe_encoder_special_chars_test
----
-{"name":"Crème Brûlée","description":"Recipe with \"quotes\"","servings":2,"servings_text":null,"working_time":15,"waiting_time":0,"steps":[{"instruction":"","ingredients":[]}]}
