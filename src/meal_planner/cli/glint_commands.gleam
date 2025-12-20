@@ -6,9 +6,9 @@ import glint
 
 // import meal_planner/cli/domains/fatsecret
 // import meal_planner/cli/domains/nutrition
+// // import meal_planner/cli/domains/plan
 import meal_planner/cli/domains/advisor
 import meal_planner/cli/domains/diary
-import meal_planner/cli/domains/plan
 import meal_planner/cli/domains/preferences
 import meal_planner/cli/domains/recipe
 import meal_planner/cli/domains/scheduler
