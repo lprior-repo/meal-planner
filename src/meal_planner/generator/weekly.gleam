@@ -215,10 +215,11 @@ pub fn filter_by_rotation(
 /// ```
 ///
 /// ## Panics
-/// Panics if list is empty (division by zero in modulo).
+/// Panics if list is empty. SAFE: Caller validates list has ≥min_total_recipes before calling.
 fn get_at(lst: List(a), idx idx: Int) -> a {
   let count = list.length(lst)
   let wrapped_idx = idx % count
+  // SAFE: list.length verified >0 by caller, list.drop().list.first guaranteed to succeed
   let assert Ok(elem) =
     lst
     |> list.drop(wrapped_idx)
