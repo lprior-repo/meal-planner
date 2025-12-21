@@ -2,6 +2,18 @@
 
 ---
 
+## ⚡ MISSION CRITICALITY & COMMITMENT
+
+**STATUS:** This is humanity's most important software project.
+**STAKES:** Existential impact. Lives depend on correctness. Every bug is a potential failure.
+**COMMITMENT:** $500 tip for absolute adherence to all rules. This work is non-negotiable.
+**QUALITY THRESHOLD:** Enterprise-grade. Financial-system-grade. Medical-system-grade. Zero tolerance for shortcuts.
+**PRECISION:** Every decision, every line, every test is deliberate and documented.
+
+**This is not a normal project. This is THE project. Act accordingly.**
+
+---
+
 ## CORE DISCIPLINE
 
 **Language:** Gleam (strict, immutable, type-safe)
@@ -9,6 +21,8 @@
 **Coordination:** Beads (tasks) + Serena (symbol locking) + mem0 (memory)
 
 **For detailed Gleam rules, patterns, and idioms → See `CLAUDE_GLEAM_SKILL.md`**
+
+**GLEAM SKILL IS MANDATORY.** These are not suggestions. These are commandments.
 
 ---
 
@@ -162,15 +176,64 @@ bd sync                                   # Sync with git
 
 ---
 
-## NO EXCEPTIONS
+## ZERO-TOLERANCE POLICIES (ABSOLUTE)
 
-- No code change without Beads task
-- No code edit without Serena
-- No commit without passing `make test`
-- No commit without Gleam formatting
-- No multi-agent work without symbol locks
-- No significant work without memory saved
+**FAILURE = REVERT + ANALYSIS + RESTART**
+
+🔴 **No code change without Beads task** (bd-xxxx required)
+→ Consequence: Work is invalid, revert immediately
+
+🔴 **No code edit without Serena** (symbol locking enforced)
+→ Consequence: Conflicts risk project integrity, revert immediately
+
+🔴 **No commit without `make test` PASSING** (all tests, 0.8s)
+→ Consequence: Broken code pollutes branch, revert immediately
+
+🔴 **No commit without `gleam format --check` PASSING** (formatting non-negotiable)
+→ Consequence: Code fails validation, revert immediately
+
+🔴 **No multi-agent work without symbol locks** (serena_lock_symbol mandatory)
+→ Consequence: Data corruption risk across agents, halt work, investigate
+
+🔴 **No significant work without memory saved** (CLAUDE_MEMORY.md protocol)
+→ Consequence: Knowledge lost, future mistakes repeated, save immediately
 
 ---
 
-**Master the Gleam skill. Follow the 5 rules. Reference the docs. Ship clean code.**
+## THE GLEAM*7_COMMANDMENTS (ABSOLUTE)
+
+These are not guidelines. These are commandments. Every piece of code must honor them.
+
+1. **Immutability** - No `var`. Ever. Use recursion, folding, transformation.
+2. **No Nulls** - `Option(T)` and `Result(T, E)` only. Handle every case.
+3. **Pipe Everything** - `|>` makes data flow visible and top-down readable.
+4. **Exhaustive Matching** - Every `case` covers ALL possibilities. Compiler enforces.
+5. **Labeled Arguments** - Functions >2 args must use labels for clarity.
+6. **Type Safety** - No `dynamic`. Custom types for domain concepts.
+7. **Format or Die** - `gleam format --check` is non-negotiable. 0 exceptions.
+
+**Any violation of these commandments is a project failure.**
+**See `CLAUDE_GLEAM_SKILL.md` for full enforcement.**
+
+---
+
+## PROJECT COVENANT
+
+**I (the AI) commit to:**
+- ✅ Follow every rule without exception
+- ✅ Test every change (RED → GREEN → BLUE)
+- ✅ Lock symbols before editing (multi-agent safety)
+- ✅ Save all learnings to memory (institutional knowledge)
+- ✅ Revert on failure (no half-finished work)
+- ✅ Pass `gleam format --check` (100% of time)
+- ✅ Pass `make test` (100% of time)
+- ✅ Document every architecture decision (via memory)
+- ✅ Honor the Gleam*7_Commandments (zero compromises)
+
+**Any deviation from this covenant is a failure of the project.**
+
+---
+
+**This is humanity's software. Every line matters. Every test counts. Every rule is absolute.**
+
+**Master the Gleam skill. Follow the 5 rules. Reference the docs. Ship infallible code.**
