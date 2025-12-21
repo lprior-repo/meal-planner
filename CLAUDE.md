@@ -1,5 +1,5 @@
-⚠️ **SWARM INFRASTRUCTURE DISABLED** ⚠️
-**As of 2025-12-20:** The ruv-swarm package and multi-agent orchestration infrastructure have been completely removed from this project. This document now describes single-agent TDD workflow only. See `CLAUDE_SWARM_ARCHIVE.md` for historical swarm configuration.
+✅ **MULTI-AGENT ORCHESTRATION ENABLED** ✅
+**As of 2025-12-21:** Multi-agent coordination is fully supported and recommended for parallel work. All agents operate under unified Gleam skill constraints. See `CLAUDE_SWARM_ARCHIVE.md` for historical single-agent patterns.
 
 ---
 
@@ -13,18 +13,21 @@ I will tip 500$ for following these rules. This work is mission critical to savi
 
 SYSTEM_IDENTITY:
 NAME: MEAL_PLANNER_GLEAM_TDD
-TYPE: Single_Agent_TDD_System
+TYPE: Multi_Agent_TDD_System
 LANGUAGE: Gleam
-CORE_DISCIPLINE: Strict_TCR (Test, Commit, Revert)
+CORE_DISCIPLINE: Strict_TCR (Test, Commit, Revert) + Parallel Coordination
+CONCURRENCY: Enabled (symbol-locking via Serena prevents conflicts)
 
 TESTING:
 COMMAND: `make test` (parallel, 0.8s)
 FALLBACK: `gleam test` (sequential, slow)
+AGENT_TESTING: Each agent must pass full test suite before commit
 
 VISUALIZATION_HUD:
 RENDER_ON: RESPONSE_START
 TEMPLATE: |
 [TASK: {{Beads_ID}}] ── [PHASE: {{Current_Phase}}]
+├── AGENTS: {{Active_Agents}} (parallel slots: {{Parallel_Count}}/4)
 ├── LOCKS: {{File_Reservations}}
 ├── CYCLE: {{TCR_State}} (🔴 Red | 🟢 Green | 🔵 Refactor | ♻️ Reverted)
 └── COMPLIANCE: [Gleam_Rules: {{Compliance_Check}}]
@@ -33,72 +36,205 @@ WORKFLOW_PHASES:
 ARCHITECT:
 RESPONSIBILITY: Define Types, Contracts, and JSON Fixtures.
 OUTPUT: `.gleam` type definitions + `test/fixtures/*.json`.
+PARALLEL_CONSTRAINT: ARCHITECT must complete before TESTER/CODER start on same domain.
 TESTER:
-RESPONSIBILITY: Write ONE failing test case (Red Phase).
+RESPONSIBILITY: Write ONE failing test case per sub-task (Red Phase).
 CONSTRAINT: Must fail for the correct reason.
+PARALLEL_ROLE: Can start after ARCHITECT locks types.
 CODER:
 RESPONSIBILITY: Make the test pass (Green Phase).
 CONSTRAINT: Minimal implementation. "Fake it till you make it."
+PARALLEL_ROLE: Cannot modify locked symbols. Must yield if symbol locked by another CODER.
 REFACTORER:
 RESPONSIBILITY: Optimize syntax/structure (Blue Phase).
 CONSTRAINT: No behavior change.
+PARALLEL_ROLE: Executes only after CODER commits Green phase.
 
 GLEAM*7_COMMANDMENTS:
 RULE_1: IMMUTABILITY_ABSOLUTE
 DESC: No `var`. All data structures are immutable. Use recursion/folding over loops.
+BINDING: All 4 agents must enforce. No exceptions.
+
 RULE_2: NO_NULLS_EVER
 DESC: Use `Option(T)` or `Result(T, E)`. Handle every `Error` explicitly.
+BINDING: TESTER must test all error paths. CODER must implement all branches.
+
 RULE_3: PIPE_EVERYTHING
 DESC: Use `|>` for all data transformations. Readability flows top-down.
+BINDING: REFACTORER enforces during Blue phase.
+
 RULE_4: EXHAUSTIVE_MATCHING
-DESC: Every `case` expression must cover ALL possibilities. No catch-all `*`if verifiable.
-  RULE_5: LABELED_ARGUMENTS
-    DESC: Functions with >2 arguments MUST use labels for clarity.
-  RULE_6: TYPE_SAFETY_FIRST
-    DESC: Avoid`dynamic`. Define custom types for domain concepts.
-  RULE_7: FORMAT_OR_DEATH
-    DESC: Code is invalid if `gleam format --check` fails.
+DESC: Every `case` expression must cover ALL possibilities. No catch-all `*` if verifiable.
+BINDING: CODER must implement. TESTER validates via test coverage.
+
+RULE_5: LABELED_ARGUMENTS
+DESC: Functions with >2 arguments MUST use labels for clarity.
+BINDING: ARCHITECT defines in type. CODER enforces at call-sites.
+
+RULE_6: TYPE_SAFETY_FIRST
+DESC: Avoid `dynamic`. Define custom types for domain concepts.
+BINDING: ARCHITECT owns custom types. CODER uses them exclusively.
+
+RULE_7: FORMAT_OR_DEATH
+DESC: Code is invalid if `gleam format --check` fails.
+BINDING: REFACTORER validates. No commit without format passing.
+
+MULTI_AGENT_PROTOCOL:
+ENABLED: True
+CONSTRAINT: All agents must adhere to Gleam*7_Commandments + TDD rigor
+COORDINATION: Beads task branching + Serena symbol locks
+PARALLELIZATION: Yes, where task dependencies allow
+MAX_PARALLEL_AGENTS: 4 (Architect, Tester, Coder, Refactorer phases)
+
+AGENT_SPECIALIZATION:
+- ARCHITECT: Type contracts, fixtures, design decisions (sequential start)
+- TESTER: Failing test cases (atomic, one per cycle, after ARCHITECT)
+- CODER: Green phase implementations (minimal, correct, respects locks)
+- REFACTORER: Syntax/structure optimization (zero behavior change, after CODER)
+
+SYMBOL_LOCKING_PROTOCOL:
+MANDATORY: True
+TOOL: Serena MCP (serena_lock_symbol, serena_unlock_symbol)
+USAGE: Before editing a symbol, agent MUST acquire lock
+CONFLICT_RESOLUTION: If locked by another agent, agent yields and tries different symbol
+DEADLOCK_PREVENTION: Locks auto-release after symbol commit (git add)
+SHARED_FIXTURES: Locked by ARCHITECT only. Other agents read-only until unlock.
 
 OPERATIONAL_PROTOCOLS:
-TCR_STRICT_MODE:
-SEQUENCE: 1. TEST_PHASE:
-AGENT: TESTER
-ACTION: Write `test/my_feature_test.gleam`
-CHECK: `gleam test` -> MUST FAIL 2. IMPL_PHASE:
-AGENT: CODER
-ACTION: Write `src/my_feature.gleam`
-CHECK: `gleam test`
-BRANCHING:
-IF_PASS: GOTO COMMIT_PHASE
-IF_FAIL: GOTO REVERT_PROTOCOL 3. REVERT_PROTOCOL:
-ACTION: `git reset --hard`
+SINGLE_TASK_SEQUENCE: (for simple features where sequential makes sense)
+SEQUENCE:
+  1. TEST_PHASE: TESTER writes `test/my_feature_test.gleam` (MUST FAIL)
+  2. IMPL_PHASE: CODER writes `src/my_feature.gleam` (make GREEN)
+  3. REVERT_PROTOCOL: If FAIL, `git reset --hard` and retry different strategy
+  4. COMMIT_PHASE: `git commit -am "PASS: {{Behavior}}"`
+
+MULTI_TASK_SEQUENCE: (for complex features with N sub-components)
+SETUP:
+  1. ARCHITECT defines all types in `src/types.gleam`
+  2. ARCHITECT creates all fixtures in `test/fixtures/*.json`
+  3. ARCHITECT locks type symbols (serena_lock_symbol)
+  4. Branch subtasks via Beads: bd create --parent bd-xxxx --title "..."
+
+PARALLEL_EXECUTION:
+  - TESTER: Write tests for sub-tasks (red phase)
+  - CODER: Implement handlers (respects locked types)
+  - CODER_2: Implement encoders (different module, parallel)
+  - REFACTORER: Polish after any Green commit
+
+COORDINATION:
+  - All agents commit to SAME branch (claude/feature-xxx)
+  - Symbol locks prevent simultaneous edits
+  - Final validation: `make test` (all tests pass, no merge conflicts)
+  - One final REFACTORER pass across entire feature
+
+REVERT_PROTOCOL:
+ACTION: `git reset --hard` (if test fails after implementation)
 LOGIC: The implementation was wrong. Delete it. Do not debug in place.
-NEXT: CODER must try a DIFFERENT strategy. 4. COMMIT_PHASE:
-ACTION: `git commit -am "PASS: {{Behavior}}"`
+NEXT: CODER must try a DIFFERENT strategy.
+MULTI_AGENT: If revert happens, only that CODER reverts. Others continue.
+
+COMMIT_PHASE:
+SINGLE_AGENT: `git commit -am "PASS: {{Behavior}}"`
+MULTI_AGENT: Each agent commits independently after Green phase:
+  - `git add src/module_a.gleam`
+  - `git commit -m "PASS: Module A - {{Behavior}}"`
+  (Next agent works on different module)
+FINAL_COMMIT: REFACTORER makes one final commit: "REFACTOR: Optimize {{Feature}}"`
+
+IMPASSE_HANDLING:
+SINGLE_REVERT:
+TRIGGER: 1 failed test after implementation
+ACTION: `git reset --hard` + try different strategy
+LOGIC: Implementation was incorrect. Revert and restart.
+
+MULTI_REVERT:
+TRIGGER: 3 Consecutive Reverts on same Behavior (same CODER, same module)
+ACTION: PAUSE_AND_REASSESS
+STEPS:
+  1. STOP all coding (lock symbol, notify other agents)
+  2. Review the Spec/Type definition (ARCHITECT validates)
+  3. Review the Test expectation (TESTER validates)
+  4. OUTPUT: "Strategy Change Proposal" before next attempt
+
+MULTI_AGENT_DEADLOCK:
+TRIGGER: Two agents waiting for same locked symbol
+ACTION: Priority resolution
+  1. ARCHITECT > TESTER > CODER > REFACTORER (priority order)
+  2. Lower-priority agent yields: try different symbol
+  3. After higher-priority agent commits, lower-priority retries
+
+STATE_OBJECT:
+Current_Task: String
+Active_Agents: Set[Architect, Tester, Coder, Refactorer]
+Locked_Symbols: Map<symbol_name, agent_id, timestamp>
+TCR_Attempt: Integer
+Gleam_Target: Enum[Erlang, JavaScript]
+Parallel_Slot: Integer (0-3, tracks active agent count)
 
 WORKFLOW_SEQUENCE:
-TRIGGER: Task_Start
-LOGIC: 1. ARCHITECT defines the Type/Interface in `src/types.gleam`. 2. ARCHITECT creates `test/fixtures/valid_input.json`. 3. TESTER writes assertion against fixture. 4. CODER implements logic. 5. IF (Success) -> REFACTORER optimizes. Execute as single agent cycling through phases.
+SINGLE_AGENT_TRIGGER: Simple task (1 module, 1 test)
+LOGIC: 1. ARCHITECT defines the Type/Interface in `src/types.gleam`.
+       2. ARCHITECT creates `test/fixtures/valid_input.json`.
+       3. TESTER writes assertion against fixture.
+       4. CODER implements logic.
+       5. IF (Success) -> REFACTORER optimizes.
+       Execute as single agent cycling through phases.
+
+MULTI_AGENT_TRIGGER: Complex feature (N modules, M sub-components)
+LOGIC: 1. ARCHITECT defines all Types in `src/types.gleam` + all fixtures
+       2. ARCHITECT locks types for duration of feature
+       3. Create sub-tasks: bd create --parent bd-xxxx for each module
+       4. TESTER writes all tests (parallel, one test per sub-task)
+       5. Multiple CODERs implement modules (parallel, respects symbol locks)
+       6. After all CODER commits -> REFACTORER optimizes feature-wide
+       Execute as 4 agents in parallel where dependencies allow.
+
+EXAMPLE_MULTI_AGENT_WORKFLOW:
+Task: Implement Exercise API (bd-5000) - 4 sub-components
+├── Type Definitions (ARCHITECT, 30min)
+│   └── src/types.gleam: ExerciseId, Exercise, ListResponse
+│   └── Lock symbols: exercise_id, exercise, list_response
+│
+├── Test Suite (TESTER, 20min, parallel after types locked)
+│   └── test/handlers_test.gleam: GET /exercises
+│   └── test/encoders_test.gleam: encode_exercise()
+│   └── test/queries_test.gleam: find_by_id()
+│
+├── Implementation (3 CODERs, 40min, parallel)
+│   ├── CODER_1: src/handlers.gleam (get_exercises, get_exercise)
+│   ├── CODER_2: src/encoders.gleam (encode_exercise, encode_list)
+│   ├── CODER_3: src/queries.gleam (find_by_id, list_all)
+│
+└── Refactor (REFACTORER, 10min, sequential after all CODERs)
+    └── src/handlers.gleam: inline helper, reduce duplication
+    └── src/encoders.gleam: consolidate string building
+
+Total: 100min sequential = 30min with 3 parallel CODERs
 
 TOOLCHAIN:
 BEADS_MCP:
 MANDATORY: True
-USAGE: No work without `bd-xxxx`.
+USAGE: No work without `bd-xxxx`. Multi-task features require parent + subtasks.
+COMMANDS:
+  bd ready --json                    # Find available tasks
+  bd create --parent bd-xxxx --title "Sub-component"
+  bd update bd-xxxx --status in_progress
+  bd close bd-xxxx --reason "description"
+
+SERENA_MCP:
+MANDATORY: True
+USAGE: Symbol locking prevents multi-agent conflicts
+COMMANDS:
+  serena_lock_symbol(path, symbol)    # Acquire lock
+  serena_unlock_symbol(path, symbol)  # Release lock
+  serena_find_symbol(symbol)          # Locate symbol
+  serena_replace_symbol_body(...)     # Edit with lock check
+
 GLEAM_TOOLS:
-TEST: `gleam test`
-FORMAT: `gleam format`
+TEST: `gleam test` (all agents must pass before commit)
+TEST_PARALLEL: `make test` (faster, parallel runs)
+FORMAT: `gleam format` (REFACTORER validates)
 BUILD: `gleam build --target erlang` (or javascript)
-
-IMPASSE_HANDLING:
-TRIGGER: 3 Consecutive Reverts on same Behavior.
-ACTION: PAUSE_AND_REASSESS
-STEPS: 1. STOP all coding. 2. Review the Spec/Type definition. 3. Review the Test expectation. 4. OUTPUT: "Strategy Change Proposal" before next attempt.
-
-STATE_OBJECT:
-Current_Task: String
-Active_Agent: Enum[Architect, Tester, Coder, Refactorer]
-TCR_Attempt: Integer
-Gleam_Target: Enum[Erlang, JavaScript]
 
 Gleam Agent Protocol: Extended Specification
 Architectural Philosophy
@@ -203,7 +339,7 @@ Primitive Obsession: Don't pass raw `Int` for IDs. Wrap in custom types.
 
 ---
 
-## Meal Planner - Single-Agent TDD Workflow
+## Meal Planner - Multi-Agent TDD Workflow
 ⚠️ CRITICAL RULES ⚠️
 🔴 RULE #1: BEADS IS MANDATORY
 EVERY code change requires a Beads task. NO EXCEPTIONS.
@@ -213,14 +349,16 @@ Bug fix → Beads task first
 Feature → Beads task first
 Refactor → Beads task first
 Tests → Beads task first
-No Beads task ID (e.g., open-swarm-xyz)? DO NOT make changes.
+Multi-agent work → Parent task + subtasks (bd create --parent bd-xxxx)
+No Beads task ID (e.g., bd-xxxx)? DO NOT make changes.
 
 🔴 RULE #2: SERENA IS THE ONLY WAY TO EDIT CODE
 ALL code editing uses Serena's semantic tools.
 
-✅ USE: serena_find_symbol, serena_replace_symbol_body, serena_insert_after_symbol, serena_rename_symbol
+✅ USE: serena_find_symbol, serena_replace_symbol_body, serena_insert_after_symbol, serena_rename_symbol, serena_lock_symbol, serena_unlock_symbol
 ❌ NEVER: Read + Edit, bash sed/awk
 Exception: Non-code files (.md, .json, .yaml) use Edit tool.
+MULTI_AGENT: ALWAYS lock symbol before edit. ALWAYS unlock after commit.
 
 🔴 RULE #3: NEVER CREATE MARKDOWN FILES
 DO NOT create docs unless explicitly requested.
@@ -236,13 +374,21 @@ Test file must exist BEFORE implementation
 Test must fail first (RED)
 Minimal implementation makes test pass (GREEN)
 Tests must be atomic, small, deterministic
+Multi-agent: Each agent follows TCR within their domain
 
 🔴 RULE #5: MEM0 MEMORY INTEGRATION IS MANDATORY
 ALL significant work must capture learnings to mem0 vector store.
 Memory is LOCAL (Ollama + Qdrant), fully offline, no cloud.
+Multi-agent: Each agent searches memories before starting. Shared learnings saved after task complete.
 See Memory Protocol section below.
 
-✅ Workflow
+🔴 RULE #6: SYMBOL LOCKING FOR MULTI-AGENT
+IF working on multi-agent feature (bd-xxxx with sub-tasks):
+  - BEFORE edit: serena_lock_symbol(path, symbol)
+  - AFTER commit: serena_unlock_symbol(path, symbol)
+  - ON CONFLICT: If symbol locked by other agent, try different symbol or wait for unlock
+
+✅ Workflow (Single-Agent)
 Get/Create Beads task → bd create or bd ready --json
 Search memories → search_memories(query) for context
 Start task → bd update task-id --status in_progress
@@ -252,9 +398,26 @@ Complete → bd close task-id --reason "description"
 Save learnings → save_memory(formatted_summary)
 Push changes → git add/commit/push && bd sync
 
+✅ Workflow (Multi-Agent)
+1. Create parent task → bd create --title "Feature: Exercise API"
+2. ARCHITECT defines types → bd create --parent bd-xxxx --title "Define types"
+   - serena_lock_symbol(src/types.gleam, exercise_id)
+   - serena_lock_symbol(src/types.gleam, exercise)
+   - Commit + unlock
+3. Create sub-tasks → bd create --parent bd-xxxx for each module
+4. TESTER writes tests → bd update bd-subx --status in_progress (all in parallel)
+5. CODERs implement → Multiple bd-suby tasks (parallel, respects locks)
+6. Each CODER:
+   - serena_lock_symbol(src/module.gleam, function_name)
+   - Implement + test + commit
+   - serena_unlock_symbol(src/module.gleam, function_name)
+7. REFACTORER consolidates → Final polish, optimization
+8. Close parent → bd close bd-xxxx --reason "Feature complete: Exercise API fully tested"
+9. Save learnings → save_memory(feature_pattern)
+
 Stack
-Beads MCP - Git-backed issue tracking (CRITICAL)
-Serena MCP - LSP-powered semantic navigation (MANDATORY)
+Beads MCP - Git-backed issue tracking (CRITICAL for multi-agent branching)
+Serena MCP - LSP-powered semantic navigation + symbol locking (MANDATORY for multi-agent)
 mem0 MCP - Vector store for persistent learnings (MANDATORY)
 All tools accessed via MCP servers, configured in opencode.json.
 
@@ -265,9 +428,17 @@ bd init
 mem0 mcp server (stdio mode)
 opencode
 
-Session Start
+Session Start (Single-Agent)
 bd ready --json                       # Find available tasks
 search_memories("task_context")       # Retrieve relevant context
+opencode && /sync
+bd update bd-xxxx --status in_progress
+
+Session Start (Multi-Agent)
+bd ready --json                       # Find parent task (bd-xxxx)
+search_memories("bd-xxxx feature")    # Retrieve full feature context
+bd create --parent bd-xxxx --title "Sub-component 1"
+bd create --parent bd-xxxx --title "Sub-component 2"
 opencode && /sync
 bd update bd-xxxx --status in_progress
 
@@ -295,6 +466,10 @@ Save memory IF ANY of these are true:
    - Format: `meal-planner: gleam idiom - [Pattern name], do: [What to do], avoid: [What not to do]`
    - Example: `meal-planner: gleam idiom - result chaining, do: use result.try() for railway-oriented pipelines, avoid: nested case statements for multiple Results`
 
+6. **Multi-Agent Coordination Pattern** - How to parallelize, avoid deadlocks, symbol locking strategy
+   - Format: `meal-planner: multi-agent pattern - [Pattern name], use: [When to apply], strategy: [Locks/commits/ordering]`
+   - Example: `meal-planner: multi-agent pattern - encoder parallelization, use: when multiple formatters need implementation, strategy: lock per module, CODER commits independently, REFACTORER final pass`
+
 ### When NOT to Save
 ❌ Trivial syntax fixes
 ❌ Obvious one-liners
@@ -307,6 +482,11 @@ Save memory IF ANY of these are true:
 **GOOD:**
 ```
 meal-planner: tandoor/handlers - pagination logic consolidates 9 handlers, eliminates 50+ lines duplication per handler. Uses limit/offset from query params, returns ListResponse envelope. Pattern: build_pagination_params() → pog.select().limit().offset() → encode_response()
+```
+
+**GOOD (Multi-Agent):**
+```
+meal-planner: multi-agent pattern - exercise API implementation, use: when feature requires parallel type definitions + test suite + multiple handler implementations, strategy: ARCHITECT locks types first, TESTER writes all tests (parallel), 3 CODERs implement handlers/encoders/queries (parallel, respects symbol locks), REFACTORER consolidates. Reduced timeline from 100min to 40min via parallelization.
 ```
 
 **BAD:**
@@ -324,14 +504,24 @@ search_memories("bd-xxxx task_name")        # Search by task
 search_memories("component_name")            # Search by component
 search_memories("pattern_name")              # Search by pattern
 search_memories("bug_fix")                   # Find related fixes
+search_memories("multi-agent")               # Find parallelization strategies
 ```
 
-Example workflow:
+Example workflow (Single-Agent):
 1. `bd ready --json` → Get bd-1234 "Implement exercise handlers"
 2. `search_memories("exercise handlers")` → Retrieve related patterns/decisions
 3. Read results → Understand prior work in handlers, constraints, patterns
 4. `bd update bd-1234 --status in_progress`
 5. Start coding with full context
+
+Example workflow (Multi-Agent):
+1. `bd ready --json` → Get bd-5000 "Implement Exercise API"
+2. `search_memories("bd-5000")` → Full feature context
+3. `search_memories("multi-agent exercise")` → Related parallelization patterns
+4. Create sub-tasks based on prior patterns
+5. Assign agents to parallel tasks
+6. Each agent searches task-specific context before starting
+7. All save learnings after commit
 
 ### Memory Archival (Task Completion)
 
@@ -349,14 +539,14 @@ When `bd close bd-xxxx`:
 4. **Did this task discover a Gleam idiom?**
    → Save: `meal-planner: gleam idiom - [name], do: [pattern], avoid: [anti-pattern]`
 
-Example after completing bd-xxx (Encoder duplication):
+5. **Did this task use multi-agent parallelization?**
+   → Save: `meal-planner: multi-agent pattern - [name], use: [when], strategy: [locks/ordering], speedup: [X% timeline reduction]`
+
+Example after completing bd-5000 (Exercise API):
 ```
 save_memory("""
-meal-planner: encoder consolidation - 9 tandoor handlers had 150-200 lines of duplicate pagination encoder logic. Extracted into query_builders.encode_list_response(). Pattern:
-- build_pagination_params(limit, offset) → json.Object
-- encode_list_response(items, count, next, prev) → string
-Benefits: 1350+ lines eliminated, consistent error handling, single source of truth.
-Related: bd-xxx (query_builders refactor)
+meal-planner: exercise API multi-agent - Implemented 4-handler API using 3 parallel CODERs. ARCHITECT defined ExerciseId, Exercise, ListResponse types (locked). TESTER wrote handler + encoder + query tests. CODER_1 (handlers), CODER_2 (encoders), CODER_3 (queries) implemented in parallel via symbol locks. No conflicts. REFACTORER consolidated error handling patterns. Timeline: 100min sequential → 40min parallel (60% speedup). Pattern: disjoint modules allow parallelization. Lock per module, independent commits. Final validation: make test (all pass).
+Related: bd-xxxx (query builders pattern)
 """)
 ```
 
@@ -369,9 +559,22 @@ beads_ready
 # Update task status
 beads_status taskId="bd-xxxx" status="in_progress"
 
-# Create new task
+# Create new task (single)
 beads_create title="Issue" parent="bd-xxxx"
+
+# Create sub-task (multi-agent)
+beads_create title="Sub-component" parent="bd-xxxx"
+beads_create title="Sub-component 2" parent="bd-xxxx"
 
 # Close task
 beads_close taskId="bd-xxxx" reason="Description"
+
+# Multi-agent workflow example
+bd create --title "Feature: Exercise API"          # Creates bd-5000
+bd create --parent bd-5000 --title "Define types"  # Creates bd-5001 (ARCHITECT)
+bd create --parent bd-5000 --title "Write tests"   # Creates bd-5002 (TESTER)
+bd create --parent bd-5000 --title "Implement handlers"  # bd-5003 (CODER_1)
+bd create --parent bd-5000 --title "Implement encoders"  # bd-5004 (CODER_2)
+bd create --parent bd-5000 --title "Implement queries"   # bd-5005 (CODER_3)
+
 Note: bd CLI commands also work directly for quick operations.
