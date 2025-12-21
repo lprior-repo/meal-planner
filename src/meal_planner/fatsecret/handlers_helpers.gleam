@@ -1,7 +1,7 @@
 /// Common helpers for FatSecret HTTP handlers
 ///
 /// Consolidates duplicate code across multiple handlers:
-/// - JSON encoding for optional values
+/// - JSON encoding for optional values (re-exported from shared/response_encoders)
 /// - Query parameter parsing
 /// - Success/error response builders
 /// - Food and recipe JSON encoders
@@ -18,34 +18,26 @@ import gleam/string
 import meal_planner/fatsecret/foods/types as food_types
 import meal_planner/fatsecret/recipes/types as recipe_types
 import meal_planner/fatsecret/service as fatsecret_service
+import meal_planner/shared/response_encoders
 import wisp
 
 // =============================================================================
-// Optional Value JSON Encoders
+// Optional Value JSON Encoders (Consolidated)
 // =============================================================================
+// These functions are now consolidated in shared/response_encoders to provide
+// a single source of truth for optional value encoding across all handler modules.
+// Re-exporting them here maintains backward compatibility.
 
-/// Encode an optional String to JSON (null if None)
 pub fn encode_optional_string(opt: Option(String)) -> json.Json {
-  case opt {
-    Some(s) -> json.string(s)
-    None -> json.null()
-  }
+  response_encoders.encode_optional_string(opt)
 }
 
-/// Encode an optional Int to JSON (null if None)
 pub fn encode_optional_int(opt: Option(Int)) -> json.Json {
-  case opt {
-    Some(i) -> json.int(i)
-    None -> json.null()
-  }
+  response_encoders.encode_optional_int(opt)
 }
 
-/// Encode an optional Float to JSON (null if None)
 pub fn encode_optional_float(opt: Option(Float)) -> json.Json {
-  case opt {
-    Some(f) -> json.float(f)
-    None -> json.null()
-  }
+  response_encoders.encode_optional_float(opt)
 }
 
 // =============================================================================
