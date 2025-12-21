@@ -3,7 +3,7 @@
 import gleeunit
 import gleeunit/should
 import meal_planner/email/parser
-import meal_planner/fatsecret/core/errors
+import meal_planner/fatsecret/errors
 import meal_planner/generator/weekly
 import meal_planner/types.{EmailRequest, Macros}
 

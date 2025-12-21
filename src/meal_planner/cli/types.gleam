@@ -1,11 +1,11 @@
 /// CLI-specific types for the Shore TUI application
 import gleam/option.{type Option}
 import meal_planner/config.{type Config}
-import meal_planner/fatsecret/diary/types as diary_types
-import meal_planner/fatsecret/exercise/types as exercise_types
-import meal_planner/fatsecret/foods/types as foods_types
-import meal_planner/fatsecret/recipes/types as recipe_types
-import meal_planner/fatsecret/weight/types as weight_types
+import meal_planner/fatsecret/diary_types as diary_types
+import meal_planner/fatsecret/exercise_types as exercise_types
+import meal_planner/fatsecret/foods_types as foods_types
+import meal_planner/fatsecret/recipes_types as recipe_types
+import meal_planner/fatsecret/weight_types as weight_types
 
 pub type Model {
   Model(

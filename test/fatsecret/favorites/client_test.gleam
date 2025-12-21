@@ -8,8 +8,8 @@
 import gleam/json
 import gleam/list
 import gleeunit/should
-import meal_planner/fatsecret/favorites/decoders
-import meal_planner/fatsecret/favorites/types
+import meal_planner/fatsecret/favorites_decoders
+import meal_planner/fatsecret/favorites_types
 
 // ============================================================================
 // Favorite Foods Decoder Tests

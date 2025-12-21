@@ -7,7 +7,7 @@ import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{None, Some}
-import meal_planner/fatsecret/profile/types as fatsecret_profile
+import meal_planner/fatsecret/profile_types as fatsecret_profile
 import meal_planner/generator/weekly
 import meal_planner/grocery_list
 import meal_planner/types

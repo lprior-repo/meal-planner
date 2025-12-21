@@ -3,7 +3,7 @@
 /// RED PHASE: Test that set_goal saves to database
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/cli/domains/nutrition
+import meal_planner/cli/domain_nutrition
 import meal_planner/config
 import meal_planner/postgres
 import meal_planner/storage

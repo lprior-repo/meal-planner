@@ -20,9 +20,9 @@ import gleam/list
 import gleam/option.{type Option, None}
 import gleam/result
 import gleam/string
-import meal_planner/fatsecret/core/errors as fatsecret_errors
+import meal_planner/fatsecret/errors as fatsecret_errors
 import meal_planner/scheduler/errors as scheduler_errors
-import meal_planner/tandoor/core/error as tandoor_error
+import meal_planner/tandoor/core_error as tandoor_error
 
 // ============================================================================
 // Core Error Type Hierarchy

@@ -16,7 +16,7 @@ import gleam/result
 import gleam/string
 import gleam/uri
 import meal_planner/env.{type FatSecretConfig}
-import meal_planner/fatsecret/core/oauth
+import meal_planner/fatsecret/oauth
 
 const api_host = "platform.fatsecret.com"
 
@@ -91,7 +91,7 @@ fn url_encode(s: String) -> String {
   uri.percent_encode(s)
 }
 
-// OAuth functions are now imported from meal_planner/fatsecret/core/oauth module
+// OAuth functions are now imported from meal_planner/fatsecret/oauth module
 // Use oauth.generate_nonce(), oauth.unix_timestamp(), oauth.oauth_encode(), etc.
 
 /// Build OAuth 1.0a parameters and sign the request

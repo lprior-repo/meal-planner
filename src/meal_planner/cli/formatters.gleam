@@ -8,11 +8,11 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
 import meal_planner/cli/types.{type Results}
-import meal_planner/fatsecret/diary/types as diary
-import meal_planner/fatsecret/exercise/types as exercise
-import meal_planner/fatsecret/foods/types as food
-import meal_planner/fatsecret/recipes/types as recipe
-import meal_planner/fatsecret/weight/types as weight
+import meal_planner/fatsecret/diary_types as diary
+import meal_planner/fatsecret/exercise_types as exercise
+import meal_planner/fatsecret/foods_types as food
+import meal_planner/fatsecret/recipes_types as recipe
+import meal_planner/fatsecret/weight_types as weight
 
 pub fn format_json(results: Results) -> String {
   case results {

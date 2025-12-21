@@ -16,8 +16,8 @@ import gleam/http/response.{type Response}
 import gleam/json
 import gleam/list
 import meal_planner/errors.{type AppError}
-import meal_planner/fatsecret/core/errors as fatsecret_errors
-import meal_planner/tandoor/core/error as tandoor_error
+import meal_planner/fatsecret/errors as fatsecret_errors
+import meal_planner/tandoor/core_error as tandoor_error
 import wisp
 
 // ============================================================================

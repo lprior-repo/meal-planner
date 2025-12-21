@@ -15,8 +15,8 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import meal_planner/fatsecret/foods/types as food_types
-import meal_planner/fatsecret/recipes/types as recipe_types
+import meal_planner/fatsecret/foods_types as food_types
+import meal_planner/fatsecret/recipes_types as recipe_types
 import meal_planner/fatsecret/service as fatsecret_service
 import wisp
 

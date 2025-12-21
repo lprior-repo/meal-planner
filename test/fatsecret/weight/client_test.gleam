@@ -8,8 +8,8 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/fatsecret/weight/decoders
-import meal_planner/fatsecret/weight/types
+import meal_planner/fatsecret/weight_decoders
+import meal_planner/fatsecret/weight_types
 
 // ============================================================================
 // Weight Entry Decoder Tests

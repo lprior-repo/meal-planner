@@ -3,8 +3,8 @@
 /// Wraps long-running operations (API calls, DB queries) as Shore effect functions
 import gleam/string
 import meal_planner/cli/types.{type Msg}
-import meal_planner/fatsecret/foods/service as foods_service
-import meal_planner/fatsecret/foods/types as food_types
+import meal_planner/fatsecret/foods_service as foods_service
+import meal_planner/fatsecret/foods_types as food_types
 import meal_planner/id
 import meal_planner/ncp
 import meal_planner/scheduler/errors as scheduler_errors

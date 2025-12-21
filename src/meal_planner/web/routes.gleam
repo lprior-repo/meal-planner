@@ -8,14 +8,14 @@
 //// - Domain-based: Organized by domain
 
 import gleam/option.{None, Some}
-import meal_planner/web/routes/auth
-import meal_planner/web/routes/fatsecret
-import meal_planner/web/routes/health
-import meal_planner/web/routes/meal_planning
-import meal_planner/web/routes/misc
-import meal_planner/web/routes/nutrition
-import meal_planner/web/routes/tandoor
-import meal_planner/web/routes/types.{type Context}
+import meal_planner/web/route_auth
+import meal_planner/web/route_fatsecret
+import meal_planner/web/route_health
+import meal_planner/web/route_meal_planning
+import meal_planner/web/route_misc
+import meal_planner/web/route_nutrition
+import meal_planner/web/route_tandoor
+import meal_planner/web/route_types.{type Context}
 import wisp
 
 /// Route request to appropriate domain router

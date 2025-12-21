@@ -18,19 +18,19 @@ import meal_planner/email/confirmation as email_confirmation
 
 // import meal_planner/email/executor as email_executor
 import meal_planner/fatsecret/client
-import meal_planner/fatsecret/core/config as fs_config
-import meal_planner/fatsecret/core/oauth as core_oauth
-import meal_planner/fatsecret/foods/handlers as foods_handlers
-import meal_planner/fatsecret/profile/handlers as profile_handlers
-import meal_planner/fatsecret/profile/oauth as profile_oauth
+import meal_planner/fatsecret/config as fs_config
+import meal_planner/fatsecret/oauth as core_oauth
+import meal_planner/fatsecret/foods_handlers as foods_handlers
+import meal_planner/fatsecret/profile_handlers as profile_handlers
+import meal_planner/fatsecret/profile_oauth as profile_oauth
 import meal_planner/fatsecret/service
 import meal_planner/fatsecret/storage
 import meal_planner/types
-import meal_planner/web/handlers/diet
-import meal_planner/web/handlers/health
-import meal_planner/web/handlers/macros
-import meal_planner/web/handlers/recipes
-import meal_planner/web/handlers/tandoor
+import meal_planner/web/handler_diet
+import meal_planner/web/handler_health
+import meal_planner/web/handler_macros
+import meal_planner/web/handler_recipes
+import meal_planner/web/handler_tandoor
 import pog
 import wisp
 

@@ -7,8 +7,8 @@
 import gleam/json
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/fatsecret/profile/decoders
-import meal_planner/fatsecret/profile/types
+import meal_planner/fatsecret/profile_decoders
+import meal_planner/fatsecret/profile_types
 
 // ============================================================================
 // Profile Response Decoder Tests

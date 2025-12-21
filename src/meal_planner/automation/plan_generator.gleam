@@ -13,7 +13,7 @@ import gleam/float
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import meal_planner/fatsecret/profile/types as fatsecret_profile
+import meal_planner/fatsecret/profile_types as fatsecret_profile
 import meal_planner/generator/types as gen_types
 import meal_planner/generator/weekly
 import meal_planner/grocery_list

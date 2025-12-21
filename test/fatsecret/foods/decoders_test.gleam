@@ -9,8 +9,8 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/fatsecret/foods/decoders
-import meal_planner/fatsecret/foods/types
+import meal_planner/fatsecret/foods_decoders
+import meal_planner/fatsecret/foods_types
 import simplifile
 
 /// Load a scraped fixture from the test fixtures directory

@@ -10,11 +10,11 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
-import meal_planner/fatsecret/core/config.{type FatSecretConfig}
-import meal_planner/fatsecret/core/errors.{type FatSecretError}
-import meal_planner/fatsecret/core/oauth.{type AccessToken}
-import meal_planner/fatsecret/diary/client as diary_client
-import meal_planner/fatsecret/diary/types.{
+import meal_planner/fatsecret/config.{type FatSecretConfig}
+import meal_planner/fatsecret/errors.{type FatSecretError}
+import meal_planner/fatsecret/oauth.{type AccessToken}
+import meal_planner/fatsecret/diary_client as diary_client
+import meal_planner/fatsecret/diary_types.{
   type MealType, Breakfast, Custom, Dinner, Lunch, Snack, date_to_int,
   food_entry_id_to_string,
 }

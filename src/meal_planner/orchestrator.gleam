@@ -8,8 +8,8 @@
 import gleam/int
 import gleam/list
 import gleam/result
-import meal_planner/fatsecret/core/config.{type FatSecretConfig}
-import meal_planner/fatsecret/core/oauth.{type AccessToken}
+import meal_planner/fatsecret/config.{type FatSecretConfig}
+import meal_planner/fatsecret/oauth.{type AccessToken}
 import meal_planner/grocery_list.{type GroceryList}
 import meal_planner/meal_prep_ai.{type MealPrepPlan}
 import meal_planner/meal_sync.{

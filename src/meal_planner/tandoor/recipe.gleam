@@ -18,7 +18,7 @@ import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import meal_planner/tandoor/api/crud_helpers.{
+import meal_planner/tandoor/api_crud_helpers.{
   execute_delete, execute_get, execute_patch, execute_post, parse_json_paginated,
   parse_json_single,
 }
@@ -28,7 +28,7 @@ import meal_planner/tandoor/client.{
   type TandoorError, type Unit, Food, Ingredient, Keyword,
   NutritionInfo as ClientNutritionInfo, Step, SupermarketCategory, Unit,
 }
-import meal_planner/tandoor/core/http.{type PaginatedResponse}
+import meal_planner/tandoor/core_http.{type PaginatedResponse}
 
 // ============================================================================
 // Types

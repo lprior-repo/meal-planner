@@ -16,7 +16,7 @@
 /// ```
 import gleam/option.{type Option, None, Some}
 import meal_planner/tandoor/client.{type ClientConfig, BearerAuth, SessionAuth}
-import meal_planner/tandoor/core/http.{type HttpTransport}
+import meal_planner/tandoor/core_http.{type HttpTransport}
 
 // Re-export commonly used types for convenience
 pub type TandoorError =

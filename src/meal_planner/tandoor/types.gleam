@@ -7,7 +7,7 @@
 /// a clear separation between API types and internal application types.
 ///
 /// Note: TandoorFood (2-field) is used for recipe ingredient references only.
-/// For full food API operations, use the Food type from meal_planner/tandoor/types/food/food.
+/// For full food API operations, use the Food type from meal_planner/tandoor/type_food.
 import gleam/int
 import gleam/option.{type Option}
 
@@ -112,7 +112,7 @@ pub type TandoorIngredient {
 ///
 /// This is a minimal 2-field representation used ONLY in recipe ingredient references.
 /// For full food API operations (get, list, create, update), use the Food type from
-/// meal_planner/tandoor/types/food/food which contains all 8 fields.
+/// meal_planner/tandoor/type_food which contains all 8 fields.
 pub type TandoorFood {
   TandoorFood(id: Int, name: String)
 }

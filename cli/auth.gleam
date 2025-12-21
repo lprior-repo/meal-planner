@@ -23,11 +23,11 @@ import gleam/json
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import meal_planner/fatsecret/core/config.{type FatSecretConfig}
-import meal_planner/fatsecret/core/errors.{type FatSecretError}
-import meal_planner/fatsecret/core/oauth.{type AccessToken, type RequestToken}
+import meal_planner/fatsecret/config.{type FatSecretConfig}
+import meal_planner/fatsecret/errors.{type FatSecretError}
+import meal_planner/fatsecret/oauth.{type AccessToken, type RequestToken}
 import meal_planner/fatsecret/crypto
-import meal_planner/fatsecret/profile/oauth as profile_oauth
+import meal_planner/fatsecret/profile_oauth as profile_oauth
 import simplifile
 
 // ============================================================================

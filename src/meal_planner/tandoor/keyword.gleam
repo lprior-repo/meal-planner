@@ -13,7 +13,7 @@ import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import meal_planner/tandoor/api/crud_helpers.{
+import meal_planner/tandoor/api_crud_helpers.{
   execute_delete, execute_get, execute_patch, execute_post, parse_json_list,
   parse_json_single,
 }

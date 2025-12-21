@@ -10,8 +10,8 @@ import gleam/option.{None, Some}
 import gleam/string
 import gleeunit
 import gleeunit/should
-import meal_planner/cli/domains/diary
-import meal_planner/fatsecret/diary/types.{
+import meal_planner/cli/domain_diary
+import meal_planner/fatsecret/diary_types.{
   Breakfast, Dinner, FoodEntry, Lunch, Snack, food_entry_id,
 }
 

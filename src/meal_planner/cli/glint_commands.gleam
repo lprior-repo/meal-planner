@@ -3,16 +3,16 @@
 /// Glint-based command routing for the unified CLI+TUI application.
 /// Routes to domain-specific command handlers based on subcommand.
 import glint
-import meal_planner/cli/domains/advisor
-import meal_planner/cli/domains/diary
-import meal_planner/cli/domains/fatsecret
-import meal_planner/cli/domains/nutrition
-import meal_planner/cli/domains/plan
-import meal_planner/cli/domains/preferences
-import meal_planner/cli/domains/recipe
-import meal_planner/cli/domains/scheduler
-import meal_planner/cli/domains/tandoor
-import meal_planner/cli/domains/web
+import meal_planner/cli/domain_advisor
+import meal_planner/cli/domain_diary
+import meal_planner/cli/domain_fatsecret
+import meal_planner/cli/domain_nutrition
+import meal_planner/cli/domain_plan
+import meal_planner/cli/domain_preferences
+import meal_planner/cli/domain_recipe
+import meal_planner/cli/domain_scheduler
+import meal_planner/cli/domain_tandoor
+import meal_planner/cli/domain_web
 import meal_planner/config.{type Config}
 
 /// Main CLI entry point - routes commands to appropriate domain handlers

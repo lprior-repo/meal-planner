@@ -9,8 +9,8 @@ import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/fatsecret/diary/decoders
-import meal_planner/fatsecret/diary/types
+import meal_planner/fatsecret/diary_decoders
+import meal_planner/fatsecret/diary_types
 
 // ============================================================================
 // MealType Tests

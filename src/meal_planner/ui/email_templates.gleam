@@ -14,7 +14,7 @@ import gleam/string
 import meal_planner/advisor/daily_recommendations.{
   type AdvisorEmail, type MacroTrend,
 }
-import meal_planner/storage/logs/summaries.{
+import meal_planner/storage/logs_summaries.{
   type FoodSummaryItem, type WeeklySummary,
 }
 import meal_planner/types.{type Macros}

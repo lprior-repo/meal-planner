@@ -7,8 +7,8 @@
 import gleam/json
 import gleam/list
 import gleeunit/should
-import meal_planner/fatsecret/exercise/decoders
-import meal_planner/fatsecret/exercise/types
+import meal_planner/fatsecret/exercise_decoders
+import meal_planner/fatsecret/exercise_types
 
 // ============================================================================
 // Exercise Entry Decoder Tests

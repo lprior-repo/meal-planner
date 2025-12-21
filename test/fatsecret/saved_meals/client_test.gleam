@@ -8,8 +8,8 @@ import gleam/json
 import gleam/list
 import gleam/option.{Some}
 import gleeunit/should
-import meal_planner/fatsecret/saved_meals/decoders
-import meal_planner/fatsecret/saved_meals/types
+import meal_planner/fatsecret/saved_meals_decoders
+import meal_planner/fatsecret/saved_meals_types
 
 // ============================================================================
 // Saved Meals Response Decoder Tests

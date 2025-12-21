@@ -7,8 +7,8 @@ import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
-import meal_planner/fatsecret/diary/service as diary_service
-import meal_planner/fatsecret/diary/types.{type DaySummary} as diary_types
+import meal_planner/fatsecret/diary_service as diary_service
+import meal_planner/fatsecret/diary_types.{type DaySummary} as diary_types
 import pog
 
 // ============================================================================

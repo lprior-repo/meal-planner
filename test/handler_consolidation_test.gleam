@@ -6,9 +6,9 @@ import gleam/json
 import gleam/option
 import gleam/string
 
-import meal_planner/tandoor/core/ids
+import meal_planner/tandoor/core_ids
 import meal_planner/tandoor/cuisine.{type Cuisine, Cuisine}
-import meal_planner/tandoor/handlers/handler_wrapper
+import meal_planner/tandoor/handler_handler_wrapper
 
 import gleeunit
 import gleeunit/should

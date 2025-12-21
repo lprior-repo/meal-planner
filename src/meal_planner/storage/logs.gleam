@@ -15,9 +15,9 @@ import meal_planner/config
 import meal_planner/id
 import meal_planner/postgres
 import meal_planner/storage/foods.{type UsdaFood}
-import meal_planner/storage/logs/entries
-import meal_planner/storage/logs/queries
-import meal_planner/storage/logs/summaries
+import meal_planner/storage/logs_entries
+import meal_planner/storage/logs_queries
+import meal_planner/storage/logs_summaries
 import meal_planner/storage/profile.{type StorageError}
 import meal_planner/types.{
   type DailyLog, type FoodLogEntry, type UserProfile, Maintain, Moderate,

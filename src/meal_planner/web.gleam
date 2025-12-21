@@ -10,7 +10,7 @@ import meal_planner/config
 import meal_planner/fatsecret/service as fatsecret_service
 import meal_planner/postgres
 import meal_planner/web/routes
-import meal_planner/web/routes/types
+import meal_planner/web/route_types
 import mist
 import wisp
 import wisp/wisp_mist

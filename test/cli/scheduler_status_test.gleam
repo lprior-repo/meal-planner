@@ -9,7 +9,7 @@ import gleam/option.{None, Some}
 import gleam/string
 import gleeunit
 import gleeunit/should
-import meal_planner/cli/domains/scheduler
+import meal_planner/cli/domain_scheduler
 import meal_planner/id
 import meal_planner/scheduler/types.{
   AutoSync, Completed, High, JobExecution, Once, RetryPolicy, Running, Scheduled,

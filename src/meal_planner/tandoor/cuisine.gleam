@@ -13,12 +13,12 @@ import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import meal_planner/tandoor/api/crud_helpers.{
+import meal_planner/tandoor/api_crud_helpers.{
   execute_delete, execute_get, execute_patch, execute_post, parse_json_list,
   parse_json_single,
 }
 import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
-import meal_planner/tandoor/core/ids.{
+import meal_planner/tandoor/core_ids.{
   type CuisineId, cuisine_id_from_int, cuisine_id_to_int,
 }
 

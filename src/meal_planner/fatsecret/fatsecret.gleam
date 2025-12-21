@@ -16,9 +16,9 @@
 ///   Error(_) -> io.println("Failed to get food")
 /// }
 /// ```
-import meal_planner/fatsecret/core/config
-import meal_planner/fatsecret/core/errors
-import meal_planner/fatsecret/core/oauth
+import meal_planner/fatsecret/config
+import meal_planner/fatsecret/errors
+import meal_planner/fatsecret/oauth
 
 /// FatSecret API configuration
 pub type FatSecretConfig =
@@ -60,8 +60,8 @@ pub const is_auth_error = errors.is_auth_error
 // Foods Domain
 // ============================================================================
 
-import meal_planner/fatsecret/foods/service as foods_service
-import meal_planner/fatsecret/foods/types as foods_types
+import meal_planner/fatsecret/foods_service as foods_service
+import meal_planner/fatsecret/foods_types as foods_types
 
 /// Service-level error for Foods API
 pub type FoodsServiceError =
@@ -113,8 +113,8 @@ pub const search_foods = foods_service.search_foods
 // Recipes Domain
 // ============================================================================
 
-import meal_planner/fatsecret/recipes/service as recipes_service
-import meal_planner/fatsecret/recipes/types as recipes_types
+import meal_planner/fatsecret/recipes_service as recipes_service
+import meal_planner/fatsecret/recipes_types as recipes_types
 
 /// Service-level error for Recipes API
 pub type RecipesServiceError =
@@ -170,8 +170,8 @@ pub const get_recipe_types = recipes_service.get_recipe_types
 // Favorites Domain
 // ============================================================================
 
-import meal_planner/fatsecret/favorites/service as favorites_service
-import meal_planner/fatsecret/favorites/types as favorites_types
+import meal_planner/fatsecret/favorites_service as favorites_service
+import meal_planner/fatsecret/favorites_types as favorites_types
 
 /// A favorite food item
 pub type FavoriteFood =
@@ -230,8 +230,8 @@ pub const get_favorite_recipes = favorites_service.get_favorite_recipes
 // Saved Meals Domain
 // ============================================================================
 
-import meal_planner/fatsecret/saved_meals/service as saved_meals_service
-import meal_planner/fatsecret/saved_meals/types as saved_meals_types
+import meal_planner/fatsecret/saved_meals_service as saved_meals_service
+import meal_planner/fatsecret/saved_meals_types as saved_meals_types
 
 /// Opaque type for saved meal IDs
 pub type SavedMealId =
@@ -295,7 +295,7 @@ pub const delete_saved_meal_item = saved_meals_service.delete_saved_meal_item
 // Diary Domain
 // ============================================================================
 
-import meal_planner/fatsecret/diary/types as diary_types
+import meal_planner/fatsecret/diary_types as diary_types
 
 /// Opaque food entry ID from FatSecret API
 pub type FoodEntryId =
@@ -346,8 +346,8 @@ pub const diary_meal_type_from_string = diary_types.meal_type_from_string
 // Weight Domain
 // ============================================================================
 
-import meal_planner/fatsecret/weight/service as weight_service
-import meal_planner/fatsecret/weight/types as weight_types
+import meal_planner/fatsecret/weight_service as weight_service
+import meal_planner/fatsecret/weight_types as weight_types
 
 /// Weight entry with date
 pub type WeightEntry =
@@ -374,8 +374,8 @@ pub const get_weight_month_summary = weight_service.get_weight_month_summary
 // Exercise Domain
 // ============================================================================
 
-import meal_planner/fatsecret/exercise/service as exercise_service
-import meal_planner/fatsecret/exercise/types as exercise_types
+import meal_planner/fatsecret/exercise_service as exercise_service
+import meal_planner/fatsecret/exercise_types as exercise_types
 
 /// Service-level error for Exercise API
 pub type ExerciseServiceError =
@@ -442,9 +442,9 @@ pub const save_exercise_template = exercise_service.save_exercise_template
 // Profile Domain
 // ============================================================================
 
-import meal_planner/fatsecret/profile/oauth as profile_oauth
-import meal_planner/fatsecret/profile/service as profile_service
-import meal_planner/fatsecret/profile/types as profile_types
+import meal_planner/fatsecret/profile_oauth as profile_oauth
+import meal_planner/fatsecret/profile_service as profile_service
+import meal_planner/fatsecret/profile_types as profile_types
 
 /// User profile information
 pub type Profile =
