@@ -17,6 +17,27 @@ import meal_planner/cli/screens/exercise_view.{
   ExerciseSearchResult, ExerciseSearchState, MainView, QuickAddPopup,
   SearchPopup,
 }
+import meal_planner/fatsecret/exercise/types as exercise_types
+
+// ============================================================================
+// Test Helpers
+// ============================================================================
+
+/// Create a minimal ExerciseEntry for testing
+fn test_exercise_entry(
+  name: String,
+  duration: Int,
+  calories: Float,
+) -> exercise_types.ExerciseEntry {
+  exercise_types.ExerciseEntry(
+    exercise_entry_id: exercise_types.exercise_entry_id("entry_1"),
+    exercise_id: exercise_types.exercise_id("ex_123"),
+    exercise_name: name,
+    duration_min: duration,
+    calories: calories,
+    date_int: 20_000,
+  )
+}
 
 // ============================================================================
 // Initialization Tests
@@ -225,13 +246,7 @@ pub fn exercise_search_result_construction_test() {
 
 pub fn exercise_edit_state_construction_test() {
   // GIVEN: Exercise entry for editing
-  let entry = exercise_types.exercise_entry(
-    id: "entry_1",
-    exercise_id: "ex_123",
-    exercise_name: "Running",
-    duration_minutes: 30,
-    calories_burned: 300.0,
-  )
+  let entry = test_exercise_entry("Running", 30, 300.0)
 
   // WHEN: Creating edit state
   let edit_state = ExerciseEditState(
@@ -262,13 +277,7 @@ pub fn exercise_edit_state_construction_test() {
 
 pub fn exercise_display_entry_construction_test() {
   // GIVEN: Exercise entry and display data
-  let entry = exercise_types.exercise_entry(
-    id: "entry_1",
-    exercise_id: "ex_123",
-    exercise_name: "Running",
-    duration_minutes: 30,
-    calories_burned: 300.0,
-  )
+  let entry = test_exercise_entry("Running", 30, 300.0)
 
   // WHEN: Creating display entry
   let display_entry = ExerciseDisplayEntry(
