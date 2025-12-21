@@ -61,7 +61,8 @@ pub type OutputFormat {
 
 /// CLI command results
 pub type Results {
-  FoodResults(List(foods_types.Food))
+  FoodSearchResults(List(foods_types.FoodSearchResult))
+  FoodDetailResult(foods_types.Food)
   DiaryResults(List(diary_types.FoodEntry))
   ExerciseResults(List(exercise_types.ExerciseEntry))
   RecipeResults(List(recipe_types.Recipe))
@@ -86,9 +87,9 @@ pub type Msg {
 
   // FatSecret Foods
   SearchFoods
-  GotSearchResults(Result(List(foods_types.Food), String))
+  GotSearchResults(Result(List(foods_types.FoodSearchResult), String))
   GetFoodDetails(String)
-  GotFoodDetails(Result(String, String))
+  GotFoodDetails(Result(foods_types.Food, String))
 
   // System
   KeyPress(String)
