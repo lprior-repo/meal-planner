@@ -119,7 +119,7 @@ pub fn update(
     types.GotSearchResults(result) -> {
       case result {
         Ok(foods) -> {
-          let updated = model.set_results(model, types.FoodResults(foods))
+          let updated = model.set_results(model, types.FoodSearchResults(foods))
           #(updated, [])
         }
         Error(err) -> {
@@ -137,8 +137,9 @@ pub fn update(
 
     types.GotFoodDetails(result) -> {
       case result {
-        Ok(_details) -> {
-          #(model, [])
+        Ok(food) -> {
+          let updated = model.set_results(model, types.FoodDetailResult(food))
+          #(updated, [])
         }
         Error(err) -> {
           let updated = model.set_error(model, err)
