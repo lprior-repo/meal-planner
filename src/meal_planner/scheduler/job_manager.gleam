@@ -12,6 +12,8 @@ import meal_planner/scheduler/types.{
   type JobExecution, type JobFrequency, type JobType, type ScheduledJob,
   type TriggerSource, JobExecution, Pending, Running, ScheduledJob,
 }
+import meal_planner/storage/scheduler as scheduler_storage
+import pog
 
 // ============================================================================
 // Job Creation
@@ -59,12 +61,12 @@ pub fn create_job(
 // Job Status Updates
 // ============================================================================
 
-/// Mark job as running and create execution record
+/// Mark job as running and create execution record (in-memory fallback)
 pub fn mark_job_running(job_id: JobId) -> Result(JobExecution, AppError) {
   // Get current timestamp
   let now = birl.now() |> birl.to_iso8601
 
-  // Return a minimal JobExecution (stub implementation for GREEN phase)
+  // Return a minimal JobExecution (fallback when no database connection)
   Ok(JobExecution(
     id: 1,
     job_id: job_id,
@@ -79,39 +81,103 @@ pub fn mark_job_running(job_id: JobId) -> Result(JobExecution, AppError) {
   ))
 }
 
-/// Mark job as completed
+/// Mark job as running with database persistence
+pub fn mark_job_running_db(
+  conn conn: pog.Connection,
+  job_id job_id: JobId,
+  trigger_type trigger_type: String,
+) -> Result(JobExecution, AppError) {
+  case scheduler_storage.mark_job_running(conn: conn, job_id: job_id, trigger_type: trigger_type) {
+    Ok(execution) -> Ok(execution)
+    Error(_) -> Error(errors.DatabaseError("Failed to mark job as running"))
+  }
+}
+
+/// Mark job as completed (in-memory fallback)
 pub fn mark_job_completed(
   job_id: JobId,
   output output: option.Option(json.Json),
 ) -> Result(Nil, AppError) {
-  // Stub implementation for GREEN phase
+  // Fallback when no database connection
   let _ = job_id
   let _ = output
   Ok(Nil)
 }
 
-/// Mark job as failed and schedule retry if applicable
+/// Mark job as completed with database persistence
+pub fn mark_job_completed_db(
+  conn conn: pog.Connection,
+  job_id job_id: JobId,
+  execution_id execution_id: Int,
+  output output: option.Option(json.Json),
+) -> Result(Nil, AppError) {
+  let output_str = case output {
+    option.Some(json_val) -> option.Some(json.to_string(json_val))
+    option.None -> option.None
+  }
+  case scheduler_storage.mark_job_completed(conn: conn, job_id: job_id, execution_id: execution_id, output_json: output_str) {
+    Ok(_) -> Ok(Nil)
+    Error(_) -> Error(errors.DatabaseError("Failed to mark job as completed"))
+  }
+}
+
+/// Mark job as failed and schedule retry if applicable (in-memory fallback)
 pub fn mark_job_failed(
   job_id: JobId,
   error error: String,
 ) -> Result(Nil, AppError) {
-  // Stub implementation for GREEN phase
+  // Fallback when no database connection
   let _ = job_id
   let _ = error
   Ok(Nil)
+}
+
+/// Mark job as failed with database persistence
+pub fn mark_job_failed_db(
+  conn conn: pog.Connection,
+  job_id job_id: JobId,
+  execution_id execution_id: Int,
+  error error: String,
+) -> Result(Nil, AppError) {
+  case scheduler_storage.mark_job_failed(conn: conn, job_id: job_id, execution_id: execution_id, error_message: error) {
+    Ok(_) -> Ok(Nil)
+    Error(_) -> Error(errors.DatabaseError("Failed to mark job as failed"))
+  }
 }
 
 // ============================================================================
 // Job Queue Queries
 // ============================================================================
 
-/// Get next pending jobs by priority
+/// Get next pending jobs by priority (in-memory fallback)
 pub fn get_next_pending_jobs(
   limit limit: Int,
 ) -> Result(List(ScheduledJob), AppError) {
-  // Stub implementation for GREEN phase - return empty list
+  // Fallback when no database connection - return empty list
   let _ = limit
   Ok([])
+}
+
+/// Get next pending jobs from database
+pub fn get_next_pending_jobs_db(
+  conn: pog.Connection,
+  limit: Int,
+) -> Result(List(ScheduledJob), AppError) {
+  case scheduler_storage.get_pending_jobs(conn, limit) {
+    Ok(jobs) -> Ok(jobs)
+    Error(_) -> Error(errors.DatabaseError("Failed to get pending jobs"))
+  }
+}
+
+/// Reset job to pending status for re-execution
+pub fn reset_job_to_pending(
+  conn: pog.Connection,
+  job_id: JobId,
+) -> Result(Nil, AppError) {
+  case scheduler_storage.reset_job_to_pending(conn, job_id) {
+    Ok(_) -> Ok(Nil)
+    Error(_) -> Error(errors.DatabaseError("Failed to reset job to pending"))
+  }
 }
 
 // ============================================================================

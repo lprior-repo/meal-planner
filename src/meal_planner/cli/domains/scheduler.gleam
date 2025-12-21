@@ -109,9 +109,62 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
     }
     ["trigger"] -> {
       case id(flags) {
-        Ok(job_id) -> {
-          io.println("Triggering job: " <> job_id)
-          Ok(Nil)
+        Ok(job_id_str) -> {
+          // Create database connection
+          case create_db_connection(config) {
+            Ok(conn) -> {
+              let job_id = id.job_id(job_id_str)
+              // Validate job exists and trigger it
+              case scheduler_storage.get_scheduled_job(conn, job_id) {
+                Ok(job) -> {
+                  io.println(
+                    "Triggering job: " <> format_job_type(job.job_type),
+                  )
+                  // Reset job to pending so it can be executed
+                  case scheduler_storage.reset_job_to_pending(conn: conn, job_id: job_id) {
+                    Ok(_) -> {
+                      // Mark as running and create execution record
+                      case
+                        scheduler_storage.mark_job_running(
+                          conn: conn,
+                          job_id: job_id,
+                          trigger_type: "manual",
+                        )
+                      {
+                        Ok(execution) -> {
+                          io.println(
+                            "Job triggered successfully (execution #"
+                            <> int.to_string(execution.id)
+                            <> ")",
+                          )
+                          io.println(
+                            "Status: " <> format_job_status(execution.status),
+                          )
+                          Ok(Nil)
+                        }
+                        Error(_) -> {
+                          io.println("Error: Failed to start job execution")
+                          Error(Nil)
+                        }
+                      }
+                    }
+                    Error(_) -> {
+                      io.println("Error: Failed to reset job status")
+                      Error(Nil)
+                    }
+                  }
+                }
+                Error(_) -> {
+                  io.println("Error: Job not found: " <> job_id_str)
+                  Error(Nil)
+                }
+              }
+            }
+            Error(err_msg) -> {
+              io.println("Error: Failed to connect to database: " <> err_msg)
+              Error(Nil)
+            }
+          }
         }
         Error(_) -> {
           io.println("Error: --id flag required for trigger command")
@@ -121,9 +174,31 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
     }
     ["executions"] -> {
       case id(flags) {
-        Ok(job_id) -> {
-          io.println("Execution history for job: " <> job_id)
-          Ok(Nil)
+        Ok(job_id_str) -> {
+          // Create database connection
+          case create_db_connection(config) {
+            Ok(conn) -> {
+              let job_id = id.job_id(job_id_str)
+              // Query executions for the job
+              case scheduler_storage.get_job_executions(conn, job_id, 20) {
+                Ok(executions) -> {
+                  io.println(
+                    "\nExecution History for Job: " <> job_id_str <> "\n",
+                  )
+                  io.println(build_executions_table(executions))
+                  Ok(Nil)
+                }
+                Error(_) -> {
+                  io.println("Error: Failed to get execution history")
+                  Error(Nil)
+                }
+              }
+            }
+            Error(err_msg) -> {
+              io.println("Error: Failed to connect to database: " <> err_msg)
+              Error(Nil)
+            }
+          }
         }
         Error(_) -> {
           io.println("Error: --id flag required for executions command")
