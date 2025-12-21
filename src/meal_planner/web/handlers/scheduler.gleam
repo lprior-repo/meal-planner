@@ -48,14 +48,40 @@ pub fn handle_list_jobs(db: pog.Connection) -> wisp.Response {
 }
 
 /// Handle GET /scheduler/executions - List execution history
-pub fn handle_list_executions(_db: pog.Connection) -> wisp.Response {
-  // For now, return empty array since we need to implement a query that lists all executions
-  // TODO: Implement scheduler_storage.list_all_executions()
-  let body =
-    json.object([#("executions", json.array([], fn(_) { json.null() }))])
-    |> json.to_string
+pub fn handle_list_executions(db: pog.Connection) -> wisp.Response {
+  case scheduler_storage.list_all_executions(db, 50) {
+    Ok(executions) -> {
+      let executions_json =
+        json.array(executions, fn(exec) {
+          json.object([
+            #("id", json.int(exec.id)),
+            #("job_id", json.string(id.job_id_to_string(exec.job_id))),
+            #("started_at", json.string(exec.started_at)),
+            #("completed_at", case exec.completed_at {
+              Some(time) -> json.string(time)
+              None -> json.null()
+            }),
+            #("status", encode_job_status(exec.status)),
+            #("attempt_number", json.int(exec.attempt_number)),
+            #("duration_ms", case exec.duration_ms {
+              Some(ms) -> json.int(ms)
+              None -> json.null()
+            }),
+            #("error_message", case exec.error_message {
+              Some(msg) -> json.string(msg)
+              None -> json.null()
+            }),
+          ])
+        })
 
-  wisp.json_response(body, 200)
+      let body =
+        json.object([#("executions", executions_json)])
+        |> json.to_string
+
+      wisp.json_response(body, 200)
+    }
+    Error(_) -> responses.internal_error("Failed to fetch execution history")
+  }
 }
 
 /// Handle POST /scheduler/trigger/{job_id} - Trigger immediate execution
@@ -66,17 +92,29 @@ pub fn handle_trigger_job(db: pog.Connection, job_id: String) -> wisp.Response {
   // Validate that job exists
   case scheduler_storage.get_scheduled_job(db, job_id) {
     Ok(job) -> {
-      // Return 202 Accepted with job_id
-      // TODO: Actually trigger the job execution via scheduler/executor
-      let body =
-        json.object([
-          #("status", json.string("accepted")),
-          #("job_id", json.string(id.job_id_to_string(job.id))),
-          #("message", json.string("Job execution triggered")),
-        ])
-        |> json.to_string
+      // Reset job to pending so it can be triggered
+      case scheduler_storage.reset_job_to_pending(conn: db, job_id: job_id) {
+        Ok(_) -> {
+          // Mark as running and create execution record
+          case scheduler_storage.mark_job_running(conn: db, job_id: job_id, trigger_type: "manual") {
+            Ok(execution) -> {
+              let body =
+                json.object([
+                  #("status", json.string("accepted")),
+                  #("job_id", json.string(id.job_id_to_string(job.id))),
+                  #("execution_id", json.int(execution.id)),
+                  #("message", json.string("Job execution triggered")),
+                ])
+                |> json.to_string
 
-      wisp.json_response(body, 202)
+              wisp.json_response(body, 202)
+            }
+            Error(_) ->
+              responses.internal_error("Failed to start job execution")
+          }
+        }
+        Error(_) -> responses.internal_error("Failed to reset job status")
+      }
     }
     Error(_) -> responses.not_found("Job not found")
   }
