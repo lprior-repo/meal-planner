@@ -25,6 +25,8 @@ import shore/ui
 pub fn start(config: Config) -> Nil {
   let exit = process.new_subject()
 
+  // SAFE: shore.spec initialization only fails if configuration is invalid.
+  // Static config guarantees success.
   let assert Ok(_actor) =
     shore.spec(
       init: fn() { init(config) },

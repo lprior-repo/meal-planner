@@ -102,7 +102,9 @@ fn encode_bytes(bytes: BitArray, index: Int, size: Int, acc: String) -> String {
   case index >= size {
     True -> acc
     False -> {
+      // SAFE: bit_array.slice(bytes, index, 1) is guaranteed to succeed for valid index < size
       let assert Ok(byte) = bit_array.slice(bytes, index, 1)
+      // SAFE: byte is guaranteed to match <<byte_val:int>> pattern for 1-byte BitArray
       let assert <<byte_val:int>> = byte
       let encoded = "%" <> string.uppercase(int_to_hex(byte_val))
       encode_bytes(bytes, index + 1, size, acc <> encoded)

@@ -338,6 +338,7 @@ fn find_best_worst_days(
         })
 
       // Find minimum and maximum scores
+      // SAFE: scored_days guaranteed to have ≥1 element (list.reduce on non-empty list)
       let assert Ok(#(best_day, _best_score)) =
         scored_days
         |> list.reduce(fn(acc, curr) {
@@ -347,6 +348,7 @@ fn find_best_worst_days(
           }
         })
 
+      // SAFE: scored_days guaranteed to have ≥1 element (list.reduce on non-empty list)
       let assert Ok(#(worst_day, _worst_score)) =
         scored_days
         |> list.reduce(fn(acc, curr) {
