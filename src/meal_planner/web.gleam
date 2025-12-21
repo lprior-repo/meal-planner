@@ -28,6 +28,7 @@ pub fn start(app_config: config.Config) -> Nil {
       pool_size: 10,
     )
 
+  // SAFE: Application cannot run without database. Panic on connection failure is intended.
   let assert Ok(db) = postgres.connect(db_config)
   io.println("✓ Database connection established")
 
@@ -48,6 +49,7 @@ pub fn start(app_config: config.Config) -> Nil {
   let secret_key_base = wisp.random_string(64)
 
   // Start the Mist server with Wisp handler
+  // SAFE: Application cannot run without HTTP server. Panic on server startup failure is intended.
   let assert Ok(_) =
     wisp_mist.handler(handler, secret_key_base)
     |> mist.new
