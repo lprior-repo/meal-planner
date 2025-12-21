@@ -16,6 +16,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/env
+import meal_planner/shared/response_encoders
 import meal_planner/tandoor/client
 import wisp
 
@@ -133,31 +134,22 @@ pub fn flatten_authenticated_result(
 }
 
 // =============================================================================
-// Optional Value JSON Encoders
+// Optional Value JSON Encoders (Consolidated)
 // =============================================================================
+// These functions are now consolidated in shared/response_encoders to provide
+// a single source of truth for optional value encoding across all handler modules.
+// Re-exporting them here maintains backward compatibility.
 
-/// Encode an optional String to JSON (null if None)
 pub fn encode_optional_string(opt: Option(String)) -> json.Json {
-  case opt {
-    Some(s) -> json.string(s)
-    None -> json.null()
-  }
+  response_encoders.encode_optional_string(opt)
 }
 
-/// Encode an optional Int to JSON (null if None)
 pub fn encode_optional_int(opt: Option(Int)) -> json.Json {
-  case opt {
-    Some(i) -> json.int(i)
-    None -> json.null()
-  }
+  response_encoders.encode_optional_int(opt)
 }
 
-/// Encode an optional Float to JSON (null if None)
 pub fn encode_optional_float(opt: Option(Float)) -> json.Json {
-  case opt {
-    Some(f) -> json.float(f)
-    None -> json.null()
-  }
+  response_encoders.encode_optional_float(opt)
 }
 
 // =============================================================================
