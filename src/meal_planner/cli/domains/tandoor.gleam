@@ -97,10 +97,13 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
     }
     ["categories"] -> {
       let limit_val = limit(flags) |> result.unwrap(50)
-      io.println(
-        "Fetching recipe categories (limit: " <> int.to_string(limit_val) <> ")",
-      )
-      Ok(Nil)
+      case list_categories_handler(config, limit: limit_val) {
+        Ok(_) -> Ok(Nil)
+        Error(msg) -> {
+          io.println("Error: " <> msg)
+          Error(Nil)
+        }
+      }
     }
     ["update"] -> {
       // Parse recipe ID from flags
@@ -188,14 +191,48 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
         }
       }
     }
+    ["get"] -> {
+      let recipe_id_opt = case id(flags) {
+        Ok(id_val) -> option.Some(id_val)
+        Error(_) -> option.None
+      }
+      case parse_get_args(["get"], id: recipe_id_opt) {
+        Ok(recipe_id) -> {
+          case get_recipe_command(config, recipe_id: recipe_id) {
+            Ok(_) -> Ok(Nil)
+            Error(msg) -> {
+              io.println(msg)
+              Error(Nil)
+            }
+          }
+        }
+        Error(msg) -> {
+          io.println(msg)
+          io.println("Usage: mp tandoor get --id <recipe_id>")
+          Error(Nil)
+        }
+      }
+    }
+    ["list"] -> {
+      let limit_val = limit(flags) |> result.unwrap(50)
+      case sync_recipes_with_limit(config, limit: option.Some(limit_val), offset: option.None) {
+        Ok(_) -> Ok(Nil)
+        Error(msg) -> {
+          io.println("Error: " <> msg)
+          Error(Nil)
+        }
+      }
+    }
     _ -> {
       io.println("Tandoor commands:")
-      io.println("  mp tandoor sync")
-      io.println("  mp tandoor categories --limit 100")
+      io.println("  mp tandoor sync                  - Full Tandoor synchronization")
+      io.println("  mp tandoor list --limit 50       - List recipes from Tandoor")
+      io.println("  mp tandoor get --id <id>         - Get recipe details")
+      io.println("  mp tandoor categories --limit 50 - List recipe categories")
       io.println(
-        "  mp tandoor update --id <recipe_id> [--name <name>] [--servings <n>] ...",
+        "  mp tandoor update --id <id> ...  - Update a recipe",
       )
-      io.println("  mp tandoor delete --id <recipe_id>")
+      io.println("  mp tandoor delete --id <id>      - Delete a recipe")
       Ok(Nil)
     }
   }
@@ -344,11 +381,44 @@ pub fn parse_get_args(
 
 /// Get a recipe by ID
 pub fn get_recipe_command(
-  _config: Config,
-  recipe_id _recipe_id: Int,
-) -> Result(String, String) {
-  // TODO: Implement actual get logic
-  Ok("{}")
+  config: Config,
+  recipe_id recipe_id: Int,
+) -> Result(recipe.RecipeDetail, String) {
+  let tandoor_config =
+    client.bearer_config(config.tandoor.base_url, config.tandoor.api_token)
+
+  case recipe.get_recipe(tandoor_config, recipe_id: recipe_id) {
+    Ok(recipe_detail) -> {
+      io.println("Recipe Details")
+      io.println("==============")
+      io.println("ID: " <> int.to_string(recipe_detail.id))
+      io.println("Name: " <> recipe_detail.name)
+      case recipe_detail.description {
+        option.Some(desc) -> io.println("Description: " <> desc)
+        option.None -> Nil
+      }
+      io.println("Servings: " <> int.to_string(recipe_detail.servings))
+      case recipe_detail.servings_text {
+        option.Some(text) -> io.println("Servings Text: " <> text)
+        option.None -> Nil
+      }
+      case recipe_detail.working_time {
+        option.Some(time) ->
+          io.println("Working Time: " <> int.to_string(time) <> " min")
+        option.None -> Nil
+      }
+      case recipe_detail.waiting_time {
+        option.Some(time) ->
+          io.println("Waiting Time: " <> int.to_string(time) <> " min")
+        option.None -> Nil
+      }
+      Ok(recipe_detail)
+    }
+    Error(e) -> {
+      let error_msg = client.error_to_string(e)
+      Error("Failed to get recipe: " <> error_msg)
+    }
+  }
 }
 
 /// Parse search command args
