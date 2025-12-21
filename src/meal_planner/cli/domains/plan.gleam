@@ -44,7 +44,9 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       let to = result_to_option(to_date(flags))
       let meal_type_filter = result_to_option(meal_type(flags))
 
-      case list_meal_plans(config, from: from, to: to, meal_type: meal_type_filter) {
+      case
+        list_meal_plans(config, from: from, to: to, meal_type: meal_type_filter)
+      {
         Ok(output) -> {
           io.println(output)
           Ok(Nil)
@@ -120,8 +122,12 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       io.println("  mp plan list --to 2025-12-31     - List until date")
       io.println("  mp plan list --meal-type 1       - Filter by meal type")
       io.println("  mp plan view --id <id>           - View meal plan details")
-      io.println("  mp plan types                    - List available meal types")
-      io.println("  mp plan sync                     - Sync with FatSecret diary")
+      io.println(
+        "  mp plan types                    - List available meal types",
+      )
+      io.println(
+        "  mp plan sync                     - Sync with FatSecret diary",
+      )
       Ok(Nil)
     }
   }
@@ -131,7 +137,8 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
 // Helper Functions
 // ============================================================================
 
-fn result_to_option(res: Result(a, b)) -> Option(a) {
+/// Convert Result to Option for CLI flag handling
+pub fn result_to_option(res: Result(a, b)) -> Option(a) {
   case res {
     Ok(val) -> Some(val)
     Error(_) -> None
@@ -151,7 +158,14 @@ fn list_meal_plans(
   let tandoor_config =
     client.bearer_config(config.tandoor.base_url, config.tandoor.api_token)
 
-  case mealplan.list_meal_plans(tandoor_config, from_date: from_date, to_date: to_date, meal_type: meal_type_filter) {
+  case
+    mealplan.list_meal_plans(
+      tandoor_config,
+      from_date: from_date,
+      to_date: to_date,
+      meal_type: meal_type_filter,
+    )
+  {
     Ok(response) -> {
       let header =
         "Meal Plans\n"
@@ -178,7 +192,8 @@ fn list_meal_plans(
   }
 }
 
-fn format_meal_plan_entry(plan: mealplan.MealPlan) -> String {
+/// Format a single meal plan entry for display
+pub fn format_meal_plan_entry(plan: mealplan.MealPlan) -> String {
   let recipe_info = case plan.recipe {
     Some(r) -> r.name
     None -> plan.title
@@ -260,12 +275,7 @@ fn view_meal_plan(
 
       let note_info = case plan.note {
         "" -> ""
-        note ->
-          "\nNote\n"
-          <> string.repeat("-", 40)
-          <> "\n"
-          <> note
-          <> "\n"
+        note -> "\nNote\n" <> string.repeat("-", 40) <> "\n" <> note <> "\n"
       }
 
       let shopping_info =
@@ -278,7 +288,14 @@ fn view_meal_plan(
 
       let footer = "\n" <> string.repeat("=", 60)
 
-      Ok(header <> basic_info <> recipe_info <> note_info <> shopping_info <> footer)
+      Ok(
+        header
+        <> basic_info
+        <> recipe_info
+        <> note_info
+        <> shopping_info
+        <> footer,
+      )
     }
     Error(err) -> {
       Error("Failed to get meal plan: " <> client.error_to_string(err))
@@ -296,10 +313,7 @@ fn list_meal_types(config: Config) -> Result(String, String) {
 
   case mealplan.list_meal_types(tandoor_config) {
     Ok(meal_types) -> {
-      let header =
-        "Available Meal Types\n"
-        <> string.repeat("=", 40)
-        <> "\n\n"
+      let header = "Available Meal Types\n" <> string.repeat("=", 40) <> "\n\n"
 
       let body = case meal_types {
         [] -> "No meal types configured.\n"
