@@ -327,3 +327,229 @@ pub fn disable_job(
     Ok(_) -> Ok(Nil)
   }
 }
+
+// ============================================================================
+// Job Status Updates
+// ============================================================================
+
+/// Update job status to running and create execution record
+pub fn mark_job_running(
+  conn conn: pog.Connection,
+  job_id job_id: JobId,
+  trigger_type trigger_type: String,
+) -> Result(JobExecution, StorageError) {
+  // First update the job status
+  let update_sql =
+    "UPDATE scheduled_jobs
+     SET status = 'running', started_at = NOW(), updated_at = NOW()
+     WHERE id = $1"
+
+  case
+    pog.query(update_sql)
+    |> pog.parameter(pog.text(id.job_id_to_string(job_id)))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+    Ok(_) -> {
+      // Create execution record
+      let insert_sql =
+        "INSERT INTO job_executions (job_id, started_at, status, attempt_number, trigger_type)
+         VALUES ($1, NOW(), 'running',
+           COALESCE((SELECT MAX(attempt_number) + 1 FROM job_executions WHERE job_id = $1), 1),
+           $2)
+         RETURNING id, job_id, started_at::text, completed_at::text, status,
+                   error_message, attempt_number, duration_ms, output, trigger_type,
+                   parent_job_id"
+
+      let decoder = job_execution_decoder()
+
+      case
+        pog.query(insert_sql)
+        |> pog.parameter(pog.text(id.job_id_to_string(job_id)))
+        |> pog.parameter(pog.text(trigger_type))
+        |> pog.returning(decoder)
+        |> pog.execute(conn)
+      {
+        Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+        Ok(pog.Returned(_, [execution])) -> Ok(execution)
+        Ok(pog.Returned(_, _)) ->
+          Error(DatabaseError("Failed to create execution record"))
+      }
+    }
+  }
+}
+
+/// Mark job as completed with optional output
+pub fn mark_job_completed(
+  conn conn: pog.Connection,
+  job_id job_id: JobId,
+  execution_id execution_id: Int,
+  output_json output_json: option.Option(String),
+) -> Result(Nil, StorageError) {
+  // Update job status
+  let job_sql =
+    "UPDATE scheduled_jobs
+     SET status = 'completed', completed_at = NOW(), updated_at = NOW()
+     WHERE id = $1"
+
+  case
+    pog.query(job_sql)
+    |> pog.parameter(pog.text(id.job_id_to_string(job_id)))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+    Ok(_) -> {
+      // Update execution record with completion and duration
+      let exec_sql =
+        "UPDATE job_executions
+         SET status = 'completed',
+             completed_at = NOW(),
+             duration_ms = EXTRACT(EPOCH FROM (NOW() - started_at)) * 1000,
+             output = $2::jsonb
+         WHERE id = $1"
+
+      case
+        pog.query(exec_sql)
+        |> pog.parameter(pog.int(execution_id))
+        |> pog.parameter(pog.nullable(pog.text, output_json))
+        |> pog.execute(conn)
+      {
+        Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+        Ok(_) -> Ok(Nil)
+      }
+    }
+  }
+}
+
+/// Mark job as failed with error message
+pub fn mark_job_failed(
+  conn conn: pog.Connection,
+  job_id job_id: JobId,
+  execution_id execution_id: Int,
+  error_message error_message: String,
+) -> Result(Nil, StorageError) {
+  // Update job status and increment error count
+  let job_sql =
+    "UPDATE scheduled_jobs
+     SET status = 'failed',
+         last_error = $2,
+         error_count = error_count + 1,
+         updated_at = NOW()
+     WHERE id = $1"
+
+  case
+    pog.query(job_sql)
+    |> pog.parameter(pog.text(id.job_id_to_string(job_id)))
+    |> pog.parameter(pog.text(error_message))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+    Ok(_) -> {
+      // Update execution record
+      let exec_sql =
+        "UPDATE job_executions
+         SET status = 'failed',
+             completed_at = NOW(),
+             duration_ms = EXTRACT(EPOCH FROM (NOW() - started_at)) * 1000,
+             error_message = $2
+         WHERE id = $1"
+
+      case
+        pog.query(exec_sql)
+        |> pog.parameter(pog.int(execution_id))
+        |> pog.parameter(pog.text(error_message))
+        |> pog.execute(conn)
+      {
+        Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+        Ok(_) -> Ok(Nil)
+      }
+    }
+  }
+}
+
+/// Get next pending jobs ordered by priority and scheduled time
+pub fn get_pending_jobs(
+  conn: pog.Connection,
+  limit: Int,
+) -> Result(List(ScheduledJob), StorageError) {
+  let sql =
+    "SELECT id, job_type, frequency_type, frequency_config, priority, user_id,
+            parameters, status, retry_max_attempts, retry_backoff_seconds,
+            retry_on_failure, error_count, last_error, scheduled_for::text,
+            started_at::text, completed_at::text, enabled, created_at::text,
+            updated_at::text, created_by
+     FROM scheduled_jobs
+     WHERE status = 'pending'
+       AND enabled = true
+       AND (scheduled_for IS NULL OR scheduled_for <= NOW())
+     ORDER BY
+       CASE priority
+         WHEN 'critical' THEN 4
+         WHEN 'high' THEN 3
+         WHEN 'medium' THEN 2
+         WHEN 'low' THEN 1
+       END DESC,
+       scheduled_for ASC NULLS LAST
+     LIMIT $1"
+
+  let decoder = scheduled_job_decoder()
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.int(limit))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
+  }
+}
+
+/// List all job executions (for web handler)
+pub fn list_all_executions(
+  conn: pog.Connection,
+  limit: Int,
+) -> Result(List(JobExecution), StorageError) {
+  let sql =
+    "SELECT id, job_id, started_at::text, completed_at::text, status,
+            error_message, attempt_number, duration_ms, output, trigger_type,
+            parent_job_id
+     FROM job_executions
+     ORDER BY started_at DESC
+     LIMIT $1"
+
+  let decoder = job_execution_decoder()
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.int(limit))
+    |> pog.returning(decoder)
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+    Ok(pog.Returned(_, rows)) -> Ok(rows)
+  }
+}
+
+/// Reset job to pending status (for retry or manual re-trigger)
+pub fn reset_job_to_pending(
+  conn conn: pog.Connection,
+  job_id job_id: JobId,
+) -> Result(Nil, StorageError) {
+  let sql =
+    "UPDATE scheduled_jobs
+     SET status = 'pending',
+         started_at = NULL,
+         completed_at = NULL,
+         updated_at = NOW()
+     WHERE id = $1"
+
+  case
+    pog.query(sql)
+    |> pog.parameter(pog.text(id.job_id_to_string(job_id)))
+    |> pog.execute(conn)
+  {
+    Error(e) -> Error(DatabaseError(utils.format_pog_error(e)))
+    Ok(_) -> Ok(Nil)
+  }
+}
