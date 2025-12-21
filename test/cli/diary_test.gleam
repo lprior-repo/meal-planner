@@ -39,7 +39,7 @@ fn create_sample_entry(
     food_id: "12345",
     serving_id: "1",
     meal: Breakfast,
-    date_int: 19700,
+    date_int: 19_700,
     calories: calories,
     protein: protein,
     carbohydrates: carbs,
@@ -53,7 +53,8 @@ fn create_sample_entry(
 
 /// Test: format_food_entry_row includes ID and name
 pub fn format_food_entry_row_includes_id_and_name_test() {
-  let entry = create_sample_entry("entry-123", "Chicken Salad", 350.0, 40.0, 10.0, 15.0)
+  let entry =
+    create_sample_entry("entry-123", "Chicken Salad", 350.0, 40.0, 10.0, 15.0)
   let output = diary.format_food_entry_row(entry)
 
   string.contains(output, "entry-123")
@@ -119,7 +120,8 @@ pub fn calculate_day_nutrition_empty_test() {
 
 /// Test: calculate_day_nutrition sums single entry
 pub fn calculate_day_nutrition_single_entry_test() {
-  let entry = create_sample_entry("entry-1", "Breakfast", 400.0, 20.0, 50.0, 15.0)
+  let entry =
+    create_sample_entry("entry-1", "Breakfast", 400.0, 20.0, 50.0, 15.0)
   let nutrition = diary.calculate_day_nutrition([entry])
 
   nutrition.calories
@@ -137,12 +139,12 @@ pub fn calculate_day_nutrition_single_entry_test() {
 
 /// Test: calculate_day_nutrition sums multiple entries
 pub fn calculate_day_nutrition_multiple_entries_test() {
-  let breakfast = create_sample_entry("entry-1", "Breakfast", 400.0, 20.0, 50.0, 15.0)
+  let breakfast =
+    create_sample_entry("entry-1", "Breakfast", 400.0, 20.0, 50.0, 15.0)
   let lunch = create_sample_entry("entry-2", "Lunch", 650.0, 35.0, 70.0, 25.0)
   let snack = create_sample_entry("entry-3", "Snack", 150.0, 5.0, 20.0, 5.0)
 
-  let nutrition =
-    diary.calculate_day_nutrition([breakfast, lunch, snack])
+  let nutrition = diary.calculate_day_nutrition([breakfast, lunch, snack])
 
   nutrition.calories
   |> should.equal(1200.0)
@@ -163,12 +165,13 @@ pub fn calculate_day_nutrition_multiple_entries_test() {
 
 /// Test: format_nutrition_summary includes all macros
 pub fn format_nutrition_summary_includes_all_macros_test() {
-  let nutrition = diary.DayNutrition(
-    calories: 1200.0,
-    protein: 60.0,
-    carbohydrates: 140.0,
-    fat: 45.0,
-  )
+  let nutrition =
+    diary.DayNutrition(
+      calories: 1200.0,
+      protein: 60.0,
+      carbohydrates: 140.0,
+      fat: 45.0,
+    )
   let output = diary.format_nutrition_summary(nutrition)
 
   string.contains(output, "DailyTotal")
@@ -189,12 +192,13 @@ pub fn format_nutrition_summary_includes_all_macros_test() {
 
 /// Test: format_nutrition_summary formats floats correctly
 pub fn format_nutrition_summary_formats_floats_test() {
-  let nutrition = diary.DayNutrition(
-    calories: 1234.5,
-    protein: 56.7,
-    carbohydrates: 142.3,
-    fat: 45.8,
-  )
+  let nutrition =
+    diary.DayNutrition(
+      calories: 1234.5,
+      protein: 56.7,
+      carbohydrates: 142.3,
+      fat: 45.8,
+    )
   let output = diary.format_nutrition_summary(nutrition)
 
   // Should have decimal values
