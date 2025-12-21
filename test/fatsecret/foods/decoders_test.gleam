@@ -11,15 +11,21 @@ import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/fatsecret/foods/decoders
 import meal_planner/fatsecret/foods/types
-import fatsecret/support/fixtures
+import simplifile
+
+/// Load a scraped fixture from the test fixtures directory
+fn load_fixture(name: String) -> String {
+  let filepath = "test/fixtures/fatsecret/scraped/" <> name <> ".json"
+  let assert Ok(content) = simplifile.read(filepath)
+  content
+}
 
 // ============================================================================
 // Food Decoder Tests (food.get.v5)
 // ============================================================================
 
 pub fn decode_generic_food_with_multiple_servings_test() {
-  let json_str = fixtures.load_scraped_fixture("food_get_generic")
-  let assert Ok(json_content) = json_str
+  let json_content = load_fixture("food_get_generic")
 
   let result =
     json.parse(json_content, decoders.food_decoder())
@@ -46,8 +52,7 @@ pub fn decode_generic_food_with_multiple_servings_test() {
 }
 
 pub fn decode_branded_food_test() {
-  let json_str = fixtures.load_scraped_fixture("food_get_branded")
-  let assert Ok(json_content) = json_str
+  let json_content = load_fixture("food_get_branded")
 
   let result =
     json.parse(json_content, decoders.food_decoder())
@@ -59,8 +64,8 @@ pub fn decode_branded_food_test() {
 }
 
 pub fn decode_food_response_wrapper_test() {
-  // Using the inline fixture for the wrapper test
-  let json_str = fixtures.food_response()
+  // Using inline fixture for the wrapper test
+  let json_str = food_response_fixture()
 
   let result =
     json.parse(json_str, decoders.food_decoder())
@@ -75,8 +80,7 @@ pub fn decode_food_response_wrapper_test() {
 // ============================================================================
 
 pub fn decode_food_search_multiple_results_test() {
-  let json_str = fixtures.load_scraped_fixture("food_search_multiple")
-  let assert Ok(json_content) = json_str
+  let json_content = load_fixture("food_search_multiple")
 
   let result =
     json.parse(json_content, decoders.food_search_response_decoder())
@@ -105,8 +109,7 @@ pub fn decode_food_search_multiple_results_test() {
 }
 
 pub fn decode_food_search_single_result_test() {
-  let json_str = fixtures.load_scraped_fixture("food_search_single")
-  let assert Ok(json_content) = json_str
+  let json_content = load_fixture("food_search_single")
 
   let result =
     json.parse(json_content, decoders.food_search_response_decoder())
@@ -118,8 +121,7 @@ pub fn decode_food_search_single_result_test() {
 }
 
 pub fn decode_food_search_empty_results_test() {
-  let json_str = fixtures.load_scraped_fixture("food_search_empty")
-  let assert Ok(json_content) = json_str
+  let json_content = load_fixture("food_search_empty")
 
   let result =
     json.parse(json_content, decoders.food_search_response_decoder())
@@ -133,7 +135,7 @@ pub fn decode_search_inline_fixture_test() {
   // Using the inline multi-result fixture
   let result =
     json.parse(
-      fixtures.food_search_response(),
+      food_search_response_fixture(),
       decoders.food_search_response_decoder(),
     )
     |> should.be_ok
@@ -147,8 +149,7 @@ pub fn decode_search_inline_fixture_test() {
 // ============================================================================
 
 pub fn decode_autocomplete_multiple_suggestions_test() {
-  let json_str = fixtures.load_scraped_fixture("autocomplete_multiple")
-  let assert Ok(json_content) = json_str
+  let json_content = load_fixture("autocomplete_multiple")
 
   let result =
     json.parse(json_content, decoders.food_autocomplete_response_decoder())
@@ -164,8 +165,7 @@ pub fn decode_autocomplete_multiple_suggestions_test() {
 }
 
 pub fn decode_autocomplete_single_suggestion_test() {
-  let json_str = fixtures.load_scraped_fixture("autocomplete_single")
-  let assert Ok(json_content) = json_str
+  let json_content = load_fixture("autocomplete_single")
 
   let result =
     json.parse(json_content, decoders.food_autocomplete_response_decoder())
@@ -176,8 +176,7 @@ pub fn decode_autocomplete_single_suggestion_test() {
 }
 
 pub fn decode_autocomplete_empty_test() {
-  let json_str = fixtures.load_scraped_fixture("autocomplete_empty")
-  let assert Ok(json_content) = json_str
+  let json_content = load_fixture("autocomplete_empty")
 
   let result =
     json.parse(json_content, decoders.food_autocomplete_response_decoder())
@@ -191,8 +190,7 @@ pub fn decode_autocomplete_empty_test() {
 // ============================================================================
 
 pub fn decode_barcode_lookup_success_test() {
-  let json_str = fixtures.load_scraped_fixture("barcode_lookup_success")
-  let assert Ok(json_content) = json_str
+  let json_content = load_fixture("barcode_lookup_success")
 
   let result =
     json.parse(json_content, decoders.barcode_lookup_decoder())
@@ -243,4 +241,72 @@ pub fn decode_optional_nutrition_fields_test() {
   result.saturated_fat |> should.equal(None)
   result.fiber |> should.equal(None)
   result.vitamin_a |> should.equal(None)
+}
+
+// ============================================================================
+// Inline Fixtures
+// ============================================================================
+
+fn food_response_fixture() -> String {
+  "{
+    \"food\": {
+      \"food_id\": \"33691\",
+      \"food_name\": \"Apple\",
+      \"food_type\": \"Generic\",
+      \"food_url\": \"https://www.fatsecret.com/calories-nutrition/generic/apple\",
+      \"servings\": {
+        \"serving\": {
+          \"serving_id\": \"0\",
+          \"serving_description\": \"1 medium (3\\\" dia)\",
+          \"serving_url\": \"https://www.fatsecret.com/calories-nutrition/generic/apple\",
+          \"metric_serving_amount\": \"182.000\",
+          \"metric_serving_unit\": \"g\",
+          \"number_of_units\": \"1.000\",
+          \"measurement_description\": \"medium (3\\\" dia)\",
+          \"calories\": \"95\",
+          \"carbohydrate\": \"25.13\",
+          \"protein\": \"0.47\",
+          \"fat\": \"0.31\",
+          \"saturated_fat\": \"0.051\",
+          \"fiber\": \"4.4\",
+          \"sugar\": \"18.91\",
+          \"is_default\": \"1\"
+        }
+      }
+    }
+  }"
+}
+
+fn food_search_response_fixture() -> String {
+  "{
+    \"foods\": {
+      \"food\": [
+        {
+          \"food_id\": \"33691\",
+          \"food_name\": \"Apple\",
+          \"food_type\": \"Generic\",
+          \"food_description\": \"Per 1 medium - Calories: 95kcal\",
+          \"food_url\": \"https://www.fatsecret.com/calories-nutrition/generic/apple\"
+        },
+        {
+          \"food_id\": \"41185\",
+          \"food_name\": \"Apple Juice\",
+          \"food_type\": \"Generic\",
+          \"food_description\": \"Per 1 cup - Calories: 114kcal\",
+          \"food_url\": \"https://www.fatsecret.com/calories-nutrition/generic/apple-juice\"
+        },
+        {
+          \"food_id\": \"4427908\",
+          \"food_name\": \"Apple Chips\",
+          \"brand_name\": \"Great Value\",
+          \"food_type\": \"Brand\",
+          \"food_description\": \"Per 1 oz - Calories: 130kcal\",
+          \"food_url\": \"https://www.fatsecret.com/calories-nutrition/great-value/apple-chips\"
+        }
+      ],
+      \"max_results\": \"50\",
+      \"total_results\": \"3\",
+      \"page_number\": \"0\"
+    }
+  }"
 }
