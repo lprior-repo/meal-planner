@@ -23,6 +23,12 @@ pub fn update(
       #(updated, [])
     }
 
+    types.SelectCommand(command) -> {
+      let screen = command_to_screen(command)
+      let updated = model.navigate_to(model, screen)
+      #(updated, [])
+    }
+
     types.GoBack -> {
       let updated = model.go_back(model)
       #(updated, [])
@@ -110,5 +116,42 @@ pub fn update(
       // No operation
       #(model, [])
     }
+  }
+}
+
+/// Map domain commands to their target screens
+fn command_to_screen(command: types.DomainCommand) -> types.Screen {
+  case command {
+    // FatSecret commands
+    types.FatSecretFoodsSearch -> types.FoodSearch
+    types.FatSecretFoodsDetail -> types.FoodSearch
+    types.FatSecretDiaryGet -> types.DiaryView
+    types.FatSecretExerciseList -> types.ExerciseView
+    types.FatSecretFavoritesList -> types.FavoritesView
+    types.FatSecretRecipesSearch -> types.RecipeView
+    types.FatSecretProfileGet -> types.ProfileView
+    types.FatSecretWeightLog -> types.WeightView
+    // Tandoor commands
+    types.TandoorSync -> types.TandoorRecipes
+    types.TandoorCategories -> types.TandoorRecipes
+    types.TandoorUpdate -> types.TandoorRecipes
+    types.TandoorDelete -> types.TandoorRecipes
+    // Database commands
+    types.DatabaseFoodsSearch -> types.DatabaseFoods
+    types.DatabaseFoodsDetail -> types.DatabaseFoods
+    types.DatabaseSync -> types.DatabaseFoods
+    // Meal Planning commands
+    types.MealPlanGenerate -> types.MealPlanGenerator
+    types.MealPlanShow -> types.MealPlanGenerator
+    types.MealPlanRegenerate -> types.MealPlanGenerator
+    // Nutrition commands
+    types.NutritionGoalsShow -> types.NutritionAnalysis
+    types.NutritionGoalsSet -> types.NutritionAnalysis
+    types.NutritionAnalyze -> types.NutritionAnalysis
+    // Scheduler commands
+    types.SchedulerList -> types.SchedulerView
+    types.SchedulerEnable -> types.SchedulerView
+    types.SchedulerDisable -> types.SchedulerView
+    types.SchedulerRun -> types.SchedulerView
   }
 }

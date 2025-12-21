@@ -70,10 +70,46 @@ pub type Results {
   ErrorResult(String)
 }
 
+/// Domain commands available in each domain menu
+pub type DomainCommand {
+  // FatSecret commands
+  FatSecretFoodsSearch
+  FatSecretFoodsDetail
+  FatSecretDiaryGet
+  FatSecretExerciseList
+  FatSecretFavoritesList
+  FatSecretRecipesSearch
+  FatSecretProfileGet
+  FatSecretWeightLog
+  // Tandoor commands
+  TandoorSync
+  TandoorCategories
+  TandoorUpdate
+  TandoorDelete
+  // Database commands
+  DatabaseFoodsSearch
+  DatabaseFoodsDetail
+  DatabaseSync
+  // Meal Planning commands
+  MealPlanGenerate
+  MealPlanShow
+  MealPlanRegenerate
+  // Nutrition commands
+  NutritionGoalsShow
+  NutritionGoalsSet
+  NutritionAnalyze
+  // Scheduler commands
+  SchedulerList
+  SchedulerEnable
+  SchedulerDisable
+  SchedulerRun
+}
+
 pub type Msg {
   // Navigation
   SelectDomain(Domain)
   SelectScreen(Screen)
+  SelectCommand(DomainCommand)
   GoBack
   Quit
   Refresh

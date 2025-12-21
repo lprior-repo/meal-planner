@@ -78,6 +78,10 @@ pub fn update(
       #(updated, [])
     }
 
+    types.SelectCommand(command) -> {
+      handle_command_selection(model, command)
+    }
+
     types.GoBack -> {
       let updated = model.go_back(model)
       #(updated, [])
@@ -153,6 +157,53 @@ pub fn update(
   }
 }
 
+/// Handle command selection and navigate to appropriate screen
+fn handle_command_selection(
+  model: types.Model,
+  command: types.DomainCommand,
+) -> #(types.Model, List(fn() -> types.Msg)) {
+  let screen = command_to_screen(command)
+  let updated = model.navigate_to(model, screen)
+  #(updated, [])
+}
+
+/// Map domain commands to their target screens
+fn command_to_screen(command: types.DomainCommand) -> types.Screen {
+  case command {
+    // FatSecret commands
+    types.FatSecretFoodsSearch -> types.FoodSearch
+    types.FatSecretFoodsDetail -> types.FoodSearch
+    types.FatSecretDiaryGet -> types.DiaryView
+    types.FatSecretExerciseList -> types.ExerciseView
+    types.FatSecretFavoritesList -> types.FavoritesView
+    types.FatSecretRecipesSearch -> types.RecipeView
+    types.FatSecretProfileGet -> types.ProfileView
+    types.FatSecretWeightLog -> types.WeightView
+    // Tandoor commands
+    types.TandoorSync -> types.TandoorRecipes
+    types.TandoorCategories -> types.TandoorRecipes
+    types.TandoorUpdate -> types.TandoorRecipes
+    types.TandoorDelete -> types.TandoorRecipes
+    // Database commands
+    types.DatabaseFoodsSearch -> types.DatabaseFoods
+    types.DatabaseFoodsDetail -> types.DatabaseFoods
+    types.DatabaseSync -> types.DatabaseFoods
+    // Meal Planning commands
+    types.MealPlanGenerate -> types.MealPlanGenerator
+    types.MealPlanShow -> types.MealPlanGenerator
+    types.MealPlanRegenerate -> types.MealPlanGenerator
+    // Nutrition commands
+    types.NutritionGoalsShow -> types.NutritionAnalysis
+    types.NutritionGoalsSet -> types.NutritionAnalysis
+    types.NutritionAnalyze -> types.NutritionAnalysis
+    // Scheduler commands
+    types.SchedulerList -> types.SchedulerView
+    types.SchedulerEnable -> types.SchedulerView
+    types.SchedulerDisable -> types.SchedulerView
+    types.SchedulerRun -> types.SchedulerView
+  }
+}
+
 /// Handle keyboard input for menu navigation
 pub fn handle_key_press(
   model: types.Model,
@@ -160,7 +211,7 @@ pub fn handle_key_press(
 ) -> #(types.Model, List(fn() -> types.Msg)) {
   case model.current_screen {
     types.MainMenu -> handle_main_menu_key(model, key)
-    types.DomainMenu(_) -> handle_domain_menu_key(model, key)
+    types.DomainMenu(domain) -> handle_domain_menu_key(model, domain, key)
     _ -> {
       case key {
         "\u{001B}" -> {
@@ -210,6 +261,7 @@ fn handle_main_menu_key(
 /// Handle key press on domain menu
 fn handle_domain_menu_key(
   model: types.Model,
+  domain: types.Domain,
   key: String,
 ) -> #(types.Model, List(fn() -> types.Msg)) {
   case key {
@@ -217,7 +269,71 @@ fn handle_domain_menu_key(
       let updated = model.go_back(model)
       #(updated, [])
     }
-    _ -> #(model, [])
+    // Number key navigation for domain commands
+    _ -> {
+      case get_command_for_key(domain, key) {
+        Some(command) -> handle_command_selection(model, command)
+        None -> #(model, [])
+      }
+    }
+  }
+}
+
+/// Get the domain command for a given key press
+fn get_command_for_key(
+  domain: types.Domain,
+  key: String,
+) -> option.Option(types.DomainCommand) {
+  case domain {
+    types.FatSecretDomain ->
+      case key {
+        "1" -> Some(types.FatSecretFoodsSearch)
+        "2" -> Some(types.FatSecretFoodsDetail)
+        "3" -> Some(types.FatSecretDiaryGet)
+        "4" -> Some(types.FatSecretExerciseList)
+        "5" -> Some(types.FatSecretFavoritesList)
+        "6" -> Some(types.FatSecretRecipesSearch)
+        "7" -> Some(types.FatSecretProfileGet)
+        "8" -> Some(types.FatSecretWeightLog)
+        _ -> None
+      }
+    types.TandoorDomain ->
+      case key {
+        "1" -> Some(types.TandoorSync)
+        "2" -> Some(types.TandoorCategories)
+        "3" -> Some(types.TandoorUpdate)
+        "4" -> Some(types.TandoorDelete)
+        _ -> None
+      }
+    types.DatabaseDomain ->
+      case key {
+        "1" -> Some(types.DatabaseFoodsSearch)
+        "2" -> Some(types.DatabaseFoodsDetail)
+        "3" -> Some(types.DatabaseSync)
+        _ -> None
+      }
+    types.MealPlanningDomain ->
+      case key {
+        "1" -> Some(types.MealPlanGenerate)
+        "2" -> Some(types.MealPlanShow)
+        "3" -> Some(types.MealPlanRegenerate)
+        _ -> None
+      }
+    types.NutritionDomain ->
+      case key {
+        "1" -> Some(types.NutritionGoalsShow)
+        "2" -> Some(types.NutritionGoalsSet)
+        "3" -> Some(types.NutritionAnalyze)
+        _ -> None
+      }
+    types.SchedulerDomain ->
+      case key {
+        "1" -> Some(types.SchedulerList)
+        "2" -> Some(types.SchedulerEnable)
+        "3" -> Some(types.SchedulerDisable)
+        "4" -> Some(types.SchedulerRun)
+        _ -> None
+      }
   }
 }
 

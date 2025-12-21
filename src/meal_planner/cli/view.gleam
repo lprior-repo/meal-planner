@@ -52,15 +52,141 @@ Controls:
 }
 
 fn view_domain_menu(_model: types.Model, domain: types.Domain) -> String {
-  let domain_name = case domain {
-    types.FatSecretDomain -> "FatSecret API"
-    types.TandoorDomain -> "Tandoor Recipes"
-    types.DatabaseDomain -> "Database"
-    types.MealPlanningDomain -> "Meal Planning"
-    types.NutritionDomain -> "Nutrition"
-    types.SchedulerDomain -> "Scheduler"
+  case domain {
+    types.FatSecretDomain -> view_fatsecret_menu()
+    types.TandoorDomain -> view_tandoor_menu()
+    types.DatabaseDomain -> view_database_menu()
+    types.MealPlanningDomain -> view_meal_planning_menu()
+    types.NutritionDomain -> view_nutrition_menu()
+    types.SchedulerDomain -> view_scheduler_menu()
   }
-  "Domain: " <> domain_name <> " (submenu not yet implemented)"
+}
+
+fn view_fatsecret_menu() -> String {
+  "═══════════════════════════════════════════════════════════
+🔥 FatSecret API
+═══════════════════════════════════════════════════════════
+
+Available commands:
+
+  1. 🔍 Foods Search      - Search for foods by name
+  2. 📋 Food Details      - Get detailed food info
+  3. 📓 Diary Get         - View diary entries for a date
+  4. 🏃 Exercise List     - List exercise entries
+  5. ⭐ Favorites List    - View favorite foods
+  6. 🍳 Recipes Search    - Search FatSecret recipes
+  7. 👤 Profile Get       - Get user profile info
+  8. ⚖️  Weight Log        - Log a weight entry
+
+Controls:
+
+  [1-8]     Select command
+  [ESC]     Go back
+  [q]       Quit
+
+═══════════════════════════════════════════════════════════"
+}
+
+fn view_tandoor_menu() -> String {
+  "═══════════════════════════════════════════════════════════
+👨‍🍳 Tandoor Recipes
+═══════════════════════════════════════════════════════════
+
+Available commands:
+
+  1. 🔄 Sync             - Sync recipes from Tandoor
+  2. 📂 Categories       - List recipe categories
+  3. ✏️  Update           - Update recipe metadata
+  4. 🗑️  Delete           - Delete a recipe
+
+Controls:
+
+  [1-4]     Select command
+  [ESC]     Go back
+  [q]       Quit
+
+═══════════════════════════════════════════════════════════"
+}
+
+fn view_database_menu() -> String {
+  "═══════════════════════════════════════════════════════════
+🗂️  Database
+═══════════════════════════════════════════════════════════
+
+Available commands:
+
+  1. 🔍 Foods Search      - Search database foods
+  2. 📋 Food Details      - Get food details from DB
+  3. 🔄 Sync USDA         - Sync USDA food data
+
+Controls:
+
+  [1-3]     Select command
+  [ESC]     Go back
+  [q]       Quit
+
+═══════════════════════════════════════════════════════════"
+}
+
+fn view_meal_planning_menu() -> String {
+  "═══════════════════════════════════════════════════════════
+📋 Meal Planning
+═══════════════════════════════════════════════════════════
+
+Available commands:
+
+  1. ✨ Generate          - Generate a new meal plan
+  2. 📖 Show              - Display current meal plan
+  3. 🔄 Regenerate        - Regenerate a specific day
+
+Controls:
+
+  [1-3]     Select command
+  [ESC]     Go back
+  [q]       Quit
+
+═══════════════════════════════════════════════════════════"
+}
+
+fn view_nutrition_menu() -> String {
+  "═══════════════════════════════════════════════════════════
+📊 Nutrition Analysis
+═══════════════════════════════════════════════════════════
+
+Available commands:
+
+  1. 🎯 Goals Show        - Display nutrition goals
+  2. ⚙️  Goals Set         - Set nutrition targets
+  3. 📈 Analyze           - Analyze meal nutrition
+
+Controls:
+
+  [1-3]     Select command
+  [ESC]     Go back
+  [q]       Quit
+
+═══════════════════════════════════════════════════════════"
+}
+
+fn view_scheduler_menu() -> String {
+  "═══════════════════════════════════════════════════════════
+⏰ Scheduler
+═══════════════════════════════════════════════════════════
+
+Available commands:
+
+  1. 📋 List              - List scheduled tasks
+  2. ✅ Enable            - Enable a task
+  3. ⏸️  Disable           - Disable a task
+  4. ▶️  Run               - Run task immediately
+
+Controls:
+
+  [1-4]     Select command
+  [ESC]     Go back
+  [q]       Quit
+
+═══════════════════════════════════════════════════════════"
 }
 
 fn view_food_search(model: types.Model) -> String {
