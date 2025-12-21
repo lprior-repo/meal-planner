@@ -7,9 +7,12 @@
 
 import gleam/int
 import gleam/list
+import gleam/option.{None}
 import gleam/string
 import gleeunit
 import gleeunit/should
+import meal_planner/cli/domains/plan
+import meal_planner/tandoor/mealplan.{type MealPlan, MealPlan}
 
 pub fn main() {
   gleeunit.main()
@@ -19,53 +22,43 @@ pub fn main() {
 // Test Fixtures
 // ============================================================================
 
-pub type MealPlan {
-  MealPlan(id: Int, date: String, meal_type: String, recipes: List(String))
-}
-
-fn create_sample_meal_plan(
-  id: Int,
-  date: String,
-  meal_type: String,
-  recipe_count: Int,
-) -> MealPlan {
-  let recipes =
-    list.range(0, recipe_count)
-    |> list.map(fn(i) { "Recipe " <> int.to_string(i) })
-
-  MealPlan(id: id, date: date, meal_type: meal_type, recipes: recipes)
+/// Create a sample meal plan for testing format functions
+fn create_sample_meal_plan(id: Int, date: String, title: String) -> MealPlan {
+  MealPlan(id: id, date: date, title: title, recipe: None, servings: 1.0)
 }
 
 // ============================================================================
 // Meal Plan Listing Tests
 // ============================================================================
 
-/// Test: List meal plans shows correct count
-pub fn list_meal_plans_shows_count_test() {
-  let plans = [
-    create_sample_meal_plan(1, "2025-12-20", "Breakfast", 1),
-    create_sample_meal_plan(2, "2025-12-20", "Lunch", 2),
-    create_sample_meal_plan(3, "2025-12-20", "Dinner", 1),
-  ]
+/// Test: Format meal plan includes ID and date
+pub fn format_meal_plan_includes_id_and_date_test() {
+  let plan = create_sample_meal_plan(42, "2025-12-20", "Lunch")
+  let output = plan.format_meal_plan_entry(plan)
 
-  list.length(plans)
-  |> should.equal(3)
+  string.contains(output, "42")
+  |> should.be_true()
+
+  string.contains(output, "2025-12-20")
+  |> should.be_true()
 }
 
-/// Test: Filter plans by date range
-pub fn filter_plans_by_date_test() {
-  let plans = [
-    create_sample_meal_plan(1, "2025-12-19", "Breakfast", 1),
-    create_sample_meal_plan(2, "2025-12-20", "Breakfast", 1),
-    create_sample_meal_plan(3, "2025-12-21", "Breakfast", 1),
-  ]
+/// Test: result_to_option converts Ok to Some
+pub fn result_to_option_ok_test() {
+  let result: Result(String, Nil) = Ok("success")
+  let option = plan.result_to_option(result)
 
-  let filtered =
-    plans
-    |> list.filter(fn(p) { p.date >= "2025-12-20" && p.date <= "2025-12-21" })
+  option
+  |> should.equal(option.Some("success"))
+}
 
-  list.length(filtered)
-  |> should.equal(2)
+/// Test: result_to_option converts Error to None
+pub fn result_to_option_error_test() {
+  let result: Result(String, String) = Error("failed")
+  let option = plan.result_to_option(result)
+
+  option
+  |> should.equal(option.None)
 }
 
 /// Test: Filter plans by meal type
