@@ -5,6 +5,27 @@
 import gleam/option.{type Option}
 
 // ============================================================================
+// Weight Entry ID (opaque type for type safety)
+// ============================================================================
+
+/// Opaque weight entry ID
+/// Used to uniquely identify weight entries for edit/delete operations
+pub opaque type WeightEntryId {
+  WeightEntryId(String)
+}
+
+/// Create a WeightEntryId from a string
+pub fn weight_entry_id(id: String) -> WeightEntryId {
+  WeightEntryId(id)
+}
+
+/// Convert WeightEntryId to string
+pub fn weight_entry_id_to_string(id: WeightEntryId) -> String {
+  let WeightEntryId(s) = id
+  s
+}
+
+// ============================================================================
 // Weight Entry Types
 // ============================================================================
 

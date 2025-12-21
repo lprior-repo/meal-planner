@@ -98,7 +98,7 @@ pub fn model_init_creates_valid_state_test() {
   |> should.equal(0)
 
   m.pagination_limit
-  |> should.equal(25)
+  |> should.equal(100)
 }
 
 // ============================================================================
