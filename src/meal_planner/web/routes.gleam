@@ -8,6 +8,7 @@
 //// - Domain-based: Organized by domain
 
 import gleam/option.{None, Some}
+import meal_planner/web/routes/advisor
 import meal_planner/web/routes/auth
 import meal_planner/web/routes/fatsecret
 import meal_planner/web/routes/health
@@ -25,28 +26,32 @@ import wisp
 pub fn route(req: wisp.Request, ctx: Context) -> wisp.Response {
   let segments = wisp.path_segments(req)
 
-  // Try each router in order: health -> auth -> nutrition -> meal_planning -> fatsecret -> tandoor -> misc -> 404
+  // Try each router in order: health -> advisor -> auth -> nutrition -> meal_planning -> fatsecret -> tandoor -> misc -> 404
   case health.route(req, segments, ctx) {
     Some(resp) -> resp
     None ->
-      case auth.route(req, segments, ctx) {
+      case advisor.route(req, segments, ctx) {
         Some(resp) -> resp
         None ->
-          case nutrition.route(req, segments, ctx) {
+          case auth.route(req, segments, ctx) {
             Some(resp) -> resp
             None ->
-              case meal_planning.route(req, segments, ctx) {
+              case nutrition.route(req, segments, ctx) {
                 Some(resp) -> resp
                 None ->
-                  case fatsecret.route(req, segments, ctx) {
+                  case meal_planning.route(req, segments, ctx) {
                     Some(resp) -> resp
                     None ->
-                      case tandoor.route(req, segments, ctx) {
+                      case fatsecret.route(req, segments, ctx) {
                         Some(resp) -> resp
                         None ->
-                          case misc.route(req, segments, ctx) {
+                          case tandoor.route(req, segments, ctx) {
                             Some(resp) -> resp
-                            None -> wisp.not_found()
+                            None ->
+                              case misc.route(req, segments, ctx) {
+                                Some(resp) -> resp
+                                None -> wisp.not_found()
+                              }
                           }
                       }
                   }
