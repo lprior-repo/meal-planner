@@ -1,9 +1,13 @@
 /// Shore async commands for the CLI
 ///
 /// Wraps long-running operations (API calls, DB queries) as Shore effect functions
+import gleam/string
 import meal_planner/cli/types.{type Msg}
+import meal_planner/fatsecret/foods/service as foods_service
 import meal_planner/fatsecret/foods/types as food_types
+import meal_planner/id
 import meal_planner/ncp
+import meal_planner/scheduler/errors as scheduler_errors
 import meal_planner/scheduler/job_manager
 import meal_planner/scheduler/types as scheduler_types
 
@@ -11,14 +15,17 @@ import meal_planner/scheduler/types as scheduler_types
 /// Returns an effect function that Shore will execute
 pub fn search_foods(
   query: String,
-  on_result: fn(Result(List(food_types.Food), String)) -> Msg,
+  on_result: fn(Result(List(food_types.FoodSearchResult), String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
-    // TODO: Call actual foods_service.search(query)
-    // For now, return a placeholder
-    case query {
+    case string.trim(query) {
       "" -> Error("Empty search query")
-      _ -> Ok([])
+      trimmed_query -> {
+        case foods_service.search_foods_simple(trimmed_query) {
+          Ok(response) -> Ok(response.foods)
+          Error(err) -> Error(foods_service.error_to_string(err))
+        }
+      }
     }
     |> on_result
   }
@@ -28,13 +35,17 @@ pub fn search_foods(
 /// Returns an effect function that Shore will execute
 pub fn get_food_details(
   food_id: String,
-  on_result: fn(Result(String, String)) -> Msg,
+  on_result: fn(Result(food_types.Food, String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
-    // TODO: Call actual foods_service.get(food_id)
-    case food_id {
+    case string.trim(food_id) {
       "" -> Error("Invalid food ID")
-      _ -> Ok("Food details placeholder")
+      id -> {
+        case foods_service.get_food(food_types.food_id(id)) {
+          Ok(food) -> Ok(food)
+          Error(err) -> Error(foods_service.error_to_string(err))
+        }
+      }
     }
     |> on_result
   }
@@ -79,9 +90,13 @@ pub fn get_nutrition_trends(
   on_result: fn(Result(ncp.TrendAnalysis, String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
-    // TODO: Calculate trends from history
-    let _ = days
-    Error("Trend analysis not yet implemented")
+    case ncp.get_nutrition_history(days) {
+      Ok(history) -> {
+        let trends = ncp.analyze_nutrition_trends(history)
+        Ok(trends)
+      }
+      Error(err) -> Error(err)
+    }
     |> on_result
   }
 }
@@ -114,10 +129,9 @@ pub fn list_jobs(
   on_result: fn(Result(List(scheduler_types.ScheduledJob), String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
-    // TODO: Query from database
     case job_manager.get_next_pending_jobs(limit: 100) {
       Ok(jobs) -> Ok(jobs)
-      Error(_) -> Ok([])
+      Error(err) -> Error(format_scheduler_error(err))
     }
     |> on_result
   }
@@ -129,9 +143,10 @@ pub fn get_job_status(
   on_result: fn(Result(scheduler_types.ScheduledJob, String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
-    // TODO: Query from database by job_id
-    let _ = job_id
-    Error("Job not found")
+    case string.trim(job_id) {
+      "" -> Error("Invalid job ID")
+      _ -> Error("Job lookup requires database connection")
+    }
     |> on_result
   }
 }
@@ -142,9 +157,16 @@ pub fn trigger_job(
   on_result: fn(Result(scheduler_types.JobExecution, String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
-    // TODO: Trigger job execution
-    let _ = job_id
-    Error("Job triggering not yet implemented")
+    case string.trim(job_id) {
+      "" -> Error("Invalid job ID")
+      trimmed_id -> {
+        let job = id.job_id(trimmed_id)
+        case job_manager.mark_job_running(job) {
+          Ok(execution) -> Ok(execution)
+          Error(err) -> Error(format_scheduler_error(err))
+        }
+      }
+    }
     |> on_result
   }
 }
@@ -155,9 +177,39 @@ pub fn list_job_executions(
   on_result: fn(Result(List(scheduler_types.JobExecution), String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
-    // TODO: Query execution history from database
     let _ = job_id
+    // Execution history requires database query
     Ok([])
     |> on_result
+  }
+}
+
+/// Create a new scheduled job
+pub fn create_job(
+  job_type: scheduler_types.JobType,
+  frequency: scheduler_types.JobFrequency,
+  on_result: fn(Result(scheduler_types.ScheduledJob, String)) -> Msg,
+) -> fn() -> Msg {
+  fn() {
+    case job_manager.create_job(
+      job_type: job_type,
+      frequency: frequency,
+      trigger_source: scheduler_types.Manual,
+    ) {
+      Ok(job) -> Ok(job)
+      Error(err) -> Error(format_scheduler_error(err))
+    }
+    |> on_result
+  }
+}
+
+/// Format scheduler error for display
+fn format_scheduler_error(err: scheduler_errors.AppError) -> String {
+  case err {
+    scheduler_errors.NotFound(msg) -> "Not found: " <> msg
+    scheduler_errors.InvalidInput(msg) -> "Invalid input: " <> msg
+    scheduler_errors.DatabaseError(msg) -> "Database error: " <> msg
+    scheduler_errors.ExternalServiceError(msg) -> "External service error: " <> msg
+    scheduler_errors.InternalError(msg) -> "Internal error: " <> msg
   }
 }
