@@ -465,10 +465,12 @@ pub fn animate(state: ProgressBarState) -> ProgressBarState {
 /// Render loading animation
 pub fn render_loading(width: Int, frame: Int) -> String {
   let animation_chars = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
-  let char = case list.at(animation_chars, frame % 10) {
-    Ok(c) -> c
-    Error(_) -> "⠋"
-  }
+  let index = frame % 10
+  let char =
+    animation_chars
+    |> list.drop(index)
+    |> list.first
+    |> result.unwrap("⠋")
 
   let dots = string.repeat("·", width - 2)
   "[" <> char <> dots <> "]"

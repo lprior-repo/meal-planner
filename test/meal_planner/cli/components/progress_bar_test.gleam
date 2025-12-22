@@ -17,8 +17,9 @@ import meal_planner/cli/components/progress_bar.{
   type ColorScheme, type FillStyle, type MacroProgressBar, type MacroStatus,
   type ProgressBarConfig, type ProgressBarState, type Threshold,
   AsciiFill, AtTarget, GradientColor, GradientFill, InverseTrafficLight,
-  Monochrome, Over, SegmentedFill, SolidFill, ThresholdBased, TrafficLight,
-  Under, UnicodeFill,
+  MacroProgressBar, Monochrome, Over, ProgressBarConfig, ProgressBarState,
+  SegmentedFill, SolidFill, Threshold, ThresholdBased, TrafficLight, Under,
+  UnicodeFill,
 }
 import shore/style
 
@@ -404,7 +405,7 @@ pub fn macro_status_under_when_below_tolerance_test() {
   // WHEN: Checking status implicitly via rendering
   // The bar at 80% with tolerance of 10% should be "Under"
   // (lower bound is 90% of target = 90)
-  { bar.current < bar.target * 0.9 }
+  { bar.current <. bar.target *. 0.9 }
   |> should.equal(True)
 }
 
@@ -423,11 +424,11 @@ pub fn macro_status_at_target_within_tolerance_test() {
   )
 
   // WHEN: Checking if within tolerance bounds
-  let lower = bar.target * 0.9
-  let upper = bar.target * 1.1
+  let lower = bar.target *. 0.9
+  let upper = bar.target *. 1.1
 
   // THEN: Current should be within bounds
-  { bar.current >= lower && bar.current <= upper }
+  { bar.current >=. lower && bar.current <=. upper }
   |> should.equal(True)
 }
 
@@ -446,10 +447,10 @@ pub fn macro_status_over_when_above_tolerance_test() {
   )
 
   // WHEN: Checking if over tolerance
-  let upper = bar.target * 1.1
+  let upper = bar.target *. 1.1
 
   // THEN: Current should be above upper bound
-  { bar.current > upper }
+  { bar.current >. upper }
   |> should.equal(True)
 }
 

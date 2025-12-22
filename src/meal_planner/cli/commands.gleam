@@ -1,6 +1,7 @@
 /// Shore async commands for the CLI
 ///
 /// Wraps long-running operations (API calls, DB queries) as Shore effect functions
+import gleam/int
 import gleam/string
 import meal_planner/cli/types.{type Msg}
 import meal_planner/fatsecret/foods/service as foods_service
@@ -206,10 +207,29 @@ pub fn create_job(
 /// Format scheduler error for display
 fn format_scheduler_error(err: scheduler_errors.AppError) -> String {
   case err {
-    scheduler_errors.NotFound(msg) -> "Not found: " <> msg
-    scheduler_errors.InvalidInput(msg) -> "Invalid input: " <> msg
+    scheduler_errors.ApiError(code, message) ->
+      "API error (" <> int.to_string(code) <> "): " <> message
+    scheduler_errors.TimeoutError(timeout_ms) ->
+      "Timeout after " <> int.to_string(timeout_ms) <> "ms"
     scheduler_errors.DatabaseError(msg) -> "Database error: " <> msg
-    scheduler_errors.ExternalServiceError(msg) -> "External service error: " <> msg
-    scheduler_errors.InternalError(msg) -> "Internal error: " <> msg
+    scheduler_errors.TransactionError(msg) -> "Transaction error: " <> msg
+    scheduler_errors.JobNotFound(job_id) ->
+      "Job not found: " <> id.job_id_to_string(job_id)
+    scheduler_errors.JobAlreadyRunning(job_id) ->
+      "Job already running: " <> id.job_id_to_string(job_id)
+    scheduler_errors.ExecutionFailed(job_id, reason) ->
+      "Job " <> id.job_id_to_string(job_id) <> " failed: " <> reason
+    scheduler_errors.MaxRetriesExceeded(job_id) ->
+      "Max retries exceeded for job: " <> id.job_id_to_string(job_id)
+    scheduler_errors.InvalidConfiguration(reason) ->
+      "Invalid configuration: " <> reason
+    scheduler_errors.InvalidJobType(job_type) ->
+      "Invalid job type: " <> job_type
+    scheduler_errors.SchedulerDisabled -> "Scheduler is disabled"
+    scheduler_errors.DependencyNotMet(job_id, dependency) ->
+      "Job "
+      <> id.job_id_to_string(job_id)
+      <> " dependency not met: "
+      <> id.job_id_to_string(dependency)
   }
 }

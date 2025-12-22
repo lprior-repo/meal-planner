@@ -28,8 +28,8 @@ import gleam/string
 import meal_planner/cli/screens/fatsecret_diary.{
   type DiaryEffect, type DiaryModel, type DiaryMsg, type MealSection,
   type MealTotals, type NutritionTarget, type SearchState, type ViewState,
-  Batch, CreateEntry, DeleteEntry, FetchEntries, FetchNutritionTargets,
-  MainView, None as NoEffect, SearchFoods, SearchPopup, UpdateEntry,
+  Batch, CreateEntry, DeleteEntry, DiaryModel, FetchEntries, FetchNutritionTargets,
+  MainView, None as NoEffect, SearchFoods, SearchPopup, SearchState, UpdateEntry,
 }
 import meal_planner/fatsecret/diary/types as diary_types
 import meal_planner/fatsecret/foods/types as foods_types
@@ -57,18 +57,8 @@ const date_format = "YYYY-MM-DD"
 /// Get current date as days since Unix epoch
 pub fn today_as_date_int() -> Int {
   let now = birl.now()
-  let today_midnight =
-    now
-    |> birl.set_time_of_day(0, 0, 0, 0)
-  let epoch = birl.from_unix(0)
-  let days =
-    birl.difference(today_midnight, epoch)
-    |> birl.duration_to_seconds
-    |> int.divide(86400)
-  case days {
-    Ok(d) -> d
-    Error(_) -> 0
-  }
+  let seconds = birl.to_unix(now)
+  seconds / 86_400
 }
 
 /// Convert date_int to displayable date string
@@ -90,17 +80,10 @@ pub fn parse_date_string(date_str: String) -> Result(Int, String) {
         int.parse(day_str)
       {
         Ok(_year), Ok(_month), Ok(_day) -> {
-          case birl.from_iso8601(date_str <> "T00:00:00Z") {
+          case birl.from_naive(date_str <> "T00:00:00") {
             Ok(dt) -> {
-              let epoch = birl.from_unix(0)
-              let days_duration =
-                birl.difference(dt, epoch)
-                |> birl.duration_to_seconds
-                |> int.divide(86_400)
-              case days_duration {
-                Ok(d) -> Ok(d)
-                Error(_) -> Error("Invalid date calculation")
-              }
+              let seconds = birl.to_unix(dt)
+              Ok(seconds / 86_400)
             }
             Error(_) -> Error("Invalid ISO date format")
           }
@@ -255,11 +238,12 @@ pub fn diary_update(
     fatsecret_diary.ConfirmAddEntry(servings, meal) -> {
       // Create entry input and submit
       let input =
-        diary_types.FoodEntryInput(
-          food_id: diary_types.food_id("placeholder"),
-          serving_id: diary_types.serving_id("placeholder"),
-          meal: meal,
+        diary_types.FromFood(
+          food_id: "placeholder",
+          food_entry_name: "Food Entry",
+          serving_id: "placeholder",
           number_of_units: servings,
+          meal: meal,
           date_int: model.current_date,
         )
       let updated = DiaryModel(..model, view_state: MainView)
@@ -322,6 +306,7 @@ pub fn diary_update(
           let update =
             diary_types.FoodEntryUpdate(
               number_of_units: Some(edit_state.new_number_of_units),
+              meal: None,
             )
           let effect =
             UpdateEntry(edit_state.entry.food_entry_id, update)
@@ -577,7 +562,7 @@ fn format_entry_text(entry: diary_types.FoodEntry) -> String {
 fn format_entry_macros(entry: diary_types.FoodEntry) -> String {
   let cal = float.truncate(entry.calories) |> int.to_string
   let p = float.truncate(entry.protein) |> int.to_string
-  let c = float.truncate(entry.carbohydrates) |> int.to_string
+  let c = float.truncate(entry.carbohydrate) |> int.to_string
   let f = float.truncate(entry.fat) |> int.to_string
   cal <> " cal | " <> p <> "g P | " <> c <> "g C | " <> f <> "g F"
 }
@@ -595,7 +580,7 @@ fn calculate_section_totals(entries: List(diary_types.FoodEntry)) -> MealTotals 
     fn(acc, entry) {
       fatsecret_diary.MealTotals(
         calories: acc.calories +. entry.calories,
-        carbohydrate: acc.carbohydrate +. entry.carbohydrates,
+        carbohydrate: acc.carbohydrate +. entry.carbohydrate,
         protein: acc.protein +. entry.protein,
         fat: acc.fat +. entry.fat,
       )
@@ -624,59 +609,63 @@ fn view_main_diary(model: DiaryModel) -> shore.Node(DiaryMsg) {
   let #(total_cal, total_carb, total_prot, total_fat) =
     fatsecret_diary.calculate_daily_totals(model.entries_by_meal)
 
-  ui.col([
-    // Header
+  let header_section = [
     ui.br(),
     ui.align(
       style.Center,
       ui.text_styled("📅 Food Diary - " <> date_str, Some(style.Green), None),
     ),
     ui.hr_styled(style.Green),
+  ]
 
-    // Error message if present
-    list.append(
-      case model.error_message {
-        Some(err) -> [
-          ui.br(),
-          ui.text_styled("⚠ " <> err, Some(style.Red), None),
-        ]
-        None -> []
-      },
-      [
-        // Navigation hints
-        ui.br(),
-        ui.text_styled(
-          "[<-] Previous  [->] Next  [t] Today  [g] Go to date  [a] Add entry",
-          Some(style.Cyan),
-          None,
-        ),
-        ui.hr(),
+  let error_section = case model.error_message {
+    Some(err) -> [
+      ui.br(),
+      ui.text_styled("⚠ " <> err, Some(style.Red), None),
+    ]
+    None -> []
+  }
 
-        // Daily totals
-        ui.br(),
-        ui.text_styled("Daily Totals:", Some(style.Yellow), None),
-        ui.text(
-          "  Calories: " <> float_to_str(total_cal)
-          <> " | Protein: " <> float_to_str(total_prot) <> "g"
-          <> " | Carbs: " <> float_to_str(total_carb) <> "g"
-          <> " | Fat: " <> float_to_str(total_fat) <> "g",
-        ),
-
-        // Nutrition targets comparison if available
-        list.append(
-          render_nutrition_comparison(model.nutrition_targets, total_cal, total_prot, total_carb, total_fat),
-          [
-            ui.hr(),
-            ui.br(),
-            // Meal sections
-            ..list.flatten(
-              list.map(model.entries_by_meal, render_meal_section)
-            )
-          ]
-        ),
-      ]
+  let nav_section = [
+    ui.br(),
+    ui.text_styled(
+      "[<-] Previous  [->] Next  [t] Today  [g] Go to date  [a] Add entry",
+      Some(style.Cyan),
+      None,
     ),
-  ])
+    ui.hr(),
+  ]
+
+  let totals_section = [
+    ui.br(),
+    ui.text_styled("Daily Totals:", Some(style.Yellow), None),
+    ui.text(
+      "  Calories: " <> float_to_str(total_cal)
+      <> " | Protein: " <> float_to_str(total_prot) <> "g"
+      <> " | Carbs: " <> float_to_str(total_carb) <> "g"
+      <> " | Fat: " <> float_to_str(total_fat) <> "g",
+    ),
+  ]
+
+  let nutrition_section = render_nutrition_comparison(
+    model.nutrition_targets, total_cal, total_prot, total_carb, total_fat,
+  )
+
+  let divider_section = [ui.hr(), ui.br()]
+
+  let meals_section = list.flatten(
+    list.map(model.entries_by_meal, render_meal_section),
+  )
+
+  ui.col(list.flatten([
+    header_section,
+    error_section,
+    nav_section,
+    totals_section,
+    nutrition_section,
+    divider_section,
+    meals_section,
+  ]))
 }
 
 /// Render nutrition comparison with targets
@@ -724,7 +713,7 @@ fn render_meal_section(section: MealSection) -> List(shore.Node(DiaryMsg)) {
   let meal_name = meal_type_to_string(section.meal_type)
   let totals = section.section_totals
 
-  [
+  let header = [
     ui.text_styled("▸ " <> meal_name, Some(style.Yellow), None),
     ui.text(
       "  Subtotal: " <> float_to_str(totals.calories) <> " cal"
@@ -732,11 +721,11 @@ fn render_meal_section(section: MealSection) -> List(shore.Node(DiaryMsg)) {
       <> " | C: " <> float_to_str(totals.carbohydrate) <> "g"
       <> " | F: " <> float_to_str(totals.fat) <> "g",
     ),
-    list.append(
-      list.map(section.entries, render_entry),
-      [ui.br()]
-    )
   ]
+  let entries = list.map(section.entries, render_entry)
+  let footer = [ui.br()]
+
+  list.flatten([header, entries, footer])
 }
 
 /// Render a single food entry
