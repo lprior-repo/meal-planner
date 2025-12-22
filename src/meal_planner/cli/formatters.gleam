@@ -171,8 +171,7 @@ pub fn format_table(results: Results) -> String {
 }
 
 fn format_food_search_table(foods: List(food.FoodSearchResult)) -> String {
-  let header =
-    "ID       | Name                      | Description"
+  let header = "ID       | Name                      | Description"
   let separator =
     "---------|---------------------------|------------------------------------------"
 

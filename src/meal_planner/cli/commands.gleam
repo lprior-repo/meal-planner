@@ -192,11 +192,13 @@ pub fn create_job(
   on_result: fn(Result(scheduler_types.ScheduledJob, String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
-    case job_manager.create_job(
-      job_type: job_type,
-      frequency: frequency,
-      trigger_source: scheduler_types.Manual,
-    ) {
+    case
+      job_manager.create_job(
+        job_type: job_type,
+        frequency: frequency,
+        trigger_source: scheduler_types.Manual,
+      )
+    {
       Ok(job) -> Ok(job)
       Error(err) -> Error(format_scheduler_error(err))
     }

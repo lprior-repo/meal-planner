@@ -96,7 +96,13 @@ pub fn handle_trigger_job(db: pog.Connection, job_id: String) -> wisp.Response {
       case scheduler_storage.reset_job_to_pending(conn: db, job_id: job_id) {
         Ok(_) -> {
           // Mark as running and create execution record
-          case scheduler_storage.mark_job_running(conn: db, job_id: job_id, trigger_type: "manual") {
+          case
+            scheduler_storage.mark_job_running(
+              conn: db,
+              job_id: job_id,
+              trigger_type: "manual",
+            )
+          {
             Ok(execution) -> {
               let body =
                 json.object([

@@ -87,7 +87,13 @@ pub fn mark_job_running_db(
   job_id job_id: JobId,
   trigger_type trigger_type: String,
 ) -> Result(JobExecution, AppError) {
-  case scheduler_storage.mark_job_running(conn: conn, job_id: job_id, trigger_type: trigger_type) {
+  case
+    scheduler_storage.mark_job_running(
+      conn: conn,
+      job_id: job_id,
+      trigger_type: trigger_type,
+    )
+  {
     Ok(execution) -> Ok(execution)
     Error(_) -> Error(errors.DatabaseError("Failed to mark job as running"))
   }
@@ -115,7 +121,14 @@ pub fn mark_job_completed_db(
     option.Some(json_val) -> option.Some(json.to_string(json_val))
     option.None -> option.None
   }
-  case scheduler_storage.mark_job_completed(conn: conn, job_id: job_id, execution_id: execution_id, output_json: output_str) {
+  case
+    scheduler_storage.mark_job_completed(
+      conn: conn,
+      job_id: job_id,
+      execution_id: execution_id,
+      output_json: output_str,
+    )
+  {
     Ok(_) -> Ok(Nil)
     Error(_) -> Error(errors.DatabaseError("Failed to mark job as completed"))
   }
@@ -139,7 +152,14 @@ pub fn mark_job_failed_db(
   execution_id execution_id: Int,
   error error: String,
 ) -> Result(Nil, AppError) {
-  case scheduler_storage.mark_job_failed(conn: conn, job_id: job_id, execution_id: execution_id, error_message: error) {
+  case
+    scheduler_storage.mark_job_failed(
+      conn: conn,
+      job_id: job_id,
+      execution_id: execution_id,
+      error_message: error,
+    )
+  {
     Ok(_) -> Ok(Nil)
     Error(_) -> Error(errors.DatabaseError("Failed to mark job as failed"))
   }

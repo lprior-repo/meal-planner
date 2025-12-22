@@ -83,7 +83,8 @@ pub fn format_weekly_trends(trends: weekly_trends.WeeklyTrends) -> String {
 pub fn format_meal_adjustment(
   adjustment: recommendations.MealAdjustment,
 ) -> String {
-  let action = recommendations.adjustment_type_to_string(adjustment.adjustment_type)
+  let action =
+    recommendations.adjustment_type_to_string(adjustment.adjustment_type)
   let nutrient = string.capitalise(adjustment.nutrient)
   let amount = format_float(adjustment.amount)
 
@@ -102,9 +103,7 @@ pub fn format_meal_adjustment(
 }
 
 /// Format an Insight for display
-pub fn format_recommendation_insight(
-  insight: recommendations.Insight,
-) -> String {
+pub fn format_recommendation_insight(insight: recommendations.Insight) -> String {
   let category = recommendations.insight_category_to_string(insight.category)
   let impact = recommendations.impact_level_to_string(insight.impact)
 
@@ -125,11 +124,9 @@ pub fn parse_date_to_int(date_str: String) -> option.Option(Int) {
       // Try to parse YYYY-MM-DD format
       case string.split(date_str, "-") {
         [year_str, month_str, day_str] -> {
-          case #(
-            int.parse(year_str),
-            int.parse(month_str),
-            int.parse(day_str),
-          ) {
+          case
+            #(int.parse(year_str), int.parse(month_str), int.parse(day_str))
+          {
             #(Ok(_year), Ok(_month), Ok(_day)) -> {
               case birl.from_naive(date_str <> "T00:00:00") {
                 Ok(dt) -> {
@@ -195,7 +192,9 @@ fn daily_handler(config: Config, date_str: String) -> Result(Nil, Nil) {
           Error(Nil)
         }
         Ok(conn) -> {
-          case daily_recommendations.generate_daily_advisor_email(conn, date_int) {
+          case
+            daily_recommendations.generate_daily_advisor_email(conn, date_int)
+          {
             Ok(email) -> {
               io.println("")
               io.println("🍽️  Daily Nutrition Advisor - " <> email.date)
@@ -264,7 +263,9 @@ fn trends_handler(config: Config, days: Int) -> Result(Nil, Nil) {
             Ok(trends) -> {
               io.println("")
               io.println(
-                "📊 Weekly Nutrition Trends (last " <> int.to_string(days) <> " days)",
+                "📊 Weekly Nutrition Trends (last "
+                <> int.to_string(days)
+                <> " days)",
               )
               io.println(
                 "═══════════════════════════════════════════════════════════════════",
@@ -285,7 +286,9 @@ fn trends_handler(config: Config, days: Int) -> Result(Nil, Nil) {
               io.println(
                 "  Protein:  " <> format_float(trends.avg_protein) <> "g",
               )
-              io.println("  Carbs:    " <> format_float(trends.avg_carbs) <> "g")
+              io.println(
+                "  Carbs:    " <> format_float(trends.avg_carbs) <> "g",
+              )
               io.println("  Fat:      " <> format_float(trends.avg_fat) <> "g")
               io.println("")
 
@@ -301,9 +304,7 @@ fn trends_handler(config: Config, days: Int) -> Result(Nil, Nil) {
                 [] -> io.println("  ✓ No concerning patterns detected")
                 patterns -> {
                   patterns
-                  |> list.each(fn(pattern) {
-                    io.println("  • " <> pattern)
-                  })
+                  |> list.each(fn(pattern) { io.println("  • " <> pattern) })
                 }
               }
               io.println("")
@@ -314,9 +315,7 @@ fn trends_handler(config: Config, days: Int) -> Result(Nil, Nil) {
                 [] -> io.println("  Keep up the great work!")
                 recs -> {
                   recs
-                  |> list.each(fn(rec) {
-                    io.println("  • " <> rec)
-                  })
+                  |> list.each(fn(rec) { io.println("  • " <> rec) })
                 }
               }
               io.println("")
@@ -376,7 +375,8 @@ fn suggestions_handler(config: Config) -> Result(Nil, Nil) {
                 )
 
               // Generate recommendations
-              let report = recommendations.generate_recommendations(trends, targets)
+              let report =
+                recommendations.generate_recommendations(trends, targets)
 
               io.println("")
               io.println("🍽️  Personalized Meal Suggestions")
@@ -404,9 +404,7 @@ fn suggestions_handler(config: Config) -> Result(Nil, Nil) {
                     // Show food suggestions
                     adj.food_suggestions
                     |> list.take(3)
-                    |> list.each(fn(food) {
-                      io.println("      → " <> food)
-                    })
+                    |> list.each(fn(food) { io.println("      → " <> food) })
                   })
                 }
               }
@@ -482,9 +480,7 @@ fn patterns_handler(config: Config) -> Result(Nil, Nil) {
                 }
                 patterns -> {
                   patterns
-                  |> list.each(fn(pattern) {
-                    io.println("  ⚠ " <> pattern)
-                  })
+                  |> list.each(fn(pattern) { io.println("  ⚠ " <> pattern) })
                 }
               }
               io.println("")
@@ -502,9 +498,7 @@ fn patterns_handler(config: Config) -> Result(Nil, Nil) {
                 recs -> {
                   recs
                   |> list.take(3)
-                  |> list.each(fn(rec) {
-                    io.println("  → " <> rec)
-                  })
+                  |> list.each(fn(rec) { io.println("  → " <> rec) })
                 }
               }
               io.println("")
@@ -572,7 +566,9 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       io.println("    Get daily nutrition analysis and recommendations")
       io.println("")
       io.println("  mp advisor trends [--days N]")
-      io.println("    Analyze nutrition trends over the past N days (default: 7)")
+      io.println(
+        "    Analyze nutrition trends over the past N days (default: 7)",
+      )
       io.println("")
       io.println("  mp advisor suggestions")
       io.println("    Get personalized meal suggestions based on your patterns")

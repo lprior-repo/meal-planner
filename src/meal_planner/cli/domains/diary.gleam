@@ -17,7 +17,9 @@ import glint
 import meal_planner/config.{type Config}
 import meal_planner/fatsecret/diary/service as diary_service
 import meal_planner/fatsecret/diary/types as diary_types
-import meal_planner/fatsecret/diary/types.{type FoodEntry, type MealType, Breakfast, Dinner, Lunch, Snack}
+import meal_planner/fatsecret/diary/types.{
+  type FoodEntry, type MealType, Breakfast, Dinner, Lunch, Snack,
+}
 import meal_planner/postgres
 import pog
 
@@ -117,11 +119,9 @@ pub fn parse_date_to_int(date_str: String) -> Option(Int) {
       // Try to parse YYYY-MM-DD format
       case string.split(date_str, "-") {
         [year_str, month_str, day_str] -> {
-          case #(
-            int.parse(year_str),
-            int.parse(month_str),
-            int.parse(day_str),
-          ) {
+          case
+            #(int.parse(year_str), int.parse(month_str), int.parse(day_str))
+          {
             #(Ok(_year), Ok(_month), Ok(_day)) -> {
               case birl.from_naive(date_str <> "T00:00:00") {
                 Ok(dt) -> {
@@ -169,7 +169,6 @@ fn create_db_connection(config: Config) -> Result(pog.Connection, String) {
   }
 }
 
-
 // ============================================================================
 // Handler Functions
 // ============================================================================
@@ -213,7 +212,9 @@ fn view_handler(config: Config, date_str: String) -> Result(Nil, Nil) {
             }
             Error(diary_service.NotConfigured) -> {
               io.println("Error: FatSecret is not configured")
-              io.println("Set FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET")
+              io.println(
+                "Set FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET",
+              )
               Error(Nil)
             }
             Error(diary_service.AuthRevoked) -> {
@@ -293,7 +294,9 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       io.println("Diary commands:")
       io.println("")
       io.println("  mp diary view [--date YYYY-MM-DD]")
-      io.println("    Display food entries for a specific date (default: today)")
+      io.println(
+        "    Display food entries for a specific date (default: today)",
+      )
       io.println("")
       io.println("  mp diary delete <ENTRY_ID>")
       io.println("    Remove a food entry from the diary")

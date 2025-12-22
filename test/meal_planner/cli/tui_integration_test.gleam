@@ -14,15 +14,14 @@ import gleeunit/should
 import meal_planner/cli/model
 import meal_planner/cli/tui
 import meal_planner/cli/types.{
-  type Domain, type Model, type Msg, type Results, type Screen,
-  BrandSearchView, ClearInput, DatabaseDomain, DatabaseFoods, DiaryView,
-  DomainMenu, ErrorScreen, ExerciseView, FatSecretDomain, FavoritesView,
-  FoodSearch, GoBack, GotSearchResults, KeyPress, LoadingScreen, MainMenu,
-  MealPlanGenerator, MealPlanningDomain, Model, NoOp, NutritionAnalysis,
-  NutritionDomain, ProfileView, Quit, RecipeView, Refresh, SavedMealsView,
-  SchedulerDomain, SchedulerView, SearchFoods, SelectDomain, SelectScreen,
-  TandoorDomain, TandoorRecipes, UpdateDate, UpdateQuantity, UpdateSearchQuery,
-  WeightView,
+  type Domain, type Model, type Msg, type Results, type Screen, BrandSearchView,
+  ClearInput, DatabaseDomain, DatabaseFoods, DiaryView, DomainMenu, ErrorScreen,
+  ExerciseView, FatSecretDomain, FavoritesView, FoodSearch, GoBack,
+  GotSearchResults, KeyPress, LoadingScreen, MainMenu, MealPlanGenerator,
+  MealPlanningDomain, Model, NoOp, NutritionAnalysis, NutritionDomain,
+  ProfileView, Quit, RecipeView, Refresh, SavedMealsView, SchedulerDomain,
+  SchedulerView, SearchFoods, SelectDomain, SelectScreen, TandoorDomain,
+  TandoorRecipes, UpdateDate, UpdateQuantity, UpdateSearchQuery, WeightView,
 }
 import meal_planner/config
 
@@ -32,31 +31,45 @@ import meal_planner/config
 
 fn test_config() -> config.Config {
   config.Config(
-    fatsecret: config.FatSecretConfig(
-      consumer_key: "test_key",
-      consumer_secret: "test_secret",
-      base_url: "https://platform.fatsecret.com/rest",
-    ),
-    tandoor: config.TandoorConfig(
-      base_url: "https://tandoor.example.com",
-      api_token: "test_token",
-    ),
+    environment: config.Development,
     database: config.DatabaseConfig(
       host: "localhost",
       port: 5432,
       name: "meal_planner_test",
       user: "test_user",
       password: "test_pass",
+      pool_size: 5,
+      connection_timeout_ms: 5000,
     ),
-    mailtrap: config.MailtrapConfig(
-      enabled: False,
-      api_key: "test_api_key",
-      from_email: "test@example.com",
-      to_email: "recipient@example.com",
+    server: config.ServerConfig(port: 3000, cors_allowed_origins: []),
+    tandoor: config.TandoorConfig(
+      base_url: "https://tandoor.example.com",
+      api_token: "test_token",
+      connect_timeout_ms: 5000,
+      request_timeout_ms: 30_000,
     ),
-    scheduler: config.SchedulerConfig(
-      enabled: False,
-      interval_seconds: 3600,
+    external_services: config.ExternalServicesConfig(
+      fatsecret: option.Some(config.FatSecretConfig(
+        consumer_key: "test_key",
+        consumer_secret: "test_secret",
+      )),
+      todoist_api_key: "test_todoist_key",
+      usda_api_key: "test_usda_key",
+      openai_api_key: "test_openai_key",
+      openai_model: "gpt-4",
+    ),
+    secrets: config.SecretsConfig(
+      oauth_encryption_key: option.None,
+      jwt_secret: option.None,
+      database_password: "test_pass",
+      tandoor_token: "test_token",
+    ),
+    logging: config.LoggingConfig(level: config.InfoLevel, debug_mode: False),
+    performance: config.PerformanceConfig(
+      request_timeout_ms: 30_000,
+      connection_timeout_ms: 5000,
+      max_concurrent_requests: 100,
+      rate_limit_requests: 1000,
     ),
   )
 }

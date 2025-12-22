@@ -185,20 +185,21 @@ pub fn search_state_initial_test() {
 
 pub fn search_state_construction_test() {
   // GIVEN: Search state with data
-  let search_state = ExerciseSearchState(
-    query: "running",
-    results: [
-      ExerciseSearchResult(
-        exercise_id: "1",
-        exercise_name: "Running",
-        calories_per_hour: 600.0,
-        exercise_type: "Cardio",
-      ),
-    ],
-    selected_index: 0,
-    is_loading: False,
-    error: None,
-  )
+  let search_state =
+    ExerciseSearchState(
+      query: "running",
+      results: [
+        ExerciseSearchResult(
+          exercise_id: "1",
+          exercise_name: "Running",
+          calories_per_hour: 600.0,
+          exercise_type: "Cardio",
+        ),
+      ],
+      selected_index: 0,
+      is_loading: False,
+      error: None,
+    )
 
   // THEN: State should construct correctly
   search_state.query
@@ -219,12 +220,13 @@ pub fn search_state_construction_test() {
 
 pub fn exercise_search_result_construction_test() {
   // GIVEN: Exercise search result data
-  let result = ExerciseSearchResult(
-    exercise_id: "ex_123",
-    exercise_name: "Swimming",
-    calories_per_hour: 500.0,
-    exercise_type: "Cardio",
-  )
+  let result =
+    ExerciseSearchResult(
+      exercise_id: "ex_123",
+      exercise_name: "Swimming",
+      calories_per_hour: 500.0,
+      exercise_type: "Cardio",
+    )
 
   // THEN: Result should construct correctly
   result.exercise_id
@@ -249,13 +251,14 @@ pub fn exercise_edit_state_construction_test() {
   let entry = test_exercise_entry("Running", 30, 300.0)
 
   // WHEN: Creating edit state
-  let edit_state = ExerciseEditState(
-    entry: entry,
-    new_duration: 45,
-    new_calories: 450.0,
-    original_duration: 30,
-    original_calories: 300.0,
-  )
+  let edit_state =
+    ExerciseEditState(
+      entry: entry,
+      new_duration: 45,
+      new_calories: 450.0,
+      original_duration: 30,
+      original_calories: 300.0,
+    )
 
   // THEN: Edit state should have correct values
   edit_state.new_duration
@@ -280,13 +283,14 @@ pub fn exercise_display_entry_construction_test() {
   let entry = test_exercise_entry("Running", 30, 300.0)
 
   // WHEN: Creating display entry
-  let display_entry = ExerciseDisplayEntry(
-    entry: entry,
-    name_display: "Running",
-    duration_display: "30 min",
-    calories_display: "300 cal",
-    summary_line: "Running - 30 min - 300 cal",
-  )
+  let display_entry =
+    ExerciseDisplayEntry(
+      entry: entry,
+      name_display: "Running",
+      duration_display: "30 min",
+      calories_display: "300 cal",
+      summary_line: "Running - 30 min - 300 cal",
+    )
 
   // THEN: Display entry should have correct values
   display_entry.name_display
@@ -308,12 +312,13 @@ pub fn exercise_display_entry_construction_test() {
 
 pub fn daily_summary_construction_test() {
   // GIVEN: Daily summary data
-  let summary = DailySummary(
-    total_calories: 500.0,
-    total_duration: 60,
-    session_count: 2,
-    avg_calories_per_session: 250.0,
-  )
+  let summary =
+    DailySummary(
+      total_calories: 500.0,
+      total_duration: 60,
+      session_count: 2,
+      avg_calories_per_session: 250.0,
+    )
 
   // THEN: Summary should have correct values
   summary.total_calories

@@ -168,12 +168,13 @@ pub fn view_state_search_popup_test() {
 // ============================================================================
 
 pub fn search_state_construction_test() {
-  let search = RecipeSearchState(
-    query: "chicken parmesan",
-    search_type: ByName,
-    is_loading: True,
-    error: None,
-  )
+  let search =
+    RecipeSearchState(
+      query: "chicken parmesan",
+      search_type: ByName,
+      is_loading: True,
+      error: None,
+    )
 
   search.query
   |> should.equal("chicken parmesan")
@@ -197,12 +198,13 @@ pub fn search_type_all_variants_test() {
 // ============================================================================
 
 pub fn pagination_state_construction_test() {
-  let pagination = PaginationState(
-    current_page: 3,
-    total_results: 150,
-    results_per_page: 20,
-    total_pages: 8,
-  )
+  let pagination =
+    PaginationState(
+      current_page: 3,
+      total_results: 150,
+      results_per_page: 20,
+      total_pages: 8,
+    )
 
   pagination.current_page
   |> should.equal(3)
@@ -219,14 +221,15 @@ pub fn pagination_state_construction_test() {
 // ============================================================================
 
 pub fn recipe_filters_construction_test() {
-  let filters = RecipeFilters(
-    max_calories: Some(500),
-    max_prep_time: Some(30),
-    min_protein: Some(20),
-    cuisine_type: Some("Italian"),
-    diet_type: Some("Vegetarian"),
-    sort_by: SortByRating,
-  )
+  let filters =
+    RecipeFilters(
+      max_calories: Some(500),
+      max_prep_time: Some(30),
+      min_protein: Some(20),
+      cuisine_type: Some("Italian"),
+      diet_type: Some("Vegetarian"),
+      sort_by: SortByRating,
+    )
 
   filters.max_calories
   |> should.equal(Some(500))
@@ -271,16 +274,17 @@ pub fn sort_option_all_variants_test() {
 pub fn recipe_list_item_construction_test() {
   let recipe_id = recipe_types.recipe_id("recipe_123")
 
-  let item = RecipeListItem(
-    recipe_id: recipe_id,
-    recipe_name: "Grilled Chicken Salad",
-    recipe_description: "A healthy salad with grilled chicken breast",
-    calories_per_serving: Some(350.0),
-    cooking_time_min: Some(25),
-    number_of_servings: 4.0,
-    is_favorite: False,
-    rating: Some(4.5),
-  )
+  let item =
+    RecipeListItem(
+      recipe_id: recipe_id,
+      recipe_name: "Grilled Chicken Salad",
+      recipe_description: "A healthy salad with grilled chicken breast",
+      calories_per_serving: Some(350.0),
+      cooking_time_min: Some(25),
+      number_of_servings: 4.0,
+      is_favorite: False,
+      rating: Some(4.5),
+    )
 
   item.recipe_name
   |> should.equal("Grilled Chicken Salad")
@@ -302,33 +306,35 @@ pub fn recipe_list_item_construction_test() {
 pub fn recipe_details_construction_test() {
   let recipe_id = recipe_types.recipe_id("recipe_456")
 
-  let nutrition = RecipeNutrition(
-    calories: 450.0,
-    carbohydrate: 35.0,
-    protein: 40.0,
-    fat: 15.0,
-    fiber: Some(5.0),
-    sugar: Some(8.0),
-    saturated_fat: Some(3.0),
-    sodium: Some(600.0),
-    cholesterol: Some(85.0),
-  )
+  let nutrition =
+    RecipeNutrition(
+      calories: 450.0,
+      carbohydrate: 35.0,
+      protein: 40.0,
+      fat: 15.0,
+      fiber: Some(5.0),
+      sugar: Some(8.0),
+      saturated_fat: Some(3.0),
+      sodium: Some(600.0),
+      cholesterol: Some(85.0),
+    )
 
-  let details = RecipeDetails(
-    recipe_id: recipe_id,
-    recipe_name: "Pasta Primavera",
-    recipe_description: "Fresh vegetable pasta dish",
-    recipe_url: "https://example.com/recipe",
-    number_of_servings: 4.0,
-    preparation_time_min: Some(15),
-    cooking_time_min: Some(20),
-    ingredients: [],
-    directions: [],
-    categories: ["Italian", "Vegetarian"],
-    nutrition: nutrition,
-    rating: Some(4.2),
-    rating_count: Some(150),
-  )
+  let details =
+    RecipeDetails(
+      recipe_id: recipe_id,
+      recipe_name: "Pasta Primavera",
+      recipe_description: "Fresh vegetable pasta dish",
+      recipe_url: "https://example.com/recipe",
+      number_of_servings: 4.0,
+      preparation_time_min: Some(15),
+      cooking_time_min: Some(20),
+      ingredients: [],
+      directions: [],
+      categories: ["Italian", "Vegetarian"],
+      nutrition: nutrition,
+      rating: Some(4.2),
+      rating_count: Some(150),
+    )
 
   details.recipe_name
   |> should.equal("Pasta Primavera")
@@ -348,15 +354,16 @@ pub fn recipe_details_construction_test() {
 // ============================================================================
 
 pub fn recipe_ingredient_construction_test() {
-  let ingredient = RecipeIngredient(
-    food_id: "food_123",
-    food_name: "Olive Oil",
-    serving_id: "serving_1",
-    number_of_units: 2.0,
-    measurement_description: "tablespoons",
-    ingredient_description: "2 tbsp olive oil",
-    ingredient_url: "https://example.com/food/olive-oil",
-  )
+  let ingredient =
+    RecipeIngredient(
+      food_id: "food_123",
+      food_name: "Olive Oil",
+      serving_id: "serving_1",
+      number_of_units: 2.0,
+      measurement_description: "tablespoons",
+      ingredient_description: "2 tbsp olive oil",
+      ingredient_url: "https://example.com/food/olive-oil",
+    )
 
   ingredient.food_name
   |> should.equal("Olive Oil")
@@ -373,10 +380,11 @@ pub fn recipe_ingredient_construction_test() {
 // ============================================================================
 
 pub fn recipe_direction_construction_test() {
-  let direction = RecipeDirection(
-    direction_number: 1,
-    direction_description: "Preheat oven to 375°F (190°C).",
-  )
+  let direction =
+    RecipeDirection(
+      direction_number: 1,
+      direction_description: "Preheat oven to 375°F (190°C).",
+    )
 
   direction.direction_number
   |> should.equal(1)
@@ -390,17 +398,18 @@ pub fn recipe_direction_construction_test() {
 // ============================================================================
 
 pub fn recipe_nutrition_construction_test() {
-  let nutrition = RecipeNutrition(
-    calories: 500.0,
-    carbohydrate: 45.0,
-    protein: 35.0,
-    fat: 20.0,
-    fiber: Some(8.0),
-    sugar: None,
-    saturated_fat: Some(5.0),
-    sodium: Some(800.0),
-    cholesterol: None,
-  )
+  let nutrition =
+    RecipeNutrition(
+      calories: 500.0,
+      carbohydrate: 45.0,
+      protein: 35.0,
+      fat: 20.0,
+      fiber: Some(8.0),
+      sugar: None,
+      saturated_fat: Some(5.0),
+      sodium: Some(800.0),
+      cholesterol: None,
+    )
 
   nutrition.calories
   |> should.equal(500.0)

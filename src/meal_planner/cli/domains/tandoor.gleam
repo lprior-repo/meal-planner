@@ -215,7 +215,13 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
     }
     ["list"] -> {
       let limit_val = limit(flags) |> result.unwrap(50)
-      case sync_recipes_with_limit(config, limit: option.Some(limit_val), offset: option.None) {
+      case
+        sync_recipes_with_limit(
+          config,
+          limit: option.Some(limit_val),
+          offset: option.None,
+        )
+      {
         Ok(_) -> Ok(Nil)
         Error(msg) -> {
           io.println("Error: " <> msg)
@@ -225,13 +231,15 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
     }
     _ -> {
       io.println("Tandoor commands:")
-      io.println("  mp tandoor sync                  - Full Tandoor synchronization")
-      io.println("  mp tandoor list --limit 50       - List recipes from Tandoor")
+      io.println(
+        "  mp tandoor sync                  - Full Tandoor synchronization",
+      )
+      io.println(
+        "  mp tandoor list --limit 50       - List recipes from Tandoor",
+      )
       io.println("  mp tandoor get --id <id>         - Get recipe details")
       io.println("  mp tandoor categories --limit 50 - List recipe categories")
-      io.println(
-        "  mp tandoor update --id <id> ...  - Update a recipe",
-      )
+      io.println("  mp tandoor update --id <id> ...  - Update a recipe")
       io.println("  mp tandoor delete --id <id>      - Delete a recipe")
       Ok(Nil)
     }

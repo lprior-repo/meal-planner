@@ -158,7 +158,12 @@ pub fn inverse_thresholds() -> List(Threshold) {
 }
 
 /// Default macro progress bar
-pub fn default_macro_bar(name: String, current: Float, target: Float, unit: String) -> MacroProgressBar {
+pub fn default_macro_bar(
+  name: String,
+  current: Float,
+  target: Float,
+  unit: String,
+) -> MacroProgressBar {
   MacroProgressBar(
     name: name,
     current: current,
@@ -178,16 +183,15 @@ pub fn default_macro_bar(name: String, current: Float, target: Float, unit: Stri
 
 /// Create progress bar state
 pub fn init_state(current: Float, max: Float) -> ProgressBarState {
-  ProgressBarState(
-    current: current,
-    max: max,
-    target: None,
-    animation_frame: 0,
-  )
+  ProgressBarState(current: current, max: max, target: None, animation_frame: 0)
 }
 
 /// Create progress bar state with target
-pub fn init_state_with_target(current: Float, max: Float, target: Float) -> ProgressBarState {
+pub fn init_state_with_target(
+  current: Float,
+  max: Float,
+  target: Float,
+) -> ProgressBarState {
   ProgressBarState(
     current: current,
     max: max,
@@ -203,7 +207,8 @@ pub fn init_state_with_target(current: Float, max: Float, target: Float) -> Prog
 /// Render a progress bar as a string
 pub fn render(config: ProgressBarConfig, state: ProgressBarState) -> String {
   let percentage = calculate_percentage(state.current, state.max)
-  let filled_width = float.truncate(percentage /. 100.0 *. int.to_float(config.width))
+  let filled_width =
+    float.truncate(percentage /. 100.0 *. int.to_float(config.width))
   let empty_width = config.width - filled_width
 
   // Get color based on scheme
@@ -252,7 +257,8 @@ pub fn render_node(
 /// Render macro progress bar
 pub fn render_macro(bar: MacroProgressBar) -> String {
   let percentage = calculate_percentage(bar.current, bar.target)
-  let filled_width = float.truncate(percentage /. 100.0 *. int.to_float(bar.width))
+  let filled_width =
+    float.truncate(percentage /. 100.0 *. int.to_float(bar.width))
   let clamped_width = int.clamp(filled_width, 0, bar.width)
   let empty_width = bar.width - clamped_width
 
@@ -281,9 +287,17 @@ pub fn render_macro(bar: MacroProgressBar) -> String {
   let target_str = float_to_string(bar.target)
   let pct_str = float_to_string(percentage)
 
-  bar.name <> ": " <> bar_str <> " "
-    <> current_str <> "/" <> target_str <> bar.unit
-    <> " (" <> pct_str <> "%)"
+  bar.name
+  <> ": "
+  <> bar_str
+  <> " "
+  <> current_str
+  <> "/"
+  <> target_str
+  <> bar.unit
+  <> " ("
+  <> pct_str
+  <> "%)"
 }
 
 /// Render macro progress bar as Shore node
@@ -392,17 +406,20 @@ fn get_color(
   case scheme {
     Monochrome(color) -> color
     ThresholdBased -> get_threshold_color(percentage, thresholds)
-    GradientColor(start, _end) -> start  // Simplified - just use start color
+    GradientColor(start, _end) -> start
+    // Simplified - just use start color
     TrafficLight -> get_traffic_light_color(percentage)
     InverseTrafficLight -> get_inverse_traffic_light_color(percentage)
   }
 }
 
 /// Get color from thresholds
-fn get_threshold_color(percentage: Float, thresholds: List(Threshold)) -> style.Color {
-  let sorted = list.sort(thresholds, fn(a, b) {
-    float.compare(b.percentage, a.percentage)
-  })
+fn get_threshold_color(
+  percentage: Float,
+  thresholds: List(Threshold),
+) -> style.Color {
+  let sorted =
+    list.sort(thresholds, fn(a, b) { float.compare(b.percentage, a.percentage) })
 
   list.find(sorted, fn(t) { percentage >=. t.percentage })
   |> result.map(fn(t) { t.color })
@@ -435,7 +452,11 @@ pub type MacroStatus {
 }
 
 /// Get macro status
-fn get_macro_status(current: Float, target: Float, tolerance: Float) -> MacroStatus {
+fn get_macro_status(
+  current: Float,
+  target: Float,
+  tolerance: Float,
+) -> MacroStatus {
   let lower = target *. { 1.0 -. tolerance /. 100.0 }
   let upper = target *. { 1.0 +. tolerance /. 100.0 }
 
@@ -517,7 +538,8 @@ pub fn protein_bar(current: Float, target: Float) -> MacroProgressBar {
     width: 25,
     under_color: style.Yellow,
     target_color: style.Green,
-    over_color: style.Cyan,  // Over on protein is okay
+    over_color: style.Cyan,
+    // Over on protein is okay
     tolerance: 10.0,
   )
 }
@@ -562,7 +584,8 @@ pub fn fiber_bar(current: Float, target: Float) -> MacroProgressBar {
     width: 25,
     under_color: style.Yellow,
     target_color: style.Green,
-    over_color: style.Green,  // Over on fiber is okay
+    over_color: style.Green,
+    // Over on fiber is okay
     tolerance: 15.0,
   )
 }
@@ -578,7 +601,8 @@ pub fn sugar_bar(current: Float, limit: Float) -> MacroProgressBar {
     under_color: style.Green,
     target_color: style.Yellow,
     over_color: style.Red,
-    tolerance: 0.0,  // No tolerance for sugar limit
+    tolerance: 0.0,
+    // No tolerance for sugar limit
   )
 }
 

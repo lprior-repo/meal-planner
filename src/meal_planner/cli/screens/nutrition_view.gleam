@@ -359,12 +359,14 @@ pub fn nutrition_update(
     }
 
     ShowWeeklyTrends -> {
-      let updated = NutritionModel(..model, view_state: WeeklyTrendsView, is_loading: True)
+      let updated =
+        NutritionModel(..model, view_state: WeeklyTrendsView, is_loading: True)
       #(updated, FetchWeeklyData(model.current_date))
     }
 
     ShowMonthlyTrends -> {
-      let updated = NutritionModel(..model, view_state: MonthlyTrendsView, is_loading: True)
+      let updated =
+        NutritionModel(..model, view_state: MonthlyTrendsView, is_loading: True)
       #(updated, FetchMonthlyData(model.current_date))
     }
 
@@ -374,12 +376,14 @@ pub fn nutrition_update(
     }
 
     ShowMealBreakdown -> {
-      let updated = NutritionModel(..model, view_state: MealBreakdownView, is_loading: True)
+      let updated =
+        NutritionModel(..model, view_state: MealBreakdownView, is_loading: True)
       #(updated, FetchMealBreakdown(model.current_date))
     }
 
     ShowNutrientDetails(nutrient) -> {
-      let updated = NutritionModel(..model, view_state: NutrientDetailsView(nutrient))
+      let updated =
+        NutritionModel(..model, view_state: NutrientDetailsView(nutrient))
       #(updated, NoEffect)
     }
 
@@ -398,7 +402,12 @@ pub fn nutrition_update(
       case model.view_state {
         DashboardView -> #(model, NoEffect)
         GoalEditView -> {
-          let updated = NutritionModel(..model, view_state: GoalsView, goal_edit_state: None)
+          let updated =
+            NutritionModel(
+              ..model,
+              view_state: GoalsView,
+              goal_edit_state: None,
+            )
           #(updated, NoEffect)
         }
         NutrientDetailsView(_) -> {
@@ -415,35 +424,44 @@ pub fn nutrition_update(
     // === Date Navigation ===
     DatePrevious -> {
       let new_date = model.current_date - 1
-      let updated = NutritionModel(..model, current_date: new_date, is_loading: True)
+      let updated =
+        NutritionModel(..model, current_date: new_date, is_loading: True)
       #(updated, FetchDailyData(new_date))
     }
 
     DateNext -> {
       let new_date = model.current_date + 1
-      let updated = NutritionModel(..model, current_date: new_date, is_loading: True)
+      let updated =
+        NutritionModel(..model, current_date: new_date, is_loading: True)
       #(updated, FetchDailyData(new_date))
     }
 
     DateToday -> {
       let today = get_today_date_int()
-      let updated = NutritionModel(..model, current_date: today, is_loading: True)
+      let updated =
+        NutritionModel(..model, current_date: today, is_loading: True)
       #(updated, FetchDailyData(today))
     }
 
     DateConfirm(date_input) -> {
       case parse_date_string(date_input) {
         Ok(date_int) -> {
-          let updated = NutritionModel(
-            ..model,
-            current_date: date_int,
-            view_state: DashboardView,
-            is_loading: True,
-          )
+          let updated =
+            NutritionModel(
+              ..model,
+              current_date: date_int,
+              view_state: DashboardView,
+              is_loading: True,
+            )
           #(updated, FetchDailyData(date_int))
         }
         Error(err) -> {
-          let updated = NutritionModel(..model, error_message: Some(err), view_state: DashboardView)
+          let updated =
+            NutritionModel(
+              ..model,
+              error_message: Some(err),
+              view_state: DashboardView,
+            )
           #(updated, NoEffect)
         }
       }
@@ -457,16 +475,18 @@ pub fn nutrition_update(
     // === Goals ===
     EditGoalStart(field) -> {
       let current_value = get_goal_value(model.goals, field)
-      let edit_state = GoalEditState(
-        editing_field: field,
-        current_value: float_to_string(current_value),
-        original_goals: model.goals,
-      )
-      let updated = NutritionModel(
-        ..model,
-        view_state: GoalEditView,
-        goal_edit_state: Some(edit_state),
-      )
+      let edit_state =
+        GoalEditState(
+          editing_field: field,
+          current_value: float_to_string(current_value),
+          original_goals: model.goals,
+        )
+      let updated =
+        NutritionModel(
+          ..model,
+          view_state: GoalEditView,
+          goal_edit_state: Some(edit_state),
+        )
       #(updated, NoEffect)
     }
 
@@ -486,17 +506,20 @@ pub fn nutrition_update(
         Some(edit) -> {
           case float.parse(edit.current_value) {
             Ok(value) -> {
-              let new_goals = set_goal_value(model.goals, edit.editing_field, value)
-              let updated = NutritionModel(
-                ..model,
-                goals: new_goals,
-                view_state: GoalsView,
-                goal_edit_state: None,
-              )
+              let new_goals =
+                set_goal_value(model.goals, edit.editing_field, value)
+              let updated =
+                NutritionModel(
+                  ..model,
+                  goals: new_goals,
+                  view_state: GoalsView,
+                  goal_edit_state: None,
+                )
               #(updated, PersistGoals(new_goals))
             }
             Error(_) -> {
-              let updated = NutritionModel(..model, error_message: Some("Invalid number"))
+              let updated =
+                NutritionModel(..model, error_message: Some("Invalid number"))
               #(updated, NoEffect)
             }
           }
@@ -506,7 +529,8 @@ pub fn nutrition_update(
     }
 
     GoalCancel -> {
-      let updated = NutritionModel(..model, view_state: GoalsView, goal_edit_state: None)
+      let updated =
+        NutritionModel(..model, view_state: GoalsView, goal_edit_state: None)
       #(updated, NoEffect)
     }
 
@@ -524,31 +548,48 @@ pub fn nutrition_update(
 
     // === Chart Settings ===
     ToggleCaloriesChart -> {
-      let settings = ChartSettings(..model.chart_settings, show_calories: !model.chart_settings.show_calories)
+      let settings =
+        ChartSettings(
+          ..model.chart_settings,
+          show_calories: !model.chart_settings.show_calories,
+        )
       let updated = NutritionModel(..model, chart_settings: settings)
       #(updated, NoEffect)
     }
 
     ToggleProteinChart -> {
-      let settings = ChartSettings(..model.chart_settings, show_protein: !model.chart_settings.show_protein)
+      let settings =
+        ChartSettings(
+          ..model.chart_settings,
+          show_protein: !model.chart_settings.show_protein,
+        )
       let updated = NutritionModel(..model, chart_settings: settings)
       #(updated, NoEffect)
     }
 
     ToggleCarbsChart -> {
-      let settings = ChartSettings(..model.chart_settings, show_carbs: !model.chart_settings.show_carbs)
+      let settings =
+        ChartSettings(
+          ..model.chart_settings,
+          show_carbs: !model.chart_settings.show_carbs,
+        )
       let updated = NutritionModel(..model, chart_settings: settings)
       #(updated, NoEffect)
     }
 
     ToggleFatChart -> {
-      let settings = ChartSettings(..model.chart_settings, show_fat: !model.chart_settings.show_fat)
+      let settings =
+        ChartSettings(
+          ..model.chart_settings,
+          show_fat: !model.chart_settings.show_fat,
+        )
       let updated = NutritionModel(..model, chart_settings: settings)
       #(updated, NoEffect)
     }
 
     SetChartType(chart_type) -> {
-      let settings = ChartSettings(..model.chart_settings, chart_type: chart_type)
+      let settings =
+        ChartSettings(..model.chart_settings, chart_type: chart_type)
       let updated = NutritionModel(..model, chart_settings: settings)
       #(updated, NoEffect)
     }
@@ -563,11 +604,13 @@ pub fn nutrition_update(
     GotDailyData(result) -> {
       case result {
         Ok(data) -> {
-          let updated = NutritionModel(..model, daily_data: data, is_loading: False)
+          let updated =
+            NutritionModel(..model, daily_data: data, is_loading: False)
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let updated = NutritionModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            NutritionModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -576,11 +619,13 @@ pub fn nutrition_update(
     GotWeeklyData(result) -> {
       case result {
         Ok(data) -> {
-          let updated = NutritionModel(..model, weekly_data: data, is_loading: False)
+          let updated =
+            NutritionModel(..model, weekly_data: data, is_loading: False)
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let updated = NutritionModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            NutritionModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -599,11 +644,17 @@ pub fn nutrition_update(
     GotMealBreakdown(result) -> {
       case result {
         Ok(breakdown) -> {
-          let updated = NutritionModel(..model, meal_breakdown: breakdown, is_loading: False)
+          let updated =
+            NutritionModel(
+              ..model,
+              meal_breakdown: breakdown,
+              is_loading: False,
+            )
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let updated = NutritionModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            NutritionModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -618,7 +669,11 @@ pub fn nutrition_update(
       case result {
         Ok(_) -> #(model, NoEffect)
         Error(err) -> {
-          let updated = NutritionModel(..model, error_message: Some("Failed to save: " <> err))
+          let updated =
+            NutritionModel(
+              ..model,
+              error_message: Some("Failed to save: " <> err),
+            )
           #(updated, NoEffect)
         }
       }
@@ -762,7 +817,11 @@ fn get_goal_value(goals: NutritionGoals, nutrient: NutrientType) -> Float {
 }
 
 /// Set goal value for a nutrient type
-fn set_goal_value(goals: NutritionGoals, nutrient: NutrientType, value: Float) -> NutritionGoals {
+fn set_goal_value(
+  goals: NutritionGoals,
+  nutrient: NutrientType,
+  value: Float,
+) -> NutritionGoals {
   case nutrient {
     Calories -> NutritionGoals(..goals, calories_target: value)
     Protein -> NutritionGoals(..goals, protein_target: value)
@@ -806,10 +865,11 @@ fn render_progress_bar(percentage: Float, width: Int) -> String {
   let filled = float.truncate(percentage /. 100.0 *. int.to_float(width))
   let filled_clamped = case filled > width {
     True -> width
-    False -> case filled < 0 {
-      True -> 0
-      False -> filled
-    }
+    False ->
+      case filled < 0 {
+        True -> 0
+        False -> filled
+      }
   }
   let empty = width - filled_clamped
 
@@ -849,7 +909,11 @@ fn view_dashboard(model: NutritionModel) -> shore.Node(NutritionMsg) {
     ui.br(),
     ui.align(
       style.Center,
-      ui.text_styled("📊 Nutrition Dashboard - " <> data.date_string, Some(style.Green), None),
+      ui.text_styled(
+        "📊 Nutrition Dashboard - " <> data.date_string,
+        Some(style.Green),
+        None,
+      ),
     ),
     ui.hr_styled(style.Green),
   ]
@@ -878,34 +942,54 @@ fn view_dashboard(model: NutritionModel) -> shore.Node(NutritionMsg) {
     ui.br(),
     ui.text_styled("Calories", Some(style.Yellow), None),
     ui.text(
-      "  " <> render_progress_bar(cal_pct, 30) <> " "
-      <> float_to_string(data.calories) <> " / "
-      <> float_to_string(goals.calories_target) <> " ("
-      <> float_to_string(cal_pct) <> "%)",
+      "  "
+      <> render_progress_bar(cal_pct, 30)
+      <> " "
+      <> float_to_string(data.calories)
+      <> " / "
+      <> float_to_string(goals.calories_target)
+      <> " ("
+      <> float_to_string(cal_pct)
+      <> "%)",
     ),
     ui.br(),
     ui.text_styled("Protein", Some(style.Cyan), None),
     ui.text(
-      "  " <> render_progress_bar(prot_pct, 30) <> " "
-      <> float_to_string(data.protein) <> "g / "
-      <> float_to_string(goals.protein_target) <> "g ("
-      <> float_to_string(prot_pct) <> "%)",
+      "  "
+      <> render_progress_bar(prot_pct, 30)
+      <> " "
+      <> float_to_string(data.protein)
+      <> "g / "
+      <> float_to_string(goals.protein_target)
+      <> "g ("
+      <> float_to_string(prot_pct)
+      <> "%)",
     ),
     ui.br(),
     ui.text_styled("Carbohydrates", Some(style.Magenta), None),
     ui.text(
-      "  " <> render_progress_bar(carb_pct, 30) <> " "
-      <> float_to_string(data.carbohydrate) <> "g / "
-      <> float_to_string(goals.carb_target) <> "g ("
-      <> float_to_string(carb_pct) <> "%)",
+      "  "
+      <> render_progress_bar(carb_pct, 30)
+      <> " "
+      <> float_to_string(data.carbohydrate)
+      <> "g / "
+      <> float_to_string(goals.carb_target)
+      <> "g ("
+      <> float_to_string(carb_pct)
+      <> "%)",
     ),
     ui.br(),
     ui.text_styled("Fat", Some(style.Yellow), None),
     ui.text(
-      "  " <> render_progress_bar(fat_pct, 30) <> " "
-      <> float_to_string(data.fat) <> "g / "
-      <> float_to_string(goals.fat_target) <> "g ("
-      <> float_to_string(fat_pct) <> "%)",
+      "  "
+      <> render_progress_bar(fat_pct, 30)
+      <> " "
+      <> float_to_string(data.fat)
+      <> "g / "
+      <> float_to_string(goals.fat_target)
+      <> "g ("
+      <> float_to_string(fat_pct)
+      <> "%)",
     ),
     ui.br(),
   ]
@@ -914,30 +998,54 @@ fn view_dashboard(model: NutritionModel) -> shore.Node(NutritionMsg) {
     ui.hr(),
     ui.text_styled("Macro Distribution:", Some(style.Yellow), None),
     ui.text(
-      "  Protein: " <> float_to_string(data.protein_pct) <> "% | "
-      <> "Carbs: " <> float_to_string(data.carb_pct) <> "% | "
-      <> "Fat: " <> float_to_string(data.fat_pct) <> "%",
+      "  Protein: "
+      <> float_to_string(data.protein_pct)
+      <> "% | "
+      <> "Carbs: "
+      <> float_to_string(data.carb_pct)
+      <> "% | "
+      <> "Fat: "
+      <> float_to_string(data.fat_pct)
+      <> "%",
     ),
     ui.br(),
   ]
 
   let status_section = [
     ui.text_styled("Status:", Some(style.Cyan), None),
-    ui.text_styled("  Calories: " <> format_status(data.calories_status), Some(status_color(data.calories_status)), None),
-    ui.text_styled("  Protein: " <> format_status(data.protein_status), Some(status_color(data.protein_status)), None),
-    ui.text_styled("  Carbs: " <> format_status(data.carb_status), Some(status_color(data.carb_status)), None),
-    ui.text_styled("  Fat: " <> format_status(data.fat_status), Some(status_color(data.fat_status)), None),
+    ui.text_styled(
+      "  Calories: " <> format_status(data.calories_status),
+      Some(status_color(data.calories_status)),
+      None,
+    ),
+    ui.text_styled(
+      "  Protein: " <> format_status(data.protein_status),
+      Some(status_color(data.protein_status)),
+      None,
+    ),
+    ui.text_styled(
+      "  Carbs: " <> format_status(data.carb_status),
+      Some(status_color(data.carb_status)),
+      None,
+    ),
+    ui.text_styled(
+      "  Fat: " <> format_status(data.fat_status),
+      Some(status_color(data.fat_status)),
+      None,
+    ),
   ]
 
-  ui.col(list.flatten([
-    header_section,
-    error_section,
-    nav_section,
-    loading_section,
-    macros_section,
-    distribution_section,
-    status_section,
-  ]))
+  ui.col(
+    list.flatten([
+      header_section,
+      error_section,
+      nav_section,
+      loading_section,
+      macros_section,
+      distribution_section,
+      status_section,
+    ]),
+  )
 }
 
 /// Render weekly trends
@@ -959,11 +1067,20 @@ fn view_weekly_trends(model: NutritionModel) -> shore.Node(NutritionMsg) {
     data -> {
       list.map(data, fn(day) {
         ui.text(
-          "  " <> day.date_string <> ": "
-          <> float_to_string(day.calories) <> " cal | "
-          <> "P:" <> float_to_string(day.protein) <> "g | "
-          <> "C:" <> float_to_string(day.carbohydrate) <> "g | "
-          <> "F:" <> float_to_string(day.fat) <> "g",
+          "  "
+          <> day.date_string
+          <> ": "
+          <> float_to_string(day.calories)
+          <> " cal | "
+          <> "P:"
+          <> float_to_string(day.protein)
+          <> "g | "
+          <> "C:"
+          <> float_to_string(day.carbohydrate)
+          <> "g | "
+          <> "F:"
+          <> float_to_string(day.fat)
+          <> "g",
         )
       })
     }
@@ -996,7 +1113,9 @@ fn view_monthly_trends(model: NutritionModel) -> shore.Node(NutritionMsg) {
     case list.length(model.weekly_data) {
       0 -> ui.text("No data available.")
       _ -> {
-        let avg_cal = list.fold(model.weekly_data, 0.0, fn(acc, d) { acc +. d.calories }) /. int.to_float(list.length(model.weekly_data))
+        let avg_cal =
+          list.fold(model.weekly_data, 0.0, fn(acc, d) { acc +. d.calories })
+          /. int.to_float(list.length(model.weekly_data))
         ui.text("Average daily calories: " <> float_to_string(avg_cal))
       }
     },
@@ -1068,15 +1187,18 @@ fn view_goal_edit(model: NutritionModel) -> shore.Node(NutritionMsg) {
         ui.hr_styled(style.Green),
         ui.br(),
 
-        ui.text("Current value: " <> float_to_string(get_goal_value(edit.original_goals, edit.editing_field))),
+        ui.text(
+          "Current value: "
+          <> float_to_string(get_goal_value(
+            edit.original_goals,
+            edit.editing_field,
+          )),
+        ),
         ui.br(),
 
-        ui.input(
-          "New value:",
-          edit.current_value,
-          style.Pct(40),
-          fn(v) { GoalValueChanged(v) },
-        ),
+        ui.input("New value:", edit.current_value, style.Pct(40), fn(v) {
+          GoalValueChanged(v)
+        }),
         ui.br(),
 
         ui.hr(),
@@ -1107,7 +1229,11 @@ fn view_meal_breakdown(model: NutritionModel) -> shore.Node(NutritionMsg) {
     ui.br(),
     ui.align(
       style.Center,
-      ui.text_styled("🍽 Meal Breakdown - " <> model.daily_data.date_string, Some(style.Green), None),
+      ui.text_styled(
+        "🍽 Meal Breakdown - " <> model.daily_data.date_string,
+        Some(style.Green),
+        None,
+      ),
     ),
     ui.hr_styled(style.Green),
     ui.br(),
@@ -1118,9 +1244,15 @@ fn view_meal_breakdown(model: NutritionModel) -> shore.Node(NutritionMsg) {
     meals -> {
       list.map(meals, fn(meal) {
         ui.text(
-          "  " <> meal.meal_name <> " (" <> int.to_string(meal.entry_count) <> " items): "
-          <> float_to_string(meal.calories) <> " cal ("
-          <> float_to_string(meal.percentage_of_daily) <> "% of daily)",
+          "  "
+          <> meal.meal_name
+          <> " ("
+          <> int.to_string(meal.entry_count)
+          <> " items): "
+          <> float_to_string(meal.calories)
+          <> " cal ("
+          <> float_to_string(meal.percentage_of_daily)
+          <> "% of daily)",
         )
       })
     }
@@ -1136,7 +1268,10 @@ fn view_meal_breakdown(model: NutritionModel) -> shore.Node(NutritionMsg) {
 }
 
 /// Render nutrient details view
-fn view_nutrient_details(model: NutritionModel, nutrient: NutrientType) -> shore.Node(NutritionMsg) {
+fn view_nutrient_details(
+  model: NutritionModel,
+  nutrient: NutrientType,
+) -> shore.Node(NutritionMsg) {
   let name = nutrient_type_to_string(nutrient)
 
   ui.col([
@@ -1177,24 +1312,40 @@ fn view_comparison(model: NutritionModel) -> shore.Node(NutritionMsg) {
 
     ui.text_styled("Comparison:", Some(style.Yellow), None),
     ui.text(
-      "  Calories:  " <> float_to_string(data.calories) <> " / "
-      <> float_to_string(goals.calories_target) <> " ("
-      <> format_difference(data.calories, goals.calories_target) <> ")",
+      "  Calories:  "
+      <> float_to_string(data.calories)
+      <> " / "
+      <> float_to_string(goals.calories_target)
+      <> " ("
+      <> format_difference(data.calories, goals.calories_target)
+      <> ")",
     ),
     ui.text(
-      "  Protein:   " <> float_to_string(data.protein) <> "g / "
-      <> float_to_string(goals.protein_target) <> "g ("
-      <> format_difference(data.protein, goals.protein_target) <> ")",
+      "  Protein:   "
+      <> float_to_string(data.protein)
+      <> "g / "
+      <> float_to_string(goals.protein_target)
+      <> "g ("
+      <> format_difference(data.protein, goals.protein_target)
+      <> ")",
     ),
     ui.text(
-      "  Carbs:     " <> float_to_string(data.carbohydrate) <> "g / "
-      <> float_to_string(goals.carb_target) <> "g ("
-      <> format_difference(data.carbohydrate, goals.carb_target) <> ")",
+      "  Carbs:     "
+      <> float_to_string(data.carbohydrate)
+      <> "g / "
+      <> float_to_string(goals.carb_target)
+      <> "g ("
+      <> format_difference(data.carbohydrate, goals.carb_target)
+      <> ")",
     ),
     ui.text(
-      "  Fat:       " <> float_to_string(data.fat) <> "g / "
-      <> float_to_string(goals.fat_target) <> "g ("
-      <> format_difference(data.fat, goals.fat_target) <> ")",
+      "  Fat:       "
+      <> float_to_string(data.fat)
+      <> "g / "
+      <> float_to_string(goals.fat_target)
+      <> "g ("
+      <> format_difference(data.fat, goals.fat_target)
+      <> ")",
     ),
     ui.br(),
 
@@ -1213,7 +1364,10 @@ fn format_difference(actual: Float, target: Float) -> String {
 }
 
 /// Render date picker
-fn view_date_picker(model: NutritionModel, date_input: String) -> shore.Node(NutritionMsg) {
+fn view_date_picker(
+  model: NutritionModel,
+  date_input: String,
+) -> shore.Node(NutritionMsg) {
   ui.col([
     ui.br(),
     ui.align(
@@ -1225,15 +1379,14 @@ fn view_date_picker(model: NutritionModel, date_input: String) -> shore.Node(Nut
 
     ui.text("Enter date (YYYY-MM-DD):"),
     ui.br(),
-    ui.input(
-      "Date:",
-      date_input,
-      style.Pct(50),
-      fn(d) { DateConfirm(d) },
-    ),
+    ui.input("Date:", date_input, style.Pct(50), fn(d) { DateConfirm(d) }),
     ui.br(),
 
-    ui.text_styled("Current: " <> date_int_to_string(model.current_date), Some(style.Cyan), None),
+    ui.text_styled(
+      "Current: " <> date_int_to_string(model.current_date),
+      Some(style.Cyan),
+      None,
+    ),
     ui.hr(),
     ui.text_styled("[Enter] Confirm  [Esc] Cancel", Some(style.Cyan), None),
   ])

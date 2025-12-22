@@ -25,7 +25,10 @@ import meal_planner/fatsecret/diary/types as diary_types
 // ============================================================================
 
 /// Create a minimal FoodEntry for testing
-fn test_food_entry(name: String, meal: diary_types.MealType) -> diary_types.FoodEntry {
+fn test_food_entry(
+  name: String,
+  meal: diary_types.MealType,
+) -> diary_types.FoodEntry {
   diary_types.FoodEntry(
     food_entry_id: diary_types.food_entry_id("entry_1"),
     food_entry_name: name,
@@ -143,11 +146,12 @@ pub fn view_state_confirm_delete_test() {
 
 pub fn view_state_edit_amount_test() {
   let entry = test_food_entry("Apple", diary_types.Snack)
-  let edit_state = EditState(
-    entry: entry,
-    new_number_of_units: 2.0,
-    original_number_of_units: 1.0,
-  )
+  let edit_state =
+    EditState(
+      entry: entry,
+      new_number_of_units: 2.0,
+      original_number_of_units: 1.0,
+    )
   let view_state: ViewState = EditAmount(edit_state)
   case view_state {
     EditAmount(state) -> state.new_number_of_units
@@ -175,13 +179,14 @@ pub fn search_state_initial_test() {
 }
 
 pub fn search_state_construction_test() {
-  let search_state = SearchState(
-    query: "chicken",
-    results: [],
-    selected_index: 0,
-    is_loading: True,
-    search_error: None,
-  )
+  let search_state =
+    SearchState(
+      query: "chicken",
+      results: [],
+      selected_index: 0,
+      is_loading: True,
+      search_error: None,
+    )
   search_state.query
   |> should.equal("chicken")
   search_state.is_loading
@@ -194,11 +199,12 @@ pub fn search_state_construction_test() {
 
 pub fn edit_state_construction_test() {
   let entry = test_food_entry("Grilled Chicken", diary_types.Lunch)
-  let edit_state = EditState(
-    entry: entry,
-    new_number_of_units: 2.0,
-    original_number_of_units: 1.0,
-  )
+  let edit_state =
+    EditState(
+      entry: entry,
+      new_number_of_units: 2.0,
+      original_number_of_units: 1.0,
+    )
   edit_state.new_number_of_units
   |> should.equal(2.0)
   edit_state.original_number_of_units
@@ -212,12 +218,13 @@ pub fn edit_state_construction_test() {
 // ============================================================================
 
 pub fn nutrition_target_construction_test() {
-  let target = NutritionTarget(
-    calories: 2000.0,
-    carbohydrate: 250.0,
-    protein: 150.0,
-    fat: 65.0,
-  )
+  let target =
+    NutritionTarget(
+      calories: 2000.0,
+      carbohydrate: 250.0,
+      protein: 150.0,
+      fat: 65.0,
+    )
   target.calories
   |> should.equal(2000.0)
   target.carbohydrate
@@ -239,17 +246,14 @@ pub fn nutrition_target_initial_none_test() {
 // ============================================================================
 
 pub fn meal_section_construction_test() {
-  let totals = MealTotals(
-    calories: 500.0,
-    carbohydrate: 50.0,
-    protein: 40.0,
-    fat: 20.0,
-  )
-  let section = MealSection(
-    meal_type: diary_types.Breakfast,
-    entries: [],
-    section_totals: totals,
-  )
+  let totals =
+    MealTotals(calories: 500.0, carbohydrate: 50.0, protein: 40.0, fat: 20.0)
+  let section =
+    MealSection(
+      meal_type: diary_types.Breakfast,
+      entries: [],
+      section_totals: totals,
+    )
   section.meal_type
   |> should.equal(diary_types.Breakfast)
   section.section_totals.calories
@@ -259,12 +263,8 @@ pub fn meal_section_construction_test() {
 }
 
 pub fn meal_totals_construction_test() {
-  let totals = MealTotals(
-    calories: 750.0,
-    carbohydrate: 80.0,
-    protein: 55.0,
-    fat: 25.0,
-  )
+  let totals =
+    MealTotals(calories: 750.0, carbohydrate: 80.0, protein: 55.0, fat: 25.0)
   totals.calories
   |> should.equal(750.0)
   totals.carbohydrate

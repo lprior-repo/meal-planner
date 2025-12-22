@@ -22,8 +22,10 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/order
 import gleam/result
 import gleam/string
+import meal_planner/id
 import meal_planner/scheduler/types as scheduler_types
 import shore
 import shore/style
@@ -305,35 +307,41 @@ pub fn scheduler_update(
     }
 
     ShowDetailsView(job_id) -> {
-      let updated = SchedulerModel(..model, view_state: DetailsView, is_loading: True)
+      let updated =
+        SchedulerModel(..model, view_state: DetailsView, is_loading: True)
       #(updated, FetchJobDetails(job_id))
     }
 
     ShowHistoryView(job_id) -> {
-      let updated = SchedulerModel(..model, view_state: HistoryView, is_loading: True)
+      let updated =
+        SchedulerModel(..model, view_state: HistoryView, is_loading: True)
       #(updated, FetchExecutionHistory(job_id, 50))
     }
 
     ShowConfigView(job_id) -> {
       // Find job to initialize config
-      let config = case list.find(model.jobs, fn(j) {
-        scheduler_types.job_id_to_string(j.job.job_id) == job_id
-      }) {
+      let config = case
+        list.find(model.jobs, fn(entry) {
+          id.job_id_to_string(entry.job.id) == job_id
+        })
+      {
         Ok(job_entry) -> {
+          let schedule = format_frequency(job_entry.job.frequency)
           Some(JobConfigState(
             job_id: job_id,
-            schedule: job_entry.job.schedule,
-            timeout: job_entry.job.timeout_seconds,
-            retries: job_entry.job.retry_count,
+            schedule: schedule,
+            timeout: job_entry.job.retry_policy.backoff_seconds,
+            retries: job_entry.job.retry_policy.max_attempts,
             enabled: job_entry.job.enabled,
-            original_schedule: job_entry.job.schedule,
-            original_timeout: job_entry.job.timeout_seconds,
-            original_retries: job_entry.job.retry_count,
+            original_schedule: schedule,
+            original_timeout: job_entry.job.retry_policy.backoff_seconds,
+            original_retries: job_entry.job.retry_policy.max_attempts,
           ))
         }
         Error(_) -> None
       }
-      let updated = SchedulerModel(..model, view_state: ConfigView, config_state: config)
+      let updated =
+        SchedulerModel(..model, view_state: ConfigView, config_state: config)
       #(updated, NoEffect)
     }
 
@@ -348,7 +356,8 @@ pub fn scheduler_update(
     }
 
     ShowDeleteConfirm(job_id) -> {
-      let updated = SchedulerModel(..model, view_state: DeleteConfirmView(job_id))
+      let updated =
+        SchedulerModel(..model, view_state: DeleteConfirmView(job_id))
       #(updated, NoEffect)
     }
 
@@ -356,15 +365,13 @@ pub fn scheduler_update(
       case model.view_state {
         ListView -> #(model, NoEffect)
         DetailsView | HistoryView -> {
-          let updated = SchedulerModel(
-            ..model,
-            view_state: ListView,
-            selected_job: None,
-          )
+          let updated =
+            SchedulerModel(..model, view_state: ListView, selected_job: None)
           #(updated, NoEffect)
         }
         ConfigView -> {
-          let updated = SchedulerModel(..model, view_state: DetailsView, config_state: None)
+          let updated =
+            SchedulerModel(..model, view_state: DetailsView, config_state: None)
           #(updated, NoEffect)
         }
         LogsView(_) -> {
@@ -396,7 +403,8 @@ pub fn scheduler_update(
     ConfirmRunJob -> {
       case model.view_state {
         RunConfirmView(job_id) -> {
-          let updated = SchedulerModel(..model, view_state: DetailsView, is_loading: True)
+          let updated =
+            SchedulerModel(..model, view_state: DetailsView, is_loading: True)
           #(updated, TriggerJobEffect(job_id))
         }
         _ -> #(model, NoEffect)
@@ -415,7 +423,8 @@ pub fn scheduler_update(
     ConfirmDeleteJob -> {
       case model.view_state {
         DeleteConfirmView(job_id) -> {
-          let updated = SchedulerModel(..model, view_state: ListView, is_loading: True)
+          let updated =
+            SchedulerModel(..model, view_state: ListView, is_loading: True)
           #(updated, DeleteJobEffect(job_id))
         }
         _ -> #(model, NoEffect)
@@ -475,8 +484,20 @@ pub fn scheduler_update(
     SaveConfig -> {
       case model.config_state {
         Some(config) -> {
-          let updated = SchedulerModel(..model, view_state: DetailsView, config_state: None, is_loading: True)
-          let effect = SaveConfigEffect(config.job_id, config.schedule, config.timeout, config.retries)
+          let updated =
+            SchedulerModel(
+              ..model,
+              view_state: DetailsView,
+              config_state: None,
+              is_loading: True,
+            )
+          let effect =
+            SaveConfigEffect(
+              config.job_id,
+              config.schedule,
+              config.timeout,
+              config.retries,
+            )
           #(updated, effect)
         }
         None -> #(model, NoEffect)
@@ -484,7 +505,8 @@ pub fn scheduler_update(
     }
 
     CancelConfig -> {
-      let updated = SchedulerModel(..model, view_state: DetailsView, config_state: None)
+      let updated =
+        SchedulerModel(..model, view_state: DetailsView, config_state: None)
       #(updated, NoEffect)
     }
 
@@ -537,7 +559,8 @@ pub fn scheduler_update(
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let updated = SchedulerModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            SchedulerModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -546,11 +569,17 @@ pub fn scheduler_update(
     GotJobDetails(result) -> {
       case result {
         Ok(details) -> {
-          let updated = SchedulerModel(..model, selected_job: Some(details), is_loading: False)
+          let updated =
+            SchedulerModel(
+              ..model,
+              selected_job: Some(details),
+              is_loading: False,
+            )
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let updated = SchedulerModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            SchedulerModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -560,11 +589,17 @@ pub fn scheduler_update(
       case result {
         Ok(executions) -> {
           let display = format_executions(executions)
-          let updated = SchedulerModel(..model, execution_history: display, is_loading: False)
+          let updated =
+            SchedulerModel(
+              ..model,
+              execution_history: display,
+              is_loading: False,
+            )
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let updated = SchedulerModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            SchedulerModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -574,7 +609,8 @@ pub fn scheduler_update(
       case result {
         Ok(_) -> #(model, FetchJobs(model.filter))
         Error(err) -> {
-          let updated = SchedulerModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            SchedulerModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -584,7 +620,8 @@ pub fn scheduler_update(
       case result {
         Ok(_) -> #(model, FetchJobs(model.filter))
         Error(err) -> {
-          let updated = SchedulerModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            SchedulerModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -595,14 +632,15 @@ pub fn scheduler_update(
         Ok(_execution) -> {
           case model.selected_job {
             Some(details) -> {
-              let job_id = scheduler_types.job_id_to_string(details.job.job_id)
+              let job_id = id.job_id_to_string(details.job.id)
               #(model, FetchExecutionHistory(job_id, 50))
             }
             None -> #(model, FetchJobs(model.filter))
           }
         }
         Error(err) -> {
-          let updated = SchedulerModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            SchedulerModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -612,7 +650,8 @@ pub fn scheduler_update(
       case result {
         Ok(_) -> #(model, FetchJobs(model.filter))
         Error(err) -> {
-          let updated = SchedulerModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            SchedulerModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -623,14 +662,15 @@ pub fn scheduler_update(
         Ok(_) -> {
           case model.selected_job {
             Some(details) -> {
-              let job_id = scheduler_types.job_id_to_string(details.job.job_id)
+              let job_id = id.job_id_to_string(details.job.id)
               #(model, FetchJobDetails(job_id))
             }
             None -> #(model, FetchJobs(model.filter))
           }
         }
         Error(err) -> {
-          let updated = SchedulerModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            SchedulerModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -652,7 +692,12 @@ pub fn scheduler_update(
     }
 
     Refresh -> {
-      let updated = SchedulerModel(..model, is_loading: True, current_time: get_current_time())
+      let updated =
+        SchedulerModel(
+          ..model,
+          is_loading: True,
+          current_time: get_current_time(),
+        )
       #(updated, FetchJobs(model.filter))
     }
 
@@ -672,7 +717,8 @@ fn handle_key_press(
           // Start search
           #(model, NoEffect)
         }
-        "f" -> scheduler_update(model, SetEnabledOnly(!model.filter.enabled_only))
+        "f" ->
+          scheduler_update(model, SetEnabledOnly(!model.filter.enabled_only))
         "a" -> scheduler_update(model, ToggleAutoRefresh)
         "c" -> scheduler_update(model, ClearFilters)
         "r" -> scheduler_update(model, Refresh)
@@ -685,7 +731,7 @@ fn handle_key_press(
         "e" -> {
           case model.selected_job {
             Some(details) -> {
-              let job_id = scheduler_types.job_id_to_string(details.job.job_id)
+              let job_id = id.job_id_to_string(details.job.id)
               case details.job.enabled {
                 True -> scheduler_update(model, DisableJob(job_id))
                 False -> scheduler_update(model, EnableJob(job_id))
@@ -697,7 +743,7 @@ fn handle_key_press(
         "r" -> {
           case model.selected_job {
             Some(details) -> {
-              let job_id = scheduler_types.job_id_to_string(details.job.job_id)
+              let job_id = id.job_id_to_string(details.job.id)
               scheduler_update(model, RunJobNow(job_id))
             }
             None -> #(model, NoEffect)
@@ -706,7 +752,7 @@ fn handle_key_press(
         "h" -> {
           case model.selected_job {
             Some(details) -> {
-              let job_id = scheduler_types.job_id_to_string(details.job.job_id)
+              let job_id = id.job_id_to_string(details.job.id)
               scheduler_update(model, ShowHistoryView(job_id))
             }
             None -> #(model, NoEffect)
@@ -715,7 +761,7 @@ fn handle_key_press(
         "c" -> {
           case model.selected_job {
             Some(details) -> {
-              let job_id = scheduler_types.job_id_to_string(details.job.job_id)
+              let job_id = id.job_id_to_string(details.job.id)
               scheduler_update(model, ShowConfigView(job_id))
             }
             None -> #(model, NoEffect)
@@ -768,7 +814,7 @@ fn handle_key_press(
 /// Format jobs for display
 fn format_jobs(
   jobs: List(scheduler_types.ScheduledJob),
-  current_time: Int,
+  _current_time: Int,
 ) -> List(JobDisplayEntry) {
   list.map(jobs, fn(job) {
     let status = case job.enabled {
@@ -776,27 +822,25 @@ fn format_jobs(
       False -> "○ Disabled"
     }
 
-    let next_run = case job.next_run_at {
-      Some(t) -> format_relative_time(t, current_time)
+    let next_run = case job.scheduled_for {
+      Some(ts) -> ts
       None -> "Not scheduled"
     }
 
-    let last_run = case job.last_run_at {
-      Some(t) -> format_relative_time(t, current_time)
+    let last_run = case job.completed_at {
+      Some(ts) -> ts
       None -> "Never"
     }
 
-    let success_rate = case job.total_runs {
-      0 -> "N/A"
-      total -> {
-        let rate = int.to_float(job.successful_runs) /. int.to_float(total) *. 100.0
-        float_to_string(rate) <> "%"
-      }
+    // Success rate calculated from error_count (0 errors = 100%)
+    let success_rate = case job.error_count {
+      0 -> "100%"
+      _ -> "Has errors"
     }
 
     JobDisplayEntry(
       job: job,
-      name_display: job.name,
+      name_display: scheduler_types.job_type_to_string(job.job_type),
       status_display: status,
       next_run_display: next_run,
       last_run_display: last_run,
@@ -810,12 +854,11 @@ fn format_executions(
   executions: List(scheduler_types.JobExecution),
 ) -> List(ExecutionDisplayEntry) {
   list.map(executions, fn(exec) {
-    let started = format_timestamp(exec.started_at)
-    let duration = case exec.completed_at {
-      Some(completed) -> {
-        let ms = completed - exec.started_at
-        int.to_string(ms) <> "ms"
-      }
+    // started_at is already a String (ISO8601)
+    let started = exec.started_at
+
+    let duration = case exec.duration_ms {
+      Some(ms) -> int.to_string(ms) <> "ms"
       None -> "Running..."
     }
 
@@ -824,10 +867,9 @@ fn format_executions(
       scheduler_types.Running -> "🔄 Running"
       scheduler_types.Completed -> "✓ Completed"
       scheduler_types.Failed -> "✗ Failed"
-      scheduler_types.Cancelled -> "○ Cancelled"
     }
 
-    let result_summary = option.unwrap(exec.result_message, "")
+    let result_summary = option.unwrap(exec.error_message, "")
 
     ExecutionDisplayEntry(
       execution: exec,
@@ -840,13 +882,19 @@ fn format_executions(
 }
 
 /// Sort jobs by option
-fn sort_jobs(jobs: List(JobDisplayEntry), sort: JobSortOption) -> List(JobDisplayEntry) {
+fn sort_jobs(
+  jobs: List(JobDisplayEntry),
+  sort: JobSortOption,
+) -> List(JobDisplayEntry) {
   case sort {
-    SortByName -> list.sort(jobs, fn(a, b) { string.compare(a.job.name, b.job.name) })
+    SortByName ->
+      list.sort(jobs, fn(a, b) {
+        string.compare(a.name_display, b.name_display)
+      })
     SortByNextRun -> {
       list.sort(jobs, fn(a, b) {
-        case a.job.next_run_at, b.job.next_run_at {
-          Some(t1), Some(t2) -> int.compare(t1, t2)
+        case a.job.scheduled_for, b.job.scheduled_for {
+          Some(t1), Some(t2) -> string.compare(t1, t2)
           Some(_), None -> order.Lt
           None, Some(_) -> order.Gt
           None, None -> order.Eq
@@ -855,8 +903,8 @@ fn sort_jobs(jobs: List(JobDisplayEntry), sort: JobSortOption) -> List(JobDispla
     }
     SortByLastRun -> {
       list.sort(jobs, fn(a, b) {
-        case a.job.last_run_at, b.job.last_run_at {
-          Some(t1), Some(t2) -> int.compare(t2, t1)
+        case a.job.completed_at, b.job.completed_at {
+          Some(t1), Some(t2) -> string.compare(t2, t1)
           Some(_), None -> order.Lt
           None, Some(_) -> order.Gt
           None, None -> order.Eq
@@ -885,26 +933,30 @@ fn format_relative_time(timestamp: Int, current: Int) -> String {
       let abs_diff = int.absolute_value(diff)
       case abs_diff < 60 {
         True -> int.to_string(abs_diff) <> "s ago"
-        False -> case abs_diff < 3600 {
-          True -> int.to_string(abs_diff / 60) <> "m ago"
-          False -> case abs_diff < 86_400 {
-            True -> int.to_string(abs_diff / 3600) <> "h ago"
-            False -> int.to_string(abs_diff / 86_400) <> "d ago"
+        False ->
+          case abs_diff < 3600 {
+            True -> int.to_string(abs_diff / 60) <> "m ago"
+            False ->
+              case abs_diff < 86_400 {
+                True -> int.to_string(abs_diff / 3600) <> "h ago"
+                False -> int.to_string(abs_diff / 86_400) <> "d ago"
+              }
           }
-        }
       }
     }
     False -> {
       // Future
       case diff < 60 {
         True -> "in " <> int.to_string(diff) <> "s"
-        False -> case diff < 3600 {
-          True -> "in " <> int.to_string(diff / 60) <> "m"
-          False -> case diff < 86_400 {
-            True -> "in " <> int.to_string(diff / 3600) <> "h"
-            False -> "in " <> int.to_string(diff / 86_400) <> "d"
+        False ->
+          case diff < 3600 {
+            True -> "in " <> int.to_string(diff / 60) <> "m"
+            False ->
+              case diff < 86_400 {
+                True -> "in " <> int.to_string(diff / 3600) <> "h"
+                False -> "in " <> int.to_string(diff / 86_400) <> "d"
+              }
           }
-        }
       }
     }
   }
@@ -921,6 +973,25 @@ fn format_timestamp(timestamp: Int) -> String {
 fn float_to_string(value: Float) -> String {
   let rounded = float.truncate(value *. 10.0) |> int.to_float
   float.to_string(rounded /. 10.0)
+}
+
+/// Format job frequency for display
+fn format_frequency(freq: scheduler_types.JobFrequency) -> String {
+  case freq {
+    scheduler_types.Weekly(day, hour, minute) ->
+      "Weekly (day "
+      <> int.to_string(day)
+      <> " at "
+      <> int.to_string(hour)
+      <> ":"
+      <> int.to_string(minute)
+      <> ")"
+    scheduler_types.Daily(hour, minute) ->
+      "Daily at " <> int.to_string(hour) <> ":" <> int.to_string(minute)
+    scheduler_types.EveryNHours(hours) ->
+      "Every " <> int.to_string(hours) <> " hours"
+    scheduler_types.Once -> "Once"
+  }
 }
 
 // ============================================================================
@@ -952,71 +1023,79 @@ fn view_list(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
     False -> "Auto-refresh OFF"
   }
 
-  ui.col([
-    ui.br(),
-    ui.align(
-      style.Center,
-      ui.text_styled("📋 Scheduler - Jobs", Some(style.Green), None),
-    ),
-    ui.hr_styled(style.Green),
+  let error_row = case model.error_message {
+    Some(err) -> [ui.text_styled("⚠ " <> err, Some(style.Red), None)]
+    None -> []
+  }
 
-    // Error
-    list.append(
-      case model.error_message {
-        Some(err) -> [ui.text_styled("⚠ " <> err, Some(style.Red), None)]
-        None -> []
-      },
+  let loading_row = case model.is_loading {
+    True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
+    False -> []
+  }
+
+  let job_rows = case model.jobs {
+    [] -> [ui.text("No scheduled jobs found.")]
+    jobs -> list.index_map(jobs, fn(job, idx) { render_job_entry(job, idx) })
+  }
+
+  ui.col(
+    list.flatten([
+      [
+        ui.br(),
+        ui.align(
+          style.Center,
+          ui.text_styled("📋 Scheduler - Jobs", Some(style.Green), None),
+        ),
+        ui.hr_styled(style.Green),
+      ],
+      error_row,
       [
         ui.br(),
         ui.text_styled(
-          "[/] Search  [f] Filter: " <> filter_status <> "  [a] " <> auto_status <> "  [r] Refresh",
+          "[/] Search  [f] Filter: "
+            <> filter_status
+            <> "  [a] "
+            <> auto_status
+            <> "  [r] Refresh",
           Some(style.Cyan),
           None,
         ),
         ui.hr(),
         ui.br(),
-
-        // Loading
-        list.append(
-          case model.is_loading {
-            True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
-            False -> []
-          },
-          [
-            // Job list
-            list.append(
-              case model.jobs {
-                [] -> [ui.text("No scheduled jobs found.")]
-                jobs -> {
-                  list.index_map(jobs, fn(job, idx) {
-                    render_job_entry(job, idx)
-                  })
-                }
-              },
-              [
-                ui.br(),
-                ui.text_styled("[Enter] View details  [1-9] Select job", Some(style.Cyan), None),
-              ]
-            )
-          ]
-        )
-      ]
-    )
-  ])
+      ],
+      loading_row,
+      job_rows,
+      [
+        ui.br(),
+        ui.text_styled(
+          "[Enter] View details  [1-9] Select job",
+          Some(style.Cyan),
+          None,
+        ),
+      ],
+    ]),
+  )
 }
 
 /// Render a job entry
-fn render_job_entry(job: JobDisplayEntry, index: Int) -> shore.Node(SchedulerMsg) {
+fn render_job_entry(
+  job: JobDisplayEntry,
+  index: Int,
+) -> shore.Node(SchedulerMsg) {
   let status_style = case job.job.enabled {
     True -> style.Green
     False -> style.Yellow
   }
 
   ui.text(
-    int.to_string(index + 1) <> ". "
-    <> job.name_display <> " | "
-    <> job.status_display <> " | Next: "
-    <> job.next_run_display <> " | Success: "
+    int.to_string(index + 1)
+    <> ". "
+    <> job.name_display
+    <> " | "
+    <> job.status_display
+    <> " | Next: "
+    <> job.next_run_display
+    <> " | Success: "
     <> job.success_rate_display,
   )
 }
@@ -1031,97 +1110,116 @@ fn view_details(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
         False -> "[e] Enable"
       }
 
-      ui.col([
-        ui.br(),
-        ui.align(
-          style.Center,
-          ui.text_styled("📋 Job Details", Some(style.Green), None),
-        ),
-        ui.hr_styled(style.Green),
-        ui.br(),
+      let job_name = scheduler_types.job_type_to_string(details.job.job_type)
 
-        ui.text("Name: " <> details.job.name),
-        ui.text("Status: " <> case details.job.enabled {
-          True -> "✓ Enabled"
-          False -> "○ Disabled"
-        }),
-        ui.text("Schedule: " <> details.schedule_expression),
-        ui.br(),
+      let error_rows = case details.last_error {
+        Some(err) -> [
+          ui.text_styled("Last Error:", Some(style.Red), None),
+          ui.text("  " <> err),
+        ]
+        None -> []
+      }
 
-        ui.text_styled("Statistics:", Some(style.Yellow), None),
-        ui.text("  Total Executions: " <> int.to_string(details.total_executions)),
-        ui.text("  Successful: " <> int.to_string(details.successful_executions)),
-        ui.text("  Failed: " <> int.to_string(details.failed_executions)),
-        ui.text("  Avg Duration: " <> int.to_string(details.average_duration_ms) <> "ms"),
-        ui.br(),
-
-        list.append(
-          case details.last_error {
-            Some(err) -> [
-              ui.text_styled("Last Error:", Some(style.Red), None),
-              ui.text("  " <> err),
-            ]
-            None -> []
-          },
+      ui.col(
+        list.flatten([
+          [
+            ui.br(),
+            ui.align(
+              style.Center,
+              ui.text_styled("📋 Job Details", Some(style.Green), None),
+            ),
+            ui.hr_styled(style.Green),
+            ui.br(),
+            ui.text("Name: " <> job_name),
+            ui.text(
+              "Status: "
+              <> case details.job.enabled {
+                True -> "✓ Enabled"
+                False -> "○ Disabled"
+              },
+            ),
+            ui.text("Schedule: " <> details.schedule_expression),
+            ui.br(),
+            ui.text_styled("Statistics:", Some(style.Yellow), None),
+            ui.text(
+              "  Total Executions: " <> int.to_string(details.total_executions),
+            ),
+            ui.text(
+              "  Successful: " <> int.to_string(details.successful_executions),
+            ),
+            ui.text("  Failed: " <> int.to_string(details.failed_executions)),
+            ui.text(
+              "  Avg Duration: "
+              <> int.to_string(details.average_duration_ms)
+              <> "ms",
+            ),
+            ui.br(),
+          ],
+          error_rows,
           [
             ui.br(),
             ui.text_styled("Configuration:", Some(style.Yellow), None),
-            ui.text("  Timeout: " <> int.to_string(details.timeout_seconds) <> "s"),
+            ui.text(
+              "  Timeout: " <> int.to_string(details.timeout_seconds) <> "s",
+            ),
             ui.text("  Retries: " <> int.to_string(details.retry_count)),
             ui.br(),
-
             ui.hr(),
             ui.text_styled(
-              enable_action <> "  [r] Run Now  [h] History  [c] Config  [Esc] Back",
+              enable_action
+                <> "  [r] Run Now  [h] History  [c] Config  [Esc] Back",
               Some(style.Cyan),
               None,
             ),
-          ]
-        )
-      ])
+          ],
+        ]),
+      )
     }
   }
 }
 
 /// Render execution history view
 fn view_history(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
-  ui.col([
-    ui.br(),
-    ui.align(
-      style.Center,
-      ui.text_styled("📜 Execution History", Some(style.Green), None),
-    ),
-    ui.hr_styled(style.Green),
-    ui.br(),
+  let loading_row = case model.is_loading {
+    True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
+    False -> []
+  }
 
-    list.append(
-      case model.is_loading {
-        True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
-        False -> []
-      },
-      [
-        list.append(
-          case model.execution_history {
-            [] -> [ui.text("No execution history.")]
-            history -> {
-              list.map(history, fn(exec) {
-                ui.text(
-                  "  " <> exec.started_at_display <> " | "
-                  <> exec.status_display <> " | "
-                  <> exec.duration_display,
-                )
-              })
-            }
-          },
-          [
-            ui.br(),
-            ui.hr(),
-            ui.text_styled("[Enter] View logs  [Esc] Back", Some(style.Cyan), None),
-          ]
+  let history_rows = case model.execution_history {
+    [] -> [ui.text("No execution history.")]
+    history ->
+      list.map(history, fn(exec) {
+        ui.text(
+          "  "
+          <> exec.started_at_display
+          <> " | "
+          <> exec.status_display
+          <> " | "
+          <> exec.duration_display,
         )
-      ]
-    )
-  ])
+      })
+  }
+
+  ui.col(
+    list.flatten([
+      [
+        ui.br(),
+        ui.align(
+          style.Center,
+          ui.text_styled("📜 Execution History", Some(style.Green), None),
+        ),
+        ui.hr_styled(style.Green),
+        ui.br(),
+      ],
+      loading_row,
+      history_rows,
+      [
+        ui.br(),
+        ui.hr(),
+        ui.text_styled("[Enter] View logs  [Esc] Back", Some(style.Cyan), None),
+      ],
+    ]),
+  )
 }
 
 /// Render config view
@@ -1138,12 +1236,9 @@ fn view_config(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
         ui.hr_styled(style.Green),
         ui.br(),
 
-        ui.input(
-          "Schedule:",
-          config.schedule,
-          style.Pct(60),
-          fn(s) { ConfigScheduleChanged(s) },
-        ),
+        ui.input("Schedule:", config.schedule, style.Pct(60), fn(s) {
+          ConfigScheduleChanged(s)
+        }),
         ui.br(),
 
         ui.input(
@@ -1172,10 +1267,13 @@ fn view_config(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
         ),
         ui.br(),
 
-        ui.text("Enabled: " <> case config.enabled {
-          True -> "Yes"
-          False -> "No"
-        }),
+        ui.text(
+          "Enabled: "
+          <> case config.enabled {
+            True -> "Yes"
+            False -> "No"
+          },
+        ),
         ui.br(),
 
         ui.hr(),
@@ -1186,7 +1284,10 @@ fn view_config(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
 }
 
 /// Render logs view
-fn view_logs(model: SchedulerModel, execution_id: String) -> shore.Node(SchedulerMsg) {
+fn view_logs(
+  model: SchedulerModel,
+  execution_id: String,
+) -> shore.Node(SchedulerMsg) {
   ui.col([
     ui.br(),
     ui.align(
@@ -1207,7 +1308,10 @@ fn view_logs(model: SchedulerModel, execution_id: String) -> shore.Node(Schedule
 }
 
 /// Render run confirmation
-fn view_run_confirm(_model: SchedulerModel, job_id: String) -> shore.Node(SchedulerMsg) {
+fn view_run_confirm(
+  _model: SchedulerModel,
+  job_id: String,
+) -> shore.Node(SchedulerMsg) {
   ui.col([
     ui.br(),
     ui.align(
@@ -1226,7 +1330,10 @@ fn view_run_confirm(_model: SchedulerModel, job_id: String) -> shore.Node(Schedu
 }
 
 /// Render delete confirmation
-fn view_delete_confirm(_model: SchedulerModel, job_id: String) -> shore.Node(SchedulerMsg) {
+fn view_delete_confirm(
+  _model: SchedulerModel,
+  job_id: String,
+) -> shore.Node(SchedulerMsg) {
   ui.col([
     ui.br(),
     ui.align(

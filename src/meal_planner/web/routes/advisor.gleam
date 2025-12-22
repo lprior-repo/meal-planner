@@ -20,8 +20,7 @@ pub fn route(
   ctx: types.Context,
 ) -> Option(wisp.Response) {
   case segments {
-    ["api", "advisor", "daily"] ->
-      Some(advisor.handle_daily_today(req, ctx.db))
+    ["api", "advisor", "daily"] -> Some(advisor.handle_daily_today(req, ctx.db))
     ["api", "advisor", "daily", date_str] ->
       Some(advisor.handle_daily_date(req, date_str, ctx.db))
     ["api", "advisor", "trends"] ->

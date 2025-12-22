@@ -23,7 +23,11 @@ pub fn main() {
 // ============================================================================
 
 /// Create a sample meal plan for testing format functions
-fn create_sample_meal_plan(id: Int, date: String, meal_type_name: String) -> MealPlan {
+fn create_sample_meal_plan(
+  id: Int,
+  date: String,
+  meal_type_name: String,
+) -> MealPlan {
   MealPlan(
     id: id,
     title: meal_type_name,

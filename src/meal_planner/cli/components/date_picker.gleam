@@ -224,7 +224,8 @@ pub fn update(
           #(updated, NoEffect)
         }
         False -> {
-          let updated = DatePickerModel(..model, error: Some("Date out of range"))
+          let updated =
+            DatePickerModel(..model, error: Some("Date out of range"))
           #(updated, NoEffect)
         }
       }
@@ -236,19 +237,22 @@ pub fn update(
     }
 
     Cancel -> {
-      let updated = DatePickerModel(..model, is_open: False, input_mode: False, error: None)
+      let updated =
+        DatePickerModel(..model, is_open: False, input_mode: False, error: None)
       #(updated, Cancelled)
     }
 
     // === Input Mode ===
     ToggleInputMode -> {
-      let input_text = date_int_to_string(model.selected_date, model.date_format)
-      let updated = DatePickerModel(
-        ..model,
-        input_mode: !model.input_mode,
-        input_text: input_text,
-        error: None,
-      )
+      let input_text =
+        date_int_to_string(model.selected_date, model.date_format)
+      let updated =
+        DatePickerModel(
+          ..model,
+          input_mode: !model.input_mode,
+          input_text: input_text,
+          error: None,
+        )
       #(updated, NoEffect)
     }
 
@@ -262,14 +266,16 @@ pub fn update(
         Ok(date_int) -> {
           case is_date_valid(date_int, model.min_date, model.max_date) {
             True -> {
-              let updated = set_selected_date(
-                DatePickerModel(..model, input_mode: False),
-                date_int,
-              )
+              let updated =
+                set_selected_date(
+                  DatePickerModel(..model, input_mode: False),
+                  date_int,
+                )
               #(updated, NoEffect)
             }
             False -> {
-              let updated = DatePickerModel(..model, error: Some("Date out of range"))
+              let updated =
+                DatePickerModel(..model, error: Some("Date out of range"))
               #(updated, NoEffect)
             }
           }
@@ -414,19 +420,29 @@ fn date_int_to_string(date_int: Int, format: DateFormat) -> String {
   let #(year, month, day) = date_int_to_ymd(date_int)
   case format {
     IsoFormat ->
-      string.pad_start(int.to_string(year), 4, "0") <> "-"
-      <> string.pad_start(int.to_string(month), 2, "0") <> "-"
+      string.pad_start(int.to_string(year), 4, "0")
+      <> "-"
+      <> string.pad_start(int.to_string(month), 2, "0")
+      <> "-"
       <> string.pad_start(int.to_string(day), 2, "0")
     UsFormat ->
-      string.pad_start(int.to_string(month), 2, "0") <> "/"
-      <> string.pad_start(int.to_string(day), 2, "0") <> "/"
+      string.pad_start(int.to_string(month), 2, "0")
+      <> "/"
+      <> string.pad_start(int.to_string(day), 2, "0")
+      <> "/"
       <> int.to_string(year)
     EuFormat ->
-      string.pad_start(int.to_string(day), 2, "0") <> "/"
-      <> string.pad_start(int.to_string(month), 2, "0") <> "/"
+      string.pad_start(int.to_string(day), 2, "0")
+      <> "/"
+      <> string.pad_start(int.to_string(month), 2, "0")
+      <> "/"
       <> int.to_string(year)
     LongFormat ->
-      month_name(month) <> " " <> int.to_string(day) <> ", " <> int.to_string(year)
+      month_name(month)
+      <> " "
+      <> int.to_string(day)
+      <> ", "
+      <> int.to_string(year)
   }
 }
 
@@ -533,10 +549,11 @@ fn days_in_month(year: Int, month: Int) -> Int {
 fn is_leap_year(year: Int) -> Bool {
   case year % 400 == 0 {
     True -> True
-    False -> case year % 100 == 0 {
-      True -> False
-      False -> year % 4 == 0
-    }
+    False ->
+      case year % 100 == 0 {
+        True -> False
+        False -> year % 4 == 0
+      }
   }
 }
 
@@ -545,7 +562,10 @@ fn is_leap_year(year: Int) -> Bool {
 // ============================================================================
 
 /// Render the date picker
-pub fn view(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) -> shore.Node(msg) {
+pub fn view(
+  model: DatePickerModel,
+  on_msg: fn(DatePickerMsg) -> msg,
+) -> shore.Node(msg) {
   case model.is_open {
     False -> view_closed(model, on_msg)
     True -> view_open(model, on_msg)
@@ -553,13 +573,19 @@ pub fn view(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) -> shore.N
 }
 
 /// Render closed state (just shows selected date)
-fn view_closed(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) -> shore.Node(msg) {
+fn view_closed(
+  model: DatePickerModel,
+  on_msg: fn(DatePickerMsg) -> msg,
+) -> shore.Node(msg) {
   let date_str = date_int_to_string(model.selected_date, model.date_format)
   ui.text("📅 " <> date_str)
 }
 
 /// Render open state (full calendar)
-fn view_open(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) -> shore.Node(msg) {
+fn view_open(
+  model: DatePickerModel,
+  on_msg: fn(DatePickerMsg) -> msg,
+) -> shore.Node(msg) {
   case model.input_mode {
     True -> view_input_mode(model, on_msg)
     False -> view_calendar_mode(model, on_msg)
@@ -567,7 +593,10 @@ fn view_open(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) -> shore.
 }
 
 /// Render input mode
-fn view_input_mode(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) -> shore.Node(msg) {
+fn view_input_mode(
+  model: DatePickerModel,
+  on_msg: fn(DatePickerMsg) -> msg,
+) -> shore.Node(msg) {
   let format_hint = case model.date_format {
     IsoFormat -> "YYYY-MM-DD"
     UsFormat -> "MM/DD/YYYY"
@@ -576,7 +605,10 @@ fn view_input_mode(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) -> 
   }
 
   let error_section = case model.error {
-    Some(err) -> [ui.br(), ui.text_styled("Error: " <> err, Some(style.Red), None)]
+    Some(err) -> [
+      ui.br(),
+      ui.text_styled("Error: " <> err, Some(style.Red), None),
+    ]
     None -> []
   }
 
@@ -585,36 +617,41 @@ fn view_input_mode(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) -> 
     ui.text_styled("[Enter] Parse  [Esc] Cancel", Some(style.Cyan), None),
   ]
 
-  ui.col(list.flatten([
-    [
-      ui.br(),
-      ui.text_styled("📅 Enter Date", Some(style.Green), None),
-      ui.hr(),
-      ui.br(),
-      ui.text("Format: " <> format_hint),
-      ui.br(),
-      ui.input(
-        "Date:",
-        model.input_text,
-        style.Pct(50),
-        fn(text) { on_msg(InputChanged(text)) },
-      ),
-    ],
-    error_section,
-    footer_section,
-  ]))
+  ui.col(
+    list.flatten([
+      [
+        ui.br(),
+        ui.text_styled("📅 Enter Date", Some(style.Green), None),
+        ui.hr(),
+        ui.br(),
+        ui.text("Format: " <> format_hint),
+        ui.br(),
+        ui.input("Date:", model.input_text, style.Pct(50), fn(text) {
+          on_msg(InputChanged(text))
+        }),
+      ],
+      error_section,
+      footer_section,
+    ]),
+  )
 }
 
 /// Render calendar mode
-fn view_calendar_mode(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) -> shore.Node(msg) {
+fn view_calendar_mode(
+  model: DatePickerModel,
+  on_msg: fn(DatePickerMsg) -> msg,
+) -> shore.Node(msg) {
   let #(sel_year, sel_month, sel_day) = date_int_to_ymd(model.selected_date)
   let today = get_today_date_int()
   let #(today_year, today_month, today_day) = date_int_to_ymd(today)
 
-  let month_str = month_name(model.view_month) <> " " <> int.to_string(model.view_year)
+  let month_str =
+    month_name(model.view_month) <> " " <> int.to_string(model.view_year)
 
   // Build calendar grid
-  let first_day_of_month = case ymd_to_date_int(model.view_year, model.view_month, 1) {
+  let first_day_of_month = case
+    ymd_to_date_int(model.view_year, model.view_month, 1)
+  {
     Ok(d) -> d
     Error(_) -> model.selected_date
   }
@@ -622,18 +659,19 @@ fn view_calendar_mode(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) 
   let num_days = days_in_month(model.view_year, model.view_month)
 
   // Build rows (6 rows max for calendar)
-  let calendar_rows = build_calendar_rows(
-    model.view_year,
-    model.view_month,
-    first_dow,
-    num_days,
-    sel_year,
-    sel_month,
-    sel_day,
-    today_year,
-    today_month,
-    today_day,
-  )
+  let calendar_rows =
+    build_calendar_rows(
+      model.view_year,
+      model.view_month,
+      first_dow,
+      num_days,
+      sel_year,
+      sel_month,
+      sel_day,
+      today_year,
+      today_month,
+      today_day,
+    )
 
   let header_section = [
     ui.br(),
@@ -652,7 +690,9 @@ fn view_calendar_mode(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) 
 
   let footer_section = [
     ui.br(),
-    ui.text("Selected: " <> date_int_to_string(model.selected_date, model.date_format)),
+    ui.text(
+      "Selected: " <> date_int_to_string(model.selected_date, model.date_format),
+    ),
   ]
 
   let help_section = [
@@ -665,13 +705,15 @@ fn view_calendar_mode(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) 
     ),
   ]
 
-  ui.col(list.flatten([
-    header_section,
-    calendar_section,
-    footer_section,
-    error_section,
-    help_section,
-  ]))
+  ui.col(
+    list.flatten([
+      header_section,
+      calendar_section,
+      footer_section,
+      error_section,
+      help_section,
+    ]),
+  )
 }
 
 /// Build calendar row strings
@@ -693,8 +735,10 @@ fn build_calendar_rows(
   let days =
     list.range(1, num_days)
     |> list.map(fn(day) {
-      let is_selected = view_year == sel_year && view_month == sel_month && day == sel_day
-      let is_today = view_year == today_year && view_month == today_month && day == today_day
+      let is_selected =
+        view_year == sel_year && view_month == sel_month && day == sel_day
+      let is_today =
+        view_year == today_year && view_month == today_month && day == today_day
 
       let day_str = string.pad_start(int.to_string(day), 2, " ")
       case is_selected, is_today {

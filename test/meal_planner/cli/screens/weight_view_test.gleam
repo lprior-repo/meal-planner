@@ -18,8 +18,8 @@ import meal_planner/cli/screens/weight_view.{
   type WeightEditState, type WeightEffect, type WeightEntryInput,
   type WeightGoalType, type WeightGoals, type WeightStatistics,
   type WeightViewState, AddEntryView, ChartPoint, ChartView, ConfirmDeleteView,
-  DatePicker, EditEntryView, Female, GainWeight, GoalsView, ListView,
-  LoseWeight, MaintainWeight, Male, Other, ProfileView, StatsView, UserProfile,
+  DatePicker, EditEntryView, Female, GainWeight, GoalsView, ListView, LoseWeight,
+  MaintainWeight, Male, Other, ProfileView, StatsView, UserProfile,
   WeightDisplayEntry, WeightEditState, WeightEntryInput, WeightGoals,
   WeightStatistics,
 }
@@ -188,14 +188,15 @@ pub fn view_state_date_picker_test() {
 
 pub fn weight_display_entry_construction_test() {
   let entry = test_weight_entry(75.5)
-  let display = WeightDisplayEntry(
-    entry: entry,
-    weight_display: "75.5 kg",
-    date_display: "Dec 20, 2025",
-    change_display: "-0.3 kg",
-    bmi_display: Some("24.2"),
-    days_since_previous: Some(1),
-  )
+  let display =
+    WeightDisplayEntry(
+      entry: entry,
+      weight_display: "75.5 kg",
+      date_display: "Dec 20, 2025",
+      change_display: "-0.3 kg",
+      bmi_display: Some("24.2"),
+      days_since_previous: Some(1),
+    )
   display.weight_display
   |> should.equal("75.5 kg")
   display.date_display
@@ -211,14 +212,15 @@ pub fn weight_display_entry_construction_test() {
 // ============================================================================
 
 pub fn weight_goals_construction_test() {
-  let goals = WeightGoals(
-    target_weight: 70.0,
-    starting_weight: 80.0,
-    goal_start_date: 19_900,
-    target_date: Some(20_200),
-    weekly_target: -0.5,
-    goal_type: LoseWeight,
-  )
+  let goals =
+    WeightGoals(
+      target_weight: 70.0,
+      starting_weight: 80.0,
+      goal_start_date: 19_900,
+      target_date: Some(20_200),
+      weekly_target: -0.5,
+      goal_type: LoseWeight,
+    )
   goals.target_weight
   |> should.equal(70.0)
   goals.starting_weight
@@ -240,12 +242,13 @@ pub fn weight_goal_type_all_variants_test() {
 // ============================================================================
 
 pub fn weight_entry_input_construction_test() {
-  let input = WeightEntryInput(
-    weight_str: "75.5",
-    date_int: 20_000,
-    comment: "After breakfast",
-    parsed_weight: Some(75.5),
-  )
+  let input =
+    WeightEntryInput(
+      weight_str: "75.5",
+      date_int: 20_000,
+      comment: "After breakfast",
+      parsed_weight: Some(75.5),
+    )
   input.weight_str
   |> should.equal("75.5")
   input.date_int
@@ -262,12 +265,13 @@ pub fn weight_entry_input_construction_test() {
 
 pub fn weight_edit_state_construction_test() {
   let entry = test_weight_entry(76.0)
-  let edit_state = WeightEditState(
-    entry: entry,
-    new_weight_str: "75.8",
-    new_comment: "Corrected",
-    original_weight: 76.0,
-  )
+  let edit_state =
+    WeightEditState(
+      entry: entry,
+      new_weight_str: "75.8",
+      new_comment: "Corrected",
+      original_weight: 76.0,
+    )
   edit_state.new_weight_str
   |> should.equal("75.8")
   edit_state.new_comment
@@ -281,18 +285,19 @@ pub fn weight_edit_state_construction_test() {
 // ============================================================================
 
 pub fn weight_statistics_construction_test() {
-  let stats = WeightStatistics(
-    total_change: -5.0,
-    average_weight: 77.5,
-    min_weight: 75.0,
-    max_weight: 82.0,
-    week_change: -0.8,
-    month_change: -2.5,
-    current_bmi: Some(24.5),
-    bmi_category: Some("Normal"),
-    goal_progress: 50.0,
-    days_to_goal: Some(100),
-  )
+  let stats =
+    WeightStatistics(
+      total_change: -5.0,
+      average_weight: 77.5,
+      min_weight: 75.0,
+      max_weight: 82.0,
+      week_change: -0.8,
+      month_change: -2.5,
+      current_bmi: Some(24.5),
+      bmi_category: Some("Normal"),
+      goal_progress: 50.0,
+      days_to_goal: Some(100),
+    )
   stats.total_change
   |> should.equal(-5.0)
   stats.average_weight
@@ -314,11 +319,12 @@ pub fn weight_statistics_construction_test() {
 // ============================================================================
 
 pub fn user_profile_construction_test() {
-  let profile = UserProfile(
-    height_cm: Some(175.0),
-    birth_date: Some(8000),
-    gender: Some(Male),
-  )
+  let profile =
+    UserProfile(
+      height_cm: Some(175.0),
+      birth_date: Some(8000),
+      gender: Some(Male),
+    )
   profile.height_cm
   |> should.equal(Some(175.0))
   profile.birth_date
@@ -442,14 +448,15 @@ pub fn weight_msg_ui_variants_compile_test() {
 
 pub fn weight_effect_all_variants_compile_test() {
   let entry_id = weight_types.weight_entry_id("test")
-  let goals = WeightGoals(
-    target_weight: 70.0,
-    starting_weight: 75.0,
-    goal_start_date: 20_000,
-    target_date: None,
-    weekly_target: -0.5,
-    goal_type: LoseWeight,
-  )
+  let goals =
+    WeightGoals(
+      target_weight: 70.0,
+      starting_weight: 75.0,
+      goal_start_date: 20_000,
+      target_date: None,
+      weekly_target: -0.5,
+      goal_type: LoseWeight,
+    )
   let profile =
     UserProfile(height_cm: Some(175.0), birth_date: None, gender: Some(Male))
   let _effects: List(WeightEffect) = [

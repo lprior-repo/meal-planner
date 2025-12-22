@@ -150,14 +150,15 @@ pub fn update(state: SearchState, msg: Msg) -> #(SearchState, List(Effect)) {
   case msg {
     // Activate the popup and reset state
     SearchActivate -> {
-      let new_state = SearchState(
-        active: True,
-        query: "",
-        results: [],
-        error: option.None,
-        loading: False,
-        selected_index: 0,
-      )
+      let new_state =
+        SearchState(
+          active: True,
+          query: "",
+          results: [],
+          error: option.None,
+          loading: False,
+          selected_index: 0,
+        )
       #(new_state, no_effects())
     }
 
@@ -171,23 +172,21 @@ pub fn update(state: SearchState, msg: Msg) -> #(SearchState, List(Effect)) {
     // Handle successful search results
     GotSearchResults(Ok(results)) -> {
       let truncated = truncate(results, max_results)
-      let new_state = SearchState(
-        ..state,
-        results: truncated,
-        loading: False,
-        error: option.None,
-        selected_index: 0,
-      )
+      let new_state =
+        SearchState(
+          ..state,
+          results: truncated,
+          loading: False,
+          error: option.None,
+          selected_index: 0,
+        )
       #(new_state, no_effects())
     }
 
     // Handle search error
     GotSearchResults(Error(err)) -> {
-      let new_state = SearchState(
-        ..state,
-        loading: False,
-        error: option.Some(err),
-      )
+      let new_state =
+        SearchState(..state, loading: False, error: option.Some(err))
       #(new_state, no_effects())
     }
 

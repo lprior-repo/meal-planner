@@ -6,8 +6,7 @@ import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/advisor/weekly_trends.{
-  type NutritionTargets, NutritionTargets,
-  calculate_macro_averages,
+  type NutritionTargets, NutritionTargets, calculate_macro_averages,
   generate_pattern_recommendations, identify_nutrition_patterns,
 }
 import meal_planner/fatsecret/diary/types.{type DaySummary, DaySummary}
