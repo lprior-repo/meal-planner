@@ -1046,7 +1046,7 @@ fn view_list(model: WeightModel) -> shore.Node(WeightMsg) {
     ui.hr_styled(style.Green),
 
     // Current weight
-    ..list.append(
+    list.append(
       case model.current_weight {
         Some(w) -> [
           ui.br(),
@@ -1056,7 +1056,7 @@ fn view_list(model: WeightModel) -> shore.Node(WeightMsg) {
       },
       [
         // Error
-        ..list.append(
+        list.append(
           case model.error_message {
             Some(err) -> [ui.text_styled("⚠ " <> err, Some(style.Red), None)]
             None -> []
@@ -1072,14 +1072,14 @@ fn view_list(model: WeightModel) -> shore.Node(WeightMsg) {
             ui.br(),
 
             // Entries
-            ..list.append(
+            list.append(
               case model.is_loading {
                 True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
                 False -> []
               },
               [
                 ui.text_styled("Recent Entries:", Some(style.Yellow), None),
-                ..list.append(
+                list.append(
                   case model.entries {
                     [] -> [ui.text("No weight entries recorded.")]
                     entries -> {
@@ -1146,7 +1146,7 @@ fn view_add_entry(model: WeightModel) -> shore.Node(WeightMsg) {
     ),
     ui.br(),
 
-    ..list.append(
+    list.append(
       case input.parsed_weight {
         Some(w) -> [ui.text_styled("Parsed: " <> float_to_string(w) <> " kg", Some(style.Green), None)]
         None -> case input.weight_str {
@@ -1293,7 +1293,7 @@ fn view_stats(model: WeightModel) -> shore.Node(WeightMsg) {
     ui.text("30-Day Change: " <> float_to_string(s.month_change) <> " kg"),
     ui.br(),
 
-    ..list.append(
+    list.append(
       case s.current_bmi, s.bmi_category {
         Some(bmi), Some(cat) -> [
           ui.text("BMI: " <> float_to_string(bmi) <> " (" <> cat <> ")"),
@@ -1326,7 +1326,7 @@ fn view_chart(model: WeightModel) -> shore.Node(WeightMsg) {
     ui.text("Last 30 days:"),
     ui.br(),
 
-    ..list.append(
+    list.append(
       list.map(chart_lines, fn(line) { ui.text(line) }),
       [
         ui.br(),

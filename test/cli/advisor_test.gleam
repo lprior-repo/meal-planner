@@ -8,6 +8,7 @@
 
 import gleam/float
 import gleam/int
+import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
 import gleeunit
@@ -144,8 +145,8 @@ pub fn format_weekly_trends_test() {
 pub fn weekly_average_test() {
   let trends = create_sample_weekly_trends(7, 2000.0, "Monday", "Sunday")
 
-  trends.avg_calories
-  > 0.0
+  let is_positive = trends.avg_calories >. 0.0
+  is_positive
   |> should.be_true()
 }
 

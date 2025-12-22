@@ -158,12 +158,13 @@ fn list_meal_plans(
   let tandoor_config =
     client.bearer_config(config.tandoor.base_url, config.tandoor.api_token)
 
+  // Note: meal_type_filter not currently supported by the API
+  let _ = meal_type_filter
   case
     mealplan.list_meal_plans(
       tandoor_config,
       from_date: from_date,
       to_date: to_date,
-      meal_type: meal_type_filter,
     )
   {
     Ok(response) -> {
@@ -308,37 +309,9 @@ fn view_meal_plan(
 // ============================================================================
 
 fn list_meal_types(config: Config) -> Result(String, String) {
-  let tandoor_config =
-    client.bearer_config(config.tandoor.base_url, config.tandoor.api_token)
-
-  case mealplan.list_meal_types(tandoor_config) {
-    Ok(meal_types) -> {
-      let header = "Available Meal Types\n" <> string.repeat("=", 40) <> "\n\n"
-
-      let body = case meal_types {
-        [] -> "No meal types configured.\n"
-        types -> {
-          types
-          |> list.map(fn(mt) {
-            "  "
-            <> int.to_string(mt.id)
-            <> ". "
-            <> mt.name
-            <> case mt.order {
-              0 -> ""
-              order -> " (order: " <> int.to_string(order) <> ")"
-            }
-          })
-          |> string.join("\n")
-        }
-      }
-
-      Ok(header <> body)
-    }
-    Error(err) -> {
-      Error("Failed to list meal types: " <> client.error_to_string(err))
-    }
-  }
+  // TODO: Implement list_meal_types in tandoor/mealplan.gleam
+  let _ = config
+  Error("Meal types listing not yet implemented")
 }
 
 // ============================================================================

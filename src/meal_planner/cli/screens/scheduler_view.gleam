@@ -961,7 +961,7 @@ fn view_list(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
     ui.hr_styled(style.Green),
 
     // Error
-    ..list.append(
+    list.append(
       case model.error_message {
         Some(err) -> [ui.text_styled("⚠ " <> err, Some(style.Red), None)]
         None -> []
@@ -977,14 +977,14 @@ fn view_list(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
         ui.br(),
 
         // Loading
-        ..list.append(
+        list.append(
           case model.is_loading {
             True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
             False -> []
           },
           [
             // Job list
-            ..list.append(
+            list.append(
               case model.jobs {
                 [] -> [ui.text("No scheduled jobs found.")]
                 jobs -> {
@@ -1055,7 +1055,7 @@ fn view_details(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
         ui.text("  Avg Duration: " <> int.to_string(details.average_duration_ms) <> "ms"),
         ui.br(),
 
-        ..list.append(
+        list.append(
           case details.last_error {
             Some(err) -> [
               ui.text_styled("Last Error:", Some(style.Red), None),
@@ -1094,13 +1094,13 @@ fn view_history(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
     ui.hr_styled(style.Green),
     ui.br(),
 
-    ..list.append(
+    list.append(
       case model.is_loading {
         True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
         False -> []
       },
       [
-        ..list.append(
+        list.append(
           case model.execution_history {
             [] -> [ui.text("No execution history.")]
             history -> {

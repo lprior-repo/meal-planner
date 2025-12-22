@@ -407,101 +407,84 @@ pub fn view(
 ) -> shore.Node(msg) {
   let item_count = list.length(model.items)
 
-  ui.col([
-    // Title
-    ..list.append(
-      case model.title {
-        Some(t) -> [ui.text_styled(t, Some(style.Green), None), ui.hr()]
-        None -> []
+  // Build all sections as separate lists, then flatten
+  let title_section = case model.title {
+    Some(t) -> [ui.text_styled(t, Some(style.Green), None), ui.hr()]
+    None -> []
+  }
+
+  let filter_section = case model.filter_active {
+    True -> [
+      ui.input(
+        "Filter:",
+        model.filter_query,
+        style.Pct(80),
+        fn(q) { on_msg(FilterQueryChanged(q)) },
+      ),
+      ui.br(),
+    ]
+    False -> []
+  }
+
+  let error_section = case model.error {
+    Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
+    None -> []
+  }
+
+  let loading_section = case model.is_loading {
+    True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
+    False -> []
+  }
+
+  let scroll_top_section = case model.scroll_offset > 0 {
+    True -> [ui.text("  ▲ " <> int.to_string(model.scroll_offset) <> " more above")]
+    False -> []
+  }
+
+  let items_section = case model.items {
+    [] -> [ui.text(model.empty_message)]
+    _ -> {
+      let visible = get_visible_items(model)
+      list.index_map(visible, fn(item, rel_index) {
+        let abs_index = model.scroll_offset + rel_index
+        let is_cursor = abs_index == model.selected_index
+        let is_selected = is_index_selected(model, abs_index)
+        let line = render_item(item, abs_index, is_cursor, is_selected)
+        ui.text(line)
+      })
+    }
+  }
+
+  let scroll_bottom_section = case model.scroll_offset + model.visible_count < item_count {
+    True -> {
+      let below = item_count - model.scroll_offset - model.visible_count
+      [ui.text("  ▼ " <> int.to_string(below) <> " more below")]
+    }
+    False -> []
+  }
+
+  let status_section = [
+    ui.br(),
+    ui.text(
+      "Item " <> int.to_string(model.selected_index + 1)
+      <> " of " <> int.to_string(item_count)
+      <> case model.multi_select {
+        True -> " | Selected: " <> int.to_string(list.length(model.selected_indices))
+        False -> ""
       },
-      [
-        // Filter input
-        ..list.append(
-          case model.filter_active {
-            True -> [
-              ui.input(
-                "Filter:",
-                model.filter_query,
-                style.Pct(80),
-                fn(q) { on_msg(FilterQueryChanged(q)) },
-              ),
-              ui.br(),
-            ]
-            False -> []
-          },
-          [
-            // Error message
-            ..list.append(
-              case model.error {
-                Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
-                None -> []
-              },
-              [
-                // Loading
-                ..list.append(
-                  case model.is_loading {
-                    True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
-                    False -> []
-                  },
-                  [
-                    // Scroll indicator (top)
-                    ..list.append(
-                      case model.scroll_offset > 0 {
-                        True -> [ui.text("  ▲ " <> int.to_string(model.scroll_offset) <> " more above")]
-                        False -> []
-                      },
-                      [
-                        // List items
-                        ..list.append(
-                          case model.items {
-                            [] -> [ui.text(model.empty_message)]
-                            _ -> {
-                              let visible = get_visible_items(model)
-                              list.index_map(visible, fn(item, rel_index) {
-                                let abs_index = model.scroll_offset + rel_index
-                                let is_cursor = abs_index == model.selected_index
-                                let is_selected = is_index_selected(model, abs_index)
-                                let line = render_item(item, abs_index, is_cursor, is_selected)
-                                ui.text(line)
-                              })
-                            }
-                          },
-                          [
-                            // Scroll indicator (bottom)
-                            ..list.append(
-                              case model.scroll_offset + model.visible_count < item_count {
-                                True -> {
-                                  let below = item_count - model.scroll_offset - model.visible_count
-                                  [ui.text("  ▼ " <> int.to_string(below) <> " more below")]
-                                }
-                                False -> []
-                              },
-                              [
-                                // Status bar
-                                ui.br(),
-                                ui.text(
-                                  "Item " <> int.to_string(model.selected_index + 1)
-                                  <> " of " <> int.to_string(item_count)
-                                  <> case model.multi_select {
-                                    True -> " | Selected: " <> int.to_string(list.length(model.selected_indices))
-                                    False -> ""
-                                  },
-                                ),
-                              ]
-                            )
-                          ]
-                        )
-                      ]
-                    )
-                  ]
-                )
-              ]
-            )
-          ]
-        )
-      ]
-    )
-  ])
+    ),
+  ]
+
+  ui.col(list.flatten([
+    title_section,
+    filter_section,
+    error_section,
+    loading_section,
+    scroll_top_section,
+    items_section,
+    scroll_bottom_section,
+    status_section,
+  ]))
 }
 
 /// Default item renderer

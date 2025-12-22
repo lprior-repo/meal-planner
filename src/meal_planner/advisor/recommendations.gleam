@@ -450,7 +450,7 @@ fn add_consistency_insights(
 fn add_progress_insights(
   insights: List(Insight),
   trends: WeeklyTrends,
-  targets: NutritionTargets,
+  _targets: NutritionTargets,
 ) -> List(Insight) {
   let best_day = trends.best_day
   let worst_day = trends.worst_day

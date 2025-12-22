@@ -312,7 +312,7 @@ fn view_domain_menu(
     ui.br(),
     ui.text("Available commands:"),
     ui.br(),
-    ..list.append(render_command_list(commands), [
+    list.append(render_command_list(commands), [
       ui.br(),
       ui.hr(),
       ui.br(),

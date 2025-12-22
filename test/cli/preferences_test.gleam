@@ -106,19 +106,19 @@ pub fn validate_calorie_goal_range_test() {
   let valid_mid = 2000
   let valid_high = 10_000
 
-  valid_low >= 500
+  valid_low >=. 500
   && valid_low
-  <= 10_000
+  <=. 10_000
   |> should.be_true()
 
-  valid_mid >= 500
+  valid_mid >=. 500
   && valid_mid
-  <= 10_000
+  <=. 10_000
   |> should.be_true()
 
-  valid_high >= 500
+  valid_high >=. 500
   && valid_high
-  <= 10_000
+  <=. 10_000
   |> should.be_true()
 }
 
@@ -128,7 +128,7 @@ pub fn validate_protein_goal_test() {
 
   protein_grams > 0
   && protein_grams
-  <= 500
+  <=. 500
   |> should.be_true()
 }
 
@@ -138,7 +138,7 @@ pub fn validate_carbs_goal_test() {
 
   carbs_grams > 0
   && carbs_grams
-  <= 1000
+  <=. 1000
   |> should.be_true()
 }
 
@@ -148,7 +148,7 @@ pub fn validate_fat_goal_test() {
 
   fat_grams > 0
   && fat_grams
-  <= 500
+  <=. 500
   |> should.be_true()
 }
 
@@ -165,8 +165,8 @@ pub fn validate_bodyweight_positive_test() {
 pub fn validate_meals_per_day_test() {
   let meals = 3
 
-  meals >= 1
+  meals >=. 1
   && meals
-  <= 10
+  <=. 10
   |> should.be_true()
 }
