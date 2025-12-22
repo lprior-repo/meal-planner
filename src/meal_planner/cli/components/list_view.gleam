@@ -23,6 +23,17 @@ import shore/ui
 // Types
 // ============================================================================
 
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/// Get item at index from list
+fn get_at(items: List(a), index: Int) -> Result(a, Nil) {
+  items
+  |> list.drop(index)
+  |> list.first
+}
+
 /// List view model (generic over item type)
 pub type ListViewModel(item) {
   ListViewModel(
@@ -74,8 +85,8 @@ pub type ListViewMsg {
   ToggleFilter
   ClearFilter
 
-  // State
-  SetItems(items: List(a))
+  // State - Note: SetItems removed as it requires a parameterized message type
+  // Use init() or direct model updates instead
   SetLoading(loading: Bool)
   SetError(error: Option(String))
   ClearError
@@ -226,7 +237,7 @@ pub fn update(
           #(updated, NoEffect)
         }
         False -> {
-          case list.at(model.items, model.selected_index) {
+          case get_at(model.items, model.selected_index) {
             Ok(item) -> #(model, ItemSelected(item, model.selected_index))
             Error(_) -> #(model, NoEffect)
           }
@@ -255,11 +266,16 @@ pub fn update(
         True -> {
           let selected_items =
             model.selected_indices
-            |> list.filter_map(fn(i) { result.ok(list.at(model.items, i)) })
+            |> list.flat_map(fn(i) {
+              case get_at(model.items, i) {
+                Ok(item) -> [item]
+                Error(_) -> []
+              }
+            })
           #(model, ItemsSelected(selected_items, model.selected_indices))
         }
         False -> {
-          case list.at(model.items, model.selected_index) {
+          case get_at(model.items, model.selected_index) {
             Ok(item) -> #(model, ItemSelected(item, model.selected_index))
             Error(_) -> #(model, NoEffect)
           }
@@ -291,16 +307,6 @@ pub fn update(
     }
 
     // === State ===
-    SetItems(items) -> {
-      let updated = ListViewModel(
-        ..model,
-        items: items,
-        selected_index: 0,
-        scroll_offset: 0,
-        selected_indices: [],
-      )
-      #(updated, NoEffect)
-    }
 
     SetLoading(loading) -> {
       let updated = ListViewModel(..model, is_loading: loading)
@@ -375,7 +381,7 @@ pub fn get_visible_items(model: ListViewModel(item)) -> List(item) {
 
 /// Get selected item
 pub fn get_selected_item(model: ListViewModel(item)) -> Option(item) {
-  case list.at(model.items, model.selected_index) {
+  case get_at(model.items, model.selected_index) {
     Ok(item) -> Some(item)
     Error(_) -> None
   }
@@ -384,7 +390,12 @@ pub fn get_selected_item(model: ListViewModel(item)) -> Option(item) {
 /// Get selected items (multi-select)
 pub fn get_selected_items(model: ListViewModel(item)) -> List(item) {
   model.selected_indices
-  |> list.filter_map(fn(i) { result.ok(list.at(model.items, i)) })
+  |> list.flat_map(fn(i) {
+    case get_at(model.items, i) {
+      Ok(item) -> [item]
+      Error(_) -> []
+    }
+  })
 }
 
 /// Check if index is selected

@@ -72,7 +72,10 @@ pub fn decode_food_response_wrapper_test() {
     |> should.be_ok
 
   result.food_name |> should.equal("Apple")
-  result.nutrition.calories |> should.equal(95.0)
+
+  // Access nutrition through servings
+  let assert [first, ..] = result.servings
+  first.nutrition.calories |> should.equal(95.0)
 }
 
 // ============================================================================

@@ -17,9 +17,7 @@ import glint
 import meal_planner/config.{type Config}
 import meal_planner/fatsecret/diary/service as diary_service
 import meal_planner/fatsecret/diary/types as diary_types
-import meal_planner/fatsecret/diary/types.{
-  type FoodEntry, type MealType, Breakfast, Dinner, Lunch, Snack,
-}
+import meal_planner/fatsecret/diary/types.{type FoodEntry, type MealType, Breakfast, Dinner, Lunch, Snack}
 import meal_planner/postgres
 import pog
 
@@ -33,7 +31,6 @@ import pog
 /// calories, and macro breakdown.
 pub fn format_food_entry_row(entry: FoodEntry) -> String {
   // Use field access instead of destructuring to be more robust
-  let food_entry_id = entry.food_entry_id
   let food_entry_name = entry.food_entry_name
   let calories = entry.calories
   let protein = entry.protein
@@ -172,15 +169,6 @@ fn create_db_connection(config: Config) -> Result(pog.Connection, String) {
   }
 }
 
-/// Format meal type for display
-fn format_meal_type(meal: MealType) -> String {
-  case meal {
-    Breakfast -> "Breakfast"
-    Lunch -> "Lunch"
-    Dinner -> "Dinner"
-    Snack -> "Snack"
-  }
-}
 
 // ============================================================================
 // Handler Functions

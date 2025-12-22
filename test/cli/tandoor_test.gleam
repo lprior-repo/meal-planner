@@ -5,7 +5,6 @@
 //// 2. Search and filter functionality
 //// 3. Sync operation status
 
-import gleam/int
 import gleam/list
 import gleam/string
 import gleeunit
@@ -174,8 +173,7 @@ pub fn filter_categories_by_name_test() {
 pub fn validate_recipe_name_required_test() {
   let name = "Grilled Chicken"
 
-  string.length(name)
-  > 0
+  { string.length(name) > 0 }
   |> should.be_true()
 }
 
@@ -183,8 +181,7 @@ pub fn validate_recipe_name_required_test() {
 pub fn validate_servings_positive_test() {
   let servings = 4.0
 
-  servings
-  > 0.0
+  { servings >. 0.0 }
   |> should.be_true()
 }
 
@@ -192,9 +189,7 @@ pub fn validate_servings_positive_test() {
 pub fn handle_decimal_servings_test() {
   let servings = 2.5
 
-  servings > 0.0
-  && servings
-  <=. 100.0
+  { servings >. 0.0 && servings <=. 100.0 }
   |> should.be_true()
 }
 
@@ -208,16 +203,13 @@ pub fn format_sync_results_test() {
   let categories_synced = 8
   let meal_plans_synced = 30
 
-  recipes_synced
-  > 0
+  { recipes_synced > 0 }
   |> should.be_true()
 
-  categories_synced
-  > 0
+  { categories_synced > 0 }
   |> should.be_true()
 
-  meal_plans_synced
-  >=. 0
+  { meal_plans_synced >= 0 }
   |> should.be_true()
 }
 
@@ -225,7 +217,6 @@ pub fn format_sync_results_test() {
 pub fn handle_empty_sync_test() {
   let synced_count = 0
 
-  synced_count
-  >=. 0
+  { synced_count >= 0 }
   |> should.be_true()
 }

@@ -5,12 +5,11 @@
 //// 2. Query validation
 //// 3. Description truncation
 
-import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
 import gleeunit
 import gleeunit/should
-import meal_planner/cli/domains/recipe
+import meal_planner/cli/domains/recipe as recipe_domain
 import meal_planner/tandoor/recipe.{type Recipe, Recipe}
 
 pub fn main() {
@@ -30,12 +29,14 @@ fn create_sample_recipe(
   Recipe(
     id: id,
     name: name,
+    slug: None,
     description: description,
-    tags: [],
-    keywords: [],
-    servings: 1.0,
-    working_time: 10,
-    waiting_time: 0,
+    servings: 1,
+    servings_text: None,
+    working_time: Some(10),
+    waiting_time: Some(0),
+    created_at: None,
+    updated_at: None,
   )
 }
 
@@ -46,7 +47,7 @@ fn create_sample_recipe(
 /// Test: format_recipe_search_results shows count for empty list
 pub fn format_recipe_search_results_empty_list_test() {
   let recipes: List(Recipe) = []
-  let output = recipe.format_recipe_search_results(recipes, query: "chicken")
+  let output = recipe_domain.format_recipe_search_results(recipes, query: "chicken")
 
   string.contains(output, "No recipes found")
   |> should.be_true()
@@ -62,7 +63,7 @@ pub fn format_recipe_search_results_shows_count_test() {
     create_sample_recipe(2, "Chicken Salad", Some("Fresh salad")),
   ]
 
-  let output = recipe.format_recipe_search_results(recipes, query: "chicken")
+  let output = recipe_domain.format_recipe_search_results(recipes, query: "chicken")
 
   string.contains(output, "Found 2 recipe(s)")
   |> should.be_true()
@@ -74,7 +75,7 @@ pub fn format_recipe_search_results_includes_names_test() {
     create_sample_recipe(1, "Grilled Chicken", Some("Delicious chicken")),
   ]
 
-  let output = recipe.format_recipe_search_results(recipes, query: "chicken")
+  let output = recipe_domain.format_recipe_search_results(recipes, query: "chicken")
 
   string.contains(output, "Grilled Chicken")
   |> should.be_true()
@@ -89,15 +90,14 @@ pub fn format_recipe_search_results_truncates_description_test() {
     create_sample_recipe(1, "Test Recipe", Some(long_description)),
   ]
 
-  let output = recipe.format_recipe_search_results(recipes, query: "test")
+  let output = recipe_domain.format_recipe_search_results(recipes, query: "test")
 
   // Should contain truncation marker
   string.contains(output, "...")
   |> should.be_true()
 
-  // Should not contain the full long description
-  string.length(output)
-  < string.length(long_description)
+  // Output should be shorter than long description (truncated)
+  { string.length(output) < string.length(long_description) }
   |> should.be_true()
 }
 
@@ -107,7 +107,7 @@ pub fn format_recipe_search_results_no_description_test() {
     create_sample_recipe(1, "Simple Recipe", None),
   ]
 
-  let output = recipe.format_recipe_search_results(recipes, query: "simple")
+  let output = recipe_domain.format_recipe_search_results(recipes, query: "simple")
 
   string.contains(output, "Simple Recipe")
   |> should.be_true()
@@ -119,7 +119,7 @@ pub fn format_recipe_search_results_preserves_case_test() {
     create_sample_recipe(1, "Grilled Chicken", Some("Delicious")),
   ]
 
-  let output = recipe.format_recipe_search_results(recipes, query: "CHICKEN")
+  let output = recipe_domain.format_recipe_search_results(recipes, query: "CHICKEN")
 
   string.contains(output, "CHICKEN")
   |> should.be_true()

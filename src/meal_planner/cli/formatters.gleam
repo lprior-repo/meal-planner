@@ -16,7 +16,8 @@ import meal_planner/fatsecret/weight/types as weight
 
 pub fn format_json(results: Results) -> String {
   case results {
-    types.FoodResults(foods) -> encode_foods_json(foods)
+    types.FoodSearchResults(foods) -> encode_food_search_results_json(foods)
+    types.FoodDetailResult(food_detail) -> encode_food_detail_json(food_detail)
     types.DiaryResults(entries) -> encode_diary_json(entries)
     types.ExerciseResults(entries) -> encode_exercise_json(entries)
     types.RecipeResults(recipes) -> encode_recipes_json(recipes)
@@ -30,28 +31,39 @@ pub fn format_json(results: Results) -> String {
   }
 }
 
-fn encode_foods_json(foods: List(food.Food)) -> String {
+fn encode_food_search_results_json(foods: List(food.FoodSearchResult)) -> String {
   foods
   |> json.array(fn(f) {
     json.object([
       #("food_id", json.string(food.food_id_to_string(f.food_id))),
       #("food_name", json.string(f.food_name)),
       #("food_type", json.string(f.food_type)),
+      #("food_description", json.string(f.food_description)),
       #("brand_name", encode_option_string(f.brand_name)),
-      #(
-        "servings",
-        json.array(f.servings, fn(s) {
-          json.object([
-            #("serving_description", json.string(s.serving_description)),
-            #("calories", json.float(s.nutrition.calories)),
-            #("carbohydrate", json.float(s.nutrition.carbohydrate)),
-            #("protein", json.float(s.nutrition.protein)),
-            #("fat", json.float(s.nutrition.fat)),
-          ])
-        }),
-      ),
     ])
   })
+  |> json.to_string
+}
+
+fn encode_food_detail_json(f: food.Food) -> String {
+  json.object([
+    #("food_id", json.string(food.food_id_to_string(f.food_id))),
+    #("food_name", json.string(f.food_name)),
+    #("food_type", json.string(f.food_type)),
+    #("brand_name", encode_option_string(f.brand_name)),
+    #(
+      "servings",
+      json.array(f.servings, fn(s) {
+        json.object([
+          #("serving_description", json.string(s.serving_description)),
+          #("calories", json.float(s.nutrition.calories)),
+          #("carbohydrate", json.float(s.nutrition.carbohydrate)),
+          #("protein", json.float(s.nutrition.protein)),
+          #("fat", json.float(s.nutrition.fat)),
+        ])
+      }),
+    ),
+  ])
   |> json.to_string
 }
 
@@ -147,7 +159,8 @@ fn encode_option_float(opt: Option(Float)) -> json.Json {
 
 pub fn format_table(results: Results) -> String {
   case results {
-    types.FoodResults(foods) -> format_foods_table(foods)
+    types.FoodSearchResults(foods) -> format_food_search_table(foods)
+    types.FoodDetailResult(food_detail) -> format_food_detail_table(food_detail)
     types.DiaryResults(entries) -> format_diary_table(entries)
     types.ExerciseResults(entries) -> format_exercise_table(entries)
     types.RecipeResults(recipes) -> format_recipes_table(recipes)
@@ -157,53 +170,69 @@ pub fn format_table(results: Results) -> String {
   }
 }
 
-fn format_foods_table(foods: List(food.Food)) -> String {
+fn format_food_search_table(foods: List(food.FoodSearchResult)) -> String {
   let header =
-    "ID       | Name                      | Calories | Protein | Carbs | Fat"
+    "ID       | Name                      | Description"
   let separator =
-    "---------|---------------------------|----------|---------|-------|-----"
+    "---------|---------------------------|------------------------------------------"
 
   let rows =
     foods
     |> list.map(fn(f) {
       let id = food.food_id_to_string(f.food_id) |> pad_right(8)
       let name = f.food_name |> pad_right(25)
+      let desc = f.food_description |> pad_right(40)
 
-      let calories = case list.first(f.servings) {
-        Ok(s) -> float.to_string(s.nutrition.calories) |> pad_left(8)
-        Error(_) -> pad_left("N/A", 8)
-      }
-
-      let protein = case list.first(f.servings) {
-        Ok(s) -> float.to_string(s.nutrition.protein) |> pad_left(7)
-        Error(_) -> pad_left("N/A", 7)
-      }
-
-      let carbs = case list.first(f.servings) {
-        Ok(s) -> float.to_string(s.nutrition.carbohydrate) |> pad_left(5)
-        Error(_) -> pad_left("N/A", 5)
-      }
-
-      let fat = case list.first(f.servings) {
-        Ok(s) -> float.to_string(s.nutrition.fat) |> pad_left(4)
-        Error(_) -> pad_left("N/A", 4)
-      }
-
-      id
-      <> " | "
-      <> name
-      <> " | "
-      <> calories
-      <> " | "
-      <> protein
-      <> " | "
-      <> carbs
-      <> " | "
-      <> fat
+      id <> " | " <> name <> " | " <> desc
     })
     |> string.join("\n")
 
   header <> "\n" <> separator <> "\n" <> rows
+}
+
+fn format_food_detail_table(f: food.Food) -> String {
+  let header =
+    "ID       | Name                      | Calories | Protein | Carbs | Fat"
+  let separator =
+    "---------|---------------------------|----------|---------|-------|-----"
+
+  let id = food.food_id_to_string(f.food_id) |> pad_right(8)
+  let name = f.food_name |> pad_right(25)
+
+  let calories = case list.first(f.servings) {
+    Ok(s) -> float.to_string(s.nutrition.calories) |> pad_left(8)
+    Error(_) -> pad_left("N/A", 8)
+  }
+
+  let protein = case list.first(f.servings) {
+    Ok(s) -> float.to_string(s.nutrition.protein) |> pad_left(7)
+    Error(_) -> pad_left("N/A", 7)
+  }
+
+  let carbs = case list.first(f.servings) {
+    Ok(s) -> float.to_string(s.nutrition.carbohydrate) |> pad_left(5)
+    Error(_) -> pad_left("N/A", 5)
+  }
+
+  let fat = case list.first(f.servings) {
+    Ok(s) -> float.to_string(s.nutrition.fat) |> pad_left(4)
+    Error(_) -> pad_left("N/A", 4)
+  }
+
+  let row =
+    id
+    <> " | "
+    <> name
+    <> " | "
+    <> calories
+    <> " | "
+    <> protein
+    <> " | "
+    <> carbs
+    <> " | "
+    <> fat
+
+  header <> "\n" <> separator <> "\n" <> row
 }
 
 fn format_diary_table(entries: List(diary.FoodEntry)) -> String {
@@ -289,7 +318,8 @@ fn format_weight_table(entries: List(weight.WeightEntry)) -> String {
 
 pub fn format_csv(results: Results) -> String {
   case results {
-    types.FoodResults(foods) -> format_foods_csv(foods)
+    types.FoodSearchResults(foods) -> format_food_search_csv(foods)
+    types.FoodDetailResult(food_detail) -> format_food_detail_csv(food_detail)
     types.DiaryResults(entries) -> format_diary_csv(entries)
     types.ExerciseResults(entries) -> format_exercise_csv(entries)
     types.RecipeResults(recipes) -> format_recipes_csv(recipes)
@@ -299,40 +329,57 @@ pub fn format_csv(results: Results) -> String {
   }
 }
 
-fn format_foods_csv(foods: List(food.Food)) -> String {
-  let header = "food_id,food_name,calories,protein,carbs,fat"
+fn format_food_search_csv(foods: List(food.FoodSearchResult)) -> String {
+  let header = "food_id,food_name,food_type,food_description,brand_name"
 
   let rows =
     foods
     |> list.map(fn(f) {
       let id = food.food_id_to_string(f.food_id)
       let name = escape_csv(f.food_name)
-
-      case list.first(f.servings) {
-        Ok(s) -> {
-          let calories = float.to_string(s.nutrition.calories)
-          let protein = float.to_string(s.nutrition.protein)
-          let carbs = float.to_string(s.nutrition.carbohydrate)
-          let fat = float.to_string(s.nutrition.fat)
-
-          id
-          <> ","
-          <> name
-          <> ","
-          <> calories
-          <> ","
-          <> protein
-          <> ","
-          <> carbs
-          <> ","
-          <> fat
-        }
-        Error(_) -> id <> "," <> name <> ",N/A,N/A,N/A,N/A"
+      let food_type = escape_csv(f.food_type)
+      let desc = escape_csv(f.food_description)
+      let brand = case f.brand_name {
+        Some(b) -> escape_csv(b)
+        None -> ""
       }
+
+      id <> "," <> name <> "," <> food_type <> "," <> desc <> "," <> brand
     })
     |> string.join("\n")
 
   header <> "\n" <> rows
+}
+
+fn format_food_detail_csv(f: food.Food) -> String {
+  let header = "food_id,food_name,calories,protein,carbs,fat"
+
+  let id = food.food_id_to_string(f.food_id)
+  let name = escape_csv(f.food_name)
+
+  let row = case list.first(f.servings) {
+    Ok(s) -> {
+      let calories = float.to_string(s.nutrition.calories)
+      let protein = float.to_string(s.nutrition.protein)
+      let carbs = float.to_string(s.nutrition.carbohydrate)
+      let fat = float.to_string(s.nutrition.fat)
+
+      id
+      <> ","
+      <> name
+      <> ","
+      <> calories
+      <> ","
+      <> protein
+      <> ","
+      <> carbs
+      <> ","
+      <> fat
+    }
+    Error(_) -> id <> "," <> name <> ",N/A,N/A,N/A,N/A"
+  }
+
+  header <> "\n" <> row
 }
 
 fn format_diary_csv(entries: List(diary.FoodEntry)) -> String {

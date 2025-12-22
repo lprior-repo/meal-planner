@@ -16,7 +16,7 @@ import meal_planner/cli/components/list_view.{
   ClearError, ClearFilter, Confirm, DeselectAll, FilterChanged,
   FilterQueryChanged, ItemSelected, ItemsSelected, NoEffect, PageDown, PageUp,
   SelectAll, SelectFirst, SelectLast, SelectNext, SelectPrevious, SetError,
-  SetItems, SetLoading, ToggleFilter, ToggleSelection,
+  SetLoading, ToggleFilter, ToggleSelection,
 }
 
 // ============================================================================
@@ -470,16 +470,14 @@ pub fn clear_filter_resets_filter_state_test() {
 // State Management Tests
 // ============================================================================
 
-pub fn set_items_replaces_items_test() {
-  // GIVEN: A list view with items
-  let model = list_view.init(sample_items(), 5)
-  let model2 = list_view.ListViewModel(..model, selected_index: 3, scroll_offset: 2)
-
-  // WHEN: Setting new items
+pub fn init_with_new_items_replaces_items_test() {
+  // GIVEN: Need to replace items
   let new_items = ["New1", "New2"]
-  let #(updated, effect) = list_view.update(model2, SetItems(new_items))
 
-  // THEN: Items should be replaced and position reset
+  // WHEN: Initializing with new items (SetItems was removed, use init instead)
+  let updated = list_view.init(new_items, 5)
+
+  // THEN: Items should be set and position should be at start
   list.length(updated.items)
   |> should.equal(2)
 
@@ -488,9 +486,6 @@ pub fn set_items_replaces_items_test() {
 
   updated.scroll_offset
   |> should.equal(0)
-
-  effect
-  |> should.equal(NoEffect)
 }
 
 pub fn set_loading_updates_loading_state_test() {

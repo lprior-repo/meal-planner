@@ -5,8 +5,6 @@
 //// 2. Input validation for nutrition goals
 //// 3. User profile information handling
 
-import gleam/int
-import gleam/string
 import gleeunit
 import gleeunit/should
 
@@ -106,19 +104,13 @@ pub fn validate_calorie_goal_range_test() {
   let valid_mid = 2000
   let valid_high = 10_000
 
-  valid_low >=. 500
-  && valid_low
-  <=. 10_000
+  { valid_low >= 500 && valid_low <= 10_000 }
   |> should.be_true()
 
-  valid_mid >=. 500
-  && valid_mid
-  <=. 10_000
+  { valid_mid >= 500 && valid_mid <= 10_000 }
   |> should.be_true()
 
-  valid_high >=. 500
-  && valid_high
-  <=. 10_000
+  { valid_high >= 500 && valid_high <= 10_000 }
   |> should.be_true()
 }
 
@@ -126,9 +118,7 @@ pub fn validate_calorie_goal_range_test() {
 pub fn validate_protein_goal_test() {
   let protein_grams = 150
 
-  protein_grams > 0
-  && protein_grams
-  <=. 500
+  { protein_grams > 0 && protein_grams <= 500 }
   |> should.be_true()
 }
 
@@ -136,9 +126,7 @@ pub fn validate_protein_goal_test() {
 pub fn validate_carbs_goal_test() {
   let carbs_grams = 250
 
-  carbs_grams > 0
-  && carbs_grams
-  <=. 1000
+  { carbs_grams > 0 && carbs_grams <= 1000 }
   |> should.be_true()
 }
 
@@ -146,9 +134,7 @@ pub fn validate_carbs_goal_test() {
 pub fn validate_fat_goal_test() {
   let fat_grams = 65
 
-  fat_grams > 0
-  && fat_grams
-  <=. 500
+  { fat_grams > 0 && fat_grams <= 500 }
   |> should.be_true()
 }
 
@@ -156,8 +142,7 @@ pub fn validate_fat_goal_test() {
 pub fn validate_bodyweight_positive_test() {
   let bodyweight = 75.0
 
-  bodyweight
-  > 0.0
+  { bodyweight >. 0.0 }
   |> should.be_true()
 }
 
@@ -165,8 +150,6 @@ pub fn validate_bodyweight_positive_test() {
 pub fn validate_meals_per_day_test() {
   let meals = 3
 
-  meals >=. 1
-  && meals
-  <=. 10
+  { meals >= 1 && meals <= 10 }
   |> should.be_true()
 }

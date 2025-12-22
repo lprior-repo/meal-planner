@@ -368,16 +368,8 @@ fn is_date_valid(
 /// Get today's date as days since epoch
 fn get_today_date_int() -> Int {
   let now = birl.now()
-  let today_midnight = birl.set_time_of_day(now, 0, 0, 0, 0)
-  let epoch = birl.from_unix(0)
-  let days =
-    birl.difference(today_midnight, epoch)
-    |> birl.duration_to_seconds
-    |> int.divide(86_400)
-  case days {
-    Ok(d) -> d
-    Error(_) -> 0
-  }
+  let today_seconds = birl.to_unix(now)
+  today_seconds / 86_400
 }
 
 /// Convert date_int to year, month, day
@@ -401,22 +393,17 @@ fn date_int_to_ymd(date_int: Int) -> #(Int, Int, Int) {
 /// Convert year, month, day to date_int
 fn ymd_to_date_int(year: Int, month: Int, day: Int) -> Result(Int, String) {
   let date_str =
-    string.pad_start(int.to_string(year), 4, "0") <> "-"
-    <> string.pad_start(int.to_string(month), 2, "0") <> "-"
+    string.pad_start(int.to_string(year), 4, "0")
+    <> "-"
+    <> string.pad_start(int.to_string(month), 2, "0")
+    <> "-"
     <> string.pad_start(int.to_string(day), 2, "0")
-    <> "T00:00:00Z"
+    <> "T00:00:00"
 
-  case birl.from_iso8601(date_str) {
+  case birl.from_naive(date_str) {
     Ok(dt) -> {
-      let epoch = birl.from_unix(0)
-      let days =
-        birl.difference(dt, epoch)
-        |> birl.duration_to_seconds
-        |> int.divide(86_400)
-      case days {
-        Ok(d) -> Ok(d)
-        Error(_) -> Error("Date calculation error")
-      }
+      let seconds = birl.to_unix(dt)
+      Ok(seconds / 86_400)
     }
     Error(_) -> Error("Invalid date")
   }
@@ -588,30 +575,34 @@ fn view_input_mode(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) -> 
     LongFormat -> "YYYY-MM-DD"
   }
 
-  ui.col([
+  let error_section = case model.error {
+    Some(err) -> [ui.br(), ui.text_styled("Error: " <> err, Some(style.Red), None)]
+    None -> []
+  }
+
+  let footer_section = [
     ui.br(),
-    ui.text_styled("📅 Enter Date", Some(style.Green), None),
-    ui.hr(),
-    ui.br(),
-    ui.text("Format: " <> format_hint),
-    ui.br(),
-    ui.input(
-      "Date:",
-      model.input_text,
-      style.Pct(50),
-      fn(text) { on_msg(InputChanged(text)) },
-    ),
-    list.append(
-      case model.error {
-        Some(err) -> [ui.br(), ui.text_styled("Error: " <> err, Some(style.Red), None)]
-        None -> []
-      },
-      [
-        ui.br(),
-        ui.text_styled("[Enter] Parse  [Esc] Cancel", Some(style.Cyan), None),
-      ]
-    )
-  ])
+    ui.text_styled("[Enter] Parse  [Esc] Cancel", Some(style.Cyan), None),
+  ]
+
+  ui.col(list.flatten([
+    [
+      ui.br(),
+      ui.text_styled("📅 Enter Date", Some(style.Green), None),
+      ui.hr(),
+      ui.br(),
+      ui.text("Format: " <> format_hint),
+      ui.br(),
+      ui.input(
+        "Date:",
+        model.input_text,
+        style.Pct(50),
+        fn(text) { on_msg(InputChanged(text)) },
+      ),
+    ],
+    error_section,
+    footer_section,
+  ]))
 }
 
 /// Render calendar mode
@@ -644,39 +635,43 @@ fn view_calendar_mode(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) 
     today_day,
   )
 
-  ui.col([
+  let header_section = [
     ui.br(),
     ui.align(style.Center, ui.text_styled(month_str, Some(style.Green), None)),
     ui.hr(),
     ui.br(),
-
-    // Day headers
     ui.text("  Su  Mo  Tu  We  Th  Fr  Sa"),
+  ]
 
-    // Calendar rows
-    list.append(
-      list.map(calendar_rows, fn(row) { ui.text(row) }),
-      [
-        ui.br(),
-        ui.text("Selected: " <> date_int_to_string(model.selected_date, model.date_format)),
-        list.append(
-          case model.error {
-            Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
-            None -> []
-          },
-          [
-            ui.br(),
-            ui.hr(),
-            ui.text_styled(
-              "[←→] Day  [↑↓] Week  [H/L] Month  [t] Today  [i] Input  [Enter] Select",
-              Some(style.Cyan),
-              None,
-            ),
-          ]
-        )
-      ]
-    )
-  ])
+  let calendar_section = list.map(calendar_rows, fn(row) { ui.text(row) })
+
+  let error_section = case model.error {
+    Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
+    None -> []
+  }
+
+  let footer_section = [
+    ui.br(),
+    ui.text("Selected: " <> date_int_to_string(model.selected_date, model.date_format)),
+  ]
+
+  let help_section = [
+    ui.br(),
+    ui.hr(),
+    ui.text_styled(
+      "[←→] Day  [↑↓] Week  [H/L] Month  [t] Today  [i] Input  [Enter] Select",
+      Some(style.Cyan),
+      None,
+    ),
+  ]
+
+  ui.col(list.flatten([
+    header_section,
+    calendar_section,
+    footer_section,
+    error_section,
+    help_section,
+  ]))
 }
 
 /// Build calendar row strings

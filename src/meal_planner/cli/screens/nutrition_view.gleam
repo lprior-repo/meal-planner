@@ -707,16 +707,8 @@ fn handle_key_press(
 /// Get today's date as days since epoch
 fn get_today_date_int() -> Int {
   let now = birl.now()
-  let today_midnight = birl.set_time_of_day(now, 0, 0, 0, 0)
-  let epoch = birl.from_unix(0)
-  let days =
-    birl.difference(today_midnight, epoch)
-    |> birl.duration_to_seconds
-    |> int.divide(86_400)
-  case days {
-    Ok(d) -> d
-    Error(_) -> 0
-  }
+  let seconds = birl.to_unix(now)
+  seconds / 86_400
 }
 
 /// Convert date_int to display string
@@ -733,17 +725,10 @@ fn parse_date_string(date_str: String) -> Result(Int, String) {
     [year_str, month_str, day_str] -> {
       case int.parse(year_str), int.parse(month_str), int.parse(day_str) {
         Ok(_), Ok(_), Ok(_) -> {
-          case birl.from_iso8601(date_str <> "T00:00:00Z") {
+          case birl.from_naive(date_str <> "T00:00:00") {
             Ok(dt) -> {
-              let epoch = birl.from_unix(0)
-              let days =
-                birl.difference(dt, epoch)
-                |> birl.duration_to_seconds
-                |> int.divide(86_400)
-              case days {
-                Ok(d) -> Ok(d)
-                Error(_) -> Error("Date calculation error")
-              }
+              let seconds = birl.to_unix(dt)
+              Ok(seconds / 86_400)
             }
             Error(_) -> Error("Invalid date format")
           }
@@ -860,106 +845,104 @@ fn view_dashboard(model: NutritionModel) -> shore.Node(NutritionMsg) {
   let carb_pct = calculate_percentage(data.carbohydrate, goals.carb_target)
   let fat_pct = calculate_percentage(data.fat, goals.fat_target)
 
-  ui.col([
-    // Header
+  let header_section = [
     ui.br(),
     ui.align(
       style.Center,
       ui.text_styled("📊 Nutrition Dashboard - " <> data.date_string, Some(style.Green), None),
     ),
     ui.hr_styled(style.Green),
+  ]
 
-    // Error message
-    list.append(
-      case model.error_message {
-        Some(err) -> [ui.br(), ui.text_styled("⚠ " <> err, Some(style.Red), None)]
-        None -> []
-      },
-      [
-        // Navigation
-        ui.br(),
-        ui.text_styled(
-          "[<-] Prev  [->] Next  [t] Today  [g] Go to  [G] Goals  [w] Weekly  [b] Breakdown",
-          Some(style.Cyan),
-          None,
-        ),
-        ui.hr(),
+  let error_section = case model.error_message {
+    Some(err) -> [ui.br(), ui.text_styled("⚠ " <> err, Some(style.Red), None)]
+    None -> []
+  }
 
-        // Loading
-        list.append(
-          case model.is_loading {
-            True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
-            False -> []
-          },
-          [
-            ui.br(),
+  let nav_section = [
+    ui.br(),
+    ui.text_styled(
+      "[<-] Prev  [->] Next  [t] Today  [g] Go to  [G] Goals  [w] Weekly  [b] Breakdown",
+      Some(style.Cyan),
+      None,
+    ),
+    ui.hr(),
+  ]
 
-            // Calories
-            ui.text_styled("Calories", Some(style.Yellow), None),
-            ui.text(
-              "  " <> render_progress_bar(cal_pct, 30) <> " "
-              <> float_to_string(data.calories) <> " / "
-              <> float_to_string(goals.calories_target) <> " ("
-              <> float_to_string(cal_pct) <> "%)",
-            ),
-            ui.br(),
+  let loading_section = case model.is_loading {
+    True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
+    False -> []
+  }
 
-            // Protein
-            ui.text_styled("Protein", Some(style.Cyan), None),
-            ui.text(
-              "  " <> render_progress_bar(prot_pct, 30) <> " "
-              <> float_to_string(data.protein) <> "g / "
-              <> float_to_string(goals.protein_target) <> "g ("
-              <> float_to_string(prot_pct) <> "%)",
-            ),
-            ui.br(),
+  let macros_section = [
+    ui.br(),
+    ui.text_styled("Calories", Some(style.Yellow), None),
+    ui.text(
+      "  " <> render_progress_bar(cal_pct, 30) <> " "
+      <> float_to_string(data.calories) <> " / "
+      <> float_to_string(goals.calories_target) <> " ("
+      <> float_to_string(cal_pct) <> "%)",
+    ),
+    ui.br(),
+    ui.text_styled("Protein", Some(style.Cyan), None),
+    ui.text(
+      "  " <> render_progress_bar(prot_pct, 30) <> " "
+      <> float_to_string(data.protein) <> "g / "
+      <> float_to_string(goals.protein_target) <> "g ("
+      <> float_to_string(prot_pct) <> "%)",
+    ),
+    ui.br(),
+    ui.text_styled("Carbohydrates", Some(style.Magenta), None),
+    ui.text(
+      "  " <> render_progress_bar(carb_pct, 30) <> " "
+      <> float_to_string(data.carbohydrate) <> "g / "
+      <> float_to_string(goals.carb_target) <> "g ("
+      <> float_to_string(carb_pct) <> "%)",
+    ),
+    ui.br(),
+    ui.text_styled("Fat", Some(style.Yellow), None),
+    ui.text(
+      "  " <> render_progress_bar(fat_pct, 30) <> " "
+      <> float_to_string(data.fat) <> "g / "
+      <> float_to_string(goals.fat_target) <> "g ("
+      <> float_to_string(fat_pct) <> "%)",
+    ),
+    ui.br(),
+  ]
 
-            // Carbohydrates
-            ui.text_styled("Carbohydrates", Some(style.Magenta), None),
-            ui.text(
-              "  " <> render_progress_bar(carb_pct, 30) <> " "
-              <> float_to_string(data.carbohydrate) <> "g / "
-              <> float_to_string(goals.carb_target) <> "g ("
-              <> float_to_string(carb_pct) <> "%)",
-            ),
-            ui.br(),
+  let distribution_section = [
+    ui.hr(),
+    ui.text_styled("Macro Distribution:", Some(style.Yellow), None),
+    ui.text(
+      "  Protein: " <> float_to_string(data.protein_pct) <> "% | "
+      <> "Carbs: " <> float_to_string(data.carb_pct) <> "% | "
+      <> "Fat: " <> float_to_string(data.fat_pct) <> "%",
+    ),
+    ui.br(),
+  ]
 
-            // Fat
-            ui.text_styled("Fat", Some(style.Yellow), None),
-            ui.text(
-              "  " <> render_progress_bar(fat_pct, 30) <> " "
-              <> float_to_string(data.fat) <> "g / "
-              <> float_to_string(goals.fat_target) <> "g ("
-              <> float_to_string(fat_pct) <> "%)",
-            ),
-            ui.br(),
+  let status_section = [
+    ui.text_styled("Status:", Some(style.Cyan), None),
+    ui.text_styled("  Calories: " <> format_status(data.calories_status), Some(status_color(data.calories_status)), None),
+    ui.text_styled("  Protein: " <> format_status(data.protein_status), Some(status_color(data.protein_status)), None),
+    ui.text_styled("  Carbs: " <> format_status(data.carb_status), Some(status_color(data.carb_status)), None),
+    ui.text_styled("  Fat: " <> format_status(data.fat_status), Some(status_color(data.fat_status)), None),
+  ]
 
-            // Macro distribution
-            ui.hr(),
-            ui.text_styled("Macro Distribution:", Some(style.Yellow), None),
-            ui.text(
-              "  Protein: " <> float_to_string(data.protein_pct) <> "% | "
-              <> "Carbs: " <> float_to_string(data.carb_pct) <> "% | "
-              <> "Fat: " <> float_to_string(data.fat_pct) <> "%",
-            ),
-            ui.br(),
-
-            // Status summary
-            ui.text_styled("Status:", Some(style.Cyan), None),
-            ui.text_styled("  Calories: " <> format_status(data.calories_status), Some(status_color(data.calories_status)), None),
-            ui.text_styled("  Protein: " <> format_status(data.protein_status), Some(status_color(data.protein_status)), None),
-            ui.text_styled("  Carbs: " <> format_status(data.carb_status), Some(status_color(data.carb_status)), None),
-            ui.text_styled("  Fat: " <> format_status(data.fat_status), Some(status_color(data.fat_status)), None),
-          ]
-        )
-      ]
-    )
-  ])
+  ui.col(list.flatten([
+    header_section,
+    error_section,
+    nav_section,
+    loading_section,
+    macros_section,
+    distribution_section,
+    status_section,
+  ]))
 }
 
 /// Render weekly trends
 fn view_weekly_trends(model: NutritionModel) -> shore.Node(NutritionMsg) {
-  ui.col([
+  let header_section = [
     ui.br(),
     ui.align(
       style.Center,
@@ -967,32 +950,32 @@ fn view_weekly_trends(model: NutritionModel) -> shore.Node(NutritionMsg) {
     ),
     ui.hr_styled(style.Green),
     ui.br(),
-
     ui.text("Last 7 days nutrition data:"),
     ui.br(),
+  ]
 
-    list.append(
-      case model.weekly_data {
-        [] -> [ui.text("No data available for this period.")]
-        data -> {
-          list.map(data, fn(day) {
-            ui.text(
-              "  " <> day.date_string <> ": "
-              <> float_to_string(day.calories) <> " cal | "
-              <> "P:" <> float_to_string(day.protein) <> "g | "
-              <> "C:" <> float_to_string(day.carbohydrate) <> "g | "
-              <> "F:" <> float_to_string(day.fat) <> "g",
-            )
-          })
-        }
-      },
-      [
-        ui.br(),
-        ui.hr(),
-        ui.text_styled("[Esc] Back", Some(style.Cyan), None),
-      ]
-    )
-  ])
+  let data_section = case model.weekly_data {
+    [] -> [ui.text("No data available for this period.")]
+    data -> {
+      list.map(data, fn(day) {
+        ui.text(
+          "  " <> day.date_string <> ": "
+          <> float_to_string(day.calories) <> " cal | "
+          <> "P:" <> float_to_string(day.protein) <> "g | "
+          <> "C:" <> float_to_string(day.carbohydrate) <> "g | "
+          <> "F:" <> float_to_string(day.fat) <> "g",
+        )
+      })
+    }
+  }
+
+  let footer_section = [
+    ui.br(),
+    ui.hr(),
+    ui.text_styled("[Esc] Back", Some(style.Cyan), None),
+  ]
+
+  ui.col(list.flatten([header_section, data_section, footer_section]))
 }
 
 /// Render monthly trends
@@ -1120,7 +1103,7 @@ fn nutrient_type_to_string(nutrient: NutrientType) -> String {
 
 /// Render meal breakdown view
 fn view_meal_breakdown(model: NutritionModel) -> shore.Node(NutritionMsg) {
-  ui.col([
+  let header_section = [
     ui.br(),
     ui.align(
       style.Center,
@@ -1128,27 +1111,28 @@ fn view_meal_breakdown(model: NutritionModel) -> shore.Node(NutritionMsg) {
     ),
     ui.hr_styled(style.Green),
     ui.br(),
+  ]
 
-    list.append(
-      case model.meal_breakdown {
-        [] -> [ui.text("No meals logged for this day.")]
-        meals -> {
-          list.map(meals, fn(meal) {
-            ui.text(
-              "  " <> meal.meal_name <> " (" <> int.to_string(meal.entry_count) <> " items): "
-              <> float_to_string(meal.calories) <> " cal ("
-              <> float_to_string(meal.percentage_of_daily) <> "% of daily)",
-            )
-          })
-        }
-      },
-      [
-        ui.br(),
-        ui.hr(),
-        ui.text_styled("[Esc] Back", Some(style.Cyan), None),
-      ]
-    )
-  ])
+  let meals_section = case model.meal_breakdown {
+    [] -> [ui.text("No meals logged for this day.")]
+    meals -> {
+      list.map(meals, fn(meal) {
+        ui.text(
+          "  " <> meal.meal_name <> " (" <> int.to_string(meal.entry_count) <> " items): "
+          <> float_to_string(meal.calories) <> " cal ("
+          <> float_to_string(meal.percentage_of_daily) <> "% of daily)",
+        )
+      })
+    }
+  }
+
+  let footer_section = [
+    ui.br(),
+    ui.hr(),
+    ui.text_styled("[Esc] Back", Some(style.Cyan), None),
+  ]
+
+  ui.col(list.flatten([header_section, meals_section, footer_section]))
 }
 
 /// Render nutrient details view

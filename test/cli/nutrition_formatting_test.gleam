@@ -7,6 +7,7 @@
 
 import gleam/float
 import gleam/int
+import gleam/list
 import gleam/string
 import gleeunit
 import gleeunit/should
@@ -85,9 +86,9 @@ pub fn format_nutrition_data_precision_test() {
 pub fn format_float_one_decimal_test() {
   let value = 123.456
 
-  // Rounded to 1 decimal
+  // Rounded to 1 decimal - float.round returns Int
   float.round(value)
-  |> float.to_string
+  |> int.to_string
   |> string.contains("123")
   |> should.be_true()
 }
@@ -134,12 +135,10 @@ pub fn under_consumption_test() {
   let goal = create_sample_goals(2000, 150, 250, 65)
   let actual = create_sample_nutrition(1500.0, 120.0, 200.0, 50.0)
 
-  actual.calories
-  < int.to_float(goal.calories)
+  { actual.calories <. int.to_float(goal.calories) }
   |> should.be_true()
 
-  actual.protein
-  < int.to_float(goal.protein)
+  { actual.protein <. int.to_float(goal.protein) }
   |> should.be_true()
 }
 
@@ -148,12 +147,10 @@ pub fn over_consumption_test() {
   let goal = create_sample_goals(2000, 150, 250, 65)
   let actual = create_sample_nutrition(2500.0, 180.0, 300.0, 80.0)
 
-  actual.calories
-  > int.to_float(goal.calories)
+  { actual.calories >. int.to_float(goal.calories) }
   |> should.be_true()
 
-  actual.protein
-  > int.to_float(goal.protein)
+  { actual.protein >. int.to_float(goal.protein) }
   |> should.be_true()
 }
 
@@ -177,8 +174,6 @@ pub fn macro_percentage_test() {
 
   let percentage = protein_calories /. total_calories *. 100.0
 
-  percentage > 0.0
-  && percentage
-  < 100.0
+  { percentage >. 0.0 && percentage <. 100.0 }
   |> should.be_true()
 }

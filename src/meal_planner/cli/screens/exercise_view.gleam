@@ -228,7 +228,7 @@ pub type ExerciseEntryInput {
   ExerciseEntryInput(
     exercise_id: String,
     exercise_name: String,
-    duration_minutes: Int,
+    duration_min: Int,
     calories: Float,
     date_int: Int,
   )
@@ -237,7 +237,7 @@ pub type ExerciseEntryInput {
 /// Update for modifying exercise entry
 pub type ExerciseEntryUpdate {
   ExerciseEntryUpdate(
-    duration_minutes: Option(Int),
+    duration_min: Option(Int),
     calories: Option(Float),
   )
 }
@@ -397,7 +397,7 @@ pub fn exercise_update(
       let input = ExerciseEntryInput(
         exercise_id: "placeholder",
         exercise_name: "Exercise",
-        duration_minutes: duration,
+        duration_min: duration,
         calories: calories,
         date_int: model.current_date,
       )
@@ -431,7 +431,7 @@ pub fn exercise_update(
       let input = ExerciseEntryInput(
         exercise_id: exercise_types.exercise_entry_id_to_string(entry.exercise_entry_id),
         exercise_name: entry.exercise_name,
-        duration_minutes: entry.duration_minutes,
+        duration_min: entry.duration_min,
         calories: entry.calories,
         date_int: model.current_date,
       )
@@ -448,9 +448,9 @@ pub fn exercise_update(
     EditExerciseStart(entry) -> {
       let edit_state = ExerciseEditState(
         entry: entry,
-        new_duration: entry.duration_minutes,
+        new_duration: entry.duration_min,
         new_calories: entry.calories,
-        original_duration: entry.duration_minutes,
+        original_duration: entry.duration_min,
         original_calories: entry.calories,
       )
       let updated = ExerciseModel(
@@ -495,7 +495,7 @@ pub fn exercise_update(
       case model.edit_state {
         Some(edit) -> {
           let update = ExerciseEntryUpdate(
-            duration_minutes: Some(edit.new_duration),
+            duration_min: Some(edit.new_duration),
             calories: Some(edit.new_calories),
           )
           let effect = UpdateEntry(edit.entry.exercise_entry_id, update)
@@ -696,16 +696,8 @@ fn handle_key_press(
 /// Get today's date as days since epoch
 fn get_today_date_int() -> Int {
   let now = birl.now()
-  let today_midnight = birl.set_time_of_day(now, 0, 0, 0, 0)
-  let epoch = birl.from_unix(0)
-  let days =
-    birl.difference(today_midnight, epoch)
-    |> birl.duration_to_seconds
-    |> int.divide(86_400)
-  case days {
-    Ok(d) -> d
-    Error(_) -> 0
-  }
+  let seconds = birl.to_unix(now)
+  seconds / 86_400
 }
 
 /// Convert date_int to display string
@@ -722,17 +714,10 @@ fn parse_date_string(date_str: String) -> Result(Int, String) {
     [year_str, month_str, day_str] -> {
       case int.parse(year_str), int.parse(month_str), int.parse(day_str) {
         Ok(_), Ok(_), Ok(_) -> {
-          case birl.from_iso8601(date_str <> "T00:00:00Z") {
+          case birl.from_naive(date_str <> "T00:00:00") {
             Ok(dt) -> {
-              let epoch = birl.from_unix(0)
-              let days =
-                birl.difference(dt, epoch)
-                |> birl.duration_to_seconds
-                |> int.divide(86_400)
-              case days {
-                Ok(d) -> Ok(d)
-                Error(_) -> Error("Date calculation error")
-              }
+              let seconds = birl.to_unix(dt)
+              Ok(seconds / 86_400)
             }
             Error(_) -> Error("Invalid date format")
           }
@@ -746,7 +731,7 @@ fn parse_date_string(date_str: String) -> Result(Int, String) {
 
 /// Format exercise entry for display
 fn format_exercise_entry(entry: exercise_types.ExerciseEntry) -> ExerciseDisplayEntry {
-  let duration_str = int.to_string(entry.duration_minutes) <> " min"
+  let duration_str = int.to_string(entry.duration_min) <> " min"
   let calories_str = float_to_string(entry.calories) <> " cal"
 
   ExerciseDisplayEntry(
@@ -766,7 +751,7 @@ fn calculate_daily_summary(entries: List(exercise_types.ExerciseEntry)) -> Daily
 
   let total_duration =
     entries
-    |> list.fold(0, fn(acc, e) { acc + e.duration_minutes })
+    |> list.fold(0, fn(acc, e) { acc + e.duration_min })
 
   let session_count = list.length(entries)
 
@@ -811,70 +796,72 @@ fn view_main_exercise(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
   let date_str = date_int_to_string(model.current_date)
   let summary = model.daily_summary
 
-  ui.col([
-    // Header
+  let header_section = [
     ui.br(),
     ui.align(
       style.Center,
       ui.text_styled("🏃 Exercise Log - " <> date_str, Some(style.Green), None),
     ),
     ui.hr_styled(style.Green),
+  ]
 
-    // Error message
-    list.append(
-      case model.error_message {
-        Some(err) -> [ui.br(), ui.text_styled("⚠ " <> err, Some(style.Red), None)]
-        None -> []
-      },
-      [
-        // Navigation hints
-        ui.br(),
-        ui.text_styled(
-          "[<-] Prev  [->] Next  [t] Today  [g] Go to  [a] Add  [q] Quick Add",
-          Some(style.Cyan),
-          None,
-        ),
-        ui.hr(),
+  let error_section = case model.error_message {
+    Some(err) -> [ui.br(), ui.text_styled("⚠ " <> err, Some(style.Red), None)]
+    None -> []
+  }
 
-        // Daily summary
-        ui.br(),
-        ui.text_styled("Daily Summary:", Some(style.Yellow), None),
-        ui.text(
-          "  Sessions: " <> int.to_string(summary.session_count)
-          <> " | Duration: " <> int.to_string(summary.total_duration) <> " min"
-          <> " | Calories: " <> float_to_string(summary.total_calories),
-        ),
-        ui.br(),
+  let nav_section = [
+    ui.br(),
+    ui.text_styled(
+      "[<-] Prev  [->] Next  [t] Today  [g] Go to  [a] Add  [q] Quick Add",
+      Some(style.Cyan),
+      None,
+    ),
+    ui.hr(),
+  ]
 
-        // Loading indicator
-        list.append(
-          case model.is_loading {
-            True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
-            False -> []
-          },
-          [
-            ui.hr(),
-            ui.br(),
-            // Exercise entries
-            list.append(
-              case model.entries {
-                [] -> [ui.text("No exercises logged for this date.")]
-                entries -> list.map(entries, render_exercise_entry)
-              },
-              [
-                ui.br(),
-                ui.text_styled(
-                  "Press [e] to edit, [d] to delete, [Enter] for details",
-                  Some(style.Cyan),
-                  None,
-                ),
-              ]
-            )
-          ]
-        )
-      ]
-    )
-  ])
+  let summary_section = [
+    ui.br(),
+    ui.text_styled("Daily Summary:", Some(style.Yellow), None),
+    ui.text(
+      "  Sessions: " <> int.to_string(summary.session_count)
+      <> " | Duration: " <> int.to_string(summary.total_duration) <> " min"
+      <> " | Calories: " <> float_to_string(summary.total_calories),
+    ),
+    ui.br(),
+  ]
+
+  let loading_section = case model.is_loading {
+    True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
+    False -> []
+  }
+
+  let divider_section = [ui.hr(), ui.br()]
+
+  let entries_section = case model.entries {
+    [] -> [ui.text("No exercises logged for this date.")]
+    entries -> list.map(entries, render_exercise_entry)
+  }
+
+  let footer_section = [
+    ui.br(),
+    ui.text_styled(
+      "Press [e] to edit, [d] to delete, [Enter] for details",
+      Some(style.Cyan),
+      None,
+    ),
+  ]
+
+  ui.col(list.flatten([
+    header_section,
+    error_section,
+    nav_section,
+    summary_section,
+    loading_section,
+    divider_section,
+    entries_section,
+    footer_section,
+  ]))
 }
 
 /// Render a single exercise entry
@@ -886,7 +873,7 @@ fn render_exercise_entry(entry: ExerciseDisplayEntry) -> shore.Node(ExerciseMsg)
 fn view_search_popup(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
   let search = model.search_state
 
-  ui.col([
+  let header_section = [
     ui.br(),
     ui.align(
       style.Center,
@@ -894,8 +881,9 @@ fn view_search_popup(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
     ),
     ui.hr_styled(style.Green),
     ui.br(),
+  ]
 
-    // Search input
+  let input_section = [
     ui.input(
       "Search:",
       search.query,
@@ -903,38 +891,38 @@ fn view_search_popup(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
       fn(q) { SearchQueryChanged(q) },
     ),
     ui.br(),
+  ]
 
-    // Loading / Error
-    list.append(
-      case search.is_loading {
-        True -> [ui.text_styled("Searching...", Some(style.Yellow), None)]
-        False -> []
-      },
-      [
-        list.append(
-          case search.error {
-            Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
-            None -> []
-          },
-          [
-            ui.br(),
-            // Results
-            list.append(
-              render_search_results(search.results, search.selected_index),
-              [
-                ui.hr(),
-                ui.text_styled(
-                  "[Enter] Search  [↑/↓] Navigate  [Esc] Cancel",
-                  Some(style.Cyan),
-                  None,
-                ),
-              ]
-            )
-          ]
-        )
-      ]
-    )
-  ])
+  let loading_section = case search.is_loading {
+    True -> [ui.text_styled("Searching...", Some(style.Yellow), None)]
+    False -> []
+  }
+
+  let error_section = case search.error {
+    Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
+    None -> []
+  }
+
+  let results_section = render_search_results(search.results, search.selected_index)
+
+  let footer_section = [
+    ui.hr(),
+    ui.text_styled(
+      "[Enter] Search  [↑/↓] Navigate  [Esc] Cancel",
+      Some(style.Cyan),
+      None,
+    ),
+  ]
+
+  ui.col(list.flatten([
+    header_section,
+    input_section,
+    loading_section,
+    error_section,
+    [ui.br()],
+    results_section,
+    footer_section,
+  ]))
 }
 
 /// Render search results
@@ -1068,7 +1056,7 @@ fn view_edit_entry(
 
 /// Render quick add popup
 fn view_quick_add(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
-  ui.col([
+  let header_section = [
     ui.br(),
     ui.align(
       style.Center,
@@ -1076,32 +1064,32 @@ fn view_quick_add(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
     ),
     ui.hr_styled(style.Green),
     ui.br(),
-
     ui.text("Recent exercises:"),
     ui.br(),
+  ]
 
-    list.append(
-      case model.recent_exercises {
-        [] -> [ui.text("No recent exercises available.")]
-        exercises -> {
-          exercises
-          |> list.index_map(fn(entry, idx) {
-            let duration = int.to_string(entry.duration_minutes)
-            let calories = float_to_string(entry.calories)
-            ui.text(
-              "  " <> int.to_string(idx + 1) <> ". "
-              <> entry.exercise_name <> " - "
-              <> duration <> " min - " <> calories <> " cal",
-            )
-          })
-        }
-      },
-      [
-        ui.hr(),
-        ui.text_styled("[1-9] Select  [Esc] Cancel", Some(style.Cyan), None),
-      ]
-    )
-  ])
+  let exercises_section = case model.recent_exercises {
+    [] -> [ui.text("No recent exercises available.")]
+    exercises -> {
+      exercises
+      |> list.index_map(fn(entry, idx) {
+        let duration = int.to_string(entry.duration_min)
+        let calories = float_to_string(entry.calories)
+        ui.text(
+          "  " <> int.to_string(idx + 1) <> ". "
+          <> entry.exercise_name <> " - "
+          <> duration <> " min - " <> calories <> " cal",
+        )
+      })
+    }
+  }
+
+  let footer_section = [
+    ui.hr(),
+    ui.text_styled("[1-9] Select  [Esc] Cancel", Some(style.Cyan), None),
+  ]
+
+  ui.col(list.flatten([header_section, exercises_section, footer_section]))
 }
 
 /// Render details view
@@ -1120,7 +1108,7 @@ fn view_details(
 
     ui.text("Name: " <> entry.exercise_name),
     ui.br(),
-    ui.text("Duration: " <> int.to_string(entry.duration_minutes) <> " minutes"),
+    ui.text("Duration: " <> int.to_string(entry.duration_min) <> " minutes"),
     ui.br(),
     ui.text("Calories Burned: " <> float_to_string(entry.calories)),
     ui.br(),

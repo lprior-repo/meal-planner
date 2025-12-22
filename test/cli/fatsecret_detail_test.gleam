@@ -5,16 +5,12 @@
 //// 2. Nutrition information display
 //// 3. Serving size options
 
-import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/string
 import gleeunit
 import gleeunit/should
-import meal_planner/fatsecret/foods/types.{
-  Food, FoodId, Nutrition, Serving, ServingId,
-  food_id, serving_id
-}
+import meal_planner/fatsecret/foods/types as types
 
 pub fn main() {
   gleeunit.main()
@@ -25,16 +21,16 @@ pub fn main() {
 // ============================================================================
 
 /// Create a sample food with nutrition information
-fn create_sample_food(name: String, brand: String) -> Food {
-  Food(
-    food_id: food_id("12345"),
+fn create_sample_food(name: String, brand: String) -> types.Food {
+  types.Food(
+    food_id: types.food_id("12345"),
     food_name: name,
     food_type: "Generic",
     food_url: "https://example.com/food/12345",
     brand_name: Some(brand),
     servings: [
-      Serving(
-        serving_id: serving_id("1"),
+      types.Serving(
+        serving_id: types.serving_id("1"),
         serving_description: "100g",
         serving_url: "https://example.com/serving/1",
         metric_serving_amount: Some(100.0),
@@ -42,7 +38,7 @@ fn create_sample_food(name: String, brand: String) -> Food {
         number_of_units: 1.0,
         measurement_description: "g",
         is_default: Some(1),
-        nutrition: Nutrition(
+        nutrition: types.Nutrition(
           calories: 100.0,
           protein: 10.0,
           carbohydrate: 20.0,
@@ -128,7 +124,7 @@ pub fn food_detail_nutrition_test() {
 
 /// Test: Serving size description is displayed
 pub fn serving_description_displayed_test() {
-  let food = create_sample_food("12345", "Chicken", "Brand")
+  let food = create_sample_food("Chicken", "Brand")
 
   let serving = list.first(food.servings)
 
@@ -142,7 +138,7 @@ pub fn serving_description_displayed_test() {
 
 /// Test: Metric serving amount and unit are correct
 pub fn metric_serving_info_test() {
-  let food = create_sample_food("12345", "Chicken", "Brand")
+  let food = create_sample_food("Chicken", "Brand")
 
   let serving = list.first(food.servings)
 

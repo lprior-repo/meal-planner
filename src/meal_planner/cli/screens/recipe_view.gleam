@@ -772,73 +772,71 @@ fn view_list(model: RecipeModel) -> shore.Node(RecipeMsg) {
   let page_info = "Page " <> int.to_string(page.current_page) <> " of " <> int.to_string(page.total_pages)
     <> " (" <> int.to_string(page.total_results) <> " recipes)"
 
-  ui.col([
-    // Header
+  let header_section = [
     ui.br(),
     ui.align(
       style.Center,
       ui.text_styled("🍳 Recipe Browser", Some(style.Green), None),
     ),
     ui.hr_styled(style.Green),
+  ]
 
-    // Error message
-    list.append(
-      case model.error_message {
-        Some(err) -> [ui.br(), ui.text_styled("⚠ " <> err, Some(style.Red), None)]
-        None -> []
-      },
-      [
-        // Search bar info
-        ui.br(),
-        case model.search_state.query {
-          "" -> ui.text("Showing popular recipes")
-          q -> ui.text("Results for: " <> q)
-        },
-        ui.br(),
+  let error_section = case model.error_message {
+    Some(err) -> [ui.br(), ui.text_styled("⚠ " <> err, Some(style.Red), None)]
+    None -> []
+  }
 
-        // Navigation hints
-        ui.text_styled(
-          "[/] Search  [f] Filters  [F] Favorites  [n/p] Page  [Enter] View",
-          Some(style.Cyan),
-          None,
-        ),
-        ui.hr(),
+  let search_info_section = [
+    ui.br(),
+    case model.search_state.query {
+      "" -> ui.text("Showing popular recipes")
+      q -> ui.text("Results for: " <> q)
+    },
+    ui.br(),
+  ]
 
-        // Pagination info
-        ui.br(),
-        ui.text(page_info),
-        ui.br(),
+  let nav_section = [
+    ui.text_styled(
+      "[/] Search  [f] Filters  [F] Favorites  [n/p] Page  [Enter] View",
+      Some(style.Cyan),
+      None,
+    ),
+    ui.hr(),
+    ui.br(),
+    ui.text(page_info),
+    ui.br(),
+  ]
 
-        // Loading indicator
-        list.append(
-          case model.is_loading {
-            True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
-            False -> []
-          },
-          [
-            ui.br(),
-            // Recipe list
-            list.append(
-              case model.recipes {
-                [] -> [ui.text("No recipes found. Try a different search.")]
-                recipes -> list.index_map(recipes, render_recipe_list_item)
-              },
-              [
-                ui.br(),
-                ui.hr(),
-                // Pagination controls
-                ui.text_styled(
-                  "[p] Previous  [n] Next  [1-9] Select recipe",
-                  Some(style.Cyan),
-                  None,
-                ),
-              ]
-            )
-          ]
-        )
-      ]
-    )
-  ])
+  let loading_section = case model.is_loading {
+    True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
+    False -> []
+  }
+
+  let recipes_section = case model.recipes {
+    [] -> [ui.text("No recipes found. Try a different search.")]
+    recipes -> list.index_map(recipes, render_recipe_list_item)
+  }
+
+  let footer_section = [
+    ui.br(),
+    ui.hr(),
+    ui.text_styled(
+      "[p] Previous  [n] Next  [1-9] Select recipe",
+      Some(style.Cyan),
+      None,
+    ),
+  ]
+
+  ui.col(list.flatten([
+    header_section,
+    error_section,
+    search_info_section,
+    nav_section,
+    loading_section,
+    [ui.br()],
+    recipes_section,
+    footer_section,
+  ]))
 }
 
 /// Render a recipe list item
@@ -909,7 +907,7 @@ fn view_detail(model: RecipeModel) -> shore.Node(RecipeMsg) {
           Some(style.Yellow),
           None,
         ),
-        list.append(
+        ..list.append(
           list.take(recipe.ingredients, 5)
           |> list.map(fn(ing) {
             ui.text("  • " <> ing.ingredient_description)
@@ -931,7 +929,7 @@ fn view_detail(model: RecipeModel) -> shore.Node(RecipeMsg) {
               None,
             ),
           ]
-        )
+        ),
       ])
     }
   }
@@ -956,7 +954,7 @@ fn view_directions(model: RecipeModel) -> shore.Node(RecipeMsg) {
         ui.hr(),
         ui.br(),
 
-        list.append(
+        ..list.append(
           case recipe.directions {
             [] -> [ui.text("No directions available.")]
             directions -> {
@@ -972,7 +970,7 @@ fn view_directions(model: RecipeModel) -> shore.Node(RecipeMsg) {
             ui.hr(),
             ui.text_styled("[Esc] Back to recipe", Some(style.Cyan), None),
           ]
-        )
+        ),
       ])
     }
   }
@@ -1086,7 +1084,7 @@ fn view_favorites(model: RecipeModel) -> shore.Node(RecipeMsg) {
     ui.hr(),
     ui.br(),
 
-    list.append(
+    ..list.append(
       case favorite_recipes {
         [] -> [ui.text("No favorites yet. Press [f] on a recipe to add it.")]
         recipes -> list.index_map(recipes, render_recipe_list_item)
@@ -1096,7 +1094,7 @@ fn view_favorites(model: RecipeModel) -> shore.Node(RecipeMsg) {
         ui.hr(),
         ui.text_styled("[Esc] Back", Some(style.Cyan), None),
       ]
-    )
+    ),
   ])
 }
 
@@ -1125,29 +1123,27 @@ fn view_search_popup(model: RecipeModel) -> shore.Node(RecipeMsg) {
     ui.br(),
 
     // Loading / Error
-    list.append(
+    ..list.append(
       case search.is_loading {
         True -> [ui.text_styled("Searching...", Some(style.Yellow), None)]
         False -> []
       },
-      [
-        list.append(
-          case search.error {
-            Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
-            None -> []
-          },
-          [
-            ui.br(),
-            ui.hr(),
-            ui.text_styled(
-              "[Enter] Search  [Tab] Change Type  [Esc] Cancel",
-              Some(style.Cyan),
-              None,
-            ),
-          ]
-        )
-      ]
-    )
+      list.append(
+        case search.error {
+          Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
+          None -> []
+        },
+        [
+          ui.br(),
+          ui.hr(),
+          ui.text_styled(
+            "[Enter] Search  [Tab] Change Type  [Esc] Cancel",
+            Some(style.Cyan),
+            None,
+          ),
+        ]
+      )
+    ),
   ])
 }
 
