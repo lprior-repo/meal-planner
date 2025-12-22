@@ -32,19 +32,13 @@ import pog
 /// Formats a FoodEntry into a readable string with ID, name, meal type,
 /// calories, and macro breakdown.
 pub fn format_food_entry_row(entry: FoodEntry) -> String {
-  let FoodEntry(
-    food_entry_id,
-    food_entry_name,
-    _food_entry_description,
-    _food_id,
-    _serving_id,
-    _meal,
-    _date_int,
-    calories,
-    protein,
-    carbohydrates,
-    fat,
-  ) = entry
+  // Use field access instead of destructuring to be more robust
+  let food_entry_id = entry.food_entry_id
+  let food_entry_name = entry.food_entry_name
+  let calories = entry.calories
+  let protein = entry.protein
+  let carbohydrates = entry.carbohydrate
+  let fat = entry.fat
 
   let id_str = entry.food_entry_id |> diary_types.food_entry_id_to_string
   let cal_str = format_float(calories)
@@ -84,24 +78,11 @@ pub fn calculate_day_nutrition(entries: List(FoodEntry)) -> DayNutrition {
   |> list.fold(
     DayNutrition(calories: 0.0, protein: 0.0, carbohydrates: 0.0, fat: 0.0),
     fn(acc, entry) {
-      let FoodEntry(
-        _,
-        _,
-        _,
-        _,
-        _,
-        _,
-        _,
-        calories,
-        protein,
-        carbohydrates,
-        fat,
-      ) = entry
       DayNutrition(
-        calories: acc.calories +. calories,
-        protein: acc.protein +. protein,
-        carbohydrates: acc.carbohydrates +. carbohydrates,
-        fat: acc.fat +. fat,
+        calories: acc.calories +. entry.calories,
+        protein: acc.protein +. entry.protein,
+        carbohydrates: acc.carbohydrates +. entry.carbohydrate,
+        fat: acc.fat +. entry.fat,
       )
     },
   )
@@ -130,46 +111,31 @@ pub fn parse_date_to_int(date_str: String) -> Option(Int) {
   case date_str {
     "today" -> {
       let now = birl.now()
-      let today_midnight =
-        now
-        |> birl.set_time_of_day(0, 0, 0, 0)
-      let epoch = birl.from_unix(0)
-      let days =
-        birl.difference(today_midnight, epoch)
-        |> birl.duration_to_seconds
-        |> int.divide(86400)
-      case days {
-        Ok(d) -> Some(d)
-        Error(_) -> None
-      }
+      let today_seconds = birl.to_unix(now)
+      // Calculate days since epoch (integer division to get day boundary)
+      let days = today_seconds / 86_400
+      Some(days)
     }
     _ -> {
       // Try to parse YYYY-MM-DD format
       case string.split(date_str, "-") {
         [year_str, month_str, day_str] -> {
-          case
+          case #(
             int.parse(year_str),
             int.parse(month_str),
             int.parse(day_str),
-          {
-            Ok(year), Ok(month), Ok(day) -> {
-              // Create a date and convert to days since epoch
-              case birl.from_iso8601(date_str <> "T00:00:00Z") {
+          ) {
+            #(Ok(_year), Ok(_month), Ok(_day)) -> {
+              case birl.from_naive(date_str <> "T00:00:00") {
                 Ok(dt) -> {
-                  let epoch = birl.from_unix(0)
-                  let days_duration =
-                    birl.difference(dt, epoch)
-                    |> birl.duration_to_seconds
-                    |> int.divide(86400)
-                  case days_duration {
-                    Ok(d) -> Some(d)
-                    Error(_) -> None
-                  }
+                  let seconds = birl.to_unix(dt)
+                  let days = seconds / 86_400
+                  Some(days)
                 }
                 Error(_) -> None
               }
             }
-            _, _, _ -> None
+            _ -> None
           }
         }
         _ -> None
@@ -191,7 +157,16 @@ fn format_float(value: Float) -> String {
 
 /// Create database connection
 fn create_db_connection(config: Config) -> Result(pog.Connection, String) {
-  case postgres.connect(config.database) {
+  let db_config =
+    postgres.Config(
+      host: config.database.host,
+      port: config.database.port,
+      database: config.database.name,
+      user: config.database.user,
+      password: Some(config.database.password),
+      pool_size: config.database.pool_size,
+    )
+  case postgres.connect(db_config) {
     Ok(conn) -> Ok(conn)
     Error(_) -> Error("Failed to connect to database")
   }

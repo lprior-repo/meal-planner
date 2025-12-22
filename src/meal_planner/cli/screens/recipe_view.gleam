@@ -782,7 +782,7 @@ fn view_list(model: RecipeModel) -> shore.Node(RecipeMsg) {
     ui.hr_styled(style.Green),
 
     // Error message
-    ..list.append(
+    list.append(
       case model.error_message {
         Some(err) -> [ui.br(), ui.text_styled("⚠ " <> err, Some(style.Red), None)]
         None -> []
@@ -810,7 +810,7 @@ fn view_list(model: RecipeModel) -> shore.Node(RecipeMsg) {
         ui.br(),
 
         // Loading indicator
-        ..list.append(
+        list.append(
           case model.is_loading {
             True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
             False -> []
@@ -818,7 +818,7 @@ fn view_list(model: RecipeModel) -> shore.Node(RecipeMsg) {
           [
             ui.br(),
             // Recipe list
-            ..list.append(
+            list.append(
               case model.recipes {
                 [] -> [ui.text("No recipes found. Try a different search.")]
                 recipes -> list.index_map(recipes, render_recipe_list_item)
@@ -909,7 +909,7 @@ fn view_detail(model: RecipeModel) -> shore.Node(RecipeMsg) {
           Some(style.Yellow),
           None,
         ),
-        ..list.append(
+        list.append(
           list.take(recipe.ingredients, 5)
           |> list.map(fn(ing) {
             ui.text("  • " <> ing.ingredient_description)
@@ -956,7 +956,7 @@ fn view_directions(model: RecipeModel) -> shore.Node(RecipeMsg) {
         ui.hr(),
         ui.br(),
 
-        ..list.append(
+        list.append(
           case recipe.directions {
             [] -> [ui.text("No directions available.")]
             directions -> {
@@ -1086,7 +1086,7 @@ fn view_favorites(model: RecipeModel) -> shore.Node(RecipeMsg) {
     ui.hr(),
     ui.br(),
 
-    ..list.append(
+    list.append(
       case favorite_recipes {
         [] -> [ui.text("No favorites yet. Press [f] on a recipe to add it.")]
         recipes -> list.index_map(recipes, render_recipe_list_item)
@@ -1125,13 +1125,13 @@ fn view_search_popup(model: RecipeModel) -> shore.Node(RecipeMsg) {
     ui.br(),
 
     // Loading / Error
-    ..list.append(
+    list.append(
       case search.is_loading {
         True -> [ui.text_styled("Searching...", Some(style.Yellow), None)]
         False -> []
       },
       [
-        ..list.append(
+        list.append(
           case search.error {
             Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
             None -> []

@@ -601,7 +601,7 @@ fn view_input_mode(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) -> 
       style.Pct(50),
       fn(text) { on_msg(InputChanged(text)) },
     ),
-    ..list.append(
+    list.append(
       case model.error {
         Some(err) -> [ui.br(), ui.text_styled("Error: " <> err, Some(style.Red), None)]
         None -> []
@@ -654,12 +654,12 @@ fn view_calendar_mode(model: DatePickerModel, on_msg: fn(DatePickerMsg) -> msg) 
     ui.text("  Su  Mo  Tu  We  Th  Fr  Sa"),
 
     // Calendar rows
-    ..list.append(
+    list.append(
       list.map(calendar_rows, fn(row) { ui.text(row) }),
       [
         ui.br(),
         ui.text("Selected: " <> date_int_to_string(model.selected_date, model.date_format)),
-        ..list.append(
+        list.append(
           case model.error {
             Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
             None -> []

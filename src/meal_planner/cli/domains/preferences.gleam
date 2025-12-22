@@ -508,40 +508,42 @@ fn update_profile(
   }
 
   // Parse activity level
-  let activity_level = case activity_opt {
-    Some("sedentary") -> Sedentary
-    Some("moderate") -> Moderate
-    Some("active") -> Active
+  use activity_level <- result.try(case activity_opt {
+    Some("sedentary") -> Ok(Sedentary)
+    Some("moderate") -> Ok(Moderate)
+    Some("active") -> Ok(Active)
     Some(invalid) ->
-      return Error(
-        "Invalid activity level: "
-        <> invalid
-        <> ". Use: sedentary, moderate, active",
+      Error(
+        "Invalid activity level: " <> invalid <> ". Use: sedentary, moderate, active"
       )
-    None -> current.activity_level
-  }
+    None -> Ok(current.activity_level)
+  })
 
   // Parse goal
-  let user_goal = case goal_opt {
-    Some("gain") -> Gain
-    Some("maintain") -> Maintain
-    Some("lose") -> Lose
+  use user_goal <- result.try(case goal_opt {
+    Some("gain") -> Ok(Gain)
+    Some("maintain") -> Ok(Maintain)
+    Some("lose") -> Ok(Lose)
     Some(invalid) ->
-      return Error("Invalid goal: " <> invalid <> ". Use: gain, maintain, lose")
-    None -> current.goal
-  }
+      Error("Invalid goal: " <> invalid <> ". Use: gain, maintain, lose")
+    None -> Ok(current.goal)
+  })
 
   // Validate meals
-  let meals_per_day = case meals_opt {
-    Some(m) if m >= 1 && m <= 10 -> m
-    Some(m) ->
-      return Error(
-        "Invalid meals per day: "
-        <> int.to_string(m)
-        <> ". Must be between 1 and 10",
-      )
-    None -> current.meals_per_day
-  }
+  use meals_per_day <- result.try(case meals_opt {
+    Some(m) -> {
+      case m >= 1 && m <= 10 {
+        True -> Ok(m)
+        False ->
+          Error(
+            "Invalid meals per day: "
+            <> int.to_string(m)
+            <> ". Must be between 1 and 10",
+          )
+      }
+    }
+    None -> Ok(current.meals_per_day)
+  })
 
   // Build updated profile
   let updated =
@@ -622,7 +624,7 @@ fn update_meals_per_day(config: Config, meals: Int) -> Result(String, String) {
         Ok(p) -> p
         Error(_) ->
           UserProfile(
-            id: types.default_user_id(),
+            id: id.user_id("1"),
             bodyweight: 70.0,
             activity_level: Moderate,
             goal: Maintain,

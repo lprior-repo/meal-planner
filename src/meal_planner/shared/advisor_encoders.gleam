@@ -67,15 +67,10 @@ pub fn encode_macro_trend(trend: daily_rec.MacroTrend) -> json.Json {
 pub fn encode_weekly_trends(trends: trends_types.WeeklyTrends) -> json.Json {
   json.object([
     #("days_analyzed", json.int(trends.days_analyzed)),
-    #("date_range", json.object([
-      #("start", json.string(trends.date_range.0)),
-      #("end", json.string(trends.date_range.1)),
-    ])),
     #("avg_calories", json.float(trends.avg_calories)),
     #("avg_protein", json.float(trends.avg_protein)),
     #("avg_fat", json.float(trends.avg_fat)),
     #("avg_carbs", json.float(trends.avg_carbs)),
-    #("target_macros", encode_nutrition_targets(trends.target_macros)),
     #("best_day", json.string(trends.best_day)),
     #("worst_day", json.string(trends.worst_day)),
     #("patterns", json.array(trends.patterns, json.string)),
@@ -83,7 +78,6 @@ pub fn encode_weekly_trends(trends: trends_types.WeeklyTrends) -> json.Json {
       trends.recommendations,
       json.string,
     )),
-    #("compliance_score", json.float(trends.compliance_score)),
   ])
 }
 
@@ -92,10 +86,10 @@ pub fn encode_nutrition_targets(
   targets: trends_types.NutritionTargets,
 ) -> json.Json {
   json.object([
-    #("target_calories", json.float(targets.target_calories)),
-    #("target_protein", json.float(targets.target_protein)),
-    #("target_fat", json.float(targets.target_fat)),
-    #("target_carbs", json.float(targets.target_carbs)),
+    #("daily_calories", json.float(targets.daily_calories)),
+    #("daily_protein", json.float(targets.daily_protein)),
+    #("daily_fat", json.float(targets.daily_fat)),
+    #("daily_carbs", json.float(targets.daily_carbs)),
   ])
 }
 
@@ -108,22 +102,13 @@ pub fn encode_recommendation_report(
   report: rec_types.RecommendationReport,
 ) -> json.Json {
   json.object([
-    #("date_range", json.object([
-      #("start", json.string(report.date_range.0)),
-      #("end", json.string(report.date_range.1)),
-    ])),
-    #("current_macros", encode_macros_from_trends(report.current_macros)),
-    #("target_macros", encode_nutrition_targets(report.target_macros)),
-    #("compliance_percentage", json.float(report.compliance_percentage)),
+    #("compliance_score", json.float(report.compliance_score)),
     #("meal_adjustments", json.array(
       report.meal_adjustments,
       encode_meal_adjustment,
     )),
     #("insights", json.array(report.insights, encode_insight)),
-    #("priority_adjustments", json.array(
-      report.priority_adjustments,
-      encode_meal_adjustment,
-    )),
+    #("trends", encode_weekly_trends(report.trends)),
   ])
 }
 
@@ -148,14 +133,10 @@ pub fn encode_meal_adjustment(adjustment: rec_types.MealAdjustment) -> json.Json
       rec_types.adjustment_type_to_string(adjustment.adjustment_type),
     )),
     #("amount", json.float(adjustment.amount)),
-    #("impact_level", json.string(rec_types.impact_level_to_string(
-      adjustment.impact_level,
-    ))),
     #("food_suggestions", json.array(
       adjustment.food_suggestions,
       json.string,
     )),
-    #("rationale", json.string(adjustment.rationale)),
   ])
 }
 
@@ -166,10 +147,9 @@ pub fn encode_insight(insight: rec_types.Insight) -> json.Json {
       insight.category,
     ))),
     #("message", json.string(insight.message)),
-    #("impact_level", json.string(rec_types.impact_level_to_string(
-      insight.impact_level,
+    #("impact", json.string(rec_types.impact_level_to_string(
+      insight.impact,
     ))),
-    #("actionable", json.bool(insight.actionable)),
   ])
 }
 

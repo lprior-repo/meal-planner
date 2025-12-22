@@ -870,7 +870,7 @@ fn view_dashboard(model: NutritionModel) -> shore.Node(NutritionMsg) {
     ui.hr_styled(style.Green),
 
     // Error message
-    ..list.append(
+    list.append(
       case model.error_message {
         Some(err) -> [ui.br(), ui.text_styled("⚠ " <> err, Some(style.Red), None)]
         None -> []
@@ -886,7 +886,7 @@ fn view_dashboard(model: NutritionModel) -> shore.Node(NutritionMsg) {
         ui.hr(),
 
         // Loading
-        ..list.append(
+        list.append(
           case model.is_loading {
             True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
             False -> []
@@ -971,7 +971,7 @@ fn view_weekly_trends(model: NutritionModel) -> shore.Node(NutritionMsg) {
     ui.text("Last 7 days nutrition data:"),
     ui.br(),
 
-    ..list.append(
+    list.append(
       case model.weekly_data {
         [] -> [ui.text("No data available for this period.")]
         data -> {
@@ -1129,7 +1129,7 @@ fn view_meal_breakdown(model: NutritionModel) -> shore.Node(NutritionMsg) {
     ui.hr_styled(style.Green),
     ui.br(),
 
-    ..list.append(
+    list.append(
       case model.meal_breakdown {
         [] -> [ui.text("No meals logged for this day.")]
         meals -> {

@@ -12,7 +12,7 @@ import gleeunit
 import gleeunit/should
 import meal_planner/cli/domains/diary
 import meal_planner/fatsecret/diary/types.{
-  Breakfast, Dinner, FoodEntry, Lunch, Snack, food_entry_id,
+  type FoodEntry, Breakfast, Dinner, FoodEntry, Lunch, Snack, food_entry_id,
 }
 
 pub fn main() {
@@ -38,12 +38,21 @@ fn create_sample_entry(
     food_entry_description: "Sample description",
     food_id: "12345",
     serving_id: "1",
+    number_of_units: 1.0,
     meal: Breakfast,
     date_int: 19_700,
     calories: calories,
+    carbohydrate: carbs,
     protein: protein,
-    carbohydrates: carbs,
     fat: fat,
+    saturated_fat: None,
+    polyunsaturated_fat: None,
+    monounsaturated_fat: None,
+    cholesterol: None,
+    sodium: None,
+    potassium: None,
+    fiber: None,
+    sugar: None,
   )
 }
 

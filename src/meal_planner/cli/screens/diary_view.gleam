@@ -634,7 +634,7 @@ fn view_main_diary(model: DiaryModel) -> shore.Node(DiaryMsg) {
     ui.hr_styled(style.Green),
 
     // Error message if present
-    ..list.append(
+    list.append(
       case model.error_message {
         Some(err) -> [
           ui.br(),
@@ -663,7 +663,7 @@ fn view_main_diary(model: DiaryModel) -> shore.Node(DiaryMsg) {
         ),
 
         // Nutrition targets comparison if available
-        ..list.append(
+        list.append(
           render_nutrition_comparison(model.nutrition_targets, total_cal, total_prot, total_carb, total_fat),
           [
             ui.hr(),
@@ -690,10 +690,22 @@ fn render_nutrition_comparison(
   case targets {
     None -> []
     Some(t) -> {
-      let cal_pct = if t.calories >. 0.0 { cal /. t.calories *. 100.0 } else { 0.0 }
-      let prot_pct = if t.protein >. 0.0 { prot /. t.protein *. 100.0 } else { 0.0 }
-      let carb_pct = if t.carbohydrate >. 0.0 { carb /. t.carbohydrate *. 100.0 } else { 0.0 }
-      let fat_pct = if t.fat >. 0.0 { fat /. t.fat *. 100.0 } else { 0.0 }
+      let cal_pct = case t.calories >. 0.0 {
+  True -> cal /. t.calories *. 100.0
+  False -> 0.0
+}
+      let prot_pct = case t.protein >. 0.0 {
+  True -> prot /. t.protein *. 100.0
+  False -> 0.0
+}
+      let carb_pct = case t.carbohydrate >. 0.0 {
+  True -> carb /. t.carbohydrate *. 100.0
+  False -> 0.0
+}
+      let fat_pct = case t.fat >. 0.0 {
+  True -> fat /. t.fat *. 100.0
+  False -> 0.0
+}
 
       [
         ui.br(),
@@ -720,7 +732,7 @@ fn render_meal_section(section: MealSection) -> List(shore.Node(DiaryMsg)) {
       <> " | C: " <> float_to_str(totals.carbohydrate) <> "g"
       <> " | F: " <> float_to_str(totals.fat) <> "g",
     ),
-    ..list.append(
+    list.append(
       list.map(section.entries, render_entry),
       [ui.br()]
     )
@@ -740,7 +752,8 @@ fn render_entry(entry: fatsecret_diary.DisplayEntry) -> shore.Node(DiaryMsg) {
 fn view_search_popup(model: DiaryModel) -> shore.Node(DiaryMsg) {
   let search = model.search_state
 
-  ui.col([
+  // Build sections
+  let header_section = [
     ui.br(),
     ui.align(
       style.Center,
@@ -748,8 +761,6 @@ fn view_search_popup(model: DiaryModel) -> shore.Node(DiaryMsg) {
     ),
     ui.hr_styled(style.Green),
     ui.br(),
-
-    // Search input
     ui.input(
       "Search:",
       search.query,
@@ -757,39 +768,39 @@ fn view_search_popup(model: DiaryModel) -> shore.Node(DiaryMsg) {
       fn(q) { fatsecret_diary.SearchQueryChanged(q) },
     ),
     ui.br(),
+  ]
 
-    // Loading indicator
-    ..list.append(
-      case search.is_loading {
-        True -> [ui.text_styled("Searching...", Some(style.Yellow), None)]
-        False -> []
-      },
-      [
-        // Error message
-        ..list.append(
-          case search.search_error {
-            Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
-            None -> []
-          },
-          [
-            // Search results
-            ui.br(),
-            ..list.append(
-              render_search_results(search.results, search.selected_index),
-              [
-                ui.hr(),
-                ui.text_styled(
-                  "[Enter] Search  [↑/↓] Navigate  [1-9] Select  [Esc] Cancel",
-                  Some(style.Cyan),
-                  None,
-                ),
-              ]
-            )
-          ]
-        )
-      ]
-    )
-  ])
+  let loading_section = case search.is_loading {
+    True -> [ui.text_styled("Searching...", Some(style.Yellow), None)]
+    False -> []
+  }
+
+  let error_section = case search.search_error {
+    Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
+    None -> []
+  }
+
+  let results_section = [
+    ui.br(),
+    ..render_search_results(search.results, search.selected_index)
+  ]
+
+  let footer_section = [
+    ui.hr(),
+    ui.text_styled(
+      "[Enter] Search  [↑/↓] Navigate  [1-9] Select  [Esc] Cancel",
+      Some(style.Cyan),
+      None,
+    ),
+  ]
+
+  ui.col(list.flatten([
+    header_section,
+    loading_section,
+    error_section,
+    results_section,
+    footer_section,
+  ]))
 }
 
 /// Render search results list

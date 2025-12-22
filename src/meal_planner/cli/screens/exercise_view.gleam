@@ -821,7 +821,7 @@ fn view_main_exercise(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
     ui.hr_styled(style.Green),
 
     // Error message
-    ..list.append(
+    list.append(
       case model.error_message {
         Some(err) -> [ui.br(), ui.text_styled("⚠ " <> err, Some(style.Red), None)]
         None -> []
@@ -847,7 +847,7 @@ fn view_main_exercise(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
         ui.br(),
 
         // Loading indicator
-        ..list.append(
+        list.append(
           case model.is_loading {
             True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
             False -> []
@@ -856,7 +856,7 @@ fn view_main_exercise(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
             ui.hr(),
             ui.br(),
             // Exercise entries
-            ..list.append(
+            list.append(
               case model.entries {
                 [] -> [ui.text("No exercises logged for this date.")]
                 entries -> list.map(entries, render_exercise_entry)
@@ -905,13 +905,13 @@ fn view_search_popup(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
     ui.br(),
 
     // Loading / Error
-    ..list.append(
+    list.append(
       case search.is_loading {
         True -> [ui.text_styled("Searching...", Some(style.Yellow), None)]
         False -> []
       },
       [
-        ..list.append(
+        list.append(
           case search.error {
             Some(err) -> [ui.text_styled("Error: " <> err, Some(style.Red), None)]
             None -> []
@@ -919,7 +919,7 @@ fn view_search_popup(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
           [
             ui.br(),
             // Results
-            ..list.append(
+            list.append(
               render_search_results(search.results, search.selected_index),
               [
                 ui.hr(),
@@ -1080,7 +1080,7 @@ fn view_quick_add(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
     ui.text("Recent exercises:"),
     ui.br(),
 
-    ..list.append(
+    list.append(
       case model.recent_exercises {
         [] -> [ui.text("No recent exercises available.")]
         exercises -> {

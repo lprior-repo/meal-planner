@@ -194,7 +194,7 @@ pub fn handle_decimal_servings_test() {
 
   servings > 0.0
   && servings
-  <= 100.0
+  <=. 100.0
   |> should.be_true()
 }
 
@@ -217,7 +217,7 @@ pub fn format_sync_results_test() {
   |> should.be_true()
 
   meal_plans_synced
-  >= 0
+  >=. 0
   |> should.be_true()
 }
 
@@ -226,6 +226,6 @@ pub fn handle_empty_sync_test() {
   let synced_count = 0
 
   synced_count
-  >= 0
+  >=. 0
   |> should.be_true()
 }

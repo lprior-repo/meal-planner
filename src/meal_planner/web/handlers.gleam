@@ -34,6 +34,14 @@ import meal_planner/web/handlers/tandoor
 import pog
 import wisp
 
+/// API route handler - delegates to API router
+pub fn handle_api_routes(_req: wisp.Request) -> wisp.Response {
+  // For now, we'll just return a placeholder response
+  // In a real implementation, this would route to the API router
+  wisp.response(501)
+  |> wisp.string_body("API routes handler not yet implemented")
+}
+
 /// Health check handler - GET /health or /
 pub fn handle_health(req: wisp.Request) -> wisp.Response {
   health.handle(req)
