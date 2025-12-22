@@ -153,10 +153,7 @@ pub type DailySummary {
 
 /// Cached exercise data
 pub type CachedExercise {
-  CachedExercise(
-    exercise: ExerciseSearchResult,
-    cached_at: Int,
-  )
+  CachedExercise(exercise: ExerciseSearchResult, cached_at: Int)
 }
 
 /// Messages for the exercise screen
@@ -218,7 +215,10 @@ pub type ExerciseEffect {
   FetchEntries(date_int: Int)
   SearchExercises(query: String)
   CreateEntry(input: ExerciseEntryInput)
-  UpdateEntry(entry_id: exercise_types.ExerciseEntryId, update: ExerciseEntryUpdate)
+  UpdateEntry(
+    entry_id: exercise_types.ExerciseEntryId,
+    update: ExerciseEntryUpdate,
+  )
   DeleteEntry(entry_id: exercise_types.ExerciseEntryId)
   BatchEffects(effects: List(ExerciseEffect))
 }
@@ -236,10 +236,7 @@ pub type ExerciseEntryInput {
 
 /// Update for modifying exercise entry
 pub type ExerciseEntryUpdate {
-  ExerciseEntryUpdate(
-    duration_min: Option(Int),
-    calories: Option(Float),
-  )
+  ExerciseEntryUpdate(duration_min: Option(Int), calories: Option(Float))
 }
 
 // ============================================================================
@@ -286,19 +283,22 @@ pub fn exercise_update(
     // === Date Navigation ===
     DatePrevious -> {
       let new_date = model.current_date - 1
-      let updated = ExerciseModel(..model, current_date: new_date, is_loading: True)
+      let updated =
+        ExerciseModel(..model, current_date: new_date, is_loading: True)
       #(updated, FetchEntries(new_date))
     }
 
     DateNext -> {
       let new_date = model.current_date + 1
-      let updated = ExerciseModel(..model, current_date: new_date, is_loading: True)
+      let updated =
+        ExerciseModel(..model, current_date: new_date, is_loading: True)
       #(updated, FetchEntries(new_date))
     }
 
     DateToday -> {
       let today = get_today_date_int()
-      let updated = ExerciseModel(..model, current_date: today, is_loading: True)
+      let updated =
+        ExerciseModel(..model, current_date: today, is_loading: True)
       #(updated, FetchEntries(today))
     }
 
@@ -311,20 +311,22 @@ pub fn exercise_update(
     DateConfirmPicker(date_input) -> {
       case parse_date_string(date_input) {
         Ok(date_int) -> {
-          let updated = ExerciseModel(
-            ..model,
-            current_date: date_int,
-            view_state: MainView,
-            is_loading: True,
-          )
+          let updated =
+            ExerciseModel(
+              ..model,
+              current_date: date_int,
+              view_state: MainView,
+              is_loading: True,
+            )
           #(updated, FetchEntries(date_int))
         }
         Error(err) -> {
-          let updated = ExerciseModel(
-            ..model,
-            error_message: Some(err),
-            view_state: MainView,
-          )
+          let updated =
+            ExerciseModel(
+              ..model,
+              error_message: Some(err),
+              view_state: MainView,
+            )
           #(updated, NoEffect)
         }
       }
@@ -337,17 +339,18 @@ pub fn exercise_update(
 
     // === Add Exercise ===
     AddExerciseStart -> {
-      let updated = ExerciseModel(
-        ..model,
-        view_state: SearchPopup,
-        search_state: ExerciseSearchState(
-          query: "",
-          results: [],
-          selected_index: 0,
-          is_loading: False,
-          error: None,
-        ),
-      )
+      let updated =
+        ExerciseModel(
+          ..model,
+          view_state: SearchPopup,
+          search_state: ExerciseSearchState(
+            query: "",
+            results: [],
+            selected_index: 0,
+            is_loading: False,
+            error: None,
+          ),
+        )
       #(updated, NoEffect)
     }
 
@@ -358,7 +361,8 @@ pub fn exercise_update(
     }
 
     SearchStarted -> {
-      let search = ExerciseSearchState(..model.search_state, is_loading: True, error: None)
+      let search =
+        ExerciseSearchState(..model.search_state, is_loading: True, error: None)
       let updated = ExerciseModel(..model, search_state: search)
       #(updated, SearchExercises(model.search_state.query))
     }
@@ -366,21 +370,23 @@ pub fn exercise_update(
     GotSearchResults(result) -> {
       case result {
         Ok(results) -> {
-          let search = ExerciseSearchState(
-            ..model.search_state,
-            results: results,
-            is_loading: False,
-            selected_index: 0,
-          )
+          let search =
+            ExerciseSearchState(
+              ..model.search_state,
+              results: results,
+              is_loading: False,
+              selected_index: 0,
+            )
           let updated = ExerciseModel(..model, search_state: search)
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let search = ExerciseSearchState(
-            ..model.search_state,
-            is_loading: False,
-            error: Some(err),
-          )
+          let search =
+            ExerciseSearchState(
+              ..model.search_state,
+              is_loading: False,
+              error: Some(err),
+            )
           let updated = ExerciseModel(..model, search_state: search)
           #(updated, NoEffect)
         }
@@ -394,29 +400,31 @@ pub fn exercise_update(
     }
 
     ConfirmAddExercise(duration, calories) -> {
-      let input = ExerciseEntryInput(
-        exercise_id: "placeholder",
-        exercise_name: "Exercise",
-        duration_min: duration,
-        calories: calories,
-        date_int: model.current_date,
-      )
+      let input =
+        ExerciseEntryInput(
+          exercise_id: "placeholder",
+          exercise_name: "Exercise",
+          duration_min: duration,
+          calories: calories,
+          date_int: model.current_date,
+        )
       let updated = ExerciseModel(..model, view_state: MainView)
       #(updated, CreateEntry(input))
     }
 
     CancelAddExercise -> {
-      let updated = ExerciseModel(
-        ..model,
-        view_state: MainView,
-        search_state: ExerciseSearchState(
-          query: "",
-          results: [],
-          selected_index: 0,
-          is_loading: False,
-          error: None,
-        ),
-      )
+      let updated =
+        ExerciseModel(
+          ..model,
+          view_state: MainView,
+          search_state: ExerciseSearchState(
+            query: "",
+            results: [],
+            selected_index: 0,
+            is_loading: False,
+            error: None,
+          ),
+        )
       #(updated, NoEffect)
     }
 
@@ -428,13 +436,16 @@ pub fn exercise_update(
 
     QuickAddSelect(entry) -> {
       // Clone the entry for today
-      let input = ExerciseEntryInput(
-        exercise_id: exercise_types.exercise_entry_id_to_string(entry.exercise_entry_id),
-        exercise_name: entry.exercise_name,
-        duration_min: entry.duration_min,
-        calories: entry.calories,
-        date_int: model.current_date,
-      )
+      let input =
+        ExerciseEntryInput(
+          exercise_id: exercise_types.exercise_entry_id_to_string(
+            entry.exercise_entry_id,
+          ),
+          exercise_name: entry.exercise_name,
+          duration_min: entry.duration_min,
+          calories: entry.calories,
+          date_int: model.current_date,
+        )
       let updated = ExerciseModel(..model, view_state: MainView)
       #(updated, CreateEntry(input))
     }
@@ -446,18 +457,20 @@ pub fn exercise_update(
 
     // === Edit Exercise ===
     EditExerciseStart(entry) -> {
-      let edit_state = ExerciseEditState(
-        entry: entry,
-        new_duration: entry.duration_min,
-        new_calories: entry.calories,
-        original_duration: entry.duration_min,
-        original_calories: entry.calories,
-      )
-      let updated = ExerciseModel(
-        ..model,
-        view_state: EditEntry(edit_state),
-        edit_state: Some(edit_state),
-      )
+      let edit_state =
+        ExerciseEditState(
+          entry: entry,
+          new_duration: entry.duration_min,
+          new_calories: entry.calories,
+          original_duration: entry.duration_min,
+          original_calories: entry.calories,
+        )
+      let updated =
+        ExerciseModel(
+          ..model,
+          view_state: EditEntry(edit_state),
+          edit_state: Some(edit_state),
+        )
       #(updated, NoEffect)
     }
 
@@ -465,11 +478,12 @@ pub fn exercise_update(
       case model.edit_state {
         Some(edit) -> {
           let new_edit = ExerciseEditState(..edit, new_duration: duration)
-          let updated = ExerciseModel(
-            ..model,
-            edit_state: Some(new_edit),
-            view_state: EditEntry(new_edit),
-          )
+          let updated =
+            ExerciseModel(
+              ..model,
+              edit_state: Some(new_edit),
+              view_state: EditEntry(new_edit),
+            )
           #(updated, NoEffect)
         }
         None -> #(model, NoEffect)
@@ -480,11 +494,12 @@ pub fn exercise_update(
       case model.edit_state {
         Some(edit) -> {
           let new_edit = ExerciseEditState(..edit, new_calories: calories)
-          let updated = ExerciseModel(
-            ..model,
-            edit_state: Some(new_edit),
-            view_state: EditEntry(new_edit),
-          )
+          let updated =
+            ExerciseModel(
+              ..model,
+              edit_state: Some(new_edit),
+              view_state: EditEntry(new_edit),
+            )
           #(updated, NoEffect)
         }
         None -> #(model, NoEffect)
@@ -494,16 +509,14 @@ pub fn exercise_update(
     EditConfirm -> {
       case model.edit_state {
         Some(edit) -> {
-          let update = ExerciseEntryUpdate(
-            duration_min: Some(edit.new_duration),
-            calories: Some(edit.new_calories),
-          )
+          let update =
+            ExerciseEntryUpdate(
+              duration_min: Some(edit.new_duration),
+              calories: Some(edit.new_calories),
+            )
           let effect = UpdateEntry(edit.entry.exercise_entry_id, update)
-          let updated = ExerciseModel(
-            ..model,
-            view_state: MainView,
-            edit_state: None,
-          )
+          let updated =
+            ExerciseModel(..model, view_state: MainView, edit_state: None)
           #(updated, effect)
         }
         None -> #(ExerciseModel(..model, view_state: MainView), NoEffect)
@@ -511,7 +524,8 @@ pub fn exercise_update(
     }
 
     EditCancel -> {
-      let updated = ExerciseModel(..model, view_state: MainView, edit_state: None)
+      let updated =
+        ExerciseModel(..model, view_state: MainView, edit_state: None)
       #(updated, NoEffect)
     }
 
@@ -553,21 +567,19 @@ pub fn exercise_update(
         Ok(entries) -> {
           let display_entries = list.map(entries, format_exercise_entry)
           let summary = calculate_daily_summary(entries)
-          let updated = ExerciseModel(
-            ..model,
-            entries: display_entries,
-            daily_summary: summary,
-            is_loading: False,
-            error_message: None,
-          )
+          let updated =
+            ExerciseModel(
+              ..model,
+              entries: display_entries,
+              daily_summary: summary,
+              is_loading: False,
+              error_message: None,
+            )
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let updated = ExerciseModel(
-            ..model,
-            is_loading: False,
-            error_message: Some(err),
-          )
+          let updated =
+            ExerciseModel(..model, is_loading: False, error_message: Some(err))
           #(updated, NoEffect)
         }
       }
@@ -730,7 +742,9 @@ fn parse_date_string(date_str: String) -> Result(Int, String) {
 }
 
 /// Format exercise entry for display
-fn format_exercise_entry(entry: exercise_types.ExerciseEntry) -> ExerciseDisplayEntry {
+fn format_exercise_entry(
+  entry: exercise_types.ExerciseEntry,
+) -> ExerciseDisplayEntry {
   let duration_str = int.to_string(entry.duration_min) <> " min"
   let calories_str = float_to_string(entry.calories) <> " cal"
 
@@ -739,12 +753,18 @@ fn format_exercise_entry(entry: exercise_types.ExerciseEntry) -> ExerciseDisplay
     name_display: entry.exercise_name,
     duration_display: duration_str,
     calories_display: calories_str,
-    summary_line: entry.exercise_name <> " - " <> duration_str <> " - " <> calories_str,
+    summary_line: entry.exercise_name
+      <> " - "
+      <> duration_str
+      <> " - "
+      <> calories_str,
   )
 }
 
 /// Calculate daily summary from entries
-fn calculate_daily_summary(entries: List(exercise_types.ExerciseEntry)) -> DailySummary {
+fn calculate_daily_summary(
+  entries: List(exercise_types.ExerciseEntry),
+) -> DailySummary {
   let total_calories =
     entries
     |> list.fold(0.0, fn(acc, e) { acc +. e.calories })
@@ -824,9 +844,13 @@ fn view_main_exercise(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
     ui.br(),
     ui.text_styled("Daily Summary:", Some(style.Yellow), None),
     ui.text(
-      "  Sessions: " <> int.to_string(summary.session_count)
-      <> " | Duration: " <> int.to_string(summary.total_duration) <> " min"
-      <> " | Calories: " <> float_to_string(summary.total_calories),
+      "  Sessions: "
+      <> int.to_string(summary.session_count)
+      <> " | Duration: "
+      <> int.to_string(summary.total_duration)
+      <> " min"
+      <> " | Calories: "
+      <> float_to_string(summary.total_calories),
     ),
     ui.br(),
   ]
@@ -852,16 +876,18 @@ fn view_main_exercise(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
     ),
   ]
 
-  ui.col(list.flatten([
-    header_section,
-    error_section,
-    nav_section,
-    summary_section,
-    loading_section,
-    divider_section,
-    entries_section,
-    footer_section,
-  ]))
+  ui.col(
+    list.flatten([
+      header_section,
+      error_section,
+      nav_section,
+      summary_section,
+      loading_section,
+      divider_section,
+      entries_section,
+      footer_section,
+    ]),
+  )
 }
 
 /// Render a single exercise entry
@@ -884,12 +910,9 @@ fn view_search_popup(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
   ]
 
   let input_section = [
-    ui.input(
-      "Search:",
-      search.query,
-      style.Pct(80),
-      fn(q) { SearchQueryChanged(q) },
-    ),
+    ui.input("Search:", search.query, style.Pct(80), fn(q) {
+      SearchQueryChanged(q)
+    }),
     ui.br(),
   ]
 
@@ -903,7 +926,8 @@ fn view_search_popup(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
     None -> []
   }
 
-  let results_section = render_search_results(search.results, search.selected_index)
+  let results_section =
+    render_search_results(search.results, search.selected_index)
 
   let footer_section = [
     ui.hr(),
@@ -914,15 +938,17 @@ fn view_search_popup(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
     ),
   ]
 
-  ui.col(list.flatten([
-    header_section,
-    input_section,
-    loading_section,
-    error_section,
-    [ui.br()],
-    results_section,
-    footer_section,
-  ]))
+  ui.col(
+    list.flatten([
+      header_section,
+      input_section,
+      loading_section,
+      error_section,
+      [ui.br()],
+      results_section,
+      footer_section,
+    ]),
+  )
 }
 
 /// Render search results
@@ -940,9 +966,13 @@ fn render_search_results(
           False -> "  "
         }
         ui.text(
-          prefix <> int.to_string(idx + 1) <> ". "
-          <> result.exercise_name <> " ("
-          <> float_to_string(result.calories_per_hour) <> " cal/hr)",
+          prefix
+          <> int.to_string(idx + 1)
+          <> ". "
+          <> result.exercise_name
+          <> " ("
+          <> float_to_string(result.calories_per_hour)
+          <> " cal/hr)",
         )
       })
     }
@@ -950,7 +980,10 @@ fn render_search_results(
 }
 
 /// Render date picker
-fn view_date_picker(model: ExerciseModel, date_input: String) -> shore.Node(ExerciseMsg) {
+fn view_date_picker(
+  model: ExerciseModel,
+  date_input: String,
+) -> shore.Node(ExerciseMsg) {
   ui.col([
     ui.br(),
     ui.align(
@@ -962,12 +995,7 @@ fn view_date_picker(model: ExerciseModel, date_input: String) -> shore.Node(Exer
 
     ui.text("Enter date (YYYY-MM-DD):"),
     ui.br(),
-    ui.input(
-      "Date:",
-      date_input,
-      style.Pct(50),
-      fn(d) { DateConfirmPicker(d) },
-    ),
+    ui.input("Date:", date_input, style.Pct(50), fn(d) { DateConfirmPicker(d) }),
     ui.br(),
 
     ui.text_styled(
@@ -1076,9 +1104,15 @@ fn view_quick_add(model: ExerciseModel) -> shore.Node(ExerciseMsg) {
         let duration = int.to_string(entry.duration_min)
         let calories = float_to_string(entry.calories)
         ui.text(
-          "  " <> int.to_string(idx + 1) <> ". "
-          <> entry.exercise_name <> " - "
-          <> duration <> " min - " <> calories <> " cal",
+          "  "
+          <> int.to_string(idx + 1)
+          <> ". "
+          <> entry.exercise_name
+          <> " - "
+          <> duration
+          <> " min - "
+          <> calories
+          <> " cal",
         )
       })
     }
@@ -1114,7 +1148,10 @@ fn view_details(
     ui.br(),
     ui.text("Date: " <> int.to_string(entry.date_int)),
     ui.br(),
-    ui.text("Entry ID: " <> exercise_types.exercise_entry_id_to_string(entry.exercise_entry_id)),
+    ui.text(
+      "Entry ID: "
+      <> exercise_types.exercise_entry_id_to_string(entry.exercise_entry_id),
+    ),
     ui.br(),
 
     ui.hr(),

@@ -27,8 +27,8 @@ import gleam/result
 import gleam/string
 import meal_planner/cli/screens/fatsecret_diary.{
   type DiaryEffect, type DiaryModel, type DiaryMsg, type MealSection,
-  type MealTotals, type NutritionTarget, type SearchState, type ViewState,
-  Batch, CreateEntry, DeleteEntry, DiaryModel, FetchEntries, FetchNutritionTargets,
+  type MealTotals, type NutritionTarget, type SearchState, type ViewState, Batch,
+  CreateEntry, DeleteEntry, DiaryModel, FetchEntries, FetchNutritionTargets,
   MainView, None as NoEffect, SearchFoods, SearchPopup, SearchState, UpdateEntry,
 }
 import meal_planner/fatsecret/diary/types as diary_types
@@ -74,11 +74,7 @@ pub fn date_int_to_string(date_int: Int) -> String {
 pub fn parse_date_string(date_str: String) -> Result(Int, String) {
   case string.split(date_str, "-") {
     [year_str, month_str, day_str] -> {
-      case
-        int.parse(year_str),
-        int.parse(month_str),
-        int.parse(day_str)
-      {
+      case int.parse(year_str), int.parse(month_str), int.parse(day_str) {
         Ok(_year), Ok(_month), Ok(_day) -> {
           case birl.from_naive(date_str <> "T00:00:00") {
             Ok(dt) -> {
@@ -145,11 +141,7 @@ pub fn diary_update(
       case parse_date_string(date_input) {
         Ok(date_int) -> {
           let updated =
-            DiaryModel(
-              ..model,
-              current_date: date_int,
-              view_state: MainView,
-            )
+            DiaryModel(..model, current_date: date_int, view_state: MainView)
           #(updated, FetchEntries(date_int))
         }
         Error(err) -> {
@@ -191,11 +183,7 @@ pub fn diary_update(
 
     fatsecret_diary.SearchFoodStarted -> {
       let search_state =
-        SearchState(
-          ..model.search_state,
-          is_loading: True,
-          search_error: None,
-        )
+        SearchState(..model.search_state, is_loading: True, search_error: None)
       let updated = DiaryModel(..model, search_state: search_state)
       #(updated, SearchFoods(model.search_state.query))
     }
@@ -287,7 +275,10 @@ pub fn diary_update(
       case model.edit_state {
         Some(edit_state) -> {
           let updated_edit =
-            fatsecret_diary.EditState(..edit_state, new_number_of_units: new_servings)
+            fatsecret_diary.EditState(
+              ..edit_state,
+              new_number_of_units: new_servings,
+            )
           let updated =
             DiaryModel(
               ..model,
@@ -308,8 +299,7 @@ pub fn diary_update(
               number_of_units: Some(edit_state.new_number_of_units),
               meal: None,
             )
-          let effect =
-            UpdateEntry(edit_state.entry.food_entry_id, update)
+          let effect = UpdateEntry(edit_state.entry.food_entry_id, update)
           let updated =
             DiaryModel(..model, view_state: MainView, edit_state: None)
           #(updated, effect)
@@ -455,7 +445,10 @@ pub fn diary_update(
 }
 
 /// Handle keyboard input for diary view
-fn handle_key_press(model: DiaryModel, key: String) -> #(DiaryModel, DiaryEffect) {
+fn handle_key_press(
+  model: DiaryModel,
+  key: String,
+) -> #(DiaryModel, DiaryEffect) {
   case model.view_state {
     MainView -> {
       case key {
@@ -505,7 +498,9 @@ fn handle_key_press(model: DiaryModel, key: String) -> #(DiaryModel, DiaryEffect
 // ============================================================================
 
 /// Group food entries by meal type
-fn group_entries_by_meal(entries: List(diary_types.FoodEntry)) -> List(MealSection) {
+fn group_entries_by_meal(
+  entries: List(diary_types.FoodEntry),
+) -> List(MealSection) {
   let breakfast_entries =
     entries
     |> list.filter(fn(e) { e.meal == diary_types.Breakfast })
@@ -597,9 +592,12 @@ pub fn diary_view(model: DiaryModel) -> shore.Node(DiaryMsg) {
   case model.view_state {
     MainView -> view_main_diary(model)
     SearchPopup -> view_search_popup(model)
-    fatsecret_diary.DatePicker(date_input) -> view_date_picker(model, date_input)
-    fatsecret_diary.ConfirmDelete(entry_id) -> view_delete_confirm(model, entry_id)
-    fatsecret_diary.EditAmount(edit_state) -> view_edit_amount(model, edit_state)
+    fatsecret_diary.DatePicker(date_input) ->
+      view_date_picker(model, date_input)
+    fatsecret_diary.ConfirmDelete(entry_id) ->
+      view_delete_confirm(model, entry_id)
+    fatsecret_diary.EditAmount(edit_state) ->
+      view_edit_amount(model, edit_state)
   }
 }
 
@@ -640,32 +638,45 @@ fn view_main_diary(model: DiaryModel) -> shore.Node(DiaryMsg) {
     ui.br(),
     ui.text_styled("Daily Totals:", Some(style.Yellow), None),
     ui.text(
-      "  Calories: " <> float_to_str(total_cal)
-      <> " | Protein: " <> float_to_str(total_prot) <> "g"
-      <> " | Carbs: " <> float_to_str(total_carb) <> "g"
-      <> " | Fat: " <> float_to_str(total_fat) <> "g",
+      "  Calories: "
+      <> float_to_str(total_cal)
+      <> " | Protein: "
+      <> float_to_str(total_prot)
+      <> "g"
+      <> " | Carbs: "
+      <> float_to_str(total_carb)
+      <> "g"
+      <> " | Fat: "
+      <> float_to_str(total_fat)
+      <> "g",
     ),
   ]
 
-  let nutrition_section = render_nutrition_comparison(
-    model.nutrition_targets, total_cal, total_prot, total_carb, total_fat,
-  )
+  let nutrition_section =
+    render_nutrition_comparison(
+      model.nutrition_targets,
+      total_cal,
+      total_prot,
+      total_carb,
+      total_fat,
+    )
 
   let divider_section = [ui.hr(), ui.br()]
 
-  let meals_section = list.flatten(
-    list.map(model.entries_by_meal, render_meal_section),
-  )
+  let meals_section =
+    list.flatten(list.map(model.entries_by_meal, render_meal_section))
 
-  ui.col(list.flatten([
-    header_section,
-    error_section,
-    nav_section,
-    totals_section,
-    nutrition_section,
-    divider_section,
-    meals_section,
-  ]))
+  ui.col(
+    list.flatten([
+      header_section,
+      error_section,
+      nav_section,
+      totals_section,
+      nutrition_section,
+      divider_section,
+      meals_section,
+    ]),
+  )
 }
 
 /// Render nutrition comparison with targets
@@ -680,29 +691,52 @@ fn render_nutrition_comparison(
     None -> []
     Some(t) -> {
       let cal_pct = case t.calories >. 0.0 {
-  True -> cal /. t.calories *. 100.0
-  False -> 0.0
-}
+        True -> cal /. t.calories *. 100.0
+        False -> 0.0
+      }
       let prot_pct = case t.protein >. 0.0 {
-  True -> prot /. t.protein *. 100.0
-  False -> 0.0
-}
+        True -> prot /. t.protein *. 100.0
+        False -> 0.0
+      }
       let carb_pct = case t.carbohydrate >. 0.0 {
-  True -> carb /. t.carbohydrate *. 100.0
-  False -> 0.0
-}
+        True -> carb /. t.carbohydrate *. 100.0
+        False -> 0.0
+      }
       let fat_pct = case t.fat >. 0.0 {
-  True -> fat /. t.fat *. 100.0
-  False -> 0.0
-}
+        True -> fat /. t.fat *. 100.0
+        False -> 0.0
+      }
 
       [
         ui.br(),
         ui.text_styled("Progress to Goals:", Some(style.Cyan), None),
-        ui.text("  Calories: " <> float_to_str(cal_pct) <> "% of " <> float_to_str(t.calories)),
-        ui.text("  Protein:  " <> float_to_str(prot_pct) <> "% of " <> float_to_str(t.protein) <> "g"),
-        ui.text("  Carbs:    " <> float_to_str(carb_pct) <> "% of " <> float_to_str(t.carbohydrate) <> "g"),
-        ui.text("  Fat:      " <> float_to_str(fat_pct) <> "% of " <> float_to_str(t.fat) <> "g"),
+        ui.text(
+          "  Calories: "
+          <> float_to_str(cal_pct)
+          <> "% of "
+          <> float_to_str(t.calories),
+        ),
+        ui.text(
+          "  Protein:  "
+          <> float_to_str(prot_pct)
+          <> "% of "
+          <> float_to_str(t.protein)
+          <> "g",
+        ),
+        ui.text(
+          "  Carbs:    "
+          <> float_to_str(carb_pct)
+          <> "% of "
+          <> float_to_str(t.carbohydrate)
+          <> "g",
+        ),
+        ui.text(
+          "  Fat:      "
+          <> float_to_str(fat_pct)
+          <> "% of "
+          <> float_to_str(t.fat)
+          <> "g",
+        ),
       ]
     }
   }
@@ -716,10 +750,18 @@ fn render_meal_section(section: MealSection) -> List(shore.Node(DiaryMsg)) {
   let header = [
     ui.text_styled("▸ " <> meal_name, Some(style.Yellow), None),
     ui.text(
-      "  Subtotal: " <> float_to_str(totals.calories) <> " cal"
-      <> " | P: " <> float_to_str(totals.protein) <> "g"
-      <> " | C: " <> float_to_str(totals.carbohydrate) <> "g"
-      <> " | F: " <> float_to_str(totals.fat) <> "g",
+      "  Subtotal: "
+      <> float_to_str(totals.calories)
+      <> " cal"
+      <> " | P: "
+      <> float_to_str(totals.protein)
+      <> "g"
+      <> " | C: "
+      <> float_to_str(totals.carbohydrate)
+      <> "g"
+      <> " | F: "
+      <> float_to_str(totals.fat)
+      <> "g",
     ),
   ]
   let entries = list.map(section.entries, render_entry)
@@ -750,12 +792,9 @@ fn view_search_popup(model: DiaryModel) -> shore.Node(DiaryMsg) {
     ),
     ui.hr_styled(style.Green),
     ui.br(),
-    ui.input(
-      "Search:",
-      search.query,
-      style.Pct(80),
-      fn(q) { fatsecret_diary.SearchQueryChanged(q) },
-    ),
+    ui.input("Search:", search.query, style.Pct(80), fn(q) {
+      fatsecret_diary.SearchQueryChanged(q)
+    }),
     ui.br(),
   ]
 
@@ -783,13 +822,15 @@ fn view_search_popup(model: DiaryModel) -> shore.Node(DiaryMsg) {
     ),
   ]
 
-  ui.col(list.flatten([
-    header_section,
-    loading_section,
-    error_section,
-    results_section,
-    footer_section,
-  ]))
+  ui.col(
+    list.flatten([
+      header_section,
+      loading_section,
+      error_section,
+      results_section,
+      footer_section,
+    ]),
+  )
 }
 
 /// Render search results list
@@ -811,8 +852,11 @@ fn render_search_results(
           None -> ""
         }
         ui.text(
-          prefix <> int.to_string(idx + 1) <> ". "
-          <> food.food_name <> brand_suffix,
+          prefix
+          <> int.to_string(idx + 1)
+          <> ". "
+          <> food.food_name
+          <> brand_suffix,
         )
       })
     }
@@ -824,7 +868,10 @@ fn render_search_results(
 // ============================================================================
 
 /// Render date picker modal
-fn view_date_picker(model: DiaryModel, date_input: String) -> shore.Node(DiaryMsg) {
+fn view_date_picker(
+  model: DiaryModel,
+  date_input: String,
+) -> shore.Node(DiaryMsg) {
   ui.col([
     ui.br(),
     ui.align(
@@ -836,12 +883,9 @@ fn view_date_picker(model: DiaryModel, date_input: String) -> shore.Node(DiaryMs
 
     ui.text("Enter date (YYYY-MM-DD):"),
     ui.br(),
-    ui.input(
-      "Date:",
-      date_input,
-      style.Pct(50),
-      fn(d) { fatsecret_diary.DateConfirmPicker(d) },
-    ),
+    ui.input("Date:", date_input, style.Pct(50), fn(d) {
+      fatsecret_diary.DateConfirmPicker(d)
+    }),
     ui.br(),
     ui.br(),
 
@@ -852,11 +896,7 @@ fn view_date_picker(model: DiaryModel, date_input: String) -> shore.Node(DiaryMs
     ),
     ui.br(),
     ui.hr(),
-    ui.text_styled(
-      "[Enter] Confirm  [Esc] Cancel",
-      Some(style.Cyan),
-      None,
-    ),
+    ui.text_styled("[Enter] Confirm  [Esc] Cancel", Some(style.Cyan), None),
   ])
 }
 
@@ -886,11 +926,7 @@ fn view_delete_confirm(
     ui.br(),
     ui.br(),
 
-    ui.text_styled(
-      "[y] Yes, delete  [n] No, cancel",
-      Some(style.Yellow),
-      None,
-    ),
+    ui.text_styled("[y] Yes, delete  [n] No, cancel", Some(style.Yellow), None),
   ])
 }
 
@@ -916,7 +952,11 @@ fn view_edit_amount(
 
     ui.text("Food: " <> entry.food_entry_name),
     ui.br(),
-    ui.text("Original: " <> float.to_string(edit_state.original_number_of_units) <> " servings"),
+    ui.text(
+      "Original: "
+      <> float.to_string(edit_state.original_number_of_units)
+      <> " servings",
+    ),
     ui.br(),
     ui.br(),
 
@@ -934,11 +974,7 @@ fn view_edit_amount(
     ui.br(),
     ui.br(),
 
-    ui.text_styled(
-      "[Enter] Save  [Esc] Cancel",
-      Some(style.Cyan),
-      None,
-    ),
+    ui.text_styled("[Enter] Save  [Esc] Cancel", Some(style.Cyan), None),
   ])
 }
 
@@ -987,7 +1023,11 @@ pub fn effect_to_shore_effects(
 
     CreateEntry(_input) -> {
       // Return effect that creates entry
-      [fn() { fatsecret_diary.EntryCreated(Ok(diary_types.food_entry_id("new"))) }]
+      [
+        fn() {
+          fatsecret_diary.EntryCreated(Ok(diary_types.food_entry_id("new")))
+        },
+      ]
     }
 
     UpdateEntry(_entry_id, _update) -> {
@@ -1002,21 +1042,25 @@ pub fn effect_to_shore_effects(
 
     FetchNutritionTargets -> {
       // Return effect that fetches targets
-      [fn() {
-        fatsecret_diary.GotNutritionTargets(Ok(
-          fatsecret_diary.NutritionTarget(
-            calories: 2000.0,
-            carbohydrate: 250.0,
-            protein: 150.0,
-            fat: 65.0,
+      [
+        fn() {
+          fatsecret_diary.GotNutritionTargets(
+            Ok(fatsecret_diary.NutritionTarget(
+              calories: 2000.0,
+              carbohydrate: 250.0,
+              protein: 150.0,
+              fat: 65.0,
+            )),
           )
-        ))
-      }]
+        },
+      ]
     }
 
     Batch(effects) -> {
       effects
-      |> list.flat_map(fn(e) { effect_to_shore_effects(e, on_entries, on_search) })
+      |> list.flat_map(fn(e) {
+        effect_to_shore_effects(e, on_entries, on_search)
+      })
     }
   }
 }

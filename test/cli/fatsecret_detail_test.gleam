@@ -10,7 +10,7 @@ import gleam/option.{None, Some}
 import gleam/string
 import gleeunit
 import gleeunit/should
-import meal_planner/fatsecret/foods/types as types
+import meal_planner/fatsecret/foods/types
 
 pub fn main() {
   gleeunit.main()

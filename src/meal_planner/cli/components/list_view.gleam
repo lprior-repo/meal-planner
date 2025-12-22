@@ -123,13 +123,20 @@ pub fn init(items: List(item), visible_count: Int) -> ListViewModel(item) {
 }
 
 /// Create with multi-select enabled
-pub fn init_multi_select(items: List(item), visible_count: Int) -> ListViewModel(item) {
+pub fn init_multi_select(
+  items: List(item),
+  visible_count: Int,
+) -> ListViewModel(item) {
   let model = init(items, visible_count)
   ListViewModel(..model, multi_select: True)
 }
 
 /// Create with title
-pub fn init_with_title(items: List(item), visible_count: Int, title: String) -> ListViewModel(item) {
+pub fn init_with_title(
+  items: List(item),
+  visible_count: Int,
+  title: String,
+) -> ListViewModel(item) {
   let model = init(items, visible_count)
   ListViewModel(..model, title: Some(title))
 }
@@ -151,12 +158,18 @@ pub fn update(
       case model.selected_index > 0 {
         True -> {
           let new_index = model.selected_index - 1
-          let new_offset = adjust_scroll_offset(new_index, model.scroll_offset, model.visible_count)
-          let updated = ListViewModel(
-            ..model,
-            selected_index: new_index,
-            scroll_offset: new_offset,
-          )
+          let new_offset =
+            adjust_scroll_offset(
+              new_index,
+              model.scroll_offset,
+              model.visible_count,
+            )
+          let updated =
+            ListViewModel(
+              ..model,
+              selected_index: new_index,
+              scroll_offset: new_offset,
+            )
           #(updated, NoEffect)
         }
         False -> #(model, NoEffect)
@@ -167,12 +180,18 @@ pub fn update(
       case model.selected_index < item_count - 1 {
         True -> {
           let new_index = model.selected_index + 1
-          let new_offset = adjust_scroll_offset(new_index, model.scroll_offset, model.visible_count)
-          let updated = ListViewModel(
-            ..model,
-            selected_index: new_index,
-            scroll_offset: new_offset,
-          )
+          let new_offset =
+            adjust_scroll_offset(
+              new_index,
+              model.scroll_offset,
+              model.visible_count,
+            )
+          let updated =
+            ListViewModel(
+              ..model,
+              selected_index: new_index,
+              scroll_offset: new_offset,
+            )
           #(updated, NoEffect)
         }
         False -> #(model, NoEffect)
@@ -180,47 +199,48 @@ pub fn update(
     }
 
     SelectFirst -> {
-      let updated = ListViewModel(
-        ..model,
-        selected_index: 0,
-        scroll_offset: 0,
-      )
+      let updated = ListViewModel(..model, selected_index: 0, scroll_offset: 0)
       #(updated, NoEffect)
     }
 
     SelectLast -> {
       let last_index = int.max(0, item_count - 1)
       let new_offset = int.max(0, last_index - model.visible_count + 1)
-      let updated = ListViewModel(
-        ..model,
-        selected_index: last_index,
-        scroll_offset: new_offset,
-      )
+      let updated =
+        ListViewModel(
+          ..model,
+          selected_index: last_index,
+          scroll_offset: new_offset,
+        )
       #(updated, NoEffect)
     }
 
     PageUp -> {
       let new_index = int.max(0, model.selected_index - model.visible_count)
       let new_offset = int.max(0, model.scroll_offset - model.visible_count)
-      let updated = ListViewModel(
-        ..model,
-        selected_index: new_index,
-        scroll_offset: new_offset,
-      )
+      let updated =
+        ListViewModel(
+          ..model,
+          selected_index: new_index,
+          scroll_offset: new_offset,
+        )
       #(updated, NoEffect)
     }
 
     PageDown -> {
-      let new_index = int.min(item_count - 1, model.selected_index + model.visible_count)
-      let new_offset = int.min(
-        int.max(0, item_count - model.visible_count),
-        model.scroll_offset + model.visible_count,
-      )
-      let updated = ListViewModel(
-        ..model,
-        selected_index: int.max(0, new_index),
-        scroll_offset: new_offset,
-      )
+      let new_index =
+        int.min(item_count - 1, model.selected_index + model.visible_count)
+      let new_offset =
+        int.min(
+          int.max(0, item_count - model.visible_count),
+          model.scroll_offset + model.visible_count,
+        )
+      let updated =
+        ListViewModel(
+          ..model,
+          selected_index: int.max(0, new_index),
+          scroll_offset: new_offset,
+        )
       #(updated, NoEffect)
     }
 
@@ -228,9 +248,13 @@ pub fn update(
     ToggleSelection -> {
       case model.multi_select {
         True -> {
-          let is_selected = list.contains(model.selected_indices, model.selected_index)
+          let is_selected =
+            list.contains(model.selected_indices, model.selected_index)
           let new_indices = case is_selected {
-            True -> list.filter(model.selected_indices, fn(i) { i != model.selected_index })
+            True ->
+              list.filter(model.selected_indices, fn(i) {
+                i != model.selected_index
+              })
             False -> [model.selected_index, ..model.selected_indices]
           }
           let updated = ListViewModel(..model, selected_indices: new_indices)
@@ -290,24 +314,25 @@ pub fn update(
     }
 
     ToggleFilter -> {
-      let updated = ListViewModel(
-        ..model,
-        filter_active: !model.filter_active,
-        filter_query: case model.filter_active {
-          True -> ""
-          False -> model.filter_query
-        },
-      )
+      let updated =
+        ListViewModel(
+          ..model,
+          filter_active: !model.filter_active,
+          filter_query: case model.filter_active {
+            True -> ""
+            False -> model.filter_query
+          },
+        )
       #(updated, NoEffect)
     }
 
     ClearFilter -> {
-      let updated = ListViewModel(..model, filter_query: "", filter_active: False)
+      let updated =
+        ListViewModel(..model, filter_query: "", filter_active: False)
       #(updated, FilterChanged(""))
     }
 
     // === State ===
-
     SetLoading(loading) -> {
       let updated = ListViewModel(..model, is_loading: loading)
       #(updated, NoEffect)
@@ -365,10 +390,11 @@ pub fn handle_key(
 fn adjust_scroll_offset(selected: Int, current_offset: Int, visible: Int) -> Int {
   case selected < current_offset {
     True -> selected
-    False -> case selected >= current_offset + visible {
-      True -> selected - visible + 1
-      False -> current_offset
-    }
+    False ->
+      case selected >= current_offset + visible {
+        True -> selected - visible + 1
+        False -> current_offset
+      }
   }
 }
 
@@ -426,12 +452,9 @@ pub fn view(
 
   let filter_section = case model.filter_active {
     True -> [
-      ui.input(
-        "Filter:",
-        model.filter_query,
-        style.Pct(80),
-        fn(q) { on_msg(FilterQueryChanged(q)) },
-      ),
+      ui.input("Filter:", model.filter_query, style.Pct(80), fn(q) {
+        on_msg(FilterQueryChanged(q))
+      }),
       ui.br(),
     ]
     False -> []
@@ -448,7 +471,9 @@ pub fn view(
   }
 
   let scroll_top_section = case model.scroll_offset > 0 {
-    True -> [ui.text("  ▲ " <> int.to_string(model.scroll_offset) <> " more above")]
+    True -> [
+      ui.text("  ▲ " <> int.to_string(model.scroll_offset) <> " more above"),
+    ]
     False -> []
   }
 
@@ -466,7 +491,9 @@ pub fn view(
     }
   }
 
-  let scroll_bottom_section = case model.scroll_offset + model.visible_count < item_count {
+  let scroll_bottom_section = case
+    model.scroll_offset + model.visible_count < item_count
+  {
     True -> {
       let below = item_count - model.scroll_offset - model.visible_count
       [ui.text("  ▼ " <> int.to_string(below) <> " more below")]
@@ -477,25 +504,30 @@ pub fn view(
   let status_section = [
     ui.br(),
     ui.text(
-      "Item " <> int.to_string(model.selected_index + 1)
-      <> " of " <> int.to_string(item_count)
+      "Item "
+      <> int.to_string(model.selected_index + 1)
+      <> " of "
+      <> int.to_string(item_count)
       <> case model.multi_select {
-        True -> " | Selected: " <> int.to_string(list.length(model.selected_indices))
+        True ->
+          " | Selected: " <> int.to_string(list.length(model.selected_indices))
         False -> ""
       },
     ),
   ]
 
-  ui.col(list.flatten([
-    title_section,
-    filter_section,
-    error_section,
-    loading_section,
-    scroll_top_section,
-    items_section,
-    scroll_bottom_section,
-    status_section,
-  ]))
+  ui.col(
+    list.flatten([
+      title_section,
+      filter_section,
+      error_section,
+      loading_section,
+      scroll_top_section,
+      items_section,
+      scroll_bottom_section,
+      status_section,
+    ]),
+  )
 }
 
 /// Default item renderer
@@ -535,7 +567,10 @@ pub fn simple_item_renderer(
 // ============================================================================
 
 /// Set items
-pub fn set_items(model: ListViewModel(item), items: List(item)) -> ListViewModel(item) {
+pub fn set_items(
+  model: ListViewModel(item),
+  items: List(item),
+) -> ListViewModel(item) {
   ListViewModel(
     ..model,
     items: items,
@@ -546,12 +581,18 @@ pub fn set_items(model: ListViewModel(item), items: List(item)) -> ListViewModel
 }
 
 /// Set title
-pub fn set_title(model: ListViewModel(item), title: String) -> ListViewModel(item) {
+pub fn set_title(
+  model: ListViewModel(item),
+  title: String,
+) -> ListViewModel(item) {
   ListViewModel(..model, title: Some(title))
 }
 
 /// Set empty message
-pub fn set_empty_message(model: ListViewModel(item), message: String) -> ListViewModel(item) {
+pub fn set_empty_message(
+  model: ListViewModel(item),
+  message: String,
+) -> ListViewModel(item) {
   ListViewModel(..model, empty_message: message)
 }
 
@@ -566,14 +607,21 @@ pub fn disable_multi_select(model: ListViewModel(item)) -> ListViewModel(item) {
 }
 
 /// Set visible count
-pub fn set_visible_count(model: ListViewModel(item), count: Int) -> ListViewModel(item) {
+pub fn set_visible_count(
+  model: ListViewModel(item),
+  count: Int,
+) -> ListViewModel(item) {
   ListViewModel(..model, visible_count: count)
 }
 
 /// Select by index
-pub fn select_index(model: ListViewModel(item), index: Int) -> ListViewModel(item) {
+pub fn select_index(
+  model: ListViewModel(item),
+  index: Int,
+) -> ListViewModel(item) {
   let item_count = list.length(model.items)
   let valid_index = int.clamp(index, 0, int.max(0, item_count - 1))
-  let new_offset = adjust_scroll_offset(valid_index, model.scroll_offset, model.visible_count)
+  let new_offset =
+    adjust_scroll_offset(valid_index, model.scroll_offset, model.visible_count)
   ListViewModel(..model, selected_index: valid_index, scroll_offset: new_offset)
 }

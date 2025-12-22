@@ -130,13 +130,14 @@ pub fn view_state_delete_confirm_view_test() {
 // ============================================================================
 
 pub fn job_filter_construction_test() {
-  let filter = JobFilter(
-    enabled_only: True,
-    failed_only: False,
-    job_type: Some(SyncJob),
-    search_query: "daily",
-    sort_by: SortByNextRun,
-  )
+  let filter =
+    JobFilter(
+      enabled_only: True,
+      failed_only: False,
+      job_type: Some(SyncJob),
+      search_query: "daily",
+      sort_by: SortByNextRun,
+    )
   filter.enabled_only
   |> should.equal(True)
   filter.job_type
@@ -183,16 +184,17 @@ pub fn job_sort_option_all_variants_test() {
 // ============================================================================
 
 pub fn job_config_state_construction_test() {
-  let config = JobConfigState(
-    job_id: "job_003",
-    schedule: "0 */4 * * *",
-    timeout: 300,
-    retries: 3,
-    enabled: True,
-    original_schedule: "0 */6 * * *",
-    original_timeout: 600,
-    original_retries: 2,
-  )
+  let config =
+    JobConfigState(
+      job_id: "job_003",
+      schedule: "0 */4 * * *",
+      timeout: 300,
+      retries: 3,
+      enabled: True,
+      original_schedule: "0 */6 * * *",
+      original_timeout: 600,
+      original_retries: 2,
+    )
   config.job_id
   |> should.equal("job_003")
   config.schedule
@@ -284,13 +286,14 @@ pub fn scheduler_msg_ui_variants_compile_test() {
 // ============================================================================
 
 pub fn scheduler_effect_all_variants_compile_test() {
-  let filter = JobFilter(
-    enabled_only: False,
-    failed_only: False,
-    job_type: None,
-    search_query: "",
-    sort_by: SortByName,
-  )
+  let filter =
+    JobFilter(
+      enabled_only: False,
+      failed_only: False,
+      job_type: None,
+      search_query: "",
+      sort_by: SortByName,
+    )
   let _effects: List(SchedulerEffect) = [
     scheduler_view.NoEffect,
     scheduler_view.FetchJobs(filter),

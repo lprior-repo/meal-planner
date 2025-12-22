@@ -302,27 +302,34 @@ fn view_domain_menu(
   let domain_name = domain_to_string(domain)
   let commands = get_domain_commands(domain)
 
-  ui.col([
-    ui.br(),
-    ui.align(
-      style.Center,
-      ui.text_styled(domain_name <> " Domain", Some(style.Green), None),
-    ),
-    ui.hr_styled(style.Green),
-    ui.br(),
-    ui.text("Available commands:"),
-    ui.br(),
-    list.append(render_command_list(commands), [
-      ui.br(),
-      ui.hr(),
-      ui.br(),
-      ui.text_styled(
-        "Press [ESC] to go back, [q] to quit",
-        Some(style.Cyan),
-        None,
-      ),
-    ])
-  ])
+  let command_rows = render_command_list(commands)
+
+  ui.col(
+    list.flatten([
+      [
+        ui.br(),
+        ui.align(
+          style.Center,
+          ui.text_styled(domain_name <> " Domain", Some(style.Green), None),
+        ),
+        ui.hr_styled(style.Green),
+        ui.br(),
+        ui.text("Available commands:"),
+        ui.br(),
+      ],
+      command_rows,
+      [
+        ui.br(),
+        ui.hr(),
+        ui.br(),
+        ui.text_styled(
+          "Press [ESC] to go back, [q] to quit",
+          Some(style.Cyan),
+          None,
+        ),
+      ],
+    ]),
+  )
 }
 
 /// Render food search screen

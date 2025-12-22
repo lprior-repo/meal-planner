@@ -105,8 +105,7 @@ pub fn profile_with_no_fields_test() {
 }
 
 pub fn profile_auth_test() {
-  let auth =
-    types.ProfileAuth(auth_token: "token123", auth_secret: "secret456")
+  let auth = types.ProfileAuth(auth_token: "token123", auth_secret: "secret456")
 
   auth.auth_token |> should.equal("token123")
   auth.auth_secret |> should.equal("secret456")

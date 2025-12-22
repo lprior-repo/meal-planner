@@ -12,11 +12,11 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/cli/components/list_view.{
-  type ListViewEffect, type ListViewModel, type ListViewMsg,
-  ClearError, ClearFilter, Confirm, DeselectAll, FilterChanged,
-  FilterQueryChanged, ItemSelected, ItemsSelected, NoEffect, PageDown, PageUp,
-  SelectAll, SelectFirst, SelectLast, SelectNext, SelectPrevious, SetError,
-  SetLoading, ToggleFilter, ToggleSelection,
+  type ListViewEffect, type ListViewModel, type ListViewMsg, ClearError,
+  ClearFilter, Confirm, DeselectAll, FilterChanged, FilterQueryChanged,
+  ItemSelected, ItemsSelected, NoEffect, PageDown, PageUp, SelectAll,
+  SelectFirst, SelectLast, SelectNext, SelectPrevious, SetError, SetLoading,
+  ToggleFilter, ToggleSelection,
 }
 
 // ============================================================================
@@ -24,7 +24,16 @@ import meal_planner/cli/components/list_view.{
 // ============================================================================
 
 fn sample_items() -> List(String) {
-  ["Apple", "Banana", "Cherry", "Date", "Elderberry", "Fig", "Grape", "Honeydew"]
+  [
+    "Apple",
+    "Banana",
+    "Cherry",
+    "Date",
+    "Elderberry",
+    "Fig",
+    "Grape",
+    "Honeydew",
+  ]
 }
 
 fn small_items() -> List(String) {
@@ -179,7 +188,8 @@ pub fn select_previous_stops_at_beginning_test() {
 pub fn select_first_goes_to_beginning_test() {
   // GIVEN: A list view at index 5
   let model = list_view.init(sample_items(), 5)
-  let model2 = list_view.ListViewModel(..model, selected_index: 5, scroll_offset: 2)
+  let model2 =
+    list_view.ListViewModel(..model, selected_index: 5, scroll_offset: 2)
 
   // WHEN: Selecting first
   let #(updated, effect) = list_view.update(model2, SelectFirst)
@@ -213,7 +223,8 @@ pub fn select_last_goes_to_end_test() {
 pub fn page_up_navigates_by_page_test() {
   // GIVEN: A list view at index 6 with visible count 5
   let model = list_view.init(sample_items(), 5)
-  let model2 = list_view.ListViewModel(..model, selected_index: 6, scroll_offset: 3)
+  let model2 =
+    list_view.ListViewModel(..model, selected_index: 6, scroll_offset: 3)
 
   // WHEN: Page up
   let #(updated, _effect) = list_view.update(model2, PageUp)
@@ -432,7 +443,8 @@ pub fn toggle_filter_enables_filter_mode_test() {
 pub fn toggle_filter_disables_filter_mode_test() {
   // GIVEN: A list view with filter enabled
   let model = list_view.init(sample_items(), 5)
-  let model2 = list_view.ListViewModel(..model, filter_active: True, filter_query: "test")
+  let model2 =
+    list_view.ListViewModel(..model, filter_active: True, filter_query: "test")
 
   // WHEN: Toggling filter
   let #(updated, _effect) = list_view.update(model2, ToggleFilter)
@@ -448,7 +460,8 @@ pub fn toggle_filter_disables_filter_mode_test() {
 pub fn clear_filter_resets_filter_state_test() {
   // GIVEN: A list view with active filter
   let model = list_view.init(sample_items(), 5)
-  let model2 = list_view.ListViewModel(..model, filter_active: True, filter_query: "apple")
+  let model2 =
+    list_view.ListViewModel(..model, filter_active: True, filter_query: "apple")
 
   // WHEN: Clearing filter
   let #(updated, effect) = list_view.update(model2, ClearFilter)
@@ -892,7 +905,8 @@ pub fn select_index_function_clamps_to_valid_range_test() {
 pub fn navigation_adjusts_scroll_offset_down_test() {
   // GIVEN: A list view with 8 items, visible count 3, at bottom of visible area
   let model = list_view.init(sample_items(), 3)
-  let model2 = list_view.ListViewModel(..model, selected_index: 2, scroll_offset: 0)
+  let model2 =
+    list_view.ListViewModel(..model, selected_index: 2, scroll_offset: 0)
 
   // WHEN: Navigating next
   let #(updated, _) = list_view.update(model2, SelectNext)
@@ -908,7 +922,8 @@ pub fn navigation_adjusts_scroll_offset_down_test() {
 pub fn navigation_adjusts_scroll_offset_up_test() {
   // GIVEN: A list view with scroll offset
   let model = list_view.init(sample_items(), 3)
-  let model2 = list_view.ListViewModel(..model, selected_index: 3, scroll_offset: 3)
+  let model2 =
+    list_view.ListViewModel(..model, selected_index: 3, scroll_offset: 3)
 
   // WHEN: Navigating previous
   let #(updated, _) = list_view.update(model2, SelectPrevious)

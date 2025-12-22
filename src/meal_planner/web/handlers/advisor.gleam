@@ -5,7 +5,6 @@
 /// - Weekly trend analysis
 /// - Meal adjustment suggestions
 /// - Compliance scoring
-
 import gleam/http
 import gleam/json
 import meal_planner/advisor/daily_recommendations
@@ -25,7 +24,10 @@ import wisp
 ///
 /// Returns daily recommendations for today with actual macros, targets,
 /// insights, and 7-day trend analysis.
-pub fn handle_daily_today(req: wisp.Request, db: pog.Connection) -> wisp.Response {
+pub fn handle_daily_today(
+  req: wisp.Request,
+  db: pog.Connection,
+) -> wisp.Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
 
@@ -67,12 +69,16 @@ pub fn handle_daily_date(
     http.Get -> {
       case diary_types.date_to_int(date_str) {
         Error(_) -> {
-          response_encoders.error_message("Invalid date format. Use YYYY-MM-DD.")
+          response_encoders.error_message(
+            "Invalid date format. Use YYYY-MM-DD.",
+          )
           |> json.to_string
           |> wisp.json_response(400)
         }
         Ok(date_int) -> {
-          case daily_recommendations.generate_daily_advisor_email(db, date_int) {
+          case
+            daily_recommendations.generate_daily_advisor_email(db, date_int)
+          {
             Ok(email) -> {
               advisor_encoders.success_advisor_email(email)
               |> json.to_string
@@ -99,7 +105,10 @@ pub fn handle_daily_date(
 ///
 /// Returns 7-day trend analysis ending today with pattern analysis,
 /// compliance score, and recommendations.
-pub fn handle_trends_week(req: wisp.Request, db: pog.Connection) -> wisp.Response {
+pub fn handle_trends_week(
+  req: wisp.Request,
+  db: pog.Connection,
+) -> wisp.Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
 
@@ -142,7 +151,9 @@ pub fn handle_trends_date(
     http.Get -> {
       case diary_types.date_to_int(end_date_str) {
         Error(_) -> {
-          response_encoders.error_message("Invalid date format. Use YYYY-MM-DD.")
+          response_encoders.error_message(
+            "Invalid date format. Use YYYY-MM-DD.",
+          )
           |> json.to_string
           |> wisp.json_response(400)
         }
@@ -175,7 +186,10 @@ pub fn handle_trends_date(
 ///
 /// Returns meal adjustment suggestions based on weekly trends and nutrition targets.
 /// Provides actionable recommendations for macro balance and dietary improvements.
-pub fn handle_suggestions(req: wisp.Request, db: pog.Connection) -> wisp.Response {
+pub fn handle_suggestions(
+  req: wisp.Request,
+  db: pog.Connection,
+) -> wisp.Response {
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
 
@@ -195,17 +209,15 @@ pub fn handle_suggestions(req: wisp.Request, db: pog.Connection) -> wisp.Respons
           // Generate recommendations from trends
           // For now, we'll use default targets - in a real implementation,
           // we'd fetch user's specific targets from the database
-          let targets = weekly_trends.NutritionTargets(
-            daily_protein: 150.0,
-            daily_carbs: 200.0,
-            daily_fat: 65.0,
-            daily_calories: 2000.0,
-          )
+          let targets =
+            weekly_trends.NutritionTargets(
+              daily_protein: 150.0,
+              daily_carbs: 200.0,
+              daily_fat: 65.0,
+              daily_calories: 2000.0,
+            )
 
-          let report = recommendations.generate_recommendations(
-            trends,
-            targets,
-          )
+          let report = recommendations.generate_recommendations(trends, targets)
 
           advisor_encoders.success_recommendations(report)
           |> json.to_string
@@ -239,9 +251,10 @@ pub fn handle_compliance(req: wisp.Request, db: pog.Connection) -> wisp.Response
         Ok(trends) -> {
           // Since compliance score isn't directly in WeeklyTrends,
           // we'll just return basic info
-          let response = json.object([
-            #("days_analyzed", json.int(trends.days_analyzed)),
-          ])
+          let response =
+            json.object([
+              #("days_analyzed", json.int(trends.days_analyzed)),
+            ])
 
           response_encoders.success_with_data(response)
           |> json.to_string
@@ -270,10 +283,8 @@ fn weekly_trends_error_to_string(error: weekly_trends.AnalysisError) -> String {
   case error {
     weekly_trends.NoDataAvailable ->
       "Insufficient diary data for trend analysis"
-    weekly_trends.InvalidDateRange ->
-      "Invalid date range for analysis"
+    weekly_trends.InvalidDateRange -> "Invalid date range for analysis"
     weekly_trends.DatabaseError(msg) -> "Database error: " <> msg
     weekly_trends.ServiceError(msg) -> "Service error: " <> msg
   }
 }
-

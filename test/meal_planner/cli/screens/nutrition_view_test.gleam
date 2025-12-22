@@ -16,13 +16,13 @@ import meal_planner/cli/screens/nutrition_view.{
   type GoalType, type MacroStatus, type MealNutrition, type NutrientType,
   type NutritionEffect, type NutritionGoals, type NutritionModel,
   type NutritionMsg, type NutritionViewState, type TimeRange, AreaChart,
-  BarChart, Calories, Carbohydrate, ChartSettings, Cholesterol,
-  ComparisonView, Custom, DailyNutrition, DashboardView, DatePicker, Fat,
-  Fiber, GoalEditState, GoalEditView, GoalsView, Last14Days, Last30Days,
-  Last7Days, Last90Days, LineChart, MealBreakdownView, MealNutrition,
-  MonthlyTrendsView, MuscleBuilding, NutrientDetailsView, NutritionGoals,
-  NutritionModel, OnTarget, Over, Protein, SaturatedFat, Sodium, Sugar, Under,
-  WeeklyTrendsView, WeightGain, WeightLoss, WeightMaintenance,
+  BarChart, Calories, Carbohydrate, ChartSettings, Cholesterol, ComparisonView,
+  Custom, DailyNutrition, DashboardView, DatePicker, Fat, Fiber, GoalEditState,
+  GoalEditView, GoalsView, Last14Days, Last30Days, Last7Days, Last90Days,
+  LineChart, MealBreakdownView, MealNutrition, MonthlyTrendsView, MuscleBuilding,
+  NutrientDetailsView, NutritionGoals, NutritionModel, OnTarget, Over, Protein,
+  SaturatedFat, Sodium, Sugar, Under, WeeklyTrendsView, WeightGain, WeightLoss,
+  WeightMaintenance,
 }
 
 // ============================================================================
@@ -188,26 +188,27 @@ pub fn view_state_date_picker_test() {
 // ============================================================================
 
 pub fn daily_nutrition_construction_test() {
-  let daily = DailyNutrition(
-    date_int: 20_000,
-    date_string: "2025-12-20",
-    calories: 1800.0,
-    protein: 120.0,
-    carbohydrate: 200.0,
-    fat: 60.0,
-    fiber: 25.0,
-    sugar: 40.0,
-    saturated_fat: 15.0,
-    sodium: 2000.0,
-    cholesterol: 250.0,
-    protein_pct: 26.7,
-    carb_pct: 44.4,
-    fat_pct: 30.0,
-    calories_status: OnTarget,
-    protein_status: Under,
-    carb_status: OnTarget,
-    fat_status: OnTarget,
-  )
+  let daily =
+    DailyNutrition(
+      date_int: 20_000,
+      date_string: "2025-12-20",
+      calories: 1800.0,
+      protein: 120.0,
+      carbohydrate: 200.0,
+      fat: 60.0,
+      fiber: 25.0,
+      sugar: 40.0,
+      saturated_fat: 15.0,
+      sodium: 2000.0,
+      cholesterol: 250.0,
+      protein_pct: 26.7,
+      carb_pct: 44.4,
+      fat_pct: 30.0,
+      calories_status: OnTarget,
+      protein_status: Under,
+      carb_status: OnTarget,
+      fat_status: OnTarget,
+    )
 
   daily.calories
   |> should.equal(1800.0)
@@ -224,17 +225,18 @@ pub fn daily_nutrition_construction_test() {
 // ============================================================================
 
 pub fn nutrition_goals_construction_test() {
-  let goals = NutritionGoals(
-    calories_target: 2500.0,
-    protein_target: 180.0,
-    carb_target: 280.0,
-    fat_target: 80.0,
-    fiber_target: 30.0,
-    sugar_limit: 60.0,
-    sodium_limit: 2300.0,
-    tolerance_pct: 10.0,
-    goal_type: MuscleBuilding,
-  )
+  let goals =
+    NutritionGoals(
+      calories_target: 2500.0,
+      protein_target: 180.0,
+      carb_target: 280.0,
+      fat_target: 80.0,
+      fiber_target: 30.0,
+      sugar_limit: 60.0,
+      sodium_limit: 2300.0,
+      tolerance_pct: 10.0,
+      goal_type: MuscleBuilding,
+    )
 
   goals.calories_target
   |> should.equal(2500.0)
@@ -284,11 +286,12 @@ pub fn goal_type_all_variants_test() {
 pub fn goal_edit_state_construction_test() {
   let original = nutrition_view.default_goals()
 
-  let edit_state = GoalEditState(
-    editing_field: Protein,
-    current_value: "160",
-    original_goals: original,
-  )
+  let edit_state =
+    GoalEditState(
+      editing_field: Protein,
+      current_value: "160",
+      original_goals: original,
+    )
 
   edit_state.editing_field
   |> should.equal(Protein)
@@ -355,14 +358,15 @@ pub fn nutrient_type_all_variants_test() {
 // ============================================================================
 
 pub fn chart_settings_construction_test() {
-  let settings = ChartSettings(
-    show_calories: True,
-    show_protein: True,
-    show_carbs: False,
-    show_fat: False,
-    chart_type: LineChart,
-    time_range: Last14Days,
-  )
+  let settings =
+    ChartSettings(
+      show_calories: True,
+      show_protein: True,
+      show_carbs: False,
+      show_fat: False,
+      chart_type: LineChart,
+      time_range: Last14Days,
+    )
 
   settings.show_calories
   |> should.equal(True)
@@ -393,15 +397,16 @@ pub fn time_range_all_variants_test() {
 // ============================================================================
 
 pub fn meal_nutrition_construction_test() {
-  let meal = MealNutrition(
-    meal_name: "Breakfast",
-    calories: 450.0,
-    protein: 25.0,
-    carbohydrate: 55.0,
-    fat: 15.0,
-    entry_count: 3,
-    percentage_of_daily: 25.0,
-  )
+  let meal =
+    MealNutrition(
+      meal_name: "Breakfast",
+      calories: 450.0,
+      protein: 25.0,
+      carbohydrate: 55.0,
+      fat: 15.0,
+      entry_count: 3,
+      percentage_of_daily: 25.0,
+    )
 
   meal.meal_name
   |> should.equal("Breakfast")

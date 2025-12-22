@@ -134,10 +134,7 @@ pub type RecipeIngredient {
 
 /// Recipe direction/step
 pub type RecipeDirection {
-  RecipeDirection(
-    direction_number: Int,
-    direction_description: String,
-  )
+  RecipeDirection(direction_number: Int, direction_description: String)
 }
 
 /// Recipe nutrition per serving
@@ -256,7 +253,12 @@ pub type RecipeMsg {
 /// Effects for the recipe screen
 pub type RecipeEffect {
   NoEffect
-  SearchRecipes(query: String, search_type: SearchType, page: Int, filters: RecipeFilters)
+  SearchRecipes(
+    query: String,
+    search_type: SearchType,
+    page: Int,
+    filters: RecipeFilters,
+  )
   FetchRecipeDetails(recipe_id: recipe_types.RecipeId)
   SaveFavorite(recipe_id: recipe_types.RecipeId)
   RemoveFavorite(recipe_id: recipe_types.RecipeId)
@@ -328,15 +330,17 @@ pub fn recipe_update(
       let id_str = recipe_types.recipe_id_to_string(recipe_id)
       case dict.get(model.recipe_cache, id_str) {
         Ok(details) -> {
-          let updated = RecipeModel(
-            ..model,
-            view_state: DetailView,
-            selected_recipe: Some(details),
-          )
+          let updated =
+            RecipeModel(
+              ..model,
+              view_state: DetailView,
+              selected_recipe: Some(details),
+            )
           #(updated, NoEffect)
         }
         Error(_) -> {
-          let updated = RecipeModel(..model, view_state: DetailView, is_loading: True)
+          let updated =
+            RecipeModel(..model, view_state: DetailView, is_loading: True)
           #(updated, FetchRecipeDetails(recipe_id))
         }
       }
@@ -370,7 +374,8 @@ pub fn recipe_update(
     GoBack -> {
       case model.view_state {
         DetailView -> {
-          let updated = RecipeModel(..model, view_state: ListView, selected_recipe: None)
+          let updated =
+            RecipeModel(..model, view_state: ListView, selected_recipe: None)
           #(updated, NoEffect)
         }
         DirectionsView | NutritionView -> {
@@ -393,63 +398,79 @@ pub fn recipe_update(
     }
 
     SearchTypeChanged(search_type) -> {
-      let search = RecipeSearchState(..model.search_state, search_type: search_type)
+      let search =
+        RecipeSearchState(..model.search_state, search_type: search_type)
       let updated = RecipeModel(..model, search_state: search)
       #(updated, NoEffect)
     }
 
     SearchStarted -> {
-      let search = RecipeSearchState(..model.search_state, is_loading: True, error: None)
+      let search =
+        RecipeSearchState(..model.search_state, is_loading: True, error: None)
       let pagination = PaginationState(..model.pagination, current_page: 1)
-      let updated = RecipeModel(
-        ..model,
-        search_state: search,
-        pagination: pagination,
-        view_state: ListView,
-      )
-      let effect = SearchRecipes(
-        model.search_state.query,
-        model.search_state.search_type,
-        1,
-        model.filters,
-      )
+      let updated =
+        RecipeModel(
+          ..model,
+          search_state: search,
+          pagination: pagination,
+          view_state: ListView,
+        )
+      let effect =
+        SearchRecipes(
+          model.search_state.query,
+          model.search_state.search_type,
+          1,
+          model.filters,
+        )
       #(updated, effect)
     }
 
     GotSearchResults(result) -> {
       case result {
         Ok(#(recipes, total)) -> {
-          let total_pages = { total + model.pagination.results_per_page - 1 } / model.pagination.results_per_page
-          let pagination = PaginationState(
-            ..model.pagination,
-            total_results: total,
-            total_pages: total_pages,
-          )
-          let search = RecipeSearchState(..model.search_state, is_loading: False)
-          let updated = RecipeModel(
-            ..model,
-            recipes: recipes,
-            search_state: search,
-            pagination: pagination,
-            is_loading: False,
-          )
+          let total_pages =
+            { total + model.pagination.results_per_page - 1 }
+            / model.pagination.results_per_page
+          let pagination =
+            PaginationState(
+              ..model.pagination,
+              total_results: total,
+              total_pages: total_pages,
+            )
+          let search =
+            RecipeSearchState(..model.search_state, is_loading: False)
+          let updated =
+            RecipeModel(
+              ..model,
+              recipes: recipes,
+              search_state: search,
+              pagination: pagination,
+              is_loading: False,
+            )
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let search = RecipeSearchState(..model.search_state, is_loading: False, error: Some(err))
-          let updated = RecipeModel(..model, search_state: search, is_loading: False)
+          let search =
+            RecipeSearchState(
+              ..model.search_state,
+              is_loading: False,
+              error: Some(err),
+            )
+          let updated =
+            RecipeModel(..model, search_state: search, is_loading: False)
           #(updated, NoEffect)
         }
       }
     }
 
     ClearSearch -> {
-      let search = RecipeSearchState(
-        query: "",
-        search_type: ByName,
-        is_loading: False,
-        error: None,
-      )
+      let search =
+        RecipeSearchState(
+          query: "",
+          search_type: ByName,
+          is_loading: False,
+          error: None,
+        )
       let updated = RecipeModel(..model, search_state: search, recipes: [])
       #(updated, NoEffect)
     }
@@ -459,14 +480,17 @@ pub fn recipe_update(
       case model.pagination.current_page < model.pagination.total_pages {
         True -> {
           let new_page = model.pagination.current_page + 1
-          let pagination = PaginationState(..model.pagination, current_page: new_page)
-          let updated = RecipeModel(..model, pagination: pagination, is_loading: True)
-          let effect = SearchRecipes(
-            model.search_state.query,
-            model.search_state.search_type,
-            new_page,
-            model.filters,
-          )
+          let pagination =
+            PaginationState(..model.pagination, current_page: new_page)
+          let updated =
+            RecipeModel(..model, pagination: pagination, is_loading: True)
+          let effect =
+            SearchRecipes(
+              model.search_state.query,
+              model.search_state.search_type,
+              new_page,
+              model.filters,
+            )
           #(updated, effect)
         }
         False -> #(model, NoEffect)
@@ -477,14 +501,17 @@ pub fn recipe_update(
       case model.pagination.current_page > 1 {
         True -> {
           let new_page = model.pagination.current_page - 1
-          let pagination = PaginationState(..model.pagination, current_page: new_page)
-          let updated = RecipeModel(..model, pagination: pagination, is_loading: True)
-          let effect = SearchRecipes(
-            model.search_state.query,
-            model.search_state.search_type,
-            new_page,
-            model.filters,
-          )
+          let pagination =
+            PaginationState(..model.pagination, current_page: new_page)
+          let updated =
+            RecipeModel(..model, pagination: pagination, is_loading: True)
+          let effect =
+            SearchRecipes(
+              model.search_state.query,
+              model.search_state.search_type,
+              new_page,
+              model.filters,
+            )
           #(updated, effect)
         }
         False -> #(model, NoEffect)
@@ -494,14 +521,17 @@ pub fn recipe_update(
     GoToPage(page) -> {
       case page >= 1 && page <= model.pagination.total_pages {
         True -> {
-          let pagination = PaginationState(..model.pagination, current_page: page)
-          let updated = RecipeModel(..model, pagination: pagination, is_loading: True)
-          let effect = SearchRecipes(
-            model.search_state.query,
-            model.search_state.search_type,
-            page,
-            model.filters,
-          )
+          let pagination =
+            PaginationState(..model.pagination, current_page: page)
+          let updated =
+            RecipeModel(..model, pagination: pagination, is_loading: True)
+          let effect =
+            SearchRecipes(
+              model.search_state.query,
+              model.search_state.search_type,
+              page,
+              model.filters,
+            )
           #(updated, effect)
         }
         False -> #(model, NoEffect)
@@ -524,17 +554,19 @@ pub fn recipe_update(
           let list_item = recipe_details_to_list_item(details, model.favorites)
           let recent = [list_item, ..list.take(model.recent_recipes, 9)]
 
-          let updated = RecipeModel(
-            ..model,
-            selected_recipe: Some(details),
-            recipe_cache: new_cache,
-            recent_recipes: recent,
-            is_loading: False,
-          )
+          let updated =
+            RecipeModel(
+              ..model,
+              selected_recipe: Some(details),
+              recipe_cache: new_cache,
+              recent_recipes: recent,
+              is_loading: False,
+            )
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let updated = RecipeModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            RecipeModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -601,13 +633,20 @@ pub fn recipe_update(
 
     ApplyFilters -> {
       let pagination = PaginationState(..model.pagination, current_page: 1)
-      let updated = RecipeModel(..model, pagination: pagination, is_loading: True, view_state: ListView)
-      let effect = SearchRecipes(
-        model.search_state.query,
-        model.search_state.search_type,
-        1,
-        model.filters,
-      )
+      let updated =
+        RecipeModel(
+          ..model,
+          pagination: pagination,
+          is_loading: True,
+          view_state: ListView,
+        )
+      let effect =
+        SearchRecipes(
+          model.search_state.query,
+          model.search_state.search_type,
+          1,
+          model.filters,
+        )
       #(updated, effect)
     }
 
@@ -628,12 +667,13 @@ pub fn recipe_update(
 
     Refresh -> {
       let updated = RecipeModel(..model, is_loading: True)
-      let effect = SearchRecipes(
-        model.search_state.query,
-        model.search_state.search_type,
-        model.pagination.current_page,
-        model.filters,
-      )
+      let effect =
+        SearchRecipes(
+          model.search_state.query,
+          model.search_state.search_type,
+          model.pagination.current_page,
+          model.filters,
+        )
       #(updated, effect)
     }
 
@@ -666,7 +706,8 @@ fn handle_key_press(
         "n" -> recipe_update(model, ShowNutritionView)
         "f" -> {
           case model.selected_recipe {
-            Some(details) -> recipe_update(model, ToggleFavorite(details.recipe_id))
+            Some(details) ->
+              recipe_update(model, ToggleFavorite(details.recipe_id))
             None -> #(model, NoEffect)
           }
         }
@@ -713,7 +754,10 @@ fn handle_key_press(
 // ============================================================================
 
 /// Convert RecipeDetails to RecipeListItem
-fn recipe_details_to_list_item(details: RecipeDetails, favorites: List(String)) -> RecipeListItem {
+fn recipe_details_to_list_item(
+  details: RecipeDetails,
+  favorites: List(String),
+) -> RecipeListItem {
   let id_str = recipe_types.recipe_id_to_string(details.recipe_id)
   RecipeListItem(
     recipe_id: details.recipe_id,
@@ -769,8 +813,14 @@ pub fn recipe_view(model: RecipeModel) -> shore.Node(RecipeMsg) {
 /// Render recipe list view
 fn view_list(model: RecipeModel) -> shore.Node(RecipeMsg) {
   let page = model.pagination
-  let page_info = "Page " <> int.to_string(page.current_page) <> " of " <> int.to_string(page.total_pages)
-    <> " (" <> int.to_string(page.total_results) <> " recipes)"
+  let page_info =
+    "Page "
+    <> int.to_string(page.current_page)
+    <> " of "
+    <> int.to_string(page.total_pages)
+    <> " ("
+    <> int.to_string(page.total_results)
+    <> " recipes)"
 
   let header_section = [
     ui.br(),
@@ -827,20 +877,25 @@ fn view_list(model: RecipeModel) -> shore.Node(RecipeMsg) {
     ),
   ]
 
-  ui.col(list.flatten([
-    header_section,
-    error_section,
-    search_info_section,
-    nav_section,
-    loading_section,
-    [ui.br()],
-    recipes_section,
-    footer_section,
-  ]))
+  ui.col(
+    list.flatten([
+      header_section,
+      error_section,
+      search_info_section,
+      nav_section,
+      loading_section,
+      [ui.br()],
+      recipes_section,
+      footer_section,
+    ]),
+  )
 }
 
 /// Render a recipe list item
-fn render_recipe_list_item(recipe: RecipeListItem, index: Int) -> shore.Node(RecipeMsg) {
+fn render_recipe_list_item(
+  recipe: RecipeListItem,
+  index: Int,
+) -> shore.Node(RecipeMsg) {
   let fav_icon = case recipe.is_favorite {
     True -> "★ "
     False -> "  "
@@ -850,8 +905,16 @@ fn render_recipe_list_item(recipe: RecipeListItem, index: Int) -> shore.Node(Rec
   let rating_str = format_optional_float(recipe.rating, "⭐")
 
   ui.text(
-    fav_icon <> int.to_string(index + 1) <> ". " <> recipe.recipe_name
-    <> " | " <> cal_str <> " | " <> time_str <> " | " <> rating_str,
+    fav_icon
+    <> int.to_string(index + 1)
+    <> ". "
+    <> recipe.recipe_name
+    <> " | "
+    <> cal_str
+    <> " | "
+    <> time_str
+    <> " | "
+    <> rating_str,
   )
 }
 
@@ -886,35 +949,54 @@ fn view_detail(model: RecipeModel) -> shore.Node(RecipeMsg) {
         ui.text("Description: " <> recipe.recipe_description),
         ui.br(),
         ui.text("Servings: " <> float_to_string(recipe.number_of_servings)),
-        ui.text("Prep Time: " <> format_optional_int(recipe.preparation_time_min, " min")),
-        ui.text("Cook Time: " <> format_optional_int(recipe.cooking_time_min, " min")),
+        ui.text(
+          "Prep Time: "
+          <> format_optional_int(recipe.preparation_time_min, " min"),
+        ),
+        ui.text(
+          "Cook Time: " <> format_optional_int(recipe.cooking_time_min, " min"),
+        ),
         ui.text("Rating: " <> format_optional_float(recipe.rating, "/5")),
         ui.br(),
 
         // Nutrition summary
         ui.text_styled("Nutrition (per serving):", Some(style.Yellow), None),
         ui.text(
-          "  Calories: " <> float_to_string(recipe.nutrition.calories)
-          <> " | Protein: " <> float_to_string(recipe.nutrition.protein) <> "g"
-          <> " | Carbs: " <> float_to_string(recipe.nutrition.carbohydrate) <> "g"
-          <> " | Fat: " <> float_to_string(recipe.nutrition.fat) <> "g",
+          "  Calories: "
+          <> float_to_string(recipe.nutrition.calories)
+          <> " | Protein: "
+          <> float_to_string(recipe.nutrition.protein)
+          <> "g"
+          <> " | Carbs: "
+          <> float_to_string(recipe.nutrition.carbohydrate)
+          <> "g"
+          <> " | Fat: "
+          <> float_to_string(recipe.nutrition.fat)
+          <> "g",
         ),
         ui.br(),
 
         // Ingredients summary
         ui.text_styled(
-          "Ingredients (" <> int.to_string(list.length(recipe.ingredients)) <> "):",
+          "Ingredients ("
+            <> int.to_string(list.length(recipe.ingredients))
+            <> "):",
           Some(style.Yellow),
           None,
         ),
         ..list.append(
           list.take(recipe.ingredients, 5)
-          |> list.map(fn(ing) {
-            ui.text("  • " <> ing.ingredient_description)
-          }),
+            |> list.map(fn(ing) {
+              ui.text("  • " <> ing.ingredient_description)
+            }),
           [
             case list.length(recipe.ingredients) > 5 {
-              True -> ui.text("  ... and " <> int.to_string(list.length(recipe.ingredients) - 5) <> " more")
+              True ->
+                ui.text(
+                  "  ... and "
+                  <> int.to_string(list.length(recipe.ingredients) - 5)
+                  <> " more",
+                )
               False -> ui.text("")
             },
             ui.br(),
@@ -928,8 +1010,8 @@ fn view_detail(model: RecipeModel) -> shore.Node(RecipeMsg) {
               Some(style.Cyan),
               None,
             ),
-          ]
-        ),
+          ],
+        )
       ])
     }
   }
@@ -953,14 +1035,15 @@ fn view_directions(model: RecipeModel) -> shore.Node(RecipeMsg) {
         ui.br(),
         ui.hr(),
         ui.br(),
-
         ..list.append(
           case recipe.directions {
             [] -> [ui.text("No directions available.")]
             directions -> {
               list.map(directions, fn(dir) {
                 ui.text(
-                  int.to_string(dir.direction_number) <> ". " <> dir.direction_description,
+                  int.to_string(dir.direction_number)
+                  <> ". "
+                  <> dir.direction_description,
                 )
               })
             }
@@ -969,8 +1052,8 @@ fn view_directions(model: RecipeModel) -> shore.Node(RecipeMsg) {
             ui.br(),
             ui.hr(),
             ui.text_styled("[Esc] Back to recipe", Some(style.Cyan), None),
-          ]
-        ),
+          ],
+        )
       ])
     }
   }
@@ -1009,9 +1092,13 @@ fn view_nutrition(model: RecipeModel) -> shore.Node(RecipeMsg) {
         // Additional nutrients
         ui.text("  Fiber:         " <> format_optional_float(n.fiber, "g")),
         ui.text("  Sugar:         " <> format_optional_float(n.sugar, "g")),
-        ui.text("  Saturated Fat: " <> format_optional_float(n.saturated_fat, "g")),
+        ui.text(
+          "  Saturated Fat: " <> format_optional_float(n.saturated_fat, "g"),
+        ),
         ui.text("  Sodium:        " <> format_optional_float(n.sodium, "mg")),
-        ui.text("  Cholesterol:   " <> format_optional_float(n.cholesterol, "mg")),
+        ui.text(
+          "  Cholesterol:   " <> format_optional_float(n.cholesterol, "mg"),
+        ),
         ui.br(),
 
         ui.hr(),
@@ -1067,7 +1154,10 @@ fn view_favorites(model: RecipeModel) -> shore.Node(RecipeMsg) {
   let favorite_recipes =
     model.recipes
     |> list.filter(fn(r) {
-      list.contains(model.favorites, recipe_types.recipe_id_to_string(r.recipe_id))
+      list.contains(
+        model.favorites,
+        recipe_types.recipe_id_to_string(r.recipe_id),
+      )
     })
 
   ui.col([
@@ -1083,7 +1173,6 @@ fn view_favorites(model: RecipeModel) -> shore.Node(RecipeMsg) {
     ui.br(),
     ui.hr(),
     ui.br(),
-
     ..list.append(
       case favorite_recipes {
         [] -> [ui.text("No favorites yet. Press [f] on a recipe to add it.")]
@@ -1093,8 +1182,8 @@ fn view_favorites(model: RecipeModel) -> shore.Node(RecipeMsg) {
         ui.br(),
         ui.hr(),
         ui.text_styled("[Esc] Back", Some(style.Cyan), None),
-      ]
-    ),
+      ],
+    )
   ])
 }
 
@@ -1111,17 +1200,13 @@ fn view_search_popup(model: RecipeModel) -> shore.Node(RecipeMsg) {
     ui.hr_styled(style.Green),
     ui.br(),
 
-    ui.input(
-      "Search:",
-      search.query,
-      style.Pct(80),
-      fn(q) { SearchQueryChanged(q) },
-    ),
+    ui.input("Search:", search.query, style.Pct(80), fn(q) {
+      SearchQueryChanged(q)
+    }),
     ui.br(),
 
     ui.text("Search type: " <> search_type_to_string(search.search_type)),
     ui.br(),
-
     // Loading / Error
     ..list.append(
       case search.is_loading {
@@ -1141,9 +1226,9 @@ fn view_search_popup(model: RecipeModel) -> shore.Node(RecipeMsg) {
             Some(style.Cyan),
             None,
           ),
-        ]
-      )
-    ),
+        ],
+      ),
+    )
   ])
 }
 

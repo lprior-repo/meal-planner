@@ -13,17 +13,17 @@ import gleam/result
 import gleam/string
 import glint
 import meal_planner/config.{type Config}
+import meal_planner/id
 import meal_planner/ncp.{type NutritionGoals, NutritionGoals}
 import meal_planner/postgres
-import pog
 import meal_planner/storage/profile.{
   type StorageError, DatabaseError, InvalidInput, NotFound, Unauthorized,
 }
-import meal_planner/id
 import meal_planner/types.{
   type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
   Moderate, Sedentary, UserProfile,
 }
+import pog
 
 // ============================================================================
 // Glint Command Handler
@@ -221,22 +221,24 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
     _ -> {
       io.println("Preferences commands:")
       io.println("")
-      io.println("  mp preferences view                    - View all preferences")
-      io.println("  mp preferences goals                   - View nutrition goals")
       io.println(
-        "  mp preferences goals --calories 2000   - Set calorie goal",
+        "  mp preferences view                    - View all preferences",
       )
+      io.println(
+        "  mp preferences goals                   - View nutrition goals",
+      )
+      io.println("  mp preferences goals --calories 2000   - Set calorie goal")
       io.println("  mp preferences goals --protein 150     - Set protein goal")
       io.println("  mp preferences profile                 - View user profile")
-      io.println(
-        "  mp preferences profile --bodyweight 75 - Set body weight",
-      )
+      io.println("  mp preferences profile --bodyweight 75 - Set body weight")
       io.println(
         "  mp preferences profile --activity moderate - Set activity level",
       )
       io.println("  mp preferences profile --goal maintain - Set goal")
       io.println("  mp preferences dietary                 - View dietary info")
-      io.println("  mp preferences meals                   - View meal settings")
+      io.println(
+        "  mp preferences meals                   - View meal settings",
+      )
       io.println("  mp preferences meals --meals 4         - Set meals per day")
       Ok(Nil)
     }
@@ -304,7 +306,9 @@ fn view_all_preferences(config: Config) -> Result(String, String) {
   // Get nutrition goals
   let goals_section = case profile.get_goals(conn) {
     Ok(g) -> format_goals_section(g)
-    Error(_) -> "\nNutrition Goals: Using defaults\n" <> format_goals_section(ncp.get_default_goals())
+    Error(_) ->
+      "\nNutrition Goals: Using defaults\n"
+      <> format_goals_section(ncp.get_default_goals())
   }
 
   let footer = "\n" <> string.repeat("=", 60)
@@ -426,7 +430,8 @@ fn update_goals(
   case profile.save_goals(conn, updated) {
     Ok(_) -> {
       let output =
-        "Nutrition goals updated successfully!\n\n" <> build_goals_table(updated)
+        "Nutrition goals updated successfully!\n\n"
+        <> build_goals_table(updated)
       Ok(output)
     }
     Error(err) -> Error(storage_error_to_string(err))
@@ -514,7 +519,9 @@ fn update_profile(
     Some("active") -> Ok(Active)
     Some(invalid) ->
       Error(
-        "Invalid activity level: " <> invalid <> ". Use: sedentary, moderate, active"
+        "Invalid activity level: "
+        <> invalid
+        <> ". Use: sedentary, moderate, active",
       )
     None -> Ok(current.activity_level)
   })

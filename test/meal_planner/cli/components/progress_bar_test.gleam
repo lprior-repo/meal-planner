@@ -15,11 +15,10 @@ import gleam/string
 import gleeunit/should
 import meal_planner/cli/components/progress_bar.{
   type ColorScheme, type FillStyle, type MacroProgressBar, type MacroStatus,
-  type ProgressBarConfig, type ProgressBarState, type Threshold,
-  AsciiFill, AtTarget, GradientColor, GradientFill, InverseTrafficLight,
-  MacroProgressBar, Monochrome, Over, ProgressBarConfig, ProgressBarState,
-  SegmentedFill, SolidFill, Threshold, ThresholdBased, TrafficLight, Under,
-  UnicodeFill,
+  type ProgressBarConfig, type ProgressBarState, type Threshold, AsciiFill,
+  AtTarget, GradientColor, GradientFill, InverseTrafficLight, MacroProgressBar,
+  Monochrome, Over, ProgressBarConfig, ProgressBarState, SegmentedFill,
+  SolidFill, Threshold, ThresholdBased, TrafficLight, Under, UnicodeFill,
 }
 import shore/style
 
@@ -62,16 +61,17 @@ pub fn default_config_has_correct_defaults_test() {
 
 pub fn custom_config_is_created_correctly_test() {
   // GIVEN: Custom configuration values
-  let config = ProgressBarConfig(
-    width: 50,
-    fill_style: SolidFill,
-    color_scheme: Monochrome(style.Cyan),
-    show_percentage: False,
-    show_value: True,
-    value_suffix: " cal",
-    label: Some("Calories"),
-    thresholds: [],
-  )
+  let config =
+    ProgressBarConfig(
+      width: 50,
+      fill_style: SolidFill,
+      color_scheme: Monochrome(style.Cyan),
+      show_percentage: False,
+      show_value: True,
+      value_suffix: " cal",
+      label: Some("Calories"),
+      thresholds: [],
+    )
 
   // THEN: Config should have custom values
   config.width
@@ -185,10 +185,8 @@ pub fn render_produces_non_empty_string_test() {
 
 pub fn render_includes_percentage_when_enabled_test() {
   // GIVEN: Config with percentage enabled
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    show_percentage: True,
-  )
+  let config =
+    ProgressBarConfig(..progress_bar.default_config(), show_percentage: True)
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -201,11 +199,12 @@ pub fn render_includes_percentage_when_enabled_test() {
 
 pub fn render_includes_value_when_enabled_test() {
   // GIVEN: Config with value enabled
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    show_value: True,
-    value_suffix: " cal",
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      show_value: True,
+      value_suffix: " cal",
+    )
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -218,10 +217,8 @@ pub fn render_includes_value_when_enabled_test() {
 
 pub fn render_includes_label_when_set_test() {
   // GIVEN: Config with label
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    label: Some("Progress"),
-  )
+  let config =
+    ProgressBarConfig(..progress_bar.default_config(), label: Some("Progress"))
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -234,11 +231,12 @@ pub fn render_includes_label_when_set_test() {
 
 pub fn render_solid_fill_contains_block_chars_test() {
   // GIVEN: Config with solid fill
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    fill_style: SolidFill,
-    show_percentage: False,
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      fill_style: SolidFill,
+      show_percentage: False,
+    )
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -254,11 +252,12 @@ pub fn render_solid_fill_contains_block_chars_test() {
 
 pub fn render_ascii_fill_contains_hash_chars_test() {
   // GIVEN: Config with ASCII fill
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    fill_style: AsciiFill,
-    show_percentage: False,
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      fill_style: AsciiFill,
+      show_percentage: False,
+    )
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -390,17 +389,18 @@ pub fn render_macro_shows_overflow_indicator_test() {
 
 pub fn macro_status_under_when_below_tolerance_test() {
   // GIVEN: A macro bar at 80% of target (with 10% tolerance)
-  let bar = MacroProgressBar(
-    name: "Test",
-    current: 80.0,
-    target: 100.0,
-    unit: "g",
-    width: 25,
-    under_color: style.Yellow,
-    target_color: style.Green,
-    over_color: style.Red,
-    tolerance: 10.0,
-  )
+  let bar =
+    MacroProgressBar(
+      name: "Test",
+      current: 80.0,
+      target: 100.0,
+      unit: "g",
+      width: 25,
+      under_color: style.Yellow,
+      target_color: style.Green,
+      over_color: style.Red,
+      tolerance: 10.0,
+    )
 
   // WHEN: Checking status implicitly via rendering
   // The bar at 80% with tolerance of 10% should be "Under"
@@ -411,17 +411,18 @@ pub fn macro_status_under_when_below_tolerance_test() {
 
 pub fn macro_status_at_target_within_tolerance_test() {
   // GIVEN: A macro bar at 95% of target (within 10% tolerance)
-  let bar = MacroProgressBar(
-    name: "Test",
-    current: 95.0,
-    target: 100.0,
-    unit: "g",
-    width: 25,
-    under_color: style.Yellow,
-    target_color: style.Green,
-    over_color: style.Red,
-    tolerance: 10.0,
-  )
+  let bar =
+    MacroProgressBar(
+      name: "Test",
+      current: 95.0,
+      target: 100.0,
+      unit: "g",
+      width: 25,
+      under_color: style.Yellow,
+      target_color: style.Green,
+      over_color: style.Red,
+      tolerance: 10.0,
+    )
 
   // WHEN: Checking if within tolerance bounds
   let lower = bar.target *. 0.9
@@ -434,17 +435,18 @@ pub fn macro_status_at_target_within_tolerance_test() {
 
 pub fn macro_status_over_when_above_tolerance_test() {
   // GIVEN: A macro bar at 120% of target
-  let bar = MacroProgressBar(
-    name: "Test",
-    current: 120.0,
-    target: 100.0,
-    unit: "g",
-    width: 25,
-    under_color: style.Yellow,
-    target_color: style.Green,
-    over_color: style.Red,
-    tolerance: 10.0,
-  )
+  let bar =
+    MacroProgressBar(
+      name: "Test",
+      current: 120.0,
+      target: 100.0,
+      unit: "g",
+      width: 25,
+      under_color: style.Yellow,
+      target_color: style.Green,
+      over_color: style.Red,
+      tolerance: 10.0,
+    )
 
   // WHEN: Checking if over tolerance
   let upper = bar.target *. 1.1
@@ -472,12 +474,13 @@ pub fn animate_increments_frame_test() {
 
 pub fn animate_wraps_at_frame_4_test() {
   // GIVEN: A state at frame 3
-  let state = ProgressBarState(
-    current: 50.0,
-    max: 100.0,
-    target: None,
-    animation_frame: 3,
-  )
+  let state =
+    ProgressBarState(
+      current: 50.0,
+      max: 100.0,
+      target: None,
+      animation_frame: 3,
+    )
 
   // WHEN: Animating
   let animated = progress_bar.animate(state)
@@ -722,10 +725,7 @@ pub fn very_large_values_handle_gracefully_test() {
 
 pub fn small_width_handles_gracefully_test() {
   // GIVEN: Config with very small width
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    width: 3,
-  )
+  let config = ProgressBarConfig(..progress_bar.default_config(), width: 3)
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -742,11 +742,12 @@ pub fn small_width_handles_gracefully_test() {
 
 pub fn gradient_fill_renders_correctly_test() {
   // GIVEN: Config with gradient fill
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    fill_style: GradientFill,
-    show_percentage: False,
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      fill_style: GradientFill,
+      show_percentage: False,
+    )
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -762,11 +763,12 @@ pub fn gradient_fill_renders_correctly_test() {
 
 pub fn segmented_fill_renders_correctly_test() {
   // GIVEN: Config with segmented fill
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    fill_style: SegmentedFill,
-    show_percentage: False,
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      fill_style: SegmentedFill,
+      show_percentage: False,
+    )
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -782,11 +784,12 @@ pub fn segmented_fill_renders_correctly_test() {
 
 pub fn unicode_fill_renders_correctly_test() {
   // GIVEN: Config with unicode fill
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    fill_style: UnicodeFill,
-    show_percentage: False,
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      fill_style: UnicodeFill,
+      show_percentage: False,
+    )
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -803,10 +806,11 @@ pub fn unicode_fill_renders_correctly_test() {
 
 pub fn monochrome_scheme_uses_single_color_test() {
   // GIVEN: Config with monochrome scheme
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    color_scheme: Monochrome(style.Blue),
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      color_scheme: Monochrome(style.Blue),
+    )
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering (color is internal, just verify no crash)
@@ -819,10 +823,11 @@ pub fn monochrome_scheme_uses_single_color_test() {
 
 pub fn traffic_light_scheme_works_test() {
   // GIVEN: Config with traffic light scheme
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    color_scheme: TrafficLight,
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      color_scheme: TrafficLight,
+    )
 
   // WHEN: Rendering at different percentages
   let low_state = progress_bar.init_state(10.0, 100.0)
@@ -846,10 +851,11 @@ pub fn traffic_light_scheme_works_test() {
 
 pub fn inverse_traffic_light_scheme_works_test() {
   // GIVEN: Config with inverse traffic light scheme
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    color_scheme: InverseTrafficLight,
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      color_scheme: InverseTrafficLight,
+    )
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -862,15 +868,16 @@ pub fn inverse_traffic_light_scheme_works_test() {
 
 pub fn threshold_based_scheme_works_test() {
   // GIVEN: Config with threshold based scheme
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    color_scheme: ThresholdBased,
-    thresholds: [
-      Threshold(percentage: 0.0, color: style.Red),
-      Threshold(percentage: 50.0, color: style.Yellow),
-      Threshold(percentage: 75.0, color: style.Green),
-    ],
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      color_scheme: ThresholdBased,
+      thresholds: [
+        Threshold(percentage: 0.0, color: style.Red),
+        Threshold(percentage: 50.0, color: style.Yellow),
+        Threshold(percentage: 75.0, color: style.Green),
+      ],
+    )
   let state = progress_bar.init_state(60.0, 100.0)
 
   // WHEN: Rendering
@@ -883,10 +890,11 @@ pub fn threshold_based_scheme_works_test() {
 
 pub fn gradient_color_scheme_works_test() {
   // GIVEN: Config with gradient color scheme
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    color_scheme: GradientColor(style.Red, style.Green),
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      color_scheme: GradientColor(style.Red, style.Green),
+    )
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -909,7 +917,8 @@ pub fn render_nutrition_summary_returns_four_nodes_test() {
   let fat = progress_bar.fat_bar(60.0, 65.0)
 
   // WHEN: Rendering nutrition summary
-  let nodes = progress_bar.render_nutrition_summary(calories, protein, carbs, fat)
+  let nodes =
+    progress_bar.render_nutrition_summary(calories, protein, carbs, fat)
 
   // THEN: Should return 4 nodes
   case nodes {
@@ -924,11 +933,12 @@ pub fn render_nutrition_summary_returns_four_nodes_test() {
 
 pub fn empty_thresholds_handled_gracefully_test() {
   // GIVEN: Config with empty thresholds
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    color_scheme: ThresholdBased,
-    thresholds: [],
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      color_scheme: ThresholdBased,
+      thresholds: [],
+    )
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -941,11 +951,12 @@ pub fn empty_thresholds_handled_gracefully_test() {
 
 pub fn single_threshold_works_test() {
   // GIVEN: Config with single threshold
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    color_scheme: ThresholdBased,
-    thresholds: [Threshold(percentage: 0.0, color: style.Cyan)],
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      color_scheme: ThresholdBased,
+      thresholds: [Threshold(percentage: 0.0, color: style.Cyan)],
+    )
   let state = progress_bar.init_state(50.0, 100.0)
 
   // WHEN: Rendering
@@ -958,16 +969,17 @@ pub fn single_threshold_works_test() {
 
 pub fn multiple_thresholds_select_correct_color_test() {
   // GIVEN: Config with multiple thresholds
-  let config = ProgressBarConfig(
-    ..progress_bar.default_config(),
-    color_scheme: ThresholdBased,
-    thresholds: [
-      Threshold(percentage: 0.0, color: style.Red),
-      Threshold(percentage: 25.0, color: style.Yellow),
-      Threshold(percentage: 50.0, color: style.Green),
-      Threshold(percentage: 75.0, color: style.Cyan),
-    ],
-  )
+  let config =
+    ProgressBarConfig(
+      ..progress_bar.default_config(),
+      color_scheme: ThresholdBased,
+      thresholds: [
+        Threshold(percentage: 0.0, color: style.Red),
+        Threshold(percentage: 25.0, color: style.Yellow),
+        Threshold(percentage: 50.0, color: style.Green),
+        Threshold(percentage: 75.0, color: style.Cyan),
+      ],
+    )
 
   // WHEN: Rendering at 60% (should use Green from 50% threshold)
   let state = progress_bar.init_state(60.0, 100.0)

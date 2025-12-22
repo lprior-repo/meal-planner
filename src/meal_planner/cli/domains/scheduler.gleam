@@ -121,7 +121,12 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
                     "Triggering job: " <> format_job_type(job.job_type),
                   )
                   // Reset job to pending so it can be executed
-                  case scheduler_storage.reset_job_to_pending(conn: conn, job_id: job_id) {
+                  case
+                    scheduler_storage.reset_job_to_pending(
+                      conn: conn,
+                      job_id: job_id,
+                    )
+                  {
                     Ok(_) -> {
                       // Mark as running and create execution record
                       case

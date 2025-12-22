@@ -54,10 +54,7 @@ fn create_test_config() -> config.Config {
       database_password: "test",
       tandoor_token: "test-token",
     ),
-    logging: config.LoggingConfig(
-      level: config.DebugLevel,
-      debug_mode: True,
-    ),
+    logging: config.LoggingConfig(level: config.DebugLevel, debug_mode: True),
     performance: config.PerformanceConfig(
       request_timeout_ms: 30_000,
       connection_timeout_ms: 5000,

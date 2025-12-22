@@ -199,11 +199,7 @@ pub type Gender {
 
 /// Chart point for graphing
 pub type ChartPoint {
-  ChartPoint(
-    date_int: Int,
-    weight: Float,
-    label: String,
-  )
+  ChartPoint(date_int: Int, weight: Float, label: String)
 }
 
 /// Messages for the weight screen
@@ -273,7 +269,11 @@ pub type WeightEffect {
   FetchEntries(limit: Int)
   FetchGoals
   CreateEntry(weight_kg: Float, date_int: Int, comment: String)
-  UpdateEntry(entry_id: weight_types.WeightEntryId, weight_kg: Float, comment: String)
+  UpdateEntry(
+    entry_id: weight_types.WeightEntryId,
+    weight_kg: Float,
+    comment: String,
+  )
   DeleteEntry(entry_id: weight_types.WeightEntryId)
   SaveGoalsEffect(goals: WeightGoals)
   SaveProfileEffect(profile: UserProfile)
@@ -342,11 +342,7 @@ fn empty_statistics() -> WeightStatistics {
 
 /// Empty profile
 fn empty_profile() -> UserProfile {
-  UserProfile(
-    height_cm: None,
-    birth_date: None,
-    gender: None,
-  )
+  UserProfile(height_cm: None, birth_date: None, gender: None)
 }
 
 // ============================================================================
@@ -367,27 +363,31 @@ pub fn weight_update(
 
     ShowAddEntry -> {
       let input = empty_entry_input(model.current_date)
-      let updated = WeightModel(..model, view_state: AddEntryView, entry_input: input)
+      let updated =
+        WeightModel(..model, view_state: AddEntryView, entry_input: input)
       #(updated, NoEffect)
     }
 
     ShowEditEntry(entry) -> {
-      let edit_state = WeightEditState(
-        entry: entry,
-        new_weight_str: float_to_string(entry.weight_kg),
-        new_comment: option.unwrap(entry.comment, ""),
-        original_weight: entry.weight_kg,
-      )
-      let updated = WeightModel(
-        ..model,
-        view_state: EditEntryView,
-        edit_state: Some(edit_state),
-      )
+      let edit_state =
+        WeightEditState(
+          entry: entry,
+          new_weight_str: float_to_string(entry.weight_kg),
+          new_comment: option.unwrap(entry.weight_comment, ""),
+          original_weight: entry.weight_kg,
+        )
+      let updated =
+        WeightModel(
+          ..model,
+          view_state: EditEntryView,
+          edit_state: Some(edit_state),
+        )
       #(updated, NoEffect)
     }
 
     ShowDeleteConfirm(entry_id) -> {
-      let updated = WeightModel(..model, view_state: ConfirmDeleteView(entry_id))
+      let updated =
+        WeightModel(..model, view_state: ConfirmDeleteView(entry_id))
       #(updated, NoEffect)
     }
 
@@ -421,11 +421,8 @@ pub fn weight_update(
       case model.view_state {
         ListView -> #(model, NoEffect)
         _ -> {
-          let updated = WeightModel(
-            ..model,
-            view_state: ListView,
-            edit_state: None,
-          )
+          let updated =
+            WeightModel(..model, view_state: ListView, edit_state: None)
           #(updated, NoEffect)
         }
       }
@@ -434,11 +431,12 @@ pub fn weight_update(
     // === Entry Input ===
     WeightInputChanged(weight_str) -> {
       let parsed = float.parse(weight_str)
-      let input = WeightEntryInput(
-        ..model.entry_input,
-        weight_str: weight_str,
-        parsed_weight: result.ok(parsed),
-      )
+      let input =
+        WeightEntryInput(
+          ..model.entry_input,
+          weight_str: weight_str,
+          parsed_weight: option.from_result(parsed),
+        )
       let updated = WeightModel(..model, entry_input: input)
       #(updated, NoEffect)
     }
@@ -463,16 +461,19 @@ pub fn weight_update(
     ConfirmAddEntry -> {
       case model.entry_input.parsed_weight {
         Some(weight) -> {
-          let updated = WeightModel(..model, view_state: ListView, is_loading: True)
-          let effect = CreateEntry(
-            weight,
-            model.entry_input.date_int,
-            model.entry_input.comment,
-          )
+          let updated =
+            WeightModel(..model, view_state: ListView, is_loading: True)
+          let effect =
+            CreateEntry(
+              weight,
+              model.entry_input.date_int,
+              model.entry_input.comment,
+            )
           #(updated, effect)
         }
         None -> {
-          let updated = WeightModel(..model, error_message: Some("Invalid weight value"))
+          let updated =
+            WeightModel(..model, error_message: Some("Invalid weight value"))
           #(updated, NoEffect)
         }
       }
@@ -511,12 +512,25 @@ pub fn weight_update(
         Some(edit) -> {
           case float.parse(edit.new_weight_str) {
             Ok(weight) -> {
-              let updated = WeightModel(..model, view_state: ListView, edit_state: None, is_loading: True)
-              let effect = UpdateEntry(edit.entry.weight_entry_id, weight, edit.new_comment)
+              let updated =
+                WeightModel(
+                  ..model,
+                  view_state: ListView,
+                  edit_state: None,
+                  is_loading: True,
+                )
+              // Use date_int as the entry ID since that's how FatSecret identifies weight entries
+              let entry_id =
+                weight_types.weight_entry_id(int.to_string(edit.entry.date_int))
+              let effect = UpdateEntry(entry_id, weight, edit.new_comment)
               #(updated, effect)
             }
             Error(_) -> {
-              let updated = WeightModel(..model, error_message: Some("Invalid weight value"))
+              let updated =
+                WeightModel(
+                  ..model,
+                  error_message: Some("Invalid weight value"),
+                )
               #(updated, NoEffect)
             }
           }
@@ -534,7 +548,8 @@ pub fn weight_update(
     ConfirmDelete -> {
       case model.view_state {
         ConfirmDeleteView(entry_id) -> {
-          let updated = WeightModel(..model, view_state: ListView, is_loading: True)
+          let updated =
+            WeightModel(..model, view_state: ListView, is_loading: True)
           #(updated, DeleteEntry(entry_id))
         }
         _ -> #(model, NoEffect)
@@ -571,7 +586,8 @@ pub fn weight_update(
 
     // === Profile ===
     SetHeight(height_cm) -> {
-      let profile = UserProfile(..model.user_profile, height_cm: Some(height_cm))
+      let profile =
+        UserProfile(..model.user_profile, height_cm: Some(height_cm))
       let updated = WeightModel(..model, user_profile: profile)
       #(updated, NoEffect)
     }
@@ -595,20 +611,23 @@ pub fn weight_update(
             [first, ..] -> Some(first.weight_kg)
             [] -> None
           }
-          let stats = calculate_statistics(entries, model.goals, model.user_profile)
+          let stats =
+            calculate_statistics(entries, model.goals, model.user_profile)
           let chart = build_chart_data(entries)
-          let updated = WeightModel(
-            ..model,
-            entries: display_entries,
-            current_weight: current,
-            statistics: stats,
-            chart_data: chart,
-            is_loading: False,
-          )
+          let updated =
+            WeightModel(
+              ..model,
+              entries: display_entries,
+              current_weight: current,
+              statistics: stats,
+              chart_data: chart,
+              is_loading: False,
+            )
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let updated = WeightModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            WeightModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -628,7 +647,8 @@ pub fn weight_update(
       case result {
         Ok(_id) -> #(model, FetchEntries(50))
         Error(err) -> {
-          let updated = WeightModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            WeightModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -638,7 +658,8 @@ pub fn weight_update(
       case result {
         Ok(_) -> #(model, FetchEntries(50))
         Error(err) -> {
-          let updated = WeightModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            WeightModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -648,7 +669,8 @@ pub fn weight_update(
       case result {
         Ok(_) -> #(model, FetchEntries(50))
         Error(err) -> {
-          let updated = WeightModel(..model, error_message: Some(err), is_loading: False)
+          let updated =
+            WeightModel(..model, error_message: Some(err), is_loading: False)
           #(updated, NoEffect)
         }
       }
@@ -676,11 +698,13 @@ pub fn weight_update(
     DateConfirm(date_str) -> {
       case parse_date_string(date_str) {
         Ok(date_int) -> {
-          let updated = WeightModel(..model, current_date: date_int, view_state: ListView)
+          let updated =
+            WeightModel(..model, current_date: date_int, view_state: ListView)
           #(updated, NoEffect)
         }
         Error(err) -> {
-          let updated = WeightModel(..model, error_message: Some(err), view_state: ListView)
+          let updated =
+            WeightModel(..model, error_message: Some(err), view_state: ListView)
           #(updated, NoEffect)
         }
       }
@@ -768,16 +792,9 @@ fn handle_key_press(
 /// Get today's date as days since epoch
 fn get_today_date_int() -> Int {
   let now = birl.now()
-  let today_midnight = birl.set_time_of_day(now, 0, 0, 0, 0)
-  let epoch = birl.from_unix(0)
-  let days =
-    birl.difference(today_midnight, epoch)
-    |> birl.duration_to_seconds
-    |> int.divide(86_400)
-  case days {
-    Ok(d) -> d
-    Error(_) -> 0
-  }
+  let midnight = birl.TimeOfDay(hour: 0, minute: 0, second: 0, milli_second: 0)
+  let today_midnight = birl.set_time_of_day(now, midnight)
+  birl.to_unix(today_midnight) / 86_400
 }
 
 /// Convert date_int to display string
@@ -794,17 +811,10 @@ fn parse_date_string(date_str: String) -> Result(Int, String) {
     [year_str, month_str, day_str] -> {
       case int.parse(year_str), int.parse(month_str), int.parse(day_str) {
         Ok(_), Ok(_), Ok(_) -> {
-          case birl.from_iso8601(date_str <> "T00:00:00Z") {
+          case birl.parse(date_str <> "T00:00:00Z") {
             Ok(dt) -> {
-              let epoch = birl.from_unix(0)
-              let days =
-                birl.difference(dt, epoch)
-                |> birl.duration_to_seconds
-                |> int.divide(86_400)
-              case days {
-                Ok(d) -> Ok(d)
-                Error(_) -> Error("Date calculation error")
-              }
+              let days = birl.to_unix(dt) / 86_400
+              Ok(days)
             }
             Error(_) -> Error("Invalid date format")
           }
@@ -829,7 +839,8 @@ fn format_entries(
 ) -> List(WeightDisplayEntry) {
   entries
   |> list.index_map(fn(entry, idx) {
-    let prev_entry = list.at(entries, idx + 1)
+    // Get the previous entry (at idx + 1) by dropping and taking first
+    let prev_entry = entries |> list.drop(idx + 1) |> list.first
     let change = case prev_entry {
       Ok(prev) -> {
         let diff = entry.weight_kg -. prev.weight_kg
@@ -885,19 +896,21 @@ fn calculate_statistics(
       let sum = list.fold(all_weights, 0.0, fn(acc, w) { acc +. w })
       let avg = sum /. int.to_float(list.length(entries))
 
-      let min = list.fold(all_weights, latest.weight_kg, fn(acc, w) {
-        case w <. acc {
-          True -> w
-          False -> acc
-        }
-      })
+      let min =
+        list.fold(all_weights, latest.weight_kg, fn(acc, w) {
+          case w <. acc {
+            True -> w
+            False -> acc
+          }
+        })
 
-      let max = list.fold(all_weights, latest.weight_kg, fn(acc, w) {
-        case w >. acc {
-          True -> w
-          False -> acc
-        }
-      })
+      let max =
+        list.fold(all_weights, latest.weight_kg, fn(acc, w) {
+          case w >. acc {
+            True -> w
+            False -> acc
+          }
+        })
 
       let week_change = calculate_period_change(entries, 7)
       let month_change = calculate_period_change(entries, 30)
@@ -946,7 +959,10 @@ fn calculate_statistics(
 }
 
 /// Calculate weight change over a period
-fn calculate_period_change(entries: List(weight_types.WeightEntry), days: Int) -> Float {
+fn calculate_period_change(
+  entries: List(weight_types.WeightEntry),
+  days: Int,
+) -> Float {
   case entries {
     [] -> 0.0
     [latest, ..] -> {
@@ -997,13 +1013,17 @@ fn render_chart(data: List(ChartPoint), width: Int, height: Int) -> List(String)
       // Build rows
       list.range(0, height - 1)
       |> list.map(fn(row) {
-        let y_val = max_w -. { int.to_float(row) /. int.to_float(height) *. range }
+        let y_val =
+          max_w -. { int.to_float(row) /. int.to_float(height) *. range }
         let label = float_to_string(y_val) <> " |"
         let row_data =
           data
           |> list.map(fn(point) {
             let normalized = { point.weight -. min_w } /. range
-            let point_row = height - 1 - float.truncate(normalized *. int.to_float(height - 1))
+            let point_row =
+              height
+              - 1
+              - float.truncate(normalized *. int.to_float(height - 1))
             case point_row == row {
               True -> "●"
               False -> " "
@@ -1037,68 +1057,68 @@ pub fn weight_view(model: WeightModel) -> shore.Node(WeightMsg) {
 
 /// Render weight list view
 fn view_list(model: WeightModel) -> shore.Node(WeightMsg) {
-  ui.col([
-    ui.br(),
-    ui.align(
-      style.Center,
-      ui.text_styled("⚖ Weight Tracker", Some(style.Green), None),
-    ),
-    ui.hr_styled(style.Green),
+  let current_weight_row = case model.current_weight {
+    Some(w) -> [
+      ui.br(),
+      ui.text_styled(
+        "Current Weight: " <> float_to_string(w) <> " kg",
+        Some(style.Yellow),
+        None,
+      ),
+    ]
+    None -> []
+  }
 
-    // Current weight
-    list.append(
-      case model.current_weight {
-        Some(w) -> [
-          ui.br(),
-          ui.text_styled("Current Weight: " <> float_to_string(w) <> " kg", Some(style.Yellow), None),
-        ]
-        None -> []
-      },
+  let error_row = case model.error_message {
+    Some(err) -> [ui.text_styled("⚠ " <> err, Some(style.Red), None)]
+    None -> []
+  }
+
+  let loading_row = case model.is_loading {
+    True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
+    False -> []
+  }
+
+  let entry_rows = case model.entries {
+    [] -> [ui.text("No weight entries recorded.")]
+    entries -> list.take(entries, 10) |> list.map(render_weight_entry)
+  }
+
+  ui.col(
+    list.flatten([
       [
-        // Error
-        list.append(
-          case model.error_message {
-            Some(err) -> [ui.text_styled("⚠ " <> err, Some(style.Red), None)]
-            None -> []
-          },
-          [
-            ui.br(),
-            ui.text_styled(
-              "[a] Add  [g] Goals  [s] Stats  [c] Chart  [p] Profile  [r] Refresh",
-              Some(style.Cyan),
-              None,
-            ),
-            ui.hr(),
-            ui.br(),
-
-            // Entries
-            list.append(
-              case model.is_loading {
-                True -> [ui.text_styled("Loading...", Some(style.Yellow), None)]
-                False -> []
-              },
-              [
-                ui.text_styled("Recent Entries:", Some(style.Yellow), None),
-                list.append(
-                  case model.entries {
-                    [] -> [ui.text("No weight entries recorded.")]
-                    entries -> {
-                      list.take(entries, 10)
-                      |> list.map(render_weight_entry)
-                    }
-                  },
-                  [
-                    ui.br(),
-                    ui.text_styled("[e] Edit  [d] Delete  [Enter] View", Some(style.Cyan), None),
-                  ]
-                )
-              ]
-            )
-          ]
-        )
-      ]
-    )
-  ])
+        ui.br(),
+        ui.align(
+          style.Center,
+          ui.text_styled("⚖ Weight Tracker", Some(style.Green), None),
+        ),
+        ui.hr_styled(style.Green),
+      ],
+      current_weight_row,
+      error_row,
+      [
+        ui.br(),
+        ui.text_styled(
+          "[a] Add  [g] Goals  [s] Stats  [c] Chart  [p] Profile  [r] Refresh",
+          Some(style.Cyan),
+          None,
+        ),
+        ui.hr(),
+        ui.br(),
+      ],
+      loading_row,
+      [ui.text_styled("Recent Entries:", Some(style.Yellow), None)],
+      entry_rows,
+      [
+        ui.br(),
+        ui.text_styled(
+          "[e] Edit  [d] Delete  [Enter] View",
+          Some(style.Cyan),
+          None,
+        ),
+      ],
+    ]),
+  )
 }
 
 /// Render a weight entry
@@ -1108,9 +1128,13 @@ fn render_weight_entry(entry: WeightDisplayEntry) -> shore.Node(WeightMsg) {
     None -> ""
   }
   ui.text(
-    "  " <> entry.date_display <> ": "
-    <> entry.weight_display <> " "
-    <> entry.change_display <> bmi_str,
+    "  "
+    <> entry.date_display
+    <> ": "
+    <> entry.weight_display
+    <> " "
+    <> entry.change_display
+    <> bmi_str,
   )
 }
 
@@ -1118,49 +1142,50 @@ fn render_weight_entry(entry: WeightDisplayEntry) -> shore.Node(WeightMsg) {
 fn view_add_entry(model: WeightModel) -> shore.Node(WeightMsg) {
   let input = model.entry_input
 
-  ui.col([
-    ui.br(),
-    ui.align(
-      style.Center,
-      ui.text_styled("➕ Add Weight Entry", Some(style.Green), None),
-    ),
-    ui.hr_styled(style.Green),
-    ui.br(),
+  let parsed_row = case input.parsed_weight {
+    Some(w) -> [
+      ui.text_styled(
+        "Parsed: " <> float_to_string(w) <> " kg",
+        Some(style.Green),
+        None,
+      ),
+    ]
+    None ->
+      case input.weight_str {
+        "" -> []
+        _ -> [ui.text_styled("Invalid weight", Some(style.Red), None)]
+      }
+  }
 
-    ui.text("Date: " <> date_int_to_string(input.date_int)),
-    ui.br(),
-
-    ui.input(
-      "Weight (kg):",
-      input.weight_str,
-      style.Pct(30),
-      fn(w) { WeightInputChanged(w) },
-    ),
-    ui.br(),
-
-    ui.input(
-      "Comment:",
-      input.comment,
-      style.Pct(60),
-      fn(c) { CommentInputChanged(c) },
-    ),
-    ui.br(),
-
-    list.append(
-      case input.parsed_weight {
-        Some(w) -> [ui.text_styled("Parsed: " <> float_to_string(w) <> " kg", Some(style.Green), None)]
-        None -> case input.weight_str {
-          "" -> []
-          _ -> [ui.text_styled("Invalid weight", Some(style.Red), None)]
-        }
-      },
+  ui.col(
+    list.flatten([
+      [
+        ui.br(),
+        ui.align(
+          style.Center,
+          ui.text_styled("➕ Add Weight Entry", Some(style.Green), None),
+        ),
+        ui.hr_styled(style.Green),
+        ui.br(),
+        ui.text("Date: " <> date_int_to_string(input.date_int)),
+        ui.br(),
+        ui.input("Weight (kg):", input.weight_str, style.Pct(30), fn(w) {
+          WeightInputChanged(w)
+        }),
+        ui.br(),
+        ui.input("Comment:", input.comment, style.Pct(60), fn(c) {
+          CommentInputChanged(c)
+        }),
+        ui.br(),
+      ],
+      parsed_row,
       [
         ui.br(),
         ui.hr(),
         ui.text_styled("[Enter] Save  [Esc] Cancel", Some(style.Cyan), None),
-      ]
-    )
-  ])
+      ],
+    ]),
+  )
 }
 
 /// Render edit entry view
@@ -1181,20 +1206,14 @@ fn view_edit_entry(model: WeightModel) -> shore.Node(WeightMsg) {
         ui.text("Original: " <> float_to_string(edit.original_weight) <> " kg"),
         ui.br(),
 
-        ui.input(
-          "New Weight (kg):",
-          edit.new_weight_str,
-          style.Pct(30),
-          fn(w) { EditWeightChanged(w) },
-        ),
+        ui.input("New Weight (kg):", edit.new_weight_str, style.Pct(30), fn(w) {
+          EditWeightChanged(w)
+        }),
         ui.br(),
 
-        ui.input(
-          "Comment:",
-          edit.new_comment,
-          style.Pct(60),
-          fn(c) { EditCommentChanged(c) },
-        ),
+        ui.input("Comment:", edit.new_comment, style.Pct(60), fn(c) {
+          EditCommentChanged(c)
+        }),
         ui.br(),
 
         ui.hr(),
@@ -1274,67 +1293,69 @@ fn goal_type_to_string(gt: WeightGoalType) -> String {
 fn view_stats(model: WeightModel) -> shore.Node(WeightMsg) {
   let s = model.statistics
 
-  ui.col([
-    ui.br(),
-    ui.align(
-      style.Center,
-      ui.text_styled("📊 Statistics", Some(style.Green), None),
-    ),
-    ui.hr_styled(style.Green),
-    ui.br(),
+  let bmi_row = case s.current_bmi, s.bmi_category {
+    Some(bmi), Some(cat) -> [
+      ui.text("BMI: " <> float_to_string(bmi) <> " (" <> cat <> ")"),
+    ]
+    _, _ -> []
+  }
 
-    ui.text("Total Change: " <> float_to_string(s.total_change) <> " kg"),
-    ui.text("Average: " <> float_to_string(s.average_weight) <> " kg"),
-    ui.text("Min: " <> float_to_string(s.min_weight) <> " kg"),
-    ui.text("Max: " <> float_to_string(s.max_weight) <> " kg"),
-    ui.br(),
-
-    ui.text("7-Day Change: " <> float_to_string(s.week_change) <> " kg"),
-    ui.text("30-Day Change: " <> float_to_string(s.month_change) <> " kg"),
-    ui.br(),
-
-    list.append(
-      case s.current_bmi, s.bmi_category {
-        Some(bmi), Some(cat) -> [
-          ui.text("BMI: " <> float_to_string(bmi) <> " (" <> cat <> ")"),
-        ]
-        _, _ -> []
-      },
+  ui.col(
+    list.flatten([
+      [
+        ui.br(),
+        ui.align(
+          style.Center,
+          ui.text_styled("📊 Statistics", Some(style.Green), None),
+        ),
+        ui.hr_styled(style.Green),
+        ui.br(),
+        ui.text("Total Change: " <> float_to_string(s.total_change) <> " kg"),
+        ui.text("Average: " <> float_to_string(s.average_weight) <> " kg"),
+        ui.text("Min: " <> float_to_string(s.min_weight) <> " kg"),
+        ui.text("Max: " <> float_to_string(s.max_weight) <> " kg"),
+        ui.br(),
+        ui.text("7-Day Change: " <> float_to_string(s.week_change) <> " kg"),
+        ui.text("30-Day Change: " <> float_to_string(s.month_change) <> " kg"),
+        ui.br(),
+      ],
+      bmi_row,
       [
         ui.text("Goal Progress: " <> float_to_string(s.goal_progress) <> "%"),
         ui.br(),
         ui.hr(),
         ui.text_styled("[Esc] Back", Some(style.Cyan), None),
-      ]
-    )
-  ])
+      ],
+    ]),
+  )
 }
 
 /// Render chart view
 fn view_chart(model: WeightModel) -> shore.Node(WeightMsg) {
   let chart_lines = render_chart(model.chart_data, 40, 10)
+  let chart_rows = list.map(chart_lines, fn(line) { ui.text(line) })
 
-  ui.col([
-    ui.br(),
-    ui.align(
-      style.Center,
-      ui.text_styled("📈 Weight Chart", Some(style.Green), None),
-    ),
-    ui.hr_styled(style.Green),
-    ui.br(),
-
-    ui.text("Last 30 days:"),
-    ui.br(),
-
-    list.append(
-      list.map(chart_lines, fn(line) { ui.text(line) }),
+  ui.col(
+    list.flatten([
+      [
+        ui.br(),
+        ui.align(
+          style.Center,
+          ui.text_styled("📈 Weight Chart", Some(style.Green), None),
+        ),
+        ui.hr_styled(style.Green),
+        ui.br(),
+        ui.text("Last 30 days:"),
+        ui.br(),
+      ],
+      chart_rows,
       [
         ui.br(),
         ui.hr(),
         ui.text_styled("[Esc] Back", Some(style.Cyan), None),
-      ]
-    )
-  ])
+      ],
+    ]),
+  )
 }
 
 /// Render profile view
@@ -1350,16 +1371,22 @@ fn view_profile(model: WeightModel) -> shore.Node(WeightMsg) {
     ui.hr_styled(style.Green),
     ui.br(),
 
-    ui.text("Height: " <> case p.height_cm {
-      Some(h) -> float_to_string(h) <> " cm"
-      None -> "Not set"
-    }),
-    ui.text("Gender: " <> case p.gender {
-      Some(Male) -> "Male"
-      Some(Female) -> "Female"
-      Some(Other) -> "Other"
-      None -> "Not set"
-    }),
+    ui.text(
+      "Height: "
+      <> case p.height_cm {
+        Some(h) -> float_to_string(h) <> " cm"
+        None -> "Not set"
+      },
+    ),
+    ui.text(
+      "Gender: "
+      <> case p.gender {
+        Some(Male) -> "Male"
+        Some(Female) -> "Female"
+        Some(Other) -> "Other"
+        None -> "Not set"
+      },
+    ),
     ui.br(),
 
     ui.text("(Height is used for BMI calculation)"),
@@ -1371,7 +1398,10 @@ fn view_profile(model: WeightModel) -> shore.Node(WeightMsg) {
 }
 
 /// Render date picker
-fn view_date_picker(model: WeightModel, date_input: String) -> shore.Node(WeightMsg) {
+fn view_date_picker(
+  model: WeightModel,
+  date_input: String,
+) -> shore.Node(WeightMsg) {
   ui.col([
     ui.br(),
     ui.align(
@@ -1381,15 +1411,16 @@ fn view_date_picker(model: WeightModel, date_input: String) -> shore.Node(Weight
     ui.hr_styled(style.Green),
     ui.br(),
 
-    ui.input(
-      "Date (YYYY-MM-DD):",
-      date_input,
-      style.Pct(50),
-      fn(d) { DateConfirm(d) },
-    ),
+    ui.input("Date (YYYY-MM-DD):", date_input, style.Pct(50), fn(d) {
+      DateConfirm(d)
+    }),
     ui.br(),
 
-    ui.text_styled("Current: " <> date_int_to_string(model.current_date), Some(style.Cyan), None),
+    ui.text_styled(
+      "Current: " <> date_int_to_string(model.current_date),
+      Some(style.Cyan),
+      None,
+    ),
     ui.hr(),
     ui.text_styled("[Enter] Confirm  [Esc] Cancel", Some(style.Cyan), None),
   ])

@@ -5,7 +5,6 @@
 /// - WeeklyTrends (7-day pattern analysis)
 /// - RecommendationReport (meal adjustments and suggestions)
 /// - Supporting types (Macros, MacroTrend, MealAdjustment, Insight, etc.)
-
 import gleam/json
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -74,10 +73,7 @@ pub fn encode_weekly_trends(trends: trends_types.WeeklyTrends) -> json.Json {
     #("best_day", json.string(trends.best_day)),
     #("worst_day", json.string(trends.worst_day)),
     #("patterns", json.array(trends.patterns, json.string)),
-    #("recommendations", json.array(
-      trends.recommendations,
-      json.string,
-    )),
+    #("recommendations", json.array(trends.recommendations, json.string)),
   ])
 }
 
@@ -103,10 +99,10 @@ pub fn encode_recommendation_report(
 ) -> json.Json {
   json.object([
     #("compliance_score", json.float(report.compliance_score)),
-    #("meal_adjustments", json.array(
-      report.meal_adjustments,
-      encode_meal_adjustment,
-    )),
+    #(
+      "meal_adjustments",
+      json.array(report.meal_adjustments, encode_meal_adjustment),
+    ),
     #("insights", json.array(report.insights, encode_insight)),
     #("trends", encode_weekly_trends(report.trends)),
   ])
@@ -129,27 +125,26 @@ pub fn encode_macros_from_trends(
 pub fn encode_meal_adjustment(adjustment: rec_types.MealAdjustment) -> json.Json {
   json.object([
     #("nutrient", json.string(adjustment.nutrient)),
-    #("adjustment_type", json.string(
-      rec_types.adjustment_type_to_string(adjustment.adjustment_type),
-    )),
+    #(
+      "adjustment_type",
+      json.string(rec_types.adjustment_type_to_string(
+        adjustment.adjustment_type,
+      )),
+    ),
     #("amount", json.float(adjustment.amount)),
-    #("food_suggestions", json.array(
-      adjustment.food_suggestions,
-      json.string,
-    )),
+    #("food_suggestions", json.array(adjustment.food_suggestions, json.string)),
   ])
 }
 
 /// Encode Insight to JSON
 pub fn encode_insight(insight: rec_types.Insight) -> json.Json {
   json.object([
-    #("category", json.string(rec_types.insight_category_to_string(
-      insight.category,
-    ))),
+    #(
+      "category",
+      json.string(rec_types.insight_category_to_string(insight.category)),
+    ),
     #("message", json.string(insight.message)),
-    #("impact", json.string(rec_types.impact_level_to_string(
-      insight.impact,
-    ))),
+    #("impact", json.string(rec_types.impact_level_to_string(insight.impact))),
   ])
 }
 
