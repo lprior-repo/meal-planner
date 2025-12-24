@@ -11,6 +11,9 @@ import gleam/string
 import meal_planner/id.{
   type CustomFoodId, type FdcId, type LogEntryId, type RecipeId, type UserId,
 }
+// Note: types/macros.gleam has the canonical Macros implementation
+// This module maintains its own Macros for backward compatibility
+// Eventually all code should migrate to importing from types/macros directly
 
 // ============================================================================
 // Core Nutrition Types
