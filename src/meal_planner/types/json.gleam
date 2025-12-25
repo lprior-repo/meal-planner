@@ -23,7 +23,8 @@ import meal_planner/types/food.{
 }
 import meal_planner/types/macros.{type Macros, Macros}
 import meal_planner/types/macros
-import meal_planner/types/micronutrients.{type Micronutrients, Micronutrients}
+import meal_planner/types/micronutrients.{type Micronutrients}
+import meal_planner/types/micronutrients as micros
 import meal_planner/types/recipe.{
   type FodmapLevel, type Ingredient, type Recipe, High, Ingredient, Low, Medium,
   Recipe,
@@ -71,29 +72,7 @@ fn optional_float(opt: Option(Float)) -> Json {
 
 /// Encode Micronutrients to JSON
 pub fn micronutrients_to_json(m: Micronutrients) -> Json {
-  json.object([
-    #("fiber", optional_float(m.fiber)),
-    #("sugar", optional_float(m.sugar)),
-    #("sodium", optional_float(m.sodium)),
-    #("cholesterol", optional_float(m.cholesterol)),
-    #("vitamin_a", optional_float(m.vitamin_a)),
-    #("vitamin_c", optional_float(m.vitamin_c)),
-    #("vitamin_d", optional_float(m.vitamin_d)),
-    #("vitamin_e", optional_float(m.vitamin_e)),
-    #("vitamin_k", optional_float(m.vitamin_k)),
-    #("vitamin_b6", optional_float(m.vitamin_b6)),
-    #("vitamin_b12", optional_float(m.vitamin_b12)),
-    #("folate", optional_float(m.folate)),
-    #("thiamin", optional_float(m.thiamin)),
-    #("riboflavin", optional_float(m.riboflavin)),
-    #("niacin", optional_float(m.niacin)),
-    #("calcium", optional_float(m.calcium)),
-    #("iron", optional_float(m.iron)),
-    #("magnesium", optional_float(m.magnesium)),
-    #("phosphorus", optional_float(m.phosphorus)),
-    #("potassium", optional_float(m.potassium)),
-    #("zinc", optional_float(m.zinc)),
-  ])
+  micros.to_json(m)
 }
 
 /// Decode Micronutrients from JSON
