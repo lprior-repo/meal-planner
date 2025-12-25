@@ -10,7 +10,10 @@ import meal_planner/meal_selection.{select_meals_for_week}
 import meal_planner/portion.{calculate_portion_for_target}
 import meal_planner/types/macros.{type Macros, Macros}
 import meal_planner/types/recipe.{type Ingredient, type Recipe}
-import meal_planner/types/user_profile.{type UserProfile, daily_carb_target, daily_fat_target, daily_protein_target}
+import meal_planner/types/user_profile.{
+  type UserProfile, daily_carb_target, daily_fat_target, daily_protein_target,
+  user_profile_meals_per_day,
+}
 
 /// Day names for weekly plan generation
 pub fn day_names() -> List(String) {
@@ -37,7 +40,7 @@ pub fn generate_weekly_plan(
       carbs: daily_carb_target(profile),
     )
 
-  let total_meals = 7 * profile.meals_per_day
+  let total_meals = 7 * user_profile_meals_per_day(profile)
   let selection = select_meals_for_week(recipes, total_meals)
   let selected_recipes = selection.selected_recipes
 
@@ -48,7 +51,7 @@ pub fn generate_weekly_plan(
         build_daily_plan(
           day_name,
           daily_macros,
-          profile.meals_per_day,
+          user_profile_meals_per_day(profile),
           available_recipes,
         )
       #([daily_plan, ..built_days], remaining)

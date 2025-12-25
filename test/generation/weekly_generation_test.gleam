@@ -12,9 +12,8 @@
 import gleam/list
 import gleeunit
 import gleeunit/should
-import meal_planner/generator/weekly.{type Constraints, Constraints}
+import meal_planner/generator/weekly.{Constraints}
 import meal_planner/id
-import meal_planner/types/macros.{type Macros, Macros}
 import meal_planner/types/recipe.{type Recipe, Low, Recipe}
 
 pub fn main() {

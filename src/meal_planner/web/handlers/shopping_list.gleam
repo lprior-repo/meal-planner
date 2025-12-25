@@ -13,12 +13,11 @@ import gleam/json
 import gleam/option.{type Option, None, Some}
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/helpers
-// Import types from mod (re-exported from types module)
-import meal_planner/tandoor/shopping/mod.{
-  type ShoppingListEntry, type ShoppingListEntryResponse,
+// Import types directly from types module for field access
+import meal_planner/tandoor/shopping/types.{
+  type ShoppingListEntry, type ShoppingListEntryResponse, ShoppingListEntry,
+  ShoppingListEntryCreate,
 }
-// Import type constructor from types directly
-import meal_planner/tandoor/shopping/types.{ShoppingListEntryCreate}
 import wisp
 
 /// Extract query parameters for list endpoint

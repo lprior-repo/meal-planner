@@ -66,7 +66,7 @@ pub fn recipe_filters_default_test() {
 }
 
 pub fn search_state_init_test() {
-  let search = model.init_search_state()
+  let search: model.RecipeSearchState = model.init_search_state()
 
   search.query |> should.equal("")
   search.search_type |> should.equal(model.ByName)

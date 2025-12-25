@@ -6,7 +6,7 @@ import meal_planner/email/command.{
   type DayOfWeek, type EmailCommand, type EmailCommandError, type EmailRequest,
   type MealType, type RegenerationScope, AddPreference, AdjustMeal, Breakfast,
   Dinner, EmailRequest, FullWeek, InvalidCommand, Lunch, RegeneratePlan,
-  RemoveDislike, SingleDay, SingleMeal, SkipMeal, Snack, day_of_week_from_string,
+  RemoveDislike, SkipMeal, Snack, day_of_week_from_string,
 }
 import meal_planner/id
 

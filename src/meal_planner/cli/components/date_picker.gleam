@@ -20,9 +20,8 @@
 import gleam/option.{type Option, None, Some}
 import meal_planner/cli/components/date_picker/logic
 import meal_planner/cli/components/date_picker/model.{
-  type DateFormat, type DatePickerEffect, type DatePickerModel, Cancelled,
-  DatePickerModel, DateSelected, EuFormat, IsoFormat, LongFormat, NoEffect,
-  UsFormat,
+  type DateFormat, type DatePickerEffect, type DatePickerModel, DatePickerModel,
+  IsoFormat,
 }
 import meal_planner/cli/components/date_picker/update
 import meal_planner/cli/components/date_picker/view
@@ -36,10 +35,9 @@ import shore
 
 // Messages - imported from messages module
 import meal_planner/cli/components/date_picker/messages.{
-  type DatePickerMsg, Cancel, ClearError, Close, ConfirmSelection, GoToToday,
-  InputChanged, NextDay, NextMonth, NextWeek, NextYear, Open, ParseInput,
-  PreviousDay, PreviousMonth, PreviousWeek, PreviousYear, SelectDate,
-  ToggleInputMode,
+  type DatePickerMsg, InputChanged, NextDay, NextMonth, NextWeek, NextYear,
+  Open, ParseInput, PreviousDay, PreviousMonth, PreviousWeek, PreviousYear,
+  SelectDate, ToggleInputMode,
 }
 
 // ============================================================================
