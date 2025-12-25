@@ -113,3 +113,24 @@ pub fn day_of_week_from_string(s: String) -> Option(DayOfWeek) {
     _ -> None
   }
 }
+
+/// Convert MealType to string
+pub fn meal_type_to_string(meal: MealType) -> String {
+  case meal {
+    Breakfast -> "breakfast"
+    Lunch -> "lunch"
+    Dinner -> "dinner"
+    Snack -> "snack"
+  }
+}
+
+/// Parse string to MealType
+pub fn meal_type_from_string(s: String) -> Option(MealType) {
+  case string.lowercase(s) {
+    "breakfast" -> Some(Breakfast)
+    "lunch" -> Some(Lunch)
+    "dinner" -> Some(Dinner)
+    "snack" -> Some(Snack)
+    _ -> None
+  }
+}
