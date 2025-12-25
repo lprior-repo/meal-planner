@@ -18,7 +18,10 @@ import gleam/json
 import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/advisor/daily_recommendations
-import meal_planner/advisor/weekly_trends
+import meal_planner/advisor/weekly_trends.{
+  type AnalysisError, DatabaseError, InvalidDateRange, NoDataAvailable,
+  ServiceError,
+}
 import meal_planner/id
 import meal_planner/postgres
 import meal_planner/scheduler/errors.{type AppError}
@@ -483,13 +486,14 @@ fn execute_weekly_trends(db: pog.Connection) -> Result(json.Json, String) {
     weekly_trends.analyze_weekly_trends(db, end_date_int)
     |> result.map_error(fn(e) {
       case e {
-        weekly_trends.DatabaseError(msg) -> "Database error: " <> msg
-        weekly_trends.ServiceError(msg) -> "Service error: " <> msg
-        weekly_trends.NoDataAvailable -> "No data available for analysis"
-        weekly_trends.InvalidDateRange -> "Invalid date range"
+        DatabaseError(msg) -> "Database error: " <> msg
+        ServiceError(msg) -> "Service error: " <> msg
+        NoDataAvailable -> "No data available for analysis"
+        InvalidDateRange -> "Invalid date range"
       }
     }),
   )
+
 
   // Convert to JSON output
   Ok(
