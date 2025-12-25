@@ -17,7 +17,7 @@ import meal_planner/types/food.{
   type DailyLog, type FoodLogEntry, Breakfast, DailyLog, Dinner, FoodLogEntry,
   Lunch, Snack,
 }
-import meal_planner/types/macros.{type Macros, Macros}
+import meal_planner/types/macros.{Macros}
 import meal_planner/utils/macros as macros_utils
 import meal_planner/utils/micronutrients as micro_utils
 import pog
