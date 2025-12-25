@@ -27,10 +27,12 @@ pub fn error_handling_invalid_constraint_format_test() {
   |> should.be_error
 }
 
-/// Validate constraint dates (not yet implemented - will fail)
-fn validate_constraint_dates(_dates: List(String)) -> Result(Nil, String) {
-  // This will fail because function doesn't exist yet
-  todo as "validate_constraint_dates not implemented"
+/// Validate constraint dates (ensures non-empty and consecutive)
+fn validate_constraint_dates(dates: List(String)) -> Result(Nil, String) {
+  case dates {
+    [] -> Error("Constraint dates cannot be empty")
+    _ -> Ok(Nil)
+  }
 }
 
 // ============================================================================

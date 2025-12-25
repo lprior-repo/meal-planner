@@ -105,7 +105,7 @@ pub fn format_nutrition_summary(nutrition: DayNutrition) -> String {
 
 /// Parse a date string (YYYY-MM-DD) to days since Unix epoch
 ///
-/// Returns Option(Int) - None if parse fails.
+/// Returns Option(Int) - None if parse fails or date is invalid.
 pub fn parse_date_to_int(date_str: String) -> Option(Int) {
   case date_str {
     "today" -> {
@@ -122,14 +122,20 @@ pub fn parse_date_to_int(date_str: String) -> Option(Int) {
           case
             #(int.parse(year_str), int.parse(month_str), int.parse(day_str))
           {
-            #(Ok(_year), Ok(_month), Ok(_day)) -> {
-              case birl.from_naive(date_str <> "T00:00:00") {
-                Ok(dt) -> {
-                  let seconds = birl.to_unix(dt)
-                  let days = seconds / 86_400
-                  Some(days)
+            #(Ok(_year), Ok(month), Ok(day)) -> {
+              // Validate month (1-12) and day (1-31)
+              case month >= 1 && month <= 12 && day >= 1 && day <= 31 {
+                True -> {
+                  case birl.from_naive(date_str <> "T00:00:00") {
+                    Ok(dt) -> {
+                      let seconds = birl.to_unix(dt)
+                      let days = seconds / 86_400
+                      Some(days)
+                    }
+                    Error(_) -> None
+                  }
                 }
-                Error(_) -> None
+                False -> None
               }
             }
             _ -> None
@@ -143,9 +149,7 @@ pub fn parse_date_to_int(date_str: String) -> Option(Int) {
 
 /// Format a float to 1 decimal place for display
 fn format_float(value: Float) -> String {
-  let rounded = { value *. 10.0 } |> float.truncate |> int.to_float
-  let result = rounded /. 10.0
-  string.inspect(result)
+  float.to_string(value)
 }
 
 // ============================================================================
