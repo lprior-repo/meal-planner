@@ -8,9 +8,7 @@ import gleeunit
 import gleeunit/should
 import meal_planner/tandoor/client.{bearer_config}
 import meal_planner/tandoor/client/recipes
-import meal_planner/tandoor/recipe.{
-  RecipeCreateRequest, RecipeUpdate,
-}
+import meal_planner/tandoor/recipe.{RecipeCreateRequest, RecipeUpdate}
 
 // ============================================================================
 // Encoders Tests
