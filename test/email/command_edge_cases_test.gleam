@@ -5,7 +5,7 @@ import gleeunit
 import gleeunit/should
 import meal_planner/email/command.{
   AddPreference, AdjustMeal, Dinner, EmailRequest, Friday, FullWeek,
-  InvalidCommand, RegeneratePlan, RemoveDislike, SingleDay, SingleMeal,
+  InvalidCommand, RegeneratePlan, RemoveDislike,
 }
 import meal_planner/email/parser
 

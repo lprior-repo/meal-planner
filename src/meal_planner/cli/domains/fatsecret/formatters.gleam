@@ -7,7 +7,6 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option
-import gleam/string
 import meal_planner/fatsecret/foods/types as food_types
 import meal_planner/fatsecret/recipes/types as recipe_types
 
