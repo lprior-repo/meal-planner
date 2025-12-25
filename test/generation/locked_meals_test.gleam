@@ -13,9 +13,7 @@ import meal_planner/generator/weekly.{
   type DayMeals, Breakfast, Constraints, DayMeals, Dinner, LockedMeal, Lunch,
 }
 import meal_planner/id
-import meal_planner/recipe.{type Recipe, Recipe}
-import meal_planner/types/fodmap_level.{Low}
-import meal_planner/types/macros.{Macros}
+import meal_planner/types.{type Recipe, Low, Macros, Recipe}
 
 // ============================================================================
 // Test Fixtures

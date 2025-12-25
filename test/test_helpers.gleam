@@ -9,8 +9,7 @@ import gleam/string
 import gleeunit/should
 import meal_planner/generator/weekly.{type GenerationError, type WeeklyMealPlan}
 import meal_planner/id
-import meal_planner/recipe.{type Recipe}
-import meal_planner/types/macros.{type Macros, Macros}
+import meal_planner/types.{type Macros, type Recipe, Macros}
 
 // ============================================================================
 // Test Fixture Builders

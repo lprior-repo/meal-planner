@@ -14,8 +14,7 @@ import gleeunit
 import gleeunit/should
 import meal_planner/generator/weekly.{type Constraints, Constraints}
 import meal_planner/id
-import meal_planner/recipe.{type Recipe, Recipe}
-import meal_planner/types/macros.{type Macros, Macros}
+import meal_planner/types.{type Macros, type Recipe, Macros, Recipe}
 
 pub fn main() {
   gleeunit.main()
