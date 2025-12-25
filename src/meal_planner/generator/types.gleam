@@ -10,6 +10,7 @@ import gleam/option.{None, Some}
 import meal_planner/fatsecret/profile/types as fatsecret_profile
 import meal_planner/generator/weekly
 import meal_planner/grocery_list
+import meal_planner/types/json as types_json
 import meal_planner/types/macros
 
 // ============================================================================
@@ -102,9 +103,9 @@ pub type PrepStep {
 pub type WeeklyMacros {
   WeeklyMacros(
     /// Total macros for the entire week
-    weekly_total: types.Macros,
+    weekly_total: macros.Macros,
     /// Average daily macros
-    daily_average: types.Macros,
+    daily_average: macros.Macros,
     /// Daily macro breakdowns with comparison status
     daily_breakdowns: List(DailyMacroBreakdown),
   )
@@ -116,11 +117,11 @@ pub type DailyMacroBreakdown {
     /// Day name (Monday, Tuesday, etc.)
     day: String,
     /// Actual macros for the day
-    actual: types.Macros,
+    actual: macros.Macros,
     /// Daily target macros
-    target: types.Macros,
+    target: macros.Macros,
     /// Deviation from target (actual - target)
-    deviation: types.Macros,
+    deviation: macros.Macros,
     /// Total calories for the day
     calories: Float,
   )
@@ -436,8 +437,8 @@ fn prep_step_decoder() -> Decoder(PrepStep) {
 
 /// Decoder for WeeklyMacros
 pub fn weekly_macros_decoder() -> Decoder(WeeklyMacros) {
-  use weekly_total <- decode.field("weekly_total", types.macros_decoder())
-  use daily_average <- decode.field("daily_average", types.macros_decoder())
+  use weekly_total <- decode.field("weekly_total", types_json.macros_decoder())
+  use daily_average <- decode.field("daily_average", types_json.macros_decoder())
   use daily_breakdowns <- decode.field(
     "daily_breakdowns",
     decode.list(daily_macro_breakdown_decoder()),
@@ -452,9 +453,9 @@ pub fn weekly_macros_decoder() -> Decoder(WeeklyMacros) {
 /// Decoder for DailyMacroBreakdown
 fn daily_macro_breakdown_decoder() -> Decoder(DailyMacroBreakdown) {
   use day <- decode.field("day", decode.string)
-  use actual <- decode.field("actual", types.macros_decoder())
-  use target <- decode.field("target", types.macros_decoder())
-  use deviation <- decode.field("deviation", types.macros_decoder())
+  use actual <- decode.field("actual", types_json.macros_decoder())
+  use target <- decode.field("target", types_json.macros_decoder())
+  use deviation <- decode.field("deviation", types_json.macros_decoder())
   use calories <- decode.field("calories", decode.float)
   decode.success(DailyMacroBreakdown(
     day: day,
