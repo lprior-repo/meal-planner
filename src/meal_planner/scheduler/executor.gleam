@@ -13,7 +13,6 @@
 //// - WeeklyTrends → weekly_trends.analyze_weekly_trends()
 
 import birl
-import gleam/int
 import gleam/json
 import gleam/option.{None, Some}
 import gleam/result

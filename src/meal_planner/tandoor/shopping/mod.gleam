@@ -5,14 +5,9 @@ import gleam/option
 import meal_planner/tandoor/client
 import meal_planner/tandoor/core/pagination.{type PaginatedResponse}
 import meal_planner/tandoor/shopping/types.{
-  type ShoppingList, type ShoppingListCreate, type ShoppingListEntry,
   type ShoppingListEntryCreate, type ShoppingListEntryResponse,
-  type ShoppingListEntryUpdate, type ShoppingListQuery, type ShoppingListRecipe,
-  type ShoppingListRecipeCreate, type ShoppingListRecipeUpdate,
-  type ShoppingListUpdate, ShoppingList, ShoppingListCreate, ShoppingListEntry,
-  ShoppingListEntryCreate, ShoppingListEntryResponse, ShoppingListEntryUpdate,
-  ShoppingListQuery, ShoppingListRecipe, ShoppingListRecipeCreate,
-  ShoppingListRecipeUpdate, ShoppingListUpdate,
+  type ShoppingListEntryUpdate, type ShoppingListQuery, ShoppingListEntryCreate,
+  ShoppingListEntryResponse, ShoppingListEntryUpdate, ShoppingListQuery,
 }
 
 // Placeholder functions for API calls

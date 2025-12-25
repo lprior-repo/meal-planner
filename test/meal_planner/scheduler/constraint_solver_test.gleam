@@ -28,6 +28,7 @@ pub fn evaluate_budget_constraint_violated_test() {
 
   case constraint_solver.evaluate_constraint(constraint, schedule) {
     advanced.Violated(_, advanced.Hard) -> True
+    _ -> False
   }
   |> should.be_true
 }
@@ -62,6 +63,7 @@ pub fn evaluate_repetition_constraint_violated_test() {
 
   case constraint_solver.evaluate_constraint(constraint, schedule) {
     advanced.Violated(_, advanced.Soft) -> True
+    _ -> False
   }
   |> should.be_true
 }
@@ -85,6 +87,7 @@ pub fn evaluate_must_include_constraint_violated_test() {
 
   case constraint_solver.evaluate_constraint(constraint, schedule) {
     advanced.Violated(_, advanced.Hard) -> True
+    _ -> False
   }
   |> should.be_true
 }

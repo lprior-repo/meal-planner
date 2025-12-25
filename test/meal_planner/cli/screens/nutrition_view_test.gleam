@@ -12,17 +12,15 @@
 import gleam/option.{None}
 import gleeunit/should
 import meal_planner/cli/screens/nutrition_view.{
-  type ChartType,
-  type GoalType, type MacroStatus, type NutrientType,
-  type NutritionEffect,
-  type NutritionMsg, type NutritionViewState, type TimeRange, AreaChart,
-  BarChart, Calories, Carbohydrate, ChartSettings, Cholesterol, ComparisonView,
-  Custom, DailyNutrition, DashboardView, DatePicker, Fat, Fiber, GoalEditState,
-  GoalEditView, GoalsView, Last14Days, Last30Days, Last7Days, Last90Days,
-  LineChart, MealBreakdownView, MealNutrition, MonthlyTrendsView, MuscleBuilding,
-  NutrientDetailsView, NutritionGoals, OnTarget, Over, Protein,
-  SaturatedFat, Sodium, Sugar, Under, WeeklyTrendsView, WeightGain, WeightLoss,
-  WeightMaintenance,
+  type ChartType, type GoalType, type MacroStatus, type NutrientType,
+  type NutritionEffect, type NutritionMsg, type NutritionViewState,
+  type TimeRange, AreaChart, BarChart, Calories, Carbohydrate, ChartSettings,
+  Cholesterol, ComparisonView, Custom, DailyNutrition, DashboardView, DatePicker,
+  Fat, Fiber, GoalEditState, GoalEditView, GoalsView, Last14Days, Last30Days,
+  Last7Days, Last90Days, LineChart, MealBreakdownView, MealNutrition,
+  MonthlyTrendsView, MuscleBuilding, NutrientDetailsView, NutritionGoals,
+  OnTarget, Over, Protein, SaturatedFat, Sodium, Sugar, Under, WeeklyTrendsView,
+  WeightGain, WeightLoss, WeightMaintenance,
 }
 
 // ============================================================================

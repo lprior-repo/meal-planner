@@ -9,7 +9,6 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/result
 import gleam/string
 import meal_planner/config.{type Config}
 import meal_planner/ncp.{
