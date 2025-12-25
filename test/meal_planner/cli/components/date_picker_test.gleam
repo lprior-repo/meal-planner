@@ -8,12 +8,17 @@
 /// - Calendar rendering
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/cli/components/date_picker.{
-  type DatePickerModel, type DatePickerMsg, Cancel, Cancelled, ClearError, Close,
-  ConfirmSelection, DateSelected, EuFormat, GoToToday, InputChanged, IsoFormat,
-  LongFormat, NextDay, NextMonth, NextWeek, NextYear, NoEffect, Open, ParseInput,
+import meal_planner/cli/components/date_picker as dp
+import meal_planner/cli/components/date_picker/messages.{
+  type DatePickerMsg, Cancel, ClearError, Close, ConfirmSelection, GoToToday,
+  InputChanged, NextDay, NextMonth, NextWeek, NextYear, Open, ParseInput,
   PreviousDay, PreviousMonth, PreviousWeek, PreviousYear, SelectDate,
-  ToggleInputMode, UsFormat,
+  ToggleInputMode,
+}
+import meal_planner/cli/components/date_picker/model.{
+  type DateFormat, type DatePickerEffect, type DatePickerModel, Cancelled,
+  DatePickerModel, DateSelected, EuFormat, IsoFormat, LongFormat, NoEffect,
+  UsFormat,
 }
 
 // ============================================================================
@@ -25,7 +30,7 @@ pub fn init_creates_valid_model_test() {
   let date_int = 20_000
 
   // WHEN: Initializing date picker
-  let model = date_picker.init(date_int)
+  let model = dp.init(date_int)
 
   // THEN: Model should have correct initial state
   model.selected_date
@@ -55,7 +60,7 @@ pub fn init_with_constraints_test() {
 
   // WHEN: Initializing with constraints
   let model =
-    date_picker.init_with_constraints(date_int, Some(min_date), Some(max_date))
+    dp.init_with_constraints(date_int, Some(min_date), Some(max_date))
 
   // THEN: Constraints should be set
   model.min_date
@@ -71,10 +76,10 @@ pub fn init_with_constraints_test() {
 
 pub fn previous_day_navigation_test() {
   // GIVEN: A date picker at day 20000
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Navigating to previous day
-  let #(updated, effect) = date_picker.update(model, PreviousDay)
+  let #(updated, effect) = dp.update(model, PreviousDay)
 
   // THEN: Date should decrease by 1
   updated.selected_date
@@ -86,10 +91,10 @@ pub fn previous_day_navigation_test() {
 
 pub fn next_day_navigation_test() {
   // GIVEN: A date picker at day 20000
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Navigating to next day
-  let #(updated, effect) = date_picker.update(model, NextDay)
+  let #(updated, effect) = dp.update(model, NextDay)
 
   // THEN: Date should increase by 1
   updated.selected_date
@@ -101,10 +106,10 @@ pub fn next_day_navigation_test() {
 
 pub fn previous_week_navigation_test() {
   // GIVEN: A date picker at day 20000
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Navigating to previous week
-  let #(updated, _effect) = date_picker.update(model, PreviousWeek)
+  let #(updated, _effect) = dp.update(model, PreviousWeek)
 
   // THEN: Date should decrease by 7
   updated.selected_date
@@ -113,10 +118,10 @@ pub fn previous_week_navigation_test() {
 
 pub fn next_week_navigation_test() {
   // GIVEN: A date picker at day 20000
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Navigating to next week
-  let #(updated, _effect) = date_picker.update(model, NextWeek)
+  let #(updated, _effect) = dp.update(model, NextWeek)
 
   // THEN: Date should increase by 7
   updated.selected_date
@@ -125,11 +130,11 @@ pub fn next_week_navigation_test() {
 
 pub fn previous_month_navigation_test() {
   // GIVEN: A date picker in March
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
   let initial_month = model.view_month
 
   // WHEN: Navigating to previous month
-  let #(updated, _effect) = date_picker.update(model, PreviousMonth)
+  let #(updated, _effect) = dp.update(model, PreviousMonth)
 
   // THEN: View month should decrease
   // Note: Exact month depends on date calculation
@@ -139,12 +144,12 @@ pub fn previous_month_navigation_test() {
 
 pub fn next_month_navigation_test() {
   // GIVEN: A date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
   let initial_month = model.view_month
   let initial_year = model.view_year
 
   // WHEN: Navigating to next month
-  let #(updated, _effect) = date_picker.update(model, NextMonth)
+  let #(updated, _effect) = dp.update(model, NextMonth)
 
   // THEN: View month should increase
   { updated.view_month > initial_month || updated.view_year > initial_year }
@@ -153,11 +158,11 @@ pub fn next_month_navigation_test() {
 
 pub fn previous_year_navigation_test() {
   // GIVEN: A date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
   let initial_year = model.view_year
 
   // WHEN: Navigating to previous year
-  let #(updated, _effect) = date_picker.update(model, PreviousYear)
+  let #(updated, _effect) = dp.update(model, PreviousYear)
 
   // THEN: View year should decrease by 1
   updated.view_year
@@ -166,11 +171,11 @@ pub fn previous_year_navigation_test() {
 
 pub fn next_year_navigation_test() {
   // GIVEN: A date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
   let initial_year = model.view_year
 
   // WHEN: Navigating to next year
-  let #(updated, _effect) = date_picker.update(model, NextYear)
+  let #(updated, _effect) = dp.update(model, NextYear)
 
   // THEN: View year should increase by 1
   updated.view_year
@@ -184,10 +189,10 @@ pub fn next_year_navigation_test() {
 pub fn navigation_respects_min_date_test() {
   // GIVEN: A date picker at min date
   let min_date = 20_000
-  let model = date_picker.init_with_constraints(min_date, Some(min_date), None)
+  let model = dp.init_with_constraints(min_date, Some(min_date), None)
 
   // WHEN: Trying to navigate before min date
-  let #(updated, _effect) = date_picker.update(model, PreviousDay)
+  let #(updated, _effect) = dp.update(model, PreviousDay)
 
   // THEN: Date should not change (stays at min)
   updated.selected_date
@@ -197,10 +202,10 @@ pub fn navigation_respects_min_date_test() {
 pub fn navigation_respects_max_date_test() {
   // GIVEN: A date picker at max date
   let max_date = 20_000
-  let model = date_picker.init_with_constraints(max_date, None, Some(max_date))
+  let model = dp.init_with_constraints(max_date, None, Some(max_date))
 
   // WHEN: Trying to navigate after max date
-  let #(updated, _effect) = date_picker.update(model, NextDay)
+  let #(updated, _effect) = dp.update(model, NextDay)
 
   // THEN: Date should not change (stays at max)
   updated.selected_date
@@ -210,10 +215,10 @@ pub fn navigation_respects_max_date_test() {
 pub fn select_date_validates_constraints_test() {
   // GIVEN: A date picker with constraints
   let model =
-    date_picker.init_with_constraints(20_000, Some(19_900), Some(20_100))
+    dp.init_with_constraints(20_000, Some(19_900), Some(20_100))
 
   // WHEN: Selecting a date outside constraints
-  let #(updated, _effect) = date_picker.update(model, SelectDate(25_000))
+  let #(updated, _effect) = dp.update(model, SelectDate(25_000))
 
   // THEN: Error should be set
   updated.error
@@ -230,10 +235,10 @@ pub fn select_date_validates_constraints_test() {
 
 pub fn toggle_input_mode_test() {
   // GIVEN: A date picker not in input mode
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Toggling input mode
-  let #(updated, _effect) = date_picker.update(model, ToggleInputMode)
+  let #(updated, _effect) = dp.update(model, ToggleInputMode)
 
   // THEN: Input mode should be enabled
   updated.input_mode
@@ -246,12 +251,12 @@ pub fn toggle_input_mode_test() {
 
 pub fn input_changed_updates_text_test() {
   // GIVEN: A date picker in input mode
-  let model = date_picker.init(20_000)
-  let #(model2, _) = date_picker.update(model, ToggleInputMode)
+  let model = dp.init(20_000)
+  let #(model2, _) = dp.update(model, ToggleInputMode)
 
   // WHEN: Changing input text
   let #(updated, _effect) =
-    date_picker.update(model2, InputChanged("2025-01-15"))
+    dp.update(model2, InputChanged("2025-01-15"))
 
   // THEN: Input text should be updated
   updated.input_text
@@ -264,12 +269,12 @@ pub fn input_changed_updates_text_test() {
 
 pub fn parse_input_valid_iso_format_test() {
   // GIVEN: A date picker with valid ISO input
-  let model = date_picker.init(20_000)
-  let #(model2, _) = date_picker.update(model, ToggleInputMode)
-  let #(model3, _) = date_picker.update(model2, InputChanged("2025-01-15"))
+  let model = dp.init(20_000)
+  let #(model2, _) = dp.update(model, ToggleInputMode)
+  let #(model3, _) = dp.update(model2, InputChanged("2025-01-15"))
 
   // WHEN: Parsing input
-  let #(updated, _effect) = date_picker.update(model3, ParseInput)
+  let #(updated, _effect) = dp.update(model3, ParseInput)
 
   // THEN: Input mode should be disabled
   updated.input_mode
@@ -282,12 +287,12 @@ pub fn parse_input_valid_iso_format_test() {
 
 pub fn parse_input_invalid_format_test() {
   // GIVEN: A date picker with invalid input
-  let model = date_picker.init(20_000)
-  let #(model2, _) = date_picker.update(model, ToggleInputMode)
-  let #(model3, _) = date_picker.update(model2, InputChanged("invalid-date"))
+  let model = dp.init(20_000)
+  let #(model2, _) = dp.update(model, ToggleInputMode)
+  let #(model3, _) = dp.update(model2, InputChanged("invalid-date"))
 
   // WHEN: Parsing input
-  let #(updated, _effect) = date_picker.update(model3, ParseInput)
+  let #(updated, _effect) = dp.update(model3, ParseInput)
 
   // THEN: Error should be set
   case updated.error {
@@ -303,10 +308,10 @@ pub fn parse_input_invalid_format_test() {
 
 pub fn open_sets_is_open_test() {
   // GIVEN: A closed date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Opening
-  let #(updated, _effect) = date_picker.update(model, Open)
+  let #(updated, _effect) = dp.update(model, Open)
 
   // THEN: is_open should be True
   updated.is_open
@@ -315,11 +320,11 @@ pub fn open_sets_is_open_test() {
 
 pub fn close_sets_is_open_test() {
   // GIVEN: An open date picker
-  let model = date_picker.init(20_000)
-  let #(model2, _) = date_picker.update(model, Open)
+  let model = dp.init(20_000)
+  let #(model2, _) = dp.update(model, Open)
 
   // WHEN: Closing
-  let #(updated, _effect) = date_picker.update(model2, Close)
+  let #(updated, _effect) = dp.update(model2, Close)
 
   // THEN: is_open should be False
   updated.is_open
@@ -328,11 +333,11 @@ pub fn close_sets_is_open_test() {
 
 pub fn confirm_selection_returns_date_selected_effect_test() {
   // GIVEN: An open date picker with a selected date
-  let model = date_picker.init(20_000)
-  let #(model2, _) = date_picker.update(model, Open)
+  let model = dp.init(20_000)
+  let #(model2, _) = dp.update(model, Open)
 
   // WHEN: Confirming selection
-  let #(updated, effect) = date_picker.update(model2, ConfirmSelection)
+  let #(updated, effect) = dp.update(model2, ConfirmSelection)
 
   // THEN: Should close and return DateSelected effect
   updated.is_open
@@ -346,11 +351,11 @@ pub fn confirm_selection_returns_date_selected_effect_test() {
 
 pub fn cancel_returns_cancelled_effect_test() {
   // GIVEN: An open date picker
-  let model = date_picker.init(20_000)
-  let #(model2, _) = date_picker.update(model, Open)
+  let model = dp.init(20_000)
+  let #(model2, _) = dp.update(model, Open)
 
   // WHEN: Cancelling
-  let #(updated, effect) = date_picker.update(model2, Cancel)
+  let #(updated, effect) = dp.update(model2, Cancel)
 
   // THEN: Should close and return Cancelled effect
   updated.is_open
@@ -362,11 +367,11 @@ pub fn cancel_returns_cancelled_effect_test() {
 
 pub fn clear_error_removes_error_test() {
   // GIVEN: A date picker with an error
-  let model = date_picker.init(20_000)
-  let model2 = date_picker.DatePickerModel(..model, error: Some("Test error"))
+  let model = dp.init(20_000)
+  let model2 = DatePickerModel(..model, error: Some("Test error"))
 
   // WHEN: Clearing error
-  let #(updated, _effect) = date_picker.update(model2, ClearError)
+  let #(updated, _effect) = dp.update(model2, ClearError)
 
   // THEN: Error should be None
   updated.error
@@ -379,10 +384,10 @@ pub fn clear_error_removes_error_test() {
 
 pub fn key_h_navigates_previous_day_test() {
   // GIVEN: A date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Pressing 'h' key
-  let #(updated, _effect) = date_picker.handle_key(model, "h")
+  let #(updated, _effect) = dp.handle_key(model, "h")
 
   // THEN: Date should decrease by 1
   updated.selected_date
@@ -391,10 +396,10 @@ pub fn key_h_navigates_previous_day_test() {
 
 pub fn key_l_navigates_next_day_test() {
   // GIVEN: A date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Pressing 'l' key
-  let #(updated, _effect) = date_picker.handle_key(model, "l")
+  let #(updated, _effect) = dp.handle_key(model, "l")
 
   // THEN: Date should increase by 1
   updated.selected_date
@@ -403,10 +408,10 @@ pub fn key_l_navigates_next_day_test() {
 
 pub fn key_t_goes_to_today_test() {
   // GIVEN: A date picker at a past date
-  let model = date_picker.init(10_000)
+  let model = dp.init(10_000)
 
   // WHEN: Pressing 't' key
-  let #(updated, _effect) = date_picker.handle_key(model, "t")
+  let #(updated, _effect) = dp.handle_key(model, "t")
 
   // THEN: Date should be updated to today (greater than 10000)
   { updated.selected_date > 10_000 }
@@ -415,10 +420,10 @@ pub fn key_t_goes_to_today_test() {
 
 pub fn key_enter_confirms_selection_test() {
   // GIVEN: A date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Pressing Enter
-  let #(_updated, effect) = date_picker.handle_key(model, "\r")
+  let #(_updated, effect) = dp.handle_key(model, "\r")
 
   // THEN: Should return DateSelected effect
   case effect {
@@ -429,10 +434,10 @@ pub fn key_enter_confirms_selection_test() {
 
 pub fn key_escape_cancels_test() {
   // GIVEN: A date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Pressing Escape
-  let #(_updated, effect) = date_picker.handle_key(model, "\u{001B}")
+  let #(_updated, effect) = dp.handle_key(model, "\u{001B}")
 
   // THEN: Should return Cancelled effect
   effect
@@ -445,12 +450,12 @@ pub fn key_escape_cancels_test() {
 
 pub fn set_format_changes_format_test() {
   // GIVEN: A date picker with default format
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Setting different formats
-  let us_model = date_picker.set_format(model, UsFormat)
-  let eu_model = date_picker.set_format(model, EuFormat)
-  let long_model = date_picker.set_format(model, LongFormat)
+  let us_model = dp.set_format(model, UsFormat)
+  let eu_model = dp.set_format(model, EuFormat)
+  let long_model = dp.set_format(model, LongFormat)
 
   // THEN: Formats should be set correctly
   us_model.date_format |> should.equal(UsFormat)
@@ -464,10 +469,10 @@ pub fn set_format_changes_format_test() {
 
 pub fn get_selected_date_returns_date_test() {
   // GIVEN: A date picker with selected date
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Getting selected date
-  let date = date_picker.get_selected_date(model)
+  let date = dp.get_selected_date(model)
 
   // THEN: Should return correct date
   date
@@ -476,10 +481,10 @@ pub fn get_selected_date_returns_date_test() {
 
 pub fn get_selected_date_string_returns_formatted_test() {
   // GIVEN: A date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Getting date as string
-  let date_str = date_picker.get_selected_date_string(model)
+  let date_str = dp.get_selected_date_string(model)
 
   // THEN: Should return non-empty string
   { date_str != "" }
@@ -488,10 +493,10 @@ pub fn get_selected_date_string_returns_formatted_test() {
 
 pub fn open_function_opens_picker_test() {
   // GIVEN: A closed date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Using open function
-  let updated = date_picker.open(model)
+  let updated = dp.open(model)
 
   // THEN: Picker should be open
   updated.is_open
@@ -500,10 +505,10 @@ pub fn open_function_opens_picker_test() {
 
 pub fn close_function_closes_picker_test() {
   // GIVEN: An open date picker
-  let model = date_picker.open(date_picker.init(20_000))
+  let model = dp.open(dp.init(20_000))
 
   // WHEN: Using close function
-  let updated = date_picker.close(model)
+  let updated = dp.close(model)
 
   // THEN: Picker should be closed
   updated.is_open
@@ -512,10 +517,10 @@ pub fn close_function_closes_picker_test() {
 
 pub fn set_min_date_sets_constraint_test() {
   // GIVEN: A date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Setting min date
-  let updated = date_picker.set_min_date(model, 19_000)
+  let updated = dp.set_min_date(model, 19_000)
 
   // THEN: Min date should be set
   updated.min_date
@@ -524,10 +529,10 @@ pub fn set_min_date_sets_constraint_test() {
 
 pub fn set_max_date_sets_constraint_test() {
   // GIVEN: A date picker
-  let model = date_picker.init(20_000)
+  let model = dp.init(20_000)
 
   // WHEN: Setting max date
-  let updated = date_picker.set_max_date(model, 21_000)
+  let updated = dp.set_max_date(model, 21_000)
 
   // THEN: Max date should be set
   updated.max_date

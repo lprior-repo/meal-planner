@@ -28,14 +28,14 @@ import shore/style
 import shore/ui
 
 // Re-export types for backward compatibility
-pub use meal_planner/cli/screens/recipe/model.{
+import meal_planner/cli/screens/recipe/model.{
   type PaginationState, type RecipeDetails, type RecipeEffect, type RecipeFilters,
   type RecipeIngredient, type RecipeDirection, type RecipeListItem, type RecipeModel,
   type RecipeNutrition, type RecipeSearchState, type RecipeViewState, type SearchType,
   type SortOption, default_filters, init,
 }
 
-pub use meal_planner/cli/screens/recipe/messages.{type RecipeMsg}
+import meal_planner/cli/screens/recipe/messages.{type RecipeMsg}
 
 // ============================================================================
 // Update Function
