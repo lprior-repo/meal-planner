@@ -223,25 +223,7 @@ pub fn goal_decoder() -> Decoder(Goal) {
 
 /// Encode UserProfile to JSON
 pub fn user_profile_to_json(u: UserProfile) -> Json {
-  let targets = user.daily_macro_targets(u)
-  let base_fields = [
-    #("id", id.user_id_to_json(u.id)),
-    #("bodyweight", json.float(u.bodyweight)),
-    #("activity_level", json.string(activity_level_to_string(u.activity_level))),
-    #("goal", json.string(goal_to_string(u.goal))),
-    #("meals_per_day", json.int(u.meals_per_day)),
-    #("daily_targets", macros_to_json(targets)),
-  ]
-
-  let fields = case u.micronutrient_goals {
-    Some(goals) -> [
-      #("micronutrient_goals", micronutrients_to_json(goals)),
-      ..base_fields
-    ]
-    None -> base_fields
-  }
-
-  json.object(fields)
+  user.to_json(u)
 }
 
 /// Decode UserProfile from JSON
@@ -526,7 +508,7 @@ pub fn email_command_to_json(cmd: EmailCommand) -> Json {
       json.object([
         #("type", json.string("skip_meal")),
         #("day", json.string(day_of_week_to_string(day))),
-        #("meal_type", json.string(meal_type_to_string(meal_type))),
+        #("meal_type", json.string(cmd.meal_type_to_string(meal_type))),
       ])
   }
 }
