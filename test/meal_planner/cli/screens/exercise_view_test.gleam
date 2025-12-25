@@ -104,7 +104,6 @@ pub fn view_state_main_view_test() {
   // THEN: Can pattern match without errors
   case view_state {
     MainView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -116,7 +115,6 @@ pub fn view_state_search_popup_test() {
   // THEN: Can pattern match correctly
   case view_state {
     SearchPopup -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -153,7 +151,6 @@ pub fn view_state_quick_add_popup_test() {
   // THEN: Can pattern match correctly
   case view_state {
     QuickAddPopup -> True
-    _ -> False
   }
   |> should.be_true
 }

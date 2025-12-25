@@ -285,7 +285,6 @@ pub fn update_got_search_results_success_test() {
   // THEN: Should update results and clear loading
   case updated.results {
     Some(types.FoodSearchResults(_)) -> True
-    _ -> False
   }
   |> should.be_true
 }

@@ -111,7 +111,6 @@ pub fn view_state_main_view_test() {
   let view_state: ViewState = MainView
   case view_state {
     MainView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -120,7 +119,6 @@ pub fn view_state_search_popup_test() {
   let view_state: ViewState = SearchPopup
   case view_state {
     SearchPopup -> True
-    _ -> False
   }
   |> should.be_true
 }
