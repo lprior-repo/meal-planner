@@ -16,8 +16,8 @@
 
 import gleam/option.{None, Some}
 import gleam/result
-import meal_planner/generator/weekly.{type WeeklyMealPlan, WeeklyMealPlan}
-import meal_planner/id.{type UserId}
+import meal_planner/generator/weekly.{type Constraints, type WeeklyMealPlan, WeeklyMealPlan}
+import meal_planner/id.{job_id, type UserId}
 import meal_planner/scheduler/types as scheduler_types
 import meal_planner/types.{type Macros, Macros}
 import pog
@@ -99,7 +99,7 @@ pub fn create_next_friday_job(
 
   let job =
     scheduler_types.ScheduledJob(
-      id: id.job_id("job_weekly_generation"),
+      id: job_id("job_weekly_generation"),
       job_type: scheduler_types.WeeklyGeneration,
       frequency: scheduler_types.Weekly(day: 5, hour: 6, minute: 0),
       // Friday 6 AM
