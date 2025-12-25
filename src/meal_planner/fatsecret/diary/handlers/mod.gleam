@@ -2,6 +2,7 @@
 ///
 /// This module provides a centralized way to route requests to the appropriate
 /// handler functions based on HTTP method and path.
+import gleam/http.{Delete, Get, Patch}
 import meal_planner/fatsecret/diary/handlers/copy
 import meal_planner/fatsecret/diary/handlers/create
 import meal_planner/fatsecret/diary/handlers/delete
@@ -17,10 +18,10 @@ pub fn handle_diary_routes(req: Request, conn: pog.Connection) -> Response {
     ["api", "fatsecret", "diary", "entries"] -> create.create_entry(req, conn)
     ["api", "fatsecret", "diary", "entries", entry_id] ->
       case req.method {
-        wisp.Get -> get.get_entry(req, conn, entry_id)
-        wisp.Patch -> update.update_entry(req, conn, entry_id)
-        wisp.Delete -> delete.delete_entry(req, conn, entry_id)
-        _ -> wisp.method_not_allowed([wisp.Get, wisp.Patch, wisp.Delete])
+        Get -> get.get_entry(req, conn, entry_id)
+        Patch -> update.update_entry(req, conn, entry_id)
+        Delete -> delete.delete_entry(req, conn, entry_id)
+        _ -> wisp.method_not_allowed([Get, Patch, Delete])
       }
     ["api", "fatsecret", "diary", "day", date_int] ->
       list.get_day(req, conn, date_int)
