@@ -22,6 +22,53 @@ import pog
 import wisp
 
 // =============================================================================
+// Router
+// =============================================================================
+
+/// Route saved meals requests to appropriate handler
+pub fn route(
+  req: wisp.Request,
+  segments: List(String),
+  db: pog.Connection,
+) -> wisp.Response {
+  case segments {
+    // POST/GET /api/fatsecret/saved-meals
+    [] ->
+      case req.method {
+        http.Get -> handle_get_saved_meals(req, db)
+        http.Post -> handle_create_saved_meal(req, db)
+        _ -> wisp.method_not_allowed([http.Get, http.Post])
+      }
+
+    // PUT/DELETE /api/fatsecret/saved-meals/:id
+    [meal_id] ->
+      case req.method {
+        http.Put -> handle_edit_saved_meal(req, db, meal_id)
+        http.Delete -> handle_delete_saved_meal(req, db, meal_id)
+        _ -> wisp.method_not_allowed([http.Put, http.Delete])
+      }
+
+    // GET/POST /api/fatsecret/saved-meals/:id/items
+    [meal_id, "items"] ->
+      case req.method {
+        http.Get -> handle_get_saved_meal_items(req, db, meal_id)
+        http.Post -> handle_add_saved_meal_item(req, db, meal_id)
+        _ -> wisp.method_not_allowed([http.Get, http.Post])
+      }
+
+    // PUT/DELETE /api/fatsecret/saved-meals/:id/items/:item_id
+    [meal_id, "items", item_id] ->
+      case req.method {
+        http.Put -> handle_edit_saved_meal_item(req, db, meal_id, item_id)
+        http.Delete -> handle_delete_saved_meal_item(req, db, meal_id, item_id)
+        _ -> wisp.method_not_allowed([http.Put, http.Delete])
+      }
+
+    _ -> wisp.not_found()
+  }
+}
+
+// =============================================================================
 // Saved Meal Handlers
 // =============================================================================
 
