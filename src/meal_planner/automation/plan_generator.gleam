@@ -17,12 +17,10 @@ import meal_planner/fatsecret/profile/types as fatsecret_profile
 import meal_planner/generator/types as gen_types
 import meal_planner/generator/weekly
 import meal_planner/grocery_list
-import meal_planner/types/macros.{type Macros, Macros}
-import meal_planner/types/macros as macros_mod
+import meal_planner/types/macros.{type Macros, Macros, zero}
 import meal_planner/types/recipe.{
-  type FodmapLevel, type Recipe, High, Low, Medium,
+  type FodmapLevel, type Recipe, High, Low, Medium, is_vertical_diet_compliant,
 }
-import meal_planner/types/recipe as recipe_mod
 
 // ============================================================================
 // Types
@@ -227,7 +225,7 @@ fn filter_by_preferences(
 /// Filter by Vertical Diet compliance
 fn filter_by_vertical_diet(require: Bool, recipes: List(Recipe)) -> List(Recipe) {
   case require {
-    True -> list.filter(recipes, recipe_mod.is_vertical_diet_compliant)
+    True -> list.filter(recipes, is_vertical_diet_compliant)
     False -> recipes
   }
 }
@@ -570,8 +568,8 @@ fn create_placeholder_macro_summary(
   _plan: weekly.WeeklyMealPlan,
 ) -> gen_types.WeeklyMacros {
   gen_types.WeeklyMacros(
-    weekly_total: macros_mod.zero(),
-    daily_average: macros_mod.zero(),
+    weekly_total: zero(),
+    daily_average: zero(),
     daily_breakdowns: [],
   )
 }
