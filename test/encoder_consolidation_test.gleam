@@ -3,7 +3,7 @@
 /// Verifies that optional value encoders are consolidated into a single
 /// source of truth in shared/response_encoders and properly re-exported.
 import gleam/json
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 
 import meal_planner/shared/response_encoders
 

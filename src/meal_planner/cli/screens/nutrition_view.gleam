@@ -18,7 +18,6 @@
 /// - Update: nutrition_update (state transitions)
 /// - View: nutrition_view (rendering)
 import birl
-import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/list

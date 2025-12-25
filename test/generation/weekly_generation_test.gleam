@@ -110,14 +110,15 @@ pub fn test_generation_produces_seven_unique_breakfasts_test() {
   let target_macros = Macros(protein: 150.0, fat: 65.0, carbs: 250.0)
 
   // Call the generation function
-  let result = weekly.generate_meal_plan(
-    available_breakfasts: available_breakfasts,
-    available_lunches: available_lunches,
-    available_dinners: available_dinners,
-    target_macros: target_macros,
-    constraints: Constraints(locked_meals: [], travel_dates: []),
-    week_of: "2025-01-06",
-  )
+  let result =
+    weekly.generate_meal_plan(
+      available_breakfasts: available_breakfasts,
+      available_lunches: available_lunches,
+      available_dinners: available_dinners,
+      target_macros: target_macros,
+      constraints: Constraints(locked_meals: [], travel_dates: []),
+      week_of: "2025-01-06",
+    )
 
   // Verify generation succeeded
   result |> should.be_ok
@@ -162,14 +163,15 @@ pub fn test_generation_respects_thirty_day_rotation_test() {
   let target_macros = Macros(protein: 150.0, fat: 65.0, carbs: 250.0)
 
   // Call the generation function - basic test with no rotation filtering
-  let result = weekly.generate_meal_plan(
-    available_breakfasts: available_breakfasts,
-    available_lunches: available_lunches,
-    available_dinners: available_dinners,
-    target_macros: target_macros,
-    constraints: Constraints(locked_meals: [], travel_dates: []),
-    week_of: "2025-01-06",
-  )
+  let result =
+    weekly.generate_meal_plan(
+      available_breakfasts: available_breakfasts,
+      available_lunches: available_lunches,
+      available_dinners: available_dinners,
+      target_macros: target_macros,
+      constraints: Constraints(locked_meals: [], travel_dates: []),
+      week_of: "2025-01-06",
+    )
 
   result |> should.be_ok
 
@@ -219,14 +221,15 @@ pub fn test_generation_balances_macros_within_ten_percent_test() {
   let target_macros = Macros(protein: 150.0, fat: 65.0, carbs: 250.0)
 
   // Call the generation function
-  let result = weekly.generate_meal_plan(
-    available_breakfasts: available_breakfasts,
-    available_lunches: available_lunches,
-    available_dinners: available_dinners,
-    target_macros: target_macros,
-    constraints: Constraints(locked_meals: [], travel_dates: []),
-    week_of: "2025-01-06",
-  )
+  let result =
+    weekly.generate_meal_plan(
+      available_breakfasts: available_breakfasts,
+      available_lunches: available_lunches,
+      available_dinners: available_dinners,
+      target_macros: target_macros,
+      constraints: Constraints(locked_meals: [], travel_dates: []),
+      week_of: "2025-01-06",
+    )
 
   result |> should.be_ok
 
@@ -273,21 +276,26 @@ pub fn test_generation_handles_travel_constraints_test() {
   // Create locked meal for Friday dinner
   let locked_salmon = test_recipe("Grilled Salmon", 52.0, 20.0, 85.0)
   let locked_meal =
-    weekly.LockedMeal(day: "Friday", meal_type: weekly.Dinner, recipe: locked_salmon)
+    weekly.LockedMeal(
+      day: "Friday",
+      meal_type: weekly.Dinner,
+      recipe: locked_salmon,
+    )
 
   // Create constraints with locked meals
   let constraints =
     weekly.Constraints(locked_meals: [locked_meal], travel_dates: [])
 
   // Call the generation function
-  let result = weekly.generate_meal_plan(
-    available_breakfasts: available_breakfasts,
-    available_lunches: available_lunches,
-    available_dinners: available_dinners,
-    target_macros: target_macros,
-    constraints: constraints,
-    week_of: "2025-01-06",
-  )
+  let result =
+    weekly.generate_meal_plan(
+      available_breakfasts: available_breakfasts,
+      available_lunches: available_lunches,
+      available_dinners: available_dinners,
+      target_macros: target_macros,
+      constraints: constraints,
+      week_of: "2025-01-06",
+    )
 
   result |> should.be_ok
 

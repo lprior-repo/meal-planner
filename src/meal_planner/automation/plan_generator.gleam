@@ -564,7 +564,7 @@ fn create_placeholder_grocery_list() -> grocery_list.GroceryList {
 /// Create placeholder macro summary
 /// TODO: Implement actual macro summary calculation from meal plan
 fn create_placeholder_macro_summary(
-  plan: weekly.WeeklyMealPlan,
+  _plan: weekly.WeeklyMealPlan,
 ) -> gen_types.WeeklyMacros {
   gen_types.WeeklyMacros(
     weekly_total: types.macros_zero(),

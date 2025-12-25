@@ -505,25 +505,6 @@ fn month_name(month: Int) -> String {
   }
 }
 
-/// Get short month name
-fn month_short(month: Int) -> String {
-  case month {
-    1 -> "Jan"
-    2 -> "Feb"
-    3 -> "Mar"
-    4 -> "Apr"
-    5 -> "May"
-    6 -> "Jun"
-    7 -> "Jul"
-    8 -> "Aug"
-    9 -> "Sep"
-    10 -> "Oct"
-    11 -> "Nov"
-    12 -> "Dec"
-    _ -> "???"
-  }
-}
-
 /// Get day of week (0 = Sunday, 6 = Saturday)
 fn day_of_week(date_int: Int) -> Int {
   // Unix epoch (Jan 1, 1970) was a Thursday (4)

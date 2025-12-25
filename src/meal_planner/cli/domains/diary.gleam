@@ -97,10 +97,8 @@ pub fn parse_date_to_int(date_str: String) -> Option(Int) {
       // Try to parse YYYY-MM-DD format
       case string.split(date_str, "-") {
         [year_str, month_str, day_str] -> {
-          case
-            #(int.parse(year_str), int.parse(month_str), int.parse(day_str))
-          {
-            #(Ok(_year), Ok(month), Ok(day)) -> {
+          case int.parse(year_str), int.parse(month_str), int.parse(day_str) {
+            Ok(_year), Ok(month), Ok(day) -> {
               // Validate month (1-12) and day (1-31)
               case month >= 1 && month <= 12 && day >= 1 && day <= 31 {
                 True -> {
@@ -116,7 +114,7 @@ pub fn parse_date_to_int(date_str: String) -> Option(Int) {
                 False -> None
               }
             }
-            _ -> None
+            _, _, _ -> None
           }
         }
         _ -> None
