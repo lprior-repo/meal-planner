@@ -14,8 +14,8 @@ import meal_planner/id
 import meal_planner/types.{
   type ActivityLevel, type CustomFood, type DailyLog, type FodmapLevel,
   type FoodLogEntry, type Ingredient, type Macros, type MealType,
-  type Micronutrients, type UserProfile, Active, Breakfast, Gain, High, Low,
-  Lose, Lunch, Maintain, Moderate, Sedentary, Snack,
+  type Micronutrients, type UserProfile, Active, Breakfast, Gain, High, Lose,
+  Low, Lunch, Maintain, Moderate, Sedentary, Snack,
 }
 
 // ============================================================================

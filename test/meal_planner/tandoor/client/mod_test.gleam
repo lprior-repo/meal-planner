@@ -2,7 +2,7 @@ import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/tandoor/client.{
-  AuthMethod, BearerAuth, ClientConfig, SessionAuth,
+  type AuthMethod, type ClientConfig, BearerAuth, ClientConfig, SessionAuth,
 }
 
 pub fn main() {

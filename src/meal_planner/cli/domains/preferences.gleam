@@ -16,12 +16,16 @@ import meal_planner/config.{type Config}
 import meal_planner/id
 import meal_planner/ncp.{type NutritionGoals, NutritionGoals}
 import meal_planner/postgres
+import meal_planner/storage/profile as profile_storage
 import meal_planner/storage/profile.{
   type StorageError, DatabaseError, InvalidInput, NotFound, Unauthorized,
+  get_user_profile,
 }
-import meal_planner/types.{
+import meal_planner/types/user_profile.{
   type UserProfile, Active, Gain, Lose, Maintain, Moderate, Sedentary,
-  UserProfile,
+  new_user_profile, user_profile_activity_level, user_profile_bodyweight,
+  user_profile_goal, user_profile_id, user_profile_meals_per_day,
+  user_profile_micronutrient_goals,
 }
 import pog
 
@@ -298,7 +302,7 @@ fn view_all_preferences(config: Config) -> Result(String, String) {
     <> "\n"
 
   // Get user profile
-  let profile_section = case profile.get_user_profile(conn) {
+  let profile_section = case get_user_profile(conn) {
     Ok(p) -> format_profile_section(p)
     Error(_) -> "\nUser Profile: Not configured\n"
   }
@@ -317,13 +321,13 @@ fn view_all_preferences(config: Config) -> Result(String, String) {
 }
 
 fn format_profile_section(p: UserProfile) -> String {
-  let activity_str = case p.activity_level {
+  let activity_str = case user_profile_activity_level(p) {
     Sedentary -> "Sedentary"
     Moderate -> "Moderate"
     Active -> "Active"
   }
 
-  let goal_str = case p.goal {
+  let goal_str = case user_profile_goal(p) {
     Gain -> "Muscle Gain"
     Maintain -> "Maintain Weight"
     Lose -> "Weight Loss"
@@ -333,7 +337,7 @@ fn format_profile_section(p: UserProfile) -> String {
   <> string.repeat("-", 40)
   <> "\n"
   <> "  Body Weight:     "
-  <> float_to_display(p.bodyweight)
+  <> float_to_display(user_profile_bodyweight(p))
   <> " kg\n"
   <> "  Activity Level:  "
   <> activity_str
@@ -342,7 +346,7 @@ fn format_profile_section(p: UserProfile) -> String {
   <> goal_str
   <> "\n"
   <> "  Meals per Day:   "
-  <> int.to_string(p.meals_per_day)
+  <> int.to_string(user_profile_meals_per_day(p))
   <> "\n"
 }
 
@@ -476,7 +480,7 @@ fn build_goals_table(goals: NutritionGoals) -> String {
 fn display_profile(config: Config) -> Result(String, String) {
   use conn <- result.try(connect_db(config))
 
-  case profile.get_user_profile(conn) {
+  case get_user_profile(conn) {
     Ok(p) -> {
       let output =
         "User Profile\n"
@@ -499,17 +503,15 @@ fn update_profile(
   use conn <- result.try(connect_db(config))
 
   // Get current profile or create default
-  let current = case profile.get_user_profile(conn) {
+  let current = case get_user_profile(conn) {
     Ok(p) -> p
     Error(_) ->
-      UserProfile(
-        id: id.user_id("1"),
-        bodyweight: 70.0,
-        activity_level: Moderate,
-        goal: Maintain,
-        meals_per_day: 3,
-        micronutrient_goals: None,
-      )
+      case
+        new_user_profile(id.user_id("1"), 70.0, Moderate, Maintain, 3, None)
+      {
+        Ok(p) -> p
+        Error(_) -> panic as "Default profile should always be valid"
+      }
   }
 
   // Parse activity level
@@ -523,7 +525,7 @@ fn update_profile(
         <> invalid
         <> ". Use: sedentary, moderate, active",
       )
-    None -> Ok(current.activity_level)
+    None -> Ok(user_profile_activity_level(current))
   })
 
   // Parse goal
@@ -533,7 +535,7 @@ fn update_profile(
     Some("lose") -> Ok(Lose)
     Some(invalid) ->
       Error("Invalid goal: " <> invalid <> ". Use: gain, maintain, lose")
-    None -> Ok(current.goal)
+    None -> Ok(user_profile_goal(current))
   })
 
   // Validate meals
@@ -549,22 +551,29 @@ fn update_profile(
           )
       }
     }
-    None -> Ok(current.meals_per_day)
+    None -> Ok(user_profile_meals_per_day(current))
   })
 
   // Build updated profile
-  let updated =
-    UserProfile(
-      id: current.id,
-      bodyweight: option.unwrap(bodyweight_opt, current.bodyweight),
-      activity_level: activity_level,
-      goal: user_goal,
-      meals_per_day: meals_per_day,
-      micronutrient_goals: current.micronutrient_goals,
+  let updated = case
+    new_user_profile(
+      user_profile_id(current),
+      option.unwrap(bodyweight_opt, user_profile_bodyweight(current)),
+      activity_level,
+      user_goal,
+      meals_per_day,
+      user_profile_micronutrient_goals(current),
     )
+  {
+    Ok(profile) -> profile
+    Error(err) -> {
+      let _ = io.println("Error creating updated profile: " <> err)
+      current
+    }
+  }
 
   // Save to database
-  case profile.save_user_profile(conn, updated) {
+  case profile_storage.save_user_profile(conn, updated) {
     Ok(_) -> {
       let output =
         "Profile updated successfully!\n" <> format_profile_section(updated)
@@ -581,17 +590,17 @@ fn update_profile(
 fn display_meal_preferences(config: Config) -> Result(String, String) {
   use conn <- result.try(connect_db(config))
 
-  case profile.get_user_profile(conn) {
+  case get_user_profile(conn) {
     Ok(p) -> {
       let output =
         "Meal Preferences\n"
         <> string.repeat("=", 40)
         <> "\n\n"
         <> "Meals per Day: "
-        <> int.to_string(p.meals_per_day)
+        <> int.to_string(user_profile_meals_per_day(p))
         <> "\n\n"
         <> "Typical meal distribution:\n"
-        <> format_meal_distribution(p.meals_per_day)
+        <> format_meal_distribution(user_profile_meals_per_day(p))
       Ok(output)
     }
     Error(err) -> Error(storage_error_to_string(err))
@@ -627,23 +636,36 @@ fn update_meals_per_day(config: Config, meals: Int) -> Result(String, String) {
       use conn <- result.try(connect_db(config))
 
       // Get current profile
-      let current = case profile.get_user_profile(conn) {
+      let current = case get_user_profile(conn) {
         Ok(p) -> p
         Error(_) ->
-          UserProfile(
-            id: id.user_id("1"),
-            bodyweight: 70.0,
-            activity_level: Moderate,
-            goal: Maintain,
-            meals_per_day: 3,
-            micronutrient_goals: None,
-          )
+          case
+            new_user_profile(id.user_id("1"), 70.0, Moderate, Maintain, 3, None)
+          {
+            Ok(p) -> p
+            Error(_) -> panic as "Default profile should always be valid"
+          }
       }
 
       // Update meals per day
-      let updated = UserProfile(..current, meals_per_day: meals)
+      let updated = case
+        new_user_profile(
+          user_profile_id(current),
+          user_profile_bodyweight(current),
+          user_profile_activity_level(current),
+          user_profile_goal(current),
+          meals,
+          user_profile_micronutrient_goals(current),
+        )
+      {
+        Ok(profile) -> profile
+        Error(err) -> {
+          let _ = io.println("Error creating updated profile: " <> err)
+          current
+        }
+      }
 
-      case profile.save_user_profile(conn, updated) {
+      case profile_storage.save_user_profile(conn, updated) {
         Ok(_) ->
           Ok(
             "Meals per day updated to "

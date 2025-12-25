@@ -9,10 +9,9 @@ import gleeunit
 import gleeunit/should
 import meal_planner/types/macros.{Macros}
 import meal_planner/types/meal_plan.{
-  DailyMacros, DayMeals, MealPlan, new_daily_macros, new_day_meals,
-  new_meal_plan, daily_macros_actual, daily_macros_calories,
-  day_meals_day, meal_plan_week_of, meal_plan_target_macros,
-  meal_plan_avg_daily_macros,
+  DailyMacros, DayMeals, MealPlan, daily_macros_actual, daily_macros_calories,
+  day_meals_day, meal_plan_avg_daily_macros, meal_plan_target_macros,
+  meal_plan_week_of, new_daily_macros, new_day_meals, new_meal_plan,
 }
 import meal_planner/types/recipe.{MealPlanRecipe}
 
@@ -132,11 +131,12 @@ pub fn test_new_meal_plan_requires_exactly_seven_days() {
   case day_result {
     Ok(day) -> {
       let seven_days = [day, day, day, day, day, day, day]
-      let plan_result = new_meal_plan(
-        week_of: "2025-01-06",
-        days: seven_days,
-        target_macros: target,
-      )
+      let plan_result =
+        new_meal_plan(
+          week_of: "2025-01-06",
+          days: seven_days,
+          target_macros: target,
+        )
       plan_result |> should.be_ok()
     }
     Error(_) -> should.fail()
@@ -161,11 +161,12 @@ pub fn test_new_meal_plan_rejects_wrong_day_count() {
   case day_result {
     Ok(day) -> {
       let six_days = [day, day, day, day, day, day]
-      let plan_result = new_meal_plan(
-        week_of: "2025-01-06",
-        days: six_days,
-        target_macros: target,
-      )
+      let plan_result =
+        new_meal_plan(
+          week_of: "2025-01-06",
+          days: six_days,
+          target_macros: target,
+        )
       plan_result |> should.be_error()
     }
     Error(_) -> should.fail()
@@ -190,11 +191,12 @@ pub fn test_meal_plan_week_of_accessor() {
   case day_result {
     Ok(day) -> {
       let seven_days = [day, day, day, day, day, day, day]
-      let plan_result = new_meal_plan(
-        week_of: "2025-01-06",
-        days: seven_days,
-        target_macros: target,
-      )
+      let plan_result =
+        new_meal_plan(
+          week_of: "2025-01-06",
+          days: seven_days,
+          target_macros: target,
+        )
 
       case plan_result {
         Ok(plan) -> {
@@ -225,11 +227,12 @@ pub fn test_meal_plan_target_macros_accessor() {
   case day_result {
     Ok(day) -> {
       let seven_days = [day, day, day, day, day, day, day]
-      let plan_result = new_meal_plan(
-        week_of: "2025-01-06",
-        days: seven_days,
-        target_macros: target,
-      )
+      let plan_result =
+        new_meal_plan(
+          week_of: "2025-01-06",
+          days: seven_days,
+          target_macros: target,
+        )
 
       case plan_result {
         Ok(plan) -> {
@@ -263,11 +266,12 @@ pub fn test_meal_plan_avg_daily_macros() {
   case day_result {
     Ok(day) -> {
       let seven_days = [day, day, day, day, day, day, day]
-      let plan_result = new_meal_plan(
-        week_of: "2025-01-06",
-        days: seven_days,
-        target_macros: target,
-      )
+      let plan_result =
+        new_meal_plan(
+          week_of: "2025-01-06",
+          days: seven_days,
+          target_macros: target,
+        )
 
       case plan_result {
         Ok(plan) -> {
