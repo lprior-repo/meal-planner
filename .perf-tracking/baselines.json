@@ -1,0 +1,22 @@
+{
+  "test_execution": {
+    "baseline_ms": 800,
+    "warning_threshold_percent": 20,
+    "critical_threshold_percent": 50,
+    "description": "Fast test execution baseline (gleam run -m test_runner/fast)"
+  },
+  "full_test_execution": {
+    "baseline_ms": 5200,
+    "warning_threshold_percent": 15,
+    "critical_threshold_percent": 40,
+    "description": "Full test suite execution baseline (gleam test)"
+  },
+  "build_execution": {
+    "baseline_ms": 150,
+    "warning_threshold_percent": 50,
+    "critical_threshold_percent": 100,
+    "description": "Incremental build baseline (gleam build)"
+  },
+  "version": "1.0.0",
+  "last_updated": "2025-12-24"
+}
