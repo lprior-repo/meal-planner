@@ -32,7 +32,8 @@ pub fn generate_test() {
   // Verify paths exist
   spec.paths
   |> dict.size
-  |> should.be_true(fn(size) { size > 0 })
+  |> fn(size) { size > 0 }
+  |> should.be_true
 }
 
 /// Test JSON encoding of spec
@@ -44,7 +45,8 @@ pub fn to_json_test() {
   json_spec
   |> json.to_string
   |> string.length
-  |> should.be_true(fn(len) { len > 100 })
+  |> fn(len) { len > 100 }
+  |> should.be_true
 }
 
 /// Test YAML conversion of spec
@@ -88,7 +90,8 @@ pub fn components_exist_test() {
     Some(components) -> {
       components.schemas
       |> dict.size
-      |> should.be_true(fn(size) { size > 0 })
+      |> fn(size) { size > 0 }
+      |> should.be_true
     }
     None -> should.fail()
   }

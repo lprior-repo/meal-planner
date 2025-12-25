@@ -4,11 +4,12 @@ import gleam/int
 import gleam/list
 import gleam/string
 import meal_planner/id
-import meal_planner/types.{
-  type Ingredient, type Macros, type Recipe, type UserProfile, Low, Macros,
-  Recipe, activity_level_to_display_string, daily_carb_target, daily_fat_target,
-  daily_protein_target, float_to_1dp_string, goal_to_display_string,
-  macros_scale, macros_to_string,
+import meal_planner/types/macros.{type Macros, Macros, scale as macros_scale}
+import meal_planner/types/recipe.{type Ingredient, type Recipe, Recipe, Low}
+import meal_planner/types/user_profile.{
+  type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
+  Moderate, Sedentary, daily_carb_target, daily_fat_target, daily_protein_target,
+  user_profile_activity_level, user_profile_bodyweight, user_profile_goal,
 }
 
 /// Meal represents a recipe with a portion size multiplier
@@ -91,11 +92,11 @@ pub fn weekly_plan_avg_daily_macros(plan: WeeklyMealPlan) -> Macros {
   let days = int_to_float(list_length(plan.days))
   case days {
     0.0 -> Macros(protein: 0.0, fat: 0.0, carbs: 0.0)
-    _ ->
+    days_val ->
       Macros(
-        protein: total.protein /. days,
-        fat: total.fat /. days,
-        carbs: total.carbs /. days,
+        protein: total.protein /. days_val,
+        fat: total.fat /. days_val,
+        carbs: total.carbs /. days_val,
       )
   }
 }
@@ -197,11 +198,11 @@ fn user_profile_header_line(profile: UserProfile) -> String {
   let fat = float_to_int_rounded(daily_fat_target(profile))
   let carbs = float_to_int_rounded(daily_carb_target(profile))
 
-  float_to_int_rounded_string(profile.bodyweight)
+  float_to_int_rounded_string(user_profile_bodyweight(profile))
   <> " lbs, "
-  <> activity_level_to_display_string(profile.activity_level)
+  <> activity_level_to_string(user_profile_activity_level(profile))
   <> ", "
-  <> goal_to_display_string(profile.goal)
+  <> goal_to_string(user_profile_goal(profile))
   <> "\n"
   <> "Daily Targets: "
   <> "P:"
@@ -213,6 +214,35 @@ fn user_profile_header_line(profile: UserProfile) -> String {
   <> "g"
 }
 
+/// Helper: Convert activity level to string
+fn activity_level_to_string(level: ActivityLevel) -> String {
+  case level {
+    Sedentary -> "Sedentary"
+    Moderate -> "Moderate"
+    Active -> "Active"
+  }
+}
+
+/// Helper: Convert goal to string
+fn goal_to_string(goal: Goal) -> String {
+  case goal {
+    Gain -> "Gain"
+    Maintain -> "Maintain"
+    Lose -> "Lose"
+  }
+}
+
+/// Helper: Format macros as string
+fn macros_to_string(m: Macros) -> String {
+  "P:"
+  <> float_to_1dp_string(m.protein)
+  <> "g F:"
+  <> float_to_1dp_string(m.fat)
+  <> "g C:"
+  <> float_to_1dp_string(m.carbs)
+  <> "g"
+}
+
 /// Helper: Round float to nearest integer
 fn float_to_int_rounded(f: Float) -> Int {
   float.round(f)
@@ -221,4 +251,14 @@ fn float_to_int_rounded(f: Float) -> Int {
 /// Helper: Format rounded float as string
 fn float_to_int_rounded_string(f: Float) -> String {
   int.to_string(float_to_int_rounded(f))
+}
+
+/// Helper: Format float to 1 decimal place as string
+fn float_to_1dp_string(f: Float) -> String {
+  let scaled = f *. 10.0
+  let rounded = float.round(scaled)
+  let int_part = rounded / 10
+  let decimal_part = int.absolute_value(rounded % 10)
+
+  int.to_string(int_part) <> "." <> int.to_string(decimal_part)
 }

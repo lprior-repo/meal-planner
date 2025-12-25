@@ -23,7 +23,7 @@ pub fn init_recipe_model_test() {
 }
 
 pub fn create_recipe_list_item_test() {
-  let recipe_id = recipe_types.RecipeId(1234)
+  let recipe_id = recipe_types.recipe_id("1234")
   let item =
     model.RecipeListItem(
       recipe_id: recipe_id,

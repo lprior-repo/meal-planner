@@ -7,9 +7,10 @@ import gleam/io
 import gleam/option.{None}
 import gleam/string
 import meal_planner/id
-import meal_planner/types.{
+import meal_planner/types/user_profile.{
   type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
-  Moderate, Sedentary, UserProfile,
+  Moderate, Sedentary, new_user_profile, user_profile_activity_level,
+  user_profile_bodyweight, user_profile_goal, user_profile_meals_per_day,
 }
 
 /// Error type for user profile operations
@@ -93,14 +94,10 @@ pub fn create_profile(
       case validate_meals_per_day(meals_per_day) {
         Error(e) -> Error(e)
         Ok(m) ->
-          Ok(UserProfile(
-            id: id.user_id(id),
-            bodyweight: w,
-            activity_level: activity_level,
-            goal: goal,
-            meals_per_day: m,
-            micronutrient_goals: None,
-          ))
+          case new_user_profile(id.user_id(id), w, activity_level, goal, m, None) {
+            Ok(profile) -> Ok(profile)
+            Error(err) -> Error(InvalidInput(err))
+          }
       }
   }
 }
@@ -142,14 +139,10 @@ pub fn collect_interactive_profile() -> Result(UserProfile, ProfileError) {
 
   // Return a default profile for demonstration
   // In a full implementation with proper stdin support, this would collect data interactively
-  Ok(UserProfile(
-    id: id.user_id("default"),
-    bodyweight: 180.0,
-    activity_level: Moderate,
-    goal: Maintain,
-    meals_per_day: 3,
-    micronutrient_goals: None,
-  ))
+  case new_user_profile(id.user_id("default"), 180.0, Moderate, Maintain, 3, None) {
+    Ok(profile) -> Ok(profile)
+    Error(err) -> Error(InvalidInput(err))
+  }
 }
 
 /// Load user profile from storage or collect interactively
@@ -174,21 +167,26 @@ pub fn print_profile(profile: UserProfile) -> Nil {
 
 /// Format user profile for display
 pub fn format_user_profile(profile: UserProfile) -> String {
-  let activity_str = case profile.activity_level {
+  let activity_level = user_profile_activity_level(profile)
+  let activity_str = case activity_level {
     Sedentary -> "Sedentary"
     Moderate -> "Moderate"
     Active -> "Active"
   }
 
-  let goal_str = case profile.goal {
+  let goal = user_profile_goal(profile)
+  let goal_str = case goal {
     Gain -> "Gain"
     Maintain -> "Maintain"
     Lose -> "Lose"
   }
 
+  let bodyweight = user_profile_bodyweight(profile)
+  let meals_per_day = user_profile_meals_per_day(profile)
+
   "==== YOUR VERTICAL DIET PROFILE ====\n"
   <> "Bodyweight: "
-  <> float_to_string(profile.bodyweight)
+  <> float_to_string(bodyweight)
   <> " lbs\n"
   <> "Activity Level: "
   <> activity_str
@@ -197,7 +195,7 @@ pub fn format_user_profile(profile: UserProfile) -> String {
   <> goal_str
   <> "\n"
   <> "Meals per Day: "
-  <> int.to_string(profile.meals_per_day)
+  <> int.to_string(meals_per_day)
   <> "\n"
   <> "===================================="
 }

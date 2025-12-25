@@ -6,6 +6,7 @@
 /// - weight_input_field: Weight value input field
 /// - comment_input_field: Comment input field
 /// - form_buttons: Standard form action buttons
+import gleam/option.{None, Some}
 import shore
 import shore/style
 import shore/ui

@@ -8,10 +8,9 @@ import meal_planner/meal_plan.{
 }
 import meal_planner/meal_selection.{select_meals_for_week}
 import meal_planner/portion.{calculate_portion_for_target}
-import meal_planner/types.{
-  type Ingredient, type Macros, type Recipe, type UserProfile, Macros,
-  daily_carb_target, daily_fat_target, daily_protein_target,
-}
+import meal_planner/types/macros.{type Macros, Macros}
+import meal_planner/types/recipe.{type Ingredient, type Recipe}
+import meal_planner/types/user_profile.{type UserProfile, daily_carb_target, daily_fat_target, daily_protein_target}
 
 /// Day names for weekly plan generation
 pub fn day_names() -> List(String) {

@@ -3,10 +3,8 @@ import gleam/list
 import gleam/result
 import gleam/string
 import meal_planner/id
-import meal_planner/types.{
-  type FodmapLevel, type Ingredient, type Macros, type Recipe, High, Ingredient,
-  Low, Macros, Medium, Recipe,
-}
+import meal_planner/types/macros.{type Macros, Macros}
+import meal_planner/types/recipe.{type FodmapLevel, type Ingredient, type Recipe, High, Ingredient, Low, Medium, Recipe}
 import simplifile
 
 /// Parse YAML content into a list of recipes

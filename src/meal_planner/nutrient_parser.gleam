@@ -8,9 +8,8 @@
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import meal_planner/types.{
-  type Macros, type Micronutrients, Macros, Micronutrients,
-}
+import meal_planner/types/macros.{type Macros, Macros}
+import meal_planner/types/micronutrients.{type Micronutrients, new as new_micronutrients}
 
 pub type UsdaNutrient {
   UsdaNutrient(name: String, amount: Float, unit: String)
@@ -104,29 +103,35 @@ pub fn parse_usda_nutrients(
     ])
   {
     True ->
-      Some(Micronutrients(
-        fiber: fiber,
-        sugar: sugar,
-        sodium: sodium,
-        cholesterol: cholesterol,
-        vitamin_a: vitamin_a,
-        vitamin_c: vitamin_c,
-        vitamin_d: vitamin_d,
-        vitamin_e: vitamin_e,
-        vitamin_k: vitamin_k,
-        vitamin_b6: vitamin_b6,
-        vitamin_b12: vitamin_b12,
-        folate: folate,
-        thiamin: thiamin,
-        riboflavin: riboflavin,
-        niacin: niacin,
-        calcium: calcium,
-        iron: iron,
-        magnesium: magnesium,
-        phosphorus: phosphorus,
-        potassium: potassium,
-        zinc: zinc,
-      ))
+      new_micronutrients(
+        fiber,
+        sugar,
+        sodium,
+        cholesterol,
+        vitamin_a,
+        vitamin_c,
+        vitamin_d,
+        vitamin_e,
+        vitamin_k,
+        vitamin_b6,
+        vitamin_b12,
+        folate,
+        thiamin,
+        riboflavin,
+        niacin,
+        calcium,
+        iron,
+        magnesium,
+        phosphorus,
+        potassium,
+        zinc,
+      )
+      |> fn(result) {
+        case result {
+          Ok(m) -> Some(m)
+          Error(_) -> None
+        }
+      }
     False -> None
   }
 

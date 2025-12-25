@@ -1,8 +1,11 @@
 /// Tests for tandoor/client/recipes module
 import gleam/option.{None, Some}
 import gleeunit/should
+import meal_planner/tandoor/client/http.{
+  BearerAuth, NotFoundError, ParseError,
+}
 import meal_planner/tandoor/client/mod.{
-  BearerAuth, ClientConfig, NotFoundError, ParseError,
+  ClientConfig,
 }
 import meal_planner/tandoor/client/recipes.{
   CreateRecipeRequest, Recipe, RecipeDetail, RecipeListResponse,

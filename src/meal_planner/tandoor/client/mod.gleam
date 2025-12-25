@@ -4,6 +4,11 @@
 /// Tandoor API client. All other modules build upon these types.
 import gleam/int
 import gleam/option.{type Option, None, Some}
+import meal_planner/tandoor/client/http.{
+  type AuthMethod, type TandoorError, SessionAuth, BearerAuth, ParseError,
+  AuthenticationError, AuthorizationError, NotFoundError, BadRequestError,
+  ServerError, NetworkError, TimeoutError, UnknownError,
+}
 
 // ============================================================================
 // Core Types
@@ -16,42 +21,6 @@ pub type HttpMethod {
   Put
   Patch
   Delete
-}
-
-/// Tandoor API error type
-pub type TandoorError {
-  /// Authentication failed (401)
-  AuthenticationError(message: String)
-  /// Authorization failed (403)
-  AuthorizationError(message: String)
-  /// Resource not found (404)
-  NotFoundError(resource: String)
-  /// Request validation failed (400)
-  BadRequestError(message: String)
-  /// Server error (5xx)
-  ServerError(status_code: Int, message: String)
-  /// Network or connection error
-  NetworkError(message: String)
-  /// Timeout waiting for response
-  TimeoutError
-  /// Error parsing response JSON
-  ParseError(message: String)
-  /// Unknown error
-  UnknownError(message: String)
-}
-
-/// Authentication method for Tandoor API
-pub type AuthMethod {
-  /// Session-based authentication (username/password -> session cookie)
-  /// This is the recommended method as it properly establishes space scope
-  SessionAuth(
-    username: String,
-    password: String,
-    session_id: Option(String),
-    csrf_token: Option(String),
-  )
-  /// Bearer token authentication (for OAuth2 tokens)
-  BearerAuth(token: String)
 }
 
 /// HTTP client configuration
