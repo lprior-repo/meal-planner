@@ -10,8 +10,10 @@ import meal_planner/automation/plan_generator
 import meal_planner/fatsecret/profile/types as fatsecret_profile
 import meal_planner/generator/weekly
 import meal_planner/id
-import meal_planner/types/recipe.{type Recipe, Recipe, type FodmapLevel, High, Low}
 import meal_planner/types/macros.{Macros}
+import meal_planner/types/recipe.{
+  type FodmapLevel, type Recipe, High, Low, Recipe,
+}
 
 pub fn main() {
   gleeunit.main()

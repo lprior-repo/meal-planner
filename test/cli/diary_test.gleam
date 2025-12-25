@@ -13,7 +13,7 @@ import meal_planner/cli/domains/diary/formatters
 import meal_planner/cli/domains/diary/helpers
 import meal_planner/cli/domains/diary/types as diary_types
 import meal_planner/fatsecret/diary/types.{
-  type FoodEntry, FoodEntry, Breakfast, Snack, food_entry_id,
+  type FoodEntry, Breakfast, FoodEntry, Snack, food_entry_id,
 }
 
 pub fn main() {
