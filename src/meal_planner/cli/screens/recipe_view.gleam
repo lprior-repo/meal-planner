@@ -10,32 +10,32 @@ import gleam/dict
 import gleam/float
 import gleam/int
 import gleam/list
-import gleam/option.{None, Some}
-import gleam/string
-import meal_planner/cli/screens/recipe/messages.{type RecipeMsg}
-import meal_planner/cli/screens/recipe/model.{
-  type RecipeDetails, type RecipeEffect, type RecipeFilters, type RecipeListItem,
-  type RecipeModel, type RecipeViewState, type SearchType, type SortOption,
-  ByCuisine, ByIngredient, ByName, DetailView, DirectionsView, FavoritesView,
-  FilterView, ListView, NoEffect, NutritionView, SearchPopup, SortByCalories,
-  SortByName, SortByPrepTime, SortByRating, SortByRecent,
+import gleam/option.{type Option, None, Some}
+import meal_planner/cli/screens/recipe/messages.{
+  type RecipeMsg, AddToMealPlan, ApplyFilters, ClearError, ClearFilters,
+  ClearSearch, GoBack, GoToPage, GotRecipeDetails, GotSearchResults, KeyPressed,
+  NextPage, NoOp, PreviousPage, Refresh, SearchQueryChanged, SearchStarted,
+  SearchTypeChanged, SetCuisineType, SetDietType, SetMaxCalories, SetMaxPrepTime,
+  SetMinProtein, SetSortBy, ShowDetailView, ShowDirectionsView, ShowFavoritesView,
+  ShowFilterView, ShowListView, ShowNutritionView, ShowSearchPopup,
+  ToggleFavorite, ViewRecipeDetails,
 }
-import meal_planner/fatsecret/recipes/types as recipe_types
-import shore
-import shore/key
-import shore/style
-import shore/ui
-
-// Re-export types for backward compatibility
 import meal_planner/cli/screens/recipe/model.{
   type PaginationState, type RecipeDetails, type RecipeDirection,
   type RecipeEffect, type RecipeFilters, type RecipeIngredient,
   type RecipeListItem, type RecipeModel, type RecipeNutrition,
   type RecipeSearchState, type RecipeViewState, type SearchType, type SortOption,
-  default_filters, init,
+  BatchEffects, ByCuisine, ByIngredient, ByName, DetailView, DirectionsView,
+  FavoritesView, FetchRecipeDetails, FilterView, ListView, LoadFavorites,
+  NoEffect, NutritionView, PaginationState, RecipeDetails, RecipeFilters,
+  RecipeListItem, RecipeModel, RecipeSearchState, RemoveFavorite, SaveFavorite,
+  SearchPopup, SearchRecipes, SortByCalories, SortByName, SortByPrepTime,
+  SortByRating, SortByRecent, default_filters, init,
 }
-
-import meal_planner/cli/screens/recipe/messages.{type RecipeMsg}
+import meal_planner/fatsecret/recipes/types as recipe_types
+import shore
+import shore/style
+import shore/ui
 
 // ============================================================================
 // Update Function
