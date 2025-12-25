@@ -23,25 +23,16 @@
 import meal_planner/cli/screens/weight/messages.{
   type WeightEffect, type WeightMsg,
 }
-import meal_planner/cli/screens/weight/model.{type WeightModel}
-import meal_planner/cli/screens/weight/update
+import meal_planner/cli/screens/weight/model
 import meal_planner/cli/screens/weight/view
 import shore
 
 /// Initialize weight tracking screen with today's date
-pub fn init(today_date_int: Int) -> WeightModel {
+pub fn init(today_date_int: Int) -> model.WeightModel {
   model.init(today_date_int)
 }
 
-/// Update weight tracking state
-pub fn update(
-  model_val: WeightModel,
-  msg: WeightMsg,
-) -> #(WeightModel, WeightEffect) {
-  update.weight_update(model_val, msg)
-}
-
 /// Render weight tracking screen
-pub fn view(model_val: WeightModel) -> shore.Node(WeightMsg) {
+pub fn view(model_val: model.WeightModel) -> shore.Node(WeightMsg) {
   view.weight_view(model_val)
 }

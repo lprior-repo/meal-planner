@@ -13,10 +13,8 @@ import gleam/order
 import gleam/result
 import gleam/string
 import meal_planner/id
-import meal_planner/types.{
-  type FodmapLevel, type Ingredient, type Macros, type Recipe, High, Ingredient,
-  Low, Macros, Medium, Recipe,
-}
+import meal_planner/types/macros.{type Macros, Macros, calories}
+import meal_planner/types/recipe.{type FodmapLevel, type Ingredient, type Recipe, High, Low, Medium, Recipe, Ingredient}
 
 /// Tandoor API nutrition data structure
 /// Represents nutritional information from Tandoor recipes
@@ -288,7 +286,7 @@ pub fn recipe_to_tandoor(recipe: Recipe) -> TandoorRecipe {
 
   let nutrition =
     TandoorNutrition(
-      energy: Some(types.macros_calories(recipe.macros)),
+      energy: Some(calories(recipe.macros)),
       protein: Some(recipe.macros.protein),
       fat: Some(recipe.macros.fat),
       carbohydrates: Some(recipe.macros.carbs),

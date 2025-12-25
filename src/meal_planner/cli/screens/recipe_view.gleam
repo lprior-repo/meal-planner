@@ -16,9 +16,9 @@ import meal_planner/cli/screens/recipe/messages.{
   ClearSearch, GoBack, GoToPage, GotRecipeDetails, GotSearchResults, KeyPressed,
   NextPage, NoOp, PreviousPage, Refresh, SearchQueryChanged, SearchStarted,
   SearchTypeChanged, SetCuisineType, SetDietType, SetMaxCalories, SetMaxPrepTime,
-  SetMinProtein, SetSortBy, ShowDetailView, ShowDirectionsView, ShowFavoritesView,
-  ShowFilterView, ShowListView, ShowNutritionView, ShowSearchPopup,
-  ToggleFavorite, ViewRecipeDetails,
+  SetMinProtein, SetSortBy, ShowDetailView, ShowDirectionsView,
+  ShowFavoritesView, ShowFilterView, ShowListView, ShowNutritionView,
+  ShowSearchPopup, ToggleFavorite, ViewRecipeDetails,
 }
 import meal_planner/cli/screens/recipe/model.{
   type PaginationState, type RecipeDetails, type RecipeDirection,

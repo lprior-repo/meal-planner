@@ -602,8 +602,7 @@ pub fn very_long_food_entry_name_test() {
   case input {
     Custom(food_entry_name: name, ..) -> {
       // Should handle long strings without truncation
-      string.length(name)
-      > 1000
+      { string.length(name) > 1000 }
       |> should.be_true
     }
     FromFood(..) -> panic as "Expected Custom variant"

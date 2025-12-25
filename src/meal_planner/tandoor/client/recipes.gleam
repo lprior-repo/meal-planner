@@ -17,9 +17,9 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/logger
-import meal_planner/tandoor/client/http
+import meal_planner/tandoor/client/http.{type TandoorError, type AuthMethod, ParseError}
 import meal_planner/tandoor/client/mod.{
-  type ClientConfig, type TandoorError, ParseError,
+  type ClientConfig,
 }
 
 // ============================================================================
@@ -517,7 +517,8 @@ pub fn get_recipes(
   ]
 
   use req <- result.try(http.build_get_request(
-    config,
+    config.base_url,
+    config.auth,
     "/api/recipe/",
     query_params,
   ))
@@ -563,7 +564,7 @@ pub fn get_recipe_by_id(
 ) -> Result(Recipe, TandoorError) {
   let path = "/api/recipe/" <> int.to_string(recipe_id) <> "/"
 
-  use req <- result.try(http.build_get_request(config, path, []))
+  use req <- result.try(http.build_get_request(config.base_url, config.auth, path, []))
   logger.debug("Tandoor GET " <> path)
 
   use resp <- result.try(http.execute_and_parse(req))
@@ -606,7 +607,7 @@ pub fn get_recipe_detail(
 ) -> Result(RecipeDetail, TandoorError) {
   let path = "/api/recipe/" <> int.to_string(recipe_id) <> "/"
 
-  use req <- result.try(http.build_get_request(config, path, []))
+  use req <- result.try(http.build_get_request(config.base_url, config.auth, path, []))
   logger.debug("Tandoor GET (detail) " <> path)
 
   use resp <- result.try(http.execute_and_parse(req))
@@ -649,7 +650,7 @@ pub fn create_recipe(
 ) -> Result(Recipe, TandoorError) {
   let body = encode_create_recipe(recipe_request)
 
-  use req <- result.try(http.build_post_request(config, "/api/recipe/", body))
+  use req <- result.try(http.build_post_request(config.base_url, config.auth, "/api/recipe/", body))
   logger.debug("Tandoor POST /api/recipe/")
 
   use resp <- result.try(http.execute_and_parse(req))
@@ -692,7 +693,7 @@ pub fn delete_recipe(
 ) -> Result(Nil, TandoorError) {
   let path = "/api/recipe/" <> int.to_string(recipe_id) <> "/"
 
-  use req <- result.try(http.build_delete_request(config, path))
+  use req <- result.try(http.build_delete_request(config.base_url, config.auth, path))
   logger.debug("Tandoor DELETE " <> path)
 
   use _resp <- result.try(http.execute_and_parse(req))

@@ -11,17 +11,27 @@
 import gleam/dict
 import gleam/option.{None, Some}
 import gleeunit/should
+import meal_planner/cli/screens/recipe/messages.{
+  type RecipeMsg, AddToMealPlan, ApplyFilters, ClearError, ClearFilters,
+  ClearSearch, GoBack, GoToPage, GotRecipeDetails, GotSearchResults, KeyPressed,
+  NextPage, NoOp, PreviousPage, Refresh, SearchQueryChanged, SearchStarted,
+  SearchTypeChanged, SetCuisineType, SetDietType, SetMaxCalories, SetMaxPrepTime,
+  SetMinProtein, SetSortBy, ShowDetailView, ShowDirectionsView,
+  ShowFavoritesView, ShowFilterView, ShowListView, ShowNutritionView,
+  ShowSearchPopup, ToggleFavorite, ViewRecipeDetails,
+}
 import meal_planner/cli/screens/recipe/mod as recipe_view
-import meal_planner/cli/screens/recipe/mod.{
+import meal_planner/cli/screens/recipe/model.{
   type PaginationState, type RecipeDetails, type RecipeDirection,
   type RecipeEffect, type RecipeFilters, type RecipeIngredient,
-  type RecipeListItem, type RecipeModel, type RecipeMsg, type RecipeNutrition,
-  type RecipeSearchState, type RecipeViewState, type SearchType, type SortOption,
+  type RecipeListItem, type RecipeNutrition, type RecipeSearchState,
+  type RecipeViewState, type SearchType, type SortOption, BatchEffects,
   ByCuisine, ByIngredient, ByName, DetailView, DirectionsView, FavoritesView,
-  FilterView, ListView, NutritionView, PaginationState, RecipeDetails,
-  RecipeDirection, RecipeFilters, RecipeIngredient, RecipeListItem, RecipeModel,
-  RecipeNutrition, RecipeSearchState, SearchPopup, SortByCalories, SortByName,
-  SortByPrepTime, SortByRating, SortByRecent,
+  FetchRecipeDetails, FilterView, ListView, LoadFavorites, NoEffect,
+  NutritionView, PaginationState, RecipeDetails, RecipeDirection, RecipeFilters,
+  RecipeIngredient, RecipeListItem, RecipeNutrition, RecipeSearchState,
+  RemoveFavorite, SaveFavorite, SearchPopup, SearchRecipes, SortByCalories,
+  SortByName, SortByPrepTime, SortByRating, SortByRecent,
 }
 import meal_planner/fatsecret/recipes/types as recipe_types
 
@@ -434,42 +444,42 @@ pub fn recipe_msg_all_variants_compile_test() {
 
   let _msgs: List(RecipeMsg) = [
     // Navigation
-    recipe_view.ShowListView,
-    recipe_view.ShowDetailView(recipe_id),
-    recipe_view.ShowFilterView,
-    recipe_view.ShowFavoritesView,
-    recipe_view.ShowDirectionsView,
-    recipe_view.ShowNutritionView,
-    recipe_view.ShowSearchPopup,
-    recipe_view.GoBack,
+    ShowListView,
+    ShowDetailView(recipe_id),
+    ShowFilterView,
+    ShowFavoritesView,
+    ShowDirectionsView,
+    ShowNutritionView,
+    ShowSearchPopup,
+    GoBack,
     // Search
-    recipe_view.SearchQueryChanged("chicken"),
-    recipe_view.SearchTypeChanged(ByIngredient),
-    recipe_view.SearchStarted,
-    recipe_view.GotSearchResults(Ok(#([], 0))),
-    recipe_view.ClearSearch,
+    SearchQueryChanged("chicken"),
+    SearchTypeChanged(ByIngredient),
+    SearchStarted,
+    GotSearchResults(Ok(#([], 0))),
+    ClearSearch,
     // Pagination
-    recipe_view.NextPage,
-    recipe_view.PreviousPage,
-    recipe_view.GoToPage(5),
+    NextPage,
+    PreviousPage,
+    GoToPage(5),
     // Recipe actions
-    recipe_view.ViewRecipeDetails(recipe_id),
-    recipe_view.ToggleFavorite(recipe_id),
-    recipe_view.AddToMealPlan(recipe_id),
+    ViewRecipeDetails(recipe_id),
+    ToggleFavorite(recipe_id),
+    AddToMealPlan(recipe_id),
     // Filters
-    recipe_view.SetMaxCalories(Some(500)),
-    recipe_view.SetMaxPrepTime(Some(30)),
-    recipe_view.SetMinProtein(Some(20)),
-    recipe_view.SetCuisineType(Some("Mexican")),
-    recipe_view.SetDietType(Some("Keto")),
-    recipe_view.SetSortBy(SortByCalories),
-    recipe_view.ApplyFilters,
-    recipe_view.ClearFilters,
+    SetMaxCalories(Some(500)),
+    SetMaxPrepTime(Some(30)),
+    SetMinProtein(Some(20)),
+    SetCuisineType(Some("Mexican")),
+    SetDietType(Some("Keto")),
+    SetSortBy(SortByCalories),
+    ApplyFilters,
+    ClearFilters,
     // UI
-    recipe_view.ClearError,
-    recipe_view.KeyPressed("s"),
-    recipe_view.Refresh,
-    recipe_view.NoOp,
+    ClearError,
+    KeyPressed("s"),
+    Refresh,
+    NoOp,
   ]
 
   True
@@ -485,13 +495,13 @@ pub fn recipe_effect_all_variants_compile_test() {
   let filters = recipe_view.default_filters()
 
   let _effects: List(RecipeEffect) = [
-    recipe_view.NoEffect,
-    recipe_view.SearchRecipes("pasta", ByName, 1, filters),
-    recipe_view.FetchRecipeDetails(recipe_id),
-    recipe_view.SaveFavorite(recipe_id),
-    recipe_view.RemoveFavorite(recipe_id),
-    recipe_view.LoadFavorites,
-    recipe_view.BatchEffects([]),
+    NoEffect,
+    SearchRecipes("pasta", ByName, 1, filters),
+    FetchRecipeDetails(recipe_id),
+    SaveFavorite(recipe_id),
+    RemoveFavorite(recipe_id),
+    LoadFavorites,
+    BatchEffects([]),
   ]
 
   True

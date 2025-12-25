@@ -7,8 +7,11 @@
 /// - weight_view: Main view dispatcher
 /// - view_*: Individual view functions for each screen state
 /// - Helper functions for rendering components
+import gleam/float
+import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/string
 import meal_planner/cli/screens/weight/components/chart
 import meal_planner/cli/screens/weight/messages.{
   type WeightMsg, CancelAddEntry, CancelDelete, CancelEditEntry, ClearError,
@@ -21,9 +24,6 @@ import meal_planner/cli/screens/weight/model.{
   ChartView, ConfirmDeleteView, DatePicker, EditEntryView, Female, GainWeight,
   GoalsView, ListView, LoseWeight, MaintainWeight, Male, Other, ProfileView,
   StatsView,
-}
-import meal_planner/cli/screens/weight/update.{
-  date_int_to_string, float_to_string,
 }
 import meal_planner/fatsecret/weight/types as weight_types
 import shore
@@ -59,7 +59,7 @@ fn view_list(model: WeightModel) -> shore.Node(WeightMsg) {
     Some(w) -> [
       ui.br(),
       ui.text_styled(
-        "Current Weight: " <> float_to_string(w) <> " kg",
+        "Current Weight: " <> format_float(w) <> " kg",
         Some(style.Yellow),
         None,
       ),
@@ -143,7 +143,7 @@ fn view_add_entry(model: WeightModel) -> shore.Node(WeightMsg) {
   let parsed_row = case input.parsed_weight {
     Some(w) -> [
       ui.text_styled(
-        "Parsed: " <> float_to_string(w) <> " kg",
+        "Parsed: " <> format_float(w) <> " kg",
         Some(style.Green),
         None,
       ),
@@ -165,7 +165,7 @@ fn view_add_entry(model: WeightModel) -> shore.Node(WeightMsg) {
         ),
         ui.hr_styled(style.Green),
         ui.br(),
-        ui.text("Date: " <> date_int_to_string(input.date_int)),
+        ui.text("Date: " <> format_date_int(input.date_int)),
         ui.br(),
         ui.input("Weight (kg):", input.weight_str, style.Pct(30), fn(w) {
           WeightInputChanged(w)
@@ -199,8 +199,8 @@ fn view_edit_entry(model: WeightModel) -> shore.Node(WeightMsg) {
         ),
         ui.hr_styled(style.Green),
         ui.br(),
-        ui.text("Date: " <> date_int_to_string(edit.entry.date_int)),
-        ui.text("Original: " <> float_to_string(edit.original_weight) <> " kg"),
+        ui.text("Date: " <> format_date_int(edit.entry.date_int)),
+        ui.text("Original: " <> format_float(edit.original_weight) <> " kg"),
         ui.br(),
         ui.input("New Weight (kg):", edit.new_weight_str, style.Pct(30), fn(w) {
           EditWeightChanged(w)
@@ -252,14 +252,14 @@ fn view_goals(model: WeightModel) -> shore.Node(WeightMsg) {
     ui.hr_styled(style.Green),
     ui.br(),
     ui.text("Goal Type: " <> goal_type_to_string(g.goal_type)),
-    ui.text("Target Weight: " <> float_to_string(g.target_weight) <> " kg"),
-    ui.text("Starting Weight: " <> float_to_string(g.starting_weight) <> " kg"),
-    ui.text("Weekly Target: " <> float_to_string(g.weekly_target) <> " kg/week"),
+    ui.text("Target Weight: " <> format_float(g.target_weight) <> " kg"),
+    ui.text("Starting Weight: " <> format_float(g.starting_weight) <> " kg"),
+    ui.text("Weekly Target: " <> format_float(g.weekly_target) <> " kg/week"),
     ui.br(),
     case model.current_weight {
       Some(current) -> {
         let remaining = g.target_weight -. current
-        ui.text("Remaining: " <> float_to_string(remaining) <> " kg")
+        ui.text("Remaining: " <> format_float(remaining) <> " kg")
       }
       None -> ui.text("")
     },
@@ -284,7 +284,7 @@ fn view_stats(model: WeightModel) -> shore.Node(WeightMsg) {
 
   let bmi_row = case s.current_bmi, s.bmi_category {
     Some(bmi), Some(cat) -> [
-      ui.text("BMI: " <> float_to_string(bmi) <> " (" <> cat <> ")"),
+      ui.text("BMI: " <> format_float(bmi) <> " (" <> cat <> ")"),
     ]
     _, _ -> []
   }
@@ -299,18 +299,18 @@ fn view_stats(model: WeightModel) -> shore.Node(WeightMsg) {
         ),
         ui.hr_styled(style.Green),
         ui.br(),
-        ui.text("Total Change: " <> float_to_string(s.total_change) <> " kg"),
-        ui.text("Average: " <> float_to_string(s.average_weight) <> " kg"),
-        ui.text("Min: " <> float_to_string(s.min_weight) <> " kg"),
-        ui.text("Max: " <> float_to_string(s.max_weight) <> " kg"),
+        ui.text("Total Change: " <> format_float(s.total_change) <> " kg"),
+        ui.text("Average: " <> format_float(s.average_weight) <> " kg"),
+        ui.text("Min: " <> format_float(s.min_weight) <> " kg"),
+        ui.text("Max: " <> format_float(s.max_weight) <> " kg"),
         ui.br(),
-        ui.text("7-Day Change: " <> float_to_string(s.week_change) <> " kg"),
-        ui.text("30-Day Change: " <> float_to_string(s.month_change) <> " kg"),
+        ui.text("7-Day Change: " <> format_float(s.week_change) <> " kg"),
+        ui.text("30-Day Change: " <> format_float(s.month_change) <> " kg"),
         ui.br(),
       ],
       bmi_row,
       [
-        ui.text("Goal Progress: " <> float_to_string(s.goal_progress) <> "%"),
+        ui.text("Goal Progress: " <> format_float(s.goal_progress) <> "%"),
         ui.br(),
         ui.hr(),
         ui.text_styled("[Esc] Back", Some(style.Cyan), None),
@@ -362,7 +362,7 @@ fn view_profile(model: WeightModel) -> shore.Node(WeightMsg) {
     ui.text(
       "Height: "
       <> case p.height_cm {
-        Some(h) -> float_to_string(h) <> " cm"
+        Some(h) -> format_float(h) <> " cm"
         None -> "Not set"
       },
     ),
@@ -401,11 +401,36 @@ fn view_date_picker(
     }),
     ui.br(),
     ui.text_styled(
-      "Current: " <> date_int_to_string(model.current_date),
+      "Current: " <> format_date_int(model.current_date),
       Some(style.Cyan),
       None,
     ),
     ui.hr(),
     ui.text_styled("[Enter] Confirm  [Esc] Cancel", Some(style.Cyan), None),
   ])
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/// Format a float value as a string
+fn format_float(value: Float) -> String {
+  let int_part = int.to_string(float.truncate(value))
+  let frac_part = float.truncate({ value -. float.floor(value) } *. 100.0)
+  int_part <> "." <> int.to_string(frac_part)
+}
+
+/// Format a date integer (YYYYMMDD) as a readable string
+fn format_date_int(date_int: Int) -> String {
+  let date_str = int.to_string(date_int)
+  case string.length(date_str) {
+    8 -> {
+      let year = string.slice(date_str, 0, 4)
+      let month = string.slice(date_str, 4, 2)
+      let day = string.slice(date_str, 6, 2)
+      year <> "-" <> month <> "-" <> day
+    }
+    _ -> date_str
+  }
 }

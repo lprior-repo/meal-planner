@@ -6,9 +6,8 @@
 /// Ported from Go implementation in main.go
 import gleam/int as gleam_int
 import gleam/list
-import meal_planner/types.{
-  type Macros, type Recipe, Macros, macros_calories, macros_scale,
-}
+import meal_planner/types/macros.{type Macros, Macros, calories as macros_calories, scale as macros_scale}
+import meal_planner/types/recipe.{type Recipe}
 
 /// PortionCalculation represents a scaled recipe portion
 pub type PortionCalculation {
