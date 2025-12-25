@@ -500,7 +500,7 @@ pub fn email_command_to_json(cmd: EmailCommand) -> Json {
       json.object([
         #("type", json.string("adjust_meal")),
         #("day", json.string(day_of_week_to_string(day))),
-        #("meal_type", json.string(meal_type_to_string(meal_type))),
+        #("meal_type", json.string(cmd.meal_type_to_string(meal_type))),
         #("recipe_id", json.string(id.recipe_id_to_string(recipe_id))),
       ])
     cmd.AddPreference(pref) ->

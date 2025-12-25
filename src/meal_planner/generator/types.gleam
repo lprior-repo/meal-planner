@@ -438,7 +438,10 @@ fn prep_step_decoder() -> Decoder(PrepStep) {
 /// Decoder for WeeklyMacros
 pub fn weekly_macros_decoder() -> Decoder(WeeklyMacros) {
   use weekly_total <- decode.field("weekly_total", types_json.macros_decoder())
-  use daily_average <- decode.field("daily_average", types_json.macros_decoder())
+  use daily_average <- decode.field(
+    "daily_average",
+    types_json.macros_decoder(),
+  )
   use daily_breakdowns <- decode.field(
     "daily_breakdowns",
     decode.list(daily_macro_breakdown_decoder()),

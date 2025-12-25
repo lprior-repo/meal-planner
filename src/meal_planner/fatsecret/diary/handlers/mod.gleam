@@ -8,6 +8,7 @@ import meal_planner/fatsecret/diary/handlers/create
 import meal_planner/fatsecret/diary/handlers/delete
 import meal_planner/fatsecret/diary/handlers/get
 import meal_planner/fatsecret/diary/handlers/list
+import meal_planner/fatsecret/diary/handlers/summary
 import meal_planner/fatsecret/diary/handlers/update
 import pog
 import wisp.{type Request, type Response}
@@ -26,7 +27,7 @@ pub fn handle_diary_routes(req: Request, conn: pog.Connection) -> Response {
     ["api", "fatsecret", "diary", "day", date_int] ->
       list.get_day(req, conn, date_int)
     ["api", "fatsecret", "diary", "month", date_int] ->
-      list.get_month(req, conn, date_int)
+      summary.get_month(req, conn, date_int)
     ["api", "fatsecret", "diary", "copy-entries"] ->
       copy.copy_entries(req, conn)
     ["api", "fatsecret", "diary", "copy-meal"] -> copy.copy_meal(req, conn)
