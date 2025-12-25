@@ -34,11 +34,7 @@ import shore
 // Types
 
 // Messages - imported from messages module
-import meal_planner/cli/components/date_picker/messages.{
-  type DatePickerMsg, InputChanged, NextDay, NextMonth, NextWeek, NextYear, Open,
-  ParseInput, PreviousDay, PreviousMonth, PreviousWeek, PreviousYear, SelectDate,
-  ToggleInputMode,
-}
+import meal_planner/cli/components/date_picker/messages.{type DatePickerMsg}
 
 // ============================================================================
 // Initialization

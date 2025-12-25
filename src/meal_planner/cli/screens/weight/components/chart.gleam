@@ -17,7 +17,7 @@ import meal_planner/cli/screens/weight/model.{type ChartPoint}
 /// Render ASCII chart from weight data
 pub fn render_chart(
   data: List(ChartPoint),
-  width: Int,
+  _width: Int,
   height: Int,
 ) -> List(String) {
   case data {

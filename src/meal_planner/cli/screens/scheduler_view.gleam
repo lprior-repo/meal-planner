@@ -1080,7 +1080,7 @@ fn render_job_entry(
   job: JobDisplayEntry,
   index: Int,
 ) -> shore.Node(SchedulerMsg) {
-  let status_style = case job.job.enabled {
+  let _ = case job.job.enabled {
     True -> style.Green
     False -> style.Yellow
   }
@@ -1283,7 +1283,7 @@ fn view_config(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
 
 /// Render logs view
 fn view_logs(
-  model: SchedulerModel,
+  _model: SchedulerModel,
   execution_id: String,
 ) -> shore.Node(SchedulerMsg) {
   ui.col([
@@ -1307,7 +1307,7 @@ fn view_logs(
 
 /// Render run confirmation
 fn view_run_confirm(
-  _model: SchedulerModel,
+  __model: SchedulerModel,
   job_id: String,
 ) -> shore.Node(SchedulerMsg) {
   ui.col([
@@ -1329,7 +1329,7 @@ fn view_run_confirm(
 
 /// Render delete confirmation
 fn view_delete_confirm(
-  _model: SchedulerModel,
+  __model: SchedulerModel,
   job_id: String,
 ) -> shore.Node(SchedulerMsg) {
   ui.col([

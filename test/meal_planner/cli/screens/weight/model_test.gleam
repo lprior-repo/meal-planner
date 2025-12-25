@@ -34,6 +34,7 @@ pub fn default_goals_has_sensible_defaults_test() {
 
   case g.goal_type {
     model.MaintainWeight -> True
+    _ -> False
   }
   |> should.be_true
 }

@@ -9,28 +9,19 @@
 /// 3. Error Propagation: Client errors -> Service errors -> HTTP responses
 /// 4. Type Safety: Opaque types across boundaries
 /// 5. State Management: Database connection passing
-import gleam/json
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/fatsecret/diary/handlers/mod
 import meal_planner/fatsecret/diary/service
 import meal_planner/fatsecret/diary/types.{
-  type FoodEntryId, type FoodEntryInput, type MealType, Breakfast, Custom,
-  FoodEntry, FromFood, Lunch, food_entry_id, food_entry_id_to_string,
-  meal_type_from_string, meal_type_to_string,
+  Breakfast, Custom, Dinner, FoodEntry, FromFood, Lunch, Snack, food_entry_id,
+  food_entry_id_to_string, meal_type_from_string, meal_type_to_string,
 }
-import pog
-import wisp.{type Request, type Response}
 
 // ============================================================================
 // Test Fixtures
 // ============================================================================
 
-/// Mock database connection for testing
-/// NOTE: This will fail unless database is configured
-fn mock_db_connection() -> Result(pog.Connection, String) {
-  Error("Mock connection - tests require real database")
-}
+// Mock database connection removed - not used in tests
 
 // ============================================================================
 // Module Boundary Tests: Request Routing
@@ -76,7 +67,7 @@ pub fn routing_wrong_method_returns_405_test() {
 /// EDGE CASE: MealType roundtrip conversion
 /// Tests that MealType survives string serialization across boundaries
 pub fn meal_type_roundtrip_conversion_test() {
-  let meals = [Breakfast, Lunch, types.Dinner, types.Snack]
+  let meals = [Breakfast, Lunch, Dinner, Snack]
 
   meals
   |> should.not_equal([])
@@ -240,7 +231,6 @@ pub fn food_entry_input_from_food_complete_test() {
       d
       |> should.equal(19_000)
     }
-    Custom(..) -> panic as "Expected FromFood variant"
   }
 }
 
@@ -252,7 +242,7 @@ pub fn food_entry_input_custom_complete_test() {
       food_entry_name: "Custom Salad",
       serving_description: "Large bowl",
       number_of_units: 1.0,
-      meal: types.Dinner,
+      meal: Dinner,
       date_int: 19_001,
       calories: 350.0,
       carbohydrate: 40.0,
@@ -291,7 +281,6 @@ pub fn food_entry_input_custom_complete_test() {
       f
       |> should.equal(8.0)
     }
-    FromFood(..) -> panic as "Expected Custom variant"
   }
 }
 
@@ -316,7 +305,6 @@ pub fn food_entry_input_zero_units_test() {
       units
       |> should.equal(0.0)
     }
-    FromFood(..) -> panic as "Expected Custom variant"
   }
 }
 
@@ -342,7 +330,6 @@ pub fn food_entry_input_negative_units_test() {
       units
       |> should.equal(-1.5)
     }
-    FromFood(..) -> panic as "Expected Custom variant"
   }
 }
 
@@ -367,7 +354,6 @@ pub fn food_entry_input_extreme_units_test() {
       units
       |> should.equal(10_000.0)
     }
-    FromFood(..) -> panic as "Expected Custom variant"
   }
 }
 
@@ -465,7 +451,6 @@ pub fn date_int_epoch_zero_test() {
       d
       |> should.equal(0)
     }
-    Custom(..) -> panic as "Expected FromFood variant"
   }
 }
 
@@ -488,7 +473,6 @@ pub fn date_int_negative_test() {
       d
       |> should.equal(-100)
     }
-    Custom(..) -> panic as "Expected FromFood variant"
   }
 }
 
@@ -511,7 +495,6 @@ pub fn date_int_far_future_test() {
       d
       |> should.equal(50_000)
     }
-    Custom(..) -> panic as "Expected FromFood variant"
   }
 }
 
@@ -573,7 +556,6 @@ pub fn empty_food_entry_name_test() {
       name
       |> should.equal("")
     }
-    FromFood(..) -> panic as "Expected Custom variant"
   }
 }
 
@@ -605,7 +587,6 @@ pub fn very_long_food_entry_name_test() {
       { string.length(name) > 1000 }
       |> should.be_true
     }
-    FromFood(..) -> panic as "Expected Custom variant"
   }
 }
 
@@ -632,7 +613,6 @@ pub fn special_characters_in_entry_name_test() {
       name
       |> should.equal(special_name)
     }
-    FromFood(..) -> panic as "Expected Custom variant"
   }
 }
 

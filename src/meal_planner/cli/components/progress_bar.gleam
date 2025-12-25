@@ -355,7 +355,7 @@ fn render_gradient(filled: Int, empty: Int) -> String {
 }
 
 /// Render segmented fill
-fn render_segmented(filled: Int, empty: Int, total: Int) -> String {
+fn render_segmented(filled: Int, _empty: Int, total: Int) -> String {
   let segment_count = 10
   let segment_width = total / segment_count
   let filled_segments = filled / int.max(1, segment_width)
