@@ -20,8 +20,8 @@ import meal_planner/storage/profile.{
   type StorageError, DatabaseError, InvalidInput, NotFound, Unauthorized,
 }
 import meal_planner/types.{
-  type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
-  Moderate, Sedentary, UserProfile,
+  type UserProfile, Active, Gain, Lose, Maintain, Moderate, Sedentary,
+  UserProfile,
 }
 import pog
 

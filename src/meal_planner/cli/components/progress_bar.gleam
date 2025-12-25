@@ -212,7 +212,7 @@ pub fn render(config: ProgressBarConfig, state: ProgressBarState) -> String {
   let empty_width = config.width - filled_width
 
   // Get color based on scheme
-  let color = get_color(config.color_scheme, percentage, config.thresholds)
+  let _color = get_color(config.color_scheme, percentage, config.thresholds)
 
   // Build bar content
   let bar_content = case config.fill_style {

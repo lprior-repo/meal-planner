@@ -10,7 +10,7 @@ import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/float
 import gleam/int
-import gleam/option.{None, Some}
+import gleam/option
 import meal_planner/fatsecret/exercise/types.{
   type Exercise, type ExerciseDaySummary, type ExerciseEntry,
   type ExerciseEntryId, type ExerciseId, type ExerciseMonthSummary, Exercise,

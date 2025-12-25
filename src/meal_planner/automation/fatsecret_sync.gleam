@@ -4,7 +4,6 @@
 /// - Nutrition profile similarity
 /// - Name matching
 /// - Meal type alignment
-import gleam/option.{None}
 import meal_planner/fatsecret/diary/types.{type FoodEntry}
 import meal_planner/tandoor/mealplan.{type MealPlan}
 
