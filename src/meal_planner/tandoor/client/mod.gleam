@@ -2,8 +2,8 @@
 ///
 /// This module provides the core types and configuration management for the
 /// Tandoor API client. All other modules build upon these types.
-import gleam/option.{type Option, None, Some}
 import gleam/int
+import gleam/option.{type Option, None, Some}
 
 // ============================================================================
 // Core Types

@@ -627,8 +627,8 @@ pub fn day_of_week_from_string(s: String) -> Option(DayOfWeek) {
 /// Convert RegenerationScope to string
 pub fn regeneration_scope_to_string(scope: RegenerationScope) -> String {
   case scope {
-    cmd.SingleMeal -> "single_meal"
-    cmd.SingleDay -> "single_day"
+    cmd.SingleMeal(day: _, meal: _) -> "single_meal"
+    cmd.SingleDay(day: _) -> "single_day"
     cmd.FullWeek -> "full_week"
   }
 }
