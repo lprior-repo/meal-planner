@@ -22,7 +22,6 @@ import meal_planner/types/food.{
   FoodLogEntry, Lunch, Snack,
 }
 import meal_planner/types/macros.{type Macros, Macros}
-import meal_planner/types/macros
 import meal_planner/types/micronutrients.{type Micronutrients}
 import meal_planner/types/micronutrients as micros
 import meal_planner/types/recipe.{
@@ -228,23 +227,7 @@ pub fn user_profile_to_json(u: UserProfile) -> Json {
 
 /// Decode UserProfile from JSON
 pub fn user_profile_decoder() -> Decoder(UserProfile) {
-  use user_id <- decode.field("id", id.user_id_decoder())
-  use bodyweight <- decode.field("bodyweight", decode.float)
-  use activity_level <- decode.field("activity_level", activity_level_decoder())
-  use goal <- decode.field("goal", goal_decoder())
-  use meals_per_day <- decode.field("meals_per_day", decode.int)
-  use micronutrient_goals <- decode.field(
-    "micronutrient_goals",
-    decode.optional(micronutrients_decoder()),
-  )
-  decode.success(UserProfile(
-    id: user_id,
-    bodyweight: bodyweight,
-    activity_level: activity_level,
-    goal: goal,
-    meals_per_day: meals_per_day,
-    micronutrient_goals: micronutrient_goals,
-  ))
+  user.decoder()
 }
 
 // ============================================================================
