@@ -16,10 +16,7 @@ import meal_planner/config.{type Config}
 import meal_planner/id
 import meal_planner/ncp.{type NutritionGoals, NutritionGoals}
 import meal_planner/postgres
-import meal_planner/storage/profile.{
-  type StorageError, DatabaseError, InvalidInput, NotFound, Unauthorized,
-  get_user_profile,
-}
+import meal_planner/storage/profile as profile
 import meal_planner/types/user_profile.{
   type UserProfile, Active, Gain, Lose, Maintain, Moderate, Sedentary,
   new_user_profile, user_profile_activity_level, user_profile_bodyweight,
@@ -277,12 +274,12 @@ fn connect_db(config: Config) -> Result(pog.Connection, String) {
   |> result.map_error(postgres.format_error)
 }
 
-fn storage_error_to_string(err: StorageError) -> String {
+fn storage_error_to_string(err: profile.StorageError) -> String {
   case err {
-    NotFound -> "Not found"
-    DatabaseError(msg) -> "Database error: " <> msg
-    InvalidInput(msg) -> "Invalid input: " <> msg
-    Unauthorized(msg) -> "Unauthorized: " <> msg
+    profile.NotFound -> "Not found"
+    profile.DatabaseError(msg) -> "Database error: " <> msg
+    profile.InvalidInput(msg) -> "Invalid input: " <> msg
+    profile.Unauthorized(msg) -> "Unauthorized: " <> msg
   }
 }
 
@@ -301,7 +298,7 @@ fn view_all_preferences(config: Config) -> Result(String, String) {
     <> "\n"
 
   // Get user profile
-  let profile_section = case get_user_profile(conn) {
+  let profile_section = case profile.get_user_profile(conn) {
     Ok(p) -> format_profile_section(p)
     Error(_) -> "\nUser Profile: Not configured\n"
   }
@@ -479,7 +476,7 @@ fn build_goals_table(goals: NutritionGoals) -> String {
 fn display_profile(config: Config) -> Result(String, String) {
   use conn <- result.try(connect_db(config))
 
-  case get_user_profile(conn) {
+  case profile.get_user_profile(conn) {
     Ok(p) -> {
       let output =
         "User Profile\n"
@@ -502,7 +499,7 @@ fn update_profile(
   use conn <- result.try(connect_db(config))
 
   // Get current profile or create default
-  let current = case get_user_profile(conn) {
+  let current = case profile.get_user_profile(conn) {
     Ok(p) -> p
     Error(_) ->
       case
@@ -572,7 +569,7 @@ fn update_profile(
   }
 
   // Save to database
-  case profile_storage.save_user_profile(conn, updated) {
+  case profile.save_user_profile(conn, updated) {
     Ok(_) -> {
       let output =
         "Profile updated successfully!\n" <> format_profile_section(updated)
@@ -589,7 +586,7 @@ fn update_profile(
 fn display_meal_preferences(config: Config) -> Result(String, String) {
   use conn <- result.try(connect_db(config))
 
-  case get_user_profile(conn) {
+  case profile.get_user_profile(conn) {
     Ok(p) -> {
       let output =
         "Meal Preferences\n"
@@ -635,7 +632,7 @@ fn update_meals_per_day(config: Config, meals: Int) -> Result(String, String) {
       use conn <- result.try(connect_db(config))
 
       // Get current profile
-      let current = case get_user_profile(conn) {
+      let current = case profile.get_user_profile(conn) {
         Ok(p) -> p
         Error(_) ->
           case
@@ -664,7 +661,7 @@ fn update_meals_per_day(config: Config, meals: Int) -> Result(String, String) {
         }
       }
 
-      case profile_storage.save_user_profile(conn, updated) {
+      case profile.save_user_profile(conn, updated) {
         Ok(_) ->
           Ok(
             "Meals per day updated to "

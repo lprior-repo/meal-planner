@@ -24,4 +24,3 @@
 /// import meal_planner/types/macros.{type Macros}
 /// import meal_planner/types/food.{type FoodLogEntry}
 /// ```
-

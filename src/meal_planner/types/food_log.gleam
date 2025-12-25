@@ -5,10 +5,15 @@ import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/option.{None, Some}
 import meal_planner/id
-import meal_planner/types.{
+import meal_planner/types/food.{
   type DailyLog, type FoodLogEntry, type MealType, Breakfast, DailyLog, Dinner,
-  FoodLogEntry, Lunch, Snack, macros_decoder, macros_to_json,
-  micronutrients_decoder, micronutrients_to_json,
+  FoodLogEntry, Lunch, Snack,
+}
+import meal_planner/types/macros.{
+  decoder as macros_decoder, to_json as macros_to_json,
+}
+import meal_planner/types/micronutrients.{
+  decoder as micronutrients_decoder, to_json as micronutrients_to_json,
 }
 
 // ============================================================================

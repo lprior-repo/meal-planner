@@ -11,7 +11,9 @@ import gleam/list
 import gleam/option.{type Option, Some}
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
 import meal_planner/storage/utils
-import meal_planner/types.{type Macros}
+import meal_planner/types/food.{type FoodLogEntry}
+import meal_planner/types/macros.{type Macros}
+import meal_planner/types/micronutrients.{type Micronutrients}
 import meal_planner/utils/macros as macros_utils
 import meal_planner/utils/micronutrients as utils_micro
 import pog
@@ -49,15 +51,15 @@ pub type WeeklySummary {
 
 /// Calculate total macros from food log entries
 /// Re-exported from utils/macros module
-pub fn calculate_total_macros(entries: List(types.FoodLogEntry)) -> Macros {
+pub fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
   macros_utils.calculate_total_macros(entries)
 }
 
 /// Calculate total micronutrients from food log entries
 /// Re-exported from utils/micronutrients module
 pub fn calculate_total_micronutrients(
-  entries: List(types.FoodLogEntry),
-) -> Option(types.Micronutrients) {
+  entries: List(FoodLogEntry),
+) -> Option(Micronutrients) {
   utils_micro.calculate_total_micronutrients(entries)
 }
 

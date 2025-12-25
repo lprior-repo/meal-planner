@@ -8,7 +8,12 @@ import meal_planner/storage/profile.{
   type StorageError, DatabaseError, NotFound, result_to_storage_error,
 }
 import meal_planner/storage/utils
-import meal_planner/types
+import meal_planner/types/custom_food.{type CustomFood, CustomFood}
+import meal_planner/types/food.{
+  type FoodSearchResponse, type FoodSearchResult, type SearchFilters,
+  CustomFoodResult, FoodSearchResponse, UsdaFoodResult,
+}
+import meal_planner/types/macros.{type Macros, Macros}
 import meal_planner/utils/micronutrients as micro_utils
 import pog
 
@@ -98,7 +103,7 @@ pub fn search_foods(
 pub fn search_foods_filtered(
   conn: pog.Connection,
   query: String,
-  _filters: types.SearchFilters,
+  _filters: SearchFilters,
   limit: Int,
 ) -> Result(List(UsdaFood), StorageError) {
   search_foods(conn, query, limit)
@@ -108,7 +113,7 @@ pub fn search_foods_filtered(
 pub fn search_foods_filtered_with_offset(
   conn: pog.Connection,
   query: String,
-  _filters: types.SearchFilters,
+  _filters: SearchFilters,
   limit: Int,
   offset: Int,
 ) -> Result(List(UsdaFood), StorageError) {
@@ -259,8 +264,8 @@ pub fn get_food_categories(
 pub fn create_custom_food(
   conn: pog.Connection,
   user_id: id.UserId,
-  food: types.CustomFood,
-) -> Result(types.CustomFood, StorageError) {
+  food: CustomFood,
+) -> Result(CustomFood, StorageError) {
   let sql =
     "INSERT INTO custom_foods (id, user_id, name, brand, description, serving_size, serving_unit, protein, fat, carbs, calories)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -293,7 +298,7 @@ pub fn get_custom_food_by_id(
   conn: pog.Connection,
   user_id: id.UserId,
   food_id: id.CustomFoodId,
-) -> Result(types.CustomFood, StorageError) {
+) -> Result(CustomFood, StorageError) {
   let sql =
     "SELECT id, user_id, name, brand, description, serving_size, serving_unit, protein, fat, carbs, calories, fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k, vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium, phosphorus, potassium, zinc
      FROM custom_foods WHERE id = $1 AND user_id = $2"
@@ -318,7 +323,7 @@ pub fn search_custom_foods(
   user_id: id.UserId,
   query: String,
   limit: Int,
-) -> Result(List(types.CustomFood), StorageError) {
+) -> Result(List(CustomFood), StorageError) {
   let sql =
     "SELECT id, user_id, name, brand, description, serving_size, serving_unit, protein, fat, carbs, calories, fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k, vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium, phosphorus, potassium, zinc
      FROM custom_foods
@@ -348,7 +353,7 @@ pub fn search_custom_foods(
 pub fn get_custom_foods_for_user(
   conn: pog.Connection,
   user_id: id.UserId,
-) -> Result(List(types.CustomFood), StorageError) {
+) -> Result(List(CustomFood), StorageError) {
   let sql =
     "SELECT id, user_id, name, brand, description, serving_size, serving_unit, protein, fat, carbs, calories, fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k, vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium, phosphorus, potassium, zinc
      FROM custom_foods WHERE user_id = $1 ORDER BY name"
@@ -384,8 +389,8 @@ pub fn delete_custom_food(
 pub fn update_custom_food(
   conn: pog.Connection,
   user_id: id.UserId,
-  food: types.CustomFood,
-) -> Result(types.CustomFood, StorageError) {
+  food: CustomFood,
+) -> Result(CustomFood, StorageError) {
   let sql =
     "UPDATE custom_foods SET name = $3, brand = $4, description = $5, serving_size = $6, serving_unit = $7, protein = $8, fat = $9, carbs = $10, calories = $11 WHERE id = $1 AND user_id = $2
      RETURNING id, user_id, name, brand, description, serving_size, serving_unit, protein, fat, carbs, calories, fiber, sugar, sodium, cholesterol, vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k, vitamin_b6, vitamin_b12, folate, thiamin, riboflavin, niacin, calcium, iron, magnesium, phosphorus, potassium, zinc"
@@ -423,7 +428,7 @@ pub fn unified_search_foods(
   user_id: id.UserId,
   query: String,
   limit: Int,
-) -> Result(types.FoodSearchResponse, StorageError) {
+) -> Result(FoodSearchResponse, StorageError) {
   // Search custom foods first (prioritized)
   use custom_foods <- result.try(search_custom_foods(
     conn,
@@ -451,12 +456,12 @@ pub fn unified_search_foods(
 
   // Convert custom foods to FoodSearchResult
   let custom_results =
-    list.map(custom_foods, fn(food) { types.CustomFoodResult(food) })
+    list.map(custom_foods, fn(food) { CustomFoodResult(food) })
 
   // Convert USDA foods to FoodSearchResult
   let usda_results =
     list.map(usda_foods, fn(food) {
-      types.UsdaFoodResult(
+      UsdaFoodResult(
         food.fdc_id,
         food.description,
         food.data_type,
@@ -469,7 +474,7 @@ pub fn unified_search_foods(
   let all_results = list.append(custom_results, usda_results)
   let total_count = custom_count + usda_count
 
-  Ok(types.FoodSearchResponse(
+  Ok(FoodSearchResponse(
     results: all_results,
     total_count: total_count,
     custom_count: custom_count,
@@ -511,7 +516,7 @@ pub fn get_food_nutrients(
 
 // Decoders
 
-fn custom_food_decoder() -> decode.Decoder(types.CustomFood) {
+fn custom_food_decoder() -> decode.Decoder(CustomFood) {
   use custom_food_id_str <- decode.field(0, decode.string)
   use user_id_str <- decode.field(1, decode.string)
   use name <- decode.field(2, decode.string)
@@ -570,7 +575,7 @@ fn custom_food_decoder() -> decode.Decoder(types.CustomFood) {
       zinc,
     )
 
-  decode.success(types.CustomFood(
+  decode.success(CustomFood(
     id: id.custom_food_id(custom_food_id_str),
     user_id: id.user_id(user_id_str),
     name: name,
@@ -578,7 +583,7 @@ fn custom_food_decoder() -> decode.Decoder(types.CustomFood) {
     description: description,
     serving_size: serving_size,
     serving_unit: serving_unit,
-    macros: types.Macros(protein: protein, fat: fat, carbs: carbs),
+    macros: Macros(protein: protein, fat: fat, carbs: carbs),
     calories: calories,
     micronutrients: micronutrients,
   ))
