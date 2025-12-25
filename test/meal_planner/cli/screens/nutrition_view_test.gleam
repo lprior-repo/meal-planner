@@ -9,18 +9,18 @@
 /// - Chart settings
 /// - Macro status calculations
 /// - Message and effect variants
-import gleam/option.{None, Some}
+import gleam/option.{None}
 import gleeunit/should
 import meal_planner/cli/screens/nutrition_view.{
-  type ChartSettings, type ChartType, type DailyNutrition, type GoalEditState,
-  type GoalType, type MacroStatus, type MealNutrition, type NutrientType,
-  type NutritionEffect, type NutritionGoals, type NutritionModel,
+  type ChartType,
+  type GoalType, type MacroStatus, type NutrientType,
+  type NutritionEffect,
   type NutritionMsg, type NutritionViewState, type TimeRange, AreaChart,
   BarChart, Calories, Carbohydrate, ChartSettings, Cholesterol, ComparisonView,
   Custom, DailyNutrition, DashboardView, DatePicker, Fat, Fiber, GoalEditState,
   GoalEditView, GoalsView, Last14Days, Last30Days, Last7Days, Last90Days,
   LineChart, MealBreakdownView, MealNutrition, MonthlyTrendsView, MuscleBuilding,
-  NutrientDetailsView, NutritionGoals, NutritionModel, OnTarget, Over, Protein,
+  NutrientDetailsView, NutritionGoals, OnTarget, Over, Protein,
   SaturatedFat, Sodium, Sugar, Under, WeeklyTrendsView, WeightGain, WeightLoss,
   WeightMaintenance,
 }
@@ -106,7 +106,6 @@ pub fn view_state_dashboard_view_test() {
   let view_state: NutritionViewState = DashboardView
   case view_state {
     DashboardView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -115,7 +114,6 @@ pub fn view_state_weekly_trends_test() {
   let view_state: NutritionViewState = WeeklyTrendsView
   case view_state {
     WeeklyTrendsView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -124,7 +122,6 @@ pub fn view_state_monthly_trends_test() {
   let view_state: NutritionViewState = MonthlyTrendsView
   case view_state {
     MonthlyTrendsView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -133,7 +130,6 @@ pub fn view_state_goals_view_test() {
   let view_state: NutritionViewState = GoalsView
   case view_state {
     GoalsView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -142,7 +138,6 @@ pub fn view_state_goal_edit_view_test() {
   let view_state: NutritionViewState = GoalEditView
   case view_state {
     GoalEditView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -151,7 +146,6 @@ pub fn view_state_meal_breakdown_view_test() {
   let view_state: NutritionViewState = MealBreakdownView
   case view_state {
     MealBreakdownView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -160,7 +154,6 @@ pub fn view_state_nutrient_details_view_test() {
   let view_state: NutritionViewState = NutrientDetailsView(Protein)
   case view_state {
     NutrientDetailsView(nutrient) -> nutrient == Protein
-    _ -> False
   }
   |> should.be_true
 }
@@ -169,7 +162,6 @@ pub fn view_state_comparison_view_test() {
   let view_state: NutritionViewState = ComparisonView
   case view_state {
     ComparisonView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -308,7 +300,6 @@ pub fn macro_status_under_test() {
   let status: MacroStatus = Under
   case status {
     Under -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -317,7 +308,6 @@ pub fn macro_status_on_target_test() {
   let status: MacroStatus = OnTarget
   case status {
     OnTarget -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -326,7 +316,6 @@ pub fn macro_status_over_test() {
   let status: MacroStatus = Over
   case status {
     Over -> True
-    _ -> False
   }
   |> should.be_true
 }

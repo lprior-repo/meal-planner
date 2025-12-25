@@ -15,13 +15,13 @@
 //// Part of Autonomous Nutritional Control Plane (meal-planner-918).
 
 import gleam/option.{None, Some}
-import gleam/result
-import meal_planner/generator/weekly.{
-  type Constraints, type WeeklyMealPlan, WeeklyMealPlan,
-}
+import meal_planner/generator/weekly.{type WeeklyMealPlan, WeeklyMealPlan}
 import meal_planner/id.{type UserId, job_id}
+import meal_planner/meal_plan/constraints.{
+  type Constraints, Balanced, Constraints,
+}
 import meal_planner/scheduler/types as scheduler_types
-import meal_planner/types/macros.{type Macros, Macros}
+import meal_planner/types/macros.{Macros}
 import pog
 
 // ============================================================================
@@ -59,8 +59,8 @@ pub type GenerationError {
 /// - Ok(WeeklyMealPlan) with complete 7-day plan on success
 /// - Error(GenerationError) on failure
 pub fn trigger_weekly_generation(
-  conn: pog.Connection,
-  user_id: UserId,
+  _conn: pog.Connection,
+  _user_id: UserId,
 ) -> Result(WeeklyMealPlan, GenerationError) {
   // TODO: Implement full generation flow
   // For now, return a minimal valid WeeklyMealPlan to make tests pass (GREEN phase)
@@ -93,7 +93,7 @@ pub fn trigger_weekly_generation(
 /// - Ok(ScheduledJob) configured for Friday 6 AM execution
 /// - Error(GenerationError) on failure
 pub fn create_next_friday_job(
-  conn: pog.Connection,
+  _conn: pog.Connection,
   user_id: UserId,
 ) -> Result(scheduler_types.ScheduledJob, GenerationError) {
   // TODO: Insert into database via job_manager
@@ -129,53 +129,11 @@ pub fn create_next_friday_job(
 // Helper Functions (Placeholder for Future Implementation)
 // ============================================================================
 
-/// Fetch user constraints from database (or return defaults if first run)
-fn fetch_user_constraints(
-  conn: pog.Connection,
-  user_id: UserId,
-) -> Result(weekly.Constraints, GenerationError) {
-  // TODO: Query user_constraints table
-  Ok(weekly.Constraints(locked_meals: [], travel_dates: []))
-}
-
-/// Fetch weekly trends from previous week
-fn fetch_weekly_trends(
-  conn: pog.Connection,
-  user_id: UserId,
-) -> Result(Nil, GenerationError) {
-  // TODO: Call advisor/weekly_trends module
-  Ok(Nil)
-}
-
-/// Fetch user's FatSecret profile for nutrition goals
-fn fetch_fatsecret_profile(
-  conn: pog.Connection,
-  user_id: UserId,
-) -> Result(Nil, GenerationError) {
-  // TODO: Call FatSecret API
-  Ok(Nil)
-}
-
-/// Fetch recipes from Tandoor API
-fn fetch_tandoor_recipes(conn: pog.Connection) -> Result(Nil, GenerationError) {
-  // TODO: Call Tandoor API
-  Ok(Nil)
-}
-
-/// Calculate grocery list from selected recipes
-fn calculate_grocery_list(plan: WeeklyMealPlan) -> Result(Nil, GenerationError) {
-  // TODO: Extract ingredients and aggregate quantities
-  Ok(Nil)
-}
-
-/// Generate email output for the meal plan
-fn generate_email_output(plan: WeeklyMealPlan) -> Result(Nil, GenerationError) {
-  // TODO: Format meal plan as email HTML
-  Ok(Nil)
-}
-
-/// Stage FatSecret upload for the generated meal plan
-fn stage_fatsecret_upload(plan: WeeklyMealPlan) -> Result(Nil, GenerationError) {
-  // TODO: Prepare FatSecret diary upload payload
-  Ok(Nil)
-}
+// TODO: Implement helper functions when needed:
+// - fetch_user_constraints: Query user_constraints table
+// - fetch_weekly_trends: Call advisor/weekly_trends module
+// - fetch_fatsecret_profile: Call FatSecret API
+// - fetch_tandoor_recipes: Call Tandoor API
+// - calculate_grocery_list: Extract ingredients and aggregate quantities
+// - generate_email_output: Format meal plan as email HTML
+// - stage_fatsecret_upload: Prepare FatSecret diary upload payload

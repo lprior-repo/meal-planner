@@ -196,7 +196,6 @@ pub fn encode_food_with_hierarchy_test() {
 fn gleam_stdlib_contains(haystack: String, needle: String) -> Bool {
   case gleam_stdlib_string_split(haystack, needle) {
     [_] -> False
-    _ -> True
   }
 }
 

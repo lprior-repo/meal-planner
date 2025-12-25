@@ -115,7 +115,6 @@ pub fn view_state_list_view_test() {
   let view_state: RecipeViewState = ListView
   case view_state {
     ListView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -124,7 +123,6 @@ pub fn view_state_detail_view_test() {
   let view_state: RecipeViewState = DetailView
   case view_state {
     DetailView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -133,7 +131,6 @@ pub fn view_state_filter_view_test() {
   let view_state: RecipeViewState = FilterView
   case view_state {
     FilterView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -142,7 +139,6 @@ pub fn view_state_favorites_view_test() {
   let view_state: RecipeViewState = FavoritesView
   case view_state {
     FavoritesView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -151,7 +147,6 @@ pub fn view_state_directions_view_test() {
   let view_state: RecipeViewState = DirectionsView
   case view_state {
     DirectionsView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -160,7 +155,6 @@ pub fn view_state_nutrition_view_test() {
   let view_state: RecipeViewState = NutritionView
   case view_state {
     NutritionView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -169,7 +163,6 @@ pub fn view_state_search_popup_test() {
   let view_state: RecipeViewState = SearchPopup
   case view_state {
     SearchPopup -> True
-    _ -> False
   }
   |> should.be_true
 }
