@@ -22,6 +22,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/string
 import meal_planner/cli/screens/fatsecret_diary.{
   type DiaryEffect, type DiaryModel, type DiaryMsg, type MealSection,
   type MealTotals, type NutritionTarget, type SearchState, type ViewState, Batch,
