@@ -30,8 +30,9 @@ import meal_planner/types/recipe.{
 }
 import meal_planner/types/user_profile.{
   type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
-  Moderate, Sedentary, UserProfile,
+  Moderate, Sedentary,
 }
+import meal_planner/types/user_profile as user
 
 // ============================================================================
 // Macros JSON
