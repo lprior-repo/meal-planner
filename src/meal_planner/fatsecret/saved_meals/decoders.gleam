@@ -28,15 +28,18 @@ fn meal_types_decoder() -> decode.Decoder(List(MealType)) {
 
 /// Decode float, handling string numbers from API
 fn float_decoder() -> decode.Decoder(Float) {
-  decode.one_of(decode.float, [
-    {
-      use s <- decode.then(decode.string)
-      case float.parse(s) {
-        Ok(f) -> decode.success(f)
-        Error(_) -> decode.success(0.0)
-      }
-    },
-  ])
+  decode.one_of(
+    decode.float,
+    or: [
+      {
+        use s <- decode.then(decode.string)
+        case float.parse(s) {
+          Ok(f) -> decode.success(f)
+          Error(_) -> decode.failure(0.0, "Float")
+        }
+      },
+    ],
+  )
 }
 
 /// Decode optional string field
