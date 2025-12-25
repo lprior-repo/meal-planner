@@ -16,7 +16,7 @@ import meal_planner/config.{type Config}
 import meal_planner/id
 import meal_planner/ncp.{type NutritionGoals, NutritionGoals}
 import meal_planner/postgres
-import meal_planner/storage/profile as profile
+import meal_planner/storage/profile
 import meal_planner/types/user_profile.{
   type UserProfile, Active, Gain, Lose, Maintain, Moderate, Sedentary,
   new_user_profile, user_profile_activity_level, user_profile_bodyweight,

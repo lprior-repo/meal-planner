@@ -20,12 +20,12 @@ import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/generator/weekly.{type DayMeals, type WeeklyMealPlan}
-import meal_planner/types.{type Ingredient}
 import meal_planner/types/grocery_item.{
   type GroceryItem, type GroceryList, grocery_list_all_items,
   grocery_list_categories, grocery_list_count, grocery_list_items_for_category,
   grocery_list_to_string, new_grocery_item, new_grocery_list,
 }
+import meal_planner/types/recipe.{type Ingredient}
 
 // ============================================================================
 // Core Types

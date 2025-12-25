@@ -17,7 +17,7 @@ import meal_planner/advisor/daily_recommendations.{
 import meal_planner/storage/logs/summaries.{
   type FoodSummaryItem, type WeeklySummary,
 }
-import meal_planner/types.{type Macros}
+import meal_planner/types/macros.{type Macros}
 
 // ============================================================================
 // Weekly Summary Email

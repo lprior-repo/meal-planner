@@ -17,8 +17,10 @@ import meal_planner/fatsecret/profile/types as fatsecret_profile
 import meal_planner/generator/types as gen_types
 import meal_planner/generator/weekly
 import meal_planner/grocery_list
-import meal_planner/types.{
-  type FodmapLevel, type Macros, type Recipe, High, Low, Medium, macros_calories,
+import meal_planner/types/macros.{type Macros}
+import meal_planner/types/macros
+import meal_planner/types/recipe.{
+  type FodmapLevel, type Recipe, High, Low, Medium,
 }
 
 // ============================================================================
@@ -270,7 +272,7 @@ fn filter_by_calories(
   case max_calories {
     None -> recipes
     Some(max) ->
-      list.filter(recipes, fn(r) { macros_calories(r.macros) <=. max })
+      list.filter(recipes, fn(r) { macros.calories(r.macros) <=. max })
   }
 }
 
@@ -305,7 +307,7 @@ fn score_recipe(
   // Calculate individual scores
   let protein_score = score_protein_alignment(macros.protein, target.protein)
   let calorie_score =
-    score_calorie_alignment(macros_calories(macros), macros_calories(target))
+    score_calorie_alignment(macros.calories(macros), macros.calories(target))
   let balance_score = score_macro_balance(macros)
 
   // Calculate weighted total score
@@ -369,7 +371,7 @@ fn score_calorie_alignment(actual: Float, target: Float) -> Float {
 /// - Fat: 25-35% of calories
 /// - Carbs: 35-45% of calories
 fn score_macro_balance(macros: Macros) -> Float {
-  let total_cals = macros_calories(macros)
+  let total_cals = macros.calories(macros)
   case total_cals <=. 0.0 {
     True -> 0.0
     False -> {

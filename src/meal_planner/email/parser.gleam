@@ -2,13 +2,13 @@
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import meal_planner/id
-import meal_planner/types.{
+import meal_planner/email/command.{
   type DayOfWeek, type EmailCommand, type EmailCommandError, type EmailRequest,
   type MealType, type RegenerationScope, AddPreference, AdjustMeal, Breakfast,
   Dinner, EmailRequest, FullWeek, InvalidCommand, Lunch, RegeneratePlan,
   RemoveDislike, SingleDay, SingleMeal, SkipMeal, Snack, day_of_week_from_string,
 }
+import meal_planner/id
 
 /// Command pattern matching configuration
 type CommandPattern {

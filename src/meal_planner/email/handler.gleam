@@ -9,10 +9,10 @@ import gleam/json
 import gleam/option.{type Option, None, Some}
 import gleam/result
 
-import meal_planner/email/parser
-import meal_planner/types.{
+import meal_planner/email/command.{
   type EmailCommand, type EmailCommandError, EmailRequest, InvalidCommand,
 }
+import meal_planner/email/parser
 
 import wisp
 

@@ -17,6 +17,9 @@ import meal_planner/config
 import meal_planner/email/confirmation as email_confirmation
 
 // import meal_planner/email/executor as email_executor
+import meal_planner/email/command.{
+  type CommandExecutionResult, type EmailCommand, CommandExecutionResult,
+}
 import meal_planner/fatsecret/client
 import meal_planner/fatsecret/core/config as fs_config
 import meal_planner/fatsecret/core/oauth as core_oauth
@@ -25,7 +28,6 @@ import meal_planner/fatsecret/profile/handlers as profile_handlers
 import meal_planner/fatsecret/profile/oauth as profile_oauth
 import meal_planner/fatsecret/service
 import meal_planner/fatsecret/storage
-import meal_planner/types
 import meal_planner/web/handlers/diet
 import meal_planner/web/handlers/health
 import meal_planner/web/handlers/macros
@@ -431,10 +433,10 @@ pub fn handle_fatsecret_get_profile_auth(
 /// Execute parsed email command with database connection
 /// Routes command to appropriate handler (adjust meal, preferences, regeneration, etc.)
 pub fn execute_email_command(
-  command: types.EmailCommand,
+  command: EmailCommand,
   _conn: pog.Connection,
-) -> types.CommandExecutionResult {
-  types.CommandExecutionResult(
+) -> CommandExecutionResult {
+  CommandExecutionResult(
     success: False,
     message: "Email executor temporarily disabled",
     command: option.Some(command),
@@ -445,7 +447,7 @@ pub fn execute_email_command(
 /// Generate confirmation email for executed command
 /// Returns email with formatted subject, body, and HTML content
 pub fn generate_confirmation_email(
-  result: types.CommandExecutionResult,
+  result: CommandExecutionResult,
   user_email: String,
 ) -> email_confirmation.ConfirmationEmail {
   email_confirmation.generate_confirmation(result, user_email)
