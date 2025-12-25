@@ -10,6 +10,7 @@ import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/float
 import gleam/int
+import gleam/option.{None, Some}
 import meal_planner/fatsecret/exercise/types.{
   type Exercise, type ExerciseDaySummary, type ExerciseEntry,
   type ExerciseEntryId, type ExerciseId, type ExerciseMonthSummary, Exercise,
@@ -171,10 +172,18 @@ fn exercise_entries_list_decoder() -> decode.Decoder(List(ExerciseEntry)) {
 /// }
 /// ```
 pub fn decode_exercise_entries_response() -> decode.Decoder(List(ExerciseEntry)) {
-  decode.at(
-    ["exercise_entries", "exercise_entry"],
-    exercise_entries_list_decoder(),
+  use entries <- decode.then(
+    decode.optional(
+      decode.at(
+        ["exercise_entries", "exercise_entry"],
+        exercise_entries_list_decoder(),
+      ),
+    ),
   )
+  decode.success(case entries {
+    Some(list) -> list
+    None -> []
+  })
 }
 
 // ============================================================================
@@ -215,25 +224,26 @@ fn single_exercise_day_to_list_decoder() -> decode.Decoder(
 /// {
 ///   "month": "12",
 ///   "year": "2024",
-///   "days": {
-///     "day": [
-///       { "date_int": "19723", "exercise_calories": "450" },
-///       { "date_int": "19724", "exercise_calories": "300" }
-///     ]
-///   }
+///   "day": [
+///     { "date_int": "19723", "exercise_calories": "450" },
+///     { "date_int": "19724", "exercise_calories": "300" }
+///   ]
 /// }
 /// ```
 pub fn exercise_month_summary_decoder() -> decode.Decoder(ExerciseMonthSummary) {
   use month <- decode.field("month", flexible_int())
   use year <- decode.field("year", flexible_int())
 
-  // Days can be a single object or array
+  // Days can be a single object or array, handle both cases
   use days <- decode.field(
-    "days",
+    "day",
     decode.one_of(
-      decode.at(["day"], decode.list(exercise_day_summary_decoder())),
+      decode.list(exercise_day_summary_decoder()),
       [
-        decode.at(["day"], single_exercise_day_to_list_decoder()),
+        {
+          use single <- decode.then(exercise_day_summary_decoder())
+          decode.success([single])
+        },
       ],
     ),
   )
