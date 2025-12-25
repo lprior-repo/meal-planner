@@ -11,7 +11,8 @@
 import gleam/dict
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/cli/screens/recipe_view.{
+import meal_planner/cli/screens/recipe/mod as recipe_view
+import meal_planner/cli/screens/recipe/mod.{
   type PaginationState, type RecipeDetails, type RecipeDirection,
   type RecipeEffect, type RecipeFilters, type RecipeIngredient,
   type RecipeListItem, type RecipeModel, type RecipeMsg, type RecipeNutrition,

@@ -17,11 +17,12 @@ import meal_planner/fatsecret/profile/types as fatsecret_profile
 import meal_planner/generator/types as gen_types
 import meal_planner/generator/weekly
 import meal_planner/grocery_list
-import meal_planner/types/macros.{type Macros}
-import meal_planner/types/macros
+import meal_planner/types/macros.{type Macros, Macros}
+import meal_planner/types/macros as macros_mod
 import meal_planner/types/recipe.{
   type FodmapLevel, type Recipe, High, Low, Medium,
 }
+import meal_planner/types/recipe as recipe_mod
 
 // ============================================================================
 // Types
@@ -226,7 +227,7 @@ fn filter_by_preferences(
 /// Filter by Vertical Diet compliance
 fn filter_by_vertical_diet(require: Bool, recipes: List(Recipe)) -> List(Recipe) {
   case require {
-    True -> list.filter(recipes, types.is_vertical_diet_compliant)
+    True -> list.filter(recipes, recipe_mod.is_vertical_diet_compliant)
     False -> recipes
   }
 }
@@ -503,7 +504,7 @@ fn calculate_target_macros(profile: fatsecret_profile.Profile) -> Macros {
   let fat_cals = daily_calories *. 0.3
   let carb_cals = daily_calories *. 0.4
 
-  types.Macros(
+  Macros(
     protein: protein_cals /. 4.0,
     // 4 cal/g
     fat: fat_cals /. 9.0,
@@ -569,8 +570,8 @@ fn create_placeholder_macro_summary(
   _plan: weekly.WeeklyMealPlan,
 ) -> gen_types.WeeklyMacros {
   gen_types.WeeklyMacros(
-    weekly_total: types.macros_zero(),
-    daily_average: types.macros_zero(),
+    weekly_total: macros_mod.zero(),
+    daily_average: macros_mod.zero(),
     daily_breakdowns: [],
   )
 }

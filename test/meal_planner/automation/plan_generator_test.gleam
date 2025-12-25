@@ -29,7 +29,7 @@ fn create_recipe(
   protein: Float,
   fat: Float,
   carbs: Float,
-  fodmap: types.FodmapLevel,
+  fodmap: FodmapLevel,
   vertical: Bool,
 ) -> Recipe {
   Recipe(

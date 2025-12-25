@@ -6,7 +6,8 @@ import gleam/dict.{type Dict}
 import gleam/option.{None, Some}
 import meal_planner/openapi/generator/types.{
   type Operation, type PathItem, type Response, ArraySchema, MediaType,
-  ObjectSchema, Operation, PathItem, RefSchema, Response, StringSchema,
+  ObjectSchema, Operation, PathItem, RefSchema, RequestBody, Response,
+  StringSchema,
 }
 
 /// Generate all API paths
@@ -176,7 +177,7 @@ pub fn ai_score_recipe_path() -> PathItem {
       summary: "Score recipes against targets",
       description: "Scores a list of recipes against macro targets using weighted scoring algorithm",
       parameters: [],
-      request_body: Some(types.RequestBody(
+      request_body: Some(RequestBody(
         description: "Recipe scoring request",
         content: dict.new()
           |> dict.insert(

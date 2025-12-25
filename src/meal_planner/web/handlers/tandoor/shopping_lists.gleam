@@ -18,12 +18,13 @@ import gleam/result
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/food.{type Food}
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/shopping.{
+import meal_planner/tandoor/shopping/mod as shopping
+import meal_planner/tandoor/unit.{type Unit}
+import shopping.{
   type ShoppingListEntryCreate, type ShoppingListEntryResponse,
   type ShoppingListEntryUpdate, ShoppingListEntryCreate, ShoppingListEntryUpdate,
   create_entry, delete_entry, get_entry, list_entries, update_entry,
 }
-import meal_planner/tandoor/unit.{type Unit}
 
 import wisp
 
