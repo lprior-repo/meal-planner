@@ -2,13 +2,11 @@
 ///
 /// Routes:
 ///   PATCH /api/fatsecret/diary/entries/:entry_id - Edit entry
-import gleam/dynamic
-import gleam/dynamic/decode
 import gleam/http.{Patch}
 import gleam/json
-import gleam/option.{None, Some}
+import meal_planner/fatsecret/diary/decoders
 import meal_planner/fatsecret/diary/service
-import meal_planner/fatsecret/diary/types.{type FoodEntryUpdate}
+import meal_planner/fatsecret/diary/types
 import pog
 import wisp.{type Request, type Response}
 
@@ -43,7 +41,7 @@ pub fn update_entry(
   use <- wisp.require_method(req, Patch)
   use body <- wisp.require_json(req)
 
-  case parse_food_entry_update(body) {
+  case decoders.parse_food_entry_update(body) {
     Error(msg) ->
       wisp.json_response(
         json.to_string(
@@ -78,52 +76,6 @@ pub fn update_entry(
 // ============================================================================
 // Helper Functions
 // ============================================================================
-
-/// Parse FoodEntryUpdate from JSON request body
-fn parse_food_entry_update(
-  body: dynamic.Dynamic,
-) -> Result(FoodEntryUpdate, String) {
-  let decoder = {
-    use number_of_units <- decode.optional_field(
-      "number_of_units",
-      None,
-      decode.optional(decode.float),
-    )
-    use meal_str <- decode.optional_field(
-      "meal",
-      None,
-      decode.optional(decode.string),
-    )
-
-    // Parse meal type if provided
-    let meal_result = case meal_str {
-      None -> Ok(None)
-      Some(ms) ->
-        case types.meal_type_from_string(ms) {
-          Ok(m) -> Ok(Some(m))
-          Error(_) -> Error("Invalid meal type")
-        }
-    }
-
-    case meal_result {
-      Error(msg) ->
-        decode.failure(
-          types.FoodEntryUpdate(number_of_units: None, meal: None),
-          msg,
-        )
-      Ok(meal) ->
-        decode.success(types.FoodEntryUpdate(
-          number_of_units: number_of_units,
-          meal: meal,
-        ))
-    }
-  }
-
-  case decode.run(body, decoder) {
-    Error(_) -> Error("Invalid request body")
-    Ok(update) -> Ok(update)
-  }
-}
 
 /// Convert service error to HTTP error response
 fn error_response(error: service.ServiceError) -> Response {
