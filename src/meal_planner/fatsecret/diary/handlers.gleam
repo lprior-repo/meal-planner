@@ -15,6 +15,13 @@ import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
+import meal_planner/fatsecret/diary/decoders
+import meal_planner/fatsecret/diary/handlers/copy
+import meal_planner/fatsecret/diary/handlers/create
+import meal_planner/fatsecret/diary/handlers/delete
+import meal_planner/fatsecret/diary/handlers/get
+import meal_planner/fatsecret/diary/handlers/list as handlers_list
+import meal_planner/fatsecret/diary/handlers/update
 import meal_planner/fatsecret/diary/service
 import meal_planner/fatsecret/diary/types.{
   type FoodEntry, type FoodEntryInput, type FoodEntryUpdate, Custom, FromFood,
@@ -68,7 +75,7 @@ pub fn create_entry(req: Request, conn: pog.Connection) -> Response {
   use <- wisp.require_method(req, Post)
   use body <- wisp.require_json(req)
 
-  case parse_food_entry_input(body) {
+  case decoders.parse_food_entry_input(body) {
     Error(msg) ->
       wisp.json_response(
         json.to_string(
@@ -135,7 +142,7 @@ pub fn update_entry(
   use <- wisp.require_method(req, Patch)
   use body <- wisp.require_json(req)
 
-  case parse_food_entry_update(body) {
+  case decoders.parse_food_entry_update(body) {
     Error(msg) ->
       wisp.json_response(
         json.to_string(
@@ -366,23 +373,20 @@ pub fn get_month(
 /// Route diary requests to appropriate handler
 pub fn handle_diary_routes(req: Request, conn: pog.Connection) -> Response {
   case wisp.path_segments(req) {
-    ["api", "fatsecret", "diary", "entries"] -> create_entry(req, conn)
+    ["api", "fatsecret", "diary", "entries"] -> create.create_entry(req, conn)
     ["api", "fatsecret", "diary", "entries", entry_id] ->
       case req.method {
-        Get -> get_entry(req, conn, entry_id)
-        Patch -> update_entry(req, conn, entry_id)
-        Delete -> delete_entry(req, conn, entry_id)
+        Get -> get.get_entry(req, conn, entry_id)
+        Patch -> update.update_entry(req, conn, entry_id)
+        Delete -> delete.delete_entry(req, conn, entry_id)
         _ -> wisp.method_not_allowed([Get, Patch, Delete])
       }
     ["api", "fatsecret", "diary", "day", date_int] ->
-      get_day(req, conn, date_int)
+      handlers_list.get_day(req, conn, date_int)
     ["api", "fatsecret", "diary", "month", date_int] ->
-      get_month(req, conn, date_int)
+      handlers_list.get_month(req, conn, date_int)
     // Copy/Template operations
-    ["api", "fatsecret", "diary", "copy-entries"] -> copy_entries(req, conn)
-    ["api", "fatsecret", "diary", "copy-meal"] -> copy_meal(req, conn)
-    ["api", "fatsecret", "diary", "commit-day"] -> commit_day(req, conn)
-    ["api", "fatsecret", "diary", "save-template"] -> save_template(req, conn)
+    ["api", "fatsecret", "diary", "copy-meal"] -> copy.copy_meal(req, conn)
     _ -> wisp.not_found()
   }
 }
