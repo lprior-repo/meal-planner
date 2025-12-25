@@ -16,7 +16,7 @@ import gleam/option.{type Option, None, Some}
 import meal_planner/fatsecret/diary/handlers as diary_handlers
 import meal_planner/fatsecret/exercise/handlers as exercise_handlers
 import meal_planner/fatsecret/favorites/handlers as favorites_handlers
-import meal_planner/fatsecret/saved_meals/handlers as saved_meals_handlers
+import meal_planner/fatsecret/saved_meals/handlers/mod as saved_meals_handlers
 import meal_planner/fatsecret/weight/handlers as weight_handlers
 import meal_planner/web/handlers
 import meal_planner/web/handlers/fatsecret/brands as brands_handler
@@ -146,53 +146,7 @@ fn route_saved_meals(
   segments: List(String),
   db: pog.Connection,
 ) -> wisp.Response {
-  case segments {
-    [] ->
-      case req.method {
-        http.Get -> saved_meals_handlers.handle_get_saved_meals(req, db)
-        http.Post -> saved_meals_handlers.handle_create_saved_meal(req, db)
-        _ -> wisp.method_not_allowed([http.Get, http.Post])
-      }
-
-    [meal_id] ->
-      case req.method {
-        http.Put ->
-          saved_meals_handlers.handle_edit_saved_meal(req, db, meal_id)
-        http.Delete ->
-          saved_meals_handlers.handle_delete_saved_meal(req, db, meal_id)
-        _ -> wisp.method_not_allowed([http.Put, http.Delete])
-      }
-
-    [meal_id, "items"] ->
-      case req.method {
-        http.Get ->
-          saved_meals_handlers.handle_get_saved_meal_items(req, db, meal_id)
-        http.Post ->
-          saved_meals_handlers.handle_add_saved_meal_item(req, db, meal_id)
-        _ -> wisp.method_not_allowed([http.Get, http.Post])
-      }
-
-    [meal_id, "items", item_id] ->
-      case req.method {
-        http.Put ->
-          saved_meals_handlers.handle_edit_saved_meal_item(
-            req,
-            db,
-            meal_id,
-            item_id,
-          )
-        http.Delete ->
-          saved_meals_handlers.handle_delete_saved_meal_item(
-            req,
-            db,
-            meal_id,
-            item_id,
-          )
-        _ -> wisp.method_not_allowed([http.Put, http.Delete])
-      }
-
-    _ -> wisp.not_found()
-  }
+  saved_meals_handlers.route(req, segments, db)
 }
 
 // ============================================================================

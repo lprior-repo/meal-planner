@@ -5,7 +5,7 @@
 import gleam/float
 import gleam/string
 import meal_planner/cli/domains/diary/types.{type DayNutrition}
-import meal_planner/fatsecret/diary/types.{type FoodEntry} as fatsecret_types
+import meal_planner/fatsecret/diary/types as fatsecret_types
 
 /// Format a single food entry for display
 ///

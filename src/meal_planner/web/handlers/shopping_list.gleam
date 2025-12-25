@@ -13,7 +13,8 @@ import gleam/json
 import gleam/option.{type Option, None, Some}
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/shopping.{
+import meal_planner/tandoor/shopping/mod as shopping
+import shopping.{
   type ShoppingListEntry, type ShoppingListEntryResponse,
   ShoppingListEntryCreate, add_recipe_to_shopping_list, create_entry,
   delete_entry, get_entry, list_entries,

@@ -3,7 +3,7 @@
 /// This module provides commands for viewing food diary entries.
 import gleam/io
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import meal_planner/cli/domains/diary/formatters
 import meal_planner/cli/domains/diary/helpers
 import meal_planner/cli/domains/diary/types

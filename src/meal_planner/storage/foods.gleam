@@ -10,10 +10,10 @@ import meal_planner/storage/profile.{
 import meal_planner/storage/utils
 import meal_planner/types/custom_food.{type CustomFood, CustomFood}
 import meal_planner/types/food.{
-  type FoodSearchResponse, type FoodSearchResult, type SearchFilters,
-  CustomFoodResult, FoodSearchResponse, UsdaFoodResult,
+  type FoodSearchResponse, type SearchFilters, CustomFoodResult,
+  FoodSearchResponse, UsdaFoodResult,
 }
-import meal_planner/types/macros.{type Macros, Macros}
+import meal_planner/types/macros.{Macros}
 import meal_planner/utils/micronutrients as micro_utils
 import pog
 

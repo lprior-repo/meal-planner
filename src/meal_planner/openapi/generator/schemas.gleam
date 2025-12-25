@@ -4,8 +4,8 @@
 /// Schemas define the structure of request/response bodies.
 import gleam/dict
 import meal_planner/openapi/generator/types.{
-  type Components, type Schema, Components, FloatSchema, ObjectSchema, RefSchema,
-  StringSchema,
+  type Components, type Schema, ArraySchema, Components, FloatSchema,
+  ObjectSchema, RefSchema, StringSchema,
 }
 
 /// Generate all component schemas
@@ -51,7 +51,7 @@ pub fn scoring_request_schema() -> Schema {
     properties: dict.new()
     |> dict.insert(
       "recipes",
-      types.ArraySchema(items: ObjectSchema(
+      ArraySchema(items: ObjectSchema(
         properties: dict.new()
         |> dict.insert("recipe_id", StringSchema)
         |> dict.insert("servings", FloatSchema),
