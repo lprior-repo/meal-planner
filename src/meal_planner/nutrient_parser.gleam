@@ -9,7 +9,9 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
 import meal_planner/types/macros.{type Macros, Macros}
-import meal_planner/types/micronutrients.{type Micronutrients, new as new_micronutrients}
+import meal_planner/types/micronutrients.{
+  type Micronutrients, new as new_micronutrients,
+}
 
 pub type UsdaNutrient {
   UsdaNutrient(name: String, amount: Float, unit: String)

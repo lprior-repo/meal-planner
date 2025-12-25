@@ -5,7 +5,7 @@ import gleam/list
 import gleam/string
 import meal_planner/id
 import meal_planner/types/macros.{type Macros, Macros, scale as macros_scale}
-import meal_planner/types/recipe.{type Ingredient, type Recipe, Recipe, Low}
+import meal_planner/types/recipe.{type Ingredient, type Recipe, Low, Recipe}
 import meal_planner/types/user_profile.{
   type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
   Moderate, Sedentary, daily_carb_target, daily_fat_target, daily_protein_target,

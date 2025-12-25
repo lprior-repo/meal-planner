@@ -94,7 +94,9 @@ pub fn create_profile(
       case validate_meals_per_day(meals_per_day) {
         Error(e) -> Error(e)
         Ok(m) ->
-          case new_user_profile(id.user_id(id), w, activity_level, goal, m, None) {
+          case
+            new_user_profile(id.user_id(id), w, activity_level, goal, m, None)
+          {
             Ok(profile) -> Ok(profile)
             Error(err) -> Error(InvalidInput(err))
           }
@@ -139,7 +141,9 @@ pub fn collect_interactive_profile() -> Result(UserProfile, ProfileError) {
 
   // Return a default profile for demonstration
   // In a full implementation with proper stdin support, this would collect data interactively
-  case new_user_profile(id.user_id("default"), 180.0, Moderate, Maintain, 3, None) {
+  case
+    new_user_profile(id.user_id("default"), 180.0, Moderate, Maintain, 3, None)
+  {
     Ok(profile) -> Ok(profile)
     Error(err) -> Error(InvalidInput(err))
   }

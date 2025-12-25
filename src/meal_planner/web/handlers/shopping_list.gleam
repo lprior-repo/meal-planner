@@ -13,6 +13,7 @@ import gleam/json
 import gleam/option.{type Option, None, Some}
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/handlers/helpers
+
 // Import types directly from types module for field access
 import meal_planner/tandoor/shopping/types.{
   type ShoppingListEntry, type ShoppingListEntryResponse, ShoppingListEntry,

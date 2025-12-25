@@ -5,9 +5,9 @@
 import gleam/int
 import gleam/option.{type Option, None, Some}
 import meal_planner/tandoor/client/http.{
-  type AuthMethod, type TandoorError, SessionAuth, BearerAuth, ParseError,
-  AuthenticationError, AuthorizationError, NotFoundError, BadRequestError,
-  ServerError, NetworkError, TimeoutError, UnknownError,
+  type AuthMethod, type TandoorError, AuthenticationError, AuthorizationError,
+  BadRequestError, BearerAuth, NetworkError, NotFoundError, ParseError,
+  ServerError, SessionAuth, TimeoutError, UnknownError,
 }
 
 // ============================================================================
