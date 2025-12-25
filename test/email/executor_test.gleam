@@ -6,7 +6,7 @@ import gleeunit
 import gleeunit/should
 
 import meal_planner/id
-import meal_planner/types.{AddPreference, AdjustMeal, Breakfast, Friday}
+import meal_planner/email/command.{AddPreference, AdjustMeal, Breakfast, Friday}
 
 pub fn main() {
   gleeunit.main()
