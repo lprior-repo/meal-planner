@@ -1,0 +1,28 @@
+{
+  "test_name": "Meal Planner Integration Test",
+  "beads_issue": "opencode-sdk-run-cxj",
+  "timestamp": "2025-12-24T22:49:20-06:00",
+  "meal_planner_path": "/home/lewis/src/meal-planner",
+  "test_components": [
+    "Verify meal-planner directory",
+    "OpenCode SDK connection",
+    "Beads task fetching",
+    "Beads database structure",
+    "Task dependency resolution",
+    "Gleam project structure"
+  ],
+  "results": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0
+  },
+  "test_details": [
+    {"test": "verify_directory", "status": "PASS"},
+    {"test": "opencode_sdk_connection", "status": "PASS"},
+    {"test": "fetch_beads_tasks", "status": "PASS", "metadata": "open=64,total=151"},
+    {"test": "beads_structure", "status": "PASS"},
+    {"test": "dependency_resolution", "status": "PASS_NO_DEPS"},
+    {"test": "gleam_structure", "status": "PASS"}
+  ],
+  "status": "completed"
+}

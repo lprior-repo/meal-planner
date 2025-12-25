@@ -4,7 +4,7 @@
 /// Routes to domain-specific command handlers based on subcommand.
 import glint
 import meal_planner/cli/domains/advisor
-import meal_planner/cli/domains/diary
+import meal_planner/cli/domains/diary/mod as diary
 import meal_planner/cli/domains/fatsecret
 import meal_planner/cli/domains/nutrition
 import meal_planner/cli/domains/plan

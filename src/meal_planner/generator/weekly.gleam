@@ -14,9 +14,8 @@
 
 import gleam/list
 import gleam/result
-import meal_planner/types.{
-  type Macros, type Recipe, macros_add, macros_calories, macros_zero,
-}
+import meal_planner/types/macros.{type Macros, add, calories, zero}
+import meal_planner/types/recipe.{type Recipe}
 
 // ============================================================================
 // Core Types
@@ -135,8 +134,8 @@ fn compare_macro(actual actual: Float, target target: Float) -> MacroComparison 
 /// Uses pipe operator to chain macro additions for readability.
 fn sum_day_macros(day: DayMeals) -> Macros {
   day.breakfast.macros
-  |> macros_add(day.lunch.macros)
-  |> macros_add(day.dinner.macros)
+  |> add(day.lunch.macros)
+  |> add(day.dinner.macros)
 }
 
 // ============================================================================
@@ -146,7 +145,7 @@ fn sum_day_macros(day: DayMeals) -> Macros {
 /// Calculate daily macro totals and comparison status
 pub fn calculate_daily_macros(day: DayMeals, target: Macros) -> DailyMacros {
   let actual = sum_day_macros(day)
-  let calories = macros_calories(actual)
+  let calories = calories(actual)
 
   DailyMacros(
     actual: actual,
@@ -166,7 +165,7 @@ pub fn days_count(plan: WeeklyMealPlan) -> Int {
 pub fn total_weekly_macros(plan: WeeklyMealPlan) -> Macros {
   plan.days
   |> list.map(sum_day_macros)
-  |> list.fold(macros_zero(), macros_add)
+  |> list.fold(zero(), add)
 }
 
 /// Check if a day is a travel day
