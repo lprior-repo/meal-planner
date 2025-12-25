@@ -1,35 +1,12 @@
-/// Tandoor API client aggregator module
+/// Tandoor API client core types and configuration
 ///
-/// This module re-exports the main types and functions from the Tandoor client
-/// family of modules, providing a unified interface for API interactions.
-///
-/// The client is organized by resource type:
-/// - http: Low-level HTTP utilities and configuration
-/// - recipes: Recipe management operations
-/// - shopping: Shopping list operations
-/// - mealplan: Meal plan operations
-/// - foods: Food database operations
-/// - users: User management operations
-///
-/// ## Usage
-///
-/// ```gleam
-/// import meal_planner/tandoor/client.{
-///   ClientConfig, AuthMethod, BearerAuth,
-/// }
-///
-/// let config = ClientConfig(
-///   base_url: "http://localhost:8000",
-///   auth: BearerAuth(token: "your-token"),
-///   timeout_ms: 10_000,
-///   retry_on_transient: True,
-///   max_retries: 3,
-/// )
-/// ```
-import gleam/option.{type Option}
+/// This module provides the core types and configuration management for the
+/// Tandoor API client. All other modules build upon these types.
+import gleam/option.{type Option, None, Some}
+import gleam/int
 
 // ============================================================================
-// Core Client Types
+// Core Types
 // ============================================================================
 
 /// HTTP request method
@@ -97,15 +74,134 @@ pub type ClientConfig {
 pub type ApiResponse {
   ApiResponse(status: Int, headers: List(#(String, String)), body: String)
 }
+
 // ============================================================================
-// Re-exports from submodules
+// Client Configuration
 // ============================================================================
 
-// These would be imported and re-exported once the submodules are created:
-//
-// pub use meal_planner/tandoor/client/http.{...}
-// pub use meal_planner/tandoor/client/recipes.{...}
-// pub use meal_planner/tandoor/client/shopping.{...}
-// pub use meal_planner/tandoor/client/mealplan.{...}
-// pub use meal_planner/tandoor/client/foods.{...}
-// pub use meal_planner/tandoor/client/users.{...}
+/// Create a client configuration with session-based authentication
+pub fn session_config(
+  base_url: String,
+  username: String,
+  password: String,
+) -> ClientConfig {
+  ClientConfig(
+    base_url: base_url,
+    auth: SessionAuth(
+      username: username,
+      password: password,
+      session_id: None,
+      csrf_token: None,
+    ),
+    timeout_ms: 10_000,
+    retry_on_transient: True,
+    max_retries: 3,
+  )
+}
+
+/// Create a client configuration with Bearer token authentication
+pub fn bearer_config(base_url: String, token: String) -> ClientConfig {
+  ClientConfig(
+    base_url: base_url,
+    auth: BearerAuth(token: token),
+    timeout_ms: 10_000,
+    retry_on_transient: True,
+    max_retries: 3,
+  )
+}
+
+/// Create a default client configuration (deprecated - use session_config)
+pub fn default_config(base_url: String, api_token: String) -> ClientConfig {
+  bearer_config(base_url, api_token)
+}
+
+/// Create a client configuration with custom timeout
+pub fn with_timeout(config: ClientConfig, timeout_ms: Int) -> ClientConfig {
+  ClientConfig(
+    base_url: config.base_url,
+    auth: config.auth,
+    timeout_ms: timeout_ms,
+    retry_on_transient: config.retry_on_transient,
+    max_retries: config.max_retries,
+  )
+}
+
+/// Create a client configuration with retry settings
+pub fn with_retry_config(
+  config: ClientConfig,
+  retry_on_transient: Bool,
+  max_retries: Int,
+) -> ClientConfig {
+  ClientConfig(
+    base_url: config.base_url,
+    auth: config.auth,
+    timeout_ms: config.timeout_ms,
+    retry_on_transient: retry_on_transient,
+    max_retries: max_retries,
+  )
+}
+
+// ============================================================================
+// Error Utilities
+// ============================================================================
+
+/// Check if error is retryable (transient failure)
+pub fn is_transient_error(error: TandoorError) -> Bool {
+  case error {
+    NetworkError(_) | TimeoutError -> True
+    ServerError(status, _) if status >= 500 && status < 600 -> True
+    _ -> False
+  }
+}
+
+/// Convert error to human-readable message
+pub fn error_to_string(error: TandoorError) -> String {
+  case error {
+    AuthenticationError(msg) -> "Authentication error: " <> msg
+    AuthorizationError(msg) -> "Authorization error: " <> msg
+    NotFoundError(resource) -> "Resource not found: " <> resource
+    BadRequestError(msg) -> "Bad request: " <> msg
+    ServerError(status, msg) ->
+      "Server error " <> int.to_string(status) <> ": " <> msg
+    NetworkError(msg) -> "Network error: " <> msg
+    TimeoutError -> "Request timeout"
+    ParseError(msg) -> "Parse error: " <> msg
+    UnknownError(msg) -> "Unknown error: " <> msg
+  }
+}
+
+// ============================================================================
+// Authentication Utilities
+// ============================================================================
+
+/// Check if config has an active session
+pub fn is_authenticated(config: ClientConfig) -> Bool {
+  case config.auth {
+    BearerAuth(_) -> True
+    SessionAuth(_, _, session_id, _) -> option.is_some(session_id)
+  }
+}
+
+/// Update config with session tokens after login
+pub fn with_session(
+  config: ClientConfig,
+  session_id: String,
+  csrf_token: String,
+) -> ClientConfig {
+  case config.auth {
+    SessionAuth(username, password, _, _) ->
+      ClientConfig(
+        base_url: config.base_url,
+        auth: SessionAuth(
+          username: username,
+          password: password,
+          session_id: Some(session_id),
+          csrf_token: Some(csrf_token),
+        ),
+        timeout_ms: config.timeout_ms,
+        retry_on_transient: config.retry_on_transient,
+        max_retries: config.max_retries,
+      )
+    BearerAuth(_) -> config
+  }
+}
