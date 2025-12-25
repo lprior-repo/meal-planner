@@ -9,7 +9,8 @@ import gleam/string
 import gleeunit/should
 import meal_planner/generator/weekly.{type GenerationError, type WeeklyMealPlan}
 import meal_planner/id
-import meal_planner/types.{type Macros, type Recipe, Macros}
+import meal_planner/types/recipe.{type Recipe, Recipe, Low}
+import meal_planner/types/macros.{type Macros, Macros}
 
 // ============================================================================
 // Test Fixture Builders
@@ -30,7 +31,7 @@ pub fn create_adjusted_target_macros() -> Macros {
 /// Create a sample recipe with consistent test data
 /// All recipes have: 40g protein, 15g fat, 50g carbs
 pub fn create_sample_recipe(recipe_id: String, name: String) -> Recipe {
-  types.Recipe(
+  Recipe(
     id: id.recipe_id(recipe_id),
     name: name,
     ingredients: [],
@@ -38,7 +39,7 @@ pub fn create_sample_recipe(recipe_id: String, name: String) -> Recipe {
     macros: Macros(protein: 40.0, fat: 15.0, carbs: 50.0),
     servings: 1,
     category: "Dinner",
-    fodmap_level: types.Low,
+    fodmap_level: Low,
     vertical_compliant: True,
   )
 }
