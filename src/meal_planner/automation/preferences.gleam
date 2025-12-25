@@ -6,7 +6,10 @@
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import meal_planner/types/recipe.{type FodmapLevel, type Recipe}
+import meal_planner/types/macros
+import meal_planner/types/recipe.{
+  type FodmapLevel, type Recipe, is_vertical_diet_compliant,
+}
 
 // ============================================================================
 // Types
@@ -139,9 +142,9 @@ fn filter_by_fodmap_level(
 /// Check if recipe FODMAP level is acceptable
 fn is_fodmap_acceptable(recipe_level: FodmapLevel, max: FodmapLevel) -> Bool {
   case recipe_level, max {
-    types.Low, _ -> True
-    types.Medium, types.Medium | types.Medium, types.High -> True
-    types.High, types.High -> True
+    recipe.Low, _ -> True
+    recipe.Medium, recipe.Medium | recipe.Medium, recipe.High -> True
+    recipe.High, recipe.High -> True
     _, _ -> False
   }
 }
@@ -149,7 +152,7 @@ fn is_fodmap_acceptable(recipe_level: FodmapLevel, max: FodmapLevel) -> Bool {
 /// Filter by Vertical Diet compliance
 fn filter_by_vertical_diet(require: Bool, recipes: List(Recipe)) -> List(Recipe) {
   case require {
-    True -> list.filter(recipes, types.is_vertical_diet_compliant)
+    True -> list.filter(recipes, recipe.is_vertical_diet_compliant)
     False -> recipes
   }
 }
@@ -220,7 +223,7 @@ fn filter_by_calories(
   case max_calories {
     None -> recipes
     Some(max) ->
-      list.filter(recipes, fn(r) { types.macros_calories(r.macros) <=. max })
+      list.filter(recipes, fn(r) { macros.calories(r.macros) <=. max })
   }
 }
 
@@ -239,7 +242,7 @@ fn matches_fodmap(recipe: Recipe, max_level: Option(FodmapLevel)) -> Bool {
 /// Check if recipe matches vertical diet filter
 fn matches_vertical_diet(recipe: Recipe, require: Bool) -> Bool {
   case require {
-    True -> types.is_vertical_diet_compliant(recipe)
+    True -> recipe.is_vertical_diet_compliant(recipe)
     False -> True
   }
 }
@@ -272,7 +275,7 @@ fn matches_protein(recipe: Recipe, min_protein: Option(Float)) -> Bool {
 fn matches_calories(recipe: Recipe, max_calories: Option(Float)) -> Bool {
   case max_calories {
     None -> True
-    Some(max) -> types.macros_calories(recipe.macros) <=. max
+    Some(max) -> macros.calories(recipe.macros) <=. max
   }
 }
 

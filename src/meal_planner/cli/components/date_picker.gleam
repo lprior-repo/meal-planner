@@ -33,33 +33,6 @@ import shore
 // ============================================================================
 
 // Types
-pub type DatePickerModel {
-  DatePickerModel(
-    selected_date: Int,
-    view_year: Int,
-    view_month: Int,
-    is_open: Bool,
-    input_mode: Bool,
-    input_text: String,
-    error: Option(String),
-    min_date: Option(Int),
-    max_date: Option(Int),
-    date_format: DateFormat,
-  )
-}
-
-pub type DateFormat {
-  IsoFormat
-  UsFormat
-  EuFormat
-  LongFormat
-}
-
-pub type DatePickerEffect {
-  NoEffect
-  DateSelected(date_int: Int)
-  Cancelled
-}
 
 // Messages - imported from messages module
 import meal_planner/cli/components/date_picker/messages.{
