@@ -1,8 +1,8 @@
 /// Tests for email command parsing
 import gleeunit
 import gleeunit/should
+import meal_planner/email/command.{EmailRequest}
 import meal_planner/email/parser
-import meal_planner/types.{EmailRequest}
 
 pub fn main() {
   gleeunit.main()

@@ -8,9 +8,9 @@ import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 
+import meal_planner/email/command.{AdjustMeal, Breakfast, Friday}
 import meal_planner/email/handler
 import meal_planner/id
-import meal_planner/types.{AdjustMeal, Breakfast, Friday}
 
 pub fn main() {
   gleeunit.main()
