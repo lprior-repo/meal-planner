@@ -9,11 +9,11 @@
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/cli/components/date_picker.{
-  type DatePickerEffect, type DatePickerModel, type DatePickerMsg, Cancel,
-  Cancelled, ClearError, Close, ConfirmSelection, DateSelected, EuFormat,
-  GoToToday, InputChanged, IsoFormat, LongFormat, NextDay, NextMonth, NextWeek,
-  NextYear, NoEffect, Open, ParseInput, PreviousDay, PreviousMonth, PreviousWeek,
-  PreviousYear, SelectDate, ToggleInputMode, UsFormat,
+  type DatePickerModel, type DatePickerMsg, Cancel, Cancelled, ClearError, Close,
+  ConfirmSelection, DateSelected, EuFormat, GoToToday, InputChanged, IsoFormat,
+  LongFormat, NextDay, NextMonth, NextWeek, NextYear, NoEffect, Open, ParseInput,
+  PreviousDay, PreviousMonth, PreviousWeek, PreviousYear, SelectDate,
+  ToggleInputMode, UsFormat,
 }
 
 // ============================================================================

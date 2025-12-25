@@ -5,14 +5,13 @@
 //// 2. Nutrition calculation and aggregation
 //// 3. Date string parsing to days since epoch
 
-import gleam/list
-import gleam/option.{None, Some}
+import gleam/option.{None}
 import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/cli/domains/diary
 import meal_planner/fatsecret/diary/types.{
-  type FoodEntry, Breakfast, Dinner, FoodEntry, Lunch, Snack, food_entry_id,
+  type FoodEntry, Breakfast, Snack, food_entry_id,
 }
 
 pub fn main() {

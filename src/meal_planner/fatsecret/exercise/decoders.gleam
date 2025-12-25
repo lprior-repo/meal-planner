@@ -10,7 +10,6 @@ import gleam/dynamic
 import gleam/dynamic/decode
 import gleam/float
 import gleam/int
-import gleam/option
 import meal_planner/fatsecret/exercise/types.{
   type Exercise, type ExerciseDaySummary, type ExerciseEntry,
   type ExerciseEntryId, type ExerciseId, type ExerciseMonthSummary, Exercise,
@@ -205,14 +204,6 @@ pub fn exercise_day_summary_decoder() -> decode.Decoder(ExerciseDaySummary) {
     date_int: date_int,
     exercise_calories: exercise_calories,
   ))
-}
-
-/// Decode single ExerciseDaySummary and wrap in list
-fn single_exercise_day_to_list_decoder() -> decode.Decoder(
-  List(ExerciseDaySummary),
-) {
-  use day <- decode.then(exercise_day_summary_decoder())
-  decode.success([day])
 }
 
 /// Decode ExerciseMonthSummary from exercise_entries.get_month.v2 response

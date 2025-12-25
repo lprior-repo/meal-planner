@@ -556,7 +556,7 @@ pub fn view(
 /// Render closed state (just shows selected date)
 fn view_closed(
   model: DatePickerModel,
-  on_msg: fn(DatePickerMsg) -> msg,
+  _on_msg: fn(DatePickerMsg) -> msg,
 ) -> shore.Node(msg) {
   let date_str = date_int_to_string(model.selected_date, model.date_format)
   ui.text("📅 " <> date_str)
@@ -565,7 +565,7 @@ fn view_closed(
 /// Render open state (full calendar)
 fn view_open(
   model: DatePickerModel,
-  on_msg: fn(DatePickerMsg) -> msg,
+  _on_msg: fn(DatePickerMsg) -> msg,
 ) -> shore.Node(msg) {
   case model.input_mode {
     True -> view_input_mode(model, on_msg)
