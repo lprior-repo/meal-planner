@@ -14,7 +14,10 @@ import gleam/result
 import gleam/string
 import meal_planner/id
 import meal_planner/types/macros.{type Macros, Macros, calories}
-import meal_planner/types/recipe.{type FodmapLevel, type Ingredient, type Recipe, High, Low, Medium, Recipe, Ingredient}
+import meal_planner/types/recipe.{
+  type FodmapLevel, type Ingredient, type Recipe, High, Ingredient, Low, Medium,
+  Recipe,
+}
 
 /// Tandoor API nutrition data structure
 /// Represents nutritional information from Tandoor recipes

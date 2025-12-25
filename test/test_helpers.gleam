@@ -7,6 +7,10 @@ import gleam/list
 import gleam/option.{Some}
 import gleam/string
 import gleeunit/should
+import meal_planner/email/command.{
+  type CommandExecutionResult, type DayOfWeek, type EmailCommand,
+  type EmailRequest, type MealType,
+}
 import meal_planner/generator/weekly.{type GenerationError, type WeeklyMealPlan}
 import meal_planner/id
 import meal_planner/types/macros.{type Macros, Macros}
@@ -69,8 +73,8 @@ pub fn create_test_email_request(
   from: String,
   subject: String,
   body: String,
-) -> types.EmailRequest {
-  types.EmailRequest(
+) -> EmailRequest {
+  command.EmailRequest(
     from_email: from,
     subject: subject,
     body: body,
@@ -82,12 +86,12 @@ pub fn create_test_email_request(
 pub fn create_test_execution_result(
   success: Bool,
   message: String,
-  command: option.Option(types.EmailCommand),
-) -> types.CommandExecutionResult {
-  types.CommandExecutionResult(
+  cmd: option.Option(EmailCommand),
+) -> CommandExecutionResult {
+  command.CommandExecutionResult(
     success: success,
     message: message,
-    command: command,
+    command: cmd,
   )
 }
 
@@ -165,29 +169,23 @@ pub fn assert_email_contains_all_sections(email: String) -> Nil {
 /// Assert that command parsing succeeded
 /// Validates Result is Ok and returns the command
 pub fn assert_command_parsed(
-  result: Result(types.EmailCommand, String),
-) -> types.EmailCommand {
+  result: Result(EmailCommand, String),
+) -> EmailCommand {
   result
   |> should.be_ok
 
-  let assert Ok(command) = result
-  command
+  let assert Ok(cmd) = result
+  cmd
 }
 
 /// Assert that day of week matches expected
-pub fn assert_day_equals(
-  actual: types.DayOfWeek,
-  expected: types.DayOfWeek,
-) -> Nil {
+pub fn assert_day_equals(actual: DayOfWeek, expected: DayOfWeek) -> Nil {
   actual
   |> should.equal(expected)
 }
 
 /// Assert that meal type matches expected
-pub fn assert_meal_type_equals(
-  actual: types.MealType,
-  expected: types.MealType,
-) -> Nil {
+pub fn assert_meal_type_equals(actual: MealType, expected: MealType) -> Nil {
   actual
   |> should.equal(expected)
 }

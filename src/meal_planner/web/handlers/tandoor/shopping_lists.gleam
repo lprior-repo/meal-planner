@@ -186,9 +186,7 @@ fn handle_delete_entry(_req: wisp.Request, id: Int) -> wisp.Response {
 // =============================================================================
 
 /// Encode a shopping list entry (internal type) to JSON
-fn encode_shopping_list_entry(
-  entry: ShoppingListEntry,
-) -> json.Json {
+fn encode_shopping_list_entry(entry: ShoppingListEntry) -> json.Json {
   json.object([
     #("id", json.int(ids.shopping_list_entry_id_to_int(entry.id))),
     #("list_recipe", encode_optional_shopping_list_id(entry.list_recipe)),

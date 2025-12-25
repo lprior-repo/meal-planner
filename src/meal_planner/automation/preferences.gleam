@@ -7,9 +7,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
 import meal_planner/types/macros
-import meal_planner/types/recipe.{
-  type FodmapLevel, type Recipe,
-}
+import meal_planner/types/recipe.{type FodmapLevel, type Recipe}
 
 // ============================================================================
 // Types

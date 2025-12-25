@@ -9,10 +9,10 @@ import meal_planner/tandoor/shopping/types.{
   type ShoppingListEntryCreate, type ShoppingListEntryResponse,
   type ShoppingListEntryUpdate, type ShoppingListQuery, type ShoppingListRecipe,
   type ShoppingListRecipeCreate, type ShoppingListRecipeUpdate,
-  type ShoppingListUpdate, ShoppingList, ShoppingListCreate,
-  ShoppingListEntry, ShoppingListEntryCreate, ShoppingListEntryResponse,
-  ShoppingListEntryUpdate, ShoppingListQuery, ShoppingListRecipe,
-  ShoppingListRecipeCreate, ShoppingListRecipeUpdate, ShoppingListUpdate,
+  type ShoppingListUpdate, ShoppingList, ShoppingListCreate, ShoppingListEntry,
+  ShoppingListEntryCreate, ShoppingListEntryResponse, ShoppingListEntryUpdate,
+  ShoppingListQuery, ShoppingListRecipe, ShoppingListRecipeCreate,
+  ShoppingListRecipeUpdate, ShoppingListUpdate,
 }
 
 // Placeholder functions for API calls
@@ -23,12 +23,14 @@ pub fn list_entries(
   _config: client.ClientConfig,
   _query: ShoppingListQuery,
 ) -> Result(PaginatedResponse(ShoppingListEntryResponse), String) {
-  Ok(pagination.PaginatedResponse(
-    count: 0,
-    next: option.None,
-    previous: option.None,
-    results: [],
-  ))
+  Ok(
+    pagination.PaginatedResponse(
+      count: 0,
+      next: option.None,
+      previous: option.None,
+      results: [],
+    ),
+  )
 }
 
 /// Create a shopping list entry
