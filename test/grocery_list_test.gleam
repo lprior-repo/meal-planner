@@ -14,10 +14,10 @@ import meal_planner/tandoor/client.{
   type Ingredient as TandoorIngredient, Food, Ingredient as TandoorIngredientC,
   SupermarketCategory, Unit,
 }
-import meal_planner/recipe.{type Recipe, Recipe}
-import meal_planner/recipe/ingredient.{type Ingredient as SimpleIngredient, Ingredient}
-import meal_planner/types/fodmap_level.{Low}
-import meal_planner/types/macros.{Macros}
+import meal_planner/types.{
+  type Ingredient as SimpleIngredient, type Recipe, Ingredient, Low, Macros,
+  Recipe,
+}
 
 // ============================================================================
 // Test Helpers

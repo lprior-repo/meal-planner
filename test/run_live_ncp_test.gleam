@@ -6,7 +6,7 @@ import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/ncp
-import meal_planner/types/macros.{Macros}
+import meal_planner/types
 
 pub fn main() {
   gleeunit.main()
@@ -178,19 +178,19 @@ pub fn live_ncp_reconciliation_complete_output_test() {
   let recipes = [
     ncp.ScoredRecipe(
       name: "Grilled Chicken Breast (150g)",
-      macros: Macros(protein: 42.0, fat: 3.0, carbs: 0.0),
+      macros: types.Macros(protein: 42.0, fat: 3.0, carbs: 0.0),
     ),
     ncp.ScoredRecipe(
       name: "Greek Yogurt with Berries",
-      macros: Macros(protein: 20.0, fat: 2.0, carbs: 25.0),
+      macros: types.Macros(protein: 20.0, fat: 2.0, carbs: 25.0),
     ),
     ncp.ScoredRecipe(
       name: "Salmon Fillet (150g)",
-      macros: Macros(protein: 34.0, fat: 12.0, carbs: 0.0),
+      macros: types.Macros(protein: 34.0, fat: 12.0, carbs: 0.0),
     ),
     ncp.ScoredRecipe(
       name: "Brown Rice (1 cup cooked)",
-      macros: Macros(protein: 5.0, fat: 2.0, carbs: 45.0),
+      macros: types.Macros(protein: 5.0, fat: 2.0, carbs: 45.0),
     ),
   ]
 
