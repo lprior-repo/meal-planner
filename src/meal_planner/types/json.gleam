@@ -10,11 +10,11 @@ import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/option.{type Option, None, Some}
 import gleam/string
+import meal_planner/email/command as cmd
 import meal_planner/email/command.{
   type CommandExecutionResult, type DayOfWeek, type EmailCommand,
   type RegenerationScope,
 }
-import meal_planner/email/command as cmd
 import meal_planner/id
 import meal_planner/types/custom_food.{type CustomFood, CustomFood}
 import meal_planner/types/food.{
