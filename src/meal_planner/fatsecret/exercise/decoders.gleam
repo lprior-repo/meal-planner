@@ -171,19 +171,17 @@ fn exercise_entries_list_decoder() -> decode.Decoder(List(ExerciseEntry)) {
 ///   }
 /// }
 /// ```
+/// When there are no entries, "exercise_entry" field is absent.
 pub fn decode_exercise_entries_response() -> decode.Decoder(List(ExerciseEntry)) {
-  use entries <- decode.then(
-    decode.optional(
-      decode.at(
-        ["exercise_entries", "exercise_entry"],
-        exercise_entries_list_decoder(),
-      ),
-    ),
-  )
-  decode.success(case entries {
-    Some(list) -> list
-    None -> []
+  use entries <- decode.field("exercise_entries", {
+    use entry_list <- decode.optional_field(
+      "exercise_entry",
+      [],
+      exercise_entries_list_decoder(),
+    )
+    decode.success(entry_list)
   })
+  decode.success(entries)
 }
 
 // ============================================================================
@@ -237,15 +235,12 @@ pub fn exercise_month_summary_decoder() -> decode.Decoder(ExerciseMonthSummary) 
   // Days can be a single object or array, handle both cases
   use days <- decode.field(
     "day",
-    decode.one_of(
-      decode.list(exercise_day_summary_decoder()),
-      [
-        {
-          use single <- decode.then(exercise_day_summary_decoder())
-          decode.success([single])
-        },
-      ],
-    ),
+    decode.one_of(decode.list(exercise_day_summary_decoder()), [
+      {
+        use single <- decode.then(exercise_day_summary_decoder())
+        decode.success([single])
+      },
+    ]),
   )
 
   decode.success(ExerciseMonthSummary(days: days, month: month, year: year))

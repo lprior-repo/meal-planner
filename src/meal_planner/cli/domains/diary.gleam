@@ -16,49 +16,9 @@ import gleam/string
 import glint
 import meal_planner/config.{type Config}
 import meal_planner/fatsecret/diary/service as diary_service
-import meal_planner/fatsecret/diary/types as diary_types
-import meal_planner/fatsecret/diary/types.{
-  type FoodEntry, type MealType, Breakfast, Dinner, Lunch, Snack,
-}
+import meal_planner/fatsecret/diary/types.{type FoodEntry, food_entry_id}
 import meal_planner/postgres
 import pog
-
-// ============================================================================
-// Public API - Test-facing Functions
-// ============================================================================
-
-/// Format a food entry for display in a table row
-///
-/// Formats a FoodEntry into a readable string with ID, name, meal type,
-/// calories, and macro breakdown.
-pub fn format_food_entry_row(entry: FoodEntry) -> String {
-  // Use field access instead of destructuring to be more robust
-  let food_entry_name = entry.food_entry_name
-  let calories = entry.calories
-  let protein = entry.protein
-  let carbohydrates = entry.carbohydrate
-  let fat = entry.fat
-
-  let id_str = entry.food_entry_id |> diary_types.food_entry_id_to_string
-  let cal_str = format_float(calories)
-  let protein_str = format_float(protein)
-  let carb_str = format_float(carbohydrates)
-  let fat_str = format_float(fat)
-
-  "  ["
-  <> id_str
-  <> "] "
-  <> food_entry_name
-  <> " | "
-  <> cal_str
-  <> "cal | P:"
-  <> protein_str
-  <> "g C:"
-  <> carb_str
-  <> "g F:"
-  <> fat_str
-  <> "g"
-}
 
 /// Calculate total nutrition for a list of entries
 ///
@@ -85,6 +45,24 @@ pub fn calculate_day_nutrition(entries: List(FoodEntry)) -> DayNutrition {
       )
     },
   )
+}
+
+/// Format a single food entry for display
+pub fn format_food_entry_row(entry: FoodEntry) -> String {
+  let padded_name = case string.length(entry.food_entry_name) {
+    len if len >= 30 -> string.slice(entry.food_entry_name, 0, 27) <> "..."
+    len -> entry.food_entry_name <> string.repeat(" ", 30 - len)
+  }
+  padded_name
+  <> " | "
+  <> format_float(entry.calories)
+  <> " cal | P:"
+  <> format_float(entry.protein)
+  <> "g C:"
+  <> format_float(entry.carbohydrate)
+  <> "g F:"
+  <> format_float(entry.fat)
+  <> "g"
 }
 
 /// Format nutrition summary for display
@@ -249,7 +227,7 @@ fn delete_handler(config: Config, entry_id_str: String) -> Result(Nil, Nil) {
       Error(Nil)
     }
     Ok(conn) -> {
-      let entry_id = diary_types.food_entry_id(entry_id_str)
+      let entry_id = food_entry_id(entry_id_str)
       case diary_service.delete_food_entry(conn, entry_id) {
         Ok(_) -> {
           io.println("✓ Food entry deleted successfully")

@@ -381,7 +381,9 @@ pub fn generate_pattern_recommendations(
   case patterns {
     [] -> {
       // Balanced week: return congratulatory message
-      ["Great job! Your nutrition is well-balanced this week. Keep up the consistent eating habits!"]
+      [
+        "Great job! Your nutrition is well-balanced this week. Keep up the consistent eating habits!",
+      ]
     }
     _ -> {
       patterns
@@ -454,7 +456,8 @@ pub fn generate_pattern_recommendations(
           }
 
           // Default case
-          _, _, _, _, _, _, _, _ -> "Continue monitoring your nutrition patterns."
+          _, _, _, _, _, _, _, _ ->
+            "Continue monitoring your nutrition patterns."
         }
       })
     }

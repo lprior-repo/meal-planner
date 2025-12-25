@@ -325,9 +325,14 @@ fn food_search_list_decoder() -> decode.Decoder(List(FoodSearchResult)) {
 /// Decoder for foods.search response
 ///
 /// Handles pagination metadata and the food array/object quirk.
+/// When there are no results, the "food" field is absent.
 pub fn food_search_response_decoder() -> decode.Decoder(FoodSearchResponse) {
   use foods <- decode.field("foods", {
-    use food_list <- decode.field("food", food_search_list_decoder())
+    use food_list <- decode.optional_field(
+      "food",
+      [],
+      food_search_list_decoder(),
+    )
     use max_results <- decode.field("max_results", flexible_int())
     use total_results <- decode.field("total_results", flexible_int())
     use page_number <- decode.field("page_number", flexible_int())
