@@ -5,7 +5,8 @@
 /// and storage/foods.gleam
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import meal_planner/types.{type FoodLogEntry}
+import meal_planner/types/food.{type FoodLogEntry}
+import meal_planner/types/micronutrients as types
 
 /// Calculate total micronutrients from food log entries
 pub fn calculate_total_micronutrients(
@@ -21,7 +22,7 @@ pub fn calculate_total_micronutrients(
 
   case micros_list {
     [] -> None
-    _ -> Some(types.micronutrients_sum(micros_list))
+    _ -> Some(types.sum(micros_list))
   }
 }
 
@@ -151,28 +152,28 @@ pub fn build_micronutrients(
   {
     True -> None
     False ->
-      Some(types.Micronutrients(
-        fiber: fiber,
-        sugar: sugar,
-        sodium: sodium,
-        cholesterol: cholesterol,
-        vitamin_a: vitamin_a,
-        vitamin_c: vitamin_c,
-        vitamin_d: vitamin_d,
-        vitamin_e: vitamin_e,
-        vitamin_k: vitamin_k,
-        vitamin_b6: vitamin_b6,
-        vitamin_b12: vitamin_b12,
-        folate: folate,
-        thiamin: thiamin,
-        riboflavin: riboflavin,
-        niacin: niacin,
-        calcium: calcium,
-        iron: iron,
-        magnesium: magnesium,
-        phosphorus: phosphorus,
-        potassium: potassium,
-        zinc: zinc,
+      Some(types.new_unchecked(
+        fiber,
+        sugar,
+        sodium,
+        cholesterol,
+        vitamin_a,
+        vitamin_c,
+        vitamin_d,
+        vitamin_e,
+        vitamin_k,
+        vitamin_b6,
+        vitamin_b12,
+        folate,
+        thiamin,
+        riboflavin,
+        niacin,
+        calcium,
+        iron,
+        magnesium,
+        phosphorus,
+        potassium,
+        zinc,
       ))
   }
 }
@@ -206,27 +207,27 @@ pub fn extract_micronutrient_values(
 ) {
   case micronutrients {
     Some(m) -> #(
-      m.fiber,
-      m.sugar,
-      m.sodium,
-      m.cholesterol,
-      m.vitamin_a,
-      m.vitamin_c,
-      m.vitamin_d,
-      m.vitamin_e,
-      m.vitamin_k,
-      m.vitamin_b6,
-      m.vitamin_b12,
-      m.folate,
-      m.thiamin,
-      m.riboflavin,
-      m.niacin,
-      m.calcium,
-      m.iron,
-      m.magnesium,
-      m.phosphorus,
-      m.potassium,
-      m.zinc,
+      types.fiber(m),
+      types.sugar(m),
+      types.sodium(m),
+      types.cholesterol(m),
+      types.vitamin_a(m),
+      types.vitamin_c(m),
+      types.vitamin_d(m),
+      types.vitamin_e(m),
+      types.vitamin_k(m),
+      types.vitamin_b6(m),
+      types.vitamin_b12(m),
+      types.folate(m),
+      types.thiamin(m),
+      types.riboflavin(m),
+      types.niacin(m),
+      types.calcium(m),
+      types.iron(m),
+      types.magnesium(m),
+      types.phosphorus(m),
+      types.potassium(m),
+      types.zinc(m),
     )
 
     None -> #(

@@ -14,41 +14,17 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import glint
+import meal_planner/cli/domains/diary/types.{
+  type DayNutrition, calculate_day_nutrition,
+}
 import meal_planner/config.{type Config}
 import meal_planner/fatsecret/diary/service as diary_service
-import meal_planner/fatsecret/diary/types.{type FoodEntry, food_entry_id}
+import meal_planner/fatsecret/diary/types as fatsecret
 import meal_planner/postgres
 import pog
 
-/// Calculate total nutrition for a list of entries
-///
-/// Sums calories, protein, carbs, and fat across all entries.
-pub type DayNutrition {
-  DayNutrition(
-    calories: Float,
-    protein: Float,
-    carbohydrates: Float,
-    fat: Float,
-  )
-}
-
-pub fn calculate_day_nutrition(entries: List(FoodEntry)) -> DayNutrition {
-  entries
-  |> list.fold(
-    DayNutrition(calories: 0.0, protein: 0.0, carbohydrates: 0.0, fat: 0.0),
-    fn(acc, entry) {
-      DayNutrition(
-        calories: acc.calories +. entry.calories,
-        protein: acc.protein +. entry.protein,
-        carbohydrates: acc.carbohydrates +. entry.carbohydrate,
-        fat: acc.fat +. entry.fat,
-      )
-    },
-  )
-}
-
 /// Format a single food entry for display
-pub fn format_food_entry_row(entry: FoodEntry) -> String {
+pub fn format_food_entry_row(entry: fatsecret.FoodEntry) -> String {
   let padded_name = case string.length(entry.food_entry_name) {
     len if len >= 30 -> string.slice(entry.food_entry_name, 0, 27) <> "..."
     len -> entry.food_entry_name <> string.repeat(" ", 30 - len)
@@ -225,7 +201,7 @@ fn delete_handler(config: Config, entry_id_str: String) -> Result(Nil, Nil) {
       Error(Nil)
     }
     Ok(conn) -> {
-      let entry_id = food_entry_id(entry_id_str)
+      let entry_id = fatsecret.food_entry_id(entry_id_str)
       case diary_service.delete_food_entry(conn, entry_id) {
         Ok(_) -> {
           io.println("✓ Food entry deleted successfully")

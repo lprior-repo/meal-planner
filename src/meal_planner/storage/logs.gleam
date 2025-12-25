@@ -19,7 +19,7 @@ import meal_planner/storage/logs/entries
 import meal_planner/storage/logs/queries
 import meal_planner/storage/logs/summaries
 import meal_planner/storage/profile.{type StorageError}
-import meal_planner/types.{type DailyLog, type FoodLogEntry}
+import meal_planner/types/food.{type DailyLog, type FoodLogEntry}
 import meal_planner/types/user_profile.{
   type UserProfile, Maintain, Moderate, new_user_profile,
 }
