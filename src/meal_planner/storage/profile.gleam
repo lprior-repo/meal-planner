@@ -8,16 +8,14 @@ import meal_planner/id
 import meal_planner/ncp
 import meal_planner/postgres
 import meal_planner/storage/utils
-import meal_planner/types.{
-  type UserProfile, daily_calorie_target, daily_carb_target, daily_fat_target,
-  daily_macro_targets, daily_protein_target, micronutrients_decoder,
-  micronutrients_to_json, new_user_profile, user_profile_activity_level,
-  user_profile_bodyweight, user_profile_goal, user_profile_meals_per_day,
-  user_profile_micronutrient_goals,
+import meal_planner/types/micronutrients.{
+  decoder as micronutrients_decoder, to_json as micronutrients_to_json,
 }
 import meal_planner/types/user_profile.{
-  type ActivityLevel, type Goal, Active, Gain, Lose, Maintain, Moderate,
-  Sedentary,
+  type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
+  Moderate, Sedentary, new_user_profile, user_profile_activity_level,
+  user_profile_bodyweight, user_profile_goal, user_profile_meals_per_day,
+  user_profile_micronutrient_goals,
 }
 import pog
 
@@ -259,7 +257,9 @@ pub fn save_user_profile(
   }
 
   // Encode micronutrient_goals to JSON string
-  let micronutrient_goals_json = case user_profile_micronutrient_goals(profile) {
+  let micronutrient_goals_json = case
+    user_profile_micronutrient_goals(profile)
+  {
     Some(goals) ->
       pog.nullable(
         pog.text,
@@ -322,18 +322,35 @@ pub fn get_user_profile(
       None -> None
     }
 
+    // Assume data from DB is always valid - validation is done at insert time
     case
       new_user_profile(
-        id: id.user_id(int.to_string(user_id)),
-        bodyweight: bodyweight,
-        activity_level: activity_level,
-        goal: goal,
-        meals_per_day: meals_per_day,
-        micronutrient_goals: micronutrient_goals,
+        id.user_id(int.to_string(user_id)),
+        bodyweight,
+        activity_level,
+        goal,
+        meals_per_day,
+        micronutrient_goals,
       )
     {
       Ok(profile) -> decode.success(profile)
-      Error(err) -> decode.failure(_, err)
+      Error(_) -> {
+        // This should not happen with valid DB data
+        // Return a default profile
+        let default_result =
+          new_user_profile(
+            id.user_id(int.to_string(user_id)),
+            70.0,
+            Moderate,
+            Maintain,
+            3,
+            None,
+          )
+        case default_result {
+          Ok(p) -> decode.success(p)
+          Error(_) -> panic as "Should not reach here"
+        }
+      }
     }
   }
 

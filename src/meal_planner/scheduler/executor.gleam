@@ -494,7 +494,6 @@ fn execute_weekly_trends(db: pog.Connection) -> Result(json.Json, String) {
     }),
   )
 
-
   // Convert to JSON output
   Ok(
     json.object([

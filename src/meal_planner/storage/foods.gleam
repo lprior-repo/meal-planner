@@ -8,7 +8,11 @@ import meal_planner/storage/profile.{
   type StorageError, DatabaseError, NotFound, result_to_storage_error,
 }
 import meal_planner/storage/utils
-import meal_planner/types
+import meal_planner/types.{
+  type CustomFood, type FoodSearchResponse, type Macros, CustomFoodResult,
+  UsdaFoodResult,
+}
+import meal_planner/types/search.{type SearchFilters}
 import meal_planner/utils/micronutrients as micro_utils
 import pog
 

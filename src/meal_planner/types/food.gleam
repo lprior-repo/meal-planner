@@ -13,13 +13,18 @@ import gleam/json.{type Json}
 import gleam/option.{type Option, None, Some}
 import meal_planner/id.{
   type CustomFoodId, type FdcId, type LogEntryId, type RecipeId, type UserId,
-  custom_food_id_to_json, fdc_id_to_json, log_entry_id_to_json, recipe_id_to_json,
-  user_id_to_json, custom_food_id_decoder, fdc_id_decoder, log_entry_id_decoder,
-  recipe_id_decoder, user_id_decoder,
+  custom_food_id_decoder, custom_food_id_to_json, fdc_id_decoder, fdc_id_to_json,
+  log_entry_id_decoder, log_entry_id_to_json, recipe_id_decoder,
+  recipe_id_to_json, user_id_decoder, user_id_to_json,
 }
 import meal_planner/types/custom_food.{type CustomFood}
-import meal_planner/types/macros.{type Macros, decoder as macros_decoder, to_json as macros_to_json}
-import meal_planner/types/micronutrients.{type Micronutrients, decoder as micronutrients_decoder, to_json as micronutrients_to_json}
+import meal_planner/types/macros.{
+  type Macros, decoder as macros_decoder, to_json as macros_to_json,
+}
+import meal_planner/types/micronutrients.{
+  type Micronutrients, decoder as micronutrients_decoder,
+  to_json as micronutrients_to_json,
+}
 
 // ============================================================================
 // Food Source Types

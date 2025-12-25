@@ -19,9 +19,9 @@ import meal_planner/storage/logs/entries
 import meal_planner/storage/logs/queries
 import meal_planner/storage/logs/summaries
 import meal_planner/storage/profile.{type StorageError}
-import meal_planner/types.{
-  type DailyLog, type FoodLogEntry, type UserProfile, Maintain, Moderate,
-  UserProfile,
+import meal_planner/types.{type DailyLog, type FoodLogEntry}
+import meal_planner/types/user_profile.{
+  type UserProfile, Maintain, Moderate, new_user_profile,
 }
 import pog
 
@@ -122,7 +122,7 @@ pub fn get_todays_logs(
   conn: pog.Connection,
   user_id: Int,
   date: String,
-) -> Result(List(Log), StorageError) {
+) -> Result(List(queries.Log), StorageError) {
   queries.get_todays_logs(conn, user_id, date)
 }
 
@@ -181,12 +181,10 @@ pub fn get_user_profile_or_default(conn: pog.Connection) -> UserProfile {
 }
 
 fn default_user_profile() -> UserProfile {
-  UserProfile(
-    id: id.user_id("user-1"),
-    bodyweight: 180.0,
-    activity_level: Moderate,
-    goal: Maintain,
-    meals_per_day: 3,
-    micronutrient_goals: None,
-  )
+  case
+    new_user_profile(id.user_id("user-1"), 180.0, Moderate, Maintain, 3, None)
+  {
+    Ok(profile) -> profile
+    Error(_) -> panic as "Default user profile should always be valid"
+  }
 }
