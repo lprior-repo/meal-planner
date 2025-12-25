@@ -144,8 +144,7 @@ fn extract_regeneration_scope_fallback(
   // SingleDay and SingleMeal require day/meal parameters from the body
   // For now, we return None since the parser can't extract those details yet
   // TODO: Extract day of week and meal type from body to create SingleDay/SingleMeal
-  case string.contains(body, "day"),
-    string.contains(body, "meal") {
+  case string.contains(body, "day"), string.contains(body, "meal") {
     True, _ -> None
     _, True -> None
     False, False -> None
