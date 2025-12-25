@@ -9,6 +9,7 @@
 /// - Helper functions for rendering components
 import gleam/list
 import gleam/option.{None, Some}
+import meal_planner/cli/screens/weight/components/chart
 import meal_planner/cli/screens/weight/messages.{
   type WeightMsg, CancelAddEntry, CancelDelete, CancelEditEntry, ClearError,
   CommentInputChanged, ConfirmAddEntry, ConfirmDelete, ConfirmEditEntry,
@@ -22,7 +23,7 @@ import meal_planner/cli/screens/weight/model.{
   StatsView,
 }
 import meal_planner/cli/screens/weight/update.{
-  date_int_to_string, float_to_string, render_chart,
+  date_int_to_string, float_to_string,
 }
 import meal_planner/fatsecret/weight/types as weight_types
 import shore
@@ -320,7 +321,7 @@ fn view_stats(model: WeightModel) -> shore.Node(WeightMsg) {
 
 /// Render chart view
 fn view_chart(model: WeightModel) -> shore.Node(WeightMsg) {
-  let chart_lines = render_chart(model.chart_data, 40, 10)
+  let chart_lines = chart.render_chart(model.chart_data, 40, 10)
   let chart_rows = list.map(chart_lines, fn(line) { ui.text(line) })
 
   ui.col(

@@ -10,11 +10,10 @@ import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import meal_planner/email/command as cmd
 import meal_planner/email/command.{
   type CommandExecutionResult, type DayOfWeek, type EmailCommand,
   type RegenerationScope,
-}
+} as cmd
 import meal_planner/id
 import meal_planner/types/custom_food.{type CustomFood, CustomFood}
 import meal_planner/types/food.{
@@ -22,8 +21,7 @@ import meal_planner/types/food.{
   FoodLogEntry, Lunch, Snack,
 }
 import meal_planner/types/macros.{type Macros, Macros}
-import meal_planner/types/micronutrients.{type Micronutrients}
-import meal_planner/types/micronutrients as micros
+import meal_planner/types/micronutrients.{type Micronutrients} as micros
 import meal_planner/types/recipe.{
   type FodmapLevel, type Ingredient, type Recipe, High, Ingredient, Low, Medium,
   Recipe,
@@ -31,8 +29,7 @@ import meal_planner/types/recipe.{
 import meal_planner/types/user_profile.{
   type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
   Moderate, Sedentary,
-}
-import meal_planner/types/user_profile as user
+} as user
 
 // ============================================================================
 // Macros JSON
@@ -59,14 +56,6 @@ pub fn macros_decoder() -> Decoder(Macros) {
 // ============================================================================
 // Micronutrients JSON
 // ============================================================================
-
-/// Helper to convert Option(Float) to Json
-fn optional_float(opt: Option(Float)) -> Json {
-  case opt {
-    Some(v) -> json.float(v)
-    None -> json.null()
-  }
-}
 
 /// Encode Micronutrients to JSON
 pub fn micronutrients_to_json(m: Micronutrients) -> Json {

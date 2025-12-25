@@ -16,7 +16,7 @@ import gleam/option.{type Option, None, Some}
 import meal_planner/fatsecret/diary/handlers as diary_handlers
 import meal_planner/fatsecret/exercise/handlers as exercise_handlers
 import meal_planner/fatsecret/favorites/handlers as favorites_handlers
-import meal_planner/fatsecret/saved_meals/handlers/mod as saved_meals_handlers
+import meal_planner/fatsecret/saved_meals/handlers as saved_meals_handlers
 import meal_planner/fatsecret/weight/handlers as weight_handlers
 import meal_planner/web/handlers
 import meal_planner/web/handlers/fatsecret/brands as brands_handler
