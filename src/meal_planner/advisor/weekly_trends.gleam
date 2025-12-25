@@ -378,77 +378,85 @@ pub fn generate_pattern_recommendations(
 ) -> List(String) {
   let #(avg_protein, avg_carbs, avg_fat, avg_calories) = averages
 
-  patterns
-  |> list.map(fn(pattern) {
-    // Use string.contains to check pattern type
-    case
-      string.contains(pattern, "protein_deficiency"),
-      string.contains(pattern, "protein_overage"),
-      string.contains(pattern, "carb_deficiency"),
-      string.contains(pattern, "carb_overage"),
-      string.contains(pattern, "fat_deficiency"),
-      string.contains(pattern, "fat_overage"),
-      string.contains(pattern, "calorie_deficit"),
-      string.contains(pattern, "calorie_surplus")
-    {
-      // Protein deficiency
-      True, False, False, False, False, False, False, False -> {
-        let deficit = targets.daily_protein -. avg_protein
-        "Increase protein intake by "
-        <> float.to_string(deficit)
-        <> "g per day. Consider adding lean meats, eggs, or protein shakes."
-      }
-      // Protein overage
-      False, True, False, False, False, False, False, False ->
-        "Protein intake is above target. This is generally fine for active individuals."
-
-      // Carb deficiency
-      False, False, True, False, False, False, False, False -> {
-        let deficit = targets.daily_carbs -. avg_carbs
-        "Increase carb intake by "
-        <> float.to_string(deficit)
-        <> "g per day. Add whole grains, fruits, or starchy vegetables."
-      }
-      // Carb overage
-      False, False, False, True, False, False, False, False -> {
-        let excess = avg_carbs -. targets.daily_carbs
-        "Reduce carb intake by "
-        <> float.to_string(excess)
-        <> "g per day. Focus on reducing refined carbs and sugars."
-      }
-
-      // Fat deficiency
-      False, False, False, False, True, False, False, False -> {
-        let deficit = targets.daily_fat -. avg_fat
-        "Increase healthy fat intake by "
-        <> float.to_string(deficit)
-        <> "g per day. Add nuts, avocados, or olive oil."
-      }
-      // Fat overage
-      False, False, False, False, False, True, False, False -> {
-        let excess = avg_fat -. targets.daily_fat
-        "Reduce fat intake by "
-        <> float.to_string(excess)
-        <> "g per day. Limit fried foods and high-fat dairy."
-      }
-
-      // Calorie deficit
-      False, False, False, False, False, False, True, False -> {
-        let deficit = targets.daily_calories -. avg_calories
-        "Increase calorie intake by "
-        <> float.to_string(deficit)
-        <> " per day to meet your goals."
-      }
-      // Calorie surplus
-      False, False, False, False, False, False, False, True -> {
-        let excess = avg_calories -. targets.daily_calories
-        "Reduce calorie intake by "
-        <> float.to_string(excess)
-        <> " per day to meet your goals."
-      }
-
-      // Default case
-      _, _, _, _, _, _, _, _ -> "Continue monitoring your nutrition patterns."
+  case patterns {
+    [] -> {
+      // Balanced week: return congratulatory message
+      ["Great job! Your nutrition is well-balanced this week. Keep up the consistent eating habits!"]
     }
-  })
+    _ -> {
+      patterns
+      |> list.map(fn(pattern) {
+        // Use string.contains to check pattern type
+        case
+          string.contains(pattern, "protein_deficiency"),
+          string.contains(pattern, "protein_overage"),
+          string.contains(pattern, "carb_deficiency"),
+          string.contains(pattern, "carb_overage"),
+          string.contains(pattern, "fat_deficiency"),
+          string.contains(pattern, "fat_overage"),
+          string.contains(pattern, "calorie_deficit"),
+          string.contains(pattern, "calorie_surplus")
+        {
+          // Protein deficiency
+          True, False, False, False, False, False, False, False -> {
+            let deficit = targets.daily_protein -. avg_protein
+            "Increase protein intake by "
+            <> float.to_string(deficit)
+            <> "g per day. Consider adding lean meats, eggs, or protein shakes."
+          }
+          // Protein overage
+          False, True, False, False, False, False, False, False ->
+            "Protein intake is above target. This is generally fine for active individuals."
+
+          // Carb deficiency
+          False, False, True, False, False, False, False, False -> {
+            let deficit = targets.daily_carbs -. avg_carbs
+            "Increase carb intake by "
+            <> float.to_string(deficit)
+            <> "g per day. Add whole grains, fruits, or starchy vegetables."
+          }
+          // Carb overage
+          False, False, False, True, False, False, False, False -> {
+            let excess = avg_carbs -. targets.daily_carbs
+            "Reduce carb intake by "
+            <> float.to_string(excess)
+            <> "g per day. Focus on reducing refined carbs and sugars."
+          }
+
+          // Fat deficiency
+          False, False, False, False, True, False, False, False -> {
+            let deficit = targets.daily_fat -. avg_fat
+            "Increase healthy fat intake by "
+            <> float.to_string(deficit)
+            <> "g per day. Add nuts, avocados, or olive oil."
+          }
+          // Fat overage
+          False, False, False, False, False, True, False, False -> {
+            let excess = avg_fat -. targets.daily_fat
+            "Reduce fat intake by "
+            <> float.to_string(excess)
+            <> "g per day. Limit fried foods and high-fat dairy."
+          }
+
+          // Calorie deficit
+          False, False, False, False, False, False, True, False -> {
+            let deficit = targets.daily_calories -. avg_calories
+            "Increase calorie intake by "
+            <> float.to_string(deficit)
+            <> " per day to meet your goals."
+          }
+          // Calorie surplus
+          False, False, False, False, False, False, False, True -> {
+            let excess = avg_calories -. targets.daily_calories
+            "Reduce calorie intake by "
+            <> float.to_string(excess)
+            <> " per day to meet your goals."
+          }
+
+          // Default case
+          _, _, _, _, _, _, _, _ -> "Continue monitoring your nutrition patterns."
+        }
+      })
+    }
+  }
 }
