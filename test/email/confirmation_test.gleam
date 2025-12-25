@@ -7,7 +7,7 @@ import gleeunit
 import gleeunit/should
 
 import meal_planner/email/command.{
-  CommandExecutionResult, AdjustMeal, Breakfast, Friday, FullWeek,
+  AdjustMeal, Breakfast, CommandExecutionResult, Friday, FullWeek,
   RegeneratePlan, RemoveDislike,
 }
 import meal_planner/email/confirmation
