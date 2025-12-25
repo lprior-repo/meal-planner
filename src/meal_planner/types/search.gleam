@@ -4,7 +4,9 @@
 import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import meal_planner/id.{fdc_id, fdc_id_decoder, fdc_id_to_json}
-import meal_planner/types/custom_food.{decoder as custom_food_decoder, to_json as custom_food_to_json}
+import meal_planner/types/custom_food.{
+  decoder as custom_food_decoder, to_json as custom_food_to_json,
+}
 import meal_planner/types/food.{
   type FoodSearchResponse, type FoodSearchResult, CustomFoodResult,
   FoodSearchResponse, UsdaFoodResult,

@@ -10,7 +10,7 @@ import gleam/option.{None, Some}
 import meal_planner/fatsecret/profile/types as fatsecret_profile
 import meal_planner/generator/weekly
 import meal_planner/grocery_list
-import meal_planner/types
+import meal_planner/types/macros
 
 // ============================================================================
 // Generation Request Types

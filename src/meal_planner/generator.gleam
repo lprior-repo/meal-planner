@@ -4,7 +4,8 @@ import gleam/list
 import meal_planner/generator/knapsack.{type KnapsackError}
 import meal_planner/logger
 import meal_planner/meal_plan.{type DailyPlan, DailyPlan, Meal}
-import meal_planner/types.{type Recipe, macros_calories}
+import meal_planner/types/macros
+import meal_planner/types/recipe.{type Recipe}
 
 /// Error type for generator functions
 pub type GeneratorError {
@@ -64,7 +65,7 @@ fn calculate_remaining_calories(
         True -> 0
         False -> {
           let macros = meal.recipe.macros
-          let calories = macros_calories(macros)
+          let calories = macros.calories(macros)
           let rounded = calories +. 0.5
           case rounded >=. 0.0 {
             True -> float_to_int(rounded)
@@ -232,7 +233,7 @@ pub fn generate_with_locked(
         _recipe_count -> {
           // Calculate calories for locked food
           let locked_calories =
-            macros_calories(locked_food.macros)
+            macros.calories(locked_food.macros)
             |> fn(f) { float_to_int(f +. 0.5) }()
 
           // Calculate remaining calories for other meals

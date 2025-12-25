@@ -21,7 +21,7 @@ import meal_planner/generator/weekly.{
 }
 import meal_planner/id.{type UserId, job_id}
 import meal_planner/scheduler/types as scheduler_types
-import meal_planner/types.{type Macros, Macros}
+import meal_planner/types/macros.{type Macros, Macros}
 import pog
 
 // ============================================================================

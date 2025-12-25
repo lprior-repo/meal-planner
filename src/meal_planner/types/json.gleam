@@ -10,13 +10,30 @@ import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import meal_planner/id
-import meal_planner/types.{
-  type ActivityLevel, type CustomFood, type DailyLog, type FodmapLevel,
-  type FoodLogEntry, type Ingredient, type Macros, type MealType,
-  type Micronutrients, type UserProfile, Active, Breakfast, Dinner, Gain, High,
-  Lose, Low, Lunch, Maintain, Medium, Moderate, Sedentary, Snack,
+import meal_planner/email/command.{
+  type CommandExecutionResult, type DayOfWeek, type EmailCommand,
+  type RegenerationScope,
 }
+import meal_planner/email/command as cmd
+import meal_planner/id
+import meal_planner/types/custom_food.{type CustomFood, CustomFood}
+import meal_planner/types/food.{
+  type DailyLog, type FoodLogEntry, type MealType, Breakfast, DailyLog, Dinner,
+  FoodLogEntry, Lunch, Snack,
+}
+import meal_planner/types/macros.{type Macros, Macros}
+import meal_planner/types/macros
+import meal_planner/types/micronutrients.{type Micronutrients, Micronutrients}
+import meal_planner/types/recipe.{
+  type FodmapLevel, type Ingredient, type Recipe, High, Ingredient, Low, Medium,
+  Recipe,
+}
+import meal_planner/types/recipe as recipe_mod
+import meal_planner/types/user_profile.{
+  type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
+  Moderate, Sedentary, UserProfile,
+}
+import meal_planner/types/user_profile as user
 
 // ============================================================================
 // Macros JSON
@@ -28,7 +45,7 @@ pub fn macros_to_json(m: Macros) -> Json {
     #("protein", json.float(m.protein)),
     #("fat", json.float(m.fat)),
     #("carbs", json.float(m.carbs)),
-    #("calories", json.float(types.macros_calories(m))),
+    #("calories", json.float(macros.calories(m))),
   ])
 }
 
@@ -37,7 +54,7 @@ pub fn macros_decoder() -> Decoder(Macros) {
   use protein <- decode.field("protein", decode.float)
   use fat <- decode.field("fat", decode.float)
   use carbs <- decode.field("carbs", decode.float)
-  decode.success(types.Macros(protein: protein, fat: fat, carbs: carbs))
+  decode.success(Macros(protein: protein, fat: fat, carbs: carbs))
 }
 
 // ============================================================================
@@ -178,7 +195,7 @@ pub fn micronutrients_decoder() -> Decoder(Micronutrients) {
     decode.optional(decode.float),
   )
   use zinc <- decode.optional_field("zinc", None, decode.optional(decode.float))
-  decode.success(types.Micronutrients(
+  decode.success(Micronutrients(
     fiber: fiber,
     sugar: sugar,
     sodium: sodium,
@@ -219,7 +236,7 @@ pub fn ingredient_to_json(i: Ingredient) -> Json {
 pub fn ingredient_decoder() -> Decoder(Ingredient) {
   use name <- decode.field("name", decode.string)
   use quantity <- decode.field("quantity", decode.string)
-  decode.success(types.Ingredient(name: name, quantity: quantity))
+  decode.success(Ingredient(name: name, quantity: quantity))
 }
 
 // ============================================================================
@@ -240,7 +257,7 @@ pub fn fodmap_level_decoder() -> Decoder(FodmapLevel) {
   use s <- decode.then(decode.string)
   case s {
     "low" -> decode.success(Low)
-    "medium" -> decode.success(types.Medium)
+    "medium" -> decode.success(Medium)
     "high" -> decode.success(High)
     _ -> decode.failure(Low, "FodmapLevel")
   }
@@ -251,7 +268,7 @@ pub fn fodmap_level_decoder() -> Decoder(FodmapLevel) {
 // ============================================================================
 
 /// Encode Recipe to JSON
-pub fn recipe_to_json(r: types.Recipe) -> Json {
+pub fn recipe_to_json(r: Recipe) -> Json {
   json.object([
     #("id", id.recipe_id_to_json(r.id)),
     #("name", json.string(r.name)),
@@ -266,7 +283,7 @@ pub fn recipe_to_json(r: types.Recipe) -> Json {
 }
 
 /// Decode Recipe from JSON
-pub fn recipe_decoder() -> Decoder(types.Recipe) {
+pub fn recipe_decoder() -> Decoder(Recipe) {
   use recipe_id <- decode.field("id", id.recipe_id_decoder())
   use name <- decode.field("name", decode.string)
   use ingredients <- decode.field(
@@ -279,7 +296,7 @@ pub fn recipe_decoder() -> Decoder(types.Recipe) {
   use category <- decode.field("category", decode.string)
   use fodmap_level <- decode.field("fodmap_level", fodmap_level_decoder())
   use vertical_compliant <- decode.field("vertical_compliant", decode.bool)
-  decode.success(types.Recipe(
+  decode.success(Recipe(
     id: recipe_id,
     name: name,
     ingredients: ingredients,
@@ -321,7 +338,7 @@ pub fn activity_level_decoder() -> Decoder(ActivityLevel) {
 // ============================================================================
 
 /// Convert Goal to JSON-friendly string
-pub fn goal_to_string(g: types.Goal) -> String {
+pub fn goal_to_string(g: Goal) -> String {
   case g {
     Gain -> "gain"
     Maintain -> "maintain"
@@ -330,7 +347,7 @@ pub fn goal_to_string(g: types.Goal) -> String {
 }
 
 /// Decode Goal from string
-pub fn goal_decoder() -> Decoder(types.Goal) {
+pub fn goal_decoder() -> Decoder(Goal) {
   use s <- decode.then(decode.string)
   case s {
     "gain" -> decode.success(Gain)
@@ -346,7 +363,7 @@ pub fn goal_decoder() -> Decoder(types.Goal) {
 
 /// Encode UserProfile to JSON
 pub fn user_profile_to_json(u: UserProfile) -> Json {
-  let targets = types.daily_macro_targets(u)
+  let targets = user.daily_macro_targets(u)
   let base_fields = [
     #("id", id.user_id_to_json(u.id)),
     #("bodyweight", json.float(u.bodyweight)),
@@ -378,7 +395,7 @@ pub fn user_profile_decoder() -> Decoder(UserProfile) {
     "micronutrient_goals",
     decode.optional(micronutrients_decoder()),
   )
-  decode.success(types.UserProfile(
+  decode.success(UserProfile(
     id: user_id,
     bodyweight: bodyweight,
     activity_level: activity_level,
@@ -466,7 +483,7 @@ pub fn custom_food_decoder() -> Decoder(CustomFood) {
     "micronutrients",
     decode.optional(micronutrients_decoder()),
   )
-  decode.success(types.CustomFood(
+  decode.success(CustomFood(
     id: food_id,
     user_id: user_id,
     name: name,
@@ -522,7 +539,7 @@ pub fn food_log_entry_decoder() -> Decoder(FoodLogEntry) {
   use logged_at <- decode.field("logged_at", decode.string)
   use source_type <- decode.field("source_type", decode.string)
   use source_id <- decode.field("source_id", decode.string)
-  decode.success(types.FoodLogEntry(
+  decode.success(FoodLogEntry(
     id: log_id,
     recipe_id: recipe_id,
     recipe_name: recipe_name,
@@ -568,7 +585,7 @@ pub fn daily_log_decoder() -> Decoder(DailyLog) {
     "total_micronutrients",
     decode.optional(micronutrients_decoder()),
   )
-  decode.success(types.DailyLog(
+  decode.success(DailyLog(
     date: date,
     entries: entries,
     total_macros: total_macros,
@@ -581,62 +598,62 @@ pub fn daily_log_decoder() -> Decoder(DailyLog) {
 // ============================================================================
 
 /// Convert DayOfWeek to string
-pub fn day_of_week_to_string(day: types.DayOfWeek) -> String {
+pub fn day_of_week_to_string(day: DayOfWeek) -> String {
   case day {
-    types.Monday -> "Monday"
-    types.Tuesday -> "Tuesday"
-    types.Wednesday -> "Wednesday"
-    types.Thursday -> "Thursday"
-    types.Friday -> "Friday"
-    types.Saturday -> "Saturday"
-    types.Sunday -> "Sunday"
+    cmd.Monday -> "Monday"
+    cmd.Tuesday -> "Tuesday"
+    cmd.Wednesday -> "Wednesday"
+    cmd.Thursday -> "Thursday"
+    cmd.Friday -> "Friday"
+    cmd.Saturday -> "Saturday"
+    cmd.Sunday -> "Sunday"
   }
 }
 
 /// Parse DayOfWeek from string
-pub fn day_of_week_from_string(s: String) -> Option(types.DayOfWeek) {
+pub fn day_of_week_from_string(s: String) -> Option(DayOfWeek) {
   case string.lowercase(s) {
-    "monday" -> Some(types.Monday)
-    "tuesday" -> Some(types.Tuesday)
-    "wednesday" -> Some(types.Wednesday)
-    "thursday" -> Some(types.Thursday)
-    "friday" -> Some(types.Friday)
-    "saturday" -> Some(types.Saturday)
-    "sunday" -> Some(types.Sunday)
+    "monday" -> Some(cmd.Monday)
+    "tuesday" -> Some(cmd.Tuesday)
+    "wednesday" -> Some(cmd.Wednesday)
+    "thursday" -> Some(cmd.Thursday)
+    "friday" -> Some(cmd.Friday)
+    "saturday" -> Some(cmd.Saturday)
+    "sunday" -> Some(cmd.Sunday)
     _ -> None
   }
 }
 
 /// Convert RegenerationScope to string
-pub fn regeneration_scope_to_string(scope: types.RegenerationScope) -> String {
+pub fn regeneration_scope_to_string(scope: RegenerationScope) -> String {
   case scope {
-    types.SingleMeal -> "single_meal"
-    types.SingleDay -> "single_day"
-    types.FullWeek -> "full_week"
+    cmd.SingleMeal -> "single_meal"
+    cmd.SingleDay -> "single_day"
+    cmd.FullWeek -> "full_week"
   }
 }
 
 /// Encode EmailCommand to JSON
-pub fn email_command_to_json(cmd: types.EmailCommand) -> Json {
+pub fn email_command_to_json(cmd: EmailCommand) -> Json {
   case cmd {
-    types.AdjustMeal(day, meal_type, recipe_id) ->
+    cmd.AdjustMeal(day, meal_type, recipe_id) ->
       json.object([
         #("type", json.string("adjust_meal")),
         #("day", json.string(day_of_week_to_string(day))),
         #("meal_type", json.string(meal_type_to_string(meal_type))),
         #("recipe_id", json.string(id.recipe_id_to_string(recipe_id))),
       ])
-    types.AddPreference(pref) ->
+    cmd.AddPreference(pref) ->
       json.object([
         #("type", json.string("add_preference")),
         #("preference", json.string(pref)),
       ])
-    types.RemoveDislike(food) ->
+    cmd.RemoveDislike(food) ->
       json.object([
         #("type", json.string("remove_dislike")),
         #("food_name", json.string(food)),
       ])
-    types.RegeneratePlan(scope, constraints) ->
+    cmd.RegeneratePlan(scope, constraints) ->
       json.object([
         #("type", json.string("regenerate_plan")),
         #("scope", json.string(regeneration_scope_to_string(scope))),
@@ -645,7 +662,7 @@ pub fn email_command_to_json(cmd: types.EmailCommand) -> Json {
           None -> json.null()
         }),
       ])
-    types.SkipMeal(day, meal_type) ->
+    cmd.SkipMeal(day, meal_type) ->
       json.object([
         #("type", json.string("skip_meal")),
         #("day", json.string(day_of_week_to_string(day))),
@@ -655,9 +672,7 @@ pub fn email_command_to_json(cmd: types.EmailCommand) -> Json {
 }
 
 /// Encode CommandExecutionResult to JSON
-pub fn command_execution_result_to_json(
-  result: types.CommandExecutionResult,
-) -> Json {
+pub fn command_execution_result_to_json(result: CommandExecutionResult) -> Json {
   json.object([
     #("success", json.bool(result.success)),
     #("message", json.string(result.message)),
