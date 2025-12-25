@@ -16,10 +16,7 @@ import meal_planner/fatsecret/foods/types as food_types
 // ============================================================================
 
 /// Handler for food search via --query flag
-pub fn search_handler(
-  config: Config,
-  search_query: String,
-) -> Result(Nil, Nil) {
+pub fn search_handler(config: Config, search_query: String) -> Result(Nil, Nil) {
   // Check if FatSecret is configured
   case config.external_services.fatsecret {
     option.Some(fs_config) -> {

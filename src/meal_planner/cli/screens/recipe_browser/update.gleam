@@ -109,8 +109,7 @@ pub fn recipe_update(
 
     // === Search ===
     messages.SearchQueryChanged(query) -> {
-      let search =
-        model.RecipeSearchState(..model.search_state, query: query)
+      let search = model.RecipeSearchState(..model.search_state, query: query)
       let updated = model.RecipeModel(..model, search_state: search)
       #(updated, messages.NoEffect)
     }
@@ -194,7 +193,8 @@ pub fn recipe_update(
           is_loading: False,
           error: None,
         )
-      let updated = model.RecipeModel(..model, search_state: search, recipes: [])
+      let updated =
+        model.RecipeModel(..model, search_state: search, recipes: [])
       #(updated, messages.NoEffect)
     }
 
@@ -329,8 +329,7 @@ pub fn recipe_update(
     }
 
     messages.SetMaxPrepTime(minutes) -> {
-      let filters =
-        model.RecipeFilters(..model.filters, max_prep_time: minutes)
+      let filters = model.RecipeFilters(..model.filters, max_prep_time: minutes)
       let updated = model.RecipeModel(..model, filters: filters)
       #(updated, messages.NoEffect)
     }
@@ -360,7 +359,8 @@ pub fn recipe_update(
     }
 
     messages.ApplyFilters -> {
-      let pagination = model.PaginationState(..model.pagination, current_page: 1)
+      let pagination =
+        model.PaginationState(..model.pagination, current_page: 1)
       let updated =
         model.RecipeModel(
           ..model,

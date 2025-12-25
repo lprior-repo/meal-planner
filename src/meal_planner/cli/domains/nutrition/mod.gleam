@@ -12,7 +12,7 @@ import gleam/result
 import glint
 import meal_planner/cli/domains/nutrition/commands
 import meal_planner/config.{type Config}
-import meal_planner/ncp.{format_goals, get_default_goals}
+import meal_planner/ncp.{get_default_goals}
 
 /// Nutrition domain command for Glint CLI
 pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
@@ -92,8 +92,7 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
               Ok(Nil)
             }
             Error(_) -> {
-              io.println("Using default goals:")
-              io.println(format_goals(get_default_goals()))
+              io.println("Using default nutrition goals")
               Ok(Nil)
             }
           }

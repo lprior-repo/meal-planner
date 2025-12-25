@@ -59,8 +59,7 @@ pub fn init_with_constraints_test() {
   let max_date = 20_100
 
   // WHEN: Initializing with constraints
-  let model =
-    dp.init_with_constraints(date_int, Some(min_date), Some(max_date))
+  let model = dp.init_with_constraints(date_int, Some(min_date), Some(max_date))
 
   // THEN: Constraints should be set
   model.min_date
@@ -214,8 +213,7 @@ pub fn navigation_respects_max_date_test() {
 
 pub fn select_date_validates_constraints_test() {
   // GIVEN: A date picker with constraints
-  let model =
-    dp.init_with_constraints(20_000, Some(19_900), Some(20_100))
+  let model = dp.init_with_constraints(20_000, Some(19_900), Some(20_100))
 
   // WHEN: Selecting a date outside constraints
   let #(updated, _effect) = dp.update(model, SelectDate(25_000))
@@ -255,8 +253,7 @@ pub fn input_changed_updates_text_test() {
   let #(model2, _) = dp.update(model, ToggleInputMode)
 
   // WHEN: Changing input text
-  let #(updated, _effect) =
-    dp.update(model2, InputChanged("2025-01-15"))
+  let #(updated, _effect) = dp.update(model2, InputChanged("2025-01-15"))
 
   // THEN: Input text should be updated
   updated.input_text

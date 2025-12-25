@@ -28,8 +28,7 @@ pub fn cmd(app_config: Config) -> glint.Command(Result(Nil, Nil)) {
   case unnamed {
     ["search"] -> {
       case query(flags) {
-        Ok(search_query) ->
-          search.search_handler(app_config, search_query)
+        Ok(search_query) -> search.search_handler(app_config, search_query)
         Error(_) -> {
           io.println("Error: --query flag required for search")
           Error(Nil)

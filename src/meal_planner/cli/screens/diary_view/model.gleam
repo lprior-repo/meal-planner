@@ -13,10 +13,6 @@ import meal_planner/cli/screens/fatsecret_diary.{type DiaryModel}
 // Re-exports
 // ============================================================================
 
-/// Re-export DiaryModel for external use
-pub type DiaryModel =
-  fatsecret_diary.DiaryModel
-
 /// Re-export init function for model creation
 pub fn init(today_date_int: Int) -> DiaryModel {
   fatsecret_diary.init(today_date_int)

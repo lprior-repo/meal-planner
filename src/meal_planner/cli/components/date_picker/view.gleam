@@ -40,7 +40,8 @@ fn view_closed(
   model: DatePickerModel,
   _on_msg: fn(DatePickerMsg) -> msg,
 ) -> shore.Node(msg) {
-  let date_str = logic.date_int_to_string(model.selected_date, model.date_format)
+  let date_str =
+    logic.date_int_to_string(model.selected_date, model.date_format)
   ui.text("📅 " <> date_str)
 }
 
@@ -122,9 +123,7 @@ fn view_calendar_mode(
   let #(today_year, today_month, today_day) = logic.date_int_to_ymd(today)
 
   let month_str =
-    logic.month_name(model.view_month)
-    <> " "
-    <> int.to_string(model.view_year)
+    logic.month_name(model.view_month) <> " " <> int.to_string(model.view_year)
 
   // Build calendar grid
   let first_day_of_month = case

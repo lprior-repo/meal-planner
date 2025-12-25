@@ -7,7 +7,9 @@
 /// - SchedulerMsg: All possible user and system events
 /// - SchedulerEffect: Side effects to execute
 import gleam/option.{type Option}
-import meal_planner/cli/screens/scheduler/model.{type JobFilter, type JobSortOption, type JobType}
+import meal_planner/cli/screens/scheduler/model.{
+  type JobFilter, type JobSortOption, type JobType,
+}
 import meal_planner/scheduler/types as scheduler_types
 
 // ============================================================================

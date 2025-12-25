@@ -2,13 +2,16 @@
 ///
 /// This module contains the update function and all message handling logic
 /// for the diary view screen, following the Elm Architecture pattern.
+import gleam/float
+import gleam/int
 import gleam/list
+import gleam/option
 import meal_planner/cli/screens/diary_view/messages.{
   type DiaryEffect, type DiaryMsg,
 }
 import meal_planner/cli/screens/diary_view/model
 import meal_planner/cli/screens/fatsecret_diary.{
-  type DiaryModel, type MealSection, Batch, CreateEntry, DeleteEntry,
+  type DiaryModel, type MealSection, Batch, CreateEntry, DeleteEntry, DiaryModel,
   FetchEntries, FetchNutritionTargets, MainView, None as NoEffect, SearchFoods,
   SearchPopup, SearchState, UpdateEntry,
 }
