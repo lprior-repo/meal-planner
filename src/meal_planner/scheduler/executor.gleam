@@ -24,8 +24,8 @@ import meal_planner/postgres
 import meal_planner/scheduler/errors.{type AppError}
 import meal_planner/scheduler/job_manager
 import meal_planner/scheduler/types.{
-  type JobExecution, type ScheduledJob, AutoSync, DailyAdvisor, JobExecution,
-  Running, WeeklyGeneration, WeeklyTrends,
+  type JobExecution, type ScheduledJob, AutoSync, Completed, DailyAdvisor,
+  JobExecution, Running, WeeklyGeneration, WeeklyTrends,
 }
 import pog
 
@@ -384,7 +384,7 @@ fn handle_success(
     job_id: job.id,
     started_at: execution.started_at,
     completed_at: Some(now),
-    status: types.Completed,
+    status: Completed,
     error_message: None,
     attempt_number: execution.attempt_number,
     duration_ms: None,

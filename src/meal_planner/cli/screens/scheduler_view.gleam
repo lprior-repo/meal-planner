@@ -21,6 +21,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/order
 import gleam/string
 import meal_planner/id
 import meal_planner/scheduler/types as scheduler_types
