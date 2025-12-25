@@ -4,6 +4,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{None, Some}
 import meal_planner/cli/screens/exercise/helpers
 import meal_planner/cli/screens/exercise/messages.{
   type ExerciseMsg, DateConfirmPicker, EditCaloriesChanged, EditDurationChanged,

@@ -27,6 +27,11 @@
 /// let #(new_model, effect) = exercise.exercise_update(model, msg)
 /// let view = exercise.exercise_view(model)
 /// ```
+import meal_planner/cli/screens/exercise/messages
+import meal_planner/cli/screens/exercise/model
+import meal_planner/cli/screens/exercise/update
+import meal_planner/cli/screens/exercise/view
+
 // Re-export model types and functions
 
 pub type ExerciseModel =
@@ -67,9 +72,6 @@ pub type ExerciseEffect =
   messages.ExerciseEffect
 
 // Re-export main functions
-import meal_planner/cli/screens/exercise/model
-import meal_planner/cli/screens/exercise/update
-import meal_planner/cli/screens/exercise/view
 
 pub const init = model.init
 

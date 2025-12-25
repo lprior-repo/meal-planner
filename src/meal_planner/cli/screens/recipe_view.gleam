@@ -6,7 +6,6 @@
 /// REFACTORING IN PROGRESS:
 /// Types moved to: recipe/model.gleam and recipe/messages.gleam
 /// Main module: recipe/mod.gleam
-
 import gleam/dict
 import gleam/float
 import gleam/int
@@ -17,8 +16,8 @@ import meal_planner/cli/screens/recipe/messages.{type RecipeMsg}
 import meal_planner/cli/screens/recipe/model.{
   type RecipeDetails, type RecipeEffect, type RecipeFilters, type RecipeListItem,
   type RecipeModel, type RecipeViewState, type SearchType, type SortOption,
-  ByIngredient, ByName, ByCuisine, DetailView, DirectionsView, FavoritesView,
-  FilterView, ListView, NutritionView, NoEffect, SearchPopup, SortByCalories,
+  ByCuisine, ByIngredient, ByName, DetailView, DirectionsView, FavoritesView,
+  FilterView, ListView, NoEffect, NutritionView, SearchPopup, SortByCalories,
   SortByName, SortByPrepTime, SortByRating, SortByRecent,
 }
 import meal_planner/fatsecret/recipes/types as recipe_types
@@ -29,10 +28,11 @@ import shore/ui
 
 // Re-export types for backward compatibility
 import meal_planner/cli/screens/recipe/model.{
-  type PaginationState, type RecipeDetails, type RecipeEffect, type RecipeFilters,
-  type RecipeIngredient, type RecipeDirection, type RecipeListItem, type RecipeModel,
-  type RecipeNutrition, type RecipeSearchState, type RecipeViewState, type SearchType,
-  type SortOption, default_filters, init,
+  type PaginationState, type RecipeDetails, type RecipeDirection,
+  type RecipeEffect, type RecipeFilters, type RecipeIngredient,
+  type RecipeListItem, type RecipeModel, type RecipeNutrition,
+  type RecipeSearchState, type RecipeViewState, type SearchType, type SortOption,
+  default_filters, init,
 }
 
 import meal_planner/cli/screens/recipe/messages.{type RecipeMsg}
