@@ -28,12 +28,10 @@ import meal_planner/types/recipe.{
   type FodmapLevel, type Ingredient, type Recipe, High, Ingredient, Low, Medium,
   Recipe,
 }
-import meal_planner/types/recipe as recipe_mod
 import meal_planner/types/user_profile.{
   type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
-  Moderate, Sedentary,
+  Moderate, Sedentary, UserProfile,
 }
-import meal_planner/types/user_profile as user
 
 // ============================================================================
 // Macros JSON
