@@ -12,9 +12,9 @@ import meal_planner/types/micronutrients.{
   decoder as micronutrients_decoder, to_json as micronutrients_to_json,
 }
 import meal_planner/types/user_profile.{
-  type ActivityLevel, type Goal, type UserProfile, Active, Gain, Lose, Maintain,
-  Moderate, Sedentary, new_user_profile, user_profile_activity_level,
-  user_profile_bodyweight, user_profile_goal, user_profile_meals_per_day,
+  type UserProfile, Active, Gain, Lose, Maintain, Moderate, Sedentary,
+  new_user_profile, user_profile_activity_level, user_profile_bodyweight,
+  user_profile_goal, user_profile_meals_per_day,
   user_profile_micronutrient_goals,
 }
 import pog

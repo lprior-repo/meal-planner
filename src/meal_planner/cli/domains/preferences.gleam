@@ -16,7 +16,6 @@ import meal_planner/config.{type Config}
 import meal_planner/id
 import meal_planner/ncp.{type NutritionGoals, NutritionGoals}
 import meal_planner/postgres
-import meal_planner/storage/profile as profile_storage
 import meal_planner/storage/profile.{
   type StorageError, DatabaseError, InvalidInput, NotFound, Unauthorized,
   get_user_profile,

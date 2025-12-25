@@ -12,12 +12,9 @@
 import gleam/list
 import gleeunit
 import gleeunit/should
-import meal_planner/generator/weekly.{
-  type Constraints, type DayMeals, type MealType, Breakfast, Constraints,
-  DayMeals, Dinner, LockedMeal, Lunch, OnTarget,
-}
+import meal_planner/generator/weekly.{type Constraints, Constraints}
 import meal_planner/id
-import meal_planner/types.{type Macros, type Recipe, Low, Macros, Recipe}
+import meal_planner/types.{type Macros, type Recipe, Macros, Recipe}
 
 pub fn main() {
   gleeunit.main()
@@ -80,15 +77,6 @@ fn dinner_recipe_pool() -> List(Recipe) {
     test_recipe("Tofu Curry", 45.0, 20.0, 88.0),
     test_recipe("Lamb Kebabs", 53.0, 25.0, 78.0),
     test_recipe("Turkey Meatballs", 49.0, 19.0, 82.0),
-  ]
-}
-
-/// Create quick-prep recipes for travel days
-fn quick_prep_recipe_pool() -> List(Recipe) {
-  [
-    test_recipe("Protein Bar", 20.0, 8.0, 35.0),
-    test_recipe("Instant Oats", 12.0, 6.0, 40.0),
-    test_recipe("Ready Meal", 25.0, 10.0, 45.0),
   ]
 }
 
