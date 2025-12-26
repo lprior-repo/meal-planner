@@ -13,7 +13,8 @@ import gleam/option.{type Option, None}
 import gleam/result
 import meal_planner/tandoor/api/crud_helpers
 import meal_planner/tandoor/api/generic_crud
-import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/api/generic_crud.{type TandoorError}
+import meal_planner/tandoor/config.{type ClientConfig}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
 
 // ============================================================================
@@ -169,7 +170,7 @@ fn encode_optional_string(value: Option(String)) -> Json {
 ///
 /// # Example
 /// ```gleam
-/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let config = config.bearer_config("http://localhost:8000", "token")
 /// let result = get_unit(config, unit_id: 1)
 /// ```
 pub fn get_unit(
@@ -194,7 +195,7 @@ pub fn get_unit(
 ///
 /// # Example
 /// ```gleam
-/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let config = config.bearer_config("http://localhost:8000", "token")
 /// let result = create_unit(config, name: "tablespoon")
 /// ```
 pub fn create_unit(
@@ -224,7 +225,7 @@ pub fn create_unit(
 ///
 /// # Example
 /// ```gleam
-/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let config = config.bearer_config("http://localhost:8000", "token")
 /// let unit = Unit(id: 1, name: "gram", ...)
 /// let result = update_unit(config, unit_id: 1, unit: unit)
 /// ```
@@ -255,7 +256,7 @@ pub fn update_unit(
 ///
 /// # Example
 /// ```gleam
-/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let config = config.bearer_config("http://localhost:8000", "token")
 /// let result = delete_unit(config, unit_id: 1)
 /// ```
 pub fn delete_unit(
@@ -285,7 +286,7 @@ pub fn delete_unit(
 ///
 /// # Example
 /// ```gleam
-/// let config = client.bearer_config("http://localhost:8000", "token")
+/// let config = config.bearer_config("http://localhost:8000", "token")
 /// let result = list_units(config, limit: Some(25), page: Some(1))
 /// ```
 pub fn list_units(

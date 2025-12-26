@@ -46,12 +46,12 @@ pub type HttpError {
 /// - Forbidden: Insufficient permissions (403)
 /// - InternalError: Server error (500)
 pub type TandoorError {
-  /// Network-related error (connection, timeout, HTTP error)
-  NetworkError(String)
-  /// JSON parsing/decoding error
-  ParseError(String)
   /// Resource not found (404)
-  NotFoundError(String)
+  NotFoundError(resource: String)
+  /// Network-related error (connection, timeout, HTTP error)
+  NetworkError(message: String)
+  /// JSON parsing/decoding error
+  ParseError(message: String)
   /// Invalid request (400)
   BadRequest(String)
   /// Authentication/authorization failed (401)
