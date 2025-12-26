@@ -19,9 +19,9 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import meal_planner/tandoor/api/crud_helpers.{
-  execute_delete, execute_get, execute_patch, execute_post, parse_json_paginated,
-  parse_json_single,
+import meal_planner/logger
+import meal_planner/tandoor/api/generic_crud.{
+  parse_json_paginated, parse_json_single,
 }
 import meal_planner/tandoor/config.{type ClientConfig}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
