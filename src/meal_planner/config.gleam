@@ -10,21 +10,20 @@
 //// - Validation on startup
 
 import envoy
-import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/config/database.{type DatabaseConfig}
 import meal_planner/config/environment.{
-  type ConfigError, type Environment, type LogLevel, DebugLevel, Development,
-  ErrorLevel, InfoLevel, InvalidEnvVar, MissingEnvVar, Production, Staging,
-  ValidationError, WarnLevel,
+  type ConfigError, type Environment, InvalidEnvVar, MissingEnvVar, Production,
+  ValidationError,
 }
 import meal_planner/config/features.{
   type Feature, FeatureCORS, FeatureFatSecret, FeatureHealthCheck, FeatureOpenAI,
   FeatureRateLimiting, FeatureTandoor, FeatureTodoist, FeatureUSDA,
 }
+import meal_planner/config/logging.{type LoggingConfig}
 
 // ============================================================================
 // TYPES
@@ -69,11 +68,6 @@ pub type SecretsConfig {
     database_password: String,
     tandoor_token: String,
   )
-}
-
-/// Logging configuration
-pub type LoggingConfig {
-  LoggingConfig(level: LogLevel, debug_mode: Bool)
 }
 
 /// Performance tuning parameters
@@ -137,11 +131,6 @@ fn get_env_list(name: String, default: List(String)) -> List(String) {
 /// Parse environment from string
 fn parse_environment(env_str: String) -> Environment {
   environment.parse_environment(env_str)
-}
-
-/// Parse log level from string
-fn parse_log_level(level_str: String) -> LogLevel {
-  environment.parse_log_level(level_str)
 }
 
 // ============================================================================
@@ -290,12 +279,8 @@ pub fn load() -> Result(Config, ConfigError) {
       tandoor_token: tandoor.api_token,
     )
 
-  // Build logging config
-  let logging =
-    LoggingConfig(
-      level: get_env_or("LOG_LEVEL", "info") |> parse_log_level,
-      debug_mode: get_env_bool("DEBUG_MODE", False),
-    )
+  // Load logging config
+  use logging_config <- result.try(logging.load())
 
   // Build performance config
   let performance =
@@ -313,7 +298,7 @@ pub fn load() -> Result(Config, ConfigError) {
     tandoor: tandoor,
     external_services: external_services,
     secrets: secrets,
-    logging: logging,
+    logging: logging_config,
     performance: performance,
   ))
 }

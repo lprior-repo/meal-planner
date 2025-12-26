@@ -6,6 +6,7 @@ import gleeunit/should
 import meal_planner/config
 import meal_planner/config/database.{DatabaseConfig}
 import meal_planner/config/environment.{Development, InfoLevel}
+import meal_planner/config/logging.{LoggingConfig}
 
 /// Test: ingredients command searches for foods and returns results
 pub fn ingredients_search_returns_results_test() {
@@ -45,7 +46,7 @@ pub fn ingredients_search_returns_results_test() {
         database_password: "test",
         tandoor_token: "test",
       ),
-      logging: config.LoggingConfig(level: InfoLevel, debug_mode: False),
+      logging: LoggingConfig(level: InfoLevel, debug_mode: False),
       performance: config.PerformanceConfig(
         request_timeout_ms: 30_000,
         connection_timeout_ms: 5000,
