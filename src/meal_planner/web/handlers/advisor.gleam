@@ -68,9 +68,9 @@ pub fn handle_daily_date(
   case req.method {
     http.Get -> {
       case diary_types.date_to_int(date_str) {
-        Error(_) -> {
+        Error(_err) -> {
           response_encoders.error_message(
-            "Invalid date format. Use YYYY-MM-DD.",
+            "Invalid date format: '" <> date_str <> "'. Use YYYY-MM-DD.",
           )
           |> json.to_string
           |> wisp.json_response(400)
@@ -150,9 +150,9 @@ pub fn handle_trends_date(
   case req.method {
     http.Get -> {
       case diary_types.date_to_int(end_date_str) {
-        Error(_) -> {
+        Error(_err) -> {
           response_encoders.error_message(
-            "Invalid date format. Use YYYY-MM-DD.",
+            "Invalid date format: '" <> end_date_str <> "'. Use YYYY-MM-DD.",
           )
           |> json.to_string
           |> wisp.json_response(400)
