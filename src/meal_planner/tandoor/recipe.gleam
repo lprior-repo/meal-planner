@@ -27,9 +27,8 @@ import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/food.{type Food}
 import meal_planner/tandoor/ingredient.{type Ingredient}
 import meal_planner/tandoor/keyword.{type Keyword}
-import meal_planner/tandoor/supermarket.{type SupermarketCategory}
 import meal_planner/tandoor/types/nutrition.{
-  type NutritionInfo as NutritionInfoType,
+  type NutritionInfo, nutrition_info_decoder,
 }
 
 // ============================================================================
@@ -386,218 +385,35 @@ pub fn recipe_overview_decoder() -> decode.Decoder(RecipeOverview) {
   ))
 }
 
-/// Decode NutritionInfo from JSON
-///
-/// This decoder handles nutrition information with optional fields
-/// for all macronutrients. It's designed to work with partial data
-/// where some nutritional values may be missing.
-///
-/// Example JSON structure:
-/// ```json
-/// {
-///   "id": 1,
-///   "carbohydrates": 45.0,
-///   "fats": 12.0,
-///   "proteins": 25.0,
-///   "calories": 380.0,
-///   "source": "USDA"
-/// }
-/// ```
-///
-/// All nutritional fields (carbohydrates, fats, proteins, calories, source)
-/// are optional and will be decoded as Option(Float) or Option(String).
-pub fn nutrition_info_decoder() -> decode.Decoder(NutritionInfo) {
-  use id <- decode.field("id", decode.int)
-  use carbohydrates <- decode.field(
-    "carbohydrates",
-    decode.optional(decode_flexible_float()),
-  )
-  use fats <- decode.field("fats", decode.optional(decode_flexible_float()))
-  use proteins <- decode.field(
-    "proteins",
-    decode.optional(decode_flexible_float()),
-  )
-  use calories <- decode.field(
-    "calories",
-    decode.optional(decode_flexible_float()),
-  )
-  use source <- decode.field("source", decode.optional(decode.string))
-
-  decode.success(NutritionInfo(
-    id: id,
-    carbohydrates: carbohydrates,
-    fats: fats,
-    proteins: proteins,
-    calories: calories,
-    source: source,
-  ))
-}
-
-// Helper decoder for client.gleam NutritionInfo type
-fn client_nutrition_decoder() -> decode.Decoder(ClientNutritionInfo) {
-  use id <- decode.field("id", decode.int)
-  use carbohydrates <- decode.optional_field("carbohydrates", 0.0, decode.float)
-  use fats <- decode.optional_field("fats", 0.0, decode.float)
-  use proteins <- decode.optional_field("proteins", 0.0, decode.float)
-  use calories <- decode.optional_field("calories", 0.0, decode.float)
-  use source <- decode.optional_field("source", "", decode.string)
-
-  decode.success(ClientNutritionInfo(
-    id: id,
-    carbohydrates: carbohydrates,
-    fats: fats,
-    proteins: proteins,
-    calories: calories,
-    source: source,
-  ))
-}
-
 // Helper decoders for nested component types
-fn supermarket_category_decoder() -> decode.Decoder(SupermarketCategory) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.field("name", decode.string)
-  use description <- decode.optional_field("description", "", decode.string)
-
-  decode.success(SupermarketCategory(
-    id: id,
-    name: name,
-    description: description,
-  ))
-}
-
-fn unit_decoder() -> decode.Decoder(Unit) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.field("name", decode.string)
-  use plural_name <- decode.optional_field(
-    "plural_name",
-    None,
-    decode.optional(decode.string),
-  )
-  // Handle null description by using optional decoder and unwrapping to empty string
-  use description <- decode.field(
-    "description",
-    decode.optional(decode.string)
-      |> decode.map(option.unwrap(_, "")),
-  )
-
-  decode.success(Unit(
-    id: id,
-    name: name,
-    plural_name: plural_name,
-    description: description,
-  ))
-}
-
-fn food_decoder() -> decode.Decoder(Food) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.field("name", decode.string)
-  use plural_name <- decode.optional_field(
-    "plural_name",
-    None,
-    decode.optional(decode.string),
-  )
-  use description <- decode.optional_field("description", "", decode.string)
-  use supermarket_category <- decode.optional_field(
-    "supermarket_category",
-    None,
-    decode.optional(supermarket_category_decoder()),
-  )
-
-  decode.success(Food(
-    id: id,
-    name: name,
-    plural_name: plural_name,
-    description: description,
-    supermarket_category: supermarket_category,
-  ))
-}
-
-fn ingredient_decoder() -> decode.Decoder(Ingredient) {
-  use id <- decode.field("id", decode.int)
-  use food <- decode.optional_field(
-    "food",
-    None,
-    decode.optional(food_decoder()),
-  )
-  use unit <- decode.optional_field(
-    "unit",
-    None,
-    decode.optional(unit_decoder()),
-  )
-  use amount <- decode.optional_field("amount", 0.0, decode.float)
-  // Handle null note by using optional decoder and unwrapping to empty string
-  use note <- decode.field(
-    "note",
-    decode.optional(decode.string)
-      |> decode.map(option.unwrap(_, "")),
-  )
-  use is_header <- decode.optional_field("is_header", False, decode.bool)
-  use no_amount <- decode.optional_field("no_amount", False, decode.bool)
-  use original_text <- decode.optional_field(
-    "original_text",
-    None,
-    decode.optional(decode.string),
-  )
-
-  decode.success(Ingredient(
-    id: id,
-    food: food,
-    unit: unit,
-    amount: amount,
-    note: note,
-    is_header: is_header,
-    no_amount: no_amount,
-    original_text: original_text,
-  ))
-}
-
 fn keyword_decoder() -> decode.Decoder(Keyword) {
   use id <- decode.field("id", decode.int)
   use name <- decode.field("name", decode.string)
-  use description <- decode.optional_field("description", "", decode.string)
-
-  decode.success(Keyword(id: id, name: name, description: description))
-}
-
-fn step_decoder() -> decode.Decoder(Step) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.optional_field("name", "", decode.string)
-  use instruction <- decode.optional_field("instruction", "", decode.string)
-  use ingredients <- decode.optional_field(
-    "ingredients",
-    [],
-    decode.list(ingredient_decoder()),
+  use label <- decode.field("label", decode.string)
+  use description <- decode.field("description", decode.string)
+  use icon <- decode.optional_field(
+    "icon",
+    None,
+    decode.optional(decode.string),
   )
-  use time <- decode.optional_field("time", 0, decode.int)
-  use order <- decode.optional_field("order", 0, decode.int)
-  use show_as_header <- decode.optional_field(
-    "show_as_header",
-    False,
-    decode.bool,
-  )
-  use show_ingredients_table <- decode.optional_field(
-    "show_ingredients_table",
-    True,
-    decode.bool,
-  )
+  use parent <- decode.field("parent", decode.optional(decode.int))
+  use numchild <- decode.field("numchild", decode.int)
+  use created_at <- decode.field("created_at", decode.string)
+  use updated_at <- decode.field("updated_at", decode.string)
+  use full_name <- decode.field("full_name", decode.string)
 
-  decode.success(Step(
+  decode.success(Keyword(
     id: id,
     name: name,
-    instruction: instruction,
-    ingredients: ingredients,
-    time: time,
-    order: order,
-    show_as_header: show_as_header,
-    show_ingredients_table: show_ingredients_table,
+    label: label,
+    description: description,
+    icon: icon,
+    parent: parent,
+    numchild: numchild,
+    created_at: created_at,
+    updated_at: updated_at,
+    full_name: full_name,
   ))
-}
-
-/// Decoder that accepts both int and float values, converting int to float
-fn decode_flexible_float() -> decode.Decoder(Float) {
-  decode.one_of(decode.float, or: [
-    decode.int |> decode.map(fn(n) { int.to_float(n) }),
-  ])
 }
 
 // ============================================================================
