@@ -26,7 +26,6 @@ import meal_planner/tandoor/core/ids.{
 import meal_planner/tandoor/ingredient.{
   type Ingredient, encode_ingredient, ingredient_decoder,
 }
-import meal_planner/tandoor/recipe.{type Recipe}
 
 // ============================================================================
 // Types
