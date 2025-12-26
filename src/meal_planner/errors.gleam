@@ -21,6 +21,7 @@ import gleam/option.{type Option, None}
 import gleam/result
 import gleam/string
 import meal_planner/errors/classification
+import meal_planner/errors/recovery
 import meal_planner/errors/types.{
   type AppError, type ErrorContext, type ErrorSeverity, type RecoveryStrategy,
   AuthenticationError, AuthorizationError, BadRequestError, Critical,
@@ -363,34 +364,7 @@ fn context_to_json(ctx: ErrorContext) -> Json {
 
 /// Get recovery strategy for error
 pub fn recovery_strategy(error: AppError) -> RecoveryStrategy {
-  case error {
-    // Validation errors - no retry
-    ValidationError(_, _)
-    | BadRequestError(_)
-    | AuthenticationError(_)
-    | AuthorizationError(_) -> NoRetry
-
-    // Not found - no retry
-    NotFoundError(_, _) -> NoRetry
-
-    // Rate limit - retry after specified time
-    RateLimitError(seconds) -> RetryAfter(seconds)
-
-    // Network errors - retry with backoff
-    NetworkError(_) -> RetryWithBackoff(max_attempts: 3, backoff_ms: 1000)
-
-    // Database errors - retry with backoff
-    DatabaseError(_, _) -> RetryWithBackoff(max_attempts: 5, backoff_ms: 2000)
-
-    // Service errors - retry with backoff
-    ServiceError(_, _) -> RetryWithBackoff(max_attempts: 3, backoff_ms: 1000)
-
-    // Internal errors - no retry
-    InternalError(_) -> NoRetry
-
-    // Inherit from wrapped error
-    WrappedError(err, _, _) -> recovery_strategy(err)
-  }
+  recovery.recovery_strategy(error)
 }
 
 // ============================================================================
