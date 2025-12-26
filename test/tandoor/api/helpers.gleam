@@ -9,13 +9,15 @@
 /// Reduces 150-200 lines of duplication across test files.
 import gleam/option.{None, Some}
 import gleam/string
-import meal_planner/tandoor/client.{type ClientConfig, ApiResponse}
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/food.{type Food, type FoodSimple, Food, FoodSimple}
 import meal_planner/tandoor/keyword.{type Keyword, Keyword}
 import meal_planner/tandoor/property.{type Property, Property}
 import meal_planner/tandoor/supermarket.{
   type SupermarketCategory, SupermarketCategory,
+}
+import meal_planner/tandoor/types/base.{
+  type ClientConfig, ApiResponse, bearer_config, session_config,
 }
 import meal_planner/tandoor/unit.{type Unit, Unit}
 
@@ -31,12 +33,12 @@ pub const test_token = "test-token"
 
 /// Create a test client config with bearer authentication
 pub fn test_config() -> ClientConfig {
-  client.bearer_config(no_server_url, test_token)
+  bearer_config(no_server_url, test_token)
 }
 
 /// Create a test client config with custom URL
 pub fn test_config_with_url(url: String) -> ClientConfig {
-  client.bearer_config(url, test_token)
+  bearer_config(url, test_token)
 }
 
 // ============================================================================

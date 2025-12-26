@@ -19,54 +19,15 @@ import gleam/httpc
 import gleam/int
 import gleam/json
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import gleam/uri
-
-// ============================================================================
-// Types
-// ============================================================================
-
-/// Tandoor API error type
-pub type TandoorError {
-  /// Authentication failed (401)
-  AuthenticationError(message: String)
-  /// Authorization failed (403)
-  AuthorizationError(message: String)
-  /// Resource not found (404)
-  NotFoundError(resource: String)
-  /// Request validation failed (400)
-  BadRequestError(message: String)
-  /// Server error (5xx)
-  ServerError(status_code: Int, message: String)
-  /// Network or connection error
-  NetworkError(message: String)
-  /// Timeout waiting for response
-  TimeoutError
-  /// Error parsing response JSON
-  ParseError(message: String)
-  /// Unknown error
-  UnknownError(message: String)
-}
-
-/// Authentication method for Tandoor API
-pub type AuthMethod {
-  /// Session-based authentication (username/password -> session cookie)
-  /// This is the recommended method as it properly establishes space scope
-  SessionAuth(
-    username: String,
-    password: String,
-    session_id: Option(String),
-    csrf_token: Option(String),
-  )
-  /// Bearer token authentication (for OAuth2 tokens)
-  BearerAuth(token: String)
-}
-
-/// HTTP response from Tandoor API
-pub type ApiResponse {
-  ApiResponse(status: Int, headers: List(#(String, String)), body: String)
+import meal_planner/tandoor/types/base.{
+  type ApiResponse, type AuthMethod, type TandoorError, ApiResponse,
+  AuthenticationError, AuthorizationError, BadRequestError, BearerAuth,
+  NetworkError, NotFoundError, ParseError, ServerError, SessionAuth,
+  TimeoutError, UnknownError,
 }
 
 // ============================================================================

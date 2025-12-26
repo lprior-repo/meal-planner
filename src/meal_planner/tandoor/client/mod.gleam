@@ -4,7 +4,7 @@
 /// Tandoor API client. All other modules build upon these types.
 import gleam/int
 import gleam/option.{None, Some}
-import meal_planner/tandoor/client/http.{
+import meal_planner/tandoor/types/base.{
   type AuthMethod, type TandoorError, AuthenticationError, AuthorizationError,
   BadRequestError, BearerAuth, NetworkError, NotFoundError, ParseError,
   ServerError, SessionAuth, TimeoutError, UnknownError,
