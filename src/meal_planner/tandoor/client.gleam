@@ -28,7 +28,6 @@ import meal_planner/tandoor/ingredient.{type Ingredient as TandoorIngredient}
 import meal_planner/tandoor/keyword.{type Keyword as TandoorKeyword}
 import meal_planner/tandoor/nutrition.{type NutritionInfo}
 import meal_planner/tandoor/recipe.{type Recipe, type RecipeDetail}
-import meal_planner/tandoor/supermarket.{type SupermarketCategory}
 
 // ============================================================================
 // Types
