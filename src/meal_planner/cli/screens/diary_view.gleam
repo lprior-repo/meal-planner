@@ -25,9 +25,9 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 import meal_planner/cli/screens/fatsecret_diary.{
   type DiaryEffect, type DiaryModel, type DiaryMsg, type MealSection,
-  type MealTotals, type NutritionTarget, type SearchState, type ViewState, Batch,
-  CreateEntry, DeleteEntry, DiaryModel, FetchEntries, FetchNutritionTargets,
-  MainView, None as NoEffect, SearchFoods, SearchPopup, SearchState, UpdateEntry,
+  type MealTotals, type NutritionTarget, Batch, CreateEntry, DeleteEntry,
+  DiaryModel, FetchEntries, FetchNutritionTargets, MainView, None as NoEffect,
+  SearchFoods, SearchPopup, SearchState, UpdateEntry,
 }
 import meal_planner/fatsecret/diary/types as diary_types
 import meal_planner/fatsecret/foods/types as foods_types
@@ -44,9 +44,6 @@ const food_cache_ttl_days = 7
 
 /// Maximum search results to display
 const max_search_results = 15
-
-/// Date format for display
-const date_format = "YYYY-MM-DD"
 
 // ============================================================================
 // Model Helpers

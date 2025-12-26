@@ -3,8 +3,6 @@
 //// This module provides a centralized import point for all web handlers and routes.
 //// It re-exports all handler functions and provides a unified routing interface.
 
-import gleam/option.{None, Some}
-import meal_planner/web/handlers
 import meal_planner/web/routes
 import meal_planner/web/routes/types.{type Context}
 import wisp

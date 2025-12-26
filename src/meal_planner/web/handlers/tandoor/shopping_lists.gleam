@@ -20,9 +20,9 @@ import meal_planner/tandoor/food.{type Food}
 import meal_planner/tandoor/handlers/helpers
 import meal_planner/tandoor/shopping/mod as shopping
 import meal_planner/tandoor/shopping/types.{
-  type ShoppingListEntry, type ShoppingListEntryCreate,
-  type ShoppingListEntryResponse, type ShoppingListEntryUpdate,
-  ShoppingListEntryCreate, ShoppingListEntryUpdate, ShoppingListQuery,
+  type ShoppingListEntryCreate, type ShoppingListEntryResponse,
+  type ShoppingListEntryUpdate, ShoppingListEntryCreate, ShoppingListEntryUpdate,
+  ShoppingListQuery,
 }
 import meal_planner/tandoor/unit.{type Unit}
 
@@ -185,25 +185,6 @@ fn handle_delete_entry(_req: wisp.Request, id: Int) -> wisp.Response {
 // JSON Encoding and Decoding
 // =============================================================================
 
-/// Encode a shopping list entry (internal type) to JSON
-fn encode_shopping_list_entry(entry: ShoppingListEntry) -> json.Json {
-  json.object([
-    #("id", json.int(ids.shopping_list_entry_id_to_int(entry.id))),
-    #("list_recipe", encode_optional_shopping_list_id(entry.list_recipe)),
-    #("food", encode_optional_food_id(entry.food)),
-    #("unit", encode_optional_unit_id(entry.unit)),
-    #("amount", json.float(entry.amount)),
-    #("order", json.int(entry.order)),
-    #("checked", json.bool(entry.checked)),
-    #("ingredient", encode_optional_ingredient_id(entry.ingredient)),
-    #("created_by", json.int(ids.user_id_to_int(entry.created_by))),
-    #("created_at", json.string(entry.created_at)),
-    #("updated_at", json.string(entry.updated_at)),
-    #("completed_at", helpers.encode_optional_string(entry.completed_at)),
-    #("delay_until", helpers.encode_optional_string(entry.delay_until)),
-  ])
-}
-
 /// Encode a shopping list entry response (from API) to JSON
 fn encode_shopping_list_entry_response(
   entry: ShoppingListEntryResponse,
@@ -340,33 +321,5 @@ fn parse_checked_param(params: List(#(String, String))) -> Option(Bool) {
     option.Some("true") -> option.Some(True)
     option.Some("false") -> option.Some(False)
     _ -> option.None
-  }
-}
-
-fn encode_optional_shopping_list_id(id: Option(ids.ShoppingListId)) -> json.Json {
-  case id {
-    option.Some(id) -> json.int(ids.shopping_list_id_to_int(id))
-    option.None -> json.null()
-  }
-}
-
-fn encode_optional_food_id(id: Option(ids.FoodId)) -> json.Json {
-  case id {
-    option.Some(id) -> json.int(ids.food_id_to_int(id))
-    option.None -> json.null()
-  }
-}
-
-fn encode_optional_unit_id(id: Option(ids.UnitId)) -> json.Json {
-  case id {
-    option.Some(id) -> json.int(ids.unit_id_to_int(id))
-    option.None -> json.null()
-  }
-}
-
-fn encode_optional_ingredient_id(id: Option(ids.IngredientId)) -> json.Json {
-  case id {
-    option.Some(id) -> json.int(ids.ingredient_id_to_int(id))
-    option.None -> json.null()
   }
 }

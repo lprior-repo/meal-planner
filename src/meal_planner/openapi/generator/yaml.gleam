@@ -4,12 +4,12 @@
 /// Used for generating human-readable OpenAPI specifications.
 import gleam/dict.{type Dict}
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/string
 import meal_planner/openapi/generator/types.{
-  type Components, type Info, type License, type PathItem, type Response,
-  type Schema, type Server, type Tag, ArraySchema, BoolSchema, FloatSchema,
-  IntSchema, ObjectSchema, RefSchema, StringSchema,
+  type Components, type Info, type PathItem, type Response, type Schema,
+  type Server, type Tag, ArraySchema, BoolSchema, FloatSchema, IntSchema,
+  ObjectSchema, RefSchema, StringSchema,
 }
 
 /// Convert OpenAPI spec to YAML string

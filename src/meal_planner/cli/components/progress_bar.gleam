@@ -302,7 +302,7 @@ pub fn render_macro(bar: MacroProgressBar) -> String {
 
 /// Render macro progress bar as Shore node
 pub fn render_macro_node(bar: MacroProgressBar) -> shore.Node(msg) {
-  let percentage = calculate_percentage(bar.current, bar.target)
+  let _percentage = calculate_percentage(bar.current, bar.target)
   let status = get_macro_status(bar.current, bar.target, bar.tolerance)
   let color = case status {
     Under -> bar.under_color

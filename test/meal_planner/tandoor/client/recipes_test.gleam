@@ -1,17 +1,10 @@
 /// Tests for tandoor/client/recipes module
 import gleam/option.{None, Some}
 import gleeunit/should
-import meal_planner/tandoor/client/http.{BearerAuth, NotFoundError, ParseError}
-import meal_planner/tandoor/client/mod.{ClientConfig}
-import meal_planner/tandoor/client/recipes.{
-  CreateRecipeRequest, Recipe, RecipeDetail, RecipeListResponse,
-}
+import meal_planner/tandoor/client/recipes.{CreateRecipeRequest, Recipe}
 
 pub fn recipe_decoder_test() {
   // Test that recipe_decoder can decode a basic recipe
-  let json_str =
-    "{\"id\": 1, \"name\": \"Test Recipe\", \"servings\": 4, \"slug\": \"test-recipe\"}"
-
   // This test verifies the public decoder function exists and works
   // Implementation will add proper JSON parsing
   should.be_true(True)

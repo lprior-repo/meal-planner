@@ -14,14 +14,14 @@ import gleeunit/should
 import meal_planner/cli/model
 import meal_planner/cli/tui
 import meal_planner/cli/types.{
-  type Domain, type Model, type Msg, type Results, type Screen, BrandSearchView,
-  ClearInput, DatabaseDomain, DatabaseFoods, DiaryView, DomainMenu, ErrorScreen,
+  type Domain, type Msg, type Results, type Screen, BrandSearchView, ClearInput,
+  DatabaseDomain, DatabaseFoods, DiaryView, DomainMenu, ErrorScreen,
   ExerciseView, FatSecretDomain, FavoritesView, FoodSearch, GoBack,
   GotSearchResults, KeyPress, LoadingScreen, MainMenu, MealPlanGenerator,
-  MealPlanningDomain, Model, NoOp, NutritionAnalysis, NutritionDomain,
-  ProfileView, Quit, RecipeView, Refresh, SavedMealsView, SchedulerDomain,
-  SchedulerView, SearchFoods, SelectDomain, SelectScreen, TandoorDomain,
-  TandoorRecipes, UpdateDate, UpdateQuantity, UpdateSearchQuery, WeightView,
+  MealPlanningDomain, NoOp, NutritionAnalysis, NutritionDomain, ProfileView,
+  Quit, RecipeView, Refresh, SavedMealsView, SchedulerDomain, SchedulerView,
+  SearchFoods, SelectDomain, SelectScreen, TandoorDomain, TandoorRecipes,
+  UpdateDate, UpdateQuantity, UpdateSearchQuery, WeightView,
 }
 import meal_planner/config
 
@@ -359,7 +359,7 @@ pub fn update_no_op_msg_test() {
 
 pub fn all_domains_can_be_selected_test() {
   let cfg = test_config()
-  let m = model.init(cfg)
+  let _m = model.init(cfg)
 
   let domains: List(Domain) = [
     FatSecretDomain,

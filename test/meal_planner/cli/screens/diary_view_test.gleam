@@ -9,14 +9,13 @@
 /// - Meal section totals
 /// - Date utilities
 import gleam/dict
-import gleam/option.{None, Some}
+import gleam/option.{None}
 import gleeunit/should
 import meal_planner/cli/screens/diary_view
 import meal_planner/cli/screens/fatsecret_diary.{
-  type DiaryEffect, type EditState, type MealSection, type MealTotals,
-  type NutritionTarget, type SearchState, type ViewState, ConfirmDelete,
-  DatePicker, EditAmount, EditState, MainView, MealSection, MealTotals,
-  NutritionTarget, SearchPopup, SearchState,
+  type DiaryEffect, type ViewState, ConfirmDelete, DatePicker, EditAmount,
+  EditState, MainView, MealSection, MealTotals, NutritionTarget, SearchPopup,
+  SearchState,
 }
 import meal_planner/fatsecret/diary/types as diary_types
 
@@ -127,7 +126,6 @@ pub fn view_state_date_picker_test() {
   let view_state: ViewState = DatePicker("2025-12-20")
   case view_state {
     DatePicker(date_input) -> date_input
-    _ -> ""
   }
   |> should.equal("2025-12-20")
 }
@@ -137,7 +135,6 @@ pub fn view_state_confirm_delete_test() {
   let view_state: ViewState = ConfirmDelete(entry_id)
   case view_state {
     ConfirmDelete(id) -> diary_types.food_entry_id_to_string(id)
-    _ -> ""
   }
   |> should.equal("12345")
 }
@@ -153,7 +150,6 @@ pub fn view_state_edit_amount_test() {
   let view_state: ViewState = EditAmount(edit_state)
   case view_state {
     EditAmount(state) -> state.new_number_of_units
-    _ -> 0.0
   }
   |> should.equal(2.0)
 }

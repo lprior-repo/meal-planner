@@ -17,16 +17,16 @@ import gleam/dynamic/decode
 import gleam/http
 import gleam/int
 import gleam/json
-import gleam/option.{None, Some}
+import gleam/option
 import gleam/result
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/food.{
-  type Food, type FoodCreateRequest, type FoodSimple, type FoodUpdateRequest,
-  FoodCreateRequest, FoodUpdateRequest, create_food, delete_food, get_food,
-  list_foods_with_options, update_food,
+  type Food, type FoodCreateRequest, type FoodUpdateRequest, FoodCreateRequest,
+  FoodUpdateRequest, create_food, delete_food, get_food, list_foods_with_options,
+  update_food,
 }
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/property.{type Property}
+import meal_planner/tandoor/property
 import meal_planner/tandoor/supermarket.{type SupermarketCategory}
 import meal_planner/tandoor/types/food/food_inherit_field.{type FoodInheritField}
 import meal_planner/tandoor/unit.{type Unit}
@@ -232,7 +232,7 @@ pub fn encode_food_detail(food: Food) -> json.Json {
 }
 
 /// Encode a FoodSimple (minimal food reference)
-fn encode_food_simple(food: FoodSimple) -> json.Json {
+fn encode_food_simple(food: food.FoodSimple) -> json.Json {
   json.object([
     #("id", json.int(ids.food_id_to_int(food.id))),
     #("name", json.string(food.name)),
@@ -251,7 +251,7 @@ fn encode_supermarket_category(cat: SupermarketCategory) -> json.Json {
 }
 
 /// Encode a Property (nutrition/allergen data)
-fn encode_property(prop: Property) -> json.Json {
+fn encode_property(prop: property.Property) -> json.Json {
   json.object([
     #("id", json.int(ids.property_id_to_int(prop.id))),
     #("name", json.string(prop.name)),
@@ -317,18 +317,18 @@ fn parse_food_update_request(
 fn food_update_decoder() -> decode.Decoder(FoodUpdateRequest) {
   // Minimal decoder - all fields optional for update operations
   decode.success(FoodUpdateRequest(
-    name: None,
-    description: None,
-    plural_name: None,
-    recipe: None,
-    food_onhand: None,
-    supermarket_category: None,
-    ignore_shopping: None,
-    shopping: None,
-    url: None,
-    properties_food_amount: None,
-    properties_food_unit: None,
-    fdc_id: None,
-    parent: None,
+    name: option.None,
+    description: option.None,
+    plural_name: option.None,
+    recipe: option.None,
+    food_onhand: option.None,
+    supermarket_category: option.None,
+    ignore_shopping: option.None,
+    shopping: option.None,
+    url: option.None,
+    properties_food_amount: option.None,
+    properties_food_unit: option.None,
+    fdc_id: option.None,
+    parent: option.None,
   ))
 }

@@ -3,23 +3,27 @@
 /// This module provides formatting utilities for displaying food diary entries
 /// and nutrition summaries in a consistent, readable format.
 import gleam/float
+import gleam/int
 import gleam/string
 import meal_planner/cli/domains/diary/types.{type DayNutrition}
 import meal_planner/fatsecret/diary/types as fatsecret_types
 
 /// Format a single food entry for display
 ///
-/// Creates a formatted string showing the food name (truncated to 30 chars if needed)
+/// Creates a formatted string showing the entry ID, food name (truncated to 30 chars if needed)
 /// followed by calories and macronutrients (protein, carbs, fat).
 ///
 /// Example output:
-/// "Chicken Breast               | 165.0 cal | P:31.0g C:0.0g F:3.6g"
+/// "entry-123 | Chicken Breast               | 165.0 cal | P:31.0g C:0.0g F:3.6g"
 pub fn format_food_entry_row(entry: fatsecret_types.FoodEntry) -> String {
+  let id_str = fatsecret_types.food_entry_id_to_string(entry.food_entry_id)
   let padded_name = case string.length(entry.food_entry_name) {
     len if len >= 30 -> string.slice(entry.food_entry_name, 0, 27) <> "..."
     len -> entry.food_entry_name <> string.repeat(" ", 30 - len)
   }
-  padded_name
+  id_str
+  <> " | "
+  <> padded_name
   <> " | "
   <> format_float(entry.calories)
   <> " cal | P:"
@@ -54,8 +58,19 @@ pub fn format_nutrition_summary(nutrition: DayNutrition) -> String {
 
 /// Format a float to 1 decimal place for display
 ///
-/// Converts a float value to a string representation.
-/// Note: Currently uses Gleam's default float formatting.
+/// Converts a float value to a string representation, rounding to 1 decimal place.
+/// Uses int conversion to avoid scientific notation for large values.
 fn format_float(value: Float) -> String {
-  float.to_string(value)
+  // Round to 1 decimal place using integer arithmetic
+  let rounded_int = float.round(value *. 10.0)
+  let int_part = rounded_int / 10
+  let decimal_part = rounded_int % 10
+
+  // Check if it's a whole number (no decimal part)
+  case decimal_part {
+    0 -> int.to_string(int_part)
+    _ -> {
+      int.to_string(int_part) <> "." <> int.to_string(decimal_part)
+    }
+  }
 }

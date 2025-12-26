@@ -5,9 +5,8 @@
 import gleam/dict.{type Dict}
 import gleam/option.{None, Some}
 import meal_planner/openapi/generator/types.{
-  type Operation, type PathItem, type Response, ArraySchema, MediaType,
-  ObjectSchema, Operation, PathItem, RefSchema, RequestBody, Response,
-  StringSchema,
+  type PathItem, ArraySchema, MediaType, ObjectSchema, Operation, PathItem,
+  RefSchema, RequestBody, Response, StringSchema,
 }
 
 /// Generate all API paths

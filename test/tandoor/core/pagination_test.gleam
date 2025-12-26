@@ -7,6 +7,10 @@ import gleeunit
 import gleeunit/should
 import meal_planner/tandoor/core/pagination
 
+pub fn main() {
+  gleeunit.main()
+}
+
 // ============================================================================
 // PaginatedResponse Tests
 // ============================================================================

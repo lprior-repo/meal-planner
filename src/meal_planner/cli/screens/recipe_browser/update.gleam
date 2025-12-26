@@ -8,13 +8,12 @@
 /// - Helper functions for processing state changes
 import gleam/dict
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import meal_planner/cli/screens/recipe_browser/messages.{
   type RecipeEffect, type RecipeMsg,
 }
 import meal_planner/cli/screens/recipe_browser/model.{
-  type RecipeDetails, type RecipeFilters, type RecipeListItem, type RecipeModel,
-  type RecipeSearchState, type RecipeViewState,
+  type RecipeDetails, type RecipeListItem, type RecipeModel,
 }
 import meal_planner/fatsecret/recipes/types as recipe_types
 

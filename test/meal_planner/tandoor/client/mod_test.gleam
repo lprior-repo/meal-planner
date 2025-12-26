@@ -1,9 +1,7 @@
 import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
-import meal_planner/tandoor/client.{
-  type AuthMethod, type ClientConfig, BearerAuth, ClientConfig, SessionAuth,
-}
+import meal_planner/tandoor/client.{BearerAuth, ClientConfig, SessionAuth}
 
 pub fn main() {
   gleeunit.main()
@@ -28,7 +26,6 @@ pub fn test_auth_method_bearer() {
   let auth = BearerAuth(token: "test-token")
   case auth {
     BearerAuth(token) -> should.equal(token, "test-token")
-    _ -> should.fail()
   }
 }
 
@@ -47,6 +44,5 @@ pub fn test_auth_method_session() {
       should.equal(session_id, Some("session-123"))
       should.equal(csrf_token, None)
     }
-    _ -> should.fail()
   }
 }

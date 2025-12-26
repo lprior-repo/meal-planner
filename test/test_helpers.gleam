@@ -4,7 +4,7 @@
 //// used across all integration workflow tests.
 
 import gleam/list
-import gleam/option.{Some}
+import gleam/option
 import gleam/string
 import gleeunit/should
 import meal_planner/email/command.{

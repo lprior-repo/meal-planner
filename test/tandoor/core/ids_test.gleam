@@ -2,11 +2,13 @@
 ///
 /// Tests type-safe ID wrappers for all Tandoor resource types.
 /// Verifies to_int, from_int, and decoder functions work correctly.
-import gleam/dynamic
-import gleam/dynamic/decode
 import gleeunit
 import gleeunit/should
 import meal_planner/tandoor/core/ids
+
+pub fn main() {
+  gleeunit.main()
+}
 
 // ============================================================================
 // RecipeId Tests

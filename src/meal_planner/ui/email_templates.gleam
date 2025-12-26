@@ -9,7 +9,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/string
 import meal_planner/advisor/daily_recommendations.{
   type AdvisorEmail, type MacroTrend,
@@ -363,7 +363,7 @@ fn render_daily_stats_section(
   target: daily_recommendations.Macros,
 ) -> String {
   let cal_diff = actual.calories -. target.calories
-  let cal_percent = cal_diff /. target.calories *. 100.0
+  let _cal_percent = cal_diff /. target.calories *. 100.0
 
   "<div style=\"padding: 30px; background-color: #f8f9fa;\">"
   <> "<h2 style=\"color: #333; margin: 0 0 20px 0;\">Today's Stats</h2>"

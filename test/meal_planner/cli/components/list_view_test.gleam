@@ -12,11 +12,10 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/cli/components/list_view.{
-  type ListViewEffect, type ListViewModel, type ListViewMsg, ClearError,
-  ClearFilter, Confirm, DeselectAll, FilterChanged, FilterQueryChanged,
-  ItemSelected, ItemsSelected, NoEffect, PageDown, PageUp, SelectAll,
-  SelectFirst, SelectLast, SelectNext, SelectPrevious, SetError, SetLoading,
-  ToggleFilter, ToggleSelection,
+  ClearError, ClearFilter, Confirm, DeselectAll, FilterChanged,
+  FilterQueryChanged, ItemSelected, ItemsSelected, NoEffect, PageDown, PageUp,
+  SelectAll, SelectFirst, SelectLast, SelectNext, SelectPrevious, SetError,
+  SetLoading, ToggleFilter, ToggleSelection,
 }
 
 // ============================================================================

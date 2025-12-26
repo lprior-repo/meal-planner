@@ -365,9 +365,10 @@ fn get_token(conn: pog.Connection) -> Result(AccessToken, ServiceError) {
 /// Convert service error to HTTP-friendly message
 pub fn error_to_message(error: ServiceError) -> String {
   case error {
-    NotConfigured -> "FatSecret API not configured"
-    NotConnected -> "Not connected to FatSecret. Please authorize first."
-    AuthRevoked -> "FatSecret authorization was revoked. Please reconnect."
+    NotConfigured -> "FatSecret API credentials not configured."
+    NotConnected -> "FatSecret account not connected. Please connect first."
+    AuthRevoked ->
+      "FatSecret authorization revoked. Please reconnect your account."
     StorageError(msg) -> "Storage error: " <> msg
     ApiError(inner) -> core_errors.error_to_string(inner)
   }

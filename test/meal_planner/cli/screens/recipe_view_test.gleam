@@ -13,25 +13,22 @@ import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/cli/screens/recipe/messages.{
   type RecipeMsg, AddToMealPlan, ApplyFilters, ClearError, ClearFilters,
-  ClearSearch, GoBack, GoToPage, GotRecipeDetails, GotSearchResults, KeyPressed,
-  NextPage, NoOp, PreviousPage, Refresh, SearchQueryChanged, SearchStarted,
-  SearchTypeChanged, SetCuisineType, SetDietType, SetMaxCalories, SetMaxPrepTime,
-  SetMinProtein, SetSortBy, ShowDetailView, ShowDirectionsView,
-  ShowFavoritesView, ShowFilterView, ShowListView, ShowNutritionView,
-  ShowSearchPopup, ToggleFavorite, ViewRecipeDetails,
+  ClearSearch, GoBack, GoToPage, GotSearchResults, KeyPressed, NextPage, NoOp,
+  PreviousPage, Refresh, SearchQueryChanged, SearchStarted, SearchTypeChanged,
+  SetCuisineType, SetDietType, SetMaxCalories, SetMaxPrepTime, SetMinProtein,
+  SetSortBy, ShowDetailView, ShowDirectionsView, ShowFavoritesView,
+  ShowFilterView, ShowListView, ShowNutritionView, ShowSearchPopup,
+  ToggleFavorite, ViewRecipeDetails,
 }
 import meal_planner/cli/screens/recipe/mod as recipe_view
 import meal_planner/cli/screens/recipe/model.{
-  type PaginationState, type RecipeDetails, type RecipeDirection,
-  type RecipeEffect, type RecipeFilters, type RecipeIngredient,
-  type RecipeListItem, type RecipeNutrition, type RecipeSearchState,
-  type RecipeViewState, type SearchType, type SortOption, BatchEffects,
-  ByCuisine, ByIngredient, ByName, DetailView, DirectionsView, FavoritesView,
-  FetchRecipeDetails, FilterView, ListView, LoadFavorites, NoEffect,
-  NutritionView, PaginationState, RecipeDetails, RecipeDirection, RecipeFilters,
-  RecipeIngredient, RecipeListItem, RecipeNutrition, RecipeSearchState,
-  RemoveFavorite, SaveFavorite, SearchPopup, SearchRecipes, SortByCalories,
-  SortByName, SortByPrepTime, SortByRating, SortByRecent,
+  type RecipeEffect, type RecipeViewState, type SearchType, type SortOption,
+  BatchEffects, ByCuisine, ByIngredient, ByName, DetailView, DirectionsView,
+  FavoritesView, FetchRecipeDetails, FilterView, ListView, LoadFavorites,
+  NoEffect, NutritionView, PaginationState, RecipeDetails, RecipeDirection,
+  RecipeFilters, RecipeIngredient, RecipeListItem, RecipeNutrition,
+  RecipeSearchState, RemoveFavorite, SaveFavorite, SearchPopup, SearchRecipes,
+  SortByCalories, SortByName, SortByPrepTime, SortByRating, SortByRecent,
 }
 import meal_planner/fatsecret/recipes/types as recipe_types
 

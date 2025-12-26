@@ -4,6 +4,10 @@ import gleeunit
 import gleeunit/should
 import meal_planner/tandoor/api/query_builders
 
+pub fn main() {
+  gleeunit.main()
+}
+
 pub fn test_build_recipe_list_params_with_pagination() {
   let params = query_builders.build_recipe_list_params(Some(25), Some(5))
 

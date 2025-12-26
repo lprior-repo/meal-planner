@@ -1267,7 +1267,7 @@ fn view_meal_breakdown(model: NutritionModel) -> shore.Node(NutritionMsg) {
 
 /// Render nutrient details view
 fn view_nutrient_details(
-  model: NutritionModel,
+  _model: NutritionModel,
   nutrient: NutrientType,
 ) -> shore.Node(NutritionMsg) {
   let name = nutrient_type_to_string(nutrient)

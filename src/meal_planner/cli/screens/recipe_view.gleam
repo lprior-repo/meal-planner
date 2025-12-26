@@ -21,16 +21,13 @@ import meal_planner/cli/screens/recipe/messages.{
   ShowSearchPopup, ToggleFavorite, ViewRecipeDetails,
 }
 import meal_planner/cli/screens/recipe/model.{
-  type PaginationState, type RecipeDetails, type RecipeDirection,
-  type RecipeEffect, type RecipeFilters, type RecipeIngredient,
-  type RecipeListItem, type RecipeModel, type RecipeNutrition,
-  type RecipeSearchState, type RecipeViewState, type SearchType, type SortOption,
-  BatchEffects, ByCuisine, ByIngredient, ByName, DetailView, DirectionsView,
-  FavoritesView, FetchRecipeDetails, FilterView, ListView, LoadFavorites,
-  NoEffect, NutritionView, PaginationState, RecipeDetails, RecipeFilters,
+  type RecipeDetails, type RecipeEffect, type RecipeListItem, type RecipeModel,
+  type SearchType, type SortOption, ByCuisine, ByIngredient, ByName, DetailView,
+  DirectionsView, FavoritesView, FetchRecipeDetails, FilterView, ListView,
+  LoadFavorites, NoEffect, NutritionView, PaginationState, RecipeFilters,
   RecipeListItem, RecipeModel, RecipeSearchState, RemoveFavorite, SaveFavorite,
   SearchPopup, SearchRecipes, SortByCalories, SortByName, SortByPrepTime,
-  SortByRating, SortByRecent, default_filters, init,
+  SortByRating, SortByRecent, default_filters,
 }
 import meal_planner/fatsecret/recipes/types as recipe_types
 import shore

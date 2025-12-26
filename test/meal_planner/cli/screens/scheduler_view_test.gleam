@@ -13,11 +13,11 @@
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/cli/screens/scheduler_view.{
-  type JobConfigState, type JobFilter, type JobSortOption, type JobType,
-  type SchedulerEffect, type SchedulerViewState, AnalysisJob, CleanupJob,
-  ConfigView, DeleteConfirmView, DetailsView, HistoryView, JobConfigState,
-  JobFilter, ListView, LogsView, NotificationJob, ReportJob, RunConfirmView,
-  SortByLastRun, SortByName, SortByNextRun, SortByStatus, SyncJob,
+  type JobSortOption, type JobType, type SchedulerEffect,
+  type SchedulerViewState, AnalysisJob, CleanupJob, ConfigView,
+  DeleteConfirmView, DetailsView, HistoryView, JobConfigState, JobFilter,
+  ListView, LogsView, NotificationJob, ReportJob, RunConfirmView, SortByLastRun,
+  SortByName, SortByNextRun, SortByStatus, SyncJob,
 }
 
 // ============================================================================

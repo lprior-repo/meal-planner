@@ -39,11 +39,11 @@
 
 import gleam/dynamic/decode.{type Decoder}
 import gleam/float
+import gleam/int
 import gleam/json.{type Json}
 import gleam/list
-import meal_planner/types/macros.{
-  type MacroComparison, type Macros, OnTarget, Over, Under,
-}
+import gleam/result
+import meal_planner/types/macros.{type MacroComparison, type Macros}
 import meal_planner/types/recipe.{type MealPlanRecipe}
 
 // ============================================================================
@@ -421,6 +421,3 @@ pub fn daily_macros_to_string(dm: DailyMacros) -> String {
   <> " | Carbs: "
   <> macros.macro_comparison_to_string(dm.carbs_status)
 }
-
-import gleam/int
-import gleam/result
