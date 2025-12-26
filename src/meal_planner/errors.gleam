@@ -176,12 +176,32 @@ pub fn to_json(error: AppError) -> Json {
 }
 
 // ============================================================================
-// Error Recovery Strategies
+// Error Recovery Strategies (Re-exported from recovery module)
 // ============================================================================
 
 /// Get recovery strategy for error
 pub fn recovery_strategy(error: AppError) -> RecoveryStrategy {
   recovery.recovery_strategy(error)
+}
+
+/// Check if a recovery strategy allows retry
+pub fn should_retry(strategy: RecoveryStrategy) -> Bool {
+  recovery.should_retry(strategy)
+}
+
+/// Get the maximum retry attempts from a strategy
+pub fn max_attempts(strategy: RecoveryStrategy) -> Int {
+  recovery.max_attempts(strategy)
+}
+
+/// Get the initial backoff delay in milliseconds
+pub fn initial_backoff_ms(strategy: RecoveryStrategy) -> Int {
+  recovery.initial_backoff_ms(strategy)
+}
+
+/// Calculate backoff delay for a given attempt number using exponential backoff
+pub fn calculate_backoff(strategy: RecoveryStrategy, attempt_number: Int) -> Int {
+  recovery.calculate_backoff(strategy, attempt_number)
 }
 
 // ============================================================================
