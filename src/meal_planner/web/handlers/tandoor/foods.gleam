@@ -65,7 +65,8 @@ pub fn handle_food_by_id(req: wisp.Request, food_id: String) -> wisp.Response {
         _ -> wisp.method_not_allowed([http.Get, http.Patch, http.Delete])
       }
     }
-    Error(_) -> helpers.error_response(400, "Invalid food ID")
+    Error(_err) ->
+      helpers.error_response(400, "Invalid food ID: '" <> food_id <> "'")
   }
 }
 
@@ -97,7 +98,7 @@ fn handle_list_foods(req: wisp.Request) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> helpers.error_response(500, "Failed to list foods")
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
@@ -113,7 +114,7 @@ fn handle_get_food(_req: wisp.Request, id: Int) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
@@ -133,7 +134,7 @@ fn handle_create_food(req: wisp.Request) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(201)
             }
-            Error(_) -> helpers.error_response(500, "Failed to create food")
+            Error(err) -> helpers.tandoor_error_to_response(err)
           }
         }
         Error(resp) -> resp
@@ -156,7 +157,7 @@ fn handle_update_food(req: wisp.Request, id: Int) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(200)
             }
-            Error(_) -> helpers.error_response(500, "Failed to update food")
+            Error(err) -> helpers.tandoor_error_to_response(err)
           }
         }
         Error(resp) -> resp
@@ -171,7 +172,7 @@ fn handle_delete_food(_req: wisp.Request, id: Int) -> wisp.Response {
     Ok(config) -> {
       case delete_food(config, food_id: id) {
         Ok(Nil) -> wisp.response(204)
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
