@@ -24,7 +24,7 @@ import meal_planner/scheduler/errors.{type AppError}
 import meal_planner/scheduler/job_manager
 import meal_planner/scheduler/types.{
   type JobExecution, type ScheduledJob, AgentWorkStream, AutoSync, Completed,
-  DailyAdvisor, Failed, JobExecution, Pending, WeeklyGeneration, WeeklyTrends,
+  DailyAdvisor, JobExecution, WeeklyGeneration, WeeklyTrends,
 }
 import pog
 
