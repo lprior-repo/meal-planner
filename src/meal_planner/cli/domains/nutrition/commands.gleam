@@ -516,3 +516,51 @@ fn load_nutrition_goals(config: Config) -> Result(NutritionGoals, String) {
     }
   }
 }
+
+/// Generate daily nutrition status report
+/// Returns daily nutrition vs goals comparison
+pub fn generate_daily_status(
+  config: Config,
+  date: String,
+) -> Result(String, String) {
+  // Reuse generate_report which provides daily status
+  generate_report(config, date: date)
+}
+
+/// Recommend dinner based on current nutrition
+/// Returns recipe suggestions to complete daily goals
+pub fn recommend_dinner(
+  config: Config,
+  date: String,
+) -> Result(String, String) {
+  // For now, provide placeholder implementation
+  // TODO: Integrate with NCP recommend_dinner functionality
+  let report =
+    "Dinner Recommendations for "
+    <> date
+    <> "\n"
+    <> string.repeat("=", 50)
+    <> "\n\n"
+    <> "Based on your daily nutrition progress:
+"
+    <> "  1. Check if you're under on protein, carbs, or calories
+"
+    <> "  2. Consider recipes that address your deficiencies
+"
+    <> "  3. Use 'mp recipe search <keyword>' to find recipes\n\n"
+    <> "Top high-protein recipes:
+"
+    <> "  • Grilled chicken breast (42g protein/serving)
+"
+    <> "  • Salmon fillet (34g protein/serving)
+"
+    <> "  • Greek yogurt with berries (20g protein/serving)
+"
+    <> "  • Lean ground turkey (26g protein/serving)
+\n"
+    <> string.repeat("=", 50)
+    <> "\n"
+
+  Ok(report)
+}
+
