@@ -125,7 +125,7 @@ pub fn parse_json_single(
     Ok(json_data) -> {
       case decode.run(json_data, decoder) {
         Ok(value) -> Ok(value)
-        Error(errors) -> {
+        Error(error_list) -> {
           let error_msg =
             "Failed to decode response: "
             <> string.join(
@@ -137,11 +137,11 @@ pub fn parse_json_single(
               }),
               ", ",
             )
-          Error(ParseError(error_msg))
+          Error(errors.ParseError(error_msg))
         }
       }
     }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
+    Error(_) -> Error(errors.ParseError("Invalid JSON response"))
   }
 }
 
@@ -156,7 +156,7 @@ pub fn parse_json_list(
     Ok(json_data) -> {
       case decode.run(json_data, decode.list(element_decoder)) {
         Ok(items) -> Ok(items)
-        Error(errors) -> {
+        Error(error_list) -> {
           let error_msg =
             "Failed to decode list response: "
             <> string.join(
@@ -168,11 +168,11 @@ pub fn parse_json_list(
               }),
               ", ",
             )
-          Error(ParseError(error_msg))
+          Error(errors.ParseError(error_msg))
         }
       }
     }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
+    Error(_) -> Error(errors.ParseError("Invalid JSON response"))
   }
 }
 
@@ -189,7 +189,7 @@ pub fn parse_json_paginated(
       // Use the http module's paginated_decoder
       case decode.run(json_data, paginated_decoder(element_decoder)) {
         Ok(paginated) -> Ok(paginated)
-        Error(errors) -> {
+        Error(error_list) -> {
           let error_msg =
             "Failed to decode paginated response: "
             <> string.join(
@@ -201,11 +201,11 @@ pub fn parse_json_paginated(
               }),
               ", ",
             )
-          Error(ParseError(error_msg))
+          Error(errors.ParseError(error_msg))
         }
       }
     }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
+    Error(_) -> Error(errors.ParseError("Invalid JSON response"))
   }
 }
 
@@ -218,7 +218,7 @@ pub fn parse_empty_response(
   case response.status {
     204 -> Ok(Nil)
     _ -> {
-      Error(ParseError(
+      Error(errors.ParseError(
         "Expected 204 No Content, got " <> string.inspect(response.status),
       ))
     }
@@ -237,6 +237,6 @@ fn execute_request(
 ) -> Result(response.Response(String), TandoorError) {
   case httpc.send(req) {
     Ok(resp) -> Ok(resp)
-    Error(_) -> Error(NetworkError("Failed to connect to Tandoor"))
+    Error(_) -> Error(errors.NetworkError("Failed to connect to Tandoor"))
   }
 }

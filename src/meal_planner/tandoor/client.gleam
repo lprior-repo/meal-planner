@@ -32,7 +32,6 @@ import meal_planner/tandoor/recipe.{
 import meal_planner/tandoor/step.{type Step}
 import meal_planner/tandoor/supermarket.{type SupermarketCategory}
 import meal_planner/tandoor/types/nutrition.{type NutritionInfo}
-import meal_planner/tandoor/unit
 
 // ============================================================================
 // Types
