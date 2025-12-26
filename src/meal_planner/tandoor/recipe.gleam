@@ -27,7 +27,6 @@ import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/food.{type Food}
 import meal_planner/tandoor/ingredient.{type Ingredient}
 import meal_planner/tandoor/keyword.{type Keyword}
-import meal_planner/tandoor/step.{type Step}
 import meal_planner/tandoor/supermarket.{type SupermarketCategory}
 import meal_planner/tandoor/types/nutrition.{
   type NutritionInfo as NutritionInfoType,
@@ -75,7 +74,7 @@ pub type Recipe {
 /// detailed recipe views and when you need access to all recipe information.
 ///
 /// Fields (extends Recipe fields):
-/// - steps: List of cooking steps with instructions and ingredients
+/// - steps: List of cooking step IDs (stored as IDs to avoid circular dependency)
 /// - nutrition: Optional nutrition information per serving
 /// - keywords: List of categorization tags
 /// - source_url: Optional URL to external recipe source
@@ -91,7 +90,7 @@ pub type RecipeDetail {
     waiting_time: Option(Int),
     created_at: Option(String),
     updated_at: Option(String),
-    steps: List(Step),
+    steps: List(Int),
     nutrition: Option(NutritionInfo),
     keywords: List(Keyword),
     source_url: Option(String),
@@ -316,7 +315,7 @@ pub fn recipe_detail_decoder() -> decode.Decoder(RecipeDetail) {
     None,
     decode.optional(decode.string),
   )
-  use steps <- decode.optional_field("steps", [], decode.list(step_decoder()))
+  use steps <- decode.optional_field("steps", [], decode.list(decode.int))
   use nutrition <- decode.optional_field(
     "nutrition",
     None,
