@@ -11,6 +11,7 @@ import meal_planner/cli/domains/web
 import meal_planner/config
 import meal_planner/config/database.{DatabaseConfig}
 import meal_planner/config/environment.{DebugLevel, Development}
+import meal_planner/config/logging.{LoggingConfig}
 
 pub fn main() {
   gleeunit.main()
@@ -56,7 +57,7 @@ fn create_test_config() -> config.Config {
       database_password: "test",
       tandoor_token: "test-token",
     ),
-    logging: config.LoggingConfig(level: DebugLevel, debug_mode: True),
+    logging: LoggingConfig(level: DebugLevel, debug_mode: True),
     performance: config.PerformanceConfig(
       request_timeout_ms: 30_000,
       connection_timeout_ms: 5000,

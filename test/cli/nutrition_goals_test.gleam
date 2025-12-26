@@ -7,6 +7,7 @@ import meal_planner/cli/domains/nutrition
 import meal_planner/config
 import meal_planner/config/database.{DatabaseConfig}
 import meal_planner/config/environment.{Development, InfoLevel}
+import meal_planner/config/logging.{LoggingConfig}
 import meal_planner/postgres
 import meal_planner/storage
 import meal_planner/storage/profile
@@ -49,7 +50,7 @@ pub fn set_goal_calories_saves_to_database_test() {
         database_password: "",
         tandoor_token: "test",
       ),
-      logging: config.LoggingConfig(level: InfoLevel, debug_mode: False),
+      logging: LoggingConfig(level: InfoLevel, debug_mode: False),
       performance: config.PerformanceConfig(
         request_timeout_ms: 30_000,
         connection_timeout_ms: 5000,
