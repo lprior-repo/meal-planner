@@ -4,7 +4,11 @@
 /// and JSON response structures.
 import gleeunit
 import gleeunit/should
-import meal_planner/errors
+import meal_planner/errors/types.{
+  AuthenticationError, AuthorizationError, BadRequestError, DatabaseError,
+  InternalError, NetworkError, NotFoundError, RateLimitError, ServiceError,
+  ValidationError,
+}
 import meal_planner/shared/error_handlers
 
 pub fn main() {
@@ -16,7 +20,7 @@ pub fn main() {
 // ============================================================================
 
 pub fn validation_error_returns_400_test() {
-  let error = errors.ValidationError("email", "Invalid email format")
+  let error = ValidationError("email", "Invalid email format")
   let response = error_handlers.app_error_to_response(error)
 
   response.status
@@ -24,7 +28,7 @@ pub fn validation_error_returns_400_test() {
 }
 
 pub fn not_found_error_returns_404_test() {
-  let error = errors.NotFoundError("recipe", "123")
+  let error = NotFoundError("recipe", "123")
   let response = error_handlers.app_error_to_response(error)
 
   response.status
@@ -32,7 +36,7 @@ pub fn not_found_error_returns_404_test() {
 }
 
 pub fn authentication_error_returns_401_test() {
-  let error = errors.AuthenticationError("Invalid token")
+  let error = AuthenticationError("Invalid token")
   let response = error_handlers.app_error_to_response(error)
 
   response.status
@@ -40,7 +44,7 @@ pub fn authentication_error_returns_401_test() {
 }
 
 pub fn authorization_error_returns_403_test() {
-  let error = errors.AuthorizationError("Insufficient permissions")
+  let error = AuthorizationError("Insufficient permissions")
   let response = error_handlers.app_error_to_response(error)
 
   response.status
@@ -48,7 +52,7 @@ pub fn authorization_error_returns_403_test() {
 }
 
 pub fn database_error_returns_500_test() {
-  let error = errors.DatabaseError("insert", "Connection failed")
+  let error = DatabaseError("insert", "Connection failed")
   let response = error_handlers.app_error_to_response(error)
 
   response.status
@@ -56,7 +60,7 @@ pub fn database_error_returns_500_test() {
 }
 
 pub fn internal_error_returns_500_test() {
-  let error = errors.InternalError("Unexpected condition")
+  let error = InternalError("Unexpected condition")
   let response = error_handlers.app_error_to_response(error)
 
   response.status
@@ -64,7 +68,7 @@ pub fn internal_error_returns_500_test() {
 }
 
 pub fn rate_limit_error_returns_429_test() {
-  let error = errors.RateLimitError(60)
+  let error = RateLimitError(60)
   let response = error_handlers.app_error_to_response(error)
 
   response.status
@@ -72,7 +76,7 @@ pub fn rate_limit_error_returns_429_test() {
 }
 
 pub fn bad_request_error_returns_400_test() {
-  let error = errors.BadRequestError("Malformed JSON")
+  let error = BadRequestError("Malformed JSON")
   let response = error_handlers.app_error_to_response(error)
 
   response.status
@@ -80,7 +84,7 @@ pub fn bad_request_error_returns_400_test() {
 }
 
 pub fn service_error_returns_502_test() {
-  let error = errors.ServiceError("fatsecret", "API unavailable")
+  let error = ServiceError("fatsecret", "API unavailable")
   let response = error_handlers.app_error_to_response(error)
 
   response.status
@@ -88,7 +92,7 @@ pub fn service_error_returns_502_test() {
 }
 
 pub fn network_error_returns_502_test() {
-  let error = errors.NetworkError("Connection timeout")
+  let error = NetworkError("Connection timeout")
   let response = error_handlers.app_error_to_response(error)
 
   response.status
@@ -152,7 +156,7 @@ pub fn multiple_validation_errors_to_response_test() {
 // ============================================================================
 
 pub fn app_error_to_http_response_test() {
-  let error = errors.ValidationError("age", "Must be positive")
+  let error = ValidationError("age", "Must be positive")
   let response = error_handlers.app_error_to_http_response(error)
 
   response.status

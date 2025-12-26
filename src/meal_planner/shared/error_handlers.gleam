@@ -15,7 +15,8 @@
 import gleam/http/response.{type Response}
 import gleam/json
 import gleam/list
-import meal_planner/errors.{type AppError}
+import meal_planner/errors
+import meal_planner/errors/types.{type AppError, NotFoundError, ValidationError}
 import meal_planner/fatsecret/core/errors as fatsecret_errors
 import meal_planner/tandoor/core/error as tandoor_error
 import wisp
@@ -37,7 +38,7 @@ import wisp
 ///
 /// # Example
 /// ```gleam
-/// app_error_to_response(errors.ValidationError("email", "Invalid format"))
+/// app_error_to_response(ValidationError("email", "Invalid format"))
 /// // -> 400 Bad Request JSON response
 /// ```
 pub fn app_error_to_response(error: AppError) -> wisp.Response {
@@ -172,7 +173,7 @@ pub fn validation_error_to_response(
   field: String,
   reason: String,
 ) -> wisp.Response {
-  errors.ValidationError(field, reason)
+  ValidationError(field, reason)
   |> app_error_to_response
 }
 
@@ -232,7 +233,7 @@ pub fn not_found_error_to_response(
   resource: String,
   id: String,
 ) -> wisp.Response {
-  errors.NotFoundError(resource, id)
+  NotFoundError(resource, id)
   |> app_error_to_response
 }
 
