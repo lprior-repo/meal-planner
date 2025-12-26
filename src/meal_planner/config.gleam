@@ -15,6 +15,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
+import meal_planner/config/database.{type DatabaseConfig}
 import meal_planner/config/environment.{
   type ConfigError, type Environment, type LogLevel, DebugLevel, Development,
   ErrorLevel, InfoLevel, InvalidEnvVar, MissingEnvVar, Production, Staging,
@@ -28,19 +29,6 @@ import meal_planner/config/features.{
 // ============================================================================
 // TYPES
 // ============================================================================
-
-/// Database configuration
-pub type DatabaseConfig {
-  DatabaseConfig(
-    host: String,
-    port: Int,
-    name: String,
-    user: String,
-    password: String,
-    pool_size: Int,
-    connection_timeout_ms: Int,
-  )
-}
 
 /// Server configuration
 pub type ServerConfig {
@@ -224,13 +212,8 @@ pub fn load() -> Result(Config, ConfigError) {
   let environment =
     get_env_or("ENVIRONMENT", "development") |> parse_environment
 
-  // Parse database config
-  use database_port <- result.try(get_env_int("DATABASE_PORT", 5432))
-  use database_pool_size <- result.try(get_env_int("DATABASE_POOL_SIZE", 10))
-  use db_conn_timeout <- result.try(get_env_int(
-    "DATABASE_CONNECTION_TIMEOUT_MS",
-    30_000,
-  ))
+  // Load database config
+  use database <- result.try(database.load())
 
   // Parse server config
   use server_port <- result.try(get_env_int("PORT", 8080))
@@ -253,18 +236,6 @@ pub fn load() -> Result(Config, ConfigError) {
   ))
   use max_concurrent <- result.try(get_env_int("MAX_CONCURRENT_REQUESTS", 100))
   use rate_limit <- result.try(get_env_int("RATE_LIMIT_REQUESTS", 100))
-
-  // Build database config
-  let database =
-    DatabaseConfig(
-      host: get_env_or("DATABASE_HOST", "localhost"),
-      port: database_port,
-      name: get_env_or("DATABASE_NAME", "meal_planner"),
-      user: get_env_or("DATABASE_USER", "postgres"),
-      password: get_env_optional("DATABASE_PASSWORD"),
-      pool_size: database_pool_size,
-      connection_timeout_ms: db_conn_timeout,
-    )
 
   // Build server config
   let server =
@@ -359,12 +330,9 @@ pub fn validate(config: Config) -> Result(Nil, ConfigError) {
   let errors = []
 
   // Validate database config
-  let errors = case config.database.pool_size {
-    size if size < 1 || size > 100 -> [
-      "Database pool size must be between 1 and 100",
-      ..errors
-    ]
-    _ -> errors
+  let errors = case database.validate(config.database) {
+    Ok(_) -> errors
+    Error(db_errors) -> list.append(db_errors, errors)
   }
 
   // Validate production requirements
@@ -469,20 +437,7 @@ pub fn is_production_ready(config: Config) -> Bool {
 ///
 /// Builds a PostgreSQL connection URL from the config
 pub fn database_url(config: Config) -> String {
-  let password_part = case config.database.password {
-    "" -> ""
-    pwd -> ":" <> pwd
-  }
-
-  "postgresql://"
-  <> config.database.user
-  <> password_part
-  <> "@"
-  <> config.database.host
-  <> ":"
-  <> int.to_string(config.database.port)
-  <> "/"
-  <> config.database.name
+  database.database_url(config.database)
 }
 
 /// Get environment
