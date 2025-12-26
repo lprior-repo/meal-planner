@@ -23,15 +23,11 @@ import gleam/result
 import gleam/string
 import gleam/uri
 import meal_planner/logger
-import meal_planner/tandoor/food.{type Food}
-import meal_planner/tandoor/ingredient.{type Ingredient}
-import meal_planner/tandoor/keyword.{type Keyword as KeywordType}
-import meal_planner/tandoor/recipe.{
-  type Recipe as RecipeType, type RecipeDetail as RecipeDetailType,
+import meal_planner/tandoor/types.{
+  type Food, type Ingredient, type Keyword as KeywordType, type NutritionInfo,
+  type Recipe as RecipeType, type RecipeDetail as RecipeDetailType, type Step,
+  type SupermarketCategory,
 }
-import meal_planner/tandoor/step.{type Step}
-import meal_planner/tandoor/supermarket.{type SupermarketCategory}
-import meal_planner/tandoor/types/nutrition.{type NutritionInfo}
 
 // ============================================================================
 // Types
