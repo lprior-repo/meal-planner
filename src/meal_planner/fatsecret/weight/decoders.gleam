@@ -3,8 +3,6 @@
 /// JSON decoders for weight types from the FatSecret API.
 /// Follows the gleam/dynamic decode pattern for type-safe parsing.
 import gleam/dynamic/decode
-import gleam/float
-import gleam/int
 import gleam/option.{None}
 import meal_planner/fatsecret/decoders/common.{
   float_string_decoder, int_string_decoder,
