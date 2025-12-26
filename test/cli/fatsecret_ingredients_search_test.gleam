@@ -4,13 +4,14 @@
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/config
+import meal_planner/config/environment.{Development, InfoLevel}
 
 /// Test: ingredients command searches for foods and returns results
 pub fn ingredients_search_returns_results_test() {
   // Create test config with all required fields
   let _test_config =
     config.Config(
-      environment: config.Development,
+      environment: Development,
       database: config.DatabaseConfig(
         host: "localhost",
         port: 5432,
@@ -43,7 +44,7 @@ pub fn ingredients_search_returns_results_test() {
         database_password: "test",
         tandoor_token: "test",
       ),
-      logging: config.LoggingConfig(level: config.InfoLevel, debug_mode: False),
+      logging: config.LoggingConfig(level: InfoLevel, debug_mode: False),
       performance: config.PerformanceConfig(
         request_timeout_ms: 30_000,
         connection_timeout_ms: 5000,

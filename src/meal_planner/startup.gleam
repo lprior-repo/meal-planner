@@ -14,9 +14,9 @@ import gleam/list
 import gleam/option.{Some}
 import gleam/string
 import meal_planner/config.{
-  type Config, Development, Production, Staging, has_fatsecret_integration,
-  has_tandoor_integration,
+  type Config, has_fatsecret_integration, has_tandoor_integration,
 }
+import meal_planner/config/environment.{Development, Production, Staging}
 
 /// Service health status
 pub type ServiceStatus {
