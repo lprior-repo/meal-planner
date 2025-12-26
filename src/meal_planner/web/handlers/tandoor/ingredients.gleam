@@ -44,7 +44,7 @@ fn handle_list_ingredients(_req: wisp.Request) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
