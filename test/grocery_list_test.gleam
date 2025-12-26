@@ -10,10 +10,10 @@ import meal_planner/grocery_list.{
   format_as_json, format_as_text, from_ingredients, merge,
 }
 import meal_planner/id
-import meal_planner/tandoor/client.{
-  type Ingredient as TandoorIngredient, Food, Ingredient as TandoorIngredientC,
-  SupermarketCategory, Unit,
-}
+import meal_planner/tandoor/food.{type Food}
+import meal_planner/tandoor/ingredient.{type Ingredient}
+import meal_planner/tandoor/supermarket.{type SupermarketCategory}
+import meal_planner/tandoor/unit.{type Unit}
 import meal_planner/types/macros.{Macros}
 import meal_planner/types/recipe.{
   type Ingredient as SimpleIngredient, type Recipe, Ingredient, Low, Recipe,

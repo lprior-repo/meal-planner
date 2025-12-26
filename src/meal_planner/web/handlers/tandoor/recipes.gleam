@@ -15,13 +15,15 @@ import gleam/json
 import gleam/option
 import gleam/result
 
-import meal_planner/tandoor/client.{type Keyword, type NutritionInfo, type Step}
 import meal_planner/tandoor/handlers/helpers
+import meal_planner/tandoor/keyword.{type Keyword}
 import meal_planner/tandoor/recipe.{
   type Recipe, type RecipeCreateRequest, type RecipeDetail, type RecipeUpdate,
   RecipeCreateRequest, RecipeUpdate, create_recipe, delete_recipe, get_recipe,
   list_recipes, update_recipe,
 }
+import meal_planner/tandoor/step.{type Step}
+import meal_planner/tandoor/types/nutrition.{type NutritionInfo}
 
 import wisp
 
