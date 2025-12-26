@@ -38,7 +38,11 @@ pub fn handle_supermarket_by_id(
         _ -> wisp.method_not_allowed([http.Get, http.Patch, http.Delete])
       }
     }
-    Error(_) -> helpers.error_response(400, "Invalid supermarket ID")
+    Error(_err) ->
+      helpers.error_response(
+        400,
+        "Invalid supermarket ID: '" <> supermarket_id <> "'",
+      )
   }
 }
 
@@ -72,7 +76,7 @@ fn handle_list_supermarkets(_req: wisp.Request) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
@@ -99,8 +103,7 @@ fn handle_create_supermarket(req: wisp.Request) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(201)
             }
-            Error(_) ->
-              helpers.error_response(500, "Failed to create supermarket")
+            Error(err) -> helpers.tandoor_error_to_response(err)
           }
         }
         Error(resp) -> resp
@@ -126,7 +129,7 @@ fn handle_get_supermarket(_req: wisp.Request, id: Int) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
@@ -153,8 +156,7 @@ fn handle_update_supermarket(req: wisp.Request, id: Int) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(200)
             }
-            Error(_) ->
-              helpers.error_response(500, "Failed to update supermarket")
+            Error(err) -> helpers.tandoor_error_to_response(err)
           }
         }
         Error(resp) -> resp
@@ -169,7 +171,7 @@ fn handle_delete_supermarket(_req: wisp.Request, id: Int) -> wisp.Response {
     Ok(config) -> {
       case delete_supermarket(config, id: id) {
         Ok(Nil) -> wisp.response(204)
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
