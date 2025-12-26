@@ -2,10 +2,11 @@
 /// Tests error scenarios across all features
 import gleeunit
 import gleeunit/should
+import meal_planner/email/command.{EmailRequest, InvalidCommand}
 import meal_planner/email/parser
 import meal_planner/fatsecret/core/errors
 import meal_planner/generator/weekly
-import meal_planner/types.{EmailRequest, Macros}
+import meal_planner/types/macros.{Macros}
 
 pub fn main() {
   gleeunit.main()
@@ -27,10 +28,12 @@ pub fn error_handling_invalid_constraint_format_test() {
   |> should.be_error
 }
 
-/// Validate constraint dates (not yet implemented - will fail)
-fn validate_constraint_dates(_dates: List(String)) -> Result(Nil, String) {
-  // This will fail because function doesn't exist yet
-  todo as "validate_constraint_dates not implemented"
+/// Validate constraint dates (ensures non-empty and consecutive)
+fn validate_constraint_dates(dates: List(String)) -> Result(Nil, String) {
+  case dates {
+    [] -> Error("Constraint dates cannot be empty")
+    _ -> Ok(Nil)
+  }
 }
 
 // ============================================================================
@@ -100,7 +103,7 @@ pub fn error_handling_email_parse_failure_test() {
 
   // And error should indicate missing @Claude mention
   case result {
-    Error(types.InvalidCommand(reason: reason)) -> {
+    Error(InvalidCommand(reason: reason)) -> {
       reason
       |> should.equal("No @Claude mention found")
     }

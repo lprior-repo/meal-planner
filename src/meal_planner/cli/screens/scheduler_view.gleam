@@ -17,13 +17,10 @@
 /// - Update: scheduler_update (state transitions)
 /// - View: scheduler_view (rendering)
 import birl
-import gleam/dict.{type Dict}
-import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
-import gleam/result
 import gleam/string
 import meal_planner/id
 import meal_planner/scheduler/types as scheduler_types
@@ -923,58 +920,6 @@ fn sort_jobs(
   }
 }
 
-/// Format relative time
-fn format_relative_time(timestamp: Int, current: Int) -> String {
-  let diff = timestamp - current
-
-  case diff < 0 {
-    True -> {
-      // Past
-      let abs_diff = int.absolute_value(diff)
-      case abs_diff < 60 {
-        True -> int.to_string(abs_diff) <> "s ago"
-        False ->
-          case abs_diff < 3600 {
-            True -> int.to_string(abs_diff / 60) <> "m ago"
-            False ->
-              case abs_diff < 86_400 {
-                True -> int.to_string(abs_diff / 3600) <> "h ago"
-                False -> int.to_string(abs_diff / 86_400) <> "d ago"
-              }
-          }
-      }
-    }
-    False -> {
-      // Future
-      case diff < 60 {
-        True -> "in " <> int.to_string(diff) <> "s"
-        False ->
-          case diff < 3600 {
-            True -> "in " <> int.to_string(diff / 60) <> "m"
-            False ->
-              case diff < 86_400 {
-                True -> "in " <> int.to_string(diff / 3600) <> "h"
-                False -> "in " <> int.to_string(diff / 86_400) <> "d"
-              }
-          }
-      }
-    }
-  }
-}
-
-/// Format timestamp to readable string
-fn format_timestamp(timestamp: Int) -> String {
-  let date = birl.from_unix(timestamp)
-  birl.to_iso8601(date)
-  |> string.slice(0, 19)
-}
-
-/// Format float to string with 1 decimal
-fn float_to_string(value: Float) -> String {
-  let rounded = float.truncate(value *. 10.0) |> int.to_float
-  float.to_string(rounded /. 10.0)
-}
-
 /// Format job frequency for display
 fn format_frequency(freq: scheduler_types.JobFrequency) -> String {
   case freq {
@@ -1082,7 +1027,7 @@ fn render_job_entry(
   job: JobDisplayEntry,
   index: Int,
 ) -> shore.Node(SchedulerMsg) {
-  let status_style = case job.job.enabled {
+  let _ = case job.job.enabled {
     True -> style.Green
     False -> style.Yellow
   }
@@ -1285,7 +1230,7 @@ fn view_config(model: SchedulerModel) -> shore.Node(SchedulerMsg) {
 
 /// Render logs view
 fn view_logs(
-  model: SchedulerModel,
+  _model: SchedulerModel,
   execution_id: String,
 ) -> shore.Node(SchedulerMsg) {
   ui.col([
@@ -1309,7 +1254,7 @@ fn view_logs(
 
 /// Render run confirmation
 fn view_run_confirm(
-  _model: SchedulerModel,
+  __model: SchedulerModel,
   job_id: String,
 ) -> shore.Node(SchedulerMsg) {
   ui.col([
@@ -1331,7 +1276,7 @@ fn view_run_confirm(
 
 /// Render delete confirmation
 fn view_delete_confirm(
-  _model: SchedulerModel,
+  __model: SchedulerModel,
   job_id: String,
 ) -> shore.Node(SchedulerMsg) {
   ui.col([

@@ -170,11 +170,17 @@ fn exercise_entries_list_decoder() -> decode.Decoder(List(ExerciseEntry)) {
 ///   }
 /// }
 /// ```
+/// When there are no entries, "exercise_entry" field is absent.
 pub fn decode_exercise_entries_response() -> decode.Decoder(List(ExerciseEntry)) {
-  decode.at(
-    ["exercise_entries", "exercise_entry"],
-    exercise_entries_list_decoder(),
-  )
+  use entries <- decode.field("exercise_entries", {
+    use entry_list <- decode.optional_field(
+      "exercise_entry",
+      [],
+      exercise_entries_list_decoder(),
+    )
+    decode.success(entry_list)
+  })
+  decode.success(entries)
 }
 
 // ============================================================================
@@ -200,14 +206,6 @@ pub fn exercise_day_summary_decoder() -> decode.Decoder(ExerciseDaySummary) {
   ))
 }
 
-/// Decode single ExerciseDaySummary and wrap in list
-fn single_exercise_day_to_list_decoder() -> decode.Decoder(
-  List(ExerciseDaySummary),
-) {
-  use day <- decode.then(exercise_day_summary_decoder())
-  decode.success([day])
-}
-
 /// Decode ExerciseMonthSummary from exercise_entries.get_month.v2 response
 ///
 /// Example JSON:
@@ -215,27 +213,25 @@ fn single_exercise_day_to_list_decoder() -> decode.Decoder(
 /// {
 ///   "month": "12",
 ///   "year": "2024",
-///   "days": {
-///     "day": [
-///       { "date_int": "19723", "exercise_calories": "450" },
-///       { "date_int": "19724", "exercise_calories": "300" }
-///     ]
-///   }
+///   "day": [
+///     { "date_int": "19723", "exercise_calories": "450" },
+///     { "date_int": "19724", "exercise_calories": "300" }
+///   ]
 /// }
 /// ```
 pub fn exercise_month_summary_decoder() -> decode.Decoder(ExerciseMonthSummary) {
   use month <- decode.field("month", flexible_int())
   use year <- decode.field("year", flexible_int())
 
-  // Days can be a single object or array
+  // Days can be a single object or array, handle both cases
   use days <- decode.field(
-    "days",
-    decode.one_of(
-      decode.at(["day"], decode.list(exercise_day_summary_decoder())),
-      [
-        decode.at(["day"], single_exercise_day_to_list_decoder()),
-      ],
-    ),
+    "day",
+    decode.one_of(decode.list(exercise_day_summary_decoder()), [
+      {
+        use single <- decode.then(exercise_day_summary_decoder())
+        decode.success([single])
+      },
+    ]),
   )
 
   decode.success(ExerciseMonthSummary(days: days, month: month, year: year))

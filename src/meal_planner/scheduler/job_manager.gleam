@@ -211,6 +211,7 @@ fn generate_job_id(job_type: JobType) -> JobId {
     types.AutoSync -> "job_auto_sync"
     types.DailyAdvisor -> "job_daily_adv"
     types.WeeklyTrends -> "job_weekly_trends"
+    types.AgentWorkStream -> "job_agent_work"
   }
 
   let timestamp =

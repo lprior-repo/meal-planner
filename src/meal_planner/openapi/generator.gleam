@@ -12,7 +12,6 @@
 /// let yaml = generator.to_yaml(spec)
 /// ```
 import gleam/dict.{type Dict}
-import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{type Option, None, Some}

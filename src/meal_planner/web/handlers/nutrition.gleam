@@ -8,7 +8,7 @@ import gleam/option.{None, Some}
 import gleam/string
 import meal_planner/mvp_recipes
 import meal_planner/ncp
-import meal_planner/types.{type Macros, Macros}
+import meal_planner/types/macros.{type Macros, Macros}
 import meal_planner/web/responses
 import wisp
 

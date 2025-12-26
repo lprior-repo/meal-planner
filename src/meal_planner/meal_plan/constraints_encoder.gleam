@@ -29,7 +29,7 @@ fn constraint_to_json(constraint: constraints.Constraints) -> json.Json {
         ),
         #(
           "macro_adjustment",
-          macro_adjustment_to_json(constraint.macro_adjustment),
+          json.string(macro_adjustment_to_string(constraint.macro_adjustment)),
         ),
         #("meal_skips", json.array(constraint.meal_skips, json.string)),
         #("preferences", json.array(constraint.preferences, json.string)),
@@ -48,11 +48,6 @@ fn locked_meal_to_json(meal: constraints.LockedMeal) -> json.Json {
   ])
 }
 
-/// Convert MealType to JSON string
-fn meal_type_to_json(meal_type: constraints.MealType) -> json.Json {
-  json.string(meal_type_to_string(meal_type))
-}
-
 fn meal_type_to_string(meal_type: constraints.MealType) -> String {
   case meal_type {
     constraints.Breakfast -> "breakfast"
@@ -60,11 +55,6 @@ fn meal_type_to_string(meal_type: constraints.MealType) -> String {
     constraints.Dinner -> "dinner"
     constraints.Snack -> "snack"
   }
-}
-
-/// Convert DayOfWeek to JSON string
-fn day_of_week_to_json(day: constraints.DayOfWeek) -> json.Json {
-  json.string(day_of_week_to_string(day))
 }
 
 fn day_of_week_to_string(day: constraints.DayOfWeek) -> String {
@@ -77,13 +67,6 @@ fn day_of_week_to_string(day: constraints.DayOfWeek) -> String {
     constraints.Saturday -> "Saturday"
     constraints.Sunday -> "Sunday"
   }
-}
-
-/// Convert MacroAdjustment to JSON string
-fn macro_adjustment_to_json(
-  adjustment: constraints.MacroAdjustment,
-) -> json.Json {
-  json.string(macro_adjustment_to_string(adjustment))
 }
 
 fn macro_adjustment_to_string(adjustment: constraints.MacroAdjustment) -> String {

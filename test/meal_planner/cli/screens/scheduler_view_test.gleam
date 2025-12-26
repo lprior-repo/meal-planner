@@ -13,11 +13,11 @@
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/cli/screens/scheduler_view.{
-  type JobConfigState, type JobFilter, type JobSortOption, type JobType,
-  type SchedulerEffect, type SchedulerViewState, AnalysisJob, CleanupJob,
-  ConfigView, DeleteConfirmView, DetailsView, HistoryView, JobConfigState,
-  JobFilter, ListView, LogsView, NotificationJob, ReportJob, RunConfirmView,
-  SortByLastRun, SortByName, SortByNextRun, SortByStatus, SyncJob,
+  type JobSortOption, type JobType, type SchedulerEffect,
+  type SchedulerViewState, AnalysisJob, CleanupJob, ConfigView,
+  DeleteConfirmView, DetailsView, HistoryView, JobConfigState, JobFilter,
+  ListView, LogsView, NotificationJob, ReportJob, RunConfirmView, SortByLastRun,
+  SortByName, SortByNextRun, SortByStatus, SyncJob,
 }
 
 // ============================================================================
@@ -66,7 +66,6 @@ pub fn view_state_list_view_test() {
   let view_state: SchedulerViewState = ListView
   case view_state {
     ListView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -75,7 +74,6 @@ pub fn view_state_details_view_test() {
   let view_state: SchedulerViewState = DetailsView
   case view_state {
     DetailsView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -84,7 +82,6 @@ pub fn view_state_history_view_test() {
   let view_state: SchedulerViewState = HistoryView
   case view_state {
     HistoryView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -93,7 +90,6 @@ pub fn view_state_config_view_test() {
   let view_state: SchedulerViewState = ConfigView
   case view_state {
     ConfigView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -102,7 +98,6 @@ pub fn view_state_logs_view_test() {
   let view_state: SchedulerViewState = LogsView("exec_123")
   case view_state {
     LogsView(id) -> id == "exec_123"
-    _ -> False
   }
   |> should.be_true
 }
@@ -111,7 +106,6 @@ pub fn view_state_run_confirm_view_test() {
   let view_state: SchedulerViewState = RunConfirmView("job_456")
   case view_state {
     RunConfirmView(id) -> id == "job_456"
-    _ -> False
   }
   |> should.be_true
 }
@@ -120,7 +114,6 @@ pub fn view_state_delete_confirm_view_test() {
   let view_state: SchedulerViewState = DeleteConfirmView("job_789")
   case view_state {
     DeleteConfirmView(id) -> id == "job_789"
-    _ -> False
   }
   |> should.be_true
 }

@@ -29,6 +29,8 @@ pub type JobType {
   DailyAdvisor
   /// Weekly trend analysis email (Thursday 8 PM)
   WeeklyTrends
+  /// Agent work stream job
+  AgentWorkStream
 }
 
 /// Job frequency specification
@@ -297,6 +299,7 @@ pub fn job_type_to_string(jt: JobType) -> String {
     AutoSync -> "auto_sync"
     DailyAdvisor -> "daily_advisor"
     WeeklyTrends -> "weekly_trends"
+    AgentWorkStream -> "agent_work_stream"
   }
 }
 
@@ -478,6 +481,7 @@ pub fn job_type_decoder() -> Decoder(JobType) {
     "auto_sync" -> decode.success(AutoSync)
     "daily_advisor" -> decode.success(DailyAdvisor)
     "weekly_trends" -> decode.success(WeeklyTrends)
+    "agent_work_stream" -> decode.success(AgentWorkStream)
     _ -> decode.failure(WeeklyGeneration, "JobType")
   }
 }

@@ -8,9 +8,10 @@
 /// - Next steps or additional information
 import gleam/option.{type Option, None, Some}
 
-import meal_planner/types.{
-  type CommandExecutionResult, type EmailCommand, type RegenerationScope,
-  AddPreference, AdjustMeal, RegeneratePlan, RemoveDislike, SkipMeal,
+import meal_planner/email/command.{
+  type CommandExecutionResult, type DayOfWeek, type EmailCommand, type MealType,
+  type RegenerationScope, AddPreference, AdjustMeal, RegeneratePlan,
+  RemoveDislike, SkipMeal,
 }
 
 // =============================================================================
@@ -97,8 +98,8 @@ fn generate_email_content(
 }
 
 fn generate_adjust_meal_email(
-  _day: types.DayOfWeek,
-  _meal_type: types.MealType,
+  _day: DayOfWeek,
+  _meal_type: MealType,
   _success: Bool,
   message: String,
 ) -> #(String, String, String) {
@@ -147,8 +148,8 @@ fn generate_regenerate_plan_email(
 }
 
 fn generate_skip_meal_email(
-  _day: types.DayOfWeek,
-  _meal_type: types.MealType,
+  _day: DayOfWeek,
+  _meal_type: MealType,
   _success: Bool,
   message: String,
 ) -> #(String, String, String) {

@@ -17,12 +17,10 @@
 /// - Update: weight_update (state transitions)
 /// - View: weight_view (rendering)
 import birl
-import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/result
 import gleam/string
 import meal_planner/fatsecret/weight/types as weight_types
 import shore
@@ -885,7 +883,7 @@ fn calculate_statistics(
 ) -> WeightStatistics {
   case entries {
     [] -> empty_statistics()
-    [latest, ..rest] -> {
+    [latest, ..] -> {
       let all_weights = list.map(entries, fn(e) { e.weight_kg })
       let first = case list.last(entries) {
         Ok(e) -> e.weight_kg
@@ -1001,7 +999,11 @@ fn build_chart_data(entries: List(weight_types.WeightEntry)) -> List(ChartPoint)
 }
 
 /// Render ASCII chart
-fn render_chart(data: List(ChartPoint), width: Int, height: Int) -> List(String) {
+fn render_chart(
+  data: List(ChartPoint),
+  _width: Int,
+  height: Int,
+) -> List(String) {
   case data {
     [] -> ["No data to display"]
     _ -> {

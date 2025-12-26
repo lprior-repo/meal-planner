@@ -7,10 +7,16 @@ import gleam/option.{None, Some}
 import gleeunit
 import gleeunit/should
 import meal_planner/automation/plan_generator
+import meal_planner/automation/plan_generator/types.{
+  type DietaryPreferences, DietaryPreferences, NutritionWeights,
+}
 import meal_planner/fatsecret/profile/types as fatsecret_profile
 import meal_planner/generator/weekly
 import meal_planner/id
-import meal_planner/types.{type Recipe, High, Low, Macros, Recipe}
+import meal_planner/types/macros.{Macros}
+import meal_planner/types/recipe.{
+  type FodmapLevel, type Recipe, High, Low, Recipe,
+}
 
 pub fn main() {
   gleeunit.main()
@@ -26,7 +32,7 @@ fn create_recipe(
   protein: Float,
   fat: Float,
   carbs: Float,
-  fodmap: types.FodmapLevel,
+  fodmap: FodmapLevel,
   vertical: Bool,
 ) -> Recipe {
   Recipe(
@@ -55,8 +61,8 @@ fn test_profile() -> fatsecret_profile.Profile {
   )
 }
 
-fn default_prefs() -> plan_generator.DietaryPreferences {
-  plan_generator.DietaryPreferences(
+fn default_prefs() -> DietaryPreferences {
+  DietaryPreferences(
     require_vertical_diet: False,
     max_fodmap_level: None,
     min_protein_per_serving: None,
@@ -157,7 +163,7 @@ pub fn generate_plan_filters_by_vertical_diet_test() {
 
   let profile = test_profile()
   let prefs =
-    plan_generator.DietaryPreferences(
+    DietaryPreferences(
       require_vertical_diet: True,
       max_fodmap_level: None,
       min_protein_per_serving: None,
@@ -202,7 +208,7 @@ pub fn generate_plan_filters_by_fodmap_level_test() {
 
   let profile = test_profile()
   let prefs =
-    plan_generator.DietaryPreferences(
+    DietaryPreferences(
       require_vertical_diet: False,
       max_fodmap_level: Some(Low),
       min_protein_per_serving: None,
@@ -237,7 +243,7 @@ pub fn generate_plan_fails_when_no_recipes_match_preferences_test() {
   let profile = test_profile()
   // Require Low FODMAP (none available)
   let prefs =
-    plan_generator.DietaryPreferences(
+    DietaryPreferences(
       require_vertical_diet: False,
       max_fodmap_level: Some(Low),
       min_protein_per_serving: None,
@@ -268,7 +274,7 @@ pub fn generate_plan_fails_with_invalid_weights_test() {
 
   // Invalid weights (sum > 1.0)
   let bad_weights =
-    Some(plan_generator.NutritionWeights(
+    Some(NutritionWeights(
       protein_weight: 0.5,
       calorie_weight: 0.5,
       balance_weight: 0.5,
@@ -297,7 +303,7 @@ pub fn generate_plan_succeeds_with_valid_custom_weights_test() {
 
   // Valid custom weights (sum = 1.0)
   let custom_weights =
-    Some(plan_generator.NutritionWeights(
+    Some(NutritionWeights(
       protein_weight: 0.5,
       calorie_weight: 0.3,
       balance_weight: 0.2,

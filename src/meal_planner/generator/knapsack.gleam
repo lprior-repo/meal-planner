@@ -3,7 +3,8 @@
 import gleam/int
 import gleam/list
 import meal_planner/logger
-import meal_planner/types.{type Recipe, macros_calories}
+import meal_planner/types/macros
+import meal_planner/types/recipe.{type Recipe}
 
 /// Error type for knapsack solver
 pub type KnapsackError {
@@ -36,7 +37,7 @@ pub fn error_to_string(error: KnapsackError) -> String {
 
 fn recipe_calories(recipe: Recipe) -> Int {
   let macros = recipe.macros
-  let calories = macros_calories(macros)
+  let calories = macros.calories(macros)
   let rounded = calories +. 0.5
   case rounded >=. 0.0 {
     True -> float_to_int(rounded)

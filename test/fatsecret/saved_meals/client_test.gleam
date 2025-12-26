@@ -126,7 +126,6 @@ pub fn saved_meal_item_input_by_food_id_test() {
       serving_id |> should.equal("12345")
       units |> should.equal(1.5)
     }
-    _ -> should.fail()
   }
 }
 
@@ -151,7 +150,6 @@ pub fn saved_meal_item_input_by_nutrition_test() {
       prot |> should.equal(10.0)
       fat |> should.equal(8.0)
     }
-    _ -> should.fail()
   }
 }
 

@@ -7,9 +7,7 @@
 //// 4. Recommendation formatting
 
 import gleam/float
-import gleam/int
 import gleam/list
-import gleam/option.{None, Some}
 import gleam/string
 import gleeunit
 import gleeunit/should

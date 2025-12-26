@@ -5,6 +5,7 @@
 /// - Numeric strings vs numbers
 /// - Optional fields
 /// - Branded vs generic foods
+import gleam/dynamic/decode
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
@@ -28,7 +29,7 @@ pub fn decode_generic_food_with_multiple_servings_test() {
   let json_content = load_fixture("food_get_generic")
 
   let result =
-    json.parse(json_content, decoders.food_decoder())
+    json.parse(json_content, decode.at(["food"], decoders.food_decoder()))
     |> should.be_ok
 
   // Verify food details
@@ -55,7 +56,7 @@ pub fn decode_branded_food_test() {
   let json_content = load_fixture("food_get_branded")
 
   let result =
-    json.parse(json_content, decoders.food_decoder())
+    json.parse(json_content, decode.at(["food"], decoders.food_decoder()))
     |> should.be_ok
 
   // Verify brand name is present
@@ -68,7 +69,7 @@ pub fn decode_food_response_wrapper_test() {
   let json_str = food_response_fixture()
 
   let result =
-    json.parse(json_str, decoders.food_decoder())
+    json.parse(json_str, decode.at(["food"], decoders.food_decoder()))
     |> should.be_ok
 
   result.food_name |> should.equal("Apple")

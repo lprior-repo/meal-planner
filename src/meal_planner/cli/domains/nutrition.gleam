@@ -24,7 +24,7 @@ import meal_planner/storage
 import meal_planner/storage/profile.{
   DatabaseError, InvalidInput, NotFound, Unauthorized,
 }
-import meal_planner/types
+import meal_planner/types/macros.{type Macros}
 
 // ============================================================================
 // Glint Command Handler
@@ -786,7 +786,7 @@ fn validate_date_format(date_str: String) -> Result(Nil, String) {
 }
 
 /// Calculate calories from macros (4 cal/g protein, 9 cal/g fat, 4 cal/g carbs)
-fn calculate_calories(macros: types.Macros) -> Float {
+fn calculate_calories(macros: Macros) -> Float {
   macros.protein *. 4.0 +. macros.fat *. 9.0 +. macros.carbs *. 4.0
 }
 

@@ -1,6 +1,6 @@
 /// MVP Recipe Library - 15 generic recipes for testing NCP
 import meal_planner/ncp.{type ScoredRecipe, ScoredRecipe}
-import meal_planner/types.{Macros}
+import meal_planner/types/macros.{Macros}
 
 /// Get all MVP recipes
 pub fn all_recipes() -> List(ScoredRecipe) {

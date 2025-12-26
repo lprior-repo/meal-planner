@@ -6,12 +6,12 @@ import gleam/option.{Some}
 import gleeunit
 import gleeunit/should
 
-import meal_planner/email/confirmation
-import meal_planner/id
-import meal_planner/types.{
+import meal_planner/email/command.{
   AdjustMeal, Breakfast, CommandExecutionResult, Friday, FullWeek,
   RegeneratePlan, RemoveDislike,
 }
+import meal_planner/email/confirmation
+import meal_planner/id
 
 pub fn main() {
   gleeunit.main()

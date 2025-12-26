@@ -1,23 +1,38 @@
 //// Recipe Types for Meal Planning
 ////
-//// Simplified recipe types for the autonomous meal planning system.
-//// Wraps Tandoor Recipe type with nutrition per serving.
+//// This module provides two recipe types:
 ////
-//// This module provides the MealPlanRecipe opaque type which:
-//// - Stores nutritional macros PER SERVING (not total)
-//// - Tracks prep and cook time for scheduling
-//// - Links to Tandoor recipe ID for full details
-//// - Validates servings, prep time, and cook time
+//// 1. **Ingredient & Recipe (Legacy)**
+////    - Ingredient: Simple type from Tandoor API (name, quantity)
+////    - Recipe: Full recipe from Tandoor with ingredients, instructions, nutrition
+////    - FodmapLevel: Enum for FODMAP tracking (Low, Medium, High)
+////    - Used for recipe management and food logging
 ////
-//// ## Example
+//// 2. **MealPlanRecipe (Simplified for Meal Planning)**
+////    - Opaque type for meal plan generation
+////    - Stores macros PER SERVING with validation
+////    - Tracks prep/cook time for scheduling
+////    - Links to Tandoor recipe via RecipeId
+////
+//// ## Examples
 ////
 //// ```gleam
+//// // Legacy Recipe (from Tandoor API)
 //// import meal_planner/types/recipe
-//// import meal_planner/types/macros
-//// import meal_planner/id
-//// import gleam/option.{None}
+//// let ingredient = recipe.Ingredient(name: "Chicken", quantity: "2 lbs")
+//// let recipe = recipe.Recipe(
+////   id: recipe_id("123"),
+////   name: "Grilled Chicken",
+////   ingredients: [ingredient],
+////   instructions: ["Grill to 165F"],
+////   macros: macros,
+////   servings: 2,
+////   category: "Protein",
+////   fodmap_level: recipe.Low,
+////   vertical_compliant: True,
+//// )
 ////
-//// let macros = macros.new(protein: 30.0, fat: 12.0, carbs: 45.0)
+//// // Meal Plan Recipe (simplified for planning)
 //// let recipe_result = recipe.new_meal_plan_recipe(
 ////   id: id.recipe_id("tandoor-123"),
 ////   name: "Chicken Stir Fry",
@@ -27,28 +42,98 @@
 ////   prep_time: 15,
 ////   cook_time: 20,
 //// )
-////
-//// case recipe_result {
-////   Ok(r) -> {
-////     recipe.recipe_name(r) // "Chicken Stir Fry"
-////     recipe.recipe_total_time(r) // 35 minutes
-////     recipe.is_quick_prep(r) // True (15 min <= 15 min)
-////   }
-////   Error(msg) -> // Validation error
-//// }
 //// ```
-////
-//// Part of NORTH STAR epic (meal-planner-918).
 
 import gleam/dynamic/decode.{type Decoder}
 import gleam/int
 import gleam/json.{type Json}
+import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/string
 import meal_planner/id.{type RecipeId}
 import meal_planner/types/macros.{type Macros}
 
 // ============================================================================
-// Core Types
+// Legacy Recipe Types (from Tandoor API)
+// ============================================================================
+
+/// Ingredient with name and quantity description.
+///
+/// Represents a single ingredient in a recipe with human-readable quantity.
+/// Example: { name: "Flour", quantity: "2 cups" }
+pub type Ingredient {
+  Ingredient(name: String, quantity: String)
+}
+
+/// FODMAP level for digestive health tracking.
+///
+/// FODMAP (Fermentable Oligosaccharides, Disaccharides, Monosaccharides, And Polyols)
+/// classification helpful for digestive health management.
+pub type FodmapLevel {
+  Low
+  Medium
+  High
+}
+
+/// Recipe with all nutritional and dietary information.
+///
+/// This type represents recipes from the Tandoor recipe manager.
+/// Recipes are fetched from Tandoor API on-demand rather than being stored locally.
+///
+/// ## Fields
+/// - id: Unique recipe identifier from Tandoor
+/// - name: Recipe name
+/// - ingredients: List of ingredients with quantities
+/// - instructions: Step-by-step cooking instructions
+/// - macros: Nutritional macros (protein, fat, carbs)
+/// - servings: Number of servings this recipe makes
+/// - category: Recipe category (e.g., "Protein", "Vegetable")
+/// - fodmap_level: FODMAP classification for digestive health
+/// - vertical_compliant: Whether recipe meets Vertical Diet requirements
+pub type Recipe {
+  Recipe(
+    id: RecipeId,
+    name: String,
+    ingredients: List(Ingredient),
+    instructions: List(String),
+    macros: Macros,
+    servings: Int,
+    category: String,
+    fodmap_level: FodmapLevel,
+    vertical_compliant: Bool,
+  )
+}
+
+/// Check if recipe meets Vertical Diet requirements.
+///
+/// Must be explicitly marked compliant AND have low FODMAP rating.
+/// Returns True only when both conditions are met.
+pub fn is_vertical_diet_compliant(recipe: Recipe) -> Bool {
+  recipe.vertical_compliant && recipe.fodmap_level == Low
+}
+
+/// Returns macros per serving (macros are already stored per serving).
+///
+/// The macros field in Recipe represents nutrition per serving.
+/// This function provides explicit access to that value.
+pub fn macros_per_serving(recipe: Recipe) -> Macros {
+  recipe.macros
+}
+
+/// Returns total macros for all servings.
+///
+/// Calculates total nutrition if you made the entire recipe.
+/// Scales per-serving macros by the number of servings.
+pub fn total_macros(recipe: Recipe) -> Macros {
+  let servings_factor = case recipe.servings {
+    s if s <= 0 -> 1.0
+    s -> int.to_float(s)
+  }
+  macros.scale(recipe.macros, servings_factor)
+}
+
+// ============================================================================
+// MealPlanRecipe Type (Simplified for Meal Planning)
 // ============================================================================
 
 /// Simplified recipe for meal planning with nutrition per serving.
@@ -230,7 +315,145 @@ pub fn is_quick_prep(recipe: MealPlanRecipe) -> Bool {
 }
 
 // ============================================================================
-// JSON Serialization
+// JSON Serialization - Legacy Types
+// ============================================================================
+
+/// Encode Ingredient to JSON.
+pub fn ingredient_to_json(i: Ingredient) -> Json {
+  json.object([
+    #("name", json.string(i.name)),
+    #("quantity", json.string(i.quantity)),
+  ])
+}
+
+/// Convert FodmapLevel to string.
+pub fn fodmap_level_to_string(f: FodmapLevel) -> String {
+  case f {
+    Low -> "low"
+    Medium -> "medium"
+    High -> "high"
+  }
+}
+
+/// Encode Recipe to JSON.
+pub fn recipe_to_json(r: Recipe) -> Json {
+  json.object([
+    #("id", id.recipe_id_to_json(r.id)),
+    #("name", json.string(r.name)),
+    #("ingredients", json.array(r.ingredients, ingredient_to_json)),
+    #("instructions", json.array(r.instructions, json.string)),
+    #("macros", macros.to_json(r.macros)),
+    #("servings", json.int(r.servings)),
+    #("category", json.string(r.category)),
+    #("fodmap_level", json.string(fodmap_level_to_string(r.fodmap_level))),
+    #("vertical_compliant", json.bool(r.vertical_compliant)),
+  ])
+}
+
+// ============================================================================
+// JSON Deserialization - Legacy Types
+// ============================================================================
+
+/// Decode Ingredient from JSON.
+pub fn ingredient_decoder() -> Decoder(Ingredient) {
+  use name <- decode.field("name", decode.string)
+  use quantity <- decode.field("quantity", decode.string)
+  decode.success(Ingredient(name: name, quantity: quantity))
+}
+
+/// Decode FodmapLevel from JSON string.
+pub fn fodmap_level_decoder() -> Decoder(FodmapLevel) {
+  use s <- decode.then(decode.string)
+  case s {
+    "low" -> decode.success(Low)
+    "medium" -> decode.success(Medium)
+    "high" -> decode.success(High)
+    _ -> decode.failure(Low, "FodmapLevel")
+  }
+}
+
+/// Decode Recipe from JSON.
+pub fn recipe_decoder() -> Decoder(Recipe) {
+  use recipe_id <- decode.field("id", id.recipe_id_decoder())
+  use name <- decode.field("name", decode.string)
+  use ingredients <- decode.field(
+    "ingredients",
+    decode.list(ingredient_decoder()),
+  )
+  use instructions <- decode.field("instructions", decode.list(decode.string))
+  use macros <- decode.field("macros", macros.decoder())
+  use servings <- decode.field("servings", decode.int)
+  use category <- decode.field("category", decode.string)
+  use fodmap_level <- decode.field("fodmap_level", fodmap_level_decoder())
+  use vertical_compliant <- decode.field("vertical_compliant", decode.bool)
+  decode.success(Recipe(
+    id: recipe_id,
+    name: name,
+    ingredients: ingredients,
+    instructions: instructions,
+    macros: macros,
+    servings: servings,
+    category: category,
+    fodmap_level: fodmap_level,
+    vertical_compliant: vertical_compliant,
+  ))
+}
+
+// ============================================================================
+// Display Formatting - Legacy Types
+// ============================================================================
+
+/// Format ingredient as a readable line (e.g., "- Flour: 2 cups").
+pub fn ingredient_to_display_string(ing: Ingredient) -> String {
+  "  - " <> ing.name <> ": " <> ing.quantity
+}
+
+/// Format ingredient line for shopping list (indented).
+pub fn ingredient_to_shopping_list_line(ing: Ingredient) -> String {
+  "    - " <> ing.name <> ": " <> ing.quantity
+}
+
+/// Format FODMAP level as a readable string.
+pub fn fodmap_level_to_display_string(level: FodmapLevel) -> String {
+  case level {
+    Low -> "Low"
+    Medium -> "Medium"
+    High -> "High"
+  }
+}
+
+/// Format Recipe as a complete, readable string.
+///
+/// Returns a formatted string with:
+/// - Recipe name
+/// - Ingredients list
+/// - Step-by-step instructions
+/// - Nutritional macros
+pub fn recipe_to_display_string(recipe: Recipe) -> String {
+  let ingredients_str =
+    list.map(recipe.ingredients, ingredient_to_display_string)
+    |> string.join("\n")
+
+  let instructions_str =
+    list.index_map(recipe.instructions, fn(inst, i) {
+      "  " <> int.to_string(i + 1) <> ". " <> inst
+    })
+    |> string.join("\n")
+
+  recipe.name
+  <> "\n"
+  <> "Macros: "
+  <> macros.to_string(recipe.macros)
+  <> "\n\n"
+  <> "Ingredients:\n"
+  <> ingredients_str
+  <> "\n\n"
+  <> "Instructions:\n"
+  <> instructions_str
+}
+
+// ============================================================================
+// JSON Serialization - MealPlanRecipe
 // ============================================================================
 
 /// Encode MealPlanRecipe to JSON.

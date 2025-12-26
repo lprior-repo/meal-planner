@@ -12,7 +12,6 @@
 import argv
 import gleam/io
 import gleam/json
-import gleam/list
 import meal_planner/openapi/generator
 
 pub fn main() {
