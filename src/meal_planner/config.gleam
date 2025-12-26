@@ -9,32 +9,21 @@
 //// - Performance tuning parameters
 //// - Validation on startup
 
-import dot_env
 import envoy
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
+import meal_planner/config/environment.{
+  type ConfigError, type Environment, type LogLevel, DebugLevel, Development,
+  ErrorLevel, InfoLevel, InvalidEnvVar, MissingEnvVar, Production, Staging,
+  ValidationError, WarnLevel,
+}
 
 // ============================================================================
 // TYPES
 // ============================================================================
-
-/// Application environment
-pub type Environment {
-  Development
-  Staging
-  Production
-}
-
-/// Log level
-pub type LogLevel {
-  DebugLevel
-  InfoLevel
-  WarnLevel
-  ErrorLevel
-}
 
 /// Feature flags for runtime behavior control
 pub type Feature {
@@ -46,13 +35,6 @@ pub type Feature {
   FeatureHealthCheck
   FeatureRateLimiting
   FeatureCORS
-}
-
-/// Configuration error type
-pub type ConfigError {
-  MissingEnvVar(name: String)
-  InvalidEnvVar(name: String, value: String, expected: String)
-  ValidationError(errors: List(String))
 }
 
 /// Database configuration
@@ -139,94 +121,47 @@ pub type Config {
 }
 
 // ============================================================================
-// ENVIRONMENT VARIABLE HELPERS
+// ENVIRONMENT VARIABLE HELPERS (Re-exported from environment module)
 // ============================================================================
 
 /// Load .env file if it exists
 fn load_dotenv() -> Nil {
-  dot_env.new()
-  |> dot_env.set_path("../.env")
-  |> dot_env.set_debug(False)
-  |> dot_env.set_ignore_missing_file(True)
-  |> dot_env.load
-
-  dot_env.new()
-  |> dot_env.set_path(".env")
-  |> dot_env.set_debug(False)
-  |> dot_env.set_ignore_missing_file(True)
-  |> dot_env.load
+  environment.load_dotenv()
 }
 
 /// Get environment variable with a default value
 fn get_env_or(name: String, default: String) -> String {
-  envoy.get(name) |> result.unwrap(default)
+  environment.get_env_or(name, default)
 }
 
 /// Get optional environment variable (returns empty string if not set)
 fn get_env_optional(name: String) -> String {
-  envoy.get(name) |> result.unwrap("")
+  environment.get_env_optional(name)
 }
 
 /// Parse integer from environment variable with default
 fn get_env_int(name: String, default: Int) -> Result(Int, ConfigError) {
-  case envoy.get(name) {
-    Ok(value) ->
-      case int.parse(value) {
-        Ok(parsed) -> Ok(parsed)
-        Error(_) ->
-          Error(InvalidEnvVar(name: name, value: value, expected: "integer"))
-      }
-    Error(_) -> Ok(default)
-  }
+  environment.get_env_int(name, default)
 }
 
 /// Parse boolean from environment variable
 fn get_env_bool(name: String, default: Bool) -> Bool {
-  case envoy.get(name) {
-    Ok(value) ->
-      case string.lowercase(value) {
-        "true" -> True
-        "1" -> True
-        "yes" -> True
-        "false" -> False
-        "0" -> False
-        "no" -> False
-        _ -> default
-      }
-    Error(_) -> default
-  }
+  environment.get_env_bool(name, default)
 }
 
 /// Parse comma-separated list from environment variable
 fn get_env_list(name: String, default: List(String)) -> List(String) {
-  case envoy.get(name) {
-    Ok(value) ->
-      value
-      |> string.split(",")
-      |> list.map(string.trim)
-      |> list.filter(fn(s) { !string.is_empty(s) })
-    Error(_) -> default
-  }
+  environment.get_env_list(name, default)
 }
 
 /// Parse environment from string
 fn parse_environment(env_str: String) -> Environment {
-  case string.lowercase(env_str) {
-    "production" -> Production
-    "staging" -> Staging
-    _ -> Development
-  }
+  environment.parse_environment(env_str)
 }
 
 /// Parse log level from string
 fn parse_log_level(level_str: String) -> LogLevel {
-  case string.lowercase(level_str) {
-    "debug" -> DebugLevel
-    "info" -> InfoLevel
-    "warn" -> WarnLevel
-    "error" -> ErrorLevel
-    _ -> InfoLevel
-  }
+  environment.parse_log_level(level_str)
 }
 
 // ============================================================================

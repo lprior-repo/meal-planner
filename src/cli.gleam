@@ -8,6 +8,9 @@ import gleam/io
 import gleam/string
 import meal_planner/cli/glint_commands
 import meal_planner/config
+import meal_planner/config/environment.{
+  InvalidEnvVar, MissingEnvVar, ValidationError,
+}
 import meal_planner/error
 import meal_planner/startup
 
@@ -48,12 +51,12 @@ pub fn main() {
     }
     Error(config_error) -> {
       let err = case config_error {
-        config.MissingEnvVar(name) ->
+        MissingEnvVar(name) ->
           error.config_error(
             "Missing required environment variable: " <> name,
             "Ensure the variable is set in your .env file or environment.",
           )
-        config.InvalidEnvVar(name, value, expected) ->
+        InvalidEnvVar(name, value, expected) ->
           error.config_error(
             "Invalid value for "
               <> name
@@ -63,7 +66,7 @@ pub fn main() {
               <> expected,
             "Check your environment variable configuration for correct format and values.",
           )
-        config.ValidationError(errors) ->
+        ValidationError(errors) ->
           error.config_error(
             "Configuration validation failed: " <> string.join(errors, ", "),
             "Fix the configuration errors listed above.",

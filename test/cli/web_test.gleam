@@ -9,6 +9,7 @@ import gleam/option.{None, Some}
 import gleeunit
 import meal_planner/cli/domains/web
 import meal_planner/config
+import meal_planner/config/environment.{DebugLevel, Development}
 
 pub fn main() {
   gleeunit.main()
@@ -21,7 +22,7 @@ pub fn main() {
 /// Create a minimal test configuration
 fn create_test_config() -> config.Config {
   config.Config(
-    environment: config.Development,
+    environment: Development,
     server: config.ServerConfig(port: 8080, cors_allowed_origins: []),
     database: config.DatabaseConfig(
       host: "localhost",
@@ -54,7 +55,7 @@ fn create_test_config() -> config.Config {
       database_password: "test",
       tandoor_token: "test-token",
     ),
-    logging: config.LoggingConfig(level: config.DebugLevel, debug_mode: True),
+    logging: config.LoggingConfig(level: DebugLevel, debug_mode: True),
     performance: config.PerformanceConfig(
       request_timeout_ms: 30_000,
       connection_timeout_ms: 5000,

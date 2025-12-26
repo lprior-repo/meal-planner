@@ -5,6 +5,7 @@ import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/cli/domains/nutrition
 import meal_planner/config
+import meal_planner/config/environment.{Development, InfoLevel}
 import meal_planner/postgres
 import meal_planner/storage
 import meal_planner/storage/profile
@@ -14,7 +15,7 @@ pub fn set_goal_calories_saves_to_database_test() {
   // Create test config
   let test_config =
     config.Config(
-      environment: config.Development,
+      environment: Development,
       database: config.DatabaseConfig(
         host: "localhost",
         port: 5432,
@@ -47,7 +48,7 @@ pub fn set_goal_calories_saves_to_database_test() {
         database_password: "",
         tandoor_token: "test",
       ),
-      logging: config.LoggingConfig(level: config.InfoLevel, debug_mode: False),
+      logging: config.LoggingConfig(level: InfoLevel, debug_mode: False),
       performance: config.PerformanceConfig(
         request_timeout_ms: 30_000,
         connection_timeout_ms: 5000,
