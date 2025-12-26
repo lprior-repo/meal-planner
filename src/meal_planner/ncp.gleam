@@ -10,8 +10,7 @@ import meal_planner/ncp/types.{
   type AdjustmentPlan, type DeviationResult, type NutritionData,
   type NutritionGoals, type NutritionState, type RecipeSuggestion,
   type ReconciliationResult, type ScoredRecipe, type TrendAnalysis,
-  type TrendDirection, AdjustmentPlan, Decreasing, DeviationResult, Increasing,
-  NutritionData, NutritionGoals, RecipeSuggestion, ReconciliationResult, Stable,
+  NutritionData, NutritionGoals, RecipeSuggestion, ReconciliationResult,
   TrendAnalysis,
 }
 import meal_planner/nutrition_constants
@@ -81,27 +80,7 @@ pub fn calculate_consistency_rate(
   goals: NutritionGoals,
   tolerance_pct: Float,
 ) -> Float {
-  case history {
-    [] -> 0.0
-    _ -> {
-      // Count total and within_tolerance in one pass
-      let #(total_count, within_count) =
-        list.fold(history, #(0, 0), fn(acc, state) {
-          let deviation = calculate_deviation(goals, state.consumed)
-          let is_within = case
-            deviation_is_within_tolerance(deviation, tolerance_pct)
-          {
-            True -> 1
-            False -> 0
-          }
-          #(acc.0 + 1, acc.1 + is_within)
-        })
-
-      let total = int_to_float(total_count)
-      let within_tolerance_count = int_to_float(within_count)
-      { within_tolerance_count /. total } *. 100.0
-    }
-  }
+  analysis.calculate_consistency_rate(history, goals, tolerance_pct)
 }
 
 /// Get default nutrition goals

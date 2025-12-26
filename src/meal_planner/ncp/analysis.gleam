@@ -5,7 +5,6 @@
 /// - Calculate averages over time periods
 /// - Track consistency against goals
 /// - Retrieve historical nutrition data
-import gleam/float
 import gleam/list
 import meal_planner/ncp/calculations
 import meal_planner/ncp/types.{
