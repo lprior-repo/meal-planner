@@ -117,36 +117,6 @@ pub fn handle_log_food(
   |> wisp.string_body("Log food handler not yet implemented")
 }
 
-/// FatSecret get recipe types - GET /api/fatsecret/recipes/types
-pub fn handle_fatsecret_recipe_types(_req: wisp.Request) -> wisp.Response {
-  wisp.response(501)
-  |> wisp.string_body("Recipe types handler not yet implemented")
-}
-
-/// FatSecret search recipes - GET /api/fatsecret/recipes/search
-pub fn handle_fatsecret_search_recipes(_req: wisp.Request) -> wisp.Response {
-  wisp.response(501)
-  |> wisp.string_body("Recipe search handler not yet implemented")
-}
-
-/// FatSecret search recipes by type - GET /api/fatsecret/recipes/search/type/:type_id
-pub fn handle_fatsecret_search_recipes_by_type(
-  _req: wisp.Request,
-  _type_id: String,
-) -> wisp.Response {
-  wisp.response(501)
-  |> wisp.string_body("Recipe type search handler not yet implemented")
-}
-
-/// FatSecret get recipe - GET /api/fatsecret/recipes/:id
-pub fn handle_fatsecret_get_recipe(
-  _req: wisp.Request,
-  _recipe_id: String,
-) -> wisp.Response {
-  wisp.response(501)
-  |> wisp.string_body("Get recipe handler not yet implemented")
-}
-
 // ============================================================================
 // FatSecret Foods API Handlers
 // ============================================================================

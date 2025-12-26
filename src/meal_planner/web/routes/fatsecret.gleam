@@ -16,6 +16,7 @@ import gleam/option.{type Option, None, Some}
 import meal_planner/fatsecret/diary/handlers as diary_handlers
 import meal_planner/fatsecret/exercise/handlers as exercise_handlers
 import meal_planner/fatsecret/favorites/handlers as favorites_handlers
+import meal_planner/fatsecret/recipes/handlers as recipes_handlers
 import meal_planner/fatsecret/saved_meals/handlers as saved_meals_handlers
 import meal_planner/fatsecret/weight/handlers as weight_handlers
 import meal_planner/web/handlers
@@ -90,11 +91,11 @@ fn route_foods(req: wisp.Request, segments: List(String)) -> wisp.Response {
 fn route_recipes(req: wisp.Request, segments: List(String)) -> wisp.Response {
   case segments {
     ["autocomplete"] -> handlers.handle_fatsecret_autocomplete_recipes(req)
-    ["types"] -> handlers.handle_fatsecret_recipe_types(req)
-    ["search"] -> handlers.handle_fatsecret_search_recipes(req)
+    ["types"] -> recipes_handlers.handle_get_recipe_types(req)
+    ["search"] -> recipes_handlers.handle_search_recipes(req)
     ["search", "type", type_id] ->
-      handlers.handle_fatsecret_search_recipes_by_type(req, type_id)
-    [recipe_id] -> handlers.handle_fatsecret_get_recipe(req, recipe_id)
+      recipes_handlers.handle_search_recipes_by_type(req, type_id)
+    [recipe_id] -> recipes_handlers.handle_get_recipe(req, recipe_id)
     _ -> wisp.not_found()
   }
 }
