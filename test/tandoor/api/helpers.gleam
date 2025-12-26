@@ -17,7 +17,7 @@ import meal_planner/tandoor/supermarket.{
   type SupermarketCategory, SupermarketCategory,
 }
 import meal_planner/tandoor/types/base.{
-  type ClientConfig, ApiResponse, bearer_config, session_config,
+  type ClientConfig, ApiResponse, bearer_config,
 }
 import meal_planner/tandoor/unit.{type Unit, Unit}
 
