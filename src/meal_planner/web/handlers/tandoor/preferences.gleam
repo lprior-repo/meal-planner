@@ -38,8 +38,7 @@ fn handle_get_preferences(_req: wisp.Request) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) ->
-          helpers.error_response(500, "Failed to get user preferences")
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
@@ -68,18 +67,10 @@ fn handle_update_preferences(req: wisp.Request) -> wisp.Response {
                   |> json.to_string
                   |> wisp.json_response(200)
                 }
-                Error(_) ->
-                  helpers.error_response(
-                    500,
-                    "Failed to update user preferences",
-                  )
+                Error(err) -> helpers.tandoor_error_to_response(err)
               }
             }
-            Error(_) ->
-              helpers.error_response(
-                500,
-                "Failed to get current user preferences",
-              )
+            Error(err) -> helpers.tandoor_error_to_response(err)
           }
         }
         Error(resp) -> resp
