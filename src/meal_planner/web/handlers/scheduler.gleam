@@ -137,6 +137,7 @@ fn encode_job_type(job_type: scheduler_types.JobType) -> json.Json {
     scheduler_types.AutoSync -> json.string("auto_sync")
     scheduler_types.DailyAdvisor -> json.string("daily_advisor")
     scheduler_types.WeeklyTrends -> json.string("weekly_trends")
+    scheduler_types.AgentWorkStream -> json.string("agent_work_stream")
   }
 }
 
