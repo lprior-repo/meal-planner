@@ -3,6 +3,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/string
+import meal_planner/ncp/calculations
 import meal_planner/ncp/types.{
   type AdjustmentPlan, type DeviationResult, type NutritionData,
   type NutritionGoals, type NutritionState, type RecipeSuggestion,
@@ -18,17 +19,7 @@ import meal_planner/types/macros.{type Macros}
 pub fn nutrition_goals_validate(
   goals: NutritionGoals,
 ) -> Result(NutritionGoals, String) {
-  case goals {
-    NutritionGoals(protein, _, _, _) if protein <=. 0.0 ->
-      Error("daily protein must be positive")
-    NutritionGoals(_, fat, _, _) if fat <. 0.0 ->
-      Error("daily fat cannot be negative")
-    NutritionGoals(_, _, carbs, _) if carbs <. 0.0 ->
-      Error("daily carbs cannot be negative")
-    NutritionGoals(_, _, _, calories) if calories <=. 0.0 ->
-      Error("daily calories must be positive")
-    _ -> Ok(goals)
-  }
+  calculations.nutrition_goals_validate(goals)
 }
 
 /// Calculate percentage deviation between actual and goals
@@ -37,20 +28,7 @@ pub fn calculate_deviation(
   goals: NutritionGoals,
   actual: NutritionData,
 ) -> DeviationResult {
-  DeviationResult(
-    protein_pct: calc_pct_deviation(goals.daily_protein, actual.protein),
-    fat_pct: calc_pct_deviation(goals.daily_fat, actual.fat),
-    carbs_pct: calc_pct_deviation(goals.daily_carbs, actual.carbs),
-    calories_pct: calc_pct_deviation(goals.daily_calories, actual.calories),
-  )
-}
-
-/// Calculate (actual - goal) / goal * 100
-fn calc_pct_deviation(goal: Float, actual: Float) -> Float {
-  case goal {
-    0.0 -> 0.0
-    _ -> { actual -. goal } /. goal *. 100.0
-  }
+  calculations.calculate_deviation(goals, actual)
 }
 
 /// Check if all macro deviations are within the given tolerance
@@ -58,20 +36,12 @@ pub fn deviation_is_within_tolerance(
   dev: DeviationResult,
   tolerance_pct: Float,
 ) -> Bool {
-  float.absolute_value(dev.protein_pct) <=. tolerance_pct
-  && float.absolute_value(dev.fat_pct) <=. tolerance_pct
-  && float.absolute_value(dev.carbs_pct) <=. tolerance_pct
+  calculations.deviation_is_within_tolerance(dev, tolerance_pct)
 }
 
 /// Returns the maximum absolute deviation across all macros
 pub fn deviation_max(dev: DeviationResult) -> Float {
-  let protein_abs = float.absolute_value(dev.protein_pct)
-  let fat_abs = float.absolute_value(dev.fat_pct)
-  let carbs_abs = float.absolute_value(dev.carbs_pct)
-
-  protein_abs
-  |> float.max(fat_abs)
-  |> float.max(carbs_abs)
+  calculations.deviation_max(dev)
 }
 
 /// Get nutrition history for specified number of days
@@ -83,81 +53,19 @@ pub fn get_nutrition_history(_days: Int) -> Result(List(NutritionState), String)
 
 /// Calculate minimum values across nutrition history
 pub fn calculate_min_nutrition(history: List(NutritionState)) -> NutritionData {
-  case history {
-    [] -> NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
-    [first, ..rest] ->
-      list.fold(rest, first.consumed, fn(min_data, state) {
-        NutritionData(
-          protein: float.min(min_data.protein, state.consumed.protein),
-          fat: float.min(min_data.fat, state.consumed.fat),
-          carbs: float.min(min_data.carbs, state.consumed.carbs),
-          calories: float.min(min_data.calories, state.consumed.calories),
-        )
-      })
-  }
+  calculations.calculate_min_nutrition(history)
 }
 
 /// Calculate maximum values across nutrition history
 pub fn calculate_max_nutrition(history: List(NutritionState)) -> NutritionData {
-  case history {
-    [] -> NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
-    [first, ..rest] ->
-      list.fold(rest, first.consumed, fn(max_data, state) {
-        NutritionData(
-          protein: float.max(max_data.protein, state.consumed.protein),
-          fat: float.max(max_data.fat, state.consumed.fat),
-          carbs: float.max(max_data.carbs, state.consumed.carbs),
-          calories: float.max(max_data.calories, state.consumed.calories),
-        )
-      })
-  }
-}
-
-/// Calculate standard deviation for a list of floats
-fn calculate_std_dev(values: List(Float), mean: Float) -> Float {
-  // Count and calculate variance in one pass
-  let #(variance_sum, count) =
-    list.fold(values, #(0.0, 0), fn(acc, value) {
-      let diff = value -. mean
-      #(acc.0 +. { diff *. diff }, acc.1 + 1)
-    })
-
-  case count {
-    0 -> 0.0
-    1 -> 0.0
-    n -> {
-      let variance = variance_sum /. int_to_float(n)
-
-      case float.square_root(variance) {
-        Ok(std_dev) -> std_dev
-        Error(_) -> 0.0
-      }
-    }
-  }
+  calculations.calculate_max_nutrition(history)
 }
 
 /// Calculate variability (standard deviation) for each macro in history
 pub fn calculate_nutrition_variability(
   history: List(NutritionState),
 ) -> NutritionData {
-  case history {
-    [] -> NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
-    _ -> {
-      let avg = average_nutrition_history(history)
-
-      let proteins = list.map(history, fn(s) { s.consumed.protein })
-      let fats = list.map(history, fn(s) { s.consumed.fat })
-      let carbs_list = list.map(history, fn(s) { s.consumed.carbs })
-      let calories_list = list.map(history, fn(s) { s.consumed.calories })
-
-      NutritionData(
-        protein: calculate_std_dev(proteins, avg.protein),
-        fat: calculate_std_dev(fats, avg.fat),
-        carbs: calculate_std_dev(carbs_list, avg.carbs),
-        calories: calculate_std_dev(calories_list, avg.calories),
-      )
-    }
-  }
+  calculations.calculate_nutrition_variability(history)
 }
 
 /// Analyze trends in nutrition history
@@ -780,23 +688,7 @@ pub fn generate_reason(deviation: DeviationResult, macros: Macros) -> String {
 /// Calculate daily totals from a list of nutrition states (sums all meals for the day)
 /// Returns total nutrition data by summing all meals consumed
 pub fn calculate_daily_totals(meals: List(NutritionState)) -> NutritionData {
-  case meals {
-    [] -> NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
-    _ -> {
-      list.fold(
-        meals,
-        NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0),
-        fn(acc, meal) {
-          NutritionData(
-            protein: acc.protein +. meal.consumed.protein,
-            fat: acc.fat +. meal.consumed.fat,
-            carbs: acc.carbs +. meal.consumed.carbs,
-            calories: acc.calories +. meal.consumed.calories,
-          )
-        },
-      )
-    }
-  }
+  calculations.calculate_daily_totals(meals)
 }
 
 /// Calculate macro percentages from nutrition data
@@ -805,15 +697,7 @@ pub fn calculate_daily_totals(meals: List(NutritionState)) -> NutritionData {
 pub fn calculate_macro_percentages(
   data: NutritionData,
 ) -> #(Float, Float, Float) {
-  case data.calories {
-    0.0 -> #(0.0, 0.0, 0.0)
-    _ -> {
-      let protein_pct = { data.protein *. 4.0 } /. data.calories *. 100.0
-      let fat_pct = { data.fat *. 9.0 } /. data.calories *. 100.0
-      let carbs_pct = { data.carbs *. 4.0 } /. data.calories *. 100.0
-      #(protein_pct, fat_pct, carbs_pct)
-    }
-  }
+  calculations.calculate_macro_percentages(data)
 }
 
 /// Check if consumed macros meet daily targets
@@ -900,5 +784,5 @@ pub fn estimate_daily_calories(
   fat: Float,
   carbs: Float,
 ) -> Float {
-  { protein *. 4.0 } +. { fat *. 9.0 } +. { carbs *. 4.0 }
+  calculations.estimate_daily_calories(protein, fat, carbs)
 }
