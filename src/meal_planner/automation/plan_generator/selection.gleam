@@ -7,9 +7,13 @@
 
 import gleam/float
 import gleam/list
+import gleam/result
 import meal_planner/automation/plan_generator/types.{
   type GenerationError, type RecipePool, type ScoredRecipe, InsufficientRecipes,
   RecipePool,
+}
+import meal_planner/types/food.{
+  Breakfast, Dinner, Lunch, Snack, meal_type_from_string,
 }
 
 /// Minimum recipes required for each meal type
@@ -28,13 +32,19 @@ pub fn categorize_recipes(scored: List(ScoredRecipe)) -> RecipePool {
   let breakfasts =
     scored
     |> list.filter(fn(sr) {
-      sr.recipe.category == "Breakfast" || sr.recipe.category == "breakfast"
+      case meal_type_from_string(sr.recipe.category) {
+        Ok(Breakfast) -> True
+        _ -> False
+      }
     })
 
   let non_breakfasts =
     scored
     |> list.filter(fn(sr) {
-      sr.recipe.category != "Breakfast" && sr.recipe.category != "breakfast"
+      case meal_type_from_string(sr.recipe.category) {
+        Ok(Breakfast) -> False
+        _ -> True
+      }
     })
 
   // Split non-breakfasts into lunch and dinner (50/50 for now)

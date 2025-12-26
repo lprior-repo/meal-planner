@@ -11,6 +11,7 @@
 import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
 import gleam/option.{type Option, None, Some}
+import gleam/result
 import meal_planner/id.{
   type CustomFoodId, type FdcId, type LogEntryId, type RecipeId, type UserId,
   log_entry_id_decoder, log_entry_id_to_json, recipe_id_decoder,
@@ -138,6 +139,30 @@ pub fn meal_type_to_string(m: MealType) -> String {
     Lunch -> "lunch"
     Dinner -> "dinner"
     Snack -> "snack"
+  }
+}
+
+/// Parse string to MealType
+///
+/// Returns Error for unknown strings instead of defaulting to Snack.
+/// This prevents typos from causing silent failures.
+///
+/// # Examples
+///
+/// ```gleam
+/// meal_type_from_string("breakfast")
+/// // -> Ok(Breakfast)
+///
+/// meal_type_from_string("brunch")
+/// // -> Error("Unknown meal type: brunch")
+/// ```
+pub fn meal_type_from_string(str: String) -> Result(MealType, String) {
+  case str {
+    "breakfast" -> Ok(Breakfast)
+    "lunch" -> Ok(Lunch)
+    "dinner" -> Ok(Dinner)
+    "snack" -> Ok(Snack)
+    _ -> Error("Unknown meal type: " <> str)
   }
 }
 

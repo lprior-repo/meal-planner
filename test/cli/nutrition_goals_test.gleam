@@ -11,6 +11,7 @@ import meal_planner/config/logging.{LoggingConfig}
 import meal_planner/postgres
 import meal_planner/storage
 import meal_planner/storage/profile
+import meal_planner/types/goal_type.{Calories}
 
 /// Test: set_goal saves calorie target to database
 pub fn set_goal_calories_saves_to_database_test() {
@@ -86,7 +87,7 @@ pub fn set_goal_calories_saves_to_database_test() {
           // Database is accessible, proceed with test
           // Call set_goal for calories
           let result =
-            nutrition.set_goal(test_config, goal_type: "calories", value: 2000)
+            nutrition.set_goal(test_config, goal_type: Calories, value: 2000)
 
           // Should return Ok
           result

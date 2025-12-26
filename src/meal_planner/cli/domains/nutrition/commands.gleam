@@ -8,6 +8,7 @@
 import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/result
 import gleam/string
 import meal_planner/cli/domains/nutrition/reporting
 import meal_planner/cli/domains/nutrition/validation
@@ -21,6 +22,9 @@ import meal_planner/postgres
 import meal_planner/storage
 import meal_planner/storage/profile.{
   DatabaseError, InvalidInput, NotFound, Unauthorized,
+}
+import meal_planner/types/goal_type.{
+  type GoalType, Calories, Carbs, Fat, Protein, display_name, unit,
 }
 import meal_planner/types/macros.{type Macros}
 
@@ -298,7 +302,7 @@ pub fn display_goals(config: Config) -> Result(String, String) {
 /// Set a specific nutrition goal with validation
 pub fn set_goal(
   config: Config,
-  goal_type goal_type: String,
+  goal_type goal_type: GoalType,
   value value: Int,
 ) -> Result(String, String) {
   // Validate input based on goal type
@@ -314,35 +318,34 @@ pub fn set_goal(
       // Create updated goals with the new value
       let float_value = int.to_float(value)
       let updated_goals = case goal_type {
-        "calories" ->
+        Calories ->
           NutritionGoals(
             daily_calories: float_value,
             daily_protein: current_goals.daily_protein,
             daily_carbs: current_goals.daily_carbs,
             daily_fat: current_goals.daily_fat,
           )
-        "protein" ->
+        Protein ->
           NutritionGoals(
             daily_calories: current_goals.daily_calories,
             daily_protein: float_value,
             daily_carbs: current_goals.daily_carbs,
             daily_fat: current_goals.daily_fat,
           )
-        "carbs" ->
+        Carbs ->
           NutritionGoals(
             daily_calories: current_goals.daily_calories,
             daily_protein: current_goals.daily_protein,
             daily_carbs: float_value,
             daily_fat: current_goals.daily_fat,
           )
-        "fat" ->
+        Fat ->
           NutritionGoals(
             daily_calories: current_goals.daily_calories,
             daily_protein: current_goals.daily_protein,
             daily_carbs: current_goals.daily_carbs,
             daily_fat: float_value,
           )
-        _ -> current_goals
       }
 
       // Save to database
@@ -370,15 +373,13 @@ pub fn set_goal(
             Error(NotFound) -> Error("Profile not found")
             Ok(_) -> {
               // Return confirmation
-              let unit = case goal_type {
-                "calories" -> " kcal"
-                _ -> "g"
-              }
+              let unit_str = unit(goal_type)
+              let display_name_str = display_name(goal_type)
               let confirmation =
-                string.capitalise(goal_type)
+                display_name_str
                 <> " goal set to "
                 <> int.to_string(value)
-                <> unit
+                <> unit_str
 
               Ok(confirmation)
             }

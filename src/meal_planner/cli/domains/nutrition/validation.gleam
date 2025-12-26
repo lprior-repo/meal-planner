@@ -3,7 +3,11 @@
 /// This module contains validation functions for nutrition-related inputs
 /// such as dates and goal values.
 import gleam/int
+import gleam/result
 import gleam/string
+import meal_planner/types/goal_type.{
+  type GoalType, Calories, Carbs, Fat, Protein,
+}
 
 // ============================================================================
 // Validation Functions
@@ -35,35 +39,34 @@ pub fn validate_date_format(date_str: String) -> Result(Nil, String) {
 
 /// Validate goal value based on type
 pub fn validate_goal_value(
-  goal_type: String,
+  goal_type: GoalType,
   value: Int,
 ) -> Result(Float, String) {
   let float_val = int.to_float(value)
   case goal_type {
-    "calories" -> {
+    Calories -> {
       case value >= 500 && value <= 10_000 {
         True -> Ok(float_val)
         False -> Error("Calories must be between 500 and 10,000")
       }
     }
-    "protein" -> {
+    Protein -> {
       case value > 0 && value < 500 {
         True -> Ok(float_val)
         False -> Error("Protein must be between 1 and 500 grams")
       }
     }
-    "carbs" -> {
+    Carbs -> {
       case value > 0 && value < 1000 {
         True -> Ok(float_val)
         False -> Error("Carbs must be between 1 and 1000 grams")
       }
     }
-    "fat" -> {
+    Fat -> {
       case value > 0 && value < 500 {
         True -> Ok(float_val)
         False -> Error("Fat must be between 1 and 500 grams")
       }
     }
-    _ -> Error("Unknown goal type: " <> goal_type)
   }
 }

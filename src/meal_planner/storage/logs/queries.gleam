@@ -16,7 +16,7 @@ import meal_planner/storage/profile.{type StorageError, DatabaseError}
 import meal_planner/storage/utils
 import meal_planner/types/food.{
   type DailyLog, type FoodLogEntry, Breakfast, DailyLog, Dinner, FoodLogEntry,
-  Lunch, Snack,
+  Lunch, Snack, meal_type_from_string,
 }
 import meal_planner/types/macros.{Macros}
 import meal_planner/utils/macros as macros_utils
@@ -285,11 +285,9 @@ fn food_log_entry_decoder() -> decode.Decoder(FoodLogEntry) {
   use source_type <- decode.field(31, decode.string)
   use source_id <- decode.field(32, decode.string)
 
-  let meal_type = case meal_type_str {
-    "breakfast" -> Breakfast
-    "lunch" -> Lunch
-    "dinner" -> Dinner
-    _ -> Snack
+  let meal_type = case meal_type_from_string(meal_type_str) {
+    Ok(mt) -> mt
+    Error(_) -> Snack
   }
 
   let micronutrients =
