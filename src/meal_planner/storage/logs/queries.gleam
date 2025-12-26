@@ -10,7 +10,8 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import meal_planner/config
 import meal_planner/id
-import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
+import meal_planner/storage/foods.{type UsdaFood}
+import meal_planner/storage/foods/types.{UsdaFood}
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
 import meal_planner/storage/utils
 import meal_planner/types/food.{
