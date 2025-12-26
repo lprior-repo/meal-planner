@@ -14,10 +14,11 @@ import gleam/result
 import gleam/string
 import glint
 import meal_planner/config.{type Config}
-import meal_planner/ncp.{
+import meal_planner/ncp.{get_default_goals}
+import meal_planner/ncp/types.{
   type DeviationResult, type NutritionData, type NutritionGoals,
-  type TrendDirection, Decreasing, Increasing, NutritionData, NutritionGoals,
-  Stable, get_default_goals,
+  type TrendAnalysis, type TrendDirection, Decreasing, Increasing, NutritionData,
+  NutritionGoals, Stable,
 }
 import meal_planner/postgres
 import meal_planner/storage
@@ -599,7 +600,7 @@ fn display_trends_with_goals(
 fn build_trends_report(
   days_count: Int,
   avg: NutritionData,
-  analysis: ncp.TrendAnalysis,
+  analysis: TrendAnalysis,
   goals: NutritionGoals,
 ) -> String {
   let header =

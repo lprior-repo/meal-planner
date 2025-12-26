@@ -11,9 +11,11 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
 import meal_planner/config.{type Config}
-import meal_planner/ncp.{
-  type DeviationResult, type NutritionData, type NutritionGoals, NutritionData,
-  NutritionGoals, get_default_goals,
+import meal_planner/ncp.{get_default_goals}
+import meal_planner/ncp/types.{
+  type DeviationResult, type NutritionData, type NutritionGoals,
+  type TrendAnalysis, type TrendDirection, Decreasing, Increasing, NutritionData,
+  NutritionGoals, Stable,
 }
 import meal_planner/postgres
 import meal_planner/storage
@@ -246,7 +248,7 @@ fn display_trends_with_goals(
 fn build_trends_report(
   days_count: Int,
   avg: NutritionData,
-  analysis: ncp.TrendAnalysis,
+  analysis: TrendAnalysis,
   goals: NutritionGoals,
 ) -> String {
   let header =
@@ -696,11 +698,11 @@ fn pad_right(s: String, width: Int) -> String {
 }
 
 /// Format a trend direction with an arrow
-fn format_trend_direction(trend: ncp.TrendDirection) -> String {
+fn format_trend_direction(trend: TrendDirection) -> String {
   case trend {
-    ncp.Increasing -> "↑ Increasing"
-    ncp.Decreasing -> "↓ Decreasing"
-    ncp.Stable -> "→ Stable"
+    Increasing -> "↑ Increasing"
+    Decreasing -> "↓ Decreasing"
+    Stable -> "→ Stable"
   }
 }
 

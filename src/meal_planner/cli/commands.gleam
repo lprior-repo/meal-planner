@@ -8,6 +8,7 @@ import meal_planner/fatsecret/foods/service as foods_service
 import meal_planner/fatsecret/foods/types as food_types
 import meal_planner/id
 import meal_planner/ncp
+import meal_planner/ncp/types as ncp_types
 import meal_planner/scheduler/errors as scheduler_errors
 import meal_planner/scheduler/job_manager
 import meal_planner/scheduler/types as scheduler_types
@@ -58,7 +59,7 @@ pub fn get_food_details(
 
 /// Get nutrition goals
 pub fn get_nutrition_goals(
-  on_result: fn(Result(ncp.NutritionGoals, String)) -> Msg,
+  on_result: fn(Result(ncp_types.NutritionGoals, String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
     // TODO: Load from database, for now use defaults
@@ -70,14 +71,16 @@ pub fn get_nutrition_goals(
 /// Get nutrition analysis for a specific date
 pub fn get_nutrition_analysis(
   date: String,
-  on_result: fn(Result(#(ncp.NutritionData, ncp.DeviationResult), String)) ->
+  on_result: fn(
+    Result(#(ncp_types.NutritionData, ncp_types.DeviationResult), String),
+  ) ->
     Msg,
 ) -> fn() -> Msg {
   fn() {
     // TODO: Calculate from diary entries
     let _ = date
     let consumed =
-      ncp.NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
+      ncp_types.NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
     let goals = ncp.get_default_goals()
     let deviation = ncp.calculate_deviation(goals, consumed)
     Ok(#(consumed, deviation))
@@ -88,7 +91,7 @@ pub fn get_nutrition_analysis(
 /// Get nutrition trends over specified number of days
 pub fn get_nutrition_trends(
   days: Int,
-  on_result: fn(Result(ncp.TrendAnalysis, String)) -> Msg,
+  on_result: fn(Result(ncp_types.TrendAnalysis, String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
     case ncp.get_nutrition_history(days) {
@@ -106,13 +109,13 @@ pub fn get_nutrition_trends(
 pub fn check_nutrition_compliance(
   date: String,
   tolerance: Float,
-  on_result: fn(Result(#(ncp.DeviationResult, Bool), String)) -> Msg,
+  on_result: fn(Result(#(ncp_types.DeviationResult, Bool), String)) -> Msg,
 ) -> fn() -> Msg {
   fn() {
     // TODO: Calculate from diary entries
     let _ = date
     let consumed =
-      ncp.NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
+      ncp_types.NutritionData(protein: 0.0, fat: 0.0, carbs: 0.0, calories: 0.0)
     let goals = ncp.get_default_goals()
     let deviation = ncp.calculate_deviation(goals, consumed)
     let compliant = ncp.deviation_is_within_tolerance(deviation, tolerance)

@@ -6,6 +6,7 @@ import gleam/string
 import gleeunit
 import gleeunit/should
 import meal_planner/ncp
+import meal_planner/ncp/types as ncp_types
 import meal_planner/types/macros
 
 pub fn main() {
@@ -41,9 +42,9 @@ pub fn live_ncp_reconciliation_complete_output_test() {
 
   // Create nutrition states
   let breakfast =
-    ncp.NutritionState(
+    ncp_types.NutritionState(
       date: "2025-01-01",
-      consumed: ncp.NutritionData(
+      consumed: ncp_types.NutritionData(
         protein: 35.0,
         fat: 12.0,
         carbs: 45.0,
@@ -53,9 +54,9 @@ pub fn live_ncp_reconciliation_complete_output_test() {
     )
 
   let lunch =
-    ncp.NutritionState(
+    ncp_types.NutritionState(
       date: "2025-01-01",
-      consumed: ncp.NutritionData(
+      consumed: ncp_types.NutritionData(
         protein: 42.0,
         fat: 15.0,
         carbs: 48.0,
@@ -65,9 +66,9 @@ pub fn live_ncp_reconciliation_complete_output_test() {
     )
 
   let dinner =
-    ncp.NutritionState(
+    ncp_types.NutritionState(
       date: "2025-01-01",
-      consumed: ncp.NutritionData(
+      consumed: ncp_types.NutritionData(
         protein: 52.0,
         fat: 22.0,
         carbs: 60.0,
@@ -114,7 +115,7 @@ pub fn live_ncp_reconciliation_complete_output_test() {
   // Goals
   io.println("🎯 NUTRITION GOALS (Daily Target):")
   let goals =
-    ncp.NutritionGoals(
+    ncp_types.NutritionGoals(
       daily_protein: 180.0,
       daily_fat: 70.0,
       daily_carbs: 200.0,
@@ -176,19 +177,19 @@ pub fn live_ncp_reconciliation_complete_output_test() {
   // Run reconciliation
   io.println("🔄 RUNNING NCP RECONCILIATION...")
   let recipes = [
-    ncp.ScoredRecipe(
+    ncp_types.ScoredRecipe(
       name: "Grilled Chicken Breast (150g)",
       macros: macros.Macros(protein: 42.0, fat: 3.0, carbs: 0.0),
     ),
-    ncp.ScoredRecipe(
+    ncp_types.ScoredRecipe(
       name: "Greek Yogurt with Berries",
       macros: macros.Macros(protein: 20.0, fat: 2.0, carbs: 25.0),
     ),
-    ncp.ScoredRecipe(
+    ncp_types.ScoredRecipe(
       name: "Salmon Fillet (150g)",
       macros: macros.Macros(protein: 34.0, fat: 12.0, carbs: 0.0),
     ),
-    ncp.ScoredRecipe(
+    ncp_types.ScoredRecipe(
       name: "Brown Rice (1 cup cooked)",
       macros: macros.Macros(protein: 5.0, fat: 2.0, carbs: 45.0),
     ),
