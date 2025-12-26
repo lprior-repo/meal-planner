@@ -217,6 +217,135 @@ fn with_session(
 // Session Authentication
 // ============================================================================
 
+/// Build GET request to fetch login page
+///
+/// This helper constructs a GET request to the Tandoor login page
+/// to extract the initial CSRF token.
+///
+/// # Arguments
+/// * `login_url` - Full URL to the login endpoint
+///
+/// # Returns
+/// Result with HTTP request or network error
+fn build_login_page_request(
+  login_url: String,
+) -> Result(request.Request(String), TandoorError) {
+  case uri.parse(login_url) {
+    Ok(parsed) -> {
+      let scheme = case parsed.scheme {
+        Some("https") -> http.Https
+        _ -> http.Http
+      }
+      let host = option.unwrap(parsed.host, "localhost")
+      let req =
+        request.new()
+        |> request.set_scheme(scheme)
+        |> request.set_host(host)
+        |> request.set_path(parsed.path)
+        |> request.set_method(http.Get)
+
+      let req_with_port = case parsed.port {
+        Some(p) -> request.set_port(req, p)
+        None -> req
+      }
+      Ok(req_with_port)
+    }
+    Error(_) -> Error(NetworkError("Failed to parse login URL"))
+  }
+}
+
+/// Build POST request to submit login credentials
+///
+/// This helper constructs a POST request with credentials to the Tandoor
+/// login endpoint, including the CSRF token and session cookie if available.
+///
+/// # Arguments
+/// * `login_url` - Full URL to the login endpoint
+/// * `csrf_token` - CSRF token extracted from login page
+/// * `username` - Username for authentication
+/// * `password` - Password for authentication
+/// * `initial_session` - Optional session ID from initial page load
+///
+/// # Returns
+/// Result with HTTP request or network error
+fn build_login_post_request(
+  login_url: String,
+  csrf_token: String,
+  username: String,
+  password: String,
+  initial_session: Option(String),
+) -> Result(request.Request(String), TandoorError) {
+  let form_body =
+    "csrfmiddlewaretoken="
+    <> uri_encode(csrf_token)
+    <> "&login="
+    <> uri_encode(username)
+    <> "&password="
+    <> uri_encode(password)
+
+  case uri.parse(login_url) {
+    Ok(parsed) -> {
+      let scheme = case parsed.scheme {
+        Some("https") -> http.Https
+        _ -> http.Http
+      }
+      let host = option.unwrap(parsed.host, "localhost")
+      let cookie_header = case initial_session {
+        Some(sid) -> "csrftoken=" <> csrf_token <> "; sessionid=" <> sid
+        None -> "csrftoken=" <> csrf_token
+      }
+      let req =
+        request.new()
+        |> request.set_scheme(scheme)
+        |> request.set_host(host)
+        |> request.set_path(parsed.path)
+        |> request.set_method(http.Post)
+        |> request.set_body(form_body)
+        |> request.prepend_header(
+          "Content-Type",
+          "application/x-www-form-urlencoded",
+        )
+        |> request.prepend_header("Cookie", cookie_header)
+        |> request.prepend_header("Referer", login_url)
+
+      let req_with_port = case parsed.port {
+        Some(p) -> request.set_port(req, p)
+        None -> req
+      }
+      Ok(req_with_port)
+    }
+    Error(_) -> Error(NetworkError("Failed to parse login URL"))
+  }
+}
+
+/// Parse CSRF token from HTML body
+///
+/// Extracts the CSRF middleware token from the login page HTML.
+/// This looks for the csrfmiddlewaretoken input field.
+///
+/// # Arguments
+/// * `body` - HTML response body from login page
+///
+/// # Returns
+/// Option containing the CSRF token if found
+fn parse_csrf_from_html(body: String) -> Option(String) {
+  // Look for csrfmiddlewaretoken value="..."
+  case string.split(body, "csrfmiddlewaretoken") {
+    [_, rest, ..] -> {
+      case string.split(rest, "value=\"") {
+        [_, value_part, ..] -> {
+          case string.split(value_part, "\"") {
+            [token, ..] -> Some(token)
+            _ -> None
+          }
+        }
+        _ -> None
+      }
+    }
+    _ -> None
+  }
+}
+
 /// Login to Tandoor and establish a session
 ///
 /// This function handles the Django login flow:
@@ -233,37 +362,16 @@ pub fn login(config: ClientConfig) -> Result(ClientConfig, TandoorError) {
   case config.auth {
     BearerAuth(_) -> Ok(config)
     SessionAuth(username, password, _, _) -> {
-      // Step 1: Get login page to extract CSRF token
       let login_url = config.base_url <> "/accounts/login/"
 
-      use login_req <- result.try(case uri.parse(login_url) {
-        Ok(parsed) -> {
-          let scheme = case parsed.scheme {
-            Some("https") -> http.Https
-            _ -> http.Http
-          }
-          let host = option.unwrap(parsed.host, "localhost")
-          let req =
-            request.new()
-            |> request.set_scheme(scheme)
-            |> request.set_host(host)
-            |> request.set_path(parsed.path)
-            |> request.set_method(http.Get)
-
-          let req_with_port = case parsed.port {
-            Some(p) -> request.set_port(req, p)
-            None -> req
-          }
-          Ok(req_with_port)
-        }
-        Error(_) -> Error(NetworkError("Failed to parse login URL"))
-      })
+      // Step 1: Get login page to extract CSRF token
+      use login_req <- result.try(build_login_page_request(login_url))
 
       use login_page <- result.try(execute_request(login_req))
 
       // Extract CSRF token from response body or cookies
       let initial_csrf =
-        extract_csrf_from_body(login_page.body)
+        parse_csrf_from_html(login_page.body)
         |> option.lazy_or(fn() { extract_csrf_from_cookies(login_page.headers) })
 
       use csrf_token <- result.try(case initial_csrf {
@@ -275,47 +383,13 @@ pub fn login(config: ClientConfig) -> Result(ClientConfig, TandoorError) {
       let initial_session = extract_session_from_cookies(login_page.headers)
 
       // Step 2: POST login credentials
-      let form_body =
-        "csrfmiddlewaretoken="
-        <> uri_encode(csrf_token)
-        <> "&login="
-        <> uri_encode(username)
-        <> "&password="
-        <> uri_encode(password)
-
-      use post_req <- result.try(case uri.parse(login_url) {
-        Ok(parsed) -> {
-          let scheme = case parsed.scheme {
-            Some("https") -> http.Https
-            _ -> http.Http
-          }
-          let host = option.unwrap(parsed.host, "localhost")
-          let cookie_header = case initial_session {
-            Some(sid) -> "csrftoken=" <> csrf_token <> "; sessionid=" <> sid
-            None -> "csrftoken=" <> csrf_token
-          }
-          let req =
-            request.new()
-            |> request.set_scheme(scheme)
-            |> request.set_host(host)
-            |> request.set_path(parsed.path)
-            |> request.set_method(http.Post)
-            |> request.set_body(form_body)
-            |> request.prepend_header(
-              "Content-Type",
-              "application/x-www-form-urlencoded",
-            )
-            |> request.prepend_header("Cookie", cookie_header)
-            |> request.prepend_header("Referer", login_url)
-
-          let req_with_port = case parsed.port {
-            Some(p) -> request.set_port(req, p)
-            None -> req
-          }
-          Ok(req_with_port)
-        }
-        Error(_) -> Error(NetworkError("Failed to parse login URL"))
-      })
+      use post_req <- result.try(build_login_post_request(
+        login_url,
+        csrf_token,
+        username,
+        password,
+        initial_session,
+      ))
 
       use login_resp <- result.try(execute_request(post_req))
 
@@ -357,25 +431,6 @@ pub fn login(config: ClientConfig) -> Result(ClientConfig, TandoorError) {
         }
       }
     }
-  }
-}
-
-/// Extract CSRF token from HTML body
-fn extract_csrf_from_body(body: String) -> Option(String) {
-  // Look for csrfmiddlewaretoken value="..."
-  case string.split(body, "csrfmiddlewaretoken") {
-    [_, rest, ..] -> {
-      case string.split(rest, "value=\"") {
-        [_, value_part, ..] -> {
-          case string.split(value_part, "\"") {
-            [token, ..] -> Some(token)
-            _ -> None
-          }
-        }
-        _ -> None
-      }
-    }
-    _ -> None
   }
 }
 
