@@ -20,22 +20,14 @@ import meal_planner/config/environment.{
   ErrorLevel, InfoLevel, InvalidEnvVar, MissingEnvVar, Production, Staging,
   ValidationError, WarnLevel,
 }
+import meal_planner/config/features.{
+  type Feature, FeatureCORS, FeatureFatSecret, FeatureHealthCheck, FeatureOpenAI,
+  FeatureRateLimiting, FeatureTandoor, FeatureTodoist, FeatureUSDA,
+}
 
 // ============================================================================
 // TYPES
 // ============================================================================
-
-/// Feature flags for runtime behavior control
-pub type Feature {
-  FeatureFatSecret
-  FeatureTandoor
-  FeatureOpenAI
-  FeatureUSDA
-  FeatureTodoist
-  FeatureHealthCheck
-  FeatureRateLimiting
-  FeatureCORS
-}
 
 /// Database configuration
 pub type DatabaseConfig {
