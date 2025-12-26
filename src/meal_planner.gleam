@@ -1,20 +1,17 @@
 /// Meal Planner - Backend for meal planning with nutritional tracking
 ///
-/// This module provides the main entry point for the meal planner application.
-/// Supports both CLI and TUI modes:
-/// - `mp` (no args) → launches interactive TUI
-/// - `mp <domain> <command> [flags]` → executes CLI command
+/// This module provides the CLI entry point for the meal planner application.
+/// Executes commands via: `mp <domain> <command> [flags]`
 ///
 import argv
 import dot_env
 import gleam/io
 import gleam/string
 import meal_planner/cli/glint_commands
-import meal_planner/cli/shore_app
 import meal_planner/config
 import meal_planner/error
 
-/// Application entry point - routes to CLI or TUI based on arguments
+/// Application entry point - CLI command interface
 pub fn main() {
   // Load .env file
   dot_env.new()
@@ -26,14 +23,11 @@ pub fn main() {
   // Load configuration from environment with error handling
   case config.load() {
     Ok(app_config) -> {
-      // Get command-line arguments (skip program name)
+      // Get command-line arguments
       let args = argv.load().arguments
 
-      // If no arguments provided, launch interactive TUI
-      case args {
-        [] -> shore_app.start(app_config)
-        _ -> glint_commands.run(app_config, args)
-      }
+      // Execute CLI command
+      glint_commands.run(app_config, args)
     }
     Error(config.MissingEnvVar(name)) -> {
       let err =

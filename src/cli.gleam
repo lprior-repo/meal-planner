@@ -1,18 +1,12 @@
-/// CLI entry point for meal-planner with unified startup
+/// CLI entry point for meal-planner
 ///
-/// Supports three modes:
-/// 1. Interactive TUI mode (when run with no arguments)
-/// 2. Non-interactive CLI mode (when run with command arguments)
-/// 3. Web server mode (when run with 'web' command)
-///
-/// All modes include startup health checks and service validation.
+/// Provides command-line interface for AI agents to interact with the API.
+/// All commands include startup health checks and service validation.
 import argv
 import dot_env
-import gleam/int
 import gleam/io
 import gleam/string
 import meal_planner/cli/glint_commands
-import meal_planner/cli/shore_app
 import meal_planner/config
 import meal_planner/error
 import meal_planner/startup
@@ -47,29 +41,8 @@ pub fn main() {
           // Get command-line arguments
           let args = argv.load().arguments
 
-          // Mode detection: empty args = TUI, otherwise = CLI
-          case args {
-            [] -> {
-              // TUI Mode: Launch interactive Shore application
-              io.println("Launching interactive meal planner...\n")
-              shore_app.start(app_config)
-            }
-            ["web"] -> {
-              // Web server mode: Start HTTP server
-              io.println(
-                "Starting web server on port "
-                <> int.to_string(app_config.server.port)
-                <> "...\n",
-              )
-              // This would call the web server startup
-              // For now, just show message
-              io.println("Web server mode not yet implemented")
-            }
-            _ -> {
-              // CLI Mode: Route through Glint for command parsing
-              glint_commands.run(app_config, args)
-            }
-          }
+          // CLI Mode: Route through Glint for command parsing
+          glint_commands.run(app_config, args)
         }
       }
     }
