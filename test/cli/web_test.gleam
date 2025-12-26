@@ -9,6 +9,7 @@ import gleam/option.{None, Some}
 import gleeunit
 import meal_planner/cli/domains/web
 import meal_planner/config
+import meal_planner/config/database.{DatabaseConfig}
 import meal_planner/config/environment.{DebugLevel, Development}
 
 pub fn main() {
@@ -24,7 +25,7 @@ fn create_test_config() -> config.Config {
   config.Config(
     environment: Development,
     server: config.ServerConfig(port: 8080, cors_allowed_origins: []),
-    database: config.DatabaseConfig(
+    database: DatabaseConfig(
       host: "localhost",
       port: 5432,
       name: "meal_planner",

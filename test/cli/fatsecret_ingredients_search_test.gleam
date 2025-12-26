@@ -4,6 +4,7 @@
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/config
+import meal_planner/config/database.{DatabaseConfig}
 import meal_planner/config/environment.{Development, InfoLevel}
 
 /// Test: ingredients command searches for foods and returns results
@@ -12,7 +13,7 @@ pub fn ingredients_search_returns_results_test() {
   let _test_config =
     config.Config(
       environment: Development,
-      database: config.DatabaseConfig(
+      database: DatabaseConfig(
         host: "localhost",
         port: 5432,
         name: "test",

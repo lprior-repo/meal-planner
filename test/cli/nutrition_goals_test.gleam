@@ -5,6 +5,7 @@ import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/cli/domains/nutrition
 import meal_planner/config
+import meal_planner/config/database.{DatabaseConfig}
 import meal_planner/config/environment.{Development, InfoLevel}
 import meal_planner/postgres
 import meal_planner/storage
@@ -16,7 +17,7 @@ pub fn set_goal_calories_saves_to_database_test() {
   let test_config =
     config.Config(
       environment: Development,
-      database: config.DatabaseConfig(
+      database: DatabaseConfig(
         host: "localhost",
         port: 5432,
         name: "meal_planner_test",
