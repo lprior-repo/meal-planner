@@ -152,7 +152,7 @@ pub fn execute_binary_request(
   // Convert binary response to string (assuming UTF-8)
   let body_string = case bit_array.to_string(response.body) {
     Ok(str) -> str
-    Error(_) -> ""
+    Error(_err) -> ""
   }
 
   // Convert response to our HttpResponse type
