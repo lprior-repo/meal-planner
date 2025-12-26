@@ -21,6 +21,7 @@ import gleam/option.{type Option, None}
 import gleam/result
 import gleam/string
 import meal_planner/errors/classification
+import meal_planner/errors/conversion
 import meal_planner/errors/recovery
 import meal_planner/errors/types.{
   type AppError, type ErrorContext, type ErrorSeverity, type RecoveryStrategy,
@@ -393,111 +394,22 @@ pub fn map_error(
 
 /// Convert Tandoor error to AppError
 pub fn from_tandoor_error(error: tandoor_error.TandoorError) -> AppError {
-  case error {
-    tandoor_error.AuthenticationError ->
-      AuthenticationError("Tandoor authentication failed")
-
-    tandoor_error.AuthorizationError ->
-      AuthorizationError("Tandoor authorization failed")
-
-    tandoor_error.NotFoundError(msg) -> NotFoundError("tandoor_resource", msg)
-
-    tandoor_error.BadRequestError(msg) -> BadRequestError(msg)
-
-    tandoor_error.ServerError(code, msg) ->
-      ServiceError(
-        "tandoor",
-        "Server error (" <> int.to_string(code) <> "): " <> msg,
-      )
-
-    tandoor_error.NetworkError(msg) -> NetworkError(msg)
-
-    tandoor_error.TimeoutError -> NetworkError("Request timeout")
-
-    tandoor_error.ParseError(msg) -> InternalError("Parse error: " <> msg)
-
-    tandoor_error.UnknownError(msg) -> InternalError(msg)
-  }
+  conversion.from_tandoor_error(error)
 }
 
 /// Convert FatSecret error to AppError
 pub fn from_fatsecret_error(error: fatsecret_errors.FatSecretError) -> AppError {
-  case error {
-    fatsecret_errors.ApiError(code, msg) ->
-      case code {
-        fatsecret_errors.InvalidAccessToken
-        | fatsecret_errors.InvalidOrExpiredToken ->
-          AuthenticationError("Your session has expired. Please log in again.")
-
-        fatsecret_errors.MissingRequiredParameter ->
-          ValidationError("required_parameter", msg)
-
-        fatsecret_errors.InvalidDate -> ValidationError("date", msg)
-
-        fatsecret_errors.ApiUnavailable -> ServiceError("fatsecret", msg)
-
-        _ -> ServiceError("fatsecret", msg)
-      }
-
-    fatsecret_errors.RequestFailed(status, body) ->
-      ServiceError(
-        "fatsecret",
-        "Request failed (" <> int.to_string(status) <> "): " <> body,
-      )
-
-    fatsecret_errors.ParseError(msg) ->
-      InternalError("FatSecret parse error: " <> msg)
-
-    fatsecret_errors.OAuthError(msg) -> AuthenticationError(msg)
-
-    fatsecret_errors.NetworkError(msg) -> NetworkError(msg)
-
-    fatsecret_errors.ConfigMissing ->
-      InternalError("FatSecret configuration is missing")
-
-    fatsecret_errors.InvalidResponse(msg) -> ServiceError("fatsecret", msg)
-  }
+  conversion.from_fatsecret_error(error)
 }
 
 /// Convert database error string to AppError
 pub fn from_database_error(operation: String, message: String) -> AppError {
-  DatabaseError(operation, message)
+  conversion.from_database_error(operation, message)
 }
 
 /// Convert scheduler error to AppError
 pub fn from_scheduler_error(error: scheduler_errors.AppError) -> AppError {
-  case error {
-    scheduler_errors.ApiError(code, msg) ->
-      ServiceError("api", "Error " <> int.to_string(code) <> ": " <> msg)
-
-    scheduler_errors.TimeoutError(ms) ->
-      NetworkError("Operation timed out after " <> int.to_string(ms) <> "ms")
-
-    scheduler_errors.DatabaseError(msg) -> DatabaseError("scheduler", msg)
-
-    scheduler_errors.TransactionError(msg) -> DatabaseError("transaction", msg)
-
-    scheduler_errors.JobNotFound(_) -> NotFoundError("job", "Job not found")
-
-    scheduler_errors.JobAlreadyRunning(_) ->
-      BadRequestError("Job is already running")
-
-    scheduler_errors.ExecutionFailed(_, reason) -> InternalError(reason)
-
-    scheduler_errors.MaxRetriesExceeded(_) ->
-      InternalError("Maximum retry attempts exceeded")
-
-    scheduler_errors.InvalidConfiguration(reason) -> BadRequestError(reason)
-
-    scheduler_errors.InvalidJobType(job_type) ->
-      ValidationError("job_type", "Invalid job type: " <> job_type)
-
-    scheduler_errors.SchedulerDisabled ->
-      ServiceError("scheduler", "Scheduler is disabled")
-
-    scheduler_errors.DependencyNotMet(_, _) ->
-      BadRequestError("Job dependency not met")
-  }
+  conversion.from_scheduler_error(error)
 }
 
 // ============================================================================
