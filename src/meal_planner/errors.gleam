@@ -20,6 +20,7 @@ import gleam/list
 import gleam/option.{type Option, None}
 import gleam/result
 import gleam/string
+import meal_planner/errors/classification
 import meal_planner/errors/types.{
   type AppError, type ErrorContext, type ErrorSeverity, type RecoveryStrategy,
   AuthenticationError, AuthorizationError, BadRequestError, Critical,
@@ -32,102 +33,37 @@ import meal_planner/scheduler/errors as scheduler_errors
 import meal_planner/tandoor/core/error as tandoor_error
 
 // ============================================================================
-// Error Classification
+// Error Classification (Re-exported from classification module)
 // ============================================================================
 
 /// Check if error is a validation error
 pub fn is_validation_error(error: AppError) -> Bool {
-  case error {
-    ValidationError(_, _) -> True
-    WrappedError(err, _, _) -> is_validation_error(err)
-    _ -> False
-  }
+  classification.is_validation_error(error)
 }
 
 /// Check if error is a client error (4xx)
 pub fn is_client_error(error: AppError) -> Bool {
-  case error {
-    ValidationError(_, _)
-    | NotFoundError(_, _)
-    | AuthenticationError(_)
-    | AuthorizationError(_)
-    | RateLimitError(_)
-    | BadRequestError(_) -> True
-    WrappedError(err, _, _) -> is_client_error(err)
-    _ -> False
-  }
+  classification.is_client_error(error)
 }
 
 /// Check if error is a server error (5xx)
 pub fn is_server_error(error: AppError) -> Bool {
-  case error {
-    DatabaseError(_, _)
-    | NetworkError(_)
-    | ServiceError(_, _)
-    | InternalError(_) -> True
-    WrappedError(err, _, _) -> is_server_error(err)
-    _ -> False
-  }
+  classification.is_server_error(error)
 }
 
 /// Check if error is an authentication error
 pub fn is_authentication_error(error: AppError) -> Bool {
-  case error {
-    AuthenticationError(_) -> True
-    WrappedError(err, _, _) -> is_authentication_error(err)
-    _ -> False
-  }
+  classification.is_authentication_error(error)
 }
 
 /// Check if error is recoverable (can be retried)
 pub fn is_recoverable(error: AppError) -> Bool {
-  case error {
-    // Recoverable network/transient errors
-    NetworkError(_) | RateLimitError(_) -> True
-    DatabaseError("select", _) -> True
-    // Database connection errors may be transient
-    ServiceError(_, _) -> True
-
-    // Non-recoverable errors
-    ValidationError(_, _)
-    | NotFoundError(_, _)
-    | AuthenticationError(_)
-    | AuthorizationError(_)
-    | BadRequestError(_)
-    | InternalError(_) -> False
-
-    // Most database writes are not safely retryable
-    DatabaseError(_, _) -> False
-
-    // Check wrapped error
-    WrappedError(err, _, _) -> is_recoverable(err)
-  }
+  classification.is_recoverable(error)
 }
 
 /// Get error severity level
 pub fn error_severity(error: AppError) -> ErrorSeverity {
-  case error {
-    // Info - expected errors
-    NotFoundError(_, _) -> Info
-
-    // Warning - recoverable errors
-    ValidationError(_, _)
-    | AuthenticationError(_)
-    | AuthorizationError(_)
-    | RateLimitError(_)
-    | BadRequestError(_) -> Warning
-
-    NetworkError(_) -> Warning
-
-    // Error - non-critical failures
-    ServiceError(_, _) -> Error
-
-    // Critical - system failures
-    DatabaseError(_, _) | InternalError(_) -> Critical
-
-    // Inherit from wrapped error
-    WrappedError(err, _, _) -> error_severity(err)
-  }
+  classification.error_severity(error)
 }
 
 // ============================================================================
