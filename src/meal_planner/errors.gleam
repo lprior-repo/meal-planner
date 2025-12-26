@@ -12,24 +12,21 @@
 //// - I18n message template hooks
 //// - Logging and monitoring integration
 
-import gleam/dict.{type Dict}
+import gleam/dict
 import gleam/http/response.{type Response}
 import gleam/int
 import gleam/json.{type Json}
-import gleam/list
 import gleam/option.{type Option, None}
 import gleam/result
-import gleam/string
 import meal_planner/errors/classification
 import meal_planner/errors/conversion
 import meal_planner/errors/http
 import meal_planner/errors/recovery
 import meal_planner/errors/types.{
-  type AppError, type ErrorContext, type ErrorSeverity, type RecoveryStrategy,
-  AuthenticationError, AuthorizationError, BadRequestError, Critical,
-  DatabaseError, Error, Info, InternalError, NetworkError, NoRetry,
-  NotFoundError, RateLimitError, RetryAfter, RetryWithBackoff, ServiceError,
-  ValidationError, Warning, WrappedError,
+  type AppError, type ErrorSeverity, type RecoveryStrategy, AuthenticationError,
+  AuthorizationError, BadRequestError, Critical, DatabaseError, InternalError,
+  NetworkError, NotFoundError, RateLimitError, ServiceError, ValidationError,
+  WrappedError,
 }
 import meal_planner/fatsecret/core/errors as fatsecret_errors
 import meal_planner/scheduler/errors as scheduler_errors
