@@ -11,6 +11,9 @@ import gleam/dynamic/decode
 import gleam/float
 import gleam/int
 import gleam/option.{None, Some}
+import meal_planner/fatsecret/decoders/common.{
+  float_string_decoder, int_string_decoder,
+}
 import meal_planner/fatsecret/diary/types.{
   type DaySummary, type FoodEntry, type FoodEntryId, type FoodEntryInput,
   type FoodEntryUpdate, type MealType, type MonthSummary, Custom, DaySummary,
@@ -223,52 +226,10 @@ pub fn month_summary_decoder() -> decode.Decoder(MonthSummary) {
 // Helper Decoders
 // ============================================================================
 
-/// Decode float from string (FatSecret API returns numbers as strings)
-fn float_string_decoder() -> decode.Decoder(Float) {
-  use s <- decode.then(decode.string)
-  case parse_float(s) {
-    Ok(f) -> decode.success(f)
-    Error(_) -> decode.failure(0.0, "Float")
-  }
-}
-
-/// Decode int from string (FatSecret API returns numbers as strings)
-fn int_string_decoder() -> decode.Decoder(Int) {
-  use s <- decode.then(decode.string)
-  case parse_int(s) {
-    Ok(i) -> decode.success(i)
-    Error(_) -> decode.failure(0, "Int")
-  }
-}
-
 /// Decode single DaySummary and wrap in list
 fn single_day_to_list_decoder() -> decode.Decoder(List(DaySummary)) {
   use day <- decode.then(day_summary_decoder())
   decode.success([day])
-}
-
-// ============================================================================
-// String Parsing Helpers
-// ============================================================================
-
-/// Parse float from string, handling both "1.5" and "1" formats
-fn parse_float(s: String) -> Result(Float, Nil) {
-  // Try parsing as float first using gleam/float
-  case float.parse(s) {
-    Ok(f) -> Ok(f)
-    Error(_) -> {
-      // If that fails, try parsing as int then convert to float
-      case int.parse(s) {
-        Ok(i) -> Ok(int.to_float(i))
-        Error(_) -> Error(Nil)
-      }
-    }
-  }
-}
-
-/// Parse int from string using gleam/int
-fn parse_int(s: String) -> Result(Int, Nil) {
-  int.parse(s)
 }
 
 // ============================================================================

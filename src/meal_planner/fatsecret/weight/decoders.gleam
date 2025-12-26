@@ -6,6 +6,9 @@ import gleam/dynamic/decode
 import gleam/float
 import gleam/int
 import gleam/option.{None}
+import meal_planner/fatsecret/decoders/common.{
+  float_string_decoder, int_string_decoder,
+}
 import meal_planner/fatsecret/weight/types.{
   type WeightDaySummary, type WeightEntry, type WeightMonthSummary,
   WeightDaySummary, WeightEntry, WeightMonthSummary,
@@ -103,32 +106,6 @@ pub fn weight_month_summary_decoder() -> decode.Decoder(WeightMonthSummary) {
 // ============================================================================
 // Helper Decoders
 // ============================================================================
-
-/// Decode float from string (FatSecret API returns numbers as strings)
-/// Handles both "75.5" (float) and "75" (integer as string) formats
-fn float_string_decoder() -> decode.Decoder(Float) {
-  use s <- decode.then(decode.string)
-  // Try parsing as float first
-  case float.parse(s) {
-    Ok(f) -> decode.success(f)
-    Error(_) -> {
-      // Fall back to parsing as int then converting to float
-      case int.parse(s) {
-        Ok(i) -> decode.success(int.to_float(i))
-        Error(_) -> decode.failure(0.0, "Float")
-      }
-    }
-  }
-}
-
-/// Decode int from string (FatSecret API returns numbers as strings)
-fn int_string_decoder() -> decode.Decoder(Int) {
-  use s <- decode.then(decode.string)
-  case int.parse(s) {
-    Ok(i) -> decode.success(i)
-    Error(_) -> decode.failure(0, "Int")
-  }
-}
 
 /// Decode single WeightDaySummary and wrap in list
 fn single_day_to_list_decoder() -> decode.Decoder(List(WeightDaySummary)) {
