@@ -232,6 +232,35 @@ pub fn created_response(data: json.Json) -> wisp.Response {
 }
 
 // =============================================================================
+// Error Response Helpers
+// =============================================================================
+
+/// Convert TandoorError to appropriate HTTP response
+///
+/// Preserves error context by mapping error types to appropriate HTTP status
+/// codes and including the original error message.
+///
+/// # Arguments
+/// * `error` - The TandoorError to convert
+///
+/// # Returns
+/// wisp.Response with appropriate status code and error message
+pub fn tandoor_error_to_response(error: client.TandoorError) -> wisp.Response {
+  let #(status, message) = case error {
+    client.AuthenticationError(msg) -> #(401, msg)
+    client.AuthorizationError(msg) -> #(403, msg)
+    client.NotFoundError(resource) -> #(404, resource)
+    client.BadRequestError(msg) -> #(400, msg)
+    client.ServerError(s, msg) -> #(s, msg)
+    client.NetworkError(msg) -> #(502, msg)
+    client.TimeoutError -> #(504, "Request timed out")
+    client.ParseError(msg) -> #(500, msg)
+    client.UnknownError(msg) -> #(500, msg)
+  }
+  error_response(status, message)
+}
+
+// =============================================================================
 // Validation Helpers
 // =============================================================================
 
