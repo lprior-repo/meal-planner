@@ -68,7 +68,10 @@ pub fn send_and_decode(
         }
       }
     }
-    Error(_) -> Error(ParseError("Invalid JSON response"))
+    Error(json_err) -> {
+      let error_msg = "Invalid JSON response: " <> string.inspect(json_err)
+      Error(ParseError(error_msg))
+    }
   }
 }
 

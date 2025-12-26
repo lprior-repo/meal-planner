@@ -44,7 +44,7 @@ pub fn handle_cuisine_by_id(
         _ -> wisp.method_not_allowed([http.Get, http.Put, http.Delete])
       }
     }
-    Error(_) -> helpers.error_response(400, "Invalid cuisine ID")
+    Error(_err) -> helpers.error_response(400, "Invalid cuisine ID: '" <> cuisine_id <> "'")
   }
 }
 
@@ -62,7 +62,7 @@ pub fn handle_list_cuisines(req: wisp.Request) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> helpers.error_response(500, "Failed to list cuisines")
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
@@ -136,7 +136,7 @@ pub fn handle_create_cuisine(req: wisp.Request) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(201)
             }
-            Error(_) -> helpers.error_response(500, "Failed to create cuisine")
+            Error(err) -> helpers.tandoor_error_to_response(err)
           }
         }
         Error(resp) -> resp
@@ -171,8 +171,8 @@ pub fn handle_update_cuisine(
                   |> json.to_string
                   |> wisp.json_response(200)
                 }
-                Error(_) ->
-                  helpers.error_response(500, "Failed to update cuisine")
+                Error(err) ->
+                  helpers.tandoor_error_to_response(err)
               }
             }
             Error(resp) -> resp
@@ -181,7 +181,7 @@ pub fn handle_update_cuisine(
         Error(msg) -> helpers.error_response(400, msg)
       }
     }
-    Error(_) -> helpers.error_response(400, "Invalid cuisine ID")
+    Error(_err) -> helpers.error_response(400, "Invalid cuisine ID: '" <> cuisine_id <> "'")
   }
 }
 
@@ -196,13 +196,13 @@ pub fn handle_delete_cuisine(
         Ok(config) -> {
           case delete_cuisine(config, cuisine_id: ids.cuisine_id_from_int(id)) {
             Ok(_) -> wisp.no_content()
-            Error(_) -> helpers.error_response(500, "Failed to delete cuisine")
+            Error(err) -> helpers.tandoor_error_to_response(err)
           }
         }
         Error(resp) -> resp
       }
     }
-    Error(_) -> helpers.error_response(400, "Invalid cuisine ID")
+    Error(_err) -> helpers.error_response(400, "Invalid cuisine ID: '" <> cuisine_id <> "'")
   }
 }
 

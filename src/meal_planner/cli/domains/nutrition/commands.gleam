@@ -5,22 +5,26 @@
 /// - Goals management (display and setting)
 /// - Trends analysis over time periods
 /// - Compliance checking against goals
-import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/result
 import gleam/string
+import meal_planner/cli/domains/nutrition/reporting
+import meal_planner/cli/domains/nutrition/validation
 import meal_planner/config.{type Config}
-import meal_planner/ncp.{get_default_goals}
+import meal_planner/ncp
 import meal_planner/ncp/types.{
   type DeviationResult, type NutritionData, type NutritionGoals,
-  type TrendAnalysis, type TrendDirection, Decreasing, Increasing, NutritionData,
-  NutritionGoals, Stable,
+  type TrendAnalysis, NutritionData, NutritionGoals,
 }
 import meal_planner/postgres
 import meal_planner/storage
 import meal_planner/storage/profile.{
   DatabaseError, InvalidInput, NotFound, Unauthorized,
+}
+import meal_planner/types/goal_type.{
+  type GoalType, Calories, Carbs, Fat, Protein, display_name, unit,
 }
 import meal_planner/types/macros.{type Macros}
 
@@ -35,14 +39,14 @@ pub fn generate_report(
   date date_str: String,
 ) -> Result(String, String) {
   // Validate date format
-  case validate_date_format(date_str) {
+  case validation.validate_date_format(date_str) {
     Error(err) -> Error(err)
     Ok(_) -> {
       // Load nutrition goals
       case load_nutrition_goals(config) {
         Error(_) -> {
           // Use default goals if not found
-          let goals = get_default_goals()
+          let goals = ncp.get_default_goals()
           generate_report_with_goals(config, date_str, goals)
         }
         Ok(goals) -> generate_report_with_goals(config, date_str, goals)
@@ -78,10 +82,10 @@ fn generate_report_with_goals(
     Ok(conn) -> {
       // Get daily log data for the date
       case storage.get_daily_log(conn, date_str) {
-        Error(DatabaseError(msg)) -> Error("Database error: " <> msg)
+        Error(DatabaseError(_msg)) -> Error("Database error: " <> msg)
         Error(NotFound) -> {
           // Return report showing no meals logged
-          Ok(build_no_meals_report(date_str, goals))
+          Ok(reporting.build_no_meals_report(date_str, goals))
         }
         Error(profile.InvalidInput(msg)) -> Error("Invalid input: " <> msg)
         Error(profile.Unauthorized(msg)) -> Error("Unauthorized: " <> msg)
@@ -99,94 +103,16 @@ fn generate_report_with_goals(
           let deviation = ncp.calculate_deviation(goals, actual)
 
           // Build and return formatted report
-          Ok(build_nutrition_report(date_str, actual, goals, deviation))
+          Ok(reporting.build_nutrition_report(
+            date_str,
+            actual,
+            goals,
+            deviation,
+          ))
         }
       }
     }
   }
-}
-
-/// Build report when no meals are logged
-fn build_no_meals_report(date_str: String, goals: NutritionGoals) -> String {
-  let header =
-    "═══════════════════════════════════════════════\n"
-    <> "        NUTRITION REPORT - "
-    <> date_str
-    <> "\n"
-    <> "═══════════════════════════════════════════════\n\n"
-
-  let message = "No meals logged for this date.\n\n"
-
-  let goals_section =
-    "Your nutrition goals:\n" <> build_goals_table(goals) <> "\n"
-
-  header <> message <> goals_section
-}
-
-/// Build formatted nutrition report
-fn build_nutrition_report(
-  date_str: String,
-  actual: NutritionData,
-  goals: NutritionGoals,
-  deviation: DeviationResult,
-) -> String {
-  let header =
-    "═══════════════════════════════════════════════\n"
-    <> "        NUTRITION REPORT - "
-    <> date_str
-    <> "\n"
-    <> "═══════════════════════════════════════════════\n\n"
-
-  let table_header =
-    "┌─────────────┬──────────┬──────────┬──────────┐\n"
-    <> "│ Nutrient    │ Goal     │ Actual   │ Diff     │\n"
-    <> "├─────────────┼──────────┼──────────┼──────────┤"
-
-  let protein_row =
-    "\n│ Protein     │ "
-    <> pad_right(float_to_string(goals.daily_protein) <> "g", 8)
-    <> " │ "
-    <> pad_right(float_to_string(actual.protein) <> "g", 8)
-    <> " │ "
-    <> pad_right(format_percentage(deviation.protein_pct), 8)
-    <> " │"
-
-  let fat_row =
-    "\n│ Fat         │ "
-    <> pad_right(float_to_string(goals.daily_fat) <> "g", 8)
-    <> " │ "
-    <> pad_right(float_to_string(actual.fat) <> "g", 8)
-    <> " │ "
-    <> pad_right(format_percentage(deviation.fat_pct), 8)
-    <> " │"
-
-  let carbs_row =
-    "\n│ Carbs       │ "
-    <> pad_right(float_to_string(goals.daily_carbs) <> "g", 8)
-    <> " │ "
-    <> pad_right(float_to_string(actual.carbs) <> "g", 8)
-    <> " │ "
-    <> pad_right(format_percentage(deviation.carbs_pct), 8)
-    <> " │"
-
-  let calories_row =
-    "\n│ Calories    │ "
-    <> pad_right(float_to_string(goals.daily_calories), 8)
-    <> " │ "
-    <> pad_right(float_to_string(actual.calories), 8)
-    <> " │ "
-    <> pad_right(format_percentage(deviation.calories_pct), 8)
-    <> " │"
-
-  let footer = "\n└─────────────┴──────────┴──────────┴──────────┘\n"
-
-  header
-  <> table_header
-  <> protein_row
-  <> fat_row
-  <> carbs_row
-  <> calories_row
-  <> footer
 }
 
 // ============================================================================
@@ -206,7 +132,7 @@ pub fn display_trends(
       // Load nutrition goals
       case load_nutrition_goals(config) {
         Error(_) -> {
-          let goals = get_default_goals()
+          let goals = ncp.get_default_goals()
           display_trends_with_goals(config, days_count, goals)
         }
         Ok(goals) -> display_trends_with_goals(config, days_count, goals)
@@ -237,76 +163,11 @@ fn display_trends_with_goals(
           let avg = ncp.average_nutrition_history(history)
 
           // Build and return formatted trends report
-          Ok(build_trends_report(days_count, avg, analysis, goals))
+          Ok(reporting.build_trends_report(days_count, avg, analysis, goals))
         }
       }
     }
   }
-}
-
-/// Build formatted trends report
-fn build_trends_report(
-  days_count: Int,
-  avg: NutritionData,
-  analysis: TrendAnalysis,
-  goals: NutritionGoals,
-) -> String {
-  let header =
-    "═══════════════════════════════════════════════\n"
-    <> "     NUTRITION TRENDS - Last "
-    <> int.to_string(days_count)
-    <> " Days\n"
-    <> "═══════════════════════════════════════════════\n\n"
-
-  let avg_section =
-    "Average Daily Intake:\n"
-    <> "  Protein:  "
-    <> float_to_string(avg.protein)
-    <> "g (Goal: "
-    <> float_to_string(goals.daily_protein)
-    <> "g)\n"
-    <> "  Fat:      "
-    <> float_to_string(avg.fat)
-    <> "g (Goal: "
-    <> float_to_string(goals.daily_fat)
-    <> "g)\n"
-    <> "  Carbs:    "
-    <> float_to_string(avg.carbs)
-    <> "g (Goal: "
-    <> float_to_string(goals.daily_carbs)
-    <> "g)\n"
-    <> "  Calories: "
-    <> float_to_string(avg.calories)
-    <> " (Goal: "
-    <> float_to_string(goals.daily_calories)
-    <> ")\n\n"
-
-  let trends_section =
-    "Trend Directions:\n"
-    <> "  Protein:  "
-    <> format_trend_direction(analysis.protein_trend)
-    <> " ("
-    <> format_percentage(analysis.protein_change)
-    <> ")\n"
-    <> "  Fat:      "
-    <> format_trend_direction(analysis.fat_trend)
-    <> " ("
-    <> format_percentage(analysis.fat_change)
-    <> ")\n"
-    <> "  Carbs:    "
-    <> format_trend_direction(analysis.carbs_trend)
-    <> " ("
-    <> format_percentage(analysis.carbs_change)
-    <> ")\n"
-    <> "  Calories: "
-    <> format_trend_direction(analysis.calories_trend)
-    <> " ("
-    <> format_percentage(analysis.calories_change)
-    <> ")\n\n"
-
-  let footer = "═══════════════════════════════════════════════\n"
-
-  header <> avg_section <> trends_section <> footer
 }
 
 // ============================================================================
@@ -326,14 +187,14 @@ pub fn check_compliance(
     True -> Error("Tolerance must be between 0 and 100")
     False -> {
       // Validate date format (basic check)
-      case validate_date_format(date_str) {
+      case validation.validate_date_format(date_str) {
         Error(err) -> Error(err)
         Ok(_) -> {
           // Load nutrition goals
           case load_nutrition_goals(config) {
             Error(_) -> {
               // If goals not found, use defaults
-              let goals = get_default_goals()
+              let goals = ncp.get_default_goals()
               check_compliance_with_goals(
                 config,
                 date_str,
@@ -403,47 +264,11 @@ fn check_compliance_with_goals(
           let deviation = ncp.calculate_deviation(goals, actual)
 
           // Build and return compliance summary
-          Ok(build_compliance_summary(deviation, tolerance_pct))
+          Ok(reporting.build_compliance_summary(deviation, tolerance_pct))
         }
       }
     }
   }
-}
-
-/// Build a compliance summary showing if within tolerance
-pub fn build_compliance_summary(
-  deviation: DeviationResult,
-  tolerance: Float,
-) -> String {
-  let is_compliant = ncp.deviation_is_within_tolerance(deviation, tolerance)
-  let status = case is_compliant {
-    True -> "✓ ON TRACK"
-    False -> "✗ OFF TRACK"
-  }
-
-  let protein_status = compliance_indicator(deviation.protein_pct, tolerance)
-  let fat_status = compliance_indicator(deviation.fat_pct, tolerance)
-  let carbs_status = compliance_indicator(deviation.carbs_pct, tolerance)
-  let calories_status = compliance_indicator(deviation.calories_pct, tolerance)
-
-  "Compliance Status: "
-  <> status
-  <> "\n\nProtein:  "
-  <> protein_status
-  <> " "
-  <> format_percentage(deviation.protein_pct)
-  <> "\nFat:      "
-  <> fat_status
-  <> " "
-  <> format_percentage(deviation.fat_pct)
-  <> "\nCarbs:    "
-  <> carbs_status
-  <> " "
-  <> format_percentage(deviation.carbs_pct)
-  <> "\nCalories: "
-  <> calories_status
-  <> " "
-  <> format_percentage(deviation.calories_pct)
 }
 
 // ============================================================================
@@ -458,16 +283,16 @@ pub fn display_goals(config: Config) -> Result(String, String) {
       let output =
         "Daily Nutrition Goals:\n"
         <> "Calories: "
-        <> float_to_string(goals.daily_calories)
+        <> reporting.format_float_value(goals.daily_calories)
         <> " kcal\n"
         <> "Protein: "
-        <> float_to_string(goals.daily_protein)
+        <> reporting.format_float_value(goals.daily_protein)
         <> "g\n"
         <> "Carbs: "
-        <> float_to_string(goals.daily_carbs)
+        <> reporting.format_float_value(goals.daily_carbs)
         <> "g\n"
         <> "Fat: "
-        <> float_to_string(goals.daily_fat)
+        <> reporting.format_float_value(goals.daily_fat)
         <> "g"
       Ok(output)
     }
@@ -477,51 +302,50 @@ pub fn display_goals(config: Config) -> Result(String, String) {
 /// Set a specific nutrition goal with validation
 pub fn set_goal(
   config: Config,
-  goal_type goal_type: String,
+  goal_type goal_type: GoalType,
   value value: Int,
 ) -> Result(String, String) {
   // Validate input based on goal type
-  case validate_goal_value(goal_type, value) {
+  case validation.validate_goal_value(goal_type, value) {
     Error(err) -> Error(err)
     Ok(_float_value) -> {
       // Load current goals or use defaults
       let current_goals = case load_nutrition_goals(config) {
-        Error(_) -> get_default_goals()
+        Error(_) -> ncp.get_default_goals()
         Ok(goals) -> goals
       }
 
       // Create updated goals with the new value
       let float_value = int.to_float(value)
       let updated_goals = case goal_type {
-        "calories" ->
+        Calories ->
           NutritionGoals(
             daily_calories: float_value,
             daily_protein: current_goals.daily_protein,
             daily_carbs: current_goals.daily_carbs,
             daily_fat: current_goals.daily_fat,
           )
-        "protein" ->
+        Protein ->
           NutritionGoals(
             daily_calories: current_goals.daily_calories,
             daily_protein: float_value,
             daily_carbs: current_goals.daily_carbs,
             daily_fat: current_goals.daily_fat,
           )
-        "carbs" ->
+        Carbs ->
           NutritionGoals(
             daily_calories: current_goals.daily_calories,
             daily_protein: current_goals.daily_protein,
             daily_carbs: float_value,
             daily_fat: current_goals.daily_fat,
           )
-        "fat" ->
+        Fat ->
           NutritionGoals(
             daily_calories: current_goals.daily_calories,
             daily_protein: current_goals.daily_protein,
             daily_carbs: current_goals.daily_carbs,
             daily_fat: float_value,
           )
-        _ -> current_goals
       }
 
       // Save to database
@@ -549,15 +373,13 @@ pub fn set_goal(
             Error(NotFound) -> Error("Profile not found")
             Ok(_) -> {
               // Return confirmation
-              let unit = case goal_type {
-                "calories" -> " kcal"
-                _ -> "g"
-              }
+              let unit_str = unit(goal_type)
+              let display_name_str = display_name(goal_type)
               let confirmation =
-                string.capitalise(goal_type)
+                display_name_str
                 <> " goal set to "
                 <> int.to_string(value)
-                <> unit
+                <> unit_str
 
               Ok(confirmation)
             }
@@ -630,22 +452,22 @@ fn apply_preset_values(
         <> preset_name
         <> "' applied:\n"
         <> "Calories: "
-        <> float_to_string(calories)
+        <> reporting.format_float_value(calories)
         <> " kcal\n"
         <> "Protein: "
-        <> float_to_string(protein_grams)
+        <> reporting.format_float_value(protein_grams)
         <> "g ("
-        <> float_to_string(protein_pct)
+        <> int.to_string(int.round(protein_pct))
         <> "%)\n"
         <> "Carbs: "
-        <> float_to_string(carbs_grams)
+        <> reporting.format_float_value(carbs_grams)
         <> "g ("
-        <> float_to_string(carbs_pct)
+        <> int.to_string(int.round(carbs_pct))
         <> "%)\n"
         <> "Fat: "
-        <> float_to_string(fat_grams)
+        <> reporting.format_float_value(fat_grams)
         <> "g ("
-        <> float_to_string(fat_pct)
+        <> int.to_string(int.round(fat_pct))
         <> "%)"
 
       Ok(confirmation)
@@ -656,104 +478,6 @@ fn apply_preset_values(
 // ============================================================================
 // Helper Functions
 // ============================================================================
-
-fn float_to_string(f: Float) -> String {
-  float.to_string(f)
-  |> string.split(".")
-  |> fn(parts) {
-    case parts {
-      [whole, decimal] -> {
-        let trimmed_decimal = string.slice(decimal, 0, 1)
-        whole <> "." <> trimmed_decimal
-      }
-      [whole] -> whole <> ".0"
-      _ -> float.to_string(f)
-    }
-  }
-}
-
-fn format_percentage(pct: Float) -> String {
-  let sign = case pct >=. 0.0 {
-    True -> "+"
-    False -> ""
-  }
-  sign <> float_to_string(pct) <> "%"
-}
-
-fn compliance_indicator(pct: Float, tolerance: Float) -> String {
-  let abs_pct = float.absolute_value(pct)
-  case abs_pct <=. tolerance {
-    True -> "✓"
-    False -> "✗"
-  }
-}
-
-fn pad_right(s: String, width: Int) -> String {
-  let current_length = string.length(s)
-  let padding_needed = width - current_length
-  case padding_needed > 0 {
-    True -> s <> string.repeat(" ", padding_needed)
-    False -> s
-  }
-}
-
-/// Format a trend direction with an arrow
-fn format_trend_direction(trend: TrendDirection) -> String {
-  case trend {
-    Increasing -> "↑ Increasing"
-    Decreasing -> "↓ Decreasing"
-    Stable -> "→ Stable"
-  }
-}
-
-/// Build a formatted table for nutrition goals
-fn build_goals_table(goals: NutritionGoals) -> String {
-  let header =
-    "┌─────────────┬──────────┐\n│ Nutrient    │ Goal     │\n├─────────────┼──────────┤"
-  let protein_row =
-    "\n│ Protein     │ "
-    <> pad_right(float_to_string(goals.daily_protein) <> "g", 8)
-    <> " │"
-  let fat_row =
-    "\n│ Fat         │ "
-    <> pad_right(float_to_string(goals.daily_fat) <> "g", 8)
-    <> " │"
-  let carbs_row =
-    "\n│ Carbs       │ "
-    <> pad_right(float_to_string(goals.daily_carbs) <> "g", 8)
-    <> " │"
-  let calories_row =
-    "\n│ Calories    │ "
-    <> pad_right(float_to_string(goals.daily_calories), 8)
-    <> " │"
-  let footer = "\n└─────────────┴──────────┘"
-
-  header <> protein_row <> fat_row <> carbs_row <> calories_row <> footer
-}
-
-/// Validate date format (YYYY-MM-DD or "today")
-fn validate_date_format(date_str: String) -> Result(Nil, String) {
-  case date_str {
-    "today" -> Ok(Nil)
-    _ -> {
-      // Basic validation: check if it matches YYYY-MM-DD pattern
-      let parts = string.split(date_str, "-")
-      case parts {
-        [year, month, day] -> {
-          case
-            string.length(year) == 4
-            && string.length(month) == 2
-            && string.length(day) == 2
-          {
-            True -> Ok(Nil)
-            False -> Error("Invalid date format. Use YYYY-MM-DD or 'today'")
-          }
-        }
-        _ -> Error("Invalid date format. Use YYYY-MM-DD or 'today'")
-      }
-    }
-  }
-}
 
 /// Calculate calories from macros (4 cal/g protein, 9 cal/g fat, 4 cal/g carbs)
 fn calculate_calories(macros: Macros) -> Float {
@@ -790,37 +514,5 @@ fn load_nutrition_goals(config: Config) -> Result(NutritionGoals, String) {
         Ok(goals) -> Ok(goals)
       }
     }
-  }
-}
-
-/// Validate goal value based on type
-fn validate_goal_value(goal_type: String, value: Int) -> Result(Float, String) {
-  let float_val = int.to_float(value)
-  case goal_type {
-    "calories" -> {
-      case value >= 500 && value <= 10_000 {
-        True -> Ok(float_val)
-        False -> Error("Calories must be between 500 and 10,000")
-      }
-    }
-    "protein" -> {
-      case value > 0 && value < 500 {
-        True -> Ok(float_val)
-        False -> Error("Protein must be between 1 and 500 grams")
-      }
-    }
-    "carbs" -> {
-      case value > 0 && value < 1000 {
-        True -> Ok(float_val)
-        False -> Error("Carbs must be between 1 and 1000 grams")
-      }
-    }
-    "fat" -> {
-      case value > 0 && value < 500 {
-        True -> Ok(float_val)
-        False -> Error("Fat must be between 1 and 500 grams")
-      }
-    }
-    _ -> Error("Unknown goal type: " <> goal_type)
   }
 }

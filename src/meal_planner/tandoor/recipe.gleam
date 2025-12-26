@@ -22,13 +22,16 @@ import meal_planner/tandoor/api/crud_helpers.{
   execute_delete, execute_get, execute_patch, execute_post, parse_json_paginated,
   parse_json_single,
 }
-import meal_planner/tandoor/client.{
-  type ClientConfig, type Food, type Ingredient, type Keyword,
-  type NutritionInfo as ClientNutritionInfo, type Step, type SupermarketCategory,
-  type TandoorError, type Unit, Food, Ingredient, Keyword,
-  NutritionInfo as ClientNutritionInfo, Step, SupermarketCategory, Unit,
-}
+import meal_planner/tandoor/client.{type ClientConfig}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
+import meal_planner/tandoor/food.{type Food}
+import meal_planner/tandoor/ingredient.{type Ingredient}
+import meal_planner/tandoor/keyword.{type Keyword}
+import meal_planner/tandoor/step.{type Step}
+import meal_planner/tandoor/supermarket.{type SupermarketCategory}
+import meal_planner/tandoor/types/nutrition.{
+  type NutritionInfo as NutritionInfoType,
+}
 
 // ============================================================================
 // Types
@@ -89,7 +92,7 @@ pub type RecipeDetail {
     created_at: Option(String),
     updated_at: Option(String),
     steps: List(Step),
-    nutrition: Option(ClientNutritionInfo),
+    nutrition: Option(NutritionInfo),
     keywords: List(Keyword),
     source_url: Option(String),
   )
@@ -132,34 +135,6 @@ pub type RecipeOverview {
 /// - image: Optional recipe image URL
 pub type RecipeSimple {
   RecipeSimple(id: Int, name: String, image: Option(String))
-}
-
-/// Detailed nutrition information with source tracking
-///
-/// This type represents comprehensive nutrition data for a recipe,
-/// including all macronutrients and the ability to track the data source.
-///
-/// All numeric fields are optional Float values to accommodate:
-/// - Missing data from various sources
-/// - Recipes where certain nutritional info isn't calculated
-/// - Partial nutrition information
-///
-/// Fields:
-/// - id: Unique identifier for this nutrition record
-/// - carbohydrates: Total carbohydrates in grams
-/// - fats: Total fats in grams
-/// - proteins: Total proteins in grams
-/// - calories: Total calories (kcal)
-/// - source: Where this nutrition data came from (e.g., "USDA", "manual", "calculated")
-pub type NutritionInfo {
-  NutritionInfo(
-    id: Int,
-    carbohydrates: Option(Float),
-    fats: Option(Float),
-    proteins: Option(Float),
-    calories: Option(Float),
-    source: Option(String),
-  )
 }
 
 /// Request to update an existing recipe (partial update)
@@ -345,7 +320,7 @@ pub fn recipe_detail_decoder() -> decode.Decoder(RecipeDetail) {
   use nutrition <- decode.optional_field(
     "nutrition",
     None,
-    decode.optional(client_nutrition_decoder()),
+    decode.optional(nutrition_info_decoder()),
   )
   use keywords <- decode.optional_field(
     "keywords",

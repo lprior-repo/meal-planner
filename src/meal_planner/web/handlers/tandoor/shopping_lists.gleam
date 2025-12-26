@@ -71,7 +71,8 @@ fn handle_list_entries(req: wisp.Request) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> helpers.error_response(500, "Failed to fetch shopping list")
+        Error(err) ->
+          helpers.error_response(500, "Failed to fetch shopping list: " <> err)
       }
     }
     Error(resp) -> resp
@@ -91,10 +92,10 @@ fn handle_create_entry(req: wisp.Request) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(201)
             }
-            Error(_) ->
+            Error(err) ->
               helpers.error_response(
                 500,
-                "Failed to create shopping list entry",
+                "Failed to create shopping list entry: " <> err,
               )
           }
         }
@@ -122,7 +123,8 @@ pub fn handle_shopping_list_entry_by_id(
         _ -> wisp.method_not_allowed([http.Get, http.Patch, http.Delete])
       }
     }
-    Error(_) -> helpers.error_response(400, "Invalid entry ID")
+    Error(_err) ->
+      helpers.error_response(400, "Invalid entry ID: '" <> entry_id <> "'")
   }
 }
 
@@ -135,7 +137,7 @@ fn handle_get_entry(_req: wisp.Request, id: Int) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> wisp.not_found()
+        Error(err) -> wisp.not_found()
       }
     }
     Error(resp) -> resp
@@ -155,10 +157,10 @@ fn handle_update_entry(req: wisp.Request, id: Int) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(200)
             }
-            Error(_) ->
+            Error(err) ->
               helpers.error_response(
                 500,
-                "Failed to update shopping list entry",
+                "Failed to update shopping list entry: " <> err,
               )
           }
         }
@@ -174,7 +176,7 @@ fn handle_delete_entry(_req: wisp.Request, id: Int) -> wisp.Response {
     Ok(config) -> {
       case shopping.delete_entry(config, id) {
         Ok(Nil) -> wisp.response(204)
-        Error(_) -> wisp.not_found()
+        Error(err) -> wisp.not_found()
       }
     }
     Error(resp) -> resp

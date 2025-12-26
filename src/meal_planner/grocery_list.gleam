@@ -9,7 +9,7 @@ import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/generator/weekly.{type DayMeals, type WeeklyMealPlan}
-import meal_planner/tandoor/client.{type Ingredient}
+import meal_planner/tandoor/ingredient.{type Ingredient}
 import meal_planner/types/recipe.{type Ingredient as SimpleIngredient}
 
 // ============================================================================

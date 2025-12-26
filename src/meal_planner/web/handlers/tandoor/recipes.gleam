@@ -15,13 +15,15 @@ import gleam/json
 import gleam/option
 import gleam/result
 
-import meal_planner/tandoor/client.{type Keyword, type NutritionInfo, type Step}
 import meal_planner/tandoor/handlers/helpers
+import meal_planner/tandoor/keyword.{type Keyword}
 import meal_planner/tandoor/recipe.{
   type Recipe, type RecipeCreateRequest, type RecipeDetail, type RecipeUpdate,
   RecipeCreateRequest, RecipeUpdate, create_recipe, delete_recipe, get_recipe,
   list_recipes, update_recipe,
 }
+import meal_planner/tandoor/step.{type Step}
+import meal_planner/tandoor/types/nutrition.{type NutritionInfo}
 
 import wisp
 
@@ -54,7 +56,7 @@ fn handle_list_recipes(_req: wisp.Request) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
@@ -74,7 +76,7 @@ fn handle_create_recipe(req: wisp.Request) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(201)
             }
-            Error(_) -> helpers.error_response(500, "Failed to create recipe")
+            Error(err) -> helpers.tandoor_error_to_response(err)
           }
         }
         Error(resp) -> resp
@@ -101,7 +103,8 @@ pub fn handle_recipe_by_id(
         _ -> wisp.method_not_allowed([http.Get, http.Patch, http.Delete])
       }
     }
-    Error(_) -> helpers.error_response(400, "Invalid recipe ID")
+    Error(_err) ->
+      helpers.error_response(400, "Invalid recipe ID: '" <> recipe_id <> "'")
   }
 }
 
@@ -114,7 +117,7 @@ fn handle_get_recipe(_req: wisp.Request, id: Int) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
@@ -134,7 +137,7 @@ fn handle_update_recipe(req: wisp.Request, id: Int) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(200)
             }
-            Error(_) -> helpers.error_response(500, "Failed to update recipe")
+            Error(err) -> helpers.tandoor_error_to_response(err)
           }
         }
         Error(resp) -> resp
@@ -149,7 +152,7 @@ fn handle_delete_recipe(_req: wisp.Request, id: Int) -> wisp.Response {
     Ok(config) -> {
       case delete_recipe(config, recipe_id: id) {
         Ok(Nil) -> wisp.response(204)
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp

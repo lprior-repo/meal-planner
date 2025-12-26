@@ -1,11 +1,12 @@
 //// Recipe Filtering by User Preferences
 ////
 //// Filter recipes by user dietary restrictions, cuisine preferences, and difficulty.
-//// Part of the Autonomous Nutritional Control Plane (meal-planner-918)
+//// Part of Autonomous Nutritional Control Plane (meal-planner-918)
 
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
+import meal_planner/types/food.{Breakfast, Snack, meal_type_from_string}
 import meal_planner/types/macros
 import meal_planner/types/recipe.{type FodmapLevel, type Recipe}
 
@@ -102,9 +103,8 @@ pub fn calculate_difficulty(recipe: Recipe) -> Difficulty {
   // Note: Recipe type from types.gleam doesn't have working_time/waiting_time
   // For now, we'll use a simple heuristic based on category
   // In a real implementation, this would use recipe timing metadata
-  case recipe.category {
-    "Breakfast" | "breakfast" -> Easy
-    "Snack" | "snack" -> Easy
+  case meal_type_from_string(recipe.category) {
+    Ok(Breakfast) | Ok(Snack) -> Easy
     _ -> Medium
   }
 }

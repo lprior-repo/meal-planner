@@ -23,6 +23,16 @@ import gleam/result
 import gleam/string
 import gleam/uri
 import meal_planner/logger
+import meal_planner/tandoor/food.{type Food}
+import meal_planner/tandoor/ingredient.{type Ingredient}
+import meal_planner/tandoor/keyword.{type Keyword as KeywordType}
+import meal_planner/tandoor/recipe.{
+  type Recipe as RecipeType, type RecipeDetail as RecipeDetailType,
+}
+import meal_planner/tandoor/step.{type Step}
+import meal_planner/tandoor/supermarket.{type SupermarketCategory}
+import meal_planner/tandoor/types/nutrition.{type NutritionInfo}
+import meal_planner/tandoor/unit
 
 // ============================================================================
 // Types
@@ -934,110 +944,36 @@ fn uri_encode(value: String) -> String {
 }
 
 // ============================================================================
-// Recipe API Methods
+// Recipe API Types
 // ============================================================================
 
-/// Unit of measurement for ingredients
-pub type Unit {
-  Unit(id: Int, name: String, plural_name: Option(String), description: String)
-}
-
-/// Food item (base ingredient)
-pub type Food {
-  Food(
-    id: Int,
-    name: String,
-    plural_name: Option(String),
-    description: String,
-    supermarket_category: Option(SupermarketCategory),
-  )
-}
-
-/// Supermarket category for shopping list organization
-pub type SupermarketCategory {
-  SupermarketCategory(id: Int, name: String, description: String)
-}
-
-/// Ingredient in a recipe step
-pub type Ingredient {
-  Ingredient(
-    id: Int,
-    food: Option(Food),
-    unit: Option(Unit),
-    amount: Float,
-    note: String,
-    is_header: Bool,
-    no_amount: Bool,
-    original_text: Option(String),
-  )
-}
-
-/// Step in a recipe with instructions and ingredients
-pub type Step {
-  Step(
-    id: Int,
-    name: String,
-    instruction: String,
-    ingredients: List(Ingredient),
-    time: Int,
-    order: Int,
-    show_as_header: Bool,
-    show_ingredients_table: Bool,
-  )
-}
-
-/// Nutrition information per serving
-pub type NutritionInfo {
-  NutritionInfo(
-    id: Int,
-    carbohydrates: Float,
-    fats: Float,
-    proteins: Float,
-    calories: Float,
-    source: String,
-  )
-}
-
 /// Recipe type for API responses (basic fields for list view)
-pub type Recipe {
-  Recipe(
-    id: Int,
-    name: String,
-    slug: Option(String),
-    description: Option(String),
-    servings: Int,
-    servings_text: Option(String),
-    working_time: Option(Int),
-    waiting_time: Option(Int),
-    created_at: Option(String),
-    updated_at: Option(String),
-  )
-}
+///
+/// This type alias points to authoritative Recipe type defined in
+/// meal_planner/tandoor/recipe to avoid duplication.
+pub type Recipe =
+  RecipeType
 
 /// Full recipe with ingredients, steps, and nutrition (for detail view)
-pub type RecipeDetail {
-  RecipeDetail(
-    id: Int,
-    name: String,
-    slug: Option(String),
-    description: Option(String),
-    servings: Int,
-    servings_text: Option(String),
-    working_time: Option(Int),
-    waiting_time: Option(Int),
-    created_at: Option(String),
-    updated_at: Option(String),
-    steps: List(Step),
-    nutrition: Option(NutritionInfo),
-    keywords: List(Keyword),
-    source_url: Option(String),
-  )
-}
+///
+/// This type alias points to authoritative RecipeDetail type defined in
+/// meal_planner/tandoor/recipe to avoid duplication.
+pub type RecipeDetail =
+  RecipeDetailType
 
 /// Keyword/tag for recipes
-pub type Keyword {
-  Keyword(id: Int, name: String, description: String)
-}
+///
+/// This type alias points to authoritative Keyword type defined in
+/// meal_planner/tandoor/keyword.
+pub type Keyword =
+  KeywordType
+
+/// Unit of measurement for ingredients
+///
+/// This type alias points to authoritative Unit type defined in
+/// meal_planner/tandoor/unit.
+pub type Unit =
+  unit.Unit
 
 /// Paginated recipe list response
 pub type RecipeListResponse {
@@ -1078,23 +1014,9 @@ fn supermarket_category_decoder() -> decode.Decoder(SupermarketCategory) {
   ))
 }
 
-/// Decoder for Unit
-fn unit_decoder() -> decode.Decoder(Unit) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.field("name", decode.string)
-  use plural_name <- decode.optional_field(
-    "plural_name",
-    None,
-    decode.optional(decode.string),
-  )
-  use description <- decode.optional_field("description", "", decode.string)
-
-  decode.success(Unit(
-    id: id,
-    name: name,
-    plural_name: plural_name,
-    description: description,
-  ))
+/// Decoder for Unit - delegates to unit.decode_unit()
+fn unit_decoder() -> decode.Decoder(unit.Unit) {
+  unit.decode_unit()
 }
 
 /// Decoder for Food

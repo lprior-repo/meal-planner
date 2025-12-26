@@ -14,6 +14,17 @@ import meal_planner/web/responses
 import pog
 import wisp
 
+
+// ============================================================================
+// Error Handling
+// ============================================================================
+
+fn storage_error_message(err) -> String {
+  case err {
+    _ -> "Storage error"
+  }
+}
+
 // ============================================================================
 // Handler Functions
 // ============================================================================
@@ -43,7 +54,7 @@ pub fn handle_list_jobs(db: pog.Connection) -> wisp.Response {
 
       wisp.json_response(body, 200)
     }
-    Error(_) -> responses.internal_error("Failed to fetch scheduled jobs")
+    Error(err) -> responses.internal_error("Failed to fetch scheduled jobs: " <> storage_error_message(err))
   }
 }
 
@@ -80,7 +91,7 @@ pub fn handle_list_executions(db: pog.Connection) -> wisp.Response {
 
       wisp.json_response(body, 200)
     }
-    Error(_) -> responses.internal_error("Failed to fetch execution history")
+    Error(err) -> responses.internal_error("Failed to fetch execution history: " <> storage_error_message(err))
   }
 }
 
@@ -115,14 +126,14 @@ pub fn handle_trigger_job(db: pog.Connection, job_id: String) -> wisp.Response {
 
               wisp.json_response(body, 202)
             }
-            Error(_) ->
-              responses.internal_error("Failed to start job execution")
+            Error(err) ->
+              responses.internal_error("Failed to start job execution: " <> storage_error_message(err))
           }
         }
-        Error(_) -> responses.internal_error("Failed to reset job status")
+        Error(err) -> responses.internal_error("Failed to reset job status: " <> storage_error_message(err))
       }
     }
-    Error(_) -> responses.not_found("Job not found")
+    Error(err) -> responses.not_found("Job not found: " <> storage_error_message(err))
   }
 }
 

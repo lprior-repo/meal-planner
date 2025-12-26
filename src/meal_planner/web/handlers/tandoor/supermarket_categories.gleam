@@ -64,7 +64,7 @@ fn handle_list_categories(_req: wisp.Request) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
@@ -91,7 +91,7 @@ fn handle_create_category(req: wisp.Request) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(201)
             }
-            Error(_) -> helpers.error_response(500, "Failed to create category")
+            Error(err) -> helpers.tandoor_error_to_response(err)
           }
         }
         Error(resp) -> resp
@@ -124,7 +124,11 @@ pub fn handle_category_by_id(
         _ -> wisp.method_not_allowed([http.Get, http.Patch, http.Delete])
       }
     }
-    Error(_) -> helpers.error_response(400, "Invalid category ID")
+    Error(_err) ->
+      helpers.error_response(
+        400,
+        "Invalid category ID: '" <> category_id <> "'",
+      )
   }
 }
 
@@ -144,7 +148,7 @@ fn handle_get_category(_req: wisp.Request, id: Int) -> wisp.Response {
           |> json.to_string
           |> wisp.json_response(200)
         }
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp
@@ -173,7 +177,7 @@ fn handle_update_category(req: wisp.Request, id: Int) -> wisp.Response {
               |> json.to_string
               |> wisp.json_response(200)
             }
-            Error(_) -> helpers.error_response(500, "Failed to update category")
+            Error(err) -> helpers.tandoor_error_to_response(err)
           }
         }
         Error(resp) -> resp
@@ -188,7 +192,7 @@ fn handle_delete_category(_req: wisp.Request, id: Int) -> wisp.Response {
     Ok(config) -> {
       case delete_category(config, category_id: id) {
         Ok(Nil) -> wisp.response(204)
-        Error(_) -> wisp.not_found()
+        Error(err) -> helpers.tandoor_error_to_response(err)
       }
     }
     Error(resp) -> resp

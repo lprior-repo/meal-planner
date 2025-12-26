@@ -135,7 +135,7 @@ fn parse_url_params(url: String) -> Option(#(Int, Int)) {
         Some(query_string) -> parse_query_string_params(query_string)
       }
     }
-    Error(_) -> None
+    Error(_err) -> None
   }
 }
 

@@ -1,8 +1,8 @@
 import gleam/option.{type Option}
-import meal_planner/tandoor/client.{type NutritionInfo}
 import meal_planner/tandoor/keyword.{type Keyword}
 import meal_planner/tandoor/property.{type Property}
 import meal_planner/tandoor/step.{type Step}
+import meal_planner/tandoor/types/nutrition.{type NutritionInfo}
 import meal_planner/tandoor/user.{type User}
 
 /// Complete recipe type with full metadata

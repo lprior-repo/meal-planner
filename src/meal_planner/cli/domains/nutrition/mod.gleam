@@ -12,6 +12,9 @@ import gleam/result
 import glint
 import meal_planner/cli/domains/nutrition/commands
 import meal_planner/config.{type Config}
+import meal_planner/types/goal_type.{
+  Calories, Carbs, Fat, Protein, from_string as goal_type_from_string,
+}
 
 /// Nutrition domain command for Glint CLI
 pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
@@ -101,22 +104,21 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
           let results = [
             case calories_val {
               Some(val) ->
-                commands.set_goal(config, goal_type: "calories", value: val)
+                commands.set_goal(config, goal_type: Calories, value: val)
               None -> Ok("")
             },
             case protein_val {
               Some(val) ->
-                commands.set_goal(config, goal_type: "protein", value: val)
+                commands.set_goal(config, goal_type: Protein, value: val)
               None -> Ok("")
             },
             case carbs_val {
               Some(val) ->
-                commands.set_goal(config, goal_type: "carbs", value: val)
+                commands.set_goal(config, goal_type: Carbs, value: val)
               None -> Ok("")
             },
             case fat_val {
-              Some(val) ->
-                commands.set_goal(config, goal_type: "fat", value: val)
+              Some(val) -> commands.set_goal(config, goal_type: Fat, value: val)
               None -> Ok("")
             },
           ]
