@@ -7,15 +7,12 @@
 /// - Daily summary calculations
 /// - Type construction
 import gleam/dict
-import gleam/option.{None, Some}
+import gleam/option.{None}
 import gleeunit/should
 import meal_planner/cli/screens/exercise_view.{
-  type DailySummary, type ExerciseDisplayEntry, type ExerciseEditState,
-  type ExerciseModel, type ExerciseSearchResult, type ExerciseSearchState,
-  type ExerciseViewState, ConfirmDelete, DailySummary, DatePicker, DetailsView,
-  EditEntry, ExerciseDisplayEntry, ExerciseEditState, ExerciseModel,
-  ExerciseSearchResult, ExerciseSearchState, MainView, QuickAddPopup,
-  SearchPopup,
+  type ExerciseViewState, ConfirmDelete, DailySummary, DatePicker,
+  ExerciseDisplayEntry, ExerciseEditState, ExerciseSearchResult,
+  ExerciseSearchState, MainView, QuickAddPopup, SearchPopup,
 }
 import meal_planner/fatsecret/exercise/types as exercise_types
 
@@ -126,7 +123,6 @@ pub fn view_state_date_picker_test() {
   // THEN: Can pattern match and extract date_input
   case view_state {
     DatePicker(date_input) -> date_input
-    _ -> ""
   }
   |> should.equal("2025-12-20")
 }
@@ -139,7 +135,6 @@ pub fn view_state_confirm_delete_test() {
   // THEN: Can pattern match and extract entry_id
   case view_state {
     ConfirmDelete(id) -> exercise_types.exercise_entry_id_to_string(id)
-    _ -> ""
   }
   |> should.equal("12345")
 }

@@ -3,6 +3,7 @@
 /// Decoders for parsing FatSecret API responses for saved meals and items.
 import gleam/dynamic/decode
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, None}
 import gleam/string
@@ -27,13 +28,21 @@ fn meal_types_decoder() -> decode.Decoder(List(MealType)) {
 }
 
 /// Decode float, handling string numbers from API
+/// Handles both "95.5" and "95" formats
 fn float_decoder() -> decode.Decoder(Float) {
   decode.one_of(decode.float, or: [
     {
       use s <- decode.then(decode.string)
+      // Try parsing as float first
       case float.parse(s) {
         Ok(f) -> decode.success(f)
-        Error(_) -> decode.failure(0.0, "Float")
+        Error(_) -> {
+          // Fall back to parsing as int then converting to float
+          case int.parse(s) {
+            Ok(i) -> decode.success(int.to_float(i))
+            Error(_) -> decode.failure(0.0, "Float")
+          }
+        }
       }
     },
   ])

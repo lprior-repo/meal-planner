@@ -11,12 +11,11 @@ import meal_planner/cli/screens/diary_view/messages.{
 }
 import meal_planner/cli/screens/diary_view/model
 import meal_planner/cli/screens/fatsecret_diary.{
-  type DiaryModel, type MealSection, Batch, CreateEntry, DeleteEntry, DiaryModel,
-  FetchEntries, FetchNutritionTargets, MainView, None as NoEffect, SearchFoods,
-  SearchPopup, SearchState, UpdateEntry,
+  type DiaryModel, type MealSection, CreateEntry, DeleteEntry, DiaryModel,
+  FetchEntries, MainView, None as NoEffect, SearchFoods, SearchPopup,
+  SearchState, UpdateEntry,
 }
 import meal_planner/fatsecret/diary/types as diary_types
-import meal_planner/fatsecret/foods/types as foods_types
 
 // ============================================================================
 // Constants

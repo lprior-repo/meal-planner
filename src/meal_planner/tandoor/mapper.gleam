@@ -15,8 +15,7 @@ import gleam/string
 import meal_planner/id
 import meal_planner/types/macros.{type Macros, Macros, calories}
 import meal_planner/types/recipe.{
-  type FodmapLevel, type Ingredient, type Recipe, High, Ingredient, Low, Medium,
-  Recipe,
+  type FodmapLevel, type Recipe, High, Low, Medium, Recipe,
 }
 
 /// Tandoor API nutrition data structure
@@ -230,13 +229,13 @@ fn keyword_is_sauce(keyword: String) -> Bool {
 ///
 /// Parameters:
 /// - keywords: Recipe keyword list
-/// - description: Recipe description text
+/// - _description: Recipe description text (unused but kept for future use)
 ///
 /// Returns:
 /// - FodmapLevel: Inferred level (Low, Medium, or High)
 fn infer_fodmap_level(
   keywords: List(String),
-  description: String,
+  _description: String,
 ) -> FodmapLevel {
   let lowercase_keywords =
     keywords
@@ -344,13 +343,6 @@ fn build_recipe_steps(instructions: List(String)) -> List(TandoorRecipeStep) {
       ingredients: [],
     )
   })
-}
-
-/// Helper type for ordering
-type Order {
-  Lt
-  Eq
-  Gt
 }
 
 /// Helper to convert recipes in bulk

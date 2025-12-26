@@ -6,8 +6,7 @@ import meal_planner/tandoor/client
 import meal_planner/tandoor/core/pagination.{type PaginatedResponse}
 import meal_planner/tandoor/shopping/types.{
   type ShoppingListEntryCreate, type ShoppingListEntryResponse,
-  type ShoppingListEntryUpdate, type ShoppingListQuery, ShoppingListEntryCreate,
-  ShoppingListEntryResponse, ShoppingListEntryUpdate, ShoppingListQuery,
+  type ShoppingListEntryUpdate, type ShoppingListQuery,
 }
 
 // Placeholder functions for API calls

@@ -12,7 +12,6 @@ import gleam/result
 import glint
 import meal_planner/cli/domains/nutrition/commands
 import meal_planner/config.{type Config}
-import meal_planner/ncp.{get_default_goals}
 
 /// Nutrition domain command for Glint CLI
 pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {

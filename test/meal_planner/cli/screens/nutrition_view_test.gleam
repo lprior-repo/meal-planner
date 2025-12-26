@@ -168,7 +168,6 @@ pub fn view_state_date_picker_test() {
   let view_state: NutritionViewState = DatePicker("2025-12-20")
   case view_state {
     DatePicker(date_input) -> date_input
-    _ -> ""
   }
   |> should.equal("2025-12-20")
 }

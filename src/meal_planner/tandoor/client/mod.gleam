@@ -3,7 +3,7 @@
 /// This module provides the core types and configuration management for the
 /// Tandoor API client. All other modules build upon these types.
 import gleam/int
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import meal_planner/tandoor/client/http.{
   type AuthMethod, type TandoorError, AuthenticationError, AuthorizationError,
   BadRequestError, BearerAuth, NetworkError, NotFoundError, ParseError,

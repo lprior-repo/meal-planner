@@ -2,7 +2,7 @@
 ///
 /// This module contains all data types and state for the weight tracking screen.
 /// Following the Model-View-Controller pattern, this is the Model layer.
-import gleam/option.{type Option, None, Some}
+import gleam/option.{type Option, None}
 import meal_planner/fatsecret/weight/types as weight_types
 
 // ============================================================================

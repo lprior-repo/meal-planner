@@ -14,10 +14,8 @@ import gleam/option.{None, Some}
 import gleam/string
 import meal_planner/cli/screens/weight/components/chart
 import meal_planner/cli/screens/weight/messages.{
-  type WeightMsg, CancelAddEntry, CancelDelete, CancelEditEntry, ClearError,
-  CommentInputChanged, ConfirmAddEntry, ConfirmDelete, ConfirmEditEntry,
-  DateConfirm, EditCommentChanged, EditWeightChanged, GoBack, KeyPressed,
-  Refresh, WeightInputChanged,
+  type WeightMsg, CommentInputChanged, DateConfirm, EditCommentChanged,
+  EditWeightChanged, WeightInputChanged,
 }
 import meal_planner/cli/screens/weight/model.{
   type WeightDisplayEntry, type WeightGoalType, type WeightModel, AddEntryView,

@@ -14,11 +14,9 @@ import gleam/option.{None, Some}
 import gleam/string
 import gleeunit/should
 import meal_planner/cli/components/progress_bar.{
-  type ColorScheme, type FillStyle, type MacroProgressBar, type MacroStatus,
-  type ProgressBarConfig, type ProgressBarState, type Threshold, AsciiFill,
-  AtTarget, GradientColor, GradientFill, InverseTrafficLight, MacroProgressBar,
-  Monochrome, Over, ProgressBarConfig, ProgressBarState, SegmentedFill,
-  SolidFill, Threshold, ThresholdBased, TrafficLight, Under, UnicodeFill,
+  AsciiFill, GradientColor, GradientFill, InverseTrafficLight, MacroProgressBar,
+  Monochrome, ProgressBarConfig, ProgressBarState, SegmentedFill, SolidFill,
+  Threshold, ThresholdBased, TrafficLight, UnicodeFill,
 }
 import shore/style
 

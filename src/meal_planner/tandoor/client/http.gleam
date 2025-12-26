@@ -23,7 +23,6 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import gleam/uri
-import meal_planner/logger
 
 // ============================================================================
 // Types

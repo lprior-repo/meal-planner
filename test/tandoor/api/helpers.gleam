@@ -7,15 +7,13 @@
 /// - Builder functions for customizing test data
 ///
 /// Reduces 150-200 lines of duplication across test files.
-import gleam/int
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/string
-import gleeunit/should
 import meal_planner/tandoor/client.{type ClientConfig, ApiResponse}
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/food.{type Food, type FoodSimple, Food, FoodSimple}
 import meal_planner/tandoor/keyword.{type Keyword, Keyword}
-import meal_planner/tandoor/property.{type Property, FoodProperty, Property}
+import meal_planner/tandoor/property.{type Property, Property}
 import meal_planner/tandoor/supermarket.{
   type SupermarketCategory, SupermarketCategory,
 }

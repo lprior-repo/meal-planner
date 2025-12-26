@@ -20,9 +20,7 @@
 /// let #(new_model, effect) = weight.update(model, messages.ShowAddEntry)
 /// let view_node = weight.view(new_model)
 /// ```
-import meal_planner/cli/screens/weight/messages.{
-  type WeightEffect, type WeightMsg,
-}
+import meal_planner/cli/screens/weight/messages.{type WeightMsg}
 import meal_planner/cli/screens/weight/model
 import meal_planner/cli/screens/weight/view
 import shore

@@ -17,9 +17,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import meal_planner/logger
-import meal_planner/tandoor/client/http.{
-  type AuthMethod, type TandoorError, ParseError,
-}
+import meal_planner/tandoor/client/http.{type TandoorError, ParseError}
 import meal_planner/tandoor/client/mod.{type ClientConfig}
 
 // ============================================================================

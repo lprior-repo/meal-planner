@@ -17,9 +17,6 @@
 import gleam/option.{None, Some}
 import meal_planner/generator/weekly.{type WeeklyMealPlan, WeeklyMealPlan}
 import meal_planner/id.{type UserId, job_id}
-import meal_planner/meal_plan/constraints.{
-  type Constraints, Balanced, Constraints,
-}
 import meal_planner/scheduler/types as scheduler_types
 import meal_planner/types/macros.{Macros}
 import pog

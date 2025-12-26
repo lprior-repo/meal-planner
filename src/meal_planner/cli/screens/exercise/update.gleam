@@ -16,10 +16,9 @@ import meal_planner/cli/screens/exercise/messages.{
   SearchQueryChanged, SearchStarted, UpdateEntry, ViewDetails,
 }
 import meal_planner/cli/screens/exercise/model.{
-  type ExerciseEntryInput, type ExerciseEntryUpdate, type ExerciseModel,
-  ConfirmDelete, DatePicker, DetailsView, EditEntry, ExerciseEditState,
-  ExerciseEntryInput, ExerciseEntryUpdate, ExerciseModel, ExerciseSearchState,
-  MainView, QuickAddPopup, SearchPopup,
+  type ExerciseModel, ConfirmDelete, DatePicker, DetailsView, EditEntry,
+  ExerciseEditState, ExerciseEntryInput, ExerciseEntryUpdate, ExerciseModel,
+  ExerciseSearchState, MainView, QuickAddPopup, SearchPopup,
 }
 import meal_planner/fatsecret/exercise/types as exercise_types
 

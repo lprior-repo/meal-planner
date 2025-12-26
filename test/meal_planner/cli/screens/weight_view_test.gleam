@@ -14,11 +14,9 @@
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/cli/screens/weight_view.{
-  type ChartPoint, type Gender, type UserProfile, type WeightDisplayEntry,
-  type WeightEditState, type WeightEffect, type WeightEntryInput,
-  type WeightGoalType, type WeightGoals, type WeightStatistics,
-  type WeightViewState, AddEntryView, ChartPoint, ChartView, ConfirmDeleteView,
-  DatePicker, EditEntryView, Female, GainWeight, GoalsView, ListView, LoseWeight,
+  type Gender, type WeightEffect, type WeightGoalType, type WeightViewState,
+  AddEntryView, ChartPoint, ChartView, ConfirmDeleteView, DatePicker,
+  EditEntryView, Female, GainWeight, GoalsView, ListView, LoseWeight,
   MaintainWeight, Male, Other, ProfileView, StatsView, UserProfile,
   WeightDisplayEntry, WeightEditState, WeightEntryInput, WeightGoals,
   WeightStatistics,

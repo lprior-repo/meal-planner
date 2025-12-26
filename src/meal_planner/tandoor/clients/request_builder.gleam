@@ -5,7 +5,7 @@
 import gleam/http
 import gleam/http/request
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/string
 import gleam/uri
 import meal_planner/tandoor/client.{

@@ -1,5 +1,5 @@
 /// Tests for weight screen model types and initialization
-import gleam/option.{None, Some}
+import gleam/option.{None}
 import gleeunit/should
 import meal_planner/cli/screens/weight/model
 
