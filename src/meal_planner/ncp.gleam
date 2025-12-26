@@ -10,10 +10,7 @@ import meal_planner/ncp/types.{
   type AdjustmentPlan, type DeviationResult, type NutritionData,
   type NutritionGoals, type NutritionState, type RecipeSuggestion,
   type ReconciliationResult, type ScoredRecipe, type TrendAnalysis,
-  NutritionData, NutritionGoals, RecipeSuggestion, ReconciliationResult,
-  TrendAnalysis,
 }
-import meal_planner/nutrition_constants
 import meal_planner/types/macros.{type Macros}
 
 /// Validate ensures goals are within reasonable ranges
