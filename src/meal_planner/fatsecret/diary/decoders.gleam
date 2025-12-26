@@ -8,7 +8,6 @@
 import birl
 import gleam/dynamic
 import gleam/dynamic/decode
-import gleam/float
 import gleam/int
 import gleam/option.{None, Some}
 import meal_planner/fatsecret/decoders/common.{
