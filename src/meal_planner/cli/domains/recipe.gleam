@@ -251,17 +251,42 @@ pub fn list_handler(
   config: Config,
   limit: Option(Int),
   offset: Option(Int),
-  _search: Option(String),
+  search: Option(String),
 ) -> Result(Nil, Nil) {
   let tandoor_config = create_tandoor_config(config)
 
   // Call Tandoor API to list recipes
   case recipe.list_recipes(tandoor_config, limit: limit, offset: offset) {
     Ok(response) -> {
+      // Filter results if search query provided
+      let filtered_results = case search {
+        Some(query) -> {
+          let query_lower = string.lowercase(query)
+          response.results
+          |> list.filter(fn(r) {
+            let name_match =
+              r.name
+              |> string.lowercase
+              |> string.contains(query_lower)
+
+            let description_match = case r.description {
+              Some(desc) ->
+                desc
+                |> string.lowercase
+                |> string.contains(query_lower)
+              None -> False
+            }
+
+            name_match || description_match
+          })
+        }
+        None -> response.results
+      }
+
       // Display results
       io.println(
         "\nRecipes (showing "
-        <> int.to_string(list.length(response.results))
+        <> int.to_string(list.length(filtered_results))
         <> " of "
         <> int.to_string(response.count)
         <> "):",
@@ -270,7 +295,7 @@ pub fn list_handler(
         "─────────────────────────────────────────────────────────────────────",
       )
 
-      response.results
+      filtered_results
       |> list.each(fn(r) {
         let description = case r.description {
           Some(desc) -> " - " <> desc
@@ -301,6 +326,29 @@ pub fn list_handler(
   }
 }
 
+/// Delete recipe by ID
+pub fn delete_handler(config: Config, recipe_id: Int) -> Result(Nil, Nil) {
+  let tandoor_config = create_tandoor_config(config)
+
+  // Call Tandoor API to delete recipe
+  case recipe.delete_recipe(tandoor_config, recipe_id: recipe_id) {
+    Ok(_) -> {
+      io.println("Recipe deleted successfully: " <> int.to_string(recipe_id))
+      Ok(Nil)
+    }
+    Error(client.NotFoundError(_)) -> {
+      io.println(
+        "Error: Recipe not found (ID: " <> int.to_string(recipe_id) <> ")",
+      )
+      Error(Nil)
+    }
+    Error(err) -> {
+      io.println("Error deleting recipe: " <> string.inspect(err))
+      Error(Nil)
+    }
+  }
+}
+
 // ============================================================================
 // Glint Command Handler
 // ============================================================================
@@ -312,6 +360,14 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
     glint.int_flag("limit")
     |> glint.flag_default(20)
     |> glint.flag_help("Maximum number of results"),
+  )
+  use offset <- glint.flag(
+    glint.int_flag("offset")
+    |> glint.flag_help("Offset for pagination (for list command)"),
+  )
+  use search <- glint.flag(
+    glint.string_flag("search")
+    |> glint.flag_help("Search query (for list command)"),
   )
   use _named, unnamed, flags <- glint.command()
 
@@ -362,9 +418,32 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       }
     }
     ["list"] -> {
-      // mp recipe list (placeholder)
-      io.println("Recipes: (list command)")
-      Ok(Nil)
+      // mp recipe list [--limit N] [--offset N] [--search QUERY]
+      let limit_opt = case limit(flags) {
+        Ok(l) -> Some(l)
+        Error(_) -> None
+      }
+      let offset_opt = case offset(flags) {
+        Ok(v) -> Some(v)
+        Error(_) -> None
+      }
+      let search_opt = case search(flags) {
+        Ok(v) -> Some(v)
+        Error(_) -> None
+      }
+      list_handler(config, limit_opt, offset_opt, search_opt)
+    }
+    ["delete", id_str] -> {
+      // mp recipe delete <ID>
+      case int.parse(id_str) {
+        Ok(recipe_id) -> delete_handler(config, recipe_id)
+        Error(_) -> {
+          io.println(
+            "Error: Invalid recipe ID. Expected a number, got: " <> id_str,
+          )
+          Error(Nil)
+        }
+      }
     }
     _ -> {
       // Show help
@@ -373,16 +452,22 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
       io.println("  mp recipe search <QUERY> [--limit N]")
       io.println("    Search for recipes by name or description")
       io.println("")
-      io.println("  mp recipe list [--limit N]")
-      io.println("    List all recipes")
+      io.println("  mp recipe list [--limit N] [--offset N] [--search QUERY]")
+      io.println("    List all recipes (supports pagination and search)")
       io.println("")
       io.println("  mp recipe detail <ID>")
       io.println("    Show full recipe details")
+      io.println("")
+      io.println("  mp recipe delete <ID>")
+      io.println("    Delete a recipe")
       io.println("")
       io.println("Examples:")
       io.println("  mp recipe search chicken")
       io.println("  mp recipe search 'pasta carbonara' --limit 5")
       io.println("  mp recipe detail 42")
+      io.println("  mp recipe list --limit 20 --offset 40")
+      io.println("  mp recipe list --search 'chicken'")
+      io.println("  mp recipe delete 42")
       Ok(Nil)
     }
   }
