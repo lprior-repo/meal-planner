@@ -26,10 +26,9 @@ import meal_planner/tandoor/client.{type ClientConfig}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/food.{type Food}
 import meal_planner/tandoor/ingredient.{type Ingredient}
-import meal_planner/tandoor/keyword.{type Keyword}
-import meal_planner/tandoor/types/nutrition.{
-  type NutritionInfo, nutrition_info_decoder,
-}
+import meal_planner/tandoor/step.{type Step}
+import meal_planner/tandoor/supermarket.{type SupermarketCategory}
+import meal_planner/tandoor/types/nutrition.{type NutritionInfo}
 
 // ============================================================================
 // Types
