@@ -194,12 +194,40 @@ pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
         }
       }
     }
+    ["daily-status"] -> {
+      let date_str = date(flags) |> result.unwrap("today")
+      case commands.generate_daily_status(config, date: date_str) {
+        Ok(report) -> {
+          io.println(report)
+          Ok(Nil)
+        }
+        Error(err) -> {
+          io.println("Error generating daily status: " <> err)
+          Error(Nil)
+        }
+      }
+    }
+    ["recommend-dinner"] -> {
+      let date_str = date(flags) |> result.unwrap("today")
+      case commands.recommend_dinner(config, date: date_str) {
+        Ok(report) -> {
+          io.println(report)
+          Ok(Nil)
+        }
+        Error(err) -> {
+          io.println("Error recommending dinner: " <> err)
+          Error(Nil)
+        }
+      }
+    }
     _ -> {
       io.println("Nutrition commands:")
       io.println("  mp nutrition report --date 2025-12-19")
       io.println("  mp nutrition goals")
       io.println("  mp nutrition trends --days 7")
       io.println("  mp nutrition compliance --date 2025-12-19 --tolerance 10")
+      io.println("  mp nutrition daily-status [--date YYYY-MM-DD]")
+      io.println("  mp nutrition recommend-dinner [--date YYYY-MM-DD]")
       Ok(Nil)
     }
   }
