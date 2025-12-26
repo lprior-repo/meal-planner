@@ -32,8 +32,6 @@ import meal_planner/tandoor/supermarket.{type SupermarketCategory}
 import meal_planner/tandoor/types/nutrition.{
   type NutritionInfo as NutritionInfoType,
 }
-import meal_planner/tandoor/unit.{type Unit}
-import meal_planner/tandoor/unit.{type Unit}
 
 // ============================================================================
 // Types
