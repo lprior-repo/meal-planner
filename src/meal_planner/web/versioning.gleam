@@ -15,7 +15,6 @@
 //// - Accept-Version: v2
 //// - Accept-Version: latest (resolves to newest version)
 
-import gleam/http.{type Header}
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -268,7 +267,7 @@ pub fn route_versioned(
   handler: fn(ApiVersion, wisp.Request) -> Option(wisp.Response),
 ) -> Option(wisp.Response) {
   case negotiate_version(req) {
-    Rejected(_reason) -> {
+    Rejected(_) -> {
       let version = extract_version(req)
       Some(version_not_supported(version))
     }
@@ -321,8 +320,8 @@ pub fn meets_minimum(version: ApiVersion, minimum: ApiVersion) -> Bool {
 // ============================================================================
 
 /// Convert order to integer
-fn order_to_int(order) -> Int {
-  case order {
+fn order_to_int(ord) -> Int {
+  case ord {
     order.Lt -> -1
     order.Eq -> 0
     order.Gt -> 1

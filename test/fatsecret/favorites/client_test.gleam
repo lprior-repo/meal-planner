@@ -5,7 +5,6 @@
 /// - Most eaten foods
 /// - Recently eaten foods
 /// - Favorite recipes
-import gleam/json
 import gleam/list
 import gleeunit/should
 import meal_planner/fatsecret/favorites/decoders

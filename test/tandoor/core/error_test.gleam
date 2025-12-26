@@ -6,6 +6,10 @@ import gleeunit
 import gleeunit/should
 import meal_planner/tandoor/core/error
 
+pub fn main() {
+  gleeunit.main()
+}
+
 pub fn test_authentication_error_to_string() {
   error.AuthenticationError
   |> error.error_to_string

@@ -1,313 +1,38 @@
-/// Recipe View Screen - Complete TUI Implementation
+/// Recipe View Screen - Implementation (being refactored)
 ///
 /// This module implements the recipe browser screen following Shore Framework
 /// (Elm Architecture) for browsing and viewing recipes from FatSecret.
 ///
-/// SCREEN FEATURES:
-/// - Browse recipes with pagination
-/// - Search recipes by name/keyword
-/// - View recipe details with ingredients
-/// - View nutrition information per serving
-/// - Save favorites
-/// - View cooking directions
-///
-/// ARCHITECTURE:
-/// - Model: RecipeModel (state container)
-/// - Msg: RecipeMsg (all possible events)
-/// - Update: recipe_update (state transitions)
-/// - View: recipe_view (rendering)
-import gleam/dict.{type Dict}
+/// REFACTORING IN PROGRESS:
+/// Types moved to: recipe/model.gleam and recipe/messages.gleam
+/// Main module: recipe/mod.gleam
+import gleam/dict
 import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/result
-import gleam/string
+import meal_planner/cli/screens/recipe/messages.{
+  type RecipeMsg, AddToMealPlan, ApplyFilters, ClearError, ClearFilters,
+  ClearSearch, GoBack, GoToPage, GotRecipeDetails, GotSearchResults, KeyPressed,
+  NextPage, NoOp, PreviousPage, Refresh, SearchQueryChanged, SearchStarted,
+  SearchTypeChanged, SetCuisineType, SetDietType, SetMaxCalories, SetMaxPrepTime,
+  SetMinProtein, SetSortBy, ShowDetailView, ShowDirectionsView,
+  ShowFavoritesView, ShowFilterView, ShowListView, ShowNutritionView,
+  ShowSearchPopup, ToggleFavorite, ViewRecipeDetails,
+}
+import meal_planner/cli/screens/recipe/model.{
+  type RecipeDetails, type RecipeEffect, type RecipeListItem, type RecipeModel,
+  type SearchType, type SortOption, ByCuisine, ByIngredient, ByName, DetailView,
+  DirectionsView, FavoritesView, FetchRecipeDetails, FilterView, ListView,
+  LoadFavorites, NoEffect, NutritionView, PaginationState, RecipeFilters,
+  RecipeListItem, RecipeModel, RecipeSearchState, RemoveFavorite, SaveFavorite,
+  SearchPopup, SearchRecipes, SortByCalories, SortByName, SortByPrepTime,
+  SortByRating, SortByRecent, default_filters,
+}
 import meal_planner/fatsecret/recipes/types as recipe_types
 import shore
-import shore/key
 import shore/style
 import shore/ui
-
-// ============================================================================
-// Types
-// ============================================================================
-
-/// Root state for the Recipe TUI screen
-pub type RecipeModel {
-  RecipeModel(
-    /// Current view state
-    view_state: RecipeViewState,
-    /// Search/browse results
-    recipes: List(RecipeListItem),
-    /// Currently selected recipe details
-    selected_recipe: Option(RecipeDetails),
-    /// Search state
-    search_state: RecipeSearchState,
-    /// Pagination state
-    pagination: PaginationState,
-    /// Loading state
-    is_loading: Bool,
-    /// Error message
-    error_message: Option(String),
-    /// Favorite recipe IDs
-    favorites: List(String),
-    /// Cache for recipe details
-    recipe_cache: Dict(String, RecipeDetails),
-    /// Filter settings
-    filters: RecipeFilters,
-    /// Recently viewed recipes
-    recent_recipes: List(RecipeListItem),
-  )
-}
-
-/// View state machine
-pub type RecipeViewState {
-  /// Recipe list/search view
-  ListView
-  /// Single recipe detail view
-  DetailView
-  /// Filter settings view
-  FilterView
-  /// Favorites list view
-  FavoritesView
-  /// Recipe directions/steps view
-  DirectionsView
-  /// Recipe nutrition view
-  NutritionView
-  /// Search popup
-  SearchPopup
-}
-
-/// Recipe list item for browse/search results
-pub type RecipeListItem {
-  RecipeListItem(
-    recipe_id: recipe_types.RecipeId,
-    recipe_name: String,
-    recipe_description: String,
-    calories_per_serving: Option(Float),
-    cooking_time_min: Option(Int),
-    number_of_servings: Float,
-    is_favorite: Bool,
-    rating: Option(Float),
-  )
-}
-
-/// Full recipe details
-pub type RecipeDetails {
-  RecipeDetails(
-    /// Basic info
-    recipe_id: recipe_types.RecipeId,
-    recipe_name: String,
-    recipe_description: String,
-    recipe_url: String,
-    /// Servings and prep
-    number_of_servings: Float,
-    preparation_time_min: Option(Int),
-    cooking_time_min: Option(Int),
-    /// Ingredients
-    ingredients: List(RecipeIngredient),
-    /// Directions
-    directions: List(RecipeDirection),
-    /// Categories
-    categories: List(String),
-    /// Nutrition per serving
-    nutrition: RecipeNutrition,
-    /// Rating info
-    rating: Option(Float),
-    rating_count: Option(Int),
-  )
-}
-
-/// Recipe ingredient
-pub type RecipeIngredient {
-  RecipeIngredient(
-    food_id: String,
-    food_name: String,
-    serving_id: String,
-    number_of_units: Float,
-    measurement_description: String,
-    ingredient_description: String,
-    ingredient_url: String,
-  )
-}
-
-/// Recipe direction/step
-pub type RecipeDirection {
-  RecipeDirection(direction_number: Int, direction_description: String)
-}
-
-/// Recipe nutrition per serving
-pub type RecipeNutrition {
-  RecipeNutrition(
-    calories: Float,
-    carbohydrate: Float,
-    protein: Float,
-    fat: Float,
-    fiber: Option(Float),
-    sugar: Option(Float),
-    saturated_fat: Option(Float),
-    sodium: Option(Float),
-    cholesterol: Option(Float),
-  )
-}
-
-/// Search state for recipe search
-pub type RecipeSearchState {
-  RecipeSearchState(
-    query: String,
-    search_type: SearchType,
-    is_loading: Bool,
-    error: Option(String),
-  )
-}
-
-/// Type of search to perform
-pub type SearchType {
-  /// Search by recipe name
-  ByName
-  /// Search by ingredient
-  ByIngredient
-  /// Search by cuisine type
-  ByCuisine
-}
-
-/// Pagination state
-pub type PaginationState {
-  PaginationState(
-    current_page: Int,
-    total_results: Int,
-    results_per_page: Int,
-    total_pages: Int,
-  )
-}
-
-/// Recipe filter settings
-pub type RecipeFilters {
-  RecipeFilters(
-    max_calories: Option(Int),
-    max_prep_time: Option(Int),
-    min_protein: Option(Int),
-    cuisine_type: Option(String),
-    diet_type: Option(String),
-    sort_by: SortOption,
-  )
-}
-
-/// Sort options for recipe list
-pub type SortOption {
-  SortByName
-  SortByCalories
-  SortByPrepTime
-  SortByRating
-  SortByRecent
-}
-
-/// Messages for the recipe screen
-pub type RecipeMsg {
-  // Navigation
-  ShowListView
-  ShowDetailView(recipe_id: recipe_types.RecipeId)
-  ShowFilterView
-  ShowFavoritesView
-  ShowDirectionsView
-  ShowNutritionView
-  ShowSearchPopup
-  GoBack
-
-  // Search
-  SearchQueryChanged(query: String)
-  SearchTypeChanged(search_type: SearchType)
-  SearchStarted
-  GotSearchResults(Result(#(List(RecipeListItem), Int), String))
-  ClearSearch
-
-  // Pagination
-  NextPage
-  PreviousPage
-  GoToPage(page: Int)
-
-  // Recipe Actions
-  ViewRecipeDetails(recipe_id: recipe_types.RecipeId)
-  GotRecipeDetails(Result(RecipeDetails, String))
-  ToggleFavorite(recipe_id: recipe_types.RecipeId)
-  AddToMealPlan(recipe_id: recipe_types.RecipeId)
-
-  // Filters
-  SetMaxCalories(calories: Option(Int))
-  SetMaxPrepTime(minutes: Option(Int))
-  SetMinProtein(grams: Option(Int))
-  SetCuisineType(cuisine: Option(String))
-  SetDietType(diet: Option(String))
-  SetSortBy(sort: SortOption)
-  ApplyFilters
-  ClearFilters
-
-  // UI
-  ClearError
-  KeyPressed(key: String)
-  Refresh
-  NoOp
-}
-
-/// Effects for the recipe screen
-pub type RecipeEffect {
-  NoEffect
-  SearchRecipes(
-    query: String,
-    search_type: SearchType,
-    page: Int,
-    filters: RecipeFilters,
-  )
-  FetchRecipeDetails(recipe_id: recipe_types.RecipeId)
-  SaveFavorite(recipe_id: recipe_types.RecipeId)
-  RemoveFavorite(recipe_id: recipe_types.RecipeId)
-  LoadFavorites
-  BatchEffects(effects: List(RecipeEffect))
-}
-
-// ============================================================================
-// Initialization
-// ============================================================================
-
-/// Create initial RecipeModel
-pub fn init() -> RecipeModel {
-  RecipeModel(
-    view_state: ListView,
-    recipes: [],
-    selected_recipe: None,
-    search_state: RecipeSearchState(
-      query: "",
-      search_type: ByName,
-      is_loading: False,
-      error: None,
-    ),
-    pagination: PaginationState(
-      current_page: 1,
-      total_results: 0,
-      results_per_page: 20,
-      total_pages: 0,
-    ),
-    is_loading: False,
-    error_message: None,
-    favorites: [],
-    recipe_cache: dict.new(),
-    filters: default_filters(),
-    recent_recipes: [],
-  )
-}
-
-/// Default filter settings
-pub fn default_filters() -> RecipeFilters {
-  RecipeFilters(
-    max_calories: None,
-    max_prep_time: None,
-    min_protein: None,
-    cuisine_type: None,
-    diet_type: None,
-    sort_by: SortByRating,
-  )
-}
 
 // ============================================================================
 // Update Function

@@ -103,3 +103,7 @@ coordination/orchestration/*
 claude-flow
 # Removed Windows wrapper files per user request
 hive-mind-prompt-*.txt
+
+# Performance tracking data and reports (keep structure, ignore data)
+.perf-tracking/test-execution.csv
+.perf-tracking/reports/

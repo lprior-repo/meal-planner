@@ -26,9 +26,16 @@ fn flexible_float() -> decode.Decoder(Float) {
   decode.one_of(decode.float, or: [
     {
       use s <- decode.then(decode.string)
+      // Try parsing as float first
       case float.parse(s) {
         Ok(f) -> decode.success(f)
-        Error(_) -> decode.failure(0.0, "Float")
+        Error(_) -> {
+          // Fall back to parsing as int then converting to float
+          case int.parse(s) {
+            Ok(i) -> decode.success(int.to_float(i))
+            Error(_) -> decode.failure(0.0, "Float")
+          }
+        }
       }
     },
   ])
@@ -66,27 +73,65 @@ pub fn nutrition_decoder() -> decode.Decoder(Nutrition) {
   use carbohydrate <- decode.field("carbohydrate", flexible_float())
   use protein <- decode.field("protein", flexible_float())
   use fat <- decode.field("fat", flexible_float())
-  use saturated_fat <- decode.field("saturated_fat", optional_flexible_float())
-  use polyunsaturated_fat <- decode.field(
+  use saturated_fat <- decode.optional_field(
+    "saturated_fat",
+    None,
+    optional_flexible_float(),
+  )
+  use polyunsaturated_fat <- decode.optional_field(
     "polyunsaturated_fat",
+    None,
     optional_flexible_float(),
   )
-  use monounsaturated_fat <- decode.field(
+  use monounsaturated_fat <- decode.optional_field(
     "monounsaturated_fat",
+    None,
     optional_flexible_float(),
   )
-  use trans_fat <- decode.field("trans_fat", optional_flexible_float())
-  use cholesterol <- decode.field("cholesterol", optional_flexible_float())
-  use sodium <- decode.field("sodium", optional_flexible_float())
-  use potassium <- decode.field("potassium", optional_flexible_float())
-  use fiber <- decode.field("fiber", optional_flexible_float())
-  use sugar <- decode.field("sugar", optional_flexible_float())
-  use added_sugars <- decode.field("added_sugars", optional_flexible_float())
-  use vitamin_a <- decode.field("vitamin_a", optional_flexible_float())
-  use vitamin_c <- decode.field("vitamin_c", optional_flexible_float())
-  use vitamin_d <- decode.field("vitamin_d", optional_flexible_float())
-  use calcium <- decode.field("calcium", optional_flexible_float())
-  use iron <- decode.field("iron", optional_flexible_float())
+  use trans_fat <- decode.optional_field(
+    "trans_fat",
+    None,
+    optional_flexible_float(),
+  )
+  use cholesterol <- decode.optional_field(
+    "cholesterol",
+    None,
+    optional_flexible_float(),
+  )
+  use sodium <- decode.optional_field("sodium", None, optional_flexible_float())
+  use potassium <- decode.optional_field(
+    "potassium",
+    None,
+    optional_flexible_float(),
+  )
+  use fiber <- decode.optional_field("fiber", None, optional_flexible_float())
+  use sugar <- decode.optional_field("sugar", None, optional_flexible_float())
+  use added_sugars <- decode.optional_field(
+    "added_sugars",
+    None,
+    optional_flexible_float(),
+  )
+  use vitamin_a <- decode.optional_field(
+    "vitamin_a",
+    None,
+    optional_flexible_float(),
+  )
+  use vitamin_c <- decode.optional_field(
+    "vitamin_c",
+    None,
+    optional_flexible_float(),
+  )
+  use vitamin_d <- decode.optional_field(
+    "vitamin_d",
+    None,
+    optional_flexible_float(),
+  )
+  use calcium <- decode.optional_field(
+    "calcium",
+    None,
+    optional_flexible_float(),
+  )
+  use iron <- decode.optional_field("iron", None, optional_flexible_float())
 
   decode.success(Nutrition(
     calories: calories,
@@ -130,12 +175,14 @@ pub fn serving_decoder() -> decode.Decoder(Serving) {
   use serving_id_str <- decode.field("serving_id", decode.string)
   use serving_description <- decode.field("serving_description", decode.string)
   use serving_url <- decode.field("serving_url", decode.string)
-  use metric_serving_amount <- decode.field(
+  use metric_serving_amount <- decode.optional_field(
     "metric_serving_amount",
+    None,
     optional_flexible_float(),
   )
-  use metric_serving_unit <- decode.field(
+  use metric_serving_unit <- decode.optional_field(
     "metric_serving_unit",
+    None,
     decode.optional(decode.string),
   )
   use number_of_units <- decode.field("number_of_units", flexible_float())
@@ -143,34 +190,76 @@ pub fn serving_decoder() -> decode.Decoder(Serving) {
     "measurement_description",
     decode.string,
   )
-  use is_default <- decode.field("is_default", decode.optional(flexible_int()))
+  use is_default <- decode.optional_field(
+    "is_default",
+    None,
+    decode.optional(flexible_int()),
+  )
 
   // Nutrition info is nested in the serving object
   use calories <- decode.field("calories", flexible_float())
   use carbohydrate <- decode.field("carbohydrate", flexible_float())
   use protein <- decode.field("protein", flexible_float())
   use fat <- decode.field("fat", flexible_float())
-  use saturated_fat <- decode.field("saturated_fat", optional_flexible_float())
-  use polyunsaturated_fat <- decode.field(
+  use saturated_fat <- decode.optional_field(
+    "saturated_fat",
+    None,
+    optional_flexible_float(),
+  )
+  use polyunsaturated_fat <- decode.optional_field(
     "polyunsaturated_fat",
+    None,
     optional_flexible_float(),
   )
-  use monounsaturated_fat <- decode.field(
+  use monounsaturated_fat <- decode.optional_field(
     "monounsaturated_fat",
+    None,
     optional_flexible_float(),
   )
-  use trans_fat <- decode.field("trans_fat", optional_flexible_float())
-  use cholesterol <- decode.field("cholesterol", optional_flexible_float())
-  use sodium <- decode.field("sodium", optional_flexible_float())
-  use potassium <- decode.field("potassium", optional_flexible_float())
-  use fiber <- decode.field("fiber", optional_flexible_float())
-  use sugar <- decode.field("sugar", optional_flexible_float())
-  use added_sugars <- decode.field("added_sugars", optional_flexible_float())
-  use vitamin_a <- decode.field("vitamin_a", optional_flexible_float())
-  use vitamin_c <- decode.field("vitamin_c", optional_flexible_float())
-  use vitamin_d <- decode.field("vitamin_d", optional_flexible_float())
-  use calcium <- decode.field("calcium", optional_flexible_float())
-  use iron <- decode.field("iron", optional_flexible_float())
+  use trans_fat <- decode.optional_field(
+    "trans_fat",
+    None,
+    optional_flexible_float(),
+  )
+  use cholesterol <- decode.optional_field(
+    "cholesterol",
+    None,
+    optional_flexible_float(),
+  )
+  use sodium <- decode.optional_field("sodium", None, optional_flexible_float())
+  use potassium <- decode.optional_field(
+    "potassium",
+    None,
+    optional_flexible_float(),
+  )
+  use fiber <- decode.optional_field("fiber", None, optional_flexible_float())
+  use sugar <- decode.optional_field("sugar", None, optional_flexible_float())
+  use added_sugars <- decode.optional_field(
+    "added_sugars",
+    None,
+    optional_flexible_float(),
+  )
+  use vitamin_a <- decode.optional_field(
+    "vitamin_a",
+    None,
+    optional_flexible_float(),
+  )
+  use vitamin_c <- decode.optional_field(
+    "vitamin_c",
+    None,
+    optional_flexible_float(),
+  )
+  use vitamin_d <- decode.optional_field(
+    "vitamin_d",
+    None,
+    optional_flexible_float(),
+  )
+  use calcium <- decode.optional_field(
+    "calcium",
+    None,
+    optional_flexible_float(),
+  )
+  use iron <- decode.optional_field("iron", None, optional_flexible_float())
 
   let nutrition =
     Nutrition(
@@ -325,9 +414,14 @@ fn food_search_list_decoder() -> decode.Decoder(List(FoodSearchResult)) {
 /// Decoder for foods.search response
 ///
 /// Handles pagination metadata and the food array/object quirk.
+/// When there are no results, the "food" field is absent.
 pub fn food_search_response_decoder() -> decode.Decoder(FoodSearchResponse) {
   use foods <- decode.field("foods", {
-    use food_list <- decode.field("food", food_search_list_decoder())
+    use food_list <- decode.optional_field(
+      "food",
+      [],
+      food_search_list_decoder(),
+    )
     use max_results <- decode.field("max_results", flexible_int())
     use total_results <- decode.field("total_results", flexible_int())
     use page_number <- decode.field("page_number", flexible_int())

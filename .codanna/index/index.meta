@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "data_source": {
+    "Tantivy": {
+      "path": "/home/lewis/src/meal-planner/.codanna/index/tantivy",
+      "doc_count": 201,
+      "timestamp": 1766439826
+    }
+  },
+  "symbol_count": 150,
+  "file_count": 6,
+  "last_modified": 1766439826,
+  "indexed_paths": [
+    "/home/lewis/src/meal-planner"
+  ]
+}

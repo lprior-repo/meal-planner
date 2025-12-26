@@ -12,16 +12,17 @@ import gleam/dynamic/decode
 import gleam/http
 import gleam/int
 import gleam/json
-import gleam/option.{type Option}
+import gleam/option.{type Option, None}
 import gleam/result
 
 import meal_planner/tandoor/core/ids
 import meal_planner/tandoor/food.{type Food}
 import meal_planner/tandoor/handlers/helpers
-import meal_planner/tandoor/shopping.{
+import meal_planner/tandoor/shopping/mod as shopping
+import meal_planner/tandoor/shopping/types.{
   type ShoppingListEntryCreate, type ShoppingListEntryResponse,
   type ShoppingListEntryUpdate, ShoppingListEntryCreate, ShoppingListEntryUpdate,
-  create_entry, delete_entry, get_entry, list_entries, update_entry,
+  ShoppingListQuery,
 }
 import meal_planner/tandoor/unit.{type Unit}
 
@@ -47,14 +48,19 @@ fn handle_list_entries(req: wisp.Request) -> wisp.Response {
       let limit = helpers.parse_int_param(query_params, "limit")
       let offset = helpers.parse_int_param(query_params, "offset")
 
-      case
-        list_entries(config, checked: checked, limit: limit, offset: offset)
-      {
+      let query =
+        ShoppingListQuery(
+          checked: checked,
+          mealplan: None,
+          updated_after: None,
+          limit: limit,
+          offset: offset,
+        )
+
+      case shopping.list_entries(config, query) {
         Ok(response) -> {
           let results_json =
-            json.array(response.results, fn(entry) {
-              encode_shopping_list_entry_response(entry)
-            })
+            json.array(response.results, encode_shopping_list_entry_response)
 
           helpers.paginated_response(
             results_json,
@@ -79,9 +85,9 @@ fn handle_create_entry(req: wisp.Request) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case create_entry(config, request) {
+          case shopping.create_entry(config, request) {
             Ok(entry) -> {
-              encode_shopping_list_entry(entry)
+              encode_shopping_list_entry_response(entry)
               |> json.to_string
               |> wisp.json_response(201)
             }
@@ -123,9 +129,9 @@ pub fn handle_shopping_list_entry_by_id(
 fn handle_get_entry(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case get_entry(config, entry_id: id) {
+      case shopping.get_entry(config, id) {
         Ok(entry) -> {
-          encode_shopping_list_entry(entry)
+          encode_shopping_list_entry_response(entry)
           |> json.to_string
           |> wisp.json_response(200)
         }
@@ -143,9 +149,9 @@ fn handle_update_entry(req: wisp.Request, id: Int) -> wisp.Response {
     Ok(request) -> {
       case helpers.get_authenticated_client() {
         Ok(config) -> {
-          case update_entry(config, entry_id: id, data: request) {
+          case shopping.update_entry(config, id, request) {
             Ok(entry) -> {
-              encode_shopping_list_entry(entry)
+              encode_shopping_list_entry_response(entry)
               |> json.to_string
               |> wisp.json_response(200)
             }
@@ -166,7 +172,7 @@ fn handle_update_entry(req: wisp.Request, id: Int) -> wisp.Response {
 fn handle_delete_entry(_req: wisp.Request, id: Int) -> wisp.Response {
   case helpers.get_authenticated_client() {
     Ok(config) -> {
-      case delete_entry(config, entry_id: id) {
+      case shopping.delete_entry(config, id) {
         Ok(Nil) -> wisp.response(204)
         Error(_) -> wisp.not_found()
       }
@@ -178,25 +184,6 @@ fn handle_delete_entry(_req: wisp.Request, id: Int) -> wisp.Response {
 // =============================================================================
 // JSON Encoding and Decoding
 // =============================================================================
-
-/// Encode a shopping list entry (internal type) to JSON
-fn encode_shopping_list_entry(entry: shopping.ShoppingListEntry) -> json.Json {
-  json.object([
-    #("id", json.int(ids.shopping_list_entry_id_to_int(entry.id))),
-    #("list_recipe", encode_optional_shopping_list_id(entry.list_recipe)),
-    #("food", encode_optional_food_id(entry.food)),
-    #("unit", encode_optional_unit_id(entry.unit)),
-    #("amount", json.float(entry.amount)),
-    #("order", json.int(entry.order)),
-    #("checked", json.bool(entry.checked)),
-    #("ingredient", encode_optional_ingredient_id(entry.ingredient)),
-    #("created_by", json.int(ids.user_id_to_int(entry.created_by))),
-    #("created_at", json.string(entry.created_at)),
-    #("updated_at", json.string(entry.updated_at)),
-    #("completed_at", helpers.encode_optional_string(entry.completed_at)),
-    #("delay_until", helpers.encode_optional_string(entry.delay_until)),
-  ])
-}
 
 /// Encode a shopping list entry response (from API) to JSON
 fn encode_shopping_list_entry_response(
@@ -334,33 +321,5 @@ fn parse_checked_param(params: List(#(String, String))) -> Option(Bool) {
     option.Some("true") -> option.Some(True)
     option.Some("false") -> option.Some(False)
     _ -> option.None
-  }
-}
-
-fn encode_optional_shopping_list_id(id: Option(ids.ShoppingListId)) -> json.Json {
-  case id {
-    option.Some(id) -> json.int(ids.shopping_list_id_to_int(id))
-    option.None -> json.null()
-  }
-}
-
-fn encode_optional_food_id(id: Option(ids.FoodId)) -> json.Json {
-  case id {
-    option.Some(id) -> json.int(ids.food_id_to_int(id))
-    option.None -> json.null()
-  }
-}
-
-fn encode_optional_unit_id(id: Option(ids.UnitId)) -> json.Json {
-  case id {
-    option.Some(id) -> json.int(ids.unit_id_to_int(id))
-    option.None -> json.null()
-  }
-}
-
-fn encode_optional_ingredient_id(id: Option(ids.IngredientId)) -> json.Json {
-  case id {
-    option.Some(id) -> json.int(ids.ingredient_id_to_int(id))
-    option.None -> json.null()
   }
 }

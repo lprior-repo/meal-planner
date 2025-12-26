@@ -5,7 +5,7 @@
 /// Recipe type, regardless of origin.
 import gleam/list
 import gleam/string
-import meal_planner/types.{type Recipe, is_vertical_diet_compliant}
+import meal_planner/types/recipe.{type Recipe, is_vertical_diet_compliant}
 
 /// MealCategory represents the food category for selection distribution
 pub type MealCategory {

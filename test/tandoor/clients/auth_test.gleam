@@ -8,6 +8,10 @@ import gleeunit/should
 import meal_planner/tandoor/client.{BearerAuth, SessionAuth}
 import meal_planner/tandoor/clients/auth
 
+pub fn main() {
+  gleeunit.main()
+}
+
 // ============================================================================
 // Config Factory Tests
 // ============================================================================

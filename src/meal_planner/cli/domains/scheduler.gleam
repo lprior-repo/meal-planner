@@ -18,9 +18,10 @@ import meal_planner/id.{type JobId}
 import meal_planner/postgres
 import meal_planner/scheduler/types.{
   type JobFrequency, type JobPriority, type JobStatus, type JobType,
-  type ScheduledJob, type TriggerSource, AutoSync, Completed, Critical, Daily,
-  DailyAdvisor, Dependent, EveryNHours, Failed, High, Low, Manual, Medium, Once,
-  Pending, Retry, Running, Scheduled, Weekly, WeeklyGeneration, WeeklyTrends,
+  type ScheduledJob, type TriggerSource, AgentWorkStream, AutoSync, Completed,
+  Critical, Daily, DailyAdvisor, Dependent, EveryNHours, Failed, High, Low,
+  Manual, Medium, Once, Pending, Retry, Running, Scheduled, Weekly,
+  WeeklyGeneration, WeeklyTrends,
 }
 import meal_planner/storage/scheduler as scheduler_storage
 import pog
@@ -233,6 +234,7 @@ pub fn format_job_type(job_type: JobType) -> String {
     AutoSync -> "Auto Sync"
     DailyAdvisor -> "Daily Advisor"
     WeeklyTrends -> "Weekly Trends"
+    AgentWorkStream -> "Agent Work Stream"
   }
 }
 

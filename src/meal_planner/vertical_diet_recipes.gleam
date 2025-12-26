@@ -5,7 +5,8 @@
 /// - Easily digestible, low FODMAP foods
 /// - Micronutrient-dense vegetables
 import meal_planner/id
-import meal_planner/types.{type Recipe, Ingredient, Low, Macros, Recipe}
+import meal_planner/types/macros.{Macros}
+import meal_planner/types/recipe.{type Recipe, Ingredient, Low, Recipe}
 
 /// Generate all Vertical Diet recipes
 pub fn all_recipes() -> List(Recipe) {

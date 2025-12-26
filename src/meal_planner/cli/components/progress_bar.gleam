@@ -212,7 +212,7 @@ pub fn render(config: ProgressBarConfig, state: ProgressBarState) -> String {
   let empty_width = config.width - filled_width
 
   // Get color based on scheme
-  let color = get_color(config.color_scheme, percentage, config.thresholds)
+  let _color = get_color(config.color_scheme, percentage, config.thresholds)
 
   // Build bar content
   let bar_content = case config.fill_style {
@@ -302,7 +302,7 @@ pub fn render_macro(bar: MacroProgressBar) -> String {
 
 /// Render macro progress bar as Shore node
 pub fn render_macro_node(bar: MacroProgressBar) -> shore.Node(msg) {
-  let percentage = calculate_percentage(bar.current, bar.target)
+  let _percentage = calculate_percentage(bar.current, bar.target)
   let status = get_macro_status(bar.current, bar.target, bar.tolerance)
   let color = case status {
     Under -> bar.under_color
@@ -355,7 +355,7 @@ fn render_gradient(filled: Int, empty: Int) -> String {
 }
 
 /// Render segmented fill
-fn render_segmented(filled: Int, empty: Int, total: Int) -> String {
+fn render_segmented(filled: Int, _empty: Int, total: Int) -> String {
   let segment_count = 10
   let segment_width = total / segment_count
   let filled_segments = filled / int.max(1, segment_width)

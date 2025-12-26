@@ -8,9 +8,14 @@ import meal_planner/id
 import meal_planner/ncp
 import meal_planner/postgres
 import meal_planner/storage/utils
-import meal_planner/types.{
+import meal_planner/types/micronutrients.{
+  decoder as micronutrients_decoder, to_json as micronutrients_to_json,
+}
+import meal_planner/types/user_profile.{
   type UserProfile, Active, Gain, Lose, Maintain, Moderate, Sedentary,
-  UserProfile,
+  new_user_profile, user_profile_activity_level, user_profile_bodyweight,
+  user_profile_goal, user_profile_meals_per_day,
+  user_profile_micronutrient_goals,
 }
 import pog
 
@@ -239,33 +244,35 @@ pub fn save_user_profile(
        meals_per_day = EXCLUDED.meals_per_day,
        micronutrient_goals = EXCLUDED.micronutrient_goals"
 
-  let activity_str = case profile.activity_level {
+  let activity_str = case user_profile_activity_level(profile) {
     Sedentary -> "sedentary"
     Moderate -> "moderate"
     Active -> "active"
   }
 
-  let goal_str = case profile.goal {
+  let goal_str = case user_profile_goal(profile) {
     Gain -> "gain"
     Maintain -> "maintain"
     Lose -> "lose"
   }
 
   // Encode micronutrient_goals to JSON string
-  let micronutrient_goals_json = case profile.micronutrient_goals {
+  let micronutrient_goals_json = case
+    user_profile_micronutrient_goals(profile)
+  {
     Some(goals) ->
       pog.nullable(
         pog.text,
-        Some(types.micronutrients_to_json(goals) |> json.to_string),
+        Some(micronutrients_to_json(goals) |> json.to_string),
       )
     None -> pog.null()
   }
 
   pog.query(sql)
-  |> pog.parameter(pog.float(profile.bodyweight))
+  |> pog.parameter(pog.float(user_profile_bodyweight(profile)))
   |> pog.parameter(pog.text(activity_str))
   |> pog.parameter(pog.text(goal_str))
-  |> pog.parameter(pog.int(profile.meals_per_day))
+  |> pog.parameter(pog.int(user_profile_meals_per_day(profile)))
   |> pog.parameter(micronutrient_goals_json)
   |> pog.execute(conn)
   |> result_to_storage_error
@@ -308,21 +315,43 @@ pub fn get_user_profile(
     // Decode micronutrient_goals from JSON string
     let micronutrient_goals = case micronutrient_goals_str {
       Some(json_str) ->
-        case json.parse(json_str, using: types.micronutrients_decoder()) {
+        case json.parse(json_str, using: micronutrients_decoder()) {
           Ok(goals) -> Some(goals)
           Error(_) -> None
         }
       None -> None
     }
 
-    decode.success(UserProfile(
-      id: id.user_id(int.to_string(user_id)),
-      bodyweight: bodyweight,
-      activity_level: activity_level,
-      goal: goal,
-      meals_per_day: meals_per_day,
-      micronutrient_goals: micronutrient_goals,
-    ))
+    // Assume data from DB is always valid - validation is done at insert time
+    case
+      new_user_profile(
+        id.user_id(int.to_string(user_id)),
+        bodyweight,
+        activity_level,
+        goal,
+        meals_per_day,
+        micronutrient_goals,
+      )
+    {
+      Ok(profile) -> decode.success(profile)
+      Error(_) -> {
+        // This should not happen with valid DB data
+        // Return a default profile
+        let default_result =
+          new_user_profile(
+            id.user_id(int.to_string(user_id)),
+            70.0,
+            Moderate,
+            Maintain,
+            3,
+            None,
+          )
+        case default_result {
+          Ok(p) -> decode.success(p)
+          Error(_) -> panic as "Should not reach here"
+        }
+      }
+    }
   }
 
   case

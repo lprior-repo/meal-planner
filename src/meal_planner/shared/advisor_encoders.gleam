@@ -6,7 +6,6 @@
 /// - RecommendationReport (meal adjustments and suggestions)
 /// - Supporting types (Macros, MacroTrend, MealAdjustment, Insight, etc.)
 import gleam/json
-import gleam/list
 import gleam/option.{type Option, None, Some}
 import meal_planner/advisor/daily_recommendations as daily_rec
 import meal_planner/advisor/recommendations as rec_types

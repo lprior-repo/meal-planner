@@ -18,12 +18,10 @@
 /// - Update: nutrition_update (state transitions)
 /// - View: nutrition_view (rendering)
 import birl
-import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/result
 import gleam/string
 import shore
 import shore/style
@@ -1269,7 +1267,7 @@ fn view_meal_breakdown(model: NutritionModel) -> shore.Node(NutritionMsg) {
 
 /// Render nutrient details view
 fn view_nutrient_details(
-  model: NutritionModel,
+  _model: NutritionModel,
   nutrient: NutrientType,
 ) -> shore.Node(NutritionMsg) {
   let name = nutrient_type_to_string(nutrient)

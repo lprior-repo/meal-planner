@@ -4,7 +4,7 @@ import gleam/int
 import gleam/list
 import gleam/string
 import meal_planner/nutrition_constants
-import meal_planner/types.{type Macros}
+import meal_planner/types/macros.{type Macros}
 
 /// NutritionGoals represents daily macro targets
 pub type NutritionGoals {

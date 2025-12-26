@@ -2,13 +2,13 @@
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import meal_planner/id
-import meal_planner/types.{
+import meal_planner/email/command.{
   type DayOfWeek, type EmailCommand, type EmailCommandError, type EmailRequest,
   type MealType, type RegenerationScope, AddPreference, AdjustMeal, Breakfast,
   Dinner, EmailRequest, FullWeek, InvalidCommand, Lunch, RegeneratePlan,
-  RemoveDislike, SingleDay, SingleMeal, SkipMeal, Snack, day_of_week_from_string,
+  RemoveDislike, SkipMeal, Snack, day_of_week_from_string,
 }
+import meal_planner/id
 
 /// Command pattern matching configuration
 type CommandPattern {
@@ -141,13 +141,13 @@ fn extract_regeneration_scope(body: String) -> Option(RegenerationScope) {
 fn extract_regeneration_scope_fallback(
   body: String,
 ) -> Option(RegenerationScope) {
-  case string.contains(body, "day") {
-    True -> Some(SingleDay)
-    False ->
-      case string.contains(body, "meal") {
-        True -> Some(SingleMeal)
-        False -> None
-      }
+  // SingleDay and SingleMeal require day/meal parameters from the body
+  // For now, we return None since the parser can't extract those details yet
+  // TODO: Extract day of week and meal type from body to create SingleDay/SingleMeal
+  case string.contains(body, "day"), string.contains(body, "meal") {
+    True, _ -> None
+    _, True -> None
+    False, False -> None
   }
 }
 

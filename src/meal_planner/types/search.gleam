@@ -1,30 +1,15 @@
-/// Food search types and operations
+/// Food search JSON codec functions
 ///
-/// Unified search results across USDA and custom foods.
+/// Provides JSON serialization/deserialization for search types defined in types/food.gleam
 import gleam/dynamic/decode.{type Decoder}
 import gleam/json.{type Json}
-import gleam/option.{type Option}
 import meal_planner/id.{fdc_id, fdc_id_decoder, fdc_id_to_json}
-import meal_planner/types.{
+import meal_planner/types/custom_food.{
+  decoder as custom_food_decoder, to_json as custom_food_to_json,
+}
+import meal_planner/types/food.{
   type FoodSearchResponse, type FoodSearchResult, CustomFoodResult,
-  FoodSearchResponse, UsdaFoodResult, custom_food_decoder, custom_food_to_json,
-}
-
-/// Search error types
-pub type FoodSearchError {
-  DatabaseError(String)
-  InvalidQuery(String)
-}
-
-/// Search filter options
-pub type SearchFilters {
-  SearchFilters(
-    verified_only: Bool,
-    // Show only verified USDA foundation/SR legacy foods
-    branded_only: Bool,
-    // Show only branded commercial foods
-    category: Option(String),
-  )
+  FoodSearchResponse, UsdaFoodResult,
 }
 
 // ============================================================================

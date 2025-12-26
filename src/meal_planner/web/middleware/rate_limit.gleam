@@ -24,7 +24,6 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/result
 import gleam/string
 import wisp
 
@@ -290,7 +289,7 @@ fn get_user_id(req: wisp.Request) -> String {
 /// }
 /// ```
 pub fn require_rate_limit(
-  req: wisp.Request,
+  _req: wisp.Request,
   limiter: RateLimiter,
   user_id: String,
   next: fn(RateLimiter) -> wisp.Response,

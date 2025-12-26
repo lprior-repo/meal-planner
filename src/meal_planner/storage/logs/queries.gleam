@@ -10,13 +10,15 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import meal_planner/config
 import meal_planner/id
-import meal_planner/storage/foods.{type UsdaFood, UsdaFood}
+import meal_planner/storage/foods.{type UsdaFood}
+import meal_planner/storage/foods/types.{UsdaFood}
 import meal_planner/storage/profile.{type StorageError, DatabaseError}
 import meal_planner/storage/utils
-import meal_planner/types.{
+import meal_planner/types/food.{
   type DailyLog, type FoodLogEntry, Breakfast, DailyLog, Dinner, FoodLogEntry,
-  Lunch, Macros, Snack,
+  Lunch, Snack,
 }
+import meal_planner/types/macros.{Macros}
 import meal_planner/utils/macros as macros_utils
 import meal_planner/utils/micronutrients as micro_utils
 import pog

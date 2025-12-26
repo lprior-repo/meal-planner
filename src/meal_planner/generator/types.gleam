@@ -10,7 +10,8 @@ import gleam/option.{None, Some}
 import meal_planner/fatsecret/profile/types as fatsecret_profile
 import meal_planner/generator/weekly
 import meal_planner/grocery_list
-import meal_planner/types
+import meal_planner/types/json as mp_json
+import meal_planner/types/macros
 
 // ============================================================================
 // Generation Request Types
@@ -102,9 +103,9 @@ pub type PrepStep {
 pub type WeeklyMacros {
   WeeklyMacros(
     /// Total macros for the entire week
-    weekly_total: types.Macros,
+    weekly_total: macros.Macros,
     /// Average daily macros
-    daily_average: types.Macros,
+    daily_average: macros.Macros,
     /// Daily macro breakdowns with comparison status
     daily_breakdowns: List(DailyMacroBreakdown),
   )
@@ -116,11 +117,11 @@ pub type DailyMacroBreakdown {
     /// Day name (Monday, Tuesday, etc.)
     day: String,
     /// Actual macros for the day
-    actual: types.Macros,
+    actual: macros.Macros,
     /// Daily target macros
-    target: types.Macros,
+    target: macros.Macros,
     /// Deviation from target (actual - target)
-    deviation: types.Macros,
+    deviation: macros.Macros,
     /// Total calories for the day
     calories: Float,
   )
@@ -153,7 +154,7 @@ fn locked_meal_to_json(lm: weekly.LockedMeal) -> Json {
   json.object([
     #("day", json.string(lm.day)),
     #("meal_type", json.string(meal_type_to_string(lm.meal_type))),
-    #("recipe", types.recipe_to_json(lm.recipe)),
+    #("recipe", mp_json.recipe_to_json(lm.recipe)),
   ])
 }
 
@@ -217,7 +218,7 @@ fn weekly_meal_plan_to_json(plan: weekly.WeeklyMealPlan) -> Json {
   json.object([
     #("week_of", json.string(plan.week_of)),
     #("days", json.array(plan.days, day_meals_to_json)),
-    #("target_macros", types.macros_to_json(plan.target_macros)),
+    #("target_macros", mp_json.macros_to_json(plan.target_macros)),
   ])
 }
 
@@ -225,9 +226,9 @@ fn weekly_meal_plan_to_json(plan: weekly.WeeklyMealPlan) -> Json {
 fn day_meals_to_json(day: weekly.DayMeals) -> Json {
   json.object([
     #("day", json.string(day.day)),
-    #("breakfast", types.recipe_to_json(day.breakfast)),
-    #("lunch", types.recipe_to_json(day.lunch)),
-    #("dinner", types.recipe_to_json(day.dinner)),
+    #("breakfast", mp_json.recipe_to_json(day.breakfast)),
+    #("lunch", mp_json.recipe_to_json(day.lunch)),
+    #("dinner", mp_json.recipe_to_json(day.dinner)),
   ])
 }
 
@@ -273,8 +274,8 @@ fn prep_step_to_json(step: PrepStep) -> Json {
 /// Encode WeeklyMacros to JSON
 pub fn weekly_macros_to_json(wm: WeeklyMacros) -> Json {
   json.object([
-    #("weekly_total", types.macros_to_json(wm.weekly_total)),
-    #("daily_average", types.macros_to_json(wm.daily_average)),
+    #("weekly_total", mp_json.macros_to_json(wm.weekly_total)),
+    #("daily_average", mp_json.macros_to_json(wm.daily_average)),
     #(
       "daily_breakdowns",
       json.array(wm.daily_breakdowns, daily_macro_breakdown_to_json),
@@ -286,9 +287,9 @@ pub fn weekly_macros_to_json(wm: WeeklyMacros) -> Json {
 fn daily_macro_breakdown_to_json(dmb: DailyMacroBreakdown) -> Json {
   json.object([
     #("day", json.string(dmb.day)),
-    #("actual", types.macros_to_json(dmb.actual)),
-    #("target", types.macros_to_json(dmb.target)),
-    #("deviation", types.macros_to_json(dmb.deviation)),
+    #("actual", mp_json.macros_to_json(dmb.actual)),
+    #("target", mp_json.macros_to_json(dmb.target)),
+    #("deviation", mp_json.macros_to_json(dmb.deviation)),
     #("calories", json.float(dmb.calories)),
   ])
 }
@@ -331,7 +332,7 @@ fn constraints_decoder() -> Decoder(weekly.Constraints) {
 fn locked_meal_decoder() -> Decoder(weekly.LockedMeal) {
   use day <- decode.field("day", decode.string)
   use meal_type <- decode.field("meal_type", meal_type_decoder())
-  use recipe <- decode.field("recipe", types.recipe_decoder())
+  use recipe <- decode.field("recipe", mp_json.recipe_decoder())
   decode.success(weekly.LockedMeal(
     day: day,
     meal_type: meal_type,
@@ -436,8 +437,8 @@ fn prep_step_decoder() -> Decoder(PrepStep) {
 
 /// Decoder for WeeklyMacros
 pub fn weekly_macros_decoder() -> Decoder(WeeklyMacros) {
-  use weekly_total <- decode.field("weekly_total", types.macros_decoder())
-  use daily_average <- decode.field("daily_average", types.macros_decoder())
+  use weekly_total <- decode.field("weekly_total", mp_json.macros_decoder())
+  use daily_average <- decode.field("daily_average", mp_json.macros_decoder())
   use daily_breakdowns <- decode.field(
     "daily_breakdowns",
     decode.list(daily_macro_breakdown_decoder()),
@@ -452,9 +453,9 @@ pub fn weekly_macros_decoder() -> Decoder(WeeklyMacros) {
 /// Decoder for DailyMacroBreakdown
 fn daily_macro_breakdown_decoder() -> Decoder(DailyMacroBreakdown) {
   use day <- decode.field("day", decode.string)
-  use actual <- decode.field("actual", types.macros_decoder())
-  use target <- decode.field("target", types.macros_decoder())
-  use deviation <- decode.field("deviation", types.macros_decoder())
+  use actual <- decode.field("actual", mp_json.macros_decoder())
+  use target <- decode.field("target", mp_json.macros_decoder())
+  use deviation <- decode.field("deviation", mp_json.macros_decoder())
   use calories <- decode.field("calories", decode.float)
   decode.success(DailyMacroBreakdown(
     day: day,

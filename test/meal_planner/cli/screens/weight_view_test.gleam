@@ -14,11 +14,9 @@
 import gleam/option.{None, Some}
 import gleeunit/should
 import meal_planner/cli/screens/weight_view.{
-  type ChartPoint, type Gender, type UserProfile, type WeightDisplayEntry,
-  type WeightEditState, type WeightEffect, type WeightEntryInput,
-  type WeightGoalType, type WeightGoals, type WeightStatistics,
-  type WeightViewState, AddEntryView, ChartPoint, ChartView, ConfirmDeleteView,
-  DatePicker, EditEntryView, Female, GainWeight, GoalsView, ListView, LoseWeight,
+  type Gender, type WeightEffect, type WeightGoalType, type WeightViewState,
+  AddEntryView, ChartPoint, ChartView, ConfirmDeleteView, DatePicker,
+  EditEntryView, Female, GainWeight, GoalsView, ListView, LoseWeight,
   MaintainWeight, Male, Other, ProfileView, StatsView, UserProfile,
   WeightDisplayEntry, WeightEditState, WeightEntryInput, WeightGoals,
   WeightStatistics,
@@ -103,7 +101,6 @@ pub fn view_state_list_view_test() {
   let view_state: WeightViewState = ListView
   case view_state {
     ListView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -112,7 +109,6 @@ pub fn view_state_add_entry_view_test() {
   let view_state: WeightViewState = AddEntryView
   case view_state {
     AddEntryView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -121,7 +117,6 @@ pub fn view_state_edit_entry_view_test() {
   let view_state: WeightViewState = EditEntryView
   case view_state {
     EditEntryView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -132,7 +127,6 @@ pub fn view_state_confirm_delete_view_test() {
   case view_state {
     ConfirmDeleteView(id) ->
       weight_types.weight_entry_id_to_string(id) == "entry_123"
-    _ -> False
   }
   |> should.be_true
 }
@@ -141,7 +135,6 @@ pub fn view_state_goals_view_test() {
   let view_state: WeightViewState = GoalsView
   case view_state {
     GoalsView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -150,7 +143,6 @@ pub fn view_state_stats_view_test() {
   let view_state: WeightViewState = StatsView
   case view_state {
     StatsView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -159,7 +151,6 @@ pub fn view_state_chart_view_test() {
   let view_state: WeightViewState = ChartView
   case view_state {
     ChartView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -168,7 +159,6 @@ pub fn view_state_profile_view_test() {
   let view_state: WeightViewState = ProfileView
   case view_state {
     ProfileView -> True
-    _ -> False
   }
   |> should.be_true
 }
@@ -177,7 +167,6 @@ pub fn view_state_date_picker_test() {
   let view_state: WeightViewState = DatePicker("2025-12-20")
   case view_state {
     DatePicker(date) -> date == "2025-12-20"
-    _ -> False
   }
   |> should.be_true
 }

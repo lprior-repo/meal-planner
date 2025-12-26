@@ -124,10 +124,8 @@ pub fn parse_date_to_int(date_str: String) -> option.Option(Int) {
       // Try to parse YYYY-MM-DD format
       case string.split(date_str, "-") {
         [year_str, month_str, day_str] -> {
-          case
-            #(int.parse(year_str), int.parse(month_str), int.parse(day_str))
-          {
-            #(Ok(_year), Ok(_month), Ok(_day)) -> {
+          case int.parse(year_str), int.parse(month_str), int.parse(day_str) {
+            Ok(_year), Ok(_month), Ok(_day) -> {
               case birl.from_naive(date_str <> "T00:00:00") {
                 Ok(dt) -> {
                   let seconds = birl.to_unix(dt)
@@ -137,7 +135,7 @@ pub fn parse_date_to_int(date_str: String) -> option.Option(Int) {
                 Error(_) -> None
               }
             }
-            _ -> None
+            _, _, _ -> None
           }
         }
         _ -> None

@@ -5,7 +5,8 @@
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import meal_planner/types.{type FoodLogEntry, type Macros, Macros}
+import meal_planner/types/food.{type FoodLogEntry}
+import meal_planner/types/macros.{type Macros, Macros}
 
 /// Calculate total macros from food log entries
 pub fn calculate_total_macros(entries: List(FoodLogEntry)) -> Macros {
