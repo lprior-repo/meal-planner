@@ -5,7 +5,7 @@ import gleam/json
 import gleam/option.{None, Some}
 import gleam/result
 import meal_planner/id
-import meal_planner/ncp
+import meal_planner/ncp/types as ncp_types
 import meal_planner/postgres
 import meal_planner/storage/utils
 import meal_planner/types/micronutrients.{
@@ -65,7 +65,7 @@ pub fn start_pool(config: DbConfig) -> Result(pog.Connection, String) {
 /// Save nutrition state for a specific date
 pub fn save_nutrition_state(
   conn: pog.Connection,
-  state: ncp.NutritionState,
+  state: ncp_types.NutritionState,
 ) -> Result(Nil, StorageError) {
   let sql =
     "INSERT INTO nutrition_state (date, protein, fat, carbs, calories, synced_at)
@@ -92,7 +92,7 @@ pub fn save_nutrition_state(
 pub fn get_nutrition_state(
   conn: pog.Connection,
   date: String,
-) -> Result(ncp.NutritionState, StorageError) {
+) -> Result(ncp_types.NutritionState, StorageError) {
   let sql =
     "SELECT date, protein, fat, carbs, calories, synced_at::text
      FROM nutrition_state WHERE date = $1"
@@ -104,9 +104,9 @@ pub fn get_nutrition_state(
     use carbs <- decode.field(3, decode.float)
     use calories <- decode.field(4, decode.float)
     use synced_at <- decode.field(5, decode.string)
-    decode.success(ncp.NutritionState(
+    decode.success(ncp_types.NutritionState(
       date: date,
-      consumed: ncp.NutritionData(
+      consumed: ncp_types.NutritionData(
         protein: protein,
         fat: fat,
         carbs: carbs,
@@ -133,7 +133,7 @@ pub fn get_nutrition_state(
 pub fn get_nutrition_history(
   conn: pog.Connection,
   limit: Int,
-) -> Result(List(ncp.NutritionState), StorageError) {
+) -> Result(List(ncp_types.NutritionState), StorageError) {
   let sql =
     "SELECT date, protein, fat, carbs, calories, synced_at::text
      FROM nutrition_state ORDER BY date DESC LIMIT $1"
@@ -145,9 +145,9 @@ pub fn get_nutrition_history(
     use carbs <- decode.field(3, decode.float)
     use calories <- decode.field(4, decode.float)
     use synced_at <- decode.field(5, decode.string)
-    decode.success(ncp.NutritionState(
+    decode.success(ncp_types.NutritionState(
       date: date,
-      consumed: ncp.NutritionData(
+      consumed: ncp_types.NutritionData(
         protein: protein,
         fat: fat,
         carbs: carbs,
@@ -173,7 +173,7 @@ pub fn get_nutrition_history(
 /// Save nutrition goals
 pub fn save_goals(
   conn: pog.Connection,
-  goals: ncp.NutritionGoals,
+  goals: ncp_types.NutritionGoals,
 ) -> Result(Nil, StorageError) {
   let sql =
     "INSERT INTO nutrition_goals (id, daily_protein, daily_fat, daily_carbs, daily_calories)
@@ -197,7 +197,7 @@ pub fn save_goals(
 /// Get nutrition goals
 pub fn get_goals(
   conn: pog.Connection,
-) -> Result(ncp.NutritionGoals, StorageError) {
+) -> Result(ncp_types.NutritionGoals, StorageError) {
   let sql =
     "SELECT daily_protein, daily_fat, daily_carbs, daily_calories
      FROM nutrition_goals WHERE id = 1"
@@ -207,7 +207,7 @@ pub fn get_goals(
     use daily_fat <- decode.field(1, decode.float)
     use daily_carbs <- decode.field(2, decode.float)
     use daily_calories <- decode.field(3, decode.float)
-    decode.success(ncp.NutritionGoals(
+    decode.success(ncp_types.NutritionGoals(
       daily_protein: daily_protein,
       daily_fat: daily_fat,
       daily_carbs: daily_carbs,

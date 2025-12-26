@@ -8,6 +8,10 @@ import gleam/option.{None, Some}
 import gleam/string
 import meal_planner/mvp_recipes
 import meal_planner/ncp
+import meal_planner/ncp/types.{
+  type DeviationResult, type NutritionData, type NutritionGoals,
+  type ScoredRecipe, NutritionData,
+}
 import meal_planner/types/macros.{type Macros, Macros}
 import meal_planner/web/responses
 import wisp
@@ -120,8 +124,8 @@ fn parse_meals_from_query(
 
 fn calculate_consumed(
   meals: List(#(String, Float)),
-  recipes: List(ncp.ScoredRecipe),
-) -> ncp.NutritionData {
+  recipes: List(ScoredRecipe),
+) -> NutritionData {
   let totals =
     list.fold(meals, Macros(0.0, 0.0, 0.0), fn(acc, meal) {
       let #(name, servings) = meal
@@ -138,7 +142,7 @@ fn calculate_consumed(
       }
     })
 
-  ncp.NutritionData(
+  NutritionData(
     protein: totals.protein,
     fat: totals.fat,
     carbs: totals.carbs,
@@ -150,7 +154,7 @@ fn calc_calories(m: Macros) -> Float {
   { m.protein *. 4.0 } +. { m.fat *. 9.0 } +. { m.carbs *. 4.0 }
 }
 
-fn nutrition_data_to_json(n: ncp.NutritionData) -> json.Json {
+fn nutrition_data_to_json(n: NutritionData) -> json.Json {
   json.object([
     #("protein", json.float(n.protein)),
     #("fat", json.float(n.fat)),
@@ -159,7 +163,7 @@ fn nutrition_data_to_json(n: ncp.NutritionData) -> json.Json {
   ])
 }
 
-fn goals_to_json(g: ncp.NutritionGoals) -> json.Json {
+fn goals_to_json(g: NutritionGoals) -> json.Json {
   json.object([
     #("protein", json.float(g.daily_protein)),
     #("fat", json.float(g.daily_fat)),
@@ -168,7 +172,7 @@ fn goals_to_json(g: ncp.NutritionGoals) -> json.Json {
   ])
 }
 
-fn deviation_to_json(d: ncp.DeviationResult) -> json.Json {
+fn deviation_to_json(d: DeviationResult) -> json.Json {
   json.object([
     #("protein_pct", json.float(d.protein_pct)),
     #("fat_pct", json.float(d.fat_pct)),

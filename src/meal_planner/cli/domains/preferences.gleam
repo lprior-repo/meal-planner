@@ -14,7 +14,8 @@ import gleam/string
 import glint
 import meal_planner/config.{type Config}
 import meal_planner/id
-import meal_planner/ncp.{type NutritionGoals, NutritionGoals}
+import meal_planner/ncp
+import meal_planner/ncp/types.{type NutritionGoals, NutritionGoals}
 import meal_planner/postgres
 import meal_planner/storage/profile
 import meal_planner/types/user_profile.{
