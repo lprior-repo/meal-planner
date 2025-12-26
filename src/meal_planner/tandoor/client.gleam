@@ -32,7 +32,7 @@ import meal_planner/tandoor/recipe.{
 import meal_planner/tandoor/step.{type Step}
 import meal_planner/tandoor/supermarket.{type SupermarketCategory}
 import meal_planner/tandoor/types/nutrition.{type NutritionInfo}
-import meal_planner/tandoor/unit.{type Unit}
+import meal_planner/tandoor/unit
 
 // ============================================================================
 // Types
@@ -913,6 +913,13 @@ pub type RecipeDetail =
 pub type Keyword =
   KeywordType
 
+/// Unit of measurement for ingredients
+///
+/// This type alias points to authoritative Unit type defined in
+/// meal_planner/tandoor/unit.
+pub type Unit =
+  unit.Unit
+
 /// Paginated recipe list response
 pub type RecipeListResponse {
   RecipeListResponse(
@@ -952,23 +959,9 @@ fn supermarket_category_decoder() -> decode.Decoder(SupermarketCategory) {
   ))
 }
 
-/// Decoder for Unit
-fn unit_decoder() -> decode.Decoder(Unit) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.field("name", decode.string)
-  use plural_name <- decode.optional_field(
-    "plural_name",
-    None,
-    decode.optional(decode.string),
-  )
-  use description <- decode.optional_field("description", "", decode.string)
-
-  decode.success(Unit(
-    id: id,
-    name: name,
-    plural_name: plural_name,
-    description: description,
-  ))
+/// Decoder for Unit - delegates to unit.decode_unit()
+fn unit_decoder() -> decode.Decoder(unit.Unit) {
+  unit.decode_unit()
 }
 
 /// Decoder for Food
