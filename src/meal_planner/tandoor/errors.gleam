@@ -14,6 +14,7 @@
 /// - NotFound: Resource not found
 /// - Validation: Invalid input data
 import gleam/http/response
+import gleam/int
 
 // ============================================================================
 // HTTP Error
@@ -76,12 +77,7 @@ pub type TandoorError {
 pub fn http_error_from_response(
   response: response.Response(String),
 ) -> HttpError {
-  let body =
-    response.body
-    |> string.from_utf8
-    |> result.unwrap(or: "<no body>")
-
-  HttpError(status_code: response.status, body: body, response: response)
+  HttpError(status_code: response.status, body: response.body, response: response)
 }
 
 /// Convert HTTP error to TandoorError

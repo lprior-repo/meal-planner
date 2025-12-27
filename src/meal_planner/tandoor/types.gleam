@@ -5,7 +5,7 @@
 // dependencies on other Tandoor submodules, we avoid circular import cycles.
 
 import gleam/dynamic/decode
-import gleam/option.{type Option}
+import gleam/option.{type Option, None}
 
 /// Basic recipe type for API responses (basic fields for list view)
 ///

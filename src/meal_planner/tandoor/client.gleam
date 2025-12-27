@@ -23,12 +23,19 @@ import gleam/result
 import gleam/string
 import gleam/uri
 import meal_planner/logger
-import meal_planner/tandoor/food.{type Food}
-import meal_planner/tandoor/ingredient.{type Ingredient as TandoorIngredient}
-import meal_planner/tandoor/nutrition.{type NutritionInfo}
-import meal_planner/tandoor/types.{
-  type Keyword, type Recipe, type RecipeDetail, keyword_decoder,
+import meal_planner/tandoor/food.{type Food, Food, food_decoder}
+import meal_planner/tandoor/ingredient.{
+  type Ingredient, Ingredient, ingredient_decoder,
 }
+import meal_planner/tandoor/shared_types.{
+  type SupermarketCategory, SupermarketCategory, supermarket_category_decoder,
+}
+import meal_planner/tandoor/step.{type Step, Step, step_decoder}
+import meal_planner/tandoor/recipe as recipe_mod
+import meal_planner/tandoor/types.{
+  type Keyword, Keyword, keyword_decoder,
+}
+import meal_planner/tandoor/unit
 
 // ============================================================================
 // Types
@@ -948,21 +955,14 @@ fn uri_encode(value: String) -> String {
 /// This type alias points to authoritative Recipe type defined in
 /// meal_planner/tandoor/recipe to avoid duplication.
 pub type Recipe =
-  RecipeType
+  recipe_mod.Recipe
 
 /// Full recipe with ingredients, steps, and nutrition (for detail view)
 ///
 /// This type alias points to authoritative RecipeDetail type defined in
 /// meal_planner/tandoor/recipe to avoid duplication.
 pub type RecipeDetail =
-  RecipeDetailType
-
-/// Keyword/tag for recipes
-///
-/// This type alias points to authoritative Keyword type defined in
-/// meal_planner/tandoor/keyword.
-pub type Keyword =
-  KeywordType
+  recipe_mod.RecipeDetail
 
 /// Unit of measurement for ingredients
 ///
@@ -970,6 +970,20 @@ pub type Keyword =
 /// meal_planner/tandoor/unit.
 pub type Unit =
   unit.Unit
+
+/// Nutrition information for a recipe (local definition)
+///
+/// Contains macronutrient data for a recipe from the Tandoor API.
+pub type NutritionInfo {
+  NutritionInfo(
+    id: Int,
+    carbohydrates: Float,
+    fats: Float,
+    proteins: Float,
+    calories: Float,
+    source: String,
+  )
+}
 
 /// Paginated recipe list response
 pub type RecipeListResponse {
@@ -997,126 +1011,9 @@ pub type CreateRecipeRequest {
 // Decoders for Recipe Components
 // ============================================================================
 
-/// Decoder for SupermarketCategory
-fn supermarket_category_decoder() -> decode.Decoder(SupermarketCategory) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.field("name", decode.string)
-  use description <- decode.optional_field("description", "", decode.string)
-
-  decode.success(SupermarketCategory(
-    id: id,
-    name: name,
-    description: description,
-  ))
-}
-
 /// Decoder for Unit - delegates to unit.decode_unit()
 fn unit_decoder() -> decode.Decoder(unit.Unit) {
   unit.decode_unit()
-}
-
-/// Decoder for Food
-fn food_decoder() -> decode.Decoder(Food) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.field("name", decode.string)
-  use plural_name <- decode.optional_field(
-    "plural_name",
-    None,
-    decode.optional(decode.string),
-  )
-  use description <- decode.optional_field("description", "", decode.string)
-  use supermarket_category <- decode.optional_field(
-    "supermarket_category",
-    None,
-    decode.optional(supermarket_category_decoder()),
-  )
-
-  decode.success(Food(
-    id: id,
-    name: name,
-    plural_name: plural_name,
-    description: description,
-    supermarket_category: supermarket_category,
-  ))
-}
-
-/// Decoder for Ingredient
-fn ingredient_decoder() -> decode.Decoder(Ingredient) {
-  use id <- decode.field("id", decode.int)
-  use food <- decode.optional_field(
-    "food",
-    None,
-    decode.optional(food_decoder()),
-  )
-  use unit <- decode.optional_field(
-    "unit",
-    None,
-    decode.optional(unit_decoder()),
-  )
-  use amount <- decode.optional_field("amount", 0.0, decode.float)
-  use note <- decode.optional_field("note", "", decode.string)
-  use is_header <- decode.optional_field("is_header", False, decode.bool)
-  use no_amount <- decode.optional_field("no_amount", False, decode.bool)
-  use original_text <- decode.optional_field(
-    "original_text",
-    None,
-    decode.optional(decode.string),
-  )
-
-  decode.success(Ingredient(
-    id: id,
-    food: food,
-    unit: unit,
-    amount: amount,
-    note: note,
-    is_header: is_header,
-    no_amount: no_amount,
-    original_text: original_text,
-  ))
-}
-
-/// Decoder for Keyword
-fn keyword_decoder_local() -> decode.Decoder(Keyword) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.field("name", decode.string)
-  use description <- decode.optional_field("description", "", decode.string)
-
-  decode.success(Keyword(id: id, name: name, description: description))
-}
-
-/// Decoder for Step
-fn step_decoder() -> decode.Decoder(Step) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.optional_field("name", "", decode.string)
-  use instruction <- decode.optional_field("instruction", "", decode.string)
-  use ingredients <- decode.optional_field(
-    "ingredients",
-    [],
-    decode.list(ingredient_decoder()),
-  )
-  use time <- decode.optional_field("time", 0, decode.int)
-  use order <- decode.optional_field("order", 0, decode.int)
-  use show_as_header <- decode.optional_field(
-    "show_as_header",
-    False,
-    decode.bool,
-  )
-  use show_ingredients_table <- decode.optional_field(
-    "show_ingredients_table",
-    True,
-    decode.bool,
-  )
-
-  decode.success(Step(
-    id: id,
-    name: name,
-    instruction: instruction,
-    ingredients: ingredients,
-    time: time,
-    order: order,
-    show_as_header: show_as_header,
-    show_ingredients_table: show_ingredients_table,
-  ))
 }
 
 /// Decoder for NutritionInfo
@@ -1138,86 +1035,11 @@ fn nutrition_decoder() -> decode.Decoder(NutritionInfo) {
   ))
 }
 
-/// Decoder for RecipeDetail (full recipe with steps, ingredients, nutrition)
-fn recipe_detail_decoder_internal() -> decode.Decoder(RecipeDetail) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.field("name", decode.string)
-  use slug <- decode.optional_field(
-    "slug",
-    None,
-    decode.optional(decode.string),
-  )
-  use description <- decode.optional_field(
-    "description",
-    None,
-    decode.optional(decode.string),
-  )
-  use servings <- decode.field("servings", decode.int)
-  use servings_text <- decode.optional_field(
-    "servings_text",
-    None,
-    decode.optional(decode.string),
-  )
-  use working_time <- decode.optional_field(
-    "working_time",
-    None,
-    decode.optional(decode.int),
-  )
-  use waiting_time <- decode.optional_field(
-    "waiting_time",
-    None,
-    decode.optional(decode.int),
-  )
-  use created_at <- decode.optional_field(
-    "created_at",
-    None,
-    decode.optional(decode.string),
-  )
-  use updated_at <- decode.optional_field(
-    "updated_at",
-    None,
-    decode.optional(decode.string),
-  )
-  use steps <- decode.optional_field("steps", [], decode.list(step_decoder()))
-  use nutrition <- decode.optional_field(
-    "nutrition",
-    None,
-    decode.optional(nutrition_decoder()),
-  )
-  use keywords <- decode.optional_field(
-    "keywords",
-    [],
-    decode.list(keyword_decoder()),
-  )
-  use source_url <- decode.optional_field(
-    "source_url",
-    None,
-    decode.optional(decode.string),
-  )
-
-  decode.success(RecipeDetail(
-    id: id,
-    name: name,
-    slug: slug,
-    description: description,
-    servings: servings,
-    servings_text: servings_text,
-    working_time: working_time,
-    waiting_time: waiting_time,
-    created_at: created_at,
-    updated_at: updated_at,
-    steps: steps,
-    nutrition: nutrition,
-    keywords: keywords,
-    source_url: source_url,
-  ))
-}
-
 /// Decode a RecipeDetail from JSON
 pub fn recipe_detail_decoder(
   json_value: dynamic.Dynamic,
 ) -> Result(RecipeDetail, String) {
-  decode.run(json_value, recipe_detail_decoder_internal())
+  decode.run(json_value, recipe_mod.recipe_detail_decoder())
   |> result.map_error(fn(errors) {
     "Failed to decode recipe detail: "
     <> string.join(
@@ -1232,64 +1054,9 @@ pub fn recipe_detail_decoder(
   })
 }
 
-/// Decoder for Recipe from JSON (internal)
-fn recipe_decoder_internal() -> decode.Decoder(Recipe) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.field("name", decode.string)
-  use slug <- decode.optional_field(
-    "slug",
-    None,
-    decode.optional(decode.string),
-  )
-  use description <- decode.optional_field(
-    "description",
-    None,
-    decode.optional(decode.string),
-  )
-  use servings <- decode.field("servings", decode.int)
-  use servings_text <- decode.optional_field(
-    "servings_text",
-    None,
-    decode.optional(decode.string),
-  )
-  use working_time <- decode.optional_field(
-    "working_time",
-    None,
-    decode.optional(decode.int),
-  )
-  use waiting_time <- decode.optional_field(
-    "waiting_time",
-    None,
-    decode.optional(decode.int),
-  )
-  use created_at <- decode.optional_field(
-    "created_at",
-    None,
-    decode.optional(decode.string),
-  )
-  use updated_at <- decode.optional_field(
-    "updated_at",
-    None,
-    decode.optional(decode.string),
-  )
-
-  decode.success(Recipe(
-    id: id,
-    name: name,
-    slug: slug,
-    description: description,
-    servings: servings,
-    servings_text: servings_text,
-    working_time: working_time,
-    waiting_time: waiting_time,
-    created_at: created_at,
-    updated_at: updated_at,
-  ))
-}
-
 /// Decode a Recipe from JSON
 pub fn recipe_decoder(json_value: dynamic.Dynamic) -> Result(Recipe, String) {
-  decode.run(json_value, recipe_decoder_internal())
+  decode.run(json_value, recipe_mod.recipe_decoder())
   |> result.map_error(fn(errors) {
     "Failed to decode recipe: "
     <> string.join(
@@ -1309,7 +1076,7 @@ fn recipe_list_decoder_internal() -> decode.Decoder(RecipeListResponse) {
   use count <- decode.field("count", decode.int)
   use next <- decode.field("next", decode.optional(decode.string))
   use previous <- decode.field("previous", decode.optional(decode.string))
-  use results <- decode.field("results", decode.list(recipe_decoder_internal()))
+  use results <- decode.field("results", decode.list(recipe_mod.recipe_decoder()))
 
   decode.success(RecipeListResponse(
     count: count,
@@ -1391,7 +1158,7 @@ pub fn get_recipe_by_id(
 
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
-      case decode.run(json_data, recipe_decoder_internal()) {
+      case decode.run(json_data, recipe_mod.recipe_decoder()) {
         Ok(recipe) -> Ok(recipe)
         Error(errors) -> {
           let error_msg =
@@ -1434,7 +1201,7 @@ pub fn get_recipe_detail(
 
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
-      case decode.run(json_data, recipe_detail_decoder_internal()) {
+      case decode.run(json_data, recipe_mod.recipe_detail_decoder()) {
         Ok(recipe) -> Ok(recipe)
         Error(errors) -> {
           let error_msg =
@@ -1477,7 +1244,7 @@ pub fn create_recipe(
 
   case json.parse(resp.body, using: decode.dynamic) {
     Ok(json_data) -> {
-      case decode.run(json_data, recipe_decoder_internal()) {
+      case decode.run(json_data, recipe_mod.recipe_decoder()) {
         Ok(recipe) -> Ok(recipe)
         Error(errors) -> {
           let error_msg =

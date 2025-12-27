@@ -17,7 +17,7 @@ import meal_planner/tandoor/api/crud_helpers.{
   execute_delete, execute_get, execute_patch, execute_post, parse_json_list,
   parse_json_single,
 }
-import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/types/base.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/ids.{
   type CuisineId, cuisine_id_from_int, cuisine_id_to_int,
 }

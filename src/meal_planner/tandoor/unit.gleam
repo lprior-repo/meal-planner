@@ -13,9 +13,8 @@ import gleam/option.{type Option, None}
 import gleam/result
 import meal_planner/tandoor/api/crud_helpers
 import meal_planner/tandoor/api/generic_crud
-import meal_planner/tandoor/api/generic_crud.{type TandoorError}
-import meal_planner/tandoor/config.{type ClientConfig}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
+import meal_planner/tandoor/types/base.{type ClientConfig, type TandoorError}
 
 // ============================================================================
 // Type

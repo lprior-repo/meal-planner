@@ -8,7 +8,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/string
 import gleam/uri
-import meal_planner/tandoor/client.{
+import meal_planner/tandoor/types/base.{
   type AuthMethod, type ClientConfig, type TandoorError, BearerAuth,
   NetworkError, SessionAuth,
 }

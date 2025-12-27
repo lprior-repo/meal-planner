@@ -7,7 +7,7 @@ import gleam/dynamic/decode
 import gleam/http/response
 import gleam/int
 import gleam/json
-import meal_planner/tandoor/client.{
+import meal_planner/tandoor/types/base.{
   type ApiResponse, type TandoorError, ApiResponse, AuthenticationError,
   AuthorizationError, BadRequestError, NotFoundError, ParseError, ServerError,
   UnknownError,

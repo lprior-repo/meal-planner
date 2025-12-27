@@ -17,8 +17,9 @@ import gleam/result
 import meal_planner/tandoor/api/crud_helpers.{
   execute_delete, execute_get, execute_patch, execute_post, parse_json_single,
 }
-import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/types/base.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/recipe.{type RecipeOverview, recipe_overview_decoder}
+import meal_planner/tandoor/types.{type Keyword}
 
 // ============================================================================
 // Types
@@ -368,7 +369,7 @@ pub fn user_decoder() -> decode.Decoder(User) {
 // ============================================================================
 
 /// Helper to encode Keyword to JSON
-fn encode_keyword_json(kw: client.Keyword) -> Json {
+fn encode_keyword_json(kw: Keyword) -> Json {
   json.object([
     #("id", json.int(kw.id)),
     #("name", json.string(kw.name)),

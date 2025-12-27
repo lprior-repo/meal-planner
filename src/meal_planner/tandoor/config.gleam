@@ -10,7 +10,7 @@
 /// - SessionAuth: Django session authentication
 ///
 /// This module is intentionally kept minimal to avoid dependencies.
-import gleam/option.{type Option}
+import gleam/option
 
 // ============================================================================
 // Authentication Types

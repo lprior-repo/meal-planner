@@ -18,7 +18,7 @@ import meal_planner/tandoor/api/crud_helpers.{
   execute_delete, execute_get, execute_patch, execute_post, parse_json_paginated,
   parse_json_single,
 }
-import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/types/base.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/core/ids.{type FoodId}
 import meal_planner/tandoor/property.{type Property, property_decoder}

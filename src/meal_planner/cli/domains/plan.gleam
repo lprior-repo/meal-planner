@@ -16,6 +16,22 @@ import meal_planner/config.{type Config}
 import meal_planner/id
 import meal_planner/scheduler/sync_scheduler
 import meal_planner/tandoor/client
+import meal_planner/tandoor/types/base.{
+  type ClientConfig,
+  type AuthMethod,
+  type TandoorError,
+  AuthenticationError,
+  AuthorizationError,
+  BadRequestError,
+  BearerAuth,
+  ClientConfig,
+  NetworkError,
+  NotFoundError,
+  ParseError,
+  ServerError,
+  TimeoutError,
+  UnknownError,
+}
 import meal_planner/tandoor/mealplan
 
 pub fn cmd(config: Config) -> glint.Command(Result(Nil, Nil)) {
@@ -156,7 +172,13 @@ fn list_meal_plans(
   meal_type meal_type_filter: Option(Int),
 ) -> Result(String, String) {
   let tandoor_config =
-    client.bearer_config(config.tandoor.base_url, config.tandoor.api_token)
+    ClientConfig(
+      base_url: config.tandoor.base_url,
+      auth: BearerAuth(config.tandoor.api_token),
+      timeout_ms: 30000,
+      retry_on_transient: True,
+      max_retries: 3,
+    )
 
   // Note: meal_type_filter not currently supported by the API
   let _ = meal_type_filter
@@ -188,7 +210,7 @@ fn list_meal_plans(
       Ok(header <> body)
     }
     Error(err) -> {
-      Error("Failed to list meal plans: " <> client.error_to_string(err))
+      Error("Failed to list meal plans: " <> error_to_string(err))
     }
   }
 }
@@ -229,7 +251,13 @@ fn view_meal_plan(
   plan_id plan_id: Int,
 ) -> Result(String, String) {
   let tandoor_config =
-    client.bearer_config(config.tandoor.base_url, config.tandoor.api_token)
+    ClientConfig(
+      base_url: config.tandoor.base_url,
+      auth: BearerAuth(config.tandoor.api_token),
+      timeout_ms: 30000,
+      retry_on_transient: True,
+      max_retries: 3,
+    )
 
   case mealplan.get_meal_plan(tandoor_config, meal_plan_id: plan_id) {
     Ok(plan) -> {
@@ -299,7 +327,7 @@ fn view_meal_plan(
       )
     }
     Error(err) -> {
-      Error("Failed to get meal plan: " <> client.error_to_string(err))
+      Error("Failed to get meal plan: " <> error_to_string(err))
     }
   }
 }
@@ -323,5 +351,21 @@ fn pad_right(s: String, width: Int) -> String {
   case width > len {
     True -> s <> string.repeat(" ", width - len)
     False -> string.slice(s, 0, width)
+  }
+}
+
+/// Convert a TandoorError to a human-readable string
+fn error_to_string(err: TandoorError) -> String {
+  case err {
+    AuthenticationError(msg) -> "Authentication failed: " <> msg
+    AuthorizationError(msg) -> "Authorization failed: " <> msg
+    NotFoundError(resource) -> "Not found: " <> resource
+    BadRequestError(msg) -> "Bad request: " <> msg
+    ServerError(status, msg) ->
+      "Server error (" <> int.to_string(status) <> "): " <> msg
+    NetworkError(msg) -> "Network error: " <> msg
+    TimeoutError -> "Request timeout"
+    ParseError(msg) -> "Parse error: " <> msg
+    UnknownError(msg) -> "Unknown error: " <> msg
   }
 }

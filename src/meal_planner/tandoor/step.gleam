@@ -17,7 +17,7 @@ import meal_planner/tandoor/api/crud_helpers.{
   execute_delete, execute_get, execute_patch, execute_post, parse_json_paginated,
   parse_json_single,
 }
-import meal_planner/tandoor/client.{type ClientConfig, type TandoorError}
+import meal_planner/tandoor/types/base.{type ClientConfig, type TandoorError}
 import meal_planner/tandoor/core/http.{type PaginatedResponse}
 import meal_planner/tandoor/core/ids.{
   type IngredientId, type StepId, ingredient_id_to_int, step_id_decoder,
@@ -30,6 +30,25 @@ import meal_planner/tandoor/ingredient.{
 // ============================================================================
 // Types
 // ============================================================================
+
+/// Minimal Recipe type for step_recipe_data field
+///
+/// This is a local definition to avoid circular imports between step and recipe
+/// modules. Contains only the fields needed for sub-recipe references in steps.
+pub type Recipe {
+  Recipe(
+    id: Int,
+    name: String,
+    slug: Option(String),
+    description: Option(String),
+    servings: Int,
+    servings_text: Option(String),
+    working_time: Option(Int),
+    waiting_time: Option(Int),
+    created_at: Option(String),
+    updated_at: Option(String),
+  )
+}
 
 /// A single step in a recipe's instructions
 ///
@@ -102,6 +121,44 @@ pub type StepUpdateRequest {
 // ============================================================================
 // Decoder
 // ============================================================================
+
+/// Decode a Recipe from JSON (minimal version for step_recipe_data)
+///
+/// This local decoder avoids circular imports with the recipe module.
+fn recipe_decoder() -> decode.Decoder(Recipe) {
+  use id <- decode.field("id", decode.int)
+  use name <- decode.field("name", decode.string)
+  use slug <- decode.field("slug", decode.optional(decode.string))
+  use description <- decode.field("description", decode.optional(decode.string))
+  use servings <- decode.field("servings", decode.int)
+  use servings_text <- decode.field(
+    "servings_text",
+    decode.optional(decode.string),
+  )
+  use working_time <- decode.field(
+    "working_time",
+    decode.optional(decode.int),
+  )
+  use waiting_time <- decode.field(
+    "waiting_time",
+    decode.optional(decode.int),
+  )
+  use created_at <- decode.field("created_at", decode.optional(decode.string))
+  use updated_at <- decode.field("updated_at", decode.optional(decode.string))
+
+  decode.success(Recipe(
+    id: id,
+    name: name,
+    slug: slug,
+    description: description,
+    servings: servings,
+    servings_text: servings_text,
+    working_time: working_time,
+    waiting_time: waiting_time,
+    created_at: created_at,
+    updated_at: updated_at,
+  ))
+}
 
 /// Decode a Step from JSON
 ///

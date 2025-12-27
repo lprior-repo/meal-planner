@@ -12,7 +12,14 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 import glint
 import meal_planner/config.{type Config}
-import meal_planner/tandoor/client.{type ClientConfig, BearerAuth, ClientConfig}
+import meal_planner/tandoor/client
+import meal_planner/tandoor/types/base.{
+  type ClientConfig,
+  type TandoorError,
+  BearerAuth,
+  ClientConfig,
+  NotFoundError,
+}
 import meal_planner/tandoor/recipe
 
 // ============================================================================
@@ -171,16 +178,12 @@ fn format_recipe_detail(recipe_detail: recipe.RecipeDetail) -> String {
 
   let steps = case recipe_detail.steps {
     [] -> ""
-    steps -> {
+    step_ids -> {
       "\n\nSteps:\n"
       <> {
-        steps
-        |> list.index_map(fn(step, idx) {
-          let step_name = case step.name {
-            "" -> ""
-            name -> name <> ": "
-          }
-          int.to_string(idx + 1) <> ". " <> step_name <> step.instruction
+        step_ids
+        |> list.index_map(fn(idx, step_id) {
+          int.to_string(idx + 1) <> ". Step ID: " <> int.to_string(step_id)
         })
         |> string.join("\n")
       }
@@ -215,7 +218,7 @@ pub fn detail_handler(config: Config, recipe_id: Int) -> Result(Nil, Nil) {
       io.println(format_recipe_detail(recipe_detail))
       Ok(Nil)
     }
-    Error(client.NotFoundError(_)) -> {
+    Error(NotFoundError(_)) -> {
       io.println(
         "Error: Recipe not found (ID: " <> int.to_string(recipe_id) <> ")",
       )
@@ -336,7 +339,7 @@ pub fn delete_handler(config: Config, recipe_id: Int) -> Result(Nil, Nil) {
       io.println("Recipe deleted successfully: " <> int.to_string(recipe_id))
       Ok(Nil)
     }
-    Error(client.NotFoundError(_)) -> {
+    Error(NotFoundError(_)) -> {
       io.println(
         "Error: Recipe not found (ID: " <> int.to_string(recipe_id) <> ")",
       )

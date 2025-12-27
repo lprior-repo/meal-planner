@@ -14,15 +14,21 @@
 
 import gleam/dynamic/decode
 import gleam/http
+import gleam/http/request
+import gleam/http/response
+import gleam/httpc
 import gleam/int
 import gleam/json
 import gleam/list
 import gleam/option.{type Option}
 import gleam/result
 import gleam/string
+import meal_planner/tandoor/clients/request_builder
+import meal_planner/tandoor/clients/response as response_parser
 import meal_planner/tandoor/core/http as core_http
 import meal_planner/tandoor/types/base.{
-  type ClientConfig, type TandoorError, ParseError,
+  type ApiResponse, type ClientConfig, type TandoorError, NetworkError,
+  ParseError,
 }
 import wisp.{type Request, type Response}
 
@@ -280,8 +286,8 @@ pub fn create(
   body: String,
   decoder: decode.Decoder(item),
 ) -> Result(item, TandoorError) {
-  use req <- result.try(client.build_post_request(config, path, body))
-  use resp <- result.try(client.execute_and_parse(req))
+  use req <- result.try(request_builder.build_post_request(config, path, body))
+  use resp <- result.try(execute_and_parse(req))
   parse_json_response(resp.body, decoder)
 }
 
@@ -309,8 +315,8 @@ pub fn get(
   decoder: decode.Decoder(item),
 ) -> Result(item, TandoorError) {
   let full_path = path <> int.to_string(id) <> "/"
-  use req <- result.try(client.build_get_request(config, full_path, []))
-  use resp <- result.try(client.execute_and_parse(req))
+  use req <- result.try(request_builder.build_get_request(config, full_path, []))
+  use resp <- result.try(execute_and_parse(req))
   parse_json_response(resp.body, decoder)
 }
 
@@ -341,8 +347,8 @@ pub fn update(
   decoder: decode.Decoder(item),
 ) -> Result(item, TandoorError) {
   let full_path = path <> int.to_string(id) <> "/"
-  use req <- result.try(client.build_patch_request(config, full_path, body))
-  use resp <- result.try(client.execute_and_parse(req))
+  use req <- result.try(request_builder.build_patch_request(config, full_path, body))
+  use resp <- result.try(execute_and_parse(req))
   parse_json_response(resp.body, decoder)
 }
 
@@ -369,8 +375,8 @@ pub fn delete(
   id: Int,
 ) -> Result(Nil, TandoorError) {
   let full_path = path <> int.to_string(id) <> "/"
-  use req <- result.try(client.build_delete_request(config, full_path))
-  use _resp <- result.try(client.execute_and_parse(req))
+  use req <- result.try(request_builder.build_delete_request(config, full_path))
+  use _resp <- result.try(execute_and_parse(req))
   Ok(Nil)
 }
 
@@ -398,8 +404,8 @@ pub fn list(
   params: List(#(String, String)),
   decoder: decode.Decoder(item),
 ) -> Result(List(item), TandoorError) {
-  use req <- result.try(client.build_get_request(config, path, params))
-  use resp <- result.try(client.execute_and_parse(req))
+  use req <- result.try(request_builder.build_get_request(config, path, params))
+  use resp <- result.try(execute_and_parse(req))
   parse_json_response(resp.body, decode.list(decoder))
 }
 
@@ -435,7 +441,21 @@ pub fn list_paginated(
   params: List(#(String, String)),
   decoder: decode.Decoder(item),
 ) -> Result(core_http.PaginatedResponse(item), TandoorError) {
-  use req <- result.try(client.build_get_request(config, path, params))
-  use resp <- result.try(client.execute_and_parse(req))
+  use req <- result.try(request_builder.build_get_request(config, path, params))
+  use resp <- result.try(execute_and_parse(req))
   parse_json_response(resp.body, core_http.paginated_decoder(decoder))
+}
+
+// =============================================================================
+// Private Helpers
+// =============================================================================
+
+/// Execute HTTP request and parse response
+fn execute_and_parse(
+  req: request.Request(String),
+) -> Result(ApiResponse, TandoorError) {
+  case httpc.send(req) {
+    Ok(resp) -> response_parser.parse_response(resp)
+    Error(_) -> Error(NetworkError("Failed to connect to Tandoor"))
+  }
 }

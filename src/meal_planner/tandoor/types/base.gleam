@@ -99,7 +99,6 @@ pub fn session_config(
   )
 }
 
-/// Create a client configuration with Bearer token authentication
 ///
 /// Use this for OAuth2 tokens. Note: Token-based auth may not work with
 /// Tandoor's multi-tenant scope system - prefer session_config for full
