@@ -20,41 +20,11 @@ import meal_planner/tandoor/api/crud_helpers.{
 }
 import meal_planner/tandoor/config.{type ClientConfig}
 import meal_planner/tandoor/errors.{type TandoorError}
+import meal_planner/tandoor/types.{type Keyword, keyword_decoder}
 
 // ============================================================================
 // Types
 // ============================================================================
-
-/// Keyword/tag for recipe categorization
-///
-/// Keywords in Tandoor form a hierarchical tree structure allowing nested
-/// categorization (e.g., Cuisine > Italian > Sicilian).
-///
-/// Fields:
-/// - id: Unique identifier
-/// - name: Machine-friendly name (lowercase, no spaces)
-/// - label: Human-readable display name (readonly, auto-generated from name)
-/// - description: Optional detailed description
-/// - icon: Optional emoji or icon character
-/// - parent: ID of parent keyword (None for root keywords)
-/// - numchild: Number of direct children (readonly)
-/// - created_at: Creation timestamp (readonly)
-/// - updated_at: Last update timestamp (readonly)
-/// - full_name: Full path from root (e.g., "Cuisine > Italian > Sicilian") (readonly)
-pub type Keyword {
-  Keyword(
-    id: Int,
-    name: String,
-    label: String,
-    description: String,
-    icon: Option(String),
-    parent: Option(Int),
-    numchild: Int,
-    created_at: String,
-    updated_at: String,
-    full_name: String,
-  )
-}
 
 /// Request to create a new keyword in Tandoor
 ///
@@ -101,35 +71,7 @@ pub type KeywordUpdateRequest {
 ///   "full_name": "Vegetarian"
 /// }
 /// ```
-pub fn keyword_decoder() -> decode.Decoder(Keyword) {
-  use id <- decode.field("id", decode.int)
-  use name <- decode.field("name", decode.string)
-  use label <- decode.field("label", decode.string)
-  use description <- decode.field("description", decode.string)
-  use icon <- decode.optional_field(
-    "icon",
-    None,
-    decode.optional(decode.string),
-  )
-  use parent <- decode.field("parent", decode.optional(decode.int))
-  use numchild <- decode.field("numchild", decode.int)
-  use created_at <- decode.field("created_at", decode.string)
-  use updated_at <- decode.field("updated_at", decode.string)
-  use full_name <- decode.field("full_name", decode.string)
-
-  decode.success(Keyword(
-    id: id,
-    name: name,
-    label: label,
-    description: description,
-    icon: icon,
-    parent: parent,
-    numchild: numchild,
-    created_at: created_at,
-    updated_at: updated_at,
-    full_name: full_name,
-  ))
-}
+// Note: keyword_decoder() is now in meal_planner/tandoor/types
 
 // ============================================================================
 // Encoders

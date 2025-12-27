@@ -529,10 +529,7 @@ pub fn generate_daily_status(
 
 /// Recommend dinner based on current nutrition
 /// Returns recipe suggestions to complete daily goals
-pub fn recommend_dinner(
-  config: Config,
-  date: String,
-) -> Result(String, String) {
+pub fn recommend_dinner(config: Config, date: String) -> Result(String, String) {
   // For now, provide placeholder implementation
   // TODO: Integrate with NCP recommend_dinner functionality
   let report =
@@ -563,4 +560,3 @@ pub fn recommend_dinner(
 
   Ok(report)
 }
-

@@ -25,9 +25,10 @@ import gleam/uri
 import meal_planner/logger
 import meal_planner/tandoor/food.{type Food}
 import meal_planner/tandoor/ingredient.{type Ingredient as TandoorIngredient}
-import meal_planner/tandoor/keyword.{type Keyword as TandoorKeyword}
 import meal_planner/tandoor/nutrition.{type NutritionInfo}
-import meal_planner/tandoor/recipe.{type Recipe, type RecipeDetail}
+import meal_planner/tandoor/types.{
+  type Keyword, type Recipe, type RecipeDetail, keyword_decoder,
+}
 
 // ============================================================================
 // Types
@@ -1075,7 +1076,7 @@ fn ingredient_decoder() -> decode.Decoder(Ingredient) {
 }
 
 /// Decoder for Keyword
-fn keyword_decoder() -> decode.Decoder(Keyword) {
+fn keyword_decoder_local() -> decode.Decoder(Keyword) {
   use id <- decode.field("id", decode.int)
   use name <- decode.field("name", decode.string)
   use description <- decode.optional_field("description", "", decode.string)

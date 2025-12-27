@@ -44,7 +44,8 @@ pub fn handle_cuisine_by_id(
         _ -> wisp.method_not_allowed([http.Get, http.Put, http.Delete])
       }
     }
-    Error(_err) -> helpers.error_response(400, "Invalid cuisine ID: '" <> cuisine_id <> "'")
+    Error(_err) ->
+      helpers.error_response(400, "Invalid cuisine ID: '" <> cuisine_id <> "'")
   }
 }
 
@@ -171,8 +172,7 @@ pub fn handle_update_cuisine(
                   |> json.to_string
                   |> wisp.json_response(200)
                 }
-                Error(err) ->
-                  helpers.tandoor_error_to_response(err)
+                Error(err) -> helpers.tandoor_error_to_response(err)
               }
             }
             Error(resp) -> resp
@@ -181,7 +181,8 @@ pub fn handle_update_cuisine(
         Error(msg) -> helpers.error_response(400, msg)
       }
     }
-    Error(_err) -> helpers.error_response(400, "Invalid cuisine ID: '" <> cuisine_id <> "'")
+    Error(_err) ->
+      helpers.error_response(400, "Invalid cuisine ID: '" <> cuisine_id <> "'")
   }
 }
 
@@ -202,7 +203,8 @@ pub fn handle_delete_cuisine(
         Error(resp) -> resp
       }
     }
-    Error(_err) -> helpers.error_response(400, "Invalid cuisine ID: '" <> cuisine_id <> "'")
+    Error(_err) ->
+      helpers.error_response(400, "Invalid cuisine ID: '" <> cuisine_id <> "'")
   }
 }
 

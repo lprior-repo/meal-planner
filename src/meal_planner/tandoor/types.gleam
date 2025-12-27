@@ -1,228 +1,128 @@
-/// Tandoor API type definitions
-///
-/// This module defines all types needed for Tandoor recipe API integration.
-/// It includes types for API responses, recipe data, and creation requests.
-///
-/// The types are structured to match the Tandoor API schema while providing
-/// a clear separation between API types and internal application types.
-///
-/// Note: TandoorFood (2-field) is used for recipe ingredient references only.
-/// For full food API operations, use the Food type from meal_planner/tandoor/types/food/food.
-import gleam/int
+// Shared recipe types to avoid circular imports
+//
+// This module contains core recipe types used by both Tandoor client
+// and CLI domains. By keeping these types in a separate module without
+// dependencies on other Tandoor submodules, we avoid circular import cycles.
+
+import gleam/dynamic/decode
 import gleam/option.{type Option}
 
-// ============================================================================
-// API Response Types
-// ============================================================================
-
-/// Paginated recipe list response from Tandoor API
-/// Opaque type ensures count is non-negative
-pub opaque type RecipeListResponse {
-  RecipeListResponse(
-    count: Int,
-    next: Option(String),
-    previous: Option(String),
-    results: List(TandoorRecipe),
-  )
-}
-
-/// Create a RecipeListResponse with validation
-/// count must be non-negative and match results length
-pub fn new_recipe_list_response(
-  count: Int,
-  next: Option(String),
-  previous: Option(String),
-  results: List(TandoorRecipe),
-) -> Result(RecipeListResponse, String) {
-  case count < 0 {
-    True -> Error("Count must be non-negative, got: " <> int.to_string(count))
-    False ->
-      Ok(RecipeListResponse(
-        count: count,
-        next: next,
-        previous: previous,
-        results: results,
-      ))
-  }
-}
-
-/// Get the total count from recipe list response
-pub fn recipe_list_response_count(r: RecipeListResponse) -> Int {
-  r.count
-}
-
-/// Get the next page URL from recipe list response
-pub fn recipe_list_response_next(r: RecipeListResponse) -> Option(String) {
-  r.next
-}
-
-/// Get the previous page URL from recipe list response
-pub fn recipe_list_response_previous(r: RecipeListResponse) -> Option(String) {
-  r.previous
-}
-
-/// Get the recipe results from recipe list response
-pub fn recipe_list_response_results(
-  r: RecipeListResponse,
-) -> List(TandoorRecipe) {
-  r.results
-}
-
-// ============================================================================
-// Recipe Types
-// ============================================================================
-
-/// Complete Tandoor recipe with all metadata and ingredients
-pub type TandoorRecipe {
-  TandoorRecipe(
-    id: Int,
-    name: String,
-    description: String,
-    servings: Int,
-    servings_text: String,
-    prep_time: Int,
-    cooking_time: Int,
-    ingredients: List(TandoorIngredient),
-    steps: List(TandoorStep),
-    nutrition: Option(TandoorNutrition),
-    keywords: List(TandoorKeyword),
-    image: Option(String),
-    internal_id: Option(String),
-    created_at: String,
-    updated_at: String,
-  )
-}
-
-// ============================================================================
-// Ingredient Types
-// ============================================================================
-
-/// Ingredient with full details including food, unit, and amount
-pub type TandoorIngredient {
-  TandoorIngredient(
-    id: Int,
-    food: TandoorFood,
-    unit: TandoorUnit,
-    amount: Float,
-    note: String,
-  )
-}
-
-/// Food item referenced by ingredient (embedded/simplified representation)
+/// Basic recipe type for API responses (basic fields for list view)
 ///
-/// This is a minimal 2-field representation used ONLY in recipe ingredient references.
-/// For full food API operations (get, list, create, update), use the Food type from
-/// meal_planner/tandoor/types/food/food which contains all 8 fields.
-pub type TandoorFood {
-  TandoorFood(id: Int, name: String)
-}
-
-/// Measurement unit for ingredients
-pub type TandoorUnit {
-  TandoorUnit(id: Int, name: String, abbreviation: String)
-}
-
-// ============================================================================
-// Step Types
-// ============================================================================
-
-/// Cooking step with instructions and timing
-pub type TandoorStep {
-  TandoorStep(id: Int, name: String, instructions: String, time: Int)
-}
-
-// ============================================================================
-// Nutrition Types
-// ============================================================================
-
-/// Nutritional information for a recipe
-pub type TandoorNutrition {
-  TandoorNutrition(
-    calories: Float,
-    carbs: Float,
-    protein: Float,
-    fats: Float,
-    fiber: Float,
-    sugars: Option(Float),
-    sodium: Option(Float),
+/// This is a lightweight representation suitable for recipe lists and
+/// pagination. Contains only essential fields without nested structures.
+///
+/// Fields:
+/// - id: Unique recipe identifier
+/// - name: Recipe name
+/// - slug: URL-friendly name (optional, readonly)
+/// - description: Recipe description (optional)
+/// - servings: Number of servings
+/// - servings_text: Human-readable servings description (optional, e.g., "4 people")
+/// - working_time: Active preparation time in minutes (optional)
+/// - waiting_time: Passive waiting time in minutes (optional, e.g., baking, marinating)
+/// - created_at: Creation timestamp (optional, readonly)
+/// - updated_at: Last update timestamp (optional, readonly)
+pub type Recipe {
+  Recipe(
+    id: Int,
+    name: String,
+    slug: Option(String),
+    description: Option(String),
+    servings: Int,
+    servings_text: Option(String),
+    working_time: Option(Int),
+    waiting_time: Option(Int),
+    created_at: Option(String),
+    updated_at: Option(String),
   )
 }
 
-// ============================================================================
-// Keyword/Tag Types
-// ============================================================================
-
-/// Keyword/tag for recipe categorization
-pub type TandoorKeyword {
-  TandoorKeyword(id: Int, name: String)
+/// Full recipe with ingredients, steps, and nutrition (for detail view)
+///
+/// This is the complete recipe representation including all nested structures
+/// like steps, ingredients, nutrition data, and keywords. Use this for
+/// detailed recipe views and when you need access to all recipe information.
+///
+/// Fields (extends Recipe fields):
+/// - steps: List of cooking step IDs (stored as IDs to avoid circular dependency)
+/// - nutrition: Optional nutrition information per serving
+/// - keywords: List of categorization tags
+/// - source_url: Optional URL to external recipe source
+///
+/// Note: To avoid circular imports, nested types (Keyword, NutritionInfo) are defined inline
+pub type RecipeDetail {
+  RecipeDetail(
+    id: Int,
+    name: String,
+    slug: Option(String),
+    description: Option(String),
+    servings: Int,
+    servings_text: Option(String),
+    working_time: Option(Int),
+    waiting_time: Option(Int),
+    created_at: Option(String),
+    updated_at: Option(String),
+    steps: List(Int),
+    nutrition: Option(NutritionInfo),
+    keywords: List(Keyword),
+    source_url: Option(String),
+  )
 }
 
-// ============================================================================
-// Request Types (for creating recipes)
-// ============================================================================
-
-/// Request to create a new recipe in Tandoor
-pub type TandoorRecipeCreateRequest {
-  TandoorRecipeCreateRequest(
+/// Recipe overview type for list responses
+///
+/// Contains a subset of recipe data optimized for pagination and list views.
+/// Lighter than full RecipeDetail, suitable for API list endpoints.
+/// Includes display-friendly fields like rating and last_cooked.
+///
+/// Fields:
+/// - id: Tandoor recipe ID
+/// - name: Recipe name
+/// - description: Recipe description
+/// - image: Optional recipe image URL
+/// - keywords: List of Keyword objects (id, name, description)
+/// - rating: Optional user rating (0.0 - 5.0)
+/// - last_cooked: Optional last cooked date (ISO 8601 format)
+pub type RecipeOverview {
+  RecipeOverview(
+    id: Int,
     name: String,
     description: String,
-    servings: Int,
-    servings_text: String,
-    prep_time: Int,
-    cooking_time: Int,
-    ingredients: List(TandoorIngredientCreateRequest),
-    steps: List(TandoorStepCreateRequest),
+    image: Option(String),
+    keywords: List(Keyword),
+    rating: Option(Float),
+    last_cooked: Option(String),
   )
 }
 
-/// Request to create an ingredient in a recipe
-pub type TandoorIngredientCreateRequest {
-  TandoorIngredientCreateRequest(
-    food: TandoorFoodCreateRequest,
-    unit: TandoorUnitCreateRequest,
-    amount: Float,
-    note: String,
-  )
+/// Minimal recipe type for embedded references
+///
+/// Used when a recipe is referenced from other entities (e.g., in meal plans).
+/// Contains only the most essential fields needed for display and linking.
+///
+/// Fields:
+/// - id: Tandoor recipe ID
+/// - name: Recipe name
+/// - image: Optional recipe image URL
+pub type RecipeSimple {
+  RecipeSimple(id: Int, name: String, image: Option(String))
 }
 
-/// Request to create a food item
-pub type TandoorFoodCreateRequest {
-  TandoorFoodCreateRequest(name: String)
-}
-
-/// Request to create/use a measurement unit
-pub type TandoorUnitCreateRequest {
-  TandoorUnitCreateRequest(name: String)
-}
-
-/// Request to create a cooking step
-pub type TandoorStepCreateRequest {
-  TandoorStepCreateRequest(
-    name: String,
-    instructions: String,
-    time: Option(Int),
-  )
-}
-
-// ============================================================================
-// Handler Request Types (simplified for API handlers)
-// ============================================================================
-
-/// Request to create a new recipe
-pub type TandoorRecipeCreate {
-  TandoorRecipeCreate(
-    name: String,
-    description: String,
-    servings: Int,
-    servings_text: String,
-    working_time: Int,
-    waiting_time: Int,
-  )
-}
-
-/// Request to update an existing recipe
-pub type TandoorRecipeUpdate {
-  TandoorRecipeUpdate(
+/// Request to update an existing recipe (partial update)
+///
+/// All fields are optional to support partial updates.
+/// Only provided fields will be sent in the PATCH request.
+///
+/// Fields:
+/// - name: New recipe name
+/// - description: New recipe description
+/// - servings: New serving count
+/// - servings_text: New servings description
+/// - working_time: New active preparation time in minutes
+/// - waiting_time: New passive waiting time in minutes
+pub type RecipeUpdate {
+  RecipeUpdate(
     name: Option(String),
     description: Option(String),
     servings: Option(Int),
@@ -232,36 +132,136 @@ pub type TandoorRecipeUpdate {
   )
 }
 
-/// Request to create a new ingredient
-pub type TandoorIngredientCreate {
-  TandoorIngredientCreate(name: String, unit: Int)
+/// Request structure for creating a new recipe
+///
+/// Only includes writable fields. Tandoor API requires a steps array
+/// with at least one step (which can be empty).
+///
+/// Fields:
+/// - name: Recipe name (required)
+/// - description: Recipe description (optional)
+/// - servings: Number of servings (required)
+/// - servings_text: Human-readable servings description (optional)
+/// - working_time: Active preparation time in minutes (optional)
+/// - waiting_time: Passive waiting time in minutes (optional)
+pub type RecipeCreateRequest {
+  RecipeCreateRequest(
+    name: String,
+    description: Option(String),
+    servings: Int,
+    servings_text: Option(String),
+    working_time: Option(Int),
+    waiting_time: Option(Int),
+  )
 }
 
-/// Request to update an ingredient
-pub type TandoorIngredientUpdate {
-  TandoorIngredientUpdate(name: Option(String), unit: Option(Int))
+/// Keyword type for recipe categorization
+///
+/// Keywords are tags that can be applied to recipes for organization
+/// and filtering (e.g., "Vegetarian", "Quick Meal", "Italian").
+///
+/// Fields:
+/// - id: Unique keyword identifier
+/// - name: Keyword name
+/// - label: Display label
+/// - description: Keyword description
+/// - icon: Optional icon name
+/// - parent: Optional parent keyword ID
+/// - numchild: Number of child keywords
+/// - created_at: Creation timestamp
+/// - updated_at: Last update timestamp
+/// - full_name: Full hierarchical name
+pub type Keyword {
+  Keyword(
+    id: Int,
+    name: String,
+    label: String,
+    description: String,
+    icon: Option(String),
+    parent: Option(Int),
+    numchild: Int,
+    created_at: String,
+    updated_at: String,
+    full_name: String,
+  )
+}
+
+/// Nutrition information for recipes
+///
+/// Contains per-serving nutritional data. All fields are optional
+/// as not all recipes have complete nutrition information.
+///
+/// Fields:
+/// - calories: Calories per serving (kcal)
+/// - fat: Total fat per serving (g)
+/// - saturated_fat: Saturated fat per serving (g)
+/// - carbohydrates: Total carbohydrates per serving (g)
+/// - sugars: Sugars per serving (g)
+/// - fiber: Dietary fiber per serving (g)
+/// - protein: Protein per serving (g)
+/// - salt: Salt/sodium per serving (g)
+pub type NutritionInfo {
+  NutritionInfo(
+    calories: Option(Float),
+    fat: Option(Float),
+    saturated_fat: Option(Float),
+    carbohydrates: Option(Float),
+    sugars: Option(Float),
+    fiber: Option(Float),
+    protein: Option(Float),
+    salt: Option(Float),
+  )
 }
 
 // ============================================================================
-// Error Types
+// Decoder Functions
 // ============================================================================
 
-/// Errors that can occur when working with Tandoor API
-pub type TandoorError {
-  /// Network connectivity error
-  NetworkError(String)
-  /// Request timed out
-  ConnectionTimeout
-  /// HTTP error with status code and body
-  HttpError(status_code: Int, body: String)
-  /// API token is invalid or missing
-  Unauthorized
-  /// Recipe or resource not found
-  NotFound
-  /// JSON parsing error
-  JsonParseError(String)
-  /// Recipe format is invalid
-  InvalidRecipeFormat(String)
-  /// Recipe creation failed
-  CreationFailed(String)
+/// Decode a Keyword from JSON
+///
+/// Used for recipe keywords/categorization.
+///
+/// Example JSON:
+/// ```json
+/// {
+///   "id": 1,
+///   "name": "Vegetarian",
+///   "label": "Vegetarian",
+///   "description": "Vegetarian recipes",
+///   "icon": "leaf",
+///   "parent": null,
+///   "numchild": 0,
+///   "created_at": "2024-01-01T00:00:00Z",
+///   "updated_at": "2024-01-01T00:00:00Z",
+///   "full_name": "Vegetarian"
+/// }
+/// ```
+pub fn keyword_decoder() -> decode.Decoder(Keyword) {
+  use id <- decode.field("id", decode.int)
+  use name <- decode.field("name", decode.string)
+  use label <- decode.field("label", decode.string)
+  use description <- decode.field("description", decode.string)
+  use icon <- decode.optional_field(
+    "icon",
+    None,
+    decode.optional(decode.string),
+  )
+  use parent <- decode.field("parent", decode.optional(decode.int))
+  use numchild <- decode.field("numchild", decode.int)
+  use created_at <- decode.field("created_at", decode.string)
+  use updated_at <- decode.field("updated_at", decode.string)
+  use full_name <- decode.field("full_name", decode.string)
+
+  decode.success(Keyword(
+    id: id,
+    name: name,
+    label: label,
+    description: description,
+    icon: icon,
+    parent: parent,
+    numchild: numchild,
+    created_at: created_at,
+    updated_at: updated_at,
+    full_name: full_name,
+  ))
 }

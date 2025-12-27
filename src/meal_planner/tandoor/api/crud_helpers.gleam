@@ -31,10 +31,9 @@ import gleam/list
 import gleam/result
 import gleam/string
 import meal_planner/logger
-import meal_planner/tandoor/client.{
-  type ClientConfig, type TandoorError, NetworkError, ParseError,
-}
+import meal_planner/tandoor/config.{type ClientConfig}
 import meal_planner/tandoor/core/http.{type PaginatedResponse, paginated_decoder}
+import meal_planner/tandoor/errors.{type TandoorError}
 
 // ============================================================================
 // HTTP Execution
@@ -137,11 +136,11 @@ pub fn parse_json_single(
               }),
               ", ",
             )
-          Error(errors.ParseError(error_msg))
+          Error(ParseError(error_msg))
         }
       }
     }
-    Error(_) -> Error(errors.ParseError("Invalid JSON response"))
+    Error(_) -> Error(ParseError("Invalid JSON response"))
   }
 }
 
@@ -237,6 +236,6 @@ fn execute_request(
 ) -> Result(response.Response(String), TandoorError) {
   case httpc.send(req) {
     Ok(resp) -> Ok(resp)
-    Error(_) -> Error(errors.NetworkError("Failed to connect to Tandoor"))
+    Error(_) -> Error(NetworkError("Failed to connect to Tandoor"))
   }
 }

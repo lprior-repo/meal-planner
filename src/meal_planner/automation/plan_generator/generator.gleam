@@ -37,21 +37,29 @@ pub fn calculate_target_macros(profile: fatsecret_profile.Profile) -> Macros {
   )
 }
 
-/// Create placeholder grocery list
-/// TODO: Implement actual grocery list aggregation from meal plan
-pub fn create_placeholder_grocery_list() -> grocery_list.GroceryList {
-  grocery_list.GroceryList(by_category: dict.new(), all_items: [])
+/// Create grocery list from weekly meal plan
+pub fn create_placeholder_grocery_list(
+  plan: weekly.WeeklyMealPlan,
+) -> grocery_list.GroceryList {
+  grocery_list.from_weekly_plan(plan)
 }
 
-/// Create placeholder macro summary
-/// TODO: Implement actual macro summary calculation from meal plan
+/// Create macro summary from weekly meal plan
 pub fn create_placeholder_macro_summary(
-  _plan: weekly.WeeklyMealPlan,
+  plan: weekly.WeeklyMealPlan,
 ) -> gen_types.WeeklyMacros {
+  let weekly_total = weekly.total_weekly_macros(plan)
+  let daily_average =
+    weekly.total_weekly_macros(plan)
+    |> macros.scale(1.0 /. 7.0)
+  let daily_breakdowns =
+    weekly.calculate_daily_macros(plan)
+    |> list.map(fn(d) { d.macros })
+
   gen_types.WeeklyMacros(
-    weekly_total: zero(),
-    daily_average: zero(),
-    daily_breakdowns: [],
+    weekly_total: weekly_total,
+    daily_average: daily_average,
+    daily_breakdowns: daily_breakdowns,
   )
 }
 
