@@ -3,13 +3,13 @@
   "data_source": {
     "Tantivy": {
       "path": "/home/lewis/src/meal-planner/.codanna/index/tantivy",
-      "doc_count": 201,
-      "timestamp": 1766439826
+      "doc_count": 3278,
+      "timestamp": 1766934533
     }
   },
-  "symbol_count": 150,
-  "file_count": 6,
-  "last_modified": 1766439826,
+  "symbol_count": 1362,
+  "file_count": 67,
+  "last_modified": 1766934533,
   "indexed_paths": [
     "/home/lewis/src/meal-planner"
   ]
