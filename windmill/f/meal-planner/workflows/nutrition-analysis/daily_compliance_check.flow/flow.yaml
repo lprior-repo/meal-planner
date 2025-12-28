@@ -1,0 +1,183 @@
+summary: Daily nutrition compliance check workflow
+description: |
+  Event-driven workflow that analyzes daily nutrition consumption and checks compliance.
+  
+  Triggered by: Webhook when user logs food, or scheduled daily check
+
+schema:
+  type: object
+  properties:
+    user_id:
+      type: string
+      description: User identifier
+    date:
+      type: string
+      description: Date to analyze (ISO format)
+    tolerance_pct:
+      type: number
+      default: 5.0
+      description: Acceptable deviation tolerance percentage
+
+value:
+  modules:
+    - id: fetch_goals
+      summary: Fetch user nutrition goals
+      value:
+        type: rawscript
+        content: |
+          // Preprocessor: Fetch user nutrition goals
+          // In production, this would query the database
+          export async function main(user_id: string) {
+            // TODO: Replace with actual database query
+            return {
+              daily_protein: 150.0,
+              daily_fat: 50.0,
+              daily_carbs: 200.0,
+              daily_calories: 2000.0
+            };
+          }
+        language: deno
+        input_transforms:
+          user_id:
+            type: javascript
+            expr: "flow_input.user_id"
+
+    - id: fetch_actual
+      summary: Fetch actual nutrition consumed
+      value:
+        type: rawscript
+        content: |
+          // Fetch actual nutrition consumed today
+          export async function main(user_id: string, date: string) {
+            // TODO: Replace with actual database query
+            return {
+              protein: 145.0,
+              fat: 55.0,
+              carbs: 210.0,
+              calories: 2050.0
+            };
+          }
+        language: deno
+        input_transforms:
+          user_id:
+            type: javascript
+            expr: "flow_input.user_id"
+          date:
+            type: javascript
+            expr: "flow_input.date || new Date().toISOString().split('T')[0]"
+
+    - id: calculate_deviation
+      summary: Calculate nutrition deviations
+      value:
+        type: script
+        path: f/meal-planner/core/ncp/calculate_deviation
+        input_transforms:
+          goals:
+            type: javascript
+            expr: "results.fetch_goals"
+          actual:
+            type: javascript
+            expr: "results.fetch_actual"
+
+    - id: check_tolerance
+      summary: Check if within tolerance
+      value:
+        type: script
+        path: f/meal-planner/core/ncp/check_within_tolerance
+        input_transforms:
+          deviation:
+            type: javascript
+            expr: "results.calculate_deviation"
+          tolerance_pct:
+            type: javascript
+            expr: "flow_input.tolerance_pct || 5.0"
+
+    - id: generate_recommendations
+      summary: Generate recommendations based on compliance
+      value:
+        type: branchone
+        branches:
+          - summary: Within tolerance - no action needed
+            expr: "results.check_tolerance.within_tolerance"
+            modules:
+              - id: log_success
+                value:
+                  type: rawscript
+                  content: |
+                    export async function main(data: any) {
+                      console.log("✓ Nutrition within tolerance");
+                      return { status: "compliant", action: "none" };
+                    }
+                  language: deno
+                  input_transforms:
+                    data:
+                      type: javascript
+                      expr: "results.check_tolerance"
+
+          - summary: Outside tolerance - generate recommendations
+            expr: "!results.check_tolerance.within_tolerance"
+            modules:
+              - id: create_recommendations
+                value:
+                  type: rawscript
+                  content: |
+                    export async function main(violations: string[], deviation: any) {
+                      const recommendations = violations.map(v => ({
+                        issue: v,
+                        suggested_action: "Adjust meal plan to bring macros within range"
+                      }));
+                      
+                      return {
+                        status: "non_compliant",
+                        recommendations,
+                        max_deviation: deviation.max_deviation
+                      };
+                    }
+                  language: deno
+                  input_transforms:
+                    violations:
+                      type: javascript
+                      expr: "results.check_tolerance.violations"
+                    deviation:
+                      type: javascript
+                      expr: "results.check_tolerance"
+
+    - id: notify_user
+      summary: Send notification to user
+      value:
+        type: rawscript
+        content: |
+          // Send notification to user
+          export async function main(user_id: string, result: any) {
+            console.log(`Notification for user ${user_id}:`, result);
+            
+            return {
+              notified: true,
+              user_id,
+              timestamp: new Date().toISOString()
+            };
+          }
+        language: deno
+        input_transforms:
+          user_id:
+            type: javascript
+            expr: "flow_input.user_id"
+          result:
+            type: javascript
+            expr: "results.generate_recommendations"
+
+  failure_module:
+    id: error_handler
+    value:
+      type: rawscript
+      content: |
+        export async function main(error: any, flow_input: any) {
+          console.error("Workflow failed:", error);
+          
+          return {
+            error: true,
+            message: error.message,
+            user_id: flow_input.user_id
+          };
+        }
+      language: deno

@@ -1,0 +1,362 @@
+{
+  "index_metadata": {
+    "indexed_at": "2025-12-28T00:00:00Z",
+    "documents": [
+      {"path": "docs/windmill/flows/14_retries.md", "type": "reference", "chunks": 3, "episodes": 1, "memories": 4},
+      {"path": "docs/windmill/flows/7_flow_error_handler.md", "type": "reference", "chunks": 2, "episodes": 1, "memories": 3},
+      {"path": "docs/windmill/flows/9_custom_timeout.md", "type": "reference", "chunks": 1, "episodes": 1, "memories": 2},
+      {"path": "docs/windmill/flows/12_flow_loops.md", "type": "reference", "chunks": 4, "episodes": 1, "memories": 5},
+      {"path": "docs/windmill/flows/13_flow_branches.md", "type": "reference", "chunks": 3, "episodes": 1, "memories": 4},
+      {"path": "docs/windmill/flows/2_early_stop.md", "type": "reference", "chunks": 2, "episodes": 1, "memories": 3},
+      {"path": "docs/windmill/flows/15_sleep.md", "type": "reference", "chunks": 2, "episodes": 1, "memories": 3},
+      {"path": "docs/windmill/flows/20_priority.md", "type": "reference", "chunks": 1, "episodes": 1, "memories": 2},
+      {"path": "docs/windmill/flows/21_lifetime.md", "type": "reference", "chunks": 1, "episodes": 1, "memories": 2},
+      {"path": "docs/windmill/flows/5_step_mocking.md", "type": "reference", "chunks": 3, "episodes": 1, "memories": 4},
+      {"path": "docs/windmill/core_concepts/24_caching/index.md", "type": "reference", "chunks": 4, "episodes": 1, "memories": 4},
+      {"path": "docs/windmill/core_concepts/21_concurrency_limits/index.md", "type": "reference", "chunks": 3, "episodes": 1, "memories": 4},
+      {"path": "docs/windmill/core_concepts/22_job_debouncing/index.md", "type": "reference", "chunks": 2, "episodes": 1, "memories": 3},
+      {"path": "docs/windmill/core_concepts/12_staging_prod/index.md", "type": "reference", "chunks": 3, "episodes": 1, "memories": 4},
+      {"path": "docs/windmill/core_concepts/7_multiplayer/index.md", "type": "reference", "chunks": 1, "episodes": 1, "memories": 2},
+      {"path": "docs/windmill/advanced/3_cli/installation.md", "type": "reference", "chunks": 2, "episodes": 1, "memories": 3},
+      {"path": "docs/windmill/advanced/3_cli/script.md", "type": "reference", "chunks": 5, "episodes": 1, "memories": 6},
+      {"path": "docs/windmill/advanced/3_cli/flow.md", "type": "reference", "chunks": 3, "episodes": 1, "memories": 4},
+      {"path": "docs/windmill/advanced/3_cli/resource.md", "type": "reference", "chunks": 2, "episodes": 1, "memories": 3},
+      {"path": "docs/windmill/advanced/3_cli/variable.md", "type": "reference", "chunks": 3, "episodes": 1, "memories": 4},
+      {"path": "docs/windmill/advanced/3_cli/workspace-management.md", "type": "reference", "chunks": 4, "episodes": 1, "memories": 5},
+      {"path": "docs/windmill/advanced/2_clients/python_client.md", "type": "reference", "chunks": 3, "episodes": 1, "memories": 5}
+    ],
+    "entity_index": {
+      "retries": ["14_retries.md"],
+      "error_handler": ["7_flow_error_handler.md"],
+      "custom_timeout": ["9_custom_timeout.md"],
+      "for_loops": ["12_flow_loops.md"],
+      "branches": ["13_flow_branches.md"],
+      "early_stop": ["2_early_stop.md"],
+      "sleep": ["15_sleep.md"],
+      "priority": ["20_priority.md"],
+      "lifetime": ["21_lifetime.md"],
+      "step_mocking": ["5_step_mocking.md"],
+      "caching": ["24_caching/index.md", "5_step_mocking.md"],
+      "concurrency_limits": ["21_concurrency_limits/index.md"],
+      "job_debouncing": ["22_job_debouncing/index.md"],
+      "staging_prod": ["12_staging_prod/index.md"],
+      "multiplayer": ["7_multiplayer/index.md"],
+      "wmill_cli": ["installation.md", "script.md", "flow.md", "resource.md", "variable.md", "workspace-management.md"],
+      "python_client": ["python_client.md"]
+    }
+  },
+  "rag_chunks": [
+    {
+      "chunk_id": "windmill_retries_constant",
+      "content": "## Constant retries\n\nFrom the `Advanced` menu, pick `Retries` and toggle `Constant retry enabled`.\nFrom there, define a maximum number of attempts and a given delay.\nAlthough the delay is set in seconds, inputs can be given in minutes, hours or days.",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/14_retries.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Retries", "Constant retries"],
+        "language": null,
+        "entities": ["retries", "constant_retry"],
+        "tags": ["windmill", "retries", "constant", "delay", "attempts", "flow", "step"]
+      },
+      "embedding_text": "Windmill constant retries retry step fixed delay seconds attempts maximum Advanced menu toggle enabled"
+    },
+    {
+      "chunk_id": "windmill_retries_exponential",
+      "content": "## Exponential backoff enabled\n\nFrom the `Advanced` menu, pick `Retries` and toggle `Exponential backoff enabled`.\nFrom there, define a maximum number of attempts and a given exponential delay defined by a base (in seconds), a multiplier and the number of the attempt.\nThe formula being given by `delay = multiplier * base ^ (number of attempt)`.",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/14_retries.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Retries", "Exponential backoff enabled"],
+        "language": null,
+        "entities": ["retries", "exponential_backoff"],
+        "tags": ["windmill", "retries", "exponential", "backoff", "delay", "multiplier", "base", "attempts"]
+      },
+      "embedding_text": "Windmill exponential backoff retry step delay multiplier base formula attempts maximum seconds growing"
+    },
+    {
+      "chunk_id": "windmill_retries_continue_on_error",
+      "content": "## Continue on error with error as step's return\n\nWhen enabled, the flow will continue to the next step after going through all the retries (if any) even if this step fails. This enables to process the error in a branch one for instance.\nBy default, each step is set to \"Stop on error and propagate error up\".",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/14_retries.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Retries", "Continue on error"],
+        "language": null,
+        "entities": ["retries", "continue_on_error", "branches"],
+        "tags": ["windmill", "retries", "continue", "error", "branch", "flow", "propagate"]
+      },
+      "embedding_text": "Windmill continue on error retry fail step proceed next branch handle error processing propagate"
+    },
+    {
+      "chunk_id": "windmill_error_handler",
+      "content": "# Error handler\n\nThe error handler is a special flow step that is executed when an error occurs in the flow.\nIf defined, the error handler will take as input the result of the step that errored (which has its error in the 'error field').\nSteps are retried until they succeed, or until the maximum number of retries defined for that spec is reached, at which point the error handler is called.",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/7_flow_error_handler.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Error handler"],
+        "language": null,
+        "entities": ["error_handler", "retries"],
+        "tags": ["windmill", "error", "handler", "flow", "step", "retry", "fail", "slack", "discord"]
+      },
+      "embedding_text": "Windmill error handler special flow step executed when error occurs input result errored retry exhausted"
+    },
+    {
+      "chunk_id": "windmill_custom_timeout",
+      "content": "# Custom timeout for step\n\nFor each step can be defined a timeout. If the execution takes longer than the time limit, the execution of the step will be interrupted.\nIf defined, the custom timeout will be used instead of the instance timeout for the step (for self-hosted, defined by the environment variable `TIMEOUT`). The step's timeout cannot be greater than the instance timeout.",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/9_custom_timeout.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Custom timeout for step"],
+        "language": null,
+        "entities": ["custom_timeout"],
+        "tags": ["windmill", "timeout", "step", "limit", "execution", "interrupt", "TIMEOUT", "instance"]
+      },
+      "embedding_text": "Windmill custom timeout step execution time limit interrupt TIMEOUT environment variable instance"
+    },
+    {
+      "chunk_id": "windmill_for_loops",
+      "content": "# For loops\n\nFor loops is a special type of steps that allows you to iterate over a list of items, given by an iterator expression.\n\n## Configuration options\n- Iterator expression: JavaScript expression for list of items\n- Skip failure: continue on item error\n- Run in parallel: execute iterations concurrently\n- Parallelism: limit parallel branches\n- Squash: run on same worker, eliminating cold starts",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/12_flow_loops.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["For loops", "Configuration options"],
+        "language": null,
+        "entities": ["for_loops"],
+        "tags": ["windmill", "for", "loop", "iterate", "parallel", "squash", "iterator", "expression"]
+      },
+      "embedding_text": "Windmill for loops iterate list items iterator expression skip failure parallel parallelism squash cold starts"
+    },
+    {
+      "chunk_id": "windmill_branches",
+      "content": "# Branches\n\nBranches allow to split the execution of the flow based on a condition.\n\nTwo types:\n- Branch one: executes first true branch or default\n- Branch all: executes all branches in parallel\n\nPredicate expression: JavaScript condition like 'results.c.command === email' or 'flow_input.number >= 2'",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/13_flow_branches.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Branches"],
+        "language": null,
+        "entities": ["branches"],
+        "tags": ["windmill", "branch", "condition", "predicate", "parallel", "flow", "split"]
+      },
+      "embedding_text": "Windmill branches split execution condition branch one branch all predicate expression JavaScript flow"
+    },
+    {
+      "chunk_id": "windmill_early_stop",
+      "content": "# Early stop / Break\n\nIf defined, at the end or before a step, the predicate expression will be evaluated to decide if the flow should stop early.\n\nFor steps: evaluated after step based on results\nFor flows: evaluated before execution based on inputs\nWithin for-loop: breaks loop instead of stopping flow",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/2_early_stop.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Early stop / Break"],
+        "language": null,
+        "entities": ["early_stop"],
+        "tags": ["windmill", "early", "stop", "break", "predicate", "condition", "loop", "flow"]
+      },
+      "embedding_text": "Windmill early stop break predicate expression flow step loop terminate halt condition"
+    },
+    {
+      "chunk_id": "windmill_sleep",
+      "content": "# Sleeps / Delays in flows\n\nExecutions within a flow can be suspended for a given time.\nSleeping is passive and does not consume any resources.\nDuration set in seconds but can handle hours, days, months.\n\nDistinct from: scheduling (triggers), approval suspension, retries, early stop",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/15_sleep.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Sleeps / Delays in flows"],
+        "language": null,
+        "entities": ["sleep"],
+        "tags": ["windmill", "sleep", "delay", "pause", "suspend", "flow", "passive"]
+      },
+      "embedding_text": "Windmill sleep delay pause suspend flow execution passive resources seconds hours days"
+    },
+    {
+      "chunk_id": "windmill_priority",
+      "content": "# Priority for steps\n\nPrioritize a flow step in the execution queue.\nPriority ranges from 1 to 100, with 100 being highest.\nNon-prioritized jobs default to priority 0.\nExclusive to Self-Hosted Enterprise.",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/20_priority.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Priority for steps"],
+        "language": null,
+        "entities": ["priority"],
+        "tags": ["windmill", "priority", "queue", "execution", "enterprise"]
+      },
+      "embedding_text": "Windmill priority step queue execution high priority jobs enterprise self-hosted"
+    },
+    {
+      "chunk_id": "windmill_lifetime",
+      "content": "# Lifetime / Delete after use\n\nThe logs, arguments and results of this flow step will be completely deleted from Windmill once the flow is complete.\nDeletion is irreversible.\nExclusive to Cloud plans and Self-Hosted Enterprise.",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/21_lifetime.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Lifetime / Delete after use"],
+        "language": null,
+        "entities": ["lifetime"],
+        "tags": ["windmill", "lifetime", "delete", "logs", "arguments", "results", "privacy"]
+      },
+      "embedding_text": "Windmill lifetime delete after use logs arguments results flow step irreversible privacy"
+    },
+    {
+      "chunk_id": "windmill_step_mocking",
+      "content": "# Step mocking / Pin result\n\nStep mocking and pinning results allows faster iteration while building flows.\n\nTwo approaches:\n- Mocking: set custom return value\n- Pinning: use previous successful run result\n\nWhen mocked or pinned, steps return immediately without computation.",
+      "metadata": {
+        "doc_source": "docs/windmill/flows/5_step_mocking.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Step mocking / Pin result"],
+        "language": null,
+        "entities": ["step_mocking"],
+        "tags": ["windmill", "mock", "pin", "result", "development", "testing", "iteration"]
+      },
+      "embedding_text": "Windmill step mocking pin result development testing iteration custom return value previous run"
+    },
+    {
+      "chunk_id": "windmill_caching",
+      "content": "# Caching\n\nCaching stores results for specified duration, reducing redundant computations.\nApplies to: scripts, flows, flow steps, app inline scripts.\n\nConfiguration: Settings > Cache, toggle on, specify duration in seconds.\nWhen triggered with same input within duration, returns cached result instantly.",
+      "metadata": {
+        "doc_source": "docs/windmill/core_concepts/24_caching/index.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Caching"],
+        "language": null,
+        "entities": ["caching"],
+        "tags": ["windmill", "cache", "performance", "duration", "results", "optimization"]
+      },
+      "embedding_text": "Windmill caching cache results duration seconds performance optimization redundant computation"
+    },
+    {
+      "chunk_id": "windmill_concurrency_limits",
+      "content": "# Concurrency limits\n\nPrevent exceeding API rate limits by controlling execution frequency.\n\nParameters:\n- Max executions within time window\n- Time window in seconds\n- Custom concurrency key (optional)\n\nCustom keys: $workspace (workspace-specific), $args[name] (argument-based)",
+      "metadata": {
+        "doc_source": "docs/windmill/core_concepts/21_concurrency_limits/index.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Concurrency limits"],
+        "language": null,
+        "entities": ["concurrency_limits"],
+        "tags": ["windmill", "concurrency", "limit", "rate", "API", "queue", "throttle"]
+      },
+      "embedding_text": "Windmill concurrency limits rate limit API throttle executions time window queue"
+    },
+    {
+      "chunk_id": "windmill_job_debouncing",
+      "content": "# Job debouncing\n\nPrevents redundant job executions by canceling pending jobs with identical characteristics.\n\nParameters:\n- Debounce delay in seconds\n- Custom debounce key (optional)\n\nFor dependency jobs, debouncing enabled by default.",
+      "metadata": {
+        "doc_source": "docs/windmill/core_concepts/22_job_debouncing/index.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Job debouncing"],
+        "language": null,
+        "entities": ["job_debouncing"],
+        "tags": ["windmill", "debounce", "cancel", "pending", "duplicate", "jobs"]
+      },
+      "embedding_text": "Windmill job debouncing cancel pending duplicate jobs delay characteristics newest"
+    },
+    {
+      "chunk_id": "windmill_staging_prod",
+      "content": "# Deploy to prod using the UI\n\nDeploy items and dependencies between workspaces.\nDeployable: Scripts, Flows, Resources, Variables, Triggers.\n\nItem states: Missing (not in target), New (will be created), diff (exists, shows differences).\nShareable pages for non-admin deployment links.",
+      "metadata": {
+        "doc_source": "docs/windmill/core_concepts/12_staging_prod/index.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Deploy to prod using the UI"],
+        "language": null,
+        "entities": ["staging_prod"],
+        "tags": ["windmill", "deploy", "staging", "prod", "workspace", "sync"]
+      },
+      "embedding_text": "Windmill deploy staging prod workspace sync scripts flows resources variables triggers"
+    },
+    {
+      "chunk_id": "windmill_multiplayer",
+      "content": "# Multiplayer\n\nReal-time collaboration on scripts with team members.\nToggle Multiplayer in script editor, invite members, write simultaneously.\nAvailable on Self-Hosted Enterprise Edition and Windmill Cloud.",
+      "metadata": {
+        "doc_source": "docs/windmill/core_concepts/7_multiplayer/index.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Multiplayer"],
+        "language": null,
+        "entities": ["multiplayer"],
+        "tags": ["windmill", "multiplayer", "collaboration", "real-time", "team"]
+      },
+      "embedding_text": "Windmill multiplayer collaboration real-time team script editor simultaneous"
+    },
+    {
+      "chunk_id": "windmill_cli_install",
+      "content": "# Installation\n\nInstall: npm install -g windmill-cli\nRequires Node v20+\nVerify: wmill --version\nUpgrade: wmill upgrade\n\nFor Cloudflare Tunnel: export HEADERS=key:value,key2:value2\nShell completions: wmill completions [bash|zsh|fish]",
+      "metadata": {
+        "doc_source": "docs/windmill/advanced/3_cli/installation.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Installation"],
+        "language": null,
+        "entities": ["wmill_cli"],
+        "tags": ["windmill", "cli", "wmill", "install", "npm", "node", "completions"]
+      },
+      "embedding_text": "Windmill CLI wmill install npm node upgrade completions bash zsh fish"
+    },
+    {
+      "chunk_id": "windmill_cli_script",
+      "content": "# Scripts\n\nCommands:\n- wmill script: list all scripts\n- wmill script push <path>: push local script\n- wmill script bootstrap <path> <language>: create new script\n- wmill script generate-metadata: regenerate schema and lockfile\n- wmill script show <path>: display remote script\n- wmill script run <path> -d JSON: run with arguments\n\nLanguages: deno, python3, bun, bash, go, nativets, postgresql, mysql, bigquery, snowflake, graphql, powershell",
+      "metadata": {
+        "doc_source": "docs/windmill/advanced/3_cli/script.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Scripts"],
+        "language": null,
+        "entities": ["wmill_cli", "scripts"],
+        "tags": ["windmill", "cli", "script", "push", "bootstrap", "run", "metadata"]
+      },
+      "embedding_text": "Windmill CLI wmill script push bootstrap run generate-metadata list show languages"
+    },
+    {
+      "chunk_id": "windmill_cli_flow",
+      "content": "# Flows\n\nCommands:\n- wmill flow: list all flows\n- wmill flow push <file> <path>: push local flow YAML\n- wmill flow bootstrap <path>: create new flow\n- wmill flow run <path> -d JSON: run with arguments\n- wmill flow generate-locks: update inline script lockfiles",
+      "metadata": {
+        "doc_source": "docs/windmill/advanced/3_cli/flow.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Flows"],
+        "language": null,
+        "entities": ["wmill_cli", "flows"],
+        "tags": ["windmill", "cli", "flow", "push", "bootstrap", "run", "locks"]
+      },
+      "embedding_text": "Windmill CLI wmill flow push bootstrap run generate-locks list YAML"
+    },
+    {
+      "chunk_id": "windmill_cli_resource",
+      "content": "# Resources\n\nCommands:\n- wmill resource: list all resources\n- wmill resource push <file> <path>: push local resource\n\nSpec structure (JSON/YAML): value (required), description (optional), resource_type (required), is_oauth (deprecated)",
+      "metadata": {
+        "doc_source": "docs/windmill/advanced/3_cli/resource.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Resources"],
+        "language": null,
+        "entities": ["wmill_cli", "resources"],
+        "tags": ["windmill", "cli", "resource", "push", "list", "JSON", "YAML"]
+      },
+      "embedding_text": "Windmill CLI wmill resource push list JSON YAML value resource_type"
+    },
+    {
+      "chunk_id": "windmill_cli_variable",
+      "content": "# Variables\n\nCommands:\n- wmill variable: list all variables\n- wmill add <path> --value=<value>: add new variable\n- wmill push <file> <path>: push local variable spec\n\nOptions: --secret, --description, --account, --oauth, --plain-secrets\nSpec: value, is_secret, description, extra_perms, account, is_oauth, is_expired",
+      "metadata": {
+        "doc_source": "docs/windmill/advanced/3_cli/variable.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Variables"],
+        "language": null,
+        "entities": ["wmill_cli", "variables"],
+        "tags": ["windmill", "cli", "variable", "add", "push", "secret", "list"]
+      },
+      "embedding_text": "Windmill CLI wmill variable add push list secret description value"
+    },
+    {
+      "chunk_id": "windmill_cli_workspace",
+      "content": "# Workspace management\n\nCommands:\n- wmill workspace: list workspaces (current underlined)\n- wmill workspace add <name> <id> <remote>: add workspace\n- wmill workspace switch <name>: switch active workspace\n- wmill workspace remove <name>: remove workspace\n- wmill workspace whoami: show current user and workspace\n\nOptions: --create, --create-workspace-name, --create-username\nEncryption keys managed with --include-key",
+      "metadata": {
+        "doc_source": "docs/windmill/advanced/3_cli/workspace-management.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Workspace management"],
+        "language": null,
+        "entities": ["wmill_cli", "workspace"],
+        "tags": ["windmill", "cli", "workspace", "add", "switch", "remove", "whoami"]
+      },
+      "embedding_text": "Windmill CLI wmill workspace add switch remove whoami list remote encryption"
+    },
+    {
+      "chunk_id": "windmill_python_client",
+      "content": "# Python client\n\nInstall: pip install wmill\n\nCore functions:\n- get_resource(path), get_variable(path), set_variable(path, value)\n- run_script_by_path(path, args), run_script_by_hash(hash, args)\n- run_script_by_path_async(path, args), run_flow_async(path, args)\n- get_result(job_id), get_state(), set_state(value)\n\nAdvanced: Windmill class with base_url, token, workspace\nS3: S3Object, load_s3_file, write_s3_file\nNote: Not thread-safe, uses WM_TOKEN env var",
+      "metadata": {
+        "doc_source": "docs/windmill/advanced/2_clients/python_client.md",
+        "doc_type": "reference",
+        "section_hierarchy": ["Python client"],
+        "language": "python",
+        "entities": ["python_client"],
+        "tags": ["windmill", "python", "sdk", "wmill", "client", "resource", "variable", "script", "flow", "S3"]
+      },
+      "embedding_text": "Windmill Python client SDK wmill pip install get_resource get_variable run_script run_flow S3 async"
+    }
+  ]
+}

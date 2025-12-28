@@ -12,6 +12,28 @@ bd close <id>         # Complete work
 bd sync               # Sync with git
 ```
 
+## Knowledge Base
+
+This project has indexed documentation in the Graphiti knowledge graph. Search before implementing:
+
+```bash
+# Search Windmill documentation
+graphiti_search_memory_facts(query="windmill retries error handling", group_ids=["windmill-docs"])
+
+# Get indexed episodes
+graphiti_get_episodes(group_ids=["windmill-docs"])
+```
+
+**Indexed Documentation:**
+- `docs/windmill/INDEXED_KNOWLEDGE.json` - RAG chunks with embedding text
+- Graphiti group `windmill-docs` - 23 feature episodes + 5 relationship episodes
+
+**What's indexed:**
+- Windmill Flow Features: Retries, Error Handler, Branches, For Loops, Early Stop, Sleep, Priority, Lifetime, Step Mocking, Custom Timeout
+- Windmill Core Concepts: Caching, Concurrency Limits, Job Debouncing, Staging/Prod, Multiplayer
+- Windmill CLI: Installation, Scripts, Flows, Resources, Variables, Workspace Management
+- Windmill Python Client: SDK functions, S3 integration
+
 ## Landing the Plane (Session Completion)
 
 **When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
