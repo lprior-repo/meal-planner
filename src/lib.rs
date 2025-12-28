@@ -4,6 +4,8 @@
 //! converted to Rust and made compatible with Windmill orchestration patterns.
 
 // Re-export modules to make them available at the crate level
+pub mod external;
+pub mod fatsecret;
 pub mod logging;
 pub mod web;
 
