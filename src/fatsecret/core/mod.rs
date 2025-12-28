@@ -2,10 +2,11 @@
 //!
 //! Contains configuration, error types, OAuth utilities, and HTTP client.
 
-mod config;
+pub mod config;
 pub mod errors;
 pub mod http;
 pub mod oauth;
+pub mod serde_utils;
 
 pub use config::FatSecretConfig;
 pub use errors::{parse_error_response, ApiErrorCode, FatSecretError};

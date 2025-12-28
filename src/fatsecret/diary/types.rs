@@ -6,6 +6,11 @@
 
 use serde::{Deserialize, Serialize};
 
+use crate::fatsecret::core::serde_utils::{
+    deserialize_flexible_float, deserialize_flexible_int, deserialize_optional_flexible_float,
+    deserialize_optional_flexible_int, deserialize_single_or_vec,
+};
+
 // ============================================================================
 // MealType
 // ============================================================================
@@ -110,42 +115,80 @@ pub struct FoodEntry {
     /// Serving ID (if from FatSecret database, empty for custom)
     pub serving_id: String,
     /// Number of servings consumed
+    #[serde(deserialize_with = "deserialize_flexible_float")]
     pub number_of_units: f64,
     /// Which meal this entry belongs to
     pub meal: MealType,
     /// Date as days since Unix epoch (0 = 1970-01-01)
+    #[serde(deserialize_with = "deserialize_flexible_int")]
     pub date_int: i32,
     /// Calories
+    #[serde(deserialize_with = "deserialize_flexible_float")]
     pub calories: f64,
     /// Carbohydrates in grams
+    #[serde(deserialize_with = "deserialize_flexible_float")]
     pub carbohydrate: f64,
     /// Protein in grams
+    #[serde(deserialize_with = "deserialize_flexible_float")]
     pub protein: f64,
     /// Total fat in grams
+    #[serde(deserialize_with = "deserialize_flexible_float")]
     pub fat: f64,
     /// Saturated fat in grams
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_optional_flexible_float"
+    )]
     pub saturated_fat: Option<f64>,
     /// Polyunsaturated fat in grams
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_optional_flexible_float"
+    )]
     pub polyunsaturated_fat: Option<f64>,
     /// Monounsaturated fat in grams
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_optional_flexible_float"
+    )]
     pub monounsaturated_fat: Option<f64>,
     /// Cholesterol in milligrams
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_optional_flexible_float"
+    )]
     pub cholesterol: Option<f64>,
     /// Sodium in milligrams
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_optional_flexible_float"
+    )]
     pub sodium: Option<f64>,
     /// Potassium in milligrams
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_optional_flexible_float"
+    )]
     pub potassium: Option<f64>,
     /// Fiber in grams
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_optional_flexible_float"
+    )]
     pub fiber: Option<f64>,
     /// Sugar in grams
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_optional_flexible_float"
+    )]
     pub sugar: Option<f64>,
 }
 
@@ -178,6 +221,15 @@ pub enum FoodEntryInput {
         protein: f64,
         fat: f64,
     },
+}
+
+impl FoodEntryInput {
+    pub fn food_entry_name(&self) -> &str {
+        match self {
+            FoodEntryInput::FromFood { food_entry_name, .. } => food_entry_name,
+            FoodEntryInput::Custom { food_entry_name, .. } => food_entry_name,
+        }
+    }
 }
 
 /// Update for an existing food entry
@@ -217,10 +269,15 @@ impl FoodEntryUpdate {
 /// Aggregated totals for a single day's diary entries.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DaySummary {
+    #[serde(deserialize_with = "deserialize_flexible_int")]
     pub date_int: i32,
+    #[serde(deserialize_with = "deserialize_flexible_float")]
     pub calories: f64,
+    #[serde(deserialize_with = "deserialize_flexible_float")]
     pub carbohydrate: f64,
+    #[serde(deserialize_with = "deserialize_flexible_float")]
     pub protein: f64,
+    #[serde(deserialize_with = "deserialize_flexible_float")]
     pub fat: f64,
 }
 
@@ -229,8 +286,11 @@ pub struct DaySummary {
 /// Contains a summary for each day in the month.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MonthSummary {
+    #[serde(rename = "day", default, deserialize_with = "deserialize_single_or_vec")]
     pub days: Vec<DaySummary>,
+    #[serde(deserialize_with = "deserialize_flexible_int")]
     pub month: i32,
+    #[serde(deserialize_with = "deserialize_flexible_int")]
     pub year: i32,
 }
 
@@ -239,15 +299,9 @@ pub struct MonthSummary {
 // ============================================================================
 
 /// Convert YYYY-MM-DD to days since epoch (date_int)
-///
-/// FatSecret API uses date_int which is the number of days since 1970-01-01.
-/// Examples:
-/// - "1970-01-01" -> 0
-/// - "1970-01-02" -> 1
-/// - "2024-01-01" -> 19723
 pub fn date_to_int(date: &str) -> Result<i32, String> {
     use chrono::NaiveDate;
-
+    
     NaiveDate::parse_from_str(date, "%Y-%m-%d")
         .map_err(|e| format!("Invalid date format: {}", e))
         .map(|d| {
@@ -257,14 +311,13 @@ pub fn date_to_int(date: &str) -> Result<i32, String> {
 }
 
 /// Convert days since epoch to YYYY-MM-DD
-///
-/// Inverse of date_to_int. Always returns a valid date string.
-pub fn int_to_date(date_int: i32) -> String {
+pub fn int_to_date(date_int: i32) -> Result<String, String> {
     use chrono::{Duration, NaiveDate};
-
+    
     let epoch = NaiveDate::from_ymd_opt(1970, 1, 1).unwrap();
-    let date = epoch + Duration::days(date_int as i64);
-    date.format("%Y-%m-%d").to_string()
+    let date = epoch.checked_add_signed(Duration::days(date_int as i64))
+        .ok_or_else(|| format!("Date calculation overflow: {}", date_int))?;
+    Ok(date.format("%Y-%m-%d").to_string())
 }
 
 // ============================================================================
@@ -284,9 +337,6 @@ impl std::fmt::Display for ValidationError {
 impl std::error::Error for ValidationError {}
 
 /// Validate custom food entry data
-///
-/// Ensures all nutrition values are valid (allows zero for things like water).
-/// Checks that names are not empty and serving descriptions are present.
 pub fn validate_custom_entry(
     food_entry_name: &str,
     serving_description: &str,

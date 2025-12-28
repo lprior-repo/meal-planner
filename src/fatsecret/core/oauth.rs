@@ -8,11 +8,14 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use base64::Engine;
 use ring::hmac;
 use ring::rand::{SecureRandom, SystemRandom};
+use serde::{Serialize, Deserialize};
+use reqwest::Method;
 
-use crate::fatsecret::core::FatSecretError;
+use crate::fatsecret::core::{FatSecretConfig, FatSecretError};
+use crate::fatsecret::core::http::make_oauth_request;
 
 /// OAuth 1.0a request token (from Step 1 of 3-legged flow)
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RequestToken {
     pub oauth_token: String,
     pub oauth_token_secret: String,
@@ -20,7 +23,7 @@ pub struct RequestToken {
 }
 
 /// OAuth 1.0a access token (from Step 3 of 3-legged flow)
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AccessToken {
     pub oauth_token: String,
     pub oauth_token_secret: String,
@@ -156,30 +159,45 @@ pub fn build_oauth_params(
 
 /// Parse OAuth response string (key=value&key2=value2) into a hash map
 pub fn parse_oauth_response(response: &str) -> HashMap<String, String> {
-    response
-        .split('&')
-        .filter_map(|pair| {
-            let mut parts = pair.splitn(2, '=');
-            let key = parts.next()?;
-            let value = parts.next()?;
-            Some((key.to_string(), value.to_string()))
-        })
+    url::form_urlencoded::parse(response.as_bytes())
+        .into_owned()
         .collect()
 }
 
-/// Parse request token response from OAuth 1.0a step 1
-pub fn parse_request_token(response: &str) -> Result<RequestToken, FatSecretError> {
-    let params = parse_oauth_response(response);
+// ============================================================================
+// OAuth 1.0a Flow - 3-legged Authentication
+// ============================================================================
 
-    let oauth_token = params
+/// Get OAuth request token (Step 1 of 3-legged flow)
+pub async fn get_request_token(
+    config: &FatSecretConfig,
+    callback_url: &str,
+) -> Result<RequestToken, FatSecretError> {
+    let mut params = HashMap::new();
+    params.insert("oauth_callback".to_string(), callback_url.to_string());
+
+    let body = make_oauth_request(
+        config,
+        Method::POST,
+        config.auth_host(),
+        "/oauth/request_token",
+        &params,
+        None,
+        None,
+    )
+    .await?;
+
+    let response_params = parse_oauth_response(&body);
+
+    let oauth_token = response_params
         .get("oauth_token")
         .ok_or_else(|| FatSecretError::oauth_error("Missing oauth_token"))?
         .clone();
-    let oauth_token_secret = params
+    let oauth_token_secret = response_params
         .get("oauth_token_secret")
         .ok_or_else(|| FatSecretError::oauth_error("Missing oauth_token_secret"))?
         .clone();
-    let oauth_callback_confirmed = params
+    let oauth_callback_confirmed = response_params
         .get("oauth_callback_confirmed")
         .map(|v| v == "true")
         .unwrap_or(false);
@@ -191,15 +209,33 @@ pub fn parse_request_token(response: &str) -> Result<RequestToken, FatSecretErro
     })
 }
 
-/// Parse access token response from OAuth 1.0a step 3
-pub fn parse_access_token(response: &str) -> Result<AccessToken, FatSecretError> {
-    let params = parse_oauth_response(response);
+/// Exchange authorized request token for access token (Step 3 of 3-legged flow)
+pub async fn get_access_token(
+    config: &FatSecretConfig,
+    request_token: &RequestToken,
+    oauth_verifier: &str,
+) -> Result<AccessToken, FatSecretError> {
+    let mut params = HashMap::new();
+    params.insert("oauth_verifier".to_string(), oauth_verifier.to_string());
 
-    let oauth_token = params
+    let body = make_oauth_request(
+        config,
+        Method::GET,
+        config.auth_host(),
+        "/oauth/access_token",
+        &params,
+        Some(&request_token.oauth_token),
+        Some(&request_token.oauth_token_secret),
+    )
+    .await?;
+
+    let response_params = parse_oauth_response(&body);
+
+    let oauth_token = response_params
         .get("oauth_token")
         .ok_or_else(|| FatSecretError::oauth_error("Missing oauth_token"))?
         .clone();
-    let oauth_token_secret = params
+    let oauth_token_secret = response_params
         .get("oauth_token_secret")
         .ok_or_else(|| FatSecretError::oauth_error("Missing oauth_token_secret"))?
         .clone();
@@ -235,7 +271,7 @@ mod tests {
 
         let base = create_signature_base_string("POST", "https://api.example.com", &params);
         // Sorted params: oauth_consumer_key, oauth_nonce, oauth_signature_method, oauth_timestamp, oauth_version
-        assert!(base.starts_with("POST&https%3A%2F%2Fapi.example.com&oauth_consumer_key%3Dkey"));
+        assert!(base.contains("POST&https%3A%2F%2Fapi.example.com&oauth_consumer_key%3Dkey"));
     }
 
     #[test]

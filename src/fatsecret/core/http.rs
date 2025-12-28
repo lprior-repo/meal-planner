@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use reqwest::{Client, Method};
 
 use crate::fatsecret::core::{FatSecretConfig, FatSecretError, AccessToken};
-use crate::fatsecret::core::oauth::{build_oauth_params, oauth_encode, parse_oauth_response};
+use crate::fatsecret::core::oauth::{build_oauth_params, oauth_encode};
 use crate::fatsecret::core::errors::parse_error_response;
 
 /// Make signed OAuth request (2-legged or 3-legged)
@@ -44,7 +44,11 @@ pub async fn make_oauth_request(
             .map(|(k, v)| format!("{}={}", k, oauth_encode(v)))
             .collect();
         let query_string = query.join("&");
-        let full_url = format!("{}?{}", url, query_string);
+        let full_url = if query_string.is_empty() {
+            url
+        } else {
+            format!("{}?{}", url, query_string)
+        };
         
         client.get(&full_url).send().await?
     } else {
