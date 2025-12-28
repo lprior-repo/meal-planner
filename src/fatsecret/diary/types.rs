@@ -7,8 +7,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::fatsecret::core::serde_utils::{
-    deserialize_flexible_float, deserialize_flexible_int, deserialize_optional_flexible_float,
-    deserialize_optional_flexible_int, deserialize_single_or_vec,
+    deserialize_flexible_float, deserialize_flexible_int, deserialize_single_or_vec,
 };
 
 // ============================================================================
@@ -413,9 +412,9 @@ mod tests {
 
     #[test]
     fn test_int_to_date() {
-        assert_eq!(int_to_date(0), "1970-01-01");
-        assert_eq!(int_to_date(1), "1970-01-02");
-        assert_eq!(int_to_date(19723), "2024-01-01");
+        assert_eq!(int_to_date(0).unwrap(), "1970-01-01");
+        assert_eq!(int_to_date(1).unwrap(), "1970-01-02");
+        assert_eq!(int_to_date(19723).unwrap(), "2024-01-01");
     }
 
     #[test]

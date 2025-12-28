@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 use crate::fatsecret::core::serde_utils::{
     deserialize_flexible_float,
     deserialize_flexible_int,
-    deserialize_optional_flexible_float,
     deserialize_single_or_vec,
 };
 
