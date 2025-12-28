@@ -1,0 +1,51 @@
+[package]
+name = "meal-planner"
+version = "1.0.0"
+edition = "2021"
+
+[[bin]]
+name = "meal-planner"
+path = "main.rs"
+
+[dependencies]
+# Core dependencies
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+tokio-util = "0.7"
+futures = "0.3"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+serde_json = "1.0"
+url = "2.4"
+reqwest = { version = "0.11", features = ["json", "multipart"] }
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "sqlite", "json"] }
+dotenv = "0.15"
+clap = { version = "4.0", features = ["derive"] }
+
+# HTTP framework (similar to Wisp/Mist)
+warp = "0.3"
+hyper = "0.14"
+
+# Configuration
+config = "0.13"
+serde_yaml = "0.9"
+
+# Logging
+log = "0.4"
+env_logger = "0.10"
+
+# Testing
+tokio-test = "0.4"
+
+[dev-dependencies]
+# Testing dependencies
+tokio = { version = "1.0", features = ["full"] }
+
+[lints.clippy]
+# Strict linting rules
+mutable_key_type = "warn"
+unnecessary_mut_passed = "warn"
+needless_pass_by_value = "warn"
+redundant_clone = "warn"

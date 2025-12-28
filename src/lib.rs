@@ -1,0 +1,12 @@
+//! Windmill-compatible Meal Planner Library
+//!
+//! This library provides the core functionality for the meal planner application,
+//! converted to Rust and made compatible with Windmill orchestration patterns.
+
+// Re-export modules to make them available at the crate level
+pub mod web;
+pub mod logging;
+
+// Public API exports
+pub use web::*;
+pub use logging::*;
