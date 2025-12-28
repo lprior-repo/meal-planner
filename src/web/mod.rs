@@ -83,24 +83,29 @@ pub async fn detailed_health_handler() -> DetailedHealthResponse {
                 message: "Tandoor configured".to_string(),
                 details: Some("API credentials present".to_string()),
             },
-        }
+        },
     }
 }
 
 /// Initialize web API routes
-pub fn init_routes() -> impl warp::Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+pub fn init_routes(
+) -> impl warp::Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     // Health check route: GET /health
     let health = warp::get()
         .and(warp::path("health"))
         .and(warp::path::end())
-        .and_then(|| async { Ok::<_, warp::Rejection>(warp::reply::json(&health_handler().await)) });
+        .and_then(|| async {
+            Ok::<_, warp::Rejection>(warp::reply::json(&health_handler().await))
+        });
 
     // Detailed health check route: GET /health/detailed
     let detailed_health = warp::get()
         .and(warp::path("health"))
         .and(warp::path("detailed"))
         .and(warp::path::end())
-        .and_then(|| async { Ok::<_, warp::Rejection>(warp::reply::json(&detailed_health_handler().await)) });
+        .and_then(|| async {
+            Ok::<_, warp::Rejection>(warp::reply::json(&detailed_health_handler().await))
+        });
 
     // Combine all routes
     health.or(detailed_health)

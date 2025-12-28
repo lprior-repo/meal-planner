@@ -2,7 +2,7 @@
 //!
 //! Provides structured logging utilities for the Windmill orchestration patterns.
 
-use log::{info, warn, error, debug, trace};
+use log::{debug, error, info, trace, warn};
 
 /// Initialize application logging
 pub fn init_logging() {
@@ -16,7 +16,10 @@ pub fn init_logging_with_config(log_level: &str, _log_format: &str) {
     // Set the log level via environment variable
     std::env::set_var("RUST_LOG", log_level);
     env_logger::init();
-    info!("Logging initialized with custom configuration at level: {}", log_level);
+    info!(
+        "Logging initialized with custom configuration at level: {}",
+        log_level
+    );
 }
 
 /// Log application startup
