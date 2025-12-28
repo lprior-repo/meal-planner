@@ -1,0 +1,80 @@
+# Windmill Configuration for Meal Planner FatSecret Integration
+# This file configures Windmill scripts and workflows for FatSecret sync operations
+
+version: "1"
+env: ""  # Leave empty, overridden by workspace
+
+# Resource types used by FatSecret scripts
+resources:
+  # PostgreSQL database connection for queue processing
+  database:
+    description: "PostgreSQL database for meal planner"
+    type: "postgresql"
+    workspace_path: "f/meal-planner/database"
+
+  # FatSecret API credentials (2-legged OAuth)
+  fatsecret_api:
+    description: "FatSecret API OAuth consumer key and secret"
+    type: "custom"
+    workspace_path: "f/meal-planner/external_apis/fatsecret"
+
+  # User OAuth tokens for 3-legged OAuth (encrypted in database)
+  fatsecret_oauth:
+    description: "FatSecret user OAuth tokens (stored in DB, retrieved by ID)"
+    type: "custom"
+    workspace_path: "f/meal-planner/fatsecret_oauth"
+
+# Script metadata and configuration
+scripts:
+  # FatSecret Sync Scripts
+  fatsecret_sync_diary_to_plan:
+    path: "f/meal-planner/scripts/fatsecret/sync/sync_diary_to_plan"
+    language: "rust"
+    description: "Sync FatSecret diary entries to Tandoor meal plans"
+
+  fatsecret_fetch_diary:
+    path: "f/meal-planner/scripts/fatsecret/diary/fetch_diary"
+    language: "rust"
+    description: "Fetch FatSecret diary entries for a specific date"
+
+  fatsecret_search_foods:
+    path: "f/meal-planner/scripts/fatsecret/foods/search_foods"
+    language: "rust"
+    description: "Search FatSecret food database"
+
+  fatsecret_process_upload_queue:
+    path: "f/meal-planner/scripts/fatsecret/sync/process_upload_queue"
+    language: "rust"
+    description: "Process pending entries in FatSecret upload queue"
+
+# Workflow orchestration (future)
+workflows: {}
+  # Example workflow that could tie scripts together
+  # daily_fatsecret_sync:
+  #   description: "Daily sync of FatSecret data to meal plans"
+  #   trigger: "schedule"
+  #   schedule: "0 2 * * *"  # 2 AM daily
+  #   steps:
+  #     - name: "fetch_diary"
+  #       script: "fatsecret_fetch_diary"
+  #     - name: "sync_to_plans"
+  #       script: "fatsecret_sync_diary_to_plan"
+  #     - name: "process_queue"
+  #       script: "fatsecret_process_upload_queue"
+
+# Environment variables for different environments
+variables:
+  development:
+    FATSECRET_API_TIMEOUT: "30000"
+    FATSECRET_MAX_RETRIES: "3"
+    FATSECRET_BATCH_SIZE: "10"
+
+  staging:
+    FATSECRET_API_TIMEOUT: "30000"
+    FATSECRET_MAX_RETRIES: "5"
+    FATSECRET_BATCH_SIZE: "50"
+
+  production:
+    FATSECRET_API_TIMEOUT: "60000"
+    FATSECRET_MAX_RETRIES: "5"
+    FATSECRET_BATCH_SIZE: "100"
