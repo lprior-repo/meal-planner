@@ -29,7 +29,11 @@ pub struct NutritionState {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
-pub enum TrendDirection { Increasing, Decreasing, Stable }
+pub enum TrendDirection {
+    Increasing,
+    Decreasing,
+    Stable,
+}
 
 #[derive(Debug, Clone, Serialize)]
 pub struct TrendAnalysis {

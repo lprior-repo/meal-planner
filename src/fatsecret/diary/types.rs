@@ -245,7 +245,6 @@ pub struct MonthSummary {
 /// - "1970-01-01" -> 0
 /// - "1970-01-02" -> 1
 /// - "2024-01-01" -> 19723
-#[allow(dead_code)]
 pub fn date_to_int(date: &str) -> Result<i32, String> {
     use chrono::NaiveDate;
 
@@ -260,13 +259,95 @@ pub fn date_to_int(date: &str) -> Result<i32, String> {
 /// Convert days since epoch to YYYY-MM-DD
 ///
 /// Inverse of date_to_int. Always returns a valid date string.
-#[allow(dead_code)]
 pub fn int_to_date(date_int: i32) -> String {
     use chrono::{Duration, NaiveDate};
 
     let epoch = NaiveDate::from_ymd_opt(1970, 1, 1).unwrap();
     let date = epoch + Duration::days(date_int as i64);
     date.format("%Y-%m-%d").to_string()
+}
+
+// ============================================================================
+// Validation Functions
+// ============================================================================
+
+/// Validation error for custom entries
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ValidationError(pub String);
+
+impl std::fmt::Display for ValidationError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl std::error::Error for ValidationError {}
+
+/// Validate custom food entry data
+///
+/// Ensures all nutrition values are valid (allows zero for things like water).
+/// Checks that names are not empty and serving descriptions are present.
+pub fn validate_custom_entry(
+    food_entry_name: &str,
+    serving_description: &str,
+    number_of_units: f64,
+    calories: f64,
+    carbohydrate: f64,
+    protein: f64,
+    fat: f64,
+) -> Result<(), ValidationError> {
+    if food_entry_name.is_empty() {
+        return Err(ValidationError(
+            "food_entry_name cannot be empty".to_string(),
+        ));
+    }
+    if serving_description.is_empty() {
+        return Err(ValidationError(
+            "serving_description cannot be empty".to_string(),
+        ));
+    }
+    validate_number_of_units(number_of_units)?;
+    if calories < 0.0 || carbohydrate < 0.0 || protein < 0.0 || fat < 0.0 {
+        return Err(ValidationError(
+            "Nutrition values cannot be negative".to_string(),
+        ));
+    }
+    Ok(())
+}
+
+/// Validate number of units is positive
+pub fn validate_number_of_units(number_of_units: f64) -> Result<(), ValidationError> {
+    if number_of_units > 0.0 {
+        Ok(())
+    } else {
+        Err(ValidationError(
+            "number_of_units must be greater than 0".to_string(),
+        ))
+    }
+}
+
+/// Validate date_int string from URL parameter
+pub fn validate_date_int_string(date_int_str: &str) -> Option<i32> {
+    date_int_str.parse().ok()
+}
+
+// ============================================================================
+// Auth Error Types
+// ============================================================================
+
+/// Simplified auth error for mapping HTTP status codes
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AuthError {
+    AuthRevoked,
+    OtherError,
+}
+
+/// Map HTTP auth error codes to service errors
+pub fn map_auth_error(status_code: u16) -> AuthError {
+    match status_code {
+        401 | 403 => AuthError::AuthRevoked,
+        _ => AuthError::OtherError,
+    }
 }
 
 #[cfg(test)]
@@ -299,5 +380,65 @@ mod tests {
             let parsed = MealType::from_api_string(s).unwrap();
             assert_eq!(meal, parsed);
         }
+    }
+
+    #[test]
+    fn test_validate_custom_entry_valid() {
+        assert!(validate_custom_entry("Apple", "1 medium", 1.0, 95.0, 25.0, 0.5, 0.3).is_ok());
+    }
+
+    #[test]
+    fn test_validate_custom_entry_empty_name() {
+        let result = validate_custom_entry("", "1 medium", 1.0, 95.0, 25.0, 0.5, 0.3);
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err().0, "food_entry_name cannot be empty");
+    }
+
+    #[test]
+    fn test_validate_custom_entry_empty_serving() {
+        let result = validate_custom_entry("Apple", "", 1.0, 95.0, 25.0, 0.5, 0.3);
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err().0, "serving_description cannot be empty");
+    }
+
+    #[test]
+    fn test_validate_custom_entry_zero_units() {
+        let result = validate_custom_entry("Apple", "1 medium", 0.0, 95.0, 25.0, 0.5, 0.3);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().0,
+            "number_of_units must be greater than 0"
+        );
+    }
+
+    #[test]
+    fn test_validate_custom_entry_negative_nutrition() {
+        let result = validate_custom_entry("Apple", "1 medium", 1.0, -95.0, 25.0, 0.5, 0.3);
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err().0, "Nutrition values cannot be negative");
+    }
+
+    #[test]
+    fn test_validate_number_of_units() {
+        assert!(validate_number_of_units(1.0).is_ok());
+        assert!(validate_number_of_units(0.5).is_ok());
+        assert!(validate_number_of_units(0.0).is_err());
+        assert!(validate_number_of_units(-1.0).is_err());
+    }
+
+    #[test]
+    fn test_validate_date_int_string() {
+        assert_eq!(validate_date_int_string("19723"), Some(19723));
+        assert_eq!(validate_date_int_string("0"), Some(0));
+        assert_eq!(validate_date_int_string("invalid"), None);
+        assert_eq!(validate_date_int_string(""), None);
+    }
+
+    #[test]
+    fn test_map_auth_error() {
+        assert_eq!(map_auth_error(401), AuthError::AuthRevoked);
+        assert_eq!(map_auth_error(403), AuthError::AuthRevoked);
+        assert_eq!(map_auth_error(500), AuthError::OtherError);
+        assert_eq!(map_auth_error(404), AuthError::OtherError);
     }
 }

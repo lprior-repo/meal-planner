@@ -41,7 +41,7 @@ impl FatSecretConfig {
     pub fn from_env() -> Option<Self> {
         let consumer_key = env::var("FATSECRET_CONSUMER_KEY").ok()?;
         let consumer_secret = env::var("FATSECRET_CONSUMER_SECRET").ok()?;
-        
+
         Some(Self {
             consumer_key,
             consumer_secret,

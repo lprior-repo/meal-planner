@@ -11,5 +11,7 @@ pub use client::{
     get_food_entries, get_food_entry, get_month_summary, save_template,
 };
 pub use types::{
-    DaySummary, FoodEntry, FoodEntryId, FoodEntryInput, FoodEntryUpdate, MealType, MonthSummary,
+    date_to_int, int_to_date, map_auth_error, validate_custom_entry, validate_date_int_string,
+    validate_number_of_units, AuthError, DaySummary, FoodEntry, FoodEntryId, FoodEntryInput,
+    FoodEntryUpdate, MealType, MonthSummary, ValidationError,
 };
