@@ -138,6 +138,11 @@ pub struct ExerciseEntryIdOnly {
 }
 
 /// Wrapper for ExerciseMonthSummary response
+#[derive(Debug, Deserialize)]
+pub struct ExerciseMonthSummaryResponse {
+    pub exercise_month: ExerciseMonthSummary,
+}
+
 // ============================================================================
 // Date Conversion Functions
 // ============================================================================
@@ -162,9 +167,4 @@ pub fn int_to_date(date_int: i32) -> Result<String, String> {
     let date = epoch.checked_add_signed(Duration::days(date_int as i64))
         .ok_or_else(|| format!("Date calculation overflow: {}", date_int))?;
     Ok(date.format("%Y-%m-%d").to_string())
-}
-
-#[derive(Debug, Deserialize)]
-pub struct ExerciseMonthSummaryResponse {
-    pub exercise_month: ExerciseMonthSummary,
 }
