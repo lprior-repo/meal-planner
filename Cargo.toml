@@ -14,48 +14,60 @@ path = "src/main.rs"
 # Nutrition domain lambdas
 [[bin]]
 name = "calculate_deviation"
-path = "nutrition/calculate_deviation.rs"
+path = "src/lambdas/nutrition/calculate_deviation.rs"
 
 [[bin]]
 name = "check_tolerance"
-path = "nutrition/check_tolerance.rs"
+path = "src/lambdas/nutrition/check_tolerance.rs"
 
 [[bin]]
 name = "daily_totals"
-path = "nutrition/daily_totals.rs"
+path = "src/lambdas/nutrition/daily_totals.rs"
 
 [[bin]]
 name = "macro_percentages"
-path = "nutrition/macro_percentages.rs"
+path = "src/lambdas/nutrition/macro_percentages.rs"
 
 [[bin]]
 name = "min_nutrition"
-path = "nutrition/min_nutrition.rs"
+path = "src/lambdas/nutrition/min_nutrition.rs"
 
 [[bin]]
 name = "max_nutrition"
-path = "nutrition/max_nutrition.rs"
+path = "src/lambdas/nutrition/max_nutrition.rs"
 
 [[bin]]
 name = "variability"
-path = "nutrition/variability.rs"
+path = "src/lambdas/nutrition/variability.rs"
 
 [[bin]]
 name = "estimate_calories"
-path = "nutrition/estimate_calories.rs"
+path = "src/lambdas/nutrition/estimate_calories.rs"
+
+[[bin]]
+name = "calculate_daily_totals"
+path = "src/lambdas/nutrition/calculate_daily_totals.rs"
+
+[[bin]]
+name = "calculate_macro_percentages_lambda"
+path = "src/lambdas/nutrition/calculate_macro_percentages.rs"
+
+[[bin]]
+name = "check_within_tolerance"
+path = "src/lambdas/nutrition/check_within_tolerance.rs"
 
 # Advisor domain lambdas
 [[bin]]
 name = "analyze_trends"
-path = "advisor/analyze_trends.rs"
+path = "src/lambdas/advisor/analyze_trends.rs"
 
 [[bin]]
 name = "consistency_rate"
-path = "advisor/consistency_rate.rs"
+path = "src/lambdas/advisor/consistency_rate.rs"
 
 [[bin]]
 name = "compliance_score"
-path = "advisor/compliance_score.rs"
+path = "src/lambdas/advisor/compliance_score.rs"
 
 [dependencies]
 sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "json"] }
