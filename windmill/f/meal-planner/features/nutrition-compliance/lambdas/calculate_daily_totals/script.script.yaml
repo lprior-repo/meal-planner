@@ -1,0 +1,4 @@
+summary: Calculate daily nutrition totals from food entries
+language: rust
+kind: script
+tag: meal-planner

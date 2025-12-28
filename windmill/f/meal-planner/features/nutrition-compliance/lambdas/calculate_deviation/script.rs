@@ -34,17 +34,20 @@ fn main() -> io::Result<()> {
     // Read JSON input from stdin
     let mut buffer = String::new();
     io::stdin().read_to_string(&mut buffer)?;
-    
+
     // Parse input
     let input: Input = serde_json::from_str(&buffer)
         .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, e))?;
-    
+
     // Calculate deviation
     let result = calculate_deviation(input);
-    
+
     // Output JSON to stdout
-    println!("{}", serde_json::to_string(&result)
-        .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?);
-    
+    println!(
+        "{}",
+        serde_json::to_string(&result)
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?
+    );
+
     Ok(())
 }

@@ -32,6 +32,14 @@ path = "f/meal-planner/features/nutrition-compliance/lambdas/calculate_deviation
 name = "check_within_tolerance"
 path = "f/meal-planner/features/nutrition-compliance/lambdas/check_within_tolerance/script.rs"
 
+[[bin]]
+name = "calculate_daily_totals"
+path = "f/meal-planner/features/nutrition-compliance/lambdas/calculate_daily_totals/script.rs"
+
+[[bin]]
+name = "calculate_macro_percentages"
+path = "f/meal-planner/features/nutrition-compliance/lambdas/calculate_macro_percentages/script.rs"
+
 [profile.release]
 opt-level = 3
 lto = true
