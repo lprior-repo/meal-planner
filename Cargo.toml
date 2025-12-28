@@ -11,22 +11,51 @@ path = "src/lib.rs"
 name = "meal-planner"
 path = "src/main.rs"
 
-# Infrastructure Lambdas - Nutrition Compliance
+# Nutrition domain lambdas
 [[bin]]
 name = "calculate_deviation"
-path = "src/meal_planner/infrastructure/lambdas/nutrition_compliance/calculate_deviation.rs"
+path = "nutrition/calculate_deviation.rs"
 
 [[bin]]
-name = "check_within_tolerance"
-path = "src/meal_planner/infrastructure/lambdas/nutrition_compliance/check_within_tolerance.rs"
+name = "check_tolerance"
+path = "nutrition/check_tolerance.rs"
 
 [[bin]]
-name = "calculate_daily_totals"
-path = "src/meal_planner/infrastructure/lambdas/nutrition_compliance/calculate_daily_totals.rs"
+name = "daily_totals"
+path = "nutrition/daily_totals.rs"
 
 [[bin]]
-name = "calculate_macro_percentages"
-path = "src/meal_planner/infrastructure/lambdas/nutrition_compliance/calculate_macro_percentages.rs"
+name = "macro_percentages"
+path = "nutrition/macro_percentages.rs"
+
+[[bin]]
+name = "min_nutrition"
+path = "nutrition/min_nutrition.rs"
+
+[[bin]]
+name = "max_nutrition"
+path = "nutrition/max_nutrition.rs"
+
+[[bin]]
+name = "variability"
+path = "nutrition/variability.rs"
+
+[[bin]]
+name = "estimate_calories"
+path = "nutrition/estimate_calories.rs"
+
+# Advisor domain lambdas
+[[bin]]
+name = "analyze_trends"
+path = "advisor/analyze_trends.rs"
+
+[[bin]]
+name = "consistency_rate"
+path = "advisor/consistency_rate.rs"
+
+[[bin]]
+name = "compliance_score"
+path = "advisor/compliance_score.rs"
 
 [dependencies]
 sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "json"] }
