@@ -11,6 +11,9 @@ pub mod web;
 
 // Meal planner domain modules
 pub mod meal_planner {
+    pub mod automation {
+        pub mod fatsecret_sync;
+    }
     pub mod infrastructure;
 }
 

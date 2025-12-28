@@ -212,14 +212,20 @@ pub struct MatchCriteria {
     pub name_similarity_threshold: f64,
 }
 
-impl MatchCriteria {
-    /// Default match criteria
-    pub fn default() -> Self {
+impl Default for MatchCriteria {
+    fn default() -> Self {
         MatchCriteria {
             calorie_tolerance: 0.15,
             macro_tolerance: 0.2,
             name_similarity_threshold: 0.6,
         }
+    }
+}
+
+impl MatchCriteria {
+    /// Create match criteria with default values
+    pub fn new_default() -> Self {
+        Self::default()
     }
 }
 
@@ -242,7 +248,7 @@ pub fn calculate_match_confidence(
 pub fn sync_diary_to_plan(
     diary_entries: Vec<FoodEntry>,
     meal_plans: Vec<MealPlan>,
-    criteria: MatchCriteria,
+    _criteria: MatchCriteria,
 ) -> SyncResult {
     // Placeholder implementation - in a real implementation this would:
     // 1. Match diary entries to meal plans based on criteria

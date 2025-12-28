@@ -11,7 +11,7 @@ use tracing::{info, instrument};
 use serde::Deserialize;
 
 use super::types::{
-    DaySummary, FoodEntry, FoodEntryId, FoodEntryInput, FoodEntryUpdate, MonthSummary,
+    FoodEntry, FoodEntryId, FoodEntryInput, FoodEntryUpdate, MonthSummary,
 };
 
 // ============================================================================
