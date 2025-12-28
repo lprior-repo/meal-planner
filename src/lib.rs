@@ -7,6 +7,11 @@
 pub mod logging;
 pub mod web;
 
+// Meal planner domain modules
+pub mod meal_planner {
+    pub mod infrastructure;
+}
+
 // Public API exports
 pub use logging::*;
 pub use web::*;

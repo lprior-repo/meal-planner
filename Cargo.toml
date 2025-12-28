@@ -1,10 +1,3 @@
-[workspace]
-resolver = "2"
-members = [
-    ".",
-    "windmill",
-]
-
 [package]
 name = "meal-planner"
 version = "0.1.0"
@@ -17,6 +10,23 @@ path = "src/lib.rs"
 [[bin]]
 name = "meal-planner"
 path = "src/main.rs"
+
+# Infrastructure Lambdas - Nutrition Compliance
+[[bin]]
+name = "calculate_deviation"
+path = "src/meal_planner/infrastructure/lambdas/nutrition_compliance/calculate_deviation.rs"
+
+[[bin]]
+name = "check_within_tolerance"
+path = "src/meal_planner/infrastructure/lambdas/nutrition_compliance/check_within_tolerance.rs"
+
+[[bin]]
+name = "calculate_daily_totals"
+path = "src/meal_planner/infrastructure/lambdas/nutrition_compliance/calculate_daily_totals.rs"
+
+[[bin]]
+name = "calculate_macro_percentages"
+path = "src/meal_planner/infrastructure/lambdas/nutrition_compliance/calculate_macro_percentages.rs"
 
 [dependencies]
 sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "json"] }
