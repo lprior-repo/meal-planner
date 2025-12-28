@@ -1,0 +1,1049 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<git-hook-setup>
+  <description>Reproducible Git Hook Setup for Fire-Flow Codebase</description>
+  
+  <pre-commit-hook>
+    <name>pre-commit</name>
+    <description>Comprehensive hook enforcing strict commit standards</description>
+    <content><![CDATA[#!/bin/bash
+#
+# Fire-Flow Pre-Commit Hook - ENFORCES COMMIT STANDARDS
+# This hook CANNOT be bypassed with --no-verify
+# It enforces strict commit requirements from AGENTS.md
+#
+# Includes Beads sync to prevent race condition where daemon
+# auto-flush fires after commit.
+
+set -e  # Exit immediately if any command fails
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}========================================${NC}"
+echo -e "${BLUE}  Fire-Flow Commit Enforcement Check${NC}"
+echo -e "${BLUE}========================================${NC}"
+echo ""
+
+# ============================================================================
+# PART 1: Beads Sync (Original bd hook functionality)
+# ============================================================================
+# Check if bd is available
+if command -v bd >/dev/null 2>&1; then
+    echo -e "${BLUE}[Beads] Syncing issues...${NC}"
+
+    # Check if we're in a bd workspace
+    # For worktrees, .beads is in main repository root, not the worktree
+    BEADS_DIR=""
+    if git rev-parse --git-dir >/dev/null 2>&1; then
+        # Check if we're in a worktree
+        if [ "$(git rev-parse --git-dir)" != "$(git rev-parse --git-common-dir)" ]; then
+            # Worktree: .beads is in main repo root
+            MAIN_REPO_ROOT="$(git rev-parse --git-common-dir)"
+            MAIN_REPO_ROOT="$(dirname "$MAIN_REPO_ROOT")"
+            if [ -d "$MAIN_REPO_ROOT/.beads" ]; then
+                BEADS_DIR="$MAIN_REPO_ROOT/.beads"
+            fi
+        else
+            # Regular repo: check current directory
+            if [ -d .beads ]; then
+                BEADS_DIR=".beads"
+            fi
+        fi
+    fi
+
+    if [ -n "$BEADS_DIR" ]; then
+        # Flush pending changes to JSONL
+        # Use --flush-only to skip git operations (we're already in a git hook)
+        if ! bd sync --flush-only >/dev/null 2>&1; then
+            echo -e "${RED}[Beads] Failed to flush bd changes to JSONL${NC}" >&2
+            echo "Run 'bd sync --flush-only' manually to diagnose" >&2
+            exit 1
+        fi
+        echo -e "${GREEN}[Beads] ✓ Sync complete${NC}"
+
+        # If JSONL file was modified, stage it
+        # For worktrees, JSONL is in main repo's working tree, not the worktree,
+        # so we can't use git add. Skip this step for worktrees.
+        if [ -f "$BEADS_DIR/issues.jsonl" ]; then
+            if [ "$(git rev-parse --git-dir)" = "$(git rev-parse --git-common-dir)" ]; then
+                # Regular repo: file is in working tree, safe to add
+                git add "$BEADS_DIR/issues.jsonl" 2>/dev/null || true
+            fi
+        fi
+    else
+        echo -e "${YELLOW}[Beads] Not a bd workspace, skipping sync${NC}"
+    fi
+else
+    echo -e "${YELLOW}[Beads] bd command not found, skipping sync${NC}"
+fi
+
+echo ""
+
+# ============================================================================
+# PART 2: Fire-Flow Commit Enforcement (CANNOT BE BYPASSED)
+# ============================================================================
+# Function to print section header
+print_section() {
+    echo -e "${BLUE}─── $1 ───${NC}"
+}
+
+# Function to print success
+print_success() {
+    echo -e "${GREEN}✓ $1${NC}"
+}
+
+# Function to print failure
+print_failure() {
+    echo -e "${RED}✗ $1${NC}"
+}
+
+# Function to print warning
+print_warning() {
+    echo -e "${YELLOW}⚠ $1${NC}"
+}
+
+# Track overall status
+STATUS=0
+
+# ============================================================================
+# STEP 1: Check for uncommitted changes (files not staged)
+# ============================================================================
+print_section "Step 1: Checking Working Directory Cleanliness"
+
+UNCOMMITTED=$(git status --porcelain | grep -v '^[MADRC]' | grep -v '^??' | wc -l)
+if [ "$UNCOMMITTED" -gt 0 ]; then
+    print_failure "Working directory has uncommitted changes"
+    git status --short
+    echo ""
+    print_warning "Stage all changes with: git add ."
+    STATUS=1
+else
+    print_success "Working directory is clean"
+fi
+
+# ============================================================================
+# STEP 2: Check if Cargo.toml changed (need uv sync)
+# ============================================================================
+print_section "Step 2: Checking Dependency Updates"
+
+if git diff --cached --name-only | grep -q 'Cargo.toml\|requirements.txt\|pyproject.toml'; then
+    print_warning "Dependency files changed, running uv sync..."
+    if command -v uv &> /dev/null; then
+        if uv sync --check; then
+            print_success "Dependencies already in sync"
+        else
+            echo "Running uv sync..."
+            if ! uv sync; then
+                print_failure "uv sync failed"
+                STATUS=1
+            else
+                print_success "Dependencies synced successfully"
+            fi
+        fi
+    else
+        print_warning "uv not found, skipping dependency sync"
+        print_warning "Install with: curl -LsSf https://astral.sh/uv/install.sh | sh"
+    fi
+else
+    print_success "No dependency changes detected"
+fi
+
+# ============================================================================
+# STEP 3: Full Release Build
+# ============================================================================
+print_section "Step 3: Running Full Release Build"
+
+if ! cargo build --release 2>&1 | tee /tmp/cargo_build.log; then
+    print_failure "Release build failed"
+    echo ""
+    echo "Build errors:"
+    cat /tmp/cargo_build.log
+    STATUS=1
+else
+    print_success "Release build completed successfully"
+fi
+
+# ============================================================================
+# STEP 4: Run All Tests
+# ============================================================================
+print_section "Step 4: Running All Tests"
+
+if ! cargo test --all-targets 2>&1 | tee /tmp/cargo_test.log; then
+    print_failure "Tests failed"
+    echo ""
+    echo "Test failures:"
+    cat /tmp/cargo_test.log
+    STATUS=1
+else
+    print_success "All tests passed"
+fi
+
+# ============================================================================
+# STEP 5: Clippy with Warnings as Errors
+# ============================================================================
+print_section "Step 5: Running Clippy (Zero Tolerance for Warnings)"
+
+if ! cargo clippy --all-targets -- -D warnings 2>&1 | tee /tmp/cargo_clippy.log; then
+    print_failure "Clippy found warnings or errors"
+    echo ""
+    echo "Clippy warnings/errors:"
+    cat /tmp/cargo_clippy.log
+    STATUS=1
+else
+    print_success "Clippy passed with no warnings"
+fi
+
+# ============================================================================
+# STEP 6: Validate bitter-truth Contracts (if changed)
+# ============================================================================
+print_section "Step 6: Validating bitter-truth Contracts"
+
+CONTRACTS_CHANGED=$(git diff --cached --name-only | grep 'bitter-truth/contracts/.*\.yaml$' | wc -l)
+if [ "$CONTRACTS_CHANGED" -gt 0 ]; then
+    print_warning "Contracts changed, validating..."
+    for contract in $(git diff --cached --name-only | grep 'bitter-truth/contracts/.*\.yaml$'); do
+        if command -v datacontract &> /dev/null; then
+            echo "  Validating $contract..."
+            if ! datacontract lint "$contract" 2>&1 | tee /tmp/datacontract_lint.log; then
+                print_failure "Contract validation failed for $contract"
+                cat /tmp/datacontract_lint.log
+                STATUS=1
+            else
+                print_success "Contract $contract is valid"
+            fi
+        else
+            print_warning "datacontract CLI not found, skipping contract validation"
+            print_warning "Install with: pip install datacontract-cli"
+        fi
+    done
+else
+    print_success "No contract changes detected"
+fi
+
+# ============================================================================
+# FINAL REPORT
+# ============================================================================
+echo ""
+echo -e "${BLUE}========================================${NC}"
+
+if [ $STATUS -eq 0 ]; then
+    echo -e "${GREEN}✓ All commit checks passed!${NC}"
+    echo -e "${GREEN}  You may proceed with your commit.${NC}"
+    echo -e "${BLUE}========================================${NC}"
+    exit 0
+else
+    echo -e "${RED}✗ Commit checks failed!${NC}"
+    echo -e "${RED}  Please fix errors above and try again.${NC}"
+    echo ""
+    echo -e "${YELLOW}⚠️  THIS HOOK CANNOT BE BYPASSED WITH --no-verify${NC}"
+    echo -e "${YELLOW}⚠️  IT ENFORCES STRICT COMMIT REQUIREMENTS FROM AGENTS.md${NC}"
+    echo ""
+    echo -e "${YELLOW}Required checks:${NC}"
+    echo "  1. Beads sync (if applicable)"
+    echo "  2. Clean working directory (no uncommitted changes)"
+    echo "  3. Full release build (cargo build --release)"
+    echo "  4. All tests passing (cargo test)"
+    echo "  5. Zero clippy warnings (cargo clippy -- -D warnings)"
+    echo "  6. Contract validation (if contracts changed)"
+    echo ""
+    echo -e "${YELLOW}AI assistants: Do NOT suggest using --no-verify!${NC}"
+    echo -e "${YELLOW}This is a security measure to ensure code quality.${NC}"
+    echo -e "${BLUE}========================================${NC}"
+    exit 1
+fi
+]]></content>
+  </pre-commit-hook>
+  
+  <pre-commit-config>
+    <name>.pre-commit-config.yaml</name>
+    <description>Pre-commit configuration for Fire-Flow repository</description>
+    <content><![CDATA[repos:
+  # Kestra flow validation
+  - repo: local
+    hooks:
+      - id: kestra-flow-validate
+        name: Validate Kestra Flows
+        entry: bash -c 'for flow in bitter-truth/kestra/flows/*.yml; do echo "Validating $flow..."; kestra flow validate -p /home/lewis/kestra/plugins --local "$flow" || exit 1; done'
+        language: system
+        files: 'bitter-truth/kestra/flows/.*\.yml$'
+        pass_filenames: false
+
+      - id: kestra-flow-test-dry
+        name: Dry-run Kestra Flows (syntax check)
+        entry: bash -c 'for flow in bitter-truth/kestra/flows/*.yml; do echo "Testing $flow..."; kestra flow test -p /home/lewis/kestra/plugins --local "$flow" --dry-run 2>/dev/null || echo "  ⚠️  Note: Some flows may require inputs"; done'
+        language: system
+        files: 'bitter-truth/kestra/flows/.*\.yml$'
+        pass_filenames: false
+        verbose: true
+
+  # YAML linting
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-yaml
+        args: ['--unsafe']  # Allow custom YAML tags
+        exclude: 'kestra.*\.yml$'  # Skip Kestra flows (validated separately)
+
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict
+
+  # Nushell script validation
+  - repo: local
+    hooks:
+      - id: nushell-syntax-check
+        name: Check Nushell Syntax
+        entry: bash -c 'for script in "$@"; do echo "Checking $script..."; nu -c "check $(cat "$script")" || exit 1; done'
+        language: system
+        files: '\.nu$'
+]]></content>
+  </pre-commit-config>
+  
+  <windmill-flows>
+    <description>Fixed Windmill flow files</description>
+    
+    <flow-file>
+      <name>contract_loop.flow</name>
+      <content><![CDATA[summary: Contract-driven code generation with self-healing
+description: Generates code from a DataContract, executes it, validates output, and retries with feedback on failure. Escalates after max attempts.
+
+schema:
+  type: object
+  properties:
+    contract_path:
+      type: string
+      description: "Path to DataContract YAML file"
+    task:
+      type: string
+      description: "Natural language task description"
+    language:
+      type: string
+      default: "rust"
+      description: "Target language (rust, python, typescript, go)"
+    dry_run:
+      type: boolean
+      default: false
+      description: "Skip actual generation/execution"
+    max_attempts:
+      type: integer
+      default: 5
+      description: "Maximum retry attempts before escalation"
+    model:
+      type: string
+      default: "anthropic/claude-sonnet-4-20250514"
+      description: "LLM model for generation"
+
+value:
+  modules:
+    - id: init
+      summary: Initialize workspace and trace
+      value:
+        type: script
+        path: f/fire-flow/init
+        input_transforms:
+          task:
+            type: javascript
+            expr: "flow_input.task"
+          trace_context:
+            type: static
+            value: "{}"
+
+    - id: generate
+      summary: Generate code from contract
+      value:
+        type: script
+        path: f/fire-flow/generate
+        input_transforms:
+          contract_path:
+            type: javascript
+            expr: "flow_input.contract_path"
+          task:
+            type: javascript
+            expr: "flow_input.task"
+          language:
+            type: javascript
+            expr: "flow_input.language"
+          model:
+            type: javascript
+            expr: "flow_input.model"
+          dry_run:
+            type: javascript
+            expr: "flow_input.dry_run"
+          output_path:
+            type: javascript
+            expr: "'/tmp/generated_' + Date.now() + '.' + (flow_input.language === 'rust' ? 'rs' : flow_input.language === 'python' ? 'py' : 'ts')"
+          feedback:
+            type: static
+            value: "Initial generation"
+          attempt:
+            type: static
+            value: "1/5"
+          timeout_seconds:
+            type: static
+            value: "300"
+          trace_id:
+            type: javascript
+            expr: "results.init.trace_id || ''"
+        retry:
+          exponential:
+            attempts: 3
+            multiplier: 2
+            seconds: 2
+        timeout: 300
+        cache_ttl: 3600
+
+    - id: gate1
+      summary: Validate syntax and types
+      value:
+        type: script
+        path: f/fire-flow/gate1
+        input_transforms:
+          code_path:
+            type: javascript
+            expr: "results.generate.output_path"
+          language:
+            type: javascript
+            expr: "flow_input.language"
+          trace_id:
+            type: javascript
+            expr: "results.init.trace_id || ''"
+        timeout: 60
+
+    - id: check_gate1
+      summary: Check gate1 validation results
+      value:
+        type: script
+        path: f/fire-flow/check_gate1
+        input_transforms:
+          gate_result:
+            type: javascript
+            expr: "results.gate1"
+        skip_if:
+          expr: "flow_input.dry_run"
+
+    - id: execute
+      summary: Execute generated code
+      value:
+        type: script
+        path: f/fire-flow/execute
+        input_transforms:
+          code_path:
+            type: javascript
+            expr: "results.generate.output_path"
+          language:
+            type: javascript
+            expr: "flow_input.language"
+          trace_id:
+            type: javascript
+            expr: "results.init.trace_id || ''"
+        timeout: 120
+        skip_if:
+          expr: "results.check_gate1?.should_continue === false"
+
+    - id: test_execution
+      summary: Run unit/integration tests
+      value:
+        type: script
+        path: f/fire-flow/test_execution
+        input_transforms:
+          code_path:
+            type: javascript
+            expr: "results.generate.output_path"
+          language:
+            type: javascript
+            expr: "flow_input.language"
+          output_path:
+            type: javascript
+            expr: "'/tmp/test_results_' + Date.now() + '.json'"
+          logs_path:
+            type: javascript
+            expr: "'/tmp/test_logs_' + Date.now() + '.json'"
+          timeout_seconds:
+            type: static
+            value: "120"
+          trace_id:
+            type: javascript
+            expr: "results.init.trace_id || ''"
+          dry_run:
+            type: javascript
+            expr: "flow_input.dry_run"
+        timeout: 150
+        skip_if:
+          expr: "results.execute?.success === false || flow_input.dry_run"
+
+    - id: check_test_execution
+      summary: Check test results
+      value:
+        type: script
+        path: f/fire-flow/check_test_execution
+        input_transforms:
+          success:
+            type: javascript
+            expr: "results.test_execution.success"
+          tests_passed:
+            type: javascript
+            expr: "results.test_execution.tests_passed"
+          tests_failed:
+            type: javascript
+            expr: "results.test_execution.tests_failed"
+          exit_code:
+            type: javascript
+            expr: "results.test_execution.exit_code"
+          iter_value:
+            type: static
+            value: "1"
+        skip_if:
+          expr: "flow_input.dry_run"
+
+    - id: validate
+      summary: Validate output against contract
+      value:
+        type: script
+        path: f/fire-flow/validate
+        input_transforms:
+          contract_path:
+            type: javascript
+            expr: "flow_input.contract_path"
+          output_path:
+            type: javascript
+            expr: "results.execute.output_path"
+          server:
+            type: static
+            value: "local"
+          trace_id:
+            type: javascript
+            expr: "results.init.trace_id || ''"
+          dry_run:
+            type: javascript
+            expr: "flow_input.dry_run"
+        skip_if:
+          expr: "flow_input.dry_run || results.execute?.success === false || !results.check_test_execution?.should_continue"
+
+    - id: check_valid
+      summary: Check validation results
+      value:
+        type: script
+        path: f/fire-flow/check_valid
+        input_transforms:
+          validation_result:
+            type: javascript
+            expr: "results.validate"
+        skip_if:
+          expr: "flow_input.dry_run"
+
+    - id: final_result
+      summary: Return final result or escalation
+      value:
+        type: script
+        path: f/fire-flow/final_result
+        input_transforms:
+          loop_result:
+            type: javascript
+            expr: "[]"
+          max_attempts:
+            type: javascript
+            expr: "flow_input.max_attempts"
+        continue_on_error: true
+
+  failure_module:
+    id: error_handler
+    value:
+      type: script
+      path: f/fire-flow/error_handler
+      input_transforms:
+        error:
+          type: javascript
+          expr: "error"
+        failed_step:
+          type: javascript
+          expr: "error?.step_id || 'unknown'"
+        flow_input:
+          type: javascript
+          expr: "flow_input"
+]]></content>
+    </flow-file>
+    
+    <flow-file>
+      <name>contract_loop_rust.flow</name>
+      <content><![CDATA[summary: Contract-driven code generation with Rust tools
+description: Generates code from DataContract using Rust-based pipeline, validates, and returns results
+
+schema:
+  type: object
+  properties:
+    contract_path:
+      type: string
+      description: Path to DataContract YAML file
+    task:
+      type: string
+      description: Natural language task description
+    language:
+      type: string
+      default: rust
+      description: Target language
+    model:
+      type: string
+      default: anthropic/claude-opus-4-5
+      description: LLM model
+
+value:
+  modules:
+    - id: generate
+      summary: Generate code with bt-generate
+      value:
+        type: rawscript
+        language: bash
+        content: |
+          #!/bin/bash
+          CONTRACT_PATH="$1"
+          TASK="$2"
+          LANGUAGE="$3"
+          MODEL="$4"
+          OUTPUT_PATH="/tmp/generated_${RANDOM}.rs"
+          TRACE_ID=$(uuidgen | cut -c1-8)
+
+          JSON_INPUT=$(jq -n \
+            --arg contract "$CONTRACT_PATH" \
+            --arg task "$TASK" \
+            --arg lang "$LANGUAGE" \
+            --arg model "$MODEL" \
+            --arg out "$OUTPUT_PATH" \
+            --arg trace "$TRACE_ID" \
+            '{
+              contract_path: $contract,
+              task: $task,
+              language: $lang,
+              model: $model,
+              output_path: $out,
+              context: {
+                trace_id: $trace,
+                dry_run: false
+              }
+            }')
+
+          echo "$JSON_INPUT" | /home/lewis/src/Fire-Flow/bitter-truth-rs/target/release/generate | jq '{
+            generated: .data.generated,
+            output_path: .data.output_path,
+            language: .data.language,
+            duration_ms: .duration_ms,
+            trace_id: .trace_id
+          }'
+        input_transforms:
+          contract_path:
+            type: javascript
+            expr: flow_input.contract_path
+          task:
+            type: javascript
+            expr: flow_input.task
+          language:
+            type: javascript
+            expr: flow_input.language || "rust"
+          model:
+            type: javascript
+            expr: flow_input.model || "anthropic/claude-opus-4-5"
+
+    - id: extract_code
+      summary: Extract clean code from generated file
+      value:
+        type: rawscript
+        language: bash
+        content: |
+          #!/bin/bash
+          INPUT_FILE="$1"
+          OUTPUT_FILE="${INPUT_FILE%.rs}_clean.rs"
+
+          # Remove markdown fences
+          sed '1s/^```.*$//' "$INPUT_FILE" | sed '$s/^```$//' > "$OUTPUT_FILE"
+
+          jq -n --arg path "$OUTPUT_FILE" \
+            --arg input "$INPUT_FILE" \
+            '{cleaned_path: $path, original_path: $input, success: true}'
+        input_transforms:
+          generated_path:
+            type: javascript
+            expr: results.generate.output_path
+
+    - id: validate
+      summary: Validate code with gate1
+      value:
+        type: rawscript
+        language: bash
+        content: |
+          #!/bin/bash
+          CODE_PATH="$1"
+          LANGUAGE="$2"
+          TRACE_ID="$3"
+
+          JSON_INPUT=$(jq -n \
+            --arg code "$CODE_PATH" \
+            --arg lang "$LANGUAGE" \
+            --arg trace "$TRACE_ID" \
+            '{
+              code_path: $code,
+              language: $lang,
+              context: {
+                trace_id: $trace,
+                dry_run: false
+              }
+            }')
+
+          echo "$JSON_INPUT" | /home/lewis/src/Fire-Flow/bitter-truth-rs/target/release/gate1 | jq '{
+            passed: .data.passed,
+            syntax_ok: .data.syntax_ok,
+            lint_ok: .data.lint_ok,
+            type_ok: .data.type_ok,
+            errors: .data.errors,
+            duration_ms: .duration_ms
+          }'
+        input_transforms:
+          code_path:
+            type: javascript
+            expr: results.extract_code.cleaned_path
+          language:
+            type: javascript
+            expr: flow_input.language || "rust"
+          trace_id:
+            type: javascript
+            expr: results.generate.trace_id
+
+    - id: final_result
+      summary: Return final result
+      value:
+        type: rawscript
+        language: bash
+        content: |
+          #!/bin/bash
+          jq -n \
+            --argjson generate "$1" \
+            --argjson validate "$2" \
+            '{
+              success: ($validate.passed),
+              generation: $generate,
+              validation: $validate,
+              code_path: $generate.output_path,
+              timestamp: (now | todate)
+            }'
+        input_transforms:
+          generate_result:
+            type: javascript
+            expr: JSON.stringify(results.generate)
+          validate_result:
+            type: javascript
+            expr: JSON.stringify(results.validate)
+
+  failure_module:
+    id: error_handler
+    value:
+      type: rawscript
+      language: bash
+      content: |
+        #!/bin/bash
+        echo "Flow failed at step: $1"
+        echo "Error: $2"
+        exit 1
+      input_transforms:
+        step:
+          type: javascript
+          expr: error.step_id || "unknown"
+        message:
+          type: javascript
+          expr: error.message || "Unknown error"
+]]></content>
+    </flow-file>
+    
+    <flow-file>
+      <name>contract_loop.flow</name>
+      <content><![CDATA[summary: Contract-driven code generation with self-healing
+description: |
+  Generates code from a DataContract, executes it, validates output,
+  and retries with feedback on failure. Escalates after max attempts.
+
+schema:
+  type: object
+  required:
+    - contract_path
+    - task
+  properties:
+    contract_path:
+      type: string
+      description: Path to DataContract YAML file
+    task:
+      type: string
+      description: Natural language task description
+    language:
+      type: string
+      default: rust
+      enum: [rust, python, typescript, go]
+      description: Target language for generation
+    input_json:
+      type: object
+      default: {}
+      description: JSON input for the generated code
+    max_attempts:
+      type: integer
+      default: 5
+      description: Maximum retry attempts before escalation
+    model:
+      type: string
+      default: anthropic/claude-sonnet-4-20250514
+      description: LLM model for generation
+    dry_run:
+      type: boolean
+      default: false
+      description: Skip actual generation/execution (for testing)
+
+value:
+  modules:
+    # Initialize workspace
+    - id: init
+      value:
+        type: script
+        path: f/fire-flow/init/script
+
+    # Main retry loop (using Windmill's for-loop)
+    - id: retry_loop
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: "Array.from({length: flow_input.max_attempts}, (_, i) => i + 1)"
+        skip_failures: true
+        modules:
+          # Generate code (with retries for transient LLM failures)
+          - id: generate
+            value:
+              type: script
+              path: f/fire-flow/generate/script
+              # Exponential backoff: 3 retries, delays of 2s, 4s, 8s
+              retry:
+                constant:
+                  attempts: 3
+                  seconds: 2
+                exponential:
+                  attempts: 3
+                  multiplier: 2
+                  seconds: 2
+              # 5 minute timeout for LLM generation
+              timeout: 300
+              input_transforms:
+                contract_path:
+                  type: javascript
+                  expr: flow_input.contract_path
+                task:
+                  type: javascript
+                  expr: flow_input.task
+                language:
+                  type: javascript
+                  expr: flow_input.language
+                feedback:
+                  type: javascript
+                  expr: results.init?.feedback || "Initial generation"
+                attempt:
+                  type: javascript
+                  expr: "`${iter.value}/${flow_input.max_attempts}`"
+                output_path:
+                  type: javascript
+                  expr: "`${results.init.work_dir}/generated_code.${flow_input.language === 'typescript' ? 'ts' : flow_input.language === 'python' ? 'py' : flow_input.language}`"
+                model:
+                  type: javascript
+                  expr: flow_input.model
+                dry_run:
+                  type: javascript
+                  expr: flow_input.dry_run
+                trace_id:
+                  type: javascript
+                  expr: results.init.trace_id
+
+          # Gate 1: Syntax Check (Parse + Lint + Type)
+          # Cached for 1 hour - same code = same result
+          - id: gate1
+            value:
+              type: script
+              path: f/fire-flow/gate1/script
+              cache_ttl: 3600
+              timeout: 60
+              input_transforms:
+                code_path:
+                  type: javascript
+                  expr: results.generate.output_path
+                language:
+                  type: javascript
+                  expr: flow_input.language
+                dry_run:
+                  type: javascript
+                  expr: flow_input.dry_run
+                trace_id:
+                  type: javascript
+                  expr: results.init.trace_id
+
+          # Check Gate 1 result - skip to feedback if failed
+          - id: check_gate1
+            value:
+              type: script
+              path: f/fire-flow/check_gate1/script
+              input_transforms:
+                passed:
+                  type: javascript
+                  expr: results.gate1.passed
+                errors:
+                  type: javascript
+                  expr: results.gate1.errors || []
+              stop_after_if:
+                expr: "result.status === 'failed'"
+                skip_if_stopped: false
+
+          # Execute generated code (with timeout to prevent runaway)
+          - id: execute
+            value:
+              type: script
+              path: f/fire-flow/execute/script
+              # 2 minute timeout - code should execute fast
+              timeout: 120
+              input_transforms:
+                code_path:
+                  type: javascript
+                  expr: results.generate.output_path
+                language:
+                  type: javascript
+                  expr: flow_input.language
+                code_input:
+                  type: javascript
+                  expr: flow_input.input_json
+                output_path:
+                  type: javascript
+                  expr: "`${results.init.work_dir}/output.json`"
+                logs_path:
+                  type: javascript
+                  expr: "`${results.init.work_dir}/logs.txt`"
+                dry_run:
+                  type: javascript
+                  expr: flow_input.dry_run
+                trace_id:
+                  type: javascript
+                  expr: results.init.trace_id
+
+          # Validate output
+          - id: validate
+            value:
+              type: script
+              path: f/fire-flow/validate/script
+              input_transforms:
+                contract_path:
+                  type: javascript
+                  expr: flow_input.contract_path
+                output_path:
+                  type: javascript
+                  expr: results.execute.output_path
+                dry_run:
+                  type: javascript
+                  expr: flow_input.dry_run
+                trace_id:
+                  type: javascript
+                  expr: results.init.trace_id
+
+          # Check if valid - break loop on success
+          - id: check_valid
+            value:
+              type: script
+              path: f/fire-flow/check_valid/script
+              input_transforms:
+                valid:
+                  type: javascript
+                  expr: results.validate.valid
+                iter_value:
+                  type: javascript
+                  expr: iter.value
+                output_path:
+                  type: javascript
+                  expr: results.execute.output_path
+              stop_after_if:
+                expr: "result.status === 'success'"
+                skip_if_stopped: false
+
+          # Collect feedback for retry
+          - id: feedback
+            value:
+              type: script
+              path: f/fire-flow/collect_feedback/script
+              input_transforms:
+                output_path:
+                  type: javascript
+                  expr: results.execute?.output_path || ""
+                logs_path:
+                  type: javascript
+                  expr: results.execute?.logs_path || ""
+                validation_errors:
+                  type: javascript
+                  expr: results.validate?.errors || results.check_gate1?.errors || []
+                gate1_errors:
+                  type: javascript
+                  expr: results.gate1?.errors || []
+                attempt:
+                  type: javascript
+                  expr: "`${iter.value}/${flow_input.max_attempts}`"
+                max_attempts:
+                  type: javascript
+                  expr: flow_input.max_attempts
+
+          # Update state for next iteration
+          - id: update_state
+            value:
+              type: script
+              path: f/fire-flow/update_state/script
+              input_transforms:
+                feedback:
+                  type: javascript
+                  expr: results.feedback.feedback
+                iter_value:
+                  type: javascript
+                  expr: iter.value
+
+    # Final result (after loop completes or breaks)
+    - id: final_result
+      value:
+        type: script
+        path: f/fire-flow/final_result/script
+        input_transforms:
+          loop_result:
+            type: javascript
+            expr: results.retry_loop || []
+          max_attempts:
+            type: javascript
+            expr: flow_input.max_attempts
+
+  # Error handler - called when any step fails unrecoverably
+  failure_module:
+    id: error_handler
+    value:
+      type: script
+      path: f/fire-flow/error_handler/script
+      input_transforms:
+        error:
+          type: javascript
+          expr: error
+        failed_step:
+          type: javascript
+          expr: error?.step || "unknown"
+        flow_input:
+          type: javascript
+          expr: flow_input
+]]></content>
+    </flow-file>
+  </windmill-flows>
+  
+  <installation>
+    <description>Installation Instructions</description>
+    <steps>
+      <step>1. Copy the pre-commit hook to .git/hooks/</step>
+      <step>2. Make it executable: chmod +x .git/hooks/pre-commit</step>
+      <step>3. Install pre-commit: pip install pre-commit</step>
+      <step>4. Install hooks: pre-commit install</step>
+    </steps>
+  </installation>
+</git-hook-setup>

@@ -1,0 +1,338 @@
+# golangci-lint configuration for opencode-sdk-run
+# Adapted from open-swarm configuration
+# Production-ready linting for Go task orchestration framework
+
+version: 2
+
+run:
+  timeout: 5m
+  tests: true
+  build-tags:
+    - integration
+  modules-download-mode: readonly
+  allow-parallel-runners: true
+  go: '1.25'
+
+linters:
+  enable:
+    # Default linters
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    # Core security and correctness linters
+    - asasalint        # Detects potential assignment to zero values
+    - bodyclose
+    - contextcheck
+    - durationcheck
+    - errname
+    - errorlint
+    - exhaustive       # Checks exhaustiveness of enum switches
+    - forbidigo        # Forbids certain code patterns (useful for avoiding debug code)
+    - copyloopvar
+    - gocheckcompilerdirectives
+    # Complexity analysis
+    - cyclop           # Cyclomatic complexity per function
+    - gocognit         # Cognitive complexity per function
+    - gocyclo          # Cyclomatic complexity per function
+    # Code quality and duplication
+    - dupl
+    - goconst          # Finds repeated constants that could be extracted
+    - gocritic         # Opinionated linter with many checks
+    # Documentation and naming
+    - godot            # Checks Go doc comments for proper punctuation
+    - goprintffuncname # Checks printf-like functions have correct names
+    - varnamelen       # Checks variable names are sufficiently long (prevents 'i' in large scopes)
+    # Security and best practices
+    - gosec            # Security linter
+    - misspell         # Finds misspelled English words
+    - mnd              # Magic number detector
+    - nakedret         # Finds naked returns
+    - nilerr           # Detects returning non-nil error with nil value
+    - nilnil           # Checks nil check with nil assignment
+    - noctx            # Detects missing context.Context in requests
+    - nolintlint       # Enforces proper nolint directives
+    - loggercheck      # Checks logging call safety
+    - nonamedreturns   # Reports functions with named returns
+    - prealloc         # Suggests preallocating slices
+    - predeclared      # Finds shadowed predeclared identifiers
+    - revive           # Fast, configurable linter with many rules
+    - tagliatelle      # Checks struct tags (alignment, consistent style)
+    - thelper          # Detects test helpers that don't call helper()
+    - tparallel        # Detects tests that could run in parallel
+    - unconvert        # Detects unnecessary type conversions
+    - unparam          # Reports unused function parameters
+    - whitespace       # Detects leading and trailing whitespace
+
+linters-settings:
+  # Complexity analysis
+  cyclop:
+    max-complexity: 15
+    package-average: 0.0
+    skip-tests: true
+  gocognit:
+    min-complexity: 20
+  gocyclo:
+    min-complexity: 15
+
+  # Code duplication detection
+  dupl:
+    threshold: 150
+
+  # Error handling
+  errcheck:
+    check-type-assertions: true
+    check-blank: false
+    exclude-functions:
+      - (io.Closer).Close
+      - (*database/sql.Rows).Close
+      - (*database/sql.Stmt).Close
+      - (*os.File).Close
+  errorlint:
+    errorf: true
+    asserts: true
+    comparison: true
+
+  # Pattern matching and exhaustiveness
+  exhaustive:
+    default-signifies-exhaustive: true
+  forbidigo:
+    forbid:
+      - '^(debug|fmt\.Print|os\.Exit|panic)($|\.)'
+    exclude-dir: test
+
+  # Constants and magic numbers
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+    ignore-tests: true
+  mnd:
+    ignored-functions:
+      - 'time.*'
+      - 'context.WithTimeout'
+      - 'context.WithDeadline'
+      - 'make'
+      - 'math.*'
+      - 'strconv.*'
+    ignored-numbers:
+      - '0'
+      - '1'
+      - '2'
+      - '10'
+      - '100'
+      - '1000'
+
+  # Code quality and style
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      - dupImport
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+      - hugeParam
+      - unnamedResult
+    settings:
+      rangeValCopy:
+        sizeThreshold: 512
+      hugeParam:
+        sizeThreshold: 512
+  godot:
+    scope: all
+    period: true
+    capital: false
+
+  # Security
+  gosec:
+    excludes:
+      - G104
+      - G204
+    severity: medium
+    confidence: medium
+
+  # Vet options
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+      - shadow
+
+  # Logging checks
+  loggercheck:
+    kitlog: false
+    klog: false
+    logr: false
+    zap: false
+    zapsugar: false
+
+  # Documentation and naming
+  misspell:
+    locale: US
+    ignore-words:
+      - opencode
+      - otel
+      - jsonl
+      - beads
+  nakedret:
+    max-func-lines: 30
+  nonamedreturns:
+    report-error-in-defer: false
+  varnamelen:
+    max-distance: 10
+    min-name-length: 1
+
+  # Linting directives and helpers
+  nolintlint:
+    require-explanation: true
+    require-specific: true
+  thelper:
+    test:
+      first: true
+      name: true
+      begin: true
+    benchmark:
+      first: true
+      name: true
+      begin: true
+
+  # Performance
+  prealloc:
+    simple: true
+    range-loops: true
+    for-loops: true
+
+  # Code structure and naming
+  revive:
+    enable-all-rules: false
+    rules:
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+        disabled: false
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: var-declaration
+      - name: package-comments
+        disabled: true
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+        disabled: true
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unused-parameter
+        disabled: true
+      - name: unreachable-code
+      - name: redefines-builtin-id
+  staticcheck:
+    checks: ["all"]
+
+  # Struct tags
+  tagliatelle:
+    case:
+      use-field-name: false
+      rules:
+        json: snake_case
+        yaml: snake_case
+        xml: snake_case
+        bson: snake_case
+
+  # Parameters
+  unparam:
+    check-exported: false
+
+  # Whitespace
+  whitespace:
+    multi-if: false
+    multi-func: false
+
+issues:
+  max-issues-per-linter: 50
+  max-same-issues: 3
+  exclude-use-default: true
+  uniq-by-line: true
+  exclude-rules:
+    # Test files: relaxed rules for test code
+    - path: _test\.go
+      linters:
+        - asasalint
+        - cyclop
+        - dupl
+        - errcheck
+        - errorlint
+        - forbidigo
+        - gochecknoglobals
+        - gocognit
+        - goconst
+        - gocritic
+        - gocyclo
+        - godot
+        - loggercheck
+        - mnd
+        - gosec
+        - nonamedreturns
+        - varnamelen
+        - wrapcheck
+    - path: _test\.go$
+      linters:
+        - tparallel
+
+    # Main functions: allow magic numbers and globals
+    - path: main\.go
+      linters:
+        - forbidigo
+        - gochecknoglobals
+        - mnd
+
+    # Generated code: exclude all linters
+    - path: ".*\\.pb\\.go$"
+      linters:
+        - all
+    - path: ".*\\.pb\\.gw\\.go$"
+      linters:
+        - all
+    - path: ".*_gen\\.go$"
+      linters:
+        - all
+    - path: "mock_.*\\.go$"
+      linters:
+        - all
+
+    # Specific checks to ignore
+    - text: "G104:"
+      linters:
+        - gosec
+    - text: "`.*` is unused"
+      linters:
+        - unparam
+      path: _test\.go
+
+    # Documentation exceptions
+    - text: "should have a package comment"
+      linters:
+        - revive
+
+  new: false
+  fix: false
+
+output:
+  formats:
+    - format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+  sort-results: true

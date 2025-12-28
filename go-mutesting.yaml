@@ -1,0 +1,27 @@
+# go-mutesting configuration for opencode-sdk-run
+# Mutation testing configuration to assess test suite quality
+
+# Skip files without corresponding _test.go
+skip_without_test: true
+
+# Skip files with build tags in _test.go
+skip_with_build_tags: true
+
+# Generate JSON report for programmatic analysis
+json_output: true
+
+# Generate HTML report for visual analysis
+html_output: true
+
+# Do not print mutation stats (useful for CI/CD)
+silent_mode: false
+
+# Directories to exclude from mutation testing
+# These are path prefixes that will be skipped
+exclude_dirs:
+  - vendor
+  - .git
+  - .beads
+  - tools
+  - scripts
+  - cmd/beads-fmt
