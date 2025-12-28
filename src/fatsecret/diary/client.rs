@@ -26,7 +26,8 @@ mod http {
         use ring::rand::{SecureRandom, SystemRandom};
         let rng = SystemRandom::new();
         let mut bytes = [0u8; 16];
-        rng.fill(&mut bytes).expect("Failed to generate random bytes");
+        rng.fill(&mut bytes)
+            .expect("Failed to generate random bytes");
         hex::encode(bytes)
     }
 
@@ -104,7 +105,10 @@ mod http {
 
         let mut params = HashMap::new();
         params.insert("oauth_consumer_key".to_string(), consumer_key.to_string());
-        params.insert("oauth_signature_method".to_string(), "HMAC-SHA1".to_string());
+        params.insert(
+            "oauth_signature_method".to_string(),
+            "HMAC-SHA1".to_string(),
+        );
         params.insert("oauth_timestamp".to_string(), timestamp);
         params.insert("oauth_nonce".to_string(), nonce);
         params.insert("oauth_version".to_string(), "1.0".to_string());
@@ -346,8 +350,9 @@ mod decoders {
     }
 
     pub fn parse_food_entry(body: &str) -> Result<FoodEntry, FatSecretError> {
-        let response: FoodEntryResponse = serde_json::from_str(body)
-            .map_err(|e| FatSecretError::ParseError(format!("Failed to parse food entry: {}", e)))?;
+        let response: FoodEntryResponse = serde_json::from_str(body).map_err(|e| {
+            FatSecretError::ParseError(format!("Failed to parse food entry: {}", e))
+        })?;
         Ok(response.food_entry.into())
     }
 
@@ -597,7 +602,10 @@ pub async fn copy_meal(
 ) -> Result<(), FatSecretError> {
     let mut params = HashMap::new();
     params.insert("from_date_int".to_string(), from_date_int.to_string());
-    params.insert("from_meal".to_string(), from_meal.to_api_string().to_string());
+    params.insert(
+        "from_meal".to_string(),
+        from_meal.to_api_string().to_string(),
+    );
     params.insert("to_date_int".to_string(), to_date_int.to_string());
     params.insert("to_meal".to_string(), to_meal.to_api_string().to_string());
 

@@ -1,24 +1,34 @@
 //! Calculate standard deviation for each macro.
 
 mod types;
-use types::{NutritionState, VariabilityResult};
 use serde::Deserialize;
 use std::io::{self, Read};
+use types::{NutritionState, VariabilityResult};
 
 #[derive(Debug, Deserialize)]
-struct Input { history: Vec<NutritionState> }
+struct Input {
+    history: Vec<NutritionState>,
+}
 
 fn std_dev(vals: &[f64], mean: f64) -> f64 {
-    if vals.len() <= 1 { return 0.0; }
+    if vals.len() <= 1 {
+        return 0.0;
+    }
     (vals.iter().map(|v| (v - mean).powi(2)).sum::<f64>() / vals.len() as f64).sqrt()
 }
 
 fn main() -> io::Result<()> {
     let mut buf = String::new();
     io::stdin().read_to_string(&mut buf)?;
-    let i: Input = serde_json::from_str(&buf).map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, e))?;
+    let i: Input =
+        serde_json::from_str(&buf).map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, e))?;
     let r = if i.history.is_empty() {
-        VariabilityResult { protein_std_dev: 0.0, fat_std_dev: 0.0, carbs_std_dev: 0.0, calories_std_dev: 0.0 }
+        VariabilityResult {
+            protein_std_dev: 0.0,
+            fat_std_dev: 0.0,
+            carbs_std_dev: 0.0,
+            calories_std_dev: 0.0,
+        }
     } else {
         let n = i.history.len() as f64;
         let p: Vec<f64> = i.history.iter().map(|s| s.consumed.protein).collect();
@@ -32,6 +42,9 @@ fn main() -> io::Result<()> {
             calories_std_dev: std_dev(&cal, cal.iter().sum::<f64>() / n),
         }
     };
-    println!("{}", serde_json::to_string(&r).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?);
+    println!(
+        "{}",
+        serde_json::to_string(&r).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?
+    );
     Ok(())
 }

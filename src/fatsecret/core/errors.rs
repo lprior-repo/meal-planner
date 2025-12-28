@@ -152,10 +152,7 @@ impl std::fmt::Display for ApiErrorCode {
 pub enum FatSecretError {
     /// Error returned by the FatSecret API
     #[error("{} (code {}): {message}", code.description(), code.to_code())]
-    ApiError {
-        code: ApiErrorCode,
-        message: String,
-    },
+    ApiError { code: ApiErrorCode, message: String },
 
     /// HTTP request failed with non-2xx status
     #[error("Request failed with status {status}: {body}")]
@@ -334,7 +331,10 @@ mod tests {
             ApiErrorCode::MissingRequiredParameter
         );
         assert_eq!(ApiErrorCode::from_code(207), ApiErrorCode::NoEntries);
-        assert_eq!(ApiErrorCode::from_code(999), ApiErrorCode::UnknownError(999));
+        assert_eq!(
+            ApiErrorCode::from_code(999),
+            ApiErrorCode::UnknownError(999)
+        );
     }
 
     #[test]
@@ -347,7 +347,9 @@ mod tests {
 
     #[test]
     fn test_api_error_code_roundtrip() {
-        for code in [2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 101, 106, 107, 108, 205, 206, 207] {
+        for code in [
+            2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 101, 106, 107, 108, 205, 206, 207,
+        ] {
             let error_code = ApiErrorCode::from_code(code);
             assert_eq!(error_code.to_code(), code);
         }
@@ -465,7 +467,10 @@ mod tests {
         assert!(display.contains("Token has expired"));
 
         let network_error = FatSecretError::network_error("connection refused");
-        assert_eq!(network_error.to_string(), "Network error: connection refused");
+        assert_eq!(
+            network_error.to_string(),
+            "Network error: connection refused"
+        );
 
         let config_error = FatSecretError::ConfigMissing;
         assert!(config_error.to_string().contains("FATSECRET_CONSUMER_KEY"));
