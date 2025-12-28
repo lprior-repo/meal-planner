@@ -1,0 +1,4 @@
+summary: Calculate nutrition deviation between actual and goals
+language: rust
+kind: script
+tag: meal-planner

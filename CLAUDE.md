@@ -112,6 +112,34 @@ bd update bd-xxxx --status in_progress
 | `CLAUDE_MULTI_AGENT.md` | Symbol locking, parallel workflows, deadlock resolution, coordination |
 | `CLAUDE_MEMORY.md` | Memory protocol, save formats, search strategy, archival |
 | `CLAUDE_TCR.md` | Test/Commit/Revert discipline, revert protocol, impasse handling |
+| `docs/windmill/INDEXED_KNOWLEDGE.json` | RAG-optimized chunks for Windmill features, CLI, Python SDK |
+
+---
+
+## KNOWLEDGE GRAPH (Graphiti)
+
+**Windmill documentation is indexed in Graphiti.** Search before implementing Windmill features:
+
+```python
+# Search for Windmill knowledge
+graphiti_search_memory_facts(query="windmill retries error handling", group_ids=["windmill-docs"])
+
+# List all indexed episodes
+graphiti_get_episodes(group_ids=["windmill-docs"], max_episodes=30)
+```
+
+**Indexed content (group: `windmill-docs`):**
+- **Flow Features**: Retries (constant + exponential), Error Handler, Branches (one/all), For Loops (parallel, squash), Early Stop/Break, Sleep/Delays, Priority, Lifetime, Step Mocking, Custom Timeout
+- **Core Concepts**: Caching, Concurrency Limits, Job Debouncing, Staging/Prod Deploy, Multiplayer
+- **CLI (wmill)**: Installation, Scripts, Flows, Resources, Variables, Workspace Management
+- **Python SDK**: get_resource, get_variable, run_script, run_flow, S3 integration
+
+**Key relationships indexed:**
+- Error Handler depends on Retries (called after retries exhausted)
+- Branches + Early Stop for conditional flow termination
+- For Loops Squash uses Dedicated Workers logic
+- Caching vs Step Mocking (production vs development optimization)
+- Concurrency Limits vs Job Debouncing (queue vs cancel strategies)
 
 ---
 
