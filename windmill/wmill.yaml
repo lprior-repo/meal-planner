@@ -1,0 +1,68 @@
+defaultTs: bun
+includes:
+  - f/**
+excludes:
+  - '**/*.md'
+  - '**/*.test.*'
+  - '**/fixtures/**'
+extraIncludes: []
+skipVariables: false
+skipResources: false
+skipResourceTypes: false
+skipSecrets: true
+skipScripts: false
+skipFlows: false
+skipApps: false
+skipFolders: false
+includeSchedules: true
+includeTriggers: true
+includeUsers: false
+includeGroups: false
+includeSettings: false
+includeKey: false
+skipBranchValidation: false
+gitBranches:
+  main:
+    baseUrl: 'http://localhost:8200/'
+    workspaceId: test
+    overrides:
+      skipSecrets: true
+      includeSettings: false
+    specificItems:
+      resources:
+        - f/fire-flow/dev_*
+      variables:
+        - f/fire-flow/debug_*
+  staging:
+    baseUrl: 'https://staging.windmill.dev/'
+    workspaceId: fire-flow-staging
+    overrides:
+      skipSecrets: true
+      includeSettings: true
+    promotionOverrides:
+      skipApps: false
+      skipFlows: false
+    specificItems:
+      resources:
+        - f/fire-flow/staging_*
+      variables:
+        - f/fire-flow/staging_*
+  production:
+    baseUrl: 'https://app.windmill.dev/'
+    workspaceId: fire-flow-prod
+    overrides:
+      skipSecrets: false
+      includeSettings: true
+    promotionOverrides:
+      skipApps: true
+    specificItems:
+      resources:
+        - f/fire-flow/prod_*
+      variables:
+        - f/fire-flow/prod_*
+  commonSpecificItems:
+    resources:
+      - f/fire-flow/config/**
+    variables:
+      - f/fire-flow/env_*
+codebases: []
