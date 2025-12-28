@@ -1,0 +1,39 @@
+[package]
+name = "windmill-lambdas"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "windmill_lambdas"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Optional dependencies for different features
+tokio = { version = "1.0", features = ["full"], optional = true }
+reqwest = { version = "0.11", features = ["json"], optional = true }
+chrono = { version = "0.4", features = ["serde"], optional = true }
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "json"], optional = true }
+
+[features]
+default = []
+async = ["tokio", "reqwest"]
+time = ["chrono"]
+database = ["sqlx", "tokio"]
+
+# Nutrition Compliance Feature Lambdas
+[[bin]]
+name = "calculate_deviation"
+path = "f/meal-planner/features/nutrition-compliance/lambdas/calculate_deviation/script.rs"
+
+[[bin]]
+name = "check_within_tolerance"
+path = "f/meal-planner/features/nutrition-compliance/lambdas/check_within_tolerance/script.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
