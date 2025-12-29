@@ -8,24 +8,24 @@
       "segment_id": "8752a85c-f7a1-4fa9-8588-dfef2f117c65",
       "max_doc": 679,
       "deletes": {
-        "num_deleted_docs": 144,
-        "opstamp": 3691
+        "num_deleted_docs": 245,
+        "opstamp": 3957
       }
     },
     {
       "segment_id": "84640371-294a-486c-9b24-0b96952492b6",
       "max_doc": 636,
       "deletes": {
-        "num_deleted_docs": 145,
-        "opstamp": 3691
+        "num_deleted_docs": 287,
+        "opstamp": 3957
       }
     },
     {
       "segment_id": "7d030165-7264-47c6-9b0b-1ed292b4ba1e",
       "max_doc": 632,
       "deletes": {
-        "num_deleted_docs": 156,
-        "opstamp": 3681
+        "num_deleted_docs": 291,
+        "opstamp": 3957
       }
     },
     {
@@ -44,17 +44,53 @@
       "deletes": null
     },
     {
-      "segment_id": "2384bbf4-e162-4b0d-ae80-8ca0c4199913",
+      "segment_id": "6b08078c-962f-40aa-aaf2-659d0da07428",
+      "max_doc": 66,
+      "deletes": null
+    },
+    {
+      "segment_id": "2c7d8526-7eec-4452-b9d0-d8731c814e38",
+      "max_doc": 66,
+      "deletes": null
+    },
+    {
+      "segment_id": "5f4fbc5b-9e44-4f8f-9c41-846c54ed14af",
+      "max_doc": 31,
+      "deletes": {
+        "num_deleted_docs": 19,
+        "opstamp": 3848
+      }
+    },
+    {
+      "segment_id": "6410d315-707e-46e6-aaad-065dde0732f8",
       "max_doc": 2,
       "deletes": null
     },
     {
-      "segment_id": "d9d674f0-67fd-4471-9665-925e6c3c8d4c",
+      "segment_id": "4fba6bcf-4707-4d17-b657-453949cc3316",
+      "max_doc": 2,
+      "deletes": {
+        "num_deleted_docs": 1,
+        "opstamp": 3848
+      }
+    },
+    {
+      "segment_id": "14161911-587c-4d99-b76b-9d4067a51ec8",
       "max_doc": 1,
       "deletes": null
     },
     {
-      "segment_id": "2cc8eced-1867-46ca-8292-61d243c1e398",
+      "segment_id": "cf251800-434c-4d06-8c62-e20c5fbbacd4",
+      "max_doc": 1,
+      "deletes": null
+    },
+    {
+      "segment_id": "499df4eb-8fb8-4761-aa82-37b9326f96f9",
+      "max_doc": 1,
+      "deletes": null
+    },
+    {
+      "segment_id": "b3d37a61-9cdd-4592-a815-d8c0967b7f13",
       "max_doc": 1,
       "deletes": null
     }
@@ -482,5 +518,5 @@
       }
     }
   ],
-  "opstamp": 3691
+  "opstamp": 3961
 }
