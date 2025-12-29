@@ -1,9 +1,8 @@
 //! Check if deviation is within tolerance.
 
-mod types;
 use serde::Deserialize;
 use std::io::{self, Read};
-use types::{DeviationResult, ToleranceCheckResult};
+use meal_planner::shared::{DeviationResult, ToleranceCheckResult};
 
 #[derive(Debug, Deserialize)]
 struct Input {
@@ -11,7 +10,8 @@ struct Input {
     tolerance_pct: f64,
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> io::Result<()> {
     let mut buf = String::new();
     io::stdin().read_to_string(&mut buf)?;
     let i: Input =

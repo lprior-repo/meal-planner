@@ -1,9 +1,8 @@
 //! Calculate overall compliance score (0-100).
 
-mod types;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
-use types::{NutritionData, NutritionGoals};
+use meal_planner::shared::{NutritionData, NutritionGoals};
 
 #[derive(Debug, Deserialize)]
 struct Input {
@@ -28,6 +27,7 @@ fn score(g: f64, a: f64) -> f64 {
         (100.0 - ((a - g) / g).abs() * 100.0).max(0.0)
     }
 }
+
 fn grade(s: f64) -> &'static str {
     match s as u32 {
         90..=100 => "A",
@@ -38,7 +38,8 @@ fn grade(s: f64) -> &'static str {
     }
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> io::Result<()> {
     let mut buf = String::new();
     io::stdin().read_to_string(&mut buf)?;
     let i: Input =

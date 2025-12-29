@@ -3,7 +3,7 @@
 //! Calculates percentage deviation between actual nutrition and goals.
 //! Windmill passes input via stdin as JSON and expects JSON output on stdout.
 
-use meal_planner::meal_planner::infrastructure::{DeviationResult, NutritionData, NutritionGoals};
+use meal_planner::shared::{DeviationResult, NutritionData, NutritionGoals};
 use serde::Deserialize;
 use std::io::{self, Read};
 
@@ -30,7 +30,8 @@ fn calculate_deviation(input: Input) -> DeviationResult {
     }
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> io::Result<()> {
     // Read JSON input from stdin
     let mut buffer = String::new();
     io::stdin().read_to_string(&mut buffer)?;

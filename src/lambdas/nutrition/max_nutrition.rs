@@ -1,16 +1,16 @@
 //! Find maximum values across nutrition history.
 
-mod types;
 use serde::Deserialize;
 use std::io::{self, Read};
-use types::{NutritionData, NutritionState};
+use meal_planner::shared::{NutritionData, NutritionState};
 
 #[derive(Debug, Deserialize)]
 struct Input {
     history: Vec<NutritionState>,
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> io::Result<()> {
     let mut buf = String::new();
     io::stdin().read_to_string(&mut buf)?;
     let i: Input =

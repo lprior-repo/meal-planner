@@ -1,9 +1,8 @@
 //! Analyze trends in nutrition history (first half vs second half).
 
-mod types;
 use serde::Deserialize;
 use std::io::{self, Read};
-use types::{NutritionData, NutritionState, TrendAnalysis, TrendDirection};
+use meal_planner::shared::{NutritionData, NutritionState, TrendAnalysis, TrendDirection};
 
 #[derive(Debug, Deserialize)]
 struct Input {
@@ -11,6 +10,7 @@ struct Input {
     #[serde(default = "default_threshold")]
     threshold: f64,
 }
+
 fn default_threshold() -> f64 {
     5.0
 }
@@ -48,6 +48,7 @@ fn pct(first: f64, second: f64) -> f64 {
         ((second - first) / first) * 100.0
     }
 }
+
 fn trend(c: f64, t: f64) -> TrendDirection {
     if c > t {
         TrendDirection::Increasing
@@ -58,7 +59,8 @@ fn trend(c: f64, t: f64) -> TrendDirection {
     }
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> io::Result<()> {
     let mut buf = String::new();
     io::stdin().read_to_string(&mut buf)?;
     let i: Input =

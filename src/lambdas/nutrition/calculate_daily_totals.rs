@@ -2,7 +2,7 @@
 //!
 //! Aggregates nutrition data across multiple food entries for a day.
 
-use meal_planner::meal_planner::infrastructure::NutritionData;
+use meal_planner::shared::NutritionData;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -35,7 +35,8 @@ fn calculate_daily_totals(entries: Vec<NutritionData>) -> NutritionData {
     )
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> io::Result<()> {
     let mut buffer = String::new();
     io::stdin().read_to_string(&mut buffer)?;
 

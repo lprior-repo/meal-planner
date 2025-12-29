@@ -18,7 +18,8 @@ struct Output {
     from_carbs: f64,
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> io::Result<()> {
     let mut buf = String::new();
     io::stdin().read_to_string(&mut buf)?;
     let i: Input =

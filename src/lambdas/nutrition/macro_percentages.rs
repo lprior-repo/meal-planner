@@ -1,9 +1,8 @@
 //! Calculate macro percentages from nutrition data.
 
-mod types;
 use serde::Serialize;
 use std::io::{self, Read};
-use types::NutritionData;
+use meal_planner::shared::NutritionData;
 
 #[derive(Debug, Serialize)]
 struct Output {
@@ -12,7 +11,8 @@ struct Output {
     carbs_pct: f64,
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> io::Result<()> {
     let mut buf = String::new();
     io::stdin().read_to_string(&mut buf)?;
     let i: NutritionData =

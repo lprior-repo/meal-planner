@@ -1,6 +1,4 @@
-//! Shared types for advisor domain
-
-#![allow(dead_code)]
+/// Shared types for advisor domain
 
 use serde::{Deserialize, Serialize};
 

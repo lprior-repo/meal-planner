@@ -1,8 +1,8 @@
 //! Calculate Macro Percentages - Windmill Rust Lambda
 //!
-//! Calculates the percentage distribution of protein, fat, and carbs from total calories.
+//! Calculates percentage distribution of protein, fat, and carbs from total calories.
 
-use meal_planner::meal_planner::infrastructure::NutritionData;
+use meal_planner::shared::NutritionData;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -48,7 +48,8 @@ fn calculate_macro_percentages(nutrition: &NutritionData) -> MacroPercentages {
     }
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> io::Result<()> {
     let mut buffer = String::new();
     io::stdin().read_to_string(&mut buffer)?;
 

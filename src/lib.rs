@@ -1,22 +1,7 @@
-//! Windmill-compatible Meal Planner Library
+//! Windmill Meal Planner - Shared Types Library
 //!
-//! This library provides the core functionality for the meal planner application,
-//! converted to Rust and made compatible with Windmill orchestration patterns.
+//! This is a minimal library providing only shared types for lambdas.
+//! Lambdas should not depend on the full meal-planner library.
 
-// Re-export modules to make them available at the crate level
-pub mod external;
-pub mod fatsecret;
-pub mod logging;
-pub mod web;
-
-// Meal planner domain modules
-pub mod meal_planner {
-    pub mod automation {
-        pub mod fatsecret_sync;
-    }
-    pub mod infrastructure;
-}
-
-// Public API exports
-pub use logging::*;
-pub use web::*;
+pub mod shared;
+pub use shared::*;

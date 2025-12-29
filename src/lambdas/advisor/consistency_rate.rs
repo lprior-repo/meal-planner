@@ -1,9 +1,8 @@
 //! Calculate percentage of days that met nutrition goals within tolerance.
 
-mod types;
 use serde::Deserialize;
 use std::io::{self, Read};
-use types::{ConsistencyResult, NutritionGoals, NutritionState};
+use meal_planner::shared::{ConsistencyResult, NutritionGoals, NutritionState};
 
 #[derive(Debug, Deserialize)]
 struct Input {
@@ -25,7 +24,8 @@ fn within(goals: &NutritionGoals, s: &NutritionState, tol: f64) -> bool {
         && dev(goals.daily_carbs, s.consumed.carbs) <= tol
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> io::Result<()> {
     let mut buf = String::new();
     io::stdin().read_to_string(&mut buf)?;
     let i: Input =

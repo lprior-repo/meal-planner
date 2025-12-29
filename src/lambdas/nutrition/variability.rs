@@ -1,9 +1,8 @@
 //! Calculate standard deviation for each macro.
 
-mod types;
 use serde::Deserialize;
 use std::io::{self, Read};
-use types::{NutritionState, VariabilityResult};
+use meal_planner::shared::{NutritionState, VariabilityResult};
 
 #[derive(Debug, Deserialize)]
 struct Input {
@@ -17,7 +16,8 @@ fn std_dev(vals: &[f64], mean: f64) -> f64 {
     (vals.iter().map(|v| (v - mean).powi(2)).sum::<f64>() / vals.len() as f64).sqrt()
 }
 
-fn main() -> io::Result<()> {
+#[tokio::main]
+async fn main() -> io::Result<()> {
     let mut buf = String::new();
     io::stdin().read_to_string(&mut buf)?;
     let i: Input =

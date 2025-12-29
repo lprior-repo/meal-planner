@@ -7,10 +7,6 @@ edition = "2021"
 name = "meal_planner"
 path = "src/lib.rs"
 
-[[bin]]
-name = "meal-planner"
-path = "src/main.rs"
-
 # Nutrition domain lambdas
 [[bin]]
 name = "calculate_deviation"
@@ -62,40 +58,14 @@ name = "analyze_trends"
 path = "src/lambdas/advisor/analyze_trends.rs"
 
 [[bin]]
-name = "consistency_rate"
-path = "src/lambdas/advisor/consistency_rate.rs"
-
-[[bin]]
 name = "compliance_score"
 path = "src/lambdas/advisor/compliance_score.rs"
 
+[[bin]]
+name = "consistency_rate"
+path = "src/lambdas/advisor/consistency_rate.rs"
+
 [dependencies]
-sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "json"] }
-tokio = { version = "1", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-chrono = { version = "0.4", features = ["serde"] }
-uuid = { version = "1.0", features = ["v4", "serde"] }
-anyhow = "1.0"
-thiserror = "1.0"
-log = "0.4"
-env_logger = "0.10"
-warp = "0.3"
-url = "2.4"
-reqwest = { version = "0.11", features = ["json"] }
-dotenv = "0.15"
-clap = { version = "4.0", features = ["derive"] }
-config = "0.13"
-serde_yaml = "0.9"
-hyper = "0.14"
-tokio-util = "0.7"
-futures = "0.3"
-tracing = "0.1"
-tracing-subscriber = "0.3"
-metrics = "0.18"
-ring = "0.17"
-base64 = "0.21"
-hex = "0.4"
-
-[dev-dependencies]
-serial_test = "3.0"
+tokio = { version = "1", features = ["full"] }
