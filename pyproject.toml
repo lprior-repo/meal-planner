@@ -1,9 +1,0 @@
-[project]
-name = "meal-planner"
-version = "1.0.0"
-description = "Windmill-compatible meal planner with Rust services"
-requires-python = ">=3.9"
-dependencies = []
-
-[tool.uv]
-# No Python dependencies for Rust project

@@ -32,6 +32,8 @@ chrono = "0.4"
 url = "2.5"
 serial_test = "3.2.0"
 aes-gcm = "0.10.3"
+sqlx = { version = "0.8.6", features = ["runtime-tokio", "postgres", "chrono", "macros", "migrate"] }
+sqlx-cli = { version = "0.8.6", features = ["rustls"], optional = true }
 
 [lib]
 name = "meal_planner"
@@ -53,3 +55,6 @@ path = "src/atsecret/diary_get_entry.rs"
 [[bin]]
 name = "diary_create_entry"
 path = "src/atsecret/diary_create_entry.rs"
+
+[features]
+sqlx-cli = ["dep:sqlx-cli"]

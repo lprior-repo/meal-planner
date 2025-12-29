@@ -1,13 +1,14 @@
 //! Token storage for OAuth authentication
 //!
-//! Handles storing and retrieving OAuth tokens with encryption.
+//! Handles storing and retrieving OAuth tokens with encryption using SQLx.
 
 use super::core::{AccessToken, RequestToken};
 use super::crypto::{decrypt, encrypt};
 use super::StorageError;
-use chrono::{Utc, Duration};
+use super::TokenValidity;
 use sqlx::PgPool;
-use std::time::SystemTime;
+use sqlx::postgres::types::PgInterval;
+use chrono::{Utc, Duration};
 
 /// Token storage for OAuth 3-legged flow
 ///
@@ -25,7 +26,7 @@ impl TokenStorage {
 
     /// Store a pending OAuth request token
     ///
-    /// These tokens are temporary and used during the 3-legged OAuth flow.
+    /// These tokens are temporary and used during 3-legged OAuth flow.
     /// They expire after 15 minutes.
     pub async fn store_pending_token(
         &self,
@@ -165,7 +166,7 @@ impl TokenStorage {
         }
     }
 
-    /// Update the last_used_at timestamp for access token
+    /// Update the last_used_at timestamp for the access token
     pub async fn update_last_used(&self) -> Result<(), StorageError> {
         sqlx::query!(
             "UPDATE fatsecret_oauth_token SET last_used_at = NOW() WHERE id = 1",
@@ -179,7 +180,7 @@ impl TokenStorage {
 
     /// Check if a token exists and is valid
     ///
-    /// Returns TokenValidity enum indicating status.
+    /// Returns a TokenValidity enum indicating the status.
     pub async fn check_token_validity(&self) -> Result<TokenValidity, StorageError> {
         let result = sqlx::query!(
             r#"
