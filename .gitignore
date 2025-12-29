@@ -113,3 +113,6 @@ target/
 
 # Ripgrep ignore patterns
 .ignore
+
+# bv (beads viewer) local config and caches
+.bv/
