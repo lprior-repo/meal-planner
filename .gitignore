@@ -107,3 +107,9 @@ hive-mind-prompt-*.txt
 .perf-tracking/test-execution.csv
 .perf-tracking/reports/
 target/
+
+# Code indexing (regenerated on each run)
+.codanna/
+
+# Ripgrep ignore patterns
+.ignore

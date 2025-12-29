@@ -1,7 +1,7 @@
 //! FatSecret Domain Types for Rust
 //!
 //! This module contains Rust ports of FatSecret API domain types.
-//! Ported from the Gleam implementation in src/meal_planner/fatsecret/.
+//! Ported from Gleam implementation in src/meal_planner/fatsecret/.
 //!
 //! ## Domain Modules
 //!
@@ -16,6 +16,10 @@
 
 // Core module (config, errors)
 pub mod core;
+
+// Support modules
+pub mod crypto;
+pub mod storage;
 
 // Domain type modules
 pub mod diary;
@@ -70,3 +74,12 @@ pub use diary::{
     validate_number_of_units, AuthError, DaySummary, FoodEntry, FoodEntryId, FoodEntryInput,
     FoodEntryUpdate, MealType, MonthSummary, ValidationError,
 };
+
+// Re-export crypto types
+pub use crypto::{CryptoError, decrypt, encrypt, encryption_configured, generate_key, StorageError, TokenValidity};
+
+// Re-export OAuth types
+pub use core::{AccessToken, RequestToken};
+
+// Re-export storage
+pub use storage::TokenStorage;

@@ -485,7 +485,7 @@ fn test_encrypt_with_short_key_fails() {
     let result = encrypt("test");
     env::remove_var("OAUTH_ENCRYPTION_KEY");
 
-    assert!(matches!(result, Err(CryptoError::KeyInvalidLength)));
+    assert!(matches!(result, Err(CryptoError::KeyInvalidLength(_))));
 }
 
 #[test]
