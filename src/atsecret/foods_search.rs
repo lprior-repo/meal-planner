@@ -135,41 +135,37 @@ fn main() -> io::Result<()> {
     };
 
     // Search foods - TODO: Integrate with actual FatSecret SDK
-    match search_query.as_str() {
-        _ => {
-            let foods = vec![FoodItem {
-                food_id: "123".to_string(),
-                food_name: "Apple".to_string(),
-                food_type: "Generic".to_string(),
-                food_description: "Medium apple".to_string(),
-                brand_name: None,
-                food_url: "https://example.com/food/123".to_string(),
-            }];
+    let foods = vec![FoodItem {
+        food_id: "123".to_string(),
+        food_name: "Apple".to_string(),
+        food_type: "Generic".to_string(),
+        food_description: "Medium apple".to_string(),
+        brand_name: None,
+        food_url: "https://example.com/food/123".to_string(),
+    }];
 
-            let search_response = SearchResponse {
-                foods,
-                pagination: PaginationMeta {
-                    total_results: 1,
-                    page: 1,
-                    has_more: false,
-                },
-            };
+    let search_response = SearchResponse {
+        foods,
+        pagination: PaginationMeta {
+            total_results: 1,
+            page: 1,
+            has_more: false,
+        },
+    };
 
-            let output = Output {
-                data: search_response,
-                meta: Some(ExecutionMeta {
-                    execution_time_ms: start_time.elapsed().as_millis() as u64,
-                    request_id: input._meta.as_ref().and_then(|m| m.request_id.clone()),
-                    trace_id: input._meta.as_ref().and_then(|m| m.trace_id.clone()),
-                }),
-            };
+    let output = Output {
+        data: search_response,
+        meta: Some(ExecutionMeta {
+            execution_time_ms: start_time.elapsed().as_millis() as u64,
+            request_id: input._meta.as_ref().and_then(|m| m.request_id.clone()),
+            trace_id: input._meta.as_ref().and_then(|m| m.trace_id.clone()),
+        }),
+    };
 
-            writeln!(
-                io::stdout(),
-                "{}",
-                serde_json::to_string(&output).unwrap()
-            )?;
-            Ok(())
-        }
-    }
+    writeln!(
+        io::stdout(),
+        "{}",
+        serde_json::to_string(&output).unwrap()
+    )?;
+    Ok(())
 }

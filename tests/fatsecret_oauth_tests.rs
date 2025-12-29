@@ -6,7 +6,7 @@
 //! - Signature generation (HMAC-SHA256 verification)
 //! - Token storage/retrieval with encryption
 
-use meal_planner::external::fatsecret::{
+use meal_planner::fatsecret::{
     decrypt, encrypt, encryption_configured, generate_key, AccessToken, CryptoError, RequestToken,
     StorageError, TokenValidity,
 };
