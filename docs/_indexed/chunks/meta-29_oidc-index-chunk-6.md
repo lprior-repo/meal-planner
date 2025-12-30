@@ -9,7 +9,7 @@ summary: "Use OIDC with Hashicorp Vault"
 
 ## Use OIDC with Hashicorp Vault
 
-```
+```text
 vault auth enable jwt
 
 vault write auth/jwt/config \

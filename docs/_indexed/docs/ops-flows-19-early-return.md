@@ -2,7 +2,7 @@
 id: ops/flows/19-early-return
 title: "Early return"
 category: ops
-tags: ["operations", "early", "flows"]
+tags: ["flows", "operations", "early"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

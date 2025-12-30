@@ -18,7 +18,7 @@ summary: "How to use"
 
 Once created, your MCP URL will look like this:
 
-```
+```yaml
 https://app.windmill.dev/api/mcp/w/<your-workspace-id>/sse?token=<your-token>
 ```
 
@@ -36,7 +36,7 @@ To connect with Cursor:
   - Click on "Add a Custom MCP server"
   - Add the following configuration in the json file:
 
-```
+```json
 {
   "mcpServers": {
     "windmill-mcp": {

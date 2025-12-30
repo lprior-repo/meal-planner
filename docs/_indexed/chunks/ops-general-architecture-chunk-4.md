@@ -35,6 +35,6 @@ meal-planner/
 ├── dagger/                       # CI/CD pipeline
 └── docs/
     └── ARCHITECTURE.md           # This file
-```
+```text
 
 Binary naming: `src/bin/<domain>_<operation>.rs` → `bin/<domain>_<operation>`

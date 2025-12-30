@@ -2,7 +2,7 @@
 id: meta/47_environment_variables/index
 title: "Environment variables"
 category: meta
-tags: ["environment", "meta", "47_environment_variables"]
+tags: ["47_environment_variables", "environment", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

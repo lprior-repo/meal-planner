@@ -156,20 +156,44 @@ def infer_language(code: str) -> str:
 def fix_code_blocks(content: str) -> tuple[str, int]:
     """Fix unlabeled code blocks in content. Returns (new_content, fix_count)."""
 
-    # Pattern to match ``` at end of line (unlabeled) followed by code
-    pattern = r"```\n(.*?)```"
-
     fixes = 0
+    lines = content.split("\n")
+    result = []
+    in_code_block = False
 
-    def replace_block(match):
+    for line in lines:
+        # Check if this is a code fence
+        if line.startswith("```"):
+            if not in_code_block:
+                # Opening a code block
+                in_code_block = True
+                if line == "```":
+                    # No language specified - mark for second pass
+                    result.append("```__NEEDS_LANG__")
+                else:
+                    result.append(line)
+            else:
+                # Closing a code block
+                in_code_block = False
+                result.append(line)
+        else:
+            result.append(line)
+
+    # Second pass: fix the __NEEDS_LANG__ markers
+    content = "\n".join(result)
+
+    def replace_unlabeled(match):
         nonlocal fixes
         code = match.group(1)
         lang = infer_language(code)
         fixes += 1
         return f"```{lang}\n{code}```"
 
-    new_content = re.sub(pattern, replace_block, content, flags=re.DOTALL)
-    return new_content, fixes
+    content = re.sub(
+        r"```__NEEDS_LANG__\n(.*?)```", replace_unlabeled, content, flags=re.DOTALL
+    )
+
+    return content, fixes
 
 
 def process_file(filepath: Path, dry_run: bool = False) -> int:
@@ -201,15 +225,17 @@ def main():
     total_fixes = 0
     files_fixed = 0
 
-    for md_file in DOCS_DIR.rglob("*.md"):
-        # Skip excluded directories
-        if any(excl in md_file.parts for excl in EXCLUDE_DIRS):
-            continue
+    # Process both .md and .mdx files
+    for pattern in ["*.md", "*.mdx"]:
+        for md_file in DOCS_DIR.rglob(pattern):
+            # Skip excluded directories
+            if any(excl in md_file.parts for excl in EXCLUDE_DIRS):
+                continue
 
-        fixes = process_file(md_file, dry_run)
-        if fixes > 0:
-            total_fixes += fixes
-            files_fixed += 1
+            fixes = process_file(md_file, dry_run)
+            if fixes > 0:
+                total_fixes += fixes
+                files_fixed += 1
 
     print(
         f"\n{'Would fix' if dry_run else 'Fixed'} {total_fixes} code blocks in {files_fixed} files"

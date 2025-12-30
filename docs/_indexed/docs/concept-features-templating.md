@@ -2,7 +2,7 @@
 id: concept/features/templating
 title: "Templating"
 category: concept
-tags: ["features", "concept", "templating"]
+tags: ["templating", "features", "concept"]
 ---
 
 # Templating

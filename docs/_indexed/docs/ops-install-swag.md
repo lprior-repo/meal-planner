@@ -2,7 +2,7 @@
 id: ops/install/swag
 title: "Swag"
 category: ops
-tags: ["operations", "docker", "swag", "install"]
+tags: ["docker", "swag", "operations", "install"]
 ---
 
 # Swag
@@ -35,7 +35,7 @@ base64 /dev/urandom | head -c50
 Copy the response from that last command and paste the key into the `.env` file:
 ```text
 nano .env
-```
+```text
 You'll also need to enter a Postgres password into the `.env` file. Then, save the file and exit the editor.
 
 ### Install and configure Docker Compose
@@ -51,7 +51,7 @@ Next, create and edit the docker compose file.
 
 ```text
 nano docker-compose.yml
-```
+```yaml
 
 Paste the following and adjust your domains, subdomains and time zone.
 
@@ -112,7 +112,7 @@ Save and exit.
 
 ```bash
 docker-compose up -d
-```
+```text
 
 ```bash
 cd /opt/swag/nginx/proxy-confs

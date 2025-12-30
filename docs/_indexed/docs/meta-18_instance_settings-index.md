@@ -2,7 +2,7 @@
 id: meta/18_instance_settings/index
 title: "Instance settings"
 category: meta
-tags: ["instance", "advanced", "meta", "18_instance_settings"]
+tags: ["18_instance_settings", "instance", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -346,7 +346,7 @@ You have another field to test the SMTP settings.
 
 The relevant environment variables are:
 
-```
+```bash
 SMTP_FROM=windmill@domain.com
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
@@ -362,7 +362,7 @@ nano .env
 
 Append the following to the end of your `.env` file:
 
-```
+```bash
 SMTP_FROM=windmill@domain.com
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587

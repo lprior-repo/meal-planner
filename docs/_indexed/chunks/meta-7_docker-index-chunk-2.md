@@ -16,4 +16,4 @@ It will handle memory tracking, logs streaming and the different exit code of th
 
 The default code is as follows:
 
-```
+```text

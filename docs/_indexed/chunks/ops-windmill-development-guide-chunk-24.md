@@ -9,7 +9,7 @@ summary: "File Structure"
 
 ## File Structure
 
-```
+```text
 windmill/
 ├── wmill.yaml                    # Sync configuration
 ├── wmill-lock.yaml               # Workspace lock

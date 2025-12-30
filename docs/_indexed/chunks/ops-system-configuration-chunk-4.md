@@ -30,7 +30,7 @@ Required settings
 S3_ACCESS_KEY=
 S3_SECRET_ACCESS_KEY=
 S3_BUCKET_NAME=
-```
+```text
 
 Alternatively you can point to a file containing the S3_SECRET_ACCESS_KEY value. If using containers make sure the file is
 persistent and available inside the container.
@@ -47,7 +47,7 @@ S3_QUERYSTRING_AUTH=1 # default true, set to 0 to serve media from a public buck
 S3_QUERYSTRING_EXPIRE=3600 # number of seconds querystring are valid for
 S3_ENDPOINT_URL= # when using a custom endpoint like minio
 S3_CUSTOM_DOMAIN= # when using a CDN/proxy to S3 (see https://github.com/TandoorRecipes/recipes/issues/1943)
-```
+```text
 
 #### AI Integration
 
@@ -61,7 +61,7 @@ SPACE_AI_ENABLED=1
 Sets the monthly default credit limit for AI usage
 ```bash
 SPACE_AI_CREDITS_MONTHLY=100
-```
+```text
 
 Ratelimit for AI API
 ```bash
@@ -78,7 +78,7 @@ key [here](https://fdc.nal.usda.gov/api-key-signup.html).
 
 ```bash
 FDC_API_KEY=DEMO_KEY
-```
+```text
 
 #### Connectors
 
@@ -108,7 +108,7 @@ EXTERNAL_CONNECTORS_QUEUE_SIZE=100  # Defaults to 100, set to any number >1
 Setting to `1` enables several django debug features and additional
 logs ([see docs](https://docs.djangoproject.com/en/5.0/ref/settings/#std-setting-DEBUG)).
 
-```
+```bash
 DEBUG=0
 ```text
 
@@ -120,7 +120,7 @@ Set to `1` to enable django debug toolbar middleware. Toolbar only shows if `DEB
 is in `INTERNAL_IPS`.
 See [Django Debug Toolbar Docs](https://django-debug-toolbar.readthedocs.io/en/latest/).
 
-```
+```bash
 DEBUG_TOOLBAR=0
 ```text
 
@@ -130,7 +130,7 @@ DEBUG_TOOLBAR=0
 
 Set to `1` to enable additional query output on the search page.
 
-```
+```bash
 SQL_DEBUG=0
 ```text
 
@@ -141,7 +141,7 @@ SQL_DEBUG=0
 Increase or decrease the logging done by application.
 Please set to `DEBUG` when making a bug report.
 
-```
+```bash
  LOG_LEVEL="DEBUG"
 ```text
 
@@ -152,7 +152,7 @@ Please set to `DEBUG` when making a bug report.
 
 Increase or decrease the logging done by gunicorn (the python wsgi application).
 
-```
+```bash
  GUNICORN_LOG_LEVEL="debug"
 ```text
 
@@ -167,7 +167,7 @@ appropriate.
 
 The default value for the user preference 'fractions' (showing amounts as decimals or fractions).
 
-```
+```bash
 FRACTION_PREF_DEFAULT=0
 ```text
 
@@ -177,7 +177,7 @@ FRACTION_PREF_DEFAULT=0
 
 The default value for the user preference 'comments' (enable/disable commenting system)
 
-```
+```bash
 COMMENT_PREF_DEFAULT=1
 ```text
 
@@ -187,7 +187,7 @@ COMMENT_PREF_DEFAULT=1
 
 The default value for the user preference 'sticky navigation' (always show navbar on top or hide when scrolling)
 
-```
+```bash
 STICKY_NAV_PREF_DEFAULT=1
 ```text
 
@@ -198,7 +198,7 @@ STICKY_NAV_PREF_DEFAULT=1
 The default for the number of spaces a user can own. By setting to 0 space creation for users will be disabled.
 Superusers can always bypass this limit.
 
-```
+```bash
 MAX_OWNED_SPACES_PREF_DEFAULT=100
 ```text
 
@@ -213,7 +213,7 @@ Default timezone to use for database
 connections ([see Django docs](https://docs.djangoproject.com/en/5.0/ref/settings/#time-zone)).
 Usually everything is converted to the users timezone so this setting doesn't really need to be correct.
 
-```
+```bash
 TZ=Europe/Berlin
 ```text
 
@@ -223,7 +223,7 @@ TZ=Europe/Berlin
 Tandoors appearance can be changed on a user and space level but unauthenticated users always see the tandoor default style.
 With this setting you can specify the ID of a space of which the appearance settings should be applied if a user is not logged in.
 
-```
+```bash
 UNAUTHENTICATED_THEME_FROM_SPACE=
 ```text
 
@@ -232,7 +232,7 @@ UNAUTHENTICATED_THEME_FROM_SPACE=
 
 Similar to the Default theme but forces the theme upon all users (authenticated/unauthenticated) and all spaces
 
-```
+```bash
 FORCE_THEME_FROM_SPACE=
 ```text
 
@@ -248,7 +248,7 @@ frequently which
 might cause high load on the server. (Technically they can obviously refresh as often as they want with their own
 scripts)
 
-```
+```bash
 SHOPPING_MIN_AUTOSYNC_INTERVAL=5
 ```python
 
@@ -261,7 +261,7 @@ A rate limit is recommended to prevent users from abusing your server for (DDoS)
 service
 providers from blocking your server for too many request.
 
-```
+```bash
 DRF_THROTTLE_RECIPE_URL_IMPORT=60/hour
 ```text
 
@@ -271,7 +271,7 @@ created spaces. These defaults can be changed in the admin view after a space ha
 
 If unset, all settings default to unlimited/enabled
 
-```
+```bash
 SPACE_DEFAULT_MAX_RECIPES=0 # 0=unlimited recipes
 SPACE_DEFAULT_MAX_USERS=0 # 0=unlimited users per space
 SPACE_DEFAULT_MAX_FILES=0 # Maximum file storage for space in MB. 0 for unlimited, -1 to disable file upload.
@@ -282,6 +282,6 @@ SPACE_DEFAULT_ALLOW_SHARING=1 # Allow users to share recipes with public links
 > default `600` - options `1-X`
 
 Recipe exports are cached for a certain time (in seconds) by default, adjust time if needed
-```
+```bash
 EXPORT_FILE_CACHE_DURATION=600
 ```

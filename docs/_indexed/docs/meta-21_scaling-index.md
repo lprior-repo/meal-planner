@@ -2,7 +2,7 @@
 id: meta/21_scaling/index
 title: "Scaling workers"
 category: meta
-tags: ["advanced", "meta", "scaling", "21_scaling"]
+tags: ["21_scaling", "scaling", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -63,7 +63,7 @@ The right number of workers depends on your specific requirements. Consider thes
 
 The fundamental relationship is:
 
-```
+```text
 Required workers ≥ Job arrival rate × Average job duration
 ```
 
@@ -76,7 +76,7 @@ With fewer workers, jobs will queue up. With more workers, some will be idle.
 
 If jobs must not wait more than X seconds before starting:
 
-```
+```text
 Required workers = (Peak arrival rate × Job duration) + (Peak arrival rate × Max queue time)
 ```
 

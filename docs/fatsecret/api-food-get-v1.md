@@ -79,7 +79,7 @@ Each serving includes:
 GET https://platform.fatsecret.com/rest/food/v1
     ?food_id=35718
     &format=json
-```
+```text
 
 ## Example Response
 

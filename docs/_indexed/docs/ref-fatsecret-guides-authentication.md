@@ -2,7 +2,7 @@
 id: ref/fatsecret/guides-authentication
 title: "FatSecret Platform API - Authentication"
 category: ref
-tags: ["fatsecret", "api", "reference"]
+tags: ["api", "fatsecret", "reference"]
 ---
 
 # FatSecret Platform API - Authentication

@@ -2,7 +2,7 @@
 id: meta/4_webhooks/index
 title: "Webhooks"
 category: meta
-tags: ["4_webhooks", "webhooks", "meta", "advanced"]
+tags: ["webhooks", "4_webhooks", "advanced", "meta"]
 ---
 
 import Tabs from '@theme/Tabs';
@@ -184,7 +184,7 @@ The webhook endpoints accept a JSON object or url encoded form data as the body,
 
 If the payload is not an object, it will be wrapped in an object with the key `body` and the value will be the payload/body itself. e.g:
 
-```
+```json
 [1,2,3] => {"body": [1,2,3]}
 ```
 
@@ -259,7 +259,7 @@ A [workspace object storage](./meta-38_object_storage_in_windmill-index.md#works
 
 It is possible for jobs to take request headers as arguments. To do so, either specify in the query args the headers to process at `include_header`, separated with `,`. e.g:
 
-```
+```text
 /api/w/workspace/jobs/run_wait_result/p/u/user/new_script?include_header=X-Sign,foo
 ```
 
@@ -269,7 +269,7 @@ or use the env variable: `INCLUDE_HEADERS` with the same format so that all requ
 
 It is possible to pass query args to the job. To do so, either specify in the query args the headers to process at `include_query`, separated with `,`. e.g for a [sync](#synchronous) get request (works for all endpoints):
 
-```
+```text
 /api/w/workspace/jobs/run_wait_result/p/u/user/new_script?include_query=a,b,c&a=foo&b=bar&c=foobar
 ```
 
@@ -356,7 +356,7 @@ Single port proxy can be leveraged to expose a webhook with a custom URL. In its
 
 In the Caddyfile, the [`handle_path`](https://caddyserver.com/docs/caddyfile/directives/handle_path#handle-path) and [`rewrite`](https://caddyserver.com/docs/caddyfile/directives/rewrite#rewrite) directive can be used:
 
-```
+```bash
 {$BASE_URL} {
 	bind {$ADDRESS}
 
@@ -373,7 +373,7 @@ In the Caddyfile, the [`handle_path`](https://caddyserver.com/docs/caddyfile/dir
 
 The job can then be triggered with:
 
-```
+```bash
 curl -X POST                               \
     --data '{}'                            \
     -H "Content-Type: application/json"    \

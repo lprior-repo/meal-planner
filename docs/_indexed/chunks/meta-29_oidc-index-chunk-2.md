@@ -13,7 +13,7 @@ OIDC tokens are generated at runtime and are scoped to the script that generated
 Your token must be associated with an audience which identifies the intended recipient of the token. The audience is provided as a parameter when generating the token. If the audience is incorrect, the consumer will reject the token. (For AWS, this audience is sts.amazonaws.com. For your own APIs, you can specify an audience such as auth.yourcompany.com.)
 If you are using a TypeScript or Python scripts, you can use the Windmill SDK to generate tokens. For other like REST or shell, you should use the REST api directly:
 
-```
+```bash
 curl -s -X POST -H "Authorization: Bearer $WM_TOKEN" "$BASE_INTERNAL_URL/api/w/$WM_WORKSPACE/oidc/token/MY_AUDIENCE"
 ```
 

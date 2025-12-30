@@ -27,7 +27,7 @@ Following CUPID principles: small, single-purpose binaries composed via Windmill
 │   ~50 lines          ~50 lines          ~50 lines          ~50 lines        │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
-```
+```text
 
 ## Binaries
 
@@ -336,7 +336,7 @@ Tandoor keywords must exist before assigning to recipes. Options:
 ### 3. Auto-Tagging Rules
 
 Source-based tagging from URL domain:
-```
+```text
 meatchurch.com → meat-church
 seriouseats.com → serious-eats
 bonappetit.com → bon-appetit

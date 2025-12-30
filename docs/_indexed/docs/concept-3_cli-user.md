@@ -2,7 +2,7 @@
 id: concept/3_cli/user
 title: "Users management"
 category: concept
-tags: ["3_cli", "windmill", "concept", "users"]
+tags: ["3_cli", "concept", "windmill", "users"]
 ---
 
 <!--

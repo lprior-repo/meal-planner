@@ -6,7 +6,7 @@ Optional Add-On feature for detecting foods within images.
 
 ```text
 POST https://platform.fatsecret.com/rest/image-recognition/v1
-```
+```text
 
 ## Overview
 

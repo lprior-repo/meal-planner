@@ -2,7 +2,7 @@
 id: meta/windmill/indexing-system
 title: "Windmill Documentation Indexing System"
 category: meta
-tags: ["advanced", "meta", "windmill"]
+tags: ["windmill", "advanced", "meta"]
 ---
 
 # Windmill Documentation Indexing System

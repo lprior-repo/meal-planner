@@ -26,7 +26,7 @@ See the [Helm chart repository README][helm] for more details.
 
 To unlock EE, set in your values.yaml:
 
-```
+```yaml
 enterprise:
 	enable: true
 ```

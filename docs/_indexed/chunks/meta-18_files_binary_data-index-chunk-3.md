@@ -15,7 +15,7 @@ or by pre-fixing those strings with the [`<data specifier:>`](https://developer.
 
 In explicit contexts, when the JSON schema specifies that a property represents Base64-encoded data:
 
-```
+```yaml
 foo:
     type: string
     format: base64

@@ -16,7 +16,7 @@ Include the access token in subsequent API requests to access user data.
 
 **Signature Calculation:**
 
-```
+```bash
 signing_key = {consumer_secret}&{access_token_secret}
 ```text
 

@@ -29,7 +29,7 @@ You can write those package.json manually or through a standar `npm install <X>`
 
 Several package.json files can therefore coexist, each having authority over the scripts closest to it:
 
-```
+```text
 └── windmill_folder/
     ├── package.json
     ├── f/foo/

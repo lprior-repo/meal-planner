@@ -42,7 +42,7 @@ meal-planner/
 ├── dagger/                       # CI/CD pipeline
 └── docs/
     └── ARCHITECTURE.md           # This file
-```
+```text
 
 Binary naming: `src/bin/<domain>_<operation>.rs` → `bin/<domain>_<operation>`
 
@@ -103,7 +103,7 @@ fn run() -> anyhow::Result<serde_json::Value> {
 
 ### Orchestration Model
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                    Windmill Flow                        │
 │  (Orchestration, scheduling, retries, error handling)   │
@@ -140,7 +140,7 @@ steps:
 
 Dagger builds binaries and deploys to Windmill worker containers:
 
-```
+```text
 ┌──────────┐    ┌──────────┐    ┌─────────────────────┐
 │  Source  │───▶│  Dagger  │───▶│  Windmill Workers   │
 │  (Rust)  │    │  Build   │    │  /usr/local/bin/*   │

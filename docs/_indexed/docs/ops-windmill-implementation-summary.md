@@ -2,7 +2,7 @@
 id: ops/windmill/implementation-summary
 title: "Documentation Indexing Implementation Summary"
 category: ops
-tags: ["operations", "documentation", "advanced", "windmill"]
+tags: ["operations", "windmill", "advanced", "documentation"]
 ---
 
 # Documentation Indexing Implementation Summary
@@ -89,7 +89,7 @@ Layer 2: Core Concepts
 Layer 3: Tools & SDKs
     ↓
 Layer 4: Deployment
-```
+```text
 
 ### Relationship Types
 

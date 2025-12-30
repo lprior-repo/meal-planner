@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-food-get-v1
 title: "Food Get v1"
 category: ref
-tags: ["fatsecret", "reference", "food"]
+tags: ["food", "fatsecret", "reference"]
 ---
 
 # Food Get v1
@@ -88,7 +88,7 @@ Each serving includes:
 GET https://platform.fatsecret.com/rest/food/v1
     ?food_id=35718
     &format=json
-```
+```text
 
 ## Example Response
 

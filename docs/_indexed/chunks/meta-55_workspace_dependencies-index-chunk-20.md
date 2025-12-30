@@ -10,7 +10,7 @@ summary: "Common patterns"
 ## Common patterns
 
 ### Team-based dependencies
-```
+```text
 /dependencies/
 ├── frontend.package.json      # Frontend team deps
 ├── backend.package.json       # Backend team deps
@@ -19,7 +19,7 @@ summary: "Common patterns"
 ```
 
 ### Environment-based
-```
+```text
 /dependencies/
 ├── prod.requirements.in       # Production-ready versions
 ├── dev.requirements.in        # Development dependencies
@@ -27,7 +27,7 @@ summary: "Common patterns"
 ```
 
 ### Feature-based
-```
+```text
 /dependencies/
 ├── ml.requirements.in         # Machine learning
 ├── api.requirements.in        # API integrations

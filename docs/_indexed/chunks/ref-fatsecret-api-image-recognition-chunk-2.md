@@ -11,4 +11,4 @@ summary: "Endpoint"
 
 ```text
 POST https://platform.fatsecret.com/rest/image-recognition/v1
-```
+```text

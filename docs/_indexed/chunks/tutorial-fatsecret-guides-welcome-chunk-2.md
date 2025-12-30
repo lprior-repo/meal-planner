@@ -15,7 +15,7 @@ Send requests directly to specific method endpoints:
 
 ```yaml
 https://platform.fatsecret.com/rest/{method}
-```
+```yaml
 
 Example:
 ```yaml
@@ -28,6 +28,6 @@ Send requests to the central API endpoint with the method specified as a paramet
 
 ```yaml
 https://platform.fatsecret.com/rest/server.api
-```
+```text
 
 Pass the method name using the `method` parameter in your request.

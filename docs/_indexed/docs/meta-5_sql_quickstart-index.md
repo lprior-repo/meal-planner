@@ -2,7 +2,7 @@
 id: meta/5_sql_quickstart/index
 title: "Quickstart PostgreSQL, MySQL, MS SQL, BigQuery, Snowflake"
 category: meta
-tags: ["sql", "meta", "quickstart", "advanced", "5_sql_quickstart"]
+tags: ["advanced", "5_sql_quickstart", "sql", "quickstart", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -305,7 +305,7 @@ Get the required values from the AWS console under CLUSTERS > your Redshift clus
 
 Find the value named 'endpoint' it should look like this:
 
-```
+```text
 default-workgroup.475893240789.us-east-1.redshift-serverless.amazonaws.com:5439/dev
 ```
 From there you can deduce your host, port and database name:

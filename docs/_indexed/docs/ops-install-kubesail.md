@@ -2,7 +2,7 @@
 id: ops/install/kubesail
 title: "Kubesail"
 category: ops
-tags: ["operations", "install", "kubesail"]
+tags: ["kubesail", "operations", "install"]
 ---
 
 # Kubesail

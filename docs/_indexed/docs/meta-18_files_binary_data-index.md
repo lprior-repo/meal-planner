@@ -2,7 +2,7 @@
 id: meta/18_files_binary_data/index
 title: "Handling files and binary data"
 category: meta
-tags: ["advanced", "18_files_binary_data", "meta", "handling"]
+tags: ["advanced", "18_files_binary_data", "handling", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -71,7 +71,7 @@ or by pre-fixing those strings with the [`<data specifier:>`](https://developer.
 
 In explicit contexts, when the JSON schema specifies that a property represents Base64-encoded data:
 
-```
+```yaml
 foo:
     type: string
     format: base64

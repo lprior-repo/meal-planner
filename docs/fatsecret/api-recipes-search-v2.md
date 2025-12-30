@@ -66,7 +66,7 @@ GET https://platform.fatsecret.com/rest/recipes/search/v2
     &calories.to=500
     &max_results=10
     &format=json
-```
+```text
 
 ## Example Response
 

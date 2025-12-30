@@ -2,7 +2,7 @@
 id: meta/6_imports/index
 title: "Dependency management & imports"
 category: meta
-tags: ["advanced", "6_imports", "meta", "dependency"]
+tags: ["dependency", "6_imports", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

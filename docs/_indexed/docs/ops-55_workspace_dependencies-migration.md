@@ -2,7 +2,7 @@
 id: ops/55_workspace_dependencies/migration
 title: "Migration guide"
 category: ops
-tags: ["operations", "55_workspace_dependencies", "migration"]
+tags: ["55_workspace_dependencies", "operations", "migration"]
 ---
 
 # Migration guide

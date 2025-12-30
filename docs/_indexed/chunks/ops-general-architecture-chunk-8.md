@@ -13,7 +13,7 @@ summary: "Deployment"
 
 Dagger builds binaries and deploys to Windmill worker containers:
 
-```
+```text
 ┌──────────┐    ┌──────────┐    ┌─────────────────────┐
 │  Source  │───▶│  Dagger  │───▶│  Windmill Workers   │
 │  (Rust)  │    │  Build   │    │  /usr/local/bin/*   │

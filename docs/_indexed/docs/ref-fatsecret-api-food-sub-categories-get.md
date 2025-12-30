@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-food-sub-categories-get
 title: "Food Sub Categories Get All v1"
 category: ref
-tags: ["fatsecret", "reference", "food"]
+tags: ["food", "fatsecret", "reference"]
 ---
 
 # Food Sub Categories Get All v1
@@ -44,7 +44,7 @@ The response includes a list of sub-categories for the specified category:
 GET https://platform.fatsecret.com/rest/food-sub-categories/v1
     ?food_category_id=1
     &format=json
-```
+```text
 
 ## Example Response
 

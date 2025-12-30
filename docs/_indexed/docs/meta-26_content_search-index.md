@@ -2,7 +2,7 @@
 id: meta/26_content_search/index
 title: "Content search"
 category: meta
-tags: ["26_content_search", "meta", "content"]
+tags: ["26_content_search", "content", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-recipes-search-v2
 title: "Recipes Search v2"
 category: ref
-tags: ["fatsecret", "reference", "recipes"]
+tags: ["recipes", "fatsecret", "reference"]
 ---
 
 # Recipes Search v2
@@ -75,7 +75,7 @@ GET https://platform.fatsecret.com/rest/recipes/search/v2
     &calories.to=500
     &max_results=10
     &format=json
-```
+```text
 
 ## Example Response
 

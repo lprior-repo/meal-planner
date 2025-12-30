@@ -11,7 +11,7 @@ summary: "Dependency files location"
 
 Locally all dependency files are stored under `/dependencies` in your workspace:
 
-```
+```text
 /dependencies/
 ├── ml.requirements.in          # Named Python dependencies
 ├── api.package.json            # Named TypeScript dependencies  

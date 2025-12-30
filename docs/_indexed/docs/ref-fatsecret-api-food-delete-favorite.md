@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-food-delete-favorite
 title: "Food Delete Favorite"
 category: ref
-tags: ["fatsecret", "reference", "food"]
+tags: ["food", "fatsecret", "reference"]
 ---
 
 # Food Delete Favorite

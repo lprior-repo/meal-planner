@@ -19,7 +19,7 @@ Original: "The company's revenue grew by 3% over the previous quarter."
 Contextualized: "This chunk is from an SEC filing on ACME corp's performance 
 in Q2 2023; the previous quarter's revenue was $314 million. The company's 
 revenue grew by 3% over the previous quarter."
-```
+```text
 
 **Results**:
 - Contextual Embeddings alone: 35% reduction in retrieval failures

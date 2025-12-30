@@ -2,7 +2,7 @@
 id: meta/7_docker_quickstart/index
 title: "Docker quickstart"
 category: meta
-tags: ["docker", "meta", "7_docker_quickstart", "advanced"]
+tags: ["docker", "7_docker_quickstart", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -156,7 +156,7 @@ docker run --name $WM_JOB_ID -it -d $IMAGE $COMMAND
 
 `msg` is just a normal Bash variable. It can be used to pass arguments to the script. This syntax is the standard Bash one to assign default values to parameters.
 
-```
+```bash
 docker run --name $WM_JOB_ID -it -d $IMAGE $COMMAND
 ```
 

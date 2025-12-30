@@ -89,7 +89,7 @@ If a token is required, append `:_authToken=<your token>` to the URL (replace `<
 
 Combining the two, you can import private packages from npm
 
-```
+```yaml
 https://registry.npmjs.org/:_authToken=***REMOVED***
 ```
 

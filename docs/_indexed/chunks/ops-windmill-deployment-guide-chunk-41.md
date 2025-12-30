@@ -22,17 +22,17 @@ FatSecret uses 3-legged OAuth 1.0a authentication.
 #### 2. Configure Callback URLs
 
 **Development:**
-```
+```yaml
 http://localhost:6969/api/oauth/fatsecret/callback
 ```text
 
 **Staging:**
-```
+```yaml
 https://staging.meal-planner.example.com/api/oauth/fatsecret/callback
 ```text
 
 **Production:**
-```
+```yaml
 https://meal-planner.example.com/api/oauth/fatsecret/callback
 ```text
 

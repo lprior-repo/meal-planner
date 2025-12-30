@@ -2,7 +2,7 @@
 id: meta/13_version_control/index
 title: "Version control"
 category: meta
-tags: ["13_version_control", "meta", "version"]
+tags: ["version", "13_version_control", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

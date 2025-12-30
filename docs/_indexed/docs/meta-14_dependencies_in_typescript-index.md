@@ -2,7 +2,7 @@
 id: meta/14_dependencies_in_typescript/index
 title: "Dependencies in TypeScript"
 category: meta
-tags: ["typescript", "dependencies", "meta", "advanced", "14_dependencies_in_typescript"]
+tags: ["14_dependencies_in_typescript", "dependencies", "typescript", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -133,7 +133,7 @@ You can write those package.json manually or through a standar `npm install <X>`
 
 Several package.json files can therefore coexist, each having authority over the scripts closest to it:
 
-```
+```text
 └── windmill_folder/
     ├── package.json
     ├── f/foo/
@@ -285,7 +285,7 @@ If a token is required, append `:_authToken=<your token>` to the URL (replace `<
 
 Combining the two, you can import private packages from npm
 
-```
+```yaml
 https://registry.npmjs.org/:_authToken=***REMOVED***
 ```
 

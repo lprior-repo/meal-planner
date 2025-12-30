@@ -32,7 +32,7 @@ Set REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt & SSL_CERT_FILE with t
 
 ### Configure Java's Trust:
 
-```
+```python
 keytool -import -alias "your.corp.com" -file path/to/cert.crt -keystore path/to/created/dir/with/certs/truststore.jks -storepass '12345678' -noprompt
 ```
 

@@ -17,7 +17,7 @@ wmill sync push --yes
 
 ## Flow File Structure
 
-```
+```typescript
 windmill/f/<domain>/<flow_name>.flow/
 └── flow.yaml    # Flow definition
 ```text

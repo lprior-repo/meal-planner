@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-recipe-get-v1
 title: "Recipe Get by ID v1"
 category: ref
-tags: ["advanced", "fatsecret", "reference", "recipe"]
+tags: ["recipe", "advanced", "fatsecret", "reference"]
 ---
 
 # Recipe Get by ID v1
@@ -114,7 +114,7 @@ Each ingredient contains:
 GET https://platform.fatsecret.com/rest/recipe/v1
     ?recipe_id=12345
     &format=json
-```
+```text
 
 ## Example Response
 

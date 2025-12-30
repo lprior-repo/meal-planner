@@ -2,7 +2,7 @@
 id: meta/22_ai_generation/index
 title: "Windmill AI"
 category: meta
-tags: ["meta", "windmill", "22_ai_generation"]
+tags: ["22_ai_generation", "windmill", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

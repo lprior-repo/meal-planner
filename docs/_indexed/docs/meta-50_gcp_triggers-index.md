@@ -2,7 +2,7 @@
 id: meta/50_gcp_triggers/index
 title: "GCP Pub/Sub triggers"
 category: meta
-tags: ["50_gcp_triggers", "gcp", "meta", "windmill", "advanced"]
+tags: ["gcp", "50_gcp_triggers", "advanced", "windmill", "meta"]
 ---
 
 # GCP Pub/Sub triggers

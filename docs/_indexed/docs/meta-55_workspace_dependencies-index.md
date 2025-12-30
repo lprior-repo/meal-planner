@@ -2,7 +2,7 @@
 id: meta/55_workspace_dependencies/index
 title: "Workspace dependencies"
 category: meta
-tags: ["workspace", "55_workspace_dependencies", "meta", "advanced"]
+tags: ["55_workspace_dependencies", "workspace", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -24,7 +24,7 @@ Workspace dependencies allow you to manage dependencies centrally at the workspa
 
 Locally all dependency files are stored under `/dependencies` in your workspace:
 
-```
+```text
 /dependencies/
 ├── ml.requirements.in          # Named Python dependencies
 ├── api.package.json            # Named TypeScript dependencies  
@@ -190,7 +190,7 @@ cat dependencies/frontend.package.json
 ## Common patterns
 
 ### Team-based dependencies
-```
+```text
 /dependencies/
 ├── frontend.package.json      # Frontend team deps
 ├── backend.package.json       # Backend team deps
@@ -199,7 +199,7 @@ cat dependencies/frontend.package.json
 ```
 
 ### Environment-based
-```
+```text
 /dependencies/
 ├── prod.requirements.in       # Production-ready versions
 ├── dev.requirements.in        # Development dependencies
@@ -207,7 +207,7 @@ cat dependencies/frontend.package.json
 ```
 
 ### Feature-based
-```
+```text
 /dependencies/
 ├── ml.requirements.in         # Machine learning
 ├── api.requirements.in        # API integrations

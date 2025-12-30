@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-image-recognition
 title: "Image Recognition API v1"
 category: ref
-tags: ["image", "advanced", "api", "fatsecret", "reference"]
+tags: ["fatsecret", "image", "api", "reference", "advanced"]
 ---
 
 # Image Recognition API v1
@@ -15,7 +15,7 @@ Optional Add-On feature for detecting foods within images.
 
 ```text
 POST https://platform.fatsecret.com/rest/image-recognition/v1
-```
+```text
 
 ## Overview
 

@@ -34,7 +34,7 @@ curl "https://authentication.fatsecret.com/oauth/request_token?oauth_consumer_ke
 
 **Response:**
 
-```
+```bash
 oauth_token=REQUEST_TOKEN&oauth_token_secret=REQUEST_TOKEN_SECRET
 ```text
 
@@ -51,7 +51,7 @@ Redirect the user to FatSecret to authorize your application.
 
 **Example Redirect:**
 
-```
+```yaml
 https://authentication.fatsecret.com/oauth/authorize?oauth_token=REQUEST_TOKEN
 ```text
 
@@ -67,7 +67,7 @@ The user will:
 
 **Callback Example:**
 
-```
+```yaml
 https://yourapp.com/callback?oauth_token=REQUEST_TOKEN&oauth_verifier=VERIFIER_CODE
 ```text
 
@@ -89,7 +89,7 @@ Exchange the authorized request token for a permanent access token.
 
 **Important:** The signature must be calculated using both your consumer secret AND the request token secret:
 
-```
+```bash
 signing_key = {consumer_secret}&{request_token_secret}
 ```text
 
@@ -101,7 +101,7 @@ curl "https://authentication.fatsecret.com/oauth/access_token?oauth_consumer_key
 
 **Response:**
 
-```
+```bash
 oauth_token=ACCESS_TOKEN&oauth_token_secret=ACCESS_TOKEN_SECRET
 ```text
 
@@ -116,7 +116,7 @@ Include the access token in subsequent API requests to access user data.
 
 **Signature Calculation:**
 
-```
+```bash
 signing_key = {consumer_secret}&{access_token_secret}
 ```text
 

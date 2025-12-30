@@ -2,7 +2,7 @@
 id: meta/29_oidc/index
 title: "OpenID Connect (OIDC)"
 category: meta
-tags: ["advanced", "meta", "openid", "29_oidc"]
+tags: ["openid", "29_oidc", "advanced", "meta"]
 ---
 
 import Tabs from '@theme/Tabs';
@@ -26,7 +26,7 @@ OIDC tokens are generated at runtime and are scoped to the script that generated
 Your token must be associated with an audience which identifies the intended recipient of the token. The audience is provided as a parameter when generating the token. If the audience is incorrect, the consumer will reject the token. (For AWS, this audience is sts.amazonaws.com. For your own APIs, you can specify an audience such as auth.yourcompany.com.)
 If you are using a TypeScript or Python scripts, you can use the Windmill SDK to generate tokens. For other like REST or shell, you should use the REST api directly:
 
-```
+```bash
 curl -s -X POST -H "Authorization: Bearer $WM_TOKEN" "$BASE_INTERNAL_URL/api/w/$WM_WORKSPACE/oidc/token/MY_AUDIENCE"
 ```
 
@@ -158,13 +158,13 @@ eyJhbGciOiJSUzI1NiIsImtpZCI6IndpbmRtaWxsIn0.eyJpc3MiOiJodHRwczovL215Y29tcGFueS5j
 
 Windmill's OIDC settings are available at the following discovery URL:
 
-```
+```html
 <base_url>/api/oidc/.well-known/openid-configuration
 ```
 
 Jwks are available directly at:
 
-```
+```html
 <base_url>/api/oidc/jwks
 ```
 
@@ -185,7 +185,7 @@ Jwks are available directly at:
 4. Pick the permission policy to attach to this role. You can create as many roles as needed so it's best to be specific.
 5. fill the Trust policy:
 
-```
+```json
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -209,7 +209,7 @@ Jwks are available directly at:
 
 Note that [AWS only supports conditions on the `aud`, `sub`, and `email` claims](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_iam-condition-keys.html#condition-keys-wif). You can use `StringLike` on the `sub` claim to limit by job, flow, or workspace:
 
-```
+```text
 "StringLike": {
   "<base_url>/api/oidc/:sub": "*::<workspace>",
   "<base_url>/api/oidc/:sub": "*::<script_path>::*::*",
@@ -291,7 +291,7 @@ def main():
 
 You can now get the ephemeral access key, secret key, and session token from it to use with any AWS API.
 
-```
+```bash
 credentials = credentials["Credentials"]
 
 aws_access_key_id=credentials["AccessKeyId"]
@@ -301,7 +301,7 @@ aws_session_token=credentials["SessionToken"]
 
 ## Use OIDC with Hashicorp Vault
 
-```
+```text
 vault auth enable jwt
 
 vault write auth/jwt/config \

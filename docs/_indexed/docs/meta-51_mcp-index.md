@@ -2,7 +2,7 @@
 id: meta/51_mcp/index
 title: "Windmill MCP"
 category: meta
-tags: ["advanced", "meta", "windmill", "51_mcp"]
+tags: ["51_mcp", "windmill", "advanced", "meta"]
 ---
 
 # Windmill MCP
@@ -41,7 +41,7 @@ Additionally, MCP provides access to Windmill's API endpoints for basic operatio
 
 Once created, your MCP URL will look like this:
 
-```
+```yaml
 https://app.windmill.dev/api/mcp/w/<your-workspace-id>/sse?token=<your-token>
 ```
 
@@ -59,7 +59,7 @@ To connect with Cursor:
   - Click on "Add a Custom MCP server"
   - Add the following configuration in the json file:
 
-```
+```json
 {
   "mcpServers": {
     "windmill-mcp": {

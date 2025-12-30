@@ -2,7 +2,7 @@
 id: ref/flows/23-job-debouncing
 title: "Job debouncing"
 category: ref
-tags: ["reference", "flows", "job"]
+tags: ["flows", "job", "reference"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

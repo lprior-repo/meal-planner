@@ -2,7 +2,7 @@
 id: meta/1_vscode-extension/index
 title: "VS Code extension"
 category: meta
-tags: ["meta", "1_vscode-extension"]
+tags: ["1_vscode-extension", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

@@ -2,7 +2,7 @@
 id: ops/11_persistent_storage/key-value-stores
 title: "NoSQL & Document databases (Mongodb, Key-Value Stores)"
 category: ops
-tags: ["sql", "windmill", "11_persistent_storage", "nosql", "operations"]
+tags: ["operations", "sql", "nosql", "windmill", "11_persistent_storage"]
 ---
 
 # NoSQL & Document databases (Mongodb, Key-Value Stores)

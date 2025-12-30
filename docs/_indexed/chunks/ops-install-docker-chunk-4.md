@@ -70,7 +70,7 @@ Remember to add the appropriate environment variables to the `.env` file:
 VIRTUAL_HOST=
 LETSENCRYPT_HOST=
 LETSENCRYPT_EMAIL=
-```
+```nginx
 
 ```shell
 wget https://raw.githubusercontent.com/vabene1111/recipes/develop/docs/install/docker/nginx-proxy/docker-compose.yml

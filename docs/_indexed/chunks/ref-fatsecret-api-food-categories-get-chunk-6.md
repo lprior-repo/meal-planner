@@ -12,4 +12,4 @@ summary: "Example Request"
 ```text
 GET https://platform.fatsecret.com/rest/food-categories/v2
     ?format=json
-```
+```text

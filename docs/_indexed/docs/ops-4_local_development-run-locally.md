@@ -2,7 +2,7 @@
 id: ops/4_local_development/run-locally
 title: "Run locally"
 category: ops
-tags: ["operations", "advanced", "4_local_development", "run"]
+tags: ["advanced", "run", "operations", "4_local_development"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -231,7 +231,7 @@ your
 [run config](https://www.jetbrains.com/help/idea/run-debug-configuration-python.html#1)
 and add two lines:
 
-```
+```bash
 BASE_INTERNAL_URL = https://app.windmill.dev
 WM_TOKEN = ThisIsAToken
 WM_WORKSPACE= workspace_id

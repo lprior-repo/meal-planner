@@ -2,7 +2,7 @@
 id: ops/install/kubernetes
 title: "Kubernetes"
 category: ops
-tags: ["operations", "kubernetes", "install"]
+tags: ["operations", "install", "kubernetes"]
 ---
 
 # Kubernetes

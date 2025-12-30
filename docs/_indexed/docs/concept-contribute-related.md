@@ -2,7 +2,7 @@
 id: concept/contribute/related
 title: "Related"
 category: concept
-tags: ["contribute", "related", "concept", "tandoor"]
+tags: ["contribute", "concept", "tandoor", "related"]
 ---
 
 # Related

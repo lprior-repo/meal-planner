@@ -80,7 +80,7 @@ Layer 2: Core Concepts
 Layer 3: Tools & SDKs
     ↓
 Layer 4: Deployment
-```
+```text
 
 ### Relationship Types
 

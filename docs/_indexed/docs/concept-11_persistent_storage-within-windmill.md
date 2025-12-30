@@ -2,7 +2,7 @@
 id: concept/11_persistent_storage/within-windmill
 title: "Within Windmill: Not recommended"
 category: concept
-tags: ["windmill", "advanced", "11_persistent_storage", "within", "concept"]
+tags: ["within", "concept", "advanced", "windmill", "11_persistent_storage"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

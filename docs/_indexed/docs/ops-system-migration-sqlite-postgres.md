@@ -2,7 +2,7 @@
 id: ops/system/migration-sqlite-postgres
 title: "How to migrate from sqlite3 database to postgresql"
 category: ops
-tags: ["docker", "how", "sql", "operations", "system"]
+tags: ["system", "tandoor", "docker", "operations", "how"]
 ---
 
 # How to migrate from sqlite3 database to postgresql 

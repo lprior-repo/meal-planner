@@ -2,7 +2,7 @@
 id: ops/fatsecret/guides-error-codes
 title: "FatSecret Platform API - Error Codes"
 category: ops
-tags: ["operations", "fatsecret", "api", "advanced"]
+tags: ["api", "fatsecret", "operations", "advanced"]
 ---
 
 # FatSecret Platform API - Error Codes

@@ -2,7 +2,7 @@
 id: meta/40_websocket_triggers/index
 title: "WebSocket triggers"
 category: meta
-tags: ["40_websocket_triggers", "meta", "windmill", "advanced", "api"]
+tags: ["api", "40_websocket_triggers", "websocket", "advanced", "windmill"]
 ---
 
 # WebSocket triggers

@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-recipe-types-get
 title: "Recipe Types Get All v1"
 category: ref
-tags: ["fatsecret", "reference", "recipe"]
+tags: ["recipe", "fatsecret", "reference"]
 ---
 
 # Recipe Types Get All v1
@@ -51,7 +51,7 @@ Returns a list of all available recipe types.
 ```text
 GET https://platform.fatsecret.com/rest/recipe-types/v1
     ?format=json
-```
+```text
 
 ## Example Response
 

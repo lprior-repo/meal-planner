@@ -11,7 +11,7 @@ summary: "Database Migrations"
 
 ### Migration Files Structure
 
-```
+```typescript
 src/db/migrations/
 ├── 001_initial_schema.sql
 ├── 002_add_oauth_tokens.sql

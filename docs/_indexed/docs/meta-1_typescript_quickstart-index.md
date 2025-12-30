@@ -2,7 +2,7 @@
 id: meta/1_typescript_quickstart/index
 title: "TypeScript quickstart"
 category: meta
-tags: ["1_typescript_quickstart", "meta", "typescript", "advanced"]
+tags: ["advanced", "1_typescript_quickstart", "typescript", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

@@ -2,7 +2,7 @@
 id: meta/14_ruby_quickstart/index
 title: "Ruby quickstart"
 category: meta
-tags: ["advanced", "14_ruby_quickstart", "meta", "ruby"]
+tags: ["14_ruby_quickstart", "ruby", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -337,7 +337,7 @@ end
 
 For authentication with private sources, specify the source URL without credentials in your script. For [Enterprise Edition](/pricing) users, add the authenticated URL to Ruby repositories in instance settings. Navigate to **Instance Settings > Registries > Ruby Repos** and add:
 
-```
+```yaml
 https://admin:123@gems.example.com/
 ```
 

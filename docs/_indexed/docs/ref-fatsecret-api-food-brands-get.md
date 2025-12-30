@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-food-brands-get
 title: "Food Brands Get All v2"
 category: ref
-tags: ["fatsecret", "reference", "food"]
+tags: ["food", "fatsecret", "reference"]
 ---
 
 # Food Brands Get All v2
@@ -52,7 +52,7 @@ GET https://platform.fatsecret.com/rest/brands/v2
     ?starts_with=Kel
     &brand_type=manufacturer
     &format=json
-```
+```text
 
 ## Example Response
 

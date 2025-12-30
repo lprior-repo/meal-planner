@@ -13,7 +13,7 @@ One possibility to use the docker daemon with k8s with containerd is to run a do
 
 Here an example of a a worker group setup with a dind side-container to be adapted with your needs.
 
-```
+```yaml
   workerGroups:
     ...
     - name: "docker"

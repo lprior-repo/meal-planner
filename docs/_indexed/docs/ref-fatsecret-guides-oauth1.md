@@ -2,7 +2,7 @@
 id: ref/fatsecret/guides-oauth1
 title: "FatSecret Platform API - OAuth 1.0 Guide"
 category: ref
-tags: ["fatsecret", "api", "reference", "oauth"]
+tags: ["oauth", "api", "fatsecret", "reference"]
 ---
 
 # FatSecret Platform API - OAuth 1.0 Guide
@@ -38,7 +38,7 @@ The request URL without query parameters, URL-encoded:
 
 ```text
 https%3A%2F%2Fplatform.fatsecret.com%2Frest%2Fserver.api
-```
+```text
 
 ### 3. Parameter String
 
@@ -54,7 +54,7 @@ Join the three components with `&`:
 
 ```text
 GET&https%3A%2F%2Fplatform.fatsecret.com%2Frest%2Fserver.api&format%3Djson%26method%3Dfoods.search%26oauth_consumer_key%3DYOUR_KEY%26oauth_nonce%3Dabc123%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1234567890%26oauth_version%3D1.0%26search_expression%3Dchicken
-```
+```text
 
 ## Calculating the Signature
 
@@ -68,7 +68,7 @@ For signed requests (no user token):
 For delegated requests (with user token):
 ```json
 {consumer_secret}&{token_secret}
-```
+```python
 
 ### 2. Calculate HMAC-SHA1
 

@@ -2,7 +2,7 @@
 id: tutorial/script_editor/script-kinds
 title: "Script kind"
 category: tutorial
-tags: ["beginner", "script", "script_editor", "tutorial"]
+tags: ["tutorial", "beginner", "script_editor", "script"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

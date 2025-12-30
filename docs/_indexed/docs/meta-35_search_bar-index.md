@@ -2,7 +2,7 @@
 id: meta/35_search_bar/index
 title: "Search bar"
 category: meta
-tags: ["35_search_bar", "search", "meta", "advanced"]
+tags: ["advanced", "35_search_bar", "search", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -58,7 +58,7 @@ You can search through completed runs by selecting the option on the search menu
 
 Queries are parsed by Tantivy's [QueryParser](https://docs.rs/tantivy/latest/tantivy/query/struct.QueryParser.html), which lets you build relatively complex and useful queries. For example, you can try searching:
 
-```
+```text
 > script_path:u/user/searchable_flow AND success:false
 ```
 

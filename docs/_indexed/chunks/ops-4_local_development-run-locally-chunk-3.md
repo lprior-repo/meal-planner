@@ -153,7 +153,7 @@ your
 [run config](https://www.jetbrains.com/help/idea/run-debug-configuration-python.html#1)
 and add two lines:
 
-```
+```bash
 BASE_INTERNAL_URL = https://app.windmill.dev
 WM_TOKEN = ThisIsAToken
 WM_WORKSPACE= workspace_id

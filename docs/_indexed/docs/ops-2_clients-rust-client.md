@@ -2,7 +2,7 @@
 id: ops/2_clients/rust-client
 title: "Rust client"
 category: ops
-tags: ["rust", "windmill", "api", "operations", "2_clients"]
+tags: ["rust", "api", "operations", "windmill", "2_clients"]
 ---
 
 # Rust client

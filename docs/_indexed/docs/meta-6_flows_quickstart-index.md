@@ -2,7 +2,7 @@
 id: meta/6_flows_quickstart/index
 title: "Flows quickstart"
 category: meta
-tags: ["6_flows_quickstart", "meta", "flows"]
+tags: ["flows", "6_flows_quickstart", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

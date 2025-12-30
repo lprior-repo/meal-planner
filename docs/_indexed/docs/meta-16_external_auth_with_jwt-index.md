@@ -2,7 +2,7 @@
 id: meta/16_external_auth_with_jwt/index
 title: "External auth with JWT"
 category: meta
-tags: ["16_external_auth_with_jwt", "meta", "windmill", "external", "advanced"]
+tags: ["16_external_auth_with_jwt", "advanced", "windmill", "external", "meta"]
 ---
 
 # External auth with JWT

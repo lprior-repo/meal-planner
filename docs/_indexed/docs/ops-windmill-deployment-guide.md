@@ -2,7 +2,7 @@
 id: ops/windmill/deployment-guide
 title: "Windmill Deployment Guide"
 category: ops
-tags: ["operations", "advanced", "windmill", "oauth"]
+tags: ["oauth", "operations", "windmill", "advanced"]
 ---
 
 <!--
@@ -142,7 +142,7 @@ wmill init
 
 ### 3. Project Structure
 
-```
+```text
 windmill/
 ├── f/meal-planner/           # Scripts and flows
 │   ├── events/               # Event-driven foundation
@@ -398,17 +398,17 @@ FatSecret uses 3-legged OAuth 1.0a authentication.
 #### 2. Configure Callback URLs
 
 **Development:**
-```
+```yaml
 http://localhost:6969/api/oauth/fatsecret/callback
 ```text
 
 **Staging:**
-```
+```yaml
 https://staging.meal-planner.example.com/api/oauth/fatsecret/callback
 ```text
 
 **Production:**
-```
+```yaml
 https://meal-planner.example.com/api/oauth/fatsecret/callback
 ```text
 
@@ -471,7 +471,7 @@ wmill variable add f/meal-planner/vars/oauth_encryption_key \
 
 ### Migration Files Structure
 
-```
+```typescript
 src/db/migrations/
 ├── 001_initial_schema.sql
 ├── 002_add_oauth_tokens.sql

@@ -2,7 +2,7 @@
 id: meta/5_sharing_common_logic/index
 title: "Sharing common logic"
 category: meta
-tags: ["advanced", "sharing", "5_sharing_common_logic", "meta"]
+tags: ["sharing", "5_sharing_common_logic", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -140,7 +140,7 @@ Windmill CLI, it is done automatically on `wmill sync push` for any script that 
 
 You can reuse bash scripts by fetching them "raw" and source them. The url is as follows:
 
-```
+```bash
 curl -H "Authorization: Bearer <Token>" <INSTANCE>/api/w/<workspace>/scripts/raw/p/<path>.sh
 ```
 

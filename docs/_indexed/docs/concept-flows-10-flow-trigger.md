@@ -2,7 +2,7 @@
 id: concept/flows/10-flow-trigger
 title: "Trigger scripts"
 category: concept
-tags: ["advanced", "trigger", "flows", "concept"]
+tags: ["flows", "concept", "trigger", "advanced"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

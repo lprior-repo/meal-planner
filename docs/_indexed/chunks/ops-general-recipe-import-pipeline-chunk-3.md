@@ -27,4 +27,4 @@ Following CUPID principles: small, single-purpose binaries composed via Windmill
 │   ~50 lines          ~50 lines          ~50 lines          ~50 lines        │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
-```
+```text

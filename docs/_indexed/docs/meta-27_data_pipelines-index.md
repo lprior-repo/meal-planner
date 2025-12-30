@@ -2,7 +2,7 @@
 id: meta/27_data_pipelines/index
 title: "Data pipelines"
 category: meta
-tags: ["advanced", "data", "27_data_pipelines", "meta"]
+tags: ["27_data_pipelines", "data", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -383,7 +383,7 @@ conn.sql("SELECT * FROM read_parquet(s3://windmill_bucket/file.parquet)")
 
 In Windmill, you can just do:
 
-```
+```bash
 conn = duckdb.connect()
 s3_resource = wmill.get_resource("/path/to/resource")
 conn.execute(wmill.duckdb_connection_settings(s3_resource)["connection_settings_str"])

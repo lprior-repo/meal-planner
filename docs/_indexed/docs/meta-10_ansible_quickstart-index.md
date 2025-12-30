@@ -2,7 +2,7 @@
 id: meta/10_ansible_quickstart/index
 title: "Ansible quickstart"
 category: meta
-tags: ["advanced", "meta", "10_ansible_quickstart", "ansible"]
+tags: ["10_ansible_quickstart", "ansible", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -332,7 +332,7 @@ To succesfully have the playbook SSH, you might need to follow these tips:
 
 1) Write the SSH key into a *secret* variable, and **make sure it has an ending newline**, otherwise you might get an error.
 
-```
+```yaml
 -----BEGIN OPENSSH PRIVATE KEY-----
 MHgCAQEEIQDWlK/Rk2h4WGKCxRs2SwplFVTSyqouwTQKIXrJ/L2clqAKBggqhkjO
 PQMBB6FEA0IABErMvG2Fa1jjG7DjEQuwRGCEDnVQc1G0ibU/HI1BjkIyf4d+sh

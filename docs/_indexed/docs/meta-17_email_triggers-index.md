@@ -2,7 +2,7 @@
 id: meta/17_email_triggers/index
 title: "Email triggers"
 category: meta
-tags: ["advanced", "17_email_triggers", "meta", "email"]
+tags: ["email", "17_email_triggers", "advanced", "meta"]
 ---
 
 # Email triggers
@@ -68,12 +68,12 @@ On Cloud, the option is always enabled.
 You can pass additional arguments to your script by adding them to the email address, formatted as query parameters.
 
 **For default runnable emails**, add them after the base32 encoded part, separated by a `+`:
-```
+```html
 <path/hash>+<workspace+path/hash+token base32 encoded>+env=prod&debug=true&region=us-west@<email_domain>
 ```
 
 **For custom email triggers**, add them before the `@` symbol, separated by a `+`:
-```
+```text
 alerts+env=prod&debug=true&region=us-west@yourdomain.com
 ```
 

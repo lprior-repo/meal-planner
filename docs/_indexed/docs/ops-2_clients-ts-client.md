@@ -2,7 +2,7 @@
 id: ops/2_clients/ts-client
 title: "TypeScript client"
 category: ops
-tags: ["operations", "typescript", "2_clients"]
+tags: ["operations", "2_clients", "typescript"]
 ---
 
 import Tabs from '@theme/Tabs';

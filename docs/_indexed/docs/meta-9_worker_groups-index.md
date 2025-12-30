@@ -2,7 +2,7 @@
 id: meta/9_worker_groups/index
 title: "Workers and worker groups"
 category: meta
-tags: ["advanced", "meta", "workers", "9_worker_groups"]
+tags: ["workers", "advanced", "9_worker_groups", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -181,7 +181,7 @@ To make custom tags available from the UI, go to the dedicated "Workers" tab on 
 
 It is possible to restrict some tags to specific workspace using the following syntax:
 
-```
+```text
 gpu(workspace+workspace2)
 ```
 
@@ -197,7 +197,7 @@ Use the edit/create config next to the worker group name in Windmill UI:
 
 **Note**: The worker group management UI is a [Cloud plans & Self-Hosted Enterprise Edition](/pricing) feature. It is still possible to use worker groups with the community edition by passing to each worker the env variable `WORKER_TAGS`:
 
-```
+```bash
 WORKER_TAGS=tag1,tag2
 ```
 
@@ -223,7 +223,7 @@ If a workspace tag contains the substring `$workspace`, it will be replaced by t
 
 With the following assignable tag:
 
-```
+```bash
 normal-$workspace
 ```
 

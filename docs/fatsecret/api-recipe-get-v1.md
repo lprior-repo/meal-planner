@@ -105,7 +105,7 @@ Each ingredient contains:
 GET https://platform.fatsecret.com/rest/recipe/v1
     ?recipe_id=12345
     &format=json
-```
+```text
 
 ## Example Response
 

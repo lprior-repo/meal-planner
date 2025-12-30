@@ -2,7 +2,7 @@
 id: meta/4_bash_quickstart/index
 title: "TypeScript quickstart"
 category: meta
-tags: ["4_bash_quickstart", "meta", "typescript", "advanced"]
+tags: ["advanced", "4_bash_quickstart", "typescript", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

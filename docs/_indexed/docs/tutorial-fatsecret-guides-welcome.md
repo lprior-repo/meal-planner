@@ -2,7 +2,7 @@
 id: tutorial/fatsecret/guides-welcome
 title: "FatSecret Platform API - Welcome"
 category: tutorial
-tags: ["beginner", "fatsecret", "api", "tutorial"]
+tags: ["api", "tutorial", "fatsecret", "beginner"]
 ---
 
 # FatSecret Platform API - Welcome
@@ -19,7 +19,7 @@ Send requests directly to specific method endpoints:
 
 ```yaml
 https://platform.fatsecret.com/rest/{method}
-```
+```yaml
 
 Example:
 ```yaml
@@ -32,7 +32,7 @@ Send requests to the central API endpoint with the method specified as a paramet
 
 ```yaml
 https://platform.fatsecret.com/rest/server.api
-```
+```text
 
 Pass the method name using the `method` parameter in your request.
 

@@ -17,7 +17,7 @@ It takes as query args:
 
 ### Job progress SSE Query args
 
-```
+```text
 running (optional boolean, default false): was the job already running ? Optimization for the backend to not waste time checking if the job is running if we know it's already the case
 log_offset (optional integer, default 0): what was the last log offset known by the client to start from when streaming new logs
 stream_offset (optional integer, default 0): what was the last log offset known by the client to start from when streaming the result stream

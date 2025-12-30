@@ -2,7 +2,7 @@
 id: tutorial/windmill/flows-guide
 title: "Windmill Flows Guide"
 category: tutorial
-tags: ["beginner", "windmill", "tutorial"]
+tags: ["tutorial", "beginner", "windmill"]
 ---
 
 # Windmill Flows Guide
@@ -26,7 +26,7 @@ wmill sync push --yes
 
 ## Flow File Structure
 
-```
+```typescript
 windmill/f/<domain>/<flow_name>.flow/
 └── flow.yaml    # Flow definition
 ```text

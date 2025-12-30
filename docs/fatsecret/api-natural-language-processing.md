@@ -6,7 +6,7 @@ Optional Add-On feature for parsing natural language food descriptions.
 
 ```text
 POST https://platform.fatsecret.com/rest/natural-language-processing/v1
-```
+```text
 
 ## Overview
 

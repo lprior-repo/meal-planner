@@ -2,7 +2,7 @@
 id: ops/contribute/vscode
 title: "Vscode"
 category: ops
-tags: ["operations", "contribute", "vscode"]
+tags: ["contribute", "vscode", "operations"]
 ---
 
 # Vscode

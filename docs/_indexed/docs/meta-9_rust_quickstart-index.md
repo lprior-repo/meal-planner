@@ -2,7 +2,7 @@
 id: meta/9_rust_quickstart/index
 title: "Rust quickstart"
 category: meta
-tags: ["rust", "9_rust_quickstart", "meta", "advanced"]
+tags: ["advanced", "9_rust_quickstart", "rust", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

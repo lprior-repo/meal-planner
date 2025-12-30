@@ -18,7 +18,7 @@ To back up:
 ```bash
 sudo docker exec -t docker_db_recipes_1 pg_dumpall -U djangouser > pgdump.sql
 
-```
+```text
 
 To restore:
 ```bash

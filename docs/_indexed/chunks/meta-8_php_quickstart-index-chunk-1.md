@@ -63,7 +63,7 @@ Windmill automatically manages [dependencies](./meta-6_imports-index.md) for you
 
 This is a simple example of a script built in php with Windmill:
 
-```
+```javascript
 <?php
 
 // remove the first // of the following lines to specify packages to install using composer

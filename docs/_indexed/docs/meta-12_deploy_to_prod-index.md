@@ -2,7 +2,7 @@
 id: meta/12_deploy_to_prod/index
 title: "Deploy to prod"
 category: meta
-tags: ["12_deploy_to_prod", "meta", "deploy"]
+tags: ["12_deploy_to_prod", "deploy", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

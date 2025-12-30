@@ -2,7 +2,7 @@
 id: concept/system/permissions
 title: "Permissions"
 category: concept
-tags: ["rust", "system", "permissions", "concept"]
+tags: ["system", "concept", "permissions", "rust"]
 ---
 
 # Permissions

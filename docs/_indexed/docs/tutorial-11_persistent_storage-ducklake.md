@@ -2,7 +2,7 @@
 id: tutorial/11_persistent_storage/ducklake
 title: "Ducklake"
 category: tutorial
-tags: ["beginner", "11_persistent_storage", "ducklake", "tutorial"]
+tags: ["tutorial", "beginner", "ducklake", "11_persistent_storage"]
 ---
 
 import Tabs from '@theme/Tabs';

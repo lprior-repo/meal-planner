@@ -2,7 +2,7 @@
 id: ops/install/truenas-portainer
 title: "Truenas Portainer"
 category: ops
-tags: ["operations", "advanced", "truenas", "install"]
+tags: ["advanced", "operations", "install", "truenas"]
 ---
 
 # Truenas Portainer

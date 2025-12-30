@@ -11,7 +11,7 @@ summary: "AI Coordination Workflows"
 
 ### Workflow 1: Initial Setup (One-time)
 
-```
+```yaml
 AI: "Let me set up documentation navigation for this repo."
 
 1. Run: docnav analyze --output relations.json
@@ -33,7 +33,7 @@ AI: "Let me set up documentation navigation for this repo."
 
 ### Workflow 2: After New Docs Added (Incremental)
 
-```
+```yaml
 AI: "New docs were added, let me update navigation."
 
 1. Run: docnav analyze --incremental --output relations.json
@@ -45,7 +45,7 @@ AI: "New docs were added, let me update navigation."
 
 ### Workflow 3: Quality Review (Periodic)
 
-```
+```yaml
 AI: "Let me check documentation navigation quality."
 
 1. Run: docnav stats
@@ -63,7 +63,7 @@ AI: "Let me check documentation navigation quality."
 
 For ambiguous cases where the CLI can't decide:
 
-```
+```text
 AI runs: docnav link --interactive --output decisions_needed.json
 
 decisions_needed.json:

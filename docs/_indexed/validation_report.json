@@ -1,11 +1,11 @@
 {
-  "run_at": "2025-12-30T09:46:31.867174",
+  "run_at": "2025-12-30T09:52:36.379527",
   "summary": {
     "files_checked": 235,
     "files_passed": 233,
     "files_failed": 2,
     "total_errors": 2,
-    "total_warnings": 58
+    "total_warnings": 3
   },
   "by_rule": {
     "V001": {
@@ -41,8 +41,8 @@
       "failed": 0
     },
     "V009": {
-      "passed": 180,
-      "failed": 55
+      "passed": 235,
+      "failed": 0
     }
   },
   "failures": [

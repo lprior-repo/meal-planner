@@ -2,7 +2,7 @@
 id: ops/features/authentication
 title: "Authentication"
 category: ops
-tags: ["operations", "features", "authentication", "advanced"]
+tags: ["advanced", "features", "operations", "authentication"]
 ---
 
 # Authentication
@@ -62,7 +62,7 @@ SOCIALACCOUNT_PROVIDERS = "{ 'openid_connect': { 'OAUTH_PKCE_ENABLED': True, 'AP
 Because this JSON contains sensitive data (client id and secret), you may instead choose to save the JSON in a file
 and set the environment variable `SOCIALACCOUNT_PROVIDERS_FILE` to the path of the file containing the JSON.
 
-```
+```bash
 SOCIALACCOUNT_PROVIDERS_FILE=/run/secrets/socialaccount_providers.txt
 ```rust
 
@@ -113,7 +113,7 @@ LDAP authentication can be enabled in the `.env` file by setting `LDAP_AUTH=1`.
 If set, users listed in the LDAP instance will be able to sign in without signing up.
 These variables must be set to configure the connection to the LDAP instance:
 
-```
+```bash
 AUTH_LDAP_SERVER_URI=ldap://ldap.example.org:389
 AUTH_LDAP_BIND_DN=uid=admin,ou=users,dc=example,dc=org
 AUTH_LDAP_BIND_PASSWORD=adminpassword
@@ -122,7 +122,7 @@ AUTH_LDAP_USER_SEARCH_BASE_DN=ou=users,dc=example,dc=org
 
 Additional optional variables:
 
-```
+```bash
 AUTH_LDAP_USER_SEARCH_FILTER_STR=(uid=%(user)s)
 AUTH_LDAP_USER_ATTR_MAP={'first_name': 'givenName', 'last_name': 'sn', 'email': 'mail'}
 AUTH_LDAP_ALWAYS_UPDATE_USER=1
@@ -157,7 +157,7 @@ Use `docker volume inspect recipes_nginx` to find out where your volume is store
 
 ### Configuration Example for Authelia
 
-```
+```nginx
 server {
   listen 80;
   server_name localhost;
@@ -207,7 +207,7 @@ the [Authelia Docs](https://docs.authelia.com/deployment/supported-proxies/nginx
 
 Remember to add the appropriate environment variables to `.env` file (example for nginx proxy):
 
-```
+```bash
 VIRTUAL_HOST=
 LETSENCRYPT_HOST=
 LETSENCRYPT_EMAIL=

@@ -2,7 +2,7 @@
 id: concept/contribute/translations
 title: "Translations"
 category: concept
-tags: ["contribute", "tandoor", "concept", "translations"]
+tags: ["contribute", "concept", "tandoor", "translations"]
 ---
 
 # Translations

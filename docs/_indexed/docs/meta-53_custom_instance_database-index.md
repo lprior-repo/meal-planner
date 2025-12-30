@@ -2,7 +2,7 @@
 id: meta/53_custom_instance_database/index
 title: "Custom Instance Database"
 category: meta
-tags: ["sql", "53_custom_instance_database", "meta", "custom", "windmill"]
+tags: ["53_custom_instance_database", "sql", "windmill", "custom", "meta"]
 ---
 
 # Custom Instance Database

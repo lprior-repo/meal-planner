@@ -11,7 +11,7 @@ summary: "Windmill Integration"
 
 ### Orchestration Model
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                    Windmill Flow                        │
 │  (Orchestration, scheduling, retries, error handling)   │

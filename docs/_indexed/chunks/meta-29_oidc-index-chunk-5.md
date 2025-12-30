@@ -24,7 +24,7 @@ summary: "Use OIDC with AWS"
 4. Pick the permission policy to attach to this role. You can create as many roles as needed so it's best to be specific.
 5. fill the Trust policy:
 
-```
+```json
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -48,7 +48,7 @@ summary: "Use OIDC with AWS"
 
 Note that [AWS only supports conditions on the `aud`, `sub`, and `email` claims](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_iam-condition-keys.html#condition-keys-wif). You can use `StringLike` on the `sub` claim to limit by job, flow, or workspace:
 
-```
+```text
 "StringLike": {
   "<base_url>/api/oidc/:sub": "*::<workspace>",
   "<base_url>/api/oidc/:sub": "*::<script_path>::*::*",
@@ -130,7 +130,7 @@ def main():
 
 You can now get the ephemeral access key, secret key, and session token from it to use with any AWS API.
 
-```
+```bash
 credentials = credentials["Credentials"]
 
 aws_access_key_id=credentials["AccessKeyId"]

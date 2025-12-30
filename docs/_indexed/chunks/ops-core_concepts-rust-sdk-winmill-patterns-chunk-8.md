@@ -32,7 +32,7 @@ fn main(input: String) -> Result<serde_json::Value> {
     
     Ok(serde_json::json!({"result": result}))
 }
-```
+```rust
 
 ### Custom error types with thiserror
 

@@ -2,7 +2,7 @@
 id: ops/2_clients/python-client
 title: "Python client"
 category: ops
-tags: ["operations", "python", "2_clients", "windmill"]
+tags: ["python", "operations", "windmill", "2_clients"]
 ---
 
 # Python client

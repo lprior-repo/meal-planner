@@ -11,6 +11,6 @@ summary: "Bash logic sharing"
 
 You can reuse bash scripts by fetching them "raw" and source them. The url is as follows:
 
-```
+```bash
 curl -H "Authorization: Bearer <Token>" <INSTANCE>/api/w/<workspace>/scripts/raw/p/<path>.sh
 ```

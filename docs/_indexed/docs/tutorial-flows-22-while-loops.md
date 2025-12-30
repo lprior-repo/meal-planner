@@ -2,7 +2,7 @@
 id: tutorial/flows/22-while-loops
 title: "While loops"
 category: tutorial
-tags: ["beginner", "while", "flows", "tutorial"]
+tags: ["flows", "tutorial", "beginner", "while"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

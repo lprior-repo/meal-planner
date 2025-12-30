@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-food-add-favorite
 title: "Food Add Favorite"
 category: ref
-tags: ["fatsecret", "reference", "food"]
+tags: ["food", "fatsecret", "reference"]
 ---
 
 # Food Add Favorite

@@ -2,7 +2,7 @@
 id: ops/install/manual
 title: "Manual installation instructions"
 category: ops
-tags: ["sql", "manual", "install", "advanced", "operations"]
+tags: ["operations", "manual", "advanced", "install", "sql"]
 ---
 
 # Manual installation instructions
@@ -140,7 +140,7 @@ Execute `bin/python3 manage.py migrate`
 
 and revert superuser from postgres:
 
-```
+```bash
 sudo -u postgres psql` and `ALTER USER djangouser WITH NOSUPERUSER;
 exit
 ```text

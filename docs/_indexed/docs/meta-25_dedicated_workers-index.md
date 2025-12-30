@@ -2,7 +2,7 @@
 id: meta/25_dedicated_workers/index
 title: "Dedicated workers / High throughput"
 category: meta
-tags: ["dedicated", "meta", "25_dedicated_workers"]
+tags: ["dedicated", "25_dedicated_workers", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

@@ -28,4 +28,4 @@ Recipes.zip/
         ├── image-name.jpg
         ├── second-image-name.jpg
         └── ...
-```
+```javascript

@@ -18,7 +18,7 @@ Redirect the user to FatSecret to authorize your application.
 
 **Example Redirect:**
 
-```
+```yaml
 https://authentication.fatsecret.com/oauth/authorize?oauth_token=REQUEST_TOKEN
 ```text
 
@@ -34,6 +34,6 @@ The user will:
 
 **Callback Example:**
 
-```
+```yaml
 https://yourapp.com/callback?oauth_token=REQUEST_TOKEN&oauth_verifier=VERIFIER_CODE
 ```text

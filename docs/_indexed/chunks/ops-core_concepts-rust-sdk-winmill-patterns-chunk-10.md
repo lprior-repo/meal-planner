@@ -50,7 +50,7 @@ async fn main(url: String, api_key: String) -> Result<serde_json::Value> {
     
     Ok(response.data)
 }
-```
+```text
 
 ### Database queries with tokio-postgres
 

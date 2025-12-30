@@ -2,7 +2,7 @@
 id: ops/install/wsl
 title: "Ubuntu Installation on Windows (WSL) and Docker Desktop"
 category: ops
-tags: ["operations", "docker", "install", "ubuntu"]
+tags: ["docker", "operations", "ubuntu", "install"]
 ---
 
 !!! info "Community Contributed"

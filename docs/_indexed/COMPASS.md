@@ -1,7 +1,7 @@
 ---
 id: meta/navigation/compass
 title: Documentation Compass
-generated: 2025-12-30T09:46:31.865348
+generated: 2025-12-30T09:52:36.378950
 ---
 
 # Documentation Compass
@@ -22,130 +22,130 @@ New here? Read these first:
 
 | Document | Tags |
 |----------|------|
-| [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md) | `oauth` `beginner` `api` |
-| [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md) | `beginner` `fatsecret` `api` |
-| [Connectors](docs/tutorial-features-connectors.md) | `features` `beginner` `connectors` |
-| [Synology](docs/tutorial-install-synology.md) | `synology` `beginner` `install` |
-| [Windmill Flows Guide](docs/tutorial-windmill-flows-guide.md) | `beginner` `windmill` `tutorial` |
-| [Data tables](docs/tutorial-11_persistent_storage-data-tables.md) | `beginner` `data` `11_persistent_storage` |
-| [Ducklake](docs/tutorial-11_persistent_storage-ducklake.md) | `beginner` `11_persistent_storage` `ducklake` |
-| [Big structured SQL data: Postgres (Supabase, Neon.tech)](docs/tutorial-11_persistent_storage-structured-databases.md) | `sql` `big` `beginner` |
-| [Suspend & Approval / Prompts](docs/tutorial-flows-11-flow-approval.md) | `beginner` `flows` `suspend` |
-| [For loops](docs/tutorial-flows-12-flow-loops.md) | `for` `beginner` `flows` |
-| [Sleeps / Delays in flows](docs/tutorial-flows-15-sleep.md) | `beginner` `flows` `sleeps` |
-| [Architecture and data exchange](docs/tutorial-flows-16-architecture.md) | `beginner` `architecture` `flows` |
-| [Flow editor](docs/tutorial-flows-1-flow-editor.md) | `flow` `beginner` `flows` |
-| [While loops](docs/tutorial-flows-22-while-loops.md) | `beginner` `while` `flows` |
-| [Flow editor components](docs/tutorial-flows-3-editor-components.md) | `flow` `beginner` `flows` |
-| [Caching](docs/tutorial-flows-4-cache.md) | `caching` `beginner` `flows` |
-| [Error handler](docs/tutorial-flows-7-flow-error-handler.md) | `error` `beginner` `flows` |
-| [What is Windmill?](docs/tutorial-windmill-intro.md) | `beginner` `windmill` `what` |
-| [Generated UI](docs/tutorial-script_editor-customize-ui.md) | `generated` `beginner` `script_editor` |
-| [Script kind](docs/tutorial-script_editor-script-kinds.md) | `beginner` `script` `script_editor` |
+| [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md) | `fatsecret` `api` `tutorial` |
+| [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md) | `api` `tutorial` `fatsecret` |
+| [Connectors](docs/tutorial-features-connectors.md) | `connectors` `tutorial` `beginner` |
+| [Synology](docs/tutorial-install-synology.md) | `synology` `tutorial` `beginner` |
+| [Windmill Flows Guide](docs/tutorial-windmill-flows-guide.md) | `tutorial` `beginner` `windmill` |
+| [Data tables](docs/tutorial-11_persistent_storage-data-tables.md) | `tutorial` `beginner` `data` |
+| [Ducklake](docs/tutorial-11_persistent_storage-ducklake.md) | `tutorial` `beginner` `ducklake` |
+| [Big structured SQL data: Postgres (Supabase, Neon.tech)](docs/tutorial-11_persistent_storage-structured-databases.md) | `big` `tutorial` `beginner` |
+| [Suspend & Approval / Prompts](docs/tutorial-flows-11-flow-approval.md) | `flows` `tutorial` `beginner` |
+| [For loops](docs/tutorial-flows-12-flow-loops.md) | `flows` `tutorial` `beginner` |
+| [Sleeps / Delays in flows](docs/tutorial-flows-15-sleep.md) | `flows` `tutorial` `beginner` |
+| [Architecture and data exchange](docs/tutorial-flows-16-architecture.md) | `flows` `tutorial` `beginner` |
+| [Flow editor](docs/tutorial-flows-1-flow-editor.md) | `flows` `tutorial` `beginner` |
+| [While loops](docs/tutorial-flows-22-while-loops.md) | `flows` `tutorial` `beginner` |
+| [Flow editor components](docs/tutorial-flows-3-editor-components.md) | `flows` `tutorial` `beginner` |
+| [Caching](docs/tutorial-flows-4-cache.md) | `flows` `tutorial` `beginner` |
+| [Error handler](docs/tutorial-flows-7-flow-error-handler.md) | `flows` `error` `tutorial` |
+| [What is Windmill?](docs/tutorial-windmill-intro.md) | `tutorial` `what` `windmill` |
+| [Generated UI](docs/tutorial-script_editor-customize-ui.md) | `generated` `tutorial` `beginner` |
+| [Script kind](docs/tutorial-script_editor-script-kinds.md) | `tutorial` `beginner` `script_editor` |
 
 
 ### Concepts (29)
 
 | Document | Tags |
 |----------|------|
-| [FatSecret Platform API - Localization](docs/concept-fatsecret-guides-localization.md) | `advanced` `fatsecret` `api` |
-| [Related](docs/concept-contribute-related.md) | `contribute` `related` `concept` |
-| [Translations](docs/concept-contribute-translations.md) | `contribute` `tandoor` `concept` |
+| [FatSecret Platform API - Localization](docs/concept-fatsecret-guides-localization.md) | `api` `fatsecret` `concept` |
+| [Related](docs/concept-contribute-related.md) | `contribute` `concept` `tandoor` |
+| [Translations](docs/concept-contribute-translations.md) | `contribute` `concept` `tandoor` |
 | [Ai](docs/concept-features-ai.md) | `features` `concept` `tandoor` |
-| [Automation](docs/concept-features-automation.md) | `features` `automation` `concept` |
-| [Shopping](docs/concept-features-shopping.md) | `features` `shopping` `concept` |
-| [Templating](docs/concept-features-templating.md) | `features` `concept` `templating` |
-| [Permissions](docs/concept-system-permissions.md) | `rust` `system` `permissions` |
-| [Apps](docs/concept-3_cli-app.md) | `windmill` `3_cli` `apps` |
-| [Flows](docs/concept-3_cli-flow.md) | `windmill` `3_cli` `flows` |
-| [Folder](docs/concept-3_cli-folder.md) | `3_cli` `folder` `windmill` |
-| [Resources](docs/concept-3_cli-resource.md) | `3_cli` `windmill` `concept` |
-| [Scripts](docs/concept-3_cli-script.md) | `windmill` `advanced` `scripts` |
-| [Users management](docs/concept-3_cli-user.md) | `3_cli` `windmill` `concept` |
-| [Variables](docs/concept-3_cli-variable.md) | `3_cli` `windmill` `concept` |
-| [Large data: S3, R2, MinIO, Azure Blob, Google Cloud Storage](docs/concept-11_persistent_storage-large-data-files.md) | `advanced` `large` `11_persistent_storage` |
-| [Within Windmill: Not recommended](docs/concept-11_persistent_storage-within-windmill.md) | `windmill` `advanced` `11_persistent_storage` |
-| [Trigger scripts](docs/concept-flows-10-flow-trigger.md) | `advanced` `trigger` `flows` |
-| [Branches](docs/concept-flows-13-flow-branches.md) | `branches` `flows` `concept` |
-| [AI-generated flows](docs/concept-flows-17-ai-flows.md) | `aigenerated` `flows` `concept` |
+| [Automation](docs/concept-features-automation.md) | `automation` `features` `concept` |
+| [Shopping](docs/concept-features-shopping.md) | `shopping` `features` `concept` |
+| [Templating](docs/concept-features-templating.md) | `templating` `features` `concept` |
+| [Permissions](docs/concept-system-permissions.md) | `system` `concept` `permissions` |
+| [Apps](docs/concept-3_cli-app.md) | `3_cli` `concept` `windmill` |
+| [Flows](docs/concept-3_cli-flow.md) | `3_cli` `concept` `flows` |
+| [Folder](docs/concept-3_cli-folder.md) | `3_cli` `folder` `concept` |
+| [Resources](docs/concept-3_cli-resource.md) | `3_cli` `concept` `resources` |
+| [Scripts](docs/concept-3_cli-script.md) | `concept` `scripts` `advanced` |
+| [Users management](docs/concept-3_cli-user.md) | `3_cli` `concept` `windmill` |
+| [Variables](docs/concept-3_cli-variable.md) | `3_cli` `concept` `windmill` |
+| [Large data: S3, R2, MinIO, Azure Blob, Google Cloud Storage](docs/concept-11_persistent_storage-large-data-files.md) | `advanced` `large` `concept` |
+| [Within Windmill: Not recommended](docs/concept-11_persistent_storage-within-windmill.md) | `within` `concept` `advanced` |
+| [Trigger scripts](docs/concept-flows-10-flow-trigger.md) | `flows` `concept` `trigger` |
+| [Branches](docs/concept-flows-13-flow-branches.md) | `flows` `concept` `branches` |
+| [AI-generated flows](docs/concept-flows-17-ai-flows.md) | `flows` `concept` `aigenerated` |
 
 
 ### Reference (28)
 
 | Document | Tags |
 |----------|------|
-| [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md) | `fatsecret` `reference` `food` |
-| [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md) | `fatsecret` `reference` `food` |
-| [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) | `fatsecret` `reference` `food` |
-| [Food Delete Favorite](docs/ref-fatsecret-api-food-delete-favorite.md) | `fatsecret` `reference` `food` |
-| [Food Entries Get (v1)](docs/ref-fatsecret-api-food-entries-get.md) | `fatsecret` `reference` `food` |
-| [Food Entry Create](docs/ref-fatsecret-api-food-entry-create.md) | `fatsecret` `reference` `food` |
-| [Food Entry Delete](docs/ref-fatsecret-api-food-entry-delete.md) | `fatsecret` `reference` `food` |
-| [Food Get v1](docs/ref-fatsecret-api-food-get-v1.md) | `fatsecret` `reference` `food` |
-| [Food Sub Categories Get All v1](docs/ref-fatsecret-api-food-sub-categories-get.md) | `fatsecret` `reference` `food` |
-| [Foods Get Favorites (v1)](docs/ref-fatsecret-api-foods-get-favorites.md) | `foods` `fatsecret` `reference` |
-| [Foods Search v1](docs/ref-fatsecret-api-foods-search-v1.md) | `foods` `fatsecret` `reference` |
-| [Foods Search v3](docs/ref-fatsecret-api-foods-search-v3.md) | `foods` `fatsecret` `reference` |
-| [Image Recognition API v1](docs/ref-fatsecret-api-image-recognition.md) | `image` `advanced` `api` |
-| [Natural Language Processing API v1](docs/ref-fatsecret-api-natural-language-processing.md) | `natural` `advanced` `api` |
+| [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md) | `food` `fatsecret` `reference` |
+| [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md) | `food` `fatsecret` `reference` |
+| [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) | `food` `fatsecret` `reference` |
+| [Food Delete Favorite](docs/ref-fatsecret-api-food-delete-favorite.md) | `food` `fatsecret` `reference` |
+| [Food Entries Get (v1)](docs/ref-fatsecret-api-food-entries-get.md) | `food` `fatsecret` `reference` |
+| [Food Entry Create](docs/ref-fatsecret-api-food-entry-create.md) | `food` `fatsecret` `reference` |
+| [Food Entry Delete](docs/ref-fatsecret-api-food-entry-delete.md) | `food` `fatsecret` `reference` |
+| [Food Get v1](docs/ref-fatsecret-api-food-get-v1.md) | `food` `fatsecret` `reference` |
+| [Food Sub Categories Get All v1](docs/ref-fatsecret-api-food-sub-categories-get.md) | `food` `fatsecret` `reference` |
+| [Foods Get Favorites (v1)](docs/ref-fatsecret-api-foods-get-favorites.md) | `fatsecret` `foods` `reference` |
+| [Foods Search v1](docs/ref-fatsecret-api-foods-search-v1.md) | `fatsecret` `foods` `reference` |
+| [Foods Search v3](docs/ref-fatsecret-api-foods-search-v3.md) | `fatsecret` `foods` `reference` |
+| [Image Recognition API v1](docs/ref-fatsecret-api-image-recognition.md) | `fatsecret` `image` `api` |
+| [Natural Language Processing API v1](docs/ref-fatsecret-api-natural-language-processing.md) | `fatsecret` `api` `reference` |
 | [Profile Create](docs/ref-fatsecret-api-profile-create.md) | `fatsecret` `profile` `reference` |
 | [Profile Get Auth](docs/ref-fatsecret-api-profile-get-auth.md) | `fatsecret` `profile` `reference` |
 | [Profile Get Status](docs/ref-fatsecret-api-profile-get.md) | `fatsecret` `profile` `reference` |
-| [Recipe Get by ID v1](docs/ref-fatsecret-api-recipe-get-v1.md) | `advanced` `fatsecret` `reference` |
-| [Recipe Types Get All v1](docs/ref-fatsecret-api-recipe-types-get.md) | `fatsecret` `reference` `recipe` |
-| [Recipes Search v2](docs/ref-fatsecret-api-recipes-search-v2.md) | `fatsecret` `reference` `recipes` |
+| [Recipe Get by ID v1](docs/ref-fatsecret-api-recipe-get-v1.md) | `recipe` `advanced` `fatsecret` |
+| [Recipe Types Get All v1](docs/ref-fatsecret-api-recipe-types-get.md) | `recipe` `fatsecret` `reference` |
+| [Recipes Search v2](docs/ref-fatsecret-api-recipes-search-v2.md) | `recipes` `fatsecret` `reference` |
 
 
 ### Operations (54)
 
 | Document | Tags |
 |----------|------|
-| [AI-Optimized Documentation System: Complete Design Document](docs/ops-general-ai-documentation-system.md) | `operations` `aioptimized` `advanced` |
-| [Meal Planner Architecture](docs/ops-general-architecture.md) | `rust` `meal` `windmill` |
-| [Recipe Import Pipeline](docs/ops-general-recipe-import-pipeline.md) | `operations` `recipe` `advanced` |
-| [FatSecret Platform API - Error Codes](docs/ops-fatsecret-guides-error-codes.md) | `operations` `fatsecret` `api` |
-| [FatSecret Platform API - Third-Party Libraries](docs/ops-fatsecret-guides-libraries.md) | `operations` `fatsecret` `api` |
-| [Contribute](docs/ops-contribute-contribute.md) | `operations` `contribute` |
-| [Documentation](docs/ops-contribute-documentation.md) | `operations` `contribute` `documentation` |
-| [Guidelines](docs/ops-contribute-guidelines.md) | `operations` `contribute` `guidelines` |
-| [Installation](docs/ops-contribute-installation.md) | `operations` `contribute` `installation` |
-| [Pycharm](docs/ops-contribute-pycharm.md) | `operations` `contribute` `pycharm` |
-| [Vscode](docs/ops-contribute-vscode.md) | `operations` `contribute` `vscode` |
-| [Faq](docs/ops-tandoor-faq.md) | `operations` `faq` `tandoor` |
-| [Authentication](docs/ops-features-authentication.md) | `operations` `features` `authentication` |
-| [External Recipes](docs/ops-features-external-recipes.md) | `operations` `features` `external` |
-| [Import Export](docs/ops-features-import-export.md) | `operations` `features` `import` |
-| [Telegram Bot](docs/ops-features-telegram-bot.md) | `operations` `tandoor` `features` |
+| [AI-Optimized Documentation System: Complete Design Document](docs/ops-general-ai-documentation-system.md) | `aioptimized` `operations` `advanced` |
+| [Meal Planner Architecture](docs/ops-general-architecture.md) | `meal` `rust` `operations` |
+| [Recipe Import Pipeline](docs/ops-general-recipe-import-pipeline.md) | `recipe` `operations` `advanced` |
+| [FatSecret Platform API - Error Codes](docs/ops-fatsecret-guides-error-codes.md) | `api` `fatsecret` `operations` |
+| [FatSecret Platform API - Third-Party Libraries](docs/ops-fatsecret-guides-libraries.md) | `api` `fatsecret` `operations` |
+| [Contribute](docs/ops-contribute-contribute.md) | `contribute` `operations` |
+| [Documentation](docs/ops-contribute-documentation.md) | `contribute` `operations` `documentation` |
+| [Guidelines](docs/ops-contribute-guidelines.md) | `contribute` `operations` `guidelines` |
+| [Installation](docs/ops-contribute-installation.md) | `contribute` `installation` `operations` |
+| [Pycharm](docs/ops-contribute-pycharm.md) | `contribute` `pycharm` `operations` |
+| [Vscode](docs/ops-contribute-vscode.md) | `contribute` `vscode` `operations` |
+| [Faq](docs/ops-tandoor-faq.md) | `faq` `tandoor` `operations` |
+| [Authentication](docs/ops-features-authentication.md) | `advanced` `features` `operations` |
+| [External Recipes](docs/ops-features-external-recipes.md) | `advanced` `features` `operations` |
+| [Import Export](docs/ops-features-import-export.md) | `import` `features` `operations` |
+| [Telegram Bot](docs/ops-features-telegram-bot.md) | `features` `tandoor` `operations` |
 | [Archlinux](docs/ops-install-archlinux.md) | `operations` `archlinux` `install` |
-| [Docker](docs/ops-install-docker.md) | `operations` `docker` `advanced` |
-| [Homeassistant](docs/ops-install-homeassistant.md) | `homeassistant` `install` `advanced` |
-| [Kubernetes](docs/ops-install-kubernetes.md) | `operations` `kubernetes` `install` |
+| [Docker](docs/ops-install-docker.md) | `advanced` `docker` `operations` |
+| [Homeassistant](docs/ops-install-homeassistant.md) | `homeassistant` `tandoor` `operations` |
+| [Kubernetes](docs/ops-install-kubernetes.md) | `operations` `install` `kubernetes` |
 
 
 ### Meta (103)
 
 | Document | Tags |
 |----------|------|
-| [Index](docs/meta-tandoor-index.md) | `meta` `index` `tandoor` |
-| [Windmill Documentation Indexing System](docs/meta-windmill-indexing-system.md) | `advanced` `meta` `windmill` |
-| [Browser automation](docs/meta-10_browser_automation-index.md) | `browser` `meta` `windmill` |
-| [Git sync](docs/meta-11_git_sync-index.md) | `advanced` `git` `meta` |
-| [Deploy to prod](docs/meta-12_deploy_to_prod-index.md) | `12_deploy_to_prod` `meta` `deploy` |
-| [Version control](docs/meta-13_version_control-index.md) | `13_version_control` `meta` `version` |
-| [Dependencies in TypeScript](docs/meta-14_dependencies_in_typescript-index.md) | `typescript` `dependencies` `meta` |
-| [Dependencies in Python](docs/meta-15_dependencies_in_python-index.md) | `python` `dependencies` `meta` |
-| [External auth with JWT](docs/meta-16_external_auth_with_jwt-index.md) | `16_external_auth_with_jwt` `meta` `windmill` |
-| [Email triggers](docs/meta-17_email_triggers-index.md) | `advanced` `17_email_triggers` `meta` |
-| [Instance settings](docs/meta-18_instance_settings-index.md) | `instance` `advanced` `meta` |
-| [Set/Get progress from code](docs/meta-19_explicit_progress-index.md) | `19_explicit_progress` `meta` `setget` |
-| [Self-host](docs/meta-1_self_host-index.md) | `selfhost` `advanced` `meta` |
-| [Workspace forks](docs/meta-20_workspace_forks-index.md) | `workspace` `meta` `20_workspace_forks` |
-| [Scaling workers](docs/meta-21_scaling-index.md) | `advanced` `meta` `scaling` |
-| [Command-line interface (CLI)](docs/meta-3_cli-index.md) | `commandline` `meta` `3_cli` |
-| [Local development](docs/meta-4_local_development-index.md) | `local` `meta` `4_local_development` |
-| [Sharing common logic](docs/meta-5_sharing_common_logic-index.md) | `advanced` `sharing` `5_sharing_common_logic` |
-| [Dependency management & imports](docs/meta-6_imports-index.md) | `advanced` `6_imports` `meta` |
-| [Run Docker containers](docs/meta-7_docker-index.md) | `7_docker` `docker` `meta` |
+| [Index](docs/meta-tandoor-index.md) | `tandoor` `index` `meta` |
+| [Windmill Documentation Indexing System](docs/meta-windmill-indexing-system.md) | `windmill` `advanced` `meta` |
+| [Browser automation](docs/meta-10_browser_automation-index.md) | `10_browser_automation` `api` `browser` |
+| [Git sync](docs/meta-11_git_sync-index.md) | `11_git_sync` `git` `advanced` |
+| [Deploy to prod](docs/meta-12_deploy_to_prod-index.md) | `12_deploy_to_prod` `deploy` `meta` |
+| [Version control](docs/meta-13_version_control-index.md) | `version` `13_version_control` `meta` |
+| [Dependencies in TypeScript](docs/meta-14_dependencies_in_typescript-index.md) | `14_dependencies_in_typescript` `dependencies` `typescript` |
+| [Dependencies in Python](docs/meta-15_dependencies_in_python-index.md) | `15_dependencies_in_python` `dependencies` `python` |
+| [External auth with JWT](docs/meta-16_external_auth_with_jwt-index.md) | `16_external_auth_with_jwt` `advanced` `windmill` |
+| [Email triggers](docs/meta-17_email_triggers-index.md) | `email` `17_email_triggers` `advanced` |
+| [Instance settings](docs/meta-18_instance_settings-index.md) | `18_instance_settings` `instance` `advanced` |
+| [Set/Get progress from code](docs/meta-19_explicit_progress-index.md) | `19_explicit_progress` `setget` `meta` |
+| [Self-host](docs/meta-1_self_host-index.md) | `1_self_host` `selfhost` `advanced` |
+| [Workspace forks](docs/meta-20_workspace_forks-index.md) | `workspace` `20_workspace_forks` `meta` |
+| [Scaling workers](docs/meta-21_scaling-index.md) | `21_scaling` `scaling` `advanced` |
+| [Command-line interface (CLI)](docs/meta-3_cli-index.md) | `3_cli` `commandline` `meta` |
+| [Local development](docs/meta-4_local_development-index.md) | `advanced` `local` `4_local_development` |
+| [Sharing common logic](docs/meta-5_sharing_common_logic-index.md) | `sharing` `5_sharing_common_logic` `advanced` |
+| [Dependency management & imports](docs/meta-6_imports-index.md) | `dependency` `6_imports` `advanced` |
+| [Run Docker containers](docs/meta-7_docker-index.md) | `docker` `run` `7_docker` |
 
 
 ## Keyword Quick Reference
@@ -160,8 +160,8 @@ New here? Read these first:
 | reference | [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md), [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md), [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) |
 | concept | [FatSecret Platform API - Localization](docs/concept-fatsecret-guides-localization.md), [Related](docs/concept-contribute-related.md), [Translations](docs/concept-contribute-translations.md) |
 | flows | [Windmill Flows Guide](docs/tutorial-windmill-flows-guide.md), [Flows](docs/concept-3_cli-flow.md), [Trigger scripts](docs/concept-flows-10-flow-trigger.md) |
-| beginner | [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md), [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md), [Connectors](docs/tutorial-features-connectors.md) |
 | tutorial | [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md), [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md), [Connectors](docs/tutorial-features-connectors.md) |
+| beginner | [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md), [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md), [Connectors](docs/tutorial-features-connectors.md) |
 | api | [Image Recognition API v1](docs/ref-fatsecret-api-image-recognition.md), [Natural Language Processing API v1](docs/ref-fatsecret-api-natural-language-processing.md), [FatSecret Platform API - Authentication](docs/ref-fatsecret-guides-authentication.md) |
 | quickstart | [Ansible quickstart](docs/meta-10_ansible_quickstart-index.md), [C# quickstart](docs/meta-11_csharp_quickstart-index.md), [Java quickstart](docs/meta-13_java_quickstart-index.md) |
 | 3cli | [Apps](docs/concept-3_cli-app.md), [Branch-specific items](docs/ops-3_cli-branch-specific-items.md), [Flows](docs/concept-3_cli-flow.md) |
@@ -171,7 +171,7 @@ New here? Read these first:
 | food | [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md), [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md), [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) |
 | platform | [FatSecret Platform API - Authentication](docs/ref-fatsecret-guides-authentication.md), [FatSecret Platform API - Error Codes](docs/ops-fatsecret-guides-error-codes.md), [FatSecret Platform API - Third-Party Libraries](docs/ops-fatsecret-guides-libraries.md) |
 | features | [Ai](docs/concept-features-ai.md), [Authentication](docs/ops-features-authentication.md), [Automation](docs/concept-features-automation.md) |
-| sql | [Manual installation instructions](docs/ops-install-manual.md), [How to migrate from sqlite3 database to postgresql](docs/ops-system-migration-sqlite-postgres.md), [NoSQL & Document databases (Mongodb, Key-Value Stores)](docs/ops-11_persistent_storage-key-value-stores.md) |
+| triggers | [Email triggers](docs/meta-17_email_triggers-index.md), [WebSocket triggers](docs/meta-40_websocket_triggers-index.md), [Kafka triggers](docs/meta-41_kafka_triggers-index.md) |
 
 ## AI Search Guide
 

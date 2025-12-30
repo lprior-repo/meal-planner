@@ -43,7 +43,7 @@ GET https://platform.fatsecret.com/rest/brands/v2
     ?starts_with=Kel
     &brand_type=manufacturer
     &format=json
-```
+```text
 
 ## Example Response
 

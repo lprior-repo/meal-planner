@@ -2,7 +2,7 @@
 id: ops/1_self_host/aws-eks-ecs
 title: "Windmill on AWS"
 category: ops
-tags: ["aws", "windmill", "advanced", "1_self_host", "operations"]
+tags: ["operations", "1_self_host", "aws", "advanced", "windmill"]
 ---
 
 # Windmill on AWS

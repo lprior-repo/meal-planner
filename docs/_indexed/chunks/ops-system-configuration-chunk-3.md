@@ -27,7 +27,7 @@ Port where Tandoor exposes its internal web server.
 
 ```bash
 TANDOOR_PORT=80
-```
+```text
 
 
 #### URL Path
@@ -55,7 +55,7 @@ This can either be a relative path from the applications base path or the url of
 
 ```bash
 STATIC_URL=/static/
-```
+```nginx
 
 #### Static root
 
@@ -97,7 +97,7 @@ See [Gunicorn docs](https://docs.gunicorn.org/en/stable/design.html#how-many-wor
 
 ```bash
 GUNICORN_WORKERS=3
-```
+```text
 
 #### Gunicorn Threads
 
@@ -122,7 +122,7 @@ See [Gunicorn docs]([https://docs.gunicorn.org/en/stable/design.html#how-many-wo
 
 ```bash
 GUNICORN_TIMEOUT=30
-```
+```text
 
 #### Gunicorn Media
 
@@ -145,7 +145,7 @@ See [Django docs](https://docs.djangoproject.com/en/5.0/ref/settings/#csrf-trust
 
 ```bash
 CSRF_TRUSTED_ORIGINS = []
-```
+```text
 
 #### Cors origins
 
@@ -167,7 +167,7 @@ when running under the same database.
 ```bash
 SESSION_COOKIE_DOMAIN=.example.com
 SESSION_COOKIE_NAME=sessionid # use this only to not interfere with non unified django applications under the same top level domain
-```
+```text
 
 ### Features
 
@@ -195,7 +195,7 @@ Enable serving of prometheus metrics under the `/metrics` path
 
 ```bash
 ENABLE_METRICS=0
-```
+```text
 
 #### Tree Sorting
 
@@ -226,7 +226,7 @@ See [Export feature docs](https://docs.tandoor.dev/features/import_export/#pdf) 
 
 ```bash
 ENABLE_PDF_EXPORT=1
-```
+```text
 
 #### Legal URLS
 
@@ -269,7 +269,7 @@ When enabled will join user into space and apply group configured in `SOCIAL_DEF
 
 ```bash
 SOCIAL_DEFAULT_ACCESS = 1
-```
+```text
 
 > default `guest` - options `guest`, `user`, `admin`
 
@@ -289,7 +289,7 @@ You might want to setup HCAPTCHA to prevent bots from creating accounts/spam.
 
 ```bash
 ENABLE_SIGNUP=0
-```
+```text
 
 #### Social Auth
 
@@ -310,7 +310,7 @@ Allow authentication via the REMOTE-USER header (can be used for e.g. authelia).
 
 ```bash
 REMOTE_USER_AUTH=0
-```
+```text
 
 #### LDAP
 
@@ -334,7 +334,7 @@ to the path of the file containing the ldap secret.
 
 ```bash
 AUTH_LDAP_BIND_PASSWORD_FILE=/run/secrets/ldap_password.txt
-```
+```text
 
 ### External Services
 
@@ -363,7 +363,7 @@ to the path of the file containing the ldap secret.
 
 ```bash
 EMAIL_HOST_PASSWORD_FILE=/run/secrets/email_password.txt
-```
+```text
 
 Optional settings (only copy the ones you need)
 

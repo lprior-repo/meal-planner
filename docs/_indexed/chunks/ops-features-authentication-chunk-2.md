@@ -57,7 +57,7 @@ SOCIALACCOUNT_PROVIDERS = "{ 'openid_connect': { 'OAUTH_PKCE_ENABLED': True, 'AP
 Because this JSON contains sensitive data (client id and secret), you may instead choose to save the JSON in a file
 and set the environment variable `SOCIALACCOUNT_PROVIDERS_FILE` to the path of the file containing the JSON.
 
-```
+```bash
 SOCIALACCOUNT_PROVIDERS_FILE=/run/secrets/socialaccount_providers.txt
 ```rust
 

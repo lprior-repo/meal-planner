@@ -2,7 +2,7 @@
 id: meta/11_git_sync/index
 title: "Git sync"
 category: meta
-tags: ["advanced", "git", "meta", "11_git_sync"]
+tags: ["11_git_sync", "git", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -118,13 +118,13 @@ If your repo requires signed commits, you can set up GPG on your Windmill instan
 
 1. Generate a GPG key pair:
 
-```
+```text
 gpg --full-generate-key
 ```
 
 2. Add the key to your GithHub account:
 
-```
+```bash
 gpg --armor --export <key_id>
 ```
 
@@ -132,7 +132,7 @@ Go to your GitHub account settings => "SSH and GPG keys" and add the GPG public 
 
 3. Add the private key to your Windmill instance:
 
-```
+```text
 gpg --armor --export-keys <key_id>
 ```
 
@@ -156,7 +156,7 @@ Create an `azure` resource on your Windmill instance with the application's `cli
 On Azure DevOps, add the application to the DevOps organization with the appropriate permissions.
 In Git sync settings of your Windmill instance, define a new repository with URL:
 
-```
+```yaml
 https://AZURE_DEVOPS_TOKEN(<path_to_the_azure_resource>)@dev.azure.com/<organization>/<project>/_git/<repository>
 ```
 

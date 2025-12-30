@@ -157,7 +157,7 @@ docnav validate \
 - Context prefix exists and is well-formed
 
 **Output**:
-```
+```text
 Validation Report
 =================
 ✓ 1520/1532 chunks valid
@@ -184,7 +184,7 @@ docnav stats \
 ```text
 
 **Output**:
-```
+```text
 Documentation Navigation Stats
 ==============================
 Total chunks:           1,532

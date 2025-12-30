@@ -13,7 +13,7 @@ wmill init
 
 ### 3. Project Structure
 
-```
+```text
 windmill/
 ├── f/meal-planner/           # Scripts and flows
 │   ├── events/               # Event-driven foundation

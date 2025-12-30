@@ -2,7 +2,7 @@
 id: meta/6_rest_grapqhql_quickstart/index
 title: "Rest / GraphQL quickstart"
 category: meta
-tags: ["advanced", "meta", "6_rest_grapqhql_quickstart", "rest"]
+tags: ["rest", "6_rest_grapqhql_quickstart", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

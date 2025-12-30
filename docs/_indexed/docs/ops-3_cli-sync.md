@@ -2,7 +2,7 @@
 id: ops/3_cli/sync
 title: "Sync"
 category: ops
-tags: ["operations", "3_cli", "sync", "advanced"]
+tags: ["3_cli", "advanced", "operations", "sync"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -35,7 +35,7 @@ It is a _dangerous_ operation, that we recommend doing on a version-controlled f
 To specify the scopes of files, you should modify the includes and excludes (array of path matchers) part of the `wmill.yaml` file generated with `wmill init`. We recommend looking at all the settings of the `wmill.yaml` file to understand the different options available.
 Those are the default ones:
 
-```
+```yaml
 defaultTs: bun
 includes:
   - f/**

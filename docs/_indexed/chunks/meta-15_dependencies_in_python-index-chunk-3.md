@@ -29,7 +29,7 @@ You can write those requirements.txt manually or through a standard `pip install
 
 Several requirements.txt files can therefore coexist, each having authority over the scripts closest to it:
 
-```
+```text
 └── windmill_folder/
     ├── requirements.txt
     ├── f/foo/

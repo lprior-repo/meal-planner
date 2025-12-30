@@ -49,7 +49,7 @@ docker-compose:
 ```yaml
 
 apache: 
-```
+```html
   Alias /<www path>/static/ /var/www/recipes/static/
   Alias /<www path>/media/ /var/www/recipes/media/
   <Directory "/var/www/recipes/">

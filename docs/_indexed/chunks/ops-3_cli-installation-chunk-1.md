@@ -70,7 +70,7 @@ Node version must greater than v20.
 
 Also, to punch through some networking layers like Cloudflare Tunnel, you might need some custom headers. You just need to use the HEADERS env variable:
 
-```
+```bash
 export HEADERS=header_key:header_value,header_key2:header_value2
 ```text
 

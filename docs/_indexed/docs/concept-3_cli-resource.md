@@ -2,7 +2,7 @@
 id: concept/3_cli/resource
 title: "Resources"
 category: concept
-tags: ["3_cli", "windmill", "concept", "resources"]
+tags: ["3_cli", "concept", "resources", "windmill"]
 ---
 
 <!--

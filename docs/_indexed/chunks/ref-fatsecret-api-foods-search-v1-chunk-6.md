@@ -14,4 +14,4 @@ GET https://platform.fatsecret.com/rest/foods/search/v1
     ?search_expression=apple
     &max_results=20
     &format=json
-```
+```text

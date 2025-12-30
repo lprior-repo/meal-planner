@@ -25,7 +25,7 @@ Windmill Rust scripts declare dependencies using a special doc-comment block at 
 //! ```text
 
 // Your script code follows...
-```
+```python
 
 **Critical detail**: `serde` with the `derive` feature is included by default—you do not need to declare it unless requiring additional features. You can still import `serde::Serialize` and `serde::Deserialize` directly.
 

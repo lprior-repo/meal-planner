@@ -15,7 +15,7 @@ Execute `bin/python3 manage.py migrate`
 
 and revert superuser from postgres:
 
-```
+```bash
 sudo -u postgres psql` and `ALTER USER djangouser WITH NOSUPERUSER;
 exit
 ```text

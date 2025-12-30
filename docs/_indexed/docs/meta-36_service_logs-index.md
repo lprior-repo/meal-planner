@@ -2,7 +2,7 @@
 id: meta/36_service_logs/index
 title: "Service logs"
 category: meta
-tags: ["36_service_logs", "service", "meta", "advanced"]
+tags: ["service", "advanced", "36_service_logs", "meta"]
 ---
 
 # Service logs
@@ -44,7 +44,7 @@ If you select a host, you will get the most recent lines that match your query (
 
 Queries are parsed by Tantivy's [QueryParser](https://docs.rs/tantivy/latest/tantivy/query/struct.QueryParser.html), which lets you build relatively complex and useful queries. For example, you can try searching:
 
-```
+```yaml
 worker_group:default ping
 ```
 To limit the search to workers in the default worker group.

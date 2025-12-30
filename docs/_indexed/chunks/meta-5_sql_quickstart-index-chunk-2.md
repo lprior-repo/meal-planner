@@ -272,7 +272,7 @@ Get the required values from the AWS console under CLUSTERS > your Redshift clus
 
 Find the value named 'endpoint' it should look like this:
 
-```
+```text
 default-workgroup.475893240789.us-east-1.redshift-serverless.amazonaws.com:5439/dev
 ```
 From there you can deduce your host, port and database name:

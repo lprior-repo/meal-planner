@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-food-categories-get
 title: "Food Categories Get All v2"
 category: ref
-tags: ["fatsecret", "reference", "food"]
+tags: ["food", "fatsecret", "reference"]
 ---
 
 # Food Categories Get All v2
@@ -42,7 +42,7 @@ The response includes a list of all food categories:
 ```text
 GET https://platform.fatsecret.com/rest/food-categories/v2
     ?format=json
-```
+```text
 
 ## Example Response
 

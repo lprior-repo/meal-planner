@@ -2,7 +2,7 @@
 id: ops/general/ai-documentation-system
 title: "AI-Optimized Documentation System: Complete Design Document"
 category: ops
-tags: ["operations", "aioptimized", "advanced"]
+tags: ["aioptimized", "operations", "advanced"]
 ---
 
 # AI-Optimized Documentation System: Complete Design Document
@@ -50,7 +50,7 @@ Original: "The company's revenue grew by 3% over the previous quarter."
 Contextualized: "This chunk is from an SEC filing on ACME corp's performance 
 in Q2 2023; the previous quarter's revenue was $314 million. The company's 
 revenue grew by 3% over the previous quarter."
-```
+```text
 
 **Results**:
 - Contextual Embeddings alone: 35% reduction in retrieval failures
@@ -143,7 +143,7 @@ This is better than:
 │  - Navigation footer (20-40 tokens)                             │
 │  - Self-contained for AI consumption                            │
 └─────────────────────────────────────────────────────────────────┘
-```
+```yaml
 
 ---
 
@@ -297,7 +297,7 @@ docnav validate \
 - Context prefix exists and is well-formed
 
 **Output**:
-```
+```text
 Validation Report
 =================
 ✓ 1520/1532 chunks valid
@@ -324,7 +324,7 @@ docnav stats \
 ```text
 
 **Output**:
-```
+```text
 Documentation Navigation Stats
 ==============================
 Total chunks:           1,532
@@ -369,7 +369,7 @@ docnav repair \
 
 ### Workflow 1: Initial Setup (One-time)
 
-```
+```yaml
 AI: "Let me set up documentation navigation for this repo."
 
 1. Run: docnav analyze --output relations.json
@@ -391,7 +391,7 @@ AI: "Let me set up documentation navigation for this repo."
 
 ### Workflow 2: After New Docs Added (Incremental)
 
-```
+```yaml
 AI: "New docs were added, let me update navigation."
 
 1. Run: docnav analyze --incremental --output relations.json
@@ -403,7 +403,7 @@ AI: "New docs were added, let me update navigation."
 
 ### Workflow 3: Quality Review (Periodic)
 
-```
+```yaml
 AI: "Let me check documentation navigation quality."
 
 1. Run: docnav stats
@@ -421,7 +421,7 @@ AI: "Let me check documentation navigation quality."
 
 For ambiguous cases where the CLI can't decide:
 
-```
+```text
 AI runs: docnav link --interactive --output decisions_needed.json
 
 decisions_needed.json:

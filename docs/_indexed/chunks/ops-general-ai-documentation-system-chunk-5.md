@@ -51,6 +51,6 @@ This is better than:
 │  - Navigation footer (20-40 tokens)                             │
 │  - Self-contained for AI consumption                            │
 └─────────────────────────────────────────────────────────────────┘
-```
+```yaml
 
 ---

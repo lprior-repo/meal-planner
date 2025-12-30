@@ -2,7 +2,7 @@
 id: meta/28_agent_workers/index
 title: "Agent workers"
 category: meta
-tags: ["agent", "advanced", "meta", "28_agent_workers"]
+tags: ["agent", "28_agent_workers", "advanced", "meta"]
 ---
 
 # Agent workers
@@ -44,7 +44,7 @@ You will see a token below once the tags are added.
 
 You can now start any windmill binary or container with the following env variables:
 
-```
+```bash
 MODE=agent
 AGENT_TOKEN="<token above>"
 BASE_INTERNAL_URL="<base internal url>"

@@ -25,7 +25,7 @@ Exchange the authorized request token for a permanent access token.
 
 **Important:** The signature must be calculated using both your consumer secret AND the request token secret:
 
-```
+```bash
 signing_key = {consumer_secret}&{request_token_secret}
 ```text
 
@@ -37,7 +37,7 @@ curl "https://authentication.fatsecret.com/oauth/access_token?oauth_consumer_key
 
 **Response:**
 
-```
+```bash
 oauth_token=ACCESS_TOKEN&oauth_token_secret=ACCESS_TOKEN_SECRET
 ```text
 

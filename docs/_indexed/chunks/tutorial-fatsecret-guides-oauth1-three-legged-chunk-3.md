@@ -30,7 +30,7 @@ curl "https://authentication.fatsecret.com/oauth/request_token?oauth_consumer_ke
 
 **Response:**
 
-```
+```bash
 oauth_token=REQUEST_TOKEN&oauth_token_secret=REQUEST_TOKEN_SECRET
 ```text
 

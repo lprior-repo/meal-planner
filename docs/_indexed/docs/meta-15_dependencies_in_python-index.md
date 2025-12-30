@@ -2,7 +2,7 @@
 id: meta/15_dependencies_in_python/index
 title: "Dependencies in Python"
 category: meta
-tags: ["python", "dependencies", "meta", "advanced", "15_dependencies_in_python"]
+tags: ["15_dependencies_in_python", "dependencies", "python", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -121,7 +121,7 @@ You can write those requirements.txt manually or through a standard `pip install
 
 Several requirements.txt files can therefore coexist, each having authority over the scripts closest to it:
 
-```
+```text
 └── windmill_folder/
     ├── requirements.txt
     ├── f/foo/

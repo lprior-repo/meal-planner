@@ -2,7 +2,7 @@
 id: ref/script_editor/job-debouncing
 title: "Job debouncing"
 category: ref
-tags: ["api", "reference", "job", "script_editor"]
+tags: ["job", "api", "script_editor", "reference"]
 ---
 
 # Job debouncing

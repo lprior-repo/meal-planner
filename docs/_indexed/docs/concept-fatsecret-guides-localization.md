@@ -2,7 +2,7 @@
 id: concept/fatsecret/guides-localization
 title: "FatSecret Platform API - Localization"
 category: concept
-tags: ["advanced", "fatsecret", "api", "concept"]
+tags: ["api", "fatsecret", "concept", "advanced"]
 ---
 
 # FatSecret Platform API - Localization
@@ -21,7 +21,7 @@ The `region` parameter filters food results to show items available in a specifi
 
 ```bash
 region=AU
-```
+```text
 
 ### Language Parameter
 

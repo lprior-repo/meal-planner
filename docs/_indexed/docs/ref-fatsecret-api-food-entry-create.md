@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-food-entry-create
 title: "Food Entry Create"
 category: ref
-tags: ["fatsecret", "reference", "food"]
+tags: ["food", "fatsecret", "reference"]
 ---
 
 # Food Entry Create

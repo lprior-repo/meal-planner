@@ -11,4 +11,4 @@ summary: "Endpoint"
 
 ```text
 POST https://platform.fatsecret.com/rest/natural-language-processing/v1
-```
+```text

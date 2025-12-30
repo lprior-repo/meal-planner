@@ -2,7 +2,7 @@
 id: ops/system/updating
 title: "Updating"
 category: ops
-tags: ["operations", "system", "docker", "updating"]
+tags: ["system", "docker", "updating", "operations"]
 ---
 
 # Updating

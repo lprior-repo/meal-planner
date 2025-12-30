@@ -2,7 +2,7 @@
 id: meta/1_self_host/index
 title: "Self-host"
 category: meta
-tags: ["selfhost", "advanced", "meta", "1_self_host"]
+tags: ["1_self_host", "selfhost", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -148,7 +148,7 @@ Make sure Docker is started:
 
 and type the following commands:
 
-```
+```bash
 curl https://raw.githubusercontent.com/windmill-labs/windmill/main/docker-compose.yml -o docker-compose.yml
 curl https://raw.githubusercontent.com/windmill-labs/windmill/main/Caddyfile -o Caddyfile
 curl https://raw.githubusercontent.com/windmill-labs/windmill/main/.env -o .env
@@ -244,7 +244,7 @@ To deploy Windmill to the `windmill.example.com` domain, make sure to set "Base 
 
 You can use any reverse proxy as long as they behave mostly like the default provided following caddy configuration:
 
-```
+```text
 :80 {
         bind {$ADDRESS}
         reverse_proxy /ws/* http://lsp:3001
@@ -507,14 +507,14 @@ NOTE: The previous images are not removed automatically, you should also run `do
 Windmill stores all of its state in PostgreSQL and it is enough to reset the database to reset the instance.
 Hence, in the setup above, to reset your Windmill instance, it is enough to reset the PostgreSQL volumes. Run:
 
-```
+```bash
 docker compose down --volumes
 docker volume rm -f windmill_db_data
 ```
 
 and then:
 
-```
+```bash
 docker compose up -d
 ```
 
@@ -553,7 +553,7 @@ See the [Helm chart repository README][helm] for more details.
 
 To unlock EE, set in your values.yaml:
 
-```
+```yaml
 enterprise:
 	enable: true
 ```
@@ -645,7 +645,7 @@ Set REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt & SSL_CERT_FILE with t
 
 ### Configure Java's Trust:
 
-```
+```python
 keytool -import -alias "your.corp.com" -file path/to/cert.crt -keystore path/to/created/dir/with/certs/truststore.jks -storepass '12345678' -noprompt
 ```
 

@@ -19,7 +19,7 @@ For signed requests (no user token):
 For delegated requests (with user token):
 ```json
 {consumer_secret}&{token_secret}
-```
+```python
 
 ### 2. Calculate HMAC-SHA1
 

@@ -2,7 +2,7 @@
 id: meta/45_nats_triggers/index
 title: "NATS triggers"
 category: meta
-tags: ["45_nats_triggers", "meta", "windmill", "nats"]
+tags: ["45_nats_triggers", "nats", "windmill", "meta"]
 ---
 
 # NATS triggers

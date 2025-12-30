@@ -2,7 +2,7 @@
 id: concept/features/shopping
 title: "Shopping"
 category: concept
-tags: ["features", "shopping", "concept"]
+tags: ["shopping", "features", "concept"]
 ---
 
 # Shopping

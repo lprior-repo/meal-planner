@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-foods-search-v1
 title: "Foods Search v1"
 category: ref
-tags: ["foods", "fatsecret", "reference"]
+tags: ["fatsecret", "foods", "reference"]
 ---
 
 # Foods Search v1
@@ -59,7 +59,7 @@ GET https://platform.fatsecret.com/rest/foods/search/v1
     ?search_expression=apple
     &max_results=20
     &format=json
-```
+```text
 
 ## Example Response
 

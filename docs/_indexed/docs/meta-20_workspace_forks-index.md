@@ -2,7 +2,7 @@
 id: meta/20_workspace_forks/index
 title: "Workspace forks"
 category: meta
-tags: ["workspace", "meta", "20_workspace_forks"]
+tags: ["workspace", "20_workspace_forks", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

@@ -2,7 +2,7 @@
 id: meta/7_docker/index
 title: "Run Docker containers"
 category: meta
-tags: ["7_docker", "docker", "meta", "advanced", "run"]
+tags: ["docker", "run", "7_docker", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -26,7 +26,7 @@ It will handle memory tracking, logs streaming and the different exit code of th
 
 The default code is as follows:
 
-```
+```text
 ## docker
 ## The annotation "docker" above is important, it tells windmill that after 
 ## the end of the bash script, it should manage the container at id $WM_JOB_ID:
@@ -65,7 +65,7 @@ One possibility to use the docker daemon with k8s with containerd is to run a do
 
 Here an example of a a worker group setup with a dind side-container to be adapted with your needs.
 
-```
+```yaml
   workerGroups:
     ...
     - name: "docker"
@@ -149,7 +149,7 @@ Hello
 
 If you use kubernetes and would like to run your docker file directly on the kubernetes host, use the following script:
 
-```
+```text
 ## shellcheck shell=bash
 ## Bash script that calls docker as a client to the host daemon
 ## See documentation: https://www.windmill.dev/docs/advanced/docker

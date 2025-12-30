@@ -47,7 +47,7 @@ fn main(config: Config) -> anyhow::Result<Output> {
         message: format!("Response: {} chars", resp.len()),
     })
 }
-```
+```rust
 
 ### Key Points
 

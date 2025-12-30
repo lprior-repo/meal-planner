@@ -9,7 +9,7 @@ summary: "Flow File Structure"
 
 ## Flow File Structure
 
-```
+```typescript
 windmill/f/<domain>/<flow_name>.flow/
 └── flow.yaml    # Flow definition
 ```text

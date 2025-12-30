@@ -2,7 +2,7 @@
 id: meta/8_preinstall_binaries/index
 title: "Preinstall binaries"
 category: meta
-tags: ["8_preinstall_binaries", "meta", "preinstall", "advanced"]
+tags: ["preinstall", "8_preinstall_binaries", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -70,14 +70,14 @@ All examples above can be used in your [`docker-compose.yml`](https://github.com
 
 Replace:
 
-```
+```yaml
   windmill_worker:
     image: ${WM_IMAGE}
 ```
 
 With the following:
 
-```
+```yaml
   windmill_worker:
     build:
       context: ./path/to/dockerfile

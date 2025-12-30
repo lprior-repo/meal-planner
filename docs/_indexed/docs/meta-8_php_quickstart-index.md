@@ -2,7 +2,7 @@
 id: meta/8_php_quickstart/index
 title: "PHP quickstart"
 category: meta
-tags: ["8_php_quickstart", "advanced", "meta", "php"]
+tags: ["advanced", "8_php_quickstart", "php", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -61,7 +61,7 @@ Windmill automatically manages [dependencies](./meta-6_imports-index.md) for you
 
 This is a simple example of a script built in php with Windmill:
 
-```
+```javascript
 <?php
 
 // remove the first // of the following lines to specify packages to install using composer

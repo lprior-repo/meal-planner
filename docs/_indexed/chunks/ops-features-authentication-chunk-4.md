@@ -33,7 +33,7 @@ Use `docker volume inspect recipes_nginx` to find out where your volume is store
 
 ### Configuration Example for Authelia
 
-```
+```nginx
 server {
   listen 80;
   server_name localhost;
@@ -83,7 +83,7 @@ the [Authelia Docs](https://docs.authelia.com/deployment/supported-proxies/nginx
 
 Remember to add the appropriate environment variables to `.env` file (example for nginx proxy):
 
-```
+```bash
 VIRTUAL_HOST=
 LETSENCRYPT_HOST=
 LETSENCRYPT_EMAIL=

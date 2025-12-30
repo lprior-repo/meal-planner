@@ -2,7 +2,7 @@
 id: meta/20_jobs/index
 title: "Jobs"
 category: meta
-tags: ["advanced", "jobs", "meta", "20_jobs"]
+tags: ["advanced", "20_jobs", "jobs", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -124,7 +124,7 @@ Jobs have as result the return of the main function serialized as a json object.
 
 If the jobs fail, it will have result an error object of the following shape:
 
-```
+```json
 {
 	"error": {
 		"name": "ErrorName",
@@ -281,7 +281,7 @@ It takes as query args:
 
 ### Job progress SSE Query args
 
-```
+```text
 running (optional boolean, default false): was the job already running ? Optimization for the backend to not waste time checking if the job is running if we know it's already the case
 log_offset (optional integer, default 0): what was the last log offset known by the client to start from when streaming new logs
 stream_offset (optional integer, default 0): what was the last log offset known by the client to start from when streaming the result stream

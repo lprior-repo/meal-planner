@@ -82,7 +82,7 @@ Specifies the number of previous messages to include as context for the AI agent
 When using `messages_context_length` via webhook, you must include a `memory_id` query parameter in your request. The `memory_id` must be a 32-character UUID that uniquely identifies the conversation context. This allows the AI agent to maintain message history across webhook calls.
 
 Example webhook URL:
-```
+```yaml
 https://your-windmill-instance/api/w/your-workspace/jobs/run_wait_result/f/your-flow?memory_id=550e8400e29b41d4a716446655440000
 ```
 

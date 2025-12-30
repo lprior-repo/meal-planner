@@ -20,7 +20,7 @@ See [Django Docs](https://docs.djangoproject.com/en/5.0/ref/settings/#std-settin
 
 ```bash
 SECRET_KEY=#$tp%v6*(*ba01wcz(ip(i5vfz8z$f%qdio&q@anr1#$=%(m4c
-```
+```text
 
 Alternatively you can point to a file containing just the secret key value. If using containers make sure the file is
 persistent and available inside the container.
@@ -42,7 +42,7 @@ Some proxies require `*` (default) but it should be set to the actual host(s).
 
 ```bash
 ALLOWED_HOSTS=recipes.mydomain.com
-```
+```text
 
 ### Database
 
@@ -78,7 +78,7 @@ The connection string will override all other database settings.
 
 ```bash
 DATABASE_URL = engine://username:password@host:port/dbname
-```
+```text
 
 #### Connection Options
 

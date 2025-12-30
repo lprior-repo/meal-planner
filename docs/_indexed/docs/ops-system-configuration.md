@@ -2,7 +2,7 @@
 id: ops/system/configuration
 title: "Configuration"
 category: ops
-tags: ["operations", "system", "advanced", "configuration"]
+tags: ["system", "configuration", "operations", "advanced"]
 ---
 
 This page describes all configuration options for the application
@@ -22,7 +22,7 @@ See [Django Docs](https://docs.djangoproject.com/en/5.0/ref/settings/#std-settin
 
 ```bash
 SECRET_KEY=#$tp%v6*(*ba01wcz(ip(i5vfz8z$f%qdio&q@anr1#$=%(m4c
-```
+```text
 
 Alternatively you can point to a file containing just the secret key value. If using containers make sure the file is
 persistent and available inside the container.
@@ -44,7 +44,7 @@ Some proxies require `*` (default) but it should be set to the actual host(s).
 
 ```bash
 ALLOWED_HOSTS=recipes.mydomain.com
-```
+```text
 
 ### Database
 
@@ -80,7 +80,7 @@ The connection string will override all other database settings.
 
 ```bash
 DATABASE_URL = engine://username:password@host:port/dbname
-```
+```text
 
 #### Connection Options
 
@@ -112,7 +112,7 @@ Port where Tandoor exposes its internal web server.
 
 ```bash
 TANDOOR_PORT=80
-```
+```text
 
 
 #### URL Path
@@ -140,7 +140,7 @@ This can either be a relative path from the applications base path or the url of
 
 ```bash
 STATIC_URL=/static/
-```
+```nginx
 
 #### Static root
 
@@ -182,7 +182,7 @@ See [Gunicorn docs](https://docs.gunicorn.org/en/stable/design.html#how-many-wor
 
 ```bash
 GUNICORN_WORKERS=3
-```
+```text
 
 #### Gunicorn Threads
 
@@ -207,7 +207,7 @@ See [Gunicorn docs]([https://docs.gunicorn.org/en/stable/design.html#how-many-wo
 
 ```bash
 GUNICORN_TIMEOUT=30
-```
+```text
 
 #### Gunicorn Media
 
@@ -230,7 +230,7 @@ See [Django docs](https://docs.djangoproject.com/en/5.0/ref/settings/#csrf-trust
 
 ```bash
 CSRF_TRUSTED_ORIGINS = []
-```
+```text
 
 #### Cors origins
 
@@ -252,7 +252,7 @@ when running under the same database.
 ```bash
 SESSION_COOKIE_DOMAIN=.example.com
 SESSION_COOKIE_NAME=sessionid # use this only to not interfere with non unified django applications under the same top level domain
-```
+```text
 
 ### Features
 
@@ -280,7 +280,7 @@ Enable serving of prometheus metrics under the `/metrics` path
 
 ```bash
 ENABLE_METRICS=0
-```
+```text
 
 #### Tree Sorting
 
@@ -311,7 +311,7 @@ See [Export feature docs](https://docs.tandoor.dev/features/import_export/#pdf) 
 
 ```bash
 ENABLE_PDF_EXPORT=1
-```
+```text
 
 #### Legal URLS
 
@@ -354,7 +354,7 @@ When enabled will join user into space and apply group configured in `SOCIAL_DEF
 
 ```bash
 SOCIAL_DEFAULT_ACCESS = 1
-```
+```text
 
 > default `guest` - options `guest`, `user`, `admin`
 
@@ -374,7 +374,7 @@ You might want to setup HCAPTCHA to prevent bots from creating accounts/spam.
 
 ```bash
 ENABLE_SIGNUP=0
-```
+```text
 
 #### Social Auth
 
@@ -395,7 +395,7 @@ Allow authentication via the REMOTE-USER header (can be used for e.g. authelia).
 
 ```bash
 REMOTE_USER_AUTH=0
-```
+```text
 
 #### LDAP
 
@@ -419,7 +419,7 @@ to the path of the file containing the ldap secret.
 
 ```bash
 AUTH_LDAP_BIND_PASSWORD_FILE=/run/secrets/ldap_password.txt
-```
+```text
 
 ### External Services
 
@@ -448,7 +448,7 @@ to the path of the file containing the ldap secret.
 
 ```bash
 EMAIL_HOST_PASSWORD_FILE=/run/secrets/email_password.txt
-```
+```text
 
 Optional settings (only copy the ones you need)
 
@@ -476,7 +476,7 @@ Required settings
 S3_ACCESS_KEY=
 S3_SECRET_ACCESS_KEY=
 S3_BUCKET_NAME=
-```
+```text
 
 Alternatively you can point to a file containing the S3_SECRET_ACCESS_KEY value. If using containers make sure the file is
 persistent and available inside the container.
@@ -493,7 +493,7 @@ S3_QUERYSTRING_AUTH=1 # default true, set to 0 to serve media from a public buck
 S3_QUERYSTRING_EXPIRE=3600 # number of seconds querystring are valid for
 S3_ENDPOINT_URL= # when using a custom endpoint like minio
 S3_CUSTOM_DOMAIN= # when using a CDN/proxy to S3 (see https://github.com/TandoorRecipes/recipes/issues/1943)
-```
+```text
 
 #### AI Integration
 
@@ -507,7 +507,7 @@ SPACE_AI_ENABLED=1
 Sets the monthly default credit limit for AI usage
 ```bash
 SPACE_AI_CREDITS_MONTHLY=100
-```
+```text
 
 Ratelimit for AI API
 ```bash
@@ -524,7 +524,7 @@ key [here](https://fdc.nal.usda.gov/api-key-signup.html).
 
 ```bash
 FDC_API_KEY=DEMO_KEY
-```
+```text
 
 #### Connectors
 
@@ -554,7 +554,7 @@ EXTERNAL_CONNECTORS_QUEUE_SIZE=100  # Defaults to 100, set to any number >1
 Setting to `1` enables several django debug features and additional
 logs ([see docs](https://docs.djangoproject.com/en/5.0/ref/settings/#std-setting-DEBUG)).
 
-```
+```bash
 DEBUG=0
 ```text
 
@@ -566,7 +566,7 @@ Set to `1` to enable django debug toolbar middleware. Toolbar only shows if `DEB
 is in `INTERNAL_IPS`.
 See [Django Debug Toolbar Docs](https://django-debug-toolbar.readthedocs.io/en/latest/).
 
-```
+```bash
 DEBUG_TOOLBAR=0
 ```text
 
@@ -576,7 +576,7 @@ DEBUG_TOOLBAR=0
 
 Set to `1` to enable additional query output on the search page.
 
-```
+```bash
 SQL_DEBUG=0
 ```text
 
@@ -587,7 +587,7 @@ SQL_DEBUG=0
 Increase or decrease the logging done by application.
 Please set to `DEBUG` when making a bug report.
 
-```
+```bash
  LOG_LEVEL="DEBUG"
 ```text
 
@@ -598,7 +598,7 @@ Please set to `DEBUG` when making a bug report.
 
 Increase or decrease the logging done by gunicorn (the python wsgi application).
 
-```
+```bash
  GUNICORN_LOG_LEVEL="debug"
 ```text
 
@@ -613,7 +613,7 @@ appropriate.
 
 The default value for the user preference 'fractions' (showing amounts as decimals or fractions).
 
-```
+```bash
 FRACTION_PREF_DEFAULT=0
 ```text
 
@@ -623,7 +623,7 @@ FRACTION_PREF_DEFAULT=0
 
 The default value for the user preference 'comments' (enable/disable commenting system)
 
-```
+```bash
 COMMENT_PREF_DEFAULT=1
 ```text
 
@@ -633,7 +633,7 @@ COMMENT_PREF_DEFAULT=1
 
 The default value for the user preference 'sticky navigation' (always show navbar on top or hide when scrolling)
 
-```
+```bash
 STICKY_NAV_PREF_DEFAULT=1
 ```text
 
@@ -644,7 +644,7 @@ STICKY_NAV_PREF_DEFAULT=1
 The default for the number of spaces a user can own. By setting to 0 space creation for users will be disabled.
 Superusers can always bypass this limit.
 
-```
+```bash
 MAX_OWNED_SPACES_PREF_DEFAULT=100
 ```text
 
@@ -659,7 +659,7 @@ Default timezone to use for database
 connections ([see Django docs](https://docs.djangoproject.com/en/5.0/ref/settings/#time-zone)).
 Usually everything is converted to the users timezone so this setting doesn't really need to be correct.
 
-```
+```bash
 TZ=Europe/Berlin
 ```text
 
@@ -669,7 +669,7 @@ TZ=Europe/Berlin
 Tandoors appearance can be changed on a user and space level but unauthenticated users always see the tandoor default style.
 With this setting you can specify the ID of a space of which the appearance settings should be applied if a user is not logged in.
 
-```
+```bash
 UNAUTHENTICATED_THEME_FROM_SPACE=
 ```text
 
@@ -678,7 +678,7 @@ UNAUTHENTICATED_THEME_FROM_SPACE=
 
 Similar to the Default theme but forces the theme upon all users (authenticated/unauthenticated) and all spaces
 
-```
+```bash
 FORCE_THEME_FROM_SPACE=
 ```text
 
@@ -694,7 +694,7 @@ frequently which
 might cause high load on the server. (Technically they can obviously refresh as often as they want with their own
 scripts)
 
-```
+```bash
 SHOPPING_MIN_AUTOSYNC_INTERVAL=5
 ```python
 
@@ -707,7 +707,7 @@ A rate limit is recommended to prevent users from abusing your server for (DDoS)
 service
 providers from blocking your server for too many request.
 
-```
+```bash
 DRF_THROTTLE_RECIPE_URL_IMPORT=60/hour
 ```text
 
@@ -717,7 +717,7 @@ created spaces. These defaults can be changed in the admin view after a space ha
 
 If unset, all settings default to unlimited/enabled
 
-```
+```bash
 SPACE_DEFAULT_MAX_RECIPES=0 # 0=unlimited recipes
 SPACE_DEFAULT_MAX_USERS=0 # 0=unlimited users per space
 SPACE_DEFAULT_MAX_FILES=0 # Maximum file storage for space in MB. 0 for unlimited, -1 to disable file upload.
@@ -728,7 +728,7 @@ SPACE_DEFAULT_ALLOW_SHARING=1 # Allow users to share recipes with public links
 > default `600` - options `1-X`
 
 Recipe exports are cached for a certain time (in seconds) by default, adjust time if needed
-```
+```bash
 EXPORT_FILE_CACHE_DURATION=600
 ```
 

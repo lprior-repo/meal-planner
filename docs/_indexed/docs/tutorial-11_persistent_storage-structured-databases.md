@@ -2,7 +2,7 @@
 id: tutorial/11_persistent_storage/structured-databases
 title: "Big structured SQL data: Postgres (Supabase, Neon.tech)"
 category: tutorial
-tags: ["sql", "big", "beginner", "11_persistent_storage", "tutorial"]
+tags: ["big", "tutorial", "beginner", "sql", "11_persistent_storage"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

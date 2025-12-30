@@ -2,7 +2,7 @@
 id: meta/security_isolation/index
 title: "Security and process isolation"
 category: meta
-tags: ["meta", "windmill", "advanced", "security", "security_isolation"]
+tags: ["security_isolation", "security", "advanced", "windmill", "meta"]
 ---
 
 # Security and process isolation
@@ -150,7 +150,7 @@ UNSHARE_ISOLATION_FLAGS="--pid --fork --mount-proc"
 
 If `ENABLE_UNSHARE_PID=true` but unshare is unavailable or fails, **the worker will panic at startup** with a detailed error message:
 
-```
+```text
 ENABLE_UNSHARE_PID is set but unshare test failed.
 Error: unshare: Operation not permitted
 Flags: --user --map-root-user --pid --fork --mount-proc

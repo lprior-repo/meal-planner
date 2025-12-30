@@ -2,7 +2,7 @@
 id: meta/22_job_debouncing/index
 title: "Job debouncing"
 category: meta
-tags: ["22_job_debouncing", "meta", "job"]
+tags: ["22_job_debouncing", "job", "meta"]
 ---
 
 <!--

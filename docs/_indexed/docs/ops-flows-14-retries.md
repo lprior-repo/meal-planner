@@ -2,7 +2,7 @@
 id: ops/flows/14-retries
 title: "Retries"
 category: ops
-tags: ["operations", "retries", "flows"]
+tags: ["flows", "operations", "retries"]
 ---
 
 <!--

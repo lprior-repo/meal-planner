@@ -11,12 +11,12 @@ summary: "Settings discovery"
 
 Windmill's OIDC settings are available at the following discovery URL:
 
-```
+```html
 <base_url>/api/oidc/.well-known/openid-configuration
 ```
 
 Jwks are available directly at:
 
-```
+```html
 <base_url>/api/oidc/jwks
 ```

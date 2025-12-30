@@ -13,4 +13,4 @@ summary: "Example Request"
 GET https://platform.fatsecret.com/rest/food-sub-categories/v1
     ?food_category_id=1
     &format=json
-```
+```text

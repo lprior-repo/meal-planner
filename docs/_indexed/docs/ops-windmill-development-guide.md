@@ -2,7 +2,7 @@
 id: ops/windmill/development-guide
 title: "Windmill Development Guide"
 category: ops
-tags: ["operations", "advanced", "windmill"]
+tags: ["operations", "windmill", "advanced"]
 ---
 
 # Windmill Development Guide
@@ -109,7 +109,7 @@ fn main(config: Config) -> anyhow::Result<Output> {
         message: format!("Response: {} chars", resp.len()),
     })
 }
-```
+```rust
 
 ### Key Points
 
@@ -216,7 +216,7 @@ Services can then reach each other by container name:
 
 ## File Structure
 
-```
+```text
 windmill/
 ├── wmill.yaml                    # Sync configuration
 ├── wmill-lock.yaml               # Workspace lock

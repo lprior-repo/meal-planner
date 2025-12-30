@@ -2,7 +2,7 @@
 id: meta/13_json_schema_and_parsing/index
 title: "JSON schema and parsing"
 category: meta
-tags: ["json", "13_json_schema_and_parsing", "meta", "advanced"]
+tags: ["advanced", "json", "13_json_schema_and_parsing", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
@@ -222,7 +222,7 @@ For flows, `oneOf` can be added as a [flow input](./tutorial-flows-3-editor-comp
 
 The result of the user's selection will be the selected object. With the example above if user picks Option 2 and enters a custom value:
 
-```
+```json
 {
     "label": "Option 2",
     "other_attribute": "Value that the user entered"

@@ -15,7 +15,7 @@ Jobs have as result the return of the main function serialized as a json object.
 
 If the jobs fail, it will have result an error object of the following shape:
 
-```
+```json
 {
 	"error": {
 		"name": "ErrorName",

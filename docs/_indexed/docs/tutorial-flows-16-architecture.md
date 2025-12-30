@@ -2,7 +2,7 @@
 id: tutorial/flows/16-architecture
 title: "Architecture and data exchange"
 category: tutorial
-tags: ["beginner", "architecture", "flows", "tutorial"]
+tags: ["flows", "tutorial", "beginner", "architecture"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

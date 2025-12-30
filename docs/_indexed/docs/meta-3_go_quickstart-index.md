@@ -2,7 +2,7 @@
 id: meta/3_go_quickstart/index
 title: "Go quickstart"
 category: meta
-tags: ["advanced", "meta", "3_go_quickstart"]
+tags: ["3_go_quickstart", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

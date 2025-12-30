@@ -42,7 +42,7 @@ Returns a list of all available recipe types.
 ```text
 GET https://platform.fatsecret.com/rest/recipe-types/v1
     ?format=json
-```
+```text
 
 ## Example Response
 

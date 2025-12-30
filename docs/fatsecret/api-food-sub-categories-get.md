@@ -35,7 +35,7 @@ The response includes a list of sub-categories for the specified category:
 GET https://platform.fatsecret.com/rest/food-sub-categories/v1
     ?food_category_id=1
     &format=json
-```
+```text
 
 ## Example Response
 

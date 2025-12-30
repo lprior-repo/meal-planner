@@ -2,7 +2,7 @@
 id: meta/46_postgres_triggers/index
 title: "Postgres triggers"
 category: meta
-tags: ["sql", "46_postgres_triggers", "meta", "windmill", "advanced"]
+tags: ["postgres", "46_postgres_triggers", "sql", "advanced", "windmill"]
 ---
 
 # Postgres triggers

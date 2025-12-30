@@ -2,7 +2,7 @@
 id: ops/3_cli/installation
 title: "Installation"
 category: ops
-tags: ["operations", "3_cli", "installation", "windmill"]
+tags: ["3_cli", "installation", "operations", "windmill"]
 ---
 
 <!--
@@ -68,7 +68,7 @@ Node version must greater than v20.
 
 Also, to punch through some networking layers like Cloudflare Tunnel, you might need some custom headers. You just need to use the HEADERS env variable:
 
-```
+```bash
 export HEADERS=header_key:header_value,header_key2:header_value2
 ```text
 

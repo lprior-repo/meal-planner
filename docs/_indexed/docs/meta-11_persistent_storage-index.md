@@ -2,7 +2,7 @@
 id: meta/11_persistent_storage/index
 title: "Persistent storage & databases"
 category: meta
-tags: ["11_persistent_storage", "meta", "persistent"]
+tags: ["persistent", "11_persistent_storage", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

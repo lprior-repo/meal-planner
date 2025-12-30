@@ -14,7 +14,7 @@ The following could prove to be useful if you are not using Traefik, but instead
 As a side note, I am using [Blocky](https://0xerr0r.github.io/blocky/) + [Consul](https://hub.docker.com/r/hashicorp/consul) + [Registrator](https://hub.docker.com/r/gliderlabs/registrator) as a DNS solution.
 
 The relevant Apache config:
-```
+```html
     <Location /tandoor>
         # in case you want to restrict access to specific IP addresses:
         Require local
@@ -41,7 +41,7 @@ The relevant Apache config:
     </Location>
 ```text
 and the relevant section from the docker-compose.yml:
-```
+```yaml
    tandoor:
      restart: always
      container_name: tandoor
@@ -71,7 +71,7 @@ and the relevant section from the docker-compose.yml:
 ```text
 
 The relevant docker-compose.yml for Registrator, Consul, and Blocky, and Autoheal:
-```
+```yaml
   consul:
     image: hashicorp/consul
     container_name: consul
@@ -147,7 +147,7 @@ The relevant docker-compose.yml for Registrator, Consul, and Blocky, and Autohea
 
 ```text
 as well as a snippet of the Blocky configuration:
-```
+```yaml
 conditional:
   fallbackUpstream: false
   mapping:

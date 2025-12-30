@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-natural-language-processing
 title: "Natural Language Processing API v1"
 category: ref
-tags: ["natural", "advanced", "api", "fatsecret", "reference"]
+tags: ["fatsecret", "api", "reference", "advanced", "natural"]
 ---
 
 # Natural Language Processing API v1
@@ -15,7 +15,7 @@ Optional Add-On feature for parsing natural language food descriptions.
 
 ```text
 POST https://platform.fatsecret.com/rest/natural-language-processing/v1
-```
+```text
 
 ## Overview
 

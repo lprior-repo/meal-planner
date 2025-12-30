@@ -2,7 +2,7 @@
 id: meta/37_critical_alerts/index
 title: "Critical alerts"
 category: meta
-tags: ["meta", "37_critical_alerts", "critical"]
+tags: ["critical", "37_critical_alerts", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
