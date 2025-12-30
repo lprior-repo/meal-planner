@@ -7,6 +7,9 @@
 //! - `fatsecret` - FatSecret API client (nutrition tracking)
 //! - `tandoor` - Tandoor Recipes API client (recipe management)
 
+// Enable nightly features for stricter lints
+#![feature(non_exhaustive_omitted_patterns_lint)]
+
 // API client modules
 pub mod fatsecret;
 pub mod tandoor;

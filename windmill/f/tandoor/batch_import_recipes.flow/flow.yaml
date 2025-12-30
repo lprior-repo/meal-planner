@@ -1,0 +1,45 @@
+summary: Batch import recipes from URLs
+description: |
+  Paste up to 25 recipe URLs (one per line) and import them all.
+  Each URL is scraped via Tandoor, tagged with its source domain,
+  and created as a recipe.
+value:
+  modules:
+    - id: import_each
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: flow_input.urls.split('\n').map(u => u.trim()).filter(u => u.length > 0)
+        skip_failures: true
+        parallel: false
+        parallelism: 1
+        modules:
+          - id: import
+            value:
+              type: flow
+              path: f/tandoor/import_recipe
+              input_transforms:
+                url:
+                  type: javascript
+                  expr: flow_input.iter.value
+                additional_keywords:
+                  type: javascript
+                  expr: flow_input.additional_keywords || []
+
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    urls:
+      type: string
+      description: Recipe URLs (one per line)
+      format: textarea
+    additional_keywords:
+      type: array
+      items:
+        type: string
+      description: Additional keywords to add to all recipes
+      default: []
+  required:
+    - urls

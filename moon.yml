@@ -2,46 +2,70 @@
 $schema: './.moon/cache/schemas/project.json'
 
 language: 'rust'
-type: 'application'
+layer: 'application'
+stack: 'backend'
+
+project:
+  name: 'Meal Planner'
+  description: 'FatSecret nutrition and Tandoor recipe integration via Windmill orchestration'
+
+env:
+  CARGO_TERM_COLOR: 'always'
+
+fileGroups:
+  sources:
+    - 'src/**/*.rs'
+    - 'main.rs'
+  tests:
+    - 'tests/**/*.rs'
+  configs:
+    - 'Cargo.*'
+    - '.cargo/*.toml'
+  windmill:
+    - 'windmill/**/*.yaml'
+    - 'windmill/**/*.sh'
 
 tasks:
   # ============================================
-  # Linting & Formatting (run in parallel)
+  # Linting & Formatting
   # ============================================
   fmt:
+    description: 'Check Rust formatting with cargo fmt'
     command: 'cargo fmt --check'
     inputs:
-      - 'src/**/*.rs'
-      - 'tests/**/*.rs'
+      - '@globs(sources)'
+      - '@globs(tests)'
     options:
       cache: true
 
   clippy:
-    command: 'cargo clippy -- -D warnings'
+    description: 'Run Clippy with strict safety lints (forbid unsafe, deny unwrap/panic)'
+    command: 'cargo clippy --all-targets --all-features -- -D warnings'
     inputs:
-      - 'src/**/*.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
+      - '@globs(sources)'
+      - '@globs(tests)'
+      - '@globs(configs)'
     options:
       cache: true
 
   validate-yaml:
+    description: 'Validate Windmill YAML files'
     command: 'yamllint -d relaxed windmill/'
     inputs:
-      - 'windmill/**/*.yaml'
+      - '@globs(windmill)'
     options:
       cache: true
 
   # ============================================
-  # Testing (depends on lint passing)
+  # Testing
   # ============================================
   test:
+    description: 'Run tests with cargo-nextest'
     command: 'cargo nextest run'
     inputs:
-      - 'src/**/*.rs'
-      - 'tests/**/*.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
+      - '@globs(sources)'
+      - '@globs(tests)'
+      - '@globs(configs)'
     deps:
       - '~:fmt'
       - '~:clippy'
@@ -52,11 +76,11 @@ tasks:
   # Building
   # ============================================
   build:
+    description: 'Build all release binaries'
     command: 'cargo build --release'
     inputs:
-      - 'src/**/*.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
+      - '@globs(sources)'
+      - '@globs(configs)'
     outputs:
       - 'target/release/fatsecret_*'
       - 'target/release/tandoor_*'
@@ -66,11 +90,11 @@ tasks:
       cache: true
 
   build-dev:
+    description: 'Build debug binaries for development'
     command: 'cargo build'
     inputs:
-      - 'src/**/*.rs'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
+      - '@globs(sources)'
+      - '@globs(configs)'
     outputs:
       - 'target/debug/fatsecret_*'
       - 'target/debug/tandoor_*'
@@ -78,6 +102,7 @@ tasks:
       cache: true
 
   copy-binaries:
+    description: 'Copy release binaries to bin/ directory'
     script: 'mkdir -p bin && cp target/release/fatsecret_* target/release/tandoor_* bin/ 2>/dev/null; ls bin/'
     inputs:
       - 'target/release/fatsecret_*'
@@ -88,9 +113,10 @@ tasks:
       - '~:build'
 
   # ============================================
-  # Windmill Validation & Metadata
+  # Windmill
   # ============================================
   generate-metadata:
+    description: 'Generate Windmill script metadata'
     script: 'cd windmill && yes | wmill script generate-metadata'
     inputs:
       - 'windmill/**/*.sh'
@@ -103,9 +129,10 @@ tasks:
       WMILL_WORKSPACE: 'meal-planner'
 
   validate-windmill:
+    description: 'Dry-run Windmill sync to validate configuration'
     script: 'cd windmill && wmill sync push --dry-run --yes'
     inputs:
-      - 'windmill/**/*'
+      - '@globs(windmill)'
     deps:
       - '~:generate-metadata'
     options:
@@ -117,19 +144,18 @@ tasks:
   # Aggregate Tasks
   # ============================================
   ci:
+    description: 'Full CI pipeline - lint, test, build, validate'
     deps:
-      # Lint tasks run in parallel (no deps between them)
       - '~:fmt'
       - '~:clippy'
       - '~:validate-yaml'
-      # Then test -> build -> copy-binaries (sequential chain)
       - '~:test'
       - '~:build'
       - '~:copy-binaries'
-      # Windmill validation (parallel with build chain after yaml validation)
       - '~:validate-windmill'
 
   quick:
+    description: 'Fast lint checks for pre-commit'
     deps:
       - '~:fmt'
       - '~:clippy'
@@ -139,10 +165,9 @@ tasks:
   # Deployment
   # ============================================
   deploy-binaries:
+    description: 'Deploy binaries to Windmill worker'
     script: |
       echo "Deploying binaries to Windmill worker..."
-      # Copy binaries to Windmill worker container
-      # This assumes docker-compose or k8s volume mount at /app/bin
       docker cp bin/. windmill-worker:/usr/local/bin/ 2>/dev/null || \
         echo "Note: Manual deployment needed - copy bin/* to Windmill worker /usr/local/bin/"
       ls -la bin/
@@ -150,6 +175,7 @@ tasks:
       - '~:copy-binaries'
 
   deploy-windmill:
+    description: 'Push Windmill scripts and flows'
     script: 'cd windmill && wmill sync push --yes'
     deps:
       - '~:validate-windmill'
@@ -157,6 +183,7 @@ tasks:
       WMILL_WORKSPACE: 'meal-planner'
 
   deploy:
+    description: 'Full deployment - CI + deploy binaries + Windmill'
     deps:
       - '~:ci'
       - '~:deploy-binaries'

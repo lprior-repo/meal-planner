@@ -1,5 +1,12 @@
 # https://moonrepo.dev/docs/config/toolchain
 $schema: './cache/schemas/toolchain.json'
 
-# Rust is managed by mise, not moon/proto
-# See mise.toml for version configuration
+# Enable Rust language support
+# This enables:
+# - Cargo.lock parsing for accurate dependency hashing
+# - Cargo binary resolution (~/.cargo/bin)
+# - Rust-specific task automations
+# - Lockfile generation if missing
+#
+# Version is managed by mise (see mise.toml), not moon
+rust: {}

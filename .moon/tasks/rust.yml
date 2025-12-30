@@ -1,0 +1,11 @@
+$schema: 'https://moonrepo.dev/schemas/tasks.json'
+
+# Rust-specific task configuration inherited by all Rust projects
+# https://moonrepo.dev/docs/config/tasks
+
+# Implicit inputs for ALL inherited tasks
+# Changes to these files invalidate all task caches
+implicitInputs:
+  - '/Cargo.toml'
+  - '/Cargo.lock'
+  - '/.cargo/config.toml'

@@ -3,6 +3,166 @@ name = "meal-planner"
 version = "0.1.0"
 edition = "2021"
 
+# =============================================================================
+# GLEAM-STYLE STRICT SAFETY LINTS
+# =============================================================================
+# These lints enforce Gleam's design principles in Rust:
+# - Immutability by default (no unnecessary mutation)
+# - Exhaustive pattern matching (handle all cases)
+# - No exceptions/panics (use Result for errors)
+# - No null/undefined (use Option explicitly)
+# - No unsafe code (memory safety guaranteed)
+# - Pure functions (predictable, testable)
+#
+# AI CANNOT BYPASS THESE - They are enforced at compile time by rustc/clippy
+# =============================================================================
+
+[lints.rust]
+# -----------------------------------------------------------------------------
+# MEMORY SAFETY - Like Gleam, memory is always safe
+# -----------------------------------------------------------------------------
+unsafe_code = "forbid"                    # FORBIDDEN: No unsafe blocks anywhere
+                                          # This cannot be bypassed with #[allow]
+
+# -----------------------------------------------------------------------------
+# EXHAUSTIVENESS - Like Gleam's exhaustive pattern matching
+# -----------------------------------------------------------------------------
+unused_must_use = "deny"                  # Must handle all Results/Options
+unreachable_patterns = "deny"             # No dead pattern branches
+non_exhaustive_omitted_patterns = "deny"  # Require handling all enum variants
+
+# -----------------------------------------------------------------------------
+# IMMUTABILITY - Like Gleam, prefer immutable by default
+# -----------------------------------------------------------------------------
+unused_mut = "deny"                       # No unnecessary mut keywords
+unused_variables = "deny"                 # No dead bindings
+unused_assignments = "deny"               # No dead assignments
+
+# -----------------------------------------------------------------------------
+# CORRECTNESS - Like Gleam's compile-time guarantees
+# -----------------------------------------------------------------------------
+trivial_casts = "deny"                    # No pointless casts
+trivial_numeric_casts = "deny"            # No pointless numeric casts
+unused_imports = "deny"                   # No unused imports
+dead_code = "deny"                        # No unreachable code
+
+# -----------------------------------------------------------------------------
+# DOCUMENTATION - Gleam encourages /// doc comments
+# -----------------------------------------------------------------------------
+missing_docs = "deny"                     # REQUIRE documentation
+
+[lints.clippy]
+# =============================================================================
+# CLIPPY: GLEAM-STYLE FUNCTIONAL PURITY - ALL ERRORS, NO WARNINGS
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# NO PANICS - Like Gleam, errors are values (Result), not exceptions
+# -----------------------------------------------------------------------------
+unwrap_used = "deny"                      # No .unwrap() - handle errors explicitly
+expect_used = "deny"                      # No .expect() - handle errors explicitly
+panic = "deny"                            # No panic!() - return Result instead
+todo = "deny"                             # No todo!() - complete the implementation
+unimplemented = "deny"                    # No unimplemented!() - handle all cases
+unreachable = "deny"                      # No unreachable!() - prove with types
+
+# Additional panic sources
+unwrap_in_result = "deny"                 # No unwrap inside Result-returning fn
+panic_in_result_fn = "deny"               # No panic! in Result-returning fn
+exit = "deny"                             # No std::process::exit
+
+# -----------------------------------------------------------------------------
+# EXPLICIT ERROR HANDLING - Like Gleam's Result type
+# -----------------------------------------------------------------------------
+# result_unwrap_used and option_unwrap_used are now just unwrap_used (set above)
+let_underscore_must_use = "deny"          # Don't discard important values
+match_result_ok = "deny"                  # Prefer proper Result handling (renamed from if_let_some_result)
+map_unwrap_or = "deny"                    # Prefer map_or/map_or_else
+
+# -----------------------------------------------------------------------------
+# IMMUTABILITY - Like Gleam, values don't change
+# -----------------------------------------------------------------------------
+mut_mut = "deny"                          # No &&mut mut
+needless_borrow = "deny"                  # No unnecessary &
+redundant_clone = "deny"                  # No unnecessary clones
+clone_on_ref_ptr = "deny"                 # No cloning Arc/Rc unnecessarily
+unnecessary_mut_passed = "deny"           # Don't pass &mut when & suffices
+
+# -----------------------------------------------------------------------------
+# FUNCTIONAL STYLE - Like Gleam's pipelines and combinators
+# -----------------------------------------------------------------------------
+manual_map = "deny"                       # Use .map() instead of match
+manual_filter = "deny"                    # Use .filter() instead of match
+manual_filter_map = "deny"                # Use .filter_map()
+manual_find = "deny"                      # Use .find()
+manual_find_map = "deny"                  # Use .find_map()
+manual_flatten = "deny"                   # Use .flatten()
+manual_ok_or = "deny"                     # Use .ok_or()
+option_if_let_else = "deny"               # Use .map_or_else()
+needless_pass_by_value = "deny"           # Prefer references for large types
+large_types_passed_by_value = "deny"      # Large types should be references
+
+# -----------------------------------------------------------------------------
+# EXHAUSTIVE MATCHING - Like Gleam's case expressions
+# -----------------------------------------------------------------------------
+match_same_arms = "deny"                  # Combine identical match arms
+match_single_binding = "deny"             # Simplify single-binding matches
+match_wildcard_for_single_variants = "deny"  # Be explicit about variants
+wildcard_enum_match_arm = "deny"          # Prefer explicit enum matching
+single_match = "deny"                     # Consider if-let for single matches
+single_match_else = "deny"                # Consider if-let-else
+
+# -----------------------------------------------------------------------------
+# TYPE SAFETY - Like Gleam's strong static types  
+# -----------------------------------------------------------------------------
+cast_possible_truncation = "deny"         # ERROR on lossy integer casts
+cast_sign_loss = "deny"                   # ERROR on sign-changing casts
+cast_precision_loss = "deny"              # ERROR on float precision loss
+cast_lossless = "deny"                    # Use .into() for lossless casts
+float_cmp = "deny"                        # No direct float == comparisons
+float_cmp_const = "deny"                  # No float == const comparisons
+
+# -----------------------------------------------------------------------------
+# SAFE INDEXING - Like Gleam's list.at() returning Option
+# -----------------------------------------------------------------------------
+indexing_slicing = "deny"                 # Prefer .get() over [] indexing
+
+# -----------------------------------------------------------------------------
+# CLARITY - Like Gleam's clean, readable syntax
+# -----------------------------------------------------------------------------
+bool_comparison = "deny"                  # No `if x == true`
+needless_bool = "deny"                    # No `if x { true } else { false }`
+match_bool = "deny"                       # Prefer if/else over match on bool
+redundant_pattern_matching = "deny"       # No redundant patterns
+collapsible_if = "deny"                   # Combine nested ifs
+collapsible_else_if = "deny"              # Use else if, not else { if }
+if_not_else = "deny"                      # Prefer if positive { } else { }
+
+# -----------------------------------------------------------------------------
+# COMPLEXITY LIMITS - Keep functions small and focused
+# -----------------------------------------------------------------------------
+cognitive_complexity = "deny"             # Limit cyclomatic complexity
+too_many_arguments = "deny"               # Functions with too many args (>7)
+too_many_lines = "deny"                   # Functions that are too long (>100)
+fn_params_excessive_bools = "deny"        # Too many bool params is confusing
+
+# -----------------------------------------------------------------------------
+# NAMING - Like Gleam's snake_case consistency  
+# -----------------------------------------------------------------------------
+enum_variant_names = "deny"               # Don't prefix variants with enum name
+module_name_repetitions = "deny"          # Don't repeat module name in items
+similar_names = "deny"                    # Avoid confusingly similar names
+
+# -----------------------------------------------------------------------------
+# CORRECTNESS GROUPS - Enable entire lint groups AS ERRORS
+# -----------------------------------------------------------------------------
+correctness = { level = "deny", priority = -1 }   # All correctness lints - CRITICAL
+suspicious = { level = "deny", priority = -1 }    # Suspicious code patterns - CRITICAL
+complexity = { level = "deny", priority = -1 }    # Overly complex code
+perf = { level = "deny", priority = -1 }          # Performance issues
+style = { level = "deny", priority = -1 }         # Style consistency
+pedantic = { level = "deny", priority = -1 }      # Maximum strictness - NO EXCEPTIONS
+
 [dependencies]
 # HTTP client
 reqwest = { version = "0.12", features = ["json", "blocking"] }
@@ -75,6 +235,10 @@ path = "src/bin/tandoor_scrape_recipe.rs"
 name = "tandoor_create_recipe"
 path = "src/bin/tandoor_create_recipe.rs"
 
+[[bin]]
+name = "fatsecret_foods_search"
+path = "src/bin/fatsecret_foods_search.rs"
+
 [features]
 sqlx-cli = ["dep:sqlx-cli"]
 
@@ -91,3 +255,10 @@ opt-level = 2                      # Optimize dependencies
 opt-level = 0
 debug = 0
 incremental = true
+
+[profile.release]
+opt-level = 3
+lto = "thin"           # Faster than "fat" LTO, still good optimization
+codegen-units = 16     # Parallel codegen (matches core count)
+strip = "symbols"      # Strip symbols - smaller binaries, faster link
+debug = 0              # No debug info in release

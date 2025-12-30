@@ -7,6 +7,13 @@ projects:
 vcs:
   manager: 'git'
   defaultBranch: 'main'
+  provider: 'github'
+  # VCS hooks managed by Moon
+  # Run `moon sync hooks` to enable locally (not auto-synced)
+  hooks:
+    pre-commit:
+      - 'moon run :fmt :clippy :validate-yaml --affected --status=staged --no-bail'
+  syncHooks: false
 
 hasher:
   optimization: 'performance'
