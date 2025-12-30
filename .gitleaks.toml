@@ -1,0 +1,32 @@
+# Gitleaks configuration
+# https://github.com/gitleaks/gitleaks
+
+title = "Meal Planner Gitleaks Config"
+
+[allowlist]
+  description = "Allowlist for false positives"
+  
+  # Test/example encryption keys (not real secrets)
+  regexes = [
+    # Test keys in crypto.rs
+    '''0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef''',
+    '''0123456789abcdef''',
+    # Test OAuth verifiers
+    '''test_verifier_\d+''',
+    '''verifier_\d+''',
+    # Windmill lock file hashes
+    '''[a-f0-9]{64}''',
+    # Example k8s secrets (base64 of "db-password" etc)
+    '''ZGItcGFzc3dvcmQ=''',
+    '''cG9zdGdyZXMtdXNlci1wYXNzd29yZA==''',
+    '''ODVkYmUxNWQ3NWVmOTMwOGM3YWUwZjMzYzdhMzI0Y2M2ZjRiZjUxOWEyZWQyZjMwMjdiZDMzYzE0MGE0ZjlhYQ==''',
+    '''85dbe15d75ef9308c7ae0f33c7a324cc6f4bf519a2ed2f3027bd33c140a4f9aa''',
+  ]
+  
+  # Paths containing example/documentation content
+  paths = [
+    '''docs/tandoor/install/k8s/.*''',
+    '''docs/windmill/.*/index\.mdx''',
+    '''tests/.*_test\.rs''',
+    '''windmill/wmill-lock\.yaml''',
+  ]
