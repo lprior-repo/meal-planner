@@ -119,14 +119,41 @@ bd link <issue-id-1> <issue-id-2>    # Create dependency
 bd unlink <issue-id-1> <issue-id-2>  # Remove dependency
 ```
 
+## Version Control with JJ
+
+This project uses **jj (Jujutsu)** exclusively for version control. Do NOT use git commands directly.
+
+### Common JJ Commands
+
+```bash
+jj status                    # Show working copy status
+jj diff                      # Show changes in working copy
+jj log                       # Show commit history
+jj describe -m "message"     # Set commit message for working copy
+jj new                       # Create a new change after current
+jj squash                    # Squash changes into parent
+jj edit <revision>           # Edit an existing revision
+jj bookmark set <name>       # Create/move a bookmark (like git branch)
+jj git push                  # Push to remote
+jj git fetch                 # Fetch from remote
+```
+
+### JJ Workflow
+
+1. Make changes to files (they're automatically tracked)
+2. Use `jj status` and `jj diff` to review
+3. Use `jj describe -m "type: description"` to set commit message
+4. Use `jj new` to start a new change
+5. Use `jj git push` to push to remote
+
 ## Landing Protocol
 
 After completing work, follow this protocol:
 
 ### 1. Commit Your Changes
 ```bash
-git add .
-git commit -m "type: description"  # Follow conventional commits
+jj describe -m "type: description"  # Follow conventional commits
+jj new                              # Start fresh change
 ```
 
 ### 2. Update Beads (Source of Truth)
@@ -142,8 +169,8 @@ mem0_add_memory(text="Decision: X. Rationale: Y. Context: Z")
 
 ### 4. Push to Remote
 ```bash
-git pull --rebase
-git push
+jj git fetch --all-remotes
+jj git push
 ```
 
 ## Commit Message Format
@@ -177,13 +204,13 @@ Closes #MP-123
 - `windmill` - Windmill script related
 - `p0`, `p1`, `p2` - Priority levels
 
-## Git Workflow
+## JJ Workflow
 
 1. Work on issues assigned to you
-2. Make commits with conventional format
-3. Push to feature branch if needed
+2. Use `jj describe -m "type: description"` to set commit message
+3. Use `jj new` to start next change
 4. Update Beads to mark progress
-5. Create PR when ready for review
+5. Use `jj git push` when ready for review
 
 ## Helpful Commands
 
