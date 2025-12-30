@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<documentation_index>
+  <metadata>
+    <schema_version>1.0.0</schema_version>
+    <indexed_at>2025-12-29T00:00:00Z</indexed_at>
+    <generator>Anthropic XML + DAG Indexing System</generator>
+    <description>DAG-based documentation index with XML metadata for Windmill and meal-planner</description>
+  </metadata>
+
+  <entities>
+    <!-- Core Concepts -->
+    <entity id="retries" type="feature">
+      <name>Retries</name>
+      <category>flows</category>
+      <documents>
+        <doc_ref>docs/windmill/flows/14_retries.md</doc_ref>
+      </documents>
+      <related_entities>
+        <entity_ref>error_handler</entity_ref>
+        <entity_ref>flow_branches</entity_ref>
+      </related_entities>
+      <tags>windmill, retry, error-handling, exponential-backoff, constant-retry</tags>
+    </entity>
+
+    <entity id="error_handler" type="feature">
+      <name>Error Handler</name>
+      <category>flows</category>
+      <documents>
+        <doc_ref>docs/windmill/flows/7_flow_error_handler.md</doc_ref>
+      </documents>
+      <related_entities>
+        <entity_ref>retries</entity_ref>
+        <entity_ref>flow_branches</entity_ref>
+      </related_entities>
+      <tags>windmill, error, handler, flow, slack, discord</tags>
+    </entity>
+
+    <entity id="custom_timeout" type="feature">
+      <name>Custom Timeout</name>
+      <category>flows</category>
+      <documents>
+        <doc_ref>docs/windmill/flows/9_custom_timeout.md</doc_ref>
+      </documents>
+      <tags>windmill, timeout, execution-limit, step</tags>
+    </entity>
+
+    <entity id="for_loops" type="feature">
+      <name>For Loops</name>
+      <category>flows</category>
+      <documents>
+        <doc_ref>docs/windmill/flows/12_flow_loops.md</doc_ref>
+      </documents>
+      <related_entities>
+        <entity_ref>flow_branches</entity_ref>
+        <entity_ref>early_stop</entity_ref>
+      </related_entities>
+      <tags>windmill, for, loop, iterate, parallel, squash, iterator</tags>
+    </entity>
+
+    <entity id="flow_branches" type="feature">
+      <name>Flow Branches</name>
+      <category>flows</category>
+      <documents>
+        <doc_ref>docs/windmill/flows/13_flow_branches.md</doc_ref>
+      </documents>
+      <related_entities>
+        <entity_ref>for_loops</entity_ref>
+        <entity_ref>error_handler</entity_ref>
+        <entity_ref>retries</entity_ref>
+      </related_entities>
+      <tags>windmill, branch, condition, predicate, parallel</tags>
+    </entity>
+
+    <entity id="early_stop" type="feature">
+      <name>Early Stop</name>
+      <category>flows</category>
+      <documents>
+        <doc_ref>docs/windmill/flows/2_early_stop.md</doc_ref>
+      </documents>
+      <related_entities>
+        <entity_ref>for_loops</entity_ref>
+      </related_entities>
+      <tags>windmill, early-stop, break, predicate, condition</tags>
+    </entity>
+
+    <entity id="sleep" type="feature">
+      <name>Sleep/Delays</name>
+      <category>flows</category>
+      <documents>
+        <doc_ref>docs/windmill/flows/15_sleep.md</doc_ref>
+      </documents>
+      <tags>windmill, sleep, delay, pause, suspend</tags>
+    </entity>
+
+    <entity id="priority" type="feature">
+      <name>Priority</name>
+      <category>flows</category>
+      <documents>
+        <doc_ref>docs/windmill/flows/20_priority.md</doc_ref>
+      </documents>
+      <tags>windmill, priority, queue, execution, enterprise</tags>
+    </entity>
+
+    <entity id="lifetime" type="feature">
+      <name>Lifetime/Delete After Use</name>
+      <category>flows</category>
+      <documents>
+        <doc_ref>docs/windmill/flows/21_lifetime.md</doc_ref>
+      </documents>
+      <tags>windmill, lifetime, delete, logs, privacy</tags>
+    </entity>
+
+    <entity id="step_mocking" type="feature">
+      <name>Step Mocking</name>
+      <category>flows</category>
+      <documents>
+        <doc_ref>docs/windmill/flows/5_step_mocking.md</doc_ref>
+      </documents>
+      <related_entities>
+        <entity_ref>caching</entity_ref>
+      </related_entities>
+      <tags>windmill, mock, pin, development, testing</tags>
+    </entity>
+
+    <entity id="caching" type="feature">
+      <name>Caching</name>
+      <category>core_concepts</category>
+      <documents>
+        <doc_ref>docs/windmill/core_concepts/24_caching/index.md</doc_ref>
+      </documents>
+      <related_entities>
+        <entity_ref>step_mocking</entity_ref>
+      </related_entities>
+      <tags>windmill, cache, performance, optimization</tags>
+    </entity>
+
+    <entity id="concurrency_limits" type="feature">
+      <name>Concurrency Limits</name>
+      <category>core_concepts</category>
+      <documents>
+        <doc_ref>docs/windmill/core_concepts/21_concurrency_limits/index.md</doc_ref>
+      </documents>
+      <tags>windmill, concurrency, limit, rate-limit, API</tags>
+    </entity>
+
+    <entity id="job_debouncing" type="feature">
+      <name>Job Debouncing</name>
+      <category>core_concepts</category>
+      <documents>
+        <doc_ref>docs/windmill/core_concepts/22_job_debouncing/index.md</doc_ref>
+      </documents>
+      <tags>windmill, debounce, cancel, duplicate, jobs</tags>
+    </entity>
+
+    <entity id="staging_prod" type="feature">
+      <name>Staging/Production Deployment</name>
+      <category>core_concepts</category>
+      <documents>
+        <doc_ref>docs/windmill/core_concepts/12_staging_prod/index.md</doc_ref>
+        <doc_ref>docs/windmill/DEPLOYMENT_GUIDE.md</doc_ref>
+      </documents>
+      <tags>windmill, deploy, staging, prod, workspace, sync</tags>
+    </entity>
+
+    <entity id="multiplayer" type="feature">
+      <name>Multiplayer</name>
+      <category>core_concepts</category>
+      <documents>
+        <doc_ref>docs/windmill/core_concepts/7_multiplayer/index.md</doc_ref>
+      </documents>
+      <tags>windmill, multiplayer, collaboration, real-time</tags>
+    </entity>
+
+    <entity id="wmill_cli" type="tool">
+      <name>Windmill CLI</name>
+      <category>cli</category>
+      <documents>
+        <doc_ref>docs/windmill/advanced/3_cli/installation.md</doc_ref>
+        <doc_ref>docs/windmill/advanced/3_cli/script.md</doc_ref>
+        <doc_ref>docs/windmill/advanced/3_cli/flow.md</doc_ref>
+        <doc_ref>docs/windmill/advanced/3_cli/resource.md</doc_ref>
+        <doc_ref>docs/windmill/advanced/3_cli/variable.md</doc_ref>
+        <doc_ref>docs/windmill/advanced/3_cli/workspace-management.md</doc_ref>
+        <doc_ref>docs/windmill/advanced/3_cli/folder.md</doc_ref>
+        <doc_ref>docs/windmill/advanced/3_cli/user.md</doc_ref>
+        <doc_ref>docs/windmill/advanced/3_cli/app.md</doc_ref>
+      </documents>
+      <related_entities>
+        <entity_ref>python_client</entity_ref>
+      </related_entities>
+      <tags>windmill, cli, wmill, command-line, deployment</tags>
+    </entity>
+
+    <entity id="python_client" type="tool">
+      <name>Python Client</name>
+      <category>clients</category>
+      <documents>
+        <doc_ref>docs/windmill/advanced/2_clients/python_client.md</doc_ref>
+      </documents>
+      <related_entities>
+        <entity_ref>wmill_cli</entity_ref>
+      </related_entities>
+      <tags>windmill, python, sdk, client, api</tags>
+    </entity>
+
+    <!-- Rust SDK Specific -->
+    <entity id="rust_sdk" type="tool">
+      <name>Windmill Rust SDK</name>
+      <category>sdk</category>
+      <documents>
+        <doc_ref>compass_artifact_wf-0ef10044-41fa-4d93-b50e-285cd1b935d1_text_markdown.md</doc_ref>
+      </documents>
+      <tags>windmill, rust, sdk, wmill, crate, anyhow, tokio</tags>
+    </entity>
+
+    <entity id="windmill_resources" type="feature">
+      <name>Resources</name>
+      <category>core_concepts</category>
+      <documents>
+        <doc_ref>compass_artifact_wf-0ef10044-41fa-4d93-b50e-285cd1b935d1_text_markdown.md</doc_ref>
+        <doc_ref>docs/windmill/DEPLOYMENT_GUIDE.md</doc_ref>
+      </documents>
+      <tags>windmill, resource, configuration, credentials</tags>
+    </entity>
+
+    <entity id="windmill_state" type="feature">
+      <name>State Management</name>
+      <category>core_concepts</category>
+      <documents>
+        <doc_ref>compass_artifact_wf-0ef10044-41fa-4d93-b50e-285cd1b935d1_text_markdown.md</doc_ref>
+      </documents>
+      <tags>windmill, state, persistence, trigger, cursor</tags>
+    </entity>
+
+    <entity id="windmill_jobs" type="feature">
+      <name>Job Management</name>
+      <category>core_concepts</category>
+      <documents>
+        <doc_ref>compass_artifact_wf-0ef10044-41fa-4d93-b50e-285cd1b935d1_text_markdown.md</doc_ref>
+      </documents>
+      <tags>windmill, job, async, sync, wait, progress</tags>
+    </entity>
+
+    <entity id="windmill_deployment" type="feature">
+      <name>Deployment</name>
+      <category>deployment</category>
+      <documents>
+        <doc_ref>docs/windmill/DEPLOYMENT_GUIDE.md</doc_ref>
+      </documents>
+      <related_entities>
+        <entity_ref>staging_prod</entity_ref>
+        <entity_ref>wmill_cli</entity_ref>
+        <entity_ref>windmill_resources</entity_ref>
+      </related_entities>
+      <tags>windmill, deployment, devops, infrastructure, monitoring</tags>
+    </entity>
+
+    <entity id="oauth" type="feature">
+      <name>OAuth Authentication</name>
+      <category>integration</category>
+      <documents>
+        <doc_ref>docs/windmill/DEPLOYMENT_GUIDE.md</doc_ref>
+      </documents>
+      <tags>windmill, oauth, authentication, fatsecret, security</tags>
+    </entity>
+
+    <entity id="schedules" type="feature">
+      <name>Schedules</name>
+      <category>core_concepts</category>
+      <documents>
+        <doc_ref>docs/windmill/DEPLOYMENT_GUIDE.md</doc_ref>
+      </documents>
+      <tags>windmill, schedule, cron, trigger, automation</tags>
+    </entity>
+  </entities>
+
+  <dag>
+    <!-- Directed Acyclic Graph showing relationships -->
+    <nodes>
+      <node id="retries" layer="1" category="flows"/>
+      <node id="error_handler" layer="1" category="flows"/>
+      <node id="for_loops" layer="1" category="flows"/>
+      <node id="flow_branches" layer="1" category="flows"/>
+      <node id="early_stop" layer="1" category="flows"/>
+      <node id="step_mocking" layer="1" category="flows"/>
+      <node id="caching" layer="2" category="core_concepts"/>
+      <node id="concurrency_limits" layer="2" category="core_concepts"/>
+      <node id="job_debouncing" layer="2" category="core_concepts"/>
+      <node id="staging_prod" layer="2" category="core_concepts"/>
+      <node id="multiplayer" layer="2" category="core_concepts"/>
+      <node id="wmill_cli" layer="3" category="cli"/>
+      <node id="python_client" layer="3" category="clients"/>
+      <node id="rust_sdk" layer="3" category="sdk"/>
+      <node id="windmill_deployment" layer="4" category="deployment"/>
+    </nodes>
+
+    <edges>
+      <!-- Flow control relationships -->
+      <edge from="retries" to="error_handler" type="uses"/>
+      <edge from="flow_branches" to="error_handler" type="can-trigger"/>
+      <edge from="retries" to="flow_branches" type="continues-on"/>
+      <edge from="for_loops" to="early_stop" type="can-break"/>
+      <edge from="for_loops" to="flow_branches" type="can-branch"/>
+      <edge from="step_mocking" to="caching" type="related-to"/>
+
+      <!-- CLI integration -->
+      <edge from="wmill_cli" to="staging_prod" type="deploys-to"/>
+      <edge from="wmill_cli" to="windmill_resources" type="manages"/>
+      <edge from="python_client" to="windmill_resources" type="accesses"/>
+      <edge from="rust_sdk" to="windmill_resources" type="accesses"/>
+
+      <!-- Deployment relationships -->
+      <edge from="staging_prod" to="windmill_deployment" type="part-of"/>
+      <edge from="wmill_cli" to="windmill_deployment" type="enables"/>
+      <edge from="windmill_resources" to="windmill_deployment" type="required-for"/>
+      <edge from="oauth" to="windmill_deployment" type="required-for"/>
+      <edge from="schedules" to="windmill_deployment" type="part-of"/>
+    </edges>
+  </dag>
+
+  <documents>
+    <document id="docs/windmill/flows/14_retries.md">
+      <xml_metadata>
+        <![CDATA[
+          <doc_metadata>
+            <type>reference</type>
+            <category>flows</category>
+            <title>Retries</title>
+            <description>Configure retry logic for flow steps with constant delays or exponential backoff</description>
+            <created_at>2025-12-28T00:00:00Z</created_at>
+            <updated_at>2025-12-29T00:00:00Z</updated_at>
+            <language>en</language>
+            <sections count="4">
+              <section name="Constant retries" level="2"/>
+              <section name="Exponential backoff enabled" level="2"/>
+              <section name="Continue on error with error as step's return" level="2"/>
+            </sections>
+            <features>
+              <feature>retries</feature>
+              <feature>exponential_backoff</feature>
+              <feature>constant_retry</feature>
+              <feature>error_continuation</feature>
+            </features>
+            <dependencies>
+              <dependency type="feature">error_handler</dependency>
+              <dependency type="feature">flow_branches</dependency>
+            </dependencies>
+            <examples count="3">
+              <example>API requests</example>
+              <example>Payment processing</example>
+              <example>Batch processing</example>
+            </examples>
+            <difficulty_level>intermediate</difficulty_level>
+            <estimated_reading_time>5</estimated_reading_time>
+          </doc_metadata>
+        ]]>
+      </xml_metadata>
+    </document>
+
+    <document id="docs/windmill/DEPLOYMENT_GUIDE.md">
+      <xml_metadata>
+        <![CDATA[
+          <doc_metadata>
+            <type>guide</type>
+            <category>deployment</category>
+            <title>Windmill Deployment Guide</title>
+            <description>Complete guide for deploying meal-planner Windmill infrastructure including resources, variables, schedules, OAuth, and monitoring</description>
+            <created_at>2025-12-28T00:00:00Z</created_at>
+            <updated_at>2025-12-29T00:00:00Z</updated_at>
+            <language>en</language>
+            <sections count="9">
+              <section name="Prerequisites" level="1"/>
+              <section name="Windmill Setup" level="1"/>
+              <section name="Resources Configuration" level="1"/>
+              <section name="Variables and Secrets" level="1"/>
+              <section name="Schedules" level="1"/>
+              <section name="OAuth Configuration" level="1"/>
+              <section name="Database Migrations" level="1"/>
+              <section name="Monitoring and Alerting" level="1"/>
+              <section name="Runbook: Common Issues" level="1"/>
+            </sections>
+            <features>
+              <feature>wmill_cli</feature>
+              <feature>windmill_resources</feature>
+              <feature>oauth</feature>
+              <feature>schedules</feature>
+              <feature>monitoring</feature>
+              <feature>troubleshooting</feature>
+            </features>
+            <dependencies>
+              <dependency type="tool">wmill_cli</dependency>
+              <dependency type="service">postgres</dependency>
+              <dependency type="service">tandoor</dependency>
+              <dependency type="service">fatsecret</dependency>
+            </dependencies>
+            <code_examples count="15"/>
+            <difficulty_level>advanced</difficulty_level>
+            <estimated_reading_time>30</estimated_reading_time>
+          </doc_metadata>
+        ]]>
+      </xml_metadata>
+    </document>
+
+    <document id="compass_artifact_wf-0ef10044-41fa-4d93-b50e-285cd1b935d1_text_markdown.md">
+      <xml_metadata>
+        <![CDATA[
+          <doc_metadata>
+            <type>reference</type>
+            <category>sdk</category>
+            <title>Windmill Rust SDK: Complete Reference Guide</title>
+            <description>Complete reference guide for Windmill Rust scripts including SDK fundamentals, patterns, resources, state, and job management</description>
+            <created_at>2025-12-28T00:00:00Z</created_at>
+            <updated_at>2025-12-29T00:00:00Z</updated_at>
+            <language>en</language>
+            <sections count="10">
+              <section name="SDK fundamentals and crate setup" level="1"/>
+              <section name="Main function signature patterns" level="1"/>
+              <section name="Return types and output serialization" level="1"/>
+              <section name="Resource and secret access" level="1"/>
+              <section name="State management between runs" level="1"/>
+              <section name="Calling other scripts and managing jobs" level="1"/>
+              <section name="Error handling patterns" level="1"/>
+              <section name="Flow composition and data passing" level="1"/>
+              <section name="Complete code examples" level="1"/>
+              <section name="Limitations compared to TypeScript and Python" level="1"/>
+            </sections>
+            <features>
+              <feature>rust_sdk</feature>
+              <feature>wmill</feature>
+              <feature>windmill_resources</feature>
+              <feature>windmill_state</feature>
+              <feature>windmill_jobs</feature>
+              <feature>error_handling</feature>
+              <feature>flow_composition</feature>
+            </features>
+            <dependencies>
+              <dependency type="crate">wmill</dependency>
+              <dependency type="crate">tokio</dependency>
+              <dependency type="crate">anyhow</dependency>
+              <dependency type="crate">serde</dependency>
+            </dependencies>
+            <code_examples count="10"/>
+            <difficulty_level>advanced</difficulty_level>
+            <estimated_reading_time>20</estimated_reading_time>
+          </doc_metadata>
+        ]]>
+      </xml_metadata>
+    </document>
+  </documents>
+
+  <search_index>
+    <!-- Pre-computed search terms for fast lookup -->
+    <term_mappings>
+      <term>retry</term>
+      <term>retries</term>
+      <term>error</term>
+      <term>handler</term>
+      <term>loop</term>
+      <term>branch</term>
+      <term>flow</term>
+      <term>timeout</term>
+      <term>sleep</term>
+      <term>delay</term>
+      <term>mock</term>
+      <term>pin</term>
+      <term>cache</term>
+      <term>concurrency</term>
+      <term>debounce</term>
+      <term>deploy</term>
+      <term>staging</term>
+      <term>prod</term>
+      <term>cli</term>
+      <term>wmill</term>
+      <term>rust</term>
+      <term>sdk</term>
+      <term>resource</term>
+      <term>variable</term>
+      <term>schedule</term>
+      <term>cron</term>
+      <term>oauth</term>
+      <term>state</term>
+      <term>job</term>
+      <term>async</term>
+      <term>sync</term>
+    </term_mappings>
+
+    <entity_search>
+      <entry term="retry" entities="retries,error_handler"/>
+      <entry term="error" entities="error_handler,retries"/>
+      <entry term="loop" entities="for_loops,early_stop"/>
+      <entry term="branch" entities="flow_branches,for_loops"/>
+      <entry term="cache" entities="caching,step_mocking"/>
+      <entry term="deploy" entities="staging_prod,windmill_deployment,wmill_cli"/>
+      <entry term="cli" entities="wmill_cli,python_client"/>
+      <entry term="rust" entities="rust_sdk"/>
+      <entry term="oauth" entities="oauth"/>
+      <entry term="schedule" entities="schedules,wmill_cli"/>
+      <entry term="resource" entities="windmill_resources,wmill_cli,rust_sdk,python_client"/>
+      <entry term="job" entities="windmill_jobs,job_debouncing,retries"/>
+      <entry term="async" entities="windmill_jobs,rust_sdk,python_client"/>
+    </entity_search>
+  </search_index>
+
+  <rag_chunks>
+    <!-- Reuse existing RAG chunks with improved metadata -->
+    <chunk id="windmill_retries_constant">
+      <document>docs/windmill/flows/14_retries.md</document>
+      <content>## Constant retries
+
+From the `Advanced` menu, pick `Retries` and toggle `Constant retry enabled`.
+From there, define a maximum number of attempts and a given delay.
+Although the delay is set in seconds, inputs can be given in minutes, hours or days.</content>
+      <section_hierarchy>
+        <level>Retries</level>
+        <level>Constant retries</level>
+      </section_hierarchy>
+      <entities>
+        <entity>retries</entity>
+        <entity>constant_retry</entity>
+      </entities>
+      <tags>windmill,retries,constant,delay,attempts,flow,step</tags>
+      <embedding_text>Windmill constant retries retry step fixed delay seconds attempts maximum Advanced menu toggle enabled</embedding_text>
+      <dag_context>
+        <prerequisites/>
+        <dependents>
+          <dependent>error_handler</dependent>
+          <dependent>flow_branches</dependent>
+        </dependents>
+      </dag_context>
+    </chunk>
+  </rag_chunks>
+</documentation_index>

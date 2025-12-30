@@ -1,3 +1,36 @@
+<!--
+<doc_metadata>
+  <type>reference</type>
+  <category>flows</category>
+  <title>Step Mocking</title>
+  <description>Mock flow steps for faster development iteration</description>
+  <created_at>2025-12-28T00:00:00Z</created_at>
+  <updated_at>2025-12-29T00:00:00Z</updated_at>
+  <language>en</language>
+  <sections count="3">
+    <section name="Step mocking / Pin result" level="1"/>
+    <section name="Mocking vs Pinning" level="2"/>
+    <section name="Accessing step results" level="2"/>
+  </sections>
+  <features>
+    <feature>step_mocking</feature>
+    <feature>pin_result</feature>
+    <feature>development_iteration</feature>
+    <feature>history_exploration</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature">caching</dependency>
+  </dependencies>
+  <examples count="2">
+    <example>Pin successful run result</example>
+    <example>Mock step with custom value</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>4</estimated_reading_time>
+  <tags>windmill,mock,pin,result,development,testing,iteration,cache</tags>
+</doc_metadata>
+-->
+
 # Step mocking / Pin result
 
 Step mocking and pinning results allows faster iteration while building flows. When a step is mocked or pinned, it will immediately return the specified value without performing any computation.

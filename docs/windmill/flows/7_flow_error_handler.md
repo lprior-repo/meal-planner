@@ -1,3 +1,33 @@
+<!--
+<doc_metadata>
+  <type>reference</type>
+  <category>flows</category>
+  <title>Error Handler</title>
+  <description>Special flow step executed when an error occurs in flow</description>
+  <created_at>2025-12-28T00:00:00Z</created_at>
+  <updated_at>2025-12-29T00:00:00Z</updated_at>
+  <language>en</language>
+  <sections count="1">
+    <section name="Error handler" level="1"/>
+  </sections>
+  <features>
+    <feature>error_handler</feature>
+    <feature>retries</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature">retries</dependency>
+    <dependency type="feature">flow_branches</dependency>
+  </dependencies>
+  <examples count="2">
+    <example>Slack error handler</example>
+    <example>Discord error handler</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>4</estimated_reading_time>
+  <tags>windmill,error,handler,flow,step,retry,fail,slack,discord</tags>
+</doc_metadata>
+-->
+
 # Error handler
 
 The error handler is a special flow step that is executed when an error occurs in the flow.

@@ -1,3 +1,38 @@
+<!--
+<doc_metadata>
+  <type>reference</type>
+  <category>flows</category>
+  <title>Retries</title>
+  <description>Configure retry logic for flow steps with constant delays or exponential backoff</description>
+  <created_at>2025-12-28T00:00:00Z</created_at>
+  <updated_at>2025-12-29T00:00:00Z</updated_at>
+  <language>en</language>
+  <sections count="4">
+    <section name="Constant retries" level="2"/>
+    <section name="Exponential backoff enabled" level="2"/>
+    <section name="Continue on error with error as step's return" level="2"/>
+  </sections>
+  <features>
+    <feature>retries</feature>
+    <feature>exponential_backoff</feature>
+    <feature>constant_retry</feature>
+    <feature>error_continuation</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature">error_handler</dependency>
+    <dependency type="feature">flow_branches</dependency>
+  </dependencies>
+  <examples count="3">
+    <example>API requests</example>
+    <example>Payment processing</example>
+    <example>Batch processing</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>5</estimated_reading_time>
+  <tags>windmill,retries,error-handling,exponential-backoff,constant-retry</tags>
+</doc_metadata>
+-->
+
 # Retries
 
 Steps within a flow can be re-tried in case of error. This feature is useful to keep a flow trying to execute even if a step momentarily failed.

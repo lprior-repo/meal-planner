@@ -6,6 +6,95 @@ This document describes how to work with AI agents in the meal-planner project u
 
 The meal-planner project uses **Beads** (bd) for issue tracking, dependency management, and agent coordination. All work must go through Beads to ensure proper tracking and visibility.
 
+## Documentation Indexing System
+
+The project uses **Anthropic XML best practices** combined with **DAG-based referencing** for documentation indexing. This system makes documentation super easy to find, navigate, and use for AI coding agents.
+
+### Key Files
+
+- **`docs/windmill/DOCUMENTATION_INDEX.xml`** - Master XML index with entities, DAG, and RAG chunks
+- **`docs/windmill/INDEXED_KNOWLEDGE.json`** - JSON programmatic access with DAG structure
+- **`docs/windmill/INDEXING_SYSTEM.md`** - Complete system documentation
+- **XML Metadata** in all docs - Structured headers with type, category, difficulty, dependencies
+
+### XML Metadata Schema
+
+Each document includes structured XML metadata:
+
+```xml
+<doc_metadata>
+  <type>reference|guide|tutorial</type>
+  <category>flows|core_concepts|cli|sdk|deployment</category>
+  <title>Document Title</title>
+  <description>Brief description</description>
+  <created_at>ISO-8601 timestamp</created_at>
+  <updated_at>ISO-8601 timestamp</updated_at>
+  <language>en</language>
+  <sections count="N">
+    <section name="Section Name" level="1|2|3"/>
+  </sections>
+  <features>
+    <feature>feature_name</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature|tool|service|crate">dependency_id</dependency>
+  </dependencies>
+  <examples count="N">
+    <example>Example description</example>
+  </examples>
+  <difficulty_level>beginner|intermediate|advanced</difficulty_level>
+  <estimated_reading_time>minutes</estimated_reading_time>
+  <tags>tag1,tag2,tag3</tags>
+</doc_metadata>
+```
+
+### DAG Structure
+
+Documents are organized in 4 layers:
+
+1. **Layer 1**: Flow Control Features (retries, error_handler, for_loops, flow_branches, early_stop, step_mocking, sleep, priority, lifetime)
+2. **Layer 2**: Core Concepts (caching, concurrency_limits, job_debouncing, staging_prod, multiplayer)
+3. **Layer 3**: Tools & SDKs (wmill_cli, python_client, rust_sdk)
+4. **Layer 4**: Deployment (windmill_deployment, oauth, schedules)
+
+### Relationship Types
+
+- `uses` - Feature A uses Feature B
+- `can-trigger` - Feature A can trigger Feature B
+- `continues-on` - Feature A continues to Feature B
+- `deploys-to` - Tool A deploys to Feature B
+- `accesses` - Tool/SDK A accesses Feature B
+- `part-of` - Feature A is part of Feature B
+- `required-for` - Feature A is required for Feature B
+
+### Adding New Documentation
+
+When adding new documentation:
+
+1. Add XML metadata header to markdown file
+2. Update `DOCUMENTATION_INDEX.xml` with new entity
+3. Add DAG node and edges if applicable
+4. Update `INDEXED_KNOWLEDGE.json` with document metadata
+5. Regenerate RAG chunks if needed
+
+See `docs/windmill/INDEXING_SYSTEM.md` for complete guidelines.
+
+### CodeAnna Integration
+
+The project uses CodeAnna for AI-assisted coding. CodeAnna has indexed the repository and provides context-aware assistance.
+
+- **Indexed**: All source code, documentation, and configuration files
+- **Context**: Full understanding of codebase architecture and patterns
+- **Available**: Run `anna help` or `anna <command>` for assistance
+
+### Best Practices
+
+1. **Use XML Metadata**: When creating or editing docs, follow the XML schema
+2. **Follow DAG Relationships**: Reference related features via DAG edges
+3. **Consult Index Files**: Use DOCUMENTATION_INDEX.xml and INDEXED_KNOWLEDGE.json for navigation
+4. **Query Properly**: Use entity names and tags from the index for relevant information
+5. **Maintain Index**: Keep index files up to date when adding/modifying docs
+
 ## Working with Beads
 
 ### Creating Issues

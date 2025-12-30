@@ -1,3 +1,39 @@
+<!--
+<doc_metadata>
+  <type>reference</type>
+  <category>core_concepts</category>
+  <title>Staging/Production Deployment</title>
+  <description>Deploy items between workspaces (staging to production)</description>
+  <created_at>2025-12-28T00:00:00Z</created_at>
+  <updated_at>2025-12-29T00:00:00Z</updated_at>
+  <language>en</language>
+  <sections count="4">
+    <section name="Deploy to prod using the UI" level="1"/>
+    <section name="How it works" level="2"/>
+    <section name="Items are called" level="2"/>
+    <section name="Shareable page" level="2"/>
+  </sections>
+  <features>
+    <feature>staging_prod</feature>
+    <feature>deployment</feature>
+    <feature>workspace_sync</feature>
+    <feature>version_management</feature>
+    <feature>diff_viewer</feature>
+  </features>
+  <dependencies>
+    <dependency type="tool">wmill_cli</dependency>
+    <dependency type="feature">enterprise_edition</dependency>
+  </dependencies>
+  <examples count="2">
+    <example>Deploy from dev to staging to prod</example>
+    <example>Shareable deployment pages for operators</example>
+  </examples>
+  <difficulty_level>intermediate</difficulty_level>
+  <estimated_reading_time>6</estimated_reading_time>
+  <tags>windmill,deploy,staging,prod,workspace,sync,version,diff</tags>
+</doc_metadata>
+-->
+
 # Deploy to prod using the UI
 
 From a workspace in Windmill, you can deploy a item and all its dependencies to another workspace. This is a natural way of implementing staging/prod. This feature is available for [Cloud plans and Self-Hosted Enterprise Edition](/pricing) only.

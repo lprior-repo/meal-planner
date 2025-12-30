@@ -1,3 +1,38 @@
+<!--
+<doc_metadata>
+  <type>reference</type>
+  <category>flows</category>
+  <title>Sleep/Delays</title>
+  <description>Suspend flow execution for a specified duration</description>
+  <created_at>2025-12-28T00:00:00Z</created_at>
+  <updated_at>2025-12-29T00:00:00Z</updated_at>
+  <language>en</language>
+  <sections count="3">
+    <section name="Sleeps / Delays in flows" level="1"/>
+    <section name="How to do it" level="2"/>
+    <section name="Keep control of slept steps" level="2"/>
+  </sections>
+  <features>
+    <feature>sleep</feature>
+    <feature>delay</feature>
+    <feature>passive_execution</feature>
+  </features>
+  <dependencies>
+    <dependency type="feature">scheduling</dependency>
+    <dependency type="feature">flow_approval</dependency>
+  </dependencies>
+  <examples count="4">
+    <example>Customer relations welcome delay</example>
+    <example>Support ticketing escalation delay</example>
+    <example>Cybersecurity threat analysis delay</example>
+    <example>Content moderation review delay</example>
+  </examples>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>3</estimated_reading_time>
+  <tags>windmill,sleep,delay,pause,suspend,flow,passive</tags>
+</doc_metadata>
+-->
+
 # Sleeps / Delays in flows
 
 Executions within a flow can be suspended for a given time.

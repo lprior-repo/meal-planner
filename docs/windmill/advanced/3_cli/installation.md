@@ -1,3 +1,40 @@
+<!--
+<doc_metadata>
+  <type>reference</type>
+  <category>cli</category>
+  <title>Windmill CLI Installation</title>
+  <description>Install and configure Windmill CLI</description>
+  <created_at>2025-12-28T00:00:00Z</created_at>
+  <updated_at>2025-12-29T00:00:00Z</updated_at>
+  <language>en</language>
+  <sections count="5">
+    <section name="Installation" level="1"/>
+    <section name="Upgrade wmill" level="2"/>
+    <section name="Completion" level="2"/>
+    <section name="Bash" level="3"/>
+    <section name="Zsh" level="3"/>
+    <section name="Fish" level="3"/>
+  </sections>
+  <features>
+    <feature>wmill_cli</feature>
+    <feature>installation</feature>
+    <feature>shell_completions</feature>
+    <feature>upgrade</feature>
+  </features>
+  <dependencies>
+    <dependency type="platform">node</dependency>
+  </dependencies>
+  <examples count="3">
+    <example>Install wmill CLI</example>
+    <example>Enable bash completions</example>
+    <example>Upgrade to latest version</example>
+  </examples>
+  <difficulty_level>beginner</difficulty_level>
+  <estimated_reading_time>3</estimated_reading_time>
+  <tags>windmill,cli,wmill,install,node,npm,upgrade,completions,bash,zsh,fish</tags>
+</doc_metadata>
+-->
+
 # Installation
 
 <iframe
