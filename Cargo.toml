@@ -67,6 +67,14 @@ path = "src/bin/fatsecret_oauth_complete.rs"
 name = "fatsecret_get_profile"
 path = "src/bin/fatsecret_get_profile.rs"
 
+[[bin]]
+name = "tandoor_scrape_recipe"
+path = "src/bin/tandoor_scrape_recipe.rs"
+
+[[bin]]
+name = "tandoor_create_recipe"
+path = "src/bin/tandoor_create_recipe.rs"
+
 [features]
 sqlx-cli = ["dep:sqlx-cli"]
 

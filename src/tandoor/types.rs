@@ -71,9 +71,13 @@ pub struct RecipeFromSourceRequest {
 /// Response from recipe import
 #[derive(Debug, Deserialize, Serialize)]
 pub struct RecipeFromSourceResponse {
-    pub recipe_json: Option<SourceImportRecipe>,
+    /// Recipe data (API returns "recipe", aliased from legacy "recipe_json")
+    #[serde(alias = "recipe_json")]
+    pub recipe: Option<SourceImportRecipe>,
     pub recipe_tree: Option<serde_json::Value>,
-    pub recipe_images: Option<Vec<String>>,
+    /// Images from the scraped page
+    #[serde(alias = "recipe_images")]
+    pub images: Option<Vec<String>>,
     #[serde(default)]
     pub error: bool,
     #[serde(default)]

@@ -2,7 +2,7 @@
 # https://mise.jdx.dev/
 
 [tools]
-rust = "1.92"
+rust = "nightly"
 mold = "latest"
 sccache = "latest"
 cargo-binstall = "latest"

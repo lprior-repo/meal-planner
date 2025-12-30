@@ -1,0 +1,67 @@
+summary: Import recipe from URL
+description: |
+  Scrapes a recipe from URL using Tandoor's built-in scraper,
+  derives a source tag from the domain, and creates the recipe
+  with auto-tagging.
+value:
+  modules:
+    - id: scrape
+      value:
+        type: script
+        path: f/tandoor/scrape_recipe
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor
+          url:
+            type: javascript
+            expr: flow_input.url
+
+    - id: derive_source_tag
+      value:
+        type: rawscript
+        language: python3
+        content: |
+          from urllib.parse import urlparse
+
+          def main(url: str) -> str:
+              domain = urlparse(url).netloc
+              # meatchurch.com -> meat-church
+              # seriouseats.com -> serious-eats
+              return domain.replace("www.", "").replace(".com", "").replace(".", "-")
+        input_transforms:
+          url:
+            type: javascript
+            expr: flow_input.url
+
+    - id: create
+      value:
+        type: script
+        path: f/tandoor/create_recipe
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor
+          recipe:
+            type: javascript
+            expr: results.scrape.recipe_json
+          additional_keywords:
+            type: javascript
+            expr: |
+              [results.derive_source_tag].concat(flow_input.additional_keywords || [])
+
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    url:
+      type: string
+      description: Recipe URL to import
+    additional_keywords:
+      type: array
+      items:
+        type: string
+      description: Additional keywords to add
+      default: []
+  required:
+    - url

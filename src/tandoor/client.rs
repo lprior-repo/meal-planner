@@ -211,7 +211,7 @@ impl TandoorClient {
         }
 
         // Extract the recipe data
-        let recipe_json = match scraped.recipe_json {
+        let recipe_json = match scraped.recipe {
             Some(r) => r,
             None => {
                 return Ok(RecipeImportResult {
