@@ -1,0 +1,19 @@
+{
+  "type": "tandoor",
+  "description": "Tandoor Recipes API connection",
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "base_url": {
+        "type": "string",
+        "description": "Base URL of the Tandoor instance (e.g., http://192.168.150.177:8090)"
+      },
+      "api_token": {
+        "type": "string",
+        "description": "Tandoor API token (starts with tda_)"
+      }
+    },
+    "required": ["base_url", "api_token"]
+  }
+}
