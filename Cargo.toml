@@ -47,10 +47,17 @@ path = "src/mod.rs"
 name = "tandoor_test_connection"
 path = "src/bin/tandoor_test_connection.rs"
 
-# TODO: Port FatSecret binaries
-# [[bin]]
-# name = "fatsecret_oauth_auth"
-# path = "src/bin/fatsecret_oauth_auth.rs"
+[[bin]]
+name = "fatsecret_oauth_start"
+path = "src/bin/fatsecret_oauth_start.rs"
+
+[[bin]]
+name = "fatsecret_oauth_callback"
+path = "src/bin/fatsecret_oauth_callback.rs"
+
+[[bin]]
+name = "fatsecret_get_token"
+path = "src/bin/fatsecret_get_token.rs"
 
 [features]
 sqlx-cli = ["dep:sqlx-cli"]

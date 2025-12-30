@@ -18,6 +18,16 @@ TANDOOR_API_TOKEN = "{{exec(command='pass show meal-planner/tandoor/api_token')}
 WINDMILL_API_URL = "{{exec(command='pass show meal-planner/windmill/api_url')}}"
 WINDMILL_TOKEN = "{{exec(command='pass show meal-planner/windmill/token')}}"
 
+# FatSecret API configuration (from pass)
+FATSECRET_CONSUMER_KEY = "{{exec(command='pass show meal-planner/fatsecret/consumer_key')}}"
+FATSECRET_CONSUMER_SECRET = "{{exec(command='pass show meal-planner/fatsecret/consumer_secret')}}"
+
+# OAuth token encryption key (from pass) - 64 hex chars for AES-256
+OAUTH_ENCRYPTION_KEY = "{{exec(command='pass show meal-planner/fatsecret/oauth_encryption_key')}}"
+
+# Database configuration (from pass)
+DATABASE_URL = "{{exec(command='pass show meal-planner/database/url')}}"
+
 [tasks.test]
 description = "Run all tests"
 run = "cargo test"
