@@ -1,0 +1,68 @@
+summary: FatSecret OAuth Setup
+description: Connect to FatSecret API via OAuth
+value:
+  modules:
+    - id: a
+      summary: Get authorization URL
+      value:
+        type: script
+        path: f/fatsecret/oauth_start
+        input_transforms:
+          fatsecret:
+            type: static
+            value: '$res:u/admin/fatsecret_api'
+          callback_url:
+            type: static
+            value: 'oob'
+
+    - id: b
+      summary: Enter verifier code from FatSecret
+      suspend:
+        required_events: 1
+        timeout: 900
+      value:
+        type: rawscript
+        language: deno
+        content: |
+          export async function main(auth_url: string) {
+            return {
+              instructions: `1. Visit this URL: ${auth_url}\n2. Authorize the app\n3. Copy the verifier code\n4. Click Resume and enter the code`,
+              auth_url: auth_url
+            };
+          }
+        input_transforms:
+          auth_url:
+            type: javascript
+            expr: results.a.auth_url
+
+    - id: c
+      summary: Complete OAuth exchange
+      value:
+        type: script
+        path: f/fatsecret/oauth_complete
+        input_transforms:
+          fatsecret:
+            type: static
+            value: '$res:u/admin/fatsecret_api'
+          oauth_verifier:
+            type: javascript
+            expr: resume.verifier
+
+    - id: d
+      summary: Verify connection
+      value:
+        type: script
+        path: f/fatsecret/get_profile
+        input_transforms:
+          fatsecret:
+            type: static
+            value: '$res:u/admin/fatsecret_api'
+
+  same_worker: false
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  order: []
+  properties: {}
+  required: []
+ws_error_handler_muted: false
