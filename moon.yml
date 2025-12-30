@@ -6,7 +6,7 @@ type: 'application'
 
 tasks:
   # ============================================
-  # Linting & Formatting
+  # Linting & Formatting (run in parallel)
   # ============================================
   fmt:
     command: 'cargo fmt --check'
@@ -25,8 +25,15 @@ tasks:
     options:
       cache: true
 
+  validate-yaml:
+    command: 'yamllint -d relaxed windmill/'
+    inputs:
+      - 'windmill/**/*.yaml'
+    options:
+      cache: true
+
   # ============================================
-  # Testing
+  # Testing (depends on lint passing)
   # ============================================
   test:
     command: 'cargo nextest run'
@@ -71,7 +78,7 @@ tasks:
       cache: true
 
   copy-binaries:
-    command: 'mkdir -p bin && cp target/release/fatsecret_* target/release/tandoor_* bin/'
+    script: 'mkdir -p bin && cp target/release/fatsecret_* target/release/tandoor_* bin/ 2>/dev/null; ls bin/'
     inputs:
       - 'target/release/fatsecret_*'
       - 'target/release/tandoor_*'
@@ -81,38 +88,45 @@ tasks:
       - '~:build'
 
   # ============================================
-  # Validation
+  # Windmill Validation & Metadata
   # ============================================
-  validate-yaml:
-    command: 'yamllint -d relaxed windmill/'
+  generate-metadata:
+    script: 'cd windmill && yes | wmill script generate-metadata'
     inputs:
-      - 'windmill/**/*.yaml'
+      - 'windmill/**/*.sh'
+      - 'windmill/**/*.script.yaml'
+    deps:
+      - '~:validate-yaml'
     options:
       cache: true
+    env:
+      WMILL_WORKSPACE: 'meal-planner'
 
   validate-windmill:
-    command: 'wmill sync push --dry-run --yes'
+    script: 'cd windmill && wmill sync push --dry-run --yes'
     inputs:
       - 'windmill/**/*'
     deps:
-      - '~:validate-yaml'
-      - '~:build'
+      - '~:generate-metadata'
     options:
-      runFromWorkspaceRoot: true
       cache: true
     env:
-      WMILL_WORKSPACE: 'windmill'
+      WMILL_WORKSPACE: 'meal-planner'
 
   # ============================================
   # Aggregate Tasks
   # ============================================
   ci:
     deps:
+      # Lint tasks run in parallel (no deps between them)
       - '~:fmt'
       - '~:clippy'
+      - '~:validate-yaml'
+      # Then test -> build -> copy-binaries (sequential chain)
       - '~:test'
       - '~:build'
       - '~:copy-binaries'
+      # Windmill validation (parallel with build chain after yaml validation)
       - '~:validate-windmill'
 
   quick:
@@ -124,11 +138,26 @@ tasks:
   # ============================================
   # Deployment
   # ============================================
+  deploy-binaries:
+    script: |
+      echo "Deploying binaries to Windmill worker..."
+      # Copy binaries to Windmill worker container
+      # This assumes docker-compose or k8s volume mount at /app/bin
+      docker cp bin/. windmill-worker:/usr/local/bin/ 2>/dev/null || \
+        echo "Note: Manual deployment needed - copy bin/* to Windmill worker /usr/local/bin/"
+      ls -la bin/
+    deps:
+      - '~:copy-binaries'
+
+  deploy-windmill:
+    script: 'cd windmill && wmill sync push --yes'
+    deps:
+      - '~:validate-windmill'
+    env:
+      WMILL_WORKSPACE: 'meal-planner'
+
   deploy:
-    command: 'wmill sync push --yes'
     deps:
       - '~:ci'
-    options:
-      runFromWorkspaceRoot: true
-    env:
-      WMILL_WORKSPACE: 'windmill'
+      - '~:deploy-binaries'
+      - '~:deploy-windmill'

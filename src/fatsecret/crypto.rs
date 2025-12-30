@@ -169,11 +169,11 @@ mod tests {
 
     #[test]
     fn test_generate_key_unique_unsafe() {
-        unsafe {
-            let key1 = generate_key();
-            let key2 = generate_key();
-            assert_ne!(key1, key2);
-        }
+        // Note: This test was previously wrapped in unsafe block unnecessarily
+        // generate_key() is not unsafe, so the block was removed
+        let key1 = generate_key();
+        let key2 = generate_key();
+        assert_ne!(key1, key2);
     }
 
     #[test]

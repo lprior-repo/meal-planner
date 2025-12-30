@@ -23,3 +23,5 @@ nonDottedPaths: true
 gitBranches:
   HEAD:
     overrides: {}
+  main:
+    overrides: {}

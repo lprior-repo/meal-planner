@@ -1,5 +1,6 @@
 summary: Complete FatSecret OAuth flow
 description: Exchanges the request token for an access token
+language: bash
 kind: script
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
@@ -9,9 +10,13 @@ schema:
       type: object
       description: FatSecret API credentials
       format: resource-fatsecret
+    oauth_token:
+      type: string
+      description: OAuth token from oauth_start step
     oauth_verifier:
       type: string
       description: Verification code from FatSecret authorization
   required:
     - fatsecret
+    - oauth_token
     - oauth_verifier

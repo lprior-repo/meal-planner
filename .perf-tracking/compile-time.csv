@@ -1,2 +1,0 @@
-timestamp,commit_hash,commit_number,branch,build_type,target,duration_ms,modules_compiled,warning_count,error_count,notes
-2025-12-28T15:04:18Z,a6db6ad09c8f8cf9a622ed409cd835e9fa031ee6,1728,main,clean,erlang,[0;34m[INFO][0m Measuring clean compilation for target: erlang...,,,,
