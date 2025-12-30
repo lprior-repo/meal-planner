@@ -1,0 +1,5 @@
+description: Tandoor Recipes API credentials
+value:
+  api_token: $var:u/admin/tandoor_api_token
+  base_url: $var:u/admin/tandoor_base_url
+resource_type: tandoor

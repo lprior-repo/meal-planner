@@ -1,0 +1,13 @@
+summary: Get FatSecret user profile
+description: Retrieves the authenticated user's profile
+kind: script
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    fatsecret:
+      type: object
+      description: FatSecret API credentials
+      format: resource-fatsecret
+  required:
+    - fatsecret

@@ -1,0 +1,13 @@
+summary: Verify Tandoor connection
+description: Tests API authentication and returns recipe count
+kind: script
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    tandoor:
+      type: object
+      description: Tandoor API credentials
+      format: resource-tandoor
+  required:
+    - tandoor

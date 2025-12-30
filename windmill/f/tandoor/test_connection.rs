@@ -1,3 +1,5 @@
+//! Verify Tandoor API connection
+//!
 //! ```cargo
 //! [dependencies]
 //! anyhow = "1.0"
@@ -17,6 +19,7 @@ pub struct TandoorConfig {
 #[derive(Serialize)]
 pub struct Output {
     pub success: bool,
+    pub recipe_count: Option<i64>,
     pub message: String,
 }
 
@@ -25,12 +28,16 @@ fn main(tandoor: TandoorConfig) -> anyhow::Result<Output> {
     
     let resp = ureq::get(&url)
         .set("Authorization", &format!("Bearer {}", tandoor.api_token))
-        .set("Host", "localhost")
         .call()?
         .into_string()?;
     
+    // Try to parse and get count
+    let json: serde_json::Value = serde_json::from_str(&resp)?;
+    let count = json.get("count").and_then(|v| v.as_i64());
+    
     Ok(Output {
         success: true,
-        message: format!("Connected! Response length: {} chars", resp.len()),
+        recipe_count: count,
+        message: "Connected to Tandoor".to_string(),
     })
 }

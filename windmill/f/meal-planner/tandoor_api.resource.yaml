@@ -1,5 +1,0 @@
-description: Tandoor instance in Docker
-value:
-  api_token: $var:f/meal-planner/tandoor_api_token
-  base_url: 'http://tandoor-web_recipes-1:80'
-resource_type: tandoor
