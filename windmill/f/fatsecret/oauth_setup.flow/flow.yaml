@@ -1,7 +1,8 @@
 summary: FatSecret OAuth Setup
-description: Connect to FatSecret API via OAuth
+description: Connect your FatSecret account
 value:
   modules:
+    # Step 1: Get the authorization URL from FatSecret
     - id: a
       summary: Get authorization URL
       value:
@@ -15,19 +16,43 @@ value:
             type: static
             value: 'oob'
 
+    # Step 2: Show auth link + verifier input form
+    # Uses minimal TypeScript to get resume URLs (required by Windmill)
     - id: b
-      summary: Enter verifier code from FatSecret
+      summary: Authorize and enter verifier
       suspend:
         required_events: 1
         timeout: 900
+        resume_form:
+          schema:
+            type: object
+            order:
+              - verifier
+            properties:
+              verifier:
+                type: string
+                title: Verifier Code
+                description: After authorizing, paste the code FatSecret displays
+            required:
+              - verifier
       value:
         type: rawscript
-        language: deno
+        language: bun
         content: |
+          import * as wmill from "windmill-client"
+
           export async function main(auth_url: string) {
+            const urls = await wmill.getResumeUrls("user");
             return {
-              instructions: `1. Visit this URL: ${auth_url}\n2. Authorize the app\n3. Copy the verifier code\n4. Click Resume and enter the code`,
-              auth_url: auth_url
+              resume: urls.resume,
+              cancel: urls.cancel,
+              description: {
+                render_all: [
+                  {
+                    markdown: `## Authorize FatSecret\n\n**[Click here to authorize](${auth_url})**\n\nAfter authorizing, FatSecret shows a verifier code.\nPaste it below and click Resume.`
+                  }
+                ]
+              }
             };
           }
         input_transforms:
@@ -35,8 +60,9 @@ value:
             type: javascript
             expr: results.a.auth_url
 
+    # Step 3: Exchange verifier for access token
     - id: c
-      summary: Complete OAuth exchange
+      summary: Complete OAuth
       value:
         type: script
         path: f/fatsecret/oauth_complete
@@ -48,6 +74,7 @@ value:
             type: javascript
             expr: resume.verifier
 
+    # Step 4: Verify it worked by fetching profile
     - id: d
       summary: Verify connection
       value:
@@ -59,10 +86,9 @@ value:
             value: '$res:u/admin/fatsecret_api'
 
   same_worker: false
+
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
-  order: []
   properties: {}
   required: []
-ws_error_handler_muted: false
