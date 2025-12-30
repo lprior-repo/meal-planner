@@ -1,0 +1,5 @@
+description: Tandoor instance in Docker
+value:
+  api_token: ***REMOVED***
+  base_url: 'http://tandoor-web_recipes-1:80'
+resource_type: tandoor

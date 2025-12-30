@@ -108,6 +108,9 @@ hive-mind-prompt-*.txt
 .perf-tracking/reports/
 target/
 
+# Compiled binaries
+bin/
+
 # Code indexing (regenerated on each run)
 .codanna/
 

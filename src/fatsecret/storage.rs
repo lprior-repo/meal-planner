@@ -195,13 +195,14 @@ impl TokenStorage {
 
         match result {
             Some(row) => {
-                let days_since = (Utc::now() - row.connected_at).num_days();
+                let duration = Utc::now().signed_duration_since(row.connected_at);
+                let days_since = duration.num_days();
 
                 if days_since < 365 {
                     Ok(TokenValidity::Valid)
                 } else {
                     Ok(TokenValidity::Old {
-                        days_since_connected: days_since,
+                        days_since_connected: days_since as i32,
                     })
                 }
             }
@@ -222,9 +223,9 @@ impl TokenStorage {
     /// Cleanup expired pending tokens
     ///
     /// Returns the number of tokens deleted.
-    pub async fn cleanup_expired_tokens(&self) -> Result<i64, StorageError> {
+    pub async fn cleanup_expired_tokens(&self) -> Result<u64, StorageError> {
         let result = sqlx::query!(
-            "DELETE FROM fatsecret_oauth_pending WHERE expires_at < NOW() RETURNING oauth_token",
+            "DELETE FROM fatsecret_oauth_pending WHERE expires_at < NOW()",
         )
         .execute(&self.db)
         .await

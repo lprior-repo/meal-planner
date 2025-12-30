@@ -1,10 +1,15 @@
-//! FatSecret SDK Library
+//! Meal Planner SDK Library
 //!
-//! This library provides a type-safe Rust client for the FatSecret API.
-//! Organized into modules: core (OAuth, HTTP), diary (food entries), foods (search).
+//! This library provides type-safe Rust clients for meal planning APIs.
+//!
+//! ## Modules
+//!
+//! - `fatsecret` - FatSecret API client (nutrition tracking)
+//! - `tandoor` - Tandoor Recipes API client (recipe management)
 
-// Re-export the fatsecret module
+// API client modules
 pub mod fatsecret;
+pub mod tandoor;
 
 // Re-export commonly used types for convenience
 pub use fatsecret::core::{FatSecretConfig, FatSecretError, AccessToken};

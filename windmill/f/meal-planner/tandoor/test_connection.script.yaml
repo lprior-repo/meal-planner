@@ -1,0 +1,24 @@
+summary: Test Tandoor API connection
+description: Verifies authentication against Tandoor instance and returns recipe count
+lock: '!inline f/meal-planner/tandoor/test_connection.script.lock'
+kind: script
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    tandoor:
+      type: object
+      description: Tandoor API configuration
+      format: resource-tandoor
+      properties:
+        api_token:
+          type: string
+          description: Tandoor API token
+        base_url:
+          type: string
+          description: Base URL of Tandoor instance
+      required:
+        - base_url
+        - api_token
+  required:
+    - tandoor

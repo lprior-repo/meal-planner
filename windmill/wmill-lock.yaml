@@ -1,0 +1,4 @@
+version: v2
+locks:
+  f/meal-planner/tandoor/test_auth: 89b144ce9bc1299da92ecad49c979e8183a9a8d474db0063eca50951c7b7d185
+  f/meal-planner/tandoor/test_connection: eff3eb533097a5c26e1ba91ce72de0e23eb983917bb4c6cc8948a67cb2f53619

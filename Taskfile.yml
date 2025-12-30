@@ -201,6 +201,26 @@ tasks:
     cmds:
       - gleam build
 
+  build:rust:
+    desc: "Build Rust binaries to bin/"
+    sources:
+      - 'src/**/*.rs'
+      - 'Cargo.toml'
+    generates:
+      - 'bin/*'
+    cmds:
+      - cargo build --release
+      - mkdir -p bin
+      - cp target/release/tandoor_* bin/ 2>/dev/null || true
+      - cp target/release/fatsecret_* bin/ 2>/dev/null || true
+      - echo "✓ Binaries built to bin/"
+
+  build:all:
+    desc: "Build everything"
+    cmds:
+      - task: build
+      - task: build:rust
+
   # ============================================================================
   # Development Tasks
   # ============================================================================

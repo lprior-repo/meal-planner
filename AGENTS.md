@@ -2,6 +2,34 @@
 
 This document describes how to work with AI agents in the meal-planner project using Beads.
 
+## Architecture
+
+**READ FIRST**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - Domain-based structure, CUPID principles, binary contract.
+
+### Key Concepts
+
+- **CUPID principles**: Composable, Unix philosophy, Predictable, Idiomatic, Domain-based
+- **Domain-based layout**: Code organized by business domain (`tandoor/`, `fatsecret/`), not technical layers
+- **Small binaries**: Each binary does ONE thing, ~50-100 lines, JSON in → JSON out
+- **Windmill orchestration**: Flows compose binaries, handle scheduling/retries/errors
+
+### Quick Reference
+
+```
+src/
+├── tandoor/              # Domain: Tandoor Recipes
+│   ├── client.rs         # Shared HTTP client
+│   ├── types.rs          # Domain types
+│   └── bin/              # Small, focused binaries
+│       └── test_connection.rs
+└── fatsecret/            # Domain: FatSecret Nutrition
+    └── ...
+
+windmill/                 # Orchestration layer
+└── f/meal-planner/
+    └── tandoor/          # Bash scripts calling binaries
+```
+
 ## Overview
 
 The meal-planner project uses **Beads** (bd) for issue tracking, dependency management, and agent coordination. All work must go through Beads to ensure proper tracking and visibility.
@@ -221,7 +249,112 @@ bd doctor            # Check project health
 bd ready             # Mark ready for review
 ```
 
+## Windmill Development
+
+This project uses **Windmill** for workflow orchestration. Scripts are written in Rust (purely functional style) and deployed via the `wmill` CLI.
+
+### Quick Reference
+
+```bash
+# Bootstrap new Rust script
+wmill script bootstrap f/meal-planner/my_script rust --summary "Summary"
+
+# Generate metadata after editing
+wmill script generate-metadata
+
+# Push to Windmill
+wmill sync push --yes
+
+# Run a script
+wmill script run f/meal-planner/my_script -d '{"param": "value"}'
+```
+
+### Key Documentation
+
+- **[Windmill Development Guide](docs/windmill/DEVELOPMENT_GUIDE.md)** - Complete CLI workflow, Rust patterns, resources
+- **[Rust Quickstart](docs/windmill/getting_started/0_scripts_quickstart/9_rust_quickstart/index.mdx)** - Rust script basics
+- **[Rust Client SDK](docs/windmill/advanced/2_clients/rust_client.mdx)** - Windmill SDK for Rust
+- **[CLI Commands](docs/windmill/advanced/3_cli/script.md)** - Script CLI reference
+- **[Sync Commands](docs/windmill/advanced/3_cli/sync.mdx)** - Push/pull operations
+
+### File Structure
+
+```
+windmill/
+├── wmill.yaml                    # Sync configuration
+└── f/meal-planner/
+    └── tandoor/
+        ├── test_connection.rs           # Script code
+        ├── test_connection.script.yaml  # Metadata
+        └── test_connection.script.lock  # Dependencies
+```
+
+### Rust Script Pattern
+
+```rust
+//! ```cargo
+//! [dependencies]
+//! anyhow = "1.0.86"
+//! serde = { version = "1.0", features = ["derive"] }
+//! ```
+
+use serde::{Deserialize, Serialize};
+
+#[derive(Deserialize)]
+struct Input { field: String }
+
+#[derive(Serialize)]
+struct Output { result: String }
+
+fn main(input: Input) -> anyhow::Result<Output> {
+    Ok(Output { result: input.field })
+}
+```
+
+### Docker Networking
+
+Windmill workers and other services communicate via shared Docker network:
+
+```bash
+# Create shared network (one-time)
+docker network create shared-services
+
+# Connect containers
+docker network connect shared-services <container_name>
+```
+
+Current services on `shared-services`:
+- Windmill workers (`lewis-windmill_worker-*`)
+- Tandoor (`tandoor-web_recipes-1` at port 80)
+
 ## Resources
 
 - [Beads Documentation](https://github.com/steveyegge/beads)
 - [Conventional Commits](https://www.conventionalcommits.org/)
+- [Windmill Documentation](https://www.windmill.dev/docs)
+
+## Landing the Plane (Session Completion)
+
+**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
+
+**MANDATORY WORKFLOW:**
+
+1. **File issues for remaining work** - Create issues for anything that needs follow-up
+2. **Run quality gates** (if code changed) - Tests, linters, builds
+3. **Update issue status** - Close finished work, update in-progress items
+4. **PUSH TO REMOTE** - This is MANDATORY:
+   ```bash
+   git pull --rebase
+   bd sync
+   git push
+   git status  # MUST show "up to date with origin"
+   ```
+5. **Clean up** - Clear stashes, prune remote branches
+6. **Verify** - All changes committed AND pushed
+7. **Hand off** - Provide context for next session
+
+**CRITICAL RULES:**
+- Work is NOT complete until `git push` succeeds
+- NEVER stop before pushing - that leaves work stranded locally
+- NEVER say "ready to push when you are" - YOU must push
+- If push fails, resolve and retry until it succeeds
