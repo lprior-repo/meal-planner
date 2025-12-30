@@ -6,9 +6,9 @@ use super::core::{AccessToken, RequestToken};
 use super::crypto::{decrypt, encrypt};
 use super::StorageError;
 use super::TokenValidity;
+use chrono::{DateTime, Duration, Utc};
 use sqlx::PgPool;
-use sqlx::postgres::types::PgInterval;
-use chrono::{Utc, Duration};
+use sqlx::Row;
 
 /// Token storage for OAuth 3-legged flow
 ///
@@ -38,7 +38,7 @@ impl TokenStorage {
         let encrypted_secret = encrypt(&token.oauth_token_secret)
             .map_err(|e| StorageError::CryptoError(e.to_string()))?;
 
-        sqlx::query!(
+        sqlx::query(
             r#"
             INSERT INTO fatsecret_oauth_pending (oauth_token, oauth_token_secret, expires_at)
             VALUES ($1, $2, $3)
@@ -46,10 +46,10 @@ impl TokenStorage {
                 oauth_token_secret = EXCLUDED.oauth_token_secret,
                 expires_at = EXCLUDED.expires_at
             "#,
-            token.oauth_token,
-            encrypted_secret,
-            expires_at,
         )
+        .bind(&token.oauth_token)
+        .bind(&encrypted_secret)
+        .bind(expires_at)
         .execute(&self.db)
         .await
         .map_err(|e| StorageError::DatabaseError(e.to_string()))?;
@@ -64,26 +64,29 @@ impl TokenStorage {
         &self,
         oauth_token: &str,
     ) -> Result<Option<RequestToken>, StorageError> {
-        let result = sqlx::query!(
+        let result = sqlx::query(
             r#"
             SELECT oauth_token, oauth_token_secret, expires_at
             FROM fatsecret_oauth_pending
             WHERE oauth_token = $1 AND expires_at > NOW()
             "#,
-            oauth_token,
         )
+        .bind(oauth_token)
         .fetch_optional(&self.db)
         .await
         .map_err(|e| StorageError::DatabaseError(e.to_string()))?;
 
         match result {
             Some(row) => {
+                let oauth_token: String = row.get("oauth_token");
+                let oauth_token_secret: String = row.get("oauth_token_secret");
+
                 // Decrypt the secret
-                let decrypted_secret = decrypt(&row.oauth_token_secret)
+                let decrypted_secret = decrypt(&oauth_token_secret)
                     .map_err(|e| StorageError::CryptoError(e.to_string()))?;
 
                 Ok(Some(RequestToken {
-                    oauth_token: row.oauth_token,
+                    oauth_token,
                     oauth_token_secret: decrypted_secret,
                     oauth_callback_confirmed: true,
                 }))
@@ -94,13 +97,11 @@ impl TokenStorage {
 
     /// Delete a pending token (after exchange for access token)
     pub async fn delete_pending_token(&self, oauth_token: &str) -> Result<(), StorageError> {
-        sqlx::query!(
-            "DELETE FROM fatsecret_oauth_pending WHERE oauth_token = $1",
-            oauth_token,
-        )
-        .execute(&self.db)
-        .await
-        .map_err(|e| StorageError::DatabaseError(e.to_string()))?;
+        sqlx::query("DELETE FROM fatsecret_oauth_pending WHERE oauth_token = $1")
+            .bind(oauth_token)
+            .execute(&self.db)
+            .await
+            .map_err(|e| StorageError::DatabaseError(e.to_string()))?;
 
         Ok(())
     }
@@ -116,7 +117,7 @@ impl TokenStorage {
         let encrypted_secret = encrypt(&token.oauth_token_secret)
             .map_err(|e| StorageError::CryptoError(e.to_string()))?;
 
-        sqlx::query!(
+        sqlx::query(
             r#"
             INSERT INTO fatsecret_oauth_token (id, oauth_token, oauth_token_secret, connected_at, last_used_at)
             VALUES (1, $1, $2, NOW(), NOW())
@@ -126,9 +127,9 @@ impl TokenStorage {
                 connected_at = EXCLUDED.connected_at,
                 last_used_at = EXCLUDED.last_used_at
             "#,
-            token.oauth_token,
-            encrypted_secret,
         )
+        .bind(&token.oauth_token)
+        .bind(&encrypted_secret)
         .execute(&self.db)
         .await
         .map_err(|e| StorageError::DatabaseError(e.to_string()))?;
@@ -140,7 +141,7 @@ impl TokenStorage {
     ///
     /// Returns None if no token is stored.
     pub async fn get_access_token(&self) -> Result<Option<AccessToken>, StorageError> {
-        let result = sqlx::query!(
+        let result = sqlx::query(
             r#"
             SELECT oauth_token, oauth_token_secret, connected_at
             FROM fatsecret_oauth_token
@@ -153,12 +154,15 @@ impl TokenStorage {
 
         match result {
             Some(row) => {
+                let oauth_token: String = row.get("oauth_token");
+                let oauth_token_secret: String = row.get("oauth_token_secret");
+
                 // Decrypt the secret
-                let decrypted_secret = decrypt(&row.oauth_token_secret)
+                let decrypted_secret = decrypt(&oauth_token_secret)
                     .map_err(|e| StorageError::CryptoError(e.to_string()))?;
 
                 Ok(Some(AccessToken {
-                    oauth_token: row.oauth_token,
+                    oauth_token,
                     oauth_token_secret: decrypted_secret,
                 }))
             }
@@ -168,12 +172,10 @@ impl TokenStorage {
 
     /// Update the last_used_at timestamp for the access token
     pub async fn update_last_used(&self) -> Result<(), StorageError> {
-        sqlx::query!(
-            "UPDATE fatsecret_oauth_token SET last_used_at = NOW() WHERE id = 1",
-        )
-        .execute(&self.db)
-        .await
-        .map_err(|e| StorageError::DatabaseError(e.to_string()))?;
+        sqlx::query("UPDATE fatsecret_oauth_token SET last_used_at = NOW() WHERE id = 1")
+            .execute(&self.db)
+            .await
+            .map_err(|e| StorageError::DatabaseError(e.to_string()))?;
 
         Ok(())
     }
@@ -182,7 +184,7 @@ impl TokenStorage {
     ///
     /// Returns a TokenValidity enum indicating the status.
     pub async fn check_token_validity(&self) -> Result<TokenValidity, StorageError> {
-        let result = sqlx::query!(
+        let result = sqlx::query(
             r#"
             SELECT connected_at
             FROM fatsecret_oauth_token
@@ -195,7 +197,8 @@ impl TokenStorage {
 
         match result {
             Some(row) => {
-                let duration = Utc::now().signed_duration_since(row.connected_at);
+                let connected_at: DateTime<Utc> = row.get("connected_at");
+                let duration = Utc::now().signed_duration_since(connected_at);
                 let days_since = duration.num_days();
 
                 if days_since < 365 {
@@ -212,7 +215,7 @@ impl TokenStorage {
 
     /// Delete the stored access token (disconnect account)
     pub async fn delete_access_token(&self) -> Result<(), StorageError> {
-        sqlx::query!("DELETE FROM fatsecret_oauth_token WHERE id = 1")
+        sqlx::query("DELETE FROM fatsecret_oauth_token WHERE id = 1")
             .execute(&self.db)
             .await
             .map_err(|e| StorageError::DatabaseError(e.to_string()))?;
@@ -224,12 +227,11 @@ impl TokenStorage {
     ///
     /// Returns the number of tokens deleted.
     pub async fn cleanup_expired_tokens(&self) -> Result<u64, StorageError> {
-        let result = sqlx::query!(
-            "DELETE FROM fatsecret_oauth_pending WHERE expires_at < NOW()",
-        )
-        .execute(&self.db)
-        .await
-        .map_err(|e| StorageError::DatabaseError(e.to_string()))?;
+        let result =
+            sqlx::query("DELETE FROM fatsecret_oauth_pending WHERE expires_at < NOW()")
+                .execute(&self.db)
+                .await
+                .map_err(|e| StorageError::DatabaseError(e.to_string()))?;
 
         Ok(result.rows_affected())
     }

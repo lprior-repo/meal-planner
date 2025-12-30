@@ -1,3 +1,37 @@
+# Meal Planner - mise configuration
+# https://mise.jdx.dev/
+
 [tools]
 gleam = "1.13.0"
 task = "3.45.5"
+rust = "1.83"
+
+[env]
+# Load .env file first (for non-secret overrides)
+_.file = ".env"
+
+# Tandoor API configuration (from pass)
+TANDOOR_BASE_URL = "{{exec(command='pass show meal-planner/tandoor/base_url')}}"
+TANDOOR_API_TOKEN = "{{exec(command='pass show meal-planner/tandoor/api_token')}}"
+
+# Windmill configuration (from pass)
+WINDMILL_API_URL = "{{exec(command='pass show meal-planner/windmill/api_url')}}"
+WINDMILL_TOKEN = "{{exec(command='pass show meal-planner/windmill/token')}}"
+
+[tasks.test]
+description = "Run all tests"
+run = "cargo test"
+
+[tasks.build]
+description = "Build all binaries"
+run = "cargo build --release"
+
+[tasks.tandoor-test]
+description = "Test Tandoor connection"
+run = '''
+echo "{\"base_url\": \"$TANDOOR_BASE_URL\", \"api_token\": \"$TANDOOR_API_TOKEN\"}" | ./target/debug/tandoor_test_connection
+'''
+
+[tasks.check]
+description = "Run cargo check and clippy"
+run = "cargo check && cargo clippy"
