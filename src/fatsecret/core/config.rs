@@ -17,9 +17,13 @@ pub const API_PATH: &str = "/rest/server.api";
 /// FatSecret API configuration
 #[derive(Debug, Clone)]
 pub struct FatSecretConfig {
+    /// The OAuth consumer key from FatSecret developer account
     pub consumer_key: String,
+    /// The OAuth consumer secret from FatSecret developer account
     pub consumer_secret: String,
+    /// Optional custom API host (defaults to platform.fatsecret.com)
     pub api_host: Option<String>,
+    /// Optional custom authentication host (defaults to authentication.fatsecret.com)
     pub auth_host: Option<String>,
 }
 

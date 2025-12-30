@@ -1,0 +1,5 @@
+# Enforce Rust nightly for maximum safety features
+# This file ensures all developers use the same toolchain
+[toolchain]
+channel = "nightly"
+components = ["rustfmt", "clippy", "rust-src"]

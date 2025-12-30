@@ -41,6 +41,7 @@ pub struct Profile {
 /// Wrapper for Profile response
 #[derive(Debug, Deserialize)]
 pub struct ProfileResponse {
+    /// The user's profile information
     pub profile: Profile,
 }
 
@@ -63,6 +64,7 @@ pub struct ProfileAuth {
 /// Wrapper for ProfileAuth response
 #[derive(Debug, Deserialize)]
 pub struct ProfileAuthResponseWrapper {
+    /// The user's profile authentication credentials
     pub profile: ProfileAuth,
 }
 

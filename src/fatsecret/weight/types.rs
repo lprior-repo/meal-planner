@@ -15,10 +15,12 @@ use serde::{Deserialize, Serialize};
 pub struct WeightEntryId(String);
 
 impl WeightEntryId {
+    /// Creates a new weight entry ID from a string-like value
     pub fn new(id: impl Into<String>) -> Self {
         Self(id.into())
     }
 
+    /// Returns the ID as a string slice
     pub fn as_str(&self) -> &str {
         &self.0
     }
@@ -44,6 +46,7 @@ pub struct WeightEntry {
 /// Wrapper for WeightEntry response
 #[derive(Debug, Deserialize)]
 pub struct WeightEntryResponse {
+    /// The weight entry data
     pub weight: WeightEntry,
 }
 
@@ -98,5 +101,6 @@ pub struct WeightMonthSummary {
 /// Wrapper for WeightMonthSummary response
 #[derive(Debug, Deserialize)]
 pub struct WeightMonthSummaryResponse {
+    /// The monthly weight summary data
     pub weight_month: WeightMonthSummary,
 }

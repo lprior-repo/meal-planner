@@ -17,19 +17,25 @@ use crate::fatsecret::core::{FatSecretConfig, FatSecretError};
 /// OAuth 1.0a request token (from Step 1 of 3-legged flow)
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RequestToken {
+    /// The temporary token used for user authorization
     pub oauth_token: String,
+    /// The secret associated with the temporary token
     pub oauth_token_secret: String,
+    /// Whether the callback URL was confirmed by the server
     pub oauth_callback_confirmed: bool,
 }
 
 /// OAuth 1.0a access token (from Step 3 of 3-legged flow)
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AccessToken {
+    /// The long-lived token for accessing user resources
     pub oauth_token: String,
+    /// The secret used to sign requests with this token
     pub oauth_token_secret: String,
 }
 
 impl AccessToken {
+    /// Creates a new access token from the given credentials
     pub fn new(oauth_token: impl Into<String>, oauth_token_secret: impl Into<String>) -> Self {
         Self {
             oauth_token: oauth_token.into(),

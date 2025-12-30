@@ -14,21 +14,37 @@
 //! - `saved_meals` - Saved meal templates
 //! - `weight` - Weight tracking and history
 
-// Core module (config, errors)
+/// Core configuration and error types for FatSecret API
 pub mod core;
 
-// Support modules
+/// Encryption and decryption utilities for secure token storage
 pub mod crypto;
+
+/// Persistent token storage with encryption support
 pub mod storage;
 
-// Domain type modules
+/// Food diary entries and daily/monthly summaries
 pub mod diary;
+
+/// Exercise entries and activity tracking
 pub mod exercise;
+
+/// Favorite foods and recipes management
 pub mod favorites;
+
+/// Food search and nutritional details from FatSecret API
 pub mod foods;
+
+/// User profile management and authentication
 pub mod profile;
+
+/// Recipe search and details
 pub mod recipes;
+
+/// Saved meal templates for quick food logging
 pub mod saved_meals;
+
+/// Weight tracking and history
 pub mod weight;
 
 // Re-export exercise types

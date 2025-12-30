@@ -29,7 +29,8 @@ unsafe_code = "forbid"                    # FORBIDDEN: No unsafe blocks anywhere
 # -----------------------------------------------------------------------------
 unused_must_use = "deny"                  # Must handle all Results/Options
 unreachable_patterns = "deny"             # No dead pattern branches
-non_exhaustive_omitted_patterns = "deny"  # Require handling all enum variants
+# non_exhaustive_omitted_patterns requires nightly feature flag - disabled for now
+# non_exhaustive_omitted_patterns = "deny"  # Require handling all enum variants
 
 # -----------------------------------------------------------------------------
 # IMMUTABILITY - Like Gleam, prefer immutable by default

@@ -152,11 +152,21 @@ impl std::fmt::Display for ApiErrorCode {
 pub enum FatSecretError {
     /// Error returned by the FatSecret API
     #[error("{} (code {}): {message}", code.description(), code.to_code())]
-    ApiError { code: ApiErrorCode, message: String },
+    ApiError {
+        /// The structured error code from the API
+        code: ApiErrorCode,
+        /// Human-readable error message from the API
+        message: String,
+    },
 
     /// HTTP request failed with non-2xx status
     #[error("Request failed with status {status}: {body}")]
-    RequestFailed { status: u16, body: String },
+    RequestFailed {
+        /// HTTP status code
+        status: u16,
+        /// Response body content
+        body: String,
+    },
 
     /// Failed to parse API response
     #[error("Failed to parse response: {0}")]

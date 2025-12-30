@@ -14,14 +14,19 @@ use thiserror::Error;
 /// Encryption errors
 #[derive(Debug, Error)]
 pub enum CryptoError {
+    /// Encryption key not configured in environment
     #[error("Encryption key not configured (set OAUTH_ENCRYPTION_KEY env var)")]
     KeyNotConfigured,
+    /// Key has invalid length (expected 64 hex chars / 32 bytes)
     #[error("Encryption key must be 64 hex characters (32 bytes), got {0} chars")]
     KeyInvalidLength(usize),
+    /// Key contains invalid hexadecimal characters
     #[error("Encryption key must be valid hex string")]
     KeyInvalidHex,
+    /// Ciphertext format is invalid or data is corrupted
     #[error("Ciphertext is invalid or corrupted")]
     InvalidCiphertext,
+    /// Decryption failed due to wrong key or corrupted data
     #[error("Decryption failed (wrong key or corrupted data)")]
     DecryptionFailed,
 }
@@ -29,10 +34,13 @@ pub enum CryptoError {
 /// Token storage errors
 #[derive(Debug, Error)]
 pub enum StorageError {
+    /// No token found in storage
     #[error("Token not found")]
     NotFound,
+    /// Database operation failed
     #[error("Database error: {0}")]
     DatabaseError(String),
+    /// Encryption or decryption operation failed
     #[error("Crypto error: {0}")]
     CryptoError(String),
 }
@@ -51,7 +59,10 @@ pub enum TokenValidity {
     /// No token stored
     NotFound,
     /// Token exists but is old (> 365 days)
-    Old { days_since_connected: i32 },
+    Old {
+        /// Number of days since the OAuth connection was established
+        days_since_connected: i32,
+    },
 }
 
 /// Check if encryption is properly configured

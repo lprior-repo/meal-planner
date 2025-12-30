@@ -19,9 +19,13 @@ use crate::fatsecret::core::serde_utils::{
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum MealType {
+    /// Breakfast meal
     Breakfast,
+    /// Lunch meal
     Lunch,
+    /// Dinner meal
     Dinner,
+    /// Snack or other meal
     #[serde(rename = "other")]
     Snack,
 }
@@ -202,28 +206,44 @@ pub struct FoodEntry {
 pub enum FoodEntryInput {
     /// Create entry from FatSecret database food
     FromFood {
+        /// FatSecret food database ID
         food_id: String,
+        /// Display name for the food entry
         food_entry_name: String,
+        /// FatSecret serving ID
         serving_id: String,
+        /// Number of servings consumed
         number_of_units: f64,
+        /// Which meal this entry belongs to
         meal: MealType,
+        /// Date as days since Unix epoch
         date_int: i32,
     },
     /// Create custom entry with manual nutrition values
     Custom {
+        /// Display name for the food entry
         food_entry_name: String,
+        /// Description of the serving size
         serving_description: String,
+        /// Number of servings consumed
         number_of_units: f64,
+        /// Which meal this entry belongs to
         meal: MealType,
+        /// Date as days since Unix epoch
         date_int: i32,
+        /// Calories per serving
         calories: f64,
+        /// Carbohydrates in grams per serving
         carbohydrate: f64,
+        /// Protein in grams per serving
         protein: f64,
+        /// Fat in grams per serving
         fat: f64,
     },
 }
 
 impl FoodEntryInput {
+    /// Returns the food entry name
     pub fn food_entry_name(&self) -> &str {
         match self {
             FoodEntryInput::FromFood {
@@ -242,22 +262,27 @@ impl FoodEntryInput {
 /// To change nutrition values, delete and recreate the entry.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct FoodEntryUpdate {
+    /// New number of servings (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub number_of_units: Option<f64>,
+    /// New meal type (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub meal: Option<MealType>,
 }
 
 impl FoodEntryUpdate {
+    /// Creates a new empty update
     pub fn new() -> Self {
         Self::default()
     }
 
+    /// Sets the number of units to update
     pub fn with_units(mut self, units: f64) -> Self {
         self.number_of_units = Some(units);
         self
     }
 
+    /// Sets the meal type to update
     pub fn with_meal(mut self, meal: MealType) -> Self {
         self.meal = Some(meal);
         self
@@ -273,14 +298,19 @@ impl FoodEntryUpdate {
 /// Aggregated totals for a single day's diary entries.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DaySummary {
+    /// Date as days since Unix epoch
     #[serde(deserialize_with = "deserialize_flexible_int")]
     pub date_int: i32,
+    /// Total calories for the day
     #[serde(deserialize_with = "deserialize_flexible_float")]
     pub calories: f64,
+    /// Total carbohydrates in grams
     #[serde(deserialize_with = "deserialize_flexible_float")]
     pub carbohydrate: f64,
+    /// Total protein in grams
     #[serde(deserialize_with = "deserialize_flexible_float")]
     pub protein: f64,
+    /// Total fat in grams
     #[serde(deserialize_with = "deserialize_flexible_float")]
     pub fat: f64,
 }
@@ -290,14 +320,17 @@ pub struct DaySummary {
 /// Contains a summary for each day in the month.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MonthSummary {
+    /// Daily summaries for each day with logged entries
     #[serde(
         rename = "day",
         default,
         deserialize_with = "deserialize_single_or_vec"
     )]
     pub days: Vec<DaySummary>,
+    /// Month number (1-12)
     #[serde(deserialize_with = "deserialize_flexible_int")]
     pub month: i32,
+    /// Year (e.g., 2024)
     #[serde(deserialize_with = "deserialize_flexible_int")]
     pub year: i32,
 }
@@ -397,7 +430,9 @@ pub fn validate_date_int_string(date_int_str: &str) -> Option<i32> {
 /// Simplified auth error for mapping HTTP status codes
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AuthError {
+    /// User's OAuth authorization was revoked (401/403)
     AuthRevoked,
+    /// Any other error type
     OtherError,
 }
 
