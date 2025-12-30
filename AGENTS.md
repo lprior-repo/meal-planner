@@ -277,11 +277,40 @@ windmill/
 - **Prompt UI**: Requires TypeScript/Python for `getResumeUrls()` - not in Rust SDK
 - **Suspended flows**: CLI hangs - use Windmill UI or async API calls
 
+## Moon Build System
+
+This project uses **Moon** for task orchestration. Moon caches task outputs for speed - repeated runs skip unchanged work.
+
+### Common Commands
+
+```bash
+moon run :ci      # Full CI pipeline (lint, test, build)
+moon run :quick   # Fast lint checks only
+moon run :deploy  # CI + Windmill push
+moon run :build   # Build release binaries
+moon run :test    # Run tests
+```
+
+### Why Moon?
+
+- **Caching**: Tasks are cached based on inputs - if nothing changed, it skips
+- **Parallelization**: Independent tasks run in parallel automatically
+- **Consistency**: Same commands work locally and in CI
+- **Dependency tracking**: Moon knows task dependencies and runs them in order
+
+### Configuration
+
+Moon config lives in:
+- `.moon/workspace.yml` - Workspace settings
+- `.moon/toolchain.yml` - Tool versions (Rust, etc.)
+- `moon.yml` - Project-level task definitions
+
 ## Resources
 
 - [Beads Documentation](https://github.com/steveyegge/beads)
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [Windmill Documentation](https://www.windmill.dev/docs)
+- [Moon Documentation](https://moonrepo.dev/docs)
 
 ## Landing the Plane (Session Completion)
 
@@ -290,14 +319,19 @@ windmill/
 **MANDATORY WORKFLOW:**
 
 1. **File issues for remaining work** - Create issues for anything that needs follow-up
-2. **Run quality gates** (if code changed) - Tests, linters, builds
+2. **Run quality gates** (if code changed):
+   ```bash
+   moon run :ci      # Full CI pipeline (lint, test, build)
+   # Or for quick validation:
+   moon run :quick   # Fast lint checks only
+   ```
 3. **Update issue status** - Close finished work, update in-progress items
 4. **PUSH TO REMOTE** - This is MANDATORY:
    ```bash
-   git pull --rebase
+   jj git fetch --all-remotes
    bd sync
-   git push
-   git status  # MUST show "up to date with origin"
+   jj git push
+   jj log -r @       # Verify push succeeded
    ```
 5. **Clean up** - Clear stashes, prune remote branches
 6. **Verify** - All changes committed AND pushed

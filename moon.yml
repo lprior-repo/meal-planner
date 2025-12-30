@@ -1,0 +1,134 @@
+# https://moonrepo.dev/docs/config/project
+$schema: './.moon/cache/schemas/project.json'
+
+language: 'rust'
+type: 'application'
+
+tasks:
+  # ============================================
+  # Linting & Formatting
+  # ============================================
+  fmt:
+    command: 'cargo fmt --check'
+    inputs:
+      - 'src/**/*.rs'
+      - 'tests/**/*.rs'
+    options:
+      cache: true
+
+  clippy:
+    command: 'cargo clippy -- -D warnings'
+    inputs:
+      - 'src/**/*.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+    options:
+      cache: true
+
+  # ============================================
+  # Testing
+  # ============================================
+  test:
+    command: 'cargo nextest run'
+    inputs:
+      - 'src/**/*.rs'
+      - 'tests/**/*.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+    deps:
+      - '~:fmt'
+      - '~:clippy'
+    options:
+      cache: true
+
+  # ============================================
+  # Building
+  # ============================================
+  build:
+    command: 'cargo build --release'
+    inputs:
+      - 'src/**/*.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+    outputs:
+      - 'target/release/fatsecret_*'
+      - 'target/release/tandoor_*'
+    deps:
+      - '~:test'
+    options:
+      cache: true
+
+  build-dev:
+    command: 'cargo build'
+    inputs:
+      - 'src/**/*.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+    outputs:
+      - 'target/debug/fatsecret_*'
+      - 'target/debug/tandoor_*'
+    options:
+      cache: true
+
+  copy-binaries:
+    command: 'mkdir -p bin && cp target/release/fatsecret_* target/release/tandoor_* bin/'
+    inputs:
+      - 'target/release/fatsecret_*'
+      - 'target/release/tandoor_*'
+    outputs:
+      - 'bin/'
+    deps:
+      - '~:build'
+
+  # ============================================
+  # Validation
+  # ============================================
+  validate-yaml:
+    command: 'yamllint -d relaxed windmill/'
+    inputs:
+      - 'windmill/**/*.yaml'
+    options:
+      cache: true
+
+  validate-windmill:
+    command: 'wmill sync push --dry-run --yes'
+    inputs:
+      - 'windmill/**/*'
+    deps:
+      - '~:validate-yaml'
+      - '~:build'
+    options:
+      runFromWorkspaceRoot: true
+      cache: true
+    env:
+      WMILL_WORKSPACE: 'windmill'
+
+  # ============================================
+  # Aggregate Tasks
+  # ============================================
+  ci:
+    deps:
+      - '~:fmt'
+      - '~:clippy'
+      - '~:test'
+      - '~:build'
+      - '~:copy-binaries'
+      - '~:validate-windmill'
+
+  quick:
+    deps:
+      - '~:fmt'
+      - '~:clippy'
+      - '~:validate-yaml'
+
+  # ============================================
+  # Deployment
+  # ============================================
+  deploy:
+    command: 'wmill sync push --yes'
+    deps:
+      - '~:ci'
+    options:
+      runFromWorkspaceRoot: true
+    env:
+      WMILL_WORKSPACE: 'windmill'

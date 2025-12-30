@@ -1,0 +1,10 @@
+# Meal Planner - Cargo Build Optimization
+# Leverages mold linker + sccache for maximum speed
+
+[build]
+rustc-wrapper = "sccache"
+jobs = 32                          # 9950X3D thread count
+
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]

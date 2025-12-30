@@ -3,16 +3,16 @@
 //! FatSecret uses OAuth 1.0a for both 2-legged (app-only) and 3-legged (user) authentication.
 //! API Documentation: https://platform.fatsecret.com/api/Default.aspx?screen=rapih
 
-use std::collections::HashMap;
-use std::time::{SystemTime, UNIX_EPOCH};
 use base64::Engine;
+use reqwest::Method;
 use ring::hmac;
 use ring::rand::{SecureRandom, SystemRandom};
-use serde::{Serialize, Deserialize};
-use reqwest::Method;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::time::{SystemTime, UNIX_EPOCH};
 
-use crate::fatsecret::core::{FatSecretConfig, FatSecretError};
 use crate::fatsecret::core::http::make_oauth_request;
+use crate::fatsecret::core::{FatSecretConfig, FatSecretError};
 
 /// OAuth 1.0a request token (from Step 1 of 3-legged flow)
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -265,7 +265,10 @@ mod tests {
         let mut params = HashMap::new();
         params.insert("oauth_consumer_key".to_string(), "key".to_string());
         params.insert("oauth_nonce".to_string(), "abc".to_string());
-        params.insert("oauth_signature_method".to_string(), "HMAC-SHA1".to_string());
+        params.insert(
+            "oauth_signature_method".to_string(),
+            "HMAC-SHA1".to_string(),
+        );
         params.insert("oauth_timestamp".to_string(), "123".to_string());
         params.insert("oauth_version".to_string(), "1.0".to_string());
 
@@ -276,7 +279,8 @@ mod tests {
 
     #[test]
     fn test_parse_oauth_response() {
-        let response = "oauth_token=token123&oauth_token_secret=secret456&oauth_callback_confirmed=true";
+        let response =
+            "oauth_token=token123&oauth_token_secret=secret456&oauth_callback_confirmed=true";
         let params = parse_oauth_response(response);
         assert_eq!(params.get("oauth_token").unwrap(), "token123");
         assert_eq!(params.get("oauth_token_secret").unwrap(), "secret456");

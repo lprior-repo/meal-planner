@@ -1,0 +1,5 @@
+# https://moonrepo.dev/docs/config/toolchain
+$schema: './cache/schemas/toolchain.json'
+
+# Rust is managed by mise, not moon/proto
+# See mise.toml for version configuration

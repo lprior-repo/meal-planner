@@ -1,13 +1,10 @@
 //! FatSecret Recipe domain types
 
-use serde::{Deserialize, Serialize};
 use crate::fatsecret::core::serde_utils::{
-    deserialize_flexible_float,
-    deserialize_flexible_int,
-    deserialize_optional_flexible_float,
-    deserialize_optional_flexible_int,
-    deserialize_single_or_vec,
+    deserialize_flexible_float, deserialize_flexible_int, deserialize_optional_flexible_float,
+    deserialize_optional_flexible_int, deserialize_single_or_vec,
 };
+use serde::{Deserialize, Serialize};
 
 // ============================================================================
 // Opaque ID Types
@@ -90,13 +87,13 @@ pub struct Recipe {
     pub cooking_time_min: Option<i32>,
     #[serde(default, deserialize_with = "deserialize_optional_flexible_float")]
     pub rating: Option<f64>,
-    
+
     #[serde(rename = "recipe_types", default)]
     pub recipe_types: RecipeTypesWrapper,
-    
+
     #[serde(rename = "ingredients", default)]
     pub ingredients: RecipeIngredientsWrapper,
-    
+
     #[serde(rename = "directions", default)]
     pub directions: RecipeDirectionsWrapper,
 
@@ -137,19 +134,31 @@ pub struct Recipe {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct RecipeTypesWrapper {
-    #[serde(rename = "recipe_type", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "recipe_type",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub recipe_types: Vec<RecipeType>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct RecipeIngredientsWrapper {
-    #[serde(rename = "ingredient", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "ingredient",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub ingredients: Vec<RecipeIngredient>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct RecipeDirectionsWrapper {
-    #[serde(rename = "direction", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "direction",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub directions: Vec<RecipeDirection>,
 }
 
@@ -166,7 +175,11 @@ pub struct RecipeSearchResult {
 /// Response from recipes.search.v3
 #[derive(Debug, Deserialize)]
 pub struct RecipeSearchResponse {
-    #[serde(rename = "recipe", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "recipe",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub recipes: Vec<RecipeSearchResult>,
     #[serde(deserialize_with = "deserialize_flexible_int")]
     pub max_results: i32,
@@ -179,7 +192,11 @@ pub struct RecipeSearchResponse {
 /// Response from recipe_types.get.v2
 #[derive(Debug, Deserialize)]
 pub struct RecipeTypesResponse {
-    #[serde(rename = "recipe_type", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "recipe_type",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub recipe_types: Vec<RecipeType>,
 }
 
@@ -193,7 +210,11 @@ pub struct RecipeSuggestion {
 /// Response from recipes.autocomplete.v2 API
 #[derive(Debug, Deserialize)]
 pub struct RecipeAutocompleteResponse {
-    #[serde(rename = "suggestion", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "suggestion",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub suggestions: Vec<RecipeSuggestion>,
 }
 

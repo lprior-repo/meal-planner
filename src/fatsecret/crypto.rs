@@ -3,8 +3,8 @@
 //! Uses AES-256-GCM for authenticated encryption of OAuth tokens.
 
 use aes_gcm::{
-    aead::{Aead, AeadCore, KeyInit, OsRng},
     aead::rand_core::RngCore,
+    aead::{Aead, AeadCore, KeyInit, OsRng},
     Aes256Gcm, Nonce,
 };
 use base64::{engine::general_purpose::STANDARD, Engine};
@@ -67,16 +67,14 @@ pub fn encryption_configured() -> bool {
 ///
 /// Expects a 64-character hex string (32 bytes for AES-256)
 fn get_encryption_key() -> Result<[u8; 32], CryptoError> {
-    let key_str = env::var("OAUTH_ENCRYPTION_KEY")
-        .map_err(|_| CryptoError::KeyNotConfigured)?;
+    let key_str = env::var("OAUTH_ENCRYPTION_KEY").map_err(|_| CryptoError::KeyNotConfigured)?;
 
     if key_str.len() != 64 {
         return Err(CryptoError::KeyInvalidLength(key_str.len()));
     }
 
     let mut key = [0u8; 32];
-    hex::decode_to_slice(&key_str, &mut key)
-        .map_err(|_| CryptoError::KeyInvalidHex)?;
+    hex::decode_to_slice(&key_str, &mut key).map_err(|_| CryptoError::KeyInvalidHex)?;
 
     Ok(key)
 }

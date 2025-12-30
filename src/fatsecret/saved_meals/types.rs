@@ -1,10 +1,7 @@
 //! FatSecret Saved Meals Domain Types
 
+use crate::fatsecret::core::serde_utils::{deserialize_flexible_float, deserialize_single_or_vec};
 use serde::{Deserialize, Serialize};
-use crate::fatsecret::core::serde_utils::{
-    deserialize_flexible_float,
-    deserialize_single_or_vec,
-};
 
 // ============================================================================
 // Opaque ID Types
@@ -170,7 +167,11 @@ pub enum SavedMealItemInput {
 /// Response from saved_meals.get.v2 API
 #[derive(Debug, Deserialize)]
 pub struct SavedMealsResponse {
-    #[serde(rename = "saved_meal", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "saved_meal",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub saved_meals: Vec<SavedMeal>,
     pub meal_filter: Option<String>,
 }
@@ -179,7 +180,11 @@ pub struct SavedMealsResponse {
 #[derive(Debug, Deserialize)]
 pub struct SavedMealItemsResponse {
     pub saved_meal_id: SavedMealId,
-    #[serde(rename = "item", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "item",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub items: Vec<SavedMealItem>,
 }
 

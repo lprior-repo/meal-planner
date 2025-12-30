@@ -3,12 +3,12 @@
 //! All requests to the FatSecret API must be signed with OAuth 1.0a.
 //! This module handles signing and executing HTTP requests using reqwest.
 
-use std::collections::HashMap;
 use reqwest::{Client, Method};
+use std::collections::HashMap;
 
-use crate::fatsecret::core::{FatSecretConfig, FatSecretError, AccessToken};
-use crate::fatsecret::core::oauth::{build_oauth_params, oauth_encode};
 use crate::fatsecret::core::errors::parse_error_response;
+use crate::fatsecret::core::oauth::{build_oauth_params, oauth_encode};
+use crate::fatsecret::core::{AccessToken, FatSecretConfig, FatSecretError};
 
 /// Make signed OAuth request (2-legged or 3-legged)
 ///
@@ -49,7 +49,7 @@ pub async fn make_oauth_request(
         } else {
             format!("{}?{}", url, query_string)
         };
-        
+
         client.get(&full_url).send().await?
     } else {
         // For POST: parameters go in body

@@ -6,6 +6,7 @@ use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, CONTENT_TYPE};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
+#[allow(clippy::enum_variant_names)]
 pub enum TandoorError {
     #[error("HTTP request failed: {0}")]
     HttpError(#[from] reqwest::Error),
@@ -24,6 +25,7 @@ pub enum TandoorError {
 pub struct TandoorClient {
     client: Client,
     base_url: String,
+    #[allow(dead_code)]
     headers: HeaderMap,
 }
 
@@ -159,7 +161,10 @@ impl TandoorClient {
     }
 
     /// Create a recipe from scraped/imported data
-    pub fn create_recipe(&self, recipe: &CreateRecipeRequest) -> Result<CreatedRecipe, TandoorError> {
+    pub fn create_recipe(
+        &self,
+        recipe: &CreateRecipeRequest,
+    ) -> Result<CreatedRecipe, TandoorError> {
         let api_url = format!("{}/api/recipe/", self.base_url);
 
         let response = self.client.post(&api_url).json(recipe).send()?;

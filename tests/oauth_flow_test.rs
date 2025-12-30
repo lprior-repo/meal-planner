@@ -8,9 +8,9 @@
 //! This test can be run with real credentials or with a mock server.
 
 use meal_planner::fatsecret::core::{
-    FatSecretConfig,
-    oauth::{RequestToken, get_request_token, get_access_token},
     oauth::AccessToken,
+    oauth::{get_access_token, get_request_token, RequestToken},
+    FatSecretConfig,
 };
 use std::env;
 
@@ -35,8 +35,7 @@ fn get_test_config() -> Option<FatSecretConfig> {
 
 /// Check if we have valid credentials for real API testing
 fn has_valid_credentials() -> bool {
-    env::var("FATSECRET_CONSUMER_KEY").is_ok()
-        && env::var("FATSECRET_CONSUMER_SECRET").is_ok()
+    env::var("FATSECRET_CONSUMER_KEY").is_ok() && env::var("FATSECRET_CONSUMER_SECRET").is_ok()
 }
 
 // ============================================================================
@@ -58,9 +57,18 @@ async fn test_oauth_step1_get_request_token() {
         let token = result.expect("Should get request token with valid credentials");
 
         // Verify request token structure
-        assert!(!token.oauth_token.is_empty(), "oauth_token should not be empty");
-        assert!(!token.oauth_token_secret.is_empty(), "oauth_token_secret should not be empty");
-        assert!(token.oauth_callback_confirmed, "oauth_callback_confirmed should be true");
+        assert!(
+            !token.oauth_token.is_empty(),
+            "oauth_token should not be empty"
+        );
+        assert!(
+            !token.oauth_token_secret.is_empty(),
+            "oauth_token_secret should not be empty"
+        );
+        assert!(
+            token.oauth_callback_confirmed,
+            "oauth_callback_confirmed should be true"
+        );
 
         println!("✅ Step 1 Success - Request Token: {}", token.oauth_token);
         println!("   Secret: {}", token.oauth_token_secret);
@@ -138,7 +146,10 @@ async fn test_oauth_step3_get_access_token() {
                 assert!(!access_token.oauth_token.is_empty());
                 assert!(!access_token.oauth_token_secret.is_empty());
 
-                println!("✅ Step 3 Success - Access Token: {}", access_token.oauth_token);
+                println!(
+                    "✅ Step 3 Success - Access Token: {}",
+                    access_token.oauth_token
+                );
             }
             Err(e) => {
                 // Expected: This will fail without a real verifier
@@ -181,7 +192,10 @@ fn test_oauth_flow_simulation() {
     println!("Step 1: Request Token Received");
     println!("  oauth_token: {}", request_token.oauth_token);
     println!("  oauth_token_secret: {}", request_token.oauth_token_secret);
-    println!("  oauth_callback_confirmed: {}", request_token.oauth_callback_confirmed);
+    println!(
+        "  oauth_callback_confirmed: {}",
+        request_token.oauth_callback_confirmed
+    );
 
     // Step 2: Redirect user to authorization URL
     let config = FatSecretConfig::new("consumer_key", "consumer_secret");
@@ -204,7 +218,10 @@ fn test_oauth_flow_simulation() {
 
     println!("  ✅ Access Token Received:");
     println!("     oauth_token: {}", access_token.oauth_token);
-    println!("     oauth_token_secret: {}", access_token.oauth_token_secret);
+    println!(
+        "     oauth_token_secret: {}",
+        access_token.oauth_token_secret
+    );
 
     println!("\n=== Flow Complete ===");
     println!("🔐 App now has access token to make authenticated API calls\n");
@@ -254,7 +271,10 @@ fn test_oauth_signature_different_inputs() {
     let sig1 = create_signature(base_string, "secret1", Some("token1"));
     let sig2 = create_signature(base_string, "secret2", Some("token2"));
 
-    assert_ne!(sig1, sig2, "Different secrets should produce different signatures");
+    assert_ne!(
+        sig1, sig2,
+        "Different secrets should produce different signatures"
+    );
 }
 
 // ============================================================================

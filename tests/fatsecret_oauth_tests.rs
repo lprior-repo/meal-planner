@@ -6,13 +6,13 @@
 //! - Signature generation (HMAC-SHA256 verification)
 //! - Token storage/retrieval with encryption
 
-use meal_planner::fatsecret::{
-    decrypt, encrypt, encryption_configured, generate_key, AccessToken, CryptoError, RequestToken,
-    StorageError, TokenValidity,
-};
 use meal_planner::fatsecret::core::{
     parse_error_response, AccessToken as CoreAccessToken, ApiErrorCode, FatSecretConfig,
     FatSecretError,
+};
+use meal_planner::fatsecret::{
+    decrypt, encrypt, encryption_configured, generate_key, AccessToken, CryptoError, RequestToken,
+    StorageError, TokenValidity,
 };
 use serial_test::serial;
 use std::env;
@@ -40,7 +40,6 @@ mod fixtures {
     pub fn expired_token_error() -> String {
         r#"{"error": {"code": 6, "message": "Invalid or expired token"}}"#.to_string()
     }
-
 
     /// Valid test encryption key (64 hex chars = 32 bytes)
     pub const TEST_ENCRYPTION_KEY: &str =
@@ -234,7 +233,9 @@ fn test_error_code_invalid_access_token() {
 
 #[test]
 fn test_all_known_error_codes_roundtrip() {
-    let known_codes = [2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 101, 106, 107, 108, 205, 206, 207];
+    let known_codes = [
+        2, 3, 4, 5, 6, 7, 8, 9, 13, 14, 101, 106, 107, 108, 205, 206, 207,
+    ];
 
     for code in known_codes {
         let error_code = ApiErrorCode::from_code(code);
@@ -382,7 +383,10 @@ fn create_oauth_signature(
     let signing_key = hmac::Key::new(hmac::HMAC_SHA256, key.as_bytes());
     let signature = hmac::sign(&signing_key, base_string.as_bytes());
 
-    base64::Engine::encode(&base64::engine::general_purpose::STANDARD, signature.as_ref())
+    base64::Engine::encode(
+        &base64::engine::general_purpose::STANDARD,
+        signature.as_ref(),
+    )
 }
 
 #[test]

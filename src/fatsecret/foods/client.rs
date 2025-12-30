@@ -8,9 +8,7 @@ use std::collections::HashMap;
 use serde::Deserialize;
 
 use crate::fatsecret::core::{make_api_request, FatSecretConfig, FatSecretError};
-use crate::fatsecret::foods::types::{
-    Food, FoodAutocompleteResponse, FoodId, FoodSearchResponse,
-};
+use crate::fatsecret::foods::types::{Food, FoodAutocompleteResponse, FoodId, FoodSearchResponse};
 
 // ============================================================================
 // Response Wrappers
@@ -48,10 +46,7 @@ struct BarcodeValue {
 /// Get complete food details by ID using food.get.v5 endpoint
 ///
 /// This is a 2-legged OAuth request (no user token required).
-pub async fn get_food(
-    config: &FatSecretConfig,
-    food_id: &FoodId,
-) -> Result<Food, FatSecretError> {
+pub async fn get_food(config: &FatSecretConfig, food_id: &FoodId) -> Result<Food, FatSecretError> {
     let mut params = HashMap::new();
     params.insert("food_id".to_string(), food_id.as_str().to_string());
     params.insert("flag_default_serving".to_string(), "true".to_string());
@@ -77,11 +72,11 @@ pub async fn list_foods_with_options(
 ) -> Result<FoodSearchResponse, FatSecretError> {
     let mut params = HashMap::new();
     params.insert("search_expression".to_string(), query.to_string());
-    
+
     if let Some(p) = page {
         params.insert("page_number".to_string(), p.to_string());
     }
-    
+
     if let Some(m) = max_results {
         params.insert("max_results".to_string(), m.to_string());
     }
@@ -124,7 +119,7 @@ pub async fn find_food_by_barcode(
 ) -> Result<Food, FatSecretError> {
     let mut params = HashMap::new();
     params.insert("barcode".to_string(), barcode.to_string());
-    
+
     if let Some(bt) = barcode_type {
         params.insert("barcode_type".to_string(), bt.to_string());
     }
@@ -151,7 +146,7 @@ pub async fn autocomplete_foods_with_options(
 ) -> Result<FoodAutocompleteResponse, FatSecretError> {
     let mut params = HashMap::new();
     params.insert("expression".to_string(), expression.to_string());
-    
+
     if let Some(m) = max_results {
         params.insert("max_results".to_string(), m.to_string());
     }

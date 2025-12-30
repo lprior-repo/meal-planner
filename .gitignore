@@ -120,3 +120,7 @@ bin/
 # bv (beads viewer) local config and caches
 .bv/
 .gitleaks-baseline.json
+
+# moon
+.moon/cache
+.moon/docker

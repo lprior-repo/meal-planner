@@ -1,11 +1,9 @@
 //! FatSecret Weight Management types
 
-use serde::{Deserialize, Serialize};
 use crate::fatsecret::core::serde_utils::{
-    deserialize_flexible_float,
-    deserialize_flexible_int,
-    deserialize_single_or_vec,
+    deserialize_flexible_float, deserialize_flexible_int, deserialize_single_or_vec,
 };
+use serde::{Deserialize, Serialize};
 
 // ============================================================================
 // Weight Entry ID (newtype for type safety)
@@ -89,7 +87,11 @@ pub struct WeightMonthSummary {
     #[serde(deserialize_with = "deserialize_flexible_int")]
     pub to_date_int: i32,
     /// List of daily weight measurements
-    #[serde(rename = "weight", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "weight",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub days: Vec<WeightDaySummary>,
 }
 

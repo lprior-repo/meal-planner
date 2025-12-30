@@ -59,5 +59,27 @@ path = "src/bin/fatsecret_oauth_callback.rs"
 name = "fatsecret_get_token"
 path = "src/bin/fatsecret_get_token.rs"
 
+[[bin]]
+name = "fatsecret_oauth_complete"
+path = "src/bin/fatsecret_oauth_complete.rs"
+
+[[bin]]
+name = "fatsecret_get_profile"
+path = "src/bin/fatsecret_get_profile.rs"
+
 [features]
 sqlx-cli = ["dep:sqlx-cli"]
+
+# Optimized build profiles for fast iteration
+[profile.dev]
+opt-level = 0
+incremental = true
+debug = 0                          # Skip DWARF, faster link
+
+[profile.dev.package."*"]
+opt-level = 2                      # Optimize dependencies
+
+[profile.test]
+opt-level = 0
+debug = 0
+incremental = true

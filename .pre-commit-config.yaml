@@ -1,46 +1,5 @@
-default_language_version:
-  gleam: "1.4.0"
-
 repos:
-  # Gleam formatting and linting
-  - repo: local
-    hooks:
-      - id: gleam-format
-        name: Gleam Format
-        entry: gleam format
-        language: system
-        types: [gleam]
-        pass_filenames: false
-        description: Format Gleam code
-
-      - id: gleam-format-check
-        name: Gleam Format Check
-        entry: gleam format --check
-        language: system
-        types: [gleam]
-        pass_filenames: false
-        stages: [commit]
-        description: Check Gleam code formatting
-
-      - id: gleam-build
-        name: Gleam Build
-        entry: gleam build
-        language: system
-        types: [gleam]
-        pass_filenames: false
-        stages: [commit]
-        description: Verify Gleam code compiles
-
-      - id: gleam-test-fast
-        name: Gleam Fast Tests
-        entry: gleam run -m test_runner/fast
-        language: system
-        types: [gleam]
-        pass_filenames: false
-        stages: [commit]
-        description: Run fast test suite
-
-  # YAML validation
+  # General file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
@@ -69,6 +28,16 @@ repos:
       - id: mixed-line-ending
         name: Mixed Line Ending
         args: [--fix=lf]
+
+  # Rust formatting
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: Rust Format Check
+        entry: cargo fmt --check
+        language: system
+        types: [rust]
+        pass_filenames: false
 
   # Conventional commits
   - repo: https://github.com/compilerla/conventional-pre-commit

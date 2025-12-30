@@ -2,9 +2,14 @@
 # https://mise.jdx.dev/
 
 [tools]
-gleam = "1.13.0"
-task = "3.45.5"
-rust = "1.83"
+rust = "1.92"
+mold = "latest"
+sccache = "latest"
+cargo-binstall = "latest"
+yamllint = "latest"
+
+# Moon for task orchestration with caching
+# Installed via cargo-binstall after mise install
 
 [env]
 # Load .env file first (for non-secret overrides)

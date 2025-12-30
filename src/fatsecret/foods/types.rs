@@ -257,7 +257,11 @@ pub struct FoodSearchResult {
 /// Response from foods.search API
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FoodSearchResponse {
-    #[serde(rename = "food", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "food",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub foods: Vec<FoodSearchResult>,
     #[serde(deserialize_with = "deserialize_flexible_int")]
     pub max_results: i32,

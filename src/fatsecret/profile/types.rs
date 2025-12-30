@@ -1,10 +1,9 @@
 //! FatSecret Profile domain types
 
-use serde::{Deserialize, Serialize};
 use crate::fatsecret::core::serde_utils::{
-    deserialize_optional_flexible_float,
-    deserialize_optional_flexible_i64,
+    deserialize_optional_flexible_float, deserialize_optional_flexible_i64,
 };
+use serde::{Deserialize, Serialize};
 
 // ============================================================================
 // Profile Data Types

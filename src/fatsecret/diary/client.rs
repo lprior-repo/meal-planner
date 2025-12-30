@@ -5,14 +5,12 @@
 
 use std::collections::HashMap;
 
-use crate::fatsecret::core::{AccessToken, FatSecretConfig, FatSecretError};
 use crate::fatsecret::core::http::make_authenticated_request;
-use tracing::{info, instrument};
+use crate::fatsecret::core::{AccessToken, FatSecretConfig, FatSecretError};
 use serde::Deserialize;
+use tracing::{info, instrument};
 
-use super::types::{
-    FoodEntry, FoodEntryId, FoodEntryInput, FoodEntryUpdate, MonthSummary,
-};
+use super::types::{FoodEntry, FoodEntryId, FoodEntryInput, FoodEntryUpdate, MonthSummary};
 
 // ============================================================================
 // Response Wrappers
@@ -25,7 +23,10 @@ struct FoodEntryResponse {
 
 #[derive(Debug, Deserialize)]
 struct FoodEntriesWrapper {
-    #[serde(default, deserialize_with = "crate::fatsecret::core::serde_utils::deserialize_single_or_vec")]
+    #[serde(
+        default,
+        deserialize_with = "crate::fatsecret::core::serde_utils::deserialize_single_or_vec"
+    )]
     food_entry: Vec<FoodEntry>,
 }
 
@@ -89,7 +90,10 @@ pub async fn create_food_entry(
             fat,
         } => {
             params.insert("food_entry_name".to_string(), food_entry_name.clone());
-            params.insert("serving_description".to_string(), serving_description.clone());
+            params.insert(
+                "serving_description".to_string(),
+                serving_description.clone(),
+            );
             params.insert("number_of_units".to_string(), number_of_units.to_string());
             params.insert("meal".to_string(), meal.to_api_string().to_string());
             params.insert("date_int".to_string(), date_int.to_string());
@@ -106,10 +110,10 @@ pub async fn create_food_entry(
     let response: CreateEntryResponse = serde_json::from_str(&body).map_err(|e| {
         FatSecretError::ParseError(format!("Failed to parse create response: {}", e))
     })?;
-    
+
     let id = FoodEntryId::new(response.food_entry_id.value);
     info!(target: "fatsecret", "Created food entry: {}", id.as_str());
-    
+
     Ok(id)
 }
 
@@ -123,10 +127,9 @@ pub async fn get_food_entry(
     params.insert("food_entry_id".to_string(), entry_id.as_str().to_string());
 
     let body = make_authenticated_request(config, token, "food_entry.get", params).await?;
-    let response: FoodEntryResponse = serde_json::from_str(&body).map_err(|e| {
-        FatSecretError::ParseError(format!("Failed to parse food entry: {}", e))
-    })?;
-    
+    let response: FoodEntryResponse = serde_json::from_str(&body)
+        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse food entry: {}", e)))?;
+
     Ok(response.food_entry)
 }
 
@@ -140,9 +143,8 @@ pub async fn get_food_entries(
     params.insert("date_int".to_string(), date_int.to_string());
 
     let body = make_authenticated_request(config, token, "food_entries.get", params).await?;
-    let response: FoodEntriesResponse = serde_json::from_str(&body).map_err(|e| {
-        FatSecretError::ParseError(format!("Failed to parse food entries: {}", e))
-    })?;
+    let response: FoodEntriesResponse = serde_json::from_str(&body)
+        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse food entries: {}", e)))?;
 
     Ok(response.food_entries.food_entry)
 }
@@ -192,10 +194,9 @@ pub async fn get_month_summary(
     params.insert("date_int".to_string(), date_int.to_string());
 
     let body = make_authenticated_request(config, token, "food_entries.get_month", params).await?;
-    let response: MonthResponse = serde_json::from_str(&body).map_err(|e| {
-        FatSecretError::ParseError(format!("Failed to parse month summary: {}", e))
-    })?;
-    
+    let response: MonthResponse = serde_json::from_str(&body)
+        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse month summary: {}", e)))?;
+
     Ok(response.month)
 }
 
@@ -229,7 +230,10 @@ pub async fn copy_meal(
 ) -> Result<(), FatSecretError> {
     let mut params = HashMap::new();
     params.insert("from_date_int".to_string(), from_date_int.to_string());
-    params.insert("from_meal".to_string(), from_meal.to_api_string().to_string());
+    params.insert(
+        "from_meal".to_string(),
+        from_meal.to_api_string().to_string(),
+    );
     params.insert("to_date_int".to_string(), to_date_int.to_string());
     params.insert("to_meal".to_string(), to_meal.to_api_string().to_string());
 

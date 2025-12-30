@@ -1,0 +1,15 @@
+# https://moonrepo.dev/docs/config/workspace
+$schema: './cache/schemas/workspace.json'
+
+projects:
+  - '.'
+
+vcs:
+  manager: 'git'
+  defaultBranch: 'main'
+
+hasher:
+  optimization: 'performance'
+
+runner:
+  cacheLifetime: '7 days'

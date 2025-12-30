@@ -7,7 +7,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::fatsecret::core::serde_utils::{
-    deserialize_flexible_float, deserialize_flexible_int, deserialize_optional_flexible_float, deserialize_single_or_vec,
+    deserialize_flexible_float, deserialize_flexible_int, deserialize_optional_flexible_float,
+    deserialize_single_or_vec,
 };
 
 // ============================================================================
@@ -225,8 +226,12 @@ pub enum FoodEntryInput {
 impl FoodEntryInput {
     pub fn food_entry_name(&self) -> &str {
         match self {
-            FoodEntryInput::FromFood { food_entry_name, .. } => food_entry_name,
-            FoodEntryInput::Custom { food_entry_name, .. } => food_entry_name,
+            FoodEntryInput::FromFood {
+                food_entry_name, ..
+            } => food_entry_name,
+            FoodEntryInput::Custom {
+                food_entry_name, ..
+            } => food_entry_name,
         }
     }
 }
@@ -285,7 +290,11 @@ pub struct DaySummary {
 /// Contains a summary for each day in the month.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MonthSummary {
-    #[serde(rename = "day", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "day",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub days: Vec<DaySummary>,
     #[serde(deserialize_with = "deserialize_flexible_int")]
     pub month: i32,
@@ -300,7 +309,7 @@ pub struct MonthSummary {
 /// Convert YYYY-MM-DD to days since epoch (date_int)
 pub fn date_to_int(date: &str) -> Result<i32, String> {
     use chrono::NaiveDate;
-    
+
     NaiveDate::parse_from_str(date, "%Y-%m-%d")
         .map_err(|e| format!("Invalid date format: {}", e))
         .map(|d| {
@@ -312,9 +321,10 @@ pub fn date_to_int(date: &str) -> Result<i32, String> {
 /// Convert days since epoch to YYYY-MM-DD
 pub fn int_to_date(date_int: i32) -> Result<String, String> {
     use chrono::{Duration, NaiveDate};
-    
+
     let epoch = NaiveDate::from_ymd_opt(1970, 1, 1).unwrap();
-    let date = epoch.checked_add_signed(Duration::days(date_int as i64))
+    let date = epoch
+        .checked_add_signed(Duration::days(date_int as i64))
         .ok_or_else(|| format!("Date calculation overflow: {}", date_int))?;
     Ok(date.format("%Y-%m-%d").to_string())
 }

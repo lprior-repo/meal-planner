@@ -1,11 +1,13 @@
 //! FatSecret SDK Profile API client
 
-use std::collections::HashMap;
 use crate::fatsecret::core::config::FatSecretConfig;
 use crate::fatsecret::core::errors::FatSecretError;
 use crate::fatsecret::core::http::make_authenticated_request;
 use crate::fatsecret::core::oauth::AccessToken;
-use crate::fatsecret::profile::types::{Profile, ProfileAuth, ProfileResponse, ProfileAuthResponseWrapper};
+use crate::fatsecret::profile::types::{
+    Profile, ProfileAuth, ProfileAuthResponseWrapper, ProfileResponse,
+};
+use std::collections::HashMap;
 
 /// Get user's profile information
 ///
@@ -14,15 +16,15 @@ pub async fn get_profile(
     config: &FatSecretConfig,
     access_token: &AccessToken,
 ) -> Result<Profile, FatSecretError> {
-    let body = make_authenticated_request(
-        config,
-        access_token,
-        "profile.get",
-        HashMap::new(),
-    ).await?;
+    let body =
+        make_authenticated_request(config, access_token, "profile.get", HashMap::new()).await?;
 
-    let response: ProfileResponse = serde_json::from_str(&body)
-        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse profile response: {}. Body: {}", e, body)))?;
+    let response: ProfileResponse = serde_json::from_str(&body).map_err(|e| {
+        FatSecretError::ParseError(format!(
+            "Failed to parse profile response: {}. Body: {}",
+            e, body
+        ))
+    })?;
 
     Ok(response.profile)
 }
@@ -38,15 +40,14 @@ pub async fn create_profile(
     let mut params = HashMap::new();
     params.insert("user_id".to_string(), user_id.to_string());
 
-    let body = make_authenticated_request(
-        config,
-        access_token,
-        "profile.create",
-        params,
-    ).await?;
+    let body = make_authenticated_request(config, access_token, "profile.create", params).await?;
 
-    let response: ProfileAuthResponseWrapper = serde_json::from_str(&body)
-        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse profile auth response: {}. Body: {}", e, body)))?;
+    let response: ProfileAuthResponseWrapper = serde_json::from_str(&body).map_err(|e| {
+        FatSecretError::ParseError(format!(
+            "Failed to parse profile auth response: {}. Body: {}",
+            e, body
+        ))
+    })?;
 
     Ok(response.profile)
 }
@@ -62,15 +63,14 @@ pub async fn get_profile_auth(
     let mut params = HashMap::new();
     params.insert("user_id".to_string(), user_id.to_string());
 
-    let body = make_authenticated_request(
-        config,
-        access_token,
-        "profile.get_auth",
-        params,
-    ).await?;
+    let body = make_authenticated_request(config, access_token, "profile.get_auth", params).await?;
 
-    let response: ProfileAuthResponseWrapper = serde_json::from_str(&body)
-        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse profile auth response: {}. Body: {}", e, body)))?;
+    let response: ProfileAuthResponseWrapper = serde_json::from_str(&body).map_err(|e| {
+        FatSecretError::ParseError(format!(
+            "Failed to parse profile auth response: {}. Body: {}",
+            e, body
+        ))
+    })?;
 
     Ok(response.profile)
 }

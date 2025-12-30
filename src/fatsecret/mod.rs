@@ -76,7 +76,9 @@ pub use diary::{
 };
 
 // Re-export crypto types
-pub use crypto::{CryptoError, decrypt, encrypt, encryption_configured, generate_key, StorageError, TokenValidity};
+pub use crypto::{
+    decrypt, encrypt, encryption_configured, generate_key, CryptoError, StorageError, TokenValidity,
+};
 
 // Re-export OAuth types
 pub use core::{AccessToken, RequestToken};
