@@ -2,7 +2,7 @@
 id: meta/19_explicit_progress/index
 title: "Set/Get progress from code"
 category: meta
-tags: ["setget", "19_explicit_progress", "meta"]
+tags: ["19_explicit_progress", "meta", "setget"]
 ---
 
 import Tabs from '@theme/Tabs';

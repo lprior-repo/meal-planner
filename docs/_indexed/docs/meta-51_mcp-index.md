@@ -2,7 +2,7 @@
 id: meta/51_mcp/index
 title: "Windmill MCP"
 category: meta
-tags: ["51_mcp", "meta", "advanced", "windmill"]
+tags: ["advanced", "meta", "windmill", "51_mcp"]
 ---
 
 # Windmill MCP

@@ -2,7 +2,7 @@
 id: meta/51_sql_to_s3_streaming/index
 title: "S3 streaming for large queries"
 category: meta
-tags: ["sql", "meta", "51_sql_to_s3_streaming", "windmill"]
+tags: ["meta", "sql", "windmill", "51_sql_to_s3_streaming"]
 ---
 
 # S3 streaming for large queries

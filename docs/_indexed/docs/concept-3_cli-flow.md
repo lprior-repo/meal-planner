@@ -2,7 +2,7 @@
 id: concept/3_cli/flow
 title: "Flows"
 category: concept
-tags: ["flows", "3_cli", "windmill", "concept"]
+tags: ["windmill", "3_cli", "flows", "concept"]
 ---
 
 <!--

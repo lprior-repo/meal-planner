@@ -2,7 +2,7 @@
 id: ref/fatsecret/guides-parameters
 title: "FatSecret Platform API - Parameters Reference"
 category: ref
-tags: ["fatsecret", "reference", "api", "advanced"]
+tags: ["advanced", "fatsecret", "api", "reference"]
 ---
 
 # FatSecret Platform API - Parameters Reference

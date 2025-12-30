@@ -2,7 +2,7 @@
 id: meta/32_private_hub/index
 title: "Private Hub"
 category: meta
-tags: ["32_private_hub", "windmill", "meta", "private"]
+tags: ["meta", "windmill", "32_private_hub", "private"]
 ---
 
 # Private Hub

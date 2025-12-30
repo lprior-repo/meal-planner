@@ -2,7 +2,7 @@
 id: ops/install/swag
 title: "Swag"
 category: ops
-tags: ["operations", "docker", "install", "swag"]
+tags: ["operations", "docker", "swag", "install"]
 ---
 
 # Swag

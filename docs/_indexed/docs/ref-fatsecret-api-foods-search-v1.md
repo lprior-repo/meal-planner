@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-foods-search-v1
 title: "Foods Search v1"
 category: ref
-tags: ["fatsecret", "foods", "reference"]
+tags: ["foods", "fatsecret", "reference"]
 ---
 
 # Foods Search v1

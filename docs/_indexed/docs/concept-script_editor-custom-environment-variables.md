@@ -2,7 +2,7 @@
 id: concept/script_editor/custom-environment-variables
 title: "Custom environment variables"
 category: concept
-tags: ["custom", "script_editor", "concept"]
+tags: ["custom", "concept", "script_editor"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

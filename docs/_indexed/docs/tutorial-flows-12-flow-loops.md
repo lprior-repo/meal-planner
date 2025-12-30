@@ -2,7 +2,7 @@
 id: tutorial/flows/12-flow-loops
 title: "For loops"
 category: tutorial
-tags: ["beginner", "flows", "tutorial", "for"]
+tags: ["for", "beginner", "flows", "tutorial"]
 ---
 
 <!--

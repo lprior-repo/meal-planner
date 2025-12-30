@@ -2,7 +2,7 @@
 id: ops/general/ai-documentation-system
 title: "AI-Optimized Documentation System: Complete Design Document"
 category: ops
-tags: ["operations", "advanced", "aioptimized"]
+tags: ["operations", "aioptimized", "advanced"]
 ---
 
 # AI-Optimized Documentation System: Complete Design Document

@@ -2,7 +2,7 @@
 id: meta/1_self_host/index
 title: "Self-host"
 category: meta
-tags: ["selfhost", "meta", "advanced", "1_self_host"]
+tags: ["selfhost", "advanced", "meta", "1_self_host"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

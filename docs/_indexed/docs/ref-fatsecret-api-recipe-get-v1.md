@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-recipe-get-v1
 title: "Recipe Get by ID v1"
 category: ref
-tags: ["fatsecret", "recipe", "reference", "advanced"]
+tags: ["advanced", "fatsecret", "reference", "recipe"]
 ---
 
 # Recipe Get by ID v1

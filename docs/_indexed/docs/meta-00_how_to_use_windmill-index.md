@@ -2,7 +2,7 @@
 id: meta/00_how_to_use_windmill/index
 title: "Getting started with Windmill"
 category: meta
-tags: ["getting", "meta", "windmill", "00_how_to_use_windmill"]
+tags: ["windmill", "meta", "getting", "00_how_to_use_windmill"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

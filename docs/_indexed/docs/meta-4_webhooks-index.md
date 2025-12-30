@@ -2,7 +2,7 @@
 id: meta/4_webhooks/index
 title: "Webhooks"
 category: meta
-tags: ["meta", "4_webhooks", "webhooks", "advanced"]
+tags: ["4_webhooks", "webhooks", "meta", "advanced"]
 ---
 
 import Tabs from '@theme/Tabs';

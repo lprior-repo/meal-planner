@@ -2,7 +2,7 @@
 id: meta/42_autoscaling/index
 title: "Autoscaling"
 category: meta
-tags: ["autoscaling", "meta", "advanced", "42_autoscaling"]
+tags: ["advanced", "autoscaling", "meta", "42_autoscaling"]
 ---
 
 # Autoscaling

@@ -2,7 +2,7 @@
 id: meta/9_deploy_gh_gl/index
 title: "Deploy to prod using a git workflow"
 category: meta
-tags: ["deploy", "meta", "advanced", "9_deploy_gh_gl"]
+tags: ["9_deploy_gh_gl", "meta", "deploy", "advanced"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

@@ -2,7 +2,7 @@
 id: meta/44_workspace_settings/index
 title: "Workspace settings"
 category: meta
-tags: ["workspace", "44_workspace_settings", "meta"]
+tags: ["workspace", "meta", "44_workspace_settings"]
 ---
 
 # Workspace settings

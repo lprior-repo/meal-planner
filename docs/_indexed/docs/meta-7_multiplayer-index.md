@@ -2,7 +2,7 @@
 id: meta/7_multiplayer/index
 title: "Multiplayer"
 category: meta
-tags: ["7_multiplayer", "multiplayer", "meta"]
+tags: ["7_multiplayer", "meta", "multiplayer"]
 ---
 
 <!--

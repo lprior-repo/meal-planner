@@ -2,7 +2,7 @@
 id: tutorial/install/synology
 title: "Synology"
 category: tutorial
-tags: ["beginner", "tutorial", "install", "synology"]
+tags: ["synology", "beginner", "install", "tutorial"]
 ---
 
 # Synology

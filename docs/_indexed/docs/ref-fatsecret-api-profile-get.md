@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-profile-get
 title: "Profile Get Status"
 category: ref
-tags: ["fatsecret", "reference", "profile"]
+tags: ["fatsecret", "profile", "reference"]
 ---
 
 # Profile Get Status

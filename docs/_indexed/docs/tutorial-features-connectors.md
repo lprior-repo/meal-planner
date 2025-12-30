@@ -2,7 +2,7 @@
 id: tutorial/features/connectors
 title: "Connectors"
 category: tutorial
-tags: ["features", "connectors", "beginner", "tutorial"]
+tags: ["features", "beginner", "connectors", "tutorial"]
 ---
 
 # Connectors

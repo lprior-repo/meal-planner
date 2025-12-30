@@ -2,7 +2,7 @@
 id: meta/0_scripts_quickstart/index
 title: "Scripts quickstart"
 category: meta
-tags: ["sql", "rust", "typescript", "docker", "meta"]
+tags: ["rust", "docker", "python", "typescript", "sql"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

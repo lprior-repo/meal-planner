@@ -2,7 +2,7 @@
 id: concept/flows/24-sticky-notes
 title: "Sticky notes"
 category: concept
-tags: ["flows", "sticky", "concept"]
+tags: ["flows", "concept", "sticky"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

@@ -2,7 +2,7 @@
 id: ops/3_cli/workspace-management
 title: "Workspace management"
 category: ops
-tags: ["operations", "workspace", "windmill", "advanced", "3_cli"]
+tags: ["workspace", "windmill", "advanced", "operations", "3_cli"]
 ---
 
 <!--

@@ -2,7 +2,7 @@
 id: ops/features/import-export
 title: "Import Export"
 category: ops
-tags: ["operations", "features", "advanced", "import"]
+tags: ["operations", "features", "import", "advanced"]
 ---
 
 # Import Export

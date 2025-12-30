@@ -2,7 +2,7 @@
 id: tutorial/script_editor/settings
 title: "Settings"
 category: tutorial
-tags: ["beginner", "settings", "tutorial", "script_editor"]
+tags: ["beginner", "settings", "script_editor", "tutorial"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

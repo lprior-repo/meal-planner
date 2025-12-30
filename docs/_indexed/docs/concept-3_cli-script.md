@@ -2,7 +2,7 @@
 id: concept/3_cli/script
 title: "Scripts"
 category: concept
-tags: ["windmill", "advanced", "concept", "3_cli", "scripts"]
+tags: ["windmill", "advanced", "scripts", "3_cli", "concept"]
 ---
 
 <!--

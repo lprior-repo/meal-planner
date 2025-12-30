@@ -2,7 +2,7 @@
 id: ref/fatsecret/guides-oauth2
 title: "FatSecret Platform API - OAuth 2.0 Guide"
 category: ref
-tags: ["oauth", "fatsecret", "reference", "api"]
+tags: ["fatsecret", "api", "reference", "oauth"]
 ---
 
 # FatSecret Platform API - OAuth 2.0 Guide

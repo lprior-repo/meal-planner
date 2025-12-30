@@ -2,7 +2,7 @@
 id: concept/flows/9-custom-timeout
 title: "Custom timeout for step"
 category: concept
-tags: ["flows", "custom", "concept"]
+tags: ["custom", "flows", "concept"]
 ---
 
 <!--

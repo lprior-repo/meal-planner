@@ -2,7 +2,7 @@
 id: tutorial/flows/11-flow-approval
 title: "Suspend & Approval / Prompts"
 category: tutorial
-tags: ["suspend", "flows", "beginner", "tutorial"]
+tags: ["beginner", "flows", "suspend", "tutorial"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

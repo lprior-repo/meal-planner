@@ -2,7 +2,7 @@
 id: meta/11_git_sync/index
 title: "Git sync"
 category: meta
-tags: ["meta", "11_git_sync", "git", "advanced"]
+tags: ["advanced", "git", "meta", "11_git_sync"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

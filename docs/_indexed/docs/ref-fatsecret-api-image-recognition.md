@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-image-recognition
 title: "Image Recognition API v1"
 category: ref
-tags: ["advanced", "reference", "api", "image", "fatsecret"]
+tags: ["image", "advanced", "api", "fatsecret", "reference"]
 ---
 
 # Image Recognition API v1

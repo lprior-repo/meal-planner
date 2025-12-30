@@ -2,7 +2,7 @@
 id: meta/10_ansible_quickstart/index
 title: "Ansible quickstart"
 category: meta
-tags: ["ansible", "meta", "advanced", "10_ansible_quickstart"]
+tags: ["advanced", "meta", "10_ansible_quickstart", "ansible"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

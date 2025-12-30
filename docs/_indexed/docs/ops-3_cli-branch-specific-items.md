@@ -2,7 +2,7 @@
 id: ops/3_cli/branch-specific-items
 title: "Branch-specific items"
 category: ops
-tags: ["operations", "3_cli", "advanced", "branchspecific"]
+tags: ["operations", "advanced", "3_cli", "branchspecific"]
 ---
 
 # Branch-specific items

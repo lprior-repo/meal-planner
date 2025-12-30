@@ -2,7 +2,7 @@
 id: meta/5_monitor_past_and_future_runs/index
 title: "Jobs runs"
 category: meta
-tags: ["jobs", "meta", "5_monitor_past_and_future_runs", "advanced"]
+tags: ["advanced", "jobs", "meta", "5_monitor_past_and_future_runs"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

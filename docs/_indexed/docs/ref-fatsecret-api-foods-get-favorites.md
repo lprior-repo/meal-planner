@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-foods-get-favorites
 title: "Foods Get Favorites (v1)"
 category: ref
-tags: ["fatsecret", "foods", "reference"]
+tags: ["foods", "fatsecret", "reference"]
 ---
 
 # Foods Get Favorites (v1)

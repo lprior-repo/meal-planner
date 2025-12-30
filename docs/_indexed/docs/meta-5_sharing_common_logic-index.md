@@ -2,7 +2,7 @@
 id: meta/5_sharing_common_logic/index
 title: "Sharing common logic"
 category: meta
-tags: ["meta", "sharing", "5_sharing_common_logic", "advanced"]
+tags: ["advanced", "sharing", "5_sharing_common_logic", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

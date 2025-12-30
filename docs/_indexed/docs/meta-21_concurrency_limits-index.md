@@ -2,7 +2,7 @@
 id: meta/21_concurrency_limits/index
 title: "Concurrency limits"
 category: meta
-tags: ["api", "21_concurrency_limits", "meta", "concurrency"]
+tags: ["meta", "concurrency", "21_concurrency_limits", "api"]
 ---
 
 <!--

@@ -2,7 +2,7 @@
 id: meta/3_resources_and_types/index
 title: "Resources and resource types"
 category: meta
-tags: ["meta", "3_resources_and_types", "resources", "advanced"]
+tags: ["3_resources_and_types", "advanced", "meta", "resources"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

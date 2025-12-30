@@ -2,7 +2,7 @@
 id: meta/17_email_triggers/index
 title: "Email triggers"
 category: meta
-tags: ["email", "meta", "17_email_triggers", "advanced"]
+tags: ["advanced", "17_email_triggers", "meta", "email"]
 ---
 
 # Email triggers

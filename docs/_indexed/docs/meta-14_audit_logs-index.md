@@ -2,7 +2,7 @@
 id: meta/14_audit_logs/index
 title: "Audit logs"
 category: meta
-tags: ["14_audit_logs", "meta", "audit"]
+tags: ["audit", "meta", "14_audit_logs"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

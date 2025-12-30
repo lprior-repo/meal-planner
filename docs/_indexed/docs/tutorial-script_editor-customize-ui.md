@@ -2,7 +2,7 @@
 id: tutorial/script_editor/customize-ui
 title: "Generated UI"
 category: tutorial
-tags: ["generated", "beginner", "tutorial", "script_editor"]
+tags: ["generated", "beginner", "script_editor", "tutorial"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

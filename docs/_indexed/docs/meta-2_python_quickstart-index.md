@@ -2,7 +2,7 @@
 id: meta/2_python_quickstart/index
 title: "Python quickstart"
 category: meta
-tags: ["2_python_quickstart", "meta", "advanced", "python"]
+tags: ["2_python_quickstart", "python", "meta", "advanced"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

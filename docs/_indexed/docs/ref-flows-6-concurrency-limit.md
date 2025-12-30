@@ -2,7 +2,7 @@
 id: ref/flows/6-concurrency-limit
 title: "Concurrency limits"
 category: ref
-tags: ["flows", "reference", "concurrency"]
+tags: ["reference", "flows", "concurrency"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

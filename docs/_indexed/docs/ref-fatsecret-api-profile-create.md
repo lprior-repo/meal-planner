@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-profile-create
 title: "Profile Create"
 category: ref
-tags: ["fatsecret", "reference", "profile"]
+tags: ["fatsecret", "profile", "reference"]
 ---
 
 # Profile Create

@@ -2,7 +2,7 @@
 id: ops/3_cli/gitsync-settings
 title: "Git sync settings"
 category: ops
-tags: ["operations", "windmill", "advanced", "3_cli", "git"]
+tags: ["git", "windmill", "advanced", "operations", "3_cli"]
 ---
 
 # Git sync settings

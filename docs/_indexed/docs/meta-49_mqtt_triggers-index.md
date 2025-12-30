@@ -2,7 +2,7 @@
 id: meta/49_mqtt_triggers/index
 title: "MQTT triggers"
 category: meta
-tags: ["mqtt", "windmill", "meta", "advanced", "49_mqtt_triggers"]
+tags: ["meta", "windmill", "49_mqtt_triggers", "advanced", "mqtt"]
 ---
 
 # MQTT triggers

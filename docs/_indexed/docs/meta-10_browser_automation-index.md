@@ -2,7 +2,7 @@
 id: meta/10_browser_automation/index
 title: "Browser automation"
 category: meta
-tags: ["browser", "meta", "windmill", "api", "10_browser_automation"]
+tags: ["browser", "meta", "windmill", "10_browser_automation", "api"]
 ---
 
 # Browser automation

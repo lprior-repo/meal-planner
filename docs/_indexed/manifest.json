@@ -1,7 +1,7 @@
 {
   "source_dir": "/home/lewis/src/meal-planner/docs",
   "output_dir": "/home/lewis/src/meal-planner/docs/_indexed",
-  "discovered_at": "2025-12-30T09:40:30.227174",
+  "discovered_at": "2025-12-30T09:46:31.589300",
   "files": [
     {
       "source_path": "AI_DOCUMENTATION_SYSTEM.md",
@@ -13,8 +13,8 @@
       "word_count": 2501,
       "tags": [
         "operations",
-        "advanced",
-        "aioptimized"
+        "aioptimized",
+        "advanced"
       ]
     },
     {
@@ -26,11 +26,11 @@
       "subcategory": "general",
       "word_count": 753,
       "tags": [
-        "operations",
-        "meal",
         "rust",
+        "meal",
         "windmill",
-        "advanced"
+        "advanced",
+        "operations"
       ]
     },
     {
@@ -182,8 +182,8 @@
       "subcategory": "fatsecret",
       "word_count": 321,
       "tags": [
-        "fatsecret",
         "foods",
+        "fatsecret",
         "reference"
       ]
     },
@@ -196,8 +196,8 @@
       "subcategory": "fatsecret",
       "word_count": 291,
       "tags": [
-        "fatsecret",
         "foods",
+        "fatsecret",
         "reference"
       ]
     },
@@ -210,8 +210,8 @@
       "subcategory": "fatsecret",
       "word_count": 302,
       "tags": [
-        "fatsecret",
         "foods",
+        "fatsecret",
         "reference"
       ]
     },
@@ -224,11 +224,11 @@
       "subcategory": "fatsecret",
       "word_count": 620,
       "tags": [
-        "advanced",
-        "reference",
-        "api",
         "image",
-        "fatsecret"
+        "advanced",
+        "api",
+        "fatsecret",
+        "reference"
       ]
     },
     {
@@ -242,9 +242,9 @@
       "tags": [
         "natural",
         "advanced",
-        "reference",
         "api",
-        "fatsecret"
+        "fatsecret",
+        "reference"
       ]
     },
     {
@@ -257,8 +257,8 @@
       "word_count": 217,
       "tags": [
         "fatsecret",
-        "reference",
-        "profile"
+        "profile",
+        "reference"
       ]
     },
     {
@@ -271,8 +271,8 @@
       "word_count": 154,
       "tags": [
         "fatsecret",
-        "reference",
-        "profile"
+        "profile",
+        "reference"
       ]
     },
     {
@@ -285,8 +285,8 @@
       "word_count": 236,
       "tags": [
         "fatsecret",
-        "reference",
-        "profile"
+        "profile",
+        "reference"
       ]
     },
     {
@@ -298,10 +298,10 @@
       "subcategory": "fatsecret",
       "word_count": 577,
       "tags": [
+        "advanced",
         "fatsecret",
-        "recipe",
         "reference",
-        "advanced"
+        "recipe"
       ]
     },
     {
@@ -314,8 +314,8 @@
       "word_count": 168,
       "tags": [
         "fatsecret",
-        "recipe",
-        "reference"
+        "reference",
+        "recipe"
       ]
     },
     {
@@ -342,8 +342,8 @@
       "word_count": 339,
       "tags": [
         "fatsecret",
-        "reference",
-        "api"
+        "api",
+        "reference"
       ]
     },
     {
@@ -384,9 +384,9 @@
       "subcategory": "fatsecret",
       "word_count": 641,
       "tags": [
+        "advanced",
         "fatsecret",
         "api",
-        "advanced",
         "concept"
       ]
     },
@@ -399,10 +399,10 @@
       "subcategory": "fatsecret",
       "word_count": 639,
       "tags": [
-        "beginner",
-        "tutorial",
         "oauth",
+        "beginner",
         "api",
+        "tutorial",
         "fatsecret"
       ]
     },
@@ -415,10 +415,10 @@
       "subcategory": "fatsecret",
       "word_count": 467,
       "tags": [
-        "oauth",
         "fatsecret",
+        "api",
         "reference",
-        "api"
+        "oauth"
       ]
     },
     {
@@ -430,10 +430,10 @@
       "subcategory": "fatsecret",
       "word_count": 489,
       "tags": [
-        "oauth",
         "fatsecret",
+        "api",
         "reference",
-        "api"
+        "oauth"
       ]
     },
     {
@@ -445,10 +445,10 @@
       "subcategory": "fatsecret",
       "word_count": 772,
       "tags": [
+        "advanced",
         "fatsecret",
-        "reference",
         "api",
-        "advanced"
+        "reference"
       ]
     },
     {
@@ -460,9 +460,9 @@
       "subcategory": "fatsecret",
       "word_count": 224,
       "tags": [
-        "api",
-        "fatsecret",
         "beginner",
+        "fatsecret",
+        "api",
         "tutorial"
       ]
     },
@@ -545,9 +545,9 @@
       "word_count": 112,
       "tags": [
         "contribute",
-        "tandoor",
         "related",
-        "concept"
+        "concept",
+        "tandoor"
       ]
     },
     {
@@ -561,8 +561,8 @@
       "tags": [
         "contribute",
         "tandoor",
-        "translations",
-        "concept"
+        "concept",
+        "translations"
       ]
     },
     {
@@ -603,8 +603,8 @@
       "word_count": 202,
       "tags": [
         "features",
-        "tandoor",
-        "concept"
+        "concept",
+        "tandoor"
       ]
     },
     {
@@ -646,8 +646,8 @@
       "word_count": 162,
       "tags": [
         "features",
-        "connectors",
         "beginner",
+        "connectors",
         "tutorial"
       ]
     },
@@ -677,8 +677,8 @@
       "tags": [
         "operations",
         "features",
-        "advanced",
-        "import"
+        "import",
+        "advanced"
       ]
     },
     {
@@ -705,8 +705,8 @@
       "word_count": 331,
       "tags": [
         "operations",
-        "features",
         "tandoor",
+        "features",
         "telegram"
       ]
     },
@@ -720,8 +720,8 @@
       "word_count": 368,
       "tags": [
         "features",
-        "templating",
-        "concept"
+        "concept",
+        "templating"
       ]
     },
     {
@@ -733,8 +733,8 @@
       "subcategory": "tandoor",
       "word_count": 699,
       "tags": [
-        "index",
         "meta",
+        "index",
         "tandoor"
       ]
     },
@@ -763,8 +763,8 @@
       "tags": [
         "operations",
         "docker",
-        "install",
-        "advanced"
+        "advanced",
+        "install"
       ]
     },
     {
@@ -776,11 +776,11 @@
       "subcategory": "install",
       "word_count": 636,
       "tags": [
-        "operations",
-        "tandoor",
-        "advanced",
         "homeassistant",
-        "install"
+        "install",
+        "advanced",
+        "operations",
+        "tandoor"
       ]
     },
     {
@@ -807,8 +807,8 @@
       "word_count": 190,
       "tags": [
         "operations",
-        "kubesail",
-        "install"
+        "install",
+        "kubesail"
       ]
     },
     {
@@ -820,11 +820,11 @@
       "subcategory": "install",
       "word_count": 891,
       "tags": [
-        "operations",
         "sql",
-        "advanced",
         "manual",
-        "install"
+        "install",
+        "advanced",
+        "operations"
       ]
     },
     {
@@ -838,8 +838,8 @@
       "tags": [
         "operations",
         "other",
-        "install",
-        "advanced"
+        "advanced",
+        "install"
       ]
     },
     {
@@ -853,8 +853,8 @@
       "tags": [
         "operations",
         "docker",
-        "install",
-        "swag"
+        "swag",
+        "install"
       ]
     },
     {
@@ -866,10 +866,10 @@
       "subcategory": "install",
       "word_count": 936,
       "tags": [
+        "synology",
         "beginner",
-        "tutorial",
         "install",
-        "synology"
+        "tutorial"
       ]
     },
     {
@@ -882,9 +882,9 @@
       "word_count": 1076,
       "tags": [
         "operations",
-        "install",
+        "advanced",
         "truenas",
-        "advanced"
+        "install"
       ]
     },
     {
@@ -897,8 +897,8 @@
       "word_count": 224,
       "tags": [
         "operations",
-        "install",
-        "unraid"
+        "unraid",
+        "install"
       ]
     },
     {
@@ -926,8 +926,8 @@
       "word_count": 667,
       "tags": [
         "operations",
-        "advanced",
         "system",
+        "advanced",
         "backup"
       ]
     },
@@ -941,9 +941,9 @@
       "word_count": 2917,
       "tags": [
         "operations",
-        "configuration",
         "system",
-        "advanced"
+        "advanced",
+        "configuration"
       ]
     },
     {
@@ -955,10 +955,10 @@
       "subcategory": "system",
       "word_count": 224,
       "tags": [
-        "operations",
-        "sql",
+        "docker",
         "how",
-        "tandoor",
+        "sql",
+        "operations",
         "system"
       ]
     },
@@ -987,9 +987,9 @@
       "word_count": 380,
       "tags": [
         "operations",
+        "system",
         "docker",
-        "updating",
-        "system"
+        "updating"
       ]
     },
     {
@@ -1015,8 +1015,8 @@
       "word_count": 2446,
       "tags": [
         "operations",
-        "windmill",
         "advanced",
+        "windmill",
         "oauth"
       ]
     },
@@ -1030,8 +1030,8 @@
       "word_count": 677,
       "tags": [
         "operations",
-        "windmill",
-        "advanced"
+        "advanced",
+        "windmill"
       ]
     },
     {
@@ -1059,8 +1059,8 @@
       "tags": [
         "operations",
         "documentation",
-        "windmill",
-        "advanced"
+        "advanced",
+        "windmill"
       ]
     },
     {
@@ -1072,8 +1072,8 @@
       "subcategory": "windmill",
       "word_count": 982,
       "tags": [
-        "meta",
         "advanced",
+        "meta",
         "windmill"
       ]
     },
@@ -1089,8 +1089,8 @@
         "browser",
         "meta",
         "windmill",
-        "api",
-        "10_browser_automation"
+        "10_browser_automation",
+        "api"
       ]
     },
     {
@@ -1103,8 +1103,8 @@
       "word_count": 111,
       "tags": [
         "operations",
-        "cli",
-        "11_git_sync"
+        "11_git_sync",
+        "cli"
       ]
     },
     {
@@ -1116,10 +1116,10 @@
       "subcategory": "11_git_sync",
       "word_count": 1563,
       "tags": [
-        "meta",
-        "11_git_sync",
+        "advanced",
         "git",
-        "advanced"
+        "meta",
+        "11_git_sync"
       ]
     },
     {
@@ -1131,9 +1131,9 @@
       "subcategory": "12_deploy_to_prod",
       "word_count": 352,
       "tags": [
-        "deploy",
         "12_deploy_to_prod",
-        "meta"
+        "meta",
+        "deploy"
       ]
     },
     {
@@ -1145,9 +1145,9 @@
       "subcategory": "13_version_control",
       "word_count": 239,
       "tags": [
+        "13_version_control",
         "meta",
-        "version",
-        "13_version_control"
+        "version"
       ]
     },
     {
@@ -1159,11 +1159,11 @@
       "subcategory": "14_dependencies_in_typescript",
       "word_count": 1768,
       "tags": [
-        "dependencies",
-        "14_dependencies_in_typescript",
         "typescript",
+        "dependencies",
         "meta",
-        "advanced"
+        "advanced",
+        "14_dependencies_in_typescript"
       ]
     },
     {
@@ -1175,11 +1175,11 @@
       "subcategory": "15_dependencies_in_python",
       "word_count": 1971,
       "tags": [
+        "python",
         "dependencies",
-        "15_dependencies_in_python",
         "meta",
         "advanced",
-        "python"
+        "15_dependencies_in_python"
       ]
     },
     {
@@ -1193,9 +1193,9 @@
       "tags": [
         "16_external_auth_with_jwt",
         "meta",
-        "advanced",
         "windmill",
-        "external"
+        "external",
+        "advanced"
       ]
     },
     {
@@ -1207,10 +1207,10 @@
       "subcategory": "17_email_triggers",
       "word_count": 850,
       "tags": [
-        "email",
-        "meta",
+        "advanced",
         "17_email_triggers",
-        "advanced"
+        "meta",
+        "email"
       ]
     },
     {
@@ -1223,9 +1223,9 @@
       "word_count": 2699,
       "tags": [
         "instance",
+        "advanced",
         "meta",
-        "18_instance_settings",
-        "advanced"
+        "18_instance_settings"
       ]
     },
     {
@@ -1237,9 +1237,9 @@
       "subcategory": "19_explicit_progress",
       "word_count": 313,
       "tags": [
-        "setget",
         "19_explicit_progress",
-        "meta"
+        "meta",
+        "setget"
       ]
     },
     {
@@ -1251,11 +1251,11 @@
       "subcategory": "1_self_host",
       "word_count": 3702,
       "tags": [
-        "operations",
+        "aws",
         "windmill",
         "advanced",
-        "aws",
-        "1_self_host"
+        "1_self_host",
+        "operations"
       ]
     },
     {
@@ -1268,8 +1268,8 @@
       "word_count": 3010,
       "tags": [
         "selfhost",
-        "meta",
         "advanced",
+        "meta",
         "1_self_host"
       ]
     },
@@ -1282,9 +1282,9 @@
       "subcategory": "20_workspace_forks",
       "word_count": 965,
       "tags": [
-        "20_workspace_forks",
         "workspace",
-        "meta"
+        "meta",
+        "20_workspace_forks"
       ]
     },
     {
@@ -1296,10 +1296,10 @@
       "subcategory": "21_scaling",
       "word_count": 1300,
       "tags": [
-        "21_scaling",
-        "meta",
         "advanced",
-        "scaling"
+        "meta",
+        "scaling",
+        "21_scaling"
       ]
     },
     {
@@ -1312,9 +1312,9 @@
       "word_count": 405,
       "tags": [
         "operations",
+        "python",
         "2_clients",
-        "windmill",
-        "python"
+        "windmill"
       ]
     },
     {
@@ -1326,10 +1326,10 @@
       "subcategory": "2_clients",
       "word_count": 448,
       "tags": [
-        "operations",
         "rust",
         "windmill",
         "api",
+        "operations",
         "2_clients"
       ]
     },
@@ -1343,8 +1343,8 @@
       "word_count": 292,
       "tags": [
         "operations",
-        "2_clients",
-        "typescript"
+        "typescript",
+        "2_clients"
       ]
     },
     {
@@ -1356,9 +1356,9 @@
       "subcategory": "3_cli",
       "word_count": 148,
       "tags": [
-        "apps",
-        "3_cli",
         "windmill",
+        "3_cli",
+        "apps",
         "concept"
       ]
     },
@@ -1372,8 +1372,8 @@
       "word_count": 919,
       "tags": [
         "operations",
-        "3_cli",
         "advanced",
+        "3_cli",
         "branchspecific"
       ]
     },
@@ -1386,9 +1386,9 @@
       "subcategory": "3_cli",
       "word_count": 441,
       "tags": [
-        "flows",
-        "3_cli",
         "windmill",
+        "3_cli",
+        "flows",
         "concept"
       ]
     },
@@ -1401,8 +1401,8 @@
       "subcategory": "3_cli",
       "word_count": 141,
       "tags": [
-        "folder",
         "3_cli",
+        "folder",
         "windmill",
         "concept"
       ]
@@ -1416,11 +1416,11 @@
       "subcategory": "3_cli",
       "word_count": 1119,
       "tags": [
-        "operations",
+        "git",
         "windmill",
         "advanced",
-        "3_cli",
-        "git"
+        "operations",
+        "3_cli"
       ]
     },
     {
@@ -1432,9 +1432,9 @@
       "subcategory": "3_cli",
       "word_count": 110,
       "tags": [
-        "3_cli",
+        "commandline",
         "meta",
-        "commandline"
+        "3_cli"
       ]
     },
     {
@@ -1448,8 +1448,8 @@
       "tags": [
         "operations",
         "3_cli",
-        "windmill",
-        "installation"
+        "installation",
+        "windmill"
       ]
     },
     {
@@ -1463,8 +1463,8 @@
       "tags": [
         "3_cli",
         "windmill",
-        "resources",
-        "concept"
+        "concept",
+        "resources"
       ]
     },
     {
@@ -1478,9 +1478,9 @@
       "tags": [
         "windmill",
         "advanced",
-        "concept",
+        "scripts",
         "3_cli",
-        "scripts"
+        "concept"
       ]
     },
     {
@@ -1494,8 +1494,8 @@
       "tags": [
         "operations",
         "3_cli",
-        "advanced",
-        "sync"
+        "sync",
+        "advanced"
       ]
     },
     {
@@ -1507,10 +1507,10 @@
       "subcategory": "3_cli",
       "word_count": 500,
       "tags": [
-        "users",
         "3_cli",
         "windmill",
-        "concept"
+        "concept",
+        "users"
       ]
     },
     {
@@ -1522,10 +1522,10 @@
       "subcategory": "3_cli",
       "word_count": 442,
       "tags": [
-        "variables",
         "3_cli",
         "windmill",
-        "concept"
+        "concept",
+        "variables"
       ]
     },
     {
@@ -1537,10 +1537,10 @@
       "subcategory": "3_cli",
       "word_count": 839,
       "tags": [
-        "operations",
         "workspace",
         "windmill",
         "advanced",
+        "operations",
         "3_cli"
       ]
     },
@@ -1555,8 +1555,8 @@
       "tags": [
         "local",
         "meta",
-        "advanced",
-        "4_local_development"
+        "4_local_development",
+        "advanced"
       ]
     },
     {
@@ -1569,8 +1569,8 @@
       "word_count": 835,
       "tags": [
         "operations",
-        "4_local_development",
         "advanced",
+        "4_local_development",
         "run"
       ]
     },
@@ -1583,10 +1583,10 @@
       "subcategory": "5_sharing_common_logic",
       "word_count": 803,
       "tags": [
-        "meta",
+        "advanced",
         "sharing",
         "5_sharing_common_logic",
-        "advanced"
+        "meta"
       ]
     },
     {
@@ -1598,9 +1598,9 @@
       "subcategory": "6_imports",
       "word_count": 1457,
       "tags": [
+        "advanced",
         "6_imports",
         "meta",
-        "advanced",
         "dependency"
       ]
     },
@@ -1629,9 +1629,9 @@
       "subcategory": "8_preinstall_binaries",
       "word_count": 681,
       "tags": [
+        "8_preinstall_binaries",
         "meta",
         "preinstall",
-        "8_preinstall_binaries",
         "advanced"
       ]
     },
@@ -1644,10 +1644,10 @@
       "subcategory": "9_deploy_gh_gl",
       "word_count": 2477,
       "tags": [
-        "deploy",
+        "9_deploy_gh_gl",
         "meta",
-        "advanced",
-        "9_deploy_gh_gl"
+        "deploy",
+        "advanced"
       ]
     },
     {
@@ -1659,11 +1659,11 @@
       "subcategory": "security_isolation",
       "word_count": 1964,
       "tags": [
-        "security",
-        "security_isolation",
         "meta",
         "windmill",
-        "advanced"
+        "advanced",
+        "security",
+        "security_isolation"
       ]
     },
     {
@@ -1675,8 +1675,8 @@
       "subcategory": "1_vscode-extension",
       "word_count": 1028,
       "tags": [
-        "1_vscode-extension",
-        "meta"
+        "meta",
+        "1_vscode-extension"
       ]
     },
     {
@@ -1688,8 +1688,8 @@
       "subcategory": "0_draft_and_deploy",
       "word_count": 646,
       "tags": [
-        "draft",
         "meta",
+        "draft",
         "0_draft_and_deploy"
       ]
     },
@@ -1702,9 +1702,9 @@
       "subcategory": "10_error_handling",
       "word_count": 1734,
       "tags": [
-        "meta",
-        "error",
         "10_error_handling",
+        "error",
+        "meta",
         "advanced"
       ]
     },
@@ -1718,9 +1718,9 @@
       "word_count": 643,
       "tags": [
         "beginner",
-        "tutorial",
+        "data",
         "11_persistent_storage",
-        "data"
+        "tutorial"
       ]
     },
     {
@@ -1733,9 +1733,9 @@
       "word_count": 621,
       "tags": [
         "beginner",
+        "11_persistent_storage",
         "ducklake",
-        "tutorial",
-        "11_persistent_storage"
+        "tutorial"
       ]
     },
     {
@@ -1747,8 +1747,8 @@
       "subcategory": "11_persistent_storage",
       "word_count": 734,
       "tags": [
-        "meta",
         "11_persistent_storage",
+        "meta",
         "persistent"
       ]
     },
@@ -1761,11 +1761,11 @@
       "subcategory": "11_persistent_storage",
       "word_count": 355,
       "tags": [
-        "operations",
         "sql",
         "windmill",
         "11_persistent_storage",
-        "nosql"
+        "nosql",
+        "operations"
       ]
     },
     {
@@ -1777,9 +1777,9 @@
       "subcategory": "11_persistent_storage",
       "word_count": 878,
       "tags": [
+        "advanced",
         "large",
         "11_persistent_storage",
-        "advanced",
         "concept"
       ]
     },
@@ -1795,8 +1795,8 @@
         "sql",
         "big",
         "beginner",
-        "tutorial",
-        "11_persistent_storage"
+        "11_persistent_storage",
+        "tutorial"
       ]
     },
     {
@@ -1808,10 +1808,10 @@
       "subcategory": "11_persistent_storage",
       "word_count": 1170,
       "tags": [
-        "within",
         "windmill",
-        "11_persistent_storage",
         "advanced",
+        "11_persistent_storage",
+        "within",
         "concept"
       ]
     },
@@ -1824,9 +1824,9 @@
       "subcategory": "12_staging_prod",
       "word_count": 505,
       "tags": [
-        "deploy",
+        "12_staging_prod",
         "meta",
-        "12_staging_prod"
+        "deploy"
       ]
     },
     {
@@ -1853,9 +1853,9 @@
       "subcategory": "14_audit_logs",
       "word_count": 321,
       "tags": [
-        "14_audit_logs",
+        "audit",
         "meta",
-        "audit"
+        "14_audit_logs"
       ]
     },
     {
@@ -1881,9 +1881,9 @@
       "subcategory": "16_roles_and_permissions",
       "word_count": 1431,
       "tags": [
+        "roles",
         "meta",
-        "16_roles_and_permissions",
-        "roles"
+        "16_roles_and_permissions"
       ]
     },
     {
@@ -1895,10 +1895,10 @@
       "subcategory": "17_collaboration",
       "word_count": 635,
       "tags": [
-        "17_collaboration",
-        "meta",
         "windmill",
-        "collaboration"
+        "meta",
+        "collaboration",
+        "17_collaboration"
       ]
     },
     {
@@ -1910,10 +1910,10 @@
       "subcategory": "18_files_binary_data",
       "word_count": 737,
       "tags": [
-        "meta",
+        "advanced",
         "18_files_binary_data",
-        "handling",
-        "advanced"
+        "meta",
+        "handling"
       ]
     },
     {
@@ -1925,8 +1925,8 @@
       "subcategory": "19_rich_display_rendering",
       "word_count": 1939,
       "tags": [
-        "meta",
         "advanced",
+        "meta",
         "19_rich_display_rendering",
         "rich"
       ]
@@ -1940,9 +1940,9 @@
       "subcategory": "1_scheduling",
       "word_count": 2610,
       "tags": [
+        "advanced",
         "schedules",
         "meta",
-        "advanced",
         "1_scheduling"
       ]
     },
@@ -1955,9 +1955,9 @@
       "subcategory": "20_jobs",
       "word_count": 3067,
       "tags": [
+        "advanced",
         "jobs",
         "meta",
-        "advanced",
         "20_jobs"
       ]
     },
@@ -1970,10 +1970,10 @@
       "subcategory": "21_concurrency_limits",
       "word_count": 442,
       "tags": [
-        "api",
-        "21_concurrency_limits",
         "meta",
-        "concurrency"
+        "concurrency",
+        "21_concurrency_limits",
+        "api"
       ]
     },
     {
@@ -1985,8 +1985,8 @@
       "subcategory": "22_ai_generation",
       "word_count": 1546,
       "tags": [
-        "windmill",
         "meta",
+        "windmill",
         "22_ai_generation"
       ]
     },
@@ -1999,9 +1999,9 @@
       "subcategory": "22_job_debouncing",
       "word_count": 324,
       "tags": [
+        "22_job_debouncing",
         "meta",
-        "job",
-        "22_job_debouncing"
+        "job"
       ]
     },
     {
@@ -2013,8 +2013,8 @@
       "subcategory": "23_instant_preview",
       "word_count": 817,
       "tags": [
-        "meta",
         "23_instant_preview",
+        "meta",
         "instant"
       ]
     },
@@ -2055,8 +2055,8 @@
       "subcategory": "26_content_search",
       "word_count": 66,
       "tags": [
-        "meta",
         "26_content_search",
+        "meta",
         "content"
       ]
     },
@@ -2069,10 +2069,10 @@
       "subcategory": "27_data_pipelines",
       "word_count": 3113,
       "tags": [
-        "27_data_pipelines",
-        "meta",
+        "advanced",
         "data",
-        "advanced"
+        "27_data_pipelines",
+        "meta"
       ]
     },
     {
@@ -2085,9 +2085,9 @@
       "word_count": 844,
       "tags": [
         "agent",
+        "advanced",
         "meta",
-        "28_agent_workers",
-        "advanced"
+        "28_agent_workers"
       ]
     },
     {
@@ -2099,10 +2099,10 @@
       "subcategory": "29_oidc",
       "word_count": 1422,
       "tags": [
-        "meta",
-        "29_oidc",
         "advanced",
-        "openid"
+        "meta",
+        "openid",
+        "29_oidc"
       ]
     },
     {
@@ -2114,10 +2114,10 @@
       "subcategory": "2_variables_and_secrets",
       "word_count": 988,
       "tags": [
-        "variables",
-        "meta",
+        "advanced",
         "2_variables_and_secrets",
-        "advanced"
+        "meta",
+        "variables"
       ]
     },
     {
@@ -2157,9 +2157,9 @@
       "subcategory": "32_private_hub",
       "word_count": 684,
       "tags": [
-        "32_private_hub",
-        "windmill",
         "meta",
+        "windmill",
+        "32_private_hub",
         "private"
       ]
     },
@@ -2172,9 +2172,9 @@
       "subcategory": "33_codebases_and_bundles",
       "word_count": 363,
       "tags": [
-        "meta",
+        "33_codebases_and_bundles",
         "codebases",
-        "33_codebases_and_bundles"
+        "meta"
       ]
     },
     {
@@ -2200,10 +2200,10 @@
       "subcategory": "35_search_bar",
       "word_count": 524,
       "tags": [
-        "meta",
-        "advanced",
+        "35_search_bar",
         "search",
-        "35_search_bar"
+        "meta",
+        "advanced"
       ]
     },
     {
@@ -2231,8 +2231,8 @@
       "word_count": 307,
       "tags": [
         "meta",
-        "critical",
-        "37_critical_alerts"
+        "37_critical_alerts",
+        "critical"
       ]
     },
     {
@@ -2244,11 +2244,11 @@
       "subcategory": "38_object_storage_in_windmill",
       "word_count": 2843,
       "tags": [
-        "38_object_storage_in_windmill",
-        "windmill",
         "meta",
+        "windmill",
         "advanced",
-        "object"
+        "object",
+        "38_object_storage_in_windmill"
       ]
     },
     {
@@ -2261,10 +2261,10 @@
       "word_count": 2128,
       "tags": [
         "meta",
-        "advanced",
+        "39_http_routing",
         "windmill",
-        "http",
-        "39_http_routing"
+        "advanced",
+        "http"
       ]
     },
     {
@@ -2276,10 +2276,10 @@
       "subcategory": "3_resources_and_types",
       "word_count": 2626,
       "tags": [
-        "meta",
         "3_resources_and_types",
-        "resources",
-        "advanced"
+        "advanced",
+        "meta",
+        "resources"
       ]
     },
     {
@@ -2293,9 +2293,9 @@
       "tags": [
         "40_websocket_triggers",
         "meta",
-        "websocket",
         "windmill",
-        "advanced"
+        "advanced",
+        "api"
       ]
     },
     {
@@ -2322,9 +2322,9 @@
       "subcategory": "42_autoscaling",
       "word_count": 1345,
       "tags": [
+        "advanced",
         "autoscaling",
         "meta",
-        "advanced",
         "42_autoscaling"
       ]
     },
@@ -2337,10 +2337,10 @@
       "subcategory": "43_preprocessors",
       "word_count": 1475,
       "tags": [
-        "meta",
         "advanced",
-        "43_preprocessors",
-        "preprocessors"
+        "preprocessors",
+        "meta",
+        "43_preprocessors"
       ]
     },
     {
@@ -2353,8 +2353,8 @@
       "word_count": 383,
       "tags": [
         "workspace",
-        "44_workspace_settings",
-        "meta"
+        "meta",
+        "44_workspace_settings"
       ]
     },
     {
@@ -2366,10 +2366,10 @@
       "subcategory": "45_nats_triggers",
       "word_count": 450,
       "tags": [
-        "nats",
         "45_nats_triggers",
         "meta",
-        "windmill"
+        "windmill",
+        "nats"
       ]
     },
     {
@@ -2382,10 +2382,10 @@
       "word_count": 4388,
       "tags": [
         "sql",
-        "windmill",
+        "46_postgres_triggers",
         "meta",
-        "advanced",
-        "postgres"
+        "windmill",
+        "advanced"
       ]
     },
     {
@@ -2397,9 +2397,9 @@
       "subcategory": "47_environment_variables",
       "word_count": 1593,
       "tags": [
-        "47_environment_variables",
+        "environment",
         "meta",
-        "environment"
+        "47_environment_variables"
       ]
     },
     {
@@ -2411,11 +2411,11 @@
       "subcategory": "48_sqs_triggers",
       "word_count": 495,
       "tags": [
-        "48_sqs_triggers",
-        "meta",
-        "windmill",
         "sqs",
-        "aws"
+        "meta",
+        "aws",
+        "windmill",
+        "48_sqs_triggers"
       ]
     },
     {
@@ -2427,11 +2427,11 @@
       "subcategory": "49_mqtt_triggers",
       "word_count": 901,
       "tags": [
-        "mqtt",
-        "windmill",
         "meta",
+        "windmill",
+        "49_mqtt_triggers",
         "advanced",
-        "49_mqtt_triggers"
+        "mqtt"
       ]
     },
     {
@@ -2443,9 +2443,9 @@
       "subcategory": "4_webhooks",
       "word_count": 2377,
       "tags": [
-        "meta",
         "4_webhooks",
         "webhooks",
+        "meta",
         "advanced"
       ]
     },
@@ -2458,11 +2458,11 @@
       "subcategory": "50_gcp_triggers",
       "word_count": 916,
       "tags": [
-        "meta",
-        "advanced",
-        "windmill",
+        "50_gcp_triggers",
         "gcp",
-        "50_gcp_triggers"
+        "meta",
+        "windmill",
+        "advanced"
       ]
     },
     {
@@ -2474,10 +2474,10 @@
       "subcategory": "51_mcp",
       "word_count": 642,
       "tags": [
-        "51_mcp",
-        "meta",
         "advanced",
-        "windmill"
+        "meta",
+        "windmill",
+        "51_mcp"
       ]
     },
     {
@@ -2489,10 +2489,10 @@
       "subcategory": "51_sql_to_s3_streaming",
       "word_count": 150,
       "tags": [
-        "sql",
         "meta",
-        "51_sql_to_s3_streaming",
-        "windmill"
+        "sql",
+        "windmill",
+        "51_sql_to_s3_streaming"
       ]
     },
     {
@@ -2519,10 +2519,10 @@
       "word_count": 348,
       "tags": [
         "sql",
-        "meta",
-        "windmill",
         "53_custom_instance_database",
-        "custom"
+        "meta",
+        "custom",
+        "windmill"
       ]
     },
     {
@@ -2534,10 +2534,10 @@
       "subcategory": "54_ai_agents",
       "word_count": 1551,
       "tags": [
-        "54_ai_agents",
-        "meta",
         "advanced",
-        "windmill"
+        "meta",
+        "windmill",
+        "54_ai_agents"
       ]
     },
     {
@@ -2578,10 +2578,10 @@
       "subcategory": "5_monitor_past_and_future_runs",
       "word_count": 745,
       "tags": [
+        "advanced",
         "jobs",
         "meta",
-        "5_monitor_past_and_future_runs",
-        "advanced"
+        "5_monitor_past_and_future_runs"
       ]
     },
     {
@@ -2608,8 +2608,8 @@
       "word_count": 113,
       "tags": [
         "7_multiplayer",
-        "multiplayer",
-        "meta"
+        "meta",
+        "multiplayer"
       ]
     },
     {
@@ -2621,8 +2621,8 @@
       "subcategory": "8_groups_and_folders",
       "word_count": 697,
       "tags": [
-        "meta",
         "groups",
+        "meta",
         "8_groups_and_folders"
       ]
     },
@@ -2635,10 +2635,10 @@
       "subcategory": "9_worker_groups",
       "word_count": 3665,
       "tags": [
-        "workers",
-        "9_worker_groups",
+        "advanced",
         "meta",
-        "advanced"
+        "workers",
+        "9_worker_groups"
       ]
     },
     {
@@ -2650,11 +2650,11 @@
       "subcategory": "core_concepts",
       "word_count": 2385,
       "tags": [
-        "operations",
         "rust",
+        "core_concepts",
         "windmill",
         "advanced",
-        "core_concepts"
+        "operations"
       ]
     },
     {
@@ -2666,9 +2666,9 @@
       "subcategory": "core_concepts",
       "word_count": 2593,
       "tags": [
+        "core_concepts",
         "meta",
-        "core",
-        "core_concepts"
+        "core"
       ]
     },
     {
@@ -2680,9 +2680,9 @@
       "subcategory": "flows",
       "word_count": 543,
       "tags": [
-        "flows",
-        "trigger",
         "advanced",
+        "trigger",
+        "flows",
         "concept"
       ]
     },
@@ -2695,9 +2695,9 @@
       "subcategory": "flows",
       "word_count": 3027,
       "tags": [
-        "suspend",
-        "flows",
         "beginner",
+        "flows",
+        "suspend",
         "tutorial"
       ]
     },
@@ -2710,10 +2710,10 @@
       "subcategory": "flows",
       "word_count": 453,
       "tags": [
+        "for",
         "beginner",
         "flows",
-        "tutorial",
-        "for"
+        "tutorial"
       ]
     },
     {
@@ -2725,8 +2725,8 @@
       "subcategory": "flows",
       "word_count": 469,
       "tags": [
-        "flows",
         "branches",
+        "flows",
         "concept"
       ]
     },
@@ -2740,8 +2740,8 @@
       "word_count": 563,
       "tags": [
         "operations",
-        "flows",
-        "retries"
+        "retries",
+        "flows"
       ]
     },
     {
@@ -2769,8 +2769,8 @@
       "word_count": 890,
       "tags": [
         "beginner",
-        "flows",
         "architecture",
+        "flows",
         "tutorial"
       ]
     },
@@ -2798,8 +2798,8 @@
       "word_count": 506,
       "tags": [
         "operations",
-        "flows",
-        "testing"
+        "testing",
+        "flows"
       ]
     },
     {
@@ -2812,8 +2812,8 @@
       "word_count": 104,
       "tags": [
         "operations",
-        "flows",
-        "early"
+        "early",
+        "flows"
       ]
     },
     {
@@ -2825,10 +2825,10 @@
       "subcategory": "flows",
       "word_count": 798,
       "tags": [
+        "flow",
         "beginner",
         "flows",
-        "tutorial",
-        "flow"
+        "tutorial"
       ]
     },
     {
@@ -2840,8 +2840,8 @@
       "subcategory": "flows",
       "word_count": 124,
       "tags": [
-        "flows",
         "priority",
+        "flows",
         "concept"
       ]
     },
@@ -2854,8 +2854,8 @@
       "subcategory": "flows",
       "word_count": 126,
       "tags": [
-        "flows",
         "lifetime",
+        "flows",
         "concept"
       ]
     },
@@ -2869,9 +2869,9 @@
       "word_count": 605,
       "tags": [
         "beginner",
+        "while",
         "flows",
-        "tutorial",
-        "while"
+        "tutorial"
       ]
     },
     {
@@ -2883,8 +2883,8 @@
       "subcategory": "flows",
       "word_count": 152,
       "tags": [
-        "flows",
         "reference",
+        "flows",
         "job"
       ]
     },
@@ -2898,8 +2898,8 @@
       "word_count": 589,
       "tags": [
         "flows",
-        "sticky",
-        "concept"
+        "concept",
+        "sticky"
       ]
     },
     {
@@ -2911,8 +2911,8 @@
       "subcategory": "flows",
       "word_count": 287,
       "tags": [
-        "flows",
         "early",
+        "flows",
         "concept"
       ]
     },
@@ -2925,10 +2925,10 @@
       "subcategory": "flows",
       "word_count": 2484,
       "tags": [
+        "flow",
         "beginner",
         "flows",
-        "tutorial",
-        "flow"
+        "tutorial"
       ]
     },
     {
@@ -2940,9 +2940,9 @@
       "subcategory": "flows",
       "word_count": 544,
       "tags": [
+        "caching",
         "beginner",
         "flows",
-        "caching",
         "tutorial"
       ]
     },
@@ -2955,8 +2955,8 @@
       "subcategory": "flows",
       "word_count": 340,
       "tags": [
-        "flows",
         "step",
+        "flows",
         "concept"
       ]
     },
@@ -2969,8 +2969,8 @@
       "subcategory": "flows",
       "word_count": 247,
       "tags": [
-        "flows",
         "reference",
+        "flows",
         "concurrency"
       ]
     },
@@ -2984,8 +2984,8 @@
       "word_count": 237,
       "tags": [
         "error",
-        "flows",
         "beginner",
+        "flows",
         "tutorial"
       ]
     },
@@ -2998,8 +2998,8 @@
       "subcategory": "flows",
       "word_count": 352,
       "tags": [
-        "flows",
         "error",
+        "flows",
         "concept"
       ]
     },
@@ -3012,8 +3012,8 @@
       "subcategory": "flows",
       "word_count": 113,
       "tags": [
-        "flows",
         "custom",
+        "flows",
         "concept"
       ]
     },
@@ -3026,9 +3026,9 @@
       "subcategory": "00_how_to_use_windmill",
       "word_count": 301,
       "tags": [
-        "getting",
-        "meta",
         "windmill",
+        "meta",
+        "getting",
         "00_how_to_use_windmill"
       ]
     },
@@ -3041,10 +3041,10 @@
       "subcategory": "10_ansible_quickstart",
       "word_count": 3200,
       "tags": [
-        "ansible",
-        "meta",
         "advanced",
-        "10_ansible_quickstart"
+        "meta",
+        "10_ansible_quickstart",
+        "ansible"
       ]
     },
     {
@@ -3070,10 +3070,10 @@
       "subcategory": "13_java_quickstart",
       "word_count": 1395,
       "tags": [
-        "13_java_quickstart",
-        "meta",
         "advanced",
-        "java"
+        "java",
+        "meta",
+        "13_java_quickstart"
       ]
     },
     {
@@ -3085,10 +3085,10 @@
       "subcategory": "14_ruby_quickstart",
       "word_count": 1933,
       "tags": [
+        "advanced",
         "14_ruby_quickstart",
         "meta",
-        "ruby",
-        "advanced"
+        "ruby"
       ]
     },
     {
@@ -3100,9 +3100,9 @@
       "subcategory": "1_typescript_quickstart",
       "word_count": 2509,
       "tags": [
-        "typescript",
         "1_typescript_quickstart",
         "meta",
+        "typescript",
         "advanced"
       ]
     },
@@ -3116,9 +3116,9 @@
       "word_count": 2144,
       "tags": [
         "2_python_quickstart",
+        "python",
         "meta",
-        "advanced",
-        "python"
+        "advanced"
       ]
     },
     {
@@ -3130,9 +3130,9 @@
       "subcategory": "3_go_quickstart",
       "word_count": 1594,
       "tags": [
-        "3_go_quickstart",
+        "advanced",
         "meta",
-        "advanced"
+        "3_go_quickstart"
       ]
     },
     {
@@ -3145,8 +3145,8 @@
       "word_count": 2072,
       "tags": [
         "4_bash_quickstart",
-        "typescript",
         "meta",
+        "typescript",
         "advanced"
       ]
     },
@@ -3161,8 +3161,8 @@
       "tags": [
         "sql",
         "meta",
-        "advanced",
         "quickstart",
+        "advanced",
         "5_sql_quickstart"
       ]
     },
@@ -3175,9 +3175,9 @@
       "subcategory": "6_rest_grapqhql_quickstart",
       "word_count": 1795,
       "tags": [
-        "6_rest_grapqhql_quickstart",
-        "meta",
         "advanced",
+        "meta",
+        "6_rest_grapqhql_quickstart",
         "rest"
       ]
     },
@@ -3192,8 +3192,8 @@
       "tags": [
         "docker",
         "meta",
-        "advanced",
-        "7_docker_quickstart"
+        "7_docker_quickstart",
+        "advanced"
       ]
     },
     {
@@ -3206,8 +3206,8 @@
       "word_count": 1541,
       "tags": [
         "8_php_quickstart",
-        "meta",
         "advanced",
+        "meta",
         "php"
       ]
     },
@@ -3221,8 +3221,8 @@
       "word_count": 1540,
       "tags": [
         "rust",
-        "meta",
         "9_rust_quickstart",
+        "meta",
         "advanced"
       ]
     },
@@ -3235,11 +3235,11 @@
       "subcategory": "0_scripts_quickstart",
       "word_count": 256,
       "tags": [
-        "sql",
         "rust",
-        "typescript",
         "docker",
-        "meta"
+        "python",
+        "typescript",
+        "sql"
       ]
     },
     {
@@ -3252,8 +3252,8 @@
       "word_count": 1695,
       "tags": [
         "6_flows_quickstart",
-        "flows",
-        "meta"
+        "meta",
+        "flows"
       ]
     },
     {
@@ -3265,9 +3265,9 @@
       "subcategory": "7_apps_quickstart",
       "word_count": 1060,
       "tags": [
+        "meta",
         "apps",
-        "7_apps_quickstart",
-        "meta"
+        "7_apps_quickstart"
       ]
     },
     {
@@ -3295,8 +3295,8 @@
       "tags": [
         "beginner",
         "windmill",
-        "tutorial",
-        "what"
+        "what",
+        "tutorial"
       ]
     },
     {
@@ -3308,8 +3308,8 @@
       "subcategory": "openflow",
       "word_count": 1357,
       "tags": [
-        "meta",
         "advanced",
+        "meta",
         "openflow"
       ]
     },
@@ -3338,8 +3338,8 @@
       "word_count": 127,
       "tags": [
         "custom",
-        "script_editor",
-        "concept"
+        "concept",
+        "script_editor"
       ]
     },
     {
@@ -3353,8 +3353,8 @@
       "tags": [
         "generated",
         "beginner",
-        "tutorial",
-        "script_editor"
+        "script_editor",
+        "tutorial"
       ]
     },
     {
@@ -3366,10 +3366,10 @@
       "subcategory": "script_editor",
       "word_count": 663,
       "tags": [
-        "meta",
         "advanced",
-        "script_editor",
-        "script"
+        "meta",
+        "script",
+        "script_editor"
       ]
     },
     {
@@ -3381,10 +3381,10 @@
       "subcategory": "script_editor",
       "word_count": 151,
       "tags": [
-        "reference",
         "api",
-        "script_editor",
-        "job"
+        "reference",
+        "job",
+        "script_editor"
       ]
     },
     {
@@ -3411,8 +3411,8 @@
       "word_count": 178,
       "tags": [
         "operations",
-        "script_editor",
-        "running"
+        "running",
+        "script_editor"
       ]
     },
     {
@@ -3425,9 +3425,9 @@
       "word_count": 396,
       "tags": [
         "beginner",
-        "tutorial",
+        "script",
         "script_editor",
-        "script"
+        "tutorial"
       ]
     },
     {
@@ -3441,8 +3441,8 @@
       "tags": [
         "beginner",
         "settings",
-        "tutorial",
-        "script_editor"
+        "script_editor",
+        "tutorial"
       ]
     },
     {
@@ -3454,9 +3454,9 @@
       "subcategory": "script_editor",
       "word_count": 105,
       "tags": [
-        "script_editor",
         "run",
-        "concept"
+        "concept",
+        "script_editor"
       ]
     }
   ],

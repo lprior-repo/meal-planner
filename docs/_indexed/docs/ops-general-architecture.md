@@ -2,7 +2,7 @@
 id: ops/general/architecture
 title: "Meal Planner Architecture"
 category: ops
-tags: ["operations", "meal", "rust", "windmill", "advanced"]
+tags: ["rust", "meal", "windmill", "advanced", "operations"]
 ---
 
 # Meal Planner Architecture

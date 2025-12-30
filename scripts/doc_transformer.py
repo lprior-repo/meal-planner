@@ -933,17 +933,24 @@ def validate_files(output_dir: str, files: List[Dict]) -> Dict:
             results["by_rule"]["V008"]["failed"] += 1
             warnings.append({"rule": "V008", "message": "No See Also section"})
 
-        # V009: Code has language
-        code_blocks = re.findall(r"```(\w*)", content)
-        unlabeled = [b for b in code_blocks if not b]
-        if not unlabeled:
+        # V009: Code has language (only check opening ```, not closing)
+        # Opening blocks: ``` followed by optional language and newline with content after
+        # Closing blocks: ``` at end of line with nothing after (or just whitespace before next ```)
+        # Strategy: count opening blocks by matching ```lang\n where next line is not empty/```
+        opening_with_lang = len(re.findall(r"^```\w+\n", content, re.MULTILINE))
+        # Opening without lang: ```\n followed by non-empty, non-``` line
+        opening_without_lang = len(
+            re.findall(r"^```\n(?!```)[^\n]", content, re.MULTILINE)
+        )
+        unlabeled_count = opening_without_lang
+        if unlabeled_count == 0:
             results["by_rule"]["V009"]["passed"] += 1
         else:
             results["by_rule"]["V009"]["failed"] += 1
             warnings.append(
                 {
                     "rule": "V009",
-                    "message": f"{len(unlabeled)} code blocks without language",
+                    "message": f"{unlabeled_count} code blocks without language",
                 }
             )
 

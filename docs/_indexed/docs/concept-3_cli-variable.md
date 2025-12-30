@@ -2,7 +2,7 @@
 id: concept/3_cli/variable
 title: "Variables"
 category: concept
-tags: ["variables", "3_cli", "windmill", "concept"]
+tags: ["3_cli", "windmill", "concept", "variables"]
 ---
 
 <!--

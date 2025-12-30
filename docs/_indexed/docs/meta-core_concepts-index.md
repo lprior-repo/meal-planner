@@ -2,7 +2,7 @@
 id: meta/core_concepts/index
 title: "Core concepts"
 category: meta
-tags: ["meta", "core", "core_concepts"]
+tags: ["core_concepts", "meta", "core"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

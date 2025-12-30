@@ -2,7 +2,7 @@
 id: meta/14_ruby_quickstart/index
 title: "Ruby quickstart"
 category: meta
-tags: ["14_ruby_quickstart", "meta", "ruby", "advanced"]
+tags: ["advanced", "14_ruby_quickstart", "meta", "ruby"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

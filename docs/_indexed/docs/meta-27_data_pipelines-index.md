@@ -2,7 +2,7 @@
 id: meta/27_data_pipelines/index
 title: "Data pipelines"
 category: meta
-tags: ["27_data_pipelines", "meta", "data", "advanced"]
+tags: ["advanced", "data", "27_data_pipelines", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
