@@ -50,9 +50,27 @@ __pycache__/
 .classpath
 .settings/
 
-# Documentation (uncomment if you don't want to index docs)
+# Documentation - KEEP INDEXED for AI agents
+# Important: docs/, AGENTS.md, and windmill/ should be indexed
 # docs/
 # *.md
+
+# Exclude vendored/external Windmill docs (keep our guides)
+docs/windmill/getting_started/
+docs/windmill/advanced/
+docs/windmill/core_concepts/
+docs/windmill/flows/*.mdx
+docs/windmill/script_editor/
+docs/windmill/openflow/
+docs/windmill/cli_local_dev/
+
+# Keep these indexed (our custom docs):
+!docs/windmill/FLOWS_GUIDE.md
+!docs/windmill/DEVELOPMENT_GUIDE.md
+!docs/windmill/DEPLOYMENT_GUIDE.md
+!docs/windmill/INDEXED_KNOWLEDGE.json
+!docs/windmill/INDEXING_SYSTEM.md
+!docs/ARCHITECTURE.md
 
 # Generated files
 *.generated.*

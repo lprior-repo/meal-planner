@@ -115,13 +115,36 @@ The project uses CodeAnna for AI-assisted coding. CodeAnna has indexed the repos
 - **Context**: Full understanding of codebase architecture and patterns
 - **Available**: Run `anna help` or `anna <command>` for assistance
 
-### Best Practices
+### Using the Index (AI Agents)
 
-1. **Use XML Metadata**: When creating or editing docs, follow the XML schema
-2. **Follow DAG Relationships**: Reference related features via DAG edges
-3. **Consult Index Files**: Use DOCUMENTATION_INDEX.xml and INDEXED_KNOWLEDGE.json for navigation
-4. **Query Properly**: Use entity names and tags from the index for relevant information
-5. **Maintain Index**: Keep index files up to date when adding/modifying docs
+The indexed knowledge system helps AI agents find relevant documentation quickly.
+
+**Quick Lookup Pattern:**
+```bash
+# Find docs for a topic (e.g., "oauth", "flows", "approval")
+jq '.entity_index.<topic>' docs/windmill/INDEXED_KNOWLEDGE.json
+
+# Example: Find OAuth-related docs
+jq '.entity_index.oauth' docs/windmill/INDEXED_KNOWLEDGE.json
+# Returns: documents, related_entities, tags
+
+# Find all docs in a category
+jq '.dag.nodes[] | select(.category == "flows")' docs/windmill/INDEXED_KNOWLEDGE.json
+```
+
+**Key Entities for This Project:**
+- `flows_guide` - How to create/manage flows, approval patterns, OAuth
+- `flow_approval` - Suspend/resume, prompts, user input mid-flow
+- `rust_sdk` - Windmill Rust SDK patterns
+- `wmill_cli` - CLI commands for scripts/flows
+- `oauth` - OAuth configuration and patterns
+
+**When to Use:**
+1. Before implementing a Windmill feature → check `entity_index` for relevant docs
+2. Debugging flow issues → check `flows_guide` and `flow_approval`
+3. Need CLI command → check `wmill_cli` entity
+
+See [docs/windmill/INDEXING_SYSTEM.md](docs/windmill/INDEXING_SYSTEM.md) for full system documentation.
 
 ## Working with Beads
 
@@ -251,81 +274,47 @@ bd ready             # Mark ready for review
 
 ## Windmill Development
 
-This project uses **Windmill** for workflow orchestration. Scripts are written in Rust (purely functional style) and deployed via the `wmill` CLI.
-
-### Quick Reference
-
-```bash
-# Bootstrap new Rust script
-wmill script bootstrap f/meal-planner/my_script rust --summary "Summary"
-
-# Generate metadata after editing
-wmill script generate-metadata
-
-# Push to Windmill
-wmill sync push --yes
-
-# Run a script
-wmill script run f/meal-planner/my_script -d '{"param": "value"}'
-```
+This project uses **Windmill** for workflow orchestration. Scripts are Rust, flows coordinate them.
 
 ### Key Documentation
 
-- **[Windmill Development Guide](docs/windmill/DEVELOPMENT_GUIDE.md)** - Complete CLI workflow, Rust patterns, resources
-- **[Rust Quickstart](docs/windmill/getting_started/0_scripts_quickstart/9_rust_quickstart/index.mdx)** - Rust script basics
-- **[Rust Client SDK](docs/windmill/advanced/2_clients/rust_client.mdx)** - Windmill SDK for Rust
-- **[CLI Commands](docs/windmill/advanced/3_cli/script.md)** - Script CLI reference
-- **[Sync Commands](docs/windmill/advanced/3_cli/sync.mdx)** - Push/pull operations
+| Doc | Purpose |
+|-----|---------|
+| **[Development Guide](docs/windmill/DEVELOPMENT_GUIDE.md)** | Scripts, CLI, resources, Rust patterns |
+| **[Flows Guide](docs/windmill/FLOWS_GUIDE.md)** | Creating flows, approval/prompt patterns, OAuth |
+| **[Rust Quickstart](docs/windmill/getting_started/0_scripts_quickstart/9_rust_quickstart/index.mdx)** | Rust script basics |
+
+### Quick Commands
+
+```bash
+# Scripts
+wmill script run f/fatsecret/oauth_start -d '{"fatsecret": "$res:u/admin/fatsecret_api", "callback_url": "oob"}'
+wmill sync push --yes
+
+# Flows (use directory path, not file)
+wmill flow push f/fatsecret/oauth_setup.flow f/fatsecret/oauth_setup
+wmill flow run f/fatsecret/oauth_setup -d '{}'
+```
 
 ### File Structure
 
 ```
 windmill/
-├── wmill.yaml                    # Sync configuration
-└── f/meal-planner/
-    └── tandoor/
-        ├── test_connection.rs           # Script code
-        ├── test_connection.script.yaml  # Metadata
-        └── test_connection.script.lock  # Dependencies
+├── wmill.yaml
+├── f/<domain>/
+│   ├── script.rs                 # Rust script
+│   ├── script.script.yaml        # Script metadata
+│   └── flow_name.flow/
+│       └── flow.yaml             # Flow definition
+└── u/admin/
+    └── resource.resource.yaml    # Resources
 ```
 
-### Rust Script Pattern
+### Gotchas
 
-```rust
-//! ```cargo
-//! [dependencies]
-//! anyhow = "1.0.86"
-//! serde = { version = "1.0", features = ["derive"] }
-//! ```
-
-use serde::{Deserialize, Serialize};
-
-#[derive(Deserialize)]
-struct Input { field: String }
-
-#[derive(Serialize)]
-struct Output { result: String }
-
-fn main(input: Input) -> anyhow::Result<Output> {
-    Ok(Output { result: input.field })
-}
-```
-
-### Docker Networking
-
-Windmill workers and other services communicate via shared Docker network:
-
-```bash
-# Create shared network (one-time)
-docker network create shared-services
-
-# Connect containers
-docker network connect shared-services <container_name>
-```
-
-Current services on `shared-services`:
-- Windmill workers (`lewis-windmill_worker-*`)
-- Tandoor (`tandoor-web_recipes-1` at port 80)
+- **Flow push**: Use `.flow` directory, not `flow.yaml` file (causes ENOTDIR error)
+- **Prompt UI**: Requires TypeScript/Python for `getResumeUrls()` - not in Rust SDK
+- **Suspended flows**: CLI hangs - use Windmill UI or async API calls
 
 ## Resources
 

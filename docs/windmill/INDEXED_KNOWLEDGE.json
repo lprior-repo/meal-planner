@@ -121,6 +121,20 @@
         "layer": 4,
         "category": "deployment",
         "documents": ["docs/windmill/DEPLOYMENT_GUIDE.md"]
+      },
+      {
+        "id": "flow_approval",
+        "type": "feature",
+        "layer": 1,
+        "category": "flows",
+        "documents": ["docs/windmill/flows/11_flow_approval.mdx", "docs/windmill/FLOWS_GUIDE.md"]
+      },
+      {
+        "id": "flows_guide",
+        "type": "guide",
+        "layer": 3,
+        "category": "flows",
+        "documents": ["docs/windmill/FLOWS_GUIDE.md"]
       }
     ],
     "edges": [
@@ -213,6 +227,24 @@
         "to": "windmill_deployment",
         "type": "part-of",
         "description": "Schedules part of deployment"
+      },
+      {
+        "from": "flow_approval",
+        "to": "oauth",
+        "type": "enables",
+        "description": "Approval flows enable OAuth user input"
+      },
+      {
+        "from": "flows_guide",
+        "to": "flow_approval",
+        "type": "documents",
+        "description": "Flows guide documents approval patterns"
+      },
+      {
+        "from": "flows_guide",
+        "to": "wmill_cli",
+        "type": "uses",
+        "description": "Flows guide uses CLI commands"
       }
     ]
   },
@@ -699,6 +731,37 @@
       }
     },
     {
+      "path": "docs/windmill/FLOWS_GUIDE.md",
+      "type": "guide",
+      "chunks": 8,
+      "episodes": 1,
+      "memories": 10,
+      "xml_metadata": {
+        "doc_type": "guide",
+        "category": "flows",
+        "title": "Windmill Flows Guide",
+        "description": "Creating and managing Windmill flows with approval/prompt patterns",
+        "sections": [
+          {"name": "Quick Reference", "level": 2},
+          {"name": "Flow File Structure", "level": 2},
+          {"name": "Flow YAML Structure", "level": 2},
+          {"name": "Input Transforms", "level": 2},
+          {"name": "Approval/Prompt Flows", "level": 2},
+          {"name": "OAuth Flow Pattern", "level": 2},
+          {"name": "Pushing Flows via API", "level": 2},
+          {"name": "Common Issues", "level": 2}
+        ],
+        "features": ["flows", "approval", "suspend", "resume", "oauth", "input_transforms", "cli"],
+        "dependencies": [
+          {"type": "tool", "id": "wmill_cli"},
+          {"type": "feature", "id": "flow_approval"}
+        ],
+        "code_examples": 12,
+        "difficulty_level": "intermediate",
+        "estimated_reading_time": 15
+      }
+    },
+    {
       "path": "compass_artifact_wf-0ef10044-41fa-4d93-b50e-285cd1b935d1_text_markdown.md",
       "type": "reference",
       "chunks": 15,
@@ -846,6 +909,16 @@
       "documents": ["docs/windmill/DEPLOYMENT_GUIDE.md"],
       "related_entities": [],
       "tags": ["windmill", "schedule", "cron", "trigger", "automation"]
+    },
+    "flow_approval": {
+      "documents": ["docs/windmill/flows/11_flow_approval.mdx", "docs/windmill/FLOWS_GUIDE.md"],
+      "related_entities": ["oauth", "flows_guide"],
+      "tags": ["windmill", "flow", "approval", "suspend", "resume", "prompt", "oauth", "user-input"]
+    },
+    "flows_guide": {
+      "documents": ["docs/windmill/FLOWS_GUIDE.md"],
+      "related_entities": ["flow_approval", "wmill_cli", "oauth"],
+      "tags": ["windmill", "flow", "guide", "yaml", "input-transforms", "approval", "oauth-pattern"]
     }
   },
   "rag_chunks": [
