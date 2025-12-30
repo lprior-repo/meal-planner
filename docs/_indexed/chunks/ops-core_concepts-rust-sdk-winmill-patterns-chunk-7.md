@@ -21,7 +21,7 @@ let job_id = wm.run_script_async(
     Some(10)                 // schedule delay in seconds (optional)
 ).await?;
 println!("Started job: {}", job_id);
-```
+```text
 
 ### Synchronous execution (wait for result)
 
@@ -35,7 +35,7 @@ let result = wm.run_script_sync(
     true,                           // verbose logging
     true                            // assert_result_not_none
 ).await?;
-```
+```text
 
 ### Job monitoring
 
@@ -48,7 +48,7 @@ let status = wm.get_job_status(&job_id).await?; // Running | Waiting | Completed
 
 // Get result directly
 let result = wm.get_result(&job_id).await?;
-```
+```text
 
 ### Progress tracking
 
@@ -58,6 +58,6 @@ wm.set_progress(50, None).await?;
 
 // Get progress
 let progress = wm.get_progress(Some(job_id.to_string())).await?;
-```
+```yaml
 
 ---

@@ -53,7 +53,7 @@ To install the wmill CLI:
 
 ```bash
 npm install -g windmill-cli
-```
+```text
 
 Node version must greater than v20.
 
@@ -61,13 +61,13 @@ Also, to punch through some networking layers like Cloudflare Tunnel, you might 
 
 ```
 export HEADERS=header_key:header_value,header_key2:header_value2
-```
+```text
 
 Verify that the installation was successful by running the following command:
 
 ```bash
 wmill --version
-```
+```text
 
 If the installation was successful, you should see the version of wmill that you just installed.
 
@@ -77,7 +77,7 @@ To upgrade your wmill installation to the latest version, run the following comm
 
 ```bash
 wmill upgrade
-```
+```text
 
 ## Completion
 
@@ -89,7 +89,7 @@ To enable bash completions, add the following line to your ~/.bashrc:
 
 ```bash
 source <(wmill completions bash)
-```
+```text
 
 ### Zsh
 
@@ -97,7 +97,7 @@ To enable zsh completions, add the following line to your ~/.zshrc:
 
 ```bash
 source <(wmill completions zsh)
-```
+```text
 
 ### Fish
 

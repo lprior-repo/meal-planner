@@ -2,7 +2,7 @@
 id: ops/features/import-export
 title: "Import Export"
 category: ops
-tags: ["operations", "advanced", "import", "features"]
+tags: ["operations", "features", "advanced", "import"]
 ---
 
 # Import Export
@@ -132,7 +132,7 @@ The folder structure should look as follows
 !!! info "_recipes"
     For some reason chowdown uses `_`before the`recipes`folder. To avoid confusion the import supports both `\_recipes`and`recipes`
 
-```
+```text
 Recipes.zip/
     ├── _recipes/
     │   ├── recipe one.md

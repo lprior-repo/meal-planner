@@ -19,4 +19,4 @@ curl -X POST "http://localhost/api/w/meal-planner/resources/create" \
       "api_token": "your_token"
     }
   }'
-```
+```bash

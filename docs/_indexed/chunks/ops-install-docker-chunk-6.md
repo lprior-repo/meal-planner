@@ -30,7 +30,7 @@ location / {
     proxy_pass http://127.0.0.1:8080; # replace port
     proxy_redirect http://127.0.0.1:8080 https://recipes.domain.tld; # replace port and domain
 }
-```
+```text
 
 #### **Apache**
 
@@ -42,7 +42,7 @@ ProxyPreserveHost  On
 ProxyRequests Off
 ProxyPass / http://localhost:8080/ # replace port
 ProxyPassReverse / http://localhost:8080/ # replace port
-```
+```text
 
 ### **Setup issues on Raspberry Pi**
 

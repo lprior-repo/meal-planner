@@ -13,7 +13,7 @@ The wmill script show command is used to show the contents of a script on the re
 
 ```bash
 wmill script show <path>
-```
+```text
 
 ### Arguments
 
@@ -27,4 +27,4 @@ wmill script show <path>
 
 ```bash
 wmill script show f/scripts/test
-```
+```text

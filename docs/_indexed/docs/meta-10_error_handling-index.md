@@ -2,7 +2,7 @@
 id: meta/10_error_handling/index
 title: "Error handling"
 category: meta
-tags: ["error", "advanced", "10_error_handling", "meta"]
+tags: ["meta", "error", "10_error_handling", "advanced"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

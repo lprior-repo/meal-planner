@@ -2,7 +2,7 @@
 id: concept/3_cli/flow
 title: "Flows"
 category: concept
-tags: ["3_cli", "concept", "windmill", "flows"]
+tags: ["flows", "3_cli", "windmill", "concept"]
 ---
 
 <!--
@@ -53,7 +53,7 @@ The `wmill flow` list command is used to list all flows in the remote workspace.
 
 ```bash
 wmill flow
-```
+```text
 
 ## Pushing a flow
 
@@ -61,7 +61,7 @@ Pushing a flow to a Windmill instance is done using the `wmill flow push` comman
 
 ```bash
 wmill flow push <file_path> <remote_path>
-```
+```text
 
 ### Arguments
 
@@ -76,7 +76,7 @@ wmill flow push <file_path> <remote_path>
 
 ```bash
 wmill flow push path/to/local/flow.yaml f/flows/test
-```
+```text
 
 ## Creating a new flow
 
@@ -84,7 +84,7 @@ The wmill flow bootstrap command is used to create a new flow locally.
 
 ```bash
 wmill flow bootstrap [--summary <summary>] [--description <description>] <path>
-```
+```text
 
 ### Arguments
 
@@ -98,7 +98,7 @@ wmill flow bootstrap [--summary <summary>] [--description <description>] <path>
 
 ```bash
 wmill flow bootstrap f/flows/flashy_flow
-```
+```text
 
 ## Running a flow
 
@@ -106,7 +106,7 @@ Running a flow by its path s done using the `wmill flow run` command.
 
 ```bash
 wmill flow run <remote_path> [options]
-```
+```text
 
 ### Arguments
 
@@ -129,7 +129,7 @@ Flows inline script [lockfiles](./meta-6_imports-index.md) can be also updated l
 
 ```bash
 wmill flow generate-locks
-```
+```text
 
 ## Flow specification
 

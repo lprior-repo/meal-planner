@@ -2,7 +2,7 @@
 id: meta/48_sqs_triggers/index
 title: "SQS triggers"
 category: meta
-tags: ["aws", "48_sqs_triggers", "sqs", "windmill", "meta"]
+tags: ["48_sqs_triggers", "meta", "windmill", "sqs", "aws"]
 ---
 
 # SQS triggers

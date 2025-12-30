@@ -9,7 +9,7 @@ summary: "Find all CLI documentation"
 
 ## Find all CLI documentation
 grep -r "<tags>windmill,cli" docs/
-```
+```text
 
 ### Category-Based Search
 

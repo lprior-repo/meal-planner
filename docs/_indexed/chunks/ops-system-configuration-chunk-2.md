@@ -18,14 +18,14 @@ Random secret key (at least 50 characters), use for example `base64 /dev/urandom
 It is used internally by django for various signing/cryptographic operations and **should be kept secret**.
 See [Django Docs](https://docs.djangoproject.com/en/5.0/ref/settings/#std-setting-SECRET_KEY)
 
-```
+```bash
 SECRET_KEY=#$tp%v6*(*ba01wcz(ip(i5vfz8z$f%qdio&q@anr1#$=%(m4c
 ```
 
 Alternatively you can point to a file containing just the secret key value. If using containers make sure the file is
 persistent and available inside the container.
 
-```
+```bash
 SECRET_KEY_FILE=/path/to/file.txt
 
 // contents of file
@@ -40,7 +40,7 @@ Security setting to prevent HTTP Host Header Attacks,
 see [Django docs](https://docs.djangoproject.com/en/5.0/ref/settings/#allowed-hosts).
 Some proxies require `*` (default) but it should be set to the actual host(s).
 
-```
+```bash
 ALLOWED_HOSTS=recipes.mydomain.com
 ```
 
@@ -65,7 +65,7 @@ Multiple parameters are required to configure the database.
 Path to file containing the database password. Overrides `POSTGRES_PASSWORD`. Only applied when using Docker (or other
 setups running `boot.sh`)
 
-```
+```bash
 POSTGRES_PASSWORD_FILE=
 ```
 
@@ -76,7 +76,7 @@ POSTGRES_PASSWORD_FILE=
 Instead of configuring the connection using multiple individual environment parameters, you can use a connection string.
 The connection string will override all other database settings.
 
-```
+```bash
 DATABASE_URL = engine://username:password@host:port/dbname
 ```
 
@@ -86,6 +86,6 @@ DATABASE_URL = engine://username:password@host:port/dbname
 
 Additional connection options can be set as shown in the example below.
 
-```
+```bash
 DB_OPTIONS={"sslmode":"require"}
 ```

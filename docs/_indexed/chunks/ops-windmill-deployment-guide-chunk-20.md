@@ -14,7 +14,7 @@ wmill resource push - f/meal-planner/external_apis/tandoor <<EOF
   "api_token": "\$var:f/meal-planner/vars/tandoor_token"
 }
 EOF
-```
+```text
 
 ### FatSecret API
 

@@ -36,4 +36,4 @@ Each document includes:
   <estimated_reading_time>minutes</estimated_reading_time>
   <tags>tag1,tag2,tag3</tags>
 </doc_metadata>
-```
+```text

@@ -13,4 +13,4 @@ The `wmill script` list command is used to list all scripts in the remote worksp
 
 ```bash
 wmill script
-```
+```text

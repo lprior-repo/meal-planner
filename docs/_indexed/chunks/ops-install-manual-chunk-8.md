@@ -11,7 +11,7 @@ summary: "Setup postgresql"
 
 ```shell
 sudo -u postgres psql
-```
+```text
 
 In the psql console:
 
@@ -31,12 +31,12 @@ ALTER USER djangouser WITH SUPERUSER;
 
 --exit Postgres Environment
 exit
-```
+```text
 
 Download the `.env` configuration file and **edit it accordingly**.
 ```shell
 wget https://raw.githubusercontent.com/vabene1111/recipes/develop/.env.template -O /var/www/recipes/.env
-```
+```text
 
 Things to edit:
 

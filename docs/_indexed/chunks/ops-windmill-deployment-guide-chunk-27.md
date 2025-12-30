@@ -11,7 +11,7 @@ summary: "FatSecret configuration"
 wmill variable add f/meal-planner/vars/fatsecret_key --value="your_key" --secret
 wmill variable add f/meal-planner/vars/fatsecret_secret --value="your_secret" --secret
 wmill variable add f/meal-planner/vars/oauth_encryption_key --value="your_64_hex_key" --secret
-```
+```text
 
 ### Environment-Specific Variables
 

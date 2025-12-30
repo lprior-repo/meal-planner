@@ -2,7 +2,7 @@
 id: meta/54_ai_agents/index
 title: "AI agents"
 category: meta
-tags: ["54_ai_agents", "advanced", "windmill", "meta"]
+tags: ["54_ai_agents", "meta", "advanced", "windmill"]
 ---
 
 # AI agents

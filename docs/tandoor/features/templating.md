@@ -27,7 +27,7 @@ You can also use the interaction menu of the ingredient to copy its reference.
 ![image](https://user-images.githubusercontent.com/6819595/103709654-5d6b8580-4fb3-11eb-9d04-36ab5a993f90.png)
 
 You can also access only the amount, unit, note or food inside your instruction text using
-```
+```json
 {{ ingredients[0].amount }}
 {{ ingredients[0].unit }}
 {{ ingredients[0].food }}

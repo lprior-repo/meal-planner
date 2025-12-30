@@ -2,7 +2,7 @@
 id: meta/33_codebases_and_bundles/index
 title: "Codebases & bundles"
 category: meta
-tags: ["codebases", "33_codebases_and_bundles", "meta"]
+tags: ["meta", "codebases", "33_codebases_and_bundles"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

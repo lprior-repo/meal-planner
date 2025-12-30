@@ -48,7 +48,7 @@ The `wmill script` list command is used to list all scripts in the remote worksp
 
 ```bash
 wmill script
-```
+```text
 
 ## Pushing a script
 
@@ -58,7 +58,7 @@ This command support .ts, .js, .py, .go and .sh files.
 
 ```bash
 wmill script push <path>
-```
+```text
 
 ### Arguments
 
@@ -72,7 +72,7 @@ wmill script push <path>
 
 ```bash
 wmill script push /path/to/script.js
-```
+```text
 
 ## Creating a new script
 
@@ -80,7 +80,7 @@ The wmill script bootstrap command is used to create a new script locally in the
 
 ```bash
 wmill script bootstrap [--summary <summary>] [--description <description>] <path> <language>
-```
+```text
 
 ### Arguments
 
@@ -95,13 +95,13 @@ wmill script bootstrap [--summary <summary>] [--description <description>] <path
 
 ```bash
 wmill script bootstrap f/scripts/hallowed_script python3
-```
+```text
 
 2. Create a new deno script `f/scripts/auspicious_script` with a summary and a description
 
 ```bash
 wmill script bootstrap --summary 'Great script' --description 'This script does this and that' f/scripts/auspicious_script deno
-```
+```text
 
 ## (Re-)Generating a script metadata file
 
@@ -111,13 +111,13 @@ This command can only be run at the same level of the `wmill-lock.yaml` of your 
 
 ```bash
 wmill script generate-metadata
-```
+```text
 
 You can also generate metadata for a single script with `wmill script generate-metadata <path>`:
 
 ```bash
 wmill script generate-metadata [--lock-only] [--schema-only] [<path>]
-```
+```text
 
 Note that you can explicitly exclude (or include) specific files or folders to be taken into account by this command, with a [`wmill.yaml` file](https://github.com/windmill-labs/windmill-sync-example/blob/main/wmill.yaml).
 
@@ -125,7 +125,7 @@ Note that you can explicitly exclude (or include) specific files or folders to b
 
 ```bash
 wmill flow generate-locks
-```
+```text
 
 ### package.json & requirements.txt
 
@@ -155,7 +155,7 @@ Below is a video on how to override Windmill inferred dependencies by [providing
 
 ```bash
 wmill script generate-metadata f/scripts/hallowed_script.py
-```
+```text
 
 ## Showing a script
 
@@ -163,7 +163,7 @@ The wmill script show command is used to show the contents of a script on the re
 
 ```bash
 wmill script show <path>
-```
+```text
 
 ### Arguments
 
@@ -177,7 +177,7 @@ wmill script show <path>
 
 ```bash
 wmill script show f/scripts/test
-```
+```text
 
 ## Running a script
 
@@ -185,7 +185,7 @@ Running a script by its path s done using the `wmill script run` command.
 
 ```bash
 wmill script run <remote_path> [options]
-```
+```text
 
 ### Arguments
 

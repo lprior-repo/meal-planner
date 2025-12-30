@@ -2,7 +2,7 @@
 id: meta/12_staging_prod/index
 title: "Deploy to prod using the UI"
 category: meta
-tags: ["deploy", "12_staging_prod", "meta"]
+tags: ["deploy", "meta", "12_staging_prod"]
 ---
 
 <!--

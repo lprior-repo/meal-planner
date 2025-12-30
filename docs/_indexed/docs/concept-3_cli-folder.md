@@ -2,7 +2,7 @@
 id: concept/3_cli/folder
 title: "Folder"
 category: concept
-tags: ["3_cli", "concept", "windmill", "folder"]
+tags: ["folder", "3_cli", "windmill", "concept"]
 ---
 
 <!--
@@ -45,7 +45,7 @@ The `wmill folder` list command is used to list all folders in the remote worksp
 
 ```bash
 wmill folder
-```
+```text
 
 ## Push
 

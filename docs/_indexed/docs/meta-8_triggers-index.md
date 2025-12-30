@@ -2,7 +2,7 @@
 id: meta/8_triggers/index
 title: "Triggers"
 category: meta
-tags: ["8_triggers", "triggers", "meta"]
+tags: ["triggers", "8_triggers", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

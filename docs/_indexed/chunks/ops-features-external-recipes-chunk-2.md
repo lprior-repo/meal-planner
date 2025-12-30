@@ -51,7 +51,7 @@ The Path depends on your setup and can be both relative and absolute.
 If you use docker the default directory is `/opt/recipes/`.
 add
 
-```
+```text
       - ./externalfiles:/opt/recipes/externalfiles
 ```
 

@@ -13,7 +13,7 @@ The wmill workspace switch command allows you to switch to another workspace. It
 
 ```bash
 wmill workspace switch <workspace_name>
-```
+```text
 
 ### Arguments
 
@@ -27,4 +27,4 @@ wmill workspace switch <workspace_name>
 
 ```bash
  wmill workspace switch MyWorkspace
-```
+```html

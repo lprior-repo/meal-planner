@@ -2,7 +2,7 @@
 id: meta/0_draft_and_deploy/index
 title: "Draft and deploy"
 category: meta
-tags: ["draft", "0_draft_and_deploy", "meta"]
+tags: ["draft", "meta", "0_draft_and_deploy"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

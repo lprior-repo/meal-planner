@@ -2,7 +2,7 @@
 id: concept/3_cli/variable
 title: "Variables"
 category: concept
-tags: ["3_cli", "concept", "windmill", "variables"]
+tags: ["variables", "3_cli", "windmill", "concept"]
 ---
 
 <!--
@@ -50,7 +50,7 @@ The `wmill variable` list command is used to list all variables in the remote wo
 
 ```bash
 wmill variable
-```
+```text
 
 ## Adding a variable
 
@@ -58,7 +58,7 @@ The `wmill variable add` command allows you to add a new variable to the remote 
 
 ```bash
 wmill add <remote_path:string> --value=<value:string> [--secret] [--description=<description:string>] [--account=<account:number>] [--oauth]
-```
+```text
 
 ### Arguments
 
@@ -82,7 +82,7 @@ This command adds a new variable with the path "my_variable" to the remote works
 
 ```bash
 wmill add my_variable --value=12345 --secret --description="My secret variable" --account=1
-```
+```text
 
 ## Pushing a variable
 
@@ -90,7 +90,7 @@ The cli push command allows you to push a local variable spec to the remote work
 
 ```bash
 wmill push <file_path:string> <remote_path:string> [--plain-secrets]
-```
+```text
 
 ### Arguments
 
@@ -121,7 +121,7 @@ Here is an example of a variable specification:
   is_oauth: boolean,
   is_expired: boolean
 }
-```
+```text
 
 ### Example
 

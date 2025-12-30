@@ -2,7 +2,7 @@
 id: meta/4_local_development/index
 title: "Local development"
 category: meta
-tags: ["local", "4_local_development", "advanced", "meta"]
+tags: ["local", "meta", "advanced", "4_local_development"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

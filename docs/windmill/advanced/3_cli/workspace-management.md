@@ -47,7 +47,7 @@ You can list all the workspaces you have access to using:
 
 ```bash
 wmill workspace
-```
+```html
 
 The currently selected workspace will be <ins>underlined</ins>.
 
@@ -68,7 +68,7 @@ locally using:
 
 ```bash
 wmill workspace add [workspace_name] [workspace_id] [remote]
-```
+```text
 
 You can login to the workspace with a token or directly from browser.
 
@@ -96,19 +96,19 @@ The new workspace will automatically be [switched](#switch-workspaces) to.
 
 ```bash
 wmill workspace add
-```
+```text
 
 2. Adds a workspace with the name "MyWorkspace", ID "workspace123", and base URL of the Windmill installation "https://example.com".
 
 ```bash
 wmill workspace add MyWorkspace workspace123 https://example.com
-```
+```text
 
 1. This command creates a workspace with the name "MyWorkspace2," using the provided username "john.doe."
 
 ```bash
 wmill workspace add --create --create-workspace-name MyWorkspace2 --create-username john.doe
-```
+```text
 
 ## Switch workspaces
 
@@ -116,7 +116,7 @@ The wmill workspace switch command allows you to switch to another workspace. It
 
 ```bash
 wmill workspace switch <workspace_name>
-```
+```text
 
 ### Arguments
 
@@ -130,7 +130,7 @@ wmill workspace switch <workspace_name>
 
 ```bash
  wmill workspace switch MyWorkspace
-```
+```html
 
 ## Selected workspace
 
@@ -143,7 +143,7 @@ The `wmill workspace remove` command allows you to remove a workspace from the C
 
 ```bash
 wmill workspace remove <workspace_name>
-```
+```text
 
 ### Arguments
 
@@ -157,7 +157,7 @@ wmill workspace remove <workspace_name>
 
 ```bash
 wmill workspace remove MyWorkspace
-```
+```text
 
 :::tip Get help
 

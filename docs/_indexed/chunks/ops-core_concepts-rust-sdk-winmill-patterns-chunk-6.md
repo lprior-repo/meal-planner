@@ -34,7 +34,7 @@ async fn main() -> anyhow::Result<serde_json::Value> {
     
     Ok(serde_json::json!({"last_id": state.last_processed_id}))
 }
-```
+```text
 
 ### Writing state
 
@@ -50,7 +50,7 @@ wm.set_state(Some(json!({
 
 // Clear state
 wm.set_state(None).await?;
-```
+```text
 
 ### Trigger script pattern with state
 
@@ -76,6 +76,6 @@ async fn main() -> anyhow::Result<serde_json::Value> {
     // Return items to process
     Ok(serde_json::json!({"items": new_items}))
 }
-```
+```yaml
 
 ---

@@ -2,7 +2,7 @@
 id: ops/11_git_sync/cli-sync
 title: "CLI sync"
 category: ops
-tags: ["operations", "11_git_sync", "cli"]
+tags: ["operations", "cli", "11_git_sync"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

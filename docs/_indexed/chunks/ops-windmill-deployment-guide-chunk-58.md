@@ -9,7 +9,7 @@ summary: "View schedule runs"
 
 ## View schedule runs
 wmill run list --schedule=f/meal-planner/schedules/daily_meal_plan
-```
+```text
 
 **Resolution:**
 1. Verify schedule is enabled
@@ -19,7 +19,7 @@ wmill run list --schedule=f/meal-planner/schedules/daily_meal_plan
    ```bash
    wmill schedule disable f/meal-planner/schedules/daily_meal_plan
    wmill schedule enable f/meal-planner/schedules/daily_meal_plan
-   ```
+   ```yaml
 
 ---
 

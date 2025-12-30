@@ -2,7 +2,7 @@
 id: meta/2_variables_and_secrets/index
 title: "Variables and secrets"
 category: meta
-tags: ["2_variables_and_secrets", "advanced", "variables", "meta"]
+tags: ["variables", "meta", "2_variables_and_secrets", "advanced"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

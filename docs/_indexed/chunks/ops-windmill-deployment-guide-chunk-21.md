@@ -15,7 +15,7 @@ wmill resource push - f/meal-planner/external_apis/fatsecret <<EOF
   "encryption_key": "\$var:f/meal-planner/vars/oauth_encryption_key"
 }
 EOF
-```
+```text
 
 ### Verify Resources
 

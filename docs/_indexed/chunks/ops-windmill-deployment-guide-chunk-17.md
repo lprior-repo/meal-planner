@@ -19,6 +19,6 @@ skipResourceTypes: false
 skipSecrets: true       # Keep secrets manual for security
 includeSchedules: true
 includeTriggers: true
-```
+```yaml
 
 ---

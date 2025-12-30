@@ -17,10 +17,10 @@
 
 | Prefix | Count | Use For |
 |--------|-------|---------|
-| `tutorial-*` | 19 | Getting started, step-by-step guides |
-| `concept-*` | 28 | Understanding features, architecture |
-| `ref-*` | 4 | API references, configuration options |
-| `ops-*` | 50 | Installation, deployment, troubleshooting |
+| `tutorial-*` | 21 | Getting started, step-by-step guides |
+| `concept-*` | 29 | Understanding features, architecture |
+| `ref-*` | 28 | API references, configuration options |
+| `ops-*` | 54 | Installation, deployment, troubleshooting |
 | `meta-*` | 103 | Index files, overviews |
 
 ## Key Documents (Direct Paths)
@@ -36,10 +36,8 @@
 - `ops-features-import-export.md` - Recipe import/export
 - `ops-install-docker.md` - Docker setup
 
-### Project-Specific (This Repo)
-- `ops-general-architecture.md` - This repo's architecture
-- `tutorial-windmill-flows-guide.md` - Flow patterns, OAuth, approval prompts
-- FatSecret OAuth flow: `windmill/f/fatsecret/oauth_setup.flow/`
+### Project-Specific
+- `concept-general-architecture.md` - This repo's architecture
 
 ## Chunk Lookup Pattern
 

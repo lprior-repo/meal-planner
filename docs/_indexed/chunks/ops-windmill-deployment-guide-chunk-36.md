@@ -14,7 +14,7 @@ wmill schedule create \
   --timezone "America/Los_Angeles" \
   --script-path f/meal-planner/handlers/nutrition/generate_report \
   --args '{"period": "weekly"}'
-```
+```text
 
 ### Schedule with Error Handler
 

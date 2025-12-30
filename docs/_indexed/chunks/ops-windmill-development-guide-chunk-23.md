@@ -9,7 +9,7 @@ summary: "Connect other services"
 
 ## Connect other services
 docker network connect shared-services tandoor-web_recipes-1
-```
+```text
 
 Services can then reach each other by container name:
 - Tandoor: `http://tandoor-web_recipes-1:80`

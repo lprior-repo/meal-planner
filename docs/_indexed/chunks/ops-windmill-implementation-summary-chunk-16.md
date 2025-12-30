@@ -9,7 +9,7 @@ summary: "System documentation"
 
 ## System documentation
 cat docs/windmill/INDEXING_SYSTEM.md
-```
+```text
 
 ### Validate Index
 

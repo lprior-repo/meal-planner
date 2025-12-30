@@ -23,7 +23,7 @@ Here is an example of a variable specification:
   is_oauth: boolean,
   is_expired: boolean
 }
-```
+```text
 
 ### Example
 

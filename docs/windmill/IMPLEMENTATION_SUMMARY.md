@@ -72,7 +72,7 @@ Indexed 23 entities across categories:
 
 ### DAG Layers
 
-```
+```text
 Layer 1: Flow Control Features
     ↓
 Layer 2: Core Concepts
@@ -117,7 +117,7 @@ Each document includes:
   <estimated_reading_time>minutes</estimated_reading_time>
   <tags>tag1,tag2,tag3</tags>
 </doc_metadata>
-```
+```text
 
 ## Benefits
 
@@ -154,7 +154,7 @@ Query: What features relate to error handling?
 # DAG traversal:
 error_handler → [retries, flow_branches]
 retries → [flow_branches]
-```
+```text
 
 ### Find Prerequisites
 
@@ -165,7 +165,7 @@ Query: What should I learn before deploying?
 windmill_deployment ← wmill_cli
 windmill_deployment ← windmill_resources
 windmill_deployment ← staging_prod
-```
+```text
 
 ### RAG with DAG Context
 
@@ -175,7 +175,7 @@ chunk = retrieve_chunk("windmill_retries_constant")
 context = chunk.dag_context  # {prerequisites: [], dependents: [...]}
 
 # AI gets both content AND relationships
-```
+```text
 
 ## Files Modified/Created
 
@@ -240,7 +240,7 @@ cat docs/windmill/INDEXED_KNOWLEDGE.json
 
 # System documentation
 cat docs/windmill/INDEXING_SYSTEM.md
-```
+```text
 
 ### Validate Index
 
@@ -250,7 +250,7 @@ xmllint --format docs/windmill/DOCUMENTATION_INDEX.xml
 
 # Check JSON syntax
 jq . docs/windmill/INDEXED_KNOWLEDGE.json
-```
+```text
 
 ### Query Index
 

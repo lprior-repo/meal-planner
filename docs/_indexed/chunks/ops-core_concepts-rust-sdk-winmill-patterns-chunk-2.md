@@ -22,7 +22,7 @@ Windmill Rust scripts declare dependencies using a special doc-comment block at 
 //! reqwest = { version = "0.12", features = ["json"] }
 //! wmill = "^1.0"
 //! tokio = { version = "1", features = ["full"] }
-//! ```
+//! ```text
 
 // Your script code follows...
 ```

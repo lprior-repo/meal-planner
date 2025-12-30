@@ -13,4 +13,4 @@ Flows inline script [lockfiles](./meta-6_imports-index.md) can be also updated l
 
 ```bash
 wmill flow generate-locks
-```
+```text

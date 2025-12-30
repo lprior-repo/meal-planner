@@ -18,6 +18,6 @@ and revert superuser from postgres:
 ```
 sudo -u postgres psql` and `ALTER USER djangouser WITH NOSUPERUSER;
 exit
-```
+```text
 
 Generate static files: `bin/python3 manage.py collectstatic --no-input` and `bin/python3 manage.py collectstatic_js_reverse` and remember the folder where files have been copied.

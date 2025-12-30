@@ -15,7 +15,7 @@ input_transforms:
   param:
     type: static
     value: 'hardcoded_value'
-```
+```bash
 
 ### Resource Reference
 ```yaml
@@ -23,7 +23,7 @@ input_transforms:
   config:
     type: static
     value: '$res:u/admin/my_resource'
-```
+```text
 
 ### From Previous Step
 ```yaml
@@ -31,7 +31,7 @@ input_transforms:
   data:
     type: javascript
     expr: results.a.some_field
-```
+```text
 
 ### From Resume Payload (approval flows)
 ```yaml
@@ -39,4 +39,4 @@ input_transforms:
   verifier:
     type: javascript
     expr: resume.verifier
-```
+```text

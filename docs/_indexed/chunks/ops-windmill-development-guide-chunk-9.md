@@ -9,7 +9,7 @@ summary: "Bootstrap other languages: python3, bun, deno, bash, go"
 
 ## Bootstrap other languages: python3, bun, deno, bash, go
 wmill script bootstrap f/meal-planner/my_script python3
-```
+```text
 
 This creates:
 - `f/meal-planner/my_script.rs` - Script code

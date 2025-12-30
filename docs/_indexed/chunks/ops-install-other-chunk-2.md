@@ -46,7 +46,7 @@ docker-compose:
       traefik.http.routers.recipes.entrypoints: http
       traefik.http.services.recipes.loadbalancer.server.port: 8080
       traefik.http.services.recipes.loadbalancer.server.scheme: http
-```
+```yaml
 
 apache: 
 ```
@@ -55,7 +55,7 @@ apache:
   <Directory "/var/www/recipes/">
     Require all granted
   </Directory>
-```
+```text
 
 I used two paths `<sub path>` and `<www path>` for simplicity. In my case I have `<sub path> = recipes` and `<www path> = serve/recipes`. One could also change the matching rules of traefik to have everything under one path.
 

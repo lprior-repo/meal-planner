@@ -13,4 +13,4 @@ The `wmill variable` list command is used to list all variables in the remote wo
 
 ```bash
 wmill variable
-```
+```text

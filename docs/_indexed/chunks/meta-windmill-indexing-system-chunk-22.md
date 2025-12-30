@@ -9,4 +9,4 @@ summary: "Python script to regenerate from XML"
 
 ## Python script to regenerate from XML
 python scripts/regenerate_index.py
-```
+```text

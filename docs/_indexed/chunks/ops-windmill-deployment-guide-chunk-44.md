@@ -11,6 +11,6 @@ summary: "Set as Windmill secret"
 wmill variable add f/meal-planner/vars/oauth_encryption_key \
   --value="499f19656b0ad170fc111dade27baadb53460157003a864ece78ea692f9e2aaa" \
   --secret
-```
+```yaml
 
 ---

@@ -9,19 +9,19 @@ summary: "Check user permissions"
 
 ## Check user permissions
 wmill user whoami
-```
+```text
 
 **Resolution:**
 1. Verify variable path permissions match user/group
 2. Add user to appropriate group:
    ```bash
    wmill group add-user devops <username>
-   ```
+   ```sql
 3. Update variable permissions:
    ```bash
    wmill variable update f/meal-planner/vars/db_password \
      --add-group g/devops
-   ```
+   ```yaml
 
 ---
 

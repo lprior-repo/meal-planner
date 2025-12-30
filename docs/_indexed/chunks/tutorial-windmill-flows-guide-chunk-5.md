@@ -9,4 +9,4 @@ summary: "Sync all (scripts + flows)"
 
 ## Sync all (scripts + flows)
 wmill sync push --yes
-```
+```text

@@ -2,7 +2,7 @@
 id: meta/windmill/indexing-system
 title: "Windmill Documentation Indexing System"
 category: meta
-tags: ["advanced", "windmill", "meta"]
+tags: ["meta", "advanced", "windmill"]
 ---
 
 # Windmill Documentation Indexing System
@@ -134,7 +134,7 @@ Each document includes:
   <estimated_reading_time>minutes</estimated_reading_time>
   <tags>tag1,tag2,tag3</tags>
 </doc_metadata>
-```
+```text
 
 ## Benefits
 
@@ -171,7 +171,7 @@ Each document includes:
 ## DAG traversal:
 error_handler -> [retries, flow_branches]
 retries -> [flow_branches]
-```
+```text
 
 ### Find Prerequisites
 
@@ -182,7 +182,7 @@ retries -> [flow_branches]
 windmill_deployment <- wmill_cli
 windmill_deployment <- windmill_resources
 windmill_deployment <- staging_prod
-```
+```text
 
 ### Find Code Examples
 
@@ -194,7 +194,7 @@ windmill_deployment <- staging_prod
 ## <examples> not empty
 
 ## Result: docs/windmill/flows/14_retries.md
-```
+```text
 
 ### RAG with DAG Context
 
@@ -205,7 +205,7 @@ chunk = retrieve_chunk("windmill_retries_constant")
 context = chunk.dag_context  # {prerequisites: [], dependents: [...]}
 
 ## AI gets both content AND relationships
-```
+```text
 
 ## Index Maintenance
 
@@ -229,7 +229,7 @@ context = chunk.dag_context  # {prerequisites: [], dependents: [...]}
 ```bash
 ## Python script to regenerate from XML
 python scripts/regenerate_index.py
-```
+```text
 
 ## Validation
 
@@ -238,14 +238,14 @@ python scripts/regenerate_index.py
 ```bash
 ## Ensure no cycles and all nodes reachable
 python scripts/validate_dag.py
-```
+```text
 
 ### Check XML Schema
 
 ```bash
 ## Validate XML metadata against schema
 xmllint --schema schema.xmldocuments/*.md
-```
+```text
 
 ## Search Optimization
 
@@ -259,7 +259,7 @@ Map terms to entities for fast lookup:
   "error": ["error_handler", "retries"],
   "deploy": ["staging_prod", "windmill_deployment", "wmill_cli"]
 }
-```
+```text
 
 ### Tag-Based Search
 
@@ -268,7 +268,7 @@ Filter by tags:
 ```bash
 ## Find all CLI documentation
 grep -r "<tags>windmill,cli" docs/
-```
+```text
 
 ### Category-Based Search
 

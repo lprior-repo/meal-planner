@@ -13,7 +13,7 @@ The `wmill user remove` command is used to remove a user from the remote server.
 
 ```bash
 wmill user remove <email:string>
-```
+```text
 
 ### Arguments
 
@@ -27,4 +27,4 @@ wmill user remove <email:string>
 
 ```bash
 wmill user remove example@example.com
-```
+```text

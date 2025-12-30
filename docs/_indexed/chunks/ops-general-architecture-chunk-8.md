@@ -18,6 +18,6 @@ Dagger builds binaries and deploys to Windmill worker containers:
 │  Source  │───▶│  Dagger  │───▶│  Windmill Workers   │
 │  (Rust)  │    │  Build   │    │  /usr/local/bin/*   │
 └──────────┘    └──────────┘    └─────────────────────┘
-```
+```text
 
 Binaries are statically linked and copied into the worker container image or mounted as a volume.

@@ -15,13 +15,13 @@ This command can only be run at the same level of the `wmill-lock.yaml` of your 
 
 ```bash
 wmill script generate-metadata
-```
+```text
 
 You can also generate metadata for a single script with `wmill script generate-metadata <path>`:
 
 ```bash
 wmill script generate-metadata [--lock-only] [--schema-only] [<path>]
-```
+```text
 
 Note that you can explicitly exclude (or include) specific files or folders to be taken into account by this command, with a [`wmill.yaml` file](https://github.com/windmill-labs/windmill-sync-example/blob/main/wmill.yaml).
 
@@ -29,7 +29,7 @@ Note that you can explicitly exclude (or include) specific files or folders to b
 
 ```bash
 wmill flow generate-locks
-```
+```text
 
 ### package.json & requirements.txt
 
@@ -59,4 +59,4 @@ Below is a video on how to override Windmill inferred dependencies by [providing
 
 ```bash
 wmill script generate-metadata f/scripts/hallowed_script.py
-```
+```text

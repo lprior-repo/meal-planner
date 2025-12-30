@@ -9,7 +9,7 @@ summary: "2. Configure error handler"
 
 ## 2. Configure error handler
 wmill workspace update --error-handler-slack-channel "meal-planner-alerts"
-```
+```text
 
 ### Custom Error Handler Script
 
@@ -44,7 +44,7 @@ export async function main(
 
     return { handled: true };
 }
-```
+```text
 
 ### Schedule Error Handlers
 

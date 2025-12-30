@@ -13,7 +13,7 @@ The wmill flow bootstrap command is used to create a new flow locally.
 
 ```bash
 wmill flow bootstrap [--summary <summary>] [--description <description>] <path>
-```
+```text
 
 ### Arguments
 
@@ -27,4 +27,4 @@ wmill flow bootstrap [--summary <summary>] [--description <description>] <path>
 
 ```bash
 wmill flow bootstrap f/flows/flashy_flow
-```
+```text

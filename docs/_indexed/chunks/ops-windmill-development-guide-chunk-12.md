@@ -9,7 +9,7 @@ summary: "Push specific script"
 
 ## Push specific script
 wmill script push f/meal-planner/my_script.rs
-```
+```text
 
 ### Running Scripts
 

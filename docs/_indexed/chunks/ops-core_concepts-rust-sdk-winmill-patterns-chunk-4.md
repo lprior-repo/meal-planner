@@ -17,7 +17,7 @@ Return types **must implement `serde::Serialize`**. Windmill automatically seria
 fn main(x: i32) -> anyhow::Result<i32> {
     Ok(x * 2)
 }
-```
+```rust
 
 ### Struct returns
 
@@ -38,7 +38,7 @@ fn main(items: Vec<String>) -> anyhow::Result<ProcessResult> {
         errors: vec![],
     })
 }
-```
+```text
 
 ### Returning arbitrary JSON
 
@@ -54,6 +54,6 @@ fn main(input: String) -> anyhow::Result<serde_json::Value> {
         }
     }))
 }
-```
+```yaml
 
 ---

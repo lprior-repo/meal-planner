@@ -2,7 +2,7 @@
 id: meta/8_php_quickstart/index
 title: "PHP quickstart"
 category: meta
-tags: ["php", "advanced", "8_php_quickstart", "meta"]
+tags: ["8_php_quickstart", "meta", "advanced", "php"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

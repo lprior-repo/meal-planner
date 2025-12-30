@@ -51,7 +51,7 @@ For flows that need user input mid-execution (like OAuth):
       auth_url:
         type: javascript
         expr: results.a.auth_url
-```
+```javascript
 
 ### Why TypeScript for Prompts?
 
@@ -71,4 +71,4 @@ input_transforms:
   user_input:
     type: javascript
     expr: resume.field_name
-```
+```text

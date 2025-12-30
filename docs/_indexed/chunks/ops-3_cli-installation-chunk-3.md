@@ -17,7 +17,7 @@ To enable bash completions, add the following line to your ~/.bashrc:
 
 ```bash
 source <(wmill completions bash)
-```
+```text
 
 ### Zsh
 
@@ -25,7 +25,7 @@ To enable zsh completions, add the following line to your ~/.zshrc:
 
 ```bash
 source <(wmill completions zsh)
-```
+```text
 
 ### Fish
 

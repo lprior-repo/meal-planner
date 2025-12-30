@@ -2,7 +2,7 @@
 id: concept/11_persistent_storage/large-data-files
 title: "Large data: S3, R2, MinIO, Azure Blob, Google Cloud Storage"
 category: concept
-tags: ["large", "concept", "advanced", "11_persistent_storage"]
+tags: ["large", "11_persistent_storage", "advanced", "concept"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

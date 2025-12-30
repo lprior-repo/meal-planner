@@ -13,7 +13,7 @@ The `wmill variable add` command allows you to add a new variable to the remote 
 
 ```bash
 wmill add <remote_path:string> --value=<value:string> [--secret] [--description=<description:string>] [--account=<account:number>] [--oauth]
-```
+```text
 
 ### Arguments
 
@@ -37,4 +37,4 @@ This command adds a new variable with the path "my_variable" to the remote works
 
 ```bash
 wmill add my_variable --value=12345 --secret --description="My secret variable" --account=1
-```
+```text

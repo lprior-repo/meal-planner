@@ -2,7 +2,7 @@
 id: concept/features/ai
 title: "Ai"
 category: concept
-tags: ["concept", "features", "tandoor"]
+tags: ["features", "tandoor", "concept"]
 ---
 
 # Ai

@@ -2,7 +2,7 @@
 id: tutorial/windmill/flows-guide
 title: "Windmill Flows Guide"
 category: tutorial
-tags: ["tutorial", "windmill", "beginner"]
+tags: ["beginner", "windmill", "tutorial"]
 ---
 
 # Windmill Flows Guide
@@ -22,14 +22,14 @@ wmill flow run f/fatsecret/oauth_setup -d '{}'
 
 ## Sync all (scripts + flows)
 wmill sync push --yes
-```
+```text
 
 ## Flow File Structure
 
 ```
 windmill/f/<domain>/<flow_name>.flow/
 └── flow.yaml    # Flow definition
-```
+```text
 
 **Important**: When pushing flows, use the `.flow` directory path, NOT the `flow.yaml` file:
 ```bash
@@ -38,7 +38,7 @@ wmill flow push f/fatsecret/oauth_setup.flow f/fatsecret/oauth_setup
 
 ## Wrong - causes "ENOTDIR" error
 wmill flow push f/fatsecret/oauth_setup.flow/flow.yaml f/fatsecret/oauth_setup
-```
+```text
 
 ## Flow YAML Structure
 
@@ -62,7 +62,7 @@ schema:
   type: object
   properties: {}
   required: []
-```
+```text
 
 ## Input Transforms
 
@@ -72,7 +72,7 @@ input_transforms:
   param:
     type: static
     value: 'hardcoded_value'
-```
+```bash
 
 ### Resource Reference
 ```yaml
@@ -80,7 +80,7 @@ input_transforms:
   config:
     type: static
     value: '$res:u/admin/my_resource'
-```
+```text
 
 ### From Previous Step
 ```yaml
@@ -88,7 +88,7 @@ input_transforms:
   data:
     type: javascript
     expr: results.a.some_field
-```
+```text
 
 ### From Resume Payload (approval flows)
 ```yaml
@@ -96,7 +96,7 @@ input_transforms:
   verifier:
     type: javascript
     expr: resume.verifier
-```
+```text
 
 ## Approval/Prompt Flows
 
@@ -142,7 +142,7 @@ For flows that need user input mid-execution (like OAuth):
       auth_url:
         type: javascript
         expr: results.a.auth_url
-```
+```javascript
 
 ### Why TypeScript for Prompts?
 
@@ -162,7 +162,7 @@ input_transforms:
   user_input:
     type: javascript
     expr: resume.field_name
-```
+```text
 
 ## OAuth Flow Pattern
 
@@ -188,7 +188,7 @@ curl -X POST \
   -H "Content-Type: application/json" \
   "http://localhost/api/w/meal-planner/flows/create" \
   -d @flow_payload.json
-```
+```text
 
 ## Common Issues
 
@@ -206,7 +206,7 @@ Run flows via API with async, or use Windmill UI. CLI waits forever on suspended
 curl -X POST -H "Authorization: Bearer $TOKEN" \
   "http://localhost/api/w/meal-planner/jobs/run/f/f/fatsecret/oauth_setup" \
   -d '{}'
-```
+```text
 
 ### Cancel suspended flow
 ```bash

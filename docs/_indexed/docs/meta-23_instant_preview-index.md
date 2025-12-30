@@ -2,7 +2,7 @@
 id: meta/23_instant_preview/index
 title: "Instant preview & testing"
 category: meta
-tags: ["instant", "23_instant_preview", "meta"]
+tags: ["meta", "23_instant_preview", "instant"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

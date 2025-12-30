@@ -13,4 +13,4 @@ The `wmill app` list command is used to list all apps in the remote workspace.
 
 ```bash
 wmill app
-```
+```text

@@ -13,4 +13,4 @@ To upgrade your wmill installation to the latest version, run the following comm
 
 ```bash
 wmill upgrade
-```
+```text

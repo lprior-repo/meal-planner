@@ -2,7 +2,7 @@
 id: meta/18_instance_settings/index
 title: "Instance settings"
 category: meta
-tags: ["18_instance_settings", "advanced", "instance", "meta"]
+tags: ["instance", "meta", "18_instance_settings", "advanced"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

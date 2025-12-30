@@ -2,7 +2,7 @@
 id: tutorial/flows/3-editor-components
 title: "Flow editor components"
 category: tutorial
-tags: ["tutorial", "beginner", "flows", "flow"]
+tags: ["beginner", "flows", "tutorial", "flow"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

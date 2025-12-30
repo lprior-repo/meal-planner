@@ -13,4 +13,4 @@ The `wmill resource` list command is used to list all resources in the remote wo
 
 ```bash
 wmill resource
-```
+```text

@@ -25,7 +25,7 @@ struct PreviousStepOutput {
 fn main(data: PreviousStepOutput) -> anyhow::Result<String> {
     Ok(format!("Processing user {} (ID: {})", data.name, data.user_id))
 }
-```
+```text
 
 In the flow editor, connect using JavaScript expressions:
 - `results.step_a.user_id` - field from step "a"
@@ -42,7 +42,7 @@ retry:
   constant:
     attempts: 5
     seconds: 60
-```
+```text
 
 **Exponential backoff:**
 ```yaml
@@ -51,6 +51,6 @@ retry:
     attempts: 5
     base: 2
     multiplier: 3
-```
+```yaml
 
 ---

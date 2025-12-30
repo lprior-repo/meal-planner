@@ -2,7 +2,7 @@
 id: meta/openflow/index
 title: "OpenFlow"
 category: meta
-tags: ["advanced", "openflow", "meta"]
+tags: ["meta", "advanced", "openflow"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

@@ -2,7 +2,7 @@
 id: ops/2_clients/python-client
 title: "Python client"
 category: ops
-tags: ["operations", "windmill", "2_clients", "python"]
+tags: ["operations", "2_clients", "windmill", "python"]
 ---
 
 # Python client
@@ -19,7 +19,7 @@ To use the Python client library, you need to install the `wmill` package via pi
 
 ```bash
 pip install wmill
-```
+```text
 
 ## Usage
 
@@ -40,7 +40,7 @@ def main():
 
     # Run a script synchronously and get result
     result = wmill.run_script_by_path('f/scripts/calculate', args={'x': 10, 'y': 20})
-```
+```text
 
 ## API reference
 
@@ -78,7 +78,7 @@ client = Windmill(
 
 ## Use client methods
 result = client.get_resource('u/user/resource')
-```
+```text
 
 ## S3 integration
 

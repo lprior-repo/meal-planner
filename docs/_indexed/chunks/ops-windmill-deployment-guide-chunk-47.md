@@ -10,7 +10,7 @@ summary: "Or via Windmill script"
 ## Or via Windmill script
 wmill script run f/meal-planner/db/run_migrations \
   -d '{"migration": "002_add_oauth_tokens"}'
-```
+```text
 
 ### Windmill Migration Script
 
@@ -29,6 +29,6 @@ pub async fn main(postgres: Postgresql, migration: String) -> Result<String, Err
 
     Ok(format!("Migration {} completed successfully", migration))
 }
-```
+```yaml
 
 ---

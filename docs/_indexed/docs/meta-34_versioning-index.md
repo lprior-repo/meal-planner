@@ -2,7 +2,7 @@
 id: meta/34_versioning/index
 title: "Versioning"
 category: meta
-tags: ["34_versioning", "versioning", "meta"]
+tags: ["versioning", "meta", "34_versioning"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

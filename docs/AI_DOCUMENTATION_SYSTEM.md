@@ -35,7 +35,7 @@ Each chunk should be **self-contained for navigation**:
 
 **The breakthrough**: Prepend 50-100 tokens of context to each chunk before embedding.
 
-```
+```yaml
 Original: "The company's revenue grew by 3% over the previous quarter."
 
 Contextualized: "This chunk is from an SEC filing on ACME corp's performance 
@@ -49,7 +49,7 @@ revenue grew by 3% over the previous quarter."
 - With reranking: 67% reduction
 
 **Key technique**: Use Claude to generate context per chunk:
-```
+```html
 <document>{{WHOLE_DOCUMENT}}</document>
 <chunk>{{CHUNK_CONTENT}}</chunk>
 Please give a short succinct context to situate this chunk within the 
@@ -108,7 +108,7 @@ This is better than:
 
 ### System Components
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                        AI COORDINATOR                           │
 │  (Claude/GPT analyzing outputs, making decisions, orchestrating)│
@@ -149,7 +149,7 @@ docnav link [OPTIONS]        # Add navigation footers
 docnav validate [OPTIONS]    # Check integrity
 docnav stats [OPTIONS]       # Coverage metrics
 docnav repair [OPTIONS]      # Fix issues
-```
+```text
 
 ### Detailed Subcommand Specifications
 
@@ -164,7 +164,7 @@ docnav analyze \
   --output relations.json \
   [--use-semantic]           # Also use codanna for semantic similarity
   [--semantic-top-k 5]       # Top K semantic matches per chunk
-```
+```text
 
 **Output** (`relations.json`):
 ```json
@@ -202,7 +202,7 @@ docnav analyze \
     "hub_chunks": ["meta-core_concepts-index-chunk-1", "tutorial-windmill-intro-chunk-1"]
   }
 }
-```
+```text
 
 #### `docnav context`
 
@@ -216,27 +216,27 @@ docnav context \
   [--template default|minimal|detailed] \
   [--use-llm]                # Use Claude for better context (costs $)
   [--dry-run]                # Show what would change
-```
+```text
 
 **Template options**:
 
 **Minimal** (~30 tokens):
 ```markdown
 > **Context**: {doc_title} > {heading_path}. Tags: {tags}.
-```
+```text
 
 **Default** (~50 tokens):
 ```markdown
 > **Context**: This chunk covers "{current_heading}" in {doc_title}. 
 > {prev_context}Part of: {category}. Tags: {tags}.
-```
+```text
 
 **Detailed** (~80 tokens):
 ```markdown
 > **Context**: This chunk explains {current_heading} in the {doc_title} documentation.
 > {It follows {prev_heading} which covered {prev_topic}. | This is the first section.}
 > Key concepts: {keywords}. Category: {category}. Difficulty: {difficulty}.
-```
+```bash
 
 **LLM-generated** (best quality, ~$0.001 per chunk):
 ```markdown
@@ -244,7 +244,7 @@ docnav context \
 > approval flows. Resume forms let suspended flows collect user input (like OAuth 
 > verifier codes) before continuing. This builds on the basic suspend mechanism 
 > from the previous section.
-```
+```text
 
 #### `docnav link`
 
@@ -258,7 +258,7 @@ docnav link \
   [--max-related 4]          # Maximum related links per chunk
   [--include-semantic]       # Include semantic matches
   [--dry-run]
-```
+```text
 
 **Output format** (appended to each chunk):
 ```markdown
@@ -267,7 +267,7 @@ docnav link \
 **Sequence**: [← Suspend Mechanism](./tutorial-flows-11-flow-approval-chunk-2.md) | [Resume Payload →](./tutorial-flows-11-flow-approval-chunk-4.md)
 **Related**: [OAuth Flow Pattern](./tutorial-windmill-flows-guide-chunk-12.md) | [Input Transforms](./ref-flows-input-transforms-chunk-2.md) | [Flow Triggers](./concept-flows-10-flow-trigger-chunk-1.md)
 **Parent**: [Suspend & Approval / Prompts](./tutorial-flows-11-flow-approval.md)
-```
+```text
 
 #### `docnav validate`
 
@@ -278,7 +278,7 @@ docnav validate \
   --chunks-dir docs/_indexed/chunks \
   [--fix]                    # Auto-fix simple issues
   [--output validation.json]
-```
+```text
 
 **Checks**:
 - All links resolve to existing files
@@ -302,7 +302,7 @@ ORPHAN (5):
   
 MISSING_CONTEXT (4):
   - concept-3_cli-app-chunk-1.md (no context prefix)
-```
+```text
 
 #### `docnav stats`
 
@@ -312,7 +312,7 @@ MISSING_CONTEXT (4):
 docnav stats \
   --chunks-dir docs/_indexed/chunks \
   --relations relations.json
-```
+```text
 
 **Output**:
 ```
@@ -338,7 +338,7 @@ Clusters Detected:
   - "flows" cluster: 245 chunks
   - "cli" cluster: 89 chunks
   - "tandoor" cluster: 67 chunks
-```
+```text
 
 #### `docnav repair`
 
@@ -352,7 +352,7 @@ docnav repair \
   [--orphans]                # Add links TO orphan chunks from related
   [--stale-context]          # Regenerate context for chunks with stale info
   [--dry-run]
-```
+```yaml
 
 ---
 
@@ -378,7 +378,7 @@ AI: "Let me set up documentation navigation for this repo."
 7. Run: docnav validate
 8. Fix: Any issues found
 9. Run: docnav stats (verify improvement)
-```
+```text
 
 ### Workflow 2: After New Docs Added (Incremental)
 
@@ -390,7 +390,7 @@ AI: "New docs were added, let me update navigation."
 3. Run: docnav link --incremental
 4. Run: docnav validate
 5. Fix: Any new issues
-```
+```text
 
 ### Workflow 3: Quality Review (Periodic)
 
@@ -406,7 +406,7 @@ AI: "Let me check documentation navigation quality."
    - docnav repair --broken-links --dry-run
    - Review proposed fixes
    - docnav repair --broken-links (apply)
-```
+```text
 
 ### Workflow 4: Interactive Linking (AI Judgment)
 
@@ -431,7 +431,7 @@ decisions_needed.json:
 
 AI reviews, makes decision, updates config:
 docnav link --decisions decisions_resolved.json
-```
+```yaml
 
 ---
 
@@ -473,7 +473,7 @@ python doc_transformer.py
 python docnav.py context
 python docnav.py link
 python docnav.py validate
-```
+```yaml
 
 ---
 
@@ -498,7 +498,7 @@ docnav analyze --use-semantic
 # Option 2: Direct embedding comparison
 # Requires: fastembed or sentence-transformers
 # Builds local embedding index, compares vectors
-```
+```text
 
 **Recommendation**: Start with tag-based only, add semantic as optional enhancement.
 
@@ -530,7 +530,7 @@ summary: "Resume Form configuration..."
 ## Resume Form
 
 The `resume_form` schema defines...
-```
+```text
 
 ### After (With Navigation)
 ```markdown

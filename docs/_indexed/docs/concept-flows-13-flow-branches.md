@@ -2,7 +2,7 @@
 id: concept/flows/13-flow-branches
 title: "Branches"
 category: concept
-tags: ["concept", "flows", "branches"]
+tags: ["flows", "branches", "concept"]
 ---
 
 <!--

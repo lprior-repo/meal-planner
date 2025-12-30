@@ -9,7 +9,7 @@ summary: "In .env"
 
 ## In .env
 WM_IMAGE=ghcr.io/windmill-labs/windmill-full:latest
-```
+```text
 
 ### Cross-Container Networking
 

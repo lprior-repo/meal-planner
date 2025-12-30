@@ -2,7 +2,7 @@
 id: concept/3_cli/resource
 title: "Resources"
 category: concept
-tags: ["3_cli", "concept", "windmill", "resources"]
+tags: ["3_cli", "windmill", "resources", "concept"]
 ---
 
 <!--
@@ -83,7 +83,7 @@ The `wmill resource` list command is used to list all resources in the remote wo
 
 ```bash
 wmill resource
-```
+```text
 
 ## Pushing a resource
 
@@ -91,7 +91,7 @@ The `wmill resource push` command is used to push a local resource, overriding a
 
 ```bash
 wmill resource push <file_path> <remote_path>
-```
+```text
 
 ### Arguments
 
@@ -109,7 +109,7 @@ value: <value>
 description: <description>
 resource_type: <resource_type>
 is_oauth: <is_oauth>
-```
+```text
 
 ```JSON
 {

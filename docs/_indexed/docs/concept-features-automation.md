@@ -2,7 +2,7 @@
 id: concept/features/automation
 title: "Automation"
 category: concept
-tags: ["concept", "automation", "features"]
+tags: ["features", "automation", "concept"]
 ---
 
 <!-- prettier-ignore -->

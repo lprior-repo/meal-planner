@@ -58,4 +58,4 @@ fn run() -> anyhow::Result<serde_json::Value> {
     // 3. Return output
     Ok(serde_json::to_value(result)?)
 }
-```
+```text

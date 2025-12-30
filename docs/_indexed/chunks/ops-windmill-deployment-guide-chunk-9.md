@@ -13,6 +13,6 @@ TANDOOR_API_TOKEN=your_tandoor_token
 FATSECRET_CONSUMER_KEY=your_consumer_key
 FATSECRET_CONSUMER_SECRET=your_consumer_secret
 OAUTH_ENCRYPTION_KEY=your_64_char_hex_key
-```
+```yaml
 
 ---

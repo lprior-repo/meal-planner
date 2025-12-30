@@ -9,7 +9,7 @@ summary: "Check job queue"
 
 ## Check job queue
 wmill job list --status=queued
-```
+```text
 
 **Resolution:**
 1. Verify workers are running: `docker ps | grep windmill-worker`

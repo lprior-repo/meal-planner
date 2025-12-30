@@ -25,4 +25,4 @@ fn test_tandoor_connection() {
     let result: Value = serde_json::from_slice(&output.stdout).unwrap();
     assert!(result["success"].as_bool().unwrap());
 }
-```
+```bash

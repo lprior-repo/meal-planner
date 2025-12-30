@@ -13,4 +13,4 @@ To use the Python client library, you need to install the `wmill` package via pi
 
 ```bash
 pip install wmill
-```
+```text

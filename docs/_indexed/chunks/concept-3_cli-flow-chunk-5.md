@@ -13,7 +13,7 @@ Running a flow by its path s done using the `wmill flow run` command.
 
 ```bash
 wmill flow run <remote_path> [options]
-```
+```text
 
 ### Arguments
 

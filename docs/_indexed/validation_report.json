@@ -1,48 +1,48 @@
 {
-  "run_at": "2025-12-30T08:29:30.047511",
+  "run_at": "2025-12-30T09:40:30.976686",
   "summary": {
-    "files_checked": 204,
-    "files_passed": 202,
+    "files_checked": 235,
+    "files_passed": 233,
     "files_failed": 2,
     "total_errors": 2,
-    "total_warnings": 121
+    "total_warnings": 151
   },
   "by_rule": {
     "V001": {
-      "passed": 204,
+      "passed": 235,
       "failed": 0
     },
     "V002": {
-      "passed": 204,
+      "passed": 235,
       "failed": 0
     },
     "V003": {
-      "passed": 204,
+      "passed": 235,
       "failed": 0
     },
     "V004": {
-      "passed": 202,
+      "passed": 233,
       "failed": 2
     },
     "V005": {
-      "passed": 204,
+      "passed": 235,
       "failed": 0
     },
     "V006": {
-      "passed": 201,
+      "passed": 232,
       "failed": 3
     },
     "V007": {
-      "passed": 204,
+      "passed": 235,
       "failed": 0
     },
     "V008": {
-      "passed": 204,
+      "passed": 235,
       "failed": 0
     },
     "V009": {
-      "passed": 86,
-      "failed": 118
+      "passed": 87,
+      "failed": 148
     }
   },
   "failures": [

@@ -9,7 +9,7 @@ summary: "Ensure no cycles and all nodes reachable"
 
 ## Ensure no cycles and all nodes reachable
 python scripts/validate_dag.py
-```
+```text
 
 ### Check XML Schema
 

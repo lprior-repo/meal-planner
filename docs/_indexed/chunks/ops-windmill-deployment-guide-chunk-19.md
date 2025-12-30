@@ -18,7 +18,7 @@ wmill resource push - f/meal-planner/database/postgres <<EOF
   "sslmode": "prefer"
 }
 EOF
-```
+```text
 
 ### Tandoor API
 

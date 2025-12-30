@@ -37,24 +37,24 @@ A full list of options to upgrade a database provide in the [official PostgreSQL
 ``` bash
 grep -E 'POSTGRES|DATABASE' ~/.docker/compose/.env
 docker ps -a --format 'table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}' | awk 'NR == 1 || /postgres/ || /recipes/'
-```
+```bash
 
 2. Export the tandoor database
 
 ``` bash
 docker exec -t {{database_container}} pg_dumpall -U {{djangouser}} > ~/tandoor.sql
-```
+```text
 
 3. Stop the tandoor application
 ``` bash
 docker compose down
-```
+```text
 
 4. Rename the tandoor volume
 
 ``` bash
 mv ./postgresql ./postgresql.old
-```
+```sql
 
 5. Update image tag on postgres container in the docker-compose.yaml
 
@@ -66,24 +66,24 @@ db_recipes:
     - ./postgresql:/var/lib/postgresql/data
   env_file:
     - ./.env
-```
+```text
 
 6. Pull and rebuild database container
 
 ``` bash
 docker compose pull && docker compose up -d db_recipes
-```
+```python
 
 7. Import the database export
 
 ``` bash
 cat ~/tandoor.sql | docker exec -i {{database_container}} psql postgres -U {{djangouser}}
-```
+```text
 
 8. Install postgres extensions
 ``` bash
 docker exec -it {{database_container}} psql postgres -U {{djangouser}}
-```
+```text
   then
 ``` psql
 CREATE EXTENSION IF NOT EXISTS unaccent;

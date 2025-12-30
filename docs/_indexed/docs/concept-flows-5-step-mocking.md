@@ -2,7 +2,7 @@
 id: concept/flows/5-step-mocking
 title: "Step mocking / Pin result"
 category: concept
-tags: ["concept", "step", "flows"]
+tags: ["flows", "step", "concept"]
 ---
 
 <!--

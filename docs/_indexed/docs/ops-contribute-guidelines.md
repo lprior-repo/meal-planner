@@ -2,7 +2,7 @@
 id: ops/contribute/guidelines
 title: "Guidelines"
 category: ops
-tags: ["operations", "guidelines", "contribute"]
+tags: ["operations", "contribute", "guidelines"]
 ---
 
 # Guidelines

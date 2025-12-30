@@ -17,5 +17,5 @@ summary: "Adding a New Binary"
    [[bin]]
    name = "<domain>-<operation>"
    path = "src/<domain>/bin/<operation>.rs"
-   ```
+   ```text
 5. Create corresponding Windmill script

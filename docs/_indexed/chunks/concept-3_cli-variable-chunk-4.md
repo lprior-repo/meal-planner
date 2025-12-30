@@ -13,7 +13,7 @@ The cli push command allows you to push a local variable spec to the remote work
 
 ```bash
 wmill push <file_path:string> <remote_path:string> [--plain-secrets]
-```
+```text
 
 ### Arguments
 

@@ -13,6 +13,6 @@ You can list all the workspaces you have access to using:
 
 ```bash
 wmill workspace
-```
+```html
 
 The currently selected workspace will be <ins>underlined</ins>.

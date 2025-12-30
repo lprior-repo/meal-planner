@@ -15,7 +15,7 @@ Binaries are built and mounted into Windmill worker containers:
 FROM ghcr.io/windmill-labs/windmill-full:latest
 COPY target/release/tandoor-* /usr/local/bin/
 COPY target/release/fatsecret-* /usr/local/bin/
-```
+```text
 
 Or use volume mounts for development:
 ```yaml

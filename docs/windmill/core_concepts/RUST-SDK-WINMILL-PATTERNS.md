@@ -62,7 +62,7 @@ Windmill Rust scripts declare dependencies using a special doc-comment block at 
 //! reqwest = { version = "0.12", features = ["json"] }
 //! wmill = "^1.0"
 //! tokio = { version = "1", features = ["full"] }
-//! ```
+//! ```text
 
 // Your script code follows...
 ```
@@ -104,7 +104,7 @@ fn main(name: String, multiplier: i32) -> anyhow::Result<Output> {
         count: multiplier * 10,
     })
 }
-```
+```text
 
 ### Async script with SDK access
 
@@ -115,7 +115,7 @@ fn main(name: String, multiplier: i32) -> anyhow::Result<Output> {
 //! tokio = { version = "1", features = ["full"] }
 //! anyhow = "1.0"
 //! serde_json = "1.0"
-//! ```
+//! ```rust
 
 use wmill::Windmill;
 use anyhow::Result;
@@ -154,7 +154,7 @@ fn main(optional_name: Option<String>) -> anyhow::Result<String> {
     let name = optional_name.unwrap_or_else(|| "default".to_string());
     Ok(format!("Hello, {}!", name))
 }
-```
+```javascript
 
 **Important**: Rust does not support default values in function signatures. Use `Option<T>` with `unwrap_or` or `unwrap_or_else` for optional parameters with defaults.
 
@@ -174,7 +174,7 @@ struct DatabaseConfig {
 fn main(config: DatabaseConfig, query: String) -> anyhow::Result<String> {
     Ok(format!("Connecting to {}:{}", config.host, config.port))
 }
-```
+```yaml
 
 ---
 
@@ -188,7 +188,7 @@ Return types **must implement `serde::Serialize`**. Windmill automatically seria
 fn main(x: i32) -> anyhow::Result<i32> {
     Ok(x * 2)
 }
-```
+```rust
 
 ### Struct returns
 
@@ -209,7 +209,7 @@ fn main(items: Vec<String>) -> anyhow::Result<ProcessResult> {
         errors: vec![],
     })
 }
-```
+```text
 
 ### Returning arbitrary JSON
 
@@ -225,7 +225,7 @@ fn main(input: String) -> anyhow::Result<serde_json::Value> {
         }
     }))
 }
-```
+```yaml
 
 ---
 
@@ -247,7 +247,7 @@ let wm = Windmill::new(
     Some("workspace_name".to_string()),
     Some("http://localhost:8000".to_string())
 )?;
-```
+```bash
 
 ### Typed resource access
 
@@ -269,7 +269,7 @@ async fn main(db_resource: String) -> anyhow::Result<String> {
     let config: PostgresResource = wm.get_resource(&db_resource).await?;
     Ok(format!("Connected to {}:{}/{}", config.host, config.port, config.dbname))
 }
-```
+```bash
 
 ### Raw resource access
 
@@ -277,7 +277,7 @@ async fn main(db_resource: String) -> anyhow::Result<String> {
 let wm = Windmill::default()?;
 let raw: serde_json::Value = wm.get_resource_any("u/admin/api_config").await?;
 let api_key = raw["api_key"].as_str().unwrap_or("");
-```
+```text
 
 ### Variable and secret access
 
@@ -290,7 +290,7 @@ let api_key: String = wm.get_variable_raw("u/admin/openai_key").await?;
 
 // Set a variable
 wm.set_variable("new_value".to_string(), "u/admin/my_var", false).await?;
-```
+```text
 
 ### Creating and updating resources
 
@@ -302,7 +302,7 @@ wm.set_resource(
     "u/admin/new_database",
     "postgresql"  // resource type
 ).await?;
-```
+```yaml
 
 ---
 
@@ -333,7 +333,7 @@ async fn main() -> anyhow::Result<serde_json::Value> {
     
     Ok(serde_json::json!({"last_id": state.last_processed_id}))
 }
-```
+```text
 
 ### Writing state
 
@@ -349,7 +349,7 @@ wm.set_state(Some(json!({
 
 // Clear state
 wm.set_state(None).await?;
-```
+```text
 
 ### Trigger script pattern with state
 
@@ -375,7 +375,7 @@ async fn main() -> anyhow::Result<serde_json::Value> {
     // Return items to process
     Ok(serde_json::json!({"items": new_items}))
 }
-```
+```yaml
 
 ---
 
@@ -393,7 +393,7 @@ let job_id = wm.run_script_async(
     Some(10)                 // schedule delay in seconds (optional)
 ).await?;
 println!("Started job: {}", job_id);
-```
+```text
 
 ### Synchronous execution (wait for result)
 
@@ -407,7 +407,7 @@ let result = wm.run_script_sync(
     true,                           // verbose logging
     true                            // assert_result_not_none
 ).await?;
-```
+```text
 
 ### Job monitoring
 
@@ -420,7 +420,7 @@ let status = wm.get_job_status(&job_id).await?; // Running | Waiting | Completed
 
 // Get result directly
 let result = wm.get_result(&job_id).await?;
-```
+```text
 
 ### Progress tracking
 
@@ -430,7 +430,7 @@ wm.set_progress(50, None).await?;
 
 // Get progress
 let progress = wm.get_progress(Some(job_id.to_string())).await?;
-```
+```yaml
 
 ---
 
@@ -442,7 +442,7 @@ let progress = wm.get_progress(Some(job_id.to_string())).await?;
 //! ```cargo
 //! [dependencies]
 //! anyhow = "1.0"
-//! ```
+//! ```rust
 
 use anyhow::{Result, Context, bail};
 
@@ -467,7 +467,7 @@ fn main(input: String) -> Result<serde_json::Value> {
 //! ```cargo
 //! [dependencies]
 //! thiserror = "1.0"
-//! ```
+//! ```rust
 
 use thiserror::Error;
 
@@ -505,7 +505,7 @@ serde_json::json!({
         "name": "ErrorType"
     }
 })
-```
+```text
 
 **Best practice**: Always prefer `Result` over `panic!()`. Windmill catches panics but they provide less context.
 
@@ -529,7 +529,7 @@ struct PreviousStepOutput {
 fn main(data: PreviousStepOutput) -> anyhow::Result<String> {
     Ok(format!("Processing user {} (ID: {})", data.name, data.user_id))
 }
-```
+```text
 
 In the flow editor, connect using JavaScript expressions:
 - `results.step_a.user_id` - field from step "a"
@@ -546,7 +546,7 @@ retry:
   constant:
     attempts: 5
     seconds: 60
-```
+```text
 
 **Exponential backoff:**
 ```yaml
@@ -555,7 +555,7 @@ retry:
     attempts: 5
     base: 2
     multiplier: 3
-```
+```yaml
 
 ---
 
@@ -570,7 +570,7 @@ retry:
 //! tokio = { version = "1", features = ["full"] }
 //! serde = { version = "1.0", features = ["derive"] }
 //! anyhow = "1.0"
-//! ```
+//! ```rust
 
 use reqwest::Client;
 use serde::Deserialize;
@@ -614,7 +614,7 @@ async fn main(url: String, api_key: String) -> Result<serde_json::Value> {
 //! tokio = { version = "1", features = ["full"] }
 //! serde = { version = "1.0", features = ["derive"] }
 //! anyhow = "1.0"
-//! ```
+//! ```rust
 
 use wmill::Windmill;
 use tokio_postgres::NoTls;
@@ -675,7 +675,7 @@ async fn main(db_resource: String, query: String) -> Result<serde_json::Value> {
 //! serde = { version = "1.0", features = ["derive"] }
 //! serde_json = "1.0"
 //! anyhow = "1.0"
-//! ```
+//! ```rust
 
 use wmill::Windmill;
 use serde::{Deserialize, Serialize};

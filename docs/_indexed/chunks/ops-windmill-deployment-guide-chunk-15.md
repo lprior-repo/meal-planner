@@ -9,7 +9,7 @@ summary: "Verify current workspace"
 
 ## Verify current workspace
 wmill workspace whoami
-```
+```text
 
 ### 2. Initialize Project
 

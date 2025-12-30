@@ -9,7 +9,7 @@ summary: "Directory Structure"
 
 ## Directory Structure
 
-```
+```text
 meal-planner/
 ├── bin/                          # Compiled binaries (gitignored)
 │   ├── tandoor_test_connection

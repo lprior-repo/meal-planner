@@ -11,7 +11,7 @@ summary: "DAG path:"
 windmill_deployment <- wmill_cli
 windmill_deployment <- windmill_resources
 windmill_deployment <- staging_prod
-```
+```text
 
 ### Find Code Examples
 

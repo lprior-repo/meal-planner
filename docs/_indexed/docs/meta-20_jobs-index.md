@@ -2,7 +2,7 @@
 id: meta/20_jobs/index
 title: "Jobs"
 category: meta
-tags: ["advanced", "20_jobs", "jobs", "meta"]
+tags: ["jobs", "meta", "advanced", "20_jobs"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

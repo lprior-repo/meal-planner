@@ -13,7 +13,7 @@ summary: "Installation"
 git clone https://aur.archlinux.org/tandoor-recipes-git.git
 cd tandoor-recipes-git
 makepkg -si
-```
+```text
 or use your favourite AUR helper.
 
 2. Setup a PostgreSQL database and user, as explained here: https://docs.tandoor.dev/install/manual/#setup-postgresql
@@ -28,9 +28,9 @@ Edit `/etc/nginx/sites-available/tandoor.conf`. You may want to use another `ser
 cd /etc/nginx/sites-enabled
 ln -s ../sites-available/tandoor.conf
 systemctl restart nginx
-```
+```text
 
 6. Enable the service
 ```shell
 systemctl enable --now tandoor
-```
+```text

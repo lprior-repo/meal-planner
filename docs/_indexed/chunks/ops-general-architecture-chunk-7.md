@@ -17,4 +17,4 @@ steps:
   - name: calculate_macros
     script: nutrition/calculate_macros
     input: ${steps.get_nutrition}
-```
+```text

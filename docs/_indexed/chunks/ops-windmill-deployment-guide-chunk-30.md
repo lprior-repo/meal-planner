@@ -10,7 +10,7 @@ summary: "Production"
 ## Production
 wmill workspace switch meal-planner-prod
 wmill variable add f/meal-planner/vars/environment --value="production"
-```
+```text
 
 ### Accessing Variables in Scripts
 

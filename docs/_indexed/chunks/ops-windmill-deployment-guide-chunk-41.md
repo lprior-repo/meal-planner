@@ -24,17 +24,17 @@ FatSecret uses 3-legged OAuth 1.0a authentication.
 **Development:**
 ```
 http://localhost:6969/api/oauth/fatsecret/callback
-```
+```text
 
 **Staging:**
 ```
 https://staging.meal-planner.example.com/api/oauth/fatsecret/callback
-```
+```text
 
 **Production:**
 ```
 https://meal-planner.example.com/api/oauth/fatsecret/callback
-```
+```text
 
 #### 3. OAuth Flow Implementation
 
@@ -55,7 +55,7 @@ pub fn main(user_id: String) -> Result<String, Error> {
     // Return authorization URL
     Ok(oauth.get_authorize_url(&request_token))
 }
-```
+```text
 
 #### 4. Token Storage Schema
 
@@ -74,7 +74,7 @@ CREATE TABLE oauth_tokens (
 );
 
 CREATE INDEX idx_oauth_tokens_user_provider ON oauth_tokens(user_id, provider);
-```
+```text
 
 #### 5. Encryption Key Generation
 

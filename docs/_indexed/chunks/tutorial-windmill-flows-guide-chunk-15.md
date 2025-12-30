@@ -11,7 +11,7 @@ summary: "Async via API"
 curl -X POST -H "Authorization: Bearer $TOKEN" \
   "http://localhost/api/w/meal-planner/jobs/run/f/f/fatsecret/oauth_setup" \
   -d '{}'
-```
+```text
 
 ### Cancel suspended flow
 ```bash

@@ -29,4 +29,4 @@ schema:
   type: object
   properties: {}
   required: []
-```
+```text

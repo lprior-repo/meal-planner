@@ -24,7 +24,7 @@ locally using:
 
 ```bash
 wmill workspace add [workspace_name] [workspace_id] [remote]
-```
+```text
 
 You can login to the workspace with a token or directly from browser.
 
@@ -52,16 +52,16 @@ The new workspace will automatically be [switched](#switch-workspaces) to.
 
 ```bash
 wmill workspace add
-```
+```text
 
 2. Adds a workspace with the name "MyWorkspace", ID "workspace123", and base URL of the Windmill installation "https://example.com".
 
 ```bash
 wmill workspace add MyWorkspace workspace123 https://example.com
-```
+```text
 
 1. This command creates a workspace with the name "MyWorkspace2," using the provided username "john.doe."
 
 ```bash
 wmill workspace add --create --create-workspace-name MyWorkspace2 --create-username john.doe
-```
+```text

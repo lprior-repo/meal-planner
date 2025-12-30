@@ -2,7 +2,7 @@
 id: ops/3_cli/sync
 title: "Sync"
 category: ops
-tags: ["operations", "advanced", "3_cli", "sync"]
+tags: ["operations", "3_cli", "advanced", "sync"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

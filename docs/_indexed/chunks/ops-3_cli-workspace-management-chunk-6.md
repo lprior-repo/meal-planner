@@ -13,7 +13,7 @@ The `wmill workspace remove` command allows you to remove a workspace from the C
 
 ```bash
 wmill workspace remove <workspace_name>
-```
+```text
 
 ### Arguments
 
@@ -27,7 +27,7 @@ wmill workspace remove <workspace_name>
 
 ```bash
 wmill workspace remove MyWorkspace
-```
+```text
 
 :::tip Get help
 

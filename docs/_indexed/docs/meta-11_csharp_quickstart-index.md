@@ -2,7 +2,7 @@
 id: meta/11_csharp_quickstart/index
 title: "C# quickstart"
 category: meta
-tags: ["advanced", "11_csharp_quickstart", "meta"]
+tags: ["11_csharp_quickstart", "meta", "advanced"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

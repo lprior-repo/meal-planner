@@ -2,7 +2,7 @@
 id: meta/52_assets/index
 title: "Assets"
 category: meta
-tags: ["52_assets", "assets", "meta"]
+tags: ["52_assets", "meta", "assets"]
 ---
 
 # Assets

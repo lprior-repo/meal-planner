@@ -20,7 +20,7 @@ Use sync `fn main()` with arguments - no tokio needed for simple HTTP:
 //! serde = { version = "1.0", features = ["derive"] }
 //! serde_json = "1.0"
 //! ureq = { version = "2.10", features = ["json"] }
-//! ```
+//! ```rust
 
 use serde::{Deserialize, Serialize};
 
@@ -83,4 +83,4 @@ schema:
         - api_token
   required:
     - config
-```
+```text

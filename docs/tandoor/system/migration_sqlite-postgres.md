@@ -8,7 +8,7 @@ While some commands are unraid specific, it should in general work for any setup
 ```cmd
 cd /opt/recipes
 ./venv/bin/python manage.py export -a > /data/dump.json
-```
+```text
 
 3. Create a Postgresql database (With a new user & database for recipes)
 
@@ -19,7 +19,7 @@ psql -U postgres
 postgres=# create database tandoor;
 postgres=# create user tandoor with encrypted password 'yoursupersecretpassworddontusethisone';
 postgres=# grant all privileges on database tandoor to tandoor;
-```
+```text
 
 4. Now its time to change some enviourment variables in TandoorRecipes template:
 ```env
@@ -29,7 +29,7 @@ POSTGRES_PORT=5432  # PostgreSQL Host
 POSTGRES_USER=tandoor  # PostgreSQL User
 POSTGRES_PASSWORD=yoursupersecretpassworddyoudidntcopy  # PostgreSQL Password
 POSTGRES_DB=tandoor  # Database, previous value: `/data/recipes.db`
-```
+```text
 
 5. Save it, and start the container once.
 

@@ -2,7 +2,7 @@
 id: tutorial/flows/7-flow-error-handler
 title: "Error handler"
 category: tutorial
-tags: ["error", "tutorial", "beginner", "flows"]
+tags: ["error", "flows", "beginner", "tutorial"]
 ---
 
 <!--

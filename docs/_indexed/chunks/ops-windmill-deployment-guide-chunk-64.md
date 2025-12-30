@@ -9,7 +9,7 @@ summary: "Validate flow YAML"
 
 ## Validate flow YAML
 wmill flow validate f/meal-planner/workflows/main.flow.yaml
-```
+```text
 
 **Resolution:**
 1. Fix syntax errors in scripts
@@ -17,10 +17,10 @@ wmill flow validate f/meal-planner/workflows/main.flow.yaml
    ```bash
    wmill script generate-metadata
    wmill flow generate-locks
-   ```
+   ```text
 3. Push again:
    ```bash
    wmill sync push
-   ```
+   ```yaml
 
 ---

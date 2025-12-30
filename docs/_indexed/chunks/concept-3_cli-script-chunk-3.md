@@ -15,7 +15,7 @@ This command support .ts, .js, .py, .go and .sh files.
 
 ```bash
 wmill script push <path>
-```
+```text
 
 ### Arguments
 
@@ -29,4 +29,4 @@ wmill script push <path>
 
 ```bash
 wmill script push /path/to/script.js
-```
+```text

@@ -2,7 +2,7 @@
 id: concept/flows/17-ai-flows
 title: "AI-generated flows"
 category: concept
-tags: ["concept", "flows", "aigenerated"]
+tags: ["aigenerated", "flows", "concept"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

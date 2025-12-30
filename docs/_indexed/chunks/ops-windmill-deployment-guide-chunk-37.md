@@ -15,7 +15,7 @@ wmill schedule create \
   --script-path f/meal-planner/handlers/tandoor/sync \
   --args '{}' \
   --on-failure f/meal-planner/handlers/notifications/slack_error
-```
+```text
 
 ### Manage Schedules
 

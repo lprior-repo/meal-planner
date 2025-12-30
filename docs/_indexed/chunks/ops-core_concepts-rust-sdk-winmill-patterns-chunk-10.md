@@ -18,7 +18,7 @@ summary: "Complete code examples"
 //! tokio = { version = "1", features = ["full"] }
 //! serde = { version = "1.0", features = ["derive"] }
 //! anyhow = "1.0"
-//! ```
+//! ```rust
 
 use reqwest::Client;
 use serde::Deserialize;
@@ -62,7 +62,7 @@ async fn main(url: String, api_key: String) -> Result<serde_json::Value> {
 //! tokio = { version = "1", features = ["full"] }
 //! serde = { version = "1.0", features = ["derive"] }
 //! anyhow = "1.0"
-//! ```
+//! ```rust
 
 use wmill::Windmill;
 use tokio_postgres::NoTls;
@@ -123,7 +123,7 @@ async fn main(db_resource: String, query: String) -> Result<serde_json::Value> {
 //! serde = { version = "1.0", features = ["derive"] }
 //! serde_json = "1.0"
 //! anyhow = "1.0"
-//! ```
+//! ```rust
 
 use wmill::Windmill;
 use serde::{Deserialize, Serialize};

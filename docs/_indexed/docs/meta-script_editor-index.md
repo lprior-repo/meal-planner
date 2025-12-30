@@ -2,7 +2,7 @@
 id: meta/script_editor/index
 title: "Script editor"
 category: meta
-tags: ["script_editor", "advanced", "script", "meta"]
+tags: ["meta", "advanced", "script_editor", "script"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

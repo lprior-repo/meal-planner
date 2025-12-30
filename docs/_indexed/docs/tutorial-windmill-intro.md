@@ -2,7 +2,7 @@
 id: tutorial/windmill/intro
 title: "What is Windmill?"
 category: tutorial
-tags: ["beginner", "tutorial", "windmill", "what"]
+tags: ["beginner", "windmill", "tutorial", "what"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

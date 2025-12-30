@@ -9,7 +9,7 @@ summary: "Test connection manually"
 
 ## Test connection manually
 psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "SELECT 1"
-```
+```text
 
 **Resolution:**
 1. Check variable values are correct
@@ -18,7 +18,7 @@ psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "SELECT 1"
 4. Update resource with correct values:
    ```bash
    wmill variable update f/meal-planner/vars/db_password --value="new_password"
-   ```
+   ```yaml
 
 ---
 
@@ -32,7 +32,7 @@ SELECT user_id, provider, expires_at
 FROM oauth_tokens
 WHERE provider = 'fatsecret'
   AND expires_at < NOW();
-```
+```text
 
 **Resolution:**
 1. Trigger token refresh flow
@@ -41,7 +41,7 @@ WHERE provider = 'fatsecret'
    ```sql
    DELETE FROM oauth_tokens
    WHERE expires_at < NOW() - INTERVAL '30 days';
-   ```
+   ```yaml
 
 ---
 

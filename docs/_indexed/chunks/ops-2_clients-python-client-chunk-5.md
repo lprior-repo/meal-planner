@@ -9,4 +9,4 @@ summary: "Use client methods"
 
 ## Use client methods
 result = client.get_resource('u/user/resource')
-```
+```text

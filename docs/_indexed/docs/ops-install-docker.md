@@ -2,7 +2,7 @@
 id: ops/install/docker
 title: "Docker"
 category: ops
-tags: ["operations", "docker", "advanced", "install"]
+tags: ["operations", "docker", "install", "advanced"]
 ---
 
 # Docker
@@ -47,7 +47,7 @@ docker run -d \
     -e POSTGRES_DB=djangodb \
     --name recipes_1 \
     vabene1111/recipes
-```
+```text
 
 Please make sure to replace the ```SECRET_KEY``` and ```POSTGRES_PASSWORD``` placeholders!
 
@@ -59,7 +59,7 @@ The main, and also recommended, installation option for this application is Dock
 2. Download the `.env` configuration file with `wget`
     ```shell
     wget https://raw.githubusercontent.com/vabene1111/recipes/develop/.env.template -O .env
-    ```
+    ```text
 3. **Edit it accordingly** (you NEED to set `SECRET_KEY` and `POSTGRES_PASSWORD`), see [configuration page](https://docs.tandoor.dev/system/configuration/).
 4. Start your container using `docker-compose up -d`.
 
@@ -70,7 +70,7 @@ Be aware that having some other web server or container running on your host mac
 
 ```shell
 wget https://raw.githubusercontent.com/vabene1111/recipes/develop/docs/install/docker/plain/docker-compose.yml
-```
+```text
 
 ~~~yaml
 {% include "./docker/plain/docker-compose.yml" %}
@@ -91,7 +91,7 @@ If you use Traefik, this configuration is the one for you.
 
 ```shell
 wget https://raw.githubusercontent.com/vabene1111/recipes/develop/docs/install/docker/traefik-nginx/docker-compose.yml
-```
+```text
 
 ~~~yaml
 {% include "./docker/traefik-nginx/docker-compose.yml" %}
@@ -110,7 +110,7 @@ Please refer to the appropriate documentation on how to setup the reverse proxy 
 
 Remember to add the appropriate environment variables to the `.env` file:
 
-```
+```bash
 VIRTUAL_HOST=
 LETSENCRYPT_HOST=
 LETSENCRYPT_EMAIL=
@@ -118,7 +118,7 @@ LETSENCRYPT_EMAIL=
 
 ```shell
 wget https://raw.githubusercontent.com/vabene1111/recipes/develop/docs/install/docker/nginx-proxy/docker-compose.yml
-```
+```text
 
 ~~~yaml
 {% include "./docker/nginx-proxy/docker-compose.yml" %}
@@ -168,7 +168,7 @@ location / {
     proxy_pass http://127.0.0.1:8080; # replace port
     proxy_redirect http://127.0.0.1:8080 https://recipes.domain.tld; # replace port and domain
 }
-```
+```text
 
 #### **Apache**
 
@@ -180,7 +180,7 @@ ProxyPreserveHost  On
 ProxyRequests Off
 ProxyPass / http://localhost:8080/ # replace port
 ProxyPassReverse / http://localhost:8080/ # replace port
-```
+```text
 
 ### **Setup issues on Raspberry Pi**
 

@@ -9,7 +9,7 @@ summary: "Check JSON syntax"
 
 ## Check JSON syntax
 jq . docs/windmill/INDEXED_KNOWLEDGE.json
-```
+```text
 
 ### Query Index
 

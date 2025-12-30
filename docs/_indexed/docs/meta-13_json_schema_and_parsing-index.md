@@ -2,7 +2,7 @@
 id: meta/13_json_schema_and_parsing/index
 title: "JSON schema and parsing"
 category: meta
-tags: ["json", "advanced", "13_json_schema_and_parsing", "meta"]
+tags: ["json", "13_json_schema_and_parsing", "meta", "advanced"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

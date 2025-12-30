@@ -28,7 +28,7 @@ fn main(name: String, multiplier: i32) -> anyhow::Result<Output> {
         count: multiplier * 10,
     })
 }
-```
+```text
 
 ### Async script with SDK access
 
@@ -39,7 +39,7 @@ fn main(name: String, multiplier: i32) -> anyhow::Result<Output> {
 //! tokio = { version = "1", features = ["full"] }
 //! anyhow = "1.0"
 //! serde_json = "1.0"
-//! ```
+//! ```rust
 
 use wmill::Windmill;
 use anyhow::Result;
@@ -78,7 +78,7 @@ fn main(optional_name: Option<String>) -> anyhow::Result<String> {
     let name = optional_name.unwrap_or_else(|| "default".to_string());
     Ok(format!("Hello, {}!", name))
 }
-```
+```javascript
 
 **Important**: Rust does not support default values in function signatures. Use `Option<T>` with `unwrap_or` or `unwrap_or_else` for optional parameters with defaults.
 
@@ -98,6 +98,6 @@ struct DatabaseConfig {
 fn main(config: DatabaseConfig, query: String) -> anyhow::Result<String> {
     Ok(format!("Connecting to {}:{}", config.host, config.port))
 }
-```
+```yaml
 
 ---

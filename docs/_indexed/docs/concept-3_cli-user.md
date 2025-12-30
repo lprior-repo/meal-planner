@@ -2,7 +2,7 @@
 id: concept/3_cli/user
 title: "Users management"
 category: concept
-tags: ["3_cli", "concept", "users", "windmill"]
+tags: ["users", "3_cli", "windmill", "concept"]
 ---
 
 <!--
@@ -50,7 +50,7 @@ The `wmill user add` command is used to add a new user to the remote server.
 
 ```bash
 wmill user add <email:string> [password:string] [--superadmin] [--company <company:string>] [--name <name:string>]
-```
+```text
 
 ### Arguments
 
@@ -73,19 +73,19 @@ wmill user add <email:string> [password:string] [--superadmin] [--company <compa
 
 ```bash
 wmill user add example@example.com
-```
+```text
 
 2. Create a new user with the email "example@example.com" and specify a password:
 
 ```bash
 wmill user add example@example.com mypassword123
-```
+```text
 
 3. Create a new superadmin user with the email "example@example.com", a specified password, and additional information:
 
 ```bash
 wmill user add example@example.com mypassword123 --superadmin --company "Acme Inc." --name "John Doe"
-```
+```text
 
 ## Removing a user
 
@@ -93,7 +93,7 @@ The `wmill user remove` command is used to remove a user from the remote server.
 
 ```bash
 wmill user remove <email:string>
-```
+```text
 
 ### Arguments
 
@@ -107,7 +107,7 @@ wmill user remove <email:string>
 
 ```bash
 wmill user remove example@example.com
-```
+```text
 
 ## Creating a token
 

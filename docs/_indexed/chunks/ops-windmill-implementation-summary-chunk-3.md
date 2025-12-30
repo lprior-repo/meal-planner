@@ -11,7 +11,7 @@ summary: "Key Features"
 
 ### DAG Layers
 
-```
+```text
 Layer 1: Flow Control Features
     ↓
 Layer 2: Core Concepts
@@ -56,4 +56,4 @@ Each document includes:
   <estimated_reading_time>minutes</estimated_reading_time>
   <tags>tag1,tag2,tag3</tags>
 </doc_metadata>
-```
+```text

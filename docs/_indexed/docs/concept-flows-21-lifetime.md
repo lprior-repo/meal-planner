@@ -2,7 +2,7 @@
 id: concept/flows/21-lifetime
 title: "Lifetime / Delete after use"
 category: concept
-tags: ["concept", "flows", "lifetime"]
+tags: ["flows", "lifetime", "concept"]
 ---
 
 <!--

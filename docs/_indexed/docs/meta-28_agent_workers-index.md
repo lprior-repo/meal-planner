@@ -2,7 +2,7 @@
 id: meta/28_agent_workers/index
 title: "Agent workers"
 category: meta
-tags: ["28_agent_workers", "advanced", "agent", "meta"]
+tags: ["agent", "meta", "28_agent_workers", "advanced"]
 ---
 
 # Agent workers

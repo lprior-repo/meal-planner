@@ -2,7 +2,7 @@
 id: ops/system/backup
 title: "Backup"
 category: ops
-tags: ["operations", "backup", "advanced", "system"]
+tags: ["operations", "advanced", "system", "backup"]
 ---
 
 # Backup
@@ -46,13 +46,13 @@ You can back up from docker even when the tandoor container is failing, so long 
 
 the following commands assume that your docker-compose files are in a folder called "docker". replace "docker_db_recipes_1" with the name of your db container. The commands also assume you use a backup name of pgdump.sql. It's a good idea to include a date in this filename, so that successive backups do not get deleted.
 To back up:
-```
+```bash
 sudo docker exec -t docker_db_recipes_1 pg_dumpall -U djangouser > pgdump.sql
 
 ```
 
 To restore:
-```
+```bash
 cat pgdump.sql | sudo docker exec -i docker_db_recipes_1 psql postgres -U djangouser
 
 ```

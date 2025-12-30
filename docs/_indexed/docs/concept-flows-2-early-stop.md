@@ -2,7 +2,7 @@
 id: concept/flows/2-early-stop
 title: "Early stop / Break"
 category: concept
-tags: ["concept", "early", "flows"]
+tags: ["flows", "early", "concept"]
 ---
 
 <!--

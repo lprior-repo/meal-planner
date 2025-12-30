@@ -18,7 +18,7 @@ AUTH_LDAP_SERVER_URI=ldap://ldap.example.org:389
 AUTH_LDAP_BIND_DN=uid=admin,ou=users,dc=example,dc=org
 AUTH_LDAP_BIND_PASSWORD=adminpassword
 AUTH_LDAP_USER_SEARCH_BASE_DN=ou=users,dc=example,dc=org
-```
+```text
 
 Additional optional variables:
 
@@ -29,4 +29,4 @@ AUTH_LDAP_ALWAYS_UPDATE_USER=1
 AUTH_LDAP_CACHE_TIMEOUT=3600
 AUTH_LDAP_START_TLS=1
 AUTH_LDAP_TLS_CACERTFILE=/etc/ssl/certs/own-ca.pem
-```
+```text

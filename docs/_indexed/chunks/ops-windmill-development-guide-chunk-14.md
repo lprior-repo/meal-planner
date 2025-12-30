@@ -9,4 +9,4 @@ summary: "Run with resource reference"
 
 ## Run with resource reference
 wmill script run f/meal-planner/my_script -d '{"config": "$res:f/meal-planner/my_resource"}'
-```
+```text

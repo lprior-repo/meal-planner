@@ -19,7 +19,7 @@ wmill workspace add meal-planner meal-planner http://localhost --token <your_tok
 
 # Initialize wmill.yaml in windmill/ directory
 cd windmill && wmill init
-```
+```text
 
 ## CLI Workflow
 
@@ -31,7 +31,7 @@ wmill script bootstrap f/meal-planner/my_script rust --summary "Script summary"
 
 # Bootstrap other languages: python3, bun, deno, bash, go
 wmill script bootstrap f/meal-planner/my_script python3
-```
+```text
 
 This creates:
 - `f/meal-planner/my_script.rs` - Script code
@@ -48,7 +48,7 @@ wmill sync pull --yes
 
 # Push specific script
 wmill script push f/meal-planner/my_script.rs
-```
+```text
 
 ### Running Scripts
 
@@ -58,7 +58,7 @@ wmill script run f/meal-planner/my_script -d '{"param": "value"}'
 
 # Run with resource reference
 wmill script run f/meal-planner/my_script -d '{"config": "$res:f/meal-planner/my_resource"}'
-```
+```text
 
 ## Rust Script Structure
 
@@ -73,7 +73,7 @@ Use sync `fn main()` with arguments - no tokio needed for simple HTTP:
 //! serde = { version = "1.0", features = ["derive"] }
 //! serde_json = "1.0"
 //! ureq = { version = "2.10", features = ["json"] }
-//! ```
+//! ```rust
 
 use serde::{Deserialize, Serialize};
 
@@ -136,7 +136,7 @@ schema:
         - api_token
   required:
     - config
-```
+```text
 
 ## Resources
 
@@ -172,7 +172,7 @@ curl -X POST "http://localhost/api/w/meal-planner/resources/create" \
       "api_token": "your_token"
     }
   }'
-```
+```bash
 
 ## Docker Setup
 
@@ -183,7 +183,7 @@ Windmill workers must use `windmill-full` for Rust support:
 ```bash
 # In .env
 WM_IMAGE=ghcr.io/windmill-labs/windmill-full:latest
-```
+```text
 
 ### Cross-Container Networking
 
@@ -200,7 +200,7 @@ docker network connect shared-services lewis-windmill_worker-3
 
 # Connect other services
 docker network connect shared-services tandoor-web_recipes-1
-```
+```text
 
 Services can then reach each other by container name:
 - Tandoor: `http://tandoor-web_recipes-1:80`

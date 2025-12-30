@@ -1,11 +1,49 @@
 {
   "version": "4.2",
-  "generated": "2025-12-30T08:29:30.043122",
+  "generated": "2025-12-30T09:40:30.956062",
   "stats": {
-    "doc_count": 204,
-    "chunk_count": 1532
+    "doc_count": 235,
+    "chunk_count": 1825
   },
   "documents": [
+    {
+      "id": "ops/general/ai-documentation-system",
+      "title": "AI-Optimized Documentation System: Complete Design Document",
+      "path": "docs/ops-general-ai-documentation-system.md",
+      "category": "ops",
+      "subcategory": "general",
+      "tags": [
+        "operations",
+        "advanced",
+        "aioptimized"
+      ],
+      "summary": "This document outlines a comprehensive system for transforming documentation into an AI-agent-optimized format. The system combines deterministic CLI tooling with AI coordination to create self-naviga",
+      "word_count": 2501,
+      "chunk_ids": [
+        "ops/general/ai-documentation-system#chunk-1",
+        "ops/general/ai-documentation-system#chunk-2",
+        "ops/general/ai-documentation-system#chunk-3",
+        "ops/general/ai-documentation-system#chunk-4",
+        "ops/general/ai-documentation-system#chunk-5",
+        "ops/general/ai-documentation-system#chunk-6",
+        "ops/general/ai-documentation-system#chunk-7",
+        "ops/general/ai-documentation-system#chunk-8",
+        "ops/general/ai-documentation-system#chunk-9",
+        "ops/general/ai-documentation-system#chunk-10",
+        "ops/general/ai-documentation-system#chunk-11",
+        "ops/general/ai-documentation-system#chunk-12",
+        "ops/general/ai-documentation-system#chunk-13",
+        "ops/general/ai-documentation-system#chunk-14",
+        "ops/general/ai-documentation-system#chunk-15",
+        "ops/general/ai-documentation-system#chunk-16",
+        "ops/general/ai-documentation-system#chunk-17",
+        "ops/general/ai-documentation-system#chunk-18",
+        "ops/general/ai-documentation-system#chunk-19",
+        "ops/general/ai-documentation-system#chunk-20",
+        "ops/general/ai-documentation-system#chunk-21",
+        "ops/general/ai-documentation-system#chunk-22"
+      ]
+    },
     {
       "id": "ops/general/architecture",
       "title": "Meal Planner Architecture",
@@ -13,11 +51,11 @@
       "category": "ops",
       "subcategory": "general",
       "tags": [
-        "meal",
         "operations",
-        "advanced",
+        "meal",
         "rust",
-        "windmill"
+        "windmill",
+        "advanced"
       ],
       "summary": "This project follows a **domain-based architecture** with small, composable Rust binaries orchestrated by Windmill flows. The design is guided by CUPID principles.",
       "word_count": 753,
@@ -36,6 +74,770 @@
         "ops/general/architecture#chunk-12",
         "ops/general/architecture#chunk-13",
         "ops/general/architecture#chunk-14"
+      ]
+    },
+    {
+      "id": "ops/general/recipe-import-pipeline",
+      "title": "Recipe Import Pipeline",
+      "path": "docs/ops-general-recipe-import-pipeline.md",
+      "category": "ops",
+      "subcategory": "general",
+      "tags": [
+        "operations",
+        "recipe",
+        "advanced"
+      ],
+      "summary": "**Status:** Planned **Last Updated:** 2025-12-30",
+      "word_count": 1171,
+      "chunk_ids": [
+        "ops/general/recipe-import-pipeline#chunk-1",
+        "ops/general/recipe-import-pipeline#chunk-2",
+        "ops/general/recipe-import-pipeline#chunk-3",
+        "ops/general/recipe-import-pipeline#chunk-4",
+        "ops/general/recipe-import-pipeline#chunk-5",
+        "ops/general/recipe-import-pipeline#chunk-6",
+        "ops/general/recipe-import-pipeline#chunk-7",
+        "ops/general/recipe-import-pipeline#chunk-8",
+        "ops/general/recipe-import-pipeline#chunk-9",
+        "ops/general/recipe-import-pipeline#chunk-10",
+        "ops/general/recipe-import-pipeline#chunk-11",
+        "ops/general/recipe-import-pipeline#chunk-12",
+        "ops/general/recipe-import-pipeline#chunk-13",
+        "ops/general/recipe-import-pipeline#chunk-14",
+        "ops/general/recipe-import-pipeline#chunk-15"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-food-add-favorite",
+      "title": "Food Add Favorite",
+      "path": "docs/ref-fatsecret-api-food-add-favorite.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "food"
+      ],
+      "summary": "Add a food to the user's favorites list.",
+      "word_count": 186,
+      "chunk_ids": [
+        "ref/fatsecret/api-food-add-favorite#chunk-1",
+        "ref/fatsecret/api-food-add-favorite#chunk-2",
+        "ref/fatsecret/api-food-add-favorite#chunk-3",
+        "ref/fatsecret/api-food-add-favorite#chunk-4",
+        "ref/fatsecret/api-food-add-favorite#chunk-5",
+        "ref/fatsecret/api-food-add-favorite#chunk-6",
+        "ref/fatsecret/api-food-add-favorite#chunk-7"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-food-brands-get",
+      "title": "Food Brands Get All v2",
+      "path": "docs/ref-fatsecret-api-food-brands-get.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "food"
+      ],
+      "summary": "Retrieve a list of food brands filtered by starting characters and optionally by brand type.",
+      "word_count": 237,
+      "chunk_ids": [
+        "ref/fatsecret/api-food-brands-get#chunk-1",
+        "ref/fatsecret/api-food-brands-get#chunk-2",
+        "ref/fatsecret/api-food-brands-get#chunk-3",
+        "ref/fatsecret/api-food-brands-get#chunk-4",
+        "ref/fatsecret/api-food-brands-get#chunk-5",
+        "ref/fatsecret/api-food-brands-get#chunk-6",
+        "ref/fatsecret/api-food-brands-get#chunk-7",
+        "ref/fatsecret/api-food-brands-get#chunk-8",
+        "ref/fatsecret/api-food-brands-get#chunk-9"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-food-categories-get",
+      "title": "Food Categories Get All v2",
+      "path": "docs/ref-fatsecret-api-food-categories-get.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "food"
+      ],
+      "summary": "Retrieve all available food categories from the FatSecret database.",
+      "word_count": 199,
+      "chunk_ids": [
+        "ref/fatsecret/api-food-categories-get#chunk-1",
+        "ref/fatsecret/api-food-categories-get#chunk-2",
+        "ref/fatsecret/api-food-categories-get#chunk-3",
+        "ref/fatsecret/api-food-categories-get#chunk-4",
+        "ref/fatsecret/api-food-categories-get#chunk-5",
+        "ref/fatsecret/api-food-categories-get#chunk-6",
+        "ref/fatsecret/api-food-categories-get#chunk-7",
+        "ref/fatsecret/api-food-categories-get#chunk-8",
+        "ref/fatsecret/api-food-categories-get#chunk-9"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-food-delete-favorite",
+      "title": "Food Delete Favorite",
+      "path": "docs/ref-fatsecret-api-food-delete-favorite.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "food"
+      ],
+      "summary": "Remove a food from the user's favorites list.",
+      "word_count": 183,
+      "chunk_ids": [
+        "ref/fatsecret/api-food-delete-favorite#chunk-1",
+        "ref/fatsecret/api-food-delete-favorite#chunk-2",
+        "ref/fatsecret/api-food-delete-favorite#chunk-3",
+        "ref/fatsecret/api-food-delete-favorite#chunk-4",
+        "ref/fatsecret/api-food-delete-favorite#chunk-5",
+        "ref/fatsecret/api-food-delete-favorite#chunk-6",
+        "ref/fatsecret/api-food-delete-favorite#chunk-7"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-food-entries-get",
+      "title": "Food Entries Get (v1)",
+      "path": "docs/ref-fatsecret-api-food-entries-get.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "food"
+      ],
+      "summary": "Retrieve food diary entries for a user.",
+      "word_count": 421,
+      "chunk_ids": [
+        "ref/fatsecret/api-food-entries-get#chunk-1",
+        "ref/fatsecret/api-food-entries-get#chunk-2",
+        "ref/fatsecret/api-food-entries-get#chunk-3",
+        "ref/fatsecret/api-food-entries-get#chunk-4",
+        "ref/fatsecret/api-food-entries-get#chunk-5",
+        "ref/fatsecret/api-food-entries-get#chunk-6",
+        "ref/fatsecret/api-food-entries-get#chunk-7"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-food-entry-create",
+      "title": "Food Entry Create",
+      "path": "docs/ref-fatsecret-api-food-entry-create.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "food"
+      ],
+      "summary": "Create a food diary entry for a user.",
+      "word_count": 386,
+      "chunk_ids": [
+        "ref/fatsecret/api-food-entry-create#chunk-1",
+        "ref/fatsecret/api-food-entry-create#chunk-2",
+        "ref/fatsecret/api-food-entry-create#chunk-3",
+        "ref/fatsecret/api-food-entry-create#chunk-4",
+        "ref/fatsecret/api-food-entry-create#chunk-5",
+        "ref/fatsecret/api-food-entry-create#chunk-6",
+        "ref/fatsecret/api-food-entry-create#chunk-7"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-food-entry-delete",
+      "title": "Food Entry Delete",
+      "path": "docs/ref-fatsecret-api-food-entry-delete.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "food"
+      ],
+      "summary": "Delete a food diary entry.",
+      "word_count": 150,
+      "chunk_ids": [
+        "ref/fatsecret/api-food-entry-delete#chunk-1",
+        "ref/fatsecret/api-food-entry-delete#chunk-2",
+        "ref/fatsecret/api-food-entry-delete#chunk-3",
+        "ref/fatsecret/api-food-entry-delete#chunk-4",
+        "ref/fatsecret/api-food-entry-delete#chunk-5",
+        "ref/fatsecret/api-food-entry-delete#chunk-6",
+        "ref/fatsecret/api-food-entry-delete#chunk-7"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-food-get-v1",
+      "title": "Food Get v1",
+      "path": "docs/ref-fatsecret-api-food-get-v1.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "food"
+      ],
+      "summary": "Retrieve detailed information for a specific food item by its ID, including complete serving and nutrition data.",
+      "word_count": 420,
+      "chunk_ids": [
+        "ref/fatsecret/api-food-get-v1#chunk-1",
+        "ref/fatsecret/api-food-get-v1#chunk-2",
+        "ref/fatsecret/api-food-get-v1#chunk-3",
+        "ref/fatsecret/api-food-get-v1#chunk-4",
+        "ref/fatsecret/api-food-get-v1#chunk-5",
+        "ref/fatsecret/api-food-get-v1#chunk-6",
+        "ref/fatsecret/api-food-get-v1#chunk-7",
+        "ref/fatsecret/api-food-get-v1#chunk-8",
+        "ref/fatsecret/api-food-get-v1#chunk-9"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-food-sub-categories-get",
+      "title": "Food Sub Categories Get All v1",
+      "path": "docs/ref-fatsecret-api-food-sub-categories-get.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "food"
+      ],
+      "summary": "Retrieve all sub-categories for a specific food category.",
+      "word_count": 228,
+      "chunk_ids": [
+        "ref/fatsecret/api-food-sub-categories-get#chunk-1",
+        "ref/fatsecret/api-food-sub-categories-get#chunk-2",
+        "ref/fatsecret/api-food-sub-categories-get#chunk-3",
+        "ref/fatsecret/api-food-sub-categories-get#chunk-4",
+        "ref/fatsecret/api-food-sub-categories-get#chunk-5",
+        "ref/fatsecret/api-food-sub-categories-get#chunk-6",
+        "ref/fatsecret/api-food-sub-categories-get#chunk-7",
+        "ref/fatsecret/api-food-sub-categories-get#chunk-8",
+        "ref/fatsecret/api-food-sub-categories-get#chunk-9"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-foods-get-favorites",
+      "title": "Foods Get Favorites (v1)",
+      "path": "docs/ref-fatsecret-api-foods-get-favorites.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "foods",
+        "reference"
+      ],
+      "summary": "Retrieve the user's favorite foods list.",
+      "word_count": 321,
+      "chunk_ids": [
+        "ref/fatsecret/api-foods-get-favorites#chunk-1",
+        "ref/fatsecret/api-foods-get-favorites#chunk-2",
+        "ref/fatsecret/api-foods-get-favorites#chunk-3",
+        "ref/fatsecret/api-foods-get-favorites#chunk-4",
+        "ref/fatsecret/api-foods-get-favorites#chunk-5",
+        "ref/fatsecret/api-foods-get-favorites#chunk-6",
+        "ref/fatsecret/api-foods-get-favorites#chunk-7"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-foods-search-v1",
+      "title": "Foods Search v1",
+      "path": "docs/ref-fatsecret-api-foods-search-v1.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "foods",
+        "reference"
+      ],
+      "summary": "Search for foods by name with basic food information. This is the original search endpoint with simpler response data.",
+      "word_count": 291,
+      "chunk_ids": [
+        "ref/fatsecret/api-foods-search-v1#chunk-1",
+        "ref/fatsecret/api-foods-search-v1#chunk-2",
+        "ref/fatsecret/api-foods-search-v1#chunk-3",
+        "ref/fatsecret/api-foods-search-v1#chunk-4",
+        "ref/fatsecret/api-foods-search-v1#chunk-5",
+        "ref/fatsecret/api-foods-search-v1#chunk-6",
+        "ref/fatsecret/api-foods-search-v1#chunk-7",
+        "ref/fatsecret/api-foods-search-v1#chunk-8",
+        "ref/fatsecret/api-foods-search-v1#chunk-9"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-foods-search-v3",
+      "title": "Foods Search v3",
+      "path": "docs/ref-fatsecret-api-foods-search-v3.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "foods",
+        "reference"
+      ],
+      "summary": "Search for foods by name or description with comprehensive nutrition data, allergens, and food attributes.",
+      "word_count": 302,
+      "chunk_ids": [
+        "ref/fatsecret/api-foods-search-v3#chunk-1",
+        "ref/fatsecret/api-foods-search-v3#chunk-2",
+        "ref/fatsecret/api-foods-search-v3#chunk-3",
+        "ref/fatsecret/api-foods-search-v3#chunk-4",
+        "ref/fatsecret/api-foods-search-v3#chunk-5",
+        "ref/fatsecret/api-foods-search-v3#chunk-6",
+        "ref/fatsecret/api-foods-search-v3#chunk-7",
+        "ref/fatsecret/api-foods-search-v3#chunk-8"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-image-recognition",
+      "title": "Image Recognition API v1",
+      "path": "docs/ref-fatsecret-api-image-recognition.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "advanced",
+        "reference",
+        "api",
+        "image",
+        "fatsecret"
+      ],
+      "summary": "Optional Add-On feature for detecting foods within images.",
+      "word_count": 620,
+      "chunk_ids": [
+        "ref/fatsecret/api-image-recognition#chunk-1",
+        "ref/fatsecret/api-image-recognition#chunk-2",
+        "ref/fatsecret/api-image-recognition#chunk-3",
+        "ref/fatsecret/api-image-recognition#chunk-4",
+        "ref/fatsecret/api-image-recognition#chunk-5",
+        "ref/fatsecret/api-image-recognition#chunk-6",
+        "ref/fatsecret/api-image-recognition#chunk-7",
+        "ref/fatsecret/api-image-recognition#chunk-8",
+        "ref/fatsecret/api-image-recognition#chunk-9",
+        "ref/fatsecret/api-image-recognition#chunk-10",
+        "ref/fatsecret/api-image-recognition#chunk-11"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-natural-language-processing",
+      "title": "Natural Language Processing API v1",
+      "path": "docs/ref-fatsecret-api-natural-language-processing.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "natural",
+        "advanced",
+        "reference",
+        "api",
+        "fatsecret"
+      ],
+      "summary": "Optional Add-On feature for parsing natural language food descriptions.",
+      "word_count": 770,
+      "chunk_ids": [
+        "ref/fatsecret/api-natural-language-processing#chunk-1",
+        "ref/fatsecret/api-natural-language-processing#chunk-2",
+        "ref/fatsecret/api-natural-language-processing#chunk-3",
+        "ref/fatsecret/api-natural-language-processing#chunk-4",
+        "ref/fatsecret/api-natural-language-processing#chunk-5",
+        "ref/fatsecret/api-natural-language-processing#chunk-6",
+        "ref/fatsecret/api-natural-language-processing#chunk-7",
+        "ref/fatsecret/api-natural-language-processing#chunk-8",
+        "ref/fatsecret/api-natural-language-processing#chunk-9",
+        "ref/fatsecret/api-natural-language-processing#chunk-10",
+        "ref/fatsecret/api-natural-language-processing#chunk-11",
+        "ref/fatsecret/api-natural-language-processing#chunk-12"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-profile-create",
+      "title": "Profile Create",
+      "path": "docs/ref-fatsecret-api-profile-create.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "profile"
+      ],
+      "summary": "Create a profile for a user within your application.",
+      "word_count": 217,
+      "chunk_ids": [
+        "ref/fatsecret/api-profile-create#chunk-1",
+        "ref/fatsecret/api-profile-create#chunk-2",
+        "ref/fatsecret/api-profile-create#chunk-3",
+        "ref/fatsecret/api-profile-create#chunk-4",
+        "ref/fatsecret/api-profile-create#chunk-5",
+        "ref/fatsecret/api-profile-create#chunk-6",
+        "ref/fatsecret/api-profile-create#chunk-7",
+        "ref/fatsecret/api-profile-create#chunk-8"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-profile-get-auth",
+      "title": "Profile Get Auth",
+      "path": "docs/ref-fatsecret-api-profile-get-auth.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "profile"
+      ],
+      "summary": "Retrieve authentication credentials for an existing user profile.",
+      "word_count": 154,
+      "chunk_ids": [
+        "ref/fatsecret/api-profile-get-auth#chunk-1",
+        "ref/fatsecret/api-profile-get-auth#chunk-2",
+        "ref/fatsecret/api-profile-get-auth#chunk-3",
+        "ref/fatsecret/api-profile-get-auth#chunk-4",
+        "ref/fatsecret/api-profile-get-auth#chunk-5",
+        "ref/fatsecret/api-profile-get-auth#chunk-6",
+        "ref/fatsecret/api-profile-get-auth#chunk-7"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-profile-get",
+      "title": "Profile Get Status",
+      "path": "docs/ref-fatsecret-api-profile-get.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "profile"
+      ],
+      "summary": "Retrieve profile status and settings for a user.",
+      "word_count": 236,
+      "chunk_ids": [
+        "ref/fatsecret/api-profile-get#chunk-1",
+        "ref/fatsecret/api-profile-get#chunk-2",
+        "ref/fatsecret/api-profile-get#chunk-3",
+        "ref/fatsecret/api-profile-get#chunk-4",
+        "ref/fatsecret/api-profile-get#chunk-5",
+        "ref/fatsecret/api-profile-get#chunk-6",
+        "ref/fatsecret/api-profile-get#chunk-7"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-recipe-get-v1",
+      "title": "Recipe Get by ID v1",
+      "path": "docs/ref-fatsecret-api-recipe-get-v1.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "recipe",
+        "reference",
+        "advanced"
+      ],
+      "summary": "Retrieve complete recipe details by recipe ID.",
+      "word_count": 577,
+      "chunk_ids": [
+        "ref/fatsecret/api-recipe-get-v1#chunk-1",
+        "ref/fatsecret/api-recipe-get-v1#chunk-2",
+        "ref/fatsecret/api-recipe-get-v1#chunk-3",
+        "ref/fatsecret/api-recipe-get-v1#chunk-4",
+        "ref/fatsecret/api-recipe-get-v1#chunk-5",
+        "ref/fatsecret/api-recipe-get-v1#chunk-6",
+        "ref/fatsecret/api-recipe-get-v1#chunk-7",
+        "ref/fatsecret/api-recipe-get-v1#chunk-8"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-recipe-types-get",
+      "title": "Recipe Types Get All v1",
+      "path": "docs/ref-fatsecret-api-recipe-types-get.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "recipe",
+        "reference"
+      ],
+      "summary": "Retrieve all available recipe type categories.",
+      "word_count": 168,
+      "chunk_ids": [
+        "ref/fatsecret/api-recipe-types-get#chunk-1",
+        "ref/fatsecret/api-recipe-types-get#chunk-2",
+        "ref/fatsecret/api-recipe-types-get#chunk-3",
+        "ref/fatsecret/api-recipe-types-get#chunk-4",
+        "ref/fatsecret/api-recipe-types-get#chunk-5",
+        "ref/fatsecret/api-recipe-types-get#chunk-6",
+        "ref/fatsecret/api-recipe-types-get#chunk-7",
+        "ref/fatsecret/api-recipe-types-get#chunk-8"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/api-recipes-search-v2",
+      "title": "Recipes Search v2",
+      "path": "docs/ref-fatsecret-api-recipes-search-v2.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "recipes"
+      ],
+      "summary": "Search for recipes by name or keyword.",
+      "word_count": 437,
+      "chunk_ids": [
+        "ref/fatsecret/api-recipes-search-v2#chunk-1",
+        "ref/fatsecret/api-recipes-search-v2#chunk-2",
+        "ref/fatsecret/api-recipes-search-v2#chunk-3",
+        "ref/fatsecret/api-recipes-search-v2#chunk-4",
+        "ref/fatsecret/api-recipes-search-v2#chunk-5",
+        "ref/fatsecret/api-recipes-search-v2#chunk-6",
+        "ref/fatsecret/api-recipes-search-v2#chunk-7",
+        "ref/fatsecret/api-recipes-search-v2#chunk-8"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/guides-authentication",
+      "title": "FatSecret Platform API - Authentication",
+      "path": "docs/ref-fatsecret-guides-authentication.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "api"
+      ],
+      "summary": "The FatSecret Platform API supports multiple authentication methods depending on your use case.",
+      "word_count": 339,
+      "chunk_ids": [
+        "ref/fatsecret/guides-authentication#chunk-1",
+        "ref/fatsecret/guides-authentication#chunk-2",
+        "ref/fatsecret/guides-authentication#chunk-3",
+        "ref/fatsecret/guides-authentication#chunk-4",
+        "ref/fatsecret/guides-authentication#chunk-5",
+        "ref/fatsecret/guides-authentication#chunk-6"
+      ]
+    },
+    {
+      "id": "ops/fatsecret/guides-error-codes",
+      "title": "FatSecret Platform API - Error Codes",
+      "path": "docs/ops-fatsecret-guides-error-codes.md",
+      "category": "ops",
+      "subcategory": "fatsecret",
+      "tags": [
+        "operations",
+        "fatsecret",
+        "api",
+        "advanced"
+      ],
+      "summary": "This guide documents error codes returned by the FatSecret Platform API.",
+      "word_count": 745,
+      "chunk_ids": [
+        "ops/fatsecret/guides-error-codes#chunk-1",
+        "ops/fatsecret/guides-error-codes#chunk-2",
+        "ops/fatsecret/guides-error-codes#chunk-3",
+        "ops/fatsecret/guides-error-codes#chunk-4",
+        "ops/fatsecret/guides-error-codes#chunk-5",
+        "ops/fatsecret/guides-error-codes#chunk-6",
+        "ops/fatsecret/guides-error-codes#chunk-7",
+        "ops/fatsecret/guides-error-codes#chunk-8",
+        "ops/fatsecret/guides-error-codes#chunk-9",
+        "ops/fatsecret/guides-error-codes#chunk-10",
+        "ops/fatsecret/guides-error-codes#chunk-11"
+      ]
+    },
+    {
+      "id": "ops/fatsecret/guides-libraries",
+      "title": "FatSecret Platform API - Third-Party Libraries",
+      "path": "docs/ops-fatsecret-guides-libraries.md",
+      "category": "ops",
+      "subcategory": "fatsecret",
+      "tags": [
+        "operations",
+        "fatsecret",
+        "api"
+      ],
+      "summary": "Community-maintained libraries and resources for integrating with the FatSecret Platform API.",
+      "word_count": 390,
+      "chunk_ids": [
+        "ops/fatsecret/guides-libraries#chunk-1",
+        "ops/fatsecret/guides-libraries#chunk-2",
+        "ops/fatsecret/guides-libraries#chunk-3",
+        "ops/fatsecret/guides-libraries#chunk-4",
+        "ops/fatsecret/guides-libraries#chunk-5",
+        "ops/fatsecret/guides-libraries#chunk-6",
+        "ops/fatsecret/guides-libraries#chunk-7",
+        "ops/fatsecret/guides-libraries#chunk-8",
+        "ops/fatsecret/guides-libraries#chunk-9"
+      ]
+    },
+    {
+      "id": "concept/fatsecret/guides-localization",
+      "title": "FatSecret Platform API - Localization",
+      "path": "docs/concept-fatsecret-guides-localization.md",
+      "category": "concept",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "api",
+        "advanced",
+        "concept"
+      ],
+      "summary": "Localization features allow you to filter food data by region and receive responses in different languages.",
+      "word_count": 641,
+      "chunk_ids": [
+        "concept/fatsecret/guides-localization#chunk-1",
+        "concept/fatsecret/guides-localization#chunk-2",
+        "concept/fatsecret/guides-localization#chunk-3",
+        "concept/fatsecret/guides-localization#chunk-4",
+        "concept/fatsecret/guides-localization#chunk-5",
+        "concept/fatsecret/guides-localization#chunk-6",
+        "concept/fatsecret/guides-localization#chunk-7",
+        "concept/fatsecret/guides-localization#chunk-8",
+        "concept/fatsecret/guides-localization#chunk-9"
+      ]
+    },
+    {
+      "id": "tutorial/fatsecret/guides-oauth1-three-legged",
+      "title": "FatSecret Platform API - 3-Legged OAuth",
+      "path": "docs/tutorial-fatsecret-guides-oauth1-three-legged.md",
+      "category": "tutorial",
+      "subcategory": "fatsecret",
+      "tags": [
+        "beginner",
+        "tutorial",
+        "oauth",
+        "api",
+        "fatsecret"
+      ],
+      "summary": "3-legged OAuth allows your application to access user-specific data on their behalf. This is required for food diaries, weight tracking, and exercise logs.",
+      "word_count": 639,
+      "chunk_ids": [
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-1",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-2",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-3",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-4",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-5",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-6",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-7",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-8",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-9",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-10",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-11",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-12",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-13",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-14",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-15",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-16",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-17",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-18",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-19",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-20",
+        "tutorial/fatsecret/guides-oauth1-three-legged#chunk-21"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/guides-oauth1",
+      "title": "FatSecret Platform API - OAuth 1.0 Guide",
+      "path": "docs/ref-fatsecret-guides-oauth1.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "oauth",
+        "fatsecret",
+        "reference",
+        "api"
+      ],
+      "summary": "OAuth 1.0 authentication requires signing each request with your credentials.",
+      "word_count": 467,
+      "chunk_ids": [
+        "ref/fatsecret/guides-oauth1#chunk-1",
+        "ref/fatsecret/guides-oauth1#chunk-2",
+        "ref/fatsecret/guides-oauth1#chunk-3",
+        "ref/fatsecret/guides-oauth1#chunk-4",
+        "ref/fatsecret/guides-oauth1#chunk-5",
+        "ref/fatsecret/guides-oauth1#chunk-6",
+        "ref/fatsecret/guides-oauth1#chunk-7",
+        "ref/fatsecret/guides-oauth1#chunk-8",
+        "ref/fatsecret/guides-oauth1#chunk-9",
+        "ref/fatsecret/guides-oauth1#chunk-10"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/guides-oauth2",
+      "title": "FatSecret Platform API - OAuth 2.0 Guide",
+      "path": "docs/ref-fatsecret-guides-oauth2.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "oauth",
+        "fatsecret",
+        "reference",
+        "api"
+      ],
+      "summary": "OAuth 2.0 is the recommended authentication method for the FatSecret Platform API.",
+      "word_count": 489,
+      "chunk_ids": [
+        "ref/fatsecret/guides-oauth2#chunk-1",
+        "ref/fatsecret/guides-oauth2#chunk-2",
+        "ref/fatsecret/guides-oauth2#chunk-3",
+        "ref/fatsecret/guides-oauth2#chunk-4",
+        "ref/fatsecret/guides-oauth2#chunk-5",
+        "ref/fatsecret/guides-oauth2#chunk-6",
+        "ref/fatsecret/guides-oauth2#chunk-7",
+        "ref/fatsecret/guides-oauth2#chunk-8",
+        "ref/fatsecret/guides-oauth2#chunk-9",
+        "ref/fatsecret/guides-oauth2#chunk-10"
+      ]
+    },
+    {
+      "id": "ref/fatsecret/guides-parameters",
+      "title": "FatSecret Platform API - Parameters Reference",
+      "path": "docs/ref-fatsecret-guides-parameters.md",
+      "category": "ref",
+      "subcategory": "fatsecret",
+      "tags": [
+        "fatsecret",
+        "reference",
+        "api",
+        "advanced"
+      ],
+      "summary": "This guide documents common parameters used across the FatSecret Platform API.",
+      "word_count": 772,
+      "chunk_ids": [
+        "ref/fatsecret/guides-parameters#chunk-1",
+        "ref/fatsecret/guides-parameters#chunk-2",
+        "ref/fatsecret/guides-parameters#chunk-3",
+        "ref/fatsecret/guides-parameters#chunk-4",
+        "ref/fatsecret/guides-parameters#chunk-5",
+        "ref/fatsecret/guides-parameters#chunk-6",
+        "ref/fatsecret/guides-parameters#chunk-7",
+        "ref/fatsecret/guides-parameters#chunk-8",
+        "ref/fatsecret/guides-parameters#chunk-9"
+      ]
+    },
+    {
+      "id": "tutorial/fatsecret/guides-welcome",
+      "title": "FatSecret Platform API - Welcome",
+      "path": "docs/tutorial-fatsecret-guides-welcome.md",
+      "category": "tutorial",
+      "subcategory": "fatsecret",
+      "tags": [
+        "api",
+        "fatsecret",
+        "beginner",
+        "tutorial"
+      ],
+      "summary": "The FatSecret Platform API provides programmatic access to FatSecret's food and nutrition database.",
+      "word_count": 224,
+      "chunk_ids": [
+        "tutorial/fatsecret/guides-welcome#chunk-1",
+        "tutorial/fatsecret/guides-welcome#chunk-2",
+        "tutorial/fatsecret/guides-welcome#chunk-3",
+        "tutorial/fatsecret/guides-welcome#chunk-4",
+        "tutorial/fatsecret/guides-welcome#chunk-5",
+        "tutorial/fatsecret/guides-welcome#chunk-6",
+        "tutorial/fatsecret/guides-welcome#chunk-7"
       ]
     },
     {
@@ -67,8 +869,8 @@
       "subcategory": "contribute",
       "tags": [
         "operations",
-        "documentation",
-        "contribute"
+        "contribute",
+        "documentation"
       ],
       "summary": "The documentation is built from the markdown files in the [docs](https://github.com/vabene1111/recipes/tree/develop/docs) folder of the GitHub repository.",
       "word_count": 154,
@@ -88,8 +890,8 @@
       "subcategory": "contribute",
       "tags": [
         "operations",
-        "guidelines",
-        "contribute"
+        "contribute",
+        "guidelines"
       ],
       "summary": "If you want to contribute bug fixes or small tweaks then your pull requests are always welcome!",
       "word_count": 347,
@@ -111,8 +913,8 @@
       "subcategory": "contribute",
       "tags": [
         "operations",
-        "installation",
-        "contribute"
+        "contribute",
+        "installation"
       ],
       "summary": "!!! info \"Development Setup\" The dev setup is a little messy as this application combines the best (at least in my opinion) of both Django and Vue.js.",
       "word_count": 417,
@@ -129,8 +931,8 @@
       "subcategory": "contribute",
       "tags": [
         "operations",
-        "pycharm",
-        "contribute"
+        "contribute",
+        "pycharm"
       ],
       "summary": "PyCharm can be configured to format and lint on save. Doing so requires some manual configuration as outlined below.",
       "word_count": 317,
@@ -151,10 +953,10 @@
       "category": "concept",
       "subcategory": "contribute",
       "tags": [
-        "related",
-        "concept",
+        "contribute",
         "tandoor",
-        "contribute"
+        "related",
+        "concept"
       ],
       "summary": "While not directly related to Tandoor, we make extensive use of the brilliant [recipe-scrapers](https://github.com/hhursev/recipe-scrapers) package by hhursev.",
       "word_count": 112,
@@ -174,10 +976,10 @@
       "category": "concept",
       "subcategory": "contribute",
       "tags": [
-        "concept",
-        "translations",
+        "contribute",
         "tandoor",
-        "contribute"
+        "translations",
+        "concept"
       ],
       "summary": "Translations are managed on [translate.tandoor.dev](https://translate.tandoor.dev/), a self hosted instance of [Weblate](https://weblate.org/de/).",
       "word_count": 229,
@@ -194,8 +996,8 @@
       "subcategory": "contribute",
       "tags": [
         "operations",
-        "vscode",
-        "contribute"
+        "contribute",
+        "vscode"
       ],
       "summary": "Configurations for debugging django, volar, testing, linting and formatting are all include in the project files.",
       "word_count": 387,
@@ -214,8 +1016,8 @@
       "subcategory": "tandoor",
       "tags": [
         "operations",
-        "tandoor",
-        "faq"
+        "faq",
+        "tandoor"
       ],
       "summary": "There are several questions and issues that come up from time to time, here are some answers: please note that the existence of some questions is due the application not being perfect in some parts. M",
       "word_count": 1251,
@@ -244,9 +1046,9 @@
       "category": "concept",
       "subcategory": "features",
       "tags": [
-        "concept",
         "features",
-        "tandoor"
+        "tandoor",
+        "concept"
       ],
       "summary": "Tandoor has several AI based features. To allow maximum flexibility, you can configure different AI providers and select them based on the task you want to perform. To prevent accidental cost escalati",
       "word_count": 202,
@@ -266,9 +1068,9 @@
       "subcategory": "features",
       "tags": [
         "operations",
-        "advanced",
+        "features",
         "authentication",
-        "features"
+        "advanced"
       ],
       "summary": "Besides the normal django username and password authentication this application supports multiple methods of central account management and authentication.",
       "word_count": 1233,
@@ -287,9 +1089,9 @@
       "category": "concept",
       "subcategory": "features",
       "tags": [
-        "concept",
+        "features",
         "automation",
-        "features"
+        "concept"
       ],
       "summary": "<!-- prettier-ignore --> !!! warning Automations are currently in a beta stage. They work pretty stable but if I encounter any issues while working on them, I might change how they work breaking exist",
       "word_count": 784,
@@ -310,10 +1112,10 @@
       "category": "tutorial",
       "subcategory": "features",
       "tags": [
-        "tutorial",
-        "beginner",
         "features",
-        "connectors"
+        "connectors",
+        "beginner",
+        "tutorial"
       ],
       "summary": "<!-- prettier-ignore --> !!! warning Connectors are currently in a beta stage.",
       "word_count": 162,
@@ -332,9 +1134,9 @@
       "subcategory": "features",
       "tags": [
         "operations",
-        "advanced",
+        "features",
         "external",
-        "features"
+        "advanced"
       ],
       "summary": "The original intend of this application was to provide a search interface to my large collection of PDF scans of recipes. This feature is now called External recipes.",
       "word_count": 704,
@@ -355,9 +1157,9 @@
       "subcategory": "features",
       "tags": [
         "operations",
+        "features",
         "advanced",
-        "import",
-        "features"
+        "import"
       ],
       "summary": "This application features a very versatile import and export feature in order to offer the best experience possible and allow you to freely choose where your data goes.",
       "word_count": 1928,
@@ -396,9 +1198,9 @@
       "category": "concept",
       "subcategory": "features",
       "tags": [
-        "concept",
         "features",
-        "shopping"
+        "shopping",
+        "concept"
       ],
       "summary": "!!! info \"WIP\" While being around for a while there are still a lot of features that I plan on adding to the shopping list. You can see an overview of what is still planned on [this](https://github.co",
       "word_count": 417,
@@ -419,9 +1221,9 @@
       "subcategory": "features",
       "tags": [
         "operations",
+        "features",
         "tandoor",
-        "telegram",
-        "features"
+        "telegram"
       ],
       "summary": "The telegram bot is meant to simplify certain interactions with Tandoor. It is currently very basic but might be expanded in the future.",
       "word_count": 331,
@@ -438,9 +1240,9 @@
       "category": "concept",
       "subcategory": "features",
       "tags": [
+        "features",
         "templating",
-        "concept",
-        "features"
+        "concept"
       ],
       "summary": "!!! danger The version containing Templating is not yet released! This documentation is only to illustrate the pending changes facilitate the discussion.",
       "word_count": 368,
@@ -459,8 +1261,8 @@
       "subcategory": "tandoor",
       "tags": [
         "index",
-        "tandoor",
-        "meta"
+        "meta",
+        "tandoor"
       ],
       "summary": "<h1 align=\"center\"> <br> <a href=\"https://tandoor.dev\"><img src=\"https://github.com/vabene1111/recipes/raw/develop/docs/logo_color.svg\" height=\"256px\" width=\"256px\"></a> <br> Tandoor Recipes <br> </h1",
       "word_count": 699,
@@ -507,8 +1309,8 @@
       "tags": [
         "operations",
         "docker",
-        "advanced",
-        "install"
+        "install",
+        "advanced"
       ],
       "summary": "!!! success \"Recommended Installation\" Setting up this application using Docker is recommended. This does not mean that other options are bad, but its the only method that is officially maintained and",
       "word_count": 1193,
@@ -530,9 +1332,9 @@
       "subcategory": "install",
       "tags": [
         "operations",
+        "tandoor",
         "advanced",
         "homeassistant",
-        "tandoor",
         "install"
       ],
       "summary": "!!! info \"Community Contributed\" This guide was contributed by the community and is neither officially supported, nor updated or tested. Many thanks to [alexbelgium](https://github.com/alexbelgium) fo",
@@ -593,9 +1395,9 @@
       "subcategory": "install",
       "tags": [
         "operations",
+        "sql",
         "advanced",
         "manual",
-        "sql",
         "install"
       ],
       "summary": "These instructions are inspired from a standard django/gunicorn/postgresql instructions ([for example](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gun",
@@ -633,8 +1435,8 @@
       "tags": [
         "operations",
         "other",
-        "advanced",
-        "install"
+        "install",
+        "advanced"
       ],
       "summary": "!!! info \"Community Contributed\" The examples in this section were contributed by members of the community. This page especially contains some setups that might help you if you really want to go down ",
       "word_count": 692,
@@ -655,8 +1457,8 @@
       "tags": [
         "operations",
         "docker",
-        "swag",
-        "install"
+        "install",
+        "swag"
       ],
       "summary": "!!! danger Please refer to the [official documentation](https://github.com/linuxserver/docker-swag#usage) for the container setup. This example shows just one setup that may or may not differ from you",
       "word_count": 412,
@@ -674,10 +1476,10 @@
       "category": "tutorial",
       "subcategory": "install",
       "tags": [
-        "synology",
-        "tutorial",
         "beginner",
-        "install"
+        "tutorial",
+        "install",
+        "synology"
       ],
       "summary": "!!! info \"Community Contributed\" This guide was contributed by the community and is neither officially supported, nor updated or tested. Since I cannot test it myself, feedback and improvements are al",
       "word_count": 936,
@@ -695,9 +1497,9 @@
       "subcategory": "install",
       "tags": [
         "operations",
-        "advanced",
+        "install",
         "truenas",
-        "install"
+        "advanced"
       ],
       "summary": "!!! info \"Community Contributed\" This guide was contributed by the community and is neither officially supported, nor updated or tested.",
       "word_count": 1076,
@@ -715,8 +1517,8 @@
       "subcategory": "install",
       "tags": [
         "operations",
-        "unraid",
-        "install"
+        "install",
+        "unraid"
       ],
       "summary": "!!! info \"Community Contributed\" This guide was contributed by the community and is neither officially supported, nor updated or tested.",
       "word_count": 224,
@@ -735,8 +1537,8 @@
       "tags": [
         "operations",
         "docker",
-        "ubuntu",
-        "install"
+        "install",
+        "ubuntu"
       ],
       "summary": "!!! info \"Community Contributed\" This guide was contributed by the community and is neither officially supported, nor updated or tested. Since I cannot test it myself, feedback and improvements are al",
       "word_count": 543,
@@ -753,9 +1555,9 @@
       "subcategory": "system",
       "tags": [
         "operations",
-        "backup",
         "advanced",
-        "system"
+        "system",
+        "backup"
       ],
       "summary": "There is currently no \"good\" way of backing up your data implemented in the application itself. This mean that you will be responsible for backing up your data.",
       "word_count": 667,
@@ -777,9 +1579,9 @@
       "subcategory": "system",
       "tags": [
         "operations",
-        "advanced",
         "configuration",
-        "system"
+        "system",
+        "advanced"
       ],
       "summary": "This page describes all configuration options for the application server. All settings must be configured in the environment of the application server, usually by adding them to the `.env` file.",
       "word_count": 2917,
@@ -798,11 +1600,11 @@
       "category": "ops",
       "subcategory": "system",
       "tags": [
-        "system",
-        "docker",
-        "how",
         "operations",
-        "sql"
+        "sql",
+        "how",
+        "tandoor",
+        "system"
       ],
       "summary": "This migration was written while using the unraid template (docker) for TandoorRecipes, version 1.3.0. While some commands are unraid specific, it should in general work for any setup.",
       "word_count": 224,
@@ -818,10 +1620,10 @@
       "category": "concept",
       "subcategory": "system",
       "tags": [
+        "rust",
         "system",
-        "concept",
         "permissions",
-        "rust"
+        "concept"
       ],
       "summary": "!!! danger \"WIP\" This application was developed for private use in a trusted environment. Due to popular demand a basic permission system has been added. It does its job protecting the most critical p",
       "word_count": 265,
@@ -887,8 +1689,8 @@
       "subcategory": "windmill",
       "tags": [
         "operations",
-        "advanced",
         "windmill",
+        "advanced",
         "oauth"
       ],
       "summary": "<!-- <doc_metadata> <type>guide</type> <category>deployment</category> <title>Windmill Deployment Guide</title> <description>Complete guide for deploying meal-planner Windmill infrastructure including",
@@ -979,8 +1781,8 @@
       "subcategory": "windmill",
       "tags": [
         "operations",
-        "advanced",
-        "windmill"
+        "windmill",
+        "advanced"
       ],
       "summary": "This guide covers the essential workflow for developing Windmill scripts in this repository.",
       "word_count": 677,
@@ -1020,9 +1822,9 @@
       "category": "tutorial",
       "subcategory": "windmill",
       "tags": [
-        "tutorial",
+        "beginner",
         "windmill",
-        "beginner"
+        "tutorial"
       ],
       "summary": "This guide covers creating and managing Windmill flows in this repository.",
       "word_count": 579,
@@ -1054,9 +1856,9 @@
       "subcategory": "windmill",
       "tags": [
         "operations",
-        "advanced",
+        "documentation",
         "windmill",
-        "documentation"
+        "advanced"
       ],
       "summary": "Created comprehensive XML metadata structure following Anthropic best practices:",
       "word_count": 888,
@@ -1092,9 +1894,9 @@
       "category": "meta",
       "subcategory": "windmill",
       "tags": [
+        "meta",
         "advanced",
-        "windmill",
-        "meta"
+        "windmill"
       ],
       "summary": "This repository now uses **Anthropic's XML-based best practices** combined with **DAG (Directed Acyclic Graph) based referencing** for documentation indexing. This system makes documentation super eas",
       "word_count": 982,
@@ -1139,10 +1941,10 @@
       "subcategory": "10_browser_automation",
       "tags": [
         "browser",
-        "10_browser_automation",
+        "meta",
         "windmill",
         "api",
-        "meta"
+        "10_browser_automation"
       ],
       "summary": "Windmill makes it easy to perform browser automation tasks, such as testing or web scraping.",
       "word_count": 284,
@@ -1160,8 +1962,8 @@
       "subcategory": "11_git_sync",
       "tags": [
         "operations",
-        "11_git_sync",
-        "cli"
+        "cli",
+        "11_git_sync"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 111,
@@ -1177,10 +1979,10 @@
       "category": "meta",
       "subcategory": "11_git_sync",
       "tags": [
+        "meta",
         "11_git_sync",
-        "advanced",
         "git",
-        "meta"
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1563,
@@ -1224,9 +2026,9 @@
       "category": "meta",
       "subcategory": "13_version_control",
       "tags": [
+        "meta",
         "version",
-        "13_version_control",
-        "meta"
+        "13_version_control"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 239,
@@ -1245,11 +2047,11 @@
       "category": "meta",
       "subcategory": "14_dependencies_in_typescript",
       "tags": [
-        "advanced",
-        "14_dependencies_in_typescript",
         "dependencies",
+        "14_dependencies_in_typescript",
         "typescript",
-        "meta"
+        "meta",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1768,
@@ -1269,11 +2071,11 @@
       "category": "meta",
       "subcategory": "15_dependencies_in_python",
       "tags": [
-        "advanced",
-        "15_dependencies_in_python",
         "dependencies",
-        "python",
-        "meta"
+        "15_dependencies_in_python",
+        "meta",
+        "advanced",
+        "python"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1971,
@@ -1307,11 +2109,11 @@
       "category": "meta",
       "subcategory": "16_external_auth_with_jwt",
       "tags": [
-        "advanced",
-        "external",
         "16_external_auth_with_jwt",
+        "meta",
+        "advanced",
         "windmill",
-        "meta"
+        "external"
       ],
       "summary": "Instead of using the built-in authentication and authorization mechanisms, you can generate your own JWT tokens with the desired permissions for your already authenticated users and pass them to Windm",
       "word_count": 597,
@@ -1328,10 +2130,10 @@
       "category": "meta",
       "subcategory": "17_email_triggers",
       "tags": [
-        "advanced",
-        "17_email_triggers",
         "email",
-        "meta"
+        "meta",
+        "17_email_triggers",
+        "advanced"
       ],
       "summary": "Scripts and flows can be triggered by email messages sent to a specific email address, leveraging [SMTP](https://www.cloudflare.com/learning/email-security/what-is-smtp/).",
       "word_count": 850,
@@ -1350,10 +2152,10 @@
       "category": "meta",
       "subcategory": "18_instance_settings",
       "tags": [
-        "18_instance_settings",
-        "advanced",
         "instance",
-        "meta"
+        "meta",
+        "18_instance_settings",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 2699,
@@ -1396,11 +2198,11 @@
       "category": "ops",
       "subcategory": "1_self_host",
       "tags": [
-        "1_self_host",
-        "aws",
         "operations",
+        "windmill",
         "advanced",
-        "windmill"
+        "aws",
+        "1_self_host"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 3702,
@@ -1418,10 +2220,10 @@
       "category": "meta",
       "subcategory": "1_self_host",
       "tags": [
-        "advanced",
         "selfhost",
-        "1_self_host",
-        "meta"
+        "meta",
+        "advanced",
+        "1_self_host"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 3010,
@@ -1471,9 +2273,9 @@
       "subcategory": "21_scaling",
       "tags": [
         "21_scaling",
+        "meta",
         "advanced",
-        "scaling",
-        "meta"
+        "scaling"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import WorkerQueueSimulator from '@site/src/components/WorkerQueueSimulator';",
       "word_count": 1300,
@@ -1499,8 +2301,8 @@
       "subcategory": "2_clients",
       "tags": [
         "operations",
-        "windmill",
         "2_clients",
+        "windmill",
         "python"
       ],
       "summary": "The Python client library for Windmill provides a convenient way to interact with the Windmill platform using Python. This client provides a set of functions and utilities to access Windmill resources",
@@ -1525,11 +2327,11 @@
       "category": "ops",
       "subcategory": "2_clients",
       "tags": [
-        "2_clients",
         "operations",
         "rust",
         "windmill",
-        "api"
+        "api",
+        "2_clients"
       ],
       "summary": "The Rust client library for Windmill provides a convenient way to interact with the Windmill platform's API from within your Rust applications. By authenticating with the `WM_TOKEN` reserved variable ",
       "word_count": 448,
@@ -1568,10 +2370,10 @@
       "category": "concept",
       "subcategory": "3_cli",
       "tags": [
+        "apps",
         "3_cli",
-        "concept",
         "windmill",
-        "apps"
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>cli</category> <title>Windmill CLI App Commands</title> <description>Manage apps via CLI</description> <created_at>2025-12-28T00:00:00Z</created_at",
       "word_count": 148,
@@ -1591,8 +2393,8 @@
       "subcategory": "3_cli",
       "tags": [
         "operations",
-        "advanced",
         "3_cli",
+        "advanced",
         "branchspecific"
       ],
       "summary": "Branch-specific items allow you to have different versions of resources and variables per Git branch. This enables teams to maintain environment-specific configurations (dev/staging/prod) that automat",
@@ -1628,10 +2430,10 @@
       "category": "concept",
       "subcategory": "3_cli",
       "tags": [
+        "flows",
         "3_cli",
-        "concept",
         "windmill",
-        "flows"
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>cli</category> <title>Windmill CLI Flow Commands</title> <description>Manage flows via CLI</description> <created_at>2025-12-28T00:00:00Z</created_",
       "word_count": 441,
@@ -1654,10 +2456,10 @@
       "category": "concept",
       "subcategory": "3_cli",
       "tags": [
+        "folder",
         "3_cli",
-        "concept",
         "windmill",
-        "folder"
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>cli</category> <title>Windmill CLI Folder Commands</title> <description>Manage folders via CLI</description> <created_at>2025-12-28T00:00:00Z</crea",
       "word_count": 141,
@@ -1675,11 +2477,11 @@
       "category": "ops",
       "subcategory": "3_cli",
       "tags": [
-        "git",
         "operations",
+        "windmill",
         "advanced",
         "3_cli",
-        "windmill"
+        "git"
       ],
       "summary": "Managing git-sync configuration between your local `wmill.yaml` file and the Windmill workspace backend is made easy using the wmill CLI. Git-sync settings operations are behind the `wmill gitsync-set",
       "word_count": 1119,
@@ -1713,8 +2515,8 @@
       "subcategory": "3_cli",
       "tags": [
         "3_cli",
-        "commandline",
-        "meta"
+        "meta",
+        "commandline"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 110,
@@ -1731,8 +2533,8 @@
       "subcategory": "3_cli",
       "tags": [
         "operations",
-        "windmill",
         "3_cli",
+        "windmill",
         "installation"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>cli</category> <title>Windmill CLI Installation</title> <description>Install and configure Windmill CLI</description> <created_at>2025-12-28T00:00:",
@@ -1752,9 +2554,9 @@
       "subcategory": "3_cli",
       "tags": [
         "3_cli",
-        "concept",
         "windmill",
-        "resources"
+        "resources",
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>cli</category> <title>Windmill CLI Resource Commands</title> <description>Manage resources via CLI</description> <created_at>2025-12-28T00:00:00Z</",
       "word_count": 310,
@@ -1772,10 +2574,10 @@
       "category": "concept",
       "subcategory": "3_cli",
       "tags": [
-        "advanced",
-        "3_cli",
-        "concept",
         "windmill",
+        "advanced",
+        "concept",
+        "3_cli",
         "scripts"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>cli</category> <title>Windmill CLI Script Commands</title> <description>Manage scripts via CLI</description> <created_at>2025-12-28T00:00:00Z</crea",
@@ -1800,8 +2602,8 @@
       "subcategory": "3_cli",
       "tags": [
         "operations",
-        "advanced",
         "3_cli",
+        "advanced",
         "sync"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
@@ -1829,10 +2631,10 @@
       "category": "concept",
       "subcategory": "3_cli",
       "tags": [
-        "3_cli",
-        "concept",
         "users",
-        "windmill"
+        "3_cli",
+        "windmill",
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>cli</category> <title>Windmill CLI User Management</title> <description>Manage users via CLI</description> <created_at>2025-12-28T00:00:00Z</create",
       "word_count": 500,
@@ -1851,10 +2653,10 @@
       "category": "concept",
       "subcategory": "3_cli",
       "tags": [
+        "variables",
         "3_cli",
-        "concept",
         "windmill",
-        "variables"
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>cli</category> <title>Windmill CLI Variable Commands</title> <description>Manage variables via CLI</description> <created_at>2025-12-28T00:00:00Z</",
       "word_count": 442,
@@ -1875,10 +2677,10 @@
       "subcategory": "3_cli",
       "tags": [
         "operations",
-        "advanced",
-        "3_cli",
         "workspace",
-        "windmill"
+        "windmill",
+        "advanced",
+        "3_cli"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>cli</category> <title>Windmill CLI Workspace Management</title> <description>Manage workspaces via CLI</description> <created_at>2025-12-28T00:00:0",
       "word_count": 839,
@@ -1902,9 +2704,9 @@
       "subcategory": "4_local_development",
       "tags": [
         "local",
-        "4_local_development",
+        "meta",
         "advanced",
-        "meta"
+        "4_local_development"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 2239,
@@ -1955,10 +2757,10 @@
       "category": "meta",
       "subcategory": "5_sharing_common_logic",
       "tags": [
-        "advanced",
-        "5_sharing_common_logic",
+        "meta",
         "sharing",
-        "meta"
+        "5_sharing_common_logic",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 803,
@@ -1982,10 +2784,10 @@
       "category": "meta",
       "subcategory": "6_imports",
       "tags": [
-        "advanced",
-        "dependency",
         "6_imports",
-        "meta"
+        "meta",
+        "advanced",
+        "dependency"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1457,
@@ -2010,11 +2812,11 @@
       "category": "meta",
       "subcategory": "7_docker",
       "tags": [
-        "docker",
-        "run",
-        "advanced",
         "7_docker",
-        "meta"
+        "docker",
+        "meta",
+        "advanced",
+        "run"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 717,
@@ -2043,10 +2845,10 @@
       "category": "meta",
       "subcategory": "8_preinstall_binaries",
       "tags": [
-        "advanced",
-        "8_preinstall_binaries",
+        "meta",
         "preinstall",
-        "meta"
+        "8_preinstall_binaries",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 681,
@@ -2067,10 +2869,10 @@
       "category": "meta",
       "subcategory": "9_deploy_gh_gl",
       "tags": [
-        "9_deploy_gh_gl",
-        "advanced",
         "deploy",
-        "meta"
+        "meta",
+        "advanced",
+        "9_deploy_gh_gl"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 2477,
@@ -2088,11 +2890,11 @@
       "category": "meta",
       "subcategory": "security_isolation",
       "tags": [
-        "advanced",
         "security",
         "security_isolation",
+        "meta",
         "windmill",
-        "meta"
+        "advanced"
       ],
       "summary": "Windmill provides multiple layers of process isolation to protect your infrastructure from potentially malicious or buggy code execution. This page covers the isolation mechanisms available and how to",
       "word_count": 1964,
@@ -2148,8 +2950,8 @@
       "subcategory": "0_draft_and_deploy",
       "tags": [
         "draft",
-        "0_draft_and_deploy",
-        "meta"
+        "meta",
+        "0_draft_and_deploy"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 646,
@@ -2171,10 +2973,10 @@
       "category": "meta",
       "subcategory": "10_error_handling",
       "tags": [
+        "meta",
         "error",
-        "advanced",
         "10_error_handling",
-        "meta"
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1734,
@@ -2197,10 +2999,10 @@
       "category": "tutorial",
       "subcategory": "11_persistent_storage",
       "tags": [
-        "tutorial",
-        "data",
         "beginner",
-        "11_persistent_storage"
+        "tutorial",
+        "11_persistent_storage",
+        "data"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 643,
@@ -2221,9 +3023,9 @@
       "category": "tutorial",
       "subcategory": "11_persistent_storage",
       "tags": [
-        "tutorial",
         "beginner",
         "ducklake",
+        "tutorial",
         "11_persistent_storage"
       ],
       "summary": "import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
@@ -2245,9 +3047,9 @@
       "category": "meta",
       "subcategory": "11_persistent_storage",
       "tags": [
-        "persistent",
+        "meta",
         "11_persistent_storage",
-        "meta"
+        "persistent"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 734,
@@ -2271,10 +3073,10 @@
       "subcategory": "11_persistent_storage",
       "tags": [
         "operations",
-        "11_persistent_storage",
-        "nosql",
+        "sql",
         "windmill",
-        "sql"
+        "11_persistent_storage",
+        "nosql"
       ],
       "summary": "This page is part of our section on [Persistent storage & databases](./index.mdx) which covers where to effectively store and manage the data manipulated by Windmill. Check that page for more options ",
       "word_count": 355,
@@ -2294,9 +3096,9 @@
       "subcategory": "11_persistent_storage",
       "tags": [
         "large",
-        "concept",
+        "11_persistent_storage",
         "advanced",
-        "11_persistent_storage"
+        "concept"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 878,
@@ -2315,11 +3117,11 @@
       "category": "tutorial",
       "subcategory": "11_persistent_storage",
       "tags": [
+        "sql",
         "big",
-        "tutorial",
         "beginner",
-        "11_persistent_storage",
-        "sql"
+        "tutorial",
+        "11_persistent_storage"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 626,
@@ -2337,11 +3139,11 @@
       "category": "concept",
       "subcategory": "11_persistent_storage",
       "tags": [
-        "advanced",
-        "11_persistent_storage",
-        "concept",
         "within",
-        "windmill"
+        "windmill",
+        "11_persistent_storage",
+        "advanced",
+        "concept"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 1170,
@@ -2360,8 +3162,8 @@
       "subcategory": "12_staging_prod",
       "tags": [
         "deploy",
-        "12_staging_prod",
-        "meta"
+        "meta",
+        "12_staging_prod"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>core_concepts</category> <title>Staging/Production Deployment</title> <description>Deploy items between workspaces (staging to production)</descrip",
       "word_count": 505,
@@ -2380,9 +3182,9 @@
       "subcategory": "13_json_schema_and_parsing",
       "tags": [
         "json",
-        "advanced",
         "13_json_schema_and_parsing",
-        "meta"
+        "meta",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 2360,
@@ -2406,9 +3208,9 @@
       "category": "meta",
       "subcategory": "14_audit_logs",
       "tags": [
-        "audit",
         "14_audit_logs",
-        "meta"
+        "meta",
+        "audit"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 321,
@@ -2428,8 +3230,8 @@
       "subcategory": "15_authentification",
       "tags": [
         "15_authentification",
-        "authentication",
-        "meta"
+        "meta",
+        "authentication"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 849,
@@ -2449,9 +3251,9 @@
       "category": "meta",
       "subcategory": "16_roles_and_permissions",
       "tags": [
-        "roles",
+        "meta",
         "16_roles_and_permissions",
-        "meta"
+        "roles"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1431,
@@ -2472,9 +3274,9 @@
       "subcategory": "17_collaboration",
       "tags": [
         "17_collaboration",
-        "collaboration",
+        "meta",
         "windmill",
-        "meta"
+        "collaboration"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 635,
@@ -2495,10 +3297,10 @@
       "category": "meta",
       "subcategory": "18_files_binary_data",
       "tags": [
-        "advanced",
-        "handling",
+        "meta",
         "18_files_binary_data",
-        "meta"
+        "handling",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 737,
@@ -2516,10 +3318,10 @@
       "category": "meta",
       "subcategory": "19_rich_display_rendering",
       "tags": [
+        "meta",
         "advanced",
-        "rich",
         "19_rich_display_rendering",
-        "meta"
+        "rich"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1939,
@@ -2549,10 +3351,10 @@
       "category": "meta",
       "subcategory": "1_scheduling",
       "tags": [
-        "1_scheduling",
-        "advanced",
         "schedules",
-        "meta"
+        "meta",
+        "advanced",
+        "1_scheduling"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 2610,
@@ -2575,10 +3377,10 @@
       "category": "meta",
       "subcategory": "20_jobs",
       "tags": [
-        "advanced",
-        "20_jobs",
         "jobs",
-        "meta"
+        "meta",
+        "advanced",
+        "20_jobs"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 3067,
@@ -2603,10 +3405,10 @@
       "category": "meta",
       "subcategory": "21_concurrency_limits",
       "tags": [
-        "21_concurrency_limits",
         "api",
-        "concurrency",
-        "meta"
+        "21_concurrency_limits",
+        "meta",
+        "concurrency"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>core_concepts</category> <title>Concurrency Limits</title> <description>Prevent exceeding API rate limits by controlling execution frequency</descr",
       "word_count": 442,
@@ -2627,8 +3429,8 @@
       "subcategory": "22_ai_generation",
       "tags": [
         "windmill",
-        "22_ai_generation",
-        "meta"
+        "meta",
+        "22_ai_generation"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1546,
@@ -2650,9 +3452,9 @@
       "category": "meta",
       "subcategory": "22_job_debouncing",
       "tags": [
+        "meta",
         "job",
-        "22_job_debouncing",
-        "meta"
+        "22_job_debouncing"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>core_concepts</category> <title>Job Debouncing</title> <description>Prevents redundant job executions by canceling pending jobs with identical char",
       "word_count": 324,
@@ -2672,9 +3474,9 @@
       "category": "meta",
       "subcategory": "23_instant_preview",
       "tags": [
-        "instant",
+        "meta",
         "23_instant_preview",
-        "meta"
+        "instant"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 817,
@@ -2715,9 +3517,9 @@
       "category": "meta",
       "subcategory": "25_dedicated_workers",
       "tags": [
-        "25_dedicated_workers",
         "dedicated",
-        "meta"
+        "meta",
+        "25_dedicated_workers"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 657,
@@ -2735,9 +3537,9 @@
       "category": "meta",
       "subcategory": "26_content_search",
       "tags": [
+        "meta",
         "26_content_search",
-        "content",
-        "meta"
+        "content"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 66,
@@ -2753,10 +3555,10 @@
       "category": "meta",
       "subcategory": "27_data_pipelines",
       "tags": [
-        "data",
         "27_data_pipelines",
-        "advanced",
-        "meta"
+        "meta",
+        "data",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import BarChart from '@site/src/components/BarChart'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 3113,
@@ -2777,10 +3579,10 @@
       "category": "meta",
       "subcategory": "28_agent_workers",
       "tags": [
-        "28_agent_workers",
-        "advanced",
         "agent",
-        "meta"
+        "meta",
+        "28_agent_workers",
+        "advanced"
       ],
       "summary": "Agent workers are a Cloud & Self-hosted [Enterprise](/pricing) feature.",
       "word_count": 844,
@@ -2798,10 +3600,10 @@
       "category": "meta",
       "subcategory": "29_oidc",
       "tags": [
-        "advanced",
+        "meta",
         "29_oidc",
-        "openid",
-        "meta"
+        "advanced",
+        "openid"
       ],
       "summary": "import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 1422,
@@ -2823,10 +3625,10 @@
       "category": "meta",
       "subcategory": "2_variables_and_secrets",
       "tags": [
-        "2_variables_and_secrets",
-        "advanced",
         "variables",
-        "meta"
+        "meta",
+        "2_variables_and_secrets",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 988,
@@ -2849,9 +3651,9 @@
       "category": "meta",
       "subcategory": "30_workspace_secret_encryption",
       "tags": [
-        "30_workspace_secret_encryption",
         "workspace",
-        "meta"
+        "meta",
+        "30_workspace_secret_encryption"
       ],
       "summary": "All [secrets](../2_variables_and_secrets/index.mdx#secrets) of a workspace are encrypted with a symmetric key unique to that workspace. This key is generated when the workspace is created and is store",
       "word_count": 127,
@@ -2868,8 +3670,8 @@
       "subcategory": "31_workflows_as_code",
       "tags": [
         "31_workflows_as_code",
-        "workflows",
-        "meta"
+        "meta",
+        "workflows"
       ],
       "summary": "import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 435,
@@ -2886,10 +3688,10 @@
       "category": "meta",
       "subcategory": "32_private_hub",
       "tags": [
-        "windmill",
-        "private",
         "32_private_hub",
-        "meta"
+        "windmill",
+        "meta",
+        "private"
       ],
       "summary": "[Windmill Hub](https://hub.windmill.dev/) is the community website of Windmill where you can find and share your Scripts, Flows, Apps and Resource types with every Windmill user. The best submissions ",
       "word_count": 684,
@@ -2908,9 +3710,9 @@
       "category": "meta",
       "subcategory": "33_codebases_and_bundles",
       "tags": [
+        "meta",
         "codebases",
-        "33_codebases_and_bundles",
-        "meta"
+        "33_codebases_and_bundles"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 363,
@@ -2931,9 +3733,9 @@
       "category": "meta",
       "subcategory": "34_versioning",
       "tags": [
-        "34_versioning",
         "versioning",
-        "meta"
+        "meta",
+        "34_versioning"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 302,
@@ -2950,10 +3752,10 @@
       "category": "meta",
       "subcategory": "35_search_bar",
       "tags": [
+        "meta",
         "advanced",
-        "35_search_bar",
         "search",
-        "meta"
+        "35_search_bar"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 524,
@@ -2970,10 +3772,10 @@
       "category": "meta",
       "subcategory": "36_service_logs",
       "tags": [
-        "advanced",
         "36_service_logs",
         "service",
-        "meta"
+        "meta",
+        "advanced"
       ],
       "summary": "View logs from any [workers](../9_worker_groups/index.mdx) or servers directly within the service logs section of the [search modal](../35_search_bar/index.mdx).",
       "word_count": 581,
@@ -2992,9 +3794,9 @@
       "category": "meta",
       "subcategory": "37_critical_alerts",
       "tags": [
-        "37_critical_alerts",
+        "meta",
         "critical",
-        "meta"
+        "37_critical_alerts"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 307,
@@ -3012,11 +3814,11 @@
       "category": "meta",
       "subcategory": "38_object_storage_in_windmill",
       "tags": [
-        "advanced",
         "38_object_storage_in_windmill",
-        "object",
         "windmill",
-        "meta"
+        "meta",
+        "advanced",
+        "object"
       ],
       "summary": "import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import DocCard from '@site/src/components/DocCard';",
       "word_count": 2843,
@@ -3037,11 +3839,11 @@
       "category": "meta",
       "subcategory": "39_http_routing",
       "tags": [
-        "39_http_routing",
+        "meta",
         "advanced",
-        "http",
         "windmill",
-        "meta"
+        "http",
+        "39_http_routing"
       ],
       "summary": "Windmill supports HTTP Routes as triggers to execute runnables (scripts or flows) whenever the route is hit by an external HTTP request, and it can also serve static files or websites.",
       "word_count": 2128,
@@ -3068,10 +3870,10 @@
       "category": "meta",
       "subcategory": "3_resources_and_types",
       "tags": [
-        "advanced",
-        "resources",
+        "meta",
         "3_resources_and_types",
-        "meta"
+        "resources",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 2626,
@@ -3098,11 +3900,11 @@
       "category": "meta",
       "subcategory": "40_websocket_triggers",
       "tags": [
-        "advanced",
         "40_websocket_triggers",
+        "meta",
         "websocket",
         "windmill",
-        "api"
+        "advanced"
       ],
       "summary": "Windmill can connect to [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) servers and trigger runnables (scripts, flows) when a message is received. Listening is done from t",
       "word_count": 543,
@@ -3120,10 +3922,10 @@
       "category": "meta",
       "subcategory": "41_kafka_triggers",
       "tags": [
-        "41_kafka_triggers",
         "kafka",
+        "meta",
         "windmill",
-        "meta"
+        "41_kafka_triggers"
       ],
       "summary": "Windmill can connect to [Kafka](https://kafka.apache.org/) brokers servers and trigger runnables (scripts, flows) when a message is received. Listening is done from the servers, so it doesn't take up ",
       "word_count": 331,
@@ -3141,10 +3943,10 @@
       "category": "meta",
       "subcategory": "42_autoscaling",
       "tags": [
-        "42_autoscaling",
         "autoscaling",
+        "meta",
         "advanced",
-        "meta"
+        "42_autoscaling"
       ],
       "summary": "Autoscaling automatically adjusts the number of workers based on your workload demands.",
       "word_count": 1345,
@@ -3165,10 +3967,10 @@
       "category": "meta",
       "subcategory": "43_preprocessors",
       "tags": [
-        "preprocessors",
-        "43_preprocessors",
+        "meta",
         "advanced",
-        "meta"
+        "43_preprocessors",
+        "preprocessors"
       ],
       "summary": "import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 1475,
@@ -3185,8 +3987,8 @@
       "category": "meta",
       "subcategory": "44_workspace_settings",
       "tags": [
-        "44_workspace_settings",
         "workspace",
+        "44_workspace_settings",
         "meta"
       ],
       "summary": "Workspace settings are configuration options specific to each workspace and can be accessed by workspace [admin](../16_roles_and_permissions/index.mdx#admin) and instance [superadmin](../16_roles_and_",
@@ -3204,10 +4006,10 @@
       "category": "meta",
       "subcategory": "45_nats_triggers",
       "tags": [
-        "45_nats_triggers",
-        "windmill",
         "nats",
-        "meta"
+        "45_nats_triggers",
+        "meta",
+        "windmill"
       ],
       "summary": "Windmill can connect to [NATS](https://nats.io/) servers and trigger runnables (scripts, flows) when a message is received. Listening is done from the servers, so it doesn't take up any workers. NATS ",
       "word_count": 450,
@@ -3225,11 +4027,11 @@
       "category": "meta",
       "subcategory": "46_postgres_triggers",
       "tags": [
-        "46_postgres_triggers",
-        "postgres",
-        "advanced",
+        "sql",
         "windmill",
-        "sql"
+        "meta",
+        "advanced",
+        "postgres"
       ],
       "summary": "Windmill can connect to a [Postgres](https://www.postgresql.org/) database and trigger runnables (scripts, flows) in response to database transactions (INSERT, UPDATE, DELETE) on specified tables, sch",
       "word_count": 4388,
@@ -3257,8 +4059,8 @@
       "subcategory": "47_environment_variables",
       "tags": [
         "47_environment_variables",
-        "environment",
-        "meta"
+        "meta",
+        "environment"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1593,
@@ -3278,11 +4080,11 @@
       "category": "meta",
       "subcategory": "48_sqs_triggers",
       "tags": [
-        "aws",
         "48_sqs_triggers",
-        "sqs",
+        "meta",
         "windmill",
-        "meta"
+        "sqs",
+        "aws"
       ],
       "summary": "Windmill can connect to an [SQS](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) queue and trigger runnables (scripts, flows) in response to messages received.",
       "word_count": 495,
@@ -3301,11 +4103,11 @@
       "category": "meta",
       "subcategory": "49_mqtt_triggers",
       "tags": [
-        "advanced",
         "mqtt",
-        "49_mqtt_triggers",
         "windmill",
-        "meta"
+        "meta",
+        "advanced",
+        "49_mqtt_triggers"
       ],
       "summary": "Windmill can connect to an [**MQTT**](https://mqtt.org/mqtt-specification/) broker and trigger runnables (scripts, flows) in response to messages published to specified topics. MQTT triggers are not a",
       "word_count": 901,
@@ -3324,10 +4126,10 @@
       "category": "meta",
       "subcategory": "4_webhooks",
       "tags": [
-        "advanced",
+        "meta",
         "4_webhooks",
         "webhooks",
-        "meta"
+        "advanced"
       ],
       "summary": "import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem'; import DocCard from '@site/src/components/DocCard';",
       "word_count": 2377,
@@ -3350,11 +4152,11 @@
       "category": "meta",
       "subcategory": "50_gcp_triggers",
       "tags": [
-        "50_gcp_triggers",
+        "meta",
         "advanced",
-        "gcp",
         "windmill",
-        "meta"
+        "gcp",
+        "50_gcp_triggers"
       ],
       "summary": "Windmill can connect to [**Google Cloud Pub/Sub**](https://cloud.google.com/pubsub/docs/overview) and trigger runnables (scripts, flows) when messages are published on topics.\\ You can configure Windm",
       "word_count": 916,
@@ -3375,9 +4177,9 @@
       "subcategory": "51_mcp",
       "tags": [
         "51_mcp",
+        "meta",
         "advanced",
-        "windmill",
-        "meta"
+        "windmill"
       ],
       "summary": "Windmill supports the [**Model Context Protocol (MCP)**](https://modelcontextprotocol.io/introduction), an open standard that enables seamless interaction between LLMs and tools like Windmill.",
       "word_count": 642,
@@ -3397,10 +4199,10 @@
       "category": "meta",
       "subcategory": "51_sql_to_s3_streaming",
       "tags": [
-        "51_sql_to_s3_streaming",
-        "windmill",
         "sql",
-        "meta"
+        "meta",
+        "51_sql_to_s3_streaming",
+        "windmill"
       ],
       "summary": "Sometimes, your SQL script will return too much data which exceeds the 10 000 rows query limit within Windmill. In this case, you will want to use the s3 flag to stream your query result to a file. Yo",
       "word_count": 150,
@@ -3417,8 +4219,8 @@
       "subcategory": "52_assets",
       "tags": [
         "52_assets",
-        "assets",
-        "meta"
+        "meta",
+        "assets"
       ],
       "summary": "Assets are designed to track data flows and visualize data sets, automatically detecting when you reference them directly in your code. Assets are referenced with URIs and include:",
       "word_count": 327,
@@ -3438,11 +4240,11 @@
       "category": "meta",
       "subcategory": "53_custom_instance_database",
       "tags": [
-        "53_custom_instance_database",
-        "custom",
-        "windmill",
         "sql",
-        "meta"
+        "meta",
+        "windmill",
+        "53_custom_instance_database",
+        "custom"
       ],
       "summary": "In the past, storing data inside a SQL database required you to setup a database outside of Windmill, and connect to it using a Resource. Custom Instance Databases allow you to use the Windmill postgr",
       "word_count": 348,
@@ -3461,9 +4263,9 @@
       "subcategory": "54_ai_agents",
       "tags": [
         "54_ai_agents",
+        "meta",
         "advanced",
-        "windmill",
-        "meta"
+        "windmill"
       ],
       "summary": "AI Agents steps allow you to integrate AI agents directly into your Windmill [flows](../../flows/1_flow_editor.mdx). They provide an interface to connect with various AI providers and models, allowing",
       "word_count": 1551,
@@ -3487,8 +4289,8 @@
       "tags": [
         "workspace",
         "55_workspace_dependencies",
-        "advanced",
-        "meta"
+        "meta",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 816,
@@ -3545,10 +4347,10 @@
       "category": "meta",
       "subcategory": "5_monitor_past_and_future_runs",
       "tags": [
-        "advanced",
-        "5_monitor_past_and_future_runs",
         "jobs",
-        "meta"
+        "meta",
+        "5_monitor_past_and_future_runs",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 745,
@@ -3570,9 +4372,9 @@
       "category": "meta",
       "subcategory": "6_auto_generated_uis",
       "tags": [
-        "autogenerated",
+        "meta",
         "6_auto_generated_uis",
-        "meta"
+        "autogenerated"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1036,
@@ -3612,9 +4414,9 @@
       "category": "meta",
       "subcategory": "8_groups_and_folders",
       "tags": [
-        "8_groups_and_folders",
+        "meta",
         "groups",
-        "meta"
+        "8_groups_and_folders"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 697,
@@ -3634,10 +4436,10 @@
       "category": "meta",
       "subcategory": "9_worker_groups",
       "tags": [
-        "advanced",
         "workers",
         "9_worker_groups",
-        "meta"
+        "meta",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 3665,
@@ -3669,10 +4471,10 @@
       "subcategory": "core_concepts",
       "tags": [
         "operations",
-        "advanced",
-        "core_concepts",
         "rust",
-        "windmill"
+        "windmill",
+        "advanced",
+        "core_concepts"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>sdk</category> <title>Windmill Rust SDK: Complete Reference Guide</title> <description>Complete reference guide for Windmill Rust scripts including",
       "word_count": 2385,
@@ -3700,9 +4502,9 @@
       "category": "meta",
       "subcategory": "core_concepts",
       "tags": [
-        "core_concepts",
+        "meta",
         "core",
-        "meta"
+        "core_concepts"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 2593,
@@ -3726,10 +4528,10 @@
       "category": "concept",
       "subcategory": "flows",
       "tags": [
-        "concept",
-        "advanced",
         "flows",
-        "trigger"
+        "trigger",
+        "advanced",
+        "concept"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 543,
@@ -3746,10 +4548,10 @@
       "category": "tutorial",
       "subcategory": "flows",
       "tags": [
-        "tutorial",
-        "beginner",
+        "suspend",
         "flows",
-        "suspend"
+        "beginner",
+        "tutorial"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 3027,
@@ -3773,9 +4575,9 @@
       "subcategory": "flows",
       "tags": [
         "beginner",
+        "flows",
         "tutorial",
-        "for",
-        "flows"
+        "for"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>flows</category> <title>For Loops</title> <description>Iterate over list of items with parallel execution options</description> <created_at>2025-12",
       "word_count": 453,
@@ -3794,9 +4596,9 @@
       "category": "concept",
       "subcategory": "flows",
       "tags": [
-        "concept",
         "flows",
-        "branches"
+        "branches",
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>flows</category> <title>Flow Branches</title> <description>Split flow execution based on conditions</description> <created_at>2025-12-28T00:00:00Z<",
       "word_count": 469,
@@ -3836,10 +4638,10 @@
       "category": "tutorial",
       "subcategory": "flows",
       "tags": [
-        "tutorial",
         "beginner",
         "flows",
-        "sleeps"
+        "sleeps",
+        "tutorial"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>flows</category> <title>Sleep/Delays</title> <description>Suspend flow execution for a specified duration</description> <created_at>2025-12-28T00:0",
       "word_count": 425,
@@ -3858,9 +4660,9 @@
       "subcategory": "flows",
       "tags": [
         "beginner",
-        "tutorial",
+        "flows",
         "architecture",
-        "flows"
+        "tutorial"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 890,
@@ -3879,9 +4681,9 @@
       "category": "concept",
       "subcategory": "flows",
       "tags": [
-        "concept",
+        "aigenerated",
         "flows",
-        "aigenerated"
+        "concept"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 59,
@@ -3917,8 +4719,8 @@
       "subcategory": "flows",
       "tags": [
         "operations",
-        "early",
-        "flows"
+        "flows",
+        "early"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 104,
@@ -3934,9 +4736,9 @@
       "category": "tutorial",
       "subcategory": "flows",
       "tags": [
-        "tutorial",
         "beginner",
         "flows",
+        "tutorial",
         "flow"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import { Timer, TerminalSquare } from 'lucide-react';",
@@ -3953,9 +4755,9 @@
       "category": "concept",
       "subcategory": "flows",
       "tags": [
-        "concept",
+        "flows",
         "priority",
-        "flows"
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>flows</category> <title>Priority</title> <description>Prioritize flow steps in execution queue</description> <created_at>2025-12-28T00:00:00Z</crea",
       "word_count": 124,
@@ -3971,9 +4773,9 @@
       "category": "concept",
       "subcategory": "flows",
       "tags": [
-        "concept",
         "flows",
-        "lifetime"
+        "lifetime",
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>flows</category> <title>Lifetime</title> <description>Delete flow step logs after completion for privacy</description> <created_at>2025-12-28T00:00",
       "word_count": 126,
@@ -3989,9 +4791,9 @@
       "category": "tutorial",
       "subcategory": "flows",
       "tags": [
-        "tutorial",
         "beginner",
         "flows",
+        "tutorial",
         "while"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
@@ -4013,8 +4815,8 @@
       "category": "ref",
       "subcategory": "flows",
       "tags": [
-        "reference",
         "flows",
+        "reference",
         "job"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
@@ -4032,9 +4834,9 @@
       "category": "concept",
       "subcategory": "flows",
       "tags": [
-        "concept",
         "flows",
-        "sticky"
+        "sticky",
+        "concept"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 589,
@@ -4055,9 +4857,9 @@
       "category": "concept",
       "subcategory": "flows",
       "tags": [
-        "concept",
+        "flows",
         "early",
-        "flows"
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>flows</category> <title>Early Stop</title> <description>Stop flow execution early based on conditions</description> <created_at>2025-12-28T00:00:00",
       "word_count": 287,
@@ -4075,9 +4877,9 @@
       "category": "tutorial",
       "subcategory": "flows",
       "tags": [
-        "tutorial",
         "beginner",
         "flows",
+        "tutorial",
         "flow"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
@@ -4103,10 +4905,10 @@
       "category": "tutorial",
       "subcategory": "flows",
       "tags": [
-        "tutorial",
         "beginner",
         "flows",
-        "caching"
+        "caching",
+        "tutorial"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 544,
@@ -4125,9 +4927,9 @@
       "category": "concept",
       "subcategory": "flows",
       "tags": [
-        "concept",
+        "flows",
         "step",
-        "flows"
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>flows</category> <title>Step Mocking</title> <description>Mock flow steps for faster development iteration</description> <created_at>2025-12-28T00:",
       "word_count": 340,
@@ -4146,9 +4948,9 @@
       "category": "ref",
       "subcategory": "flows",
       "tags": [
+        "flows",
         "reference",
-        "concurrency",
-        "flows"
+        "concurrency"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 247,
@@ -4167,9 +4969,9 @@
       "subcategory": "flows",
       "tags": [
         "error",
-        "tutorial",
+        "flows",
         "beginner",
-        "flows"
+        "tutorial"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>flows</category> <title>Error Handler</title> <description>Special flow step executed when an error occurs in flow</description> <created_at>2025-1",
       "word_count": 237,
@@ -4185,9 +4987,9 @@
       "category": "concept",
       "subcategory": "flows",
       "tags": [
+        "flows",
         "error",
-        "concept",
-        "flows"
+        "concept"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 352,
@@ -4208,9 +5010,9 @@
       "category": "concept",
       "subcategory": "flows",
       "tags": [
-        "concept",
         "flows",
-        "custom"
+        "custom",
+        "concept"
       ],
       "summary": "<!-- <doc_metadata> <type>reference</type> <category>flows</category> <title>Custom Timeout</title> <description>Define timeout for individual flow steps</description> <created_at>2025-12-28T00:00:00Z",
       "word_count": 113,
@@ -4227,9 +5029,9 @@
       "subcategory": "00_how_to_use_windmill",
       "tags": [
         "getting",
+        "meta",
         "windmill",
-        "00_how_to_use_windmill",
-        "meta"
+        "00_how_to_use_windmill"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 301,
@@ -4247,10 +5049,10 @@
       "category": "meta",
       "subcategory": "10_ansible_quickstart",
       "tags": [
-        "10_ansible_quickstart",
         "ansible",
+        "meta",
         "advanced",
-        "meta"
+        "10_ansible_quickstart"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 3200,
@@ -4280,9 +5082,9 @@
       "category": "meta",
       "subcategory": "11_csharp_quickstart",
       "tags": [
-        "advanced",
         "11_csharp_quickstart",
-        "meta"
+        "meta",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1455,
@@ -4305,10 +5107,10 @@
       "category": "meta",
       "subcategory": "13_java_quickstart",
       "tags": [
-        "java",
         "13_java_quickstart",
+        "meta",
         "advanced",
-        "meta"
+        "java"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1395,
@@ -4331,10 +5133,10 @@
       "category": "meta",
       "subcategory": "14_ruby_quickstart",
       "tags": [
-        "advanced",
         "14_ruby_quickstart",
+        "meta",
         "ruby",
-        "meta"
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1933,
@@ -4363,9 +5165,9 @@
       "subcategory": "1_typescript_quickstart",
       "tags": [
         "typescript",
-        "advanced",
         "1_typescript_quickstart",
-        "meta"
+        "meta",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 2509,
@@ -4390,10 +5192,10 @@
       "category": "meta",
       "subcategory": "2_python_quickstart",
       "tags": [
-        "advanced",
         "2_python_quickstart",
-        "python",
-        "meta"
+        "meta",
+        "advanced",
+        "python"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 2144,
@@ -4425,9 +5227,9 @@
       "category": "meta",
       "subcategory": "3_go_quickstart",
       "tags": [
-        "advanced",
         "3_go_quickstart",
-        "meta"
+        "meta",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1594,
@@ -4450,10 +5252,10 @@
       "category": "meta",
       "subcategory": "4_bash_quickstart",
       "tags": [
-        "typescript",
         "4_bash_quickstart",
-        "advanced",
-        "meta"
+        "typescript",
+        "meta",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 2072,
@@ -4486,11 +5288,11 @@
       "category": "meta",
       "subcategory": "5_sql_quickstart",
       "tags": [
-        "quickstart",
-        "advanced",
-        "5_sql_quickstart",
         "sql",
-        "meta"
+        "meta",
+        "advanced",
+        "quickstart",
+        "5_sql_quickstart"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 5323,
@@ -4517,10 +5319,10 @@
       "category": "meta",
       "subcategory": "6_rest_grapqhql_quickstart",
       "tags": [
-        "advanced",
-        "rest",
         "6_rest_grapqhql_quickstart",
-        "meta"
+        "meta",
+        "advanced",
+        "rest"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1795,
@@ -4542,9 +5344,9 @@
       "subcategory": "7_docker_quickstart",
       "tags": [
         "docker",
-        "7_docker_quickstart",
+        "meta",
         "advanced",
-        "meta"
+        "7_docker_quickstart"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1508,
@@ -4578,10 +5380,10 @@
       "category": "meta",
       "subcategory": "8_php_quickstart",
       "tags": [
-        "php",
-        "advanced",
         "8_php_quickstart",
-        "meta"
+        "meta",
+        "advanced",
+        "php"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1541,
@@ -4603,10 +5405,10 @@
       "category": "meta",
       "subcategory": "9_rust_quickstart",
       "tags": [
-        "advanced",
-        "9_rust_quickstart",
         "rust",
-        "meta"
+        "meta",
+        "9_rust_quickstart",
+        "advanced"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1540,
@@ -4630,11 +5432,11 @@
       "category": "meta",
       "subcategory": "0_scripts_quickstart",
       "tags": [
-        "0_scripts_quickstart",
-        "docker",
+        "sql",
         "rust",
-        "meta",
-        "typescript"
+        "typescript",
+        "docker",
+        "meta"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import { SiGnubash, SiGo, SiPython, SiTypescript, SiPostgresql, SiGraphql, SiDocker, SiPhp, SiAnsible, SiRust, SiCplusplus, SiRuby, } from 'react-ic",
       "word_count": 256,
@@ -4650,8 +5452,8 @@
       "category": "meta",
       "subcategory": "6_flows_quickstart",
       "tags": [
-        "flows",
         "6_flows_quickstart",
+        "flows",
         "meta"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
@@ -4693,8 +5495,8 @@
       "category": "meta",
       "subcategory": "8_triggers",
       "tags": [
-        "8_triggers",
         "triggers",
+        "8_triggers",
         "meta"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
@@ -4716,8 +5518,8 @@
       "subcategory": "windmill",
       "tags": [
         "beginner",
-        "tutorial",
         "windmill",
+        "tutorial",
         "what"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import VideoTour from '@site/src/components/VideoTour'; import { Book, Pen, Home, Cloud, Terminal, Play, Code, List, LayoutDashboard, Monitor } from",
@@ -4737,9 +5539,9 @@
       "category": "meta",
       "subcategory": "openflow",
       "tags": [
+        "meta",
         "advanced",
-        "openflow",
-        "meta"
+        "openflow"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1357,
@@ -4756,10 +5558,10 @@
       "category": "ref",
       "subcategory": "script_editor",
       "tags": [
-        "script_editor",
-        "reference",
         "api",
-        "concurrency"
+        "reference",
+        "concurrency",
+        "script_editor"
       ],
       "summary": "The Concurrency limits feature allows you to define concurrency limits for scripts, flows and inline scripts within flows. Its primary goal is to prevent exceeding the API Limit of the targeted API, e",
       "word_count": 208,
@@ -4778,9 +5580,9 @@
       "category": "concept",
       "subcategory": "script_editor",
       "tags": [
+        "custom",
         "script_editor",
-        "concept",
-        "custom"
+        "concept"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 127,
@@ -4796,10 +5598,10 @@
       "category": "tutorial",
       "subcategory": "script_editor",
       "tags": [
-        "script_editor",
         "generated",
+        "beginner",
         "tutorial",
-        "beginner"
+        "script_editor"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 387,
@@ -4815,10 +5617,10 @@
       "category": "meta",
       "subcategory": "script_editor",
       "tags": [
-        "script_editor",
+        "meta",
         "advanced",
-        "script",
-        "meta"
+        "script_editor",
+        "script"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard'; import Tabs from '@theme/Tabs'; import TabItem from '@theme/TabItem';",
       "word_count": 663,
@@ -4837,9 +5639,9 @@
       "category": "ref",
       "subcategory": "script_editor",
       "tags": [
-        "script_editor",
         "reference",
         "api",
+        "script_editor",
         "job"
       ],
       "summary": "Job debouncing limits job duplicates. When a script is queued with the same debouncing key within the specified time window, only the most recent one will run. This helps prevent duplicate executions ",
@@ -4859,8 +5661,8 @@
       "subcategory": "script_editor",
       "tags": [
         "operations",
-        "script_editor",
-        "multiplayer"
+        "multiplayer",
+        "script_editor"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 72,
@@ -4897,9 +5699,9 @@
       "category": "tutorial",
       "subcategory": "script_editor",
       "tags": [
-        "script_editor",
-        "tutorial",
         "beginner",
+        "tutorial",
+        "script_editor",
         "script"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
@@ -4921,10 +5723,10 @@
       "category": "tutorial",
       "subcategory": "script_editor",
       "tags": [
-        "script_editor",
-        "tutorial",
         "beginner",
-        "settings"
+        "settings",
+        "tutorial",
+        "script_editor"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 1463,
@@ -4945,8 +5747,8 @@
       "subcategory": "script_editor",
       "tags": [
         "script_editor",
-        "concept",
-        "run"
+        "run",
+        "concept"
       ],
       "summary": "import DocCard from '@site/src/components/DocCard';",
       "word_count": 105,
@@ -4958,6 +5760,61 @@
   ],
   "graph": {
     "links": [
+      {
+        "from": "ops/general/recipe-import-pipeline",
+        "to": "ops/general/architecture",
+        "type": "internal_link"
+      },
+      {
+        "from": "ops/general/recipe-import-pipeline",
+        "to": "ops/windmill/development-guide",
+        "type": "internal_link"
+      },
+      {
+        "from": "ref/fatsecret/api-recipe-types-get",
+        "to": "ref/fatsecret/api-recipes-search-v2",
+        "type": "internal_link"
+      },
+      {
+        "from": "ref/fatsecret/guides-authentication",
+        "to": "ref/fatsecret/guides-oauth2",
+        "type": "internal_link"
+      },
+      {
+        "from": "ref/fatsecret/guides-authentication",
+        "to": "ref/fatsecret/guides-oauth1",
+        "type": "internal_link"
+      },
+      {
+        "from": "ref/fatsecret/guides-authentication",
+        "to": "tutorial/fatsecret/guides-oauth1-three-legged",
+        "type": "internal_link"
+      },
+      {
+        "from": "tutorial/fatsecret/guides-welcome",
+        "to": "ref/fatsecret/guides-authentication",
+        "type": "internal_link"
+      },
+      {
+        "from": "tutorial/fatsecret/guides-welcome",
+        "to": "ref/fatsecret/guides-oauth2",
+        "type": "internal_link"
+      },
+      {
+        "from": "tutorial/fatsecret/guides-welcome",
+        "to": "ref/fatsecret/guides-oauth1",
+        "type": "internal_link"
+      },
+      {
+        "from": "tutorial/fatsecret/guides-welcome",
+        "to": "ref/fatsecret/guides-parameters",
+        "type": "internal_link"
+      },
+      {
+        "from": "tutorial/fatsecret/guides-welcome",
+        "to": "ops/fatsecret/guides-error-codes",
+        "type": "internal_link"
+      },
       {
         "from": "ops/tandoor/faq",
         "to": "ops/install/docker",
@@ -12281,11 +13138,12 @@
     ]
   },
   "keywords": {
-    "meal": [
-      "ops/general/architecture"
-    ],
     "operations": [
+      "ops/general/ai-documentation-system",
       "ops/general/architecture",
+      "ops/general/recipe-import-pipeline",
+      "ops/fatsecret/guides-error-codes",
+      "ops/fatsecret/guides-libraries",
       "ops/contribute/contribute",
       "ops/contribute/documentation",
       "ops/contribute/guidelines",
@@ -12336,8 +13194,19 @@
       "ops/script_editor/multiplayer",
       "ops/script_editor/perpetual-scripts"
     ],
+    "design": [
+      "ops/general/ai-documentation-system"
+    ],
     "advanced": [
+      "ops/general/ai-documentation-system",
       "ops/general/architecture",
+      "ops/general/recipe-import-pipeline",
+      "ref/fatsecret/api-image-recognition",
+      "ref/fatsecret/api-natural-language-processing",
+      "ref/fatsecret/api-recipe-get-v1",
+      "ops/fatsecret/guides-error-codes",
+      "concept/fatsecret/guides-localization",
+      "ref/fatsecret/guides-parameters",
       "ops/features/authentication",
       "ops/features/external-recipes",
       "ops/features/import-export",
@@ -12421,12 +13290,35 @@
       "meta/openflow/index",
       "meta/script_editor/index"
     ],
-    "planner": [
-      "ops/general/architecture"
+    "system": [
+      "ops/general/ai-documentation-system",
+      "ops/system/backup",
+      "ops/system/configuration",
+      "ops/system/migration-sqlite-postgres",
+      "concept/system/permissions",
+      "ops/system/updating",
+      "meta/windmill/indexing-system"
     ],
-    "architecture": [
-      "ops/general/architecture",
-      "tutorial/flows/16-architecture"
+    "complete": [
+      "ops/general/ai-documentation-system",
+      "ops/core_concepts/rust-sdk-winmill-patterns"
+    ],
+    "document": [
+      "ops/general/ai-documentation-system",
+      "ops/11_persistent_storage/key-value-stores"
+    ],
+    "documentation": [
+      "ops/general/ai-documentation-system",
+      "ops/contribute/documentation",
+      "ops/windmill/dag-visualization",
+      "ops/windmill/implementation-summary",
+      "meta/windmill/indexing-system"
+    ],
+    "aioptimized": [
+      "ops/general/ai-documentation-system"
+    ],
+    "meal": [
+      "ops/general/architecture"
     ],
     "rust": [
       "ops/general/architecture",
@@ -12482,38 +13374,257 @@
       "meta/00_how_to_use_windmill/index",
       "tutorial/windmill/intro"
     ],
-    "contribute": [
-      "ops/contribute/contribute",
-      "ops/contribute/documentation",
-      "ops/contribute/guidelines",
-      "ops/contribute/installation",
-      "ops/contribute/pycharm",
-      "concept/contribute/related",
-      "concept/contribute/translations",
-      "ops/contribute/vscode"
+    "architecture": [
+      "ops/general/architecture",
+      "tutorial/flows/16-architecture"
     ],
-    "documentation": [
-      "ops/contribute/documentation",
-      "ops/windmill/dag-visualization",
-      "ops/windmill/implementation-summary",
-      "meta/windmill/indexing-system"
+    "planner": [
+      "ops/general/architecture"
     ],
-    "guidelines": [
-      "ops/contribute/guidelines"
+    "recipe": [
+      "ops/general/recipe-import-pipeline",
+      "ref/fatsecret/api-recipe-get-v1",
+      "ref/fatsecret/api-recipe-types-get"
     ],
-    "installation": [
-      "ops/contribute/installation",
-      "ops/install/manual",
-      "ops/install/wsl",
-      "ops/3_cli/installation"
+    "import": [
+      "ops/general/recipe-import-pipeline",
+      "ops/features/import-export"
     ],
-    "pycharm": [
-      "ops/contribute/pycharm"
+    "pipeline": [
+      "ops/general/recipe-import-pipeline"
     ],
-    "related": [
-      "concept/contribute/related"
+    "add": [
+      "ref/fatsecret/api-food-add-favorite"
+    ],
+    "reference": [
+      "ref/fatsecret/api-food-add-favorite",
+      "ref/fatsecret/api-food-brands-get",
+      "ref/fatsecret/api-food-categories-get",
+      "ref/fatsecret/api-food-delete-favorite",
+      "ref/fatsecret/api-food-entries-get",
+      "ref/fatsecret/api-food-entry-create",
+      "ref/fatsecret/api-food-entry-delete",
+      "ref/fatsecret/api-food-get-v1",
+      "ref/fatsecret/api-food-sub-categories-get",
+      "ref/fatsecret/api-foods-get-favorites",
+      "ref/fatsecret/api-foods-search-v1",
+      "ref/fatsecret/api-foods-search-v3",
+      "ref/fatsecret/api-image-recognition",
+      "ref/fatsecret/api-natural-language-processing",
+      "ref/fatsecret/api-profile-create",
+      "ref/fatsecret/api-profile-get-auth",
+      "ref/fatsecret/api-profile-get",
+      "ref/fatsecret/api-recipe-get-v1",
+      "ref/fatsecret/api-recipe-types-get",
+      "ref/fatsecret/api-recipes-search-v2",
+      "ref/fatsecret/guides-authentication",
+      "ref/fatsecret/guides-oauth1",
+      "ref/fatsecret/guides-oauth2",
+      "ref/fatsecret/guides-parameters",
+      "ops/core_concepts/rust-sdk-winmill-patterns",
+      "ref/flows/23-job-debouncing",
+      "ref/flows/6-concurrency-limit",
+      "ref/script_editor/concurrency-limit",
+      "ref/script_editor/job-debouncing"
+    ],
+    "food": [
+      "ref/fatsecret/api-food-add-favorite",
+      "ref/fatsecret/api-food-brands-get",
+      "ref/fatsecret/api-food-categories-get",
+      "ref/fatsecret/api-food-delete-favorite",
+      "ref/fatsecret/api-food-entries-get",
+      "ref/fatsecret/api-food-entry-create",
+      "ref/fatsecret/api-food-entry-delete",
+      "ref/fatsecret/api-food-get-v1",
+      "ref/fatsecret/api-food-sub-categories-get"
+    ],
+    "fatsecret": [
+      "ref/fatsecret/api-food-add-favorite",
+      "ref/fatsecret/api-food-brands-get",
+      "ref/fatsecret/api-food-categories-get",
+      "ref/fatsecret/api-food-delete-favorite",
+      "ref/fatsecret/api-food-entries-get",
+      "ref/fatsecret/api-food-entry-create",
+      "ref/fatsecret/api-food-entry-delete",
+      "ref/fatsecret/api-food-get-v1",
+      "ref/fatsecret/api-food-sub-categories-get",
+      "ref/fatsecret/api-foods-get-favorites",
+      "ref/fatsecret/api-foods-search-v1",
+      "ref/fatsecret/api-foods-search-v3",
+      "ref/fatsecret/api-image-recognition",
+      "ref/fatsecret/api-natural-language-processing",
+      "ref/fatsecret/api-profile-create",
+      "ref/fatsecret/api-profile-get-auth",
+      "ref/fatsecret/api-profile-get",
+      "ref/fatsecret/api-recipe-get-v1",
+      "ref/fatsecret/api-recipe-types-get",
+      "ref/fatsecret/api-recipes-search-v2",
+      "ref/fatsecret/guides-authentication",
+      "ops/fatsecret/guides-error-codes",
+      "ops/fatsecret/guides-libraries",
+      "concept/fatsecret/guides-localization",
+      "tutorial/fatsecret/guides-oauth1-three-legged",
+      "ref/fatsecret/guides-oauth1",
+      "ref/fatsecret/guides-oauth2",
+      "ref/fatsecret/guides-parameters",
+      "tutorial/fatsecret/guides-welcome"
+    ],
+    "favorite": [
+      "ref/fatsecret/api-food-add-favorite",
+      "ref/fatsecret/api-food-delete-favorite"
+    ],
+    "brands": [
+      "ref/fatsecret/api-food-brands-get"
+    ],
+    "all": [
+      "ref/fatsecret/api-food-brands-get",
+      "ref/fatsecret/api-food-categories-get",
+      "ref/fatsecret/api-food-sub-categories-get",
+      "ref/fatsecret/api-recipe-types-get"
+    ],
+    "get": [
+      "ref/fatsecret/api-food-brands-get",
+      "ref/fatsecret/api-food-categories-get",
+      "ref/fatsecret/api-food-entries-get",
+      "ref/fatsecret/api-food-get-v1",
+      "ref/fatsecret/api-food-sub-categories-get",
+      "ref/fatsecret/api-foods-get-favorites",
+      "ref/fatsecret/api-profile-get-auth",
+      "ref/fatsecret/api-profile-get",
+      "ref/fatsecret/api-recipe-get-v1",
+      "ref/fatsecret/api-recipe-types-get"
+    ],
+    "categories": [
+      "ref/fatsecret/api-food-categories-get",
+      "ref/fatsecret/api-food-sub-categories-get"
+    ],
+    "delete": [
+      "ref/fatsecret/api-food-delete-favorite",
+      "ref/fatsecret/api-food-entry-delete",
+      "concept/flows/21-lifetime"
+    ],
+    "entries": [
+      "ref/fatsecret/api-food-entries-get"
+    ],
+    "v1": [
+      "ref/fatsecret/api-food-entries-get",
+      "ref/fatsecret/api-foods-get-favorites"
+    ],
+    "create": [
+      "ref/fatsecret/api-food-entry-create",
+      "ref/fatsecret/api-profile-create"
+    ],
+    "entry": [
+      "ref/fatsecret/api-food-entry-create",
+      "ref/fatsecret/api-food-entry-delete"
+    ],
+    "sub": [
+      "ref/fatsecret/api-food-sub-categories-get"
+    ],
+    "favorites": [
+      "ref/fatsecret/api-foods-get-favorites"
+    ],
+    "foods": [
+      "ref/fatsecret/api-foods-get-favorites",
+      "ref/fatsecret/api-foods-search-v1",
+      "ref/fatsecret/api-foods-search-v3"
+    ],
+    "search": [
+      "ref/fatsecret/api-foods-search-v1",
+      "ref/fatsecret/api-foods-search-v3",
+      "ref/fatsecret/api-recipes-search-v2",
+      "meta/26_content_search/index",
+      "meta/35_search_bar/index"
+    ],
+    "recognition": [
+      "ref/fatsecret/api-image-recognition"
+    ],
+    "api": [
+      "ref/fatsecret/api-image-recognition",
+      "ref/fatsecret/api-natural-language-processing",
+      "ref/fatsecret/guides-authentication",
+      "ops/fatsecret/guides-error-codes",
+      "ops/fatsecret/guides-libraries",
+      "concept/fatsecret/guides-localization",
+      "tutorial/fatsecret/guides-oauth1-three-legged",
+      "ref/fatsecret/guides-oauth1",
+      "ref/fatsecret/guides-oauth2",
+      "ref/fatsecret/guides-parameters",
+      "tutorial/fatsecret/guides-welcome",
+      "meta/10_browser_automation/index",
+      "ops/2_clients/rust-client",
+      "meta/21_concurrency_limits/index",
+      "ref/script_editor/concurrency-limit",
+      "ref/script_editor/job-debouncing"
+    ],
+    "image": [
+      "ref/fatsecret/api-image-recognition"
+    ],
+    "processing": [
+      "ref/fatsecret/api-natural-language-processing"
+    ],
+    "language": [
+      "ref/fatsecret/api-natural-language-processing"
+    ],
+    "natural": [
+      "ref/fatsecret/api-natural-language-processing"
+    ],
+    "profile": [
+      "ref/fatsecret/api-profile-create",
+      "ref/fatsecret/api-profile-get-auth",
+      "ref/fatsecret/api-profile-get"
+    ],
+    "auth": [
+      "ref/fatsecret/api-profile-get-auth",
+      "meta/16_external_auth_with_jwt/index"
+    ],
+    "status": [
+      "ref/fatsecret/api-profile-get"
+    ],
+    "types": [
+      "ref/fatsecret/api-recipe-types-get",
+      "meta/3_resources_and_types/index"
+    ],
+    "recipes": [
+      "ref/fatsecret/api-recipes-search-v2",
+      "ops/features/external-recipes"
+    ],
+    "authentication": [
+      "ref/fatsecret/guides-authentication",
+      "ops/features/authentication",
+      "meta/15_authentification/index"
+    ],
+    "platform": [
+      "ref/fatsecret/guides-authentication",
+      "ops/fatsecret/guides-error-codes",
+      "ops/fatsecret/guides-libraries",
+      "concept/fatsecret/guides-localization",
+      "tutorial/fatsecret/guides-oauth1-three-legged",
+      "ref/fatsecret/guides-oauth1",
+      "ref/fatsecret/guides-oauth2",
+      "ref/fatsecret/guides-parameters",
+      "tutorial/fatsecret/guides-welcome"
+    ],
+    "error": [
+      "ops/fatsecret/guides-error-codes",
+      "meta/10_error_handling/index",
+      "tutorial/flows/7-flow-error-handler",
+      "concept/flows/8-error-handling"
+    ],
+    "codes": [
+      "ops/fatsecret/guides-error-codes"
+    ],
+    "thirdparty": [
+      "ops/fatsecret/guides-libraries"
+    ],
+    "libraries": [
+      "ops/fatsecret/guides-libraries"
+    ],
+    "localization": [
+      "concept/fatsecret/guides-localization"
     ],
     "concept": [
+      "concept/fatsecret/guides-localization",
       "concept/contribute/related",
       "concept/contribute/translations",
       "concept/features/ai",
@@ -12543,6 +13654,104 @@
       "concept/script_editor/custom-environment-variables",
       "concept/script_editor/vs-code-scripts"
     ],
+    "beginner": [
+      "tutorial/fatsecret/guides-oauth1-three-legged",
+      "tutorial/fatsecret/guides-welcome",
+      "tutorial/features/connectors",
+      "tutorial/install/synology",
+      "tutorial/windmill/flows-guide",
+      "tutorial/11_persistent_storage/data-tables",
+      "tutorial/11_persistent_storage/ducklake",
+      "tutorial/11_persistent_storage/structured-databases",
+      "tutorial/flows/11-flow-approval",
+      "tutorial/flows/12-flow-loops",
+      "tutorial/flows/15-sleep",
+      "tutorial/flows/16-architecture",
+      "tutorial/flows/1-flow-editor",
+      "tutorial/flows/22-while-loops",
+      "tutorial/flows/3-editor-components",
+      "tutorial/flows/4-cache",
+      "tutorial/flows/7-flow-error-handler",
+      "tutorial/windmill/intro",
+      "tutorial/script_editor/customize-ui",
+      "tutorial/script_editor/script-kinds",
+      "tutorial/script_editor/settings"
+    ],
+    "tutorial": [
+      "tutorial/fatsecret/guides-oauth1-three-legged",
+      "tutorial/fatsecret/guides-welcome",
+      "tutorial/features/connectors",
+      "tutorial/install/synology",
+      "tutorial/windmill/flows-guide",
+      "tutorial/11_persistent_storage/data-tables",
+      "tutorial/11_persistent_storage/ducklake",
+      "tutorial/11_persistent_storage/structured-databases",
+      "tutorial/flows/11-flow-approval",
+      "tutorial/flows/12-flow-loops",
+      "tutorial/flows/15-sleep",
+      "tutorial/flows/16-architecture",
+      "tutorial/flows/1-flow-editor",
+      "tutorial/flows/22-while-loops",
+      "tutorial/flows/3-editor-components",
+      "tutorial/flows/4-cache",
+      "tutorial/flows/7-flow-error-handler",
+      "tutorial/windmill/intro",
+      "tutorial/script_editor/customize-ui",
+      "tutorial/script_editor/script-kinds",
+      "tutorial/script_editor/settings"
+    ],
+    "oauth": [
+      "tutorial/fatsecret/guides-oauth1-three-legged",
+      "ref/fatsecret/guides-oauth1",
+      "ref/fatsecret/guides-oauth2",
+      "ops/windmill/deployment-guide"
+    ],
+    "3legged": [
+      "tutorial/fatsecret/guides-oauth1-three-legged"
+    ],
+    "10": [
+      "ref/fatsecret/guides-oauth1"
+    ],
+    "guide": [
+      "ref/fatsecret/guides-oauth1",
+      "ref/fatsecret/guides-oauth2",
+      "ops/windmill/deployment-guide",
+      "ops/windmill/development-guide",
+      "tutorial/windmill/flows-guide",
+      "ops/55_workspace_dependencies/migration",
+      "ops/core_concepts/rust-sdk-winmill-patterns"
+    ],
+    "20": [
+      "ref/fatsecret/guides-oauth2"
+    ],
+    "parameters": [
+      "ref/fatsecret/guides-parameters"
+    ],
+    "welcome": [
+      "tutorial/fatsecret/guides-welcome"
+    ],
+    "contribute": [
+      "ops/contribute/contribute",
+      "ops/contribute/documentation",
+      "ops/contribute/guidelines",
+      "ops/contribute/installation",
+      "ops/contribute/pycharm",
+      "concept/contribute/related",
+      "concept/contribute/translations",
+      "ops/contribute/vscode"
+    ],
+    "guidelines": [
+      "ops/contribute/guidelines"
+    ],
+    "installation": [
+      "ops/contribute/installation",
+      "ops/install/manual",
+      "ops/install/wsl",
+      "ops/3_cli/installation"
+    ],
+    "pycharm": [
+      "ops/contribute/pycharm"
+    ],
     "tandoor": [
       "concept/contribute/related",
       "concept/contribute/translations",
@@ -12550,7 +13759,11 @@
       "concept/features/ai",
       "ops/features/telegram-bot",
       "meta/tandoor/index",
-      "ops/install/homeassistant"
+      "ops/install/homeassistant",
+      "ops/system/migration-sqlite-postgres"
+    ],
+    "related": [
+      "concept/contribute/related"
     ],
     "translations": [
       "concept/contribute/translations"
@@ -12572,55 +13785,9 @@
       "ops/features/telegram-bot",
       "concept/features/templating"
     ],
-    "authentication": [
-      "ops/features/authentication",
-      "meta/15_authentification/index"
-    ],
     "automation": [
       "concept/features/automation",
       "meta/10_browser_automation/index"
-    ],
-    "tutorial": [
-      "tutorial/features/connectors",
-      "tutorial/install/synology",
-      "tutorial/windmill/flows-guide",
-      "tutorial/11_persistent_storage/data-tables",
-      "tutorial/11_persistent_storage/ducklake",
-      "tutorial/11_persistent_storage/structured-databases",
-      "tutorial/flows/11-flow-approval",
-      "tutorial/flows/12-flow-loops",
-      "tutorial/flows/15-sleep",
-      "tutorial/flows/16-architecture",
-      "tutorial/flows/1-flow-editor",
-      "tutorial/flows/22-while-loops",
-      "tutorial/flows/3-editor-components",
-      "tutorial/flows/4-cache",
-      "tutorial/flows/7-flow-error-handler",
-      "tutorial/windmill/intro",
-      "tutorial/script_editor/customize-ui",
-      "tutorial/script_editor/script-kinds",
-      "tutorial/script_editor/settings"
-    ],
-    "beginner": [
-      "tutorial/features/connectors",
-      "tutorial/install/synology",
-      "tutorial/windmill/flows-guide",
-      "tutorial/11_persistent_storage/data-tables",
-      "tutorial/11_persistent_storage/ducklake",
-      "tutorial/11_persistent_storage/structured-databases",
-      "tutorial/flows/11-flow-approval",
-      "tutorial/flows/12-flow-loops",
-      "tutorial/flows/15-sleep",
-      "tutorial/flows/16-architecture",
-      "tutorial/flows/1-flow-editor",
-      "tutorial/flows/22-while-loops",
-      "tutorial/flows/3-editor-components",
-      "tutorial/flows/4-cache",
-      "tutorial/flows/7-flow-error-handler",
-      "tutorial/windmill/intro",
-      "tutorial/script_editor/customize-ui",
-      "tutorial/script_editor/script-kinds",
-      "tutorial/script_editor/settings"
     ],
     "connectors": [
       "tutorial/features/connectors"
@@ -12628,12 +13795,6 @@
     "external": [
       "ops/features/external-recipes",
       "meta/16_external_auth_with_jwt/index"
-    ],
-    "recipes": [
-      "ops/features/external-recipes"
-    ],
-    "import": [
-      "ops/features/import-export"
     ],
     "export": [
       "ops/features/import-export"
@@ -12710,11 +13871,13 @@
       "meta/38_object_storage_in_windmill/index",
       "meta/39_http_routing/index",
       "meta/3_resources_and_types/index",
+      "meta/40_websocket_triggers/index",
       "meta/41_kafka_triggers/index",
       "meta/42_autoscaling/index",
       "meta/43_preprocessors/index",
       "meta/44_workspace_settings/index",
       "meta/45_nats_triggers/index",
+      "meta/46_postgres_triggers/index",
       "meta/47_environment_variables/index",
       "meta/48_sqs_triggers/index",
       "meta/49_mqtt_triggers/index",
@@ -12777,7 +13940,6 @@
       "ops/install/docker",
       "ops/install/swag",
       "ops/install/wsl",
-      "ops/system/migration-sqlite-postgres",
       "ops/system/updating",
       "meta/7_docker/index",
       "meta/7_docker_quickstart/index",
@@ -12792,12 +13954,6 @@
     "kubesail": [
       "ops/install/kubesail"
     ],
-    "manual": [
-      "ops/install/manual"
-    ],
-    "instructions": [
-      "ops/install/manual"
-    ],
     "sql": [
       "ops/install/manual",
       "ops/system/migration-sqlite-postgres",
@@ -12806,7 +13962,14 @@
       "meta/46_postgres_triggers/index",
       "meta/51_sql_to_s3_streaming/index",
       "meta/53_custom_instance_database/index",
-      "meta/5_sql_quickstart/index"
+      "meta/5_sql_quickstart/index",
+      "meta/0_scripts_quickstart/index"
+    ],
+    "manual": [
+      "ops/install/manual"
+    ],
+    "instructions": [
+      "ops/install/manual"
     ],
     "other": [
       "ops/install/other"
@@ -12826,9 +13989,6 @@
     "unraid": [
       "ops/install/unraid"
     ],
-    "windows": [
-      "ops/install/wsl"
-    ],
     "wsl": [
       "ops/install/wsl"
     ],
@@ -12838,26 +13998,21 @@
     "ubuntu": [
       "ops/install/wsl"
     ],
+    "windows": [
+      "ops/install/wsl"
+    ],
     "backup": [
       "ops/system/backup"
-    ],
-    "system": [
-      "ops/system/backup",
-      "ops/system/configuration",
-      "ops/system/migration-sqlite-postgres",
-      "concept/system/permissions",
-      "ops/system/updating",
-      "meta/windmill/indexing-system"
     ],
     "configuration": [
       "ops/system/configuration"
     ],
+    "how": [
+      "ops/system/migration-sqlite-postgres"
+    ],
     "from": [
       "ops/system/migration-sqlite-postgres",
       "meta/19_explicit_progress/index"
-    ],
-    "migrate": [
-      "ops/system/migration-sqlite-postgres"
     ],
     "sqlite3": [
       "ops/system/migration-sqlite-postgres"
@@ -12866,12 +14021,12 @@
       "ops/system/migration-sqlite-postgres",
       "meta/53_custom_instance_database/index"
     ],
-    "how": [
-      "ops/system/migration-sqlite-postgres"
-    ],
     "postgresql": [
       "ops/system/migration-sqlite-postgres",
       "meta/5_sql_quickstart/index"
+    ],
+    "migrate": [
+      "ops/system/migration-sqlite-postgres"
     ],
     "permissions": [
       "concept/system/permissions",
@@ -12888,16 +14043,6 @@
     ],
     "deployment": [
       "ops/windmill/deployment-guide"
-    ],
-    "oauth": [
-      "ops/windmill/deployment-guide"
-    ],
-    "guide": [
-      "ops/windmill/deployment-guide",
-      "ops/windmill/development-guide",
-      "tutorial/windmill/flows-guide",
-      "ops/55_workspace_dependencies/migration",
-      "ops/core_concepts/rust-sdk-winmill-patterns"
     ],
     "development": [
       "ops/windmill/development-guide",
@@ -12932,12 +14077,12 @@
       "concept/flows/9-custom-timeout",
       "meta/6_flows_quickstart/index"
     ],
-    "implementation": [
-      "ops/windmill/implementation-summary"
-    ],
     "indexing": [
       "ops/windmill/implementation-summary",
       "meta/windmill/indexing-system"
+    ],
+    "implementation": [
+      "ops/windmill/implementation-summary"
     ],
     "summary": [
       "ops/windmill/implementation-summary"
@@ -12948,21 +14093,13 @@
     "10browserautomation": [
       "meta/10_browser_automation/index"
     ],
-    "api": [
-      "meta/10_browser_automation/index",
-      "ops/2_clients/rust-client",
-      "meta/21_concurrency_limits/index",
-      "meta/40_websocket_triggers/index",
-      "ref/script_editor/concurrency-limit",
-      "ref/script_editor/job-debouncing"
+    "cli": [
+      "ops/11_git_sync/cli-sync",
+      "meta/3_cli/index"
     ],
     "11gitsync": [
       "ops/11_git_sync/cli-sync",
       "meta/11_git_sync/index"
-    ],
-    "cli": [
-      "ops/11_git_sync/cli-sync",
-      "meta/3_cli/index"
     ],
     "sync": [
       "ops/11_git_sync/cli-sync",
@@ -12981,16 +14118,13 @@
       "meta/0_draft_and_deploy/index",
       "meta/12_staging_prod/index"
     ],
-    "12deploytoprod": [
-      "meta/12_deploy_to_prod/index"
-    ],
     "prod": [
       "meta/12_deploy_to_prod/index",
       "meta/9_deploy_gh_gl/index",
       "meta/12_staging_prod/index"
     ],
-    "control": [
-      "meta/13_version_control/index"
+    "12deploytoprod": [
+      "meta/12_deploy_to_prod/index"
     ],
     "version": [
       "meta/13_version_control/index"
@@ -12998,13 +14132,16 @@
     "13versioncontrol": [
       "meta/13_version_control/index"
     ],
-    "14dependenciesintypescript": [
-      "meta/14_dependencies_in_typescript/index"
+    "control": [
+      "meta/13_version_control/index"
     ],
     "dependencies": [
       "meta/14_dependencies_in_typescript/index",
       "meta/15_dependencies_in_python/index",
       "meta/55_workspace_dependencies/index"
+    ],
+    "14dependenciesintypescript": [
+      "meta/14_dependencies_in_typescript/index"
     ],
     "typescript": [
       "meta/14_dependencies_in_typescript/index",
@@ -13021,14 +14158,14 @@
       "ops/2_clients/python-client",
       "meta/2_python_quickstart/index"
     ],
-    "auth": [
-      "meta/16_external_auth_with_jwt/index"
-    ],
     "jwt": [
       "meta/16_external_auth_with_jwt/index"
     ],
     "16externalauthwithjwt": [
       "meta/16_external_auth_with_jwt/index"
+    ],
+    "email": [
+      "meta/17_email_triggers/index"
     ],
     "triggers": [
       "meta/17_email_triggers/index",
@@ -13040,9 +14177,6 @@
       "meta/49_mqtt_triggers/index",
       "meta/50_gcp_triggers/index",
       "meta/8_triggers/index"
-    ],
-    "email": [
-      "meta/17_email_triggers/index"
     ],
     "17emailtriggers": [
       "meta/17_email_triggers/index"
@@ -13060,34 +14194,31 @@
     "18instancesettings": [
       "meta/18_instance_settings/index"
     ],
+    "setget": [
+      "meta/19_explicit_progress/index"
+    ],
     "code": [
       "meta/19_explicit_progress/index",
       "meta/1_vscode-extension/index",
       "meta/31_workflows_as_code/index",
       "concept/script_editor/vs-code-scripts"
     ],
-    "progress": [
-      "meta/19_explicit_progress/index"
-    ],
-    "setget": [
-      "meta/19_explicit_progress/index"
-    ],
     "19explicitprogress": [
       "meta/19_explicit_progress/index"
     ],
-    "1selfhost": [
-      "ops/1_self_host/aws-eks-ecs",
-      "meta/1_self_host/index"
+    "progress": [
+      "meta/19_explicit_progress/index"
     ],
     "aws": [
       "ops/1_self_host/aws-eks-ecs",
       "meta/48_sqs_triggers/index"
     ],
-    "selfhost": [
+    "1selfhost": [
+      "ops/1_self_host/aws-eks-ecs",
       "meta/1_self_host/index"
     ],
-    "20workspaceforks": [
-      "meta/20_workspace_forks/index"
+    "selfhost": [
+      "meta/1_self_host/index"
     ],
     "workspace": [
       "meta/20_workspace_forks/index",
@@ -13096,17 +14227,20 @@
       "meta/44_workspace_settings/index",
       "meta/55_workspace_dependencies/index"
     ],
-    "forks": [
+    "20workspaceforks": [
       "meta/20_workspace_forks/index"
     ],
-    "scaling": [
-      "meta/21_scaling/index"
+    "forks": [
+      "meta/20_workspace_forks/index"
     ],
     "workers": [
       "meta/21_scaling/index",
       "meta/25_dedicated_workers/index",
       "meta/28_agent_workers/index",
       "meta/9_worker_groups/index"
+    ],
+    "scaling": [
+      "meta/21_scaling/index"
     ],
     "21scaling": [
       "meta/21_scaling/index"
@@ -13120,6 +14254,10 @@
       "ops/2_clients/python-client",
       "ops/2_clients/rust-client",
       "ops/2_clients/ts-client"
+    ],
+    "apps": [
+      "concept/3_cli/app",
+      "meta/7_apps_quickstart/index"
     ],
     "3cli": [
       "concept/3_cli/app",
@@ -13136,10 +14274,6 @@
       "concept/3_cli/variable",
       "ops/3_cli/workspace-management"
     ],
-    "apps": [
-      "concept/3_cli/app",
-      "meta/7_apps_quickstart/index"
-    ],
     "branchspecific": [
       "ops/3_cli/branch-specific-items"
     ],
@@ -13149,10 +14283,10 @@
     "folder": [
       "concept/3_cli/folder"
     ],
-    "interface": [
+    "commandline": [
       "meta/3_cli/index"
     ],
-    "commandline": [
+    "interface": [
       "meta/3_cli/index"
     ],
     "resources": [
@@ -13180,12 +14314,12 @@
       "meta/47_environment_variables/index",
       "concept/script_editor/custom-environment-variables"
     ],
-    "local": [
-      "meta/4_local_development/index"
-    ],
     "4localdevelopment": [
       "meta/4_local_development/index",
       "ops/4_local_development/run-locally"
+    ],
+    "local": [
+      "meta/4_local_development/index"
     ],
     "run": [
       "ops/4_local_development/run-locally",
@@ -13195,9 +14329,6 @@
     "locally": [
       "ops/4_local_development/run-locally"
     ],
-    "sharing": [
-      "meta/5_sharing_common_logic/index"
-    ],
     "common": [
       "meta/5_sharing_common_logic/index"
     ],
@@ -13205,6 +14336,9 @@
       "meta/5_sharing_common_logic/index"
     ],
     "logic": [
+      "meta/5_sharing_common_logic/index"
+    ],
+    "sharing": [
       "meta/5_sharing_common_logic/index"
     ],
     "imports": [
@@ -13222,13 +14356,13 @@
     "containers": [
       "meta/7_docker/index"
     ],
-    "preinstall": [
-      "meta/8_preinstall_binaries/index"
-    ],
     "binaries": [
       "meta/8_preinstall_binaries/index"
     ],
     "8preinstallbinaries": [
+      "meta/8_preinstall_binaries/index"
+    ],
+    "preinstall": [
       "meta/8_preinstall_binaries/index"
     ],
     "9deployghgl": [
@@ -13241,9 +14375,6 @@
       "meta/9_deploy_gh_gl/index",
       "meta/12_staging_prod/index"
     ],
-    "isolation": [
-      "meta/security_isolation/index"
-    ],
     "security": [
       "meta/security_isolation/index"
     ],
@@ -13253,33 +14384,36 @@
     "securityisolation": [
       "meta/security_isolation/index"
     ],
-    "extension": [
-      "meta/1_vscode-extension/index"
+    "isolation": [
+      "meta/security_isolation/index"
     ],
     "1vscodeextension": [
       "meta/1_vscode-extension/index"
     ],
-    "0draftanddeploy": [
-      "meta/0_draft_and_deploy/index"
+    "extension": [
+      "meta/1_vscode-extension/index"
     ],
     "draft": [
       "meta/0_draft_and_deploy/index"
     ],
+    "0draftanddeploy": [
+      "meta/0_draft_and_deploy/index"
+    ],
     "10errorhandling": [
       "meta/10_error_handling/index"
-    ],
-    "error": [
-      "meta/10_error_handling/index",
-      "tutorial/flows/7-flow-error-handler",
-      "concept/flows/8-error-handling"
     ],
     "handling": [
       "meta/10_error_handling/index",
       "meta/18_files_binary_data/index",
       "concept/flows/8-error-handling"
     ],
-    "tables": [
-      "tutorial/11_persistent_storage/data-tables"
+    "data": [
+      "tutorial/11_persistent_storage/data-tables",
+      "concept/11_persistent_storage/large-data-files",
+      "tutorial/11_persistent_storage/structured-databases",
+      "meta/18_files_binary_data/index",
+      "meta/27_data_pipelines/index",
+      "tutorial/flows/16-architecture"
     ],
     "11persistentstorage": [
       "tutorial/11_persistent_storage/data-tables",
@@ -13290,13 +14424,8 @@
       "tutorial/11_persistent_storage/structured-databases",
       "concept/11_persistent_storage/within-windmill"
     ],
-    "data": [
-      "tutorial/11_persistent_storage/data-tables",
-      "concept/11_persistent_storage/large-data-files",
-      "tutorial/11_persistent_storage/structured-databases",
-      "meta/18_files_binary_data/index",
-      "meta/27_data_pipelines/index",
-      "tutorial/flows/16-architecture"
+    "tables": [
+      "tutorial/11_persistent_storage/data-tables"
     ],
     "ducklake": [
       "tutorial/11_persistent_storage/ducklake"
@@ -13304,29 +14433,32 @@
     "persistent": [
       "meta/11_persistent_storage/index"
     ],
+    "databases": [
+      "meta/11_persistent_storage/index",
+      "ops/11_persistent_storage/key-value-stores"
+    ],
     "storage": [
       "meta/11_persistent_storage/index",
       "concept/11_persistent_storage/large-data-files",
       "meta/38_object_storage_in_windmill/index"
     ],
-    "databases": [
-      "meta/11_persistent_storage/index",
+    "mongodb": [
       "ops/11_persistent_storage/key-value-stores"
     ],
     "keyvalue": [
       "ops/11_persistent_storage/key-value-stores"
     ],
+    "nosql": [
+      "ops/11_persistent_storage/key-value-stores"
+    ],
     "stores": [
       "ops/11_persistent_storage/key-value-stores"
     ],
-    "mongodb": [
-      "ops/11_persistent_storage/key-value-stores"
+    "cloud": [
+      "concept/11_persistent_storage/large-data-files"
     ],
-    "document": [
-      "ops/11_persistent_storage/key-value-stores"
-    ],
-    "nosql": [
-      "ops/11_persistent_storage/key-value-stores"
+    "azure": [
+      "concept/11_persistent_storage/large-data-files"
     ],
     "blob": [
       "concept/11_persistent_storage/large-data-files"
@@ -13334,29 +14466,22 @@
     "google": [
       "concept/11_persistent_storage/large-data-files"
     ],
-    "large": [
-      "concept/11_persistent_storage/large-data-files",
-      "meta/51_sql_to_s3_streaming/index"
-    ],
-    "s3": [
-      "concept/11_persistent_storage/large-data-files",
-      "meta/38_object_storage_in_windmill/index"
-    ],
-    "cloud": [
+    "minio": [
       "concept/11_persistent_storage/large-data-files"
     ],
     "r2": [
       "concept/11_persistent_storage/large-data-files"
     ],
-    "azure": [
-      "concept/11_persistent_storage/large-data-files"
+    "s3": [
+      "concept/11_persistent_storage/large-data-files",
+      "meta/38_object_storage_in_windmill/index"
     ],
-    "minio": [
-      "concept/11_persistent_storage/large-data-files"
+    "large": [
+      "concept/11_persistent_storage/large-data-files",
+      "meta/51_sql_to_s3_streaming/index"
     ],
-    "postgres": [
-      "tutorial/11_persistent_storage/structured-databases",
-      "meta/46_postgres_triggers/index"
+    "neontech": [
+      "tutorial/11_persistent_storage/structured-databases"
     ],
     "big": [
       "tutorial/11_persistent_storage/structured-databases"
@@ -13364,8 +14489,9 @@
     "supabase": [
       "tutorial/11_persistent_storage/structured-databases"
     ],
-    "neontech": [
-      "tutorial/11_persistent_storage/structured-databases"
+    "postgres": [
+      "tutorial/11_persistent_storage/structured-databases",
+      "meta/46_postgres_triggers/index"
     ],
     "structured": [
       "tutorial/11_persistent_storage/structured-databases"
@@ -13373,10 +14499,10 @@
     "not": [
       "concept/11_persistent_storage/within-windmill"
     ],
-    "recommended": [
+    "within": [
       "concept/11_persistent_storage/within-windmill"
     ],
-    "within": [
+    "recommended": [
       "concept/11_persistent_storage/within-windmill"
     ],
     "12stagingprod": [
@@ -13385,32 +14511,32 @@
     "json": [
       "meta/13_json_schema_and_parsing/index"
     ],
-    "parsing": [
+    "13jsonschemaandparsing": [
       "meta/13_json_schema_and_parsing/index"
     ],
     "schema": [
       "meta/13_json_schema_and_parsing/index"
     ],
-    "13jsonschemaandparsing": [
+    "parsing": [
       "meta/13_json_schema_and_parsing/index"
     ],
     "14auditlogs": [
+      "meta/14_audit_logs/index"
+    ],
+    "audit": [
       "meta/14_audit_logs/index"
     ],
     "logs": [
       "meta/14_audit_logs/index",
       "meta/36_service_logs/index"
     ],
-    "audit": [
-      "meta/14_audit_logs/index"
-    ],
     "15authentification": [
       "meta/15_authentification/index"
     ],
-    "roles": [
+    "16rolesandpermissions": [
       "meta/16_roles_and_permissions/index"
     ],
-    "16rolesandpermissions": [
+    "roles": [
       "meta/16_roles_and_permissions/index"
     ],
     "17collaboration": [
@@ -13419,17 +14545,14 @@
     "collaboration": [
       "meta/17_collaboration/index"
     ],
+    "18filesbinarydata": [
+      "meta/18_files_binary_data/index"
+    ],
     "binary": [
       "meta/18_files_binary_data/index"
     ],
     "files": [
       "meta/18_files_binary_data/index"
-    ],
-    "18filesbinarydata": [
-      "meta/18_files_binary_data/index"
-    ],
-    "rich": [
-      "meta/19_rich_display_rendering/index"
     ],
     "rendering": [
       "meta/19_rich_display_rendering/index"
@@ -13440,20 +14563,28 @@
     "19richdisplayrendering": [
       "meta/19_rich_display_rendering/index"
     ],
-    "1scheduling": [
-      "meta/1_scheduling/index"
+    "rich": [
+      "meta/19_rich_display_rendering/index"
     ],
     "schedules": [
       "meta/1_scheduling/index"
     ],
-    "20jobs": [
-      "meta/20_jobs/index"
+    "1scheduling": [
+      "meta/1_scheduling/index"
     ],
     "jobs": [
       "meta/20_jobs/index",
       "meta/5_monitor_past_and_future_runs/index"
     ],
+    "20jobs": [
+      "meta/20_jobs/index"
+    ],
     "limits": [
+      "meta/21_concurrency_limits/index",
+      "ref/flows/6-concurrency-limit",
+      "ref/script_editor/concurrency-limit"
+    ],
+    "concurrency": [
       "meta/21_concurrency_limits/index",
       "ref/flows/6-concurrency-limit",
       "ref/script_editor/concurrency-limit"
@@ -13461,13 +14592,13 @@
     "21concurrencylimits": [
       "meta/21_concurrency_limits/index"
     ],
-    "concurrency": [
-      "meta/21_concurrency_limits/index",
-      "ref/flows/6-concurrency-limit",
-      "ref/script_editor/concurrency-limit"
-    ],
     "22aigeneration": [
       "meta/22_ai_generation/index"
+    ],
+    "job": [
+      "meta/22_job_debouncing/index",
+      "ref/flows/23-job-debouncing",
+      "ref/script_editor/job-debouncing"
     ],
     "debouncing": [
       "meta/22_job_debouncing/index",
@@ -13477,19 +14608,14 @@
     "22jobdebouncing": [
       "meta/22_job_debouncing/index"
     ],
-    "job": [
-      "meta/22_job_debouncing/index",
-      "ref/flows/23-job-debouncing",
-      "ref/script_editor/job-debouncing"
+    "preview": [
+      "meta/23_instant_preview/index"
     ],
     "testing": [
       "meta/23_instant_preview/index",
       "ops/flows/18-test-flows"
     ],
     "23instantpreview": [
-      "meta/23_instant_preview/index"
-    ],
-    "preview": [
       "meta/23_instant_preview/index"
     ],
     "instant": [
@@ -13502,10 +14628,10 @@
       "meta/24_caching/index",
       "tutorial/flows/4-cache"
     ],
-    "dedicated": [
+    "high": [
       "meta/25_dedicated_workers/index"
     ],
-    "high": [
+    "dedicated": [
       "meta/25_dedicated_workers/index"
     ],
     "throughput": [
@@ -13513,10 +14639,6 @@
     ],
     "25dedicatedworkers": [
       "meta/25_dedicated_workers/index"
-    ],
-    "search": [
-      "meta/26_content_search/index",
-      "meta/35_search_bar/index"
     ],
     "26contentsearch": [
       "meta/26_content_search/index"
@@ -13530,17 +14652,11 @@
     "27datapipelines": [
       "meta/27_data_pipelines/index"
     ],
-    "28agentworkers": [
-      "meta/28_agent_workers/index"
-    ],
     "agent": [
       "meta/28_agent_workers/index"
     ],
-    "oidc": [
-      "meta/29_oidc/index"
-    ],
-    "29oidc": [
-      "meta/29_oidc/index"
+    "28agentworkers": [
+      "meta/28_agent_workers/index"
     ],
     "connect": [
       "meta/29_oidc/index"
@@ -13548,10 +14664,16 @@
     "openid": [
       "meta/29_oidc/index"
     ],
-    "2variablesandsecrets": [
-      "meta/2_variables_and_secrets/index"
+    "oidc": [
+      "meta/29_oidc/index"
+    ],
+    "29oidc": [
+      "meta/29_oidc/index"
     ],
     "secrets": [
+      "meta/2_variables_and_secrets/index"
+    ],
+    "2variablesandsecrets": [
       "meta/2_variables_and_secrets/index"
     ],
     "secret": [
@@ -13569,19 +14691,19 @@
     "workflows": [
       "meta/31_workflows_as_code/index"
     ],
+    "private": [
+      "meta/32_private_hub/index"
+    ],
     "hub": [
       "meta/32_private_hub/index"
     ],
     "32privatehub": [
       "meta/32_private_hub/index"
     ],
-    "private": [
-      "meta/32_private_hub/index"
-    ],
-    "bundles": [
+    "codebases": [
       "meta/33_codebases_and_bundles/index"
     ],
-    "codebases": [
+    "bundles": [
       "meta/33_codebases_and_bundles/index"
     ],
     "33codebasesandbundles": [
@@ -13605,13 +14727,13 @@
     "36servicelogs": [
       "meta/36_service_logs/index"
     ],
-    "37criticalalerts": [
+    "alerts": [
       "meta/37_critical_alerts/index"
     ],
     "critical": [
       "meta/37_critical_alerts/index"
     ],
-    "alerts": [
+    "37criticalalerts": [
       "meta/37_critical_alerts/index"
     ],
     "38objectstorageinwindmill": [
@@ -13629,13 +14751,10 @@
     "39httprouting": [
       "meta/39_http_routing/index"
     ],
-    "resource": [
-      "meta/3_resources_and_types/index"
-    ],
-    "types": [
-      "meta/3_resources_and_types/index"
-    ],
     "3resourcesandtypes": [
+      "meta/3_resources_and_types/index"
+    ],
+    "resource": [
       "meta/3_resources_and_types/index"
     ],
     "40websockettriggers": [
@@ -13650,29 +14769,26 @@
     "41kafkatriggers": [
       "meta/41_kafka_triggers/index"
     ],
-    "42autoscaling": [
-      "meta/42_autoscaling/index"
-    ],
     "autoscaling": [
       "meta/42_autoscaling/index"
     ],
-    "preprocessors": [
-      "meta/43_preprocessors/index"
+    "42autoscaling": [
+      "meta/42_autoscaling/index"
     ],
     "43preprocessors": [
+      "meta/43_preprocessors/index"
+    ],
+    "preprocessors": [
       "meta/43_preprocessors/index"
     ],
     "44workspacesettings": [
       "meta/44_workspace_settings/index"
     ],
-    "45natstriggers": [
-      "meta/45_nats_triggers/index"
-    ],
     "nats": [
       "meta/45_nats_triggers/index"
     ],
-    "46postgrestriggers": [
-      "meta/46_postgres_triggers/index"
+    "45natstriggers": [
+      "meta/45_nats_triggers/index"
     ],
     "47environmentvariables": [
       "meta/47_environment_variables/index"
@@ -13702,10 +14818,10 @@
     "pubsub": [
       "meta/50_gcp_triggers/index"
     ],
-    "50gcptriggers": [
+    "gcp": [
       "meta/50_gcp_triggers/index"
     ],
-    "gcp": [
+    "50gcptriggers": [
       "meta/50_gcp_triggers/index"
     ],
     "mcp": [
@@ -13714,10 +14830,10 @@
     "51mcp": [
       "meta/51_mcp/index"
     ],
-    "queries": [
+    "streaming": [
       "meta/51_sql_to_s3_streaming/index"
     ],
-    "streaming": [
+    "queries": [
       "meta/51_sql_to_s3_streaming/index"
     ],
     "51sqltos3streaming": [
@@ -13757,13 +14873,13 @@
     "runs": [
       "meta/5_monitor_past_and_future_runs/index"
     ],
-    "6autogenerateduis": [
-      "meta/6_auto_generated_uis/index"
-    ],
     "autogenerated": [
       "meta/6_auto_generated_uis/index"
     ],
     "uis": [
+      "meta/6_auto_generated_uis/index"
+    ],
+    "6autogenerateduis": [
       "meta/6_auto_generated_uis/index"
     ],
     "7multiplayer": [
@@ -13773,15 +14889,15 @@
       "meta/7_multiplayer/index",
       "ops/script_editor/multiplayer"
     ],
-    "8groupsandfolders": [
-      "meta/8_groups_and_folders/index"
+    "groups": [
+      "meta/8_groups_and_folders/index",
+      "meta/9_worker_groups/index"
     ],
     "folders": [
       "meta/8_groups_and_folders/index"
     ],
-    "groups": [
-      "meta/8_groups_and_folders/index",
-      "meta/9_worker_groups/index"
+    "8groupsandfolders": [
+      "meta/8_groups_and_folders/index"
     ],
     "9workergroups": [
       "meta/9_worker_groups/index"
@@ -13789,19 +14905,9 @@
     "worker": [
       "meta/9_worker_groups/index"
     ],
-    "complete": [
-      "ops/core_concepts/rust-sdk-winmill-patterns"
-    ],
     "coreconcepts": [
       "ops/core_concepts/rust-sdk-winmill-patterns",
       "meta/core_concepts/index"
-    ],
-    "reference": [
-      "ops/core_concepts/rust-sdk-winmill-patterns",
-      "ref/flows/23-job-debouncing",
-      "ref/flows/6-concurrency-limit",
-      "ref/script_editor/concurrency-limit",
-      "ref/script_editor/job-debouncing"
     ],
     "coding": [
       "ops/core_concepts/rust-sdk-winmill-patterns"
@@ -13809,10 +14915,10 @@
     "sdk": [
       "ops/core_concepts/rust-sdk-winmill-patterns"
     ],
-    "core": [
+    "concepts": [
       "meta/core_concepts/index"
     ],
-    "concepts": [
+    "core": [
       "meta/core_concepts/index"
     ],
     "trigger": [
@@ -13827,12 +14933,12 @@
     "prompts": [
       "tutorial/flows/11-flow-approval"
     ],
+    "for": [
+      "tutorial/flows/12-flow-loops"
+    ],
     "loops": [
       "tutorial/flows/12-flow-loops",
       "tutorial/flows/22-while-loops"
-    ],
-    "for": [
-      "tutorial/flows/12-flow-loops"
     ],
     "branches": [
       "concept/flows/13-flow-branches"
@@ -13840,10 +14946,10 @@
     "retries": [
       "ops/flows/14-retries"
     ],
-    "delays": [
+    "sleeps": [
       "tutorial/flows/15-sleep"
     ],
-    "sleeps": [
+    "delays": [
       "tutorial/flows/15-sleep"
     ],
     "exchange": [
@@ -13859,28 +14965,25 @@
     "return": [
       "ops/flows/19-early-return"
     ],
+    "flow": [
+      "tutorial/flows/1-flow-editor",
+      "tutorial/flows/3-editor-components"
+    ],
     "editor": [
       "tutorial/flows/1-flow-editor",
       "tutorial/flows/3-editor-components",
       "meta/script_editor/index"
     ],
-    "flow": [
-      "tutorial/flows/1-flow-editor",
-      "tutorial/flows/3-editor-components"
+    "steps": [
+      "concept/flows/20-priority"
     ],
     "priority": [
       "concept/flows/20-priority"
     ],
-    "steps": [
-      "concept/flows/20-priority"
+    "lifetime": [
+      "concept/flows/21-lifetime"
     ],
     "use": [
-      "concept/flows/21-lifetime"
-    ],
-    "delete": [
-      "concept/flows/21-lifetime"
-    ],
-    "lifetime": [
       "concept/flows/21-lifetime"
     ],
     "after": [
@@ -13895,24 +14998,24 @@
     "sticky": [
       "concept/flows/24-sticky-notes"
     ],
-    "break": [
+    "stop": [
       "concept/flows/2-early-stop"
     ],
-    "stop": [
+    "break": [
       "concept/flows/2-early-stop"
     ],
     "components": [
       "tutorial/flows/3-editor-components"
     ],
-    "step": [
-      "concept/flows/5-step-mocking",
-      "concept/flows/9-custom-timeout"
+    "mocking": [
+      "concept/flows/5-step-mocking"
     ],
     "pin": [
       "concept/flows/5-step-mocking"
     ],
-    "mocking": [
-      "concept/flows/5-step-mocking"
+    "step": [
+      "concept/flows/5-step-mocking",
+      "concept/flows/9-custom-timeout"
     ],
     "result": [
       "concept/flows/5-step-mocking"
@@ -13923,14 +15026,17 @@
     "timeout": [
       "concept/flows/9-custom-timeout"
     ],
-    "started": [
+    "getting": [
       "meta/00_how_to_use_windmill/index"
     ],
-    "getting": [
+    "started": [
       "meta/00_how_to_use_windmill/index"
     ],
     "00howtousewindmill": [
       "meta/00_how_to_use_windmill/index"
+    ],
+    "ansible": [
+      "meta/10_ansible_quickstart/index"
     ],
     "quickstart": [
       "meta/10_ansible_quickstart/index",
@@ -13953,22 +15059,19 @@
     "10ansiblequickstart": [
       "meta/10_ansible_quickstart/index"
     ],
-    "ansible": [
-      "meta/10_ansible_quickstart/index"
-    ],
     "11csharpquickstart": [
       "meta/11_csharp_quickstart/index"
-    ],
-    "java": [
-      "meta/13_java_quickstart/index"
     ],
     "13javaquickstart": [
       "meta/13_java_quickstart/index"
     ],
-    "14rubyquickstart": [
-      "meta/14_ruby_quickstart/index"
+    "java": [
+      "meta/13_java_quickstart/index"
     ],
     "ruby": [
+      "meta/14_ruby_quickstart/index"
+    ],
+    "14rubyquickstart": [
       "meta/14_ruby_quickstart/index"
     ],
     "1typescriptquickstart": [
@@ -13986,14 +15089,17 @@
     "bigquery": [
       "meta/5_sql_quickstart/index"
     ],
-    "snowflake": [
+    "mysql": [
       "meta/5_sql_quickstart/index"
     ],
-    "mysql": [
+    "snowflake": [
       "meta/5_sql_quickstart/index"
     ],
     "5sqlquickstart": [
       "meta/5_sql_quickstart/index"
+    ],
+    "6restgrapqhqlquickstart": [
+      "meta/6_rest_grapqhql_quickstart/index"
     ],
     "graphql": [
       "meta/6_rest_grapqhql_quickstart/index"
@@ -14001,23 +15107,17 @@
     "rest": [
       "meta/6_rest_grapqhql_quickstart/index"
     ],
-    "6restgrapqhqlquickstart": [
-      "meta/6_rest_grapqhql_quickstart/index"
-    ],
     "7dockerquickstart": [
       "meta/7_docker_quickstart/index"
-    ],
-    "php": [
-      "meta/8_php_quickstart/index"
     ],
     "8phpquickstart": [
       "meta/8_php_quickstart/index"
     ],
+    "php": [
+      "meta/8_php_quickstart/index"
+    ],
     "9rustquickstart": [
       "meta/9_rust_quickstart/index"
-    ],
-    "0scriptsquickstart": [
-      "meta/0_scripts_quickstart/index"
     ],
     "6flowsquickstart": [
       "meta/6_flows_quickstart/index"
@@ -14053,10 +15153,10 @@
       "meta/script_editor/index",
       "tutorial/script_editor/script-kinds"
     ],
-    "perpetual": [
+    "services": [
       "ops/script_editor/perpetual-scripts"
     ],
-    "services": [
+    "perpetual": [
       "ops/script_editor/perpetual-scripts"
     ],
     "running": [

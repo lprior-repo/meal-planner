@@ -2,7 +2,7 @@
 id: tutorial/flows/15-sleep
 title: "Sleeps / Delays in flows"
 category: tutorial
-tags: ["tutorial", "beginner", "flows", "sleeps"]
+tags: ["beginner", "flows", "sleeps", "tutorial"]
 ---
 
 <!--

@@ -9,7 +9,7 @@ summary: "Check job details"
 
 ## Check job details
 wmill job get <job_id>
-```
+```text
 
 **Resolution:**
 1. Increase worker memory limits in docker-compose
@@ -17,12 +17,12 @@ wmill job get <job_id>
    ```yaml
    # In script metadata
    timeout: 600  # 10 minutes
-   ```
+   ```text
 3. Optimize script to process data in chunks
 4. Use dedicated workers for heavy jobs:
    ```yaml
    tag: heavy-compute
-   ```
+   ```yaml
 
 ---
 

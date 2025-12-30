@@ -25,7 +25,7 @@ Configuration options for serving related services.
 
 Port where Tandoor exposes its internal web server.
 
-```
+```bash
 TANDOOR_PORT=80
 ```
 
@@ -38,7 +38,7 @@ If base URL is something other than just / (you are serving a subfolder in your 
 instance http://recipe_app/recipes/)
 Be sure to not have a trailing slash: e.g. '/recipes' instead of '/recipes/'
 
-```
+```bash
 SCRIPT_NAME=/recipes
 ```
 
@@ -53,7 +53,7 @@ This can either be a relative path from the applications base path or the url of
     - MUST END IN `/`
     - This is not required if you are just using a subfolder
 
-```
+```bash
 STATIC_URL=/static/
 ```
 
@@ -76,7 +76,7 @@ This can either be a relative path from the applications base path or the url of
     - This is **not required** if you are just using a subfolder
     - This is **not required** if using S3/object storage
 
-```
+```bash
 MEDIA_URL=/media/
 ```
 
@@ -95,7 +95,7 @@ Set the number of gunicorn workers to start when starting using `boot.sh` (all c
 The default is likely appropriate for most installations.
 See [Gunicorn docs](https://docs.gunicorn.org/en/stable/design.html#how-many-workers) for recommended settings.
 
-```
+```bash
 GUNICORN_WORKERS=3
 ```
 
@@ -107,7 +107,7 @@ Set the number of gunicorn threads to start when starting using `boot.sh` (all c
 The default is likely appropriate for most installations.
 See [Gunicorn docs](https://docs.gunicorn.org/en/stable/design.html#how-many-workers) for recommended settings.
 
-```
+```bash
 GUNICORN_THREADS=2
 ```
 
@@ -120,7 +120,7 @@ Set the timeout in seconds of gunicorn when starting using `boot.sh` (all contai
 The default is likely appropriate for most installations. However, if you are using a LLM which high response times gunicornmight time out during the wait until the LLM finished, in such cases you might want to increase the timeout.
 See [Gunicorn docs]([https://docs.gunicorn.org/en/stable/design.html#how-many-workers](https://docs.gunicorn.org/en/stable/settings.html#timeout)) for default settings.
 
-```
+```bash
 GUNICORN_TIMEOUT=30
 ```
 
@@ -132,7 +132,7 @@ Serve media files directly using gunicorn. Basically everyone recommends not doi
 provided that include an additional nxginx container to handle media file serving.
 If you know what you are doing turn this on (`1`) to serve media files using djangos serve() method.
 
-```
+```bash
 GUNICORN_MEDIA=0
 ```
 
@@ -143,7 +143,7 @@ GUNICORN_MEDIA=0
 Allows setting origins to allow for unsafe requests.
 See [Django docs](https://docs.djangoproject.com/en/5.0/ref/settings/#csrf-trusted-origins)
 
-```
+```bash
 CSRF_TRUSTED_ORIGINS = []
 ```
 
@@ -155,7 +155,7 @@ By default, cross-origin resource sharing is disabled. Enabling this will allow 
 domains.
 Please read [the docs](https://github.com/adamchainz/django-cors-headers) carefully before enabling this.
 
-```
+```bash
 CORS_ALLOW_ALL_ORIGINS = True
 ```
 
@@ -164,7 +164,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 Django session cookie settings. Can be changed to allow a single django application to authenticate several applications
 when running under the same database.
 
-```
+```bash
 SESSION_COOKIE_DOMAIN=.example.com
 SESSION_COOKIE_NAME=sessionid # use this only to not interfere with non unified django applications under the same top level domain
 ```
@@ -180,7 +180,7 @@ If you allow signing up to your instance you might want to use a captcha to prev
 Tandoor supports HCAPTCHA which is supposed to be a privacy-friendly captcha provider.
 See [HCAPTCHA website](https://www.hcaptcha.com/) for more information and to acquire your sitekey and secret.
 
-```
+```bash
 HCAPTCHA_SITEKEY=
 HCAPTCHA_SECRET=
 ```
@@ -193,7 +193,7 @@ Enable serving of prometheus metrics under the `/metrics` path
     The view is not secured (as per the prometheus default way) so make sure to secure it
     through your web server.
 
-```
+```bash
 ENABLE_METRICS=0
 ```
 
@@ -211,7 +211,7 @@ This value can also be temporarily changed in Admin, it will revert the next tim
     Disabling tree sorting is a temporary fix, in the future we might find a better implementation to allow tree sorting
     without the large performance impacts.
 
-```
+```bash
 SORT_TREE_BY_NAME=0
 ```
 
@@ -224,7 +224,7 @@ a chromium binary and is generally implemented only rudimentary and somewhat slo
 
 See [Export feature docs](https://docs.tandoor.dev/features/import_export/#pdf) for additional information.
 
-```
+```bash
 ENABLE_PDF_EXPORT=1
 ```
 
@@ -232,7 +232,7 @@ ENABLE_PDF_EXPORT=1
 
 Depending on your jurisdiction you might need to provide any of the following URLs for your instance.
 
-```
+```bash
 TERMS_URL=
 PRIVACY_URL=
 IMPRINT_URL=
@@ -267,13 +267,13 @@ access to the data.
 
 When enabled will join user into space and apply group configured in `SOCIAL_DEFAULT_GROUP`.
 
-```
+```bash
 SOCIAL_DEFAULT_ACCESS = 1
 ```
 
 > default `guest` - options `guest`, `user`, `admin`
 
-```
+```bash
 SOCIAL_DEFAULT_GROUP=guest
 ```
 
@@ -287,7 +287,7 @@ You might want to setup HCAPTCHA to prevent bots from creating accounts/spam.
 !!! info
     Social accounts will always be able to sign up, if providers are configured
 
-```
+```bash
 ENABLE_SIGNUP=0
 ```
 
@@ -295,7 +295,7 @@ ENABLE_SIGNUP=0
 
 Allows you to set up external OAuth providers.
 
-```
+```bash
 SOCIAL_PROVIDERS = allauth.socialaccount.providers.github, allauth.socialaccount.providers.nextcloud,
 ```
 
@@ -308,7 +308,7 @@ Allow authentication via the REMOTE-USER header (can be used for e.g. authelia).
     Leave off if you don't know what you are doing! Enabling this without proper configuration will enable anybody
     to login with any username!
 
-```
+```bash
 REMOTE_USER_AUTH=0
 ```
 
@@ -318,7 +318,7 @@ LDAP based authentication is disabled by default. You can enable it by setting `
 other
 settings accordingly. Please remove/comment settings you do not need for your setup.
 
-```
+```bash
 LDAP_AUTH=
 AUTH_LDAP_SERVER_URI=
 AUTH_LDAP_BIND_DN=
@@ -332,7 +332,7 @@ Instead of passing the LDAP password directly through the environment variable `
 you can set the password in a file and set the environment variable `AUTH_LDAP_BIND_PASSWORD_FILE`
 to the path of the file containing the ldap secret.
 
-```
+```bash
 AUTH_LDAP_BIND_PASSWORD_FILE=/run/secrets/ldap_password.txt
 ```
 
@@ -344,7 +344,7 @@ Email Settings, see [Django docs](https://docs.djangoproject.com/en/3.2/ref/sett
 information.
 Required for email confirmation and password reset (automatically activates if host is set).
 
-```
+```bash
 EMAIL_HOST=
 EMAIL_PORT=
 EMAIL_HOST_USER=
@@ -361,10 +361,10 @@ Instead of passing the email password directly through the environment variable 
 you can set the password in a file and set the environment variable `EMAIL_HOST_PASSWORD_FILE`
 to the path of the file containing the ldap secret.
 
-```
+```bash
 EMAIL_HOST_PASSWORD_FILE=/run/secrets/email_password.txt
 ```
 
 Optional settings (only copy the ones you need)
 
-```
+```bash

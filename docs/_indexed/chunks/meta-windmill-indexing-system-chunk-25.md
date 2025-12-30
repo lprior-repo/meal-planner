@@ -9,4 +9,4 @@ summary: "Validate XML metadata against schema"
 
 ## Validate XML metadata against schema
 xmllint --schema schema.xmldocuments/*.md
-```
+```text

@@ -13,7 +13,7 @@ The `wmill resource push` command is used to push a local resource, overriding a
 
 ```bash
 wmill resource push <file_path> <remote_path>
-```
+```text
 
 ### Arguments
 
@@ -31,7 +31,7 @@ value: <value>
 description: <description>
 resource_type: <resource_type>
 is_oauth: <is_oauth>
-```
+```text
 
 ```JSON
 {

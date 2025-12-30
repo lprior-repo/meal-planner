@@ -2,7 +2,7 @@
 id: ops/install/swag
 title: "Swag"
 category: ops
-tags: ["operations", "docker", "swag", "install"]
+tags: ["operations", "docker", "install", "swag"]
 ---
 
 # Swag
@@ -25,7 +25,7 @@ tags: ["operations", "docker", "swag", "install"]
 
 ### Download and edit Tandoor configuration
 
-```
+```bash
 cd /opt
 mkdir recipes
 cd recipes
@@ -33,7 +33,7 @@ wget https://raw.githubusercontent.com/vabene1111/recipes/develop/.env.template 
 base64 /dev/urandom | head -c50
 ``` 
 Copy the response from that last command and paste the key into the `.env` file:
-```
+```text
 nano .env
 ```
 You'll also need to enter a Postgres password into the `.env` file. Then, save the file and exit the editor.
@@ -41,7 +41,7 @@ You'll also need to enter a Postgres password into the `.env` file. Then, save t
 ### Install and configure Docker Compose
 
 In keeping with [these instructions](https://docs.linuxserver.io/general/docker-compose):
-```
+```bash
 cd /opt
 curl -L --fail https://raw.githubusercontent.com/linuxserver/docker-docker-compose/master/run.sh -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
@@ -49,13 +49,13 @@ chmod +x /usr/local/bin/docker-compose
 
 Next, create and edit the docker compose file.
 
-```
+```text
 nano docker-compose.yml
 ```
 
 Paste the following and adjust your domains, subdomains and time zone.
 
-```
+```yaml
 ---
 version: "2.1"
 services:
@@ -110,11 +110,11 @@ Save and exit.
 
 ### Create containers and configure swag reverse proxy
 
-```
+```bash
 docker-compose up -d
 ```
 
-```
+```bash
 cd /opt/swag/nginx/proxy-confs
 cp recipes.subdomain.conf.sample recipes.subdomain.conf
 nano recipes.subdomain.conf
@@ -124,7 +124,7 @@ Change the line `server_name recipes.*;` to `server_name mysubdomain.*;`, save a
 
 ### Finalize
 
-```
+```bash
 cd /opt
 docker restart swag recipes
 ```

@@ -12,7 +12,7 @@ summary: "Flow File Structure"
 ```
 windmill/f/<domain>/<flow_name>.flow/
 └── flow.yaml    # Flow definition
-```
+```text
 
 **Important**: When pushing flows, use the `.flow` directory path, NOT the `flow.yaml` file:
 ```bash

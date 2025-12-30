@@ -17,7 +17,7 @@ src/db/migrations/
 ├── 002_add_oauth_tokens.sql
 ├── 003_add_meal_plans.sql
 └── 004_add_nutrition_goals.sql
-```
+```text
 
 ### OAuth Tokens Migration
 
@@ -61,7 +61,7 @@ CREATE TRIGGER tr_oauth_tokens_updated_at
 
 -- Down Migration (for rollback)
 -- DROP TABLE IF EXISTS oauth_tokens CASCADE;
-```
+```text
 
 ### Running Migrations
 

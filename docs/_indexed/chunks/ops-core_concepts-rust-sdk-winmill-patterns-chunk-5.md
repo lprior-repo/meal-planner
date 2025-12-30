@@ -25,7 +25,7 @@ let wm = Windmill::new(
     Some("workspace_name".to_string()),
     Some("http://localhost:8000".to_string())
 )?;
-```
+```bash
 
 ### Typed resource access
 
@@ -47,7 +47,7 @@ async fn main(db_resource: String) -> anyhow::Result<String> {
     let config: PostgresResource = wm.get_resource(&db_resource).await?;
     Ok(format!("Connected to {}:{}/{}", config.host, config.port, config.dbname))
 }
-```
+```bash
 
 ### Raw resource access
 
@@ -55,7 +55,7 @@ async fn main(db_resource: String) -> anyhow::Result<String> {
 let wm = Windmill::default()?;
 let raw: serde_json::Value = wm.get_resource_any("u/admin/api_config").await?;
 let api_key = raw["api_key"].as_str().unwrap_or("");
-```
+```text
 
 ### Variable and secret access
 
@@ -68,7 +68,7 @@ let api_key: String = wm.get_variable_raw("u/admin/openai_key").await?;
 
 // Set a variable
 wm.set_variable("new_value".to_string(), "u/admin/my_var", false).await?;
-```
+```text
 
 ### Creating and updating resources
 
@@ -80,6 +80,6 @@ wm.set_resource(
     "u/admin/new_database",
     "postgresql"  // resource type
 ).await?;
-```
+```yaml
 
 ---

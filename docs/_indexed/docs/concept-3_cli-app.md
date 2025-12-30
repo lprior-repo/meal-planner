@@ -2,7 +2,7 @@
 id: concept/3_cli/app
 title: "Apps"
 category: concept
-tags: ["3_cli", "concept", "windmill", "apps"]
+tags: ["apps", "3_cli", "windmill", "concept"]
 ---
 
 <!--
@@ -46,7 +46,7 @@ The `wmill app` list command is used to list all apps in the remote workspace.
 
 ```bash
 wmill app
-```
+```text
 
 ## Pushing an app
 
@@ -54,7 +54,7 @@ Pushing an app to a Windmill instance is done using the `wmill app push` command
 
 ```bash
 wmill app push <file_path>
-```
+```text
 
 ### Arguments
 
@@ -68,7 +68,7 @@ wmill app push <file_path>
 
 ```bash
 wmill app push ./my_app.json
-```
+```text
 
 ## Remote path format
 

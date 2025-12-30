@@ -13,7 +13,7 @@ Pushing a flow to a Windmill instance is done using the `wmill flow push` comman
 
 ```bash
 wmill flow push <file_path> <remote_path>
-```
+```text
 
 ### Arguments
 
@@ -28,4 +28,4 @@ wmill flow push <file_path> <remote_path>
 
 ```bash
 wmill flow push path/to/local/flow.yaml f/flows/test
-```
+```text

@@ -22,7 +22,7 @@ To get a shopping bot follow these steps
    - chat id: if you know where messages will be sent from enter the chat ID, otherwise it is set to the first chat the bot received a message from
 4. Visit your installation at `recipes.mydomin.tld/telegram/setup/<botid>` with botid being the ID of the bot you just created
    You should see the following message:
-    ```
+    ```json
     {
         "hook_url": "https://recipes.mydomin.tld/telegram/hook/c0c08de9-5e1e-4480-8312-3e256af61340/",
         "create_response": {

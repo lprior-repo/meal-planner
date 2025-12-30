@@ -13,7 +13,7 @@ The wmill script bootstrap command is used to create a new script locally in the
 
 ```bash
 wmill script bootstrap [--summary <summary>] [--description <description>] <path> <language>
-```
+```text
 
 ### Arguments
 
@@ -28,10 +28,10 @@ wmill script bootstrap [--summary <summary>] [--description <description>] <path
 
 ```bash
 wmill script bootstrap f/scripts/hallowed_script python3
-```
+```text
 
 2. Create a new deno script `f/scripts/auspicious_script` with a summary and a description
 
 ```bash
 wmill script bootstrap --summary 'Great script' --description 'This script does this and that' f/scripts/auspicious_script deno
-```
+```text

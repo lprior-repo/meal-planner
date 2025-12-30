@@ -26,7 +26,7 @@ information.
 
 Required settings
 
-```
+```text
 S3_ACCESS_KEY=
 S3_SECRET_ACCESS_KEY=
 S3_BUCKET_NAME=
@@ -35,13 +35,13 @@ S3_BUCKET_NAME=
 Alternatively you can point to a file containing the S3_SECRET_ACCESS_KEY value. If using containers make sure the file is
 persistent and available inside the container.
 
-```
+```text
 S3_SECRET_ACCESS_KEY_FILE=/path/to/file.txt
 ```
 
 Optional settings (only copy the ones you need)
 
-```
+```text
 S3_REGION_NAME= # default none, set your region might be required
 S3_QUERYSTRING_AUTH=1 # default true, set to 0 to serve media from a public bucket without signed urls
 S3_QUERYSTRING_EXPIRE=3600 # number of seconds querystring are valid for
@@ -54,17 +54,17 @@ S3_CUSTOM_DOMAIN= # when using a CDN/proxy to S3 (see https://github.com/Tandoor
 Most AI features are configured trough the AI Provider settings in the Tandoor web interface. Some defaults can be set for new spaces on your instance.
 
 Enables AI features for spaces by default
-```
+```bash
 SPACE_AI_ENABLED=1
 ```
 
 Sets the monthly default credit limit for AI usage
-```
+```bash
 SPACE_AI_CREDITS_MONTHLY=100
 ```
 
 Ratelimit for AI API
-```
+```bash
 AI_RATELIMIT=60/hour
 ```
 
@@ -76,7 +76,7 @@ The default `DEMO_KEY` is limited to 30 requests / hour or 50 requests / day.
 If you want to do many requests to the FDC API you need to get a (free) API
 key [here](https://fdc.nal.usda.gov/api-key-signup.html).
 
-```
+```bash
 FDC_API_KEY=DEMO_KEY
 ```
 
@@ -90,7 +90,7 @@ FDC_API_KEY=DEMO_KEY
 ```env
 DISABLE_EXTERNAL_CONNECTORS=0  # Default 0 (false), set to 1 (true) to disable connectors
 EXTERNAL_CONNECTORS_QUEUE_SIZE=100  # Defaults to 100, set to any number >1
-```
+```text
 
 ### Debugging/Development settings
 
@@ -110,7 +110,7 @@ logs ([see docs](https://docs.djangoproject.com/en/5.0/ref/settings/#std-setting
 
 ```
 DEBUG=0
-```
+```text
 
 #### Debug Toolbar
 
@@ -122,7 +122,7 @@ See [Django Debug Toolbar Docs](https://django-debug-toolbar.readthedocs.io/en/l
 
 ```
 DEBUG_TOOLBAR=0
-```
+```text
 
 #### SQL Debug
 
@@ -132,7 +132,7 @@ Set to `1` to enable additional query output on the search page.
 
 ```
 SQL_DEBUG=0
-```
+```text
 
 #### Application Log Level
 
@@ -143,7 +143,7 @@ Please set to `DEBUG` when making a bug report.
 
 ```
  LOG_LEVEL="DEBUG"
-```
+```text
 
 
 #### Gunicorn Log Level
@@ -154,7 +154,7 @@ Increase or decrease the logging done by gunicorn (the python wsgi application).
 
 ```
  GUNICORN_LOG_LEVEL="debug"
-```
+```text
 
 ### Default User Preferences
 
@@ -169,7 +169,7 @@ The default value for the user preference 'fractions' (showing amounts as decima
 
 ```
 FRACTION_PREF_DEFAULT=0
-```
+```text
 
 #### Comments
 
@@ -179,7 +179,7 @@ The default value for the user preference 'comments' (enable/disable commenting 
 
 ```
 COMMENT_PREF_DEFAULT=1
-```
+```text
 
 #### Sticky Navigation
 
@@ -189,7 +189,7 @@ The default value for the user preference 'sticky navigation' (always show navba
 
 ```
 STICKY_NAV_PREF_DEFAULT=1
-```
+```text
 
 #### Max owned spaces
 
@@ -200,7 +200,7 @@ Superusers can always bypass this limit.
 
 ```
 MAX_OWNED_SPACES_PREF_DEFAULT=100
-```
+```text
 
 
 ### Cosmetic / Preferences
@@ -215,7 +215,7 @@ Usually everything is converted to the users timezone so this setting doesn't re
 
 ```
 TZ=Europe/Berlin
-```
+```text
 
 #### Default Theme
 > default `0` - options `1-X` (space ID)
@@ -225,7 +225,7 @@ With this setting you can specify the ID of a space of which the appearance sett
 
 ```
 UNAUTHENTICATED_THEME_FROM_SPACE=
-```
+```text
 
 #### Force Theme
 > default `0` - options `1-X` (space ID)
@@ -234,7 +234,7 @@ Similar to the Default theme but forces the theme upon all users (authenticated/
 
 ```
 FORCE_THEME_FROM_SPACE=
-```
+```text
 
 ### Rate Limiting / Performance
 
@@ -250,7 +250,7 @@ scripts)
 
 ```
 SHOPPING_MIN_AUTOSYNC_INTERVAL=5
-```
+```python
 
 #### API Url Import throttle
 
@@ -263,7 +263,7 @@ providers from blocking your server for too many request.
 
 ```
 DRF_THROTTLE_RECIPE_URL_IMPORT=60/hour
-```
+```text
 
 #### Default Space Limits
 You might want to limit how many resources a user might create. The following settings apply automatically to newly
@@ -276,7 +276,7 @@ SPACE_DEFAULT_MAX_RECIPES=0 # 0=unlimited recipes
 SPACE_DEFAULT_MAX_USERS=0 # 0=unlimited users per space
 SPACE_DEFAULT_MAX_FILES=0 # Maximum file storage for space in MB. 0 for unlimited, -1 to disable file upload.
 SPACE_DEFAULT_ALLOW_SHARING=1 # Allow users to share recipes with public links
-```
+```bash
 
 #### Export file caching
 > default `600` - options `1-X`

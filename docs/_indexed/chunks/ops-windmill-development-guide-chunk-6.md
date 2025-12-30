@@ -9,4 +9,4 @@ summary: "Initialize wmill.yaml in windmill/ directory"
 
 ## Initialize wmill.yaml in windmill/ directory
 cd windmill && wmill init
-```
+```text

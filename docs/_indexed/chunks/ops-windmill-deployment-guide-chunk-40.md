@@ -9,7 +9,7 @@ summary: "Delete schedule"
 
 ## Delete schedule
 wmill schedule delete f/meal-planner/schedules/old_schedule
-```
+```text
 
 ### Cron Syntax Reference
 

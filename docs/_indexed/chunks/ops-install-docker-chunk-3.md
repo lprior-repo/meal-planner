@@ -25,6 +25,6 @@ docker run -d \
     -e POSTGRES_DB=djangodb \
     --name recipes_1 \
     vabene1111/recipes
-```
+```text
 
 Please make sure to replace the ```SECRET_KEY``` and ```POSTGRES_PASSWORD``` placeholders!

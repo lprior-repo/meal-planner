@@ -36,7 +36,7 @@ The `wmill folder` list command is used to list all folders in the remote worksp
 
 ```bash
 wmill folder
-```
+```text
 
 ## Push
 

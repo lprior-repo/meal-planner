@@ -2,7 +2,7 @@
 id: meta/7_docker_quickstart/index
 title: "Docker quickstart"
 category: meta
-tags: ["docker", "7_docker_quickstart", "advanced", "meta"]
+tags: ["docker", "meta", "advanced", "7_docker_quickstart"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

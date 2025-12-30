@@ -23,7 +23,7 @@ summary: "Windmill Integration"
 │  (Pure function: JSON in → JSON out)                    │
 │  Deployed to worker container via Dagger                │
 └─────────────────────────────────────────────────────────┘
-```
+```text
 
 ### Flows for Composition
 

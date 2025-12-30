@@ -2,7 +2,7 @@
 id: concept/flows/20-priority
 title: "Priority for steps"
 category: concept
-tags: ["concept", "priority", "flows"]
+tags: ["flows", "priority", "concept"]
 ---
 
 <!--

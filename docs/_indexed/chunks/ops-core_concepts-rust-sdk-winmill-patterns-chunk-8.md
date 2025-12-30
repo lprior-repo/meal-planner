@@ -15,7 +15,7 @@ summary: "Error handling patterns"
 //! ```cargo
 //! [dependencies]
 //! anyhow = "1.0"
-//! ```
+//! ```rust
 
 use anyhow::{Result, Context, bail};
 
@@ -40,7 +40,7 @@ fn main(input: String) -> Result<serde_json::Value> {
 //! ```cargo
 //! [dependencies]
 //! thiserror = "1.0"
-//! ```
+//! ```rust
 
 use thiserror::Error;
 
@@ -78,7 +78,7 @@ serde_json::json!({
         "name": "ErrorType"
     }
 })
-```
+```text
 
 **Best practice**: Always prefer `Result` over `panic!()`. Windmill catches panics but they provide less context.
 

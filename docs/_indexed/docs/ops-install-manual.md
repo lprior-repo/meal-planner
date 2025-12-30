@@ -2,7 +2,7 @@
 id: ops/install/manual
 title: "Manual installation instructions"
 category: ops
-tags: ["operations", "advanced", "manual", "sql", "install"]
+tags: ["operations", "sql", "advanced", "manual", "install"]
 ---
 
 # Manual installation instructions
@@ -54,10 +54,10 @@ curl -fsSL https://rpm.nodesource.com/setup_lts.x | bash -
 
 ## ... no root privileges
 curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
-```
+```text
 ```shell
 sudo npm install --global yarn
-```
+```text
 
 !!! info "NodeJS installation issues"
     If you run into problems with the NodeJS installation, please refer to the [official documentation](https://github.com/nodesource/distributions/blob/master/README.md).
@@ -66,13 +66,13 @@ sudo npm install --global yarn
 
 ```shell
 sudo apt install -y libpq-dev postgresql
-```
+```text
 
 ### Install LDAP requirements
 
 ```shell
 sudo apt install -y libsasl2-dev python3-dev libldap2-dev libssl-dev
-```
+```text
 
 ### Install project requirements
 
@@ -84,7 +84,7 @@ Using binaries from the virtual env:
 
 ```shell
 /var/www/recipes/bin/pip3 install -r requirements.txt
-```
+```text
 
 You will also need to install front end requirements and build them. For this navigate to the `./vue3` folder and run
 
@@ -92,13 +92,13 @@ You will also need to install front end requirements and build them. For this na
 cd ./vue3
 yarn install
 yarn build
-```
+```text
 
 ## Setup postgresql
 
 ```shell
 sudo -u postgres psql
-```
+```text
 
 In the psql console:
 
@@ -118,12 +118,12 @@ ALTER USER djangouser WITH SUPERUSER;
 
 --exit Postgres Environment
 exit
-```
+```text
 
 Download the `.env` configuration file and **edit it accordingly**.
 ```shell
 wget https://raw.githubusercontent.com/vabene1111/recipes/develop/.env.template -O /var/www/recipes/.env
-```
+```text
 
 Things to edit:
 
@@ -143,7 +143,7 @@ and revert superuser from postgres:
 ```
 sudo -u postgres psql` and `ALTER USER djangouser WITH NOSUPERUSER;
 exit
-```
+```text
 
 Generate static files: `bin/python3 manage.py collectstatic --no-input` and `bin/python3 manage.py collectstatic_js_reverse` and remember the folder where files have been copied.
 
@@ -172,7 +172,7 @@ ExecStart=/var/www/recipes/bin/gunicorn --error-logfile /tmp/gunicorn_err.log --
 
 [Install]
 WantedBy=multi-user.target
-```
+```text
 
 *Note*: `-error-logfile /tmp/gunicorn_err.log --log-level debug --capture-output` are useful for debugging and can be removed later
 
@@ -208,7 +208,7 @@ server {
         proxy_set_header X-Forwarded-For $remote_addr;
     }
 }
-```
+```text
 
 *Note*: Enter the correct path in static and proxy_pass lines.
 

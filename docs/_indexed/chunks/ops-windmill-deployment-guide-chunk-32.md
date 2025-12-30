@@ -9,7 +9,7 @@ summary: "Get secret (automatically decrypted)"
 
 ## Get secret (automatically decrypted)
 db_password = wmill.get_variable("f/meal-planner/vars/db_password")
-```
+```text
 
 **Rust:**
 ```rust
@@ -18,6 +18,6 @@ fn main(postgres: Postgresql) -> Result<(), Error> {
     let conn = postgres.connect()?;
     // ...
 }
-```
+```yaml
 
 ---

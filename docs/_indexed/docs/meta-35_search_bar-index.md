@@ -2,7 +2,7 @@
 id: meta/35_search_bar/index
 title: "Search bar"
 category: meta
-tags: ["advanced", "35_search_bar", "search", "meta"]
+tags: ["meta", "advanced", "search", "35_search_bar"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

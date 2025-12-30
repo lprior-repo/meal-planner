@@ -39,7 +39,7 @@ The relevant Apache config:
         RequestHeader set X-Forwarded-Proto "https"
         ProxyPreserveHost On
     </Location>
-```
+```text
 and the relevant section from the docker-compose.yml:
 ```
    tandoor:
@@ -68,7 +68,7 @@ and the relevant section from the docker-compose.yml:
      depends_on:
         # You will have to set up postgres accordingly
        - postgres
-```
+```text
 
 The relevant docker-compose.yml for Registrator, Consul, and Blocky, and Autoheal:
 ```
@@ -145,7 +145,7 @@ The relevant docker-compose.yml for Registrator, Consul, and Blocky, and Autohea
     restart: always
     container_name: autoheal
 
-```
+```text
 as well as a snippet of the Blocky configuration:
 ```
 conditional:

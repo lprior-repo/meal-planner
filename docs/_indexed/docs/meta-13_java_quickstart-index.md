@@ -2,7 +2,7 @@
 id: meta/13_java_quickstart/index
 title: "Java quickstart"
 category: meta
-tags: ["java", "13_java_quickstart", "advanced", "meta"]
+tags: ["13_java_quickstart", "meta", "advanced", "java"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

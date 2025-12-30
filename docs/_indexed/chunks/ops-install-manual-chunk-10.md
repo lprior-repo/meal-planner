@@ -32,7 +32,7 @@ ExecStart=/var/www/recipes/bin/gunicorn --error-logfile /tmp/gunicorn_err.log --
 
 [Install]
 WantedBy=multi-user.target
-```
+```text
 
 *Note*: `-error-logfile /tmp/gunicorn_err.log --log-level debug --capture-output` are useful for debugging and can be removed later
 
@@ -68,7 +68,7 @@ server {
         proxy_set_header X-Forwarded-For $remote_addr;
     }
 }
-```
+```text
 
 *Note*: Enter the correct path in static and proxy_pass lines.
 

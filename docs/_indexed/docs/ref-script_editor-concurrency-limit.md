@@ -2,7 +2,7 @@
 id: ref/script_editor/concurrency-limit
 title: "Concurrency limits"
 category: ref
-tags: ["script_editor", "reference", "api", "concurrency"]
+tags: ["api", "reference", "concurrency", "script_editor"]
 ---
 
 # Concurrency limits

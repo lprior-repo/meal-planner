@@ -9,6 +9,6 @@ summary: "Get specific resource"
 
 ## Get specific resource
 wmill resource get f/meal-planner/database/postgres
-```
+```yaml
 
 ---

@@ -9,7 +9,7 @@ summary: "Initialize wmill configuration"
 
 ## Initialize wmill configuration
 wmill init
-```
+```text
 
 ### 3. Project Structure
 
@@ -37,7 +37,7 @@ windmill/
 ├── resources/                # Resource definitions
 ├── variables/                # Variable definitions
 └── wmill.yaml                # CLI configuration
-```
+```text
 
 ### 4. wmill.yaml Configuration
 

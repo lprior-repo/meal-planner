@@ -2,7 +2,7 @@
 id: meta/17_collaboration/index
 title: "Collaboration in Windmill"
 category: meta
-tags: ["17_collaboration", "collaboration", "windmill", "meta"]
+tags: ["17_collaboration", "meta", "windmill", "collaboration"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

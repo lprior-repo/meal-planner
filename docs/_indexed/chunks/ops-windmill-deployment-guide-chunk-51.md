@@ -11,7 +11,7 @@ summary: "Add error handler to critical schedules"
 wmill schedule update f/meal-planner/schedules/critical_sync \
   --on-failure f/meal-planner/handlers/notifications/slack_error \
   --on-recovery f/meal-planner/handlers/notifications/slack_recovery
-```
+```text
 
 ### Health Check Endpoints
 
@@ -46,7 +46,7 @@ pub async fn main(postgres: Postgresql, tandoor: Tandoor) -> Result<serde_json::
 
     Ok(status)
 }
-```
+```text
 
 ### Metrics Collection
 
@@ -68,7 +68,7 @@ pub async fn main(postgres: Postgresql) -> Result<serde_json::Value, Error> {
 
     Ok(metrics)
 }
-```
+```text
 
 ### Alerting Rules
 

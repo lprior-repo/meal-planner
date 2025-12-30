@@ -9,7 +9,7 @@ summary: "Upgrade to latest"
 
 ## Upgrade to latest
 wmill upgrade
-```
+```text
 
 ### Environment Setup
 

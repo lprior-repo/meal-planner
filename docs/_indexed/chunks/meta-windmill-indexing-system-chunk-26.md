@@ -19,7 +19,7 @@ Map terms to entities for fast lookup:
   "error": ["error_handler", "retries"],
   "deploy": ["staging_prod", "windmill_deployment", "wmill_cli"]
 }
-```
+```text
 
 ### Tag-Based Search
 

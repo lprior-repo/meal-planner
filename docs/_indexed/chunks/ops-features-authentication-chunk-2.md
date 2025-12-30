@@ -28,7 +28,7 @@ When at least one social provider is set up, the social login sign in buttons sh
 
 ```ini
 SOCIAL_PROVIDERS=allauth.socialaccount.providers.openid_connect,allauth.socialaccount.providers.nextcloud
-```
+```html
 
 <!-- prettier-ignore -->
 !!! warning "Formatting"
@@ -52,14 +52,14 @@ The example below is for a generic OIDC provider with PKCE enabled. Most values 
 
 ```ini
 SOCIALACCOUNT_PROVIDERS = "{ 'openid_connect': { 'OAUTH_PKCE_ENABLED': True, 'APPS': [ { 'provider_id': 'oidc', 'name': 'My-IDM', 'client_id': 'my_client_id', 'secret': 'my_client_secret', 'settings': { 'server_url': 'https://idm.example.com/oidc/recipes' } } ] } }"
-```
+```text
 
 Because this JSON contains sensitive data (client id and secret), you may instead choose to save the JSON in a file
 and set the environment variable `SOCIALACCOUNT_PROVIDERS_FILE` to the path of the file containing the JSON.
 
 ```
 SOCIALACCOUNT_PROVIDERS_FILE=/run/secrets/socialaccount_providers.txt
-```
+```rust
 
 !!! success "Improvements ?"
     There are most likely ways to achieve the same goal but with a cleaner or simpler system.
@@ -94,7 +94,7 @@ To enable Keycloak as a sign in option, set those variables to define the social
 SOCIAL_PROVIDERS=allauth.socialaccount.providers.openid_connect
 SOCIALACCOUNT_PROVIDERS='{"openid_connect":{"APPS":[{"provider_id":"keycloak","name":"Keycloak","client_id":"KEYCLOAK_CLIENT_ID","secret":"KEYCLOAK_CLIENT_SECRET","settings":{"server_url":"https://auth.example.org/realms/KEYCLOAK_REALM/.well-known/openid-configuration"}}]}}
 '
-```
+```text
 
 You are now able to sign in using Keycloak after a restart of the service.
 

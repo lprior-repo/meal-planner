@@ -26,4 +26,4 @@ def main():
 
     # Run a script synchronously and get result
     result = wmill.run_script_by_path('f/scripts/calculate', args={'x': 10, 'y': 20})
-```
+```text

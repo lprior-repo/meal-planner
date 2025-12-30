@@ -8,4 +8,4 @@ summary: "AI gets both content AND relationships"
 ---
 
 ## AI gets both content AND relationships
-```
+```text

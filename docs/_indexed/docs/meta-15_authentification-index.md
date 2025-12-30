@@ -2,7 +2,7 @@
 id: meta/15_authentification/index
 title: "Authentication"
 category: meta
-tags: ["15_authentification", "authentication", "meta"]
+tags: ["15_authentification", "meta", "authentication"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

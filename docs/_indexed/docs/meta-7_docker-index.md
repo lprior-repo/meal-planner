@@ -2,7 +2,7 @@
 id: meta/7_docker/index
 title: "Run Docker containers"
 category: meta
-tags: ["docker", "run", "advanced", "7_docker", "meta"]
+tags: ["7_docker", "docker", "meta", "advanced", "run"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

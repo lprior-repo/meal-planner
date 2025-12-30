@@ -2,7 +2,7 @@
 id: meta/55_workspace_dependencies/index
 title: "Workspace dependencies"
 category: meta
-tags: ["workspace", "55_workspace_dependencies", "advanced", "meta"]
+tags: ["workspace", "55_workspace_dependencies", "meta", "advanced"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

@@ -45,7 +45,7 @@ docker-compose:
       traefik.http.routers.recipes.entrypoints: http
       traefik.http.services.recipes.loadbalancer.server.port: 8080
       traefik.http.services.recipes.loadbalancer.server.scheme: http
-```
+```yaml
 
 apache: 
 ```
@@ -54,7 +54,7 @@ apache:
   <Directory "/var/www/recipes/">
     Require all granted
   </Directory>
-```
+```text
 
 I used two paths `<sub path>` and `<www path>` for simplicity. In my case I have `<sub path> = recipes` and `<www path> = serve/recipes`. One could also change the matching rules of traefik to have everything under one path.
 
@@ -92,7 +92,7 @@ The relevant Apache config:
         RequestHeader set X-Forwarded-Proto "https"
         ProxyPreserveHost On
     </Location>
-```
+```text
 and the relevant section from the docker-compose.yml:
 ```
    tandoor:
@@ -121,7 +121,7 @@ and the relevant section from the docker-compose.yml:
      depends_on:
         # You will have to set up postgres accordingly
        - postgres
-```
+```text
 
 The relevant docker-compose.yml for Registrator, Consul, and Blocky, and Autoheal:
 ```
@@ -198,7 +198,7 @@ The relevant docker-compose.yml for Registrator, Consul, and Blocky, and Autohea
     restart: always
     container_name: autoheal
 
-```
+```text
 as well as a snippet of the Blocky configuration:
 ```
 conditional:

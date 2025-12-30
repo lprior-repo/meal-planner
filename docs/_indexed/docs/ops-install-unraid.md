@@ -2,7 +2,7 @@
 id: ops/install/unraid
 title: "Unraid"
 category: ops
-tags: ["operations", "unraid", "install"]
+tags: ["operations", "install", "unraid"]
 ---
 
 # Unraid

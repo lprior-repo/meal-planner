@@ -13,14 +13,14 @@ Random secret key (at least 50 characters), use for example `base64 /dev/urandom
 It is used internally by django for various signing/cryptographic operations and **should be kept secret**.
 See [Django Docs](https://docs.djangoproject.com/en/5.0/ref/settings/#std-setting-SECRET_KEY)
 
-```
+```bash
 SECRET_KEY=#$tp%v6*(*ba01wcz(ip(i5vfz8z$f%qdio&q@anr1#$=%(m4c
 ```
 
 Alternatively you can point to a file containing just the secret key value. If using containers make sure the file is
 persistent and available inside the container.
 
-```
+```bash
 SECRET_KEY_FILE=/path/to/file.txt
 
 // contents of file
@@ -35,7 +35,7 @@ Security setting to prevent HTTP Host Header Attacks,
 see [Django docs](https://docs.djangoproject.com/en/5.0/ref/settings/#allowed-hosts).
 Some proxies require `*` (default) but it should be set to the actual host(s).
 
-```
+```bash
 ALLOWED_HOSTS=recipes.mydomain.com
 ```
 
@@ -60,7 +60,7 @@ Multiple parameters are required to configure the database.
 Path to file containing the database password. Overrides `POSTGRES_PASSWORD`. Only applied when using Docker (or other
 setups running `boot.sh`)
 
-```
+```bash
 POSTGRES_PASSWORD_FILE=
 ```
 
@@ -71,7 +71,7 @@ POSTGRES_PASSWORD_FILE=
 Instead of configuring the connection using multiple individual environment parameters, you can use a connection string.
 The connection string will override all other database settings.
 
-```
+```bash
 DATABASE_URL = engine://username:password@host:port/dbname
 ```
 
@@ -81,7 +81,7 @@ DATABASE_URL = engine://username:password@host:port/dbname
 
 Additional connection options can be set as shown in the example below.
 
-```
+```bash
 DB_OPTIONS={"sslmode":"require"}
 ```
 
@@ -103,7 +103,7 @@ Configuration options for serving related services.
 
 Port where Tandoor exposes its internal web server.
 
-```
+```bash
 TANDOOR_PORT=80
 ```
 
@@ -116,7 +116,7 @@ If base URL is something other than just / (you are serving a subfolder in your 
 instance http://recipe_app/recipes/)
 Be sure to not have a trailing slash: e.g. '/recipes' instead of '/recipes/'
 
-```
+```bash
 SCRIPT_NAME=/recipes
 ```
 
@@ -131,7 +131,7 @@ This can either be a relative path from the applications base path or the url of
     - MUST END IN `/`
     - This is not required if you are just using a subfolder
 
-```
+```bash
 STATIC_URL=/static/
 ```
 
@@ -154,7 +154,7 @@ This can either be a relative path from the applications base path or the url of
     - This is **not required** if you are just using a subfolder
     - This is **not required** if using S3/object storage
 
-```
+```bash
 MEDIA_URL=/media/
 ```
 
@@ -173,7 +173,7 @@ Set the number of gunicorn workers to start when starting using `boot.sh` (all c
 The default is likely appropriate for most installations.
 See [Gunicorn docs](https://docs.gunicorn.org/en/stable/design.html#how-many-workers) for recommended settings.
 
-```
+```bash
 GUNICORN_WORKERS=3
 ```
 
@@ -185,7 +185,7 @@ Set the number of gunicorn threads to start when starting using `boot.sh` (all c
 The default is likely appropriate for most installations.
 See [Gunicorn docs](https://docs.gunicorn.org/en/stable/design.html#how-many-workers) for recommended settings.
 
-```
+```bash
 GUNICORN_THREADS=2
 ```
 
@@ -198,7 +198,7 @@ Set the timeout in seconds of gunicorn when starting using `boot.sh` (all contai
 The default is likely appropriate for most installations. However, if you are using a LLM which high response times gunicornmight time out during the wait until the LLM finished, in such cases you might want to increase the timeout.
 See [Gunicorn docs]([https://docs.gunicorn.org/en/stable/design.html#how-many-workers](https://docs.gunicorn.org/en/stable/settings.html#timeout)) for default settings.
 
-```
+```bash
 GUNICORN_TIMEOUT=30
 ```
 
@@ -210,7 +210,7 @@ Serve media files directly using gunicorn. Basically everyone recommends not doi
 provided that include an additional nxginx container to handle media file serving.
 If you know what you are doing turn this on (`1`) to serve media files using djangos serve() method.
 
-```
+```bash
 GUNICORN_MEDIA=0
 ```
 
@@ -221,7 +221,7 @@ GUNICORN_MEDIA=0
 Allows setting origins to allow for unsafe requests.
 See [Django docs](https://docs.djangoproject.com/en/5.0/ref/settings/#csrf-trusted-origins)
 
-```
+```bash
 CSRF_TRUSTED_ORIGINS = []
 ```
 
@@ -233,7 +233,7 @@ By default, cross-origin resource sharing is disabled. Enabling this will allow 
 domains.
 Please read [the docs](https://github.com/adamchainz/django-cors-headers) carefully before enabling this.
 
-```
+```bash
 CORS_ALLOW_ALL_ORIGINS = True
 ```
 
@@ -242,7 +242,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 Django session cookie settings. Can be changed to allow a single django application to authenticate several applications
 when running under the same database.
 
-```
+```bash
 SESSION_COOKIE_DOMAIN=.example.com
 SESSION_COOKIE_NAME=sessionid # use this only to not interfere with non unified django applications under the same top level domain
 ```
@@ -258,7 +258,7 @@ If you allow signing up to your instance you might want to use a captcha to prev
 Tandoor supports HCAPTCHA which is supposed to be a privacy-friendly captcha provider.
 See [HCAPTCHA website](https://www.hcaptcha.com/) for more information and to acquire your sitekey and secret.
 
-```
+```bash
 HCAPTCHA_SITEKEY=
 HCAPTCHA_SECRET=
 ```
@@ -271,7 +271,7 @@ Enable serving of prometheus metrics under the `/metrics` path
     The view is not secured (as per the prometheus default way) so make sure to secure it
     through your web server.
 
-```
+```bash
 ENABLE_METRICS=0
 ```
 
@@ -289,7 +289,7 @@ This value can also be temporarily changed in Admin, it will revert the next tim
     Disabling tree sorting is a temporary fix, in the future we might find a better implementation to allow tree sorting
     without the large performance impacts.
 
-```
+```bash
 SORT_TREE_BY_NAME=0
 ```
 
@@ -302,7 +302,7 @@ a chromium binary and is generally implemented only rudimentary and somewhat slo
 
 See [Export feature docs](https://docs.tandoor.dev/features/import_export/#pdf) for additional information.
 
-```
+```bash
 ENABLE_PDF_EXPORT=1
 ```
 
@@ -310,7 +310,7 @@ ENABLE_PDF_EXPORT=1
 
 Depending on your jurisdiction you might need to provide any of the following URLs for your instance.
 
-```
+```bash
 TERMS_URL=
 PRIVACY_URL=
 IMPRINT_URL=
@@ -345,13 +345,13 @@ access to the data.
 
 When enabled will join user into space and apply group configured in `SOCIAL_DEFAULT_GROUP`.
 
-```
+```bash
 SOCIAL_DEFAULT_ACCESS = 1
 ```
 
 > default `guest` - options `guest`, `user`, `admin`
 
-```
+```bash
 SOCIAL_DEFAULT_GROUP=guest
 ```
 
@@ -365,7 +365,7 @@ You might want to setup HCAPTCHA to prevent bots from creating accounts/spam.
 !!! info
     Social accounts will always be able to sign up, if providers are configured
 
-```
+```bash
 ENABLE_SIGNUP=0
 ```
 
@@ -373,7 +373,7 @@ ENABLE_SIGNUP=0
 
 Allows you to set up external OAuth providers.
 
-```
+```bash
 SOCIAL_PROVIDERS = allauth.socialaccount.providers.github, allauth.socialaccount.providers.nextcloud,
 ```
 
@@ -386,7 +386,7 @@ Allow authentication via the REMOTE-USER header (can be used for e.g. authelia).
     Leave off if you don't know what you are doing! Enabling this without proper configuration will enable anybody
     to login with any username!
 
-```
+```bash
 REMOTE_USER_AUTH=0
 ```
 
@@ -396,7 +396,7 @@ LDAP based authentication is disabled by default. You can enable it by setting `
 other
 settings accordingly. Please remove/comment settings you do not need for your setup.
 
-```
+```bash
 LDAP_AUTH=
 AUTH_LDAP_SERVER_URI=
 AUTH_LDAP_BIND_DN=
@@ -410,7 +410,7 @@ Instead of passing the LDAP password directly through the environment variable `
 you can set the password in a file and set the environment variable `AUTH_LDAP_BIND_PASSWORD_FILE`
 to the path of the file containing the ldap secret.
 
-```
+```bash
 AUTH_LDAP_BIND_PASSWORD_FILE=/run/secrets/ldap_password.txt
 ```
 
@@ -422,7 +422,7 @@ Email Settings, see [Django docs](https://docs.djangoproject.com/en/3.2/ref/sett
 information.
 Required for email confirmation and password reset (automatically activates if host is set).
 
-```
+```bash
 EMAIL_HOST=
 EMAIL_PORT=
 EMAIL_HOST_USER=
@@ -437,13 +437,13 @@ Instead of passing the email password directly through the environment variable 
 you can set the password in a file and set the environment variable `EMAIL_HOST_PASSWORD_FILE`
 to the path of the file containing the ldap secret.
 
-```
+```bash
 EMAIL_HOST_PASSWORD_FILE=/run/secrets/email_password.txt
 ```
 
 Optional settings (only copy the ones you need)
 
-```
+```bash
 # prefix used for account related emails (default "[Tandoor Recipes] ")
 ACCOUNT_EMAIL_SUBJECT_PREFIX=
 ```
@@ -463,7 +463,7 @@ information.
 
 Required settings
 
-```
+```text
 S3_ACCESS_KEY=
 S3_SECRET_ACCESS_KEY=
 S3_BUCKET_NAME=
@@ -472,13 +472,13 @@ S3_BUCKET_NAME=
 Alternatively you can point to a file containing the S3_SECRET_ACCESS_KEY value. If using containers make sure the file is
 persistent and available inside the container.
 
-```
+```text
 S3_SECRET_ACCESS_KEY_FILE=/path/to/file.txt
 ```
 
 Optional settings (only copy the ones you need)
 
-```
+```text
 S3_REGION_NAME= # default none, set your region might be required
 S3_QUERYSTRING_AUTH=1 # default true, set to 0 to serve media from a public bucket without signed urls
 S3_QUERYSTRING_EXPIRE=3600 # number of seconds querystring are valid for
@@ -491,17 +491,17 @@ S3_CUSTOM_DOMAIN= # when using a CDN/proxy to S3 (see https://github.com/Tandoor
 Most AI features are configured trough the AI Provider settings in the Tandoor web interface. Some defaults can be set for new spaces on your instance.
 
 Enables AI features for spaces by default
-```
+```bash
 SPACE_AI_ENABLED=1
 ```
 
 Sets the monthly default credit limit for AI usage
-```
+```bash
 SPACE_AI_CREDITS_MONTHLY=100
 ```
 
 Ratelimit for AI API
-```
+```bash
 AI_RATELIMIT=60/hour
 ```
 
@@ -513,7 +513,7 @@ The default `DEMO_KEY` is limited to 30 requests / hour or 50 requests / day.
 If you want to do many requests to the FDC API you need to get a (free) API
 key [here](https://fdc.nal.usda.gov/api-key-signup.html).
 
-```
+```bash
 FDC_API_KEY=DEMO_KEY
 ```
 
@@ -527,7 +527,7 @@ FDC_API_KEY=DEMO_KEY
 ```env
 DISABLE_EXTERNAL_CONNECTORS=0  # Default 0 (false), set to 1 (true) to disable connectors
 EXTERNAL_CONNECTORS_QUEUE_SIZE=100  # Defaults to 100, set to any number >1
-```
+```text
 
 ### Debugging/Development settings
 
@@ -547,7 +547,7 @@ logs ([see docs](https://docs.djangoproject.com/en/5.0/ref/settings/#std-setting
 
 ```
 DEBUG=0
-```
+```text
 
 #### Debug Toolbar
 
@@ -559,7 +559,7 @@ See [Django Debug Toolbar Docs](https://django-debug-toolbar.readthedocs.io/en/l
 
 ```
 DEBUG_TOOLBAR=0
-```
+```text
 
 #### SQL Debug
 
@@ -569,7 +569,7 @@ Set to `1` to enable additional query output on the search page.
 
 ```
 SQL_DEBUG=0
-```
+```text
 
 #### Application Log Level
 
@@ -580,7 +580,7 @@ Please set to `DEBUG` when making a bug report.
 
 ```
  LOG_LEVEL="DEBUG"
-```
+```text
 
 
 #### Gunicorn Log Level
@@ -591,7 +591,7 @@ Increase or decrease the logging done by gunicorn (the python wsgi application).
 
 ```
  GUNICORN_LOG_LEVEL="debug"
-```
+```text
 
 ### Default User Preferences
 
@@ -606,7 +606,7 @@ The default value for the user preference 'fractions' (showing amounts as decima
 
 ```
 FRACTION_PREF_DEFAULT=0
-```
+```text
 
 #### Comments
 
@@ -616,7 +616,7 @@ The default value for the user preference 'comments' (enable/disable commenting 
 
 ```
 COMMENT_PREF_DEFAULT=1
-```
+```text
 
 #### Sticky Navigation
 
@@ -626,7 +626,7 @@ The default value for the user preference 'sticky navigation' (always show navba
 
 ```
 STICKY_NAV_PREF_DEFAULT=1
-```
+```text
 
 #### Max owned spaces
 
@@ -637,7 +637,7 @@ Superusers can always bypass this limit.
 
 ```
 MAX_OWNED_SPACES_PREF_DEFAULT=100
-```
+```text
 
 
 ### Cosmetic / Preferences
@@ -652,7 +652,7 @@ Usually everything is converted to the users timezone so this setting doesn't re
 
 ```
 TZ=Europe/Berlin
-```
+```text
 
 #### Default Theme
 > default `0` - options `1-X` (space ID)
@@ -662,7 +662,7 @@ With this setting you can specify the ID of a space of which the appearance sett
 
 ```
 UNAUTHENTICATED_THEME_FROM_SPACE=
-```
+```text
 
 #### Force Theme
 > default `0` - options `1-X` (space ID)
@@ -671,7 +671,7 @@ Similar to the Default theme but forces the theme upon all users (authenticated/
 
 ```
 FORCE_THEME_FROM_SPACE=
-```
+```text
 
 ### Rate Limiting / Performance
 
@@ -687,7 +687,7 @@ scripts)
 
 ```
 SHOPPING_MIN_AUTOSYNC_INTERVAL=5
-```
+```python
 
 #### API Url Import throttle
 
@@ -700,7 +700,7 @@ providers from blocking your server for too many request.
 
 ```
 DRF_THROTTLE_RECIPE_URL_IMPORT=60/hour
-```
+```text
 
 #### Default Space Limits
 You might want to limit how many resources a user might create. The following settings apply automatically to newly
@@ -713,7 +713,7 @@ SPACE_DEFAULT_MAX_RECIPES=0 # 0=unlimited recipes
 SPACE_DEFAULT_MAX_USERS=0 # 0=unlimited users per space
 SPACE_DEFAULT_MAX_FILES=0 # Maximum file storage for space in MB. 0 for unlimited, -1 to disable file upload.
 SPACE_DEFAULT_ALLOW_SHARING=1 # Allow users to share recipes with public links
-```
+```bash
 
 #### Export file caching
 > default `600` - options `1-X`

@@ -71,7 +71,7 @@ server {
     return 301 http://<auth_endpoint>/logout;
   }
 }
-```
+```text
 
 Please refer to the appropriate documentation on how to set up the reverse proxy, authentication, and networks.
 

@@ -72,7 +72,7 @@ wmill --version
 
 # Upgrade to latest
 wmill upgrade
-```
+```text
 
 ### Environment Setup
 
@@ -97,7 +97,7 @@ TANDOOR_API_TOKEN=your_tandoor_token
 FATSECRET_CONSUMER_KEY=your_consumer_key
 FATSECRET_CONSUMER_SECRET=your_consumer_secret
 OAUTH_ENCRYPTION_KEY=your_64_char_hex_key
-```
+```yaml
 
 ---
 
@@ -120,7 +120,7 @@ wmill workspace switch meal-planner-dev
 
 # Verify current workspace
 wmill workspace whoami
-```
+```text
 
 ### 2. Initialize Project
 
@@ -129,7 +129,7 @@ cd /home/lewis/src/meal-planner/windmill
 
 # Initialize wmill configuration
 wmill init
-```
+```text
 
 ### 3. Project Structure
 
@@ -157,7 +157,7 @@ windmill/
 ├── resources/                # Resource definitions
 ├── variables/                # Variable definitions
 └── wmill.yaml                # CLI configuration
-```
+```text
 
 ### 4. wmill.yaml Configuration
 
@@ -174,7 +174,7 @@ skipResourceTypes: false
 skipSecrets: true       # Keep secrets manual for security
 includeSchedules: true
 includeTriggers: true
-```
+```yaml
 
 ---
 
@@ -198,7 +198,7 @@ wmill resource push - f/meal-planner/database/postgres <<EOF
   "sslmode": "prefer"
 }
 EOF
-```
+```text
 
 #### Tandoor API
 
@@ -210,7 +210,7 @@ wmill resource push - f/meal-planner/external_apis/tandoor <<EOF
   "api_token": "\$var:f/meal-planner/vars/tandoor_token"
 }
 EOF
-```
+```text
 
 #### FatSecret API
 
@@ -223,7 +223,7 @@ wmill resource push - f/meal-planner/external_apis/fatsecret <<EOF
   "encryption_key": "\$var:f/meal-planner/vars/oauth_encryption_key"
 }
 EOF
-```
+```text
 
 ### Verify Resources
 
@@ -233,7 +233,7 @@ wmill resource
 
 # Get specific resource
 wmill resource get f/meal-planner/database/postgres
-```
+```yaml
 
 ---
 
@@ -257,7 +257,7 @@ wmill variable add f/meal-planner/vars/tandoor_token --value="your_token" --secr
 wmill variable add f/meal-planner/vars/fatsecret_key --value="your_key" --secret
 wmill variable add f/meal-planner/vars/fatsecret_secret --value="your_secret" --secret
 wmill variable add f/meal-planner/vars/oauth_encryption_key --value="your_64_hex_key" --secret
-```
+```text
 
 ### Environment-Specific Variables
 
@@ -275,7 +275,7 @@ wmill variable add f/meal-planner/vars/environment --value="staging"
 # Production
 wmill workspace switch meal-planner-prod
 wmill variable add f/meal-planner/vars/environment --value="production"
-```
+```text
 
 ### Accessing Variables in Scripts
 
@@ -288,7 +288,7 @@ db_host = wmill.get_variable("f/meal-planner/vars/db_host")
 
 # Get secret (automatically decrypted)
 db_password = wmill.get_variable("f/meal-planner/vars/db_password")
-```
+```text
 
 **Rust:**
 ```rust
@@ -297,7 +297,7 @@ fn main(postgres: Postgresql) -> Result<(), Error> {
     let conn = postgres.connect()?;
     // ...
 }
-```
+```yaml
 
 ---
 
@@ -331,7 +331,7 @@ wmill schedule create \
   --timezone "America/Los_Angeles" \
   --script-path f/meal-planner/handlers/nutrition/generate_report \
   --args '{"period": "weekly"}'
-```
+```text
 
 ### Schedule with Error Handler
 
@@ -344,7 +344,7 @@ wmill schedule create \
   --script-path f/meal-planner/handlers/tandoor/sync \
   --args '{}' \
   --on-failure f/meal-planner/handlers/notifications/slack_error
-```
+```text
 
 ### Manage Schedules
 
@@ -358,7 +358,7 @@ wmill schedule disable f/meal-planner/schedules/daily_meal_plan
 
 # Delete schedule
 wmill schedule delete f/meal-planner/schedules/old_schedule
-```
+```text
 
 ### Cron Syntax Reference
 
@@ -391,17 +391,17 @@ FatSecret uses 3-legged OAuth 1.0a authentication.
 **Development:**
 ```
 http://localhost:6969/api/oauth/fatsecret/callback
-```
+```text
 
 **Staging:**
 ```
 https://staging.meal-planner.example.com/api/oauth/fatsecret/callback
-```
+```text
 
 **Production:**
 ```
 https://meal-planner.example.com/api/oauth/fatsecret/callback
-```
+```text
 
 #### 3. OAuth Flow Implementation
 
@@ -422,7 +422,7 @@ pub fn main(user_id: String) -> Result<String, Error> {
     // Return authorization URL
     Ok(oauth.get_authorize_url(&request_token))
 }
-```
+```text
 
 #### 4. Token Storage Schema
 
@@ -441,7 +441,7 @@ CREATE TABLE oauth_tokens (
 );
 
 CREATE INDEX idx_oauth_tokens_user_provider ON oauth_tokens(user_id, provider);
-```
+```text
 
 #### 5. Encryption Key Generation
 
@@ -454,7 +454,7 @@ openssl rand -hex 32
 wmill variable add f/meal-planner/vars/oauth_encryption_key \
   --value="499f19656b0ad170fc111dade27baadb53460157003a864ece78ea692f9e2aaa" \
   --secret
-```
+```yaml
 
 ---
 
@@ -468,7 +468,7 @@ src/db/migrations/
 ├── 002_add_oauth_tokens.sql
 ├── 003_add_meal_plans.sql
 └── 004_add_nutrition_goals.sql
-```
+```text
 
 ### OAuth Tokens Migration
 
@@ -512,7 +512,7 @@ CREATE TRIGGER tr_oauth_tokens_updated_at
 
 -- Down Migration (for rollback)
 -- DROP TABLE IF EXISTS oauth_tokens CASCADE;
-```
+```text
 
 ### Running Migrations
 
@@ -524,7 +524,7 @@ psql -h $DATABASE_HOST -U $DATABASE_USER -d $DATABASE_NAME \
 # Or via Windmill script
 wmill script run f/meal-planner/db/run_migrations \
   -d '{"migration": "002_add_oauth_tokens"}'
-```
+```text
 
 ### Windmill Migration Script
 
@@ -543,7 +543,7 @@ pub async fn main(postgres: Postgresql, migration: String) -> Result<String, Err
 
     Ok(format!("Migration {} completed successfully", migration))
 }
-```
+```yaml
 
 ---
 
@@ -559,7 +559,7 @@ Configure workspace-level error handling in Windmill Settings > Error Handler.
 # 1. Connect Slack to workspace (via UI)
 # 2. Configure error handler
 wmill workspace update --error-handler-slack-channel "meal-planner-alerts"
-```
+```text
 
 #### Custom Error Handler Script
 
@@ -594,7 +594,7 @@ export async function main(
 
     return { handled: true };
 }
-```
+```text
 
 ### Schedule Error Handlers
 
@@ -603,7 +603,7 @@ export async function main(
 wmill schedule update f/meal-planner/schedules/critical_sync \
   --on-failure f/meal-planner/handlers/notifications/slack_error \
   --on-recovery f/meal-planner/handlers/notifications/slack_recovery
-```
+```text
 
 ### Health Check Endpoints
 
@@ -638,7 +638,7 @@ pub async fn main(postgres: Postgresql, tandoor: Tandoor) -> Result<serde_json::
 
     Ok(status)
 }
-```
+```text
 
 ### Metrics Collection
 
@@ -660,7 +660,7 @@ pub async fn main(postgres: Postgresql) -> Result<serde_json::Value, Error> {
 
     Ok(metrics)
 }
-```
+```text
 
 ### Alerting Rules
 
@@ -687,7 +687,7 @@ wmill worker list
 
 # Check job queue
 wmill job list --status=queued
-```
+```text
 
 **Resolution:**
 1. Verify workers are running: `docker ps | grep windmill-worker`
@@ -707,7 +707,7 @@ wmill resource get f/meal-planner/database/postgres
 
 # Test connection manually
 psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "SELECT 1"
-```
+```text
 
 **Resolution:**
 1. Check variable values are correct
@@ -716,7 +716,7 @@ psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "SELECT 1"
 4. Update resource with correct values:
    ```bash
    wmill variable update f/meal-planner/vars/db_password --value="new_password"
-   ```
+   ```yaml
 
 ---
 
@@ -730,7 +730,7 @@ SELECT user_id, provider, expires_at
 FROM oauth_tokens
 WHERE provider = 'fatsecret'
   AND expires_at < NOW();
-```
+```text
 
 **Resolution:**
 1. Trigger token refresh flow
@@ -739,7 +739,7 @@ WHERE provider = 'fatsecret'
    ```sql
    DELETE FROM oauth_tokens
    WHERE expires_at < NOW() - INTERVAL '30 days';
-   ```
+   ```yaml
 
 ---
 
@@ -754,7 +754,7 @@ wmill schedule get f/meal-planner/schedules/daily_meal_plan
 
 # View schedule runs
 wmill run list --schedule=f/meal-planner/schedules/daily_meal_plan
-```
+```text
 
 **Resolution:**
 1. Verify schedule is enabled
@@ -764,7 +764,7 @@ wmill run list --schedule=f/meal-planner/schedules/daily_meal_plan
    ```bash
    wmill schedule disable f/meal-planner/schedules/daily_meal_plan
    wmill schedule enable f/meal-planner/schedules/daily_meal_plan
-   ```
+   ```yaml
 
 ---
 
@@ -776,7 +776,7 @@ wmill run list --schedule=f/meal-planner/schedules/daily_meal_plan
 ```bash
 # Pull first to see remote changes
 wmill sync pull --show-diffs
-```
+```text
 
 **Resolution:**
 1. Review conflicts in diff output
@@ -784,7 +784,7 @@ wmill sync pull --show-diffs
 3. Use `--yes` to force push (destructive):
    ```bash
    wmill sync push --yes
-   ```
+   ```text
 4. Or merge changes manually and push
 
 ---
@@ -797,7 +797,7 @@ wmill sync pull --show-diffs
 ```bash
 # Check job details
 wmill job get <job_id>
-```
+```text
 
 **Resolution:**
 1. Increase worker memory limits in docker-compose
@@ -805,12 +805,12 @@ wmill job get <job_id>
    ```yaml
    # In script metadata
    timeout: 600  # 10 minutes
-   ```
+   ```text
 3. Optimize script to process data in chunks
 4. Use dedicated workers for heavy jobs:
    ```yaml
    tag: heavy-compute
-   ```
+   ```yaml
 
 ---
 
@@ -825,19 +825,19 @@ wmill variable get f/meal-planner/vars/db_password
 
 # Check user permissions
 wmill user whoami
-```
+```text
 
 **Resolution:**
 1. Verify variable path permissions match user/group
 2. Add user to appropriate group:
    ```bash
    wmill group add-user devops <username>
-   ```
+   ```sql
 3. Update variable permissions:
    ```bash
    wmill variable update f/meal-planner/vars/db_password \
      --add-group g/devops
-   ```
+   ```yaml
 
 ---
 
@@ -852,7 +852,7 @@ wmill script generate-metadata
 
 # Validate flow YAML
 wmill flow validate f/meal-planner/workflows/main.flow.yaml
-```
+```text
 
 **Resolution:**
 1. Fix syntax errors in scripts
@@ -860,11 +860,11 @@ wmill flow validate f/meal-planner/workflows/main.flow.yaml
    ```bash
    wmill script generate-metadata
    wmill flow generate-locks
-   ```
+   ```text
 3. Push again:
    ```bash
    wmill sync push
-   ```
+   ```yaml
 
 ---
 

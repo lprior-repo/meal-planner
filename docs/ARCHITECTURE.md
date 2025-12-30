@@ -16,7 +16,7 @@ All code in this project should embody these properties:
 
 ## Directory Structure
 
-```
+```text
 meal-planner/
 ├── bin/                          # Compiled binaries (gitignored)
 │   ├── tandoor_test_connection
@@ -97,7 +97,7 @@ fn run() -> anyhow::Result<serde_json::Value> {
     // 3. Return output
     Ok(serde_json::to_value(result)?)
 }
-```
+```text
 
 ## Windmill Integration
 
@@ -115,7 +115,7 @@ fn run() -> anyhow::Result<serde_json::Value> {
 │  (Pure function: JSON in → JSON out)                    │
 │  Deployed to worker container via Dagger                │
 └─────────────────────────────────────────────────────────┘
-```
+```text
 
 ### Flows for Composition
 
@@ -132,7 +132,7 @@ steps:
   - name: calculate_macros
     script: nutrition/calculate_macros
     input: ${steps.get_nutrition}
-```
+```text
 
 ## Deployment
 
@@ -145,7 +145,7 @@ Dagger builds binaries and deploys to Windmill worker containers:
 │  Source  │───▶│  Dagger  │───▶│  Windmill Workers   │
 │  (Rust)  │    │  Build   │    │  /usr/local/bin/*   │
 └──────────┘    └──────────┘    └─────────────────────┘
-```
+```text
 
 Binaries are statically linked and copied into the worker container image or mounted as a volume.
 
@@ -184,7 +184,7 @@ Cross-domain coordination happens in Windmill flows, not in Rust code.
    [[bin]]
    name = "<domain>-<operation>"
    path = "src/<domain>/bin/<operation>.rs"
-   ```
+   ```text
 5. Create corresponding Windmill script
 
 ## Testing
@@ -205,7 +205,7 @@ fn test_tandoor_connection() {
     let result: Value = serde_json::from_slice(&output.stdout).unwrap();
     assert!(result["success"].as_bool().unwrap());
 }
-```
+```bash
 
 ## Docker Deployment
 
@@ -215,7 +215,7 @@ Binaries are built and mounted into Windmill worker containers:
 FROM ghcr.io/windmill-labs/windmill-full:latest
 COPY target/release/tandoor-* /usr/local/bin/
 COPY target/release/fatsecret-* /usr/local/bin/
-```
+```text
 
 Or use volume mounts for development:
 ```yaml

@@ -10,7 +10,7 @@ summary: "DAG traversal:"
 ## DAG traversal:
 error_handler → [retries, flow_branches]
 retries → [flow_branches]
-```
+```text
 
 ### Find Prerequisites
 
