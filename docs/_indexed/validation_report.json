@@ -1,0 +1,75 @@
+{
+  "run_at": "2025-12-30T08:29:30.047511",
+  "summary": {
+    "files_checked": 204,
+    "files_passed": 202,
+    "files_failed": 2,
+    "total_errors": 2,
+    "total_warnings": 121
+  },
+  "by_rule": {
+    "V001": {
+      "passed": 204,
+      "failed": 0
+    },
+    "V002": {
+      "passed": 204,
+      "failed": 0
+    },
+    "V003": {
+      "passed": 204,
+      "failed": 0
+    },
+    "V004": {
+      "passed": 202,
+      "failed": 2
+    },
+    "V005": {
+      "passed": 204,
+      "failed": 0
+    },
+    "V006": {
+      "passed": 201,
+      "failed": 3
+    },
+    "V007": {
+      "passed": 204,
+      "failed": 0
+    },
+    "V008": {
+      "passed": 204,
+      "failed": 0
+    },
+    "V009": {
+      "passed": 86,
+      "failed": 118
+    }
+  },
+  "failures": [
+    {
+      "file": "docs/ops-contribute-installation.md",
+      "errors": [
+        {
+          "rule": "V004",
+          "message": "Heading levels skip"
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "file": "docs/ops-install-homeassistant.md",
+      "errors": [
+        {
+          "rule": "V004",
+          "message": "Heading levels skip"
+        }
+      ],
+      "warnings": [
+        {
+          "rule": "V009",
+          "message": "1 code blocks without language"
+        }
+      ]
+    }
+  ]
+}

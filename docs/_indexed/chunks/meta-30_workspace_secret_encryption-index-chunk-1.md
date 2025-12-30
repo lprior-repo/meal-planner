@@ -1,0 +1,26 @@
+---
+doc_id: meta/30_workspace_secret_encryption/index
+chunk_id: meta/30_workspace_secret_encryption/index#chunk-1
+heading_path: ["Workspace secret encryption"]
+chunk_type: prose
+tokens: 192
+summary: "Workspace secret encryption"
+---
+
+# Workspace secret encryption
+
+> **Context**: All [secrets](./meta-2_variables_and_secrets-index.md#secrets) of a workspace are encrypted with a symmetric key unique to that workspace. This key is ge
+
+All [secrets](./meta-2_variables_and_secrets-index.md#secrets) of a workspace are encrypted with a symmetric key unique to that workspace. This key is generated when the workspace is created and is stored in the database in the workspace_settings.
+
+You can manually update the encryption key of a workspace, it will be re-encrypted with the new key and the previous key will be replaced by the new one.
+
+If you're manually updating the key to match another workspace key from another Windmill instance, make sure not to use the 'SECRET_SALT' [environment variable](./meta-47_environment_variables-index.md) or, if you're using it, make sure the salt matches across both instances.
+
+The encryption key should be 64 characters long and only contain letters and numbers.
+
+<video
+	className="border-2 rounded-lg object-cover w-full h-full dark:border-gray-800"
+	controls
+	src="/videos/encrypt_secrets.mp4"
+/>

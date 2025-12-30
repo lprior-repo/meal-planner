@@ -1,0 +1,78 @@
+---
+doc_id: meta/16_external_auth_with_jwt/index
+chunk_id: meta/16_external_auth_with_jwt/index#chunk-1
+heading_path: ["External auth with JWT"]
+chunk_type: prose
+tokens: 676
+summary: "External auth with JWT"
+---
+
+# External auth with JWT
+
+> **Context**: Instead of using the built-in authentication and authorization mechanisms, you can generate your own JWT tokens with the desired permissions for your 
+
+Instead of using the built-in authentication and authorization mechanisms, you can generate your own JWT tokens with the desired permissions for your already authenticated users and pass them to Windmill.
+This way, you control what permissions your users have without having to create them in Windmill.
+
+This feature is [Enterprise Edition](/pricing) and [Whitelabel](../../misc/8_white_labelling/index.mdx) only.
+
+For JWT verification, the first option is to pass as an environment variable called `JWT_EXT_PUBLIC_KEY` the public key in PEM format (RS256).
+The second option is to pass as `JWT_EXT_JWKS_URL` the url of the JWKs endpoint to retrieve the public keys from which the JWTs will be matched on the `kid` field.
+In the latter case, the instance will refresh its cache of public keys every 15 minutes.
+The environment variable in both cases has to be passed to all servers and workers.
+
+The JWT token should be prefixed with `jwt_ext_` to let Windmill know that this is an external token and passed in the `Authorization` header as a bearer token.
+The JWT payload has to contain the following fields:
+- `username`: the username of the user (for logs)
+- `email`: the email of the user (for logs)
+- `is_admin`: a boolean indicating if the user is an admin
+- `is_operator`: a boolean indicating if the user is an operator (run-only)
+- `workspace_id`: the workspace id. The token will be granted the configured permissions in the specified workspace.
+- `workspace_ids`: an array of workspace ids. When provided, the token will be granted the configured permissions in all specified workspaces. In that case, the `workspace_id` field is not required.
+- `folders`: an array of arrays containing 3 values: the name of the folder, a boolean indicating whether the user can write to the folder and a boolean indicating whether the user is the owner of the folder (can manage folder permissions)
+- `groups`: an array of strings containing the groups to which the user belongs. When using JWT external authentication, **group permissions on folders are not checked** because the user's permissions depend directly on the folder permissions specified in the JWT.
+- `scopes`: an optional array of strings containing the scopes of the user/token. To limit the user's job listing permissions by specific tags, add a scope with the value `if_jobs:filter_tags:tag1,tag2`.
+
+While you don't need to create the user on Windmill, you should create the workspaces and folders.
+
+Here's an example TypeScript code that generates the JWT token with the required payload and token prefix:
+
+```typescript
+import { createSigner } from 'fast-jwt'
+
+const YOUR_PRIVATE_KEY = `-----BEGIN RSA PRIVATE KEY-----...-----END RSA PRIVATE KEY-----`
+
+async function generateJWT(
+  kid: string,
+  username: string,
+  email: string,
+  is_admin= false,
+  is_operator= false,
+  workspace_id?: string,
+  workspace_ids?: string[],
+  folders: [string, boolean, boolean][] = [],
+  groups: string[] = [],
+  scopes: string[] = []
+) {
+  const signer = createSigner({
+    kid,
+    algorithm: 'RS256',
+    key: YOUR_PRIVATE_KEY,
+    expiresIn: '1h'
+  })
+
+  const token = await signer({
+    username,
+    email,
+    is_admin,
+    is_operator,
+    folders,
+    groups,
+    workspace_id,
+    workspace_ids,
+    scopes
+  })
+
+  return "jwt_ext_" + token
+}
+```

@@ -1,0 +1,3017 @@
+{
+  "source_dir": "/home/lewis/src/meal-planner/docs",
+  "output_dir": "/home/lewis/src/meal-planner/docs/_indexed",
+  "discovered_at": "2025-12-30T08:29:29.926509",
+  "files": [
+    {
+      "source_path": "ARCHITECTURE.md",
+      "id": "ops/general/architecture",
+      "filename": "ops-general-architecture.md",
+      "title": "Meal Planner Architecture",
+      "category": "ops",
+      "subcategory": "general",
+      "word_count": 753,
+      "tags": [
+        "meal",
+        "operations",
+        "advanced",
+        "rust",
+        "windmill"
+      ]
+    },
+    {
+      "source_path": "tandoor/contribute/contribute.md",
+      "id": "ops/contribute/contribute",
+      "filename": "ops-contribute-contribute.md",
+      "title": "Contribute",
+      "category": "ops",
+      "subcategory": "contribute",
+      "word_count": 255,
+      "tags": [
+        "operations",
+        "contribute"
+      ]
+    },
+    {
+      "source_path": "tandoor/contribute/documentation.md",
+      "id": "ops/contribute/documentation",
+      "filename": "ops-contribute-documentation.md",
+      "title": "Documentation",
+      "category": "ops",
+      "subcategory": "contribute",
+      "word_count": 154,
+      "tags": [
+        "operations",
+        "documentation",
+        "contribute"
+      ]
+    },
+    {
+      "source_path": "tandoor/contribute/guidelines.md",
+      "id": "ops/contribute/guidelines",
+      "filename": "ops-contribute-guidelines.md",
+      "title": "Guidelines",
+      "category": "ops",
+      "subcategory": "contribute",
+      "word_count": 347,
+      "tags": [
+        "operations",
+        "guidelines",
+        "contribute"
+      ]
+    },
+    {
+      "source_path": "tandoor/contribute/installation.md",
+      "id": "ops/contribute/installation",
+      "filename": "ops-contribute-installation.md",
+      "title": "Installation",
+      "category": "ops",
+      "subcategory": "contribute",
+      "word_count": 417,
+      "tags": [
+        "operations",
+        "installation",
+        "contribute"
+      ]
+    },
+    {
+      "source_path": "tandoor/contribute/pycharm.md",
+      "id": "ops/contribute/pycharm",
+      "filename": "ops-contribute-pycharm.md",
+      "title": "Pycharm",
+      "category": "ops",
+      "subcategory": "contribute",
+      "word_count": 317,
+      "tags": [
+        "operations",
+        "pycharm",
+        "contribute"
+      ]
+    },
+    {
+      "source_path": "tandoor/contribute/related.md",
+      "id": "concept/contribute/related",
+      "filename": "concept-contribute-related.md",
+      "title": "Related",
+      "category": "concept",
+      "subcategory": "contribute",
+      "word_count": 112,
+      "tags": [
+        "related",
+        "concept",
+        "tandoor",
+        "contribute"
+      ]
+    },
+    {
+      "source_path": "tandoor/contribute/translations.md",
+      "id": "concept/contribute/translations",
+      "filename": "concept-contribute-translations.md",
+      "title": "Translations",
+      "category": "concept",
+      "subcategory": "contribute",
+      "word_count": 229,
+      "tags": [
+        "concept",
+        "translations",
+        "tandoor",
+        "contribute"
+      ]
+    },
+    {
+      "source_path": "tandoor/contribute/vscode.md",
+      "id": "ops/contribute/vscode",
+      "filename": "ops-contribute-vscode.md",
+      "title": "Vscode",
+      "category": "ops",
+      "subcategory": "contribute",
+      "word_count": 387,
+      "tags": [
+        "operations",
+        "vscode",
+        "contribute"
+      ]
+    },
+    {
+      "source_path": "tandoor/faq.md",
+      "id": "ops/tandoor/faq",
+      "filename": "ops-tandoor-faq.md",
+      "title": "Faq",
+      "category": "ops",
+      "subcategory": "tandoor",
+      "word_count": 1251,
+      "tags": [
+        "operations",
+        "tandoor",
+        "faq"
+      ]
+    },
+    {
+      "source_path": "tandoor/features/ai.md",
+      "id": "concept/features/ai",
+      "filename": "concept-features-ai.md",
+      "title": "Ai",
+      "category": "concept",
+      "subcategory": "features",
+      "word_count": 202,
+      "tags": [
+        "concept",
+        "features",
+        "tandoor"
+      ]
+    },
+    {
+      "source_path": "tandoor/features/authentication.md",
+      "id": "ops/features/authentication",
+      "filename": "ops-features-authentication.md",
+      "title": "Authentication",
+      "category": "ops",
+      "subcategory": "features",
+      "word_count": 1233,
+      "tags": [
+        "operations",
+        "advanced",
+        "authentication",
+        "features"
+      ]
+    },
+    {
+      "source_path": "tandoor/features/automation.md",
+      "id": "concept/features/automation",
+      "filename": "concept-features-automation.md",
+      "title": "Automation",
+      "category": "concept",
+      "subcategory": "features",
+      "word_count": 784,
+      "tags": [
+        "concept",
+        "automation",
+        "features"
+      ]
+    },
+    {
+      "source_path": "tandoor/features/connectors.md",
+      "id": "tutorial/features/connectors",
+      "filename": "tutorial-features-connectors.md",
+      "title": "Connectors",
+      "category": "tutorial",
+      "subcategory": "features",
+      "word_count": 162,
+      "tags": [
+        "tutorial",
+        "beginner",
+        "features",
+        "connectors"
+      ]
+    },
+    {
+      "source_path": "tandoor/features/external_recipes.md",
+      "id": "ops/features/external-recipes",
+      "filename": "ops-features-external-recipes.md",
+      "title": "External Recipes",
+      "category": "ops",
+      "subcategory": "features",
+      "word_count": 704,
+      "tags": [
+        "operations",
+        "advanced",
+        "external",
+        "features"
+      ]
+    },
+    {
+      "source_path": "tandoor/features/import_export.md",
+      "id": "ops/features/import-export",
+      "filename": "ops-features-import-export.md",
+      "title": "Import Export",
+      "category": "ops",
+      "subcategory": "features",
+      "word_count": 1928,
+      "tags": [
+        "operations",
+        "advanced",
+        "import",
+        "features"
+      ]
+    },
+    {
+      "source_path": "tandoor/features/shopping.md",
+      "id": "concept/features/shopping",
+      "filename": "concept-features-shopping.md",
+      "title": "Shopping",
+      "category": "concept",
+      "subcategory": "features",
+      "word_count": 417,
+      "tags": [
+        "concept",
+        "features",
+        "shopping"
+      ]
+    },
+    {
+      "source_path": "tandoor/features/telegram_bot.md",
+      "id": "ops/features/telegram-bot",
+      "filename": "ops-features-telegram-bot.md",
+      "title": "Telegram Bot",
+      "category": "ops",
+      "subcategory": "features",
+      "word_count": 331,
+      "tags": [
+        "operations",
+        "tandoor",
+        "telegram",
+        "features"
+      ]
+    },
+    {
+      "source_path": "tandoor/features/templating.md",
+      "id": "concept/features/templating",
+      "filename": "concept-features-templating.md",
+      "title": "Templating",
+      "category": "concept",
+      "subcategory": "features",
+      "word_count": 368,
+      "tags": [
+        "templating",
+        "concept",
+        "features"
+      ]
+    },
+    {
+      "source_path": "tandoor/index.md",
+      "id": "meta/tandoor/index",
+      "filename": "meta-tandoor-index.md",
+      "title": "Index",
+      "category": "meta",
+      "subcategory": "tandoor",
+      "word_count": 699,
+      "tags": [
+        "index",
+        "tandoor",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/archlinux.md",
+      "id": "ops/install/archlinux",
+      "filename": "ops-install-archlinux.md",
+      "title": "Archlinux",
+      "category": "ops",
+      "subcategory": "install",
+      "word_count": 265,
+      "tags": [
+        "operations",
+        "archlinux",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/docker.md",
+      "id": "ops/install/docker",
+      "filename": "ops-install-docker.md",
+      "title": "Docker",
+      "category": "ops",
+      "subcategory": "install",
+      "word_count": 1193,
+      "tags": [
+        "operations",
+        "docker",
+        "advanced",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/homeassistant.md",
+      "id": "ops/install/homeassistant",
+      "filename": "ops-install-homeassistant.md",
+      "title": "Homeassistant",
+      "category": "ops",
+      "subcategory": "install",
+      "word_count": 636,
+      "tags": [
+        "operations",
+        "advanced",
+        "homeassistant",
+        "tandoor",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/kubernetes.md",
+      "id": "ops/install/kubernetes",
+      "filename": "ops-install-kubernetes.md",
+      "title": "Kubernetes",
+      "category": "ops",
+      "subcategory": "install",
+      "word_count": 742,
+      "tags": [
+        "operations",
+        "kubernetes",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/kubesail.md",
+      "id": "ops/install/kubesail",
+      "filename": "ops-install-kubesail.md",
+      "title": "Kubesail",
+      "category": "ops",
+      "subcategory": "install",
+      "word_count": 190,
+      "tags": [
+        "operations",
+        "kubesail",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/manual.md",
+      "id": "ops/install/manual",
+      "filename": "ops-install-manual.md",
+      "title": "Manual installation instructions",
+      "category": "ops",
+      "subcategory": "install",
+      "word_count": 891,
+      "tags": [
+        "operations",
+        "advanced",
+        "manual",
+        "sql",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/other.md",
+      "id": "ops/install/other",
+      "filename": "ops-install-other.md",
+      "title": "Other",
+      "category": "ops",
+      "subcategory": "install",
+      "word_count": 692,
+      "tags": [
+        "operations",
+        "other",
+        "advanced",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/swag.md",
+      "id": "ops/install/swag",
+      "filename": "ops-install-swag.md",
+      "title": "Swag",
+      "category": "ops",
+      "subcategory": "install",
+      "word_count": 412,
+      "tags": [
+        "operations",
+        "docker",
+        "swag",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/synology.md",
+      "id": "tutorial/install/synology",
+      "filename": "tutorial-install-synology.md",
+      "title": "Synology",
+      "category": "tutorial",
+      "subcategory": "install",
+      "word_count": 936,
+      "tags": [
+        "synology",
+        "tutorial",
+        "beginner",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/truenas_portainer.md",
+      "id": "ops/install/truenas-portainer",
+      "filename": "ops-install-truenas-portainer.md",
+      "title": "Truenas Portainer",
+      "category": "ops",
+      "subcategory": "install",
+      "word_count": 1076,
+      "tags": [
+        "operations",
+        "advanced",
+        "truenas",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/unraid.md",
+      "id": "ops/install/unraid",
+      "filename": "ops-install-unraid.md",
+      "title": "Unraid",
+      "category": "ops",
+      "subcategory": "install",
+      "word_count": 224,
+      "tags": [
+        "operations",
+        "unraid",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/install/wsl.md",
+      "id": "ops/install/wsl",
+      "filename": "ops-install-wsl.md",
+      "title": "Ubuntu Installation on Windows (WSL) and Docker Desktop",
+      "category": "ops",
+      "subcategory": "install",
+      "word_count": 543,
+      "tags": [
+        "operations",
+        "docker",
+        "ubuntu",
+        "install"
+      ]
+    },
+    {
+      "source_path": "tandoor/system/backup.md",
+      "id": "ops/system/backup",
+      "filename": "ops-system-backup.md",
+      "title": "Backup",
+      "category": "ops",
+      "subcategory": "system",
+      "word_count": 667,
+      "tags": [
+        "operations",
+        "backup",
+        "advanced",
+        "system"
+      ]
+    },
+    {
+      "source_path": "tandoor/system/configuration.md",
+      "id": "ops/system/configuration",
+      "filename": "ops-system-configuration.md",
+      "title": "Configuration",
+      "category": "ops",
+      "subcategory": "system",
+      "word_count": 2917,
+      "tags": [
+        "operations",
+        "advanced",
+        "configuration",
+        "system"
+      ]
+    },
+    {
+      "source_path": "tandoor/system/migration_sqlite-postgres.md",
+      "id": "ops/system/migration-sqlite-postgres",
+      "filename": "ops-system-migration-sqlite-postgres.md",
+      "title": "How to migrate from sqlite3 database to postgresql",
+      "category": "ops",
+      "subcategory": "system",
+      "word_count": 224,
+      "tags": [
+        "system",
+        "docker",
+        "how",
+        "operations",
+        "sql"
+      ]
+    },
+    {
+      "source_path": "tandoor/system/permissions.md",
+      "id": "concept/system/permissions",
+      "filename": "concept-system-permissions.md",
+      "title": "Permissions",
+      "category": "concept",
+      "subcategory": "system",
+      "word_count": 265,
+      "tags": [
+        "system",
+        "concept",
+        "permissions",
+        "rust"
+      ]
+    },
+    {
+      "source_path": "tandoor/system/updating.md",
+      "id": "ops/system/updating",
+      "filename": "ops-system-updating.md",
+      "title": "Updating",
+      "category": "ops",
+      "subcategory": "system",
+      "word_count": 380,
+      "tags": [
+        "operations",
+        "docker",
+        "updating",
+        "system"
+      ]
+    },
+    {
+      "source_path": "windmill/DAG_VISUALIZATION.txt",
+      "id": "ops/windmill/dag-visualization",
+      "filename": "ops-windmill-dag-visualization.md",
+      "title": "Windmill Documentation DAG Visualization",
+      "category": "ops",
+      "subcategory": "windmill",
+      "word_count": 467,
+      "tags": [
+        "operations",
+        "windmill"
+      ]
+    },
+    {
+      "source_path": "windmill/DEPLOYMENT_GUIDE.md",
+      "id": "ops/windmill/deployment-guide",
+      "filename": "ops-windmill-deployment-guide.md",
+      "title": "Windmill Deployment Guide",
+      "category": "ops",
+      "subcategory": "windmill",
+      "word_count": 2446,
+      "tags": [
+        "operations",
+        "advanced",
+        "windmill",
+        "oauth"
+      ]
+    },
+    {
+      "source_path": "windmill/DEVELOPMENT_GUIDE.md",
+      "id": "ops/windmill/development-guide",
+      "filename": "ops-windmill-development-guide.md",
+      "title": "Windmill Development Guide",
+      "category": "ops",
+      "subcategory": "windmill",
+      "word_count": 677,
+      "tags": [
+        "operations",
+        "advanced",
+        "windmill"
+      ]
+    },
+    {
+      "source_path": "windmill/FLOWS_GUIDE.md",
+      "id": "tutorial/windmill/flows-guide",
+      "filename": "tutorial-windmill-flows-guide.md",
+      "title": "Windmill Flows Guide",
+      "category": "tutorial",
+      "subcategory": "windmill",
+      "word_count": 579,
+      "tags": [
+        "tutorial",
+        "windmill",
+        "beginner"
+      ]
+    },
+    {
+      "source_path": "windmill/IMPLEMENTATION_SUMMARY.md",
+      "id": "ops/windmill/implementation-summary",
+      "filename": "ops-windmill-implementation-summary.md",
+      "title": "Documentation Indexing Implementation Summary",
+      "category": "ops",
+      "subcategory": "windmill",
+      "word_count": 888,
+      "tags": [
+        "operations",
+        "advanced",
+        "windmill",
+        "documentation"
+      ]
+    },
+    {
+      "source_path": "windmill/INDEXING_SYSTEM.md",
+      "id": "meta/windmill/indexing-system",
+      "filename": "meta-windmill-indexing-system.md",
+      "title": "Windmill Documentation Indexing System",
+      "category": "meta",
+      "subcategory": "windmill",
+      "word_count": 982,
+      "tags": [
+        "advanced",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/10_browser_automation/index.mdx",
+      "id": "meta/10_browser_automation/index",
+      "filename": "meta-10_browser_automation-index.md",
+      "title": "Browser automation",
+      "category": "meta",
+      "subcategory": "10_browser_automation",
+      "word_count": 284,
+      "tags": [
+        "browser",
+        "10_browser_automation",
+        "windmill",
+        "api",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/11_git_sync/cli_sync.mdx",
+      "id": "ops/11_git_sync/cli-sync",
+      "filename": "ops-11_git_sync-cli-sync.md",
+      "title": "CLI sync",
+      "category": "ops",
+      "subcategory": "11_git_sync",
+      "word_count": 111,
+      "tags": [
+        "operations",
+        "11_git_sync",
+        "cli"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/11_git_sync/index.mdx",
+      "id": "meta/11_git_sync/index",
+      "filename": "meta-11_git_sync-index.md",
+      "title": "Git sync",
+      "category": "meta",
+      "subcategory": "11_git_sync",
+      "word_count": 1563,
+      "tags": [
+        "11_git_sync",
+        "advanced",
+        "git",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/12_deploy_to_prod/index.mdx",
+      "id": "meta/12_deploy_to_prod/index",
+      "filename": "meta-12_deploy_to_prod-index.md",
+      "title": "Deploy to prod",
+      "category": "meta",
+      "subcategory": "12_deploy_to_prod",
+      "word_count": 352,
+      "tags": [
+        "deploy",
+        "12_deploy_to_prod",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/13_version_control/index.mdx",
+      "id": "meta/13_version_control/index",
+      "filename": "meta-13_version_control-index.md",
+      "title": "Version control",
+      "category": "meta",
+      "subcategory": "13_version_control",
+      "word_count": 239,
+      "tags": [
+        "version",
+        "13_version_control",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/14_dependencies_in_typescript/index.mdx",
+      "id": "meta/14_dependencies_in_typescript/index",
+      "filename": "meta-14_dependencies_in_typescript-index.md",
+      "title": "Dependencies in TypeScript",
+      "category": "meta",
+      "subcategory": "14_dependencies_in_typescript",
+      "word_count": 1768,
+      "tags": [
+        "advanced",
+        "14_dependencies_in_typescript",
+        "dependencies",
+        "typescript",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/15_dependencies_in_python/index.mdx",
+      "id": "meta/15_dependencies_in_python/index",
+      "filename": "meta-15_dependencies_in_python-index.md",
+      "title": "Dependencies in Python",
+      "category": "meta",
+      "subcategory": "15_dependencies_in_python",
+      "word_count": 1971,
+      "tags": [
+        "advanced",
+        "15_dependencies_in_python",
+        "dependencies",
+        "python",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/16_external_auth_with_jwt/index.mdx",
+      "id": "meta/16_external_auth_with_jwt/index",
+      "filename": "meta-16_external_auth_with_jwt-index.md",
+      "title": "External auth with JWT",
+      "category": "meta",
+      "subcategory": "16_external_auth_with_jwt",
+      "word_count": 597,
+      "tags": [
+        "advanced",
+        "external",
+        "16_external_auth_with_jwt",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/17_email_triggers/index.mdx",
+      "id": "meta/17_email_triggers/index",
+      "filename": "meta-17_email_triggers-index.md",
+      "title": "Email triggers",
+      "category": "meta",
+      "subcategory": "17_email_triggers",
+      "word_count": 850,
+      "tags": [
+        "advanced",
+        "17_email_triggers",
+        "email",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/18_instance_settings/index.mdx",
+      "id": "meta/18_instance_settings/index",
+      "filename": "meta-18_instance_settings-index.md",
+      "title": "Instance settings",
+      "category": "meta",
+      "subcategory": "18_instance_settings",
+      "word_count": 2699,
+      "tags": [
+        "18_instance_settings",
+        "advanced",
+        "instance",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/19_explicit_progress/index.mdx",
+      "id": "meta/19_explicit_progress/index",
+      "filename": "meta-19_explicit_progress-index.md",
+      "title": "Set/Get progress from code",
+      "category": "meta",
+      "subcategory": "19_explicit_progress",
+      "word_count": 313,
+      "tags": [
+        "setget",
+        "19_explicit_progress",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/1_self_host/aws_eks_ecs.mdx",
+      "id": "ops/1_self_host/aws-eks-ecs",
+      "filename": "ops-1_self_host-aws-eks-ecs.md",
+      "title": "Windmill on AWS",
+      "category": "ops",
+      "subcategory": "1_self_host",
+      "word_count": 3702,
+      "tags": [
+        "1_self_host",
+        "aws",
+        "operations",
+        "advanced",
+        "windmill"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/1_self_host/index.mdx",
+      "id": "meta/1_self_host/index",
+      "filename": "meta-1_self_host-index.md",
+      "title": "Self-host",
+      "category": "meta",
+      "subcategory": "1_self_host",
+      "word_count": 3010,
+      "tags": [
+        "advanced",
+        "selfhost",
+        "1_self_host",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/20_workspace_forks/index.mdx",
+      "id": "meta/20_workspace_forks/index",
+      "filename": "meta-20_workspace_forks-index.md",
+      "title": "Workspace forks",
+      "category": "meta",
+      "subcategory": "20_workspace_forks",
+      "word_count": 965,
+      "tags": [
+        "20_workspace_forks",
+        "workspace",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/21_scaling/index.mdx",
+      "id": "meta/21_scaling/index",
+      "filename": "meta-21_scaling-index.md",
+      "title": "Scaling workers",
+      "category": "meta",
+      "subcategory": "21_scaling",
+      "word_count": 1300,
+      "tags": [
+        "21_scaling",
+        "advanced",
+        "scaling",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/2_clients/python_client.md",
+      "id": "ops/2_clients/python-client",
+      "filename": "ops-2_clients-python-client.md",
+      "title": "Python client",
+      "category": "ops",
+      "subcategory": "2_clients",
+      "word_count": 405,
+      "tags": [
+        "operations",
+        "windmill",
+        "2_clients",
+        "python"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/2_clients/rust_client.mdx",
+      "id": "ops/2_clients/rust-client",
+      "filename": "ops-2_clients-rust-client.md",
+      "title": "Rust client",
+      "category": "ops",
+      "subcategory": "2_clients",
+      "word_count": 448,
+      "tags": [
+        "2_clients",
+        "operations",
+        "rust",
+        "windmill",
+        "api"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/2_clients/ts_client.mdx",
+      "id": "ops/2_clients/ts-client",
+      "filename": "ops-2_clients-ts-client.md",
+      "title": "TypeScript client",
+      "category": "ops",
+      "subcategory": "2_clients",
+      "word_count": 292,
+      "tags": [
+        "operations",
+        "2_clients",
+        "typescript"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/app.md",
+      "id": "concept/3_cli/app",
+      "filename": "concept-3_cli-app.md",
+      "title": "Apps",
+      "category": "concept",
+      "subcategory": "3_cli",
+      "word_count": 148,
+      "tags": [
+        "3_cli",
+        "concept",
+        "windmill",
+        "apps"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/branch-specific-items.mdx",
+      "id": "ops/3_cli/branch-specific-items",
+      "filename": "ops-3_cli-branch-specific-items.md",
+      "title": "Branch-specific items",
+      "category": "ops",
+      "subcategory": "3_cli",
+      "word_count": 919,
+      "tags": [
+        "operations",
+        "advanced",
+        "3_cli",
+        "branchspecific"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/flow.md",
+      "id": "concept/3_cli/flow",
+      "filename": "concept-3_cli-flow.md",
+      "title": "Flows",
+      "category": "concept",
+      "subcategory": "3_cli",
+      "word_count": 441,
+      "tags": [
+        "3_cli",
+        "concept",
+        "windmill",
+        "flows"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/folder.md",
+      "id": "concept/3_cli/folder",
+      "filename": "concept-3_cli-folder.md",
+      "title": "Folder",
+      "category": "concept",
+      "subcategory": "3_cli",
+      "word_count": 141,
+      "tags": [
+        "3_cli",
+        "concept",
+        "windmill",
+        "folder"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/gitsync-settings.mdx",
+      "id": "ops/3_cli/gitsync-settings",
+      "filename": "ops-3_cli-gitsync-settings.md",
+      "title": "Git sync settings",
+      "category": "ops",
+      "subcategory": "3_cli",
+      "word_count": 1119,
+      "tags": [
+        "git",
+        "operations",
+        "advanced",
+        "3_cli",
+        "windmill"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/index.mdx",
+      "id": "meta/3_cli/index",
+      "filename": "meta-3_cli-index.md",
+      "title": "Command-line interface (CLI)",
+      "category": "meta",
+      "subcategory": "3_cli",
+      "word_count": 110,
+      "tags": [
+        "3_cli",
+        "commandline",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/installation.md",
+      "id": "ops/3_cli/installation",
+      "filename": "ops-3_cli-installation.md",
+      "title": "Installation",
+      "category": "ops",
+      "subcategory": "3_cli",
+      "word_count": 270,
+      "tags": [
+        "operations",
+        "windmill",
+        "3_cli",
+        "installation"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/resource.md",
+      "id": "concept/3_cli/resource",
+      "filename": "concept-3_cli-resource.md",
+      "title": "Resources",
+      "category": "concept",
+      "subcategory": "3_cli",
+      "word_count": 310,
+      "tags": [
+        "3_cli",
+        "concept",
+        "windmill",
+        "resources"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/script.md",
+      "id": "concept/3_cli/script",
+      "filename": "concept-3_cli-script.md",
+      "title": "Scripts",
+      "category": "concept",
+      "subcategory": "3_cli",
+      "word_count": 868,
+      "tags": [
+        "advanced",
+        "3_cli",
+        "concept",
+        "windmill",
+        "scripts"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/sync.mdx",
+      "id": "ops/3_cli/sync",
+      "filename": "ops-3_cli-sync.md",
+      "title": "Sync",
+      "category": "ops",
+      "subcategory": "3_cli",
+      "word_count": 1988,
+      "tags": [
+        "operations",
+        "advanced",
+        "3_cli",
+        "sync"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/user.md",
+      "id": "concept/3_cli/user",
+      "filename": "concept-3_cli-user.md",
+      "title": "Users management",
+      "category": "concept",
+      "subcategory": "3_cli",
+      "word_count": 500,
+      "tags": [
+        "3_cli",
+        "concept",
+        "users",
+        "windmill"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/variable.md",
+      "id": "concept/3_cli/variable",
+      "filename": "concept-3_cli-variable.md",
+      "title": "Variables",
+      "category": "concept",
+      "subcategory": "3_cli",
+      "word_count": 442,
+      "tags": [
+        "3_cli",
+        "concept",
+        "windmill",
+        "variables"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/3_cli/workspace-management.md",
+      "id": "ops/3_cli/workspace-management",
+      "filename": "ops-3_cli-workspace-management.md",
+      "title": "Workspace management",
+      "category": "ops",
+      "subcategory": "3_cli",
+      "word_count": 839,
+      "tags": [
+        "operations",
+        "advanced",
+        "3_cli",
+        "workspace",
+        "windmill"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/4_local_development/index.mdx",
+      "id": "meta/4_local_development/index",
+      "filename": "meta-4_local_development-index.md",
+      "title": "Local development",
+      "category": "meta",
+      "subcategory": "4_local_development",
+      "word_count": 2239,
+      "tags": [
+        "local",
+        "4_local_development",
+        "advanced",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/4_local_development/run_locally.mdx",
+      "id": "ops/4_local_development/run-locally",
+      "filename": "ops-4_local_development-run-locally.md",
+      "title": "Run locally",
+      "category": "ops",
+      "subcategory": "4_local_development",
+      "word_count": 835,
+      "tags": [
+        "operations",
+        "4_local_development",
+        "advanced",
+        "run"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/5_sharing_common_logic/index.mdx",
+      "id": "meta/5_sharing_common_logic/index",
+      "filename": "meta-5_sharing_common_logic-index.md",
+      "title": "Sharing common logic",
+      "category": "meta",
+      "subcategory": "5_sharing_common_logic",
+      "word_count": 803,
+      "tags": [
+        "advanced",
+        "5_sharing_common_logic",
+        "sharing",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/6_imports/index.mdx",
+      "id": "meta/6_imports/index",
+      "filename": "meta-6_imports-index.md",
+      "title": "Dependency management & imports",
+      "category": "meta",
+      "subcategory": "6_imports",
+      "word_count": 1457,
+      "tags": [
+        "advanced",
+        "dependency",
+        "6_imports",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/7_docker/index.mdx",
+      "id": "meta/7_docker/index",
+      "filename": "meta-7_docker-index.md",
+      "title": "Run Docker containers",
+      "category": "meta",
+      "subcategory": "7_docker",
+      "word_count": 717,
+      "tags": [
+        "docker",
+        "run",
+        "advanced",
+        "7_docker",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/8_preinstall_binaries/index.mdx",
+      "id": "meta/8_preinstall_binaries/index",
+      "filename": "meta-8_preinstall_binaries-index.md",
+      "title": "Preinstall binaries",
+      "category": "meta",
+      "subcategory": "8_preinstall_binaries",
+      "word_count": 681,
+      "tags": [
+        "advanced",
+        "8_preinstall_binaries",
+        "preinstall",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/9_deploy_gh_gl/index.mdx",
+      "id": "meta/9_deploy_gh_gl/index",
+      "filename": "meta-9_deploy_gh_gl-index.md",
+      "title": "Deploy to prod using a git workflow",
+      "category": "meta",
+      "subcategory": "9_deploy_gh_gl",
+      "word_count": 2477,
+      "tags": [
+        "9_deploy_gh_gl",
+        "advanced",
+        "deploy",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/advanced/security_isolation/index.mdx",
+      "id": "meta/security_isolation/index",
+      "filename": "meta-security_isolation-index.md",
+      "title": "Security and process isolation",
+      "category": "meta",
+      "subcategory": "security_isolation",
+      "word_count": 1964,
+      "tags": [
+        "advanced",
+        "security",
+        "security_isolation",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/cli_local_dev/1_vscode-extension/index.mdx",
+      "id": "meta/1_vscode-extension/index",
+      "filename": "meta-1_vscode-extension-index.md",
+      "title": "VS Code extension",
+      "category": "meta",
+      "subcategory": "1_vscode-extension",
+      "word_count": 1028,
+      "tags": [
+        "1_vscode-extension",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/0_draft_and_deploy/index.mdx",
+      "id": "meta/0_draft_and_deploy/index",
+      "filename": "meta-0_draft_and_deploy-index.md",
+      "title": "Draft and deploy",
+      "category": "meta",
+      "subcategory": "0_draft_and_deploy",
+      "word_count": 646,
+      "tags": [
+        "draft",
+        "0_draft_and_deploy",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/10_error_handling/index.mdx",
+      "id": "meta/10_error_handling/index",
+      "filename": "meta-10_error_handling-index.md",
+      "title": "Error handling",
+      "category": "meta",
+      "subcategory": "10_error_handling",
+      "word_count": 1734,
+      "tags": [
+        "error",
+        "advanced",
+        "10_error_handling",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/11_persistent_storage/data_tables.mdx",
+      "id": "tutorial/11_persistent_storage/data-tables",
+      "filename": "tutorial-11_persistent_storage-data-tables.md",
+      "title": "Data tables",
+      "category": "tutorial",
+      "subcategory": "11_persistent_storage",
+      "word_count": 643,
+      "tags": [
+        "tutorial",
+        "data",
+        "beginner",
+        "11_persistent_storage"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/11_persistent_storage/ducklake.mdx",
+      "id": "tutorial/11_persistent_storage/ducklake",
+      "filename": "tutorial-11_persistent_storage-ducklake.md",
+      "title": "Ducklake",
+      "category": "tutorial",
+      "subcategory": "11_persistent_storage",
+      "word_count": 621,
+      "tags": [
+        "tutorial",
+        "beginner",
+        "ducklake",
+        "11_persistent_storage"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/11_persistent_storage/index.mdx",
+      "id": "meta/11_persistent_storage/index",
+      "filename": "meta-11_persistent_storage-index.md",
+      "title": "Persistent storage & databases",
+      "category": "meta",
+      "subcategory": "11_persistent_storage",
+      "word_count": 734,
+      "tags": [
+        "persistent",
+        "11_persistent_storage",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/11_persistent_storage/key_value_stores.mdx",
+      "id": "ops/11_persistent_storage/key-value-stores",
+      "filename": "ops-11_persistent_storage-key-value-stores.md",
+      "title": "NoSQL & Document databases (Mongodb, Key-Value Stores)",
+      "category": "ops",
+      "subcategory": "11_persistent_storage",
+      "word_count": 355,
+      "tags": [
+        "operations",
+        "11_persistent_storage",
+        "nosql",
+        "windmill",
+        "sql"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/11_persistent_storage/large_data_files.mdx",
+      "id": "concept/11_persistent_storage/large-data-files",
+      "filename": "concept-11_persistent_storage-large-data-files.md",
+      "title": "Large data: S3, R2, MinIO, Azure Blob, Google Cloud Storage",
+      "category": "concept",
+      "subcategory": "11_persistent_storage",
+      "word_count": 878,
+      "tags": [
+        "large",
+        "concept",
+        "advanced",
+        "11_persistent_storage"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/11_persistent_storage/structured_databases.mdx",
+      "id": "tutorial/11_persistent_storage/structured-databases",
+      "filename": "tutorial-11_persistent_storage-structured-databases.md",
+      "title": "Big structured SQL data: Postgres (Supabase, Neon.tech)",
+      "category": "tutorial",
+      "subcategory": "11_persistent_storage",
+      "word_count": 626,
+      "tags": [
+        "big",
+        "tutorial",
+        "beginner",
+        "11_persistent_storage",
+        "sql"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/11_persistent_storage/within_windmill.mdx",
+      "id": "concept/11_persistent_storage/within-windmill",
+      "filename": "concept-11_persistent_storage-within-windmill.md",
+      "title": "Within Windmill: Not recommended",
+      "category": "concept",
+      "subcategory": "11_persistent_storage",
+      "word_count": 1170,
+      "tags": [
+        "advanced",
+        "11_persistent_storage",
+        "concept",
+        "within",
+        "windmill"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/12_staging_prod/index.md",
+      "id": "meta/12_staging_prod/index",
+      "filename": "meta-12_staging_prod-index.md",
+      "title": "Deploy to prod using the UI",
+      "category": "meta",
+      "subcategory": "12_staging_prod",
+      "word_count": 505,
+      "tags": [
+        "deploy",
+        "12_staging_prod",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/13_json_schema_and_parsing/index.mdx",
+      "id": "meta/13_json_schema_and_parsing/index",
+      "filename": "meta-13_json_schema_and_parsing-index.md",
+      "title": "JSON schema and parsing",
+      "category": "meta",
+      "subcategory": "13_json_schema_and_parsing",
+      "word_count": 2360,
+      "tags": [
+        "json",
+        "advanced",
+        "13_json_schema_and_parsing",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/14_audit_logs/index.mdx",
+      "id": "meta/14_audit_logs/index",
+      "filename": "meta-14_audit_logs-index.md",
+      "title": "Audit logs",
+      "category": "meta",
+      "subcategory": "14_audit_logs",
+      "word_count": 321,
+      "tags": [
+        "audit",
+        "14_audit_logs",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/15_authentification/index.mdx",
+      "id": "meta/15_authentification/index",
+      "filename": "meta-15_authentification-index.md",
+      "title": "Authentication",
+      "category": "meta",
+      "subcategory": "15_authentification",
+      "word_count": 849,
+      "tags": [
+        "15_authentification",
+        "authentication",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/16_roles_and_permissions/index.mdx",
+      "id": "meta/16_roles_and_permissions/index",
+      "filename": "meta-16_roles_and_permissions-index.md",
+      "title": "Roles and permissions",
+      "category": "meta",
+      "subcategory": "16_roles_and_permissions",
+      "word_count": 1431,
+      "tags": [
+        "roles",
+        "16_roles_and_permissions",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/17_collaboration/index.mdx",
+      "id": "meta/17_collaboration/index",
+      "filename": "meta-17_collaboration-index.md",
+      "title": "Collaboration in Windmill",
+      "category": "meta",
+      "subcategory": "17_collaboration",
+      "word_count": 635,
+      "tags": [
+        "17_collaboration",
+        "collaboration",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/18_files_binary_data/index.mdx",
+      "id": "meta/18_files_binary_data/index",
+      "filename": "meta-18_files_binary_data-index.md",
+      "title": "Handling files and binary data",
+      "category": "meta",
+      "subcategory": "18_files_binary_data",
+      "word_count": 737,
+      "tags": [
+        "advanced",
+        "handling",
+        "18_files_binary_data",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/19_rich_display_rendering/index.mdx",
+      "id": "meta/19_rich_display_rendering/index",
+      "filename": "meta-19_rich_display_rendering-index.md",
+      "title": "Rich display rendering",
+      "category": "meta",
+      "subcategory": "19_rich_display_rendering",
+      "word_count": 1939,
+      "tags": [
+        "advanced",
+        "rich",
+        "19_rich_display_rendering",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/1_scheduling/index.mdx",
+      "id": "meta/1_scheduling/index",
+      "filename": "meta-1_scheduling-index.md",
+      "title": "Schedules",
+      "category": "meta",
+      "subcategory": "1_scheduling",
+      "word_count": 2610,
+      "tags": [
+        "1_scheduling",
+        "advanced",
+        "schedules",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/20_jobs/index.mdx",
+      "id": "meta/20_jobs/index",
+      "filename": "meta-20_jobs-index.md",
+      "title": "Jobs",
+      "category": "meta",
+      "subcategory": "20_jobs",
+      "word_count": 3067,
+      "tags": [
+        "advanced",
+        "20_jobs",
+        "jobs",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/21_concurrency_limits/index.md",
+      "id": "meta/21_concurrency_limits/index",
+      "filename": "meta-21_concurrency_limits-index.md",
+      "title": "Concurrency limits",
+      "category": "meta",
+      "subcategory": "21_concurrency_limits",
+      "word_count": 442,
+      "tags": [
+        "21_concurrency_limits",
+        "api",
+        "concurrency",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/22_ai_generation/index.mdx",
+      "id": "meta/22_ai_generation/index",
+      "filename": "meta-22_ai_generation-index.md",
+      "title": "Windmill AI",
+      "category": "meta",
+      "subcategory": "22_ai_generation",
+      "word_count": 1546,
+      "tags": [
+        "windmill",
+        "22_ai_generation",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/22_job_debouncing/index.md",
+      "id": "meta/22_job_debouncing/index",
+      "filename": "meta-22_job_debouncing-index.md",
+      "title": "Job debouncing",
+      "category": "meta",
+      "subcategory": "22_job_debouncing",
+      "word_count": 324,
+      "tags": [
+        "job",
+        "22_job_debouncing",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/23_instant_preview/index.mdx",
+      "id": "meta/23_instant_preview/index",
+      "filename": "meta-23_instant_preview-index.md",
+      "title": "Instant preview & testing",
+      "category": "meta",
+      "subcategory": "23_instant_preview",
+      "word_count": 817,
+      "tags": [
+        "instant",
+        "23_instant_preview",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/24_caching/index.md",
+      "id": "meta/24_caching/index",
+      "filename": "meta-24_caching-index.md",
+      "title": "Caching",
+      "category": "meta",
+      "subcategory": "24_caching",
+      "word_count": 781,
+      "tags": [
+        "24_caching",
+        "caching",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/25_dedicated_workers/index.mdx",
+      "id": "meta/25_dedicated_workers/index",
+      "filename": "meta-25_dedicated_workers-index.md",
+      "title": "Dedicated workers / High throughput",
+      "category": "meta",
+      "subcategory": "25_dedicated_workers",
+      "word_count": 657,
+      "tags": [
+        "25_dedicated_workers",
+        "dedicated",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/26_content_search/index.mdx",
+      "id": "meta/26_content_search/index",
+      "filename": "meta-26_content_search-index.md",
+      "title": "Content search",
+      "category": "meta",
+      "subcategory": "26_content_search",
+      "word_count": 66,
+      "tags": [
+        "26_content_search",
+        "content",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/27_data_pipelines/index.mdx",
+      "id": "meta/27_data_pipelines/index",
+      "filename": "meta-27_data_pipelines-index.md",
+      "title": "Data pipelines",
+      "category": "meta",
+      "subcategory": "27_data_pipelines",
+      "word_count": 3113,
+      "tags": [
+        "data",
+        "27_data_pipelines",
+        "advanced",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/28_agent_workers/index.mdx",
+      "id": "meta/28_agent_workers/index",
+      "filename": "meta-28_agent_workers-index.md",
+      "title": "Agent workers",
+      "category": "meta",
+      "subcategory": "28_agent_workers",
+      "word_count": 844,
+      "tags": [
+        "28_agent_workers",
+        "advanced",
+        "agent",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/29_oidc/index.mdx",
+      "id": "meta/29_oidc/index",
+      "filename": "meta-29_oidc-index.md",
+      "title": "OpenID Connect (OIDC)",
+      "category": "meta",
+      "subcategory": "29_oidc",
+      "word_count": 1422,
+      "tags": [
+        "advanced",
+        "29_oidc",
+        "openid",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/2_variables_and_secrets/index.mdx",
+      "id": "meta/2_variables_and_secrets/index",
+      "filename": "meta-2_variables_and_secrets-index.md",
+      "title": "Variables and secrets",
+      "category": "meta",
+      "subcategory": "2_variables_and_secrets",
+      "word_count": 988,
+      "tags": [
+        "2_variables_and_secrets",
+        "advanced",
+        "variables",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/30_workspace_secret_encryption/index.mdx",
+      "id": "meta/30_workspace_secret_encryption/index",
+      "filename": "meta-30_workspace_secret_encryption-index.md",
+      "title": "Workspace secret encryption",
+      "category": "meta",
+      "subcategory": "30_workspace_secret_encryption",
+      "word_count": 127,
+      "tags": [
+        "30_workspace_secret_encryption",
+        "workspace",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/31_workflows_as_code/index.mdx",
+      "id": "meta/31_workflows_as_code/index",
+      "filename": "meta-31_workflows_as_code-index.md",
+      "title": "Workflows as code",
+      "category": "meta",
+      "subcategory": "31_workflows_as_code",
+      "word_count": 435,
+      "tags": [
+        "31_workflows_as_code",
+        "workflows",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/32_private_hub/index.mdx",
+      "id": "meta/32_private_hub/index",
+      "filename": "meta-32_private_hub-index.md",
+      "title": "Private Hub",
+      "category": "meta",
+      "subcategory": "32_private_hub",
+      "word_count": 684,
+      "tags": [
+        "windmill",
+        "private",
+        "32_private_hub",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/33_codebases_and_bundles/index.mdx",
+      "id": "meta/33_codebases_and_bundles/index",
+      "filename": "meta-33_codebases_and_bundles-index.md",
+      "title": "Codebases & bundles",
+      "category": "meta",
+      "subcategory": "33_codebases_and_bundles",
+      "word_count": 363,
+      "tags": [
+        "codebases",
+        "33_codebases_and_bundles",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/34_versioning/index.mdx",
+      "id": "meta/34_versioning/index",
+      "filename": "meta-34_versioning-index.md",
+      "title": "Versioning",
+      "category": "meta",
+      "subcategory": "34_versioning",
+      "word_count": 302,
+      "tags": [
+        "34_versioning",
+        "versioning",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/35_search_bar/index.mdx",
+      "id": "meta/35_search_bar/index",
+      "filename": "meta-35_search_bar-index.md",
+      "title": "Search bar",
+      "category": "meta",
+      "subcategory": "35_search_bar",
+      "word_count": 524,
+      "tags": [
+        "advanced",
+        "35_search_bar",
+        "search",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/36_service_logs/index.mdx",
+      "id": "meta/36_service_logs/index",
+      "filename": "meta-36_service_logs-index.md",
+      "title": "Service logs",
+      "category": "meta",
+      "subcategory": "36_service_logs",
+      "word_count": 581,
+      "tags": [
+        "advanced",
+        "36_service_logs",
+        "service",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/37_critical_alerts/index.mdx",
+      "id": "meta/37_critical_alerts/index",
+      "filename": "meta-37_critical_alerts-index.md",
+      "title": "Critical alerts",
+      "category": "meta",
+      "subcategory": "37_critical_alerts",
+      "word_count": 307,
+      "tags": [
+        "37_critical_alerts",
+        "critical",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/38_object_storage_in_windmill/index.mdx",
+      "id": "meta/38_object_storage_in_windmill/index",
+      "filename": "meta-38_object_storage_in_windmill-index.md",
+      "title": "Object storage in Windmill (S3)",
+      "category": "meta",
+      "subcategory": "38_object_storage_in_windmill",
+      "word_count": 2843,
+      "tags": [
+        "advanced",
+        "38_object_storage_in_windmill",
+        "object",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/39_http_routing/index.mdx",
+      "id": "meta/39_http_routing/index",
+      "filename": "meta-39_http_routing-index.md",
+      "title": "HTTP routes",
+      "category": "meta",
+      "subcategory": "39_http_routing",
+      "word_count": 2128,
+      "tags": [
+        "39_http_routing",
+        "advanced",
+        "http",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/3_resources_and_types/index.mdx",
+      "id": "meta/3_resources_and_types/index",
+      "filename": "meta-3_resources_and_types-index.md",
+      "title": "Resources and resource types",
+      "category": "meta",
+      "subcategory": "3_resources_and_types",
+      "word_count": 2626,
+      "tags": [
+        "advanced",
+        "resources",
+        "3_resources_and_types",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/40_websocket_triggers/index.mdx",
+      "id": "meta/40_websocket_triggers/index",
+      "filename": "meta-40_websocket_triggers-index.md",
+      "title": "WebSocket triggers",
+      "category": "meta",
+      "subcategory": "40_websocket_triggers",
+      "word_count": 543,
+      "tags": [
+        "advanced",
+        "40_websocket_triggers",
+        "websocket",
+        "windmill",
+        "api"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/41_kafka_triggers/index.mdx",
+      "id": "meta/41_kafka_triggers/index",
+      "filename": "meta-41_kafka_triggers-index.md",
+      "title": "Kafka triggers",
+      "category": "meta",
+      "subcategory": "41_kafka_triggers",
+      "word_count": 331,
+      "tags": [
+        "41_kafka_triggers",
+        "kafka",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/42_autoscaling/index.mdx",
+      "id": "meta/42_autoscaling/index",
+      "filename": "meta-42_autoscaling-index.md",
+      "title": "Autoscaling",
+      "category": "meta",
+      "subcategory": "42_autoscaling",
+      "word_count": 1345,
+      "tags": [
+        "42_autoscaling",
+        "autoscaling",
+        "advanced",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/43_preprocessors/index.mdx",
+      "id": "meta/43_preprocessors/index",
+      "filename": "meta-43_preprocessors-index.md",
+      "title": "Preprocessors",
+      "category": "meta",
+      "subcategory": "43_preprocessors",
+      "word_count": 1475,
+      "tags": [
+        "preprocessors",
+        "43_preprocessors",
+        "advanced",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/44_workspace_settings/index.mdx",
+      "id": "meta/44_workspace_settings/index",
+      "filename": "meta-44_workspace_settings-index.md",
+      "title": "Workspace settings",
+      "category": "meta",
+      "subcategory": "44_workspace_settings",
+      "word_count": 383,
+      "tags": [
+        "44_workspace_settings",
+        "workspace",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/45_nats_triggers/index.mdx",
+      "id": "meta/45_nats_triggers/index",
+      "filename": "meta-45_nats_triggers-index.md",
+      "title": "NATS triggers",
+      "category": "meta",
+      "subcategory": "45_nats_triggers",
+      "word_count": 450,
+      "tags": [
+        "45_nats_triggers",
+        "windmill",
+        "nats",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/46_postgres_triggers/index.mdx",
+      "id": "meta/46_postgres_triggers/index",
+      "filename": "meta-46_postgres_triggers-index.md",
+      "title": "Postgres triggers",
+      "category": "meta",
+      "subcategory": "46_postgres_triggers",
+      "word_count": 4388,
+      "tags": [
+        "46_postgres_triggers",
+        "postgres",
+        "advanced",
+        "windmill",
+        "sql"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/47_environment_variables/index.mdx",
+      "id": "meta/47_environment_variables/index",
+      "filename": "meta-47_environment_variables-index.md",
+      "title": "Environment variables",
+      "category": "meta",
+      "subcategory": "47_environment_variables",
+      "word_count": 1593,
+      "tags": [
+        "47_environment_variables",
+        "environment",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/48_sqs_triggers/index.mdx",
+      "id": "meta/48_sqs_triggers/index",
+      "filename": "meta-48_sqs_triggers-index.md",
+      "title": "SQS triggers",
+      "category": "meta",
+      "subcategory": "48_sqs_triggers",
+      "word_count": 495,
+      "tags": [
+        "aws",
+        "48_sqs_triggers",
+        "sqs",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/49_mqtt_triggers/index.mdx",
+      "id": "meta/49_mqtt_triggers/index",
+      "filename": "meta-49_mqtt_triggers-index.md",
+      "title": "MQTT triggers",
+      "category": "meta",
+      "subcategory": "49_mqtt_triggers",
+      "word_count": 901,
+      "tags": [
+        "advanced",
+        "mqtt",
+        "49_mqtt_triggers",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/4_webhooks/index.mdx",
+      "id": "meta/4_webhooks/index",
+      "filename": "meta-4_webhooks-index.md",
+      "title": "Webhooks",
+      "category": "meta",
+      "subcategory": "4_webhooks",
+      "word_count": 2377,
+      "tags": [
+        "advanced",
+        "4_webhooks",
+        "webhooks",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/50_gcp_triggers/index.mdx",
+      "id": "meta/50_gcp_triggers/index",
+      "filename": "meta-50_gcp_triggers-index.md",
+      "title": "GCP Pub/Sub triggers",
+      "category": "meta",
+      "subcategory": "50_gcp_triggers",
+      "word_count": 916,
+      "tags": [
+        "50_gcp_triggers",
+        "advanced",
+        "gcp",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/51_mcp/index.mdx",
+      "id": "meta/51_mcp/index",
+      "filename": "meta-51_mcp-index.md",
+      "title": "Windmill MCP",
+      "category": "meta",
+      "subcategory": "51_mcp",
+      "word_count": 642,
+      "tags": [
+        "51_mcp",
+        "advanced",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/51_sql_to_s3_streaming/index.mdx",
+      "id": "meta/51_sql_to_s3_streaming/index",
+      "filename": "meta-51_sql_to_s3_streaming-index.md",
+      "title": "S3 streaming for large queries",
+      "category": "meta",
+      "subcategory": "51_sql_to_s3_streaming",
+      "word_count": 150,
+      "tags": [
+        "51_sql_to_s3_streaming",
+        "windmill",
+        "sql",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/52_assets/index.mdx",
+      "id": "meta/52_assets/index",
+      "filename": "meta-52_assets-index.md",
+      "title": "Assets",
+      "category": "meta",
+      "subcategory": "52_assets",
+      "word_count": 327,
+      "tags": [
+        "52_assets",
+        "assets",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/53_custom_instance_database/index.mdx",
+      "id": "meta/53_custom_instance_database/index",
+      "filename": "meta-53_custom_instance_database-index.md",
+      "title": "Custom Instance Database",
+      "category": "meta",
+      "subcategory": "53_custom_instance_database",
+      "word_count": 348,
+      "tags": [
+        "53_custom_instance_database",
+        "custom",
+        "windmill",
+        "sql",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/54_ai_agents/index.mdx",
+      "id": "meta/54_ai_agents/index",
+      "filename": "meta-54_ai_agents-index.md",
+      "title": "AI agents",
+      "category": "meta",
+      "subcategory": "54_ai_agents",
+      "word_count": 1551,
+      "tags": [
+        "54_ai_agents",
+        "advanced",
+        "windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/55_workspace_dependencies/index.mdx",
+      "id": "meta/55_workspace_dependencies/index",
+      "filename": "meta-55_workspace_dependencies-index.md",
+      "title": "Workspace dependencies",
+      "category": "meta",
+      "subcategory": "55_workspace_dependencies",
+      "word_count": 816,
+      "tags": [
+        "workspace",
+        "55_workspace_dependencies",
+        "advanced",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/55_workspace_dependencies/migration.mdx",
+      "id": "ops/55_workspace_dependencies/migration",
+      "filename": "ops-55_workspace_dependencies-migration.md",
+      "title": "Migration guide",
+      "category": "ops",
+      "subcategory": "55_workspace_dependencies",
+      "word_count": 264,
+      "tags": [
+        "operations",
+        "55_workspace_dependencies",
+        "migration"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/5_monitor_past_and_future_runs/index.mdx",
+      "id": "meta/5_monitor_past_and_future_runs/index",
+      "filename": "meta-5_monitor_past_and_future_runs-index.md",
+      "title": "Jobs runs",
+      "category": "meta",
+      "subcategory": "5_monitor_past_and_future_runs",
+      "word_count": 745,
+      "tags": [
+        "advanced",
+        "5_monitor_past_and_future_runs",
+        "jobs",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/6_auto_generated_uis/index.mdx",
+      "id": "meta/6_auto_generated_uis/index",
+      "filename": "meta-6_auto_generated_uis-index.md",
+      "title": "Auto-generated UIs",
+      "category": "meta",
+      "subcategory": "6_auto_generated_uis",
+      "word_count": 1036,
+      "tags": [
+        "autogenerated",
+        "6_auto_generated_uis",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/7_multiplayer/index.md",
+      "id": "meta/7_multiplayer/index",
+      "filename": "meta-7_multiplayer-index.md",
+      "title": "Multiplayer",
+      "category": "meta",
+      "subcategory": "7_multiplayer",
+      "word_count": 113,
+      "tags": [
+        "7_multiplayer",
+        "multiplayer",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/8_groups_and_folders/index.mdx",
+      "id": "meta/8_groups_and_folders/index",
+      "filename": "meta-8_groups_and_folders-index.md",
+      "title": "Groups and folders",
+      "category": "meta",
+      "subcategory": "8_groups_and_folders",
+      "word_count": 697,
+      "tags": [
+        "8_groups_and_folders",
+        "groups",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/9_worker_groups/index.mdx",
+      "id": "meta/9_worker_groups/index",
+      "filename": "meta-9_worker_groups-index.md",
+      "title": "Workers and worker groups",
+      "category": "meta",
+      "subcategory": "9_worker_groups",
+      "word_count": 3665,
+      "tags": [
+        "advanced",
+        "workers",
+        "9_worker_groups",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/RUST-SDK-WINMILL-PATTERNS.md",
+      "id": "ops/core_concepts/rust-sdk-winmill-patterns",
+      "filename": "ops-core_concepts-rust-sdk-winmill-patterns.md",
+      "title": "Windmill Rust SDK: Complete Reference Guide for AI Coding Agents",
+      "category": "ops",
+      "subcategory": "core_concepts",
+      "word_count": 2385,
+      "tags": [
+        "operations",
+        "advanced",
+        "core_concepts",
+        "rust",
+        "windmill"
+      ]
+    },
+    {
+      "source_path": "windmill/core_concepts/index.mdx",
+      "id": "meta/core_concepts/index",
+      "filename": "meta-core_concepts-index.md",
+      "title": "Core concepts",
+      "category": "meta",
+      "subcategory": "core_concepts",
+      "word_count": 2593,
+      "tags": [
+        "core_concepts",
+        "core",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/10_flow_trigger.mdx",
+      "id": "concept/flows/10-flow-trigger",
+      "filename": "concept-flows-10-flow-trigger.md",
+      "title": "Trigger scripts",
+      "category": "concept",
+      "subcategory": "flows",
+      "word_count": 543,
+      "tags": [
+        "concept",
+        "advanced",
+        "flows",
+        "trigger"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/11_flow_approval.mdx",
+      "id": "tutorial/flows/11-flow-approval",
+      "filename": "tutorial-flows-11-flow-approval.md",
+      "title": "Suspend & Approval / Prompts",
+      "category": "tutorial",
+      "subcategory": "flows",
+      "word_count": 3027,
+      "tags": [
+        "tutorial",
+        "beginner",
+        "flows",
+        "suspend"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/12_flow_loops.md",
+      "id": "tutorial/flows/12-flow-loops",
+      "filename": "tutorial-flows-12-flow-loops.md",
+      "title": "For loops",
+      "category": "tutorial",
+      "subcategory": "flows",
+      "word_count": 453,
+      "tags": [
+        "beginner",
+        "tutorial",
+        "for",
+        "flows"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/13_flow_branches.md",
+      "id": "concept/flows/13-flow-branches",
+      "filename": "concept-flows-13-flow-branches.md",
+      "title": "Branches",
+      "category": "concept",
+      "subcategory": "flows",
+      "word_count": 469,
+      "tags": [
+        "concept",
+        "flows",
+        "branches"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/14_retries.md",
+      "id": "ops/flows/14-retries",
+      "filename": "ops-flows-14-retries.md",
+      "title": "Retries",
+      "category": "ops",
+      "subcategory": "flows",
+      "word_count": 563,
+      "tags": [
+        "operations",
+        "flows",
+        "retries"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/15_sleep.md",
+      "id": "tutorial/flows/15-sleep",
+      "filename": "tutorial-flows-15-sleep.md",
+      "title": "Sleeps / Delays in flows",
+      "category": "tutorial",
+      "subcategory": "flows",
+      "word_count": 425,
+      "tags": [
+        "tutorial",
+        "beginner",
+        "flows",
+        "sleeps"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/16_architecture.mdx",
+      "id": "tutorial/flows/16-architecture",
+      "filename": "tutorial-flows-16-architecture.md",
+      "title": "Architecture and data exchange",
+      "category": "tutorial",
+      "subcategory": "flows",
+      "word_count": 890,
+      "tags": [
+        "beginner",
+        "tutorial",
+        "architecture",
+        "flows"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/17_ai_flows.mdx",
+      "id": "concept/flows/17-ai-flows",
+      "filename": "concept-flows-17-ai-flows.md",
+      "title": "AI-generated flows",
+      "category": "concept",
+      "subcategory": "flows",
+      "word_count": 59,
+      "tags": [
+        "concept",
+        "flows",
+        "aigenerated"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/18_test_flows.mdx",
+      "id": "ops/flows/18-test-flows",
+      "filename": "ops-flows-18-test-flows.md",
+      "title": "Testing flows",
+      "category": "ops",
+      "subcategory": "flows",
+      "word_count": 506,
+      "tags": [
+        "operations",
+        "flows",
+        "testing"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/19_early_return.mdx",
+      "id": "ops/flows/19-early-return",
+      "filename": "ops-flows-19-early-return.md",
+      "title": "Early return",
+      "category": "ops",
+      "subcategory": "flows",
+      "word_count": 104,
+      "tags": [
+        "operations",
+        "early",
+        "flows"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/1_flow_editor.mdx",
+      "id": "tutorial/flows/1-flow-editor",
+      "filename": "tutorial-flows-1-flow-editor.md",
+      "title": "Flow editor",
+      "category": "tutorial",
+      "subcategory": "flows",
+      "word_count": 798,
+      "tags": [
+        "tutorial",
+        "beginner",
+        "flows",
+        "flow"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/20_priority.md",
+      "id": "concept/flows/20-priority",
+      "filename": "concept-flows-20-priority.md",
+      "title": "Priority for steps",
+      "category": "concept",
+      "subcategory": "flows",
+      "word_count": 124,
+      "tags": [
+        "concept",
+        "priority",
+        "flows"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/21_lifetime.md",
+      "id": "concept/flows/21-lifetime",
+      "filename": "concept-flows-21-lifetime.md",
+      "title": "Lifetime / Delete after use",
+      "category": "concept",
+      "subcategory": "flows",
+      "word_count": 126,
+      "tags": [
+        "concept",
+        "flows",
+        "lifetime"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/22_while_loops.mdx",
+      "id": "tutorial/flows/22-while-loops",
+      "filename": "tutorial-flows-22-while-loops.md",
+      "title": "While loops",
+      "category": "tutorial",
+      "subcategory": "flows",
+      "word_count": 605,
+      "tags": [
+        "tutorial",
+        "beginner",
+        "flows",
+        "while"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/23_job_debouncing.mdx",
+      "id": "ref/flows/23-job-debouncing",
+      "filename": "ref-flows-23-job-debouncing.md",
+      "title": "Job debouncing",
+      "category": "ref",
+      "subcategory": "flows",
+      "word_count": 152,
+      "tags": [
+        "reference",
+        "flows",
+        "job"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/24_sticky_notes.mdx",
+      "id": "concept/flows/24-sticky-notes",
+      "filename": "concept-flows-24-sticky-notes.md",
+      "title": "Sticky notes",
+      "category": "concept",
+      "subcategory": "flows",
+      "word_count": 589,
+      "tags": [
+        "concept",
+        "flows",
+        "sticky"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/2_early_stop.md",
+      "id": "concept/flows/2-early-stop",
+      "filename": "concept-flows-2-early-stop.md",
+      "title": "Early stop / Break",
+      "category": "concept",
+      "subcategory": "flows",
+      "word_count": 287,
+      "tags": [
+        "concept",
+        "early",
+        "flows"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/3_editor_components.mdx",
+      "id": "tutorial/flows/3-editor-components",
+      "filename": "tutorial-flows-3-editor-components.md",
+      "title": "Flow editor components",
+      "category": "tutorial",
+      "subcategory": "flows",
+      "word_count": 2484,
+      "tags": [
+        "tutorial",
+        "beginner",
+        "flows",
+        "flow"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/4_cache.mdx",
+      "id": "tutorial/flows/4-cache",
+      "filename": "tutorial-flows-4-cache.md",
+      "title": "Caching",
+      "category": "tutorial",
+      "subcategory": "flows",
+      "word_count": 544,
+      "tags": [
+        "tutorial",
+        "beginner",
+        "flows",
+        "caching"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/5_step_mocking.md",
+      "id": "concept/flows/5-step-mocking",
+      "filename": "concept-flows-5-step-mocking.md",
+      "title": "Step mocking / Pin result",
+      "category": "concept",
+      "subcategory": "flows",
+      "word_count": 340,
+      "tags": [
+        "concept",
+        "step",
+        "flows"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/6_concurrency_limit.mdx",
+      "id": "ref/flows/6-concurrency-limit",
+      "filename": "ref-flows-6-concurrency-limit.md",
+      "title": "Concurrency limits",
+      "category": "ref",
+      "subcategory": "flows",
+      "word_count": 247,
+      "tags": [
+        "reference",
+        "concurrency",
+        "flows"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/7_flow_error_handler.md",
+      "id": "tutorial/flows/7-flow-error-handler",
+      "filename": "tutorial-flows-7-flow-error-handler.md",
+      "title": "Error handler",
+      "category": "tutorial",
+      "subcategory": "flows",
+      "word_count": 237,
+      "tags": [
+        "error",
+        "tutorial",
+        "beginner",
+        "flows"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/8_error_handling.mdx",
+      "id": "concept/flows/8-error-handling",
+      "filename": "concept-flows-8-error-handling.md",
+      "title": "Error handling in flows",
+      "category": "concept",
+      "subcategory": "flows",
+      "word_count": 352,
+      "tags": [
+        "error",
+        "concept",
+        "flows"
+      ]
+    },
+    {
+      "source_path": "windmill/flows/9_custom_timeout.md",
+      "id": "concept/flows/9-custom-timeout",
+      "filename": "concept-flows-9-custom-timeout.md",
+      "title": "Custom timeout for step",
+      "category": "concept",
+      "subcategory": "flows",
+      "word_count": 113,
+      "tags": [
+        "concept",
+        "flows",
+        "custom"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/00_how_to_use_windmill/index.mdx",
+      "id": "meta/00_how_to_use_windmill/index",
+      "filename": "meta-00_how_to_use_windmill-index.md",
+      "title": "Getting started with Windmill",
+      "category": "meta",
+      "subcategory": "00_how_to_use_windmill",
+      "word_count": 301,
+      "tags": [
+        "getting",
+        "windmill",
+        "00_how_to_use_windmill",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/10_ansible_quickstart/index.mdx",
+      "id": "meta/10_ansible_quickstart/index",
+      "filename": "meta-10_ansible_quickstart-index.md",
+      "title": "Ansible quickstart",
+      "category": "meta",
+      "subcategory": "10_ansible_quickstart",
+      "word_count": 3200,
+      "tags": [
+        "10_ansible_quickstart",
+        "ansible",
+        "advanced",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/11_csharp_quickstart/index.mdx",
+      "id": "meta/11_csharp_quickstart/index",
+      "filename": "meta-11_csharp_quickstart-index.md",
+      "title": "C# quickstart",
+      "category": "meta",
+      "subcategory": "11_csharp_quickstart",
+      "word_count": 1455,
+      "tags": [
+        "advanced",
+        "11_csharp_quickstart",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/13_java_quickstart/index.mdx",
+      "id": "meta/13_java_quickstart/index",
+      "filename": "meta-13_java_quickstart-index.md",
+      "title": "Java quickstart",
+      "category": "meta",
+      "subcategory": "13_java_quickstart",
+      "word_count": 1395,
+      "tags": [
+        "java",
+        "13_java_quickstart",
+        "advanced",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/14_ruby_quickstart/index.mdx",
+      "id": "meta/14_ruby_quickstart/index",
+      "filename": "meta-14_ruby_quickstart-index.md",
+      "title": "Ruby quickstart",
+      "category": "meta",
+      "subcategory": "14_ruby_quickstart",
+      "word_count": 1933,
+      "tags": [
+        "advanced",
+        "14_ruby_quickstart",
+        "ruby",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/1_typescript_quickstart/index.mdx",
+      "id": "meta/1_typescript_quickstart/index",
+      "filename": "meta-1_typescript_quickstart-index.md",
+      "title": "TypeScript quickstart",
+      "category": "meta",
+      "subcategory": "1_typescript_quickstart",
+      "word_count": 2509,
+      "tags": [
+        "typescript",
+        "advanced",
+        "1_typescript_quickstart",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/2_python_quickstart/index.mdx",
+      "id": "meta/2_python_quickstart/index",
+      "filename": "meta-2_python_quickstart-index.md",
+      "title": "Python quickstart",
+      "category": "meta",
+      "subcategory": "2_python_quickstart",
+      "word_count": 2144,
+      "tags": [
+        "advanced",
+        "2_python_quickstart",
+        "python",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/3_go_quickstart/index.mdx",
+      "id": "meta/3_go_quickstart/index",
+      "filename": "meta-3_go_quickstart-index.md",
+      "title": "Go quickstart",
+      "category": "meta",
+      "subcategory": "3_go_quickstart",
+      "word_count": 1594,
+      "tags": [
+        "advanced",
+        "3_go_quickstart",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/4_bash_quickstart/index.mdx",
+      "id": "meta/4_bash_quickstart/index",
+      "filename": "meta-4_bash_quickstart-index.md",
+      "title": "TypeScript quickstart",
+      "category": "meta",
+      "subcategory": "4_bash_quickstart",
+      "word_count": 2072,
+      "tags": [
+        "typescript",
+        "4_bash_quickstart",
+        "advanced",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/5_sql_quickstart/index.mdx",
+      "id": "meta/5_sql_quickstart/index",
+      "filename": "meta-5_sql_quickstart-index.md",
+      "title": "Quickstart PostgreSQL, MySQL, MS SQL, BigQuery, Snowflake",
+      "category": "meta",
+      "subcategory": "5_sql_quickstart",
+      "word_count": 5323,
+      "tags": [
+        "quickstart",
+        "advanced",
+        "5_sql_quickstart",
+        "sql",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/6_rest_grapqhql_quickstart/index.mdx",
+      "id": "meta/6_rest_grapqhql_quickstart/index",
+      "filename": "meta-6_rest_grapqhql_quickstart-index.md",
+      "title": "Rest / GraphQL quickstart",
+      "category": "meta",
+      "subcategory": "6_rest_grapqhql_quickstart",
+      "word_count": 1795,
+      "tags": [
+        "advanced",
+        "rest",
+        "6_rest_grapqhql_quickstart",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/7_docker_quickstart/index.mdx",
+      "id": "meta/7_docker_quickstart/index",
+      "filename": "meta-7_docker_quickstart-index.md",
+      "title": "Docker quickstart",
+      "category": "meta",
+      "subcategory": "7_docker_quickstart",
+      "word_count": 1508,
+      "tags": [
+        "docker",
+        "7_docker_quickstart",
+        "advanced",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/8_php_quickstart/index.mdx",
+      "id": "meta/8_php_quickstart/index",
+      "filename": "meta-8_php_quickstart-index.md",
+      "title": "PHP quickstart",
+      "category": "meta",
+      "subcategory": "8_php_quickstart",
+      "word_count": 1541,
+      "tags": [
+        "php",
+        "advanced",
+        "8_php_quickstart",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/9_rust_quickstart/index.mdx",
+      "id": "meta/9_rust_quickstart/index",
+      "filename": "meta-9_rust_quickstart-index.md",
+      "title": "Rust quickstart",
+      "category": "meta",
+      "subcategory": "9_rust_quickstart",
+      "word_count": 1540,
+      "tags": [
+        "advanced",
+        "9_rust_quickstart",
+        "rust",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/0_scripts_quickstart/index.mdx",
+      "id": "meta/0_scripts_quickstart/index",
+      "filename": "meta-0_scripts_quickstart-index.md",
+      "title": "Scripts quickstart",
+      "category": "meta",
+      "subcategory": "0_scripts_quickstart",
+      "word_count": 256,
+      "tags": [
+        "0_scripts_quickstart",
+        "docker",
+        "rust",
+        "meta",
+        "typescript"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/6_flows_quickstart/index.mdx",
+      "id": "meta/6_flows_quickstart/index",
+      "filename": "meta-6_flows_quickstart-index.md",
+      "title": "Flows quickstart",
+      "category": "meta",
+      "subcategory": "6_flows_quickstart",
+      "word_count": 1695,
+      "tags": [
+        "flows",
+        "6_flows_quickstart",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/7_apps_quickstart/index.mdx",
+      "id": "meta/7_apps_quickstart/index",
+      "filename": "meta-7_apps_quickstart-index.md",
+      "title": "Apps quickstart",
+      "category": "meta",
+      "subcategory": "7_apps_quickstart",
+      "word_count": 1060,
+      "tags": [
+        "apps",
+        "7_apps_quickstart",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/getting_started/8_triggers/index.mdx",
+      "id": "meta/8_triggers/index",
+      "filename": "meta-8_triggers-index.md",
+      "title": "Triggers",
+      "category": "meta",
+      "subcategory": "8_triggers",
+      "word_count": 1885,
+      "tags": [
+        "8_triggers",
+        "triggers",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/intro.mdx",
+      "id": "tutorial/windmill/intro",
+      "filename": "tutorial-windmill-intro.md",
+      "title": "What is Windmill?",
+      "category": "tutorial",
+      "subcategory": "windmill",
+      "word_count": 578,
+      "tags": [
+        "beginner",
+        "tutorial",
+        "windmill",
+        "what"
+      ]
+    },
+    {
+      "source_path": "windmill/openflow/index.mdx",
+      "id": "meta/openflow/index",
+      "filename": "meta-openflow-index.md",
+      "title": "OpenFlow",
+      "category": "meta",
+      "subcategory": "openflow",
+      "word_count": 1357,
+      "tags": [
+        "advanced",
+        "openflow",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/script_editor/concurrency_limit.mdx",
+      "id": "ref/script_editor/concurrency-limit",
+      "filename": "ref-script_editor-concurrency-limit.md",
+      "title": "Concurrency limits",
+      "category": "ref",
+      "subcategory": "script_editor",
+      "word_count": 208,
+      "tags": [
+        "script_editor",
+        "reference",
+        "api",
+        "concurrency"
+      ]
+    },
+    {
+      "source_path": "windmill/script_editor/custom_environment_variables.mdx",
+      "id": "concept/script_editor/custom-environment-variables",
+      "filename": "concept-script_editor-custom-environment-variables.md",
+      "title": "Custom environment variables",
+      "category": "concept",
+      "subcategory": "script_editor",
+      "word_count": 127,
+      "tags": [
+        "script_editor",
+        "concept",
+        "custom"
+      ]
+    },
+    {
+      "source_path": "windmill/script_editor/customize_ui.mdx",
+      "id": "tutorial/script_editor/customize-ui",
+      "filename": "tutorial-script_editor-customize-ui.md",
+      "title": "Generated UI",
+      "category": "tutorial",
+      "subcategory": "script_editor",
+      "word_count": 387,
+      "tags": [
+        "script_editor",
+        "generated",
+        "tutorial",
+        "beginner"
+      ]
+    },
+    {
+      "source_path": "windmill/script_editor/index.mdx",
+      "id": "meta/script_editor/index",
+      "filename": "meta-script_editor-index.md",
+      "title": "Script editor",
+      "category": "meta",
+      "subcategory": "script_editor",
+      "word_count": 663,
+      "tags": [
+        "script_editor",
+        "advanced",
+        "script",
+        "meta"
+      ]
+    },
+    {
+      "source_path": "windmill/script_editor/job_debouncing.mdx",
+      "id": "ref/script_editor/job-debouncing",
+      "filename": "ref-script_editor-job-debouncing.md",
+      "title": "Job debouncing",
+      "category": "ref",
+      "subcategory": "script_editor",
+      "word_count": 151,
+      "tags": [
+        "script_editor",
+        "reference",
+        "api",
+        "job"
+      ]
+    },
+    {
+      "source_path": "windmill/script_editor/multiplayer.mdx",
+      "id": "ops/script_editor/multiplayer",
+      "filename": "ops-script_editor-multiplayer.md",
+      "title": "Multiplayer",
+      "category": "ops",
+      "subcategory": "script_editor",
+      "word_count": 72,
+      "tags": [
+        "operations",
+        "script_editor",
+        "multiplayer"
+      ]
+    },
+    {
+      "source_path": "windmill/script_editor/perpetual_scripts.mdx",
+      "id": "ops/script_editor/perpetual-scripts",
+      "filename": "ops-script_editor-perpetual-scripts.md",
+      "title": "Running services with perpetual scripts",
+      "category": "ops",
+      "subcategory": "script_editor",
+      "word_count": 178,
+      "tags": [
+        "operations",
+        "script_editor",
+        "running"
+      ]
+    },
+    {
+      "source_path": "windmill/script_editor/script_kinds.mdx",
+      "id": "tutorial/script_editor/script-kinds",
+      "filename": "tutorial-script_editor-script-kinds.md",
+      "title": "Script kind",
+      "category": "tutorial",
+      "subcategory": "script_editor",
+      "word_count": 396,
+      "tags": [
+        "script_editor",
+        "tutorial",
+        "beginner",
+        "script"
+      ]
+    },
+    {
+      "source_path": "windmill/script_editor/settings.mdx",
+      "id": "tutorial/script_editor/settings",
+      "filename": "tutorial-script_editor-settings.md",
+      "title": "Settings",
+      "category": "tutorial",
+      "subcategory": "script_editor",
+      "word_count": 1463,
+      "tags": [
+        "script_editor",
+        "tutorial",
+        "beginner",
+        "settings"
+      ]
+    },
+    {
+      "source_path": "windmill/script_editor/vs_code_scripts.mdx",
+      "id": "concept/script_editor/vs-code-scripts",
+      "filename": "concept-script_editor-vs-code-scripts.md",
+      "title": "Run scripts in VS Code",
+      "category": "concept",
+      "subcategory": "script_editor",
+      "word_count": 105,
+      "tags": [
+        "script_editor",
+        "concept",
+        "run"
+      ]
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,38 @@
+---
+doc_id: concept/script_editor/vs-code-scripts
+chunk_id: concept/script_editor/vs-code-scripts#chunk-1
+heading_path: ["Run scripts in VS Code"]
+chunk_type: prose
+tokens: 144
+summary: "import DocCard from '@site/src/components/DocCard';"
+---
+
+import DocCard from '@site/src/components/DocCard';
+
+# Run scripts in VS Code
+
+> **Context**: import DocCard from '@site/src/components/DocCard';
+
+The Windmill VS Code extension allows you to run your scripts and preview the output within VS Code. This feature lets you preview your work without leaving your code editor.
+
+![VS Code extension](../../blog/2023-11-20-vscode/vscode_extension.png 'VS Code extension')
+
+<iframe
+	style={{ aspectRatio: '16/9' }}
+	src="https://www.youtube.com/embed/aSOF6AzyDr8"
+	title="YouTube video player"
+	frameBorder="0"
+	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+	allowFullScreen
+	className="border-2 rounded-lg object-cover w-full dark:border-gray-800"
+></iframe>
+
+<br />
+
+<div className="grid grid-cols-2 gap-6 mb-4">
+	<DocCard
+		title="VS Code extension"
+		description="Build scripts and flows in the comfort of your VS Code editor, while leveraging Windmill UIs for test & flows edition."
+		href="/docs/cli_local_dev/vscode-extension"
+	/>
+</div>

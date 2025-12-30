@@ -1,0 +1,47 @@
+---
+doc_id: meta/28_agent_workers/index
+chunk_id: meta/28_agent_workers/index#chunk-2
+heading_path: ["Agent workers", "Quickstart"]
+chunk_type: prose
+tokens: 466
+summary: "Quickstart"
+---
+
+## Quickstart
+
+Go to the Workers page (/workers) as a superadmin and click "+ New agent worker"
+
+![Add worker](./new_agent_worker.png)
+
+After clicking, a drawer will open:
+
+![Agent worker config](./agent_worker.png)
+
+Fill the form with the following values:
+
+- Agent Group: this is only used to group agent workers together on the workers page, contrary to normal workers, no config is pulled dynamically from the agent group.
+- Tags: this is a list of tags that the agent worker will listen to. It can't be changed by the worker and is encoded in the JWT token passed to the worker
+
+You will see a token below once the tags are added.
+
+You can now start any windmill binary or container with the following env variables:
+
+```
+MODE=agent
+AGENT_TOKEN="<token above>"
+BASE_INTERNAL_URL="<base internal url>"
+```
+
+If needed, pass an INIT_SCRIPT env variable with the content of the script you want to run when the worker starts. See [this page](./meta-8_preinstall_binaries-index.md) for more information.
+
+BASE_INTERNAL_URL must correspond to the base of the url of the windmill instance the worker should send HTTP requests to, it has no trailing slash (e.g. `http://my-windmill-instance.xyz`). It can be the same as BASE_URL but it can be different if it's within a private network.
+
+You can mix and match normal and agent workers. You actually will need to have at least one normal worker that listens to the tags `flow` and `dependency` (or `flow-$workspace` and `dependency-$workspace` if using workspace specific default tags) to have flow and dependency job being runnable as agent workers can't run dependency jobs nor can run the flow state machine (but can run the subjobs within them).
+
+That's it! You can now start your worker and it will be ready to run jobs that are tagged with the worker's tags.
+
+### Dynamic tags for agent workers
+
+The tags are assigned statically to a script/flow at deployment time but can have a dynamic part to make them more flexible.
+
+You can use dynamic tags based on the job's args `tag-$args[argName]` or the job's workspace id `tag-$workspace` to target a different agent worker based either on the job's args or the job's workspace id. See more about [dynamic tags](./meta-9_worker_groups-index.md#dynamic-tag).
