@@ -1,0 +1,9 @@
+---
+doc_id: ref/classes/functioncallargvalue
+chunk_id: ref/classes/functioncallargvalue#chunk-2
+heading_path: ["functioncallargvalue", "Extends"]
+chunk_type: prose
+tokens: 3
+summary: "- `BaseClient`"
+---
+- `BaseClient`

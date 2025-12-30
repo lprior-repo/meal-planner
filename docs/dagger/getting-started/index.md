@@ -1,0 +1,25 @@
+# Getting Started
+
+Dagger is a powerful tool for building and managing application delivery workflows. This guide will help you get started with Dagger, covering the basics of how to set up your environment, create Dagger modules, and run your first workflows.
+
+The getting started guide is divided into several sections to help you learn Dagger
+
+## Installation
+
+Follow the [installation guide](/getting-started/installation) for detailed instructions on how to install, uninstall and update Dagger.
+
+## Learn key concepts
+
+Understand the [fundamental building blocks](/getting-started/concepts) of Dagger.
+
+## Build a CI workflow
+
+Follow the [CI quickstart](/getting-started/quickstarts/ci) to create your first CI workflow.
+
+## Build an AI agent
+
+Follow the [AI agent quickstart](/getting-started/quickstarts/agent) to build AI agents that operate in secure sandboxed environments and work with different AI models with no code changes.
+
+## Add an AI agent to your existing workflows
+
+Follow the [AI agent integration quickstart](/getting-started/quickstarts/agent-in-project) to add AI agents in your existing CI workflows.

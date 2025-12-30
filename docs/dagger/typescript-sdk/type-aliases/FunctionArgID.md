@@ -1,0 +1,11 @@
+# Type Alias: FunctionArgID
+
+> **FunctionArgID** = `string` & `object`
+
+The `FunctionArgID` scalar type represents an identifier for an object of type FunctionArg.
+
+## Type Declaration
+
+### \_\_FunctionArgID
+
+> **\_\_FunctionArgID**: `never`
