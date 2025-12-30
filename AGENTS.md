@@ -34,117 +34,78 @@ windmill/                 # Orchestration layer
 
 The meal-planner project uses **Beads** (bd) for issue tracking, dependency management, and agent coordination. All work must go through Beads to ensure proper tracking and visibility.
 
-## Documentation Indexing System
+## Documentation Retrieval (Token-Efficient)
 
-The project uses **Anthropic XML best practices** combined with **DAG-based referencing** for documentation indexing. This system makes documentation super easy to find, navigate, and use for AI coding agents.
+**204 docs, 1532 chunks** indexed at `docs/_indexed/`. Optimized for minimal token usage.
 
-### Key Files
+### Retrieval Priority (use in order)
 
-- **`docs/windmill/DOCUMENTATION_INDEX.xml`** - Master XML index with entities, DAG, and RAG chunks
-- **`docs/windmill/INDEXED_KNOWLEDGE.json`** - JSON programmatic access with DAG structure
-- **`docs/windmill/INDEXING_SYSTEM.md`** - Complete system documentation
-- **XML Metadata** in all docs - Structured headers with type, category, difficulty, dependencies
+1. **CodeAnna semantic search** (best for natural language queries)
+   ```
+   # Via MCP tool: semantic_search_docs
+   Query: "how to create windmill flow with approval"
+   ```
 
-### XML Metadata Schema
+2. **QUICKREF.md** (~400 tokens) - category overview, direct paths
+   ```
+   docs/_indexed/QUICKREF.md
+   ```
 
-Each document includes structured XML metadata:
+3. **Targeted chunks** (~170 tokens each) - specific sections
+   ```bash
+   # Find chunks by topic
+   ls docs/_indexed/chunks/*oauth*
+   ls docs/_indexed/chunks/*flow-approval*
+   ```
 
-```xml
-<doc_metadata>
-  <type>reference|guide|tutorial</type>
-  <category>flows|core_concepts|cli|sdk|deployment</category>
-  <title>Document Title</title>
-  <description>Brief description</description>
-  <created_at>ISO-8601 timestamp</created_at>
-  <updated_at>ISO-8601 timestamp</updated_at>
-  <language>en</language>
-  <sections count="N">
-    <section name="Section Name" level="1|2|3"/>
-  </sections>
-  <features>
-    <feature>feature_name</feature>
-  </features>
-  <dependencies>
-    <dependency type="feature|tool|service|crate">dependency_id</dependency>
-  </dependencies>
-  <examples count="N">
-    <example>Example description</example>
-  </examples>
-  <difficulty_level>beginner|intermediate|advanced</difficulty_level>
-  <estimated_reading_time>minutes</estimated_reading_time>
-  <tags>tag1,tag2,tag3</tags>
-</doc_metadata>
-```
+4. **Full docs** (~1300 tokens avg) - only when needed
+   ```
+   docs/_indexed/docs/{category}-{topic}-{slug}.md
+   ```
 
-### DAG Structure
+### DO NOT LOAD (too expensive)
 
-Documents are organized in 4 layers:
+| File | Tokens | Why |
+|------|--------|-----|
+| `INDEX.json` | ~110,000 | Use CodeAnna search instead |
+| `COMPASS.md` | ~8,000 | Use QUICKREF.md instead |
 
-1. **Layer 1**: Flow Control Features (retries, error_handler, for_loops, flow_branches, early_stop, step_mocking, sleep, priority, lifetime)
-2. **Layer 2**: Core Concepts (caching, concurrency_limits, job_debouncing, staging_prod, multiplayer)
-3. **Layer 3**: Tools & SDKs (wmill_cli, python_client, rust_sdk)
-4. **Layer 4**: Deployment (windmill_deployment, oauth, schedules)
+### Category Prefixes
 
-### Relationship Types
+| Prefix | Use For |
+|--------|---------|
+| `tutorial-*` | Step-by-step guides |
+| `concept-*` | Understanding features |
+| `ref-*` | API/config reference |
+| `ops-*` | Install/deploy/troubleshoot |
+| `meta-*` | Index files, overviews |
 
-- `uses` - Feature A uses Feature B
-- `can-trigger` - Feature A can trigger Feature B
-- `continues-on` - Feature A continues to Feature B
-- `deploys-to` - Tool A deploys to Feature B
-- `accesses` - Tool/SDK A accesses Feature B
-- `part-of` - Feature A is part of Feature B
-- `required-for` - Feature A is required for Feature B
+### Common Lookups (Direct Paths)
 
-### Adding New Documentation
+| Need | Path |
+|------|------|
+| Rust SDK patterns | `docs/_indexed/docs/ref-core_concepts-rust-sdk-winmill-patterns.md` |
+| Flow approval | `docs/_indexed/docs/concept-flows-11-flow-approval.md` |
+| Scheduling | `docs/_indexed/docs/meta-1_scheduling-index.md` |
+| Error handling | `docs/_indexed/docs/meta-10_error_handling-index.md` |
+| Tandoor setup | `docs/_indexed/docs/ops-install-docker.md` |
 
-When adding new documentation:
+### CodeAnna MCP Tools
 
-1. Add XML metadata header to markdown file
-2. Update `DOCUMENTATION_INDEX.xml` with new entity
-3. Add DAG node and edges if applicable
-4. Update `INDEXED_KNOWLEDGE.json` with document metadata
-5. Regenerate RAG chunks if needed
+CodeAnna indexes both code AND docs. Use these MCP tools:
 
-See `docs/windmill/INDEXING_SYSTEM.md` for complete guidelines.
+| Tool | Use For |
+|------|---------|
+| `semantic_search_docs` | Natural language doc search |
+| `find_symbol` | Find code definitions |
+| `get_calls` | What a function calls |
+| `find_callers` | Who calls a function |
+| `analyze_impact` | Change impact analysis |
 
-### CodeAnna Integration
-
-The project uses CodeAnna for AI-assisted coding. CodeAnna has indexed the repository and provides context-aware assistance.
-
-- **Indexed**: All source code, documentation, and configuration files
-- **Context**: Full understanding of codebase architecture and patterns
-- **Available**: Run `anna help` or `anna <command>` for assistance
-
-### Using the Index (AI Agents)
-
-The indexed knowledge system helps AI agents find relevant documentation quickly.
-
-**Quick Lookup Pattern:**
-```bash
-# Find docs for a topic (e.g., "oauth", "flows", "approval")
-jq '.entity_index.<topic>' docs/windmill/INDEXED_KNOWLEDGE.json
-
-# Example: Find OAuth-related docs
-jq '.entity_index.oauth' docs/windmill/INDEXED_KNOWLEDGE.json
-# Returns: documents, related_entities, tags
-
-# Find all docs in a category
-jq '.dag.nodes[] | select(.category == "flows")' docs/windmill/INDEXED_KNOWLEDGE.json
-```
-
-**Key Entities for This Project:**
-- `flows_guide` - How to create/manage flows, approval patterns, OAuth
-- `flow_approval` - Suspend/resume, prompts, user input mid-flow
-- `rust_sdk` - Windmill Rust SDK patterns
-- `wmill_cli` - CLI commands for scripts/flows
-- `oauth` - OAuth configuration and patterns
-
-**When to Use:**
-1. Before implementing a Windmill feature → check `entity_index` for relevant docs
-2. Debugging flow issues → check `flows_guide` and `flow_approval`
-3. Need CLI command → check `wmill_cli` entity
-
-See [docs/windmill/INDEXING_SYSTEM.md](docs/windmill/INDEXING_SYSTEM.md) for full system documentation.
+**Example workflow:**
+1. `semantic_search_docs("windmill flow error handler")` → finds relevant chunks
+2. Read the specific chunk returned
+3. If need more context, read the full doc
 
 ## Working with Beads
 
