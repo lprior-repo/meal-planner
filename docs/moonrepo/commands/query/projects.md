@@ -1,0 +1,74 @@
+# query projects
+
+Use the `moon query projects` sub-command to query information about all projects in the project graph. The project list can be filtered by passing a [query statement](/docs/concepts/query-lang) as an argument, or by using [options](#options) arguments.
+
+```
+# Find all projects
+$ moon query projects
+
+# Find all projects with an id that matches "react"
+$ moon query projects --id react
+$ moon query projects "project~react"
+
+# Find all projects with a `lint` or `build` task
+$ moon query projects --tasks "lint|build"
+$ moon query projects "task=[lint,build]"
+```
+
+By default, this will output a list of projects in the format of `<id> | <source> | <stack> | <type> | <language> | <description>`, separated by new lines. If no description is defined, "..." will be displayed instead.
+
+```
+web | apps/web | frontend | application | typescript | ...
+```
+
+The projects can also be output in JSON by passing the `--json` flag. The output has the following structure:
+
+```
+{
+	projects: Project[],
+	options: QueryOptions,
+}
+```
+
+### Affected projects
+
+This command can also be used to query for affected projects, based on the state of the VCS working tree. For advanced control, you can also pass the results of `moon query touched-files` to stdin.
+
+```
+# Find all affected projects
+$ moon query projects --affected
+
+# Find all affected projects using the results of another query
+$ moon query touched-files | moon query projects --affected
+```
+
+### Arguments
+
+- `[query]` - An optional [query statement](/docs/concepts/query-lang) to filter projects with. When provided, all [filter options](#filters) are ignored. v1.4.0
+
+### Options
+
+- `--json` - Display the projects in JSON format.
+
+#### Affected
+
+- `--affected` - Filter projects that have been affected by touched files.
+- `--downstream` - Include downstream dependents of queried projects. Supports "none" (default), "direct", "deep". v1.29.0
+- `--upstream` - Include upstream dependencies of queried projects. Supports "none", "direct", "deep" (default). v1.29.0
+
+#### Filters
+
+All option values are case-insensitive regex patterns.
+
+- `--alias <regex>` - Filter projects that match this alias.
+- `--id <regex>` - Filter projects that match this ID/name.
+- `--language <regex>` - Filter projects of this programming language.
+- `--layer <regex>` - Filter project of this layer.
+- `--source <regex>` - Filter projects that match this source path.
+- `--stack <regex>` - Filter projects of the tech stack.
+- `--tags <regex>` - Filter projects that have the following tags.
+- `--tasks <regex>` - Filter projects that have the following tasks.
+
+### Configuration
+
+- [`projects`](/docs/config/workspace#projects) in `.moon/workspace.yml`

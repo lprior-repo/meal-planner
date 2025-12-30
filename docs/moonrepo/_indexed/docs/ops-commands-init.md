@@ -1,0 +1,46 @@
+---
+id: ops/commands/init
+title: "init"
+category: ops
+tags: ["init", "commands", "operations"]
+---
+
+# init
+
+> **Context**: The `moon init` command will initialize moon into a repository and scaffold necessary config files by creating a `.moon` folder.
+
+The `moon init` command will initialize moon into a repository and scaffold necessary config files by creating a `.moon` folder.
+
+```
+$ moon init
+
+## In another directory
+$ moon init --to ./app
+```
+
+### Initializing a specific tool
+
+The command can also be used to initialize a specific tool into the toolchain *after* moon has already been initialized. Perfect for adopting a new language into the workspace.
+
+```
+$ moon init node
+```
+
+When ran, we'll prompt you with a handful of questions, and generate (or modify) the [`.moon/toolchain.yml`](/docs/config/toolchain) file.
+
+### Arguments
+
+-   `[tool]` - Individual tool to initialize and configure.
+    -   Accepts: `bun`, `node`, `rust`, `typescript`
+
+### Options
+
+-   `--force` - Overwrite existing config files if they exist.
+-   `--minimal` - Generate minimal configurations and sane defaults.
+-   `--to` - Destination to initialize and scaffold into. Defaults to `.` (current working directory).
+-   `--yes` - Skip all prompts and enables tools based on file detection.
+
+
+## See Also
+
+- [`.moon/toolchain.yml`](/docs/config/toolchain)
