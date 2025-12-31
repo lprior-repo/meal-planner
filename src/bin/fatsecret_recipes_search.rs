@@ -1,17 +1,18 @@
-//! Find FatSecret food by barcode
+//! Search FatSecret recipes
 //!
-//! Looks up a food by its UPC/EAN barcode and returns full details.
+//! Searches for recipes with optional pagination and filtering by recipe type.
 //! This is a 2-legged OAuth request (no user token required).
 //!
-//! JSON input (CLI arg or stdin):
-//!   `{"fatsecret": {...}, "barcode": "0014800000000", "barcode_type": "UPC-A"}`
+//! JSON stdin:
+//!   `{"fatsecret": {...}, "search_expression": "chicken", ...}`
 //!
-//! JSON stdout: `{"success": true, "food": {...}}`
+//! JSON stdout: `{"success": true, "recipes": {...}}`
 
+// CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
 
 use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};
-use meal_planner::fatsecret::foods::find_food_by_barcode;
+use meal_planner::fatsecret::recipes::search_recipes;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -26,16 +27,20 @@ struct FatSecretResource {
 struct Input {
     /// FatSecret credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
-    /// The barcode to look up (UPC-A, EAN-13, etc.)
-    barcode: String,
-    /// Optional barcode type (e.g., "UPC-A", "EAN-13")
-    barcode_type: Option<String>,
+    /// Search query (e.g., "chicken soup")
+    search_expression: String,
+    /// Maximum results to return (optional)
+    max_results: Option<i32>,
+    /// Page number for pagination (optional)
+    page_number: Option<i32>,
+    /// Filter by recipe type (optional)
+    recipe_type: Option<String>,
 }
 
 #[derive(Serialize)]
 struct Output {
     success: bool,
-    food: serde_json::Value,
+    recipes: serde_json::Value,
 }
 
 #[derive(Serialize)]
@@ -62,27 +67,26 @@ async fn main() {
 }
 
 async fn run() -> Result<Output, Box<dyn std::error::Error>> {
-    // Read input: prefer CLI arg, fall back to stdin
-    let input: Input = if let Some(arg) = std::env::args().nth(1) {
-        serde_json::from_str(&arg)?
-    } else {
-        let mut input_str = String::new();
-        io::stdin().read_to_string(&mut input_str)?;
-        serde_json::from_str(&input_str)?
-    };
+    let mut input_str = String::new();
+    io::stdin().read_to_string(&mut input_str)?;
+    let input: Input = serde_json::from_str(&input_str)?;
 
-    // Get config: prefer input, fall back to environment
     let config = match input.fatsecret {
         Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret),
         None => FatSecretConfig::from_env().ok_or(FatSecretError::ConfigMissing)?,
     };
 
-    // Find food by barcode
-    let result =
-        find_food_by_barcode(&config, &input.barcode, input.barcode_type.as_deref()).await?;
+    let result = search_recipes(
+        &config,
+        &input.search_expression,
+        input.max_results,
+        input.page_number,
+        input.recipe_type.as_deref(),
+    )
+    .await?;
 
     Ok(Output {
         success: true,
-        food: serde_json::to_value(result)?,
+        recipes: serde_json::to_value(result)?,
     })
 }

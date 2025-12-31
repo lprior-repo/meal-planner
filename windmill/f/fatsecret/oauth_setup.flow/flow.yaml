@@ -61,6 +61,7 @@ value:
             expr: results.a.auth_url
 
     # Step 3: Exchange verifier for access token
+    # Pass the pending token from step 1 as input
     - id: c
       summary: Complete OAuth
       value:
@@ -70,11 +71,18 @@ value:
           fatsecret:
             type: static
             value: '$res:u/admin/fatsecret_api'
+          oauth_token:
+            type: javascript
+            expr: results.a.oauth_token
+          oauth_token_secret:
+            type: javascript
+            expr: results.a.oauth_token_secret
           oauth_verifier:
             type: javascript
             expr: resume.verifier
 
     # Step 4: Verify it worked by fetching profile
+    # Pass the access token from step 3 as input
     - id: d
       summary: Verify connection
       value:
@@ -84,6 +92,12 @@ value:
           fatsecret:
             type: static
             value: '$res:u/admin/fatsecret_api'
+          oauth_token:
+            type: javascript
+            expr: results.c.oauth_token
+          oauth_token_secret:
+            type: javascript
+            expr: results.c.oauth_token_secret
 
   same_worker: false
 

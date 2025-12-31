@@ -383,7 +383,6 @@ fn test_oauth_flow_logic() {
 
 /// Print OAuth flow instructions for manual testing
 #[test]
-#[ignore] // Run this manually with: cargo test test_oauth_manual_instructions -- --ignored
 fn test_oauth_manual_instructions() {
     println!("\n========================================");
     println!("Manual OAuth Flow Test Instructions");

@@ -47,33 +47,35 @@ impl AccessToken {
 /// Generate OAuth nonce (random hex string)
 ///
 /// Returns a cryptographically secure random nonce for OAuth signing.
-/// This function handles the extremely rare case of RNG failure gracefully.
-pub fn generate_nonce() -> String {
+///
+/// # Errors
+/// Returns `FatSecretError::OAuthError` if the system RNG fails (extremely rare).
+pub fn generate_nonce() -> Result<String, FatSecretError> {
     let rng = SystemRandom::new();
     let mut bytes = [0u8; 16];
-    // RNG failure is extremely rare (hardware/OS issue) - use fallback
-    if rng.fill(&mut bytes).is_err() {
-        // Fallback: use timestamp + fixed entropy (not ideal but functional)
-        let ts = unix_timestamp();
-        return format!("{:016x}{:016x}", ts, ts.wrapping_mul(0x517cc1b727220a95));
-    }
-    hex::encode(bytes)
+    rng.fill(&mut bytes)
+        .map_err(|_| FatSecretError::oauth_error("Failed to generate random bytes for nonce"))?;
+    Ok(hex::encode(bytes))
 }
 
 /// Get current Unix timestamp in seconds
 ///
 /// Returns the current time as seconds since Unix epoch.
-/// Handles the theoretical case of system clock before epoch gracefully.
-pub fn unix_timestamp() -> u64 {
+///
+/// # Errors
+/// Returns `FatSecretError::OAuthError` if system clock is before Unix epoch
+/// (can happen in containers, VMs, or misconfigured systems).
+pub fn unix_timestamp() -> Result<u64, FatSecretError> {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_secs())
-        .unwrap_or(0) // Clock before epoch = 0 (shouldn't happen but safe)
+        .map_err(|_| FatSecretError::oauth_error("System clock is before Unix epoch"))
 }
 
 /// RFC 3986 percent-encoding for OAuth 1.0a
 ///
 /// Must encode all characters except: A-Z a-z 0-9 - . _ ~
+#[must_use]
 pub fn oauth_encode(s: &str) -> String {
     let mut result = String::new();
     for byte in s.bytes() {
@@ -108,6 +110,7 @@ pub fn oauth_encode(s: &str) -> String {
 ///
 /// Format: METHOD&URL&SORTED_PARAMS
 /// All components must be percent-encoded
+#[must_use]
 pub fn create_signature_base_string(
     method: &str,
     url: &str,
@@ -135,12 +138,13 @@ pub fn create_signature_base_string(
 /// Signing key = consumer_secret& OR consumer_secret&token_secret
 /// Note: The signing key components are NOT percent-encoded per OAuth 1.0a spec
 /// Result is base64-encoded
+#[must_use]
 pub fn create_signature(
     base_string: &str,
     consumer_secret: &str,
     token_secret: Option<&str>,
 ) -> String {
-    let signing_key = format!("{consumer_secret}&{}", token_secret.unwrap_or(""));
+    let signing_key = format!("{consumer_secret}&{token_secret.unwrap_or(""}"));
     let key = hmac::Key::new(hmac::HMAC_SHA1_FOR_LEGACY_USE_ONLY, signing_key.as_bytes());
     let signature = hmac::sign(&key, base_string.as_bytes());
     base64::engine::general_purpose::STANDARD.encode(signature.as_ref())
@@ -162,9 +166,9 @@ pub fn build_oauth_params(
     extra_params: &HashMap<String, String>,
     token: Option<&str>,
     token_secret: Option<&str>,
-) -> HashMap<String, String> {
-    let timestamp = unix_timestamp().to_string();
-    let nonce = generate_nonce();
+) -> Result<HashMap<String, String>, FatSecretError> {
+    let timestamp = unix_timestamp()?.to_string();
+    let nonce = generate_nonce()?;
 
     // Base OAuth parameters (immutable construction)
     let base_params = [
@@ -188,13 +192,14 @@ pub fn build_oauth_params(
     let signature = create_signature(&base_string, consumer_secret, token_secret);
 
     // Return final params with signature (immutable extension)
-    params_without_sig
+    Ok(params_without_sig
         .into_iter()
         .chain(std::iter::once(("oauth_signature".to_string(), signature)))
-        .collect()
+        .collect())
 }
 
 /// Parse OAuth response string (key=value&key2=value2) into a hash map
+#[must_use]
 pub fn parse_oauth_response(response: &str) -> HashMap<String, String> {
     url::form_urlencoded::parse(response.as_bytes())
         .into_owned()

@@ -1,10 +1,7 @@
 //! FatSecret Favorites Domain Types
 
+use crate::fatsecret::core::serde_utils::{deserialize_flexible_float, deserialize_single_or_vec};
 use serde::{Deserialize, Serialize};
-use crate::fatsecret::core::serde_utils::{
-    deserialize_flexible_float,
-    deserialize_single_or_vec,
-};
 
 /// A favorite food item
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -61,28 +58,44 @@ pub struct FavoriteRecipe {
 /// Response containing favorite foods
 #[derive(Debug, Deserialize)]
 pub struct FavoriteFoodsResponse {
-    #[serde(rename = "food", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "food",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub foods: Vec<FavoriteFood>,
 }
 
 /// Response containing most eaten foods
 #[derive(Debug, Deserialize)]
 pub struct MostEatenResponse {
-    #[serde(rename = "food", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "food",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub foods: Vec<MostEatenFood>,
 }
 
 /// Response containing recently eaten foods
 #[derive(Debug, Deserialize)]
 pub struct RecentlyEatenResponse {
-    #[serde(rename = "food", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "food",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub foods: Vec<RecentlyEatenFood>,
 }
 
 /// Response containing favorite recipes
 #[derive(Debug, Deserialize)]
 pub struct FavoriteRecipesResponse {
-    #[serde(rename = "recipe", default, deserialize_with = "deserialize_single_or_vec")]
+    #[serde(
+        rename = "recipe",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
     pub recipes: Vec<FavoriteRecipe>,
 }
 

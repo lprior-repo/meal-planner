@@ -3,23 +3,23 @@
 //! Gets a request token and returns the authorization URL.
 //! The user visits the URL to authorize, then FatSecret redirects to callback.
 //!
+//! This script returns the pending token which should be stored as a Windmill Resource
+//! for use in the next step (oauth_complete).
+//!
 //! JSON stdin (Windmill format):
 //!   `{"fatsecret": {...}, "callback_url": "oob"}`
 //!
 //! JSON stdin (standalone format - uses env vars for credentials):
 //!   `{"callback_url": "http://localhost:8765/callback"}`
 //!
-//! JSON stdout: `{"success": true, "auth_url": "https://...", "oauth_token": "..."}`
+//! JSON stdout: `{"success": true, "auth_url": "https://...", "oauth_token": "...", "oauth_token_secret": "..."}`
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
 
 use meal_planner::fatsecret::core::oauth::get_request_token;
 use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};
-use meal_planner::fatsecret::TokenStorage;
 use serde::{Deserialize, Serialize};
-use sqlx::postgres::PgPoolOptions;
-use std::env;
 use std::io::{self, Read};
 
 /// FatSecret resource (matches Windmill resource-fatsecret format)
@@ -42,8 +42,10 @@ struct Output {
     success: bool,
     /// URL user should visit to authorize
     auth_url: String,
-    /// Request token (needed to identify the pending auth)
+    /// Request token (needed for oauth_complete)
     oauth_token: String,
+    /// Request token secret (needed for oauth_complete)
+    oauth_token_secret: String,
 }
 
 #[derive(Serialize)]
@@ -56,14 +58,14 @@ struct ErrorOutput {
 async fn main() {
     match run().await {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!("{serde_json::to_string(&output}").unwrap());
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!("{serde_json::to_string(&error}").unwrap());
             std::process::exit(1);
         }
     }
@@ -81,19 +83,8 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
         None => FatSecretConfig::from_env().ok_or(FatSecretError::ConfigMissing)?,
     };
 
-    // Get database connection
-    let database_url = env::var("DATABASE_URL").map_err(|_| "DATABASE_URL not set")?;
-    let pool = PgPoolOptions::new()
-        .max_connections(1)
-        .connect(&database_url)
-        .await?;
-
-    // Get request token from FatSecret
+    // Get request token from FatSecret (no database needed)
     let request_token = get_request_token(&config, &input.callback_url).await?;
-
-    // Store pending token in database (encrypted)
-    let storage = TokenStorage::new(pool);
-    storage.store_pending_token(&request_token).await?;
 
     // Build authorization URL
     let auth_url = config.authorization_url(&request_token.oauth_token);
@@ -102,5 +93,6 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
         success: true,
         auth_url,
         oauth_token: request_token.oauth_token,
+        oauth_token_secret: request_token.oauth_token_secret,
     })
 }

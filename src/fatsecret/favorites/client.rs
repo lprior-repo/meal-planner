@@ -1,14 +1,14 @@
 //! FatSecret Favorites API Client
 
-use std::collections::HashMap;
 use crate::fatsecret::core::config::FatSecretConfig;
 use crate::fatsecret::core::errors::FatSecretError;
 use crate::fatsecret::core::http::make_authenticated_request;
 use crate::fatsecret::core::oauth::AccessToken;
 use crate::fatsecret::favorites::types::{
-    FavoriteFood, FavoriteFoodsResponse, FavoriteRecipe, FavoriteRecipesResponse,
-    MealFilter, MostEatenFood, MostEatenResponse, RecentlyEatenFood, RecentlyEatenResponse,
+    FavoriteFood, FavoriteFoodsResponse, FavoriteRecipe, FavoriteRecipesResponse, MealFilter,
+    MostEatenFood, MostEatenResponse, RecentlyEatenFood, RecentlyEatenResponse,
 };
+use std::collections::HashMap;
 
 /// Add a food to favorites (food.add_favorite - 3-legged)
 pub async fn add_favorite_food(
@@ -51,9 +51,14 @@ pub async fn get_favorite_foods(
         params.insert("page_number".to_string(), n.to_string());
     }
 
-    let body = make_authenticated_request(config, access_token, "foods.get_favorites.v2", params).await?;
-    let response: FavoriteFoodsResponse = serde_json::from_str(&body)
-        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse favorite foods: {e}. Body: {body}")))?;
+    let body =
+        make_authenticated_request(config, access_token, "foods.get_favorites.v2", params).await?;
+    let response: FavoriteFoodsResponse = serde_json::from_str(&body).map_err(|e| {
+        FatSecretError::ParseError(format!(
+            "Failed to parse favorite foods: {}. Body: {}",
+            e, body
+        ))
+    })?;
 
     Ok(response.foods)
 }
@@ -69,9 +74,14 @@ pub async fn get_most_eaten(
         params.insert("meal".to_string(), m.to_api_string().to_string());
     }
 
-    let body = make_authenticated_request(config, access_token, "foods.get_most_eaten.v2", params).await?;
-    let response: MostEatenResponse = serde_json::from_str(&body)
-        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse most eaten foods: {e}. Body: {body}")))?;
+    let body =
+        make_authenticated_request(config, access_token, "foods.get_most_eaten.v2", params).await?;
+    let response: MostEatenResponse = serde_json::from_str(&body).map_err(|e| {
+        FatSecretError::ParseError(format!(
+            "Failed to parse most eaten foods: {}. Body: {}",
+            e, body
+        ))
+    })?;
 
     Ok(response.foods)
 }
@@ -87,9 +97,15 @@ pub async fn get_recently_eaten(
         params.insert("meal".to_string(), m.to_api_string().to_string());
     }
 
-    let body = make_authenticated_request(config, access_token, "foods.get_recently_eaten.v2", params).await?;
-    let response: RecentlyEatenResponse = serde_json::from_str(&body)
-        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse recently eaten foods: {e}. Body: {body}")))?;
+    let body =
+        make_authenticated_request(config, access_token, "foods.get_recently_eaten.v2", params)
+            .await?;
+    let response: RecentlyEatenResponse = serde_json::from_str(&body).map_err(|e| {
+        FatSecretError::ParseError(format!(
+            "Failed to parse recently eaten foods: {}. Body: {}",
+            e, body
+        ))
+    })?;
 
     Ok(response.foods)
 }
@@ -135,9 +151,14 @@ pub async fn get_favorite_recipes(
         params.insert("page_number".to_string(), n.to_string());
     }
 
-    let body = make_authenticated_request(config, access_token, "recipes.get_favorites.v2", params).await?;
-    let response: FavoriteRecipesResponse = serde_json::from_str(&body)
-        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse favorite recipes: {e}. Body: {body}")))?;
+    let body = make_authenticated_request(config, access_token, "recipes.get_favorites.v2", params)
+        .await?;
+    let response: FavoriteRecipesResponse = serde_json::from_str(&body).map_err(|e| {
+        FatSecretError::ParseError(format!(
+            "Failed to parse favorite recipes: {}. Body: {}",
+            e, body
+        ))
+    })?;
 
     Ok(response.recipes)
 }

@@ -12,7 +12,7 @@ value:
         input_transforms:
           tandoor:
             type: static
-            value: $res:u/admin/tandoor
+            value: $res:u/admin/tandoor_api
           url:
             type: javascript
             expr: flow_input.url
@@ -41,7 +41,7 @@ value:
         input_transforms:
           tandoor:
             type: static
-            value: $res:u/admin/tandoor
+            value: $res:u/admin/tandoor_api
           recipe:
             type: javascript
             expr: results.scrape.recipe_json

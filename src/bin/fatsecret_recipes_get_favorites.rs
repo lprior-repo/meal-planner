@@ -1,23 +1,21 @@
-//! Delete food from FatSecret favorites
+//! Get FatSecret favorite recipes
 //!
-//! Removes a food from the user's favorites list.
+//! Retrieves user's favorite recipes list.
 //! This is a 3-legged OAuth request (requires user access token).
 //!
 //! JSON stdin:
-//!   `{"fatsecret": {...}, "access_token": "...", "access_secret": "...", "food_id": "12345"}`
+//!   `{"fatsecret": {...}, "access_token": "...", "access_secret": "..."}`
 //!
-//! JSON stdout: `{"success": true}`
+//! JSON stdout: `{"success": true, "recipes": [...]}`
 
+// CLI binaries: exit and JSON unwrap are acceptable at top level
 #![allow(clippy::exit, clippy::unwrap_used)]
 
-use meal_planner::fatsecret::core::http::make_authenticated_request;
-use meal_planner::fatsecret::core::serde_utils::SuccessResponse;
 use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig, FatSecretError};
+use meal_planner::fatsecret::favorites::get_favorite_recipes;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::io::{self, Read};
 
-/// FatSecret resource (matches Windmill resource-fatsecret format)
 #[derive(Deserialize)]
 struct FatSecretResource {
     consumer_key: String,
@@ -28,17 +26,20 @@ struct FatSecretResource {
 struct Input {
     /// FatSecret credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
-    /// OAuth access token
+    /// OAuth access token (required for 3-legged requests)
     access_token: String,
-    /// OAuth access token secret
+    /// OAuth access secret (required for 3-legged requests)
     access_secret: String,
-    /// Food ID to remove from favorites
-    food_id: String,
+    /// Maximum results to return (optional)
+    max_results: Option<i32>,
+    /// Page number for pagination (optional)
+    page_number: Option<i32>,
 }
 
 #[derive(Serialize)]
 struct Output {
     success: bool,
+    recipes: Vec<serde_json::Value>,
 }
 
 #[derive(Serialize)]
@@ -65,36 +66,25 @@ async fn main() {
 }
 
 async fn run() -> Result<Output, Box<dyn std::error::Error>> {
-    // Read input
     let mut input_str = String::new();
     io::stdin().read_to_string(&mut input_str)?;
     let input: Input = serde_json::from_str(&input_str)?;
 
-    // Get config: prefer input, fall back to environment
     let config = match input.fatsecret {
         Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret),
         None => FatSecretConfig::from_env().ok_or(FatSecretError::ConfigMissing)?,
     };
 
-    // Build access token from input
     let token = AccessToken::new(input.access_token, input.access_secret);
 
-    // Build params with food_id
-    let mut params = HashMap::new();
-    params.insert("food_id".to_string(), input.food_id);
+    let recipes =
+        get_favorite_recipes(&config, &token, input.max_results, input.page_number).await?;
 
-    // Call API
-    let response =
-        make_authenticated_request(&config, &token, "food.delete_favorite", params).await?;
-
-    // Parse response to verify success
-    // The API returns {"success": {"value": "1"}} - nested format
-    let api_response: SuccessResponse = serde_json::from_str(&response)
-        .map_err(|e| format!("Failed to parse API response: {e}. Body: {response}"))?;
-
-    if !api_response.is_success() {
-        return Err(format!("API returned unexpected response: {response}").into());
-    }
-
-    Ok(Output { success: true })
+    Ok(Output {
+        success: true,
+        recipes: recipes
+            .into_iter()
+            .map(serde_json::to_value)
+            .collect::<Result<Vec<_>, _>>()?,
+    })
 }
