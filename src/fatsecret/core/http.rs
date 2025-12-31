@@ -145,3 +145,66 @@ pub async fn make_authenticated_request(
 fn check_api_error(body: String) -> Result<String, FatSecretError> {
     parse_error_response(&body).map_or(Ok(body), Err)
 }
+
+// ============================================================================
+// Response Parsing Helpers
+// ============================================================================
+
+/// Parse API response JSON into a typed result
+///
+/// This consolidates the JSON parsing pattern used across all client modules,
+/// ensuring consistent error messages that include the response body for debugging.
+///
+/// # Example
+/// ```ignore
+/// let response: FoodSearchResponse = parse_api_response(
+///     &config,
+///     "foods.search",
+///     params,
+///     "food search"
+/// ).await?;
+/// ```
+pub async fn parse_api_response<T: serde::de::DeserializeOwned>(
+    config: &FatSecretConfig,
+    method_name: &str,
+    params: HashMap<String, String>,
+    error_context: &str,
+) -> Result<T, FatSecretError> {
+    let body = make_api_request(config, method_name, params).await?;
+    serde_json::from_str::<T>(&body).map_err(|e| {
+        FatSecretError::ParseError(format!(
+            "Failed to parse {} response: {}. Body: {}",
+            error_context, e, body
+        ))
+    })
+}
+
+/// Parse authenticated API response JSON into a typed result
+///
+/// Like `parse_api_response` but for 3-legged OAuth endpoints requiring user tokens.
+///
+/// # Example
+/// ```ignore
+/// let response: FoodEntriesResponse = parse_authenticated_response(
+///     &config,
+///     &token,
+///     "food_entries.get",
+///     params,
+///     "food entries"
+/// ).await?;
+/// ```
+pub async fn parse_authenticated_response<T: serde::de::DeserializeOwned>(
+    config: &FatSecretConfig,
+    access_token: &AccessToken,
+    method_name: &str,
+    params: HashMap<String, String>,
+    error_context: &str,
+) -> Result<T, FatSecretError> {
+    let body = make_authenticated_request(config, access_token, method_name, params).await?;
+    serde_json::from_str::<T>(&body).map_err(|e| {
+        FatSecretError::ParseError(format!(
+            "Failed to parse {} response: {}. Body: {}",
+            error_context, e, body
+        ))
+    })
+}
