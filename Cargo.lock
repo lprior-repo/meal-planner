@@ -1310,7 +1310,6 @@ dependencies = [
  "base64",
  "chrono",
  "hex",
- "once_cell",
  "reqwest",
  "ring",
  "serde",
