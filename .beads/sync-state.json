@@ -1,7 +1,0 @@
-{
-  "last_failure": "2025-12-30T14:34:19.994450458-06:00",
-  "failure_count": 2,
-  "backoff_until": "2025-12-30T14:35:19.994450718-06:00",
-  "needs_manual_sync": false,
-  "failure_reason": "git pull failed in worktree: exit status 1\nfatal: couldn't find remote ref beads-sync\n"
-}

@@ -296,14 +296,6 @@ name = "fatsecret_oauth_start"
 path = "src/bin/fatsecret_oauth_start.rs"
 
 [[bin]]
-name = "fatsecret_oauth_callback"
-path = "src/bin/fatsecret_oauth_callback.rs"
-
-[[bin]]
-name = "fatsecret_get_token"
-path = "src/bin/fatsecret_get_token.rs"
-
-[[bin]]
 name = "fatsecret_oauth_complete"
 path = "src/bin/fatsecret_oauth_complete.rs"
 
@@ -438,6 +430,228 @@ path = "src/bin/fatsecret_recipes_get_favorites.rs"
 [[bin]]
 name = "fatsecret_recipe_types_get"
 path = "src/bin/fatsecret_recipe_types_get.rs"
+
+[[bin]]
+name = "tandoor_keyword_list"
+path = "src/bin/tandoor_keyword_list.rs"
+
+[[bin]]
+name = "tandoor_keyword_create"
+path = "src/bin/tandoor_keyword_create.rs"
+
+[[bin]]
+name = "tandoor_keyword_update"
+path = "src/bin/tandoor_keyword_update.rs"
+
+[[bin]]
+name = "tandoor_keyword_delete"
+path = "src/bin/tandoor_keyword_delete.rs"
+
+[[bin]]
+name = "tandoor_recipe_list"
+path = "src/bin/tandoor_recipe_list.rs"
+
+[[bin]]
+name = "tandoor_recipe_get"
+path = "src/bin/tandoor_recipe_get.rs"
+
+[[bin]]
+name = "tandoor_food_list"
+path = "src/bin/tandoor_food_list.rs"
+
+[[bin]]
+name = "tandoor_food_get"
+path = "src/bin/tandoor_food_get.rs"
+
+[[bin]]
+name = "tandoor_food_create"
+path = "src/bin/tandoor_food_create.rs"
+
+[[bin]]
+name = "tandoor_food_update"
+path = "src/bin/tandoor_food_update.rs"
+
+[[bin]]
+name = "tandoor_food_delete"
+path = "src/bin/tandoor_food_delete.rs"
+
+[[bin]]
+name = "tandoor_recipe_book_list"
+path = "src/bin/tandoor_recipe_book_list.rs"
+
+[[bin]]
+name = "tandoor_recipe_book_get"
+path = "src/bin/tandoor_recipe_book_get.rs"
+
+[[bin]]
+name = "tandoor_recipe_book_create"
+path = "src/bin/tandoor_recipe_book_create.rs"
+
+[[bin]]
+name = "tandoor_recipe_book_update"
+path = "src/bin/tandoor_recipe_book_update.rs"
+
+[[bin]]
+name = "tandoor_recipe_book_delete"
+path = "src/bin/tandoor_recipe_book_delete.rs"
+
+[[bin]]
+name = "tandoor_recipe_book_entry_list"
+path = "src/bin/tandoor_recipe_book_entry_list.rs"
+
+[[bin]]
+name = "tandoor_recipe_book_entry_get"
+path = "src/bin/tandoor_recipe_book_entry_get.rs"
+
+[[bin]]
+name = "tandoor_recipe_book_entry_create"
+path = "src/bin/tandoor_recipe_book_entry_create.rs"
+
+[[bin]]
+name = "tandoor_recipe_book_entry_delete"
+path = "src/bin/tandoor_recipe_book_entry_delete.rs"
+
+[[bin]]
+name = "tandoor_recipe_batch_update"
+path = "src/bin/tandoor_recipe_batch_update.rs"
+
+[[bin]]
+name = "tandoor_recipe_list_flat"
+path = "src/bin/tandoor_recipe_list_flat.rs"
+
+[[bin]]
+name = "tandoor_recipe_get_related"
+path = "src/bin/tandoor_recipe_get_related.rs"
+
+[[bin]]
+name = "tandoor_recipe_upload_image"
+path = "src/bin/tandoor_recipe_upload_image.rs"
+
+[[bin]]
+name = "tandoor_user_get"
+path = "src/bin/tandoor_user_get.rs"
+
+[[bin]]
+name = "tandoor_user_list"
+path = "src/bin/tandoor_user_list.rs"
+
+[[bin]]
+name = "tandoor_food_batch_update"
+path = "src/bin/tandoor_food_batch_update.rs"
+
+[[bin]]
+name = "tandoor_shopping_list_recipe_get"
+path = "src/bin/tandoor_shopping_list_recipe_get.rs"
+
+[[bin]]
+name = "tandoor_shopping_list_recipe_delete"
+path = "src/bin/tandoor_shopping_list_recipe_delete.rs"
+
+[[bin]]
+name = "tandoor_shopping_list_entry_bulk"
+path = "src/bin/tandoor_shopping_list_entry_bulk.rs"
+
+[[bin]]
+name = "tandoor_meal_plan_export_ical"
+path = "src/bin/tandoor_meal_plan_export_ical.rs"
+
+[[bin]]
+name = "tandoor_step_list"
+path = "src/bin/tandoor_step_list.rs"
+
+[[bin]]
+name = "tandoor_step_get"
+path = "src/bin/tandoor_step_get.rs"
+
+[[bin]]
+name = "tandoor_step_create"
+path = "src/bin/tandoor_step_create.rs"
+
+[[bin]]
+name = "tandoor_step_update"
+path = "src/bin/tandoor_step_update.rs"
+
+[[bin]]
+name = "tandoor_step_delete"
+path = "src/bin/tandoor_step_delete.rs"
+
+[[bin]]
+name = "tandoor_space_list"
+path = "src/bin/tandoor_space_list.rs"
+
+[[bin]]
+name = "tandoor_space_get"
+path = "src/bin/tandoor_space_get.rs"
+
+[[bin]]
+name = "tandoor_supermarket_list"
+path = "src/bin/tandoor_supermarket_list.rs"
+
+[[bin]]
+name = "tandoor_supermarket_get"
+path = "src/bin/tandoor_supermarket_get.rs"
+
+[[bin]]
+name = "tandoor_supermarket_create"
+path = "src/bin/tandoor_supermarket_create.rs"
+
+[[bin]]
+name = "tandoor_supermarket_update"
+path = "src/bin/tandoor_supermarket_update.rs"
+
+[[bin]]
+name = "tandoor_supermarket_delete"
+path = "src/bin/tandoor_supermarket_delete.rs"
+
+# Unit binaries
+[[bin]]
+name = "tandoor_unit_list"
+path = "src/bin/tandoor_unit_list.rs"
+
+[[bin]]
+name = "tandoor_unit_get"
+path = "src/bin/tandoor_unit_get.rs"
+
+[[bin]]
+name = "tandoor_unit_create"
+path = "src/bin/tandoor_unit_create.rs"
+
+[[bin]]
+name = "tandoor_unit_update"
+path = "src/bin/tandoor_unit_update.rs"
+
+[[bin]]
+name = "tandoor_unit_delete"
+path = "src/bin/tandoor_unit_delete.rs"
+
+[[bin]]
+name = "tandoor_unit_conversion_list"
+path = "src/bin/tandoor_unit_conversion_list.rs"
+
+# Ingredient binaries
+[[bin]]
+name = "tandoor_ingredient_list"
+path = "src/bin/tandoor_ingredient_list.rs"
+
+[[bin]]
+name = "tandoor_ingredient_get"
+path = "src/bin/tandoor_ingredient_get.rs"
+
+[[bin]]
+name = "tandoor_ingredient_create"
+path = "src/bin/tandoor_ingredient_create.rs"
+
+[[bin]]
+name = "tandoor_ingredient_update"
+path = "src/bin/tandoor_ingredient_update.rs"
+
+[[bin]]
+name = "tandoor_ingredient_delete"
+path = "src/bin/tandoor_ingredient_delete.rs"
+
+[[bin]]
+name = "tandoor_ingredient_from_string"
+path = "src/bin/tandoor_ingredient_from_string.rs"
 
 [features]
 sqlx-cli = ["dep:sqlx-cli"]

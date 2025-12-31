@@ -12,9 +12,11 @@
 #![allow(clippy::expect_used)]
 
 use meal_planner::tandoor::{
-    ConnectionTestResult, CreateFoodRequest, CreateIngredientRequest, CreateKeywordRequest,
-    CreateRecipeRequest, CreateStepRequest, CreatedRecipe, PaginatedResponse,
-    RecipeFromSourceResponse, RecipeImportResult, RecipeSummary, TandoorClient, TandoorConfig,
+    ConnectionTestResult, CreateFoodRequest, CreateFoodRequestData, CreateIngredientRequest,
+    CreateKeywordRequest, CreateRecipeRequest, CreateShoppingListEntryRequest, CreateStepRequest,
+    CreatedRecipe, PaginatedResponse, RecipeFromSourceResponse, RecipeImportResult, RecipeSummary,
+    ShoppingListEntry, TandoorClient, TandoorConfig, UpdateFoodRequest,
+    UpdateShoppingListEntryRequest,
 };
 use serde_json::json;
 use wiremock::{
@@ -890,4 +892,1283 @@ fn test_client_creation_with_https() {
     };
     let client = TandoorClient::new(&config);
     assert!(client.is_ok());
+}
+
+// ============================================================================
+// Shopping List Operations
+// ============================================================================
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_list_shopping_list_entries() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/meal-plan/1/shopping/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "count": 2,
+            "next": null,
+            "previous": null,
+            "results": [
+                {
+                    "id": 1,
+                    "list": 1,
+                    "ingredient": null,
+                    "unit": null,
+                    "amount": 5.0,
+                    "food": "apples",
+                    "checked": false,
+                    "order": 1
+                },
+                {
+                    "id": 2,
+                    "list": 1,
+                    "ingredient": null,
+                    "unit": null,
+                    "amount": 2.0,
+                    "food": "oranges",
+                    "checked": true,
+                    "order": 2
+                }
+            ]
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.list_shopping_list_entries(1)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let entries: Vec<ShoppingListEntry> = result.expect("Should succeed");
+    assert_eq!(entries.len(), 2);
+    assert_eq!(entries[0].food, Some("apples".to_string()));
+    assert!(!entries[0].checked);
+    assert!(entries[1].checked);
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_create_shopping_list_entry() {
+    let mock_server = MockServer::start().await;
+
+    let entry_req = CreateShoppingListEntryRequest {
+        list: 1,
+        ingredient: None,
+        unit: None,
+        amount: Some(3.0),
+        food: Some("milk".to_string()),
+        order: None,
+    };
+
+    Mock::given(method("POST"))
+        .and(path("/api/meal-plan/1/shopping/"))
+        .respond_with(ResponseTemplate::new(201).set_body_json(json!({
+            "id": 3,
+            "list": 1,
+            "ingredient": null,
+            "unit": null,
+            "amount": 3.0,
+            "food": "milk",
+            "checked": false,
+            "order": 3
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.create_shopping_list_entry(1, &entry_req)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let entry: ShoppingListEntry = result.expect("Should succeed");
+    assert_eq!(entry.id, 3);
+    assert_eq!(entry.food, Some("milk".to_string()));
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_update_shopping_list_entry() {
+    let mock_server = MockServer::start().await;
+
+    let update_req = UpdateShoppingListEntryRequest {
+        unit: None,
+        amount: Some(2.5),
+        food: None,
+        checked: Some(true),
+        order: None,
+    };
+
+    Mock::given(method("PATCH"))
+        .and(path("/api/meal-plan/1/shopping/1/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "id": 1,
+            "list": 1,
+            "ingredient": null,
+            "unit": null,
+            "amount": 2.5,
+            "food": "apples",
+            "checked": true,
+            "order": 1
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.update_shopping_list_entry(1, 1, &update_req)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let entry: ShoppingListEntry = result.expect("Should succeed");
+    assert_eq!(entry.id, 1);
+    assert!(entry.checked);
+    assert_eq!(entry.amount, Some(2.5));
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_delete_shopping_list_entry() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("DELETE"))
+        .and(path("/api/meal-plan/1/shopping/1/"))
+        .respond_with(ResponseTemplate::new(204))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.delete_shopping_list_entry(1, 1)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_add_recipe_to_shopping_list() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/api/meal-plan/1/shopping/"))
+        .respond_with(ResponseTemplate::new(201).set_body_json(json!({
+            "count": 5,
+            "next": null,
+            "previous": null,
+            "results": [
+                {
+                    "id": 1,
+                    "list": 1,
+                    "ingredient": null,
+                    "unit": null,
+                    "amount": 2.0,
+                    "food": "flour",
+                    "checked": false,
+                    "order": 1
+                },
+                {
+                    "id": 2,
+                    "list": 1,
+                    "ingredient": null,
+                    "unit": null,
+                    "amount": 1.0,
+                    "food": "sugar",
+                    "checked": false,
+                    "order": 2
+                }
+            ]
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.add_recipe_to_shopping_list(1, 5)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let entries: Vec<ShoppingListEntry> = result.expect("Should succeed");
+    assert_eq!(entries.len(), 2);
+    assert_eq!(entries[0].food, Some("flour".to_string()));
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_list_shopping_list_entries_empty() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/meal-plan/2/shopping/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "count": 0,
+            "next": null,
+            "previous": null,
+            "results": []
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.list_shopping_list_entries(2)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let entries: Vec<ShoppingListEntry> = result.expect("Should succeed");
+    assert_eq!(entries.len(), 0);
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_delete_shopping_list_entry_not_found() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("DELETE"))
+        .and(path("/api/meal-plan/1/shopping/999/"))
+        .respond_with(ResponseTemplate::new(404).set_body_string("Not Found"))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.delete_shopping_list_entry(1, 999)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_err());
+    let err_msg = result.unwrap_err().to_string();
+    assert!(err_msg.contains("API error (404)"));
+}
+
+// ============================================================================
+// Meal Plan CRUD Operations
+// ============================================================================
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_list_meal_plans_success() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/meal-plan/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "count": 2,
+            "next": null,
+            "previous": null,
+            "timestamp": "2025-12-31T08:16:22.962719+00:00",
+            "results": [
+                {
+                    "id": 1,
+                    "title": "",
+                    "recipe": {
+                        "id": 1,
+                        "name": "Recipe 1",
+                        "description": null,
+                        "keywords": null,
+                        "working_time": null,
+                        "waiting_time": null,
+                        "rating": null,
+                        "servings": null
+                    },
+                    "servings": 2.0,
+                    "note": "",
+                    "note_markdown": "",
+                    "from_date": "2025-12-31T00:00:00+01:00",
+                    "to_date": "2025-12-31T00:00:00+01:00",
+                    "meal_type": {
+                        "id": 1,
+                        "name": "Breakfast",
+                        "order": 0,
+                        "time": null,
+                        "color": null,
+                        "default": false,
+                        "created_by": 1
+                    },
+                    "created_by": 1,
+                    "shared": [],
+                    "recipe_name": "Recipe 1",
+                    "meal_type_name": "Breakfast",
+                    "shopping": false
+                }
+            ]
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.list_meal_plans(None, None)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let response = result.expect("Should succeed");
+    assert_eq!(response.count, 2);
+    assert_eq!(response.results.len(), 1);
+    assert_eq!(response.results[0].recipe_name, "Recipe 1");
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_list_meal_plans_with_pagination() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/meal-plan/"))
+        .and(query_param("page", "2"))
+        .and(query_param("page_size", "10"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "count": 25,
+            "next": null,
+            "previous": "http://localhost/api/meal-plan/?page=1&page_size=10",
+            "timestamp": "2025-12-31T08:16:22.962719+00:00",
+            "results": []
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.list_meal_plans(Some(2), Some(10))
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let response = result.expect("Should succeed");
+    assert_eq!(response.count, 25);
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_get_meal_plan_success() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/meal-plan/1/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "id": 1,
+            "title": "Test Meal",
+            "recipe": {
+                "id": 1,
+                "name": "Test Recipe",
+                "description": "Test Description",
+                "keywords": null,
+                "working_time": 20,
+                "waiting_time": null,
+                "rating": 4.5,
+                "servings": 4
+            },
+            "servings": 2.0,
+            "note": "Notes here",
+            "note_markdown": "**Notes** here",
+            "from_date": "2025-12-31T00:00:00+01:00",
+            "to_date": "2025-12-31T00:00:00+01:00",
+            "meal_type": {
+                "id": 1,
+                "name": "Breakfast",
+                "order": 0,
+                "time": null,
+                "color": null,
+                "default": false,
+                "created_by": 1
+            },
+            "created_by": 1,
+            "shared": [],
+            "recipe_name": "Test Recipe",
+            "meal_type_name": "Breakfast",
+            "shopping": false
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.get_meal_plan(1)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let meal_plan = result.expect("Should succeed");
+    assert_eq!(meal_plan.id, 1);
+    assert_eq!(meal_plan.servings, 2.0);
+    assert_eq!(meal_plan.recipe_name, "Test Recipe");
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_create_meal_plan_success() {
+    use meal_planner::tandoor::CreateMealPlanRequest;
+
+    let mock_server = MockServer::start().await;
+
+    let create_request = CreateMealPlanRequest {
+        recipe: 1,
+        meal_type: 1,
+        from_date: "2025-12-31".to_string(),
+        to_date: None,
+        servings: 2.0,
+        title: None,
+        note: None,
+    };
+
+    Mock::given(method("POST"))
+        .and(path("/api/meal-plan/"))
+        .respond_with(ResponseTemplate::new(201).set_body_json(json!({
+            "id": 1,
+            "title": "",
+            "recipe": {
+                "id": 1,
+                "name": "Test Recipe",
+                "description": null,
+                "keywords": null,
+                "working_time": null,
+                "waiting_time": null,
+                "rating": null,
+                "servings": null
+            },
+            "servings": 2.0,
+            "note": "",
+            "note_markdown": "",
+            "from_date": "2025-12-31T00:00:00+01:00",
+            "to_date": "2025-12-31T00:00:00+01:00",
+            "meal_type": {
+                "id": 1,
+                "name": "Breakfast",
+                "order": 0,
+                "time": null,
+                "color": null,
+                "default": false,
+                "created_by": 1
+            },
+            "created_by": 1,
+            "shared": [],
+            "recipe_name": "Test Recipe",
+            "meal_type_name": "Breakfast",
+            "shopping": false
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.create_meal_plan(&create_request)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let meal_plan = result.expect("Should succeed");
+    assert_eq!(meal_plan.id, 1);
+    assert_eq!(meal_plan.servings, 2.0);
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_update_meal_plan_success() {
+    use meal_planner::tandoor::UpdateMealPlanRequest;
+
+    let mock_server = MockServer::start().await;
+
+    let update_request = UpdateMealPlanRequest {
+        recipe: Some(2),
+        meal_type: None,
+        from_date: None,
+        to_date: None,
+        servings: Some(3.0),
+        title: None,
+        note: None,
+    };
+
+    Mock::given(method("PATCH"))
+        .and(path("/api/meal-plan/1/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "id": 1,
+            "title": "",
+            "recipe": {
+                "id": 2,
+                "name": "Updated Recipe",
+                "description": null,
+                "keywords": null,
+                "working_time": null,
+                "waiting_time": null,
+                "rating": null,
+                "servings": null
+            },
+            "servings": 3.0,
+            "note": "",
+            "note_markdown": "",
+            "from_date": "2025-12-31T00:00:00+01:00",
+            "to_date": "2025-12-31T00:00:00+01:00",
+            "meal_type": {
+                "id": 1,
+                "name": "Breakfast",
+                "order": 0,
+                "time": null,
+                "color": null,
+                "default": false,
+                "created_by": 1
+            },
+            "created_by": 1,
+            "shared": [],
+            "recipe_name": "Updated Recipe",
+            "meal_type_name": "Breakfast",
+            "shopping": false
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.update_meal_plan(1, &update_request)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let meal_plan = result.expect("Should succeed");
+    assert_eq!(meal_plan.servings, 3.0);
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_delete_meal_plan_success() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("DELETE"))
+        .and(path("/api/meal-plan/1/"))
+        .respond_with(ResponseTemplate::new(204))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.delete_meal_plan(1)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_delete_meal_plan_not_found() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("DELETE"))
+        .and(path("/api/meal-plan/999/"))
+        .respond_with(ResponseTemplate::new(404).set_body_string("Not Found"))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.delete_meal_plan(999)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_err());
+    let err_msg = result.unwrap_err().to_string();
+    assert!(err_msg.contains("API error (404)"));
+}
+
+// ============================================================================
+// Food CRUD Operations
+// ============================================================================
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_list_foods_success() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/food/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "count": 3,
+            "next": null,
+            "previous": null,
+            "results": [
+                {
+                    "id": 1,
+                    "name": "Chicken",
+                    "description": "Poultry meat"
+                },
+                {
+                    "id": 2,
+                    "name": "Rice",
+                    "description": null
+                },
+                {
+                    "id": 3,
+                    "name": "Broccoli",
+                    "description": "Green vegetable"
+                }
+            ]
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.list_foods(None, None)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let foods = result.expect("Should succeed");
+    assert_eq!(foods.count, 3);
+    assert_eq!(foods.results.len(), 3);
+    assert_eq!(foods.results[0].name, "Chicken");
+    assert_eq!(foods.results[1].id, 2);
+    assert_eq!(
+        foods.results[2].description,
+        Some("Green vegetable".to_string())
+    );
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_list_foods_with_pagination() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/food/"))
+        .and(query_param("page", "1"))
+        .and(query_param("page_size", "10"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "count": 50,
+            "next": "http://localhost/api/food/?page=2&page_size=10",
+            "previous": null,
+            "results": [
+                {
+                    "id": 1,
+                    "name": "Chicken",
+                    "description": null
+                }
+            ]
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.list_foods(Some(1), Some(10))
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let foods = result.expect("Should succeed");
+    assert_eq!(foods.count, 50);
+    assert!(foods.next.is_some());
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_get_food_success() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/food/42/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "id": 42,
+            "name": "Salmon",
+            "description": "Fatty fish"
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.get_food(42)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let food = result.expect("Should succeed");
+    assert_eq!(food.id, 42);
+    assert_eq!(food.name, "Salmon");
+    assert_eq!(food.description, Some("Fatty fish".to_string()));
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_get_food_not_found() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/food/999/"))
+        .respond_with(ResponseTemplate::new(404).set_body_string("Not Found"))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.get_food(999)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_err());
+    let err_msg = result.unwrap_err().to_string();
+    assert!(err_msg.contains("API error (404)"));
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_create_food_success() {
+    let mock_server = MockServer::start().await;
+
+    let create_request = CreateFoodRequestData {
+        name: "Pasta".to_string(),
+        description: Some("Wheat pasta".to_string()),
+    };
+
+    Mock::given(method("POST"))
+        .and(path("/api/food/"))
+        .respond_with(ResponseTemplate::new(201).set_body_json(json!({
+            "id": 100,
+            "name": "Pasta",
+            "description": "Wheat pasta"
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.create_food(&create_request)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let created = result.expect("Should succeed");
+    assert_eq!(created.id, 100);
+    assert_eq!(created.name, "Pasta");
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_create_food_minimal() {
+    let mock_server = MockServer::start().await;
+
+    let create_request = CreateFoodRequestData {
+        name: "Tofu".to_string(),
+        description: None,
+    };
+
+    Mock::given(method("POST"))
+        .and(path("/api/food/"))
+        .respond_with(ResponseTemplate::new(201).set_body_json(json!({
+            "id": 101,
+            "name": "Tofu",
+            "description": null
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.create_food(&create_request)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let created = result.expect("Should succeed");
+    assert_eq!(created.id, 101);
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_create_food_auth_error() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/api/food/"))
+        .respond_with(ResponseTemplate::new(403).set_body_string("Forbidden"))
+        .mount(&mock_server)
+        .await;
+
+    let create_request = CreateFoodRequestData {
+        name: "Eggs".to_string(),
+        description: None,
+    };
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.create_food(&create_request)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_err());
+    let err_msg = result.unwrap_err().to_string();
+    assert!(err_msg.contains("Authentication failed"));
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_update_food_success() {
+    let mock_server = MockServer::start().await;
+
+    let update_request = UpdateFoodRequest {
+        name: Some("Quinoa".to_string()),
+        description: Some("Ancient grain".to_string()),
+    };
+
+    Mock::given(method("PATCH"))
+        .and(path("/api/food/50/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "id": 50,
+            "name": "Quinoa",
+            "description": "Ancient grain"
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.update_food(50, &update_request)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let updated = result.expect("Should succeed");
+    assert_eq!(updated.id, 50);
+    assert_eq!(updated.name, "Quinoa");
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_update_food_partial() {
+    let mock_server = MockServer::start().await;
+
+    let update_request = UpdateFoodRequest {
+        name: Some("Lentils".to_string()),
+        description: None,
+    };
+
+    Mock::given(method("PATCH"))
+        .and(path("/api/food/60/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "id": 60,
+            "name": "Lentils",
+            "description": "Legume"
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.update_food(60, &update_request)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_update_food_not_found() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("PATCH"))
+        .and(path("/api/food/999/"))
+        .respond_with(ResponseTemplate::new(404).set_body_string("Not Found"))
+        .mount(&mock_server)
+        .await;
+
+    let update_request = UpdateFoodRequest {
+        name: Some("NonExistent".to_string()),
+        description: None,
+    };
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.update_food(999, &update_request)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_err());
+    let err_msg = result.unwrap_err().to_string();
+    assert!(err_msg.contains("API error (404)"));
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_delete_food_success() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("DELETE"))
+        .and(path("/api/food/30/"))
+        .respond_with(ResponseTemplate::new(204))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.delete_food(30)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_delete_food_not_found() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("DELETE"))
+        .and(path("/api/food/999/"))
+        .respond_with(ResponseTemplate::new(404).set_body_string("Not Found"))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.delete_food(999)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_err());
+    let err_msg = result.unwrap_err().to_string();
+    assert!(err_msg.contains("API error (404)"));
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_delete_food_auth_error() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("DELETE"))
+        .and(path("/api/food/40/"))
+        .respond_with(ResponseTemplate::new(401).set_body_string("Unauthorized"))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.delete_food(40)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_err());
+    let err_msg = result.unwrap_err().to_string();
+    assert!(err_msg.contains("Authentication failed"));
+}
+
+// ============================================================================
+// Meal Type Tests
+// ============================================================================
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_list_meal_types_success() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/meal-type/"))
+        .and(header("Authorization", "Bearer test_token_12345"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "count": 3,
+            "next": null,
+            "previous": null,
+            "results": [
+                {
+                    "id": 1,
+                    "name": "Breakfast",
+                    "order": 0,
+                    "time": "08:00",
+                    "color": null,
+                    "default": true,
+                    "created_by": 1
+                },
+                {
+                    "id": 2,
+                    "name": "Lunch",
+                    "order": 1,
+                    "time": "12:00",
+                    "color": null,
+                    "default": false,
+                    "created_by": 1
+                },
+                {
+                    "id": 3,
+                    "name": "Dinner",
+                    "order": 2,
+                    "time": "19:00",
+                    "color": null,
+                    "default": false,
+                    "created_by": 1
+                }
+            ]
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.list_meal_types(None, None)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let response = result.expect("Should succeed");
+    assert_eq!(response.count, 3);
+    assert_eq!(response.results.len(), 3);
+    assert_eq!(response.results[0].name, "Breakfast");
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_get_meal_type_success() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/meal-type/1/"))
+        .and(header("Authorization", "Bearer test_token_12345"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "id": 1,
+            "name": "Breakfast",
+            "order": 0,
+            "time": "08:00",
+            "color": null,
+            "default": true,
+            "created_by": 1
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.get_meal_type(1)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let meal_type = result.expect("Should succeed");
+    assert_eq!(meal_type.id, 1);
+    assert_eq!(meal_type.name, "Breakfast");
+    assert!(meal_type.default);
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_create_meal_type_success() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/api/meal-type/"))
+        .and(header("Authorization", "Bearer test_token_12345"))
+        .respond_with(ResponseTemplate::new(201).set_body_json(json!({
+            "id": 4,
+            "name": "Snack",
+            "order": 3,
+            "time": "15:00",
+            "color": null,
+            "default": false,
+            "created_by": 1
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        let request = meal_planner::tandoor::CreateMealTypeRequest {
+            name: "Snack".to_string(),
+            order: Some(3),
+            time: Some("15:00".to_string()),
+            color: None,
+            default: Some(false),
+        };
+        client.create_meal_type(&request)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let meal_type = result.expect("Should succeed");
+    assert_eq!(meal_type.id, 4);
+    assert_eq!(meal_type.name, "Snack");
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_update_meal_type_success() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("PATCH"))
+        .and(path("/api/meal-type/1/"))
+        .and(header("Authorization", "Bearer test_token_12345"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "id": 1,
+            "name": "Breakfast Updated",
+            "order": 0,
+            "time": "07:30",
+            "color": "#FF5733",
+            "default": true,
+            "created_by": 1
+        })))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        let request = meal_planner::tandoor::UpdateMealTypeRequest {
+            name: Some("Breakfast Updated".to_string()),
+            order: None,
+            time: Some("07:30".to_string()),
+            color: Some("#FF5733".to_string()),
+            default: None,
+        };
+        client.update_meal_type(1, &request)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+    let meal_type = result.expect("Should succeed");
+    assert_eq!(meal_type.id, 1);
+    assert_eq!(meal_type.name, "Breakfast Updated");
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_delete_meal_type_success() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("DELETE"))
+        .and(path("/api/meal-type/1/"))
+        .and(header("Authorization", "Bearer test_token_12345"))
+        .respond_with(ResponseTemplate::new(204).set_body_string(""))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.delete_meal_type(1)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_get_meal_type_not_found() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("GET"))
+        .and(path("/api/meal-type/999/"))
+        .respond_with(ResponseTemplate::new(404).set_body_string("Not found"))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        client.get_meal_type(999)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_err());
+    let err_msg = result.unwrap_err().to_string();
+    assert!(err_msg.contains("API error (404)"));
+}
+
+#[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+async fn test_create_meal_type_auth_error() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/api/meal-type/"))
+        .respond_with(ResponseTemplate::new(401).set_body_string("Unauthorized"))
+        .mount(&mock_server)
+        .await;
+
+    let uri = mock_server.uri();
+    let handle = tokio::task::spawn_blocking(move || {
+        let client = create_test_client(&uri);
+        let request = meal_planner::tandoor::CreateMealTypeRequest {
+            name: "Snack".to_string(),
+            order: None,
+            time: None,
+            color: None,
+            default: None,
+        };
+        client.create_meal_type(&request)
+    });
+
+    let result = handle.await.expect("Task should complete");
+
+    assert!(result.is_err());
+    let err_msg = result.unwrap_err().to_string();
+    assert!(err_msg.contains("Authentication failed"));
 }
