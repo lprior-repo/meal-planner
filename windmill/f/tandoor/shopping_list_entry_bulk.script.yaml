@@ -1,0 +1,31 @@
+summary: Bulk create shopping list entries
+description: Creates or updates multiple shopping list entries for a meal plan
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    entries:
+      type: string
+      description: >-
+        Array of entries to create/update (each with list, food, amount, unit,
+        etc.)
+      default: null
+      items:
+        type: object
+      originalType: string
+    mealplan_id:
+      type: string
+      description: Meal plan ID
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - mealplan_id
+    - entries

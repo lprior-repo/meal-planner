@@ -1,32 +1,45 @@
 summary: Edit FatSecret food diary entry
 description: Updates an existing food diary entry
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    fatsecret:
-      type: object
-      description: FatSecret API credentials
-      format: resource-fatsecret
-    access_token:
-      type: string
-      description: OAuth access token
     access_secret:
       type: string
       description: OAuth access token secret
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
     food_entry_id:
       type: string
       description: The food entry ID to edit
-    number_of_units:
-      type: number
-      description: Optional new number of units
+      default: null
+      originalType: string
     meal:
       type: string
-      description: Optional new meal type (breakfast, lunch, dinner, other)
+      description: 'Optional new meal type (breakfast, lunch, dinner, other)'
+      default: null
+      originalType: string
+    number_of_units:
+      type: string
+      description: Optional new number of units
+      default: null
+      originalType: string
   required:
     - fatsecret
     - access_token
     - access_secret
     - food_entry_id
+    - number_of_units
+    - meal

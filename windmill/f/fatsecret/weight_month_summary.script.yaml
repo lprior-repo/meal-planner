@@ -1,0 +1,33 @@
+summary: Get FatSecret weight month summary
+description: Retrieves aggregated weight statistics for a specific month
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    access_secret:
+      type: string
+      description: OAuth access secret (required for 3-legged requests)
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token (required for 3-legged requests)
+      default: null
+      originalType: string
+    date_int:
+      type: string
+      description: Date as days since Unix epoch (1970-01-01)
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - date_int

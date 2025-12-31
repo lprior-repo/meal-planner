@@ -1,24 +1,31 @@
 summary: Delete food from FatSecret favorites
 description: Removes a food from the user's favorites list (requires user access token)
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    fatsecret:
-      type: object
-      description: FatSecret API credentials
-      format: resource-fatsecret
-    access_token:
-      type: string
-      description: OAuth access token
     access_secret:
       type: string
       description: OAuth access token secret
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
     food_id:
       type: string
       description: The food ID to remove from favorites
+      default: null
+      originalType: string
   required:
     - fatsecret
     - access_token

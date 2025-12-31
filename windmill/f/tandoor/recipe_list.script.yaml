@@ -1,0 +1,27 @@
+summary: List recipes from Tandoor
+description: >-
+  Retrieves a paginated list of recipes from Tandoor with optional page and
+  page_size parameters.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    page:
+      type: string
+      description: Page number (defaults to 1)
+      default: ''
+      originalType: string
+    page_size:
+      type: string
+      description: Number of recipes per page (defaults to API default)
+      default: ''
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor

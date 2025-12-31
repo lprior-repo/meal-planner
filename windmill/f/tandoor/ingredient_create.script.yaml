@@ -1,0 +1,33 @@
+summary: Create ingredient
+description: 'Creates a new ingredient in Tandoor with food, optional unit and amount'
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    amount:
+      type: string
+      description: Amount (optional)
+      default: null
+      originalType: string
+    food:
+      type: string
+      description: Food ID for the ingredient
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+    unit:
+      type: string
+      description: Unit ID (optional)
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - food
+    - unit
+    - amount

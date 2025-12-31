@@ -1,0 +1,35 @@
+summary: Add FatSecret recipe to favorites
+description: >-
+  Adds a recipe to user's favorites list. This is a 3-legged OAuth request
+  (requires user access token).
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    access_secret:
+      type: string
+      description: OAuth access secret (required for 3-legged requests)
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token (required for 3-legged requests)
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+    recipe_id:
+      type: string
+      description: ID of recipe to add to favorites
+      default: null
+      originalType: string
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - recipe_id

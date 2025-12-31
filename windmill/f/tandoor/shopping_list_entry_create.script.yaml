@@ -1,0 +1,27 @@
+summary: Create shopping list entry
+description: Adds a new entry to a shopping list for a meal plan
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    entry:
+      type: string
+      description: 'Entry details (list, food, amount, unit, checked, order)'
+      default: null
+      originalType: string
+    mealplan_id:
+      type: string
+      description: Meal plan ID
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - mealplan_id
+    - entry

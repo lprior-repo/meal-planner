@@ -1,0 +1,41 @@
+summary: Get FatSecret favorite recipes
+description: >-
+  Retrieves user's favorite recipes list. This is a 3-legged OAuth request
+  (requires user access token).
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    access_secret:
+      type: string
+      description: OAuth access secret (required for 3-legged requests)
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token (required for 3-legged requests)
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+    max_results:
+      type: string
+      description: Maximum results to return (optional)
+      default: null
+      originalType: string
+    page_number:
+      type: string
+      description: Page number for pagination (optional)
+      default: null
+      originalType: string
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - max_results
+    - page_number

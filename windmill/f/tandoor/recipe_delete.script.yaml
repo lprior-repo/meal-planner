@@ -1,0 +1,23 @@
+summary: Delete recipe from Tandoor
+description: >-
+  Removes a recipe and all associated data from Tandoor. This operation is
+  irreversible.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    recipe_id:
+      type: string
+      description: Recipe ID to delete
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - recipe_id

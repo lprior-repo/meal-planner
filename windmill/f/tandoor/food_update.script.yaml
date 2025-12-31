@@ -1,0 +1,33 @@
+summary: Update a food
+description: Updates an existing food entry in the Tandoor database
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    name:
+      type: string
+      description: New name for the food (optional)
+      default: null
+      originalType: string
+    description:
+      type: string
+      description: New description for the food (optional)
+      default: null
+      originalType: string
+    food_id:
+      type: string
+      description: ID of the food to update
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - food_id
+    - name
+    - description

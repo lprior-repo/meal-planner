@@ -1,0 +1,49 @@
+summary: Create a new FatSecret saved meal
+description: >-
+  Creates a saved meal template with associated meal types (breakfast, lunch,
+  dinner, other)
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    access_secret:
+      type: string
+      description: OAuth access secret (required for 3-legged requests)
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token (required for 3-legged requests)
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+    meals:
+      type: string
+      description: >-
+        Meal types this saved meal applies to (comma-separated:
+        breakfast,lunch,dinner,other)
+      default: null
+      originalType: string
+    saved_meal_description:
+      type: string
+      description: Optional description for the saved meal
+      default: null
+      originalType: string
+    saved_meal_name:
+      type: string
+      description: Name for the saved meal
+      default: null
+      originalType: string
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - saved_meal_name
+    - saved_meal_description
+    - meals

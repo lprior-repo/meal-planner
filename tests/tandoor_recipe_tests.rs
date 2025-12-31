@@ -1,24 +1,17 @@
-//! Integration tests for Tandoor API client
+//! Recipe tests for Tandoor API client
 //!
-//! Tests all client methods with mocked HTTP responses:
-//! - Connection testing
-//! - Recipe listing with pagination
-//! - Recipe scraping from URLs
-//! - Recipe creation
-//! - Error handling (network, auth, API errors)
-//!
-//! Uses wiremock for HTTP mocking - no real API calls.
+//! Tests recipe listing, scraping, creation, and import operations.
 
 #![allow(clippy::expect_used)]
 
 use meal_planner::tandoor::{
-    ConnectionTestResult, CreateFoodRequest, CreateIngredientRequest, CreateKeywordRequest,
-    CreateRecipeRequest, CreateStepRequest, CreatedRecipe, PaginatedResponse,
-    RecipeFromSourceResponse, RecipeImportResult, RecipeSummary, TandoorClient, TandoorConfig,
+    CreateFoodRequest, CreateIngredientRequest, CreateKeywordRequest, CreateRecipeRequest,
+    CreateStepRequest, CreatedRecipe, PaginatedResponse, RecipeFromSourceResponse,
+    RecipeImportResult, RecipeSummary, TandoorClient, TandoorConfig,
 };
 use serde_json::json;
 use wiremock::{
-    matchers::{body_json, header, method, path, query_param},
+    matchers::{body_json, method, path, query_param},
     Mock, MockServer, ResponseTemplate,
 };
 
@@ -30,147 +23,6 @@ fn create_test_client(base_url: &str) -> TandoorClient {
         api_token: "test_token_12345".to_string(),
     };
     TandoorClient::new(&config).unwrap()
-}
-
-// ============================================================================
-// Connection Testing
-// ============================================================================
-
-#[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
-async fn test_connection_success() {
-    let mock_server = MockServer::start().await;
-
-    // Mock successful recipe list response
-    Mock::given(method("GET"))
-        .and(path("/api/recipe/"))
-        .and(header("Authorization", "Bearer test_token_12345"))
-        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
-            "count": 42,
-            "next": null,
-            "previous": null,
-            "results": []
-        })))
-        .mount(&mock_server)
-        .await;
-
-    let uri = mock_server.uri();
-    let handle = tokio::task::spawn_blocking(move || {
-        let client = create_test_client(&uri);
-        client.test_connection()
-    });
-
-    let result = handle.await.expect("Task should complete");
-
-    assert!(result.is_ok());
-    let conn_test: ConnectionTestResult = result.expect("Should succeed");
-    assert!(conn_test.success);
-    assert_eq!(conn_test.recipe_count, 42);
-    assert!(conn_test.message.contains("42"));
-}
-
-#[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
-async fn test_connection_auth_failure_401() {
-    let mock_server = MockServer::start().await;
-
-    // Mock 401 Unauthorized
-    Mock::given(method("GET"))
-        .and(path("/api/recipe/"))
-        .respond_with(ResponseTemplate::new(401).set_body_json(json!({
-            "detail": "Invalid token"
-        })))
-        .mount(&mock_server)
-        .await;
-
-    let uri = mock_server.uri();
-    let handle = tokio::task::spawn_blocking(move || {
-        let client = create_test_client(&uri);
-        client.test_connection()
-    });
-
-    let result = handle.await.expect("Task should complete");
-
-    assert!(result.is_err());
-    let err_msg = result.unwrap_err().to_string();
-    assert!(err_msg.contains("Authentication failed"));
-}
-
-#[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
-async fn test_connection_auth_failure_403() {
-    let mock_server = MockServer::start().await;
-
-    // Mock 403 Forbidden
-    Mock::given(method("GET"))
-        .and(path("/api/recipe/"))
-        .respond_with(ResponseTemplate::new(403).set_body_json(json!({
-            "detail": "Access denied"
-        })))
-        .mount(&mock_server)
-        .await;
-
-    let uri = mock_server.uri();
-    let handle = tokio::task::spawn_blocking(move || {
-        let client = create_test_client(&uri);
-        client.test_connection()
-    });
-
-    let result = handle.await.expect("Task should complete");
-
-    assert!(result.is_err());
-    let err_msg = result.unwrap_err().to_string();
-    assert!(err_msg.contains("Authentication failed"));
-}
-
-#[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
-async fn test_connection_server_error() {
-    let mock_server = MockServer::start().await;
-
-    // Mock 500 Internal Server Error
-    Mock::given(method("GET"))
-        .and(path("/api/recipe/"))
-        .respond_with(ResponseTemplate::new(500).set_body_string("Internal Server Error"))
-        .mount(&mock_server)
-        .await;
-
-    let uri = mock_server.uri();
-    let handle = tokio::task::spawn_blocking(move || {
-        let client = create_test_client(&uri);
-        client.test_connection()
-    });
-
-    let result = handle.await.expect("Task should complete");
-
-    assert!(result.is_err());
-    let err_msg = result.unwrap_err().to_string();
-    assert!(err_msg.contains("API error (500)"));
-}
-
-#[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
-async fn test_connection_parse_error() {
-    let mock_server = MockServer::start().await;
-
-    // Mock invalid JSON response
-    Mock::given(method("GET"))
-        .and(path("/api/recipe/"))
-        .respond_with(ResponseTemplate::new(200).set_body_string("not json"))
-        .mount(&mock_server)
-        .await;
-
-    let uri = mock_server.uri();
-    let handle = tokio::task::spawn_blocking(move || {
-        let client = create_test_client(&uri);
-        client.test_connection()
-    });
-
-    let result = handle.await.expect("Task should complete");
-
-    assert!(result.is_err());
-    let err_msg = result.unwrap_err().to_string();
-    assert!(err_msg.contains("Failed to parse response"));
 }
 
 // ============================================================================
@@ -292,7 +144,7 @@ async fn test_list_recipes_with_pagination() {
 }
 
 #[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 async fn test_list_recipes_empty() {
     let mock_server = MockServer::start().await;
 
@@ -322,7 +174,7 @@ async fn test_list_recipes_empty() {
 }
 
 #[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 async fn test_list_recipes_api_error() {
     let mock_server = MockServer::start().await;
 
@@ -441,7 +293,7 @@ async fn test_scrape_recipe_success() {
 }
 
 #[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 async fn test_scrape_recipe_failure() {
     let mock_server = MockServer::start().await;
 
@@ -473,7 +325,7 @@ async fn test_scrape_recipe_failure() {
 }
 
 #[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 async fn test_scrape_recipe_auth_error() {
     let mock_server = MockServer::start().await;
 
@@ -503,7 +355,7 @@ async fn test_scrape_recipe_auth_error() {
 // ============================================================================
 
 #[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 async fn test_create_recipe_success() {
     let mock_server = MockServer::start().await;
 
@@ -557,7 +409,7 @@ async fn test_create_recipe_success() {
 }
 
 #[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 async fn test_create_recipe_minimal() {
     let mock_server = MockServer::start().await;
 
@@ -595,7 +447,7 @@ async fn test_create_recipe_minimal() {
 }
 
 #[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 async fn test_create_recipe_auth_error() {
     let mock_server = MockServer::start().await;
 
@@ -634,12 +486,7 @@ async fn test_create_recipe_auth_error() {
 // ============================================================================
 
 #[tokio::test]
-#[allow(
-    clippy::expect_used,
-    clippy::unwrap_used,
-    clippy::indexing_slicing,
-    clippy::too_many_lines
-)]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::too_many_lines)]
 async fn test_import_recipe_success() {
     let mock_server = MockServer::start().await;
 
@@ -719,11 +566,10 @@ async fn test_import_recipe_success() {
 }
 
 #[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 async fn test_import_recipe_scrape_failure() {
     let mock_server = MockServer::start().await;
 
-    // Mock scrape failure
     Mock::given(method("POST"))
         .and(path("/api/recipe-from-source/"))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
@@ -752,11 +598,10 @@ async fn test_import_recipe_scrape_failure() {
 }
 
 #[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 async fn test_import_recipe_no_data() {
     let mock_server = MockServer::start().await;
 
-    // Mock scrape with no recipe data
     Mock::given(method("POST"))
         .and(path("/api/recipe-from-source/"))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
@@ -784,7 +629,7 @@ async fn test_import_recipe_no_data() {
 }
 
 #[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 async fn test_import_recipe_create_failure() {
     let mock_server = MockServer::start().await;
 
@@ -831,63 +676,4 @@ async fn test_import_recipe_create_failure() {
     assert!(result.is_err());
     let err_msg = result.unwrap_err().to_string();
     assert!(err_msg.contains("API error (400)"));
-}
-
-// ============================================================================
-// Network Error Handling
-// ============================================================================
-
-#[test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
-fn test_network_timeout() {
-    // Use an invalid/unroutable IP to simulate network error
-    // This won't actually take 30 seconds due to connection refused
-    let config = TandoorConfig {
-        base_url: "http://192.0.2.1:9999".to_string(), // TEST-NET-1, guaranteed unroutable
-        api_token: "test_token".to_string(),
-    };
-    let client = TandoorClient::new(&config).expect("Client creation should succeed");
-
-    let result = client.test_connection();
-    assert!(result.is_err());
-    // Network errors are wrapped in HttpError
-    let err_msg = result.unwrap_err().to_string();
-    assert!(err_msg.contains("HTTP request failed"));
-}
-
-// ============================================================================
-// Client Configuration
-// ============================================================================
-
-#[test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
-fn test_client_creation_valid_config() {
-    let config = TandoorConfig {
-        base_url: "http://localhost:8090".to_string(),
-        api_token: "valid_token".to_string(),
-    };
-    let client = TandoorClient::new(&config);
-    assert!(client.is_ok());
-}
-
-#[test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
-fn test_client_creation_trims_trailing_slash() {
-    let config = TandoorConfig {
-        base_url: "http://localhost:8090/".to_string(),
-        api_token: "test_token".to_string(),
-    };
-    let client = TandoorClient::new(&config);
-    assert!(client.is_ok());
-}
-
-#[test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
-fn test_client_creation_with_https() {
-    let config = TandoorConfig {
-        base_url: "https://tandoor.example.com".to_string(),
-        api_token: "secure_token".to_string(),
-    };
-    let client = TandoorClient::new(&config);
-    assert!(client.is_ok());
 }

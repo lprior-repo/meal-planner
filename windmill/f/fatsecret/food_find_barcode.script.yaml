@@ -1,21 +1,26 @@
 summary: Find FatSecret food by barcode
 description: Looks up a food by its UPC/EAN barcode and returns full details
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    fatsecret:
-      type: object
-      description: FatSecret API credentials
-      format: resource-fatsecret
     barcode:
       type: string
-      description: Barcode to look up (UPC-A, EAN-13, etc.)
+      description: 'Barcode to look up (UPC-A, EAN-13, etc.)'
+      default: null
+      originalType: string
     barcode_type:
       type: string
-      description: Optional barcode type (e.g., "UPC-A", "EAN-13")
+      description: 'Optional barcode type (e.g., "UPC-A", "EAN-13")'
+      default: ''
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
   required:
     - fatsecret
     - barcode

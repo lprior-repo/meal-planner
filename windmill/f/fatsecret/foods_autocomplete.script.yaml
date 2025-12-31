@@ -1,22 +1,26 @@
 summary: Autocomplete FatSecret food names
 description: Returns food suggestions for partial search terms
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    fatsecret:
-      type: object
-      description: FatSecret API credentials
-      format: resource-fatsecret
     expression:
       type: string
       description: Partial food name to autocomplete
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
     max_results:
-      type: integer
+      type: string
       description: Maximum number of suggestions
-      default: 10
+      default: '10'
+      originalType: string
   required:
     - fatsecret
     - expression

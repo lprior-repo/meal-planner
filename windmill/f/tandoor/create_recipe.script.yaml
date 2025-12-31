@@ -1,24 +1,28 @@
 summary: Create recipe in Tandoor
 description: Creates a recipe from scraped/imported data with optional keywords
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    tandoor:
-      type: object
-      description: Tandoor API credentials
-      format: resource-tandoor
-    recipe:
-      type: object
-      description: Recipe data from scrape_recipe output
     additional_keywords:
-      type: array
+      type: string
+      description: Additional keywords to add
+      default: '[]'
       items:
         type: string
-      description: Additional keywords to add
-      default: []
+      originalType: string
+    recipe:
+      type: string
+      description: Recipe data from scrape_recipe output
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
   required:
     - tandoor
     - recipe

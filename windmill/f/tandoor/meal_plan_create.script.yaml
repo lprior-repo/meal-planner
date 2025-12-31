@@ -1,0 +1,57 @@
+summary: Create meal plan
+description: 'Creates a new meal plan with recipe, meal type, date, and servings'
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    from_date:
+      type: string
+      description: 'Start date (ISO format, e.g. 2025-12-31)'
+      default: null
+      originalType: string
+    meal_type:
+      type: string
+      description: Meal type ID
+      default: null
+      originalType: string
+    note:
+      type: string
+      description: Optional note
+      default: null
+      originalType: string
+    recipe:
+      type: string
+      description: Recipe ID
+      default: null
+      originalType: string
+    servings:
+      type: string
+      description: Number of servings
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+    title:
+      type: string
+      description: Optional title
+      default: null
+      originalType: string
+    to_date:
+      type: string
+      description: 'End date (optional, ISO format)'
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - recipe
+    - meal_type
+    - from_date
+    - servings
+    - to_date
+    - title
+    - note

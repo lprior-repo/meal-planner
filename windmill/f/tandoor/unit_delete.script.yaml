@@ -1,0 +1,21 @@
+summary: Delete a unit
+description: Deletes a measurement unit from the Tandoor database
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    id:
+      type: string
+      description: ID of the unit to delete
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - id

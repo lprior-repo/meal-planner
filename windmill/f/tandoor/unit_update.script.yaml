@@ -1,0 +1,31 @@
+summary: Update an existing unit
+description: Updates a unit's name and/or plural name in Tandoor
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    id:
+      type: string
+      description: Unit ID to update
+      default: null
+      originalType: string
+    name:
+      type: string
+      description: New unit name (optional)
+      default: 'null'
+      originalType: string
+    plural_name:
+      type: string
+      description: New plural name (optional)
+      default: 'null'
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - id

@@ -1,0 +1,21 @@
+summary: Create a recipe step
+description: Creates a new recipe step in Tandoor with the given instruction
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    instruction:
+      type: string
+      description: 'Step instruction text (e.g., "Boil water")'
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - instruction

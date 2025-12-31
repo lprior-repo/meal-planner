@@ -1,0 +1,45 @@
+summary: Create a new FatSecret exercise entry
+description: Logs an exercise session with duration. Requires OAuth user access token.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    access_secret:
+      type: string
+      description: OAuth access secret (required for 3-legged requests)
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token (required for 3-legged requests)
+      default: null
+      originalType: string
+    date_int:
+      type: string
+      description: Date as days since Unix epoch (1970-01-01)
+      default: null
+      originalType: string
+    duration_min:
+      type: string
+      description: Duration of exercise in minutes
+      default: null
+      originalType: string
+    exercise_id:
+      type: string
+      description: ID of the exercise to log
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - exercise_id
+    - duration_min
+    - date_int

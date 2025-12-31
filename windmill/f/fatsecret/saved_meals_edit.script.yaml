@@ -1,0 +1,51 @@
+summary: Edit an existing FatSecret saved meal
+description: 'Updates a saved meal template (name, description, meal types)'
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    access_secret:
+      type: string
+      description: OAuth access secret (required for 3-legged requests)
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token (required for 3-legged requests)
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+    meals:
+      type: string
+      description: 'New meal types (optional, comma-separated: breakfast,lunch,dinner,other)'
+      default: null
+      originalType: string
+    saved_meal_description:
+      type: string
+      description: New description for the saved meal (optional)
+      default: null
+      originalType: string
+    saved_meal_id:
+      type: string
+      description: ID of the saved meal to edit
+      default: null
+      originalType: string
+    saved_meal_name:
+      type: string
+      description: New name for the saved meal (optional)
+      default: null
+      originalType: string
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - saved_meal_id
+    - saved_meal_name
+    - saved_meal_description
+    - meals

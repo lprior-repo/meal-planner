@@ -1,0 +1,39 @@
+summary: Update ingredient
+description: 'Updates an existing ingredient in Tandoor with optional food, unit, and amount'
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    id:
+      type: string
+      description: Ingredient ID to update
+      default: null
+      originalType: string
+    amount:
+      type: string
+      description: Amount (optional)
+      default: null
+      originalType: string
+    food:
+      type: string
+      description: Food ID (optional)
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+    unit:
+      type: string
+      description: Unit ID (optional)
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - id
+    - food
+    - unit
+    - amount
