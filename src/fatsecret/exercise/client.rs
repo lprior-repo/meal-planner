@@ -225,3 +225,409 @@ pub async fn delete_exercise_entry(
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use wiremock::matchers::{body_string_contains, method, path};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
+
+    fn test_config(mock_server: &MockServer) -> FatSecretConfig {
+        FatSecretConfig::with_base_url("test_key", "test_secret", mock_server.uri())
+    }
+
+    fn test_token() -> AccessToken {
+        AccessToken {
+            oauth_token: "test_token".to_string(),
+            oauth_token_secret: "test_secret".to_string(),
+        }
+    }
+
+    // ========================================================================
+    // get_exercise tests (2-legged OAuth)
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_exercise_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercises.get.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "exercise": {
+                        "exercise_id": "12345",
+                        "exercise_name": "Running",
+                        "calories_per_hour": "600"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let exercise_id = ExerciseId::new("12345");
+
+        let result = get_exercise(&config, &exercise_id).await;
+        assert!(result.is_ok());
+        let exercise = result.unwrap();
+        assert_eq!(exercise.exercise_id.as_str(), "12345");
+        assert_eq!(exercise.exercise_name, "Running");
+        assert!((exercise.calories_per_hour - 600.0).abs() < 0.01);
+    }
+
+    #[tokio::test]
+    async fn test_get_exercise_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercises.get.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"invalid": "data"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let exercise_id = ExerciseId::new("12345");
+
+        let result = get_exercise(&config, &exercise_id).await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // get_exercise_entries tests (3-legged OAuth)
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_exercise_entries_multiple() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercise_entries.get.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "exercise_entry": [
+                        {
+                            "exercise_entry_id": "111",
+                            "exercise_id": "12345",
+                            "exercise_name": "Running",
+                            "duration_min": "30",
+                            "calories": "300",
+                            "date_int": "19723"
+                        },
+                        {
+                            "exercise_entry_id": "222",
+                            "exercise_id": "67890",
+                            "exercise_name": "Walking",
+                            "duration_min": "45",
+                            "calories": "150",
+                            "date_int": "19723"
+                        }
+                    ]
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_exercise_entries(&config, &token, 19723).await;
+        assert!(result.is_ok());
+        let entries = result.unwrap();
+        assert_eq!(entries.len(), 2);
+        assert_eq!(entries[0].exercise_name, "Running");
+        assert_eq!(entries[1].exercise_name, "Walking");
+    }
+
+    #[tokio::test]
+    async fn test_get_exercise_entries_single() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercise_entries.get.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "exercise_entry": {
+                        "exercise_entry_id": "111",
+                        "exercise_id": "12345",
+                        "exercise_name": "Cycling",
+                        "duration_min": "60",
+                        "calories": "500",
+                        "date_int": "19723"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_exercise_entries(&config, &token, 19723).await;
+        assert!(result.is_ok());
+        let entries = result.unwrap();
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].exercise_name, "Cycling");
+    }
+
+    #[tokio::test]
+    async fn test_get_exercise_entries_empty() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercise_entries.get.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"exercise_entry": []}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_exercise_entries(&config, &token, 19723).await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().is_empty());
+    }
+
+    // ========================================================================
+    // create_exercise_entry tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_create_exercise_entry_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercise_entry.edit"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "exercise_entry": {
+                        "exercise_entry_id": "99999",
+                        "exercise_id": "12345",
+                        "exercise_name": "Swimming",
+                        "duration_min": "30",
+                        "calories": "250",
+                        "date_int": "19723"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let input = ExerciseEntryInput {
+            exercise_id: ExerciseId::new("12345"),
+            duration_min: 30,
+            date_int: 19723,
+        };
+
+        let result = create_exercise_entry(&config, &token, input).await;
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().as_str(), "99999");
+    }
+
+    #[tokio::test]
+    async fn test_create_exercise_entry_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercise_entry.edit"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"bad": "response"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let input = ExerciseEntryInput {
+            exercise_id: ExerciseId::new("12345"),
+            duration_min: 30,
+            date_int: 19723,
+        };
+
+        let result = create_exercise_entry(&config, &token, input).await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // edit_exercise_entry tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_edit_exercise_entry_duration() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercise_entry.edit"))
+            .and(body_string_contains("duration_min"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let entry_id = ExerciseEntryId::new("11111");
+        let update = ExerciseEntryUpdate {
+            exercise_id: None,
+            duration_min: Some(45),
+        };
+
+        let result = edit_exercise_entry(&config, &token, &entry_id, update).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_edit_exercise_entry_exercise_id() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercise_entry.edit"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let entry_id = ExerciseEntryId::new("11111");
+        let update = ExerciseEntryUpdate {
+            exercise_id: Some(ExerciseId::new("67890")),
+            duration_min: None,
+        };
+
+        let result = edit_exercise_entry(&config, &token, &entry_id, update).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // delete_exercise_entry tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_delete_exercise_entry_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercise_entry.delete"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let entry_id = ExerciseEntryId::new("11111");
+
+        let result = delete_exercise_entry(&config, &token, &entry_id).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // get_exercise_month_summary tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_exercise_month_summary_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercise_entries.get_month.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "exercise_month": {
+                        "month": "1",
+                        "year": "2024",
+                        "day": [
+                            {
+                                "date_int": "19723",
+                                "exercise_calories": "450"
+                            },
+                            {
+                                "date_int": "19725",
+                                "exercise_calories": "300"
+                            }
+                        ]
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_exercise_month_summary(&config, &token, 2024, 1).await;
+        assert!(result.is_ok());
+        let summary = result.unwrap();
+        assert_eq!(summary.month, 1);
+        assert_eq!(summary.days.len(), 2);
+    }
+
+    #[tokio::test]
+    async fn test_get_exercise_month_summary_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=exercise_entries.get_month.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"malformed": true}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_exercise_month_summary(&config, &token, 2024, 1).await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // Error handling tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_api_error_response() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"error": {"code": 106, "message": "Invalid ID value"}}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let exercise_id = ExerciseId::new("invalid");
+
+        let result = get_exercise(&config, &exercise_id).await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_http_error_response() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(500).set_body_string("Server Error"))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_exercise_entries(&config, &token, 19723).await;
+        assert!(result.is_err());
+    }
+}

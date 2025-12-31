@@ -149,3 +149,284 @@ pub async fn get_recipe_types(config: &FatSecretConfig) -> Result<Vec<RecipeType
 
     Ok(response.recipe_types.recipe_types)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use wiremock::matchers::{body_string_contains, method, path};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
+
+    fn test_config(mock_server: &MockServer) -> FatSecretConfig {
+        FatSecretConfig::with_base_url("test_key", "test_secret", mock_server.uri())
+    }
+
+    // ========================================================================
+    // get_recipe tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_recipe_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=recipe.get.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "recipe": {
+                        "recipe_id": "99999",
+                        "recipe_name": "Grilled Chicken",
+                        "recipe_description": "Simple grilled chicken breast",
+                        "recipe_url": "https://www.fatsecret.com/recipe",
+                        "calories": "165",
+                        "carbohydrate": "0",
+                        "protein": "31",
+                        "fat": "4",
+                        "preparation_time_min": "30",
+                        "cooking_time_min": "20",
+                        "number_of_servings": "4",
+                        "ingredients": {
+                            "ingredient": []
+                        },
+                        "directions": {
+                            "direction": []
+                        },
+                        "recipe_categories": {
+                            "recipe_category": []
+                        },
+                        "recipe_types": {
+                            "recipe_type": []
+                        }
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let recipe_id = RecipeId::new("99999");
+
+        let result = get_recipe(&config, &recipe_id).await;
+        assert!(result.is_ok());
+        let recipe = result.unwrap();
+        assert_eq!(recipe.recipe_name, "Grilled Chicken");
+    }
+
+    #[tokio::test]
+    async fn test_get_recipe_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=recipe.get.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"invalid": "data"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let recipe_id = RecipeId::new("99999");
+
+        let result = get_recipe(&config, &recipe_id).await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // search_recipes tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_search_recipes_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=recipes.search.v3"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "recipes": {
+                        "recipe": [
+                            {
+                                "recipe_id": "99999",
+                                "recipe_name": "Pasta Primavera",
+                                "recipe_description": "Classic Italian pasta",
+                                "recipe_url": "https://www.fatsecret.com/recipe/99999"
+                            }
+                        ],
+                        "max_results": "20",
+                        "total_results": "100",
+                        "page_number": "0"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = search_recipes(&config, "pasta", Some(20), Some(0), None).await;
+        assert!(result.is_ok());
+        let response = result.unwrap();
+        assert_eq!(response.recipes.len(), 1);
+        assert_eq!(response.total_results, 100);
+    }
+
+    #[tokio::test]
+    async fn test_search_recipes_with_type() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=recipes.search.v3"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "recipes": {
+                        "recipe": [],
+                        "max_results": "20",
+                        "total_results": "0",
+                        "page_number": "0"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = search_recipes(&config, "salad", None, None, Some("vegetarian")).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // autocomplete_recipes tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_autocomplete_recipes_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=recipes.autocomplete.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "suggestions": {
+                        "suggestion": [
+                            {"recipe_id": "1", "recipe_name": "Chicken Curry"},
+                            {"recipe_id": "2", "recipe_name": "Chicken Stir Fry"}
+                        ]
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = autocomplete_recipes(&config, "chick").await;
+        assert!(result.is_ok());
+        let suggestions = result.unwrap();
+        assert_eq!(suggestions.len(), 2);
+    }
+
+    #[tokio::test]
+    async fn test_autocomplete_recipes_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=recipes.autocomplete.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"bad": "format"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = autocomplete_recipes(&config, "test").await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // get_recipe_types tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_recipe_types_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=recipe_types.get.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "recipe_types": {
+                        "recipe_type": ["Appetizer", "Main Dish", "Dessert"]
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = get_recipe_types(&config).await;
+        assert!(result.is_ok());
+        let types = result.unwrap();
+        assert_eq!(types.len(), 3);
+    }
+
+    #[tokio::test]
+    async fn test_get_recipe_types_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=recipe_types.get.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"invalid": true}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = get_recipe_types(&config).await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // Error handling tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_api_error_response() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"error": {"code": 106, "message": "Invalid ID value"}}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let recipe_id = RecipeId::new("invalid");
+
+        let result = get_recipe(&config, &recipe_id).await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_http_error_response() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(500).set_body_string("Server Error"))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = search_recipes(&config, "test", None, None, None).await;
+        assert!(result.is_err());
+    }
+}

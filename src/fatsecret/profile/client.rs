@@ -161,3 +161,215 @@ pub async fn get_profile_auth(
 
     Ok(response.profile)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use wiremock::matchers::{body_string_contains, method, path};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
+
+    fn test_config(mock_server: &MockServer) -> FatSecretConfig {
+        FatSecretConfig::with_base_url("test_key", "test_secret", mock_server.uri())
+    }
+
+    fn test_token() -> AccessToken {
+        AccessToken {
+            oauth_token: "test_token".to_string(),
+            oauth_token_secret: "test_secret".to_string(),
+        }
+    }
+
+    // ========================================================================
+    // get_profile tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_profile_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=profile.get"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "profile": {
+                        "goal_weight_kg": "70",
+                        "last_weight_kg": "75",
+                        "last_weight_date_int": "20000",
+                        "height_cm": "180",
+                        "calorie_goal": "2000",
+                        "weight_measure": "Kg",
+                        "height_measure": "Cm"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_profile(&config, &token).await;
+        assert!(result.is_ok());
+        let profile = result.unwrap();
+        assert_eq!(profile.goal_weight_kg, Some(70.0));
+        assert_eq!(profile.last_weight_kg, Some(75.0));
+    }
+
+    #[tokio::test]
+    async fn test_get_profile_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=profile.get"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"invalid": "data"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_profile(&config, &token).await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // create_profile tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_create_profile_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=profile.create"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "profile": {
+                        "auth_token": "abc123token",
+                        "auth_secret": "xyz789secret"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = create_profile(&config, &token, "user123").await;
+        assert!(result.is_ok());
+        let auth = result.unwrap();
+        assert_eq!(auth.auth_token, "abc123token");
+        assert_eq!(auth.auth_secret, "xyz789secret");
+    }
+
+    #[tokio::test]
+    async fn test_create_profile_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=profile.create"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"bad": "response"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = create_profile(&config, &token, "user123").await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // get_profile_auth tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_profile_auth_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=profile.get_auth"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "profile": {
+                        "auth_token": "existing_token",
+                        "auth_secret": "existing_secret"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_profile_auth(&config, &token, "user456").await;
+        assert!(result.is_ok());
+        let auth = result.unwrap();
+        assert_eq!(auth.auth_token, "existing_token");
+    }
+
+    #[tokio::test]
+    async fn test_get_profile_auth_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=profile.get_auth"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"invalid": true}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_profile_auth(&config, &token, "user789").await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // Error handling tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_api_error_response() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"error": {"code": 9, "message": "Invalid access token"}}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_profile(&config, &token).await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_http_error_response() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(500).set_body_string("Server Error"))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = create_profile(&config, &token, "user123").await;
+        assert!(result.is_err());
+    }
+}

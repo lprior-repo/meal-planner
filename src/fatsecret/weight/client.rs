@@ -135,3 +135,233 @@ pub async fn get_weight_by_date(
 
     Ok(response.weight)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use wiremock::matchers::{body_string_contains, method, path};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
+
+    fn test_config(mock_server: &MockServer) -> FatSecretConfig {
+        FatSecretConfig::with_base_url("test_key", "test_secret", mock_server.uri())
+    }
+
+    fn test_token() -> AccessToken {
+        AccessToken {
+            oauth_token: "test_token".to_string(),
+            oauth_token_secret: "test_secret".to_string(),
+        }
+    }
+
+    // ========================================================================
+    // update_weight tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_update_weight_minimal() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=weight.update"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let update = WeightUpdate {
+            current_weight_kg: 75.5,
+            date_int: 19723,
+            goal_weight_kg: None,
+            height_cm: None,
+            comment: None,
+        };
+
+        let result = update_weight(&config, &token, update).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_update_weight_with_all_fields() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=weight.update"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let update = WeightUpdate {
+            current_weight_kg: 75.5,
+            date_int: 19723,
+            goal_weight_kg: Some(70.0),
+            height_cm: Some(180.0),
+            comment: Some("After breakfast".to_string()),
+        };
+
+        let result = update_weight(&config, &token, update).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // get_weight_month_summary tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_weight_month_summary_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=weights.get_month"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "weight_month": {
+                        "from_date_int": "19723",
+                        "to_date_int": "19753",
+                        "weight": [
+                            {
+                                "date_int": "19723",
+                                "weight_kg": "75.5"
+                            },
+                            {
+                                "date_int": "19730",
+                                "weight_kg": "75.0"
+                            }
+                        ]
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_weight_month_summary(&config, &token, 19723).await;
+        assert!(result.is_ok());
+        let summary = result.unwrap();
+        assert_eq!(summary.from_date_int, 19723);
+        assert_eq!(summary.days.len(), 2);
+    }
+
+    #[tokio::test]
+    async fn test_get_weight_month_summary_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=weights.get_month"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"bad": "data"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_weight_month_summary(&config, &token, 19723).await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // get_weight_by_date tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_weight_by_date_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=weight.get"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "weight": {
+                        "date_int": "19723",
+                        "weight_kg": "75.5",
+                        "weight_comment": "Morning weigh-in"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_weight_by_date(&config, &token, 19723).await;
+        assert!(result.is_ok());
+        let entry = result.unwrap();
+        assert_eq!(entry.date_int, 19723);
+        assert!((entry.weight_kg - 75.5).abs() < 0.01);
+    }
+
+    #[tokio::test]
+    async fn test_get_weight_by_date_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=weight.get"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"invalid": "response"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_weight_by_date(&config, &token, 19723).await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // Error handling tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_api_error_response() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"error": {"code": 205, "message": "Weight date too far in the future"}}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let update = WeightUpdate {
+            current_weight_kg: 75.5,
+            date_int: 99999,
+            goal_weight_kg: None,
+            height_cm: None,
+            comment: None,
+        };
+
+        let result = update_weight(&config, &token, update).await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_http_error_response() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(500).set_body_string("Server Error"))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_weight_by_date(&config, &token, 19723).await;
+        assert!(result.is_err());
+    }
+}

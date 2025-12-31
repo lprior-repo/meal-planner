@@ -1986,4 +1986,5 @@ mod tests {
         let client = TandoorClient::new(&config).unwrap();
         assert_eq!(client.base_url, "http://localhost:8090/tandoor");
     }
+
 }

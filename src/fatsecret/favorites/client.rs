@@ -243,3 +243,358 @@ pub async fn get_favorite_recipes(
 
     Ok(response.recipes)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use wiremock::matchers::{body_string_contains, method, path};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
+
+    fn test_config(mock_server: &MockServer) -> FatSecretConfig {
+        FatSecretConfig::with_base_url("test_key", "test_secret", mock_server.uri())
+    }
+
+    fn test_token() -> AccessToken {
+        AccessToken {
+            oauth_token: "test_token".to_string(),
+            oauth_token_secret: "test_secret".to_string(),
+        }
+    }
+
+    // ========================================================================
+    // add_favorite_food tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_add_favorite_food_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food.add_favorite"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = add_favorite_food(&config, &token, "12345").await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // delete_favorite_food tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_delete_favorite_food_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food.delete_favorite"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = delete_favorite_food(&config, &token, "12345").await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // get_favorite_foods tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_favorite_foods_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.get_favorites.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "food": [
+                        {
+                            "food_id": "33691",
+                            "food_name": "Chicken Breast",
+                            "food_type": "Generic",
+                            "food_description": "Per 100g - Calories: 165kcal",
+                            "food_url": "https://www.fatsecret.com/chicken",
+                            "serving_id": "34321",
+                            "number_of_units": "1.00"
+                        }
+                    ]
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_favorite_foods(&config, &token, Some(50), Some(0)).await;
+        assert!(result.is_ok());
+        let foods = result.unwrap();
+        assert_eq!(foods.len(), 1);
+        assert_eq!(foods[0].food_name, "Chicken Breast");
+    }
+
+    #[tokio::test]
+    async fn test_get_favorite_foods_no_pagination() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.get_favorites.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"food": []}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_favorite_foods(&config, &token, None, None).await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().is_empty());
+    }
+
+    // ========================================================================
+    // get_most_eaten tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_most_eaten_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.get_most_eaten.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "food": [
+                        {
+                            "food_id": "33691",
+                            "food_name": "Chicken Breast",
+                            "food_type": "Generic",
+                            "food_description": "Per 100g - Calories: 165kcal",
+                            "food_url": "https://www.fatsecret.com/chicken",
+                            "serving_id": "34321",
+                            "number_of_units": "2.50"
+                        }
+                    ]
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_most_eaten(&config, &token, None).await;
+        assert!(result.is_ok());
+        let foods = result.unwrap();
+        assert_eq!(foods.len(), 1);
+    }
+
+    #[tokio::test]
+    async fn test_get_most_eaten_with_meal_filter() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.get_most_eaten.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"food": []}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_most_eaten(&config, &token, Some(MealFilter::Breakfast)).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // get_recently_eaten tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_recently_eaten_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.get_recently_eaten.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "food": [
+                        {
+                            "food_id": "5055",
+                            "food_name": "Brown Rice",
+                            "food_type": "Generic",
+                            "food_description": "Per cup - Calories: 216kcal",
+                            "food_url": "https://www.fatsecret.com/rice",
+                            "serving_id": "5056",
+                            "number_of_units": "1.00"
+                        }
+                    ]
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_recently_eaten(&config, &token, None).await;
+        assert!(result.is_ok());
+        let foods = result.unwrap();
+        assert_eq!(foods.len(), 1);
+        assert_eq!(foods[0].food_name, "Brown Rice");
+    }
+
+    #[tokio::test]
+    async fn test_get_recently_eaten_with_meal_filter() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.get_recently_eaten.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"food": []}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_recently_eaten(&config, &token, Some(MealFilter::Lunch)).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // add_favorite_recipe tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_add_favorite_recipe_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=recipe.add_favorite"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = add_favorite_recipe(&config, &token, "99999").await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // delete_favorite_recipe tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_delete_favorite_recipe_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=recipe.delete_favorite"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = delete_favorite_recipe(&config, &token, "99999").await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // get_favorite_recipes tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_favorite_recipes_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=recipes.get_favorites.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "recipe": [
+                        {
+                            "recipe_id": "99999",
+                            "recipe_name": "Grilled Chicken",
+                            "recipe_description": "Simple grilled chicken breast",
+                            "recipe_url": "https://www.fatsecret.com/recipe/99999"
+                        }
+                    ]
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_favorite_recipes(&config, &token, Some(20), Some(0)).await;
+        assert!(result.is_ok());
+        let recipes = result.unwrap();
+        assert_eq!(recipes.len(), 1);
+    }
+
+    // ========================================================================
+    // Error handling tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_api_error_response() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"error": {"code": 106, "message": "Invalid ID value"}}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = add_favorite_food(&config, &token, "invalid").await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_parse_error_handling() {
+        let mock_server = MockServer::start().await;
+
+        // The response type has #[serde(default)] so missing fields won't cause errors.
+        // Use an invalid "food" field value to trigger a parse error.
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.get_favorites.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"food": "not_an_array_or_object"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_favorite_foods(&config, &token, None, None).await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+}

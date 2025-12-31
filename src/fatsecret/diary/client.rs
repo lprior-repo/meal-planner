@@ -380,3 +380,561 @@ pub async fn save_template(
     make_authenticated_request(config, token, "food_entry.save_template", params).await?;
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::fatsecret::diary::types::MealType;
+    use wiremock::matchers::{body_string_contains, method, path};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
+
+    fn test_config(mock_server: &MockServer) -> FatSecretConfig {
+        FatSecretConfig::with_base_url("test_key", "test_secret", mock_server.uri())
+    }
+
+    fn test_token() -> AccessToken {
+        AccessToken {
+            oauth_token: "test_token".to_string(),
+            oauth_token_secret: "test_secret".to_string(),
+        }
+    }
+
+    // ========================================================================
+    // build_entry_params tests
+    // ========================================================================
+
+    #[test]
+    fn test_build_entry_params_from_food() {
+        let input = FoodEntryInput::FromFood {
+            food_id: "12345".to_string(),
+            food_entry_name: "Oatmeal".to_string(),
+            serving_id: "67890".to_string(),
+            number_of_units: 1.5,
+            meal: MealType::Breakfast,
+            date_int: 19723,
+        };
+        let params = build_entry_params(&input);
+
+        assert_eq!(params.get("food_id"), Some(&"12345".to_string()));
+        assert_eq!(params.get("food_entry_name"), Some(&"Oatmeal".to_string()));
+        assert_eq!(params.get("serving_id"), Some(&"67890".to_string()));
+        assert_eq!(params.get("number_of_units"), Some(&"1.5".to_string()));
+        assert_eq!(params.get("meal"), Some(&"breakfast".to_string()));
+        assert_eq!(params.get("date_int"), Some(&"19723".to_string()));
+    }
+
+    #[test]
+    fn test_build_entry_params_custom() {
+        let input = FoodEntryInput::Custom {
+            food_entry_name: "Custom Meal".to_string(),
+            serving_description: "1 bowl".to_string(),
+            number_of_units: 2.0,
+            meal: MealType::Lunch,
+            date_int: 19724,
+            calories: 350.0,
+            carbohydrate: 45.0,
+            protein: 15.0,
+            fat: 12.0,
+        };
+        let params = build_entry_params(&input);
+
+        assert_eq!(params.get("food_entry_name"), Some(&"Custom Meal".to_string()));
+        assert_eq!(params.get("serving_description"), Some(&"1 bowl".to_string()));
+        assert_eq!(params.get("number_of_units"), Some(&"2".to_string()));
+        assert_eq!(params.get("meal"), Some(&"lunch".to_string()));
+        assert_eq!(params.get("date_int"), Some(&"19724".to_string()));
+        assert_eq!(params.get("calories"), Some(&"350".to_string()));
+        assert_eq!(params.get("carbohydrate"), Some(&"45".to_string()));
+        assert_eq!(params.get("protein"), Some(&"15".to_string()));
+        assert_eq!(params.get("fat"), Some(&"12".to_string()));
+    }
+
+    // ========================================================================
+    // create_food_entry tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_create_food_entry_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entry.create"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"food_entry_id": {"value": "99999"}}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let input = FoodEntryInput::FromFood {
+            food_id: "12345".to_string(),
+            food_entry_name: "Test Food".to_string(),
+            serving_id: "67890".to_string(),
+            number_of_units: 1.0,
+            meal: MealType::Breakfast,
+            date_int: 19723,
+        };
+
+        let result = create_food_entry(&config, &token, input).await;
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().as_str(), "99999");
+    }
+
+    #[tokio::test]
+    async fn test_create_food_entry_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entry.create"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"invalid": "response"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let input = FoodEntryInput::FromFood {
+            food_id: "12345".to_string(),
+            food_entry_name: "Test".to_string(),
+            serving_id: "67890".to_string(),
+            number_of_units: 1.0,
+            meal: MealType::Breakfast,
+            date_int: 19723,
+        };
+
+        let result = create_food_entry(&config, &token, input).await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // get_food_entry tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_food_entry_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entry.get"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "food_entry": {
+                        "food_entry_id": "11111",
+                        "food_id": "33691",
+                        "food_entry_name": "Chicken Breast",
+                        "food_entry_description": "100g Chicken Breast",
+                        "serving_id": "34321",
+                        "number_of_units": "1.00",
+                        "meal": "lunch",
+                        "date_int": "19723",
+                        "calories": "165",
+                        "carbohydrate": "0",
+                        "protein": "31.02",
+                        "fat": "3.57"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let entry_id = FoodEntryId::new("11111");
+
+        let result = get_food_entry(&config, &token, &entry_id).await;
+        assert!(result.is_ok());
+        let entry = result.unwrap();
+        assert_eq!(entry.food_entry_id.as_str(), "11111");
+        assert_eq!(entry.food_entry_name, "Chicken Breast");
+    }
+
+    #[tokio::test]
+    async fn test_get_food_entry_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entry.get"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"bad": "data"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let entry_id = FoodEntryId::new("11111");
+
+        let result = get_food_entry(&config, &token, &entry_id).await;
+        assert!(matches!(result, Err(FatSecretError::ParseError(_))));
+    }
+
+    // ========================================================================
+    // get_food_entries tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_food_entries_multiple() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entries.get"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "food_entries": {
+                        "food_entry": [
+                            {
+                                "food_entry_id": "111",
+                                "food_id": "33691",
+                                "food_entry_name": "Eggs",
+                                "food_entry_description": "2 large eggs",
+                                "serving_id": "34321",
+                                "number_of_units": "2.00",
+                                "meal": "breakfast",
+                                "date_int": "19723",
+                                "calories": "180",
+                                "carbohydrate": "1",
+                                "protein": "12",
+                                "fat": "14"
+                            },
+                            {
+                                "food_entry_id": "222",
+                                "food_id": "12345",
+                                "food_entry_name": "Toast",
+                                "food_entry_description": "1 slice toast",
+                                "serving_id": "54321",
+                                "number_of_units": "1.00",
+                                "meal": "breakfast",
+                                "date_int": "19723",
+                                "calories": "80",
+                                "carbohydrate": "15",
+                                "protein": "2",
+                                "fat": "1"
+                            }
+                        ]
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_food_entries(&config, &token, 19723).await;
+        assert!(result.is_ok());
+        let entries = result.unwrap();
+        assert_eq!(entries.len(), 2);
+        assert_eq!(entries[0].food_entry_name, "Eggs");
+        assert_eq!(entries[1].food_entry_name, "Toast");
+    }
+
+    #[tokio::test]
+    async fn test_get_food_entries_single() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entries.get"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "food_entries": {
+                        "food_entry": {
+                            "food_entry_id": "111",
+                            "food_id": "33691",
+                            "food_entry_name": "Salad",
+                            "food_entry_description": "1 serving mixed salad",
+                            "serving_id": "34321",
+                            "number_of_units": "1.00",
+                            "meal": "lunch",
+                            "date_int": "19723",
+                            "calories": "50",
+                            "carbohydrate": "10",
+                            "protein": "3",
+                            "fat": "0"
+                        }
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_food_entries(&config, &token, 19723).await;
+        assert!(result.is_ok());
+        let entries = result.unwrap();
+        assert_eq!(entries.len(), 1);
+    }
+
+    #[tokio::test]
+    async fn test_get_food_entries_empty() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entries.get"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"food_entries": {"food_entry": []}}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_food_entries(&config, &token, 19723).await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().is_empty());
+    }
+
+    // ========================================================================
+    // edit_food_entry tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_edit_food_entry_units() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entry.edit"))
+            .and(body_string_contains("number_of_units"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let entry_id = FoodEntryId::new("11111");
+        let update = FoodEntryUpdate::new().with_units(2.5);
+
+        let result = edit_food_entry(&config, &token, &entry_id, update).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_edit_food_entry_meal() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entry.edit"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let entry_id = FoodEntryId::new("11111");
+        let update = FoodEntryUpdate::new().with_meal(MealType::Dinner);
+
+        let result = edit_food_entry(&config, &token, &entry_id, update).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // delete_food_entry tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_delete_food_entry_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entry.delete"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let entry_id = FoodEntryId::new("11111");
+
+        let result = delete_food_entry(&config, &token, &entry_id).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // get_month_summary tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_month_summary_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entries.get_month"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "month": {
+                        "month": "1",
+                        "year": "2024",
+                        "day": [
+                            {
+                                "date_int": "19723",
+                                "calories": "1800",
+                                "carbohydrate": "200",
+                                "protein": "100",
+                                "fat": "60"
+                            }
+                        ]
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_month_summary(&config, &token, 19723).await;
+        assert!(result.is_ok());
+        let summary = result.unwrap();
+        assert_eq!(summary.month, 1);
+        assert!(!summary.days.is_empty());
+    }
+
+    // ========================================================================
+    // copy_entries tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_copy_entries_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entry.copy"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = copy_entries(&config, &token, 19723, 19724).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // copy_meal tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_copy_meal_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entry.copy_meal"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = copy_meal(
+            &config,
+            &token,
+            19723,
+            MealType::Breakfast,
+            19724,
+            MealType::Lunch,
+        )
+        .await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // commit_day tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_commit_day_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entry.commit_day"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = commit_day(&config, &token, 19723).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // save_template tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_save_template_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food_entry.save_template"))
+            .and(body_string_contains("template_name"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = save_template(&config, &token, 19723, "My Breakfast").await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // Error handling tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_api_error_handling() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"error": {"code": 106, "message": "Invalid ID value"}}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+        let entry_id = FoodEntryId::new("invalid");
+
+        let result = get_food_entry(&config, &token, &entry_id).await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_http_error_handling() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(500).set_body_string("Internal Server Error"))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let token = test_token();
+
+        let result = get_food_entries(&config, &token, 19723).await;
+        assert!(result.is_err());
+    }
+}

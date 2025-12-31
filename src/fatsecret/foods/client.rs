@@ -267,3 +267,354 @@ pub async fn autocomplete_foods(
 ) -> Result<FoodAutocompleteResponse, FatSecretError> {
     autocomplete_foods_with_options(config, expression, None).await
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use wiremock::matchers::{body_string_contains, method, path};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
+
+    fn test_config(mock_server: &MockServer) -> FatSecretConfig {
+        FatSecretConfig::with_base_url("test_key", "test_secret", mock_server.uri())
+    }
+
+    // ========================================================================
+    // get_food tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_get_food_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food.get.v5"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "food": {
+                        "food_id": "33691",
+                        "food_name": "Chicken Breast",
+                        "food_type": "Generic",
+                        "food_url": "https://www.fatsecret.com/chicken",
+                        "servings": {
+                            "serving": [
+                                {
+                                    "serving_id": "34321",
+                                    "serving_description": "100 g",
+                                    "serving_url": "https://www.fatsecret.com/serving",
+                                    "metric_serving_amount": "100.000",
+                                    "metric_serving_unit": "g",
+                                    "number_of_units": "1.00",
+                                    "measurement_description": "100g",
+                                    "calories": "165",
+                                    "carbohydrate": "0.00",
+                                    "protein": "31.02",
+                                    "fat": "3.57"
+                                }
+                            ]
+                        }
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let food_id = FoodId::new("33691");
+
+        let result = get_food(&config, &food_id).await;
+        assert!(result.is_ok());
+        let food = result.unwrap();
+        assert_eq!(food.food_name, "Chicken Breast");
+        assert_eq!(food.food_id.as_str(), "33691");
+    }
+
+    #[tokio::test]
+    async fn test_get_food_parse_error() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food.get.v5"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"invalid": "data"}"#))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let food_id = FoodId::new("33691");
+
+        let result = get_food(&config, &food_id).await;
+        assert!(result.is_err());
+    }
+
+    // ========================================================================
+    // search_foods tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_search_foods_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.search"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "foods": {
+                        "food": [
+                            {
+                                "food_id": "33691",
+                                "food_name": "Chicken Breast",
+                                "food_type": "Generic",
+                                "food_description": "Per 100g - Calories: 165kcal",
+                                "food_url": "https://www.fatsecret.com/chicken"
+                            }
+                        ],
+                        "max_results": "20",
+                        "total_results": "100",
+                        "page_number": "0"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = search_foods(&config, "chicken", 0, 20).await;
+        assert!(result.is_ok());
+        let response = result.unwrap();
+        assert_eq!(response.foods.len(), 1);
+        assert_eq!(response.total_results, 100);
+    }
+
+    #[tokio::test]
+    async fn test_search_foods_simple_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.search"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "foods": {
+                        "food": [],
+                        "max_results": "20",
+                        "total_results": "0",
+                        "page_number": "0"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = search_foods_simple(&config, "nonexistent").await;
+        assert!(result.is_ok());
+        assert!(result.unwrap().foods.is_empty());
+    }
+
+    #[tokio::test]
+    async fn test_list_foods_with_options() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.search"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "foods": {
+                        "food": [],
+                        "max_results": "50",
+                        "total_results": "0",
+                        "page_number": "2"
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = list_foods_with_options(&config, "test", Some(2), Some(50)).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // autocomplete_foods tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_autocomplete_foods_success() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.autocomplete.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "suggestions": {
+                        "suggestion": [
+                            {"food_id": "1", "food_name": "Chicken"},
+                            {"food_id": "2", "food_name": "Chicken Breast"},
+                            {"food_id": "3", "food_name": "Chicken Thigh"}
+                        ]
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = autocomplete_foods(&config, "chick").await;
+        assert!(result.is_ok());
+        let response = result.unwrap();
+        assert_eq!(response.suggestions.len(), 3);
+    }
+
+    #[tokio::test]
+    async fn test_autocomplete_foods_with_options() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=foods.autocomplete.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "suggestions": {
+                        "suggestion": [{"food_id": "1", "food_name": "Test"}]
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = autocomplete_foods_with_options(&config, "test", Some(5)).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // find_food_by_barcode tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_find_food_by_barcode_success() {
+        let mock_server = MockServer::start().await;
+
+        // First mock for barcode lookup
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food.find_id_for_barcode.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"food_id": {"value": "12345"}}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        // Second mock for food.get.v5
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food.get.v5"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "food": {
+                        "food_id": "12345",
+                        "food_name": "Barcode Food",
+                        "food_type": "Brand",
+                        "food_url": "https://www.fatsecret.com/food",
+                        "servings": {
+                            "serving": []
+                        }
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = find_food_by_barcode(&config, "0123456789", None).await;
+        assert!(result.is_ok());
+        let food = result.unwrap();
+        assert_eq!(food.food_name, "Barcode Food");
+    }
+
+    #[tokio::test]
+    async fn test_find_food_by_barcode_with_type() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food.find_id_for_barcode.v2"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"food_id": {"value": "12345"}}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .and(body_string_contains("method=food.get.v5"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{
+                    "food": {
+                        "food_id": "12345",
+                        "food_name": "UPC Food",
+                        "food_type": "Brand",
+                        "food_url": "https://www.fatsecret.com/food",
+                        "servings": {"serving": []}
+                    }
+                }"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = find_food_by_barcode(&config, "0123456789", Some("UPC")).await;
+        assert!(result.is_ok());
+    }
+
+    // ========================================================================
+    // Error handling tests
+    // ========================================================================
+
+    #[tokio::test]
+    async fn test_api_error_response() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(200).set_body_string(
+                r#"{"error": {"code": 106, "message": "Invalid ID value"}}"#,
+            ))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+        let food_id = FoodId::new("invalid");
+
+        let result = get_food(&config, &food_id).await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_http_error_response() {
+        let mock_server = MockServer::start().await;
+
+        Mock::given(method("POST"))
+            .and(path("/rest/server.api"))
+            .respond_with(ResponseTemplate::new(500).set_body_string("Server Error"))
+            .mount(&mock_server)
+            .await;
+
+        let config = test_config(&mock_server);
+
+        let result = search_foods(&config, "test", 0, 20).await;
+        assert!(result.is_err());
+    }
+}
