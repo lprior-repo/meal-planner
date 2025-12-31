@@ -1,4 +1,4 @@
-//! Get FatSecret food by ID
+//! Get `FatSecret` food by ID
 //!
 //! Retrieves detailed food information including all servings and nutrition data.
 //! This is a 2-legged OAuth request (no user token required).
@@ -16,7 +16,7 @@ use meal_planner::fatsecret::foods::{get_food, FoodId};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
-/// FatSecret resource (matches Windmill resource-fatsecret format)
+/// `FatSecret` resource (matches Windmill resource-fatsecret format)
 #[derive(Deserialize)]
 struct FatSecretResource {
     consumer_key: String,
@@ -25,7 +25,7 @@ struct FatSecretResource {
 
 #[derive(Deserialize)]
 struct Input {
-    /// FatSecret credentials (optional - falls back to env vars)
+    /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
     /// The food ID to retrieve
     food_id: String,

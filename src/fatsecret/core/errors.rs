@@ -409,7 +409,7 @@ pub enum FatSecretError {
     #[error("Network error: {0}")]
     NetworkError(String),
 
-    /// FatSecret configuration is missing
+    /// `FatSecret` configuration is missing
     #[error("FatSecret configuration is missing. Set FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET environment variables.")]
     ConfigMissing,
 
@@ -518,7 +518,7 @@ impl FatSecretError {
     /// Determine if an error indicates a premium subscription is required
     ///
     /// Returns true only for API error code 24 (Feature not available for current plan).
-    /// Note: Error code 12 (MethodNotAccessible) is an auth/scope issue, NOT premium.
+    /// Note: Error code 12 (`MethodNotAccessible`) is an auth/scope issue, NOT premium.
     #[must_use]
     pub fn is_premium_required(&self) -> bool {
         matches!(
@@ -550,7 +550,7 @@ impl FatSecretError {
     }
 }
 
-/// JSON structure for FatSecret API error responses
+/// JSON structure for `FatSecret` API error responses
 ///
 /// The API returns errors in the format:
 /// ```json
@@ -567,7 +567,7 @@ struct ApiErrorInner {
     message: String,
 }
 
-/// Parse an error response from the FatSecret API
+/// Parse an error response from the `FatSecret` API
 ///
 /// Returns `Some(FatSecretError::ApiError)` if the body contains a valid error response,
 /// `None` otherwise.
@@ -607,6 +607,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[allow(clippy::cognitive_complexity)]
     fn test_api_error_code_from_code() {
         assert_eq!(
             ApiErrorCode::from_code(2),
@@ -663,6 +664,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::cognitive_complexity)]
     fn test_is_auth_related() {
         // OAuth 1.0 codes (2-9) should be auth errors
         assert!(ApiErrorCode::MissingOAuthParameter.is_auth_related());
@@ -736,6 +738,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::cognitive_complexity)]
     fn test_fatsecret_error_is_recoverable() {
         // Network errors are recoverable
         assert!(FatSecretError::network_error("timeout").is_recoverable());

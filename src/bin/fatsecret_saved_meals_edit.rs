@@ -1,4 +1,4 @@
-//! Edit an existing FatSecret saved meal
+//! Edit an existing `FatSecret` saved meal
 //!
 //! Updates a saved meal template (name, description, meal types).
 //! This is a 3-legged OAuth request (requires user access token).
@@ -39,7 +39,7 @@ struct FatSecretResource {
 
 #[derive(Deserialize)]
 struct Input {
-    /// FatSecret credentials (optional - falls back to env vars)
+    /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
     /// OAuth access token (required for 3-legged requests)
     access_token: String,

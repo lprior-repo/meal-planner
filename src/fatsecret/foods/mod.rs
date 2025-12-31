@@ -1,12 +1,12 @@
-//! FatSecret Foods API Domain
+//! `FatSecret` Foods API Domain
 //!
-//! This module provides a complete interface to the FatSecret Foods API for searching,
+//! This module provides a complete interface to the `FatSecret` Foods API for searching,
 //! retrieving, and analyzing food nutrition data. It implements the domain-driven design
 //! pattern with clear separation between types and client operations.
 //!
 //! # Organization
 //!
-//! - [`client`] - API client functions for interacting with FatSecret foods endpoints
+//! - [`client`] - API client functions for interacting with `FatSecret` foods endpoints
 //! - [`types`] - Type definitions for foods, servings, and nutrition information
 //!
 //! # Key Types
@@ -15,12 +15,12 @@
 //! - [`FoodId`] - Opaque identifier for a specific food
 //! - [`Serving`] - A serving size option with associated nutrition data
 //! - [`Nutrition`] - Comprehensive nutrition information (macros, micros, vitamins)
-//! - [`FoodSearchResponse`] - Paginated search results from foods.search API
+//! - [`FoodSearchResponse`] - Paginated search results from `foods.search` API
 //! - [`FoodAutocompleteResponse`] - Quick suggestions from foods.autocomplete API
 //!
 //! # API Coverage
 //!
-//! This module wraps these FatSecret Platform API endpoints:
+//! This module wraps these `FatSecret` Platform API endpoints:
 //!
 //! - `food.get.v5` - Get complete food details by ID
 //! - `foods.search` - Search foods by text query with pagination
@@ -35,10 +35,10 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::{search_foods_simple, get_food};
-//! use meal_planner::fatsecret::core::FatSecretConfig;
+//! use meal_planner::fatsecret::core::`FatSecretConfig`;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
+//! let config = `FatSecretConfig`::from_env()?;
 //!
 //! // Search for "chicken breast"
 //! let results = search_foods_simple(&config, "chicken breast").await?;
@@ -46,7 +46,7 @@
 //!
 //! // Get detailed nutrition for first result
 //! if let Some(first) = results.foods.first() {
-//!     let food = get_food(&config, &first.food_id).await?;
+//!     let food = get_food(&config, &first.`food_id`).await?;
 //!     println!("{} has {} servings", food.food_name, food.servings.serving.len());
 //!     
 //!     // Show nutrition for default serving
@@ -66,14 +66,14 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::autocomplete_foods;
-//! use meal_planner::fatsecret::core::FatSecretConfig;
+//! use meal_planner::fatsecret::core::`FatSecretConfig`;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
+//! let config = `FatSecretConfig`::from_env()?;
 //!
 //! let suggestions = autocomplete_foods(&config, "chick").await?;
 //! for suggestion in suggestions.suggestions {
-//!     println!("{}: {}", suggestion.food_id, suggestion.food_name);
+//!     println!("{}: {}", suggestion.`food_id`, suggestion.food_name);
 //! }
 //! # Ok(())
 //! # }
@@ -83,10 +83,10 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::find_food_by_barcode;
-//! use meal_planner::fatsecret::core::FatSecretConfig;
+//! use meal_planner::fatsecret::core::`FatSecretConfig`;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
+//! let config = `FatSecretConfig`::from_env()?;
 //!
 //! // Lookup by UPC barcode
 //! let food = find_food_by_barcode(&config, "012345678901", Some("upc")).await?;
@@ -97,7 +97,7 @@
 //!
 //! # See Also
 //!
-//! - [FatSecret Foods API Documentation](https://platform.fatsecret.com/api/Default.aspx?screen=rapiref2&method=foods.search)
+//! - [`FatSecret` Foods API Documentation](https://platform.fatsecret.com/api/Default.aspx?screen=rapiref2&method=`foods.search`)
 //! - [`crate::fatsecret::core`] for OAuth configuration
 //! - [`crate::fatsecret::diary`] for logging food consumption
 

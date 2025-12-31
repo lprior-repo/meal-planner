@@ -1,13 +1,13 @@
-//! OAuth 1.0a authentication implementation for FatSecret Platform API
+//! OAuth 1.0a authentication implementation for `FatSecret` Platform API
 //!
-//! This module provides complete OAuth 1.0a authentication for the FatSecret Platform API,
+//! This module provides complete OAuth 1.0a authentication for the `FatSecret` Platform API,
 //! supporting both **2-legged** (application-only) and **3-legged** (user authorization)
 //! authentication flows.
 //!
 //! # OAuth 1.0a Overview
 //!
 //! OAuth 1.0a is a signature-based authentication protocol that provides secure API access
-//! without exposing user credentials. FatSecret uses this for all API operations.
+//! without exposing user credentials. `FatSecret` uses this for all API operations.
 //!
 //! ## 2-Legged OAuth (Application-Only)
 //!
@@ -55,7 +55,7 @@
 //!
 //! OAuth 1.0a relies on timestamps. Ensure:
 //! - System clock is synchronized (use NTP)
-//! - Server time is within ±5 minutes of FatSecret servers
+//! - Server time is within ±5 minutes of `FatSecret` servers
 //! - Handle `401 Unauthorized` errors with timestamp issues
 //!
 //! # 3-Legged OAuth Flow
@@ -63,14 +63,14 @@
 //! ## Step 1: Get Request Token
 //!
 //! ```no_run
-//! use meal_planner::fatsecret::core::{FatSecretConfig, oauth::get_request_token};
+//! use meal_planner::fatsecret::core::{`FatSecretConfig`, oauth::get_request_token};
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
+//! let config = `FatSecretConfig`::from_env()?;
 //! let callback_url = "https://yourapp.com/oauth/callback";
 //!
 //! let request_token = get_request_token(&config, callback_url).await?;
-//! println!("Request Token: {}", request_token.oauth_token);
+//! println!("Request Token: {}", request_token.`oauth_token`);
 //! # Ok(())
 //! # }
 //! ```
@@ -80,24 +80,24 @@
 //! Redirect user to authorization URL:
 //!
 //! ```text
-//! https://www.fatsecret.com/oauth/authorize?oauth_token={REQUEST_TOKEN}
+//! https://www.fatsecret.com/oauth/authorize?`oauth_token`={REQUEST_TOKEN}
 //! ```
 //!
-//! User logs in and authorizes your app. FatSecret redirects back with:
+//! User logs in and authorizes your app. `FatSecret` redirects back with:
 //!
 //! ```text
-//! https://yourapp.com/oauth/callback?oauth_token={TOKEN}&oauth_verifier={VERIFIER}
+//! https://yourapp.com/oauth/callback?`oauth_token`={TOKEN}&oauth_verifier={VERIFIER}
 //! ```
 //!
 //! ## Step 3: Exchange for Access Token
 //!
 //! ```no_run
-//! use meal_planner::fatsecret::core::{FatSecretConfig, oauth::{get_access_token, RequestToken}};
+//! use meal_planner::fatsecret::core::{`FatSecretConfig`, oauth::{get_access_token, `RequestToken`}};
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
-//! # let request_token = RequestToken {
-//! #     oauth_token: "token".to_string(),
+//! let config = `FatSecretConfig`::from_env()?;
+//! # let request_token = `RequestToken` {
+//! #     `oauth_token`: "token".to_string(),
 //! #     oauth_token_secret: "secret".to_string(),
 //! #     oauth_callback_confirmed: true,
 //! # };
@@ -106,7 +106,7 @@
 //! let access_token = get_access_token(&config, &request_token, oauth_verifier).await?;
 //!
 //! // Store access_token securely (encrypted in database)
-//! println!("Access Token: {}", access_token.oauth_token);
+//! println!("Access Token: {}", access_token.`oauth_token`);
 //! # Ok(())
 //! # }
 //! ```
@@ -114,13 +114,13 @@
 //! ## Step 4: Make Authenticated Requests
 //!
 //! ```no_run
-//! use meal_planner::fatsecret::core::{FatSecretConfig, oauth::AccessToken};
+//! use meal_planner::fatsecret::core::{`FatSecretConfig`, oauth::`AccessToken`};
 //! use meal_planner::fatsecret::diary::get_food_entries;
 //! use chrono::NaiveDate;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
-//! let access_token = AccessToken::new("token", "secret"); // From storage
+//! let config = `FatSecretConfig`::from_env()?;
+//! let access_token = `AccessToken`::new("token", "secret"); // From storage
 //!
 //! let date = NaiveDate::from_ymd_opt(2025, 1, 1).unwrap();
 //! let entries = get_food_entries(&config, &access_token, date).await?;
@@ -156,13 +156,13 @@
 //! Signing key components are **NOT percent-encoded**:
 //!
 //! ```text
-//! signing_key = consumer_secret & token_secret
+//! signing_key = `consumer_secret` & token_secret
 //! ```
 //!
 //! NOT:
 //!
 //! ```text
-//! signing_key = percent_encode(consumer_secret) & percent_encode(token_secret)
+//! signing_key = percent_encode(`consumer_secret`) & percent_encode(token_secret)
 //! ```
 //!
 //! ## Parameter Sorting
@@ -170,7 +170,7 @@
 //! Parameters must be sorted **lexicographically by key** before signing:
 //!
 //! ```text
-//! oauth_consumer_key=...&oauth_nonce=...&oauth_signature_method=...
+//! `oauth_consumer_key`=...&`oauth_nonce`=...&`oauth_signature_method`=...
 //! ```
 //!
 //! ## Timestamp Validation
@@ -182,7 +182,7 @@
 //!
 //! # API Reference
 //!
-//! - [FatSecret Platform API](https://platform.fatsecret.com/api/)
+//! - [`FatSecret` Platform API](https://platform.fatsecret.com/api/)
 //! - [OAuth 1.0a Spec (RFC 5849)](https://tools.ietf.org/html/rfc5849)
 //! - [OAuth Authentication Guide](https://platform.fatsecret.com/api/Default.aspx?screen=rapih)
 //!
@@ -327,7 +327,7 @@ pub fn create_signature_base_string(
 
 /// Create HMAC-SHA1 signature for OAuth 1.0a
 ///
-/// Signing key = consumer_secret& OR consumer_secret&token_secret
+/// Signing key = `consumer_secret`& OR `consumer_secret`&token_secret
 /// Note: The signing key components are NOT percent-encoded per OAuth 1.0a spec
 /// Result is base64-encoded
 pub fn create_signature(
@@ -343,9 +343,9 @@ pub fn create_signature(
 
 /// Build complete OAuth 1.0a parameter set with signature
 ///
-/// Includes: oauth_consumer_key, oauth_signature_method, oauth_timestamp,
-/// oauth_nonce, oauth_version, oauth_token (if provided), oauth_signature,
-/// plus any extra_params
+/// Includes: `oauth_consumer_key`, `oauth_signature_method`, `oauth_timestamp`,
+/// `oauth_nonce`, `oauth_version`, `oauth_token` (if provided), `oauth_signature`,
+/// plus any `extra_params`
 ///
 /// # Gleam-style: Built immutably using iterator chains
 #[allow(clippy::too_many_arguments)] // OAuth 1.0a spec requires these params

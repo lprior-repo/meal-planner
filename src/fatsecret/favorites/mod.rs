@@ -1,7 +1,7 @@
-//! FatSecret Favorites Domain - User favorite foods and recipes management
+//! `FatSecret` Favorites Domain - User favorite foods and recipes management
 //!
 //! This module provides functionality for managing a user's favorite foods, recipes, and
-//! eating patterns through the FatSecret Platform API. It supports tracking favorites,
+//! eating patterns through the `FatSecret` Platform API. It supports tracking favorites,
 //! analyzing eating habits, and retrieving frequently consumed items.
 //!
 //! # Authentication
@@ -34,12 +34,12 @@
 //!     get_most_eaten,
 //!     MealFilter
 //! };
-//! use meal_planner::fatsecret::core::config::FatSecretConfig;
-//! use meal_planner::fatsecret::core::oauth::AccessToken;
+//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
-//! let access_token = AccessToken {
+//! let config = `FatSecretConfig`::from_env()?;
+//! let access_token = `AccessToken` {
 //!     token: "user_access_token".to_string(),
 //!     secret: "user_token_secret".to_string(),
 //! };
@@ -64,7 +64,7 @@
 //!
 //! # API Reference
 //!
-//! - [FatSecret Platform API - Favorites](https://platform.fatsecret.com/api/Default.aspx?screen=rapir)
+//! - [`FatSecret` Platform API - Favorites](https://platform.fatsecret.com/api/Default.aspx?screen=rapir)
 //!
 //! # Module Organization
 //!

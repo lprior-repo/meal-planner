@@ -1,4 +1,4 @@
-//! Get FatSecret favorite recipes
+//! Get `FatSecret` favorite recipes
 //!
 //! Retrieves user's favorite recipes list.
 //! This is a 3-legged OAuth request (requires user access token).
@@ -24,7 +24,7 @@ struct FatSecretResource {
 
 #[derive(Deserialize)]
 struct Input {
-    /// FatSecret credentials (optional - falls back to env vars)
+    /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
     /// OAuth access token (required for 3-legged requests)
     access_token: String,

@@ -1,4 +1,4 @@
-//! Complete FatSecret OAuth 3-legged flow with manual verifier
+//! Complete `FatSecret` OAuth 3-legged flow with manual verifier
 //!
 //! Exchanges the request token for an access token using a manually-entered verifier.
 //! This is for out-of-band (oob) OAuth flows where user copies the verifier code.
@@ -22,7 +22,7 @@ use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
-/// FatSecret resource (matches Windmill resource-fatsecret format)
+/// `FatSecret` resource (matches Windmill resource-fatsecret format)
 #[derive(Deserialize)]
 struct FatSecretResource {
     consumer_key: String,
@@ -31,7 +31,7 @@ struct FatSecretResource {
 
 #[derive(Deserialize)]
 struct Input {
-    /// FatSecret credentials (optional - falls back to env vars)
+    /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
     /// Pending request token from oauth_start
     oauth_token: String,

@@ -1,13 +1,13 @@
-//! Create FatSecret food diary entry
+//! Create `FatSecret` food diary entry
 //!
 //! Creates a new food diary entry.
 //! This is a 3-legged OAuth request (requires user access token).
 //!
 //! JSON input (CLI arg or stdin):
 //!   `{"fatsecret": {...}, "access_token": "...", "access_secret": "...",
-//!     "food_id": "12345", "food_entry_name": "Chicken Breast",
-//!     "serving_id": "54321", "number_of_units": 1.5,
-//!     "meal": "lunch", "date_int": 20088}`
+//!     "`food_id`": "12345", "food_entry_name": "Chicken Breast",
+//!     "`serving_id`": "54321", "number_of_units": 1.5,
+//!     "meal": "lunch", "`date_int`": 20088}`
 //!
 //! JSON stdout: `{"success": true, "food_entry_id": "123456789"}`
 
@@ -18,7 +18,7 @@ use meal_planner::fatsecret::diary::{create_food_entry, FoodEntryInput, MealType
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
-/// FatSecret resource (matches Windmill resource-fatsecret format)
+/// `FatSecret` resource (matches Windmill resource-fatsecret format)
 #[derive(Deserialize)]
 struct FatSecretResource {
     consumer_key: String,
@@ -27,13 +27,13 @@ struct FatSecretResource {
 
 #[derive(Deserialize)]
 struct Input {
-    /// FatSecret credentials (optional - falls back to env vars)
+    /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
     /// OAuth access token
     access_token: String,
     /// OAuth access token secret
     access_secret: String,
-    /// The food ID from FatSecret database
+    /// The food ID from `FatSecret` database
     food_id: String,
     /// Display name for the entry
     food_entry_name: String,

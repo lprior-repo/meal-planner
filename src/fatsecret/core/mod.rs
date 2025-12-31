@@ -1,4 +1,4 @@
-//! FatSecret Core module
+//! `FatSecret` Core module
 //!
 //! Contains configuration, error types, OAuth utilities, and HTTP client.
 

@@ -1,6 +1,6 @@
-//! FatSecret Food Diary API Client Implementation
+//! `FatSecret` Food Diary API Client Implementation
 //!
-//! This module implements the HTTP client layer for the FatSecret Food Diary API.
+//! This module implements the HTTP client layer for the `FatSecret` Food Diary API.
 //! It handles request construction, response parsing, and error handling for all
 //! diary-related operations.
 //!
@@ -41,7 +41,7 @@
 //!
 //! # Response Handling
 //!
-//! The FatSecret API has quirks that this module handles:
+//! The `FatSecret` API has quirks that this module handles:
 //! - Single items may be returned as objects OR arrays (handled by `deserialize_single_or_vec`)
 //! - Numeric values may be strings or numbers (handled by `deserialize_flexible_*`)
 //! - Nested wrapper objects (e.g., `{"food_entry": {...}}`)
@@ -58,25 +58,25 @@
 //! # Usage Example
 //!
 //! ```rust,no_run
-//! use meal_planner::fatsecret::{FatSecretConfig, AccessToken};
+//! use meal_planner::fatsecret::{`FatSecretConfig`, `AccessToken`};
 //! use meal_planner::fatsecret::diary::{
 //!     create_food_entry, get_food_entries, edit_food_entry,
-//!     FoodEntryInput, FoodEntryUpdate, MealType,
+//!     FoodEntryInput, FoodEntryUpdate, `MealType`,
 //! };
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
-//! let token = AccessToken::new("oauth_token", "oauth_secret");
-//! let date_int = 19723; // 2024-01-01
+//! let config = `FatSecretConfig`::from_env()?;
+//! let token = `AccessToken`::new("`oauth_token`", "oauth_secret");
+//! let `date_int` = 19723; // 2024-01-01
 //!
 //! // Create a new entry
-//! let input = FoodEntryInput::FromFood {
-//!     food_id: "12345".to_string(),
+//! let input = FoodEntryInput::`FromFood` {
+//!     `food_id`: "12345".to_string(),
 //!     food_entry_name: "Oatmeal".to_string(),
-//!     serving_id: "67890".to_string(),
+//!     `serving_id`: "67890".to_string(),
 //!     number_of_units: 1.5,
-//!     meal: MealType::Breakfast,
-//!     date_int,
+//!     meal: `MealType`::Breakfast,
+//!     `date_int`,
 //! };
 //! let entry_id = create_food_entry(&config, &token, input).await?;
 //!
@@ -85,7 +85,7 @@
 //! edit_food_entry(&config, &token, &entry_id, update).await?;
 //!
 //! // Get all entries for the day
-//! let entries = get_food_entries(&config, &token, date_int).await?;
+//! let entries = get_food_entries(&config, &token, `date_int`).await?;
 //! println!("Total entries: {}", entries.len());
 //! # Ok(())
 //! # }

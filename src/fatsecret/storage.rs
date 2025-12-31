@@ -201,7 +201,7 @@ impl TokenStorage {
         }
     }
 
-    /// Update the last_used_at timestamp for the access token
+    /// Update the `last_used_at` timestamp for the access token
     pub async fn update_last_used(&self) -> Result<(), StorageError> {
         sqlx::query("UPDATE fatsecret_oauth_token SET last_used_at = NOW() WHERE id = 1")
             .execute(&self.db)
@@ -213,7 +213,7 @@ impl TokenStorage {
 
     /// Check if a token exists and is valid
     ///
-    /// Returns a TokenValidity enum indicating the status.
+    /// Returns a `TokenValidity` enum indicating the status.
     pub async fn check_token_validity(&self) -> Result<TokenValidity, StorageError> {
         let result = sqlx::query(
             r"

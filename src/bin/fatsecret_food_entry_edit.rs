@@ -1,11 +1,11 @@
-//! Edit FatSecret food diary entry
+//! Edit `FatSecret` food diary entry
 //!
 //! Updates an existing food diary entry.
 //! This is a 3-legged OAuth request (requires user access token).
 //!
 //! JSON input (CLI arg or stdin):
 //!   `{"fatsecret": {...}, "access_token": "...", "access_secret": "...",
-//!     "food_entry_id": "123456", "number_of_units": 2.0, "meal": "dinner"}`
+//!     "`food_entry_id`": "123456", "number_of_units": 2.0, "meal": "dinner"}`
 //!
 //! JSON stdout: `{"success": true}`
 
@@ -16,7 +16,7 @@ use meal_planner::fatsecret::diary::{edit_food_entry, FoodEntryId, FoodEntryUpda
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
-/// FatSecret resource (matches Windmill resource-fatsecret format)
+/// `FatSecret` resource (matches Windmill resource-fatsecret format)
 #[derive(Deserialize)]
 struct FatSecretResource {
     consumer_key: String,
@@ -25,7 +25,7 @@ struct FatSecretResource {
 
 #[derive(Deserialize)]
 struct Input {
-    /// FatSecret credentials (optional - falls back to env vars)
+    /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
     /// OAuth access token
     access_token: String,

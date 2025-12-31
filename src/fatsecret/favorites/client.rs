@@ -1,6 +1,6 @@
-//! FatSecret Favorites API Client
+//! `FatSecret` Favorites API Client
 //!
-//! This module provides the HTTP client functions for interacting with the FatSecret
+//! This module provides the HTTP client functions for interacting with the `FatSecret`
 //! Platform API's favorites endpoints. All functions perform authenticated requests
 //! using 3-legged OAuth and return strongly-typed results.
 //!
@@ -32,7 +32,7 @@
 //! - Network failures during API communication
 //! - OAuth signature validation failures
 //! - JSON parsing errors from malformed API responses
-//! - API-level errors (invalid food_id, unauthorized access, etc.)
+//! - API-level errors (invalid `food_id`, unauthorized access, etc.)
 //!
 //! # Example
 //!
@@ -43,12 +43,12 @@
 //!     get_most_eaten,
 //! };
 //! use meal_planner::fatsecret::favorites::types::MealFilter;
-//! use meal_planner::fatsecret::core::config::FatSecretConfig;
-//! use meal_planner::fatsecret::core::oauth::AccessToken;
+//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
-//! let access_token = AccessToken {
+//! let config = `FatSecretConfig`::from_env()?;
+//! let access_token = `AccessToken` {
 //!     token: "user_token".to_string(),
 //!     secret: "user_secret".to_string(),
 //! };
@@ -59,7 +59,7 @@
 //! // Get first page of favorites (max 50 results)
 //! let favorites = get_favorite_foods(&config, &access_token, Some(50), Some(0)).await?;
 //! for food in favorites {
-//!     println!("Favorite: {} ({})", food.food_name, food.food_id);
+//!     println!("Favorite: {} ({})", food.food_name, food.`food_id`);
 //! }
 //!
 //! // Get breakfast foods sorted by frequency
@@ -71,7 +71,7 @@
 //!
 //! # API Methods
 //!
-//! This client wraps the following FatSecret Platform API methods:
+//! This client wraps the following `FatSecret` Platform API methods:
 //! - `food.add_favorite` - Add food to favorites
 //! - `food.delete_favorite` - Remove food from favorites
 //! - `foods.get_favorites.v2` - List favorite foods
@@ -91,7 +91,7 @@ use crate::fatsecret::favorites::types::{
 };
 use std::collections::HashMap;
 
-/// Add a food to favorites (food.add_favorite - 3-legged)
+/// Add a food to favorites (food.`add_favorite` - 3-legged)
 pub async fn add_favorite_food(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -104,7 +104,7 @@ pub async fn add_favorite_food(
     Ok(())
 }
 
-/// Remove a food from favorites (food.delete_favorite - 3-legged)
+/// Remove a food from favorites (food.`delete_favorite` - 3-legged)
 pub async fn delete_favorite_food(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -191,7 +191,7 @@ pub async fn get_recently_eaten(
     Ok(response.foods)
 }
 
-/// Add a recipe to favorites (recipe.add_favorite - 3-legged)
+/// Add a recipe to favorites (recipe.`add_favorite` - 3-legged)
 pub async fn add_favorite_recipe(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -204,7 +204,7 @@ pub async fn add_favorite_recipe(
     Ok(())
 }
 
-/// Remove a recipe from favorites (recipe.delete_favorite - 3-legged)
+/// Remove a recipe from favorites (recipe.`delete_favorite` - 3-legged)
 pub async fn delete_favorite_recipe(
     config: &FatSecretConfig,
     access_token: &AccessToken,

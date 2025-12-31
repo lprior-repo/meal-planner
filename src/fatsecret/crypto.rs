@@ -39,7 +39,7 @@
 //! Set the key as an environment variable:
 //!
 //! ```bash
-//! export OAUTH_ENCRYPTION_KEY="your_64_character_hex_key_here"
+//! export `OAUTH_ENCRYPTION_KEY`="your_64_character_hex_key_here"
 //! ```
 //!
 //! # Usage Examples
@@ -69,7 +69,7 @@
 //!
 //! if !encryption_configured() {
 //!     eprintln!("WARNING: Encryption not configured!");
-//!     eprintln!("Set OAUTH_ENCRYPTION_KEY environment variable");
+//!     eprintln!("Set `OAUTH_ENCRYPTION_KEY` environment variable");
 //!     std::process::exit(1);
 //! }
 //! ```
@@ -271,7 +271,7 @@ pub fn decrypt(encrypted: &str) -> Result<String, CryptoError> {
 
 /// Generate a random 32-byte key encoded as 64 hex characters
 ///
-/// This can be used to generate a new key for OAUTH_ENCRYPTION_KEY env var
+/// This can be used to generate a new key for `OAUTH_ENCRYPTION_KEY` env var
 pub fn generate_key() -> String {
     let mut key_bytes = [0u8; 32];
     OsRng.fill_bytes(&mut key_bytes);
@@ -287,7 +287,8 @@ mod tests {
 
     // Mutex to ensure tests that modify OAUTH_ENCRYPTION_KEY run serially
     // This prevents environment variable pollution between tests
-    static CRYPTO_TEST_LOCK: once_cell::sync::Lazy<Mutex<()>> = once_cell::sync::Lazy::new(|| Mutex::new(()));
+    static CRYPTO_TEST_LOCK: once_cell::sync::Lazy<Mutex<()>> =
+        once_cell::sync::Lazy::new(|| Mutex::new(()));
 
     #[test]
     fn test_generate_key_valid_hex() {
@@ -314,7 +315,7 @@ mod tests {
     #[test]
     fn test_encrypt_decrypt_roundtrip() {
         let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
-        
+
         env::set_var(
             "OAUTH_ENCRYPTION_KEY",
             "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
@@ -332,7 +333,7 @@ mod tests {
     #[test]
     fn test_encrypt_decrypt_roundtrip_unsafe() {
         let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
-        
+
         env::set_var(
             "OAUTH_ENCRYPTION_KEY",
             "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
@@ -350,7 +351,7 @@ mod tests {
     #[test]
     fn test_encrypt_different_each_time() {
         let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
-        
+
         env::set_var(
             "OAUTH_ENCRYPTION_KEY",
             "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
@@ -368,7 +369,7 @@ mod tests {
     #[test]
     fn test_encrypt_different_each_time_unsafe() {
         let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
-        
+
         env::set_var(
             "OAUTH_ENCRYPTION_KEY",
             "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
@@ -386,7 +387,7 @@ mod tests {
     #[test]
     fn test_encrypt_without_key_fails() {
         let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
-        
+
         env::remove_var("OAUTH_ENCRYPTION_KEY");
         let result = encrypt("test");
         assert!(matches!(result, Err(CryptoError::KeyNotConfigured)));
@@ -395,7 +396,7 @@ mod tests {
     #[test]
     fn test_decrypt_with_wrong_key_fails() {
         let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
-        
+
         let key1 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
         let key2 = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
 
@@ -414,7 +415,7 @@ mod tests {
     #[test]
     fn test_encryption_configured() {
         let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
-        
+
         env::remove_var("OAUTH_ENCRYPTION_KEY");
         assert!(!encryption_configured());
 

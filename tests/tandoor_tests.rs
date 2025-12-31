@@ -9,11 +9,12 @@
 //!
 //! Uses wiremock for HTTP mocking - no real API calls.
 
+#![allow(clippy::expect_used)]
+
 use meal_planner::tandoor::{
     ConnectionTestResult, CreateFoodRequest, CreateIngredientRequest, CreateKeywordRequest,
     CreateRecipeRequest, CreateStepRequest, CreatedRecipe, PaginatedResponse,
-    RecipeFromSourceResponse, RecipeImportResult, RecipeSummary, TandoorClient,
-    TandoorConfig,
+    RecipeFromSourceResponse, RecipeImportResult, RecipeSummary, TandoorClient, TandoorConfig,
 };
 use serde_json::json;
 use wiremock::{
@@ -22,12 +23,13 @@ use wiremock::{
 };
 
 /// Helper to create a test client pointing to the mock server
+#[allow(clippy::unwrap_used)]
 fn create_test_client(base_url: &str) -> TandoorClient {
     let config = TandoorConfig {
         base_url: base_url.to_string(),
         api_token: "test_token_12345".to_string(),
     };
-    TandoorClient::new(&config).expect("Failed to create test client")
+    TandoorClient::new(&config).unwrap()
 }
 
 // ============================================================================
@@ -35,6 +37,7 @@ fn create_test_client(base_url: &str) -> TandoorClient {
 // ============================================================================
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_connection_success() {
     let mock_server = MockServer::start().await;
 
@@ -67,6 +70,7 @@ async fn test_connection_success() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_connection_auth_failure_401() {
     let mock_server = MockServer::start().await;
 
@@ -93,6 +97,7 @@ async fn test_connection_auth_failure_401() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_connection_auth_failure_403() {
     let mock_server = MockServer::start().await;
 
@@ -119,6 +124,7 @@ async fn test_connection_auth_failure_403() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_connection_server_error() {
     let mock_server = MockServer::start().await;
 
@@ -143,6 +149,7 @@ async fn test_connection_server_error() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_connection_parse_error() {
     let mock_server = MockServer::start().await;
 
@@ -171,6 +178,12 @@ async fn test_connection_parse_error() {
 // ============================================================================
 
 #[tokio::test]
+#[allow(
+    clippy::expect_used,
+    clippy::unwrap_used,
+    clippy::indexing_slicing,
+    clippy::too_many_lines
+)]
 async fn test_list_recipes_no_pagination() {
     let mock_server = MockServer::start().await;
 
@@ -234,6 +247,7 @@ async fn test_list_recipes_no_pagination() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_list_recipes_with_pagination() {
     let mock_server = MockServer::start().await;
 
@@ -278,6 +292,7 @@ async fn test_list_recipes_with_pagination() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_list_recipes_empty() {
     let mock_server = MockServer::start().await;
 
@@ -307,6 +322,7 @@ async fn test_list_recipes_empty() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_list_recipes_api_error() {
     let mock_server = MockServer::start().await;
 
@@ -334,6 +350,12 @@ async fn test_list_recipes_api_error() {
 // ============================================================================
 
 #[tokio::test]
+#[allow(
+    clippy::expect_used,
+    clippy::unwrap_used,
+    clippy::indexing_slicing,
+    clippy::too_many_lines
+)]
 async fn test_scrape_recipe_success() {
     let mock_server = MockServer::start().await;
 
@@ -419,6 +441,7 @@ async fn test_scrape_recipe_success() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_scrape_recipe_failure() {
     let mock_server = MockServer::start().await;
 
@@ -450,6 +473,7 @@ async fn test_scrape_recipe_failure() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_scrape_recipe_auth_error() {
     let mock_server = MockServer::start().await;
 
@@ -479,6 +503,7 @@ async fn test_scrape_recipe_auth_error() {
 // ============================================================================
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_create_recipe_success() {
     let mock_server = MockServer::start().await;
 
@@ -532,6 +557,7 @@ async fn test_create_recipe_success() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_create_recipe_minimal() {
     let mock_server = MockServer::start().await;
 
@@ -569,6 +595,7 @@ async fn test_create_recipe_minimal() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_create_recipe_auth_error() {
     let mock_server = MockServer::start().await;
 
@@ -607,6 +634,12 @@ async fn test_create_recipe_auth_error() {
 // ============================================================================
 
 #[tokio::test]
+#[allow(
+    clippy::expect_used,
+    clippy::unwrap_used,
+    clippy::indexing_slicing,
+    clippy::too_many_lines
+)]
 async fn test_import_recipe_success() {
     let mock_server = MockServer::start().await;
 
@@ -686,6 +719,7 @@ async fn test_import_recipe_success() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_import_recipe_scrape_failure() {
     let mock_server = MockServer::start().await;
 
@@ -718,6 +752,7 @@ async fn test_import_recipe_scrape_failure() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_import_recipe_no_data() {
     let mock_server = MockServer::start().await;
 
@@ -749,6 +784,7 @@ async fn test_import_recipe_no_data() {
 }
 
 #[tokio::test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_import_recipe_create_failure() {
     let mock_server = MockServer::start().await;
 
@@ -802,6 +838,7 @@ async fn test_import_recipe_create_failure() {
 // ============================================================================
 
 #[test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 fn test_network_timeout() {
     // Use an invalid/unroutable IP to simulate network error
     // This won't actually take 30 seconds due to connection refused
@@ -823,6 +860,7 @@ fn test_network_timeout() {
 // ============================================================================
 
 #[test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 fn test_client_creation_valid_config() {
     let config = TandoorConfig {
         base_url: "http://localhost:8090".to_string(),
@@ -833,6 +871,7 @@ fn test_client_creation_valid_config() {
 }
 
 #[test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 fn test_client_creation_trims_trailing_slash() {
     let config = TandoorConfig {
         base_url: "http://localhost:8090/".to_string(),
@@ -843,6 +882,7 @@ fn test_client_creation_trims_trailing_slash() {
 }
 
 #[test]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 fn test_client_creation_with_https() {
     let config = TandoorConfig {
         base_url: "https://tandoor.example.com".to_string(),

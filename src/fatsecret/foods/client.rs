@@ -1,6 +1,6 @@
-//! FatSecret Foods API Client Functions
+//! `FatSecret` Foods API Client Functions
 //!
-//! This module provides async functions for interacting with the FatSecret Foods API.
+//! This module provides async functions for interacting with the `FatSecret` Foods API.
 //! All functions are 2-legged OAuth requests (no user token required) and return
 //! strongly-typed results or errors.
 //!
@@ -17,7 +17,7 @@
 //!
 //! # API Methods
 //!
-//! | Function | FatSecret Method | Purpose |
+//! | Function | `FatSecret` Method | Purpose |
 //! |----------|-----------------|---------|
 //! | [`get_food`] | `food.get.v5` | Get complete food details by ID |
 //! | [`search_foods`] | `foods.search` | Search foods with pagination |
@@ -34,13 +34,13 @@
 //! ```no_run
 //! use meal_planner::fatsecret::foods::client::get_food;
 //! use meal_planner::fatsecret::foods::types::FoodId;
-//! use meal_planner::fatsecret::core::FatSecretConfig;
+//! use meal_planner::fatsecret::core::`FatSecretConfig`;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
-//! let food_id = FoodId::new("12345");
+//! let config = `FatSecretConfig`::from_env()?;
+//! let `food_id` = FoodId::new("12345");
 //!
-//! let food = get_food(&config, &food_id).await?;
+//! let food = get_food(&config, &`food_id`).await?;
 //! println!("{} has {} servings",
 //!     food.food_name,
 //!     food.servings.serving.len()
@@ -53,10 +53,10 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::client::search_foods;
-//! use meal_planner::fatsecret::core::FatSecretConfig;
+//! use meal_planner::fatsecret::core::`FatSecretConfig`;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
+//! let config = `FatSecretConfig`::from_env()?;
 //!
 //! // Get page 1 (0-indexed) with max 50 results
 //! let results = search_foods(&config, "salmon", 1, 50).await?;
@@ -73,10 +73,10 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::client::autocomplete_foods_with_options;
-//! use meal_planner::fatsecret::core::FatSecretConfig;
+//! use meal_planner::fatsecret::core::`FatSecretConfig`;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
+//! let config = `FatSecretConfig`::from_env()?;
 //!
 //! // Get top 5 suggestions for "bro"
 //! let suggestions = autocomplete_foods_with_options(&config, "bro", Some(5)).await?;
@@ -92,7 +92,7 @@
 //! All functions return [`Result<T, FatSecretError>`](crate::fatsecret::core::FatSecretError).
 //! Common errors:
 //!
-//! - `ApiError` - FatSecret API returned an error (invalid params, not found, etc.)
+//! - `ApiError` - `FatSecret` API returned an error (invalid params, not found, etc.)
 //! - `HttpError` - Network/HTTP failure
 //! - `ParseError` - Failed to deserialize response (API contract changed?)
 //!
@@ -100,7 +100,7 @@
 //!
 //! - [`crate::fatsecret::foods::types`] for all type definitions
 //! - [`crate::fatsecret::core::make_api_request`] for the underlying request builder
-//! - [FatSecret Platform API Reference](https://platform.fatsecret.com/api/)
+//! - [`FatSecret` Platform API Reference](https://platform.fatsecret.com/api/)
 //!
 //! # Original Source
 //!
@@ -146,7 +146,7 @@ struct BarcodeValue {
 // Food Get API (food.get.v5)
 // ============================================================================
 
-/// Get complete food details by ID using food.get.v5 endpoint
+/// Get complete food details by ID using `food.get`.v5 endpoint
 ///
 /// This is a 2-legged OAuth request (no user token required).
 pub async fn get_food(config: &FatSecretConfig, food_id: &FoodId) -> Result<Food, FatSecretError> {
@@ -190,7 +190,7 @@ pub async fn list_foods_with_options(
     Ok(wrapper.foods)
 }
 
-/// Search for foods using the foods.search endpoint
+/// Search for foods using the `foods.search` endpoint
 pub async fn search_foods(
     config: &FatSecretConfig,
     query: &str,

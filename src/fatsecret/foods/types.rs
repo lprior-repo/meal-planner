@@ -1,13 +1,13 @@
-//! FatSecret Food Domain Types
+//! `FatSecret` Food Domain Types
 //!
-//! This module defines all types used in the FatSecret Foods API domain, including
+//! This module defines all types used in the `FatSecret` Foods API domain, including
 //! foods, servings, nutrition data, and API response structures.
 //!
 //! # Design Principles
 //!
 //! 1. **Opaque IDs** - [`FoodId`] and [`ServingId`] are opaque wrappers preventing
 //!    accidental mixing of string IDs
-//! 2. **Flexible deserialization** - Handle FatSecret's inconsistent JSON (strings vs numbers)
+//! 2. **Flexible deserialization** - Handle `FatSecret`'s inconsistent JSON (strings vs numbers)
 //! 3. **Flattened structures** - Nutrition data embedded in servings via `#[serde(flatten)]`
 //! 4. **Optional fields** - Micronutrients and brand names are optional per API contract
 //!
@@ -15,13 +15,13 @@
 //!
 //! ```text
 //! Food                          # Complete food details
-//! ├── food_id: FoodId           # Unique identifier
+//! ├── `food_id`: FoodId           # Unique identifier
 //! ├── food_name: String         # "Chicken Breast"
 //! ├── food_type: String         # "Generic" or "Brand"
 //! ├── brand_name: Option        # For branded foods
 //! └── servings: FoodServings
 //!     └── serving: Vec<Serving>
-//!         ├── serving_id: ServingId
+//!         ├── `serving_id`: ServingId
 //!         ├── serving_description: String    # "1 cup"
 //!         ├── metric_serving_amount: Option  # 240.0
 //!         ├── metric_serving_unit: Option    # "g"
@@ -54,7 +54,7 @@
 //!
 //! # API Response Mapping
 //!
-//! FatSecret returns inconsistent JSON shapes. This module handles:
+//! `FatSecret` returns inconsistent JSON shapes. This module handles:
 //!
 //! - **String/number coercion** - Some APIs return `"123"`, others `123`
 //! - **Single item arrays** - `{"serving": {...}}` vs `{"serving": [{...}]}`
@@ -120,12 +120,12 @@
 //! use meal_planner::fatsecret::foods::types::{FoodId, ServingId};
 //!
 //! // From string slice
-//! let food_id = FoodId::new("12345");
-//! assert_eq!(food_id.as_str(), "12345");
+//! let `food_id` = FoodId::new("12345");
+//! assert_eq!(`food_id`.as_str(), "12345");
 //!
 //! // From String
-//! let serving_id = ServingId::from("67890".to_string());
-//! assert_eq!(serving_id.to_string(), "67890");
+//! let `serving_id` = ServingId::from("67890".to_string());
+//! assert_eq!(`serving_id`.to_string(), "67890");
 //!
 //! // Type safety prevents mixing
 //! // let wrong: FoodId = ServingId::new("123"); // Compile error!
@@ -145,7 +145,7 @@
 //!
 //! - [`crate::fatsecret::foods::client`] for API client functions
 //! - [`crate::fatsecret::core::serde_utils`] for custom deserializers
-//! - [FatSecret Platform API Reference](https://platform.fatsecret.com/api/)
+//! - [`FatSecret` Platform API Reference](https://platform.fatsecret.com/api/)
 
 use serde::{Deserialize, Serialize};
 
@@ -158,7 +158,7 @@ use crate::fatsecret::core::serde_utils::{
 // Opaque ID Types
 // ============================================================================
 
-/// Opaque food ID from FatSecret API
+/// Opaque food ID from `FatSecret` API
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct FoodId(String);
@@ -193,7 +193,7 @@ impl std::fmt::Display for FoodId {
     }
 }
 
-/// Opaque serving ID from FatSecret API
+/// Opaque serving ID from `FatSecret` API
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct ServingId(String);
@@ -365,7 +365,7 @@ pub struct Serving {
     pub serving_id: ServingId,
     /// Human-readable description of the serving (e.g., "1 cup")
     pub serving_description: String,
-    /// URL to the serving details on FatSecret
+    /// URL to the serving details on `FatSecret`
     pub serving_url: String,
     /// Metric equivalent amount (e.g., 240 for 240g)
     #[serde(
@@ -398,7 +398,7 @@ pub struct Serving {
 // Food Information
 // ============================================================================
 
-/// Complete food details from FatSecret API
+/// Complete food details from `FatSecret` API
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Food {
     /// Unique identifier for this food
@@ -407,7 +407,7 @@ pub struct Food {
     pub food_name: String,
     /// Type of food (e.g., "Generic", "Brand")
     pub food_type: String,
-    /// URL to the food details on FatSecret
+    /// URL to the food details on `FatSecret`
     pub food_url: String,
     /// Brand name for branded foods
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -442,11 +442,11 @@ pub struct FoodSearchResult {
     /// Brand name for branded foods
     #[serde(skip_serializing_if = "Option::is_none")]
     pub brand_name: Option<String>,
-    /// URL to the food details on FatSecret
+    /// URL to the food details on `FatSecret`
     pub food_url: String,
 }
 
-/// Response from foods.search API
+/// Response from `foods.search` API
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FoodSearchResponse {
     /// List of matching foods

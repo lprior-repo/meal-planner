@@ -1,4 +1,4 @@
-//! Unit tests for the FatSecret Exercise domain
+//! Unit tests for the `FatSecret` Exercise domain
 //!
 //! Test coverage:
 //! - Type deserialization (flexible numeric fields, single-or-vec)
@@ -10,7 +10,6 @@
 // =============================================================================
 // TEST-ONLY LINT OVERRIDES
 // =============================================================================
-#![cfg(test)]
 #![allow(clippy::unwrap_used)]
 #![allow(clippy::expect_used)]
 #![allow(clippy::panic)]
@@ -209,7 +208,7 @@ fn test_exercise_deserialize_numeric_fields() {
 
     assert_eq!(exercise.exercise_id.as_str(), "12345");
     assert_eq!(exercise.exercise_name, "Running");
-    assert_eq!(exercise.calories_per_hour, 600.5);
+    assert!((exercise.calories_per_hour - 600.5).abs() < f64::EPSILON);
 }
 
 #[test]
@@ -219,7 +218,7 @@ fn test_exercise_deserialize_string_numbers() {
 
     assert_eq!(exercise.exercise_id.as_str(), "12345");
     assert_eq!(exercise.exercise_name, "Running");
-    assert_eq!(exercise.calories_per_hour, 600.5);
+    assert!((exercise.calories_per_hour - 600.5).abs() < f64::EPSILON);
 }
 
 #[test]
@@ -235,7 +234,7 @@ fn test_exercise_serialize() {
 
     assert_eq!(deserialized.exercise_id, exercise.exercise_id);
     assert_eq!(deserialized.exercise_name, exercise.exercise_name);
-    assert_eq!(deserialized.calories_per_hour, exercise.calories_per_hour);
+    assert!((deserialized.calories_per_hour - exercise.calories_per_hour).abs() < f64::EPSILON);
 }
 
 // =============================================================================
@@ -251,7 +250,7 @@ fn test_exercise_entry_deserialize_numeric_fields() {
     assert_eq!(entry.exercise_id.as_str(), "12345");
     assert_eq!(entry.exercise_name, "Running");
     assert_eq!(entry.duration_min, 30);
-    assert_eq!(entry.calories, 300.25);
+    assert!((entry.calories - 300.25).abs() < f64::EPSILON);
     assert_eq!(entry.date_int, 19723);
 }
 
@@ -264,7 +263,7 @@ fn test_exercise_entry_deserialize_string_numbers() {
     assert_eq!(entry.exercise_id.as_str(), "12345");
     assert_eq!(entry.exercise_name, "Running");
     assert_eq!(entry.duration_min, 30);
-    assert_eq!(entry.calories, 300.25);
+    assert!((entry.calories - 300.25).abs() < f64::EPSILON);
     assert_eq!(entry.date_int, 19723);
 }
 
@@ -284,7 +283,7 @@ fn test_exercise_entry_serialize() {
 
     assert_eq!(deserialized.exercise_entry_id, entry.exercise_entry_id);
     assert_eq!(deserialized.duration_min, entry.duration_min);
-    assert_eq!(deserialized.calories, entry.calories);
+    assert!((deserialized.calories - entry.calories).abs() < f64::EPSILON);
 }
 
 // =============================================================================
@@ -352,7 +351,12 @@ fn test_exercise_entries_response_single_entry() {
 
     assert_eq!(response.exercise_entries.len(), 1);
     assert_eq!(
-        response.exercise_entries[0].exercise_entry_id.as_str(),
+        response
+            .exercise_entries
+            .first()
+            .expect("should have entry")
+            .exercise_entry_id
+            .as_str(),
         "67890"
     );
 }
@@ -364,11 +368,21 @@ fn test_exercise_entries_response_multiple_entries() {
 
     assert_eq!(response.exercise_entries.len(), 2);
     assert_eq!(
-        response.exercise_entries[0].exercise_entry_id.as_str(),
+        response
+            .exercise_entries
+            .first()
+            .expect("should have first entry")
+            .exercise_entry_id
+            .as_str(),
         "67890"
     );
     assert_eq!(
-        response.exercise_entries[1].exercise_entry_id.as_str(),
+        response
+            .exercise_entries
+            .get(1)
+            .expect("should have second entry")
+            .exercise_entry_id
+            .as_str(),
         "67891"
     );
 }
@@ -391,7 +405,7 @@ fn test_exercise_day_summary_deserialize() {
     let summary: ExerciseDaySummary = serde_json::from_str(json).expect("should deserialize");
 
     assert_eq!(summary.date_int, 19723);
-    assert_eq!(summary.exercise_calories, 750.5);
+    assert!((summary.exercise_calories - 750.5).abs() < f64::EPSILON);
 }
 
 #[test]
@@ -400,7 +414,7 @@ fn test_exercise_day_summary_deserialize_string_numbers() {
     let summary: ExerciseDaySummary = serde_json::from_str(json).expect("should deserialize");
 
     assert_eq!(summary.date_int, 19723);
-    assert_eq!(summary.exercise_calories, 750.5);
+    assert!((summary.exercise_calories - 750.5).abs() < f64::EPSILON);
 }
 
 #[test]
@@ -409,8 +423,9 @@ fn test_exercise_month_summary_single_day() {
         serde_json::from_str(fixtures::SINGLE_DAY_SUMMARY).expect("should deserialize");
 
     assert_eq!(summary.days.len(), 1);
-    assert_eq!(summary.days[0].date_int, 19723);
-    assert_eq!(summary.days[0].exercise_calories, 750.5);
+    let day = summary.days.first().expect("should have day");
+    assert_eq!(day.date_int, 19723);
+    assert!((day.exercise_calories - 750.5).abs() < f64::EPSILON);
     assert_eq!(summary.month, 1);
     assert_eq!(summary.year, 2024);
 }
@@ -421,8 +436,22 @@ fn test_exercise_month_summary_multiple_days() {
         serde_json::from_str(fixtures::MULTIPLE_DAYS_SUMMARY).expect("should deserialize");
 
     assert_eq!(summary.days.len(), 2);
-    assert_eq!(summary.days[0].date_int, 19723);
-    assert_eq!(summary.days[1].date_int, 19724);
+    assert_eq!(
+        summary
+            .days
+            .first()
+            .expect("should have first day")
+            .date_int,
+        19723
+    );
+    assert_eq!(
+        summary
+            .days
+            .get(1)
+            .expect("should have second day")
+            .date_int,
+        19724
+    );
     assert_eq!(summary.month, 1);
     assert_eq!(summary.year, 2024);
 }
@@ -433,8 +462,9 @@ fn test_exercise_month_summary_string_numbers() {
         serde_json::from_str(fixtures::MONTH_SUMMARY_STRING_NUMBERS).expect("should deserialize");
 
     assert_eq!(summary.days.len(), 1);
-    assert_eq!(summary.days[0].date_int, 19723);
-    assert_eq!(summary.days[0].exercise_calories, 750.5);
+    let day = summary.days.first().expect("should have day");
+    assert_eq!(day.date_int, 19723);
+    assert!((day.exercise_calories - 750.5).abs() < f64::EPSILON);
     assert_eq!(summary.month, 1);
     assert_eq!(summary.year, 2024);
 }
@@ -446,7 +476,7 @@ fn test_exercise_month_summary_calculate_total_calories() {
 
     let total: f64 = summary.days.iter().map(|d| d.exercise_calories).sum();
 
-    assert_eq!(total, 1250.75); // 750.5 + 500.25
+    assert!((total - 1250.75).abs() < f64::EPSILON); // 750.5 + 500.25
 }
 
 // =============================================================================
@@ -571,7 +601,7 @@ fn test_exercise_entry_zero_duration() {
 
     let entry: ExerciseEntry = serde_json::from_str(json).expect("should deserialize");
     assert_eq!(entry.duration_min, 0);
-    assert_eq!(entry.calories, 0.0);
+    assert!((entry.calories - 0.0).abs() < f64::EPSILON);
 }
 
 #[test]
@@ -587,7 +617,7 @@ fn test_exercise_entry_large_duration() {
 
     let entry: ExerciseEntry = serde_json::from_str(json).expect("should deserialize");
     assert_eq!(entry.duration_min, 360);
-    assert_eq!(entry.calories, 3600.0);
+    assert!((entry.calories - 3600.0).abs() < f64::EPSILON);
 }
 
 #[test]
@@ -696,7 +726,7 @@ fn test_exercise_clone() {
     let cloned = exercise.clone();
     assert_eq!(cloned.exercise_id, exercise.exercise_id);
     assert_eq!(cloned.exercise_name, exercise.exercise_name);
-    assert_eq!(cloned.calories_per_hour, exercise.calories_per_hour);
+    assert!((cloned.calories_per_hour - exercise.calories_per_hour).abs() < f64::EPSILON);
 }
 
 #[test]
@@ -773,10 +803,7 @@ fn test_single_exercise_entry_response_wrapper() {
 
     let response: SingleExerciseEntryResponse =
         serde_json::from_str(json).expect("should deserialize");
-    assert_eq!(
-        response.exercise_entry.exercise_entry_id.as_str(),
-        "67890"
-    );
+    assert_eq!(response.exercise_entry.exercise_entry_id.as_str(), "67890");
 }
 
 #[test]

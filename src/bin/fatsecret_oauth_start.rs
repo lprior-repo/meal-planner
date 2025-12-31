@@ -1,7 +1,7 @@
-//! Start FatSecret OAuth 3-legged flow
+//! Start `FatSecret` OAuth 3-legged flow
 //!
 //! Gets a request token and returns the authorization URL.
-//! The user visits the URL to authorize, then FatSecret redirects to callback.
+//! The user visits the URL to authorize, then `FatSecret` redirects to callback.
 //!
 //! This script returns the pending token which should be stored as a Windmill Resource
 //! for use in the next step (oauth_complete).
@@ -22,7 +22,7 @@ use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
-/// FatSecret resource (matches Windmill resource-fatsecret format)
+/// `FatSecret` resource (matches Windmill resource-fatsecret format)
 #[derive(Deserialize)]
 struct FatSecretResource {
     consumer_key: String,
@@ -31,7 +31,7 @@ struct FatSecretResource {
 
 #[derive(Deserialize)]
 struct Input {
-    /// FatSecret credentials (optional - falls back to env vars)
+    /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
     /// Callback URL for OAuth redirect (e.g., "http://localhost:8765/callback" or "oob")
     callback_url: String,
