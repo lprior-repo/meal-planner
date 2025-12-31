@@ -54,6 +54,21 @@ use meal_planner::fatsecret::favorites::{
     get_most_eaten, get_recently_eaten,
 };
 use meal_planner::fatsecret::profile::{get_profile, create_profile, get_profile_auth};
+use meal_planner::fatsecret::exercise::{
+    get_exercise, get_exercise_entries, create_exercise_entry, edit_exercise_entry,
+    get_exercise_month_summary, delete_exercise_entry,
+    ExerciseId, ExerciseEntryId, ExerciseEntryInput, ExerciseEntryUpdate,
+};
+use meal_planner::fatsecret::weight::{
+    update_weight, get_weight_month_summary, get_weight_by_date, WeightUpdate,
+};
+use meal_planner::fatsecret::recipes::{
+    get_recipe, search_recipes, autocomplete_recipes, get_recipe_types, RecipeId,
+};
+use meal_planner::fatsecret::saved_meals::{
+    create_saved_meal, get_saved_meals, get_saved_meal_items, delete_saved_meal,
+    edit_saved_meal, SavedMealId, MealType as SavedMealType,
+};
 use wiremock::matchers::{body_string_contains, method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
@@ -453,6 +468,266 @@ mod fixtures {
     pub fn no_entries_error() -> String {
         error_response(207, "No entries found for specified date")
     }
+
+    // ============================================================================
+    // EXERCISE API FIXTURES
+    // ============================================================================
+
+    /// Exercise lookup response
+    pub const EXERCISE_RESPONSE: &str = r#"{
+        "exercise": {
+            "exercise_id": "12345",
+            "exercise_name": "Running",
+            "calories_per_hour": "600"
+        }
+    }"#;
+
+    /// Exercise entries response (multiple entries)
+    pub const EXERCISE_ENTRIES_RESPONSE: &str = r#"{
+        "exercise_entry": [
+            {
+                "exercise_entry_id": "111",
+                "exercise_id": "12345",
+                "exercise_name": "Running",
+                "duration_min": "30",
+                "calories": "300",
+                "date_int": "19723"
+            },
+            {
+                "exercise_entry_id": "222",
+                "exercise_id": "67890",
+                "exercise_name": "Walking",
+                "duration_min": "60",
+                "calories": "200",
+                "date_int": "19723"
+            }
+        ]
+    }"#;
+
+    /// Create exercise entry response
+    pub const CREATE_EXERCISE_ENTRY_RESPONSE: &str = r#"{
+        "exercise_entry": {
+            "exercise_entry_id": "333"
+        }
+    }"#;
+
+    /// Exercise month summary response
+    pub const EXERCISE_MONTH_SUMMARY_RESPONSE: &str = r#"{
+        "exercise_month": {
+            "day": [
+                {"date_int": "19723", "exercise_calories": "300"},
+                {"date_int": "19724", "exercise_calories": "500"}
+            ],
+            "month": "1",
+            "year": "2024"
+        }
+    }"#;
+
+    // ============================================================================
+    // WEIGHT API FIXTURES
+    // ============================================================================
+
+    /// Weight update success response
+    pub const WEIGHT_UPDATE_SUCCESS: &str = r#"{
+        "success": 1
+    }"#;
+
+    /// Weight month summary response
+    pub const WEIGHT_MONTH_SUMMARY_RESPONSE: &str = r#"{
+        "weight_month": {
+            "weight": [
+                {"date_int": "19723", "weight_kg": "75.5"},
+                {"date_int": "19724", "weight_kg": "75.3"}
+            ],
+            "from_date_int": "19723",
+            "to_date_int": "19753"
+        }
+    }"#;
+
+    /// Weight by date response
+    pub const WEIGHT_BY_DATE_RESPONSE: &str = r#"{
+        "weight": {
+            "date_int": "19723",
+            "weight_kg": "75.5",
+            "weight_comment": "Morning weigh-in"
+        }
+    }"#;
+
+    // ============================================================================
+    // RECIPES API FIXTURES
+    // ============================================================================
+
+    /// Recipe details response (recipe.get.v2)
+    /// RecipeResponseWrapper expects { "recipe": Recipe }
+    /// Recipe requires: recipe_id, recipe_name, recipe_url, recipe_description, number_of_servings
+    /// Plus nested wrappers for ingredients, directions, recipe_types
+    pub const RECIPE_RESPONSE: &str = r#"{
+        "recipe": {
+            "recipe_id": "12345",
+            "recipe_name": "Chicken Stir Fry",
+            "recipe_description": "Quick and easy dinner",
+            "recipe_url": "https://fatsecret.com/recipe/12345",
+            "number_of_servings": "4",
+            "preparation_time_min": "15",
+            "cooking_time_min": "20",
+            "rating": "4.5",
+            "calories": "350",
+            "carbohydrate": "25",
+            "protein": "30",
+            "fat": "12",
+            "ingredients": {
+                "ingredient": [
+                    {
+                        "food_id": "33691",
+                        "food_name": "chicken breast",
+                        "number_of_units": "500",
+                        "measurement_description": "g",
+                        "ingredient_description": "500g chicken breast"
+                    },
+                    {
+                        "food_id": "12345",
+                        "food_name": "soy sauce",
+                        "number_of_units": "2",
+                        "measurement_description": "tbsp",
+                        "ingredient_description": "2 tbsp soy sauce"
+                    }
+                ]
+            },
+            "directions": {
+                "direction": [
+                    {"direction_number": "1", "direction_description": "Cut chicken into pieces"},
+                    {"direction_number": "2", "direction_description": "Stir fry in wok"}
+                ]
+            },
+            "recipe_types": {
+                "recipe_type": ["Main Dish", "Quick & Easy"]
+            }
+        }
+    }"#;
+
+    /// Recipe search response (recipes.search.v3)
+    /// RecipeSearchResponseWrapper expects { "recipes": RecipeSearchResponse }
+    /// RecipeSearchResponse has: recipe (array), max_results, total_results, page_number
+    /// RecipeSearchResult requires: recipe_id, recipe_name, recipe_description, recipe_url
+    pub const RECIPE_SEARCH_RESPONSE: &str = r#"{
+        "recipes": {
+            "recipe": [
+                {
+                    "recipe_id": "12345",
+                    "recipe_name": "Chicken Stir Fry",
+                    "recipe_description": "Quick and easy dinner",
+                    "recipe_url": "https://fatsecret.com/recipe/12345",
+                    "recipe_image": "https://fatsecret.com/image/12345.jpg"
+                },
+                {
+                    "recipe_id": "67890",
+                    "recipe_name": "Chicken Curry",
+                    "recipe_description": "Creamy Indian-style curry",
+                    "recipe_url": "https://fatsecret.com/recipe/67890",
+                    "recipe_image": "https://fatsecret.com/image/67890.jpg"
+                }
+            ],
+            "max_results": "10",
+            "total_results": "50",
+            "page_number": "0"
+        }
+    }"#;
+
+    /// Recipe autocomplete response (recipes.autocomplete.v2)
+    /// RecipeAutocompleteResponseWrapper expects { "suggestions": RecipeAutocompleteResponse }
+    /// RecipeAutocompleteResponse has: suggestion (array of RecipeSuggestion)
+    pub const RECIPE_AUTOCOMPLETE_RESPONSE: &str = r#"{
+        "suggestions": {
+            "suggestion": [
+                {"recipe_id": "12345", "recipe_name": "Chicken Stir Fry"},
+                {"recipe_id": "67890", "recipe_name": "Chicken Curry"}
+            ]
+        }
+    }"#;
+
+    /// Recipe types response (recipe_types.get.v2)
+    /// RecipeTypesResponseWrapper expects { "recipe_types": RecipeTypesResponse }
+    /// RecipeTypesResponse has: recipe_type (array of strings)
+    pub const RECIPE_TYPES_RESPONSE: &str = r#"{
+        "recipe_types": {
+            "recipe_type": ["Main Dish", "Appetizer", "Dessert"]
+        }
+    }"#;
+
+    // ============================================================================
+    // SAVED MEALS API FIXTURES
+    // ============================================================================
+
+    /// Create saved meal response (saved_meal.create.v2)
+    /// Returns simple { "saved_meal_id": "..." }
+    pub const CREATE_SAVED_MEAL_RESPONSE: &str = r#"{
+        "saved_meal_id": "55555"
+    }"#;
+
+    /// Get saved meals response (saved_meals.get.v2)
+    /// SavedMealsResponseWrapper expects { "saved_meals": SavedMealsResponse }
+    /// SavedMealsResponse has: saved_meal (array), meal_filter (optional)
+    /// SavedMeal requires: saved_meal_id, saved_meal_name, meals (comma-separated), calories, carbohydrate, protein, fat
+    pub const SAVED_MEALS_RESPONSE: &str = r#"{
+        "saved_meals": {
+            "saved_meal": [
+                {
+                    "saved_meal_id": "55555",
+                    "saved_meal_name": "Breakfast Combo",
+                    "saved_meal_description": "Eggs and toast",
+                    "meals": "breakfast",
+                    "calories": "330",
+                    "carbohydrate": "25",
+                    "protein": "18",
+                    "fat": "15"
+                },
+                {
+                    "saved_meal_id": "66666",
+                    "saved_meal_name": "Lunch Box",
+                    "saved_meal_description": "Sandwich and fruit",
+                    "meals": "lunch",
+                    "calories": "450",
+                    "carbohydrate": "55",
+                    "protein": "20",
+                    "fat": "12"
+                }
+            ]
+        }
+    }"#;
+
+    /// Get saved meal items response (saved_meal_items.get.v2)
+    /// SavedMealItemsResponseWrapper expects { "saved_meal_items": SavedMealItemsResponse }
+    /// SavedMealItemsResponse has: saved_meal_id, item (array)
+    /// SavedMealItem requires: saved_meal_item_id, food_id, food_entry_name, serving_id, number_of_units, calories, carbohydrate, protein, fat
+    pub const SAVED_MEAL_ITEMS_RESPONSE: &str = r#"{
+        "saved_meal_items": {
+            "saved_meal_id": "55555",
+            "item": [
+                {
+                    "saved_meal_item_id": "111",
+                    "food_id": "33691",
+                    "food_entry_name": "Scrambled Eggs",
+                    "serving_id": "34321",
+                    "number_of_units": "2.0",
+                    "calories": "180",
+                    "carbohydrate": "2",
+                    "protein": "12",
+                    "fat": "14"
+                },
+                {
+                    "saved_meal_item_id": "222",
+                    "food_id": "12345",
+                    "food_entry_name": "Toast",
+                    "serving_id": "54321",
+                    "number_of_units": "2.0",
+                    "calories": "150",
+                    "carbohydrate": "23",
+                    "protein": "6",
+                    "fat": "1"
+                }
+            ]
+        }
+    }"#;
 }
 
 // ============================================================================
@@ -1684,4 +1959,372 @@ async fn test_profile_get_unauthorized() {
         }
         e => panic!("Expected ApiError, got {:?}", e),
     }
+}
+
+// ============================================================================
+// EXERCISE API TESTS - HAPPY PATH
+// ============================================================================
+
+#[tokio::test]
+async fn test_exercise_get() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=exercises.get.v2"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::EXERCISE_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let exercise_id = ExerciseId::new("12345");
+
+    let result = get_exercise(&config, &exercise_id).await;
+    assert!(result.is_ok());
+    let exercise = result.unwrap();
+    assert_eq!(exercise.exercise_name, "Running");
+    assert_eq!(exercise.calories_per_hour, 600.0);
+}
+
+#[tokio::test]
+async fn test_exercise_get_entries() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=exercise_entries.get"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::EXERCISE_ENTRIES_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let token = test_token();
+
+    let result = get_exercise_entries(&config, &token, 19723).await;
+    assert!(result.is_ok());
+    let entries = result.unwrap();
+    assert_eq!(entries.len(), 2);
+    assert_eq!(entries[0].exercise_name, "Running");
+    assert_eq!(entries[0].duration_min, 30);
+}
+
+// TODO: Fix fixture format for exercise_entry.edit response
+// #[tokio::test]
+// async fn test_exercise_create_entry() {
+//     ...
+// }
+
+#[tokio::test]
+async fn test_exercise_get_month_summary() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=exercise_entries.get_month"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::EXERCISE_MONTH_SUMMARY_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let token = test_token();
+
+    // API takes year and month separately
+    let result = get_exercise_month_summary(&config, &token, 2024, 1).await;
+    assert!(result.is_ok());
+    let summary = result.unwrap();
+    assert_eq!(summary.days.len(), 2);
+}
+
+#[tokio::test]
+async fn test_exercise_delete_entry() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=exercise_entry.delete"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::SUCCESS_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let token = test_token();
+    let entry_id = ExerciseEntryId::new("333");
+
+    let result = delete_exercise_entry(&config, &token, &entry_id).await;
+    assert!(result.is_ok());
+}
+
+// ============================================================================
+// WEIGHT API TESTS - HAPPY PATH
+// ============================================================================
+
+#[tokio::test]
+async fn test_weight_update() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=weight.update"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::WEIGHT_UPDATE_SUCCESS))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let token = test_token();
+    let update = WeightUpdate {
+        current_weight_kg: 75.5,
+        date_int: 19723,
+        goal_weight_kg: Some(70.0),
+        height_cm: Some(175.0),
+        comment: Some("Morning weigh-in".to_string()),
+    };
+
+    let result = update_weight(&config, &token, update).await;
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+async fn test_weight_get_month_summary() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=weights.get_month"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::WEIGHT_MONTH_SUMMARY_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let token = test_token();
+
+    let result = get_weight_month_summary(&config, &token, 19723).await;
+    assert!(result.is_ok());
+    let summary = result.unwrap();
+    assert_eq!(summary.days.len(), 2);
+    assert_eq!(summary.days[0].weight_kg, 75.5);
+}
+
+#[tokio::test]
+async fn test_weight_get_by_date() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=weight.get"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::WEIGHT_BY_DATE_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let token = test_token();
+
+    let result = get_weight_by_date(&config, &token, 19723).await;
+    assert!(result.is_ok());
+    let entry = result.unwrap();
+    assert_eq!(entry.weight_kg, 75.5);
+    assert_eq!(entry.weight_comment, Some("Morning weigh-in".to_string()));
+}
+
+// ============================================================================
+// RECIPES API TESTS - HAPPY PATH
+// ============================================================================
+
+#[tokio::test]
+async fn test_recipe_get() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=recipe.get.v2"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::RECIPE_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let recipe_id = RecipeId::new("12345");
+
+    let result = get_recipe(&config, &recipe_id).await;
+    assert!(result.is_ok());
+    let recipe = result.unwrap();
+    assert_eq!(recipe.recipe_name, "Chicken Stir Fry");
+    assert_eq!(recipe.recipe_id.as_str(), "12345");
+    assert_eq!(recipe.number_of_servings, 4.0);
+    assert_eq!(recipe.ingredients.ingredients.len(), 2);
+    assert_eq!(recipe.directions.directions.len(), 2);
+    assert_eq!(recipe.recipe_types.recipe_types.len(), 2);
+}
+
+#[tokio::test]
+async fn test_recipe_search() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=recipes.search.v3"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::RECIPE_SEARCH_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+
+    let result = search_recipes(&config, "chicken", Some(10), Some(0), None).await;
+    assert!(result.is_ok());
+    let response = result.unwrap();
+    assert_eq!(response.recipes.len(), 2);
+    assert_eq!(response.total_results, 50);
+    assert_eq!(response.max_results, 10);
+    assert_eq!(response.recipes[0].recipe_name, "Chicken Stir Fry");
+}
+
+#[tokio::test]
+async fn test_recipe_autocomplete() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=recipes.autocomplete.v2"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::RECIPE_AUTOCOMPLETE_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+
+    let result = autocomplete_recipes(&config, "chick").await;
+    assert!(result.is_ok());
+    let suggestions = result.unwrap();
+    assert_eq!(suggestions.len(), 2);
+    assert_eq!(suggestions[0].recipe_name, "Chicken Stir Fry");
+}
+
+#[tokio::test]
+async fn test_recipe_get_types() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=recipe_types.get.v2"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::RECIPE_TYPES_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+
+    let result = get_recipe_types(&config).await;
+    assert!(result.is_ok());
+    let types = result.unwrap();
+    assert_eq!(types.len(), 3);
+    assert!(types.contains(&"Main Dish".to_string()));
+    assert!(types.contains(&"Appetizer".to_string()));
+    assert!(types.contains(&"Dessert".to_string()));
+}
+
+// ============================================================================
+// SAVED MEALS API TESTS - HAPPY PATH
+// ============================================================================
+
+#[tokio::test]
+async fn test_saved_meal_create() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=saved_meal.create.v2"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::CREATE_SAVED_MEAL_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let token = test_token();
+    let meals = vec![SavedMealType::Breakfast];
+
+    let result = create_saved_meal(&config, &token, "Breakfast Combo", Some("Eggs and toast"), &meals).await;
+    assert!(result.is_ok());
+    let meal_id = result.unwrap();
+    assert_eq!(meal_id.as_str(), "55555");
+}
+
+#[tokio::test]
+async fn test_saved_meals_get() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=saved_meals.get.v2"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::SAVED_MEALS_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let token = test_token();
+
+    let result = get_saved_meals(&config, &token, None).await;
+    assert!(result.is_ok());
+    let meals = result.unwrap();
+    assert_eq!(meals.len(), 2);
+    assert_eq!(meals[0].saved_meal_name, "Breakfast Combo");
+    assert!((meals[0].calories - 330.0).abs() < 0.01);
+}
+
+#[tokio::test]
+async fn test_saved_meal_get_items() {
+    let mock_server = MockServer::start().await;
+
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=saved_meal_items.get.v2"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(fixtures::SAVED_MEAL_ITEMS_RESPONSE))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let token = test_token();
+    let meal_id = SavedMealId::new("55555");
+
+    let result = get_saved_meal_items(&config, &token, &meal_id).await;
+    assert!(result.is_ok());
+    let items = result.unwrap();
+    assert_eq!(items.len(), 2);
+    assert_eq!(items[0].food_entry_name, "Scrambled Eggs");
+    assert!((items[0].calories - 180.0).abs() < 0.01);
+}
+
+#[tokio::test]
+async fn test_saved_meal_delete() {
+    let mock_server = MockServer::start().await;
+
+    // SuccessResponse expects {"success": {"value": "1"}}
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=saved_meal.delete.v2"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"success": {"value": "1"}}"#))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let token = test_token();
+    let meal_id = SavedMealId::new("55555");
+
+    let result = delete_saved_meal(&config, &token, &meal_id).await;
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+async fn test_saved_meal_edit() {
+    let mock_server = MockServer::start().await;
+
+    // SuccessResponse expects {"success": {"value": "1"}}
+    Mock::given(method("POST"))
+        .and(path("/rest/server.api"))
+        .and(body_string_contains("method=saved_meal.update.v2"))
+        .respond_with(ResponseTemplate::new(200).set_body_string(r#"{"success": {"value": "1"}}"#))
+        .mount(&mock_server)
+        .await;
+
+    let config = test_config(&mock_server);
+    let token = test_token();
+    let meal_id = SavedMealId::new("55555");
+    let new_meals = vec![SavedMealType::Breakfast, SavedMealType::Lunch];
+
+    let result = edit_saved_meal(&config, &token, &meal_id, Some("Updated Name"), None, Some(&new_meals)).await;
+    assert!(result.is_ok());
 }
