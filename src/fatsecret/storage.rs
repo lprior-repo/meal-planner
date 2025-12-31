@@ -235,8 +235,11 @@ impl TokenStorage {
                 if days_since < 365 {
                     Ok(TokenValidity::Valid)
                 } else {
+                    // Safe: days_since is clamped to positive values and < i32::MAX practically
+                    #[allow(clippy::cast_possible_truncation)]
+                    let days_i32 = days_since.min(i64::from(i32::MAX)) as i32;
                     Ok(TokenValidity::Old {
-                        days_since_connected: days_since as i32,
+                        days_since_connected: days_i32,
                     })
                 }
             }

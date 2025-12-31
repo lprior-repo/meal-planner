@@ -1,11 +1,14 @@
 //! Scrape recipe from URL via Tandoor API
 //!
 //! JSON stdin:
-//!   {"tandoor": {"base_url": "...", "api_token": "..."}, "url": "https://..."}
+//!   `{"tandoor": {"base_url": "...", "api_token": "..."}, "url": "https://..."}`
 //!
 //! JSON stdout:
-//!   {"success": true, "recipe_json": {...}, "images": [...]}
-//!   {"success": false, "error": "..."}
+//!   `{"success": true, "recipe_json": {...}, "images": [...]}`
+//!   `{"success": false, "error": "..."}`
+
+// CLI binaries: exit and JSON unwrap are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used)]
 
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};

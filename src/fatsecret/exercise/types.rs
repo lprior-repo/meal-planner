@@ -182,15 +182,21 @@ pub struct ExerciseMonthSummaryResponse {
 // Date Conversion Functions
 // ============================================================================
 
+/// Unix epoch date (1970-01-01)
+const UNIX_EPOCH_DATE: (i32, u32, u32) = (1970, 1, 1);
+
 /// Convert YYYY-MM-DD to days since epoch (date_int)
 pub fn date_to_int(date: &str) -> Result<i32, String> {
     use chrono::NaiveDate;
 
+    let epoch = NaiveDate::from_ymd_opt(UNIX_EPOCH_DATE.0, UNIX_EPOCH_DATE.1, UNIX_EPOCH_DATE.2)
+        .ok_or_else(|| "Invalid epoch date".to_string())?;
+
     NaiveDate::parse_from_str(date, "%Y-%m-%d")
         .map_err(|e| format!("Invalid date format: {}", e))
-        .map(|d| {
-            let epoch = NaiveDate::from_ymd_opt(1970, 1, 1).unwrap();
-            (d - epoch).num_days() as i32
+        .and_then(|d| {
+            let days = (d - epoch).num_days();
+            i32::try_from(days).map_err(|_| format!("Date out of range: {} days since epoch", days))
         })
 }
 
@@ -198,9 +204,10 @@ pub fn date_to_int(date: &str) -> Result<i32, String> {
 pub fn int_to_date(date_int: i32) -> Result<String, String> {
     use chrono::{Duration, NaiveDate};
 
-    let epoch = NaiveDate::from_ymd_opt(1970, 1, 1).unwrap();
+    let epoch = NaiveDate::from_ymd_opt(UNIX_EPOCH_DATE.0, UNIX_EPOCH_DATE.1, UNIX_EPOCH_DATE.2)
+        .ok_or_else(|| "Invalid epoch date".to_string())?;
     let date = epoch
-        .checked_add_signed(Duration::days(date_int as i64))
+        .checked_add_signed(Duration::days(i64::from(date_int)))
         .ok_or_else(|| format!("Date calculation overflow: {}", date_int))?;
     Ok(date.format("%Y-%m-%d").to_string())
 }

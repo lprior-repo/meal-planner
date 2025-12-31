@@ -1,9 +1,9 @@
 # Meal Planner - Cargo Build Optimization
-# Leverages mold linker + sccache for maximum speed on 9950X3D
+# Leverages mold linker for maximum speed
 
 [build]
-rustc-wrapper = "sccache"
-jobs = 32                          # 9950X3D: 16 cores * 2 threads
+# rustc-wrapper = "sccache"         # Uncomment when sccache is installed
+jobs = 32                          # Parallel compilation jobs
 
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
@@ -11,11 +11,6 @@ rustflags = [
     "-C", "link-arg=-fuse-ld=mold",
     "-C", "link-arg=-Wl,--threads=16",  # Parallel linking (mold)
 ]
-
-# Use all CPU threads for parallel codegen in rustc
-[env]
-CARGO_BUILD_JOBS = "32"
-RUSTFLAGS = "-C codegen-units=16"
 
 # Incremental compilation cache
 [profile.dev]

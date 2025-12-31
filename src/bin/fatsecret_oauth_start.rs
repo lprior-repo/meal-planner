@@ -4,12 +4,15 @@
 //! The user visits the URL to authorize, then FatSecret redirects to callback.
 //!
 //! JSON stdin (Windmill format):
-//!   {"fatsecret": {"consumer_key": "...", "consumer_secret": "..."}, "callback_url": "oob"}
+//!   `{"fatsecret": {...}, "callback_url": "oob"}`
 //!
 //! JSON stdin (standalone format - uses env vars for credentials):
-//!   {"callback_url": "http://localhost:8765/callback"}
+//!   `{"callback_url": "http://localhost:8765/callback"}`
 //!
-//! JSON stdout: {"success": true, "auth_url": "https://...", "oauth_token": "..."}
+//! JSON stdout: `{"success": true, "auth_url": "https://...", "oauth_token": "..."}`
+
+// CLI binaries: exit and JSON unwrap are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used)]
 
 use meal_planner::fatsecret::core::oauth::get_request_token;
 use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};

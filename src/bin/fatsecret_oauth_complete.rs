@@ -4,12 +4,15 @@
 //! This is for out-of-band (oob) OAuth flows where user copies the verifier code.
 //!
 //! JSON stdin (Windmill format):
-//!   {"fatsecret": {"consumer_key": "...", "consumer_secret": "..."}, "oauth_verifier": "..."}
+//!   `{"fatsecret": {...}, "oauth_verifier": "..."}`
 //!
 //! JSON stdin (standalone format - uses env vars for credentials):
-//!   {"oauth_verifier": "..."}
+//!   `{"oauth_verifier": "..."}`
 //!
-//! JSON stdout: {"success": true, "message": "Access token stored"}
+//! JSON stdout: `{"success": true, "message": "Access token stored"}`
+
+// CLI binaries: exit and JSON unwrap are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used)]
 
 use meal_planner::fatsecret::core::oauth::get_access_token;
 use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};
