@@ -434,4 +434,170 @@ mod tests {
 
         env::remove_var("OAUTH_ENCRYPTION_KEY");
     }
+
+    #[test]
+    #[serial]
+    fn test_key_invalid_length() {
+        let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
+
+        env::set_var("OAUTH_ENCRYPTION_KEY", "tooshort");
+        let result = encrypt("test");
+        assert!(matches!(result, Err(CryptoError::KeyInvalidLength(8))));
+
+        env::remove_var("OAUTH_ENCRYPTION_KEY");
+    }
+
+    #[test]
+    #[serial]
+    fn test_key_invalid_hex() {
+        let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
+
+        // 64 characters but not valid hex
+        env::set_var(
+            "OAUTH_ENCRYPTION_KEY",
+            "ghij456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        );
+        let result = encrypt("test");
+        assert!(matches!(result, Err(CryptoError::KeyInvalidHex)));
+
+        env::remove_var("OAUTH_ENCRYPTION_KEY");
+    }
+
+    #[test]
+    #[serial]
+    fn test_decrypt_invalid_base64() {
+        let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
+
+        env::set_var(
+            "OAUTH_ENCRYPTION_KEY",
+            "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        );
+
+        let result = decrypt("not-valid-base64!!!");
+        assert!(matches!(result, Err(CryptoError::InvalidCiphertext)));
+
+        env::remove_var("OAUTH_ENCRYPTION_KEY");
+    }
+
+    #[test]
+    #[serial]
+    fn test_decrypt_too_short() {
+        let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
+
+        env::set_var(
+            "OAUTH_ENCRYPTION_KEY",
+            "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        );
+
+        // Valid base64 but too short (less than 28 bytes)
+        let result = decrypt("AAAAAAAAAAAAAAAA");
+        assert!(matches!(result, Err(CryptoError::InvalidCiphertext)));
+
+        env::remove_var("OAUTH_ENCRYPTION_KEY");
+    }
+
+    // ============================================================================
+    // CryptoError Display tests
+    // ============================================================================
+
+    #[test]
+    fn test_crypto_error_display_key_not_configured() {
+        let err = CryptoError::KeyNotConfigured;
+        assert!(err.to_string().contains("OAUTH_ENCRYPTION_KEY"));
+    }
+
+    #[test]
+    fn test_crypto_error_display_key_invalid_length() {
+        let err = CryptoError::KeyInvalidLength(32);
+        assert!(err.to_string().contains("64 hex characters"));
+        assert!(err.to_string().contains("32"));
+    }
+
+    #[test]
+    fn test_crypto_error_display_key_invalid_hex() {
+        let err = CryptoError::KeyInvalidHex;
+        assert!(err.to_string().contains("hex"));
+    }
+
+    #[test]
+    fn test_crypto_error_display_invalid_ciphertext() {
+        let err = CryptoError::InvalidCiphertext;
+        assert!(err.to_string().contains("invalid") || err.to_string().contains("corrupted"));
+    }
+
+    #[test]
+    fn test_crypto_error_display_decryption_failed() {
+        let err = CryptoError::DecryptionFailed;
+        assert!(err.to_string().contains("failed"));
+    }
+
+    // ============================================================================
+    // StorageError tests
+    // ============================================================================
+
+    #[test]
+    fn test_storage_error_not_found() {
+        let err = StorageError::NotFound;
+        assert!(err.to_string().contains("not found"));
+    }
+
+    #[test]
+    fn test_storage_error_database() {
+        let err = StorageError::DatabaseError("connection failed".to_string());
+        assert!(err.to_string().contains("connection failed"));
+    }
+
+    #[test]
+    fn test_storage_error_from_crypto() {
+        let crypto_err = CryptoError::KeyNotConfigured;
+        let storage_err: StorageError = crypto_err.into();
+        assert!(storage_err.to_string().contains("OAUTH_ENCRYPTION_KEY"));
+    }
+
+    // ============================================================================
+    // TokenValidity tests
+    // ============================================================================
+
+    #[test]
+    fn test_token_validity_valid() {
+        let validity = TokenValidity::Valid;
+        assert_eq!(validity, TokenValidity::Valid);
+    }
+
+    #[test]
+    fn test_token_validity_not_found() {
+        let validity = TokenValidity::NotFound;
+        assert_eq!(validity, TokenValidity::NotFound);
+    }
+
+    #[test]
+    fn test_token_validity_old() {
+        let validity = TokenValidity::Old {
+            days_since_connected: 400,
+        };
+        if let TokenValidity::Old {
+            days_since_connected,
+        } = validity
+        {
+            assert_eq!(days_since_connected, 400);
+        } else {
+            panic!("Expected Old variant");
+        }
+    }
+
+    #[test]
+    fn test_token_validity_clone() {
+        let original = TokenValidity::Old {
+            days_since_connected: 365,
+        };
+        let cloned = original.clone();
+        assert_eq!(original, cloned);
+    }
+
+    #[test]
+    fn test_token_validity_debug() {
+        let validity = TokenValidity::Valid;
+        let debug_str = format!("{:?}", validity);
+        assert!(debug_str.contains("Valid"));
+    }
 }
