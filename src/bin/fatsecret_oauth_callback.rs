@@ -8,6 +8,9 @@
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
+#![allow(clippy::too_many_lines, clippy::clone_on_ref_ptr)]
+#![allow(clippy::significant_drop_in_scrutinee, clippy::let_underscore_must_use)]
+#![allow(clippy::indexing_slicing)]
 
 use meal_planner::fatsecret::core::oauth::get_access_token;
 use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};

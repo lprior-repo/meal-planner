@@ -1,0 +1,26 @@
+summary: Delete FatSecret food diary entry
+description: Deletes a food diary entry (requires user access token)
+language: bash
+kind: script
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    fatsecret:
+      type: object
+      description: FatSecret API credentials
+      format: resource-fatsecret
+    access_token:
+      type: string
+      description: OAuth access token
+    access_secret:
+      type: string
+      description: OAuth access token secret
+    food_entry_id:
+      type: string
+      description: The food entry ID to delete
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - food_entry_id

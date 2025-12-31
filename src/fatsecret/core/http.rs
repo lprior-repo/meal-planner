@@ -14,6 +14,7 @@ use crate::fatsecret::core::{AccessToken, FatSecretConfig, FatSecretError};
 ///
 /// This is the low-level request function. Most users should use
 /// make_api_request() or make_authenticated_request() instead.
+#[allow(clippy::too_many_arguments)] // OAuth signing requires these params
 pub async fn make_oauth_request(
     config: &FatSecretConfig,
     method: Method,
@@ -34,7 +35,7 @@ pub async fn make_oauth_request(
         params,
         token,
         token_secret,
-    )?;
+    );
 
     let client = Client::new();
     let response = if method == Method::GET {
@@ -137,9 +138,5 @@ pub async fn make_authenticated_request(
 
 /// Check response for API errors
 fn check_api_error(body: String) -> Result<String, FatSecretError> {
-    if let Some(error) = parse_error_response(&body) {
-        Err(error)
-    } else {
-        Ok(body)
-    }
+    parse_error_response(&body).map_or(Ok(body), Err)
 }

@@ -248,8 +248,8 @@ impl FoodEntryInput {
         match self {
             FoodEntryInput::FromFood {
                 food_entry_name, ..
-            } => food_entry_name,
-            FoodEntryInput::Custom {
+            }
+            | FoodEntryInput::Custom {
                 food_entry_name, ..
             } => food_entry_name,
         }
@@ -277,12 +277,14 @@ impl FoodEntryUpdate {
     }
 
     /// Sets the number of units to update
+    #[must_use]
     pub fn with_units(mut self, units: f64) -> Self {
         self.number_of_units = Some(units);
         self
     }
 
     /// Sets the meal type to update
+    #[must_use]
     pub fn with_meal(mut self, meal: MealType) -> Self {
         self.meal = Some(meal);
         self
@@ -339,21 +341,21 @@ pub struct MonthSummary {
 // Date Conversion Functions
 // ============================================================================
 
-/// Unix epoch date (1970-01-01)
+/// Unix epoch date (1970-01-01) - constant for date calculations
 const UNIX_EPOCH_DATE: (i32, u32, u32) = (1970, 1, 1);
 
 /// Convert YYYY-MM-DD to days since epoch (date_int)
 pub fn date_to_int(date: &str) -> Result<i32, String> {
     use chrono::NaiveDate;
 
-    let epoch = NaiveDate::from_ymd_opt(UNIX_EPOCH_DATE.0, UNIX_EPOCH_DATE.1, UNIX_EPOCH_DATE.2)
-        .ok_or_else(|| "Invalid epoch date".to_string())?;
-
     NaiveDate::parse_from_str(date, "%Y-%m-%d")
         .map_err(|e| format!("Invalid date format: {}", e))
         .and_then(|d| {
+            let epoch =
+                NaiveDate::from_ymd_opt(UNIX_EPOCH_DATE.0, UNIX_EPOCH_DATE.1, UNIX_EPOCH_DATE.2)
+                    .ok_or_else(|| "Invalid epoch date".to_string())?;
             let days = (d - epoch).num_days();
-            i32::try_from(days).map_err(|_| format!("Date out of range: {} days since epoch", days))
+            i32::try_from(days).map_err(|_| format!("Date too far from epoch: {} days", days))
         })
 }
 
@@ -386,6 +388,7 @@ impl std::fmt::Display for ValidationError {
 impl std::error::Error for ValidationError {}
 
 /// Validate custom food entry data
+#[allow(clippy::too_many_arguments)] // Validation needs all fields to check
 pub fn validate_custom_entry(
     food_entry_name: &str,
     serving_description: &str,

@@ -7,6 +7,16 @@
 //!
 //! This test can be run with real credentials or with a mock server.
 
+// =============================================================================
+// TEST-ONLY LINT OVERRIDES - Tests can panic, use expect/unwrap, etc.
+// =============================================================================
+#![allow(clippy::unwrap_used)]
+#![allow(clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::wildcard_enum_match_arm)]
+#![allow(clippy::unnecessary_wraps)]
+#![allow(clippy::ignore_without_reason)]
+
 use meal_planner::fatsecret::core::{
     oauth::AccessToken,
     oauth::{get_access_token, get_request_token, RequestToken},

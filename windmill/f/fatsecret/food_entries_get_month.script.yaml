@@ -1,0 +1,26 @@
+summary: Get FatSecret monthly food diary summary
+description: Retrieves nutrition summary for all days in a month
+language: bash
+kind: script
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    fatsecret:
+      type: object
+      description: FatSecret API credentials
+      format: resource-fatsecret
+    access_token:
+      type: string
+      description: OAuth access token
+    access_secret:
+      type: string
+      description: OAuth access token secret
+    date_int:
+      type: integer
+      description: Any day in the target month (days since epoch)
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - date_int

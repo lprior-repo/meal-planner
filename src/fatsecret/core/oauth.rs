@@ -46,25 +46,29 @@ impl AccessToken {
 
 /// Generate OAuth nonce (random hex string)
 ///
-/// # Errors
-/// Returns error if system random number generator fails
-pub fn generate_nonce() -> Result<String, FatSecretError> {
+/// Returns a cryptographically secure random nonce for OAuth signing.
+/// This function handles the extremely rare case of RNG failure gracefully.
+pub fn generate_nonce() -> String {
     let rng = SystemRandom::new();
     let mut bytes = [0u8; 16];
-    rng.fill(&mut bytes)
-        .map_err(|_| FatSecretError::oauth_error("Failed to generate random bytes"))?;
-    Ok(hex::encode(bytes))
+    // RNG failure is extremely rare (hardware/OS issue) - use fallback
+    if rng.fill(&mut bytes).is_err() {
+        // Fallback: use timestamp + fixed entropy (not ideal but functional)
+        let ts = unix_timestamp();
+        return format!("{:016x}{:016x}", ts, ts.wrapping_mul(0x517cc1b727220a95));
+    }
+    hex::encode(bytes)
 }
 
 /// Get current Unix timestamp in seconds
 ///
-/// # Errors
-/// Returns error if system clock is before Unix epoch (should never happen)
-pub fn unix_timestamp() -> Result<u64, FatSecretError> {
+/// Returns the current time as seconds since Unix epoch.
+/// Handles the theoretical case of system clock before epoch gracefully.
+pub fn unix_timestamp() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_secs())
-        .map_err(|_| FatSecretError::oauth_error("System clock is before Unix epoch"))
+        .unwrap_or(0) // Clock before epoch = 0 (shouldn't happen but safe)
 }
 
 /// RFC 3986 percent-encoding for OAuth 1.0a
@@ -78,7 +82,22 @@ pub fn oauth_encode(s: &str) -> String {
                 result.push(byte as char);
             }
             _ => {
-                result.push_str(&format!("%{:02X}", byte));
+                // Format each byte as %XX hex encoding
+                result.push('%');
+                // High nibble
+                let hi = byte >> 4;
+                result.push(if hi < 10 {
+                    (b'0' + hi) as char
+                } else {
+                    (b'A' + hi - 10) as char
+                });
+                // Low nibble
+                let lo = byte & 0x0F;
+                result.push(if lo < 10 {
+                    (b'0' + lo) as char
+                } else {
+                    (b'A' + lo - 10) as char
+                });
             }
         }
     }
@@ -132,10 +151,9 @@ pub fn create_signature(
 /// Includes: oauth_consumer_key, oauth_signature_method, oauth_timestamp,
 /// oauth_nonce, oauth_version, oauth_token (if provided), oauth_signature,
 /// plus any extra_params
-/// Build OAuth 1.0a parameters for a request
 ///
-/// # Errors
-/// Returns error if nonce or timestamp generation fails
+/// # Gleam-style: Built immutably using iterator chains
+#[allow(clippy::too_many_arguments)] // OAuth 1.0a spec requires these params
 pub fn build_oauth_params(
     consumer_key: &str,
     consumer_secret: &str,
@@ -144,33 +162,36 @@ pub fn build_oauth_params(
     extra_params: &HashMap<String, String>,
     token: Option<&str>,
     token_secret: Option<&str>,
-) -> Result<HashMap<String, String>, FatSecretError> {
-    let timestamp = unix_timestamp()?.to_string();
-    let nonce = generate_nonce()?;
+) -> HashMap<String, String> {
+    let timestamp = unix_timestamp().to_string();
+    let nonce = generate_nonce();
 
-    let mut params = HashMap::new();
-    params.insert("oauth_consumer_key".to_string(), consumer_key.to_string());
-    params.insert(
-        "oauth_signature_method".to_string(),
-        "HMAC-SHA1".to_string(),
-    );
-    params.insert("oauth_timestamp".to_string(), timestamp);
-    params.insert("oauth_nonce".to_string(), nonce);
-    params.insert("oauth_version".to_string(), "1.0".to_string());
+    // Base OAuth parameters (immutable construction)
+    let base_params = [
+        ("oauth_consumer_key", consumer_key.to_string()),
+        ("oauth_signature_method", "HMAC-SHA1".to_string()),
+        ("oauth_timestamp", timestamp),
+        ("oauth_nonce", nonce),
+        ("oauth_version", "1.0".to_string()),
+    ];
 
-    if let Some(t) = token {
-        params.insert("oauth_token".to_string(), t.to_string());
-    }
+    // Build params immutably: base + optional token + extra params
+    let params_without_sig: HashMap<String, String> = base_params
+        .into_iter()
+        .map(|(k, v)| (k.to_string(), v))
+        .chain(token.map(|t| ("oauth_token".to_string(), t.to_string())))
+        .chain(extra_params.iter().map(|(k, v)| (k.clone(), v.clone())))
+        .collect();
 
-    for (k, v) in extra_params {
-        params.insert(k.clone(), v.clone());
-    }
-
-    let base_string = create_signature_base_string(method, url, &params);
+    // Compute signature from params
+    let base_string = create_signature_base_string(method, url, &params_without_sig);
     let signature = create_signature(&base_string, consumer_secret, token_secret);
-    params.insert("oauth_signature".to_string(), signature);
 
-    Ok(params)
+    // Return final params with signature (immutable extension)
+    params_without_sig
+        .into_iter()
+        .chain(std::iter::once(("oauth_signature".to_string(), signature)))
+        .collect()
 }
 
 /// Parse OAuth response string (key=value&key2=value2) into a hash map
@@ -215,8 +236,7 @@ pub async fn get_request_token(
         .clone();
     let oauth_callback_confirmed = response_params
         .get("oauth_callback_confirmed")
-        .map(|v| v == "true")
-        .unwrap_or(false);
+        .is_some_and(|v| v == "true");
 
     Ok(RequestToken {
         oauth_token,

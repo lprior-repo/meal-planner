@@ -6,6 +6,16 @@
 //! - Signature generation (HMAC-SHA256 verification)
 //! - Token storage/retrieval with encryption
 
+// =============================================================================
+// TEST-ONLY LINT OVERRIDES - Tests can panic, use expect/unwrap, etc.
+// =============================================================================
+#![allow(clippy::unwrap_used)]
+#![allow(clippy::expect_used)]
+#![allow(clippy::panic)]
+#![allow(clippy::wildcard_enum_match_arm)]
+#![allow(clippy::inefficient_to_string)]
+#![allow(clippy::format_push_string)]
+
 use meal_planner::fatsecret::core::{
     parse_error_response, AccessToken as CoreAccessToken, ApiErrorCode, FatSecretConfig,
     FatSecretError,
