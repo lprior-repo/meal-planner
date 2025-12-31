@@ -245,3 +245,210 @@ impl MealFilter {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ============================================================================
+    // MealFilter tests
+    // ============================================================================
+
+    #[test]
+    fn test_meal_filter_all_to_api_string() {
+        assert_eq!(MealFilter::All.to_api_string(), "all");
+    }
+
+    #[test]
+    fn test_meal_filter_breakfast_to_api_string() {
+        assert_eq!(MealFilter::Breakfast.to_api_string(), "breakfast");
+    }
+
+    #[test]
+    fn test_meal_filter_lunch_to_api_string() {
+        assert_eq!(MealFilter::Lunch.to_api_string(), "lunch");
+    }
+
+    #[test]
+    fn test_meal_filter_dinner_to_api_string() {
+        assert_eq!(MealFilter::Dinner.to_api_string(), "dinner");
+    }
+
+    #[test]
+    fn test_meal_filter_snack_to_api_string() {
+        assert_eq!(MealFilter::Snack.to_api_string(), "other");
+    }
+
+    #[test]
+    fn test_meal_filter_serde_roundtrip() {
+        let filters = vec![
+            MealFilter::All,
+            MealFilter::Breakfast,
+            MealFilter::Lunch,
+            MealFilter::Dinner,
+            MealFilter::Snack,
+        ];
+        for filter in filters {
+            let json = serde_json::to_string(&filter).unwrap();
+            let parsed: MealFilter = serde_json::from_str(&json).unwrap();
+            assert_eq!(filter, parsed);
+        }
+    }
+
+    // ============================================================================
+    // FavoriteFood tests
+    // ============================================================================
+
+    #[test]
+    fn test_favorite_food_deserialize() {
+        let json = r#"{
+            "food_id": "123",
+            "food_name": "Apple",
+            "food_type": "Generic",
+            "food_description": "Per medium apple - Calories: 95kcal",
+            "food_url": "https://fatsecret.com/food/123",
+            "serving_id": "456",
+            "number_of_units": "1.5"
+        }"#;
+        let food: FavoriteFood = serde_json::from_str(json).unwrap();
+        assert_eq!(food.food_id, "123");
+        assert_eq!(food.food_name, "Apple");
+        assert!((food.number_of_units - 1.5).abs() < 0.01);
+        assert!(food.brand_name.is_none());
+    }
+
+    #[test]
+    fn test_favorite_food_with_brand() {
+        let json = r#"{
+            "food_id": "123",
+            "food_name": "Protein Bar",
+            "food_type": "Brand",
+            "brand_name": "Quest",
+            "food_description": "Per bar - Calories: 200kcal",
+            "food_url": "https://fatsecret.com/food/123",
+            "serving_id": "456",
+            "number_of_units": 2.0
+        }"#;
+        let food: FavoriteFood = serde_json::from_str(json).unwrap();
+        assert_eq!(food.brand_name, Some("Quest".to_string()));
+        assert!((food.number_of_units - 2.0).abs() < 0.01);
+    }
+
+    // ============================================================================
+    // Response wrapper tests
+    // ============================================================================
+
+    #[test]
+    fn test_favorite_foods_response_multiple() {
+        let json = r#"{
+            "food": [
+                {
+                    "food_id": "1",
+                    "food_name": "Apple",
+                    "food_type": "Generic",
+                    "food_description": "95 cal",
+                    "food_url": "https://example.com/1",
+                    "serving_id": "10",
+                    "number_of_units": "1"
+                },
+                {
+                    "food_id": "2",
+                    "food_name": "Banana",
+                    "food_type": "Generic",
+                    "food_description": "105 cal",
+                    "food_url": "https://example.com/2",
+                    "serving_id": "20",
+                    "number_of_units": "1"
+                }
+            ]
+        }"#;
+        let response: FavoriteFoodsResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.foods.len(), 2);
+        assert_eq!(response.foods[0].food_name, "Apple");
+        assert_eq!(response.foods[1].food_name, "Banana");
+    }
+
+    #[test]
+    fn test_favorite_foods_response_single() {
+        let json = r#"{
+            "food": {
+                "food_id": "1",
+                "food_name": "Apple",
+                "food_type": "Generic",
+                "food_description": "95 cal",
+                "food_url": "https://example.com/1",
+                "serving_id": "10",
+                "number_of_units": "1"
+            }
+        }"#;
+        let response: FavoriteFoodsResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.foods.len(), 1);
+    }
+
+    #[test]
+    fn test_favorite_foods_response_empty() {
+        let json = r#"{}"#;
+        let response: FavoriteFoodsResponse = serde_json::from_str(json).unwrap();
+        assert!(response.foods.is_empty());
+    }
+
+    #[test]
+    fn test_most_eaten_response() {
+        let json = r#"{
+            "food": {
+                "food_id": "1",
+                "food_name": "Apple",
+                "food_type": "Generic",
+                "food_description": "95 cal",
+                "food_url": "https://example.com/1",
+                "serving_id": "10",
+                "number_of_units": "1"
+            }
+        }"#;
+        let response: MostEatenResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.foods.len(), 1);
+        assert_eq!(response.foods[0].food_name, "Apple");
+    }
+
+    #[test]
+    fn test_recently_eaten_response() {
+        let json = r#"{
+            "food": {
+                "food_id": "1",
+                "food_name": "Apple",
+                "food_type": "Generic",
+                "food_description": "95 cal",
+                "food_url": "https://example.com/1",
+                "serving_id": "10",
+                "number_of_units": "1"
+            }
+        }"#;
+        let response: RecentlyEatenResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.foods.len(), 1);
+    }
+
+    #[test]
+    fn test_favorite_recipes_response() {
+        let json = r#"{
+            "recipe": [
+                {
+                    "recipe_id": "1",
+                    "recipe_name": "Pasta",
+                    "recipe_description": "Delicious pasta",
+                    "recipe_url": "https://example.com/1"
+                },
+                {
+                    "recipe_id": "2",
+                    "recipe_name": "Salad",
+                    "recipe_description": "Fresh salad",
+                    "recipe_url": "https://example.com/2",
+                    "recipe_image": "https://example.com/2.jpg"
+                }
+            ]
+        }"#;
+        let response: FavoriteRecipesResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.recipes.len(), 2);
+        assert!(response.recipes[0].recipe_image.is_none());
+        assert!(response.recipes[1].recipe_image.is_some());
+    }
+}

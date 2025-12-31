@@ -205,3 +205,191 @@ pub struct ProfileCreateInput {
 
 /// Response from profile.get_auth API
 pub type ProfileAuthResponse = ProfileAuth;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ============================================================================
+    // Profile tests
+    // ============================================================================
+
+    #[test]
+    fn test_profile_deserialize_empty() {
+        let json = r#"{}"#;
+        let profile: Profile = serde_json::from_str(json).unwrap();
+        assert!(profile.goal_weight_kg.is_none());
+        assert!(profile.last_weight_kg.is_none());
+        assert!(profile.last_weight_date_int.is_none());
+        assert!(profile.last_weight_comment.is_none());
+        assert!(profile.height_cm.is_none());
+        assert!(profile.calorie_goal.is_none());
+        assert!(profile.weight_measure.is_none());
+        assert!(profile.height_measure.is_none());
+    }
+
+    #[test]
+    fn test_profile_deserialize_string_values() {
+        let json = r#"{
+            "goal_weight_kg": "75.5",
+            "last_weight_kg": "80.2",
+            "last_weight_date_int": "19723",
+            "height_cm": "175.5",
+            "calorie_goal": "2000"
+        }"#;
+        let profile: Profile = serde_json::from_str(json).unwrap();
+        assert!((profile.goal_weight_kg.unwrap() - 75.5).abs() < 0.01);
+        assert!((profile.last_weight_kg.unwrap() - 80.2).abs() < 0.01);
+        assert_eq!(profile.last_weight_date_int.unwrap(), 19723);
+        assert!((profile.height_cm.unwrap() - 175.5).abs() < 0.01);
+        assert_eq!(profile.calorie_goal.unwrap(), 2000);
+    }
+
+    #[test]
+    fn test_profile_deserialize_numeric_values() {
+        let json = r#"{
+            "goal_weight_kg": 70.0,
+            "last_weight_kg": 72.5,
+            "last_weight_date_int": 19724,
+            "height_cm": 180.0,
+            "calorie_goal": 2500
+        }"#;
+        let profile: Profile = serde_json::from_str(json).unwrap();
+        assert!((profile.goal_weight_kg.unwrap() - 70.0).abs() < 0.01);
+        assert_eq!(profile.last_weight_date_int.unwrap(), 19724);
+    }
+
+    #[test]
+    fn test_profile_deserialize_with_comment() {
+        let json = r#"{
+            "last_weight_kg": "75.0",
+            "last_weight_comment": "After morning workout"
+        }"#;
+        let profile: Profile = serde_json::from_str(json).unwrap();
+        assert_eq!(
+            profile.last_weight_comment,
+            Some("After morning workout".to_string())
+        );
+    }
+
+    #[test]
+    fn test_profile_deserialize_with_measures() {
+        let json = r#"{
+            "weight_measure": "Kg",
+            "height_measure": "Cm"
+        }"#;
+        let profile: Profile = serde_json::from_str(json).unwrap();
+        assert_eq!(profile.weight_measure, Some("Kg".to_string()));
+        assert_eq!(profile.height_measure, Some("Cm".to_string()));
+    }
+
+    #[test]
+    fn test_profile_clone() {
+        let profile = Profile {
+            goal_weight_kg: Some(70.0),
+            last_weight_kg: Some(75.0),
+            last_weight_date_int: Some(19723),
+            last_weight_comment: Some("Test".to_string()),
+            height_cm: Some(175.0),
+            calorie_goal: Some(2000),
+            weight_measure: Some("Kg".to_string()),
+            height_measure: Some("Cm".to_string()),
+        };
+        let cloned = profile.clone();
+        assert_eq!(profile.goal_weight_kg, cloned.goal_weight_kg);
+        assert_eq!(profile.last_weight_comment, cloned.last_weight_comment);
+    }
+
+    // ============================================================================
+    // ProfileResponse tests
+    // ============================================================================
+
+    #[test]
+    fn test_profile_response() {
+        let json = r#"{
+            "profile": {
+                "goal_weight_kg": "70.0",
+                "calorie_goal": "2000"
+            }
+        }"#;
+        let response: ProfileResponse = serde_json::from_str(json).unwrap();
+        assert!((response.profile.goal_weight_kg.unwrap() - 70.0).abs() < 0.01);
+    }
+
+    // ============================================================================
+    // ProfileAuth tests
+    // ============================================================================
+
+    #[test]
+    fn test_profile_auth_deserialize() {
+        let json = r#"{
+            "auth_token": "token123",
+            "auth_secret": "secret456"
+        }"#;
+        let auth: ProfileAuth = serde_json::from_str(json).unwrap();
+        assert_eq!(auth.auth_token, "token123");
+        assert_eq!(auth.auth_secret, "secret456");
+    }
+
+    #[test]
+    fn test_profile_auth_serialize() {
+        let auth = ProfileAuth {
+            auth_token: "my-token".to_string(),
+            auth_secret: "my-secret".to_string(),
+        };
+        let json = serde_json::to_string(&auth).unwrap();
+        assert!(json.contains("my-token"));
+        assert!(json.contains("my-secret"));
+    }
+
+    #[test]
+    fn test_profile_auth_clone() {
+        let auth = ProfileAuth {
+            auth_token: "token".to_string(),
+            auth_secret: "secret".to_string(),
+        };
+        let cloned = auth.clone();
+        assert_eq!(auth.auth_token, cloned.auth_token);
+        assert_eq!(auth.auth_secret, cloned.auth_secret);
+    }
+
+    // ============================================================================
+    // ProfileAuthResponseWrapper tests
+    // ============================================================================
+
+    #[test]
+    fn test_profile_auth_response_wrapper() {
+        let json = r#"{
+            "profile": {
+                "auth_token": "oauth-token",
+                "auth_secret": "oauth-secret"
+            }
+        }"#;
+        let wrapper: ProfileAuthResponseWrapper = serde_json::from_str(json).unwrap();
+        assert_eq!(wrapper.profile.auth_token, "oauth-token");
+        assert_eq!(wrapper.profile.auth_secret, "oauth-secret");
+    }
+
+    // ============================================================================
+    // ProfileCreateInput tests
+    // ============================================================================
+
+    #[test]
+    fn test_profile_create_input() {
+        let input = ProfileCreateInput {
+            user_id: "user-123".to_string(),
+        };
+        let json = serde_json::to_string(&input).unwrap();
+        assert!(json.contains("user-123"));
+    }
+
+    #[test]
+    fn test_profile_create_input_roundtrip() {
+        let input = ProfileCreateInput {
+            user_id: "unique-id".to_string(),
+        };
+        let json = serde_json::to_string(&input).unwrap();
+        let parsed: ProfileCreateInput = serde_json::from_str(&json).unwrap();
+        assert_eq!(input.user_id, parsed.user_id);
+    }
+}

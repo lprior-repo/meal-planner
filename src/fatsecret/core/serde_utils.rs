@@ -191,3 +191,314 @@ impl SuccessResponse {
         self.success.as_ref().is_some_and(|s| s.value == "1")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde::Deserialize;
+
+    // ============================================================================
+    // deserialize_single_or_vec tests
+    // ============================================================================
+
+    #[derive(Debug, Deserialize, PartialEq)]
+    struct TestVec {
+        #[serde(default, deserialize_with = "deserialize_single_or_vec")]
+        items: Vec<String>,
+    }
+
+    #[test]
+    fn test_single_or_vec_with_single() {
+        let json = r#"{"items": "single"}"#;
+        let result: TestVec = serde_json::from_str(json).unwrap();
+        assert_eq!(result.items, vec!["single".to_string()]);
+    }
+
+    #[test]
+    fn test_single_or_vec_with_vec() {
+        let json = r#"{"items": ["a", "b", "c"]}"#;
+        let result: TestVec = serde_json::from_str(json).unwrap();
+        assert_eq!(result.items, vec!["a".to_string(), "b".to_string(), "c".to_string()]);
+    }
+
+    #[test]
+    fn test_single_or_vec_with_null() {
+        let json = r#"{"items": null}"#;
+        let result: TestVec = serde_json::from_str(json).unwrap();
+        assert!(result.items.is_empty());
+    }
+
+    #[test]
+    fn test_single_or_vec_with_empty_array() {
+        let json = r#"{"items": []}"#;
+        let result: TestVec = serde_json::from_str(json).unwrap();
+        assert!(result.items.is_empty());
+    }
+
+    // ============================================================================
+    // deserialize_flexible_float tests
+    // ============================================================================
+
+    #[derive(Debug, Deserialize)]
+    struct TestFloat {
+        #[serde(deserialize_with = "deserialize_flexible_float")]
+        value: f64,
+    }
+
+    #[test]
+    fn test_flexible_float_from_number() {
+        let json = r#"{"value": 12.5}"#;
+        let result: TestFloat = serde_json::from_str(json).unwrap();
+        assert!((result.value - 12.5).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_flexible_float_from_string() {
+        let json = r#"{"value": "95.5"}"#;
+        let result: TestFloat = serde_json::from_str(json).unwrap();
+        assert!((result.value - 95.5).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_flexible_float_from_empty_string() {
+        let json = r#"{"value": ""}"#;
+        let result: TestFloat = serde_json::from_str(json).unwrap();
+        assert!((result.value - 0.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_flexible_float_from_integer_number() {
+        let json = r#"{"value": 42}"#;
+        let result: TestFloat = serde_json::from_str(json).unwrap();
+        assert!((result.value - 42.0).abs() < 0.001);
+    }
+
+    // ============================================================================
+    // deserialize_optional_flexible_float tests
+    // ============================================================================
+
+    #[derive(Debug, Deserialize)]
+    struct TestOptionalFloat {
+        #[serde(default, deserialize_with = "deserialize_optional_flexible_float")]
+        value: Option<f64>,
+    }
+
+    #[test]
+    fn test_optional_float_from_number() {
+        let json = r#"{"value": 12.5}"#;
+        let result: TestOptionalFloat = serde_json::from_str(json).unwrap();
+        assert!((result.value.unwrap() - 12.5).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_optional_float_from_string() {
+        let json = r#"{"value": "95.5"}"#;
+        let result: TestOptionalFloat = serde_json::from_str(json).unwrap();
+        assert!((result.value.unwrap() - 95.5).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_optional_float_from_empty_string() {
+        let json = r#"{"value": ""}"#;
+        let result: TestOptionalFloat = serde_json::from_str(json).unwrap();
+        assert!(result.value.is_none());
+    }
+
+    #[test]
+    fn test_optional_float_from_null() {
+        let json = r#"{"value": null}"#;
+        let result: TestOptionalFloat = serde_json::from_str(json).unwrap();
+        assert!(result.value.is_none());
+    }
+
+    #[test]
+    fn test_optional_float_from_none_string() {
+        let json = r#"{"value": "None"}"#;
+        let result: TestOptionalFloat = serde_json::from_str(json).unwrap();
+        assert!(result.value.is_none());
+    }
+
+    // ============================================================================
+    // deserialize_flexible_int tests
+    // ============================================================================
+
+    #[derive(Debug, Deserialize)]
+    struct TestInt {
+        #[serde(deserialize_with = "deserialize_flexible_int")]
+        value: i32,
+    }
+
+    #[test]
+    fn test_flexible_int_from_number() {
+        let json = r#"{"value": 42}"#;
+        let result: TestInt = serde_json::from_str(json).unwrap();
+        assert_eq!(result.value, 42);
+    }
+
+    #[test]
+    fn test_flexible_int_from_string() {
+        let json = r#"{"value": "123"}"#;
+        let result: TestInt = serde_json::from_str(json).unwrap();
+        assert_eq!(result.value, 123);
+    }
+
+    #[test]
+    fn test_flexible_int_from_empty_string() {
+        let json = r#"{"value": ""}"#;
+        let result: TestInt = serde_json::from_str(json).unwrap();
+        assert_eq!(result.value, 0);
+    }
+
+    #[test]
+    fn test_flexible_int_negative() {
+        let json = r#"{"value": "-99"}"#;
+        let result: TestInt = serde_json::from_str(json).unwrap();
+        assert_eq!(result.value, -99);
+    }
+
+    // ============================================================================
+    // deserialize_optional_flexible_int tests
+    // ============================================================================
+
+    #[derive(Debug, Deserialize)]
+    struct TestOptionalInt {
+        #[serde(default, deserialize_with = "deserialize_optional_flexible_int")]
+        value: Option<i32>,
+    }
+
+    #[test]
+    fn test_optional_int_from_number() {
+        let json = r#"{"value": 42}"#;
+        let result: TestOptionalInt = serde_json::from_str(json).unwrap();
+        assert_eq!(result.value, Some(42));
+    }
+
+    #[test]
+    fn test_optional_int_from_string() {
+        let json = r#"{"value": "123"}"#;
+        let result: TestOptionalInt = serde_json::from_str(json).unwrap();
+        assert_eq!(result.value, Some(123));
+    }
+
+    #[test]
+    fn test_optional_int_from_null() {
+        let json = r#"{"value": null}"#;
+        let result: TestOptionalInt = serde_json::from_str(json).unwrap();
+        assert!(result.value.is_none());
+    }
+
+    #[test]
+    fn test_optional_int_from_empty_string() {
+        let json = r#"{"value": ""}"#;
+        let result: TestOptionalInt = serde_json::from_str(json).unwrap();
+        assert!(result.value.is_none());
+    }
+
+    #[test]
+    fn test_optional_int_from_null_string() {
+        let json = r#"{"value": "null"}"#;
+        let result: TestOptionalInt = serde_json::from_str(json).unwrap();
+        assert!(result.value.is_none());
+    }
+
+    // ============================================================================
+    // deserialize_flexible_i64 tests
+    // ============================================================================
+
+    #[derive(Debug, Deserialize)]
+    struct TestI64 {
+        #[serde(deserialize_with = "deserialize_flexible_i64")]
+        value: i64,
+    }
+
+    #[test]
+    fn test_flexible_i64_from_number() {
+        let json = r#"{"value": 9999999999}"#;
+        let result: TestI64 = serde_json::from_str(json).unwrap();
+        assert_eq!(result.value, 9999999999);
+    }
+
+    #[test]
+    fn test_flexible_i64_from_string() {
+        let json = r#"{"value": "9999999999"}"#;
+        let result: TestI64 = serde_json::from_str(json).unwrap();
+        assert_eq!(result.value, 9999999999);
+    }
+
+    #[test]
+    fn test_flexible_i64_from_empty_string() {
+        let json = r#"{"value": ""}"#;
+        let result: TestI64 = serde_json::from_str(json).unwrap();
+        assert_eq!(result.value, 0);
+    }
+
+    // ============================================================================
+    // deserialize_optional_flexible_i64 tests
+    // ============================================================================
+
+    #[derive(Debug, Deserialize)]
+    struct TestOptionalI64 {
+        #[serde(default, deserialize_with = "deserialize_optional_flexible_i64")]
+        value: Option<i64>,
+    }
+
+    #[test]
+    fn test_optional_i64_from_number() {
+        let json = r#"{"value": 9999999999}"#;
+        let result: TestOptionalI64 = serde_json::from_str(json).unwrap();
+        assert_eq!(result.value, Some(9999999999));
+    }
+
+    #[test]
+    fn test_optional_i64_from_string() {
+        let json = r#"{"value": "9999999999"}"#;
+        let result: TestOptionalI64 = serde_json::from_str(json).unwrap();
+        assert_eq!(result.value, Some(9999999999));
+    }
+
+    #[test]
+    fn test_optional_i64_from_null() {
+        let json = r#"{"value": null}"#;
+        let result: TestOptionalI64 = serde_json::from_str(json).unwrap();
+        assert!(result.value.is_none());
+    }
+
+    #[test]
+    fn test_optional_i64_from_empty_string() {
+        let json = r#"{"value": ""}"#;
+        let result: TestOptionalI64 = serde_json::from_str(json).unwrap();
+        assert!(result.value.is_none());
+    }
+
+    // ============================================================================
+    // SuccessResponse tests
+    // ============================================================================
+
+    #[test]
+    fn test_success_response_success() {
+        let json = r#"{"success": {"value": "1"}}"#;
+        let result: SuccessResponse = serde_json::from_str(json).unwrap();
+        assert!(result.is_success());
+    }
+
+    #[test]
+    fn test_success_response_failure() {
+        let json = r#"{"success": {"value": "0"}}"#;
+        let result: SuccessResponse = serde_json::from_str(json).unwrap();
+        assert!(!result.is_success());
+    }
+
+    #[test]
+    fn test_success_response_missing() {
+        let json = r#"{}"#;
+        let result: SuccessResponse = serde_json::from_str(json).unwrap();
+        assert!(!result.is_success());
+    }
+
+    #[test]
+    fn test_success_response_null() {
+        let json = r#"{"success": null}"#;
+        let result: SuccessResponse = serde_json::from_str(json).unwrap();
+        assert!(!result.is_success());
+    }
+}

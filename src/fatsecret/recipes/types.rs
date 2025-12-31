@@ -375,3 +375,436 @@ pub struct RecipeTypesResponseWrapper {
     /// The response containing available recipe types
     pub recipe_types: RecipeTypesResponse,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ============================================================================
+    // RecipeId tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_id_new() {
+        let id = RecipeId::new("12345");
+        assert_eq!(id.as_str(), "12345");
+    }
+
+    #[test]
+    fn test_recipe_id_from_string() {
+        let id: RecipeId = String::from("67890").into();
+        assert_eq!(id.as_str(), "67890");
+    }
+
+    #[test]
+    fn test_recipe_id_from_str() {
+        let id: RecipeId = "abc123".into();
+        assert_eq!(id.as_str(), "abc123");
+    }
+
+    #[test]
+    fn test_recipe_id_display() {
+        let id = RecipeId::new("recipe-id");
+        assert_eq!(format!("{}", id), "recipe-id");
+    }
+
+    #[test]
+    fn test_recipe_id_equality() {
+        let id1 = RecipeId::new("same");
+        let id2 = RecipeId::new("same");
+        let id3 = RecipeId::new("different");
+        assert_eq!(id1, id2);
+        assert_ne!(id1, id3);
+    }
+
+    #[test]
+    fn test_recipe_id_hash() {
+        use std::collections::HashSet;
+        let mut set = HashSet::new();
+        set.insert(RecipeId::new("id1"));
+        set.insert(RecipeId::new("id2"));
+        set.insert(RecipeId::new("id1")); // duplicate
+        assert_eq!(set.len(), 2);
+    }
+
+    #[test]
+    fn test_recipe_id_serde() {
+        let id = RecipeId::new("serde-test");
+        let json = serde_json::to_string(&id).unwrap();
+        assert_eq!(json, "\"serde-test\"");
+        let parsed: RecipeId = serde_json::from_str(&json).unwrap();
+        assert_eq!(id, parsed);
+    }
+
+    // ============================================================================
+    // RecipeIngredient tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_ingredient_deserialize() {
+        let json = r#"{
+            "food_id": "123",
+            "food_name": "Flour",
+            "number_of_units": "2.5",
+            "measurement_description": "cups",
+            "ingredient_description": "2.5 cups all-purpose flour"
+        }"#;
+        let ingredient: RecipeIngredient = serde_json::from_str(json).unwrap();
+        assert_eq!(ingredient.food_id, "123");
+        assert_eq!(ingredient.food_name, "Flour");
+        assert!((ingredient.number_of_units - 2.5).abs() < 0.01);
+        assert_eq!(ingredient.measurement_description, "cups");
+        assert!(ingredient.serving_id.is_none());
+        assert!(ingredient.ingredient_url.is_none());
+    }
+
+    #[test]
+    fn test_recipe_ingredient_with_optional_fields() {
+        let json = r#"{
+            "food_id": "456",
+            "food_name": "Sugar",
+            "serving_id": "789",
+            "number_of_units": 1.0,
+            "measurement_description": "tbsp",
+            "ingredient_description": "1 tablespoon sugar",
+            "ingredient_url": "https://fatsecret.com/ingredient/456"
+        }"#;
+        let ingredient: RecipeIngredient = serde_json::from_str(json).unwrap();
+        assert_eq!(ingredient.serving_id, Some("789".to_string()));
+        assert_eq!(
+            ingredient.ingredient_url,
+            Some("https://fatsecret.com/ingredient/456".to_string())
+        );
+    }
+
+    // ============================================================================
+    // RecipeDirection tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_direction_deserialize() {
+        let json = r#"{
+            "direction_number": "1",
+            "direction_description": "Preheat oven to 350°F"
+        }"#;
+        let direction: RecipeDirection = serde_json::from_str(json).unwrap();
+        assert_eq!(direction.direction_number, 1);
+        assert_eq!(direction.direction_description, "Preheat oven to 350°F");
+    }
+
+    #[test]
+    fn test_recipe_direction_numeric_number() {
+        let json = r#"{
+            "direction_number": 2,
+            "direction_description": "Mix ingredients"
+        }"#;
+        let direction: RecipeDirection = serde_json::from_str(json).unwrap();
+        assert_eq!(direction.direction_number, 2);
+    }
+
+    // ============================================================================
+    // Wrapper tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_types_wrapper_single() {
+        let json = r#"{
+            "recipe_type": "Dessert"
+        }"#;
+        let wrapper: RecipeTypesWrapper = serde_json::from_str(json).unwrap();
+        assert_eq!(wrapper.recipe_types.len(), 1);
+        assert_eq!(wrapper.recipe_types[0], "Dessert");
+    }
+
+    #[test]
+    fn test_recipe_types_wrapper_multiple() {
+        let json = r#"{
+            "recipe_type": ["Dessert", "Vegetarian", "Quick & Easy"]
+        }"#;
+        let wrapper: RecipeTypesWrapper = serde_json::from_str(json).unwrap();
+        assert_eq!(wrapper.recipe_types.len(), 3);
+    }
+
+    #[test]
+    fn test_recipe_types_wrapper_empty() {
+        let json = r#"{}"#;
+        let wrapper: RecipeTypesWrapper = serde_json::from_str(json).unwrap();
+        assert!(wrapper.recipe_types.is_empty());
+    }
+
+    #[test]
+    fn test_recipe_ingredients_wrapper_single() {
+        let json = r#"{
+            "ingredient": {
+                "food_id": "1",
+                "food_name": "Egg",
+                "number_of_units": "1",
+                "measurement_description": "large",
+                "ingredient_description": "1 large egg"
+            }
+        }"#;
+        let wrapper: RecipeIngredientsWrapper = serde_json::from_str(json).unwrap();
+        assert_eq!(wrapper.ingredients.len(), 1);
+    }
+
+    #[test]
+    fn test_recipe_directions_wrapper_multiple() {
+        let json = r#"{
+            "direction": [
+                {"direction_number": "1", "direction_description": "Step 1"},
+                {"direction_number": "2", "direction_description": "Step 2"}
+            ]
+        }"#;
+        let wrapper: RecipeDirectionsWrapper = serde_json::from_str(json).unwrap();
+        assert_eq!(wrapper.directions.len(), 2);
+    }
+
+    // ============================================================================
+    // RecipeSearchResult tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_search_result_deserialize() {
+        let json = r#"{
+            "recipe_id": "12345",
+            "recipe_name": "Chocolate Cake",
+            "recipe_description": "A delicious chocolate cake",
+            "recipe_url": "https://fatsecret.com/recipe/12345"
+        }"#;
+        let result: RecipeSearchResult = serde_json::from_str(json).unwrap();
+        assert_eq!(result.recipe_id.as_str(), "12345");
+        assert_eq!(result.recipe_name, "Chocolate Cake");
+        assert!(result.recipe_image.is_none());
+    }
+
+    #[test]
+    fn test_recipe_search_result_with_image() {
+        let json = r#"{
+            "recipe_id": "12345",
+            "recipe_name": "Cake",
+            "recipe_description": "A cake",
+            "recipe_url": "https://fatsecret.com/recipe/12345",
+            "recipe_image": "https://fatsecret.com/images/12345.jpg"
+        }"#;
+        let result: RecipeSearchResult = serde_json::from_str(json).unwrap();
+        assert!(result.recipe_image.is_some());
+    }
+
+    // ============================================================================
+    // RecipeSearchResponse tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_search_response() {
+        let json = r#"{
+            "recipe": [
+                {
+                    "recipe_id": "1",
+                    "recipe_name": "Recipe 1",
+                    "recipe_description": "Desc 1",
+                    "recipe_url": "https://example.com/1"
+                },
+                {
+                    "recipe_id": "2",
+                    "recipe_name": "Recipe 2",
+                    "recipe_description": "Desc 2",
+                    "recipe_url": "https://example.com/2"
+                }
+            ],
+            "max_results": "20",
+            "total_results": "100",
+            "page_number": "0"
+        }"#;
+        let response: RecipeSearchResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.recipes.len(), 2);
+        assert_eq!(response.max_results, 20);
+        assert_eq!(response.total_results, 100);
+        assert_eq!(response.page_number, 0);
+    }
+
+    #[test]
+    fn test_recipe_search_response_numeric() {
+        let json = r#"{
+            "recipe": [],
+            "max_results": 10,
+            "total_results": 0,
+            "page_number": 0
+        }"#;
+        let response: RecipeSearchResponse = serde_json::from_str(json).unwrap();
+        assert!(response.recipes.is_empty());
+        assert_eq!(response.max_results, 10);
+    }
+
+    // ============================================================================
+    // RecipeTypesResponse tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_types_response() {
+        let json = r#"{
+            "recipe_type": ["Appetizer", "Main Dish", "Dessert", "Side Dish"]
+        }"#;
+        let response: RecipeTypesResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.recipe_types.len(), 4);
+    }
+
+    // ============================================================================
+    // RecipeSuggestion tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_suggestion() {
+        let json = r#"{
+            "recipe_id": "999",
+            "recipe_name": "Chicken Parmesan"
+        }"#;
+        let suggestion: RecipeSuggestion = serde_json::from_str(json).unwrap();
+        assert_eq!(suggestion.recipe_id.as_str(), "999");
+        assert_eq!(suggestion.recipe_name, "Chicken Parmesan");
+    }
+
+    // ============================================================================
+    // RecipeAutocompleteResponse tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_autocomplete_response() {
+        let json = r#"{
+            "suggestion": [
+                {"recipe_id": "1", "recipe_name": "Chicken Alfredo"},
+                {"recipe_id": "2", "recipe_name": "Chicken Curry"}
+            ]
+        }"#;
+        let response: RecipeAutocompleteResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.suggestions.len(), 2);
+    }
+
+    // ============================================================================
+    // Response wrapper tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_search_response_wrapper() {
+        let json = r#"{
+            "recipes": {
+                "recipe": [],
+                "max_results": "10",
+                "total_results": "0",
+                "page_number": "0"
+            }
+        }"#;
+        let wrapper: RecipeSearchResponseWrapper = serde_json::from_str(json).unwrap();
+        assert!(wrapper.recipes.recipes.is_empty());
+    }
+
+    #[test]
+    fn test_recipe_autocomplete_response_wrapper() {
+        let json = r#"{
+            "suggestions": {
+                "suggestion": []
+            }
+        }"#;
+        let wrapper: RecipeAutocompleteResponseWrapper = serde_json::from_str(json).unwrap();
+        assert!(wrapper.suggestions.suggestions.is_empty());
+    }
+
+    #[test]
+    fn test_recipe_types_response_wrapper() {
+        let json = r#"{
+            "recipe_types": {
+                "recipe_type": ["Breakfast", "Lunch"]
+            }
+        }"#;
+        let wrapper: RecipeTypesResponseWrapper = serde_json::from_str(json).unwrap();
+        assert_eq!(wrapper.recipe_types.recipe_types.len(), 2);
+    }
+
+    // ============================================================================
+    // Recipe (full) tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_minimal() {
+        let json = r#"{
+            "recipe_id": "12345",
+            "recipe_name": "Simple Recipe",
+            "recipe_url": "https://fatsecret.com/recipe/12345",
+            "recipe_description": "A simple recipe",
+            "number_of_servings": "4"
+        }"#;
+        let recipe: Recipe = serde_json::from_str(json).unwrap();
+        assert_eq!(recipe.recipe_id.as_str(), "12345");
+        assert_eq!(recipe.recipe_name, "Simple Recipe");
+        assert!((recipe.number_of_servings - 4.0).abs() < 0.01);
+        assert!(recipe.recipe_image.is_none());
+        assert!(recipe.preparation_time_min.is_none());
+        assert!(recipe.cooking_time_min.is_none());
+        assert!(recipe.rating.is_none());
+        assert!(recipe.calories.is_none());
+    }
+
+    #[test]
+    fn test_recipe_with_times() {
+        let json = r#"{
+            "recipe_id": "12345",
+            "recipe_name": "Recipe with times",
+            "recipe_url": "https://example.com",
+            "recipe_description": "Desc",
+            "number_of_servings": "2",
+            "preparation_time_min": "15",
+            "cooking_time_min": "30"
+        }"#;
+        let recipe: Recipe = serde_json::from_str(json).unwrap();
+        assert_eq!(recipe.preparation_time_min, Some(15));
+        assert_eq!(recipe.cooking_time_min, Some(30));
+    }
+
+    #[test]
+    fn test_recipe_with_nutrition() {
+        let json = r#"{
+            "recipe_id": "12345",
+            "recipe_name": "Nutritious Recipe",
+            "recipe_url": "https://example.com",
+            "recipe_description": "Desc",
+            "number_of_servings": "2",
+            "calories": "350",
+            "carbohydrate": "45.5",
+            "protein": "25",
+            "fat": "12.3"
+        }"#;
+        let recipe: Recipe = serde_json::from_str(json).unwrap();
+        assert!((recipe.calories.unwrap() - 350.0).abs() < 0.01);
+        assert!((recipe.carbohydrate.unwrap() - 45.5).abs() < 0.01);
+        assert!((recipe.protein.unwrap() - 25.0).abs() < 0.01);
+        assert!((recipe.fat.unwrap() - 12.3).abs() < 0.01);
+    }
+
+    #[test]
+    fn test_recipe_with_rating() {
+        let json = r#"{
+            "recipe_id": "12345",
+            "recipe_name": "Rated Recipe",
+            "recipe_url": "https://example.com",
+            "recipe_description": "Desc",
+            "number_of_servings": 4,
+            "rating": 4.5
+        }"#;
+        let recipe: Recipe = serde_json::from_str(json).unwrap();
+        assert!((recipe.rating.unwrap() - 4.5).abs() < 0.01);
+    }
+
+    #[test]
+    fn test_recipe_response_wrapper() {
+        let json = r#"{
+            "recipe": {
+                "recipe_id": "12345",
+                "recipe_name": "Wrapped Recipe",
+                "recipe_url": "https://example.com",
+                "recipe_description": "Desc",
+                "number_of_servings": "1"
+            }
+        }"#;
+        let wrapper: RecipeResponseWrapper = serde_json::from_str(json).unwrap();
+        assert_eq!(wrapper.recipe.recipe_name, "Wrapped Recipe");
+    }
+}

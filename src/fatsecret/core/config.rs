@@ -166,4 +166,61 @@ mod tests {
         let config = FatSecretConfig::new("key", "secret");
         assert_eq!(config.get_base_url(), "https://platform.fatsecret.com");
     }
+
+    #[test]
+    fn test_custom_api_host() {
+        let mut config = FatSecretConfig::new("key", "secret");
+        config.api_host = Some("custom.fatsecret.com".to_string());
+        assert_eq!(config.api_host(), "custom.fatsecret.com");
+        assert_eq!(config.get_api_host(), "custom.fatsecret.com");
+        assert_eq!(
+            config.api_url(),
+            "https://custom.fatsecret.com/rest/server.api"
+        );
+    }
+
+    #[test]
+    fn test_custom_auth_host() {
+        let mut config = FatSecretConfig::new("key", "secret");
+        config.auth_host = Some("auth.custom.com".to_string());
+        assert_eq!(config.auth_host(), "auth.custom.com");
+        assert_eq!(config.get_auth_host(), "auth.custom.com");
+        assert_eq!(
+            config.authorization_url("token"),
+            "https://auth.custom.com/authorize?oauth_token=token"
+        );
+    }
+
+    #[test]
+    fn test_config_clone() {
+        let config = FatSecretConfig::new("key", "secret");
+        let cloned = config.clone();
+        assert_eq!(config.consumer_key, cloned.consumer_key);
+        assert_eq!(config.consumer_secret, cloned.consumer_secret);
+    }
+
+    #[test]
+    fn test_config_debug() {
+        let config = FatSecretConfig::new("key", "secret");
+        let debug_str = format!("{:?}", config);
+        assert!(debug_str.contains("FatSecretConfig"));
+        assert!(debug_str.contains("key"));
+    }
+
+    #[test]
+    fn test_alias_methods() {
+        let config = FatSecretConfig::new("key", "secret");
+        // Verify alias methods return same values
+        assert_eq!(config.api_host(), config.get_api_host());
+        assert_eq!(config.auth_host(), config.get_auth_host());
+    }
+
+    #[test]
+    fn test_base_url_override_takes_precedence() {
+        let mut config = FatSecretConfig::new("key", "secret");
+        config.api_host = Some("ignored.host.com".to_string());
+        config.base_url_override = Some("http://mock:9999".to_string());
+        // base_url_override takes precedence over api_host
+        assert_eq!(config.get_base_url(), "http://mock:9999");
+    }
 }

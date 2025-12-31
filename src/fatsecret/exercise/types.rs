@@ -293,3 +293,347 @@ pub fn int_to_date(date_int: i32) -> Result<String, String> {
         .ok_or_else(|| format!("Date calculation overflow: {date_int}"))?;
     Ok(date.format("%Y-%m-%d").to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ============================================================================
+    // ExerciseId tests
+    // ============================================================================
+
+    #[test]
+    fn test_exercise_id_new() {
+        let id = ExerciseId::new("12345");
+        assert_eq!(id.as_str(), "12345");
+    }
+
+    #[test]
+    fn test_exercise_id_equality() {
+        let id1 = ExerciseId::new("same");
+        let id2 = ExerciseId::new("same");
+        let id3 = ExerciseId::new("different");
+        assert_eq!(id1, id2);
+        assert_ne!(id1, id3);
+    }
+
+    #[test]
+    fn test_exercise_id_hash() {
+        use std::collections::HashSet;
+        let mut set = HashSet::new();
+        set.insert(ExerciseId::new("id1"));
+        set.insert(ExerciseId::new("id2"));
+        set.insert(ExerciseId::new("id1")); // duplicate
+        assert_eq!(set.len(), 2);
+    }
+
+    #[test]
+    fn test_exercise_id_serde() {
+        let id = ExerciseId::new("serde-test");
+        let json = serde_json::to_string(&id).unwrap();
+        assert_eq!(json, "\"serde-test\"");
+        let parsed: ExerciseId = serde_json::from_str(&json).unwrap();
+        assert_eq!(id, parsed);
+    }
+
+    // ============================================================================
+    // ExerciseEntryId tests
+    // ============================================================================
+
+    #[test]
+    fn test_exercise_entry_id_new() {
+        let id = ExerciseEntryId::new("entry123");
+        assert_eq!(id.as_str(), "entry123");
+    }
+
+    #[test]
+    fn test_exercise_entry_id_equality() {
+        let id1 = ExerciseEntryId::new("same");
+        let id2 = ExerciseEntryId::new("same");
+        assert_eq!(id1, id2);
+    }
+
+    // ============================================================================
+    // Exercise tests
+    // ============================================================================
+
+    #[test]
+    fn test_exercise_deserialize() {
+        let json = r#"{
+            "exercise_id": "123",
+            "exercise_name": "Running",
+            "calories_per_hour": "600"
+        }"#;
+        let exercise: Exercise = serde_json::from_str(json).unwrap();
+        assert_eq!(exercise.exercise_id.as_str(), "123");
+        assert_eq!(exercise.exercise_name, "Running");
+        assert!((exercise.calories_per_hour - 600.0).abs() < 0.01);
+    }
+
+    #[test]
+    fn test_exercise_deserialize_numeric() {
+        let json = r#"{
+            "exercise_id": "456",
+            "exercise_name": "Swimming",
+            "calories_per_hour": 500.5
+        }"#;
+        let exercise: Exercise = serde_json::from_str(json).unwrap();
+        assert!((exercise.calories_per_hour - 500.5).abs() < 0.01);
+    }
+
+    // ============================================================================
+    // ExerciseEntry tests
+    // ============================================================================
+
+    #[test]
+    fn test_exercise_entry_deserialize() {
+        let json = r#"{
+            "exercise_entry_id": "entry1",
+            "exercise_id": "123",
+            "exercise_name": "Running",
+            "duration_min": "30",
+            "calories": "300",
+            "date_int": "19723"
+        }"#;
+        let entry: ExerciseEntry = serde_json::from_str(json).unwrap();
+        assert_eq!(entry.exercise_entry_id.as_str(), "entry1");
+        assert_eq!(entry.exercise_id.as_str(), "123");
+        assert_eq!(entry.duration_min, 30);
+        assert!((entry.calories - 300.0).abs() < 0.01);
+        assert_eq!(entry.date_int, 19723);
+    }
+
+    #[test]
+    fn test_exercise_entry_deserialize_numeric() {
+        let json = r#"{
+            "exercise_entry_id": "entry2",
+            "exercise_id": "456",
+            "exercise_name": "Cycling",
+            "duration_min": 45,
+            "calories": 450.5,
+            "date_int": 19724
+        }"#;
+        let entry: ExerciseEntry = serde_json::from_str(json).unwrap();
+        assert_eq!(entry.duration_min, 45);
+        assert!((entry.calories - 450.5).abs() < 0.01);
+    }
+
+    // ============================================================================
+    // ExerciseEntryInput tests
+    // ============================================================================
+
+    #[test]
+    fn test_exercise_entry_input() {
+        let input = ExerciseEntryInput {
+            exercise_id: ExerciseId::new("123"),
+            duration_min: 30,
+            date_int: 19723,
+        };
+        let json = serde_json::to_string(&input).unwrap();
+        assert!(json.contains("123"));
+        assert!(json.contains("30"));
+    }
+
+    // ============================================================================
+    // ExerciseEntryUpdate tests
+    // ============================================================================
+
+    #[test]
+    fn test_exercise_entry_update_default() {
+        let update = ExerciseEntryUpdate::default();
+        assert!(update.exercise_id.is_none());
+        assert!(update.duration_min.is_none());
+    }
+
+    #[test]
+    fn test_exercise_entry_update_partial() {
+        let update = ExerciseEntryUpdate {
+            exercise_id: None,
+            duration_min: Some(45),
+        };
+        let json = serde_json::to_string(&update).unwrap();
+        assert!(json.contains("45"));
+        assert!(!json.contains("exercise_id"));
+    }
+
+    // ============================================================================
+    // ExerciseDaySummary tests
+    // ============================================================================
+
+    #[test]
+    fn test_exercise_day_summary_deserialize() {
+        let json = r#"{
+            "date_int": "19723",
+            "exercise_calories": "500"
+        }"#;
+        let summary: ExerciseDaySummary = serde_json::from_str(json).unwrap();
+        assert_eq!(summary.date_int, 19723);
+        assert!((summary.exercise_calories - 500.0).abs() < 0.01);
+    }
+
+    // ============================================================================
+    // ExerciseMonthSummary tests
+    // ============================================================================
+
+    #[test]
+    fn test_exercise_month_summary_single_day() {
+        let json = r#"{
+            "day": {
+                "date_int": "19723",
+                "exercise_calories": "300"
+            },
+            "month": "1",
+            "year": "2024"
+        }"#;
+        let summary: ExerciseMonthSummary = serde_json::from_str(json).unwrap();
+        assert_eq!(summary.days.len(), 1);
+        assert_eq!(summary.month, 1);
+        assert_eq!(summary.year, 2024);
+    }
+
+    #[test]
+    fn test_exercise_month_summary_multiple_days() {
+        let json = r#"{
+            "day": [
+                {"date_int": "19723", "exercise_calories": "300"},
+                {"date_int": "19724", "exercise_calories": "400"}
+            ],
+            "month": "1",
+            "year": "2024"
+        }"#;
+        let summary: ExerciseMonthSummary = serde_json::from_str(json).unwrap();
+        assert_eq!(summary.days.len(), 2);
+    }
+
+    #[test]
+    fn test_exercise_month_summary_empty() {
+        let json = r#"{
+            "month": "1",
+            "year": "2024"
+        }"#;
+        let summary: ExerciseMonthSummary = serde_json::from_str(json).unwrap();
+        assert!(summary.days.is_empty());
+    }
+
+    // ============================================================================
+    // Response wrapper tests
+    // ============================================================================
+
+    #[test]
+    fn test_exercise_response() {
+        let json = r#"{
+            "exercise": {
+                "exercise_id": "123",
+                "exercise_name": "Running",
+                "calories_per_hour": "600"
+            }
+        }"#;
+        let response: ExerciseResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.exercise.exercise_name, "Running");
+    }
+
+    #[test]
+    fn test_exercise_entries_response_single() {
+        let json = r#"{
+            "exercise_entry": {
+                "exercise_entry_id": "entry1",
+                "exercise_id": "123",
+                "exercise_name": "Running",
+                "duration_min": "30",
+                "calories": "300",
+                "date_int": "19723"
+            }
+        }"#;
+        let response: ExerciseEntriesResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.exercise_entries.len(), 1);
+    }
+
+    #[test]
+    fn test_exercise_entries_response_multiple() {
+        let json = r#"{
+            "exercise_entry": [
+                {
+                    "exercise_entry_id": "entry1",
+                    "exercise_id": "123",
+                    "exercise_name": "Running",
+                    "duration_min": "30",
+                    "calories": "300",
+                    "date_int": "19723"
+                },
+                {
+                    "exercise_entry_id": "entry2",
+                    "exercise_id": "456",
+                    "exercise_name": "Cycling",
+                    "duration_min": "45",
+                    "calories": "450",
+                    "date_int": "19723"
+                }
+            ]
+        }"#;
+        let response: ExerciseEntriesResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.exercise_entries.len(), 2);
+    }
+
+    #[test]
+    fn test_single_exercise_entry_response() {
+        let json = r#"{
+            "exercise_entry": {
+                "exercise_entry_id": "new-entry"
+            }
+        }"#;
+        let response: SingleExerciseEntryResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.exercise_entry.exercise_entry_id.as_str(), "new-entry");
+    }
+
+    #[test]
+    fn test_exercise_month_summary_response() {
+        let json = r#"{
+            "exercise_month": {
+                "day": [],
+                "month": "6",
+                "year": "2024"
+            }
+        }"#;
+        let response: ExerciseMonthSummaryResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.exercise_month.month, 6);
+        assert_eq!(response.exercise_month.year, 2024);
+    }
+
+    // ============================================================================
+    // Date conversion tests
+    // ============================================================================
+
+    #[test]
+    fn test_date_to_int_epoch() {
+        assert_eq!(date_to_int("1970-01-01").unwrap(), 0);
+    }
+
+    #[test]
+    fn test_date_to_int_modern() {
+        assert_eq!(date_to_int("2024-01-01").unwrap(), 19723);
+    }
+
+    #[test]
+    fn test_date_to_int_invalid() {
+        assert!(date_to_int("invalid").is_err());
+        assert!(date_to_int("2024/01/01").is_err());
+    }
+
+    #[test]
+    fn test_int_to_date_epoch() {
+        assert_eq!(int_to_date(0).unwrap(), "1970-01-01");
+    }
+
+    #[test]
+    fn test_int_to_date_modern() {
+        assert_eq!(int_to_date(19723).unwrap(), "2024-01-01");
+    }
+
+    #[test]
+    fn test_date_roundtrip() {
+        let date = "2024-06-15";
+        let int = date_to_int(date).unwrap();
+        let back = int_to_date(int).unwrap();
+        assert_eq!(date, back);
+    }
+}

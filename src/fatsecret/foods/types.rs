@@ -487,3 +487,249 @@ pub struct FoodAutocompleteResponse {
     #[serde(rename = "suggestion", deserialize_with = "deserialize_single_or_vec")]
     pub suggestions: Vec<FoodSuggestion>,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ============================================================================
+    // FoodId tests
+    // ============================================================================
+
+    #[test]
+    fn test_food_id_new() {
+        let id = FoodId::new("12345");
+        assert_eq!(id.as_str(), "12345");
+    }
+
+    #[test]
+    fn test_food_id_from_string() {
+        let id = FoodId::from("12345".to_string());
+        assert_eq!(id.as_str(), "12345");
+    }
+
+    #[test]
+    fn test_food_id_from_str() {
+        let id = FoodId::from("12345");
+        assert_eq!(id.as_str(), "12345");
+    }
+
+    #[test]
+    fn test_food_id_display() {
+        let id = FoodId::new("12345");
+        assert_eq!(format!("{}", id), "12345");
+    }
+
+    #[test]
+    fn test_food_id_equality() {
+        let id1 = FoodId::new("12345");
+        let id2 = FoodId::new("12345");
+        let id3 = FoodId::new("67890");
+        assert_eq!(id1, id2);
+        assert_ne!(id1, id3);
+    }
+
+    // ============================================================================
+    // ServingId tests
+    // ============================================================================
+
+    #[test]
+    fn test_serving_id_new() {
+        let id = ServingId::new("456");
+        assert_eq!(id.as_str(), "456");
+    }
+
+    #[test]
+    fn test_serving_id_from_string() {
+        let id = ServingId::from("456".to_string());
+        assert_eq!(id.as_str(), "456");
+    }
+
+    #[test]
+    fn test_serving_id_from_str() {
+        let id = ServingId::from("456");
+        assert_eq!(id.as_str(), "456");
+    }
+
+    #[test]
+    fn test_serving_id_display() {
+        let id = ServingId::new("456");
+        assert_eq!(format!("{}", id), "456");
+    }
+
+    // ============================================================================
+    // Nutrition tests
+    // ============================================================================
+
+    #[test]
+    fn test_nutrition_deserialize_required_fields() {
+        let json = r#"{
+            "calories": "150",
+            "carbohydrate": "20",
+            "protein": "5",
+            "fat": "7"
+        }"#;
+        let nutrition: Nutrition = serde_json::from_str(json).unwrap();
+        assert!((nutrition.calories - 150.0).abs() < 0.01);
+        assert!((nutrition.carbohydrate - 20.0).abs() < 0.01);
+        assert!((nutrition.protein - 5.0).abs() < 0.01);
+        assert!((nutrition.fat - 7.0).abs() < 0.01);
+    }
+
+    #[test]
+    fn test_nutrition_deserialize_all_fields() {
+        let json = r#"{
+            "calories": "150",
+            "carbohydrate": "20",
+            "protein": "5",
+            "fat": "7",
+            "saturated_fat": "2",
+            "fiber": "3",
+            "sugar": "10",
+            "sodium": "200",
+            "cholesterol": "15",
+            "vitamin_a": "5",
+            "vitamin_c": "10",
+            "calcium": "8",
+            "iron": "6"
+        }"#;
+        let nutrition: Nutrition = serde_json::from_str(json).unwrap();
+        assert_eq!(nutrition.saturated_fat, Some(2.0));
+        assert_eq!(nutrition.fiber, Some(3.0));
+        assert_eq!(nutrition.sugar, Some(10.0));
+        assert_eq!(nutrition.sodium, Some(200.0));
+        assert_eq!(nutrition.vitamin_a, Some(5.0));
+    }
+
+    // ============================================================================
+    // Serving tests
+    // ============================================================================
+
+    #[test]
+    fn test_serving_deserialize() {
+        let json = r#"{
+            "serving_id": "123",
+            "serving_description": "1 cup",
+            "serving_url": "https://example.com/serving",
+            "metric_serving_amount": "240",
+            "metric_serving_unit": "g",
+            "number_of_units": "1",
+            "measurement_description": "cup",
+            "is_default": "1",
+            "calories": "100",
+            "carbohydrate": "15",
+            "protein": "3",
+            "fat": "5"
+        }"#;
+        let serving: Serving = serde_json::from_str(json).unwrap();
+        assert_eq!(serving.serving_id.as_str(), "123");
+        assert_eq!(serving.serving_description, "1 cup");
+        assert_eq!(serving.metric_serving_amount, Some(240.0));
+        assert_eq!(serving.metric_serving_unit, Some("g".to_string()));
+        assert_eq!(serving.is_default, Some(1));
+    }
+
+    // ============================================================================
+    // Food tests
+    // ============================================================================
+
+    #[test]
+    fn test_food_deserialize() {
+        let json = r#"{
+            "food_id": "12345",
+            "food_name": "Apple",
+            "food_type": "Generic",
+            "food_url": "https://example.com/food",
+            "servings": {
+                "serving": {
+                    "serving_id": "456",
+                    "serving_description": "1 medium",
+                    "serving_url": "https://example.com/serving",
+                    "number_of_units": "1",
+                    "measurement_description": "medium",
+                    "calories": "95",
+                    "carbohydrate": "25",
+                    "protein": "0.5",
+                    "fat": "0.3"
+                }
+            }
+        }"#;
+        let food: Food = serde_json::from_str(json).unwrap();
+        assert_eq!(food.food_id.as_str(), "12345");
+        assert_eq!(food.food_name, "Apple");
+        assert_eq!(food.servings.serving.len(), 1);
+        assert!(food.brand_name.is_none());
+    }
+
+    #[test]
+    fn test_food_deserialize_with_brand() {
+        let json = r#"{
+            "food_id": "12345",
+            "food_name": "Protein Bar",
+            "food_type": "Brand",
+            "food_url": "https://example.com/food",
+            "brand_name": "Quest",
+            "servings": {
+                "serving": []
+            }
+        }"#;
+        let food: Food = serde_json::from_str(json).unwrap();
+        assert_eq!(food.brand_name, Some("Quest".to_string()));
+    }
+
+    // ============================================================================
+    // Search response tests
+    // ============================================================================
+
+    #[test]
+    fn test_food_search_response() {
+        let json = r#"{
+            "food": [
+                {
+                    "food_id": "1",
+                    "food_name": "Apple",
+                    "food_type": "Generic",
+                    "food_description": "95 cal",
+                    "food_url": "https://example.com/1"
+                },
+                {
+                    "food_id": "2",
+                    "food_name": "Banana",
+                    "food_type": "Generic",
+                    "food_description": "105 cal",
+                    "food_url": "https://example.com/2"
+                }
+            ],
+            "max_results": "10",
+            "total_results": "100",
+            "page_number": "0"
+        }"#;
+        let response: FoodSearchResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.foods.len(), 2);
+        assert_eq!(response.max_results, 10);
+        assert_eq!(response.total_results, 100);
+        assert_eq!(response.page_number, 0);
+    }
+
+    #[test]
+    fn test_food_autocomplete_response() {
+        let json = r#"{
+            "suggestion": [
+                {"food_id": "1", "food_name": "Apple"},
+                {"food_id": "2", "food_name": "Apricot"}
+            ]
+        }"#;
+        let response: FoodAutocompleteResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.suggestions.len(), 2);
+        assert_eq!(response.suggestions[0].food_name, "Apple");
+    }
+
+    #[test]
+    fn test_food_autocomplete_response_single() {
+        let json = r#"{
+            "suggestion": {"food_id": "1", "food_name": "Apple"}
+        }"#;
+        let response: FoodAutocompleteResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.suggestions.len(), 1);
+    }
+}
