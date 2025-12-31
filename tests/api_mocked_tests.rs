@@ -394,14 +394,14 @@ mod fixtures {
         error_response(6, "Invalid/expired request token")
     }
 
-    /// Invalid signature (code 7)
+    /// Invalid signature (code 8)
     pub fn invalid_signature_error() -> String {
-        error_response(7, "Invalid signature")
+        error_response(8, "Invalid signature")
     }
 
-    /// Invalid nonce (code 8)
+    /// Invalid nonce (code 7)
     pub fn invalid_nonce_error() -> String {
-        error_response(8, "Invalid/used nonce")
+        error_response(7, "Invalid/used nonce")
     }
 
     /// Invalid access token (code 9)
@@ -686,7 +686,7 @@ async fn test_food_search_error_invalid_search_value() {
     let err = result.unwrap_err();
     match err {
         FatSecretError::ApiError { code, .. } => {
-            assert_eq!(code, ApiErrorCode::InvalidSearchValue);
+            assert_eq!(code, ApiErrorCode::InvalidServingId);
         }
         _ => panic!("Expected ApiError, got {:?}", err),
     }
@@ -710,7 +710,7 @@ async fn test_food_get_error_invalid_id() {
     let err = result.unwrap_err();
     match err {
         FatSecretError::ApiError { code, .. } => {
-            assert_eq!(code, ApiErrorCode::InvalidId);
+            assert_eq!(code, ApiErrorCode::InvalidFoodId);
         }
         _ => panic!("Expected ApiError, got {:?}", err),
     }
@@ -789,7 +789,7 @@ async fn test_error_expired_token() {
     let err = result.unwrap_err();
     match err {
         FatSecretError::ApiError { code, .. } => {
-            assert_eq!(code, ApiErrorCode::InvalidOrExpiredToken);
+            assert_eq!(code, ApiErrorCode::InvalidOrExpiredTimestamp);
             assert!(code.is_auth_related());
         }
         _ => panic!("Expected ApiError, got {:?}", err),
@@ -866,7 +866,7 @@ async fn test_error_invalid_method() {
     let err = result.unwrap_err();
     match err {
         FatSecretError::ApiError { code, .. } => {
-            assert_eq!(code, ApiErrorCode::InvalidMethod);
+            assert_eq!(code, ApiErrorCode::OAuth2InvalidToken);
         }
         _ => panic!("Expected ApiError, got {:?}", err),
     }
@@ -891,7 +891,7 @@ async fn test_error_api_unavailable() {
     let err = result.unwrap_err();
     match &err {
         FatSecretError::ApiError { code, .. } => {
-            assert_eq!(*code, ApiErrorCode::ApiUnavailable);
+            assert_eq!(*code, ApiErrorCode::OAuth2TokenExpired);
             // API unavailable should be recoverable
             assert!(err.is_recoverable());
         }
@@ -1229,19 +1229,19 @@ async fn test_all_api_error_codes_roundtrip() {
         (3, ApiErrorCode::UnsupportedOAuthParameter),
         (4, ApiErrorCode::InvalidSignatureMethod),
         (5, ApiErrorCode::InvalidConsumerCredentials),
-        (6, ApiErrorCode::InvalidOrExpiredToken),
-        (7, ApiErrorCode::InvalidSignature),
-        (8, ApiErrorCode::InvalidNonce),
+        (6, ApiErrorCode::InvalidOrExpiredTimestamp),
+        (7, ApiErrorCode::InvalidNonce),
+        (8, ApiErrorCode::InvalidSignature),
         (9, ApiErrorCode::InvalidAccessToken),
-        (13, ApiErrorCode::InvalidMethod),
-        (14, ApiErrorCode::ApiUnavailable),
+        (13, ApiErrorCode::OAuth2InvalidToken),
+        (14, ApiErrorCode::OAuth2TokenExpired),
         (101, ApiErrorCode::MissingRequiredParameter),
-        (106, ApiErrorCode::InvalidId),
-        (107, ApiErrorCode::InvalidSearchValue),
-        (108, ApiErrorCode::InvalidDate),
-        (205, ApiErrorCode::WeightDateTooFar),
-        (206, ApiErrorCode::WeightDateEarlier),
-        (207, ApiErrorCode::NoEntries),
+        (106, ApiErrorCode::InvalidFoodId),
+        (107, ApiErrorCode::InvalidServingId),
+        (108, ApiErrorCode::InvalidRecipeId),
+        (205, ApiErrorCode::ExerciseEntryNotFound),
+        (206, ApiErrorCode::WeightEntryNotFound),
+        (207, ApiErrorCode::UserProfileNotFound),
     ];
 
     for (code, expected) in codes {
@@ -1264,7 +1264,7 @@ async fn test_all_api_error_codes_roundtrip() {
 
 #[tokio::test]
 async fn test_auth_related_codes() {
-    // Codes 2-9 are auth-related
+    // Codes 2-9 are OAuth 1.0 auth-related
     for code in 2..=9 {
         let error_code = ApiErrorCode::from_code(code);
         assert!(
@@ -1274,8 +1274,18 @@ async fn test_auth_related_codes() {
         );
     }
 
-    // Other codes are NOT auth-related
-    for code in [13, 14, 101, 106, 107, 108, 205, 206, 207] {
+    // Code 12 (MethodNotAccessible) and codes 13-14 (OAuth 2.0) are also auth-related
+    for code in [12, 13, 14] {
+        let error_code = ApiErrorCode::from_code(code);
+        assert!(
+            error_code.is_auth_related(),
+            "Code {} should be auth-related",
+            code
+        );
+    }
+
+    // Parameter and not-found codes are NOT auth-related
+    for code in [101, 106, 107, 108, 205, 206, 207] {
         let error_code = ApiErrorCode::from_code(code);
         assert!(
             !error_code.is_auth_related(),
@@ -1449,7 +1459,7 @@ async fn test_diary_get_entry_invalid_id() {
     assert!(result.is_err());
     match result.unwrap_err() {
         FatSecretError::ApiError { code, .. } => {
-            assert_eq!(code, ApiErrorCode::InvalidId);
+            assert_eq!(code, ApiErrorCode::InvalidFoodId);
         }
         e => panic!("Expected ApiError, got {:?}", e),
     }
@@ -1472,7 +1482,7 @@ async fn test_diary_get_entries_no_entries() {
     assert!(result.is_err());
     match result.unwrap_err() {
         FatSecretError::ApiError { code, .. } => {
-            assert_eq!(code, ApiErrorCode::NoEntries);
+            assert_eq!(code, ApiErrorCode::UserProfileNotFound);
         }
         e => panic!("Expected ApiError, got {:?}", e),
     }
