@@ -359,10 +359,6 @@ name = "fatsecret_food_entry_delete"
 path = "src/bin/fatsecret_food_entry_delete.rs"
 
 [[bin]]
-name = "fatsecret_exercise_get"
-path = "src/bin/fatsecret_exercise_get.rs"
-
-[[bin]]
 name = "fatsecret_exercise_entries_get"
 path = "src/bin/fatsecret_exercise_entries_get.rs"
 
@@ -389,10 +385,6 @@ path = "src/bin/fatsecret_recipe_get.rs"
 [[bin]]
 name = "fatsecret_recipes_search"
 path = "src/bin/fatsecret_recipes_search.rs"
-
-[[bin]]
-name = "fatsecret_recipes_autocomplete"
-path = "src/bin/fatsecret_recipes_autocomplete.rs"
 
 [[bin]]
 name = "fatsecret_saved_meals_get"
