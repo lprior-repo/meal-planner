@@ -391,6 +391,1366 @@ impl TandoorClient {
             message: "Recipe imported successfully".to_string(),
         })
     }
+
+    // ============================================================================
+    // Unit Methods (/api/unit/)
+    // ============================================================================
+
+    /// List all units with optional pagination
+    pub fn list_units(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<Unit>, TandoorError> {
+        let mut url = format!("{}/api/unit/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url.push('?');
+            url.push_str(&params.join("&"));
+        }
+
+        let response = self.client.get(&url).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        response
+            .json::<PaginatedResponse<Unit>>()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a specific unit by ID
+    pub fn get_unit(&self, id: i64) -> Result<Unit, TandoorError> {
+        let url = format!("{}/api/unit/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if response.status().as_u16() == 404 {
+            return Err(TandoorError::ApiError {
+                status: 404,
+                message: "Unit not found".to_string(),
+            });
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        response
+            .json::<Unit>()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a new unit
+    pub fn create_unit(&self, request: &CreateUnitRequestData) -> Result<Unit, TandoorError> {
+        let url = format!("{}/api/unit/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        response
+            .json::<Unit>()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update an existing unit
+    pub fn update_unit(&self, id: i64, request: &UpdateUnitRequest) -> Result<Unit, TandoorError> {
+        let url = format!("{}/api/unit/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if response.status().as_u16() == 404 {
+            return Err(TandoorError::ApiError {
+                status: 404,
+                message: "Unit not found".to_string(),
+            });
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        response
+            .json::<Unit>()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a unit by ID
+    pub fn delete_unit(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/unit/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if response.status().as_u16() == 404 {
+            return Err(TandoorError::ApiError {
+                status: 404,
+                message: "Unit not found".to_string(),
+            });
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    /// List all unit conversions with optional pagination
+    pub fn list_unit_conversions(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<UnitConversion>, TandoorError> {
+        let mut url = format!("{}/api/unitconversion/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url.push('?');
+            url.push_str(&params.join("&"));
+        }
+
+        let response = self.client.get(&url).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        response
+            .json::<PaginatedResponse<UnitConversion>>()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    // ============================================================================
+    // Ingredient Methods (/api/ingredient/)
+    // ============================================================================
+
+    /// List all ingredients with optional pagination
+    pub fn list_ingredients(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<Ingredient>, TandoorError> {
+        let mut url = format!("{}/api/ingredient/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url.push('?');
+            url.push_str(&params.join("&"));
+        }
+
+        let response = self.client.get(&url).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        response
+            .json::<PaginatedResponse<Ingredient>>()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a specific ingredient by ID
+    pub fn get_ingredient(&self, id: i64) -> Result<Ingredient, TandoorError> {
+        let url = format!("{}/api/ingredient/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if response.status().as_u16() == 404 {
+            return Err(TandoorError::ApiError {
+                status: 404,
+                message: "Ingredient not found".to_string(),
+            });
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        response
+            .json::<Ingredient>()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a new ingredient
+    pub fn create_ingredient(
+        &self,
+        request: &CreateIngredientRequestData,
+    ) -> Result<Ingredient, TandoorError> {
+        let url = format!("{}/api/ingredient/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        response
+            .json::<Ingredient>()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update an existing ingredient
+    pub fn update_ingredient(
+        &self,
+        id: i64,
+        request: &UpdateIngredientRequest,
+    ) -> Result<Ingredient, TandoorError> {
+        let url = format!("{}/api/ingredient/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if response.status().as_u16() == 404 {
+            return Err(TandoorError::ApiError {
+                status: 404,
+                message: "Ingredient not found".to_string(),
+            });
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        response
+            .json::<Ingredient>()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete an ingredient by ID
+    pub fn delete_ingredient(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/ingredient/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if response.status().as_u16() == 404 {
+            return Err(TandoorError::ApiError {
+                status: 404,
+                message: "Ingredient not found".to_string(),
+            });
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    /// Parse ingredient text and return parsed ingredient
+    pub fn ingredient_from_string(
+        &self,
+        request: &IngredientFromStringRequest,
+    ) -> Result<ParsedIngredient, TandoorError> {
+        let url = format!("{}/api/ingredient-from-string/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+
+        response
+            .json::<ParsedIngredient>()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    // ============= RECIPE OPERATIONS =============
+
+    /// Get a single recipe by ID
+    pub fn get_recipe(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/recipe/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a recipe by ID
+    pub fn delete_recipe(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/recipe/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    /// Get recipes related to a given recipe
+    pub fn get_related_recipes(&self, id: i64) -> Result<Vec<RecipeSummary>, TandoorError> {
+        let url = format!("{}/api/recipe/{}/related/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Batch update multiple recipes
+    pub fn batch_update_recipes(&self, updates: &[serde_json::Value]) -> Result<i32, TandoorError> {
+        let url = format!("{}/api/recipe/batch_update/", self.base_url);
+        let response = self.client.patch(&url).json(updates).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        // Return count of updated recipes
+        Ok(updates.len() as i32)
+    }
+
+    // ============= FOOD OPERATIONS =============
+
+    /// List foods with pagination
+    pub fn list_foods(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
+        let mut url = format!("{}/api/food/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a single food by ID
+    pub fn get_food(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/food/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a food by ID
+    pub fn delete_food(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/food/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    /// Batch update multiple foods
+    pub fn batch_update_foods(&self, updates: &[serde_json::Value]) -> Result<i32, TandoorError> {
+        let url = format!("{}/api/food/batch_update/", self.base_url);
+        let response = self.client.patch(&url).json(updates).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(updates.len() as i32)
+    }
+
+    // ============= MEAL PLAN OPERATIONS =============
+
+    /// List meal plans with pagination
+    pub fn list_meal_plans(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
+        let mut url = format!("{}/api/meal-plan/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a single meal plan by ID
+    pub fn get_meal_plan(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/meal-plan/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a new meal plan
+    pub fn create_meal_plan(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/meal-plan/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a meal plan
+    pub fn update_meal_plan(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/meal-plan/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Export meal plan as iCalendar format
+    pub fn export_meal_plan_ical(&self, id: i64) -> Result<String, TandoorError> {
+        let url = format!("{}/api/meal-plan/{}/ical/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .text()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    // ============= MEAL TYPE OPERATIONS =============
+
+    /// List meal types with pagination
+    pub fn list_meal_types(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
+        let mut url = format!("{}/api/meal-type/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a new meal type
+    pub fn create_meal_type(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/meal-type/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a meal type
+    pub fn update_meal_type(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/meal-type/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a meal type
+    pub fn delete_meal_type(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/meal-type/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    // ============= SHOPPING LIST OPERATIONS =============
+
+    /// List shopping list entries for a meal plan
+    pub fn list_shopping_list_entries(
+        &self,
+        mealplan_id: i64,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
+        let mut url = format!("{}/api/meal-plan/{}/shopping/", self.base_url, mealplan_id);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a recipe from shopping list
+    pub fn delete_recipe_from_shopping_list(&self, mealplan_id: i64, recipe_id: i64) -> Result<(), TandoorError> {
+        let url = format!(
+            "{}/api/meal-plan/{}/shopping/recipes/{}/",
+            self.base_url, mealplan_id, recipe_id
+        );
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    /// Bulk create shopping list entries
+    pub fn bulk_create_shopping_list_entries(
+        &self,
+        mealplan_id: i64,
+        entries: &[serde_json::Value],
+    ) -> Result<i32, TandoorError> {
+        let url = format!("{}/api/meal-plan/{}/shopping/bulk/", self.base_url, mealplan_id);
+        let response = self.client.post(&url).json(entries).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(entries.len() as i32)
+    }
+
+    // ============= RECIPE BOOK OPERATIONS =============
+
+    /// Create a recipe book
+    pub fn create_recipe_book(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/recipe-book/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a recipe book by ID
+    pub fn get_recipe_book(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/recipe-book/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a recipe book
+    pub fn update_recipe_book(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/recipe-book/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a recipe book entry by ID
+    pub fn get_recipe_book_entry(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/recipe-book-entry/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a recipe book entry
+    pub fn delete_recipe_book_entry(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/recipe-book-entry/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    // ============= SUPERMARKET OPERATIONS =============
+
+    /// List supermarkets with pagination
+    pub fn list_supermarkets(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
+        let mut url = format!("{}/api/supermarket/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a supermarket
+    pub fn create_supermarket(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/supermarket/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a supermarket
+    pub fn update_supermarket(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/supermarket/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a supermarket
+    pub fn delete_supermarket(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/supermarket/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    // ============= STEP OPERATIONS =============
+
+    /// Create a food
+    pub fn create_food(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/food/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a food
+    pub fn update_food(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/food/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a keyword
+    pub fn create_keyword(&self, request: &CreateKeywordRequest) -> Result<Keyword, TandoorError> {
+        let url = format!("{}/api/keyword/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a recipe (using serde_json::Value)
+    pub fn update_recipe(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/recipe/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a keyword
+    pub fn delete_keyword(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/keyword/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    /// Get a meal type by ID
+    pub fn get_meal_type(&self, id: i64) -> Result<MealType, TandoorError> {
+        let url = format!("{}/api/meal-type/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a space by ID
+    pub fn get_space(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/space/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// List spaces
+    pub fn list_spaces(&self) -> Result<Vec<serde_json::Value>, TandoorError> {
+        let url = format!("{}/api/space/", self.base_url);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a step
+    pub fn delete_step(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/step/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    /// Update a step
+    pub fn update_step(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/step/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a step
+    pub fn create_step(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/step/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// List steps with pagination
+    pub fn list_steps(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
+        let mut url = format!("{}/api/step/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a recipe from shopping list
+    pub fn get_recipe_from_shopping_list(
+        &self,
+        mealplan_id: i64,
+        recipe_id: i64,
+    ) -> Result<serde_json::Value, TandoorError> {
+        let url = format!(
+            "{}/api/meal-plan/{}/shopping/recipes/{}/",
+            self.base_url, mealplan_id, recipe_id
+        );
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a recipe book
+    pub fn delete_recipe_book(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/recipe-book/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    /// Create a recipe book entry
+    pub fn create_recipe_book_entry(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/recipe-book-entry/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// List keywords with pagination
+    pub fn list_keywords(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<Keyword>, TandoorError> {
+        let mut url = format!("{}/api/keyword/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a keyword by ID
+    pub fn get_keyword(&self, id: i64) -> Result<Keyword, TandoorError> {
+        let url = format!("{}/api/keyword/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a keyword
+    pub fn update_keyword(&self, id: i64, request: &CreateKeywordRequest) -> Result<Keyword, TandoorError> {
+        let url = format!("{}/api/keyword/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// List recipe books with pagination
+    pub fn list_recipe_books(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<RecipeBook>, TandoorError> {
+        let mut url = format!("{}/api/recipe-book/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// List recipe book entries with pagination
+    pub fn list_recipe_book_entries(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<RecipeBookEntry>, TandoorError> {
+        let mut url = format!("{}/api/recipe-book-entry/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// List users with pagination
+    pub fn list_users(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
+        let mut url = format!("{}/api/user/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a user by ID
+    pub fn get_user(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/user/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a shopping list entry
+    pub fn create_shopping_list_entry(
+        &self,
+        mealplan_id: i64,
+        request: &serde_json::Value,
+    ) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/meal-plan/{}/shopping/", self.base_url, mealplan_id);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a shopping list entry
+    pub fn update_shopping_list_entry(
+        &self,
+        mealplan_id: i64,
+        entry_id: i64,
+        request: &serde_json::Value,
+    ) -> Result<serde_json::Value, TandoorError> {
+        let url = format!(
+            "{}/api/meal-plan/{}/shopping/{}/",
+            self.base_url, mealplan_id, entry_id
+        );
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a shopping list entry
+    pub fn delete_shopping_list_entry(
+        &self,
+        mealplan_id: i64,
+        entry_id: i64,
+    ) -> Result<(), TandoorError> {
+        let url = format!(
+            "{}/api/meal-plan/{}/shopping/{}/",
+            self.base_url, mealplan_id, entry_id
+        );
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    /// Add recipe to shopping list (creates entries for all ingredients)
+    pub fn add_recipe_to_shopping_list(
+        &self,
+        mealplan_id: i64,
+        recipe_id: i64,
+    ) -> Result<Vec<serde_json::Value>, TandoorError> {
+        let url = format!("{}/api/meal-plan/{}/shopping/", self.base_url, mealplan_id);
+        let body = serde_json::json!({"recipe": recipe_id});
+        let response = self.client.post(&url).json(&body).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// List recipes without pagination (flat list)
+    pub fn list_recipes_flat(
+        &self,
+        limit: Option<u32>,
+        offset: Option<u32>,
+    ) -> Result<Vec<RecipeSummary>, TandoorError> {
+        let mut url = format!("{}/api/recipe/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(l) = limit {
+            params.push(format!("limit={}", l));
+        }
+        if let Some(o) = offset {
+            params.push(format!("offset={}", o));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
 }
 
 #[cfg(test)]
