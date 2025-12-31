@@ -1,0 +1,22 @@
+summary: Get FatSecret favorite foods
+description: Retrieves the user's list of favorite foods
+language: bash
+kind: script
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    fatsecret:
+      type: object
+      description: FatSecret API credentials
+      format: resource-fatsecret
+    access_token:
+      type: string
+      description: OAuth access token
+    access_secret:
+      type: string
+      description: OAuth access token secret
+  required:
+    - fatsecret
+    - access_token
+    - access_secret

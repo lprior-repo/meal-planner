@@ -2,4 +2,4 @@
 # This file ensures all developers use the same toolchain
 [toolchain]
 channel = "nightly"
-components = ["rustfmt", "clippy", "rust-src"]
+components = ["rustfmt", "clippy", "rust-src", "rust-analyzer"]

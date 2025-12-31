@@ -8,6 +8,7 @@
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
+#![allow(clippy::too_many_lines, clippy::cognitive_complexity)]
 
 use meal_planner::fatsecret::{TokenStorage, TokenValidity};
 use serde::{Deserialize, Serialize};

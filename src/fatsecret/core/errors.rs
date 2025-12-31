@@ -142,7 +142,23 @@ impl std::fmt::Display for ApiErrorCode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::UnknownError(code) => write!(f, "Unknown Error (code {})", code),
-            _ => write!(f, "{}", self.description()),
+            Self::MissingOAuthParameter
+            | Self::UnsupportedOAuthParameter
+            | Self::InvalidSignatureMethod
+            | Self::InvalidConsumerCredentials
+            | Self::InvalidOrExpiredToken
+            | Self::InvalidSignature
+            | Self::InvalidNonce
+            | Self::InvalidAccessToken
+            | Self::InvalidMethod
+            | Self::ApiUnavailable
+            | Self::MissingRequiredParameter
+            | Self::InvalidId
+            | Self::InvalidSearchValue
+            | Self::InvalidDate
+            | Self::WeightDateTooFar
+            | Self::WeightDateEarlier
+            | Self::NoEntries => write!(f, "{}", self.description()),
         }
     }
 }
@@ -234,11 +250,9 @@ impl FatSecretError {
     /// - Server errors (5xx status codes)
     pub fn is_recoverable(&self) -> bool {
         match self {
-            // Network errors are recoverable
-            Self::NetworkError(_) => true,
-
-            // API unavailable might be temporary
-            Self::ApiError {
+            // Network errors and API unavailable are recoverable
+            Self::NetworkError(_)
+            | Self::ApiError {
                 code: ApiErrorCode::ApiUnavailable,
                 ..
             } => true,
@@ -247,7 +261,12 @@ impl FatSecretError {
             Self::RequestFailed { status, .. } if *status >= 500 => true,
 
             // Other errors are not recoverable
-            _ => false,
+            Self::ApiError { .. }
+            | Self::RequestFailed { .. }
+            | Self::ParseError(_)
+            | Self::OAuthError(_)
+            | Self::ConfigMissing
+            | Self::InvalidResponse(_) => false,
         }
     }
 
@@ -259,10 +278,12 @@ impl FatSecretError {
     /// - API errors related to OAuth (codes 2-9)
     pub fn is_auth_error(&self) -> bool {
         match self {
-            Self::OAuthError(_) => true,
-            Self::ConfigMissing => true,
+            Self::OAuthError(_) | Self::ConfigMissing => true,
             Self::ApiError { code, .. } => code.is_auth_related(),
-            _ => false,
+            Self::RequestFailed { .. }
+            | Self::ParseError(_)
+            | Self::NetworkError(_)
+            | Self::InvalidResponse(_) => false,
         }
     }
 
@@ -270,7 +291,12 @@ impl FatSecretError {
     pub fn api_error_code(&self) -> Option<&ApiErrorCode> {
         match self {
             Self::ApiError { code, .. } => Some(code),
-            _ => None,
+            Self::RequestFailed { .. }
+            | Self::ParseError(_)
+            | Self::OAuthError(_)
+            | Self::NetworkError(_)
+            | Self::ConfigMissing
+            | Self::InvalidResponse(_) => None,
         }
     }
 }
@@ -454,7 +480,12 @@ mod tests {
                 assert_eq!(code, ApiErrorCode::MissingRequiredParameter);
                 assert_eq!(message, "Missing required parameter");
             }
-            _ => panic!("expected ApiError"),
+            FatSecretError::RequestFailed { .. }
+            | FatSecretError::ParseError(_)
+            | FatSecretError::OAuthError(_)
+            | FatSecretError::NetworkError(_)
+            | FatSecretError::ConfigMissing
+            | FatSecretError::InvalidResponse(_) => panic!("expected ApiError"),
         }
     }
 

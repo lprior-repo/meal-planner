@@ -69,8 +69,13 @@ pub enum TokenValidity {
 pub fn encryption_configured() -> bool {
     match get_encryption_key() {
         Ok(_) => true,
-        Err(CryptoError::KeyNotConfigured) => false,
-        Err(_) => false,
+        Err(
+            CryptoError::KeyNotConfigured
+            | CryptoError::KeyInvalidLength(_)
+            | CryptoError::KeyInvalidHex
+            | CryptoError::InvalidCiphertext
+            | CryptoError::DecryptionFailed,
+        ) => false,
     }
 }
 

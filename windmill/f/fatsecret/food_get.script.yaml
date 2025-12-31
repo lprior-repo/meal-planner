@@ -1,0 +1,18 @@
+summary: Get FatSecret food by ID
+description: Retrieves detailed food information including all servings and nutrition data
+language: bash
+kind: script
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    fatsecret:
+      type: object
+      description: FatSecret API credentials
+      format: resource-fatsecret
+    food_id:
+      type: string
+      description: The food ID to retrieve
+  required:
+    - fatsecret
+    - food_id

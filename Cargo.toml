@@ -6,15 +6,26 @@ edition = "2021"
 # =============================================================================
 # GLEAM-STYLE STRICT SAFETY LINTS
 # =============================================================================
-# These lints enforce Gleam's design principles in Rust:
-# - Immutability by default (no unnecessary mutation)
-# - Exhaustive pattern matching (handle all cases)
-# - No exceptions/panics (use Result for errors)
-# - No null/undefined (use Option explicitly)
-# - No unsafe code (memory safety guaranteed)
-# - Pure functions (predictable, testable)
+# These lints enforce SOME of Gleam's design principles in Rust.
 #
-# AI CANNOT BYPASS THESE - They are enforced at compile time by rustc/clippy
+# WHAT LINTS CAN ENFORCE (~60-70% of Gleam's guarantees):
+# - No .unwrap()/.expect()/panic!() in YOUR code
+# - No unsafe blocks in YOUR code (deps can still use it)
+# - Functional style preferences (map/filter vs loops)
+# - Exhaustive matching style (rustc already enforces completeness)
+#
+# WHAT LINTS CANNOT CATCH (fundamental language differences):
+# - Integer overflow: Wraps silently in release (mitigated: overflow-checks=true)
+# - Stdlib panics: vec.remove(i), str.split_at(n), 1/0, etc.
+# - Indirect panics: .unwrap_or_else(|| panic!()), assert!()
+# - Stack overflow: No TCO in Rust, deep recursion crashes
+# - Dependency unsafe: forbid(unsafe_code) only applies to THIS crate
+# - OOM: Vec::push() can panic on allocation failure
+#
+# For true Gleam-level safety, you'd also need:
+# - Audit all dependencies for panic paths
+# - Wrap all stdlib calls that can panic
+# - Accept you're fighting the language's design choices
 # =============================================================================
 
 [lints.rust]
@@ -48,9 +59,9 @@ unused_imports = "deny"                   # No unused imports
 dead_code = "deny"                        # No unreachable code
 
 # -----------------------------------------------------------------------------
-# DOCUMENTATION - Disabled (not part of core type safety)
+# DOCUMENTATION - Optional, not safety-critical
 # -----------------------------------------------------------------------------
-# missing_docs - Disabled, not a safety concern
+# missing_docs = "warn"                   # Encouraged but not required
 
 [lints.clippy]
 # =============================================================================
@@ -72,12 +83,21 @@ unwrap_in_result = "deny"                 # No unwrap inside Result-returning fn
 panic_in_result_fn = "deny"               # No panic! in Result-returning fn
 exit = "deny"                             # No std::process::exit
 
+# Assertions (these can panic - warn but allow for debugging)
+assertions_on_result_states = "allow"     # assert!(x.is_ok()) allowed in tests
+assertions_on_constants = "deny"          # assert!(true) is pointless
+
+# Arithmetic that can panic (division by zero, etc.)
+# Note: This is VERY strict and may require many allows
+# arithmetic_side_effects = "warn"        # Disabled: too noisy, use checked_* methods
+
 # -----------------------------------------------------------------------------
 # EXPLICIT ERROR HANDLING - Like Gleam's Result type
 # -----------------------------------------------------------------------------
 # result_unwrap_used and option_unwrap_used are now just unwrap_used (set above)
 let_underscore_must_use = "deny"          # Don't discard important values
 match_result_ok = "deny"                  # Prefer proper Result handling
+map_unwrap_or = "deny"                    # Prefer map_or/map_or_else
 
 # -----------------------------------------------------------------------------
 # IMMUTABILITY - Like Gleam, values don't change
@@ -98,14 +118,30 @@ manual_find = "deny"                      # Use .find()
 manual_find_map = "deny"                  # Use .find_map()
 manual_flatten = "deny"                   # Use .flatten()
 manual_ok_or = "deny"                     # Use .ok_or()
+option_if_let_else = "deny"               # Use .map_or_else()
 needless_pass_by_value = "deny"           # Prefer references for large types
 large_types_passed_by_value = "deny"      # Large types should be references
 
 # -----------------------------------------------------------------------------
+# ITERATOR-FIRST - Prefer functional iteration over imperative loops
+# -----------------------------------------------------------------------------
+explicit_iter_loop = "deny"               # Use .iter() not `for x in &collection`
+explicit_into_iter_loop = "deny"          # Use .into_iter() not `for x in collection`
+iter_without_into_iter = "deny"           # If you have iter(), have into_iter()
+manual_while_let_some = "deny"            # Use iterator methods, not while let
+
+# -----------------------------------------------------------------------------
+# MINIMIZE MUTATION - As close to immutable as Rust allows
+# -----------------------------------------------------------------------------
+needless_pass_by_ref_mut = "deny"         # Don't use &mut when & suffices
+
+# -----------------------------------------------------------------------------
 # EXHAUSTIVE MATCHING - Like Gleam's case expressions
 # -----------------------------------------------------------------------------
+match_same_arms = "deny"                  # Combine identical match arms
 match_single_binding = "deny"             # Simplify single-binding matches
 match_wildcard_for_single_variants = "deny"  # Be explicit about variants
+wildcard_enum_match_arm = "deny"          # Prefer explicit enum matching
 single_match = "deny"                     # Consider if-let for single matches
 single_match_else = "deny"                # Consider if-let-else
 
@@ -139,13 +175,26 @@ if_not_else = "deny"                      # Prefer if positive { } else { }
 # COMPLEXITY LIMITS - Keep functions small and focused
 # -----------------------------------------------------------------------------
 cognitive_complexity = "deny"             # Limit cyclomatic complexity
-too_many_arguments = "warn"               # Functions with too many args (>7)
+too_many_arguments = "warn"               # Functions with too many args - refactor over time
+too_many_lines = "warn"                   # Functions that are too long - refactor over time
 fn_params_excessive_bools = "deny"        # Too many bool params is confusing
 
 # -----------------------------------------------------------------------------
-# NAMING - Like Gleam's snake_case consistency
+# NAMING - Like Gleam's snake_case consistency  
 # -----------------------------------------------------------------------------
 enum_variant_names = "deny"               # Don't prefix variants with enum name
+
+# -----------------------------------------------------------------------------
+# OPTION/RESULT DISCIPLINE - Like Gleam's explicit error handling
+# -----------------------------------------------------------------------------
+ok_expect = "deny"                        # Don't use .ok().expect()
+try_err = "deny"                          # Force ? propagation patterns
+
+# -----------------------------------------------------------------------------
+# NUMERIC SAFETY - Gleam has safe arithmetic
+# -----------------------------------------------------------------------------
+integer_division = "warn"                 # Warn on integer division (truncates)
+cast_possible_wrap = "deny"               # Deny casts that could wrap
 
 # -----------------------------------------------------------------------------
 # CORRECTNESS GROUPS - Enable entire lint groups AS ERRORS
@@ -155,39 +204,47 @@ suspicious = { level = "deny", priority = -1 }    # Suspicious code patterns - C
 complexity = { level = "deny", priority = -1 }    # Overly complex code
 perf = { level = "deny", priority = -1 }          # Performance issues
 style = { level = "deny", priority = -1 }         # Style consistency
+nursery = { level = "warn", priority = -1 }       # Experimental lints (warn, not deny)
+cargo = { level = "warn", priority = -1 }         # Cargo.toml best practices
+
+# -----------------------------------------------------------------------------
+# PEDANTIC - Enable but allow documentation-related noise
+# -----------------------------------------------------------------------------
 pedantic = { level = "deny", priority = -1 }      # Maximum strictness
 
 # -----------------------------------------------------------------------------
-# DOCUMENTATION LINTS - Disabled (not part of type safety)
+# PEDANTIC OVERRIDES - Allow style preferences that don't affect safety
+# We want Gleam's SAFETY, not every pedantic style rule
 # -----------------------------------------------------------------------------
-missing_errors_doc = "allow"              # Don't require # Errors section
-missing_panics_doc = "allow"              # Don't require # Panics section
-missing_docs_in_private_items = "allow"   # Don't require docs on private items
-doc_markdown = "allow"                    # Don't lint doc comment formatting
+# Documentation pedantry
+doc_markdown = "allow"                    # Don't require backticks in docs
+missing_errors_doc = "allow"              # Don't require error docs
+missing_panics_doc = "allow"              # Don't require panic docs (we don't panic anyway)
+module_name_repetitions = "allow"         # Allow FatSecretConfig in fatsecret::config
 
-# -----------------------------------------------------------------------------
-# STYLE LINTS - Disabled (not type safety)
-# -----------------------------------------------------------------------------
-module_name_repetitions = "allow"         # Not type safety
-similar_names = "allow"                   # Not type safety
-uninlined_format_args = "allow"           # Not type safety (format!("{}", x) vs format!("{x}"))
-must_use_candidate = "allow"              # Too noisy
-wildcard_imports = "allow"                # Not type safety
-manual_let_else = "allow"                 # Style preference
-too_many_lines = "allow"                  # Not type safety - allow long functions
-redundant_else = "allow"                  # Style preference
-items_after_statements = "allow"          # Not type safety
-return_self_not_must_use = "allow"        # Builder pattern style
-needless_raw_string_hashes = "allow"      # Raw string style
-struct_excessive_bools = "allow"          # Struct design style
-struct_field_names = "allow"              # Naming style
-ref_option = "allow"                      # Reference style (deprecated rename)
-ref_option_ref = "allow"                  # Reference style
-implicit_hasher = "allow"                 # HashMap generalization
-format_push_string = "allow"              # String formatting style
-map_unwrap_or = "allow"                   # Option handling style (override the deny above)
-option_if_let_else = "allow"              # Option handling style (override the deny above)
-match_same_arms = "allow"                 # Duplicated code detection
+# Style preferences (not safety)
+needless_raw_string_hashes = "allow"      # r#""# vs r"" is just style
+must_use_candidate = "allow"              # Don't require #[must_use] everywhere
+implicit_hasher = "allow"                 # HashMap<K,V> is fine, don't need BuildHasher
+uninlined_format_args = "allow"           # format!("{}", x) vs format!("{x}") is style
+items_after_statements = "allow"          # Allow defining helpers after use
+similar_names = "allow"                   # Allow oauth_token vs oauth_token_secret
+
+# Cargo metadata (not safety, just packaging)
+cargo_common_metadata = "allow"           # Don't require description/license for internal crate
+multiple_crate_versions = "allow"         # Dependencies can have version conflicts
+
+# Nursery lints that are too noisy
+missing_const_for_fn = "allow"            # Too noisy, const fn is optimization not safety
+trivially_copy_pass_by_ref = "allow"      # Style preference, not safety
+
+# Pedantic style that's too strict for existing code
+struct_field_names = "allow"              # Allow saved_meal_id in SavedMeal struct
+wrong_self_convention = "allow"           # Allow to_* methods taking &self
+unreadable_literal = "allow"              # Hex constants don't need separators
+wildcard_imports = "allow"                # Allow use module::*
+manual_let_else = "allow"                 # let...else is newer, don't require it yet
+use_self = "allow"                        # Self vs TypeName is style, not safety
 
 [dependencies]
 # HTTP client
@@ -265,6 +322,54 @@ path = "src/bin/tandoor_create_recipe.rs"
 name = "fatsecret_foods_search"
 path = "src/bin/fatsecret_foods_search.rs"
 
+[[bin]]
+name = "fatsecret_food_get"
+path = "src/bin/fatsecret_food_get.rs"
+
+[[bin]]
+name = "fatsecret_foods_autocomplete"
+path = "src/bin/fatsecret_foods_autocomplete.rs"
+
+[[bin]]
+name = "fatsecret_food_find_barcode"
+path = "src/bin/fatsecret_food_find_barcode.rs"
+
+[[bin]]
+name = "fatsecret_food_add_favorite"
+path = "src/bin/fatsecret_food_add_favorite.rs"
+
+[[bin]]
+name = "fatsecret_food_delete_favorite"
+path = "src/bin/fatsecret_food_delete_favorite.rs"
+
+[[bin]]
+name = "fatsecret_foods_get_favorites"
+path = "src/bin/fatsecret_foods_get_favorites.rs"
+
+[[bin]]
+name = "fatsecret_food_entries_get"
+path = "src/bin/fatsecret_food_entries_get.rs"
+
+[[bin]]
+name = "fatsecret_food_entry_get"
+path = "src/bin/fatsecret_food_entry_get.rs"
+
+[[bin]]
+name = "fatsecret_food_entries_get_month"
+path = "src/bin/fatsecret_food_entries_get_month.rs"
+
+[[bin]]
+name = "fatsecret_food_entry_create"
+path = "src/bin/fatsecret_food_entry_create.rs"
+
+[[bin]]
+name = "fatsecret_food_entry_edit"
+path = "src/bin/fatsecret_food_entry_edit.rs"
+
+[[bin]]
+name = "fatsecret_food_entry_delete"
+path = "src/bin/fatsecret_food_entry_delete.rs"
+
 [features]
 sqlx-cli = ["dep:sqlx-cli"]
 
@@ -288,3 +393,4 @@ lto = "thin"           # Faster than "fat" LTO, still good optimization
 codegen-units = 16     # Parallel codegen (matches core count)
 strip = "symbols"      # Strip symbols - smaller binaries, faster link
 debug = 0              # No debug info in release
+overflow-checks = true # CRITICAL: Panic on overflow instead of silent wrap

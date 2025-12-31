@@ -51,18 +51,13 @@ struct MonthResponse {
 }
 
 // ============================================================================
-// Public API Functions
+// Helper Functions
 // ============================================================================
 
-/// Create a new food entry in the user's diary
-#[instrument(skip(config, token))]
-pub async fn create_food_entry(
-    config: &FatSecretConfig,
-    token: &AccessToken,
-    input: FoodEntryInput,
-) -> Result<FoodEntryId, FatSecretError> {
+/// Build API parameters from a `FoodEntryInput`
+fn build_entry_params(input: &FoodEntryInput) -> HashMap<String, String> {
     let mut params = HashMap::new();
-    match &input {
+    match input {
         FoodEntryInput::FromFood {
             food_id,
             food_entry_name,
@@ -103,7 +98,21 @@ pub async fn create_food_entry(
             params.insert("fat".to_string(), fat.to_string());
         }
     }
+    params
+}
 
+// ============================================================================
+// Public API Functions
+// ============================================================================
+
+/// Create a new food entry in the user's diary
+#[instrument(skip(config, token))]
+pub async fn create_food_entry(
+    config: &FatSecretConfig,
+    token: &AccessToken,
+    input: FoodEntryInput,
+) -> Result<FoodEntryId, FatSecretError> {
+    let params = build_entry_params(&input);
     info!(target: "fatsecret", "Creating food entry: {}", input.food_entry_name());
 
     let body = make_authenticated_request(config, token, "food_entry.create", params).await?;
@@ -220,6 +229,7 @@ pub async fn copy_entries(
 }
 
 /// Copy entries for a specific meal from one date/meal to another
+#[allow(clippy::too_many_arguments)] // API requires all these params
 pub async fn copy_meal(
     config: &FatSecretConfig,
     token: &AccessToken,

@@ -1,0 +1,29 @@
+# Clippy configuration for Gleam-style Rust
+# These thresholds enforce small, focused functions
+#
+# NOTE: Clippy cannot catch:
+# - Stdlib panics (vec.remove, split_at, 1/0, etc.)
+# - Integer overflow (use overflow-checks=true in profile)
+# - Stack overflow from deep recursion (no TCO)
+# - Panics in dependencies
+
+# Don't avoid breaking changes - we want the best API
+avoid-breaking-exported-api = false
+
+# Cognitive complexity limit (Gleam functions are simple)
+cognitive-complexity-threshold = 10
+
+# Max function arguments (Gleam uses records for many args)
+too-many-arguments-threshold = 5
+
+# Type complexity limit
+type-complexity-threshold = 200
+
+# Max lines per function (Gleam functions are short)
+too-many-lines-threshold = 50
+
+# Max bool parameters (use a struct/enum instead)
+max-fn-params-bools = 2
+
+# Enforce consistent msrv
+msrv = "1.75"

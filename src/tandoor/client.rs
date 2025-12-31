@@ -192,6 +192,7 @@ impl TandoorClient {
     ///
     /// This is a convenience method that combines scraping and creation.
     /// It scrapes the recipe from the URL, then creates it in Tandoor.
+    #[allow(clippy::too_many_lines)] // Complex import logic - hard to split meaningfully
     pub fn import_recipe_from_url(
         &self,
         url: &str,

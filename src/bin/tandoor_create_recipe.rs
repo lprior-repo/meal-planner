@@ -1,14 +1,15 @@
 //! Create recipe in Tandoor from scraped data
 //!
 //! JSON stdin:
-//!   `{"tandoor": {...}, "recipe": {...}, "additional_keywords": [...]}`
+//!   {"tandoor": {...}, "recipe": {...}, "additional_keywords": `["tag1", "tag2"]`}
 //!
 //! JSON stdout:
-//!   `{"success": true, "recipe_id": 123, "name": "..."}`
-//!   `{"success": false, "error": "..."}`
+//!   {"success": true, "recipe_id": 123, "name": "..."}
+//!   {"success": false, "error": "..."}
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
+#![allow(clippy::too_many_lines)]
 
 use meal_planner::tandoor::{
     CreateFoodRequest, CreateIngredientRequest, CreateKeywordRequest, CreateRecipeRequest,

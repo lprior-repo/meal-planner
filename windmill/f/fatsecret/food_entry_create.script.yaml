@@ -1,0 +1,51 @@
+summary: Create FatSecret food diary entry
+description: Creates a new food diary entry for the user
+language: bash
+kind: script
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    fatsecret:
+      type: object
+      description: FatSecret API credentials
+      format: resource-fatsecret
+    access_token:
+      type: string
+      description: OAuth access token
+    access_secret:
+      type: string
+      description: OAuth access token secret
+    food_id:
+      type: string
+      description: The food ID from FatSecret database
+    food_entry_name:
+      type: string
+      description: Display name for the entry
+    serving_id:
+      type: string
+      description: The serving size ID
+    number_of_units:
+      type: number
+      description: Number of servings consumed
+    meal:
+      type: string
+      description: 'Meal type: breakfast, lunch, dinner, or other'
+      enum:
+        - breakfast
+        - lunch
+        - dinner
+        - other
+    date_int:
+      type: integer
+      description: Date as days since Unix epoch (1970-01-01)
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - food_id
+    - food_entry_name
+    - serving_id
+    - number_of_units
+    - meal
+    - date_int

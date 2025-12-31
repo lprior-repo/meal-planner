@@ -226,25 +226,21 @@ impl TokenStorage {
         .await
         .map_err(|e| StorageError::DatabaseError(e.to_string()))?;
 
-        match result {
-            Some(row) => {
-                let connected_at: DateTime<Utc> = row.get("connected_at");
-                let duration = Utc::now().signed_duration_since(connected_at);
-                let days_since = duration.num_days();
+        result.map_or(Ok(TokenValidity::NotFound), |row| {
+            let connected_at: DateTime<Utc> = row.get("connected_at");
+            let duration = Utc::now().signed_duration_since(connected_at);
+            let days_since = duration.num_days();
 
-                if days_since < 365 {
-                    Ok(TokenValidity::Valid)
-                } else {
-                    // Safe: days_since is clamped to positive values and < i32::MAX practically
-                    #[allow(clippy::cast_possible_truncation)]
-                    let days_i32 = days_since.min(i64::from(i32::MAX)) as i32;
-                    Ok(TokenValidity::Old {
-                        days_since_connected: days_i32,
-                    })
-                }
+            if days_since < 365 {
+                Ok(TokenValidity::Valid)
+            } else {
+                // Safe: days_since is bounded by realistic dates (won't overflow i32)
+                #[allow(clippy::cast_possible_truncation)]
+                Ok(TokenValidity::Old {
+                    days_since_connected: days_since as i32,
+                })
             }
-            None => Ok(TokenValidity::NotFound),
-        }
+        })
     }
 
     /// Delete the stored access token (disconnect account)
