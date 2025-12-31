@@ -3,10 +3,10 @@
 //! Retrieves the authenticated user's profile information.
 //! Requires a stored access token (run oauth_start + oauth_complete first).
 //!
-//! JSON stdin (Windmill format):
+//! JSON input (CLI arg or stdin, Windmill format):
 //!   `{"fatsecret": {"consumer_key": "...", "consumer_secret": "..."}}`
 //!
-//! JSON stdin (standalone format - uses env vars for credentials):
+//! JSON input (CLI arg or stdin, standalone format - uses env vars for credentials):
 //!   `{}`
 //!
 //! JSON stdout: `{"success": true, "profile": {...}}`
@@ -65,13 +65,21 @@ async fn main() {
 }
 
 async fn run() -> Result<Output, Box<dyn std::error::Error>> {
-    // Read input
-    let mut input_str = String::new();
-    io::stdin().read_to_string(&mut input_str)?;
-    let input: Input = if input_str.trim().is_empty() {
-        Input::default()
+    // Read input: prefer CLI arg, fall back to stdin
+    let input: Input = if let Some(arg) = std::env::args().nth(1) {
+        if arg.trim().is_empty() {
+            Input::default()
+        } else {
+            serde_json::from_str(&arg)?
+        }
     } else {
-        serde_json::from_str(&input_str)?
+        let mut input_str = String::new();
+        io::stdin().read_to_string(&mut input_str)?;
+        if input_str.trim().is_empty() {
+            Input::default()
+        } else {
+            serde_json::from_str(&input_str)?
+        }
     };
 
     // Get config: prefer input, fall back to environment
