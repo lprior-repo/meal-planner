@@ -518,4 +518,162 @@ mod tests {
         assert_eq!(params.get("oauth_token_secret").unwrap(), "secret456");
         assert_eq!(params.get("oauth_callback_confirmed").unwrap(), "true");
     }
+
+    #[test]
+    fn test_generate_nonce() {
+        let nonce1 = generate_nonce();
+        let nonce2 = generate_nonce();
+        // Nonces should be unique
+        assert_ne!(nonce1, nonce2);
+        // Nonces should be reasonable length
+        assert!(nonce1.len() >= 16);
+    }
+
+    #[test]
+    fn test_unix_timestamp() {
+        let ts = unix_timestamp();
+        // Should be after Jan 1, 2024 (1704067200)
+        assert!(ts > 1_704_067_200);
+    }
+
+    #[test]
+    fn test_create_signature() {
+        let base_string = "POST&https%3A%2F%2Fapi.example.com&oauth_param%3Dvalue";
+        let signature = create_signature(base_string, "consumer_secret", None);
+        // Signature should be base64 encoded
+        assert!(!signature.is_empty());
+        // Should not contain URL-unsafe characters after encoding
+        assert!(signature.chars().all(|c| c.is_ascii_alphanumeric() || c == '+' || c == '/' || c == '='));
+    }
+
+    #[test]
+    fn test_create_signature_with_token_secret() {
+        let base_string = "GET&https%3A%2F%2Fapi.example.com&test%3Dvalue";
+        let sig1 = create_signature(base_string, "consumer_secret", None);
+        let sig2 = create_signature(base_string, "consumer_secret", Some("token_secret"));
+        // Different token secrets should produce different signatures
+        assert_ne!(sig1, sig2);
+    }
+
+    #[test]
+    fn test_oauth_encode_special_chars() {
+        // Plus sign is encoded
+        assert_eq!(oauth_encode("+"), "%2B");
+        // At sign is encoded
+        assert_eq!(oauth_encode("@"), "%40");
+        // Slash is encoded
+        assert_eq!(oauth_encode("/"), "%2F");
+        // Colon is encoded
+        assert_eq!(oauth_encode(":"), "%3A");
+    }
+
+    #[test]
+    fn test_oauth_encode_unreserved() {
+        // Unreserved characters should not be encoded
+        let unreserved = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+        assert_eq!(oauth_encode(unreserved), unreserved);
+    }
+
+    #[test]
+    fn test_build_oauth_params() {
+        let extra = HashMap::new();
+        let params = build_oauth_params(
+            "test_consumer_key",
+            "test_consumer_secret",
+            "POST",
+            "https://api.example.com/test",
+            &extra,
+            None,
+            None,
+        );
+
+        // Should contain required OAuth params
+        assert_eq!(params.get("oauth_consumer_key").unwrap(), "test_consumer_key");
+        assert_eq!(params.get("oauth_signature_method").unwrap(), "HMAC-SHA1");
+        assert_eq!(params.get("oauth_version").unwrap(), "1.0");
+        assert!(params.contains_key("oauth_timestamp"));
+        assert!(params.contains_key("oauth_nonce"));
+        assert!(params.contains_key("oauth_signature"));
+    }
+
+    #[test]
+    fn test_build_oauth_params_with_token() {
+        let extra = HashMap::new();
+        let params = build_oauth_params(
+            "consumer_key",
+            "consumer_secret",
+            "GET",
+            "https://api.example.com/resource",
+            &extra,
+            Some("access_token"),
+            Some("token_secret"),
+        );
+
+        assert_eq!(params.get("oauth_token").unwrap(), "access_token");
+    }
+
+    #[test]
+    fn test_build_oauth_params_with_extra() {
+        let mut extra = HashMap::new();
+        extra.insert("method".to_string(), "foods.search".to_string());
+        extra.insert("search_expression".to_string(), "apple".to_string());
+
+        let params = build_oauth_params(
+            "key",
+            "secret",
+            "POST",
+            "https://api.example.com",
+            &extra,
+            None,
+            None,
+        );
+
+        assert_eq!(params.get("method").unwrap(), "foods.search");
+        assert_eq!(params.get("search_expression").unwrap(), "apple");
+    }
+
+    #[test]
+    fn test_parse_oauth_response_empty() {
+        let params = parse_oauth_response("");
+        assert!(params.is_empty());
+    }
+
+    #[test]
+    fn test_parse_oauth_response_single() {
+        let params = parse_oauth_response("key=value");
+        assert_eq!(params.get("key").unwrap(), "value");
+    }
+
+    #[test]
+    fn test_parse_oauth_response_encoded() {
+        let params = parse_oauth_response("name=John%20Doe&city=New%20York");
+        assert_eq!(params.get("name").unwrap(), "John Doe");
+        assert_eq!(params.get("city").unwrap(), "New York");
+    }
+
+    // ============================================================================
+    // Token type tests
+    // ============================================================================
+
+    #[test]
+    fn test_request_token_fields() {
+        let token = RequestToken {
+            oauth_token: "req_token".to_string(),
+            oauth_token_secret: "req_secret".to_string(),
+            oauth_callback_confirmed: true,
+        };
+        assert_eq!(token.oauth_token, "req_token");
+        assert_eq!(token.oauth_token_secret, "req_secret");
+        assert!(token.oauth_callback_confirmed);
+    }
+
+    #[test]
+    fn test_access_token_fields() {
+        let token = AccessToken {
+            oauth_token: "acc_token".to_string(),
+            oauth_token_secret: "acc_secret".to_string(),
+        };
+        assert_eq!(token.oauth_token, "acc_token");
+        assert_eq!(token.oauth_token_secret, "acc_secret");
+    }
 }
