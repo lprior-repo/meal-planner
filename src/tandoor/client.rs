@@ -406,4 +406,118 @@ mod tests {
         let client = TandoorClient::new(&config);
         assert!(client.is_ok());
     }
+
+    #[test]
+    fn test_client_creation_with_trailing_slash() {
+        let config = TandoorConfig {
+            base_url: "http://localhost:8090/".to_string(),
+            api_token: "test_token".to_string(),
+        };
+        let client = TandoorClient::new(&config).unwrap();
+        // base_url should have trailing slash stripped
+        assert!(!client.base_url.ends_with('/'));
+        assert_eq!(client.base_url, "http://localhost:8090");
+    }
+
+    #[test]
+    fn test_tandoor_error_display_http() {
+        // We can't easily create a reqwest::Error, but we can test other variants
+        let err = TandoorError::AuthError("Invalid token".to_string());
+        assert!(err.to_string().contains("Authentication"));
+        assert!(err.to_string().contains("Invalid token"));
+    }
+
+    #[test]
+    fn test_tandoor_error_display_api_error() {
+        let err = TandoorError::ApiError {
+            status: 404,
+            message: "Not found".to_string(),
+        };
+        let display = err.to_string();
+        assert!(display.contains("404"));
+        assert!(display.contains("Not found"));
+        assert!(display.contains("API error"));
+    }
+
+    #[test]
+    fn test_tandoor_error_display_parse_error() {
+        let err = TandoorError::ParseError("unexpected token".to_string());
+        let display = err.to_string();
+        assert!(display.contains("parse"));
+        assert!(display.contains("unexpected token"));
+    }
+
+    #[test]
+    fn test_tandoor_error_auth_error_debug() {
+        let err = TandoorError::AuthError("token expired".to_string());
+        let debug = format!("{:?}", err);
+        assert!(debug.contains("AuthError"));
+        assert!(debug.contains("token expired"));
+    }
+
+    #[test]
+    fn test_tandoor_error_api_error_debug() {
+        let err = TandoorError::ApiError {
+            status: 500,
+            message: "Server error".to_string(),
+        };
+        let debug = format!("{:?}", err);
+        assert!(debug.contains("ApiError"));
+        assert!(debug.contains("500"));
+        assert!(debug.contains("Server error"));
+    }
+
+    #[test]
+    fn test_tandoor_error_parse_error_debug() {
+        let err = TandoorError::ParseError("invalid json".to_string());
+        let debug = format!("{:?}", err);
+        assert!(debug.contains("ParseError"));
+        assert!(debug.contains("invalid json"));
+    }
+
+    #[test]
+    fn test_client_stores_headers() {
+        let config = TandoorConfig {
+            base_url: "http://localhost:8090".to_string(),
+            api_token: "my_secret_token".to_string(),
+        };
+        let client = TandoorClient::new(&config).unwrap();
+
+        // Verify headers were set (we can check the stored headers)
+        assert!(client.headers.contains_key(AUTHORIZATION));
+        assert!(client.headers.contains_key(CONTENT_TYPE));
+    }
+
+    #[test]
+    fn test_client_with_different_ports() {
+        // Test various port configurations
+        for port in [80, 443, 8080, 9000, 3000] {
+            let config = TandoorConfig {
+                base_url: format!("http://localhost:{}", port),
+                api_token: "token".to_string(),
+            };
+            let client = TandoorClient::new(&config);
+            assert!(client.is_ok(), "Failed to create client for port {}", port);
+        }
+    }
+
+    #[test]
+    fn test_client_with_https_url() {
+        let config = TandoorConfig {
+            base_url: "https://tandoor.example.com".to_string(),
+            api_token: "secure_token".to_string(),
+        };
+        let client = TandoorClient::new(&config);
+        assert!(client.is_ok());
+    }
+
+    #[test]
+    fn test_client_with_path_in_url() {
+        let config = TandoorConfig {
+            base_url: "http://localhost:8090/tandoor".to_string(),
+            api_token: "token".to_string(),
+        };
+        let client = TandoorClient::new(&config).unwrap();
+        assert_eq!(client.base_url, "http://localhost:8090/tandoor");
+    }
 }

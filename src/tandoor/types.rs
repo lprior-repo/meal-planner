@@ -427,3 +427,591 @@ pub struct RecipeImportResult {
     /// Status message or error description
     pub message: String,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ============================================================================
+    // TandoorConfig tests
+    // ============================================================================
+
+    #[test]
+    fn test_tandoor_config() {
+        let config = TandoorConfig {
+            base_url: "http://localhost:8080".to_string(),
+            api_token: "my_token".to_string(),
+        };
+        assert_eq!(config.base_url, "http://localhost:8080");
+        assert_eq!(config.api_token, "my_token");
+    }
+
+    #[test]
+    fn test_tandoor_config_clone() {
+        let config = TandoorConfig {
+            base_url: "http://example.com".to_string(),
+            api_token: "token123".to_string(),
+        };
+        let cloned = config.clone();
+        assert_eq!(config.base_url, cloned.base_url);
+        assert_eq!(config.api_token, cloned.api_token);
+    }
+
+    #[test]
+    fn test_tandoor_config_serde() {
+        let config = TandoorConfig {
+            base_url: "http://localhost".to_string(),
+            api_token: "secret".to_string(),
+        };
+        let json = serde_json::to_string(&config).unwrap();
+        assert!(json.contains("http://localhost"));
+        let parsed: TandoorConfig = serde_json::from_str(&json).unwrap();
+        assert_eq!(config.base_url, parsed.base_url);
+    }
+
+    // ============================================================================
+    // PaginatedResponse tests
+    // ============================================================================
+
+    #[test]
+    fn test_paginated_response_deserialize() {
+        let json = r#"{
+            "count": 100,
+            "next": "http://example.com/page=2",
+            "previous": null,
+            "results": [{"id": 1, "name": "Test"}]
+        }"#;
+        let response: PaginatedResponse<RecipeSummary> = serde_json::from_str(json).unwrap();
+        assert_eq!(response.count, 100);
+        assert!(response.next.is_some());
+        assert!(response.previous.is_none());
+        assert_eq!(response.results.len(), 1);
+    }
+
+    #[test]
+    fn test_paginated_response_empty() {
+        let json = r#"{
+            "count": 0,
+            "next": null,
+            "previous": null,
+            "results": []
+        }"#;
+        let response: PaginatedResponse<RecipeSummary> = serde_json::from_str(json).unwrap();
+        assert_eq!(response.count, 0);
+        assert!(response.results.is_empty());
+    }
+
+    // ============================================================================
+    // RecipeSummary tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_summary_minimal() {
+        let json = r#"{
+            "id": 42,
+            "name": "Simple Recipe"
+        }"#;
+        let summary: RecipeSummary = serde_json::from_str(json).unwrap();
+        assert_eq!(summary.id, 42);
+        assert_eq!(summary.name, "Simple Recipe");
+        assert!(summary.description.is_none());
+        assert!(summary.keywords.is_none());
+    }
+
+    #[test]
+    fn test_recipe_summary_full() {
+        let json = r#"{
+            "id": 1,
+            "name": "Full Recipe",
+            "description": "A complete recipe",
+            "keywords": [{"id": 1, "name": "dinner"}, {"id": 2, "name": "quick"}],
+            "working_time": 30,
+            "waiting_time": 60,
+            "rating": 4.5,
+            "servings": 4
+        }"#;
+        let summary: RecipeSummary = serde_json::from_str(json).unwrap();
+        assert_eq!(summary.id, 1);
+        assert_eq!(summary.description, Some("A complete recipe".to_string()));
+        assert_eq!(summary.keywords.as_ref().unwrap().len(), 2);
+        assert_eq!(summary.working_time, Some(30));
+        assert_eq!(summary.rating, Some(4.5));
+        assert_eq!(summary.servings, Some(4));
+    }
+
+    // ============================================================================
+    // Keyword tests
+    // ============================================================================
+
+    #[test]
+    fn test_keyword_deserialize() {
+        let json = r#"{"id": 5, "name": "vegetarian"}"#;
+        let keyword: Keyword = serde_json::from_str(json).unwrap();
+        assert_eq!(keyword.id, 5);
+        assert_eq!(keyword.name, "vegetarian");
+    }
+
+    // ============================================================================
+    // ConnectionTestResult tests
+    // ============================================================================
+
+    #[test]
+    fn test_connection_test_result_success() {
+        let result = ConnectionTestResult {
+            success: true,
+            message: "Connected successfully".to_string(),
+            recipe_count: 42,
+        };
+        assert!(result.success);
+        assert_eq!(result.recipe_count, 42);
+    }
+
+    #[test]
+    fn test_connection_test_result_serialize() {
+        let result = ConnectionTestResult {
+            success: true,
+            message: "OK".to_string(),
+            recipe_count: 10,
+        };
+        let json = serde_json::to_string(&result).unwrap();
+        assert!(json.contains("true"));
+        assert!(json.contains("10"));
+    }
+
+    // ============================================================================
+    // TandoorErrorResponse tests
+    // ============================================================================
+
+    #[test]
+    fn test_error_response_detail() {
+        let json = r#"{"detail": "Not found"}"#;
+        let error: TandoorErrorResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(error.detail, Some("Not found".to_string()));
+        assert!(error.error.is_none());
+    }
+
+    #[test]
+    fn test_error_response_error() {
+        let json = r#"{"error": "Invalid request"}"#;
+        let error: TandoorErrorResponse = serde_json::from_str(json).unwrap();
+        assert!(error.detail.is_none());
+        assert_eq!(error.error, Some("Invalid request".to_string()));
+    }
+
+    // ============================================================================
+    // RecipeFromSourceRequest tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_from_source_request_url() {
+        let request = RecipeFromSourceRequest {
+            url: Some("https://example.com/recipe".to_string()),
+            data: None,
+            bookmarklet: None,
+        };
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("https://example.com/recipe"));
+        assert!(!json.contains("data"));
+        assert!(!json.contains("bookmarklet"));
+    }
+
+    #[test]
+    fn test_recipe_from_source_request_data() {
+        let request = RecipeFromSourceRequest {
+            url: None,
+            data: Some("raw recipe data".to_string()),
+            bookmarklet: None,
+        };
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("raw recipe data"));
+    }
+
+    // ============================================================================
+    // RecipeFromSourceResponse tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_from_source_response_success() {
+        let json = r#"{
+            "recipe": {
+                "name": "Test Recipe",
+                "description": "A test",
+                "servings": 4,
+                "working_time": 30,
+                "waiting_time": 0,
+                "steps": [],
+                "keywords": []
+            },
+            "error": false,
+            "msg": "Success"
+        }"#;
+        let response: RecipeFromSourceResponse = serde_json::from_str(json).unwrap();
+        assert!(!response.error);
+        assert!(response.recipe.is_some());
+        assert_eq!(response.recipe.as_ref().unwrap().name, "Test Recipe");
+    }
+
+    #[test]
+    fn test_recipe_from_source_response_error() {
+        let json = r#"{
+            "recipe": null,
+            "error": true,
+            "msg": "Failed to parse"
+        }"#;
+        let response: RecipeFromSourceResponse = serde_json::from_str(json).unwrap();
+        assert!(response.error);
+        assert!(response.recipe.is_none());
+        assert_eq!(response.msg, "Failed to parse");
+    }
+
+    #[test]
+    fn test_recipe_from_source_response_with_images() {
+        let json = r#"{
+            "recipe": null,
+            "images": ["img1.jpg", "img2.jpg"],
+            "error": false,
+            "msg": ""
+        }"#;
+        let response: RecipeFromSourceResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(response.images.as_ref().unwrap().len(), 2);
+    }
+
+    // ============================================================================
+    // SourceImportRecipe tests
+    // ============================================================================
+
+    #[test]
+    fn test_source_import_recipe_minimal() {
+        let json = r#"{
+            "name": "Minimal Recipe"
+        }"#;
+        let recipe: SourceImportRecipe = serde_json::from_str(json).unwrap();
+        assert_eq!(recipe.name, "Minimal Recipe");
+        assert_eq!(recipe.servings, 1); // default
+        assert_eq!(recipe.working_time, 0); // default
+        assert!(recipe.steps.is_empty()); // default
+    }
+
+    #[test]
+    fn test_source_import_recipe_full() {
+        let json = r#"{
+            "name": "Full Recipe",
+            "description": "A complete imported recipe",
+            "source_url": "https://example.com",
+            "image": "https://example.com/img.jpg",
+            "servings": 4,
+            "servings_text": "4 servings",
+            "working_time": 30,
+            "waiting_time": 60,
+            "internal": true,
+            "steps": [
+                {
+                    "instruction": "Step 1",
+                    "ingredients": [],
+                    "show_ingredients_table": true
+                }
+            ],
+            "keywords": [
+                {"id": null, "label": null, "name": "dinner"}
+            ]
+        }"#;
+        let recipe: SourceImportRecipe = serde_json::from_str(json).unwrap();
+        assert_eq!(recipe.servings, 4);
+        assert_eq!(recipe.working_time, 30);
+        assert!(recipe.internal);
+        assert_eq!(recipe.steps.len(), 1);
+        assert_eq!(recipe.keywords.len(), 1);
+    }
+
+    // ============================================================================
+    // SourceImportStep tests
+    // ============================================================================
+
+    #[test]
+    fn test_source_import_step() {
+        let json = r#"{
+            "instruction": "Mix all ingredients",
+            "ingredients": [
+                {
+                    "amount": 2.0,
+                    "food": {"name": "eggs"},
+                    "unit": null,
+                    "note": ""
+                }
+            ],
+            "show_ingredients_table": true
+        }"#;
+        let step: SourceImportStep = serde_json::from_str(json).unwrap();
+        assert_eq!(step.instruction, "Mix all ingredients");
+        assert_eq!(step.ingredients.len(), 1);
+        assert!(step.show_ingredients_table);
+    }
+
+    #[test]
+    fn test_source_import_step_defaults() {
+        let json = r#"{
+            "instruction": "Simple step"
+        }"#;
+        let step: SourceImportStep = serde_json::from_str(json).unwrap();
+        assert!(step.ingredients.is_empty());
+        assert!(step.show_ingredients_table); // default true
+    }
+
+    // ============================================================================
+    // SourceImportIngredient tests
+    // ============================================================================
+
+    #[test]
+    fn test_source_import_ingredient_full() {
+        let json = r#"{
+            "amount": 2.5,
+            "food": {"name": "flour"},
+            "unit": {"name": "cups"},
+            "note": "sifted",
+            "original_text": "2.5 cups sifted flour"
+        }"#;
+        let ingredient: SourceImportIngredient = serde_json::from_str(json).unwrap();
+        assert_eq!(ingredient.amount, Some(2.5));
+        assert_eq!(ingredient.food.as_ref().unwrap().name, "flour");
+        assert_eq!(ingredient.unit.as_ref().unwrap().name, "cups");
+        assert_eq!(ingredient.note, "sifted");
+    }
+
+    #[test]
+    fn test_source_import_ingredient_minimal() {
+        let json = r#"{
+            "food": {"name": "salt"}
+        }"#;
+        let ingredient: SourceImportIngredient = serde_json::from_str(json).unwrap();
+        assert!(ingredient.amount.is_none());
+        assert!(ingredient.unit.is_none());
+        assert_eq!(ingredient.note, ""); // default
+    }
+
+    // ============================================================================
+    // SourceImportKeyword tests
+    // ============================================================================
+
+    #[test]
+    fn test_source_import_keyword_new() {
+        let json = r#"{
+            "id": null,
+            "label": null,
+            "name": "quick"
+        }"#;
+        let keyword: SourceImportKeyword = serde_json::from_str(json).unwrap();
+        assert!(keyword.id.is_none());
+        assert_eq!(keyword.name, "quick");
+    }
+
+    #[test]
+    fn test_source_import_keyword_existing() {
+        let json = r#"{
+            "id": 42,
+            "label": "Quick Meals",
+            "name": "quick"
+        }"#;
+        let keyword: SourceImportKeyword = serde_json::from_str(json).unwrap();
+        assert_eq!(keyword.id, Some(42));
+        assert_eq!(keyword.label, Some("Quick Meals".to_string()));
+    }
+
+    // ============================================================================
+    // CreateRecipeRequest tests
+    // ============================================================================
+
+    #[test]
+    fn test_create_recipe_request_minimal() {
+        let request = CreateRecipeRequest {
+            name: "Simple".to_string(),
+            description: None,
+            source_url: None,
+            servings: None,
+            working_time: None,
+            waiting_time: None,
+            keywords: None,
+            steps: None,
+        };
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("Simple"));
+        assert!(!json.contains("description"));
+        assert!(!json.contains("servings"));
+    }
+
+    #[test]
+    fn test_create_recipe_request_full() {
+        let request = CreateRecipeRequest {
+            name: "Full Recipe".to_string(),
+            description: Some("Description".to_string()),
+            source_url: Some("https://example.com".to_string()),
+            servings: Some(4),
+            working_time: Some(30),
+            waiting_time: Some(60),
+            keywords: Some(vec![CreateKeywordRequest { name: "dinner".to_string() }]),
+            steps: Some(vec![CreateStepRequest {
+                instruction: "Cook it".to_string(),
+                ingredients: None,
+            }]),
+        };
+        let json = serde_json::to_string(&request).unwrap();
+        assert!(json.contains("Full Recipe"));
+        assert!(json.contains("dinner"));
+        assert!(json.contains("Cook it"));
+    }
+
+    // ============================================================================
+    // CreateStepRequest tests
+    // ============================================================================
+
+    #[test]
+    fn test_create_step_request_minimal() {
+        let step = CreateStepRequest {
+            instruction: "Do something".to_string(),
+            ingredients: None,
+        };
+        let json = serde_json::to_string(&step).unwrap();
+        assert!(json.contains("Do something"));
+        assert!(!json.contains("ingredients"));
+    }
+
+    #[test]
+    fn test_create_step_request_with_ingredients() {
+        let step = CreateStepRequest {
+            instruction: "Mix".to_string(),
+            ingredients: Some(vec![CreateIngredientRequest {
+                amount: Some(2.0),
+                food: CreateFoodRequest { name: "eggs".to_string() },
+                unit: None,
+                note: None,
+            }]),
+        };
+        let json = serde_json::to_string(&step).unwrap();
+        assert!(json.contains("eggs"));
+        assert!(json.contains("2.0"));
+    }
+
+    // ============================================================================
+    // CreateIngredientRequest tests
+    // ============================================================================
+
+    #[test]
+    fn test_create_ingredient_request_minimal() {
+        let ingredient = CreateIngredientRequest {
+            amount: None,
+            food: CreateFoodRequest { name: "salt".to_string() },
+            unit: None,
+            note: None,
+        };
+        let json = serde_json::to_string(&ingredient).unwrap();
+        assert!(json.contains("salt"));
+        assert!(!json.contains("amount"));
+        assert!(!json.contains("unit"));
+    }
+
+    #[test]
+    fn test_create_ingredient_request_full() {
+        let ingredient = CreateIngredientRequest {
+            amount: Some(1.5),
+            food: CreateFoodRequest { name: "butter".to_string() },
+            unit: Some(CreateUnitRequest { name: "tbsp".to_string() }),
+            note: Some("softened".to_string()),
+        };
+        let json = serde_json::to_string(&ingredient).unwrap();
+        assert!(json.contains("butter"));
+        assert!(json.contains("tbsp"));
+        assert!(json.contains("softened"));
+    }
+
+    // ============================================================================
+    // CreatedRecipe tests
+    // ============================================================================
+
+    #[test]
+    fn test_created_recipe_deserialize() {
+        let json = r#"{"id": 123, "name": "New Recipe"}"#;
+        let created: CreatedRecipe = serde_json::from_str(json).unwrap();
+        assert_eq!(created.id, 123);
+        assert_eq!(created.name, "New Recipe");
+    }
+
+    // ============================================================================
+    // RecipeImportResult tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_import_result_success() {
+        let result = RecipeImportResult {
+            success: true,
+            recipe_id: Some(42),
+            recipe_name: Some("Imported Recipe".to_string()),
+            source_url: "https://example.com".to_string(),
+            message: "Success".to_string(),
+        };
+        assert!(result.success);
+        assert_eq!(result.recipe_id, Some(42));
+    }
+
+    #[test]
+    fn test_recipe_import_result_failure() {
+        let result = RecipeImportResult {
+            success: false,
+            recipe_id: None,
+            recipe_name: None,
+            source_url: "https://bad.com".to_string(),
+            message: "Failed to scrape".to_string(),
+        };
+        assert!(!result.success);
+        assert!(result.recipe_id.is_none());
+    }
+
+    #[test]
+    fn test_recipe_import_result_serialize() {
+        let result = RecipeImportResult {
+            success: true,
+            recipe_id: Some(1),
+            recipe_name: Some("Test".to_string()),
+            source_url: "https://test.com".to_string(),
+            message: "OK".to_string(),
+        };
+        let json = serde_json::to_string(&result).unwrap();
+        assert!(json.contains("true"));
+        assert!(json.contains("https://test.com"));
+    }
+
+    // ============================================================================
+    // Default function tests
+    // ============================================================================
+
+    #[test]
+    fn test_default_servings() {
+        assert_eq!(default_servings(), 1);
+    }
+
+    #[test]
+    fn test_default_true() {
+        assert!(default_true());
+    }
+
+    // ============================================================================
+    // SourceImportDuplicate tests
+    // ============================================================================
+
+    #[test]
+    fn test_source_import_duplicate() {
+        let json = r#"{"id": 5, "name": "Duplicate Recipe"}"#;
+        let dup: SourceImportDuplicate = serde_json::from_str(json).unwrap();
+        assert_eq!(dup.id, 5);
+        assert_eq!(dup.name, "Duplicate Recipe");
+    }
+
+    #[test]
+    fn test_source_import_duplicate_serialize() {
+        let dup = SourceImportDuplicate {
+            id: 10,
+            name: "Test".to_string(),
+        };
+        let json = serde_json::to_string(&dup).unwrap();
+        assert!(json.contains("10"));
+        assert!(json.contains("Test"));
+    }
+}

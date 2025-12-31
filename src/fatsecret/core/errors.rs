@@ -942,4 +942,482 @@ mod tests {
         assert!(!ApiErrorCode::FoodEntryNotFound.is_premium_required());
         assert!(ApiErrorCode::FoodEntryNotFound.is_not_found());
     }
+
+    // ============================================================================
+    // Additional comprehensive tests for coverage
+    // ============================================================================
+
+    #[test]
+    #[allow(clippy::cognitive_complexity)]
+    fn test_all_error_codes_from_code() {
+        // Test every single error code conversion
+        assert_eq!(ApiErrorCode::from_code(1), ApiErrorCode::GeneralError);
+        assert_eq!(ApiErrorCode::from_code(10), ApiErrorCode::InvalidApiMethod);
+        assert_eq!(ApiErrorCode::from_code(11), ApiErrorCode::RequiresHttps);
+        assert_eq!(
+            ApiErrorCode::from_code(20),
+            ApiErrorCode::UserPermissionDenied
+        );
+        assert_eq!(ApiErrorCode::from_code(21), ApiErrorCode::AccountSuspended);
+        assert_eq!(ApiErrorCode::from_code(22), ApiErrorCode::RateLimitExceeded);
+        assert_eq!(ApiErrorCode::from_code(23), ApiErrorCode::ApiAccessDisabled);
+
+        // OAuth 1.0 codes
+        assert_eq!(
+            ApiErrorCode::from_code(3),
+            ApiErrorCode::UnsupportedOAuthParameter
+        );
+        assert_eq!(
+            ApiErrorCode::from_code(4),
+            ApiErrorCode::InvalidSignatureMethod
+        );
+        assert_eq!(
+            ApiErrorCode::from_code(5),
+            ApiErrorCode::InvalidConsumerCredentials
+        );
+        assert_eq!(
+            ApiErrorCode::from_code(6),
+            ApiErrorCode::InvalidOrExpiredTimestamp
+        );
+        assert_eq!(ApiErrorCode::from_code(7), ApiErrorCode::InvalidNonce);
+        assert_eq!(ApiErrorCode::from_code(8), ApiErrorCode::InvalidSignature);
+
+        // Parameter errors
+        assert_eq!(
+            ApiErrorCode::from_code(102),
+            ApiErrorCode::InvalidParameterType
+        );
+        assert_eq!(
+            ApiErrorCode::from_code(103),
+            ApiErrorCode::InvalidParameterValue
+        );
+        assert_eq!(
+            ApiErrorCode::from_code(104),
+            ApiErrorCode::ParameterOutOfRange
+        );
+        assert_eq!(ApiErrorCode::from_code(105), ApiErrorCode::InvalidDateFormat);
+        assert_eq!(ApiErrorCode::from_code(106), ApiErrorCode::InvalidFoodId);
+        assert_eq!(ApiErrorCode::from_code(107), ApiErrorCode::InvalidServingId);
+        assert_eq!(ApiErrorCode::from_code(108), ApiErrorCode::InvalidRecipeId);
+        assert_eq!(
+            ApiErrorCode::from_code(109),
+            ApiErrorCode::InvalidFoodEntryId
+        );
+
+        // Resource not found errors
+        assert_eq!(ApiErrorCode::from_code(201), ApiErrorCode::FoodNotFound);
+        assert_eq!(ApiErrorCode::from_code(202), ApiErrorCode::RecipeNotFound);
+        assert_eq!(ApiErrorCode::from_code(203), ApiErrorCode::ServingNotFound);
+        assert_eq!(
+            ApiErrorCode::from_code(205),
+            ApiErrorCode::ExerciseEntryNotFound
+        );
+        assert_eq!(
+            ApiErrorCode::from_code(206),
+            ApiErrorCode::WeightEntryNotFound
+        );
+        assert_eq!(ApiErrorCode::from_code(208), ApiErrorCode::MealNotFound);
+        assert_eq!(ApiErrorCode::from_code(209), ApiErrorCode::BrandNotFound);
+        assert_eq!(ApiErrorCode::from_code(210), ApiErrorCode::DuplicateEntry);
+        assert_eq!(
+            ApiErrorCode::from_code(211),
+            ApiErrorCode::MaximumLimitReached
+        );
+    }
+
+    #[test]
+    #[allow(clippy::cognitive_complexity)]
+    fn test_all_descriptions() {
+        // Test all error code descriptions
+        assert_eq!(ApiErrorCode::GeneralError.description(), "General Error");
+        assert_eq!(
+            ApiErrorCode::InvalidApiMethod.description(),
+            "Invalid API Method"
+        );
+        assert_eq!(
+            ApiErrorCode::RequiresHttps.description(),
+            "Method Requires HTTPS"
+        );
+        assert_eq!(
+            ApiErrorCode::UserPermissionDenied.description(),
+            "User Permission Denied"
+        );
+        assert_eq!(
+            ApiErrorCode::AccountSuspended.description(),
+            "Account Suspended"
+        );
+        assert_eq!(
+            ApiErrorCode::RateLimitExceeded.description(),
+            "Rate Limit Exceeded"
+        );
+        assert_eq!(
+            ApiErrorCode::ApiAccessDisabled.description(),
+            "API Access Disabled"
+        );
+        assert_eq!(
+            ApiErrorCode::PremiumRequired.description(),
+            "Premium Subscription Required"
+        );
+
+        // OAuth 1.0 descriptions
+        assert_eq!(
+            ApiErrorCode::MissingOAuthParameter.description(),
+            "Missing OAuth Parameter"
+        );
+        assert_eq!(
+            ApiErrorCode::UnsupportedOAuthParameter.description(),
+            "Unsupported OAuth Parameter"
+        );
+        assert_eq!(
+            ApiErrorCode::InvalidSignatureMethod.description(),
+            "Invalid Signature Method"
+        );
+        assert_eq!(
+            ApiErrorCode::InvalidConsumerCredentials.description(),
+            "Invalid Consumer Credentials"
+        );
+        assert_eq!(
+            ApiErrorCode::InvalidOrExpiredTimestamp.description(),
+            "Invalid or Expired Timestamp"
+        );
+        assert_eq!(
+            ApiErrorCode::InvalidNonce.description(),
+            "Invalid or Used Nonce"
+        );
+        assert_eq!(
+            ApiErrorCode::InvalidSignature.description(),
+            "Invalid Signature"
+        );
+        assert_eq!(
+            ApiErrorCode::InvalidAccessToken.description(),
+            "Invalid or Expired Access Token"
+        );
+
+        // OAuth 2.0 descriptions
+        assert_eq!(
+            ApiErrorCode::OAuth2InvalidToken.description(),
+            "Invalid Access Token (OAuth 2.0)"
+        );
+        assert_eq!(
+            ApiErrorCode::OAuth2TokenExpired.description(),
+            "Access Token Expired (OAuth 2.0)"
+        );
+
+        // Parameter error descriptions
+        assert_eq!(
+            ApiErrorCode::MissingRequiredParameter.description(),
+            "Missing Required Parameter"
+        );
+        assert_eq!(
+            ApiErrorCode::InvalidParameterType.description(),
+            "Invalid Parameter Type"
+        );
+        assert_eq!(
+            ApiErrorCode::InvalidParameterValue.description(),
+            "Invalid Parameter Value"
+        );
+        assert_eq!(
+            ApiErrorCode::ParameterOutOfRange.description(),
+            "Parameter Value Out of Range"
+        );
+        assert_eq!(
+            ApiErrorCode::InvalidDateFormat.description(),
+            "Invalid Date Format"
+        );
+        assert_eq!(ApiErrorCode::InvalidFoodId.description(), "Invalid food_id");
+        assert_eq!(
+            ApiErrorCode::InvalidServingId.description(),
+            "Invalid serving_id"
+        );
+        assert_eq!(
+            ApiErrorCode::InvalidRecipeId.description(),
+            "Invalid recipe_id"
+        );
+        assert_eq!(
+            ApiErrorCode::InvalidFoodEntryId.description(),
+            "Invalid food_entry_id"
+        );
+
+        // Resource not found descriptions
+        assert_eq!(ApiErrorCode::FoodNotFound.description(), "Food Not Found");
+        assert_eq!(
+            ApiErrorCode::RecipeNotFound.description(),
+            "Recipe Not Found"
+        );
+        assert_eq!(
+            ApiErrorCode::ServingNotFound.description(),
+            "Serving Not Found"
+        );
+        assert_eq!(
+            ApiErrorCode::FoodEntryNotFound.description(),
+            "Food Entry Not Found"
+        );
+        assert_eq!(
+            ApiErrorCode::ExerciseEntryNotFound.description(),
+            "Exercise Entry Not Found"
+        );
+        assert_eq!(
+            ApiErrorCode::WeightEntryNotFound.description(),
+            "Weight Entry Not Found"
+        );
+        assert_eq!(
+            ApiErrorCode::UserProfileNotFound.description(),
+            "User Profile Not Found"
+        );
+        assert_eq!(ApiErrorCode::MealNotFound.description(), "Meal Not Found");
+        assert_eq!(ApiErrorCode::BrandNotFound.description(), "Brand Not Found");
+        assert_eq!(
+            ApiErrorCode::DuplicateEntry.description(),
+            "Duplicate Entry"
+        );
+        assert_eq!(
+            ApiErrorCode::MaximumLimitReached.description(),
+            "Maximum Limit Reached"
+        );
+        assert_eq!(
+            ApiErrorCode::UnknownError(999).description(),
+            "Unknown Error"
+        );
+    }
+
+    #[test]
+    fn test_unknown_error_display() {
+        let error = ApiErrorCode::UnknownError(42);
+        assert_eq!(error.to_string(), "Unknown Error (code 42)");
+
+        let error2 = ApiErrorCode::UnknownError(-1);
+        assert_eq!(error2.to_string(), "Unknown Error (code -1)");
+    }
+
+    #[test]
+    fn test_is_retryable_all_cases() {
+        // Retryable errors
+        assert!(ApiErrorCode::RateLimitExceeded.is_retryable());
+        assert!(ApiErrorCode::GeneralError.is_retryable());
+        assert!(ApiErrorCode::OAuth2TokenExpired.is_retryable());
+
+        // Non-retryable errors
+        assert!(!ApiErrorCode::InvalidAccessToken.is_retryable());
+        assert!(!ApiErrorCode::MissingRequiredParameter.is_retryable());
+        assert!(!ApiErrorCode::FoodNotFound.is_retryable());
+        assert!(!ApiErrorCode::PremiumRequired.is_retryable());
+        assert!(!ApiErrorCode::UnknownError(999).is_retryable());
+    }
+
+    #[test]
+    fn test_fatsecret_error_api_error_code() {
+        // Test api_error_code getter
+        let error = FatSecretError::ApiError {
+            code: ApiErrorCode::FoodNotFound,
+            message: "not found".into(),
+        };
+        assert_eq!(
+            error.api_error_code(),
+            Some(&ApiErrorCode::FoodNotFound)
+        );
+
+        // Non-API errors return None
+        assert!(FatSecretError::ConfigMissing.api_error_code().is_none());
+        assert!(FatSecretError::network_error("err").api_error_code().is_none());
+        assert!(FatSecretError::parse_error("err").api_error_code().is_none());
+        assert!(FatSecretError::oauth_error("err").api_error_code().is_none());
+        assert!(FatSecretError::request_failed(400, "err").api_error_code().is_none());
+        assert!(FatSecretError::invalid_response("err").api_error_code().is_none());
+    }
+
+    #[test]
+    fn test_fatsecret_error_is_not_found() {
+        // API errors with not-found codes
+        assert!(FatSecretError::ApiError {
+            code: ApiErrorCode::FoodNotFound,
+            message: "not found".into()
+        }
+        .is_not_found());
+
+        assert!(FatSecretError::ApiError {
+            code: ApiErrorCode::RecipeNotFound,
+            message: "not found".into()
+        }
+        .is_not_found());
+
+        // Non-not-found API errors
+        assert!(!FatSecretError::ApiError {
+            code: ApiErrorCode::InvalidAccessToken,
+            message: "invalid".into()
+        }
+        .is_not_found());
+
+        // Non-API errors
+        assert!(!FatSecretError::request_failed(404, "not found").is_not_found());
+        assert!(!FatSecretError::network_error("err").is_not_found());
+        assert!(!FatSecretError::parse_error("err").is_not_found());
+        assert!(!FatSecretError::oauth_error("err").is_not_found());
+        assert!(!FatSecretError::ConfigMissing.is_not_found());
+        assert!(!FatSecretError::invalid_response("err").is_not_found());
+    }
+
+    #[test]
+    fn test_fatsecret_error_is_recoverable_all_cases() {
+        // OAuth error is NOT recoverable (needs re-auth)
+        assert!(!FatSecretError::oauth_error("invalid").is_recoverable());
+
+        // Invalid response is NOT recoverable
+        assert!(!FatSecretError::invalid_response("bad data").is_recoverable());
+
+        // GeneralError (code 1) is retryable
+        assert!(FatSecretError::ApiError {
+            code: ApiErrorCode::GeneralError,
+            message: "general".into()
+        }
+        .is_recoverable());
+    }
+
+    #[test]
+    fn test_fatsecret_error_constructors() {
+        let api_err = FatSecretError::api_error(201, "Food not found");
+        match api_err {
+            FatSecretError::ApiError { code, message } => {
+                assert_eq!(code, ApiErrorCode::FoodNotFound);
+                assert_eq!(message, "Food not found");
+            }
+            _ => panic!("Expected ApiError"),
+        }
+
+        let invalid_resp = FatSecretError::invalid_response("unexpected format");
+        match invalid_resp {
+            FatSecretError::InvalidResponse(msg) => {
+                assert_eq!(msg, "unexpected format");
+            }
+            _ => panic!("Expected InvalidResponse"),
+        }
+    }
+
+    #[test]
+    fn test_fatsecret_error_display_all_variants() {
+        // Request failed
+        let err = FatSecretError::request_failed(503, "Service Unavailable");
+        assert!(err.to_string().contains("503"));
+        assert!(err.to_string().contains("Service Unavailable"));
+
+        // Parse error
+        let err = FatSecretError::parse_error("unexpected token");
+        assert!(err.to_string().contains("parse"));
+        assert!(err.to_string().contains("unexpected token"));
+
+        // OAuth error
+        let err = FatSecretError::oauth_error("signature mismatch");
+        assert!(err.to_string().contains("OAuth"));
+        assert!(err.to_string().contains("signature mismatch"));
+
+        // Invalid response
+        let err = FatSecretError::invalid_response("missing field");
+        assert!(err.to_string().contains("Invalid response"));
+        assert!(err.to_string().contains("missing field"));
+    }
+
+    #[test]
+    fn test_from_serde_json_error() {
+        let json_err = serde_json::from_str::<i32>("not a number").unwrap_err();
+        let fat_err: FatSecretError = json_err.into();
+
+        match fat_err {
+            FatSecretError::ParseError(msg) => {
+                assert!(msg.contains("JSON parse error"));
+            }
+            _ => panic!("Expected ParseError"),
+        }
+    }
+
+    #[test]
+    #[allow(clippy::cognitive_complexity)]
+    fn test_all_is_auth_related() {
+        // All OAuth 1.0 errors (codes 2-9)
+        assert!(ApiErrorCode::UnsupportedOAuthParameter.is_auth_related());
+        assert!(ApiErrorCode::InvalidSignatureMethod.is_auth_related());
+        assert!(ApiErrorCode::InvalidConsumerCredentials.is_auth_related());
+        assert!(ApiErrorCode::InvalidOrExpiredTimestamp.is_auth_related());
+        assert!(ApiErrorCode::InvalidNonce.is_auth_related());
+
+        // Non-auth general errors
+        assert!(!ApiErrorCode::GeneralError.is_auth_related());
+        assert!(!ApiErrorCode::InvalidApiMethod.is_auth_related());
+        assert!(!ApiErrorCode::RequiresHttps.is_auth_related());
+        assert!(!ApiErrorCode::UserPermissionDenied.is_auth_related());
+        assert!(!ApiErrorCode::AccountSuspended.is_auth_related());
+        assert!(!ApiErrorCode::ApiAccessDisabled.is_auth_related());
+    }
+
+    #[test]
+    #[allow(clippy::cognitive_complexity)]
+    fn test_all_is_not_found() {
+        // All not-found errors
+        assert!(ApiErrorCode::ServingNotFound.is_not_found());
+        assert!(ApiErrorCode::ExerciseEntryNotFound.is_not_found());
+        assert!(ApiErrorCode::WeightEntryNotFound.is_not_found());
+        assert!(ApiErrorCode::MealNotFound.is_not_found());
+        assert!(ApiErrorCode::BrandNotFound.is_not_found());
+
+        // Not "not found" errors
+        assert!(!ApiErrorCode::DuplicateEntry.is_not_found());
+        assert!(!ApiErrorCode::MaximumLimitReached.is_not_found());
+        assert!(!ApiErrorCode::UnknownError(999).is_not_found());
+    }
+
+    #[test]
+    #[allow(clippy::cognitive_complexity)]
+    fn test_all_is_parameter_error() {
+        // All parameter errors
+        assert!(ApiErrorCode::InvalidParameterType.is_parameter_error());
+        assert!(ApiErrorCode::InvalidParameterValue.is_parameter_error());
+        assert!(ApiErrorCode::ParameterOutOfRange.is_parameter_error());
+        assert!(ApiErrorCode::InvalidServingId.is_parameter_error());
+        assert!(ApiErrorCode::InvalidRecipeId.is_parameter_error());
+        assert!(ApiErrorCode::InvalidFoodEntryId.is_parameter_error());
+
+        // Not parameter errors
+        assert!(!ApiErrorCode::GeneralError.is_parameter_error());
+        assert!(!ApiErrorCode::RateLimitExceeded.is_parameter_error());
+    }
+
+    #[test]
+    fn test_api_error_code_clone() {
+        let original = ApiErrorCode::FoodNotFound;
+        let cloned = original;
+        assert_eq!(original, cloned);
+
+        let unknown = ApiErrorCode::UnknownError(123);
+        let cloned_unknown = unknown;
+        assert_eq!(unknown, cloned_unknown);
+    }
+
+    #[test]
+    fn test_api_error_code_debug() {
+        let code = ApiErrorCode::InvalidAccessToken;
+        let debug_str = format!("{:?}", code);
+        assert!(debug_str.contains("InvalidAccessToken"));
+
+        let unknown = ApiErrorCode::UnknownError(42);
+        let debug_str = format!("{:?}", unknown);
+        assert!(debug_str.contains("UnknownError"));
+        assert!(debug_str.contains("42"));
+    }
+
+    #[test]
+    fn test_fatsecret_error_is_auth_error_all_variants() {
+        // Test is_auth_error for RequestFailed
+        assert!(!FatSecretError::request_failed(401, "unauthorized").is_auth_error());
+
+        // Test is_auth_error for InvalidResponse
+        assert!(!FatSecretError::invalid_response("bad").is_auth_error());
+    }
+
+    #[test]
+    fn test_code_display_uses_description() {
+        // Known codes should display their description
+        let code = ApiErrorCode::FoodNotFound;
+        assert_eq!(code.to_string(), "Food Not Found");
+
+        let code = ApiErrorCode::RateLimitExceeded;
+        assert_eq!(code.to_string(), "Rate Limit Exceeded");
+    }
 }
