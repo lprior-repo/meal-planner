@@ -281,17 +281,26 @@ windmill/
 
 This project uses **Moon** for task orchestration. Moon caches task outputs for speed - repeated runs skip unchanged work.
 
+### ABSOLUTE RULE: Always Use Moon
+
+**NEVER run individual cargo/rustc commands directly. ALL builds, tests, and CI tasks MUST go through Moon.**
+
+This is non-negotiable:
+- `moon run :build` - NOT `cargo build --release`
+- `moon run :test` - NOT `cargo test`
+- `moon run :ci` - NOT individual lint/test/build commands
+
+Moon parallelizes everything and caches results. Direct commands bypass this and are slower.
+
 ### Common Commands
 
 ```bash
 moon run :ci      # Full CI pipeline (lint, test, build)
 moon run :quick   # Fast lint checks only
 moon run :deploy  # CI + Windmill push
-moon run :build   # Build release binaries (PREFERRED - parallelized)
+moon run :build   # Build release binaries (parallelized, cached)
 moon run :test    # Run tests
 ```
-
-**IMPORTANT**: Always use `moon run :build` instead of `cargo build --release` for building binaries. Moon parallelizes the build and caches results, making it significantly faster.
 
 ### Why Moon?
 

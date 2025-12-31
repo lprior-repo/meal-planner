@@ -1829,7 +1829,7 @@ impl TandoorClient {
         Ok(paginated.results)
     }
 
-    /// List recipes without pagination (flat list)
+    /// List recipes without pagination (flat list) - extracts results from paginated response
     pub fn list_recipes_flat(
         &self,
         limit: Option<u32>,
@@ -1838,10 +1838,14 @@ impl TandoorClient {
         let mut url = format!("{}/api/recipe/", self.base_url);
         let mut params = Vec::new();
         if let Some(l) = limit {
-            params.push(format!("limit={}", l));
+            params.push(format!("page_size={}", l));
         }
         if let Some(o) = offset {
-            params.push(format!("offset={}", o));
+            // Convert offset to page number (1-indexed)
+            let page_size = limit.unwrap_or(50);
+            #[allow(clippy::integer_division)]
+            let page = if page_size > 0 { o / page_size + 1 } else { 1 };
+            params.push(format!("page={}", page));
         }
         if !params.is_empty() {
             url = format!("{}?{}", url, params.join("&"));
@@ -1853,9 +1857,10 @@ impl TandoorClient {
                 message: response.text().unwrap_or_default(),
             });
         }
-        response
+        let paginated: PaginatedResponse<RecipeSummary> = response
             .json()
-            .map_err(|e| TandoorError::ParseError(e.to_string()))
+            .map_err(|e| TandoorError::ParseError(e.to_string()))?;
+        Ok(paginated.results)
     }
 }
 

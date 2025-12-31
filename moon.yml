@@ -101,9 +101,24 @@ tasks:
     options:
       cache: true
 
+  dev:
+    description: 'Fast development build - skip tests, just lint and build release'
+    deps:
+      - '~:fmt'
+      - '~:clippy'
+    command: 'cargo build --release'
+    inputs:
+      - '@globs(sources)'
+      - '@globs(configs)'
+    outputs:
+      - 'target/release/fatsecret_*'
+      - 'target/release/tandoor_*'
+    options:
+      cache: true
+
   copy-binaries:
-    description: 'Copy release binaries to bin/ directory'
-    script: 'mkdir -p bin && cp target/release/fatsecret_* target/release/tandoor_* bin/ 2>/dev/null; ls bin/'
+    description: 'Copy release binaries to bin/ directory (after full build)'
+    script: 'mkdir -p bin && cp target/release/fatsecret_* target/release/tandoor_* bin/ 2>/dev/null; ls bin/ | grep -v "\.d$" | wc -l; echo "binaries copied"'
     inputs:
       - 'target/release/fatsecret_*'
       - 'target/release/tandoor_*'
@@ -111,6 +126,17 @@ tasks:
       - 'bin/'
     deps:
       - '~:build'
+
+  copy-binaries-dev:
+    description: 'Copy release binaries to bin/ directory (after dev build)'
+    script: 'mkdir -p bin && cp target/release/fatsecret_* target/release/tandoor_* bin/ 2>/dev/null; ls bin/ | grep -v "\.d$" | wc -l; echo "binaries copied"'
+    inputs:
+      - 'target/release/fatsecret_*'
+      - 'target/release/tandoor_*'
+    outputs:
+      - 'bin/'
+    deps:
+      - '~:dev'
 
   # ============================================
   # Windmill

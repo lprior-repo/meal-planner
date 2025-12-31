@@ -69,7 +69,7 @@ fn run() -> anyhow::Result<Output> {
     Ok(Output {
         success: true,
         id: Some(created.id),
-        name: Some(created.name),
+        name: created.name.or(created.label),
         error: None,
     })
 }

@@ -168,12 +168,18 @@ pub struct RecipeSummary {
 }
 
 /// Keyword/tag
+/// Note: In recipe list responses, keywords only have `id` and `label`.
+/// In keyword list responses, they have full details including `name`.
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Keyword {
     /// Keyword ID
     pub id: i64,
-    /// Keyword name
-    pub name: String,
+    /// Keyword name (full keyword list responses)
+    #[serde(default)]
+    pub name: Option<String>,
+    /// Keyword label (always present in recipe list responses)
+    #[serde(default)]
+    pub label: Option<String>,
 }
 
 /// Test connection result
