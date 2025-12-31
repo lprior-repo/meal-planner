@@ -1,4 +1,4 @@
-//! FatSecret Saved Meals Domain Types
+//! `FatSecret` Saved Meals Domain Types
 
 use crate::fatsecret::core::serde_utils::{deserialize_flexible_float, deserialize_single_or_vec};
 use serde::{Deserialize, Serialize};
@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 // Opaque ID Types
 // ============================================================================
 
-/// Opaque type for FatSecret saved meal IDs
+/// Opaque type for `FatSecret` saved meal IDs
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct SavedMealId(String);
@@ -42,7 +42,7 @@ impl std::fmt::Display for SavedMealId {
     }
 }
 
-/// Opaque type for FatSecret saved meal item IDs
+/// Opaque type for `FatSecret` saved meal item IDs
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct SavedMealItemId(String);
@@ -79,7 +79,7 @@ pub enum MealType {
 }
 
 impl MealType {
-    /// Converts the meal type to its FatSecret API string representation
+    /// Converts the meal type to its `FatSecret` API string representation
     pub fn to_api_string(&self) -> &'static str {
         match self {
             MealType::Breakfast => "breakfast",
@@ -141,7 +141,7 @@ where
 pub struct SavedMealItem {
     /// Unique ID for this item within the saved meal
     pub saved_meal_item_id: SavedMealItemId,
-    /// FatSecret food ID
+    /// `FatSecret` food ID
     pub food_id: String,
     /// Display name for the food entry
     pub food_entry_name: String,
@@ -168,9 +168,9 @@ pub struct SavedMealItem {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum SavedMealItemInput {
-    /// Reference an existing FatSecret food by ID and serving
+    /// Reference an existing `FatSecret` food by ID and serving
     ByFoodId {
-        /// FatSecret food ID to reference
+        /// `FatSecret` food ID to reference
         food_id: String,
         /// Serving size ID
         serving_id: String,
@@ -200,7 +200,7 @@ pub enum SavedMealItemInput {
 // Response Wrappers
 // ============================================================================
 
-/// Response from saved_meals.get.v2 API
+/// Response from `saved_meals.get.v2` API
 #[derive(Debug, Deserialize)]
 pub struct SavedMealsResponse {
     /// List of saved meals returned by the API
@@ -214,7 +214,7 @@ pub struct SavedMealsResponse {
     pub meal_filter: Option<String>,
 }
 
-/// Response from saved_meal_items.get.v2 API
+/// Response from `saved_meal_items.get.v2` API
 #[derive(Debug, Deserialize)]
 pub struct SavedMealItemsResponse {
     /// ID of the saved meal these items belong to
@@ -228,14 +228,14 @@ pub struct SavedMealItemsResponse {
     pub items: Vec<SavedMealItem>,
 }
 
-/// Top-level wrapper for saved_meals.get.v2 API response
+/// Top-level wrapper for `saved_meals.get.v2` API response
 #[derive(Debug, Deserialize)]
 pub struct SavedMealsResponseWrapper {
     /// The saved meals response data
     pub saved_meals: SavedMealsResponse,
 }
 
-/// Top-level wrapper for saved_meal_items.get.v2 API response
+/// Top-level wrapper for `saved_meal_items.get.v2` API response
 #[derive(Debug, Deserialize)]
 pub struct SavedMealItemsResponseWrapper {
     /// The saved meal items response data

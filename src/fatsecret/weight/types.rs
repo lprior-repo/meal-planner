@@ -1,4 +1,4 @@
-//! FatSecret Weight Management types
+//! `FatSecret` Weight Management types
 
 use crate::fatsecret::core::serde_utils::{
     deserialize_flexible_float, deserialize_flexible_int, deserialize_single_or_vec,
@@ -43,7 +43,7 @@ pub struct WeightEntry {
     pub weight_comment: Option<String>,
 }
 
-/// Wrapper for WeightEntry response
+/// Wrapper for `WeightEntry` response
 #[derive(Debug, Deserialize)]
 pub struct WeightEntryResponse {
     /// The weight entry data
@@ -98,7 +98,7 @@ pub struct WeightMonthSummary {
     pub days: Vec<WeightDaySummary>,
 }
 
-/// Wrapper for WeightMonthSummary response
+/// Wrapper for `WeightMonthSummary` response
 #[derive(Debug, Deserialize)]
 pub struct WeightMonthSummaryResponse {
     /// The monthly weight summary data

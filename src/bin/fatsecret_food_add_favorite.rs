@@ -111,7 +111,7 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
         == 1;
 
     if !api_success {
-        return Err(format!("API returned unexpected response: {}", response).into());
+        return Err(format!("API returned unexpected response: {response}").into());
     }
 
     Ok(Output { success: true })

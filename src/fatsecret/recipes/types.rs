@@ -1,4 +1,4 @@
-//! FatSecret Recipe domain types
+//! `FatSecret` Recipe domain types
 
 use crate::fatsecret::core::serde_utils::{
     deserialize_flexible_float, deserialize_flexible_int, deserialize_optional_flexible_float,
@@ -10,13 +10,13 @@ use serde::{Deserialize, Serialize};
 // Opaque ID Types
 // ============================================================================
 
-/// Opaque type for FatSecret recipe IDs
+/// Opaque type for `FatSecret` recipe IDs
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct RecipeId(String);
 
 impl RecipeId {
-    /// Creates a new RecipeId from any string-like value
+    /// Creates a new `RecipeId` from any string-like value
     pub fn new(id: impl Into<String>) -> Self {
         Self(id.into())
     }
@@ -52,7 +52,7 @@ impl std::fmt::Display for RecipeId {
 /// Ingredient in a recipe
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RecipeIngredient {
-    /// FatSecret food ID for this ingredient
+    /// `FatSecret` food ID for this ingredient
     pub food_id: String,
     /// Name of the food item
     pub food_name: String,
@@ -65,7 +65,7 @@ pub struct RecipeIngredient {
     pub measurement_description: String,
     /// Full description of the ingredient as displayed in the recipe
     pub ingredient_description: String,
-    /// Optional URL to the ingredient details on FatSecret
+    /// Optional URL to the ingredient details on `FatSecret`
     pub ingredient_url: Option<String>,
 }
 
@@ -85,11 +85,11 @@ pub type RecipeType = String;
 /// Complete recipe details
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Recipe {
-    /// Unique recipe ID from FatSecret
+    /// Unique recipe ID from `FatSecret`
     pub recipe_id: RecipeId,
     /// Name of the recipe
     pub recipe_name: String,
-    /// URL to the recipe on FatSecret website
+    /// URL to the recipe on `FatSecret` website
     pub recipe_url: String,
     /// Brief description of the recipe
     pub recipe_description: String,
@@ -170,7 +170,7 @@ pub struct Recipe {
     pub iron: Option<f64>,
 }
 
-/// Wrapper for deserializing recipe types from FatSecret API
+/// Wrapper for deserializing recipe types from `FatSecret` API
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct RecipeTypesWrapper {
     /// List of recipe type/category names
@@ -182,7 +182,7 @@ pub struct RecipeTypesWrapper {
     pub recipe_types: Vec<RecipeType>,
 }
 
-/// Wrapper for deserializing ingredients from FatSecret API
+/// Wrapper for deserializing ingredients from `FatSecret` API
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct RecipeIngredientsWrapper {
     /// List of recipe ingredients
@@ -194,7 +194,7 @@ pub struct RecipeIngredientsWrapper {
     pub ingredients: Vec<RecipeIngredient>,
 }
 
-/// Wrapper for deserializing directions from FatSecret API
+/// Wrapper for deserializing directions from `FatSecret` API
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct RecipeDirectionsWrapper {
     /// List of cooking directions/steps
@@ -209,13 +209,13 @@ pub struct RecipeDirectionsWrapper {
 /// Recipe search result item
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RecipeSearchResult {
-    /// Unique recipe ID from FatSecret
+    /// Unique recipe ID from `FatSecret`
     pub recipe_id: RecipeId,
     /// Name of the recipe
     pub recipe_name: String,
     /// Brief description of the recipe
     pub recipe_description: String,
-    /// URL to the recipe on FatSecret website
+    /// URL to the recipe on `FatSecret` website
     pub recipe_url: String,
     /// Optional URL to the recipe image
     pub recipe_image: Option<String>,
@@ -242,7 +242,7 @@ pub struct RecipeSearchResponse {
     pub page_number: i32,
 }
 
-/// Response from recipe_types.get.v2
+/// Response from `recipe_types.get.v2`
 #[derive(Debug, Deserialize)]
 pub struct RecipeTypesResponse {
     /// List of available recipe types/categories
@@ -257,7 +257,7 @@ pub struct RecipeTypesResponse {
 /// Single recipe autocomplete suggestion
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RecipeSuggestion {
-    /// Unique recipe ID from FatSecret
+    /// Unique recipe ID from `FatSecret`
     pub recipe_id: RecipeId,
     /// Name of the suggested recipe
     pub recipe_name: String,

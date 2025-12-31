@@ -1,4 +1,4 @@
-//! FatSecret Saved Meals API client
+//! `FatSecret` Saved Meals API client
 
 use crate::fatsecret::core::config::FatSecretConfig;
 use crate::fatsecret::core::errors::FatSecretError;
@@ -10,7 +10,7 @@ use crate::fatsecret::saved_meals::types::{
 };
 use std::collections::HashMap;
 
-/// Get user's saved meals (saved_meals.get.v2 - 3-legged)
+/// Get user's saved meals (`saved_meals.get.v2` - 3-legged)
 pub async fn get_saved_meals(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -33,7 +33,7 @@ pub async fn get_saved_meals(
     Ok(response.saved_meals.saved_meals)
 }
 
-/// Get items for a specific saved meal (saved_meal_items.get.v2 - 3-legged)
+/// Get items for a specific saved meal (`saved_meal_items.get.v2` - 3-legged)
 pub async fn get_saved_meal_items(
     config: &FatSecretConfig,
     access_token: &AccessToken,

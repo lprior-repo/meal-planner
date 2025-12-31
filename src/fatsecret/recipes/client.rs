@@ -1,4 +1,4 @@
-//! FatSecret Recipe API client
+//! `FatSecret` Recipe API client
 
 use crate::fatsecret::core::config::FatSecretConfig;
 use crate::fatsecret::core::errors::FatSecretError;
@@ -80,7 +80,7 @@ pub async fn autocomplete_recipes(
     Ok(response.suggestions.suggestions)
 }
 
-/// Get all recipe types (recipe_types.get.v2 - 2-legged)
+/// Get all recipe types (`recipe_types.get.v2` - 2-legged)
 pub async fn get_recipe_types(config: &FatSecretConfig) -> Result<Vec<RecipeType>, FatSecretError> {
     let params = HashMap::new();
 

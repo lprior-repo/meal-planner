@@ -370,6 +370,10 @@ path = "src/bin/fatsecret_food_entry_edit.rs"
 name = "fatsecret_food_entry_delete"
 path = "src/bin/fatsecret_food_entry_delete.rs"
 
+[[bin]]
+name = "fatsecret_saved_meals_edit"
+path = "src/bin/fatsecret_saved_meals_edit.rs"
+
 [features]
 sqlx-cli = ["dep:sqlx-cli"]
 

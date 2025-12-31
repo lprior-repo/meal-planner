@@ -1,4 +1,4 @@
-//! FatSecret SDK Weight API client
+//! `FatSecret` SDK Weight API client
 
 use crate::fatsecret::core::config::FatSecretConfig;
 use crate::fatsecret::core::errors::FatSecretError;
@@ -39,7 +39,7 @@ pub async fn update_weight(
     Ok(())
 }
 
-/// Get weight measurements for a month (weights.get_month method)
+/// Get weight measurements for a month (`weights.get_month` method)
 pub async fn get_weight_month_summary(
     config: &FatSecretConfig,
     token: &AccessToken,

@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 /// Configuration for Tandoor API client
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct TandoorConfig {
-    /// Base URL of the Tandoor instance (e.g., "http://localhost:8080")
+    /// Base URL of the Tandoor instance (e.g., `<http://localhost:8080>`)
     pub base_url: String,
     /// API token for authentication
     pub api_token: String,
@@ -95,7 +95,7 @@ pub struct RecipeFromSourceRequest {
 /// Response from recipe import
 #[derive(Debug, Deserialize, Serialize)]
 pub struct RecipeFromSourceResponse {
-    /// Recipe data (API returns "recipe", aliased from legacy "recipe_json")
+    /// Recipe data (API returns "recipe", aliased from legacy "`recipe_json`")
     #[serde(alias = "recipe_json")]
     pub recipe: Option<SourceImportRecipe>,
     /// Recipe tree structure
