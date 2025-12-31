@@ -533,7 +533,7 @@ impl TandoorClient {
         page: Option<u32>,
         page_size: Option<u32>,
     ) -> Result<PaginatedResponse<UnitConversion>, TandoorError> {
-        let mut url = format!("{}/api/unitconversion/", self.base_url);
+        let mut url = format!("{}/api/unit-conversion/", self.base_url);
         let mut params = Vec::new();
         if let Some(p) = page {
             params.push(format!("page={}", p));
@@ -1701,23 +1701,9 @@ impl TandoorClient {
             .map_err(|e| TandoorError::ParseError(e.to_string()))
     }
 
-    /// List users with pagination
-    pub fn list_users(
-        &self,
-        page: Option<u32>,
-        page_size: Option<u32>,
-    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
-        let mut url = format!("{}/api/user/", self.base_url);
-        let mut params = Vec::new();
-        if let Some(p) = page {
-            params.push(format!("page={}", p));
-        }
-        if let Some(ps) = page_size {
-            params.push(format!("page_size={}", ps));
-        }
-        if !params.is_empty() {
-            url = format!("{}?{}", url, params.join("&"));
-        }
+    /// List all users (returns array, not paginated)
+    pub fn list_users(&self) -> Result<Vec<serde_json::Value>, TandoorError> {
+        let url = format!("{}/api/user/", self.base_url);
         let response = self.client.get(&url).send()?;
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {

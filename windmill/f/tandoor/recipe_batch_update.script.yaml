@@ -1,0 +1,17 @@
+summary: Batch update recipes
+description: Updates multiple recipes in a single request.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    updates:
+      type: object
+      description: Array of recipe updates
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+  required:
+    - tandoor
+    - updates
