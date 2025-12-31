@@ -34,7 +34,7 @@ pub async fn make_oauth_request(
         params,
         token,
         token_secret,
-    );
+    )?;
 
     let client = Client::new();
     let response = if method == Method::GET {

@@ -1,12 +1,15 @@
 //! Test Tandoor API connection
 //!
 //! JSON stdin (Windmill format):
-//!   {"tandoor": {"base_url": "...", "api_token": "..."}}
+//!   `{"tandoor": {"base_url": "...", "api_token": "..."}}`
 //!
 //! JSON stdin (standalone format):
-//!   {"base_url": "...", "api_token": "..."}
+//!   `{"base_url": "...", "api_token": "..."}`
 //!
-//! JSON stdout: {"success": true, "message": "...", "recipe_count": N}
+//! JSON stdout: `{"success": true, "message": "...", "recipe_count": N}`
+
+// CLI binaries: exit and JSON unwrap are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used)]
 
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::Deserialize;

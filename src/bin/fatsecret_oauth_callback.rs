@@ -3,8 +3,11 @@
 //! Starts a temporary HTTP server to receive the OAuth callback,
 //! exchanges the request token for an access token, and stores it.
 //!
-//! JSON stdin: {"port": 8765, "timeout_secs": 300}
-//! JSON stdout: {"success": true, "message": "Connected to FatSecret"}
+//! JSON stdin: `{"port": 8765, "timeout_secs": 300}`
+//! JSON stdout: `{"success": true, "message": "Connected to FatSecret"}`
+
+// CLI binaries: exit and JSON unwrap are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used)]
 
 use meal_planner::fatsecret::core::oauth::get_access_token;
 use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};
@@ -95,12 +98,13 @@ async fn run() -> Result<Output, Box<dyn std::error::Error + Send + Sync>> {
     let tx = Arc::new(tokio::sync::Mutex::new(Some(tx)));
 
     // Build the callback handler
-    let tx_clone = tx.clone();
+    let tx_clone = Arc::clone(&tx);
     let callback_handler = move |params: CallbackParams| {
-        let tx = tx_clone.clone();
+        let tx = Arc::clone(&tx_clone);
         async move {
             if let Some(sender) = tx.lock().await.take() {
-                let _ = sender.send(params);
+                // Ignoring send result - receiver may have been dropped
+                drop(sender.send(params));
             }
         }
     };
@@ -123,7 +127,10 @@ async fn run() -> Result<Output, Box<dyn std::error::Error + Send + Sync>> {
             // Read the HTTP request
             let mut buf = [0u8; 4096];
             let n = tokio::io::AsyncReadExt::read(&mut socket, &mut buf).await?;
-            let request = String::from_utf8_lossy(&buf[..n]);
+            let request = buf
+                .get(..n)
+                .map(|b| String::from_utf8_lossy(b))
+                .unwrap_or_default();
 
             // Parse the request line to get the path
             if let Some(line) = request.lines().next() {

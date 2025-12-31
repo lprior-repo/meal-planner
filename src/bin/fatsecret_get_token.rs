@@ -3,8 +3,11 @@
 //! Retrieves and decrypts the stored access token for use by other scripts.
 //! Returns the token validity status and optionally the token itself.
 //!
-//! JSON stdin: {} (empty object, no input required)
-//! JSON stdout: {"success": true, "status": "valid", "oauth_token": "...", "oauth_token_secret": "..."}
+//! JSON stdin: `{}` (empty object, no input required)
+//! JSON stdout: `{"success": true, "status": "valid", "oauth_token": "...", "oauth_token_secret": "..."}`
+
+// CLI binaries: exit and JSON unwrap are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used)]
 
 use meal_planner::fatsecret::{TokenStorage, TokenValidity};
 use serde::{Deserialize, Serialize};

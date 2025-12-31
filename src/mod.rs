@@ -16,7 +16,6 @@
 #![feature(must_not_suspend)]
 // Enable strict provenance lints (pointer safety)
 #![feature(strict_provenance_lints)]
-
 // =============================================================================
 // CRATE-LEVEL LINTS - Additional safety beyond Cargo.toml
 // =============================================================================

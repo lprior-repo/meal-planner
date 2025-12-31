@@ -45,20 +45,26 @@ impl AccessToken {
 }
 
 /// Generate OAuth nonce (random hex string)
-pub fn generate_nonce() -> String {
+///
+/// # Errors
+/// Returns error if system random number generator fails
+pub fn generate_nonce() -> Result<String, FatSecretError> {
     let rng = SystemRandom::new();
     let mut bytes = [0u8; 16];
     rng.fill(&mut bytes)
-        .expect("Failed to generate random bytes");
-    hex::encode(bytes)
+        .map_err(|_| FatSecretError::oauth_error("Failed to generate random bytes"))?;
+    Ok(hex::encode(bytes))
 }
 
 /// Get current Unix timestamp in seconds
-pub fn unix_timestamp() -> u64 {
+///
+/// # Errors
+/// Returns error if system clock is before Unix epoch (should never happen)
+pub fn unix_timestamp() -> Result<u64, FatSecretError> {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .expect("Time went backwards")
-        .as_secs()
+        .map(|d| d.as_secs())
+        .map_err(|_| FatSecretError::oauth_error("System clock is before Unix epoch"))
 }
 
 /// RFC 3986 percent-encoding for OAuth 1.0a
@@ -126,6 +132,10 @@ pub fn create_signature(
 /// Includes: oauth_consumer_key, oauth_signature_method, oauth_timestamp,
 /// oauth_nonce, oauth_version, oauth_token (if provided), oauth_signature,
 /// plus any extra_params
+/// Build OAuth 1.0a parameters for a request
+///
+/// # Errors
+/// Returns error if nonce or timestamp generation fails
 pub fn build_oauth_params(
     consumer_key: &str,
     consumer_secret: &str,
@@ -134,9 +144,9 @@ pub fn build_oauth_params(
     extra_params: &HashMap<String, String>,
     token: Option<&str>,
     token_secret: Option<&str>,
-) -> HashMap<String, String> {
-    let timestamp = unix_timestamp().to_string();
-    let nonce = generate_nonce();
+) -> Result<HashMap<String, String>, FatSecretError> {
+    let timestamp = unix_timestamp()?.to_string();
+    let nonce = generate_nonce()?;
 
     let mut params = HashMap::new();
     params.insert("oauth_consumer_key".to_string(), consumer_key.to_string());
@@ -160,7 +170,7 @@ pub fn build_oauth_params(
     let signature = create_signature(&base_string, consumer_secret, token_secret);
     params.insert("oauth_signature".to_string(), signature);
 
-    params
+    Ok(params)
 }
 
 /// Parse OAuth response string (key=value&key2=value2) into a hash map

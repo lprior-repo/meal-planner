@@ -4,14 +4,13 @@
 //! This is a 2-legged OAuth request (no user token required).
 //!
 //! JSON stdin:
-//!   {
-//!     "fatsecret": {"consumer_key": "...", "consumer_secret": "..."},
-//!     "query": "chicken breast",
-//!     "page": 0,           // optional, defaults to 0
-//!     "max_results": 20    // optional, defaults to 20
-//!   }
+//!   `{"fatsecret": {"consumer_key": "...", "consumer_secret": "..."},`
+//!   `"query": "chicken breast", "page": 0, "max_results": 20}`
 //!
-//! JSON stdout: {"success": true, "foods": {...}}
+//! JSON stdout: `{"success": true, "foods": {...}}`
+
+// CLI binaries: exit and JSON unwrap are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used)]
 
 use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};
 use meal_planner::fatsecret::foods::search_foods;

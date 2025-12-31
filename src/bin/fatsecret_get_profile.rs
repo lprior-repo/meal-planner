@@ -4,12 +4,15 @@
 //! Requires a stored access token (run oauth_start + oauth_complete first).
 //!
 //! JSON stdin (Windmill format):
-//!   {"fatsecret": {"consumer_key": "...", "consumer_secret": "..."}}
+//!   `{"fatsecret": {"consumer_key": "...", "consumer_secret": "..."}}`
 //!
 //! JSON stdin (standalone format - uses env vars for credentials):
-//!   {}
+//!   `{}`
 //!
-//! JSON stdout: {"success": true, "profile": {...}}
+//! JSON stdout: `{"success": true, "profile": {...}}`
+
+// CLI binaries: exit and JSON unwrap are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used)]
 
 use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};
 use meal_planner::fatsecret::profile::get_profile;
