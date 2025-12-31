@@ -148,7 +148,7 @@ impl TokenStorage {
         let encrypted_secret = encrypt(&token.oauth_token_secret)
             .map_err(|e| StorageError::CryptoError(e.to_string()))?;
 
-         sqlx::query(
+        sqlx::query(
             r"
             INSERT INTO fatsecret_oauth_token (id, oauth_token, oauth_token_secret, connected_at, last_used_at)
             VALUES (1, $1, $2, NOW(), NOW())
@@ -172,7 +172,7 @@ impl TokenStorage {
     ///
     /// Returns None if no token is stored.
     pub async fn get_access_token(&self) -> Result<Option<AccessToken>, StorageError> {
-         let result = sqlx::query(
+        let result = sqlx::query(
             r"
             SELECT oauth_token, oauth_token_secret, connected_at
             FROM fatsecret_oauth_token
@@ -215,7 +215,7 @@ impl TokenStorage {
     ///
     /// Returns a TokenValidity enum indicating the status.
     pub async fn check_token_validity(&self) -> Result<TokenValidity, StorageError> {
-         let result = sqlx::query(
+        let result = sqlx::query(
             r"
             SELECT connected_at
             FROM fatsecret_oauth_token

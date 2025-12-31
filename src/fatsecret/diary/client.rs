@@ -1,7 +1,110 @@
-//! FatSecret SDK Food Diary API client
+//! FatSecret Food Diary API Client Implementation
 //!
-//! 3-legged authenticated API calls for food diary management.
-//! All operations require user OAuth access token.
+//! This module implements the HTTP client layer for the FatSecret Food Diary API.
+//! It handles request construction, response parsing, and error handling for all
+//! diary-related operations.
+//!
+//! # Purpose
+//!
+//! This client module provides the low-level implementation details for:
+//! - Making authenticated API requests via OAuth 1.0a
+//! - Serializing input types to API parameters
+//! - Deserializing JSON responses to typed structs
+//! - Handling API-specific response formats and edge cases
+//!
+//! # Authentication
+//!
+//! All functions require:
+//! - [`FatSecretConfig`] - API credentials (consumer key/secret)
+//! - [`AccessToken`] - User-specific OAuth token (obtained via 3-legged flow)
+//!
+//! The actual OAuth signing is handled by [`make_authenticated_request`] from
+//! the core HTTP module.
+//!
+//! # API Methods
+//!
+//! ## Core CRUD Operations
+//! - [`create_food_entry`] - Add new food to diary (database or custom)
+//! - [`get_food_entry`] - Retrieve single entry by ID
+//! - [`get_food_entries`] - Get all entries for a date
+//! - [`edit_food_entry`] - Update portion size or meal type
+//! - [`delete_food_entry`] - Remove entry from diary
+//!
+//! ## Summaries
+//! - [`get_month_summary`] - Aggregated nutrition totals by day for a month
+//!
+//! ## Copy/Template Operations
+//! - [`copy_entries`] - Copy entire day of entries to another date
+//! - [`copy_meal`] - Copy specific meal entries between dates
+//! - [`commit_day`] - Finalize a day's entries (marks as complete)
+//! - [`save_template`] - Save day's entries as reusable template
+//!
+//! # Response Handling
+//!
+//! The FatSecret API has quirks that this module handles:
+//! - Single items may be returned as objects OR arrays (handled by `deserialize_single_or_vec`)
+//! - Numeric values may be strings or numbers (handled by `deserialize_flexible_*`)
+//! - Nested wrapper objects (e.g., `{"food_entry": {...}}`)
+//!
+//! # Key Types
+//!
+//! - [`FoodEntry`] - Complete food diary entry
+//! - [`FoodEntryInput`] - Input for creating entries
+//! - [`FoodEntryUpdate`] - Partial updates for existing entries
+//! - [`FoodEntryId`] - Type-safe entry identifier
+//! - [`MonthSummary`] - Monthly aggregated data
+//! - [`MealType`] - Enum for breakfast/lunch/dinner/snack
+//!
+//! # Usage Example
+//!
+//! ```rust,no_run
+//! use meal_planner::fatsecret::{FatSecretConfig, AccessToken};
+//! use meal_planner::fatsecret::diary::{
+//!     create_food_entry, get_food_entries, edit_food_entry,
+//!     FoodEntryInput, FoodEntryUpdate, MealType,
+//! };
+//!
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! let config = FatSecretConfig::from_env()?;
+//! let token = AccessToken::new("oauth_token", "oauth_secret");
+//! let date_int = 19723; // 2024-01-01
+//!
+//! // Create a new entry
+//! let input = FoodEntryInput::FromFood {
+//!     food_id: "12345".to_string(),
+//!     food_entry_name: "Oatmeal".to_string(),
+//!     serving_id: "67890".to_string(),
+//!     number_of_units: 1.5,
+//!     meal: MealType::Breakfast,
+//!     date_int,
+//! };
+//! let entry_id = create_food_entry(&config, &token, input).await?;
+//!
+//! // Update the portion size
+//! let update = FoodEntryUpdate::new().with_units(2.0);
+//! edit_food_entry(&config, &token, &entry_id, update).await?;
+//!
+//! // Get all entries for the day
+//! let entries = get_food_entries(&config, &token, date_int).await?;
+//! println!("Total entries: {}", entries.len());
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! # Error Handling
+//!
+//! Functions return `Result<T, FatSecretError>` which covers:
+//! - HTTP errors (network, timeout, status codes)
+//! - OAuth errors (invalid/revoked tokens)
+//! - Parse errors (unexpected API response format)
+//! - API errors (invalid parameters, rate limits)
+//!
+//! # Implementation Notes
+//!
+//! - All API methods use the `food_entry.*` or `food_entries.*` endpoint namespace
+//! - Date parameters use `date_int` (days since Unix epoch)
+//! - Tracing is enabled on key operations for debugging
+//! - Response deserialization is strict - unknown fields cause errors
 
 use std::collections::HashMap;
 
@@ -116,9 +219,8 @@ pub async fn create_food_entry(
     info!(target: "fatsecret", "Creating food entry: {}", input.food_entry_name());
 
     let body = make_authenticated_request(config, token, "food_entry.create", params).await?;
-    let response: CreateEntryResponse = serde_json::from_str(&body).map_err(|e| {
-        FatSecretError::ParseError(format!("Failed to parse create response: {e}"))
-    })?;
+    let response: CreateEntryResponse = serde_json::from_str(&body)
+        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse create response: {e}")))?;
 
     let id = FoodEntryId::new(response.food_entry_id.value);
     info!(target: "fatsecret", "Created food entry: {}", id.as_str());

@@ -1,4 +1,86 @@
-//! FatSecret SDK Exercise domain types
+//! Type definitions for FatSecret Exercise domain.
+//!
+//! This module defines all data structures used in the exercise APIs, including:
+//!
+//! - Public exercise database types ([`Exercise`])
+//! - User diary entry types ([`ExerciseEntry`], [`ExerciseEntryInput`])
+//! - Summary types ([`ExerciseMonthSummary`], [`ExerciseDaySummary`])
+//! - Opaque ID types ([`ExerciseId`], [`ExerciseEntryId`])
+//! - Date conversion utilities ([`date_to_int`], [`int_to_date`])
+//!
+//! # Key Types
+//!
+//! ## Core Domain Types
+//!
+//! - [`Exercise`] - Exercise details from public database (name, calories/hour)
+//! - [`ExerciseEntry`] - Complete user diary entry (exercise, duration, calories, date)
+//! - [`ExerciseEntryInput`] - Input for creating a new exercise entry
+//! - [`ExerciseEntryUpdate`] - Partial update for existing entry
+//!
+//! ## Summary Types
+//!
+//! - [`ExerciseMonthSummary`] - Monthly breakdown with daily totals
+//! - [`ExerciseDaySummary`] - Single day's exercise total
+//!
+//! ## ID Types
+//!
+//! - [`ExerciseId`] - Opaque ID for exercises in the public database
+//! - [`ExerciseEntryId`] - Opaque ID for user's diary entries
+//!
+//! # Date Format
+//!
+//! FatSecret uses `date_int`: days since Unix epoch (1970-01-01).
+//!
+//! - **Example**: `19723` = 2024-01-01 (19,723 days after 1970-01-01)
+//!
+//! Use helper functions to convert:
+//!
+//! - [`date_to_int("2024-01-01")`] → `19723`
+//! - [`int_to_date(19723)`] → `"2024-01-01"`
+//!
+//! # Usage Example
+//!
+//! ```rust
+//! use meal_planner::fatsecret::exercise::types::{
+//!     ExerciseId, ExerciseEntryInput, date_to_int, int_to_date,
+//! };
+//!
+//! # fn example() -> Result<(), String> {
+//! // Create an exercise entry for today
+//! let date_int = date_to_int("2024-01-15")?;
+//! let input = ExerciseEntryInput {
+//!     exercise_id: ExerciseId::new("12345"),
+//!     duration_min: 30,
+//!     date_int,
+//! };
+//!
+//! // Convert date_int back to human-readable format
+//! let date_str = int_to_date(date_int)?;
+//! assert_eq!(date_str, "2024-01-15");
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! # Serialization
+//!
+//! All types implement `Serialize` and `Deserialize` with special handling for
+//! FatSecret's API quirks:
+//!
+//! - **Flexible numbers**: API sometimes returns strings for numeric fields
+//!   (e.g., `"123.45"` instead of `123.45`). Custom deserializers handle both.
+//! - **Single-or-array**: API returns single object OR array depending on count
+//!   (e.g., one exercise entry vs multiple). Custom deserializers normalize to `Vec<T>`.
+//!
+//! # API Response Wrappers
+//!
+//! FatSecret wraps responses in container objects:
+//!
+//! - [`ExerciseResponse`] - Wraps [`Exercise`]
+//! - [`ExerciseEntriesResponse`] - Wraps `Vec<ExerciseEntry>`
+//! - [`SingleExerciseEntryResponse`] - Wraps single entry (create/edit)
+//! - [`ExerciseMonthSummaryResponse`] - Wraps [`ExerciseMonthSummary`]
+//!
+//! These are internal to the client module - public API returns unwrapped types.
 
 use crate::fatsecret::core::serde_utils::{
     deserialize_flexible_float, deserialize_flexible_int, deserialize_single_or_vec,

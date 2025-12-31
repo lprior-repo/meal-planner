@@ -1,4 +1,85 @@
 //! FatSecret Favorites API Client
+//!
+//! This module provides the HTTP client functions for interacting with the FatSecret
+//! Platform API's favorites endpoints. All functions perform authenticated requests
+//! using 3-legged OAuth and return strongly-typed results.
+//!
+//! # Key Functions
+//!
+//! ## Food Favorites
+//! - [`add_favorite_food`] - Mark a food as favorite
+//! - [`delete_favorite_food`] - Remove a food from favorites
+//! - [`get_favorite_foods`] - Retrieve all favorite foods with pagination
+//!
+//! ## Recipe Favorites
+//! - [`add_favorite_recipe`] - Mark a recipe as favorite
+//! - [`delete_favorite_recipe`] - Remove a recipe from favorites
+//! - [`get_favorite_recipes`] - Retrieve all favorite recipes with pagination
+//!
+//! ## Usage Analytics
+//! - [`get_most_eaten`] - Get frequently consumed foods (optionally filtered by meal)
+//! - [`get_recently_eaten`] - Get recently consumed foods (optionally filtered by meal)
+//!
+//! # Authentication
+//!
+//! All functions require:
+//! - [`FatSecretConfig`] - API credentials and configuration
+//! - [`AccessToken`] - 3-legged OAuth access token with user authorization
+//!
+//! # Error Handling
+//!
+//! Functions return `Result<T, FatSecretError>` with these possible errors:
+//! - Network failures during API communication
+//! - OAuth signature validation failures
+//! - JSON parsing errors from malformed API responses
+//! - API-level errors (invalid food_id, unauthorized access, etc.)
+//!
+//! # Example
+//!
+//! ```rust,no_run
+//! use meal_planner::fatsecret::favorites::client::{
+//!     add_favorite_food,
+//!     get_favorite_foods,
+//!     get_most_eaten,
+//! };
+//! use meal_planner::fatsecret::favorites::types::MealFilter;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
+//!
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! let config = FatSecretConfig::from_env()?;
+//! let access_token = AccessToken {
+//!     token: "user_token".to_string(),
+//!     secret: "user_secret".to_string(),
+//! };
+//!
+//! // Add a food to favorites
+//! add_favorite_food(&config, &access_token, "12345").await?;
+//!
+//! // Get first page of favorites (max 50 results)
+//! let favorites = get_favorite_foods(&config, &access_token, Some(50), Some(0)).await?;
+//! for food in favorites {
+//!     println!("Favorite: {} ({})", food.food_name, food.food_id);
+//! }
+//!
+//! // Get breakfast foods sorted by frequency
+//! let breakfast = get_most_eaten(&config, &access_token, Some(MealFilter::Breakfast)).await?;
+//! println!("Most eaten at breakfast: {:?}", breakfast.first().map(|f| &f.food_name));
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! # API Methods
+//!
+//! This client wraps the following FatSecret Platform API methods:
+//! - `food.add_favorite` - Add food to favorites
+//! - `food.delete_favorite` - Remove food from favorites
+//! - `foods.get_favorites.v2` - List favorite foods
+//! - `foods.get_most_eaten.v2` - Get most eaten foods
+//! - `foods.get_recently_eaten.v2` - Get recently eaten foods
+//! - `recipe.add_favorite` - Add recipe to favorites
+//! - `recipe.delete_favorite` - Remove recipe from favorites
+//! - `recipes.get_favorites.v2` - List favorite recipes
 
 use crate::fatsecret::core::config::FatSecretConfig;
 use crate::fatsecret::core::errors::FatSecretError;

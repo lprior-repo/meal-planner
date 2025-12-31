@@ -1,25 +1,25 @@
-//! FatSecret API Configuration
+//! `FatSecret` API Configuration
 //!
-//! Provides configuration for connecting to the FatSecret Platform API.
-//! Ported from src/meal_planner/fatsecret/core/config.gleam
+//! Provides configuration for connecting to the `FatSecret` Platform API.
+//! Ported from `src/meal_planner/fatsecret/core/config.gleam`
 
 use std::env;
 
-/// Default FatSecret API host
+/// Default `FatSecret` API host
 pub const DEFAULT_API_HOST: &str = "platform.fatsecret.com";
 
-/// Default FatSecret authentication host
+/// Default `FatSecret` authentication host
 pub const DEFAULT_AUTH_HOST: &str = "authentication.fatsecret.com";
 
 /// API endpoint path
 pub const API_PATH: &str = "/rest/server.api";
 
-/// FatSecret API configuration
+/// `FatSecret` API configuration
 #[derive(Debug, Clone)]
 pub struct FatSecretConfig {
-    /// The OAuth consumer key from FatSecret developer account
+    /// The OAuth consumer key from `FatSecret` developer account
     pub consumer_key: String,
-    /// The OAuth consumer secret from FatSecret developer account
+    /// The OAuth consumer secret from `FatSecret` developer account
     pub consumer_secret: String,
     /// Optional custom API host (defaults to platform.fatsecret.com)
     pub api_host: Option<String>,
@@ -28,7 +28,7 @@ pub struct FatSecretConfig {
 }
 
 impl FatSecretConfig {
-    /// Create a new FatSecretConfig with explicit credentials
+    /// Create a new `FatSecretConfig` with explicit credentials
     pub fn new(consumer_key: impl Into<String>, consumer_secret: impl Into<String>) -> Self {
         Self {
             consumer_key: consumer_key.into(),
@@ -38,10 +38,10 @@ impl FatSecretConfig {
         }
     }
 
-    /// Create a new FatSecretConfig from environment variables
+    /// Create a new `FatSecretConfig` from environment variables
     ///
-    /// Reads FATSECRET_CONSUMER_KEY and FATSECRET_CONSUMER_SECRET from environment.
-    /// Optionally reads FATSECRET_API_HOST and FATSECRET_AUTH_HOST for custom hosts.
+    /// Reads `FATSECRET_CONSUMER_KEY` and `FATSECRET_CONSUMER_SECRET` from environment.
+    /// Optionally reads `FATSECRET_API_HOST` and `FATSECRET_AUTH_HOST` for custom hosts.
     pub fn from_env() -> Option<Self> {
         let consumer_key = env::var("FATSECRET_CONSUMER_KEY").ok()?;
         let consumer_secret = env::var("FATSECRET_CONSUMER_SECRET").ok()?;

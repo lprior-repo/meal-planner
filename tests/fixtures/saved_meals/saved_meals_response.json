@@ -1,0 +1,16 @@
+{
+  "saved_meals": {
+    "saved_meal": [
+      {
+        "saved_meal_id": "111222",
+        "saved_meal_name": "Post-Workout Breakfast",
+        "saved_meal_description": "High protein breakfast for recovery"
+      },
+      {
+        "saved_meal_id": "333444",
+        "saved_meal_name": "Quick Lunch",
+        "saved_meal_description": "Fast and healthy lunch option"
+      }
+    ]
+  }
+}

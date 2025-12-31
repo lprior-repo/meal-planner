@@ -24,7 +24,7 @@ pub async fn make_oauth_request(
     token: Option<&str>,
     token_secret: Option<&str>,
 ) -> Result<String, FatSecretError> {
-    let url = format!("https://{host}{path}");
+    let url = format!("https://{}{}", host, path);
 
     // Build OAuth parameters with signature
     let oauth_params = build_oauth_params(
@@ -42,13 +42,13 @@ pub async fn make_oauth_request(
         // For GET: parameters go in query string
         let query: Vec<_> = oauth_params
             .iter()
-            .map(|(k, v)| format!("{k}={oauth_encode(v}")))
+            .map(|(k, v)| format!("{}={}", k, oauth_encode(v)))
             .collect();
         let query_string = query.join("&");
         let full_url = if query_string.is_empty() {
             url
         } else {
-            format!("{url}?{query_string}")
+            format!("{}?{}", url, query_string)
         };
 
         client.get(&full_url).send().await?
@@ -56,7 +56,7 @@ pub async fn make_oauth_request(
         // For POST: parameters go in body
         let body: Vec<_> = oauth_params
             .iter()
-            .map(|(k, v)| format!("{k}={oauth_encode(v}")))
+            .map(|(k, v)| format!("{}={}", k, oauth_encode(v)))
             .collect();
         let body_string = body.join("&");
 

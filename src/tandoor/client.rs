@@ -1,4 +1,77 @@
-//! Tandoor API client
+//! Tandoor API HTTP Client
+//!
+//! Provides [`TandoorClient`] for making blocking HTTP requests to the Tandoor Recipes API.
+//! All methods return [`Result<T, TandoorError>`](TandoorError) for error handling.
+//!
+//! # Key Types
+//!
+//! - [`TandoorClient`] - Main HTTP client (blocking, thread-safe)
+//! - [`TandoorError`] - Typed error enum for API failures
+//!
+//! # Client Creation
+//!
+//! The client is created from [`TandoorConfig`](crate::tandoor::TandoorConfig) and sets up:
+//! - Bearer token authentication
+//! - 30-second request timeout
+//! - Required headers (`Authorization`, `Content-Type`, `Host`)
+//!
+//! # API Methods
+//!
+//! ## Connection Testing
+//! - [`test_connection`](TandoorClient::test_connection) - Verify API access
+//!
+//! ## Recipe Operations
+//! - [`list_recipes`](TandoorClient::list_recipes) - Paginated recipe listing
+//! - [`scrape_recipe_from_url`](TandoorClient::scrape_recipe_from_url) - Scrape recipe data
+//! - [`create_recipe`](TandoorClient::create_recipe) - Create from scraped data
+//! - [`import_recipe_from_url`](TandoorClient::import_recipe_from_url) - Scrape + create (convenience)
+//!
+//! # Usage Example
+//!
+//! ```rust,no_run
+//! use meal_planner::tandoor::{TandoorClient, TandoorConfig};
+//!
+//! # fn main() -> Result<(), Box<dyn std::error::Error>> {
+//! let config = TandoorConfig {
+//!     base_url: "http://localhost:8090".to_string(),
+//!     api_token: "your-token".to_string(),
+//! };
+//!
+//! let client = TandoorClient::new(&config)?;
+//!
+//! // Test connectivity
+//! match client.test_connection() {
+//!     Ok(result) => println!("{}", result.message),
+//!     Err(e) => eprintln!("Connection failed: {}", e),
+//! }
+//!
+//! // Import a recipe
+//! let result = client.import_recipe_from_url(
+//!     "https://example.com/recipe",
+//!     Some(vec!["dinner".to_string()])
+//! )?;
+//!
+//! if result.success {
+//!     println!("Created recipe ID: {}", result.recipe_id.unwrap());
+//! } else {
+//!     eprintln!("Import failed: {}", result.message);
+//! }
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! # Error Handling
+//!
+//! All methods return [`TandoorError`] which covers:
+//! - HTTP transport errors ([`HttpError`](TandoorError::HttpError))
+//! - Authentication failures ([`AuthError`](TandoorError::AuthError))
+//! - API errors with status codes ([`ApiError`](TandoorError::ApiError))
+//! - JSON parsing failures ([`ParseError`](TandoorError::ParseError))
+//!
+//! # Thread Safety
+//!
+//! [`TandoorClient`] is `Send + Sync` and can be shared across threads or used in async contexts
+//! via `tokio::task::spawn_blocking`.
 
 use crate::tandoor::types::*;
 use reqwest::blocking::Client;
@@ -35,7 +108,7 @@ impl TandoorClient {
         let mut headers = HeaderMap::new();
         headers.insert(
             AUTHORIZATION,
-            HeaderValue::from_str(&format!("Bearer {config.api_token}"))
+            HeaderValue::from_str(&format!("Bearer {}", config.api_token))
                 .map_err(|e| TandoorError::AuthError(e.to_string()))?,
         );
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
@@ -56,7 +129,7 @@ impl TandoorClient {
 
     /// Test connection by fetching recipes
     pub fn test_connection(&self) -> Result<ConnectionTestResult, TandoorError> {
-        let url = format!("{self.base_url}/api/recipe/");
+        let url = format!("{}/api/recipe/", self.base_url);
 
         let response = self.client.get(&url).send()?;
         let status = response.status();
@@ -94,17 +167,17 @@ impl TandoorClient {
         page: Option<u32>,
         page_size: Option<u32>,
     ) -> Result<PaginatedResponse<RecipeSummary>, TandoorError> {
-        let mut url = format!("{self.base_url}/api/recipe/");
+        let mut url = format!("{}/api/recipe/", self.base_url);
 
         let mut params = Vec::new();
         if let Some(p) = page {
-            params.push(format!("page={p}"));
+            params.push(format!("page={}", p));
         }
         if let Some(ps) = page_size {
-            params.push(format!("page_size={ps}"));
+            params.push(format!("page_size={}", ps));
         }
         if !params.is_empty() {
-            url = format!("{url}?{params.join("&"}"));
+            url = format!("{}?{}", url, params.join("&"));
         }
 
         let response = self.client.get(&url).send()?;
@@ -131,7 +204,7 @@ impl TandoorClient {
         &self,
         url: &str,
     ) -> Result<RecipeFromSourceResponse, TandoorError> {
-        let api_url = format!("{self.base_url}/api/recipe-from-source/");
+        let api_url = format!("{}/api/recipe-from-source/", self.base_url);
 
         let request = RecipeFromSourceRequest {
             url: Some(url.to_string()),
@@ -165,7 +238,7 @@ impl TandoorClient {
         &self,
         recipe: &CreateRecipeRequest,
     ) -> Result<CreatedRecipe, TandoorError> {
-        let api_url = format!("{self.base_url}/api/recipe/");
+        let api_url = format!("{}/api/recipe/", self.base_url);
 
         let response = self.client.post(&api_url).json(recipe).send()?;
         let status = response.status();

@@ -1,0 +1,31 @@
+{
+  "food": {
+    "food_id": "98765",
+    "food_name": "Greek Yogurt",
+    "brand_name": "Fage",
+    "food_type": "Brand",
+    "food_url": "https://www.fatsecret.com/calories-nutrition/fage/greek-yogurt",
+    "servings": {
+      "serving": {
+        "serving_id": "11111",
+        "serving_description": "1 container (170g)",
+        "serving_url": "https://www.fatsecret.com/calories-nutrition/fage/greek-yogurt",
+        "metric_serving_amount": "170.00",
+        "metric_serving_unit": "g",
+        "number_of_units": "1.000",
+        "measurement_description": "container",
+        "is_default": "1",
+        "calories": "100.00",
+        "carbohydrate": "7.00",
+        "protein": "18.00",
+        "fat": "0.00",
+        "saturated_fat": "0.00",
+        "cholesterol": "10.00",
+        "sodium": "65.00",
+        "potassium": "240.00",
+        "sugar": "7.00",
+        "calcium": "20.00"
+      }
+    }
+  }
+}

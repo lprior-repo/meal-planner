@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "6",
+    "message": "Rate limit exceeded. Please try again later."
+  }
+}

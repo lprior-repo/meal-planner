@@ -1,4 +1,78 @@
-//! FatSecret SDK Exercise API client
+//! HTTP client functions for FatSecret Exercise APIs.
+//!
+//! This module provides async functions to interact with FatSecret's exercise endpoints,
+//! handling OAuth signing, request construction, and response parsing.
+//!
+//! # API Methods
+//!
+//! ## Public Database (2-legged OAuth)
+//!
+//! - [`get_exercise`] - Look up exercise by ID, get calorie burn rate
+//!
+//! ## User Diary (3-legged OAuth)
+//!
+//! - [`get_exercise_entries`] - Get user's logged exercises for a specific date
+//! - [`create_exercise_entry`] - Log a new exercise session
+//! - [`edit_exercise_entry`] - Update an existing exercise entry
+//! - [`delete_exercise_entry`] - Remove an exercise entry
+//! - [`get_exercise_month_summary`] - Get daily exercise totals for a month
+//!
+//! # Authentication
+//!
+//! - **2-legged**: Only requires [`FatSecretConfig`] with client credentials
+//! - **3-legged**: Requires [`FatSecretConfig`] + user's [`AccessToken`]
+//!
+//! # Usage Example
+//!
+//! ```rust,no_run
+//! use meal_planner::fatsecret::exercise::client::{
+//!     get_exercise, create_exercise_entry, get_exercise_month_summary,
+//! };
+//! use meal_planner::fatsecret::exercise::types::{ExerciseId, ExerciseEntryInput};
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
+//!
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! let config = FatSecretConfig::from_env()?;
+//! let access_token = AccessToken::new("user_token", "user_secret");
+//!
+//! // Public database lookup (2-legged)
+//! let exercise = get_exercise(&config, &ExerciseId::new("12345")).await?;
+//! println!("Calories per hour: {}", exercise.calories_per_hour);
+//!
+//! // Log exercise session (3-legged)
+//! let input = ExerciseEntryInput {
+//!     exercise_id: ExerciseId::new("12345"),
+//!     duration_min: 45,
+//!     date_int: 19723, // 2024-01-01 (days since Unix epoch)
+//! };
+//! let entry_id = create_exercise_entry(&config, &access_token, input).await?;
+//!
+//! // Get monthly summary (3-legged)
+//! let summary = get_exercise_month_summary(&config, &access_token, 2024, 1).await?;
+//! for day in summary.days {
+//!     println!("Date: {}, Calories: {}", day.date_int, day.exercise_calories);
+//! }
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! # Error Handling
+//!
+//! All functions return `Result<T, FatSecretError>`. Common errors:
+//!
+//! - `AuthError` - OAuth signature failure, invalid credentials
+//! - `HttpError` - Network issues, API downtime
+//! - `ParseError` - Unexpected API response format
+//! - `ApiError` - FatSecret API error (e.g., invalid exercise ID)
+//!
+//! # Implementation Notes
+//!
+//! - **Create vs Edit**: FatSecret uses the same API endpoint (`exercise_entry.edit`)
+//!   for both creating and updating entries. The presence/absence of `exercise_entry_id`
+//!   determines the operation.
+//! - **Date Format**: All dates use `date_int` (days since 1970-01-01). Use helpers
+//!   from [`types`] module to convert to/from YYYY-MM-DD strings.
 
 use crate::fatsecret::core::config::FatSecretConfig;
 use crate::fatsecret::core::errors::FatSecretError;

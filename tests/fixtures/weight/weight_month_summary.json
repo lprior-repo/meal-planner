@@ -1,0 +1,24 @@
+{
+  "month": {
+    "from_date_int": "20058",
+    "to_date_int": "20088",
+    "day": [
+      {
+        "date_int": "20058",
+        "weight_kg": "83.2"
+      },
+      {
+        "date_int": "20065",
+        "weight_kg": "82.8"
+      },
+      {
+        "date_int": "20072",
+        "weight_kg": "82.5"
+      },
+      {
+        "date_int": "20088",
+        "weight_kg": "82.3"
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "exercise_entries": {
+    "exercise_entry": [
+      {
+        "exercise_entry_id": "456789123",
+        "exercise_id": "1001",
+        "exercise_name": "Running",
+        "minutes": "30",
+        "calories": "300",
+        "is_custom": "0",
+        "date_int": "20088"
+      },
+      {
+        "exercise_entry_id": "456789124",
+        "exercise_id": "1002",
+        "exercise_name": "Cycling",
+        "minutes": "45",
+        "calories": "400",
+        "is_custom": "0",
+        "date_int": "20088"
+      }
+    ]
+  }
+}

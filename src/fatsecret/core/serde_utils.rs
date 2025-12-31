@@ -1,6 +1,6 @@
 //! Serde utilities for handling FatSecret API quirks
 
-use serde::{Deserialize, Deserializer};
+use serde::{Deserialize, Deserializer, Serialize};
 
 /// Deserialize a single value, a sequence, or null into a Vec<T>
 pub fn deserialize_single_or_vec<'de, T, D>(deserializer: D) -> Result<Vec<T>, D::Error>
@@ -166,5 +166,28 @@ where
             }
         }
         _ => Ok(None),
+    }
+}
+
+/// FatSecret API success response (for operations like add_favorite, delete_favorite)
+///
+/// The API returns `{"success": {"value": "1"}}` for successful operations
+#[derive(Debug, Deserialize, Serialize)]
+pub struct SuccessResponse {
+    /// Optional success indicator wrapper
+    pub success: Option<SuccessValue>,
+}
+
+/// Success value container from FatSecret API
+#[derive(Debug, Deserialize, Serialize)]
+pub struct SuccessValue {
+    /// String value indicating success ("1") or failure ("0")
+    pub value: String,
+}
+
+impl SuccessResponse {
+    /// Check if the response indicates success (value is "1")
+    pub fn is_success(&self) -> bool {
+        self.success.as_ref().is_some_and(|s| s.value == "1")
     }
 }

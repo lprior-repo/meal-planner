@@ -1,7 +1,110 @@
-//! FatSecret Foods API client
+//! FatSecret Foods API Client Functions
 //!
-//! Provides type-safe wrappers around the base FatSecret client.
-//! Ported from src/meal_planner/fatsecret/foods/client.gleam
+//! This module provides async functions for interacting with the FatSecret Foods API.
+//! All functions are 2-legged OAuth requests (no user token required) and return
+//! strongly-typed results or errors.
+//!
+//! # Architecture
+//!
+//! Each function follows this pattern:
+//! 1. Build API parameters as `HashMap<String, String>`
+//! 2. Call [`make_api_request`] with method name and params
+//! 3. Deserialize JSON response through a wrapper type
+//! 4. Return the inner domain type
+//!
+//! This provides a clean separation between API response shapes (which may have
+//! nested wrapper objects) and domain types (which are flat and ergonomic).
+//!
+//! # API Methods
+//!
+//! | Function | FatSecret Method | Purpose |
+//! |----------|-----------------|---------|
+//! | [`get_food`] | `food.get.v5` | Get complete food details by ID |
+//! | [`search_foods`] | `foods.search` | Search foods with pagination |
+//! | [`search_foods_simple`] | `foods.search` | Search with defaults (page 0, max 20) |
+//! | [`list_foods_with_options`] | `foods.search` | Search with optional page/max_results |
+//! | [`autocomplete_foods`] | `foods.autocomplete.v2` | Get autocomplete suggestions |
+//! | [`autocomplete_foods_with_options`] | `foods.autocomplete.v2` | Autocomplete with max_results |
+//! | [`find_food_by_barcode`] | `food.find_id_for_barcode.v2` | Lookup food by barcode |
+//!
+//! # Examples
+//!
+//! ## Get food details by ID
+//!
+//! ```no_run
+//! use meal_planner::fatsecret::foods::client::get_food;
+//! use meal_planner::fatsecret::foods::types::FoodId;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
+//!
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! let config = FatSecretConfig::from_env()?;
+//! let food_id = FoodId::new("12345");
+//!
+//! let food = get_food(&config, &food_id).await?;
+//! println!("{} has {} servings",
+//!     food.food_name,
+//!     food.servings.serving.len()
+//! );
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! ## Search foods with pagination
+//!
+//! ```no_run
+//! use meal_planner::fatsecret::foods::client::search_foods;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
+//!
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! let config = FatSecretConfig::from_env()?;
+//!
+//! // Get page 1 (0-indexed) with max 50 results
+//! let results = search_foods(&config, "salmon", 1, 50).await?;
+//! println!("Page {}/{}: {} results",
+//!     results.page_number + 1,
+//!     (results.total_results / results.max_results) + 1,
+//!     results.foods.len()
+//! );
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! ## Autocomplete for search-as-you-type
+//!
+//! ```no_run
+//! use meal_planner::fatsecret::foods::client::autocomplete_foods_with_options;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
+//!
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! let config = FatSecretConfig::from_env()?;
+//!
+//! // Get top 5 suggestions for "bro"
+//! let suggestions = autocomplete_foods_with_options(&config, "bro", Some(5)).await?;
+//! for suggestion in suggestions.suggestions {
+//!     println!("{}", suggestion.food_name); // "Broccoli", "Brown Rice", etc.
+//! }
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! # Error Handling
+//!
+//! All functions return [`Result<T, FatSecretError>`](crate::fatsecret::core::FatSecretError).
+//! Common errors:
+//!
+//! - `ApiError` - FatSecret API returned an error (invalid params, not found, etc.)
+//! - `HttpError` - Network/HTTP failure
+//! - `ParseError` - Failed to deserialize response (API contract changed?)
+//!
+//! # See Also
+//!
+//! - [`crate::fatsecret::foods::types`] for all type definitions
+//! - [`crate::fatsecret::core::make_api_request`] for the underlying request builder
+//! - [FatSecret Platform API Reference](https://platform.fatsecret.com/api/)
+//!
+//! # Original Source
+//!
+//! Ported from `src/meal_planner/fatsecret/foods/client.gleam`
 
 use std::collections::HashMap;
 

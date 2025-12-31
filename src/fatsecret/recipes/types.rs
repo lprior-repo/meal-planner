@@ -1,4 +1,77 @@
-//! `FatSecret` Recipe domain types
+//! FatSecret Recipe API domain types.
+//!
+//! This module defines the type system for FatSecret Recipe API responses.
+//! All types are designed for robust deserialization of the FatSecret API's
+//! sometimes-inconsistent JSON format.
+//!
+//! # Key Types
+//!
+//! ## Core Domain Types
+//!
+//! - [`Recipe`] - Complete recipe with ingredients, directions, and nutrition facts
+//! - [`RecipeId`] - Type-safe opaque wrapper for recipe identifiers
+//! - [`RecipeIngredient`] - Single ingredient with quantity and food ID
+//! - [`RecipeDirection`] - Numbered cooking step/instruction
+//!
+//! ## Search & Discovery
+//!
+//! - [`RecipeSearchResult`] - Lightweight recipe summary from search
+//! - [`RecipeSearchResponse`] - Paginated search results with metadata
+//! - [`RecipeSuggestion`] - Autocomplete suggestion for recipe names
+//! - [`RecipeType`] - Recipe category/classification (e.g., "Vegetarian", "Main Dish")
+//!
+//! ## Wrapper Types
+//!
+//! The API uses inconsistent nesting and can return single items or arrays.
+//! Wrapper types handle this with custom deserializers:
+//!
+//! - [`RecipeTypesWrapper`] - Handles `recipe_type` as string or array
+//! - [`RecipeIngredientsWrapper`] - Handles `ingredient` as object or array
+//! - [`RecipeDirectionsWrapper`] - Handles `direction` as object or array
+//!
+//! # Usage Example
+//!
+//! ```no_run
+//! use meal_planner::fatsecret::recipes::types::{Recipe, RecipeId, RecipeIngredient};
+//!
+//! # fn example(recipe: Recipe) {
+//! // Access recipe metadata
+//! println!("Recipe: {}", recipe.recipe_name);
+//! println!("ID: {}", recipe.recipe_id);
+//! println!("Servings: {}", recipe.number_of_servings);
+//!
+//! // Iterate over ingredients
+//! for ingredient in &recipe.ingredients.ingredients {
+//!     println!(
+//!         "- {} {} {}",
+//!         ingredient.number_of_units,
+//!         ingredient.measurement_description,
+//!         ingredient.food_name
+//!     );
+//! }
+//!
+//! // Iterate over cooking steps
+//! for direction in &recipe.directions.directions {
+//!     println!("{}. {}", direction.direction_number, direction.direction_description);
+//! }
+//!
+//! // Access nutrition data (all optional)
+//! if let Some(cal) = recipe.calories {
+//!     println!("Calories per serving: {}", cal);
+//! }
+//! # }
+//! ```
+//!
+//! # Flexible Deserialization
+//!
+//! The FatSecret API returns numeric values as both strings and numbers.
+//! This module uses custom deserializers from [`crate::fatsecret::core::serde_utils`]:
+//!
+//! - `deserialize_flexible_int` - Accepts "123" or 123
+//! - `deserialize_flexible_float` - Accepts "12.5" or 12.5
+//! - `deserialize_single_or_vec` - Accepts single item or array
+//!
+//! This ensures robust parsing regardless of API response format variations.
 
 use crate::fatsecret::core::serde_utils::{
     deserialize_flexible_float, deserialize_flexible_int, deserialize_optional_flexible_float,
@@ -222,7 +295,7 @@ pub struct RecipeSearchResult {
 }
 
 /// Response from recipes.search.v3
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct RecipeSearchResponse {
     /// List of matching recipes
     #[serde(

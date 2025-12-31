@@ -1,0 +1,19 @@
+{
+  "food_entry_summary": {
+    "date_int": "20088",
+    "calories": "2450.00",
+    "carbohydrate": "275.50",
+    "protein": "125.30",
+    "fat": "85.20",
+    "saturated_fat": "25.10",
+    "polyunsaturated_fat": "15.50",
+    "monounsaturated_fat": "30.20",
+    "cholesterol": "320.00",
+    "sodium": "2100.00",
+    "potassium": "3200.00",
+    "fiber": "32.0",
+    "sugar": "45.00",
+    "calcium": "850.00",
+    "iron": "18.00"
+  }
+}

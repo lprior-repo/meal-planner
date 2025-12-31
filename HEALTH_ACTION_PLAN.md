@@ -60,7 +60,11 @@
 - 0 SQL injection vectors (parameterized queries)
 - 0 hardcoded secrets (all from environment)
 - 0 panic calls in production code
-- 64 unwrap() calls (all acceptable: CLI output or marked #[allow] in tests)
+- 181 unwrap/expect calls (all acceptable patterns):
+  - 40 CLI output (JSON serialization in binaries)
+  - 126 test assertions (with #[allow] annotations)
+  - 15 documentation examples
+  - 0 in production library code ✓
 - 925 lines of public API documentation
 - 0 TODO/FIXME comments
 - 0 dead code or unused imports

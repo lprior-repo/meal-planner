@@ -1,0 +1,49 @@
+{
+  "food_entries": {
+    "food_entry": [
+      {
+        "food_entry_id": "987654321",
+        "food_entry_name": "Chicken Breast",
+        "serving_id": "67890",
+        "number_of_units": "1.000",
+        "measurement_description": "cup, chopped or diced",
+        "metric_serving_amount": "140.00",
+        "metric_serving_unit": "g",
+        "calories": "231",
+        "carbohydrate": "0.00",
+        "protein": "43.40",
+        "fat": "5.04",
+        "saturated_fat": "1.427",
+        "polyunsaturated_fat": "1.123",
+        "monounsaturated_fat": "1.850",
+        "cholesterol": "119",
+        "sodium": "104",
+        "potassium": "358",
+        "fiber": "0.0",
+        "sugar": "0.00",
+        "calcium": "2",
+        "iron": "6",
+        "meal": "Breakfast",
+        "date_int": "20088"
+      },
+      {
+        "food_entry_id": "987654322",
+        "food_entry_name": "Oatmeal",
+        "serving_id": "12345",
+        "number_of_units": "0.500",
+        "measurement_description": "cup",
+        "metric_serving_amount": "40.00",
+        "metric_serving_unit": "g",
+        "calories": "150",
+        "carbohydrate": "27.00",
+        "protein": "5.00",
+        "fat": "3.00",
+        "saturated_fat": "0.500",
+        "fiber": "4.0",
+        "sugar": "1.00",
+        "meal": "Breakfast",
+        "date_int": "20088"
+      }
+    ]
+  }
+}

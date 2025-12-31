@@ -1,0 +1,22 @@
+{
+  "saved_meal_items": {
+    "saved_meal_item": [
+      {
+        "saved_meal_item_id": "555666",
+        "food_id": "12345",
+        "food_entry_name": "Chicken Breast",
+        "serving_id": "67890",
+        "number_of_units": "1.000",
+        "measurement_description": "cup, chopped or diced"
+      },
+      {
+        "saved_meal_item_id": "777888",
+        "food_id": "67890",
+        "food_entry_name": "Oatmeal",
+        "serving_id": "12345",
+        "number_of_units": "0.500",
+        "measurement_description": "cup"
+      }
+    ]
+  }
+}

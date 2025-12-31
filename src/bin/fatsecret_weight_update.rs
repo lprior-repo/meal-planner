@@ -38,6 +38,8 @@ struct Input {
     goal_weight_kg: Option<f64>,
     /// Current height in centimeters (optional)
     height_cm: Option<f64>,
+    /// Comment about the measurement (optional)
+    comment: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -55,14 +57,14 @@ struct ErrorOutput {
 async fn main() {
     match run().await {
         Ok(output) => {
-            println!("{serde_json::to_string(&output}").unwrap());
+            println!("{}", serde_json::to_string(&output).unwrap());
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            println!("{serde_json::to_string(&error}").unwrap());
+            println!("{}", serde_json::to_string(&error).unwrap());
             std::process::exit(1);
         }
     }
@@ -85,6 +87,7 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
         date_int: input.date_int,
         goal_weight_kg: input.goal_weight_kg,
         height_cm: input.height_cm,
+        comment: input.comment,
     };
 
     update_weight(&config, &token, update).await?;

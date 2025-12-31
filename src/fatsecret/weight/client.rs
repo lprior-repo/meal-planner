@@ -1,4 +1,59 @@
-//! `FatSecret` SDK Weight API client
+//! FatSecret Weight API client functions
+//!
+//! This module contains the client functions for interacting with the FatSecret
+//! Platform API's weight management endpoints. All functions require authentication
+//! via OAuth 1.0a access tokens.
+//!
+//! # Available Operations
+//!
+//! - **Update Weight** - Record a new weight measurement using [`update_weight()`]
+//! - **Get Weight by Date** - Retrieve a specific weight entry using [`get_weight_by_date()`]
+//! - **Get Monthly Summary** - Fetch all weight measurements for a month using [`get_weight_month_summary()`]
+//!
+//! # Authentication
+//!
+//! All functions require:
+//! - A [`FatSecretConfig`] containing API credentials
+//! - An [`AccessToken`] obtained via the OAuth flow
+//!
+//! # Error Handling
+//!
+//! Functions return [`FatSecretError`] which covers:
+//! - Network errors
+//! - Authentication failures
+//! - JSON parsing errors
+//! - API-specific errors (invalid dates, missing data, etc.)
+//!
+//! # Usage Example
+//!
+//! ```no_run
+//! use meal_planner::fatsecret::weight::{update_weight, get_weight_by_date, WeightUpdate};
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
+//!
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! let config = FatSecretConfig::from_env()?;
+//! let token = AccessToken::new("access_token", "access_secret");
+//!
+//! // Record today's weight
+//! let update = WeightUpdate {
+//!     current_weight_kg: 75.5,
+//!     date_int: 19723, // 2024-01-01
+//!     goal_weight_kg: None,
+//!     height_cm: None,
+//!     comment: Some("After breakfast".to_string()),
+//! };
+//! update_weight(&config, &token, update).await?;
+//!
+//! // Retrieve the weight we just recorded
+//! let entry = get_weight_by_date(&config, &token, 19723).await?;
+//! println!("Weight: {} kg", entry.weight_kg);
+//! if let Some(comment) = entry.weight_comment {
+//!     println!("Comment: {}", comment);
+//! }
+//! # Ok(())
+//! # }
+//! ```
 
 use crate::fatsecret::core::config::FatSecretConfig;
 use crate::fatsecret::core::errors::FatSecretError;

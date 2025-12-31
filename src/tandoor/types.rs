@@ -1,4 +1,113 @@
-//! Tandoor API types
+//! Tandoor API Request and Response Types
+//!
+//! Type definitions for all Tandoor API interactions. Types are organized by API endpoint
+//! and operation, with serde support for JSON serialization/deserialization.
+//!
+//! # Type Categories
+//!
+//! ## Configuration
+//! - [`TandoorConfig`] - Client configuration (URL + token)
+//!
+//! ## Common Response Wrappers
+//! - [`PaginatedResponse<T>`](PaginatedResponse) - Paginated list responses
+//! - [`ConnectionTestResult`] - Connection test outcome
+//! - [`TandoorErrorResponse`] - API error details
+//!
+//! ## Recipe Listing
+//! - [`RecipeSummary`] - Recipe metadata from `/api/recipe/` (GET)
+//! - [`Keyword`] - Recipe tags/keywords
+//!
+//! ## Recipe Import (URL Scraping)
+//! - [`RecipeFromSourceRequest`] - Request to `/api/recipe-from-source/` (POST)
+//! - [`RecipeFromSourceResponse`] - Scraped recipe data
+//! - [`SourceImportRecipe`] - Parsed recipe structure
+//! - [`SourceImportStep`] - Recipe step with ingredients
+//! - [`SourceImportIngredient`] - Ingredient with amount/unit/food
+//! - [`SourceImportFood`], [`SourceImportUnit`], [`SourceImportKeyword`] - Component types
+//!
+//! ## Recipe Creation
+//! - [`CreateRecipeRequest`] - Create recipe via `/api/recipe/` (POST)
+//! - [`CreateStepRequest`] - Step in recipe creation
+//! - [`CreateIngredientRequest`] - Ingredient in step
+//! - [`CreateFoodRequest`], [`CreateUnitRequest`], [`CreateKeywordRequest`] - Component types
+//! - [`CreatedRecipe`] - Response after creation
+//!
+//! ## Import Results
+//! - [`RecipeImportResult`] - Combined scrape + create result
+//!
+//! # Usage Example
+//!
+//! ```rust
+//! use meal_planner::tandoor::{
+//!     TandoorConfig,
+//!     CreateRecipeRequest,
+//!     CreateStepRequest,
+//!     CreateIngredientRequest,
+//!     CreateFoodRequest,
+//!     CreateUnitRequest,
+//! };
+//!
+//! // Configuration
+//! let config = TandoorConfig {
+//!     base_url: "http://localhost:8090".to_string(),
+//!     api_token: "your-token".to_string(),
+//! };
+//!
+//! // Build a recipe creation request
+//! let recipe = CreateRecipeRequest {
+//!     name: "Scrambled Eggs".to_string(),
+//!     description: Some("Quick breakfast".to_string()),
+//!     source_url: None,
+//!     servings: Some(2),
+//!     working_time: Some(5),
+//!     waiting_time: None,
+//!     keywords: None,
+//!     steps: Some(vec![
+//!         CreateStepRequest {
+//!             instruction: "Whisk eggs and cook in butter".to_string(),
+//!             ingredients: Some(vec![
+//!                 CreateIngredientRequest {
+//!                     amount: Some(4.0),
+//!                     food: CreateFoodRequest {
+//!                         name: "eggs".to_string(),
+//!                     },
+//!                     unit: None,
+//!                     note: None,
+//!                 },
+//!                 CreateIngredientRequest {
+//!                     amount: Some(1.0),
+//!                     food: CreateFoodRequest {
+//!                         name: "butter".to_string(),
+//!                     },
+//!                     unit: Some(CreateUnitRequest {
+//!                         name: "tbsp".to_string(),
+//!                     }),
+//!                     note: None,
+//!                 },
+//!             ]),
+//!         }
+//!     ]),
+//! };
+//!
+//! // Serialize to JSON for API request
+//! let json = serde_json::to_string(&recipe).unwrap();
+//! assert!(json.contains("Scrambled Eggs"));
+//! ```
+//!
+//! # Field Conventions
+//!
+//! - **Times**: All durations are in minutes (`working_time`, `waiting_time`)
+//! - **Amounts**: Ingredient quantities use `f64` for precision
+//! - **Optional fields**: Use `#[serde(skip_serializing_if = "Option::is_none")]` to omit nulls
+//! - **Defaults**: Import types use `#[serde(default)]` for missing fields
+//!
+//! # API Endpoint Mapping
+//!
+//! | Endpoint | Request Type | Response Type |
+//! |----------|--------------|---------------|
+//! | `GET /api/recipe/` | N/A | `PaginatedResponse<RecipeSummary>` |
+//! | `POST /api/recipe/` | `CreateRecipeRequest` | `CreatedRecipe` |
+//! | `POST /api/recipe-from-source/` | `RecipeFromSourceRequest` | `RecipeFromSourceResponse` |
 
 use serde::{Deserialize, Serialize};
 

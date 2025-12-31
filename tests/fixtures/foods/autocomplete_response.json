@@ -1,0 +1,18 @@
+{
+  "suggestions": {
+    "suggestion": [
+      {
+        "food_id": "11111",
+        "food_name": "Chicken Breast"
+      },
+      {
+        "food_id": "22222",
+        "food_name": "Chicken Thigh"
+      },
+      {
+        "food_id": "33333",
+        "food_name": "Chicken Wings"
+      }
+    ]
+  }
+}

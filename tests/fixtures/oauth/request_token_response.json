@@ -1,0 +1,5 @@
+{
+  "oauth_token": "temp_request_token_abc123",
+  "oauth_token_secret": "temp_request_secret_xyz789",
+  "oauth_callback_confirmed": "true"
+}

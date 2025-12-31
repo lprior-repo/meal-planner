@@ -41,7 +41,7 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{serde_json::to_string(&output}").unwrap());
+    println!("{}", serde_json::to_string(&output).unwrap());
     if !output.success {
         std::process::exit(1);
     }

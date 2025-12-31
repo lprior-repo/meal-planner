@@ -1,0 +1,13 @@
+{
+  "recipe_types": {
+    "recipe_type": [
+      "Breakfast",
+      "Lunch",
+      "Dinner",
+      "Snack",
+      "Dessert",
+      "Appetizer",
+      "Beverage"
+    ]
+  }
+}

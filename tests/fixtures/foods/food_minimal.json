@@ -1,0 +1,21 @@
+{
+  "food": {
+    "food_id": "55555",
+    "food_name": "Apple",
+    "food_type": "Generic",
+    "food_url": "https://www.fatsecret.com/calories-nutrition/generic/apple",
+    "servings": {
+      "serving": {
+        "serving_id": "22222",
+        "serving_description": "1 medium",
+        "serving_url": "https://www.fatsecret.com/calories-nutrition/generic/apple",
+        "number_of_units": "1.000",
+        "measurement_description": "medium",
+        "calories": "95",
+        "carbohydrate": "25",
+        "protein": "0.5",
+        "fat": "0.3"
+      }
+    }
+  }
+}

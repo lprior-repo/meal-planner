@@ -1,0 +1,82 @@
+{
+  "recipe": {
+    "recipe_id": "54321",
+    "recipe_name": "Grilled Chicken Salad",
+    "recipe_description": "A healthy and delicious grilled chicken salad with mixed greens",
+    "recipe_url": "https://www.fatsecret.com/recipes/grilled-chicken-salad/Default.aspx",
+    "recipe_image": "https://www.fatsecret.com/recipes/grilled-chicken-salad/image.jpg",
+    "recipe_categories": {
+      "recipe_category": [
+        {"recipe_category_name": "Salads"},
+        {"recipe_category_name": "Chicken"}
+      ]
+    },
+    "recipe_types": {
+      "recipe_type": ["Lunch", "Dinner"]
+    },
+    "preparation_time_min": "20",
+    "cooking_time_min": "15",
+    "number_of_servings": "4",
+    "ingredients": {
+      "ingredient": [
+        {
+          "ingredient_description": "2 chicken breasts, boneless and skinless",
+          "ingredient_url": "https://www.fatsecret.com/calories-nutrition/generic/chicken-breast",
+          "food_id": "12345",
+          "serving_id": "67890",
+          "number_of_units": "2.000",
+          "measurement_description": "breast"
+        },
+        {
+          "ingredient_description": "4 cups mixed salad greens",
+          "ingredient_url": "https://www.fatsecret.com/calories-nutrition/generic/mixed-greens",
+          "food_id": "11111",
+          "serving_id": "22222",
+          "number_of_units": "4.000",
+          "measurement_description": "cup"
+        }
+      ]
+    },
+    "directions": {
+      "direction": [
+        {
+          "direction_number": "1",
+          "direction_description": "Preheat grill to medium-high heat"
+        },
+        {
+          "direction_number": "2",
+          "direction_description": "Season chicken breasts with salt and pepper, then grill for 6-8 minutes per side until cooked through"
+        },
+        {
+          "direction_number": "3",
+          "direction_description": "Let chicken rest for 5 minutes, then slice"
+        },
+        {
+          "direction_number": "4",
+          "direction_description": "Arrange mixed greens on plates and top with sliced chicken"
+        }
+      ]
+    },
+    "serving_sizes": {
+      "serving": {
+        "serving_id": "1",
+        "calcium": "100",
+        "calories": "320",
+        "carbohydrate": "12.00",
+        "cholesterol": "95",
+        "fat": "12.00",
+        "fiber": "3.0",
+        "iron": "15",
+        "monounsaturated_fat": "4.50",
+        "polyunsaturated_fat": "2.50",
+        "potassium": "450",
+        "protein": "42.00",
+        "saturated_fat": "3.00",
+        "sodium": "380",
+        "sugar": "4.00",
+        "vitamin_a": "35",
+        "vitamin_c": "25"
+      }
+    }
+  }
+}

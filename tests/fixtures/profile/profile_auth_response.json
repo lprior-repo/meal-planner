@@ -1,0 +1,6 @@
+{
+  "profile": {
+    "auth_token": "abc123def456",
+    "auth_secret": "secret789xyz"
+  }
+}

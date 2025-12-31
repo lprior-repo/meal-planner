@@ -1,0 +1,55 @@
+{
+  "food": {
+    "food_id": "12345",
+    "food_name": "Chicken Breast",
+    "food_type": "Generic",
+    "food_url": "https://www.fatsecret.com/calories-nutrition/generic/chicken-breast",
+    "servings": {
+      "serving": [
+        {
+          "serving_id": "67890",
+          "serving_description": "1 cup, chopped or diced",
+          "serving_url": "https://www.fatsecret.com/calories-nutrition/generic/chicken-breast?portionid=67890",
+          "metric_serving_amount": "140.00",
+          "metric_serving_unit": "g",
+          "number_of_units": "1.000",
+          "measurement_description": "cup, chopped or diced",
+          "is_default": "1",
+          "calories": "231.00",
+          "carbohydrate": "0.00",
+          "protein": "43.40",
+          "fat": "5.04",
+          "saturated_fat": "1.427",
+          "polyunsaturated_fat": "1.123",
+          "monounsaturated_fat": "1.850",
+          "trans_fat": "0.000",
+          "cholesterol": "119.00",
+          "sodium": "104.00",
+          "potassium": "358.00",
+          "fiber": "0.0",
+          "sugar": "0.00",
+          "vitamin_a": "1.00",
+          "vitamin_c": "0.00",
+          "calcium": "2.00",
+          "iron": "6.00"
+        },
+        {
+          "serving_id": "67891",
+          "serving_description": "100g",
+          "serving_url": "https://www.fatsecret.com/calories-nutrition/generic/chicken-breast?portionid=67891",
+          "metric_serving_amount": "100",
+          "metric_serving_unit": "g",
+          "number_of_units": "100.000",
+          "measurement_description": "g",
+          "calories": 165,
+          "carbohydrate": 0,
+          "protein": 31,
+          "fat": 3.6,
+          "saturated_fat": 1.02,
+          "cholesterol": 85,
+          "sodium": 74
+        }
+      ]
+    }
+  }
+}

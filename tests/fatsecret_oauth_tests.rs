@@ -223,13 +223,13 @@ fn test_error_code_invalid_credentials() {
 #[test]
 fn test_error_code_expired_token() {
     let code = ApiErrorCode::from_code(6);
-    assert_eq!(code, ApiErrorCode::InvalidOrExpiredToken);
+    assert_eq!(code, ApiErrorCode::InvalidOrExpiredTimestamp);
     assert!(code.is_auth_related());
 }
 
 #[test]
 fn test_error_code_invalid_signature() {
-    let code = ApiErrorCode::from_code(7);
+    let code = ApiErrorCode::from_code(8);
     assert_eq!(code, ApiErrorCode::InvalidSignature);
     assert!(code.is_auth_related());
 }
@@ -278,7 +278,7 @@ fn test_parse_expired_token_error() {
 
     match error {
         FatSecretError::ApiError { code, .. } => {
-            assert_eq!(code, ApiErrorCode::InvalidOrExpiredToken);
+            assert_eq!(code, ApiErrorCode::InvalidOrExpiredTimestamp);
         }
         _ => panic!("Expected ApiError"),
     }
@@ -342,7 +342,7 @@ fn test_api_auth_codes_are_auth_errors() {
     let auth_codes = [
         ApiErrorCode::MissingOAuthParameter,
         ApiErrorCode::InvalidConsumerCredentials,
-        ApiErrorCode::InvalidOrExpiredToken,
+        ApiErrorCode::InvalidOrExpiredTimestamp,
         ApiErrorCode::InvalidSignature,
         ApiErrorCode::InvalidAccessToken,
     ];

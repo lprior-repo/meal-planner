@@ -1,14 +1,14 @@
-//! FatSecret API Error Types
+//! `FatSecret` API Error Types
 //!
-//! Defines error codes and error types for the FatSecret Platform API.
+//! Defines error codes and error types for the `FatSecret` Platform API.
 //! Error codes documented at: docs/fatsecret/guides-error-codes.md
 
 use serde::Deserialize;
 use thiserror::Error;
 
-/// FatSecret API error codes as documented in the API reference.
+/// `FatSecret` API error codes as documented in the API reference.
 ///
-/// These correspond to the numeric error codes returned by the FatSecret API.
+/// These correspond to the numeric error codes returned by the `FatSecret` API.
 /// See docs/fatsecret/guides-error-codes.md for full documentation.
 ///
 /// # Important Distinctions
@@ -88,13 +88,13 @@ pub enum ApiErrorCode {
     ParameterOutOfRange,
     /// Code 105: Invalid date format
     InvalidDateFormat,
-    /// Code 106: Invalid food_id
+    /// Code 106: Invalid `food_id`
     InvalidFoodId,
-    /// Code 107: Invalid serving_id
+    /// Code 107: Invalid `serving_id`
     InvalidServingId,
-    /// Code 108: Invalid recipe_id
+    /// Code 108: Invalid `recipe_id`
     InvalidRecipeId,
-    /// Code 109: Invalid food_entry_id
+    /// Code 109: Invalid `food_entry_id`
     InvalidFoodEntryId,
 
     // ============================================
@@ -128,7 +128,7 @@ pub enum ApiErrorCode {
 }
 
 impl ApiErrorCode {
-    /// Convert an integer error code to the corresponding ApiErrorCode
+    /// Convert an integer error code to the corresponding `ApiErrorCode`
     #[must_use]
     pub fn from_code(code: i32) -> Self {
         match code {
@@ -180,7 +180,7 @@ impl ApiErrorCode {
         }
     }
 
-    /// Convert an ApiErrorCode to its integer representation
+    /// Convert an `ApiErrorCode` to its integer representation
     #[must_use]
     pub fn to_code(&self) -> i32 {
         match self {
@@ -313,7 +313,7 @@ impl ApiErrorCode {
 
     /// Check if this error indicates a premium subscription is required.
     ///
-    /// Only code 24 indicates a premium issue. Code 12 (MethodNotAccessible)
+    /// Only code 24 indicates a premium issue. Code 12 (`MethodNotAccessible`)
     /// is an OAuth scope issue, NOT a premium issue.
     #[must_use]
     pub fn is_premium_required(&self) -> bool {
@@ -376,10 +376,10 @@ impl std::fmt::Display for ApiErrorCode {
     }
 }
 
-/// All possible errors from the FatSecret SDK
+/// All possible errors from the `FatSecret` SDK
 #[derive(Error, Debug)]
 pub enum FatSecretError {
-    /// Error returned by the FatSecret API
+    /// Error returned by the `FatSecret` API
     #[error("{} (code {}): {message}", code.description(), code.to_code())]
     ApiError {
         /// The structured error code from the API
@@ -602,8 +602,7 @@ impl From<serde_json::Error> for FatSecretError {
 }
 
 #[cfg(test)]
-// Test functions have higher cognitive complexity due to multiple assertions
-#[allow(clippy::cognitive_complexity)]
+#[allow(clippy::unwrap_used)] // Tests are allowed to use unwrap/expect
 mod tests {
     use super::*;
 

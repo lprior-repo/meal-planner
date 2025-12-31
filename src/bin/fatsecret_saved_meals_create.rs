@@ -55,14 +55,12 @@ fn parse_meals(meals_str: &str) -> Result<Vec<MealType>, String> {
         .split(',')
         .map(str::trim)
         .filter(|s| !s.is_empty())
-        .map(|s| {
-            match s {
-                "breakfast" => Ok(MealType::Breakfast),
-                "lunch" => Ok(MealType::Lunch),
-                "dinner" => Ok(MealType::Dinner),
-                "other" | "snack" => Ok(MealType::Snack),
-                _ => Err(format!("Invalid meal type: {s}")),
-            }
+        .map(|s| match s {
+            "breakfast" => Ok(MealType::Breakfast),
+            "lunch" => Ok(MealType::Lunch),
+            "dinner" => Ok(MealType::Dinner),
+            "other" | "snack" => Ok(MealType::Snack),
+            _ => Err(format!("Invalid meal type: {s}")),
         })
         .collect::<Result<Vec<_>, _>>()
 }
@@ -71,14 +69,14 @@ fn parse_meals(meals_str: &str) -> Result<Vec<MealType>, String> {
 async fn main() {
     match run().await {
         Ok(output) => {
-            println!("{serde_json::to_string(&output}").unwrap());
+            println!("{}", serde_json::to_string(&output).unwrap());
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            println!("{serde_json::to_string(&error}").unwrap());
+            println!("{}", serde_json::to_string(&error).unwrap());
             std::process::exit(1);
         }
     }

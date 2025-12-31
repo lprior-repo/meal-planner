@@ -1,7 +1,151 @@
 //! FatSecret Food Domain Types
 //!
-//! These types represent foods, servings, and nutrition information
-//! from the FatSecret Platform API.
+//! This module defines all types used in the FatSecret Foods API domain, including
+//! foods, servings, nutrition data, and API response structures.
+//!
+//! # Design Principles
+//!
+//! 1. **Opaque IDs** - [`FoodId`] and [`ServingId`] are opaque wrappers preventing
+//!    accidental mixing of string IDs
+//! 2. **Flexible deserialization** - Handle FatSecret's inconsistent JSON (strings vs numbers)
+//! 3. **Flattened structures** - Nutrition data embedded in servings via `#[serde(flatten)]`
+//! 4. **Optional fields** - Micronutrients and brand names are optional per API contract
+//!
+//! # Type Hierarchy
+//!
+//! ```text
+//! Food                          # Complete food details
+//! ├── food_id: FoodId           # Unique identifier
+//! ├── food_name: String         # "Chicken Breast"
+//! ├── food_type: String         # "Generic" or "Brand"
+//! ├── brand_name: Option        # For branded foods
+//! └── servings: FoodServings
+//!     └── serving: Vec<Serving>
+//!         ├── serving_id: ServingId
+//!         ├── serving_description: String    # "1 cup"
+//!         ├── metric_serving_amount: Option  # 240.0
+//!         ├── metric_serving_unit: Option    # "g"
+//!         └── nutrition: Nutrition           # Flattened
+//!             ├── calories: f64              # Required macros
+//!             ├── protein: f64
+//!             ├── carbohydrate: f64
+//!             ├── fat: f64
+//!             ├── saturated_fat: Option<f64> # Optional details
+//!             ├── fiber: Option<f64>
+//!             ├── sugar: Option<f64>
+//!             └── ... (vitamins, minerals)
+//! ```
+//!
+//! # Key Types
+//!
+//! ## Core Domain Types
+//!
+//! - [`Food`] - Complete food with all serving options and nutrition
+//! - [`Serving`] - A single serving size with embedded nutrition data
+//! - [`Nutrition`] - Macros (protein/carbs/fat) and optional micros/vitamins
+//! - [`FoodId`], [`ServingId`] - Type-safe opaque identifiers
+//!
+//! ## Search & Discovery Types
+//!
+//! - [`FoodSearchResponse`] - Paginated search results
+//! - [`FoodSearchResult`] - Single search result with summary
+//! - [`FoodAutocompleteResponse`] - Autocomplete suggestions
+//! - [`FoodSuggestion`] - Single suggestion (id + name only)
+//!
+//! # API Response Mapping
+//!
+//! FatSecret returns inconsistent JSON shapes. This module handles:
+//!
+//! - **String/number coercion** - Some APIs return `"123"`, others `123`
+//! - **Single item arrays** - `{"serving": {...}}` vs `{"serving": [{...}]}`
+//! - **Optional vs required** - Micronutrients may be missing or `null`
+//!
+//! See [`crate::fatsecret::core::serde_utils`] for custom deserializers.
+//!
+//! # Examples
+//!
+//! ## Working with food details
+//!
+//! ```no_run
+//! use meal_planner::fatsecret::foods::types::{Food, FoodId};
+//!
+//! # fn example(food: Food) {
+//! // Find default serving
+//! let default_serving = food.servings.serving.iter()
+//!     .find(|s| s.is_default == Some(1))
+//!     .or_else(|| food.servings.serving.first());
+//!
+//! if let Some(serving) = default_serving {
+//!     println!("{}: {} cal",
+//!         serving.serving_description,
+//!         serving.nutrition.calories
+//!     );
+//!     
+//!     // Check for fiber data
+//!     if let Some(fiber) = serving.nutrition.fiber {
+//!         println!("  Fiber: {}g", fiber);
+//!     }
+//! }
+//! # }
+//! ```
+//!
+//! ## Processing search results
+//!
+//! ```no_run
+//! use meal_planner::fatsecret::foods::types::FoodSearchResponse;
+//!
+//! # fn example(response: FoodSearchResponse) {
+//! println!("Showing {} of {} results",
+//!     response.foods.len(),
+//!     response.total_results
+//! );
+//!
+//! for result in response.foods {
+//!     println!("{}: {}", result.food_name, result.food_description);
+//!     if let Some(brand) = result.brand_name {
+//!         println!("  Brand: {}", brand);
+//!     }
+//! }
+//!
+//! // Calculate pagination
+//! let total_pages = (response.total_results / response.max_results) + 1;
+//! let current_page = response.page_number + 1; // API is 0-indexed
+//! println!("Page {}/{}", current_page, total_pages);
+//! # }
+//! ```
+//!
+//! ## Creating opaque IDs
+//!
+//! ```
+//! use meal_planner::fatsecret::foods::types::{FoodId, ServingId};
+//!
+//! // From string slice
+//! let food_id = FoodId::new("12345");
+//! assert_eq!(food_id.as_str(), "12345");
+//!
+//! // From String
+//! let serving_id = ServingId::from("67890".to_string());
+//! assert_eq!(serving_id.to_string(), "67890");
+//!
+//! // Type safety prevents mixing
+//! // let wrong: FoodId = ServingId::new("123"); // Compile error!
+//! ```
+//!
+//! # Nutrition Data Units
+//!
+//! | Field | Unit | Notes |
+//! |-------|------|-------|
+//! | `calories` | kcal | Required |
+//! | `protein`, `carbohydrate`, `fat` | grams | Required macros |
+//! | `saturated_fat`, `fiber`, `sugar` | grams | Optional |
+//! | `cholesterol`, `sodium`, `potassium` | milligrams | Optional |
+//! | `vitamin_a`, `vitamin_c`, `calcium`, `iron` | % daily value | Optional |
+//!
+//! # See Also
+//!
+//! - [`crate::fatsecret::foods::client`] for API client functions
+//! - [`crate::fatsecret::core::serde_utils`] for custom deserializers
+//! - [FatSecret Platform API Reference](https://platform.fatsecret.com/api/)
 
 use serde::{Deserialize, Serialize};
 

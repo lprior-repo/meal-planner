@@ -1,8 +1,203 @@
-//! FatSecret Food Diary types
+//! FatSecret Food Diary Type Definitions
 //!
-//! These types represent food entries logged in the user's food diary,
-//! along with daily and monthly summaries. The FatSecret API uses
-//! date_int (days since Unix epoch) for all date operations.
+//! This module defines the complete type system for the FatSecret Food Diary API,
+//! including food entries, nutrition summaries, meal types, and utility functions
+//! for date conversion and validation.
+//!
+//! # Purpose
+//!
+//! Provides strongly-typed representations of:
+//! - Food diary entries with full nutrition data
+//! - Input types for creating/updating entries
+//! - Daily and monthly nutrition summaries
+//! - Date conversion between ISO format and FatSecret's date_int
+//! - Validation logic for custom food entries
+//! - Error types for authentication and validation
+//!
+//! # Core Types
+//!
+//! ## Entry Types
+//! - [`FoodEntry`] - Complete diary entry (read from API)
+//! - [`FoodEntryInput`] - Input for creating entries (FromFood or Custom variants)
+//! - [`FoodEntryUpdate`] - Builder for partial updates (portions, meal)
+//! - [`FoodEntryId`] - Type-safe newtype wrapper for entry IDs
+//!
+//! ## Meal Classification
+//! - [`MealType`] - Breakfast, Lunch, Dinner, or Snack
+//!
+//! ## Summary Types
+//! - [`DaySummary`] - Aggregated nutrition totals for one day
+//! - [`MonthSummary`] - Collection of day summaries for a month
+//!
+//! ## Error Types
+//! - [`ValidationError`] - Custom entry validation failures
+//! - [`AuthError`] - OAuth authentication error classification
+//!
+//! # Date System
+//!
+//! FatSecret uses `date_int` (i32) representing days since Unix epoch (1970-01-01):
+//! - `0` = 1970-01-01
+//! - `19723` = 2024-01-01
+//!
+//! Conversion functions:
+//! - [`date_to_int`] - "YYYY-MM-DD" → date_int
+//! - [`int_to_date`] - date_int → "YYYY-MM-DD"
+//!
+//! # Validation Functions
+//!
+//! - [`validate_custom_entry`] - Validates all fields for custom food entries
+//! - [`validate_number_of_units`] - Ensures portion size is positive
+//! - [`validate_date_int_string`] - Parses date_int from string (for URL params)
+//! - [`map_auth_error`] - Maps HTTP status codes to auth error types
+//!
+//! # Nutrition Units
+//!
+//! All nutrition values use specific units:
+//! - **Calories**: kcal
+//! - **Macronutrients** (carbs, protein, fat): grams (g)
+//! - **Cholesterol, sodium, potassium**: milligrams (mg)
+//! - **Fiber, sugar**: grams (g)
+//!
+//! # Serde Handling
+//!
+//! The FatSecret API has inconsistent response formats. This module handles:
+//! - Flexible numeric parsing (strings OR numbers) via `deserialize_flexible_*`
+//! - Single item OR array responses via `deserialize_single_or_vec`
+//! - Optional fields with default values
+//!
+//! # Usage Examples
+//!
+//! ## Creating Entries
+//!
+//! ```rust
+//! use meal_planner::fatsecret::diary::{FoodEntryInput, MealType, date_to_int};
+//!
+//! // From FatSecret database
+//! let from_db = FoodEntryInput::FromFood {
+//!     food_id: "12345".to_string(),
+//!     food_entry_name: "Grilled Chicken".to_string(),
+//!     serving_id: "67890".to_string(),
+//!     number_of_units: 1.0,
+//!     meal: MealType::Dinner,
+//!     date_int: date_to_int("2024-01-15").unwrap(),
+//! };
+//!
+//! // Custom nutrition values
+//! let custom = FoodEntryInput::Custom {
+//!     food_entry_name: "Protein Smoothie".to_string(),
+//!     serving_description: "1 large (500ml)".to_string(),
+//!     number_of_units: 1.0,
+//!     meal: MealType::Breakfast,
+//!     date_int: date_to_int("2024-01-15").unwrap(),
+//!     calories: 300.0,
+//!     carbohydrate: 25.0,  // grams
+//!     protein: 35.0,       // grams
+//!     fat: 8.0,            // grams
+//! };
+//! ```
+//!
+//! ## Updating Entries
+//!
+//! ```rust
+//! use meal_planner::fatsecret::diary::{FoodEntryUpdate, MealType};
+//!
+//! // Builder pattern for updates
+//! let update = FoodEntryUpdate::new()
+//!     .with_units(2.0)
+//!     .with_meal(MealType::Snack);
+//!
+//! // Only update portion size
+//! let partial = FoodEntryUpdate::new().with_units(1.5);
+//! ```
+//!
+//! ## Date Conversion
+//!
+//! ```rust
+//! use meal_planner::fatsecret::diary::{date_to_int, int_to_date};
+//!
+//! // ISO date to FatSecret format
+//! let date_int = date_to_int("2024-01-01").unwrap();
+//! assert_eq!(date_int, 19723);
+//!
+//! // FatSecret format back to ISO
+//! let iso_date = int_to_date(19723).unwrap();
+//! assert_eq!(iso_date, "2024-01-01");
+//!
+//! // Epoch start
+//! assert_eq!(date_to_int("1970-01-01").unwrap(), 0);
+//! ```
+//!
+//! ## Validation
+//!
+//! ```rust
+//! use meal_planner::fatsecret::diary::validate_custom_entry;
+//!
+//! // Valid custom entry
+//! let result = validate_custom_entry(
+//!     "Apple",
+//!     "1 medium",
+//!     1.0,    // units
+//!     95.0,   // calories
+//!     25.0,   // carbs
+//!     0.5,    // protein
+//!     0.3,    // fat
+//! );
+//! assert!(result.is_ok());
+//!
+//! // Invalid: negative nutrition
+//! let result = validate_custom_entry(
+//!     "Bad Food",
+//!     "1 serving",
+//!     1.0,
+//!     -100.0,  // ❌ negative calories
+//!     10.0,
+//!     5.0,
+//!     2.0,
+//! );
+//! assert!(result.is_err());
+//! ```
+//!
+//! ## Working with Meal Types
+//!
+//! ```rust
+//! use meal_planner::fatsecret::diary::MealType;
+//!
+//! let meal = MealType::Breakfast;
+//! assert_eq!(meal.to_api_string(), "breakfast");
+//!
+//! let parsed = MealType::from_api_string("lunch").unwrap();
+//! assert_eq!(parsed, MealType::Lunch);
+//!
+//! // "other" maps to Snack
+//! let snack = MealType::from_api_string("other").unwrap();
+//! assert_eq!(snack, MealType::Snack);
+//! ```
+//!
+//! # Type Safety
+//!
+//! ## FoodEntryId Newtype
+//!
+//! The [`FoodEntryId`] newtype prevents accidental misuse of entry IDs:
+//!
+//! ```rust
+//! use meal_planner::fatsecret::diary::FoodEntryId;
+//!
+//! let id = FoodEntryId::new("123456");
+//! let id_str: &str = id.as_str();
+//! assert_eq!(id_str, "123456");
+//!
+//! // Type safety: can't accidentally pass wrong string type
+//! // fn delete(id: &FoodEntryId) { ... }
+//! // delete("raw_string"); // ❌ compile error
+//! ```
+//!
+//! # Implementation Details
+//!
+//! - Uses `chrono` for date calculations
+//! - All numeric fields use `f64` for precision
+//! - Optional nutrition fields default to `None`
+//! - Implements `Display`, `Debug`, `Clone`, `Serialize`, `Deserialize` where appropriate
+//! - Comprehensive unit tests for all conversion and validation logic
 
 use serde::{Deserialize, Serialize};
 
@@ -455,21 +650,127 @@ pub fn map_auth_error(status_code: u16) -> AuthError {
 }
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used)] // Tests are allowed to use unwrap/expect
 mod tests {
     use super::*;
 
+    // ========================================================================
+    // Date Conversion Tests
+    // ========================================================================
+
     #[test]
-    fn test_date_to_int() {
+    fn test_date_to_int_epoch() {
         assert_eq!(date_to_int("1970-01-01").unwrap(), 0);
-        assert_eq!(date_to_int("1970-01-02").unwrap(), 1);
-        assert_eq!(date_to_int("2024-01-01").unwrap(), 19723);
     }
 
     #[test]
-    fn test_int_to_date() {
+    fn test_date_to_int_sequential_days() {
+        assert_eq!(date_to_int("1970-01-02").unwrap(), 1);
+        assert_eq!(date_to_int("1970-01-03").unwrap(), 2);
+        assert_eq!(date_to_int("1970-01-10").unwrap(), 9);
+    }
+
+    #[test]
+    fn test_date_to_int_modern_dates() {
+        assert_eq!(date_to_int("2024-01-01").unwrap(), 19723);
+        assert_eq!(date_to_int("2024-12-31").unwrap(), 20088);
+        assert_eq!(date_to_int("2025-01-01").unwrap(), 20089);
+    }
+
+    #[test]
+    fn test_date_to_int_leap_year() {
+        // 2024 is a leap year
+        assert_eq!(date_to_int("2024-02-29").unwrap(), 19782);
+        assert_eq!(date_to_int("2024-03-01").unwrap(), 19783);
+    }
+
+    #[test]
+    fn test_date_to_int_invalid_format() {
+        assert!(date_to_int("2024/01/01").is_err());
+        assert!(date_to_int("01-01-2024").is_err());
+        // Note: chrono actually accepts single-digit months/days, so "2024-1-1" parses fine
+        assert!(date_to_int("invalid").is_err());
+        assert!(date_to_int("").is_err());
+    }
+
+    #[test]
+    fn test_date_to_int_invalid_dates() {
+        assert!(date_to_int("2024-02-30").is_err()); // Feb doesn't have 30 days
+        assert!(date_to_int("2024-13-01").is_err()); // Invalid month
+        assert!(date_to_int("2024-00-01").is_err()); // Invalid month
+    }
+
+    #[test]
+    fn test_int_to_date_epoch() {
         assert_eq!(int_to_date(0).unwrap(), "1970-01-01");
+    }
+
+    #[test]
+    fn test_int_to_date_sequential_days() {
         assert_eq!(int_to_date(1).unwrap(), "1970-01-02");
+        assert_eq!(int_to_date(2).unwrap(), "1970-01-03");
+        assert_eq!(int_to_date(365).unwrap(), "1971-01-01");
+    }
+
+    #[test]
+    fn test_int_to_date_modern_dates() {
         assert_eq!(int_to_date(19723).unwrap(), "2024-01-01");
+        assert_eq!(int_to_date(20088).unwrap(), "2024-12-31");
+        assert_eq!(int_to_date(20089).unwrap(), "2025-01-01");
+    }
+
+    #[test]
+    fn test_int_to_date_negative() {
+        // Dates before epoch
+        assert_eq!(int_to_date(-1).unwrap(), "1969-12-31");
+        assert_eq!(int_to_date(-365).unwrap(), "1969-01-01");
+    }
+
+    #[test]
+    fn test_date_conversion_roundtrip() {
+        let dates = [
+            "1970-01-01",
+            "2000-01-01",
+            "2024-06-15",
+            "2024-12-31",
+            "2025-01-01",
+        ];
+        for date in dates {
+            let int = date_to_int(date).unwrap();
+            let back = int_to_date(int).unwrap();
+            assert_eq!(date, back);
+        }
+    }
+
+    // ========================================================================
+    // MealType Tests
+    // ========================================================================
+
+    #[test]
+    fn test_meal_type_to_api_string() {
+        assert_eq!(MealType::Breakfast.to_api_string(), "breakfast");
+        assert_eq!(MealType::Lunch.to_api_string(), "lunch");
+        assert_eq!(MealType::Dinner.to_api_string(), "dinner");
+        assert_eq!(MealType::Snack.to_api_string(), "other");
+    }
+
+    #[test]
+    fn test_meal_type_from_api_string() {
+        assert_eq!(
+            MealType::from_api_string("breakfast"),
+            Some(MealType::Breakfast)
+        );
+        assert_eq!(MealType::from_api_string("lunch"), Some(MealType::Lunch));
+        assert_eq!(MealType::from_api_string("dinner"), Some(MealType::Dinner));
+        assert_eq!(MealType::from_api_string("other"), Some(MealType::Snack));
+        assert_eq!(MealType::from_api_string("snack"), Some(MealType::Snack));
+    }
+
+    #[test]
+    fn test_meal_type_from_api_string_invalid() {
+        assert_eq!(MealType::from_api_string("invalid"), None);
+        assert_eq!(MealType::from_api_string(""), None);
+        assert_eq!(MealType::from_api_string("BREAKFAST"), None); // Case sensitive
     }
 
     #[test]
@@ -487,8 +788,80 @@ mod tests {
     }
 
     #[test]
+    fn test_meal_type_display() {
+        assert_eq!(format!("{}", MealType::Breakfast), "breakfast");
+        assert_eq!(format!("{}", MealType::Lunch), "lunch");
+        assert_eq!(format!("{}", MealType::Dinner), "dinner");
+        assert_eq!(format!("{}", MealType::Snack), "other");
+    }
+
+    #[test]
+    fn test_meal_type_serde_json() {
+        let json = serde_json::json!("breakfast");
+        let meal: MealType = serde_json::from_value(json).unwrap();
+        assert_eq!(meal, MealType::Breakfast);
+
+        let json = serde_json::json!("other");
+        let meal: MealType = serde_json::from_value(json).unwrap();
+        assert_eq!(meal, MealType::Snack);
+    }
+
+    // ========================================================================
+    // FoodEntryId Tests
+    // ========================================================================
+
+    #[test]
+    fn test_food_entry_id_new() {
+        let id = FoodEntryId::new("12345");
+        assert_eq!(id.as_str(), "12345");
+    }
+
+    #[test]
+    fn test_food_entry_id_from_string() {
+        let id: FoodEntryId = "67890".into();
+        assert_eq!(id.as_str(), "67890");
+
+        let id: FoodEntryId = String::from("abc123").into();
+        assert_eq!(id.as_str(), "abc123");
+    }
+
+    #[test]
+    fn test_food_entry_id_display() {
+        let id = FoodEntryId::new("test-id");
+        assert_eq!(format!("{}", id), "test-id");
+    }
+
+    #[test]
+    fn test_food_entry_id_equality() {
+        let id1 = FoodEntryId::new("12345");
+        let id2 = FoodEntryId::new("12345");
+        let id3 = FoodEntryId::new("67890");
+
+        assert_eq!(id1, id2);
+        assert_ne!(id1, id3);
+    }
+
+    #[test]
+    fn test_food_entry_id_clone() {
+        let id1 = FoodEntryId::new("12345");
+        let id2 = id1.clone();
+        assert_eq!(id1, id2);
+    }
+
+    // ========================================================================
+    // Validation Tests
+    // ========================================================================
+
+    #[test]
     fn test_validate_custom_entry_valid() {
         assert!(validate_custom_entry("Apple", "1 medium", 1.0, 95.0, 25.0, 0.5, 0.3).is_ok());
+        assert!(validate_custom_entry("Chicken", "100g", 2.5, 200.0, 0.0, 40.0, 5.0).is_ok());
+    }
+
+    #[test]
+    fn test_validate_custom_entry_valid_zero_nutrition() {
+        // Zero nutrition values are valid (e.g., water has 0 calories)
+        assert!(validate_custom_entry("Water", "1 glass", 1.0, 0.0, 0.0, 0.0, 0.0).is_ok());
     }
 
     #[test]
@@ -502,7 +875,10 @@ mod tests {
     fn test_validate_custom_entry_empty_serving() {
         let result = validate_custom_entry("Apple", "", 1.0, 95.0, 25.0, 0.5, 0.3);
         assert!(result.is_err());
-        assert_eq!(result.unwrap_err().0, "serving_description cannot be empty");
+        assert_eq!(
+            result.unwrap_err().0,
+            "serving_description cannot be empty"
+        );
     }
 
     #[test]
@@ -516,33 +892,401 @@ mod tests {
     }
 
     #[test]
-    fn test_validate_custom_entry_negative_nutrition() {
+    fn test_validate_custom_entry_negative_units() {
+        let result = validate_custom_entry("Apple", "1 medium", -1.0, 95.0, 25.0, 0.5, 0.3);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().0,
+            "number_of_units must be greater than 0"
+        );
+    }
+
+    #[test]
+    fn test_validate_custom_entry_negative_calories() {
         let result = validate_custom_entry("Apple", "1 medium", 1.0, -95.0, 25.0, 0.5, 0.3);
         assert!(result.is_err());
-        assert_eq!(result.unwrap_err().0, "Nutrition values cannot be negative");
+        assert_eq!(
+            result.unwrap_err().0,
+            "Nutrition values cannot be negative"
+        );
     }
 
     #[test]
-    fn test_validate_number_of_units() {
+    fn test_validate_custom_entry_negative_carbs() {
+        let result = validate_custom_entry("Apple", "1 medium", 1.0, 95.0, -25.0, 0.5, 0.3);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().0,
+            "Nutrition values cannot be negative"
+        );
+    }
+
+    #[test]
+    fn test_validate_custom_entry_negative_protein() {
+        let result = validate_custom_entry("Apple", "1 medium", 1.0, 95.0, 25.0, -0.5, 0.3);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().0,
+            "Nutrition values cannot be negative"
+        );
+    }
+
+    #[test]
+    fn test_validate_custom_entry_negative_fat() {
+        let result = validate_custom_entry("Apple", "1 medium", 1.0, 95.0, 25.0, 0.5, -0.3);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().0,
+            "Nutrition values cannot be negative"
+        );
+    }
+
+    #[test]
+    fn test_validate_number_of_units_valid() {
         assert!(validate_number_of_units(1.0).is_ok());
         assert!(validate_number_of_units(0.5).is_ok());
+        assert!(validate_number_of_units(0.001).is_ok());
+        assert!(validate_number_of_units(100.0).is_ok());
+    }
+
+    #[test]
+    fn test_validate_number_of_units_invalid() {
         assert!(validate_number_of_units(0.0).is_err());
         assert!(validate_number_of_units(-1.0).is_err());
+        assert!(validate_number_of_units(-0.001).is_err());
     }
 
     #[test]
-    fn test_validate_date_int_string() {
+    fn test_validate_date_int_string_valid() {
         assert_eq!(validate_date_int_string("19723"), Some(19723));
         assert_eq!(validate_date_int_string("0"), Some(0));
-        assert_eq!(validate_date_int_string("invalid"), None);
-        assert_eq!(validate_date_int_string(""), None);
+        assert_eq!(validate_date_int_string("1"), Some(1));
+        assert_eq!(validate_date_int_string("99999"), Some(99999));
     }
 
     #[test]
-    fn test_map_auth_error() {
+    fn test_validate_date_int_string_negative() {
+        assert_eq!(validate_date_int_string("-1"), Some(-1));
+        assert_eq!(validate_date_int_string("-365"), Some(-365));
+    }
+
+    #[test]
+    fn test_validate_date_int_string_invalid() {
+        assert_eq!(validate_date_int_string("invalid"), None);
+        assert_eq!(validate_date_int_string(""), None);
+        assert_eq!(validate_date_int_string("12.5"), None);
+        assert_eq!(validate_date_int_string("12a"), None);
+    }
+
+    #[test]
+    fn test_validation_error_display() {
+        let err = ValidationError("test error".to_string());
+        assert_eq!(format!("{}", err), "test error");
+    }
+
+    // ========================================================================
+    // Auth Error Tests
+    // ========================================================================
+
+    #[test]
+    fn test_map_auth_error_revoked() {
         assert_eq!(map_auth_error(401), AuthError::AuthRevoked);
         assert_eq!(map_auth_error(403), AuthError::AuthRevoked);
+    }
+
+    #[test]
+    fn test_map_auth_error_other() {
         assert_eq!(map_auth_error(500), AuthError::OtherError);
         assert_eq!(map_auth_error(404), AuthError::OtherError);
+        assert_eq!(map_auth_error(400), AuthError::OtherError);
+        assert_eq!(map_auth_error(200), AuthError::OtherError);
+    }
+
+    // ========================================================================
+    // FoodEntryInput Tests
+    // ========================================================================
+
+    #[test]
+    fn test_food_entry_input_from_food_name() {
+        let input = FoodEntryInput::FromFood {
+            food_id: "123".to_string(),
+            food_entry_name: "Banana".to_string(),
+            serving_id: "456".to_string(),
+            number_of_units: 1.0,
+            meal: MealType::Breakfast,
+            date_int: 19723,
+        };
+        assert_eq!(input.food_entry_name(), "Banana");
+    }
+
+    #[test]
+    fn test_food_entry_input_custom_name() {
+        let input = FoodEntryInput::Custom {
+            food_entry_name: "Homemade Smoothie".to_string(),
+            serving_description: "1 large glass".to_string(),
+            number_of_units: 1.0,
+            meal: MealType::Snack,
+            date_int: 19723,
+            calories: 250.0,
+            carbohydrate: 30.0,
+            protein: 20.0,
+            fat: 5.0,
+        };
+        assert_eq!(input.food_entry_name(), "Homemade Smoothie");
+    }
+
+    // ========================================================================
+    // FoodEntryUpdate Tests
+    // ========================================================================
+
+    #[test]
+    fn test_food_entry_update_new() {
+        let update = FoodEntryUpdate::new();
+        assert!(update.number_of_units.is_none());
+        assert!(update.meal.is_none());
+    }
+
+    #[test]
+    fn test_food_entry_update_with_units() {
+        let update = FoodEntryUpdate::new().with_units(2.0);
+        assert_eq!(update.number_of_units, Some(2.0));
+        assert!(update.meal.is_none());
+    }
+
+    #[test]
+    fn test_food_entry_update_with_meal() {
+        let update = FoodEntryUpdate::new().with_meal(MealType::Lunch);
+        assert!(update.number_of_units.is_none());
+        assert_eq!(update.meal, Some(MealType::Lunch));
+    }
+
+    #[test]
+    fn test_food_entry_update_chained() {
+        let update = FoodEntryUpdate::new()
+            .with_units(1.5)
+            .with_meal(MealType::Dinner);
+        assert_eq!(update.number_of_units, Some(1.5));
+        assert_eq!(update.meal, Some(MealType::Dinner));
+    }
+
+    #[test]
+    fn test_food_entry_update_default() {
+        let update: FoodEntryUpdate = Default::default();
+        assert!(update.number_of_units.is_none());
+        assert!(update.meal.is_none());
+    }
+
+    // ========================================================================
+    // FoodEntry Deserialization Tests
+    // ========================================================================
+
+    #[test]
+    fn test_food_entry_deserialize_from_json() {
+        let json = r#"{
+            "food_entry_id": "12345",
+            "food_entry_name": "Banana",
+            "food_entry_description": "1 medium banana",
+            "food_id": "100",
+            "serving_id": "200",
+            "number_of_units": "1.5",
+            "meal": "breakfast",
+            "date_int": "19723",
+            "calories": "157.5",
+            "carbohydrate": "40.5",
+            "protein": "1.5",
+            "fat": "0.6"
+        }"#;
+
+        let entry: FoodEntry = serde_json::from_str(json).unwrap();
+        assert_eq!(entry.food_entry_id.as_str(), "12345");
+        assert_eq!(entry.food_entry_name, "Banana");
+        assert_eq!(entry.number_of_units, 1.5);
+        assert_eq!(entry.meal, MealType::Breakfast);
+        assert_eq!(entry.date_int, 19723);
+        assert_eq!(entry.calories, 157.5);
+    }
+
+    #[test]
+    fn test_food_entry_deserialize_numeric_values() {
+        let json = r#"{
+            "food_entry_id": "12345",
+            "food_entry_name": "Chicken",
+            "food_entry_description": "100g grilled chicken",
+            "food_id": "101",
+            "serving_id": "201",
+            "number_of_units": 2.0,
+            "meal": "dinner",
+            "date_int": 19723,
+            "calories": 300.0,
+            "carbohydrate": 0.0,
+            "protein": 60.0,
+            "fat": 6.0
+        }"#;
+
+        let entry: FoodEntry = serde_json::from_str(json).unwrap();
+        assert_eq!(entry.number_of_units, 2.0);
+        assert_eq!(entry.date_int, 19723);
+        assert_eq!(entry.calories, 300.0);
+    }
+
+    #[test]
+    fn test_food_entry_deserialize_optional_fields() {
+        let json = r#"{
+            "food_entry_id": "12345",
+            "food_entry_name": "Apple",
+            "food_entry_description": "1 medium apple",
+            "food_id": "102",
+            "serving_id": "202",
+            "number_of_units": "1",
+            "meal": "other",
+            "date_int": "19723",
+            "calories": "95",
+            "carbohydrate": "25",
+            "protein": "0.5",
+            "fat": "0.3",
+            "fiber": "4.4",
+            "sugar": "19"
+        }"#;
+
+        let entry: FoodEntry = serde_json::from_str(json).unwrap();
+        assert_eq!(entry.meal, MealType::Snack);
+        assert_eq!(entry.fiber, Some(4.4));
+        assert_eq!(entry.sugar, Some(19.0));
+        assert!(entry.saturated_fat.is_none());
+    }
+
+    #[test]
+    fn test_food_entry_deserialize_meal_types() {
+        for (meal_str, expected) in [
+            ("breakfast", MealType::Breakfast),
+            ("lunch", MealType::Lunch),
+            ("dinner", MealType::Dinner),
+            ("other", MealType::Snack),
+        ] {
+            let json = format!(
+                r#"{{
+                "food_entry_id": "1",
+                "food_entry_name": "Test",
+                "food_entry_description": "Test",
+                "food_id": "1",
+                "serving_id": "1",
+                "number_of_units": "1",
+                "meal": "{}",
+                "date_int": "19723",
+                "calories": "100",
+                "carbohydrate": "10",
+                "protein": "10",
+                "fat": "10"
+            }}"#,
+                meal_str
+            );
+
+            let entry: FoodEntry = serde_json::from_str(&json).unwrap();
+            assert_eq!(entry.meal, expected);
+        }
+    }
+
+    // ========================================================================
+    // DaySummary Tests
+    // ========================================================================
+
+    #[test]
+    fn test_day_summary_deserialize() {
+        let json = r#"{
+            "date_int": "19723",
+            "calories": "2500",
+            "carbohydrate": "300",
+            "protein": "150",
+            "fat": "80"
+        }"#;
+
+        let summary: DaySummary = serde_json::from_str(json).unwrap();
+        assert_eq!(summary.date_int, 19723);
+        assert_eq!(summary.calories, 2500.0);
+        assert_eq!(summary.carbohydrate, 300.0);
+        assert_eq!(summary.protein, 150.0);
+        assert_eq!(summary.fat, 80.0);
+    }
+
+    #[test]
+    fn test_day_summary_deserialize_numeric() {
+        let json = r#"{
+            "date_int": 19723,
+            "calories": 2500.5,
+            "carbohydrate": 300.2,
+            "protein": 150.8,
+            "fat": 80.1
+        }"#;
+
+        let summary: DaySummary = serde_json::from_str(json).unwrap();
+        assert_eq!(summary.date_int, 19723);
+        assert_eq!(summary.calories, 2500.5);
+    }
+
+    // ========================================================================
+    // MonthSummary Tests
+    // ========================================================================
+
+    #[test]
+    fn test_month_summary_deserialize_single_day() {
+        let json = r#"{
+            "day": {
+                "date_int": "19723",
+                "calories": "2000",
+                "carbohydrate": "250",
+                "protein": "120",
+                "fat": "70"
+            },
+            "month": "1",
+            "year": "2024"
+        }"#;
+
+        let summary: MonthSummary = serde_json::from_str(json).unwrap();
+        assert_eq!(summary.days.len(), 1);
+        assert_eq!(summary.month, 1);
+        assert_eq!(summary.year, 2024);
+        assert_eq!(summary.days[0].date_int, 19723);
+    }
+
+    #[test]
+    fn test_month_summary_deserialize_multiple_days() {
+        let json = r#"{
+            "day": [
+                {
+                    "date_int": "19723",
+                    "calories": "2000",
+                    "carbohydrate": "250",
+                    "protein": "120",
+                    "fat": "70"
+                },
+                {
+                    "date_int": "19724",
+                    "calories": "2100",
+                    "carbohydrate": "260",
+                    "protein": "130",
+                    "fat": "75"
+                }
+            ],
+            "month": "1",
+            "year": "2024"
+        }"#;
+
+        let summary: MonthSummary = serde_json::from_str(json).unwrap();
+        assert_eq!(summary.days.len(), 2);
+        assert_eq!(summary.days[0].date_int, 19723);
+        assert_eq!(summary.days[1].date_int, 19724);
+    }
+
+    #[test]
+    fn test_month_summary_deserialize_no_days() {
+        let json = r#"{
+            "month": "1",
+            "year": "2024"
+        }"#;
+
+        let summary: MonthSummary = serde_json::from_str(json).unwrap();
+        assert_eq!(summary.days.len(), 0);
+        assert_eq!(summary.month, 1);
+        assert_eq!(summary.year, 2024);
     }
 }

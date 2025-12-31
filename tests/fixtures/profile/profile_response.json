@@ -1,0 +1,12 @@
+{
+  "profile": {
+    "user_id": "123456",
+    "first_name": "John",
+    "last_name": "Doe",
+    "last_updated": "1640000000",
+    "goal_weight_kg": "75.0",
+    "height_cm": "180.0",
+    "height_measure": "cm",
+    "weight_measure": "kg"
+  }
+}
