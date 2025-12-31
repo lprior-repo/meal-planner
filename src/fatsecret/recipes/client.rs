@@ -20,7 +20,7 @@ pub async fn get_recipe(
 
     let body = make_api_request(config, "recipe.get.v2", params).await?;
     let response: RecipeResponseWrapper = serde_json::from_str(&body).map_err(|e| {
-        FatSecretError::ParseError(format!("Failed to parse recipe: {}. Body: {}", e, body))
+        FatSecretError::ParseError(format!("Failed to parse recipe: {e}. Body: {body}"))
     })?;
 
     Ok(response.recipe)

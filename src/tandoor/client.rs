@@ -35,7 +35,7 @@ impl TandoorClient {
         let mut headers = HeaderMap::new();
         headers.insert(
             AUTHORIZATION,
-            HeaderValue::from_str(&format!("Bearer {}", config.api_token))
+            HeaderValue::from_str(&format!("Bearer {config.api_token}"))
                 .map_err(|e| TandoorError::AuthError(e.to_string()))?,
         );
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
@@ -56,7 +56,7 @@ impl TandoorClient {
 
     /// Test connection by fetching recipes
     pub fn test_connection(&self) -> Result<ConnectionTestResult, TandoorError> {
-        let url = format!("{}/api/recipe/", self.base_url);
+        let url = format!("{self.base_url}/api/recipe/");
 
         let response = self.client.get(&url).send()?;
         let status = response.status();
@@ -94,17 +94,17 @@ impl TandoorClient {
         page: Option<u32>,
         page_size: Option<u32>,
     ) -> Result<PaginatedResponse<RecipeSummary>, TandoorError> {
-        let mut url = format!("{}/api/recipe/", self.base_url);
+        let mut url = format!("{self.base_url}/api/recipe/");
 
         let mut params = Vec::new();
         if let Some(p) = page {
-            params.push(format!("page={}", p));
+            params.push(format!("page={p}"));
         }
         if let Some(ps) = page_size {
-            params.push(format!("page_size={}", ps));
+            params.push(format!("page_size={ps}"));
         }
         if !params.is_empty() {
-            url = format!("{}?{}", url, params.join("&"));
+            url = format!("{url}?{params.join("&"}"));
         }
 
         let response = self.client.get(&url).send()?;
@@ -131,7 +131,7 @@ impl TandoorClient {
         &self,
         url: &str,
     ) -> Result<RecipeFromSourceResponse, TandoorError> {
-        let api_url = format!("{}/api/recipe-from-source/", self.base_url);
+        let api_url = format!("{self.base_url}/api/recipe-from-source/");
 
         let request = RecipeFromSourceRequest {
             url: Some(url.to_string()),
@@ -165,7 +165,7 @@ impl TandoorClient {
         &self,
         recipe: &CreateRecipeRequest,
     ) -> Result<CreatedRecipe, TandoorError> {
-        let api_url = format!("{}/api/recipe/", self.base_url);
+        let api_url = format!("{self.base_url}/api/recipe/");
 
         let response = self.client.post(&api_url).json(recipe).send()?;
         let status = response.status();

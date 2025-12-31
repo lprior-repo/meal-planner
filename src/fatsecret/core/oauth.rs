@@ -140,7 +140,7 @@ pub fn create_signature(
     consumer_secret: &str,
     token_secret: Option<&str>,
 ) -> String {
-    let signing_key = format!("{}&{}", consumer_secret, token_secret.unwrap_or(""));
+    let signing_key = format!("{consumer_secret}&{token_secret.unwrap_or(""}"));
     let key = hmac::Key::new(hmac::HMAC_SHA1_FOR_LEGACY_USE_ONLY, signing_key.as_bytes());
     let signature = hmac::sign(&key, base_string.as_bytes());
     base64::engine::general_purpose::STANDARD.encode(signature.as_ref())

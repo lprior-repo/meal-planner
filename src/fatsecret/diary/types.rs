@@ -349,13 +349,13 @@ pub fn date_to_int(date: &str) -> Result<i32, String> {
     use chrono::NaiveDate;
 
     NaiveDate::parse_from_str(date, "%Y-%m-%d")
-        .map_err(|e| format!("Invalid date format: {}", e))
+        .map_err(|e| format!("Invalid date format: {e}"))
         .and_then(|d| {
             let epoch =
                 NaiveDate::from_ymd_opt(UNIX_EPOCH_DATE.0, UNIX_EPOCH_DATE.1, UNIX_EPOCH_DATE.2)
                     .ok_or_else(|| "Invalid epoch date".to_string())?;
             let days = (d - epoch).num_days();
-            i32::try_from(days).map_err(|_| format!("Date too far from epoch: {} days", days))
+            i32::try_from(days).map_err(|_| format!("Date too far from epoch: {days} days"))
         })
 }
 
@@ -367,7 +367,7 @@ pub fn int_to_date(date_int: i32) -> Result<String, String> {
         .ok_or_else(|| "Invalid epoch date".to_string())?;
     let date = epoch
         .checked_add_signed(Duration::days(i64::from(date_int)))
-        .ok_or_else(|| format!("Date calculation overflow: {}", date_int))?;
+        .ok_or_else(|| format!("Date calculation overflow: {date_int}"))?;
     Ok(date.format("%Y-%m-%d").to_string())
 }
 

@@ -54,14 +54,14 @@ struct ErrorOutput {
 async fn main() {
     match run().await {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!("{serde_json::to_string(&output}").unwrap());
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!("{serde_json::to_string(&error}").unwrap());
             std::process::exit(1);
         }
     }
@@ -95,7 +95,7 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
 
     if let Some(meal_str) = input.meal {
         let meal = MealType::from_api_string(&meal_str)
-            .ok_or_else(|| format!("Invalid meal type: {}", meal_str))?;
+            .ok_or_else(|| format!("Invalid meal type: {meal_str}"))?;
         update = update.with_meal(meal);
     }
 

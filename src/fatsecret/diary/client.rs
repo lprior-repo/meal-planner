@@ -117,7 +117,7 @@ pub async fn create_food_entry(
 
     let body = make_authenticated_request(config, token, "food_entry.create", params).await?;
     let response: CreateEntryResponse = serde_json::from_str(&body).map_err(|e| {
-        FatSecretError::ParseError(format!("Failed to parse create response: {}", e))
+        FatSecretError::ParseError(format!("Failed to parse create response: {e}"))
     })?;
 
     let id = FoodEntryId::new(response.food_entry_id.value);
@@ -137,7 +137,7 @@ pub async fn get_food_entry(
 
     let body = make_authenticated_request(config, token, "food_entry.get", params).await?;
     let response: FoodEntryResponse = serde_json::from_str(&body)
-        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse food entry: {}", e)))?;
+        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse food entry: {e}")))?;
 
     Ok(response.food_entry)
 }
@@ -153,7 +153,7 @@ pub async fn get_food_entries(
 
     let body = make_authenticated_request(config, token, "food_entries.get", params).await?;
     let response: FoodEntriesResponse = serde_json::from_str(&body)
-        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse food entries: {}", e)))?;
+        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse food entries: {e}")))?;
 
     Ok(response.food_entries.food_entry)
 }
@@ -204,7 +204,7 @@ pub async fn get_month_summary(
 
     let body = make_authenticated_request(config, token, "food_entries.get_month", params).await?;
     let response: MonthResponse = serde_json::from_str(&body)
-        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse month summary: {}", e)))?;
+        .map_err(|e| FatSecretError::ParseError(format!("Failed to parse month summary: {e}")))?;
 
     Ok(response.month)
 }

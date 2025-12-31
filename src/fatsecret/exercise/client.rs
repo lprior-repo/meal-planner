@@ -115,7 +115,7 @@ pub async fn get_exercise_month_summary(
     month: i32,
 ) -> Result<ExerciseMonthSummary, FatSecretError> {
     let mut params = HashMap::new();
-    params.insert("date".to_string(), format!("{}-{}", year, month));
+    params.insert("date".to_string(), format!("{year}-{month}"));
 
     let body = make_authenticated_request(
         config,

@@ -334,11 +334,11 @@ pub fn parse_error_response(body: &str) -> Option<FatSecretError> {
 impl From<reqwest::Error> for FatSecretError {
     fn from(error: reqwest::Error) -> Self {
         if error.is_timeout() {
-            Self::NetworkError(format!("Request timed out: {}", error))
+            Self::NetworkError(format!("Request timed out: {error}"))
         } else if error.is_connect() {
-            Self::NetworkError(format!("Connection failed: {}", error))
+            Self::NetworkError(format!("Connection failed: {error}"))
         } else if error.is_decode() {
-            Self::ParseError(format!("Failed to decode response: {}", error))
+            Self::ParseError(format!("Failed to decode response: {error}"))
         } else {
             Self::NetworkError(error.to_string())
         }
@@ -347,7 +347,7 @@ impl From<reqwest::Error> for FatSecretError {
 
 impl From<serde_json::Error> for FatSecretError {
     fn from(error: serde_json::Error) -> Self {
-        Self::ParseError(format!("JSON parse error: {}", error))
+        Self::ParseError(format!("JSON parse error: {error}"))
     }
 }
 

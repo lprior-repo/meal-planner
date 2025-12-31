@@ -1,0 +1,59 @@
+summary: Import recipe from URL
+description: |
+  Scrapes a recipe from URL using Tandoor's built-in scraper,
+  derives a source tag from the domain, and creates the recipe
+  with auto-tagging.
+value:
+  modules:
+    - id: scrape
+      value:
+        type: script
+        input_transforms:
+          tandoor:
+            type: static
+            value: '$res:u/admin/tandoor_api'
+          url:
+            type: javascript
+            expr: flow_input.url
+        path: f/tandoor/scrape_recipe
+    - id: derive_source_tag
+      value:
+        type: rawscript
+        content: '!inline inline_script_0.inline_script.py'
+        input_transforms:
+          url:
+            type: javascript
+            expr: flow_input.url
+        lock: '!inline inline_script_0.inline_script.lock'
+        language: python3
+    - id: create
+      value:
+        type: script
+        input_transforms:
+          additional_keywords:
+            type: javascript
+            expr: >
+              [results.derive_source_tag].concat(flow_input.additional_keywords
+              || [])
+          recipe:
+            type: javascript
+            expr: results.scrape.recipe_json
+          tandoor:
+            type: static
+            value: '$res:u/admin/tandoor_api'
+        path: f/tandoor/create_recipe
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    additional_keywords:
+      type: array
+      description: Additional keywords to add
+      default: []
+      items:
+        type: string
+    url:
+      type: string
+      description: Recipe URL to import
+  required:
+    - url
