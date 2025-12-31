@@ -1,5 +1,5 @@
 # Meal Planner - Cargo Build Optimization
-# Leverages mold linker for maximum speed
+# Leverages lld linker for fast builds
 
 [build]
 # rustc-wrapper = "sccache"         # Uncomment when sccache is installed
@@ -8,8 +8,7 @@ jobs = 32                          # Parallel compilation jobs
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
 rustflags = [
-    "-C", "link-arg=-fuse-ld=mold",
-    "-C", "link-arg=-Wl,--threads=16",  # Parallel linking (mold)
+    "-C", "link-arg=-fuse-ld=lld",
 ]
 
 # Incremental compilation cache
