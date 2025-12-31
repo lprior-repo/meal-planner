@@ -1778,4 +1778,526 @@ mod tests {
         assert!(json.contains("10"));
         assert!(json.contains("Test"));
     }
+
+    // ============================================================================
+    // MealPlan types tests
+    // ============================================================================
+
+    #[test]
+    fn test_meal_plan_summary_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "recipe_name": "Pasta",
+            "meal_type_name": "Dinner",
+            "from_date": "2024-01-01",
+            "to_date": "2024-01-01",
+            "servings": 4.0,
+            "shopping": true
+        }"#;
+        let summary: MealPlanSummary = serde_json::from_str(json).unwrap();
+        assert_eq!(summary.id, 1);
+        assert_eq!(summary.recipe_name, "Pasta");
+        assert_eq!(summary.meal_type_name, "Dinner");
+        assert!(summary.shopping);
+    }
+
+    #[test]
+    fn test_meal_plan_summary_default_shopping() {
+        let json = r#"{
+            "id": 1,
+            "recipe_name": "Salad",
+            "meal_type_name": "Lunch",
+            "from_date": "2024-01-01",
+            "to_date": "2024-01-01",
+            "servings": 2.0
+        }"#;
+        let summary: MealPlanSummary = serde_json::from_str(json).unwrap();
+        assert!(!summary.shopping);
+    }
+
+    #[test]
+    fn test_create_meal_plan_request_minimal() {
+        let req = CreateMealPlanRequest {
+            recipe: 123,
+            meal_type: 1,
+            from_date: "2024-01-15".to_string(),
+            to_date: None,
+            servings: 4.0,
+            title: None,
+            note: None,
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("123"));
+        assert!(!json.contains("to_date")); // None should be skipped
+    }
+
+    #[test]
+    fn test_create_meal_plan_request_full() {
+        let req = CreateMealPlanRequest {
+            recipe: 123,
+            meal_type: 2,
+            from_date: "2024-01-15".to_string(),
+            to_date: Some("2024-01-16".to_string()),
+            servings: 4.0,
+            title: Some("Weekly Dinner".to_string()),
+            note: Some("Make extra".to_string()),
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("Weekly Dinner"));
+        assert!(json.contains("Make extra"));
+    }
+
+    #[test]
+    fn test_update_meal_plan_request_empty() {
+        let req = UpdateMealPlanRequest {
+            recipe: None,
+            meal_type: None,
+            from_date: None,
+            to_date: None,
+            servings: None,
+            title: None,
+            note: None,
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert_eq!(json, "{}");
+    }
+
+    #[test]
+    fn test_update_meal_plan_request_partial() {
+        let req = UpdateMealPlanRequest {
+            recipe: Some(456),
+            meal_type: None,
+            from_date: None,
+            to_date: None,
+            servings: Some(6.0),
+            title: None,
+            note: None,
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("456"));
+        assert!(json.contains("6.0") || json.contains("6"));
+        assert!(!json.contains("meal_type"));
+    }
+
+    // ============================================================================
+    // MealType tests
+    // ============================================================================
+
+    #[test]
+    fn test_meal_type_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "name": "Breakfast",
+            "order": 0,
+            "default": true
+        }"#;
+        let mt: MealType = serde_json::from_str(json).unwrap();
+        assert_eq!(mt.id, 1);
+        assert_eq!(mt.name, "Breakfast");
+        assert_eq!(mt.order, 0);
+        assert!(mt.default);
+    }
+
+    #[test]
+    fn test_meal_type_with_optional_fields() {
+        let json = r#"{
+            "id": 2,
+            "name": "Lunch",
+            "order": 1,
+            "time": "12:00",
+            "color": "blue"
+        }"#;
+        let mt: MealType = serde_json::from_str(json).unwrap();
+        assert_eq!(mt.time, Some("12:00".to_string()));
+        assert_eq!(mt.color, Some("blue".to_string()));
+    }
+
+    #[test]
+    fn test_create_meal_type_request() {
+        let req = CreateMealTypeRequest {
+            name: "Snack".to_string(),
+            order: Some(5),
+            time: Some("15:00".to_string()),
+            color: None,
+            default: Some(false),
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("Snack"));
+        assert!(!json.contains("color"));
+    }
+
+    // ============================================================================
+    // RecipeBook tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_book_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "name": "Favorites",
+            "description": "My favorite recipes",
+            "icon": "star",
+            "color": "gold"
+        }"#;
+        let book: RecipeBook = serde_json::from_str(json).unwrap();
+        assert_eq!(book.id, 1);
+        assert_eq!(book.name, "Favorites");
+        assert_eq!(book.description, "My favorite recipes");
+    }
+
+    #[test]
+    fn test_recipe_book_entry_deserialize() {
+        let json = r#"{
+            "id": 10,
+            "recipe_book": 1,
+            "recipe": 100,
+            "recipe_name": "Chocolate Cake",
+            "position": 5
+        }"#;
+        let entry: RecipeBookEntry = serde_json::from_str(json).unwrap();
+        assert_eq!(entry.id, 10);
+        assert_eq!(entry.recipe_book, 1);
+        assert_eq!(entry.recipe, 100);
+        assert_eq!(entry.recipe_name, "Chocolate Cake");
+    }
+
+    #[test]
+    fn test_create_recipe_book_entry_request() {
+        let req = CreateRecipeBookEntryRequest {
+            recipe_book: 1,
+            recipe: 50,
+            position: Some(3),
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("\"recipe_book\":1"));
+        assert!(json.contains("\"recipe\":50"));
+    }
+
+    // ============================================================================
+    // ShoppingList tests
+    // ============================================================================
+
+    #[test]
+    fn test_shopping_list_entry_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "list": 10,
+            "ingredient": 100,
+            "unit": "cups",
+            "amount": 2.5,
+            "food": "Flour",
+            "checked": false,
+            "order": 1
+        }"#;
+        let entry: ShoppingListEntry = serde_json::from_str(json).unwrap();
+        assert_eq!(entry.id, 1);
+        assert_eq!(entry.list, 10);
+        assert_eq!(entry.food, Some("Flour".to_string()));
+        assert!(!entry.checked);
+    }
+
+    #[test]
+    fn test_shopping_list_recipe_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "mealplan": 5,
+            "recipe": 10,
+            "recipe_name": "Pasta",
+            "list": 100,
+            "servings": 4.0
+        }"#;
+        let recipe: ShoppingListRecipe = serde_json::from_str(json).unwrap();
+        assert_eq!(recipe.id, 1);
+        assert_eq!(recipe.recipe_name, "Pasta");
+        assert_eq!(recipe.servings, 4.0);
+    }
+
+    #[test]
+    fn test_create_shopping_list_entry_request() {
+        let req = CreateShoppingListEntryRequest {
+            list: 10,
+            ingredient: None,
+            unit: Some("kg".to_string()),
+            amount: Some(1.5),
+            food: Some("Rice".to_string()),
+            checked: Some(false),
+            order: None,
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("Rice"));
+        assert!(json.contains("1.5"));
+    }
+
+    // ============================================================================
+    // Unit/Food/Ingredient tests
+    // ============================================================================
+
+    #[test]
+    fn test_unit_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "name": "kg",
+            "plural_name": "kilograms"
+        }"#;
+        let unit: Unit = serde_json::from_str(json).unwrap();
+        assert_eq!(unit.id, 1);
+        assert_eq!(unit.name, "kg");
+        assert_eq!(unit.plural_name, Some("kilograms".to_string()));
+    }
+
+    #[test]
+    fn test_food_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "name": "Chicken Breast",
+            "description": "Boneless skinless"
+        }"#;
+        let food: Food = serde_json::from_str(json).unwrap();
+        assert_eq!(food.id, 1);
+        assert_eq!(food.name, "Chicken Breast");
+    }
+
+    #[test]
+    fn test_ingredient_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "food": 10,
+            "unit": 5,
+            "amount": 2.5
+        }"#;
+        let ing: Ingredient = serde_json::from_str(json).unwrap();
+        assert_eq!(ing.id, 1);
+        assert_eq!(ing.food, 10);
+        assert_eq!(ing.unit, Some(5));
+        assert_eq!(ing.amount, Some(2.5));
+    }
+
+    #[test]
+    fn test_parsed_ingredient() {
+        let json = r#"{
+            "amount": 2.0,
+            "unit": "cups",
+            "food": "flour"
+        }"#;
+        let parsed: ParsedIngredient = serde_json::from_str(json).unwrap();
+        assert_eq!(parsed.amount, Some(2.0));
+        assert_eq!(parsed.unit, Some("cups".to_string()));
+        assert_eq!(parsed.food, Some("flour".to_string()));
+    }
+
+    #[test]
+    fn test_ingredient_from_string_request() {
+        let req = IngredientFromStringRequest {
+            text: "2 cups flour".to_string(),
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("2 cups flour"));
+    }
+
+    // ============================================================================
+    // Step tests
+    // ============================================================================
+
+    #[test]
+    fn test_step_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "instruction": "Mix all ingredients",
+            "recipe": 10,
+            "order": 1
+        }"#;
+        let step: Step = serde_json::from_str(json).unwrap();
+        assert_eq!(step.id, 1);
+        assert_eq!(step.instruction, "Mix all ingredients");
+        assert_eq!(step.recipe, Some(10));
+    }
+
+    #[test]
+    fn test_create_step_request() {
+        let req = CreateStepRequestData {
+            instruction: "Bake for 30 minutes".to_string(),
+            recipe: Some(5),
+            order: Some(2),
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("Bake for 30 minutes"));
+    }
+
+    // ============================================================================
+    // Space/User tests
+    // ============================================================================
+
+    #[test]
+    fn test_space_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "name": "My Kitchen",
+            "description": "Personal recipes"
+        }"#;
+        let space: Space = serde_json::from_str(json).unwrap();
+        assert_eq!(space.id, 1);
+        assert_eq!(space.name, "My Kitchen");
+    }
+
+    #[test]
+    fn test_user_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "username": "chef_john",
+            "email": "john@example.com",
+            "first_name": "John",
+            "last_name": "Doe"
+        }"#;
+        let user: User = serde_json::from_str(json).unwrap();
+        assert_eq!(user.id, 1);
+        assert_eq!(user.username, "chef_john");
+        assert_eq!(user.email, Some("john@example.com".to_string()));
+    }
+
+    // ============================================================================
+    // Supermarket tests
+    // ============================================================================
+
+    #[test]
+    fn test_supermarket_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "name": "Local Grocery",
+            "description": "Down the street"
+        }"#;
+        let market: Supermarket = serde_json::from_str(json).unwrap();
+        assert_eq!(market.id, 1);
+        assert_eq!(market.name, "Local Grocery");
+    }
+
+    #[test]
+    fn test_create_supermarket_request() {
+        let req = CreateSupermarketRequest {
+            name: "Whole Foods".to_string(),
+            description: Some("Organic store".to_string()),
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("Whole Foods"));
+        assert!(json.contains("Organic store"));
+    }
+
+    #[test]
+    fn test_update_supermarket_request_empty() {
+        let req = UpdateSupermarketRequest {
+            name: None,
+            description: None,
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert_eq!(json, "{}");
+    }
+
+    // ============================================================================
+    // Batch update tests
+    // ============================================================================
+
+    #[test]
+    fn test_batch_update_recipe_request() {
+        let req = BatchUpdateRecipeRequest {
+            id: 1,
+            name: Some("Updated Name".to_string()),
+            description: None,
+            servings: Some(6),
+            working_time: None,
+            waiting_time: None,
+        };
+        let json = serde_json::to_string(&req).unwrap();
+        assert!(json.contains("Updated Name"));
+        assert!(!json.contains("description"));
+    }
+
+    #[test]
+    fn test_batch_update_recipe_response() {
+        let json = r#"{
+            "updated_count": 5,
+            "updated_ids": [1, 2, 3, 4, 5]
+        }"#;
+        let resp: BatchUpdateRecipeResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(resp.updated_count, 5);
+        assert_eq!(resp.updated_ids.len(), 5);
+    }
+
+    #[test]
+    fn test_batch_update_food_response() {
+        let json = r#"{
+            "updated_count": 3,
+            "updated_ids": [10, 20, 30]
+        }"#;
+        let resp: BatchUpdateFoodResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(resp.updated_count, 3);
+        assert_eq!(resp.updated_ids, vec![10, 20, 30]);
+    }
+
+    // ============================================================================
+    // UnitConversion tests
+    // ============================================================================
+
+    #[test]
+    fn test_unit_conversion_deserialize() {
+        let json = r#"{
+            "id": 1,
+            "from_unit": 10,
+            "to_unit": 20,
+            "factor": 1000.0
+        }"#;
+        let conv: UnitConversion = serde_json::from_str(json).unwrap();
+        assert_eq!(conv.id, 1);
+        assert_eq!(conv.from_unit, 10);
+        assert_eq!(conv.to_unit, 20);
+        assert_eq!(conv.factor, 1000.0);
+    }
+
+    // ============================================================================
+    // Related recipes tests
+    // ============================================================================
+
+    #[test]
+    fn test_related_recipes_response() {
+        let json = r#"{
+            "results": [
+                {"id": 1, "name": "Recipe 1", "image": null},
+                {"id": 2, "name": "Recipe 2", "image": null}
+            ]
+        }"#;
+        let resp: RelatedRecipesResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(resp.results.len(), 2);
+    }
+
+    // ============================================================================
+    // PaginatedMealPlanResponse tests
+    // ============================================================================
+
+    #[test]
+    fn test_paginated_meal_plan_response() {
+        let json = r#"{
+            "count": 10,
+            "next": "http://example.com/page2",
+            "previous": null,
+            "timestamp": "2024-01-01T12:00:00Z",
+            "results": []
+        }"#;
+        let resp: PaginatedMealPlanResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(resp.count, 10);
+        assert_eq!(resp.next, Some("http://example.com/page2".to_string()));
+        assert!(resp.previous.is_none());
+    }
+
+    // ============================================================================
+    // Bulk shopping list tests
+    // ============================================================================
+
+    #[test]
+    fn test_bulk_shopping_list_entry_response() {
+        let json = r#"{
+            "created_count": 5,
+            "created_ids": [1, 2, 3, 4, 5]
+        }"#;
+        let resp: BulkShoppingListEntryResponse = serde_json::from_str(json).unwrap();
+        assert_eq!(resp.created_count, 5);
+        assert_eq!(resp.created_ids.len(), 5);
+    }
 }
