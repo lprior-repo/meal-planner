@@ -66,7 +66,8 @@ mod tests {
 
     #[test]
     fn test_input_parsing() {
-        let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "id": 7}"#;
+        let json =
+            r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "id": 7}"#;
         let input: Input = serde_json::from_str(json).unwrap();
         assert_eq!(input.id, 7);
     }

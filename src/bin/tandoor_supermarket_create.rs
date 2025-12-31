@@ -65,12 +65,15 @@ fn run() -> anyhow::Result<Output> {
         description: input.description,
     };
 
-    let created = client.create_supermarket(&request)?;
+    let created = client.create_supermarket(&serde_json::to_value(&request)?)?;
 
     Ok(Output {
         success: true,
-        id: Some(created.id),
-        name: Some(created.name),
+        id: created.get("id").and_then(serde_json::Value::as_i64),
+        name: created
+            .get("name")
+            .and_then(|v| v.as_str())
+            .map(ToString::to_string),
         error: None,
     })
 }

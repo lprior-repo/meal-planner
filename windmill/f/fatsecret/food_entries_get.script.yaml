@@ -1,24 +1,31 @@
 summary: Get FatSecret food diary entries
 description: Retrieves all food diary entries for a specific date (3-legged OAuth)
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    fatsecret:
-      type: object
-      description: FatSecret API credentials
-      format: resource-fatsecret
-    access_token:
-      type: string
-      description: OAuth access token
     access_secret:
       type: string
       description: OAuth access token secret
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token
+      default: null
+      originalType: string
     date_int:
-      type: integer
+      type: string
       description: Date as days since Unix epoch (1970-01-01)
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
   required:
     - fatsecret
     - access_token

@@ -11,7 +11,7 @@
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
 
-use meal_planner::tandoor::{Space, TandoorClient, TandoorConfig};
+use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -24,7 +24,7 @@ struct Input {
 struct Output {
     success: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    spaces: Option<Vec<Space>>,
+    spaces: Option<Vec<serde_json::Value>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error: Option<String>,
 }

@@ -9,7 +9,7 @@
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
 
-use meal_planner::tandoor::{TandoorClient, TandoorConfig, Ingredient};
+use meal_planner::tandoor::{Ingredient, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 

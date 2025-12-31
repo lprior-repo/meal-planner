@@ -61,11 +61,11 @@ fn run() -> anyhow::Result<Output> {
         order: None,
     };
 
-    let created = client.create_step(&request)?;
+    let created = client.create_step(&serde_json::to_value(&request)?)?;
 
     Ok(Output {
         success: true,
-        id: Some(created.id),
+        id: created.get("id").and_then(serde_json::Value::as_i64),
         error: None,
     })
 }

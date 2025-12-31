@@ -31,7 +31,7 @@ struct Output {
 
 fn main() {
     match run() {
-        Ok(_) => {
+        Ok(()) => {
             let output = Output {
                 success: true,
                 error: None,

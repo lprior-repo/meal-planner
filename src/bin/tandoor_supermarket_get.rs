@@ -11,7 +11,7 @@
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
 
-use meal_planner::tandoor::{Supermarket, TandoorClient, TandoorConfig};
+use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -25,7 +25,7 @@ struct Input {
 struct Output {
     success: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    supermarket: Option<Supermarket>,
+    supermarket: Option<serde_json::Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error: Option<String>,
 }
@@ -70,7 +70,8 @@ mod tests {
 
     #[test]
     fn test_input_parsing() {
-        let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "id": 5}"#;
+        let json =
+            r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "id": 5}"#;
         let input: Input = serde_json::from_str(json).unwrap();
         assert_eq!(input.id, 5);
     }

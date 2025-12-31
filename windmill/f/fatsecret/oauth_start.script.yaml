@@ -1,19 +1,20 @@
 summary: Start FatSecret OAuth flow
 description: Gets a request token and returns the authorization URL
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    fatsecret:
-      type: object
-      description: FatSecret API credentials
-      format: resource-fatsecret
     callback_url:
       type: string
       description: OAuth callback URL (use 'oob' for out-of-band)
       default: oob
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
   required:
     - fatsecret
-    - callback_url

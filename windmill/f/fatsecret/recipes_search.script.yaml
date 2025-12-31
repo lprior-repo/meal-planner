@@ -1,0 +1,41 @@
+summary: Search FatSecret recipes
+description: >-
+  Searches for recipes with optional pagination and filtering by recipe type.
+  This is a 2-legged OAuth request (no user token required).
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+    max_results:
+      type: string
+      description: Maximum results to return (optional)
+      default: null
+      originalType: string
+    page_number:
+      type: string
+      description: Page number for pagination (optional)
+      default: null
+      originalType: string
+    recipe_type:
+      type: string
+      description: Filter by recipe type (optional)
+      default: null
+      originalType: string
+    search_expression:
+      type: string
+      description: 'Search query (e.g., "chicken soup")'
+      default: null
+      originalType: string
+  required:
+    - fatsecret
+    - search_expression
+    - max_results
+    - page_number
+    - recipe_type

@@ -1,26 +1,31 @@
 summary: Search FatSecret foods database
 description: Searches the FatSecret food database for foods matching a query
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
     fatsecret:
-      type: object
+      type: string
       description: FatSecret API credentials
-      format: resource-fatsecret
+      default: null
+      originalType: string
+    max_results:
+      type: string
+      description: Maximum results per page
+      default: '20'
+      originalType: string
+    page:
+      type: string
+      description: Page number (0-indexed)
+      default: '0'
+      originalType: string
     query:
       type: string
-      description: Search query (e.g., "chicken breast")
-    page:
-      type: integer
-      description: Page number (0-indexed)
-      default: 0
-    max_results:
-      type: integer
-      description: Maximum results per page
-      default: 20
+      description: 'Search query (e.g., "chicken breast")'
+      default: null
+      originalType: string
   required:
     - fatsecret
     - query

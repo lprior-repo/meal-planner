@@ -57,7 +57,12 @@ fn run() -> anyhow::Result<Output> {
     };
 
     let client = TandoorClient::new(&input.tandoor)?;
-    let count = client.batch_update_foods(&input.updates)?;
+    let updates: Vec<serde_json::Value> = input
+        .updates
+        .into_iter()
+        .map(serde_json::to_value)
+        .collect::<Result<Vec<_>, _>>()?;
+    let count = client.batch_update_foods(&updates)?;
 
     Ok(Output {
         success: true,
@@ -75,8 +80,11 @@ mod tests {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "updates": [{"id": 1, "name": "Updated Food"}]}"#;
         let input: Input = serde_json::from_str(json).unwrap();
         assert_eq!(input.updates.len(), 1);
-        assert_eq!(input.updates[0].id, 1);
-        assert_eq!(input.updates[0].name, Some("Updated Food".to_string()));
+        assert_eq!(input.updates.first().unwrap().id, 1);
+        assert_eq!(
+            input.updates.first().unwrap().name,
+            Some("Updated Food".to_string())
+        );
     }
 
     #[test]

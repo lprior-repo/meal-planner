@@ -1,32 +1,45 @@
 summary: Add food to FatSecret favorites
 description: Adds a food to the user's favorites list
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    fatsecret:
-      type: object
-      description: FatSecret API credentials
-      format: resource-fatsecret
-    access_token:
-      type: string
-      description: OAuth access token
     access_secret:
       type: string
       description: OAuth access token secret
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
     food_id:
       type: string
       description: The food ID to add to favorites
+      default: null
+      originalType: string
+    number_of_units:
+      type: string
+      description: Optional default number of units
+      default: null
+      originalType: string
     serving_id:
       type: string
       description: Optional default serving ID
-    number_of_units:
-      type: number
-      description: Optional default number of units
+      default: null
+      originalType: string
   required:
     - fatsecret
     - access_token
     - access_secret
     - food_id
+    - serving_id
+    - number_of_units

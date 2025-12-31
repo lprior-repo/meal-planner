@@ -62,7 +62,7 @@ fn run() -> anyhow::Result<Output> {
         order: None,
     };
 
-    client.update_step(input.id, &request)?;
+    client.update_step(input.id, &serde_json::to_value(&request)?)?;
 
     Ok(Output {
         success: true,

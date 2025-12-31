@@ -1,0 +1,27 @@
+summary: List recipes in flat format
+description: >-
+  Retrieves a flat list of recipes without pagination wrapper. Useful for
+  getting all recipes with limit/offset control.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    limit:
+      type: string
+      description: Maximum number of recipes to return
+      default: ''
+      originalType: string
+    offset:
+      type: string
+      description: Offset for pagination
+      default: ''
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor

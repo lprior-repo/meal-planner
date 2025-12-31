@@ -1,22 +1,36 @@
 summary: Complete FatSecret OAuth flow
-description: Exchanges the request token for an access token
-language: bash
+description: >-
+  Exchanges the request token for an access token using a manually-entered
+  verifier. For out-of-band (oob) OAuth flows where user copies the verifier
+  code.
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
     fatsecret:
-      type: object
+      type: string
       description: FatSecret API credentials
-      format: resource-fatsecret
+      default: null
+      originalType: string
     oauth_token:
       type: string
-      description: OAuth token from oauth_start step
+      description: Pending request token from oauth_start
+      default: null
+      originalType: string
+    oauth_token_secret:
+      type: string
+      description: Pending request token secret from oauth_start
+      default: null
+      originalType: string
     oauth_verifier:
       type: string
-      description: Verification code from FatSecret authorization
+      description: OAuth verifier code from user authorization
+      default: null
+      originalType: string
   required:
     - fatsecret
     - oauth_token
+    - oauth_token_secret
     - oauth_verifier

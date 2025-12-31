@@ -1,44 +1,56 @@
 summary: Create FatSecret food diary entry
 description: Creates a new food diary entry for the user
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    fatsecret:
-      type: object
-      description: FatSecret API credentials
-      format: resource-fatsecret
-    access_token:
-      type: string
-      description: OAuth access token
     access_secret:
       type: string
       description: OAuth access token secret
-    food_id:
+      default: null
+      originalType: string
+    access_token:
       type: string
-      description: The food ID from FatSecret database
+      description: OAuth access token
+      default: null
+      originalType: string
+    date_int:
+      type: string
+      description: Date as days since Unix epoch (1970-01-01)
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
     food_entry_name:
       type: string
       description: Display name for the entry
-    serving_id:
+      default: null
+      originalType: string
+    food_id:
       type: string
-      description: The serving size ID
-    number_of_units:
-      type: number
-      description: Number of servings consumed
+      description: The food ID from FatSecret database
+      default: null
+      originalType: string
     meal:
       type: string
       description: 'Meal type: breakfast, lunch, dinner, or other'
-      enum:
-        - breakfast
-        - lunch
-        - dinner
-        - other
-    date_int:
-      type: integer
-      description: Date as days since Unix epoch (1970-01-01)
+      default: null
+      originalType: string
+    number_of_units:
+      type: string
+      description: Number of servings consumed
+      default: null
+      originalType: string
+    serving_id:
+      type: string
+      description: The serving size ID
+      default: null
+      originalType: string
   required:
     - fatsecret
     - access_token

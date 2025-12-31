@@ -62,9 +62,7 @@ fn run() -> anyhow::Result<Output> {
 
     let client = TandoorClient::new(&input.tandoor)?;
 
-    let request = CreateKeywordRequest {
-        name: input.name.clone(),
-    };
+    let request = CreateKeywordRequest { name: input.name };
 
     let created = client.create_keyword(&request)?;
 

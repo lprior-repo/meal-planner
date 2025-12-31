@@ -1,0 +1,33 @@
+summary: Update shopping list entry
+description: 'Updates an existing shopping list entry (e.g., mark as checked, change amount)'
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    entry_id:
+      type: string
+      description: Entry ID to update
+      default: null
+      originalType: string
+    mealplan_id:
+      type: string
+      description: Meal plan ID
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+    update:
+      type: string
+      description: 'Update details (list, amount, unit, food, checked, order)'
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - mealplan_id
+    - entry_id
+    - update

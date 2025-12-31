@@ -784,7 +784,7 @@ impl TandoorClient {
             });
         }
         // Return count of updated recipes
-        Ok(updates.len() as i32)
+        Ok(i32::try_from(updates.len()).unwrap_or(i32::MAX))
     }
 
     // ============= FOOD OPERATIONS =============
@@ -794,7 +794,7 @@ impl TandoorClient {
         &self,
         page: Option<u32>,
         page_size: Option<u32>,
-    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
+    ) -> Result<PaginatedResponse<Food>, TandoorError> {
         let mut url = format!("{}/api/food/", self.base_url);
         let mut params = Vec::new();
         if let Some(p) = page {
@@ -807,6 +807,9 @@ impl TandoorClient {
             url = format!("{}?{}", url, params.join("&"));
         }
         let response = self.client.get(&url).send()?;
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
                 status: response.status().as_u16(),
@@ -819,9 +822,12 @@ impl TandoorClient {
     }
 
     /// Get a single food by ID
-    pub fn get_food(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
+    pub fn get_food(&self, id: i64) -> Result<Food, TandoorError> {
         let url = format!("{}/api/food/{}/", self.base_url, id);
         let response = self.client.get(&url).send()?;
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
                 status: response.status().as_u16(),
@@ -837,6 +843,9 @@ impl TandoorClient {
     pub fn delete_food(&self, id: i64) -> Result<(), TandoorError> {
         let url = format!("{}/api/food/{}/", self.base_url, id);
         let response = self.client.delete(&url).send()?;
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
                 status: response.status().as_u16(),
@@ -856,7 +865,7 @@ impl TandoorClient {
                 message: response.text().unwrap_or_default(),
             });
         }
-        Ok(updates.len() as i32)
+        Ok(i32::try_from(updates.len()).unwrap_or(i32::MAX))
     }
 
     // ============= MEAL PLAN OPERATIONS =============
@@ -866,7 +875,7 @@ impl TandoorClient {
         &self,
         page: Option<u32>,
         page_size: Option<u32>,
-    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
+    ) -> Result<PaginatedMealPlanResponse, TandoorError> {
         let mut url = format!("{}/api/meal-plan/", self.base_url);
         let mut params = Vec::new();
         if let Some(p) = page {
@@ -891,7 +900,7 @@ impl TandoorClient {
     }
 
     /// Get a single meal plan by ID
-    pub fn get_meal_plan(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
+    pub fn get_meal_plan(&self, id: i64) -> Result<MealPlan, TandoorError> {
         let url = format!("{}/api/meal-plan/{}/", self.base_url, id);
         let response = self.client.get(&url).send()?;
         if !response.status().is_success() {
@@ -906,7 +915,10 @@ impl TandoorClient {
     }
 
     /// Create a new meal plan
-    pub fn create_meal_plan(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn create_meal_plan(
+        &self,
+        request: &CreateMealPlanRequest,
+    ) -> Result<MealPlan, TandoorError> {
         let url = format!("{}/api/meal-plan/", self.base_url);
         let response = self.client.post(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -921,7 +933,11 @@ impl TandoorClient {
     }
 
     /// Update a meal plan
-    pub fn update_meal_plan(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn update_meal_plan(
+        &self,
+        id: i64,
+        request: &UpdateMealPlanRequest,
+    ) -> Result<MealPlan, TandoorError> {
         let url = format!("{}/api/meal-plan/{}/", self.base_url, id);
         let response = self.client.patch(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -950,6 +966,19 @@ impl TandoorClient {
             .map_err(|e| TandoorError::ParseError(e.to_string()))
     }
 
+    /// Delete a meal plan by ID
+    pub fn delete_meal_plan(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/meal-plan/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
     // ============= MEAL TYPE OPERATIONS =============
 
     /// List meal types with pagination
@@ -957,7 +986,7 @@ impl TandoorClient {
         &self,
         page: Option<u32>,
         page_size: Option<u32>,
-    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
+    ) -> Result<PaginatedResponse<MealType>, TandoorError> {
         let mut url = format!("{}/api/meal-type/", self.base_url);
         let mut params = Vec::new();
         if let Some(p) = page {
@@ -982,9 +1011,15 @@ impl TandoorClient {
     }
 
     /// Create a new meal type
-    pub fn create_meal_type(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn create_meal_type(
+        &self,
+        request: &CreateMealTypeRequest,
+    ) -> Result<MealType, TandoorError> {
         let url = format!("{}/api/meal-type/", self.base_url);
         let response = self.client.post(&url).json(request).send()?;
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
                 status: response.status().as_u16(),
@@ -997,7 +1032,11 @@ impl TandoorClient {
     }
 
     /// Update a meal type
-    pub fn update_meal_type(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn update_meal_type(
+        &self,
+        id: i64,
+        request: &UpdateMealTypeRequest,
+    ) -> Result<MealType, TandoorError> {
         let url = format!("{}/api/meal-type/{}/", self.base_url, id);
         let response = self.client.patch(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -1030,20 +1069,8 @@ impl TandoorClient {
     pub fn list_shopping_list_entries(
         &self,
         mealplan_id: i64,
-        page: Option<u32>,
-        page_size: Option<u32>,
-    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
-        let mut url = format!("{}/api/meal-plan/{}/shopping/", self.base_url, mealplan_id);
-        let mut params = Vec::new();
-        if let Some(p) = page {
-            params.push(format!("page={}", p));
-        }
-        if let Some(ps) = page_size {
-            params.push(format!("page_size={}", ps));
-        }
-        if !params.is_empty() {
-            url = format!("{}?{}", url, params.join("&"));
-        }
+    ) -> Result<Vec<ShoppingListEntry>, TandoorError> {
+        let url = format!("{}/api/meal-plan/{}/shopping/", self.base_url, mealplan_id);
         let response = self.client.get(&url).send()?;
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
@@ -1051,13 +1078,19 @@ impl TandoorClient {
                 message: response.text().unwrap_or_default(),
             });
         }
-        response
+        // The API returns a paginated response, extract the results
+        let paginated: PaginatedResponse<ShoppingListEntry> = response
             .json()
-            .map_err(|e| TandoorError::ParseError(e.to_string()))
+            .map_err(|e| TandoorError::ParseError(e.to_string()))?;
+        Ok(paginated.results)
     }
 
     /// Delete a recipe from shopping list
-    pub fn delete_recipe_from_shopping_list(&self, mealplan_id: i64, recipe_id: i64) -> Result<(), TandoorError> {
+    pub fn delete_recipe_from_shopping_list(
+        &self,
+        mealplan_id: i64,
+        recipe_id: i64,
+    ) -> Result<(), TandoorError> {
         let url = format!(
             "{}/api/meal-plan/{}/shopping/recipes/{}/",
             self.base_url, mealplan_id, recipe_id
@@ -1078,7 +1111,10 @@ impl TandoorClient {
         mealplan_id: i64,
         entries: &[serde_json::Value],
     ) -> Result<i32, TandoorError> {
-        let url = format!("{}/api/meal-plan/{}/shopping/bulk/", self.base_url, mealplan_id);
+        let url = format!(
+            "{}/api/meal-plan/{}/shopping/bulk/",
+            self.base_url, mealplan_id
+        );
         let response = self.client.post(&url).json(entries).send()?;
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
@@ -1086,13 +1122,16 @@ impl TandoorClient {
                 message: response.text().unwrap_or_default(),
             });
         }
-        Ok(entries.len() as i32)
+        Ok(i32::try_from(entries.len()).unwrap_or(i32::MAX))
     }
 
     // ============= RECIPE BOOK OPERATIONS =============
 
     /// Create a recipe book
-    pub fn create_recipe_book(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn create_recipe_book(
+        &self,
+        request: &serde_json::Value,
+    ) -> Result<serde_json::Value, TandoorError> {
         let url = format!("{}/api/recipe-book/", self.base_url);
         let response = self.client.post(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -1122,7 +1161,11 @@ impl TandoorClient {
     }
 
     /// Update a recipe book
-    pub fn update_recipe_book(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn update_recipe_book(
+        &self,
+        id: i64,
+        request: &serde_json::Value,
+    ) -> Result<serde_json::Value, TandoorError> {
         let url = format!("{}/api/recipe-book/{}/", self.base_url, id);
         let response = self.client.patch(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -1195,8 +1238,26 @@ impl TandoorClient {
             .map_err(|e| TandoorError::ParseError(e.to_string()))
     }
 
+    /// Get a supermarket by ID
+    pub fn get_supermarket(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/supermarket/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
     /// Create a supermarket
-    pub fn create_supermarket(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn create_supermarket(
+        &self,
+        request: &serde_json::Value,
+    ) -> Result<serde_json::Value, TandoorError> {
         let url = format!("{}/api/supermarket/", self.base_url);
         let response = self.client.post(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -1211,7 +1272,11 @@ impl TandoorClient {
     }
 
     /// Update a supermarket
-    pub fn update_supermarket(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn update_supermarket(
+        &self,
+        id: i64,
+        request: &serde_json::Value,
+    ) -> Result<serde_json::Value, TandoorError> {
         let url = format!("{}/api/supermarket/{}/", self.base_url, id);
         let response = self.client.patch(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -1241,9 +1306,12 @@ impl TandoorClient {
     // ============= STEP OPERATIONS =============
 
     /// Create a food
-    pub fn create_food(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn create_food(&self, request: &CreateFoodRequestData) -> Result<Food, TandoorError> {
         let url = format!("{}/api/food/", self.base_url);
         let response = self.client.post(&url).json(request).send()?;
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
                 status: response.status().as_u16(),
@@ -1256,9 +1324,12 @@ impl TandoorClient {
     }
 
     /// Update a food
-    pub fn update_food(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn update_food(&self, id: i64, request: &UpdateFoodRequest) -> Result<Food, TandoorError> {
         let url = format!("{}/api/food/{}/", self.base_url, id);
         let response = self.client.patch(&url).json(request).send()?;
+        if response.status().as_u16() == 401 || response.status().as_u16() == 403 {
+            return Err(TandoorError::AuthError(response.text().unwrap_or_default()));
+        }
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
                 status: response.status().as_u16(),
@@ -1286,7 +1357,11 @@ impl TandoorClient {
     }
 
     /// Update a recipe (using serde_json::Value)
-    pub fn update_recipe(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn update_recipe(
+        &self,
+        id: i64,
+        request: &serde_json::Value,
+    ) -> Result<serde_json::Value, TandoorError> {
         let url = format!("{}/api/recipe/{}/", self.base_url, id);
         let response = self.client.patch(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -1358,6 +1433,21 @@ impl TandoorClient {
             .map_err(|e| TandoorError::ParseError(e.to_string()))
     }
 
+    /// Get a step by ID
+    pub fn get_step(&self, id: i64) -> Result<serde_json::Value, TandoorError> {
+        let url = format!("{}/api/step/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
     /// Delete a step
     pub fn delete_step(&self, id: i64) -> Result<(), TandoorError> {
         let url = format!("{}/api/step/{}/", self.base_url, id);
@@ -1372,7 +1462,11 @@ impl TandoorClient {
     }
 
     /// Update a step
-    pub fn update_step(&self, id: i64, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn update_step(
+        &self,
+        id: i64,
+        request: &serde_json::Value,
+    ) -> Result<serde_json::Value, TandoorError> {
         let url = format!("{}/api/step/{}/", self.base_url, id);
         let response = self.client.patch(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -1387,7 +1481,10 @@ impl TandoorClient {
     }
 
     /// Create a step
-    pub fn create_step(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn create_step(
+        &self,
+        request: &serde_json::Value,
+    ) -> Result<serde_json::Value, TandoorError> {
         let url = format!("{}/api/step/", self.base_url);
         let response = self.client.post(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -1466,7 +1563,10 @@ impl TandoorClient {
     }
 
     /// Create a recipe book entry
-    pub fn create_recipe_book_entry(&self, request: &serde_json::Value) -> Result<serde_json::Value, TandoorError> {
+    pub fn create_recipe_book_entry(
+        &self,
+        request: &serde_json::Value,
+    ) -> Result<serde_json::Value, TandoorError> {
         let url = format!("{}/api/recipe-book-entry/", self.base_url);
         let response = self.client.post(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -1525,7 +1625,11 @@ impl TandoorClient {
     }
 
     /// Update a keyword
-    pub fn update_keyword(&self, id: i64, request: &CreateKeywordRequest) -> Result<Keyword, TandoorError> {
+    pub fn update_keyword(
+        &self,
+        id: i64,
+        request: &UpdateKeywordRequest,
+    ) -> Result<Keyword, TandoorError> {
         let url = format!("{}/api/keyword/{}/", self.base_url, id);
         let response = self.client.patch(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -1645,8 +1749,8 @@ impl TandoorClient {
     pub fn create_shopping_list_entry(
         &self,
         mealplan_id: i64,
-        request: &serde_json::Value,
-    ) -> Result<serde_json::Value, TandoorError> {
+        request: &CreateShoppingListEntryRequest,
+    ) -> Result<ShoppingListEntry, TandoorError> {
         let url = format!("{}/api/meal-plan/{}/shopping/", self.base_url, mealplan_id);
         let response = self.client.post(&url).json(request).send()?;
         if !response.status().is_success() {
@@ -1665,8 +1769,8 @@ impl TandoorClient {
         &self,
         mealplan_id: i64,
         entry_id: i64,
-        request: &serde_json::Value,
-    ) -> Result<serde_json::Value, TandoorError> {
+        request: &UpdateShoppingListEntryRequest,
+    ) -> Result<ShoppingListEntry, TandoorError> {
         let url = format!(
             "{}/api/meal-plan/{}/shopping/{}/",
             self.base_url, mealplan_id, entry_id
@@ -1708,7 +1812,7 @@ impl TandoorClient {
         &self,
         mealplan_id: i64,
         recipe_id: i64,
-    ) -> Result<Vec<serde_json::Value>, TandoorError> {
+    ) -> Result<Vec<ShoppingListEntry>, TandoorError> {
         let url = format!("{}/api/meal-plan/{}/shopping/", self.base_url, mealplan_id);
         let body = serde_json::json!({"recipe": recipe_id});
         let response = self.client.post(&url).json(&body).send()?;
@@ -1718,9 +1822,11 @@ impl TandoorClient {
                 message: response.text().unwrap_or_default(),
             });
         }
-        response
+        // API returns paginated response with results
+        let paginated: PaginatedResponse<ShoppingListEntry> = response
             .json()
-            .map_err(|e| TandoorError::ParseError(e.to_string()))
+            .map_err(|e| TandoorError::ParseError(e.to_string()))?;
+        Ok(paginated.results)
     }
 
     /// List recipes without pagination (flat list)

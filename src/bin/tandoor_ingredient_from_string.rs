@@ -9,7 +9,9 @@
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
 
-use meal_planner::tandoor::{IngredientFromStringRequest, TandoorClient, TandoorConfig, ParsedIngredient};
+use meal_planner::tandoor::{
+    IngredientFromStringRequest, ParsedIngredient, TandoorClient, TandoorConfig,
+};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -59,9 +61,7 @@ fn run() -> anyhow::Result<Output> {
 
     let client = TandoorClient::new(&input.tandoor)?;
 
-    let request = IngredientFromStringRequest {
-        text: input.text,
-    };
+    let request = IngredientFromStringRequest { text: input.text };
 
     let result = client.ingredient_from_string(&request)?;
 

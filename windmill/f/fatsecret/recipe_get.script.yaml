@@ -1,0 +1,23 @@
+summary: Get FatSecret recipe by ID
+description: >-
+  Retrieves detailed recipe information including ingredients and directions.
+  This is a 2-legged OAuth request (no user token required).
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+    recipe_id:
+      type: string
+      description: The recipe ID to retrieve
+      default: null
+      originalType: string
+  required:
+    - fatsecret
+    - recipe_id

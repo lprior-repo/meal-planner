@@ -1,0 +1,21 @@
+summary: Get a specific user
+description: Retrieves detailed information about a user by ID from Tandoor
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+    user_id:
+      type: string
+      description: User ID to retrieve
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - user_id

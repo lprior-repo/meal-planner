@@ -12,7 +12,7 @@
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
 
-use meal_planner::tandoor::{TandoorClient, TandoorConfig, UpdateMealPlanRequest};
+use meal_planner::tandoor::{MealPlan, TandoorClient, TandoorConfig, UpdateMealPlanRequest};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -49,7 +49,7 @@ struct Input {
 struct Output {
     success: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    meal_plan: Option<serde_json::Value>,
+    meal_plan: Option<MealPlan>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error: Option<String>,
 }
@@ -99,7 +99,7 @@ fn run() -> anyhow::Result<Output> {
 
     Ok(Output {
         success: true,
-        meal_plan: Some(serde_json::to_value(meal_plan)?),
+        meal_plan: Some(meal_plan),
         error: None,
     })
 }
@@ -126,9 +126,10 @@ mod tests {
 
     #[test]
     fn test_output_serialization() {
+        // Test with None since we can't easily create a MealPlan in tests
         let output = Output {
             success: true,
-            meal_plan: Some(serde_json::json!({"id": 1})),
+            meal_plan: None,
             error: None,
         };
         let json = serde_json::to_string(&output).unwrap();

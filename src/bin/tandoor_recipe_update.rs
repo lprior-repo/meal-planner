@@ -52,9 +52,8 @@ struct Output {
     error: Option<String>,
 }
 
-#[tokio::main]
-async fn main() {
-    match run().await {
+fn main() {
+    match run() {
         Ok(output) => {
             println!("{}", serde_json::to_string(&output).unwrap());
         }
@@ -70,7 +69,8 @@ async fn main() {
     }
 }
 
-async fn run() -> Result<Output, Box<dyn std::error::Error>> {
+#[allow(clippy::too_many_lines)]
+fn run() -> Result<Output, Box<dyn std::error::Error>> {
     // Read input: prefer CLI arg, fall back to stdin
     let input: Input = if let Some(arg) = std::env::args().nth(1) {
         serde_json::from_str(&arg)?
@@ -85,22 +85,40 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
     // Build update request with only non-empty fields
     let mut update_request = json!({});
     if let Some(name) = input.name {
-        update_request["name"] = json!(name);
+        update_request
+            .as_object_mut()
+            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
+            .insert("name".to_string(), json!(name));
     }
     if let Some(description) = input.description {
-        update_request["description"] = json!(description);
+        update_request
+            .as_object_mut()
+            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
+            .insert("description".to_string(), json!(description));
     }
     if let Some(source_url) = input.source_url {
-        update_request["source_url"] = json!(source_url);
+        update_request
+            .as_object_mut()
+            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
+            .insert("source_url".to_string(), json!(source_url));
     }
     if let Some(servings) = input.servings {
-        update_request["servings"] = json!(servings);
+        update_request
+            .as_object_mut()
+            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
+            .insert("servings".to_string(), json!(servings));
     }
     if let Some(working_time) = input.working_time {
-        update_request["working_time"] = json!(working_time);
+        update_request
+            .as_object_mut()
+            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
+            .insert("working_time".to_string(), json!(working_time));
     }
     if let Some(waiting_time) = input.waiting_time {
-        update_request["waiting_time"] = json!(waiting_time);
+        update_request
+            .as_object_mut()
+            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
+            .insert("waiting_time".to_string(), json!(waiting_time));
     }
 
     let recipe = client.update_recipe(input.recipe_id, &update_request)?;

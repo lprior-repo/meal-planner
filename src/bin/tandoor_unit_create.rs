@@ -66,8 +66,8 @@ fn run() -> anyhow::Result<Output> {
     let client = TandoorClient::new(&input.tandoor)?;
 
     let request = CreateUnitRequestData {
-        name: input.name.clone(),
-        plural_name: input.plural_name.clone(),
+        name: input.name,
+        plural_name: input.plural_name,
     };
 
     let created = client.create_unit(&request)?;

@@ -39,9 +39,8 @@ struct Output {
     error: Option<String>,
 }
 
-#[tokio::main]
-async fn main() {
-    match run().await {
+fn main() {
+    match run() {
         Ok(output) => {
             println!("{}", serde_json::to_string(&output).unwrap());
         }
@@ -58,7 +57,7 @@ async fn main() {
     }
 }
 
-async fn run() -> Result<Output, Box<dyn std::error::Error>> {
+fn run() -> Result<Output, Box<dyn std::error::Error>> {
     // Read input: prefer CLI arg, fall back to stdin
     let input: Input = if let Some(arg) = std::env::args().nth(1) {
         serde_json::from_str(&arg)?

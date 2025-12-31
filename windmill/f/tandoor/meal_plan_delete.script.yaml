@@ -1,0 +1,21 @@
+summary: Delete meal plan
+description: Deletes a meal plan from Tandoor by ID
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    meal_plan_id:
+      type: string
+      description: Meal plan ID to delete
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - meal_plan_id

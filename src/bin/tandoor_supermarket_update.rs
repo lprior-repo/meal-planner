@@ -63,7 +63,7 @@ fn run() -> anyhow::Result<Output> {
         description: input.description,
     };
 
-    client.update_supermarket(input.id, &request)?;
+    client.update_supermarket(input.id, &serde_json::to_value(&request)?)?;
 
     Ok(Output {
         success: true,

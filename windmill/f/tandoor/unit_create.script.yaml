@@ -1,0 +1,27 @@
+summary: Create a new unit
+description: Creates a new measurement unit in the Tandoor database
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    name:
+      type: string
+      description: 'Name of the unit (e.g., kg, cup, tbsp)'
+      default: null
+      originalType: string
+    plural_name:
+      type: string
+      description: 'Plural form of the unit name (e.g., kilograms, cups)'
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - name
+    - plural_name

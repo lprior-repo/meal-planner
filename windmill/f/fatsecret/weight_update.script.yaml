@@ -1,0 +1,57 @@
+summary: Update FatSecret weight measurement
+description: 'Logs a weight measurement with optional goal weight, height, and comment'
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    access_secret:
+      type: string
+      description: OAuth access secret (required for 3-legged requests)
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token (required for 3-legged requests)
+      default: null
+      originalType: string
+    comment:
+      type: string
+      description: Comment about the measurement (optional)
+      default: null
+      originalType: string
+    current_weight_kg:
+      type: string
+      description: Current weight in kilograms
+      default: null
+      originalType: string
+    date_int:
+      type: string
+      description: Date as days since Unix epoch (1970-01-01)
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+    goal_weight_kg:
+      type: string
+      description: Goal weight in kilograms (optional)
+      default: null
+      originalType: string
+    height_cm:
+      type: string
+      description: Current height in centimeters (optional)
+      default: null
+      originalType: string
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - current_weight_kg
+    - date_int
+    - goal_weight_kg
+    - height_cm
+    - comment

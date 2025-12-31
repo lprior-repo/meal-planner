@@ -1,0 +1,45 @@
+summary: Create meal type
+description: Creates a new meal type in Tandoor with the provided details
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    name:
+      type: string
+      description: 'Name of the meal type (e.g., Breakfast, Lunch, Dinner)'
+      default: null
+      originalType: string
+    color:
+      type: string
+      description: 'Color for the meal type (optional, hex format)'
+      default: null
+      originalType: string
+    default:
+      type: string
+      description: Whether this is the default meal type (optional)
+      default: null
+      originalType: string
+    order:
+      type: string
+      description: Display order (optional)
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+    time:
+      type: string
+      description: 'Default time for this meal type (optional, HH:MM format)'
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - name
+    - order
+    - time
+    - color
+    - default

@@ -65,7 +65,7 @@ fn run() -> anyhow::Result<Output> {
     let client = TandoorClient::new(&input.tandoor)?;
 
     let request = UpdateKeywordRequest {
-        name: input.name.clone(),
+        name: Some(input.name),
     };
 
     let updated = client.update_keyword(input.id, &request)?;
