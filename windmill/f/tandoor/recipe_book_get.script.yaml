@@ -6,7 +6,7 @@ schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    recipe_book_id:
+    id:
       type: integer
       description: Recipe book ID
     tandoor:
@@ -14,4 +14,4 @@ schema:
       description: Tandoor API credentials
   required:
     - tandoor
-    - recipe_book_id
+    - id
