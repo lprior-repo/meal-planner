@@ -1,7 +1,7 @@
-//! FatSecret Recipe API domain types.
+//! `FatSecret` Recipe API domain types.
 //!
-//! This module defines the type system for FatSecret Recipe API responses.
-//! All types are designed for robust deserialization of the FatSecret API's
+//! This module defines the type system for `FatSecret` Recipe API responses.
+//! All types are designed for robust deserialization of the `FatSecret` API's
 //! sometimes-inconsistent JSON format.
 //!
 //! # Key Types
@@ -37,7 +37,7 @@
 //! # fn example(recipe: Recipe) {
 //! // Access recipe metadata
 //! println!("Recipe: {}", recipe.recipe_name);
-//! println!("ID: {}", recipe.recipe_id);
+//! println!("ID: {}", recipe.`recipe_id`);
 //! println!("Servings: {}", recipe.number_of_servings);
 //!
 //! // Iterate over ingredients
@@ -64,7 +64,7 @@
 //!
 //! # Flexible Deserialization
 //!
-//! The FatSecret API returns numeric values as both strings and numbers.
+//! The `FatSecret` API returns numeric values as both strings and numbers.
 //! This module uses custom deserializers from [`crate::fatsecret::core::serde_utils`]:
 //!
 //! - `deserialize_flexible_int` - Accepts "123" or 123

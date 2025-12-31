@@ -1,6 +1,6 @@
-//! FatSecret Weight Management types
+//! `FatSecret` Weight Management types
 //!
-//! Type definitions for weight tracking via the FatSecret Platform API.
+//! Type definitions for weight tracking via the `FatSecret` Platform API.
 //! These types provide type-safe deserialization of API responses and
 //! construction of API requests.
 //!
@@ -32,7 +32,7 @@
 //! - Numeric values as either strings or numbers (`deserialize_flexible_int`, `deserialize_flexible_float`)
 //! - Single items or arrays (`deserialize_single_or_vec`)
 //!
-//! This ensures compatibility with FatSecret's inconsistent JSON responses.
+//! This ensures compatibility with `FatSecret`'s inconsistent JSON responses.
 //!
 //! # Usage Example
 //!
@@ -42,7 +42,7 @@
 //! // Create a weight update request
 //! let update = WeightUpdate {
 //!     current_weight_kg: 75.5,
-//!     date_int: 19723, // 2024-01-01
+//!     `date_int`: 19723, // 2024-01-01
 //!     goal_weight_kg: Some(70.0),
 //!     height_cm: Some(175.0),
 //!     comment: Some("Morning weigh-in".to_string()),
@@ -50,12 +50,12 @@
 //!
 //! // Deserialize a weight entry from JSON
 //! let json = r#"{
-//!     "date_int": "19723",
+//!     "`date_int`": "19723",
 //!     "weight_kg": "75.5",
 //!     "weight_comment": "Morning weigh-in"
 //! }"#;
 //! let entry: WeightEntry = serde_json::from_str(json).unwrap();
-//! assert_eq!(entry.date_int, 19723);
+//! assert_eq!(entry.`date_int`, 19723);
 //! assert_eq!(entry.weight_kg, 75.5);
 //! ```
 
@@ -220,7 +220,7 @@ mod tests {
         }"#;
         let entry: WeightEntry = serde_json::from_str(json).unwrap();
         assert_eq!(entry.date_int, 19723);
-        assert_eq!(entry.weight_kg, 75.5);
+        assert!((entry.weight_kg - 75.5).abs() < f64::EPSILON);
         assert_eq!(entry.weight_comment.as_deref(), Some("Morning weigh-in"));
     }
 
@@ -232,7 +232,7 @@ mod tests {
         }"#;
         let entry: WeightEntry = serde_json::from_str(json).unwrap();
         assert_eq!(entry.date_int, 19723);
-        assert_eq!(entry.weight_kg, 75.5);
+        assert!((entry.weight_kg - 75.5).abs() < f64::EPSILON);
         assert_eq!(entry.weight_comment, None);
     }
 
@@ -245,7 +245,7 @@ mod tests {
         }"#;
         let entry: WeightEntry = serde_json::from_str(json).unwrap();
         assert_eq!(entry.date_int, 19723);
-        assert_eq!(entry.weight_kg, 75.5);
+        assert!((entry.weight_kg - 75.5).abs() < f64::EPSILON);
         assert_eq!(entry.weight_comment, None);
     }
 
@@ -257,7 +257,7 @@ mod tests {
         }"#;
         let entry: WeightEntry = serde_json::from_str(json).unwrap();
         assert_eq!(entry.date_int, 19723);
-        assert_eq!(entry.weight_kg, 75.5);
+        assert!((entry.weight_kg - 75.5).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -268,7 +268,7 @@ mod tests {
         }"#;
         let entry: WeightEntry = serde_json::from_str(json).unwrap();
         assert_eq!(entry.date_int, 19723);
-        assert_eq!(entry.weight_kg, 75.5);
+        assert!((entry.weight_kg - 75.5).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -279,7 +279,7 @@ mod tests {
         }"#;
         let entry: WeightEntry = serde_json::from_str(json).unwrap();
         assert_eq!(entry.date_int, 19723);
-        assert_eq!(entry.weight_kg, 75.5);
+        assert!((entry.weight_kg - 75.5).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -290,7 +290,7 @@ mod tests {
         }"#;
         let entry: WeightEntry = serde_json::from_str(json).unwrap();
         assert_eq!(entry.date_int, 0);
-        assert_eq!(entry.weight_kg, 70.0);
+        assert!((entry.weight_kg - 70.0).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -301,7 +301,7 @@ mod tests {
         }"#;
         let entry: WeightEntry = serde_json::from_str(json).unwrap();
         assert_eq!(entry.date_int, -365);
-        assert_eq!(entry.weight_kg, 70.0);
+        assert!((entry.weight_kg - 70.0).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -312,7 +312,7 @@ mod tests {
         }"#;
         let entry: WeightEntry = serde_json::from_str(json).unwrap();
         assert_eq!(entry.date_int, 19723);
-        assert_eq!(entry.weight_kg, 75.567);
+        assert!((entry.weight_kg - 75.567).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -346,7 +346,7 @@ mod tests {
         }"#;
         let response: WeightEntryResponse = serde_json::from_str(json).unwrap();
         assert_eq!(response.weight.date_int, 19723);
-        assert_eq!(response.weight.weight_kg, 75.5);
+        assert!((response.weight.weight_kg - 75.5).abs() < f64::EPSILON);
         assert_eq!(response.weight.weight_comment.as_deref(), Some("Morning"));
     }
 
@@ -363,7 +363,7 @@ mod tests {
             height_cm: None,
             comment: None,
         };
-        assert_eq!(update.current_weight_kg, 75.5);
+        assert!((update.current_weight_kg - 75.5).abs() < f64::EPSILON);
         assert_eq!(update.date_int, 19723);
         assert_eq!(update.goal_weight_kg, None);
         assert_eq!(update.height_cm, None);
@@ -415,7 +415,7 @@ mod tests {
             height_cm: Some(175.0),
             comment: Some("Morning weigh-in".to_string()),
         };
-        assert_eq!(update.current_weight_kg, 75.5);
+        assert!((update.current_weight_kg - 75.5).abs() < f64::EPSILON);
         assert_eq!(update.date_int, 19723);
         assert_eq!(update.goal_weight_kg, Some(70.0));
         assert_eq!(update.height_cm, Some(175.0));
@@ -425,7 +425,7 @@ mod tests {
     #[test]
     fn test_weight_update_default() {
         let update = WeightUpdate::default();
-        assert_eq!(update.current_weight_kg, 0.0);
+        assert!((update.current_weight_kg - 0.0).abs() < f64::EPSILON);
         assert_eq!(update.date_int, 0);
         assert_eq!(update.goal_weight_kg, None);
         assert_eq!(update.height_cm, None);
@@ -459,7 +459,7 @@ mod tests {
             "comment": "Morning"
         }"#;
         let update: WeightUpdate = serde_json::from_str(json).unwrap();
-        assert_eq!(update.current_weight_kg, 75.5);
+        assert!((update.current_weight_kg - 75.5).abs() < f64::EPSILON);
         assert_eq!(update.date_int, 19723);
         assert_eq!(update.goal_weight_kg, Some(70.0));
         assert_eq!(update.height_cm, Some(175.0));
@@ -478,7 +478,7 @@ mod tests {
         }"#;
         let summary: WeightDaySummary = serde_json::from_str(json).unwrap();
         assert_eq!(summary.date_int, 19723);
-        assert_eq!(summary.weight_kg, 75.5);
+        assert!((summary.weight_kg - 75.5).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -489,7 +489,7 @@ mod tests {
         }"#;
         let summary: WeightDaySummary = serde_json::from_str(json).unwrap();
         assert_eq!(summary.date_int, 19723);
-        assert_eq!(summary.weight_kg, 75.5);
+        assert!((summary.weight_kg - 75.5).abs() < f64::EPSILON);
     }
 
     // ============================================================================
@@ -509,6 +509,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::indexing_slicing)]
     fn test_weight_month_summary_single_day() {
         let json = r#"{
             "from_date_int": "19723",
@@ -523,10 +524,11 @@ mod tests {
         assert_eq!(summary.to_date_int, 19753);
         assert_eq!(summary.days.len(), 1);
         assert_eq!(summary.days[0].date_int, 19723);
-        assert_eq!(summary.days[0].weight_kg, 75.5);
+        assert!((summary.days[0].weight_kg - 75.5).abs() < f64::EPSILON);
     }
 
     #[test]
+    #[allow(clippy::indexing_slicing)]
     fn test_weight_month_summary_multiple_days() {
         let json = r#"{
             "from_date_int": "19723",
@@ -551,11 +553,11 @@ mod tests {
         assert_eq!(summary.to_date_int, 19753);
         assert_eq!(summary.days.len(), 3);
         assert_eq!(summary.days[0].date_int, 19723);
-        assert_eq!(summary.days[0].weight_kg, 75.5);
+        assert!((summary.days[0].weight_kg - 75.5).abs() < f64::EPSILON);
         assert_eq!(summary.days[1].date_int, 19724);
-        assert_eq!(summary.days[1].weight_kg, 75.3);
+        assert!((summary.days[1].weight_kg - 75.3).abs() < f64::EPSILON);
         assert_eq!(summary.days[2].date_int, 19725);
-        assert_eq!(summary.days[2].weight_kg, 75.1);
+        assert!((summary.days[2].weight_kg - 75.1).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -674,15 +676,16 @@ mod tests {
         // Test first and last weight
         let first = summary.days.first().unwrap();
         let last = summary.days.last().unwrap();
-        assert_eq!(first.weight_kg, 80.0);
-        assert_eq!(last.weight_kg, 76.0);
-        
+        assert!((first.weight_kg - 80.0).abs() < f64::EPSILON);
+        assert!((last.weight_kg - 76.0).abs() < f64::EPSILON);
+
         // Calculate weight loss
         let loss = first.weight_kg - last.weight_kg;
-        assert_eq!(loss, 4.0);
+        assert!((loss - 4.0).abs() < f64::EPSILON);
     }
 
     #[test]
+    #[allow(clippy::cast_precision_loss)]
     fn test_weight_month_summary_average_calculation() {
         let summary = WeightMonthSummary {
             from_date_int: 19723,
@@ -705,7 +708,7 @@ mod tests {
 
         let sum: f64 = summary.days.iter().map(|d| d.weight_kg).sum();
         let avg = sum / summary.days.len() as f64;
-        assert_eq!(avg, 76.0);
+        assert!((avg - 76.0).abs() < f64::EPSILON);
     }
 
     #[test]
@@ -729,14 +732,23 @@ mod tests {
             ],
         };
 
-        let min = summary.days.iter().map(|d| d.weight_kg).fold(f64::INFINITY, f64::min);
-        let max = summary.days.iter().map(|d| d.weight_kg).fold(f64::NEG_INFINITY, f64::max);
-        
-        assert_eq!(min, 75.0);
-        assert_eq!(max, 80.2);
+        let min = summary
+            .days
+            .iter()
+            .map(|d| d.weight_kg)
+            .fold(f64::INFINITY, f64::min);
+        let max = summary
+            .days
+            .iter()
+            .map(|d| d.weight_kg)
+            .fold(f64::NEG_INFINITY, f64::max);
+
+        assert!((min - 75.0).abs() < f64::EPSILON);
+        assert!((max - 80.2).abs() < f64::EPSILON);
     }
 
     #[test]
+    #[allow(clippy::indexing_slicing)]
     fn test_weight_month_summary_sorted_by_date() {
         let summary = WeightMonthSummary {
             from_date_int: 19723,
@@ -757,9 +769,9 @@ mod tests {
             ],
         };
 
-        let mut sorted_days = summary.days.clone();
+        let mut sorted_days = summary.days;
         sorted_days.sort_by_key(|d| d.date_int);
-        
+
         assert_eq!(sorted_days[0].date_int, 19723);
         assert_eq!(sorted_days[1].date_int, 19724);
         assert_eq!(sorted_days[2].date_int, 19725);
@@ -778,7 +790,7 @@ mod tests {
         };
         let cloned = entry.clone();
         assert_eq!(entry.date_int, cloned.date_int);
-        assert_eq!(entry.weight_kg, cloned.weight_kg);
+        assert!((entry.weight_kg - cloned.weight_kg).abs() < f64::EPSILON);
         assert_eq!(entry.weight_comment, cloned.weight_comment);
     }
 
@@ -792,7 +804,7 @@ mod tests {
             comment: Some("Morning".to_string()),
         };
         let cloned = update.clone();
-        assert_eq!(update.current_weight_kg, cloned.current_weight_kg);
+        assert!((update.current_weight_kg - cloned.current_weight_kg).abs() < f64::EPSILON);
         assert_eq!(update.date_int, cloned.date_int);
         assert_eq!(update.goal_weight_kg, cloned.goal_weight_kg);
         assert_eq!(update.height_cm, cloned.height_cm);

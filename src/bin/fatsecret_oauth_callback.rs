@@ -1,4 +1,4 @@
-//! FatSecret OAuth callback handler
+//! `FatSecret` OAuth callback handler
 //!
 //! Starts a temporary HTTP server to receive the OAuth callback,
 //! exchanges the request token for an access token, and stores it.

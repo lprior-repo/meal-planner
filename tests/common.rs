@@ -2,7 +2,7 @@
 
 use serde_json::{json, Value};
 
-/// FatSecret API credentials
+/// `FatSecret` API credentials
 pub struct FatSecretCredentials {
     /// OAuth consumer key for API authentication
     pub consumer_key: String,
@@ -28,10 +28,10 @@ pub struct OAuthTokens {
     pub access_secret: String,
 }
 
-/// Get FatSecret credentials from environment or password manager
+/// Get `FatSecret` credentials from environment or password manager
 ///
 /// Tries the following sources in order:
-/// 1. Environment variables (FATSECRET_CONSUMER_KEY, FATSECRET_CONSUMER_SECRET)
+/// 1. Environment variables (`FATSECRET_CONSUMER_KEY`, `FATSECRET_CONSUMER_SECRET`)
 /// 2. Windmill resources (would be fetched via API in real implementation)
 /// 3. Password manager (`pass` command)
 pub fn get_fatsecret_credentials() -> Option<FatSecretCredentials> {

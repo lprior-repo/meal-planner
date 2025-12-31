@@ -1,4 +1,4 @@
-//! Serde utilities for handling FatSecret API quirks
+//! Serde utilities for handling `FatSecret` API quirks
 
 use serde::{Deserialize, Deserializer, Serialize};
 
@@ -169,7 +169,7 @@ where
     }
 }
 
-/// FatSecret API success response (for operations like add_favorite, delete_favorite)
+/// `FatSecret` API success response (for operations like `add_favorite`, `delete_favorite`)
 ///
 /// The API returns `{"success": {"value": "1"}}` for successful operations
 #[derive(Debug, Deserialize, Serialize)]
@@ -178,7 +178,7 @@ pub struct SuccessResponse {
     pub success: Option<SuccessValue>,
 }
 
-/// Success value container from FatSecret API
+/// Success value container from `FatSecret` API
 #[derive(Debug, Deserialize, Serialize)]
 pub struct SuccessValue {
     /// String value indicating success ("1") or failure ("0")

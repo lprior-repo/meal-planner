@@ -1,6 +1,6 @@
-//! FatSecret Weight API client functions
+//! `FatSecret` Weight API client functions
 //!
-//! This module contains the client functions for interacting with the FatSecret
+//! This module contains the client functions for interacting with the `FatSecret`
 //! Platform API's weight management endpoints. All functions require authentication
 //! via OAuth 1.0a access tokens.
 //!
@@ -28,17 +28,17 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::weight::{update_weight, get_weight_by_date, WeightUpdate};
-//! use meal_planner::fatsecret::core::config::FatSecretConfig;
-//! use meal_planner::fatsecret::core::oauth::AccessToken;
+//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
-//! let token = AccessToken::new("access_token", "access_secret");
+//! let config = `FatSecretConfig`::from_env()?;
+//! let token = `AccessToken`::new("access_token", "access_secret");
 //!
 //! // Record today's weight
 //! let update = WeightUpdate {
 //!     current_weight_kg: 75.5,
-//!     date_int: 19723, // 2024-01-01
+//!     `date_int`: 19723, // 2024-01-01
 //!     goal_weight_kg: None,
 //!     height_cm: None,
 //!     comment: Some("After breakfast".to_string()),

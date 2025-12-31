@@ -1,6 +1,6 @@
-//! HTTP client functions for FatSecret Exercise APIs.
+//! HTTP client functions for `FatSecret` Exercise APIs.
 //!
-//! This module provides async functions to interact with FatSecret's exercise endpoints,
+//! This module provides async functions to interact with `FatSecret`'s exercise endpoints,
 //! handling OAuth signing, request construction, and response parsing.
 //!
 //! # API Methods
@@ -29,12 +29,12 @@
 //!     get_exercise, create_exercise_entry, get_exercise_month_summary,
 //! };
 //! use meal_planner::fatsecret::exercise::types::{ExerciseId, ExerciseEntryInput};
-//! use meal_planner::fatsecret::core::config::FatSecretConfig;
-//! use meal_planner::fatsecret::core::oauth::AccessToken;
+//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
-//! let access_token = AccessToken::new("user_token", "user_secret");
+//! let config = `FatSecretConfig`::from_env()?;
+//! let access_token = `AccessToken`::new("user_token", "user_secret");
 //!
 //! // Public database lookup (2-legged)
 //! let exercise = get_exercise(&config, &ExerciseId::new("12345")).await?;
@@ -44,14 +44,14 @@
 //! let input = ExerciseEntryInput {
 //!     exercise_id: ExerciseId::new("12345"),
 //!     duration_min: 45,
-//!     date_int: 19723, // 2024-01-01 (days since Unix epoch)
+//!     `date_int`: 19723, // 2024-01-01 (days since Unix epoch)
 //! };
 //! let entry_id = create_exercise_entry(&config, &access_token, input).await?;
 //!
 //! // Get monthly summary (3-legged)
 //! let summary = get_exercise_month_summary(&config, &access_token, 2024, 1).await?;
 //! for day in summary.days {
-//!     println!("Date: {}, Calories: {}", day.date_int, day.exercise_calories);
+//!     println!("Date: {}, Calories: {}", day.`date_int`, day.exercise_calories);
 //! }
 //! # Ok(())
 //! # }
@@ -64,11 +64,11 @@
 //! - `AuthError` - OAuth signature failure, invalid credentials
 //! - `HttpError` - Network issues, API downtime
 //! - `ParseError` - Unexpected API response format
-//! - `ApiError` - FatSecret API error (e.g., invalid exercise ID)
+//! - `ApiError` - `FatSecret` API error (e.g., invalid exercise ID)
 //!
 //! # Implementation Notes
 //!
-//! - **Create vs Edit**: FatSecret uses the same API endpoint (`exercise_entry.edit`)
+//! - **Create vs Edit**: `FatSecret` uses the same API endpoint (`exercise_entry.edit`)
 //!   for both creating and updating entries. The presence/absence of `exercise_entry_id`
 //!   determines the operation.
 //! - **Date Format**: All dates use `date_int` (days since 1970-01-01). Use helpers

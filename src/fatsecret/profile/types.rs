@@ -1,6 +1,6 @@
-//! FatSecret Profile API data types
+//! `FatSecret` Profile API data types
 //!
-//! This module defines the data structures for FatSecret's Profile API.
+//! This module defines the data structures for `FatSecret`'s Profile API.
 //! These types represent user profiles, authentication credentials, and API responses.
 //!
 //! # Key Types
@@ -28,7 +28,7 @@
 //!
 //! # Authentication Flow
 //!
-//! When you create a profile or retrieve auth credentials, FatSecret returns a [`ProfileAuth`]
+//! When you create a profile or retrieve auth credentials, `FatSecret` returns a [`ProfileAuth`]
 //! containing OAuth credentials:
 //!
 //! ```json
@@ -84,15 +84,15 @@
 //! # }
 //! ```
 //!
-//! ## Converting ProfileAuth to AccessToken
+//! ## Converting ProfileAuth to `AccessToken`
 //!
 //! ```rust
-//! use meal_planner::fatsecret::core::oauth::AccessToken;
+//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
 //! use meal_planner::fatsecret::profile::types::ProfileAuth;
 //!
 //! # fn example(profile_auth: ProfileAuth) {
-//! // Convert ProfileAuth to AccessToken for API calls
-//! let user_token = AccessToken {
+//! // Convert ProfileAuth to `AccessToken` for API calls
+//! let user_token = `AccessToken` {
 //!     token: profile_auth.auth_token,
 //!     secret: profile_auth.auth_secret,
 //! };
@@ -123,7 +123,7 @@
 //! # Field Parsing
 //!
 //! This module uses custom deserializers from `core::serde_utils` to handle
-//! FatSecret's flexible numeric formats (strings or numbers):
+//! `FatSecret`'s flexible numeric formats (strings or numbers):
 //!
 //! - `deserialize_optional_flexible_float` - Handles `"1.5"` or `1.5` → `Option<f64>`
 //! - `deserialize_optional_flexible_i64` - Handles `"123"` or `123` → `Option<i64>`
@@ -179,7 +179,7 @@ pub struct ProfileResponse {
 
 /// Profile authentication tokens from profile.create and profile.get_auth APIs
 ///
-/// After creating a profile or retrieving auth credentials, FatSecret returns
+/// After creating a profile or retrieving auth credentials, `FatSecret` returns
 /// OAuth credentials that can be used for all subsequent authenticated API calls.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProfileAuth {

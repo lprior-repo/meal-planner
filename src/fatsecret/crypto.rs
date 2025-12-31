@@ -39,7 +39,7 @@
 //! Set the key as an environment variable:
 //!
 //! ```bash
-//! export OAUTH_ENCRYPTION_KEY="your_64_character_hex_key_here"
+//! export `OAUTH_ENCRYPTION_KEY`="your_64_character_hex_key_here"
 //! ```
 //!
 //! # Usage Examples
@@ -69,7 +69,7 @@
 //!
 //! if !encryption_configured() {
 //!     eprintln!("WARNING: Encryption not configured!");
-//!     eprintln!("Set OAUTH_ENCRYPTION_KEY environment variable");
+//!     eprintln!("Set `OAUTH_ENCRYPTION_KEY` environment variable");
 //!     std::process::exit(1);
 //! }
 //! ```
@@ -271,7 +271,7 @@ pub fn decrypt(encrypted: &str) -> Result<String, CryptoError> {
 
 /// Generate a random 32-byte key encoded as 64 hex characters
 ///
-/// This can be used to generate a new key for OAUTH_ENCRYPTION_KEY env var
+/// This can be used to generate a new key for `OAUTH_ENCRYPTION_KEY` env var
 pub fn generate_key() -> String {
     let mut key_bytes = [0u8; 32];
     OsRng.fill_bytes(&mut key_bytes);

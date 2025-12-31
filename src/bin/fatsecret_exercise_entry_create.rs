@@ -1,6 +1,6 @@
-//! Create a new FatSecret exercise entry
+//! Create a new `FatSecret` exercise entry
 //!
-//! Logs an exercise session with duration. The FatSecret API uses
+//! Logs an exercise session with duration. The `FatSecret` API uses
 //! the same endpoint (exercise_entry.edit) for both create and update operations.
 //! This binary handles the create case by not including exercise_entry_id.
 //!
@@ -27,7 +27,7 @@ struct FatSecretResource {
 
 #[derive(Deserialize)]
 struct Input {
-    /// FatSecret credentials (optional - falls back to env vars)
+    /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
     /// OAuth access token (required for 3-legged requests)
     access_token: String,

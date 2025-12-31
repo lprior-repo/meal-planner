@@ -1,4 +1,4 @@
-//! Get FatSecret recipe types
+//! Get `FatSecret` recipe types
 //!
 //! Retrieves all available recipe types/categories.
 //! This is a 2-legged OAuth request (no user token required).
@@ -25,7 +25,7 @@ struct FatSecretResource {
 
 #[derive(Deserialize)]
 struct Input {
-    /// FatSecret credentials (optional - falls back to env vars)
+    /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
 }
 

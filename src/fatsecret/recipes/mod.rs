@@ -1,7 +1,7 @@
-//! FatSecret Recipe API domain module.
+//! `FatSecret` Recipe API domain module.
 //!
-//! This module provides access to the FatSecret Recipe API, enabling search,
-//! retrieval, and autocomplete functionality for recipes from the FatSecret database.
+//! This module provides access to the `FatSecret` Recipe API, enabling search,
+//! retrieval, and autocomplete functionality for recipes from the `FatSecret` database.
 //!
 //! # Key Types
 //!
@@ -20,11 +20,11 @@
 //! # Usage Example
 //!
 //! ```no_run
-//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
 //! use meal_planner::fatsecret::recipes::{search_recipes, get_recipe};
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = FatSecretConfig::from_env()?;
+//! let config = `FatSecretConfig`::from_env()?;
 //!
 //! // Search for chicken recipes
 //! let search = search_recipes(&config, "chicken", Some(10), Some(0), None).await?;
@@ -32,7 +32,7 @@
 //!
 //! // Get full details for first result
 //! if let Some(result) = search.recipes.first() {
-//!     let recipe = get_recipe(&config, &result.recipe_id).await?;
+//!     let recipe = get_recipe(&config, &result.`recipe_id`).await?;
 //!     println!("Recipe: {}", recipe.recipe_name);
 //!     println!("Servings: {}", recipe.number_of_servings);
 //!     println!("Ingredients: {}", recipe.ingredients.ingredients.len());

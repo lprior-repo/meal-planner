@@ -1,4 +1,4 @@
-//! Edit an existing FatSecret exercise entry
+//! Edit an existing `FatSecret` exercise entry
 //!
 //! Updates an existing exercise entry (duration, exercise type, etc.).
 //! This binary handles the edit case by including exercise_entry_id.
@@ -28,7 +28,7 @@ struct FatSecretResource {
 
 #[derive(Deserialize)]
 struct Input {
-    /// FatSecret credentials (optional - falls back to env vars)
+    /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
     /// OAuth access token (required for 3-legged requests)
     access_token: String,

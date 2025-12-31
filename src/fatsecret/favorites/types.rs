@@ -1,6 +1,6 @@
-//! FatSecret Favorites Domain Types
+//! `FatSecret` Favorites Domain Types
 //!
-//! This module defines the data structures for the FatSecret favorites domain,
+//! This module defines the data structures for the `FatSecret` favorites domain,
 //! including favorite foods, recipes, usage analytics, and API response wrappers.
 //!
 //! # Core Types
@@ -64,11 +64,11 @@
 //!
 //! # fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! // Parse API response
-//! let json = r#"{"food": [{"food_id": "123", "food_name": "Apple", ...}]}"#;
+//! let json = r#"{"food": [{"`food_id`": "123", "food_name": "Apple", ...}]}"#;
 //! let response: FavoriteFoodsResponse = serde_json::from_str(json)?;
 //!
 //! // Handle single item or array
-//! let json_single = r#"{"food": {"food_id": "123", "food_name": "Apple", ...}}"#;
+//! let json_single = r#"{"food": {"`food_id`": "123", "food_name": "Apple", ...}}"#;
 //! let response_single: FavoriteFoodsResponse = serde_json::from_str(json_single)?;
 //! # Ok(())
 //! # }
@@ -100,7 +100,7 @@ pub struct FavoriteFood {
     pub brand_name: Option<String>,
     /// Nutritional description (e.g., "Per 100g - Calories: 250kcal")
     pub food_description: String,
-    /// URL to the food details page on FatSecret
+    /// URL to the food details page on `FatSecret`
     pub food_url: String,
     /// Identifier for the specific serving size
     pub serving_id: String,
@@ -122,7 +122,7 @@ pub struct MostEatenFood {
     pub brand_name: Option<String>,
     /// Nutritional description (e.g., "Per 100g - Calories: 250kcal")
     pub food_description: String,
-    /// URL to the food details page on FatSecret
+    /// URL to the food details page on `FatSecret`
     pub food_url: String,
     /// Identifier for the specific serving size
     pub serving_id: String,
@@ -144,7 +144,7 @@ pub struct RecentlyEatenFood {
     pub brand_name: Option<String>,
     /// Nutritional description (e.g., "Per 100g - Calories: 250kcal")
     pub food_description: String,
-    /// URL to the food details page on FatSecret
+    /// URL to the food details page on `FatSecret`
     pub food_url: String,
     /// Identifier for the specific serving size
     pub serving_id: String,
@@ -162,7 +162,7 @@ pub struct FavoriteRecipe {
     pub recipe_name: String,
     /// Brief description of the recipe
     pub recipe_description: String,
-    /// URL to the recipe details page on FatSecret
+    /// URL to the recipe details page on `FatSecret`
     pub recipe_url: String,
     /// Optional URL to the recipe image
     pub recipe_image: Option<String>,

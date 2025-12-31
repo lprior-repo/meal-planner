@@ -1,4 +1,4 @@
-//! FatSecret OAuth Integration Tests
+//! `FatSecret` OAuth Integration Tests
 //!
 //! Comprehensive tests for:
 //! - OAuth flow (request token -> authorize -> access token)

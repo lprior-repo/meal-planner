@@ -1,4 +1,4 @@
-//! Windmill Integration Tests for FatSecret API
+//! Windmill Integration Tests for `FatSecret` API
 //!
 //! These tests verify that Windmill scripts work correctly with real API calls.
 //! They require:

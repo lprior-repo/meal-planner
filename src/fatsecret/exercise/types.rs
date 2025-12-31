@@ -1,4 +1,4 @@
-//! Type definitions for FatSecret Exercise domain.
+//! Type definitions for `FatSecret` Exercise domain.
 //!
 //! This module defines all data structures used in the exercise APIs, including:
 //!
@@ -29,7 +29,7 @@
 //!
 //! # Date Format
 //!
-//! FatSecret uses `date_int`: days since Unix epoch (1970-01-01).
+//! `FatSecret` uses `date_int`: days since Unix epoch (1970-01-01).
 //!
 //! - **Example**: `19723` = 2024-01-01 (19,723 days after 1970-01-01)
 //!
@@ -47,15 +47,15 @@
 //!
 //! # fn example() -> Result<(), String> {
 //! // Create an exercise entry for today
-//! let date_int = date_to_int("2024-01-15")?;
+//! let `date_int` = date_to_int("2024-01-15")?;
 //! let input = ExerciseEntryInput {
 //!     exercise_id: ExerciseId::new("12345"),
 //!     duration_min: 30,
-//!     date_int,
+//!     `date_int`,
 //! };
 //!
-//! // Convert date_int back to human-readable format
-//! let date_str = int_to_date(date_int)?;
+//! // Convert `date_int` back to human-readable format
+//! let date_str = int_to_date(`date_int`)?;
 //! assert_eq!(date_str, "2024-01-15");
 //! # Ok(())
 //! # }
@@ -64,7 +64,7 @@
 //! # Serialization
 //!
 //! All types implement `Serialize` and `Deserialize` with special handling for
-//! FatSecret's API quirks:
+//! `FatSecret`'s API quirks:
 //!
 //! - **Flexible numbers**: API sometimes returns strings for numeric fields
 //!   (e.g., `"123.45"` instead of `123.45`). Custom deserializers handle both.
@@ -73,7 +73,7 @@
 //!
 //! # API Response Wrappers
 //!
-//! FatSecret wraps responses in container objects:
+//! `FatSecret` wraps responses in container objects:
 //!
 //! - [`ExerciseResponse`] - Wraps [`Exercise`]
 //! - [`ExerciseEntriesResponse`] - Wraps `Vec<ExerciseEntry>`
@@ -91,7 +91,7 @@ use serde::{Deserialize, Serialize};
 // Opaque ID Types
 // ============================================================================
 
-/// Opaque type for FatSecret exercise IDs
+/// Opaque type for `FatSecret` exercise IDs
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct ExerciseId(String);
@@ -108,7 +108,7 @@ impl ExerciseId {
     }
 }
 
-/// Opaque type for FatSecret exercise entry IDs
+/// Opaque type for `FatSecret` exercise entry IDs
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct ExerciseEntryId(String);
@@ -132,7 +132,7 @@ impl ExerciseEntryId {
 /// Exercise details from exercises.get.v2 API
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Exercise {
-    /// Unique exercise ID from FatSecret
+    /// Unique exercise ID from `FatSecret`
     pub exercise_id: ExerciseId,
     /// Name of the exercise
     pub exercise_name: String,
@@ -267,7 +267,7 @@ pub struct ExerciseMonthSummaryResponse {
 /// Unix epoch date (1970-01-01) - constant for date calculations
 const UNIX_EPOCH_DATE: (i32, u32, u32) = (1970, 1, 1);
 
-/// Convert YYYY-MM-DD to days since epoch (date_int)
+/// Convert YYYY-MM-DD to days since epoch (`date_int`)
 pub fn date_to_int(date: &str) -> Result<i32, String> {
     use chrono::NaiveDate;
 

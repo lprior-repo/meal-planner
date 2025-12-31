@@ -52,7 +52,7 @@
 //! )?;
 //!
 //! if result.success {
-//!     println!("Created recipe ID: {}", result.recipe_id.unwrap());
+//!     println!("Created recipe ID: {}", result.`recipe_id`.unwrap());
 //! } else {
 //!     eprintln!("Import failed: {}", result.message);
 //! }

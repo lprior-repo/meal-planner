@@ -1,13 +1,13 @@
 //! Database Layer Integration Tests
 //!
 //! Comprehensive tests for database operations including:
-//! - TokenStorage CRUD operations
+//! - `TokenStorage` CRUD operations
 //! - Encryption/decryption round-trips
 //! - Error handling for missing database
 //! - Concurrent access patterns
 //!
 //! Test database configuration:
-//! - Uses TEST_DATABASE_URL environment variable (falls back to DATABASE_URL)
+//! - Uses TEST_DATABASE_URL environment variable (falls back to `DATABASE_URL`)
 //! - Creates isolated test data for each test
 //! - Cleans up test data after each test
 
@@ -37,7 +37,7 @@ use tokio::sync::Semaphore;
 
 /// Get database URL for testing
 ///
-/// Tries TEST_DATABASE_URL first, then falls back to DATABASE_URL.
+/// Tries TEST_DATABASE_URL first, then falls back to `DATABASE_URL`.
 /// Panics if neither is set (tests should fail fast).
 fn get_test_database_url() -> String {
     env::var("TEST_DATABASE_URL")
@@ -530,7 +530,7 @@ async fn test_check_token_validity_old() {
         TokenValidity::Old {
             days_since_connected,
         } => {
-            assert!(days_since_connected >= 399 && days_since_connected <= 401);
+            assert!((399..=401).contains(&days_since_connected));
         }
         _ => panic!("Expected Old validity status"),
     }
@@ -607,8 +607,14 @@ async fn test_cleanup_expired_tokens() {
     assert_eq!(deleted, 1);
 
     // Verify token1 is gone but token2 remains
-    let result1 = storage.get_pending_token(&token1.oauth_token).await.unwrap();
-    let result2 = storage.get_pending_token(&token2.oauth_token).await.unwrap();
+    let result1 = storage
+        .get_pending_token(&token1.oauth_token)
+        .await
+        .unwrap();
+    let result2 = storage
+        .get_pending_token(&token2.oauth_token)
+        .await
+        .unwrap();
 
     assert!(result1.is_none());
     assert!(result2.is_some());
@@ -661,12 +667,13 @@ async fn test_encryption_roundtrip_pending_token() {
     storage.store_pending_token(&token).await.unwrap();
 
     // Verify it's encrypted in the database
-    let row =
-        sqlx::query("SELECT oauth_token_secret FROM fatsecret_oauth_pending WHERE oauth_token = $1")
-            .bind(&token.oauth_token)
-            .fetch_one(&pool)
-            .await
-            .unwrap();
+    let row = sqlx::query(
+        "SELECT oauth_token_secret FROM fatsecret_oauth_pending WHERE oauth_token = $1",
+    )
+    .bind(&token.oauth_token)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
     let encrypted: String = row.get("oauth_token_secret");
 
     // Should NOT be plaintext
@@ -750,28 +757,38 @@ async fn test_encryption_different_ciphertexts() {
     storage.store_pending_token(&token2).await.unwrap();
 
     // Get encrypted values from database
-    let row1 =
-        sqlx::query("SELECT oauth_token_secret FROM fatsecret_oauth_pending WHERE oauth_token = $1")
-            .bind(&token1.oauth_token)
-            .fetch_one(&pool)
-            .await
-            .unwrap();
+    let row1 = sqlx::query(
+        "SELECT oauth_token_secret FROM fatsecret_oauth_pending WHERE oauth_token = $1",
+    )
+    .bind(&token1.oauth_token)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
     let encrypted1: String = row1.get("oauth_token_secret");
 
-    let row2 =
-        sqlx::query("SELECT oauth_token_secret FROM fatsecret_oauth_pending WHERE oauth_token = $1")
-            .bind(&token2.oauth_token)
-            .fetch_one(&pool)
-            .await
-            .unwrap();
+    let row2 = sqlx::query(
+        "SELECT oauth_token_secret FROM fatsecret_oauth_pending WHERE oauth_token = $1",
+    )
+    .bind(&token2.oauth_token)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
     let encrypted2: String = row2.get("oauth_token_secret");
 
     // Should be different (due to random nonces)
     assert_ne!(encrypted1, encrypted2);
 
     // But both should decrypt to same value
-    let retrieved1 = storage.get_pending_token(&token1.oauth_token).await.unwrap().unwrap();
-    let retrieved2 = storage.get_pending_token(&token2.oauth_token).await.unwrap().unwrap();
+    let retrieved1 = storage
+        .get_pending_token(&token1.oauth_token)
+        .await
+        .unwrap()
+        .unwrap();
+    let retrieved2 = storage
+        .get_pending_token(&token2.oauth_token)
+        .await
+        .unwrap()
+        .unwrap();
 
     assert_eq!(retrieved1.oauth_token_secret, "same_secret");
     assert_eq!(retrieved2.oauth_token_secret, "same_secret");

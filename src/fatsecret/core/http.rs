@@ -1,6 +1,6 @@
-//! FatSecret SDK HTTP client with OAuth signing
+//! `FatSecret` SDK HTTP client with OAuth signing
 //!
-//! All requests to the FatSecret API must be signed with OAuth 1.0a.
+//! All requests to the `FatSecret` API must be signed with OAuth 1.0a.
 //! This module handles signing and executing HTTP requests using reqwest.
 
 use reqwest::{Client, Method};
@@ -13,7 +13,7 @@ use crate::fatsecret::core::{AccessToken, FatSecretConfig, FatSecretError};
 /// Make signed OAuth request (2-legged or 3-legged)
 ///
 /// This is the low-level request function. Most users should use
-/// make_api_request() or make_authenticated_request() instead.
+/// `make_api_request()` or `make_authenticated_request()` instead.
 #[allow(clippy::too_many_arguments)] // OAuth signing requires these params
 pub async fn make_oauth_request(
     config: &FatSecretConfig,
@@ -89,7 +89,7 @@ pub async fn make_oauth_request(
 /// Make 2-legged API request (public data, no user token)
 ///
 /// This is used for API methods that don't require user authentication,
-/// such as foods.search or food.get.
+/// such as `foods.search` or `food.get`.
 pub async fn make_api_request(
     config: &FatSecretConfig,
     method_name: &str,
@@ -116,7 +116,7 @@ pub async fn make_api_request(
 /// Make 3-legged API request (user data, requires access token)
 ///
 /// This is used for API methods that require user authentication,
-/// such as food_entries.get or food_entry.create.
+/// such as `food_entries.get` or `food_entry.create`.
 pub async fn make_authenticated_request(
     config: &FatSecretConfig,
     access_token: &AccessToken,

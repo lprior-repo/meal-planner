@@ -1,4 +1,4 @@
-//! Retrieve FatSecret access token
+//! Retrieve `FatSecret` access token
 //!
 //! Retrieves and decrypts the stored access token for use by other scripts.
 //! Returns the token validity status and optionally the token itself.

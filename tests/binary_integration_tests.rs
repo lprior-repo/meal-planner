@@ -1,4 +1,4 @@
-//! Integration tests for FatSecret CLI binaries
+//! Integration tests for `FatSecret` CLI binaries
 //!
 //! These tests verify that each binary:
 //! 1. Exists and is executable
@@ -9,7 +9,7 @@
 //! Run with: cargo test --test binary_integration_tests
 //!
 //! Credentials are automatically loaded from:
-//! 1. Environment variables (FATSECRET_CONSUMER_KEY, etc.)
+//! 1. Environment variables (`FATSECRET_CONSUMER_KEY`, etc.)
 //! 2. Windmill resources (u/admin/fatsecret_api)
 //! 3. `pass` password manager (meal-planner/fatsecret/*)
 
@@ -73,7 +73,7 @@ fn binary_exists(binary_name: &str) -> bool {
     paths.iter().any(|p| std::path::Path::new(p).exists())
 }
 
-/// Get FatSecret credentials (from env, Windmill, or pass)
+/// Get `FatSecret` credentials (from env, Windmill, or pass)
 fn get_credentials() -> Option<Value> {
     get_fatsecret_credentials().map(|c| c.to_json())
 }
