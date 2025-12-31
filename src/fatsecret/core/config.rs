@@ -25,6 +25,9 @@ pub struct FatSecretConfig {
     pub api_host: Option<String>,
     /// Optional custom authentication host (defaults to authentication.fatsecret.com)
     pub auth_host: Option<String>,
+    /// Optional base URL override for testing (e.g., "http://127.0.0.1:8080")
+    /// When set, this is used instead of constructing https://{host}
+    pub base_url_override: Option<String>,
 }
 
 impl FatSecretConfig {
@@ -35,6 +38,7 @@ impl FatSecretConfig {
             consumer_secret: consumer_secret.into(),
             api_host: None,
             auth_host: None,
+            base_url_override: None,
         }
     }
 
@@ -51,7 +55,31 @@ impl FatSecretConfig {
             consumer_secret,
             api_host: env::var("FATSECRET_API_HOST").ok(),
             auth_host: env::var("FATSECRET_AUTH_HOST").ok(),
+            base_url_override: None,
         })
+    }
+
+    /// Create a test config with a base URL override (for mocking)
+    pub fn with_base_url(
+        consumer_key: impl Into<String>,
+        consumer_secret: impl Into<String>,
+        base_url: impl Into<String>,
+    ) -> Self {
+        Self {
+            consumer_key: consumer_key.into(),
+            consumer_secret: consumer_secret.into(),
+            api_host: None,
+            auth_host: None,
+            base_url_override: Some(base_url.into()),
+        }
+    }
+
+    /// Get the base URL for API requests
+    /// Uses base_url_override if set (for testing), otherwise constructs from host
+    pub fn get_base_url(&self) -> String {
+        self.base_url_override
+            .clone()
+            .unwrap_or_else(|| format!("https://{}", self.api_host()))
     }
 
     /// Get the API host, using default if not configured
@@ -125,5 +153,17 @@ mod tests {
             config.authorization_url("token123"),
             "https://authentication.fatsecret.com/authorize?oauth_token=token123"
         );
+    }
+
+    #[test]
+    fn test_with_base_url() {
+        let config = FatSecretConfig::with_base_url("key", "secret", "http://localhost:8080");
+        assert_eq!(config.get_base_url(), "http://localhost:8080");
+    }
+
+    #[test]
+    fn test_get_base_url_default() {
+        let config = FatSecretConfig::new("key", "secret");
+        assert_eq!(config.get_base_url(), "https://platform.fatsecret.com");
     }
 }

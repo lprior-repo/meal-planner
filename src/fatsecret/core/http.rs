@@ -24,7 +24,12 @@ pub async fn make_oauth_request(
     token: Option<&str>,
     token_secret: Option<&str>,
 ) -> Result<String, FatSecretError> {
-    let url = format!("https://{}{}", host, path);
+    // Use base_url_override if set (for testing), otherwise construct from host
+    let url = if config.base_url_override.is_some() {
+        format!("{}{}", config.get_base_url(), path)
+    } else {
+        format!("https://{}{}", host, path)
+    };
 
     // Build OAuth parameters with signature
     let oauth_params = build_oauth_params(

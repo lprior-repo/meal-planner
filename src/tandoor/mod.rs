@@ -71,5 +71,5 @@
 mod client;
 mod types;
 
-pub use client::TandoorClient;
+pub use client::{TandoorClient, TandoorError};
 pub use types::*;
