@@ -27,4 +27,4 @@ input=$(jq -n \
 	| if $number_of_units != "" then . + {number_of_units: ($number_of_units | tonumber)} else . end')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/fatsecret_food_add_favorite >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_food_add_favorite >./result.json

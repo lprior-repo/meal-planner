@@ -24,4 +24,4 @@ input=$(jq -n \
 	'{tandoor: $tandoor, recipe: $recipe, meal_type: $meal_type, from_date: $from_date, servings: $servings, to_date: $to_date, title: $title, note: $note}')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/tandoor_meal_plan_create >./result.json
+echo "$input" | /usr/local/bin/meal-planner/tandoor_meal_plan_create >./result.json

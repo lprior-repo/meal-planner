@@ -10,4 +10,4 @@ input=$(jq -n \
 	'{fatsecret: $fatsecret}')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/fatsecret_get_profile >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_get_profile >./result.json

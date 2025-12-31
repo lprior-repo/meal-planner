@@ -287,9 +287,11 @@ This project uses **Moon** for task orchestration. Moon caches task outputs for 
 moon run :ci      # Full CI pipeline (lint, test, build)
 moon run :quick   # Fast lint checks only
 moon run :deploy  # CI + Windmill push
-moon run :build   # Build release binaries
+moon run :build   # Build release binaries (PREFERRED - parallelized)
 moon run :test    # Run tests
 ```
+
+**IMPORTANT**: Always use `moon run :build` instead of `cargo build --release` for building binaries. Moon parallelizes the build and caches results, making it significantly faster.
 
 ### Why Moon?
 

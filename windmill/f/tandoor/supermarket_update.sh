@@ -24,4 +24,4 @@ else
 fi
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/tandoor_supermarket_update >./result.json
+echo "$input" | /usr/local/bin/meal-planner/tandoor_supermarket_update >./result.json

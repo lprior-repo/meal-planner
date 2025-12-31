@@ -22,4 +22,4 @@ input=$(jq -n \
 	--arg comment "$comment" \
 	'{fatsecret: $fatsecret, access_token: $access_token, access_secret: $access_secret, current_weight_kg: $current_weight_kg, date_int: $date_int, goal_weight_kg: (if $goal_weight_kg == "" then null else ($goal_weight_kg | tonumber) end), height_cm: (if $height_cm == "" then null else ($height_cm | tonumber) end), comment: (if $comment == "" then null else $comment end)}')
 
-echo "$input" | /usr/local/bin/fatsecret_weight_update >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_weight_update >./result.json

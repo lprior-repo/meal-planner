@@ -16,4 +16,4 @@ input=$(jq -n \
 	'{tandoor: $tandoor, food: $food, unit: $unit, amount: $amount}')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/tandoor_ingredient_create >./result.json
+echo "$input" | /usr/local/bin/meal-planner/tandoor_ingredient_create >./result.json

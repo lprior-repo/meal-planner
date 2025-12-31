@@ -17,4 +17,4 @@ input=$(jq -n \
 	--argjson page_number "${page_number:-null}" \
 	'{fatsecret: $fatsecret, access_token: $access_token, access_secret: $access_secret} + (if $max_results != null then {max_results: $max_results} else {} end) + (if $page_number != null then {page_number: $page_number} else {} end)')
 
-echo "$input" | /usr/local/bin/fatsecret_recipes_get_favorites >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_recipes_get_favorites >./result.json

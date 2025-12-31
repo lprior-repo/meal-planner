@@ -21,4 +21,4 @@ input=$(jq -n \
 	}')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/fatsecret_food_entries_get_month >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_food_entries_get_month >./result.json

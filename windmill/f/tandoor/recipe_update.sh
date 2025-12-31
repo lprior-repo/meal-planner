@@ -41,4 +41,4 @@ if [ -n "$waiting_time" ]; then
 fi
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/tandoor_recipe_update >./result.json
+echo "$input" | /usr/local/bin/meal-planner/tandoor_recipe_update >./result.json

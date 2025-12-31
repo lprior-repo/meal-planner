@@ -14,4 +14,4 @@ input=$(jq -n \
 	'{tandoor: $tandoor, id: $id, name: $name}')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/tandoor_keyword_update >./result.json
+echo "$input" | /usr/local/bin/meal-planner/tandoor_keyword_update >./result.json
