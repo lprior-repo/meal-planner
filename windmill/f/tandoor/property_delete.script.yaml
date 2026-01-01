@@ -1,0 +1,21 @@
+summary: Delete property
+description: Deletes a property from Tandoor
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    property_id:
+      type: string
+      description: Property ID to delete
+      default: null
+      originalType: integer
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - property_id

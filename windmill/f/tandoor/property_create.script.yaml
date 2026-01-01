@@ -1,0 +1,27 @@
+summary: Create property
+description: Creates a new property value in Tandoor
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    property_amount:
+      type: string
+      description: Property value amount
+      default: null
+      originalType: number
+    property_type:
+      type: string
+      description: Property type ID
+      default: null
+      originalType: integer
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - property_amount
+    - property_type

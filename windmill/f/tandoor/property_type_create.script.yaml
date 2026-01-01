@@ -1,0 +1,36 @@
+summary: Create property type
+description: Creates a new property type in Tandoor
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    name:
+      type: string
+      description: Property type name (e.g., Calories, Protein)
+      default: null
+      originalType: string
+    unit:
+      type: string
+      description: Unit of measurement (e.g., kcal, g)
+      default: null
+      originalType: string
+    description:
+      type: string
+      description: Description
+      default: null
+      originalType: string
+    order:
+      type: string
+      description: Display order
+      default: null
+      originalType: integer
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - name

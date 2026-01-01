@@ -1293,6 +1293,118 @@ pub struct AiImportResponse {
     pub duplicates: Vec<SourceImportDuplicate>,
 }
 
+// ============================================================================
+// Property Types (for /api/property-type/ and /api/property/)
+// ============================================================================
+
+/// Property type category
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum PropertyCategory {
+    Nutrition,
+    Allergen,
+    Goal,
+    Price,
+    Other,
+}
+
+/// Property type definition (e.g., "Calories", "Protein", "Fat")
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct PropertyType {
+    /// Property type ID
+    pub id: Option<i64>,
+    /// Property name (required)
+    pub name: String,
+    /// Unit of measurement (e.g., "kcal", "g")
+    #[serde(default)]
+    pub unit: Option<String>,
+    /// Description
+    #[serde(default)]
+    pub description: Option<String>,
+    /// Display order
+    #[serde(default)]
+    pub order: i32,
+    /// Open data slug for external data sources
+    #[serde(default)]
+    pub open_data_slug: Option<String>,
+    /// FDA FoodData Central ID
+    #[serde(default)]
+    pub fdc_id: Option<i64>,
+    /// Category (nutrition, allergen, etc.)
+    #[serde(default)]
+    pub category: Option<PropertyCategory>,
+}
+
+/// Request to create a property type
+#[derive(Debug, Serialize)]
+pub struct CreatePropertyTypeRequest {
+    /// Property name (required)
+    pub name: String,
+    /// Unit of measurement
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub unit: Option<String>,
+    /// Description
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    /// Display order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub order: Option<i32>,
+    /// Category
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub category: Option<PropertyCategory>,
+}
+
+/// Request to update a property type
+#[derive(Debug, Serialize)]
+pub struct UpdatePropertyTypeRequest {
+    /// Property name
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    /// Unit of measurement
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub unit: Option<String>,
+    /// Description
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    /// Display order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub order: Option<i32>,
+    /// Category
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub category: Option<PropertyCategory>,
+}
+
+/// Property value (links a property type to a food/recipe with an amount)
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Property {
+    /// Property ID
+    pub id: Option<i64>,
+    /// Amount value
+    pub property_amount: Option<f64>,
+    /// Property type definition
+    pub property_type: PropertyType,
+}
+
+/// Request to create a property
+#[derive(Debug, Serialize)]
+pub struct CreatePropertyRequest {
+    /// Amount value
+    pub property_amount: f64,
+    /// Property type ID or full type
+    pub property_type: i64,
+}
+
+/// Request to update a property
+#[derive(Debug, Serialize)]
+pub struct UpdatePropertyRequest {
+    /// Amount value
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub property_amount: Option<f64>,
+    /// Property type ID
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub property_type: Option<i64>,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

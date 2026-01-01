@@ -2022,6 +2022,202 @@ impl TandoorClient {
             .map_err(|e| TandoorError::ParseError(e.to_string()))
     }
 
+    // ========================================================================
+    // Property Type Methods
+    // ========================================================================
+
+    /// List property types with optional pagination
+    pub fn list_property_types(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<PropertyType>, TandoorError> {
+        let mut url = format!("{}/api/property-type/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a property type by ID
+    pub fn get_property_type(&self, id: i64) -> Result<PropertyType, TandoorError> {
+        let url = format!("{}/api/property-type/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a property type
+    pub fn create_property_type(
+        &self,
+        request: &CreatePropertyTypeRequest,
+    ) -> Result<PropertyType, TandoorError> {
+        let url = format!("{}/api/property-type/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a property type
+    pub fn update_property_type(
+        &self,
+        id: i64,
+        request: &UpdatePropertyTypeRequest,
+    ) -> Result<PropertyType, TandoorError> {
+        let url = format!("{}/api/property-type/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a property type
+    pub fn delete_property_type(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/property-type/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    // ========================================================================
+    // Property Methods
+    // ========================================================================
+
+    /// List properties with optional pagination
+    pub fn list_properties(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<Property>, TandoorError> {
+        let mut url = format!("{}/api/property/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a property by ID
+    pub fn get_property(&self, id: i64) -> Result<Property, TandoorError> {
+        let url = format!("{}/api/property/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a property
+    pub fn create_property(
+        &self,
+        request: &CreatePropertyRequest,
+    ) -> Result<Property, TandoorError> {
+        let url = format!("{}/api/property/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a property
+    pub fn update_property(
+        &self,
+        id: i64,
+        request: &UpdatePropertyRequest,
+    ) -> Result<Property, TandoorError> {
+        let url = format!("{}/api/property/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a property
+    pub fn delete_property(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/property/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
     /// Get the API token (helper for multipart requests that need a fresh client)
     fn get_token(&self) -> String {
         self.headers

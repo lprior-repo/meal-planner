@@ -1,0 +1,25 @@
+summary: List properties
+description: Lists all property values from Tandoor
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    page:
+      type: string
+      description: Page number (optional)
+      default: null
+      originalType: integer
+    page_size:
+      type: string
+      description: Page size (optional)
+      default: null
+      originalType: integer
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
