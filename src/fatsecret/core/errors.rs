@@ -180,26 +180,56 @@ impl ApiErrorCode {
         }
     }
 
-    /// Check if this error indicates a premium subscription is required
+    /// Convert an `ApiErrorCode` to its integer representation
     #[must_use]
-    pub fn is_premium_required(&self) -> bool {
+    pub fn to_code(&self) -> i32 {
         match self {
-            Self::ApiError { code, .. } => code.is_premium_required(),
-            _ => false,
+            // General errors
+            Self::GeneralError => 1,
+            Self::InvalidApiMethod => 10,
+            Self::RequiresHttps => 11,
+            Self::MethodNotAccessible => 12,
+            Self::UserPermissionDenied => 20,
+            Self::AccountSuspended => 21,
+            Self::RateLimitExceeded => 22,
+            Self::ApiAccessDisabled => 23,
+            Self::PremiumRequired => 24,
+            // OAuth 1.0 errors
+            Self::MissingOAuthParameter => 2,
+            Self::UnsupportedOAuthParameter => 3,
+            Self::InvalidSignatureMethod => 4,
+            Self::InvalidConsumerCredentials => 5,
+            Self::InvalidOrExpiredTimestamp => 6,
+            Self::InvalidNonce => 7,
+            Self::InvalidSignature => 8,
+            Self::InvalidAccessToken => 9,
+            // OAuth 2.0 errors
+            Self::OAuth2InvalidToken => 13,
+            Self::OAuth2TokenExpired => 14,
+            // Parameter errors
+            Self::MissingRequiredParameter => 101,
+            Self::InvalidParameterType => 102,
+            Self::InvalidParameterValue => 103,
+            Self::ParameterOutOfRange => 104,
+            Self::InvalidDateFormat => 105,
+            Self::InvalidFoodId => 106,
+            Self::InvalidServingId => 107,
+            Self::InvalidRecipeId => 108,
+            Self::InvalidFoodEntryId => 109,
+            // Resource not found errors
+            Self::FoodNotFound => 201,
+            Self::RecipeNotFound => 202,
+            Self::ServingNotFound => 203,
+            Self::FoodEntryNotFound => 204,
+            Self::ExerciseEntryNotFound => 205,
+            Self::WeightEntryNotFound => 206,
+            Self::UserProfileNotFound => 207,
+            Self::MealNotFound => 208,
+            Self::BrandNotFound => 209,
+            Self::DuplicateEntry => 210,
+            Self::MaximumLimitReached => 211,
+            Self::UnknownError(n) => *n,
         }
-    }
-
-    /// Check if this error indicates an authentication/authorization issue
-    #[must_use]
-    pub fn is_auth_error(&self) -> bool {
-        match self {
-            Self::ApiError { code, .. } => code.is_auth_related(),
-            Self::OAuthError(_) => true,
-            Self::ConfigMissing => true,
-            _ => false,
-        }
-    }
-}
     }
 
     /// Get a human-readable description of the error code.

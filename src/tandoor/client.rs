@@ -147,6 +147,28 @@ impl TandoorClient {
         Ok(())
     }
 
+    /// Serialize and send a validated POST request (DOS prevention)
+    fn post_request<T: serde::Serialize>(
+        &self,
+        url: &str,
+        request: &T,
+    ) -> Result<reqwest::blocking::Response, TandoorError> {
+        let json = serde_json::to_vec(request).map_err(|e| TandoorError::ParseError(e.to_string()))?;
+        self.validate_request_size(&json)?;
+        Ok(self.client.post(url).json(request).send()?)
+    }
+
+    /// Serialize and send a validated PATCH request (DOS prevention)
+    fn patch_request<T: serde::Serialize>(
+        &self,
+        url: &str,
+        request: &T,
+    ) -> Result<reqwest::blocking::Response, TandoorError> {
+        let json = serde_json::to_vec(request).map_err(|e| TandoorError::ParseError(e.to_string()))?;
+        self.validate_request_size(&json)?;
+        Ok(self.client.patch(url).json(request).send()?)
+    }
+
     /// Test connection by fetching recipes
     pub fn test_connection(&self) -> Result<ConnectionTestResult, TandoorError> {
         let url = format!("{}/api/recipe/", self.base_url);
@@ -232,7 +254,7 @@ impl TandoorClient {
             bookmarklet: None,
         };
 
-        let response = self.client.post(&api_url).json(&request).send()?;
+        let response = self.post_request(&api_url, &request)?;
         let status = response.status();
 
         if status.as_u16() == 401 || status.as_u16() == 403 {
@@ -260,7 +282,7 @@ impl TandoorClient {
     ) -> Result<CreatedRecipe, TandoorError> {
         let api_url = format!("{}/api/recipe/", self.base_url);
 
-        let response = self.client.post(&api_url).json(recipe).send()?;
+        let response = self.post_request(&api_url, recipe)?;
         let status = response.status();
 
         if status.as_u16() == 401 || status.as_u16() == 403 {

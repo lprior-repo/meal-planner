@@ -164,19 +164,6 @@ pub async fn make_authenticated_request(
     check_api_error(body)
 }
 
-/// Validate request body size against DOS limits
-fn validate_request_size(body: &str) -> Result<(), FatSecretError> {
-    const MAX_REQUEST_SIZE: usize = 1024 * 1024; // 1MB for API requests
-    if body.len() > MAX_REQUEST_SIZE {
-        return Err(FatSecretError::NetworkError(format!(
-            "Request too large: {} bytes exceeds limit of {} bytes",
-            body.len(),
-            MAX_REQUEST_SIZE
-        )));
-    }
-    Ok(())
-}
-
 /// Check response for API errors
 fn check_api_error(body: String) -> Result<String, FatSecretError> {
     parse_error_response(&body).map_or(Ok(body), Err)
