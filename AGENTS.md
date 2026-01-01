@@ -2,6 +2,17 @@
 
 This document describes how to work with AI agents in the meal-planner project using Beads.
 
+## Quick Start - If In A Hurry
+
+**Need FatSecret OAuth tokens right now?** See **[⚠️ CRITICAL: FatSecret OAuth Token Setup](#-critical-fatsecret-oauth-token-setup-do-this-first)** below.
+
+It has:
+- 5 clear steps to get and store tokens
+- Exact resource path: `u/admin/fatsecret_oauth`
+- Database location (Windmill PostgreSQL, encrypted)
+- Copy-paste code with marked placeholders
+- Verification commands
+
 ## Architecture
 
 **READ FIRST**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - Domain-based structure, CUPID principles, binary contract.
