@@ -10,13 +10,13 @@
 //!   `{"base_url": "...", "api_token": "...", "recipe_id": 123, "image_path": "/path/to/image.jpg"}`
 //!
 //! JSON stdout:
-//!   `{"success": true, "message": "Image uploaded successfully"}`
+//!   `{"success": true, "image": "...", "image_url": "..."}`
 //!   `{"success": false, "error": "..."}`
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
 
-use meal_planner::tandoor::TandoorConfig;
+use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -38,7 +38,9 @@ struct Input {
 struct Output {
     success: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    message: Option<String>,
+    image: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    image_url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error: Option<String>,
 }
@@ -48,7 +50,8 @@ fn main() {
         Ok(o) => o,
         Err(e) => Output {
             success: false,
-            message: None,
+            image: None,
+            image_url: None,
             error: Some(e.to_string()),
         },
     };
@@ -65,7 +68,7 @@ fn run() -> anyhow::Result<Output> {
     let parsed: Input = serde_json::from_str(&input)?;
 
     // Support both Windmill format (nested) and standalone format (flat)
-    let _config = match parsed.tandoor {
+    let config = match parsed.tandoor {
         Some(c) => c,
         None => TandoorConfig {
             base_url: parsed
@@ -85,15 +88,14 @@ fn run() -> anyhow::Result<Output> {
         ));
     }
 
-    // TODO: Create TandoorClient and call client.upload_recipe_image(recipe_id, &image_path)?
-    // For now, validate inputs and return success message
+    // Create client and upload image
+    let client = TandoorClient::new(&config)?;
+    let result = client.upload_recipe_image(parsed.recipe_id, &parsed.image_path)?;
 
     Ok(Output {
         success: true,
-        message: Some(format!(
-            "Image upload prepared for recipe {}: {}",
-            parsed.recipe_id, parsed.image_path
-        )),
+        image: result.image,
+        image_url: result.image_url,
         error: None,
     })
 }
@@ -106,26 +108,29 @@ mod tests {
     fn test_output_serialization() {
         let output = Output {
             success: true,
-            message: Some("Image uploaded".to_string()),
+            image: Some("/media/recipes/123.jpg".to_string()),
+            image_url: None,
             error: None,
         };
         let json = serde_json::to_string(&output).unwrap();
         assert!(json.contains("\"success\":true"));
-        assert!(json.contains("\"message\":\"Image uploaded\""));
+        assert!(json.contains("\"image\":\"/media/recipes/123.jpg\""));
         assert!(!json.contains("error"));
+        assert!(!json.contains("image_url"));
     }
 
     #[test]
     fn test_error_output_serialization() {
         let output = Output {
             success: false,
-            message: None,
+            image: None,
+            image_url: None,
             error: Some("File not found".to_string()),
         };
         let json = serde_json::to_string(&output).unwrap();
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("\"error\":\"File not found\""));
-        assert!(!json.contains("message"));
+        assert!(!json.contains("image"));
     }
 
     #[test]

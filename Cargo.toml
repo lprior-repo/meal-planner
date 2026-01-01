@@ -248,7 +248,7 @@ use_self = "allow"                        # Self vs TypeName is style, not safet
 
 [dependencies]
 # HTTP client
-reqwest = { version = "0.12", features = ["json", "blocking"] }
+reqwest = { version = "0.12", features = ["json", "blocking", "multipart"] }
 
 # Async runtime (only needed for lib, not binaries)
 tokio = { version = "1.0", features = ["full"], optional = false }
@@ -652,6 +652,10 @@ path = "src/bin/tandoor_ingredient_delete.rs"
 [[bin]]
 name = "tandoor_ingredient_from_string"
 path = "src/bin/tandoor_ingredient_from_string.rs"
+
+[[bin]]
+name = "tandoor_ai_import"
+path = "src/bin/tandoor_ai_import.rs"
 
 [features]
 sqlx-cli = ["dep:sqlx-cli"]

@@ -1253,3 +1253,45 @@ pub struct UpdateSupermarketRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
 }
+
+// ============================================================================
+// Recipe Image Types (for /api/recipe/{id}/image/)
+// ============================================================================
+
+/// Response from uploading a recipe image
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct RecipeImage {
+    /// Image URL (returned after upload)
+    #[serde(default)]
+    pub image: Option<String>,
+    /// External image URL
+    #[serde(default)]
+    pub image_url: Option<String>,
+}
+
+// ============================================================================
+// AI Import Types (for /api/ai-import/)
+// ============================================================================
+
+/// Response from AI import (same as recipe from source)
+#[derive(Debug, Deserialize, Serialize)]
+pub struct AiImportResponse {
+    /// Recipe data
+    #[serde(alias = "recipe_json")]
+    pub recipe: Option<SourceImportRecipe>,
+    /// Recipe ID if an existing recipe was updated
+    #[serde(default)]
+    pub recipe_id: Option<i64>,
+    /// Images from the imported file
+    #[serde(default)]
+    pub images: Vec<String>,
+    /// Whether an error occurred
+    #[serde(default)]
+    pub error: bool,
+    /// Error or status message
+    #[serde(default)]
+    pub msg: String,
+    /// Duplicate recipes found
+    #[serde(default)]
+    pub duplicates: Vec<SourceImportDuplicate>,
+}
