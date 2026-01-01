@@ -11,5 +11,17 @@ schema:
       description: FatSecret API credentials
       default: null
       originalType: string
+    oauth_token:
+      type: string
+      description: FatSecret OAuth access token
+      default: null
+      originalType: string
+    oauth_token_secret:
+      type: string
+      description: FatSecret OAuth access token secret
+      default: null
+      originalType: string
   required:
     - fatsecret
+    - oauth_token
+    - oauth_token_secret
