@@ -16,4 +16,4 @@ input=$(jq -n \
 	--argjson month "$month" \
 	'{fatsecret: $fatsecret, access_token: $access_token, access_secret: $access_secret, year: $year, month: $month}')
 
-echo "$input" | /usr/local/bin/fatsecret_exercise_month_summary >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_exercise_month_summary >./result.json

@@ -1,0 +1,21 @@
+summary: Create a recipe book entry
+description: Adds a recipe to a recipe book.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    recipe_book_id:
+      type: integer
+      description: Recipe book ID
+    recipe_id:
+      type: integer
+      description: Recipe ID to add
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+  required:
+    - tandoor
+    - recipe_book_id
+    - recipe_id

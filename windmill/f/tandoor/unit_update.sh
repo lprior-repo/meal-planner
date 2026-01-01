@@ -17,4 +17,4 @@ input=$(jq -n \
 	'{tandoor: $tandoor, id: $id} + (if $name == "null" then {} else {name: $name} end) + (if $plural_name == "null" then {} else {plural_name: $plural_name} end)')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/tandoor_unit_update >./result.json
+echo "$input" | /usr/local/bin/meal-planner/tandoor_unit_update >./result.json

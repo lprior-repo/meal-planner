@@ -27,4 +27,4 @@ input=$(jq -n \
 	| if $meal != "" then . + {meal: $meal} else . end')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/fatsecret_food_entry_edit >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_food_entry_edit >./result.json

@@ -37,4 +37,4 @@ input=$(jq -n \
 	}')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/tandoor_meal_plan_update >./result.json
+echo "$input" | /usr/local/bin/meal-planner/tandoor_meal_plan_update >./result.json

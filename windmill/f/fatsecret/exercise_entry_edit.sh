@@ -21,4 +21,4 @@ input=$(jq -n \
 	| if $exercise_id != "" then . + {exercise_id: $exercise_id} else . end
 	| if $duration_min != "" then . + {duration_min: ($duration_min | tonumber)} else . end')
 
-echo "$input" | /usr/local/bin/fatsecret_exercise_entry_edit >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_exercise_entry_edit >./result.json

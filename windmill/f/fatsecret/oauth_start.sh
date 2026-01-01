@@ -12,4 +12,4 @@ input=$(jq -n \
 	'{fatsecret: $fatsecret, callback_url: $callback_url}')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/fatsecret_oauth_start >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_oauth_start >./result.json

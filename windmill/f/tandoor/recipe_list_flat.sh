@@ -30,4 +30,4 @@ else
 fi
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/tandoor_recipe_list_flat >./result.json
+echo "$input" | /usr/local/bin/meal-planner/tandoor_recipe_list_flat >./result.json

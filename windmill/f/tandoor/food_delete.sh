@@ -12,4 +12,4 @@ input=$(jq -n \
 	'{tandoor: $tandoor, food_id: $food_id}')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/tandoor_food_delete >./result.json
+echo "$input" | /usr/local/bin/meal-planner/tandoor_food_delete >./result.json

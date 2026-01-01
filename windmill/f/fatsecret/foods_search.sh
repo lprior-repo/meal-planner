@@ -16,4 +16,4 @@ input=$(jq -n \
 	'{fatsecret: $fatsecret, query: $query, page: $page, max_results: $max_results}')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/fatsecret_foods_search >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_foods_search >./result.json

@@ -1,0 +1,17 @@
+summary: Parse ingredient from string
+description: Parses an ingredient text string into structured data.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    text:
+      type: string
+      description: Ingredient text (e.g. "2 cups flour")
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+  required:
+    - tandoor
+    - text

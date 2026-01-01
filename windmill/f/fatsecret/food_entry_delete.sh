@@ -14,4 +14,4 @@ input=$(jq -n \
 	--arg food_entry_id "$food_entry_id" \
 	'{fatsecret: $fatsecret, access_token: $access_token, access_secret: $access_secret, food_entry_id: $food_entry_id}')
 
-echo "$input" | /usr/local/bin/fatsecret_food_entry_delete >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_food_entry_delete >./result.json

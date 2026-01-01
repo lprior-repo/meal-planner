@@ -1,12 +1,12 @@
 //! List users from Tandoor
 //!
-//! Retrieves a paginated list of all users in the Tandoor database.
+//! Retrieves all users in the Tandoor database (non-paginated endpoint).
 //!
 //! JSON input (CLI arg or stdin):
-//!   `{"tandoor": {...}, "page": 1, "page_size": 20}`
+//!   `{"tandoor": {...}}`
 //!
 //! JSON stdout:
-//!   `{"success": true, "count": 123, "users": [...]}`
+//!   `{"success": true, "count": 5, "users": [...]}`
 //!   `{"success": false, "error": "..."}`
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
@@ -19,17 +19,13 @@ use std::io::{self, Read};
 #[derive(Deserialize)]
 struct Input {
     tandoor: TandoorConfig,
-    #[serde(default)]
-    page: Option<u32>,
-    #[serde(default)]
-    page_size: Option<u32>,
 }
 
 #[derive(Serialize)]
 struct Output {
     success: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    count: Option<i64>,
+    count: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     users: Option<Vec<serde_json::Value>>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -63,18 +59,12 @@ fn run() -> anyhow::Result<Output> {
     };
 
     let client = TandoorClient::new(&input.tandoor)?;
-    let result = client.list_users(input.page, input.page_size)?;
+    let users = client.list_users()?;
 
     Ok(Output {
         success: true,
-        count: Some(result.count),
-        users: Some(
-            result
-                .results
-                .into_iter()
-                .map(|u| serde_json::to_value(u).unwrap())
-                .collect(),
-        ),
+        count: Some(users.len()),
+        users: Some(users),
         error: None,
     })
 }
@@ -84,19 +74,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_input_parsing_with_page() {
-        let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "page": 1, "page_size": 20}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
-        assert_eq!(input.page, Some(1));
-        assert_eq!(input.page_size, Some(20));
-    }
-
-    #[test]
-    fn test_input_parsing_defaults() {
+    fn test_input_parsing() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}}"#;
         let input: Input = serde_json::from_str(json).unwrap();
-        assert_eq!(input.page, None);
-        assert_eq!(input.page_size, None);
+        assert_eq!(input.tandoor.base_url, "http://localhost:8090");
     }
 
     #[test]
