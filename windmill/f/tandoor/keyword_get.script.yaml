@@ -1,0 +1,21 @@
+summary: Get keyword by ID
+description: Retrieves detailed information about a specific keyword by ID
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    keyword_id:
+      type: string
+      description: Keyword ID to retrieve
+      default: null
+      originalType: integer
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - keyword_id

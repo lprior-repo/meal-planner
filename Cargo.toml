@@ -440,6 +440,10 @@ name = "tandoor_keyword_create"
 path = "src/bin/tandoor_keyword_create.rs"
 
 [[bin]]
+name = "tandoor_keyword_get"
+path = "src/bin/tandoor_keyword_get.rs"
+
+[[bin]]
 name = "tandoor_keyword_update"
 path = "src/bin/tandoor_keyword_update.rs"
 
