@@ -135,6 +135,14 @@ It suggests that the future of software might not be about AI replacing engineer
 
 ---
 
+## I'd Just Like to Interject for a Moment
+
+![Arch Linux Meme](https://analyticsindiamag.com/wp-content/uploads/2023/01/ae2.jpg)
+
+Yes, it's written in Rust. No, I don't use Arch Linux (yet).
+
+---
+
 **Status**: Active experiment. Contributions welcome. Let's see how far we can push "Vibe Engineering."
 
 **Made with**: Rust, discipline, and the firm belief that AI can write good code if we set high enough standards.
