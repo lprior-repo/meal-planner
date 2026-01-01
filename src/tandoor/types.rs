@@ -1374,7 +1374,7 @@ mod tests {
         let json = r#"{"id": 5, "name": "vegetarian"}"#;
         let keyword: Keyword = serde_json::from_str(json).unwrap();
         assert_eq!(keyword.id, 5);
-        assert_eq!(keyword.name, "vegetarian");
+        assert_eq!(keyword.name, Some("vegetarian".to_string()));
     }
 
     // ============================================================================
@@ -2123,14 +2123,14 @@ mod tests {
     fn test_ingredient_deserialize() {
         let json = r#"{
             "id": 1,
-            "food": 10,
-            "unit": 5,
+            "food": {"id": 10, "name": "Chicken"},
+            "unit": {"id": 5, "name": "grams"},
             "amount": 2.5
         }"#;
         let ing: Ingredient = serde_json::from_str(json).unwrap();
         assert_eq!(ing.id, 1);
-        assert_eq!(ing.food, 10);
-        assert_eq!(ing.unit, Some(5));
+        assert!(ing.food.is_object());
+        assert!(ing.unit.is_some());
         assert_eq!(ing.amount, Some(2.5));
     }
 
@@ -2138,13 +2138,13 @@ mod tests {
     fn test_parsed_ingredient() {
         let json = r#"{
             "amount": 2.0,
-            "unit": "cups",
-            "food": "flour"
+            "unit": {"name": "cups", "id": 1},
+            "food": {"name": "flour", "id": 10}
         }"#;
         let parsed: ParsedIngredient = serde_json::from_str(json).unwrap();
         assert_eq!(parsed.amount, Some(2.0));
-        assert_eq!(parsed.unit, Some("cups".to_string()));
-        assert_eq!(parsed.food, Some("flour".to_string()));
+        assert!(parsed.unit.is_some());
+        assert!(parsed.food.is_some());
     }
 
     #[test]
@@ -2302,15 +2302,19 @@ mod tests {
     fn test_unit_conversion_deserialize() {
         let json = r#"{
             "id": 1,
-            "from_unit": 10,
-            "to_unit": 20,
-            "factor": 1000.0
+            "name": "grams to kilograms",
+            "base_amount": 1000.0,
+            "base_unit": {"id": 10, "name": "grams"},
+            "converted_amount": 1.0,
+            "converted_unit": {"id": 20, "name": "kilograms"}
         }"#;
         let conv: UnitConversion = serde_json::from_str(json).unwrap();
         assert_eq!(conv.id, 1);
-        assert_eq!(conv.from_unit, 10);
-        assert_eq!(conv.to_unit, 20);
-        assert_eq!(conv.factor, 1000.0);
+        assert_eq!(conv.name, Some("grams to kilograms".to_string()));
+        assert_eq!(conv.base_amount, Some(1000.0));
+        assert!(conv.base_unit.is_some());
+        assert_eq!(conv.converted_amount, Some(1.0));
+        assert!(conv.converted_unit.is_some());
     }
 
     // ============================================================================
