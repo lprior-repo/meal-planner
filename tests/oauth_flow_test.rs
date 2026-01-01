@@ -122,7 +122,7 @@ async fn test_oauth_step1_request_token_fields() {
 #[test]
 #[ignore = "requires database connection"]
 fn test_oauth_step2_authorization_url() {
-    let config = FatSecretConfig::new("key", "secret");
+    let config = FatSecretConfig::new("1234567890123456", "1234567890123456").unwrap();
     let oauth_token = "test_request_token_abc123";
 
     let auth_url = config.authorization_url(oauth_token);
@@ -220,7 +220,7 @@ fn test_oauth_flow_simulation() {
     );
 
     // Step 2: Redirect user to authorization URL
-    let config = FatSecretConfig::new("consumer_key", "consumer_secret");
+    let config = FatSecretConfig::new("1234567890123456", "1234567890123456").unwrap();
     let auth_url = config.authorization_url(&request_token.oauth_token);
 
     println!("\nStep 2: Redirect User to Authorize");
@@ -364,7 +364,7 @@ fn test_oauth_timestamp_generation() {
 fn test_oauth_flow_logic() {
     println!("\n=== OAuth Flow Logic Test ===\n");
 
-    let config = FatSecretConfig::new("test_key", "test_secret");
+    let config = FatSecretConfig::new("1234567890123456", "1234567890123456").unwrap();
 
     // Step 1: Simulate getting request token
     println!("Step 1: Get Request Token");
@@ -807,7 +807,7 @@ async fn test_token_storage_cleanup_expired() {
 #[tokio::test]
 #[ignore = "requires database connection"]
 async fn test_oauth_invalid_credentials() {
-    let config = FatSecretConfig::new("invalid_key", "invalid_secret");
+    let config = FatSecretConfig::new("1234567890123456", "1234567890123456").unwrap();
     let result = get_request_token(&config, "oob").await;
 
     // Should fail with authentication error

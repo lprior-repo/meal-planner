@@ -126,7 +126,7 @@ fn test_request_token_parsing_from_response() {
 
 #[test]
 fn test_authorization_url_generation() {
-    let config = FatSecretConfig::new("consumer_key", "consumer_secret");
+    let config = FatSecretConfig::new("1234567890123456", "1234567890123456").unwrap();
     let oauth_token = "test_request_token";
 
     let auth_url = config.authorization_url(oauth_token);
@@ -185,7 +185,7 @@ fn test_access_token_parsing_from_response() {
 
 #[test]
 fn test_config_creation() {
-    let config = FatSecretConfig::new("my_key", "my_secret");
+    let config = FatSecretConfig::new("1234567890123456", "1234567890123456").unwrap();
 
     assert_eq!(config.consumer_key, "my_key");
     assert_eq!(config.consumer_secret, "my_secret");
@@ -193,7 +193,7 @@ fn test_config_creation() {
 
 #[test]
 fn test_config_default_hosts() {
-    let config = FatSecretConfig::new("key", "secret");
+    let config = FatSecretConfig::new("1234567890123456", "1234567890123456").unwrap();
 
     assert_eq!(config.api_host(), "platform.fatsecret.com");
     assert_eq!(config.auth_host(), "authentication.fatsecret.com");
@@ -201,7 +201,7 @@ fn test_config_default_hosts() {
 
 #[test]
 fn test_config_api_url() {
-    let config = FatSecretConfig::new("key", "secret");
+    let config = FatSecretConfig::new("1234567890123456", "1234567890123456").unwrap();
 
     assert_eq!(
         config.api_url(),
