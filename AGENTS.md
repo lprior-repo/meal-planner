@@ -30,6 +30,155 @@ windmill/                 # Orchestration layer
     └── tandoor/          # Bash scripts calling binaries
 ```
 
+## ⚠️ CRITICAL: FatSecret OAuth Token Setup (Do This First!)
+
+**This must be done ONCE to enable all FatSecret features. Follow exactly.**
+
+### Step 1: Get Authorization URL
+
+```bash
+wmill script run f/fatsecret/oauth_start -d '{"fatsecret": "$res:u/admin/fatsecret_api", "callback_url": "oob"}' 2>&1 | tail -5
+```
+
+**Output will show:**
+```json
+{
+  "success": true,
+  "auth_url": "https://authentication.fatsecret.com/oauth/authorize?oauth_token=XXX",
+  "oauth_token": "REQUEST_TOKEN_HERE",
+  "oauth_token_secret": "REQUEST_TOKEN_SECRET_HERE"
+}
+```
+
+**Copy these values:**
+- `auth_url` → Visit in browser
+- `oauth_token` → Save temporarily
+- `oauth_token_secret` → Save temporarily
+
+### Step 2: Authorize in Browser
+
+1. **Visit the `auth_url`** in your browser
+2. Log in with FatSecret account
+3. Click "Authorize"
+4. **Copy the verifier code** (6-8 digits shown on screen)
+
+### Step 3: Exchange Verifier for Access Token
+
+```bash
+wmill script run f/fatsecret/oauth_complete -d '{
+  "fatsecret": "$res:u/admin/fatsecret_api",
+  "oauth_token": "REQUEST_TOKEN_HERE",
+  "oauth_token_secret": "REQUEST_TOKEN_SECRET_HERE",
+  "oauth_verifier": "YOUR_VERIFIER_CODE"
+}' 2>&1 | tail -10
+```
+
+**Output will show access tokens:**
+```json
+{
+  "success": true,
+  "oauth_token": "ACCESS_TOKEN_HERE",
+  "oauth_token_secret": "ACCESS_TOKEN_SECRET_HERE"
+}
+```
+
+**Copy these values** - they are your permanent access tokens.
+
+### Step 4: Store in Windmill (SECURELY) ⭐ EXACTLY WHERE TOKENS LIVE
+
+**The OAuth tokens MUST be stored as a Windmill Resource for all scripts to access them.**
+
+#### Database Location (Encrypted)
+```
+PostgreSQL: windmill database
+  ↓
+  Table: resource
+  ↓
+  Path: u/admin/fatsecret_oauth
+  ↓
+  Fields: consumer_key, consumer_secret, oauth_token, oauth_token_secret
+  ↓
+  Encryption: AES-256 with ENCRYPTION_KEY from docker-compose.yml
+```
+
+#### Quick Copy-Paste (Replace Values)
+
+```bash
+# 1. Get Windmill token
+TOKEN="hLg0fT2LyCggnu7ViGVFnmqejPF1uWsI"  # From ~/.config/windmill/remotes.ndjson
+
+# 2. Create resource with OAuth tokens
+curl -s -X POST "http://localhost/api/w/meal-planner/resources/create" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "path": "u/admin/fatsecret_oauth",
+    "resource_type": "fatsecret",
+    "value": {
+      "consumer_key": "YOUR_CONSUMER_KEY_HERE",
+      "consumer_secret": "YOUR_CONSUMER_SECRET_HERE",
+      "oauth_token": "ACCESS_TOKEN_HERE",
+      "oauth_token_secret": "ACCESS_TOKEN_SECRET_HERE"
+    }
+  }'
+
+# 3. Verify it's stored (encrypted in database)
+curl -s "http://localhost/api/w/meal-planner/resources/get/u/admin/fatsecret_oauth" \
+  -H "Authorization: Bearer $TOKEN" | jq .
+
+# 4. Direct DB verification (shows encrypted values)
+docker exec lewis-db-1 psql -U postgres -d windmill \
+  -c "SELECT path, workspace_id FROM resource WHERE path = 'u/admin/fatsecret_oauth';"
+```
+
+**Security Guarantee:**
+- ✅ Values encrypted at rest in PostgreSQL
+- ✅ Encryption key: `ENCRYPTION_KEY` from `/home/lewis/docker-compose.yml`
+- ✅ Only Windmill workers with matching key can decrypt
+- ✅ Resource ID: `u/admin/fatsecret_oauth` (readable path for scripts)
+- ✅ All scripts reference: `$res:u/admin/fatsecret_oauth`
+
+### Step 5: Verify Connection
+
+```bash
+wmill script run f/fatsecret/get_profile -d '{
+  "fatsecret": "$res:u/admin/fatsecret_oauth",
+  "oauth_token": "ACCESS_TOKEN_HERE",
+  "oauth_token_secret": "ACCESS_TOKEN_SECRET_HERE"
+}' 2>&1 | tail -15
+```
+
+**Success = User profile data appears**
+
+### Reference: Where Everything Lives
+
+| Item | Location | Secure? | Access |
+|------|----------|---------|--------|
+| Consumer Key/Secret | **Windmill Resource** `u/admin/fatsecret_api` | ✅ Encrypted at rest | `$res:u/admin/fatsecret_api` |
+| OAuth Access Tokens | **Windmill Resource** `u/admin/fatsecret_oauth` | ✅ Encrypted at rest | `$res:u/admin/fatsecret_oauth` |
+| Windmill DB | PostgreSQL `windmill` database → `resource` table | ✅ AES-256 encrypted | `docker exec lewis-db-1 psql` |
+| Encryption Key | `/home/lewis/docker-compose.yml` → `ENCRYPTION_KEY` env var | ⚠️ CRITICAL | Must match in workers |
+| Pass Store | `pass show meal-planner/fatsecret/{consumer_key,consumer_secret,oauth_encryption_key}` | ✅ GPG Encrypted | Local only |
+
+### Using Tokens in Scripts
+
+**All FatSecret scripts use the resource path syntax:**
+
+```bash
+# In wmill script calls:
+wmill script run f/fatsecret/get_profile -d '{
+  "fatsecret": "$res:u/admin/fatsecret_oauth"
+}'
+
+# In flow inputs:
+input_transforms:
+  fatsecret:
+    type: static
+    value: '$res:u/admin/fatsecret_oauth'
+```
+
+**NO hardcoding of tokens in code. ALWAYS use `$res:u/admin/fatsecret_oauth`.**
+
 ## Overview
 
 The meal-planner project uses **Beads** (bd) for issue tracking, dependency management, and agent coordination. All work must go through Beads to ensure proper tracking and visibility.
