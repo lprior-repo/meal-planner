@@ -3,10 +3,10 @@
 //! Retrieves all recipe book entries with optional pagination.
 //!
 //! JSON stdin:
-//!   {"tandoor": {"base_url": "...", "api_token": "..."}, "page": 1, "page_size": 10}
+//!   {"tandoor": {"`base_url"`: "...", "`api_token"`: "..."}, "page": 1, "`page_size"`: 10}
 //!
 //! JSON stdout:
-//!   {"success": true, "count": 5, "recipe_book_entries": [...]}
+//!   {"success": true, "count": 5, "`recipe_book_entries"`: [...]}
 //!   {"success": false, "error": "..."}
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level

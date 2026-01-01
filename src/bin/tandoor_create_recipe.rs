@@ -1,7 +1,7 @@
 //! Create recipe in Tandoor from scraped data
 //!
 //! JSON stdin:
-//!   {"tandoor": {...}, "recipe": {...}, "additional_keywords": `["tag1", "tag2"]`}
+//!   {"tandoor": {...}, "recipe": {...}, "`additional_keywords"`: `["tag1", "tag2"]`}
 //!
 //! JSON stdout:
 //!   {"success": true, "`recipe_id`": 123, "name": "..."}

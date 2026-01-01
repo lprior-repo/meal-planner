@@ -105,7 +105,7 @@ pub async fn get_exercise(
     Ok(response.exercise)
 }
 
-/// Get user's exercise entries for a specific date (exercise_entries.get.v2 - 3-legged)
+/// Get user's exercise entries for a specific date (`exercise_entries.get.v2` - 3-legged)
 pub async fn get_exercise_entries(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -181,7 +181,7 @@ pub async fn edit_exercise_entry(
     Ok(())
 }
 
-/// Get monthly exercise summary (exercise_entries.get_month.v2 - 3-legged)
+/// Get monthly exercise summary (`exercise_entries.get_month.v2` - 3-legged)
 pub async fn get_exercise_month_summary(
     config: &FatSecretConfig,
     access_token: &AccessToken,

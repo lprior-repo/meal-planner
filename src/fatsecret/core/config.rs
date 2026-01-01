@@ -16,7 +16,7 @@ pub const DEFAULT_AUTH_HOST: &str = "authentication.fatsecret.com";
 /// API endpoint path
 pub const API_PATH: &str = "/rest/server.api";
 
-/// Configuration error for FatSecret API
+/// Configuration error for `FatSecret` API
 #[derive(Debug, thiserror::Error)]
 pub enum ConfigError {
     #[error("Consumer key is empty or too short (minimum 16 characters)")]
@@ -78,8 +78,8 @@ impl FatSecretConfig {
     pub fn from_env() -> Result<Self, ConfigError> {
         let consumer_key =
             env::var("FATSECRET_CONSUMER_KEY").map_err(|_| ConfigError::ConsumerKey)?;
-        let consumer_secret = env::var("FATSECRET_CONSUMER_SECRET")
-            .map_err(|_| ConfigError::ConsumerSecret)?;
+        let consumer_secret =
+            env::var("FATSECRET_CONSUMER_SECRET").map_err(|_| ConfigError::ConsumerSecret)?;
 
         validate_credential(&consumer_key, true)?;
         validate_credential(&consumer_secret, false)?;
@@ -229,28 +229,19 @@ mod tests {
     #[test]
     fn test_null_byte_in_key_rejected() {
         let result = FatSecretConfig::new("123456789012345\0", "1234567890123456");
-        assert!(matches!(
-            result,
-            Err(ConfigError::CredentialCharacters)
-        ));
+        assert!(matches!(result, Err(ConfigError::CredentialCharacters)));
     }
 
     #[test]
     fn test_null_byte_in_secret_rejected() {
         let result = FatSecretConfig::new("1234567890123456", "123456789012345\0");
-        assert!(matches!(
-            result,
-            Err(ConfigError::CredentialCharacters)
-        ));
+        assert!(matches!(result, Err(ConfigError::CredentialCharacters)));
     }
 
     #[test]
     fn test_control_char_in_key_rejected() {
         let result = FatSecretConfig::new("123456789012345\x01", "1234567890123456");
-        assert!(matches!(
-            result,
-            Err(ConfigError::CredentialCharacters)
-        ));
+        assert!(matches!(result, Err(ConfigError::CredentialCharacters)));
     }
 
     #[test]

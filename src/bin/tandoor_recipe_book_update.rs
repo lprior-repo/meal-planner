@@ -4,7 +4,7 @@
 //!   {"tandoor": {...}, "id": 1, "name": "Updated Name", "description": "..."}
 //!
 //! JSON stdout:
-//!   {"success": true, "recipe_book": {...}}
+//!   {"success": true, "`recipe_book"`: {...}}
 //!   {"success": false, "error": "..."}
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level

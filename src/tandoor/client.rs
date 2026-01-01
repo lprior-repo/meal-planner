@@ -92,6 +92,9 @@ pub enum TandoorError {
 
     #[error("Failed to parse response: {0}")]
     ParseError(String),
+
+    #[error("Request too large: {size} bytes exceeds limit of {limit} bytes")]
+    RequestTooLarge { size: u64, limit: u64 },
 }
 
 /// Tandoor API client
@@ -118,6 +121,9 @@ impl TandoorClient {
         let client = Client::builder()
             .timeout(std::time::Duration::from_secs(30))
             .default_headers(headers.clone())
+            // DOS prevention: Limit connection pool to prevent resource exhaustion
+            .pool_max_idle_per_host(5)
+            .pool_idle_timeout(std::time::Duration::from_secs(60))
             .build()?;
 
         Ok(Self {
@@ -125,6 +131,20 @@ impl TandoorClient {
             base_url: config.base_url.trim_end_matches('/').to_string(),
             headers,
         })
+    }
+
+    /// Validate request body size against DOS limits
+    fn validate_request_size(&self, body: &[u8]) -> Result<(), TandoorError> {
+        const MAX_REQUEST_SIZE: u64 = 10 * 1024 * 1024; // 10MB
+        let size = u64::try_from(body.len()).unwrap_or(u64::MAX);
+
+        if size > MAX_REQUEST_SIZE {
+            return Err(TandoorError::RequestTooLarge {
+                size,
+                limit: MAX_REQUEST_SIZE,
+            });
+        }
+        Ok(())
     }
 
     /// Test connection by fetching recipes
@@ -1356,7 +1376,7 @@ impl TandoorClient {
             .map_err(|e| TandoorError::ParseError(e.to_string()))
     }
 
-    /// Update a recipe (using serde_json::Value)
+    /// Update a recipe (using `serde_json::Value`)
     pub fn update_recipe(
         &self,
         id: i64,

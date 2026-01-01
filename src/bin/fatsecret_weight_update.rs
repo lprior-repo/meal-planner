@@ -8,8 +8,7 @@
 //!
 //! JSON stdout: `{"success": true}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit is acceptable at the top level
 
 use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig};
 use meal_planner::fatsecret::weight::{update_weight, WeightUpdate};
@@ -57,14 +56,17 @@ struct ErrorOutput {
 async fn main() {
     match run().await {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&output).expect("Failed to serialize output JSON")
+            );
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!("{}", serde_json::to_string(&error).expect("Failed to serialize error JSON"));
             std::process::exit(1);
         }
     }
@@ -76,7 +78,8 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
     let input: Input = serde_json::from_str(&input_str)?;
 
     let config = match input.fatsecret {
-        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret).expect("Invalid FatSecret credentials"),
+        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret)
+            .expect("Invalid FatSecret credentials"),
         None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 

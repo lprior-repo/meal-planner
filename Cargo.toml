@@ -433,6 +433,14 @@ name = "fatsecret_recipe_types_get"
 path = "src/bin/fatsecret_recipe_types_get.rs"
 
 [[bin]]
+name = "fatsecret_food_find_barcode"
+path = "src/bin/fatsecret_food_find_barcode.rs"
+
+[[bin]]
+name = "fatsecret_foods_autocomplete"
+path = "src/bin/fatsecret_foods_autocomplete.rs"
+
+[[bin]]
 name = "tandoor_keyword_list"
 path = "src/bin/tandoor_keyword_list.rs"
 
@@ -529,6 +537,14 @@ name = "tandoor_recipe_upload_image"
 path = "src/bin/tandoor_recipe_upload_image.rs"
 
 [[bin]]
+name = "tandoor_recipe_delete"
+path = "src/bin/tandoor_recipe_delete.rs"
+
+[[bin]]
+name = "tandoor_recipe_update"
+path = "src/bin/tandoor_recipe_update.rs"
+
+[[bin]]
 name = "tandoor_user_get"
 path = "src/bin/tandoor_user_get.rs"
 
@@ -549,12 +565,72 @@ name = "tandoor_shopping_list_recipe_delete"
 path = "src/bin/tandoor_shopping_list_recipe_delete.rs"
 
 [[bin]]
+name = "tandoor_shopping_list_recipe_add"
+path = "src/bin/tandoor_shopping_list_recipe_add.rs"
+
+[[bin]]
 name = "tandoor_shopping_list_entry_bulk"
 path = "src/bin/tandoor_shopping_list_entry_bulk.rs"
 
 [[bin]]
+name = "tandoor_shopping_list_entry_create"
+path = "src/bin/tandoor_shopping_list_entry_create.rs"
+
+[[bin]]
+name = "tandoor_shopping_list_entry_delete"
+path = "src/bin/tandoor_shopping_list_entry_delete.rs"
+
+[[bin]]
+name = "tandoor_shopping_list_entry_list"
+path = "src/bin/tandoor_shopping_list_entry_list.rs"
+
+[[bin]]
+name = "tandoor_shopping_list_entry_update"
+path = "src/bin/tandoor_shopping_list_entry_update.rs"
+
+[[bin]]
 name = "tandoor_meal_plan_export_ical"
 path = "src/bin/tandoor_meal_plan_export_ical.rs"
+
+[[bin]]
+name = "tandoor_meal_plan_create"
+path = "src/bin/tandoor_meal_plan_create.rs"
+
+[[bin]]
+name = "tandoor_meal_plan_delete"
+path = "src/bin/tandoor_meal_plan_delete.rs"
+
+[[bin]]
+name = "tandoor_meal_plan_get"
+path = "src/bin/tandoor_meal_plan_get.rs"
+
+[[bin]]
+name = "tandoor_meal_plan_list"
+path = "src/bin/tandoor_meal_plan_list.rs"
+
+[[bin]]
+name = "tandoor_meal_plan_update"
+path = "src/bin/tandoor_meal_plan_update.rs"
+
+[[bin]]
+name = "tandoor_meal_type_create"
+path = "src/bin/tandoor_meal_type_create.rs"
+
+[[bin]]
+name = "tandoor_meal_type_delete"
+path = "src/bin/tandoor_meal_type_delete.rs"
+
+[[bin]]
+name = "tandoor_meal_type_get"
+path = "src/bin/tandoor_meal_type_get.rs"
+
+[[bin]]
+name = "tandoor_meal_type_list"
+path = "src/bin/tandoor_meal_type_list.rs"
+
+[[bin]]
+name = "tandoor_meal_type_update"
+path = "src/bin/tandoor_meal_type_update.rs"
 
 [[bin]]
 name = "tandoor_step_list"

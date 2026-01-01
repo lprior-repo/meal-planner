@@ -3,7 +3,7 @@
 //! Exchanges the request token for an access token using a manually-entered verifier.
 //! This is for out-of-band (oob) OAuth flows where user copies the verifier code.
 //!
-//! Takes the pending token from oauth_start as input (via Windmill Resource parameter).
+//! Takes the pending token from `oauth_start` as input (via Windmill Resource parameter).
 //! Returns the access token which should be stored as a Windmill Resource.
 //!
 //! JSON stdin (Windmill format):
@@ -15,10 +15,11 @@
 //! JSON stdout: `{"success": true, "oauth_token": "...", "oauth_token_secret": "..."}`
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::fatsecret::core::oauth::{get_access_token, RequestToken};
 use meal_planner::fatsecret::core::FatSecretConfig;
+use meal_planner::fatsecret::crypto::validate_encryption_at_startup;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -33,9 +34,9 @@ struct FatSecretResource {
 struct Input {
     /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
-    /// Pending request token from oauth_start
+    /// Pending request token from `oauth_start`
     oauth_token: String,
-    /// Pending request token secret from oauth_start
+    /// Pending request token secret from `oauth_start`
     oauth_token_secret: String,
     /// OAuth verifier code from user authorization
     oauth_verifier: String,
@@ -74,6 +75,12 @@ async fn main() {
 }
 
 async fn run() -> Result<Output, Box<dyn std::error::Error>> {
+    // Validate encryption configuration at startup (Security Issue MP-2jjo)
+    // This binary completes OAuth flow which typically results in token storage
+    validate_encryption_at_startup().map_err(|e| {
+        format!("Encryption validation failed: {}. Please set OAUTH_ENCRYPTION_KEY environment variable.", e)
+    })?;
+
     // Read input
     let mut input_str = String::new();
     io::stdin().read_to_string(&mut input_str)?;
@@ -81,7 +88,8 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
 
     // Get config: prefer input, fall back to environment
     let config = match input.fatsecret {
-        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret).expect("Invalid FatSecret credentials"),
+        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret)
+            .expect("Invalid FatSecret credentials"),
         None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 

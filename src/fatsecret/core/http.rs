@@ -5,6 +5,7 @@
 
 use reqwest::{Client, Method};
 use std::collections::HashMap;
+use std::time::Duration;
 
 use crate::fatsecret::core::errors::parse_error_response;
 use crate::fatsecret::core::oauth::{build_oauth_params, oauth_encode};
@@ -37,8 +38,15 @@ pub async fn make_oauth_request(
         token_secret,
     );
 
-    let client = Client::new();
-    let response = if method == Method::GET {
+    // DOS prevention: Configure client with size limits
+    let client = Client::builder()
+        .timeout(Duration::from_secs(30))
+        // DOS prevention: Limit connection pool to prevent resource exhaustion
+        .pool_max_idle_per_host(3)
+        .pool_idle_timeout(Duration::from_secs(30))
+        .build()
+        .map_err(|e| FatSecretError::NetworkError(e.to_string()))?;
+    let response: reqwest::Response = if method == Method::GET {
         // For GET: parameters go in query string
         let query: Vec<_> = oauth_params
             .iter()

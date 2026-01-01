@@ -121,7 +121,7 @@ pub struct TandoorConfig {
 }
 
 impl TandoorConfig {
-    /// Create TandoorConfig from environment variables
+    /// Create `TandoorConfig` from environment variables
     /// Looks for `TANDOOR_BASE_URL` and `TANDOOR_API_TOKEN`
     pub fn from_env() -> Option<Self> {
         let base_url = std::env::var("TANDOOR_BASE_URL").ok()?;
@@ -542,7 +542,7 @@ pub struct CreateMealPlanRequest {
     pub meal_type: i64,
     /// Start date (ISO date string)
     pub from_date: String,
-    /// End date (ISO date string, optional - defaults to from_date)
+    /// End date (ISO date string, optional - defaults to `from_date`)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to_date: Option<String>,
     /// Number of servings

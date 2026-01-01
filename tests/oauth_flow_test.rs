@@ -37,16 +37,13 @@ use std::env;
 /// Get `FatSecret` config from environment or test with defaults
 fn get_test_config() -> Option<FatSecretConfig> {
     // Try environment variables first
-    if let Some(config) = FatSecretConfig::from_env() {
+    if let Ok(config) = FatSecretConfig::from_env() {
         return Some(config);
     }
 
     // For testing without credentials, use test values
     // This will fail with real API but allows testing signature generation
-    Some(FatSecretConfig::new(
-        "test_consumer_key",
-        "test_consumer_secret",
-    ))
+    FatSecretConfig::new("test_consumer_key", "test_consumer_secret").ok()
 }
 
 /// Check if we have valid credentials for real API testing

@@ -187,8 +187,8 @@ fn test_access_token_parsing_from_response() {
 fn test_config_creation() {
     let config = FatSecretConfig::new("1234567890123456", "1234567890123456").unwrap();
 
-    assert_eq!(config.consumer_key, "my_key");
-    assert_eq!(config.consumer_secret, "my_secret");
+    assert_eq!(config.consumer_key, "1234567890123456");
+    assert_eq!(config.consumer_secret, "1234567890123456");
 }
 
 #[test]

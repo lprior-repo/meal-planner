@@ -197,6 +197,131 @@ pub fn encryption_configured() -> bool {
     }
 }
 
+/// Validate encryption configuration at startup
+///
+/// This function should be called during application initialization
+/// to ensure encryption keys are properly configured before any
+/// cryptographic operations are attempted.
+///
+/// # Returns
+///
+/// `Ok(())` if encryption is properly configured
+/// `Err(CryptoError)` with detailed error message if not configured
+///
+/// # Example
+///
+/// ```no_run
+/// use meal_planner::fatsecret::crypto::validate_encryption_at_startup;
+///
+/// fn main() -> Result<(), Box<dyn std::error::Error>> {
+///     // Validate encryption before starting the application
+///     validate_encryption_at_startup()?;
+///     
+///     // Continue with application logic...
+///     Ok(())
+/// }
+/// ```
+pub fn validate_encryption_at_startup() -> Result<(), CryptoError> {
+    match get_encryption_key() {
+        Ok(_key_bytes) => {
+            // Test the key by performing a simple encrypt/decrypt operation
+            // This ensures the key is not just valid format but also functional
+            let test_plaintext = "startup_validation_test";
+
+            // If encryption/decryption fails with this key, it indicates a problem
+            match encrypt(test_plaintext).and_then(|encrypted| decrypt(&encrypted)) {
+                Ok(decrypted) if decrypted == test_plaintext => Ok(()),
+                Ok(_) => Err(CryptoError::DecryptionFailed),
+                Err(e) => Err(e),
+            }
+        }
+        Err(e) => {
+            // Provide more descriptive error messages for common issues
+            match e {
+                CryptoError::KeyNotConfigured => {
+                    eprintln!(
+                        "SECURITY ERROR: OAUTH_ENCRYPTION_KEY environment variable is not set"
+                    );
+                    eprintln!("To fix this issue:");
+                    eprintln!("1. Generate a secure key: cargo run --bin generate_encryption_key");
+                    eprintln!("2. Set the environment variable: export OAUTH_ENCRYPTION_KEY='your_64_char_hex_key'");
+                    eprintln!("3. Restart the application");
+                }
+                CryptoError::KeyInvalidLength(len) => {
+                    eprintln!(
+                        "SECURITY ERROR: OAUTH_ENCRYPTION_KEY has invalid length: {} characters",
+                        len
+                    );
+                    eprintln!("Expected: 64 hex characters (32 bytes for AES-256)");
+                    eprintln!("To fix this: Generate a new key with: cargo run --bin generate_encryption_key");
+                }
+                CryptoError::KeyInvalidHex => {
+                    eprintln!("SECURITY ERROR: OAUTH_ENCRYPTION_KEY contains invalid hexadecimal characters");
+                    eprintln!("Expected: 64 valid hex characters (0-9, a-f, A-F)");
+                    eprintln!("To fix this: Generate a new key with: cargo run --bin generate_encryption_key");
+                }
+                _ => {
+                    eprintln!(
+                        "SECURITY ERROR: Unexpected error validating encryption key: {}",
+                        e
+                    );
+                }
+            }
+            Err(e)
+        }
+    }
+}
+
+/// Validate encryption configuration with detailed error reporting
+///
+/// Similar to `validate_encryption_at_startup()` but returns detailed
+/// validation information rather than just success/failure.
+///
+/// # Returns
+///
+/// `Ok(details)` with validation details if successful
+/// `Err(CryptoError)` if validation fails
+pub fn validate_encryption_detailed() -> Result<ValidationDetails, CryptoError> {
+    let key_str =
+        std::env::var("OAUTH_ENCRYPTION_KEY").map_err(|_| CryptoError::KeyNotConfigured)?;
+
+    let details = ValidationDetails {
+        key_is_set: true,
+        key_length: key_str.len(),
+        key_is_valid_hex: key_str.chars().all(|c| c.is_ascii_hexdigit()),
+        key_correct_length: key_str.len() == 64,
+    };
+
+    // Perform actual encryption test if basic checks pass
+    if details.key_is_valid_hex && details.key_correct_length {
+        let test_plaintext = "startup_validation_test";
+        match encrypt(test_plaintext).and_then(|encrypted| decrypt(&encrypted)) {
+            Ok(decrypted) if decrypted == test_plaintext => Ok(details),
+            Ok(_) => Err(CryptoError::DecryptionFailed),
+            Err(e) => Err(e),
+        }
+    } else {
+        Err(if !details.key_correct_length {
+            CryptoError::KeyInvalidLength(details.key_length)
+        } else {
+            CryptoError::KeyInvalidHex
+        })
+    }
+}
+
+/// Details about encryption key validation
+#[derive(Debug, Clone)]
+pub struct ValidationDetails {
+    /// Whether the OAUTH_ENCRYPTION_KEY environment variable is set
+    pub key_is_set: bool,
+    /// Length of the key string
+    pub key_length: usize,
+    /// Whether the key contains only valid hexadecimal characters
+    pub key_is_valid_hex: bool,
+    /// Whether the key has the correct length (64 characters)
+    pub key_correct_length: bool,
+}
+
 /// Get encryption key from environment variable
 ///
 /// Expects a 64-character hex string (32 bytes for AES-256)

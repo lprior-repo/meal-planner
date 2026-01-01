@@ -5,13 +5,13 @@
 //!
 //! JSON input (CLI arg or stdin):
 //!   `{"fatsecret": {...}, "access_token": "...", "access_secret": "...",
-//!     "`food_id`": "12345", "food_entry_name": "Chicken Breast",
-//!     "`serving_id`": "54321", "number_of_units": 1.5,
-//!     "meal": "lunch", "`date_int`": 20088}`
+//!     "``food_id``": "12345", "food_entry_name": "Chicken Breast",
+//!     "``serving_id``": "54321", "number_of_units": 1.5,
+//!     "meal": "lunch", "``date_int``": 20088}`
 //!
 //! JSON stdout: `{"success": true, "food_entry_id": "123456789"}`
 
-#![allow(clippy::exit, clippy::unwrap_used)]
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig};
 use meal_planner::fatsecret::diary::{create_food_entry, FoodEntryInput, MealType};
@@ -88,7 +88,8 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
 
     // Get config: prefer input, fall back to environment
     let config = match input.fatsecret {
-        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret).expect("Invalid FatSecret credentials"),
+        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret)
+            .map_err(|e| format!("Invalid FatSecret credentials: {}", e))?,
         None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 

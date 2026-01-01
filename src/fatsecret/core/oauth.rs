@@ -301,7 +301,7 @@ pub fn oauth_encode(s: &str) -> String {
 
 /// Create OAuth 1.0a signature base string
 ///
-/// Format: METHOD&URL&SORTED_PARAMS
+/// Format: `METHOD&URL&SORTED_PARAMS`
 /// All components must be percent-encoded
 pub fn create_signature_base_string(
     method: &str,
@@ -327,7 +327,7 @@ pub fn create_signature_base_string(
 
 /// Create HMAC-SHA1 signature for OAuth 1.0a
 ///
-/// Signing key = `consumer_secret`& OR `consumer_secret`&token_secret
+/// Signing key = `consumer_secret`& OR `consumer_secret`&`token_secret`
 /// Note: The signing key components are NOT percent-encoded per OAuth 1.0a spec
 /// Result is base64-encoded
 pub fn create_signature(

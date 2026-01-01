@@ -1,37 +1,32 @@
-//! List recipe books from Tandoor with pagination
+//! Get a specific keyword from Tandoor
 //!
-//! Retrieves all recipe books with optional pagination.
+//! Retrieves a keyword by ID.
 //!
 //! JSON stdin:
-//!   {"tandoor": {"`base_url"`: "...", "`api_token"`: "..."}, "page": 1, "`page_size"`: 10}
+//!   `{"tandoor": {"base_url": "...", "api_token": "..."}, "id": 1}`
 //!
 //! JSON stdout:
-//!   {"success": true, "count": 5, "`recipe_books"`: [...]}
-//!   {"success": false, "error": "..."}
+//!   `{"success": true, "keyword": {...}}`
+//!   `{"success": false, "error": "..."}`
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
 
-use meal_planner::tandoor::{RecipeBook, TandoorClient, TandoorConfig};
+use meal_planner::tandoor::{Keyword, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
 #[derive(Deserialize)]
 struct Input {
     tandoor: TandoorConfig,
-    #[serde(default)]
-    page: Option<u32>,
-    #[serde(default)]
-    page_size: Option<u32>,
+    id: i64,
 }
 
 #[derive(Serialize)]
 struct Output {
     success: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    count: Option<i64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    recipe_books: Option<Vec<RecipeBook>>,
+    keyword: Option<Keyword>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error: Option<String>,
 }
@@ -42,8 +37,7 @@ fn main() {
         Err(e) => {
             let error = Output {
                 success: false,
-                count: None,
-                recipe_books: None,
+                keyword: None,
                 error: Some(e.to_string()),
             };
             println!("{}", serde_json::to_string(&error).unwrap());
@@ -59,12 +53,11 @@ fn run() -> anyhow::Result<Output> {
     let parsed: Input = serde_json::from_str(&input)?;
     let client = TandoorClient::new(&parsed.tandoor)?;
 
-    let response = client.list_recipe_books(parsed.page, parsed.page_size)?;
+    let keyword = client.get_keyword(parsed.id)?;
 
     Ok(Output {
         success: true,
-        count: Some(response.count),
-        recipe_books: Some(response.results),
+        keyword: Some(keyword),
         error: None,
     })
 }
@@ -75,30 +68,21 @@ mod tests {
 
     #[test]
     fn test_input_parsing() {
-        let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "page": 1, "page_size": 10}"#;
+        let json =
+            r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "id": 1}"#;
         let parsed: Input = serde_json::from_str(json).unwrap();
-        assert_eq!(parsed.page, Some(1));
-        assert_eq!(parsed.page_size, Some(10));
-    }
-
-    #[test]
-    fn test_input_parsing_no_pagination() {
-        let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
-        assert_eq!(parsed.page, None);
-        assert_eq!(parsed.page_size, None);
+        assert_eq!(parsed.id, 1);
+        assert_eq!(parsed.tandoor.base_url, "http://localhost:8090");
     }
 
     #[test]
     fn test_output_serialization() {
         let output = Output {
             success: true,
-            count: Some(5),
-            recipe_books: None,
+            keyword: None,
             error: None,
         };
         let json = serde_json::to_string(&output).unwrap();
         assert!(json.contains("\"success\":true"));
-        assert!(json.contains("\"count\":5"));
     }
 }

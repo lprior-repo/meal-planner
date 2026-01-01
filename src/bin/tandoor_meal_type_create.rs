@@ -6,7 +6,7 @@
 //!   {"tandoor": {...}, "name": "Breakfast", "order": 0, "time": "08:00", "color": null, "default": false}
 //!
 //! JSON stdout:
-//!   {"success": true, "meal_type": {...}}
+//!   {"success": true, "`meal_type"`: {...}}
 //!   {"success": false, "error": "..."}
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level

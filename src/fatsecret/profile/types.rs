@@ -84,7 +84,7 @@
 //! # }
 //! ```
 //!
-//! ## Converting ProfileAuth to `AccessToken`
+//! ## Converting `ProfileAuth` to `AccessToken`
 //!
 //! ```rust
 //! use meal_planner::fatsecret::core::oauth::`AccessToken`;
@@ -177,19 +177,19 @@ pub struct ProfileResponse {
 // Profile Authentication Types
 // ============================================================================
 
-/// Profile authentication tokens from profile.create and profile.get_auth APIs
+/// Profile authentication tokens from profile.create and `profile.get_auth` APIs
 ///
 /// After creating a profile or retrieving auth credentials, `FatSecret` returns
 /// OAuth credentials that can be used for all subsequent authenticated API calls.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProfileAuth {
-    /// OAuth access token for the profile (returned as "auth_token" in API)
+    /// OAuth access token for the profile (returned as "`auth_token`" in API)
     pub auth_token: String,
-    /// OAuth token secret for signing requests (returned as "auth_secret" in API)
+    /// OAuth token secret for signing requests (returned as "`auth_secret`" in API)
     pub auth_secret: String,
 }
 
-/// Wrapper for ProfileAuth response
+/// Wrapper for `ProfileAuth` response
 #[derive(Debug, Deserialize)]
 pub struct ProfileAuthResponseWrapper {
     /// The user's profile authentication credentials
@@ -203,5 +203,5 @@ pub struct ProfileCreateInput {
     pub user_id: String,
 }
 
-/// Response from profile.get_auth API
+/// Response from `profile.get_auth` API
 pub type ProfileAuthResponse = ProfileAuth;

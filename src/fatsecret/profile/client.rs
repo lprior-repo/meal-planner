@@ -13,7 +13,7 @@
 //!
 //! All functions require:
 //! - `config: &FatSecretConfig` - Your `FatSecret` API credentials (consumer key/secret)
-//! - `access_token: &AccessToken` - OAuth access token (app-level for create/get_auth, user-level for get)
+//! - `access_token: &AccessToken` - OAuth access token (app-level for `create/get_auth`, user-level for get)
 //!
 //! # Usage Pattern
 //!
@@ -141,7 +141,7 @@ pub async fn create_profile(
 
 /// Get profile authentication credentials for a user
 ///
-/// API Method: profile.get_auth
+/// API Method: `profile.get_auth`
 pub async fn get_profile_auth(
     config: &FatSecretConfig,
     access_token: &AccessToken,

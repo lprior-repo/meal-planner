@@ -97,7 +97,7 @@ use serde::{Deserialize, Serialize};
 pub struct ExerciseId(String);
 
 impl ExerciseId {
-    /// Creates a new ExerciseId from the given value
+    /// Creates a new `ExerciseId` from the given value
     pub fn new(id: impl Into<String>) -> Self {
         Self(id.into())
     }
@@ -114,7 +114,7 @@ impl ExerciseId {
 pub struct ExerciseEntryId(String);
 
 impl ExerciseEntryId {
-    /// Creates a new ExerciseEntryId from the given value
+    /// Creates a new `ExerciseEntryId` from the given value
     pub fn new(id: impl Into<String>) -> Self {
         Self(id.into())
     }
@@ -227,7 +227,7 @@ pub struct ExerciseMonthSummary {
     pub year: i32,
 }
 
-/// Wrapper for ExerciseEntry response (list)
+/// Wrapper for `ExerciseEntry` response (list)
 #[derive(Debug, Deserialize)]
 pub struct ExerciseEntriesResponse {
     /// List of exercise entries returned from the API
@@ -239,7 +239,7 @@ pub struct ExerciseEntriesResponse {
     pub exercise_entries: Vec<ExerciseEntry>,
 }
 
-/// Wrapper for single ExerciseEntry response (used in create/edit)
+/// Wrapper for single `ExerciseEntry` response (used in create/edit)
 #[derive(Debug, Deserialize)]
 pub struct SingleExerciseEntryResponse {
     /// The created or updated exercise entry
@@ -253,7 +253,7 @@ pub struct ExerciseEntryIdOnly {
     pub exercise_entry_id: ExerciseEntryId,
 }
 
-/// Wrapper for ExerciseMonthSummary response
+/// Wrapper for `ExerciseMonthSummary` response
 #[derive(Debug, Deserialize)]
 pub struct ExerciseMonthSummaryResponse {
     /// The monthly exercise summary data

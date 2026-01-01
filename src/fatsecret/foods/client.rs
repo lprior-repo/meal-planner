@@ -22,9 +22,9 @@
 //! | [`get_food`] | `food.get.v5` | Get complete food details by ID |
 //! | [`search_foods`] | `foods.search` | Search foods with pagination |
 //! | [`search_foods_simple`] | `foods.search` | Search with defaults (page 0, max 20) |
-//! | [`list_foods_with_options`] | `foods.search` | Search with optional page/max_results |
+//! | [`list_foods_with_options`] | `foods.search` | Search with optional `page/max_results` |
 //! | [`autocomplete_foods`] | `foods.autocomplete.v2` | Get autocomplete suggestions |
-//! | [`autocomplete_foods_with_options`] | `foods.autocomplete.v2` | Autocomplete with max_results |
+//! | [`autocomplete_foods_with_options`] | `foods.autocomplete.v2` | Autocomplete with `max_results` |
 //! | [`find_food_by_barcode`] | `food.find_id_for_barcode.v2` | Lookup food by barcode |
 //!
 //! # Examples
@@ -212,7 +212,7 @@ pub async fn search_foods_simple(
 // Food Barcode Lookup API (food.find_id_for_barcode.v2)
 // ============================================================================
 
-/// Find food ID by barcode using food.find_id_for_barcode.v2 endpoint
+/// Find food ID by barcode using `food.find_id_for_barcode.v2` endpoint
 ///
 /// This is a 2-legged OAuth request (no user token required).
 pub async fn find_food_by_barcode(

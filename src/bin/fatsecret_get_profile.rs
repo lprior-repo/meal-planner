@@ -1,7 +1,7 @@
 //! Get `FatSecret` user profile
 //!
 //! Retrieves the authenticated user's profile information.
-//! Requires access token credentials passed as parameters (from oauth_complete or Windmill Resource).
+//! Requires access token credentials passed as parameters (from `oauth_complete` or Windmill Resource).
 //!
 //! JSON stdin (Windmill format):
 //!   `{"fatsecret": {"consumer_key": "...", "consumer_secret": "..."}, "oauth_token": "...", "oauth_token_secret": "..."}`
@@ -12,7 +12,7 @@
 //! JSON stdout: `{"success": true, "profile": {...}}`
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig};
 use meal_planner::fatsecret::profile::get_profile;
@@ -73,7 +73,8 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
 
     // Get config: prefer input, fall back to environment
     let config = match input.fatsecret {
-        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret).expect("Invalid FatSecret credentials"),
+        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret)
+            .expect("Invalid FatSecret credentials"),
         None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 

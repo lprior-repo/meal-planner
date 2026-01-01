@@ -1,8 +1,8 @@
 //! Create a new `FatSecret` exercise entry
 //!
 //! Logs an exercise session with duration. The `FatSecret` API uses
-//! the same endpoint (exercise_entry.edit) for both create and update operations.
-//! This binary handles the create case by not including exercise_entry_id.
+//! the same endpoint (`exercise_entry.edit`) for both create and update operations.
+//! This binary handles the create case by not including `exercise_entry_id`.
 //!
 //! This is a 3-legged OAuth request (requires user access token).
 //!
@@ -12,7 +12,7 @@
 //! JSON stdout: `{"success": true, "exercise_entry_id": "..."}`
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig};
 use meal_planner::fatsecret::exercise::{create_exercise_entry, ExerciseEntryInput, ExerciseId};
@@ -76,7 +76,8 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
     let input: Input = serde_json::from_str(&input_str)?;
 
     let config = match input.fatsecret {
-        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret).expect("Invalid FatSecret credentials"),
+        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret)
+            .expect("Invalid FatSecret credentials"),
         None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 

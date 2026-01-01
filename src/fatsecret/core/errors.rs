@@ -416,6 +416,10 @@ pub enum FatSecretError {
     /// Invalid response structure from API
     #[error("Invalid response from API: {0}")]
     InvalidResponse(String),
+
+    /// HTTP client error (reqwest-level errors)
+    #[error("HTTP error: {0}")]
+    HttpError(String),
 }
 
 impl FatSecretError {
@@ -479,25 +483,8 @@ impl FatSecretError {
             | Self::ParseError(_)
             | Self::OAuthError(_)
             | Self::ConfigMissing
-            | Self::InvalidResponse(_) => false,
-        }
-    }
-
-    /// Determine if an error is authentication-related
-    ///
-    /// Auth errors include:
-    /// - OAuth errors
-    /// - Missing configuration
-    /// - API errors related to OAuth (codes 2-9)
-    #[must_use]
-    pub fn is_auth_error(&self) -> bool {
-        match self {
-            Self::OAuthError(_) | Self::ConfigMissing => true,
-            Self::ApiError { code, .. } => code.is_auth_related(),
-            Self::RequestFailed { .. }
-            | Self::ParseError(_)
-            | Self::NetworkError(_)
-            | Self::InvalidResponse(_) => false,
+            | Self::InvalidResponse(_)
+            | Self::HttpError(_) => false,
         }
     }
 
@@ -510,42 +497,9 @@ impl FatSecretError {
             | Self::ParseError(_)
             | Self::OAuthError(_)
             | Self::NetworkError(_)
-            | Self::ConfigMissing
-            | Self::InvalidResponse(_) => None,
-        }
-    }
-
-    /// Determine if an error indicates a premium subscription is required
-    ///
-    /// Returns true only for API error code 24 (Feature not available for current plan).
-    /// Note: Error code 12 (`MethodNotAccessible`) is an auth/scope issue, NOT premium.
-    #[must_use]
-    pub fn is_premium_required(&self) -> bool {
-        matches!(
-            self,
-            Self::ApiError {
-                code: ApiErrorCode::PremiumRequired,
-                ..
-            }
-        )
-    }
-
-    /// Determine if an error indicates a resource was not found
-    ///
-    /// Returns true for:
-    /// - Error code 204 (Food entry not found)
-    /// - Error code 207 (No entries found)
-    /// - Error code 106 (Invalid ID - often means not found)
-    #[must_use]
-    pub fn is_not_found(&self) -> bool {
-        match self {
-            Self::ApiError { code, .. } => code.is_not_found(),
-            Self::RequestFailed { .. }
-            | Self::ParseError(_)
-            | Self::OAuthError(_)
-            | Self::NetworkError(_)
-            | Self::ConfigMissing
-            | Self::InvalidResponse(_) => false,
+            | Self::InvalidResponse(_)
+            | Self::HttpError(_)
+            | Self::ConfigMissing => None,
         }
     }
 }

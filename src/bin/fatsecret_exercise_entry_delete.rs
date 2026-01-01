@@ -9,7 +9,7 @@
 //! JSON stdout: `{"success": true}`
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig};
 use meal_planner::fatsecret::exercise::{delete_exercise_entry, ExerciseEntryId};
@@ -68,7 +68,8 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
     let input: Input = serde_json::from_str(&input_str)?;
 
     let config = match input.fatsecret {
-        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret).expect("Invalid FatSecret credentials"),
+        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret)
+            .expect("Invalid FatSecret credentials"),
         None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 

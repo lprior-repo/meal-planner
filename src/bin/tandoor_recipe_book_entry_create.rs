@@ -3,10 +3,10 @@
 //! Adds a recipe to a recipe book.
 //!
 //! JSON stdin:
-//!   {"tandoor": {...}, "recipe_book": 1, "recipe": 2, "position": 0}
+//!   {"tandoor": {...}, "`recipe_book"`: 1, "recipe": 2, "position": 0}
 //!
 //! JSON stdout:
-//!   {"success": true, "recipe_book_entry": {...}}
+//!   {"success": true, "`recipe_book_entry"`: {...}}
 //!   {"success": false, "error": "..."}
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level

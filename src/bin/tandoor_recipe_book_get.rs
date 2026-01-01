@@ -3,10 +3,10 @@
 //! Retrieves a recipe book by ID.
 //!
 //! JSON stdin:
-//!   {"tandoor": {"base_url": "...", "api_token": "..."}, "id": 1}
+//!   {"tandoor": {"`base_url"`: "...", "`api_token"`: "..."}, "id": 1}
 //!
 //! JSON stdout:
-//!   {"success": true, "recipe_book": {...}}
+//!   {"success": true, "`recipe_book"`: {...}}
 //!   {"success": false, "error": "..."}
 
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
