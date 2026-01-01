@@ -240,7 +240,7 @@ pub struct RecipeFromSourceResponse {
 }
 
 /// Imported recipe structure
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SourceImportRecipe {
     /// Recipe name
     pub name: String,
@@ -280,7 +280,7 @@ fn default_servings() -> i32 {
 }
 
 /// Import step
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SourceImportStep {
     /// Step instructions
     pub instruction: String,
@@ -298,7 +298,7 @@ fn default_true() -> bool {
 }
 
 /// Import ingredient
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SourceImportIngredient {
     /// Quantity amount
     pub amount: Option<f64>,
@@ -315,21 +315,21 @@ pub struct SourceImportIngredient {
 }
 
 /// Food reference for import
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SourceImportFood {
     /// Food name
     pub name: String,
 }
 
 /// Unit reference for import
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SourceImportUnit {
     /// Unit name
     pub name: String,
 }
 
 /// Keyword for import
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SourceImportKeyword {
     /// Keyword ID (if existing)
     pub id: Option<i64>,
@@ -340,7 +340,7 @@ pub struct SourceImportKeyword {
 }
 
 /// Duplicate recipe info
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SourceImportDuplicate {
     /// Recipe ID
     pub id: i64,
@@ -1262,10 +1262,8 @@ pub struct UpdateSupermarketRequest {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct RecipeImage {
     /// Image URL (returned after upload)
-    #[serde(default)]
     pub image: Option<String>,
     /// External image URL
-    #[serde(default)]
     pub image_url: Option<String>,
 }
 
@@ -1274,13 +1272,12 @@ pub struct RecipeImage {
 // ============================================================================
 
 /// Response from AI import (same as recipe from source)
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct AiImportResponse {
     /// Recipe data
     #[serde(alias = "recipe_json")]
     pub recipe: Option<SourceImportRecipe>,
     /// Recipe ID if an existing recipe was updated
-    #[serde(default)]
     pub recipe_id: Option<i64>,
     /// Images from the imported file
     #[serde(default)]
@@ -1294,4 +1291,207 @@ pub struct AiImportResponse {
     /// Duplicate recipes found
     #[serde(default)]
     pub duplicates: Vec<SourceImportDuplicate>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ============================================================================
+    // RecipeImage Tests
+    // ============================================================================
+
+    #[test]
+    fn test_recipe_image_deserialize_full() {
+        let json = r#"{
+            "image": "/media/recipes/123.jpg",
+            "image_url": "https://example.com/recipe.jpg"
+        }"#;
+        let result: RecipeImage = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(result.image, Some("/media/recipes/123.jpg".to_string()));
+        assert_eq!(
+            result.image_url,
+            Some("https://example.com/recipe.jpg".to_string())
+        );
+    }
+
+    #[test]
+    fn test_recipe_image_deserialize_partial() {
+        let json = r#"{"image": "/media/recipes/456.png"}"#;
+        let result: RecipeImage = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(result.image, Some("/media/recipes/456.png".to_string()));
+        assert!(result.image_url.is_none());
+    }
+
+    #[test]
+    fn test_recipe_image_deserialize_empty() {
+        let json = r#"{}"#;
+        let result: RecipeImage = serde_json::from_str(json).expect("Failed to deserialize");
+        assert!(result.image.is_none());
+        assert!(result.image_url.is_none());
+    }
+
+    #[test]
+    fn test_recipe_image_deserialize_null_fields() {
+        let json = r#"{"image": null, "image_url": null}"#;
+        let result: RecipeImage = serde_json::from_str(json).expect("Failed to deserialize");
+        assert!(result.image.is_none());
+        assert!(result.image_url.is_none());
+    }
+
+    #[test]
+    fn test_recipe_image_serialize() {
+        let image = RecipeImage {
+            image: Some("/media/recipes/789.jpg".to_string()),
+            image_url: None,
+        };
+        let json = serde_json::to_string(&image).expect("Failed to serialize");
+        assert!(json.contains("/media/recipes/789.jpg"));
+    }
+
+    #[test]
+    fn test_recipe_image_clone() {
+        let original = RecipeImage {
+            image: Some("/media/test.jpg".to_string()),
+            image_url: Some("https://example.com/test.jpg".to_string()),
+        };
+        let cloned = original.clone();
+        assert_eq!(original.image, cloned.image);
+        assert_eq!(original.image_url, cloned.image_url);
+    }
+
+    // ============================================================================
+    // AiImportResponse Tests
+    // ============================================================================
+
+    #[test]
+    fn test_ai_import_response_deserialize_success() {
+        let json = r#"{
+            "recipe": {
+                "name": "Test Recipe",
+                "description": "A test recipe",
+                "servings": 4,
+                "steps": [],
+                "keywords": []
+            },
+            "recipe_id": 123,
+            "images": ["https://example.com/img1.jpg", "https://example.com/img2.jpg"],
+            "error": false,
+            "msg": "Import successful",
+            "duplicates": []
+        }"#;
+        let result: AiImportResponse =
+            serde_json::from_str(json).expect("Failed to deserialize");
+        assert!(result.recipe.is_some());
+        assert_eq!(result.recipe.as_ref().map(|r| r.name.as_str()), Some("Test Recipe"));
+        assert_eq!(result.recipe_id, Some(123));
+        assert_eq!(result.images.len(), 2);
+        assert!(!result.error);
+        assert_eq!(result.msg, "Import successful");
+        assert!(result.duplicates.is_empty());
+    }
+
+    #[test]
+    fn test_ai_import_response_deserialize_error() {
+        let json = r#"{
+            "recipe": null,
+            "error": true,
+            "msg": "Failed to parse image"
+        }"#;
+        let result: AiImportResponse =
+            serde_json::from_str(json).expect("Failed to deserialize");
+        assert!(result.recipe.is_none());
+        assert!(result.recipe_id.is_none());
+        assert!(result.error);
+        assert_eq!(result.msg, "Failed to parse image");
+    }
+
+    #[test]
+    fn test_ai_import_response_deserialize_minimal() {
+        let json = r#"{}"#;
+        let result: AiImportResponse =
+            serde_json::from_str(json).expect("Failed to deserialize");
+        assert!(result.recipe.is_none());
+        assert!(result.recipe_id.is_none());
+        assert!(result.images.is_empty());
+        assert!(!result.error);
+        assert!(result.msg.is_empty());
+        assert!(result.duplicates.is_empty());
+    }
+
+    #[test]
+    fn test_ai_import_response_deserialize_with_alias() {
+        // Test that recipe_json alias works
+        let json = r#"{
+            "recipe_json": {
+                "name": "Aliased Recipe",
+                "description": "",
+                "servings": 2,
+                "steps": [],
+                "keywords": []
+            },
+            "error": false,
+            "msg": ""
+        }"#;
+        let result: AiImportResponse =
+            serde_json::from_str(json).expect("Failed to deserialize");
+        assert!(result.recipe.is_some());
+        assert_eq!(
+            result.recipe.as_ref().map(|r| r.name.as_str()),
+            Some("Aliased Recipe")
+        );
+    }
+
+    #[test]
+    fn test_ai_import_response_deserialize_with_duplicates() {
+        let json = r#"{
+            "recipe": null,
+            "error": false,
+            "msg": "Duplicates found",
+            "duplicates": [
+                {"id": 1, "name": "Existing Recipe 1"},
+                {"id": 2, "name": "Existing Recipe 2"}
+            ]
+        }"#;
+        let result: AiImportResponse =
+            serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(result.duplicates.len(), 2);
+        assert_eq!(result.duplicates.first().map(|d| d.id), Some(1));
+        assert_eq!(
+            result.duplicates.first().map(|d| d.name.as_str()),
+            Some("Existing Recipe 1")
+        );
+    }
+
+    #[test]
+    fn test_ai_import_response_clone() {
+        let original = AiImportResponse {
+            recipe: None,
+            recipe_id: Some(42),
+            images: vec!["test.jpg".to_string()],
+            error: false,
+            msg: "Test message".to_string(),
+            duplicates: vec![],
+        };
+        let cloned = original.clone();
+        assert_eq!(original.recipe_id, cloned.recipe_id);
+        assert_eq!(original.images, cloned.images);
+        assert_eq!(original.error, cloned.error);
+        assert_eq!(original.msg, cloned.msg);
+    }
+
+    #[test]
+    fn test_ai_import_response_serialize() {
+        let response = AiImportResponse {
+            recipe: None,
+            recipe_id: Some(100),
+            images: vec!["img.jpg".to_string()],
+            error: false,
+            msg: "OK".to_string(),
+            duplicates: vec![],
+        };
+        let json = serde_json::to_string(&response).expect("Failed to serialize");
+        assert!(json.contains("\"recipe_id\":100"));
+        assert!(json.contains("\"msg\":\"OK\""));
+    }
 }

@@ -14,12 +14,12 @@ schema:
       default: null
       originalType: string
     ai_provider_id:
-      type: integer
+      type: string
       description: AI provider ID to use for import
       default: null
       originalType: integer
     recipe_id:
-      type: integer
+      type: string
       description: Optional recipe ID to update (instead of creating new)
       default: null
       originalType: integer
