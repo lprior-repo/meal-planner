@@ -8,12 +8,21 @@
 //! - Autocomplete response handling
 //! - Flexible number parsing (strings vs numbers)
 //! - Single-or-vec deserialization patterns
+//!
+//! # TDD Principles Applied (Kent Beck Style)
+//!
+//! - **Parameterized tests**: Using rstest for table-driven tests
+//! - **Pretty assertions**: Better diff output for failures
+//! - **Test builders**: Fluent API for test data construction
+//! - **Focused assertions**: One concept per test
 
 #![allow(clippy::unwrap_used)]
 #![allow(clippy::expect_used)]
 #![allow(clippy::panic)]
 
 use super::types::*;
+use pretty_assertions::assert_eq;
+use rstest::rstest;
 use serde_json;
 
 // =============================================================================
@@ -787,4 +796,188 @@ fn test_food_id_invalid_json() {
     let json = r#"not_a_string"#;
     let result: Result<FoodId, _> = serde_json::from_str(json);
     assert!(result.is_err());
+}
+
+// =============================================================================
+// Parameterized Tests (rstest) - Kent Beck Table-Driven Style
+// =============================================================================
+
+/// Parameterized test for FoodId creation from various string types
+#[rstest]
+#[case::from_str("12345", "12345")]
+#[case::from_numeric_string("67890", "67890")]
+#[case::from_empty_string("", "")]
+#[case::from_special_chars("food-123_abc", "food-123_abc")]
+fn test_food_id_creation(#[case] input: &str, #[case] expected: &str) {
+    let id = FoodId::new(input);
+    assert_eq!(id.as_str(), expected);
+}
+
+/// Parameterized test for ServingId creation
+#[rstest]
+#[case::from_str("serve_123", "serve_123")]
+#[case::from_numeric_string("99999", "99999")]
+fn test_serving_id_creation(#[case] input: &str, #[case] expected: &str) {
+    let id = ServingId::new(input);
+    assert_eq!(id.as_str(), expected);
+}
+
+/// Parameterized test for nutrition deserialization with flexible number formats
+/// Tests that both string and numeric JSON values deserialize correctly
+#[rstest]
+#[case::all_integers(
+    r#"{"calories": 200, "carbohydrate": 25, "protein": 20, "fat": 8}"#,
+    200.0, 25.0, 20.0, 8.0
+)]
+#[case::all_floats(
+    r#"{"calories": 200.5, "carbohydrate": 25.5, "protein": 20.5, "fat": 8.5}"#,
+    200.5, 25.5, 20.5, 8.5
+)]
+#[case::all_strings(
+    r#"{"calories": "200", "carbohydrate": "25", "protein": "20", "fat": "8"}"#,
+    200.0, 25.0, 20.0, 8.0
+)]
+#[case::mixed_types(
+    r#"{"calories": 200, "carbohydrate": "25.5", "protein": 20, "fat": "8.0"}"#,
+    200.0, 25.5, 20.0, 8.0
+)]
+#[case::zero_values(
+    r#"{"calories": 0, "carbohydrate": 0.0, "protein": "0", "fat": "0.0"}"#,
+    0.0, 0.0, 0.0, 0.0
+)]
+fn test_nutrition_flexible_parsing(
+    #[case] json: &str,
+    #[case] expected_calories: f64,
+    #[case] expected_carbs: f64,
+    #[case] expected_protein: f64,
+    #[case] expected_fat: f64,
+) {
+    let nutrition: Nutrition = serde_json::from_str(json).expect("should parse");
+
+    assert!(
+        (nutrition.calories - expected_calories).abs() < f64::EPSILON,
+        "calories mismatch: got {}, expected {}",
+        nutrition.calories,
+        expected_calories
+    );
+    assert!(
+        (nutrition.carbohydrate - expected_carbs).abs() < f64::EPSILON,
+        "carbs mismatch"
+    );
+    assert!(
+        (nutrition.protein - expected_protein).abs() < f64::EPSILON,
+        "protein mismatch"
+    );
+    assert!((nutrition.fat - expected_fat).abs() < f64::EPSILON, "fat mismatch");
+}
+
+/// Parameterized test for pagination values in search responses
+#[rstest]
+#[case::first_page(0, 20, 100)]
+#[case::middle_page(5, 50, 500)]
+#[case::last_page(9, 10, 100)]
+#[case::single_result(0, 20, 1)]
+fn test_search_pagination_values(
+    #[case] page_number: i32,
+    #[case] max_results: i32,
+    #[case] total_results: i32,
+) {
+    let json = format!(
+        r#"{{
+            "foods": {{
+                "food": [],
+                "max_results": "{}",
+                "total_results": "{}",
+                "page_number": "{}"
+            }}
+        }}"#,
+        max_results, total_results, page_number
+    );
+
+    let response: FoodSearchResponse = serde_json::from_str(&json).expect("should parse");
+
+    assert_eq!(response.page_number, page_number);
+    assert_eq!(response.max_results, max_results);
+    assert_eq!(response.total_results, total_results);
+}
+
+/// Parameterized test for food type classification
+#[rstest]
+#[case::generic_food("Generic", None)]
+#[case::branded_food("Brand", Some("Kellogg's"))]
+fn test_food_type_classification(#[case] food_type: &str, #[case] brand_name: Option<&str>) {
+    let brand_json = brand_name
+        .map(|b| format!(r#""brand_name": "{}","#, b))
+        .unwrap_or_default();
+
+    let json = format!(
+        r#"{{
+            "food_id": "123",
+            "food_name": "Test Food",
+            "food_type": "{}",
+            "food_url": "https://example.com",
+            {}
+            "servings": {{
+                "serving": {{
+                    "serving_id": "456",
+                    "serving_description": "1 serving",
+                    "serving_url": "https://example.com/serving",
+                    "metric_serving_amount": 100.0,
+                    "metric_serving_unit": "g",
+                    "number_of_units": 1.0,
+                    "measurement_description": "serving",
+                    "calories": 100.0,
+                    "carbohydrate": 10.0,
+                    "protein": 5.0,
+                    "fat": 2.0
+                }}
+            }}
+        }}"#,
+        food_type, brand_json
+    );
+
+    let food: Food = serde_json::from_str(&json).expect("should parse");
+    assert_eq!(food.food_type, food_type);
+    assert_eq!(food.brand_name.as_deref(), brand_name);
+}
+
+/// Parameterized test for single vs array serving deserialization
+#[rstest]
+#[case::single_serving(
+    r#"{"serving": {"serving_id": "1", "serving_description": "1 cup", "serving_url": "http://x", "number_of_units": 1.0, "measurement_description": "cup", "calories": 100, "carbohydrate": 10, "protein": 5, "fat": 2}}"#,
+    1
+)]
+#[case::multiple_servings(
+    r#"{"serving": [{"serving_id": "1", "serving_description": "1 cup", "serving_url": "http://x", "number_of_units": 1.0, "measurement_description": "cup", "calories": 100, "carbohydrate": 10, "protein": 5, "fat": 2}, {"serving_id": "2", "serving_description": "100g", "serving_url": "http://y", "number_of_units": 1.0, "measurement_description": "gram", "calories": 150, "carbohydrate": 15, "protein": 8, "fat": 3}]}"#,
+    2
+)]
+fn test_servings_single_or_vec(#[case] json: &str, #[case] expected_count: usize) {
+    let servings: FoodServings = serde_json::from_str(json).expect("should parse");
+    assert_eq!(servings.serving.len(), expected_count);
+}
+
+/// Parameterized test for autocomplete suggestions
+#[rstest]
+#[case::empty_suggestions(r#"{"suggestions": {}}"#, 0)]
+#[case::single_suggestion(
+    r#"{"suggestions": {"suggestion": {"food_id": "123", "food_name": "Apple"}}}"#,
+    1
+)]
+#[case::multiple_suggestions(
+    r#"{"suggestions": {"suggestion": [{"food_id": "1", "food_name": "A"}, {"food_id": "2", "food_name": "B"}]}}"#,
+    2
+)]
+fn test_autocomplete_response_size(#[case] json: &str, #[case] expected_count: usize) {
+    let response: FoodAutocompleteResponse = serde_json::from_str(json).expect("should parse");
+    assert_eq!(response.suggestions.len(), expected_count);
+}
+
+/// Test that invalid JSON consistently fails
+#[rstest]
+#[case::missing_calories(r#"{"carbohydrate": 10, "protein": 5, "fat": 2}"#)]
+#[case::invalid_number(r#"{"calories": "abc", "carbohydrate": 10, "protein": 5, "fat": 2}"#)]
+#[case::null_required(r#"{"calories": null, "carbohydrate": 10, "protein": 5, "fat": 2}"#)]
+fn test_nutrition_invalid_json_fails(#[case] json: &str) {
+    let result: Result<Nutrition, _> = serde_json::from_str(json);
+    assert!(result.is_err(), "Expected error for JSON: {}", json);
 }

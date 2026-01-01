@@ -749,6 +749,10 @@ incremental = true
 
 [dev-dependencies]
 wiremock = "0.6"
+# TDD assertion libraries - Kent Beck style
+pretty_assertions = "1.4"    # Better diff output for assert_eq failures
+rstest = "0.18"              # Parameterized/table-driven tests
+rstest_reuse = "0.6"         # Reusable test templates
 
 [profile.release]
 opt-level = 3
