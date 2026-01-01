@@ -586,9 +586,13 @@ mod tests {
     /// Test that invalid key lengths are rejected
     #[rstest]
     #[case::too_short("0123456789abcdef", 16)] // 16 chars
-    #[case::too_long("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0000", 68)]
+    #[case::too_long(
+        "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0000",
+        68
+    )]
     #[case::empty("", 0)]
     #[case::odd_length("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde", 63)]
+    #[allow(clippy::used_underscore_binding)]
     fn test_invalid_key_length_rejected(#[case] key: &str, #[case] _expected_len: usize) {
         let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
 
@@ -639,7 +643,9 @@ mod tests {
     fn test_crypto_error_display(#[case] error: CryptoError, #[case] expected_substring: &str) {
         let display = error.to_string();
         assert!(
-            display.to_lowercase().contains(&expected_substring.to_lowercase()),
+            display
+                .to_lowercase()
+                .contains(&expected_substring.to_lowercase()),
             "Error '{}' should contain '{}'",
             display,
             expected_substring
@@ -654,7 +660,9 @@ mod tests {
     fn test_storage_error_display(#[case] error: StorageError, #[case] expected_substring: &str) {
         let display = error.to_string();
         assert!(
-            display.to_lowercase().contains(&expected_substring.to_lowercase()),
+            display
+                .to_lowercase()
+                .contains(&expected_substring.to_lowercase()),
             "Error '{}' should contain '{}'",
             display,
             expected_substring
@@ -667,12 +675,20 @@ mod tests {
         assert_eq!(TokenValidity::Valid, TokenValidity::Valid);
         assert_eq!(TokenValidity::NotFound, TokenValidity::NotFound);
         assert_eq!(
-            TokenValidity::Old { days_since_connected: 400 },
-            TokenValidity::Old { days_since_connected: 400 }
+            TokenValidity::Old {
+                days_since_connected: 400
+            },
+            TokenValidity::Old {
+                days_since_connected: 400
+            }
         );
         assert_ne!(
-            TokenValidity::Old { days_since_connected: 400 },
-            TokenValidity::Old { days_since_connected: 500 }
+            TokenValidity::Old {
+                days_since_connected: 400
+            },
+            TokenValidity::Old {
+                days_since_connected: 500
+            }
         );
     }
 

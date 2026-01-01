@@ -1042,7 +1042,10 @@ mod tests {
         true
     )]
     #[case::server_error_recoverable(FatSecretError::request_failed(500, "server error"), true)]
-    #[case::service_unavailable_recoverable(FatSecretError::request_failed(503, "unavailable"), true)]
+    #[case::service_unavailable_recoverable(
+        FatSecretError::request_failed(503, "unavailable"),
+        true
+    )]
     #[case::bad_request_not_recoverable(FatSecretError::request_failed(400, "bad request"), false)]
     #[case::not_found_not_recoverable(FatSecretError::request_failed(404, "not found"), false)]
     #[case::config_missing_not_recoverable(FatSecretError::ConfigMissing, false)]

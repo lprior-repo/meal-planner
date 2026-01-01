@@ -44,8 +44,7 @@ fn test_config_serialization_roundtrip() {
     };
 
     let json = serde_json::to_string(&config).expect("should serialize");
-    let deserialized: TandoorConfig =
-        serde_json::from_str(&json).expect("should deserialize");
+    let deserialized: TandoorConfig = serde_json::from_str(&json).expect("should deserialize");
 
     assert_eq!(config.base_url, deserialized.base_url);
     assert_eq!(config.api_token, deserialized.api_token);
@@ -152,7 +151,10 @@ fn test_recipe_summary_full() {
 
     let keywords = recipe.keywords.expect("should have keywords");
     assert_eq!(keywords.len(), 2);
-    assert_eq!(keywords[0].label, Some("breakfast".to_string()));
+    assert_eq!(
+        keywords.first().expect("should have first keyword").label,
+        Some("breakfast".to_string())
+    );
 }
 
 // =============================================================================
@@ -166,18 +168,8 @@ fn test_recipe_summary_full() {
     Some("dinner"),
     Some("Dinner")
 )]
-#[case::with_only_label(
-    r#"{"id": 2, "label": "Lunch"}"#,
-    2,
-    None,
-    Some("Lunch")
-)]
-#[case::with_only_name(
-    r#"{"id": 3, "name": "breakfast"}"#,
-    3,
-    Some("breakfast"),
-    None
-)]
+#[case::with_only_label(r#"{"id": 2, "label": "Lunch"}"#, 2, None, Some("Lunch"))]
+#[case::with_only_name(r#"{"id": 3, "name": "breakfast"}"#, 3, Some("breakfast"), None)]
 fn test_keyword_deserialization(
     #[case] json: &str,
     #[case] expected_id: i64,
@@ -333,11 +325,22 @@ fn test_source_import_recipe_full() {
     assert_eq!(recipe.servings, 6);
     assert_eq!(recipe.working_time, 45);
     assert_eq!(recipe.steps.len(), 1);
-    assert_eq!(recipe.steps[0].instruction, "Mix ingredients");
-    assert_eq!(recipe.steps[0].ingredients.len(), 1);
-    assert_eq!(recipe.steps[0].ingredients[0].amount, Some(2.5));
+
+    let first_step = recipe.steps.first().expect("should have first step");
+    assert_eq!(first_step.instruction, "Mix ingredients");
+    assert_eq!(first_step.ingredients.len(), 1);
+
+    let first_ingredient = first_step
+        .ingredients
+        .first()
+        .expect("should have first ingredient");
+    assert_eq!(first_ingredient.amount, Some(2.5));
     assert_eq!(
-        recipe.steps[0].ingredients[0].food.as_ref().unwrap().name,
+        first_ingredient
+            .food
+            .as_ref()
+            .expect("should have food")
+            .name,
         "flour"
     );
 }
@@ -387,7 +390,10 @@ fn test_recipe_import_result_failure() {
 #[test]
 fn test_tandoor_error_display() {
     let auth_error = TandoorError::AuthError("Invalid token".to_string());
-    assert_eq!(auth_error.to_string(), "Authentication failed: Invalid token");
+    assert_eq!(
+        auth_error.to_string(),
+        "Authentication failed: Invalid token"
+    );
 
     let api_error = TandoorError::ApiError {
         status: 404,
@@ -396,7 +402,10 @@ fn test_tandoor_error_display() {
     assert_eq!(api_error.to_string(), "API error (404): Not found");
 
     let parse_error = TandoorError::ParseError("Invalid JSON".to_string());
-    assert_eq!(parse_error.to_string(), "Failed to parse response: Invalid JSON");
+    assert_eq!(
+        parse_error.to_string(),
+        "Failed to parse response: Invalid JSON"
+    );
 
     let size_error = TandoorError::RequestTooLarge {
         size: 15_000_000,
@@ -513,10 +522,7 @@ fn test_ingredient_amount_parsing(#[case] json: &str, #[case] expected_amount: O
         }
         (None, None) => {} // Both None, test passes
         (actual, expected) => {
-            panic!(
-                "Amount mismatch: got {:?}, expected {:?}",
-                actual, expected
-            );
+            panic!("Amount mismatch: got {:?}, expected {:?}", actual, expected);
         }
     }
 }

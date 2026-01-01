@@ -33,8 +33,6 @@
 //! }
 //! ```
 
-#![cfg(test)]
-
 // Re-export testing libraries for convenience
 pub use pretty_assertions::{assert_eq, assert_ne};
 pub use rstest::*;
@@ -78,10 +76,7 @@ pub fn assert_err<T: std::fmt::Debug, E>(result: Result<T, E>) -> E {
 /// Assert that an Option is Some and return the value
 #[track_caller]
 pub fn assert_some<T>(option: Option<T>) -> T {
-    match option {
-        Some(value) => value,
-        None => panic!("Expected Some, got None"),
-    }
+    option.unwrap_or_else(|| panic!("Expected Some, got None"))
 }
 
 /// Assert that an Option is None
@@ -121,6 +116,7 @@ pub fn assert_float_near(actual: f64, expected: f64, tolerance: f64) {
 
 /// Builder for Nutrition test data
 #[derive(Debug, Clone)]
+#[must_use]
 pub struct NutritionBuilder {
     calories: f64,
     carbohydrate: f64,
@@ -238,6 +234,7 @@ impl NutritionBuilder {
 
 /// Builder for WeightEntry test data
 #[derive(Debug, Clone)]
+#[must_use]
 pub struct WeightEntryBuilder {
     date_int: i32,
     weight_kg: f64,
@@ -302,6 +299,7 @@ impl WeightEntryBuilder {
 
 /// Builder for WeightUpdate test data
 #[derive(Debug, Clone)]
+#[must_use]
 pub struct WeightUpdateBuilder {
     current_weight_kg: f64,
     date_int: i32,
@@ -372,6 +370,7 @@ impl WeightUpdateBuilder {
 
 /// Builder for WeightMonthSummary test data
 #[derive(Debug, Clone)]
+#[must_use]
 pub struct WeightMonthSummaryBuilder {
     from_date_int: i32,
     to_date_int: i32,
@@ -403,17 +402,25 @@ impl WeightMonthSummaryBuilder {
 
     /// Add a day's weight measurement
     pub fn with_day(mut self, date_int: i32, weight_kg: f64) -> Self {
-        self.days.push(WeightDaySummary { date_int, weight_kg });
+        self.days.push(WeightDaySummary {
+            date_int,
+            weight_kg,
+        });
         self
     }
 
     /// Add multiple days with linear weight progression
-    pub fn with_linear_progression(mut self, start_weight: f64, end_weight: f64, days: i32) -> Self {
-        let weight_change_per_day = (end_weight - start_weight) / (days as f64 - 1.0);
+    pub fn with_linear_progression(
+        mut self,
+        start_weight: f64,
+        end_weight: f64,
+        days: i32,
+    ) -> Self {
+        let weight_change_per_day = (end_weight - start_weight) / (f64::from(days) - 1.0);
         for i in 0..days {
             self.days.push(WeightDaySummary {
                 date_int: self.from_date_int + i,
-                weight_kg: start_weight + (weight_change_per_day * i as f64),
+                weight_kg: start_weight + (weight_change_per_day * f64::from(i)),
             });
         }
         self
@@ -597,9 +604,24 @@ mod tests {
             .build();
 
         assert_eq!(summary.days.len(), 5);
-        assert_float_eq(summary.days[0].weight_kg, 80.0);
+        assert_float_eq(
+            summary
+                .days
+                .first()
+                .expect("should have first day")
+                .weight_kg,
+            80.0,
+        );
         // Last day should be 78.0 (linear from 80 to 78 in 5 steps)
-        assert_float_near(summary.days[4].weight_kg, 78.0, 0.01);
+        assert_float_near(
+            summary
+                .days
+                .get(4)
+                .expect("should have fifth day")
+                .weight_kg,
+            78.0,
+            0.01,
+        );
     }
 
     #[test]
