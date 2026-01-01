@@ -18,4 +18,4 @@ input=$(jq -n \
 	--arg meals "$meals" \
 	'{fatsecret: $fatsecret, access_token: $access_token, access_secret: $access_secret, saved_meal_name: $saved_meal_name, saved_meal_description: (if $saved_meal_description == "" then null else $saved_meal_description end), meals: $meals}')
 
-echo "$input" | /usr/local/bin/fatsecret_saved_meals_create >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_saved_meals_create >./result.json

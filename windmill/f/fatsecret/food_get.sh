@@ -10,4 +10,4 @@ input=$(jq -n \
 	--arg food_id "$food_id" \
 	'{fatsecret: $fatsecret, food_id: $food_id}')
 
-echo "$input" | /usr/local/bin/fatsecret_food_get >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_food_get >./result.json

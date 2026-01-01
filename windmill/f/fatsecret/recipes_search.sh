@@ -17,4 +17,4 @@ input=$(jq -n \
 	--arg recipe_type "$recipe_type" \
 	'{fatsecret: $fatsecret, search_expression: $search_expression} + (if $max_results != null then {max_results: $max_results} else {} end) + (if $page_number != null then {page_number: $page_number} else {} end) + (if $recipe_type != "" then {recipe_type: $recipe_type} else {} end)')
 
-echo "$input" | /usr/local/bin/fatsecret_recipes_search >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_recipes_search >./result.json

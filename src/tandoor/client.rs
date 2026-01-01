@@ -533,7 +533,7 @@ impl TandoorClient {
         page: Option<u32>,
         page_size: Option<u32>,
     ) -> Result<PaginatedResponse<UnitConversion>, TandoorError> {
-        let mut url = format!("{}/api/unitconversion/", self.base_url);
+        let mut url = format!("{}/api/unit-conversion/", self.base_url);
         let mut params = Vec::new();
         if let Some(p) = page {
             params.push(format!("page={}", p));
@@ -1701,23 +1701,9 @@ impl TandoorClient {
             .map_err(|e| TandoorError::ParseError(e.to_string()))
     }
 
-    /// List users with pagination
-    pub fn list_users(
-        &self,
-        page: Option<u32>,
-        page_size: Option<u32>,
-    ) -> Result<PaginatedResponse<serde_json::Value>, TandoorError> {
-        let mut url = format!("{}/api/user/", self.base_url);
-        let mut params = Vec::new();
-        if let Some(p) = page {
-            params.push(format!("page={}", p));
-        }
-        if let Some(ps) = page_size {
-            params.push(format!("page_size={}", ps));
-        }
-        if !params.is_empty() {
-            url = format!("{}?{}", url, params.join("&"));
-        }
+    /// List all users (returns array, not paginated)
+    pub fn list_users(&self) -> Result<Vec<serde_json::Value>, TandoorError> {
+        let url = format!("{}/api/user/", self.base_url);
         let response = self.client.get(&url).send()?;
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
@@ -1829,7 +1815,7 @@ impl TandoorClient {
         Ok(paginated.results)
     }
 
-    /// List recipes without pagination (flat list)
+    /// List recipes without pagination (flat list) - extracts results from paginated response
     pub fn list_recipes_flat(
         &self,
         limit: Option<u32>,
@@ -1838,10 +1824,14 @@ impl TandoorClient {
         let mut url = format!("{}/api/recipe/", self.base_url);
         let mut params = Vec::new();
         if let Some(l) = limit {
-            params.push(format!("limit={}", l));
+            params.push(format!("page_size={}", l));
         }
         if let Some(o) = offset {
-            params.push(format!("offset={}", o));
+            // Convert offset to page number (1-indexed)
+            let page_size = limit.unwrap_or(50);
+            #[allow(clippy::integer_division)]
+            let page = if page_size > 0 { o / page_size + 1 } else { 1 };
+            params.push(format!("page={}", page));
         }
         if !params.is_empty() {
             url = format!("{}?{}", url, params.join("&"));
@@ -1853,9 +1843,10 @@ impl TandoorClient {
                 message: response.text().unwrap_or_default(),
             });
         }
-        response
+        let paginated: PaginatedResponse<RecipeSummary> = response
             .json()
-            .map_err(|e| TandoorError::ParseError(e.to_string()))
+            .map_err(|e| TandoorError::ParseError(e.to_string()))?;
+        Ok(paginated.results)
     }
 }
 

@@ -18,4 +18,4 @@ input=$(jq -n \
 	--argjson date_int "$date_int" \
 	'{fatsecret: $fatsecret, access_token: $access_token, access_secret: $access_secret, exercise_id: $exercise_id, duration_min: $duration_min, date_int: $date_int}')
 
-echo "$input" | /usr/local/bin/fatsecret_exercise_entry_create >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_exercise_entry_create >./result.json

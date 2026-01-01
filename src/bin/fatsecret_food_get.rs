@@ -11,7 +11,7 @@
 // CLI binaries: exit and JSON unwrap are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used)]
 
-use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};
+use meal_planner::fatsecret::core::FatSecretConfig;
 use meal_planner::fatsecret::foods::{get_food, FoodId};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
@@ -72,8 +72,8 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
 
     // Get config: prefer input, fall back to environment
     let config = match input.fatsecret {
-        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret),
-        None => FatSecretConfig::from_env().ok_or(FatSecretError::ConfigMissing)?,
+        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret).expect("Invalid FatSecret credentials"),
+        None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 
     // Get food by ID

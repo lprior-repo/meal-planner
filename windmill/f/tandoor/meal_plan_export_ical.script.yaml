@@ -1,0 +1,21 @@
+summary: Export meal plan as iCal
+description: Exports meal plan entries as iCal format.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    from_date:
+      type: string
+      description: Start date (YYYY-MM-DD, optional)
+      default: ''
+    to_date:
+      type: string
+      description: End date (YYYY-MM-DD, optional)
+      default: ''
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+  required:
+    - tandoor

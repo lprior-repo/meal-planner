@@ -16,4 +16,4 @@ input=$(jq -n \
 	'{fatsecret: $fatsecret, oauth_token: $oauth_token, oauth_token_secret: $oauth_token_secret, oauth_verifier: $oauth_verifier}')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/fatsecret_oauth_complete >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_oauth_complete >./result.json

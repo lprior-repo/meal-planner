@@ -1,0 +1,21 @@
+summary: Create a recipe book
+description: Creates a new recipe book in Tandoor.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    name:
+      type: string
+      description: Recipe book name
+    description:
+      type: string
+      description: Recipe book description (optional)
+      default: ''
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+  required:
+    - tandoor
+    - name

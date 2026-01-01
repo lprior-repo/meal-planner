@@ -14,4 +14,4 @@ input=$(jq -n \
 	'{tandoor: $tandoor} + (if $page != "" then {page: ($page | tonumber)} else {} end) + (if $page_size != "" then {page_size: ($page_size | tonumber)} else {} end)')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/tandoor_food_list >./result.json
+echo "$input" | /usr/local/bin/meal-planner/tandoor_food_list >./result.json

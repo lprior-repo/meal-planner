@@ -8,4 +8,4 @@ input=$(jq -n \
 	--argjson fatsecret "$fatsecret" \
 	'{fatsecret: $fatsecret}')
 
-echo "$input" | /usr/local/bin/fatsecret_recipe_types_get >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_recipe_types_get >./result.json

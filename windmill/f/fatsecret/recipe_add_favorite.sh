@@ -14,4 +14,4 @@ input=$(jq -n \
 	--arg recipe_id "$recipe_id" \
 	'{fatsecret: $fatsecret, access_token: $access_token, access_secret: $access_secret, recipe_id: $recipe_id}')
 
-echo "$input" | /usr/local/bin/fatsecret_recipe_add_favorite >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_recipe_add_favorite >./result.json

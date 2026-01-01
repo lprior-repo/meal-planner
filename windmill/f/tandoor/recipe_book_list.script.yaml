@@ -1,0 +1,21 @@
+summary: List recipe books from Tandoor
+description: Retrieves a paginated list of recipe books from Tandoor.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    page:
+      type: string
+      description: Page number (optional)
+      default: ''
+    page_size:
+      type: string
+      description: Number per page (optional)
+      default: ''
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+  required:
+    - tandoor

@@ -14,4 +14,4 @@ input=$(jq -n \
 	--arg meal "$meal" \
 	'{fatsecret: $fatsecret, access_token: $access_token, access_secret: $access_secret, meal: (if $meal == "" then null else $meal end)}')
 
-echo "$input" | /usr/local/bin/fatsecret_saved_meals_get >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_saved_meals_get >./result.json

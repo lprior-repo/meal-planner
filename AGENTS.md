@@ -2,6 +2,16 @@
 
 This document describes how to work with AI agents in the meal-planner project using Beads.
 
+## Quick Start - If In A Hurry
+
+**Need to use FatSecret OAuth tokens?** They're already stored securely:
+
+**Resource path:** `$res:u/admin/fatsecret_oauth`
+
+**Stored in:** Windmill PostgreSQL `windmill` database → `resource` table
+
+Use this path in all FatSecret scripts. For initial setup, see [docs/FATSECRET_OAUTH_SETUP.md](docs/FATSECRET_OAUTH_SETUP.md)
+
 ## Architecture
 
 **READ FIRST**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - Domain-based structure, CUPID principles, binary contract.
@@ -29,6 +39,16 @@ windmill/                 # Orchestration layer
 └── f/meal-planner/
     └── tandoor/          # Bash scripts calling binaries
 ```
+
+## FatSecret OAuth Credentials
+
+**OAuth tokens are stored in Windmill:**
+- **Path:** `u/admin/fatsecret_oauth`
+- **Database:** Windmill PostgreSQL → `resource` table
+- **Encryption:** AES-256 at rest
+- **Access in scripts:** `$res:u/admin/fatsecret_oauth`
+
+For initial setup, see [docs/FATSECRET_OAUTH_SETUP.md](docs/FATSECRET_OAUTH_SETUP.md)
 
 ## Overview
 
@@ -281,13 +301,24 @@ windmill/
 
 This project uses **Moon** for task orchestration. Moon caches task outputs for speed - repeated runs skip unchanged work.
 
+### ABSOLUTE RULE: Always Use Moon
+
+**NEVER run individual cargo/rustc commands directly. ALL builds, tests, and CI tasks MUST go through Moon.**
+
+This is non-negotiable:
+- `moon run :build` - NOT `cargo build --release`
+- `moon run :test` - NOT `cargo test`
+- `moon run :ci` - NOT individual lint/test/build commands
+
+Moon parallelizes everything and caches results. Direct commands bypass this and are slower.
+
 ### Common Commands
 
 ```bash
 moon run :ci      # Full CI pipeline (lint, test, build)
 moon run :quick   # Fast lint checks only
 moon run :deploy  # CI + Windmill push
-moon run :build   # Build release binaries
+moon run :build   # Build release binaries (parallelized, cached)
 moon run :test    # Run tests
 ```
 
