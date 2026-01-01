@@ -1405,7 +1405,7 @@ impl TandoorClient {
         request: &serde_json::Value,
     ) -> Result<serde_json::Value, TandoorError> {
         let url = format!("{}/api/recipe/{}/", self.base_url, id);
-        let response = self.client.patch(&url).json(request).send()?;
+        let response = self.patch_request(&url, request)?;
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
                 status: response.status().as_u16(),
