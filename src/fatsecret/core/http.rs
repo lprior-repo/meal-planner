@@ -15,7 +15,7 @@ use crate::fatsecret::core::{AccessToken, FatSecretConfig, FatSecretError};
 ///
 /// This is the low-level request function. Most users should use
 /// `make_api_request()` or `make_authenticated_request()` instead.
-#[allow(clippy::too_many_arguments)] // OAuth signing requires these params
+#[allow(clippy::too_many_arguments, clippy::too_many_lines)] // OAuth signing requires these params
 pub async fn make_oauth_request(
     config: &FatSecretConfig,
     method: Method,
@@ -92,15 +92,12 @@ pub async fn make_oauth_request(
 /// Validate request body size against DOS limits
 fn validate_request_size(params: &HashMap<String, String>) -> Result<(), FatSecretError> {
     const MAX_REQUEST_SIZE: usize = 1024 * 1024; // 1MB for API requests
-    let total_size: usize = params.iter()
-        .map(|(k, v)| k.len() + v.len())
-        .sum();
-    
+    let total_size: usize = params.iter().map(|(k, v)| k.len() + v.len()).sum();
+
     if total_size > MAX_REQUEST_SIZE {
         return Err(FatSecretError::NetworkError(format!(
             "Request too large: {} bytes exceeds limit of {} bytes",
-            total_size,
-            MAX_REQUEST_SIZE
+            total_size, MAX_REQUEST_SIZE
         )));
     }
     Ok(())
@@ -118,7 +115,7 @@ pub async fn make_api_request(
     let mut api_params = params;
     api_params.insert("method".to_string(), method_name.to_string());
     api_params.insert("format".to_string(), "json".to_string());
-    
+
     // DOS prevention: Validate request size before sending
     validate_request_size(&api_params)?;
 

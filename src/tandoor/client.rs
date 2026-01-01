@@ -134,6 +134,7 @@ impl TandoorClient {
     }
 
     /// Validate request body size against DOS limits
+    #[allow(clippy::unused_self)]
     fn validate_request_size(&self, body: &[u8]) -> Result<(), TandoorError> {
         const MAX_REQUEST_SIZE: u64 = 10 * 1024 * 1024; // 10MB
         let size = u64::try_from(body.len()).unwrap_or(u64::MAX);
@@ -153,7 +154,8 @@ impl TandoorClient {
         url: &str,
         request: &T,
     ) -> Result<reqwest::blocking::Response, TandoorError> {
-        let json = serde_json::to_vec(request).map_err(|e| TandoorError::ParseError(e.to_string()))?;
+        let json =
+            serde_json::to_vec(request).map_err(|e| TandoorError::ParseError(e.to_string()))?;
         self.validate_request_size(&json)?;
         Ok(self.client.post(url).json(request).send()?)
     }
@@ -164,7 +166,8 @@ impl TandoorClient {
         url: &str,
         request: &T,
     ) -> Result<reqwest::blocking::Response, TandoorError> {
-        let json = serde_json::to_vec(request).map_err(|e| TandoorError::ParseError(e.to_string()))?;
+        let json =
+            serde_json::to_vec(request).map_err(|e| TandoorError::ParseError(e.to_string()))?;
         self.validate_request_size(&json)?;
         Ok(self.client.patch(url).json(request).send()?)
     }

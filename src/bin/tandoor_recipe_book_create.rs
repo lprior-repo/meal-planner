@@ -7,8 +7,8 @@
 //!   {"success": true, "`recipe_book"`: {...}}
 //!   {"success": false, "error": "..."}
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{CreateRecipeBookRequest, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -39,14 +39,20 @@ struct Output {
 
 fn main() {
     match run() {
-        Ok(output) => println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON")),
+        Ok(output) => println!(
+            "{}",
+            serde_json::to_string(&output).expect("Failed to serialize output JSON")
+        ),
         Err(e) => {
             let error = Output {
                 success: false,
                 recipe_book: None,
                 error: Some(e.to_string()),
             };
-            println!("{}", serde_json::to_string(serde_json::to_string(&error).expect("Unexpected None value")error).expect("Failed to serialize error JSON"));
+            println!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }
@@ -105,7 +111,7 @@ mod tests {
             recipe_book: None,
             error: None,
         };
-        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
     }
 }

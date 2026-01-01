@@ -8,8 +8,8 @@
 //!
 //! JSON stdout: `{"success": true, "message": "...", "recipe_count": N}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::Deserialize;
@@ -27,7 +27,10 @@ struct Input {
 
 fn main() {
     match run() {
-        Ok(output) => println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON")),
+        Ok(output) => println!(
+            "{}",
+            serde_json::to_string(&output).expect("Failed to serialize output JSON")
+        ),
         Err(e) => {
             println!("{{\"success\":false,\"error\":\"{e}\"}}");
             std::process::exit(1);

@@ -13,8 +13,8 @@
 //!   `{"success": true, "message": "Image uploaded successfully"}`
 //!   `{"success": false, "error": "..."}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::TandoorConfig;
 use serde::{Deserialize, Serialize};
@@ -52,7 +52,10 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
+    println!(
+        "{}",
+        serde_json::to_string(&output).expect("Failed to serialize output JSON")
+    );
     if !output.success {
         std::process::exit(1);
     }
@@ -109,7 +112,7 @@ mod tests {
             message: Some("Image uploaded".to_string()),
             error: None,
         };
-        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"message\":\"Image uploaded\""));
         assert!(!json.contains("error"));
@@ -122,7 +125,7 @@ mod tests {
             message: None,
             error: Some("File not found".to_string()),
         };
-        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("\"error\":\"File not found\""));
         assert!(!json.contains("message"));

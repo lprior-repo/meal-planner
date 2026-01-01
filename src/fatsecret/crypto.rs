@@ -260,7 +260,7 @@ pub fn validate_encryption_at_startup() -> Result<(), CryptoError> {
                     eprintln!("Expected: 64 valid hex characters (0-9, a-f, A-F)");
                     eprintln!("To fix this: Generate a new key with: cargo run --bin generate_encryption_key");
                 }
-                _ => {
+                CryptoError::InvalidCiphertext | CryptoError::DecryptionFailed => {
                     eprintln!(
                         "SECURITY ERROR: Unexpected error validating encryption key: {}",
                         e
@@ -301,10 +301,10 @@ pub fn validate_encryption_detailed() -> Result<ValidationDetails, CryptoError> 
             Err(e) => Err(e),
         }
     } else {
-        Err(if !details.key_correct_length {
-            CryptoError::KeyInvalidLength(details.key_length)
-        } else {
+        Err(if details.key_correct_length {
             CryptoError::KeyInvalidHex
+        } else {
+            CryptoError::KeyInvalidLength(details.key_length)
         })
     }
 }

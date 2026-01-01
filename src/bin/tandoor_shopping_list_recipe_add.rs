@@ -7,8 +7,8 @@
 //!
 //! JSON stdout: `{"success": true, "entries": [...]}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{ShoppingListEntry, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -46,7 +46,10 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
+    println!(
+        "{}",
+        serde_json::to_string(&output).expect("Failed to serialize output JSON")
+    );
     if !output.success {
         std::process::exit(1);
     }
@@ -87,7 +90,7 @@ mod tests {
             entries: Some(vec![]),
             error: None,
         };
-        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"entries\":[]"));
     }
@@ -99,7 +102,7 @@ mod tests {
             entries: None,
             error: Some("Recipe not found".to_string()),
         };
-        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("Recipe not found"));
     }

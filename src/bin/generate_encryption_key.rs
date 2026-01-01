@@ -16,10 +16,14 @@
 //! export OAUTH_ENCRYPTION_KEY="generated_key_here"
 //! ```
 
-#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
+#![allow(
+    clippy::exit,
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::unnecessary_wraps
+)]
 
-use meal_planner::fatsecret::crypto::{generate_key, validate_encryption_at_startup};
-use std::env;
+use meal_planner::fatsecret::crypto::generate_key;
 
 #[derive(serde::Serialize)]
 struct Output {
@@ -38,14 +42,20 @@ struct ErrorOutput {
 async fn main() {
     match run() {
         Ok(output) => {
-            println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
+            println!(
+                "{}",
+                serde_json::to_string(&output).expect("Failed to serialize output JSON")
+            );
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            eprintln!("{}", serde_json::to_string(serde_json::to_string(&error).expect("Unexpected None value")error).expect("Failed to serialize error JSON"));
+            eprintln!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }

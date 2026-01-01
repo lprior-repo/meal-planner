@@ -231,7 +231,7 @@ where
 }
 
 /// Deserialize an optional float that might be a string, number, or missing
-/// 
+///
 /// This function performs strict validation to prevent silent data loss:
 /// - Empty strings, "None", "null", and actual null values become None
 /// - Whitespace-only strings become None
@@ -268,7 +268,7 @@ where
 }
 
 /// Deserialize an int that might be a string ("95") or number (95)
-/// 
+///
 /// This function performs strict validation to prevent silent data loss:
 /// - Empty strings are rejected with an error
 /// - Whitespace-only strings are rejected with an error  
@@ -294,7 +294,7 @@ where
                     "empty or whitespace-only string cannot be deserialized as a number",
                 ));
             }
-            
+
             trimmed.parse::<i32>().map_err(|_| {
                 serde::de::Error::custom(format!(
                     "invalid numeric string '{}': cannot be parsed as i32",
@@ -495,7 +495,7 @@ mod tests {
         let error = result.unwrap_err();
         assert!(error
             .to_string()
-            .contains("empty string cannot be deserialized as a number"));
+            .contains("empty or whitespace-only string cannot be deserialized as a number"));
     }
 
     #[test]
@@ -569,7 +569,7 @@ mod tests {
         let error = result.unwrap_err();
         assert!(error
             .to_string()
-            .contains("empty string cannot be deserialized as a number"));
+            .contains("empty or whitespace-only string cannot be deserialized as a number"));
     }
 
     #[test]

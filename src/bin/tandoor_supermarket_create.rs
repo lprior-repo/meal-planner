@@ -8,8 +8,8 @@
 //! JSON stdout: `{"success": true, "id": 123, "name": "Whole Foods"}`
 //!   or `{"success": false, "error": "..."}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{CreateSupermarketRequest, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -44,7 +44,10 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
+    println!(
+        "{}",
+        serde_json::to_string(&output).expect("Failed to serialize output JSON")
+    );
     if !output.success {
         std::process::exit(1);
     }

@@ -7,8 +7,8 @@
 //!   {"success": true, "`recipe_id`": 123, "name": "..."}
 //!   {"success": false, "error": "..."}
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 #![allow(clippy::too_many_lines)]
 
 use meal_planner::tandoor::{
@@ -47,7 +47,10 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
+    println!(
+        "{}",
+        serde_json::to_string(&output).expect("Failed to serialize output JSON")
+    );
     if !output.success {
         std::process::exit(1);
     }

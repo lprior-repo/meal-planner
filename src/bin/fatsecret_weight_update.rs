@@ -8,7 +8,8 @@
 //!
 //! JSON stdout: `{"success": true}`
 
-// CLI binaries: exit is acceptable at the top level
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig};
 use meal_planner::fatsecret::weight::{update_weight, WeightUpdate};

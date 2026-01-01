@@ -8,7 +8,8 @@
 //!
 //! JSON stdout: `{"success": true, "entries": [...]}`
 
-// CLI binaries: exit is acceptable at the top level
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig};
 use meal_planner::fatsecret::exercise::get_exercise_entries;
@@ -49,14 +50,20 @@ struct ErrorOutput {
 async fn main() {
     match run().await {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).expect("Failed to serialize output JSON"));
+            println!(
+                "{}",
+                serde_json::to_string(&output).expect("Failed to serialize output JSON")
+            );
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            println!("{}", serde_json::to_string(&error).expect("Failed to serialize error JSON"));
+            println!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }

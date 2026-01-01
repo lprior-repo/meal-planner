@@ -502,6 +502,39 @@ impl FatSecretError {
             | Self::ConfigMissing => None,
         }
     }
+
+    /// Check if this error indicates an authentication problem.
+    ///
+    /// Returns true for OAuth errors, invalid tokens, and ConfigMissing.
+    #[must_use]
+    pub fn is_auth_error(&self) -> bool {
+        match self {
+            Self::OAuthError(_) | Self::ConfigMissing => true,
+            Self::ApiError { code, .. } => code.is_auth_related(),
+            Self::RequestFailed { .. }
+            | Self::ParseError(_)
+            | Self::NetworkError(_)
+            | Self::InvalidResponse(_)
+            | Self::HttpError(_) => false,
+        }
+    }
+
+    /// Check if this error indicates a premium subscription is required.
+    ///
+    /// Only returns true for API errors with code 24 (PremiumRequired).
+    #[must_use]
+    pub fn is_premium_required(&self) -> bool {
+        match self {
+            Self::ApiError { code, .. } => code.is_premium_required(),
+            Self::RequestFailed { .. }
+            | Self::ParseError(_)
+            | Self::OAuthError(_)
+            | Self::NetworkError(_)
+            | Self::ConfigMissing
+            | Self::InvalidResponse(_)
+            | Self::HttpError(_) => false,
+        }
+    }
 }
 
 /// JSON structure for `FatSecret` API error responses
@@ -803,7 +836,8 @@ mod tests {
             | FatSecretError::OAuthError(_)
             | FatSecretError::NetworkError(_)
             | FatSecretError::ConfigMissing
-            | FatSecretError::InvalidResponse(_) => panic!("expected ApiError"),
+            | FatSecretError::InvalidResponse(_)
+            | FatSecretError::HttpError(_) => panic!("expected ApiError"),
         }
     }
 
@@ -827,7 +861,8 @@ mod tests {
             | FatSecretError::OAuthError(_)
             | FatSecretError::NetworkError(_)
             | FatSecretError::ConfigMissing
-            | FatSecretError::InvalidResponse(_) => panic!("expected ApiError"),
+            | FatSecretError::InvalidResponse(_)
+            | FatSecretError::HttpError(_) => panic!("expected ApiError"),
         }
     }
 
