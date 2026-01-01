@@ -69,14 +69,14 @@ fn parse_meals(meals_str: &str) -> Result<Vec<MealType>, String> {
 async fn main() {
     match run().await {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!("{}", serde_json::to_string(serde_json::to_string(&error).expect("Unexpected None value")error).expect("Failed to serialize error JSON"));
             std::process::exit(1);
         }
     }

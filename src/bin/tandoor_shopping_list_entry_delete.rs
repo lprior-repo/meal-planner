@@ -42,7 +42,7 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(&output).unwrap());
+    println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
     if !output.success {
         std::process::exit(1);
     }
@@ -71,7 +71,7 @@ mod tests {
     #[test]
     fn test_input_deserialization() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "mealplan_id": 123, "entry_id": 456}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.mealplan_id, 123);
         assert_eq!(input.entry_id, 456);
     }
@@ -82,7 +82,7 @@ mod tests {
             success: true,
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
     }
 
@@ -92,7 +92,7 @@ mod tests {
             success: false,
             error: Some("Not found".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("Not found"));
     }

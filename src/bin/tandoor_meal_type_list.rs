@@ -38,7 +38,7 @@ struct Output {
 
 fn main() {
     match run() {
-        Ok(output) => println!("{}", serde_json::to_string(&output).unwrap()),
+        Ok(output) => println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON")),
         Err(e) => {
             let error = Output {
                 success: false,
@@ -46,7 +46,7 @@ fn main() {
                 meal_types: None,
                 error: Some(e.to_string()),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!("{}", serde_json::to_string(serde_json::to_string(&error).expect("Unexpected None value")error).expect("Failed to serialize error JSON"));
             std::process::exit(1);
         }
     }
@@ -76,7 +76,7 @@ mod tests {
     #[test]
     fn test_input_parsing() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(parsed.tandoor.base_url, "http://localhost:8090");
         assert_eq!(parsed.tandoor.api_token, "test");
         assert_eq!(parsed.page, None);
@@ -86,7 +86,7 @@ mod tests {
     #[test]
     fn test_input_with_pagination() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "page": 2, "page_size": 20}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(parsed.page, Some(2));
         assert_eq!(parsed.page_size, Some(20));
     }
@@ -99,7 +99,7 @@ mod tests {
             meal_types: Some(vec![]),
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"count\":5"));
     }

@@ -59,7 +59,7 @@ struct ErrorOutput {
 async fn main() {
     match run() {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
         }
         Err(e) => {
             // Try to get detailed info even on error if requested
@@ -84,7 +84,7 @@ async fn main() {
                 error: e.to_string(),
                 details: error_details,
             };
-            eprintln!("{}", serde_json::to_string(&error).unwrap());
+            eprintln!("{}", serde_json::to_string(serde_json::to_string(&error).expect("Unexpected None value")error).expect("Failed to serialize error JSON"));
             std::process::exit(1);
         }
     }

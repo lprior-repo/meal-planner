@@ -66,7 +66,10 @@ async fn main() {
                 success: false,
                 error: e.to_string(),
             };
-            println!("{}", serde_json::to_string(&error).expect("Failed to serialize error JSON"));
+            println!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }

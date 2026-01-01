@@ -52,7 +52,7 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(&output).unwrap());
+    println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
     if !output.success {
         std::process::exit(1);
     }
@@ -109,7 +109,7 @@ mod tests {
             message: Some("Image uploaded".to_string()),
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"message\":\"Image uploaded\""));
         assert!(!json.contains("error"));
@@ -122,7 +122,7 @@ mod tests {
             message: None,
             error: Some("File not found".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("\"error\":\"File not found\""));
         assert!(!json.contains("message"));
@@ -138,7 +138,7 @@ mod tests {
 			"recipe_id": 42,
 			"image_path": "/tmp/recipe.jpg"
 		}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert!(parsed.tandoor.is_some());
         assert_eq!(parsed.recipe_id, 42);
         assert_eq!(parsed.image_path, "/tmp/recipe.jpg");
@@ -152,7 +152,7 @@ mod tests {
 			"recipe_id": 123,
 			"image_path": "/home/user/dish.png"
 		}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert!(parsed.tandoor.is_none());
         assert_eq!(parsed.base_url, Some("http://localhost:8090".to_string()));
         assert_eq!(parsed.recipe_id, 123);

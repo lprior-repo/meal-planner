@@ -38,14 +38,14 @@ pub async fn make_oauth_request(
         token_secret,
     );
 
-    // DOS prevention: Configure client with size limits
+    // DOS prevention: Configure client with connection limits
     let client = Client::builder()
         .timeout(Duration::from_secs(30))
         // DOS prevention: Limit connection pool to prevent resource exhaustion
         .pool_max_idle_per_host(3)
         .pool_idle_timeout(Duration::from_secs(30))
         .build()
-        .map_err(|e| FatSecretError::NetworkError(e.to_string()))?;
+        .map_err(|e: reqwest::Error| FatSecretError::NetworkError(e.to_string()))?;
     let response: reqwest::Response = if method == Method::GET {
         // For GET: parameters go in query string
         let query: Vec<_> = oauth_params
@@ -89,6 +89,23 @@ pub async fn make_oauth_request(
     Ok(body)
 }
 
+/// Validate request body size against DOS limits
+fn validate_request_size(params: &HashMap<String, String>) -> Result<(), FatSecretError> {
+    const MAX_REQUEST_SIZE: usize = 1024 * 1024; // 1MB for API requests
+    let total_size: usize = params.iter()
+        .map(|(k, v)| k.len() + v.len())
+        .sum();
+    
+    if total_size > MAX_REQUEST_SIZE {
+        return Err(FatSecretError::NetworkError(format!(
+            "Request too large: {} bytes exceeds limit of {} bytes",
+            total_size,
+            MAX_REQUEST_SIZE
+        )));
+    }
+    Ok(())
+}
+
 /// Make 2-legged API request (public data, no user token)
 ///
 /// This is used for API methods that don't require user authentication,
@@ -101,6 +118,9 @@ pub async fn make_api_request(
     let mut api_params = params;
     api_params.insert("method".to_string(), method_name.to_string());
     api_params.insert("format".to_string(), "json".to_string());
+    
+    // DOS prevention: Validate request size before sending
+    validate_request_size(&api_params)?;
 
     let body = make_oauth_request(
         config,
@@ -142,6 +162,19 @@ pub async fn make_authenticated_request(
     .await?;
 
     check_api_error(body)
+}
+
+/// Validate request body size against DOS limits
+fn validate_request_size(body: &str) -> Result<(), FatSecretError> {
+    const MAX_REQUEST_SIZE: usize = 1024 * 1024; // 1MB for API requests
+    if body.len() > MAX_REQUEST_SIZE {
+        return Err(FatSecretError::NetworkError(format!(
+            "Request too large: {} bytes exceeds limit of {} bytes",
+            body.len(),
+            MAX_REQUEST_SIZE
+        )));
+    }
+    Ok(())
 }
 
 /// Check response for API errors

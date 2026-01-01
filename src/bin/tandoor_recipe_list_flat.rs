@@ -54,7 +54,7 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(&output).unwrap());
+    println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
     if !output.success {
         std::process::exit(1);
     }
@@ -104,7 +104,7 @@ mod tests {
             recipe_count: Some(0),
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"recipe_count\":0"));
         assert!(json.contains("\"recipes\":[]"));
@@ -118,7 +118,7 @@ mod tests {
             recipe_count: None,
             error: Some("Connection failed".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("\"error\":\"Connection failed\""));
         assert!(!json.contains("recipe_count"));
@@ -134,7 +134,7 @@ mod tests {
 			"limit": 50,
 			"offset": 0
 		}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert!(parsed.tandoor.is_some());
         assert_eq!(parsed.limit, Some(50));
         assert_eq!(parsed.offset, Some(0));
@@ -147,7 +147,7 @@ mod tests {
 			"api_token": "test_token",
 			"limit": 100
 		}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert!(parsed.tandoor.is_none());
         assert_eq!(parsed.base_url, Some("http://localhost:8090".to_string()));
         assert_eq!(parsed.limit, Some(100));

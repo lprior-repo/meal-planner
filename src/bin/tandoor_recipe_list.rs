@@ -42,7 +42,7 @@ struct Output {
 fn main() {
     match run() {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
         }
         Err(e) => {
             let error = Output {
@@ -51,7 +51,7 @@ fn main() {
                 recipes: None,
                 error: Some(e.to_string()),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!("{}", serde_json::to_string(serde_json::to_string(&error).expect("Unexpected None value")error).expect("Failed to serialize error JSON"));
             std::process::exit(1);
         }
     }
@@ -99,7 +99,7 @@ mod tests {
             recipes: Some(vec![]),
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"count\":5"));
     }
@@ -112,7 +112,7 @@ mod tests {
             recipes: None,
             error: Some("Connection failed".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("\"error\""));
         assert!(!json.contains("\"count\""));

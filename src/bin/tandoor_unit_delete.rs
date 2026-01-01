@@ -31,14 +31,14 @@ struct Output {
 fn main() {
     match run() {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
         }
         Err(e) => {
             let error = Output {
                 success: false,
                 error: Some(e.to_string()),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!("{}", serde_json::to_string(serde_json::to_string(&error).expect("Unexpected None value")error).expect("Failed to serialize error JSON"));
             std::process::exit(1);
         }
     }
@@ -73,7 +73,7 @@ mod tests {
             success: true,
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
     }
 
@@ -83,7 +83,7 @@ mod tests {
             success: false,
             error: Some("unit not found".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("unit not found"));
     }

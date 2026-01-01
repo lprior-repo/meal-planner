@@ -44,7 +44,7 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(&output).unwrap());
+    println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
     if !output.success {
         std::process::exit(1);
     }
@@ -85,7 +85,7 @@ mod tests {
     #[test]
     fn test_input_parsing_with_description() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "name": "Costco", "description": "Warehouse store"}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.name, "Costco");
         assert_eq!(input.description, Some("Warehouse store".to_string()));
     }
@@ -93,7 +93,7 @@ mod tests {
     #[test]
     fn test_input_parsing_minimal() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "name": "Trader Joe's"}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.name, "Trader Joe's");
         assert_eq!(input.description, None);
     }

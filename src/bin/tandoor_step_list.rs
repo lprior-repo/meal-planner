@@ -46,7 +46,7 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(&output).unwrap());
+    println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
     if !output.success {
         std::process::exit(1);
     }
@@ -84,7 +84,7 @@ mod tests {
             steps: Some(vec![]),
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"count\":5"));
     }
@@ -92,7 +92,7 @@ mod tests {
     #[test]
     fn test_input_parsing_with_pagination() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "page": 2, "page_size": 20}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.page, Some(2));
         assert_eq!(input.page_size, Some(20));
     }

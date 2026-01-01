@@ -42,7 +42,7 @@ struct Output {
 fn main() {
     match run() {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
         }
         Err(e) => {
             let error = Output {
@@ -51,7 +51,7 @@ fn main() {
                 meal_plans: None,
                 error: Some(e.to_string()),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!("{}", serde_json::to_string(serde_json::to_string(&error).expect("Unexpected None value")error).expect("Failed to serialize error JSON"));
             std::process::exit(1);
         }
     }
@@ -93,7 +93,7 @@ mod tests {
     #[test]
     fn test_input_parsing_minimal() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.page, None);
         assert_eq!(input.page_size, None);
     }
@@ -101,7 +101,7 @@ mod tests {
     #[test]
     fn test_input_parsing_with_pagination() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "page": 2, "page_size": 20}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.page, Some(2));
         assert_eq!(input.page_size, Some(20));
     }
@@ -114,7 +114,7 @@ mod tests {
             meal_plans: Some(vec![serde_json::json!({"id": 1})]),
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"count\":5"));
     }
@@ -127,7 +127,7 @@ mod tests {
             meal_plans: None,
             error: Some("API error".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("API error"));
         assert!(!json.contains("\"count\""));

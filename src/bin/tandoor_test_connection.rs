@@ -27,7 +27,7 @@ struct Input {
 
 fn main() {
     match run() {
-        Ok(output) => println!("{}", serde_json::to_string(&output).unwrap()),
+        Ok(output) => println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON")),
         Err(e) => {
             println!("{{\"success\":false,\"error\":\"{e}\"}}");
             std::process::exit(1);

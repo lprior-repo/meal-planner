@@ -46,7 +46,7 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(&output).unwrap());
+    println!("{}", serde_json::to_string(serde_json::to_string(&output).expect("Unexpected None value")output).expect("Failed to serialize output JSON"));
     if !output.success {
         std::process::exit(1);
     }
@@ -73,7 +73,7 @@ fn run() -> anyhow::Result<Output> {
             result
                 .results
                 .into_iter()
-                .map(|f| serde_json::to_value(f).unwrap())
+                .map(|f| serde_json::to_value(f).expect("Unexpected None value"))
                 .collect(),
         ),
         error: None,
@@ -87,7 +87,7 @@ mod tests {
     #[test]
     fn test_input_parsing_with_page() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "page": 1, "page_size": 20}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.page, Some(1));
         assert_eq!(input.page_size, Some(20));
     }
@@ -95,7 +95,7 @@ mod tests {
     #[test]
     fn test_input_parsing_defaults() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.page, None);
         assert_eq!(input.page_size, None);
     }

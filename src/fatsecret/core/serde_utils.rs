@@ -192,6 +192,12 @@ where
 }
 
 /// Deserialize a float that might be a string ("95.5") or number (95.5)
+///
+/// This function performs strict validation to prevent silent data loss:
+/// - Empty strings are rejected with an error
+/// - Whitespace-only strings are rejected with an error  
+/// - Invalid number strings are rejected with an error
+/// - Valid numeric strings are parsed normally
 pub fn deserialize_flexible_float<'de, D>(deserializer: D) -> Result<f64, D::Error>
 where
     D: Deserializer<'de>,
@@ -206,18 +212,31 @@ where
     match FlexibleFloat::deserialize(deserializer)? {
         FlexibleFloat::Float(f) => Ok(f),
         FlexibleFloat::String(s) => {
-            if s.is_empty() {
-                Err(serde::de::Error::custom(
-                    "empty string cannot be deserialized as a number",
-                ))
-            } else {
-                s.parse::<f64>().map_err(serde::de::Error::custom)
+            let trimmed = s.trim();
+            if trimmed.is_empty() {
+                return Err(serde::de::Error::custom(
+                    "empty or whitespace-only string cannot be deserialized as a number",
+                ));
             }
+
+            // Ensure the string is a valid number representation
+            trimmed.parse::<f64>().map_err(|_| {
+                serde::de::Error::custom(format!(
+                    "invalid numeric string '{}': cannot be parsed as f64",
+                    s
+                ))
+            })
         }
     }
 }
 
 /// Deserialize an optional float that might be a string, number, or missing
+/// 
+/// This function performs strict validation to prevent silent data loss:
+/// - Empty strings, "None", "null", and actual null values become None
+/// - Whitespace-only strings become None
+/// - Invalid number strings are rejected with an error
+/// - Valid numeric strings are parsed normally
 pub fn deserialize_optional_flexible_float<'de, D>(deserializer: D) -> Result<Option<f64>, D::Error>
 where
     D: Deserializer<'de>,
@@ -232,10 +251,16 @@ where
     match Option::<FlexibleFloat>::deserialize(deserializer)? {
         Some(FlexibleFloat::Float(f)) => Ok(Some(f)),
         Some(FlexibleFloat::String(s)) => {
-            if s.is_empty() || s == "None" || s == "null" {
+            let trimmed = s.trim();
+            if trimmed.is_empty() || trimmed == "None" || trimmed == "null" {
                 Ok(None)
             } else {
-                s.parse::<f64>().map(Some).map_err(serde::de::Error::custom)
+                trimmed.parse::<f64>().map(Some).map_err(|_| {
+                    serde::de::Error::custom(format!(
+                        "invalid numeric string '{}': cannot be parsed as f64",
+                        s
+                    ))
+                })
             }
         }
         _ => Ok(None),
@@ -243,6 +268,12 @@ where
 }
 
 /// Deserialize an int that might be a string ("95") or number (95)
+/// 
+/// This function performs strict validation to prevent silent data loss:
+/// - Empty strings are rejected with an error
+/// - Whitespace-only strings are rejected with an error  
+/// - Invalid number strings are rejected with an error
+/// - Valid numeric strings are parsed normally
 pub fn deserialize_flexible_int<'de, D>(deserializer: D) -> Result<i32, D::Error>
 where
     D: Deserializer<'de>,
@@ -257,13 +288,19 @@ where
     match FlexibleInt::deserialize(deserializer)? {
         FlexibleInt::Int(i) => Ok(i),
         FlexibleInt::String(s) => {
-            if s.is_empty() {
-                Err(serde::de::Error::custom(
-                    "empty string cannot be deserialized as a number",
-                ))
-            } else {
-                s.parse::<i32>().map_err(serde::de::Error::custom)
+            let trimmed = s.trim();
+            if trimmed.is_empty() {
+                return Err(serde::de::Error::custom(
+                    "empty or whitespace-only string cannot be deserialized as a number",
+                ));
             }
+            
+            trimmed.parse::<i32>().map_err(|_| {
+                serde::de::Error::custom(format!(
+                    "invalid numeric string '{}': cannot be parsed as i32",
+                    s
+                ))
+            })
         }
     }
 }
