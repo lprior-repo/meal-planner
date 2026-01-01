@@ -5,6 +5,8 @@
 
 use std::env;
 
+use urlencoding::encode;
+
 /// Default `FatSecret` API host
 pub const DEFAULT_API_HOST: &str = "platform.fatsecret.com";
 
@@ -84,7 +86,7 @@ impl FatSecretConfig {
         format!(
             "https://{}/oauth/authorize?oauth_token={}",
             self.auth_host(),
-            oauth_token
+            encode(oauth_token)
         )
     }
 }
@@ -124,6 +126,15 @@ mod tests {
         assert_eq!(
             config.authorization_url("token123"),
             "https://authentication.fatsecret.com/oauth/authorize?oauth_token=token123"
+        );
+    }
+
+    #[test]
+    fn test_authorization_url_special_chars() {
+        let config = FatSecretConfig::new("key", "secret");
+        assert_eq!(
+            config.authorization_url("token&special=chars"),
+            "https://authentication.fatsecret.com/oauth/authorize?oauth_token=token%26special%3Dchars"
         );
     }
 }
