@@ -1,6 +1,6 @@
-# Documentation for AI
+# Documentation System (AI + Human)
 
-How we optimize documentation for AI agents.
+How we design documentation for both AI agents and humans to consume efficiently.
 
 ## The Problem
 
@@ -49,30 +49,30 @@ Source: [Anthropic Contextual Retrieval](https://www.anthropic.com/news/contextu
 
 ## Building Documentation
 
-When adding docs:
+When adding docs, optimize for **both humans and AI agents**:
 
-1. Write naturally (Stripe-style: short, clear, linked)
-2. Use consistent heading levels
-3. Link to related docs with Markdown links
-4. Categorize with tags: `tutorial-*`, `concept-*`, `ref-*`, `ops-*`, `meta-*`
-5. Keep chunks ~200 tokens (prevents bloat, aids navigation)
+1. **Write clearly**: Short, concrete, linked
+2. **Structure for scanning**: Headings, tables, code blocks
+3. **Cross-reference**: Link to 2-3 related docs
+4. **Stay focused**: One topic per doc, under 1500 words
+5. **Be complete**: Full answer in one place
+
+This helps:
+- **Humans**: Quickly find what they need, follow links to related topics
+- **AI agents**: Navigate by following doc links, understand context through links
 
 ## Indexing
 
 Automatic via:
-- `docs/_indexed/chunks/` - Chunked content
-- `docs/_indexed/docs/` - Full documents
+- `docs/_indexed/chunks/` - Chunked content for AI search
+- `docs/_indexed/docs/` - Full documents for context
 - `docs/_indexed/INDEX.json` - Searchable index (load only when needed)
 
 Run indexing: (commands in AGENTS.md)
 
-## Stripe-Quality Checklist
+## Examples of AI+Human Optimized Docs
 
-- [ ] **Short**: Under 1500 words
-- [ ] **Focused**: One topic, clear purpose
-- [ ] **Linked**: Cross-references to related docs
-- [ ] **Scannable**: Headings, tables, code blocks
-- [ ] **Complete**: Answer the question fully in one place
-- [ ] **Actionable**: Clear next steps or "see also"
-
-See: [ARCHITECTURE.md](ARCHITECTURE.md), [MOON_CI_PIPELINE.md](MOON_CI_PIPELINE.md), [FATSECRET_OAUTH_SETUP.md](FATSECRET_OAUTH_SETUP.md) for examples
+See: 
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Architecture for humans, links for AI
+- [MOON_CI_PIPELINE.md](MOON_CI_PIPELINE.md) - Commands for humans, structure for AI
+- [FATSECRET_OAUTH_SETUP.md](FATSECRET_OAUTH_SETUP.md) - Steps for humans, context links for AI

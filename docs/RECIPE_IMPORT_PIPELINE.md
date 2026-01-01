@@ -4,6 +4,8 @@
 
 Automated recipe import: scrape → enrich with nutrition → store in Tandoor.
 
+**For both humans and AI agents**: Links throughout help you navigate to related docs for deeper context.
+
 ## Architecture
 
 Windmill flow composes small binaries (CUPID principles):

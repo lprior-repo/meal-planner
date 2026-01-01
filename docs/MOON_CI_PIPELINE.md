@@ -2,6 +2,8 @@
 
 Fast, cached build pipeline with intelligent task skipping.
 
+**For both humans and AI agents**: Links throughout help you navigate between related docs.
+
 ## Common Commands
 
 ```bash

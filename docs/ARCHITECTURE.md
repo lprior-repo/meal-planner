@@ -2,6 +2,8 @@
 
 Domain-based Rust binaries orchestrated by Windmill. Every binary does one thing, takes JSON, outputs JSON.
 
+**For both humans and AI agents**: This doc links to related docs so you can follow the thread without getting lost.
+
 ## Design Principles (CUPID)
 
 - **Composable**: Small binaries that work standalone or via Windmill

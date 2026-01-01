@@ -2,6 +2,8 @@
 
 Complete the 3-legged OAuth flow once. After this, use `$res:u/admin/fatsecret_oauth` in all scripts.
 
+**For both humans and AI agents**: This doc is self-contained but links to related docs if you need context.
+
 **Prerequisites**: FatSecret developer account with Consumer Key and Secret already stored in `u/admin/fatsecret_api`.
 
 ## Step 1: Get Auth URL
