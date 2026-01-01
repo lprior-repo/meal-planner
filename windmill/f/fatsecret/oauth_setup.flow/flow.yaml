@@ -49,7 +49,16 @@ value:
               description: {
                 render_all: [
                   {
-                    markdown: `## Authorize FatSecret\n\n**[Click here to authorize](${auth_url})**\n\nAfter authorizing, FatSecret shows a verifier code.\nPaste it below and click Resume.`
+                    markdown: `## Authorize FatSecret
+
+**Auth URL:** \`${auth_url}\`
+
+[Click here to authorize](${auth_url})
+
+After authorizing in FatSecret:
+1. You'll see a verifier code displayed
+2. Paste that code in the "Verifier Code" field below
+3. Click "Resume" to complete the connection`
                   }
                 ]
               }

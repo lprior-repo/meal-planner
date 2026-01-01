@@ -131,7 +131,7 @@ fn test_authorization_url_generation() {
 
     let auth_url = config.authorization_url(oauth_token);
 
-    assert!(auth_url.starts_with("https://authentication.fatsecret.com/authorize"));
+    assert!(auth_url.starts_with("https://authentication.fatsecret.com/oauth/authorize"));
     assert!(auth_url.contains("oauth_token=test_request_token"));
 }
 

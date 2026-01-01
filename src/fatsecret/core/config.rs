@@ -82,7 +82,7 @@ impl FatSecretConfig {
     /// Get the OAuth authorization URL
     pub fn authorization_url(&self, oauth_token: &str) -> String {
         format!(
-            "https://{}/authorize?oauth_token={}",
+            "https://{}/oauth/authorize?oauth_token={}",
             self.auth_host(),
             oauth_token
         )
@@ -123,7 +123,7 @@ mod tests {
         let config = FatSecretConfig::new("key", "secret");
         assert_eq!(
             config.authorization_url("token123"),
-            "https://authentication.fatsecret.com/authorize?oauth_token=token123"
+            "https://authentication.fatsecret.com/oauth/authorize?oauth_token=token123"
         );
     }
 }
