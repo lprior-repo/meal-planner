@@ -1,6 +1,6 @@
 summary: Generate weekly meal plan
 description: |
-  Randomly selects 2 Meat Church recipes and creates meal plan entries.
+  Randomly selects recipes by keyword and creates meal plan entries.
   Uses hardcoded $res:u/admin/tandoor_api resource.
 value:
   modules:
@@ -28,16 +28,16 @@ value:
             value: $res:u/admin/tandoor_api
           recipe:
             type: javascript
-            expr: String(results.select_random.recipes[0].id)
+            expr: results.select_random.recipes[0].id
           meal_type:
-            type: static
-            value: dinner
+            type: javascript
+            expr: flow_input.meal_type_id || 1
           from_date:
             type: javascript
             expr: flow_input.dates[0]
           servings:
             type: javascript
-            expr: String(results.select_random.recipes[0].servings || 4)
+            expr: results.select_random.recipes[0].servings || 4
     - id: create_meal_plan_2
       value:
         type: script
@@ -48,16 +48,16 @@ value:
             value: $res:u/admin/tandoor_api
           recipe:
             type: javascript
-            expr: String(results.select_random.recipes[1].id)
+            expr: results.select_random.recipes[1].id
           meal_type:
-            type: static
-            value: dinner
+            type: javascript
+            expr: flow_input.meal_type_id || 1
           from_date:
             type: javascript
             expr: flow_input.dates[1]
           servings:
             type: javascript
-            expr: String(results.select_random.recipes[1].servings || 4)
+            expr: results.select_random.recipes[1].servings || 4
     - id: format_output
       value:
         type: script
@@ -77,7 +77,7 @@ value:
             expr: JSON.stringify(results.create_meal_plan_2)
 
 schema:
-  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  $schema: 'https://json-schema.org/draft-2020-12/schema'
   type: object
   properties:
     keyword:
@@ -88,6 +88,10 @@ schema:
       type: integer
       description: Number of recipes to select
       default: 2
+    meal_type_id:
+      type: integer
+      description: Meal type ID (1=Breakfast, etc.)
+      default: 1
     dates:
       type: array
       items:

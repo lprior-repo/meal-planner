@@ -52,7 +52,7 @@ tasks:
 
   validate-yaml:
     description: 'Validate Windmill YAML files'
-    command: 'yamllint -d relaxed windmill/'
+    command: 'yamllint -c .yamllintrc windmill/'
     inputs:
       - '@globs(windmill)'
     options:
@@ -81,6 +81,37 @@ tasks:
       - 'scripts/validate-windmill-cue.sh'
     options:
       cache: true
+
+  # ============================================
+  # API Contract Testing (Schemathesis)
+  # ============================================
+  test-api-contracts:
+    description: 'Run Schemathesis API contract tests against OpenAPI specs'
+    script: |
+      echo "=== API Contract Testing with Schemathesis ==="
+      echo ""
+      
+      # Validate FatSecret OpenAPI spec (no live API for this one)
+      echo "Validating FatSecret OpenAPI spec..."
+      uvx schemathesis run openapi/fatsecret.yaml --validate-schema-only
+      echo "✓ FatSecret spec is valid"
+      echo ""
+      
+      # Run limited tests against Tandoor (requires live API)
+      echo "Running Tandoor API contract tests..."
+      uvx schemathesis run openapi/tandoor.yaml \
+        --url http://localhost:8090 \
+        --checks not_a_server_error,status_code_conformance,response_schema_conformance \
+        --max-failures 5 \
+        --workers 2
+      echo ""
+      
+      echo "=== API Contract Tests Complete ==="
+    inputs:
+      - 'openapi/*.yaml'
+      - 'openapi/*.yml'
+    options:
+      cache: false  # Always run fresh tests against live API
 
   # ============================================
   # Testing

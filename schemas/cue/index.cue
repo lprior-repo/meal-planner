@@ -1,30 +1,26 @@
 // Meal Planner CUE Schema Index
-// Master file that imports all schemas and provides quick reference
-
-package mealplanner
+// Master file that provides quick reference and documentation
+//
+// SOURCE OF TRUTH: All type definitions are authored in CUE
+// GENERATION: CUE → JSON Schema → Rust types (via typify)
+// TESTING: OpenAPI specs → Schemathesis tests
 
 // =============================================================================
 // SCHEMA FILES
 // =============================================================================
 //
-// base.cue              - Core types, common patterns, base definitions
-// fatsecret_foods.cue   - Food search, get, autocomplete, barcode, favorites
-// fatsecret_diary.cue   - Food diary entries CRUD
-// fatsecret_exercise.cue - Exercise entries CRUD, month summary
-// fatsecret_recipes.cue - Recipe search, get, favorites
-// fatsecret_saved_meals.cue - Saved meal templates CRUD
-// fatsecret_weight.cue  - Weight tracking
-// fatsecret_oauth.cue   - OAuth flow, token management, profile
-// tandoor.cue           - Tandoor API: test, scrape, create
-// flows.cue             - Windmill flow definitions
-// resources.cue         - Windmill resource types
+// fatsecret/api.cue      - Complete FatSecret Platform API (all endpoints)
+// fatsecret_oauth.cue    - OAuth 1.0a flow and token management
+// base.cue               - Common types, patterns, validation rules
+// tandoor.cue            - Tandoor Recipes API (from openapi/tandoor.yaml)
+// resources.cue          - Windmill resource type definitions
+// flows.cue              - Windmill flow definitions
 
 // =============================================================================
 // BINARY QUICK REFERENCE
 // =============================================================================
 
 // 2-LEGGED OAUTH (No user token required)
-// These operations work with just API credentials
 #TwoLeggedBinaries: [
 	"fatsecret_foods_search",
 	"fatsecret_food_get",
@@ -36,7 +32,6 @@ package mealplanner
 ]
 
 // 3-LEGGED OAUTH (Requires user access token)
-// These operations require user authorization
 #ThreeLeggedBinaries: [
 	// Diary
 	"fatsecret_food_entries_get",
@@ -92,8 +87,8 @@ package mealplanner
 // =============================================================================
 
 #Flows: [
-	"f/fatsecret/oauth_setup",      // OAuth 3-legged authorization
-	"f/tandoor/import_recipe",      // Scrape + create single recipe
+	"f/fatsecret/oauth_setup",       // OAuth 3-legged authorization
+	"f/tandoor/import_recipe",       // Scrape + create single recipe
 	"f/tandoor/batch_import_recipes", // Import multiple recipes
 ]
 
@@ -114,37 +109,55 @@ package mealplanner
 // Note: "snack" is alias for "other" in some contexts
 
 // =============================================================================
-// VALIDATION EXAMPLES
+// WORKFLOW
+// =============================================================================
+//
+// 1. Author types in CUE (schemas/cue/fatsecret/api.cue)
+// 2. Generate OpenAPI:  nu scripts/gen_openapi.nu
+// 3. Generate Rust types: cargo run --bin codegen_typify
+// 4. Run API tests:     moon run :test-api-contracts
+//
+// CI Pipeline:
+//   moon run :validate-cue     # CUE schema validation
+//   moon run :test-api-contracts  # Schemathesis tests
+//   moon run :test              # Rust unit tests
+
+// =============================================================================
+// KEY TYPE DEFINITIONS (from fatsecret/api.cue)
 // =============================================================================
 
-// Example: Validate a food entry create input
-_exampleFoodEntryCreate: #FoodEntryCreateInput & {
-	fatsecret: {
-		consumer_key:    "abc123"
-		consumer_secret: "xyz789"
-	}
-	access_token:    "user_token"
-	access_secret:   "user_secret"
-	food_id:         "33691"
-	food_entry_name: "Chicken Breast"
-	serving_id:      "12345"
-	number_of_units: 1.5
-	meal:            "lunch"
-	date_int:        20088
-}
+// Common ID types
+// #DateInt: int & >=0  // Days since Unix epoch
+// #FoodId: string & =~"^[0-9]+$"
+// #ServingId: string & =~"^[0-9]+$"
+// #FoodEntryId: string & =~"^[0-9]+$"
+// #MealType: "breakfast" | "lunch" | "dinner" | "other" | "snack"
 
-// Example: Validate a foods search input
-_exampleFoodsSearch: #FoodsSearchInput & {
-	query:       "grilled chicken"
-	page:        0
-	max_results: 20
-}
+// Food Entry (Diary)
+// #FoodEntry: {
+//     food_entry_id: #FoodEntryId
+//     food_id: #FoodId
+//     food_entry_name: string
+//     serving_id: #ServingId
+//     number_of_units: number
+//     meal: #MealType
+//     date_int: #DateInt
+//     calories: number
+//     carbohydrate: number
+//     protein: number
+//     fat: number
+// }
 
-// Example: Validate a Tandoor scrape input
-_exampleTandoorScrape: #TandoorScrapeRecipeInput & {
-	tandoor: {
-		base_url:  "https://recipes.example.com"
-		api_token: "token123"
-	}
-	url: "https://seriouseats.com/recipe/chicken"
-}
+// Foods Search Input (V3)
+// #FoodsSearchV3Input: {
+//     search_expression: string
+//     page_number?: int
+//     max_results?: int & <=50
+//     include_sub_categories?: bool
+//     include_food_images?: bool
+//     include_food_attributes?: bool
+//     flag_default_serving?: bool
+//     region?: string
+//     language?: string
+//     format?: "json" | "xml"
+// }

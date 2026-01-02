@@ -17,20 +17,20 @@ jq -n --argjson recipes "$recipes_json" --argjson dates "$dates_json" --argjson 
   summary: {
     recipes_selected: ($recipes | length),
     cooking_dates: $dates,
-    meal_plan_ids: [$mp1.id, $mp2.id]
+    meal_plan_ids: [$mp1.meal_plan.id, $mp2.meal_plan.id]
   },
   meal_plans: [
     {
       recipe_id: $recipes[0].id,
       recipe_name: $recipes[0].name,
       cooking_date: $dates[0],
-      meal_type: "dinner"
+      meal_type: ($mp1.meal_plan.meal_type_name // $mp1.meal_plan.meal_type.name)
     },
     {
       recipe_id: $recipes[1].id,
       recipe_name: $recipes[1].name,
       cooking_date: $dates[1],
-      meal_type: "dinner"
+      meal_type: ($mp2.meal_plan.meal_type_name // $mp2.meal_plan.meal_type.name)
     }
   ],
   ingredients: ["See Tandoor shopping list"],

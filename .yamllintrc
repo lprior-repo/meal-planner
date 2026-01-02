@@ -1,0 +1,13 @@
+# yamllint configuration file
+# Disables line-length check for Windmill YAML files that naturally exceed 80 chars
+# Also ignores missing document start markers
+
+extends: default
+
+rules:
+  line-length:
+    ignore: |
+      windmill/
+  document-start:
+    ignore: |
+      windmill/
