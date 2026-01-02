@@ -156,3 +156,44 @@ pub fn skip_if_no_credentials() {
         println!("Skipping: No credentials available (set env vars or configure pass)");
     }
 }
+
+#[allow(dead_code)]
+pub fn binary_exists(binary_name: &str) -> bool {
+    let paths = [
+        format!("./bin/{}", binary_name),
+        format!("target/debug/{}", binary_name),
+        format!("target/release/{}", binary_name),
+    ];
+    paths.iter().any(|p| std::path::Path::new(p).exists())
+}
+
+#[allow(dead_code)]
+pub fn run_binary_with_exit_code(binary_name: &str, input: &Value) -> Result<(Value, i32), String> {
+    let binary_path = format!("./bin/{}", binary_name);
+    if !std::path::Path::new(&binary_path).exists() {
+        return Err(format!("Binary not found: {}", binary_path));
+    }
+
+    let mut child = Command::new(&binary_path)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|e| format!("Failed to spawn {}: {}", binary_name, e))?;
+
+    if let Some(ref mut stdin) = child.stdin {
+        stdin.write_all(input.to_string().as_bytes())
+            .map_err(|e| format!("Failed to write stdin: {}", e))?;
+    }
+
+    let output = child.wait_with_output()
+        .map_err(|e| format!("Failed to wait for {}: {}", binary_name, e))?;
+
+    let exit_code = output.status.code().unwrap_or(-1);
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    let json_output: Value = serde_json::from_str(&stdout)
+        .map_err(|e| format!("Failed to parse JSON from {}: {} (output: {})", binary_name, e, stdout))?;
+
+    Ok((json_output, exit_code))
+}
