@@ -5,8 +5,8 @@
 #![allow(clippy::expect_used)]
 
 use meal_planner::tandoor::{
-    CreateShoppingListEntryRequest, ShoppingListEntry, TandoorClient, TandoorConfig,
-    UpdateShoppingListEntryRequest,
+    CreateShoppingListEntryRequest, ShoppingListEntry, ShoppingListRecipe, TandoorClient,
+    TandoorConfig, UpdateShoppingListEntryRequest,
 };
 use serde_json::json;
 use wiremock::{
@@ -198,31 +198,41 @@ async fn test_add_recipe_to_shopping_list() {
     let mock_server = MockServer::start().await;
 
     Mock::given(method("POST"))
-        .and(path("/api/meal-plan/1/shopping/"))
+        .and(path("/api/shopping-list-recipe/"))
         .respond_with(ResponseTemplate::new(201).set_body_json(json!({
-            "count": 5,
+            "count": 1,
             "next": null,
             "previous": null,
             "results": [
                 {
                     "id": 1,
                     "list": 1,
-                    "ingredient": null,
-                    "unit": null,
-                    "amount": 2.0,
-                    "food": "flour",
-                    "checked": false,
-                    "order": 1
-                },
-                {
-                    "id": 2,
-                    "list": 1,
-                    "ingredient": null,
-                    "unit": null,
-                    "amount": 1.0,
-                    "food": "sugar",
-                    "checked": false,
-                    "order": 2
+                    "mealplan": 1,
+                    "recipe": 5,
+                    "recipe_name": "Test Recipe",
+                    "servings": 4.0,
+                    "entries": [
+                        {
+                            "id": 1,
+                            "list": 1,
+                            "ingredient": null,
+                            "unit": null,
+                            "amount": 2.0,
+                            "food": "flour",
+                            "checked": false,
+                            "order": 1
+                        },
+                        {
+                            "id": 2,
+                            "list": 1,
+                            "ingredient": null,
+                            "unit": null,
+                            "amount": 1.0,
+                            "food": "sugar",
+                            "checked": false,
+                            "order": 2
+                        }
+                    ]
                 }
             ]
         })))
@@ -238,9 +248,12 @@ async fn test_add_recipe_to_shopping_list() {
     let result = handle.await.expect("Task should complete");
 
     assert!(result.is_ok());
-    let entries: Vec<ShoppingListEntry> = result.expect("Should succeed");
-    assert_eq!(entries.len(), 2);
-    assert_eq!(entries[0].food, Some("flour".to_string()));
+    let recipes: Vec<ShoppingListRecipe> = result.expect("Should succeed");
+    assert_eq!(recipes.len(), 1);
+    assert_eq!(recipes[0].recipe, 5);
+    assert_eq!(recipes[0].recipe_name, "Test Recipe");
+    assert_eq!(recipes[0].mealplan, 1);
+    assert_eq!(recipes[0].servings, 4.0);
 }
 
 #[tokio::test]

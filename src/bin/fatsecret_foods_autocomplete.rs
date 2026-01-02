@@ -12,7 +12,7 @@
 #![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::fatsecret::core::FatSecretConfig;
-use meal_planner::fatsecret::recipes::autocomplete_recipes;
+use meal_planner::fatsecret::foods::autocomplete_foods;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -77,11 +77,12 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
         None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 
-    let suggestions = autocomplete_recipes(&config, &input.expression).await?;
+    let response = autocomplete_foods(&config, &input.expression).await?;
 
     Ok(Output {
         success: true,
-        suggestions: suggestions
+        suggestions: response
+            .suggestions
             .into_iter()
             .map(serde_json::to_value)
             .collect::<Result<Vec<_>, _>>()?,

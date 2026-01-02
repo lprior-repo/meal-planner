@@ -89,6 +89,9 @@ value:
           recipe_id:
             type: javascript
             expr: results.select_random.recipes[0].id
+          servings:
+            type: javascript
+            expr: results.create_meal_plan_1.meal_plan.servings
     - id: add_to_shopping_list_2
       value:
         type: script
@@ -103,6 +106,9 @@ value:
           recipe_id:
             type: javascript
             expr: results.select_random.recipes[1].id
+          servings:
+            type: javascript
+            expr: results.create_meal_plan_2.meal_plan.servings
 
 schema:
   $schema: 'https://json-schema.org/draft-2020-12/schema'

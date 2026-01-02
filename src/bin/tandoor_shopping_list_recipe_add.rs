@@ -1,6 +1,6 @@
 //! Add recipe to shopping list
 //!
-//! Adds all ingredients from a recipe to the shopping list for a meal plan.
+//! Adds all ingredients from a recipe to shopping list for a meal plan.
 //!
 //! JSON input (CLI arg or stdin):
 //!   `{"tandoor": {...}, "mealplan_id": 123, "recipe_id": 456}`
@@ -10,7 +10,7 @@
 // CLI binaries: exit and unwrap/expect are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
-use meal_planner::tandoor::{ShoppingListEntry, TandoorClient, TandoorConfig};
+use meal_planner::tandoor::{ShoppingListRecipe, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -22,13 +22,15 @@ struct Input {
     mealplan_id: i64,
     /// Recipe ID to add
     recipe_id: i64,
+    /// Number of servings
+    servings: f64,
 }
 
 #[derive(Serialize)]
 struct Output {
     success: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    entries: Option<Vec<ShoppingListEntry>>,
+    entries: Option<Vec<ShoppingListRecipe>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     error: Option<String>,
 }
@@ -55,7 +57,7 @@ fn main() {
     }
 }
 
-fn run() -> Result<Vec<ShoppingListEntry>, Box<dyn std::error::Error>> {
+fn run() -> Result<Vec<ShoppingListRecipe>, Box<dyn std::error::Error>> {
     // Read input: prefer CLI arg, fall back to stdin
     let input: Input = if let Some(arg) = std::env::args().nth(1) {
         serde_json::from_str(&arg)?
@@ -66,7 +68,8 @@ fn run() -> Result<Vec<ShoppingListEntry>, Box<dyn std::error::Error>> {
     };
 
     let client = TandoorClient::new(&input.tandoor)?;
-    let entries = client.add_recipe_to_shopping_list(input.mealplan_id, input.recipe_id)?;
+    let entries =
+        client.add_recipe_to_shopping_list(input.mealplan_id, input.recipe_id, input.servings)?;
 
     Ok(entries)
 }

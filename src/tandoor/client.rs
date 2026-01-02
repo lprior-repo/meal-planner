@@ -1862,9 +1862,11 @@ impl TandoorClient {
         &self,
         mealplan_id: i64,
         recipe_id: i64,
-    ) -> Result<Vec<ShoppingListEntry>, TandoorError> {
-        let url = format!("{}/api/meal-plan/{}/shopping/", self.base_url, mealplan_id);
-        let body = serde_json::json!({"recipe": recipe_id});
+        servings: f64,
+    ) -> Result<Vec<ShoppingListRecipe>, TandoorError> {
+        let url = format!("{}/api/shopping-list-recipe/", self.base_url);
+        let body =
+            serde_json::json!({"recipe": recipe_id, "mealplan": mealplan_id, "servings": servings});
         let response = self.client.post(&url).json(&body).send()?;
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
@@ -1873,7 +1875,7 @@ impl TandoorClient {
             });
         }
         // API returns paginated response with results
-        let paginated: PaginatedResponse<ShoppingListEntry> = response
+        let paginated: PaginatedResponse<ShoppingListRecipe> = response
             .json()
             .map_err(|e| TandoorError::ParseError(e.to_string()))?;
         Ok(paginated.results)

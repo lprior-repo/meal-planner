@@ -7,17 +7,18 @@ package fatsecret
 // COMMON TYPES
 // =============================================================================
 
-#DateInt: int & >=0
-#FoodId: string & =~"^[0-9]+$"
-#ServingId: string & =~"^[0-9]+$"
-#FoodEntryId: string & =~"^[0-9]+$"
-#RecipeId: string & =~"^[0-9]+$"
-#ExerciseId: string & =~"^[0-9]+$"
+#DateInt:         int & >=0
+#FoodId:          string & =~"^[0-9]+$"
+#ServingId:       string & =~"^[0-9]+$"
+#FoodEntryId:     string & =~"^[0-9]+$"
+#RecipeId:        string & =~"^[0-9]+$"
+#ExerciseId:      string & =~"^[0-9]+$"
 #ExerciseEntryId: string & =~"^[0-9]+$"
-#MealType: "breakfast" | "lunch" | "dinner" | "other" | "snack"
-#FoodType: "Generic" | "Brand"
-#Format: "json" | "xml"
-#WeightUnit: "kg" | "lb"
+#MealType:        "breakfast" | "lunch" | "dinner" | "other" | "snack"
+#FoodType:        "Generic" | "Brand"
+#Format:          "json" | "xml"
+#WeightUnit:      "kg" | "lb"
+
 #HeightUnit: "cm" | "inch"
 
 // =============================================================================
@@ -25,40 +26,40 @@ package fatsecret
 // =============================================================================
 
 #NutritionData: {
-	calories?: number
-	fat?: number
-	saturated_fat?: number
-	trans_fat?: number
+	calories?:            number
+	fat?:                 number
+	saturated_fat?:       number
+	trans_fat?:           number
 	polyunsaturated_fat?: number
 	monounsaturated_fat?: number
-	cholesterol?: number
-	sodium?: number
-	carbohydrate?: number
-	fiber?: number
-	sugar?: number
-	protein?: number
-	vitamin_a?: number
-	vitamin_c?: number
-	calcium?: number
-	iron?: number
-	potassium?: number
+	cholesterol?:         number
+	sodium?:              number
+	carbohydrate?:        number
+	fiber?:               number
+	sugar?:               number
+	protein?:             number
+	vitamin_a?:           number
+	vitamin_c?:           number
+	calcium?:             number
+	iron?:                number
+	potassium?:           number
 }
 
 #Serving: {
-	serving_id: #ServingId
-	serving_description: string
-	serving_url?: string
+	serving_id:             #ServingId
+	serving_description:    string
+	serving_url?:           string
 	metric_serving_amount?: number
-	metric_serving_unit?: string
-	number_of_units?: number
-	nutrition: #NutritionData
+	metric_serving_unit?:   string
+	number_of_units?:       number
+	nutrition:              #NutritionData
 }
 
 #FoodSummary: {
-	food_id: #FoodId
-	food_name: string
-	food_type: #FoodType
-	food_url?: string
+	food_id:     #FoodId
+	food_name:   string
+	food_type:   #FoodType
+	food_url?:   string
 	brand_name?: string
 	...
 }
@@ -74,23 +75,23 @@ package fatsecret
 // =============================================================================
 
 #FoodsSearchV3Input: {
-	search_expression: string
-	page_number?: int
-	max_results?: int & <=50
-	include_sub_categories?: bool
-	include_food_images?: bool
+	search_expression:        string
+	page_number?:             int
+	max_results?:             int & <=50
+	include_sub_categories?:  bool
+	include_food_images?:     bool
 	include_food_attributes?: bool
-	flag_default_serving?: bool
-	region?: string
-	language?: string
-	format?: #Format
+	flag_default_serving?:    bool
+	region?:                  string
+	language?:                string
+	format?:                  #Format
 }
 
 #FoodsSearchV3Output: {
 	success: true
 	foods: {
-		max_results: int
-		page_number: int
+		max_results:   int
+		page_number:   int
 		total_results: int
 		food: [...#FoodSummary]
 	}
@@ -98,85 +99,85 @@ package fatsecret
 
 #FoodsSearchV1Input: {
 	search_expression: string
-	page_number?: int
-	max_results?: int & <=50
-	format?: #Format
+	page_number?:      int
+	max_results?:      int & <=50
+	format?:           #Format
 }
 
 #FoodsSearchV1Output: {
 	success: true
 	foods: {
-		max_results: int
-		page_number: int
+		max_results:   int
+		page_number:   int
 		total_results: int
 		food: [...#FoodSummary]
 	}
 }
 
 #FoodGetV1Input: {
-	food_id: #FoodId
-	format?: #Format
+	food_id:                 #FoodId
+	format?:                 #Format
 	include_sub_categories?: bool
-	flag_default_serving?: bool
-	region?: string
-	language?: string
+	flag_default_serving?:   bool
+	region?:                 string
+	language?:               string
 }
 
 #FoodGetV1Output: {
 	success: true
-	food: #FoodComplete
+	food:    #FoodComplete
 }
 
 #FoodsAutocompleteInput: {
-	expression: string
+	expression:   string
 	max_results?: int & <=20
-	format?: #Format
+	format?:      #Format
 }
 
 #FoodsAutocompleteOutput: {
 	success: true
 	suggestions: [...{
-		food_id: #FoodId
+		food_id:   #FoodId
 		food_name: string
 		food_type: #FoodType
-		score?: number
+		score?:    number
 	}]
 }
 
 #FoodFindBarcodeInput: {
-	barcode: string
+	barcode:       string
 	barcode_type?: string
-	format?: #Format
+	format?:       #Format
 }
 
 #FoodFindBarcodeOutput: {
 	success: true
-	food?: #FoodComplete
+	food?:   #FoodComplete
 }
 
 #FoodCategoriesOutput: {
 	success: true
 	categories: {
 		category: [...{
-			category_id: string
-			category_name: string
+			category_id:           string
+			category_name:         string
 			category_description?: string
-			food_category_type: string
+			food_category_type:    string
 		}]
 	}
 }
 
 #FoodSubCategoriesInput: {
 	category_id: string
-	format?: #Format
+	format?:     #Format
 }
 
 #FoodSubCategoriesOutput: {
 	success: true
 	sub_categories: {
 		sub_category: [...{
-			sub_category_id: string
-			sub_category_name: string
+			sub_category_id:    string
+			sub_category_name:  string
 			parent_category_id: string
 		}]
 	}
@@ -185,17 +186,17 @@ package fatsecret
 #FoodBrandsInput: {
 	page_number?: int
 	max_results?: int & <=50
-	format?: #Format
+	format?:      #Format
 }
 
 #FoodBrandsOutput: {
 	success: true
 	brands: {
-		max_results: int
-		page_number: int
+		max_results:   int
+		page_number:   int
 		total_results: int
 		brand: [...{
-			brand_name: string
+			brand_name:         string
 			brand_description?: string
 		}]
 	}
@@ -213,10 +214,10 @@ package fatsecret
 }
 
 #FoodAddFavoriteInput: {
-	food_id: #FoodId
-	serving_id?: #ServingId
+	food_id:          #FoodId
+	serving_id?:      #ServingId
 	number_of_units?: number & >0
-	format?: #Format
+	format?:          #Format
 }
 
 #FoodAddFavoriteOutput: {
@@ -239,14 +240,14 @@ package fatsecret
 #FoodsMostEatenInput: {
 	page_number?: int
 	max_results?: int & <=50
-	format?: #Format
+	format?:      #Format
 }
 
 #FoodsMostEatenOutput: {
 	success: true
 	foods: {
-		max_results: int
-		page_number: int
+		max_results:   int
+		page_number:   int
 		total_results: int
 		food: [...#FoodSummary]
 	}
@@ -255,14 +256,14 @@ package fatsecret
 #FoodsRecentlyEatenInput: {
 	page_number?: int
 	max_results?: int & <=50
-	format?: #Format
+	format?:      #Format
 }
 
 #FoodsRecentlyEatenOutput: {
 	success: true
 	foods: {
-		max_results: int
-		page_number: int
+		max_results:   int
+		page_number:   int
 		total_results: int
 		food: [...#FoodSummary]
 	}
@@ -273,7 +274,13 @@ package fatsecret
 // =============================================================================
 
 #RecipesGetFavoritesInput: {
-	format?: #Format
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	format?:       #Format
 }
 
 #RecipesGetFavoritesOutput: {
@@ -284,8 +291,14 @@ package fatsecret
 }
 
 #RecipeAddFavoriteInput: {
-	recipe_id: #RecipeId
-	format?: #Format
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	recipe_id:     #RecipeId
+	format?:       #Format
 }
 
 #RecipeAddFavoriteOutput: {
@@ -293,8 +306,14 @@ package fatsecret
 }
 
 #RecipeDeleteFavoriteInput: {
-	recipe_id: #RecipeId
-	format?: #Format
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	recipe_id:     #RecipeId
+	format?:       #Format
 }
 
 #RecipeDeleteFavoriteOutput: {
@@ -302,72 +321,90 @@ package fatsecret
 }
 
 // =============================================================================
-// SAVED MEALS: EDIT & GET ITEMS
+// RECIPES: AUTOCOMPLETE
 // =============================================================================
 
-#SavedMealsGetItemsInput: {
-	saved_meal_id: string
-	format?: #Format
+#RecipesAutocompleteInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	expression: string
 }
 
-#SavedMealsGetItemsOutput: {
+#RecipesAutocompleteOutput: {
 	success: true
-	saved_meal: #SavedMeal
-}
-
-#SavedMealEditInput: {
-	saved_meal_id: string
-	saved_meal_name?: string
-	foods?: [...{
-		food_id: #FoodId
-		food_entry_name: string
-		serving_id: #ServingId
-		number_of_units: number & >0
+	suggestions: [...{
+		recipe_id:     #RecipeId
+		recipe_name:   string
+		recipe_image?: string
+		score?:        number
 	}]
-	meal_type?: #MealType
-	format?: #Format
 }
 
-#SavedMealEditOutput: {
+// =============================================================================
+// EXERCISE: GET
+// =============================================================================
+
+#ExerciseGetInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	exercise_id: #ExerciseId
+}
+
+#ExerciseGetOutput: {
 	success: true
+	exercise: {
+		exercise_id:           #ExerciseId
+		exercise_name:         string
+		exercise_description?: string
+		exercise_type?:        string
+		calories_per_minute?:  number
+		met_value?:            number
+	}
 }
 
 // =============================================================================
-// WEIGHT: UPDATE
-// =============================================================================
-
-#WeightUpdateInput: {
-	weight_kg: number & >0
-	date?: #DateInt
-	comment?: string
-	format?: #Format
-}
-
-#WeightUpdateOutput: {
-	success: true
-	weight_entry: #WeightEntry
-}
-
-// =============================================================================
-// DIARY: MONTH SUMMARY
+// FOOD ENTRIES: MONTH SUMMARY (NEW)
 // =============================================================================
 
 #FoodEntryMonthSummaryInput: {
-	year: int & >=2000 & <=2100
-	month: int & >=1 & <=12
+	year:    int & >=2000 & <=2100
+	month:   int & >=1 & <=12
 	format?: #Format
 }
 
 #FoodEntryMonthSummaryOutput: {
 	success: true
 	month_summary: {
-		year: int
-		month: int
-		total_foods: int
-		total_calories: number
+		year:               int
+		month:              int
+		total_foods:        int
+		total_calories:     number
 		total_carbohydrate: number
-		total_protein: number
-		total_fat: number
+		total_protein:      number
+		total_fat:          number
+	}
+}
+
+// =============================================================================
+// DIARY: MONTH SUMMARY
+// =============================================================================
+
+#FoodEntriesGetMonthOutput: {
+	success: true
+	month: {
+		year:  int
+		month: int
+		days: [...{
+			date_int:           #DateInt
+			total_calories:     number
+			total_carbohydrate: number
+			total_protein:      number
+			total_fat:          number
+		}]
 	}
 }
 
@@ -376,31 +413,37 @@ package fatsecret
 // =============================================================================
 
 #FoodEntry: {
-	food_entry_id: #FoodEntryId
-	food_id: #FoodId
-	food_entry_name: string
-	serving_id: #ServingId
-	number_of_units: number
-	meal: #MealType
-	date_int: #DateInt
-	calories: number
-	carbohydrate: number
-	protein: number
-	fat: number
-	saturated_fat?: number
+	food_entry_id:        #FoodEntryId
+	food_id:              #FoodId
+	food_entry_name:      string
+	serving_id:           #ServingId
+	number_of_units:      number
+	meal:                 #MealType
+	date_int:             #DateInt
+	calories:             number
+	carbohydrate:         number
+	protein:              number
+	fat:                  number
+	saturated_fat?:       number
 	polyunsaturated_fat?: number
 	monounsaturated_fat?: number
-	cholesterol?: number
-	sodium?: number
-	potassium?: number
-	fiber?: number
-	sugar?: number
+	cholesterol?:         number
+	sodium?:              number
+	potassium?:           number
+	fiber?:               number
+	sugar?:               number
 }
 
 #FoodEntriesGetInput: {
-	date?: #DateInt
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:   string
+	access_secret:  string
+	date?:          #DateInt
 	food_entry_id?: #FoodEntryId
-	format?: #Format
+	format?:        #Format
 }
 
 #FoodEntriesGetOutput: {
@@ -411,29 +454,41 @@ package fatsecret
 }
 
 #FoodEntryCreateInput: {
-	food_id: #FoodId
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:    string
+	access_secret:   string
+	food_id:         #FoodId
 	food_entry_name: string
-	serving_id: #ServingId
+	serving_id:      #ServingId
 	number_of_units: number & >0
-	meal: #MealType
-	date?: #DateInt
-	format?: #Format
+	meal:            #MealType
+	date?:           #DateInt
+	format?:         #Format
 }
 
 #FoodEntryCreateOutput: {
-	success: true
+	success:    true
 	food_entry: #FoodEntry
 }
 
 #FoodEntryEditInput: {
-	food_entry_id: #FoodEntryId
-	food_id?: #FoodId
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:     string
+	access_secret:    string
+	food_entry_id:    #FoodEntryId
+	food_id?:         #FoodId
 	food_entry_name?: string
-	serving_id?: #ServingId
+	serving_id?:      #ServingId
 	number_of_units?: number & >0
-	meal?: #MealType
-	date?: #DateInt
-	format?: #Format
+	meal?:            #MealType
+	date?:            #DateInt
+	format?:          #Format
 }
 
 #FoodEntryEditOutput: {
@@ -441,12 +496,28 @@ package fatsecret
 }
 
 #FoodEntryDeleteInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
 	food_entry_id: #FoodEntryId
-	format?: #Format
+	format?:       #Format
 }
 
 #FoodEntryDeleteOutput: {
 	success: true
+}
+
+#FoodEntriesGetMonthInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	date_int:      #DateInt
 }
 
 // =============================================================================
@@ -454,15 +525,15 @@ package fatsecret
 // =============================================================================
 
 #RecipeSummary: {
-	recipe_id: #RecipeId
-	recipe_name: string
+	recipe_id:           #RecipeId
+	recipe_name:         string
 	recipe_description?: string
-	recipe_image?: string
+	recipe_image?:       string
 	recipe_nutrition: {
-		calories: number
+		calories:     number
 		carbohydrate: number
-		fat: number
-		protein: number
+		fat:          number
+		protein:      number
 	}
 	recipe_ingredients?: {
 		ingredient: [...string]
@@ -473,30 +544,30 @@ package fatsecret
 }
 
 #RecipesSearchV2Input: {
-	search_expression?: string
-	must_have_images?: bool
-	"calories.from"?: int & >=0
-	"calories.to"?: int & >=0
-	"carb_percentage.from"?: int & <=100
-	"carb_percentage.to"?: int & <=100
+	search_expression?:         string
+	must_have_images?:          bool
+	"calories.from"?:           int & >=0
+	"calories.to"?:             int & >=0
+	"carb_percentage.from"?:    int & <=100
+	"carb_percentage.to"?:      int & <=100
 	"protein_percentage.from"?: int & <=100
-	"protein_percentage.to"?: int & <=100
-	"fat_percentage.from"?: int & <=100
-	"fat_percentage.to"?: int & <=100
-	"prep_time.from"?: int & >=0
-	"prep_time.to"?: int & >=0
-	page_number?: int
-	max_results?: int & <=50
-	sort_by?: string
-	region?: string
-	format?: #Format
+	"protein_percentage.to"?:   int & <=100
+	"fat_percentage.from"?:     int & <=100
+	"fat_percentage.to"?:       int & <=100
+	"prep_time.from"?:          int & >=0
+	"prep_time.to"?:            int & >=0
+	page_number?:               int
+	max_results?:               int & <=50
+	sort_by?:                   string
+	region?:                    string
+	format?:                    #Format
 }
 
 #RecipesSearchV2Output: {
 	success: true
 	recipes: {
-		max_results: int
-		page_number: int
+		max_results:   int
+		page_number:   int
 		total_results: int
 		recipe: [...#RecipeSummary]
 	}
@@ -504,22 +575,22 @@ package fatsecret
 
 #RecipeGetV1Input: {
 	recipe_id: #RecipeId
-	format?: #Format
+	format?:   #Format
 }
 
 #RecipeGetV1Output: {
 	success: true
 	recipe: {
-		recipe_id: #RecipeId
-		recipe_name: string
-		recipe_description?: string
-		recipe_image?: string
-		recipe_url?: string
-		prep_time?: int
-		cook_time?: int
-		servings?: number
+		recipe_id:            #RecipeId
+		recipe_name:          string
+		recipe_description?:  string
+		recipe_image?:        string
+		recipe_url?:          string
+		prep_time?:           int
+		cook_time?:           int
+		servings?:            number
 		serving_description?: string
-		recipe_nutrition: #RecipeSummary["recipe_nutrition"]
+		recipe_nutrition:     #RecipeSummary["recipe_nutrition"]
 		recipe_types?: {
 			recipe_type: [...string]
 		}
@@ -538,13 +609,13 @@ package fatsecret
 // =============================================================================
 
 #Profile: {
-	weight_measure: #WeightUnit
-	height_measure: #HeightUnit
-	last_weight_kg: number
+	weight_measure:       #WeightUnit
+	height_measure:       #HeightUnit
+	last_weight_kg:       number
 	last_weight_date_int: #DateInt
 	last_weight_comment?: string
-	goal_weight_kg: number
-	height_cm: number
+	goal_weight_kg:       number
+	height_cm:            number
 }
 
 #ProfileGetInput: {
@@ -560,8 +631,8 @@ package fatsecret
 	weight_measure?: #WeightUnit
 	height_measure?: #HeightUnit
 	goal_weight_kg?: number
-	height_cm?: number
-	format?: #Format
+	height_cm?:      number
+	format?:         #Format
 }
 
 #ProfileCreateOutput: {
@@ -573,7 +644,7 @@ package fatsecret
 }
 
 #ProfileGetAuthOutput: {
-	success: true
+	success:    true
 	authorized: bool
 }
 
@@ -583,16 +654,22 @@ package fatsecret
 
 #ExerciseEntry: {
 	exercise_entry_id: #ExerciseEntryId
-	exercise_id: #ExerciseId
-	exercise_name: string
-	duration_minutes: int
-	calories_burned: number
-	date_int: #DateInt
+	exercise_id:       #ExerciseId
+	exercise_name:     string
+	duration_minutes:  int
+	calories_burned:   number
+	date_int:          #DateInt
 }
 
 #ExerciseEntriesGetInput: {
-	date: #DateInt
-	format?: #Format
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	date:          #DateInt
+	format?:       #Format
 }
 
 #ExerciseEntriesGetOutput: {
@@ -603,22 +680,34 @@ package fatsecret
 }
 
 #ExerciseEntryCreateInput: {
-	exercise_id: #ExerciseId
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:     string
+	access_secret:    string
+	exercise_id:      #ExerciseId
 	duration_minutes: int & >=1 & <=1440
-	date: #DateInt
-	format?: #Format
+	date:             #DateInt
+	format?:          #Format
 }
 
 #ExerciseEntryCreateOutput: {
-	success: true
+	success:        true
 	exercise_entry: #ExerciseEntry
 }
 
 #ExerciseEntryEditInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:      string
+	access_secret:     string
 	exercise_entry_id: #ExerciseEntryId
-	exercise_id?: #ExerciseId
+	exercise_id?:      #ExerciseId
 	duration_minutes?: int & >=1 & <=1440
-	format?: #Format
+	format?:           #Format
 }
 
 #ExerciseEntryEditOutput: {
@@ -626,8 +715,14 @@ package fatsecret
 }
 
 #ExerciseEntryDeleteInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:      string
+	access_secret:     string
 	exercise_entry_id: #ExerciseEntryId
-	format?: #Format
+	format?:           #Format
 }
 
 #ExerciseEntryDeleteOutput: {
@@ -635,19 +730,25 @@ package fatsecret
 }
 
 #ExerciseMonthSummaryInput: {
-	year: int & >=2000 & <=2100
-	month: int & >=1 & <=12
-	format?: #Format
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	year:          int & >=2000 & <=2100
+	month:         int & >=1 & <=12
+	format?:       #Format
 }
 
 #ExerciseMonthSummaryOutput: {
 	success: true
 	month_summary: {
-		year: int
-		month: int
-		total_exercises: int
+		year:                   int
+		month:                  int
+		total_exercises:        int
 		total_duration_minutes: int
-		total_calories_burned: number
+		total_calories_burned:  number
 	}
 }
 
@@ -656,52 +757,100 @@ package fatsecret
 // =============================================================================
 
 #SavedMeal: {
-	saved_meal_id: string
-	saved_meal_name: string
-	foods: [...{
-		food_id: #FoodId
+	saved_meal_id:           string
+	saved_meal_name:         string
+	saved_meal_description?: string
+	meals: [...#MealType,
+	]
+	foods?: [...{
+		food_id:         #FoodId
 		food_entry_name: string
-		serving_id: #ServingId
+		serving_id:      #ServingId
 		number_of_units: number
 	}]
-	meal_type: #MealType
 }
 
 #SavedMealsGetInput: {
-	format?: #Format
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	meal?:         #MealType
 }
 
 #SavedMealsGetOutput: {
 	success: true
-	saved_meals: {
-		saved_meal: [...#SavedMeal]
-	}
+	saved_meals: [...#SavedMeal]
 }
 
 #SavedMealCreateInput: {
-	saved_meal_name: string
-	foods: [...{
-		food_id: #FoodId
-		food_entry_name: string
-		serving_id: #ServingId
-		number_of_units: number & >0
-	}]
-	meal_type: #MealType
-	format?: #Format
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:            string
+	access_secret:           string
+	saved_meal_name:         string
+	saved_meal_description?: string
+	meals:                   string
 }
 
 #SavedMealCreateOutput: {
-	success: true
+	success:       true
 	saved_meal_id: string
 }
 
+#SavedMealEditInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:            string
+	access_secret:           string
+	saved_meal_id:           string
+	saved_meal_name?:        string
+	saved_meal_description?: string
+	meals?:                  string
+}
+
+#SavedMealEditOutput: {
+	success: true
+}
+
 #SavedMealDeleteInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
 	saved_meal_id: string
-	format?: #Format
 }
 
 #SavedMealDeleteOutput: {
 	success: true
+}
+
+#SavedMealsGetItemsInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	saved_meal_id: string
+}
+
+#SavedMealsGetItemsOutput: {
+	success: true
+	items: [...{
+		food_id:         #FoodId
+		food_entry_name: string
+		serving_id:      #ServingId
+		number_of_units: number
+	}]
 }
 
 // =============================================================================
@@ -710,12 +859,58 @@ package fatsecret
 
 #WeightEntry: {
 	weight_kg: number
-	date_int: #DateInt
-	comment?: string
+	date_int:  #DateInt
+	comment?:  string
+}
+
+#WeightUpdateInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:      string
+	access_secret:     string
+	current_weight_kg: number & >0
+	date_int:          #DateInt
+	goal_weight_kg?:   number & >0
+	height_cm?:        number & >0
+	comment?:          string
+}
+
+#WeightUpdateOutput: {
+	success: true
+}
+
+#WeightMonthSummaryInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	date_int:      #DateInt
+}
+
+#WeightMonthSummaryOutput: {
+	success: true
+	month_summary: {
+		year:             int
+		month:            int
+		start_weight_kg?: number
+		end_weight_kg?:   number
+		avg_weight_kg?:   number
+		total_weigh_ins?: int
+	}
 }
 
 #WeightGetInput: {
-	format?: #Format
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	format?:       #Format
 }
 
 #WeightGetOutput: {
@@ -726,20 +921,32 @@ package fatsecret
 }
 
 #WeightEntryCreateInput: {
-	weight_kg: number & >0
-	date?: #DateInt
-	comment?: string
-	format?: #Format
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	weight_kg:     number & >0
+	date?:         #DateInt
+	comment?:      string
+	format?:       #Format
 }
 
 #WeightEntryCreateOutput: {
-	success: true
+	success:      true
 	weight_entry: #WeightEntry
 }
 
 #WeightEntryDeleteInput: {
-	date_int: #DateInt
-	format?: #Format
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	access_token:  string
+	access_secret: string
+	date_int:      #DateInt
+	format?:       #Format
 }
 
 #WeightEntryDeleteOutput: {
@@ -752,19 +959,19 @@ package fatsecret
 
 #ImageRecognitionInput: {
 	image_url: string
-	format?: #Format
+	format?:   #Format
 }
 
 #ImageRecognitionOutput: {
 	success: true
 	foods: [...{
-		food_id: #FoodId
-		food_name: string
+		food_id:    #FoodId
+		food_name:  string
 		confidence: number
 		servings: [...{
-			serving_id: #ServingId
+			serving_id:          #ServingId
 			serving_description: string
-			number_of_units?: number
+			number_of_units?:    number
 		}]
 	}]
 }
@@ -774,7 +981,7 @@ package fatsecret
 // =============================================================================
 
 #NaturalLanguageInput: {
-	text: string
+	text:    string
 	format?: #Format
 }
 
@@ -783,14 +990,14 @@ package fatsecret
 	interpretations: [...{
 		interpretation_type: string
 		foods?: [...{
-			food_id: #FoodId
-			food_name: string
-			serving_id: #ServingId
+			food_id:         #FoodId
+			food_name:       string
+			serving_id:      #ServingId
 			number_of_units: number
-			meal_type?: #MealType
+			meal_type?:      #MealType
 		}]
 		exercise?: {
-			exercise_id: #ExerciseId
+			exercise_id:      #ExerciseId
 			duration_minutes: int
 		}
 		weight?: {
@@ -803,57 +1010,110 @@ package fatsecret
 // API PATHS
 // =============================================================================
 
-#FoodsSearchPath: "/rest/foods/search/v3" | "/rest/foods/search/v1"
-#FoodGetPath: "/rest/food/v1"
-#FoodsAutocompletePath: "/rest/foods/autocomplete"
-#FoodFindBarcodePath: "/rest/food/find-by-barcode"
-#FoodCategoriesPath: "/rest/food-categories/get"
-#FoodSubCategoriesPath: "/rest/food-sub-categories/get"
-#FoodBrandsPath: "/rest/food-brands/get"
-#FoodsFavoritesPath: "/rest/foods/get-favorites"
-#FoodAddFavoritePath: "/rest/food/add-favorite"
-#FoodDeleteFavoritePath: "/rest/food/delete-favorite"
-#FoodsMostEatenPath: "/rest/foods/most-eaten"
-#FoodsRecentlyEatenPath: "/rest/foods/recently-eaten"
-#FoodEntriesPath: "/rest/food-entries/v1"
-#FoodEntryCreatePath: "/rest/food-entries/v1"
-#FoodEntryEditPath: "/rest/food-entries/v1"
-#FoodEntryDeletePath: "/rest/food-entries/v1"
+#FoodsSearchPath:           "/rest/foods/search/v3" | "/rest/foods/search/v1"
+#FoodGetPath:               "/rest/food/v1"
+#FoodsAutocompletePath:     "/rest/foods/autocomplete"
+#FoodFindBarcodePath:       "/rest/food/find-by-barcode"
+#FoodCategoriesPath:        "/rest/food-categories/get"
+#FoodSubCategoriesPath:     "/rest/food-sub-categories/get"
+#FoodBrandsPath:            "/rest/food-brands/get"
+#FoodsFavoritesPath:        "/rest/foods/get-favorites"
+#FoodAddFavoritePath:       "/rest/food/add-favorite"
+#FoodDeleteFavoritePath:    "/rest/food/delete-favorite"
+#FoodsMostEatenPath:        "/rest/foods/most-eaten"
+#FoodsRecentlyEatenPath:    "/rest/foods/recently-eaten"
+#FoodEntriesPath:           "/rest/food-entries/v1"
+#FoodEntryCreatePath:       "/rest/food-entries/v1"
+#FoodEntryEditPath:         "/rest/food-entries/v1"
+#FoodEntryDeletePath:       "/rest/food-entries/v1"
 #FoodEntryMonthSummaryPath: "/rest/food-entries/month-summary"
-#RecipesSearchPath: "/rest/recipes/search/v2"
-#RecipeGetPath: "/rest/recipe/v1"
-#RecipeTypesPath: "/rest/recipe-types/get"
-#RecipeAddFavoritePath: "/rest/recipe/add-favorite"
-#RecipeDeleteFavoritePath: "/rest/recipe/delete-favorite"
-#RecipesGetFavoritesPath: "/rest/recipes/get-favorites"
-#ProfilePath: "/rest/profile/v1"
-#ProfileCreatePath: "/rest/profile/create"
-#ProfileGetAuthPath: "/rest/profile/get-auth"
-#ExerciseEntriesPath: "/rest/exercise-entries/get"
-#ExerciseEntryCreatePath: "/rest/exercise-entry/create"
-#ExerciseEntryEditPath: "/rest/exercise-entry/edit"
-#ExerciseEntryDeletePath: "/rest/exercise-entry/delete"
-#ExerciseMonthSummaryPath: "/rest/exercise/month-summary"
-#SavedMealsPath: "/rest/saved-meals/get"
-#SavedMealsGetItemsPath: "/rest/saved-meals/get-items"
-#SavedMealCreatePath: "/rest/saved-meal/create"
-#SavedMealEditPath: "/rest/saved-meal/edit"
-#SavedMealDeletePath: "/rest/saved-meal/delete"
-#WeightPath: "/rest/weight/get"
-#WeightEntryCreatePath: "/rest/weight-entry/create"
-#WeightEntryUpdatePath: "/rest/weight-entry/update"
-#WeightEntryDeletePath: "/rest/weight-entry/delete"
-#ImageRecognitionPath: "/rest/image/recognize"
-#NaturalLanguagePath: "/rest/natural-language"
+#RecipesSearchPath:         "/rest/recipes/search/v2"
+#RecipeGetPath:             "/rest/recipe/v1"
+#RecipeTypesPath:           "/rest/recipe-types/get"
+#RecipeAddFavoritePath:     "/rest/recipe/add-favorite"
+#RecipeDeleteFavoritePath:  "/rest/recipe/delete-favorite"
+#RecipesGetFavoritesPath:   "/rest/recipes/get-favorites"
+#ProfilePath:               "/rest/profile/v1"
+#ProfileCreatePath:         "/rest/profile/create"
+#ProfileGetAuthPath:        "/rest/profile/get-auth"
+#ExerciseEntriesPath:       "/rest/exercise-entries/get"
+#ExerciseEntryCreatePath:   "/rest/exercise-entry/create"
+#ExerciseEntryEditPath:     "/rest/exercise-entry/edit"
+#ExerciseEntryDeletePath:   "/rest/exercise-entry/delete"
+#ExerciseMonthSummaryPath:  "/rest/exercise/month-summary"
+#SavedMealsPath:            "/rest/saved-meals/get"
+#SavedMealsGetItemsPath:    "/rest/saved-meals/get-items"
+#SavedMealCreatePath:       "/rest/saved-meal/create"
+#SavedMealEditPath:         "/rest/saved-meal/edit"
+#SavedMealDeletePath:       "/rest/saved-meal/delete"
+#WeightPath:                "/rest/weight/get"
+#WeightEntryCreatePath:     "/rest/weight-entry/create"
+#WeightEntryUpdatePath:     "/rest/weight-entry/update"
+#WeightEntryDeletePath:     "/rest/weight-entry/delete"
+#ImageRecognitionPath:      "/rest/image/recognize"
+#NaturalLanguagePath:       "/rest/natural-language"
+#OAuthStartPath:            "/rest/request-token"
+#OAuthCompletePath:         "/rest/access-token"
+#GetTokenPath:              "/internal/get-token"
+#ExerciseGetPath:           "/rest/exercise/v1"
+
+#RecipesAutocompletePath: "/rest/recipes/autocomplete"
 
 // =============================================================================
-// ERROR
+// OAUTH
 // =============================================================================
 
-#Error: {
-	success: false
-	error: {
-		code: string
-		message: string
+#OAuthStartInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
 	}
+	callback_url: string
+}
+
+#OAuthStartOutput: {
+	success:            true
+	auth_url:           string
+	oauth_token:        string
+	oauth_token_secret: string
+}
+
+#OAuthCompleteInput: {
+	fatsecret?: {
+		consumer_key:    string
+		consumer_secret: string
+	}
+	oauth_token:        string
+	oauth_token_secret: string
+	oauth_verifier:     string
+}
+
+#OAuthCompleteOutput: {
+	success:            true
+	oauth_token:        string
+	oauth_token_secret: string
+}
+
+#OAuthCallbackInput: {
+	port?:         int & >=1 & <=65535
+	timeout_secs?: int & >=1 & <=3600
+}
+
+#OAuthCallbackOutput: {
+	success: true
+	message: string
+}
+
+#TokenStatus: "valid" | "not_found" | "old"
+
+#GetTokenInput: {
+	check_only?: bool
+}
+
+#GetTokenOutput: {
+	success:               true
+	status:                #TokenStatus
+	days_since_connected?: int
+	oauth_token?:          string
+	oauth_token_secret?:   string
 }
