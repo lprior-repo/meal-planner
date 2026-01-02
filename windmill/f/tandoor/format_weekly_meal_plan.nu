@@ -9,20 +9,20 @@ export def main [recipes_json: string, dates_json: string, meal_plan_1_json: str
   
   # Recipes table
   print "Recipes:"
-  $result.recipes | select id name servings working_time waiting_time | table
+  print ($result.recipes | select id name servings working_time waiting_time | table)
   print ""
   
   # Meal plans table
   print "Meal Schedule:"
-  $result.meal_plans | each { |mp|
+  print ($result.meal_plans | each { |mp|
     {
-      Date: ($mp.from_date | into datetime | date format '%Y-%m-%d'),
+      Date: ($mp.from_date | into datetime | format date '%Y-%m-%d'),
       Recipe: $mp.recipe_name,
-      Type: ($mp.meal_type_name // $mp.meal_type.name),
+      Type: (if ($mp.meal_type_name != null) { $mp.meal_type_name } else if ($mp.meal_type != null) { $mp.meal_type.name } else { "Unknown" }),
       Servings: $mp.servings,
       ID: $mp.id
     }
-  } | table
+  } | table)
   print ""
   
   # Summary

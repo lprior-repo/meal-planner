@@ -233,6 +233,145 @@ package fatsecret
 }
 
 // =============================================================================
+// FOODS: MOST EATEN & RECENTLY EATEN
+// =============================================================================
+
+#FoodsMostEatenInput: {
+	page_number?: int
+	max_results?: int & <=50
+	format?: #Format
+}
+
+#FoodsMostEatenOutput: {
+	success: true
+	foods: {
+		max_results: int
+		page_number: int
+		total_results: int
+		food: [...#FoodSummary]
+	}
+}
+
+#FoodsRecentlyEatenInput: {
+	page_number?: int
+	max_results?: int & <=50
+	format?: #Format
+}
+
+#FoodsRecentlyEatenOutput: {
+	success: true
+	foods: {
+		max_results: int
+		page_number: int
+		total_results: int
+		food: [...#FoodSummary]
+	}
+}
+
+// =============================================================================
+// RECIPES: FAVORITES
+// =============================================================================
+
+#RecipesGetFavoritesInput: {
+	format?: #Format
+}
+
+#RecipesGetFavoritesOutput: {
+	success: true
+	recipes: {
+		recipe: [...#RecipeSummary]
+	}
+}
+
+#RecipeAddFavoriteInput: {
+	recipe_id: #RecipeId
+	format?: #Format
+}
+
+#RecipeAddFavoriteOutput: {
+	success: true
+}
+
+#RecipeDeleteFavoriteInput: {
+	recipe_id: #RecipeId
+	format?: #Format
+}
+
+#RecipeDeleteFavoriteOutput: {
+	success: true
+}
+
+// =============================================================================
+// SAVED MEALS: EDIT & GET ITEMS
+// =============================================================================
+
+#SavedMealsGetItemsInput: {
+	saved_meal_id: string
+	format?: #Format
+}
+
+#SavedMealsGetItemsOutput: {
+	success: true
+	saved_meal: #SavedMeal
+}
+
+#SavedMealEditInput: {
+	saved_meal_id: string
+	saved_meal_name?: string
+	foods?: [...{
+		food_id: #FoodId
+		food_entry_name: string
+		serving_id: #ServingId
+		number_of_units: number & >0
+	}]
+	meal_type?: #MealType
+	format?: #Format
+}
+
+#SavedMealEditOutput: {
+	success: true
+}
+
+// =============================================================================
+// WEIGHT: UPDATE
+// =============================================================================
+
+#WeightUpdateInput: {
+	weight_kg: number & >0
+	date?: #DateInt
+	comment?: string
+	format?: #Format
+}
+
+#WeightUpdateOutput: {
+	success: true
+	weight_entry: #WeightEntry
+}
+
+// =============================================================================
+// DIARY: MONTH SUMMARY
+// =============================================================================
+
+#FoodEntryMonthSummaryInput: {
+	year: int & >=2000 & <=2100
+	month: int & >=1 & <=12
+	format?: #Format
+}
+
+#FoodEntryMonthSummaryOutput: {
+	success: true
+	month_summary: {
+		year: int
+		month: int
+		total_foods: int
+		total_calories: number
+		total_carbohydrate: number
+		total_protein: number
+		total_fat: number
+	}
+}
+
+// =============================================================================
 // DIARY
 // =============================================================================
 
@@ -674,13 +813,19 @@ package fatsecret
 #FoodsFavoritesPath: "/rest/foods/get-favorites"
 #FoodAddFavoritePath: "/rest/food/add-favorite"
 #FoodDeleteFavoritePath: "/rest/food/delete-favorite"
+#FoodsMostEatenPath: "/rest/foods/most-eaten"
+#FoodsRecentlyEatenPath: "/rest/foods/recently-eaten"
 #FoodEntriesPath: "/rest/food-entries/v1"
 #FoodEntryCreatePath: "/rest/food-entries/v1"
 #FoodEntryEditPath: "/rest/food-entries/v1"
 #FoodEntryDeletePath: "/rest/food-entries/v1"
+#FoodEntryMonthSummaryPath: "/rest/food-entries/month-summary"
 #RecipesSearchPath: "/rest/recipes/search/v2"
 #RecipeGetPath: "/rest/recipe/v1"
 #RecipeTypesPath: "/rest/recipe-types/get"
+#RecipeAddFavoritePath: "/rest/recipe/add-favorite"
+#RecipeDeleteFavoritePath: "/rest/recipe/delete-favorite"
+#RecipesGetFavoritesPath: "/rest/recipes/get-favorites"
 #ProfilePath: "/rest/profile/v1"
 #ProfileCreatePath: "/rest/profile/create"
 #ProfileGetAuthPath: "/rest/profile/get-auth"
@@ -690,10 +835,13 @@ package fatsecret
 #ExerciseEntryDeletePath: "/rest/exercise-entry/delete"
 #ExerciseMonthSummaryPath: "/rest/exercise/month-summary"
 #SavedMealsPath: "/rest/saved-meals/get"
+#SavedMealsGetItemsPath: "/rest/saved-meals/get-items"
 #SavedMealCreatePath: "/rest/saved-meal/create"
+#SavedMealEditPath: "/rest/saved-meal/edit"
 #SavedMealDeletePath: "/rest/saved-meal/delete"
 #WeightPath: "/rest/weight/get"
 #WeightEntryCreatePath: "/rest/weight-entry/create"
+#WeightEntryUpdatePath: "/rest/weight-entry/update"
 #WeightEntryDeletePath: "/rest/weight-entry/delete"
 #ImageRecognitionPath: "/rest/image/recognize"
 #NaturalLanguagePath: "/rest/natural-language"

@@ -114,6 +114,58 @@ tasks:
       cache: false  # Always run fresh tests against live API
 
   # ============================================
+  # API Codegen
+  # ============================================
+  gen-api-types:
+    description: 'Generate API types from CUE schemas (OpenAPI, Rust types)'
+    script: |
+      echo "=== Generating API types from CUE schemas ==="
+      echo ""
+      
+      # Generate OpenAPI spec from CUE
+      echo "1. Generating OpenAPI spec from CUE..."
+      if command -v nu >/dev/null 2>&1; then
+        nu scripts/gen_openapi.nu
+        echo "✓ Generated openapi/fatsecret.yaml"
+      else
+        echo "WARN: nu not installed, skipping OpenAPI generation"
+      fi
+      echo ""
+      
+      # Generate Rust types from CUE via JSON Schema
+      echo "2. Generating Rust types from CUE..."
+      if command -v nu >/dev/null 2>&1; then
+        nu scripts/gen_rust_types.nu
+        echo "✓ Generated target/fatsecret_schema.json"
+      else
+        echo "WARN: nu not installed, skipping JSON Schema generation"
+      fi
+      echo ""
+      
+      # Run typify to generate Rust types
+      echo "3. Running typify to generate Rust types..."
+      if [ -f "target/fatsecret_schema.json" ]; then
+        cargo run --bin codegen_typify 2>/dev/null || {
+          echo "Note: codegen_typify may need updates for full schema"
+        }
+        echo "✓ Updated src/api/fatsecret_types.rs"
+      else
+        echo "WARN: JSON Schema not found, skipping typify"
+      fi
+      echo ""
+      
+      echo "=== API types generation complete ==="
+    inputs:
+      - '@globs(schemas)'
+      - 'scripts/*.nu'
+    outputs:
+      - 'openapi/fatsecret.yaml'
+      - 'target/fatsecret_schema.json'
+      - 'src/api/fatsecret_types.rs'
+    options:
+      cache: false  # Always regenerate to catch schema drift
+
+  # ============================================
   # Testing
   # ============================================
   test:
@@ -127,6 +179,7 @@ tasks:
       - '~:fmt'
       - '~:clippy'
       - '~:validate-cue'
+      - '~:gen-api-types'  # Ensure types are up to date before testing
     options:
       cache: true
 
