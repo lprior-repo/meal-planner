@@ -85,7 +85,7 @@ async fn run() -> Result<Output, Box<dyn std::error::Error + Send + Sync>> {
     let input: Input = serde_json::from_str(&input_str)?;
 
     // Get config from environment
-    let config = FatSecretConfig::from_env().ok_or(FatSecretError::ConfigMissing)?;
+    let config = FatSecretConfig::from_env().map_err(|_| FatSecretError::ConfigMissing)?;
 
     // Get database connection
     let database_url = env::var("DATABASE_URL").map_err(|_| "DATABASE_URL not set")?;

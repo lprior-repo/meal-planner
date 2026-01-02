@@ -66,8 +66,9 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
     let input: Input = serde_json::from_str(&input_str)?;
 
     let config = match input.fatsecret {
-        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret),
-        None => FatSecretConfig::from_env().ok_or(FatSecretError::ConfigMissing)?,
+        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret)
+            .map_err(|_| FatSecretError::ConfigMissing)?,
+        None => FatSecretConfig::from_env().map_err(|_| FatSecretError::ConfigMissing)?,
     };
 
     let suggestions = autocomplete_recipes(&config, &input.expression).await?;
