@@ -152,8 +152,69 @@ pub struct RecipeDirection {
     pub direction_description: String,
 }
 
-/// Recipe category/type
-pub type RecipeType = String;
+/// Recipe type/category from the API (e.g., "Vegetarian", "Main Dish")
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(from = "RecipeTypeHelper", into = "RecipeTypeHelper")]
+pub struct RecipeType {
+    pub code: String,
+    pub name: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+enum RecipeTypeHelper {
+    StringValue(String),
+    ObjectValue {
+        #[serde(default)]
+        recipe_type_code: Option<String>,
+        #[serde(default)]
+        recipe_type_name: Option<String>,
+    },
+}
+
+impl From<RecipeTypeHelper> for RecipeType {
+    fn from(h: RecipeTypeHelper) -> Self {
+        match h {
+            RecipeTypeHelper::StringValue(name) => Self {
+                code: name.to_lowercase().replace(' ', "_"),
+                name,
+            },
+            RecipeTypeHelper::ObjectValue {
+                recipe_type_code,
+                recipe_type_name,
+            } => {
+                if let Some(code) = recipe_type_code {
+                    Self {
+                        code,
+                        name: recipe_type_name.unwrap_or_default(),
+                    }
+                } else if let Some(name) = recipe_type_name {
+                    Self {
+                        code: name.to_lowercase().replace(' ', "_"),
+                        name,
+                    }
+                } else {
+                    Self {
+                        code: "unknown".to_string(),
+                        name: "Unknown".to_string(),
+                    }
+                }
+            }
+        }
+    }
+}
+
+impl From<RecipeType> for RecipeTypeHelper {
+    fn from(t: RecipeType) -> Self {
+        Self::ObjectValue {
+            recipe_type_code: Some(t.code),
+            recipe_type_name: Some(t.name),
+        }
+    }
+}
+
+/// Legacy type alias for backward compatibility
+pub type RecipeTypeString = String;
 
 /// Complete recipe details
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -255,7 +316,7 @@ pub struct RecipeTypesWrapper {
     pub recipe_types: Vec<RecipeType>,
 }
 
-/// Wrapper for deserializing ingredients from `FatSecret` API
+/// Wrapper for deserializing ingredients from `FatSecret` API (full objects)
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct RecipeIngredientsWrapper {
     /// List of recipe ingredients
@@ -279,6 +340,63 @@ pub struct RecipeDirectionsWrapper {
     pub directions: Vec<RecipeDirection>,
 }
 
+/// Wrapper for deserializing recipe types from `FatSecret` search API (strings)
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct RecipeTypesStringWrapper {
+    #[serde(
+        rename = "recipe_type",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
+    pub recipe_types: Vec<String>,
+}
+
+/// Wrapper for deserializing ingredients from `FatSecret` search API (strings)
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct RecipeIngredientsStringWrapper {
+    #[serde(
+        rename = "ingredient",
+        default,
+        deserialize_with = "deserialize_single_or_vec"
+    )]
+    pub ingredients: Vec<String>,
+}
+
+/// Wrapper for deserializing nutrition from `FatSecret` search API (strings)
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct RecipeNutritionStringWrapper {
+    #[serde(default, deserialize_with = "deserialize_optional_flexible_float")]
+    pub calories: Option<f64>,
+    #[serde(
+        default,
+        rename = "carbohydrate",
+        deserialize_with = "deserialize_optional_flexible_float"
+    )]
+    pub carbohydrate: Option<f64>,
+    #[serde(default, deserialize_with = "deserialize_optional_flexible_float")]
+    pub protein: Option<f64>,
+    #[serde(default, deserialize_with = "deserialize_optional_flexible_float")]
+    pub fat: Option<f64>,
+}
+
+/// Recipe as returned by search API (simplified with string ingredients/types)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RecipeSearchApiResponse {
+    pub recipe_id: RecipeId,
+    pub recipe_name: String,
+    pub recipe_description: String,
+    #[serde(default)]
+    pub recipe_url: Option<String>,
+    #[serde(default)]
+    pub recipe_image: Option<String>,
+    #[serde(default)]
+    pub recipe_types: RecipeTypesStringWrapper,
+    #[serde(default)]
+    pub recipe_ingredients: RecipeIngredientsStringWrapper,
+    #[serde(default)]
+    pub recipe_nutrition: RecipeNutritionStringWrapper,
+}
+
 /// Recipe search result item
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RecipeSearchResult {
@@ -297,13 +415,13 @@ pub struct RecipeSearchResult {
 /// Response from recipes.search.v3
 #[derive(Debug, Deserialize, Serialize)]
 pub struct RecipeSearchResponse {
-    /// List of matching recipes
+    /// List of matching recipes (API returns simplified objects with string ingredients)
     #[serde(
         rename = "recipe",
         default,
         deserialize_with = "deserialize_single_or_vec"
     )]
-    pub recipes: Vec<RecipeSearchResult>,
+    pub recipes: Vec<RecipeSearchApiResponse>,
     /// Maximum results per page
     #[serde(deserialize_with = "deserialize_flexible_int")]
     pub max_results: i32,

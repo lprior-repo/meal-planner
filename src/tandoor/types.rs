@@ -654,6 +654,8 @@ pub struct RecipeBook {
 #[derive(Debug, Serialize)]
 pub struct CreateRecipeBookRequest {
     pub name: String,
+    #[serde(default)]
+    pub shared: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]

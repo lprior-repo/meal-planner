@@ -838,9 +838,9 @@ impl TandoorClient {
     }
 
     /// Batch update multiple recipes
-    pub fn batch_update_recipes(&self, updates: &[serde_json::Value]) -> Result<i32, TandoorError> {
+    pub fn batch_update_recipes(&self, updates: &serde_json::Value) -> Result<i32, TandoorError> {
         let url = format!("{}/api/recipe/batch_update/", self.base_url);
-        let response = self.client.patch(&url).json(updates).send()?;
+        let response = self.client.put(&url).json(updates).send()?;
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
                 status: response.status().as_u16(),
@@ -848,7 +848,10 @@ impl TandoorClient {
             });
         }
         // Return count of updated recipes
-        Ok(i32::try_from(updates.len()).unwrap_or(i32::MAX))
+        updates.as_object().map_or_else(
+            || Ok(0),
+            |map| Ok(i32::try_from(map.len()).unwrap_or(i32::MAX)),
+        )
     }
 
     // ============= FOOD OPERATIONS =============

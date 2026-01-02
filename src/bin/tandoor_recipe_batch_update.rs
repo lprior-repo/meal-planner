@@ -82,12 +82,19 @@ fn run() -> anyhow::Result<Output> {
     }
 
     let client = TandoorClient::new(&config)?;
-    let updates: Vec<serde_json::Value> = parsed
+
+    // Tandoor API expects dict format: {"recipe_id": {"field": value}}
+    let updates_map: serde_json::Map<String, serde_json::Value> = parsed
         .updates
         .into_iter()
-        .map(serde_json::to_value)
-        .collect::<Result<Vec<_>, _>>()?;
-    let count = client.batch_update_recipes(&updates)?;
+        .map(|u| {
+            let id = u.id;
+            let value = serde_json::to_value(u)?;
+            Ok::<(String, serde_json::Value), anyhow::Error>((id.to_string(), value))
+        })
+        .collect::<anyhow::Result<_>>()?;
+
+    let count = client.batch_update_recipes(&serde_json::Value::Object(updates_map))?;
 
     Ok(Output {
         success: true,

@@ -1,0 +1,5 @@
+description: Tandoor Recipes API credentials
+value:
+  api_token: tda_dcb794d0_e494_46b7_a7cf_43200a1b336e
+  base_url: 'http://172.19.0.1:8090'
+resource_type: tandoor

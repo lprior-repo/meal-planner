@@ -1,0 +1,21 @@
+summary: Add Calories to All Recipes
+description: Get nutritional information from FatSecret for all Tandoor recipe ingredients and calculate calories per serving
+lock: ''
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor

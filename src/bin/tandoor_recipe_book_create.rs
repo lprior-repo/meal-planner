@@ -19,6 +19,8 @@ struct Input {
     tandoor: TandoorConfig,
     name: String,
     #[serde(default)]
+    shared: bool,
+    #[serde(default)]
     description: Option<String>,
     #[serde(default)]
     icon: Option<String>,
@@ -67,6 +69,7 @@ fn run() -> anyhow::Result<Output> {
 
     let request = CreateRecipeBookRequest {
         name: parsed.name,
+        shared: parsed.shared,
         description: parsed.description,
         icon: parsed.icon,
         color: parsed.color,
