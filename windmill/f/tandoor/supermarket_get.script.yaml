@@ -1,5 +1,6 @@
 summary: Get a supermarket by ID
 description: Retrieves a specific supermarket/store by ID from the Tandoor API
+lock: ''
 kind: script
 language: bash
 schema:

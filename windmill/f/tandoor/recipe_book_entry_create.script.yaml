@@ -1,5 +1,6 @@
 summary: Create a recipe book entry
 description: Adds a recipe to a recipe book.
+lock: ''
 kind: script
 language: bash
 schema:

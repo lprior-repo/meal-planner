@@ -1,5 +1,6 @@
 summary: Batch update foods
 description: Updates multiple foods in the Tandoor database with specified changes
+lock: ''
 kind: script
 language: bash
 schema:

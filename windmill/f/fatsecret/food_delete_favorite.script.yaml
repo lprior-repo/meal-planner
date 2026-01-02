@@ -1,5 +1,6 @@
 summary: Delete food from FatSecret favorites
 description: Removes a food from the user's favorites list (requires user access token)
+lock: ''
 kind: script
 language: bash
 schema:

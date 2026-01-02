@@ -1,5 +1,6 @@
 summary: Get items for a FatSecret saved meal
 description: Retrieves all food items within a saved meal template
+lock: ''
 kind: script
 language: bash
 schema:

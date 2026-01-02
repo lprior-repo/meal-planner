@@ -1,5 +1,6 @@
 summary: Update FatSecret weight measurement
 description: 'Logs a weight measurement with optional goal weight, height, and comment'
+lock: ''
 kind: script
 language: bash
 schema:

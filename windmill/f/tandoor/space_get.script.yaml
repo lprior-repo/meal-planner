@@ -1,5 +1,6 @@
 summary: Get a single space
 description: Retrieves a specific user workspace/space by ID from Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

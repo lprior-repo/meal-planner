@@ -1,5 +1,6 @@
 summary: List shopping list entries
 description: Retrieves all shopping list entries for a given meal plan
+lock: ''
 kind: script
 language: bash
 schema:

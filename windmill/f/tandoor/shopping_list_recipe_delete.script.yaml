@@ -2,6 +2,7 @@ summary: Delete recipe from shopping list
 description: >-
   Removes a recipe entry and all its associated shopping list entries from a
   meal plan
+lock: ''
 kind: script
 language: bash
 schema:

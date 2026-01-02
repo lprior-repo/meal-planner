@@ -1,5 +1,6 @@
 summary: Delete FatSecret food diary entry
 description: Deletes a food diary entry (requires user access token)
+lock: ''
 kind: script
 language: bash
 schema:

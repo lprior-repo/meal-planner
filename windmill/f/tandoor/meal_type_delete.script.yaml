@@ -1,5 +1,6 @@
 summary: Delete meal type
 description: Deletes an existing meal type from Tandoor by ID
+lock: ''
 kind: script
 language: bash
 schema:

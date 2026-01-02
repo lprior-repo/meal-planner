@@ -1,5 +1,6 @@
 summary: Get FatSecret favorite foods
 description: Retrieves the user's list of favorite foods
+lock: ''
 kind: script
 language: bash
 schema:

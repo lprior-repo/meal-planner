@@ -1,5 +1,6 @@
 summary: Get a food by ID
 description: Retrieves detailed information about a specific food by ID
+lock: ''
 kind: script
 language: bash
 schema:

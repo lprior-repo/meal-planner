@@ -2,6 +2,7 @@ summary: Get recipe details from Tandoor
 description: >-
   Retrieves full recipe information including all ingredients and steps from
   Tandoor.
+lock: ''
 kind: script
 language: bash
 schema:

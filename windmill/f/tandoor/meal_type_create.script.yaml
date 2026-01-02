@@ -1,5 +1,6 @@
 summary: Create meal type
 description: Creates a new meal type in Tandoor with the provided details
+lock: ''
 kind: script
 language: bash
 schema:

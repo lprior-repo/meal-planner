@@ -1,5 +1,6 @@
 summary: List all spaces
 description: Retrieves a list of all user workspaces/spaces from Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

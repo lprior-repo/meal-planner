@@ -1,5 +1,6 @@
 summary: Update a supermarket
 description: Updates an existing supermarket/store in the Tandoor database
+lock: ''
 kind: script
 language: bash
 schema:

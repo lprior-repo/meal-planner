@@ -1,5 +1,6 @@
 summary: Get a recipe book entry
 description: Gets a recipe book entry by ID.
+lock: ''
 kind: script
 language: bash
 schema:

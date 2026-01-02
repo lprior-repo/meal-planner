@@ -2,6 +2,7 @@ summary: Get recipe from shopping list
 description: >-
   Retrieves detailed information about a recipe entry in a meal plan's shopping
   list
+lock: ''
 kind: script
 language: bash
 schema:

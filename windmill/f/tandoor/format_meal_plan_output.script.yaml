@@ -2,5 +2,7 @@ summary: Format meal plan output
 description: |
   Formats the meal plan output including recipes, dates,
   cooking schedule, and consolidated ingredient list.
+lock: ''
 kind: script
 language: bash
+schema: null

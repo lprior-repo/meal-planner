@@ -1,5 +1,6 @@
 summary: Create FatSecret food diary entry
 description: Creates a new food diary entry for the user
+lock: ''
 kind: script
 language: bash
 schema:

@@ -1,5 +1,6 @@
 summary: Delete a unit
 description: Deletes a measurement unit from the Tandoor database
+lock: ''
 kind: script
 language: bash
 schema:

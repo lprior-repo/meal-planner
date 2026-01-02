@@ -1,5 +1,6 @@
 summary: Create a new unit
 description: Creates a new measurement unit in the Tandoor database
+lock: ''
 kind: script
 language: bash
 schema:

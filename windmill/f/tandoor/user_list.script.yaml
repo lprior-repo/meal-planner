@@ -1,5 +1,6 @@
 summary: List all users
 description: Retrieves a paginated list of users from Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

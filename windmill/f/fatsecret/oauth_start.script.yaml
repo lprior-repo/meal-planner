@@ -1,5 +1,6 @@
 summary: Start FatSecret OAuth flow
 description: Gets a request token and returns the authorization URL
+lock: ''
 kind: script
 language: bash
 schema:

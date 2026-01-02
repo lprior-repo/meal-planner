@@ -2,6 +2,7 @@ summary: Get FatSecret exercise entries for a date
 description: >-
   Retrieves all exercise entries logged for the given date. Requires OAuth user
   access token.
+lock: ''
 kind: script
 language: bash
 schema:

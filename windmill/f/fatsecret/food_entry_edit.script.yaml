@@ -1,5 +1,6 @@
 summary: Edit FatSecret food diary entry
 description: Updates an existing food diary entry
+lock: ''
 kind: script
 language: bash
 schema:

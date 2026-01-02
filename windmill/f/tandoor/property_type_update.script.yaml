@@ -1,24 +1,15 @@
 summary: Update property type
 description: Updates an existing property type in Tandoor
+lock: ''
 kind: script
 language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    property_type_id:
-      type: string
-      description: Property type ID to update
-      default: null
-      originalType: integer
     name:
       type: string
       description: New name
-      default: null
-      originalType: string
-    unit:
-      type: string
-      description: New unit
       default: null
       originalType: string
     description:
@@ -31,9 +22,19 @@ schema:
       description: New display order
       default: null
       originalType: integer
+    property_type_id:
+      type: string
+      description: Property type ID to update
+      default: null
+      originalType: integer
     tandoor:
       type: string
       description: Tandoor API credentials
+      default: null
+      originalType: string
+    unit:
+      type: string
+      description: New unit
       default: null
       originalType: string
   required:

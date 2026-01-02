@@ -1,5 +1,6 @@
 summary: List property types
 description: Lists all property types (nutrition categories) from Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

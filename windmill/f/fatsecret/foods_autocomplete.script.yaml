@@ -1,5 +1,6 @@
 summary: Autocomplete FatSecret food names
 description: Returns food suggestions for partial search terms
+lock: ''
 kind: script
 language: bash
 schema:

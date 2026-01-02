@@ -1,5 +1,6 @@
 summary: Verify Tandoor connection
 description: Tests API authentication and returns recipe count
+lock: ''
 kind: script
 language: bash
 schema:

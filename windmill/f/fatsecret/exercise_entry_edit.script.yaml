@@ -2,6 +2,7 @@ summary: Edit a FatSecret exercise entry
 description: >-
   Updates an existing exercise entry (duration, exercise type, etc.). Requires
   OAuth user access token.
+lock: ''
 kind: script
 language: bash
 schema:

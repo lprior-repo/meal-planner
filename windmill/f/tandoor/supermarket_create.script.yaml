@@ -1,5 +1,6 @@
 summary: Create a new supermarket
 description: Creates a new supermarket/store entry in the Tandoor database
+lock: ''
 kind: script
 language: bash
 schema:

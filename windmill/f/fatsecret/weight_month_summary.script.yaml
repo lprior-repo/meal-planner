@@ -1,5 +1,6 @@
 summary: Get FatSecret weight month summary
 description: Retrieves aggregated weight statistics for a specific month
+lock: ''
 kind: script
 language: bash
 schema:

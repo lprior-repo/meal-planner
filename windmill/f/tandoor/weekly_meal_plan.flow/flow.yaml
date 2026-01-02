@@ -28,7 +28,7 @@ value:
             value: $res:u/admin/tandoor_api
           recipe:
             type: javascript
-            expr: String(modules.select_random.result.recipes[0].id)
+            expr: String(results.select_random.recipes[0].id)
           meal_type:
             type: javascript
             expr: "dinner"
@@ -37,7 +37,7 @@ value:
             expr: flow_input.dates[0]
           servings:
             type: javascript
-            expr: String(modules.select_random.result.recipes[0].servings || 4)
+            expr: String(results.select_random.recipes[0].servings || 4)
     - id: create_meal_plan_2
       value:
         type: script
@@ -48,7 +48,7 @@ value:
             value: $res:u/admin/tandoor_api
           recipe:
             type: javascript
-            expr: String(modules.select_random.result.recipes[1].id)
+            expr: String(results.select_random.recipes[1].id)
           meal_type:
             type: javascript
             expr: "dinner"
@@ -57,7 +57,7 @@ value:
             expr: flow_input.dates[1]
           servings:
             type: javascript
-            expr: String(modules.select_random.result.recipes[1].servings || 4)
+            expr: String(results.select_random.recipes[1].servings || 4)
     - id: format_output
       value:
         type: script
@@ -65,16 +65,16 @@ value:
         input_transforms:
           recipes_json:
             type: javascript
-            expr: JSON.stringify(modules.select_random.result.recipes)
+            expr: JSON.stringify(results.select_random.recipes)
           dates_json:
             type: javascript
             expr: JSON.stringify(flow_input.dates)
           meal_plan_1_json:
             type: javascript
-            expr: JSON.stringify(modules.create_meal_plan_1.result)
+            expr: JSON.stringify(results.create_meal_plan_1)
           meal_plan_2_json:
             type: javascript
-            expr: JSON.stringify(modules.create_meal_plan_2.result)
+            expr: JSON.stringify(results.create_meal_plan_2)
 
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'

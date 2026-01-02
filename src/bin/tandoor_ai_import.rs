@@ -72,6 +72,7 @@ fn main() {
     }
 }
 
+#[allow(clippy::too_many_lines)]
 fn run() -> anyhow::Result<Output> {
     let mut input = String::new();
     io::stdin().read_to_string(&mut input)?;

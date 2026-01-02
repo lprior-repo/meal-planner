@@ -1,5 +1,6 @@
 summary: Get FatSecret saved meals
 description: 'Retrieves user''s saved meal templates, optionally filtered by meal type'
+lock: ''
 kind: script
 language: bash
 schema:

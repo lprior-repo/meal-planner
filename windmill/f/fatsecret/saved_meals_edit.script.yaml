@@ -1,5 +1,6 @@
 summary: Edit an existing FatSecret saved meal
 description: 'Updates a saved meal template (name, description, meal types)'
+lock: ''
 kind: script
 language: bash
 schema:

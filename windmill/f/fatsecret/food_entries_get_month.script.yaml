@@ -1,5 +1,6 @@
 summary: Get FatSecret monthly food diary summary
 description: Retrieves nutrition summary for all days in a month
+lock: ''
 kind: script
 language: bash
 schema:

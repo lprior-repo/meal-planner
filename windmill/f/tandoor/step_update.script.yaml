@@ -1,5 +1,6 @@
 summary: Update a recipe step
 description: Updates an existing recipe step instruction in Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

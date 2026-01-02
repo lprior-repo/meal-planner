@@ -1,5 +1,6 @@
 summary: Delete property type
 description: Deletes a property type from Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

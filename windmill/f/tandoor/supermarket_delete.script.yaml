@@ -1,5 +1,6 @@
 summary: Delete a supermarket
 description: Deletes an existing supermarket/store from the Tandoor database
+lock: ''
 kind: script
 language: bash
 schema:

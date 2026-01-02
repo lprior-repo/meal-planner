@@ -1,5 +1,6 @@
 summary: List properties
 description: Lists all property values from Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

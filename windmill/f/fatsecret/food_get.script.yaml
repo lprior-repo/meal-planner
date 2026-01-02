@@ -1,5 +1,6 @@
 summary: Get FatSecret food by ID
 description: Retrieves detailed food information including all servings and nutrition data
+lock: ''
 kind: script
 language: bash
 schema:

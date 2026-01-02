@@ -2,6 +2,7 @@ summary: Delete FatSecret recipe from favorites
 description: >-
   Removes a recipe from user's favorites list. This is a 3-legged OAuth request
   (requires user access token).
+lock: ''
 kind: script
 language: bash
 schema:

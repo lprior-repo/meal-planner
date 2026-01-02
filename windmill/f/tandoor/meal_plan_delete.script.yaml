@@ -1,5 +1,6 @@
 summary: Delete meal plan
 description: Deletes a meal plan from Tandoor by ID
+lock: ''
 kind: script
 language: bash
 schema:

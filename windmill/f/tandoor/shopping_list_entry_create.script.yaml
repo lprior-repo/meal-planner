@@ -1,5 +1,6 @@
 summary: Create shopping list entry
 description: Adds a new entry to a shopping list for a meal plan
+lock: ''
 kind: script
 language: bash
 schema:

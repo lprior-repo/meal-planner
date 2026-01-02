@@ -1,5 +1,6 @@
 summary: Scrape recipe from URL
 description: Uses Tandoor's built-in scraper to extract recipe data from a URL
+lock: ''
 kind: script
 language: bash
 schema:

@@ -2,6 +2,7 @@ summary: Upload recipe image to Tandoor
 description: >-
   Uploads an image file to a recipe in Tandoor. Converts the file to multipart
   form-data.
+lock: ''
 kind: script
 language: bash
 schema:

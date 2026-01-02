@@ -1,5 +1,6 @@
 summary: Get FatSecret user profile
 description: Retrieves the authenticated user's profile
+lock: ''
 kind: script
 language: bash
 schema:

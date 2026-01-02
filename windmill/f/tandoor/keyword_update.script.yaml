@@ -1,5 +1,6 @@
 summary: Update keyword
 description: Updates an existing keyword name in Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

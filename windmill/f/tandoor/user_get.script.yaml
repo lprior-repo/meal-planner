@@ -1,5 +1,6 @@
 summary: Get a specific user
 description: Retrieves detailed information about a user by ID from Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

@@ -1,5 +1,6 @@
 summary: Search FatSecret foods database
 description: Searches the FatSecret food database for foods matching a query
+lock: ''
 kind: script
 language: bash
 schema:

@@ -1,5 +1,6 @@
 summary: Get property by ID
 description: Retrieves a specific property from Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

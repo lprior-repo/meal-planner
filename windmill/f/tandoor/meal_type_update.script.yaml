@@ -1,5 +1,6 @@
 summary: Update meal type
 description: Updates an existing meal type in Tandoor with the provided details
+lock: ''
 kind: script
 language: bash
 schema:

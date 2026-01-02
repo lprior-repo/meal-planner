@@ -1,5 +1,6 @@
 summary: Create a new FatSecret exercise entry
 description: Logs an exercise session with duration. Requires OAuth user access token.
+lock: ''
 kind: script
 language: bash
 schema:

@@ -1,5 +1,6 @@
 summary: Get ingredient
 description: Retrieves a specific ingredient from Tandoor by ID
+lock: ''
 kind: script
 language: bash
 schema:

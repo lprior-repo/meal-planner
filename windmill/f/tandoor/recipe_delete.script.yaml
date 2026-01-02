@@ -2,6 +2,7 @@ summary: Delete recipe from Tandoor
 description: >-
   Removes a recipe and all associated data from Tandoor. This operation is
   irreversible.
+lock: ''
 kind: script
 language: bash
 schema:

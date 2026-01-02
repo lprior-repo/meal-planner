@@ -2,6 +2,7 @@ summary: List recipes in flat format
 description: >-
   Retrieves a flat list of recipes without pagination wrapper. Useful for
   getting all recipes with limit/offset control.
+lock: ''
 kind: script
 language: bash
 schema:

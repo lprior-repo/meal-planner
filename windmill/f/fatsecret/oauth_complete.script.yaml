@@ -3,6 +3,7 @@ description: >-
   Exchanges the request token for an access token using a manually-entered
   verifier. For out-of-band (oob) OAuth flows where user copies the verifier
   code.
+lock: ''
 kind: script
 language: bash
 schema:

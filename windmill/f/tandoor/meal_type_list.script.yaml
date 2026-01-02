@@ -1,5 +1,6 @@
 summary: List meal types
 description: Lists all meal types from Tandoor with optional pagination
+lock: ''
 kind: script
 language: bash
 schema:

@@ -1,5 +1,6 @@
 summary: Get meal plan by ID
 description: Retrieves detailed meal plan information from Tandoor by ID
+lock: ''
 kind: script
 language: bash
 schema:

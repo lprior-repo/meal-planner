@@ -1,5 +1,6 @@
 summary: Delete ingredient
 description: Deletes an ingredient from Tandoor by ID
+lock: ''
 kind: script
 language: bash
 schema:

@@ -2,6 +2,7 @@ summary: Get FatSecret exercise month summary
 description: >-
   Retrieves aggregated exercise statistics for a specific month. Requires OAuth
   user access token.
+lock: ''
 kind: script
 language: bash
 schema:

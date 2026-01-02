@@ -1,5 +1,6 @@
 summary: List recipe steps
 description: Retrieves a paginated list of recipe steps from Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

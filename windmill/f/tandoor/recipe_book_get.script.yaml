@@ -1,5 +1,6 @@
 summary: Get a recipe book by ID
 description: Retrieves a single recipe book by its ID from Tandoor.
+lock: ''
 kind: script
 language: bash
 schema:

@@ -1,5 +1,6 @@
 summary: List meal plans
 description: Lists all meal plans from Tandoor with optional pagination
+lock: ''
 kind: script
 language: bash
 schema:

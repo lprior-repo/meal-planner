@@ -1,5 +1,6 @@
 summary: Update an existing unit
 description: Updates a unit's name and/or plural name in Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

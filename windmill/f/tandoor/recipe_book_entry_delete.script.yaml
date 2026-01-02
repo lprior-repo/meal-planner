@@ -1,5 +1,6 @@
 summary: Delete a recipe book entry
 description: Removes a recipe from a recipe book.
+lock: ''
 kind: script
 language: bash
 schema:

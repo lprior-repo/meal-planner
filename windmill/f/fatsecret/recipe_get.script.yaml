@@ -2,6 +2,7 @@ summary: Get FatSecret recipe by ID
 description: >-
   Retrieves detailed recipe information including ingredients and directions.
   This is a 2-legged OAuth request (no user token required).
+lock: ''
 kind: script
 language: bash
 schema:

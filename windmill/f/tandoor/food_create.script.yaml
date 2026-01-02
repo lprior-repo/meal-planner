@@ -1,5 +1,6 @@
 summary: Create a food
 description: Creates a new food entry in the Tandoor database
+lock: ''
 kind: script
 language: bash
 schema:

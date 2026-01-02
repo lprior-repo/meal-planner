@@ -117,7 +117,7 @@ impl TandoorClient {
                 .map_err(|e| TandoorError::AuthError(e.to_string()))?,
         );
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
-        
+
         // Extract host from base_url for Docker networking where host header validation may occur
         // Handle URLs with or without authentication (e.g., http://user:pass@localhost:8080/path)
         let host = config
@@ -127,10 +127,10 @@ impl TandoorClient {
             .split('/')
             .next()
             .unwrap_or("localhost")
-            .split('@')  // Remove authentication info if present
-            .last()
+            .split('@') // Remove authentication info if present
+            .next_back()
             .unwrap_or("localhost");
-        
+
         headers.insert(
             "Host",
             HeaderValue::from_str(host)
@@ -1916,6 +1916,7 @@ impl TandoorClient {
     /// Helper method to read a file and detect its MIME type
     ///
     /// Returns (file_data, file_name, mime_type)
+    #[allow(clippy::unused_self)]
     fn read_file_with_mime(
         &self,
         file_path: &str,
@@ -1946,7 +1947,8 @@ impl TandoorClient {
             Some("webp") => "image/webp",
             Some("pdf") => "application/pdf",
             _ => "application/octet-stream",
-        }.to_string();
+        }
+        .to_string();
 
         Ok((buffer, file_name, mime_type))
     }

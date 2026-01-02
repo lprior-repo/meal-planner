@@ -2,6 +2,7 @@ summary: Get related recipes from Tandoor
 description: >-
   Retrieves recipes similar to the specified recipe based on shared keywords,
   ingredients, or other similarity metrics.
+lock: ''
 kind: script
 language: bash
 schema:

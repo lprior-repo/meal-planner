@@ -1,5 +1,6 @@
 summary: Get a recipe step
 description: Retrieves a specific recipe step by ID from Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

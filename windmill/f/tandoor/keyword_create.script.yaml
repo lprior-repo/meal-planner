@@ -1,5 +1,6 @@
 summary: Create keyword
 description: Creates a new keyword in Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

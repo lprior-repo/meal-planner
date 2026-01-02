@@ -1,5 +1,6 @@
 summary: List ingredients
 description: Lists ingredients from Tandoor with optional pagination
+lock: ''
 kind: script
 language: bash
 schema:

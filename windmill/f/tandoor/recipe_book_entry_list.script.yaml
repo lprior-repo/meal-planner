@@ -1,5 +1,6 @@
 summary: List recipe book entries
 description: Lists all entries in a recipe book.
+lock: ''
 kind: script
 language: bash
 schema:

@@ -2,6 +2,7 @@ summary: Update meal plan
 description: >-
   Updates an existing meal plan with new values for recipe, meal type, date,
   servings, or notes
+lock: ''
 kind: script
 language: bash
 schema:

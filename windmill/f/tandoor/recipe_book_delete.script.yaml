@@ -1,5 +1,6 @@
 summary: Delete a recipe book
 description: Deletes a recipe book from Tandoor.
+lock: ''
 kind: script
 language: bash
 schema:

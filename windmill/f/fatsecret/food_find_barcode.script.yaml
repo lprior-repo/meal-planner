@@ -1,5 +1,6 @@
 summary: Find FatSecret food by barcode
 description: Looks up a food by its UPC/EAN barcode and returns full details
+lock: ''
 kind: script
 language: bash
 schema:

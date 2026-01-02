@@ -1,5 +1,6 @@
 summary: Create property type
 description: Creates a new property type in Tandoor
+lock: ''
 kind: script
 language: bash
 schema:
@@ -8,12 +9,7 @@ schema:
   properties:
     name:
       type: string
-      description: Property type name (e.g., Calories, Protein)
-      default: null
-      originalType: string
-    unit:
-      type: string
-      description: Unit of measurement (e.g., kcal, g)
+      description: 'Property type name (e.g., Calories, Protein)'
       default: null
       originalType: string
     description:
@@ -29,6 +25,11 @@ schema:
     tandoor:
       type: string
       description: Tandoor API credentials
+      default: null
+      originalType: string
+    unit:
+      type: string
+      description: 'Unit of measurement (e.g., kcal, g)'
       default: null
       originalType: string
   required:

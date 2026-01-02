@@ -2,22 +2,23 @@ summary: Import recipe from image/PDF using AI
 description: >-
   Uses Tandoor's AI import endpoint to extract recipe data from images or PDF
   files. Requires an AI provider to be configured in Tandoor.
+lock: ''
 kind: script
 language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    file_path:
-      type: string
-      description: Path to the image or PDF file
-      default: null
-      originalType: string
     ai_provider_id:
       type: string
       description: AI provider ID to use for import
       default: null
       originalType: integer
+    file_path:
+      type: string
+      description: Path to the image or PDF file
+      default: null
+      originalType: string
     recipe_id:
       type: string
       description: Optional recipe ID to update (instead of creating new)

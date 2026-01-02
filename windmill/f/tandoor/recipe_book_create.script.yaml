@@ -1,5 +1,6 @@
 summary: Create a recipe book
 description: Creates a new recipe book in Tandoor.
+lock: ''
 kind: script
 language: bash
 schema:

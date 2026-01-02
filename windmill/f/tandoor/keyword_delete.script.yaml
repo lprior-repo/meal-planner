@@ -1,5 +1,6 @@
 summary: Delete keyword
 description: Deletes a keyword from Tandoor by ID
+lock: ''
 kind: script
 language: bash
 schema:

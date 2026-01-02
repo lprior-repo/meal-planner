@@ -1,5 +1,6 @@
 summary: Update a food
 description: Updates an existing food entry in the Tandoor database
+lock: ''
 kind: script
 language: bash
 schema:

@@ -1,5 +1,6 @@
 summary: Delete a recipe step
 description: Deletes an existing recipe step from Tandoor by ID
+lock: ''
 kind: script
 language: bash
 schema:

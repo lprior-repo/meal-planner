@@ -2,6 +2,7 @@ summary: Update recipe in Tandoor
 description: >-
   Updates recipe fields like name, description, servings, and timing. Only
   specified fields are updated.
+lock: ''
 kind: script
 language: bash
 schema:

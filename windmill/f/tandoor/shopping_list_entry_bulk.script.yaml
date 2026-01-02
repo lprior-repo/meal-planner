@@ -1,5 +1,6 @@
 summary: Bulk create shopping list entries
 description: Creates or updates multiple shopping list entries for a meal plan
+lock: ''
 kind: script
 language: bash
 schema:

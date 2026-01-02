@@ -2,6 +2,7 @@ summary: Get FatSecret most eaten foods
 description: >-
   Retrieves user's most frequently eaten foods. Can filter by meal type.
   Requires OAuth user access token.
+lock: ''
 kind: script
 language: bash
 schema:

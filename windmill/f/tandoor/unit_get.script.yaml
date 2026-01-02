@@ -1,5 +1,6 @@
 summary: Get a specific unit
 description: Retrieves a unit by ID from Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

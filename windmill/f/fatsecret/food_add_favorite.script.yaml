@@ -1,5 +1,6 @@
 summary: Add food to FatSecret favorites
 description: Adds a food to the user's favorites list
+lock: ''
 kind: script
 language: bash
 schema:

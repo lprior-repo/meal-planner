@@ -1,5 +1,6 @@
 summary: Delete a FatSecret saved meal
 description: Removes a saved meal template by ID
+lock: ''
 kind: script
 language: bash
 schema:

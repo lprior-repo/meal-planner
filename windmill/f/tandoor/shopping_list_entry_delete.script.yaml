@@ -1,5 +1,6 @@
 summary: Delete shopping list entry
 description: Removes an entry from a shopping list
+lock: ''
 kind: script
 language: bash
 schema:

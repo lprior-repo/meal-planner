@@ -1,5 +1,6 @@
 summary: Update ingredient
 description: 'Updates an existing ingredient in Tandoor with optional food, unit, and amount'
+lock: ''
 kind: script
 language: bash
 schema:

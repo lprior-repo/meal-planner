@@ -1,5 +1,6 @@
 summary: Update shopping list entry
 description: 'Updates an existing shopping list entry (e.g., mark as checked, change amount)'
+lock: ''
 kind: script
 language: bash
 schema:

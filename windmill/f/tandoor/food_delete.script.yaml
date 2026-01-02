@@ -1,5 +1,6 @@
 summary: Delete a food
 description: Deletes a food entry from the Tandoor database
+lock: ''
 kind: script
 language: bash
 schema:

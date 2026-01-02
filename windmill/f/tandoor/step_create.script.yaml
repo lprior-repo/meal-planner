@@ -1,5 +1,6 @@
 summary: Create a recipe step
 description: Creates a new recipe step in Tandoor with the given instruction
+lock: ''
 kind: script
 language: bash
 schema:

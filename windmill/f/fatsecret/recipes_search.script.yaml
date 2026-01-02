@@ -2,6 +2,7 @@ summary: Search FatSecret recipes
 description: >-
   Searches for recipes with optional pagination and filtering by recipe type.
   This is a 2-legged OAuth request (no user token required).
+lock: ''
 kind: script
 language: bash
 schema:

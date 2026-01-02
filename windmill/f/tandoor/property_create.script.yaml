@@ -1,5 +1,6 @@
 summary: Create property
 description: Creates a new property value in Tandoor
+lock: ''
 kind: script
 language: bash
 schema:

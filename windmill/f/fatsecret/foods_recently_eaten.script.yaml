@@ -2,6 +2,7 @@ summary: Get FatSecret recently eaten foods
 description: >-
   Retrieves user's recently eaten foods. Can filter by meal type. Requires OAuth
   user access token.
+lock: ''
 kind: script
 language: bash
 schema:

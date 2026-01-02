@@ -1,5 +1,6 @@
 summary: Get FatSecret food diary entries
 description: Retrieves all food diary entries for a specific date (3-legged OAuth)
+lock: ''
 kind: script
 language: bash
 schema:

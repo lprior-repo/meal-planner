@@ -1,5 +1,6 @@
 summary: List keywords
 description: Lists all keywords from Tandoor with optional pagination
+lock: ''
 kind: script
 language: bash
 schema:

@@ -1,5 +1,6 @@
 summary: Create meal plan
 description: 'Creates a new meal plan with recipe, meal type, date, and servings'
+lock: ''
 kind: script
 language: bash
 schema:

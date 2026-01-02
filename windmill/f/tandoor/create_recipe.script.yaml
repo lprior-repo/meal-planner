@@ -1,5 +1,6 @@
 summary: Create recipe in Tandoor
 description: Creates a recipe from scraped/imported data with optional keywords
+lock: ''
 kind: script
 language: bash
 schema:

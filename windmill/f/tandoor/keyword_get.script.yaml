@@ -1,5 +1,6 @@
 summary: Get keyword by ID
 description: Retrieves detailed information about a specific keyword by ID
+lock: ''
 kind: script
 language: bash
 schema:

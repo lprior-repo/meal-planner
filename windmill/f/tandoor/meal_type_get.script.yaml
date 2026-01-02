@@ -1,5 +1,6 @@
 summary: Get meal type by ID
 description: Retrieves a specific meal type from Tandoor by ID
+lock: ''
 kind: script
 language: bash
 schema:

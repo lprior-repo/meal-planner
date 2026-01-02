@@ -2,6 +2,7 @@ summary: Create a new FatSecret saved meal
 description: >-
   Creates a saved meal template with associated meal types (breakfast, lunch,
   dinner, other)
+lock: ''
 kind: script
 language: bash
 schema:

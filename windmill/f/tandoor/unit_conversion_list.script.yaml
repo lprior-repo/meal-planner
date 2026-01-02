@@ -1,5 +1,6 @@
 summary: List unit conversions
 description: Retrieves a paginated list of unit conversions from the Tandoor API
+lock: ''
 kind: script
 language: bash
 schema:

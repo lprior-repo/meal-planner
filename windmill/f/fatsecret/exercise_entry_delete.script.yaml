@@ -2,6 +2,7 @@ summary: Delete a FatSecret exercise entry
 description: >-
   Removes an exercise entry from the user's diary. Requires OAuth user access
   token.
+lock: ''
 kind: script
 language: bash
 schema:

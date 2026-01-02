@@ -1492,10 +1492,12 @@ mod tests {
             "msg": "Import successful",
             "duplicates": []
         }"#;
-        let result: AiImportResponse =
-            serde_json::from_str(json).expect("Failed to deserialize");
+        let result: AiImportResponse = serde_json::from_str(json).expect("Failed to deserialize");
         assert!(result.recipe.is_some());
-        assert_eq!(result.recipe.as_ref().map(|r| r.name.as_str()), Some("Test Recipe"));
+        assert_eq!(
+            result.recipe.as_ref().map(|r| r.name.as_str()),
+            Some("Test Recipe")
+        );
         assert_eq!(result.recipe_id, Some(123));
         assert_eq!(result.images.len(), 2);
         assert!(!result.error);
@@ -1510,8 +1512,7 @@ mod tests {
             "error": true,
             "msg": "Failed to parse image"
         }"#;
-        let result: AiImportResponse =
-            serde_json::from_str(json).expect("Failed to deserialize");
+        let result: AiImportResponse = serde_json::from_str(json).expect("Failed to deserialize");
         assert!(result.recipe.is_none());
         assert!(result.recipe_id.is_none());
         assert!(result.error);
@@ -1521,8 +1522,7 @@ mod tests {
     #[test]
     fn test_ai_import_response_deserialize_minimal() {
         let json = r#"{}"#;
-        let result: AiImportResponse =
-            serde_json::from_str(json).expect("Failed to deserialize");
+        let result: AiImportResponse = serde_json::from_str(json).expect("Failed to deserialize");
         assert!(result.recipe.is_none());
         assert!(result.recipe_id.is_none());
         assert!(result.images.is_empty());
@@ -1545,8 +1545,7 @@ mod tests {
             "error": false,
             "msg": ""
         }"#;
-        let result: AiImportResponse =
-            serde_json::from_str(json).expect("Failed to deserialize");
+        let result: AiImportResponse = serde_json::from_str(json).expect("Failed to deserialize");
         assert!(result.recipe.is_some());
         assert_eq!(
             result.recipe.as_ref().map(|r| r.name.as_str()),
@@ -1565,8 +1564,7 @@ mod tests {
                 {"id": 2, "name": "Existing Recipe 2"}
             ]
         }"#;
-        let result: AiImportResponse =
-            serde_json::from_str(json).expect("Failed to deserialize");
+        let result: AiImportResponse = serde_json::from_str(json).expect("Failed to deserialize");
         assert_eq!(result.duplicates.len(), 2);
         assert_eq!(result.duplicates.first().map(|d| d.id), Some(1));
         assert_eq!(
