@@ -122,6 +122,20 @@ option_if_let_else = "deny"               # Use .map_or_else()
 needless_pass_by_value = "deny"           # Prefer references for large types
 large_types_passed_by_value = "deny"      # Large types should be references
 
+# LET BINDING ELIMINATION - Force functional chaining
+let_and_return = "deny"                   # No `let x = expr; x` - just return expr
+let_unit_value = "deny"                   # No `let () = expr` - just call expr
+let_underscore_untyped = "deny"           # Discourage `let _ = x` patterns
+bind_instead_of_map = "deny"              # Use .map() not .and_then(|x| Some(f(x)))
+unnecessary_lazy_evaluations = "deny"     # Use direct values, not closures
+useless_let_if_seq = "deny"               # No `let x; if cond { x = a } else { x = b }`
+
+# WRAPPING/UNWRAPPING - Prefer transformations
+unnecessary_wraps = "deny"                # Don't wrap values unnecessarily
+question_mark_used = "allow"              # ? is the functional way - allowed
+or_fun_call = "deny"                      # Use .unwrap_or_else() not .unwrap_or(fn())
+option_option = "deny"                    # Avoid Option<Option<T>> - flatten it
+
 # -----------------------------------------------------------------------------
 # ITERATOR-FIRST - Prefer functional iteration over imperative loops
 # -----------------------------------------------------------------------------
