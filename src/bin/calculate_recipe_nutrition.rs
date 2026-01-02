@@ -14,13 +14,11 @@
 
 #![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
-use meal_planner::fatsecret::core::config::FatSecretConfig;
 use meal_planner::tandoor::nutrition::core::{
-    calculate_recipe_nutrition, convert_to_grams, create_test_nutrition_db, IngredientNutrition,
+    calculate_recipe_nutrition, create_test_nutrition_db, IngredientNutrition,
 };
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::collections::HashMap;
 use std::io::{self, Read};
 
