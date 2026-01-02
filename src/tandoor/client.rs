@@ -407,16 +407,8 @@ impl TandoorClient {
             },
             source_url: Some(url.to_string()),
             servings: Some(recipe_json.servings),
-            working_time: if recipe_json.working_time > 0 {
-                Some(recipe_json.working_time)
-            } else {
-                None
-            },
-            waiting_time: if recipe_json.waiting_time > 0 {
-                Some(recipe_json.waiting_time)
-            } else {
-                None
-            },
+            working_time: (recipe_json.working_time > 0).then_some(recipe_json.working_time),
+            waiting_time: (recipe_json.waiting_time > 0).then_some(recipe_json.waiting_time),
             keywords: if keywords.is_empty() {
                 None
             } else {

@@ -135,6 +135,25 @@ unnecessary_wraps = "deny"                # Don't wrap values unnecessarily
 question_mark_used = "allow"              # ? is the functional way - allowed
 or_fun_call = "deny"                      # Use .unwrap_or_else() not .unwrap_or(fn())
 option_option = "deny"                    # Avoid Option<Option<T>> - flatten it
+if_then_some_else_none = "deny"           # Use .then() or .then_some() not if/else
+bool_to_int_with_if = "deny"              # Use bool as int directly, not if/else
+redundant_guards = "deny"                 # Remove redundant match guards
+option_as_ref_deref = "deny"              # Use .as_deref() instead of .as_ref().map(|x| &**x)
+result_map_or_into_option = "deny"        # Simplify .map_or(None, Some)
+
+# MANUAL IMPLEMENTATIONS - Use std library combinators
+manual_is_ascii_check = "deny"            # Use .is_ascii_*() methods
+manual_clamp = "deny"                     # Use .clamp() not if chains
+manual_range_contains = "deny"            # Use range.contains() not comparisons
+manual_saturating_arithmetic = "deny"     # Use .saturating_*() methods
+manual_string_new = "deny"                # Use String::new() not "".to_string()
+manual_instant_elapsed = "deny"           # Use .elapsed() not Instant::now() - start
+manual_rem_euclid = "deny"                # Use .rem_euclid() for modulo
+manual_split_once = "deny"                # Use .split_once() not .splitn(2,)
+manual_str_repeat = "deny"                # Use str::repeat() not loop
+manual_assert = "deny"                    # Use assert! not if { panic }
+manual_next_back = "deny"                 # Use .next_back() not .rev().next()
+manual_swap = "deny"                      # Use std::mem::swap
 
 # -----------------------------------------------------------------------------
 # ITERATOR-FIRST - Prefer functional iteration over imperative loops
@@ -143,11 +162,27 @@ explicit_iter_loop = "deny"               # Use .iter() not `for x in &collectio
 explicit_into_iter_loop = "deny"          # Use .into_iter() not `for x in collection`
 iter_without_into_iter = "deny"           # If you have iter(), have into_iter()
 manual_while_let_some = "deny"            # Use iterator methods, not while let
+needless_collect = "deny"                 # Don't .collect() just to iterate again
+flat_map_option = "deny"                  # Use .flatten() not .flat_map(|x| x)
+filter_map_identity = "deny"              # Simplify .filter_map(|x| x) to .flatten()
+map_identity = "deny"                     # Remove .map(|x| x) - it's a no-op
+iter_on_single_items = "deny"             # Don't iterate single items
+iter_on_empty_collections = "deny"        # Don't iterate empty collections
+explicit_counter_loop = "deny"            # Use .enumerate() not manual counter
+needless_range_loop = "deny"              # Use .iter().enumerate() not range indexing
+while_let_on_iterator = "deny"            # Use for loop, not while let Some(x) = iter.next()
+for_kv_map = "deny"                       # Use .keys()/.values() not destructuring
 
 # -----------------------------------------------------------------------------
 # MINIMIZE MUTATION - As close to immutable as Rust allows
 # -----------------------------------------------------------------------------
 needless_pass_by_ref_mut = "deny"         # Don't use &mut when & suffices
+stable_sort_primitive = "deny"            # Use unstable_sort for primitives (no mutation order)
+extend_with_drain = "deny"                # Use .append() not .extend(x.drain())
+iter_with_drain = "deny"                  # Use .into_iter() not .drain(..)
+clear_with_drain = "deny"                 # Use .clear() not .drain(..)
+collection_is_never_read = "deny"         # Don't build collections that are never read
+read_zero_byte_vec = "deny"               # Don't read into zero-capacity vecs
 
 # -----------------------------------------------------------------------------
 # EXHAUSTIVE MATCHING - Like Gleam's case expressions
@@ -187,6 +222,36 @@ redundant_pattern_matching = "deny"       # No redundant patterns
 collapsible_if = "deny"                   # Combine nested ifs
 collapsible_else_if = "deny"              # Use else if, not else { if }
 if_not_else = "deny"                      # Prefer if positive { } else { }
+needless_return = "deny"                  # Use expression-based returns, not return keyword
+redundant_else = "deny"                   # Remove else after return/break/continue
+needless_continue = "deny"                # Simplify loop control flow
+semicolon_if_nothing_returned = "deny"    # Make unit returns explicit with ;
+unit_arg = "deny"                         # Don't pass () as function argument
+unused_unit = "deny"                      # Don't return () explicitly
+match_like_matches_macro = "deny"         # Use matches!() macro for bool matches
+equatable_if_let = "deny"                 # Use == instead of if let for simple matches
+get_first = "deny"                        # Use .first() instead of .get(0)
+
+# -----------------------------------------------------------------------------
+# SIDE EFFECT CONTROL - Functional code minimizes side effects
+# -----------------------------------------------------------------------------
+# Note: print_stdout/print_stderr allowed because this crate has CLI binaries
+# where stdout IS the return value (functional I/O at system boundary)
+print_stdout = "allow"                    # CLI binaries output to stdout
+print_stderr = "allow"                    # CLI binaries may output errors to stderr
+dbg_macro = "deny"                        # No dbg! - remove debug statements
+use_debug = "deny"                        # Explicit Debug usage, not implicit
+disallowed_methods = "deny"               # Can configure banned side-effecting methods
+disallowed_types = "deny"                 # Can configure banned types
+disallowed_macros = "deny"                # Can configure banned macros
+
+# -----------------------------------------------------------------------------
+# STRING IMMUTABILITY - Prefer format! over mutation
+# -----------------------------------------------------------------------------
+format_push_string = "deny"               # Use format! not string.push_str(format!())
+string_add = "deny"                       # Use format! not string + &other
+string_add_assign = "deny"                # Use format! not string += &other
+string_lit_chars_any = "deny"             # Use string methods not .chars().any()
 
 # -----------------------------------------------------------------------------
 # COMPLEXITY LIMITS - Keep functions small and focused

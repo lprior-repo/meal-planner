@@ -120,6 +120,8 @@
 //! - `base64`: Encoding for storage
 //! - `hex`: Key parsing from environment
 
+use tracing::error;
+
 use aes_gcm::{
     aead::rand_core::RngCore,
     aead::{Aead, AeadCore, KeyInit, OsRng},
@@ -197,6 +199,37 @@ pub fn encryption_configured() -> bool {
     }
 }
 
+/// Log detailed security error for encryption key issues
+#[allow(clippy::cognitive_complexity)]
+fn log_crypto_error(e: &CryptoError) {
+    error!(
+        error = %e,
+        help = crypto_error_help(e),
+        "SECURITY ERROR: Encryption key validation failed"
+    );
+}
+
+/// Get help text for crypto errors
+const fn crypto_error_help(e: &CryptoError) -> &'static str {
+    match e {
+        CryptoError::KeyNotConfigured => {
+            "OAUTH_ENCRYPTION_KEY not set. Fix: 1) cargo run --bin generate_encryption_key, \
+             2) export OAUTH_ENCRYPTION_KEY='key', 3) restart"
+        }
+        CryptoError::KeyInvalidLength(_) => {
+            "Invalid key length. Expected 64 hex chars (32 bytes). \
+             Fix: cargo run --bin generate_encryption_key"
+        }
+        CryptoError::KeyInvalidHex => {
+            "Invalid hex characters. Expected 0-9, a-f, A-F. \
+             Fix: cargo run --bin generate_encryption_key"
+        }
+        CryptoError::InvalidCiphertext | CryptoError::DecryptionFailed => {
+            "Key validation failed unexpectedly"
+        }
+    }
+}
+
 /// Validate encryption configuration at startup
 ///
 /// This function should be called during application initialization
@@ -216,60 +249,27 @@ pub fn encryption_configured() -> bool {
 /// fn main() -> Result<(), Box<dyn std::error::Error>> {
 ///     // Validate encryption before starting the application
 ///     validate_encryption_at_startup()?;
-///     
+///
 ///     // Continue with application logic...
 ///     Ok(())
 /// }
 /// ```
 pub fn validate_encryption_at_startup() -> Result<(), CryptoError> {
-    match get_encryption_key() {
-        Ok(_key_bytes) => {
-            // Test the key by performing a simple encrypt/decrypt operation
-            // This ensures the key is not just valid format but also functional
+    get_encryption_key()
+        .and_then(|_key_bytes| {
             let test_plaintext = "startup_validation_test";
-
-            // If encryption/decryption fails with this key, it indicates a problem
-            match encrypt(test_plaintext).and_then(|encrypted| decrypt(&encrypted)) {
-                Ok(decrypted) if decrypted == test_plaintext => Ok(()),
-                Ok(_) => Err(CryptoError::DecryptionFailed),
-                Err(e) => Err(e),
-            }
-        }
-        Err(e) => {
-            // Provide more descriptive error messages for common issues
-            match e {
-                CryptoError::KeyNotConfigured => {
-                    eprintln!(
-                        "SECURITY ERROR: OAUTH_ENCRYPTION_KEY environment variable is not set"
-                    );
-                    eprintln!("To fix this issue:");
-                    eprintln!("1. Generate a secure key: cargo run --bin generate_encryption_key");
-                    eprintln!("2. Set the environment variable: export OAUTH_ENCRYPTION_KEY='your_64_char_hex_key'");
-                    eprintln!("3. Restart the application");
-                }
-                CryptoError::KeyInvalidLength(len) => {
-                    eprintln!(
-                        "SECURITY ERROR: OAUTH_ENCRYPTION_KEY has invalid length: {} characters",
-                        len
-                    );
-                    eprintln!("Expected: 64 hex characters (32 bytes for AES-256)");
-                    eprintln!("To fix this: Generate a new key with: cargo run --bin generate_encryption_key");
-                }
-                CryptoError::KeyInvalidHex => {
-                    eprintln!("SECURITY ERROR: OAUTH_ENCRYPTION_KEY contains invalid hexadecimal characters");
-                    eprintln!("Expected: 64 valid hex characters (0-9, a-f, A-F)");
-                    eprintln!("To fix this: Generate a new key with: cargo run --bin generate_encryption_key");
-                }
-                CryptoError::InvalidCiphertext | CryptoError::DecryptionFailed => {
-                    eprintln!(
-                        "SECURITY ERROR: Unexpected error validating encryption key: {}",
-                        e
-                    );
-                }
-            }
-            Err(e)
-        }
-    }
+            encrypt(test_plaintext)
+                .and_then(|encrypted| decrypt(&encrypted))
+                .and_then(|decrypted| {
+                    (decrypted == test_plaintext)
+                        .then_some(())
+                        .ok_or(CryptoError::DecryptionFailed)
+                })
+        })
+        .map_err(|e| {
+            log_crypto_error(&e);
+            e
+        })
 }
 
 /// Validate encryption configuration with detailed error reporting

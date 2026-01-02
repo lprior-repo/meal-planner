@@ -128,16 +128,8 @@ fn run() -> anyhow::Result<Output> {
         },
         source_url: parsed.recipe.source_url.clone(),
         servings: Some(parsed.recipe.servings),
-        working_time: if parsed.recipe.working_time > 0 {
-            Some(parsed.recipe.working_time)
-        } else {
-            None
-        },
-        waiting_time: if parsed.recipe.waiting_time > 0 {
-            Some(parsed.recipe.waiting_time)
-        } else {
-            None
-        },
+        working_time: (parsed.recipe.working_time > 0).then_some(parsed.recipe.working_time),
+        waiting_time: (parsed.recipe.waiting_time > 0).then_some(parsed.recipe.waiting_time),
         keywords: if keywords.is_empty() {
             None
         } else {
