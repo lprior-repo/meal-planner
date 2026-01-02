@@ -4,7 +4,7 @@
 //!   {"tandoor": {...}, "recipe": {...}, "`additional_keywords"`: `["tag1", "tag2"]`}
 //!
 //! JSON stdout:
-//!   {"success": true, "`recipe_id`": 123, "name": "..."}
+//!   {"success": true, "recipe_id": 123, "name": "..."}
 //!   {"success": false, "error": "..."}
 
 // CLI binaries: exit and unwrap/expect are acceptable at the top level

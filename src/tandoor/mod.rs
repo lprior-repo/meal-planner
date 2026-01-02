@@ -51,7 +51,7 @@
 //! if import.success {
 //!     println!("Imported: {} (ID: {})",
 //!         import.recipe_name.unwrap(),
-//!         import.`recipe_id`.unwrap()
+//!         import.recipe_id.unwrap()
 //!     );
 //! }
 //! # Ok(())

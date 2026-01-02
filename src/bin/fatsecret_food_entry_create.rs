@@ -5,9 +5,9 @@
 //!
 //! JSON input (CLI arg or stdin):
 //!   `{"fatsecret": {...}, "access_token": "...", "access_secret": "...",
-//!     "``food_id``": "12345", "food_entry_name": "Chicken Breast",
-//!     "``serving_id``": "54321", "number_of_units": 1.5,
-//!     "meal": "lunch", "``date_int``": 20088}`
+//!     "`food_id`": "12345", "food_entry_name": "Chicken Breast",
+//!     "`serving_id`": "54321", "number_of_units": 1.5,
+//!     "meal": "lunch", "`date_int`": 20088}`
 //!
 //! JSON stdout: `{"success": true, "food_entry_id": "123456789"}`
 

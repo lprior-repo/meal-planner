@@ -88,11 +88,11 @@ pub enum ApiErrorCode {
     ParameterOutOfRange,
     /// Code 105: Invalid date format
     InvalidDateFormat,
-    /// Code 106: Invalid `food_id`
+    /// Code 106: Invalid food_id
     InvalidFoodId,
-    /// Code 107: Invalid `serving_id`
+    /// Code 107: Invalid serving_id
     InvalidServingId,
-    /// Code 108: Invalid `recipe_id`
+    /// Code 108: Invalid recipe_id
     InvalidRecipeId,
     /// Code 109: Invalid `food_entry_id`
     InvalidFoodEntryId,

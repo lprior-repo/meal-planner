@@ -12,7 +12,7 @@
 //! # Key Types
 //!
 //! - [`Food`] - Complete food details including all serving options
-//! - [`FoodId`] - Opaque identifier for a specific food
+//! - [FoodId] - Opaque identifier for a specific food
 //! - [`Serving`] - A serving size option with associated nutrition data
 //! - [`Nutrition`] - Comprehensive nutrition information (macros, micros, vitamins)
 //! - [`FoodSearchResponse`] - Paginated search results from `foods.search` API
@@ -35,10 +35,10 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::{search_foods_simple, get_food};
-//! use meal_planner::fatsecret::core::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
+//! let config = FatSecretConfig::from_env()?;
 //!
 //! // Search for "chicken breast"
 //! let results = search_foods_simple(&config, "chicken breast").await?;
@@ -46,7 +46,7 @@
 //!
 //! // Get detailed nutrition for first result
 //! if let Some(first) = results.foods.first() {
-//!     let food = get_food(&config, &first.`food_id`).await?;
+//!     let food = get_food(&config, &first.food_id).await?;
 //!     println!("{} has {} servings", food.food_name, food.servings.serving.len());
 //!     
 //!     // Show nutrition for default serving
@@ -66,14 +66,14 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::autocomplete_foods;
-//! use meal_planner::fatsecret::core::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
+//! let config = FatSecretConfig::from_env()?;
 //!
 //! let suggestions = autocomplete_foods(&config, "chick").await?;
 //! for suggestion in suggestions.suggestions {
-//!     println!("{}: {}", suggestion.`food_id`, suggestion.food_name);
+//!     println!("{}: {}", suggestion.food_id, suggestion.food_name);
 //! }
 //! # Ok(())
 //! # }
@@ -83,10 +83,10 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::find_food_by_barcode;
-//! use meal_planner::fatsecret::core::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
+//! let config = FatSecretConfig::from_env()?;
 //!
 //! // Lookup by UPC barcode
 //! let food = find_food_by_barcode(&config, "012345678901", Some("upc")).await?;

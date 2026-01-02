@@ -33,7 +33,7 @@
 //! - [`SavedMealId`] - Type-safe identifier for saved meals
 //! - [`SavedMealItemId`] - Type-safe identifier for meal items
 //! - [`SavedMealItemInput`] - Input for creating new meal items
-//! - [`MealType`] - Breakfast, Lunch, Dinner, or Snack classification
+//! - [MealType] - Breakfast, Lunch, Dinner, or Snack classification
 //!
 //! # API Functions
 //!
@@ -62,7 +62,7 @@
 //!
 //! # Date Handling
 //!
-//! When logging saved meals, dates use `date_int` format (days since Unix epoch).
+//! When logging saved meals, dates use date_int format (days since Unix epoch).
 //! Use helper functions from other modules for date conversion.
 //!
 //! # Usage Example
@@ -72,13 +72,13 @@
 //!     create_saved_meal, create_saved_meal_item, get_saved_meals,
 //!     SavedMealItemInput, MealType,
 //! };
-//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
 //! use meal_planner::fatsecret::foods::FoodId;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let token = `AccessToken`::new("user_token", "user_secret");
+//! let config = FatSecretConfig::from_env()?;
+//! let token = AccessToken::new("user_token", "user_secret");
 //!
 //! // Create a saved meal for "Morning Protein Shake"
 //! let meal_id = create_saved_meal(
@@ -120,12 +120,12 @@
 //!
 //! ```rust,no_run
 //! # use meal_planner::fatsecret::saved_meals::log_saved_meal;
-//! # use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! # use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! # use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! # use meal_planner::fatsecret::core::oauth::AccessToken;
 //! # use meal_planner::fatsecret::saved_meals::SavedMealId;
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! # let config = `FatSecretConfig`::from_env()?;
-//! # let token = `AccessToken`::new("user_token", "user_secret");
+//! # let config = FatSecretConfig::from_env()?;
+//! # let token = AccessToken::new("user_token", "user_secret");
 //! # let meal_id = SavedMealId::new("123");
 //! // Log with double the protein powder
 //! log_saved_meal(

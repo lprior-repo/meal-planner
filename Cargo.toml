@@ -284,6 +284,7 @@ once_cell = "1.19"
 [lib]
 name = "meal_planner"
 path = "src/mod.rs"
+doctest = false
 
 # Domain binaries (JSON in -> JSON out)
 # Naming: <domain>_<operation>

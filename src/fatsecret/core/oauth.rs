@@ -63,14 +63,14 @@
 //! ## Step 1: Get Request Token
 //!
 //! ```no_run
-//! use meal_planner::fatsecret::core::{`FatSecretConfig`, oauth::get_request_token};
+//! use meal_planner::fatsecret::core::{FatSecretConfig, oauth::get_request_token};
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
+//! let config = FatSecretConfig::from_env()?;
 //! let callback_url = "https://yourapp.com/oauth/callback";
 //!
 //! let request_token = get_request_token(&config, callback_url).await?;
-//! println!("Request Token: {}", request_token.`oauth_token`);
+//! println!("Request Token: {}", request_token.oauth_token);
 //! # Ok(())
 //! # }
 //! ```
@@ -80,24 +80,24 @@
 //! Redirect user to authorization URL:
 //!
 //! ```text
-//! https://www.fatsecret.com/oauth/authorize?`oauth_token`={REQUEST_TOKEN}
+//! https://www.fatsecret.com/oauth/authorize?oauth_token={REQUEST_TOKEN}
 //! ```
 //!
-//! User logs in and authorizes your app. `FatSecret` redirects back with:
+//! User logs in and authorizes your app. FatSecret redirects back with:
 //!
 //! ```text
-//! https://yourapp.com/oauth/callback?`oauth_token`={TOKEN}&oauth_verifier={VERIFIER}
+//! https://yourapp.com/oauth/callback?oauth_token={TOKEN}&oauth_verifier={VERIFIER}
 //! ```
 //!
 //! ## Step 3: Exchange for Access Token
 //!
 //! ```no_run
-//! use meal_planner::fatsecret::core::{`FatSecretConfig`, oauth::{get_access_token, `RequestToken`}};
+//! use meal_planner::fatsecret::core::{FatSecretConfig, oauth::{get_access_token, RequestToken}};
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! # let request_token = `RequestToken` {
-//! #     `oauth_token`: "token".to_string(),
+//! let config = FatSecretConfig::from_env()?;
+//! # let request_token = RequestToken {
+//! #     oauth_token: "token".to_string(),
 //! #     oauth_token_secret: "secret".to_string(),
 //! #     oauth_callback_confirmed: true,
 //! # };
@@ -106,7 +106,7 @@
 //! let access_token = get_access_token(&config, &request_token, oauth_verifier).await?;
 //!
 //! // Store access_token securely (encrypted in database)
-//! println!("Access Token: {}", access_token.`oauth_token`);
+//! println!("Access Token: {}", access_token.oauth_token);
 //! # Ok(())
 //! # }
 //! ```
@@ -114,16 +114,15 @@
 //! ## Step 4: Make Authenticated Requests
 //!
 //! ```no_run
-//! use meal_planner::fatsecret::core::{`FatSecretConfig`, oauth::`AccessToken`};
-//! use meal_planner::fatsecret::diary::get_food_entries;
-//! use chrono::NaiveDate;
+//! use meal_planner::fatsecret::core::{FatSecretConfig, oauth::AccessToken};
+//! use meal_planner::fatsecret::diary::{get_food_entries, date_to_int};
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let access_token = `AccessToken`::new("token", "secret"); // From storage
+//! let config = FatSecretConfig::from_env()?;
+//! let access_token = AccessToken::new("token", "secret"); // From storage
 //!
-//! let date = NaiveDate::from_ymd_opt(2025, 1, 1).unwrap();
-//! let entries = get_food_entries(&config, &access_token, date).await?;
+//! let date_int = date_to_int("2025-01-01").unwrap();
+//! let entries = get_food_entries(&config, &access_token, date_int).await?;
 //! # Ok(())
 //! # }
 //! ```
@@ -344,7 +343,7 @@ pub fn create_signature(
 /// Build complete OAuth 1.0a parameter set with signature
 ///
 /// Includes: `oauth_consumer_key`, `oauth_signature_method`, `oauth_timestamp`,
-/// `oauth_nonce`, `oauth_version`, `oauth_token` (if provided), `oauth_signature`,
+/// `oauth_nonce`, `oauth_version`, oauth_token (if provided), `oauth_signature`,
 /// plus any `extra_params`
 ///
 /// # Gleam-style: Built immutably using iterator chains

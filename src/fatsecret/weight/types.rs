@@ -21,7 +21,7 @@
 //!
 //! # Date Format
 //!
-//! All dates use `date_int`: the number of days since Unix epoch (1970-01-01).
+//! All dates use date_int: the number of days since Unix epoch (1970-01-01).
 //! For example:
 //! - `0` = 1970-01-01
 //! - `19723` = 2024-01-01
@@ -42,7 +42,7 @@
 //! // Create a weight update request
 //! let update = WeightUpdate {
 //!     current_weight_kg: 75.5,
-//!     `date_int`: 19723, // 2024-01-01
+//!     date_int: 19723, // 2024-01-01
 //!     goal_weight_kg: Some(70.0),
 //!     height_cm: Some(175.0),
 //!     comment: Some("Morning weigh-in".to_string()),
@@ -50,12 +50,12 @@
 //!
 //! // Deserialize a weight entry from JSON
 //! let json = r#"{
-//!     "`date_int`": "19723",
+//!     "date_int": "19723",
 //!     "weight_kg": "75.5",
 //!     "weight_comment": "Morning weigh-in"
 //! }"#;
 //! let entry: WeightEntry = serde_json::from_str(json).unwrap();
-//! assert_eq!(entry.`date_int`, 19723);
+//! assert_eq!(entry.date_int, 19723);
 //! assert_eq!(entry.weight_kg, 75.5);
 //! ```
 

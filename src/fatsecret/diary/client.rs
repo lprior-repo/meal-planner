@@ -15,8 +15,8 @@
 //! # Authentication
 //!
 //! All functions require:
-//! - [`FatSecretConfig`] - API credentials (consumer key/secret)
-//! - [`AccessToken`] - User-specific OAuth token (obtained via 3-legged flow)
+//! - [FatSecretConfig] - API credentials (consumer key/secret)
+//! - [AccessToken] - User-specific OAuth token (obtained via 3-legged flow)
 //!
 //! The actual OAuth signing is handled by [`make_authenticated_request`] from
 //! the core HTTP module.
@@ -51,32 +51,32 @@
 //! - [`FoodEntry`] - Complete food diary entry
 //! - [`FoodEntryInput`] - Input for creating entries
 //! - [`FoodEntryUpdate`] - Partial updates for existing entries
-//! - [`FoodEntryId`] - Type-safe entry identifier
+//! - [FoodEntryId] - Type-safe entry identifier
 //! - [`MonthSummary`] - Monthly aggregated data
-//! - [`MealType`] - Enum for breakfast/lunch/dinner/snack
+//! - [MealType] - Enum for breakfast/lunch/dinner/snack
 //!
 //! # Usage Example
 //!
 //! ```rust,no_run
-//! use meal_planner::fatsecret::{`FatSecretConfig`, `AccessToken`};
+//! use meal_planner::fatsecret::core::{FatSecretConfig, AccessToken};
 //! use meal_planner::fatsecret::diary::{
 //!     create_food_entry, get_food_entries, edit_food_entry,
-//!     FoodEntryInput, FoodEntryUpdate, `MealType`,
+//!     FoodEntryInput, FoodEntryUpdate, MealType,
 //! };
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let token = `AccessToken`::new("`oauth_token`", "oauth_secret");
-//! let `date_int` = 19723; // 2024-01-01
+//! let config = FatSecretConfig::from_env()?;
+//! let token = AccessToken::new("oauth_token", "oauth_secret");
+//! let date_int = 19723; // 2024-01-01
 //!
 //! // Create a new entry
-//! let input = FoodEntryInput::`FromFood` {
-//!     `food_id`: "12345".to_string(),
+//! let input = FoodEntryInput::FromFood {
+//!     food_id: "12345".to_string(),
 //!     food_entry_name: "Oatmeal".to_string(),
-//!     `serving_id`: "67890".to_string(),
+//!     serving_id: "67890".to_string(),
 //!     number_of_units: 1.5,
-//!     meal: `MealType`::Breakfast,
-//!     `date_int`,
+//!     meal: MealType::Breakfast,
+//!     date_int,
 //! };
 //! let entry_id = create_food_entry(&config, &token, input).await?;
 //!
@@ -85,7 +85,7 @@
 //! edit_food_entry(&config, &token, &entry_id, update).await?;
 //!
 //! // Get all entries for the day
-//! let entries = get_food_entries(&config, &token, `date_int`).await?;
+//! let entries = get_food_entries(&config, &token, date_int).await?;
 //! println!("Total entries: {}", entries.len());
 //! # Ok(())
 //! # }
@@ -102,7 +102,7 @@
 //! # Implementation Notes
 //!
 //! - All API methods use the `food_entry.*` or `food_entries.*` endpoint namespace
-//! - Date parameters use `date_int` (days since Unix epoch)
+//! - Date parameters use date_int (days since Unix epoch)
 //! - Tracing is enabled on key operations for debugging
 //! - Response deserialization is strict - unknown fields cause errors
 

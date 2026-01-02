@@ -19,16 +19,16 @@
 //!
 //! ## Creating a Profile
 //!
-//! Use app-level credentials to create a new user profile:
+//! ## Use app-level credentials to create a new user profile
 //!
 //! ```rust,no_run
-//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
 //! use meal_planner::fatsecret::profile::client::create_profile;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let app_token = `AccessToken`::from_client_credentials(&config).await?;
+//! let config = FatSecretConfig::from_env()?;
+//! let app_token = AccessToken::new("client_token", "client_secret");
 //!
 //! let profile_auth = create_profile(
 //!     &config,
@@ -48,17 +48,17 @@
 //! Use user-level credentials to fetch their profile:
 //!
 //! ```rust,no_run
-//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
 //! use meal_planner::fatsecret::profile::client::get_profile;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
+//! let config = FatSecretConfig::from_env()?;
 //!
 //! // Load user's stored credentials
-//! let user_token = `AccessToken` {
-//!     token: "user-oauth-token".to_string(),
-//!     secret: "user-oauth-secret".to_string(),
+//! let user_token = AccessToken {
+//!     oauth_token: "user-oauth-token".to_string(),
+//!     oauth_token_secret: "user-oauth-secret".to_string(),
 //! };
 //!
 //! let profile = get_profile(&config, &user_token).await?;

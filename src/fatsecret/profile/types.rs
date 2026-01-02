@@ -84,17 +84,17 @@
 //! # }
 //! ```
 //!
-//! ## Converting `ProfileAuth` to `AccessToken`
+//! ## Converting `ProfileAuth` to AccessToken
 //!
 //! ```rust
-//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
 //! use meal_planner::fatsecret::profile::types::ProfileAuth;
 //!
 //! # fn example(profile_auth: ProfileAuth) {
-//! // Convert ProfileAuth to `AccessToken` for API calls
-//! let user_token = `AccessToken` {
-//!     token: profile_auth.auth_token,
-//!     secret: profile_auth.auth_secret,
+//! // Convert ProfileAuth to AccessToken for API calls
+//! let user_token = AccessToken {
+//!     oauth_token: profile_auth.auth_token,
+//!     oauth_token_secret: profile_auth.auth_secret,
 //! };
 //!
 //! // Now use user_token for authenticated API calls

@@ -34,12 +34,12 @@
 //!     get_most_eaten,
 //!     MealFilter
 //! };
-//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let access_token = `AccessToken` {
+//! let config = FatSecretConfig::from_env()?;
+//! let access_token = AccessToken {
 //!     token: "user_access_token".to_string(),
 //!     secret: "user_token_secret".to_string(),
 //! };

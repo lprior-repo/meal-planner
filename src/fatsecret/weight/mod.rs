@@ -19,24 +19,24 @@
 //!
 //! # Date Format
 //!
-//! All dates use the `FatSecret` `date_int` format: days since Unix epoch (0 = 1970-01-01).
+//! All dates use the `FatSecret` date_int format: days since Unix epoch (0 = 1970-01-01).
 //! Use the utility functions in `fatsecret::core::date_utils` to convert to/from standard dates.
 //!
 //! # Usage Example
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::weight::{update_weight, get_weight_month_summary, WeightUpdate};
-//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let token = `AccessToken`::new("access_token", "access_secret");
+//! let config = FatSecretConfig::from_env()?;
+//! let token = AccessToken::new("access_token", "access_secret");
 //!
 //! // Record a weight measurement
 //! let update = WeightUpdate {
 //!     current_weight_kg: 75.5,
-//!     `date_int`: 19723, // 2024-01-01
+//!     date_int: 19723, // 2024-01-01
 //!     goal_weight_kg: Some(70.0),
 //!     height_cm: Some(175.0),
 //!     comment: Some("Morning weight".to_string()),
@@ -46,7 +46,7 @@
 //! // Retrieve monthly summary
 //! let summary = get_weight_month_summary(&config, &token, 19723).await?;
 //! for day in &summary.days {
-//!     println!("Date: {}, Weight: {} kg", day.`date_int`, day.weight_kg);
+//!     println!("Date: {}, Weight: {} kg", day.date_int, day.weight_kg);
 //! }
 //! # Ok(())
 //! # }

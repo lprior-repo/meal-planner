@@ -13,8 +13,8 @@
 //! # Authentication
 //!
 //! All functions require:
-//! - A [`FatSecretConfig`] containing API credentials
-//! - An [`AccessToken`] obtained via the OAuth flow
+//! - A [FatSecretConfig] containing API credentials
+//! - An [AccessToken] obtained via the OAuth flow
 //!
 //! # Error Handling
 //!
@@ -28,17 +28,17 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::weight::{update_weight, get_weight_by_date, WeightUpdate};
-//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let token = `AccessToken`::new("access_token", "access_secret");
+//! let config = FatSecretConfig::from_env()?;
+//! let token = AccessToken::new("access_token", "access_secret");
 //!
 //! // Record today's weight
 //! let update = WeightUpdate {
 //!     current_weight_kg: 75.5,
-//!     `date_int`: 19723, // 2024-01-01
+//!     date_int: 19723, // 2024-01-01
 //!     goal_weight_kg: None,
 //!     height_cm: None,
 //!     comment: Some("After breakfast".to_string()),

@@ -64,11 +64,11 @@
 //!
 //! # fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! // Parse API response
-//! let json = r#"{"food": [{"`food_id`": "123", "food_name": "Apple", ...}]}"#;
+//! let json = r#"{"food": [{"food_id": "123", "food_name": "Apple", ...}]}"#;
 //! let response: FavoriteFoodsResponse = serde_json::from_str(json)?;
 //!
 //! // Handle single item or array
-//! let json_single = r#"{"food": {"`food_id`": "123", "food_name": "Apple", ...}}"#;
+//! let json_single = r#"{"food": {"food_id": "123", "food_name": "Apple", ...}}"#;
 //! let response_single: FavoriteFoodsResponse = serde_json::from_str(json_single)?;
 //! # Ok(())
 //! # }

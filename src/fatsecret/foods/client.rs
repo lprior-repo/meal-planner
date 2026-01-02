@@ -34,13 +34,13 @@
 //! ```no_run
 //! use meal_planner::fatsecret::foods::client::get_food;
 //! use meal_planner::fatsecret::foods::types::FoodId;
-//! use meal_planner::fatsecret::core::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let `food_id` = FoodId::new("12345");
+//! let config = FatSecretConfig::from_env()?;
+//! let food_id = FoodId::new("12345");
 //!
-//! let food = get_food(&config, &`food_id`).await?;
+//! let food = get_food(&config, &food_id).await?;
 //! println!("{} has {} servings",
 //!     food.food_name,
 //!     food.servings.serving.len()
@@ -53,10 +53,10 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::client::search_foods;
-//! use meal_planner::fatsecret::core::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
+//! let config = FatSecretConfig::from_env()?;
 //!
 //! // Get page 1 (0-indexed) with max 50 results
 //! let results = search_foods(&config, "salmon", 1, 50).await?;
@@ -73,10 +73,10 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::client::autocomplete_foods_with_options;
-//! use meal_planner::fatsecret::core::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
+//! let config = FatSecretConfig::from_env()?;
 //!
 //! // Get top 5 suggestions for "bro"
 //! let suggestions = autocomplete_foods_with_options(&config, "bro", Some(5)).await?;

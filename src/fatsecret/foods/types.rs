@@ -5,7 +5,7 @@
 //!
 //! # Design Principles
 //!
-//! 1. **Opaque IDs** - [`FoodId`] and [`ServingId`] are opaque wrappers preventing
+//! 1. **Opaque IDs** - [FoodId] and [`ServingId`] are opaque wrappers preventing
 //!    accidental mixing of string IDs
 //! 2. **Flexible deserialization** - Handle `FatSecret`'s inconsistent JSON (strings vs numbers)
 //! 3. **Flattened structures** - Nutrition data embedded in servings via `#[serde(flatten)]`
@@ -15,13 +15,13 @@
 //!
 //! ```text
 //! Food                          # Complete food details
-//! ├── `food_id`: FoodId           # Unique identifier
+//! ├── food_id: FoodId           # Unique identifier
 //! ├── food_name: String         # "Chicken Breast"
 //! ├── food_type: String         # "Generic" or "Brand"
 //! ├── brand_name: Option        # For branded foods
 //! └── servings: FoodServings
 //!     └── serving: Vec<Serving>
-//!         ├── `serving_id`: ServingId
+//!         ├── serving_id: ServingId
 //!         ├── serving_description: String    # "1 cup"
 //!         ├── metric_serving_amount: Option  # 240.0
 //!         ├── metric_serving_unit: Option    # "g"
@@ -43,7 +43,7 @@
 //! - [`Food`] - Complete food with all serving options and nutrition
 //! - [`Serving`] - A single serving size with embedded nutrition data
 //! - [`Nutrition`] - Macros (protein/carbs/fat) and optional micros/vitamins
-//! - [`FoodId`], [`ServingId`] - Type-safe opaque identifiers
+//! - [FoodId], [`ServingId`] - Type-safe opaque identifiers
 //!
 //! ## Search & Discovery Types
 //!
@@ -120,12 +120,12 @@
 //! use meal_planner::fatsecret::foods::types::{FoodId, ServingId};
 //!
 //! // From string slice
-//! let `food_id` = FoodId::new("12345");
-//! assert_eq!(`food_id`.as_str(), "12345");
+//! let food_id = FoodId::new("12345");
+//! assert_eq!(food_id.as_str(), "12345");
 //!
 //! // From String
-//! let `serving_id` = ServingId::from("67890".to_string());
-//! assert_eq!(`serving_id`.to_string(), "67890");
+//! let serving_id = ServingId::from("67890".to_string());
+//! assert_eq!(serving_id.to_string(), "67890");
 //!
 //! // Type safety prevents mixing
 //! // let wrong: FoodId = ServingId::new("123"); // Compile error!
@@ -164,7 +164,7 @@ use crate::fatsecret::core::serde_utils::{
 pub struct FoodId(String);
 
 impl FoodId {
-    /// Creates a new `FoodId` from the given value
+    /// Creates a new FoodId from the given value
     pub fn new(id: impl Into<String>) -> Self {
         Self(id.into())
     }

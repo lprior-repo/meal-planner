@@ -29,7 +29,7 @@
 //!
 //! # Date Format
 //!
-//! `FatSecret` uses `date_int`: days since Unix epoch (1970-01-01).
+//! `FatSecret` uses date_int: days since Unix epoch (1970-01-01).
 //!
 //! - **Example**: `19723` = 2024-01-01 (19,723 days after 1970-01-01)
 //!
@@ -47,15 +47,15 @@
 //!
 //! # fn example() -> Result<(), String> {
 //! // Create an exercise entry for today
-//! let `date_int` = date_to_int("2024-01-15")?;
+//! let date_int = date_to_int("2024-01-15")?;
 //! let input = ExerciseEntryInput {
 //!     exercise_id: ExerciseId::new("12345"),
 //!     duration_min: 30,
-//!     `date_int`,
+//!     date_int,
 //! };
 //!
-//! // Convert `date_int` back to human-readable format
-//! let date_str = int_to_date(`date_int`)?;
+//! // Convert date_int back to human-readable format
+//! let date_str = int_to_date(date_int)?;
 //! assert_eq!(date_str, "2024-01-15");
 //! # Ok(())
 //! # }
@@ -267,7 +267,7 @@ pub struct ExerciseMonthSummaryResponse {
 /// Unix epoch date (1970-01-01) - constant for date calculations
 const UNIX_EPOCH_DATE: (i32, u32, u32) = (1970, 1, 1);
 
-/// Convert YYYY-MM-DD to days since epoch (`date_int`)
+/// Convert YYYY-MM-DD to days since epoch (date_int)
 pub fn date_to_int(date: &str) -> Result<i32, String> {
     use chrono::NaiveDate;
 

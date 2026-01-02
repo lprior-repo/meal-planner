@@ -44,7 +44,7 @@ pub struct FatSecretConfig {
 }
 
 impl FatSecretConfig {
-    /// Create a new `FatSecretConfig` with explicit credentials
+    /// Create a new FatSecretConfig with explicit credentials
     ///
     /// # Errors
     ///
@@ -69,7 +69,7 @@ impl FatSecretConfig {
         })
     }
 
-    /// Create a new `FatSecretConfig` from environment variables
+    /// Create a new FatSecretConfig from environment variables
     ///
     /// # Errors
     ///

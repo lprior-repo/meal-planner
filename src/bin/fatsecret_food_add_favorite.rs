@@ -5,7 +5,7 @@
 //!
 //! JSON stdin:
 //!   `{"fatsecret": {...}, "access_token": "...", "access_secret": "...",
-//!     "``food_id``": "12345", "``serving_id``": "54321", "number_of_units": 1.0}`
+//!     "`food_id`": "12345", "`serving_id`": "54321", "number_of_units": 1.0}`
 //!
 //! JSON stdout: `{"success": true}`
 
