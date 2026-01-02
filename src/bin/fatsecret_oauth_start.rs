@@ -4,7 +4,7 @@
 //! The user visits the URL to authorize, then `FatSecret` redirects to callback.
 //!
 //! This script returns the pending token which should be stored as a Windmill Resource
-//! for use in the next step (oauth_complete).
+//! for use in the next step (`oauth_complete`).
 //!
 //! JSON stdin (Windmill format):
 //!   `{"fatsecret": {...}, "callback_url": "oob"}`
@@ -14,11 +14,12 @@
 //!
 //! JSON stdout: `{"success": true, "auth_url": "https://...", "oauth_token": "...", "oauth_token_secret": "..."}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::fatsecret::core::oauth::get_request_token;
-use meal_planner::fatsecret::core::{FatSecretConfig, FatSecretError};
+use meal_planner::fatsecret::core::FatSecretConfig;
+use meal_planner::fatsecret::crypto::validate_encryption_at_startup;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
 
@@ -33,7 +34,7 @@ struct FatSecretResource {
 struct Input {
     /// `FatSecret` credentials (optional - falls back to env vars)
     fatsecret: Option<FatSecretResource>,
-    /// Callback URL for OAuth redirect (e.g., "http://localhost:8765/callback" or "oob")
+    /// Callback URL for OAuth redirect (e.g., "<http://localhost:8765/callback>" or "oob")
     callback_url: String,
 }
 
@@ -42,9 +43,9 @@ struct Output {
     success: bool,
     /// URL user should visit to authorize
     auth_url: String,
-    /// Request token (needed for oauth_complete)
+    /// Request token (needed for `oauth_complete`)
     oauth_token: String,
-    /// Request token secret (needed for oauth_complete)
+    /// Request token secret (needed for `oauth_complete`)
     oauth_token_secret: String,
 }
 
@@ -58,20 +59,33 @@ struct ErrorOutput {
 async fn main() {
     match run().await {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&output).expect("Failed to serialize output JSON")
+            );
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }
 }
 
 async fn run() -> Result<Output, Box<dyn std::error::Error>> {
+    // Validate encryption configuration at startup (Security Issue MP-2jjo)
+    // Even though this specific binary doesn't use storage directly,
+    // it's part of the OAuth flow that may lead to token storage
+    validate_encryption_at_startup().map_err(|e| {
+        format!("Encryption validation failed: {}. Please set OAUTH_ENCRYPTION_KEY environment variable.", e)
+    })?;
+
     // Read input
     let mut input_str = String::new();
     io::stdin().read_to_string(&mut input_str)?;
@@ -79,8 +93,9 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
 
     // Get config: prefer input, fall back to environment
     let config = match input.fatsecret {
-        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret),
-        None => FatSecretConfig::from_env().ok_or(FatSecretError::ConfigMissing)?,
+        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret)
+            .expect("Invalid FatSecret credentials"),
+        None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 
     // Get request token from FatSecret (no database needed)

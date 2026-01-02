@@ -10,8 +10,8 @@
 //!   `{"success": true, "updated_count": N, "updated_ids": [...]}`
 //!   `{"success": false, "error": "..."}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{BatchUpdateRecipeRequest, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -47,7 +47,10 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(&output).unwrap());
+    println!(
+        "{}",
+        serde_json::to_string(&output).expect("Failed to serialize output JSON")
+    );
     if !output.success {
         std::process::exit(1);
     }
@@ -104,7 +107,7 @@ mod tests {
             updated_count: Some(2),
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"updated_count\":2"));
     }
@@ -116,7 +119,7 @@ mod tests {
             updated_count: None,
             error: Some("Connection failed".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("\"error\":\"Connection failed\""));
         assert!(!json.contains("updated_count"));
@@ -131,10 +134,17 @@ mod tests {
 			},
 			"updates": [{"id": 1, "name": "Updated Recipe"}]
 		}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert!(parsed.tandoor.is_some());
         assert_eq!(parsed.updates.len(), 1);
-        assert_eq!(parsed.updates.first().unwrap().id, 1);
+        assert_eq!(
+            parsed
+                .updates
+                .first()
+                .expect("Expected at least one element")
+                .id,
+            1
+        );
     }
 
     #[test]
@@ -144,7 +154,7 @@ mod tests {
 			"api_token": "test_token",
 			"updates": [{"id": 1, "name": "Updated Recipe"}]
 		}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert!(parsed.tandoor.is_none());
         assert_eq!(parsed.base_url, Some("http://localhost:8090".to_string()));
     }

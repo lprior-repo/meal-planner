@@ -8,8 +8,8 @@
 //! JSON stdout: `{"success": true, "count": N, "keywords": [...]}`
 //!   or on error: `{"success": false, "error": "..."}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -41,7 +41,10 @@ struct Output {
 fn main() {
     match run() {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&output).expect("Failed to serialize output JSON")
+            );
         }
         Err(e) => {
             let error = Output {
@@ -50,7 +53,10 @@ fn main() {
                 keywords: None,
                 error: Some(e.to_string()),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }
@@ -76,7 +82,7 @@ fn run() -> anyhow::Result<Output> {
             result
                 .results
                 .into_iter()
-                .map(|k| serde_json::to_value(k).unwrap())
+                .map(|k| serde_json::to_value(k).expect("Unexpected None value"))
                 .collect(),
         ),
         error: None,
@@ -95,7 +101,7 @@ mod tests {
             keywords: Some(vec![]),
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"count\":5"));
     }
@@ -108,7 +114,7 @@ mod tests {
             keywords: None,
             error: Some("test error".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("\"error\""));
     }

@@ -9,8 +9,8 @@
 //! JSON stdout: `{"success": true, "recipe": {...}}`
 //!   or `{"success": false, "error": "..."}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -55,7 +55,10 @@ struct Output {
 fn main() {
     match run() {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&output).expect("Failed to serialize output JSON")
+            );
         }
         Err(e) => {
             let error = Output {
@@ -63,7 +66,10 @@ fn main() {
                 recipe: None,
                 error: Some(e.to_string()),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }
@@ -137,7 +143,7 @@ mod tests {
     #[test]
     fn test_input_parsing_minimal() {
         let json = r#"{"tandoor": {"base_url": "http://localhost", "api_token": "token"}, "recipe_id": 123}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.recipe_id, 123);
         assert!(input.name.is_none());
     }
@@ -145,7 +151,7 @@ mod tests {
     #[test]
     fn test_input_parsing_with_updates() {
         let json = r#"{"tandoor": {"base_url": "http://localhost", "api_token": "token"}, "recipe_id": 123, "name": "Updated", "servings": 6}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.recipe_id, 123);
         assert_eq!(input.name, Some("Updated".to_string()));
         assert_eq!(input.servings, Some(6));
@@ -158,7 +164,7 @@ mod tests {
             recipe: None,
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(!json.contains("\"recipe\""));
     }
@@ -170,7 +176,7 @@ mod tests {
             recipe: None,
             error: Some("Update failed".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("\"error\""));
     }

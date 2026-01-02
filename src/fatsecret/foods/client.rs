@@ -22,9 +22,9 @@
 //! | [`get_food`] | `food.get.v5` | Get complete food details by ID |
 //! | [`search_foods`] | `foods.search` | Search foods with pagination |
 //! | [`search_foods_simple`] | `foods.search` | Search with defaults (page 0, max 20) |
-//! | [`list_foods_with_options`] | `foods.search` | Search with optional page/max_results |
+//! | [`list_foods_with_options`] | `foods.search` | Search with optional `page/max_results` |
 //! | [`autocomplete_foods`] | `foods.autocomplete.v2` | Get autocomplete suggestions |
-//! | [`autocomplete_foods_with_options`] | `foods.autocomplete.v2` | Autocomplete with max_results |
+//! | [`autocomplete_foods_with_options`] | `foods.autocomplete.v2` | Autocomplete with `max_results` |
 //! | [`find_food_by_barcode`] | `food.find_id_for_barcode.v2` | Lookup food by barcode |
 //!
 //! # Examples
@@ -34,13 +34,13 @@
 //! ```no_run
 //! use meal_planner::fatsecret::foods::client::get_food;
 //! use meal_planner::fatsecret::foods::types::FoodId;
-//! use meal_planner::fatsecret::core::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let `food_id` = FoodId::new("12345");
+//! let config = FatSecretConfig::from_env()?;
+//! let food_id = FoodId::new("12345");
 //!
-//! let food = get_food(&config, &`food_id`).await?;
+//! let food = get_food(&config, &food_id).await?;
 //! println!("{} has {} servings",
 //!     food.food_name,
 //!     food.servings.serving.len()
@@ -53,10 +53,10 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::client::search_foods;
-//! use meal_planner::fatsecret::core::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
+//! let config = FatSecretConfig::from_env()?;
 //!
 //! // Get page 1 (0-indexed) with max 50 results
 //! let results = search_foods(&config, "salmon", 1, 50).await?;
@@ -73,10 +73,10 @@
 //!
 //! ```no_run
 //! use meal_planner::fatsecret::foods::client::autocomplete_foods_with_options;
-//! use meal_planner::fatsecret::core::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::FatSecretConfig;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
+//! let config = FatSecretConfig::from_env()?;
 //!
 //! // Get top 5 suggestions for "bro"
 //! let suggestions = autocomplete_foods_with_options(&config, "bro", Some(5)).await?;
@@ -212,7 +212,7 @@ pub async fn search_foods_simple(
 // Food Barcode Lookup API (food.find_id_for_barcode.v2)
 // ============================================================================
 
-/// Find food ID by barcode using food.find_id_for_barcode.v2 endpoint
+/// Find food ID by barcode using `food.find_id_for_barcode.v2` endpoint
 ///
 /// This is a 2-legged OAuth request (no user token required).
 pub async fn find_food_by_barcode(

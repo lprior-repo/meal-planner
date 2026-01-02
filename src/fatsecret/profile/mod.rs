@@ -36,13 +36,13 @@
 //! # Usage Example
 //!
 //! ```rust,no_run
-//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
 //! use meal_planner::fatsecret::profile::{create_profile, get_profile};
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let app_token = `AccessToken`::from_client_credentials(&config).await?;
+//! let config = FatSecretConfig::from_env()?;
+//! let app_token = AccessToken::from_client_credentials(&config).await?;
 //!
 //! // Create a new user profile
 //! let profile_auth = create_profile(
@@ -53,8 +53,8 @@
 //!
 //! println!("Profile created! OAuth token: {}", profile_auth.auth_token);
 //!
-//! // Convert ProfileAuth to `AccessToken` for user-specific API calls
-//! let user_token = `AccessToken` {
+//! // Convert ProfileAuth to AccessToken for user-specific API calls
+//! let user_token = AccessToken {
 //!     token: profile_auth.auth_token.clone(),
 //!     secret: profile_auth.auth_secret.clone(),
 //! };
@@ -78,12 +78,12 @@
 //! keyed by your application's user ID:
 //!
 //! ```rust,no_run
-//! # use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! # use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! # use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! # use meal_planner::fatsecret::core::oauth::AccessToken;
 //! # use meal_planner::fatsecret::profile::create_profile;
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! # let config = `FatSecretConfig`::from_env()?;
-//! # let app_token = `AccessToken`::from_client_credentials(&config).await?;
+//! # let config = FatSecretConfig::from_env()?;
+//! # let app_token = AccessToken::from_client_credentials(&config).await?;
 //! // On user signup
 //! let profile_auth = create_profile(&config, &app_token, "user-456").await?;
 //! // Store profile_auth.auth_token and profile_auth.auth_secret in your DB
@@ -91,7 +91,7 @@
 //!
 //! // On subsequent requests
 //! // let stored_auth = db.get_profile_auth("user-456");
-//! // let user_token = `AccessToken` {
+//! // let user_token = AccessToken {
 //! //     token: stored_auth.auth_token,
 //! //     secret: stored_auth.auth_secret,
 //! // };

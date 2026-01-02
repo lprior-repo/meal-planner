@@ -19,8 +19,8 @@
 //!
 //! # Authentication
 //!
-//! - **2-legged**: Only requires [`FatSecretConfig`] with client credentials
-//! - **3-legged**: Requires [`FatSecretConfig`] + user's [`AccessToken`]
+//! - **2-legged**: Only requires [FatSecretConfig] with client credentials
+//! - **3-legged**: Requires [FatSecretConfig] + user's [AccessToken]
 //!
 //! # Usage Example
 //!
@@ -29,12 +29,12 @@
 //!     get_exercise, create_exercise_entry, get_exercise_month_summary,
 //! };
 //! use meal_planner::fatsecret::exercise::types::{ExerciseId, ExerciseEntryInput};
-//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let access_token = `AccessToken`::new("user_token", "user_secret");
+//! let config = FatSecretConfig::from_env()?;
+//! let access_token = AccessToken::new("user_token", "user_secret");
 //!
 //! // Public database lookup (2-legged)
 //! let exercise = get_exercise(&config, &ExerciseId::new("12345")).await?;
@@ -44,14 +44,14 @@
 //! let input = ExerciseEntryInput {
 //!     exercise_id: ExerciseId::new("12345"),
 //!     duration_min: 45,
-//!     `date_int`: 19723, // 2024-01-01 (days since Unix epoch)
+//!     date_int: 19723, // 2024-01-01 (days since Unix epoch)
 //! };
 //! let entry_id = create_exercise_entry(&config, &access_token, input).await?;
 //!
 //! // Get monthly summary (3-legged)
 //! let summary = get_exercise_month_summary(&config, &access_token, 2024, 1).await?;
 //! for day in summary.days {
-//!     println!("Date: {}, Calories: {}", day.`date_int`, day.exercise_calories);
+//!     println!("Date: {}, Calories: {}", day.date_int, day.exercise_calories);
 //! }
 //! # Ok(())
 //! # }
@@ -71,7 +71,7 @@
 //! - **Create vs Edit**: `FatSecret` uses the same API endpoint (`exercise_entry.edit`)
 //!   for both creating and updating entries. The presence/absence of `exercise_entry_id`
 //!   determines the operation.
-//! - **Date Format**: All dates use `date_int` (days since 1970-01-01). Use helpers
+//! - **Date Format**: All dates use date_int (days since 1970-01-01). Use helpers
 //!   from [`types`] module to convert to/from YYYY-MM-DD strings.
 
 use crate::fatsecret::core::config::FatSecretConfig;
@@ -105,7 +105,7 @@ pub async fn get_exercise(
     Ok(response.exercise)
 }
 
-/// Get user's exercise entries for a specific date (exercise_entries.get.v2 - 3-legged)
+/// Get user's exercise entries for a specific date (`exercise_entries.get.v2` - 3-legged)
 pub async fn get_exercise_entries(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -181,7 +181,7 @@ pub async fn edit_exercise_entry(
     Ok(())
 }
 
-/// Get monthly exercise summary (exercise_entries.get_month.v2 - 3-legged)
+/// Get monthly exercise summary (`exercise_entries.get_month.v2` - 3-legged)
 pub async fn get_exercise_month_summary(
     config: &FatSecretConfig,
     access_token: &AccessToken,

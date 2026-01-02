@@ -88,11 +88,11 @@ pub enum ApiErrorCode {
     ParameterOutOfRange,
     /// Code 105: Invalid date format
     InvalidDateFormat,
-    /// Code 106: Invalid `food_id`
+    /// Code 106: Invalid food_id
     InvalidFoodId,
-    /// Code 107: Invalid `serving_id`
+    /// Code 107: Invalid serving_id
     InvalidServingId,
-    /// Code 108: Invalid `recipe_id`
+    /// Code 108: Invalid recipe_id
     InvalidRecipeId,
     /// Code 109: Invalid `food_entry_id`
     InvalidFoodEntryId,
@@ -416,6 +416,10 @@ pub enum FatSecretError {
     /// Invalid response structure from API
     #[error("Invalid response from API: {0}")]
     InvalidResponse(String),
+
+    /// HTTP client error (reqwest-level errors)
+    #[error("HTTP error: {0}")]
+    HttpError(String),
 }
 
 impl FatSecretError {
@@ -479,25 +483,8 @@ impl FatSecretError {
             | Self::ParseError(_)
             | Self::OAuthError(_)
             | Self::ConfigMissing
-            | Self::InvalidResponse(_) => false,
-        }
-    }
-
-    /// Determine if an error is authentication-related
-    ///
-    /// Auth errors include:
-    /// - OAuth errors
-    /// - Missing configuration
-    /// - API errors related to OAuth (codes 2-9)
-    #[must_use]
-    pub fn is_auth_error(&self) -> bool {
-        match self {
-            Self::OAuthError(_) | Self::ConfigMissing => true,
-            Self::ApiError { code, .. } => code.is_auth_related(),
-            Self::RequestFailed { .. }
-            | Self::ParseError(_)
-            | Self::NetworkError(_)
-            | Self::InvalidResponse(_) => false,
+            | Self::InvalidResponse(_)
+            | Self::HttpError(_) => false,
         }
     }
 
@@ -510,42 +497,42 @@ impl FatSecretError {
             | Self::ParseError(_)
             | Self::OAuthError(_)
             | Self::NetworkError(_)
-            | Self::ConfigMissing
-            | Self::InvalidResponse(_) => None,
+            | Self::InvalidResponse(_)
+            | Self::HttpError(_)
+            | Self::ConfigMissing => None,
         }
     }
 
-    /// Determine if an error indicates a premium subscription is required
+    /// Check if this error indicates an authentication problem.
     ///
-    /// Returns true only for API error code 24 (Feature not available for current plan).
-    /// Note: Error code 12 (`MethodNotAccessible`) is an auth/scope issue, NOT premium.
+    /// Returns true for OAuth errors, invalid tokens, and ConfigMissing.
     #[must_use]
-    pub fn is_premium_required(&self) -> bool {
-        matches!(
-            self,
-            Self::ApiError {
-                code: ApiErrorCode::PremiumRequired,
-                ..
-            }
-        )
+    pub fn is_auth_error(&self) -> bool {
+        match self {
+            Self::OAuthError(_) | Self::ConfigMissing => true,
+            Self::ApiError { code, .. } => code.is_auth_related(),
+            Self::RequestFailed { .. }
+            | Self::ParseError(_)
+            | Self::NetworkError(_)
+            | Self::InvalidResponse(_)
+            | Self::HttpError(_) => false,
+        }
     }
 
-    /// Determine if an error indicates a resource was not found
+    /// Check if this error indicates a premium subscription is required.
     ///
-    /// Returns true for:
-    /// - Error code 204 (Food entry not found)
-    /// - Error code 207 (No entries found)
-    /// - Error code 106 (Invalid ID - often means not found)
+    /// Only returns true for API errors with code 24 (PremiumRequired).
     #[must_use]
-    pub fn is_not_found(&self) -> bool {
+    pub fn is_premium_required(&self) -> bool {
         match self {
-            Self::ApiError { code, .. } => code.is_not_found(),
+            Self::ApiError { code, .. } => code.is_premium_required(),
             Self::RequestFailed { .. }
             | Self::ParseError(_)
             | Self::OAuthError(_)
             | Self::NetworkError(_)
             | Self::ConfigMissing
-            | Self::InvalidResponse(_) => false,
+            | Self::InvalidResponse(_)
+            | Self::HttpError(_) => false,
         }
     }
 }
@@ -605,6 +592,8 @@ impl From<serde_json::Error> for FatSecretError {
 #[allow(clippy::unwrap_used)] // Tests are allowed to use unwrap/expect
 mod tests {
     use super::*;
+    use pretty_assertions::assert_eq;
+    use rstest::rstest;
 
     #[test]
     #[allow(clippy::cognitive_complexity)]
@@ -849,7 +838,8 @@ mod tests {
             | FatSecretError::OAuthError(_)
             | FatSecretError::NetworkError(_)
             | FatSecretError::ConfigMissing
-            | FatSecretError::InvalidResponse(_) => panic!("expected ApiError"),
+            | FatSecretError::InvalidResponse(_)
+            | FatSecretError::HttpError(_) => panic!("expected ApiError"),
         }
     }
 
@@ -873,7 +863,8 @@ mod tests {
             | FatSecretError::OAuthError(_)
             | FatSecretError::NetworkError(_)
             | FatSecretError::ConfigMissing
-            | FatSecretError::InvalidResponse(_) => panic!("expected ApiError"),
+            | FatSecretError::InvalidResponse(_)
+            | FatSecretError::HttpError(_) => panic!("expected ApiError"),
         }
     }
 
@@ -941,5 +932,195 @@ mod tests {
         assert!(!ApiErrorCode::FoodEntryNotFound.is_auth_related());
         assert!(!ApiErrorCode::FoodEntryNotFound.is_premium_required());
         assert!(ApiErrorCode::FoodEntryNotFound.is_not_found());
+    }
+
+    // =========================================================================
+    // Parameterized Tests (rstest) - Kent Beck Table-Driven Style
+    // =========================================================================
+
+    /// Parameterized test for API error code conversion from integer
+    #[rstest]
+    #[case::general_error(1, ApiErrorCode::GeneralError)]
+    #[case::missing_oauth(2, ApiErrorCode::MissingOAuthParameter)]
+    #[case::unsupported_oauth(3, ApiErrorCode::UnsupportedOAuthParameter)]
+    #[case::invalid_sig_method(4, ApiErrorCode::InvalidSignatureMethod)]
+    #[case::invalid_consumer(5, ApiErrorCode::InvalidConsumerCredentials)]
+    #[case::invalid_timestamp(6, ApiErrorCode::InvalidOrExpiredTimestamp)]
+    #[case::invalid_nonce(7, ApiErrorCode::InvalidNonce)]
+    #[case::invalid_signature(8, ApiErrorCode::InvalidSignature)]
+    #[case::invalid_access_token(9, ApiErrorCode::InvalidAccessToken)]
+    #[case::invalid_api_method(10, ApiErrorCode::InvalidApiMethod)]
+    #[case::requires_https(11, ApiErrorCode::RequiresHttps)]
+    #[case::method_not_accessible(12, ApiErrorCode::MethodNotAccessible)]
+    #[case::oauth2_invalid_token(13, ApiErrorCode::OAuth2InvalidToken)]
+    #[case::oauth2_token_expired(14, ApiErrorCode::OAuth2TokenExpired)]
+    #[case::rate_limit(22, ApiErrorCode::RateLimitExceeded)]
+    #[case::premium_required(24, ApiErrorCode::PremiumRequired)]
+    #[case::missing_param(101, ApiErrorCode::MissingRequiredParameter)]
+    #[case::food_not_found(201, ApiErrorCode::FoodNotFound)]
+    #[case::recipe_not_found(202, ApiErrorCode::RecipeNotFound)]
+    #[case::unknown(999, ApiErrorCode::UnknownError(999))]
+    fn test_api_error_code_from_code_parameterized(
+        #[case] code: i32,
+        #[case] expected: ApiErrorCode,
+    ) {
+        let result = ApiErrorCode::from_code(code);
+        assert_eq!(result, expected);
+    }
+
+    /// Parameterized test for auth-related error codes
+    #[rstest]
+    #[case::missing_oauth(ApiErrorCode::MissingOAuthParameter, true)]
+    #[case::invalid_signature(ApiErrorCode::InvalidSignature, true)]
+    #[case::invalid_access_token(ApiErrorCode::InvalidAccessToken, true)]
+    #[case::method_not_accessible(ApiErrorCode::MethodNotAccessible, true)]
+    #[case::oauth2_invalid(ApiErrorCode::OAuth2InvalidToken, true)]
+    #[case::oauth2_expired(ApiErrorCode::OAuth2TokenExpired, true)]
+    #[case::rate_limit(ApiErrorCode::RateLimitExceeded, false)]
+    #[case::premium(ApiErrorCode::PremiumRequired, false)]
+    #[case::food_not_found(ApiErrorCode::FoodNotFound, false)]
+    #[case::missing_param(ApiErrorCode::MissingRequiredParameter, false)]
+    fn test_is_auth_related_parameterized(#[case] code: ApiErrorCode, #[case] expected: bool) {
+        assert_eq!(
+            code.is_auth_related(),
+            expected,
+            "{:?} should {} be auth-related",
+            code,
+            if expected { "" } else { "not" }
+        );
+    }
+
+    /// Parameterized test for not-found error codes
+    #[rstest]
+    #[case::food_not_found(ApiErrorCode::FoodNotFound, true)]
+    #[case::recipe_not_found(ApiErrorCode::RecipeNotFound, true)]
+    #[case::serving_not_found(ApiErrorCode::ServingNotFound, true)]
+    #[case::food_entry_not_found(ApiErrorCode::FoodEntryNotFound, true)]
+    #[case::exercise_entry_not_found(ApiErrorCode::ExerciseEntryNotFound, true)]
+    #[case::weight_entry_not_found(ApiErrorCode::WeightEntryNotFound, true)]
+    #[case::user_profile_not_found(ApiErrorCode::UserProfileNotFound, true)]
+    #[case::meal_not_found(ApiErrorCode::MealNotFound, true)]
+    #[case::brand_not_found(ApiErrorCode::BrandNotFound, true)]
+    #[case::duplicate_entry(ApiErrorCode::DuplicateEntry, false)]
+    #[case::rate_limit(ApiErrorCode::RateLimitExceeded, false)]
+    fn test_is_not_found_parameterized(#[case] code: ApiErrorCode, #[case] expected: bool) {
+        assert_eq!(
+            code.is_not_found(),
+            expected,
+            "{:?} should {} be not-found",
+            code,
+            if expected { "" } else { "not" }
+        );
+    }
+
+    /// Parameterized test for retryable error codes
+    #[rstest]
+    #[case::rate_limit(ApiErrorCode::RateLimitExceeded, true)]
+    #[case::general_error(ApiErrorCode::GeneralError, true)]
+    #[case::oauth2_expired(ApiErrorCode::OAuth2TokenExpired, true)]
+    #[case::invalid_token(ApiErrorCode::InvalidAccessToken, false)]
+    #[case::premium(ApiErrorCode::PremiumRequired, false)]
+    #[case::food_not_found(ApiErrorCode::FoodNotFound, false)]
+    fn test_is_retryable_parameterized(#[case] code: ApiErrorCode, #[case] expected: bool) {
+        assert_eq!(
+            code.is_retryable(),
+            expected,
+            "{:?} should {} be retryable",
+            code,
+            if expected { "" } else { "not" }
+        );
+    }
+
+    /// Parameterized test for FatSecretError recoverable status
+    #[rstest]
+    #[case::network_error_recoverable(FatSecretError::network_error("timeout"), true)]
+    #[case::rate_limit_recoverable(
+        FatSecretError::ApiError {
+            code: ApiErrorCode::RateLimitExceeded,
+            message: "limit".into()
+        },
+        true
+    )]
+    #[case::server_error_recoverable(FatSecretError::request_failed(500, "server error"), true)]
+    #[case::service_unavailable_recoverable(
+        FatSecretError::request_failed(503, "unavailable"),
+        true
+    )]
+    #[case::bad_request_not_recoverable(FatSecretError::request_failed(400, "bad request"), false)]
+    #[case::not_found_not_recoverable(FatSecretError::request_failed(404, "not found"), false)]
+    #[case::config_missing_not_recoverable(FatSecretError::ConfigMissing, false)]
+    #[case::parse_error_not_recoverable(FatSecretError::parse_error("bad json"), false)]
+    fn test_fatsecret_error_is_recoverable_parameterized(
+        #[case] error: FatSecretError,
+        #[case] expected: bool,
+    ) {
+        assert_eq!(
+            error.is_recoverable(),
+            expected,
+            "Error {:?} should {} be recoverable",
+            error,
+            if expected { "" } else { "not" }
+        );
+    }
+
+    /// Parameterized test for parse_error_response
+    #[rstest]
+    #[case::valid_error(
+        r#"{"error": {"code": 101, "message": "Missing required parameter"}}"#,
+        Some(ApiErrorCode::MissingRequiredParameter)
+    )]
+    #[case::code_12(
+        r#"{"error": {"code": 12, "message": "Method not accessible"}}"#,
+        Some(ApiErrorCode::MethodNotAccessible)
+    )]
+    #[case::code_24(
+        r#"{"error": {"code": 24, "message": "Premium required"}}"#,
+        Some(ApiErrorCode::PremiumRequired)
+    )]
+    #[case::invalid_json(r#"not json"#, None)]
+    #[case::empty_string("", None)]
+    #[case::missing_error_field(r#"{"other": "data"}"#, None)]
+    fn test_parse_error_response_parameterized(
+        #[case] body: &str,
+        #[case] expected_code: Option<ApiErrorCode>,
+    ) {
+        let result = parse_error_response(body);
+
+        match (result, expected_code) {
+            (Some(FatSecretError::ApiError { code, .. }), Some(expected)) => {
+                assert_eq!(code, expected);
+            }
+            (None, None) => {} // Both None, test passes
+            (result, expected) => {
+                panic!(
+                    "Mismatch for body '{}': got {:?}, expected {:?}",
+                    body, result, expected
+                );
+            }
+        }
+    }
+
+    /// Parameterized test for error code descriptions
+    #[rstest]
+    #[case::general(ApiErrorCode::GeneralError, "General Error")]
+    #[case::invalid_method(ApiErrorCode::InvalidApiMethod, "Invalid API Method")]
+    #[case::method_not_accessible(
+        ApiErrorCode::MethodNotAccessible,
+        "OAuth token lacks required scopes"
+    )]
+    #[case::premium_required(ApiErrorCode::PremiumRequired, "Premium Subscription Required")]
+    #[case::rate_limit(ApiErrorCode::RateLimitExceeded, "Rate Limit Exceeded")]
+    #[case::food_not_found(ApiErrorCode::FoodNotFound, "Food Not Found")]
+    fn test_error_code_description_parameterized(
+        #[case] code: ApiErrorCode,
+        #[case] expected_substring: &str,
+    ) {
+        let description = code.description();
+        assert!(
+            description.contains(expected_substring),
+            "Description '{}' should contain '{}'",
+            description,
+            expected_substring
+        );
     }
 }

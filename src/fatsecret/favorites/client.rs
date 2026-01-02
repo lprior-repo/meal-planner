@@ -23,8 +23,8 @@
 //! # Authentication
 //!
 //! All functions require:
-//! - [`FatSecretConfig`] - API credentials and configuration
-//! - [`AccessToken`] - 3-legged OAuth access token with user authorization
+//! - [FatSecretConfig] - API credentials and configuration
+//! - [AccessToken] - 3-legged OAuth access token with user authorization
 //!
 //! # Error Handling
 //!
@@ -32,7 +32,7 @@
 //! - Network failures during API communication
 //! - OAuth signature validation failures
 //! - JSON parsing errors from malformed API responses
-//! - API-level errors (invalid `food_id`, unauthorized access, etc.)
+//! - API-level errors (invalid food_id, unauthorized access, etc.)
 //!
 //! # Example
 //!
@@ -43,14 +43,14 @@
 //!     get_most_eaten,
 //! };
 //! use meal_planner::fatsecret::favorites::types::MealFilter;
-//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let access_token = `AccessToken` {
-//!     token: "user_token".to_string(),
-//!     secret: "user_secret".to_string(),
+//! let config = FatSecretConfig::from_env()?;
+//! let access_token = AccessToken {
+//!     oauth_token: "user_token".to_string(),
+//!     oauth_token_secret: "user_secret".to_string(),
 //! };
 //!
 //! // Add a food to favorites
@@ -59,7 +59,7 @@
 //! // Get first page of favorites (max 50 results)
 //! let favorites = get_favorite_foods(&config, &access_token, Some(50), Some(0)).await?;
 //! for food in favorites {
-//!     println!("Favorite: {} ({})", food.food_name, food.`food_id`);
+//!     println!("Favorite: {} ({})", food.food_name, food.food_id);
 //! }
 //!
 //! // Get breakfast foods sorted by frequency
@@ -117,7 +117,7 @@ pub async fn delete_favorite_food(
     Ok(())
 }
 
-/// Get user's favorite foods (foods.get_favorites.v2 - 3-legged)
+/// Get user's favorite foods (`foods.get_favorites.v2` - 3-legged)
 pub async fn get_favorite_foods(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -144,7 +144,7 @@ pub async fn get_favorite_foods(
     Ok(response.foods)
 }
 
-/// Get user's most eaten foods (foods.get_most_eaten.v2 - 3-legged)
+/// Get user's most eaten foods (`foods.get_most_eaten.v2` - 3-legged)
 pub async fn get_most_eaten(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -167,7 +167,7 @@ pub async fn get_most_eaten(
     Ok(response.foods)
 }
 
-/// Get user's recently eaten foods (foods.get_recently_eaten.v2 - 3-legged)
+/// Get user's recently eaten foods (`foods.get_recently_eaten.v2` - 3-legged)
 pub async fn get_recently_eaten(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -217,7 +217,7 @@ pub async fn delete_favorite_recipe(
     Ok(())
 }
 
-/// Get user's favorite recipes (recipes.get_favorites.v2 - 3-legged)
+/// Get user's favorite recipes (`recipes.get_favorites.v2` - 3-legged)
 pub async fn get_favorite_recipes(
     config: &FatSecretConfig,
     access_token: &AccessToken,

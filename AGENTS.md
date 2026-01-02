@@ -2,6 +2,16 @@
 
 This document describes how to work with AI agents in the meal-planner project using Beads.
 
+## Quick Start - If In A Hurry
+
+**Need to use FatSecret OAuth tokens?** They're already stored securely:
+
+**Resource path:** `$res:u/admin/fatsecret_oauth`
+
+**Stored in:** Windmill PostgreSQL `windmill` database → `resource` table
+
+Use this path in all FatSecret scripts. For initial setup, see [docs/FATSECRET_OAUTH_SETUP.md](docs/FATSECRET_OAUTH_SETUP.md)
+
 ## Architecture
 
 **READ FIRST**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - Domain-based structure, CUPID principles, binary contract.
@@ -28,6 +38,76 @@ src/
 windmill/                 # Orchestration layer
 └── f/meal-planner/
     └── tandoor/          # Bash scripts calling binaries
+```
+
+## CUE Schema Contracts
+
+**All binary and flow contracts are defined in CUE** at `schemas/cue/`. Use these for input/output validation.
+
+### Schema Files
+
+| File | Contents |
+|------|----------|
+| `base.cue` | Core types, common patterns (#DateInt, #MealType, #FatSecretResource) |
+| `fatsecret_foods.cue` | Food search, get, autocomplete, barcode, favorites |
+| `fatsecret_diary.cue` | Food diary entries CRUD |
+| `fatsecret_exercise.cue` | Exercise entries CRUD, month summary |
+| `fatsecret_recipes.cue` | Recipe search, get, favorites |
+| `fatsecret_saved_meals.cue` | Saved meal templates CRUD |
+| `fatsecret_weight.cue` | Weight tracking |
+| `fatsecret_oauth.cue` | OAuth flow, token management, profile |
+| `tandoor.cue` | Tandoor API: test, scrape, create |
+| `flows.cue` | Windmill flow definitions |
+| `resources.cue` | Windmill resource types |
+| `index.cue` | Quick reference, binary lists, examples |
+
+### Binary Categories
+
+```
+# 2-LEGGED OAUTH (No user token)
+fatsecret_foods_search, fatsecret_food_get, fatsecret_foods_autocomplete,
+fatsecret_food_find_barcode, fatsecret_recipes_search, fatsecret_recipe_get,
+fatsecret_recipe_types_get
+
+# 3-LEGGED OAUTH (Requires access token)
+fatsecret_food_entries_*, fatsecret_exercise_*, fatsecret_foods_get_favorites,
+fatsecret_foods_most_eaten, fatsecret_foods_recently_eaten, fatsecret_*_favorite,
+fatsecret_saved_meals_*, fatsecret_weight_*, fatsecret_get_profile
+
+# OAUTH MANAGEMENT
+fatsecret_oauth_start, fatsecret_oauth_complete, fatsecret_oauth_callback,
+fatsecret_get_token
+
+# TANDOOR
+tandoor_test_connection, tandoor_scrape_recipe, tandoor_create_recipe
+```
+
+### Domain Types Quick Reference
+
+| Type | Format | Example | Notes |
+|------|--------|---------|-------|
+| `#DateInt` | Days since epoch | `20088` | 2025-01-01 |
+| `#FoodId` | Opaque string | `"33691"` | From search results |
+| `#ServingId` | Opaque string | `"123456"` | From food.servings |
+| `#MealType` | Enum | `"breakfast"` | breakfast/lunch/dinner/other/snack |
+
+### Date Conversion
+
+```
+# DateInt = days since 1970-01-01
+date_to_int("2025-01-01") → 20088
+int_to_date(20088) → "2025-01-01"
+
+# In JS: Math.floor(new Date("2025-01-01").getTime() / 86400000)
+# In Rust: (NaiveDate.and_hms(0,0,0).timestamp() / 86400) as i32
+```
+
+### Example: Validate Input with CUE
+
+```bash
+# Validate a food entry create request
+echo '{"access_token":"x","access_secret":"y","food_id":"123",...}' | \
+  cue vet schemas/cue/fatsecret_diary.cue -d '#FoodEntryCreateInput' -
 ```
 
 ## Overview

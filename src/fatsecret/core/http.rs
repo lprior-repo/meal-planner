@@ -5,6 +5,7 @@
 
 use reqwest::{Client, Method};
 use std::collections::HashMap;
+use std::time::Duration;
 
 use crate::fatsecret::core::errors::parse_error_response;
 use crate::fatsecret::core::oauth::{build_oauth_params, oauth_encode};
@@ -14,7 +15,7 @@ use crate::fatsecret::core::{AccessToken, FatSecretConfig, FatSecretError};
 ///
 /// This is the low-level request function. Most users should use
 /// `make_api_request()` or `make_authenticated_request()` instead.
-#[allow(clippy::too_many_arguments)] // OAuth signing requires these params
+#[allow(clippy::too_many_arguments, clippy::too_many_lines)] // OAuth signing requires these params
 pub async fn make_oauth_request(
     config: &FatSecretConfig,
     method: Method,
@@ -37,8 +38,15 @@ pub async fn make_oauth_request(
         token_secret,
     );
 
-    let client = Client::new();
-    let response = if method == Method::GET {
+    // DOS prevention: Configure client with connection limits
+    let client = Client::builder()
+        .timeout(Duration::from_secs(30))
+        // DOS prevention: Limit connection pool to prevent resource exhaustion
+        .pool_max_idle_per_host(3)
+        .pool_idle_timeout(Duration::from_secs(30))
+        .build()
+        .map_err(|e: reqwest::Error| FatSecretError::NetworkError(e.to_string()))?;
+    let response: reqwest::Response = if method == Method::GET {
         // For GET: parameters go in query string
         let query: Vec<_> = oauth_params
             .iter()
@@ -81,6 +89,20 @@ pub async fn make_oauth_request(
     Ok(body)
 }
 
+/// Validate request body size against DOS limits
+fn validate_request_size(params: &HashMap<String, String>) -> Result<(), FatSecretError> {
+    const MAX_REQUEST_SIZE: usize = 1024 * 1024; // 1MB for API requests
+    let total_size: usize = params.iter().map(|(k, v)| k.len() + v.len()).sum();
+
+    if total_size > MAX_REQUEST_SIZE {
+        return Err(FatSecretError::NetworkError(format!(
+            "Request too large: {} bytes exceeds limit of {} bytes",
+            total_size, MAX_REQUEST_SIZE
+        )));
+    }
+    Ok(())
+}
+
 /// Make 2-legged API request (public data, no user token)
 ///
 /// This is used for API methods that don't require user authentication,
@@ -93,6 +115,9 @@ pub async fn make_api_request(
     let mut api_params = params;
     api_params.insert("method".to_string(), method_name.to_string());
     api_params.insert("format".to_string(), "json".to_string());
+
+    // DOS prevention: Validate request size before sending
+    validate_request_size(&api_params)?;
 
     let body = make_oauth_request(
         config,

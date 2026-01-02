@@ -1,14 +1,14 @@
 //! Create recipe in Tandoor from scraped data
 //!
 //! JSON stdin:
-//!   {"tandoor": {...}, "recipe": {...}, "additional_keywords": `["tag1", "tag2"]`}
+//!   {"tandoor": {...}, "recipe": {...}, "`additional_keywords"`: `["tag1", "tag2"]`}
 //!
 //! JSON stdout:
-//!   {"success": true, "`recipe_id`": 123, "name": "..."}
+//!   {"success": true, "recipe_id": 123, "name": "..."}
 //!   {"success": false, "error": "..."}
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 #![allow(clippy::too_many_lines)]
 
 use meal_planner::tandoor::{
@@ -47,7 +47,10 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(&output).unwrap());
+    println!(
+        "{}",
+        serde_json::to_string(&output).expect("Failed to serialize output JSON")
+    );
     if !output.success {
         std::process::exit(1);
     }

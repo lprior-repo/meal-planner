@@ -20,8 +20,8 @@
 //!
 //! # Authentication
 //!
-//! - **2-legged OAuth** (public database): Only requires [`FatSecretConfig`]
-//! - **3-legged OAuth** (user diary): Requires [`FatSecretConfig`] + [`AccessToken`]
+//! - **2-legged OAuth** (public database): Only requires [FatSecretConfig]
+//! - **3-legged OAuth** (user diary): Requires [FatSecretConfig] + [AccessToken]
 //!
 //! # Usage Example
 //!
@@ -30,12 +30,12 @@
 //!     get_exercise, create_exercise_entry, get_exercise_entries,
 //!     ExerciseId, ExerciseEntryInput,
 //! };
-//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
-//! use meal_planner::fatsecret::core::oauth::`AccessToken`;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
+//! use meal_planner::fatsecret::core::oauth::AccessToken;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
-//! let access_token = `AccessToken`::new("user_token", "user_secret");
+//! let config = FatSecretConfig::from_env()?;
+//! let access_token = AccessToken::new("user_token", "user_secret");
 //!
 //! // Look up exercise details (2-legged - public database)
 //! let exercise_id = ExerciseId::new("12345");
@@ -47,7 +47,7 @@
 //! let input = ExerciseEntryInput {
 //!     exercise_id,
 //!     duration_min: 30,
-//!     `date_int`: 19723, // Days since Unix epoch (2024-01-01)
+//!     date_int: 19723, // Days since Unix epoch (2024-01-01)
 //! };
 //! let entry_id = create_exercise_entry(&config, &access_token, input).await?;
 //!
@@ -63,11 +63,11 @@
 //!
 //! # Date Format
 //!
-//! `FatSecret` uses `date_int` - days since Unix epoch (1970-01-01). Helper functions
+//! `FatSecret` uses date_int - days since Unix epoch (1970-01-01). Helper functions
 //! are provided in [`types`] module:
 //!
-//! - [`date_to_int`] - Convert "YYYY-MM-DD" → `date_int`
-//! - [`int_to_date`] - Convert `date_int` → "YYYY-MM-DD"
+//! - [`date_to_int`] - Convert "YYYY-MM-DD" → date_int
+//! - [`int_to_date`] - Convert date_int → "YYYY-MM-DD"
 //!
 //! # See Also
 //!

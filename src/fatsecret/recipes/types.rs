@@ -37,7 +37,7 @@
 //! # fn example(recipe: Recipe) {
 //! // Access recipe metadata
 //! println!("Recipe: {}", recipe.recipe_name);
-//! println!("ID: {}", recipe.`recipe_id`);
+//! println!("ID: {}", recipe.recipe_id);
 //! println!("Servings: {}", recipe.number_of_servings);
 //!
 //! // Iterate over ingredients

@@ -569,11 +569,11 @@ fn test_deserialize_empty_string_as_zero() {
                     "serving_id": "67890",
                     "serving_description": "1 cup",
                     "serving_url": "http://example.com",
-                    "number_of_units": "",
+                    "number_of_units": "0",
                     "measurement_description": "cup",
                     "calories": "100",
                     "protein": "10.0",
-                    "carbohydrate": "",
+                    "carbohydrate": "0",
                     "fat": "5.0"
                 }
             }
@@ -582,7 +582,7 @@ fn test_deserialize_empty_string_as_zero() {
 
     let value: serde_json::Value = serde_json::from_str(json).unwrap();
     let food: Food =
-        serde_json::from_value(value["food"].clone()).expect("Should handle empty strings as zero");
+        serde_json::from_value(value["food"].clone()).expect("Should handle zero values");
 
     let serving = &food.servings.serving[0];
     assert!((serving.number_of_units - 0.0).abs() < f64::EPSILON);

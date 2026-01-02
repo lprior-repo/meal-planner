@@ -52,7 +52,7 @@
 //! )?;
 //!
 //! if result.success {
-//!     println!("Created recipe ID: {}", result.`recipe_id`.unwrap());
+//!     println!("Created recipe ID: {}", result.recipe_id.unwrap());
 //! } else {
 //!     eprintln!("Import failed: {}", result.message);
 //! }
@@ -95,6 +95,8 @@ pub enum TandoorError {
 
     #[error("File error: {0}")]
     FileError(String),
+    #[error("Request too large: {size} bytes exceeds limit of {limit} bytes")]
+    RequestTooLarge { size: u64, limit: u64 },
 }
 
 /// Tandoor API client
@@ -138,6 +140,9 @@ impl TandoorClient {
         let client = Client::builder()
             .timeout(std::time::Duration::from_secs(30))
             .default_headers(headers.clone())
+            // DOS prevention: Limit connection pool to prevent resource exhaustion
+            .pool_max_idle_per_host(5)
+            .pool_idle_timeout(std::time::Duration::from_secs(60))
             .build()?;
 
         Ok(Self {
@@ -145,6 +150,45 @@ impl TandoorClient {
             base_url: config.base_url.trim_end_matches('/').to_string(),
             headers,
         })
+    }
+
+    /// Validate request body size against DOS limits
+    #[allow(clippy::unused_self)]
+    fn validate_request_size(&self, body: &[u8]) -> Result<(), TandoorError> {
+        const MAX_REQUEST_SIZE: u64 = 10 * 1024 * 1024; // 10MB
+        let size = u64::try_from(body.len()).unwrap_or(u64::MAX);
+
+        if size > MAX_REQUEST_SIZE {
+            return Err(TandoorError::RequestTooLarge {
+                size,
+                limit: MAX_REQUEST_SIZE,
+            });
+        }
+        Ok(())
+    }
+
+    /// Serialize and send a validated POST request (DOS prevention)
+    fn post_request<T: serde::Serialize>(
+        &self,
+        url: &str,
+        request: &T,
+    ) -> Result<reqwest::blocking::Response, TandoorError> {
+        let json =
+            serde_json::to_vec(request).map_err(|e| TandoorError::ParseError(e.to_string()))?;
+        self.validate_request_size(&json)?;
+        Ok(self.client.post(url).json(request).send()?)
+    }
+
+    /// Serialize and send a validated PATCH request (DOS prevention)
+    fn patch_request<T: serde::Serialize>(
+        &self,
+        url: &str,
+        request: &T,
+    ) -> Result<reqwest::blocking::Response, TandoorError> {
+        let json =
+            serde_json::to_vec(request).map_err(|e| TandoorError::ParseError(e.to_string()))?;
+        self.validate_request_size(&json)?;
+        Ok(self.client.patch(url).json(request).send()?)
     }
 
     /// Test connection by fetching recipes
@@ -232,7 +276,7 @@ impl TandoorClient {
             bookmarklet: None,
         };
 
-        let response = self.client.post(&api_url).json(&request).send()?;
+        let response = self.post_request(&api_url, &request)?;
         let status = response.status();
 
         if status.as_u16() == 401 || status.as_u16() == 403 {
@@ -260,7 +304,7 @@ impl TandoorClient {
     ) -> Result<CreatedRecipe, TandoorError> {
         let api_url = format!("{}/api/recipe/", self.base_url);
 
-        let response = self.client.post(&api_url).json(recipe).send()?;
+        let response = self.post_request(&api_url, recipe)?;
         let status = response.status();
 
         if status.as_u16() == 401 || status.as_u16() == 403 {
@@ -1376,14 +1420,14 @@ impl TandoorClient {
             .map_err(|e| TandoorError::ParseError(e.to_string()))
     }
 
-    /// Update a recipe (using serde_json::Value)
+    /// Update a recipe (using `serde_json::Value`)
     pub fn update_recipe(
         &self,
         id: i64,
         request: &serde_json::Value,
     ) -> Result<serde_json::Value, TandoorError> {
         let url = format!("{}/api/recipe/{}/", self.base_url, id);
-        let response = self.client.patch(&url).json(request).send()?;
+        let response = self.patch_request(&url, request)?;
         if !response.status().is_success() {
             return Err(TandoorError::ApiError {
                 status: response.status().as_u16(),

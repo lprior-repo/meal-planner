@@ -1,8 +1,8 @@
 //! Create a new `FatSecret` exercise entry
 //!
 //! Logs an exercise session with duration. The `FatSecret` API uses
-//! the same endpoint (exercise_entry.edit) for both create and update operations.
-//! This binary handles the create case by not including exercise_entry_id.
+//! the same endpoint (`exercise_entry.edit`) for both create and update operations.
+//! This binary handles the create case by not including `exercise_entry_id`.
 //!
 //! This is a 3-legged OAuth request (requires user access token).
 //!
@@ -11,10 +11,10 @@
 //!
 //! JSON stdout: `{"success": true, "exercise_entry_id": "..."}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
-use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig, FatSecretError};
+use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig};
 use meal_planner::fatsecret::exercise::{create_exercise_entry, ExerciseEntryInput, ExerciseId};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
@@ -57,14 +57,20 @@ struct ErrorOutput {
 async fn main() {
     match run().await {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&output).expect("Failed to serialize output JSON")
+            );
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }
@@ -76,8 +82,9 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
     let input: Input = serde_json::from_str(&input_str)?;
 
     let config = match input.fatsecret {
-        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret),
-        None => FatSecretConfig::from_env().ok_or(FatSecretError::ConfigMissing)?,
+        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret)
+            .expect("Invalid FatSecret credentials"),
+        None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 
     let token = AccessToken::new(input.access_token, input.access_secret);

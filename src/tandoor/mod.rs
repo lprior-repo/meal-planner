@@ -51,7 +51,7 @@
 //! if import.success {
 //!     println!("Imported: {} (ID: {})",
 //!         import.recipe_name.unwrap(),
-//!         import.`recipe_id`.unwrap()
+//!         import.recipe_id.unwrap()
 //!     );
 //! }
 //! # Ok(())
@@ -70,6 +70,9 @@
 
 mod client;
 mod types;
+
+#[cfg(test)]
+mod tests;
 
 pub use client::TandoorClient;
 pub use types::*;

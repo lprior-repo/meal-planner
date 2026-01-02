@@ -1,5 +1,13 @@
-# Enforce Rust nightly for maximum safety features
-# This file ensures all developers use the same toolchain
 [toolchain]
-channel = "nightly"
-components = ["rustfmt", "clippy", "rust-src", "rust-analyzer"]
+# The "Golden Nightly" - Pinned to Nov 15, 2025
+# This specific build supports 'edition = "2024"' and the 'pattern_types' feature.
+channel = "nightly-2025-11-15"
+
+# Essential components for a good developer experience
+components = [ "rustfmt", "clippy", "rust-src", "rust-analyzer" ]
+
+# Targets (Optional: Add if you are cross-compiling, otherwise leave generic)
+# targets = [ "x86_64-unknown-linux-gnu" ]
+
+# Minimal profile installs faster, we manually added components above
+profile = "minimal"

@@ -3,14 +3,14 @@
 //! Adds a recipe to a recipe book.
 //!
 //! JSON stdin:
-//!   {"tandoor": {...}, "recipe_book": 1, "recipe": 2, "position": 0}
+//!   {"tandoor": {...}, "`recipe_book"`: 1, "recipe": 2, "position": 0}
 //!
 //! JSON stdout:
-//!   {"success": true, "recipe_book_entry": {...}}
+//!   {"success": true, "`recipe_book_entry"`: {...}}
 //!   {"success": false, "error": "..."}
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{CreateRecipeBookEntryRequest, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -36,14 +36,20 @@ struct Output {
 
 fn main() {
     match run() {
-        Ok(output) => println!("{}", serde_json::to_string(&output).unwrap()),
+        Ok(output) => println!(
+            "{}",
+            serde_json::to_string(&output).expect("Failed to serialize output JSON")
+        ),
         Err(e) => {
             let error = Output {
                 success: false,
                 recipe_book_entry: None,
                 error: Some(e.to_string()),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }
@@ -78,7 +84,7 @@ mod tests {
     #[test]
     fn test_input_parsing() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "recipe_book": 1, "recipe": 2}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(parsed.recipe_book, 1);
         assert_eq!(parsed.recipe, 2);
         assert_eq!(parsed.position, None);
@@ -87,7 +93,7 @@ mod tests {
     #[test]
     fn test_input_parsing_with_position() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "recipe_book": 1, "recipe": 2, "position": 5}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(parsed.recipe_book, 1);
         assert_eq!(parsed.recipe, 2);
         assert_eq!(parsed.position, Some(5));
@@ -100,7 +106,7 @@ mod tests {
             recipe_book_entry: None,
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
     }
 }

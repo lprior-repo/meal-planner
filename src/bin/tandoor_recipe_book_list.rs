@@ -3,14 +3,14 @@
 //! Retrieves all recipe books with optional pagination.
 //!
 //! JSON stdin:
-//!   {"tandoor": {"base_url": "...", "api_token": "..."}, "page": 1, "page_size": 10}
+//!   {"tandoor": {"`base_url"`: "...", "`api_token"`: "..."}, "page": 1, "`page_size"`: 10}
 //!
 //! JSON stdout:
-//!   {"success": true, "count": 5, "recipe_books": [...]}
+//!   {"success": true, "count": 5, "`recipe_books"`: [...]}
 //!   {"success": false, "error": "..."}
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{RecipeBook, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -38,7 +38,10 @@ struct Output {
 
 fn main() {
     match run() {
-        Ok(output) => println!("{}", serde_json::to_string(&output).unwrap()),
+        Ok(output) => println!(
+            "{}",
+            serde_json::to_string(&output).expect("Failed to serialize output JSON")
+        ),
         Err(e) => {
             let error = Output {
                 success: false,
@@ -46,7 +49,10 @@ fn main() {
                 recipe_books: None,
                 error: Some(e.to_string()),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }
@@ -76,7 +82,7 @@ mod tests {
     #[test]
     fn test_input_parsing() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "page": 1, "page_size": 10}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(parsed.page, Some(1));
         assert_eq!(parsed.page_size, Some(10));
     }
@@ -84,7 +90,7 @@ mod tests {
     #[test]
     fn test_input_parsing_no_pagination() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(parsed.page, None);
         assert_eq!(parsed.page_size, None);
     }
@@ -97,7 +103,7 @@ mod tests {
             recipe_books: None,
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"count\":5"));
     }

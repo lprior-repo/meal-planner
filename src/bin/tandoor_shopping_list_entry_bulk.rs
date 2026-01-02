@@ -9,8 +9,8 @@
 //!   `{"success": true, "count": N}`
 //!   `{"success": false, "error": "..."}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{CreateShoppingListEntryRequest, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -48,7 +48,10 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(&output).unwrap());
+    println!(
+        "{}",
+        serde_json::to_string(&output).expect("Failed to serialize output JSON")
+    );
     if !output.success {
         std::process::exit(1);
     }
@@ -82,7 +85,7 @@ mod tests {
     #[test]
     fn test_input_deserialization_empty() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "mealplan_id": 123, "entries": []}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.mealplan_id, 123);
         assert_eq!(input.entries.len(), 0);
     }
@@ -90,7 +93,7 @@ mod tests {
     #[test]
     fn test_input_deserialization_with_entries() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "mealplan_id": 123, "entries": [{"list": 1, "food": "apples", "amount": 5.0}]}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.mealplan_id, 123);
         assert_eq!(input.entries.len(), 1);
     }
@@ -102,7 +105,7 @@ mod tests {
             count: Some(5),
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"count\":5"));
     }
@@ -114,7 +117,7 @@ mod tests {
             count: None,
             error: Some("Invalid list ID".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("Invalid list ID"));
     }

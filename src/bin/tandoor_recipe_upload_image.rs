@@ -13,8 +13,8 @@
 //!   `{"success": true, "image": "...", "image_url": "..."}`
 //!   `{"success": false, "error": "..."}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -55,7 +55,10 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!("{}", serde_json::to_string(&output).unwrap());
+    println!(
+        "{}",
+        serde_json::to_string(&output).expect("Failed to serialize output JSON")
+    );
     if !output.success {
         std::process::exit(1);
     }
@@ -112,7 +115,7 @@ mod tests {
             image_url: None,
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
         assert!(json.contains("\"image\":\"/media/recipes/123.jpg\""));
         assert!(!json.contains("error"));
@@ -127,7 +130,7 @@ mod tests {
             image_url: None,
             error: Some("File not found".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("\"error\":\"File not found\""));
         assert!(!json.contains("image"));
@@ -143,7 +146,7 @@ mod tests {
 			"recipe_id": 42,
 			"image_path": "/tmp/recipe.jpg"
 		}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert!(parsed.tandoor.is_some());
         assert_eq!(parsed.recipe_id, 42);
         assert_eq!(parsed.image_path, "/tmp/recipe.jpg");
@@ -157,7 +160,7 @@ mod tests {
 			"recipe_id": 123,
 			"image_path": "/home/user/dish.png"
 		}"#;
-        let parsed: Input = serde_json::from_str(json).unwrap();
+        let parsed: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert!(parsed.tandoor.is_none());
         assert_eq!(parsed.base_url, Some("http://localhost:8090".to_string()));
         assert_eq!(parsed.recipe_id, 123);

@@ -9,8 +9,8 @@
 //!   `{"success": true, "meal_plan": {...}}`
 //!   `{"success": false, "error": "..."}`
 
-// CLI binaries: exit and JSON unwrap are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used)]
+// CLI binaries: exit and unwrap/expect are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{CreateMealPlanRequest, MealPlan, TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -51,7 +51,10 @@ struct Output {
 fn main() {
     match run() {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&output).expect("Failed to serialize output JSON")
+            );
         }
         Err(e) => {
             let error = Output {
@@ -59,7 +62,10 @@ fn main() {
                 meal_plan: None,
                 error: Some(e.to_string()),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }
@@ -105,7 +111,7 @@ mod tests {
     #[test]
     fn test_input_parsing_minimal() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "recipe": 1, "meal_type": 1, "from_date": "2025-12-31", "servings": 2.0}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.recipe, 1);
         assert!((input.servings - 2.0).abs() < f64::EPSILON);
         assert_eq!(input.title, None);
@@ -114,7 +120,7 @@ mod tests {
     #[test]
     fn test_input_parsing_with_optionals() {
         let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "recipe": 1, "meal_type": 1, "from_date": "2025-12-31", "servings": 2.0, "title": "Test", "note": "Note here"}"#;
-        let input: Input = serde_json::from_str(json).unwrap();
+        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
         assert_eq!(input.title, Some("Test".to_string()));
         assert_eq!(input.note, Some("Note here".to_string()));
     }
@@ -127,7 +133,7 @@ mod tests {
             meal_plan: None,
             error: None,
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":true"));
     }
 
@@ -138,7 +144,7 @@ mod tests {
             meal_plan: None,
             error: Some("Creation failed".to_string()),
         };
-        let json = serde_json::to_string(&output).unwrap();
+        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
         assert!(json.contains("\"success\":false"));
     }
 }

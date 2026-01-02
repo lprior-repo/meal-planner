@@ -30,10 +30,18 @@
 #![cfg_attr(test, allow(clippy::unwrap_used))]
 #![cfg_attr(test, allow(clippy::expect_used))]
 #![cfg_attr(test, allow(clippy::panic))]
+#![cfg_attr(test, allow(clippy::indexing_slicing))]
 
 // API client modules
 pub mod fatsecret;
 pub mod tandoor;
+
+// Test utilities - only compiled for tests
+#[cfg(test)]
+pub mod test_helpers;
+
+#[cfg(test)]
+pub mod tests;
 
 // Re-export commonly used types for convenience
 pub use fatsecret::core::errors::parse_error_response;

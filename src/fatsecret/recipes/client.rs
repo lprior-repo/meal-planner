@@ -13,11 +13,11 @@
 //! # Usage Example
 //!
 //! ```no_run
-//! use meal_planner::fatsecret::core::config::`FatSecretConfig`;
+//! use meal_planner::fatsecret::core::config::FatSecretConfig;
 //! use meal_planner::fatsecret::recipes::client::{search_recipes, get_recipe};
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env()?;
+//! let config = FatSecretConfig::from_env()?;
 //!
 //! // Search for vegetarian pasta recipes
 //! let results = search_recipes(
@@ -32,7 +32,7 @@
 //!
 //! // Get detailed recipe information
 //! for result in results.recipes.iter().take(3) {
-//!     let recipe = get_recipe(&config, &result.`recipe_id`).await?;
+//!     let recipe = get_recipe(&config, &result.recipe_id).await?;
 //!     println!("\n{}", recipe.recipe_name);
 //!     println!("Calories: {:?}", recipe.calories);
 //!     println!("Prep time: {:?} min", recipe.preparation_time_min);

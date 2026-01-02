@@ -41,16 +41,16 @@
 //! 2. **User Authorization**: User approves access via `FatSecret` web UI
 //! 3. **Access Token**: Exchange verifier for long-lived credentials
 //!
-//! All authenticated requests require an [`AccessToken`] containing:
-//! - `oauth_token` - Access token string
-//! - `oauth_token_secret` - Token secret for signing requests
+//! All authenticated requests require an [AccessToken] containing:
+//! - oauth_token - Access token string
+//! - oauth_token_secret - Token secret for signing requests
 //!
 //! ## Token Storage and Encryption
 //!
 //! Tokens are stored securely in `PostgreSQL` with AES-256-GCM encryption:
 //!
 //! - Requires `OAUTH_ENCRYPTION_KEY` environment variable (32-byte base64)
-//! - Use [`TokenStorage`] for persistent token management
+//! - Use [TokenStorage] for persistent token management
 //! - Use [`crypto`] module for encryption/decryption primitives
 //!
 //! # Example Usage
@@ -59,36 +59,36 @@
 //!
 //! ```rust,no_run
 //! use meal_planner::fatsecret::{
-//!     core::{`FatSecretConfig`, `AccessToken`},
-//!     diary::{get_food_entries, FoodEntryInput, `MealType`, create_food_entry},
-//!     storage::`TokenStorage`,
+//!     core::{FatSecretConfig, AccessToken},
+//!     diary::{get_food_entries, FoodEntryInput, MealType, create_food_entry},
+//!     storage::TokenStorage,
 //! };
 //! use sqlx::PgPool;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! // 1. Configure API credentials
-//! let config = `FatSecretConfig`::from_env()
-//!     .ok_or("Missing `FATSECRET_CONSUMER_KEY` or `FATSECRET_CONSUMER_SECRET`")?;
+//! let config = FatSecretConfig::from_env()
+//!     .ok_or("Missing FATSECRET_CONSUMER_KEY or FATSECRET_CONSUMER_SECRET")?;
 //!
 //! // 2. Load access token from storage
-//! let db = PgPool::connect(&std::env::var("`DATABASE_URL`")?).await?;
-//! let storage = `TokenStorage`::new(db);
+//! let db = PgPool::connect(&std::env::var("DATABASE_URL")?).await?;
+//! let storage = TokenStorage::new(db);
 //! let token = storage.get_access_token().await?
 //!     .ok_or("No access token found - run OAuth flow first")?;
 //!
 //! // 3. Get today's food entries
-//! let `date_int` = 20088; // Days since Unix epoch
-//! let entries = get_food_entries(&config, &token, `date_int`).await?;
+//! let date_int = 20088; // Days since Unix epoch
+//! let entries = get_food_entries(&config, &token, date_int).await?;
 //! println!("Found {} entries", entries.len());
 //!
 //! // 4. Log a new food entry
-//! let entry_input = FoodEntryInput::`FromFood` {
-//!     `food_id`: "12345".to_string(),
+//! let entry_input = FoodEntryInput::FromFood {
+//!     food_id: "12345".to_string(),
 //!     food_entry_name: "Banana".to_string(),
-//!     `serving_id`: "67890".to_string(),
+//!     serving_id: "67890".to_string(),
 //!     number_of_units: 1.0,
-//!     meal: `MealType`::Breakfast,
-//!     `date_int`,
+//!     meal: MealType::Breakfast,
+//!     date_int,
 //! };
 //! let entry_id = create_food_entry(&config, &token, &entry_input).await?;
 //! println!("Created entry: {}", entry_id.value);
@@ -100,24 +100,24 @@
 //!
 //! ```rust,no_run
 //! use meal_planner::fatsecret::{
-//!     core::{`FatSecretConfig`, oauth::{get_request_token, get_access_token}},
-//!     storage::`TokenStorage`,
+//!     core::{FatSecretConfig, oauth::{get_request_token, get_access_token}},
+//!     storage::TokenStorage,
 //! };
 //! use sqlx::PgPool;
 //!
 //! # async fn oauth_example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env().unwrap();
-//! let db = PgPool::connect(&std::env::var("`DATABASE_URL`")?).await?;
-//! let storage = `TokenStorage`::new(db);
+//! let config = FatSecretConfig::from_env().unwrap();
+//! let db = PgPool::connect(&std::env::var("DATABASE_URL")?).await?;
+//! let storage = TokenStorage::new(db);
 //!
 //! // Step 1: Get request token
 //! let request_token = get_request_token(&config, "oob").await?;
 //! storage.store_pending_token(&request_token).await?;
 //!
-//! // Step 2: User authorizes (get verifier from `FatSecret` web UI)
+//! // Step 2: User authorizes (get verifier from FatSecret web UI)
 //! let auth_url = format!(
-//!     "https://www.fatsecret.com/oauth/authorize?`oauth_token`={}",
-//!     request_token.`oauth_token`
+//!     "https://www.fatsecret.com/oauth/authorize?oauth_token={}",
+//!     request_token.oauth_token
 //! );
 //! println!("Visit: {}", auth_url);
 //!
@@ -133,12 +133,12 @@
 //!
 //! ```rust,no_run
 //! use meal_planner::fatsecret::{
-//!     core::`FatSecretConfig`,
+//!     core::FatSecretConfig,
 //!     foods::search_foods,
 //! };
 //!
 //! # async fn search_example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = `FatSecretConfig`::from_env().unwrap();
+//! let config = FatSecretConfig::from_env().unwrap();
 //!
 //! // Search requires only API credentials (no user token)
 //! let results = search_foods(
@@ -149,7 +149,7 @@
 //! ).await?;
 //!
 //! for food in results.foods.food {
-//!     println!("{}: {}", food.`food_id`, food.food_name);
+//!     println!("{}: {}", food.food_id, food.food_name);
 //! }
 //! # Ok(())
 //! # }
@@ -165,7 +165,7 @@
 //! echo '{
 //!   "access_token": "...",
 //!   "access_secret": "...",
-//!   "`date_int`": 20088
+//!   "date_int": 20088
 //! }' | fatsecret_food_entries_get
 //!
 //! # Output: {"success": true, "entries": [...]}
@@ -183,10 +183,10 @@
 //!
 //! # Environment Variables
 //!
-//! - `FATSECRET_CONSUMER_KEY` - OAuth consumer key (required)
-//! - `FATSECRET_CONSUMER_SECRET` - OAuth consumer secret (required)
+//! - FATSECRET_CONSUMER_KEY - OAuth consumer key (required)
+//! - FATSECRET_CONSUMER_SECRET - OAuth consumer secret (required)
 //! - `OAUTH_ENCRYPTION_KEY` - 32-byte base64 key for token encryption (required for storage)
-//! - `DATABASE_URL` - `PostgreSQL` connection string (required for token storage)
+//! - DATABASE_URL - `PostgreSQL` connection string (required for token storage)
 //!
 //! # Further Reading
 //!
