@@ -1,0 +1,99 @@
+summary: Generate weekly meal plan
+description: |
+  Randomly selects 2 Meat Church recipes and creates meal plan entries.
+  Uses hardcoded $res:u/admin/tandoor_api resource.
+value:
+  modules:
+    - id: select_random
+      value:
+        type: script
+        path: f/tandoor/recipe_random_select
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+          keyword:
+            type: javascript
+            expr: flow_input.keyword || "meat-church"
+          count:
+            type: javascript
+            expr: flow_input.count || 2
+    - id: create_meal_plan_1
+      value:
+        type: script
+        path: f/tandoor/meal_plan_create
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+          recipe:
+            type: javascript
+            expr: String(modules.select_random.result.recipes[0].id)
+          meal_type:
+            type: javascript
+            expr: "dinner"
+          from_date:
+            type: javascript
+            expr: flow_input.dates[0]
+          servings:
+            type: javascript
+            expr: String(modules.select_random.result.recipes[0].servings || 4)
+    - id: create_meal_plan_2
+      value:
+        type: script
+        path: f/tandoor/meal_plan_create
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+          recipe:
+            type: javascript
+            expr: String(modules.select_random.result.recipes[1].id)
+          meal_type:
+            type: javascript
+            expr: "dinner"
+          from_date:
+            type: javascript
+            expr: flow_input.dates[1]
+          servings:
+            type: javascript
+            expr: String(modules.select_random.result.recipes[1].servings || 4)
+    - id: format_output
+      value:
+        type: script
+        path: f/tandoor/format_meal_plan_output
+        input_transforms:
+          recipes_json:
+            type: javascript
+            expr: JSON.stringify(modules.select_random.result.recipes)
+          dates_json:
+            type: javascript
+            expr: JSON.stringify(flow_input.dates)
+          meal_plan_1_json:
+            type: javascript
+            expr: JSON.stringify(modules.create_meal_plan_1.result)
+          meal_plan_2_json:
+            type: javascript
+            expr: JSON.stringify(modules.create_meal_plan_2.result)
+
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    keyword:
+      type: string
+      description: Keyword to filter recipes by
+      default: meat-church
+    count:
+      type: integer
+      description: Number of recipes to select
+      default: 2
+    dates:
+      type: array
+      items:
+        type: string
+      description: Cooking dates (YYYY-MM-DD)
+      minItems: 2
+      maxItems: 2
+  required:
+    - dates

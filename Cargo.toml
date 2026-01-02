@@ -280,6 +280,7 @@ aes-gcm = "0.10.3"
 sqlx = { version = "0.8.6", features = ["runtime-tokio", "postgres", "chrono", "macros", "migrate"] }
 sqlx-cli = { version = "0.8.6", features = ["rustls"], optional = true }
 once_cell = "1.19"
+fastrand = "2.1"
 
 [lib]
 name = "meal_planner"
@@ -709,6 +710,11 @@ path = "src/bin/tandoor_unit_delete.rs"
 [[bin]]
 name = "tandoor_unit_conversion_list"
 path = "src/bin/tandoor_unit_conversion_list.rs"
+
+# Recipe selection
+[[bin]]
+name = "tandoor_recipe_random_select"
+path = "src/bin/tandoor_recipe_random_select.rs"
 
 # Ingredient binaries
 [[bin]]

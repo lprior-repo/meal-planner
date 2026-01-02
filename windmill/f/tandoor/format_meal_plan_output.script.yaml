@@ -1,0 +1,6 @@
+summary: Format meal plan output
+description: |
+  Formats the meal plan output including recipes, dates,
+  cooking schedule, and consolidated ingredient list.
+kind: script
+language: bash

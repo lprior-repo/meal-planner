@@ -1,0 +1,6 @@
+summary: Randomly select recipes by keyword
+description: |
+  Fetches all recipes from Tandoor, filters by keyword,
+  and randomly selects N recipes for meal planning.
+kind: script
+language: bash

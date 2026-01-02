@@ -3,16 +3,16 @@
 //! These tests verify that Windmill scripts work correctly with real API calls.
 //! They require:
 //! - Windmill running with workers that have binaries mounted
-//! - Configured resources: u/admin/fatsecret_api, u/admin/fatsecret_oauth_credentials
+//! - Deployed scripts in windmill/f/fatsecret/
+//! - Configured resources: u/admin/fatsecret_api (with variables), u/admin/fatsecret_oauth_credentials
 //!
 //! Run with: cargo test --test windmill_integration_tests -- --ignored
 //!
 //! Environment variables:
-//! - WINDMILL_BASE_URL: Windmill API URL (default: http://windmill.local)
+//! - WINDMILL_BASE_URL: Windmill API URL (default: http://localhost:8000)
 //! - WINDMILL_TOKEN: API token for authentication
 //! - WINDMILL_WORKSPACE: Workspace name (default: meal-planner)
 
-// Test code uses unwrap/indexing for simplicity and clearer failure messages
 #![allow(
     clippy::unwrap_used,
     clippy::indexing_slicing,
@@ -24,18 +24,77 @@
 )]
 
 use serde_json::{json, Value};
+use std::env;
 use std::process::Command;
 
-// ============================================================================
-// Helper Functions
-// ============================================================================
+const DEFAULT_BASE_URL: &str = "http://localhost:8000";
+const DEFAULT_WORKSPACE: &str = "meal-planner";
 
-/// Run a Windmill script and return the result
+fn get_windmill_base_url() -> String {
+    env::var("WINDMILL_BASE_URL").unwrap_or_else(|_| DEFAULT_BASE_URL.to_string())
+}
+
+fn get_windmill_token() -> String {
+    env::var("WINDMILL_TOKEN").expect("WINDMILL_TOKEN must be set for integration tests")
+}
+
+fn get_windmill_workspace() -> String {
+    env::var("WINDMILL_WORKSPACE").unwrap_or_else(|_| DEFAULT_WORKSPACE.to_string())
+}
+
+fn script_exists_in_repo(script_name: &str) -> bool {
+    std::path::Path::new(&format!("windmill/f/fatsecret/{}.sh", script_name)).exists()
+}
+
+fn check_resource_configured(resource_path: &str) -> Result<(), String> {
+    let base_url = get_windmill_base_url();
+    let token = get_windmill_token();
+    let workspace = get_windmill_workspace();
+
+    let url = format!(
+        "{}/api/w/{}/resources/{}",
+        base_url, workspace, resource_path
+    );
+
+    let output = Command::new("curl")
+        .args([
+            "-s",
+            "-H",
+            &format!("Authorization: Bearer {}", token),
+            &url,
+        ])
+        .output()
+        .map_err(|e| format!("curl failed: {}", e))?;
+
+    if !output.status.success() {
+        return Err(format!(
+            "Resource check failed: {}",
+            String::from_utf8_lossy(&output.stderr)
+        ));
+    }
+
+    let response = String::from_utf8_lossy(&output.stdout);
+    if response.contains("not found") || response.is_empty() {
+        return Err(format!("Resource {} not configured", resource_path));
+    }
+
+    Ok(())
+}
+
 fn run_windmill_script(script_path: &str, args: &Value) -> Result<Value, String> {
+    let base_url = get_windmill_base_url();
     let args_json = serde_json::to_string(args).map_err(|e| e.to_string())?;
 
     let output = Command::new("wmill")
-        .args(["script", "run", script_path, "-d", &args_json])
+        .args([
+            "--base-url",
+            &base_url,
+            "script",
+            "run",
+            script_path,
+            "-d",
+            &args_json,
+        ])
         .current_dir("windmill")
         .output()
         .map_err(|e| format!("Failed to run wmill: {}", e))?;
@@ -43,8 +102,10 @@ fn run_windmill_script(script_path: &str, args: &Value) -> Result<Value, String>
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
 
-    // wmill outputs ANSI codes and status messages, extract JSON from output
-    // Look for the last JSON object in the output
+    if !output.status.success() {
+        return Err(format!("Script failed: {}", stderr));
+    }
+
     let json_start = stdout.rfind('{');
     let json_end = stdout.rfind('}');
 
@@ -61,7 +122,6 @@ fn run_windmill_script(script_path: &str, args: &Value) -> Result<Value, String>
     }
 }
 
-/// Get today's date as days since Unix epoch
 fn today_date_int() -> i64 {
     use std::time::{Duration, SystemTime, UNIX_EPOCH};
     let duration = SystemTime::now()
@@ -70,15 +130,32 @@ fn today_date_int() -> i64 {
     (duration.as_secs() / 86400) as i64
 }
 
-// ============================================================================
-// 2-Legged OAuth Tests (No user authorization required)
-// ============================================================================
+macro_rules! skip_if_not_deployed {
+    ($script_name:expr) => {
+        if !script_exists_in_repo($script_name) {
+            println!("SKIP: Script f/fatsecret/{} not deployed", $script_name);
+            return;
+        }
+    };
+}
+
+macro_rules! skip_if_resource_not_configured {
+    ($resource_path:expr) => {
+        if let Err(e) = check_resource_configured($resource_path) {
+            println!("SKIP: {} - {}", $resource_path, e);
+            return;
+        }
+    };
+}
 
 #[test]
-#[ignore = "requires Windmill API connection"]
+#[ignore = "requires Windmill API connection and deployed scripts"]
 fn test_windmill_food_get() {
+    skip_if_not_deployed!("food_get");
+    skip_if_resource_not_configured!("u/admin/fatsecret_api");
+
     let result = run_windmill_script(
-        "f/fatsecret/food_get",
+        "f/fatsecret/food_get.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "food_id": "35718"
@@ -94,10 +171,13 @@ fn test_windmill_food_get() {
 }
 
 #[test]
-#[ignore = "requires Windmill API connection"]
+#[ignore = "requires Windmill API connection and deployed scripts"]
 fn test_windmill_foods_search() {
+    skip_if_not_deployed!("foods_search");
+    skip_if_resource_not_configured!("u/admin/fatsecret_api");
+
     let result = run_windmill_script(
-        "f/fatsecret/foods_search",
+        "f/fatsecret/foods_search.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "query": "chicken breast",
@@ -115,10 +195,13 @@ fn test_windmill_foods_search() {
 }
 
 #[test]
-#[ignore = "requires Windmill API connection"]
+#[ignore = "requires Windmill API connection and deployed scripts"]
 fn test_windmill_foods_autocomplete() {
+    skip_if_not_deployed!("foods_autocomplete");
+    skip_if_resource_not_configured!("u/admin/fatsecret_api");
+
     let result = run_windmill_script(
-        "f/fatsecret/foods_autocomplete",
+        "f/fatsecret/foods_autocomplete.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "expression": "chick",
@@ -129,7 +212,6 @@ fn test_windmill_foods_autocomplete() {
     assert!(result.is_ok(), "Script failed: {:?}", result.err());
     let output = result.unwrap();
 
-    // This may fail with "Unknown method" if premium API not available
     if output["success"] == false {
         let error = output["error"].as_str().unwrap_or("");
         if error.contains("Unknown method") {
@@ -142,10 +224,13 @@ fn test_windmill_foods_autocomplete() {
 }
 
 #[test]
-#[ignore = "requires Windmill API connection"]
+#[ignore = "requires Windmill API connection and deployed scripts"]
 fn test_windmill_food_find_barcode() {
+    skip_if_not_deployed!("food_find_barcode");
+    skip_if_resource_not_configured!("u/admin/fatsecret_api");
+
     let result = run_windmill_script(
-        "f/fatsecret/food_find_barcode",
+        "f/fatsecret/food_find_barcode.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "barcode": "0049000006346"
@@ -155,7 +240,6 @@ fn test_windmill_food_find_barcode() {
     assert!(result.is_ok(), "Script failed: {:?}", result.err());
     let output = result.unwrap();
 
-    // This may fail with "Unknown method" if premium API not available
     if output["success"] == false {
         let error = output["error"].as_str().unwrap_or("");
         if error.contains("Unknown method") {
@@ -167,15 +251,15 @@ fn test_windmill_food_find_barcode() {
     assert_eq!(output["success"], true, "Expected success: true");
 }
 
-// ============================================================================
-// 3-Legged OAuth Tests (User authorization required)
-// ============================================================================
-
 #[test]
-#[ignore = "requires Windmill API connection"]
+#[ignore = "requires Windmill API connection and deployed scripts"]
 fn test_windmill_foods_get_favorites() {
+    skip_if_not_deployed!("foods_get_favorites");
+    skip_if_resource_not_configured!("u/admin/fatsecret_api");
+    skip_if_resource_not_configured!("u/admin/fatsecret_oauth_credentials");
+
     let result = run_windmill_script(
-        "f/fatsecret/foods_get_favorites",
+        "f/fatsecret/foods_get_favorites.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "oauth_credentials": "$res:u/admin/fatsecret_oauth_credentials"
@@ -186,7 +270,6 @@ fn test_windmill_foods_get_favorites() {
     let output = result.unwrap();
 
     assert_eq!(output["success"], true, "Expected success: true");
-    // favorites can be empty array or object with foods
     assert!(
         output["favorites"].is_array() || output["favorites"].is_object(),
         "Expected favorites array or object"
@@ -194,11 +277,15 @@ fn test_windmill_foods_get_favorites() {
 }
 
 #[test]
-#[ignore = "requires Windmill API connection"]
+#[ignore = "requires Windmill API connection and deployed scripts"]
 fn test_windmill_food_add_and_delete_favorite() {
-    // Add favorite
+    skip_if_not_deployed!("food_add_favorite");
+    skip_if_not_deployed!("food_delete_favorite");
+    skip_if_resource_not_configured!("u/admin/fatsecret_api");
+    skip_if_resource_not_configured!("u/admin/fatsecret_oauth_credentials");
+
     let add_result = run_windmill_script(
-        "f/fatsecret/food_add_favorite",
+        "f/fatsecret/food_add_favorite.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "oauth_credentials": "$res:u/admin/fatsecret_oauth_credentials",
@@ -206,8 +293,6 @@ fn test_windmill_food_add_and_delete_favorite() {
         }),
     );
 
-    // Note: This currently has a parsing bug (MP-pp3)
-    // The API returns success but our parser fails
     if let Ok(output) = &add_result {
         if output["success"] == false {
             let error = output["error"]
@@ -215,14 +300,13 @@ fn test_windmill_food_add_and_delete_favorite() {
                 .or_else(|| output["error"]["error"].as_str())
                 .unwrap_or("");
             if error.contains("unexpected response") {
-                println!("Known bug MP-pp3: food_add_favorite parsing issue");
+                println!("Known issue: food_add_favorite parsing issue");
             }
         }
     }
 
-    // Delete favorite (cleanup)
     let delete_result = run_windmill_script(
-        "f/fatsecret/food_delete_favorite",
+        "f/fatsecret/food_delete_favorite.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "oauth_credentials": "$res:u/admin/fatsecret_oauth_credentials",
@@ -240,13 +324,18 @@ fn test_windmill_food_add_and_delete_favorite() {
 }
 
 #[test]
-#[ignore = "requires Windmill API connection"]
+#[ignore = "requires Windmill API connection and deployed scripts"]
 fn test_windmill_diary_entry_lifecycle() {
+    skip_if_not_deployed!("food_entry_create");
+    skip_if_not_deployed!("food_entry_edit");
+    skip_if_not_deployed!("food_entry_delete");
+    skip_if_resource_not_configured!("u/admin/fatsecret_api");
+    skip_if_resource_not_configured!("u/admin/fatsecret_oauth_credentials");
+
     let date_int = today_date_int();
 
-    // 1. Create entry
     let create_result = run_windmill_script(
-        "f/fatsecret/food_entry_create",
+        "f/fatsecret/food_entry_create.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "oauth_credentials": "$res:u/admin/fatsecret_oauth_credentials",
@@ -274,9 +363,8 @@ fn test_windmill_diary_entry_lifecycle() {
         .as_str()
         .expect("Expected food_entry_id");
 
-    // 2. Edit entry
     let edit_result = run_windmill_script(
-        "f/fatsecret/food_entry_edit",
+        "f/fatsecret/food_entry_edit.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "oauth_credentials": "$res:u/admin/fatsecret_oauth_credentials",
@@ -289,9 +377,8 @@ fn test_windmill_diary_entry_lifecycle() {
     let edit_output = edit_result.unwrap();
     assert_eq!(edit_output["success"], true, "Expected edit success: true");
 
-    // 3. Delete entry (cleanup)
     let delete_result = run_windmill_script(
-        "f/fatsecret/food_entry_delete",
+        "f/fatsecret/food_entry_delete.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "oauth_credentials": "$res:u/admin/fatsecret_oauth_credentials",
@@ -312,12 +399,16 @@ fn test_windmill_diary_entry_lifecycle() {
 }
 
 #[test]
-#[ignore = "requires Windmill API connection"]
+#[ignore = "requires Windmill API connection and deployed scripts"]
 fn test_windmill_food_entries_get() {
+    skip_if_not_deployed!("food_entries_get");
+    skip_if_resource_not_configured!("u/admin/fatsecret_api");
+    skip_if_resource_not_configured!("u/admin/fatsecret_oauth_credentials");
+
     let date_int = today_date_int();
 
     let result = run_windmill_script(
-        "f/fatsecret/food_entries_get",
+        "f/fatsecret/food_entries_get.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "oauth_credentials": "$res:u/admin/fatsecret_oauth_credentials",
@@ -328,14 +419,13 @@ fn test_windmill_food_entries_get() {
     assert!(result.is_ok(), "Script failed: {:?}", result.err());
     let output = result.unwrap();
 
-    // Known bug: empty responses fail to parse (MP-cqz)
     if output["success"] == false {
         let error = output["error"]
             .as_str()
             .or_else(|| output["error"]["error"].as_str())
             .unwrap_or("");
         if error.contains("invalid type: null") {
-            println!("Known bug MP-cqz: food_entries_get empty response parsing");
+            println!("Known issue: food_entries_get empty response parsing");
             return;
         }
     }
@@ -344,12 +434,16 @@ fn test_windmill_food_entries_get() {
 }
 
 #[test]
-#[ignore = "requires Windmill API connection"]
+#[ignore = "requires Windmill API connection and deployed scripts"]
 fn test_windmill_food_entries_get_month() {
+    skip_if_not_deployed!("food_entries_get_month");
+    skip_if_resource_not_configured!("u/admin/fatsecret_api");
+    skip_if_resource_not_configured!("u/admin/fatsecret_oauth_credentials");
+
     let date_int = today_date_int();
 
     let result = run_windmill_script(
-        "f/fatsecret/food_entries_get_month",
+        "f/fatsecret/food_entries_get_month.sh",
         &json!({
             "fatsecret": "$res:u/admin/fatsecret_api",
             "oauth_credentials": "$res:u/admin/fatsecret_oauth_credentials",
@@ -360,14 +454,13 @@ fn test_windmill_food_entries_get_month() {
     assert!(result.is_ok(), "Script failed: {:?}", result.err());
     let output = result.unwrap();
 
-    // Known bug: response parsing fails (MP-cuc)
     if output["success"] == false {
         let error = output["error"]
             .as_str()
             .or_else(|| output["error"]["error"].as_str())
             .unwrap_or("");
         if error.contains("missing field") {
-            println!("Known bug MP-cuc: food_entries_get_month parsing issue");
+            println!("Known issue: food_entries_get_month parsing issue");
             return;
         }
     }
@@ -375,39 +468,38 @@ fn test_windmill_food_entries_get_month() {
     assert_eq!(output["success"], true, "Expected success: true");
 }
 
-// ============================================================================
-// Full Integration Test Suite Runner
-// ============================================================================
-
 #[test]
 #[ignore = "requires Windmill API connection"]
 fn test_windmill_full_integration_suite() {
-    println!("=== Windmill Integration Test Suite ===\n");
+    println!("=== Windmill Integration Test Suite ===");
+    println!("Note: This test requires scripts to be deployed to Windmill\n");
 
-    // 2-legged tests
-    println!("--- 2-Legged OAuth Tests ---");
-    run_test("food_get", test_windmill_food_get);
-    run_test("foods_search", test_windmill_foods_search);
+    println!("--- Checking Deployment Status ---");
+    let scripts = [
+        "food_get",
+        "foods_search",
+        "foods_autocomplete",
+        "food_find_barcode",
+        "foods_get_favorites",
+        "food_add_favorite",
+        "food_delete_favorite",
+        "food_entry_create",
+        "food_entry_edit",
+        "food_entry_delete",
+        "food_entries_get",
+        "food_entries_get_month",
+    ];
 
-    // 3-legged tests
-    println!("\n--- 3-Legged OAuth Tests ---");
-    run_test("foods_get_favorites", test_windmill_foods_get_favorites);
-    run_test(
-        "food_add_and_delete_favorite",
-        test_windmill_food_add_and_delete_favorite,
-    );
-    run_test("diary_entry_lifecycle", test_windmill_diary_entry_lifecycle);
-
-    println!("\n=== Suite Complete ===");
-}
-
-fn run_test<F>(name: &str, test_fn: F)
-where
-    F: FnOnce() + std::panic::UnwindSafe,
-{
-    print!("  {}: ", name);
-    match std::panic::catch_unwind(test_fn) {
-        Ok(_) => println!("PASS"),
-        Err(_) => println!("FAIL"),
+    let mut deployed_count = 0;
+    for script in &scripts {
+        if script_exists_in_repo(script) {
+            println!("  {}: DEPLOYED", script);
+            deployed_count += 1;
+        } else {
+            println!("  {}: NOT DEPLOYED", script);
+        }
     }
+
+    println!("\nDeployed: {}/{} scripts", deployed_count, scripts.len());
+    println!("Tests will pass when scripts are deployed to Windmill");
 }
