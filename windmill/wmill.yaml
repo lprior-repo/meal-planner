@@ -19,7 +19,7 @@ includeGroups: false
 includeSettings: false
 includeKey: false
 skipWorkspaceDependencies: false
-nonDottedPaths: true
+nonDottedPaths: false
 gitBranches:
   HEAD:
     overrides: {}
