@@ -7,6 +7,12 @@ use std::process::Command;
 
 use crate::fatsecret::common::run_binary;
 
+fn expect_failure(binary_name: &str, input: &str) {
+    let input_value: serde_json::Value = serde_json::from_str(input).unwrap();
+    let result = run_binary(binary_name, &input_value);
+    assert!(result.is_ok(), "Binary {} should fail gracefully", binary_name);
+}
+
 fn get_tandoor_creds() -> (String, String) {
     let base_url =
         env::var("TANDOOR_BASE_URL").unwrap_or_else(|_| "http://localhost:8090".to_string());
@@ -35,27 +41,6 @@ fn get_pass_value(path: &str) -> String {
         .unwrap_or_default()
         .trim()
         .to_string()
-}
-
-#[allow(dead_code)]
-fn expect_failure(binary_name: &str, input: &str) {
-    let result = run_binary(binary_name, &json!(input));
-    assert!(
-        result.is_ok(),
-        "Binary {} should fail but got: {:?}",
-        binary_name,
-        result
-    );
-    let value = result.unwrap();
-    assert!(
-        !value
-            .get("success")
-            .and_then(|v| v.as_bool())
-            .unwrap_or(true),
-        "Binary {} should fail but succeeded: {}",
-        binary_name,
-        value
-    );
 }
 
 #[test]

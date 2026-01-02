@@ -99,7 +99,7 @@ impl FatSecretCredentials {
 
 #[allow(dead_code)]
 pub fn run_binary(binary_name: &str, input: &Value) -> Result<Value, String> {
-    let binary_path = format!("./target/debug/{}", binary_name);
+    let binary_path = find_binary_path(binary_name)?;
     if !std::path::Path::new(&binary_path).exists() {
         return Err(format!("Binary not found: {}", binary_path));
     }
@@ -128,6 +128,23 @@ pub fn run_binary(binary_name: &str, input: &Value) -> Result<Value, String> {
 
     serde_json::from_str(&stdout)
         .map_err(|e| format!("Failed to parse JSON from {}: {} (output: {})", binary_name, e, stdout))
+}
+
+#[allow(dead_code)]
+pub fn find_binary_path(binary_name: &str) -> Result<String, String> {
+    let paths = [
+        format!("./bin/{}", binary_name),
+        format!("target/debug/{}", binary_name),
+        format!("target/release/{}", binary_name),
+    ];
+
+    for path in &paths {
+        if std::path::Path::new(path).exists() {
+            return Ok(path.clone());
+        }
+    }
+
+    Err(format!("Binary {} not found in any location: {:?}", binary_name, paths))
 }
 
 #[allow(dead_code)]

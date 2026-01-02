@@ -45,26 +45,6 @@ fn run_binary(binary_name: &str, input: &Value) -> Result<Value, String> {
     serde_json::from_str(&stdout).map_err(|e| format!("Parse error: {} - Raw: {}", e, stdout))
 }
 
-fn expect_failure(binary_name: &str, input: &Value) {
-    let result = run_binary(binary_name, input);
-    assert!(
-        result.is_ok(),
-        "Binary {} should fail but got: {:?}",
-        binary_name,
-        result
-    );
-    let value = result.unwrap();
-    assert!(
-        !value
-            .get("success")
-            .and_then(|v| v.as_bool())
-            .unwrap_or(true),
-        "Binary {} should fail but succeeded: {}",
-        binary_name,
-        value
-    );
-}
-
 #[test]
 fn tandoor_user_list_success() {
     let (url, token) = get_tandoor_creds();

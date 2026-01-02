@@ -9,6 +9,8 @@ use serde_json::json;
 use std::process::{Command, Stdio};
 use std::io::Write;
 
+use crate::fatsecret::common::expect_failure;
+
 fn run_binary(binary_name: &str, input: &serde_json::Value) -> Result<serde_json::Value, String> {
     let binary_path = format!("./target/debug/{}", binary_name);
     if !std::path::Path::new(&binary_path).exists() {
@@ -39,11 +41,6 @@ fn run_binary(binary_name: &str, input: &serde_json::Value) -> Result<serde_json
 
     serde_json::from_str(&stdout)
         .map_err(|e| format!("Failed to parse JSON from {}: {} (output: {})", binary_name, e, stdout))
-}
-
-fn expect_failure(binary_name: &str, input: &serde_json::Value) {
-    let result = run_binary(binary_name, input);
-    assert!(result.is_ok(), "Binary {} should fail gracefully", binary_name);
 }
 
 fn get_fatsecret_credentials() -> Option<(String, String)> {

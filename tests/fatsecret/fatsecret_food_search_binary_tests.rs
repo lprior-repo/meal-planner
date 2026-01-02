@@ -4,6 +4,8 @@
 use serde_json::{json, Value};
 use std::process::{Command, Stdio};
 
+use crate::fatsecret::common::expect_failure;
+
 fn run_binary(binary_name: &str, input: &str) -> Result<Value, String> {
     let mut child = Command::new("cargo")
         .args(["run", "--release", "--bin", binary_name])
@@ -45,26 +47,6 @@ fn expect_success(binary_name: &str, input: &str) -> Value {
         value
     );
     value
-}
-
-fn expect_failure(binary_name: &str, input: &str) {
-    let result = run_binary(binary_name, input);
-    assert!(
-        result.is_ok(),
-        "Binary {} should fail but got: {:?}",
-        binary_name,
-        result
-    );
-    let value = result.unwrap();
-    assert!(
-        !value
-            .get("success")
-            .and_then(|v| v.as_bool())
-            .unwrap_or(true),
-        "Binary {} should fail but succeeded: {}",
-        binary_name,
-        value
-    );
 }
 
 #[test]

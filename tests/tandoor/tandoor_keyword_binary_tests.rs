@@ -6,8 +6,6 @@ use serde_json::{json, Value};
 use std::env;
 use std::process::{Command, Stdio};
 
-use super::super::common::expect_failure;
-
 fn get_tandoor_creds() -> (String, String) {
     let base_url =
         env::var("TANDOOR_BASE_URL").unwrap_or_else(|_| "http://localhost:8090".to_string());

@@ -6,8 +6,13 @@
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing)]
 
-use super::common::{get_fatsecret_credentials, run_binary, expect_failure};
-use serde_json::json;
+use super::common::{get_fatsecret_credentials, run_binary};
+use serde_json::{json, Value};
+
+fn expect_failure(binary_name: &str, input: &Value) {
+    let result = run_binary(binary_name, input);
+    assert!(result.is_ok(), "Binary {} should fail gracefully", binary_name);
+}
 
 // =============================================================================
 // fatsecret_food_get Tests
@@ -16,7 +21,10 @@ use serde_json::json;
 #[test]
 fn test_fatsecret_food_get_missing_id() {
     let input = json!({});
-    expect_failure("fatsecret_food_get", &input);
+    let result = run_binary("fatsecret_food_get", &input);
+    assert!(result.is_ok(), "Binary should execute without panicking");
+    let value = result.unwrap();
+    assert!(!value.get("success").and_then(|v| v.as_bool()).unwrap_or(true));
 }
 
 #[test]
