@@ -115,8 +115,21 @@ impl TandoorClient {
                 .map_err(|e| TandoorError::AuthError(e.to_string()))?,
         );
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
-        // Required for Docker networking where host header validation may occur
-        headers.insert("Host", HeaderValue::from_static("localhost"));
+        
+        // Extract host from base_url for Docker networking where host header validation may occur
+        let host = config
+            .base_url
+            .trim_start_matches("http://")
+            .trim_start_matches("https://")
+            .split('/')
+            .next()
+            .unwrap_or("localhost");
+        
+        headers.insert(
+            "Host",
+            HeaderValue::from_str(host)
+                .map_err(|e| TandoorError::AuthError(format!("Invalid host: {}", e)))?,
+        );
 
         let client = Client::builder()
             .timeout(std::time::Duration::from_secs(30))
@@ -1852,28 +1865,22 @@ impl TandoorClient {
         Ok(paginated.results)
     }
 
-    /// Upload an image for a recipe
+    /// Helper method to read a file and detect its MIME type
     ///
-    /// This uploads an image file to a recipe using multipart form-data.
-    /// The image is sent as `image` field in the multipart request.
-    pub fn upload_recipe_image(
+    /// Returns (file_data, file_name, mime_type)
+    fn read_file_with_mime(
         &self,
-        recipe_id: i64,
-        image_path: &str,
-    ) -> Result<RecipeImage, TandoorError> {
-        use reqwest::blocking::multipart::{Form, Part};
+        file_path: &str,
+    ) -> Result<(Vec<u8>, String, String), TandoorError> {
         use std::fs::File;
         use std::io::Read;
         use std::path::Path;
 
-        let url = format!("{}/api/recipe/{}/image/", self.base_url, recipe_id);
-
-        // Read the file
-        let path = Path::new(image_path);
+        let path = Path::new(file_path);
         let file_name = path
             .file_name()
             .and_then(|n| n.to_str())
-            .unwrap_or("image.jpg")
+            .unwrap_or("file")
             .to_string();
 
         let mut file = File::open(path)
@@ -1889,27 +1896,44 @@ impl TandoorClient {
             Some("png") => "image/png",
             Some("gif") => "image/gif",
             Some("webp") => "image/webp",
+            Some("pdf") => "application/pdf",
             _ => "application/octet-stream",
-        };
+        }
+        .to_string();
+
+        Ok((buffer, file_name, mime_type))
+    }
+
+    /// Upload an image for a recipe
+    ///
+    /// This uploads an image file to a recipe using multipart form-data.
+    /// The image is sent as `image` field in the multipart request.
+    pub fn upload_recipe_image(
+        &self,
+        recipe_id: i64,
+        image_path: &str,
+    ) -> Result<RecipeImage, TandoorError> {
+        use reqwest::blocking::multipart::{Form, Part};
+
+        let url = format!("{}/api/recipe/{}/image/", self.base_url, recipe_id);
+
+        // Read file and detect MIME type using helper
+        let (buffer, file_name, mime_type) = self.read_file_with_mime(image_path)?;
 
         // Create multipart form with the image
         let part = Part::bytes(buffer)
             .file_name(file_name)
-            .mime_str(mime_type)
+            .mime_str(&mime_type)
             .map_err(|e| TandoorError::ParseError(format!("Invalid MIME type: {}", e)))?;
 
         let form = Form::new().part("image", part);
 
-        // Build request without Content-Type header (reqwest sets it for multipart)
-        let response = Client::builder()
-            .timeout(std::time::Duration::from_secs(60))
-            .build()?
+        // Build request using the shared client; reqwest sets Content-Type for multipart
+        let response = self
+            .client
             .put(&url)
-            .header(
-                AUTHORIZATION,
-                format!("Bearer {}", self.get_token()),
-            )
-            .header("Host", "localhost")
+            .header(AUTHORIZATION, format!("Bearer {}", self.get_token()))
+            .timeout(std::time::Duration::from_secs(60))
             .multipart(form)
             .send()?;
 
@@ -1944,41 +1968,16 @@ impl TandoorClient {
         recipe_id: Option<i64>,
     ) -> Result<AiImportResponse, TandoorError> {
         use reqwest::blocking::multipart::{Form, Part};
-        use std::fs::File;
-        use std::io::Read;
-        use std::path::Path;
 
         let url = format!("{}/api/ai-import/", self.base_url);
 
-        // Read the file
-        let path = Path::new(file_path);
-        let file_name = path
-            .file_name()
-            .and_then(|n| n.to_str())
-            .unwrap_or("file")
-            .to_string();
-
-        let mut file = File::open(path)
-            .map_err(|e| TandoorError::FileError(format!("Failed to open file: {}", e)))?;
-
-        let mut buffer = Vec::new();
-        file.read_to_end(&mut buffer)
-            .map_err(|e| TandoorError::FileError(format!("Failed to read file: {}", e)))?;
-
-        // Detect MIME type from extension
-        let mime_type = match path.extension().and_then(|e| e.to_str()) {
-            Some("jpg" | "jpeg") => "image/jpeg",
-            Some("png") => "image/png",
-            Some("gif") => "image/gif",
-            Some("webp") => "image/webp",
-            Some("pdf") => "application/pdf",
-            _ => "application/octet-stream",
-        };
+        // Read file and detect MIME type using helper
+        let (buffer, file_name, mime_type) = self.read_file_with_mime(file_path)?;
 
         // Create multipart form with the file
         let part = Part::bytes(buffer)
             .file_name(file_name)
-            .mime_str(mime_type)
+            .mime_str(&mime_type)
             .map_err(|e| TandoorError::ParseError(format!("Invalid MIME type: {}", e)))?;
 
         let mut form = Form::new()
@@ -1989,16 +1988,12 @@ impl TandoorClient {
             form = form.text("recipe_id", rid.to_string());
         }
 
-        // Build request without Content-Type header (reqwest sets it for multipart)
-        let response = Client::builder()
-            .timeout(std::time::Duration::from_secs(120)) // Longer timeout for AI processing
-            .build()?
+        // Build request using the shared client; reqwest sets Content-Type for multipart
+        let response = self
+            .client
             .post(&url)
-            .header(
-                AUTHORIZATION,
-                format!("Bearer {}", self.get_token()),
-            )
-            .header("Host", "localhost")
+            .header(AUTHORIZATION, format!("Bearer {}", self.get_token()))
+            .timeout(std::time::Duration::from_secs(120)) // Longer timeout for AI processing
             .multipart(form)
             .send()?;
 
