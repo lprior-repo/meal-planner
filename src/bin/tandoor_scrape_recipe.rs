@@ -7,8 +7,8 @@
 //!   `{"success": true, "recipe_json": {...}, "images": [...]}`
 //!   `{"success": false, "error": "..."}`
 
-// CLI binaries: exit and unwrap/expect are acceptable at the top level
-#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
+// CLI binaries: exit and JSON unwrap are acceptable at the top level
+#![allow(clippy::exit, clippy::unwrap_used)]
 
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -41,10 +41,7 @@ fn main() {
             error: Some(e.to_string()),
         },
     };
-    println!(
-        "{}",
-        serde_json::to_string(&output).expect("Failed to serialize output JSON")
-    );
+    println!("{}", serde_json::to_string(&output).unwrap());
     if !output.success {
         std::process::exit(1);
     }
