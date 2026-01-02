@@ -30,8 +30,8 @@ value:
             type: javascript
             expr: String(results.select_random.recipes[0].id)
           meal_type:
-            type: javascript
-            expr: "dinner"
+            type: static
+            value: dinner
           from_date:
             type: javascript
             expr: flow_input.dates[0]
@@ -50,8 +50,8 @@ value:
             type: javascript
             expr: String(results.select_random.recipes[1].id)
           meal_type:
-            type: javascript
-            expr: "dinner"
+            type: static
+            value: dinner
           from_date:
             type: javascript
             expr: flow_input.dates[1]

@@ -1,0 +1,131 @@
+#!/usr/bin/env nu
+# Generate OpenAPI spec from CUE schema for Schemathesis
+# Usage: nu scripts/gen_openapi.nu
+
+let schema_path = "schemas/cue/fatsecret/api.cue"
+
+# Transform to OpenAPI format
+let openapi = {
+    openapi: "3.0.0"
+    info: {
+        title: "FatSecret Platform API"
+        version: "1.0.0"
+        description: "Generated from CUE schema"
+    }
+    servers: [
+        {url: "https://platform.fatsecret.com/rest"}
+    ]
+    paths: {
+        "/foods/search/v3": {
+            get: {
+                summary: "Search foods v3"
+                parameters: [
+                    {name: "search_expression", in: "query", required: true, schema: {type: "string"}}
+                    {name: "page_number", in: "query", schema: {type: "integer", minimum: 0}}
+                    {name: "max_results", in: "query", schema: {type: "integer", maximum: 50}}
+                ]
+                responses: {
+                    "200": {
+                        description: "Successful response"
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object"
+                                    properties: {
+                                        success: {type: "boolean"}
+                                        foods: {type: "object"}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        "/food/v1": {
+            get: {
+                summary: "Get food by ID"
+                parameters: [
+                    {name: "food_id", in: "query", required: true, schema: {type: "string", pattern: "^[0-9]+$"}}
+                ]
+                responses: {
+                    "200": {
+                        description: "Successful response"
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object"
+                                    properties: {
+                                        success: {type: "boolean"}
+                                        food: {type: "object"}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        "/food-entries/v1": {
+            get: {
+                summary: "Get food diary entries"
+                parameters: [
+                    {name: "date", in: "query", schema: {type: "integer", minimum: 0}}
+                ]
+                responses: {
+                    "200": {
+                        description: "Successful response"
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "object"
+                                    properties: {
+                                        success: {type: "boolean"}
+                                        food_entries: {type: "object"}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            post: {
+                summary: "Create food diary entry"
+                requestBody: {
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object"
+                                required: ["food_id", "food_entry_name", "serving_id", "number_of_units", "meal"]
+                                properties: {
+                                    food_id: {type: "string", pattern: "^[0-9]+$"}
+                                    food_entry_name: {type: "string"}
+                                    serving_id: {type: "string", pattern: "^[0-9]+$"}
+                                    number_of_units: {type: "number", minimum: 0}
+                                    meal: {type: "string", enum: ["breakfast", "lunch", "dinner", "other", "snack"]}
+                                    date: {type: "integer", minimum: 0}
+                                }
+                            }
+                        }
+                    }
+                }
+                responses: {
+                    "200": {
+                        description: "Successful response"
+                        content: {
+                            "application/json": {
+                                schema: {type: "object"}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+# Save OpenAPI spec
+$openapi | to json -r | save openapi/fatsecret.yaml --force
+
+print "Generated openapi/fatsecret.yaml"
+
