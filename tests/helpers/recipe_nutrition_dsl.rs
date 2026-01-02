@@ -73,7 +73,7 @@ impl RecipeNutritionDSL {
             "recipe_id": recipe_id
         });
 
-        let output = run_binary("calculate_recipe_nutrition", &input)
+        let output = run_binary("tandoor_recipe_calculate_nutrition", &input)
             .expect("Failed to calculate nutrition");
 
         NutritionResult {

@@ -81,8 +81,9 @@ fn test_ingredient_lookup_nutrition_output_contract() {
     let result = cue_validate(&output_str, "#TandoorIngredientLookupNutritionOutput");
 
     assert!(
-        result.is_err(),
-        "Expected contract validation to fail (contract not yet defined)"
+        result.is_ok(),
+        "Expected contract validation to pass: {:?}",
+        result.err()
     );
 }
 
@@ -104,8 +105,9 @@ fn test_recipe_calculate_nutrition_input_contract() {
     let result = cue_validate(&input_str, "#TandoorRecipeCalculateNutritionInput");
 
     assert!(
-        result.is_err(),
-        "Expected contract validation to fail (contract not yet defined)"
+        result.is_ok(),
+        "Expected contract validation to pass: {:?}",
+        result.err()
     );
 }
 
@@ -128,8 +130,9 @@ fn test_recipe_calculate_nutrition_output_contract() {
     let result = cue_validate(&output_str, "#TandoorRecipeCalculateNutritionOutput");
 
     assert!(
-        result.is_err(),
-        "Expected contract validation to fail (contract not yet defined)"
+        result.is_ok(),
+        "Expected contract validation to pass: {:?}",
+        result.err()
     );
 }
 
@@ -146,8 +149,9 @@ fn test_add_calories_to_recipes_input_contract() {
     let result = cue_validate(&input_str, "#TandoorAddCaloriesToRecipesInput");
 
     assert!(
-        result.is_err(),
-        "Expected contract validation to fail (contract not yet defined)"
+        result.is_ok(),
+        "Expected contract validation to pass: {:?}",
+        result.err()
     );
 }
 
@@ -172,7 +176,25 @@ fn test_add_calories_to_recipes_output_contract() {
     let result = cue_validate(&output_str, "#TandoorAddCaloriesToRecipesOutput");
 
     assert!(
+        result.is_ok(),
+        "Expected contract validation to pass: {:?}",
+        result.err()
+    );
+}
+
+#[test]
+fn test_invalid_input_fails_validation() {
+    let invalid_input = json!({
+        "ingredient_name": "chicken breast",
+        "amount": -100.0,
+        "unit": "g"
+    });
+
+    let input_str = invalid_input.to_string();
+    let result = cue_validate(&input_str, "#TandoorIngredientLookupNutritionInput");
+
+    assert!(
         result.is_err(),
-        "Expected contract validation to fail (contract not yet defined)"
+        "Expected contract validation to fail for negative amount"
     );
 }

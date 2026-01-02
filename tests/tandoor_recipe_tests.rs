@@ -25,61 +25,199 @@ fn create_test_client(base_url: &str) -> TandoorClient {
     TandoorClient::new(&config).unwrap()
 }
 
+/// Mock response for recipe list with pagination
+fn mock_recipe_list_response() -> serde_json::Value {
+    json!({
+        "count": 3,
+        "next": null,
+        "previous": null,
+        "results": [
+            {
+                "id": 1,
+                "name": "Scrambled Eggs",
+                "description": "Quick breakfast",
+                "keywords": [{"id": 1, "name": "breakfast"}],
+                "working_time": 5,
+                "waiting_time": 0,
+                "rating": 4.5,
+                "servings": 2
+            },
+            {
+                "id": 2,
+                "name": "Pasta Carbonara",
+                "description": null,
+                "keywords": null,
+                "working_time": 20,
+                "waiting_time": null,
+                "rating": null,
+                "servings": 4
+            },
+            {
+                "id": 3,
+                "name": "Chicken Soup",
+                "description": "Comfort food",
+                "keywords": [],
+                "working_time": null,
+                "waiting_time": 30,
+                "rating": 5.0,
+                "servings": 6
+            }
+        ]
+    })
+}
+
+/// Mock response for successful recipe scrape
+fn mock_successful_scrape_response() -> serde_json::Value {
+    json!({
+        "error": false,
+        "msg": "Recipe scraped successfully",
+        "recipe": {
+            "name": "Chocolate Cake",
+            "description": "Delicious chocolate cake",
+            "source_url": "https://example.com/recipe",
+            "image": "https://example.com/image.jpg",
+            "servings": 8,
+            "servings_text": "8 servings",
+            "working_time": 30,
+            "waiting_time": 45,
+            "internal": false,
+            "steps": [
+                {
+                    "instruction": "Mix ingredients",
+                    "show_ingredients_table": true,
+                    "ingredients": [
+                        {
+                            "amount": 2.0,
+                            "food": {"name": "eggs"},
+                            "unit": null,
+                            "note": "",
+                            "original_text": "2 eggs"
+                        },
+                        {
+                            "amount": 1.0,
+                            "food": {"name": "flour"},
+                            "unit": {"name": "cup"},
+                            "note": "all-purpose",
+                            "original_text": "1 cup all-purpose flour"
+                        }
+                    ]
+                },
+                {
+                    "instruction": "Bake at 350°F",
+                    "show_ingredients_table": true,
+                    "ingredients": []
+                }
+            ],
+            "keywords": [
+                {"id": null, "label": null, "name": "dessert"},
+                {"id": 5, "label": "Sweet", "name": "sweet"}
+            ]
+        },
+        "recipe_tree": null,
+        "images": ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
+    })
+}
+
+/// Mock response for successful recipe import
+fn mock_successful_import_response() -> serde_json::Value {
+    json!({
+        "error": false,
+        "msg": "Success",
+        "recipe": {
+            "name": "Imported Recipe",
+            "description": "Imported from web",
+            "source_url": "https://example.com/recipe",
+            "image": null,
+            "servings": 4,
+            "servings_text": "",
+            "working_time": 20,
+            "waiting_time": 0,
+            "internal": false,
+            "steps": [
+                {
+                    "instruction": "Step 1",
+                    "show_ingredients_table": true,
+                    "ingredients": [
+                        {
+                            "amount": 1.0,
+                            "food": {"name": "onion"},
+                            "unit": null,
+                            "note": "",
+                            "original_text": "1 onion"
+                        }
+                    ]
+                }
+            ],
+            "keywords": [
+                {"id": null, "label": null, "name": "dinner"}
+            ]
+        },
+        "recipe_tree": null,
+        "images": null
+    })
+}
+
+/// Mock response for recipe create success
+fn mock_create_recipe_success_response() -> serde_json::Value {
+    json!({
+        "id": 789,
+        "name": "Imported Recipe"
+    })
+}
+
+/// Setup mock server for recipe list
+async fn setup_mock_server_for_list_recipes() -> MockServer {
+    let mock_server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .and(path("/api/recipe/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(mock_recipe_list_response()))
+        .mount(&mock_server)
+        .await;
+    mock_server
+}
+
+/// Setup mock server for recipe scrape
+async fn setup_mock_server_for_scrape_recipe() -> MockServer {
+    let mock_server = MockServer::start().await;
+    Mock::given(method("POST"))
+        .and(path("/api/recipe-from-source/"))
+        .and(body_json(json!({
+            "url": "https://example.com/recipe"
+        })))
+        .respond_with(ResponseTemplate::new(200).set_body_json(mock_successful_scrape_response()))
+        .mount(&mock_server)
+        .await;
+    mock_server
+}
+
+/// Setup mock server for recipe import (scrape + create)
+async fn setup_mock_server_for_recipe_import() -> MockServer {
+    let mock_server = MockServer::start().await;
+    Mock::given(method("POST"))
+        .and(path("/api/recipe-from-source/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(mock_successful_import_response()))
+        .expect(1)
+        .mount(&mock_server)
+        .await;
+    Mock::given(method("POST"))
+        .and(path("/api/recipe/"))
+        .respond_with(
+            ResponseTemplate::new(201).set_body_json(mock_create_recipe_success_response()),
+        )
+        .expect(1)
+        .mount(&mock_server)
+        .await;
+    mock_server
+}
+
 // ============================================================================
 // Recipe Listing
 // ============================================================================
 
 #[tokio::test]
-#[allow(
-    clippy::expect_used,
-    clippy::unwrap_used,
-    clippy::indexing_slicing,
-    clippy::too_many_lines
-)]
+#[allow(clippy::expect_used, clippy::unwrap_used, clippy::indexing_slicing)]
 async fn test_list_recipes_no_pagination() {
-    let mock_server = MockServer::start().await;
-
-    Mock::given(method("GET"))
-        .and(path("/api/recipe/"))
-        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
-            "count": 3,
-            "next": null,
-            "previous": null,
-            "results": [
-                {
-                    "id": 1,
-                    "name": "Scrambled Eggs",
-                    "description": "Quick breakfast",
-                    "keywords": [{"id": 1, "name": "breakfast"}],
-                    "working_time": 5,
-                    "waiting_time": 0,
-                    "rating": 4.5,
-                    "servings": 2
-                },
-                {
-                    "id": 2,
-                    "name": "Pasta Carbonara",
-                    "description": null,
-                    "keywords": null,
-                    "working_time": 20,
-                    "waiting_time": null,
-                    "rating": null,
-                    "servings": 4
-                },
-                {
-                    "id": 3,
-                    "name": "Chicken Soup",
-                    "description": "Comfort food",
-                    "keywords": [],
-                    "working_time": null,
-                    "waiting_time": 30,
-                    "rating": 5.0,
-                    "servings": 6
-                }
-            ]
-        })))
-        .mount(&mock_server)
-        .await;
+    let mock_server = setup_mock_server_for_list_recipes().await;
 
     let uri = mock_server.uri();
     let handle = tokio::task::spawn_blocking(move || {
@@ -486,62 +624,9 @@ async fn test_create_recipe_auth_error() {
 // ============================================================================
 
 #[tokio::test]
-#[allow(clippy::expect_used, clippy::unwrap_used, clippy::too_many_lines)]
+#[allow(clippy::expect_used, clippy::unwrap_used)]
 async fn test_import_recipe_success() {
-    let mock_server = MockServer::start().await;
-
-    // Mock scrape response
-    Mock::given(method("POST"))
-        .and(path("/api/recipe-from-source/"))
-        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
-            "error": false,
-            "msg": "Success",
-            "recipe": {
-                "name": "Imported Recipe",
-                "description": "Imported from web",
-                "source_url": "https://example.com/recipe",
-                "image": null,
-                "servings": 4,
-                "servings_text": "",
-                "working_time": 20,
-                "waiting_time": 0,
-                "internal": false,
-                "steps": [
-                    {
-                        "instruction": "Step 1",
-                        "show_ingredients_table": true,
-                        "ingredients": [
-                            {
-                                "amount": 1.0,
-                                "food": {"name": "onion"},
-                                "unit": null,
-                                "note": "",
-                                "original_text": "1 onion"
-                            }
-                        ]
-                    }
-                ],
-                "keywords": [
-                    {"id": null, "label": null, "name": "dinner"}
-                ]
-            },
-            "recipe_tree": null,
-            "images": null
-        })))
-        .expect(1)
-        .mount(&mock_server)
-        .await;
-
-    // Mock create response
-    Mock::given(method("POST"))
-        .and(path("/api/recipe/"))
-        .respond_with(ResponseTemplate::new(201).set_body_json(json!({
-            "id": 789,
-            "name": "Imported Recipe"
-        })))
-        .expect(1)
-        .mount(&mock_server)
-        .await;
+    let mock_server = setup_mock_server_for_recipe_import().await;
 
     let uri = mock_server.uri();
     let handle = tokio::task::spawn_blocking(move || {

@@ -93,8 +93,9 @@ mod tests {
 
     #[test]
     fn test_parse_input_with_id() {
-        let json = r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "id": 42}"#;
-        let input = parse_input_json(json).expect("Failed to parse test JSON");
+        let json =
+            r#"{"tandoor": {"base_url": "http://localhost:8090", "api_token": "test"}, "id": 42}"#;
+        let input: Input = parse_input_json(json).expect("Failed to parse test JSON");
         assert_eq!(input.id, 42);
     }
 

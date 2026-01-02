@@ -1811,7 +1811,6 @@ package mealplanner
 	recipe_id:          int
 	recipe_name:        string
 	nutrition:          #TandoorRecipeNutrition
-	ingredient_count:   int
 	failed_ingredients: [...string]
 } | #ErrorOutput
 

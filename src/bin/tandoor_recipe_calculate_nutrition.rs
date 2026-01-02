@@ -84,43 +84,14 @@ fn run() -> Result<Output, String> {
     let recipe = client
         .get_recipe(input.recipe_id)
         .map_err(|e| e.to_string())?;
-    let recipe_name = recipe
-        .get("name")
-        .and_then(|n| n.as_str())
-        .unwrap_or("Unknown")
-        .to_string();
-
+    let recipe_name = get_recipe_name(&recipe);
     let steps = recipe
         .get("steps")
         .and_then(|s| s.as_array())
         .ok_or("No steps found in recipe")?;
 
-    let mut nutrition = Nutrition::default();
-    let mut ingredient_count = 0usize;
-    let mut failed_ingredients = Vec::new();
-
-    for step in steps {
-        let ingredients = step.get("ingredients").and_then(|i| i.as_array());
-        if let Some(ings) = ingredients {
-            for ingredient in ings {
-                ingredient_count += 1;
-                match calculate_ingredient_nutrition(&recipe, ingredient) {
-                    Ok(ing_nutrition) => {
-                        nutrition.calories += ing_nutrition.calories;
-                        nutrition.protein += ing_nutrition.protein;
-                        nutrition.carbohydrate += ing_nutrition.carbohydrate;
-                        nutrition.fat += ing_nutrition.fat;
-                    }
-                    Err(_e) => {
-                        let (name, _, _) = extract_ingredient_info(ingredient);
-                        if !name.is_empty() {
-                            failed_ingredients.push(name);
-                        }
-                    }
-                }
-            }
-        }
-    }
+    let (nutrition, ingredient_count, failed_ingredients) =
+        calculate_recipe_nutrition(&recipe, steps)?;
 
     Ok(Output {
         success: true,
@@ -140,7 +111,39 @@ fn read_input() -> Result<Input, String> {
     serde_json::from_str(&s).map_err(|e| e.to_string())
 }
 
-fn calculate_ingredient_nutrition(
+fn get_recipe_name(recipe: &serde_json::Value) -> String {
+    recipe
+        .get("name")
+        .and_then(|n| n.as_str())
+        .unwrap_or("Unknown")
+        .to_string()
+}
+
+fn calculate_recipe_nutrition(
+    recipe: &serde_json::Value,
+    steps: &[serde_json::Value],
+) -> Result<(Nutrition, usize, Vec<String>), String> {
+    let mut nutrition = Nutrition::default();
+    let mut ingredient_count = 0usize;
+    let mut failed_ingredients = Vec::new();
+
+    for step in steps {
+        let ingredients = step.get("ingredients").and_then(|i| i.as_array());
+        if let Some(ings) = ingredients {
+            for ingredient in ings {
+                ingredient_count += 1;
+                match calculate_single_ingredient_nutrition(recipe, ingredient) {
+                    Ok(ing_nutrition) => add_nutrition(&mut nutrition, ing_nutrition),
+                    Err(_) => add_failed_ingredient(ingredient, &mut failed_ingredients),
+                }
+            }
+        }
+    }
+
+    Ok((nutrition, ingredient_count, failed_ingredients))
+}
+
+fn calculate_single_ingredient_nutrition(
     recipe: &serde_json::Value,
     ingredient: &serde_json::Value,
 ) -> Result<Nutrition, String> {
@@ -148,27 +151,33 @@ fn calculate_ingredient_nutrition(
         .get("amount")
         .and_then(|a| a.as_f64())
         .unwrap_or(0.0);
-    let food = ingredient.get("food").ok_or("Ingredient has no food")?;
-    let food_id = food
-        .get("id")
-        .and_then(|i| i.as_i64())
-        .ok_or("Food has no ID")?;
+    let _food = ingredient.get("food").ok_or("Ingredient has no food")?;
 
-    let properties = get_food_properties(&recipe, food_id)?;
-    let serving_size = properties
+    let properties = get_food_properties(recipe)?;
+    let serving_size = get_serving_size(&properties);
+    let serving_nutrition = build_serving_nutrition(&properties);
+    let scaled = scale_nutrition_to_grams(&serving_nutrition, serving_size, amount);
+
+    extract_nutrition_from_scaled(&scaled)
+}
+
+fn get_serving_size(properties: &serde_json::Value) -> f64 {
+    properties
         .get("serving_size_grams")
         .and_then(|s| s.as_f64())
-        .unwrap_or(100.0);
+        .unwrap_or(100.0)
+}
 
-    let serving_nutrition = json!({
+fn build_serving_nutrition(properties: &serde_json::Value) -> serde_json::Value {
+    json!({
         "calories": properties.get("calories").and_then(|c| c.as_f64()).unwrap_or(0.0),
         "protein": properties.get("protein").and_then(|p| p.as_f64()).unwrap_or(0.0),
         "carbohydrate": properties.get("carbohydrate").and_then(|c| c.as_f64()).unwrap_or(0.0),
         "fat": properties.get("fat").and_then(|f| f.as_f64()).unwrap_or(0.0),
-    });
+    })
+}
 
-    let scaled = scale_nutrition_to_grams(&serving_nutrition, serving_size, amount);
-
+fn extract_nutrition_from_scaled(scaled: &serde_json::Value) -> Result<Nutrition, String> {
     Ok(Nutrition {
         calories: scaled
             .get("calories")
@@ -186,10 +195,7 @@ fn calculate_ingredient_nutrition(
     })
 }
 
-fn get_food_properties(
-    recipe: &serde_json::Value,
-    _food_id: i64,
-) -> Result<serde_json::Value, String> {
+fn get_food_properties(recipe: &serde_json::Value) -> Result<serde_json::Value, String> {
     let nutrition_prop = recipe.get("nutrition");
     if let Some(nut) = nutrition_prop {
         if nut.is_object() && !nut.is_null() {
@@ -197,6 +203,20 @@ fn get_food_properties(
         }
     }
     Ok(json!({}))
+}
+
+fn add_nutrition(total: &mut Nutrition, addition: Nutrition) {
+    total.calories += addition.calories;
+    total.protein += addition.protein;
+    total.carbohydrate += addition.carbohydrate;
+    total.fat += addition.fat;
+}
+
+fn add_failed_ingredient(ingredient: &serde_json::Value, failed: &mut Vec<String>) {
+    let (name, _, _) = extract_ingredient_info(ingredient);
+    if !name.is_empty() {
+        failed.push(name);
+    }
 }
 
 #[cfg(test)]
@@ -250,5 +270,44 @@ mod tests {
         assert!(result.is_ok());
         let input = result.unwrap();
         assert_eq!(input.recipe_id, 42);
+    }
+
+    #[test]
+    fn test_get_recipe_name() {
+        let recipe = json!({"name": "Test Recipe"});
+        assert_eq!(get_recipe_name(&recipe), "Test Recipe");
+    }
+
+    #[test]
+    fn test_get_recipe_name_unknown() {
+        let recipe = json!({});
+        assert_eq!(get_recipe_name(&recipe), "Unknown");
+    }
+
+    #[test]
+    fn test_add_nutrition() {
+        let mut total = Nutrition::default();
+        let addition = Nutrition {
+            calories: 100.0,
+            protein: 10.0,
+            carbohydrate: 20.0,
+            fat: 5.0,
+        };
+        add_nutrition(&mut total, addition);
+        assert_eq!(total.calories, 100.0);
+        assert_eq!(total.protein, 10.0);
+    }
+
+    #[test]
+    fn test_add_failed_ingredient() {
+        let ingredient = json!({
+            "food": {"name": "salt"},
+            "amount": 5.0,
+            "unit": {"name": "g"}
+        });
+        let mut failed = Vec::new();
+        add_failed_ingredient(&ingredient, &mut failed);
+        assert_eq!(failed.len(), 1);
+        assert_eq!(failed[0], "salt");
     }
 }

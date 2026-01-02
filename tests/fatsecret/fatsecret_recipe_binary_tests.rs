@@ -6,8 +6,8 @@
 
 use serde_json::json;
 
-use super::super::support::binary_runner::run_binary;
 use crate::fatsecret::common::{expect_failure, get_fatsecret_credentials};
+use crate::helpers::support::binary_runner::run_binary;
 
 #[test]
 fn test_fatsecret_recipes_search_missing_expression() {

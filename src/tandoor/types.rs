@@ -1616,8 +1616,8 @@ mod tests {
                 unit: Some(SourceImportUnit {
                     name: "piece".to_string(),
                 }),
-                note: "".to_string(),
-                original_text: "".to_string(),
+                note: String::new(),
+                original_text: String::new(),
             }],
             show_ingredients_table: true,
         }];
@@ -1637,8 +1637,8 @@ mod tests {
                     name: "rice".to_string(),
                 }),
                 unit: None,
-                note: "".to_string(),
-                original_text: "".to_string(),
+                note: String::new(),
+                original_text: String::new(),
             }],
             show_ingredients_table: true,
         }];
@@ -1659,8 +1659,8 @@ mod tests {
                 unit: Some(SourceImportUnit {
                     name: "tsp".to_string(),
                 }),
-                note: "".to_string(),
-                original_text: "".to_string(),
+                note: String::new(),
+                original_text: String::new(),
             }],
             show_ingredients_table: true,
         }];

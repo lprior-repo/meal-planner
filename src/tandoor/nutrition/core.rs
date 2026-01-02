@@ -9,7 +9,7 @@
 //! These functions form the FUNCTIONAL CORE.
 //! The IMPERATIVE SHELL (binaries) handles all I/O.
 
-use serde_json::Value;
+use serde_json::{json, Value};
 
 /// Ingredient nutrition data from FatSecret
 #[derive(Debug, Clone)]
@@ -218,6 +218,7 @@ pub fn create_test_nutrition_db() -> std::collections::HashMap<String, Ingredien
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_json::json;
 
     #[test]
     fn test_convert_grams_known_units() {
