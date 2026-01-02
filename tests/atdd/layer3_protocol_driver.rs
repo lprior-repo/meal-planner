@@ -197,7 +197,9 @@ pub mod fatsecret_driver {
                 ("format", "json"),
             ];
 
-            let response = self.execute_signed_request("GET", BASE_URL, &params).await?;
+            let response = self
+                .execute_signed_request("GET", BASE_URL, &params)
+                .await?;
             Ok(response.body)
         }
 
@@ -208,7 +210,9 @@ pub mod fatsecret_driver {
                 ("format", "json"),
             ];
 
-            let response = self.execute_signed_request("GET", BASE_URL, &params).await?;
+            let response = self
+                .execute_signed_request("GET", BASE_URL, &params)
+                .await?;
             Ok(response.body)
         }
 
@@ -259,9 +263,10 @@ pub mod fatsecret_driver {
             match request {
                 Ok(resp) => {
                     let status = resp.status().as_u16();
-                    let body: Value = resp.json().await.map_err(|e| {
-                        ProtocolDriverError::ResponseParse(e.to_string())
-                    })?;
+                    let body: Value = resp
+                        .json()
+                        .await
+                        .map_err(|e| ProtocolDriverError::ResponseParse(e.to_string()))?;
 
                     Ok(HttpResponse {
                         status_code: status,
@@ -307,7 +312,8 @@ pub mod tandoor_driver {
         pub async fn get_recipe(&self, recipe_id: i64) -> Result<Value, ProtocolDriverError> {
             let url = format!("{}/recipes/{}/", self.base_url, recipe_id);
 
-            let response = self.http_client
+            let response = self
+                .http_client
                 .get(&url)
                 .header("Authorization", format!("Token {}", self.auth_token))
                 .send()
@@ -322,21 +328,20 @@ pub mod tandoor_driver {
                 )));
             }
 
-            response.json().await.map_err(|e| {
-                ProtocolDriverError::ResponseParse(e.to_string())
-            })
+            response
+                .json()
+                .await
+                .map_err(|e| ProtocolDriverError::ResponseParse(e.to_string()))
         }
 
-        pub async fn list_recipes(
-            &self,
-            page: Option<i32>,
-        ) -> Result<Value, ProtocolDriverError> {
+        pub async fn list_recipes(&self, page: Option<i32>) -> Result<Value, ProtocolDriverError> {
             let mut url = format!("{}/recipes/", self.base_url);
             if let Some(p) = page {
                 url.push_str(&format!("?page={}", p));
             }
 
-            let response = self.http_client
+            let response = self
+                .http_client
                 .get(&url)
                 .header("Authorization", format!("Token {}", self.auth_token))
                 .send()
@@ -351,15 +356,17 @@ pub mod tandoor_driver {
                 )));
             }
 
-            response.json().await.map_err(|e| {
-                ProtocolDriverError::ResponseParse(e.to_string())
-            })
+            response
+                .json()
+                .await
+                .map_err(|e| ProtocolDriverError::ResponseParse(e.to_string()))
         }
 
         pub async fn create_recipe(&self, recipe: &Value) -> Result<Value, ProtocolDriverError> {
             let url = format!("{}/recipes/", self.base_url);
 
-            let response = self.http_client
+            let response = self
+                .http_client
                 .post(&url)
                 .header("Authorization", format!("Token {}", self.auth_token))
                 .json(recipe)
@@ -375,9 +382,10 @@ pub mod tandoor_driver {
                 )));
             }
 
-            response.json().await.map_err(|e| {
-                ProtocolDriverError::ResponseParse(e.to_string())
-            })
+            response
+                .json()
+                .await
+                .map_err(|e| ProtocolDriverError::ResponseParse(e.to_string()))
         }
 
         pub async fn update_recipe(
@@ -387,7 +395,8 @@ pub mod tandoor_driver {
         ) -> Result<Value, ProtocolDriverError> {
             let url = format!("{}/recipes/{}/", self.base_url, recipe_id);
 
-            let response = self.http_client
+            let response = self
+                .http_client
                 .put(&url)
                 .header("Authorization", format!("Token {}", self.auth_token))
                 .json(recipe)
@@ -403,9 +412,10 @@ pub mod tandoor_driver {
                 )));
             }
 
-            response.json().await.map_err(|e| {
-                ProtocolDriverError::ResponseParse(e.to_string())
-            })
+            response
+                .json()
+                .await
+                .map_err(|e| ProtocolDriverError::ResponseParse(e.to_string()))
         }
     }
 }

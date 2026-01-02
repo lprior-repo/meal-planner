@@ -42,7 +42,12 @@ pub struct DSLResult {
 }
 
 impl DSLResult {
-    pub fn new(operation: &str, input: serde_json::Value, output: serde_json::Value, passed: bool) -> Self {
+    pub fn new(
+        operation: &str,
+        input: serde_json::Value,
+        output: serde_json::Value,
+        passed: bool,
+    ) -> Self {
         Self {
             operation: operation.to_string(),
             input,
@@ -184,14 +189,21 @@ impl GateValidator {
             if passed {
                 format!("All DSL methods ({} tested in {})", dsl_methods, dsl_tests)
             } else {
-                format!("Missing DSL tests ({} methods, {} tests)", dsl_methods, dsl_tests)
+                format!(
+                    "Missing DSL tests ({} methods, {} tests)",
+                    dsl_methods, dsl_tests
+                )
             },
         ));
         passed
     }
 
     /// GATE-3: Validate protocol drivers are pure functions
-    pub fn validate_protocol_purity(&mut self, driver_functions: usize, pure_functions: usize) -> bool {
+    pub fn validate_protocol_purity(
+        &mut self,
+        driver_functions: usize,
+        pure_functions: usize,
+    ) -> bool {
         let passed = pure_functions >= driver_functions;
         self.gates.push(GateStatus::new(
             3,
@@ -200,7 +212,11 @@ impl GateValidator {
             if passed {
                 format!("All {} protocol functions are pure", driver_functions)
             } else {
-                format!("{} of {} protocol functions are impure", driver_functions - pure_functions, driver_functions)
+                format!(
+                    "{} of {} protocol functions are impure",
+                    driver_functions - pure_functions,
+                    driver_functions
+                )
             },
         ));
         passed
@@ -234,7 +250,11 @@ impl GateValidator {
             if passed {
                 format!("All {} acceptance tests passed", results.len())
             } else {
-                let failed: Vec<_> = results.iter().filter(|r| !r.passed).map(|r| &r.test_name).collect();
+                let failed: Vec<_> = results
+                    .iter()
+                    .filter(|r| !r.passed)
+                    .map(|r| &r.test_name)
+                    .collect();
                 format!("Failed tests: {}", failed.join(", "))
             },
         ));
@@ -355,9 +375,18 @@ mod tests {
 
     #[test]
     fn layer_display() {
-        assert_eq!(Layer::AcceptanceTest.to_string(), "Layer 1: Acceptance Test");
+        assert_eq!(
+            Layer::AcceptanceTest.to_string(),
+            "Layer 1: Acceptance Test"
+        );
         assert_eq!(Layer::DSL.to_string(), "Layer 2: DSL");
-        assert_eq!(Layer::ProtocolDriver.to_string(), "Layer 3: Protocol Driver");
-        assert_eq!(Layer::FunctionalCore.to_string(), "Layer 4: Functional Core");
+        assert_eq!(
+            Layer::ProtocolDriver.to_string(),
+            "Layer 3: Protocol Driver"
+        );
+        assert_eq!(
+            Layer::FunctionalCore.to_string(),
+            "Layer 4: Functional Core"
+        );
     }
 }

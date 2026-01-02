@@ -1,3 +1,4 @@
+kind: script
 name: Import All Meat Church Recipes
 description: |
   Scrape all 36 Meat Church recipes from meatchurch.com and import them into Tandoor.

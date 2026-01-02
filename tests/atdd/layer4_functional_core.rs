@@ -89,10 +89,7 @@ pub fn calculate_recipe_nutrition(
 }
 
 /// Find nutrition data for a food by name
-fn find_food_nutrition(
-    name: &str,
-    food_data: &[(&str, FoodNutrition)],
-) -> Option<FoodNutrition> {
+fn find_food_nutrition(name: &str, food_data: &[(&str, FoodNutrition)]) -> Option<FoodNutrition> {
     food_data
         .iter()
         .find(|(food_name, _)| food_name.to_lowercase() == name.to_lowercase())
@@ -195,7 +192,11 @@ pub fn parse_fatsecret_food(json: &Value) -> Option<FoodNutrition> {
 
     let calories = default_serving.get("calories")?.as_str()?.parse().ok()?;
     let protein = default_serving.get("protein")?.as_str()?.parse().ok()?;
-    let carbs = default_serving.get("carbohydrate")?.as_str()?.parse().ok()?;
+    let carbs = default_serving
+        .get("carbohydrate")?
+        .as_str()?
+        .parse()
+        .ok()?;
     let fat = default_serving.get("fat")?.as_str()?.parse().ok()?;
 
     Some(FoodNutrition {

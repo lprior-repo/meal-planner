@@ -60,7 +60,9 @@ fn binary_accepts_valid_input_and_returns_nutrition() {
         "api_token": "test-token"
     });
     let mut config_file = File::create(&config_path).unwrap();
-    config_file.write_all(config_content.to_string().as_bytes()).unwrap();
+    config_file
+        .write_all(config_content.to_string().as_bytes())
+        .unwrap();
 
     let input = json!({
         "base_url": "http://localhost:9999",
@@ -112,7 +114,9 @@ fn binary_handles_missing_recipe() {
         "api_token": "test-token"
     });
     let mut config_file = File::create(&config_path).unwrap();
-    config_file.write_all(config_content.to_string().as_bytes()).unwrap();
+    config_file
+        .write_all(config_content.to_string().as_bytes())
+        .unwrap();
 
     let input = json!({
         "base_url": "http://localhost:9999",
@@ -138,8 +142,7 @@ fn binary_handles_missing_recipe() {
     if let Ok(stdout) = stdout_result {
         // If we got valid JSON, it should have success: false
         assert_eq!(
-            stdout["success"],
-            false,
+            stdout["success"], false,
             "Should report failure when recipe not found"
         );
     }

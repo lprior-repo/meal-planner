@@ -184,9 +184,9 @@ impl RecipeNutritionDSL {
         F: Fn(f64) -> bool,
     {
         let nutrition = self.driver.get_nutrition(recipe_id).await?;
-        let calories = nutrition.calories.ok_or_else(|| {
-            DSLError::new("Recipe has no calorie data", Layer::DSL)
-        })?;
+        let calories = nutrition
+            .calories
+            .ok_or_else(|| DSLError::new("Recipe has no calorie data", Layer::DSL))?;
 
         if !condition(calories) {
             return Err(DSLError::new(
@@ -208,9 +208,9 @@ impl RecipeNutritionDSL {
         F: Fn(f64) -> bool,
     {
         let nutrition = self.driver.get_nutrition(recipe_id).await?;
-        let protein = nutrition.protein.ok_or_else(|| {
-            DSLError::new("Recipe has no protein data", Layer::DSL)
-        })?;
+        let protein = nutrition
+            .protein
+            .ok_or_else(|| DSLError::new("Recipe has no protein data", Layer::DSL))?;
 
         if !condition(protein) {
             return Err(DSLError::new(
@@ -288,7 +288,11 @@ impl RecipeNutritionDSL {
 /// Implementations handle specific protocols (HTTP, DB, etc.)
 #[async_trait::async_trait]
 pub trait NutritionProtocolDriver: Send + Sync {
-    async fn create_recipe(&self, name: &str, ingredients: &[TestIngredient]) -> Result<TestRecipe, Box<dyn Error>>;
+    async fn create_recipe(
+        &self,
+        name: &str,
+        ingredients: &[TestIngredient],
+    ) -> Result<TestRecipe, Box<dyn Error>>;
     async fn calculate_nutrition(&self, recipe_id: i64) -> Result<NutritionResult, Box<dyn Error>>;
     async fn get_nutrition(&self, recipe_id: i64) -> Result<NutritionResult, Box<dyn Error>>;
     async fn get_nutrition_source(&self, recipe_id: i64) -> Result<String, Box<dyn Error>>;
@@ -331,8 +335,8 @@ impl NutritionProtocolDriver for BinaryProtocolDriver {
             "ingredients": ingredients,
         });
 
-        let output = run_binary(&self.binary_path, &input)
-            .map_err(|e| Box::new(e) as Box<dyn Error>)?;
+        let output =
+            run_binary(&self.binary_path, &input).map_err(|e| Box::new(e) as Box<dyn Error>)?;
 
         let id = output["id"].as_i64().ok_or("Missing id")?;
         Ok(TestRecipe {
@@ -348,8 +352,8 @@ impl NutritionProtocolDriver for BinaryProtocolDriver {
             "recipe_id": recipe_id,
         });
 
-        let output = run_binary(&self.binary_path, &input)
-            .map_err(|e| Box::new(e) as Box<dyn Error>)?;
+        let output =
+            run_binary(&self.binary_path, &input).map_err(|e| Box::new(e) as Box<dyn Error>)?;
 
         Ok(NutritionResult {
             success: output["success"].as_bool().unwrap_or(false),
@@ -359,7 +363,11 @@ impl NutritionProtocolDriver for BinaryProtocolDriver {
             fat: output["fat"].as_f64(),
             failed_ingredients: output["failed_ingredients"]
                 .as_array()
-                .map(|arr| arr.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect())
+                .map(|arr| {
+                    arr.iter()
+                        .filter_map(|v| v.as_str().map(|s| s.to_string()))
+                        .collect()
+                })
                 .unwrap_or_default(),
         })
     }
@@ -370,8 +378,8 @@ impl NutritionProtocolDriver for BinaryProtocolDriver {
             "recipe_id": recipe_id,
         });
 
-        let output = run_binary(&self.binary_path, &input)
-            .map_err(|e| Box::new(e) as Box<dyn Error>)?;
+        let output =
+            run_binary(&self.binary_path, &input).map_err(|e| Box::new(e) as Box<dyn Error>)?;
 
         Ok(NutritionResult {
             success: output["success"].as_bool().unwrap_or(false),
@@ -389,13 +397,15 @@ impl NutritionProtocolDriver for BinaryProtocolDriver {
             "recipe_id": recipe_id,
         });
 
-        let output = run_binary(&self.binary_path, &input)
-            .map_err(|e| Box::new(e) as Box<dyn Error>)?;
+        let output =
+            run_binary(&self.binary_path, &input).map_err(|e| Box::new(e) as Box<dyn Error>)?;
 
         output["source"]
             .as_str()
             .map(|s| s.to_string())
-            .ok_or_else(|| Box::new(DSLError::new("Missing source", Layer::ProtocolDriver)) as Box<dyn Error>)
+            .ok_or_else(|| {
+                Box::new(DSLError::new("Missing source", Layer::ProtocolDriver)) as Box<dyn Error>
+            })
     }
 
     async fn set_calories(&self, recipe_id: i64, calories: f64) -> Result<(), Box<dyn Error>> {
@@ -405,8 +415,7 @@ impl NutritionProtocolDriver for BinaryProtocolDriver {
             "calories": calories,
         });
 
-        run_binary(&self.binary_path, &input)
-            .map_err(|e| Box::new(e) as Box<dyn Error>)?;
+        run_binary(&self.binary_path, &input).map_err(|e| Box::new(e) as Box<dyn Error>)?;
 
         Ok(())
     }
@@ -424,8 +433,8 @@ impl NutritionProtocolDriver for BinaryProtocolDriver {
             "meal_types": meal_types,
         });
 
-        let output = run_binary(&self.binary_path, &input)
-            .map_err(|e| Box::new(e) as Box<dyn Error>)?;
+        let output =
+            run_binary(&self.binary_path, &input).map_err(|e| Box::new(e) as Box<dyn Error>)?;
 
         let days: Vec<DayPlan> = output["days"]
             .as_array()
@@ -454,8 +463,8 @@ impl NutritionProtocolDriver for BinaryProtocolDriver {
 
 /// Run binary and return JSON output
 fn run_binary(binary_path: &str, input: &Value) -> Result<Value, Box<dyn Error>> {
-    use std::process::{Command, Stdio};
     use std::io::Write;
+    use std::process::{Command, Stdio};
 
     let mut child = Command::new(binary_path)
         .stdin(Stdio::piped())
@@ -465,7 +474,9 @@ fn run_binary(binary_path: &str, input: &Value) -> Result<Value, Box<dyn Error>>
         .map_err(|e| format!("Failed to spawn {}: {}", binary_path, e))?;
 
     let mut stdin = child.stdin.take().unwrap();
-    stdin.write_all(input.to_string().as_bytes()).map_err(|e| e.to_string())?;
+    stdin
+        .write_all(input.to_string().as_bytes())
+        .map_err(|e| e.to_string())?;
     drop(stdin);
 
     let output = child.wait_with_output().map_err(|e| e.to_string())?;
@@ -488,13 +499,11 @@ mod tests {
         let recipe = TestRecipe {
             id: 1,
             name: "Test Recipe".to_string(),
-            ingredients: vec![
-                TestIngredient {
-                    name: "chicken".to_string(),
-                    amount: 200.0,
-                    unit: "g".to_string(),
-                },
-            ],
+            ingredients: vec![TestIngredient {
+                name: "chicken".to_string(),
+                amount: 200.0,
+                unit: "g".to_string(),
+            }],
         };
 
         assert_eq!(recipe.id, 1);
@@ -527,18 +536,14 @@ mod tests {
     #[test]
     fn test_weekly_meal_plan() {
         let plan = WeeklyMealPlan {
-            days: vec![
-                DayPlan {
-                    name: "Monday".to_string(),
-                    meals: vec![
-                        Meal {
-                            name: "Breakfast".to_string(),
-                            recipe_id: 1,
-                            calories: 400.0,
-                        },
-                    ],
-                },
-            ],
+            days: vec![DayPlan {
+                name: "Monday".to_string(),
+                meals: vec![Meal {
+                    name: "Breakfast".to_string(),
+                    recipe_id: 1,
+                    calories: 400.0,
+                }],
+            }],
         };
 
         assert_eq!(plan.days.len(), 1);

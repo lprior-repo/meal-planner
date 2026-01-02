@@ -9,7 +9,7 @@
 //! These functions form the FUNCTIONAL CORE.
 //! The IMPERATIVE SHELL (binaries) handles all I/O.
 
-use serde_json::{json, Value};
+use serde_json::Value;
 
 /// Ingredient nutrition data from FatSecret
 #[derive(Debug, Clone)]

@@ -58,10 +58,7 @@ mod nutrition_acceptancetests {
         let result = dsl.calculate_and_update_recipe_nutrition(recipe.id).await;
 
         // THEN - Verification via DSL
-        assert!(
-            result.success,
-            "Nutrition calculation should succeed"
-        );
+        assert!(result.success, "Nutrition calculation should succeed");
         assert!(
             result.calories.map(|c| c > 0.0).unwrap_or(false),
             "Recipe should have positive calories"
@@ -102,7 +99,9 @@ mod nutrition_acceptancetests {
             "Should calculate calories from available ingredients"
         );
         assert!(
-            result.failed_ingredients.contains(&"xyzabc123_nonexistent".to_string()),
+            result
+                .failed_ingredients
+                .contains(&"xyzabc123_nonexistent".to_string()),
             "Should report missing ingredient"
         );
     }
@@ -119,10 +118,7 @@ mod nutrition_acceptancetests {
         let mut dsl = RecipeNutritionDSL::new().await;
 
         let recipe = dsl
-            .create_recipe_with_ingredients(
-                "Protein Smoothie",
-                vec![("protein powder", 30.0, "g")],
-            )
+            .create_recipe_with_ingredients("Protein Smoothie", vec![("protein powder", 30.0, "g")])
             .await;
 
         dsl.set_recipe_calories(recipe.id, 999.0).await;
@@ -151,10 +147,7 @@ mod nutrition_acceptancetests {
         let recipe = dsl
             .create_recipe_with_ingredients(
                 "High Protein Meal",
-                vec![
-                    ("chicken breast", 200.0, "g"),
-                    ("greek yogurt", 150.0, "g"),
-                ],
+                vec![("chicken breast", 200.0, "g"), ("greek yogurt", 150.0, "g")],
             )
             .await;
 
@@ -162,10 +155,7 @@ mod nutrition_acceptancetests {
         let result = dsl.calculate_and_update_recipe_nutrition(recipe.id).await;
 
         // THEN
-        assert!(
-            result.success,
-            "Nutrition calculation should succeed"
-        );
+        assert!(result.success, "Nutrition calculation should succeed");
     }
 }
 
@@ -190,11 +180,9 @@ mod meal_plan_acceptancetests {
     async fn should_generate_meal_plan_with_all_meals() {
         let mut dsl = RecipeNutritionDSL::new().await;
 
-        let plan = dsl.generate_weekly_meal_plan(
-            "balanced",
-            2000,
-            vec!["breakfast", "lunch", "dinner"],
-        ).await;
+        let plan = dsl
+            .generate_weekly_meal_plan("balanced", 2000, vec!["breakfast", "lunch", "dinner"])
+            .await;
 
         assert!(plan.days.len() == 7);
         assert!(plan.days.iter().all(|d| d.meals.len() == 3));
@@ -210,13 +198,13 @@ mod meal_plan_acceptancetests {
     async fn should_respect_calorie_limits_in_meal_plan() {
         let mut dsl = RecipeNutritionDSL::new().await;
 
-        let plan = dsl.generate_weekly_meal_plan(
-            "balanced",
-            2000,
-            vec!["breakfast", "lunch", "dinner"],
-        ).await;
+        let plan = dsl
+            .generate_weekly_meal_plan("balanced", 2000, vec!["breakfast", "lunch", "dinner"])
+            .await;
 
-        let total_calories: f64 = plan.days.iter()
+        let total_calories: f64 = plan
+            .days
+            .iter()
             .flat_map(|d| d.meals.iter())
             .map(|m| m.calories)
             .sum();

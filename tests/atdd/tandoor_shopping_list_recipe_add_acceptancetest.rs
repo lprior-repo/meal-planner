@@ -20,9 +20,7 @@ fn test_accepts_valid_input_from_stdin() {
     });
 
     let mut cmd = Command::cargo_bin(BINARY_NAME).unwrap();
-    cmd.write_stdin(input.to_string())
-        .assert()
-        .success();
+    cmd.write_stdin(input.to_string()).assert().success();
 }
 
 #[test]
@@ -38,9 +36,7 @@ fn test_accepts_valid_input_from_cli_arg() {
     });
 
     let mut cmd = Command::cargo_bin(BINARY_NAME).unwrap();
-    cmd.arg(input.to_string())
-        .assert()
-        .success();
+    cmd.arg(input.to_string()).assert().success();
 }
 
 #[test]
@@ -56,13 +52,17 @@ fn test_outputs_success_with_entries() {
     });
 
     let mut cmd = Command::cargo_bin(BINARY_NAME).unwrap();
-    let output = cmd.write_stdin(input.to_string())
+    let output = cmd
+        .write_stdin(input.to_string())
         .output()
         .expect("Failed to execute binary");
 
     assert!(output.status.success(), "Binary should succeed");
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("\"success\":true"), "Output should indicate success");
+    assert!(
+        stdout.contains("\"success\":true"),
+        "Output should indicate success"
+    );
 }
 
 #[test]
@@ -70,13 +70,20 @@ fn test_outputs_error_on_invalid_json() {
     let invalid_input = "{invalid json}";
 
     let mut cmd = Command::cargo_bin(BINARY_NAME).unwrap();
-    let output = cmd.write_stdin(invalid_input.to_string())
+    let output = cmd
+        .write_stdin(invalid_input.to_string())
         .output()
         .expect("Failed to execute binary");
 
-    assert!(!output.status.success(), "Binary should fail on invalid JSON");
+    assert!(
+        !output.status.success(),
+        "Binary should fail on invalid JSON"
+    );
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("\"success\":false"), "Output should indicate failure");
+    assert!(
+        stdout.contains("\"success\":false"),
+        "Output should indicate failure"
+    );
 }
 
 #[test]
@@ -90,11 +97,18 @@ fn test_outputs_error_on_missing_fields() {
     });
 
     let mut cmd = Command::cargo_bin(BINARY_NAME).unwrap();
-    let output = cmd.write_stdin(incomplete_input.to_string())
+    let output = cmd
+        .write_stdin(incomplete_input.to_string())
         .output()
         .expect("Failed to execute binary");
 
-    assert!(!output.status.success(), "Binary should fail on missing required fields");
+    assert!(
+        !output.status.success(),
+        "Binary should fail on missing required fields"
+    );
     let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("\"success\":false"), "Output should indicate failure");
+    assert!(
+        stdout.contains("\"success\":false"),
+        "Output should indicate failure"
+    );
 }
