@@ -5,7 +5,7 @@ use serde_json::json;
 use std::env;
 use std::process::Command;
 
-use crate::fatsecret::common::{expect_success, run_binary};
+use crate::fatsecret::common::run_binary;
 
 fn get_tandoor_creds() -> (String, String) {
     let base_url =
