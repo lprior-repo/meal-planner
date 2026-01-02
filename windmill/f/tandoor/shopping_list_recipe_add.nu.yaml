@@ -1,0 +1,6 @@
+summary: Add recipe to shopping list
+description: Adds a recipe with its meal plan to the shopping list
+lock: ''
+kind: script
+language: nushell
+schema: null

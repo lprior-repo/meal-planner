@@ -75,6 +75,34 @@ value:
           meal_plan_2_json:
             type: javascript
             expr: JSON.stringify(results.create_meal_plan_2)
+    - id: add_to_shopping_list_1
+      value:
+        type: script
+        path: f/tandoor/shopping_list_recipe_add
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+          mealplan_id:
+            type: javascript
+            expr: results.create_meal_plan_1.meal_plan.id
+          recipe_id:
+            type: javascript
+            expr: results.select_random.recipes[0].id
+    - id: add_to_shopping_list_2
+      value:
+        type: script
+        path: f/tandoor/shopping_list_recipe_add
+        input_transforms:
+          tandoor:
+            type: static
+            value: $res:u/admin/tandoor_api
+          mealplan_id:
+            type: javascript
+            expr: results.create_meal_plan_2.meal_plan.id
+          recipe_id:
+            type: javascript
+            expr: results.select_random.recipes[1].id
 
 schema:
   $schema: 'https://json-schema.org/draft-2020-12/schema'
