@@ -200,5 +200,8 @@ pub struct TestRecipe {
 pub struct NutritionResult {
     pub success: bool,
     pub calories: Option<f64>,
+    pub protein: Option<f64>,
+    pub fat: Option<f64>,
+    pub carbohydrate: Option<f64>,
     pub failed_ingredients: Vec<String>,
 }

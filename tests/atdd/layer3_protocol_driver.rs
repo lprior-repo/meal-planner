@@ -31,9 +31,6 @@ use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-pub mod fatsecret_driver;
-pub mod tandoor_driver;
-
 /// HTTP Protocol Types
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HttpRequest {
