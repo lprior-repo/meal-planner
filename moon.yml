@@ -59,18 +59,26 @@ tasks:
       cache: true
 
   validate-cue:
-    description: 'Validate CUE schema contracts'
+    description: 'Validate CUE schemas and Windmill YAML contracts'
     script: |
+      export PATH="/home/lewis/.local/share/mise/installs/cue/0.15.3:$PATH"
       if command -v cue >/dev/null 2>&1; then
-        echo "Validating CUE schemas..."
+        echo "=== CUE Schema Validation ==="
         cue vet schemas/cue/*.cue
-        echo "All CUE schemas valid"
+        echo "✓ All CUE schemas valid"
+        echo ""
+        echo "=== Windmill YAML Contract Validation ==="
+        ./scripts/validate-windmill-cue.sh
+        echo ""
+        echo "=== All Contracts Valid ==="
       else
         echo "WARN: CUE not installed, skipping schema validation"
-        echo "Install with: go install cuelang.org/go/cmd/cue@latest"
+        echo "Install with: mise install cue"
       fi
     inputs:
       - '@globs(schemas)'
+      - '@globs(windmill)'
+      - 'scripts/validate-windmill-cue.sh'
     options:
       cache: true
 
@@ -87,6 +95,7 @@ tasks:
     deps:
       - '~:fmt'
       - '~:clippy'
+      - '~:validate-cue'
     options:
       cache: true
 

@@ -32,8 +32,13 @@
 //!     assert_contains(&json, "12345");
 //! }
 //! ```
-
-#![cfg(test)]
+//!
+//! Test code allows certain clippy lints that are too strict for test utilities
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::return_self_not_must_use)]
+#![allow(clippy::option_if_let_else)]
+#![allow(clippy::cast_lossless)]
+// Note: #![cfg(test)] is set in mod.rs
 
 // Re-export testing libraries for convenience
 pub use pretty_assertions::{assert_eq, assert_ne};
@@ -403,12 +408,20 @@ impl WeightMonthSummaryBuilder {
 
     /// Add a day's weight measurement
     pub fn with_day(mut self, date_int: i32, weight_kg: f64) -> Self {
-        self.days.push(WeightDaySummary { date_int, weight_kg });
+        self.days.push(WeightDaySummary {
+            date_int,
+            weight_kg,
+        });
         self
     }
 
     /// Add multiple days with linear weight progression
-    pub fn with_linear_progression(mut self, start_weight: f64, end_weight: f64, days: i32) -> Self {
+    pub fn with_linear_progression(
+        mut self,
+        start_weight: f64,
+        end_weight: f64,
+        days: i32,
+    ) -> Self {
         let weight_change_per_day = (end_weight - start_weight) / (days as f64 - 1.0);
         for i in 0..days {
             self.days.push(WeightDaySummary {
