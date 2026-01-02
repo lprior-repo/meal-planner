@@ -35,6 +35,9 @@
 pub mod fatsecret;
 pub mod tandoor;
 
+// Workflow module - pure functions, type-safe
+pub mod workflows;
+
 // Test utilities - only compiled for tests
 #[cfg(test)]
 pub mod test_helpers;
