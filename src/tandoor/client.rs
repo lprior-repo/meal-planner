@@ -117,12 +117,16 @@ impl TandoorClient {
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
         
         // Extract host from base_url for Docker networking where host header validation may occur
+        // Handle URLs with or without authentication (e.g., http://user:pass@localhost:8080/path)
         let host = config
             .base_url
             .trim_start_matches("http://")
             .trim_start_matches("https://")
             .split('/')
             .next()
+            .unwrap_or("localhost")
+            .split('@')  // Remove authentication info if present
+            .last()
             .unwrap_or("localhost");
         
         headers.insert(
@@ -1898,8 +1902,7 @@ impl TandoorClient {
             Some("webp") => "image/webp",
             Some("pdf") => "application/pdf",
             _ => "application/octet-stream",
-        }
-        .to_string();
+        }.to_string();
 
         Ok((buffer, file_name, mime_type))
     }
