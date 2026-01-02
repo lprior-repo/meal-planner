@@ -6,6 +6,12 @@
 use super::errors::{RecipeImportError, RecipeImportResult};
 use serde::{Deserialize, Serialize};
 
+/// Common country-code TLDs to strip from domains
+const COUNTRY_CODE_TLDS: &[&str] = &[".com.au", ".co.uk", ".co.nz", ".co.za"];
+
+/// Common generic TLDs to strip from domains
+const GENERIC_TLDS: &[&str] = &[".com", ".org", ".net"];
+
 /// A URL that has been validated to be a real URL
 /// Type system guarantees it's valid - you can't construct one without validation
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -47,8 +53,7 @@ impl SourceTag {
         let mut domain = domain.trim_start_matches("www.");
         
         // Strip common TLDs including country-code TLDs (check most specific first)
-        let country_code_tlds = [".com.au", ".co.uk", ".co.nz", ".co.za"];
-        for tld in &country_code_tlds {
+        for tld in COUNTRY_CODE_TLDS {
             if let Some(stripped) = domain.strip_suffix(tld) {
                 domain = stripped;
                 break;
@@ -56,8 +61,7 @@ impl SourceTag {
         }
         
         // Then try generic TLDs
-        let generic_tlds = [".com", ".org", ".net"];
-        for tld in &generic_tlds {
+        for tld in GENERIC_TLDS {
             if let Some(stripped) = domain.strip_suffix(tld) {
                 domain = stripped;
                 break;
