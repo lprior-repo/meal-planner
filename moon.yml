@@ -24,6 +24,8 @@ fileGroups:
   windmill:
     - 'windmill/**/*.yaml'
     - 'windmill/**/*.sh'
+  schemas:
+    - 'schemas/cue/**/*.cue'
 
 tasks:
   # ============================================
@@ -53,6 +55,22 @@ tasks:
     command: 'yamllint -d relaxed windmill/'
     inputs:
       - '@globs(windmill)'
+    options:
+      cache: true
+
+  validate-cue:
+    description: 'Validate CUE schema contracts'
+    script: |
+      if command -v cue >/dev/null 2>&1; then
+        echo "Validating CUE schemas..."
+        cue vet schemas/cue/*.cue
+        echo "All CUE schemas valid"
+      else
+        echo "WARN: CUE not installed, skipping schema validation"
+        echo "Install with: go install cuelang.org/go/cmd/cue@latest"
+      fi
+    inputs:
+      - '@globs(schemas)'
     options:
       cache: true
 
@@ -176,6 +194,7 @@ tasks:
       - '~:fmt'
       - '~:clippy'
       - '~:validate-yaml'
+      - '~:validate-cue'
       - '~:test'
       - '~:build'
       - '~:copy-binaries'
@@ -187,6 +206,7 @@ tasks:
       - '~:fmt'
       - '~:clippy'
       - '~:validate-yaml'
+      - '~:validate-cue'
 
   # ============================================
   # Deployment

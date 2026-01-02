@@ -7,9 +7,10 @@ mold = "latest"
 sccache = "latest"
 cargo-binstall = "latest"
 yamllint = "latest"
+cue = "latest"
 
 # Moon for task orchestration with caching
-# Installed via cargo-binstall after mise install
+# Installed via npm: npm install -g @moonrepo/cli
 
 [env]
 # Load .env file first (for non-secret overrides)
