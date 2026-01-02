@@ -1,0 +1,6 @@
+summary: Format weekly meal plan output
+description: Combines recipes and meal plans into formatted output with full data
+lock: ''
+kind: script
+language: nushell
+schema: null

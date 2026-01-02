@@ -61,7 +61,7 @@ value:
     - id: format_output
       value:
         type: script
-        path: f/tandoor/format_meal_plan_output
+        path: f/tandoor/format_weekly_meal_plan
         input_transforms:
           recipes_json:
             type: javascript

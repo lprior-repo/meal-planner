@@ -733,6 +733,10 @@ name = "tandoor_ingredient_create"
 path = "src/bin/tandoor_ingredient_create.rs"
 
 [[bin]]
+name = "tandoor_format_weekly_meal_plan"
+path = "src/bin/tandoor_format_weekly_meal_plan.rs"
+
+[[bin]]
 name = "tandoor_ingredient_update"
 path = "src/bin/tandoor_ingredient_update.rs"
 
