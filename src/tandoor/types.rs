@@ -1681,7 +1681,7 @@ mod tests {
                     name: "tsp".to_string(),
                 }),
                 note: "freshly ground".to_string(),
-                original_text: "".to_string(),
+                original_text: String::new(),
             }],
             show_ingredients_table: true,
         }];

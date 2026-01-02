@@ -222,21 +222,21 @@ mod tests {
 
     #[test]
     fn test_convert_grams_known_units() {
-        assert_eq!(convert_to_grams(100.0, "g", ""), 100.0);
-        assert_eq!(convert_to_grams(1.0, "kg", ""), 1000.0);
-        assert_eq!(convert_to_grams(100.0, "ml", ""), 100.0);
-        assert_eq!(convert_to_grams(1.0, "l", ""), 1000.0);
+        assert!((convert_to_grams(100.0, "g", "") - 100.0).abs() < 0.001);
+        assert!((convert_to_grams(1.0, "kg", "") - 1000.0).abs() < 0.001);
+        assert!((convert_to_grams(100.0, "ml", "") - 100.0).abs() < 0.001);
+        assert!((convert_to_grams(1.0, "l", "") - 1000.0).abs() < 0.001);
         assert!((convert_to_grams(1.0, "oz", "") - 28.3495).abs() < 0.01);
         assert!((convert_to_grams(1.0, "lb", "") - 453.592).abs() < 0.01);
-        assert_eq!(convert_to_grams(1.0, "cup", ""), 240.0);
-        assert_eq!(convert_to_grams(1.0, "tbsp", ""), 15.0);
-        assert_eq!(convert_to_grams(1.0, "tsp", ""), 5.0);
+        assert!((convert_to_grams(1.0, "cup", "") - 240.0).abs() < 0.001);
+        assert!((convert_to_grams(1.0, "tbsp", "") - 15.0).abs() < 0.001);
+        assert!((convert_to_grams(1.0, "tsp", "") - 5.0).abs() < 0.001);
     }
 
     #[test]
     fn test_convert_grams_unknown_unit_returns_amount() {
-        assert_eq!(convert_to_grams(100.0, "piece", ""), 100.0);
-        assert_eq!(convert_to_grams(5.0, "whole", ""), 5.0);
+        assert!((convert_to_grams(100.0, "piece", "") - 100.0).abs() < 0.001);
+        assert!((convert_to_grams(5.0, "whole", "") - 5.0).abs() < 0.001);
     }
 
     #[test]
@@ -305,7 +305,7 @@ mod tests {
         let db = create_test_nutrition_db();
         let recipe = json!({});
         let result = calculate_recipe_nutrition(&recipe, &db);
-        assert_eq!(result.calories, 0.0);
+        assert!((result.calories - 0.0).abs() < 0.001);
     }
 
     #[test]
