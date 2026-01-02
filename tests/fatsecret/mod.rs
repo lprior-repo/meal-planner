@@ -23,5 +23,13 @@ pub mod fatsecret_recipe_binary_tests;
 pub mod fatsecret_recipe_favorites_tests;
 pub mod fatsecret_recipe_types_tests;
 
+pub mod food_tests;
+pub mod diary_tests;
+pub mod exercise_tests;
+pub mod recipe_tests;
+pub mod weight_tests;
+pub mod saved_meals_tests;
+pub mod oauth_tests;
+
 #[path = "../common.rs"]
 pub mod common;

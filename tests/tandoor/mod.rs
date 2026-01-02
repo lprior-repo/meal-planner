@@ -16,3 +16,8 @@ pub mod tandoor_supermarket_binary_tests;
 pub mod tandoor_space_binary_tests;
 pub mod tandoor_user_binary_tests;
 pub mod tandoor_unit_conversion_binary_tests;
+pub mod shopping_list_entry_tests;
+pub mod shopping_list_recipe_tests;
+
+#[path = "../common.rs"]
+pub mod common;

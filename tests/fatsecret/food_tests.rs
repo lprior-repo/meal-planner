@@ -6,8 +6,7 @@
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing)]
 
-mod common;
-use common::{get_fatsecret_credentials, run_binary, expect_success, expect_failure};
+use super::common::{get_fatsecret_credentials, run_binary, expect_failure};
 use serde_json::json;
 
 // =============================================================================
