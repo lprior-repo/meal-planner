@@ -79,6 +79,9 @@ impl RecipeNutritionDSL {
         NutritionResult {
             success: output.get("success").unwrap().as_bool().unwrap(),
             calories: output.get("calories").and_then(|v| v.as_f64()),
+            protein: output.get("protein").and_then(|v| v.as_f64()),
+            fat: output.get("fat").and_then(|v| v.as_f64()),
+            carbohydrate: output.get("carbohydrate").and_then(|v| v.as_f64()),
             failed_ingredients: output
                 .get("failed_ingredients")
                 .and_then(|v| v.as_array())

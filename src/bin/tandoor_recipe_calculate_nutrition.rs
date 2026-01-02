@@ -39,8 +39,6 @@
 
 #![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
-use meal_planner::fatsecret::core::config::FatSecretConfig;
-use meal_planner::fatsecret::foods::{get_food, search_foods_simple};
 use meal_planner::tandoor::nutrition::{extract_ingredient_info, scale_nutrition_to_grams};
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
