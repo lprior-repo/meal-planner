@@ -9,15 +9,13 @@
     clippy::unwrap_used,
     clippy::indexing_slicing,
     clippy::expect_used,
-    clippy::too_many_lines
+    clippy::too_many_lines,
+    clippy::unused_imports
 )]
 
 use std::sync::Arc;
 use tokio::task::spawn_blocking;
-use wiremock::{
-    matchers::{body_json, method, path, query_param},
-    Mock, MockServer, ResponseTemplate,
-};
+use wiremock::{Mock, MockServer, ResponseTemplate};
 use serde_json::json;
 
 // ============================================================================
@@ -77,8 +75,8 @@ async fn e2e_import_recipe_flow() {
     let mock_server = MockServer::start().await;
 
     // Step 1: Mock scrape_recipe response
-    Mock::given(method("POST"))
-        .and(path("/api/recipe-from-source/"))
+    Mock::given(wiremock::matchers::method("POST"))
+        .and(wiremock::matchers::path("/api/recipe-from-source/"))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "error": false,
             "msg": "Recipe scraped successfully",
@@ -108,8 +106,8 @@ async fn e2e_import_recipe_flow() {
         .await;
 
     // Step 2: Mock create_recipe response
-    Mock::given(method("POST"))
-        .and(path("/api/recipe/"))
+    Mock::given(wiremock::matchers::method("POST"))
+        .and(wiremock::matchers::path("/api/recipe/"))
         .respond_with(ResponseTemplate::new(201).set_body_json(json!({
             "id": 999,
             "name": "Test Recipe from Meatchurch"
@@ -210,8 +208,7 @@ fn e2e_flow_test_coverage() {
     println!("   [x] Scrape recipe from URL");
     println!("   [x] Derive source tag from domain");
     println!("   [x] Create recipe with auto-tagging");
-    println!("   [x] E2E test with mock API");
-    println!();
+    println!("   [x] E2E test with mock API\n");
 
     println!("✅ oauth_setup.flow:");
     println!("   [ ] Cannot fully E2E test (manual step required)");
@@ -224,7 +221,7 @@ fn e2e_flow_test_coverage() {
     println!();
 
     println!("⚠️  weekly_meal_plan.flow:");
-    println!("   [ ] Skipped (requires multiple binaries in sequence)");
+    println!("   [ ] Skipped (complex multi-step, unit tested elsewhere)");
     println!("   Note: All individual binaries are unit tested");
     println!();
 
