@@ -90,6 +90,7 @@ pub async fn make_oauth_request(
 }
 
 /// Validate request body size against DOS limits
+#[allow(clippy::arithmetic_side_effects)] // Safe: string lengths are bounded by memory
 fn validate_request_size(params: &HashMap<String, String>) -> Result<(), FatSecretError> {
     const MAX_REQUEST_SIZE: usize = 1024 * 1024; // 1MB for API requests
     let total_size: usize = params.iter().map(|(k, v)| k.len() + v.len()).sum();

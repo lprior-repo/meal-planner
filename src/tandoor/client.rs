@@ -1874,7 +1874,7 @@ impl TandoorClient {
         if let Some(o) = offset {
             // Convert offset to page number (1-indexed)
             let page_size = limit.unwrap_or(50);
-            #[allow(clippy::integer_division)]
+            #[allow(clippy::integer_division, clippy::arithmetic_side_effects)]
             let page = if page_size > 0 { o / page_size + 1 } else { 1 };
             params.push(format!("page={}", page));
         }

@@ -87,9 +87,9 @@ exit = "deny"                             # No std::process::exit
 assertions_on_result_states = "allow"     # assert!(x.is_ok()) allowed in tests
 assertions_on_constants = "deny"          # assert!(true) is pointless
 
-# Arithmetic that can panic (division by zero, etc.)
-# Note: This is VERY strict and may require many allows
-# arithmetic_side_effects = "warn"        # Disabled: too noisy, use checked_* methods
+# Arithmetic that can panic (division by zero, overflow, etc.)
+# STRICT: Require explicit checked_*/saturating_*/wrapping_* methods
+arithmetic_side_effects = "deny"          # DENY: Force explicit overflow handling
 
 # -----------------------------------------------------------------------------
 # EXPLICIT ERROR HANDLING - Like Gleam's Result type
@@ -146,7 +146,7 @@ single_match = "deny"                     # Consider if-let for single matches
 single_match_else = "deny"                # Consider if-let-else
 
 # -----------------------------------------------------------------------------
-# TYPE SAFETY - Like Gleam's strong static types  
+# TYPE SAFETY - Like Gleam's strong static types
 # -----------------------------------------------------------------------------
 cast_possible_truncation = "deny"         # ERROR on lossy integer casts
 cast_sign_loss = "deny"                   # ERROR on sign-changing casts
@@ -154,6 +154,9 @@ cast_precision_loss = "deny"              # ERROR on float precision loss
 cast_lossless = "deny"                    # Use .into() for lossless casts
 float_cmp = "deny"                        # No direct float == comparisons
 float_cmp_const = "deny"                  # No float == const comparisons
+ptr_as_ptr = "deny"                       # No pointer casts without as_ptr
+transmute_ptr_to_ref = "deny"             # No transmute to references
+as_conversions = "deny"                   # DENY: All `as` casts - use From/Into/TryFrom
 
 # -----------------------------------------------------------------------------
 # SAFE INDEXING - Like Gleam's list.at() returning Option
@@ -193,8 +196,21 @@ try_err = "deny"                          # Force ? propagation patterns
 # -----------------------------------------------------------------------------
 # NUMERIC SAFETY - Gleam has safe arithmetic
 # -----------------------------------------------------------------------------
-integer_division = "warn"                 # Warn on integer division (truncates)
-cast_possible_wrap = "deny"               # Deny casts that could wrap
+integer_division = "deny"                 # DENY: Integer division truncates - use checked_div
+cast_possible_wrap = "deny"               # DENY: Casts that could wrap
+as_underscore = "deny"                    # DENY: _ as Type hides conversions
+# default_numeric_fallback = "deny"       # Too strict for practical code - Rust inference is safe
+# float_arithmetic = "deny"               # Meal planning needs float math - allow it
+
+# -----------------------------------------------------------------------------
+# DETERMINISM - No runtime surprises, predictable behavior
+# -----------------------------------------------------------------------------
+fallible_impl_from = "deny"               # From should not panic - use TryFrom
+lossy_float_literal = "deny"              # No imprecise float literals
+string_lit_as_bytes = "deny"              # Prefer b"..." over "...".as_bytes()
+unnecessary_fallible_conversions = "deny" # Don't use TryFrom when From works
+rc_mutex = "deny"                         # Rc<Mutex> is usually wrong
+mutex_atomic = "deny"                     # Use atomics when possible
 
 # -----------------------------------------------------------------------------
 # CORRECTNESS GROUPS - Enable entire lint groups AS ERRORS
@@ -204,7 +220,7 @@ suspicious = { level = "deny", priority = -1 }    # Suspicious code patterns - C
 complexity = { level = "deny", priority = -1 }    # Overly complex code
 perf = { level = "deny", priority = -1 }          # Performance issues
 style = { level = "deny", priority = -1 }         # Style consistency
-nursery = { level = "warn", priority = -1 }       # Experimental lints (warn, not deny)
+nursery = { level = "deny", priority = -1 }       # Experimental lints - now DENY for strictness
 cargo = { level = "warn", priority = -1 }         # Cargo.toml best practices
 
 # -----------------------------------------------------------------------------
@@ -738,6 +754,7 @@ sqlx-cli = ["dep:sqlx-cli"]
 opt-level = 0
 incremental = true
 debug = 0                          # Skip DWARF, faster link
+overflow-checks = true             # CRITICAL: Panic on overflow in dev too
 
 [profile.dev.package."*"]
 opt-level = 2                      # Optimize dependencies
@@ -746,6 +763,7 @@ opt-level = 2                      # Optimize dependencies
 opt-level = 0
 debug = 0
 incremental = true
+overflow-checks = true             # CRITICAL: Panic on overflow in tests
 
 [dev-dependencies]
 wiremock = "0.6"

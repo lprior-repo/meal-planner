@@ -28,6 +28,7 @@ impl TokenStorage {
     ///
     /// These tokens are temporary and used during 3-legged OAuth flow.
     /// They expire after 15 minutes.
+    #[allow(clippy::arithmetic_side_effects)] // Safe: chrono Duration addition is bounded
     pub async fn store_pending_token(&self, token: &RequestToken) -> Result<(), StorageError> {
         let expires_at = Utc::now() + Duration::minutes(15);
 
@@ -235,7 +236,7 @@ impl TokenStorage {
                 Ok(TokenValidity::Valid)
             } else {
                 // Safe: days_since is bounded by realistic dates (won't overflow i32)
-                #[allow(clippy::cast_possible_truncation)]
+                #[allow(clippy::cast_possible_truncation, clippy::as_conversions)]
                 Ok(TokenValidity::Old {
                     days_since_connected: days_since as i32,
                 })

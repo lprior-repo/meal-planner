@@ -17,10 +17,13 @@
     clippy::unwrap_used,
     clippy::indexing_slicing,
     clippy::expect_used,
+    clippy::panic,
     clippy::cast_possible_wrap,
     clippy::integer_division,
     clippy::too_many_lines,
-    clippy::ignored_unit_patterns
+    clippy::ignored_unit_patterns,
+    clippy::arithmetic_side_effects,
+    clippy::as_conversions
 )]
 
 use serde_json::{json, Value};

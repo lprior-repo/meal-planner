@@ -25,11 +25,13 @@
 // Warn on types that shouldn't be held across await points
 #![warn(must_not_suspend)]
 // =============================================================================
-// TEST CODE - Allow panics in tests (that's how test failures work)
+// TEST CODE - Allow panics and arithmetic in tests (that's how test failures work)
 // =============================================================================
 #![cfg_attr(test, allow(clippy::unwrap_used))]
 #![cfg_attr(test, allow(clippy::expect_used))]
 #![cfg_attr(test, allow(clippy::panic))]
+#![cfg_attr(test, allow(clippy::arithmetic_side_effects))]
+#![cfg_attr(test, allow(clippy::as_conversions))]
 
 // API client modules
 pub mod fatsecret;

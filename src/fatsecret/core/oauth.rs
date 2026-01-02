@@ -269,6 +269,8 @@ pub fn unix_timestamp() -> u64 {
 /// RFC 3986 percent-encoding for OAuth 1.0a
 ///
 /// Must encode all characters except: A-Z a-z 0-9 - . _ ~
+#[allow(clippy::arithmetic_side_effects, clippy::as_conversions)]
+// Safe: byte values 0-255, nibbles 0-15, ASCII char arithmetic is bounded
 pub fn oauth_encode(s: &str) -> String {
     let mut result = String::new();
     for byte in s.bytes() {

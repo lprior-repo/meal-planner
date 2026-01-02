@@ -19,6 +19,8 @@
 #![allow(clippy::panic)]
 #![allow(clippy::wildcard_enum_match_arm)]
 #![allow(clippy::inefficient_to_string)]
+#![allow(clippy::arithmetic_side_effects)]
+#![allow(clippy::as_conversions)]
 
 use chrono::{Duration, Utc};
 use meal_planner::fatsecret::{

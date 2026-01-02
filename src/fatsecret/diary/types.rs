@@ -540,6 +540,7 @@ pub struct MonthSummary {
 const UNIX_EPOCH_DATE: (i32, u32, u32) = (1970, 1, 1);
 
 /// Convert YYYY-MM-DD to days since epoch (`date_int`)
+#[allow(clippy::arithmetic_side_effects)] // Safe: chrono date subtraction is bounded
 pub fn date_to_int(date: &str) -> Result<i32, String> {
     use chrono::NaiveDate;
 
