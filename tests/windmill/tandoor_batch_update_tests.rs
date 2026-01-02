@@ -153,8 +153,14 @@ fn test_windmill_recipe_batch_update_yaml_valid() {
     let yaml_path = "windmill/f/tandoor/recipe_batch_update.script.yaml";
     let content = std::fs::read_to_string(yaml_path).expect("Should read yaml file");
 
-    assert!(content.contains("language: bash"), "Should specify bash language");
-    assert!(content.contains("kind: script"), "Should specify script kind");
+    assert!(
+        content.contains("language: bash"),
+        "Should specify bash language"
+    );
+    assert!(
+        content.contains("kind: script"),
+        "Should specify script kind"
+    );
     assert!(content.contains("summary:"), "Should have summary");
 }
 
@@ -164,10 +170,7 @@ fn test_windmill_recipe_batch_update_schema_valid() {
     let yaml_path = "windmill/f/tandoor/recipe_batch_update.script.yaml";
     let content = std::fs::read_to_string(yaml_path).expect("Should read yaml file");
 
-    assert!(
-        content.contains("schema:"),
-        "Should have schema definition"
-    );
+    assert!(content.contains("schema:"), "Should have schema definition");
     assert!(
         content.contains("tandoor"),
         "Schema should require tandoor field"

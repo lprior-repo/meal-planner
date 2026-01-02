@@ -6,6 +6,7 @@
 //! ```json
 //! {
 //!   "tandoor": {"base_url": "...", "api_token": "..."},
+//!   "fatsecret": {"consumer_key": "...", "consumer_secret": "..."},
 //!   "recipe_id": 123
 //! }
 //! ```
@@ -16,8 +17,11 @@
 //!   "success": true,
 //!   "recipe_id": 123,
 //!   "recipe_name": "Recipe Name",
-//!   "nutrition": {"calories": 0.0, "protein": 0.0, "carbohydrate": 0.0, "fat": 0.0},
-//!   "ingredient_count": 0,
+//!   "calories": 330.0,
+//!   "protein": 31.0,
+//!   "fat": 3.6,
+//!   "carbohydrate": 0.0,
+//!   "ingredient_count": 3,
 //!   "failed_ingredients": []
 //! }
 //! ```
@@ -30,11 +34,13 @@
 //! ## Nutrition Sources
 //!
 //! This binary supports two modes:
-//! 1. **FatSecret lookup** - Uses FatSecret API to look up ingredient nutrition
+//! 1. **FatSecret lookup** - Uses FatSecret API to look up ingredient nutrition (when fatsecret config provided)
 //! 2. **Property-based** - Uses nutrition properties already stored in Tandoor
 
 #![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
+use meal_planner::fatsecret::core::config::FatSecretConfig;
+use meal_planner::fatsecret::foods::{get_food, search_foods_simple};
 use meal_planner::tandoor::nutrition::{extract_ingredient_info, scale_nutrition_to_grams};
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
 use serde::{Deserialize, Serialize};
@@ -42,8 +48,15 @@ use serde_json::json;
 use std::io::{self, Read};
 
 #[derive(Deserialize)]
+struct FatSecretInput {
+    consumer_key: String,
+    consumer_secret: String,
+}
+
+#[derive(Deserialize)]
 struct Input {
     tandoor: TandoorConfig,
+    fatsecret: Option<FatSecretInput>,
     recipe_id: i64,
 }
 
@@ -52,17 +65,14 @@ struct Output {
     success: bool,
     recipe_id: i64,
     recipe_name: String,
-    nutrition: Nutrition,
-    ingredient_count: usize,
-    failed_ingredients: Vec<String>,
-}
-
-#[derive(Serialize, Default)]
-struct Nutrition {
     calories: f64,
     protein: f64,
-    carbohydrate: f64,
     fat: f64,
+    carbohydrate: f64,
+    ingredient_count: usize,
+    failed_ingredients: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    error: Option<String>,
 }
 
 fn main() {
@@ -72,7 +82,10 @@ fn main() {
             serde_json::to_string(&output).expect("Failed to serialize output JSON")
         ),
         Err(e) => {
-            println!("{{\"success\":false,\"error\":\"{}\"}}", e);
+            println!(
+                "{{\"success\":false,\"error\":\"{}\"}}",
+                serde_json::to_string(&e).unwrap_or_else(|_| e)
+            );
             std::process::exit(1);
         }
     }
@@ -90,16 +103,27 @@ fn run() -> Result<Output, String> {
         .and_then(|s| s.as_array())
         .ok_or("No steps found in recipe")?;
 
-    let (nutrition, ingredient_count, failed_ingredients) =
-        calculate_recipe_nutrition(&recipe, steps)?;
+    let fatsecret_config = match input.fatsecret {
+        Some(fs) => Some(
+            FatSecretConfig::new(fs.consumer_key, fs.consumer_secret).map_err(|e| e.to_string())?,
+        ),
+        None => None,
+    };
+
+    let (calories, protein, fat, carbohydrate, ingredient_count, failed_ingredients) =
+        calculate_recipe_nutrition(&recipe, steps, fatsecret_config.as_ref())?;
 
     Ok(Output {
         success: true,
         recipe_id: input.recipe_id,
         recipe_name,
-        nutrition,
+        calories,
+        protein,
+        fat,
+        carbohydrate,
         ingredient_count,
         failed_ingredients,
+        error: None,
     })
 }
 
@@ -122,8 +146,12 @@ fn get_recipe_name(recipe: &serde_json::Value) -> String {
 fn calculate_recipe_nutrition(
     recipe: &serde_json::Value,
     steps: &[serde_json::Value],
-) -> Result<(Nutrition, usize, Vec<String>), String> {
-    let mut nutrition = Nutrition::default();
+    fatsecret_config: Option<&FatSecretConfig>,
+) -> Result<(f64, f64, f64, f64, usize, Vec<String>), String> {
+    let mut total_calories = 0.0;
+    let mut total_protein = 0.0;
+    let mut total_fat = 0.0;
+    let mut total_carbohydrate = 0.0;
     let mut ingredient_count = 0usize;
     let mut failed_ingredients = Vec::new();
 
@@ -132,91 +160,137 @@ fn calculate_recipe_nutrition(
         if let Some(ings) = ingredients {
             for ingredient in ings {
                 ingredient_count += 1;
-                match calculate_single_ingredient_nutrition(recipe, ingredient) {
-                    Ok(ing_nutrition) => add_nutrition(&mut nutrition, ing_nutrition),
-                    Err(_) => add_failed_ingredient(ingredient, &mut failed_ingredients),
+                match calculate_single_ingredient_nutrition(ingredient, fatsecret_config) {
+                    Ok(nutrition) => {
+                        total_calories += nutrition.0;
+                        total_protein += nutrition.1;
+                        total_fat += nutrition.2;
+                        total_carbohydrate += nutrition.3;
+                    }
+                    Err(name) => {
+                        failed_ingredients.push(name);
+                    }
                 }
             }
         }
     }
 
-    Ok((nutrition, ingredient_count, failed_ingredients))
+    Ok((
+        total_calories,
+        total_protein,
+        total_fat,
+        total_carbohydrate,
+        ingredient_count,
+        failed_ingredients,
+    ))
 }
 
 fn calculate_single_ingredient_nutrition(
-    recipe: &serde_json::Value,
     ingredient: &serde_json::Value,
-) -> Result<Nutrition, String> {
+    fatsecret_config: Option<&FatSecretConfig>,
+) -> Result<(f64, f64, f64, f64), String> {
     let amount = ingredient
         .get("amount")
         .and_then(|a| a.as_f64())
         .unwrap_or(0.0);
-    let _food = ingredient.get("food").ok_or("Ingredient has no food")?;
 
-    let properties = get_food_properties(recipe)?;
-    let serving_size = get_serving_size(&properties);
-    let serving_nutrition = build_serving_nutrition(&properties);
-    let scaled = scale_nutrition_to_grams(&serving_nutrition, serving_size, amount);
+    let (food_name, _, unit) = extract_ingredient_info(ingredient);
+    if food_name.is_empty() {
+        return Err("Unknown".to_string());
+    }
 
-    extract_nutrition_from_scaled(&scaled)
+    // First try to get nutrition from stored properties
+    if let Some(props) = ingredient.get("food").and_then(|f| f.get("properties")) {
+        if let Some(nutrition) = get_stored_nutrition(props) {
+            let serving_size = props
+                .get("serving_size_grams")
+                .and_then(|s| s.as_f64())
+                .unwrap_or(100.0);
+            let target_grams = convert_to_grams(amount, &unit, &food_name);
+            let scaled = scale_nutrition_to_grams(&nutrition, serving_size, target_grams);
+            return extract_nutrition_from_scaled(&scaled);
+        }
+    }
+
+    // If FatSecret config is provided, look up nutrition
+    if let Some(config) = fatsecret_config {
+        match lookup_nutrition_from_fatsecret(config, &food_name).await {
+            Ok((serving_size, nutrition)) => {
+                let target_grams = convert_to_grams(amount, &unit, &food_name);
+                let scaled = scale_nutrition_to_grams(&nutrition, serving_size, target_grams);
+                return extract_nutrition_from_scaled(&scaled);
+            }
+            Err(_) => {
+                return Err(food_name);
+            }
+        }
+    }
+
+    Err(food_name)
 }
 
-fn get_serving_size(properties: &serde_json::Value) -> f64 {
-    properties
-        .get("serving_size_grams")
-        .and_then(|s| s.as_f64())
-        .unwrap_or(100.0)
+fn get_stored_nutrition(props: &serde_json::Value) -> Option<serde_json::Value> {
+    let calories = props.get("calories")?.as_f64()?;
+    let protein = props.get("protein")?.as_f64()?;
+    let fat = props.get("fat")?.as_f64()?;
+    let carbohydrate = props.get("carbohydrate")?.as_f64()?;
+
+    Some(json!({
+        "calories": calories,
+        "protein": protein,
+        "carbohydrate": carbohydrate,
+        "fat": fat,
+    }))
 }
 
-fn build_serving_nutrition(properties: &serde_json::Value) -> serde_json::Value {
-    json!({
-        "calories": properties.get("calories").and_then(|c| c.as_f64()).unwrap_or(0.0),
-        "protein": properties.get("protein").and_then(|p| p.as_f64()).unwrap_or(0.0),
-        "carbohydrate": properties.get("carbohydrate").and_then(|c| c.as_f64()).unwrap_or(0.0),
-        "fat": properties.get("fat").and_then(|f| f.as_f64()).unwrap_or(0.0),
-    })
+async fn lookup_nutrition_from_fatsecret(
+    config: &FatSecretConfig,
+    food_name: &str,
+) -> Result<(f64, serde_json::Value), String> {
+    let search_results = search_foods_simple(config, food_name)
+        .await
+        .map_err(|_| "Search failed".to_string())?;
+
+    let first_food = search_results.foods.first().ok_or("No foods found")?;
+    let food = get_food(config, &first_food.food_id)
+        .await
+        .map_err(|_| "Get food failed".to_string())?;
+
+    let serving = food.servings.serving.first().ok_or("No servings")?;
+    let serving_size = serving.metric_serving_amount.unwrap_or(100.0);
+
+    let nutrition = json!({
+        "calories": serving.nutrition.calories,
+        "protein": serving.nutrition.protein,
+        "carbohydrate": serving.nutrition.carbohydrate,
+        "fat": serving.nutrition.fat,
+    });
+
+    Ok((serving_size, nutrition))
 }
 
-fn extract_nutrition_from_scaled(scaled: &serde_json::Value) -> Result<Nutrition, String> {
-    Ok(Nutrition {
-        calories: scaled
+fn convert_to_grams(amount: f64, unit: &str, ingredient_name: &str) -> f64 {
+    meal_planner::tandoor::nutrition::convert_to_grams(amount, unit, ingredient_name)
+}
+
+fn extract_nutrition_from_scaled(
+    scaled: &serde_json::Value,
+) -> Result<(f64, f64, f64, f64), String> {
+    Ok((
+        scaled
             .get("calories")
             .and_then(|c| c.as_f64())
             .unwrap_or(0.0),
-        protein: scaled
+        scaled
             .get("protein")
             .and_then(|p| p.as_f64())
             .unwrap_or(0.0),
-        carbohydrate: scaled
+        scaled.get("fat").and_then(|f| f.as_f64()).unwrap_or(0.0),
+        scaled
             .get("carbohydrate")
             .and_then(|c| c.as_f64())
             .unwrap_or(0.0),
-        fat: scaled.get("fat").and_then(|f| f.as_f64()).unwrap_or(0.0),
-    })
-}
-
-fn get_food_properties(recipe: &serde_json::Value) -> Result<serde_json::Value, String> {
-    let nutrition_prop = recipe.get("nutrition");
-    if let Some(nut) = nutrition_prop {
-        if nut.is_object() && !nut.is_null() {
-            return Ok(nut.clone());
-        }
-    }
-    Ok(json!({}))
-}
-
-fn add_nutrition(total: &mut Nutrition, addition: Nutrition) {
-    total.calories += addition.calories;
-    total.protein += addition.protein;
-    total.carbohydrate += addition.carbohydrate;
-    total.fat += addition.fat;
-}
-
-fn add_failed_ingredient(ingredient: &serde_json::Value, failed: &mut Vec<String>) {
-    let (name, _, _) = extract_ingredient_info(ingredient);
-    if !name.is_empty() {
-        failed.push(name);
-    }
+    ))
 }
 
 #[cfg(test)]
