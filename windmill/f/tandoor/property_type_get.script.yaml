@@ -1,0 +1,21 @@
+summary: Get property type by ID
+description: Retrieves a specific property type from Tandoor
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    property_type_id:
+      type: string
+      description: Property type ID
+      default: null
+      originalType: integer
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - property_type_id

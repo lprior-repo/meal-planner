@@ -93,6 +93,8 @@ pub enum TandoorError {
     #[error("Failed to parse response: {0}")]
     ParseError(String),
 
+    #[error("File error: {0}")]
+    FileError(String),
     #[error("Request too large: {size} bytes exceeds limit of {limit} bytes")]
     RequestTooLarge { size: u64, limit: u64 },
 }
@@ -115,8 +117,25 @@ impl TandoorClient {
                 .map_err(|e| TandoorError::AuthError(e.to_string()))?,
         );
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
-        // Required for Docker networking where host header validation may occur
-        headers.insert("Host", HeaderValue::from_static("localhost"));
+        
+        // Extract host from base_url for Docker networking where host header validation may occur
+        // Handle URLs with or without authentication (e.g., http://user:pass@localhost:8080/path)
+        let host = config
+            .base_url
+            .trim_start_matches("http://")
+            .trim_start_matches("https://")
+            .split('/')
+            .next()
+            .unwrap_or("localhost")
+            .split('@')  // Remove authentication info if present
+            .last()
+            .unwrap_or("localhost");
+        
+        headers.insert(
+            "Host",
+            HeaderValue::from_str(host)
+                .map_err(|e| TandoorError::AuthError(format!("Invalid host: {}", e)))?,
+        );
 
         let client = Client::builder()
             .timeout(std::time::Duration::from_secs(30))
@@ -1892,6 +1911,362 @@ impl TandoorClient {
             .json()
             .map_err(|e| TandoorError::ParseError(e.to_string()))?;
         Ok(paginated.results)
+    }
+
+    /// Helper method to read a file and detect its MIME type
+    ///
+    /// Returns (file_data, file_name, mime_type)
+    fn read_file_with_mime(
+        &self,
+        file_path: &str,
+    ) -> Result<(Vec<u8>, String, String), TandoorError> {
+        use std::fs::File;
+        use std::io::Read;
+        use std::path::Path;
+
+        let path = Path::new(file_path);
+        let file_name = path
+            .file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or("file")
+            .to_string();
+
+        let mut file = File::open(path)
+            .map_err(|e| TandoorError::FileError(format!("Failed to open file: {}", e)))?;
+
+        let mut buffer = Vec::new();
+        file.read_to_end(&mut buffer)
+            .map_err(|e| TandoorError::FileError(format!("Failed to read file: {}", e)))?;
+
+        // Detect MIME type from extension
+        let mime_type = match path.extension().and_then(|e| e.to_str()) {
+            Some("jpg" | "jpeg") => "image/jpeg",
+            Some("png") => "image/png",
+            Some("gif") => "image/gif",
+            Some("webp") => "image/webp",
+            Some("pdf") => "application/pdf",
+            _ => "application/octet-stream",
+        }.to_string();
+
+        Ok((buffer, file_name, mime_type))
+    }
+
+    /// Upload an image for a recipe
+    ///
+    /// This uploads an image file to a recipe using multipart form-data.
+    /// The image is sent as `image` field in the multipart request.
+    pub fn upload_recipe_image(
+        &self,
+        recipe_id: i64,
+        image_path: &str,
+    ) -> Result<RecipeImage, TandoorError> {
+        use reqwest::blocking::multipart::{Form, Part};
+
+        let url = format!("{}/api/recipe/{}/image/", self.base_url, recipe_id);
+
+        // Read file and detect MIME type using helper
+        let (buffer, file_name, mime_type) = self.read_file_with_mime(image_path)?;
+
+        // Create multipart form with the image
+        let part = Part::bytes(buffer)
+            .file_name(file_name)
+            .mime_str(&mime_type)
+            .map_err(|e| TandoorError::ParseError(format!("Invalid MIME type: {}", e)))?;
+
+        let form = Form::new().part("image", part);
+
+        // Build request using the shared client; reqwest sets Content-Type for multipart
+        let response = self
+            .client
+            .put(&url)
+            .header(AUTHORIZATION, format!("Bearer {}", self.get_token()))
+            .timeout(std::time::Duration::from_secs(60))
+            .multipart(form)
+            .send()?;
+
+        let status = response.status();
+
+        if status.as_u16() == 401 || status.as_u16() == 403 {
+            let body = response.text().unwrap_or_default();
+            return Err(TandoorError::AuthError(body));
+        }
+
+        if !status.is_success() {
+            let body = response.text().unwrap_or_default();
+            return Err(TandoorError::ApiError {
+                status: status.as_u16(),
+                message: body,
+            });
+        }
+
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Import a recipe from an image or PDF using AI
+    ///
+    /// This sends a file to Tandoor's AI import endpoint which uses OCR/AI
+    /// to extract recipe data from images or PDFs.
+    pub fn ai_import(
+        &self,
+        file_path: &str,
+        ai_provider_id: i64,
+        recipe_id: Option<i64>,
+    ) -> Result<AiImportResponse, TandoorError> {
+        use reqwest::blocking::multipart::{Form, Part};
+
+        let url = format!("{}/api/ai-import/", self.base_url);
+
+        // Read file and detect MIME type using helper
+        let (buffer, file_name, mime_type) = self.read_file_with_mime(file_path)?;
+
+        // Create multipart form with the file
+        let part = Part::bytes(buffer)
+            .file_name(file_name)
+            .mime_str(&mime_type)
+            .map_err(|e| TandoorError::ParseError(format!("Invalid MIME type: {}", e)))?;
+
+        let mut form = Form::new()
+            .part("file", part)
+            .text("ai_provider_id", ai_provider_id.to_string());
+
+        if let Some(rid) = recipe_id {
+            form = form.text("recipe_id", rid.to_string());
+        }
+
+        // Build request using the shared client; reqwest sets Content-Type for multipart
+        let response = self
+            .client
+            .post(&url)
+            .header(AUTHORIZATION, format!("Bearer {}", self.get_token()))
+            .timeout(std::time::Duration::from_secs(120)) // Longer timeout for AI processing
+            .multipart(form)
+            .send()?;
+
+        let status = response.status();
+
+        if status.as_u16() == 401 || status.as_u16() == 403 {
+            let body = response.text().unwrap_or_default();
+            return Err(TandoorError::AuthError(body));
+        }
+
+        if !status.is_success() {
+            let body = response.text().unwrap_or_default();
+            return Err(TandoorError::ApiError {
+                status: status.as_u16(),
+                message: body,
+            });
+        }
+
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    // ========================================================================
+    // Property Type Methods
+    // ========================================================================
+
+    /// List property types with optional pagination
+    pub fn list_property_types(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<PropertyType>, TandoorError> {
+        let mut url = format!("{}/api/property-type/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a property type by ID
+    pub fn get_property_type(&self, id: i64) -> Result<PropertyType, TandoorError> {
+        let url = format!("{}/api/property-type/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a property type
+    pub fn create_property_type(
+        &self,
+        request: &CreatePropertyTypeRequest,
+    ) -> Result<PropertyType, TandoorError> {
+        let url = format!("{}/api/property-type/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a property type
+    pub fn update_property_type(
+        &self,
+        id: i64,
+        request: &UpdatePropertyTypeRequest,
+    ) -> Result<PropertyType, TandoorError> {
+        let url = format!("{}/api/property-type/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a property type
+    pub fn delete_property_type(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/property-type/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    // ========================================================================
+    // Property Methods
+    // ========================================================================
+
+    /// List properties with optional pagination
+    pub fn list_properties(
+        &self,
+        page: Option<u32>,
+        page_size: Option<u32>,
+    ) -> Result<PaginatedResponse<Property>, TandoorError> {
+        let mut url = format!("{}/api/property/", self.base_url);
+        let mut params = Vec::new();
+        if let Some(p) = page {
+            params.push(format!("page={}", p));
+        }
+        if let Some(ps) = page_size {
+            params.push(format!("page_size={}", ps));
+        }
+        if !params.is_empty() {
+            url = format!("{}?{}", url, params.join("&"));
+        }
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Get a property by ID
+    pub fn get_property(&self, id: i64) -> Result<Property, TandoorError> {
+        let url = format!("{}/api/property/{}/", self.base_url, id);
+        let response = self.client.get(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Create a property
+    pub fn create_property(
+        &self,
+        request: &CreatePropertyRequest,
+    ) -> Result<Property, TandoorError> {
+        let url = format!("{}/api/property/", self.base_url);
+        let response = self.client.post(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Update a property
+    pub fn update_property(
+        &self,
+        id: i64,
+        request: &UpdatePropertyRequest,
+    ) -> Result<Property, TandoorError> {
+        let url = format!("{}/api/property/{}/", self.base_url, id);
+        let response = self.client.patch(&url).json(request).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        response
+            .json()
+            .map_err(|e| TandoorError::ParseError(e.to_string()))
+    }
+
+    /// Delete a property
+    pub fn delete_property(&self, id: i64) -> Result<(), TandoorError> {
+        let url = format!("{}/api/property/{}/", self.base_url, id);
+        let response = self.client.delete(&url).send()?;
+        if !response.status().is_success() {
+            return Err(TandoorError::ApiError {
+                status: response.status().as_u16(),
+                message: response.text().unwrap_or_default(),
+            });
+        }
+        Ok(())
+    }
+
+    /// Get the API token (helper for multipart requests that need a fresh client)
+    fn get_token(&self) -> String {
+        self.headers
+            .get(AUTHORIZATION)
+            .and_then(|v| v.to_str().ok())
+            .map(|s| s.trim_start_matches("Bearer ").to_string())
+            .unwrap_or_default()
     }
 }
 

@@ -248,7 +248,7 @@ use_self = "allow"                        # Self vs TypeName is style, not safet
 
 [dependencies]
 # HTTP client
-reqwest = { version = "0.12", features = ["json", "blocking"] }
+reqwest = { version = "0.12", features = ["json", "blocking", "multipart"] }
 
 # Async runtime (only needed for lib, not binaries)
 tokio = { version = "1.0", features = ["full"], optional = false }
@@ -448,6 +448,10 @@ path = "src/bin/tandoor_keyword_list.rs"
 [[bin]]
 name = "tandoor_keyword_create"
 path = "src/bin/tandoor_keyword_create.rs"
+
+[[bin]]
+name = "tandoor_keyword_get"
+path = "src/bin/tandoor_keyword_get.rs"
 
 [[bin]]
 name = "tandoor_keyword_update"
@@ -730,6 +734,52 @@ path = "src/bin/tandoor_ingredient_delete.rs"
 [[bin]]
 name = "tandoor_ingredient_from_string"
 path = "src/bin/tandoor_ingredient_from_string.rs"
+
+[[bin]]
+name = "tandoor_ai_import"
+path = "src/bin/tandoor_ai_import.rs"
+
+# Property Type binaries
+[[bin]]
+name = "tandoor_property_type_list"
+path = "src/bin/tandoor_property_type_list.rs"
+
+[[bin]]
+name = "tandoor_property_type_get"
+path = "src/bin/tandoor_property_type_get.rs"
+
+[[bin]]
+name = "tandoor_property_type_create"
+path = "src/bin/tandoor_property_type_create.rs"
+
+[[bin]]
+name = "tandoor_property_type_update"
+path = "src/bin/tandoor_property_type_update.rs"
+
+[[bin]]
+name = "tandoor_property_type_delete"
+path = "src/bin/tandoor_property_type_delete.rs"
+
+# Property binaries
+[[bin]]
+name = "tandoor_property_list"
+path = "src/bin/tandoor_property_list.rs"
+
+[[bin]]
+name = "tandoor_property_get"
+path = "src/bin/tandoor_property_get.rs"
+
+[[bin]]
+name = "tandoor_property_create"
+path = "src/bin/tandoor_property_create.rs"
+
+[[bin]]
+name = "tandoor_property_update"
+path = "src/bin/tandoor_property_update.rs"
+
+[[bin]]
+name = "tandoor_property_delete"
+path = "src/bin/tandoor_property_delete.rs"
 
 [features]
 sqlx-cli = ["dep:sqlx-cli"]
