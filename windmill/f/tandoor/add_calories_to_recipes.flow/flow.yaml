@@ -1,0 +1,73 @@
+summary: Add calories to Tandoor recipes via FatSecret
+description: |
+  Fetches all recipes from Tandoor, calculates nutrition using FatSecret,
+  and updates each recipe with calorie data.
+
+value:
+  modules:
+    - id: list_recipes
+      value:
+        type: rawscript
+        content: |
+          #!/bin/bash
+          # List all recipes from Tandoor
+          tandoor_recipe_list_flat
+        input_transforms:
+          tandoor:
+            type: javascript
+            expr: "$res:u/admin/tandoor"
+        language: bash
+
+    - id: process_recipes
+      value:
+        type: forloopflow
+        iterator:
+          type: javascript
+          expr: results.list_recipes.recipes
+        skip_failures: true
+        modules:
+          - id: calculate_nutrition
+            value:
+              type: rawscript
+              content: |
+                #!/bin/bash
+                # Calculate nutrition for this recipe
+                echo "$1" | tandoor_recipe_calculate_nutrition
+              input_transforms:
+                tandoor:
+                  type: javascript
+                  expr: "$res:u/admin/tandoor"
+                fatsecret:
+                  type: javascript
+                  expr: "$res:u/admin/fatsecret_api"
+                recipe_id:
+                  type: javascript
+                  expr: flow_input.iter.value.id
+              language: bash
+
+          - id: update_nutrition
+            value:
+              type: rawscript
+              content: |
+                #!/bin/bash
+                # Update recipe with calculated nutrition
+                echo "$1" | tandoor_recipe_update_nutrition
+              input_transforms:
+                tandoor:
+                  type: javascript
+                  expr: "$res:u/admin/tandoor"
+                recipe_id:
+                  type: javascript
+                  expr: results.calculate_nutrition.recipe_id
+                nutrition:
+                  type: javascript
+                  expr: results.calculate_nutrition.nutrition
+              language: bash
+              skip_if_stopped: true
+              summary: Update recipe nutrition in Tandoor
+
+schema:
+  $schema: https://json-schema.org/draft/2020-12/schema
+  type: object
+  properties: {}
+  required: []

@@ -17,16 +17,19 @@
     clippy::too_many_lines
 )]
 
-use wiremock::{Mock, MockServer, ResponseTemplate};
 use serde_json::json;
+use wiremock::{Mock, MockServer, ResponseTemplate};
 
 fn run_binary(name: &str, input: &serde_json::Value) -> serde_json::Value {
-    use std::process::Command;
     use std::path::Path;
+    use std::process::Command;
 
     let binary_path = format!("target/release/{}", name);
     if !Path::new(&binary_path).exists() {
-        panic!("Binary not found: {}. Run 'cargo build --release' first.", binary_path);
+        panic!(
+            "Binary not found: {}. Run 'cargo build --release' first.",
+            binary_path
+        );
     }
 
     let input_str = serde_json::to_string(input).expect("Failed to serialize input");
@@ -37,13 +40,17 @@ fn run_binary(name: &str, input: &serde_json::Value) -> serde_json::Value {
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     if !output.status.success() {
-        panic!("Binary {} failed: {}",
+        panic!(
+            "Binary {} failed: {}",
             name,
-            String::from_utf8_lossy(&output.stderr));
+            String::from_utf8_lossy(&output.stderr)
+        );
     }
 
-    serde_json::from_str(&stdout)
-        .expect(&format!("Failed to parse JSON output from {}: {}", name, stdout))
+    serde_json::from_str(&stdout).expect(&format!(
+        "Failed to parse JSON output from {}: {}",
+        name, stdout
+    ))
 }
 
 #[tokio::test]
@@ -83,24 +90,36 @@ async fn flow_import_recipe_full() {
         .await;
 
     println!("Step 1: Run tandoor_scrape_recipe");
-    let scrape_result = run_binary("tandoor_scrape_recipe", &json!({
-        "tandoor": {"base_url": uri, "api_token": "test_token"},
-        "url": "https://example.com/ribs"
-    }));
+    let scrape_result = run_binary(
+        "tandoor_scrape_recipe",
+        &json!({
+            "tandoor": {"base_url": uri, "api_token": "test_token"},
+            "url": "https://example.com/ribs"
+        }),
+    );
 
     assert_eq!(scrape_result["success"], true, "Scrape should succeed");
-    assert!(scrape_result["recipe_json"].is_object(), "Should have recipe JSON");
+    assert!(
+        scrape_result["recipe_json"].is_object(),
+        "Should have recipe JSON"
+    );
 
     println!("Step 2: Run tandoor_create_recipe with source tag");
     let scrape_result_clone = scrape_result.clone();
-    let create_result = run_binary("tandoor_create_recipe", &json!({
-        "tandoor": {"base_url": uri, "api_token": "test_token"},
-        "recipe": scrape_result_clone["recipe_json"].clone(),
-        "additional_keywords": ["example-com"]
-    }));
+    let create_result = run_binary(
+        "tandoor_create_recipe",
+        &json!({
+            "tandoor": {"base_url": uri, "api_token": "test_token"},
+            "recipe": scrape_result_clone["recipe_json"].clone(),
+            "additional_keywords": ["example-com"]
+        }),
+    );
 
     assert_eq!(create_result["success"], true, "Create should succeed");
-    assert_eq!(create_result["recipe"]["id"], 42, "Should get correct recipe ID");
+    assert_eq!(
+        create_result["recipe"]["id"], 42,
+        "Should get correct recipe ID"
+    );
 
     println!("✓ import_recipe.flow complete\n");
 }
@@ -144,33 +163,45 @@ async fn flow_batch_import_recipes_full() {
 
     println!("Step 1: Import recipe 1");
     let url1 = "https://example.com/recipe/100";
-    let scrape1 = run_binary("tandoor_scrape_recipe", &json!({
-        "tandoor": {"base_url": uri, "api_token": "test_token"},
-        "url": url1
-    }));
+    let scrape1 = run_binary(
+        "tandoor_scrape_recipe",
+        &json!({
+            "tandoor": {"base_url": uri, "api_token": "test_token"},
+            "url": url1
+        }),
+    );
     assert_eq!(scrape1["success"], true);
 
-    let create1 = run_binary("tandoor_create_recipe", &json!({
-        "tandoor": {"base_url": uri, "api_token": "test_token"},
-        "recipe": scrape1["recipe_json"].clone(),
-        "additional_keywords": []
-    }));
+    let create1 = run_binary(
+        "tandoor_create_recipe",
+        &json!({
+            "tandoor": {"base_url": uri, "api_token": "test_token"},
+            "recipe": scrape1["recipe_json"].clone(),
+            "additional_keywords": []
+        }),
+    );
     assert_eq!(create1["success"], true);
     assert_eq!(create1["recipe"]["id"], 100);
 
     println!("Step 2: Import recipe 2");
     let url2 = "https://example.com/recipe/101";
-    let scrape2 = run_binary("tandoor_scrape_recipe", &json!({
-        "tandoor": {"base_url": uri, "api_token": "test_token"},
-        "url": url2
-    }));
+    let scrape2 = run_binary(
+        "tandoor_scrape_recipe",
+        &json!({
+            "tandoor": {"base_url": uri, "api_token": "test_token"},
+            "url": url2
+        }),
+    );
     assert_eq!(scrape2["success"], true);
 
-    let create2 = run_binary("tandoor_create_recipe", &json!({
-        "tandoor": {"base_url": uri, "api_token": "test_token"},
-        "recipe": scrape2["recipe_json"].clone(),
-        "additional_keywords": []
-    }));
+    let create2 = run_binary(
+        "tandoor_create_recipe",
+        &json!({
+            "tandoor": {"base_url": uri, "api_token": "test_token"},
+            "recipe": scrape2["recipe_json"].clone(),
+            "additional_keywords": []
+        }),
+    );
     assert_eq!(create2["success"], true);
     assert_eq!(create2["recipe"]["id"], 101);
 
@@ -221,35 +252,44 @@ async fn flow_weekly_meal_plan_full() {
         .await;
 
     println!("Step 1: Select random recipes");
-    let select_result = run_binary("tandoor_recipe_random_select", &json!({
-        "tandoor": {"base_url": uri, "api_token": "test_token"},
-        "keyword": "dinner",
-        "count": 2
-    }));
+    let select_result = run_binary(
+        "tandoor_recipe_random_select",
+        &json!({
+            "tandoor": {"base_url": uri, "api_token": "test_token"},
+            "keyword": "dinner",
+            "count": 2
+        }),
+    );
 
     assert_eq!(select_result["success"], true, "Select should succeed");
     let recipes = &select_result["recipes"];
     assert_eq!(recipes.as_array().unwrap().len(), 2);
 
     println!("Step 2: Create meal plan entry 1");
-    let create1 = run_binary("tandoor_meal_plan_create", &json!({
-        "tandoor": {"base_url": uri, "api_token": "test_token"},
-        "recipe": recipes[0]["id"],
-        "meal_type": 1,
-        "from_date": "2025-01-06",
-        "servings": 6
-    }));
+    let create1 = run_binary(
+        "tandoor_meal_plan_create",
+        &json!({
+            "tandoor": {"base_url": uri, "api_token": "test_token"},
+            "recipe": recipes[0]["id"],
+            "meal_type": 1,
+            "from_date": "2025-01-06",
+            "servings": 6
+        }),
+    );
 
     assert_eq!(create1["meal_plan"]["id"], 501);
 
     println!("Step 3: Create meal plan entry 2");
-    let create2 = run_binary("tandoor_meal_plan_create", &json!({
-        "tandoor": {"base_url": uri, "api_token": "test_token"},
-        "recipe": recipes[1]["id"],
-        "meal_type": 1,
-        "from_date": "2025-01-07",
-        "servings": 4
-    }));
+    let create2 = run_binary(
+        "tandoor_meal_plan_create",
+        &json!({
+            "tandoor": {"base_url": uri, "api_token": "test_token"},
+            "recipe": recipes[1]["id"],
+            "meal_type": 1,
+            "from_date": "2025-01-07",
+            "servings": 4
+        }),
+    );
 
     assert_eq!(create2["meal_plan"]["id"], 502);
 
@@ -257,12 +297,15 @@ async fn flow_weekly_meal_plan_full() {
     let recipes_clone = select_result["recipes"].clone();
     let create1_clone = create1.clone();
     let create2_clone = create2.clone();
-    let format_result = run_binary("tandoor_format_weekly_meal_plan", &json!({
-        "recipes_json": serde_json::to_string(&recipes_clone).unwrap(),
-        "dates_json": serde_json::to_string(&json!(["2025-01-06", "2025-01-07"])).unwrap(),
-        "meal_plan_1_json": serde_json::to_string(&create1_clone).unwrap(),
-        "meal_plan_2_json": serde_json::to_string(&create2_clone).unwrap()
-    }));
+    let format_result = run_binary(
+        "tandoor_format_weekly_meal_plan",
+        &json!({
+            "recipes_json": serde_json::to_string(&recipes_clone).unwrap(),
+            "dates_json": serde_json::to_string(&json!(["2025-01-06", "2025-01-07"])).unwrap(),
+            "meal_plan_1_json": serde_json::to_string(&create1_clone).unwrap(),
+            "meal_plan_2_json": serde_json::to_string(&create2_clone).unwrap()
+        }),
+    );
 
     assert!(format_result["recipes"].is_array());
 

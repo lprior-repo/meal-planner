@@ -10,7 +10,11 @@ fn load_fixture(name: &str) -> String {
 }
 
 #[test]
-#[allow(clippy::expect_used, clippy::indexing_slicing, clippy::cognitive_complexity)]
+#[allow(
+    clippy::expect_used,
+    clippy::indexing_slicing,
+    clippy::cognitive_complexity
+)]
 fn test_deserialize_serving_with_all_nutrition() {
     let json = load_fixture("food_complete");
     let food: Food = serde_json::from_str(&json)
@@ -65,7 +69,11 @@ fn test_deserialize_serving_flexible_number_types() {
 }
 
 #[test]
-#[allow(clippy::expect_used, clippy::indexing_slicing, clippy::cognitive_complexity)]
+#[allow(
+    clippy::expect_used,
+    clippy::indexing_slicing,
+    clippy::cognitive_complexity
+)]
 fn test_deserialize_serving_missing_optional_fields() {
     let json = load_fixture("food_minimal");
     let food: Food = serde_json::from_str(&json)
@@ -95,7 +103,11 @@ fn test_find_default_serving() {
         .and_then(|v: serde_json::Value| serde_json::from_value(v["food"].clone()))
         .expect("Failed to deserialize food");
 
-    let default_serving = food.servings.serving.iter().find(|s| s.is_default == Some(1));
+    let default_serving = food
+        .servings
+        .serving
+        .iter()
+        .find(|s| s.is_default == Some(1));
 
     assert!(default_serving.is_some());
     let serving = default_serving.unwrap();
@@ -110,7 +122,11 @@ fn test_fallback_to_first_serving_when_no_default() {
         .and_then(|v: serde_json::Value| serde_json::from_value(v["food"].clone()))
         .expect("Failed to deserialize food");
 
-    let serving = food.servings.serving.iter().find(|s| s.is_default == Some(1))
+    let serving = food
+        .servings
+        .serving
+        .iter()
+        .find(|s| s.is_default == Some(1))
         .or_else(|| food.servings.serving.first());
 
     assert!(serving.is_some());

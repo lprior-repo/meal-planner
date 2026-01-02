@@ -69,6 +69,7 @@
 //! See [`ARCHITECTURE.md`](../../../docs/ARCHITECTURE.md) for design principles.
 
 mod client;
+pub mod nutrition;
 mod types;
 
 #[cfg(test)]

@@ -15,9 +15,9 @@
 
 #![allow(clippy::unwrap_used, clippy::indexing_slicing, clippy::panic)]
 
+use serde_json::Value;
 use std::io::Write;
 use std::process::{Command, Stdio};
-use serde_json::Value;
 
 fn binary_exists(binary_name: &str) -> bool {
     let paths = [

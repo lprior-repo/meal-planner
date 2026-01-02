@@ -10,7 +10,11 @@ fn load_fixture(name: &str) -> String {
 }
 
 #[test]
-#[allow(clippy::expect_used, clippy::indexing_slicing, clippy::suboptimal_flops)]
+#[allow(
+    clippy::expect_used,
+    clippy::indexing_slicing,
+    clippy::suboptimal_flops
+)]
 fn test_nutrition_macros_calculation() {
     let json = load_fixture("food_complete");
     let food: Food = serde_json::from_str(&json)
@@ -25,7 +29,8 @@ fn test_nutrition_macros_calculation() {
     assert!((nutrition.carbohydrate - 0.0).abs() < f64::EPSILON);
     assert!((nutrition.fat - 5.04).abs() < f64::EPSILON);
 
-    let calculated_calories = (nutrition.protein * 4.0) + (nutrition.carbohydrate * 4.0) + (nutrition.fat * 9.0);
+    let calculated_calories =
+        (nutrition.protein * 4.0) + (nutrition.carbohydrate * 4.0) + (nutrition.fat * 9.0);
 
     let diff = (calculated_calories - nutrition.calories).abs();
     assert!(
@@ -65,7 +70,12 @@ fn test_nutrition_fat_breakdown() {
 }
 
 #[test]
-#[allow(clippy::expect_used, clippy::indexing_slicing, clippy::cognitive_complexity, clippy::unwrap_used)]
+#[allow(
+    clippy::expect_used,
+    clippy::indexing_slicing,
+    clippy::cognitive_complexity,
+    clippy::unwrap_used
+)]
 fn test_complete_food_workflow() {
     let json = load_fixture("food_complete");
     let food: Food = serde_json::from_str(&json)
@@ -75,11 +85,17 @@ fn test_complete_food_workflow() {
     assert_eq!(food.food_name, "Chicken Breast");
     assert_eq!(food.food_type, "Generic");
 
-    let default_serving = food.servings.serving.iter()
+    let default_serving = food
+        .servings
+        .serving
+        .iter()
         .find(|s| s.is_default == Some(1))
         .expect("Should have default serving");
 
-    assert_eq!(default_serving.serving_description, "1 cup, chopped or diced");
+    assert_eq!(
+        default_serving.serving_description,
+        "1 cup, chopped or diced"
+    );
     assert_eq!(default_serving.metric_serving_amount, Some(140.0));
 
     let nutrition = &default_serving.nutrition;

@@ -11,7 +11,11 @@ use serde_json::{json, Value};
 
 fn expect_failure(binary_name: &str, input: &Value) {
     let result = run_binary(binary_name, input);
-    assert!(result.is_ok(), "Binary {} should fail gracefully", binary_name);
+    assert!(
+        result.is_ok(),
+        "Binary {} should fail gracefully",
+        binary_name
+    );
 }
 
 // =============================================================================
@@ -24,7 +28,10 @@ fn test_fatsecret_food_get_missing_id() {
     let result = run_binary("fatsecret_food_get", &input);
     assert!(result.is_ok(), "Binary should execute without panicking");
     let value = result.unwrap();
-    assert!(!value.get("success").and_then(|v| v.as_bool()).unwrap_or(true));
+    assert!(!value
+        .get("success")
+        .and_then(|v| v.as_bool())
+        .unwrap_or(true));
 }
 
 #[test]

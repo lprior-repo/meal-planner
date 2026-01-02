@@ -74,7 +74,10 @@ fn test_serialize_food_roundtrip() {
 
     assert_eq!(food.food_id, deserialized.food_id);
     assert_eq!(food.food_name, deserialized.food_name);
-    assert_eq!(food.servings.serving.len(), deserialized.servings.serving.len());
+    assert_eq!(
+        food.servings.serving.len(),
+        deserialized.servings.serving.len()
+    );
 }
 
 #[test]
@@ -106,7 +109,10 @@ fn test_deserialize_missing_required_field() {
 
     let value = result.unwrap();
     let food_result: Result<Food, _> = serde_json::from_value(value["food"].clone());
-    assert!(food_result.is_err(), "Should fail when missing required calories field");
+    assert!(
+        food_result.is_err(),
+        "Should fail when missing required calories field"
+    );
 }
 
 #[test]
@@ -139,7 +145,10 @@ fn test_deserialize_invalid_number_format() {
 
     let value = result.unwrap();
     let food_result: Result<Food, _> = serde_json::from_value(value["food"].clone());
-    assert!(food_result.is_err(), "Should fail with invalid number format");
+    assert!(
+        food_result.is_err(),
+        "Should fail with invalid number format"
+    );
 }
 
 #[test]
@@ -168,7 +177,8 @@ fn test_deserialize_empty_string_as_zero() {
     }"#;
 
     let value: serde_json::Value = serde_json::from_str(json).unwrap();
-    let food: Food = serde_json::from_value(value["food"].clone()).expect("Should handle zero values");
+    let food: Food =
+        serde_json::from_value(value["food"].clone()).expect("Should handle zero values");
 
     let serving = &food.servings.serving[0];
     assert!((serving.number_of_units - 0.0).abs() < f64::EPSILON);

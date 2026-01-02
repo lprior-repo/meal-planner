@@ -7,10 +7,7 @@
 //! - Flow YAML files are readable
 //! - Manual testing instructions documented
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::too_many_lines
-)]
+#![allow(clippy::unwrap_used, clippy::too_many_lines)]
 
 #[test]
 fn all_flow_files_exist() {
@@ -45,7 +42,9 @@ fn test_coverage() {
     println!("   [x] oauth_setup.flow (4 modules: start, suspend, complete, verify)");
     println!("   [x] import_recipe.flow (3 modules: scrape, derive tag, create)");
     println!("   [x] batch_import_recipes.flow (2 modules: loop, import_recipe)");
-    println!("   [x] weekly_meal_plan.flow (6 modules: select, create×2, format, add to shopping×2)");
+    println!(
+        "   [x] weekly_meal_plan.flow (6 modules: select, create×2, format, add to shopping×2)"
+    );
     println!();
 
     println!("📝 Manual Testing Instructions:");

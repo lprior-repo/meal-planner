@@ -68,7 +68,8 @@ fn test_serialize_opaque_ids() {
     assert_eq!(serving_json, r#""67890""#);
 
     let food_id_back: FoodId = serde_json::from_str(&food_json).expect("Failed to deserialize");
-    let serving_id_back: ServingId = serde_json::from_str(&serving_json).expect("Failed to deserialize");
+    let serving_id_back: ServingId =
+        serde_json::from_str(&serving_json).expect("Failed to deserialize");
 
     assert_eq!(food_id, food_id_back);
     assert_eq!(serving_id, serving_id_back);

@@ -9,7 +9,6 @@
 //! JSON stdout: `{"success": true, "recipe": {...}}`
 //!   or `{"success": false, "error": "..."}`
 
-// CLI binaries: exit and unwrap/expect are acceptable at the top level
 #![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
 use meal_planner::tandoor::{TandoorClient, TandoorConfig};
@@ -19,26 +18,18 @@ use std::io::{self, Read};
 
 #[derive(Deserialize)]
 struct Input {
-    /// Tandoor configuration (URL and token)
     tandoor: TandoorConfig,
-    /// Recipe ID to update
     recipe_id: i64,
-    /// Recipe name (optional)
     #[serde(default)]
     name: Option<String>,
-    /// Recipe description (optional)
     #[serde(default)]
     description: Option<String>,
-    /// Source URL (optional)
     #[serde(default)]
     source_url: Option<String>,
-    /// Number of servings (optional)
     #[serde(default)]
     servings: Option<i32>,
-    /// Active cooking time in minutes (optional)
     #[serde(default)]
     working_time: Option<i32>,
-    /// Passive time in minutes (optional)
     #[serde(default)]
     waiting_time: Option<i32>,
 }
@@ -54,81 +45,59 @@ struct Output {
 
 fn main() {
     match run() {
-        Ok(output) => {
-            println!(
-                "{}",
-                serde_json::to_string(&output).expect("Failed to serialize output JSON")
-            );
-        }
+        Ok(output) => println!("{}", serde_json::to_string(&output).unwrap()),
         Err(e) => {
             let error = Output {
                 success: false,
                 recipe: None,
                 error: Some(e.to_string()),
             };
-            println!(
-                "{}",
-                serde_json::to_string(&error).expect("Failed to serialize error JSON")
-            );
+            println!("{}", serde_json::to_string(&error).unwrap());
             std::process::exit(1);
         }
     }
 }
 
-#[allow(clippy::too_many_lines)]
+fn read_input() -> Result<Input, Box<dyn std::error::Error>> {
+    let input_str = std::env::args().nth(1).map_or_else(
+        || {
+            let mut s = String::new();
+            io::stdin().read_to_string(&mut s)?;
+            Ok::<String, Box<dyn std::error::Error>>(s)
+        },
+        Ok,
+    )?;
+    serde_json::from_str(&input_str).map_err(Into::into)
+}
+
+fn build_update_request(input: &Input) -> Value {
+    let mut request = json!({});
+    let obj = request.as_object_mut().unwrap();
+    if let Some(name) = &input.name {
+        obj.insert("name".to_string(), json!(name));
+    }
+    if let Some(desc) = &input.description {
+        obj.insert("description".to_string(), json!(desc));
+    }
+    if let Some(url) = &input.source_url {
+        obj.insert("source_url".to_string(), json!(url));
+    }
+    if let Some(serv) = input.servings {
+        obj.insert("servings".to_string(), json!(serv));
+    }
+    if let Some(wt) = input.working_time {
+        obj.insert("working_time".to_string(), json!(wt));
+    }
+    if let Some(wt) = input.waiting_time {
+        obj.insert("waiting_time".to_string(), json!(wt));
+    }
+    request
+}
+
 fn run() -> Result<Output, Box<dyn std::error::Error>> {
-    // Read input: prefer CLI arg, fall back to stdin
-    let input: Input = if let Some(arg) = std::env::args().nth(1) {
-        serde_json::from_str(&arg)?
-    } else {
-        let mut input_str = String::new();
-        io::stdin().read_to_string(&mut input_str)?;
-        serde_json::from_str(&input_str)?
-    };
-
+    let input = read_input()?;
     let client = TandoorClient::new(&input.tandoor)?;
-
-    // Build update request with only non-empty fields
-    let mut update_request = json!({});
-    if let Some(name) = input.name {
-        update_request
-            .as_object_mut()
-            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
-            .insert("name".to_string(), json!(name));
-    }
-    if let Some(description) = input.description {
-        update_request
-            .as_object_mut()
-            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
-            .insert("description".to_string(), json!(description));
-    }
-    if let Some(source_url) = input.source_url {
-        update_request
-            .as_object_mut()
-            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
-            .insert("source_url".to_string(), json!(source_url));
-    }
-    if let Some(servings) = input.servings {
-        update_request
-            .as_object_mut()
-            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
-            .insert("servings".to_string(), json!(servings));
-    }
-    if let Some(working_time) = input.working_time {
-        update_request
-            .as_object_mut()
-            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
-            .insert("working_time".to_string(), json!(working_time));
-    }
-    if let Some(waiting_time) = input.waiting_time {
-        update_request
-            .as_object_mut()
-            .ok_or_else(|| anyhow::anyhow!("Expected object"))?
-            .insert("waiting_time".to_string(), json!(waiting_time));
-    }
-
-    let recipe = client.update_recipe(input.recipe_id, &update_request)?;
-
+    let recipe = client.update_recipe(input.recipe_id, &build_update_request(&input))?;
     Ok(Output {
         success: true,
         recipe: Some(recipe),
@@ -143,7 +112,7 @@ mod tests {
     #[test]
     fn test_input_parsing_minimal() {
         let json = r#"{"tandoor": {"base_url": "http://localhost", "api_token": "token"}, "recipe_id": 123}"#;
-        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
+        let input: Input = serde_json::from_str(json).unwrap();
         assert_eq!(input.recipe_id, 123);
         assert!(input.name.is_none());
     }
@@ -151,7 +120,7 @@ mod tests {
     #[test]
     fn test_input_parsing_with_updates() {
         let json = r#"{"tandoor": {"base_url": "http://localhost", "api_token": "token"}, "recipe_id": 123, "name": "Updated", "servings": 6}"#;
-        let input: Input = serde_json::from_str(json).expect("Failed to parse test JSON");
+        let input: Input = serde_json::from_str(json).unwrap();
         assert_eq!(input.recipe_id, 123);
         assert_eq!(input.name, Some("Updated".to_string()));
         assert_eq!(input.servings, Some(6));
@@ -164,7 +133,7 @@ mod tests {
             recipe: None,
             error: None,
         };
-        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
+        let json = serde_json::to_string(&output).unwrap();
         assert!(json.contains("\"success\":true"));
         assert!(!json.contains("\"recipe\""));
     }
@@ -176,8 +145,41 @@ mod tests {
             recipe: None,
             error: Some("Update failed".to_string()),
         };
-        let json = serde_json::to_string(&output).expect("Failed to serialize output JSON");
+        let json = serde_json::to_string(&output).unwrap();
         assert!(json.contains("\"success\":false"));
         assert!(json.contains("\"error\""));
+    }
+
+    #[test]
+    fn test_build_update_request_name_only() {
+        let input: Input = serde_json::from_str(
+            r#"{"tandoor": {"base_url": "http://localhost", "api_token": "x"}, "recipe_id": 1, "name": "Test"}"#
+        ).unwrap();
+        let request = build_update_request(&input);
+        assert_eq!(request["name"], "Test");
+        assert_eq!(request.as_object().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn test_build_update_request_all_fields() {
+        let input: Input = serde_json::from_str(
+            r#"{"tandoor": {"base_url": "http://localhost", "api_token": "x"}, "recipe_id": 1, "name": "N", "description": "D", "source_url": "http://x.com", "servings": 4, "working_time": 30, "waiting_time": 60}"#
+        ).unwrap();
+        let request = build_update_request(&input);
+        let obj = request.as_object().unwrap();
+        assert_eq!(obj.len(), 6);
+        assert_eq!(obj["name"], "N");
+        assert_eq!(obj["servings"], 4);
+        assert_eq!(obj["working_time"], 30);
+    }
+
+    #[test]
+    fn test_build_update_request_empty() {
+        let input: Input = serde_json::from_str(
+            r#"{"tandoor": {"base_url": "http://localhost", "api_token": "x"}, "recipe_id": 1}"#,
+        )
+        .unwrap();
+        let request = build_update_request(&input);
+        assert_eq!(request.as_object().unwrap().len(), 0);
     }
 }

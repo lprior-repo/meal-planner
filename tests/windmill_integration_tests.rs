@@ -43,7 +43,9 @@ fn get_windmill_workspace() -> String {
 }
 
 fn script_exists_in_repo(script_name: &str) -> bool {
-    std::path::Path::new(&format!("windmill/f/fatsecret/{}.sh", script_name)).exists()
+    let fatsecret_path = format!("windmill/f/fatsecret/{}.sh", script_name);
+    let tandoor_path = format!("windmill/f/tandoor/{}.sh", script_name);
+    std::path::Path::new(&fatsecret_path).exists() || std::path::Path::new(&tandoor_path).exists()
 }
 
 fn check_resource_configured(resource_path: &str) -> Result<(), String> {
@@ -469,7 +471,104 @@ fn test_windmill_food_entries_get_month() {
 }
 
 #[test]
-#[ignore = "requires Windmill API connection"]
+#[ignore = "requires Windmill API connection and deployed scripts"]
+fn test_windmill_recipe_list() {
+    skip_if_not_deployed!("recipe_list");
+    skip_if_resource_not_configured!("u/admin/tandoor_api");
+
+    let result = run_windmill_script(
+        "f/tandoor/recipe_list.sh",
+        &json!({
+            "tandoor": "$res:u/admin/tandoor_api"
+        }),
+    );
+
+    assert!(result.is_ok(), "Script failed: {:?}", result.err());
+    let output = result.unwrap();
+
+    assert_eq!(output["success"], true, "Expected success: true");
+    assert!(output["count"].is_number(), "Expected count number");
+    assert!(output["recipes"].is_array(), "Expected recipes array");
+}
+
+#[test]
+#[ignore = "requires Windmill API connection and deployed scripts"]
+fn test_windmill_recipe_list_with_pagination() {
+    skip_if_not_deployed!("recipe_list");
+    skip_if_resource_not_configured!("u/admin/tandoor_api");
+
+    let result = run_windmill_script(
+        "f/tandoor/recipe_list.sh",
+        &json!({
+            "tandoor": "$res:u/admin/tandoor_api",
+            "page": "1",
+            "page_size": "2"
+        }),
+    );
+
+    assert!(result.is_ok(), "Script failed: {:?}", result.err());
+    let output = result.unwrap();
+
+    assert_eq!(output["success"], true, "Expected success: true");
+    let recipes = output["recipes"].as_array().unwrap();
+    assert!(recipes.len() <= 2, "Expected at most 2 recipes per page");
+}
+
+#[test]
+#[ignore = "requires Windmill API connection and deployed scripts"]
+fn test_windmill_tandoor_test_connection() {
+    skip_if_not_deployed!("test_connection");
+    skip_if_resource_not_configured!("u/admin/tandoor_api");
+
+    let result = run_windmill_script(
+        "f/tandoor/test_connection.sh",
+        &json!({
+            "tandoor": "$res:u/admin/tandoor_api"
+        }),
+    );
+
+    assert!(result.is_ok(), "Script failed: {:?}", result.err());
+    let output = result.unwrap();
+
+    assert_eq!(output["success"], true, "Expected success: true");
+    assert!(output["message"].is_string(), "Expected message string");
+    assert!(
+        output["recipe_count"].is_number(),
+        "Expected recipe_count number"
+    );
+}
+
+#[test]
+#[ignore = "requires Windmill connection"]
+fn test_windmill_tandoor_integration_suite() {
+    println!("=== Tandoor Windmill Integration Test Suite ===");
+    println!("Note: This test requires scripts to be deployed to Windmill\n");
+
+    println!("--- Checking Deployment Status ---");
+    let scripts = [
+        "test_connection",
+        "recipe_list",
+        "recipe_get",
+        "recipe_update",
+        "create_recipe",
+    ];
+
+    let mut deployed_count = 0;
+    for script in &scripts {
+        if script_exists_in_repo(script) {
+            println!("  {}: DEPLOYED", script);
+            deployed_count += 1;
+        } else {
+            println!("  {}: NOT DEPLOYED", script);
+        }
+    }
+
+    println!("\nDeployed: {}/{} scripts", deployed_count, scripts.len());
+    println!("Tests will pass when scripts are deployed to Windmill");
+}
+
+#[test]
+#[ignore = "requires Windmill API connection and deployed scripts"]
 fn test_windmill_full_integration_suite() {
     println!("=== Windmill Integration Test Suite ===");
     println!("Note: This test requires scripts to be deployed to Windmill\n");

@@ -41,7 +41,8 @@ fn test_foods_autocomplete_empty_input() {
         return;
     }
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_foods_autocomplete", &json!({})).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_foods_autocomplete", &json!({})).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -57,7 +58,8 @@ fn test_foods_autocomplete_missing_expression() {
         "fatsecret": {"consumer_key": "test", "consumer_secret": "test"}
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_foods_autocomplete", &input).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_foods_autocomplete", &input).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -75,7 +77,8 @@ fn test_food_add_favorite_missing_tokens() {
         "food_id": "12345"
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_food_add_favorite", &input).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_food_add_favorite", &input).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -94,7 +97,8 @@ fn test_food_delete_favorite_missing_food_id() {
         "access_secret": "test"
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_food_delete_favorite", &input).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_food_delete_favorite", &input).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -111,7 +115,8 @@ fn test_foods_get_favorites_missing_tokens() {
         "fatsecret": {"consumer_key": "test", "consumer_secret": "test"}
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_foods_get_favorites", &input).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_foods_get_favorites", &input).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -130,7 +135,8 @@ fn test_food_entries_get_missing_date() {
         "access_secret": "test"
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_food_entries_get", &input).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_food_entries_get", &input).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -147,7 +153,8 @@ fn test_recipes_autocomplete_missing_expression() {
         "fatsecret": {"consumer_key": "test", "consumer_secret": "test"}
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_recipes_autocomplete", &input).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_recipes_autocomplete", &input).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -166,7 +173,8 @@ fn test_food_entries_get_month_missing_date() {
         "access_secret": "test"
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_food_entries_get_month", &input).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_food_entries_get_month", &input).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -185,7 +193,8 @@ fn test_food_entry_create_missing_fields() {
         "access_secret": "test"
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_food_entry_create", &input).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_food_entry_create", &input).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -209,7 +218,8 @@ fn test_food_entry_create_invalid_meal_type() {
         "date_int": 20088
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_food_entry_create", &input).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_food_entry_create", &input).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -232,7 +242,8 @@ fn test_food_entry_edit_missing_entry_id() {
         "access_secret": "test"
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_food_entry_edit", &input).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_food_entry_edit", &input).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -251,7 +262,8 @@ fn test_food_entry_delete_missing_entry_id() {
         "access_secret": "test"
     });
 
-    let (output, exit_code) = run_binary_with_exit_code("fatsecret_food_entry_delete", &input).unwrap();
+    let (output, exit_code) =
+        run_binary_with_exit_code("fatsecret_food_entry_delete", &input).unwrap();
 
     assert_eq!(exit_code, 1);
     assert_eq!(output["success"], false);
@@ -260,9 +272,9 @@ fn test_food_entry_delete_missing_entry_id() {
 
 #[test]
 fn test_invalid_json_handling() {
+    use serde_json::Value;
     use std::io::Write;
     use std::process::{Command, Stdio};
-    use serde_json::Value;
 
     let binaries = ["fatsecret_food_get", "fatsecret_foods_autocomplete"];
 

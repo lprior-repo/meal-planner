@@ -12,6 +12,11 @@ package mealplanner
 	api_token: string
 }
 
+#FatSecretResource: {
+	consumer_key:    string & =~"^[A-Za-z0-9]+$"
+	consumer_secret: string & =~"^[A-Za-z0-9]+$"
+}
+
 #ErrorOutput: {
 	success: false
 	error:   string
@@ -588,6 +593,25 @@ package mealplanner
 	success:       bool
 	updated_count?: int
 	error?:        string
+} | #ErrorOutput
+
+// tandoor_recipe_update_nutrition
+#TandoorRecipeUpdateNutritionInput: {
+	tandoor: #TandoorResource
+	recipe_id: int
+	nutrition: {
+		calories?:       number
+		protein?:        number
+		carbohydrates?:  number
+		fat?:            number
+	}
+}
+
+#TandoorRecipeUpdateNutritionOutput: {
+	success:    bool
+	recipe_id?: int
+	recipe?:    #TandoorRecipe
+	error?:     string
 } | #ErrorOutput
 
 // =============================================================================
@@ -1329,8 +1353,9 @@ package mealplanner
 
 // tandoor_shopping_list_entry_delete
 #TandoorShoppingListEntryDeleteInput: {
-	tandoor: #TandoorResource
-	id:      int
+	tandoor:      #TandoorResource
+	mealplan_id:  int
+	entry_id:     int
 }
 
 #TandoorShoppingListEntryDeleteOutput: {
@@ -1744,4 +1769,129 @@ package mealplanner
 	recipe_id?: int
 	name?:      string
 	error?:     string
+} | #ErrorOutput
+
+// =============================================================================
+// NUTRITION BINARIES
+// =============================================================================
+
+// tandoor_ingredient_lookup_nutrition
+// Lookup nutrition data for a single ingredient from FatSecret
+#TandoorIngredientLookupNutritionInput: {
+	fatsecret?:        #FatSecretResource
+	ingredient_name:   string
+	amount:            number & >=0
+	unit:              string
+}
+
+#TandoorIngredientLookupNutritionOutput: {
+	success:    true
+	food_id:    string
+	food_name:  string
+	nutrition:  #TandoorScaledNutrition
+} | #ErrorOutput
+
+#TandoorScaledNutrition: {
+	calories:     number & >=0
+	protein:      number & >=0
+	carbohydrate: number & >=0
+	fat:          number & >=0
+}
+
+// tandoor_recipe_calculate_nutrition
+// Calculate total nutrition for all ingredients in a recipe
+#TandoorRecipeCalculateNutritionInput: {
+	tandoor:    #TandoorResource
+	fatsecret?: #FatSecretResource
+	recipe_id:  int
+}
+
+#TandoorRecipeCalculateNutritionOutput: {
+	success:            true
+	recipe_id:          int
+	recipe_name:        string
+	nutrition:          #TandoorRecipeNutrition
+	ingredient_count:   int
+	failed_ingredients: [...string]
+} | #ErrorOutput
+
+#TandoorRecipeNutrition: {
+	calories:     number & >=0
+	protein:      number & >=0
+	carbohydrate: number & >=0
+	fat:          number & >=0
+}
+
+// tandoor_add_calories_to_recipes
+// Batch update all recipes with calculated calories from ingredients
+#TandoorAddCaloriesToRecipesInput: {
+	tandoor: #TandoorResource
+}
+
+#TandoorAddCaloriesToRecipesOutput: {
+	success:  true
+	total:    int
+	updated:  int
+	failed:   int
+	recipes:  [...#TandoorRecipeCalorieUpdate]
+} | #ErrorOutput
+
+#TandoorRecipeCalorieUpdate: {
+	id:        int
+	name:      string
+	calories:  number & >=0
+	status:    string
+}
+
+// =============================================================================
+// NUTRITION CALCULATION BINARIES
+// =============================================================================
+
+// tandoor_ingredient_lookup_nutrition
+#IngredientNutritionLookupInput: {
+	fatsecret?: #FatSecretResource
+	ingredient_name: string
+	amount: number & >=0
+	unit: string
+}
+
+#IngredientNutritionLookupOutput: {
+	success: true
+	food_id: string
+	food_name: string
+	nutrition: #NutritionData
+} | #ErrorOutput
+
+#NutritionData: {
+	calories: number & >=0
+	protein: number & >=0
+	carbohydrate: number & >=0
+	fat: number & >=0
+}
+
+// tandoor_recipe_calculate_nutrition
+#RecipeNutritionCalculateInput: {
+	tandoor: #TandoorResource
+	fatsecret?: #FatSecretResource
+	recipe_id: int & >=0
+}
+
+#RecipeNutritionCalculateOutput: {
+	success: true
+	recipe_id: int & >=0
+	recipe_name: string
+	nutrition: #NutritionData
+	failed_ingredients: [...string]
+} | #ErrorOutput
+
+// tandoor_recipe_update_nutrition
+#RecipeNutritionUpdateInput: {
+	tandoor: #TandoorResource
+	recipe_id: int & >=0
+	nutrition: #NutritionData
+}
+
+#RecipeNutritionUpdateOutput: {
+	success: true
+	recipe_id: int & >=0
 } | #ErrorOutput

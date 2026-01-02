@@ -1,3 +1,4 @@
+pub mod ingredient_nutrition_core_tests;
 pub mod tandoor_connection_binary_tests;
 pub mod tandoor_master_list_binary_tests;
 pub mod tandoor_shopping_list_binary_tests;
@@ -18,6 +19,8 @@ pub mod tandoor_user_binary_tests;
 pub mod tandoor_unit_conversion_binary_tests;
 pub mod shopping_list_entry_tests;
 pub mod shopping_list_recipe_tests;
+pub mod tandoor_food_get_atdd;
+pub mod tandoor_recipe_delete_windmill_tests;
 
-#[path = "../common.rs"]
+#[path = "../helpers/common.rs"]
 pub mod common;

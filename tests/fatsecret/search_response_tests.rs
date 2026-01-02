@@ -10,7 +10,11 @@ fn load_fixture(name: &str) -> String {
 }
 
 #[test]
-#[allow(clippy::expect_used, clippy::indexing_slicing, clippy::cognitive_complexity)]
+#[allow(
+    clippy::expect_used,
+    clippy::indexing_slicing,
+    clippy::cognitive_complexity
+)]
 fn test_deserialize_search_response() {
     let json = load_fixture("search_response");
     let response: FoodSearchResponse = serde_json::from_str(&json)
@@ -46,7 +50,11 @@ fn test_deserialize_search_response_empty() {
 }
 
 #[test]
-#[allow(clippy::expect_used, clippy::indexing_slicing, clippy::integer_division)]
+#[allow(
+    clippy::expect_used,
+    clippy::indexing_slicing,
+    clippy::integer_division
+)]
 fn test_search_response_pagination_calculation() {
     let json = load_fixture("search_response");
     let response: FoodSearchResponse = serde_json::from_str(&json)

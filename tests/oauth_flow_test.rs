@@ -869,13 +869,11 @@ fn test_crypto_error_from_storage_error() {
 // Complete End-to-End Flow Test (Mocked)
 // ============================================================================
 
-#[tokio::test]
-#[ignore = "requires database connection"]
-#[allow(clippy::too_many_lines)]
-async fn test_complete_oauth_flow_with_storage() {
+/// Helper function to setup test environment for OAuth flow test
+async fn setup_oauth_flow_test() -> Option<(PgPool, TokenStorage)> {
     if env::var("DATABASE_URL").is_err() {
         eprintln!("Skipping test: DATABASE_URL not set");
-        return;
+        return None;
     }
 
     env::set_var(
@@ -885,12 +883,21 @@ async fn test_complete_oauth_flow_with_storage() {
 
     let pool = setup_test_db().await;
     cleanup_test_tokens(&pool).await;
+    let storage = TokenStorage::new(pool.clone());
 
-    println!("\n=== Complete OAuth Flow Simulation ===\n");
+    Some((pool, storage))
+}
 
+/// Helper function to cleanup OAuth flow test
+async fn cleanup_oauth_flow_test(pool: &PgPool) {
+    cleanup_test_tokens(pool).await;
+    env::remove_var("OAUTH_ENCRYPTION_KEY");
+}
+
+/// Execute a complete OAuth flow simulation with storage
+async fn execute_oauth_flow_simulation(storage: &TokenStorage) {
     // Step 1: Store pending token (simulating Step 1 of OAuth flow)
     println!("Step 1: Store Request Token");
-    let storage = TokenStorage::new(pool.clone());
     let request_token = RequestToken {
         oauth_token: "flow_test_request_token".to_string(),
         oauth_token_secret: "flow_test_request_secret".to_string(),
@@ -898,7 +905,7 @@ async fn test_complete_oauth_flow_with_storage() {
     };
 
     storage.store_pending_token(&request_token).await.unwrap();
-    println!("  ✅ Request token stored securely (encrypted)");
+    println!("  Request token stored securely (encrypted)");
 
     // Step 2: Retrieve pending token (simulating callback)
     println!("\nStep 2: Retrieve Request Token for Verification");
@@ -913,14 +920,14 @@ async fn test_complete_oauth_flow_with_storage() {
         retrieved_request.oauth_token_secret,
         request_token.oauth_token_secret
     );
-    println!("  ✅ Request token retrieved and decrypted successfully");
+    println!("  Request token retrieved and decrypted successfully");
 
     // Step 3: Exchange for access token (simulated)
     println!("\nStep 3: Exchange Request Token for Access Token");
     let access_token = AccessToken::new("flow_test_access_token", "flow_test_access_secret");
 
     storage.store_access_token(&access_token).await.unwrap();
-    println!("  ✅ Access token stored securely (encrypted)");
+    println!("  Access token stored securely (encrypted)");
 
     // Step 4: Clean up pending token
     println!("\nStep 4: Clean Up Pending Token");
@@ -928,7 +935,7 @@ async fn test_complete_oauth_flow_with_storage() {
         .delete_pending_token("flow_test_request_token")
         .await
         .unwrap();
-    println!("  ✅ Pending token deleted");
+    println!("  Pending token deleted");
 
     // Step 5: Retrieve access token for API use
     println!("\nStep 5: Retrieve Access Token for API Calls");
@@ -943,13 +950,24 @@ async fn test_complete_oauth_flow_with_storage() {
         retrieved_access.oauth_token_secret,
         access_token.oauth_token_secret
     );
-    println!("  ✅ Access token retrieved and decrypted successfully");
+    println!("  Access token retrieved and decrypted successfully");
+}
+
+#[tokio::test]
+#[ignore = "requires database connection"]
+async fn test_complete_oauth_flow_with_storage() {
+    let Some((pool, storage)) = setup_oauth_flow_test().await else {
+        return;
+    };
+
+    println!("\n=== Complete OAuth Flow Simulation ===\n");
+
+    execute_oauth_flow_simulation(&storage).await;
 
     println!("\n=== Flow Complete ===");
-    println!("🔐 OAuth flow completed successfully with encrypted storage\n");
+    println!("OAuth flow completed successfully with encrypted storage\n");
 
-    cleanup_test_tokens(&pool).await;
-    env::remove_var("OAUTH_ENCRYPTION_KEY");
+    cleanup_oauth_flow_test(&pool).await;
 }
 
 // ============================================================================

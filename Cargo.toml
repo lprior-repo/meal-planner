@@ -253,6 +253,7 @@ serde_yaml = "0.9"
 
 # Async runtime (only needed for lib, not binaries)
 tokio = { version = "1.0", features = ["full"], optional = false }
+futures = "0.3"
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
@@ -746,54 +747,16 @@ name = "tandoor_ingredient_delete"
 path = "src/bin/tandoor_ingredient_delete.rs"
 
 [[bin]]
-name = "tandoor_ingredient_from_string"
-path = "src/bin/tandoor_ingredient_from_string.rs"
+name = "tandoor_ingredient_lookup_nutrition"
+path = "src/bin/tandoor_ingredient_lookup_nutrition.rs"
 
 [[bin]]
-name = "tandoor_ai_import"
-path = "src/bin/tandoor_ai_import.rs"
-
-# Property Type binaries
-[[bin]]
-name = "tandoor_property_type_list"
-path = "src/bin/tandoor_property_type_list.rs"
+name = "tandoor_recipe_calculate_nutrition"
+path = "src/bin/tandoor_recipe_calculate_nutrition.rs"
 
 [[bin]]
-name = "tandoor_property_type_get"
-path = "src/bin/tandoor_property_type_get.rs"
-
-[[bin]]
-name = "tandoor_property_type_create"
-path = "src/bin/tandoor_property_type_create.rs"
-
-[[bin]]
-name = "tandoor_property_type_update"
-path = "src/bin/tandoor_property_type_update.rs"
-
-[[bin]]
-name = "tandoor_property_type_delete"
-path = "src/bin/tandoor_property_type_delete.rs"
-
-# Property binaries
-[[bin]]
-name = "tandoor_property_list"
-path = "src/bin/tandoor_property_list.rs"
-
-[[bin]]
-name = "tandoor_property_get"
-path = "src/bin/tandoor_property_get.rs"
-
-[[bin]]
-name = "tandoor_property_create"
-path = "src/bin/tandoor_property_create.rs"
-
-[[bin]]
-name = "tandoor_property_update"
-path = "src/bin/tandoor_property_update.rs"
-
-[[bin]]
-name = "tandoor_property_delete"
-path = "src/bin/tandoor_property_delete.rs"
+name = "tandoor_recipe_update_nutrition"
+path = "src/bin/tandoor_recipe_update_nutrition.rs"
 
 [features]
 sqlx-cli = ["dep:sqlx-cli"]
@@ -814,6 +777,7 @@ incremental = true
 
 [dev-dependencies]
 wiremock = "0.6"
+assert_cmd = "2.0"
 # TDD assertion libraries - Kent Beck style
 pretty_assertions = "1.4"    # Better diff output for assert_eq failures
 rstest = "0.18"              # Parameterized/table-driven tests

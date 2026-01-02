@@ -814,7 +814,7 @@ pub struct CreateShoppingListEntryRequest {
 }
 
 /// Request to update a shopping list entry
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct UpdateShoppingListEntryRequest {
     /// Shopping list ID (optional)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1418,9 +1418,9 @@ mod tests {
     #[test]
     fn test_recipe_image_deserialize_full() {
         let json = r#"{
-            "image": "/media/recipes/123.jpg",
-            "image_url": "https://example.com/recipe.jpg"
-        }"#;
+                "image": "/media/recipes/123.jpg",
+                "image_url": "https://example.com/recipe.jpg"
+            }"#;
         let result: RecipeImage = serde_json::from_str(json).expect("Failed to deserialize");
         assert_eq!(result.image, Some("/media/recipes/123.jpg".to_string()));
         assert_eq!(
@@ -1475,135 +1475,220 @@ mod tests {
     }
 
     // ============================================================================
-    // AiImportResponse Tests
+    // Pure Core Function Tests (Dave Farley: Functional Core / Imperative Shell)
     // ============================================================================
 
+    fn validate_recipe_name(name: &str) -> Result<(), String> {
+        if name.is_empty() {
+            Err("Recipe name cannot be empty".to_string())
+        } else if name.len() > 255 {
+            Err("Recipe name exceeds 255 characters".to_string())
+        } else {
+            Ok(())
+        }
+    }
+
+    fn build_keywords(
+        scraped: &[SourceImportKeyword],
+        additional: &[String],
+    ) -> Vec<CreateKeywordRequest> {
+        let mut keywords: Vec<CreateKeywordRequest> = scraped
+            .iter()
+            .map(|k| CreateKeywordRequest {
+                name: k.name.clone(),
+            })
+            .collect();
+        for kw in additional {
+            keywords.push(CreateKeywordRequest { name: kw.clone() });
+        }
+        keywords
+    }
+
+    fn build_steps_with_ingredients(steps: &[SourceImportStep]) -> Vec<CreateStepRequest> {
+        steps
+            .iter()
+            .map(|s| {
+                let ingredients: Vec<CreateIngredientRequest> = s
+                    .ingredients
+                    .iter()
+                    .filter_map(|i| {
+                        let food = i.food.as_ref()?;
+                        let unit_name = i
+                            .unit
+                            .as_ref()
+                            .map(|u| u.name.clone())
+                            .filter(|n| !n.is_empty())
+                            .unwrap_or_else(|| "piece".to_string());
+                        Some(CreateIngredientRequest {
+                            amount: i.amount,
+                            food: CreateFoodRequest {
+                                name: food.name.clone(),
+                            },
+                            unit: Some(CreateUnitRequest { name: unit_name }),
+                            note: if i.note.is_empty() {
+                                None
+                            } else {
+                                Some(i.note.clone())
+                            },
+                        })
+                    })
+                    .collect();
+                CreateStepRequest {
+                    instruction: s.instruction.clone(),
+                    ingredients: Some(ingredients),
+                }
+            })
+            .collect()
+    }
+
     #[test]
-    fn test_ai_import_response_deserialize_success() {
-        let json = r#"{
-            "recipe": {
-                "name": "Test Recipe",
-                "description": "A test recipe",
-                "servings": 4,
-                "steps": [],
-                "keywords": []
-            },
-            "recipe_id": 123,
-            "images": ["https://example.com/img1.jpg", "https://example.com/img2.jpg"],
-            "error": false,
-            "msg": "Import successful",
-            "duplicates": []
-        }"#;
-        let result: AiImportResponse = serde_json::from_str(json).expect("Failed to deserialize");
-        assert!(result.recipe.is_some());
+    fn test_validate_recipe_name_empty() {
+        assert!(validate_recipe_name("").is_err());
+    }
+
+    #[test]
+    fn test_validate_recipe_name_too_long() {
+        let long_name = "a".repeat(256);
+        assert!(validate_recipe_name(&long_name).is_err());
+    }
+
+    #[test]
+    fn test_validate_recipe_name_valid() {
+        assert!(validate_recipe_name("Test Recipe").is_ok());
+    }
+
+    #[test]
+    fn test_build_keywords_empty() {
+        let result = build_keywords(&[], &[]);
+        assert!(result.is_empty());
+    }
+
+    #[test]
+    fn test_build_keywords_scraped_only() {
+        let scraped = vec![SourceImportKeyword {
+            id: Some(1),
+            label: Some("dinner".to_string()),
+            name: "dinner".to_string(),
+        }];
+        let result = build_keywords(&scraped, &[]);
+        assert_eq!(result.len(), 1);
+        assert_eq!(result[0].name, "dinner");
+    }
+
+    #[test]
+    fn test_build_keywords_additional_only() {
+        let additional = vec!["quick".to_string(), "easy".to_string()];
+        let result = build_keywords(&[], &additional);
+        assert_eq!(result.len(), 2);
+        assert_eq!(result[0].name, "quick");
+        assert_eq!(result[1].name, "easy");
+    }
+
+    #[test]
+    fn test_build_keywords_combined() {
+        let scraped = vec![SourceImportKeyword {
+            id: None,
+            label: None,
+            name: "dinner".to_string(),
+        }];
+        let additional = vec!["test".to_string()];
+        let result = build_keywords(&scraped, &additional);
+        assert_eq!(result.len(), 2);
+        assert_eq!(result[0].name, "dinner");
+        assert_eq!(result[1].name, "test");
+    }
+
+    #[test]
+    fn test_build_steps_with_ingredients_empty() {
+        let result = build_steps_with_ingredients(&[]);
+        assert!(result.is_empty());
+    }
+
+    #[test]
+    fn test_build_steps_with_ingredients_single_step() {
+        let steps = vec![SourceImportStep {
+            instruction: "Mix ingredients".to_string(),
+            ingredients: vec![SourceImportIngredient {
+                amount: Some(2.0),
+                food: Some(SourceImportFood {
+                    name: "eggs".to_string(),
+                }),
+                unit: Some(SourceImportUnit {
+                    name: "piece".to_string(),
+                }),
+                note: "".to_string(),
+                original_text: "".to_string(),
+            }],
+            show_ingredients_table: true,
+        }];
+        let result = build_steps_with_ingredients(&steps);
+        assert_eq!(result.len(), 1);
+        assert_eq!(result[0].instruction, "Mix ingredients");
+        assert_eq!(result[0].ingredients.as_ref().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn test_build_steps_with_ingredients_default_unit() {
+        let steps = vec![SourceImportStep {
+            instruction: "Cook".to_string(),
+            ingredients: vec![SourceImportIngredient {
+                amount: Some(1.0),
+                food: Some(SourceImportFood {
+                    name: "rice".to_string(),
+                }),
+                unit: None,
+                note: "".to_string(),
+                original_text: "".to_string(),
+            }],
+            show_ingredients_table: true,
+        }];
+        let result = build_steps_with_ingredients(&steps);
+        let ingredients = result[0].ingredients.as_ref().unwrap();
+        assert_eq!(ingredients[0].unit.as_ref().unwrap().name, "piece");
+    }
+
+    #[test]
+    fn test_build_steps_with_ingredients_empty_note() {
+        let steps = vec![SourceImportStep {
+            instruction: "Step 1".to_string(),
+            ingredients: vec![SourceImportIngredient {
+                amount: None,
+                food: Some(SourceImportFood {
+                    name: "salt".to_string(),
+                }),
+                unit: Some(SourceImportUnit {
+                    name: "tsp".to_string(),
+                }),
+                note: "".to_string(),
+                original_text: "".to_string(),
+            }],
+            show_ingredients_table: true,
+        }];
+        let result = build_steps_with_ingredients(&steps);
+        assert!(result[0].ingredients.as_ref().unwrap()[0].note.is_none());
+    }
+
+    #[test]
+    fn test_build_steps_with_ingredients_with_note() {
+        let steps = vec![SourceImportStep {
+            instruction: "Step 1".to_string(),
+            ingredients: vec![SourceImportIngredient {
+                amount: Some(1.0),
+                food: Some(SourceImportFood {
+                    name: "pepper".to_string(),
+                }),
+                unit: Some(SourceImportUnit {
+                    name: "tsp".to_string(),
+                }),
+                note: "freshly ground".to_string(),
+                original_text: "".to_string(),
+            }],
+            show_ingredients_table: true,
+        }];
+        let result = build_steps_with_ingredients(&steps);
         assert_eq!(
-            result.recipe.as_ref().map(|r| r.name.as_str()),
-            Some("Test Recipe")
+            result[0].ingredients.as_ref().unwrap()[0].note,
+            Some("freshly ground".to_string())
         );
-        assert_eq!(result.recipe_id, Some(123));
-        assert_eq!(result.images.len(), 2);
-        assert!(!result.error);
-        assert_eq!(result.msg, "Import successful");
-        assert!(result.duplicates.is_empty());
-    }
-
-    #[test]
-    fn test_ai_import_response_deserialize_error() {
-        let json = r#"{
-            "recipe": null,
-            "error": true,
-            "msg": "Failed to parse image"
-        }"#;
-        let result: AiImportResponse = serde_json::from_str(json).expect("Failed to deserialize");
-        assert!(result.recipe.is_none());
-        assert!(result.recipe_id.is_none());
-        assert!(result.error);
-        assert_eq!(result.msg, "Failed to parse image");
-    }
-
-    #[test]
-    fn test_ai_import_response_deserialize_minimal() {
-        let json = r#"{}"#;
-        let result: AiImportResponse = serde_json::from_str(json).expect("Failed to deserialize");
-        assert!(result.recipe.is_none());
-        assert!(result.recipe_id.is_none());
-        assert!(result.images.is_empty());
-        assert!(!result.error);
-        assert!(result.msg.is_empty());
-        assert!(result.duplicates.is_empty());
-    }
-
-    #[test]
-    fn test_ai_import_response_deserialize_with_alias() {
-        // Test that recipe_json alias works
-        let json = r#"{
-            "recipe_json": {
-                "name": "Aliased Recipe",
-                "description": "",
-                "servings": 2,
-                "steps": [],
-                "keywords": []
-            },
-            "error": false,
-            "msg": ""
-        }"#;
-        let result: AiImportResponse = serde_json::from_str(json).expect("Failed to deserialize");
-        assert!(result.recipe.is_some());
-        assert_eq!(
-            result.recipe.as_ref().map(|r| r.name.as_str()),
-            Some("Aliased Recipe")
-        );
-    }
-
-    #[test]
-    fn test_ai_import_response_deserialize_with_duplicates() {
-        let json = r#"{
-            "recipe": null,
-            "error": false,
-            "msg": "Duplicates found",
-            "duplicates": [
-                {"id": 1, "name": "Existing Recipe 1"},
-                {"id": 2, "name": "Existing Recipe 2"}
-            ]
-        }"#;
-        let result: AiImportResponse = serde_json::from_str(json).expect("Failed to deserialize");
-        assert_eq!(result.duplicates.len(), 2);
-        assert_eq!(result.duplicates.first().map(|d| d.id), Some(1));
-        assert_eq!(
-            result.duplicates.first().map(|d| d.name.as_str()),
-            Some("Existing Recipe 1")
-        );
-    }
-
-    #[test]
-    fn test_ai_import_response_clone() {
-        let original = AiImportResponse {
-            recipe: None,
-            recipe_id: Some(42),
-            images: vec!["test.jpg".to_string()],
-            error: false,
-            msg: "Test message".to_string(),
-            duplicates: vec![],
-        };
-        let cloned = original.clone();
-        assert_eq!(original.recipe_id, cloned.recipe_id);
-        assert_eq!(original.images, cloned.images);
-        assert_eq!(original.error, cloned.error);
-        assert_eq!(original.msg, cloned.msg);
-    }
-
-    #[test]
-    fn test_ai_import_response_serialize() {
-        let response = AiImportResponse {
-            recipe: None,
-            recipe_id: Some(100),
-            images: vec!["img.jpg".to_string()],
-            error: false,
-            msg: "OK".to_string(),
-            duplicates: vec![],
-        };
-        let json = serde_json::to_string(&response).expect("Failed to serialize");
-        assert!(json.contains("\"recipe_id\":100"));
-        assert!(json.contains("\"msg\":\"OK\""));
     }
 }
