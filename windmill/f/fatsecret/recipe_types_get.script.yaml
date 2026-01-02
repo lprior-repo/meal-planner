@@ -1,0 +1,17 @@
+summary: Get FatSecret recipe types
+description: >-
+  Retrieves all available recipe types/categories. This is a 2-legged OAuth
+  request (no user token required).
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+  required:
+    - fatsecret

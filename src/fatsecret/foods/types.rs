@@ -164,7 +164,7 @@ use crate::fatsecret::core::serde_utils::{
 pub struct FoodId(String);
 
 impl FoodId {
-    /// Creates a new FoodId from the given value
+    /// Creates a new `FoodId` from the given value
     pub fn new(id: impl Into<String>) -> Self {
         Self(id.into())
     }
@@ -199,7 +199,7 @@ impl std::fmt::Display for FoodId {
 pub struct ServingId(String);
 
 impl ServingId {
-    /// Creates a new ServingId from the given value
+    /// Creates a new `ServingId` from the given value
     pub fn new(id: impl Into<String>) -> Self {
         Self(id.into())
     }

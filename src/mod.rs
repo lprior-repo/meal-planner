@@ -35,6 +35,10 @@
 pub mod fatsecret;
 pub mod tandoor;
 
+// Test utilities - only compiled for tests
+#[cfg(test)]
+pub mod test_helpers;
+
 // Re-export commonly used types for convenience
 pub use fatsecret::core::errors::parse_error_response;
 pub use fatsecret::core::http::{make_api_request, make_authenticated_request, make_oauth_request};

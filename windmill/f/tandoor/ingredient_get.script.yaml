@@ -1,0 +1,21 @@
+summary: Get ingredient
+description: Retrieves a specific ingredient from Tandoor by ID
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    id:
+      type: string
+      description: Ingredient ID to retrieve
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - id

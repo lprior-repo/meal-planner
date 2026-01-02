@@ -1,0 +1,35 @@
+summary: Batch update foods
+description: Updates multiple foods in the Tandoor database with specified changes
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+    updates:
+      type: string
+      description: Array of food updates with id and optional name/description
+      default: null
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: Food ID to update
+          name:
+            type: string
+            description: New name for the food
+          description:
+            type: string
+            description: New description for the food
+        required:
+          - id
+      originalType: string
+  required:
+    - tandoor
+    - updates

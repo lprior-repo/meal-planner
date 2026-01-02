@@ -1,0 +1,53 @@
+summary: Update recipe in Tandoor
+description: >-
+  Updates recipe fields like name, description, servings, and timing. Only
+  specified fields are updated.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    name:
+      type: string
+      description: New recipe name
+      default: ''
+      originalType: string
+    description:
+      type: string
+      description: New recipe description
+      default: ''
+      originalType: string
+    recipe_id:
+      type: string
+      description: Recipe ID to update
+      default: null
+      originalType: string
+    servings:
+      type: string
+      description: Number of servings
+      default: ''
+      originalType: string
+    source_url:
+      type: string
+      description: New source URL
+      default: ''
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+    waiting_time:
+      type: string
+      description: Passive time in minutes
+      default: ''
+      originalType: string
+    working_time:
+      type: string
+      description: Active cooking time in minutes
+      default: ''
+      originalType: string
+  required:
+    - tandoor
+    - recipe_id

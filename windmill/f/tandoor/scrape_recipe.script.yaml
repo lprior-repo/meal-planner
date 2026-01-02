@@ -1,18 +1,21 @@
 summary: Scrape recipe from URL
 description: Uses Tandoor's built-in scraper to extract recipe data from a URL
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
     tandoor:
-      type: object
+      type: string
       description: Tandoor API credentials
-      format: resource-tandoor
+      default: null
+      originalType: string
     url:
       type: string
       description: Recipe URL to scrape
+      default: null
+      originalType: string
   required:
     - tandoor
     - url

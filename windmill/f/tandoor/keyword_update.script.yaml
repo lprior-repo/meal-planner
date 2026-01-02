@@ -1,0 +1,27 @@
+summary: Update keyword
+description: Updates an existing keyword name in Tandoor
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    id:
+      type: string
+      description: Keyword ID to update
+      default: null
+      originalType: string
+    name:
+      type: string
+      description: New keyword name
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - id
+    - name

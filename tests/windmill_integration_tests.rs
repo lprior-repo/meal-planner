@@ -75,6 +75,7 @@ fn today_date_int() -> i64 {
 // ============================================================================
 
 #[test]
+#[ignore = "requires Windmill API connection"]
 fn test_windmill_food_get() {
     let result = run_windmill_script(
         "f/fatsecret/food_get",
@@ -93,6 +94,7 @@ fn test_windmill_food_get() {
 }
 
 #[test]
+#[ignore = "requires Windmill API connection"]
 fn test_windmill_foods_search() {
     let result = run_windmill_script(
         "f/fatsecret/foods_search",
@@ -113,6 +115,7 @@ fn test_windmill_foods_search() {
 }
 
 #[test]
+#[ignore = "requires Windmill API connection"]
 fn test_windmill_foods_autocomplete() {
     let result = run_windmill_script(
         "f/fatsecret/foods_autocomplete",
@@ -139,6 +142,7 @@ fn test_windmill_foods_autocomplete() {
 }
 
 #[test]
+#[ignore = "requires Windmill API connection"]
 fn test_windmill_food_find_barcode() {
     let result = run_windmill_script(
         "f/fatsecret/food_find_barcode",
@@ -168,6 +172,7 @@ fn test_windmill_food_find_barcode() {
 // ============================================================================
 
 #[test]
+#[ignore = "requires Windmill API connection"]
 fn test_windmill_foods_get_favorites() {
     let result = run_windmill_script(
         "f/fatsecret/foods_get_favorites",
@@ -189,6 +194,7 @@ fn test_windmill_foods_get_favorites() {
 }
 
 #[test]
+#[ignore = "requires Windmill API connection"]
 fn test_windmill_food_add_and_delete_favorite() {
     // Add favorite
     let add_result = run_windmill_script(
@@ -234,6 +240,7 @@ fn test_windmill_food_add_and_delete_favorite() {
 }
 
 #[test]
+#[ignore = "requires Windmill API connection"]
 fn test_windmill_diary_entry_lifecycle() {
     let date_int = today_date_int();
 
@@ -305,6 +312,7 @@ fn test_windmill_diary_entry_lifecycle() {
 }
 
 #[test]
+#[ignore = "requires Windmill API connection"]
 fn test_windmill_food_entries_get() {
     let date_int = today_date_int();
 
@@ -336,6 +344,7 @@ fn test_windmill_food_entries_get() {
 }
 
 #[test]
+#[ignore = "requires Windmill API connection"]
 fn test_windmill_food_entries_get_month() {
     let date_int = today_date_int();
 
@@ -371,6 +380,7 @@ fn test_windmill_food_entries_get_month() {
 // ============================================================================
 
 #[test]
+#[ignore = "requires Windmill API connection"]
 fn test_windmill_full_integration_suite() {
     println!("=== Windmill Integration Test Suite ===\n");
 

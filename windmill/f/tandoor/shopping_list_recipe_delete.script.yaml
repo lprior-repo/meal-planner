@@ -1,0 +1,29 @@
+summary: Delete recipe from shopping list
+description: >-
+  Removes a recipe entry and all its associated shopping list entries from a
+  meal plan
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    mealplan_id:
+      type: string
+      description: Meal plan ID
+      default: null
+      originalType: string
+    recipe_id:
+      type: string
+      description: Recipe ID to delete from shopping list
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - mealplan_id
+    - recipe_id

@@ -1,0 +1,15 @@
+summary: List all spaces
+description: Retrieves a list of all user workspaces/spaces from Tandoor
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor

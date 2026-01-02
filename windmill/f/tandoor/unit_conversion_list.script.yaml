@@ -1,0 +1,27 @@
+summary: List unit conversions
+description: Retrieves a paginated list of unit conversions from the Tandoor API
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    page:
+      type: string
+      description: Page number for pagination
+      default: null
+      originalType: string
+    page_size:
+      type: string
+      description: Number of results per page
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - page
+    - page_size

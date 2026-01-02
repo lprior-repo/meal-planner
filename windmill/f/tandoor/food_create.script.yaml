@@ -1,0 +1,27 @@
+summary: Create a food
+description: Creates a new food entry in the Tandoor database
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    name:
+      type: string
+      description: Name of the food to create
+      default: null
+      originalType: string
+    description:
+      type: string
+      description: Optional description for the food
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - name
+    - description

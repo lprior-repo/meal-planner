@@ -120,6 +120,19 @@ pub struct TandoorConfig {
     pub api_token: String,
 }
 
+impl TandoorConfig {
+    /// Create `TandoorConfig` from environment variables
+    /// Looks for `TANDOOR_BASE_URL` and `TANDOOR_API_TOKEN`
+    pub fn from_env() -> Option<Self> {
+        let base_url = std::env::var("TANDOOR_BASE_URL").ok()?;
+        let api_token = std::env::var("TANDOOR_API_TOKEN").ok()?;
+        Some(TandoorConfig {
+            base_url,
+            api_token,
+        })
+    }
+}
+
 /// Paginated response wrapper
 #[derive(Debug, Deserialize)]
 pub struct PaginatedResponse<T> {
@@ -155,12 +168,18 @@ pub struct RecipeSummary {
 }
 
 /// Keyword/tag
+/// Note: In recipe list responses, keywords only have `id` and `label`.
+/// In keyword list responses, they have full details including `name`.
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Keyword {
     /// Keyword ID
     pub id: i64,
-    /// Keyword name
-    pub name: String,
+    /// Keyword name (full keyword list responses)
+    #[serde(default)]
+    pub name: Option<String>,
+    /// Keyword label (always present in recipe list responses)
+    #[serde(default)]
+    pub label: Option<String>,
 }
 
 /// Test connection result
@@ -364,6 +383,14 @@ pub struct CreateKeywordRequest {
     pub name: String,
 }
 
+/// Keyword update request
+#[derive(Debug, Serialize)]
+pub struct UpdateKeywordRequest {
+    /// Keyword name (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+}
+
 /// Step creation request
 #[derive(Debug, Serialize)]
 pub struct CreateStepRequest {
@@ -426,4 +453,803 @@ pub struct RecipeImportResult {
     pub source_url: String,
     /// Status message or error description
     pub message: String,
+}
+
+// ============================================================================
+// Meal Plan Types (for /api/meal-plan/)
+// ============================================================================
+
+/// Meal plan summary (list view)
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct MealPlanSummary {
+    /// Meal plan ID
+    pub id: i64,
+    /// Recipe name
+    pub recipe_name: String,
+    /// Meal type name
+    pub meal_type_name: String,
+    /// Date from
+    pub from_date: String,
+    /// Date to
+    pub to_date: String,
+    /// Number of servings
+    pub servings: f64,
+    /// Whether added to shopping
+    #[serde(default)]
+    pub shopping: bool,
+}
+
+/// Full meal plan response
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct MealPlan {
+    /// Meal plan ID
+    pub id: i64,
+    /// Title
+    #[serde(default)]
+    pub title: String,
+    /// Recipe details
+    pub recipe: serde_json::Value,
+    /// Number of servings
+    pub servings: f64,
+    /// Note
+    #[serde(default)]
+    pub note: String,
+    /// Note in markdown format
+    #[serde(default)]
+    pub note_markdown: String,
+    /// Date from (ISO datetime)
+    pub from_date: String,
+    /// Date to (ISO datetime)
+    pub to_date: String,
+    /// Meal type details
+    pub meal_type: serde_json::Value,
+    /// User ID who created this
+    pub created_by: i64,
+    /// Shared with users
+    #[serde(default)]
+    pub shared: Vec<i64>,
+    /// Recipe name
+    pub recipe_name: String,
+    /// Meal type name
+    pub meal_type_name: String,
+    /// Whether added to shopping
+    #[serde(default)]
+    pub shopping: bool,
+}
+
+/// Paginated meal plan response with timestamp
+#[derive(Debug, Deserialize)]
+pub struct PaginatedMealPlanResponse {
+    /// Total number of items
+    pub count: i64,
+    /// URL for next page (if any)
+    pub next: Option<String>,
+    /// URL for previous page (if any)
+    pub previous: Option<String>,
+    /// Server timestamp
+    #[serde(default)]
+    pub timestamp: Option<String>,
+    /// Items on this page
+    pub results: Vec<MealPlan>,
+}
+
+/// Request to create a meal plan
+#[derive(Debug, Serialize)]
+pub struct CreateMealPlanRequest {
+    /// Recipe ID
+    pub recipe: i64,
+    /// Meal type ID
+    pub meal_type: i64,
+    /// Start date (ISO date string)
+    pub from_date: String,
+    /// End date (ISO date string, optional - defaults to `from_date`)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub to_date: Option<String>,
+    /// Number of servings
+    pub servings: f64,
+    /// Title (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub title: Option<String>,
+    /// Note (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub note: Option<String>,
+}
+
+/// Request to update a meal plan
+#[derive(Debug, Serialize)]
+pub struct UpdateMealPlanRequest {
+    /// Recipe ID (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recipe: Option<i64>,
+    /// Meal type ID (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub meal_type: Option<i64>,
+    /// Start date (ISO date string, optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub from_date: Option<String>,
+    /// End date (ISO date string, optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub to_date: Option<String>,
+    /// Number of servings (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub servings: Option<f64>,
+    /// Title (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub title: Option<String>,
+    /// Note (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub note: Option<String>,
+}
+
+// ============================================================================
+// Meal Type Types (for /api/meal-type/)
+// ============================================================================
+
+/// Meal type (breakfast, lunch, dinner, etc.)
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct MealType {
+    pub id: i64,
+    pub name: String,
+    #[serde(default)]
+    pub order: i32,
+    #[serde(default)]
+    pub time: Option<String>,
+    #[serde(default)]
+    pub color: Option<String>,
+    #[serde(default)]
+    pub default: bool,
+    #[serde(default)]
+    pub created_by: Option<i64>,
+}
+
+/// Request to create a meal type
+#[derive(Debug, Serialize)]
+pub struct CreateMealTypeRequest {
+    pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub order: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub time: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub color: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub default: Option<bool>,
+}
+
+/// Request to update a meal type
+#[derive(Debug, Serialize)]
+pub struct UpdateMealTypeRequest {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub order: Option<i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub time: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub color: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub default: Option<bool>,
+}
+
+// ============================================================================
+// Recipe Book Types (for /api/recipe-book/)
+// ============================================================================
+
+/// Recipe book (collection of recipes)
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct RecipeBook {
+    pub id: i64,
+    pub name: String,
+    #[serde(default)]
+    pub description: String,
+    #[serde(default)]
+    pub icon: String,
+    #[serde(default)]
+    pub color: String,
+    #[serde(default)]
+    pub filter: Option<serde_json::Value>,
+}
+
+/// Request to create a recipe book
+#[derive(Debug, Serialize)]
+pub struct CreateRecipeBookRequest {
+    pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub color: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub filter: Option<serde_json::Value>,
+}
+
+/// Request to update a recipe book
+#[derive(Debug, Serialize)]
+pub struct UpdateRecipeBookRequest {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub icon: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub color: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub filter: Option<serde_json::Value>,
+}
+
+// ============================================================================
+// Recipe Book Entry Types (for /api/recipe-book-entry/)
+// ============================================================================
+
+/// Recipe book entry (recipe in a book)
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct RecipeBookEntry {
+    pub id: i64,
+    pub recipe_book: i64,
+    pub recipe: i64,
+    #[serde(default)]
+    pub recipe_name: String,
+    #[serde(default)]
+    pub position: i32,
+}
+
+/// Request to create a recipe book entry
+#[derive(Debug, Serialize)]
+pub struct CreateRecipeBookEntryRequest {
+    pub recipe_book: i64,
+    pub recipe: i64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub position: Option<i32>,
+}
+
+/// Request to update a recipe book entry
+#[derive(Debug, Serialize)]
+pub struct UpdateRecipeBookEntryRequest {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recipe_book: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recipe: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub position: Option<i32>,
+}
+
+// ============================================================================
+// Batch Recipe Update Types
+// ============================================================================
+
+/// Request to batch update recipes
+#[derive(Debug, Serialize, Deserialize)]
+pub struct BatchUpdateRecipeRequest {
+    /// Recipe ID
+    pub id: i64,
+    /// Updated name (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    /// Updated description (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    /// Updated servings (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub servings: Option<i32>,
+    /// Updated working time in minutes (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub working_time: Option<i32>,
+    /// Updated waiting time in minutes (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub waiting_time: Option<i32>,
+}
+
+/// Response from batch updating recipes
+#[derive(Debug, Serialize, Deserialize)]
+pub struct BatchUpdateRecipeResponse {
+    /// Number of recipes updated
+    pub updated_count: i64,
+    /// IDs of updated recipes
+    pub updated_ids: Vec<i64>,
+}
+
+// ============================================================================
+// Related Recipes Types
+// ============================================================================
+
+/// Response for related recipes
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RelatedRecipesResponse {
+    /// List of related recipes
+    pub results: Vec<RecipeSummary>,
+}
+
+// ============================================================================
+// Shopping List Types (for /api/meal-plan/{id}/shopping/)
+// ============================================================================
+
+/// Shopping list entry (ingredient on shopping list)
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct ShoppingListEntry {
+    /// Entry ID
+    pub id: i64,
+    /// Shopping list ID
+    pub list: i64,
+    /// Ingredient ID (if linked to recipe ingredient)
+    pub ingredient: Option<i64>,
+    /// Unit of measurement
+    pub unit: Option<String>,
+    /// Quantity amount
+    pub amount: Option<f64>,
+    /// Food name
+    pub food: Option<String>,
+    /// Whether item is checked off
+    pub checked: bool,
+    /// Display order
+    pub order: Option<i32>,
+}
+
+/// Request to create a shopping list entry
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CreateShoppingListEntryRequest {
+    /// Shopping list ID
+    pub list: i64,
+    /// Ingredient ID (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ingredient: Option<i64>,
+    /// Unit (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub unit: Option<String>,
+    /// Quantity (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub amount: Option<f64>,
+    /// Food name (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub food: Option<String>,
+    /// Whether checked (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub checked: Option<bool>,
+    /// Display order (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub order: Option<i32>,
+}
+
+/// Request to update a shopping list entry
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UpdateShoppingListEntryRequest {
+    /// Shopping list ID (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub list: Option<i64>,
+    /// Ingredient ID (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ingredient: Option<i64>,
+    /// Unit (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub unit: Option<String>,
+    /// Quantity (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub amount: Option<f64>,
+    /// Food name (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub food: Option<String>,
+    /// Whether checked (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub checked: Option<bool>,
+    /// Display order (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub order: Option<i32>,
+}
+
+/// Shopping list recipe (recipe entry in shopping list)
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct ShoppingListRecipe {
+    /// ID
+    pub id: i64,
+    /// Meal plan ID
+    pub mealplan: i64,
+    /// Recipe ID
+    pub recipe: i64,
+    /// Recipe name
+    pub recipe_name: String,
+    /// Shopping list ID
+    pub list: i64,
+    /// Number of servings
+    pub servings: f64,
+    /// Entries in this recipe's shopping list
+    #[serde(default)]
+    pub entries: Vec<ShoppingListEntry>,
+}
+
+/// Bulk request for shopping list entries
+#[derive(Debug, Serialize, Deserialize)]
+pub struct BulkShoppingListEntryRequest {
+    /// Array of entries to create/update
+    pub entries: Vec<CreateShoppingListEntryRequest>,
+}
+
+/// Response for bulk shopping list operation
+#[derive(Debug, Serialize, Deserialize)]
+pub struct BulkShoppingListEntryResponse {
+    /// Number of entries created/updated
+    pub created_count: i64,
+    /// IDs of created entries
+    pub created_ids: Vec<i64>,
+}
+
+// ============================================================================
+// Unit Types (for /api/unit/)
+// ============================================================================
+
+/// Unit of measurement
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Unit {
+    /// Unit ID
+    pub id: i64,
+    /// Unit name (e.g., "kg", "cup", "tbsp")
+    pub name: String,
+    /// Plural form (optional)
+    #[serde(default)]
+    pub plural_name: Option<String>,
+}
+
+/// Request to create a unit
+#[derive(Debug, Serialize)]
+pub struct CreateUnitRequestData {
+    /// Unit name
+    pub name: String,
+    /// Plural form (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub plural_name: Option<String>,
+}
+
+/// Request to update a unit
+#[derive(Debug, Serialize)]
+pub struct UpdateUnitRequest {
+    /// Unit name (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    /// Plural form (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub plural_name: Option<String>,
+}
+
+/// Unit conversion - full response from API
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct UnitConversion {
+    /// Conversion ID
+    pub id: i64,
+    /// Conversion name/description
+    #[serde(default)]
+    pub name: Option<String>,
+    /// Base amount
+    #[serde(default)]
+    pub base_amount: Option<f64>,
+    /// Base unit (full object)
+    #[serde(default)]
+    pub base_unit: Option<serde_json::Value>,
+    /// Converted amount
+    #[serde(default)]
+    pub converted_amount: Option<f64>,
+    /// Converted unit (full object)
+    #[serde(default)]
+    pub converted_unit: Option<serde_json::Value>,
+    /// Food (full object, optional)
+    #[serde(default)]
+    pub food: Option<serde_json::Value>,
+    /// Created by user ID
+    #[serde(default)]
+    pub created_by: Option<i64>,
+    /// Open data slug
+    #[serde(default)]
+    pub open_data_slug: Option<String>,
+}
+
+// ============================================================================
+// Ingredient Types (for /api/ingredient/)
+// ============================================================================
+
+/// Food ingredient (foods in recipes)
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Food {
+    /// Food ID
+    pub id: i64,
+    /// Food name
+    pub name: String,
+    /// Food description
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+/// Request to create a food
+#[derive(Debug, Serialize)]
+pub struct CreateFoodRequestData {
+    /// Food name
+    pub name: String,
+    /// Food description (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+}
+
+/// Request to update a food
+#[derive(Debug, Serialize)]
+pub struct UpdateFoodRequest {
+    /// Food name (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    /// Food description (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+}
+
+/// Ingredient (food + unit in a recipe) - full response from API
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Ingredient {
+    /// Ingredient ID
+    pub id: i64,
+    /// Food object (full data from API)
+    pub food: serde_json::Value,
+    /// Unit object (optional, full data from API)
+    #[serde(default)]
+    pub unit: Option<serde_json::Value>,
+    /// Amount (optional)
+    #[serde(default)]
+    pub amount: Option<f64>,
+    /// Note (optional)
+    #[serde(default)]
+    pub note: Option<String>,
+    /// Order in step
+    #[serde(default)]
+    pub order: Option<i32>,
+    /// Is this a section header
+    #[serde(default)]
+    pub is_header: Option<bool>,
+    /// No amount flag
+    #[serde(default)]
+    pub no_amount: Option<bool>,
+    /// Original text from import
+    #[serde(default)]
+    pub original_text: Option<String>,
+    /// Always use plural food name
+    #[serde(default)]
+    pub always_use_plural_food: Option<bool>,
+    /// Always use plural unit name
+    #[serde(default)]
+    pub always_use_plural_unit: Option<bool>,
+    /// Unit conversions
+    #[serde(default)]
+    pub conversions: Option<Vec<serde_json::Value>>,
+    /// Recipes using this ingredient
+    #[serde(default)]
+    pub used_in_recipes: Option<Vec<serde_json::Value>>,
+}
+
+/// Request to create an ingredient
+#[derive(Debug, Serialize)]
+pub struct CreateIngredientRequestData {
+    /// Food ID
+    pub food: i64,
+    /// Unit ID (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub unit: Option<i64>,
+    /// Amount (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub amount: Option<f64>,
+}
+
+/// Request to update an ingredient
+#[derive(Debug, Serialize)]
+pub struct UpdateIngredientRequest {
+    /// Food ID (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub food: Option<i64>,
+    /// Unit ID (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub unit: Option<i64>,
+    /// Amount (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub amount: Option<f64>,
+}
+
+/// Request to parse ingredient from text
+#[derive(Debug, Serialize)]
+pub struct IngredientFromStringRequest {
+    /// Ingredient text to parse (e.g., "2 cups flour")
+    pub text: String,
+}
+
+/// Parsed ingredient from text - API response
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct ParsedIngredient {
+    /// Parsed amount
+    #[serde(default)]
+    pub amount: Option<f64>,
+    /// Parsed unit (object with name and id)
+    #[serde(default)]
+    pub unit: Option<serde_json::Value>,
+    /// Parsed food (object with name and id)
+    #[serde(default)]
+    pub food: Option<serde_json::Value>,
+    /// Note text
+    #[serde(default)]
+    pub note: Option<String>,
+    /// Original text that was parsed
+    #[serde(default)]
+    pub original_text: Option<String>,
+}
+
+// ============================================================================
+// Step Types (for /api/step/)
+// ============================================================================
+
+/// Recipe step
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Step {
+    /// Step ID
+    pub id: i64,
+    /// Step instructions
+    pub instruction: String,
+    /// Recipe ID this step belongs to
+    #[serde(default)]
+    pub recipe: Option<i64>,
+    /// Step order
+    #[serde(default)]
+    pub order: Option<i32>,
+}
+
+/// Request to create a step
+#[derive(Debug, Serialize)]
+pub struct CreateStepRequestData {
+    /// Step instructions
+    pub instruction: String,
+    /// Recipe ID
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recipe: Option<i64>,
+    /// Step order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub order: Option<i32>,
+}
+
+/// Request to update a step
+#[derive(Debug, Serialize)]
+pub struct UpdateStepRequest {
+    /// Step instructions
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub instruction: Option<String>,
+    /// Recipe ID
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub recipe: Option<i64>,
+    /// Step order
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub order: Option<i32>,
+}
+
+// ============================================================================
+// Space Types (for /api/space/)
+// ============================================================================
+
+/// User workspace/space
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Space {
+    /// Space ID
+    pub id: i64,
+    /// Space name
+    pub name: String,
+    /// Space description
+    #[serde(default)]
+    pub description: Option<String>,
+    /// Space creation date
+    #[serde(default)]
+    pub created_at: Option<String>,
+}
+
+/// Request to create a space
+#[derive(Debug, Serialize)]
+pub struct CreateSpaceRequest {
+    /// Space name
+    pub name: String,
+    /// Space description
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+}
+
+/// Request to update a space
+#[derive(Debug, Serialize)]
+pub struct UpdateSpaceRequest {
+    /// Space name
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    /// Space description
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+}
+
+// ============================================================================
+// User Types (for /api/user/)
+// ============================================================================
+
+/// User profile
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct User {
+    /// User ID
+    pub id: i64,
+    /// Username
+    pub username: String,
+    /// User's email
+    #[serde(default)]
+    pub email: Option<String>,
+    /// User's first name
+    #[serde(default)]
+    pub first_name: Option<String>,
+    /// User's last name
+    #[serde(default)]
+    pub last_name: Option<String>,
+    /// User creation date
+    #[serde(default)]
+    pub date_joined: Option<String>,
+    /// Last login date
+    #[serde(default)]
+    pub last_login: Option<String>,
+    /// User's profile image URL
+    #[serde(default)]
+    pub profile_picture: Option<String>,
+}
+
+// ============================================================================
+// Food Batch Update Types (for /api/food/batch_update/)
+// ============================================================================
+
+/// Request to batch update foods
+#[derive(Debug, Serialize, Deserialize)]
+pub struct BatchUpdateFoodRequest {
+    /// Food ID
+    pub id: i64,
+    /// Updated name (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    /// Updated description (optional)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+}
+
+/// Response from batch updating foods
+#[derive(Debug, Serialize, Deserialize)]
+pub struct BatchUpdateFoodResponse {
+    /// Number of foods updated
+    pub updated_count: i64,
+    /// IDs of updated foods
+    pub updated_ids: Vec<i64>,
+}
+
+// ============================================================================
+// Supermarket Types (for /api/supermarket/)
+// ============================================================================
+
+/// Supermarket/store
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Supermarket {
+    /// Supermarket ID
+    pub id: i64,
+    /// Supermarket name
+    pub name: String,
+    /// Supermarket description
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+/// Request to create a supermarket
+#[derive(Debug, Serialize)]
+pub struct CreateSupermarketRequest {
+    /// Supermarket name
+    pub name: String,
+    /// Supermarket description
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+}
+
+/// Request to update a supermarket
+#[derive(Debug, Serialize)]
+pub struct UpdateSupermarketRequest {
+    /// Supermarket name
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    /// Supermarket description
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
 }

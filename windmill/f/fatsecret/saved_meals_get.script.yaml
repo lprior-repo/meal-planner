@@ -1,0 +1,33 @@
+summary: Get FatSecret saved meals
+description: 'Retrieves user''s saved meal templates, optionally filtered by meal type'
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    access_secret:
+      type: string
+      description: OAuth access secret (required for 3-legged requests)
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token (required for 3-legged requests)
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+    meal:
+      type: string
+      description: 'Filter by meal type (optional: breakfast, lunch, dinner, other)'
+      default: null
+      originalType: string
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - meal

@@ -1,0 +1,25 @@
+summary: Update a recipe book
+description: Updates an existing recipe book in Tandoor.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    recipe_book_id:
+      type: integer
+      description: Recipe book ID
+    name:
+      type: string
+      description: New name (optional)
+      default: ''
+    description:
+      type: string
+      description: New description (optional)
+      default: ''
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+  required:
+    - tandoor
+    - recipe_book_id

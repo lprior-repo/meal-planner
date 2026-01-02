@@ -2,7 +2,6 @@ summary: FatSecret OAuth Setup
 description: Connect your FatSecret account
 value:
   modules:
-    # Step 1: Get the authorization URL from FatSecret
     - id: a
       summary: Get authorization URL
       value:
@@ -16,8 +15,6 @@ value:
             type: static
             value: 'oob'
 
-    # Step 2: Show auth link + verifier input form
-    # Uses minimal TypeScript to get resume URLs (required by Windmill)
     - id: b
       summary: Authorize and enter verifier
       suspend:
@@ -33,8 +30,8 @@ value:
                 type: string
                 title: Verifier Code
                 description: After authorizing, paste the code FatSecret displays
-            required:
-              - verifier
+          required:
+            - verifier
       value:
         type: rawscript
         language: bun
@@ -49,7 +46,7 @@ value:
               description: {
                 render_all: [
                   {
-                    markdown: `## Authorize FatSecret\n\n**[Click here to authorize](${auth_url})**\n\nAfter authorizing, FatSecret shows a verifier code.\nPaste it below and click Resume.`
+                    "markdown": "## Authorize FatSecret\n\n**Auth URL:** `" + auth_url + "`\n\nAfter authorizing in FatSecret:\n1. You will see a verifier code displayed\n2. Paste that code in the Verifier Code field below\n3. Click Resume to complete the connection"
                   }
                 ]
               }
@@ -60,8 +57,6 @@ value:
             type: javascript
             expr: results.a.auth_url
 
-    # Step 3: Exchange verifier for access token
-    # Pass the pending token from step 1 as input
     - id: c
       summary: Complete OAuth
       value:
@@ -81,8 +76,6 @@ value:
             type: javascript
             expr: resume.verifier
 
-    # Step 4: Verify it worked by fetching profile
-    # Pass the access token from step 3 as input
     - id: d
       summary: Verify connection
       value:

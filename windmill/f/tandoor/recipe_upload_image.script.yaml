@@ -1,0 +1,29 @@
+summary: Upload recipe image to Tandoor
+description: >-
+  Uploads an image file to a recipe in Tandoor. Converts the file to multipart
+  form-data.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    image_path:
+      type: string
+      description: Path to the image file
+      default: null
+      originalType: string
+    recipe_id:
+      type: string
+      description: Recipe ID to upload image for
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - recipe_id
+    - image_path

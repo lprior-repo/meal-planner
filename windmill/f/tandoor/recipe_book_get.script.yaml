@@ -1,0 +1,17 @@
+summary: Get a recipe book by ID
+description: Retrieves a single recipe book by its ID from Tandoor.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    id:
+      type: integer
+      description: Recipe book ID
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+  required:
+    - tandoor
+    - id

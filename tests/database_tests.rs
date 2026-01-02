@@ -122,6 +122,7 @@ mod fixtures {
 // =============================================================================
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_store_and_get_pending_token() {
     let _key = setup_encryption();
@@ -154,6 +155,7 @@ async fn test_store_and_get_pending_token() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_get_nonexistent_pending_token() {
     let _key = setup_encryption();
@@ -175,6 +177,7 @@ async fn test_get_nonexistent_pending_token() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_update_pending_token_on_conflict() {
     let _key = setup_encryption();
@@ -216,6 +219,7 @@ async fn test_update_pending_token_on_conflict() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_delete_pending_token() {
     let _key = setup_encryption();
@@ -245,6 +249,7 @@ async fn test_delete_pending_token() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_get_latest_pending_token() {
     let _key = setup_encryption();
@@ -278,6 +283,7 @@ async fn test_get_latest_pending_token() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_get_latest_pending_token_when_none_exist() {
     let _key = setup_encryption();
@@ -302,6 +308,7 @@ async fn test_get_latest_pending_token_when_none_exist() {
 // =============================================================================
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_store_and_get_access_token() {
     let _key = setup_encryption();
@@ -333,6 +340,7 @@ async fn test_store_and_get_access_token() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_get_access_token_when_none_exists() {
     let _key = setup_encryption();
@@ -353,6 +361,7 @@ async fn test_get_access_token_when_none_exists() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_update_access_token_on_conflict() {
     let _key = setup_encryption();
@@ -384,6 +393,7 @@ async fn test_update_access_token_on_conflict() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_delete_access_token() {
     let _key = setup_encryption();
@@ -413,6 +423,7 @@ async fn test_delete_access_token() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_update_last_used() {
     let _key = setup_encryption();
@@ -457,6 +468,7 @@ async fn test_update_last_used() {
 // =============================================================================
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_check_token_validity_not_found() {
     let _key = setup_encryption();
@@ -477,6 +489,7 @@ async fn test_check_token_validity_not_found() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_check_token_validity_fresh() {
     let _key = setup_encryption();
@@ -501,6 +514,7 @@ async fn test_check_token_validity_fresh() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_check_token_validity_old() {
     let _key = setup_encryption();
@@ -544,6 +558,7 @@ async fn test_check_token_validity_old() {
 // =============================================================================
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_pending_token_expires() {
     let _key = setup_encryption();
@@ -574,6 +589,7 @@ async fn test_pending_token_expires() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_cleanup_expired_tokens() {
     let _key = setup_encryption();
@@ -624,6 +640,7 @@ async fn test_cleanup_expired_tokens() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_cleanup_expired_tokens_when_none() {
     let _key = setup_encryption();
@@ -648,6 +665,7 @@ async fn test_cleanup_expired_tokens_when_none() {
 // =============================================================================
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_encryption_roundtrip_pending_token() {
     let _key = setup_encryption();
@@ -694,6 +712,7 @@ async fn test_encryption_roundtrip_pending_token() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_encryption_roundtrip_access_token() {
     let _key = setup_encryption();
@@ -732,6 +751,7 @@ async fn test_encryption_roundtrip_access_token() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_encryption_different_ciphertexts() {
     let _key = setup_encryption();
@@ -802,6 +822,7 @@ async fn test_encryption_different_ciphertexts() {
 // =============================================================================
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_invalid_database_url() {
     let _key = setup_encryption();
@@ -815,6 +836,7 @@ async fn test_invalid_database_url() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_store_pending_token_without_encryption() {
     cleanup_encryption(); // Ensure no key is set
@@ -838,6 +860,7 @@ async fn test_store_pending_token_without_encryption() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_get_pending_token_with_corrupted_data() {
     let _key = setup_encryption();
@@ -871,6 +894,7 @@ async fn test_get_pending_token_with_corrupted_data() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_get_access_token_with_wrong_decryption_key() {
     let _key = setup_encryption();
@@ -905,6 +929,7 @@ async fn test_get_access_token_with_wrong_decryption_key() {
 // =============================================================================
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_concurrent_pending_token_writes() {
     let _key = setup_encryption();
@@ -952,6 +977,7 @@ async fn test_concurrent_pending_token_writes() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_concurrent_access_token_updates() {
     let _key = setup_encryption();
@@ -993,6 +1019,7 @@ async fn test_concurrent_access_token_updates() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_concurrent_reads_and_writes() {
     let _key = setup_encryption();
@@ -1050,6 +1077,7 @@ async fn test_concurrent_reads_and_writes() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_rate_limited_concurrent_access() {
     let _key = setup_encryption();
@@ -1106,6 +1134,7 @@ async fn test_rate_limited_concurrent_access() {
 // =============================================================================
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_unicode_in_token_secrets() {
     let _key = setup_encryption();
@@ -1130,6 +1159,7 @@ async fn test_unicode_in_token_secrets() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_very_long_token_secrets() {
     let _key = setup_encryption();
@@ -1158,6 +1188,7 @@ async fn test_very_long_token_secrets() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_empty_token_secret() {
     let _key = setup_encryption();
@@ -1182,6 +1213,7 @@ async fn test_empty_token_secret() {
 }
 
 #[tokio::test]
+#[ignore = "requires database connection"]
 #[serial]
 async fn test_special_characters_in_token() {
     let _key = setup_encryption();
@@ -1216,6 +1248,7 @@ async fn test_special_characters_in_token() {
 // =============================================================================
 
 #[test]
+#[ignore = "requires database connection"]
 fn test_coverage_summary() {
     println!("\n=== Database Integration Test Coverage ===\n");
 

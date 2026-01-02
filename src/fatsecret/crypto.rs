@@ -197,6 +197,131 @@ pub fn encryption_configured() -> bool {
     }
 }
 
+/// Validate encryption configuration at startup
+///
+/// This function should be called during application initialization
+/// to ensure encryption keys are properly configured before any
+/// cryptographic operations are attempted.
+///
+/// # Returns
+///
+/// `Ok(())` if encryption is properly configured
+/// `Err(CryptoError)` with detailed error message if not configured
+///
+/// # Example
+///
+/// ```no_run
+/// use meal_planner::fatsecret::crypto::validate_encryption_at_startup;
+///
+/// fn main() -> Result<(), Box<dyn std::error::Error>> {
+///     // Validate encryption before starting the application
+///     validate_encryption_at_startup()?;
+///     
+///     // Continue with application logic...
+///     Ok(())
+/// }
+/// ```
+pub fn validate_encryption_at_startup() -> Result<(), CryptoError> {
+    match get_encryption_key() {
+        Ok(_key_bytes) => {
+            // Test the key by performing a simple encrypt/decrypt operation
+            // This ensures the key is not just valid format but also functional
+            let test_plaintext = "startup_validation_test";
+
+            // If encryption/decryption fails with this key, it indicates a problem
+            match encrypt(test_plaintext).and_then(|encrypted| decrypt(&encrypted)) {
+                Ok(decrypted) if decrypted == test_plaintext => Ok(()),
+                Ok(_) => Err(CryptoError::DecryptionFailed),
+                Err(e) => Err(e),
+            }
+        }
+        Err(e) => {
+            // Provide more descriptive error messages for common issues
+            match e {
+                CryptoError::KeyNotConfigured => {
+                    eprintln!(
+                        "SECURITY ERROR: OAUTH_ENCRYPTION_KEY environment variable is not set"
+                    );
+                    eprintln!("To fix this issue:");
+                    eprintln!("1. Generate a secure key: cargo run --bin generate_encryption_key");
+                    eprintln!("2. Set the environment variable: export OAUTH_ENCRYPTION_KEY='your_64_char_hex_key'");
+                    eprintln!("3. Restart the application");
+                }
+                CryptoError::KeyInvalidLength(len) => {
+                    eprintln!(
+                        "SECURITY ERROR: OAUTH_ENCRYPTION_KEY has invalid length: {} characters",
+                        len
+                    );
+                    eprintln!("Expected: 64 hex characters (32 bytes for AES-256)");
+                    eprintln!("To fix this: Generate a new key with: cargo run --bin generate_encryption_key");
+                }
+                CryptoError::KeyInvalidHex => {
+                    eprintln!("SECURITY ERROR: OAUTH_ENCRYPTION_KEY contains invalid hexadecimal characters");
+                    eprintln!("Expected: 64 valid hex characters (0-9, a-f, A-F)");
+                    eprintln!("To fix this: Generate a new key with: cargo run --bin generate_encryption_key");
+                }
+                CryptoError::InvalidCiphertext | CryptoError::DecryptionFailed => {
+                    eprintln!(
+                        "SECURITY ERROR: Unexpected error validating encryption key: {}",
+                        e
+                    );
+                }
+            }
+            Err(e)
+        }
+    }
+}
+
+/// Validate encryption configuration with detailed error reporting
+///
+/// Similar to `validate_encryption_at_startup()` but returns detailed
+/// validation information rather than just success/failure.
+///
+/// # Returns
+///
+/// `Ok(details)` with validation details if successful
+/// `Err(CryptoError)` if validation fails
+pub fn validate_encryption_detailed() -> Result<ValidationDetails, CryptoError> {
+    let key_str =
+        std::env::var("OAUTH_ENCRYPTION_KEY").map_err(|_| CryptoError::KeyNotConfigured)?;
+
+    let details = ValidationDetails {
+        key_is_set: true,
+        key_length: key_str.len(),
+        key_is_valid_hex: key_str.chars().all(|c| c.is_ascii_hexdigit()),
+        key_correct_length: key_str.len() == 64,
+    };
+
+    // Perform actual encryption test if basic checks pass
+    if details.key_is_valid_hex && details.key_correct_length {
+        let test_plaintext = "startup_validation_test";
+        match encrypt(test_plaintext).and_then(|encrypted| decrypt(&encrypted)) {
+            Ok(decrypted) if decrypted == test_plaintext => Ok(details),
+            Ok(_) => Err(CryptoError::DecryptionFailed),
+            Err(e) => Err(e),
+        }
+    } else {
+        Err(if details.key_correct_length {
+            CryptoError::KeyInvalidHex
+        } else {
+            CryptoError::KeyInvalidLength(details.key_length)
+        })
+    }
+}
+
+/// Details about encryption key validation
+#[derive(Debug, Clone)]
+pub struct ValidationDetails {
+    /// Whether the OAUTH_ENCRYPTION_KEY environment variable is set
+    pub key_is_set: bool,
+    /// Length of the key string
+    pub key_length: usize,
+    /// Whether the key contains only valid hexadecimal characters
+    pub key_is_valid_hex: bool,
+    /// Whether the key has the correct length (64 characters)
+    pub key_correct_length: bool,
+}
+
 /// Get encryption key from environment variable
 ///
 /// Expects a 64-character hex string (32 bytes for AES-256)
@@ -282,6 +407,8 @@ pub fn generate_key() -> String {
 #[allow(clippy::unwrap_used)] // Tests are allowed to use unwrap/expect
 mod tests {
     use super::*;
+    use pretty_assertions::assert_eq;
+    use rstest::rstest;
     use std::env;
     use std::sync::Mutex;
 
@@ -424,6 +551,151 @@ mod tests {
             "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
         );
         assert!(encryption_configured());
+
+        env::remove_var("OAUTH_ENCRYPTION_KEY");
+    }
+
+    // =========================================================================
+    // Parameterized Tests (rstest) - Kent Beck Table-Driven Style
+    // =========================================================================
+
+    /// Test encryption/decryption roundtrip with various plaintexts
+    #[rstest]
+    #[case::short_string("hello")]
+    #[case::empty_string("")]
+    #[case::oauth_token("oauth_token_secret_123456789")]
+    #[case::unicode("Hello 世界 🌍")]
+    #[case::special_chars("!@#$%^&*()_+-=[]{}|;':\",./<>?")]
+    #[case::long_string(&"a".repeat(1000))]
+    fn test_encrypt_decrypt_various_plaintexts(#[case] plaintext: &str) {
+        let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
+
+        env::set_var(
+            "OAUTH_ENCRYPTION_KEY",
+            "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        );
+
+        let encrypted = encrypt(plaintext).expect("encryption should succeed");
+        let decrypted = decrypt(&encrypted).expect("decryption should succeed");
+
+        assert_eq!(plaintext, decrypted);
+
+        env::remove_var("OAUTH_ENCRYPTION_KEY");
+    }
+
+    /// Test that invalid key lengths are rejected
+    #[rstest]
+    #[case::too_short("0123456789abcdef", 16)] // 16 chars
+    #[case::too_long("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0000", 68)]
+    #[case::empty("", 0)]
+    #[case::odd_length("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde", 63)]
+    fn test_invalid_key_length_rejected(#[case] key: &str, #[case] _expected_len: usize) {
+        let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
+
+        env::set_var("OAUTH_ENCRYPTION_KEY", key);
+
+        let result = encrypt("test");
+        assert!(
+            matches!(result, Err(CryptoError::KeyInvalidLength(_))),
+            "Expected KeyInvalidLength for key of length {}, got {:?}",
+            key.len(),
+            result
+        );
+
+        env::remove_var("OAUTH_ENCRYPTION_KEY");
+    }
+
+    /// Test that invalid hex characters in key are rejected
+    #[rstest]
+    #[case::has_uppercase_g("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdeg")]
+    #[case::has_space("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcde ")]
+    #[case::has_special("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcd@f")]
+    fn test_invalid_hex_key_rejected(#[case] key: &str) {
+        let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
+
+        // First check if the key has valid length - if not, we'll get length error first
+        if key.len() == 64 {
+            env::set_var("OAUTH_ENCRYPTION_KEY", key);
+
+            let result = encrypt("test");
+            assert!(
+                matches!(result, Err(CryptoError::KeyInvalidHex)),
+                "Expected KeyInvalidHex for key '{}', got {:?}",
+                key,
+                result
+            );
+
+            env::remove_var("OAUTH_ENCRYPTION_KEY");
+        }
+    }
+
+    /// Test CryptoError Display formatting
+    #[rstest]
+    #[case::key_not_configured(CryptoError::KeyNotConfigured, "OAUTH_ENCRYPTION_KEY")]
+    #[case::key_invalid_length(CryptoError::KeyInvalidLength(32), "32 chars")]
+    #[case::key_invalid_hex(CryptoError::KeyInvalidHex, "valid hex")]
+    #[case::invalid_ciphertext(CryptoError::InvalidCiphertext, "invalid or corrupted")]
+    #[case::decryption_failed(CryptoError::DecryptionFailed, "wrong key")]
+    fn test_crypto_error_display(#[case] error: CryptoError, #[case] expected_substring: &str) {
+        let display = error.to_string();
+        assert!(
+            display.to_lowercase().contains(&expected_substring.to_lowercase()),
+            "Error '{}' should contain '{}'",
+            display,
+            expected_substring
+        );
+    }
+
+    /// Test StorageError Display formatting
+    #[rstest]
+    #[case::not_found(StorageError::NotFound, "not found")]
+    #[case::database_error(StorageError::DatabaseError("connection failed".to_string()), "connection failed")]
+    #[case::crypto_error(StorageError::CryptoError("bad key".to_string()), "bad key")]
+    fn test_storage_error_display(#[case] error: StorageError, #[case] expected_substring: &str) {
+        let display = error.to_string();
+        assert!(
+            display.to_lowercase().contains(&expected_substring.to_lowercase()),
+            "Error '{}' should contain '{}'",
+            display,
+            expected_substring
+        );
+    }
+
+    /// Test TokenValidity enum equality
+    #[test]
+    fn test_token_validity_equality() {
+        assert_eq!(TokenValidity::Valid, TokenValidity::Valid);
+        assert_eq!(TokenValidity::NotFound, TokenValidity::NotFound);
+        assert_eq!(
+            TokenValidity::Old { days_since_connected: 400 },
+            TokenValidity::Old { days_since_connected: 400 }
+        );
+        assert_ne!(
+            TokenValidity::Old { days_since_connected: 400 },
+            TokenValidity::Old { days_since_connected: 500 }
+        );
+    }
+
+    /// Test that generated keys have correct length
+    #[test]
+    fn test_generate_key_length() {
+        let key = generate_key();
+        assert_eq!(key.len(), 64, "Generated key should be 64 hex characters");
+    }
+
+    /// Test that generated keys work for encryption
+    #[test]
+    fn test_generated_key_works() {
+        let _lock = CRYPTO_TEST_LOCK.lock().unwrap();
+
+        let key = generate_key();
+        env::set_var("OAUTH_ENCRYPTION_KEY", &key);
+
+        let plaintext = "test_with_generated_key";
+        let encrypted = encrypt(plaintext).expect("should encrypt with generated key");
+        let decrypted = decrypt(&encrypted).expect("should decrypt with generated key");
+
+        assert_eq!(plaintext, decrypted);
 
         env::remove_var("OAUTH_ENCRYPTION_KEY");
     }

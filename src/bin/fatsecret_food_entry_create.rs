@@ -5,15 +5,15 @@
 //!
 //! JSON input (CLI arg or stdin):
 //!   `{"fatsecret": {...}, "access_token": "...", "access_secret": "...",
-//!     "`food_id`": "12345", "food_entry_name": "Chicken Breast",
-//!     "`serving_id`": "54321", "number_of_units": 1.5,
-//!     "meal": "lunch", "`date_int`": 20088}`
+//!     "``food_id``": "12345", "food_entry_name": "Chicken Breast",
+//!     "``serving_id``": "54321", "number_of_units": 1.5,
+//!     "meal": "lunch", "``date_int``": 20088}`
 //!
 //! JSON stdout: `{"success": true, "food_entry_id": "123456789"}`
 
-#![allow(clippy::exit, clippy::unwrap_used)]
+#![allow(clippy::exit, clippy::unwrap_used, clippy::expect_used)]
 
-use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig, FatSecretError};
+use meal_planner::fatsecret::core::{AccessToken, FatSecretConfig};
 use meal_planner::fatsecret::diary::{create_food_entry, FoodEntryInput, MealType};
 use serde::{Deserialize, Serialize};
 use std::io::{self, Read};
@@ -63,14 +63,20 @@ struct ErrorOutput {
 async fn main() {
     match run().await {
         Ok(output) => {
-            println!("{}", serde_json::to_string(&output).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&output).expect("Failed to serialize output JSON")
+            );
         }
         Err(e) => {
             let error = ErrorOutput {
                 success: false,
                 error: e.to_string(),
             };
-            println!("{}", serde_json::to_string(&error).unwrap());
+            println!(
+                "{}",
+                serde_json::to_string(&error).expect("Failed to serialize error JSON")
+            );
             std::process::exit(1);
         }
     }
@@ -88,8 +94,9 @@ async fn run() -> Result<Output, Box<dyn std::error::Error>> {
 
     // Get config: prefer input, fall back to environment
     let config = match input.fatsecret {
-        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret),
-        None => FatSecretConfig::from_env().ok_or(FatSecretError::ConfigMissing)?,
+        Some(resource) => FatSecretConfig::new(resource.consumer_key, resource.consumer_secret)
+            .map_err(|e| format!("Invalid FatSecret credentials: {}", e))?,
+        None => FatSecretConfig::from_env().map_err(|e| format!("Invalid configuration: {}", e))?,
     };
 
     // Build access token

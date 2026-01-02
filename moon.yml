@@ -119,9 +119,23 @@ tasks:
     options:
       cache: true
 
+  dev:
+    description: 'Fast development build - skip tests, just lint and build'
+    command: 'cargo fmt --check && cargo clippy --all-targets --all-features -- -D warnings && cargo build --release && mkdir -p bin && cp target/release/fatsecret_* target/release/tandoor_* bin/ 2>/dev/null && echo "Built and copied binaries to bin/"'
+    inputs:
+      - '@globs(sources)'
+      - '@globs(configs)'
+    outputs:
+      - 'target/release/fatsecret_*'
+      - 'target/release/tandoor_*'
+      - 'bin/'
+    options:
+      cache: true
+      runInCI: false
+
   copy-binaries:
-    description: 'Copy release binaries to bin/ directory'
-    script: 'mkdir -p bin && cp target/release/fatsecret_* target/release/tandoor_* bin/ 2>/dev/null; ls bin/'
+    description: 'Copy release binaries to bin/ directory (after full build)'
+    script: 'mkdir -p bin && cp target/release/fatsecret_* target/release/tandoor_* bin/ 2>/dev/null; ls bin/ | grep -v "\.d$" | wc -l; echo "binaries copied"'
     inputs:
       - 'target/release/fatsecret_*'
       - 'target/release/tandoor_*'

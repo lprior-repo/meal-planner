@@ -1,0 +1,21 @@
+summary: Get a supermarket by ID
+description: Retrieves a specific supermarket/store by ID from the Tandoor API
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    id:
+      type: string
+      description: ID of the supermarket to retrieve
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - id

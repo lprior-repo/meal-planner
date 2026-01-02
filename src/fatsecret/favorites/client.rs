@@ -117,7 +117,7 @@ pub async fn delete_favorite_food(
     Ok(())
 }
 
-/// Get user's favorite foods (foods.get_favorites.v2 - 3-legged)
+/// Get user's favorite foods (`foods.get_favorites.v2` - 3-legged)
 pub async fn get_favorite_foods(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -144,7 +144,7 @@ pub async fn get_favorite_foods(
     Ok(response.foods)
 }
 
-/// Get user's most eaten foods (foods.get_most_eaten.v2 - 3-legged)
+/// Get user's most eaten foods (`foods.get_most_eaten.v2` - 3-legged)
 pub async fn get_most_eaten(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -167,7 +167,7 @@ pub async fn get_most_eaten(
     Ok(response.foods)
 }
 
-/// Get user's recently eaten foods (foods.get_recently_eaten.v2 - 3-legged)
+/// Get user's recently eaten foods (`foods.get_recently_eaten.v2` - 3-legged)
 pub async fn get_recently_eaten(
     config: &FatSecretConfig,
     access_token: &AccessToken,
@@ -217,7 +217,7 @@ pub async fn delete_favorite_recipe(
     Ok(())
 }
 
-/// Get user's favorite recipes (recipes.get_favorites.v2 - 3-legged)
+/// Get user's favorite recipes (`recipes.get_favorites.v2` - 3-legged)
 pub async fn get_favorite_recipes(
     config: &FatSecretConfig,
     access_token: &AccessToken,

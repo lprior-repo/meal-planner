@@ -1,0 +1,65 @@
+summary: Update meal plan
+description: >-
+  Updates an existing meal plan with new values for recipe, meal type, date,
+  servings, or notes
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    from_date:
+      type: string
+      description: 'Start date (optional, YYYY-MM-DD)'
+      default: null
+      originalType: string
+    meal_plan_id:
+      type: string
+      description: Meal plan ID to update
+      default: null
+      originalType: string
+    meal_type:
+      type: string
+      description: Meal type ID (optional)
+      default: null
+      originalType: string
+    note:
+      type: string
+      description: Note for the meal plan (optional)
+      default: null
+      originalType: string
+    recipe:
+      type: string
+      description: Recipe ID (optional)
+      default: null
+      originalType: string
+    servings:
+      type: string
+      description: Number of servings (optional)
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+    title:
+      type: string
+      description: Meal plan title (optional)
+      default: null
+      originalType: string
+    to_date:
+      type: string
+      description: 'End date (optional, YYYY-MM-DD)'
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - meal_plan_id
+    - recipe
+    - meal_type
+    - from_date
+    - to_date
+    - servings
+    - title
+    - note

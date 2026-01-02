@@ -1,14 +1,27 @@
 summary: Get FatSecret user profile
 description: Retrieves the authenticated user's profile
-language: bash
 kind: script
+language: bash
 schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
     fatsecret:
-      type: object
+      type: string
       description: FatSecret API credentials
-      format: resource-fatsecret
+      default: null
+      originalType: string
+    oauth_token:
+      type: string
+      description: FatSecret OAuth access token
+      default: null
+      originalType: string
+    oauth_token_secret:
+      type: string
+      description: FatSecret OAuth access token secret
+      default: null
+      originalType: string
   required:
     - fatsecret
+    - oauth_token
+    - oauth_token_secret

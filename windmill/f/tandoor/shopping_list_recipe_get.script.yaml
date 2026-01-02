@@ -1,0 +1,29 @@
+summary: Get recipe from shopping list
+description: >-
+  Retrieves detailed information about a recipe entry in a meal plan's shopping
+  list
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    mealplan_id:
+      type: string
+      description: Meal plan ID
+      default: null
+      originalType: string
+    recipe_id:
+      type: string
+      description: Recipe ID to retrieve from shopping list
+      default: null
+      originalType: string
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+      default: null
+      originalType: string
+  required:
+    - tandoor
+    - mealplan_id
+    - recipe_id

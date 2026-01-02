@@ -1,0 +1,47 @@
+summary: Edit a FatSecret exercise entry
+description: >-
+  Updates an existing exercise entry (duration, exercise type, etc.). Requires
+  OAuth user access token.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    access_secret:
+      type: string
+      description: OAuth access secret (required for 3-legged requests)
+      default: null
+      originalType: string
+    access_token:
+      type: string
+      description: OAuth access token (required for 3-legged requests)
+      default: null
+      originalType: string
+    duration_min:
+      type: string
+      description: New duration in minutes (optional)
+      default: null
+      originalType: string
+    exercise_entry_id:
+      type: string
+      description: ID of exercise entry to edit
+      default: null
+      originalType: string
+    exercise_id:
+      type: string
+      description: New exercise ID (optional)
+      default: null
+      originalType: string
+    fatsecret:
+      type: string
+      description: FatSecret API credentials
+      default: null
+      originalType: string
+  required:
+    - fatsecret
+    - access_token
+    - access_secret
+    - exercise_entry_id
+    - exercise_id
+    - duration_min

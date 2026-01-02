@@ -14,4 +14,4 @@ else
 		'{fatsecret: $fatsecret, barcode: $barcode}')
 fi
 
-echo "$input" | /usr/local/bin/fatsecret_food_find_barcode >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_food_find_barcode >./result.json

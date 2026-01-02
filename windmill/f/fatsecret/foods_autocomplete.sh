@@ -14,4 +14,4 @@ input=$(jq -n \
 	'{fatsecret: $fatsecret, expression: $expression, max_results: $max_results}')
 
 # Call binary and capture output
-echo "$input" | /usr/local/bin/fatsecret_foods_autocomplete >./result.json
+echo "$input" | /usr/local/bin/meal-planner/fatsecret_foods_autocomplete >./result.json

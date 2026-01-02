@@ -1,0 +1,17 @@
+summary: Delete a recipe book
+description: Deletes a recipe book from Tandoor.
+kind: script
+language: bash
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    recipe_book_id:
+      type: integer
+      description: Recipe book ID
+    tandoor:
+      type: string
+      description: Tandoor API credentials
+  required:
+    - tandoor
+    - recipe_book_id
