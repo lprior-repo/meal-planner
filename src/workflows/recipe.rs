@@ -43,13 +43,29 @@ impl SourceTag {
             .domain()
             .ok_or_else(|| RecipeImportError::InvalidUrl("No domain in URL".to_string()))?;
 
-        let tag = domain
-            .trim_start_matches("www.")
-            .replace(".com", "")
-            .replace(".org", "")
-            .replace(".net", "")
-            .replace(".", "-")
-            .to_lowercase();
+        // Remove www. prefix
+        let mut domain = domain.trim_start_matches("www.");
+        
+        // Strip common TLDs including country-code TLDs (check most specific first)
+        let country_code_tlds = [".com.au", ".co.uk", ".co.nz", ".co.za"];
+        for tld in &country_code_tlds {
+            if let Some(stripped) = domain.strip_suffix(tld) {
+                domain = stripped;
+                break;
+            }
+        }
+        
+        // Then try generic TLDs
+        let generic_tlds = [".com", ".org", ".net"];
+        for tld in &generic_tlds {
+            if let Some(stripped) = domain.strip_suffix(tld) {
+                domain = stripped;
+                break;
+            }
+        }
+        
+        // Convert remaining dots to hyphens and lowercase
+        let tag = domain.replace(".", "-").to_lowercase();
 
         Ok(SourceTag(tag))
     }
@@ -173,6 +189,24 @@ mod tests {
         let url = ValidUrl::parse("https://www.serious-eats.com/recipe").unwrap();
         let tag = SourceTag::from_url(&url).unwrap();
         assert_eq!(tag.as_str(), "serious-eats");
+    }
+    
+    #[test]
+    fn source_tag_handles_country_code_tlds() {
+        // Test .com.au
+        let url = ValidUrl::parse("https://www.taste.com.au/recipe").unwrap();
+        let tag = SourceTag::from_url(&url).unwrap();
+        assert_eq!(tag.as_str(), "taste");
+        
+        // Test .co.uk
+        let url = ValidUrl::parse("https://www.bbcgoodfood.co.uk/recipe").unwrap();
+        let tag = SourceTag::from_url(&url).unwrap();
+        assert_eq!(tag.as_str(), "bbcgoodfood");
+        
+        // Test .co.nz
+        let url = ValidUrl::parse("https://www.nzherald.co.nz/recipe").unwrap();
+        let tag = SourceTag::from_url(&url).unwrap();
+        assert_eq!(tag.as_str(), "nzherald");
     }
 
     #[test]

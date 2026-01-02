@@ -31,10 +31,16 @@ pub fn create_recipe_in_api(
     recipe: RecipeWithTags,
 ) -> RecipeImportResult<ImportedRecipe> {
     // Simulate API call - in reality this would use http client
-    // For now, return mock data
+    // Mock returns realistic data derived from the input
     let recipe_id = 123i64;
-    let recipe_name = "Example Recipe".to_string();
+    
+    // Generate recipe name from the source tag for more realistic mock behavior
+    let recipe_name = format!("Recipe from {}", recipe.source_tag.as_str());
+    
+    // Use the actual URL from input, not a placeholder
     let source_url = recipe.url.as_str().to_string();
+    
+    // Preserve all tags from the input
     let tags_applied = recipe.keywords;
 
     ImportedRecipe::new(recipe_id, recipe_name, source_url, tags_applied)
@@ -96,5 +102,34 @@ mod tests {
             vec!["", "   "],
         );
         assert!(result.is_err());
+    }
+    
+    #[test]
+    fn mock_implementation_uses_actual_input_url() {
+        // Verify that the mock doesn't use hard-coded placeholder URLs
+        let test_url = "https://www.allrecipes.com/recipe/12345";
+        let result = import_recipe(test_url, vec!["quick"]);
+        assert!(result.is_ok());
+        
+        let recipe = result.unwrap();
+        assert_eq!(recipe.source_url, test_url);
+        assert!(recipe.name.contains("allrecipes")); // Should derive from source tag
+    }
+    
+    #[test]
+    fn mock_preserves_all_keywords() {
+        let result = import_recipe(
+            "https://www.seriouseats.com/recipe",
+            vec!["italian", "pasta", "quick"],
+        );
+        assert!(result.is_ok());
+        
+        let recipe = result.unwrap();
+        // Should have source tag + 3 user keywords
+        assert_eq!(recipe.tags_applied.len(), 4);
+        assert!(recipe.tags_applied.iter().any(|k| k.as_str() == "seriouseats"));
+        assert!(recipe.tags_applied.iter().any(|k| k.as_str() == "italian"));
+        assert!(recipe.tags_applied.iter().any(|k| k.as_str() == "pasta"));
+        assert!(recipe.tags_applied.iter().any(|k| k.as_str() == "quick"));
     }
 }
