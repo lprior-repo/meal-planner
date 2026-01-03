@@ -14,6 +14,7 @@ use helpers::recipe_nutrition_dsl::*;
 /// WHEN we calculate nutrition for the recipe
 /// THEN the recipe should have accurate calorie data from FatSecret
 #[test]
+#[ignore = "requires real Tandoor and FatSecret API credentials"]
 fn should_add_calories_to_recipe_when_ingredients_exist() {
     // GIVEN - Setup via DSL (Layer 2)
     let mut dsl = RecipeNutritionDSL::new();
@@ -42,6 +43,7 @@ fn should_add_calories_to_recipe_when_ingredients_exist() {
 /// WHEN we calculate nutrition
 /// THEN system should calculate from available ingredients and report failures
 #[test]
+#[ignore = "requires real Tandoor and FatSecret API credentials"]
 fn should_handle_missing_ingredients_gracefully() {
     // GIVEN
     let mut dsl = RecipeNutritionDSL::new();
@@ -68,6 +70,7 @@ fn should_handle_missing_ingredients_gracefully() {
 /// WHEN we recalculate nutrition
 /// THEN existing data should be overwritten with new calculation
 #[test]
+#[ignore = "requires real Tandoor and FatSecret API credentials"]
 fn should_overwrite_existing_nutrition_when_recalculating() {
     // GIVEN
     let mut dsl = RecipeNutritionDSL::new();

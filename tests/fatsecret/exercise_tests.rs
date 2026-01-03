@@ -28,6 +28,7 @@ fn test_fatsecret_exercise_entries_get_missing_date() {
 }
 
 #[test]
+#[ignore = "requires real FatSecret API credentials"]
 fn test_fatsecret_exercise_entries_get_with_date() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -62,6 +63,7 @@ fn test_fatsecret_exercise_entry_create_missing_fields() {
 }
 
 #[test]
+#[ignore = "requires real FatSecret API credentials"]
 fn test_fatsecret_exercise_entry_create_with_fields() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -98,6 +100,7 @@ fn test_fatsecret_exercise_entry_edit_missing_entry_id() {
 }
 
 #[test]
+#[ignore = "requires real FatSecret API credentials"]
 fn test_fatsecret_exercise_entry_edit_with_id() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -133,6 +136,7 @@ fn test_fatsecret_exercise_entry_delete_missing_id() {
 }
 
 #[test]
+#[ignore = "requires real FatSecret API credentials"]
 fn test_fatsecret_exercise_entry_delete_with_id() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -167,6 +171,7 @@ fn test_fatsecret_exercise_month_summary_missing_params() {
 }
 
 #[test]
+#[ignore = "requires real FatSecret API credentials"]
 fn test_fatsecret_exercise_month_summary_with_params() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
@@ -202,6 +207,7 @@ fn test_fatsecret_exercise_get_missing_id() {
 }
 
 #[test]
+#[ignore = "requires real FatSecret API credentials"]
 fn test_fatsecret_exercise_get_with_id() {
     let creds = match get_fatsecret_credentials() {
         Some(c) => c,
