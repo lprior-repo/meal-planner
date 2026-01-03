@@ -21,6 +21,7 @@ pub mod shopping_list_entry_tests;
 pub mod shopping_list_recipe_tests;
 pub mod tandoor_food_get_atdd;
 pub mod tandoor_recipe_delete_windmill_tests;
+pub mod recipe_selection_tests;
 
 #[path = "../helpers/common.rs"]
 pub mod common;

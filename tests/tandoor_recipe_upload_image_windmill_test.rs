@@ -132,6 +132,8 @@ fn run_binary(binary_name: &str, input: &str) -> Result<Value, String> {
     serde_json::from_str(&stdout).map_err(|e| format!("Parse error: {} - Raw: {}", e, stdout))
 }
 
+#[allow(dead_code)]
+#[allow(dead_code)]
 fn expect_success(binary_name: &str, input: &str) -> Value {
     let result = run_binary(binary_name, input);
     assert!(

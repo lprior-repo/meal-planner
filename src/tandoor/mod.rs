@@ -70,6 +70,7 @@
 
 mod client;
 pub mod nutrition;
+pub mod recipe_selection;
 pub mod shopping;
 mod types;
 
