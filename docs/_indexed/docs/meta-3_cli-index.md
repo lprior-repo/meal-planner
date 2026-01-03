@@ -2,7 +2,7 @@
 id: meta/3_cli/index
 title: "Command-line interface (CLI)"
 category: meta
-tags: ["3_cli", "commandline", "meta"]
+tags: ["commandline", "3_cli", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

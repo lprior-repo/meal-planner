@@ -2,7 +2,7 @@
 id: tutorial/11_persistent_storage/data-tables
 title: "Data tables"
 category: tutorial
-tags: ["tutorial", "beginner", "data", "11_persistent_storage"]
+tags: ["data", "beginner", "tutorial", "11_persistent_storage"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

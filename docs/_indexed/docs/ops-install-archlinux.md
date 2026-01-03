@@ -2,7 +2,7 @@
 id: ops/install/archlinux
 title: "Archlinux"
 category: ops
-tags: ["operations", "archlinux", "install"]
+tags: ["archlinux", "operations", "install"]
 ---
 
 # Archlinux

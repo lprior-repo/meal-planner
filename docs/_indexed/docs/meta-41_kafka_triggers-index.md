@@ -2,7 +2,7 @@
 id: meta/41_kafka_triggers/index
 title: "Kafka triggers"
 category: meta
-tags: ["41_kafka_triggers", "kafka", "windmill", "meta"]
+tags: ["kafka", "41_kafka_triggers", "windmill", "meta"]
 ---
 
 # Kafka triggers

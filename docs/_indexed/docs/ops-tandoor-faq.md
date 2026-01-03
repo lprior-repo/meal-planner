@@ -2,7 +2,7 @@
 id: ops/tandoor/faq
 title: "Faq"
 category: ops
-tags: ["faq", "tandoor", "operations"]
+tags: ["operations", "tandoor", "faq"]
 ---
 
 # Faq

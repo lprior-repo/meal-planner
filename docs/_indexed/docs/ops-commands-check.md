@@ -1,0 +1,51 @@
+---
+id: ops/commands/check
+title: "check"
+category: ops
+tags: ["operations", "check", "commands"]
+---
+
+# check
+
+> **Context**: The `moon check [...projects]` (or `moon c`) command will run *all* [build and test tasks](/docs/concepts/task#types) for one or many projects. This i
+
+The `moon check [...projects]` (or `moon c`) command will run *all* [build and test tasks](/docs/concepts/task#types) for one or many projects. This is a convenience command for verifying the current state of a project, instead of running multiple [`moon run`](/docs/commands/run) commands.
+
+```
+## Check project at current working directory
+$ moon check
+
+## Check project by name
+$ moon check app
+
+## Check multiple projects by name
+$ moon check client server
+
+## Check ALL projects (may be costly)
+$ moon check --all
+```
+
+### Arguments
+
+-   `[...names]` - List of project names or aliases to explicitly check, as defined in [`projects`](/docs/config/workspace#projects).
+
+### Options
+
+-   `--all` - Run check for all projects in the workspace.
+-   `-u`, `--updateCache` - Bypass cache and force update any existing items.
+-   `--summary` - Display a summary and stats of the current run. v1.25.0
+
+### Configuration
+
+-   [`projects`](/docs/config/workspace#projects) in `.moon/workspace.yml`
+-   [`tasks`](/docs/config/tasks#tasks) in `.moon/tasks.yml`
+-   [`tasks`](/docs/config/project#tasks) in `moon.yml`
+
+
+## See Also
+
+- [build and test tasks](/docs/concepts/task#types)
+- [`moon run`](/docs/commands/run)
+- [`projects`](/docs/config/workspace#projects)
+- [`projects`](/docs/config/workspace#projects)
+- [`tasks`](/docs/config/tasks#tasks)

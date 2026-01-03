@@ -2,7 +2,7 @@
 id: ops/script_editor/perpetual-scripts
 title: "Running services with perpetual scripts"
 category: ops
-tags: ["operations", "script_editor", "running"]
+tags: ["operations", "running", "script_editor"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

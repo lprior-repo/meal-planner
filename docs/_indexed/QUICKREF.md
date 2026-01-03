@@ -17,11 +17,11 @@
 
 | Prefix | Count | Use For |
 |--------|-------|---------|
-| `tutorial-*` | 21 | Getting started, step-by-step guides |
-| `concept-*` | 29 | Understanding features, architecture |
-| `ref-*` | 28 | API references, configuration options |
-| `ops-*` | 54 | Installation, deployment, troubleshooting |
-| `meta-*` | 103 | Index files, overviews |
+| `tutorial-*` | 28 | Getting started, step-by-step guides |
+| `concept-*` | 53 | Understanding features, architecture |
+| `ref-*` | 33 | API references, configuration options |
+| `ops-*` | 144 | Installation, deployment, troubleshooting |
+| `meta-*` | 104 | Index files, overviews |
 
 ## Key Documents (Direct Paths)
 

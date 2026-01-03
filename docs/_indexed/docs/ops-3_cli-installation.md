@@ -2,7 +2,7 @@
 id: ops/3_cli/installation
 title: "Installation"
 category: ops
-tags: ["3_cli", "installation", "operations", "windmill"]
+tags: ["operations", "windmill", "installation", "3_cli"]
 ---
 
 <!--

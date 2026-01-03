@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-food-brands-get
 title: "Food Brands Get All v2"
 category: ref
-tags: ["food", "fatsecret", "reference"]
+tags: ["fatsecret", "reference", "food"]
 ---
 
 # Food Brands Get All v2

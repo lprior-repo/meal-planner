@@ -2,7 +2,7 @@
 id: meta/8_groups_and_folders/index
 title: "Groups and folders"
 category: meta
-tags: ["groups", "8_groups_and_folders", "meta"]
+tags: ["8_groups_and_folders", "groups", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

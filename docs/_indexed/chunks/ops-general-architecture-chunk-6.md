@@ -1,32 +1,21 @@
 ---
 doc_id: ops/general/architecture
 chunk_id: ops/general/architecture#chunk-6
-heading_path: ["Meal Planner Architecture", "Windmill Integration"]
-chunk_type: code
-tokens: 78
+heading_path: ["Architecture", "Windmill Integration"]
+chunk_type: prose
+tokens: 28
 summary: "Windmill Integration"
 ---
 
 ## Windmill Integration
 
-### Orchestration Model
-
-```text
-┌─────────────────────────────────────────────────────────┐
-│                    Windmill Flow                        │
-│  (Orchestration, scheduling, retries, error handling)   │
-└─────────────────────────────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────┐
-│                    Rust Binary                          │
-│  (Pure function: JSON in → JSON out)                    │
-│  Deployed to worker container via Dagger                │
-└─────────────────────────────────────────────────────────┘
-```text
-
-### Flows for Composition
-
-Complex operations are Windmill **flows** that compose multiple binaries:
+Flows compose binaries:
 
 ```yaml
+steps:
+  - get_recipes: tandoor/list_recipes
+  - get_nutrition: fatsecret/search
+    foreach: ${steps.get_recipes}
+  - calculate: nutrition/macros
+    input: ${steps.get_nutrition}
+```

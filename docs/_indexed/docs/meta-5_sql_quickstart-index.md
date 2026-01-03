@@ -2,7 +2,7 @@
 id: meta/5_sql_quickstart/index
 title: "Quickstart PostgreSQL, MySQL, MS SQL, BigQuery, Snowflake"
 category: meta
-tags: ["advanced", "5_sql_quickstart", "sql", "quickstart", "meta"]
+tags: ["quickstart", "5_sql_quickstart", "sql", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

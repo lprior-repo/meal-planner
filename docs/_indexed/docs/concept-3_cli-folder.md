@@ -2,7 +2,7 @@
 id: concept/3_cli/folder
 title: "Folder"
 category: concept
-tags: ["3_cli", "folder", "concept", "windmill"]
+tags: ["concept", "windmill", "folder", "3_cli"]
 ---
 
 <!--

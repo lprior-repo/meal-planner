@@ -2,7 +2,7 @@
 id: tutorial/fatsecret/guides-oauth1-three-legged
 title: "FatSecret Platform API - 3-Legged OAuth"
 category: tutorial
-tags: ["fatsecret", "api", "tutorial", "beginner", "oauth"]
+tags: ["fatsecret", "beginner", "api", "oauth", "tutorial"]
 ---
 
 # FatSecret Platform API - 3-Legged OAuth

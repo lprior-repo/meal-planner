@@ -2,7 +2,7 @@
 id: ops/system/configuration
 title: "Configuration"
 category: ops
-tags: ["system", "configuration", "operations", "advanced"]
+tags: ["operations", "advanced", "configuration", "system"]
 ---
 
 This page describes all configuration options for the application

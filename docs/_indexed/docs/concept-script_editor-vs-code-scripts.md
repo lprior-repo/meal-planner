@@ -2,7 +2,7 @@
 id: concept/script_editor/vs-code-scripts
 title: "Run scripts in VS Code"
 category: concept
-tags: ["run", "concept", "script_editor"]
+tags: ["concept", "script_editor", "run"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

@@ -2,7 +2,7 @@
 id: ops/contribute/documentation
 title: "Documentation"
 category: ops
-tags: ["contribute", "operations", "documentation"]
+tags: ["operations", "documentation", "contribute"]
 ---
 
 # Documentation

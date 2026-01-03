@@ -2,7 +2,7 @@
 id: ops/fatsecret/guides-libraries
 title: "FatSecret Platform API - Third-Party Libraries"
 category: ops
-tags: ["api", "fatsecret", "operations"]
+tags: ["operations", "fatsecret", "api"]
 ---
 
 # FatSecret Platform API - Third-Party Libraries

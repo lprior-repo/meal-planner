@@ -2,7 +2,7 @@
 id: ops/features/authentication
 title: "Authentication"
 category: ops
-tags: ["advanced", "features", "operations", "authentication"]
+tags: ["operations", "advanced", "authentication", "features"]
 ---
 
 # Authentication

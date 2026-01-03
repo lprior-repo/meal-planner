@@ -2,7 +2,7 @@
 id: meta/security_isolation/index
 title: "Security and process isolation"
 category: meta
-tags: ["security_isolation", "security", "advanced", "windmill", "meta"]
+tags: ["security_isolation", "windmill", "security", "advanced", "meta"]
 ---
 
 # Security and process isolation

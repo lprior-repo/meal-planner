@@ -2,7 +2,7 @@
 id: ops/install/manual
 title: "Manual installation instructions"
 category: ops
-tags: ["operations", "manual", "advanced", "install", "sql"]
+tags: ["operations", "manual", "install", "sql", "advanced"]
 ---
 
 # Manual installation instructions

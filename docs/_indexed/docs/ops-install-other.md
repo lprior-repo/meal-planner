@@ -2,7 +2,7 @@
 id: ops/install/other
 title: "Other"
 category: ops
-tags: ["advanced", "operations", "install", "other"]
+tags: ["operations", "install", "advanced", "other"]
 ---
 
 # Other

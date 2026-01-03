@@ -2,7 +2,7 @@
 id: meta/36_service_logs/index
 title: "Service logs"
 category: meta
-tags: ["service", "advanced", "36_service_logs", "meta"]
+tags: ["36_service_logs", "advanced", "service", "meta"]
 ---
 
 # Service logs

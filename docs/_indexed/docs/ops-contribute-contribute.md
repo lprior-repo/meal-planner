@@ -2,7 +2,7 @@
 id: ops/contribute/contribute
 title: "Contribute"
 category: ops
-tags: ["contribute", "operations"]
+tags: ["operations", "contribute"]
 ---
 
 # Contribute

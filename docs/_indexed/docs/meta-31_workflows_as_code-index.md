@@ -2,7 +2,7 @@
 id: meta/31_workflows_as_code/index
 title: "Workflows as code"
 category: meta
-tags: ["workflows", "31_workflows_as_code", "meta"]
+tags: ["31_workflows_as_code", "workflows", "meta"]
 ---
 
 import Tabs from '@theme/Tabs';

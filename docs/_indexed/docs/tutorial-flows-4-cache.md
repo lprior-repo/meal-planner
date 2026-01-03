@@ -2,7 +2,7 @@
 id: tutorial/flows/4-cache
 title: "Caching"
 category: tutorial
-tags: ["flows", "tutorial", "beginner", "caching"]
+tags: ["flows", "caching", "tutorial", "beginner"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

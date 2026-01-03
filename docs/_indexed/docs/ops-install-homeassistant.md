@@ -2,7 +2,7 @@
 id: ops/install/homeassistant
 title: "Homeassistant"
 category: ops
-tags: ["homeassistant", "tandoor", "operations", "advanced", "install"]
+tags: ["operations", "homeassistant", "install", "tandoor", "advanced"]
 ---
 
 # Homeassistant

@@ -2,7 +2,7 @@
 id: meta/39_http_routing/index
 title: "HTTP routes"
 category: meta
-tags: ["windmill", "advanced", "http", "39_http_routing", "meta"]
+tags: ["windmill", "39_http_routing", "http", "advanced", "meta"]
 ---
 
 # HTTP routes

@@ -2,7 +2,7 @@
 id: ops/features/external-recipes
 title: "External Recipes"
 category: ops
-tags: ["advanced", "features", "operations", "external"]
+tags: ["external", "operations", "advanced", "features"]
 ---
 
 # External Recipes

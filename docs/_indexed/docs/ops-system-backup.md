@@ -2,7 +2,7 @@
 id: ops/system/backup
 title: "Backup"
 category: ops
-tags: ["system", "advanced", "operations", "backup"]
+tags: ["operations", "backup", "advanced", "system"]
 ---
 
 # Backup

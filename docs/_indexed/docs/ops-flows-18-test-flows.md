@@ -2,7 +2,7 @@
 id: ops/flows/18-test-flows
 title: "Testing flows"
 category: ops
-tags: ["flows", "testing", "operations"]
+tags: ["flows", "operations", "testing"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

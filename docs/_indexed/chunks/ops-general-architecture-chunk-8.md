@@ -1,23 +1,15 @@
 ---
 doc_id: ops/general/architecture
 chunk_id: ops/general/architecture#chunk-8
-heading_path: ["Meal Planner Architecture", "Deployment"]
+heading_path: ["Architecture", "Adding a New Domain"]
 chunk_type: prose
-tokens: 71
-summary: "Deployment"
+tokens: 37
+summary: "Adding a New Domain"
 ---
 
-## Deployment
+## Adding a New Domain
 
-### Dagger Pipeline
-
-Dagger builds binaries and deploys to Windmill worker containers:
-
-```text
-┌──────────┐    ┌──────────┐    ┌─────────────────────┐
-│  Source  │───▶│  Dagger  │───▶│  Windmill Workers   │
-│  (Rust)  │    │  Build   │    │  /usr/local/bin/*   │
-└──────────┘    └──────────┘    └─────────────────────┘
-```text
-
-Binaries are statically linked and copied into the worker container image or mounted as a volume.
+1. Create `src/<domain>/` with `mod.rs`, `client.rs`, `types.rs`
+2. Add binaries in `src/bin/<domain>_<operation>.rs`
+3. Register in `Cargo.toml` and `src/lib.rs`
+4. Create Windmill scripts in `windmill/f/<domain>/`

@@ -2,7 +2,7 @@
 id: meta/15_dependencies_in_python/index
 title: "Dependencies in Python"
 category: meta
-tags: ["15_dependencies_in_python", "dependencies", "python", "advanced", "meta"]
+tags: ["python", "15_dependencies_in_python", "advanced", "dependencies", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

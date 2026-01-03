@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-food-categories-get
 title: "Food Categories Get All v2"
 category: ref
-tags: ["food", "fatsecret", "reference"]
+tags: ["fatsecret", "reference", "food"]
 ---
 
 # Food Categories Get All v2

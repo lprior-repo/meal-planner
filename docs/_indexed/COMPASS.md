@@ -1,177 +1,177 @@
 ---
 id: meta/navigation/compass
 title: Documentation Compass
-generated: 2025-12-30T09:52:36.378950
+generated: 2026-01-02T19:44:02.663475
 ---
 
 # Documentation Compass
 
-> **235 documents** | **1825 chunks** | Last updated: 2025-12-30
+> **362 documents** | **2620 chunks** | Last updated: 2026-01-02
 
 ## Quick Start
 
 New here? Read these first:
 
-1. **[FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md)** - Get up and running
-2. **[FatSecret Platform API - Localization](docs/concept-fatsecret-guides-localization.md)** - Understand the basics
+1. **[FatSecret OAuth Setup (One-Time)](docs/tutorial-general-fatsecret-oauth-setup.md)** - Get up and running
+2. **[Documentation System (AI + Human)](docs/concept-general-ai-documentation-system.md)** - Understand the basics
 3. **[Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md)** - Explore the API
 
 ## Documents by Category
 
-### Tutorials (21)
+### Tutorials (28)
 
 | Document | Tags |
 |----------|------|
-| [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md) | `fatsecret` `api` `tutorial` |
-| [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md) | `api` `tutorial` `fatsecret` |
-| [Connectors](docs/tutorial-features-connectors.md) | `connectors` `tutorial` `beginner` |
-| [Synology](docs/tutorial-install-synology.md) | `synology` `tutorial` `beginner` |
-| [Windmill Flows Guide](docs/tutorial-windmill-flows-guide.md) | `tutorial` `beginner` `windmill` |
-| [Data tables](docs/tutorial-11_persistent_storage-data-tables.md) | `tutorial` `beginner` `data` |
-| [Ducklake](docs/tutorial-11_persistent_storage-ducklake.md) | `tutorial` `beginner` `ducklake` |
-| [Big structured SQL data: Postgres (Supabase, Neon.tech)](docs/tutorial-11_persistent_storage-structured-databases.md) | `big` `tutorial` `beginner` |
-| [Suspend & Approval / Prompts](docs/tutorial-flows-11-flow-approval.md) | `flows` `tutorial` `beginner` |
-| [For loops](docs/tutorial-flows-12-flow-loops.md) | `flows` `tutorial` `beginner` |
-| [Sleeps / Delays in flows](docs/tutorial-flows-15-sleep.md) | `flows` `tutorial` `beginner` |
-| [Architecture and data exchange](docs/tutorial-flows-16-architecture.md) | `flows` `tutorial` `beginner` |
-| [Flow editor](docs/tutorial-flows-1-flow-editor.md) | `flows` `tutorial` `beginner` |
-| [While loops](docs/tutorial-flows-22-while-loops.md) | `flows` `tutorial` `beginner` |
-| [Flow editor components](docs/tutorial-flows-3-editor-components.md) | `flows` `tutorial` `beginner` |
-| [Caching](docs/tutorial-flows-4-cache.md) | `flows` `tutorial` `beginner` |
-| [Error handler](docs/tutorial-flows-7-flow-error-handler.md) | `flows` `error` `tutorial` |
-| [What is Windmill?](docs/tutorial-windmill-intro.md) | `tutorial` `what` `windmill` |
-| [Generated UI](docs/tutorial-script_editor-customize-ui.md) | `generated` `tutorial` `beginner` |
-| [Script kind](docs/tutorial-script_editor-script-kinds.md) | `tutorial` `beginner` `script_editor` |
+| [FatSecret OAuth Setup (One-Time)](docs/tutorial-general-fatsecret-oauth-setup.md) | `fatsecret` `oauth` `tutorial` |
+| [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md) | `fatsecret` `beginner` `api` |
+| [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md) | `fatsecret` `beginner` `tutorial` |
+| [Angular example](docs/tutorial-examples-angular.md) | `examples` `angular` `beginner` |
+| [Nest example](docs/tutorial-examples-nest.md) | `examples` `nest` `beginner` |
+| [Next example](docs/tutorial-examples-next.md) | `examples` `beginner` `next` |
+| [Nuxt example](docs/tutorial-examples-nuxt.md) | `nuxt` `examples` `beginner` |
+| [Remix example](docs/tutorial-examples-remix.md) | `examples` `beginner` `remix` |
+| [Moon Monorepo Documentation URLs](docs/tutorial-moonrepo-urls.md) | `moon` `beginner` `tutorial` |
+| [Connectors](docs/tutorial-features-connectors.md) | `connectors` `beginner` `features` |
+| [Synology](docs/tutorial-install-synology.md) | `install` `synology` `beginner` |
+| [Windmill Flows Guide](docs/tutorial-windmill-flows-guide.md) | `windmill` `beginner` `tutorial` |
+| [Data tables](docs/tutorial-11_persistent_storage-data-tables.md) | `data` `beginner` `tutorial` |
+| [Ducklake](docs/tutorial-11_persistent_storage-ducklake.md) | `beginner` `ducklake` `tutorial` |
+| [Big structured SQL data: Postgres (Supabase, Neon.tech)](docs/tutorial-11_persistent_storage-structured-databases.md) | `big` `beginner` `11_persistent_storage` |
+| [Suspend & Approval / Prompts](docs/tutorial-flows-11-flow-approval.md) | `flows` `suspend` `beginner` |
+| [For loops](docs/tutorial-flows-12-flow-loops.md) | `flows` `for` `beginner` |
+| [Sleeps / Delays in flows](docs/tutorial-flows-15-sleep.md) | `flows` `sleeps` `beginner` |
+| [Architecture and data exchange](docs/tutorial-flows-16-architecture.md) | `flows` `architecture` `beginner` |
+| [Flow editor](docs/tutorial-flows-1-flow-editor.md) | `flows` `beginner` `flow` |
 
 
-### Concepts (29)
-
-| Document | Tags |
-|----------|------|
-| [FatSecret Platform API - Localization](docs/concept-fatsecret-guides-localization.md) | `api` `fatsecret` `concept` |
-| [Related](docs/concept-contribute-related.md) | `contribute` `concept` `tandoor` |
-| [Translations](docs/concept-contribute-translations.md) | `contribute` `concept` `tandoor` |
-| [Ai](docs/concept-features-ai.md) | `features` `concept` `tandoor` |
-| [Automation](docs/concept-features-automation.md) | `automation` `features` `concept` |
-| [Shopping](docs/concept-features-shopping.md) | `shopping` `features` `concept` |
-| [Templating](docs/concept-features-templating.md) | `templating` `features` `concept` |
-| [Permissions](docs/concept-system-permissions.md) | `system` `concept` `permissions` |
-| [Apps](docs/concept-3_cli-app.md) | `3_cli` `concept` `windmill` |
-| [Flows](docs/concept-3_cli-flow.md) | `3_cli` `concept` `flows` |
-| [Folder](docs/concept-3_cli-folder.md) | `3_cli` `folder` `concept` |
-| [Resources](docs/concept-3_cli-resource.md) | `3_cli` `concept` `resources` |
-| [Scripts](docs/concept-3_cli-script.md) | `concept` `scripts` `advanced` |
-| [Users management](docs/concept-3_cli-user.md) | `3_cli` `concept` `windmill` |
-| [Variables](docs/concept-3_cli-variable.md) | `3_cli` `concept` `windmill` |
-| [Large data: S3, R2, MinIO, Azure Blob, Google Cloud Storage](docs/concept-11_persistent_storage-large-data-files.md) | `advanced` `large` `concept` |
-| [Within Windmill: Not recommended](docs/concept-11_persistent_storage-within-windmill.md) | `within` `concept` `advanced` |
-| [Trigger scripts](docs/concept-flows-10-flow-trigger.md) | `flows` `concept` `trigger` |
-| [Branches](docs/concept-flows-13-flow-branches.md) | `flows` `concept` `branches` |
-| [AI-generated flows](docs/concept-flows-17-ai-flows.md) | `flows` `concept` `aigenerated` |
-
-
-### Reference (28)
+### Concepts (53)
 
 | Document | Tags |
 |----------|------|
-| [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md) | `food` `fatsecret` `reference` |
-| [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md) | `food` `fatsecret` `reference` |
-| [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) | `food` `fatsecret` `reference` |
-| [Food Delete Favorite](docs/ref-fatsecret-api-food-delete-favorite.md) | `food` `fatsecret` `reference` |
-| [Food Entries Get (v1)](docs/ref-fatsecret-api-food-entries-get.md) | `food` `fatsecret` `reference` |
-| [Food Entry Create](docs/ref-fatsecret-api-food-entry-create.md) | `food` `fatsecret` `reference` |
-| [Food Entry Delete](docs/ref-fatsecret-api-food-entry-delete.md) | `food` `fatsecret` `reference` |
-| [Food Get v1](docs/ref-fatsecret-api-food-get-v1.md) | `food` `fatsecret` `reference` |
-| [Food Sub Categories Get All v1](docs/ref-fatsecret-api-food-sub-categories-get.md) | `food` `fatsecret` `reference` |
-| [Foods Get Favorites (v1)](docs/ref-fatsecret-api-foods-get-favorites.md) | `fatsecret` `foods` `reference` |
-| [Foods Search v1](docs/ref-fatsecret-api-foods-search-v1.md) | `fatsecret` `foods` `reference` |
-| [Foods Search v3](docs/ref-fatsecret-api-foods-search-v3.md) | `fatsecret` `foods` `reference` |
-| [Image Recognition API v1](docs/ref-fatsecret-api-image-recognition.md) | `fatsecret` `image` `api` |
-| [Natural Language Processing API v1](docs/ref-fatsecret-api-natural-language-processing.md) | `fatsecret` `api` `reference` |
-| [Profile Create](docs/ref-fatsecret-api-profile-create.md) | `fatsecret` `profile` `reference` |
-| [Profile Get Auth](docs/ref-fatsecret-api-profile-get-auth.md) | `fatsecret` `profile` `reference` |
-| [Profile Get Status](docs/ref-fatsecret-api-profile-get.md) | `fatsecret` `profile` `reference` |
-| [Recipe Get by ID v1](docs/ref-fatsecret-api-recipe-get-v1.md) | `recipe` `advanced` `fatsecret` |
+| [Documentation System (AI + Human)](docs/concept-general-ai-documentation-system.md) | `concept` `documentation` |
+| [Recipe Import Pipeline](docs/concept-general-recipe-import-pipeline.md) | `recipe` `concept` `tandoor` |
+| [FatSecret Platform API - Localization](docs/concept-fatsecret-guides-localization.md) | `concept` `fatsecret` `advanced` |
+| [Cheat sheet](docs/concept-moonrepo-cheat-sheet.md) | `concept` `cheat` `moonrepo` |
+| [migrate](docs/concept-commands-migrate.md) | `migrate` `concept` `commands` |
+| [migrate from-turborepo](docs/concept-migrate-from-turborepo.md) | `migrate` `concept` |
+| [sync](docs/concept-commands-sync.md) | `sync` `concept` `commands` |
+| [toolchain](docs/concept-commands-toolchain.md) | `concept` `toolchain` `commands` |
+| [File patterns](docs/concept-concepts-file-pattern.md) | `file` `javascript` `concepts` |
+| [Query language](docs/concept-concepts-query-lang.md) | `concept` `sql` `query` |
+| [Tokens](docs/concept-concepts-token.md) | `concept` `tokens` `concepts` |
+| [Config files](docs/concept-moonrepo-config.md) | `concept` `config` `moonrepo` |
+| [.moon/tasks\[/\*\*/\*\].{pkl,yml}](docs/concept-config-tasks.md) | `concept` `config` `advanced` |
+| [template.{pkl,yml}](docs/concept-config-template.md) | `templatepklyml` `concept` `config` |
+| [Create a project](docs/concept-moonrepo-create-project.md) | `concept` `create` `moonrepo` |
+| [Editors](docs/concept-moonrepo-editors.md) | `concept` `editors` `moonrepo` |
+| [React example](docs/concept-examples-react.md) | `concept` `react` `examples` |
+| [Deno handbook](docs/concept-javascript-deno-handbook.md) | `concept` `typescript` `deno` |
+| [Node.js examples](docs/concept-node-examples.md) | `nodejs` `concept` `node` |
+| [Terminal notifications](docs/concept-guides-notifications.md) | `concept` `terminal` `guides` |
+
+
+### Reference (33)
+
+| Document | Tags |
+|----------|------|
+| [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md) | `fatsecret` `reference` `food` |
+| [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md) | `fatsecret` `reference` `food` |
+| [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) | `fatsecret` `reference` `food` |
+| [Food Delete Favorite](docs/ref-fatsecret-api-food-delete-favorite.md) | `fatsecret` `reference` `food` |
+| [Food Entries Get (v1)](docs/ref-fatsecret-api-food-entries-get.md) | `fatsecret` `reference` `food` |
+| [Food Entry Create](docs/ref-fatsecret-api-food-entry-create.md) | `fatsecret` `reference` `food` |
+| [Food Entry Delete](docs/ref-fatsecret-api-food-entry-delete.md) | `fatsecret` `reference` `food` |
+| [Food Get v1](docs/ref-fatsecret-api-food-get-v1.md) | `fatsecret` `reference` `food` |
+| [Food Sub Categories Get All v1](docs/ref-fatsecret-api-food-sub-categories-get.md) | `fatsecret` `reference` `food` |
+| [Foods Get Favorites (v1)](docs/ref-fatsecret-api-foods-get-favorites.md) | `fatsecret` `reference` `foods` |
+| [Foods Search v1](docs/ref-fatsecret-api-foods-search-v1.md) | `fatsecret` `reference` `foods` |
+| [Foods Search v3](docs/ref-fatsecret-api-foods-search-v3.md) | `fatsecret` `reference` `foods` |
+| [Image Recognition API v1](docs/ref-fatsecret-api-image-recognition.md) | `fatsecret` `image` `reference` |
+| [Natural Language Processing API v1](docs/ref-fatsecret-api-natural-language-processing.md) | `fatsecret` `natural` `reference` |
+| [Profile Create](docs/ref-fatsecret-api-profile-create.md) | `fatsecret` `reference` `profile` |
+| [Profile Get Auth](docs/ref-fatsecret-api-profile-get-auth.md) | `fatsecret` `reference` `profile` |
+| [Profile Get Status](docs/ref-fatsecret-api-profile-get.md) | `fatsecret` `reference` `profile` |
+| [Recipe Get by ID v1](docs/ref-fatsecret-api-recipe-get-v1.md) | `recipe` `fatsecret` `reference` |
 | [Recipe Types Get All v1](docs/ref-fatsecret-api-recipe-types-get.md) | `recipe` `fatsecret` `reference` |
 | [Recipes Search v2](docs/ref-fatsecret-api-recipes-search-v2.md) | `recipes` `fatsecret` `reference` |
 
 
-### Operations (54)
+### Operations (144)
 
 | Document | Tags |
 |----------|------|
-| [AI-Optimized Documentation System: Complete Design Document](docs/ops-general-ai-documentation-system.md) | `aioptimized` `operations` `advanced` |
-| [Meal Planner Architecture](docs/ops-general-architecture.md) | `meal` `rust` `operations` |
-| [Recipe Import Pipeline](docs/ops-general-recipe-import-pipeline.md) | `recipe` `operations` `advanced` |
-| [FatSecret Platform API - Error Codes](docs/ops-fatsecret-guides-error-codes.md) | `api` `fatsecret` `operations` |
-| [FatSecret Platform API - Third-Party Libraries](docs/ops-fatsecret-guides-libraries.md) | `api` `fatsecret` `operations` |
-| [Contribute](docs/ops-contribute-contribute.md) | `contribute` `operations` |
-| [Documentation](docs/ops-contribute-documentation.md) | `contribute` `operations` `documentation` |
-| [Guidelines](docs/ops-contribute-guidelines.md) | `contribute` `operations` `guidelines` |
-| [Installation](docs/ops-contribute-installation.md) | `contribute` `installation` `operations` |
-| [Pycharm](docs/ops-contribute-pycharm.md) | `contribute` `pycharm` `operations` |
-| [Vscode](docs/ops-contribute-vscode.md) | `contribute` `vscode` `operations` |
-| [Faq](docs/ops-tandoor-faq.md) | `faq` `tandoor` `operations` |
-| [Authentication](docs/ops-features-authentication.md) | `advanced` `features` `operations` |
-| [External Recipes](docs/ops-features-external-recipes.md) | `advanced` `features` `operations` |
-| [Import Export](docs/ops-features-import-export.md) | `import` `features` `operations` |
-| [Telegram Bot](docs/ops-features-telegram-bot.md) | `features` `tandoor` `operations` |
-| [Archlinux](docs/ops-install-archlinux.md) | `operations` `archlinux` `install` |
-| [Docker](docs/ops-install-docker.md) | `advanced` `docker` `operations` |
-| [Homeassistant](docs/ops-install-homeassistant.md) | `homeassistant` `tandoor` `operations` |
-| [Kubernetes](docs/ops-install-kubernetes.md) | `operations` `install` `kubernetes` |
+| [Architecture](docs/ops-general-architecture.md) | `operations` `architecture` `windmill` |
+| [Build & Test (Moon)](docs/ops-general-moon-ci-pipeline.md) | `operations` `build` |
+| [FatSecret Platform API - Error Codes](docs/ops-fatsecret-guides-error-codes.md) | `operations` `fatsecret` `advanced` |
+| [FatSecret Platform API - Third-Party Libraries](docs/ops-fatsecret-guides-libraries.md) | `operations` `fatsecret` `api` |
+| [Implementation Scope: food.brands.get.v2](docs/ops-fatsecret-impl-scope-food-brands-get.md) | `operations` `fatsecret` `implementation` |
+| [Implementation Scope: FatSecret food.categories.get.v2](docs/ops-fatsecret-impl-scope-food-categories-get.md) | `operations` `fatsecret` `implementation` |
+| [Commands](docs/ops-moonrepo-commands.md) | `operations` `commands` `moonrepo` |
+| [action-graph](docs/ops-commands-action-graph.md) | `operations` `actiongraph` `commands` |
+| [bin](docs/ops-commands-bin.md) | `operations` `bin` `commands` |
+| [check](docs/ops-commands-check.md) | `operations` `check` `commands` |
+| [ci](docs/ops-commands-ci.md) | `operations` `commands` |
+| [clean](docs/ops-commands-clean.md) | `clean` `operations` `commands` |
+| [completions](docs/ops-commands-completions.md) | `completions` `operations` `commands` |
+| [docker](docs/ops-commands-docker.md) | `docker` `operations` `commands` |
+| [docker file](docs/ops-docker-file.md) | `docker` `operations` |
+| [docker prune](docs/ops-docker-prune.md) | `docker` `operations` |
+| [docker scaffold](docs/ops-docker-scaffold.md) | `docker` `operations` |
+| [docker setup](docs/ops-docker-setup.md) | `docker` `operations` |
+| [ext](docs/ops-commands-ext.md) | `operations` `ext` `commands` |
+| [generate](docs/ops-commands-generate.md) | `operations` `commands` `generate` |
 
 
-### Meta (103)
+### Meta (104)
 
 | Document | Tags |
 |----------|------|
+| [Documentation](docs/meta-general-readme.md) | `documentation` `meta` |
 | [Index](docs/meta-tandoor-index.md) | `tandoor` `index` `meta` |
 | [Windmill Documentation Indexing System](docs/meta-windmill-indexing-system.md) | `windmill` `advanced` `meta` |
-| [Browser automation](docs/meta-10_browser_automation-index.md) | `10_browser_automation` `api` `browser` |
-| [Git sync](docs/meta-11_git_sync-index.md) | `11_git_sync` `git` `advanced` |
+| [Browser automation](docs/meta-10_browser_automation-index.md) | `browser` `windmill` `10_browser_automation` |
+| [Git sync](docs/meta-11_git_sync-index.md) | `git` `11_git_sync` `advanced` |
 | [Deploy to prod](docs/meta-12_deploy_to_prod-index.md) | `12_deploy_to_prod` `deploy` `meta` |
 | [Version control](docs/meta-13_version_control-index.md) | `version` `13_version_control` `meta` |
-| [Dependencies in TypeScript](docs/meta-14_dependencies_in_typescript-index.md) | `14_dependencies_in_typescript` `dependencies` `typescript` |
-| [Dependencies in Python](docs/meta-15_dependencies_in_python-index.md) | `15_dependencies_in_python` `dependencies` `python` |
-| [External auth with JWT](docs/meta-16_external_auth_with_jwt-index.md) | `16_external_auth_with_jwt` `advanced` `windmill` |
-| [Email triggers](docs/meta-17_email_triggers-index.md) | `email` `17_email_triggers` `advanced` |
+| [Dependencies in TypeScript](docs/meta-14_dependencies_in_typescript-index.md) | `14_dependencies_in_typescript` `typescript` `advanced` |
+| [Dependencies in Python](docs/meta-15_dependencies_in_python-index.md) | `python` `15_dependencies_in_python` `advanced` |
+| [External auth with JWT](docs/meta-16_external_auth_with_jwt-index.md) | `external` `windmill` `16_external_auth_with_jwt` |
+| [Email triggers](docs/meta-17_email_triggers-index.md) | `advanced` `email` `17_email_triggers` |
 | [Instance settings](docs/meta-18_instance_settings-index.md) | `18_instance_settings` `instance` `advanced` |
-| [Set/Get progress from code](docs/meta-19_explicit_progress-index.md) | `19_explicit_progress` `setget` `meta` |
-| [Self-host](docs/meta-1_self_host-index.md) | `1_self_host` `selfhost` `advanced` |
+| [Set/Get progress from code](docs/meta-19_explicit_progress-index.md) | `setget` `19_explicit_progress` `meta` |
+| [Self-host](docs/meta-1_self_host-index.md) | `selfhost` `advanced` `1_self_host` |
 | [Workspace forks](docs/meta-20_workspace_forks-index.md) | `workspace` `20_workspace_forks` `meta` |
-| [Scaling workers](docs/meta-21_scaling-index.md) | `21_scaling` `scaling` `advanced` |
-| [Command-line interface (CLI)](docs/meta-3_cli-index.md) | `3_cli` `commandline` `meta` |
-| [Local development](docs/meta-4_local_development-index.md) | `advanced` `local` `4_local_development` |
+| [Scaling workers](docs/meta-21_scaling-index.md) | `scaling` `21_scaling` `advanced` |
+| [Command-line interface (CLI)](docs/meta-3_cli-index.md) | `commandline` `3_cli` `meta` |
+| [Local development](docs/meta-4_local_development-index.md) | `4_local_development` `advanced` `local` |
 | [Sharing common logic](docs/meta-5_sharing_common_logic-index.md) | `sharing` `5_sharing_common_logic` `advanced` |
-| [Dependency management & imports](docs/meta-6_imports-index.md) | `dependency` `6_imports` `advanced` |
-| [Run Docker containers](docs/meta-7_docker-index.md) | `docker` `run` `7_docker` |
+| [Dependency management & imports](docs/meta-6_imports-index.md) | `advanced` `6_imports` `dependency` |
 
 
 ## Keyword Quick Reference
 
 | Keyword | Relevant Documents |
 |---------|-------------------|
-| meta | [Index](docs/meta-tandoor-index.md), [Windmill Documentation Indexing System](docs/meta-windmill-indexing-system.md), [Browser automation](docs/meta-10_browser_automation-index.md) |
-| advanced | [AI-Optimized Documentation System: Complete Design Document](docs/ops-general-ai-documentation-system.md), [Meal Planner Architecture](docs/ops-general-architecture.md), [Recipe Import Pipeline](docs/ops-general-recipe-import-pipeline.md) |
-| operations | [AI-Optimized Documentation System: Complete Design Document](docs/ops-general-ai-documentation-system.md), [Meal Planner Architecture](docs/ops-general-architecture.md), [Recipe Import Pipeline](docs/ops-general-recipe-import-pipeline.md) |
-| windmill | [Meal Planner Architecture](docs/ops-general-architecture.md), [Windmill Documentation DAG Visualization](docs/ops-windmill-dag-visualization.md), [Windmill Deployment Guide](docs/ops-windmill-deployment-guide.md) |
-| fatsecret | [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md), [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md), [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) |
+| operations | [Architecture](docs/ops-general-architecture.md), [Build & Test (Moon)](docs/ops-general-moon-ci-pipeline.md), [FatSecret Platform API - Error Codes](docs/ops-fatsecret-guides-error-codes.md) |
+| advanced | [Image Recognition API v1](docs/ref-fatsecret-api-image-recognition.md), [Natural Language Processing API v1](docs/ref-fatsecret-api-natural-language-processing.md), [Recipe Get by ID v1](docs/ref-fatsecret-api-recipe-get-v1.md) |
+| meta | [Documentation](docs/meta-general-readme.md), [Index](docs/meta-tandoor-index.md), [Windmill Documentation Indexing System](docs/meta-windmill-indexing-system.md) |
+| concept | [Documentation System (AI + Human)](docs/concept-general-ai-documentation-system.md), [Recipe Import Pipeline](docs/concept-general-recipe-import-pipeline.md), [FatSecret Platform API - Localization](docs/concept-fatsecret-guides-localization.md) |
+| windmill | [Architecture](docs/ops-general-architecture.md), [Windmill Documentation DAG Visualization](docs/ops-windmill-dag-visualization.md), [Windmill Deployment Guide](docs/ops-windmill-deployment-guide.md) |
 | reference | [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md), [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md), [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) |
-| concept | [FatSecret Platform API - Localization](docs/concept-fatsecret-guides-localization.md), [Related](docs/concept-contribute-related.md), [Translations](docs/concept-contribute-translations.md) |
+| fatsecret | [FatSecret OAuth Setup (One-Time)](docs/tutorial-general-fatsecret-oauth-setup.md), [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md), [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md) |
+| beginner | [FatSecret OAuth Setup (One-Time)](docs/tutorial-general-fatsecret-oauth-setup.md), [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md), [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md) |
+| tutorial | [FatSecret OAuth Setup (One-Time)](docs/tutorial-general-fatsecret-oauth-setup.md), [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md), [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md) |
 | flows | [Windmill Flows Guide](docs/tutorial-windmill-flows-guide.md), [Flows](docs/concept-3_cli-flow.md), [Trigger scripts](docs/concept-flows-10-flow-trigger.md) |
-| tutorial | [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md), [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md), [Connectors](docs/tutorial-features-connectors.md) |
-| beginner | [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md), [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md), [Connectors](docs/tutorial-features-connectors.md) |
+| commands | [Commands](docs/ops-moonrepo-commands.md), [action-graph](docs/ops-commands-action-graph.md), [bin](docs/ops-commands-bin.md) |
 | api | [Image Recognition API v1](docs/ref-fatsecret-api-image-recognition.md), [Natural Language Processing API v1](docs/ref-fatsecret-api-natural-language-processing.md), [FatSecret Platform API - Authentication](docs/ref-fatsecret-guides-authentication.md) |
+| moonrepo | [Cheat sheet](docs/concept-moonrepo-cheat-sheet.md), [Commands](docs/ops-moonrepo-commands.md), [Feature comparison](docs/ops-moonrepo-comparison.md) |
+| examples | [Angular example](docs/tutorial-examples-angular.md), [Astro example](docs/ops-examples-astro.md), [ESLint example](docs/ops-examples-eslint.md) |
+| guides | [Continuous integration (CI)](docs/ops-guides-ci.md), [Code generation](docs/ops-guides-codegen.md), [Code owners](docs/ops-guides-codeowners.md) |
+| example | [Angular example](docs/tutorial-examples-angular.md), [Astro example](docs/ops-examples-astro.md), [ESLint example](docs/ops-examples-eslint.md) |
 | quickstart | [Ansible quickstart](docs/meta-10_ansible_quickstart-index.md), [C# quickstart](docs/meta-11_csharp_quickstart-index.md), [Java quickstart](docs/meta-13_java_quickstart-index.md) |
+| concepts | [Concepts](docs/ops-moonrepo-concepts.md), [Cache](docs/ops-concepts-cache.md), [File groups](docs/ref-concepts-file-group.md) |
+| install | [Install moon](docs/ops-moonrepo-install.md), [Archlinux](docs/ops-install-archlinux.md), [Docker](docs/ops-install-docker.md) |
 | 3cli | [Apps](docs/concept-3_cli-app.md), [Branch-specific items](docs/ops-3_cli-branch-specific-items.md), [Flows](docs/concept-3_cli-flow.md) |
-| install | [Archlinux](docs/ops-install-archlinux.md), [Docker](docs/ops-install-docker.md), [Homeassistant](docs/ops-install-homeassistant.md) |
-| get | [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md), [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md), [Food Entries Get (v1)](docs/ref-fatsecret-api-food-entries-get.md) |
-| scripteditor | [Concurrency limits](docs/ref-script_editor-concurrency-limit.md), [Custom environment variables](docs/concept-script_editor-custom-environment-variables.md), [Generated UI](docs/tutorial-script_editor-customize-ui.md) |
-| food | [Food Add Favorite](docs/ref-fatsecret-api-food-add-favorite.md), [Food Brands Get All v2](docs/ref-fatsecret-api-food-brands-get.md), [Food Categories Get All v2](docs/ref-fatsecret-api-food-categories-get.md) |
-| platform | [FatSecret Platform API - Authentication](docs/ref-fatsecret-guides-authentication.md), [FatSecret Platform API - Error Codes](docs/ops-fatsecret-guides-error-codes.md), [FatSecret Platform API - Third-Party Libraries](docs/ops-fatsecret-guides-libraries.md) |
-| features | [Ai](docs/concept-features-ai.md), [Authentication](docs/ops-features-authentication.md), [Automation](docs/concept-features-automation.md) |
-| triggers | [Email triggers](docs/meta-17_email_triggers-index.md), [WebSocket triggers](docs/meta-40_websocket_triggers-index.md), [Kafka triggers](docs/meta-41_kafka_triggers-index.md) |
 
 ## AI Search Guide
 
@@ -187,21 +187,28 @@ Use these patterns to find what you need:
 
 ## All Documents
 
-Alphabetical list of all 235 documents:
+Alphabetical list of all 362 documents:
 
 | ID | Title | Category |
 |----|-------|----------|
+| concept/config/tasks | [.moon/tasks\[/\*\*/\*\].{pkl,yml}](docs/concept-config-tasks.md) | concept |
+| ops/config/toolchain | [.moon/toolchain.{pkl,yml}](docs/ops-config-toolchain.md) | ops |
+| ops/config/workspace | [.moon/workspace.{pkl,yml}](docs/ops-config-workspace.md) | ops |
+| ops/how-it-works/action-graph | [Action graph](docs/ops-how-it-works-action-graph.md) | ops |
+| ops/commands/action-graph | [action-graph](docs/ops-commands-action-graph.md) | ops |
 | meta/28_agent_workers/index | [Agent workers](docs/meta-28_agent_workers-index.md) | meta |
 | concept/features/ai | [Ai](docs/concept-features-ai.md) | concept |
 | meta/54_ai_agents/index | [AI agents](docs/meta-54_ai_agents-index.md) | meta |
 | concept/flows/17-ai-flows | [AI-generated flows](docs/concept-flows-17-ai-flows.md) | concept |
-| ops/general/ai-documentation-system | [AI-Optimized Documentation System: Complete Design Document](docs/ops-general-ai-documentation-system.md) | ops |
+| tutorial/examples/angular | [Angular example](docs/tutorial-examples-angular.md) | tutorial |
 | meta/10_ansible_quickstart/index | [Ansible quickstart](docs/meta-10_ansible_quickstart-index.md) | meta |
 | concept/3_cli/app | [Apps](docs/concept-3_cli-app.md) | concept |
 | meta/7_apps_quickstart/index | [Apps quickstart](docs/meta-7_apps_quickstart-index.md) | meta |
+| ops/general/architecture | [Architecture](docs/ops-general-architecture.md) | ops |
 | tutorial/flows/16-architecture | [Architecture and data exchange](docs/tutorial-flows-16-architecture.md) | tutorial |
 | ops/install/archlinux | [Archlinux](docs/ops-install-archlinux.md) | ops |
 | meta/52_assets/index | [Assets](docs/meta-52_assets-index.md) | meta |
+| ops/examples/astro | [Astro example](docs/ops-examples-astro.md) | ops |
 | meta/14_audit_logs/index | [Audit logs](docs/meta-14_audit_logs-index.md) | meta |
 | ops/features/authentication | [Authentication](docs/ops-features-authentication.md) | ops |
 | meta/15_authentification/index | [Authentication](docs/meta-15_authentification-index.md) | meta |
@@ -210,53 +217,86 @@ Alphabetical list of all 235 documents:
 | meta/42_autoscaling/index | [Autoscaling](docs/meta-42_autoscaling-index.md) | meta |
 | ops/system/backup | [Backup](docs/ops-system-backup.md) | ops |
 | tutorial/11_persistent_storage/structured-databases | [Big structured SQL data: Postgres (Supabase, Neon.tech)](docs/tutorial-11_persistent_storage-structured-databases.md) | tutorial |
+| ops/commands/bin | [bin](docs/ops-commands-bin.md) | ops |
 | ops/3_cli/branch-specific-items | [Branch-specific items](docs/ops-3_cli-branch-specific-items.md) | ops |
 | concept/flows/13-flow-branches | [Branches](docs/concept-flows-13-flow-branches.md) | concept |
 | meta/10_browser_automation/index | [Browser automation](docs/meta-10_browser_automation-index.md) | meta |
+| ops/general/moon-ci-pipeline | [Build & Test (Moon)](docs/ops-general-moon-ci-pipeline.md) | ops |
+| ops/javascript/bun-handbook | [Bun handbook](docs/ops-javascript-bun-handbook.md) | ops |
 | meta/11_csharp_quickstart/index | [C# quickstart](docs/meta-11_csharp_quickstart-index.md) | meta |
+| ops/concepts/cache | [Cache](docs/ops-concepts-cache.md) | ops |
 | meta/24_caching/index | [Caching](docs/meta-24_caching-index.md) | meta |
 | tutorial/flows/4-cache | [Caching](docs/tutorial-flows-4-cache.md) | tutorial |
+| concept/moonrepo/cheat-sheet | [Cheat sheet](docs/concept-moonrepo-cheat-sheet.md) | concept |
+| ops/commands/check | [check](docs/ops-commands-check.md) | ops |
+| ops/commands/ci | [ci](docs/ops-commands-ci.md) | ops |
+| ops/commands/clean | [clean](docs/ops-commands-clean.md) | ops |
 | ops/11_git_sync/cli-sync | [CLI sync](docs/ops-11_git_sync-cli-sync.md) | ops |
+| ops/guides/codegen | [Code generation](docs/ops-guides-codegen.md) | ops |
+| ops/guides/codeowners | [Code owners](docs/ops-guides-codeowners.md) | ops |
 | meta/33_codebases_and_bundles/index | [Codebases & bundles](docs/meta-33_codebases_and_bundles-index.md) | meta |
 | meta/17_collaboration/index | [Collaboration in Windmill](docs/meta-17_collaboration-index.md) | meta |
 | meta/3_cli/index | [Command-line interface (CLI)](docs/meta-3_cli-index.md) | meta |
+| ops/moonrepo/commands | [Commands](docs/ops-moonrepo-commands.md) | ops |
+| ops/commands/completions | [completions](docs/ops-commands-completions.md) | ops |
+| ops/moonrepo/concepts | [Concepts](docs/ops-moonrepo-concepts.md) | ops |
 | meta/21_concurrency_limits/index | [Concurrency limits](docs/meta-21_concurrency_limits-index.md) | meta |
 | ref/flows/6-concurrency-limit | [Concurrency limits](docs/ref-flows-6-concurrency-limit.md) | ref |
 | ref/script_editor/concurrency-limit | [Concurrency limits](docs/ref-script_editor-concurrency-limit.md) | ref |
+| concept/moonrepo/config | [Config files](docs/concept-moonrepo-config.md) | concept |
 | ops/system/configuration | [Configuration](docs/ops-system-configuration.md) | ops |
 | tutorial/features/connectors | [Connectors](docs/tutorial-features-connectors.md) | tutorial |
 | meta/26_content_search/index | [Content search](docs/meta-26_content_search-index.md) | meta |
+| ops/guides/ci | [Continuous integration (CI)](docs/ops-guides-ci.md) | ops |
 | ops/contribute/contribute | [Contribute](docs/ops-contribute-contribute.md) | ops |
 | meta/core_concepts/index | [Core concepts](docs/meta-core_concepts-index.md) | meta |
+| concept/moonrepo/create-project | [Create a project](docs/concept-moonrepo-create-project.md) | concept |
+| ops/moonrepo/create-task | [Create a task](docs/ops-moonrepo-create-task.md) | ops |
 | meta/37_critical_alerts/index | [Critical alerts](docs/meta-37_critical_alerts-index.md) | meta |
 | concept/script_editor/custom-environment-variables | [Custom environment variables](docs/concept-script_editor-custom-environment-variables.md) | concept |
 | meta/53_custom_instance_database/index | [Custom Instance Database](docs/meta-53_custom_instance_database-index.md) | meta |
 | concept/flows/9-custom-timeout | [Custom timeout for step](docs/concept-flows-9-custom-timeout.md) | concept |
 | meta/27_data_pipelines/index | [Data pipelines](docs/meta-27_data_pipelines-index.md) | meta |
 | tutorial/11_persistent_storage/data-tables | [Data tables](docs/tutorial-11_persistent_storage-data-tables.md) | tutorial |
+| ops/guides/debug-task | [Debugging a task](docs/ops-guides-debug-task.md) | ops |
 | meta/25_dedicated_workers/index | [Dedicated workers / High throughput](docs/meta-25_dedicated_workers-index.md) | meta |
+| concept/javascript/deno-handbook | [Deno handbook](docs/concept-javascript-deno-handbook.md) | concept |
 | meta/15_dependencies_in_python/index | [Dependencies in Python](docs/meta-15_dependencies_in_python-index.md) | meta |
 | meta/14_dependencies_in_typescript/index | [Dependencies in TypeScript](docs/meta-14_dependencies_in_typescript-index.md) | meta |
 | meta/6_imports/index | [Dependency management & imports](docs/meta-6_imports-index.md) | meta |
 | meta/12_deploy_to_prod/index | [Deploy to prod](docs/meta-12_deploy_to_prod-index.md) | meta |
 | meta/9_deploy_gh_gl/index | [Deploy to prod using a git workflow](docs/meta-9_deploy_gh_gl-index.md) | meta |
 | meta/12_staging_prod/index | [Deploy to prod using the UI](docs/meta-12_staging_prod-index.md) | meta |
+| ops/commands/docker | [docker](docs/ops-commands-docker.md) | ops |
 | ops/install/docker | [Docker](docs/ops-install-docker.md) | ops |
+| ops/docker/file | [docker file](docs/ops-docker-file.md) | ops |
+| ops/guides/docker | [Docker integration](docs/ops-guides-docker.md) | ops |
+| ops/docker/prune | [docker prune](docs/ops-docker-prune.md) | ops |
 | meta/7_docker_quickstart/index | [Docker quickstart](docs/meta-7_docker_quickstart-index.md) | meta |
+| ops/docker/scaffold | [docker scaffold](docs/ops-docker-scaffold.md) | ops |
+| ops/docker/setup | [docker setup](docs/ops-docker-setup.md) | ops |
+| meta/general/readme | [Documentation](docs/meta-general-readme.md) | meta |
 | ops/contribute/documentation | [Documentation](docs/ops-contribute-documentation.md) | ops |
 | ops/windmill/implementation-summary | [Documentation Indexing Implementation Summary](docs/ops-windmill-implementation-summary.md) | ops |
+| concept/general/ai-documentation-system | [Documentation System (AI + Human)](docs/concept-general-ai-documentation-system.md) | concept |
 | meta/0_draft_and_deploy/index | [Draft and deploy](docs/meta-0_draft_and_deploy-index.md) | meta |
 | tutorial/11_persistent_storage/ducklake | [Ducklake](docs/tutorial-11_persistent_storage-ducklake.md) | tutorial |
 | ops/flows/19-early-return | [Early return](docs/ops-flows-19-early-return.md) | ops |
 | concept/flows/2-early-stop | [Early stop / Break](docs/concept-flows-2-early-stop.md) | concept |
+| concept/moonrepo/editors | [Editors](docs/concept-moonrepo-editors.md) | concept |
 | meta/17_email_triggers/index | [Email triggers](docs/meta-17_email_triggers-index.md) | meta |
 | meta/47_environment_variables/index | [Environment variables](docs/meta-47_environment_variables-index.md) | meta |
 | tutorial/flows/7-flow-error-handler | [Error handler](docs/tutorial-flows-7-flow-error-handler.md) | tutorial |
 | meta/10_error_handling/index | [Error handling](docs/meta-10_error_handling-index.md) | meta |
 | concept/flows/8-error-handling | [Error handling in flows](docs/concept-flows-8-error-handling.md) | concept |
+| ops/examples/eslint | [ESLint example](docs/ops-examples-eslint.md) | ops |
+| ops/commands/ext | [ext](docs/ops-commands-ext.md) | ops |
+| ops/guides/extensions | [Extensions](docs/ops-guides-extensions.md) | ops |
 | meta/16_external_auth_with_jwt/index | [External auth with JWT](docs/meta-16_external_auth_with_jwt-index.md) | meta |
 | ops/features/external-recipes | [External Recipes](docs/ops-features-external-recipes.md) | ops |
+| ops/moonrepo/faq | [FAQ](docs/ops-moonrepo-faq.md) | ops |
 | ops/tandoor/faq | [Faq](docs/ops-tandoor-faq.md) | ops |
+| tutorial/general/fatsecret-oauth-setup | [FatSecret OAuth Setup (One-Time)](docs/tutorial-general-fatsecret-oauth-setup.md) | tutorial |
 | tutorial/fatsecret/guides-oauth1-three-legged | [FatSecret Platform API - 3-Legged OAuth](docs/tutorial-fatsecret-guides-oauth1-three-legged.md) | tutorial |
 | ref/fatsecret/guides-authentication | [FatSecret Platform API - Authentication](docs/ref-fatsecret-guides-authentication.md) | ref |
 | ops/fatsecret/guides-error-codes | [FatSecret Platform API - Error Codes](docs/ops-fatsecret-guides-error-codes.md) | ops |
@@ -266,6 +306,9 @@ Alphabetical list of all 235 documents:
 | ref/fatsecret/guides-parameters | [FatSecret Platform API - Parameters Reference](docs/ref-fatsecret-guides-parameters.md) | ref |
 | ops/fatsecret/guides-libraries | [FatSecret Platform API - Third-Party Libraries](docs/ops-fatsecret-guides-libraries.md) | ops |
 | tutorial/fatsecret/guides-welcome | [FatSecret Platform API - Welcome](docs/tutorial-fatsecret-guides-welcome.md) | tutorial |
+| ops/moonrepo/comparison | [Feature comparison](docs/ops-moonrepo-comparison.md) | ops |
+| ref/concepts/file-group | [File groups](docs/ref-concepts-file-group.md) | ref |
+| concept/concepts/file-pattern | [File patterns](docs/concept-concepts-file-pattern.md) | concept |
 | tutorial/flows/1-flow-editor | [Flow editor](docs/tutorial-flows-1-flow-editor.md) | tutorial |
 | tutorial/flows/3-editor-components | [Flow editor components](docs/tutorial-flows-3-editor-components.md) | tutorial |
 | concept/3_cli/flow | [Flows](docs/concept-3_cli-flow.md) | concept |
@@ -285,6 +328,7 @@ Alphabetical list of all 235 documents:
 | ref/fatsecret/api-foods-search-v3 | [Foods Search v3](docs/ref-fatsecret-api-foods-search-v3.md) | ref |
 | tutorial/flows/12-flow-loops | [For loops](docs/tutorial-flows-12-flow-loops.md) | tutorial |
 | meta/50_gcp_triggers/index | [GCP Pub/Sub triggers](docs/meta-50_gcp_triggers-index.md) | meta |
+| ops/commands/generate | [generate](docs/ops-commands-generate.md) | ops |
 | tutorial/script_editor/customize-ui | [Generated UI](docs/tutorial-script_editor-customize-ui.md) | tutorial |
 | meta/00_how_to_use_windmill/index | [Getting started with Windmill](docs/meta-00_how_to_use_windmill-index.md) | meta |
 | meta/11_git_sync/index | [Git sync](docs/meta-11_git_sync-index.md) | meta |
@@ -294,16 +338,23 @@ Alphabetical list of all 235 documents:
 | ops/contribute/guidelines | [Guidelines](docs/ops-contribute-guidelines.md) | ops |
 | meta/18_files_binary_data/index | [Handling files and binary data](docs/meta-18_files_binary_data-index.md) | meta |
 | ops/install/homeassistant | [Homeassistant](docs/ops-install-homeassistant.md) | ops |
+| concept/moonrepo/how-it-works | [How it works](docs/concept-moonrepo-how-it-works.md) | concept |
 | ops/system/migration-sqlite-postgres | [How to migrate from sqlite3 database to postgresql](docs/ops-system-migration-sqlite-postgres.md) | ops |
 | meta/39_http_routing/index | [HTTP routes](docs/meta-39_http_routing-index.md) | meta |
 | ref/fatsecret/api-image-recognition | [Image Recognition API v1](docs/ref-fatsecret-api-image-recognition.md) | ref |
+| ops/fatsecret/impl-scope-food-categories-get | [Implementation Scope: FatSecret food.categories.get.v2](docs/ops-fatsecret-impl-scope-food-categories-get.md) | ops |
+| ops/fatsecret/impl-scope-food-brands-get | [Implementation Scope: food.brands.get.v2](docs/ops-fatsecret-impl-scope-food-brands-get.md) | ops |
 | ops/features/import-export | [Import Export](docs/ops-features-import-export.md) | ops |
 | meta/tandoor/index | [Index](docs/meta-tandoor-index.md) | meta |
+| ops/commands/init | [init](docs/ops-commands-init.md) | ops |
+| ops/moonrepo/install | [Install moon](docs/ops-moonrepo-install.md) | ops |
 | ops/contribute/installation | [Installation](docs/ops-contribute-installation.md) | ops |
 | ops/3_cli/installation | [Installation](docs/ops-3_cli-installation.md) | ops |
 | meta/18_instance_settings/index | [Instance settings](docs/meta-18_instance_settings-index.md) | meta |
 | meta/23_instant_preview/index | [Instant preview & testing](docs/meta-23_instant_preview-index.md) | meta |
+| ops/moonrepo/docs | [Introduction](docs/ops-moonrepo-docs.md) | ops |
 | meta/13_java_quickstart/index | [Java quickstart](docs/meta-13_java_quickstart-index.md) | meta |
+| ops/examples/jest | [Jest example](docs/ops-examples-jest.md) | ops |
 | meta/22_job_debouncing/index | [Job debouncing](docs/meta-22_job_debouncing-index.md) | meta |
 | ref/flows/23-job-debouncing | [Job debouncing](docs/ref-flows-23-job-debouncing.md) | ref |
 | ref/script_editor/job-debouncing | [Job debouncing](docs/ref-script_editor-job-debouncing.md) | ref |
@@ -313,54 +364,91 @@ Alphabetical list of all 235 documents:
 | meta/41_kafka_triggers/index | [Kafka triggers](docs/meta-41_kafka_triggers-index.md) | meta |
 | ops/install/kubernetes | [Kubernetes](docs/ops-install-kubernetes.md) | ops |
 | ops/install/kubesail | [Kubesail](docs/ops-install-kubesail.md) | ops |
+| ops/how-it-works/languages | [Languages](docs/ops-how-it-works-languages.md) | ops |
 | concept/11_persistent_storage/large-data-files | [Large data: S3, R2, MinIO, Azure Blob, Google Cloud Storage](docs/concept-11_persistent_storage-large-data-files.md) | concept |
 | concept/flows/21-lifetime | [Lifetime / Delete after use](docs/concept-flows-21-lifetime.md) | concept |
 | meta/4_local_development/index | [Local development](docs/meta-4_local_development-index.md) | meta |
 | ops/install/manual | [Manual installation instructions](docs/ops-install-manual.md) | ops |
-| ops/general/architecture | [Meal Planner Architecture](docs/ops-general-architecture.md) | ops |
+| ops/commands/mcp | [mcp](docs/ops-commands-mcp.md) | ops |
+| ops/guides/mcp | [MCP integration](docs/ops-guides-mcp.md) | ops |
+| concept/commands/migrate | [migrate](docs/concept-commands-migrate.md) | concept |
+| ops/migrate/from-package-json | [migrate from-package-json](docs/ops-migrate-from-package-json.md) | ops |
+| concept/migrate/from-turborepo | [migrate from-turborepo](docs/concept-migrate-from-turborepo.md) | concept |
+| ops/moonrepo/migrate-to-moon | [Migrate to moon](docs/ops-moonrepo-migrate-to-moon.md) | ops |
 | ops/55_workspace_dependencies/migration | [Migration guide](docs/ops-55_workspace_dependencies-migration.md) | ops |
+| tutorial/moonrepo/urls | [Moon Monorepo Documentation URLs](docs/tutorial-moonrepo-urls.md) | tutorial |
+| ops/config/project | [moon.{pkl,yml}](docs/ops-config-project.md) | ops |
 | meta/49_mqtt_triggers/index | [MQTT triggers](docs/meta-49_mqtt_triggers-index.md) | meta |
 | meta/7_multiplayer/index | [Multiplayer](docs/meta-7_multiplayer-index.md) | meta |
 | ops/script_editor/multiplayer | [Multiplayer](docs/ops-script_editor-multiplayer.md) | ops |
 | meta/45_nats_triggers/index | [NATS triggers](docs/meta-45_nats_triggers-index.md) | meta |
 | ref/fatsecret/api-natural-language-processing | [Natural Language Processing API v1](docs/ref-fatsecret-api-natural-language-processing.md) | ref |
+| tutorial/examples/nest | [Nest example](docs/tutorial-examples-nest.md) | tutorial |
+| tutorial/examples/next | [Next example](docs/tutorial-examples-next.md) | tutorial |
+| concept/node/examples | [Node.js examples](docs/concept-node-examples.md) | concept |
+| ops/javascript/node-handbook | [Node.js handbook](docs/ops-javascript-node-handbook.md) | ops |
 | ops/11_persistent_storage/key-value-stores | [NoSQL & Document databases (Mongodb, Key-Value Stores)](docs/ops-11_persistent_storage-key-value-stores.md) | ops |
+| tutorial/examples/nuxt | [Nuxt example](docs/tutorial-examples-nuxt.md) | tutorial |
 | meta/38_object_storage_in_windmill/index | [Object storage in Windmill (S3)](docs/meta-38_object_storage_in_windmill-index.md) | meta |
+| ops/guides/offline-mode | [Offline mode](docs/ops-guides-offline-mode.md) | ops |
+| ops/guides/open-source | [Open source usage](docs/ops-guides-open-source.md) | ops |
 | meta/openflow/index | [OpenFlow](docs/meta-openflow-index.md) | meta |
 | meta/29_oidc/index | [OpenID Connect (OIDC)](docs/meta-29_oidc-index.md) | meta |
 | ops/install/other | [Other](docs/ops-install-other.md) | ops |
+| ops/commands/overview | [Overview](docs/ops-commands-overview.md) | ops |
+| ops/examples/packemon | [Packemon example](docs/ops-examples-packemon.md) | ops |
 | concept/system/permissions | [Permissions](docs/concept-system-permissions.md) | concept |
 | meta/11_persistent_storage/index | [Persistent storage & databases](docs/meta-11_persistent_storage-index.md) | meta |
 | meta/8_php_quickstart/index | [PHP quickstart](docs/meta-8_php_quickstart-index.md) | meta |
+| ops/guides/pkl-config | [Pkl configuration](docs/ops-guides-pkl-config.md) | ops |
 | meta/46_postgres_triggers/index | [Postgres triggers](docs/meta-46_postgres_triggers-index.md) | meta |
 | meta/8_preinstall_binaries/index | [Preinstall binaries](docs/meta-8_preinstall_binaries-index.md) | meta |
 | meta/43_preprocessors/index | [Preprocessors](docs/meta-43_preprocessors-index.md) | meta |
+| ops/examples/prettier | [Prettier example](docs/ops-examples-prettier.md) | ops |
 | concept/flows/20-priority | [Priority for steps](docs/concept-flows-20-priority.md) | concept |
 | meta/32_private_hub/index | [Private Hub](docs/meta-32_private_hub-index.md) | meta |
 | ref/fatsecret/api-profile-create | [Profile Create](docs/ref-fatsecret-api-profile-create.md) | ref |
 | ref/fatsecret/api-profile-get-auth | [Profile Get Auth](docs/ref-fatsecret-api-profile-get-auth.md) | ref |
 | ref/fatsecret/api-profile-get | [Profile Get Status](docs/ref-fatsecret-api-profile-get.md) | ref |
+| ops/commands/project | [project](docs/ops-commands-project.md) | ops |
+| ops/how-it-works/project-graph | [Project graph](docs/ops-how-it-works-project-graph.md) | ops |
+| ops/commands/project-graph | [project-graph](docs/ops-commands-project-graph.md) | ops |
+| ref/concepts/project | [Projects](docs/ref-concepts-project.md) | ref |
 | ops/contribute/pycharm | [Pycharm](docs/ops-contribute-pycharm.md) | ops |
 | ops/2_clients/python-client | [Python client](docs/ops-2_clients-python-client.md) | ops |
 | meta/2_python_quickstart/index | [Python quickstart](docs/meta-2_python_quickstart-index.md) | meta |
+| ops/commands/query | [query](docs/ops-commands-query.md) | ops |
+| ops/query/hash | [query hash](docs/ops-query-hash.md) | ops |
+| ops/query/hash-diff | [query hash-diff](docs/ops-query-hash-diff.md) | ops |
+| concept/concepts/query-lang | [Query language](docs/concept-concepts-query-lang.md) | concept |
+| ops/query/projects | [query projects](docs/ops-query-projects.md) | ops |
+| ops/query/tasks | [query tasks](docs/ops-query-tasks.md) | ops |
+| ops/query/touched-files | [query touched-files](docs/ops-query-touched-files.md) | ops |
 | meta/5_sql_quickstart/index | [Quickstart PostgreSQL, MySQL, MS SQL, BigQuery, Snowflake](docs/meta-5_sql_quickstart-index.md) | meta |
+| concept/examples/react | [React example](docs/concept-examples-react.md) | concept |
 | ref/fatsecret/api-recipe-get-v1 | [Recipe Get by ID v1](docs/ref-fatsecret-api-recipe-get-v1.md) | ref |
-| ops/general/recipe-import-pipeline | [Recipe Import Pipeline](docs/ops-general-recipe-import-pipeline.md) | ops |
+| concept/general/recipe-import-pipeline | [Recipe Import Pipeline](docs/concept-general-recipe-import-pipeline.md) | concept |
 | ref/fatsecret/api-recipe-types-get | [Recipe Types Get All v1](docs/ref-fatsecret-api-recipe-types-get.md) | ref |
 | ref/fatsecret/api-recipes-search-v2 | [Recipes Search v2](docs/ref-fatsecret-api-recipes-search-v2.md) | ref |
 | concept/contribute/related | [Related](docs/concept-contribute-related.md) | concept |
+| tutorial/examples/remix | [Remix example](docs/tutorial-examples-remix.md) | tutorial |
+| concept/guides/remote-cache | [Remote caching](docs/concept-guides-remote-cache.md) | concept |
 | concept/3_cli/resource | [Resources](docs/concept-3_cli-resource.md) | concept |
 | meta/3_resources_and_types/index | [Resources and resource types](docs/meta-3_resources_and_types-index.md) | meta |
 | meta/6_rest_grapqhql_quickstart/index | [Rest / GraphQL quickstart](docs/meta-6_rest_grapqhql_quickstart-index.md) | meta |
 | ops/flows/14-retries | [Retries](docs/ops-flows-14-retries.md) | ops |
 | meta/19_rich_display_rendering/index | [Rich display rendering](docs/meta-19_rich_display_rendering-index.md) | meta |
 | meta/16_roles_and_permissions/index | [Roles and permissions](docs/meta-16_roles_and_permissions-index.md) | meta |
+| concept/guides/root-project | [Root-level project](docs/concept-guides-root-project.md) | concept |
 | meta/14_ruby_quickstart/index | [Ruby quickstart](docs/meta-14_ruby_quickstart-index.md) | meta |
+| ops/commands/run | [run](docs/ops-commands-run.md) | ops |
+| ops/moonrepo/run-task | [Run a task](docs/ops-moonrepo-run-task.md) | ops |
 | meta/7_docker/index | [Run Docker containers](docs/meta-7_docker-index.md) | meta |
 | ops/4_local_development/run-locally | [Run locally](docs/ops-4_local_development-run-locally.md) | ops |
 | concept/script_editor/vs-code-scripts | [Run scripts in VS Code](docs/concept-script_editor-vs-code-scripts.md) | concept |
 | ops/script_editor/perpetual-scripts | [Running services with perpetual scripts](docs/ops-script_editor-perpetual-scripts.md) | ops |
 | ops/2_clients/rust-client | [Rust client](docs/ops-2_clients-rust-client.md) | ops |
+| ops/rust/handbook | [Rust handbook](docs/ops-rust-handbook.md) | ops |
 | meta/9_rust_quickstart/index | [Rust quickstart](docs/meta-9_rust_quickstart-index.md) | meta |
 | meta/51_sql_to_s3_streaming/index | [S3 streaming for large queries](docs/meta-51_sql_to_s3_streaming-index.md) | meta |
 | meta/21_scaling/index | [Scaling workers](docs/meta-21_scaling-index.md) | meta |
@@ -375,36 +463,74 @@ Alphabetical list of all 235 documents:
 | meta/36_service_logs/index | [Service logs](docs/meta-36_service_logs-index.md) | meta |
 | meta/19_explicit_progress/index | [Set/Get progress from code](docs/meta-19_explicit_progress-index.md) | meta |
 | tutorial/script_editor/settings | [Settings](docs/tutorial-script_editor-settings.md) | tutorial |
+| ops/commands/setup | [setup](docs/ops-commands-setup.md) | ops |
+| ops/moonrepo/setup-toolchain | [Setup toolchain](docs/ops-moonrepo-setup-toolchain.md) | ops |
+| ops/moonrepo/setup-workspace | [Setup workspace](docs/ops-moonrepo-setup-workspace.md) | ops |
 | meta/5_sharing_common_logic/index | [Sharing common logic](docs/meta-5_sharing_common_logic-index.md) | meta |
+| concept/guides/sharing-config | [Sharing workspace configuration](docs/concept-guides-sharing-config.md) | concept |
 | concept/features/shopping | [Shopping](docs/concept-features-shopping.md) | concept |
 | tutorial/flows/15-sleep | [Sleeps / Delays in flows](docs/tutorial-flows-15-sleep.md) | tutorial |
+| ops/examples/solid | [Solid example](docs/ops-examples-solid.md) | ops |
 | meta/48_sqs_triggers/index | [SQS triggers](docs/meta-48_sqs_triggers-index.md) | meta |
 | concept/flows/5-step-mocking | [Step mocking / Pin result](docs/concept-flows-5-step-mocking.md) | concept |
 | concept/flows/24-sticky-notes | [Sticky notes](docs/concept-flows-24-sticky-notes.md) | concept |
+| ops/examples/storybook | [Storybook example](docs/ops-examples-storybook.md) | ops |
 | tutorial/flows/11-flow-approval | [Suspend & Approval / Prompts](docs/tutorial-flows-11-flow-approval.md) | tutorial |
+| ops/examples/sveltekit | [SvelteKit example](docs/ops-examples-sveltekit.md) | ops |
 | ops/install/swag | [Swag](docs/ops-install-swag.md) | ops |
+| concept/commands/sync | [sync](docs/concept-commands-sync.md) | concept |
 | ops/3_cli/sync | [Sync](docs/ops-3_cli-sync.md) | ops |
+| ops/sync/codeowners | [sync codeowners](docs/ops-sync-codeowners.md) | ops |
+| ops/sync/config-schemas | [sync config-schemas](docs/ops-sync-config-schemas.md) | ops |
+| ops/sync/hooks | [sync hooks](docs/ops-sync-hooks.md) | ops |
+| ops/sync/projects | [sync projects](docs/ops-sync-projects.md) | ops |
 | tutorial/install/synology | [Synology](docs/tutorial-install-synology.md) | tutorial |
+| ops/concepts/target | [Targets](docs/ops-concepts-target.md) | ops |
+| ops/commands/task | [task](docs/ops-commands-task.md) | ops |
+| concept/how-it-works/task-graph | [Task graph](docs/concept-how-it-works-task-graph.md) | concept |
+| ops/concepts/task-inheritance | [Task inheritance](docs/ops-concepts-task-inheritance.md) | ops |
+| ops/guides/profile | [Task profiling](docs/ops-guides-profile.md) | ops |
+| ops/commands/task-graph | [task-graph](docs/ops-commands-task-graph.md) | ops |
+| ref/concepts/task | [Tasks](docs/ref-concepts-task.md) | ref |
+| ops/commands/teardown | [teardown](docs/ops-commands-teardown.md) | ops |
 | ops/features/telegram-bot | [Telegram Bot](docs/ops-features-telegram-bot.md) | ops |
+| concept/config/template | [template.{pkl,yml}](docs/concept-config-template.md) | concept |
+| ops/commands/templates | [templates](docs/ops-commands-templates.md) | ops |
 | concept/features/templating | [Templating](docs/concept-features-templating.md) | concept |
+| concept/guides/notifications | [Terminal notifications](docs/concept-guides-notifications.md) | concept |
+| ops/moonrepo/terminology | [Terminology](docs/ops-moonrepo-terminology.md) | ops |
 | ops/flows/18-test-flows | [Testing flows](docs/ops-flows-18-test-flows.md) | ops |
+| concept/concepts/token | [Tokens](docs/concept-concepts-token.md) | concept |
+| concept/commands/toolchain | [toolchain](docs/concept-commands-toolchain.md) | concept |
+| ops/concepts/toolchain | [Toolchain](docs/ops-concepts-toolchain.md) | ops |
+| ops/toolchain/add | [toolchain add](docs/ops-toolchain-add.md) | ops |
+| ops/toolchain/info | [toolchain info](docs/ops-toolchain-info.md) | ops |
 | concept/contribute/translations | [Translations](docs/concept-contribute-translations.md) | concept |
 | concept/flows/10-flow-trigger | [Trigger scripts](docs/concept-flows-10-flow-trigger.md) | concept |
 | meta/8_triggers/index | [Triggers](docs/meta-8_triggers-index.md) | meta |
 | ops/install/truenas-portainer | [Truenas Portainer](docs/ops-install-truenas-portainer.md) | ops |
 | ops/2_clients/ts-client | [TypeScript client](docs/ops-2_clients-ts-client.md) | ops |
+| ops/examples/typescript | [TypeScript example](docs/ops-examples-typescript.md) | ops |
+| ref/javascript/typescript-project-refs | [TypeScript project references](docs/ref-javascript-typescript-project-refs.md) | ref |
 | meta/1_typescript_quickstart/index | [TypeScript quickstart](docs/meta-1_typescript_quickstart-index.md) | meta |
 | meta/4_bash_quickstart/index | [TypeScript quickstart](docs/meta-4_bash_quickstart-index.md) | meta |
+| ops/javascript/typescript-eslint | [typescript-eslint](docs/ops-javascript-typescript-eslint.md) | ops |
 | ops/install/wsl | [Ubuntu Installation on Windows (WSL) and Docker Desktop](docs/ops-install-wsl.md) | ops |
 | ops/install/unraid | [Unraid](docs/ops-install-unraid.md) | ops |
 | ops/system/updating | [Updating](docs/ops-system-updating.md) | ops |
+| ops/commands/upgrade | [upgrade](docs/ops-commands-upgrade.md) | ops |
 | concept/3_cli/user | [Users management](docs/concept-3_cli-user.md) | concept |
 | concept/3_cli/variable | [Variables](docs/concept-3_cli-variable.md) | concept |
 | meta/2_variables_and_secrets/index | [Variables and secrets](docs/meta-2_variables_and_secrets-index.md) | meta |
+| ops/guides/vcs-hooks | [VCS hooks](docs/ops-guides-vcs-hooks.md) | ops |
 | meta/13_version_control/index | [Version control](docs/meta-13_version_control-index.md) | meta |
 | meta/34_versioning/index | [Versioning](docs/meta-34_versioning-index.md) | meta |
+| ops/examples/vite | [Vite & Vitest example](docs/ops-examples-vite.md) | ops |
+| ops/editors/vscode | [VS Code extension](docs/ops-editors-vscode.md) | ops |
 | meta/1_vscode-extension/index | [VS Code extension](docs/meta-1_vscode-extension-index.md) | meta |
 | ops/contribute/vscode | [Vscode](docs/ops-contribute-vscode.md) | ops |
+| ops/examples/vue | [Vue example](docs/ops-examples-vue.md) | ops |
+| ops/guides/wasm-plugins | [WASM plugins](docs/ops-guides-wasm-plugins.md) | ops |
 | meta/4_webhooks/index | [Webhooks](docs/meta-4_webhooks-index.md) | meta |
 | meta/40_websocket_triggers/index | [WebSocket triggers](docs/meta-40_websocket_triggers-index.md) | meta |
 | tutorial/windmill/intro | [What is Windmill?](docs/tutorial-windmill-intro.md) | tutorial |
@@ -421,6 +547,7 @@ Alphabetical list of all 235 documents:
 | concept/11_persistent_storage/within-windmill | [Within Windmill: Not recommended](docs/concept-11_persistent_storage-within-windmill.md) | concept |
 | meta/9_worker_groups/index | [Workers and worker groups](docs/meta-9_worker_groups-index.md) | meta |
 | meta/31_workflows_as_code/index | [Workflows as code](docs/meta-31_workflows_as_code-index.md) | meta |
+| ref/concepts/workspace | [Workspace](docs/ref-concepts-workspace.md) | ref |
 | meta/55_workspace_dependencies/index | [Workspace dependencies](docs/meta-55_workspace_dependencies-index.md) | meta |
 | meta/20_workspace_forks/index | [Workspace forks](docs/meta-20_workspace_forks-index.md) | meta |
 | ops/3_cli/workspace-management | [Workspace management](docs/ops-3_cli-workspace-management.md) | ops |

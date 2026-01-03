@@ -2,7 +2,7 @@
 id: ops/contribute/pycharm
 title: "Pycharm"
 category: ops
-tags: ["contribute", "pycharm", "operations"]
+tags: ["operations", "contribute", "pycharm"]
 ---
 
 # Pycharm

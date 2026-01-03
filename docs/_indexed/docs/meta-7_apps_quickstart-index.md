@@ -2,7 +2,7 @@
 id: meta/7_apps_quickstart/index
 title: "Apps quickstart"
 category: meta
-tags: ["7_apps_quickstart", "apps", "meta"]
+tags: ["apps", "7_apps_quickstart", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

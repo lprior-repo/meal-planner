@@ -2,7 +2,7 @@
 id: meta/38_object_storage_in_windmill/index
 title: "Object storage in Windmill (S3)"
 category: meta
-tags: ["38_object_storage_in_windmill", "object", "advanced", "windmill", "meta"]
+tags: ["windmill", "object", "38_object_storage_in_windmill", "advanced", "meta"]
 ---
 
 import Tabs from '@theme/Tabs';

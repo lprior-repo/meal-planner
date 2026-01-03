@@ -2,7 +2,7 @@
 id: meta/24_caching/index
 title: "Caching"
 category: meta
-tags: ["caching", "24_caching", "meta"]
+tags: ["24_caching", "caching", "meta"]
 ---
 
 <!--

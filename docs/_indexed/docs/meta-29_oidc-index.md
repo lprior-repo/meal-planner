@@ -2,7 +2,7 @@
 id: meta/29_oidc/index
 title: "OpenID Connect (OIDC)"
 category: meta
-tags: ["openid", "29_oidc", "advanced", "meta"]
+tags: ["advanced", "29_oidc", "openid", "meta"]
 ---
 
 import Tabs from '@theme/Tabs';

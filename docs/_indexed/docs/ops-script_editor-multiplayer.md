@@ -2,7 +2,7 @@
 id: ops/script_editor/multiplayer
 title: "Multiplayer"
 category: ops
-tags: ["multiplayer", "operations", "script_editor"]
+tags: ["operations", "script_editor", "multiplayer"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

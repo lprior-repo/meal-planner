@@ -2,7 +2,7 @@
 id: tutorial/windmill/flows-guide
 title: "Windmill Flows Guide"
 category: tutorial
-tags: ["tutorial", "beginner", "windmill"]
+tags: ["windmill", "beginner", "tutorial"]
 ---
 
 # Windmill Flows Guide

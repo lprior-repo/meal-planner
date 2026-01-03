@@ -2,7 +2,7 @@
 id: meta/18_files_binary_data/index
 title: "Handling files and binary data"
 category: meta
-tags: ["advanced", "18_files_binary_data", "handling", "meta"]
+tags: ["handling", "18_files_binary_data", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

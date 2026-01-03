@@ -2,7 +2,7 @@
 id: concept/flows/8-error-handling
 title: "Error handling in flows"
 category: concept
-tags: ["flows", "error", "concept"]
+tags: ["flows", "concept", "error"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

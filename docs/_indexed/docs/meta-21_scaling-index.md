@@ -2,7 +2,7 @@
 id: meta/21_scaling/index
 title: "Scaling workers"
 category: meta
-tags: ["21_scaling", "scaling", "advanced", "meta"]
+tags: ["scaling", "21_scaling", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

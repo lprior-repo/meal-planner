@@ -2,7 +2,7 @@
 id: meta/43_preprocessors/index
 title: "Preprocessors"
 category: meta
-tags: ["preprocessors", "advanced", "43_preprocessors", "meta"]
+tags: ["preprocessors", "43_preprocessors", "advanced", "meta"]
 ---
 
 import Tabs from '@theme/Tabs';

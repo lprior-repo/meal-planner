@@ -2,7 +2,7 @@
 id: meta/1_scheduling/index
 title: "Schedules"
 category: meta
-tags: ["1_scheduling", "schedules", "advanced", "meta"]
+tags: ["schedules", "advanced", "1_scheduling", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

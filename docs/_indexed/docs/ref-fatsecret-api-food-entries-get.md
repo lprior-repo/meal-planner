@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-food-entries-get
 title: "Food Entries Get (v1)"
 category: ref
-tags: ["food", "fatsecret", "reference"]
+tags: ["fatsecret", "reference", "food"]
 ---
 
 # Food Entries Get (v1)

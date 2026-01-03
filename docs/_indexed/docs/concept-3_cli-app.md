@@ -2,7 +2,7 @@
 id: concept/3_cli/app
 title: "Apps"
 category: concept
-tags: ["3_cli", "concept", "windmill", "apps"]
+tags: ["apps", "concept", "windmill", "3_cli"]
 ---
 
 <!--

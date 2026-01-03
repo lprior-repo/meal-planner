@@ -2,7 +2,7 @@
 id: meta/19_rich_display_rendering/index
 title: "Rich display rendering"
 category: meta
-tags: ["rich", "advanced", "19_rich_display_rendering", "meta"]
+tags: ["rich", "19_rich_display_rendering", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

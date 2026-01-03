@@ -2,7 +2,7 @@
 id: ops/4_local_development/run-locally
 title: "Run locally"
 category: ops
-tags: ["advanced", "run", "operations", "4_local_development"]
+tags: ["4_local_development", "operations", "advanced", "run"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

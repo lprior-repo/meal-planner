@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-food-entry-delete
 title: "Food Entry Delete"
 category: ref
-tags: ["food", "fatsecret", "reference"]
+tags: ["fatsecret", "reference", "food"]
 ---
 
 # Food Entry Delete

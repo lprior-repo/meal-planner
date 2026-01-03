@@ -2,7 +2,7 @@
 id: ops/install/docker
 title: "Docker"
 category: ops
-tags: ["advanced", "docker", "operations", "install"]
+tags: ["docker", "operations", "install", "advanced"]
 ---
 
 # Docker

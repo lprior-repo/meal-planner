@@ -2,7 +2,7 @@
 id: meta/16_roles_and_permissions/index
 title: "Roles and permissions"
 category: meta
-tags: ["roles", "16_roles_and_permissions", "meta"]
+tags: ["16_roles_and_permissions", "roles", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

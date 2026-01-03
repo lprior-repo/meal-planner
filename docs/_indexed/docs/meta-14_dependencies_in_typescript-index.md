@@ -2,7 +2,7 @@
 id: meta/14_dependencies_in_typescript/index
 title: "Dependencies in TypeScript"
 category: meta
-tags: ["14_dependencies_in_typescript", "dependencies", "typescript", "advanced", "meta"]
+tags: ["14_dependencies_in_typescript", "typescript", "advanced", "dependencies", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

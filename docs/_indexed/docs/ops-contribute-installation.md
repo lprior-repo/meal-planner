@@ -2,7 +2,7 @@
 id: ops/contribute/installation
 title: "Installation"
 category: ops
-tags: ["contribute", "installation", "operations"]
+tags: ["operations", "contribute", "installation"]
 ---
 
 # Installation

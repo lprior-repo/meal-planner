@@ -1,0 +1,24 @@
+---
+doc_id: ops/moonrepo/migrate-to-moon
+chunk_id: ops/moonrepo/migrate-to-moon#chunk-3
+heading_path: ["Migrate to moon", "Continue using scripts"]
+chunk_type: prose
+tokens: 312
+summary: "Continue using scripts"
+---
+
+## Continue using scripts
+
+As a frontend developer you're already familiar with the Node.js ecosystem, specifically around defining and using `package.json` scripts, and you may not want to deviate from this. Don't worry, simply enable the `node.inferTasksFromScripts` setting to automatically create moon tasks from a project's scripts! These can then be ran with `moon run`.
+
+This implementation is a simple abstraction that runs `npm run <script>` (or pnpm/yarn) in the project directory as a child process. While this works, relying on `package.json` scripts incurs the following risks and disadvantages:
+
+-   Inputs default to `**/*`:
+    -   A change to every project relative file will mark the task as affected, even those not necessary for the task. Granular input control is lost.
+    -   A change to workspace relative files *will not* mark the task as affected. For example, a change to `/prettier.config.js` would not be detected for a `npm run format` script.
+-   Outputs default to an empty list unless:
+    -   moon will attempt to extract outputs from arguments, by looking for variations of `--out`, `--outFile`, `--dist-dir`, etc.
+    -   If no output could be determined, builds will not be cached and hydrated.
+-   Tasks will always run in CI unless:
+    -   moon will attempt to determine invalid CI tasks by looking for popular command usage, for example: `webpack serve`, `next dev`, `--watch` usage, and more. This *is not* an exhaustive check.
+    -   The script name contains variations of `dev`, `start`, or `serve`.

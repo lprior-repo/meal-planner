@@ -2,7 +2,7 @@
 id: ops/core_concepts/rust-sdk-winmill-patterns
 title: "Windmill Rust SDK: Complete Reference Guide for AI Coding Agents"
 category: ops
-tags: ["rust", "operations", "advanced", "core_concepts", "windmill"]
+tags: ["core_concepts", "operations", "windmill", "rust", "advanced"]
 ---
 
 <!--

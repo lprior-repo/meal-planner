@@ -2,7 +2,7 @@
 id: ops/features/telegram-bot
 title: "Telegram Bot"
 category: ops
-tags: ["features", "tandoor", "operations", "telegram"]
+tags: ["operations", "tandoor", "telegram", "features"]
 ---
 
 # Telegram Bot

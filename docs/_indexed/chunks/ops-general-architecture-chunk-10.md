@@ -1,17 +1,13 @@
 ---
 doc_id: ops/general/architecture
 chunk_id: ops/general/architecture#chunk-10
-heading_path: ["Meal Planner Architecture", "Adding a New Domain"]
+heading_path: ["Architecture", "See Also"]
 chunk_type: prose
-tokens: 50
-summary: "Adding a New Domain"
+tokens: 9
+summary: "See Also"
 ---
 
-## Adding a New Domain
+## See Also
 
-1. Create domain directory: `src/<domain>/`
-2. Add module files: `mod.rs`, `client.rs`, `types.rs`
-3. Create `bin/` subdirectory for binaries
-4. Add binaries to `Cargo.toml`
-5. Export domain in `src/lib.rs`
-6. Create Windmill scripts in `windmill/f/meal-planner/<domain>/`
+- [MOON_CI_PIPELINE.md](MOON_CI_PIPELINE.md)
+- [MOON_CI_PIPELINE.md](MOON_CI_PIPELINE.md)

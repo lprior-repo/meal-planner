@@ -2,7 +2,7 @@
 id: ref/fatsecret/api-profile-get-auth
 title: "Profile Get Auth"
 category: ref
-tags: ["fatsecret", "profile", "reference"]
+tags: ["fatsecret", "reference", "profile"]
 ---
 
 # Profile Get Auth

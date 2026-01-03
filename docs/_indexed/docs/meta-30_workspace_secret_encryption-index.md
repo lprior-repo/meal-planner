@@ -2,7 +2,7 @@
 id: meta/30_workspace_secret_encryption/index
 title: "Workspace secret encryption"
 category: meta
-tags: ["30_workspace_secret_encryption", "workspace", "meta"]
+tags: ["workspace", "30_workspace_secret_encryption", "meta"]
 ---
 
 # Workspace secret encryption

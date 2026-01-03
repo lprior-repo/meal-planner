@@ -1,12 +1,16 @@
 ---
 doc_id: ops/general/architecture
 chunk_id: ops/general/architecture#chunk-2
-heading_path: ["Meal Planner Architecture", "Overview"]
+heading_path: ["Architecture", "Design Principles (CUPID)"]
 chunk_type: prose
-tokens: 31
-summary: "Overview"
+tokens: 62
+summary: "Design Principles (CUPID)"
 ---
 
-## Overview
+## Design Principles (CUPID)
 
-This project follows a **domain-based architecture** with small, composable Rust binaries orchestrated by Windmill flows. The design is guided by CUPID principles.
+- **Composable**: Small binaries that work standalone or via Windmill
+- **Unix philosophy**: Each binary does ONE thing well
+- **Predictable**: Same input = same output, explicit error handling
+- **Idiomatic**: Standard Rust, serde, thiserror
+- **Domain-based**: Organized by business domain, not technical layers

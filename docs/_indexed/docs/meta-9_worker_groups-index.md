@@ -2,7 +2,7 @@
 id: meta/9_worker_groups/index
 title: "Workers and worker groups"
 category: meta
-tags: ["workers", "advanced", "9_worker_groups", "meta"]
+tags: ["9_worker_groups", "workers", "advanced", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';

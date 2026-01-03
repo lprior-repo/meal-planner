@@ -2,7 +2,7 @@
 id: meta/8_preinstall_binaries/index
 title: "Preinstall binaries"
 category: meta
-tags: ["preinstall", "8_preinstall_binaries", "advanced", "meta"]
+tags: ["advanced", "8_preinstall_binaries", "preinstall", "meta"]
 ---
 
 import DocCard from '@site/src/components/DocCard';
