@@ -9,8 +9,7 @@
 // SCHEMA FILES
 // =============================================================================
 //
-// fatsecret/api.cue      - Complete FatSecret Platform API (all endpoints)
-// fatsecret_oauth.cue    - OAuth 1.0a flow and token management
+// fatsecret/api.cue      - Complete FatSecret Platform API (all endpoints + OAuth)
 // base.cue               - Common types, patterns, validation rules
 // tandoor.cue            - Tandoor Recipes API (from openapi/tandoor.yaml)
 // resources.cue          - Windmill resource type definitions
