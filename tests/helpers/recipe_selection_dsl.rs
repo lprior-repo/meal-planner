@@ -8,9 +8,6 @@
 //! - The driver handles serialization, binary invocation, and I/O boundaries.
 
 use crate::helpers::recipe_selection_driver::RecipeSelectionDriver;
-use crate::helpers::recipe_selection_driver::RecipeSelectionDriverImpl;
-
-use fastrand::Rng;
 
 #[derive(Clone, Debug)]
 struct RecipeRecord {
@@ -19,14 +16,14 @@ struct RecipeRecord {
     calories: u32,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
 pub struct RecipeSelectionItem {
     pub id: u32,
     pub name: String,
     pub calories: u32,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
 pub struct RecipeSelectionResult {
     pub recipes: Vec<RecipeSelectionItem>,
     pub total_calories: u32,
@@ -103,63 +100,18 @@ impl RecipeSelectionDSL {
         tolerance: u32,
         count: usize,
     ) -> RecipeSelectionResult {
-        let lower = target_calories.saturating_sub(tolerance);
-        let upper = target_calories.saturating_add(tolerance);
-        let mut matching: Vec<_> = self
+        let recipes: Vec<RecipeSelectionItem> = self
             .recipes
             .iter()
-            .cloned()
-            .filter(|recipe| recipe.calories >= lower && recipe.calories <= upper)
+            .map(|r| RecipeSelectionItem {
+                id: r.id,
+                name: r.name.clone(),
+                calories: r.calories,
+            })
             .collect();
 
-        if matching.is_empty() || count == 0 {
-            let warning = if matching.is_empty() {
-                Some("no recipes found".to_string())
-            } else {
-                None
-            };
-            return RecipeSelectionResult::new(Vec::new(), warning);
-        }
-
-        let selected = if matching.len() <= count {
-            matching
-                .into_iter()
-                .map(Self::record_to_item)
-                .collect::<Vec<_>>()
-        } else {
-            matching.sort_by(|left, right| {
-                let left_diff = (left.calories as i64 - target_calories as i64).abs();
-                let right_diff = (right.calories as i64 - target_calories as i64).abs();
-                left_diff
-                    .cmp(&right_diff)
-                    .then_with(|| left.name.cmp(&right.name))
-            });
-
-            let pool_limit = count.checked_mul(3).unwrap_or(count);
-            let pool_size = pool_limit.min(matching.len());
-            let mut pool = matching.into_iter().take(pool_size).collect::<Vec<_>>();
-            self.rng.shuffle(&mut pool);
-            pool.into_iter()
-                .take(count)
-                .map(Self::record_to_item)
-                .collect::<Vec<_>>()
-        };
-
-        let warning = if selected.len() < count {
-            Some(format!("only {} recipes found", selected.len()))
-        } else {
-            None
-        };
-
-        RecipeSelectionResult::new(selected, warning)
-    }
-
-    fn record_to_item(record: RecipeRecord) -> RecipeSelectionItem {
-        RecipeSelectionItem {
-            id: record.id,
-            name: record.name,
-            calories: record.calories,
-        }
+        self.driver
+            .select_recipes(target_calories, tolerance, count, &recipes)
     }
 
     pub fn verify_recipe_count(&self, result: &RecipeSelectionResult, expected: usize) {

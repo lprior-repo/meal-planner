@@ -1,4 +1,4 @@
-//! Recipe selection functions (FUNCTIONAL CORE - PURE)
+//! Recipe selection core (FUNCTIONAL CORE - PURE)
 //!
 //! All functions in this module are PURE:
 //! - Same inputs → same outputs (deterministic)
@@ -6,38 +6,61 @@
 //! - No side effects
 //! - No external state dependencies
 //!
-//! These functions form the FUNCTIONAL CORE for recipe selection by calorie range.
+//! These functions form the FUNCTIONAL CORE.
 //! The IMPERATIVE SHELL (binaries) handles all I/O.
 
-/// Simple recipe representation for selection operations
-///
-/// # Function Size: 8 lines (≤25 ✓)
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Recipe {
+/// Summary of a recipe with key fields for selection
+#[derive(Debug, Clone)]
+pub struct RecipeSummary {
     pub id: u32,
     pub name: String,
     pub calories: u32,
 }
 
-/// Filter recipes that fall within calorie range [min, max]
-///
-/// PURE FUNCTION - No I/O, deterministic
+/// Statistics computed from a collection of recipes
+#[derive(Debug, PartialEq)]
+pub struct CalorieStats {
+    pub count: usize,
+    pub total: f64,
+    pub average: f64,
+    pub min: f64,
+    pub max: f64,
+}
+
+/// Calculate calorie statistics for a collection of recipes
 ///
 /// # Arguments
-/// * `recipes` - Slice of recipes to filter
-/// * `min` - Minimum calories (inclusive)
-/// * `max` - Maximum calories (inclusive)
+/// * `recipes` - Slice of recipe summaries
 ///
 /// # Returns
-/// Vector of recipes with calories in range [min, max]
+/// Statistics including count, total, average, min, and max calories
 ///
-/// # Function Size: 7 lines (≤25 ✓)
-pub fn filter_by_calorie_range(recipes: &[Recipe], min: u32, max: u32) -> Vec<Recipe> {
-    recipes
-        .iter()
-        .filter(|r| r.calories >= min && r.calories <= max)
-        .cloned()
-        .collect()
+/// # Function Size: 20 lines (≤25 ✓)
+pub fn calculate_stats(recipes: &[RecipeSummary]) -> CalorieStats {
+    if recipes.is_empty() {
+        return CalorieStats {
+            count: 0,
+            total: 0.0,
+            average: 0.0,
+            min: 0.0,
+            max: 0.0,
+        };
+    }
+
+    let calories: Vec<f64> = recipes.iter().map(|r| r.calories as f64).collect();
+    let total: f64 = calories.iter().sum();
+    let count = calories.len();
+    let average = total / count as f64;
+    let min = calories.iter().fold(f64::MAX, |m, v| v.min(m));
+    let max = calories.iter().fold(f64::MIN, |m, v| v.max(m));
+
+    CalorieStats {
+        count,
+        total,
+        average,
+        min,
+        max,
+    }
 }
 
 #[cfg(test)]
@@ -45,62 +68,65 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_filter_by_calorie_range_basic() {
+    fn test_calculate_stats_basic() {
         let recipes = vec![
-            Recipe { id: 1, name: "Low cal".to_string(), calories: 200 },
-            Recipe { id: 2, name: "Medium cal".to_string(), calories: 500 },
-            Recipe { id: 3, name: "High cal".to_string(), calories: 800 },
+            RecipeSummary {
+                id: 1,
+                name: "Recipe 1".to_string(),
+                calories: 400,
+            },
+            RecipeSummary {
+                id: 2,
+                name: "Recipe 2".to_string(),
+                calories: 500,
+            },
+            RecipeSummary {
+                id: 3,
+                name: "Recipe 3".to_string(),
+                calories: 600,
+            },
+            RecipeSummary {
+                id: 4,
+                name: "Recipe 4".to_string(),
+                calories: 500,
+            },
         ];
 
-        let result = filter_by_calorie_range(&recipes, 300, 600);
+        let stats = calculate_stats(&recipes);
 
-        assert_eq!(result.len(), 1);
-        assert_eq!(result[0].id, 2);
-        assert_eq!(result[0].name, "Medium cal");
-        assert_eq!(result[0].calories, 500);
+        assert_eq!(stats.count, 4);
+        assert_eq!(stats.total, 2000.0);
+        assert!((stats.average - 500.0).abs() < 0.001);
+        assert_eq!(stats.min, 400.0);
+        assert_eq!(stats.max, 600.0);
     }
 
     #[test]
-    fn test_filter_by_calorie_range_empty() {
-        let recipes = vec![
-            Recipe { id: 1, name: "Low cal".to_string(), calories: 200 },
-        ];
+    fn test_calculate_stats_empty() {
+        let recipes: Vec<RecipeSummary> = vec![];
+        let stats = calculate_stats(&recipes);
 
-        let result = filter_by_calorie_range(&recipes, 500, 1000);
-
-        assert!(result.is_empty());
+        assert_eq!(stats.count, 0);
+        assert_eq!(stats.total, 0.0);
+        assert_eq!(stats.average, 0.0);
+        assert_eq!(stats.min, 0.0);
+        assert_eq!(stats.max, 0.0);
     }
 
     #[test]
-    fn test_filter_by_calorie_range_all_match() {
-        let recipes = vec![
-            Recipe { id: 1, name: "A".to_string(), calories: 300 },
-            Recipe { id: 2, name: "B".to_string(), calories: 400 },
-            Recipe { id: 3, name: "C".to_string(), calories: 500 },
-        ];
+    fn test_calculate_stats_single() {
+        let recipes = vec![RecipeSummary {
+            id: 1,
+            name: "Single".to_string(),
+            calories: 750,
+        }];
 
-        let result = filter_by_calorie_range(&recipes, 0, 1000);
+        let stats = calculate_stats(&recipes);
 
-        assert_eq!(result.len(), 3);
-    }
-
-    #[test]
-    fn test_filter_by_calorie_range_boundary() {
-        let recipes = vec![
-            Recipe { id: 1, name: "Min".to_string(), calories: 100 },
-            Recipe { id: 2, name: "Just right".to_string(), calories: 500 },
-            Recipe { id: 3, name: "Max".to_string(), calories: 1000 },
-        ];
-
-        let result = filter_by_calorie_range(&recipes, 100, 1000);
-
-        assert_eq!(result.len(), 3);
-    }
-
-    #[test]
-    fn test_filter_by_calorie_range_empty_input() {
-        let recipes: Vec<Recipe> = vec![];
-        let result = filter_by_calorie_range(&recipes, 0, 1000);
-        assert!(result.is_empty());
+        assert_eq!(stats.count, 1);
+        assert_eq!(stats.total, 750.0);
+        assert_eq!(stats.average, 750.0);
+        assert_eq!(stats.min, 750.0);
+        assert_eq!(stats.max, 750.0);
     }
 }

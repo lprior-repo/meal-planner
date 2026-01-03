@@ -8,4 +8,5 @@
 pub mod common;
 pub mod recipe_nutrition_dsl;
 pub mod recipe_selection_dsl;
+pub mod recipe_selection_driver;
 pub mod support;
